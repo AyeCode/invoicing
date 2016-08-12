@@ -217,6 +217,14 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'Failed <span class="count">(%s)</span>', 'Failed <span class="count">(%s)</span>', 'invoicing' )
     ) );
+    register_post_status( 'renewal', array(
+        'label'                     => _x( 'Renewal', 'Invoice status', 'invoicing' ),
+        'public'                    => true,
+        'exclude_from_search'       => true,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop( 'Renewal <span class="count">(%s)</span>', 'Renewal <span class="count">(%s)</span>', 'invoicing' )
+    ) );
 }
 add_action( 'init', 'wpinv_register_post_status', 10 );
 

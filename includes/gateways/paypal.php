@@ -483,7 +483,7 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
     wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
-    if( false === $subscription ) {
+    if ( false === $subscription ) {
         return;
     }
     
@@ -518,10 +518,13 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
         'amount'         => $ipn_data['mc_gross'],
         'transaction_id' => $ipn_data['txn_id']
     );
-    wpinv_error_log( $args, 'args', __FILE__, __LINE__ );
+    
     $invoice = wpinv_recurring_add_subscription_payment( $parent_invoice_id, $args );
-    wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
+    
     if ( !empty( $invoice ) ) {
+        sleep(1);
+        wpinv_insert_payment_note( $invoice->ID, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $ipn_data['txn_id'] ) );
+
         $invoice->renew_subscription();
     }
 }
@@ -561,20 +564,17 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
                 'item_id'           => $cart_item['id'],
                 'status'            => 'active',
                 'period'            => $item->get_recurring_period(),
-                'initial_amount'    => 0,
+                'initial_amount'    => wpinv_payment_total( $parent_invoice_id ),
                 'recurring_amount'  => $invoice->get_total(),
                 'interval'          => $item->get_recurring_interval(),
                 'bill_times'        => $item->get_recurring_limit(),
                 'expiration'        => $invoice->get_new_expiration( $cart_item['id'] ),
                 'profile_id'        => $ipn_data['subscr_id'],
+                'created'           => current_time( 'mysql', 0 )
             );
             
             // Retrieve pending subscription from database and update it's status to active and set proper profile ID
             $subscription->update_subscription( $args );
-    
-            /*
-            $invoice->add_subscription( $args );
-            */
         }
     }
 }
@@ -769,7 +769,9 @@ function wpinv_paypal_get_transaction_id( $invoice_id ) {
 add_filter( 'wpinv_payment_get_transaction_id-paypal', 'wpinv_paypal_get_transaction_id', 10, 1 );
 
 function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id ) {
-    $paypal_base_url = 'https://www.paypal.com/webscr?cmd=_history-details-from-hub&id=';
+    $sandbox = wpinv_is_test_mode( 'paypal' ) ? '.sandbox' : '';
+    
+    $paypal_base_url = 'https://www' . $sandbox . '.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=';
     $transaction_url = '<a href="' . esc_url( $paypal_base_url . $transaction_id ) . '" target="_blank">' . $transaction_id . '</a>';
 
     return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_url );

@@ -519,12 +519,12 @@ final class WPInv_Invoice {
     private function insert_invoice() {
         $invoice_title = '';
 
-        if ( ! empty( $this->first_name ) && ! empty( $this->last_name ) ) {
-            $invoice_title = $this->first_name . ' ' . $this->last_name;
-        } else if ( ! empty( $this->first_name ) && empty( $this->last_name ) ) {
-            $invoice_title = $this->first_name;
-        } else if ( ! empty( $this->email ) && is_email( $this->email ) ) {
-            $invoice_title = $this->email;
+        if ($number = $this->get_number()) {
+            $invoice_title = $number;
+        } else if ( ! empty( $this->ID ) ) {
+            $invoice_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
+        } else {
+            $invoice_title = __( 'WPINV-', 'invoicing' );
         }
 
         if ( empty( $this->key ) ) {
@@ -564,15 +564,14 @@ final class WPInv_Invoice {
             'fees'         => $this->fees,
         );
         
-        $invoice_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
-        $post_name = sanitize_title( $invoice_title );
+        $post_name      = sanitize_title( $invoice_title );
 
         $post_data = array(
                         'post_title'    => $invoice_title,
                         'post_status'   => $this->status,
                         'post_type'     => 'wpi_invoice',
-                        'post_date'     => ! empty( $this->date ) ? $this->date : null,
-                        'post_date_gmt' => ! empty( $this->date ) ? get_gmt_from_date( $this->date ) : null,
+                        'post_date'     => ! empty( $this->date ) ? $this->date : current_time( 'mysql' ),
+                        'post_date_gmt' => ! empty( $this->date ) ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
                         'post_parent'   => $this->parent_invoice,
                     );
         $args = apply_filters( 'wpinv_insert_invoice_args', $post_data, $this );
@@ -587,10 +586,9 @@ final class WPInv_Invoice {
             $invoice_id = wp_insert_post( $args );
             
             $post_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id );
-            $post_name = sanitize_title( $post_title );
-                
             global $wpdb;
-            $wpdb->update( $wpdb->posts, array( 'post_title' => $post_title, 'post_name' => $post_name ), array( 'ID' => $invoice_id ) );
+            $wpdb->update( $wpdb->posts, array( 'post_title' => $post_title, 'post_name' => sanitize_title( $post_title ) ), array( 'ID' => $invoice_id ) );
+            clean_post_cache( $invoice_id );
         }
 
         if ( !empty( $invoice_id ) ) {             
@@ -847,7 +845,6 @@ final class WPInv_Invoice {
 
         if ( true === $saved ) {
             $this->setup_invoice( $this->ID );
-            wpinv_error_log( $this, 'setup_invoice', __FILE__, __LINE__ );
         }
         //wpinv_error_log( $this, 'this 2', __FILE__, __LINE__ );
         return $saved;
@@ -1138,7 +1135,7 @@ final class WPInv_Invoice {
         }
 
         $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
-
+        
         return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
     }
 
@@ -1877,19 +1874,50 @@ final class WPInv_Invoice {
         return $bill_times;
     }
 
-    public function get_child_payments() {
+    public function get_child_payments( $self = false ) {
         $invoices = get_posts( array(
-            'post_parent'    => (int)$this->parent_invoice,
-            'posts_per_page' => '999',
-            'post_status'    => 'any',
-            'post_type'      => 'wpi_invoice'
+            'post_type'         => 'wpi_invoice',
+            'post_parent'       => (int)$this->ID,
+            'posts_per_page'    => '999',
+            'post_status'       => 'publish',
+            'orderby'           => 'ID',
+            'order'             => 'DESC',
+            'fields'            => 'ids'
         ) );
+        
+        if ( $self && $this->is_complete() ) {
+            if ( !empty( $invoices ) ) {
+                $invoices[] = (int)$this->ID;
+            } else {
+                $invoices = array( $this->ID );
+            }
+            
+            $invoices = array_unique( $invoices );
+        }
 
         return $invoices;
     }
 
     public function get_total_invoices() {
         return count( $this->get_child_payments() ) + 1;
+    }
+    
+    public function get_subscriptions( $limit = -1 ) {
+        $subscriptions = wpinv_get_subscriptions( array( 'parent_invoice_id' => $this->ID, 'numberposts' => $limit ) );
+
+        return $subscriptions;
+    }
+    
+    public function get_subscription_id() {
+        $subscription_id = $this->get_meta( '_wpinv_subscr_profile_id', true );
+        
+        if ( empty( $subscription_id ) && !empty( $this->parent_invoice ) ) {
+            $parent_invoice = wpinv_get_invoice( $this->parent_invoice );
+            
+            $subscription_id = $parent_invoice->get_meta( '_wpinv_subscr_profile_id', true );
+        }
+        
+        return $subscription_id;
     }
     
     public function get_subscription_status() {
@@ -1937,6 +1965,16 @@ final class WPInv_Invoice {
         return $subscription_period;
     }
     
+    public function get_subscription_interval() {
+        $interval = (int)$this->get_meta( '_wpinv_subscr_interval', true );
+        
+        if ( !$interval > 0 ) {
+            $interval = 1;
+        }
+        
+        return $interval;
+    }
+    
     public function failing_subscription() {
         $args = array(
             'status' => 'failing'
@@ -1978,7 +2016,8 @@ final class WPInv_Invoice {
     }
     
     public function add_subscription( $data = array() ) {
-        if ( $this->ID != 0 ) {
+        wpinv_error_log( $data, 'add_subscription()', __FILE__, __LINE__ );
+        if ( empty( $this->ID ) ) {
             return false;
         }
 
@@ -2004,7 +2043,8 @@ final class WPInv_Invoice {
             }
         }
 
-        do_action( 'wpinv_subscription_pre_create', $args, $this );
+        wpinv_error_log( $args, 'wpinv_subscription_pre_create', __FILE__, __LINE__ );
+        do_action( 'wpinv_subscription_pre_create', $args, $data, $this );
         
         if ( !empty( $args ) ) {
             foreach ( $args as $key => $value ) {
@@ -2012,34 +2052,19 @@ final class WPInv_Invoice {
             }
         }
 
-        do_action( 'wpinv_subscription_post_create', $args, $this );
+        do_action( 'wpinv_subscription_post_create', $args, $data, $this );
 
         return true;
     }
     
     public function update_subscription( $args = array() ) {
         wpinv_error_log( $args, 'update_subscription()', __FILE__, __LINE__ );
-        if ( $this->ID != 0 ) {
+        if ( empty( $this->ID ) ) {
             return false;
         }
 
-        $defaults = array(
-            'period'            => '',
-            'initial_amount'    => '',
-            'recurring_amount'  => '',
-            'interval'          => 0,
-            'bill_times'        => 0,
-            'item_id'           => 0,
-            'created'           => '',
-            'expiration'        => '',
-            'status'            => '',
-            'profile_id'        => '',
-        );
-
-        $args = wp_parse_args( $data, $defaults );
-
-        if ( $args['expiration'] && strtotime( 'NOW', current_time( 'timestamp' ) ) > strtotime( $args['expiration'], current_time( 'timestamp' ) ) ) {
-            if ( 'active' == $args['status'] ) {
+        if ( !empty( $args['expiration'] ) && $args['expiration'] && strtotime( 'NOW', current_time( 'timestamp' ) ) > strtotime( $args['expiration'], current_time( 'timestamp' ) ) ) {
+            if ( !isset( $args['status'] ) || ( isset( $args['status'] ) && 'active' == $args['status'] ) ) {
                 // Force an active subscription to expired if expiration date is in the past
                 $args['status'] = 'expired';
             }
@@ -2059,7 +2084,9 @@ final class WPInv_Invoice {
     }
     
     public function renew_subscription() {
+        wpinv_error_log( 1, 'renew_subscription()', __FILE__, __LINE__ );
         $expires = $this->get_expiration_time();
+        wpinv_error_log( $expires, 'expires', __FILE__, __LINE__ );
 
         // Determine what date to use as the start for the new expiration calculation
         if ( $expires > current_time( 'timestamp' ) && $this->is_subscription_active() ) {
@@ -2067,15 +2094,18 @@ final class WPInv_Invoice {
         } else {
             $base_date  = current_time( 'timestamp' );
         }
-
+        wpinv_error_log( $base_date, 'base_date', __FILE__, __LINE__ );
         $last_day       = cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
-        $expiration     = date_i18n( 'Y-m-d H:i:s', strtotime( '+1 ' . $this->get_subscription_period() . ' 23:59:59', $base_date ) );
+        wpinv_error_log( $last_day, 'last_day', __FILE__, __LINE__ );
+        $expiration     = date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $this->get_subscription_interval() . ' ' . $this->get_subscription_period( true ), $base_date ) );
+        wpinv_error_log( $expiration, 'expiration', __FILE__, __LINE__ );
 
         if( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
             $expiration = date_i18n( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
         }
 
         $expiration     = apply_filters( 'wpinv_subscription_renewal_expiration', $expiration, $this->ID, $this );
+        wpinv_error_log( $expiration, 'expiration', __FILE__, __LINE__ );
 
         do_action( 'wpinv_subscription_pre_renew', $this->ID, $expiration, $this );
 
@@ -2094,7 +2124,7 @@ final class WPInv_Invoice {
         );
 
         if( $this->update_subscription( $args ) ) {
-            $note = sprintf( __( 'Subscription #%1$s %2$s', 'invoicing' ), $this->ID, $status );
+            $note = sprintf( __( 'Subscription #%1$s: %2$s', 'invoicing' ), wpinv_get_invoice_number( $this->ID ), $status );
             $this->add_note( $note, true );
         }
 
@@ -2173,8 +2203,30 @@ final class WPInv_Invoice {
     
     public function get_new_expiration( $item_id = 0 ) {
         $item   = new WPInv_Item( $item_id );
-        $period = $item->get_recurring_period();
+        $interval = $item->get_recurring_interval();
+        $period = $item->get_recurring_period( true );
 
-        return date_i18n( 'Y-m-d H:i:s', strtotime( '+ 1 ' . $period . ' 23:59:59' ) );
+        return date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $interval . ' ' . $period ) );
+    }
+    
+    public function get_subscription_data() {
+        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created' );
+        
+        $subscription_meta = array();
+        foreach ( $fields as $field ) {
+            if ( ( $value = $this->get_meta( '_wpinv_subscr_' . $field ) ) !== false ) {
+                $subscription_meta[ $field ] = $value;
+            }
+        }
+        
+        return $subscription_meta;
+    }
+    
+    public function is_complete() {
+        if ( $this->has_status( array( 'publish', 'completed', 'processing', 'renewal' ) ) ) {
+            return true;
+        }
+        
+        return false;
     }
 }

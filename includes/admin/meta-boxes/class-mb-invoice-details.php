@@ -108,4 +108,54 @@ class WPInv_Meta_Box_Details {
         $invoice->recalculate_total();
         $invoice->save();
     }
+    
+    public static function subscriptions( $post ) {
+        global $wpi_mb_inboive;
+        
+        $invoice = $wpi_mb_inboive;
+        
+        if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
+            $payments = $invoice->get_child_payments();
+            
+            ?>
+            <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Subscription ID:</label> %s' ), $wpi_mb_inboive->get_subscription_id() ); ?></p>
+            <?php if ( !empty( $payments ) ) { ?>
+                <p><strong><?php _e( 'Renewal Payments:', 'invoicing' ); ?></strong></p>
+                <ul id="wpi-sub-payments">
+                <?php foreach ( $payments as $invoice_id ) { ?>
+                    <li>
+                        <a href="<?php echo esc_url( get_edit_post_link( $invoice_id ) ); ?>"><?php echo wpinv_get_invoice_number( $invoice_id ); ?></a>&nbsp;&ndash;&nbsp;
+                        <span><?php echo wpinv_get_invoice_date( $invoice_id ); ?>&nbsp;&ndash;&nbsp;</span>
+                        <span><?php echo wpinv_payment_total( $invoice_id, true ); ?></span>
+                    </li>
+                <?php } ?>
+                </ul>
+            <?php }
+        }
+    }
+    
+    public static function renewals( $post ) {
+        global $wpi_mb_inboive;
+        
+        if ( wpinv_is_subscription_payment( $wpi_mb_inboive ) ) {
+            $parent_url = get_edit_post_link( $wpi_mb_inboive->parent_invoice );
+            $parent_id  = wpinv_get_invoice_number( $wpi_mb_inboive->parent_invoice );
+        ?>
+        <p class="wpi-meta-row"><?php printf( __( '<label>Subscription ID:</label> %s', 'invoicing' ), $wpi_mb_inboive->get_subscription_id() ); ?></p>
+        <p class="wpi-meta-row"><?php printf( __( '<label>Parent Invoice:</label> <a href="%s">%s</a>', 'invoicing' ), $parent_url, $parent_id ); ?></p>
+        <?php
+        }
+    }
+    
+    public static function payment_meta( $post ) {
+        global $wpi_mb_inboive;
+        
+        ?>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_inboive->gateway ) ); ?></p>
+        <?php if ( $wpi_mb_inboive->is_complete() ) { ?>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_inboive->get_key() ); ?></p>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_inboive ) ); ?></p>
+        <?php } ?>
+        <?php
+    }
 }

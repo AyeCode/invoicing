@@ -218,14 +218,31 @@ class WPInv_Item {
 
     }
     
-    public function get_recurring_period() {
+    public function get_recurring_period( $full = false ) {
         $period = get_post_meta( $this->ID, '_wpinv_recurring_period', true );
         
         if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
             $period = 'D';
         }
+        
+        if ( $full ) {
+            switch( $period ) {
+                case 'D':
+                    $period = 'day';
+                break;
+                case 'W':
+                    $period = 'week';
+                break;
+                case 'M':
+                    $period = 'month';
+                break;
+                case 'Y':
+                    $period = 'year';
+                break;
+            }
+        }
 
-        return apply_filters( 'wpinv_item_recurring_period', $period, $this->ID );
+        return apply_filters( 'wpinv_item_recurring_period', $period, $full, $this->ID );
 
     }
     
