@@ -1226,3 +1226,15 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv-row-recurring-fields.wpinv-recurring-n {
     color: #888;
 }
+.inside > p.wpi-meta-row > label  {
+    font-weight: 600;
+    vertical-align: text-top;
+}
+.inside > p.wpi-meta-row {
+    line-height: normal;
+    vertical-align: middle;
+}
+
+.inside > p.wpi-meta-row a {
+    text-decoration: none;
+}

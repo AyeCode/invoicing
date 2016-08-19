@@ -4,13 +4,28 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
-function wpinv_add_meta_boxes() {
+function wpinv_add_meta_boxes( $post_type, $post ) {
+    global $wpi_mb_inboive;
+    if ( $post_type == 'wpi_invoice' && !empty( $post->ID ) ) {
+        $wpi_mb_inboive = wpinv_get_invoice( $post->ID );
+    }
+    
+    if ( !empty( $wpi_mb_inboive ) && $wpi_mb_inboive->is_recurring() && !wpinv_is_subscription_payment( $wpi_mb_inboive ) ) {
+        add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscriptions', 'invoicing' ), 'WPInv_Meta_Box_Details::subscriptions', 'wpi_invoice', 'side', 'high' );
+    }
+    
+    if ( wpinv_is_subscription_payment( $wpi_mb_inboive ) ) {
+        add_meta_box( 'wpinv-mb-renewals', __( 'Renewal Payments', 'invoicing' ), 'WPInv_Meta_Box_Details::renewals', 'wpi_invoice', 'side', 'high' );
+    }
+    
     add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'WPInv_Meta_Box_Details::output', 'wpi_invoice', 'side', 'default' );
+    add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'WPInv_Meta_Box_Details::payment_meta', 'wpi_invoice', 'side', 'default' );
+    
     add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'WPInv_Meta_Box_Items::output', 'wpi_invoice', 'normal', 'high' );
     add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'WPInv_Meta_Box_Billing_Details::output', 'wpi_invoice', 'normal', 'high' );
     add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'normal', 'high' );
 }
-add_action( 'add_meta_boxes', 'wpinv_add_meta_boxes', 30 );
+add_action( 'add_meta_boxes', 'wpinv_add_meta_boxes', 30, 2 );
 
 function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
     // $post_id and $post are required

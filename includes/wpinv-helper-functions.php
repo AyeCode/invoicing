@@ -304,7 +304,8 @@ function wpinv_get_invoice_statuses() {
         'onhold'    => __( 'On Hold', 'invoicing' ),
         'refunded'  => __( 'Refunded', 'invoicing' ),
         'cancelled' => __( 'Cancelled', 'invoicing' ),
-        'failed'    => __( 'Failed', 'invoicing' )
+        'failed'    => __( 'Failed', 'invoicing' ),
+        'renewal'    => __( 'Renewal Payment', 'invoicing' )
     );
 
     return apply_filters( 'wpinv_statuses', $invoice_statuses );

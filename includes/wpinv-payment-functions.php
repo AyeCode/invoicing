@@ -55,8 +55,8 @@ function wpinv_get_subscription( $id = 0, $by_profile_id = false ) {
  * Records a new payment on the subscription
  * 
  */
-function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $args = array() ) {
-    $args = wp_parse_args( $args, array(
+function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscription_args = array() ) {    
+    $args = wp_parse_args( $subscription_args, array(
         'amount'         => '',
         'transaction_id' => '',
         'gateway'        => ''
@@ -101,19 +101,23 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $args = a
     }
 
     // increase the earnings for each product in the subscription
-    $items = $parent_invoice->get_cart_details();
+    $items          = $parent_invoice->get_cart_details();
     if ( $items ) {        
-        $add_items = array();
+        $add_items      = array();
+        $cart_details   = array();
         
         foreach ( $items as $item ) {
-            $add_item           = $item;
-            $add_item['action'] = 'add';
+            $add_item             = array();
+            $add_item['id']       = $item['id'];
+            $add_item['quantity'] = $item['quantity'];
             
-            $add_items[] = $add_item;
+            $add_items[]    = $add_item;
+            $cart_details[] = $item;
             break;
         }
         
         $invoice->set( 'items', $add_items );
+        $invoice->cart_details = $cart_details;
     }
     
     $total = $args['amount'];
@@ -139,12 +143,23 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $args = a
     $invoice->tax      = wpinv_format_amount( $tax, NULL, true );
     $invoice->discount = wpinv_format_amount( $discount, NULL, true );
     $invoice->total    = wpinv_format_amount( $total, NULL, true );
-    wpinv_error_log( $invoice, 'before save()', __FILE__, __LINE__ );
     $invoice->save();
-    wpinv_error_log( $invoice, 'after save()', __FILE__, __LINE__ );
+    
+    wpinv_update_payment_status( $invoice->ID, 'publish' );
+    wpinv_update_payment_status( $invoice->ID, 'renewal' );
+    
+    $invoice = wpinv_get_invoice( $invoice->ID );
+    
+    $subscription_data                      = wpinv_payment_subscription_data( $parent_invoice );
+    $subscription_data['recurring_amount']  = $invoice->get_total();
+    $subscription_data['created']           = current_time( 'mysql', 0 );
+    $subscription_data['expiration']        = $invoice->get_new_expiration( $subscription_data['item_id'] );
+    
+    // Retrieve pending subscription from database and update it's status to active and set proper profile ID
+    $invoice->update_subscription( $subscription_data );
 
-    do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $parent_invoice );
-    do_action( 'wpinv_recurring_record_payment', $invoice->ID, $parent_invoice_id, $args['amount'], $args['transaction_id'] );
+    do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $parent_invoice, $subscription_args );
+    do_action( 'wpinv_recurring_record_payment', $invoice->ID, $parent_invoice_id, $subscription_args );
 
     return $invoice;
 }
@@ -165,4 +180,56 @@ function wpinv_payment_exists( $txn_id = '' ) {
     }
 
     return false;
+}
+
+function wpinv_is_subscription_payment( $invoice = '' ) {
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    if ( !is_object( $invoice ) && is_scalar( $invoice ) ) {
+        $invoice = wpinv_get_invoice( $invoice );
+    }
+    
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+        
+    if ( $invoice->parent_invoice && $invoice->parent_invoice != $invoice->ID ) {
+        return true;
+    }
+
+    return false;
+}
+
+function wpinv_payment_subscription_data( $invoice = '' ) {
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    if ( !is_object( $invoice ) && is_scalar( $invoice ) ) {
+        $invoice = wpinv_get_invoice( $invoice );
+    }
+    
+    if ( empty( $invoice ) ) {
+        return false;
+    }    
+
+    return $invoice->get_subscription_data();
+}
+
+function wpinv_payment_link_transaction_id( $invoice = '' ) {
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    if ( !is_object( $invoice ) && is_scalar( $invoice ) ) {
+        $invoice = wpinv_get_invoice( $invoice );
+    }
+    
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    return apply_filters( 'wpinv_payment_details_transaction_id-' . $invoice->gateway, $invoice->get_transaction_id(), $invoice->ID );
 }

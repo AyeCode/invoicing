@@ -738,7 +738,7 @@ function wpinv_get_watermark( $id ) {
     $invoice = wpinv_get_invoice( $id );
     
     if ( !empty( $invoice ) ) {
-        if ( $invoice->has_status( array( 'publish', 'completed' ) ) ) {
+        if ( $invoice->is_complete() ) {
             return __( 'Paid', 'invoicing' );
         }
         if ( $invoice->has_status( array( 'cancelled' ) ) ) {
@@ -990,7 +990,7 @@ function wpinv_display_payments_info( $invoice_id = 0, $echo = true ) {
     
     ob_start();
     do_action( 'wpinv_before_display_payments_info', $invoice_id );
-    if ( ( $gateway_title = $invoice->get_gateway_title() ) || $invoice->has_status( array( 'publish', 'completed', 'processing' ) ) ) {
+    if ( ( $gateway_title = $invoice->get_gateway_title() ) || $invoice->is_complete() ) {
         ?>
         <div class="wpi-payment-info">
             <p class="wpi-payment-gateway"><?php echo wp_sprintf( __( 'Payment via %s', 'invoicing' ), $gateway_title ? $gateway_title : __( 'Manually', 'invoicing' ) ); ?></p>
