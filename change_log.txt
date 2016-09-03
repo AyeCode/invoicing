@@ -1,6 +1,0 @@
-v1.0.0
-Initial release.
-
-v0.0.0
-ajaxurl sometimes not defined on frontend - FIXED
-Not working if GD not installed - FIXED

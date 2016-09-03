@@ -20,5 +20,6 @@ Invoicing plugin.
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release.
+= 0.0.1 =
+ajaxurl sometimes not defined on frontend - FIXED
+Not working if GD not installed - FIXED
