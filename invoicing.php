@@ -3,7 +3,7 @@
 Plugin Name: Invoicing
 Plugin URI: http://wpgeodirectory.com/
 Description: Invoicing plugin.
-Version: 1.0.0
+Version: 0.0.1
 Author: GeoDirectory
 Author URI: http://wpgeodirectory.com/
 License: GPLv3
@@ -15,7 +15,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '1.0.0' );
+    define( 'WPINV_VERSION', '0.0.1' );
 }
 
 if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {
