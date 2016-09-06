@@ -517,6 +517,62 @@ function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) 
 function wpinv_new_invoice_note_notification( $invoice_id, $new_status = '' ) {
 }
 
+function wpinv_customer_invoice_notification( $invoice_id ) {
+    global $wpinv_email_search, $wpinv_email_replace;
+    
+    wpinv_error_log( $invoice_id, 'wpinv_customer_invoice_notification()', __FILE__, __LINE__ );
+    $email_type = 'customer_invoice';
+    if ( !wpinv_email_is_enabled( $email_type ) ) {
+        return;
+    }
+    
+    $invoice = wpinv_get_invoice( $invoice_id );
+    if ( empty( $invoice ) ) {
+        return;
+    }
+    
+    $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    if ( !is_email( $recipient ) ) {
+        return;
+    }
+        
+    $search                     = array();
+    $search['invoice_number']   = '{invoice_number}';
+    $search['invoice_date']     = '{invoice_date}';
+    $search['name']             = '{name}';
+    
+    $replace                    = array();
+    $replace['invoice_number']  = $invoice->get_number();
+    $replace['invoice_date']    = $invoice->get_invoice_date();
+    $replace['name']            = $invoice->get_user_full_name();
+    
+    $wpinv_email_search     = $search;
+    $wpinv_email_replace    = $replace;
+    
+    $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
+    $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
+    $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
+    
+    $email_heading = wpinv_get_option( 'email_' . $email_type . '_heading' );
+    $email_heading = apply_filters( 'wpinv_email_heading', $email_heading, $email_type, $invoice );
+    
+    $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
+            'invoice'       => $invoice,
+            'email_type'    => $email_type,
+            'email_heading' => $email_heading,
+            'sent_to_admin' => false,
+            'plain_text'    => false,
+        ) );
+    
+    wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    
+    if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
+        $recipient  = wpinv_get_admin_email();
+        $subject    .= ' - ADMIN BCC COPY';
+        wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    }
+}
+
 function wpinv_mail_get_from_address() {
     $from_address = apply_filters( 'wpinv_mail_from_address', wpinv_get_option( 'email_from' ) );
     return sanitize_email( $from_address );
@@ -1077,3 +1133,10 @@ function wpinv_email_invoice_items( $invoice, $email_type = '', $sent_to_admin =
 function wpinv_email_billing_details( $invoice, $email_type = '', $sent_to_admin = false ) {
     wpinv_get_template( 'emails/wpinv-email-billing-details.php', array( 'invoice' => $invoice, 'email_type' => $email_type, 'sent_to_admin' => $sent_to_admin ) );
 }
+
+function wpinv_send_customer_invoice( $data = array() ) {
+    $redirect = add_query_arg( array( 'wpinv-message' => 'email_sent', 'wpi_action' => false, 'invoice_id' => false ) );
+    wp_redirect( $redirect );
+    exit;
+}
+add_action( 'wpinv_send_invoice', 'wpinv_send_customer_invoice' );

@@ -475,7 +475,7 @@ add_action( 'wpinv_paypal_subscr_eot', 'wpinv_process_paypal_subscr_eot' );
 add_action( 'wpinv_paypal_subscr_failed', 'wpinv_process_paypal_subscr_failed' );
 
 /**
- * Processes the recurring payments as they come in.
+ * Process the subscription payment received IPN.
  */
 function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     $parent_invoice_id = absint( $ipn_data['custom'] );
@@ -530,7 +530,7 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
 }
 
 /**
- * Processes the "signup" IPN notice
+ * Process the subscription started IPN.
  */
 function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     $parent_invoice_id = absint( $ipn_data['custom'] );
@@ -580,7 +580,7 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
 }
 
 /**
- * Processes the "cancel" IPN notice.
+ * Process the subscription canceled IPN.
  */
 function wpinv_process_paypal_subscr_cancel( $ipn_data ) {
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
@@ -593,7 +593,7 @@ function wpinv_process_paypal_subscr_cancel( $ipn_data ) {
 }
 
 /**
- * Processes the "cancel" IPN notice.
+ * Process the subscription expired IPN.
  */
 function wpinv_process_paypal_subscr_eot( $ipn_data ) {
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
@@ -606,7 +606,7 @@ function wpinv_process_paypal_subscr_eot( $ipn_data ) {
 }
 
 /**
- * Processes the payment failed IPN notice.
+ * Process the subscription payment failed IPN.
  */
 function wpinv_process_paypal_subscr_failed( $ipn_data ) {
     $subscription = wpinv_get_paypal_subscription( $ipn_data );

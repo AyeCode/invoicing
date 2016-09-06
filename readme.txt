@@ -23,3 +23,5 @@ Invoicing plugin.
 = 0.0.1 =
 ajaxurl sometimes not defined on frontend - FIXED
 Not working if GD not installed - FIXED
+In print invoice view use the company name if available instead of the website name - CHANGED
+Invoice link added in email to view invoice print page - ADDED

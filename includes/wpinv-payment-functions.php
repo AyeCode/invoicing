@@ -233,3 +233,31 @@ function wpinv_payment_link_transaction_id( $invoice = '' ) {
 
     return apply_filters( 'wpinv_payment_details_transaction_id-' . $invoice->gateway, $invoice->get_transaction_id(), $invoice->ID );
 }
+
+function wpinv_get_pretty_subscription_period( $period ) {
+    $frequency = '';
+    //Format period details
+    switch ( $period ) {
+        case 'D' :
+        case 'day' :
+            $frequency = __( 'Daily', 'invoicing' );
+            break;
+        case 'W' :
+        case 'week' :
+            $frequency = __( 'Weekly', 'invoicing' );
+            break;
+        case 'M' :
+        case 'week' :
+            $frequency = __( 'Monthly', 'invoicing' );
+            break;
+        case 'Y' :
+        case 'week' :
+            $frequency = __( 'Yearly', 'invoicing' );
+            break;
+        default :
+            $frequency = apply_filters( 'wpinv_pretty_subscription_period', $frequency, $period );
+            break;
+    }
+
+    return $frequency;
+}

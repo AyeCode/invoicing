@@ -95,9 +95,20 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             $value = '<a href="' . esc_url( $edit_link ) . '">' . __( 'View Invoice Details', 'invoicing' ) . '</a>';
             break;
         case 'wpi_actions' :
+            $value = '';
             if ( !empty( $post->post_name ) ) {
-                $value = '<a href="' . esc_url( get_permalink( $post->ID ) ) . '" class="button ui-tip sliced-pdf-button" title="" target="_blank"><span class="dashicons dashicons-media-default"></span></a>';
+                $value .= '<a title="' . esc_attr__( 'Print invoice', 'invoicing' ) . '" href="' . esc_url( get_permalink( $post->ID ) ) . '" class="button ui-tip column-act-btn" title="" target="_blank"><span class="dashicons dashicons-media-default"></span></a>';
             }
+            
+            $email   = $wpi_invoice->get_email();
+            if ( !$email ) {
+                $email = get_the_author_meta( 'email' );
+            }
+            
+            if ( $email ) {
+                $value .= '<a title="' . esc_attr__( 'Send invoice to customer', 'invoicing' ) . '" href="' . esc_url( add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) ) ) . '" class="button ui-tip column-act-btn"><span class="dashicons dashicons-email-alt"></span></a>';
+            }
+            
             break;
         default:
             $value = isset( $post->$column_name ) ? $post->$column_name : '';
@@ -173,7 +184,8 @@ function wpinv_admin_messages() {
 	}
 
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
-		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The invoice receipt has been resent.', 'invoicing' ), 'updated' );
+		//add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The invoice has been sent to customer.', 'invoicing' ), 'updated' );
+		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'Testing send invoice to customer.', 'invoicing' ), 'updated' );
     }
 
     if ( isset( $_GET['wpinv-message'] ) && 'invoice-note-deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {

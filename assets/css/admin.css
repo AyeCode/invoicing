@@ -200,10 +200,6 @@ ul.invoice_notes li.customer-note .note_content:after {
   text-align: right;
   width: 23%;
 }
-.wpinv #side-sortables .gdmbx2-id-sliced-invoice-number input {
-  float: right;
-  width: 75% !important;
-}
 .wpinv #side-sortables select {
   width: 100%;
 }
@@ -484,47 +480,6 @@ ul.invoice_notes li.customer-note .note_content:after {
   margin: 20px 0;
   padding: 0 15px 2px;
 }
-
-#sliced_invoices .gdmbx2-id-template .gdmbx-td {
-  padding: 30px 0 0 0;
-}
-#sliced_invoices .gdmbx2-id-template li {
-  float: left;
-}
-#sliced_invoices .gdmbx2-id-template input.gdmbx2-option { /* HIDE RADIO */
-  visibility: hidden; /* Makes input not-clickable */
-  position: absolute; /* Remove input from document flow */
-}
-#sliced_invoices .gdmbx2-id-template input + label > img {
-  border: 1px solid #aaa;
-  cursor: pointer;
-  margin: 0 5px 0 10px;
-}
-#sliced_invoices .gdmbx2-id-template input:checked + label > img { /* (RADIO CHECKED) IMAGE STYLES */
-  border:2px solid #0073AA;
-}
-
-#gdmbx2-metabox-sliced_extras .sliced-extras > li {
-  margin: 5px 0 15px;
-}
-#gdmbx2-metabox-sliced_extras .sliced-extras .description {
-  display: block;
-  font-style: normal;
-  margin: 5px 0 0;
-}
-.sliced-invoices_page_sliced_tools pre {
-  background: #fafafa none repeat scroll 0 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  display: inline-block;
-  margin: 0;
-  padding: 15px 20px;
-  line-height: 22px;
-  font-size: 14px;
-}
-#sliced_extras .button-primary {
-  display: none;
-}
 .wpinv_import_form {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #ddd;
@@ -543,30 +498,6 @@ ul.invoice_notes li.customer-note .note_content:after {
   margin: 0;
   padding: 5px 0 0;
 }
-.sliced-extras {
-  background: #f8f8f8 none repeat scroll 0 0;
-  padding: 10px 20px;
-}
-/*
- * Reports
- */
-.sliced-dashboard li span {
-  float: left;
-  padding: 0 15px 0 0;
-  text-align: right;
-  width: 25%;
-}
-.sliced-dashboard li.label {
-  font-size: 14px;
-  font-weight: bold;
-}
-.sliced-dashboard li span.dashicons {
-  float: none;
-  text-align: left;
-  width: auto;
-  padding: 0 5px 0 0;
-}
-
 .wpinv .labeled-chart-container {
   min-height: 180px;
   padding-right: 150px;
@@ -608,35 +539,23 @@ ul.invoice_notes li.customer-note .note_content:after {
 /*
  * Columns/ list view
  */
-.wpinv .manage-column.column-sliced_actions {
+.wpinv .manage-column.column-wpi_actions {
   width: 80px;
 }
 .wpinv .manage-column.column-comments {
   width: 50px;
 }
-.wpinv .manage-column.column-sliced_number {
-  width: 120px;
-}
-.wpinv .sliced-pdf-button {
+.wpinv .column-act-btn {
   margin: 0 5px 4px 0;
   padding: 0 6px 1px;
 }
-.wpinv .sliced-email-button {
+.wpinv .column-email-btn {
   padding: 0 6px 1px;
 }
 .wpinv .button.ui-tip .dashicons {
   float: left;
   font-size: 16px;
   margin: 5px 0 0;
-}
-.description.sliced-sent {
-  color: #888;
-  display: block;
-  font-size: 11px;
-  font-style: normal;
-  letter-spacing: -0.5px;
-  margin: 0;
-  width: 100%;
 }
 td.taxonomy-invoice_status a {
   border: 2px solid #ddd;
@@ -714,9 +633,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }  
 
 @media only screen and (min-width : 783px) and (max-width : 960px) {
-  .wpinv .manage-column.column-sliced_number {
-    width: auto;
-  }
 } 
 
 @media only screen and (min-width : 490px) and (max-width : 659px) {

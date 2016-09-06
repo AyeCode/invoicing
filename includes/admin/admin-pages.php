@@ -32,7 +32,7 @@ function wpinv_is_admin_page( $passed_page = '', $passed_view = '' ) {
     $action     = isset( $_GET['action'] )              ? strtolower( $_GET['action'] )             : false;
     $page       = isset( $_GET['page'] )                ? strtolower( $_GET['page'] )               : false;
     $view       = isset( $_GET['view'] )                ? strtolower( $_GET['view'] )               : false;
-    $edd_action = isset( $_GET['wpinv-action'] )   ? strtolower( $_GET['wpinv-action'] )  : false;
+    $wpi_action = isset( $_GET['wpinv-action'] )        ? strtolower( $_GET['wpinv-action'] )       : false;
     $tab        = isset( $_GET['tab'] )                 ? strtolower( $_GET['tab'] )                : false;
 
     switch ( $passed_page ) {
@@ -63,17 +63,17 @@ function wpinv_is_admin_page( $passed_page = '', $passed_view = '' ) {
         case 'discounts':
             switch ( $passed_view ) {
                 case 'list-table':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && false === $edd_action ) {
+                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && false === $wpi_action ) {
                         $found = true;
                     }
                     break;
                 case 'edit':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'edit_discount' === $edd_action ) {
+                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'edit_discount' === $wpi_action ) {
                         $found = true;
                     }
                     break;
                 case 'new':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'add_discount' === $edd_action ) {
+                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'add_discount' === $wpi_action ) {
                         $found = true;
                     }
                     break;

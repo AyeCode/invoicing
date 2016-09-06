@@ -4,6 +4,7 @@ if ( !defined('ABSPATH') )
     die('-1');
 
 $sent_to_admin = !empty( $sent_to_admin ) ? true : false;
+$invoice_url = $sent_to_admin ? get_edit_post_link( $invoice->ID ) : get_permalink( $invoice->ID );
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
 <div id="wpinv-email-details">
@@ -12,7 +13,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
         <?php if ( $invoice_number = $invoice->get_number() ) { ?>
             <tr>
                 <td><?php _e( 'Invoice Number', 'invoicing' ); ?></td>
-                <td><?php if ( $sent_to_admin ) { ?><a href="<?php echo esc_url( get_edit_post_link( $invoice->ID ) ) ;?>"><?php echo esc_html( $invoice_number ); ?></a><?php } else { echo esc_html( $invoice_number ); } ?></td>
+                <td><a href="<?php echo esc_url( $invoice_url ) ;?>"><?php echo $invoice_number; ?></a></td>
             </tr>
         <?php } ?>
         <tr>

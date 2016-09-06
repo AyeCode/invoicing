@@ -1861,6 +1861,39 @@ final class WPInv_Invoice {
         return $created;
     }
     
+    public function get_subscription_start( $formatted = true ) {
+        $start   = $this->get_subscription_created();
+        
+        if ( $formatted ) {
+            $date = date_i18n( get_option( 'date_format' ), strtotime( $start ) );
+        } else {
+            $date = date_i18n( 'Y-m-d H:i:s', strtotime( $start ) );
+        }
+
+        return $date;
+    }
+    
+    public function get_subscription_end( $formatted = true ) {
+        $start          = $this->get_subscription_created();
+        $interval       = $this->get_subscription_interval();
+        $period         = $this->get_subscription_period( true );
+        $bill_times     = (int)$this->get_bill_times();
+        
+        if ( $bill_times == 0 ) {
+            return $formatted ? __( 'Until cancelled', 'invoicing' ) : $bill_times;
+        }
+        
+        $total_period = $start . '+' . ( $interval * $bill_times ) . ' ' . $period;
+        
+        if ( $formatted ) {
+            $date = date_i18n( get_option( 'date_format' ), strtotime( $total_period ) );
+        } else {
+            $date = date_i18n( 'Y-m-d H:i:s', strtotime( $total_period ) );
+        }
+
+        return $date;
+    }
+    
     public function get_expiration_time() {
         return strtotime( $this->get_expiration(), current_time( 'timestamp' ) );
     }
@@ -1879,7 +1912,7 @@ final class WPInv_Invoice {
             'post_type'         => 'wpi_invoice',
             'post_parent'       => (int)$this->ID,
             'posts_per_page'    => '999',
-            'post_status'       => 'publish',
+            'post_status'       => array( 'publish', 'completed', 'processing', 'renewal' ),
             'orderby'           => 'ID',
             'order'             => 'DESC',
             'fields'            => 'ids'
@@ -1898,7 +1931,7 @@ final class WPInv_Invoice {
         return $invoices;
     }
 
-    public function get_total_invoices() {
+    public function get_total_payments() {
         return count( $this->get_child_payments() ) + 1;
     }
     
@@ -1955,14 +1988,31 @@ final class WPInv_Invoice {
         return $status;
     }
     
-    public function get_subscription_period() {
-        $subscription_period = $this->get_meta( '_wpinv_subscr_period', true );
+    public function get_subscription_period( $full = false ) {
+        $period = $this->get_meta( '_wpinv_subscr_period', true );
         
-        if ( !in_array( $subscription_period, array( 'D', 'W', 'M', 'Y' ) ) ) {
-            $subscription_period = 'D';
+        if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
+            $period = 'D';
         }
         
-        return $subscription_period;
+        if ( $full ) {
+            switch( $period ) {
+                case 'D':
+                    $period = 'day';
+                break;
+                case 'W':
+                    $period = 'week';
+                break;
+                case 'M':
+                    $period = 'month';
+                break;
+                case 'Y':
+                    $period = 'year';
+                break;
+            }
+        }
+        
+        return $period;
     }
     
     public function get_subscription_interval() {
@@ -2012,7 +2062,7 @@ final class WPInv_Invoice {
     }
 
     public function can_cancel() {
-        return apply_filters( 'edd_subscription_can_cancel', false, $this );
+        return apply_filters( 'wpinv_subscription_can_cancel', false, $this );
     }
     
     public function add_subscription( $data = array() ) {
@@ -2110,7 +2160,7 @@ final class WPInv_Invoice {
         do_action( 'wpinv_subscription_pre_renew', $this->ID, $expiration, $this );
 
         $status       = 'active';
-        $times_billed = $this->get_total_invoices();
+        $times_billed = $this->get_total_payments();
 
         // Complete subscription if applicable
         if ( $this->get_bill_times() > 0 && $times_billed >= $this->get_bill_times() ) {
@@ -2153,19 +2203,19 @@ final class WPInv_Invoice {
     }
 
     public function get_cancel_url() {
-        $url = wp_nonce_url( add_query_arg( array( 'edd_action' => 'cancel_subscription', 'sub_id' => $this->id ) ), 'edd-recurring-cancel' );
+        $url = wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'cancel_subscription', 'sub_id' => $this->ID ) ), 'wpinv-recurring-cancel' );
 
-        return apply_filters( 'edd_subscription_cancel_url', $url, $this );
+        return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
     }
 
     public function can_update() {
-        return apply_filters( 'edd_subscription_can_update', false, $this );
+        return apply_filters( 'wpinv_subscription_can_update', false, $this );
     }
 
     public function get_update_url() {
-        $url = add_query_arg( array( 'action' => 'update', 'subscription_id' => $this->id ) );
+        $url = add_query_arg( array( 'action' => 'update', 'sub_id' => $this->ID ) );
 
-        return apply_filters( 'edd_subscription_update_url', $url, $this );
+        return apply_filters( 'wpinv_subscription_update_url', $url, $this );
     }
 
     

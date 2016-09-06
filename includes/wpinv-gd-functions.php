@@ -4,10 +4,11 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
-function wpinv_geodir_integration() {
-
-    if (!defined('GEODIRECTORY_VERSION')){return null;}
-
+function wpinv_geodir_integration() {    
+    if (!defined('GEODIRECTORY_VERSION')) {
+        return;
+    }
+    
     if (!(defined( 'DOING_AJAX' ) && DOING_AJAX)) {
         // Add  fields for force upgrade
         if ( defined('INVOICE_TABLE') && !get_option('wpinv_gdp_column') ) {
