@@ -1783,7 +1783,7 @@ final class WPInv_Invoice {
     }
     
     public function needs_payment() {
-        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending', 'failed' ), $this );
+        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
 
         if ( $this->has_status( $valid_invoice_statuses ) && $this->get_total() > 0 ) {
             $needs_payment = true;
