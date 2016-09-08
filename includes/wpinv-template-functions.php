@@ -712,9 +712,13 @@ function wpinv_get_business_address() {
 }
 
 function wpinv_display_from_address() {
+    $from_name = wpinv_owner_vat_company_name();
+    if (empty($from_name)) {
+        $from_name = wpinv_get_business_name();
+    }
     ?><div class="from"><strong><?php _e( 'From:', 'invoicing' ) ?></strong></div>
     <div class="wrapper">
-        <div class="name"><a target="_blank" href="<?php echo esc_url( wpinv_get_business_website() ); ?>"><?php echo esc_html( wpinv_get_business_name() ); ?></a></div>
+        <div class="name"><?php echo esc_html( $from_name ); ?></div>
         <?php if ( $address = wpinv_get_business_address() ) { ?>
         <div class="address"><?php echo wpautop( wp_kses_post( $address ) );?></div>
         <?php } ?>

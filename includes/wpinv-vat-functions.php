@@ -773,6 +773,11 @@ function wpinv_owner_vat_number() {
     return $vat_number;
 }
 
+function wpinv_owner_vat_company_name() {
+    $company_name = wpinv_get_option( 'vat_company_name' );
+    return apply_filters('wpinv_owner_vat_company_name', $company_name);
+}
+
 function wpinv_vat_enqueue_vat_scripts() {
     global $wpinv_options;
     
@@ -792,7 +797,7 @@ function wpinv_vat_enqueue_vat_scripts() {
     $vars['ErrorResettingVATID'] = __( 'An error occurred resetting the VAT number supplied!', 'invoicing' );
     $vars['ErrorInvalidResponse'] = __( 'An invalid response has been received from the server!', 'invoicing' );
     $vars['PageWillBeRefreshed'] = __( 'The page will be refreshed to update the VAT.', 'invoicing' );
-    $vars['Apply2015Rules'] = !empty($wpinv_options['edd_vat_2015_rules']);
+    $vars['Apply2015Rules'] = !empty($wpinv_options['vat_2015_rules']);
     $vars['NoRateSet'] = __( 'You have not set a rate. Do you want to continue?', 'invoicing' );
     $vars['RateRequestResponseInvalid'] = __( 'The get rate request response is invalid', 'invoicing' );
     $vars['PageRefresh'] = __( 'The page will be refreshed in 10 seconds to show the new options.', 'invoicing' );

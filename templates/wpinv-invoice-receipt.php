@@ -1,6 +1,6 @@
 <?php
 /**
- * This template is used to display the purchase summary with [edd_receipt]
+ * This template is used to display the purchase summary with [wpinv_receipt]
  */
 global $wpinv_receipt_args;
 

@@ -1,12 +1,10 @@
-
 // make sure ajaxurl is defined
 if (typeof ajaxurl === 'undefined' || ajaxurl === null) {
     // variable is undefined or null
     ajaxurl = WPInv.ajax_url;
 }
 
-
-jQuery(function($) {
+jQuery(function($) {        
     var valid = false;
     $('#wpinv_checkout_form').on('submit', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
