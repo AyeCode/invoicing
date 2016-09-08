@@ -1782,6 +1782,15 @@ final class WPInv_Invoice {
         return $this;
     }
     
+    public function recalculate_totals($temp = false) {
+        wpinv_error_log( '=>', 'recalculate_totals()', __FILE__, __LINE__ );
+        
+        $this->update_items($temp);
+        $this->save();
+        
+        return $this;
+    }
+    
     public function needs_payment() {
         $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
 

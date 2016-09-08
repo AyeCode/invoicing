@@ -179,7 +179,7 @@ class WPInv_Plugin {
     }
     
     public function admin_enqueue_scripts() {
-        global $post;
+        global $post, $pagenow;
         
         wp_register_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array(), '4.5.0' );
         wp_enqueue_style( 'font-awesome' );
@@ -252,6 +252,7 @@ class WPInv_Plugin {
         $localize                               = array();
         $localize['ajax_url']                   = admin_url( 'admin-ajax.php' );
         $localize['post_ID']                    = isset( $post->ID ) ? $post->ID : '';
+        $localize['wpinv_nonce']                = wp_create_nonce( 'wpinv-nonce' );
         $localize['add_invoice_note_nonce']     = wp_create_nonce( 'add-invoice-note' );
         $localize['delete_invoice_note_nonce']  = wp_create_nonce( 'delete-invoice-note' );
         $localize['invoice_item_nonce']         = wp_create_nonce( 'invoice-item' );
@@ -270,8 +271,14 @@ class WPInv_Plugin {
         $localize['OneItemMin']                 = __( 'Invoice must contain at least one item', 'invoicing' );
         $localize['DeleteInvoiceItem']          = __( 'Are you sure you wish to delete this item?', 'invoicing' );
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
+        $localize['confirmCalcTotals']           = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
+        
+        if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) && ( wpinv_admin_post_type() == 'wpi_invoice' ) ) {
+            wp_enqueue_script( 'password-strength-meter' );
+            wp_enqueue_script( 'user-profile' );
+        }
     }
     
     public function admin_body_class( $classes ) {

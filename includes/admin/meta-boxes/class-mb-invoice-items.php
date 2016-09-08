@@ -172,7 +172,8 @@ class WPInv_Meta_Box_Items {
                     'with_packages'    => false,
                 ) );
                 ?>
-                <input type="button" value="Add item to Invoice" class="button button-primary" id="wpinv-add-item"><input type="button" value="Create new item" class="button button-primary" id="wpinv-new-item">
+                <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
             </div>
         </div>
         <?php

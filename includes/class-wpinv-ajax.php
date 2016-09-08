@@ -66,7 +66,9 @@ class WPInv_Ajax {
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
             'create_invoice_item' => false,
-            'get_billing_details' => false
+            'get_billing_details' => false,
+            'admin_recalculate_totals' => false,
+            'add_new_user' => false,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -143,6 +145,7 @@ class WPInv_Ajax {
     }
     
     public static function add_invoice_item() {
+        global $wpi_userID;
         check_ajax_referer( 'invoice-item', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
             die(-1);
@@ -150,6 +153,10 @@ class WPInv_Ajax {
         
         $item_id    = sanitize_text_field( $_POST['item_id'] );
         $invoice_id = absint( $_POST['invoice_id'] );
+        
+        if ( !empty( $_POST['user_id'] ) ) {
+            $wpi_userID = absint( $_POST['user_id'] ); 
+        }
 
         // Find the item
         if ( !is_numeric( $item_id ) ) {
@@ -303,6 +310,65 @@ class WPInv_Ajax {
         $response                               = array();
         $response['success']                    = true;
         $response['data']['billing_details']    = $billing_details;
+        
+        wp_send_json( $response );
+    }
+    
+    public static function admin_recalculate_totals() {
+        global $wpi_userID;
+        
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $invoice_id = absint( $_POST['invoice_id'] );        
+        $invoice    = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) ) {
+            die();
+        }
+        
+        if ( !empty( $_POST['user_id'] ) ) {
+            $wpi_userID = absint( $_POST['user_id'] ); 
+        }
+        
+        if ( empty( $_POST['country'] ) ) {
+            $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
+        }
+            
+        $invoice->country = sanitize_text_field( $_POST['country'] );
+        $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
+        if ( isset( $_POST['state'] ) ) {
+            $invoice->state = sanitize_text_field( $_POST['state'] );
+            $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
+        }
+        $invoice = $invoice->recalculate_totals(true);
+        
+        $response                       = array();
+        $response['success']            = true;
+        $response['data']['items']      = wpinv_admin_get_line_items( $invoice );
+        $response['data']['subtotal']   = $invoice->get_subtotal();
+        $response['data']['subtotalf']  = $invoice->get_subtotal(true);
+        $response['data']['tax']        = $invoice->get_tax();
+        $response['data']['taxf']       = $invoice->get_tax(true);
+        $response['data']['discount']   = $invoice->get_discount();
+        $response['data']['discountf']  = $invoice->get_discount(true);
+        $response['data']['total']      = $invoice->get_total();
+        $response['data']['totalf']     = $invoice->get_total(true);
+        
+        wp_send_json( $response );
+    }
+    
+    public static function add_new_user() {
+        global $wpi_userID;
+        
+        check_ajax_referer( 'create-user', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+                
+        $response                       = array();
+        $response['success']            = true;
         
         wp_send_json( $response );
     }

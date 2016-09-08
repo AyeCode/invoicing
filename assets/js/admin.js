@@ -279,6 +279,11 @@ jQuery(function($) {
         jQuery('#authordiv', jQuery('.wpinv')).hide();
     }
     
+    var wpinvNumber;
+    if (!jQuery('#post input[name="post_title"]').val() && (wpinvNumber = jQuery('#wpinv-details input[name="wpinv_number"]').val())) {
+        jQuery('#post input[name="post_title"]').val(wpinvNumber);
+    }
+    
     var wpi_stat_links = jQuery('.post-type-wpi_invoice .subsubsub');
     if (wpi_stat_links.is(':visible')) {
         var publish_count = jQuery('.publish', wpi_stat_links).find('.count').text();
@@ -485,6 +490,8 @@ jQuery(function($) {
             this.prices();
             this.remove_item();
             this.add_item();
+            this.recalculateTotals();
+            this.addNewUser();
         },
         preSetup : function() {
             var wpinvColorPicker = $('.wpinv-color-picker');
@@ -590,6 +597,17 @@ jQuery(function($) {
                     item_id: item_id,
                     _nonce: WPInv_Admin.invoice_item_nonce
                 };
+                
+                var user_id, country, state;
+                if (user_id = $('[name="post_author_override"]').val()) {
+                    data.user_id = user_id;
+                }
+                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
+                    data.country = country;
+                }
+                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
+                    data.state = state;
+                }
 
                 $.post( WPInv_Admin.ajax_url, data, function( response ) {
                     wpinvUnblock(metaBox);
@@ -658,6 +676,17 @@ jQuery(function($) {
                 for (var i in fields) {
                    data[fields[i]['name']] = fields[i]['value'];
                 }
+                
+                var user_id, country, state;
+                if (user_id = $('[name="post_author_override"]').val()) {
+                    data.user_id = user_id;
+                }
+                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
+                    data.country = country;
+                }
+                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
+                    data.state = state;
+                }
 
                 $.post( WPInv_Admin.ajax_url, data, function( response ) {
                     wpinvUnblock(metaBox);
@@ -665,6 +694,51 @@ jQuery(function($) {
                         if (response.success === true) {
                             $('[name="_wpinv_quick[name]"]', metaBox).val('');
                             $('[name="_wpinv_quick[price]"]', metaBox).val('');
+                            WPInv.update_inline_items(response.data, metaBox, gdTotals);
+                        }
+                    }
+                });
+            });
+        },
+        recalculateTotals : function() {
+            $('.wpinv-actions').on('click', '#wpinv-recalc-totals', function(e) {
+                e.preventDefault();
+                
+                var metaBox = $('#wpinv_items_wrap');
+                var gdTotals = $( '.wpinv-totals', metaBox );
+                var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
+                
+                if ( !invoice_id > 0 ) {
+                    return false;
+                }
+                
+                if ( !window.confirm( WPInv_Admin.confirmCalcTotals ) ) {
+                    return false;
+                }
+                
+                wpinvBlock(metaBox);
+                
+                var data = {
+                    action: 'wpinv_admin_recalculate_totals',
+                    invoice_id: invoice_id,
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                var user_id, country, state;
+                if (user_id = $('[name="post_author_override"]').val()) {
+                    data.user_id = user_id;
+                }
+                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
+                    data.country = country;
+                }
+                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
+                    data.state = state;
+                }
+
+                $.post( WPInv_Admin.ajax_url, data, function( response ) {
+                    wpinvUnblock(metaBox);
+                    if (response && typeof response == 'object') {
+                        if (response.success === true) {
                             WPInv.update_inline_items(response.data, metaBox, gdTotals);
                         }
                     }
@@ -750,6 +824,68 @@ jQuery(function($) {
             $el.append(optioins);
             $el.val(val);
             $el.find('option[value="' + val + '"]').attr('selected', 'selected');
+        },
+        addNewUser: function() {
+            $('#wpinv-tb-newuser').on('click', '#submit', function(e) {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else {
+                    e.returnValue = false;
+                }
+                
+                var tBox = $('#wpinv-tb-newuser');
+                
+                $('.result-message', tBox).hide();
+                
+                var _nonce   = $('#_wpnonce_create-user', tBox).val();
+                var user_login  = $('#user_login', tBox).val();
+                var password    = $('#pass1', tBox).val();
+                var email       = $('#email', tBox).val();
+                var first_name  = $('#first_name', tBox).val();
+                var last_name   = $('#last_name', tBox).val();
+                var website     = $('#url', tBox).val();
+
+                var address     = $('#_wpinv_user_address', tBox).val();
+                
+                if (!user_login || !password || !email) {
+                    return true;
+                }
+                
+                data = {
+                    action: 'wpinv_add_new_user',
+                    _nonce: _nonce,
+                    user_login: user_login,
+                    password: password,
+                    email: email,
+                    first_name: first_name,
+                    last_name: last_name,
+                    website: website,
+                    address: address,
+                };
+                
+                $.post( WPInv_Admin.ajax_url, data, function( response ) {
+                    console.log(response);
+                    //wpinvUnblock(metaBox);
+                    //if (response && typeof response == 'object') {
+                        //if (response.success === true) {
+                            // Hide 'Please wait' indicator
+                            $('.indicator', tBox).hide();
+                            if ( response != 'Error adding the new user.' ) {
+                                // If user is created
+                                //$("#_wpinv_client").html(response);
+                                tb_remove();
+                                $("form#create-user", tBox).reset();
+                                //$('<span class="updated">New Client Successfully Added</span>').insertAfter('select#_wpinv_client'); // Add success message to results div
+                            } else {
+                                $('.result-message', tBox).addClass('form-invalid error');
+                                $('.result-message', tBox).show();
+                                $('.result-message', tBox).html('Please check that all required fields are filled in and that this users does not already exist.');
+                                $('.form-required', tBox).addClass('form-invalid'); // Add class failed to results div
+                            }
+                        //}
+                    //}
+                });
+            });
         }
     };
     

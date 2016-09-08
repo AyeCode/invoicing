@@ -12,8 +12,12 @@ class WPInv_Meta_Box_Billing_Details {
 <div class="gdmbx2-wrap form-table">
     <div id="gdmbx2-metabox-wpinv_address" class="gdmbx2-metabox gdmbx-field-list wpinv-address gdmbx-row">
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-user-id table-layout">
-            <div class="gdmbx-th"><label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label></div>
-            <div class="gdmbx-td gdmbx-customer-div"><a id="wpinv-fill-user-details" title="Fill user details" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-user"></i>Fill user details</a></div>
+            <div class="gdmbx-th">
+                <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
+                <?php add_thickbox(); ?>
+                <a class="wpinv-new-user thickbox button button-small button-secondary" title="<?php _e( 'Add New User', 'invoicing' );?>" href="#TB_inline?width=480&height=540&inlineId=wpinv-ajax-user" class="thickbox"><?php _e( 'Add New User', 'invoicing' );?></a>
+            </div>
+            <div class="gdmbx-td gdmbx-customer-div"><a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-user"></i><?php _e( 'Fill User Details', 'invoicing' );?></a></div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
             <div class="gdmbx-th"><label for="wpinv_ip"><?php _e( 'IP Address', 'invoicing' );?><?php if ($invoice->ip) { ?>
