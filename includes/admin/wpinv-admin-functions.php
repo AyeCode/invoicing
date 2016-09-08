@@ -496,3 +496,95 @@ function wpinv_add_items_filters() {
     }
 }
 add_action( 'restrict_manage_posts', 'wpinv_add_items_filters', 100 );
+
+function wpinv_user_registration_form() {
+    global $pagenow;
+    
+    if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) && ( wpinv_admin_post_type() == 'wpi_invoice' ) ) {
+        $creating = isset( $_POST['createuser'] );
+
+        $new_user_login = $creating && isset( $_POST['user_login'] ) ? wp_unslash( $_POST['user_login'] ) : '';
+        $new_user_firstname = $creating && isset( $_POST['first_name'] ) ? wp_unslash( $_POST['first_name'] ) : '';
+        $new_user_lastname = $creating && isset( $_POST['last_name'] ) ? wp_unslash( $_POST['last_name'] ) : '';
+        $new_user_email = $creating && isset( $_POST['email'] ) ? wp_unslash( $_POST['email'] ) : '';
+        $new_user_uri = $creating && isset( $_POST['url'] ) ? wp_unslash( $_POST['url'] ) : '';
+        $new_user_role = $creating && isset( $_POST['role'] ) ? wp_unslash( $_POST['role'] ) : '';
+        $new_user_send_password = $creating && isset( $_POST['send_password'] ) ? wp_unslash( $_POST['send_password'] ) : true;
+        $new_user_ignore_pass = $creating && isset( $_POST['noconfirmation'] ) ? wp_unslash( $_POST['noconfirmation'] ) : '';
+        ?>
+        <div id="wpinv-ajax-user" style="display:none">
+            <div id="wpinv-tb-newuser">
+                <div class="alert result-message">&nbsp;</div>
+                <p><?php esc_attr_e( 'Add a new user here. This will create a new WordPress User in the database.', 'invoicing' );?></p>
+                <form action="" method="post" name="create-user" id="create-user" class="validate" novalidate="novalidate"<?php do_action( 'user_new_form_tag' );?>>
+                    <input name="action" type="hidden" value="create-user" />
+                    <?php wp_nonce_field( 'create-user', '_wpnonce_create-user' ); ?>
+                    <table class="form-table popup-form">
+                        <tbody>
+                            <tr class="form-field form-required">
+                                <th scope="row"><label for="user_login"><?php _e('Username'); ?>*</label></th>
+                                <td><input name="user_login" type="text" id="user_login" value="<?php echo esc_attr( $new_user_login ); ?>" aria-required="true" autocapitalize="none" autocorrect="off" /></td>
+                            </tr>
+                            <tr class="form-field form-required">
+                                <th scope="row"><label for="email"><?php _e('E-mail'); ?>*</label></th>
+                                <td><input name="email" type="email" id="email" value="<?php echo esc_attr( $new_user_email ); ?>" /></td>
+                            </tr>
+                            <tr class="form-field">
+                                <th scope="row"><label for="first_name"><?php _e('First Name') ?> </label></th>
+                                <td><input name="first_name" type="text" id="first_name" value="<?php echo esc_attr( $new_user_firstname ); ?>" /></td>
+                            </tr>
+                            <tr class="form-field">
+                                <th scope="row"><label for="last_name"><?php _e('Last Name') ?> </label></th>
+                                <td><input name="last_name" type="text" id="last_name" value="<?php echo esc_attr( $new_user_lastname ); ?>" /></td>
+                            </tr>
+                            <tr class="form-field">
+                                <th scope="row"><label for="_wpinv_user_address"><?php _e( 'Address', 'invoicing' ); ?></label></th>
+                                <td><textarea class="regular-text" name="_wpinv_user_address" id="_wpinv_user_address"></textarea></td>
+                            </tr>
+                            <tr class="form-field">
+                                <th scope="row"><label for="url"><?php _e('Website') ?></label></th>
+                                <td><input name="url" type="url" id="url" class="code" value="<?php echo esc_attr( $new_user_uri ); ?>" /></td>
+                            </tr>
+                            <tr class="form-field form-required user-pass1-wrap">
+                                <th scope="row"><label for="pass1"><?php _e( 'Password' ); ?><span class="description hide-if-js"><?php _e( '(required)' ); ?></span></label></th>
+                                <td>
+                                    <input class="hidden" value=" " /><!-- #24364 workaround -->
+                                    <button type="button" class="button button-secondary wp-generate-pw hide-if-no-js"><?php _e( 'Show password' ); ?></button>
+                                    <div class="wp-pwd hide-if-js">
+                                    <?php $initial_password = wp_generate_password( 24 ); ?>
+                                        <span class="password-input-wrapper">
+                                            <input type="password" name="pass1" id="pass1" class="regular-text" autocomplete="off" data-reveal="1" data-pw="<?php echo esc_attr( $initial_password ); ?>" aria-describedby="pass-strength-result" />
+                                        </span>
+                                        <button type="button" class="button button-secondary wp-hide-pw hide-if-no-js" data-toggle="0" aria-label="<?php esc_attr_e( 'Hide password' ); ?>">
+                                            <span class="dashicons dashicons-hidden"></span>
+                                            <span class="text"><?php _e( 'Hide' ); ?></span>
+                                        </button>
+                                        <button type="button" class="button button-secondary wp-cancel-pw hide-if-no-js" data-toggle="0" aria-label="<?php esc_attr_e( 'Cancel password change' ); ?>">
+                                            <span class="text"><?php _e( 'Cancel' ); ?></span>
+                                        </button>
+                                        <div style="display:none" id="pass-strength-result" aria-live="polite"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="form-field form-required user-pass2-wrap hide-if-js">
+                                <th scope="row"><label for="pass2"><?php _e( 'Repeat Password' ); ?> <span class="description"><?php _e( '(required)' ); ?></span></label></th>
+                                <td><input name="pass2" type="password" id="pass2" autocomplete="off" /></td>
+                            </tr>
+                            <tr class="pw-weak">
+                                <th><?php _e( 'Confirm Password' ); ?></th>
+                                <td><label><input type="checkbox" name="pw_weak" class="pw-checkbox" /><?php _e( 'Confirm use of weak password' ); ?></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <?php submit_button( __( 'Add New User '), 'primary', 'create-user', true, array( 'id' => 'submit', 'class' => 'submit button button-primary button-large' ) ); ?>
+                    <div class="indicator" style="display:none"><?php _e( 'Please wait...', 'invoicing' ); ?></div>
+                </form>
+            </div>
+        </div>
+        <?php
+    }
+}
+
+add_action( 'wp_ajax_create-user', 'wpinv_registra_user' );
+add_action( 'admin_footer-post-new.php', 'wpinv_user_registration_form' );
+add_action( 'admin_footer-post.php', 'wpinv_user_registration_form' );

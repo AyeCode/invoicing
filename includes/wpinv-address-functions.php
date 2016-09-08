@@ -45,15 +45,17 @@ function wpinv_state_name( $state_code = '', $country_code = '' ) {
 }
 
 function wpinv_store_address() {
-	$address = wpinv_get_option( 'store_address', '' );
+    $address = wpinv_get_option( 'store_address', '' );
 
-	return apply_filters( 'wpinv_store_address', $address );
+    return apply_filters( 'wpinv_store_address', $address );
 }
 
 function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
-	if( empty( $user_id ) ) {
-		$user_id = get_current_user_id();
-	}
+    global $wpi_userID;
+    
+    if( empty( $user_id ) ) {
+        $user_id = !empty( $wpi_userID ) ? $wpi_userID : get_current_user_id();
+    }
     
     $address_fields = array(
         'user_id',
@@ -72,7 +74,7 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     
     $address = array();
     foreach ( $address_fields as $field ) {
-        $address[$field] = get_user_meta( $user_id, '_wpinv_' . $field, true );
+        $address[$field] = $field == 'user_id' ? $user_id : get_user_meta( $user_id, '_wpinv_' . $field, true );
     }
 
     $user_info = get_userdata( $user_id );

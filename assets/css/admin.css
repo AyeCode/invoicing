@@ -122,27 +122,6 @@ ul.invoice_notes li.customer-note .note_content:after {
   line-height: 1.85;
 }
 .wpinv #minor-publishing { display: none; }
-/*
-  client popup form
-*/
-.wpinv #TB_window {
-  height: auto !important;
-  max-height: 100% !important;
-}
-.wpinv #TB_ajaxContent {
-    min-width: 95% !important;
-}
-.wpinv #TB_ajaxContent .form-table th, .wpinv #TB_ajaxContent .gdmbx-th {
-    padding: 5px 10px 5px 0;
-}
-.wpinv #TB_ajaxContent .form-table td, .wpinv #TB_ajaxContent .gdmbx-td {
-    margin-bottom: 0;
-    padding: 5px 0px;
-}
-.user-new-php .gdmbx2-metabox-title {
-  font-size: 1.4em;
-}
-
 /* fixes akismet style conflict */
 .wpinv .alert {
   border: medium none;
@@ -1027,10 +1006,10 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     padding: 10px;
 }
 .wpinv-actions  #wpinv-add-item {
-    margin-right: 15px;
+    margin-right: 10px;
 }
 .wpinv-actions  #wpinv_invoice_item {
-    margin-right: 11px;
+    margin-right: 5px;
     font-size: 13px;
     width: 200px;
 }
@@ -1123,6 +1102,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 #wpinv-fill-user-details {
     margin-left: 5px;
+    margin-top: 2px;
 }
 #wpinv-fill-user-details .fa {
     color: #333;
@@ -1150,7 +1130,53 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     line-height: normal;
     vertical-align: middle;
 }
-
 .inside > p.wpi-meta-row a {
     text-decoration: none;
+}
+.wpinv-flr {
+    float: right;
+}
+.gdmbx-wpinv-user-id .gdmbx-th {
+    position: relative;
+}
+.wpinv-new-user {
+    left: 140px;
+    position: absolute;
+    top: -4px;
+}
+.post-type-wpi_invoice #TB_window {
+    /*
+    height: auto !important;
+    max-height: 100% !important;
+    */
+}
+.post-type-wpi_invoice #TB_ajaxContent {
+    max-height: calc(100% - 47px);
+    min-width: 95% !important;
+    width: auto !important;
+}
+.post-type-wpi_invoice #TB_ajaxContent .alert {
+    border: medium none;
+    height: auto;
+    margin: 5px 15px 2px;
+    padding: 1px 12px;
+}
+.post-type-wpi_invoice #TB_ajaxContent .form-table th, .post-type-wpi_invoice #TB_ajaxContent .cmb-th {
+    padding: 5px 10px 5px 0;
+}
+.post-type-wpi_invoice .popup-form .form-field label {
+    float: left;
+    font-weight: bold;
+    margin: 10px 0 5px;
+    width: 100%;
+}
+.post-type-wpi_invoice #TB_ajaxContent .form-table td {
+    margin-bottom: 0;
+    padding: 5px 0;
+}
+.post-type-wpi_invoice #TB_ajaxContent .show-password #pass1-text {
+    width: 25em;
+}
+.post-type-wpi_invoice .result-message {
+    display: none;
 }

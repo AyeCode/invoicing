@@ -90,7 +90,7 @@ function wpinv_get_tax_rates() {
 }
 
 function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
-    global $wpi_tax_rates;
+    global $wpi_tax_rates, $wpi_userID;
     $wpi_tax_rates = !empty( $wpi_tax_rates ) ? $wpi_tax_rates : array();
     
     if ( !empty( $wpi_tax_rates ) && !empty( $item_id ) && isset( $wpi_tax_rates[$item_id] ) ) {
@@ -105,7 +105,7 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
     
     $rate = (float)wpinv_get_option( 'tax_rate', 0 );
     wpinv_error_log( $rate, 'DEFAULT RATE', __FILE__, __LINE__ );
-    $user_address = wpinv_get_user_address();
+    $user_address = wpinv_get_user_address( $wpi_userID );
     //wpinv_error_log( $user_address, 'user_address', __FILE__, __LINE__ );
     wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
     if( empty( $country ) ) {

@@ -402,7 +402,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
     if ( $class === '_exempt' ) {
         return 0;
     }
-    
+    //wpinv_error_log( $_POST, '_POST', __FILE__, __LINE__ );
     if( !empty( $_POST['wpinv_country'] ) ) {
         $post_country = $_POST['wpinv_country'];
     } elseif( !empty( $_POST['wpinv_country'] ) ) {
@@ -413,9 +413,11 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         $post_country = '';
     }
 
+    wpinv_error_log( $post_country, 'post_country', __FILE__, __LINE__ );
+    wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
     // If there is a VAT number, the rate is zero
     // Grab the country either from the POST array or
-    // use the original country    
+    // use the original country
     $country = !empty( $post_country ) ? $post_country : apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : $country );
     wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
     
@@ -1683,7 +1685,7 @@ function wpinv_disable_vat_fields() {
 function wpinv_user_country( $country = '', $user_id = 0 ) {
     // Try to get the customer address
     $user_address = wpinv_get_user_address( $user_id, false );
-    
+    //wpinv_error_log( $user_address, 'wpinv_user_country()', __FILE__, __LINE__ );
     // Return the customer address if possible or fall back to the cart address
     $country = empty( $user_address ) || !isset( $user_address['country'] ) || empty( $user_address['country'] ) ? $country : $user_address['country'];
 
@@ -1699,6 +1701,18 @@ function wpinv_user_country( $country = '', $user_id = 0 ) {
 
     return $result;
 }
+add_filter( 'wpinv-get-country', 'wpinv_user_country', 10 );
+
+function wpinv_set_user_country( $country = '', $user_id = 0 ) {
+    global $wpi_userID;
+    
+    if ( empty($country) && !empty($wpi_userID) && get_current_user_id() != $wpi_userID ) {
+        $country = wpinv_get_default_country();
+    }
+    
+    return $country;
+}
+add_filter( 'wpinv-user-country', 'wpinv_set_user_country', 10 );
 
 function wpinv_user_company( $company = '', $user_id = 0 ) {
     if ( empty( $user_id ) ) {
@@ -1761,7 +1775,6 @@ function wpinv_save_vat_information($company = '', $vat_number = '') {
     // to decide if the using being logged in or not is relevant
     do_action('wpinv-save-vat-info', $company, $vat_number);
 }
-add_filter( 'wpinv-get-country', 'wpinv_user_country', 10 );
 
 function wpinv_checkout_vat_validate() {
     global $wpinv_options, $wpi_session;
