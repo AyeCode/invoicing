@@ -491,7 +491,6 @@ jQuery(function($) {
             this.remove_item();
             this.add_item();
             this.recalculateTotals();
-            this.addNewUser();
         },
         preSetup : function() {
             var wpinvColorPicker = $('.wpinv-color-picker');
@@ -525,6 +524,32 @@ jQuery(function($) {
                 });
                 
                 return false;
+            });
+            
+            $('#wpinv-address').on('click', '.wpinv-new-user', function(e) {
+                e.preventDefault();
+                
+                var val, bL, iL, mBox = $('#wpinv-address');
+                
+                if ($('#wpinv_new_user', mBox).val()) {
+                    val = '';
+                    bL = $(this).data('blabel-new');
+                    iL = $(this).data('ilabel-new');
+                    $('#wpinv_new_email', mBox).val('demo@aaa.aaa').hide();
+                    $('#post_author_override', mBox).show();
+                    $('#wpinv-fill-user-details', mBox).show();
+                } else {
+                    val = '1';
+                    bL = $(this).data('blabel-cancel');
+                    iL = $(this).data('ilabel-cancel');
+                    $('#post_author_override', mBox).hide();
+                    $('#wpinv-fill-user-details', mBox).hide();
+                    $('#wpinv_new_email', mBox).val('').show();
+                }
+                
+                $(this).text(bL);
+                $('#wpinv_new_user', mBox).val(val);
+                $('[data-ilabel="user"]', mBox).text(iL);
             });
         },
         remove_item : function() {
@@ -824,68 +849,6 @@ jQuery(function($) {
             $el.append(optioins);
             $el.val(val);
             $el.find('option[value="' + val + '"]').attr('selected', 'selected');
-        },
-        addNewUser: function() {
-            $('#wpinv-tb-newuser').on('click', '#submit', function(e) {
-                if (e.preventDefault) {
-                    e.preventDefault();
-                } else {
-                    e.returnValue = false;
-                }
-                
-                var tBox = $('#wpinv-tb-newuser');
-                
-                $('.result-message', tBox).hide();
-                
-                var _nonce   = $('#_wpnonce_create-user', tBox).val();
-                var user_login  = $('#user_login', tBox).val();
-                var password    = $('#pass1', tBox).val();
-                var email       = $('#email', tBox).val();
-                var first_name  = $('#first_name', tBox).val();
-                var last_name   = $('#last_name', tBox).val();
-                var website     = $('#url', tBox).val();
-
-                var address     = $('#_wpinv_user_address', tBox).val();
-                
-                if (!user_login || !password || !email) {
-                    return true;
-                }
-                
-                data = {
-                    action: 'wpinv_add_new_user',
-                    _nonce: _nonce,
-                    user_login: user_login,
-                    password: password,
-                    email: email,
-                    first_name: first_name,
-                    last_name: last_name,
-                    website: website,
-                    address: address,
-                };
-                
-                $.post( WPInv_Admin.ajax_url, data, function( response ) {
-                    console.log(response);
-                    //wpinvUnblock(metaBox);
-                    //if (response && typeof response == 'object') {
-                        //if (response.success === true) {
-                            // Hide 'Please wait' indicator
-                            $('.indicator', tBox).hide();
-                            if ( response != 'Error adding the new user.' ) {
-                                // If user is created
-                                //$("#_wpinv_client").html(response);
-                                tb_remove();
-                                $("form#create-user", tBox).reset();
-                                //$('<span class="updated">New Client Successfully Added</span>').insertAfter('select#_wpinv_client'); // Add success message to results div
-                            } else {
-                                $('.result-message', tBox).addClass('form-invalid error');
-                                $('.result-message', tBox).show();
-                                $('.result-message', tBox).html('Please check that all required fields are filled in and that this users does not already exist.');
-                                $('.form-required', tBox).addClass('form-invalid'); // Add class failed to results div
-                            }
-                        //}
-                    //}
-                });
-            });
         }
     };
     

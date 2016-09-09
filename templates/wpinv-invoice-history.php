@@ -62,7 +62,13 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 										'view'   => array(
 											'url'  => $invoice->get_view_invoice_url(),
 											'name' => __( 'View', 'invoicing' ),
-                                            'class' => 'btn-default'
+                                            'class' => 'btn-info'
+										),
+                                        'print'   => array(
+											'url'  => $invoice->get_print_url(),
+											'name' => __( 'Print', 'invoicing' ),
+                                            'class' => 'btn-primary',
+                                            'attrs' => 'target="_blank"'
 										)
 									);
 
@@ -73,7 +79,7 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 									if ( $actions = apply_filters( 'wpinv_user_invoices_actions', $actions, $invoice ) ) {
 										foreach ( $actions as $key => $action ) {
 											$class = !empty($action['class']) ? sanitize_html_class($action['class']) : '';
-                                            echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm ' . $class . ' ' . sanitize_html_class( $key ) . '">' . $action['name'] . '</a>';
+                                            echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm ' . $class . ' ' . sanitize_html_class( $key ) . '" ' . ( !empty($action['attrs']) ? $action['attrs'] : '' ) . '>' . $action['name'] . '</a>';
 										}
 									}
 								?>

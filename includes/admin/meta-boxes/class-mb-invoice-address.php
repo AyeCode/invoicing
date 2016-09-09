@@ -13,11 +13,13 @@ class WPInv_Meta_Box_Billing_Details {
     <div id="gdmbx2-metabox-wpinv_address" class="gdmbx2-metabox gdmbx-field-list wpinv-address gdmbx-row">
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-user-id table-layout">
             <div class="gdmbx-th">
-                <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
-                <?php add_thickbox(); ?>
-                <a class="wpinv-new-user thickbox button button-small button-secondary" title="<?php _e( 'Add New User', 'invoicing' );?>" href="#TB_inline?width=480&height=540&inlineId=wpinv-ajax-user" class="thickbox"><?php _e( 'Add New User', 'invoicing' );?></a>
+                <input type="hidden" id="wpinv_new_user" name="wpinv_new_user" value="" />
+                <label for="post_author_override" data-ilabel="user"><?php _e( 'Customer', 'invoicing' );?></label>
+                <a class="wpinv-new-user button button-small button-secondary" data-blabel-new="<?php esc_attr_e( 'Add New User', 'invoicing' );?>" data-blabel-cancel="<?php esc_attr_e( 'Cancel', 'invoicing' );?>" data-ilabel-cancel="<?php esc_attr_e( 'Email (Username)', 'invoicing' );?>" data-ilabel-new="<?php esc_attr_e( 'Customer', 'invoicing' );?>" href="javascript:void(0)"><?php _e( 'Add New User', 'invoicing' );?></a>
             </div>
-            <div class="gdmbx-td gdmbx-customer-div"><a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-user"></i><?php _e( 'Fill User Details', 'invoicing' );?></a></div>
+            <div class="gdmbx-td gdmbx-customer-div"><a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-user"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
+            <input type="email" required="required" value="demo@aaa.aaa" id="wpinv_new_email" name="wpinv_new_email" class="gdmbx2-text-large" style="display:none">
+            </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
             <div class="gdmbx-th"><label for="wpinv_ip"><?php _e( 'IP Address', 'invoicing' );?><?php if ($invoice->ip) { ?>

@@ -10,19 +10,19 @@ function wpinv_authorizenet_cc_form( $invoice_id ) {
         <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Card Details', 'invoicing' ) ;?></h3></div>
         <div class="panel-body">
             <div class="form-group required">
-              <label for="auth-input-cc-owner" class="col-sm-3 control-label"><?php _e( 'Card Owner', 'invoicing' ) ;?></label>
-              <div class="col-sm-9">
+              <label for="auth-input-cc-owner" class="col-sm-4 control-label"><?php _e( 'Card Owner', 'invoicing' ) ;?></label>
+              <div class="col-sm-8">
                 <input type="text" class="form-control" id="auth-input-cc-owner" placeholder="<?php esc_attr_e( 'Card Owner', 'invoicing' ) ;?>" value="<?php echo $cc_owner;?>" name="authorizenet[cc_owner]">
               </div>
             </div>
             <div class="form-group required">
-              <label for="auth-input-cc-number" class="col-sm-3 control-label"><?php _e( 'Card Number', 'invoicing' ) ;?></label>
-              <div class="col-sm-9">
+              <label for="auth-input-cc-number" class="col-sm-4 control-label"><?php _e( 'Card Number', 'invoicing' ) ;?></label>
+              <div class="col-sm-8">
                 <input type="text" class="form-control" id="auth-input-cc-number" placeholder="<?php esc_attr_e( 'Card Number', 'invoicing' ) ;?>" value="" name="authorizenet[cc_number]">
               </div>
             </div>
             <div class="form-group required">
-              <label for="auth-input-cc-expire-date" class="col-sm-3 control-label"><?php _e( 'Card Expiry Date', 'invoicing' ) ;?></label>
+              <label for="auth-input-cc-expire-date" class="col-sm-4 control-label"><?php _e( 'Card Expiry Date', 'invoicing' ) ;?></label>
               <div class="col-sm-2">
                 <select class="form-control" id="auth-input-cc-expire-date" name="authorizenet[cc_expire_month]">
                     <?php for ( $i = 1; $i <= 12; $i++ ) { $value = str_pad( $i, 2, '0', STR_PAD_LEFT ); ?>
@@ -39,8 +39,8 @@ function wpinv_authorizenet_cc_form( $invoice_id ) {
               </div>
             </div>
             <div class="form-group required">
-              <label for="auth-input-cc-cvv2" class="col-sm-3 control-label"><?php _e( 'Card Security Code (CVV2)', 'invoicing' ) ;?></label>
-              <div class="col-sm-9">
+              <label for="auth-input-cc-cvv2" class="col-sm-4 control-label"><?php _e( 'Card Security Code (CVV2)', 'invoicing' ) ;?></label>
+              <div class="col-sm-8">
                 <input type="text" class="form-control" id="auth-input-cc-cvv2" placeholder="<?php esc_attr_e( 'Card Security Code (CVV2)', 'invoicing' ) ;?>" value="" name="authorizenet[cc_cvv2]"">
               </div>
             </div>

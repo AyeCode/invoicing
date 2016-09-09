@@ -190,7 +190,8 @@ p.wpinv_error {
     border-radius: 0;
 }
 .payment_box .panel .form-group {
-    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
 }
 .payment_box .panel .panel-heading {
     margin-bottom: 1.25em;
@@ -3393,8 +3394,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 
-
-
 .wpi-user-invoices a,
 .wpinv-receipt .wpinv-receipt-actions a {
     text-decoration: none;
@@ -3405,6 +3404,18 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .wpi-user-invoices .invoice-actions a.btn {
     line-height: normal;
     margin: 0 2.5px;
+}
+a.btn-primary:visited,
+a.btn-success:visited,
+a.btn-info:visited,
+a.btn-warning:visited,
+a.btn-danger:visited,
+a.btn-primary:hover,
+a.btn-success:hover,
+a.btn-info:hover,
+a.btn-warning:hover,
+a.btn-danger:hover {
+    color: #fff !important;
 }
 div.wpinv-receipt td p,
 div td .meta p {
