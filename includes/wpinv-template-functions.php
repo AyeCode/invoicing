@@ -13,10 +13,62 @@ if ( !defined( 'WPINC' ) ) {
 
 if ( !is_admin() ) {
     add_filter( 'single_template', 'wpinv_template', 10, 1 );
+    add_action( 'wpinv_invoice_after_body', 'wpinv_display_invoice_top_bar' );
+    add_action( 'wpinv_invoice_top_bar_left', 'wpinv_invoice_display_left_actions' );
+    add_action( 'wpinv_invoice_top_bar_right', 'wpinv_invoice_display_right_actions' );
 }
 
 function wpinv_template_path() {
     return apply_filters( 'wpinv_template_path', 'invoicing/' );
+}
+
+function wpinv_display_invoice_top_bar( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return;
+    }
+    ?>
+    <div class="row wpinv-top-bar no-print">
+        <div class="container">
+            <div class="col-xs-6">
+                <?php do_action( 'wpinv_invoice_top_bar_left', $invoice );?>
+            </div>
+            <div class="col-xs-6 text-right">
+                <?php do_action( 'wpinv_invoice_top_bar_right', $invoice );?>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+function wpinv_invoice_display_left_actions( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return;
+    }
+    
+    $user_id = (int)$invoice->get_user_id();
+    $current_user_id = (int)get_current_user_id();
+    
+    if ( $user_id > 0 && $user_id == $current_user_id && $invoice->needs_payment() ) {
+    ?>
+    <a class="btn btn-success btn-sm" title="<?php esc_attr_e( 'Pay This Invoice', 'invoicing' ); ?>" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>"><?php _e( 'Pay For Invoice', 'invoicing' ); ?></a>
+    <?php
+    }
+}
+
+function wpinv_invoice_display_right_actions( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return;
+    }
+    
+    $user_id = (int)$invoice->get_user_id();
+    $current_user_id = (int)get_current_user_id();
+    
+    if ( $user_id > 0 && $user_id == $current_user_id ) {
+    ?>
+    <a class="btn btn-primary btn-sm" href="<?php echo esc_url( $invoice->get_view_invoice_url() ); ?>"><?php _e( 'View Invoice', 'invoicing' ); ?></a>
+    <a class="btn btn-primary btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+    <?php
+    }
 }
 
 function wpinv_before_invoice_content( $content ) {
@@ -716,8 +768,8 @@ function wpinv_display_from_address() {
     if (empty($from_name)) {
         $from_name = wpinv_get_business_name();
     }
-    ?><div class="from"><strong><?php _e( 'From:', 'invoicing' ) ?></strong></div>
-    <div class="wrapper">
+    ?><div class="from col-xs-2"><strong><?php _e( 'From:', 'invoicing' ) ?></strong></div>
+    <div class="wrapper col-xs-10">
         <div class="name"><?php echo esc_html( $from_name ); ?></div>
         <?php if ( $address = wpinv_get_business_address() ) { ?>
         <div class="address"><?php echo wpautop( wp_kses_post( $address ) );?></div>
@@ -805,8 +857,8 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     
     $billing_details = $invoice->get_user_info();
 
-    $output = '<div class="to"><strong>' . __( 'To:', 'invoicing' ) . '</strong></div>';
-    $output .= '<div class="wrapper">';
+    $output = '<div class="to col-xs-2"><strong>' . __( 'To:', 'invoicing' ) . '</strong></div>';
+    $output .= '<div class="wrapper col-xs-10">';
     $output .= '<div class="name">' . esc_html( trim( $billing_details['first_name'] . ' ' . $billing_details['last_name'] ) ) . '</div>';
     if ( $company = $billing_details['company'] ) {
         $output .= '<div class="company">' . wpautop( wp_kses_post( $company ) ) . '</div>';
@@ -857,6 +909,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     $invoice            = wpinv_get_invoice( $invoice_id );
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
+    $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
     
     $cart_details = $invoice->get_cart_details();
     ob_start();
@@ -870,7 +923,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     <th class="qty"><strong><?php _e( "Qty", "invoicing" );?></strong></th>
                 <?php } ?>
                 <th class="total"><strong><?php _e( "Item Total", "invoicing" );?></strong></th>
-                <?php if ($use_taxes) { ?>
+                <?php if ($use_taxes && !$zero_tax) { ?>
                     <th class="tax"><strong><?php _e( "Tax (%)", "invoicing" );?></strong></th>
                 <?php } ?>
             </tr>
@@ -922,7 +975,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         }
                         $line_item .= '<td class="total">' . esc_html__( wpinv_price( $line_total, $invoice->get_currency() ) ) . '</td>';
                         
-                        if ($use_taxes) {
+                        if ($use_taxes && !$zero_tax) {
                             $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
                         }
                     $line_item .= '</tr>';
@@ -1014,13 +1067,13 @@ function wpinv_display_payments_info( $invoice_id = 0, $echo = true ) {
     }
 }
 
-function wpinv_display_style() {
+function wpinv_display_style( $invoice ) {
     wp_register_style( 'wpinv-single-style', WPINV_PLUGIN_URL . 'assets/css/invoice.css', array(), WPINV_VERSION );
     
     wp_print_styles( 'open-sans' );
     wp_print_styles( 'wpinv-single-style' );
 }
-add_action( 'wpinv_head', 'wpinv_display_style' );
+add_action( 'wpinv_invoice_head', 'wpinv_display_style' );
 
 function wpinv_checkout_billing_details() {  
     $invoice_id = (int)wpinv_get_invoice_cart_id();
@@ -1297,7 +1350,6 @@ function wpinv_checkout_form() {
         echo '<div id="wpinv_checkout_wrap">';
         
         if ( wpinv_get_cart_contents() || wpinv_cart_has_fees() ) {
-            wpinv_checkout_cart();
             ?>
             <div id="wpinv_checkout_form_wrap" class="wpinv_clearfix table-responsive">
                 <?php do_action( 'wpinv_before_checkout_form' ); ?>
@@ -1305,6 +1357,7 @@ function wpinv_checkout_form() {
                     <?php
                     do_action( 'wpinv_checkout_form_top' );
                     do_action( 'wpinv_checkout_billing_info' );
+                    do_action( 'wpinv_checkout_cart' );
                     do_action( 'wpinv_payment_mode_select'  );
                     do_action( 'wpinv_checkout_form_bottom' )
                     ?>
@@ -1335,13 +1388,14 @@ function wpinv_checkout_cart( $cart_details = array() ) {
     */
 
     do_action( 'wpinv_before_checkout_cart' );
-    echo '<form id="wpinv_checkout_cart_form" method="post">';
+    echo '<div id="wpinv_checkout_cart_form" method="post">';
         echo '<div id="wpinv_checkout_cart_wrap">';
             wpinv_get_template_part( 'wpinv-checkout-cart' );
         echo '</div>';
-    echo '</form>';
+    echo '</div>';
     do_action( 'wpinv_after_checkout_cart' );
 }
+add_action( 'wpinv_checkout_cart', 'wpinv_checkout_cart', 10 );
 
 function wpinv_empty_cart_message() {
 	return apply_filters( 'wpinv_empty_cart_message', '<span class="wpinv_empty_cart">' . __( 'Your cart is empty.', 'invoicing' ) . '</span>' );
@@ -1794,7 +1848,7 @@ function wpinv_receipt_billing_address( $invoice_id = 0 ) {
     <?php
     $output = ob_get_clean();
     
-    $output = apply_filters( 'wpinv_display_to_address', $output, $invoice_id );
+    $output = apply_filters( 'wpinv_receipt_billing_address', $output, $invoice_id );
 
     echo $output;
 }
@@ -1821,7 +1875,7 @@ function wpinv_receipt_actions( $invoice ) {
             'print'   => array(
                 'url'  => $invoice->get_print_url(),
                 'name' => __( 'Print', 'invoicing' ),
-                'class' => 'btn-info',
+                'class' => 'btn-primary',
                 'attrs' => 'target="_blank"'
             )
         );

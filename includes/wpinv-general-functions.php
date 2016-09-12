@@ -42,6 +42,13 @@ function wpinv_get_success_page_uri() {
 	return apply_filters( 'wpinv_get_success_page_uri', get_permalink( $page_id ) );
 }
 
+function wpinv_get_history_page_uri() {
+	$page_id = wpinv_get_option( 'invoice_history_page', 0 );
+	$page_id = absint( $page_id );
+
+	return apply_filters( 'wpinv_get_history_page_uri', get_permalink( $page_id ) );
+}
+
 function wpinv_is_success_page() {
 	$is_success_page = wpinv_get_option( 'success_page', false );
 	$is_success_page = isset( $is_success_page ) ? is_page( $is_success_page ) : false;

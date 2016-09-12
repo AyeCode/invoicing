@@ -92,7 +92,6 @@ a img {outline:none; border:none;}
 }
 .wpinv-title {
   font-size: 160%;
-  padding-top: 10px;
   text-align: right;
 }
 .wpinv-details {
@@ -225,9 +224,11 @@ a img {outline:none; border:none;}
   padding: 15px;
   text-align: center;
 }
+.wpinv-from-address {
+  padding-top: 0;
+}
 .wpinv-to-address {
   padding: 0;
-  margin: 0;
 }
 .wpinv-payments {
   background: #ededed none repeat scroll 0 0;
@@ -259,4 +260,32 @@ a img {outline:none; border:none;}
   font-size: 85%;
   margin: 0 0 30px;
   padding: 10px 0 0;
+}
+.wpinv-line-items .table-responsive {
+    border: none!important;
+}
+.wpinv-address .from,
+.wpinv-address .to {
+    max-width: 60px
+}
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .wpinv > .container.wpinv-wrap {
+        border: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+}
+@media screen and (max-width:767px) {
+    .wpinv > .container.wpinv-wrap {
+        padding: 15px;
+        margin: 15px;
+    }
+    
+    .wpinv-top-bar {
+        padding: 10px 0;
+    }
 }

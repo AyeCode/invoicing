@@ -74,6 +74,15 @@ class WPInv_Meta_Box_Details {
         <?php */ ?>
     </div>
 </div>
+<div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-save-send table-layout">
+    <p class="wpi-meta-row wpi-save-send"><label for="wpi_save_send"><?php _e( 'Send Invoice:', 'invoicing' ); ?></label>
+        <select id="wpi_save_send" name="wpi_save_send">
+            <option value="1"><?php _e( 'Yes', 'invoicing' ); ?></option>
+            <option value="" selected="selected"><?php _e( 'No', 'invoicing' ); ?></option>
+        </select>
+    </p>
+    <p class="wpi-meta-row wpi-send-info"><?php esc_attr_e( 'After save invoice this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>
+</div>
 <?php wp_nonce_field( 'wpinv_details', 'wpinv_details_nonce' ) ;?>
         <?php
     }
@@ -109,10 +118,35 @@ class WPInv_Meta_Box_Details {
         $invoice->save();
     }
     
-    public static function subscriptions( $post ) {
-        global $wpi_mb_inboive;
+    public static function resend_invoice( $post ) {
+        global $wpi_mb_invoice;
         
-        $invoice = $wpi_mb_inboive;
+        if ( empty( $wpi_mb_invoice ) ) {
+            return;
+        }
+        
+        do_action( 'wpinv_metabox_resend_invoice_before', $wpi_mb_invoice );
+
+        $email   = $wpi_mb_invoice->get_email();
+        if ( !$email ) {
+            $email = get_the_author_meta( 'email' );
+        }
+        
+        if ( $email ) {
+            $email_url = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
+        ?>
+        <p class="wpi-meta-row wpi-resend-info"><?php esc_attr_e( 'This will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>
+        <p class="wpi-meta-row wpi-resend-email"><a title="<?php esc_attr_e( 'Send invoice to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $email_url ); ?>" class="button button-secondary"><?php esc_attr_e( 'Resend Invoice', 'invoicing' ); ?></a></p>
+        <?php
+        }
+        
+        do_action( 'wpinv_metabox_resend_invoice_after', $wpi_mb_invoice );
+    }
+    
+    public static function subscriptions( $post ) {
+        global $wpi_mb_invoice;
+        
+        $invoice = $wpi_mb_invoice;
         
         if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
             $payments = $invoice->get_child_payments();
@@ -121,7 +155,7 @@ class WPInv_Meta_Box_Details {
             $bill_times     = (int)$invoice->get_bill_times();
             
             $subscription   = $invoice->get_subscription_data();
-            wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
+            //wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
             $period     = wpinv_get_pretty_subscription_period( $subscription['period'] );
             $billing    = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() ) . ' / ' . $period;
             $initial    = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
@@ -133,7 +167,7 @@ class WPInv_Meta_Box_Details {
             }
             $times_billed   = $total_payments . ' / ' . ( ( $bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
             ?>
-            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_inboive->get_subscription_id(); ?></p>
+            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_invoice->get_subscription_id(); ?></p>
             <?php if ( !empty( $payments ) ) { ?>
                 <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
                 <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
@@ -154,26 +188,26 @@ class WPInv_Meta_Box_Details {
     }
     
     public static function renewals( $post ) {
-        global $wpi_mb_inboive;
+        global $wpi_mb_invoice;
         
-        if ( wpinv_is_subscription_payment( $wpi_mb_inboive ) ) {
-            $parent_url = get_edit_post_link( $wpi_mb_inboive->parent_invoice );
-            $parent_id  = wpinv_get_invoice_number( $wpi_mb_inboive->parent_invoice );
+        if ( wpinv_is_subscription_payment( $wpi_mb_invoice ) ) {
+            $parent_url = get_edit_post_link( $wpi_mb_invoice->parent_invoice );
+            $parent_id  = wpinv_get_invoice_number( $wpi_mb_invoice->parent_invoice );
         ?>
-        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_inboive->get_subscription_id(); ?></p>
+        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_invoice->get_subscription_id(); ?></p>
         <p class="wpi-meta-row wpi-parent-id"><label><?php _e( 'Parent Invoice:', 'invoicing' );?> </label><a href="<?php echo esc_url( $parent_url ); ?>"><?php echo $parent_id; ?></a></p>
         <?php
         }
     }
     
     public static function payment_meta( $post ) {
-        global $wpi_mb_inboive;
+        global $wpi_mb_invoice;
         
         ?>
-        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_inboive->gateway ) ); ?></p>
-        <?php if ( $wpi_mb_inboive->is_complete() ) { ?>
-        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_inboive->get_key() ); ?></p>
-        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_inboive ) ); ?></p>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_invoice->gateway ) ); ?></p>
+        <?php if ( $wpi_mb_invoice->is_complete() ) { ?>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_invoice->get_key() ); ?></p>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_invoice ) ); ?></p>
         <?php } ?>
         <?php
     }

@@ -274,11 +274,6 @@ class WPInv_Plugin {
         $localize['confirmCalcTotals']           = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
-        
-        if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) && ( wpinv_admin_post_type() == 'wpi_invoice' ) ) {
-            wp_enqueue_script( 'password-strength-meter' );
-            wp_enqueue_script( 'user-profile' );
-        }
     }
     
     public function admin_body_class( $classes ) {

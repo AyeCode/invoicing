@@ -4,7 +4,11 @@ if ( !defined('ABSPATH') ) {
 }
 global $post;
 $invoice_id = $post->ID;
-do_action( 'wpinv_before_invoice_display' ); ?><!DOCTYPE html>
+$invoice = wpinv_get_invoice( $invoice_id );
+if ( empty( $invoice ) ) {
+    exit;
+}
+do_action( 'wpinv_invoice_before_display', $invoice ); ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
     <meta charset="UTF-8">
@@ -13,13 +17,13 @@ do_action( 'wpinv_before_invoice_display' ); ?><!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
 
-    <?php do_action('wpinv_head'); ?>
+    <?php do_action( 'wpinv_invoice_head', $invoice ); ?>
 </head>
 
-<?php do_action( 'wpinv_before_body' ); ?>
+<?php do_action( 'wpinv_invoice_before_body', $invoice ); ?>
 
 <body class="body wpinv">
-<?php do_action( 'wpinv_after_body' ); ?>
+<?php do_action( 'wpinv_invoice_after_body', $invoice ); ?>
     <div class="container wpinv-wrap">
     <?php if ( $watermark = wpinv_watermark( $invoice_id ) ) { ?>
         <div class="watermark no-print"><p><?php echo esc_html( $watermark ) ?></p></div>
@@ -27,7 +31,7 @@ do_action( 'wpinv_before_invoice_display' ); ?><!DOCTYPE html>
     <!-- ///// Start PDF header -->
     <htmlpageheader name="wpinv-pdf-header">
         <div class="row wpinv-header">
-            <div class="col-xs-12 col-sm-6 wpinv-business">
+            <div class="col-xs-6 wpinv-business">
                 <a target="_blank" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
                     <?php if ( $logo = wpinv_get_business_logo() ) { ?>
                     <img class="logo" src="<?php echo esc_url( $logo ); ?>">
@@ -37,7 +41,7 @@ do_action( 'wpinv_before_invoice_display' ); ?><!DOCTYPE html>
                 </a>
             </div>
 
-            <div class="col-xs-12 col-sm-6 wpinv-title">
+            <div class="col-xs-6 wpinv-title">
                 <h2><?php echo esc_html( _e( 'Invoice', 'invoicing' ) ); ?></h2>
             </div>
         </div><!-- END row -->
@@ -102,7 +106,7 @@ do_action( 'wpinv_before_invoice_display' ); ?><!DOCTYPE html>
         <!-- End PDF footer ///// -->
     </div> <!-- END wpinv-wrap -->
 
-<?php do_action( 'wpinv_footer' ); ?>
-<?php do_action( 'wpinv_template_footer' ); ?>
+<?php do_action( 'wpinv_invoice_footer', $invoice ); ?>
+<?php do_action( 'wpinv_invoice_template_footer', $invoice ); ?>
 </body>
 </html>

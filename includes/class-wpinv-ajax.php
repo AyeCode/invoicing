@@ -358,20 +358,6 @@ class WPInv_Ajax {
         
         wp_send_json( $response );
     }
-    
-    public static function add_new_user() {
-        global $wpi_userID;
-        
-        check_ajax_referer( 'create-user', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
-            die(-1);
-        }
-                
-        $response                       = array();
-        $response['success']            = true;
-        
-        wp_send_json( $response );
-    }
 }
 
 WPInv_Ajax::init();
