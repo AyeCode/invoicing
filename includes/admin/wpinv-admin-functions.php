@@ -516,18 +516,28 @@ add_action( 'save_post', 'wpinv_send_invoice_after_save', 100, 1 );
 function wpinv_send_register_new_user( $data, $postarr ) {
     if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && $data['post_type'] == 'wpi_invoice' ) {
         $is_new_user = !empty( $postarr['wpinv_new_user'] ) ? true : false;
-        $new_email = !empty( $postarr['wpinv_new_email'] ) && $postarr['wpinv_new_email'] !== 'demo@aaa.aaa' && is_email( $postarr['wpinv_new_email'] ) ? $postarr['wpinv_new_email'] : NULL;
+        $email = !empty( $postarr['wpinv_email'] ) && $postarr['wpinv_email'] && is_email( $postarr['wpinv_email'] ) ? $postarr['wpinv_email'] : NULL;
         
-        if ( $is_new_user && $new_email && !email_exists( $new_email ) && !username_exists( $new_email ) ) {
+        if ( $is_new_user && $email && !email_exists( $email ) ) {
             $first_name = !empty( $postarr['wpinv_first_name'] ) ? sanitize_text_field( $postarr['wpinv_first_name'] ) : '';
             $last_name = !empty( $postarr['wpinv_last_name'] ) ? sanitize_text_field( $postarr['wpinv_last_name'] ) : '';
             $display_name = $first_name || $last_name ? trim( $first_name . ' ' . $last_name ) : '';
-            $user_nicename = $display_name ? trim( $display_name ) : $new_email;
+            $user_nicename = $display_name ? trim( $display_name ) : $email;
+            $user_company = !empty( $postarr['wpinv_company'] ) ? sanitize_text_field( $postarr['wpinv_company'] ) : '';
+            
+            $user_login = sanitize_user( str_replace( ' ', '', $display_name ), true );
+            if ( !( validate_username( $user_login ) && !username_exists( $user_login ) ) ) {
+                $user_login = sanitize_user( str_replace( ' ', '', $user_company ), true );
+                
+                if ( !( validate_username( $user_login ) && !username_exists( $user_login ) ) ) {
+                    $user_login = $email;
+                }
+            }
             
             $userdata = array(
-                'user_login' => sanitize_text_field( $new_email ),
+                'user_login' => $user_login,
                 'user_pass' => wp_generate_password( 12, false ),
-                'user_email' => sanitize_text_field( $new_email ),
+                'user_email' => sanitize_text_field( $email ),
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'user_nicename' => mb_substr( $user_nicename, 0, 50 ),

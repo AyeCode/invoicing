@@ -535,7 +535,8 @@ jQuery(function($) {
                     val = '';
                     bL = $(this).data('blabel-new');
                     iL = $(this).data('ilabel-new');
-                    $('#wpinv_new_email', mBox).val('demo@aaa.aaa').hide();
+                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).show();
+                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-wpinv-email .gdmbx-td'));
                     $('#post_author_override', mBox).show();
                     $('#wpinv-fill-user-details', mBox).show();
                 } else {
@@ -544,12 +545,59 @@ jQuery(function($) {
                     iL = $(this).data('ilabel-cancel');
                     $('#post_author_override', mBox).hide();
                     $('#wpinv-fill-user-details', mBox).hide();
-                    $('#wpinv_new_email', mBox).val('').show();
+                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).hide();
+                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-customer-div'));
                 }
                 
                 $(this).text(bL);
                 $('#wpinv_new_user', mBox).val(val);
                 $('[data-ilabel="user"]', mBox).text(iL);
+            });
+            
+            $('.gdmbx-customer-div #wpinv_email').live('change', function(e) {
+                var metaBox = $(this).closest('.inside');
+                wpinvBlock(metaBox);
+                
+                var data = {
+                    action: 'wpinv_check_email',
+                    email: $(this).val(),
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post( WPInv_Admin.ajax_url, data, function(response) {
+                    var elCountry = $( '#wpinv_country', metaBox);
+                    elCountry.removeAttr('data-state').removeAttr('data-change');
+                    
+                    if (response && typeof response == 'object') {
+                        if (response.success === true && typeof response.data.billing_details == 'object') {
+                            if (!$('#post_author_override [value="' + response.data.id + '"]', metaBox).val()) {
+                                $('#post_author_override', metaBox).prepend('<option value="' + response.data.id + '">' + response.data.name + ' (' + response.data.login + ')</option>');
+                            }
+                            $('#post_author_override', metaBox).val(response.data.id);
+                            $('.wpinv-new-user', metaBox).click();
+                            
+                            var state = false;
+                            var country = false;
+                            $.each( response.data.billing_details, function( key, value ) {
+                                if (key == 'state') {
+                                    state = value;
+                                } else if (key == 'country') {
+                                    country = value;
+                                } else {
+                                    $( '#wpinv_' + key, metaBox).val(value).change();
+                                }
+                            });
+                            
+                            if (country !== false) {
+                                if (state !== false) {
+                                    elCountry.data('state', state).data('change', '1');
+                                }
+                                elCountry.val(country).change();
+                            }
+                        }
+                    }
+                    wpinvUnblock(metaBox);
+                });
             });
         },
         remove_item : function() {
