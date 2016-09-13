@@ -491,6 +491,7 @@ jQuery(function($) {
             this.remove_item();
             this.add_item();
             this.recalculateTotals();
+            this.setup_tools();
         },
         preSetup : function() {
             var wpinvColorPicker = $('.wpinv-color-picker');
@@ -897,6 +898,61 @@ jQuery(function($) {
             $el.append(optioins);
             $el.val(val);
             $el.find('option[value="' + val + '"]').attr('selected', 'selected');
+        },
+        setup_tools: function() {
+            $('#wpinv_tools_table').on('click', '.wpinv-tool', function(e) {
+                var $this = $(this);
+                e.preventDefault();
+                
+                var mBox = $this.closest('tr');
+                
+                if (!confirm(WPInv_Admin.AreYouSure)) {
+                    return false;
+                }
+                
+                var tool = $this.data('tool');
+                $(this).prop('disabled', true);
+                if (!tool) {
+                    return false;
+                }
+                
+                $('.wpinv-run-' + tool).remove();
+                if (!mBox.hasClass('wpinv-tool-' + tool)) {
+                    mBox.addClass('wpinv-tool-' + tool);
+                }
+                mBox.addClass('wpinv-tool-active');
+                mBox.after('<tr class="wpinv-tool-loader wpinv-run-' + tool + '"><td colspan="3"><span class="wpinv-i-loader"><i class="fa fa-spin fa-refresh"></i></span></td></tr>');
+                
+                var data = {
+                    action: 'wpinv_run_tool',
+                    tool: tool,
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post( WPInv_Admin.ajax_url, data, function(res) {                    
+                    mBox.removeClass('wpinv-tool-active');
+                    $this.prop('disabled', false);
+                    var msg = prem = '';
+                    if (res && typeof res == 'object') {
+                        msg = res.data ? res.data.message : '';
+                        if(res.success === false) {
+                            prem = '<span class="wpinv-i-check wpinv-i-error"><i class="fa fa-exclamation-circle"></i></span>';
+                        } else {
+                            prem = '<span class="wpinv-i-check"><i class="fa fa-check-circle"></i></span>';
+                        }
+                    }
+                    
+                    if (msg) {
+                        $('.wpinv-run-' + tool).addClass('wpinv-tool-done').find('td').html(prem + msg + '<span class="wpinv-i-close"><i class="fa fa-close"></i></span>');
+                    } else {
+                        $('.wpinv-run-' + tool).remove();
+                    }
+                });
+            });
+            
+            $('#wpinv_tools_table').on('click', '.wpinv-i-close', function(e) {
+                $(this).closest('tr').fadeOut();
+            });
         }
     };
     

@@ -73,13 +73,14 @@ function wpinv_get_settings() {
 
     if( empty( $settings ) ) {
         // Update old settings with new single option
-        $general_settings = is_array( get_option( 'wpinv_settings_general' ) )    ? get_option( 'wpinv_settings_general' )    : array();
-        $gateways_settings = is_array( get_option( 'wpinv_settings_gateways' ) )   ? get_option( 'wpinv_settings_gateways' )   : array();
+        $general_settings   = is_array( get_option( 'wpinv_settings_general' ) )    ? get_option( 'wpinv_settings_general' )    : array();
+        $gateways_settings  = is_array( get_option( 'wpinv_settings_gateways' ) )   ? get_option( 'wpinv_settings_gateways' )   : array();
         //$email_settings   = is_array( get_option( 'wpinv_settings_emails' ) )     ? get_option( 'wpinv_settings_emails' )     : array();
-        $tax_settings     = is_array( get_option( 'wpinv_settings_taxes' ) )      ? get_option( 'wpinv_settings_taxes' )      : array();
+        $tax_settings       = is_array( get_option( 'wpinv_settings_taxes' ) )      ? get_option( 'wpinv_settings_taxes' )      : array();
         //$misc_settings    = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
+        $tool_settings      = is_array( get_option( 'wpinv_settings_tools' ) )      ? get_option( 'wpinv_settings_tools' )      : array();
 
-        $settings = array_merge( $general_settings, $gateways_settings, $tax_settings );
+        $settings = array_merge( $general_settings, $gateways_settings, $tax_settings, $tool_settings );
 
         update_option( 'wpinv_settings', $settings );
 
@@ -518,13 +519,27 @@ function wpinv_get_registered_settings() {
             )
         ),
         /** Misc Settings */
-        'misc' => apply_filters('wpinv_settings_misc',
+        /*'misc' => apply_filters('wpinv_settings_misc',
             array(
                 'main' => array(
                     'misc_settings' => array(
                         'id'   => 'misc_settings',
                         'name' => '<h3>' . __( 'Misc Settings', 'invoicing' ) . '</h3>',
                         'type' => 'header',
+                    ),
+                ),
+            )
+        ),
+        */
+        /** Misc Settings */
+        'tools' => apply_filters('wpinv_settings_tools',
+            array(
+                'main' => array(
+                    'tool_settings' => array(
+                        'id'   => 'tool_settings',
+                        'name' => '<h3>' . __( 'Diagnostic Tools', 'invoicing' ) . '</h3>',
+                        'desc' => __( 'Invoicing diagnostic tools', 'invoicing' ),
+                        'type' => 'tools',
                     ),
                 ),
             )
@@ -628,16 +643,15 @@ function wpinv_sanitize_text_field( $input ) {
 add_filter( 'wpinv_settings_sanitize_text', 'wpinv_sanitize_text_field' );
 
 function wpinv_get_settings_tabs() {
-	$settings = wpinv_get_registered_settings();
-
-	$tabs             = array();
-	$tabs['general']  = __( 'General', 'invoicing' );
-	$tabs['gateways'] = __( 'Payment Gateways', 'invoicing' );
-	$tabs['taxes']    = __( 'Taxes', 'invoicing' );
+    $tabs             = array();
+    $tabs['general']  = __( 'General', 'invoicing' );
+    $tabs['gateways'] = __( 'Payment Gateways', 'invoicing' );
+    $tabs['taxes']    = __( 'Taxes', 'invoicing' );
     $tabs['emails']   = __( 'Emails', 'invoicing' );
-	//$tabs['misc']     = __( 'Misc', 'invoicing' );
+    //$tabs['misc']   = __( 'Misc', 'invoicing' );
+    $tabs['tools']    = __( 'Tools', 'invoicing' );
 
-	return apply_filters( 'wpinv_settings_tabs', $tabs );
+    return apply_filters( 'wpinv_settings_tabs', $tabs );
 }
 
 function wpinv_get_settings_tab_sections( $tab = false ) {
@@ -677,6 +691,9 @@ function wpinv_get_registered_settings_sections() {
         ) ),
         'misc' => apply_filters( 'wpinv_settings_sections_misc', array(
             'main' => __( 'Misc Settings', 'invoicing' ),
+        ) ),
+        'tools' => apply_filters( 'wpinv_settings_sections_tools', array(
+            'main' => __( 'Diagnostic Tools', 'invoicing' ),
         ) ),
     );
 
@@ -1252,6 +1269,30 @@ function wpinv_tax_rates_callback($args) {
 	</table>
 	<?php
 	echo ob_get_clean();
+}
+
+function wpinv_tools_callback($args) {
+    global $wpinv_options;
+    ob_start(); ?>
+    </td><tr>
+    <td colspan="2" class="wpinv_tools_tdbox">
+    <?php if ( $args['desc'] ) { ?><p><?php echo $args['desc']; ?></p><?php } ?>
+    <?php do_action( 'wpinv_tools_before' ); ?>
+    <table id="wpinv_tools_table" class="wp-list-table widefat fixed posts">
+        <thead>
+            <tr>
+                <th scope="col" class="wpinv-th-tool"><?php _e( 'Tool', 'invoicing' ); ?></th>
+                <th scope="col" class="wpinv-th-desc"><?php _e( 'Description', 'invoicing' ); ?></th>
+                <th scope="col" class="wpinv-th-action"><?php _e( 'Action', 'invoicing' ); ?></th>
+            </tr>
+        </thead>
+            <?php do_action( 'wpinv_tools_row' ); ?>
+        <tbody>
+        </tbody>
+    </table>
+    <?php do_action( 'wpinv_tools_after' ); ?>
+    <?php
+    echo ob_get_clean();
 }
 
 function wpinv_descriptive_text_callback( $args ) {

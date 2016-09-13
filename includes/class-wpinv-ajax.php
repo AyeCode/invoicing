@@ -69,6 +69,7 @@ class WPInv_Ajax {
             'get_billing_details' => false,
             'admin_recalculate_totals' => false,
             'check_email' => false,
+            'run_tool' => false,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -387,6 +388,21 @@ class WPInv_Ajax {
         }
         
         wp_send_json( $response );
+    }
+    
+    public static function run_tool() {
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $tool = sanitize_text_field( $_POST['tool'] );
+        
+        do_action( 'wpinv_run_tool' );
+        
+        if ( !empty( $tool ) ) {
+            do_action( 'wpinv_tool_' . $tool );
+        }
     }
 }
 
