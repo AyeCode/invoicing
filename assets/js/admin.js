@@ -491,6 +491,7 @@ jQuery(function($) {
             this.remove_item();
             this.add_item();
             this.recalculateTotals();
+            this.setup_tools();
         },
         preSetup : function() {
             var wpinvColorPicker = $('.wpinv-color-picker');
@@ -535,7 +536,8 @@ jQuery(function($) {
                     val = '';
                     bL = $(this).data('blabel-new');
                     iL = $(this).data('ilabel-new');
-                    $('#wpinv_new_email', mBox).val('demo@aaa.aaa').hide();
+                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).show();
+                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-wpinv-email .gdmbx-td'));
                     $('#post_author_override', mBox).show();
                     $('#wpinv-fill-user-details', mBox).show();
                 } else {
@@ -544,12 +546,59 @@ jQuery(function($) {
                     iL = $(this).data('ilabel-cancel');
                     $('#post_author_override', mBox).hide();
                     $('#wpinv-fill-user-details', mBox).hide();
-                    $('#wpinv_new_email', mBox).val('').show();
+                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).hide();
+                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-customer-div'));
                 }
                 
                 $(this).text(bL);
                 $('#wpinv_new_user', mBox).val(val);
                 $('[data-ilabel="user"]', mBox).text(iL);
+            });
+            
+            $('.gdmbx-customer-div #wpinv_email').live('change', function(e) {
+                var metaBox = $(this).closest('.inside');
+                wpinvBlock(metaBox);
+                
+                var data = {
+                    action: 'wpinv_check_email',
+                    email: $(this).val(),
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post( WPInv_Admin.ajax_url, data, function(response) {
+                    var elCountry = $( '#wpinv_country', metaBox);
+                    elCountry.removeAttr('data-state').removeAttr('data-change');
+                    
+                    if (response && typeof response == 'object') {
+                        if (response.success === true && typeof response.data.billing_details == 'object') {
+                            if (!$('#post_author_override [value="' + response.data.id + '"]', metaBox).val()) {
+                                $('#post_author_override', metaBox).prepend('<option value="' + response.data.id + '">' + response.data.name + ' (' + response.data.login + ')</option>');
+                            }
+                            $('#post_author_override', metaBox).val(response.data.id);
+                            $('.wpinv-new-user', metaBox).click();
+                            
+                            var state = false;
+                            var country = false;
+                            $.each( response.data.billing_details, function( key, value ) {
+                                if (key == 'state') {
+                                    state = value;
+                                } else if (key == 'country') {
+                                    country = value;
+                                } else {
+                                    $( '#wpinv_' + key, metaBox).val(value).change();
+                                }
+                            });
+                            
+                            if (country !== false) {
+                                if (state !== false) {
+                                    elCountry.data('state', state).data('change', '1');
+                                }
+                                elCountry.val(country).change();
+                            }
+                        }
+                    }
+                    wpinvUnblock(metaBox);
+                });
             });
         },
         remove_item : function() {
@@ -849,6 +898,61 @@ jQuery(function($) {
             $el.append(optioins);
             $el.val(val);
             $el.find('option[value="' + val + '"]').attr('selected', 'selected');
+        },
+        setup_tools: function() {
+            $('#wpinv_tools_table').on('click', '.wpinv-tool', function(e) {
+                var $this = $(this);
+                e.preventDefault();
+                
+                var mBox = $this.closest('tr');
+                
+                if (!confirm(WPInv_Admin.AreYouSure)) {
+                    return false;
+                }
+                
+                var tool = $this.data('tool');
+                $(this).prop('disabled', true);
+                if (!tool) {
+                    return false;
+                }
+                
+                $('.wpinv-run-' + tool).remove();
+                if (!mBox.hasClass('wpinv-tool-' + tool)) {
+                    mBox.addClass('wpinv-tool-' + tool);
+                }
+                mBox.addClass('wpinv-tool-active');
+                mBox.after('<tr class="wpinv-tool-loader wpinv-run-' + tool + '"><td colspan="3"><span class="wpinv-i-loader"><i class="fa fa-spin fa-refresh"></i></span></td></tr>');
+                
+                var data = {
+                    action: 'wpinv_run_tool',
+                    tool: tool,
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post( WPInv_Admin.ajax_url, data, function(res) {                    
+                    mBox.removeClass('wpinv-tool-active');
+                    $this.prop('disabled', false);
+                    var msg = prem = '';
+                    if (res && typeof res == 'object') {
+                        msg = res.data ? res.data.message : '';
+                        if(res.success === false) {
+                            prem = '<span class="wpinv-i-check wpinv-i-error"><i class="fa fa-exclamation-circle"></i></span>';
+                        } else {
+                            prem = '<span class="wpinv-i-check"><i class="fa fa-check-circle"></i></span>';
+                        }
+                    }
+                    
+                    if (msg) {
+                        $('.wpinv-run-' + tool).addClass('wpinv-tool-done').find('td').html(prem + msg + '<span class="wpinv-i-close"><i class="fa fa-close"></i></span>');
+                    } else {
+                        $('.wpinv-run-' + tool).remove();
+                    }
+                });
+            });
+            
+            $('#wpinv_tools_table').on('click', '.wpinv-i-close', function(e) {
+                $(this).closest('tr').fadeOut();
+            });
         }
     };
     

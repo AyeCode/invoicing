@@ -81,7 +81,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     $meta['cpt_name']           = get_post_type_plural_label($package->post_type);
     $meta['price']              = wpinv_format_amount( $package->amount, NULL, true );
     $meta['vat_rule']           = 'digital';
-    $meta['vat_class']          = $meta['price'] > 0 ? '_standard' : '_exempt';
+    $meta['vat_class']          = '_exempt';
     
     if ( !empty( $package->sub_active ) ) {
         $meta['is_recurring']       = 1;
@@ -736,3 +736,120 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
     // Return false if no invoice was inserted
     return false;
 }
+
+function wpinv_merge_gd_invoices() {
+    if (!defined('GEODIRPAYMENT_VERSION')) {
+        return;
+    }
+    ?>
+    <tr>
+        <td><?php _e( 'Merge Price Packages', 'invoicing' ); ?></td>
+        <td><p><?php _e( 'Merge GeoDirectory Payment Manager price packages to the Invoicing items.', 'invoicing' ); ?></p></td>
+        <td><input type="button" data-tool="merge_packages" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
+    </tr>
+    <tr>
+        <td><?php _e( 'Merge Invoices', 'invoicing' ); ?></td>
+        <td><p><?php _e( 'Merge GeoDirectory Payment Manager invoices to the Invoicing.', 'invoicing' ); ?></p></td>
+        <td><input type="button" data-tool="merge_invoices" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
+    </tr>
+    <?php
+}
+add_action( 'wpinv_tools_row', 'wpinv_merge_gd_invoices', 10 );
+
+function wpinv_tool_merge_packages() {
+    $packages = geodir_package_list_info();
+    
+    $count = 0;
+    
+    if ( !empty( $packages ) ) {
+        $success = true;
+        
+        foreach ( $packages as $key => $package ) {
+            $item = wpinv_get_item_by('package_id', $package->pid);
+            if ( !empty( $item ) ) {
+                continue;
+            }
+            
+            $merged = wpinv_merge_gd_package_to_item( $package->pid, false, $package );
+            
+            if ( !empty( $merged ) ) {
+                wpinv_error_log( 'Invoice merge S : ' . $package->pid );
+                $count++;
+            } else {
+                wpinv_error_log( 'Invoice merge F : ' . $package->pid );
+            }
+        }
+        
+        if ( $count > 0 ) {
+            $message = sprintf( _n( 'Total <b>%d</b> price package is merged successfully.', 'Total <b>%d</b> price packages are merged successfully.', $count, 'invoicing' ), $count );
+        } else {
+            $message = __( 'No price packages merged.', 'invoicing' );
+        }
+    } else {
+        $success = false;
+        $message = __( 'No price packages found to merge!', 'invoicing' );
+    }
+    
+    $response = array();
+    $response['success'] = $success;
+    $response['data']['message'] = $message;
+    wp_send_json( $response );
+}
+add_action( 'wpinv_tool_merge_packages', 'wpinv_tool_merge_packages' );
+
+function wpinv_tool_merge_invoices() {
+    global $wpdb;
+    
+    $sql = "SELECT `gdi`.`id`, `gdi`.`date`, `gdi`.`date_updated` FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NULL ORDER BY `gdi`.`id` ASC";
+    $items = $wpdb->get_results( $sql );
+    
+    $count = 0;
+    
+    if ( !empty( $items ) ) {
+        $success = true;
+        
+        foreach ( $items as $item ) {
+            $wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = 0 WHERE id = '" . $item->id . "'" );
+            
+            $merged = wpinv_cpt_save( $item->id );
+            
+            if ( !empty( $merged ) && !empty( $merged->ID ) ) {
+                $count++;
+                
+                $wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = '" . $merged->ID . "' WHERE id = '" . $item->id . "'" );
+                
+                $post_date = !empty( $item->date ) && $item->date != '0000-00-00 00:00:00' ? $item->date : current_time( 'mysql' );
+                $post_date_gmt = get_gmt_from_date( $post_date );
+                $post_modified = !empty( $item->date_updated ) && $item->date_updated != '0000-00-00 00:00:00' ? $item->date_updated : $post_date;
+                $post_modified_gmt = get_gmt_from_date( $post_modified );
+                
+                $wpdb->update( $wpdb->posts, array( 'post_date' => $post_date, 'post_date_gmt' => $post_date_gmt, 'post_modified' => $post_modified, 'post_modified_gmt' => $post_modified_gmt ), array( 'ID' => $merged->ID ) );
+                
+                if ( $merged->is_complete() ) {
+                    update_post_meta( $merged->ID, '_wpinv_completed_date', $post_modified );
+                }
+                
+                clean_post_cache( $merged->ID );
+                
+                wpinv_error_log( 'Invoice merge S : ' . $item->id . ' => ' . $merged->ID );
+            } else {
+                wpinv_error_log( 'Invoice merge F : ' . $item->id );
+            }
+        }
+        
+        if ( $count > 0 ) {
+            $message = sprintf( _n( 'Total <b>%d</b> invoice is merged successfully.', 'Total <b>%d</b> invoices are merged successfully.', $count, 'invoicing' ), $count );
+        } else {
+            $message = __( 'No invoices merged.', 'invoicing' );
+        }
+    } else {
+        $success = false;
+        $message = __( 'No invoices found to merge!', 'invoicing' );
+    }
+    
+    $response = array();
+    $response['success'] = $success;
+    $response['data']['message'] = $message;
+    wp_send_json( $response );
+}
+add_action( 'wpinv_tool_merge_invoices', 'wpinv_tool_merge_invoices' );

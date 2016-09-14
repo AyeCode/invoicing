@@ -734,7 +734,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpi-taxes-vat_rates-_new #tab_container form p.submit {
     display: none;
 }
-.invoices_page_wpinv-settings td.wpinv_vat_tdbox {
+.invoices_page_wpinv-settings td.wpinv_vat_tdbox,
+.invoices_page_wpinv-settings td.wpinv_tools_tdbox {
     padding: 0;
 }
 #wpinv_vat_rates {
@@ -1201,4 +1202,73 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 #wpinv-details #major-publishing-actions {
     border-top: none;
+}
+.invoices_page_wpinv-settings td.wpinv_tools_tdbox {
+    padding: 0;
+}
+.wpi-tools-main #tab_container form > p.submit {
+    display: none;
+}
+#wpinv_tools_table {
+    margin: 1em 0
+}
+#wpinv_tools_table .wpinv-th-tool {
+    width: 20%;
+}
+#wpinv_tools_table .wpinv-th-action {
+    width: 10%;
+}
+#wpinv_tools_table tr th:last-child,
+#wpinv_tools_table tr td:last-child {
+    text-align: center;
+}
+#wpinv_tools_table thead th {
+    background-color: #f9f9f9;
+    padding: 15px 10px;
+}
+#wpinv_tools_table tbody td {
+    border-bottom: 1px solid #efefef;
+}
+#wpinv_tools_table  tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+#wpinv_tools_table  tr.wpinv-tool-active,
+#wpinv_tools_table  tr.wpinv-tool-loader {
+    background-color: #d8ffdc;
+}
+#wpinv_tools_table  tr.wpinv-tool-active td {
+    border-bottom: none!important;
+}
+#wpinv_tools_table  tr.wpinv-tool-loader td {
+    position: relative;
+}
+#wpinv_tools_table  tr.wpinv-tool-loader td {
+    border-top: none!important;
+    border-bottom: 1px dotted #9f9f82!important;
+}
+#wpinv_tools_table  tr.wpinv-tool-done.wpinv-tool-loader td {
+    padding: 12.5px 20px 12.5px 40px;
+    text-align: left;
+    font-style: italic;
+}
+#wpinv_tools_table  tr.wpinv-tool-done .wpinv-i-loader {
+    display: none;
+}
+#wpinv_tools_table  tr.wpinv-tool-done .wpinv-i-close {
+    position: absolute;
+    right: 17px;
+    top: 12px;
+    cursor: pointer;
+}
+#wpinv_tools_table  tr.wpinv-tool-done .wpinv-i-check {
+    color: orange;
+    left: 16px;
+    position: absolute;
+}
+#wpinv_tools_table  tr.wpinv-tool-done .wpinv-i-error {
+    color: red;
+}
+.wpinv-i-loader {
+    position: absolute;
+    top: -5px;
 }

@@ -49,7 +49,7 @@ do_action( 'wpinv_invoice_before_display', $invoice ); ?><!DOCTYPE html>
     <!-- End PDF header ///// -->
         
         <div class="row wpinv-upper">
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-md-6 col-sm-5">
                 <div class="row col-xs-12 col-sm-12 wpinv-from-address wpinv-address">
                     <?php wpinv_display_from_address(); ?>
                 </div>
@@ -57,7 +57,7 @@ do_action( 'wpinv_invoice_before_display', $invoice ); ?><!DOCTYPE html>
                     <?php wpinv_display_to_address( $invoice_id ); ?>
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-md-6 col-sm-7">
                 <div class="col-xs-12 col-sm-10 wpinv-details">
                     <?php wpinv_display_invoice_details( $invoice_id ); ?>
                 </div>

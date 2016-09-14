@@ -268,6 +268,9 @@ a img {outline:none; border:none;}
 .wpinv-address .to {
     max-width: 60px
 }
+.wpinv-details table tr td:nth-child(2) {
+    text-align: left;
+}
 @media print {
     .no-print {
         display: none !important;

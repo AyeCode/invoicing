@@ -570,8 +570,8 @@ final class WPInv_Invoice {
                         'post_title'    => $invoice_title,
                         'post_status'   => $this->status,
                         'post_type'     => 'wpi_invoice',
-                        'post_date'     => ! empty( $this->date ) ? $this->date : current_time( 'mysql' ),
-                        'post_date_gmt' => ! empty( $this->date ) ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
+                        'post_date'     => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? $this->date : current_time( 'mysql' ),
+                        'post_date_gmt' => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
                         'post_parent'   => $this->parent_invoice,
                     );
         $args = apply_filters( 'wpinv_insert_invoice_args', $post_data, $this );

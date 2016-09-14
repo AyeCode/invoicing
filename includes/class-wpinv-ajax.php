@@ -68,7 +68,8 @@ class WPInv_Ajax {
             'create_invoice_item' => false,
             'get_billing_details' => false,
             'admin_recalculate_totals' => false,
-            'add_new_user' => false,
+            'check_email' => false,
+            'run_tool' => false,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -357,6 +358,51 @@ class WPInv_Ajax {
         $response['data']['totalf']     = $invoice->get_total(true);
         
         wp_send_json( $response );
+    }
+    
+    public static function check_email() {
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $email = sanitize_text_field( $_POST['email'] );
+        
+        $response = array();
+        if ( is_email( $email ) && email_exists( $email ) && $user_data = get_user_by( 'email', $email ) ) {
+            $user_id            = $user_data->ID;
+            $user_login         = $user_data->user_login;
+            $display_name       = $user_data->display_name ? $user_data->display_name : $user_login;
+            $billing_details    = wpinv_get_user_address($user_id);
+            $billing_details    = apply_filters( 'wpinv_fill_billing_details', $billing_details, $user_id );
+            
+            if (isset($billing_details['user_id'])) {
+                unset($billing_details['user_id']);
+            }
+            
+            $response['success']                    = true;
+            $response['data']['id']                 = $user_data->ID;
+            $response['data']['name']               = $display_name;
+            $response['data']['login']              = $user_login;
+            $response['data']['billing_details']    = $billing_details;
+        }
+        
+        wp_send_json( $response );
+    }
+    
+    public static function run_tool() {
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $tool = sanitize_text_field( $_POST['tool'] );
+        
+        do_action( 'wpinv_run_tool' );
+        
+        if ( !empty( $tool ) ) {
+            do_action( 'wpinv_tool_' . $tool );
+        }
     }
 }
 

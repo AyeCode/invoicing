@@ -271,7 +271,8 @@ class WPInv_Plugin {
         $localize['OneItemMin']                 = __( 'Invoice must contain at least one item', 'invoicing' );
         $localize['DeleteInvoiceItem']          = __( 'Are you sure you wish to delete this item?', 'invoicing' );
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
-        $localize['confirmCalcTotals']           = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
+        $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
+        $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }
