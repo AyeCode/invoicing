@@ -12,41 +12,41 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 function wpinv_get_payment_gateways() {
-	// Default, built-in gateways
-	$gateways = array(
-		'paypal' => array(
-			'admin_label'    => __( 'PayPal Standard', 'invoicing' ),
-			'checkout_label' => __( 'PayPal Standard', 'invoicing' ),
+    // Default, built-in gateways
+    $gateways = array(
+        'paypal' => array(
+            'admin_label'    => __( 'PayPal Standard', 'invoicing' ),
+            'checkout_label' => __( 'PayPal Standard', 'invoicing' ),
             'ordering'       => 1,
-		),
+        ),
         'authorizenet' => array(
-			'admin_label'    => __( 'Authorize.Net (AIM)', 'invoicing' ),
-			'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
+            'admin_label'    => __( 'Authorize.Net (AIM)', 'invoicing' ),
+            'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
             'ordering'       => 2,
-		),
+        ),
         'worldpay' => array(
-			'admin_label'    => __( 'Worldpay', 'invoicing' ),
-			'checkout_label' => __( 'Worldpay - Credit Card / Debit Card', 'invoicing' ),
+            'admin_label'    => __( 'Worldpay', 'invoicing' ),
+            'checkout_label' => __( 'Worldpay - Credit Card / Debit Card', 'invoicing' ),
             'ordering'       => 3,
-		),
+        ),
         '2co' => array(
-			'admin_label'    => __( '2Checkout', 'invoicing' ),
-			'checkout_label' => __( '2Checkout - Credit Card / Debit Card', 'invoicing' ),
+            'admin_label'    => __( '2Checkout', 'invoicing' ),
+            'checkout_label' => __( '2Checkout - Credit Card / Debit Card', 'invoicing' ),
             'ordering'       => 4,
-		),
+        ),
         'bank_transfer' => array(
-			'admin_label'    => __( 'Pre Bank Transfer', 'invoicing' ),
-			'checkout_label' => __( 'Pre Bank Transfer', 'invoicing' ),
+            'admin_label'    => __( 'Pre Bank Transfer', 'invoicing' ),
+            'checkout_label' => __( 'Pre Bank Transfer', 'invoicing' ),
             'ordering'       => 5,
-		),
+        ),
         'manual' => array(
-			'admin_label'    => __( 'Test Payment', 'invoicing' ),
-			'checkout_label' => __( 'Test Payment', 'invoicing' ),
+            'admin_label'    => __( 'Test Payment', 'invoicing' ),
+            'checkout_label' => __( 'Test Payment', 'invoicing' ),
             'ordering'       => 6,
-		),
-	);
+        ),
+    );
 
-	return apply_filters( 'wpinv_payment_gateways', $gateways );
+    return apply_filters( 'wpinv_payment_gateways', $gateways );
 }
 
 function wpinv_payment_gateway_titles( $all_gateways ) {
@@ -72,83 +72,83 @@ function wpinv_payment_gateway_titles( $all_gateways ) {
 add_filter( 'wpinv_payment_gateways', 'wpinv_payment_gateway_titles', 1000, 1 );
 
 function wpinv_get_enabled_payment_gateways( $sort = false ) {
-	$gateways = wpinv_get_payment_gateways();
-	$enabled  = wpinv_get_option( 'gateways', false );
+    $gateways = wpinv_get_payment_gateways();
+    $enabled  = wpinv_get_option( 'gateways', false );
 
-	$gateway_list = array();
+    $gateway_list = array();
 
-	foreach ( $gateways as $key => $gateway ) {
-		if ( isset( $enabled[ $key ] ) && $enabled[ $key ] == 1 ) {
-			$gateway_list[ $key ] = $gateway;
-		}
-	}
+    foreach ( $gateways as $key => $gateway ) {
+        if ( isset( $enabled[ $key ] ) && $enabled[ $key ] == 1 ) {
+            $gateway_list[ $key ] = $gateway;
+        }
+    }
 
-	if ( true === $sort ) {
-		// Reorder our gateways so the default is first
-		$default_gateway_id = wpinv_get_default_gateway();
+    if ( true === $sort ) {
+        // Reorder our gateways so the default is first
+        $default_gateway_id = wpinv_get_default_gateway();
 
-		if ( wpinv_is_gateway_active( $default_gateway_id ) ) {
-			$default_gateway    = array( $default_gateway_id => $gateway_list[ $default_gateway_id ] );
-			unset( $gateway_list[ $default_gateway_id ] );
+        if ( wpinv_is_gateway_active( $default_gateway_id ) ) {
+            $default_gateway    = array( $default_gateway_id => $gateway_list[ $default_gateway_id ] );
+            unset( $gateway_list[ $default_gateway_id ] );
 
-			$gateway_list = array_merge( $default_gateway, $gateway_list );
-		}
-	}
+            $gateway_list = array_merge( $default_gateway, $gateway_list );
+        }
+    }
 
-	return apply_filters( 'wpinv_enabled_payment_gateways', $gateway_list );
+    return apply_filters( 'wpinv_enabled_payment_gateways', $gateway_list );
 }
 
 function wpinv_is_gateway_active( $gateway ) {
-	$gateways = wpinv_get_enabled_payment_gateways();
-	
+    $gateways = wpinv_get_enabled_payment_gateways();
+
     $ret = array_key_exists( $gateway, $gateways );
-	
+
     return apply_filters( 'wpinv_is_gateway_active', $ret, $gateway, $gateways );
 }
 
 function wpinv_get_default_gateway() {
-	$default = wpinv_get_option( 'default_gateway', 'paypal' );
+    $default = wpinv_get_option( 'default_gateway', 'paypal' );
 
-	if ( !wpinv_is_gateway_active( $default ) ) {
-		$gateways = wpinv_get_enabled_payment_gateways();
-		$gateways = array_keys( $gateways );
-		$default  = reset( $gateways );
-	}
+    if ( !wpinv_is_gateway_active( $default ) ) {
+        $gateways = wpinv_get_enabled_payment_gateways();
+        $gateways = array_keys( $gateways );
+        $default  = reset( $gateways );
+    }
 
-	return apply_filters( 'wpinv_default_gateway', $default );
+    return apply_filters( 'wpinv_default_gateway', $default );
 }
 
 function wpinv_get_gateway_admin_label( $gateway ) {
-	$gateways = wpinv_get_payment_gateways();
-	$label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['admin_label'] : $gateway;
-	$payment  = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : false;
+    $gateways = wpinv_get_payment_gateways();
+    $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['admin_label'] : $gateway;
+    $payment  = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : false;
 
-	if( $gateway == 'manual' && $payment ) {
-		if( wpinv_get_payment_amount( $payment ) == 0 ) {
-			$label = __( 'Manual Payment', 'invoicing' );
-		}
-	}
+    if( $gateway == 'manual' && $payment ) {
+        if( wpinv_get_payment_amount( $payment ) == 0 ) {
+            $label = __( 'Manual Payment', 'invoicing' );
+        }
+    }
 
-	return apply_filters( 'wpinv_gateway_admin_label', $label, $gateway );
+    return apply_filters( 'wpinv_gateway_admin_label', $label, $gateway );
 }
 
 function wpinv_get_gateway_description( $gateway ) {
-	global $wpinv_options;
-    
+    global $wpinv_options;
+
     $description = isset( $wpinv_options[$gateway . '_desc'] ) ? $wpinv_options[$gateway . '_desc'] : '';
 
-	return apply_filters( 'wpinv_gateway_description', $description, $gateway );
+    return apply_filters( 'wpinv_gateway_description', $description, $gateway );
 }
 
 function wpinv_get_gateway_checkout_label( $gateway ) {
-	$gateways = wpinv_get_payment_gateways();
-	$label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['checkout_label'] : $gateway;
+    $gateways = wpinv_get_payment_gateways();
+    $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['checkout_label'] : $gateway;
 
-	if( $gateway == 'manual' ) {
-		$label = __( 'Manual Payment', 'invoicing' );
-	}
+    if( $gateway == 'manual' ) {
+        $label = __( 'Manual Payment', 'invoicing' );
+    }
 
-	return apply_filters( 'wpinv_gateway_checkout_label', $label, $gateway );
+    return apply_filters( 'wpinv_gateway_checkout_label', $label, $gateway );
 }
 
 function wpinv_settings_sections_gateways( $settings ) {
@@ -226,140 +226,139 @@ function wpinv_gateway_header_callback( $args ) {
 }
 
 function wpinv_get_gateway_supports( $gateway ) {
-	$gateways = wpinv_get_enabled_payment_gateways();
-	$supports = isset( $gateways[ $gateway ]['supports'] ) ? $gateways[ $gateway ]['supports'] : array();
-	return apply_filters( 'wpinv_gateway_supports', $supports, $gateway );
+    $gateways = wpinv_get_enabled_payment_gateways();
+    $supports = isset( $gateways[ $gateway ]['supports'] ) ? $gateways[ $gateway ]['supports'] : array();
+    return apply_filters( 'wpinv_gateway_supports', $supports, $gateway );
 }
 
 function wpinv_gateway_supports_buy_now( $gateway ) {
-	$supports = wpinv_get_gateway_supports( $gateway );
-	$ret = in_array( 'buy_now', $supports );
-	return apply_filters( 'wpinv_gateway_supports_buy_now', $ret, $gateway );
+    $supports = wpinv_get_gateway_supports( $gateway );
+    $ret = in_array( 'buy_now', $supports );
+    return apply_filters( 'wpinv_gateway_supports_buy_now', $ret, $gateway );
 }
 
 function wpinv_shop_supports_buy_now() {
-	$gateways = wpinv_get_enabled_payment_gateways();
-	$ret      = false;
+    $gateways = wpinv_get_enabled_payment_gateways();
+    $ret      = false;
 
-	if ( !wpinv_use_taxes()  && $gateways ) {
-		foreach ( $gateways as $gateway_id => $gateway ) {
-			if ( wpinv_gateway_supports_buy_now( $gateway_id ) ) {
-				$ret = true;
-				break;
-			}
-		}
-	}
+    if ( !wpinv_use_taxes()  && $gateways ) {
+        foreach ( $gateways as $gateway_id => $gateway ) {
+            if ( wpinv_gateway_supports_buy_now( $gateway_id ) ) {
+                $ret = true;
+                break;
+            }
+        }
+    }
 
-	return apply_filters( 'wpinv_shop_supports_buy_now', $ret );
+    return apply_filters( 'wpinv_shop_supports_buy_now', $ret );
 }
 
 function wpinv_build_straight_to_gateway_data( $items_id = 0, $options = array(), $quantity = 1 ) {
-	$price_options = array();
+    $price_options = array();
 
-	if ( empty( $options ) || !wpinv_has_variable_prices( $items_id ) ) {
-		$price = wpinv_get_download_price( $download_id );
-	} else {
-		if( is_array( $options['price_id'] ) ) {
-			$price_id = $options['price_id'][0];
-		} else {
-			$price_id = $options['price_id'];
-		}
+    if ( empty( $options ) || !wpinv_has_variable_prices( $items_id ) ) {
+        $price = wpinv_get_download_price( $download_id );
+    } else {
+        if( is_array( $options['price_id'] ) ) {
+            $price_id = $options['price_id'][0];
+        } else {
+            $price_id = $options['price_id'];
+        }
 
-		$prices = wpinv_get_variable_prices( $download_id );
+        $prices = wpinv_get_variable_prices( $download_id );
 
-		// Make sure a valid price ID was supplied
-		if ( ! isset( $prices[ $price_id ] ) ) {
-			wp_die( __( 'The requested price ID does not exist.', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 404 ) );
-		}
+        // Make sure a valid price ID was supplied
+        if ( ! isset( $prices[ $price_id ] ) ) {
+            wp_die( __( 'The requested price ID does not exist.', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 404 ) );
+        }
 
-		$price_options = array(
-			'price_id' => $price_id,
-			'amount'   => $prices[ $price_id ]['amount']
-		);
-		$price  = $prices[ $price_id ]['amount'];
-	}
+        $price_options = array(
+            'price_id' => $price_id,
+            'amount'   => $prices[ $price_id ]['amount']
+        );
+        $price  = $prices[ $price_id ]['amount'];
+    }
 
-	// Set up Downloads array
-	$items = array(
-		array(
-			'id'      => $items_id,
-			'options' => $price_options
-		)
-	);
+    // Set up Downloads array
+    $items = array(
+        array(
+            'id'      => $items_id,
+            'options' => $price_options
+        )
+    );
 
-	// Set up Cart Details array
-	$cart_details = array(
-		array(
-			'name'        => get_the_title( $download_id ),
-			'id'          => $download_id,
-			'tax'         => 0,
-			'discount'    => 0,
-			'item_price'  => $price,
-			'subtotal'    => ( $price * $quantity ),
-			'price'       => ( $price * $quantity ),
-			'quantity'    => $quantity,
-		)
-	);
+    // Set up Cart Details array
+    $cart_details = array(
+        array(
+            'name'        => get_the_title( $download_id ),
+            'id'          => $download_id,
+            'tax'         => 0,
+            'discount'    => 0,
+            'item_price'  => $price,
+            'subtotal'    => ( $price * $quantity ),
+            'price'       => ( $price * $quantity ),
+            'quantity'    => $quantity,
+        )
+    );
 
-	if( is_user_logged_in() ) {
-		$current_user = wp_get_current_user();
-	}
+    if( is_user_logged_in() ) {
+        $current_user = wp_get_current_user();
+    }
 
 
-	// Setup user information
-	$user_info = array(
-		'id'         => is_user_logged_in() ? get_current_user_id()         : -1,
-		'email'      => is_user_logged_in() ? $current_user->user_email     : '',
-		'first_name' => is_user_logged_in() ? $current_user->user_firstname : '',
-		'last_name'  => is_user_logged_in() ? $current_user->user_lastname  : '',
-		'discount'   => 'none',
-		'address'    => array()
-	);
+    // Setup user information
+    $user_info = array(
+        'id'         => is_user_logged_in() ? get_current_user_id()         : -1,
+        'email'      => is_user_logged_in() ? $current_user->user_email     : '',
+        'first_name' => is_user_logged_in() ? $current_user->user_firstname : '',
+        'last_name'  => is_user_logged_in() ? $current_user->user_lastname  : '',
+        'discount'   => 'none',
+        'address'    => array()
+    );
 
-	// Setup purchase information
-	$purchase_data = array(
-		'items'        => $items,
-		'fees'         => wpinv_get_cart_fees(),
-		'subtotal'     => $price * $quantity,
-		'discount'     => 0,
-		'tax'          => 0,
-		'price'        => $price * $quantity,
-		'invoice_key' => strtolower( md5( uniqid() ) ),
-		'user_email'   => $user_info['email'],
-		'date'         => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
-		'user_info'    => $user_info,
-		'post_data'    => array(),
-		'cart_details' => $cart_details,
-		'gateway'      => 'paypal',
-		'buy_now'      => true,
-		'card_info'    => array()
-	);
+    // Setup purchase information
+    $purchase_data = array(
+        'items'        => $items,
+        'fees'         => wpinv_get_cart_fees(),
+        'subtotal'     => $price * $quantity,
+        'discount'     => 0,
+        'tax'          => 0,
+        'price'        => $price * $quantity,
+        'invoice_key' => strtolower( md5( uniqid() ) ),
+        'user_email'   => $user_info['email'],
+        'date'         => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+        'user_info'    => $user_info,
+        'post_data'    => array(),
+        'cart_details' => $cart_details,
+        'gateway'      => 'paypal',
+        'buy_now'      => true,
+        'card_info'    => array()
+    );
 
-	return apply_filters( 'wpinv_straight_to_gateway_purchase_data', $purchase_data );
-
+    return apply_filters( 'wpinv_straight_to_gateway_purchase_data', $purchase_data );
 }
 
 function wpinv_send_to_gateway( $gateway, $payment_data ) {
     $payment_data['gateway_nonce'] = wp_create_nonce( 'wpi-gateway' );
 
-	// $gateway must match the ID used when registering the gateway
-	do_action( 'wpinv_gateway_' . $gateway, $payment_data );
+    // $gateway must match the ID used when registering the gateway
+    do_action( 'wpinv_gateway_' . $gateway, $payment_data );
 }
 
 function wpinv_show_gateways() {
-	$gateways = wpinv_get_enabled_payment_gateways();
-	$show_gateways = false;
+    $gateways = wpinv_get_enabled_payment_gateways();
+    $show_gateways = false;
 
-	$chosen_gateway = isset( $_GET['payment-mode'] ) ? preg_replace('/[^a-zA-Z0-9-_]+/', '', $_GET['payment-mode'] ) : false;
+    $chosen_gateway = isset( $_GET['payment-mode'] ) ? preg_replace('/[^a-zA-Z0-9-_]+/', '', $_GET['payment-mode'] ) : false;
 
-	if ( count( $gateways ) > 1 && empty( $chosen_gateway ) ) {
-		$show_gateways = true;
-		if ( wpinv_get_cart_total() <= 0 ) {
-			$show_gateways = false;
-		}
-	}
+    if ( count( $gateways ) > 1 && empty( $chosen_gateway ) ) {
+        $show_gateways = true;
+        if ( wpinv_get_cart_total() <= 0 ) {
+            $show_gateways = false;
+        }
+    }
 
-	return apply_filters( 'wpinv_show_gateways', $show_gateways );
+    return apply_filters( 'wpinv_show_gateways', $show_gateways );
 }
 
 function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
@@ -548,8 +547,8 @@ function wpinv_gateway_settings_bank_transfer( $setting ) {
             'desc' => __( 'Instructions that will be added to the thank you page and emails.', 'invoicing' ),
             'type' => 'textarea',
             'std' => __( 'Make your payment directly into our bank account. Please use your Invoice ID as the payment reference. Your invoice won\'t be processed until the funds have cleared in our account.', 'invoicing' ),
-            'cols' => 30,
-            'rows' => 3
+            'cols' => 37,
+            'rows' => 5
         );
         
     return $setting;
