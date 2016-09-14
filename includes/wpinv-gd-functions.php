@@ -112,6 +112,31 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     return $item;
 }
 
+function wpinv_gd_to_wpi_gateway( $payment_method ) {
+    switch( $payment_method ) {
+        case 'prebanktransfer':
+            $gateway = 'bank_transfer';
+        break;
+        default:
+            $gateway = empty( $payment_method ) ? 'manual' : $payment_method;
+        break;
+    }
+    
+    return apply_filters( 'wpinv_gd_to_wpi_gateway', $gateway, $payment_method );
+}
+
+function wpinv_gd_to_wpi_gateway_title( $payment_method ) {
+    $gateway = wpinv_gd_to_wpi_gateway( $payment_method );
+    
+    $gateway_title = wpinv_get_gateway_checkout_label( $gateway );
+    
+    if ( $gateway == $gateway_title ) {
+        $gateway_title = geodir_payment_method_title( $gateway );
+    }
+    
+    return apply_filters( 'wpinv_gd_to_wpi_gateway_title', $gateway_title, $payment_method );
+}
+
 function wpinv_print_checkout_errors() {
     global $wpi_session;
     wpinv_print_errors();
@@ -296,11 +321,11 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             
             if ($invoice_info->paymentmethod !== $wpi_invoice->gateway) {
                 $save = true;
-                $gateway = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : 'manually';
-                $gateway_title = !empty( $invoice_info->paymentmethod ) ? geodir_payment_method_title( $invoice_info->paymentmethod ) : __( 'Manual Payment', 'invoicing' );
-                $save = true;
-                $wpi_invoice->set('gateway', $gateway);
-                $wpi_invoice->set('gateway_title', $gateway_title);
+                $gateway = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : '';
+                $gateway = wpinv_gd_to_wpi_gateway( $gateway );
+                $gateway_title = wpinv_gd_to_wpi_gateway_title( $gateway );
+                $wpi_invoice->set('gateway', $gateway );
+                $wpi_invoice->set('gateway_title', $gateway_title );
             }
             
             if ( ( $status = wpinv_to_wpi_status( $invoice_info->status ) ) !== $wpi_invoice->status ) {
@@ -341,8 +366,9 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                 $invoice_data['created_date']   = $invoice_info->date;
             }
             
-            $paymentmethod = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : 'manually';
-            $payment_method_title = !empty( $invoice_info->paymentmethod ) ? geodir_payment_method_title( $invoice_info->paymentmethod ) : __( 'Manual Payment', 'invoicing' );
+            $paymentmethod = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : '';
+            $paymentmethod = wpinv_gd_to_wpi_gateway( $paymentmethod );
+            $payment_method_title = wpinv_gd_to_wpi_gateway_title( $paymentmethod );
             
             $invoice_data['payment_details'] = array( 
                 'gateway'           => $paymentmethod, 
@@ -607,6 +633,12 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
     $gateway = !empty( $invoice_data['gateway'] ) ? $invoice_data['gateway'] : '';
     $gateway = empty( $gateway ) && isset( $_POST['gateway'] ) ? $_POST['gateway'] : $gateway;
     
+    if ( !empty( $gateway ) ) {
+        $gateway = wpinv_gd_to_wpi_gateway( $gateway );
+        $invoice_data['payment_details']['gateway'] = $gateway;
+        $invoice_data['payment_details']['gateway_title'] = wpinv_gd_to_wpi_gateway_title( $gateway );
+    }
+    
     $user_info = array(
         'user_id'        => '',
         'first_name'     => '',
@@ -639,34 +671,33 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         $payment_details = wp_parse_args( $invoice_data['payment_details'], $payment_details );
     }
 
-    $invoice->status         = !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending';
+    $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending' ) );
     if ( !empty( $payment_details ) ) {
-        $invoice->currency       = $payment_details['currency'];
-        $invoice->gateway        = $payment_details['gateway'];
-        $invoice->gateway_title  = $payment_details['gateway_title'];
-        $invoice->transaction_id = $payment_details['transaction_id'];
+        $invoice->set( 'currency', $payment_details['currency'] );
+        $invoice->set( 'gateway', $payment_details['gateway'] );
+        $invoice->set( 'gateway_title', $payment_details['gateway_title'] );
+        $invoice->set( 'transaction_id', $payment_details['transaction_id'] );
     }
-    $invoice->user_info      = $user_info;
-    $invoice->gateway        = $gateway;
-    $invoice->user_id        = $user_info['user_id'];
-    $invoice->email          = $user_info['email'];
-    $invoice->first_name     = $user_info['first_name'];
-    $invoice->last_name      = $user_info['last_name'];
-    $invoice->address        = $user_info['address'];
-    $invoice->company        = $user_info['company'];
-    $invoice->vat_number     = $user_info['vat_number'];
-    $invoice->phone          = $user_info['phone'];
-    $invoice->city           = $user_info['city'];
-    $invoice->country        = $user_info['country'];
-    $invoice->state          = $user_info['state'];
-    $invoice->zip            = $user_info['zip'];
-    $invoice->discounts      = !empty( $user_info['discount'] ) ? $user_info['discount'] : array();
-    $invoice->ip             = wpinv_get_ip();
+    $invoice->set( 'user_info', $user_info );
+    $invoice->set( 'user_id', $user_info['user_id'] );
+    $invoice->set( 'email', $user_info['email'] );
+    $invoice->set( 'first_name', $user_info['first_name'] );
+    $invoice->set( 'last_name', $user_info['last_name'] );
+    $invoice->set( 'address', $user_info['address'] );
+    $invoice->set( 'company', $user_info['company'] );
+    $invoice->set( 'vat_number', $user_info['vat_number'] );
+    $invoice->set( 'phone', $user_info['phone'] );
+    $invoice->set( 'city', $user_info['city'] );
+    $invoice->set( 'country', $user_info['country'] );
+    $invoice->set( 'state', $user_info['state'] );
+    $invoice->set( 'zip', $user_info['zip'] );
+    $invoice->set( 'discounts', ( !empty( $user_info['discount'] ) ? $user_info['discount'] : array() ) );
+    $invoice->set( 'ip', wpinv_get_ip() );
     if ( !empty( $invoice_data['invoice_key'] ) ) {
-        $invoice->key        = $invoice_data['invoice_key'];
+        $invoice->set( 'key', $invoice_data['invoice_key'] );
     }
-    $invoice->mode           = wpinv_is_test_mode() ? 'test' : 'live';
-    $invoice->parent_invoice = !empty( $invoice_data['parent'] ) ? absint( $invoice_data['parent'] ) : '';
+    $invoice->set( 'mode', ( wpinv_is_test_mode() ? 'test' : 'live' ) );
+    $invoice->set( 'parent_invoice', ( !empty( $invoice_data['parent'] ) ? absint( $invoice_data['parent'] ) : '' ) );
     
     // Add note
     if ( !empty( $invoice_data['user_note'] ) ) {
@@ -710,16 +741,16 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
     $invoice->increase_tax( wpinv_get_cart_fee_tax() );
 
     if ( isset( $invoice_data['post_date'] ) ) {
-        $invoice->date = $invoice_data['post_date'];
+        $invoice->set( 'date', $invoice_data['post_date'] );
     }
 
     //if ( wpinv_get_option( 'enable_sequential' ) ) {
         $number          = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice->ID ); // TODO
-        $invoice->number = $number;
+        $invoice->set( 'number', $number );
         update_option( 'wpinv_last_invoice_number', $number );
     //}
-
     $invoice->save();
+
     wpinv_error_log( 'save()', 'invoice', __FILE__, __LINE__ );
     
     do_action( 'wpinv_insert_invoice', $invoice->ID, $invoice_data );
@@ -816,7 +847,7 @@ function wpinv_tool_merge_invoices() {
             if ( !empty( $merged ) && !empty( $merged->ID ) ) {
                 $count++;
                 
-                $wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = '" . $merged->ID . "' WHERE id = '" . $item->id . "'" );
+                //$wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = '" . $merged->ID . "' WHERE id = '" . $item->id . "'" );
                 
                 $post_date = !empty( $item->date ) && $item->date != '0000-00-00 00:00:00' ? $item->date : current_time( 'mysql' );
                 $post_date_gmt = get_gmt_from_date( $post_date );
