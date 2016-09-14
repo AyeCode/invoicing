@@ -32,6 +32,10 @@ function wpinv_merge_gd_packages_to_items( $force = false ) {
     if ( $merged = get_option( 'wpinv_merge_gd_packages' ) && !$force ) {
         return true;
     }
+
+    if(!function_exists('geodir_package_list_info')){
+        return false;
+    }
     
     $packages = geodir_package_list_info();
     
