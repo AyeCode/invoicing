@@ -156,7 +156,9 @@ final class WPInv_Invoice {
         
         // User based
         $this->ip              = $this->setup_ip();
-        $this->user_id         = $this->setup_user_id();
+        $this->user_id         = !empty( $invoice->post_author ) ? $invoice->post_author : get_current_user_id();///$this->setup_user_id();
+        $this->email           = get_the_author_meta( 'email', $this->user_id );
+        
         $this->user_info       = $this->setup_user_info();
                 
         $this->first_name      = $this->user_info['first_name'];
@@ -165,13 +167,12 @@ final class WPInv_Invoice {
         $this->vat_number      = $this->user_info['vat_number'];
         $this->vat_rate        = $this->user_info['vat_rate'];
         $this->self_certified  = $this->user_info['self_certified'];
-        $this->email           = $this->user_info['email'];
-        $this->phone           = $this->user_info['phone'];
         $this->address         = $this->user_info['address'];
         $this->city            = $this->user_info['city'];
         $this->country         = $this->user_info['country'];
         $this->state           = $this->user_info['state'];
         $this->zip             = $this->user_info['zip'];
+        $this->phone           = $this->user_info['phone'];
         
         $this->discounts       = $this->user_info['discount'];
         $this->discount        = $this->setup_discount();
@@ -367,10 +368,10 @@ final class WPInv_Invoice {
         return $ip;
     }
 
-    private function setup_user_id() {
-        $user_id = $this->get_meta( '_wpinv_user_id' );
-        return $user_id;
-    }
+    ///private function setup_user_id() {
+        ///$user_id = $this->get_meta( '_wpinv_user_id' );
+        ///return $user_id;
+    ///}
         
     private function setup_first_name() {
         $first_name = $this->get_meta( '_wpinv_first_name' );
@@ -402,10 +403,10 @@ final class WPInv_Invoice {
         return $self_certified;
     }
     
-    private function setup_email() {
-        $email = $this->get_meta( '_wpinv_email' );
-        return $email;
-    }
+    ///private function setup_email() {
+        ///$email = $this->get_meta( '_wpinv_email' );
+        ///return $email;
+    ///}
     
     private function setup_phone() {
         $phone = $this->get_meta( '_wpinv_phone' );
@@ -444,7 +445,7 @@ final class WPInv_Invoice {
             'user_id'        => $this->user_id,
             'first_name'     => $this->first_name,
             'last_name'      => $this->last_name,
-            'email'          => $this->email,
+            'email'          => get_the_author_meta( 'email', $this->user_id ),
             'phone'          => $this->phone,
             'address'        => $this->address,
             'city'           => $this->city,
@@ -458,7 +459,21 @@ final class WPInv_Invoice {
             'discount'       => $this->discounts,
         );
         
-        $user_info    = isset( $this->payment_meta['user_info'] ) ? maybe_unserialize( $this->payment_meta['user_info'] ) : array();
+        $user_info = array();
+        if ( isset( $this->payment_meta['user_info'] ) ) {
+            $user_info = maybe_unserialize( $this->payment_meta['user_info'] );
+            
+            if ( !empty( $user_info ) && isset( $user_info['user_id'] ) && $post = get_post( $this->ID ) ) {
+                $this->user_id = $post->post_author;
+                $this->email = get_the_author_meta( 'email', $this->user_id );
+                
+                $user_info['user_id'] = $this->user_id;
+                $user_info['email'] = $this->email;
+                $this->payment_meta['user_id'] = $this->user_id;
+                $this->payment_meta['email'] = $this->email;
+            }
+        }
+        
         $user_info    = wp_parse_args( $user_info, $defaults );
         
         // Get the user, but only if it's been created
@@ -595,7 +610,7 @@ final class WPInv_Invoice {
             $this->ID  = $invoice_id;
             $this->_ID = $invoice_id;
             
-            $this->pending['user_id'] = $this->user_id;
+            ///$this->pending['user_id'] = $this->user_id;
             if ( isset( $this->pending['number'] ) ) {
                 $this->pending['number'] = $post_name;
             }
@@ -699,10 +714,10 @@ final class WPInv_Invoice {
                     case 'ip':
                         $this->update_meta( '_wpinv_user_ip', $this->ip );
                         break;
-                    case 'user_id':
-                        $this->update_meta( '_wpinv_user_id', $this->user_id );
-                        $this->user_info['user_id'] = $this->user_id;
-                        break;
+                    ///case 'user_id':
+                        ///$this->update_meta( '_wpinv_user_id', $this->user_id );
+                        ///$this->user_info['user_id'] = $this->user_id;
+                        ///break;
                     case 'first_name':
                         $this->update_meta( '_wpinv_first_name', $this->first_name );
                         $this->user_info['first_name'] = $this->first_name;
@@ -711,10 +726,10 @@ final class WPInv_Invoice {
                         $this->update_meta( '_wpinv_last_name', $this->last_name );
                         $this->user_info['last_name'] = $this->last_name;
                         break;
-                    case 'email':
-                        $this->update_meta( '_wpinv_email', $this->email );
-                        $this->user_info['email'] = $this->email;
-                        break;
+                    ///case 'email':
+                        ///$this->update_meta( '_wpinv_email', $this->email );
+                        ///$this->user_info['email'] = $this->email;
+                        ///break;
                     case 'phone':
                         $this->update_meta( '_wpinv_phone', $this->phone );
                         $this->user_info['phone'] = $this->phone;
@@ -1061,7 +1076,6 @@ final class WPInv_Invoice {
         }
 
         $do_change = apply_filters( 'wpinv_should_update_invoice_status', true, $this->ID, $new_status, $old_status );
-
         $updated = false;
 
         if ( $do_change ) {
@@ -1121,9 +1135,9 @@ final class WPInv_Invoice {
             $meta_key     = '_wpinv_payment_meta';
             $meta_value   = $current_meta;
 
-        } else if ( $meta_key == 'email' || $meta_key == '_wpinv_email' ) {
+        } ///else if ( $meta_key == 'email' || $meta_key == '_wpinv_email' ) {
 
-            $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
+            /*$meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
             
             update_post_meta( $this->ID, '_wpinv_email', $meta_value );
 
@@ -1132,7 +1146,8 @@ final class WPInv_Invoice {
 
             $meta_key     = '_wpinv_payment_meta';
             $meta_value   = $current_meta;
-        }
+        }*/
+        ///
 
         $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
         
@@ -1210,9 +1225,9 @@ final class WPInv_Invoice {
                 $meta['key'] = $this->setup_invoice_key();
             }
 
-            if ( empty( $meta['email'] ) ) {
-                $meta['email'] = $this->setup_email();
-            }
+            ///if ( empty( $meta['email'] ) ) {
+                ///$meta['email'] = $this->setup_email();
+            ///}
 
             if ( empty( $meta['date'] ) ) {
                 $meta['date'] = get_post_field( 'post_date', $this->ID );

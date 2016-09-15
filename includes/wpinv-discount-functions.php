@@ -26,7 +26,7 @@ function wpinv_get_discount_type_name( $type = '' ) {
 
 function wpinv_get_discounts( $args = array() ) {
     $defaults = array(
-        'post_type'      => 'wpinv_discount',
+        'post_type'      => 'wpi_discount',
         'posts_per_page' => 20,
         'paged'          => null,
         'post_status'    => array( 'active', 'inactive', 'expired' )
@@ -78,7 +78,7 @@ function wpinv_get_discount( $discount_id = 0 ) {
 
     $discount = get_post( $discount_id );
 
-    if ( get_post_type( $discount_id ) != 'wpinv_discount' ) {
+    if ( get_post_type( $discount_id ) != 'wpi_discount' ) {
         return false;
     }
 
@@ -106,7 +106,7 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
 
         case 'code':
             $discount = wpinv_get_discounts( array(
-                'meta_key'       => '_wpinv_discount_code',
+                'meta_key'       => '_wpi_discount_code',
                 'meta_value'     => $value,
                 'posts_per_page' => 1,
                 'post_status'    => 'any'
@@ -125,7 +125,7 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
 
         case 'name':
             $discount = get_posts( array(
-                'post_type'      => 'wpinv_discount',
+                'post_type'      => 'wpi_discount',
                 'name'           => $value,
                 'posts_per_page' => 1,
                 'post_status'    => 'any'
@@ -212,7 +212,7 @@ function wpinv_store_discount( $details, $discount_id = null ) {
         ) );
 
         foreach( $meta as $key => $value ) {
-            update_post_meta( $discount_id, '_wpinv_discount_' . $key, $value );
+            update_post_meta( $discount_id, '_wpi_discount_' . $key, $value );
         }
 
         do_action( 'wpinv_post_update_discount', $meta, $discount_id );
@@ -227,13 +227,13 @@ function wpinv_store_discount( $details, $discount_id = null ) {
         do_action( 'wpinv_pre_insert_discount', $meta );
 
         $discount_id = wp_insert_post( array(
-            'post_type'   => 'wpinv_discount',
+            'post_type'   => 'wpi_discount',
             'post_title'  => $meta['name'],
             'post_status' => 'active'
         ) );
 
         foreach( $meta as $key => $value ) {
-            update_post_meta( $discount_id, '_wpinv_discount_' . $key, $value );
+            update_post_meta( $discount_id, '_wpi_discount_' . $key, $value );
         }
 
         do_action( 'wpinv_post_insert_discount', $meta, $discount_id );
@@ -298,49 +298,49 @@ function wpinv_is_discount_active( $code_id = null ) {
 }
 
 function wpinv_get_discount_code( $code_id = null ) {
-    $code = get_post_meta( $code_id, '_wpinv_discount_code', true );
+    $code = get_post_meta( $code_id, '_wpi_discount_code', true );
 
     return apply_filters( 'wpinv_get_discount_code', $code, $code_id );
 }
 
 function wpinv_get_discount_start_date( $code_id = null ) {
-    $start_date = get_post_meta( $code_id, '_wpinv_discount_start', true );
+    $start_date = get_post_meta( $code_id, '_wpi_discount_start', true );
 
     return apply_filters( 'wpinv_get_discount_start_date', $start_date, $code_id );
 }
 
 function wpinv_get_discount_expiration( $code_id = null ) {
-    $expiration = get_post_meta( $code_id, '_wpinv_discount_expiration', true );
+    $expiration = get_post_meta( $code_id, '_wpi_discount_expiration', true );
 
     return apply_filters( 'wpinv_get_discount_expiration', $expiration, $code_id );
 }
 
 function wpinv_get_discount_max_uses( $code_id = null ) {
-    $max_uses = get_post_meta( $code_id, '_wpinv_discount_max_uses', true );
+    $max_uses = get_post_meta( $code_id, '_wpi_discount_max_uses', true );
 
     return (int) apply_filters( 'wpinv_get_discount_max_uses', $max_uses, $code_id );
 }
 
 function wpinv_get_discount_uses( $code_id = null ) {
-    $uses = get_post_meta( $code_id, '_wpinv_discount_uses', true );
+    $uses = get_post_meta( $code_id, '_wpi_discount_uses', true );
 
     return (int) apply_filters( 'wpinv_get_discount_uses', $uses, $code_id );
 }
 
 function wpinv_get_discount_min_price( $code_id = null ) {
-    $min_price = get_post_meta( $code_id, '_wpinv_discount_min_price', true );
+    $min_price = get_post_meta( $code_id, '_wpi_discount_min_price', true );
 
     return (float) apply_filters( 'wpinv_get_discount_min_price', $min_price, $code_id );
 }
 
 function wpinv_get_discount_amount( $code_id = null ) {
-    $amount = get_post_meta( $code_id, '_wpinv_discount_amount', true );
+    $amount = get_post_meta( $code_id, '_wpi_discount_amount', true );
 
     return (float) apply_filters( 'wpinv_get_discount_amount', $amount, $code_id );
 }
 
 function wpinv_get_discount_type( $code_id = null, $name = false ) {
-    $type = strtolower( get_post_meta( $code_id, '_wpinv_discount_type', true ) );
+    $type = strtolower( get_post_meta( $code_id, '_wpi_discount_type', true ) );
     
     if ( $name ) {
         $name = wpinv_get_discount_type_name( $type );
@@ -368,7 +368,7 @@ function wpinv_discount_status( $status ) {
 }
 
 function wpinv_get_discount_excluded_products( $code_id = null ) {
-    $excluded_products = get_post_meta( $code_id, '_wpinv_discount_excluded_products', true );
+    $excluded_products = get_post_meta( $code_id, '_wpi_discount_excluded_products', true );
 
     if ( empty( $excluded_products ) || ! is_array( $excluded_products ) ) {
         $excluded_products = array();
@@ -378,7 +378,7 @@ function wpinv_get_discount_excluded_products( $code_id = null ) {
 }
 
 function wpinv_get_discount_product_reqs( $code_id = null ) {
-    $product_reqs = get_post_meta( $code_id, '_wpinv_discount_product_reqs', true );
+    $product_reqs = get_post_meta( $code_id, '_wpi_discount_product_reqs', true );
 
     if ( empty( $product_reqs ) || ! is_array( $product_reqs ) ) {
         $product_reqs = array();
@@ -388,11 +388,11 @@ function wpinv_get_discount_product_reqs( $code_id = null ) {
 }
 
 function wpinv_get_discount_product_condition( $code_id = 0 ) {
-    return get_post_meta( $code_id, '_wpinv_discount_product_condition', true );
+    return get_post_meta( $code_id, '_wpi_discount_product_condition', true );
 }
 
 function wpinv_is_discount_not_global( $code_id = 0 ) {
-    return (bool) get_post_meta( $code_id, '_wpinv_discount_is_not_global', true );
+    return (bool) get_post_meta( $code_id, '_wpi_discount_is_not_global', true );
 }
 
 function wpinv_is_discount_expired( $code_id = null ) {
@@ -478,7 +478,7 @@ function wpinv_discount_is_min_met( $code_id = null ) {
 }
 
 function wpinv_discount_is_single_use( $code_id = 0 ) {
-    $single_use = get_post_meta( $code_id, '_wpinv_discount_is_single_use', true );
+    $single_use = get_post_meta( $code_id, '_wpi_discount_is_single_use', true );
     return (bool) apply_filters( 'wpinv_is_discount_single_use', $single_use, $code_id );
 }
 
@@ -708,7 +708,7 @@ function wpinv_increase_discount_usage( $code ) {
         $uses = 1;
     }
 
-    update_post_meta( $id, '_wpinv_discount_uses', $uses );
+    update_post_meta( $id, '_wpi_discount_uses', $uses );
 
     do_action( 'wpinv_discount_increase_use_count', $uses, $id, $code );
 
@@ -729,7 +729,7 @@ function wpinv_decrease_discount_usage( $code ) {
         $uses = 0;
     }
 
-    update_post_meta( $id, '_wpinv_discount_uses', $uses );
+    update_post_meta( $id, '_wpi_discount_uses', $uses );
 
     do_action( 'wpinv_discount_decrease_use_count', $uses, $id, $code );
 

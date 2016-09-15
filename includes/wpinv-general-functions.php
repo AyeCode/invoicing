@@ -262,13 +262,13 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
         update_post_meta( $invoice_id, '_wpinv_include_tax', get_option( 'wpinv_prices_include_tax' ) );
         update_post_meta( $invoice_id, '_wpinv_user_ip', wpinv_get_ip() );
         update_post_meta( $invoice_id, '_wpinv_user_agent', wpinv_get_user_agent() );
-        update_post_meta( $invoice_id, '_wpinv_user_id', 0 );
+        ///update_post_meta( $invoice_id, '_wpinv_user_id', 0 );
         update_post_meta( $invoice_id, '_wpinv_created_via', sanitize_text_field( $args['created_via'] ) );
     }
 
-    if ( is_numeric( $args['user_id'] ) ) {
-        update_post_meta( $invoice_id, '_wpinv_user_id', $args['user_id'] );
-    }
+    ///if ( is_numeric( $args['user_id'] ) ) {
+        ///update_post_meta( $invoice_id, '_wpinv_user_id', $args['user_id'] );
+    ///}
 
     update_post_meta( $invoice_id, '_wpinv_version', WPINV_VERSION );
 
@@ -323,10 +323,10 @@ function wpinv_checkout_required_fields() {
     $require_billing_details = apply_filters( 'wpinv_checkout_required_billing_details', wpinv_use_taxes() );
     
     if ( $require_billing_details ) {
-        $required_fields['email'] = array(
-                'error_id' => 'invalid_email',
-                'error_message' => __( 'Please enter a valid email address', 'invoicing' )
-            );
+        ///$required_fields['email'] = array(
+                ///'error_id' => 'invalid_email',
+                ///'error_message' => __( 'Please enter a valid email address', 'invoicing' )
+            ///);
         $required_fields['first_name'] = array(
                 'error_id' => 'invalid_first_name',
                 'error_message' => __( 'Please enter your first name', 'invoicing' )

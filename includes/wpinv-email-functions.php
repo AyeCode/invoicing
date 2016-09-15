@@ -913,6 +913,7 @@ function wpinv_get_emails() {
                 'std'  => 1
             ),
         ),
+        /*
         'user_note' => array(
             'email_user_note_header' => array(
                 'id'   => 'email_user_note_header',
@@ -936,9 +937,10 @@ function wpinv_get_emails() {
                 'size' => 'large'
             ),
         ),
-	);
+        */
+    );
 
-	return apply_filters( 'wpinv_get_emails', $emails );
+    return apply_filters( 'wpinv_get_emails', $emails );
 }
 
 function wpinv_settings_emails( $settings = array() ) {

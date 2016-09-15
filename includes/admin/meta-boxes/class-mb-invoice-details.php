@@ -126,13 +126,8 @@ class WPInv_Meta_Box_Details {
         }
         
         do_action( 'wpinv_metabox_resend_invoice_before', $wpi_mb_invoice );
-
-        $email   = $wpi_mb_invoice->get_email();
-        if ( !$email ) {
-            $email = get_the_author_meta( 'email' );
-        }
         
-        if ( $email ) {
+        if ( $email = $wpi_mb_invoice->get_email() ) {
             $email_url = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
         ?>
         <p class="wpi-meta-row wpi-resend-info"><?php esc_attr_e( 'This will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>

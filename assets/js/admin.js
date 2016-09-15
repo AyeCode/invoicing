@@ -275,7 +275,7 @@ jQuery(function($) {
     
     var invBilling = jQuery('#wpinv-address.postbox').html();
     if (invBilling) {
-        jQuery('#post_author_override', '#authordiv').addClass('gdmbx2-text-medium').detach().prependTo(jQuery('.gdmbx-customer-div'));
+        jQuery('#post_author_override', '#authordiv').remove();//.addClass('gdmbx2-text-medium').detach().prependTo(jQuery('.gdmbx-customer-div'));
         jQuery('#authordiv', jQuery('.wpinv')).hide();
     }
     
@@ -529,34 +529,35 @@ jQuery(function($) {
             
             $('#wpinv-address').on('click', '.wpinv-new-user', function(e) {
                 e.preventDefault();
+                                
+                var mBox = $('#wpinv-address');
                 
-                var val, bL, iL, mBox = $('#wpinv-address');
-                
-                if ($('#wpinv_new_user', mBox).val()) {
-                    val = '';
-                    bL = $(this).data('blabel-new');
-                    iL = $(this).data('ilabel-new');
-                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).show();
-                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-wpinv-email .gdmbx-td'));
-                    $('#post_author_override', mBox).show();
-                    $('#wpinv-fill-user-details', mBox).show();
-                } else {
-                    val = '1';
-                    bL = $(this).data('blabel-cancel');
-                    iL = $(this).data('ilabel-cancel');
-                    $('#post_author_override', mBox).hide();
-                    $('#wpinv-fill-user-details', mBox).hide();
-                    $('.gdmbx-wpinv-email .gdmbx-th label', mBox).hide();
-                    $('#wpinv_email', mBox).detach().appendTo($('.gdmbx-customer-div'));
-                }
-                
-                $(this).text(bL);
-                $('#wpinv_new_user', mBox).val(val);
-                $('[data-ilabel="user"]', mBox).text(iL);
+                $('#wpinv_new_user', mBox).val(1);
+                //$('#wpinv_email', mBox).val('');
+                $('#wpinv_email', mBox).prop('required', 'required');
+                $('.gdmbx-wpinv-user-id', mBox).hide();
+                $('.gdmbx-wpinv-email', mBox).show();
             });
             
-            $('.gdmbx-customer-div #wpinv_email').live('change', function(e) {
+            $('#wpinv-address').on('click', '.wpinv-new-cancel', function(e) {
+                e.preventDefault();
+                                
+                var mBox = $('#wpinv-address');
+                
+                $('#wpinv_new_user', mBox).val(0);
+                //$('#wpinv_email', mBox).val($('#wpinv_email', mBox).data('value'));
+                $('#wpinv_email', mBox).prop('required', false);
+                $('.gdmbx-wpinv-email', mBox).hide();
+                $('.gdmbx-wpinv-user-id', mBox).show();
+            });
+            
+            $('#wpinv-address #wpinv_email').live('change', function(e) {
                 var metaBox = $(this).closest('.inside');
+                
+                if (!$('#wpinv_new_user', metaBox).val()) {
+                    return false;
+                }
+                
                 wpinvBlock(metaBox);
                 
                 var data = {
@@ -572,10 +573,10 @@ jQuery(function($) {
                     if (response && typeof response == 'object') {
                         if (response.success === true && typeof response.data.billing_details == 'object') {
                             if (!$('#post_author_override [value="' + response.data.id + '"]', metaBox).val()) {
-                                $('#post_author_override', metaBox).prepend('<option value="' + response.data.id + '">' + response.data.name + ' (' + response.data.login + ')</option>');
+                                $('#post_author_override', metaBox).prepend('<option value="' + response.data.id + '">' + response.data.name + '</option>');
                             }
                             $('#post_author_override', metaBox).val(response.data.id);
-                            $('.wpinv-new-user', metaBox).click();
+                            $('.wpinv-new-cancel', metaBox).click();
                             
                             var state = false;
                             var country = false;

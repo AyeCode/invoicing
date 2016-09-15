@@ -956,7 +956,7 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
         'last_name',
         'company',
         'vat_number',
-        'email',
+        ///'email',
         'phone',
         'address',
         'city',
@@ -1179,6 +1179,10 @@ function wpinv_get_invoices( $args ) {
         'orderby'        => $args['orderby'],
         'order'          => $args['order'],
     );
+    
+    if ( !empty( $args['user'] ) ) {
+        $wp_query_args['post_author'] = absint( $args['user'] );
+    }
 
     if ( ! is_null( $args['parent'] ) ) {
         $wp_query_args['post_parent'] = absint( $args['parent'] );
@@ -1188,11 +1192,6 @@ function wpinv_get_invoices( $args ) {
         $wp_query_args['offset'] = absint( $args['offset'] );
     } else {
         $wp_query_args['paged'] = absint( $args['page'] );
-    }
-
-    if ( $args['user'] !== null ) {
-        $values = is_array( $args['user'] ) ? $args['user'] : array( $args['user'] );
-        $wp_query_args['meta_query'][] = wpinv_get_invoices_user_meta_query( $values );
     }
 
     if ( ! empty( $args['exclude'] ) ) {
@@ -1221,43 +1220,6 @@ function wpinv_get_invoices( $args ) {
     } else {
         return $return;
     }
-}
-
-function wpinv_get_invoices_user_meta_query( $values, $relation = 'or' ) {
-    $meta_query = array(
-        'relation' => strtoupper( $relation ),
-        'user_emails' => array(
-            'key'     => '_wpinv_email',
-            'value'   => array(),
-            'compare' => 'IN',
-        ),
-        'user_ids' => array(
-            'key'     => '_wpinv_user_id',
-            'value'   => array(),
-            'compare' => 'IN',
-        )
-    );
-    foreach ( $values as $value ) {
-        if ( is_array( $value ) ) {
-            $meta_query[] = wpinv_get_invoices_user_meta_query( $value, 'and' );
-        } elseif ( is_email( $value ) ) {
-            $meta_query['user_emails']['value'][] = sanitize_email( $value );
-        } else {
-            $meta_query['user_ids']['value'][] = strval( absint( $value ) );
-        }
-    }
-
-    if ( empty( $meta_query['user_emails']['value'] ) ) {
-        unset( $meta_query['user_emails'] );
-        unset( $meta_query['relation'] );
-    }
-
-    if ( empty( $meta_query['user_ids']['value'] ) ) {
-        unset( $meta_query['user_ids'] );
-        unset( $meta_query['relation'] );
-    }
-
-    return $meta_query;
 }
 
 function wpinv_get_user_invoices_columns() {

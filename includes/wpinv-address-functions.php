@@ -58,12 +58,12 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     }
     
     $address_fields = array(
-        'user_id',
+        ///'user_id',
         'first_name',
         'last_name',
         'company',
         'vat_number',
-        'email',
+        ///'email',
         'phone',
         'address',
         'city',
@@ -72,12 +72,14 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         'zip',
     );
     
-    $address = array();
-    foreach ( $address_fields as $field ) {
-        $address[$field] = $field == 'user_id' ? $user_id : get_user_meta( $user_id, '_wpinv_' . $field, true );
-    }
-
     $user_info = get_userdata( $user_id );
+    
+    $address = array();
+    $address['user_id'] = $user_id;
+    $address['email'] = !empty( $user_info ) ? $user_info->user_email : '';
+    foreach ( $address_fields as $field ) {
+        $address[$field] = get_user_meta( $user_id, '_wpinv_' . $field, true );
+    }
 
     if ( !empty( $user_info ) ) {
         if( empty( $address['first_name'] ) )
@@ -85,9 +87,6 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         
         if( empty( $address['last_name'] ) )
             $address['last_name'] = $user_info->last_name;
-        
-        if( empty( $address['email'] ) )
-            $address['email'] = $user_info->user_email;
     }
     
     $address['name'] = trim( trim( $address['first_name'] . ' ' . $address['last_name'] ), "," );

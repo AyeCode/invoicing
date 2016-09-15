@@ -3,18 +3,21 @@
     width: 80px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#details {
-    width: 130px;
+    width: 120px;
 }
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
-
-.post-type-wpi_invoice .wp-list-table.widefat th#amount,
 .post-type-wpi_invoice .wp-list-table.widefat th#invoice_date,
 .post-type-wpi_invoice .wp-list-table.widefat th#status {
     width: 140px;
 }
-
+.post-type-wpi_invoice .wp-list-table.widefat th#amount {
+    width: 130px;
+}
+.post-type-wpi_invoice .wp-list-table.widefat th#customer {
+    width: 160px;
+}
 .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
     width: 50%;
     padding: 0;
@@ -1105,7 +1108,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin-left: 5px;
     margin-top: 2px;
 }
-#wpinv-fill-user-details .fa {
+#wpinv-address .button-small .fa {
     color: #333;
     margin-right: 3px;
 }
@@ -1137,11 +1140,13 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv-flr {
     float: right;
 }
-.gdmbx-wpinv-user-id .gdmbx-th {
+.gdmbx-wpinv-user-id .gdmbx-th,
+.gdmbx-wpinv-email .gdmbx-th {
     position: relative;
 }
-.wpinv-new-user {
-    left: 140px;
+.wpinv-new-user,
+.wpinv-new-cancel {
+    left: 240px;
     position: absolute;
     top: -4px;
 }
@@ -1271,4 +1276,15 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv-i-loader {
     position: absolute;
     top: -5px;
+}
+/* Discounts */
+.post-type-wpi_discount #postexcerpt .inside p {
+    display: none;
+}
+.post-type-wpi_discount .wp-list-table.widefat th#name {
+    width: 150px;
+}
+.post-type-wpi_discount .wp-list-table.widefat .column-status {
+    width: 70px;
+    text-align: center;
 }

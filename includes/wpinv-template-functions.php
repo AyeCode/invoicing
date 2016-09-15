@@ -856,7 +856,6 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     }
     
     $billing_details = $invoice->get_user_info();
-
     $output = '<div class="to col-xs-2"><strong>' . __( 'To:', 'invoicing' ) . '</strong></div>';
     $output .= '<div class="wrapper col-xs-10">';
     $output .= '<div class="name">' . esc_html( trim( $billing_details['first_name'] . ' ' . $billing_details['last_name'] ) ) . '</div>';
@@ -896,7 +895,7 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
         $output .= '<div class="address">' . $address_row . '</div>';
     }
     
-    if ( $email = $billing_details['email'] ) {
+    if ( $email = $invoice->get_email() ) {
         $output .= '<div class="email">' . esc_html( $email ) . '</div>';
     }
     $output .= '</div>';
@@ -1614,31 +1613,6 @@ function wpinv_checkout_billing_info() {
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_email" class="wpi-label"><?php _e( 'Email Address', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_email',
-                                'name'          => 'wpinv_email',
-                                'value'         => $billing_details['email'],
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'Email address', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_phone',
-                                'name'          => 'wpinv_phone',
-                                'value'         => $billing_details['phone'],
-                                'class'         => 'wpi-input',
-                                'placeholder'   => __( 'Phone', 'invoicing' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
                         <label for="wpinv_address" class="wpi-label"><?php _e( 'Address', 'invoicing' );?><span class="wpi-required">*</span></label>
                         <?php
                         echo wpinv_html_text( array(
@@ -1715,6 +1689,18 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_zip',
                                 'class'         => 'wpi-input',
                                 'placeholder'   => __( 'ZIP / Postcode', 'invoicing' ),
+                            ) );
+                        ?>
+                    </p>
+                    <p class="wpi-cart-field wpi-col2 wpi-coll">
+                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?></label>
+                        <?php
+                        echo wpinv_html_text( array(
+                                'id'            => 'wpinv_phone',
+                                'name'          => 'wpinv_phone',
+                                'value'         => $billing_details['phone'],
+                                'class'         => 'wpi-input',
+                                'placeholder'   => __( 'Phone', 'invoicing' ),
                             ) );
                         ?>
                     </p>

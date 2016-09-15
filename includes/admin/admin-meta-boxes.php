@@ -24,9 +24,9 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
     
     add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'WPInv_Meta_Box_Details::output', 'wpi_invoice', 'side', 'default' );
     add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'WPInv_Meta_Box_Details::payment_meta', 'wpi_invoice', 'side', 'default' );
-    
-    add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'WPInv_Meta_Box_Items::output', 'wpi_invoice', 'normal', 'high' );
+   
     add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'WPInv_Meta_Box_Billing_Details::output', 'wpi_invoice', 'normal', 'high' );
+    add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'WPInv_Meta_Box_Items::output', 'wpi_invoice', 'normal', 'high' );
     add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'normal', 'high' );
 }
 add_action( 'add_meta_boxes', 'wpinv_add_meta_boxes', 30, 2 );
@@ -145,4 +145,93 @@ function wpinv_register_item_meta_boxes() {
     }
     
     add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'WPInv_Meta_Box_Items::item_info', 'wpi_item', 'side', 'core' );
+}
+
+function wpinv_register_discount_meta_boxes() {
+    add_meta_box( 'wpinv_discount_fields', __( 'Discount Details', 'invoicing' ), 'wpinv_discount_metabox_details', 'wpi_discount', 'normal', 'high' );
+}
+
+function wpinv_discount_metabox_details( $post ) {
+    ?>
+<table class="form-table">
+    <tbody>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_code">Discount Code</label>
+            </th>
+            <td>
+                <input type="text" style="width: 300px;" value="" name="wpinv_discount_code" id="wpinv_discount_code">
+                <p class="description">Enter a code for this discount, such as 10PERCENT</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_type">Type</label>
+            </th>
+            <td>
+                <select id="wpinv_discount_type" name="wpinv_discount_type">
+                <option value="percent">Percentage</option>
+                <option value="fixed">Flat amount</option>
+                </select>
+                <p class="description">The kind of discount to apply for this discount.</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_amount">Amount</label>
+            </th>
+            <td>
+                <input type="text" style="width: 40px;" value="" name="wpinv_discount_amount" id="wpinv_discount_amount">
+                <p style="display:none;" class="description edd-amount-description">Enter the discount amount in USD</p>
+                <p class="description edd-amount-description">Enter the discount percentage. 10 = 10%</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="edd-start">Start date</label>
+            </th>
+            <td>
+                <input type="text" class="edd_datepicker hasDatepicker" style="width: 300px;" value="" id="edd-start" name="start">
+                <p class="description">Enter the start date for this discount code in the format of mm/dd/yyyy. For no start date, leave blank. If entered, the discount can only be used after or on this date.</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_expiration">Expiration date</label>
+            </th>
+            <td>
+                <input type="text" class="edd_datepicker hasDatepicker" style="width: 300px;" id="wpinv_discount_expiration" name="wpinv_discount_expiration">
+                <p class="description">Enter the expiration date for this discount code in the format of mm/dd/yyyy. For no expiration, leave blank</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_min_total">Minimum Amount</label>
+            </th>
+            <td>
+                <input type="text" style="width:40px;" value="" name="min_price" id="wpinv_discount_min_total">
+                <p class="description">The minimum invoice total before this discount can be used. Leave blank for no minimum.</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_max_uses">Max Uses</label>
+            </th>
+            <td>
+                <input type="text" style="width:40px;" value="" name="wpinv_discount_max_uses" id="wpinv_discount_max_uses">
+                <p class="description">The maximum number of times this discount can be used. Leave blank for unlimited.</p>
+            </td>
+        </tr>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_use_once">Use Once Per User</label>
+            </th>
+            <td>
+                <input type="checkbox" value="1" name="wpinv_discount_use_once" id="wpinv_discount_use_once">
+                <span class="description">Limit this discount to a single-use per user?</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <?php
 }

@@ -24,142 +24,7 @@ function wpinv_remove_admin_submenus() {
     remove_submenu_page( 'edit.php?post_type=wpi_invoice', 'post-new.php?post_type=wpi_invoice' );
 }
 
-function wpinv_is_admin_page( $passed_page = '', $passed_view = '' ) {
-    global $pagenow, $typenow;
-
-    $found      = false;
-    $post_type  = isset( $_GET['post_type'] )           ? strtolower( $_GET['post_type'] )          : false;
-    $action     = isset( $_GET['action'] )              ? strtolower( $_GET['action'] )             : false;
-    $page       = isset( $_GET['page'] )                ? strtolower( $_GET['page'] )               : false;
-    $view       = isset( $_GET['view'] )                ? strtolower( $_GET['view'] )               : false;
-    $wpi_action = isset( $_GET['wpinv-action'] )        ? strtolower( $_GET['wpinv-action'] )       : false;
-    $tab        = isset( $_GET['tab'] )                 ? strtolower( $_GET['tab'] )                : false;
-
-    switch ( $passed_page ) {
-        case 'wpi_invoice':
-            switch ( $passed_view ) {
-                case 'list-table':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' ) {
-                        $found = true;
-                    }
-                    break;
-                case 'edit':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'post.php' ) {
-                        $found = true;
-                    }
-                    break;
-                case 'new':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'post-new.php' ) {
-                        $found = true;
-                    }
-                    break;
-                default:
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) || 'wpi_invoice' === $post_type || ( 'post-new.php' == $pagenow && 'wpi_invoice' === $post_type ) ) {
-                        $found = true;
-                    }
-                    break;
-            }
-            break;
-        case 'discounts':
-            switch ( $passed_view ) {
-                case 'list-table':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && false === $wpi_action ) {
-                        $found = true;
-                    }
-                    break;
-                case 'edit':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'edit_discount' === $wpi_action ) {
-                        $found = true;
-                    }
-                    break;
-                case 'new':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page && 'add_discount' === $wpi_action ) {
-                        $found = true;
-                    }
-                    break;
-                default:
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-discounts' === $page ) {
-                        $found = true;
-                    }
-                    break;
-            }
-            break;
-        case 'settings':
-            switch ( $passed_view ) {
-                case 'general':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page && ( 'genera' === $tab || false === $tab ) ) {
-                        $found = true;
-                    }
-                    break;
-                case 'gateways':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page && 'gateways' === $tab ) {
-                        $found = true;
-                    }
-                    break;
-                case 'emails':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page && 'emails' === $tab ) {
-                        $found = true;
-                    }
-                    break;
-                case 'taxes':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page && 'taxes' === $tab ) {
-                        $found = true;
-                    }
-                    break;
-                case 'misc':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page && 'misc' === $tab ) {
-                        $found = true;
-                    }
-                    break;
-                default:
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-settings' === $page ) {
-                        $found = true;
-                    }
-                    break;
-            }
-            break;
-        case 'customers':
-            switch ( $passed_view ) {
-                case 'list-table':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-customers' === $page && false === $view ) {
-                        $found = true;
-                    }
-                    break;
-                case 'overview':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-customers' === $page && 'overview' === $view ) {
-                        $found = true;
-                    }
-                    break;
-                case 'notes':
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-customers' === $page && 'notes' === $view ) {
-                        $found = true;
-                    }
-                    break;
-                default:
-                    if ( ( 'wpi_invoice' == $typenow || 'wpi_invoice' === $post_type ) && $pagenow == 'edit.php' && 'wpinv-customers' === $page ) {
-                        $found = true;
-                    }
-                    break;
-            }
-            break;
-        default:
-            global $wpi_discounts_page, $wpi_invoices_page, $wpi_settings_page, $wpi_system_info_pag, $wpi_customers_page;
-            
-            $admin_pages = apply_filters( 'wpinv_admin_pages', array( $wpi_discounts_page, $wpi_invoices_page, $wpi_settings_page, $wpi_system_info_pag, $wpi_customers_page ) );
-            
-            if ( 'wpi_invoice' == $typenow || 'index.php' == $pagenow || 'post-new.php' == $pagenow || 'post.php' == $pagenow ) {
-                $found = true;
-            } elseif ( in_array( $pagenow, $admin_pages ) ) {
-                $found = true;
-            }
-            break;
-    }
-
-    return (bool) apply_filters( 'wpinv_is_admin_page', $found, $page, $view, $passed_page, $passed_view );
-}
-
-
-add_filter( 'manage_wpinv_discount_posts_columns', 'wpinv_discount_columns' );
+add_filter( 'manage_wpi_discount_posts_columns', 'wpinv_discount_columns' );
 function wpinv_discount_columns( $existing_columns ) {
     $columns                = array();
     $columns['cb']          = $existing_columns['cb'];
@@ -174,7 +39,7 @@ function wpinv_discount_columns( $existing_columns ) {
     return $columns;
 }
 
-add_action( 'manage_wpinv_discount_posts_custom_column', 'wpinv_discount_custom_column' );
+add_action( 'manage_wpi_discount_posts_custom_column', 'wpinv_discount_custom_column' );
 function wpinv_discount_custom_column( $column ) {
     global $post;
     
@@ -234,7 +99,7 @@ function wpinv_post_row_actions( $actions, $post ) {
         $actions = array();
     }
     
-    if ( $post_type == 'wpinv_discount' ) {
+    if ( $post_type == 'wpi_discount' ) {
         $actions = wpinv_discount_row_actions( $post, $actions );
     }
     
@@ -296,10 +161,10 @@ function wpinv_discount_bulk_actions( $actions, $display = false ) {
     
     echo '</div><div class="alignleft actions">';
 }
-add_filter( 'bulk_actions-edit-wpinv_discount', 'wpinv_discount_bulk_actions', 10 );
+add_filter( 'bulk_actions-edit-wpi_discount', 'wpinv_discount_bulk_actions', 10 );
 
 function wpinv_disable_months_dropdown( $disable, $post_type ) {
-    if ( $post_type == 'wpinv_discount' ) {
+    if ( $post_type == 'wpi_discount' ) {
         $disable = true;
     }
     
@@ -310,7 +175,7 @@ add_filter( 'disable_months_dropdown', 'wpinv_disable_months_dropdown', 10, 2 );
 function wpinv_restrict_manage_posts() {
     global $typenow;
 
-    if( 'wpinv_discount' == $typenow ) {
+    if( 'wpi_discount' == $typenow ) {
         wpinv_discount_filters();
     }
 }
@@ -339,7 +204,7 @@ function wpinv_discount_filters() {
 }
 
 function wpinv_discount_views( $views ) {
-    $base           = admin_url('edit.php?post_type=wpinv_discount');
+    $base           = admin_url('edit.php?post_type=wpi_discount');
 
     $current        = isset( $_GET['status'] ) ? $_GET['status'] : '';
     $total_count    = '&nbsp;<span class="count">(' . 0    . ')</span>';
@@ -354,7 +219,7 @@ function wpinv_discount_views( $views ) {
 
     return $views;
 }
-//add_filter( 'views_edit-wpinv_discount', 'wpinv_discount_views', 10 );
+add_filter( 'views_edit-wpi_discount', 'wpinv_discount_views', 10 );
 
 function wpinv_request( $vars ) {
     global $typenow, $wp_query, $wp_post_statuses;
@@ -386,15 +251,7 @@ function wpinv_request( $vars ) {
                     $vars,
                     array(
                         'meta_key' => '_wpinv_first_name',
-                        'orderby'  => 'meta_value_num'
-                    )
-                );
-            } else if ( 'email' == $vars['orderby'] ) {
-                $vars = array_merge(
-                    $vars,
-                    array(
-                        'meta_key' => '_wpinv_email',
-                        'orderby'  => 'meta_value_num'
+                        'orderby'  => 'meta_value'
                     )
                 );
             }

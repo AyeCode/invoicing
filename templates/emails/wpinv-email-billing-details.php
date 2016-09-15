@@ -37,7 +37,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
         <tbody>
             <tr class="wpi-receipt-name">
                 <th class="text-left"><?php _e( 'Name', 'invoicing' ); ?></th>
-                <td><?php if ( $sent_to_admin && $invoice->user_id ) { ?><a href="<?php echo esc_url( add_query_arg( 'user_id', $invoice->user_id, self_admin_url( 'user-edit.php' ) ) ) ;?>"><?php echo esc_html( $invoice->get_user_full_name() ); ?></a><?php } else { echo esc_html( $invoice->get_user_full_name() ); } ?></td>
+                <td><?php if ( $sent_to_admin && $invoice->user_id ) { ?><a href="<?php echo esc_url( add_query_arg( 'user_id', $invoice->get_user_id(), self_admin_url( 'user-edit.php' ) ) ) ;?>"><?php echo esc_html( $invoice->get_user_full_name() ); ?></a><?php } else { echo esc_html( $invoice->get_user_full_name() ); } ?></td>
             </tr>
             <tr class="wpi-receipt-email">
                 <th class="text-left"><?php _e( 'Email', 'invoicing' ); ?></th>
