@@ -125,7 +125,8 @@ function wpinv_register_post_types() {
         'map_meta_cap'       => true,
         'has_archive'        => false,
         'hierarchical'       => false,
-        'supports'           => array( 'title' ),
+        'supports'           => array( 'title', 'excerpt' ),
+        'register_meta_box_cb'  => 'wpinv_register_discount_meta_boxes',
         'show_in_nav_menus'  => false,
         'show_in_admin_bar'  => true,
         'menu_icon'          => $menu_icon,
@@ -134,7 +135,7 @@ function wpinv_register_post_types() {
             
     $args = apply_filters( 'wpinv_register_post_type_discount', $args );
     
-    //register_post_type( 'wpinv_discount', $args );
+    register_post_type( 'wpi_discount', $args );
 }
 
 function wpinv_get_default_labels() {

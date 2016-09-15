@@ -43,7 +43,7 @@ function wpinv_sortable_columns( $columns ) {
         'amount' => array( 'amount', false ),
         'invoice_date'   => array( 'date', false ),
         'customer'   => array( 'customer', false ),
-        'email'   => array( 'email', false ),
+        ///'email'   => array( 'email', false ),
         'status'   => array( 'status', false ),
     );
     
@@ -64,9 +64,6 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
     switch ( $column_name ) {
         case 'email' :
             $value   = $wpi_invoice->get_email();
-            if ( !$value ) {
-                $value = get_the_author_meta( 'email' );
-            }
             break;
         case 'customer' :
             $customer_name = $wpi_invoice->get_user_full_name();
@@ -100,12 +97,7 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
                 $value .= '<a title="' . esc_attr__( 'Print invoice', 'invoicing' ) . '" href="' . esc_url( get_permalink( $post->ID ) ) . '" class="button ui-tip column-act-btn" title="" target="_blank"><span class="dashicons dashicons-media-default"></span></a>';
             }
             
-            $email   = $wpi_invoice->get_email();
-            if ( !$email ) {
-                $email = get_the_author_meta( 'email' );
-            }
-            
-            if ( $email ) {
+            if ( $email = $wpi_invoice->get_email() ) {
                 $value .= '<a title="' . esc_attr__( 'Send invoice to customer', 'invoicing' ) . '" href="' . esc_url( add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) ) ) . '" class="button ui-tip column-act-btn"><span class="dashicons dashicons-email-alt"></span></a>';
             }
             
@@ -515,6 +507,11 @@ add_action( 'save_post', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
     if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && $data['post_type'] == 'wpi_invoice' ) {
+        if ( !empty( $postarr['post_status'] ) && !empty( $postarr['wpinv_status'] ) && $postarr['post_status'] != $postarr['wpinv_status'] ) {
+            $data['post_status'] = sanitize_text_field( $postarr['wpinv_status'] );
+            $_POST['post_status'] = sanitize_text_field( $postarr['wpinv_status'] );
+        }
+        
         $is_new_user = !empty( $postarr['wpinv_new_user'] ) ? true : false;
         $email = !empty( $postarr['wpinv_email'] ) && $postarr['wpinv_email'] && is_email( $postarr['wpinv_email'] ) ? $postarr['wpinv_email'] : NULL;
         
@@ -559,17 +556,17 @@ function wpinv_send_register_new_user( $data, $postarr ) {
                     'last_name',
                     'company',
                     'vat_number',
-                    'email',
-                    'phone',
+                    ///'email',
                     'address',
                     'city',
                     'state',
                     'country',
                     'zip',
+                    'phone',
                 );
                 
                 $meta = array();
-                $meta['_wpinv_user_id'] = $new_user_id;
+                ///$meta['_wpinv_user_id'] = $new_user_id;
                 foreach ( $meta_fields as $field ) {
                     $meta['_wpinv_' . $field] = isset( $postarr['wpinv_' . $field] ) ? sanitize_text_field( $postarr['wpinv_' . $field] ) : '';
                 }

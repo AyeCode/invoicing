@@ -307,6 +307,10 @@ class WPInv_Ajax {
         if (isset($billing_details['user_id'])) {
             unset($billing_details['user_id']);
         }
+        
+        if (isset($billing_details['email'])) {
+            unset($billing_details['email']);
+        }
 
         $response                               = array();
         $response['success']                    = true;
@@ -382,8 +386,7 @@ class WPInv_Ajax {
             
             $response['success']                    = true;
             $response['data']['id']                 = $user_data->ID;
-            $response['data']['name']               = $display_name;
-            $response['data']['login']              = $user_login;
+            $response['data']['name']               = $user_data->user_email;
             $response['data']['billing_details']    = $billing_details;
         }
         

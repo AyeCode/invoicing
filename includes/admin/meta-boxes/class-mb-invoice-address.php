@@ -6,6 +6,7 @@ if ( !defined( 'WPINC' ) ) {
 
 class WPInv_Meta_Box_Billing_Details {
     public static function output( $post ) {
+        global $user_ID;
         $post_id    = !empty( $post->ID ) ? $post->ID : 0;
         $invoice    = new WPInv_Invoice( $post_id );
 ?>
@@ -13,11 +14,28 @@ class WPInv_Meta_Box_Billing_Details {
     <div id="gdmbx2-metabox-wpinv_address" class="gdmbx2-metabox gdmbx-field-list wpinv-address gdmbx-row">
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-user-id table-layout">
             <div class="gdmbx-th">
-                <input type="hidden" id="wpinv_new_user" name="wpinv_new_user" value="" />
-                <label for="post_author_override" data-ilabel="user"><?php _e( 'Customer', 'invoicing' );?></label>
-                <a class="wpinv-new-user button button-small button-secondary" data-blabel-new="<?php esc_attr_e( 'Add New User', 'invoicing' );?>" data-blabel-cancel="<?php esc_attr_e( 'Cancel', 'invoicing' );?>" data-ilabel-cancel="<?php esc_attr_e( 'Email', 'invoicing' );?>" data-ilabel-new="<?php esc_attr_e( 'Customer', 'invoicing' );?>" href="javascript:void(0)"><?php _e( 'Add New User', 'invoicing' );?></a>
+                <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
+                <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
             </div>
-            <div class="gdmbx-td gdmbx-customer-div"><a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-user"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
+            <div class="gdmbx-td gdmbx-customer-div">
+            <?php wpinv_dropdown_users( array(
+                            'name' => 'post_author_override',
+                            'selected' => empty($post->ID) ? $user_ID : $post->post_author,
+                            'include_selected' => true,
+                            'show' => 'user_email',
+                            'orderby' => 'user_email',
+                            'class' => 'gdmbx2-text-medium'
+                        ) ); ?>
+            <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
+            </div>
+        </div>
+        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-email table-layout" style="display:none">
+            <div class="gdmbx-th"><label for="wpinv_email"><?php _e( 'Email', 'invoicing' );?></label>
+            <a class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-close"></i><?php _e( 'Cancel', 'invoicing' );?></a>
+            </div>
+            <div class="gdmbx-td">
+                <input type="hidden" id="wpinv_new_user" name="wpinv_new_user" value="" />
+                <input type="email" class="gdmbx2-text-large" name="wpinv_email" id="wpinv_email" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
@@ -50,18 +68,6 @@ class WPInv_Meta_Box_Billing_Details {
             <div class="gdmbx-th"><label for="wpinv_vat_number"><?php _e( 'Vat Number', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
                 <input type="text" class="gdmbx2-text-large" name="wpinv_vat_number" id="wpinv_vat_number" value="<?php echo esc_attr( $invoice->vat_number );?>" />
-            </div>
-        </div>
-        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-email table-layout">
-            <div class="gdmbx-th"><label for="wpinv_email"><?php _e( 'Email', 'invoicing' );?></label></div>
-            <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_email" id="wpinv_email" value="<?php echo esc_attr( $invoice->email );?>" required="required" />
-            </div>
-        </div>
-        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-phone table-layout">
-            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?></label></div>
-            <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" required="required" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-address table-layout">
@@ -131,6 +137,12 @@ class WPInv_Meta_Box_Billing_Details {
                 <input type="text" class="gdmbx2-text-large" name="wpinv_zip" id="wpinv_zip" value="<?php echo esc_attr( $invoice->zip );?>" />
             </div>
         </div>
+        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-phone table-layout">
+            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?></label></div>
+            <div class="gdmbx-td">
+                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" required="required" />
+            </div>
+        </div>
     </div>
 </div>
 <?php wp_nonce_field( 'wpinv_billing_details', 'wpinv_billing_details_nonce' ) ;?>
@@ -140,12 +152,12 @@ class WPInv_Meta_Box_Billing_Details {
     public static function save( $post_id, $data, $post ) {
         $invoice = new WPInv_Invoice( $post_id );
         
-        $user_id        = (int)$data['post_author_override'];
+        ///$user_id        = (int)$data['post_author_override'];
         $first_name     = sanitize_text_field( $data['wpinv_first_name'] );
         $last_name      = sanitize_text_field( $data['wpinv_last_name'] );
         $company        = sanitize_text_field( $data['wpinv_company'] );
         $vat_number     = sanitize_text_field( $data['wpinv_vat_number'] );
-        $email          = sanitize_email( $data['wpinv_email'] );
+        ///$email          = sanitize_email( $data['wpinv_email'] );
         $phone          = sanitize_text_field( $data['wpinv_phone'] );
         $address        = sanitize_text_field( $data['wpinv_address'] );
         $city           = sanitize_text_field( $data['wpinv_city'] );
@@ -153,12 +165,12 @@ class WPInv_Meta_Box_Billing_Details {
         $country        = sanitize_text_field( $data['wpinv_country'] );
         $state          = sanitize_text_field( $data['wpinv_state'] );
         
-        $invoice->set( 'user_id', $user_id );
+        ///$invoice->set( 'user_id', $user_id );
         $invoice->set( 'first_name', $first_name );
         $invoice->set( 'last_name', $last_name );
         $invoice->set( 'company', $company );
         $invoice->set( 'vat_number', $vat_number );
-        $invoice->set( 'email', $email );
+        ///$invoice->set( 'email', $email );
         $invoice->set( 'phone', $phone );
         $invoice->set( 'address', $address );
         $invoice->set( 'city', $city );

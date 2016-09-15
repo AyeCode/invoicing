@@ -159,164 +159,6 @@ function wpinv_print_checkout_errors() {
 }
 add_action( 'geodir_checkout_page_content', 'wpinv_print_checkout_errors', -10 );
 
-function wpinv_checkout_fields() {    
-    if ( wpinv_use_taxes() && geodir_is_page( 'checkout' ) ) {
-        $logged_in          = is_user_logged_in();
-        $billing_details    = wpinv_checkout_billing_details();
-
-        if ( !empty( $billing_details['country'] ) ) {
-            $selected_country = $billing_details['country'];
-        } else {
-            $selected_country = apply_filters( 'wpinv-get-country', '' );
-            
-            if ( empty( $selected_country ) ) {
-                $selected_country = wpinv_get_default_country();
-            }
-        }
-        ?>
-        <div id="wpinv-fields" class="clearfix">
-            <div id="wpi-billing" class="wpi-billing clearfix">
-                <span><legend><?php _e( 'Billing Details', 'invoicing' );?></legend></span>
-                <div id="wpinv-fields-box">
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_first_name" class="wpi-label"><?php _e( 'First Name', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_first_name',
-                                'name'          => 'wpinv_first_name',
-                                'value'         => $billing_details['first_name'],
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'First name', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_last_name" class="wpi-label"><?php _e( 'Last Name', 'invoicing' );?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_last_name',
-                                'name'          => 'wpinv_last_name',
-                                'value'         => $billing_details['last_name'],
-                                'class'         => 'wpi-input',
-                                'placeholder'   => __( 'Last name', 'invoicing' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_email" class="wpi-label"><?php _e( 'Email Address', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_email',
-                                'name'          => 'wpinv_email',
-                                'value'         => $billing_details['email'],
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'Email address', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_phone',
-                                'name'          => 'wpinv_phone',
-                                'value'         => $billing_details['phone'],
-                                'class'         => 'wpi-input',
-                                'placeholder'   => __( 'Phone', 'invoicing' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_address" class="wpi-label"><?php _e( 'Address', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_address',
-                                'name'          => 'wpinv_address',
-                                'value'         => $billing_details['address'],
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'Address', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_city" class="wpi-label"><?php _e( 'City', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_city',
-                                'name'          => 'wpinv_city',
-                                'value'         => $billing_details['city'],
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'City', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        ?>
-                    </p>
-                    <p id="wpinv_country_box" class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_country" class="wpi-label"><?php _e( 'Country', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php echo wpinv_html_select( array(
-                            'options'          => wpinv_get_country_list(),
-                            'name'             => 'wpinv_country',
-                            'id'               => 'wpinv_country',
-                            'selected'         => $selected_country,
-                            'show_option_all'  => false,
-                            'show_option_none' => false,
-                            'class'            => 'wpi-input required',
-                            'placeholder'      => __( 'Choose a country', 'invoicing' ),
-                            'required'          => true,
-                        ) ); ?>
-                    </p>
-                    <p id="wpinv_state_box" class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_state" class="wpi-label"><?php _e( 'State / Province', 'invoicing' );?><span class="wpi-required">*</span></label>
-                        <?php
-                        $states = wpinv_get_country_states( $selected_country );
-                        if( !empty( $states ) ) {
-                            echo wpinv_html_select( array(
-                                'options'          => $states,
-                                'name'             => 'wpinv_state',
-                                'id'               => 'wpinv_state',
-                                'selected'         => $billing_details['state'],
-                                'show_option_all'  => false,
-                                'show_option_none' => false,
-                                'class'            => 'wpi-input required',
-                                'placeholder'      => __( 'Choose a state', 'invoicing' ),
-                                'required'         => true,
-                            ) );
-                        } else {
-                            echo wpinv_html_text( array(
-                                'name'          => 'wpinv_state',
-                                'value'         => $billing_details['state'],
-                                'id'            => 'wpinv_state',
-                                'class'         => 'wpi-input required',
-                                'placeholder'   => __( 'State / Province', 'invoicing' ),
-                                'required'      => true,
-                            ) );
-                        }
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_zip" class="wpi-label"><?php _e( 'ZIP / Postcode', 'invoicing' );?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'name'          => 'wpinv_zip',
-                                'value'         => $billing_details['zip'],
-                                'id'            => 'wpinv_zip',
-                                'class'         => 'wpi-input',
-                                'placeholder'   => __( 'ZIP / Postcode', 'invoicing' ),
-                            ) );
-                        ?>
-                    </p>
-                </div>
-            </div>
-            <?php do_action( 'wpinv_after_billing_fields', $billing_details ); ?>
-        </div>
-        <?php
-    }
-}
-//add_action( 'geodir_checkout_after_form_fields', 'wpinv_checkout_fields' );
-
 function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
     global $wpi_nosave;
     wpinv_error_log( 'IN', 'wpinv_cpt_save( ' . $invoice_id . ', ' . $update . ', ' . $pre_status . ' )', __FILE__, __LINE__ );
@@ -346,6 +188,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             
             if ( ( $status = wpinv_to_wpi_status( $invoice_info->status ) ) !== $wpi_invoice->status ) {
                 $save = true;
+                wpinv_error_log( 1, '1', __FILE__, __LINE__ );
                 $wpi_invoice->set( 'status', $status );
             }
             
@@ -686,7 +529,7 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         );
         $payment_details = wp_parse_args( $invoice_data['payment_details'], $payment_details );
     }
-
+    wpinv_error_log( 1, '1', __FILE__, __LINE__ );
     $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending' ) );
     if ( !empty( $payment_details ) ) {
         $invoice->set( 'currency', $payment_details['currency'] );
@@ -694,9 +537,10 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         $invoice->set( 'gateway_title', $payment_details['gateway_title'] );
         $invoice->set( 'transaction_id', $payment_details['transaction_id'] );
     }
+
     $invoice->set( 'user_info', $user_info );
-    $invoice->set( 'user_id', $user_info['user_id'] );
-    $invoice->set( 'email', $user_info['email'] );
+    ///$invoice->set( 'user_id', $user_info['user_id'] );
+    ///$invoice->set( 'email', $user_info['email'] );
     $invoice->set( 'first_name', $user_info['first_name'] );
     $invoice->set( 'last_name', $user_info['last_name'] );
     $invoice->set( 'address', $user_info['address'] );
@@ -820,10 +664,10 @@ function wpinv_tool_merge_packages() {
             $merged = wpinv_merge_gd_package_to_item( $package->pid, false, $package );
             
             if ( !empty( $merged ) ) {
-                wpinv_error_log( 'Invoice merge S : ' . $package->pid );
+                wpinv_error_log( 'Package merge S : ' . $package->pid );
                 $count++;
             } else {
-                wpinv_error_log( 'Invoice merge F : ' . $package->pid );
+                wpinv_error_log( 'Package merge F : ' . $package->pid );
             }
         }
         

@@ -79,10 +79,10 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     $invoice->set( 'key', $parent_invoice->get_key() );
     
     $invoice->set( 'ip', $parent_invoice->ip );
-    $invoice->set( 'user_id', $parent_invoice->get_user_id() );
+    ///$invoice->set( 'user_id', $parent_invoice->get_user_id() );
     $invoice->set( 'first_name', $parent_invoice->get_first_name() );
     $invoice->set( 'last_name', $parent_invoice->get_last_name() );
-    $invoice->set( 'email', $parent_invoice->get_email() );
+    ///$invoice->set( 'email', $parent_invoice->get_email() );
     $invoice->set( 'phone', $parent_invoice->phone );
     $invoice->set( 'address', $parent_invoice->address );
     $invoice->set( 'city', $parent_invoice->city );
