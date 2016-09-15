@@ -389,6 +389,20 @@ function wpinv_settings_sanitize_vat_rates( $input ) {
 }
 add_filter( 'wpinv_settings_taxes-vat_rates_sanitize', 'wpinv_settings_sanitize_vat_rates' );
 
+function wpinv_item_is_taxable( $item_id = 0, $country = false, $state = false ) {
+    if ( !wpinv_use_taxes() ) {
+        return false;
+    }
+    
+    $is_taxable = true;
+    
+    if ( !empty( $item_id ) && wpinv_get_item_vat_class( $item_id ) == '_exempt' ) {
+        $is_taxable = false;
+    }
+    
+    return apply_filters( 'wpinv_item_is_taxable', $is_taxable, $item_id, $country , $state );
+}
+
 function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0 ) {
     wpinv_error_log( 'wpinv_get_vat_rate( DEFAULT rate: ' . $rate . ', country: ' . $country . ', state: ' . $state . ', item_id: ' . $item_id . ' )', '', __FILE__, __LINE__ );
     global $wpinv_options, $wpi_session, $wpi_item_id;
@@ -397,11 +411,14 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
     
     $allow_vat_classes = wpinv_allow_vat_classes();
     
-    $class = ( $allow_vat_classes && $item_id ) ? wpinv_get_item_vat_class( $item_id ) : '_standard';
+    $class = $item_id ? wpinv_get_item_vat_class( $item_id ) : '_standard';
     wpinv_error_log( $class, 'class', __FILE__, __LINE__ );
     if ( $class === '_exempt' ) {
         return 0;
+    } else if ( !$allow_vat_classes ) {
+        $class = '_standard';
     }
+
     //wpinv_error_log( $_POST, '_POST', __FILE__, __LINE__ );
     if( !empty( $_POST['wpinv_country'] ) ) {
         $post_country = $_POST['wpinv_country'];

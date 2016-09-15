@@ -4,6 +4,18 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+function wpinv_is_gd_post_type( $post_type ) {
+    global $gd_posttypes;
+    
+    $gd_posttypes = !empty( $gd_posttypes ) && is_array( $gd_posttypes ) ? $gd_posttypes : geodir_get_posttypes();
+    
+    if ( !empty( $post_type ) && !empty( $gd_posttypes ) && in_array( $post_type, $gd_posttypes ) ) {
+        return true;
+    }
+    
+    return false;
+}
+
 function wpinv_geodir_integration() {    
     if (!defined('GEODIRECTORY_VERSION')) {
         return;
@@ -73,7 +85,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
 
     $package = empty($package) ? geodir_get_package_info($package_id) : $package;
 
-    if (empty($package)) {
+    if ( empty($package) || !wpinv_is_gd_post_type( $package->post_type ) ) {
         return false;
     }
         

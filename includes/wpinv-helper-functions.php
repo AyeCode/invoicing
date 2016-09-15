@@ -97,6 +97,11 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
         return $wpi_tax_rates[$item_id];
     }
     
+    if ( !wpinv_item_is_taxable( $item_id, $country, $state ) ) {
+        $wpi_tax_rates[$item_id] = 0;
+        return 0;
+    }
+    
     $is_global = false;
     if ( $item_id == 'global' ) {
         $is_global = true;
