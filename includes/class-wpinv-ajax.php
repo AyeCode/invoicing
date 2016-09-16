@@ -384,6 +384,10 @@ class WPInv_Ajax {
                 unset($billing_details['user_id']);
             }
             
+            if (isset($billing_details['email'])) {
+                unset($billing_details['email']);
+            }
+            
             $response['success']                    = true;
             $response['data']['id']                 = $user_data->ID;
             $response['data']['name']               = $user_data->user_email;

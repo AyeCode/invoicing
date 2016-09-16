@@ -494,6 +494,21 @@ jQuery(function($) {
             this.setup_tools();
         },
         preSetup : function() {
+            $('.wpiDatepicker').each(function(e) {
+                var $this = $(this);
+                var args = {};
+                if ($this.attr('data-changeMonth')) {
+                    args.changeMonth = true;
+                }
+                if ($this.attr('data-changeYear')) {
+                    args.changeYear = true;
+                }
+                if ($this.attr('data-dateFormat')) {
+                    args.dateFormat = $this.attr('data-dateformat');
+                }
+                $(this).datepicker(args);
+            });
+            
             var wpinvColorPicker = $('.wpinv-color-picker');
 
             if ( wpinvColorPicker.length ) {
@@ -541,7 +556,7 @@ jQuery(function($) {
             
             $('#wpinv-address').on('click', '.wpinv-new-cancel', function(e) {
                 e.preventDefault();
-                                
+
                 var mBox = $('#wpinv-address');
                 
                 $('#wpinv_new_user', mBox).val(0);
@@ -553,10 +568,11 @@ jQuery(function($) {
             
             $('#wpinv-address #wpinv_email').live('change', function(e) {
                 var metaBox = $(this).closest('.inside');
-                
-                if (!$('#wpinv_new_user', metaBox).val()) {
+                if (parseInt($('#wpinv_new_user', metaBox).val()) != 1) {
                     return false;
                 }
+                
+                e.preventDefault();
                 
                 wpinvBlock(metaBox);
                 
@@ -586,7 +602,9 @@ jQuery(function($) {
                                 } else if (key == 'country') {
                                     country = value;
                                 } else {
-                                    $( '#wpinv_' + key, metaBox).val(value).change();
+                                    if (key != 'email') {
+                                        $( '#wpinv_' + key, metaBox).val(value).change();
+                                    }
                                 }
                             });
                             
@@ -601,6 +619,21 @@ jQuery(function($) {
                     wpinvUnblock(metaBox);
                 });
             });
+            
+            $('#wpinv_discount_type').live('change', function(e) {
+                e.preventDefault();
+                
+                var mBox = $(this).closest('.inside');
+                
+                if ($(this).val() == 'flat') {
+                    $('.wpi-discount-p', mBox).hide();
+                    $('.wpi-discount-f', mBox).show();
+                } else {
+                    $('.wpi-discount-p', mBox).show();
+                    $('.wpi-discount-f', mBox).hide();
+                }
+            });
+            $('#wpinv_discount_type').trigger('change');
         },
         remove_item : function() {
             // Remove a remove from a purchase

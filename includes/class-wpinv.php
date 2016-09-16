@@ -181,6 +181,8 @@ class WPInv_Plugin {
     public function admin_enqueue_scripts() {
         global $post, $pagenow;
         
+        $post_type = wpinv_admin_post_type();
+        
         wp_register_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array(), '4.5.0' );
         wp_enqueue_style( 'font-awesome' );
         
@@ -191,6 +193,10 @@ class WPInv_Plugin {
         wp_enqueue_style( 'wpinv_admin_style' );
         
         $suffix       = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        
+        if ( $post_type == 'wpi_disocunt' && ( $pagenow == 'post-new.php' || $pagenow = 'post.php' ) ) {
+            wp_enqueue_script( 'jquery-ui-datepicker' );
+        }
 
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
