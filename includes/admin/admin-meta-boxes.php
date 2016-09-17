@@ -152,86 +152,138 @@ function wpinv_register_discount_meta_boxes() {
 }
 
 function wpinv_discount_metabox_details( $post ) {
-    ?>
-<table class="form-table">
+    $discount_id    = $post->ID;
+    $discount       = wpinv_get_discount( $discount_id );
+    
+    $type           = wpinv_get_discount_type( $discount_id );
+    $single_use     = wpinv_discount_is_single_use( $discount_id );
+?>
+<?php do_action( 'wpinv_discount_form_top', $post ); ?>
+<?php wp_nonce_field( 'wpinv_discount_metabox_nonce', 'wpinv_discount_metabox_nonce' ); ;?>
+<table class="form-table wpi-form-table">
     <tbody>
+        <?php do_action( 'wpinv_discount_form_first', $post ); ?>
+        <?php do_action( 'wpinv_discount_form_before_code', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_code">Discount Code</label>
+                <label for="wpinv_discount_code"><?php _e( 'Discount Code', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" style="width: 300px;" value="" name="wpinv_discount_code" id="wpinv_discount_code">
-                <p class="description">Enter a code for this discount, such as 10PERCENT</p>
+                <input type="text" name="code" id="wpinv_discount_code" class="medium-text" value="<?php echo esc_attr( wpinv_get_discount_code( $discount_id ) ); ?>" required>
+                <p class="description"><?php _e( 'Enter a code for this discount, such as 10OFF', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_type', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_type">Type</label>
+                <label for="wpinv_discount_type"><?php _e( 'Discount Type', 'invoicing' ); ?></label>
             </th>
             <td>
-                <select id="wpinv_discount_type" name="wpinv_discount_type">
-                <option value="percent">Percentage</option>
-                <option value="fixed">Flat amount</option>
+                <select id="wpinv_discount_type" name="type" class="medium-text">
+                    <?php foreach ( wpinv_get_discount_types() as $value => $label ) { ?>
+                    <option value="<?php echo $value ;?>" <?php selected( $type, $value ); ?>><?php echo $label; ?></option>
+                    <?php } ?>
                 </select>
-                <p class="description">The kind of discount to apply for this discount.</p>
+                <p class="description"><?php _e( 'The kind of discount to apply for this discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_amount', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_amount">Amount</label>
+                <label for="wpinv_discount_amount"><?php _e( 'Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" style="width: 40px;" value="" name="wpinv_discount_amount" id="wpinv_discount_amount">
-                <p style="display:none;" class="description edd-amount-description">Enter the discount amount in USD</p>
-                <p class="description edd-amount-description">Enter the discount percentage. 10 = 10%</p>
+                <input type="text" name="amount" id="wpinv_discount_amount" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_amount( $discount_id ) ); ?>" required> <font class="wpi-discount-p">%</font><font class="wpi-discount-f" style="display:none;">$</font>
+                <p style="display:none;" class="description"><?php _e( 'Enter the discount amount in USD', 'invoicing' ); ?></p>
+                <p class="description"><?php _e( 'Enter the discount value. Ex: 10', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_start', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="edd-start">Start date</label>
+                <label for="wpinv_discount_start"><?php _e( 'Start date', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" class="edd_datepicker hasDatepicker" style="width: 300px;" value="" id="edd-start" name="start">
-                <p class="description">Enter the start date for this discount code in the format of mm/dd/yyyy. For no start date, leave blank. If entered, the discount can only be used after or on this date.</p>
+                <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_start" data-dateFormat="yy-mm-dd" name="start" value="<?php echo esc_attr( wpinv_get_discount_start_date( $discount_id ) ); ?>">
+                <p class="description"><?php _e( 'Enter the start date for this discount code in the format of yyyy-mm-dd. For no start date, leave blank. If entered, the discount can only be used after or on this date.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_expiration', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_expiration">Expiration date</label>
+                <label for="wpinv_discount_expiration"><?php _e( 'Expiration date', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" class="edd_datepicker hasDatepicker" style="width: 300px;" id="wpinv_discount_expiration" name="wpinv_discount_expiration">
-                <p class="description">Enter the expiration date for this discount code in the format of mm/dd/yyyy. For no expiration, leave blank</p>
+                <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_expiration" data-dateFormat="yy-mm-dd" name="expiration" value="<?php echo esc_attr( wpinv_get_discount_expiration( $discount_id ) ); ?>">
+                <p class="description"><?php _e( 'Enter the expiration date for this discount code in the format of yyyy-mm-dd. Leave blank for no expiration.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_min_total', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_min_total">Minimum Amount</label>
+                <label for="wpinv_discount_min_total"><?php _e( 'Minimum Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" style="width:40px;" value="" name="min_price" id="wpinv_discount_min_total">
-                <p class="description">The minimum invoice total before this discount can be used. Leave blank for no minimum.</p>
+                <input type="text" name="min_total" id="wpinv_discount_min_total" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_min_total( $discount_id ) ); ?>">
+                <p class="description"><?php _e( 'This allows you to set the minimum amount (subtotal, including taxes) allowed when using the discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_max_total', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_max_uses">Max Uses</label>
+                <label for="wpinv_discount_max_total"><?php _e( 'Maximum Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" style="width:40px;" value="" name="wpinv_discount_max_uses" id="wpinv_discount_max_uses">
-                <p class="description">The maximum number of times this discount can be used. Leave blank for unlimited.</p>
+                <input type="text" name="max_total" id="wpinv_discount_max_total" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_max_total( $discount_id ) ); ?>">
+                <p class="description"><?php _e( 'This allows you to set the maximum amount (subtotal, including taxes) allowed when using the discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_max_uses', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_use_once">Use Once Per User</label>
+                <label for="wpinv_discount_max_uses"><?php _e( 'Max Uses', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="checkbox" value="1" name="wpinv_discount_use_once" id="wpinv_discount_use_once">
-                <span class="description">Limit this discount to a single-use per user?</span>
+                <input type="number" min="0" step="1" id="wpinv_discount_max_uses" name="max_uses" class="medium-text" value="<?php echo esc_attr( wpinv_get_discount_max_uses( $discount_id ) ); ?>">
+                <p class="description"><?php _e( 'The maximum number of times this discount can be used. Leave blank for unlimited.', 'invoicing' ); ?></p>
             </td>
         </tr>
+        <?php do_action( 'wpinv_discount_form_before_single_use', $post ); ?>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_single_use"><?php _e( 'Use Once Per User', 'invoicing' ); ?></label>
+            </th>
+            <td>
+                <input type="checkbox" value="1" name="single_use" id="wpinv_discount_single_use" <?php checked( true, $single_use ); ?>>
+                <span class="description"><?php _e( 'Limit this discount to a single use per user?', 'invoicing' ); ?></span>
+            </td>
+        </tr>
+        <?php do_action( 'wpinv_discount_form_last', $post ); ?>
     </tbody>
 </table>
+<?php do_action( 'wpinv_discount_form_bottom', $post ); ?>
     <?php
 }
+
+function wpinv_discount_metabox_save( $post_id, $post, $update = false ) {
+    $post_type = !empty( $post ) ? $post->post_type : '';
+    
+    if ( $post_type != 'wpi_discount' ) {
+        return;
+    }
+    
+    if ( !isset( $_POST['wpinv_discount_metabox_nonce'] ) || ( isset( $_POST['wpinv_discount_metabox_nonce'] ) && !wp_verify_nonce( $_POST['wpinv_discount_metabox_nonce'], 'wpinv_discount_metabox_nonce' ) ) ) {
+        return;
+    }
+    
+    if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
+        return;
+    }
+    
+    if ( !current_user_can( 'manage_options', $post_id ) ) {
+        return;
+    }
+    
+    return wpinv_store_discount( $post_id, $_POST, $post, $update );
+}
+add_action( 'save_post', 'wpinv_discount_metabox_save', 10, 3 );

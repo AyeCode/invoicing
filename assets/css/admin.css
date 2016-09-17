@@ -1,3 +1,15 @@
+.wpi-form-table.form-table th {
+    padding: 12.5px 10px 12.5px 0;
+}
+.wpi-form-table.form-table td {
+    padding: 10px;
+}
+.wpi-form-table p.description {
+    line-height: normal;
+}
+.medium-text {
+    width: 220px;
+}
 /* invoice notes */
 .post-type-wpi_invoice .wp-list-table.widefat th#ID {
     width: 80px;
@@ -34,6 +46,9 @@
     margin: 0;
     padding: 0;
 }
+.wpinv .gdmbx2-wrap select {
+    height: auto;
+}
 #wpinv-details #wpinv-vat-rates-list td {
     padding: 5px 10px;
     font-size: 13px
@@ -52,9 +67,6 @@
 .gdmbx2-wrap .gdmbx-row label {
     font-size: 13px;
 }
-
-
-
 ul.invoice_notes {
     padding: 2px 0 0
 }

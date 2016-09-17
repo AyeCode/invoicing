@@ -13,8 +13,8 @@ if ( !defined( 'WPINC' ) ) {
 
 function wpinv_get_discount_types() {
     $discount_types = array(
-                        'fixed'     => __( 'Fixed', 'invoicing' ),
                         'percent'   => __( 'Percentage', 'invoicing' ),
+                        'flat'     => __( 'Flat Amount', 'invoicing' ),
                     );
     return (array)apply_filters( 'wpinv_discount_types', $discount_types );
 }
@@ -75,12 +75,12 @@ function wpinv_get_discount( $discount_id = 0 ) {
     if( empty( $discount_id ) ) {
         return false;
     }
-
-    $discount = get_post( $discount_id );
-
+    
     if ( get_post_type( $discount_id ) != 'wpi_discount' ) {
         return false;
     }
+
+    $discount = get_post( $discount_id );
 
     return $discount;
 }
@@ -148,100 +148,67 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
     return false;
 }
 
-function wpinv_store_discount( $details, $discount_id = null ) {
+function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
     $meta = array(
-        'code'              => isset( $details['code'] )             ? $details['code']              : '',
-        'name'              => isset( $details['name'] )             ? $details['name']              : '',
-        'status'            => isset( $details['status'] )           ? $details['status']            : 'active',
-        'uses'              => isset( $details['uses'] )             ? $details['uses']              : '',
-        'max_uses'          => isset( $details['max'] )              ? $details['max']               : '',
-        'amount'            => isset( $details['amount'] )           ? $details['amount']            : '',
-        'start'             => isset( $details['start'] )            ? $details['start']             : '',
-        'expiration'        => isset( $details['expiration'] )       ? $details['expiration']        : '',
-        'type'              => isset( $details['type'] )             ? $details['type']              : '',
-        'min_price'         => isset( $details['min_price'] )        ? $details['min_price']         : '',
-        'product_reqs'      => isset( $details['products'] )         ? $details['products']          : array(),
-        'product_condition' => isset( $details['product_condition'] )? $details['product_condition'] : '',
-        'excluded_products' => isset( $details['excluded-products'] )? $details['excluded-products'] : array(),
-        'is_not_global'     => isset( $details['not_global'] )       ? $details['not_global']        : false,
-        'is_single_use'     => isset( $details['use_once'] )         ? $details['use_once']          : false,
+        'code'              => isset( $data['code'] )             ? sanitize_text_field( $data['code'] )              : '',
+        'type'              => isset( $data['type'] )             ? sanitize_text_field( $data['type'] )              : 'percent',
+        'amount'            => isset( $data['amount'] )           ? wpinv_sanitize_amount( $data['amount'] )          : '',
+        'start'             => isset( $data['start'] )            ? sanitize_text_field( $data['start'] )             : '',
+        'expiration'        => isset( $data['expiration'] )       ? sanitize_text_field( $data['expiration'] )        : '',
+        'min_total'         => isset( $data['min_total'] )        ? wpinv_sanitize_amount( $data['min_total'] )       : '',
+        'max_total'         => isset( $data['max_total'] )        ? wpinv_sanitize_amount( $data['max_total'] )       : '',
+        'max_uses'          => isset( $data['max_uses'] )         ? absint( $data['max_uses'] )                       : '',
+        'items'             => isset( $data['items'] )            ? $data['items']                                    : array(),
+        'exclude_items'     => isset( $data['exclude_items'] )    ? $data['exclude_items']                            : array(),
+        'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
     );
-
+    
     $start_timestamp        = strtotime( $meta['start'] );
 
-    if( ! empty( $meta['start'] ) ) {
-        $meta['start']      = date( 'm/d/Y H:i:s', $start_timestamp );
+    if ( !empty( $meta['start'] ) ) {
+        $meta['start']      = date( 'Y-m-d H:i:s', $start_timestamp );
+    }
+    
+    if ( $meta['type'] == 'percent' && (float)$meta['amount'] > 100 ) {
+        $meta['amount'] = 100;
     }
 
-    if( ! empty( $meta['expiration'] ) ) {
-        $meta['expiration'] = date( 'm/d/Y H:i:s', strtotime( date( 'm/d/Y', strtotime( $meta['expiration'] ) ) . ' 23:59:59' ) );
+    if ( !empty( $meta['expiration'] ) ) {
+        $meta['expiration'] = date( 'Y-m-d H:i:s', strtotime( date( 'Y-m-d', strtotime( $meta['expiration'] ) ) . ' 23:59:59' ) );
         $end_timestamp      = strtotime( $meta['expiration'] );
 
-        if( ! empty( $meta['start'] ) && $start_timestamp > $end_timestamp ) {
-            // Set the expiration date to the start date if start is later than expiration
-            $meta['expiration'] = $meta['start'];
+        if ( !empty( $meta['start'] ) && $start_timestamp > $end_timestamp ) {
+            $meta['expiration'] = $meta['start']; // Set the expiration date to the start date if start is later than expiration date.
         }
     }
-
-    if( ! empty( $meta['product_reqs'] ) ) {
-        foreach( $meta['product_reqs'] as $key => $product ) {
-            if( 0 === intval( $product ) ) {
-                unset( $meta['product_reqs'][ $key ] );
+    
+    if ( ! empty( $meta['items'] ) ) {
+        foreach ( $meta['items'] as $key => $item ) {
+            if ( 0 === intval( $item ) ) {
+                unset( $meta['items'][ $key ] );
             }
         }
     }
-
-    if( ! empty( $meta['excluded_products'] ) ) {
-        foreach( $meta['excluded_products'] as $key => $product ) {
-            if( 0 === intval( $product ) ) {
-                unset( $meta['excluded_products'][ $key ] );
+    
+    if ( ! empty( $meta['excluded_items'] ) ) {
+        foreach ( $meta['excluded_items'] as $key => $item ) {
+            if ( 0 === intval( $item ) ) {
+                unset( $meta['excluded_items'][ $key ] );
             }
         }
     }
-
-    if ( !empty( $discount_id ) && wpinv_discount_exists( $discount_id ) ) {
-        // Update an existing discount
-        $meta = apply_filters( 'wpinv_update_discount', $meta, $discount_id );
-
-        do_action( 'wpinv_pre_update_discount', $meta, $discount_id );
-
-        wp_update_post( array(
-            'ID'          => $discount_id,
-            'post_title'  => $meta['name'],
-            'post_status' => $meta['status']
-        ) );
-
-        foreach( $meta as $key => $value ) {
-            update_post_meta( $discount_id, '_wpi_discount_' . $key, $value );
-        }
-
-        do_action( 'wpinv_post_update_discount', $meta, $discount_id );
-
-        // Discount code updated
-        return $discount_id;
-
-    } else {
-        // Add the discount
-        $meta = apply_filters( 'wpinv_insert_discount', $meta );
-
-        do_action( 'wpinv_pre_insert_discount', $meta );
-
-        $discount_id = wp_insert_post( array(
-            'post_type'   => 'wpi_discount',
-            'post_title'  => $meta['name'],
-            'post_status' => 'active'
-        ) );
-
-        foreach( $meta as $key => $value ) {
-            update_post_meta( $discount_id, '_wpi_discount_' . $key, $value );
-        }
-
-        do_action( 'wpinv_post_insert_discount', $meta, $discount_id );
-
-        // Discount code created
-        return $discount_id;
+    
+    $meta = apply_filters( 'wpinv_update_discount', $meta, $post_id, $post );
+    
+    do_action( 'wpinv_pre_update_discount', $meta, $post_id, $post );
+    
+    foreach( $meta as $key => $value ) {
+        update_post_meta( $post_id, '_wpi_discount_' . $key, $value );
     }
-
+    
+    do_action( 'wpinv_post_update_discount', $meta, $post_id, $post );
+    
+    return $post_id;
 }
 
 function wpinv_remove_discount( $discount_id = 0 ) {
@@ -327,10 +294,16 @@ function wpinv_get_discount_uses( $code_id = null ) {
     return (int) apply_filters( 'wpinv_get_discount_uses', $uses, $code_id );
 }
 
-function wpinv_get_discount_min_price( $code_id = null ) {
-    $min_price = get_post_meta( $code_id, '_wpi_discount_min_price', true );
+function wpinv_get_discount_min_total( $code_id = null ) {
+    $min_total = get_post_meta( $code_id, '_wpi_discount_min_total', true );
 
-    return (float) apply_filters( 'wpinv_get_discount_min_price', $min_price, $code_id );
+    return (float) apply_filters( 'wpinv_get_discount_min_total', $min_total, $code_id );
+}
+
+function wpinv_get_discount_max_total( $code_id = null ) {
+    $max_total = get_post_meta( $code_id, '_wpi_discount_max_total', true );
+
+    return (float) apply_filters( 'wpinv_get_discount_max_total', $max_total, $code_id );
 }
 
 function wpinv_get_discount_amount( $code_id = null ) {
@@ -348,7 +321,7 @@ function wpinv_get_discount_type( $code_id = null, $name = false ) {
         return apply_filters( 'wpinv_get_discount_type_name', $name, $code_id );
     }
 
-    return apply_filters( 'wpinv_get_discount_type', $type, $code_id, $title );
+    return apply_filters( 'wpinv_get_discount_type', $type, $code_id );
 }
 
 function wpinv_discount_status( $status ) {
@@ -463,18 +436,37 @@ function wpinv_discount_is_min_met( $code_id = null ) {
     $return   = false;
 
     if ( $discount ) {
-        $min         = wpinv_get_discount_min_price( $code_id );
+        $min         = wpinv_get_discount_min_total( $code_id );
         $cart_amount = wpinv_get_cart_discountable_subtotal( $code_id );
 
         if ( (float) $cart_amount >= (float) $min ) {
             // Minimum has been met
             $return = true;
         } else {
-            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum order of %s not met.', 'wpinv_' ), wpinv_currency_filter( wpinv_format_amount( $min ) ) ) );
+            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice of %s not met.', 'wpinv_' ), wpinv_currency_filter( wpinv_format_amount( $min ) ) ) );
         }
     }
 
     return apply_filters( 'wpinv_is_discount_min_met', $return, $code_id );
+}
+
+function wpinv_discount_is_max_met( $code_id = null ) {
+    $discount = wpinv_get_discount( $code_id );
+    $return   = false;
+
+    if ( $discount ) {
+        $max         = wpinv_get_discount_max_total( $code_id );
+        $cart_amount = wpinv_get_cart_discountable_subtotal( $code_id );
+
+        if ( (float) $cart_amount <= (float) $max ) {
+            // Minimum has been met
+            $return = true;
+        } else {
+            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Maximum invoice of %s not met.', 'wpinv_' ), wpinv_currency_filter( wpinv_format_amount( $max ) ) ) );
+        }
+    }
+
+    return apply_filters( 'wpinv_is_discount_max_met', $return, $code_id );
 }
 
 function wpinv_discount_is_single_use( $code_id = 0 ) {
@@ -648,6 +640,7 @@ function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
                 !wpinv_is_discount_maxed_out( $discount_id ) &&
                 !wpinv_is_discount_used( $code, $user, $discount_id ) &&
                 wpinv_discount_is_min_met( $discount_id ) &&
+                wpinv_discount_is_max_met( $discount_id ) &&
                 wpinv_discount_product_reqs_met( $discount_id )
             ) {
                 $return = true;
