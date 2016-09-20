@@ -634,19 +634,19 @@ var WPInv_VAT = {
 
 	  // Checks the check digits of a German VAT number.
 	  
-	  var product = 10;
+	  var item = 10;
 	  var sum = 0;     
 	  var checkdigit = 0;                      
 	  for (var i = 0; i < 8; i++) {
 		
 		// Extract the next digit and implement peculiar algorithm!.
-		sum = (Number(vatnumber.charAt(i)) + product) % 10;
+		sum = (Number(vatnumber.charAt(i)) + item) % 10;
 		if (sum == 0) {sum = 10};
-		product = (2 * sum) % 11;
+		item = (2 * sum) % 11;
 	  }
 	  
 	  // Establish check digit.  
-	  if (11 - product == 10) {checkdigit = 0} else {checkdigit = 11 - product};
+	  if (11 - item == 10) {checkdigit = 0} else {checkdigit = 11 - item};
 	  
 	  // Compare it with the last two characters of the VAT number. If the same, then it is a valid 
 	  // check digit.
@@ -854,20 +854,20 @@ var WPInv_VAT = {
 
 	  // Checks the check digits of a Croatian VAT number using ISO 7064, MOD 11-10 for check digit.
 	  
-	  var product = 10;
+	  var item = 10;
 	  var sum = 0;     
 	  var checkdigit = 0; 
 	  
 	  for (var i = 0; i < 10; i++) {
 		
 		// Extract the next digit and implement the algorithm
-		sum = (Number(vatnumber.charAt(i)) + product) % 10;
+		sum = (Number(vatnumber.charAt(i)) + item) % 10;
 		if (sum == 0) {sum = 10};
-		product = (2 * sum) % 11;
+		item = (2 * sum) % 11;
 	  }
 	  
 	  // Now check that we have the right check digit
-	  if ((product + vatnumber.slice (10,11)*1) % 10== 1)
+	  if ((item + vatnumber.slice (10,11)*1) % 10== 1)
 		return true
 	  else 
 		return false;
@@ -1213,20 +1213,20 @@ var WPInv_VAT = {
 
 	  // Checks the check digits of a Serbian VAT number using ISO 7064, MOD 11-10 for check digit.
 	  
-	  var product = 10;
+	  var item = 10;
 	  var sum = 0;     
 	  var checkdigit = 0; 
 	  
 	  for (var i = 0; i < 8; i++) {
 		
 		// Extract the next digit and implement the algorithm
-		sum = (Number(vatnumber.charAt(i)) + product) % 10;
+		sum = (Number(vatnumber.charAt(i)) + item) % 10;
 		if (sum == 0) {sum = 10};
-		product = (2 * sum) % 11;
+		item = (2 * sum) % 11;
 	  }
 	  
 	  // Now check that we have the right check digit
-	  if ((product + vatnumber.slice (8,9)*1) % 10== 1)
+	  if ((item + vatnumber.slice (8,9)*1) % 10== 1)
 		return true
 	  else 
 		return false;

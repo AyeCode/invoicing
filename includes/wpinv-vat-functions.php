@@ -484,7 +484,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         $rate = 0;
 
         // Otherwise work out what rate to use
-        // Case 1: It's a phyical product sold to a consumer
+        // Case 1: It's a phyical item sold to a consumer
         if ( empty( $vat_number ) && !$is_digital ) {
             // If the consumer is in the same country as the shop, charge VAT at the rate in the shop's country
             // Otherwise zero
@@ -503,7 +503,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         }
         // Case 2: There is no VAT number or its a company sale in the base country
         else if ( empty( $vat_number ) || ( wpinv_force_vat_for_same_country() && $country == $base_country ) ) {
-            // Get here if this is is a digital product and there is no VAT number or there is a
+            // Get here if this is is a digital item and there is no VAT number or there is a
             // VAT number but VAT has to be charged because the customer is in the same country
 
             wpinv_error_log( $country, 'empty VAT', __FILE__, __LINE__ );

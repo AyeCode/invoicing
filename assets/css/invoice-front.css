@@ -206,6 +206,31 @@ div.list-group-item:focus {
   color: #555555;
   background-color: #f5f5f5;
 }
+#wpinv-discount-field.panel {
+    margin-top: -19px;
+    background-color: #fcfcfc
+}
+#wpinv-discount-field .wpinv-label {
+    margin-right: 1em;
+}
+#wpinv-discount-field .row {
+    margin-bottom: 0;
+}
+#wpinv-discount-field #wpi-apply-code.btn-sm {
+    vertical-align: text-top;
+}
+.wpinv-discount-msg .alert {
+    margin-bottom: 0;
+    margin-top: 15px;
+    padding: 7px 8px;
+    display: none;
+}
+.wpinv-discount-msg .alert .fa {
+    margin-right: 7px;
+}
+.wpinv-discount-msg .alert-success .fa {
+    color: orange;
+}
 /* cart */
 .small {
     font-size: 85%;
@@ -3426,6 +3451,9 @@ div td .meta p {
 #wpinv_checkout_wrap #wpinv_checkout_cart small.meta p {
     font-size: 12px !important
 }
+#wpinv_checkout_wrap .form-control {
+    float: none;
+}
 .wpinv-receipt .wpinv-receipt-actions {
     margin-bottom: 2.5em;
     margin-top: -4.5em;
@@ -3434,4 +3462,10 @@ div td .meta p {
 .wpinv-receipt-address .table-sm tr th,
 .wpinv-bank-details .table-sm tr th {
     width: 30%;
+}
+
+#wpi-billing,
+#wpi-vat-details,
+.wpi-ip-info {
+    display: none!important;
 }

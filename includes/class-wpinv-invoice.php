@@ -2227,7 +2227,7 @@ final class WPInv_Invoice {
     }
 
     public function get_cancel_url() {
-        $url = wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'cancel_subscription', 'sub_id' => $this->ID ) ), 'wpinv-recurring-cancel' );
+        $url = wp_nonce_url( add_query_arg( array( 'wpi_action' => 'cancel_subscription', 'sub_id' => $this->ID ) ), 'wpinv-recurring-cancel' );
 
         return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
     }

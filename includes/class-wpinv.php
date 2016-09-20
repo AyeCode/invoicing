@@ -170,8 +170,14 @@ class WPInv_Plugin {
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
         wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery', 'wpinv-vat-script' ),  WPINV_VERSION );
         
-        $localize                               = array();
-        $localize['ajax_url']                   = admin_url( 'admin-ajax.php' );
+        $localize                         = array();
+        $localize['ajax_url']             = admin_url( 'admin-ajax.php' );
+        $localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
+        $localize['currency_symbol']      = wpinv_currency_symbol();
+        $localize['currency_pos']         = wpinv_currency_position();
+        $localize['thousand_sep']         = wpinv_thousands_seperator();
+        $localize['decimal_sep']          = wpinv_decimal_seperator();
+        $localize['decimals']             = wpinv_decimals();
         
         wp_enqueue_script( 'jquery-blockui' );
         wp_enqueue_script( 'wpinv-front-script' );

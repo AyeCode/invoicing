@@ -481,7 +481,7 @@ function wpinv_item_dropdown( $args = array() ) {
         }
     }
 
-    // This ensures that any selected products are included in the drop down
+    // This ensures that any selected items are included in the drop down
     if( is_array( $args['selected'] ) ) {
         foreach( $args['selected'] as $item ) {
             if( ! in_array( $item, $options ) ) {
@@ -1220,7 +1220,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
                         'id'            => 'wpinv_company',
                         'name'          => 'wpinv_company',
                         'value'         => $vat_fields['company'],
-                        'class'         => 'wpi-input',
+                        'class'         => 'wpi-input form-control',
                         'placeholder'   => __( 'Company name', 'invoicing' ),
                     ) );
                 ?>
@@ -1230,7 +1230,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
                 <label for="wpinv_vat_number" class="wpi-label"><?php _e( 'Vat Number', 'invoicing' );?></label>
                 <span id="wpinv_vat_number-wrap">
                     <label for="wpinv_vat_number" class="wpinv-label"></label>
-                    <input type="text" class="wpi-input" placeholder="<?php echo esc_attr__( 'Vat number', 'invoicing' );?>" value="<?php esc_attr_e( $vat_fields['vat_number'] );?>" id="wpinv_vat_number" name="wpinv_vat_number">
+                    <input type="text" class="wpi-input form-control" placeholder="<?php echo esc_attr__( 'Vat number', 'invoicing' );?>" value="<?php esc_attr_e( $vat_fields['vat_number'] );?>" id="wpinv_vat_number" name="wpinv_vat_number">
                     <span class="wpinv-vat-stat <?php echo $vat_vailidated_class;?>"><i class="fa"></i>&nbsp;<font><?php echo $vat_vailidated_text;?></font></span>
                 </span>
             </p>
@@ -1415,7 +1415,7 @@ function wpinv_save_cart_button() {
     if ( wpinv_is_cart_saving_disabled() )
         return;
 ?>
-    <a class="wpinv-cart-saving-button wpinv-submit button" id="wpinv-save-cart-button" href="<?php echo esc_url( add_query_arg( 'wpinv_action', 'save_cart' ) ); ?>"><?php _e( 'Save Cart', 'invoicing' ); ?></a>
+    <a class="wpinv-cart-saving-button wpinv-submit button" id="wpinv-save-cart-button" href="<?php echo esc_url( add_query_arg( 'wpi_action', 'save_cart' ) ); ?>"><?php _e( 'Save Cart', 'invoicing' ); ?></a>
 <?php
 }
 
@@ -1472,7 +1472,7 @@ function wpinv_display_cart_messages() {
 add_action( 'wpinv_before_checkout_cart', 'wpinv_display_cart_messages' );
 
 function wpinv_discount_field() {
-    if( isset( $_GET['wpi-gateway'] ) && wpinv_is_ajax_disabled() ) {
+    if ( isset( $_GET['wpi-gateway'] ) && wpinv_is_ajax_disabled() ) {
         return; // Only show before a payment method has been selected if ajax is disabled
     }
 
@@ -1482,25 +1482,30 @@ function wpinv_discount_field() {
 
     if ( wpinv_has_active_discounts() && wpinv_get_cart_total() ) {
     ?>
-    <div id="wpinv_discount_code">
-        <p id="wpinv_show_discount" style="display:none;">
-            <?php _e( 'Have a discount code?', 'invoicing' ); ?> <a href="#" class="wpinv_discount_link"><?php echo _x( 'Click to enter it', 'Entering a discount code', 'invoicing' ); ?></a>
-        </p>
-        <p id="wpinv-discount-code-wrap" class="wpinv-cart-adjustment">
-            <label class="wpinv-label" for="wpinv-discount">
-                <?php _e( 'Discount', 'invoicing' ); ?>
-                <i id="wpinv-discount-loader" class="fa fa-refresh fa-spin" style="display:none;"/>
-            </label>
-            <span class="wpinv-description"><?php _e( 'Enter a coupon code if you have one.', 'invoicing' ); ?></span>
-            <input class="wpinv-input" type="text" id="wpinv-discount" name="wpinv-discount" placeholder="<?php _e( 'Enter discount', 'invoicing' ); ?>"/>
-            <input type="submit" class="wpinv-apply-discount wpinv-submit button" value="<?php echo _x( 'Apply', 'Apply discount at checkout', 'invoicing' ); ?>"/>
-            <span id="wpinv-discount-error-wrap" class="wpinv_error wpinv-alert wpinv-alert-error" style="display:none;"></span>
-        </p>
+    <div id="wpinv-discount-field" class="panel panel-default">
+        <div class="panel-body">
+            <p>
+                <label class="wpinv-label" for="wpinv_discount_code"><strong><?php _e( 'Discount', 'invoicing' ); ?></strong></label>
+                <span class="wpinv-description"><?php _e( 'Enter a discount code if you have one.', 'invoicing' ); ?></span>
+            </p>
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    <input class="wpinv-input form-control" type="text" id="wpinv_discount_code" name="wpinv_discount_code" placeholder="<?php _e( 'Enter discount code', 'invoicing' ); ?>"/>
+                </div>
+                <div class="col-sm-3">
+                    <button id="wpi-apply-discount" type="button" class="btn btn-success btn-sm"><?php _e( 'Apply Discount', 'invoicing' ); ?></button>
+                </div>
+                <div class="col-sm-12 wpinv-discount-msg">
+                    <div class="alert alert-success"><i class="fa fa-check-circle"></i><span class="wpi-msg"></span></div>
+                    <div class="alert alert-error"><i class="fa fa-warning"></i><span class="wpi-msg"></span></div>
+                </div>
+            </div>
+        </div>
     </div>
 <?php
     }
 }
-add_action( 'wpinv_checkout_form_top', 'wpinv_discount_field', -1 );
+add_action( 'wpinv_after_checkout_cart', 'wpinv_discount_field', -10 );
 
 function wpinv_agree_to_terms_js() {
     if ( wpinv_get_option( 'show_agree_to_terms', false ) ) {
@@ -1594,7 +1599,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_first_name',
                                 'name'          => 'wpinv_first_name',
                                 'value'         => $billing_details['first_name'],
-                                'class'         => 'wpi-input required',
+                                'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'First name', 'invoicing' ),
                                 'required'      => true,
                             ) );
@@ -1607,7 +1612,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_last_name',
                                 'name'          => 'wpinv_last_name',
                                 'value'         => $billing_details['last_name'],
-                                'class'         => 'wpi-input',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Last name', 'invoicing' ),
                             ) );
                         ?>
@@ -1619,7 +1624,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_address',
                                 'name'          => 'wpinv_address',
                                 'value'         => $billing_details['address'],
-                                'class'         => 'wpi-input required',
+                                'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'Address', 'invoicing' ),
                                 'required'      => true,
                             ) );
@@ -1632,7 +1637,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_city',
                                 'name'          => 'wpinv_city',
                                 'value'         => $billing_details['city'],
-                                'class'         => 'wpi-input required',
+                                'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'City', 'invoicing' ),
                                 'required'      => true,
                             ) );
@@ -1647,7 +1652,7 @@ function wpinv_checkout_billing_info() {
                             'selected'         => $selected_country,
                             'show_option_all'  => false,
                             'show_option_none' => false,
-                            'class'            => 'wpi-input required',
+                            'class'            => 'wpi-input form-control required',
                             'placeholder'      => __( 'Choose a country', 'invoicing' ),
                             'required'          => true,
                         ) ); ?>
@@ -1664,7 +1669,7 @@ function wpinv_checkout_billing_info() {
                                 'selected'         => $billing_details['state'],
                                 'show_option_all'  => false,
                                 'show_option_none' => false,
-                                'class'            => 'wpi-input required',
+                                'class'            => 'wpi-input form-control required',
                                 'placeholder'      => __( 'Choose a state', 'invoicing' ),
                                 'required'         => true,
                             ) );
@@ -1673,7 +1678,7 @@ function wpinv_checkout_billing_info() {
                                 'name'          => 'wpinv_state',
                                 'value'         => $billing_details['state'],
                                 'id'            => 'wpinv_state',
-                                'class'         => 'wpi-input required',
+                                'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'State / Province', 'invoicing' ),
                                 'required'      => true,
                             ) );
@@ -1687,7 +1692,7 @@ function wpinv_checkout_billing_info() {
                                 'name'          => 'wpinv_zip',
                                 'value'         => $billing_details['zip'],
                                 'id'            => 'wpinv_zip',
-                                'class'         => 'wpi-input',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'ZIP / Postcode', 'invoicing' ),
                             ) );
                         ?>
@@ -1699,7 +1704,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_phone',
                                 'name'          => 'wpinv_phone',
                                 'value'         => $billing_details['phone'],
-                                'class'         => 'wpi-input',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Phone', 'invoicing' ),
                             ) );
                         ?>
