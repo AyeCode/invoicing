@@ -71,6 +71,7 @@ class WPInv_Ajax {
             'check_email' => false,
             'run_tool' => false,
             'apply_discount' => false,
+            'remove_discount' => false,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -280,8 +281,6 @@ class WPInv_Ajax {
         $data['post_status']    = 'publish';
         $data['meta']           = $meta;
         
-        //wpinv_error_log( $data, 'data', __FILE__, __LINE__ );
-        
         $item = new WPInv_Item();
         $item->create( $data );
         
@@ -428,18 +427,10 @@ class WPInv_Ajax {
             $user = is_user_logged_in() ? get_current_user_id() : '';
 
             if ( wpinv_is_discount_valid( $discount_code, $user ) ) {
-                $response['success']        = true;
+                $response['success']    = true;
                 
-                $discount  = wpinv_get_discount_by_code( $discount_code );
-                $amount    = wpinv_format_discount_rate( wpinv_get_discount_type( $discount->ID ), wpinv_get_discount_amount( $discount->ID ) );
-                $discounts = wpinv_set_cart_discount( $discount_code );
-                wpinv_error_log( $discounts, 'discounts', __FILE__, __LINE__ );
-                $total     = wpinv_get_cart_total( null, $discounts );
-
-                $response['data']['amount']         = $amount;
-                $response['data']['total_plain']    = $total;
-                $response['data']['total']          = html_entity_decode( wpinv_price( wpinv_format_amount( $total ) ), ENT_COMPAT, 'UTF-8' );
-                $response['data']['html']           = wpinv_get_cart_discounts_html( '', $discounts );
+                wpinv_set_cart_discount( $discount_code );
+                wpinv_recalculate_tax();
             } else {
                 $errors = wpinv_get_errors();
                 $response['msg']  = $errors['wpinv-discount-error'];
@@ -448,6 +439,23 @@ class WPInv_Ajax {
 
             // Allow for custom discount code handling
             $response = apply_filters( 'wpinv_ajax_discount_response', $response );
+        }
+        
+        wp_send_json( $response );
+    }
+    
+    public static function remove_discount() {
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        
+        $response = array();
+        
+        if ( isset( $_POST['code'] ) ) {
+            $discount_code = sanitize_text_field( $_POST['code'] );
+            
+            $response['success']    = true;
+            
+            wpinv_unset_cart_discount( $discount_code );
+            wpinv_recalculate_tax();
         }
         
         wp_send_json( $response );

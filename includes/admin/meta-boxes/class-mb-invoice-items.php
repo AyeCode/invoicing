@@ -144,14 +144,14 @@ class WPInv_Meta_Box_Items {
                                     <td class="total"><?php echo $subtotal;?></td>
                                     <td class="action"></td>
                                 </tr>
-                                <tr class="tax">
-                                    <td class="name"><?php _e( 'Tax:', 'invoicing' );?></td>
-                                    <td class="total"><?php echo $tax;?></td>
-                                    <td class="action"></td>
-                                </tr>
                                 <tr class="discount">
                                     <td class="name"><?php echo ( $discount_code ? wp_sprintf( __( 'Discount <small>(%s)</small>:', 'invoicing' ), $discount_code ) : __( 'Discount:', 'invoicing' ) );?></td>
                                     <td class="total"><?php echo $discount;?></td>
+                                    <td class="action"></td>
+                                </tr>
+                                <tr class="tax">
+                                    <td class="name"><?php _e( 'Tax:', 'invoicing' );?></td>
+                                    <td class="total"><?php echo $tax;?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <tr class="total">

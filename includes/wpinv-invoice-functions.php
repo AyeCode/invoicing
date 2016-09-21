@@ -1201,7 +1201,7 @@ function wpinv_get_invoices( $args ) {
     );
     
     if ( !empty( $args['user'] ) ) {
-        $wp_query_args['post_author'] = absint( $args['user'] );
+        $wp_query_args['author'] = absint( $args['user'] );
     }
 
     if ( ! is_null( $args['parent'] ) ) {
