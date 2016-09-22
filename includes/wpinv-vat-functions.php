@@ -1948,7 +1948,7 @@ function wpinv_recalculated_tax() {
 }
 add_action( 'wp_ajax_wpinv_recalculate_tax', 'wpinv_recalculated_tax', 1 );
 
-function wpinv_recalculate_tax() {
+function wpinv_recalculate_tax( $return = false ) {
     $invoice_id = (int)wpinv_get_invoice_cart_id();
     if ( empty( $invoice_id ) ) {
         return false;
@@ -1970,20 +1970,28 @@ function wpinv_recalculate_tax() {
         $invoice->state = sanitize_text_field($_POST['state']);
         $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
     }
-    $invoice = $invoice->update_items(true);
+
+    $invoice->cart_details  = wpinv_get_cart_content_details();
+    
+    $subtotal               = wpinv_get_cart_subtotal( $invoice->cart_details );
+    $tax                    = wpinv_get_cart_tax( $invoice->cart_details );
+    $total                  = wpinv_get_cart_total( $invoice->cart_details );
+
+    $invoice->tax           = $tax;
+    $invoice->subtotal      = $subtotal;
+    $invoice->total         = $total;
+
     $invoice->save();
     
-    ob_start();
-    wpinv_checkout_cart( $invoice->cart_details );
-    $cart     = ob_get_clean();
-
     $response = array(
-        'html'         => $cart,
-        'tax_raw'      => $invoice->get_tax(),
-        'tax'          => html_entity_decode( $invoice->get_tax(true), ENT_COMPAT, 'UTF-8' ),
-        'total'        => html_entity_decode( $invoice->get_total(true), ENT_COMPAT, 'UTF-8' ),
-        'total_raw'    => $invoice->get_total(),
+        'total'        => html_entity_decode( wpinv_price( wpinv_format_amount( $total ) ), ENT_COMPAT, 'UTF-8' ),
+        'total_raw'    => $total,
+        'html'         => wpinv_checkout_cart( $invoice->cart_details, false ),
     );
+    
+    if ( $return ) {
+        return $response;
+    }
 
     wp_send_json( $response );
 }

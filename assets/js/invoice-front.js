@@ -66,6 +66,7 @@ jQuery(function($) {
                 $('#wpinv_state', elB).replaceWith( response );
                 
                 var changeState = function() {
+                    console.log('69 : wpinv_recalculate_taxes(' + $(this).val() + ')');
                     wpinv_recalculate_taxes($(this).val());
                 };
                 $( "#wpinv_state" ).unbind( "change", changeState );
@@ -75,6 +76,7 @@ jQuery(function($) {
             $('#wpinv_state', elB).addClass('form-control wpi-input required');
         }).done(function (data) {
             jQuery('#wpinv_state_box').unblock();
+            console.log('78 : wpinv_recalculate_taxes()');
             wpinv_recalculate_taxes();
         });
 
@@ -83,6 +85,7 @@ jQuery(function($) {
     
     $('select#wpinv_state', elB).change(function(e){
         $('.wpinv_errors').remove();
+        console.log('86 : wpinv_recalculate_taxes()');
         wpinv_recalculate_taxes($(this).val());
     });
     
@@ -164,7 +167,6 @@ jQuery(function($) {
             
             var $this = $(this),
                 $box = $this.closest('.panel-body'),
-                $address = $('#wpi-billing', $this.checkout_form),
                 discount_code = $('#wpinv_discount_code', $box).val(),
                 $msg = $('.wpinv-discount-msg', $box),
                 $msgS = $('.alert-success', $msg),
@@ -178,8 +180,6 @@ jQuery(function($) {
             var data = {
                 action: 'wpinv_apply_discount',
                 code: discount_code,
-                country: $('#wpinv_country', $address).val(),
-                state: $('#wpinv_state', $address).val(),
                 _nonce: WPInv.nonce
             };
 
@@ -202,25 +202,17 @@ jQuery(function($) {
                     
                     var success = false;
                     if (res && typeof res == 'object') {
-                        if (res.html) {
+                        if (res.success) {
                             success = true;
+                            jQuery('#wpinv_checkout_cart_form', $this.checkout_form).replaceWith(res.data.html);
+                            jQuery('.wpinv-chdeckout-total').text(res.data.total);
+                            
                             $('#wpinv_discount_code', $box).val('');
                             
-                            jQuery('#wpinv_checkout_cart_form', $this.checkout_form).replaceWith(res.html);
-                            jQuery('.wpinv-chdeckout-total', $this.checkout_form).text(res.total);
-                            
-                            $('.wpinv_cart_total').each(function() {
-                                $(this).find('.wpinv_cart_amount').attr('data-total', res.total_row).text(res.total);
-                            });
-                            
-                            var tax_data = new Object();
-                            tax_data.postdata = data;
-                            tax_data.response = res;
-                            tax_data.recalculated = true;
-                            jQuery('body').trigger('wpinv_taxes_recalculated', [tax_data]);
-                            jQuery('body').trigger('wpinv_vat_recalculated', [tax_data]);
-                            
-                            if ( '0.00' == res.total_row ) {
+                            //console.log('217 : wpinv_recalculate_taxes()');
+                            //wpinv_recalculate_taxes();
+
+                            if ( '0.00' == res.data.total_row ) {
                                 $('#wpinv_payment_mode_select', $this.checkout_form).hide();
                                 $('input[name="wpi-gateway"]', $this.checkout_form).val( 'manual' );
 
@@ -257,7 +249,6 @@ jQuery(function($) {
             
             var $this = $(this),
                 $block = $this.closest('#wpinv_checkout_cart_wrap'),
-                $address = $('#wpi-billing', $this.checkout_form),
                 discount_code = $this.data('code');
             
             if (discount_code == '' ) {
@@ -267,8 +258,6 @@ jQuery(function($) {
             var data = {
                 action: 'wpinv_remove_discount',
                 code: discount_code,
-                country: $('#wpinv_country', $address).val(),
-                state: $('#wpinv_state', $address).val(),
                 _nonce: WPInv.nonce
             };
             
@@ -284,38 +273,23 @@ jQuery(function($) {
                 },
                 success: function (res) {                  
                     if (res && typeof res == 'object') {
-                        if (res.html) {
+                        if (res.success) {
+                            jQuery('#wpinv_checkout_cart_form', $this.checkout_form).replaceWith(res.data.html);
+                            jQuery('.wpinv-chdeckout-total').text(res.data.total);
+                            
                             var zero = '0' + WPInv.decimal_separator + '00';
+
                             $('.wpinv_cart_amount').each(function() {
                                 if ( WPInv.currency_sign + zero == $(this).data('total') || zero + WPInv.currency_sign == $(this).data('total') ) {
-                                    // We're removing a 100% discount code so we need to force the payment gateway to reload
+                                    // We are removing a 100% discount code so we need to force the payment gateway to reload
                                     window.location.reload();
                                 }
-                                $(this).text(res.total);
+                                $(this).text(res.data.total);
                             });
-                            
-                            jQuery('#wpinv_checkout_cart_form', $this.checkout_form).replaceWith(res.html);
-                            jQuery('.wpinv-chdeckout-total', $this.checkout_form).text(res.total);
-                            
-                            $('.wpinv_cart_total').each(function() {
-                                $(this).find('.wpinv_cart_amount').attr('data-total', res.total_row).text(res.total);
-                            });
-                            
-                            var tax_data = new Object();
-                            tax_data.postdata = data;
-                            tax_data.response = res;
-                            tax_data.recalculated = true;
-                            jQuery('body').trigger('wpinv_taxes_recalculated', [tax_data]);
-                            jQuery('body').trigger('wpinv_vat_recalculated', [tax_data]);
-                            
-                            if ( '0.00' == res.total_row ) {
-                                $('#wpinv_payment_mode_select', $this.checkout_form).hide();
-                                $('input[name="wpi-gateway"]', $this.checkout_form).val( 'manual' );
 
-                            } else {
-                                $('#wpinv_payment_mode_select', $this.checkout_form).show();
-                            }
-                            
+                            console.log('291 : wpinv_recalculate_taxes()');
+                            //wpinv_recalculate_taxes();
+
                             $(document.body).trigger('wpinv_discount_removed', [res]);
                         }
                     }
@@ -331,6 +305,7 @@ jQuery(function($) {
             return false;
         },
         recalculate_taxes: function() {
+            console.log('308 : wpinv_recalculate_taxes()');
             wpinv_recalculate_taxes();
         }
     }

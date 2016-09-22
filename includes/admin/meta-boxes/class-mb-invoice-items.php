@@ -6,15 +6,17 @@ if ( !defined( 'WPINC' ) ) {
 
 class WPInv_Meta_Box_Items {
     public static function output( $post ) {        
-        $post_id        = !empty( $post->ID ) ? $post->ID : 0;
-        $invoice        = new WPInv_Invoice( $post_id );
+        global $ajax_cart_details;
         
-        $subtotal       = $invoice->get_subtotal( true );
-        $tax            = $invoice->get_tax( true );
-        $discount       = $invoice->get_discount( true );
-        $discount_code  = $invoice->discount > 0 ? $invoice->discount_code : '';
-        $total          = $invoice->get_total( true );
-        
+        $post_id            = !empty( $post->ID ) ? $post->ID : 0;
+        $invoice            = new WPInv_Invoice( $post_id );wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
+        $ajax_cart_details  = $invoice->get_cart_details();
+        $subtotal           = $invoice->get_subtotal( true );
+        $discount_raw       = $invoice->get_discount();
+        $discount           = wpinv_price( $discount_raw, $invoice->get_currency() );
+        $discounts          = $discount_raw > 0 ? $invoice->get_discounts() : '';
+        $tax                = $invoice->get_tax( true );
+        $total              = $invoice->get_total( true );
         $item_quantities    = wpinv_item_quantities_enabled();
         $use_taxes          = wpinv_use_taxes();
         $item_types         = wpinv_get_item_types();
@@ -145,8 +147,8 @@ class WPInv_Meta_Box_Items {
                                     <td class="action"></td>
                                 </tr>
                                 <tr class="discount">
-                                    <td class="name"><?php echo ( $discount_code ? wp_sprintf( __( 'Discount <small>(%s)</small>:', 'invoicing' ), $discount_code ) : __( 'Discount:', 'invoicing' ) );?></td>
-                                    <td class="total"><?php echo $discount;?></td>
+                                    <td class="name"><?php wpinv_get_discount_label( wpinv_discount_code( $invoice->ID ) ); ?>:</td>
+                                    <td class="total"><?php echo wpinv_discount( $invoice->ID, true, true ); ?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <tr class="tax">

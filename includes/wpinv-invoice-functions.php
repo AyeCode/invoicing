@@ -149,10 +149,10 @@ function wpinv_tax( $invoice_id = 0, $currency = false ) {
     return $invoice->get_tax( $currency );
 }
 
-function wpinv_discount( $invoice_id = 0, $currency = false ) {
+function wpinv_discount( $invoice_id = 0, $currency = false, $dash = false ) {
     $invoice = wpinv_get_invoice( $invoice_id );
 
-    return $invoice->get_discount( $currency );
+    return $invoice->get_discount( $currency, $dash );
 }
 
 function wpinv_discount_code( $invoice_id = 0 ) {
@@ -472,7 +472,7 @@ function wpinv_get_cart_contents() {
 function wpinv_get_cart_content_details() {
     //wpinv_error_log( '', 'wpinv_get_cart_content_details()', __FILE__, __LINE__ );
     global $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
-    
+    //wpinv_error_log( debug_backtrace(), 'debug_backtrace', __FILE__, __LINE__ );
     $cart_items = wpinv_get_cart_contents();
     
     if ( empty( $cart_items ) ) {
@@ -501,6 +501,7 @@ function wpinv_get_cart_content_details() {
         $wpi_item_id            = $item_id;
         
         $item_price         = wpinv_get_item_price( $item_id );
+        wpinv_error_log( 'discount', $item_id, __FILE__, __LINE__ );
         $discount           = wpinv_get_cart_item_discount_amount( $item );
         $discount           = apply_filters( 'wpinv_get_cart_content_details_item_discount_amount', $discount, $item );
         $quantity           = wpinv_get_cart_item_quantity( $item );
@@ -545,7 +546,7 @@ function wpinv_get_cart_content_details() {
             $wpinv_flat_discount_total = 0.00;
         }
     }
-
+    //wpinv_error_log( $details, 'wpinv_get_cart_content_details()', __FILE__, __LINE__ );
     return $details;
 }
 
@@ -1075,23 +1076,27 @@ function wpinv_process_checkout() {
         'zip'            => $user['zip'],
     );
     
+    $cart_items = wpinv_get_cart_contents();
+    $discounts  = wpinv_get_cart_discounts();
+    
     // Setup invoice information
     $invoice_data = array(
-        'invoice_id'   => !empty( $invoice ) ? $invoice->ID : 0,
-        'items'        => wpinv_get_cart_contents(),
-        'fees'         => wpinv_get_cart_fees(),        // Any arbitrary fees that have been added to the cart
-        'subtotal'     => wpinv_get_cart_subtotal(),    // Amount before taxes and discounts
-        'discount'     => wpinv_get_cart_discounted_amount(), // Discounted amount
-        'tax'          => wpinv_get_cart_tax(),               // Taxed amount
-        'price'        => wpinv_get_cart_total(),    // Amount after taxes
-        'invoice_key'  => !empty( $invoice->get_key() ) ? $invoice->get_key() : $invoice->generate_key(),
-        'user_email'   => $user['email'],
-        'date'         => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
-        'user_info'    => stripslashes_deep( $user_info ),
-        'post_data'    => $_POST,
-        'cart_details' => wpinv_get_cart_content_details(),
-        'gateway'      => $valid_data['gateway'],
-        'card_info'    => $valid_data['cc_info']
+        'invoice_id'        => !empty( $invoice ) ? $invoice->ID : 0,
+        'items'             => $cart_items,
+        'cart_discounts'    => $discounts,
+        'fees'              => wpinv_get_cart_fees(),        // Any arbitrary fees that have been added to the cart
+        'subtotal'          => wpinv_get_cart_subtotal( $cart_items ),    // Amount before taxes and discounts
+        'discount'          => wpinv_get_cart_items_discount_amount( $cart_items, $discounts ), // Discounted amount
+        'tax'               => wpinv_get_cart_tax( $cart_items ),               // Taxed amount
+        'price'             => wpinv_get_cart_total( $cart_items, $discounts ),    // Amount after taxes
+        'invoice_key'       => !empty( $invoice->get_key() ) ? $invoice->get_key() : $invoice->generate_key(),
+        'user_email'        => $user['email'],
+        'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+        'user_info'         => stripslashes_deep( $user_info ),
+        'post_data'         => $_POST,
+        'cart_details'      => $cart_items,
+        'gateway'           => $valid_data['gateway'],
+        'card_info'         => $valid_data['cc_info']
     );
     
     $vat_info   = wpinv_user_vat_info();
@@ -1136,7 +1141,7 @@ function wpinv_process_checkout() {
     
     // Set gateway
     $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
-    
+
     // Send info to the gateway for payment processing
     wpinv_send_to_gateway( $invoice_data['gateway'], $invoice_data );
     die();
@@ -1362,8 +1367,9 @@ function wpinv_pay_for_invoice() {
         
         if ( $invoice_id && $user_can_view && ( $invoice = wpinv_get_invoice( $invoice_id ) ) ) {
             if ( $invoice->needs_payment() ) {
-                $data               = array();
-                $data['invoice_id'] = $invoice_id;
+                $data                   = array();
+                $data['invoice_id']     = $invoice_id;
+                $data['cart_discounts'] = $invoice->get_discounts( true );
                 
                 wpinv_set_checkout_session( $data );
             } else {

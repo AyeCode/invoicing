@@ -905,12 +905,14 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
 }
 
 function wpinv_display_line_items( $invoice_id = 0 ) {
+    global $ajax_cart_details;
     $invoice            = wpinv_get_invoice( $invoice_id );
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
     $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
     
-    $cart_details = $invoice->get_cart_details();
+    $cart_details       = $invoice->get_cart_details();
+    $ajax_cart_details  = $cart_details;
     ob_start();
     ?>
     <table class="table table-sm table-bordered table-striped">
@@ -1006,6 +1008,13 @@ function wpinv_display_invoice_totals( $invoice_id = 0 ) {
                 <td class="total"><strong><?php _e( wpinv_subtotal( $invoice_id, true ) ) ?></strong></td>
             </tr>
             <?php do_action( 'wpinv_after_display_totals' ); ?>
+            <?php if ( wpinv_discount( $invoice_id, false ) > 0 ) { ?>
+                <tr class="row-discount">
+                    <td class="rate"><?php wpinv_get_discount_label( wpinv_discount_code( $invoice_id ) ); ?></td>
+                    <td class="total"><?php echo wpinv_discount( $invoice_id, true, true ); ?></td>
+                </tr>
+            <?php do_action( 'wpinv_after_display_discount' ); ?>
+            <?php } ?>
             <?php if ( $use_taxes ) { ?>
             <tr class="row-tax">
                 <td class="rate"><?php _e( 'Tax', 'invoicing' ); ?></td>
@@ -1020,14 +1029,6 @@ function wpinv_display_invoice_totals( $invoice_id = 0 ) {
                         <td class="total"><?php echo $fee['amount_display']; ?></td>
                     </tr>
                 <?php } ?>
-            <?php } ?>
-            <?php if ( wpinv_discount( $invoice_id, false ) > 0 ) { ?>
-            <tr class="row-discount">
-                <td class="rate">
-            <?php if ( $discount_code = wpinv_discount_code( $invoice_id ) ) { echo wp_sprintf( __( 'Discount <small>(%s)</small>', 'invoicing' ), $discount_code ); } else { _e( 'Discount', 'invoicing' ); } ?></td>
-                <td class="total"><?php _e( wpinv_discount( $invoice_id, true ) ); ?></td>
-            </tr>
-            <?php do_action( 'wpinv_after_display_discount' ); ?>
             <?php } ?>
             <tr class="table-active row-total">
                 <td class="rate"><strong><?php _e( 'Total', 'invoicing' ) ?></strong></td>
@@ -1371,7 +1372,7 @@ function wpinv_checkout_form() {
     return ob_get_clean();
 }
 
-function wpinv_checkout_cart( $cart_details = array() ) {
+function wpinv_checkout_cart( $cart_details = array(), $echo = true ) {
     global $ajax_cart_details;
     $ajax_cart_details = $cart_details;
     /*
@@ -1385,7 +1386,7 @@ function wpinv_checkout_cart( $cart_details = array() ) {
         add_action( 'wpinv_cart_footer_buttons', 'wpinv_save_cart_button' );
     }
     */
-
+    ob_start();
     do_action( 'wpinv_before_checkout_cart' );
     echo '<div id="wpinv_checkout_cart_form" method="post">';
         echo '<div id="wpinv_checkout_cart_wrap">';
@@ -1393,6 +1394,13 @@ function wpinv_checkout_cart( $cart_details = array() ) {
         echo '</div>';
     echo '</div>';
     do_action( 'wpinv_after_checkout_cart' );
+    $content = ob_get_clean();
+    
+    if ( $echo ) {
+        echo $content;
+    } else {
+        return $content;
+    }
 }
 add_action( 'wpinv_checkout_cart', 'wpinv_checkout_cart', 10 );
 

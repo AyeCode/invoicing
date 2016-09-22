@@ -90,110 +90,7 @@ jQuery(function($) {
         
         return formatted;
     }
-    /**
-     * calculate the totals on the fly when editing or adding a quote or invoice
-     */
-    function wpinvInvoiceTotals() {
-        // work out the line total
-        var sum = $.map($('.wpinv input.item_amount'), function(item) {
-            var group = $(item).parents('.gdmbx-repeatable-grouping');
-            var index = group.data('iterator');
-            var amount = wpinvRawNumber(item.value);
-            // work out the line totals and taxes/discounts
-            var item_sub_total = amount; // 100 
-            var item_total = item_sub_total; // 110
-            // display 0 instead of NaN
-            
-            if (isNaN(item_total)) {
-                item_total = 0;
-            }
-            
-            // display the calculated amount
-            $(item).parents('.gdmbx-type-text-money').find('.item_total').html(wpinvFormatAmount(item_total));
-            
-            return parseFloat(item_total);
-        }).reduce(function(a, b) {
-            return a + b;
-        }, 0);
-        
-        wpinvRefreshFeesTotal();
-        
-        // display 0 instead of NaN
-        if (isNaN(sum)) {
-            sum = 0;
-        }
-                
-        if (typeof $('#wpinv_discount').val() !== 'undefined') {
-            wpiGlobalDiscount = wpinvRawNumber($('#wpinv_discount').val());
-        }
-        
-        if (typeof $('#wpinv_tax').val() !== 'undefined') {
-            wpiGlobalTax = wpinvRawNumber($('#wpinv_tax').val());
-        }
-        
-        wpinvGlobalFee = 0;
-        $('.wpinv-fees .wpinv-fee-amount input[type="text"]').each(function() { 
-            wpinvGlobalFee += wpinvRawNumber($(this).val());
-        });
-        
-        if ( !sum > 0 ) {
-            wpiGlobalTax = 0;
-            wpiGlobalDiscount = 0;
-            wpinvGlobalFee = 0;
-        }
-        
-        // add global tax if any
-        if (wpiGlobalTax > 0) {
-            var raw_tax = wpiGlobalTax;
-            var raw_total = sum + raw_tax;
-        } else {
-            var raw_tax = 0;
-            var raw_total = sum;
-        }
-        
-        if (wpinvGlobalFee > 0) {
-            raw_total = raw_total + wpinvGlobalFee;
-        }
-        
-        // add global tax if any
-        if (wpiGlobalDiscount > 0) {
-            var raw_discount = wpiGlobalDiscount;
-            raw_total = raw_total - raw_discount;
-        } else {
-            var raw_discount = 0;
-        }
-        
-        raw_total = Math.max(raw_total, 0);
-        
-        $("#wpinv-items #wpinv_sub_total").html(wpinvFormatAmount(sum));
-        $("#wpinv-items #wpinv_tax").html(wpinvFormatAmount(raw_tax));
-        $("#wpinv-items #wpinv_discount").html(wpinvFormatAmount(raw_discount));
-        $("#wpinv-items #wpinv_total").html(wpinvFormatAmount(raw_total));
-        $("input#wpinv_totals_for_ordering").val(wpinvFormatAmount(raw_total));
-    };
-
-    function wpinvClearItemTotal() {
-        var lastRow = $(this).closest('.gdmbx-row').prev();
-        var index = $(lastRow).data('iterator');
-        
-        $(lastRow).find('.item_total').html(wpinvFormatAmount('0'));
-    };
-    
-    $(document).on('click', '.gdmbx-add-group-row', wpinvClearItemTotal);
-    $(document).on('click', '.gdmbx-remove-group-row', wpinvInvoiceTotals);
-    
-    //$(document).on('keyup change', '.wpinv input.item_amount, #wpinv_discount, #wpinv_tax', function() {
-    $(document).on('keyup change', '.wpinv input.item_amount, #wpinv_discount, .wpinv-fee-name, .wpinv-fee-amount', function() {
-        wpinvInvoiceTotals();
-    });
-    
-    /**
-     * on page load
-     */
-    $(function() {
-        wpinvInvoiceTotals();
-    });
-    
+       
     /**
      * Invoice Notes Panel
      */
@@ -444,46 +341,7 @@ jQuery(function($) {
             });
         }
     });
-    
-    $(document).on('click', '#wpinv-add-fee', function(e) {
-        $('.wpinv_fees .wpinv-fees').append($('#wpinv-fee-format').html());
-        
-        wpinvRefreshFees();
-    });
-    
-    $(document).on('click', '.wpinv-fees .wpinv-fee .wpinv-fee-remove', function(e) {
-        jQuery(this).closest('tr').remove();
-        
-        wpinvRefreshFees();
-    });
-    
-    function wpinvRefreshFees() {        
-        var i = 0;
-        jQuery('.wpinv-fees .wpinv-fee').each(function() {
-            jQuery(this).find('.wpinv-fee-name').attr("name", "invoice_fees[" + i + "][label]").attr("id", "wpinv_fee_name_" + i);
-            jQuery(this).find('.wpinv-fee-amount').attr("name", "invoice_fees[" + i + "][amount]").attr("id", "wpinv_fee_amount_" + i);
-            i++;
-        });
-        
-        wpinvInvoiceTotals();
-    }
-    
-    function wpinvRefreshFeesTotal() {
-        jQuery("#wpinv-items .wpinv_totals .fee").remove();
-        
-        var fees = '';
-        jQuery('.wpinv-fees .wpinv-fee').each(function() { 
-            var label = jQuery(this).find('.wpinv-fee-name').val();
-            if (label && label !== '' && label.trim()) {
-                var fee = wpinvRawNumber(jQuery(this).find('.wpinv-fee-amount').val());
-                fee = wpinvFormatAmount(Math.max(fee, 0));
-                fees += '<div class="fee">' + label + '<span class="alignright"><span id="wpinv_fee">' + fee + '</span></span></div>';
-            }
-        });
-        
-        jQuery("#wpinv-items .wpinv_totals .tax").after(fees);
-    }
-    
+
     var WPInv = {
         init : function() {
             this.preSetup();
@@ -854,6 +712,9 @@ jQuery(function($) {
             });
         },
         update_inline_items: function(data, metaBox, gdTotals) {
+            if ( data.discount > 0 ) {
+                data.discountf = '&ndash;' + data.discountf;
+            }
             $( '.wpinv-line-items', metaBox ).html( data.items );
             $( '.subtotal .total', gdTotals ).html( data.subtotalf );
             $( '.tax .total', gdTotals ).html( data.taxf );

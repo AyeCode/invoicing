@@ -69,6 +69,7 @@ jQuery(function($) {
                     return;
                 }
                 has_vat = vat_state;
+                console.log('72 : wpinv_recalculate_taxes()');
                 wpinv_recalculate_taxes();
             });
             
@@ -454,6 +455,7 @@ jQuery(function($) {
                         $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
 
                         config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
+                        console.log('457 : wpinv_recalculate_taxes()');
                         wpinv_recalculate_taxes();
                         return;
                     })
@@ -649,6 +651,7 @@ jQuery(function($) {
                     $('#wpinv_vat_number').val("");
 
                     if (updateTaxes) {
+                        console.log('652 : wpinv_recalculate_taxes()');
                         wpinv_recalculate_taxes();
                     }
 
