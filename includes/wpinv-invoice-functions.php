@@ -246,6 +246,27 @@ function wpinv_to_wpi_status( $status ) {
     return $inv_status;
 }
 
+function wpinv_get_cart_discountable_subtotal( $code_id ) {
+    $cart_items = wpinv_get_cart_content_details();
+    $items      = array();
+
+    $excluded_items = wpinv_get_discount_excluded_items( $code_id );
+
+    if( $cart_items ) {
+
+        foreach( $cart_items as $item ) {
+
+            if( ! in_array( $item['id'], $excluded_items ) ) {
+                $items[] =  $item;
+            }
+        }
+    }
+
+    $subtotal = edd_get_cart_items_subtotal( $items );
+
+    return apply_filters( 'edd_get_cart_discountable_subtotal', $subtotal );
+}
+
 function wpinv_get_cart_items_subtotal( $items ) {
     $subtotal = 0.00;
 
@@ -479,10 +500,10 @@ function wpinv_get_cart_content_details() {
         $wpi_current_id         = $invoice->ID;
         $wpi_item_id            = $item_id;
         
-        $quantity           = wpinv_item_quantities_enabled() && !empty( $item['quantity'] ) ? absint( $item['quantity'] ) : 1;
         $item_price         = wpinv_get_item_price( $item_id );
-        $discount           = 0;//wpinv_get_cart_item_discount_amount( $item );
+        $discount           = wpinv_get_cart_item_discount_amount( $item );
         $discount           = apply_filters( 'wpinv_get_cart_content_details_item_discount_amount', $discount, $item );
+        $quantity           = wpinv_get_cart_item_quantity( $item );
         $fees               = wpinv_get_cart_fees( 'fee', $item_id );
         
         $subtotal           = $item_price * $quantity;
@@ -537,7 +558,6 @@ function wpinv_get_cart_details( $invoice_id = 0 ) {
     $invoice_currency = $invoice->currency;
 
     if ( ! empty( $cart_details ) && is_array( $cart_details ) ) {
-
         foreach ( $cart_details as $key => $cart_item ) {
             $cart_details[ $key ]['currency'] = $invoice_currency;
 
@@ -1111,7 +1131,7 @@ function wpinv_process_checkout() {
         unset( $session_data['card_info']['card_number'] );
     }
     
-    // Used for showing download links to non logged-in users after purchase, and for other plugins needing purchase data.
+    // Used for showing item links to non logged-in users after purchase, and for other plugins needing purchase data.
     wpinv_set_checkout_session( $invoice_data );
     
     // Set gateway
@@ -1181,7 +1201,7 @@ function wpinv_get_invoices( $args ) {
     );
     
     if ( !empty( $args['user'] ) ) {
-        $wp_query_args['post_author'] = absint( $args['user'] );
+        $wp_query_args['author'] = absint( $args['user'] );
     }
 
     if ( ! is_null( $args['parent'] ) ) {

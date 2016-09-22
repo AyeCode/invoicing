@@ -411,7 +411,7 @@ function wpinv_get_registered_settings() {
                     'display_tax_rate' => array(
                         'id'   => 'display_tax_rate',
                         'name' => __( 'Display Tax Rate on Prices', 'invoicing' ),
-                        'desc' => __( 'Some countries require a notice when product prices include tax.', 'invoicing' ),
+                        'desc' => __( 'Some countries require a notice when item prices include tax.', 'invoicing' ),
                         'type' => 'checkbox',
                     ),
                     'checkout_include_tax' => array(

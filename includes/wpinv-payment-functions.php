@@ -100,7 +100,7 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
         $invoice->set( 'gateway', $args['gateway'] );
     }
 
-    // increase the earnings for each product in the subscription
+    // increase the earnings for each item in the subscription
     $items          = $parent_invoice->get_cart_details();
     if ( $items ) {        
         $add_items      = array();

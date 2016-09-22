@@ -30,7 +30,6 @@ function wpinv_discount_columns( $existing_columns ) {
     $columns['cb']          = $existing_columns['cb'];
     $columns['name']        = __( 'Name', 'invoicing' );
     $columns['code']        = __( 'Code', 'invoicing' );
-    $columns['type']        = __( 'Type', 'invoicing' );
     $columns['amount']      = __( 'Amount', 'invoicing' );
     $columns['usage']       = __( 'Usage / Limit', 'invoicing' );
     $columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
@@ -52,11 +51,8 @@ function wpinv_discount_custom_column( $column ) {
         case 'code' :
             echo wpinv_get_discount_code( $discount->ID );
         break;
-        case 'type' :
-            echo wpinv_get_discount_type( $discount->ID, true );
-        break;
         case 'amount' :
-            echo wpinv_get_discount_amount( $discount->ID );
+            echo wpinv_format_discount_rate( wpinv_get_discount_type( $discount->ID ), wpinv_get_discount_amount( $discount->ID ) );
         break;
         case 'usage_limit' :
             echo wpinv_get_discount_uses( $discount->ID );
@@ -111,13 +107,13 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
     $edit_link = get_edit_post_link( $discount->ID );
     $row_actions['edit'] = '<a href="' . esc_url( $edit_link ) . '">' . __( 'Edit', 'invoicing' ) . '</a>';
 
-    if( in_array( strtolower( $discount->post_status ),  array( 'active', 'publish' ) ) ) {
-        $row_actions['deactivate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'deactivate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Deactivate', 'invoicing' ) . '</a>';
-    } elseif( in_array( strtolower( $discount->post_status ),  array( 'inactive', 'pending', 'draft' ) ) ) {
-        $row_actions['activate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'activate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Activate', 'invoicing' ) . '</a>';
+    if( in_array( strtolower( $discount->post_status ),  array(  'publish' ) ) ) {
+        $row_actions['deactivate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'deactivate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Deactivate', 'invoicing' ) . '</a>';
+    } elseif( in_array( strtolower( $discount->post_status ),  array( 'pending', 'draft' ) ) ) {
+        $row_actions['activate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'activate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Activate', 'invoicing' ) . '</a>';
     }
 
-    $row_actions['delete'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'delete_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Delete', 'invoicing' ) . '</a>';
+    $row_actions['delete'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'delete_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Delete', 'invoicing' ) . '</a>';
 
     $row_actions = apply_filters( 'wpinv_discount_row_actions', $row_actions, $discount );
 
@@ -202,24 +198,6 @@ function wpinv_discount_filters() {
     </select>
     <?php
 }
-
-function wpinv_discount_views( $views ) {
-    $base           = admin_url('edit.php?post_type=wpi_discount');
-
-    $current        = isset( $_GET['status'] ) ? $_GET['status'] : '';
-    $total_count    = '&nbsp;<span class="count">(' . 0    . ')</span>';
-    $active_count   = '&nbsp;<span class="count">(' . 0 . ')</span>';
-    $inactive_count = '&nbsp;<span class="count">(' . 0  . ')</span>';
-
-    $views = array(
-        'all'      => sprintf( '<a href="%s"%s>%s</a>', remove_query_arg( 'status', $base ), $current === 'all' || $current == '' ? ' class="current"' : '', __('All', 'invoicing') . $total_count ),
-        'active'   => sprintf( '<a href="%s"%s>%s</a>', add_query_arg( 'status', 'active', $base ), $current === 'active' ? ' class="current"' : '', __('Active', 'invoicing') . $active_count ),
-        'inactive' => sprintf( '<a href="%s"%s>%s</a>', add_query_arg( 'status', 'inactive', $base ), $current === 'inactive' ? ' class="current"' : '', __('Inactive', 'invoicing') . $inactive_count ),
-    );
-
-    return $views;
-}
-add_filter( 'views_edit-wpi_discount', 'wpinv_discount_views', 10 );
 
 function wpinv_request( $vars ) {
     global $typenow, $wp_query, $wp_post_statuses;
@@ -336,6 +314,20 @@ function wpinv_request( $vars ) {
             $meta_query[] = array(
                     'key'   => '_wpinv_type',
                     'value' => sanitize_text_field( $_GET['type'] ),
+                    'compare' => '='
+                );
+        }
+        
+        if ( !empty( $meta_query ) ) {
+            $vars['meta_query'] = $meta_query;
+        }
+    } else if ( 'wpi_discount' == $typenow ) {
+        $meta_query = !empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();
+        // Filter vat rule type
+        if ( isset( $_GET['discount_type'] ) && $_GET['discount_type'] !== '' ) {
+            $meta_query[] = array(
+                    'key'   => '_wpi_discount_type',
+                    'value' => sanitize_text_field( $_GET['discount_type'] ),
                     'compare' => '='
                 );
         }

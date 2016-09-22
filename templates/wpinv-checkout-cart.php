@@ -3,11 +3,12 @@
  *  This template is used to display the Checkout page when items are in the cart
  */
 
-global $post;
+global $post, $wpi_cart_columns, $wpi_session;
 $cart_items         = wpinv_get_cart_contents();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
 $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl.)', 'invoicing' ) : __( '(Tax Excl.)', 'invoicing' ) ) : '';
+wpinv_error_log( $wpi_session, 'wpi_session', __FILE__, __LINE__ );
 ?>
 <table id="wpinv_checkout_cart" class="table table-bordered table-hover">
     <thead>
@@ -111,6 +112,8 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
                 <?php do_action( 'wpinv_checkout_table_subtotal_last', $cart_items ); ?>
             </tr>
         <?php } ?>
+        
+        <?php $wpi_cart_columns = $cart_columns - 1; wpinv_cart_discounts_html( $cart_items ); ?>
 
         <?php if ( $use_taxes ) { ?>
             <tr class="wpinv_cart_footer_row wpinv_cart_tax_row"<?php if( !wpinv_is_cart_taxed() ) echo ' style="display:none;"'; ?>>
@@ -124,17 +127,6 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
                 <?php do_action( 'wpinv_checkout_table_tax_last' ); ?>
             </tr>
         <?php } ?>
-        
-        <tr class="wpinv_cart_footer_row wpinv_cart_discount_row" <?php if( !wpinv_cart_has_discounts( $cart_items ) )  echo ' style="display:none;"'; ?>>
-            <?php do_action( 'wpinv_checkout_table_discount_first', $cart_items ); ?>
-            <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_discount_label text-right">
-                <strong><?php _e( 'Discount', 'invoicing' ); ?><?php echo esc_html( wpinv_cart_discount_code( $cart_items ) ); ?>:</strong>
-            </td>
-            <td class="wpinv_cart_discount text-right">
-                <span class="wpinv_cart_discount_amount" data-discount="<?php echo wpinv_get_cart_discount( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_discount( $cart_items ) ); ?></span>
-            </td>
-            <?php do_action( 'wpinv_checkout_table_discount_last', $cart_items ); ?>
-        </tr>
 
         <tr class="wpinv_cart_footer_row">
             <?php do_action( 'wpinv_checkout_table_footer_first' ); ?>

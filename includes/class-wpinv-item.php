@@ -350,4 +350,14 @@ class WPInv_Item {
 
         return ! empty( $fees ) ? $fees : array();
     }
+    
+    public function can_purchase() {
+        $can_purchase = true;
+
+        if ( !current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
+            $can_purchase = false;
+        }
+
+        return (bool)apply_filters( 'wpinv_can_purchase_item', $can_purchase, $this );
+    }
 }

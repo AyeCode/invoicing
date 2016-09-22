@@ -7,11 +7,11 @@ jQuery(function($) {
         // New for 2015 rule support
         var ip_country = $('#wpi-ip-country');
         // It's OK to not show the self-certify prompt whenever 
-        //	The 2015 rules do not apply
-        //  The 2015 rules do apply but
-        //		the user's billing address is in the same EU state; or 
-        //		the user is in another EU state but has entered a VAT number; or
-        //		the user's IP address outside the EU and the billing address is outside the EU
+        // The 2015 rules do not apply
+        // The 2015 rules do apply but
+        //      the user's billing address is in the same EU state; or 
+        //      the user is in another EU state but has entered a VAT number; or
+        //      the user's IP address outside the EU and the billing address is outside the EU
         ip_country .css('display', 'none'); // Assume the prompt is not required
         if (WPInv_VAT_Vars.Apply2015Rules) {
             var buyer_and_billing_outside_eu = !vat_state && states.indexOf(ip_country.attr('value')) === -1;
@@ -46,33 +46,31 @@ jQuery(function($) {
                     taxdata.postdata.wpinv_country = 'GB';
                 }
 
-				// Get the VAT state
-				var states = eu_states;
-				var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
+                // Get the VAT state
+                var states = eu_states;
+                var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
                 if ( vat_state && WPInv_VAT_Vars.disableVATSameCountry && ( wpinv_is_base_country(taxdata.postdata.country) || wpinv_is_base_country(taxdata.postdata.country) ) ) {
-                    console.log( 'Base Country: 1' );
                     vat_state = false;
                 }
 
-				// Find the fieldset to make it visible as appropriate
-				var vat_info = $('#wpi-vat-details');
-				vat_info.css('display', vat_state ? "block" : "none");
-				
-				// Find the hidden field
-				vat_info.find("[name='wpinv_vat_ignore']").val(vat_state ? "0" : "1");
-				$('#wpinv-non-vat-company').css('display', vat_state ? "none" : "block");
-				
-				// If the VAT state has changed, recalculate
-				if (has_vat == vat_state) {
-					if (vat_state) {
-						config.reset(config, $('#wpinv_vat_reset'), false);
+                // Find the fieldset to make it visible as appropriate
+                var vat_info = $('#wpi-vat-details');
+                vat_info.css('display', vat_state ? "block" : "none");
+                
+                // Find the hidden field
+                vat_info.find("[name='wpinv_vat_ignore']").val(vat_state ? "0" : "1");
+                $('#wpinv-non-vat-company').css('display', vat_state ? "none" : "block");
+                
+                // If the VAT state has changed, recalculate
+                if (has_vat == vat_state) {
+                    if (vat_state) {
+                        config.reset(config, $('#wpinv_vat_reset'), false);
                     }
-					return;
-				}
-				has_vat = vat_state;
-				console.log('wpinv_recalculate_taxes(69)');
-				wpinv_recalculate_taxes();
-			});
+                    return;
+                }
+                has_vat = vat_state;
+                wpinv_recalculate_taxes();
+            });
             
             // Insert new tax rate row
             $('#wpi_add_eu_states').on('click', function() {
@@ -456,7 +454,6 @@ jQuery(function($) {
                         $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
 
                         config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
-                        console.log('wpinv_recalculate_taxes(449)');
                         wpinv_recalculate_taxes();
                         return;
                     })
@@ -652,7 +649,6 @@ jQuery(function($) {
                     $('#wpinv_vat_number').val("");
 
                     if (updateTaxes) {
-                        console.log('wpinv_recalculate_taxes(644)');
                         wpinv_recalculate_taxes();
                     }
 
@@ -715,7 +711,6 @@ jQuery(function($) {
 });
 
 function wpinv_recalculate_taxes( state ) {
-    console.log( 'wpinv_recalculate_taxes( ' + state + ' )' );
     var $address = jQuery('#wpi-billing');
 
     if( !state ) {

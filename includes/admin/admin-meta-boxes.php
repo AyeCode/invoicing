@@ -193,7 +193,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_amount"><?php _e( 'Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" name="amount" id="wpinv_discount_amount" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_amount( $discount_id ) ); ?>" required> <font class="wpi-discount-p">%</font><font class="wpi-discount-f" style="display:none;">$</font>
+                <input type="text" name="amount" id="wpinv_discount_amount" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_amount( $discount_id ) ); ?>" required> <font class="wpi-discount-p">%</font><font class="wpi-discount-f" style="display:none;"><?php echo wpinv_currency_symbol() ;?></font>
                 <p style="display:none;" class="description"><?php _e( 'Enter the discount amount in USD', 'invoicing' ); ?></p>
                 <p class="description"><?php _e( 'Enter the discount value. Ex: 10', 'invoicing' ); ?></p>
             </td>

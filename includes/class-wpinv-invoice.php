@@ -29,8 +29,8 @@ final class WPInv_Invoice {
     public $fees = array();
     public $fees_total = 0;
     public $discounts = 'none';
-    public $discount = 0;
-    public $discount_code = 0;
+        public $discount = 0;
+        public $discount_code = 0;
     public $date = '';
     public $completed_date = '';
     public $status      = 'pending';
@@ -175,8 +175,8 @@ final class WPInv_Invoice {
         $this->phone           = $this->user_info['phone'];
         
         $this->discounts       = $this->user_info['discount'];
-        $this->discount        = $this->setup_discount();
-        $this->discount_code   = $this->setup_discount_code();
+            $this->discount        = $this->setup_discount();
+            $this->discount_code   = $this->setup_discount_code();
 
         // Other Identifiers
         $this->key             = $this->setup_invoice_key();
@@ -322,15 +322,6 @@ final class WPInv_Invoice {
         }
 
         return $amount;
-        /*
-        $amount = $this->get_meta( '_wpinv_total', true );
-
-        if ( empty( $amount ) && '0.00' !== $amount ) {
-            $amount = $this->subtotal + $this->tax - $this->discount + $this->fees_total;
-        }
-
-        return $amount;
-        */
     }
     
     private function setup_mode() {
@@ -1044,7 +1035,7 @@ final class WPInv_Invoice {
     public function recalculate_total() {
         global $wpi_nosave;
         
-        $this->total = $this->subtotal + $this->tax + $this->fees_total - $this->discount;
+        $this->total = $this->subtotal + $this->tax + $this->fees_total;// - $this->discount;
         $this->total = wpinv_format_amount( $this->total, NULL, true );
         
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
@@ -1287,6 +1278,9 @@ final class WPInv_Invoice {
     }
     
     public function get_discount( $currency = false ) {
+        if ( !empty( $this->discounts ) ) {
+            $this->discount = wpinv_get_cart_items_discount_amount( $this->items , $this->discounts );
+        }
         $discount = wpinv_format_amount( $this->discount, NULL, !$currency );
         
         if ( $currency ) {
@@ -1562,7 +1556,7 @@ final class WPInv_Invoice {
 
             $this->items[]  = $new_item;
 
-            $discount   = $args['discount'];
+            $discount   = wpinv_get_cart_item_discount_amount( $args, $this->get_discounts() ); // $args['discount'];
             $subtotal   = $amount;
 
             if ( wpinv_prices_include_tax() ) {
@@ -1601,7 +1595,7 @@ final class WPInv_Invoice {
         $added_item['action']  = 'add';
         $this->pending['items'][] = $added_item;
         reset( $this->cart_details );
-        
+        wpinv_error_log( $this->cart_details, 'cart_details', __FILE__, __LINE__ );
         $this->increase_subtotal( $subtotal );
         $this->increase_tax( $tax );
         
@@ -1729,8 +1723,9 @@ final class WPInv_Invoice {
     
     public function update_items($temp = false) {
         wpinv_error_log( 'IN', 'update_items()', __FILE__, __LINE__ );
+        wpinv_error_log( $this->get_discounts(), 'discounts', __FILE__, __LINE__ );
         global $wpi_current_id, $wpi_item_id, $wpi_nosave;
-                
+        
         if ( !empty( $this->cart_details ) ) {
             $wpi_nosave     = $temp;
             $cart_subtotal  = 0;
@@ -1741,6 +1736,7 @@ final class WPInv_Invoice {
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
                 $amount     = wpinv_format_amount( $item_price * $quantity, NULL, true );
+                $subtotal   = $item_price * $quantity;
                 
                 $wpi_current_id         = $this->ID;
                 $wpi_item_id            = $item['id'];
@@ -1748,13 +1744,13 @@ final class WPInv_Invoice {
                 $_POST['wpinv_country'] = $this->country;
                 $_POST['wpinv_state']   = $this->state;
                 
+                $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() ); // $item['discount'];
+                wpinv_error_log( $discount, 'discount', __FILE__, __LINE__ );
+                
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
                 $tax_class  = wpinv_get_item_vat_class( $wpi_item_id );
-                $tax        = $item_price > 0 ? ( $item_price * $quantity * 0.01 * (float)$tax_rate ) : 0;
+                $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
                 wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
-
-                $discount   = $item['discount'];
-                $subtotal   = $amount;
 
                 if ( wpinv_prices_include_tax() ) {
                     $subtotal -= wpinv_format_amount( $tax, NULL, true );
@@ -1793,7 +1789,7 @@ final class WPInv_Invoice {
             
             $this->cart_details = $cart_details;
         }
-        
+        wpinv_error_log( $this, 'INVOICE', __FILE__, __LINE__ );
         return $this;
     }
     
@@ -2227,7 +2223,7 @@ final class WPInv_Invoice {
     }
 
     public function get_cancel_url() {
-        $url = wp_nonce_url( add_query_arg( array( 'wpinv-action' => 'cancel_subscription', 'sub_id' => $this->ID ) ), 'wpinv-recurring-cancel' );
+        $url = wp_nonce_url( add_query_arg( array( 'wpi_action' => 'cancel_subscription', 'sub_id' => $this->ID ) ), 'wpinv-recurring-cancel' );
 
         return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
     }

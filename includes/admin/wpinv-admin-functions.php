@@ -446,7 +446,7 @@ add_action( 'manage_wpi_item_posts_custom_column', 'wpinv_items_table_custom_col
 function wpinv_add_items_filters() {
     global $typenow;
 
-    // Checks if the current post type is 'download'
+    // Checks if the current post type is 'item'
     if ( $typenow == 'wpi_item') {
         if ( wpinv_allow_vat_rules() ) {
             echo wpinv_html_select( array(
