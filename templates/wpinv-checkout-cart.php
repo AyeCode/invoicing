@@ -3,12 +3,11 @@
  *  This template is used to display the Checkout page when items are in the cart
  */
 
-global $post, $wpi_cart_columns, $wpi_session;
-$cart_items         = wpinv_get_cart_contents();
+global $post, $ajax_cart_details, $wpi_cart_columns, $wpi_session;
+$cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();//wpinv_get_cart_contents();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
 $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl.)', 'invoicing' ) : __( '(Tax Excl.)', 'invoicing' ) ) : '';
-wpinv_error_log( $wpi_session, 'wpi_session', __FILE__, __LINE__ );
 ?>
 <table id="wpinv_checkout_cart" class="table table-bordered table-hover">
     <thead>
@@ -71,6 +70,7 @@ wpinv_error_log( $wpi_session, 'wpi_session', __FILE__, __LINE__ );
                     <td class="wpinv_cart_item_tax text-right">
                         <?php
                         echo wpinv_cart_item_tax( $item );
+                        //echo wpinv_get_cart_item_tax( $wpi_item->ID, $subtotal = '', $options = array() );
                         do_action( 'wpinv_cart_item_tax', $item, $key );
                         ?>
                     </td>

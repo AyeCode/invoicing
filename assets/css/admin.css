@@ -1057,6 +1057,12 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     padding: 0!important;
     text-align: right;
 }
+.discount code {
+    background: inherit;
+    font-size: inherit;
+    margin: 0 1px;
+    padding: 0 1px;
+}
 #wpinv-quick-add table {
     background: #fff;
     width: 100%;

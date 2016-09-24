@@ -231,6 +231,12 @@ div.list-group-item:focus {
 .wpinv-discount-msg .alert-success .fa {
     color: orange;
 }
+.wpinv_cart_discount_row code {
+    background: inherit;
+    font-size: inherit;
+    margin: 0 1px;
+    padding: 0 1px;
+}
 /* cart */
 .small {
     font-size: 85%;
@@ -3462,10 +3468,4 @@ div td .meta p {
 .wpinv-receipt-address .table-sm tr th,
 .wpinv-bank-details .table-sm tr th {
     width: 30%;
-}
-
-#wpi-billing,
-#wpi-vat-details,
-.wpi-ip-info {
-    display: none!important;
 }

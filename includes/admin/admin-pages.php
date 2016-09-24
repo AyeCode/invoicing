@@ -14,7 +14,7 @@ function wpinv_add_options_link() {
     
     $wpi_invoice            = get_post_type_object( 'wpi_invoice' );
 
-    add_menu_page( __( 'Invoices', 'invoicing' ), __( 'Invoices', 'invoicing' ), 'manage_options', 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
+    add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), 'manage_options', 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
     
     $wpi_settings_page   = add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), 'manage_options', 'wpinv-settings', 'wpinv_options_page' );
 }

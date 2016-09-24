@@ -643,6 +643,11 @@ function wpinv_merge_gd_invoices() {
         <td><p><?php _e( 'Merge GeoDirectory Payment Manager invoices to the Invoicing.', 'invoicing' ); ?></p></td>
         <td><input type="button" data-tool="merge_invoices" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
     </tr>
+    <tr>
+        <td><?php _e( 'Merge Coupons', 'invoicing' ); ?></td>
+        <td><p><?php _e( 'Merge GeoDirectory Payment Manager coupons to the Invoicing.', 'invoicing' ); ?></p></td>
+        <td><input type="button" data-tool="merge_coupons" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
+    </tr>
     <?php
 }
 add_action( 'wpinv_tools_row', 'wpinv_merge_gd_invoices', 10 );
@@ -744,3 +749,63 @@ function wpinv_tool_merge_invoices() {
     wp_send_json( $response );
 }
 add_action( 'wpinv_tool_merge_invoices', 'wpinv_tool_merge_invoices' );
+
+function wpinv_tool_merge_coupons() {
+    global $wpdb;
+    
+    $sql = "SELECT * FROM `" . COUPON_TABLE . "` WHERE `coupon_code` IS NOT NULL AND `coupon_code` != '' ORDER BY `cid` ASC";
+    $items = $wpdb->get_results( $sql );
+    $count = 0;
+    
+    if ( !empty( $items ) ) {
+        $success = true;
+        
+        foreach ( $items as $item ) {
+            if ( wpinv_get_discount_by_code( $item->coupon_code ) ) {
+                continue;
+            }
+            
+            $args = array(
+                'post_type'   => 'wpi_discount',
+                'post_title'  => $item->coupon_code,
+                'post_status' => !empty( $item->status ) ? 'publish' : 'pending'
+            );
+
+            $merged = wp_insert_post( $args );
+            
+            $item_id = $item->cid;
+            
+            if ( $merged ) {
+                $meta = array(
+                    'code'              => $item->coupon_code,
+                    'type'              => $item->discount_type != 'per' ? 'flat' : 'percent',
+                    'amount'            => (float)$item->discount_amount,
+                    'max_uses'          => (int)$item->usage_limit,
+                    'uses'              => (int)$item->usage_count,
+                );
+                wpinv_store_discount( $merged, $meta, get_post( $merged ) );
+                
+                $count++;
+                
+                wpinv_error_log( 'Coupon merge S : ' . $item_id . ' => ' . $merged );
+            } else {
+                wpinv_error_log( 'Coupon merge F : ' . $item_id );
+            }
+        }
+        
+        if ( $count > 0 ) {
+            $message = sprintf( _n( 'Total <b>%d</b> coupon is merged successfully.', 'Total <b>%d</b> coupons are merged successfully.', $count, 'invoicing' ), $count );
+        } else {
+            $message = __( 'No coupons merged.', 'invoicing' );
+        }
+    } else {
+        $success = false;
+        $message = __( 'No coupons found to merge!', 'invoicing' );
+    }
+    
+    $response = array();
+    $response['success'] = $success;
+    $response['data']['message'] = $message;
+    wp_send_json( $response );
+}
+add_action( 'wpinv_tool_merge_coupons', 'wpinv_tool_merge_coupons' );

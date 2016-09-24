@@ -203,6 +203,7 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
         'items'             => isset( $data['items'] )            ? $data['items']                                    : array(),
         'exclude_items'     => isset( $data['exclude_items'] )    ? $data['exclude_items']                            : array(),
         'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
+        'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : 0,
     );
     
     $start_timestamp        = strtotime( $meta['start'] );
@@ -817,9 +818,7 @@ function wpinv_format_discount_rate( $type, $amount ) {
     }
 }
 
-function wpinv_set_cart_discount( $code = '' ) {
-    global $wpi_session;
-    
+function wpinv_set_cart_discount( $code = '' ) {    
     if ( wpinv_multiple_discounts_allowed() ) {
         // Get all active cart discounts
         $discounts = wpinv_get_cart_discounts();
@@ -837,29 +836,39 @@ function wpinv_set_cart_discount( $code = '' ) {
         $discounts = array();
         $discounts[] = $code;
     }
+    $discounts = array_values( $discounts );
     
-    //$invoice = wpinv_get_invoice_cart();
-    //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
-    //$invoice->set( 'discounts', $discounts );
-    //$invoice->recalculate_totals(true);
-    //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
-
-    $wpi_session->set( 'cart_discounts', implode( ',', $discounts ) );
-
+    $data = wpinv_get_checkout_session();
+    if ( empty( $data ) ) {
+        $data = array();
+    } else {
+        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
+            $payment_meta['user_info']['discount']  = implode( ',', $discounts );
+            update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
+        }
+    }
+    $data['cart_discounts'] = $discounts; //wpinv_error_log( $discounts, 'wpinv_set_cart_discount()', __FILE__, __LINE__ );
+    
+    wpinv_set_checkout_session( $data );
+    
     return $discounts;
 }
 
-function wpinv_unset_cart_discount( $code = '' ) {
-    global $wpi_session;
-    
+function wpinv_unset_cart_discount( $code = '' ) {    
     $discounts = wpinv_get_cart_discounts();
 
-    if ( $discounts ) {
+    if ( $code && !empty( $discounts ) && in_array( $code, $discounts ) ) {
         $key = array_search( $code, $discounts );
         unset( $discounts[ $key ] );
-        $discounts = implode( ',', array_values( $discounts ) );
-        // update the active discounts
-        $wpi_session->set( 'cart_discounts', $discounts );
+            
+        $data = wpinv_get_checkout_session();
+        $data['cart_discounts'] = $discounts; //wpinv_error_log( $discounts, 'wpinv_unset_cart_discount()', __FILE__, __LINE__ );
+        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
+            $payment_meta['user_info']['discount']  = !empty( $discounts ) ? implode( ',', $discounts ) : '';
+            update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
+        }
+        
+        wpinv_set_checkout_session( $data );
     }
     
     //$cart_discounts = $discounts ? explode( ',', $discounts ) : array();
@@ -874,16 +883,22 @@ function wpinv_unset_cart_discount( $code = '' ) {
 }
 
 function wpinv_unset_all_cart_discounts() {
-    global $wpi_session;
+    $data = wpinv_get_checkout_session();
     
-    $wpi_session->set( 'cart_discounts', null );
+    if ( !empty( $data ) && isset( $data['cart_discounts'] ) ) {
+        unset( $data['cart_discounts'] );
+        
+         wpinv_set_checkout_session( $data );
+         return true;
+    }
+    
+    return false;
 }
 
 function wpinv_get_cart_discounts( $items = array() ) {
-    global $wpi_session;
+    $session = wpinv_get_checkout_session();
     
-    $discounts = $wpi_session->get( 'cart_discounts' );
-    $discounts = ! empty( $discounts ) ? explode( ',', $discounts ) : false;
+    $discounts = !empty( $session['cart_discounts'] ) ? $session['cart_discounts'] : false;
     return $discounts;
 }
 
@@ -930,6 +945,7 @@ function wpinv_get_cart_items_discount_amount( $items = array(), $discount = fal
     $amount = 0;
     
     foreach ( $items as $item ) {
+        wpinv_error_log( $discount, $item['id'], __FILE__, __LINE__ );
         $amount += wpinv_get_cart_item_discount_amount( $item, $discount );
     }
     
@@ -958,7 +974,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
     $discounted_price = $price;
 
     $discounts = false === $discount ? wpinv_get_cart_discounts() : $discount;
-    
+    wpinv_error_log( $discounts, 'discounts 1', __FILE__, __LINE__ );
     if ( $discounts ) {
         if ( is_array( $discounts ) ) {
             $discounts = array_values( $discounts );
@@ -966,7 +982,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $discounts = explode( ',', $discounts );
         }
     }
-    
+    wpinv_error_log( $discounts, 'discounts 2', __FILE__, __LINE__ );
     if( $discounts ) {
         foreach ( $discounts as $discount ) {
             $code_id = wpinv_get_discount_id_by_code( $discount );
@@ -1156,9 +1172,20 @@ function wpinv_apply_preset_discount() {
 }
 //add_action( 'init', 'wpinv_apply_preset_discount', 999 );
 
+function wpinv_get_discount_label( $code, $echo = true ) {
+    $label = wp_sprintf( __( 'Discount%1$s', 'invoicing' ), ( $code != '' ? ' (<code>' . $code . '</code>)': '' ) );
+    $label = apply_filters( 'wpinv_get_discount_label', $label, $code );
+
+    if ( $echo ) {
+        echo $label;
+    } else {
+        return $label;
+    }
+}
+
 function wpinv_cart_discount_label( $code, $rate, $echo = true ) {
     $label = wp_sprintf( __( '%1$s Discount: %2$s', 'invoicing' ), $rate, $code );
-    $label = apply_filters( 'wpinv_cart_discount_label', esc_html( $label ), $code, $rate );
+    $label = apply_filters( 'wpinv_cart_discount_label', $label, $code, $rate );
 
     if ( $echo ) {
         echo $label;

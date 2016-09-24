@@ -456,7 +456,7 @@ function wpinv_get_cart_item_price( $item_id = 0, $options = array(), $remove_ta
     }
 
     if ( $remove_tax_from_inclusive && wpinv_prices_include_tax() ) {
-        $price -= wpinv_get_cart_item_tax( $item_id, $options, $price );
+        $price -= wpinv_get_cart_item_tax( $item_id, $price, $options );
     }
 
     return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $options );

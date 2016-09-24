@@ -3,6 +3,7 @@
 if ( !defined('ABSPATH') )
     die('-1');
 
+global $ajax_cart_details;
 $ajax_cart_details = $invoice->get_cart_details();
 $cart_items        = $ajax_cart_details;
 
@@ -118,6 +119,19 @@ do_action( 'wpinv_before_email_items', $invoice ); ?>
                     <?php do_action( 'wpinv_email_items_table_subtotal_last', $cart_items, $invoice ); ?>
                 </tr>
             <?php } ?>
+            
+            <?php if ( wpinv_discount( $invoice_id, false ) > 0 ) { ?>
+                <tr class="wpinv_cart_footer_row wpinv_cart_discount_row">
+                    <?php do_action( 'wpinv_receipt_items_table_discount_first', $cart_items, $invoice ); ?>
+                    <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_discount_label text-right">
+                        <strong><?php wpinv_get_discount_label( wpinv_discount_code( $invoice_id ) ); ?>:</strong>
+                    </td>
+                    <td class="wpinv_cart_discount text-right">
+                        <span class="wpinv_cart_discount_amount"><?php echo wpinv_discount( $invoice_id, true, true ); ?></span>
+                    </td>
+                    <?php do_action( 'wpinv_receipt_items_table_discount_last', $cart_items, $invoice ); ?>
+                </tr>
+            <?php } ?>
 
             <?php if ( !$zero_tax && $use_taxes && wpinv_is_cart_taxed() ) { ?>
                 <tr class="wpinv_cart_footer_row wpinv_cart_tax_row">
@@ -131,17 +145,6 @@ do_action( 'wpinv_before_email_items', $invoice ); ?>
                     <?php do_action( 'wpinv_email_items_table_tax_last', $cart_items, $invoice ); ?>
                 </tr>
             <?php } ?>
-            
-            <tr class="wpinv_cart_footer_row wpinv_cart_discount_row" <?php if( !wpinv_cart_has_discounts( $cart_items ) )  echo ' style="display:none;"'; ?>>
-                <?php do_action( 'wpinv_email_items_table_discount_first', $invoice, $invoice ); ?>
-                <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_discount_label text-right">
-                    <strong><?php _e( 'Discount', 'invoicing' ); ?><?php echo esc_html( wpinv_cart_discount_code( $cart_items ) ); ?>:</strong>
-                </td>
-                <td class="wpinv_cart_discount text-right">
-                    <span class="wpinv_cart_discount_amount"><?php echo $invoice->get_discount( true ); ?></span>
-                </td>
-                <?php do_action( 'wpinv_email_items_table_discount_last', $cart_items, $invoice ); ?>
-            </tr>
 
             <tr class="wpinv_cart_footer_row">
                 <?php do_action( 'wpinv_email_items_table_footer_first', $cart_items, $invoice ); ?>

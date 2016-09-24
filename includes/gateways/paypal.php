@@ -84,23 +84,21 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         $i = 1;
         if( is_array( $purchase_data['cart_details'] ) && ! empty( $purchase_data['cart_details'] ) ) {
             foreach ( $purchase_data['cart_details'] as $item ) {
-                $item_amount = round( ( $item['subtotal'] / $item['quantity'] ) - ( $item['discount'] / $item['quantity'] ), 2 );
+                $item['quantity'] = $item['quantity'] > 0 ? $item['quantity'] : 1;
+                $item_amount = round( $item['subtotal'] / $item['quantity'], 2 );
 
-                if( $item_amount <= 0 ) {
+                if ( $item_amount <= 0 ) {
                     $item_amount = 0;
                 }
 
-                $paypal_args['item_number_' . $i ]  = $item['id'];
-                $paypal_args['item_name_' . $i ]    = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( $item ), ENT_COMPAT, 'UTF-8' ) );
-                $paypal_args['quantity_' . $i ]     = $item['quantity'];
-                $paypal_args['amount_' . $i ]       = $item_amount;
+                $paypal_args['item_number_' . $i ]      = $item['id'];
+                $paypal_args['item_name_' . $i ]        = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( $item ), ENT_COMPAT, 'UTF-8' ) );
+                $paypal_args['quantity_' . $i ]         = $item['quantity'];
+                $paypal_args['amount_' . $i ]           = $item_amount;
+                $paypal_args['discount_amount_' . $i ]  = $item['discount'];
 
                 $i++;
             }
-        }
-
-        if ( ( $discounted_amount = (float)$invoice->get_discount() ) > '0' ) {
-            $paypal_args['discount_amount_cart'] = wpinv_sanitize_amount( $discounted_amount );
         }
 
         // Add taxes to the cart
@@ -358,7 +356,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 	if ( !wpinv_get_payment_user_email( $invoice_id ) ) {
 		// This runs when a Buy Now purchase was made. It bypasses checkout so no personal info is collected until PayPal
 		// No email associated with purchase, so store from PayPal
-		wpinv_update_payment_meta( $invoice_id, '_wpinv_email', $data['payer_email'] );
+		wpinv_update_invoice_meta( $invoice_id, '_wpinv_email', $data['payer_email'] );
 
 		// Setup and store the customers's details
 		$user_info = array(
@@ -375,7 +373,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 		$user_info['zip']     = ! empty( $data['address_zip']          ) ? sanitize_text_field( $data['address_zip'] )          : false;
 
 		$payment_meta['user_info'] = $user_info;
-		wpinv_update_payment_meta( $invoice_id, '_wpinv_payment_meta', $payment_meta );
+		wpinv_update_invoice_meta( $invoice_id, '_wpinv_payment_meta', $payment_meta );
 	}
 
 	if ( $payment_status == 'refunded' || $payment_status == 'reversed' ) {

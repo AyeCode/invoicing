@@ -261,12 +261,18 @@ final class WPInv_Invoice {
     }
     
     private function setup_discount() {
-        $discount = $this->get_meta( '_wpinv_discount', true );
+        //$discount = $this->get_meta( '_wpinv_discount', true );
+        $discount = $this->subtotal - ( $this->total - $this->tax - $this->fees_total );
+        if ( $discount < 0 ) {
+            $discount = 0;
+        }
+        $discount = wpinv_format_amount( $discount, NULL, true );
+        
         return $discount;
     }
     
     private function setup_discount_code() {
-        $discount_code = $this->get_meta( '_wpinv_discount_code', true );
+        $discount_code = !empty( $this->discounts ) ? $this->discounts : $this->get_meta( '_wpinv_discount_code', true );
         return $discount_code;
     }
     
@@ -847,6 +853,10 @@ final class WPInv_Invoice {
 
             $this->pending = array();
             $saved         = true;
+        } else {
+            $this->update_meta( '_wpinv_subtotal', wpinv_format_amount( $this->subtotal, NULL, true ) );
+            $this->update_meta( '_wpinv_total', wpinv_format_amount( $this->total, NULL, true ) );
+            $this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
         }
 
         if ( true === $saved ) {
@@ -1035,7 +1045,7 @@ final class WPInv_Invoice {
     public function recalculate_total() {
         global $wpi_nosave;
         
-        $this->total = $this->subtotal + $this->tax + $this->fees_total;// - $this->discount;
+        $this->total = $this->subtotal - $this->discount + $this->tax + $this->fees_total;
         $this->total = wpinv_format_amount( $this->total, NULL, true );
         
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
@@ -1252,7 +1262,7 @@ final class WPInv_Invoice {
     }
     
     public function get_total( $currency = false ) {
-        $this->recalculate_total();
+        //$this->recalculate_total();
         
         $total = wpinv_format_amount( $this->total, NULL, !$currency );
         //wpinv_error_log( $total, 'total', __FILE__, __LINE__ );
@@ -1273,21 +1283,31 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_get_invoice_subtotal', $subtotal, $this->ID, $this, $currency );
     }
     
-    private function get_discounts() {
-        return apply_filters( 'wpinv_payment_discounts', $this->discounts, $this->ID, $this );
+    public function get_discounts( $array = false ) {
+        $discounts = $this->discounts;
+        if ( $array && $discounts ) {
+            $discounts = explode( ',', $discounts );
+        }
+        return apply_filters( 'wpinv_payment_discounts', $discounts, $this->ID, $this, $array );
     }
     
-    public function get_discount( $currency = false ) {
+    public function get_discount( $currency = false, $dash = false ) {
         if ( !empty( $this->discounts ) ) {
+            global $ajax_cart_details;
+            $ajax_cart_details = $this->get_cart_details();
+
             $this->discount = wpinv_get_cart_items_discount_amount( $this->items , $this->discounts );
         }
-        $discount = wpinv_format_amount( $this->discount, NULL, !$currency );
+        $discount   = wpinv_format_amount( $this->discount, NULL, !$currency );
+        $dash       = $dash && $discount > 0 ? '&ndash;' : '';
         
         if ( $currency ) {
             $discount = wpinv_price( $discount, $this->get_currency() );
         }
         
-        return apply_filters( 'wpinv_get_invoice_discount', $discount, $this->ID, $this, $currency );
+        $discount   = $dash . $discount;
+        
+        return apply_filters( 'wpinv_get_invoice_discount', $discount, $this->ID, $this, $currency, $dash );
     }
     
     public function get_discount_code() {
@@ -1789,7 +1809,7 @@ final class WPInv_Invoice {
             
             $this->cart_details = $cart_details;
         }
-        wpinv_error_log( $this, 'INVOICE', __FILE__, __LINE__ );
+        //wpinv_error_log( $this, 'INVOICE', __FILE__, __LINE__ );
         return $this;
     }
     
