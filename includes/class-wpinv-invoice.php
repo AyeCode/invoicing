@@ -28,7 +28,7 @@ final class WPInv_Invoice {
     public $tax = 0;
     public $fees = array();
     public $fees_total = 0;
-    public $discounts = 'none';
+    public $discounts = '';
         public $discount = 0;
         public $discount_code = 0;
     public $date = '';
@@ -483,7 +483,7 @@ final class WPInv_Invoice {
                     'first_name' => $user->first_name,
                     'last_name'  => $user->last_name,
                     'email'      => $user->user_email,
-                    'discount'   => 'none',
+                    'discount'   => '',
                 );
             } else {
                 foreach ( $user_info as $key => $value ) {
@@ -627,7 +627,7 @@ final class WPInv_Invoice {
         return $this->ID;
     }
 
-    public function save() {
+    public function save( $setup = false ) {
         global $wpi_session;
         
         $saved = false;
@@ -669,7 +669,7 @@ final class WPInv_Invoice {
 
                                 case 'remove':
                                     if ( 'publish' === $this->status || 'complete' === $this->status || 'revoked' === $this->status ) {
-                                        $total_decrease += $item['amount'];
+                                        $total_decrease += $item['price'];
                                     }
                                     break;
                             }
@@ -859,10 +859,10 @@ final class WPInv_Invoice {
             $this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
         }
 
-        if ( true === $saved ) {
+        if ( true === $saved || $setup ) {
             $this->setup_invoice( $this->ID );
         }
-        //wpinv_error_log( $this, 'this 2', __FILE__, __LINE__ );
+        
         return $saved;
     }
     
@@ -1045,7 +1045,7 @@ final class WPInv_Invoice {
     public function recalculate_total() {
         global $wpi_nosave;
         
-        $this->total = $this->subtotal - $this->discount + $this->tax + $this->fees_total;
+        $this->total = $this->subtotal + $this->tax + $this->fees_total;
         $this->total = wpinv_format_amount( $this->total, NULL, true );
         
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
@@ -1181,7 +1181,7 @@ final class WPInv_Invoice {
 
     private function process_failure() {
         $discounts = $this->discounts;
-        if ( 'none' === $discounts || empty( $discounts ) ) {
+        if ( empty( $discounts ) ) {
             return;
         }
 
@@ -1491,6 +1491,7 @@ final class WPInv_Invoice {
 
         $wpi_current_id         = $this->ID;
         $wpi_item_id            = $item->ID;
+        $discounts              = $this->get_discounts();
         
         $_POST['wpinv_country'] = $this->country;
         $_POST['wpinv_state']   = $this->state;
@@ -1519,37 +1520,44 @@ final class WPInv_Invoice {
         }
         
         if ($has_quantities && $found_cart_key !== false) {
-            $orig_quantity = $this->cart_details[ $found_cart_key ]['quantity'];
+            $cart_item          = $this->cart_details[$found_cart_key];
+            $item_price         = $cart_item['item_price'];
+            $quantity           = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
+            $tax_rate           = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : 0;
             
-            $this->cart_details[ $found_cart_key ]['quantity'] += $args['quantity'];
-
-            $item_price   = $this->cart_details[ $found_cart_key ]['item_price'];
-            $tax          = $this->cart_details[ $found_cart_key ]['tax'];
-            $discount     = ! empty( $this->cart_details[ $found_cart_key ]['discount'] ) ? $this->cart_details[ $found_cart_key ]['discount'] : 0;
-
+            $new_quantity       = $quantity + $args['quantity'];
+            $subtotal           = $item_price * $new_quantity;
+            
+            $args['quantity']   = $new_quantity;
+            $discount           = !empty( $args['discount'] ) ? $args['discount'] : 0;
+            $tax                = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
+            
+            $discount_increased = $discount > 0 && $subtotal > 0 && $discount > (float)$cart_item['discount'] ? $discount - (float)$cart_item['discount'] : 0;
+            $tax_increased      = $tax > 0 && $subtotal > 0 && $tax > (float)$cart_item['tax'] ? $tax - (float)$cart_item['tax'] : 0;
             // The total increase equals the number removed * the item_price
             $total_increased    = wpinv_format_amount( $item_price, NULL, true );
-            $tax_increased      = wpinv_format_amount( $tax / $orig_quantity, NULL, true );
+            
+            if ( wpinv_prices_include_tax() ) {
+                $subtotal -= wpinv_format_amount( $tax, NULL, true );
+            }
 
-            $new_quantity = $this->cart_details[ $found_cart_key ]['quantity'];
-            $new_tax      = $this->cart_details[ $found_cart_key ]['tax'] + $tax_increased;
-            $new_subtotal = $new_quantity * $item_price;
-            $new_discount = 0;
-            $new_total    = 0;
+            $total              = $subtotal - $discount + $tax;
 
-            $this->cart_details[ $found_cart_key ]['subtotal'] = $new_subtotal;
-            $this->cart_details[ $found_cart_key ]['discount'] = $new_discount;
-            $this->cart_details[ $found_cart_key ]['tax']      = $new_tax;
-            $this->cart_details[ $found_cart_key ]['price']    = $new_subtotal - $new_discount + $new_tax;
+            // Do not allow totals to go negative
+            if( $total < 0 ) {
+                $total = 0;
+            }
             
-            $added_item             = $this->cart_details[ $found_cart_key ];
-            $added_item['id']       = $item_id;
-            $added_item['price']    = $total_increased;
-            $added_item['quantity'] = $args['quantity'];
+            $cart_item['quantity']  = $new_quantity;
+            $cart_item['subtotal']  = $subtotal;
+            $cart_item['discount']  = $discount;
+            $cart_item['tax']       = $tax;
+            $cart_item['price']     = $total;
             
-            $subtotal   = $total_increased;
-            $tax        = $tax_increased;
+            $subtotal               = $total_increased - $discount_increased;
+            $tax                    = $tax_increased;
             
+            $this->cart_details[$found_cart_key] = $cart_item;
             //wpinv_error_log( $added_item, 'updated_item', __FILE__, __LINE__ );
         } else {
             // Allow overriding the price
@@ -1560,13 +1568,14 @@ final class WPInv_Invoice {
             }
 
             // Sanitizing the price here so we don't have a dozen calls later
-            $item_price         = wpinv_sanitize_amount( $item_price );
-            $amount             = wpinv_format_amount( $item_price * $args['quantity'], NULL, true );
+            $item_price = wpinv_sanitize_amount( $item_price );
+            $subtotal   = wpinv_format_amount( $item_price * $args['quantity'], NULL, true );
         
-            $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
-            $tax_class  = wpinv_get_item_vat_class( $item->ID );
-            $tax        = $item_price > 0 ? ( $item_price * $args['quantity'] * 0.01 * (float)$tax_rate ) : 0;
-            wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
+            $discount   = !empty( $args['discount'] ) ? $args['discount'] : 0;
+            $tax_class  = !empty( $args['vat_class'] ) ? $args['vat_class'] : '';
+            $tax_rate   = !empty( $args['vat_rate'] ) ? $args['vat_rate'] : 0;
+            $tax        = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
+            //wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
 
             // Setup the items meta item
             $new_item = array(
@@ -1575,9 +1584,6 @@ final class WPInv_Invoice {
             );
 
             $this->items[]  = $new_item;
-
-            $discount   = wpinv_get_cart_item_discount_amount( $args, $this->get_discounts() ); // $args['discount'];
-            $subtotal   = $amount;
 
             if ( wpinv_prices_include_tax() ) {
                 $subtotal -= wpinv_format_amount( $tax, NULL, true );
@@ -1604,21 +1610,18 @@ final class WPInv_Invoice {
                 'meta'        => $args['meta'],
                 'fees'        => $args['fees'],
             );
-            
-            $added_item = end( $this->cart_details );
-            
+                        
             $subtotal = $subtotal - $discount;
-            
-            //wpinv_error_log( $added_item, 'added_item', __FILE__, __LINE__ );
         }
         
+        $added_item = end( $this->cart_details );
         $added_item['action']  = 'add';
+        
         $this->pending['items'][] = $added_item;
-        reset( $this->cart_details );
-        wpinv_error_log( $this->cart_details, 'cart_details', __FILE__, __LINE__ );
+        
         $this->increase_subtotal( $subtotal );
         $this->increase_tax( $tax );
-        
+
         return true;
     }
     
@@ -1695,64 +1698,96 @@ final class WPInv_Invoice {
             $found_cart_key = $cart_index;
         }
         
-        $orig_quantity = $this->cart_details[ $found_cart_key ]['quantity'];
+        $cart_item  = $this->cart_details[$found_cart_key];
+        $quantity   = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
+        $discounts  = $this->get_discounts();
         
-        if ( $orig_quantity > $args['quantity'] ) {
-            $this->cart_details[ $found_cart_key ]['quantity'] -= $args['quantity'];
-
-            $item_price   = $this->cart_details[ $found_cart_key ]['item_price'];
-            $tax          = $this->cart_details[ $found_cart_key ]['tax'];
-            $discount     = ! empty( $this->cart_details[ $found_cart_key ]['discount'] ) ? $this->cart_details[ $found_cart_key ]['discount'] : 0;
-
-            // The total reduction equals the number removed * the item_price
-            $total_reduced = wpinv_format_amount( $item_price, NULL, true );
-            $tax_reduced   = wpinv_format_amount( $tax / $orig_quantity, NULL, true );
-
-            $new_quantity = $this->cart_details[ $found_cart_key ]['quantity'];
-            $new_tax      = $this->cart_details[ $found_cart_key ]['tax'] - $tax_reduced;
-            $new_subtotal = $new_quantity * $item_price;
-            $new_discount = 0;
-            $new_total    = 0;
-
-            $this->cart_details[ $found_cart_key ]['subtotal'] = $new_subtotal;
-            $this->cart_details[ $found_cart_key ]['discount'] = $new_discount;
-            $this->cart_details[ $found_cart_key ]['tax']      = $new_tax;
-            $this->cart_details[ $found_cart_key ]['price']    = $new_subtotal - $new_discount + $new_tax;
-        } else {
-            if ( isset( $this->cart_details[ $found_cart_key ] ) ) {
-                $total_reduced = $this->cart_details[ $found_cart_key ]['item_price'];
-                $tax_reduced   = $this->cart_details[ $found_cart_key ]['tax'];
-
-                unset( $this->cart_details[ $found_cart_key ] );
+        if ( $quantity > $args['quantity'] ) {
+            $item_price         = $cart_item['item_price'];
+            $tax_rate           = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : 0;
+            
+            $new_quantity       = max( $quantity - $args['quantity'], 1);
+            $subtotal           = $item_price * $new_quantity;
+            
+            $args['quantity']   = $new_quantity;
+            $discount           = !empty( $cart_item['discount'] ) ? $cart_item['discount'] : 0;
+            $tax                = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
+            
+            $discount_decrease  = (float)$cart_item['discount'] > 0 && $quantity > 0 ? wpinv_format_amount( ( (float)$cart_item['discount'] / $quantity ), NULL, true ) : 0;
+            $discount_decrease  = $discount > 0 && $subtotal > 0 && (float)$cart_item['discount'] > $discount ? (float)$cart_item['discount'] - $discount : $discount_decrease; 
+            $tax_decrease       = (float)$cart_item['tax'] > 0 && $quantity > 0 ? wpinv_format_amount( ( (float)$cart_item['tax'] / $quantity ), NULL, true ) : 0;
+            $tax_decrease       = $tax > 0 && $subtotal > 0 && (float)$cart_item['tax'] > $tax ? (float)$cart_item['tax'] - $tax : $tax_decrease;
+            
+            // The total increase equals the number removed * the item_price
+            $total_decrease     = wpinv_format_amount( $item_price, NULL, true );
+            
+            if ( wpinv_prices_include_tax() ) {
+                $subtotal -= wpinv_format_amount( $tax, NULL, true );
             }
+
+            $total              = $subtotal - $discount + $tax;
+
+            // Do not allow totals to go negative
+            if( $total < 0 ) {
+                $total = 0;
+            }
+            
+            $cart_item['quantity']  = $new_quantity;
+            $cart_item['subtotal']  = $subtotal;
+            $cart_item['discount']  = $discount;
+            $cart_item['tax']       = $tax;
+            $cart_item['price']     = $total;
+            
+            $added_item             = $cart_item;
+            $added_item['id']       = $item_id;
+            $added_item['price']    = $total_decrease;
+            $added_item['quantity'] = $args['quantity'];
+            
+            $subtotal_decrease      = $total_decrease - $discount_decrease;
+            
+            $this->cart_details[$found_cart_key] = $cart_item;
+            
+            $remove_item = end( $this->cart_details );
+        } else {
+            $item_price     = $cart_item['item_price'];
+            $discount       = !empty( $cart_item['discount'] ) ? $cart_item['discount'] : 0;
+            $tax            = !empty( $cart_item['tax'] ) ? $cart_item['tax'] : 0;
+        
+            $subtotal_decrease  = ( $item_price * $quantity ) - $discount;
+            $tax_decrease       = $tax;
+
+            unset( $this->cart_details[$found_cart_key] );
+            
+            $remove_item             = $args;
+            $remove_item['id']       = $item_id;
+            $remove_item['price']    = $subtotal_decrease;
+            $remove_item['quantity'] = $args['quantity'];
         }
-
-        $pending_args             = $args;
-        $pending_args['id']       = $item_id;
-        $pending_args['amount']   = $total_reduced;
-        $pending_args['quantity'] = $args['quantity'];
-        $pending_args['action']   = 'remove';
-
-        $this->pending['items'][] = $pending_args;
-
-        $this->decrease_subtotal( $total_reduced );
-        $this->decrease_tax( $tax_reduced );
-
+        
+        $remove_item['action']      = 'remove';
+        $this->pending['items'][]   = $remove_item;
+               
+        $this->decrease_subtotal( $subtotal_decrease );
+        $this->decrease_tax( $tax_decrease );
+        
         return true;
     }
     
     public function update_items($temp = false) {
         wpinv_error_log( 'IN', 'update_items()', __FILE__, __LINE__ );
-        wpinv_error_log( $this->get_discounts(), 'discounts', __FILE__, __LINE__ );
         global $wpi_current_id, $wpi_item_id, $wpi_nosave;
         
         if ( !empty( $this->cart_details ) ) {
-            $wpi_nosave     = $temp;
-            $cart_subtotal  = 0;
-            $cart_tax       = 0;
-            $update_cart_details = array();
+            $wpi_nosave             = $temp;
+            $cart_subtotal          = 0;
+            $cart_discount          = 0;
+            $cart_tax               = 0;
+            $update_cart_details    = array();
             
-            foreach ( $this->cart_details as $key => $item ) {                
+            $_POST['wpinv_country'] = $this->country;
+            $_POST['wpinv_state']   = $this->state;
+            
+            foreach ( $this->cart_details as $key => $item ) {
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
                 $amount     = wpinv_format_amount( $item_price * $quantity, NULL, true );
@@ -1761,16 +1796,13 @@ final class WPInv_Invoice {
                 $wpi_current_id         = $this->ID;
                 $wpi_item_id            = $item['id'];
                 
-                $_POST['wpinv_country'] = $this->country;
-                $_POST['wpinv_state']   = $this->state;
-                
-                $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() ); // $item['discount'];
-                wpinv_error_log( $discount, 'discount', __FILE__, __LINE__ );
+                $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
+                //wpinv_error_log( $discount, 'discount', __FILE__, __LINE__ );
                 
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
                 $tax_class  = wpinv_get_item_vat_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-                wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
+                //wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
 
                 if ( wpinv_prices_include_tax() ) {
                     $subtotal -= wpinv_format_amount( $tax, NULL, true );
@@ -1798,18 +1830,19 @@ final class WPInv_Invoice {
                     'fees'        => isset($item['fees']) ? $item['fees'] : array(),
                 );
                 
-                $cart_subtotal  += (float)($subtotal - $discount);
+                $cart_subtotal  += (float)($subtotal - $discount); // TODO
+                $cart_discount  += (float)($discount);
                 $cart_tax       += (float)($tax);
             }
-            
             $this->subtotal = wpinv_format_amount( $cart_subtotal, NULL, true );
             $this->tax      = wpinv_format_amount( $cart_tax, NULL, true );
+            $this->discount = wpinv_format_amount( $cart_discount, NULL, true );
             
             $this->recalculate_total();
             
             $this->cart_details = $cart_details;
         }
-        //wpinv_error_log( $this, 'INVOICE', __FILE__, __LINE__ );
+
         return $this;
     }
     
@@ -1817,7 +1850,7 @@ final class WPInv_Invoice {
         wpinv_error_log( '=>', 'recalculate_totals()', __FILE__, __LINE__ );
         
         $this->update_items($temp);
-        $this->save();
+        $this->save( true );
         
         return $this;
     }

@@ -517,10 +517,10 @@ function wpinv_discount_is_min_met( $code_id = null ) {
     $return   = false;
 
     if ( $discount ) {
-        $min         = wpinv_get_discount_min_total( $code_id );
-        $cart_amount = wpinv_get_cart_discountable_subtotal( $code_id );
+        $min         = (float)wpinv_get_discount_min_total( $code_id );
+        $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $code_id );
 
-        if ( (float) $cart_amount >= (float) $min ) {
+        if ( !$min > 0 || $cart_amount >= $min ) {
             // Minimum has been met
             $return = true;
         } else {
@@ -536,10 +536,10 @@ function wpinv_discount_is_max_met( $code_id = null ) {
     $return   = false;
 
     if ( $discount ) {
-        $max         = wpinv_get_discount_max_total( $code_id );
-        $cart_amount = wpinv_get_cart_discountable_subtotal( $code_id );
+        $max         = (float)wpinv_get_discount_max_total( $code_id );
+        $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $code_id );
 
-        if ( (float) $cart_amount <= (float) $max ) {
+        if ( !$max > 0 || $cart_amount <= $max ) {
             // Minimum has been met
             $return = true;
         } else {
@@ -870,14 +870,6 @@ function wpinv_unset_cart_discount( $code = '' ) {
         
         wpinv_set_checkout_session( $data );
     }
-    
-    //$cart_discounts = $discounts ? explode( ',', $discounts ) : array();
-    //wpinv_error_log( $cart_discounts, 'cart_discounts', __FILE__, __LINE__ );
-    //$invoice = wpinv_get_invoice_cart();
-    //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
-    //$invoice->set( 'discounts', $cart_discounts );
-    //$invoice->recalculate_totals(true);
-    //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
 
     return $discounts;
 }
@@ -937,15 +929,14 @@ function wpinv_get_cart_discounted_amount( $items = array(), $discounts = false 
 
 function wpinv_get_cart_items_discount_amount( $items = array(), $discount = false ) {
     $items  = !empty( $items ) ? $items : wpinv_get_cart_content_details();
-
-    if ( empty( $discount ) ) {
+    
+    if ( empty( $discount ) || empty( $items ) ) {
         return 0;
     }
 
     $amount = 0;
     
     foreach ( $items as $item ) {
-        wpinv_error_log( $discount, $item['id'], __FILE__, __LINE__ );
         $amount += wpinv_get_cart_item_discount_amount( $item, $discount );
     }
     
@@ -956,25 +947,29 @@ function wpinv_get_cart_items_discount_amount( $items = array(), $discount = fal
 
 function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false ) {
     global $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
+    
+    $amount = 0;
 
     if ( empty( $item ) || empty( $item['id'] ) ) {
-        return 0;
+        return $amount;
     }
 
     if ( empty( $item['quantity'] ) ) {
-        return 0;
+        return $amount;
     }
 
     if ( empty( $item['options'] ) ) {
         $item['options'] = array();
     }
 
-    $amount           = 0;
     $price            = wpinv_get_cart_item_price( $item['id'], $item['options'] );
     $discounted_price = $price;
 
     $discounts = false === $discount ? wpinv_get_cart_discounts() : $discount;
-    wpinv_error_log( $discounts, 'discounts 1', __FILE__, __LINE__ );
+    if ( empty( $discounts ) ) {
+        return $amount;
+    }
+
     if ( $discounts ) {
         if ( is_array( $discounts ) ) {
             $discounts = array_values( $discounts );
@@ -982,7 +977,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $discounts = explode( ',', $discounts );
         }
     }
-    wpinv_error_log( $discounts, 'discounts 2', __FILE__, __LINE__ );
+    //wpinv_error_log( $discounts, 'discounts', __FILE__, __LINE__ );
     if( $discounts ) {
         foreach ( $discounts as $discount ) {
             $code_id = wpinv_get_discount_id_by_code( $discount );
@@ -1008,6 +1003,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
                     if ( 'flat' === wpinv_get_discount_type( $code_id ) ) {
                         $items_subtotal    = 0.00;
                         $cart_items        = wpinv_get_cart_contents();
+                        
                         foreach ( $cart_items as $cart_item ) {
                             if ( ! in_array( $cart_item['id'], $excluded_items ) ) {
                                 $options = !empty( $cart_item['options'] ) ? $cart_item['options'] : array();
@@ -1134,7 +1130,7 @@ function wpinv_maybe_remove_cart_discount( $cart_key = 0 ) {
 add_action( 'wpinv_post_remove_from_cart', 'wpinv_maybe_remove_cart_discount' );
 
 function wpinv_multiple_discounts_allowed() {
-    $ret = wpinv_get_option( 'allow_multiple_discounts', true );
+    $ret = wpinv_get_option( 'allow_multiple_discounts', false );
     return (bool) apply_filters( 'wpinv_multiple_discounts_allowed', $ret );
 }
 

@@ -9,7 +9,7 @@ class WPInv_Meta_Box_Items {
         global $ajax_cart_details;
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
-        $invoice            = new WPInv_Invoice( $post_id );wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
+        $invoice            = new WPInv_Invoice( $post_id );
         $ajax_cart_details  = $invoice->get_cart_details();
         $subtotal           = $invoice->get_subtotal( true );
         $discount_raw       = $invoice->get_discount();
