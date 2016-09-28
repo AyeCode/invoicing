@@ -809,3 +809,25 @@ function wpinv_tool_merge_coupons() {
     wp_send_json( $response );
 }
 add_action( 'wpinv_tool_merge_coupons', 'wpinv_tool_merge_coupons' );
+
+function wpinv_pm_to_wpi_currency( $value, $option = '' ) {
+    return wpinv_get_currency();
+}
+add_filter( 'pre_option_geodir_currency', 'wpinv_pm_to_wpi_currency', 10, 2 );
+
+function wpinv_pm_to_wpi_currency_sign( $value, $option = '' ) {
+    return wpinv_currency_symbol();
+}
+add_filter( 'pre_option_geodir_currencysym', 'wpinv_pm_to_wpi_currency_sign', 10, 2 );
+
+function wpinv_pm_to_wpi_display_price( $price, $amount, $display = true , $decimal_sep, $thousand_sep ) {
+    if ( !$display ) {
+        $price = wpinv_format_amount( $amount, NULL, true );
+    } else {
+        $price = wpinv_price( wpinv_format_amount( $amount ) );
+    }
+    echo $price;
+    return $price;
+}
+add_filter( 'geodir_payment_price' , 'wpinv_pm_to_wpi_display_price', 10000, 5 );
+

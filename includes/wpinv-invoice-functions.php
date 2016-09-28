@@ -501,7 +501,7 @@ function wpinv_get_cart_content_details() {
         $wpi_item_id            = $item_id;
         
         $item_price         = wpinv_get_item_price( $item_id );
-        wpinv_error_log( 'discount', $item_id, __FILE__, __LINE__ );
+        //wpinv_error_log( 'discount', $item_id, __FILE__, __LINE__ );
         $discount           = wpinv_get_cart_item_discount_amount( $item );
         $discount           = apply_filters( 'wpinv_get_cart_content_details_item_discount_amount', $discount, $item );
         $quantity           = wpinv_get_cart_item_quantity( $item );

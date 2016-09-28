@@ -176,6 +176,14 @@ class WPInv_Ajax {
             die();
         }
         
+        $checkout_session = wpinv_get_checkout_session();
+        
+        $data                   = array();
+        $data['invoice_id']     = $invoice_id;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
+        
+        wpinv_set_checkout_session( $data );
+        
         $quantity = wpinv_item_quantities_enabled() && !empty($_POST['qty']) && (int)$_POST['qty'] > 0 ? (int)$_POST['qty'] : 1;
 
         $args = array(
@@ -191,6 +199,21 @@ class WPInv_Ajax {
         $invoice->add_item( $item_id, $args );
         $invoice->save();
         
+        if ( empty( $_POST['country'] ) ) {
+            $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
+        }
+        if ( empty( $_POST['state'] ) ) {
+            $_POST['state'] = $invoice->state;
+        }
+         
+        $invoice->country   = sanitize_text_field( $_POST['country'] );
+        $invoice->state     = sanitize_text_field( $_POST['state'] );
+        
+        $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
+        $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
+
+        $invoice->recalculate_totals(true);
+        
         $response                       = array();
         $response['success']            = true;
         $response['data']['items']      = wpinv_admin_get_line_items( $invoice );
@@ -198,10 +221,12 @@ class WPInv_Ajax {
         $response['data']['subtotalf']  = $invoice->get_subtotal(true);
         $response['data']['tax']        = $invoice->get_tax();
         $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->get_discount();
-        $response['data']['discountf']  = $invoice->get_discount(true);
+        $response['data']['discount']   = $invoice->discount;
+        $response['data']['discountf']  = wpinv_price( $invoice->discount, $invoice->get_currency() );
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
+        
+        wpinv_set_checkout_session($checkout_session);
         
         wp_send_json( $response );
     }
@@ -230,6 +255,14 @@ class WPInv_Ajax {
         if ( empty( $invoice ) ) {
             die();
         }
+        
+        $checkout_session = wpinv_get_checkout_session();
+        
+        $data                   = array();
+        $data['invoice_id']     = $invoice_id;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
+        
+        wpinv_set_checkout_session( $data );
 
         $args = array(
             'id'         => $item_id,
@@ -240,6 +273,21 @@ class WPInv_Ajax {
         $invoice->remove_item( $item_id, $args );
         $invoice->save();
         
+        if ( empty( $_POST['country'] ) ) {
+            $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
+        }
+        if ( empty( $_POST['state'] ) ) {
+            $_POST['state'] = $invoice->state;
+        }
+         
+        $invoice->country   = sanitize_text_field( $_POST['country'] );
+        $invoice->state     = sanitize_text_field( $_POST['state'] );
+        
+        $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
+        $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
+        
+        $invoice->recalculate_totals(true);
+        
         $response                       = array();
         $response['success']            = true;
         $response['data']['items']      = wpinv_admin_get_line_items( $invoice );
@@ -247,10 +295,12 @@ class WPInv_Ajax {
         $response['data']['subtotalf']  = $invoice->get_subtotal(true);
         $response['data']['tax']        = $invoice->get_tax();
         $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->get_discount();
-        $response['data']['discountf']  = $invoice->get_discount(true);
+        $response['data']['discount']   = $invoice->discount;
+        $response['data']['discountf']  = wpinv_price( $invoice->discount, $invoice->get_currency() );
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
+        
+        wpinv_set_checkout_session($checkout_session);
         
         wp_send_json( $response );
     }
@@ -333,6 +383,14 @@ class WPInv_Ajax {
             die();
         }
         
+        $checkout_session = wpinv_get_checkout_session();
+        
+        $data                   = array();
+        $data['invoice_id']     = $invoice_id;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
+        
+        wpinv_set_checkout_session( $data );
+        
         if ( !empty( $_POST['user_id'] ) ) {
             $wpi_userID = absint( $_POST['user_id'] ); 
         }
@@ -347,6 +405,7 @@ class WPInv_Ajax {
             $invoice->state = sanitize_text_field( $_POST['state'] );
             $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
         }
+        
         $invoice = $invoice->recalculate_totals(true);
         
         $response                       = array();
@@ -360,6 +419,8 @@ class WPInv_Ajax {
         $response['data']['discountf']  = $invoice->get_discount(true);
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
+        
+        wpinv_set_checkout_session($checkout_session);
         
         wp_send_json( $response );
     }

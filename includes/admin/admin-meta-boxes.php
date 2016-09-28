@@ -156,7 +156,14 @@ function wpinv_discount_metabox_details( $post ) {
     $discount       = wpinv_get_discount( $discount_id );
     
     $type           = wpinv_get_discount_type( $discount_id );
+    $min_total      = wpinv_get_discount_min_total( $discount_id );
+    $max_total      = wpinv_get_discount_max_total( $discount_id );
+    $max_uses       = wpinv_get_discount_max_uses( $discount_id );
     $single_use     = wpinv_discount_is_single_use( $discount_id );
+    
+    $min_total      = $min_total > 0 ? $min_total : '';
+    $max_total      = $max_total > 0 ? $max_total : '';
+    $max_uses       = $max_uses > 0 ? $max_uses : '';
 ?>
 <?php do_action( 'wpinv_discount_form_top', $post ); ?>
 <?php wp_nonce_field( 'wpinv_discount_metabox_nonce', 'wpinv_discount_metabox_nonce' ); ;?>
@@ -224,7 +231,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_min_total"><?php _e( 'Minimum Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" name="min_total" id="wpinv_discount_min_total" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_min_total( $discount_id ) ); ?>">
+                <input type="text" name="min_total" id="wpinv_discount_min_total" class="wpi-field-price wpi-price" value="<?php echo $min_total; ?>">
                 <p class="description"><?php _e( 'This allows you to set the minimum amount (subtotal, including taxes) allowed when using the discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
@@ -234,7 +241,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_max_total"><?php _e( 'Maximum Amount', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" name="max_total" id="wpinv_discount_max_total" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_max_total( $discount_id ) ); ?>">
+                <input type="text" name="max_total" id="wpinv_discount_max_total" class="wpi-field-price wpi-price" value="<?php echo $max_total; ?>">
                 <p class="description"><?php _e( 'This allows you to set the maximum amount (subtotal, including taxes) allowed when using the discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
@@ -244,7 +251,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_max_uses"><?php _e( 'Max Uses', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="number" min="0" step="1" id="wpinv_discount_max_uses" name="max_uses" class="medium-text" value="<?php echo esc_attr( wpinv_get_discount_max_uses( $discount_id ) ); ?>">
+                <input type="number" min="0" step="1" id="wpinv_discount_max_uses" name="max_uses" class="medium-text" value="<?php echo $max_uses; ?>">
                 <p class="description"><?php _e( 'The maximum number of times this discount can be used. Leave blank for unlimited.', 'invoicing' ); ?></p>
             </td>
         </tr>
