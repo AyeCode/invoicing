@@ -97,7 +97,7 @@ class WPInv_Meta_Box_Details {
         //$tax            = (float)$data['wpinv_tax'];
         $discount       = (float)$data['wpinv_discount'];
         $discount_code  = sanitize_text_field( $data['wpinv_discount_code'] );
-        $ip             = wpinv_get_ip();
+        $ip             = !empty( $invoice->ip ) ? $invoice->ip : wpinv_get_ip();
 
         $invoice->set( 'status', $status );
         $invoice->set( 'number', $number );
