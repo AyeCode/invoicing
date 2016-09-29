@@ -145,39 +145,7 @@ class WPInv_Meta_Box_Billing_Details {
         </div>
     </div>
 </div>
-<?php wp_nonce_field( 'wpinv_billing_details', 'wpinv_billing_details_nonce' ) ;?>
+<?php wp_nonce_field( 'wpinv_save_invoice', 'wpinv_save_invoice' ) ;?>
 <?php
-    }
-    
-    public static function save( $post_id, $data, $post ) {
-        $invoice = new WPInv_Invoice( $post_id );
-        
-        ///$user_id        = (int)$data['post_author_override'];
-        $first_name     = sanitize_text_field( $data['wpinv_first_name'] );
-        $last_name      = sanitize_text_field( $data['wpinv_last_name'] );
-        $company        = sanitize_text_field( $data['wpinv_company'] );
-        $vat_number     = sanitize_text_field( $data['wpinv_vat_number'] );
-        ///$email          = sanitize_email( $data['wpinv_email'] );
-        $phone          = sanitize_text_field( $data['wpinv_phone'] );
-        $address        = sanitize_text_field( $data['wpinv_address'] );
-        $city           = sanitize_text_field( $data['wpinv_city'] );
-        $zip            = sanitize_text_field( $data['wpinv_zip'] );
-        $country        = sanitize_text_field( $data['wpinv_country'] );
-        $state          = sanitize_text_field( $data['wpinv_state'] );
-        
-        ///$invoice->set( 'user_id', $user_id );
-        $invoice->set( 'first_name', $first_name );
-        $invoice->set( 'last_name', $last_name );
-        $invoice->set( 'company', $company );
-        $invoice->set( 'vat_number', $vat_number );
-        ///$invoice->set( 'email', $email );
-        $invoice->set( 'phone', $phone );
-        $invoice->set( 'address', $address );
-        $invoice->set( 'city', $city );
-        $invoice->set( 'zip', $zip );
-        $invoice->set( 'country', $country );
-        $invoice->set( 'state', $state );
-
-        return $invoice->save();
     }
 }

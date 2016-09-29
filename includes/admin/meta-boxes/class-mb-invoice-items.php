@@ -181,10 +181,6 @@ class WPInv_Meta_Box_Items {
         <?php
     }
     
-    public static function save( $post_id, $post_data, $post ) {
-        return true;
-    }
-    
     public static function prices( $post ) {        
         $symbol         = wpinv_currency_symbol();
         $position       = wpinv_currency_position();
@@ -279,5 +275,59 @@ class WPInv_Meta_Box_Items {
                 ) ); ?>
         </p>
         <?php
+    }
+    
+    public static function save( $post_id, $data, $post ) {
+        $invoice        = new WPInv_Invoice( $post_id );
+        
+        // Billing
+        $first_name     = sanitize_text_field( $data['wpinv_first_name'] );
+        $last_name      = sanitize_text_field( $data['wpinv_last_name'] );
+        $company        = sanitize_text_field( $data['wpinv_company'] );
+        $vat_number     = sanitize_text_field( $data['wpinv_vat_number'] );
+        $phone          = sanitize_text_field( $data['wpinv_phone'] );
+        $address        = sanitize_text_field( $data['wpinv_address'] );
+        $city           = sanitize_text_field( $data['wpinv_city'] );
+        $zip            = sanitize_text_field( $data['wpinv_zip'] );
+        $country        = sanitize_text_field( $data['wpinv_country'] );
+        $state          = sanitize_text_field( $data['wpinv_state'] );
+        
+        // Details
+        $status         = sanitize_text_field( $data['wpinv_status'] );
+        $old_status     = !empty( $data['original_post_status'] ) ? sanitize_text_field( $data['original_post_status'] ) : $status;
+        $number         = sanitize_text_field( $data['wpinv_number'] );
+        //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
+        //$discount       = sanitize_text_field( $data['wpinv_discount'] );
+        
+        $ip             = !empty( $invoice->get_ip() ) ? $invoice->get_ip() : wpinv_get_ip();
+        
+        $invoice->set( 'first_name', $first_name );
+        $invoice->set( 'last_name', $last_name );
+        $invoice->set( 'company', $company );
+        $invoice->set( 'vat_number', $vat_number );
+        $invoice->set( 'phone', $phone );
+        $invoice->set( 'address', $address );
+        $invoice->set( 'city', $city );
+        $invoice->set( 'zip', $zip );
+        $invoice->set( 'country', $country );
+        $invoice->set( 'state', $state );
+        $invoice->set( 'status', $status );
+        $invoice->set( 'number', $number );
+        //$invoice->set( 'discounts', $discounts );
+        //$invoice->set( 'discount', $discount );
+        $invoice->set( 'ip', $ip );
+        $invoice->old_status = $_POST['original_post_status'];
+        $saved = $invoice->save();
+        
+        // Check for payment notes
+        if ( !empty( $data['invoice_note'] ) ) {
+            $note               = wp_kses( $data['invoice_note'], array() );
+            $note_type          = sanitize_text_field( $data['invoice_note_type'] );
+            $is_customer_note   = $note_type == 'customer' ? 1 : 0;
+        
+            wpinv_insert_payment_note( $invoice->ID, $note, $is_customer_note );
+        }
+        
+        return $saved;
     }
 }

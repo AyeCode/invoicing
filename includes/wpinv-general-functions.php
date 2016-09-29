@@ -78,9 +78,8 @@ function wpinv_send_to_success_page( $args = null ) {
     $gateway = isset( $_REQUEST['wpi-gateway'] ) ? $_REQUEST['wpi-gateway'] : '';
     
     $redirect = apply_filters( 'wpinv_success_page_redirect', $redirect, $gateway, $args );
-    wpinv_error_log( $redirect, 'redirect', __FILE__, __LINE__ );
-	wp_redirect( $redirect );
-	exit;
+    wp_redirect( $redirect );
+    exit;
 }
 
 function wpinv_send_to_failed_page( $args = null ) {
@@ -99,9 +98,8 @@ function wpinv_send_to_failed_page( $args = null ) {
     $gateway = isset( $_REQUEST['wpi-gateway'] ) ? $_REQUEST['wpi-gateway'] : '';
     
     $redirect = apply_filters( 'wpinv_failed_page_redirect', $redirect, $gateway, $args );
-    wpinv_error_log( $redirect, 'redirect', __FILE__, __LINE__ );
-	wp_redirect( $redirect );
-	exit;
+    wp_redirect( $redirect );
+    exit;
 }
 
 function wpinv_get_checkout_uri( $args = array() ) {

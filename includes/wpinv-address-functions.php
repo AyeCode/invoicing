@@ -1554,12 +1554,10 @@ function wpinv_get_ip_country( $address = null ) {
     global $wpinv_ip_address_country;
     
     if ( !empty( $wpinv_ip_address_country ) ) {
-        //wpinv_error_log( $wpinv_ip_address_country, 'ip_address_country', __FILE__, __LINE__ );
         return $wpinv_ip_address_country;
     }
 
     global $wpinv_options;
-    wpinv_error_log( (isset($wpinv_options['vat_ip_lookup']) ? $wpinv_options['vat_ip_lookup'] : "--"), 'vat_ip_lookup', __FILE__, __LINE__ );
     $real_ip_address = $address === null ? wpinv_get_ip() : $address;
 
     if ( !empty( $real_ip_address ) && $real_ip_address !== "127.0.0.1" ) {
@@ -1582,15 +1580,12 @@ function wpinv_get_ip_country( $address = null ) {
                 error_reporting( $erl );
             } catch( Exception $e ) {
             }
-
-            //wpinv_error_log( $wpinv_ip_address_country, 'geoip_country_code_by_name', __FILE__, __LINE__ );
             
             return $wpinv_ip_address_country;
         }
         // Fallback to use the GeoIP2 function if available because they are faster
         else if ( wpinv_getGeoLiteCountryFilename() !== false && ( !isset( $wpinv_options['vat_ip_lookup'] ) || $wpinv_options['vat_ip_lookup'] === "geoip2" || $wpinv_options['vat_ip_lookup'] === "default" ) ) {
             $wpinv_ip_address_country = wpinv_getGeoIP2CountryCode( $real_ip_address );
-            //wpinv_error_log( $wpinv_ip_address_country, 'getGeoIP2CountryCode', __FILE__, __LINE__ );
             
             return $wpinv_ip_address_country;
         }
@@ -1611,7 +1606,6 @@ function wpinv_get_ip_country( $address = null ) {
     // Finally, if the other two options are not viable then use the store
     if ( empty( $wpinv_ip_address_country ) ) {
         $wpinv_ip_address_country = wpinv_get_default_country();
-        //wpinv_error_log( $wpinv_ip_address_country, 'wpinv_get_default_country', __FILE__, __LINE__ );
     }
 
     return $wpinv_ip_address_country;

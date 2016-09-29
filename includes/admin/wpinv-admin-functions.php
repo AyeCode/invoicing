@@ -507,11 +507,6 @@ add_action( 'save_post', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
     if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && $data['post_type'] == 'wpi_invoice' ) {
-        if ( !empty( $postarr['post_status'] ) && !empty( $postarr['wpinv_status'] ) && $postarr['post_status'] != $postarr['wpinv_status'] ) {
-            $data['post_status'] = sanitize_text_field( $postarr['wpinv_status'] );
-            $_POST['post_status'] = sanitize_text_field( $postarr['wpinv_status'] );
-        }
-        
         $is_new_user = !empty( $postarr['wpinv_new_user'] ) ? true : false;
         $email = !empty( $postarr['wpinv_email'] ) && $postarr['wpinv_email'] && is_email( $postarr['wpinv_email'] ) ? $postarr['wpinv_email'] : NULL;
         

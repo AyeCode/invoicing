@@ -335,7 +335,6 @@ function wpinv_cart_total( $cart_items = array(), $echo = true ) {
 }
 
 function wpinv_get_cart_tax( $items = array() ) {
-    //wpinv_error_log( '', 'wpinv_get_cart_tax()', __FILE__, __LINE__ );
     $cart_tax = 0;
     $items    = !empty( $items ) ? $items : wpinv_get_cart_content_details();
 
@@ -463,16 +462,13 @@ function wpinv_cart_has_recurring_item() {
 }
 
 function wpinv_get_cart_contents() {
-    //wpinv_error_log( '', 'wpinv_get_cart_contents()', __FILE__, __LINE__ );
     $cart_details = wpinv_get_cart_details();
     
     return apply_filters( 'wpinv_get_cart_contents', $cart_details );
 }
 
 function wpinv_get_cart_content_details() {
-    //wpinv_error_log( '', 'wpinv_get_cart_content_details()', __FILE__, __LINE__ );
     global $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
-    //wpinv_error_log( debug_backtrace(), 'debug_backtrace', __FILE__, __LINE__ );
     $cart_items = wpinv_get_cart_contents();
     
     if ( empty( $cart_items ) ) {
@@ -491,7 +487,6 @@ function wpinv_get_cart_content_details() {
     }
 
     foreach( $cart_items as $key => $item ) {
-        //wpinv_error_log( $item, 'item', __FILE__, __LINE__ );
         $item_id            = isset( $item['id'] ) ? sanitize_text_field( $item['id'] ) : '';
         if ( empty( $item_id ) ) {
             continue;
@@ -501,7 +496,6 @@ function wpinv_get_cart_content_details() {
         $wpi_item_id            = $item_id;
         
         $item_price         = wpinv_get_item_price( $item_id );
-        //wpinv_error_log( 'discount', $item_id, __FILE__, __LINE__ );
         $discount           = wpinv_get_cart_item_discount_amount( $item );
         $discount           = apply_filters( 'wpinv_get_cart_content_details_item_discount_amount', $discount, $item );
         $quantity           = wpinv_get_cart_item_quantity( $item );
@@ -511,8 +505,6 @@ function wpinv_get_cart_content_details() {
         $tax_rate           = wpinv_get_tax_rate( $_POST['country'], $_POST['state'], $wpi_item_id );
         $tax_class          = wpinv_get_item_vat_class( $item_id );
         $tax                = wpinv_get_cart_item_tax( $item_id, $subtotal - $discount );
-        //wpinv_error_log( $tax, 'tax', __FILE__, __LINE__ );
-        //$tax                = $item_price > 0 ? ( $item_price * 0.01 * (float)$tax_rate ) : 0;
         
         if ( wpinv_prices_include_tax() ) {
             $subtotal -= wpinv_format_amount( $tax, NULL, true );
@@ -528,7 +520,6 @@ function wpinv_get_cart_content_details() {
         $details[ $key ]  = array(
             'id'                => $item_id,
             'name'              => !empty($item['name']) ? $item['name'] : get_the_title( $item_id ),
-            //'description'       => get_the_excerpt( $item_id ),
             'item_price'        => wpinv_format_amount( $item_price, NULL, true ),
             'quantity'          => $quantity,
             'discount'          => wpinv_format_amount( $discount, NULL, true ),
@@ -540,19 +531,19 @@ function wpinv_get_cart_content_details() {
             'meta'              => isset( $item['meta'] ) ? $item['meta'] : array(),
             'fees'              => $fees,
         );
-        //wpinv_error_log( $details[ $key ], $key, __FILE__, __LINE__ );
+        
         if ( $wpinv_is_last_cart_item ) {
             $wpinv_is_last_cart_item   = false;
             $wpinv_flat_discount_total = 0.00;
         }
     }
-    //wpinv_error_log( $details, 'wpinv_get_cart_content_details()', __FILE__, __LINE__ );
+    
     return $details;
 }
 
 function wpinv_get_cart_details( $invoice_id = 0 ) {
     global $ajax_cart_details;
-    //wpinv_error_log( '', 'wpinv_get_cart_details()', __FILE__, __LINE__ );
+
     $invoice      = wpinv_get_invoice_cart( $invoice_id );
     $cart_details = !empty( $ajax_cart_details ) ? $ajax_cart_details : $invoice->cart_details;
 
@@ -1111,7 +1102,7 @@ function wpinv_process_checkout() {
             $invoice_data['cart_details'][$key]['vat_rate'] = round( $rate, 3 );
         }
     }
-    //wpinv_error_log( $invoice_data, 'invoice_data', __FILE__, __LINE__ );
+
     // Add the user data for hooks
     $valid_data['user'] = $user;
     
@@ -1130,7 +1121,6 @@ function wpinv_process_checkout() {
     
     // Setup the data we're storing in the purchase session
     $session_data = $invoice_data;
-    //wpinv_error_log( $session_data, 'session_data', __FILE__, __LINE__ );
     // Make sure credit card numbers are never stored in sessions
     if ( !empty( $session_data['card_info']['card_number'] ) ) {
         unset( $session_data['card_info']['card_number'] );

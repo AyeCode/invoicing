@@ -847,7 +847,7 @@ function wpinv_set_cart_discount( $code = '' ) {
             update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
         }
     }
-    $data['cart_discounts'] = $discounts; //wpinv_error_log( $discounts, 'wpinv_set_cart_discount()', __FILE__, __LINE__ );
+    $data['cart_discounts'] = $discounts;
     
     wpinv_set_checkout_session( $data );
     
@@ -862,7 +862,7 @@ function wpinv_unset_cart_discount( $code = '' ) {
         unset( $discounts[ $key ] );
             
         $data = wpinv_get_checkout_session();
-        $data['cart_discounts'] = $discounts; //wpinv_error_log( $discounts, 'wpinv_unset_cart_discount()', __FILE__, __LINE__ );
+        $data['cart_discounts'] = $discounts;
         if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
             $payment_meta['user_info']['discount']  = !empty( $discounts ) ? implode( ',', $discounts ) : '';
             update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
@@ -977,7 +977,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $discounts = explode( ',', $discounts );
         }
     }
-    //wpinv_error_log( $discounts, 'discounts', __FILE__, __LINE__ );
+
     if( $discounts ) {
         foreach ( $discounts as $discount ) {
             $code_id = wpinv_get_discount_id_by_code( $discount );

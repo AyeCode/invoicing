@@ -108,11 +108,9 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
         $item_id = 0;
     }
     
-    $rate = (float)wpinv_get_option( 'tax_rate', 0 );
-    wpinv_error_log( $rate, 'DEFAULT RATE', __FILE__, __LINE__ );
-    $user_address = wpinv_get_user_address( $wpi_userID );
-    //wpinv_error_log( $user_address, 'user_address', __FILE__, __LINE__ );
-    wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
+    $rate           = (float)wpinv_get_option( 'tax_rate', 0 );
+    $user_address   = wpinv_get_user_address( $wpi_userID );
+
     if( empty( $country ) ) {
         if( !empty( $_POST['wpinv_country'] ) ) {
             $country = $_POST['wpinv_country'];
@@ -125,9 +123,6 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
         }
         $country = !empty( $country ) ? $country : wpinv_get_default_country();
     }
-
-    wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
-    //wpinv_error_log( $_POST, 'POST', __FILE__, __LINE__ );
 
     if( empty( $state ) ) {
         if( !empty( $_POST['wpinv_state'] ) ) {
@@ -144,13 +139,13 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
 
     if( !empty( $country ) ) {
         $tax_rates   = wpinv_get_tax_rates();
-        //wpinv_error_log( $tax_rates, 'tax_rates', __FILE__, __LINE__ );
+
         if( !empty( $tax_rates ) ) {
             // Locate the tax rate for this country / state, if it exists
             foreach( $tax_rates as $key => $tax_rate ) {
                 if( $country != $tax_rate['country'] )
                     continue;
-                wpinv_error_log( $country, 'tax_country', __FILE__, __LINE__ );
+
                 if( !empty( $tax_rate['global'] ) ) {
                     if( !empty( $tax_rate['rate'] ) ) {
                         $rate = number_format( $tax_rate['rate'], 4 );
@@ -168,8 +163,6 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
             }
         }
     }
-
-    wpinv_error_log( $rate, 'wpinv_get_tax_rate() FINAL', __FILE__, __LINE__ );
     
     $rate = apply_filters( 'wpinv_tax_rate', $rate, $country, $state, $item_id );
     
