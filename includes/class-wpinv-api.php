@@ -17,7 +17,6 @@ class WPInv_API {
     public function __construct( $params = array() ) {
     }
     public function insert_invoice( $data ) {
-        wpinv_error_log( 'IN', 'insert_invoice()', __FILE__, __LINE__ );
         global $wpdb;
         //wpinv_transaction_query( 'start' );
 
@@ -270,10 +269,6 @@ class WPInv_API {
             
             $rate = wpinv_get_tax_rate( $country, $state, 'global' );
             
-            //wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
-            //wpinv_error_log( $state, 'state', __FILE__, __LINE__ );
-            //wpinv_error_log( $rate, 'rate', __FILE__, __LINE__ );
-            
             $total_tax = 0;
             foreach ( $data['items'] as $item ) {
                 $id                 = isset( $item['id'] ) ? sanitize_text_field( $item['id'] ) : '';
@@ -283,26 +278,10 @@ class WPInv_API {
                 
                 if ( !empty( $item['vat_rates_class'] ) ) {
                     $vat_rates_class = $item['vat_rates_class'];
-                    /*
-                    if ( isset( $item['vat_rate'] ) ) {
-                        $vat_rate = $item['vat_rate'];
-                    } else {
-                        $vat_rate = wpinv_lookup_rate( $country, $state, $rate, $item['vat_rates_class'] );
-                    }
-                    */
                 } else {
-                    $vat_rates_class    = '_standard';
-                    /*
-                    if ( isset( $item['vat_rate'] ) ) {
-                        $vat_rate = $item['vat_rate'];
-                    } else {
-                        $vat_rate = wpinv_lookup_rate( $country, $state, $rate, $vat_rates_class );
-                    }
-                    */
+                    $vat_rates_class = '_standard';
                 }
                 $vat_rate = wpinv_get_tax_rate( $country, $state, $id );
-                
-                wpinv_error_log( $vat_rate, 'set_items() => vat_rate', __FILE__, __LINE__ );
                 
                 $tax = $amount > 0 ? ( $amount * 0.01 * (float)$vat_rate ) : 0;
                 $total_tax += $tax;
@@ -323,8 +302,6 @@ class WPInv_API {
             $invoice->set( 'tax', wpinv_format_amount( $total_tax, NULL, true ) );
             
             $items_array = apply_filters( 'wpinv_save_invoice_items', $items_array, $data['items'], $invoice );
-            
-            //wpinv_error_log( $items_array, 'save_items', __FILE__, __LINE__ );
             
             $invoice->set( 'items', $items_array );
             update_post_meta( $invoice->ID, '_wpinv_items', $items_array );

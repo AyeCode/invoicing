@@ -9,6 +9,19 @@ jQuery(function($) {
     var wpiDecimalSep = WPInv_Admin.decimal_sep;
     var wpiDecimals = WPInv_Admin.decimals;
     
+    var $postForm = $('.post-type-wpi_invoice form#post');
+    if ($('[name="wpinv_status"]', $postForm).length) {
+        var origStatus = $('[name="wpinv_status"]', $postForm).val();
+        $('[name="original_post_status"]', $postForm).val(origStatus);
+        $('[name="hidden_post_status"]', $postForm).val(origStatus);
+        $('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + origStatus + '" id="post_status" name="post_status">');
+        
+        $postForm.on('change', '[name="wpinv_status"]', function(e) {
+            e.preventDefault();
+            $('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + $(this).val() + '" id="post_status" name="post_status">');
+        });
+    }
+    
     $('input.wpi-price').on("contextmenu",function(e) {
         return false;
     });
@@ -160,14 +173,6 @@ jQuery(function($) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
         jQuery('#submitdiv', jQuery('.wpinv')).hide();
         jQuery('#major-publishing-actions', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
-        
-        if (jQuery('#hidden_post_status', '#wpinv-details').val() == 'draft') {
-            jQuery('#hidden_post_status', '#wpinv-details').val('pending');
-        }
-        
-        if (jQuery('#post_status', '#wpinv-details').val() == 'draft') {
-            jQuery('#post_status', '#wpinv-details').val('pending');
-        }
     }
     
     var invBilling = jQuery('#wpinv-address.postbox').html();

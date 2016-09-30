@@ -87,37 +87,6 @@ class WPInv_Meta_Box_Details {
         <?php
     }
     
-    public static function save( $post_id, $data, $post ) {
-        $invoice = new WPInv_Invoice( $post_id );
-        
-        $curr_total     = (float)$invoice->get_total();
-        
-        $status         = sanitize_text_field( $data['wpinv_status'] );
-        $number         = sanitize_text_field( $data['wpinv_number'] );
-        //$tax            = (float)$data['wpinv_tax'];
-        $discount       = (float)$data['wpinv_discount'];
-        $discount_code  = sanitize_text_field( $data['wpinv_discount_code'] );
-        $ip             = wpinv_get_ip();
-
-        $invoice->set( 'status', $status );
-        $invoice->set( 'number', $number );
-        //$invoice->set( 'tax', $tax );
-        $invoice->set( 'discount', $discount );
-        $invoice->set( 'discount_code', $discount_code );
-        $invoice->set( 'ip', $ip );
-        
-        // Check for payment notes
-        if ( !empty( $data['invoice_note'] ) ) {
-            $note               = wp_kses( $data['invoice_note'], array() );
-            $note_type          = sanitize_text_field( $data['invoice_note_type'] );
-            $is_customer_note   = $note_type == 'customer' ? 1 : 0;
-        
-            wpinv_insert_payment_note( $invoice->ID, $note, $is_customer_note );
-        }
-        $invoice->recalculate_total();
-        $invoice->save();
-    }
-    
     public static function resend_invoice( $post ) {
         global $wpi_mb_invoice;
         
@@ -150,10 +119,9 @@ class WPInv_Meta_Box_Details {
             $bill_times     = (int)$invoice->get_bill_times();
             
             $subscription   = $invoice->get_subscription_data();
-            //wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
-            $period     = wpinv_get_pretty_subscription_period( $subscription['period'] );
-            $billing    = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() ) . ' / ' . $period;
-            $initial    = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
+            $period         = wpinv_get_pretty_subscription_period( $subscription['period'] );
+            $billing        = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() ) . ' / ' . $period;
+            $initial        = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
             
             if ( $billing != $billing ) {
                 $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Inital subscription amount then billing cycle and amount', 'invoicing' ), $initial, $billing );

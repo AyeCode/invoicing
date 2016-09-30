@@ -404,22 +404,18 @@ function wpinv_item_is_taxable( $item_id = 0, $country = false, $state = false )
 }
 
 function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0 ) {
-    wpinv_error_log( 'wpinv_get_vat_rate( DEFAULT rate: ' . $rate . ', country: ' . $country . ', state: ' . $state . ', item_id: ' . $item_id . ' )', '', __FILE__, __LINE__ );
     global $wpinv_options, $wpi_session, $wpi_item_id;
     
     $item_id = $item_id > 0 ? $item_id : $wpi_item_id;
-    
     $allow_vat_classes = wpinv_allow_vat_classes();
-    
     $class = $item_id ? wpinv_get_item_vat_class( $item_id ) : '_standard';
-    wpinv_error_log( $class, 'class', __FILE__, __LINE__ );
+
     if ( $class === '_exempt' ) {
         return 0;
     } else if ( !$allow_vat_classes ) {
         $class = '_standard';
     }
 
-    //wpinv_error_log( $_POST, '_POST', __FILE__, __LINE__ );
     if( !empty( $_POST['wpinv_country'] ) ) {
         $post_country = $_POST['wpinv_country'];
     } elseif( !empty( $_POST['wpinv_country'] ) ) {
@@ -430,43 +426,28 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         $post_country = '';
     }
 
-    wpinv_error_log( $post_country, 'post_country', __FILE__, __LINE__ );
-    wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
     // If there is a VAT number, the rate is zero
     // Grab the country either from the POST array or
     // use the original country
     $country = !empty( $post_country ) ? $post_country : apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : $country );
-    wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
     
     $requires_vat   = apply_filters( 'wpinv_requires_vat', 0, false );
     $is_digital     = wpinv_item_get_vat_rule( $item_id ) == 'digital' ;
     
     $rate = isset( $wpinv_options['tax_rate'] ) ? (float)$wpinv_options['tax_rate'] : ( $requires_vat && isset( $wpinv_options['vat_eu_states'] ) ? $wpinv_options['vat_eu_states'] : 0 );
-    wpinv_error_log( $rate, 'rate', __FILE__, __LINE__ );
       
     if ( wpinv_disable_vat_for_same_country() && wpinv_is_base_country( $country ) ) { // Disable VAT to same country
         $rate = 0;
-        wpinv_error_log( 1, 'disable_vat_for_same_country', __FILE__, __LINE__ );
     } else if ( $requires_vat ) { // If VAT is not required return the default tax rate
-        wpinv_error_log( $rate, 'requires_vat', __FILE__, __LINE__ );
         // OK, VAT is required so see if there is a VAT number
         // in the user's account
         $vat_number = wpinv_get_vat_number( '', 0, true );
-        wpinv_error_log( $vat_number, 'vat_number', __FILE__, __LINE__ );
         // A supplied VAT number may be in the session variable
         $vat_info = $wpi_session->get( 'user_vat_info' );
-        wpinv_error_log( $vat_info, 'vat_info', __FILE__, __LINE__ );
+        
         if ( is_array( $vat_info ) ) {
             $vat_number = isset( $vat_info['number'] ) && !empty( $vat_info['valid'] ) ? $vat_info['number'] : "";
         }
-        /*
-        if ( is_array( $vat_info ) && !empty( $vat_info['valid'] ) ) {
-            $vat_number = $vat_info['number'];
-        } else {
-            $vat_number = '';
-        }
-        */
-        wpinv_error_log( $vat_number, 'vat_number', __FILE__, __LINE__ );
         
         // If there is a VAT number, the rate is zero
         // Grab the country either from the POST array or
@@ -498,15 +479,12 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
                 } else if( !empty( $country ) ) { // Case 2b: Lookup the rate for the country
                     $rate = wpinv_lookup_rate( $country, $state, $rate, $class );
                 }
-                wpinv_error_log( $country, 'Case 1a rate', __FILE__, __LINE__ );
             }
         }
         // Case 2: There is no VAT number or its a company sale in the base country
         else if ( empty( $vat_number ) || ( wpinv_force_vat_for_same_country() && $country == $base_country ) ) {
             // Get here if this is is a digital item and there is no VAT number or there is a
             // VAT number but VAT has to be charged because the customer is in the same country
-
-            wpinv_error_log( $country, 'empty VAT', __FILE__, __LINE__ );
             // Default to the VAT default value.
             // Case 2a: There's no billing country so use the the default VAT rate if it is available
             if ( empty( $country ) && isset( $wpinv_options['vat_eu_states'] ) ) {
@@ -520,10 +498,9 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         // Tax may still be due if there is a rate for the country
         // However if the IP address of the user is an EU state then
         // it is the rate to use
-        wpinv_error_log( $country, 'country', __FILE__, __LINE__ );
         if ( $is_digital ) {
             $ip_country_code = wpinv_get_ip_country();
-            wpinv_error_log( $ip_country_code, 'ip_country_code', __FILE__, __LINE__ );
+            
             if ( $ip_country_code && in_array( $ip_country_code, wpinv_get_eu_states() ) ) {
                 $rate = wpinv_lookup_rate( $ip_country_code, '', 0, $class );
             } else {
@@ -533,13 +510,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
             $rate = wpinv_lookup_rate( $country, $state, $rate, $class );
         }
     }
-    
-    //if( $rate > 1 ) {
-        // Convert to a number we can use
-        //$rate = $rate / 100;
-    //}
 
-    wpinv_error_log( $rate, 'wpinv_get_vat_rate() FINAL', __FILE__, __LINE__ );
     return $rate;
 }
 add_filter( 'wpinv_tax_rate', 'wpinv_get_vat_rate', 10, 4 );
@@ -618,7 +589,6 @@ function wpinv_get_vat_number( $vat_number = '', $user_id = 0, $is_valid = false
 }
 
 function wpinv_lookup_rate( $country, $state, $rate, $class ) {
-    wpinv_error_log( 'wpinv_lookup_rate( ' . $country . ', ' . $state . ', ' . $rate . ', ' . $class . ' )', '', __FILE__, __LINE__ );
     if ( $class === '_exempt' ) {
         return 0;
     }
@@ -650,7 +620,7 @@ function wpinv_lookup_rate( $country, $state, $rate, $class ) {
             }, $tax_rates, $class_rates );
         }
     }
-    //wpinv_error_log( $tax_rates, 'tax_rates', __FILE__, __LINE__ );
+
     if ( !empty( $tax_rates ) ) {
 
         // Locate the tax rate for this country / state, if it exists
@@ -674,7 +644,7 @@ function wpinv_lookup_rate( $country, $state, $rate, $class ) {
             }
         }
     }
-    wpinv_error_log( $rate, 'wpinv_lookup_rate() FINAL', __FILE__, __LINE__ );
+    
     return $rate;
 }
 
@@ -1417,17 +1387,13 @@ add_action( 'wp_ajax_wpinv_vat_validate', 'wpinv_ajax_vat_validate' );
 add_action( 'wp_ajax_nopriv_wpinv_vat_validate', 'wpinv_ajax_vat_validate' );
 
 function wpinv_check_vat_offline( $vat_number, $country_code = '', $formatted = false ) {
-    wpinv_error_log( 'START', 'wpinv_check_vat_offline()', __FILE__, __LINE__ );
-    wpinv_error_log( $vat_number, 'vat_number 1', __FILE__, __LINE__ );
-    wpinv_error_log( $country_code, 'country_code 1', __FILE__, __LINE__ );
     if ( $country_code === '' ) {
         $country_code = substr( $vat_number, 0, 2 );
     }
     
     $country_code = $country_code ? strtoupper( $country_code ) : '';
     $vat_number = $vat_number ? strtoupper( $vat_number ) : '';
-    wpinv_error_log( $vat_number, 'vat_number 2', __FILE__, __LINE__ );
-    wpinv_error_log( $country_code, 'country_code 2', __FILE__, __LINE__ );
+
     $regex   = array();
     switch ( $country_code ) {
         case 'AT':
@@ -1702,7 +1668,7 @@ function wpinv_disable_vat_fields() {
 function wpinv_user_country( $country = '', $user_id = 0 ) {
     // Try to get the customer address
     $user_address = wpinv_get_user_address( $user_id, false );
-    //wpinv_error_log( $user_address, 'wpinv_user_country()', __FILE__, __LINE__ );
+    
     // Return the customer address if possible or fall back to the cart address
     $country = empty( $user_address ) || !isset( $user_address['country'] ) || empty( $user_address['country'] ) ? $country : $user_address['country'];
 
@@ -1820,7 +1786,6 @@ function wpinv_checkout_vat_validate() {
     
     // This check is not needed if the VAT setup is set to ignore
     $vat_ignore = !empty( $_POST['wpinv_vat_ignore'] ) ? true : false;
-    wpinv_error_log( (bool)$vat_ignore, 'VAT Ignore', __FILE__, __LINE__ );
     
     // Is digital?
     $is_digital = wpinv_vat_rule_is_digital();
@@ -1840,9 +1805,6 @@ function wpinv_checkout_vat_validate() {
         // BMS 2014-12-19 Update to support setting the default country to be the country of the IP address (v1.3.0)
         $billing_country = apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : $default_country );
     }
-    
-    wpinv_error_log( $billing_country, 'billing_country', __FILE__, __LINE__ );
-    wpinv_error_log( $ip_country_code, 'ip_country_code', __FILE__, __LINE__ );
     
     $eu_state_billing = in_array( $billing_country, $eu_states );
     $eu_state_ip_address = in_array( $ip_country_code, $eu_states );
@@ -1943,7 +1905,6 @@ function wpinv_checkout_vat_validate() {
 }
 
 function wpinv_recalculated_tax() {
-    //wpinv_error_log( 'wpinv_recalculated_tax()', '', __FILE__, __LINE__ );
     define( 'WPINV_RECALCTAX', true );
 }
 add_action( 'wp_ajax_wpinv_recalculate_tax', 'wpinv_recalculated_tax', 1 );

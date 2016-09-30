@@ -35,7 +35,6 @@ function wpinv_geodir_integration() {
 add_action( 'admin_init', 'wpinv_geodir_integration' );
 
 function wpinv_update_package_item($package_id) {
-    wpinv_error_log( $package_id, 'wpinv_update_package_item()', __FILE__, __LINE__ );
     return wpinv_merge_gd_package_to_item($package_id, true);
 }
 add_action('geodir_after_save_package', 'wpinv_update_package_item', 10, 1);
@@ -161,7 +160,7 @@ add_action( 'geodir_checkout_page_content', 'wpinv_print_checkout_errors', -10 )
 
 function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
     global $wpi_nosave;
-    wpinv_error_log( 'IN', 'wpinv_cpt_save( ' . $invoice_id . ', ' . $update . ', ' . $pre_status . ' )', __FILE__, __LINE__ );
+    
     $invoice_info = geodir_get_invoice( $invoice_id );
     
     $wpi_invoice_id  = !empty( $invoice_info->invoice_id ) ? $invoice_info->invoice_id : 0;
@@ -188,21 +187,17 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             
             if ( ( $status = wpinv_to_wpi_status( $invoice_info->status ) ) !== $wpi_invoice->status ) {
                 $save = true;
-                wpinv_error_log( 1, '1', __FILE__, __LINE__ );
                 $wpi_invoice->set( 'status', $status );
             }
             
-            wpinv_error_log( 'UPDATE', 'wpinv_cpt_save()', __FILE__, __LINE__ );
             if ($save) {
                 $wpi_nosave = true;
                 $wpi_invoice->recalculate_total();
                 $wpi_invoice->save();
-                wpinv_error_log( 'save()', 'wpinv_cpt_save()', __FILE__, __LINE__ );
             }
             
             return $wpi_invoice;
         } else { // create invoice
-            wpinv_error_log( 'CREATE', 'wpinv_cpt_save()', __FILE__, __LINE__ );
             $user_info = get_userdata( $invoice_info->user_id );
             
             if ( !empty( $pre_status ) ) {
@@ -251,12 +246,11 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                 'country'       => $user_address['country'],
                 'state'         => $user_address['state'],
                 'zip'           => $user_address['zip'],
+                'discount'      => $invoice_info->coupon_code,
             );
             
-            if ($invoice_info->discount > 0) {
-                $invoice_data['discount']       = $invoice_info->discount;
-                $invoice_data['discount_code']  = $invoice_info->coupon_code;
-            }
+            $invoice_data['discount']       = $invoice_info->discount;
+            $invoice_data['discount_code']  = $invoice_info->coupon_code;
             
             $post_item = wpinv_get_gd_package_item($invoice_info->package_id);
             
@@ -266,6 +260,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                     'id'                => $post_item->ID,
                     'name'              => $post_item->get_name(),
                     'item_price'        => $post_item->get_price(),
+                    'discount'          => $invoice_info->discount,
                     'meta'              => array( 
                                             'post_id'       => $invoice_info->post_id,
                                             'invoice_title' => $invoice_info->post_title
@@ -311,13 +306,11 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
 add_action('geodir_payment_invoice_created', 'wpinv_cpt_save', 11, 3);
 
 function wpinv_cpt_update( $invoice_id ) {
-    wpinv_error_log( '===>', 'wpinv_cpt_save()', __FILE__, __LINE__ );
     return wpinv_cpt_save( $invoice_id, true );
 }
 add_action('geodir_payment_invoice_updated', 'wpinv_cpt_update', 11, 1);
 
 function wpinv_payment_status_changed( $invoice_id, $new_status, $old_status = 'pending', $subscription = false ) {
-    wpinv_error_log( 'IN', 'wpinv_payment_status_changed()', __FILE__, __LINE__ );
     $invoice_info = geodir_get_invoice( $invoice_id );
     if ( empty( $invoice_info ) ) {
         return false;
@@ -344,7 +337,6 @@ function wpinv_transaction_details_note( $invoice_id, $html ) {
     $wpi_invoice_id = !empty( $invoice_info->invoice_id ) ? $invoice_info->invoice_id : NULL;
     
     if ( !$wpi_invoice_id ) {
-        wpinv_error_log( '===>', 'wpinv_cpt_save()', __FILE__, __LINE__ );
         $invoice = wpinv_cpt_save( $invoice_id, false, $old_status );
         
         if ( !empty( $invoice ) ) {
@@ -393,7 +385,6 @@ function wpinv_to_gdp_recalculate_total( $invoice, $wpi_nosave ) {
     }
     
     $gdp_invoice_id = wpinv_wpi_to_gdp_id( $invoice->ID );
-    //wpinv_error_log( $gdp_invoice_id, 'gdp_invoice_id', __FILE__, __LINE__ );
     
     if ( $gdp_invoice_id > 0 ) {
         $update_data = array();
@@ -401,8 +392,6 @@ function wpinv_to_gdp_recalculate_total( $invoice, $wpi_nosave ) {
         $update_data['paied_amount']    = $invoice->total;
         $update_data['discount']        = $invoice->discount;
         $update_data['coupon_code']     = $invoice->discount_code;
-        
-        //wpinv_error_log( $update_data, 'update_data', __FILE__, __LINE__ );
         
         $wpdb->update( INVOICE_TABLE, $update_data, array( 'id' => $gdp_invoice_id ) );
     }
@@ -420,36 +409,12 @@ function wpinv_gdp_to_wpi_invoice( $invoice_id ) {
     return wpinv_get_invoice( $invoice->invoice_id );
 }
 
-/*
-function wpinv_filter_cart_totals( $cart ) {
-    if ( !( !empty( $cart->invoice_id ) && geodir_is_page( 'checkout' ) ) ) {
-        return $cart;
-    }
-    
-    $wpi_invoice = wpinv_get_invoice_cart( $cart->invoice_id );
-    if ( empty( $wpi_invoice ) ) {
-        return $cart;
-    }
-    
-    $cart->tax_amount           = $wpi_invoice->get_tax();
-    $cart->discount             = $wpi_invoice->get_discount();
-    $cart->paied_amount         = $wpi_invoice->get_total();
-    $cart->tax_amount_display   = $wpi_invoice->get_tax( true );
-    $cart->discount_display     = $wpi_invoice->get_discount( true );
-    $cart->paied_amount_display = $wpi_invoice->get_total( true );
-
-    return $cart;
-}
-add_filter( 'geodir_payment_get_cart', 'wpinv_filter_cart_totals' );
-*/
-
 function wpinv_payment_set_coupon_code( $status, $invoice_id, $coupon_code ) {
-    //wpinv_error_log( $status, 'wpinv_payment_set_coupon_code()', __FILE__, __LINE__ );
     $invoice = wpinv_gdp_to_wpi_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return $status;
     }
-    //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
+
     if ( $status === 1 || $status === 0 ) {
         if ( $status === 1 ) {
             $discount = geodir_get_discount_amount( $coupon_code, $invoice->get_subtotal() );
@@ -462,8 +427,6 @@ function wpinv_payment_set_coupon_code( $status, $invoice_id, $coupon_code ) {
         $invoice->set( 'discount_code', $coupon_code );
         $invoice->save();
         $invoice->recalculate_total();
-        
-        //wpinv_error_log( $invoice, 'invoice', __FILE__, __LINE__ );
     }
     
     return $status;
@@ -471,7 +434,6 @@ function wpinv_payment_set_coupon_code( $status, $invoice_id, $coupon_code ) {
 add_filter( 'geodir_payment_set_coupon_code', 'wpinv_payment_set_coupon_code', 10, 3 );
 
 function wpinv_insert_invoice( $invoice_data = array() ) {
-    wpinv_error_log( 'wpinv_insert_invoice()', '', __FILE__, __LINE__ );
     if ( empty( $invoice_data ) ) {
         return false;
     }
@@ -529,7 +491,6 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         );
         $payment_details = wp_parse_args( $invoice_data['payment_details'], $payment_details );
     }
-    wpinv_error_log( 1, '1', __FILE__, __LINE__ );
     $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending' ) );
     if ( !empty( $payment_details ) ) {
         $invoice->set( 'currency', $payment_details['currency'] );
@@ -592,7 +553,6 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
                 'meta'          => isset( $item['meta'] ) ? $item['meta'] : array(),
                 'fees'          => isset( $item['fees'] ) ? $item['fees'] : array(),
             );
-            //wpinv_error_log( $args, 'args', __FILE__, __LINE__ );
 
             $invoice->add_item( $item_id, $args );
         }
@@ -610,8 +570,6 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         update_option( 'wpinv_last_invoice_number', $number );
     //}
     $invoice->save();
-
-    wpinv_error_log( 'save()', 'invoice', __FILE__, __LINE__ );
     
     do_action( 'wpinv_insert_invoice', $invoice->ID, $invoice_data );
 
@@ -826,8 +784,29 @@ function wpinv_pm_to_wpi_display_price( $price, $amount, $display = true , $deci
     } else {
         $price = wpinv_price( wpinv_format_amount( $amount ) );
     }
-    echo $price;
+    
     return $price;
 }
 add_filter( 'geodir_payment_price' , 'wpinv_pm_to_wpi_display_price', 10000, 5 );
 
+function wpinv_pm_to_inv_checkout_redirect( $redirect_url ) {
+    $invoice_id         = geodir_payment_cart_id();
+    $invoice_info       = geodir_get_invoice( $invoice_id );
+    $wpi_invoice        = !empty( $invoice_info->invoice_id ) ? wpinv_get_invoice( $invoice_info->invoice_id ) : NULL;
+    
+    if ( !( !empty( $wpi_invoice ) && !empty( $wpi_invoice->ID ) ) ) {
+        $wpi_invoice_id = wpinv_cpt_save( $invoice_id );
+        $wpi_invoice    = wpinv_get_invoice( $wpi_invoice_id );
+    }
+    
+    if ( !empty( $wpi_invoice ) && !empty( $wpi_invoice->ID ) ) {
+        
+        // Clear cart
+        geodir_payment_clear_cart();
+    
+        $redirect_url = $wpi_invoice->get_checkout_payment_url();
+    }
+    
+    return $redirect_url;
+}
+add_filter( 'geodir_payment_checkout_redirect_url', 'wpinv_pm_to_inv_checkout_redirect', 100, 1 );

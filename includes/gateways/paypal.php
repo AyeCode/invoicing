@@ -117,7 +117,6 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         // Get rid of cart contents
         wpinv_empty_cart();
         
-        wpinv_error_log( $paypal_redirect, 'paypal_redirect', __FILE__, __LINE__ );
         // Redirect to PayPal
         wp_redirect( $paypal_redirect );
         exit;
@@ -204,7 +203,6 @@ function wpinv_process_paypal_ipn() {
 	if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] != 'POST' ) {
 		return;
 	}
-    wpinv_error_log( 'wpinv_process_paypal_ipn()', '', __FILE__, __LINE__ );
 
 	// Set initial post data to empty string
 	$post_data = '';
@@ -300,8 +298,6 @@ function wpinv_process_paypal_ipn() {
 	);
 
 	$encoded_data_array = wp_parse_args( $encoded_data_array, $defaults );
-    
-    wpinv_error_log( $encoded_data_array, 'ipn_data', __FILE__, __LINE__ );
 
 	$invoice_id = isset( $encoded_data_array['custom'] ) ? absint( $encoded_data_array['custom'] ) : 0;
 
@@ -477,20 +473,15 @@ add_action( 'wpinv_paypal_subscr_failed', 'wpinv_process_paypal_subscr_failed' )
  */
 function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     $parent_invoice_id = absint( $ipn_data['custom'] );
-    wpinv_error_log( $parent_invoice_id, 'wpinv_process_paypal_subscr_payment()', __FILE__, __LINE__ );
     
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
-    wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
     if ( false === $subscription ) {
         return;
     }
     
     $transaction_id = wpinv_get_payment_transaction_id( $parent_invoice_id );
-    wpinv_error_log( $transaction_id, 'transaction_id', __FILE__, __LINE__ );
     $signup_date    = strtotime( $subscription->get_subscription_created() );
-    wpinv_error_log( $signup_date, 'signup_date', __FILE__, __LINE__ );
     $today          = date_i18n( 'Y-n-d', $signup_date ) == date_i18n( 'Y-n-d', strtotime( $ipn_data['payment_date'] ) );
-    wpinv_error_log( $today, 'today', __FILE__, __LINE__ );
 
     // Look to see if payment is same day as signup and we have set the transaction ID on the parent payment yet
     if ( $today && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
@@ -498,13 +489,13 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
         wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['txn_id'] );
         return;
     }
-    wpinv_error_log( $transaction_id, 'transaction_id', __FILE__, __LINE__ );
+    
     if ( wpinv_get_id_by_transaction_id( $ipn_data['txn_id'] ) ) {
         return; // Payment alreay recorded
     }
 
     $currency_code = strtolower( $ipn_data['mc_currency'] );
-    wpinv_error_log( $currency_code, 'currency_code', __FILE__, __LINE__ );
+
     // verify details
     if ( $currency_code != strtolower( wpinv_get_currency() ) ) {
         // the currency code is invalid
@@ -532,7 +523,6 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
  */
 function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     $parent_invoice_id = absint( $ipn_data['custom'] );
-    wpinv_error_log( $parent_invoice_id, 'wpinv_process_paypal_subscr_signup()', __FILE__, __LINE__ );
     if( empty( $parent_invoice_id ) ) {
         return;
     }
@@ -547,7 +537,6 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ) );
     
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
-    wpinv_error_log( $subscription, 'subscription', __FILE__, __LINE__ );
     if ( false === $subscription ) {
         return;
     }

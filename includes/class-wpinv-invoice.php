@@ -877,7 +877,6 @@ final class WPInv_Invoice {
         );
 
         $fee = wp_parse_args( $args, $default_args );
-        wpinv_error_log( $fee, 'fee', __FILE__, __LINE__ );
         
         if ( !empty( $fee['label'] ) ) {
             return false;
@@ -1261,11 +1260,8 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_cart_details', $this->cart_details, $this->ID, $this );
     }
     
-    public function get_total( $currency = false ) {
-        //$this->recalculate_total();
-        
+    public function get_total( $currency = false ) {        
         $total = wpinv_format_amount( $this->total, NULL, !$currency );
-        //wpinv_error_log( $total, 'total', __FILE__, __LINE__ );
         if ( $currency ) {
             $total = wpinv_price( $total, $this->get_currency() );
         }
@@ -1462,7 +1458,6 @@ final class WPInv_Invoice {
     }
     
     public function add_item( $item_id = 0, $args = array() ) {
-        //wpinv_error_log( $args, 'add_item()', __FILE__, __LINE__ );
         global $wpi_current_id, $wpi_item_id;
         
         $item = new WPInv_Item( $item_id );
@@ -1558,7 +1553,6 @@ final class WPInv_Invoice {
             $tax                    = $tax_increased;
             
             $this->cart_details[$found_cart_key] = $cart_item;
-            //wpinv_error_log( $added_item, 'updated_item', __FILE__, __LINE__ );
         } else {
             // Allow overriding the price
             if( false !== $args['item_price'] ) {
@@ -1575,7 +1569,6 @@ final class WPInv_Invoice {
             $tax_class  = !empty( $args['vat_class'] ) ? $args['vat_class'] : '';
             $tax_rate   = !empty( $args['vat_rate'] ) ? $args['vat_rate'] : 0;
             $tax        = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-            //wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
 
             // Setup the items meta item
             $new_item = array(
@@ -1774,7 +1767,6 @@ final class WPInv_Invoice {
     }
     
     public function update_items($temp = false) {
-        wpinv_error_log( 'IN', 'update_items()', __FILE__, __LINE__ );
         global $wpi_current_id, $wpi_item_id, $wpi_nosave;
         
         if ( !empty( $this->cart_details ) ) {
@@ -1797,12 +1789,10 @@ final class WPInv_Invoice {
                 $wpi_item_id            = $item['id'];
                 
                 $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
-                //wpinv_error_log( $discount, 'discount', __FILE__, __LINE__ );
                 
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
                 $tax_class  = wpinv_get_item_vat_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-                //wpinv_error_log( 'tax: ' . $tax . ', tax_rate: ' . $tax_rate . ', tax_class: ' . $tax_class, '', __FILE__, __LINE__ );
 
                 if ( wpinv_prices_include_tax() ) {
                     $subtotal -= wpinv_format_amount( $tax, NULL, true );
@@ -1846,9 +1836,7 @@ final class WPInv_Invoice {
         return $this;
     }
     
-    public function recalculate_totals($temp = false) {
-        wpinv_error_log( '=>', 'recalculate_totals()', __FILE__, __LINE__ );
-        
+    public function recalculate_totals($temp = false) {        
         $this->update_items($temp);
         $this->save( true );
         
@@ -2139,7 +2127,6 @@ final class WPInv_Invoice {
     }
     
     public function add_subscription( $data = array() ) {
-        wpinv_error_log( $data, 'add_subscription()', __FILE__, __LINE__ );
         if ( empty( $this->ID ) ) {
             return false;
         }
@@ -2166,7 +2153,6 @@ final class WPInv_Invoice {
             }
         }
 
-        wpinv_error_log( $args, 'wpinv_subscription_pre_create', __FILE__, __LINE__ );
         do_action( 'wpinv_subscription_pre_create', $args, $data, $this );
         
         if ( !empty( $args ) ) {
@@ -2181,7 +2167,6 @@ final class WPInv_Invoice {
     }
     
     public function update_subscription( $args = array() ) {
-        wpinv_error_log( $args, 'update_subscription()', __FILE__, __LINE__ );
         if ( empty( $this->ID ) ) {
             return false;
         }
@@ -2192,7 +2177,7 @@ final class WPInv_Invoice {
                 $args['status'] = 'expired';
             }
         }
-        wpinv_error_log( $args, 'wpinv_subscription_pre_update', __FILE__, __LINE__ );
+
         do_action( 'wpinv_subscription_pre_update', $args, $this );
         
         if ( !empty( $args ) ) {
@@ -2207,9 +2192,7 @@ final class WPInv_Invoice {
     }
     
     public function renew_subscription() {
-        wpinv_error_log( 1, 'renew_subscription()', __FILE__, __LINE__ );
         $expires = $this->get_expiration_time();
-        wpinv_error_log( $expires, 'expires', __FILE__, __LINE__ );
 
         // Determine what date to use as the start for the new expiration calculation
         if ( $expires > current_time( 'timestamp' ) && $this->is_subscription_active() ) {
@@ -2217,18 +2200,15 @@ final class WPInv_Invoice {
         } else {
             $base_date  = current_time( 'timestamp' );
         }
-        wpinv_error_log( $base_date, 'base_date', __FILE__, __LINE__ );
+        
         $last_day       = cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
-        wpinv_error_log( $last_day, 'last_day', __FILE__, __LINE__ );
         $expiration     = date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $this->get_subscription_interval() . ' ' . $this->get_subscription_period( true ), $base_date ) );
-        wpinv_error_log( $expiration, 'expiration', __FILE__, __LINE__ );
 
         if( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
             $expiration = date_i18n( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
         }
 
         $expiration     = apply_filters( 'wpinv_subscription_renewal_expiration', $expiration, $this->ID, $this );
-        wpinv_error_log( $expiration, 'expiration', __FILE__, __LINE__ );
 
         do_action( 'wpinv_subscription_pre_renew', $this->ID, $expiration, $this );
 

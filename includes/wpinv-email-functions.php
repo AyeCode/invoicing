@@ -85,7 +85,6 @@ function wpinv_send_transactional_email() {
 function wpinv_new_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_new_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'new_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -133,7 +132,6 @@ function wpinv_new_invoice_notification( $invoice_id, $new_status = '' ) {
 function wpinv_cancelled_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_cancelled_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'cancelled_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -181,7 +179,6 @@ function wpinv_cancelled_invoice_notification( $invoice_id, $new_status = '' ) {
 function wpinv_failed_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_failed_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'failed_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -229,7 +226,6 @@ function wpinv_failed_invoice_notification( $invoice_id, $new_status = '' ) {
 function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_onhold_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'onhold_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -285,7 +281,6 @@ function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
 function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_processing_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'processing_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -341,7 +336,6 @@ function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) 
 function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_completed_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'completed_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -397,7 +391,6 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
 function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_fully_refunded_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'refunded_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -454,7 +447,6 @@ function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
 function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_partially_refunded_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'refunded_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -514,7 +506,6 @@ function wpinv_new_invoice_note_notification( $invoice_id, $new_status = '' ) {
 function wpinv_user_invoice_notification( $invoice_id ) {
     global $wpinv_email_search, $wpinv_email_replace;
     
-    wpinv_error_log( $invoice_id, 'wpinv_user_invoice_notification()', __FILE__, __LINE__ );
     $email_type = 'user_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
@@ -607,11 +598,6 @@ function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
 
     $message = wpinv_email_style_body( $message );
     $message = apply_filters( 'wpinv_mail_content', $message );
-    
-    //wpinv_error_log( $to, 'to', __FILE__, __LINE__ );
-    //wpinv_error_log( $subject, 'subject', __FILE__, __LINE__ );
-    //wpinv_error_log( $headers, 'headers', __FILE__, __LINE__ );
-    //wpinv_error_log( $message, 'message', __FILE__, __LINE__ );
     
     $sent  = wp_mail( $to, $subject, $message, $headers, $attachments );
     

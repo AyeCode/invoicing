@@ -1089,9 +1089,7 @@ function wpinv_checkout_billing_details() {
     }
     $user_id        = $invoice->get_user_id();
     $user_info      = $invoice->get_user_info();
-    //wpinv_error_log( $user_info, 'user_info', __FILE__, __LINE__ );
     $address_info   = wpinv_get_user_address( $user_id );
-    //wpinv_error_log( $address_info, 'address_info', __FILE__, __LINE__ );
     
     if ( empty( $user_info['first_name'] ) && !empty( $user_info['first_name'] ) ) {
         $user_info['first_name'] = $user_info['first_name'];
@@ -1581,7 +1579,6 @@ function wpinv_payment_mode_select() {
 add_action( 'wpinv_payment_mode_select', 'wpinv_payment_mode_select' );
 
 function wpinv_checkout_billing_info() {    
-    //wpinv_error_log( 'IN', 'wpinv_checkout_billing_info()', __FILE__, __LINE__ );
     if ( wpinv_is_checkout() ) {
         $logged_in          = is_user_logged_in();
         $billing_details    = wpinv_checkout_billing_details();

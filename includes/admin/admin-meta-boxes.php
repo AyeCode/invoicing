@@ -32,6 +32,8 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
 add_action( 'add_meta_boxes', 'wpinv_add_meta_boxes', 30, 2 );
 
 function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
+    remove_action( 'save_post', __FUNCTION__ );
+    
     // $post_id and $post are required
     if ( empty( $post_id ) || empty( $post ) ) {
         return;
@@ -51,16 +53,8 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
             return;
         }
     
-        if ( !empty( $_POST['invoice_items'] ) && isset( $_POST['wpinv_items_nonce'] ) && wp_verify_nonce( $_POST['wpinv_items_nonce'], 'wpinv_items' ) ) {
+        if ( isset( $_POST['wpinv_save_invoice'] ) && wp_verify_nonce( $_POST['wpinv_save_invoice'], 'wpinv_save_invoice' ) ) {
             WPInv_Meta_Box_Items::save( $post_id, $_POST, $post );
-        }
-        
-        if ( isset( $_POST['wpinv_details_nonce'] ) && wp_verify_nonce( $_POST['wpinv_details_nonce'], 'wpinv_details' ) ) {
-            WPInv_Meta_Box_Details::save( $post_id, $_POST, $post );
-        }
-        
-        if ( isset( $_POST['wpinv_billing_details_nonce'] ) && wp_verify_nonce( $_POST['wpinv_billing_details_nonce'], 'wpinv_billing_details' ) ) {
-            WPInv_Meta_Box_Billing_Details::save( $post_id, $_POST, $post );
         }
     } else if ( $post->post_type == 'wpi_item' ) {
         // verify nonce
