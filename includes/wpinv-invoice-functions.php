@@ -605,6 +605,15 @@ function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
         }
     }
     
+    // Check for discount codes and increment their use counts
+    if ( $discounts = $invoice->get_discounts( true ) ) {
+        if( ! empty( $discounts ) ) {
+            foreach( $discounts as $code ) {
+                wpinv_increase_discount_usage( $code );
+            }
+        }
+    }
+    
     // Ensure this action only runs once ever
     if( empty( $completed_date ) ) {
         // Save the completed date
@@ -1241,7 +1250,7 @@ function wpinv_get_user_invoices_columns() {
     $columns = array(
             'invoice-number'  => array( 'title' => __( 'ID', 'invoicing' ), 'class' => 'text-left' ),
             'invoice-date'    => array( 'title' => __( 'Date', 'invoicing' ), 'class' => 'text-left' ),
-            'invoice-status'  => array( 'title' => __( 'Status', 'invoicing' ), 'class' => 'text-left' ),
+            'invoice-status'  => array( 'title' => __( 'Status', 'invoicing' ), 'class' => 'text-center' ),
             'invoice-total'   => array( 'title' => __( 'Total', 'invoicing' ), 'class' => 'text-right' ),
             'invoice-actions' => array( 'title' => '&nbsp;', 'class' => 'text-center' ),
         );
@@ -1389,4 +1398,38 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
     $transaction_id = apply_filters( 'wpinv_set_payment_transaction_id', $transaction_id, $invoice_id );
     
     return wpinv_update_invoice_meta( $invoice_id, '_wpinv_transaction_id', $transaction_id );
+}
+
+function wpinv_invoice_status_label( $status, $status_display = '' ) {
+    if ( empty( $status_display ) ) {
+        $status_display = wpinv_status_nicename( $status );
+    }
+    
+    switch ( $status ) {
+        case 'publish' :
+        case 'complete' :
+        case 'renewal' :
+            $class = 'label-success';
+        break;
+        case 'pending' :
+            $class = 'label-primary';
+        break;
+        case 'processing' :
+            $class = 'label-warning';
+        break;
+        case 'onhold' :
+            $class = 'label-info';
+        break;
+        case 'cancelled' :
+        case 'failed' :
+            $class = 'label-danger';
+        break;
+        default:
+            $class = 'label-default';
+        break;
+    }
+    
+    $label = '<span class="label label-inv-' . $status . ' ' . $class . '">' . $status_display . '</span>';
+    
+    return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
 }
