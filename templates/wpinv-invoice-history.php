@@ -42,8 +42,8 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 									<?php echo _x( '#', 'hash before invoice number', 'invoicing' ) . $invoice->get_number(); ?>
 								</a>
 
-							<?php elseif ( 'invoice-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID ); ?>
-								<time datetime="<?php echo $date; ?>" title="<?php echo esc_attr( strtotime( $date ) ); ?>"><?php echo $date; ?></time>
+							<?php elseif ( 'invoice-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID ); $dateYMD = wpinv_get_invoice_date( $invoice->ID, 'Y-m-d H:i:s' ); ?>
+								<time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
 
 							<?php elseif ( 'invoice-status' === $column_id ) : ?>
 								<?php echo wpinv_invoice_status_label( $invoice_status, $invoice->get_status( true ) ) ; ?>

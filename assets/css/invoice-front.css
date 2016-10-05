@@ -3472,3 +3472,9 @@ div td .meta p {
 .wpinv-bank-details .table-sm tr th {
     width: 30%;
 }
+.wpinv-receipt-details .label {
+    font-size: inherit;
+}
+.wpinv-receipt-details .tr-total td {
+    background-color: #f7f7f7;
+}

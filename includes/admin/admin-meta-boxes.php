@@ -150,6 +150,8 @@ function wpinv_discount_metabox_details( $post ) {
     $discount       = wpinv_get_discount( $discount_id );
     
     $type           = wpinv_get_discount_type( $discount_id );
+    $item_reqs      = wpinv_get_discount_item_reqs( $discount_id );
+    $excluded_items = wpinv_get_discount_excluded_items( $discount_id );
     $min_total      = wpinv_get_discount_min_total( $discount_id );
     $max_total      = wpinv_get_discount_max_total( $discount_id );
     $max_uses       = wpinv_get_discount_max_uses( $discount_id );
@@ -197,6 +199,44 @@ function wpinv_discount_metabox_details( $post ) {
                 <input type="text" name="amount" id="wpinv_discount_amount" class="wpi-field-price wpi-price" value="<?php echo esc_attr( wpinv_get_discount_amount( $discount_id ) ); ?>" required> <font class="wpi-discount-p">%</font><font class="wpi-discount-f" style="display:none;"><?php echo wpinv_currency_symbol() ;?></font>
                 <p style="display:none;" class="description"><?php _e( 'Enter the discount amount in USD', 'invoicing' ); ?></p>
                 <p class="description"><?php _e( 'Enter the discount value. Ex: 10', 'invoicing' ); ?></p>
+            </td>
+        </tr>
+        <?php do_action( 'wpinv_discount_form_before_items', $post ); ?>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_items"><?php _e( 'Items', 'invoicing' ); ?></label>
+            </th>
+            <td>
+                <p><?php echo wpinv_item_dropdown( array(
+                        'name'        => 'items[]',
+                        'id'          => 'items',
+                        'selected'    => $item_reqs,
+                        'multiple'    => true,
+                        'chosen'      => true,
+                        'class'       => 'medium-text',
+                        'placeholder' => __( 'Select one or more Items', 'invoicing' )
+                    ) ); ?>
+                </p>
+                <p class="description"><?php _e( 'Items which need to be in the cart to use this discount or, for "Item Discounts", which items are discounted. If left blank, this discount can be used on any item.', 'invoicing' ); ?></p>
+            </td>
+        </tr>
+        <?php do_action( 'wpinv_discount_form_before_excluded_items', $post ); ?>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_excluded_items"><?php _e( 'Excluded Items', 'invoicing' ); ?></label>
+            </th>
+            <td>
+                <p><?php echo wpinv_item_dropdown( array(
+                        'name'        => 'excluded_items[]',
+                        'id'          => 'excluded_items',
+                        'selected'    => $excluded_items,
+                        'multiple'    => true,
+                        'chosen'      => true,
+                        'class'       => 'medium-text',
+                        'placeholder' => __( 'Select one or more Items', 'invoicing' )
+                    ) ); ?>
+                </p>
+                <p class="description"><?php _e( 'Items which are NOT allowed to use this discount.', 'invoicing' ); ?></p>
             </td>
         </tr>
         <?php do_action( 'wpinv_discount_form_before_start', $post ); ?>

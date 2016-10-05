@@ -1973,7 +1973,7 @@ final class WPInv_Invoice {
             'post_type'         => 'wpi_invoice',
             'post_parent'       => (int)$this->ID,
             'posts_per_page'    => '999',
-            'post_status'       => array( 'publish', 'completed', 'processing', 'renewal' ),
+            'post_status'       => array( 'publish', 'complete', 'processing', 'renewal' ),
             'orderby'           => 'ID',
             'order'             => 'DESC',
             'fields'            => 'ids'
@@ -2326,7 +2326,7 @@ final class WPInv_Invoice {
     }
     
     public function is_complete() {
-        if ( $this->has_status( array( 'publish', 'completed', 'processing', 'renewal' ) ) ) {
+        if ( $this->has_status( array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
             return true;
         }
         

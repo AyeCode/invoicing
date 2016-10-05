@@ -176,14 +176,15 @@ function wpinv_get_date_created( $invoice_id = 0 ) {
     return $date_created;
 }
 
-function wpinv_get_invoice_date( $invoice_id = 0 ) {
+function wpinv_get_invoice_date( $invoice_id = 0, $format = '' ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     
+    $format         = !empty( $format ) ? $format : get_option( 'date_format' );
     $date_completed = $invoice->get_completed_date();
-    $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ), strtotime( $date_completed ) ) : '';
+    $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( $format, strtotime( $date_completed ) ) : '';
     if ( $invoice_date == '' ) {
         $date_created   = $invoice->get_created_date();
-        $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ), strtotime( $date_created ) ) : '';
+        $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( $format, strtotime( $date_created ) ) : '';
     }
 
     return $invoice_date;
@@ -228,22 +229,6 @@ function wpinv_get_payment_key( $invoice_id = 0 ) {
 function wpinv_get_invoice_number( $invoice_id = 0 ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     return $invoice->get_number();
-}
-
-function wpinv_to_wpi_status( $status ) {
-    $inv_status = $status ? $status : 'pending';
-    
-    switch ( $status ) {
-        case 'confirmed':
-        case 'processing':
-            $inv_status = 'publish';
-        break;
-        case 'refunded':
-            $inv_status = 'cancelled';
-        break;
-    }
-    
-    return $inv_status;
 }
 
 function wpinv_get_cart_discountable_subtotal( $code_id ) {
