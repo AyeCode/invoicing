@@ -201,9 +201,9 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
         'max_total'         => isset( $data['max_total'] )        ? wpinv_sanitize_amount( $data['max_total'] )       : '',
         'max_uses'          => isset( $data['max_uses'] )         ? absint( $data['max_uses'] )                       : '',
         'items'             => isset( $data['items'] )            ? $data['items']                                    : array(),
-        'exclude_items'     => isset( $data['exclude_items'] )    ? $data['exclude_items']                            : array(),
+        'excluded_items'    => isset( $data['excluded_items'] )   ? $data['excluded_items']                           : array(),
         'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
-        'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : 0,
+        'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : false,
     );
     
     $start_timestamp        = strtotime( $meta['start'] );
@@ -211,7 +211,7 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
     if ( !empty( $meta['start'] ) ) {
         $meta['start']      = date( 'Y-m-d H:i:s', $start_timestamp );
     }
-    
+        
     if ( $meta['type'] == 'percent' && (float)$meta['amount'] > 100 ) {
         $meta['amount'] = 100;
     }
@@ -223,6 +223,10 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
         if ( !empty( $meta['start'] ) && $start_timestamp > $end_timestamp ) {
             $meta['expiration'] = $meta['start']; // Set the expiration date to the start date if start is later than expiration date.
         }
+    }
+    
+    if ( $meta['uses'] === false ) {
+        unset( $meta['uses'] );
     }
     
     if ( ! empty( $meta['items'] ) ) {

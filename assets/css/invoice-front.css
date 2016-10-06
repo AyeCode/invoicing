@@ -3436,6 +3436,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     line-height: normal;
     margin: 0 2.5px;
 }
+.wpi-user-invoices  .wpinv-item td {
+    vertical-align: middle;
+}
 a.btn-primary:visited,
 a.btn-success:visited,
 a.btn-info:visited,
@@ -3468,4 +3471,10 @@ div td .meta p {
 .wpinv-receipt-address .table-sm tr th,
 .wpinv-bank-details .table-sm tr th {
     width: 30%;
+}
+.wpinv-receipt-details .label {
+    font-size: inherit;
+}
+.wpinv-receipt-details .tr-total td {
+    background-color: #f7f7f7;
 }

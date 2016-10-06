@@ -423,7 +423,7 @@ function wpinv_html_select( $args = array() ) {
         foreach( $args['options'] as $key => $option ) {
 
             if( $args['multiple'] && is_array( $args['selected'] ) ) {
-                $selected = selected( true, in_array( $key, $args['selected'], true ), false );
+                $selected = selected( true, (bool)in_array( $key, $args['selected'] ), false );
             } else {
                 $selected = selected( $args['selected'], $key, false );
             }
@@ -806,6 +806,7 @@ function wpinv_get_watermark( $id ) {
 }
 
 function wpinv_display_invoice_details( $invoice_id = 0 ) {
+    $invoice_status = wpinv_get_invoice_status( $invoice_id );
     ?>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = wpinv_get_invoice_number( $invoice_id ) ) { ?>
@@ -816,7 +817,7 @@ function wpinv_display_invoice_details( $invoice_id = 0 ) {
         <?php } ?>
         <tr>
             <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
-            <td><?php echo wpinv_get_invoice_status( $invoice_id, true ); ?></td>
+            <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
         <tr>
             <td><?php _e( 'Payment Method', 'invoicing' ); ?></td>
@@ -840,7 +841,7 @@ function wpinv_display_invoice_details( $invoice_id = 0 ) {
                 <td><?php echo $user_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <tr class="table-active">
+        <tr class="table-active tr-total">
             <td><strong><?php _e( 'Total Amount', 'invoicing' ) ?></strong></td>
             <td><strong><?php echo wpinv_payment_total( $invoice_id, true ); ?></strong></td>
         </tr>

@@ -176,14 +176,15 @@ function wpinv_get_date_created( $invoice_id = 0 ) {
     return $date_created;
 }
 
-function wpinv_get_invoice_date( $invoice_id = 0 ) {
+function wpinv_get_invoice_date( $invoice_id = 0, $format = '' ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     
+    $format         = !empty( $format ) ? $format : get_option( 'date_format' );
     $date_completed = $invoice->get_completed_date();
-    $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ), strtotime( $date_completed ) ) : '';
+    $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( $format, strtotime( $date_completed ) ) : '';
     if ( $invoice_date == '' ) {
         $date_created   = $invoice->get_created_date();
-        $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ), strtotime( $date_created ) ) : '';
+        $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( $format, strtotime( $date_created ) ) : '';
     }
 
     return $invoice_date;
@@ -228,22 +229,6 @@ function wpinv_get_payment_key( $invoice_id = 0 ) {
 function wpinv_get_invoice_number( $invoice_id = 0 ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     return $invoice->get_number();
-}
-
-function wpinv_to_wpi_status( $status ) {
-    $inv_status = $status ? $status : 'pending';
-    
-    switch ( $status ) {
-        case 'confirmed':
-        case 'processing':
-            $inv_status = 'publish';
-        break;
-        case 'refunded':
-            $inv_status = 'cancelled';
-        break;
-    }
-    
-    return $inv_status;
 }
 
 function wpinv_get_cart_discountable_subtotal( $code_id ) {
@@ -601,6 +586,15 @@ function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
             // Ensure these actions only run once, ever
             if ( empty( $completed_date ) ) {
                 do_action( 'wpinv_complete_item_payment', $item['id'], $invoice_id, $item, $cart_index );
+            }
+        }
+    }
+    
+    // Check for discount codes and increment their use counts
+    if ( $discounts = $invoice->get_discounts( true ) ) {
+        if( ! empty( $discounts ) ) {
+            foreach( $discounts as $code ) {
+                wpinv_increase_discount_usage( $code );
             }
         }
     }
@@ -1241,7 +1235,7 @@ function wpinv_get_user_invoices_columns() {
     $columns = array(
             'invoice-number'  => array( 'title' => __( 'ID', 'invoicing' ), 'class' => 'text-left' ),
             'invoice-date'    => array( 'title' => __( 'Date', 'invoicing' ), 'class' => 'text-left' ),
-            'invoice-status'  => array( 'title' => __( 'Status', 'invoicing' ), 'class' => 'text-left' ),
+            'invoice-status'  => array( 'title' => __( 'Status', 'invoicing' ), 'class' => 'text-center' ),
             'invoice-total'   => array( 'title' => __( 'Total', 'invoicing' ), 'class' => 'text-right' ),
             'invoice-actions' => array( 'title' => '&nbsp;', 'class' => 'text-center' ),
         );
@@ -1389,4 +1383,38 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
     $transaction_id = apply_filters( 'wpinv_set_payment_transaction_id', $transaction_id, $invoice_id );
     
     return wpinv_update_invoice_meta( $invoice_id, '_wpinv_transaction_id', $transaction_id );
+}
+
+function wpinv_invoice_status_label( $status, $status_display = '' ) {
+    if ( empty( $status_display ) ) {
+        $status_display = wpinv_status_nicename( $status );
+    }
+    
+    switch ( $status ) {
+        case 'publish' :
+        case 'complete' :
+        case 'renewal' :
+            $class = 'label-success';
+        break;
+        case 'pending' :
+            $class = 'label-primary';
+        break;
+        case 'processing' :
+            $class = 'label-warning';
+        break;
+        case 'onhold' :
+            $class = 'label-info';
+        break;
+        case 'cancelled' :
+        case 'failed' :
+            $class = 'label-danger';
+        break;
+        default:
+            $class = 'label-default';
+        break;
+    }
+    
+    $label = '<span class="label label-inv-' . $status . ' ' . $class . '">' . $status_display . '</span>';
+    
+    return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
 }

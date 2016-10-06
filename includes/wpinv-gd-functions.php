@@ -127,7 +127,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     return $item;
 }
 
-function wpinv_gd_to_wpi_gateway( $payment_method ) {
+function wpinv_gdp_to_wpi_gateway( $payment_method ) {
     switch( $payment_method ) {
         case 'prebanktransfer':
             $gateway = 'bank_transfer';
@@ -137,11 +137,11 @@ function wpinv_gd_to_wpi_gateway( $payment_method ) {
         break;
     }
     
-    return apply_filters( 'wpinv_gd_to_wpi_gateway', $gateway, $payment_method );
+    return apply_filters( 'wpinv_gdp_to_wpi_gateway', $gateway, $payment_method );
 }
 
-function wpinv_gd_to_wpi_gateway_title( $payment_method ) {
-    $gateway = wpinv_gd_to_wpi_gateway( $payment_method );
+function wpinv_gdp_to_wpi_gateway_title( $payment_method ) {
+    $gateway = wpinv_gdp_to_wpi_gateway( $payment_method );
     
     $gateway_title = wpinv_get_gateway_checkout_label( $gateway );
     
@@ -149,7 +149,7 @@ function wpinv_gd_to_wpi_gateway_title( $payment_method ) {
         $gateway_title = geodir_payment_method_title( $gateway );
     }
     
-    return apply_filters( 'wpinv_gd_to_wpi_gateway_title', $gateway_title, $payment_method );
+    return apply_filters( 'wpinv_gdp_to_wpi_gateway_title', $gateway_title, $payment_method );
 }
 
 function wpinv_print_checkout_errors() {
@@ -179,13 +179,13 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             if ($invoice_info->paymentmethod !== $wpi_invoice->gateway) {
                 $save = true;
                 $gateway = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : '';
-                $gateway = wpinv_gd_to_wpi_gateway( $gateway );
-                $gateway_title = wpinv_gd_to_wpi_gateway_title( $gateway );
+                $gateway = wpinv_gdp_to_wpi_gateway( $gateway );
+                $gateway_title = wpinv_gdp_to_wpi_gateway_title( $gateway );
                 $wpi_invoice->set('gateway', $gateway );
                 $wpi_invoice->set('gateway_title', $gateway_title );
             }
             
-            if ( ( $status = wpinv_to_wpi_status( $invoice_info->status ) ) !== $wpi_invoice->status ) {
+            if ( ( $status = wpinv_gdp_to_wpi_status( $invoice_info->status ) ) !== $wpi_invoice->status ) {
                 $save = true;
                 $wpi_invoice->set( 'status', $status );
             }
@@ -203,7 +203,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             if ( !empty( $pre_status ) ) {
                 $invoice_info->status = $pre_status;
             }
-            $status = wpinv_to_wpi_status( $invoice_info->status );
+            $status = wpinv_gdp_to_wpi_status( $invoice_info->status );
             
             $invoice_data                   = array();
             $invoice_data['invoice_id']     = $wpi_invoice_id;
@@ -221,8 +221,8 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             }
             
             $paymentmethod = !empty( $invoice_info->paymentmethod ) ? $invoice_info->paymentmethod : '';
-            $paymentmethod = wpinv_gd_to_wpi_gateway( $paymentmethod );
-            $payment_method_title = wpinv_gd_to_wpi_gateway_title( $paymentmethod );
+            $paymentmethod = wpinv_gdp_to_wpi_gateway( $paymentmethod );
+            $payment_method_title = wpinv_gdp_to_wpi_gateway_title( $paymentmethod );
             
             $invoice_data['payment_details'] = array( 
                 'gateway'           => $paymentmethod, 
@@ -318,7 +318,7 @@ function wpinv_payment_status_changed( $invoice_id, $new_status, $old_status = '
 
     $invoice = !empty( $invoice_info->invoice_id ) ? wpinv_get_invoice( $invoice_info->invoice_id ) : NULL;
     if ( !empty( $invoice ) ) {
-        $new_status = wpinv_to_wpi_status($new_status);
+        $new_status = wpinv_gdp_to_wpi_status($new_status);
         $invoice    = wpinv_update_payment_status( $invoice->ID, $new_status );
     } else {
         $invoice = wpinv_cpt_save( $invoice_id );
@@ -354,12 +354,30 @@ function wpinv_transaction_details_note( $invoice_id, $html ) {
 }
 add_action( 'geodir_payment_invoice_transaction_details_changed', 'wpinv_transaction_details_note', 11, 2 );
 
-function wpinv_to_gdp_status( $status ) {
+function wpinv_gdp_to_wpi_status( $status ) {
+    $inv_status = $status ? $status : 'pending';
+    
+    switch ( $status ) {
+        case 'confirmed':
+            $inv_status = 'publish';
+        break;
+    }
+    
+    return $inv_status;
+}
+
+function wpinv_wpi_to_gdp_status( $status ) {
     $inv_status = $status ? $status : 'pending';
     
     switch ( $status ) {
         case 'publish':
+        case 'complete':
+        case 'processing':
+        case 'renewal':
             $inv_status = 'confirmed';
+        break;
+        case 'refunded':
+            $inv_status = 'cancelled';
         break;
     }
     
@@ -455,9 +473,9 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
     $gateway = empty( $gateway ) && isset( $_POST['gateway'] ) ? $_POST['gateway'] : $gateway;
     
     if ( !empty( $gateway ) ) {
-        $gateway = wpinv_gd_to_wpi_gateway( $gateway );
+        $gateway = wpinv_gdp_to_wpi_gateway( $gateway );
         $invoice_data['payment_details']['gateway'] = $gateway;
-        $invoice_data['payment_details']['gateway_title'] = wpinv_gd_to_wpi_gateway_title( $gateway );
+        $invoice_data['payment_details']['gateway_title'] = wpinv_gdp_to_wpi_gateway_title( $gateway );
     }
     
     $user_info = array(
@@ -768,17 +786,17 @@ function wpinv_tool_merge_coupons() {
 }
 add_action( 'wpinv_tool_merge_coupons', 'wpinv_tool_merge_coupons' );
 
-function wpinv_pm_to_wpi_currency( $value, $option = '' ) {
+function wpinv_gdp_to_wpi_currency( $value, $option = '' ) {
     return wpinv_get_currency();
 }
-add_filter( 'pre_option_geodir_currency', 'wpinv_pm_to_wpi_currency', 10, 2 );
+add_filter( 'pre_option_geodir_currency', 'wpinv_gdp_to_wpi_currency', 10, 2 );
 
-function wpinv_pm_to_wpi_currency_sign( $value, $option = '' ) {
+function wpinv_gdp_to_wpi_currency_sign( $value, $option = '' ) {
     return wpinv_currency_symbol();
 }
-add_filter( 'pre_option_geodir_currencysym', 'wpinv_pm_to_wpi_currency_sign', 10, 2 );
+add_filter( 'pre_option_geodir_currencysym', 'wpinv_gdp_to_wpi_currency_sign', 10, 2 );
 
-function wpinv_pm_to_wpi_display_price( $price, $amount, $display = true , $decimal_sep, $thousand_sep ) {
+function wpinv_gdp_to_wpi_display_price( $price, $amount, $display = true , $decimal_sep, $thousand_sep ) {
     if ( !$display ) {
         $price = wpinv_format_amount( $amount, NULL, true );
     } else {
@@ -787,9 +805,9 @@ function wpinv_pm_to_wpi_display_price( $price, $amount, $display = true , $deci
     
     return $price;
 }
-add_filter( 'geodir_payment_price' , 'wpinv_pm_to_wpi_display_price', 10000, 5 );
+add_filter( 'geodir_payment_price' , 'wpinv_gdp_to_wpi_display_price', 10000, 5 );
 
-function wpinv_pm_to_inv_checkout_redirect( $redirect_url ) {
+function wpinv_gdp_to_inv_checkout_redirect( $redirect_url ) {
     $invoice_id         = geodir_payment_cart_id();
     $invoice_info       = geodir_get_invoice( $invoice_id );
     $wpi_invoice        = !empty( $invoice_info->invoice_id ) ? wpinv_get_invoice( $invoice_info->invoice_id ) : NULL;
@@ -809,4 +827,29 @@ function wpinv_pm_to_inv_checkout_redirect( $redirect_url ) {
     
     return $redirect_url;
 }
-add_filter( 'geodir_payment_checkout_redirect_url', 'wpinv_pm_to_inv_checkout_redirect', 100, 1 );
+add_filter( 'geodir_payment_checkout_redirect_url', 'wpinv_gdp_to_inv_checkout_redirect', 100, 1 );
+
+function wpinv_gdp_dashboard_invoice_history_link( $dashboard_links ) {    
+    if ( get_current_user_id() ) {        
+        $dashboard_links .= '<li><i class="fa fa-shopping-cart"></i><a class="gd-invoice-link" href="' . esc_url( wpinv_get_history_page_uri() ) . '">' . __( 'My Invoice History', 'invoicing' ) . '</a></li>';
+    }
+
+    return $dashboard_links;
+}
+add_action( 'geodir_dashboard_links', 'wpinv_gdp_dashboard_invoice_history_link' );
+remove_action( 'geodir_dashboard_links', 'geodir_payment_invoices_list_page_link' );
+
+function wpinv_wpi_to_gdp_update_status( $invoice_id, $new_status, $old_status ) {
+    $invoice    = wpinv_get_invoice( $invoice_id );
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    remove_action( 'geodir_payment_invoice_status_changed', 'wpinv_payment_status_changed', 11, 4 );
+    
+    $invoice_id = wpinv_wpi_to_gdp_id( $invoice_id );
+    $new_status = wpinv_wpi_to_gdp_status( $new_status );
+    
+    geodir_update_invoice_status( $invoice_id, $new_status, $invoice->is_recurring() );
+}
+add_action( 'wpinv_update_status', 'wpinv_wpi_to_gdp_update_status', 999, 3 );

@@ -30,3 +30,4 @@ Backend the initial vat value should be assigned via the user country - CHANGED
 In backend button added to recalculate totals for invoice - ADDED
 Able to add new user from edit invoice page - ADDED
 Tools added to merge GD packages & invoices - ADDED
+Discount can be enable/disable for relevant item - ADDED
