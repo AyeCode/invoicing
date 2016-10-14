@@ -943,10 +943,10 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
     $user    = false;
     $is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
-    if ( $is_ajax ) {
+    /*if ( $is_ajax ) {
         // Do not create or login the user during the ajax submission (check for errors only)
         return true;
-    } else if ( is_user_logged_in() ) {
+    } else */if ( is_user_logged_in() ) {
         // Set the valid user as the logged in collected data
         $user = $valid_data['logged_in_user'];
     }
@@ -1041,8 +1041,17 @@ function wpinv_process_checkout() {
             return false;
         }
     }
-    
+
     if ( $is_ajax ) {
+        // Save address fields.
+        $address_fields = array( 'first_name', 'last_name', 'phone', 'address', 'city', 'country', 'state', 'zip', 'company' );
+        foreach ( $address_fields as $field ) {
+            if ( isset( $user[$field] ) ) {
+                $invoice->set( $field, $user[$field] );
+            }
+            
+            $invoice->save();
+        }
         echo 'OK';
         die();
     }
@@ -1095,6 +1104,16 @@ function wpinv_process_checkout() {
             $rate = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state'], $item_data['id']);
             $invoice_data['cart_details'][$key]['vat_rate'] = round( $rate, 3 );
         }
+    }
+    
+    // Save vat fields.
+    $address_fields = array( 'vat_number', 'vat_rate', 'self_certified' );
+    foreach ( $address_fields as $field ) {
+        if ( isset( $invoice_data['user_info'][$field] ) ) {
+            $invoice->set( $field, $invoice_data['user_info'][$field] );
+        }
+        
+        $invoice->save();
     }
 
     // Add the user data for hooks
