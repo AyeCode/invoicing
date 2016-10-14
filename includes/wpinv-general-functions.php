@@ -354,3 +354,27 @@ function wpinv_is_ssl_enforced() {
     $ssl_enforced = wpinv_get_option( 'enforce_ssl', false );
     return (bool) apply_filters( 'wpinv_is_ssl_enforced', $ssl_enforced );
 }
+
+function wpinv_user_can_print_invoice( $post ) {
+    $allow = false;
+    
+    if ( !( $user_id = get_current_user_id() ) ) {
+        return $allow;
+    }
+    
+    if ( is_int( $post ) ) {
+        $post = get_post( $post );
+    }
+    
+    // Allow to owner.
+    if ( is_object( $post ) && !empty( $post->post_author ) && $post->post_author == $user_id ) {
+        $allow = true;
+    }
+    
+    // Allow to admin user.
+    if ( current_user_can( 'manage_options' ) ) {
+        $allow = true;
+    }
+    
+    return apply_filters( 'wpinv_can_print_invoice', $allow, $post );
+}

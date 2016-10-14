@@ -723,7 +723,7 @@ function wpinv_template( $template ) {
     global $post, $wp_query;
     
     if ( is_single() && !empty( $post ) && get_post_type() == 'wpi_invoice' ) {
-        if ( current_user_can( 'edit_post', $post->ID ) || current_user_can( 'manage_options' ) ) {
+        if ( wpinv_user_can_print_invoice( $post->ID ) ) {
             $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
         } else {
             $wp_query->set_404();
