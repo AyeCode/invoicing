@@ -50,6 +50,8 @@ class WPInv_Plugin {
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
             add_action( 'admin_body_class', array( &$this, 'admin_body_class' ) );
+        } else {
+            add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
         }
         
         /**
@@ -339,5 +341,13 @@ class WPInv_Plugin {
         if ( isset( $_REQUEST['wpi_action'] ) ) {
             do_action( 'wpinv_' . wpinv_sanitize_key( $_REQUEST['wpi_action'] ), $_REQUEST );
         }
+    }
+    
+    public function pre_get_posts( $wp_query ) {
+        if ( !empty( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'wpi_invoice' && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
+            $wp_query->query_vars['post_status'] = array_keys( wpinv_get_invoice_statuses() );
+        }
+        
+        return $wp_query;
     }
 }
