@@ -1050,6 +1050,10 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin-top: 0;
     margin-bottom: 0;
 }
+.wpinv-items-wrap.wpinv-paid th.action,
+.wpinv-items-wrap.wpinv-paid td.action {
+    width: 0 !important;
+}
 .wpinv-totals table {
     width: 100%;
 }

@@ -794,7 +794,7 @@ function wpinv_get_watermark( $id ) {
     $invoice = wpinv_get_invoice( $id );
     
     if ( !empty( $invoice ) ) {
-        if ( $invoice->is_complete() ) {
+        if ( $invoice->is_paid() ) {
             return __( 'Paid', 'invoicing' );
         }
         if ( $invoice->has_status( array( 'cancelled' ) ) ) {
@@ -805,7 +805,9 @@ function wpinv_get_watermark( $id ) {
     return NULL;
 }
 
-function wpinv_display_invoice_details( $invoice_id = 0 ) {
+function wpinv_display_invoice_details( $invoice ) {
+    $invoice_id = $invoice->ID;
+    
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
     ?>
     <table class="table table-bordered table-sm">
@@ -819,6 +821,12 @@ function wpinv_display_invoice_details( $invoice_id = 0 ) {
             <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
             <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
+        <?php if ( $invoice->is_renewal() ) { ?>
+        <tr>
+            <td><?php _e( 'Parent Invoice', 'invoicing' ); ?></td>
+            <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
+        </tr>
+        <?php } ?>
         <tr>
             <td><?php _e( 'Payment Method', 'invoicing' ); ?></td>
             <td><?php echo wpinv_get_payment_gateway_name( $invoice_id ); ?></td>
@@ -1048,7 +1056,7 @@ function wpinv_display_payments_info( $invoice_id = 0, $echo = true ) {
     
     ob_start();
     do_action( 'wpinv_before_display_payments_info', $invoice_id );
-    if ( ( $gateway_title = $invoice->get_gateway_title() ) || $invoice->is_complete() ) {
+    if ( ( $gateway_title = $invoice->get_gateway_title() ) || $invoice->is_paid() ) {
         ?>
         <div class="wpi-payment-info">
             <p class="wpi-payment-gateway"><?php echo wp_sprintf( __( 'Payment via %s', 'invoicing' ), $gateway_title ? $gateway_title : __( 'Manually', 'invoicing' ) ); ?></p>
@@ -1329,7 +1337,11 @@ function wpinv_admin_get_line_items($invoice = array()) {
             if ( $use_taxes ) {
                 $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
             }
-            $line_item .= '<td class="action"><i class="fa fa-remove wpinv-item-remove"></i></td>';
+            $line_item .= '<td class="action">';
+            if ( !$invoice->is_paid() ) {
+                $line_item .= '<i class="fa fa-remove wpinv-item-remove"></i>';
+            }
+            $line_item .= '</td>';
         $line_item .= '</tr>';
         
         echo apply_filters( 'wpinv_admin_line_item', $line_item, $cart_item, $invoice );
@@ -1896,3 +1908,105 @@ function wpinv_receipt_actions( $invoice ) {
 }
 
 add_action( 'wpinv_before_start', 'wpinv_receipt_actions', -10, 1 );
+
+function wpinv_invoice_link( $invoice_id ) {
+    $invoice = wpinv_get_invoice( $invoice_id );
+    
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    
+    $invoice_link = '<a href="' . esc_url( $invoice->get_view_invoice_url() ) . '">' . $invoice->get_number() . '</a>';
+    
+    return apply_filters( 'wpinv_get_invoice_link', $invoice_link, $invoice );
+}
+
+function wpinv_invoice_subscription_details( $invoice ) {
+    if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
+        $total_payments = (int)$invoice->get_total_payments();
+        $bill_times     = (int)$invoice->get_bill_times();
+        $payments       = $invoice->get_child_payments();
+        
+        $subscription   = $invoice->get_subscription_data();
+        $period         = wpinv_get_pretty_subscription_period( $subscription['period'] );
+        $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
+        $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );
+        $billing        = $billing_amount . ' / ' . $period;
+        
+        if ( $initial_amount != $billing_amount ) {
+            $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Inital subscription amount then billing cycle and amount', 'invoicing' ), $initial_amount, $billing );
+        } else {
+            $billing_cycle  = $billing;
+        }
+        $times_billed   = $total_payments . ' / ' . ( ( $bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
+        ?>
+        <div class="wpinv-subscriptions-details">
+            <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><?php _e( 'Billing Cycle', 'invoicing' ) ;?></th>
+                        <th><?php _e( 'Start Date', 'invoicing' ) ;?></th>
+                        <th><?php _e( 'Expiration Date', 'invoicing' ) ;?></th>
+                        <th class="text-center"><?php _e( 'Times Billed', 'invoicing' ) ;?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><?php echo $billing_cycle; ?></td>
+                        <td><?php echo $invoice->get_subscription_start(); ?></td>
+                        <td><?php echo $invoice->get_subscription_end(); ?></td>
+                        <td class="text-center"><?php echo $times_billed; ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <?php if ( !empty( $payments ) ) { ?>
+        <div class="wpinv-renewal-payments">
+            <h3 class="wpinv-renewals-t"><?php echo apply_filters( 'wpinv_renewal_payments_title', __( 'Renewal Payments', 'invoicing' ) ); ?></h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th><?php _e( 'Invoice', 'invoicing' ) ;?></th>
+                        <th><?php _e( 'Date', 'invoicing' ) ;?></th>
+                        <th class="text-right"><?php _e( 'Amount', 'invoicing' ) ;?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $payments as $key => $invoice_id ) { ?>
+                    <tr>
+                        <th scope="row"><?php echo ( $key + 1 );?></th>
+                        <td><?php echo wpinv_invoice_link( $invoice_id ) ;?></td>
+                        <td><?php echo wpinv_get_invoice_date( $invoice_id ); ?></td>
+                        <td class="text-right"><?php echo wpinv_payment_total( $invoice_id, true ); ?></td>
+                    </tr>
+                    <?php } ?>
+                    <tr><td colspan="4" style="padding:0"></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <?php } ?>
+        <?php
+    }
+}
+add_action( 'wpinv_after_receipt_billing', 'wpinv_invoice_subscription_details', 10, 1 );
+
+function wpinv_subscription_details_on_cart( $label ) {
+    $invoice = wpinv_get_invoice_cart();
+    if ( !empty( $invoice ) && $item_id = $invoice->get_recurring() ) {
+        $item               = new WPInv_Item( $item_id );
+        $period             = $item->get_recurring_period();
+        $interval           = $item->get_recurring_interval();
+        $bill_times         = (int)$item->get_recurring_limit();
+        $initial_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
+        $billing_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
+        
+        $description        = wpinv_subscription_description_on_cart( $initial_amount, $billing_amount, $period, $interval, $bill_times );
+        
+        $label              = '<span class="wpinv-cart-sub-desc">' . $description . '</span> ' . $label;
+    }
+    
+    return $label;
+}
+add_filter( 'wpinv_cart_total_label', 'wpinv_subscription_details_on_cart', 10, 1 );

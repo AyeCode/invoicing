@@ -157,6 +157,15 @@ class WPInv_Ajax {
         $item_id    = sanitize_text_field( $_POST['item_id'] );
         $invoice_id = absint( $_POST['invoice_id'] );
         
+        $invoice    = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) ) {
+            die();
+        }
+        
+        if ( $invoice->is_paid() ) {
+            die(); // Don't allow modify items for paid invoice.
+        }
+        
         if ( !empty( $_POST['user_id'] ) ) {
             $wpi_userID = absint( $_POST['user_id'] ); 
         }
@@ -171,9 +180,24 @@ class WPInv_Ajax {
             die();
         }
         
-        $invoice     = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) ) {
-            die();
+        // Validate item before adding to invoice because recurring item must be paid individually.
+        if ( !empty( $invoice->cart_details ) ) {
+            $valid = true;
+            
+            if ( $recurring_item = $invoice->get_recurring() ) {
+                if ( $recurring_item != $item_id ) {
+                    $valid = false;
+                }
+            } else if ( wpinv_is_recurring_item( $item_id ) ) {
+                $valid = false;
+            }
+            
+            if ( !$valid ) {
+                $response               = array();
+                $response['success']    = false;
+                $response['msg']        = __( 'You can not add item to invoice because recurring item must be paid individually!', 'invoicing' );
+                wp_send_json( $response );
+            }
         }
         
         $checkout_session = wpinv_get_checkout_session();
@@ -241,6 +265,15 @@ class WPInv_Ajax {
         $invoice_id = absint( $_POST['invoice_id'] );
         $cart_index = isset( $_POST['index'] ) && $_POST['index'] >= 0 ? $_POST['index'] : false;
 
+        $invoice     = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) ) {
+            die();
+        }
+        
+        if ( $invoice->is_paid() ) {
+            die(); // Don't allow modify items for paid invoice.
+        }
+        
         // Find the item
         if ( !is_numeric( $item_id ) ) {
             die();
@@ -248,11 +281,6 @@ class WPInv_Ajax {
 
         $item = new WPInv_Item( $item_id );
         if ( !( !empty( $item ) && $item->post_type == 'wpi_item' ) ) {
-            die();
-        }
-        
-        $invoice     = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) ) {
             die();
         }
         
@@ -317,6 +345,21 @@ class WPInv_Ajax {
         if ( !is_numeric( $invoice_id ) ) {
             die();
         }
+        
+        
+        $invoice     = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) ) {
+            die();
+        }
+        
+        // Validate item before adding to invoice because recurring item must be paid individually.
+        if ( !empty( $invoice->cart_details ) && $invoice->get_recurring() ) {
+            $response               = array();
+            $response['success']    = false;
+            $response['msg']        = __( 'You can not add item to invoice because recurring item must be paid individually!', 'invoicing' );
+            wp_send_json( $response );
+        }
+        
         
         $save_item = $_POST['_wpinv_quick'];
         

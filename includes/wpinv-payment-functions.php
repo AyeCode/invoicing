@@ -247,15 +247,43 @@ function wpinv_get_pretty_subscription_period( $period ) {
             $frequency = __( 'Weekly', 'invoicing' );
             break;
         case 'M' :
-        case 'week' :
+        case 'month' :
             $frequency = __( 'Monthly', 'invoicing' );
             break;
         case 'Y' :
-        case 'week' :
+        case 'year' :
             $frequency = __( 'Yearly', 'invoicing' );
             break;
         default :
             $frequency = apply_filters( 'wpinv_pretty_subscription_period', $frequency, $period );
+            break;
+    }
+
+    return $frequency;
+}
+
+function wpinv_get_pretty_subscription_period_name( $period ) {
+    $frequency = '';
+    //Format period details
+    switch ( $period ) {
+        case 'D' :
+        case 'day' :
+            $frequency = __( 'Day', 'invoicing' );
+            break;
+        case 'W' :
+        case 'week' :
+            $frequency = __( 'Week', 'invoicing' );
+            break;
+        case 'M' :
+        case 'month' :
+            $frequency = __( 'Month', 'invoicing' );
+            break;
+        case 'Y' :
+        case 'year' :
+            $frequency = __( 'Year', 'invoicing' );
+            break;
+        default :
+            $frequency = apply_filters( 'wpinv_pretty_subscription_period_name', $frequency, $period );
             break;
     }
 

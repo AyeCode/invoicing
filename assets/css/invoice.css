@@ -271,6 +271,26 @@ a img {outline:none; border:none;}
 .wpinv-details table tr td:nth-child(2) {
     text-align: left;
 }
+.wpinv-subscriptions-details h3,
+.wpinv-renewal-payments h3 {
+    margin-bottom: 7px;
+}
+.wpinv-subscriptions-details table,
+.wpinv-renewal-payments table {  
+    border: none!important;
+    margin-bottom: 30px
+}
+.wpinv-wrap .wpinv-subscriptions-details table th,
+.wpinv-wrap .wpinv-subscriptions-details table td,
+.wpinv-wrap .wpinv-renewal-payments table th,
+.wpinv-wrap .wpinv-renewal-payments table td {
+    border: none;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: none;
+    vertical-align: middle;
+    padding: 8px;
+}
 @media print {
     .no-print {
         display: none !important;

@@ -32,7 +32,7 @@ $tax_label          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? 
     <?php do_action( 'wpinv_before_receipt_details', $invoice ); ?>
     <div class="wpinv-receipt-details">
         <h3 class="wpinv-details-t"><?php echo apply_filters( 'wpinv_receipt_details_title', __( 'Invoice Details', 'invoicing' ) ); ?></h3>
-        <?php wpinv_display_invoice_details( $invoice_id ); ?>
+        <?php wpinv_display_invoice_details( $invoice ); ?>
     </div>
     <?php do_action( 'wpinv_after_receipt_details', $invoice ); ?>
     <?php do_action( 'wpinv_before_receipt_billing', $invoice ); ?>

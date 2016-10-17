@@ -585,6 +585,8 @@ jQuery(function($) {
                     if (response && typeof response == 'object') {
                         if (response.success === true) {
                             WPInv.update_inline_items(response.data, metaBox, gdTotals);
+                        } else if ( response.msg ) {
+                            alert( response.msg );
                         }
                     }
                 });
@@ -666,6 +668,8 @@ jQuery(function($) {
                             $('[name="_wpinv_quick[name]"]', metaBox).val('');
                             $('[name="_wpinv_quick[price]"]', metaBox).val('');
                             WPInv.update_inline_items(response.data, metaBox, gdTotals);
+                        } else if ( response.msg ) {
+                            alert( response.msg );
                         }
                     }
                 });

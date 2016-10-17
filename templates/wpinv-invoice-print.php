@@ -59,7 +59,7 @@ do_action( 'wpinv_invoice_before_display', $invoice ); ?><!DOCTYPE html>
             </div>
             <div class="col-xs-12 col-md-6 col-sm-7">
                 <div class="col-xs-12 col-sm-10 wpinv-details">
-                    <?php wpinv_display_invoice_details( $invoice_id ); ?>
+                    <?php wpinv_display_invoice_details( $invoice ); ?>
                 </div>
             </div>
         </div><!-- END row -->
@@ -71,7 +71,7 @@ do_action( 'wpinv_invoice_before_display', $invoice ); ?><!DOCTYPE html>
                 </div>
             </div><!-- END row -->
         <?php } ?>
-        
+        <?php echo wpinv_invoice_subscription_details( $invoice ); ?>
         <div class="row wpinv-items">
             <div class="col-sm-12 wpinv-line-items">
                 <div class="table-responsive">

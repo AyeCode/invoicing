@@ -20,6 +20,12 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
             <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
             <td><?php echo $invoice->get_status( true ); ?></td>
         </tr>
+        <?php if ( $invoice->is_renewal() ) { ?>
+        <tr>
+            <td><?php _e( 'Parent Invoice', 'invoicing' ); ?></td>
+            <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
+        </tr>
+        <?php } ?>
         <tr>
             <td><?php _e( 'Payment Method', 'invoicing' ); ?></td>
             <td><?php echo $invoice->get_gateway_title(); ?></td>

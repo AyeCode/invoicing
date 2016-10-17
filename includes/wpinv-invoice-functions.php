@@ -1293,6 +1293,10 @@ function wpinv_payment_receipt( $atts, $content = null ) {
 
     $invoice_id    = wpinv_get_invoice_id_by_key( $invoice_key );
     $user_can_view = wpinv_can_view_receipt( $invoice_key );
+    if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
+        $invoice_id     = (int)$_GET['invoice-id'];
+        $user_can_view  = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? true : false;
+    }
 
     // Key was provided, but user is logged out. Offer them the ability to login and view the receipt
     if ( ! $user_can_view && ! empty( $invoice_key ) && ! is_user_logged_in() ) {
@@ -1334,6 +1338,9 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 	global $wpinv_receipt_args;
 
 	$wpinv_receipt_args['id'] = wpinv_get_invoice_id_by_key( $invoice_key );
+	if ( isset( $_GET['invoice-id'] ) ) {
+		$wpinv_receipt_args['id'] = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? (int)$_GET['invoice-id'] : 0;
+	}
 
 	$user_id = (int) wpinv_get_user_id( $wpinv_receipt_args['id'] );
     $invoice_meta = wpinv_get_invoice_meta( $wpinv_receipt_args['id'] );
@@ -1367,6 +1374,10 @@ function wpinv_pay_for_invoice() {
         
         $invoice_id    = wpinv_get_invoice_id_by_key( $invoice_key );
         $user_can_view = wpinv_can_view_receipt( $invoice_key );
+        if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
+            $invoice_id     = (int)$_GET['invoice-id'];
+            $user_can_view  = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? true : false;
+        }
         
         if ( $invoice_id && $user_can_view && ( $invoice = wpinv_get_invoice( $invoice_id ) ) ) {
             if ( $invoice->needs_payment() ) {

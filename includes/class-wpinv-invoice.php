@@ -1857,6 +1857,10 @@ final class WPInv_Invoice {
     
     public function get_view_invoice_url() {
         $view_invoice_url = add_query_arg( 'invoice_key', $this->get_key(), wpinv_get_success_page_uri() );
+        
+        if ( $this->is_renewal() ) {
+            $view_invoice_url = add_query_arg( 'invoice-id', $this->ID, $view_invoice_url );
+        }
 
         return apply_filters( 'wpinv_get_view_invoice_url', $view_invoice_url, $this );
     }
@@ -1906,6 +1910,23 @@ final class WPInv_Invoice {
         }
 
         return apply_filters( 'wpinv_invoice_has_recurring_item', $has_subscription, $this->cart_details );
+    }
+    
+    public function get_recurring() {
+        $item_id = NULL;
+        
+        if ( empty( $this->cart_details ) ) {
+            return $item_id;
+        }
+        
+        foreach( $this->cart_details as $cart_item ) {
+            if ( !empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] )  ) {
+                $item_id = $cart_item['id'];
+                break;
+            }
+        }
+
+        return apply_filters( 'wpinv_invoice_get_recurring_item', $item_id, $this );
     }
         
     public function get_expiration() {
@@ -1979,7 +2000,7 @@ final class WPInv_Invoice {
             'fields'            => 'ids'
         ) );
         
-        if ( $self && $this->is_complete() ) {
+        if ( $self && $this->is_paid() ) {
             if ( !empty( $invoices ) ) {
                 $invoices[] = (int)$this->ID;
             } else {
@@ -2271,6 +2292,11 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_subscription_update_url', $url, $this );
     }
 
+    public function is_renewal() {
+        $is_renewal = $this->parent_invoice && $this->parent_invoice != $this->ID ? true : false;
+
+        return apply_filters( 'wpinv_invoice_is_renewal', $is_renewal, $this );
+    }
     
     public function is_subscription_active() {
         $ret = false;
@@ -2325,7 +2351,7 @@ final class WPInv_Invoice {
         return $subscription_meta;
     }
     
-    public function is_complete() {
+    public function is_paid() {
         if ( $this->has_status( array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
             return true;
         }
