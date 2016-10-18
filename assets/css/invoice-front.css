@@ -3478,3 +3478,13 @@ div td .meta p {
 .wpinv-receipt-details .tr-total td {
     background-color: #f7f7f7;
 }
+.wpinv_cart_total_row td,
+.wpinv_cart_total_row th {
+    background-color: #f7f7f7;
+}
+.wpinv-cart-sub-desc {
+    display: inline-block;
+    max-width: 85%;
+    float: left;
+    text-align: left;
+}

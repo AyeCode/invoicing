@@ -33,7 +33,7 @@ class WPInv_Meta_Box_Items {
             $cols++;
         }        
         ?>
-        <div class="wpinv-items-wrap" id="wpinv_items_wrap">
+        <div class="wpinv-items-wrap<?php echo ( $invoice->is_paid() ? ' wpinv-paid' : '' ); ?>" id="wpinv_items_wrap" data-status="<?php echo $invoice->status; ?>">
             <table id="wpinv_items" class="wpinv-items" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
@@ -168,13 +168,15 @@ class WPInv_Meta_Box_Items {
             </table>
             <div class="wpinv-actions">
                 <?php
-                echo wpinv_item_dropdown( array(
-                    'name'             => 'wpinv_invoice_item',
-                    'id'               => 'wpinv_invoice_item',
-                    'with_packages'    => false,
-                ) );
-                ?>
-                <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                    if ( !$invoice->is_paid() ) {
+                    echo wpinv_item_dropdown( array(
+                        'name'             => 'wpinv_invoice_item',
+                        'id'               => 'wpinv_invoice_item',
+                        'with_packages'    => false,
+                    ) );
+                    ?>
+                    <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                    <?php } ?>
                 <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
             </div>
         </div>

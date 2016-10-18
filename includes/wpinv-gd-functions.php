@@ -697,7 +697,7 @@ function wpinv_tool_merge_invoices() {
                 
                 $wpdb->update( $wpdb->posts, array( 'post_date' => $post_date, 'post_date_gmt' => $post_date_gmt, 'post_modified' => $post_modified, 'post_modified_gmt' => $post_modified_gmt ), array( 'ID' => $merged->ID ) );
                 
-                if ( $merged->is_complete() ) {
+                if ( $merged->is_paid() ) {
                     update_post_meta( $merged->ID, '_wpinv_completed_date', $post_modified );
                 }
                 

@@ -120,17 +120,18 @@ class WPInv_Meta_Box_Details {
             
             $subscription   = $invoice->get_subscription_data();
             $period         = wpinv_get_pretty_subscription_period( $subscription['period'] );
-            $billing        = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() ) . ' / ' . $period;
-            $initial        = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
+            $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
+            $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );
+            $billing        = $billing_amount . ' / ' . $period;
             
-            if ( $billing != $billing ) {
-                $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Inital subscription amount then billing cycle and amount', 'invoicing' ), $initial, $billing );
+            if ( $initial_amount != $billing_amount ) {
+                $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Inital subscription amount then billing cycle and amount', 'invoicing' ), $initial_amount, $billing );
             } else {
                 $billing_cycle  = $billing;
             }
             $times_billed   = $total_payments . ' / ' . ( ( $bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
             ?>
-            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_invoice->get_subscription_id(); ?></p>
+            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_id(); ?></p>
             <?php if ( !empty( $payments ) ) { ?>
                 <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
                 <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
@@ -168,7 +169,7 @@ class WPInv_Meta_Box_Details {
         
         ?>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_invoice->gateway ) ); ?></p>
-        <?php if ( $wpi_mb_invoice->is_complete() ) { ?>
+        <?php if ( $wpi_mb_invoice->is_paid() ) { ?>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_invoice->get_key() ); ?></p>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_invoice ) ); ?></p>
         <?php } ?>

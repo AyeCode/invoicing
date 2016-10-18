@@ -738,7 +738,7 @@ function wpinv_paypal_success_page_redirect() {
 
     return;
 }
-add_action( 'template_redirect', 'wpinv_paypal_success_page_redirect' );
+//add_action( 'template_redirect', 'wpinv_paypal_success_page_redirect' );
 
 function wpinv_paypal_get_transaction_id( $invoice_id ) {
     $transaction_id = '';
