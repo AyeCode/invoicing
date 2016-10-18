@@ -173,6 +173,7 @@ class WPInv_Meta_Box_Items {
                         'name'             => 'wpinv_invoice_item',
                         'id'               => 'wpinv_invoice_item',
                         'with_packages'    => false,
+                        'show_recurring'   => true,
                     ) );
                     ?>
                     <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
@@ -186,19 +187,21 @@ class WPInv_Meta_Box_Items {
     public static function prices( $post ) {        
         $symbol         = wpinv_currency_symbol();
         $position       = wpinv_currency_position();
-        
         $item           = new WPInv_Item( $post->ID );
         
         $price          = $item->get_price();
         $is_recurring   = $item->is_recurring();
         $period         = $item->get_recurring_period();
-        $interval       = $item->get_recurring_interval();
-        $times          = $item->get_recurring_limit();
+        $interval       = absint( $item->get_recurring_interval() );
+        $times          = absint( $item->get_recurring_limit() );
         
         $intervals      = array();
         for ( $i = 1; $i <= 90; $i++ ) {
             $intervals[$i] = $i;
         }
+        
+        $interval       = $interval > 0 ? $interval : 1;
+        $times          = $times > 0 ? $times : 1;
         
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
         ?>
@@ -220,7 +223,7 @@ class WPInv_Meta_Box_Items {
                     'show_option_all'  => false,
                     'show_option_none' => false
                 ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
-                <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s)', 'invoicing' );?></label>
+                <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="1"> <?php _e( 'time(s)', 'invoicing' );?></label>
         </p>
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
         <?php

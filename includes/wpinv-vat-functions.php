@@ -840,6 +840,14 @@ function wpinv_settings_vat_settings( $settings ) {
             'size' => 'regular'
         );
         
+        $vat_settings['vat_company_name'] = array(
+            'id' => 'vat_company_name',
+            'name' => __( 'Company Name', 'invoicing' ),
+            'desc' => __( 'Enter your company name as it appears on your VAT return (not case sensitive)', 'invoicing' ),
+            'type' => 'text',
+            'size' => 'regular',
+        );
+        
         $vat_settings['vat_number'] = array(
             'id'   => 'vat_number',
             'name' => __( 'VAT Number', 'invoicing' ),
@@ -854,14 +862,6 @@ function wpinv_settings_vat_settings( $settings ) {
             'type' => 'text',
             'size' => 'regular',
             'std' => 'VAT'
-        );
-        
-        $vat_settings['vat_company_name'] = array(
-            'id' => 'vat_company_name',
-            'name' => __( 'Company Name', 'invoicing' ),
-            'desc' => __( 'Enter your company name as it appears on your VAT return (not case sensitive)', 'invoicing' ),
-            'type' => 'text',
-            'size' => 'regular',
         );
         
         $vat_settings['vat_invoice_notice'] = array(
@@ -994,8 +994,9 @@ function wpinv_settings_vat_settings( $settings ) {
         $vat_settings['vat_2015_rules'] = array(
             'id' => 'vat_2015_rules',
             'name' => __( 'Enable 2015 rules', 'invoicing' ),
-            'desc' => __( 'Check if VAT should always be applied to consumer sales from IP addresses within the EU even if the billing address is outside the EU.<br>When checked, an option will be available to download current VAT rates from the Lyquidity web site if more recent rates are available. <br>When checked, you will be notified when the rates on our web site have been updated.', 'invoicing' ),
-            'type' => 'checkbox'
+            'desc' => __( 'Check if VAT should always be applied to consumer sales from IP addresses within the EU even if the billing address is outside the EU.<br>When checked, an option will be available to download current VAT rates from the Lyquidity web site if more recent rates are available. <br>When checked, you will be notified when the rates on our web site have been updated.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable unless you know what you are doing.', 'invoicing' ) . '</font>',
+            'type' => 'checkbox',
+            'std' => '1'
         );
     
         $vat_settings['vat_allow_classes'] = array(
@@ -1543,6 +1544,13 @@ function wpinv_check_vat( $vat_number, $country_code = '' ) {
         $country_code = substr( $vat_number, 0, 2 );
     }
     
+    if ( !class_exists( 'SoapClient' ) ) {
+        $return->message = __( 'An error occurred validating the VAT number: Your server does not have the SOAP Client enabled.', 'invoicing' );
+        $return->valid = false;
+        
+        return $return;
+    }
+    
     if ( empty( $wpinv_options['vat_simple_check'] ) ) {
         if ( !wpinv_check_vat_offline( $vat_number ) ) {
             return $return;
@@ -1560,8 +1568,22 @@ function wpinv_check_vat( $vat_number, $country_code = '' ) {
         
         $response = $SoapClient->checkVat( [ 'countryCode' => strtoupper( $country_code ), 'vatNumber' => $vat_number ] );
     } catch ( Exception $e ) {
-        $return->message = __( 'An error occurred validating the VAT number: EU Commission VAT server (VIES) check fails.', 'invoicing' ) . ' ' . __( $e->getMessage(), 'invoicing' );
+        $faults = array (
+            'INVALID_INPUT'       => __( 'The provided CountryCode is invalid or the VAT number is empty', 'invoicing' ),
+            'SERVICE_UNAVAILABLE' => __( 'The SOAP service is unavailable, try again later', 'invoicing' ),
+            'MS_UNAVAILABLE'      => __( 'The Member State service is unavailable, try again later or with another Member State', 'invoicing' ),
+            'TIMEOUT'             => __( 'The Member State service could not be reached in time, try again later or with another Member State', 'invoicing' ),
+            'SERVER_BUSY'         => __( 'The service cannot process your request. Try again later.', 'invoicing' )
+        );
+                
+        if ( $error = trim( $e->getMessage() ) ) {
+            $error = isset( $faults[$error] ) ? $faults[$error] : __( $error, 'invoicing' );
+        } else {
+            $error = '';
+        }
+        $return->message = __( 'An error occurred validating the VAT number: EU Commission VAT server (VIES) check fails.', 'invoicing' ) . ' ' . $error;
         $return->valid = false;
+        return $return;
     }
 
     if ( !empty( $response ) && is_object( $response ) ) {
