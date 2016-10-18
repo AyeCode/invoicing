@@ -208,13 +208,14 @@ function wpinv_discount_metabox_details( $post ) {
             </th>
             <td>
                 <p><?php echo wpinv_item_dropdown( array(
-                        'name'        => 'items[]',
-                        'id'          => 'items',
-                        'selected'    => $item_reqs,
-                        'multiple'    => true,
-                        'chosen'      => true,
-                        'class'       => 'medium-text',
-                        'placeholder' => __( 'Select one or more Items', 'invoicing' )
+                        'name'              => 'items[]',
+                        'id'                => 'items',
+                        'selected'          => $item_reqs,
+                        'multiple'          => true,
+                        'chosen'            => true,
+                        'class'             => 'medium-text',
+                        'placeholder'       => __( 'Select one or more Items', 'invoicing' ),
+                        'show_recurring'    => true,
                     ) ); ?>
                 </p>
                 <p class="description"><?php _e( 'Items which need to be in the cart to use this discount or, for "Item Discounts", which items are discounted. If left blank, this discount can be used on any item.', 'invoicing' ); ?></p>
@@ -227,13 +228,14 @@ function wpinv_discount_metabox_details( $post ) {
             </th>
             <td>
                 <p><?php echo wpinv_item_dropdown( array(
-                        'name'        => 'excluded_items[]',
-                        'id'          => 'excluded_items',
-                        'selected'    => $excluded_items,
-                        'multiple'    => true,
-                        'chosen'      => true,
-                        'class'       => 'medium-text',
-                        'placeholder' => __( 'Select one or more Items', 'invoicing' )
+                        'name'              => 'excluded_items[]',
+                        'id'                => 'excluded_items',
+                        'selected'          => $excluded_items,
+                        'multiple'          => true,
+                        'chosen'            => true,
+                        'class'             => 'medium-text',
+                        'placeholder'       => __( 'Select one or more Items', 'invoicing' ),
+                        'show_recurring'    => true,
                     ) ); ?>
                 </p>
                 <p class="description"><?php _e( 'Items which are NOT allowed to use this discount.', 'invoicing' ); ?></p>

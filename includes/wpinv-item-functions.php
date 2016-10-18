@@ -533,3 +533,25 @@ function wpinv_get_cart_item_quantity( $item ) {
     
     return apply_filters( 'wpinv_get_cart_item_quantity', $quantity, $item );
 }
+
+function wpinv_get_item_suffix( $item, $html = true ) {
+    if ( empty( $item ) ) {
+        return NULL;
+    }
+    
+    if ( is_int( $item ) ) {
+        $item = new WPInv_Item( $item );
+    }
+    
+    if ( !( is_object( $item ) && is_a( $item, 'WPInv_Item' ) ) ) {
+        return NULL;
+    }
+    
+    $suffix = $item->is_recurring() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '';
+    
+    if ( !$html && $suffix ) {
+        $suffix = strip_tags( $suffix );
+    }
+    
+    return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
+}

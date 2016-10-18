@@ -201,7 +201,6 @@ class WPInv_Meta_Box_Items {
         }
         
         $interval       = $interval > 0 ? $interval : 1;
-        $times          = $times > 0 ? $times : 1;
         
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
         ?>
@@ -223,7 +222,7 @@ class WPInv_Meta_Box_Items {
                     'show_option_all'  => false,
                     'show_option_none' => false
                 ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
-                <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="1"> <?php _e( 'time(s)', 'invoicing' );?></label>
+                <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
         </p>
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
         <?php
@@ -267,6 +266,7 @@ class WPInv_Meta_Box_Items {
     
     public static function item_info( $post ) {
         $item_type = wpinv_get_item_type( $post->ID );
+        do_action( 'wpinv_item_info_metabox_before', $post );
         ?>
         <p><label for="wpinv_item_type"><strong><?php _e( 'Type:', 'invoicing' );?></strong></label>&nbsp;&nbsp;&nbsp;
         <?php echo wpinv_html_select( array(
@@ -279,7 +279,9 @@ class WPInv_Meta_Box_Items {
                     'class'            => 'gdmbx2-text-medium wpinv-item-type',
                 ) ); ?>
         </p>
+        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Custom: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?><br><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
         <?php
+        do_action( 'wpinv_item_info_metabox_after', $post );
     }
     
     public static function save( $post_id, $data, $post ) {
