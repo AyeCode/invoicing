@@ -247,9 +247,9 @@ function wpinv_get_cart_discountable_subtotal( $code_id ) {
         }
     }
 
-    $subtotal = edd_get_cart_items_subtotal( $items );
+    $subtotal = wpinv_get_cart_items_subtotal( $items );
 
-    return apply_filters( 'edd_get_cart_discountable_subtotal', $subtotal );
+    return apply_filters( 'wpinv_get_cart_discountable_subtotal', $subtotal );
 }
 
 function wpinv_get_cart_items_subtotal( $items ) {

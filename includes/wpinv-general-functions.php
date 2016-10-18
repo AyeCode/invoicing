@@ -392,7 +392,7 @@ function wpinv_subscription_description_on_cart( $initial, $billing, $period, $i
             if ( (int)$bill_times > 0 ) {
                 if ( $interval > 1 ) {
                     if ( $bill_times > 1 ) {
-                        $description .= wp_sprintf( __( 'Then %s for each %d days., for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
+                        $description .= wp_sprintf( __( 'Then %s for each %d days, for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
                     } else {
                         $description .= ' ' . wp_sprintf( __( 'Then %s for %d days.', 'invoicing' ), $billing, $interval );
                     }
@@ -410,15 +410,15 @@ function wpinv_subscription_description_on_cart( $initial, $billing, $period, $i
             if ( (int)$bill_times > 0 ) {
                 if ( $interval > 1 ) {
                     if ( $bill_times > 1 ) {
-                        $description .= wp_sprintf( __( 'for each %d weeks., for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
+                        $description .= ' ' . wp_sprintf( __( 'Then for each %d weeks, for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
                     } else {
-                        $description .= wp_sprintf( __( 'for %d weeks.', 'invoicing' ), $billing, $interval );
+                        $description .= ' ' . wp_sprintf( __( 'Then for %d weeks.', 'invoicing' ), $billing, $interval );
                     }
                 } else {
-                    $description .= wp_sprintf( _n( 'for one week.', 'for each week, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
+                    $description .= ' ' . wp_sprintf( _n( 'Then for one week.', 'Then for each week, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
                 }
             } else {
-                $description .= wp_sprintf( _n( 'for each week.', 'for each %d weeks.', $interval, 'invoicing' ), $billing, $interval );
+                $description .= ' ' . wp_sprintf( _n( 'Then for each week.', 'Then for each %d weeks.', $interval, 'invoicing' ), $billing, $interval );
             }
             break;
         case 'M' :
@@ -428,15 +428,15 @@ function wpinv_subscription_description_on_cart( $initial, $billing, $period, $i
             if ( (int)$bill_times > 0 ) {
                 if ( $interval > 1 ) {
                     if ( $bill_times > 1 ) {
-                        $description .= wp_sprintf( __( 'for each %d months., for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
+                        $description .= ' ' . wp_sprintf( __( 'Then for each %d months, for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
                     } else {
-                        $description .= wp_sprintf( __( 'for %d months.', 'invoicing' ), $billing, $interval );
+                        $description .= ' ' . wp_sprintf( __( 'Then for %d months.', 'invoicing' ), $billing, $interval );
                     }
                 } else {
-                    $description .= wp_sprintf( _n( 'for one month.', 'for each month, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
+                    $description .= ' ' . wp_sprintf( _n( 'Then for one month.', 'Then for each month, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
                 }
             } else {
-                $description .= wp_sprintf( _n( 'for each month.', 'for each %d months.', $interval, 'invoicing' ), $billing, $interval );
+                $description .= ' ' . wp_sprintf( _n( 'Then for each month.', 'Then for each %d months.', $interval, 'invoicing' ), $billing, $interval );
             }
             break;
         case 'Y' :
@@ -446,15 +446,15 @@ function wpinv_subscription_description_on_cart( $initial, $billing, $period, $i
             if ( (int)$bill_times > 0 ) {
                 if ( $interval > 1 ) {
                     if ( $bill_times > 1 ) {
-                        $description .= wp_sprintf( __( 'for each %d years, for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
+                        $description .= ' ' . wp_sprintf( __( 'Then for each %d years, for %d installments.', 'invoicing' ), $billing, $interval, $bill_times );
                     } else {
-                        $description .= wp_sprintf( __( 'for %d years.', 'invoicing'), $billing, $interval );
+                        $description .= ' ' . wp_sprintf( __( 'Then for %d years.', 'invoicing'), $billing, $interval );
                     }
                 } else {
-                    $description .=  wp_sprintf( _n( 'for one year.', 'for each year, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
+                    $description .=  ' ' . wp_sprintf( _n( 'Then for one year.', 'Then for each year, for %d installments.', $bill_times, 'invoicing' ), $billing, $bill_times );
                 }
             } else {
-                $description .= wp_sprintf(_n( 'for each year.', 'for each %d years.', $interval, 'invoicing' ), $billing, $interval );
+                $description .= ' ' . wp_sprintf(_n( 'Then for each year.', 'Then for each %d years.', $interval, 'invoicing' ), $billing, $interval );
             }
     }
 

@@ -67,8 +67,9 @@ function wpinv_invoice_display_right_actions( $invoice ) {
     ?>
     <a class="btn btn-primary btn-sm" href="<?php echo esc_url( $invoice->get_view_invoice_url() ); ?>"><?php _e( 'View Invoice', 'invoicing' ); ?></a>
     <a class="btn btn-primary btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+    <?php } ?>
+    <a class="btn btn-warning btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
     <?php
-    }
 }
 
 function wpinv_before_invoice_content( $content ) {
@@ -439,18 +440,19 @@ function wpinv_html_select( $args = array() ) {
 
 function wpinv_item_dropdown( $args = array() ) {
     $defaults = array(
-        'name'        => 'wpi_item',
-        'id'          => 'wpi_item',
-        'class'       => '',
-        'multiple'    => false,
-        'selected'    => 0,
-        'chosen'      => false,
-        'number'      => 100,
-        'placeholder' => __( 'Choose a item', 'invoicing' ),
-        'data'        => array( 'search-type' => 'item' ),
-        'show_option_all'  => false,
-        'show_option_none' => false,
-        'with_packages' => true,
+        'name'              => 'wpi_item',
+        'id'                => 'wpi_item',
+        'class'             => '',
+        'multiple'          => false,
+        'selected'          => 0,
+        'chosen'            => false,
+        'number'            => 100,
+        'placeholder'       => __( 'Choose a item', 'invoicing' ),
+        'data'              => array( 'search-type' => 'item' ),
+        'show_option_all'   => false,
+        'show_option_none'  => false,
+        'with_packages'     => true,
+        'show_recurring'    => false,
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -474,10 +476,15 @@ function wpinv_item_dropdown( $args = array() ) {
 
     $items      = get_posts( $item_args );
     $options    = array();
-    //$options[0] = '';
     if ( $items ) {
         foreach ( $items as $item ) {
-            $options[ absint( $item->ID ) ] = esc_html( $item->post_title );
+            $title = esc_html( $item->post_title );
+            
+            if ( !empty( $args['show_recurring'] ) && wpinv_is_recurring_item( $item->ID ) ) {
+                $title .= ' ' . __( '(r)', 'invoicing' );
+            }
+            
+            $options[ absint( $item->ID ) ] = $title;
         }
     }
 
@@ -1716,7 +1723,7 @@ function wpinv_checkout_billing_info() {
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?></label>
+                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?><span class="wpi-required">*</span></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_phone',
@@ -1724,6 +1731,7 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['phone'],
                                 'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Phone', 'invoicing' ),
+                                'required'      => true,
                             ) );
                         ?>
                     </p>
@@ -1928,6 +1936,11 @@ function wpinv_invoice_subscription_details( $invoice ) {
         $payments       = $invoice->get_child_payments();
         
         $subscription   = $invoice->get_subscription_data();
+        
+        if ( !( !empty( $subscription ) && !empty( $subscription['item_id'] ) ) ) {
+            return;
+        }
+        
         $period         = wpinv_get_pretty_subscription_period( $subscription['period'] );
         $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
         $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );

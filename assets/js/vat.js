@@ -510,7 +510,7 @@ jQuery(function($) {
                                 $('#wpi_vat_number_original').val(number);
                                 message = json.message ? json.message : '';
                             } else {
-                                error = json.error ? json.error : '';
+                                error = json.message ? json.message : json.error;
                             }
                         }
                         
