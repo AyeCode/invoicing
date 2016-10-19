@@ -480,8 +480,8 @@ function wpinv_item_dropdown( $args = array() ) {
         foreach ( $items as $item ) {
             $title = esc_html( $item->post_title );
             
-            if ( !empty( $args['show_recurring'] ) && wpinv_is_recurring_item( $item->ID ) ) {
-                $title .= ' ' . __( '(r)', 'invoicing' );
+            if ( !empty( $args['show_recurring'] ) ) {
+                $title .= wpinv_get_item_suffix( $item->ID, false );
             }
             
             $options[ absint( $item->ID ) ] = $title;
@@ -492,11 +492,19 @@ function wpinv_item_dropdown( $args = array() ) {
     if( is_array( $args['selected'] ) ) {
         foreach( $args['selected'] as $item ) {
             if( ! in_array( $item, $options ) ) {
-                $options[$item] = get_the_title( $item );
+                $title = get_the_title( $item );
+                if ( !empty( $args['show_recurring'] ) ) {
+                    $title .= wpinv_get_item_suffix( $item, false );
+                }
+                $options[$item] = $title;
             }
         }
     } elseif ( is_numeric( $args['selected'] ) && $args['selected'] !== 0 ) {
         if ( ! in_array( $args['selected'], $options ) ) {
+            $title = get_the_title( $args['selected'] );
+            if ( !empty( $args['show_recurring'] ) ) {
+                $title .= wpinv_get_item_suffix( $args['selected'], false );
+            }
             $options[$args['selected']] = get_the_title( $args['selected'] );
         }
     }
@@ -980,7 +988,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     }
                     
                     $line_item = '<tr class="row_' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . ' wpinv-item">';
-                        $line_item .= '<td class="name">' . esc_html__( $item_name, 'invoicing' );
+                        $line_item .= '<td class="name">' . esc_html__( $item_name, 'invoicing' ) . wpinv_get_item_suffix( $item );
                         if ( $summary !== '' ) {
                             $line_item .= '<br/><small class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</small>';
                         }
@@ -1329,7 +1337,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
 
         $line_item = '<tr class="item item-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . '" data-item-id="' . $item_id . '">';
             $line_item .= '<td class="id">' . $item_id . '</td>';
-            $line_item .= '<td class="title"><a href="' . get_edit_post_link( $item_id ) . '" target="_blank">' . $cart_item['name'] . '</a>';
+            $line_item .= '<td class="title"><a href="' . get_edit_post_link( $item_id ) . '" target="_blank">' . $cart_item['name'] . '</a>' . wpinv_get_item_suffix( $wpi_item );
             if ( $summary !== '' ) {
                 $line_item .= '<span class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</span>';
             }

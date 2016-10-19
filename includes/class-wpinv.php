@@ -189,20 +189,28 @@ class WPInv_Plugin {
     public function admin_enqueue_scripts() {
         global $post, $pagenow;
         
-        $post_type = wpinv_admin_post_type();
+        $post_type  = wpinv_admin_post_type();
+        $suffix     = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
-        wp_register_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array(), '4.5.0' );
+        wp_register_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome' . $suffix . '.css', array(), '4.5.0' );
         wp_enqueue_style( 'font-awesome' );
         
-        wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
-        wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
+        wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
+        wp_enqueue_style( 'jquery-ui-css' );
         
+        wp_register_style( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/css/chosen' . $suffix . '.css', array(), '1.6.2' );
+        wp_enqueue_style( 'jquery-chosen' );
+
+        wp_register_script( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/js/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.6.2' );
+        wp_enqueue_script( 'jquery-chosen' );
+        
+        wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_meta_box_style' );
+        
+        wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_admin_style' );
         
-        $suffix       = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-        
-        if ( $post_type == 'wpi_disocunt' && ( $pagenow == 'post-new.php' || $pagenow = 'post.php' ) ) {
+        if ( $post_type == 'wpi_discount' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 

@@ -42,8 +42,8 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
                                     echo get_the_post_thumbnail( $item['id'], apply_filters( 'wpinv_checkout_image_size', array( 25,25 ) ) );
                                 echo '</div>';
                             }
-                            $item_title = wpinv_get_cart_item_name( $item );
-                            echo '<span class="wpinv_checkout_cart_item_title">' . esc_html( $item_title ) . '</span>';
+                            $item_title = esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $wpi_item );
+                            echo '<span class="wpinv_checkout_cart_item_title">' . $item_title . '</span>';
                             if ( !empty( $wpi_item ) && $wpi_item->is_package() && !empty( $item['meta']['post_id'] ) ) {
                                 $post_link = !empty( $item['meta']['invoice_title'] ) ? $item['meta']['invoice_title'] : get_the_title( $item['meta']['post_id'] );
                                 $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $wpi_item->get_cpt_singular_name(), $post_link );
