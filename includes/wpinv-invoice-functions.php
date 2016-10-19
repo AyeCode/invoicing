@@ -1280,9 +1280,9 @@ function wpinv_payment_receipt( $atts, $content = null ) {
     $session = wpinv_get_checkout_session();
     if ( isset( $_GET['invoice_key'] ) ) {
         $invoice_key = urldecode( $_GET['invoice_key'] );
-    } else if ( $session ) {
+    } else if ( $session && isset( $session['invoice_key'] ) ) {
         $invoice_key = $session['invoice_key'];
-    } elseif ( $wpinv_receipt_args['invoice_key'] ) {
+    } elseif ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
         $invoice_key = $wpinv_receipt_args['invoice_key'];
     }
 

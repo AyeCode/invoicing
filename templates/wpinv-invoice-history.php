@@ -38,7 +38,7 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 								<?php do_action( 'wpinv_user_invoices_column_' . $column_id, $invoice ); ?>
 
 							<?php elseif ( 'invoice-number' === $column_id ) : ?>
-								<a href="<?php echo esc_url( $invoice->get_view_invoice_url() ); ?>">
+								<a href="<?php echo esc_url( $invoice->get_view_url() ); ?>">
 									<?php echo _x( '#', 'hash before invoice number', 'invoicing' ) . $invoice->get_number(); ?>
 								</a>
 
@@ -56,16 +56,11 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 									$actions = array(
 										'pay'    => array(
 											'url'  => $invoice->get_checkout_payment_url(),
-											'name' => __( 'Pay', 'invoicing' ),
+											'name' => __( 'Pay Now', 'invoicing' ),
                                             'class' => 'btn-success'
 										),
-										'view'   => array(
-											'url'  => $invoice->get_view_invoice_url(),
-											'name' => __( 'View', 'invoicing' ),
-                                            'class' => 'btn-info'
-										),
                                         'print'   => array(
-											'url'  => $invoice->get_print_url(),
+											'url'  => $invoice->get_view_url(),
 											'name' => __( 'Print', 'invoicing' ),
                                             'class' => 'btn-primary',
                                             'attrs' => 'target="_blank"'

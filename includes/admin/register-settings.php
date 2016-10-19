@@ -1260,7 +1260,7 @@ function wpinv_tax_rates_callback($args) {
 					<label for="tax_rates[0][global]"><?php _e( 'Apply to whole country', 'invoicing' ); ?></label>
 				</td>
 				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="0.10" min="0.00" name="tax_rates[0][rate]" value=""/></td>
-                <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[0][name]" value=""/></td>
+                <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[0][name]" placeholder="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" value="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" /></td>
 				<td><span class="wpinv_remove_tax_rate button-secondary"><?php _e( 'Remove Rate', 'invoicing' ); ?></span></td>
 			</tr>
 		<?php endif; ?>

@@ -195,7 +195,7 @@ function wpinv_is_subscription_payment( $invoice = '' ) {
         return false;
     }
         
-    if ( $invoice->parent_invoice && $invoice->parent_invoice != $invoice->ID ) {
+    if ( $invoice->is_renewal() ) {
         return true;
     }
 

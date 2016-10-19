@@ -4,6 +4,7 @@
  */
 
 global $post, $ajax_cart_details, $wpi_cart_columns, $wpi_session;
+$invoice            = wpinv_get_invoice_cart();
 $cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
@@ -131,7 +132,7 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
         <tr class="wpinv_cart_footer_row wpinv_cart_total_row">
             <?php do_action( 'wpinv_checkout_table_footer_first' ); ?>
             <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_total_label text-right">
-                <?php echo apply_filters( 'wpinv_cart_total_label', '<strong>' . __( 'Total', 'invoicing' ) . ':</strong>' ); ?>
+                <?php echo apply_filters( 'wpinv_cart_total_label', '<strong>' . __( 'Total', 'invoicing' ) . ':</strong>', $invoice ); ?>
             </td>
             <td class="wpinv_cart_total text-right">
                 <span class="wpinv_cart_amount bold" data-subtotal="<?php echo wpinv_get_cart_total( $cart_items ); ?>" data-total="<?php echo wpinv_get_cart_total(); ?>"><?php wpinv_cart_total( $cart_items ); ?></span>

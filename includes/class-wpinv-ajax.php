@@ -157,6 +157,10 @@ class WPInv_Ajax {
         $item_id    = sanitize_text_field( $_POST['item_id'] );
         $invoice_id = absint( $_POST['invoice_id'] );
         
+        if ( !is_numeric( $invoice_id ) || !is_numeric( $item_id ) ) {
+            die();
+        }
+        
         $invoice    = wpinv_get_invoice( $invoice_id );
         if ( empty( $invoice ) ) {
             die();
@@ -168,11 +172,6 @@ class WPInv_Ajax {
         
         if ( !empty( $_POST['user_id'] ) ) {
             $wpi_userID = absint( $_POST['user_id'] ); 
-        }
-
-        // Find the item
-        if ( !is_numeric( $item_id ) ) {
-            die();
         }
 
         $item = new WPInv_Item( $item_id );
@@ -264,8 +263,12 @@ class WPInv_Ajax {
         $item_id    = sanitize_text_field( $_POST['item_id'] );
         $invoice_id = absint( $_POST['invoice_id'] );
         $cart_index = isset( $_POST['index'] ) && $_POST['index'] >= 0 ? $_POST['index'] : false;
+        
+        if ( !is_numeric( $invoice_id ) || !is_numeric( $item_id ) ) {
+            die();
+        }
 
-        $invoice     = wpinv_get_invoice( $invoice_id );
+        $invoice    = wpinv_get_invoice( $invoice_id );
         if ( empty( $invoice ) ) {
             die();
         }
@@ -273,13 +276,8 @@ class WPInv_Ajax {
         if ( $invoice->is_paid() ) {
             die(); // Don't allow modify items for paid invoice.
         }
-        
-        // Find the item
-        if ( !is_numeric( $item_id ) ) {
-            die();
-        }
 
-        $item = new WPInv_Item( $item_id );
+        $item       = new WPInv_Item( $item_id );
         if ( !( !empty( $item ) && $item->post_type == 'wpi_item' ) ) {
             die();
         }
@@ -344,8 +342,7 @@ class WPInv_Ajax {
         // Find the item
         if ( !is_numeric( $invoice_id ) ) {
             die();
-        }
-        
+        }        
         
         $invoice     = wpinv_get_invoice( $invoice_id );
         if ( empty( $invoice ) ) {
@@ -358,8 +355,7 @@ class WPInv_Ajax {
             $response['success']    = false;
             $response['msg']        = __( 'You can not add item to invoice because recurring item must be paid individually!', 'invoicing' );
             wp_send_json( $response );
-        }
-        
+        }        
         
         $save_item = $_POST['_wpinv_quick'];
         

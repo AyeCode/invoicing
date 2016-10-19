@@ -1395,6 +1395,10 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_address', $this->address, $this->ID, $this );
     }
     
+    public function get_phone() {
+        return apply_filters( 'wpinv_phone', $this->phone, $this->ID, $this );
+    }
+    
     public function get_number() {
         return apply_filters( 'wpinv_number', $this->number, $this->ID, $this );
     }
@@ -1693,6 +1697,11 @@ final class WPInv_Invoice {
         
         $cart_item  = $this->cart_details[$found_cart_key];
         $quantity   = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
+        
+        if ( count( $this->cart_details ) == 1 && ( $quantity - $args['quantity'] ) < 1 ) {
+            return false; // Invoice must contain at least one item.
+        }
+        
         $discounts  = $this->get_discounts();
         
         if ( $quantity > $args['quantity'] ) {
@@ -1855,16 +1864,6 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this, $valid_invoice_statuses );
     }
     
-    public function get_view_invoice_url() {
-        $view_invoice_url = add_query_arg( 'invoice_key', $this->get_key(), wpinv_get_success_page_uri() );
-        
-        if ( $this->is_renewal() ) {
-            $view_invoice_url = add_query_arg( 'invoice-id', $this->ID, $view_invoice_url );
-        }
-
-        return apply_filters( 'wpinv_get_view_invoice_url', $view_invoice_url, $this );
-    }
-    
     public function get_checkout_payment_url( $on_checkout = false ) {
         $pay_url = wpinv_get_checkout_uri();
 
@@ -1872,19 +1871,19 @@ final class WPInv_Invoice {
             $pay_url = str_replace( 'http:', 'https:', $pay_url );
         }
 
-		if ( $on_checkout ) {
-			$pay_url = add_query_arg( 'invoice_key', $this->get_key(), $pay_url );
-		} else {
-			$pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $this->get_key() ), $pay_url );
-		}
+        if ( $on_checkout ) {
+            $pay_url = add_query_arg( 'invoice_key', $this->get_key(), $pay_url );
+        } else {
+            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $this->get_key() ), $pay_url );
+        }
 
-		return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this );
+        return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this );
     }
     
-    public function get_print_url() {
+    public function get_view_url() {
         $print_url = get_permalink( $this->ID );
 
-		return apply_filters( 'wpinv_get_print_url', $print_url, $this );
+        return apply_filters( 'wpinv_get_view_url', $print_url, $this );
     }
     
     public function generate_key( $string = '' ) {
@@ -2292,6 +2291,12 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_subscription_update_url', $url, $this );
     }
 
+    public function is_parent() {
+        $is_parent = empty( $this->parent_invoice ) ? true : false;
+
+        return apply_filters( 'wpinv_invoice_is_parent', $is_parent, $this );
+    }
+    
     public function is_renewal() {
         $is_renewal = $this->parent_invoice && $this->parent_invoice != $this->ID ? true : false;
 

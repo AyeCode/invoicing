@@ -714,32 +714,6 @@ function wpinv_paypal_success_page_content( $content ) {
 }
 add_filter( 'wpinv_payment_confirm_paypal', 'wpinv_paypal_success_page_content' );
 
-function wpinv_paypal_success_page_redirect() { 
-    global $wpi_invoice;
-    
-    $session = wpinv_get_checkout_session();
-
-    if ( empty( $_GET['invoice-id'] ) && empty( $session['invoice_key'] )  ) {
-        return;
-    }
-
-    $invoice_id = !empty( $_GET['invoice-id'] ) ? absint( $_GET['invoice-id'] ) : wpinv_get_invoice_id_by_key( $session['invoice_key'] );
-
-    if ( empty(  $invoice_id ) ) {
-        return;
-    }
-
-    $wpi_invoice = wpinv_get_invoice( $invoice_id );
-    
-    if ( !empty( $wpi_invoice ) && 'pending' != $wpi_invoice->status && 'paypal' == $wpi_invoice->get_gateway() ) {
-        wp_redirect( $wpi_invoice->get_view_invoice_url() );
-        exit;
-    }
-
-    return;
-}
-//add_action( 'template_redirect', 'wpinv_paypal_success_page_redirect' );
-
 function wpinv_paypal_get_transaction_id( $invoice_id ) {
     $transaction_id = '';
     $notes = wpinv_get_invoice_notes( $invoice_id );

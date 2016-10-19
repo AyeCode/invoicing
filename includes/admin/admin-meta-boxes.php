@@ -14,12 +14,12 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
         add_meta_box( 'wpinv-mb-resend-invoice', __( 'Resend Invoice', 'invoicing' ), 'WPInv_Meta_Box_Details::resend_invoice', 'wpi_invoice', 'side', 'high' );
     }
     
-    if ( !empty( $wpi_mb_invoice ) && $wpi_mb_invoice->is_recurring() && !wpinv_is_subscription_payment( $wpi_mb_invoice ) ) {
+    if ( !empty( $wpi_mb_invoice ) && $wpi_mb_invoice->is_recurring() && $wpi_mb_invoice->is_parent() ) {
         add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscriptions', 'invoicing' ), 'WPInv_Meta_Box_Details::subscriptions', 'wpi_invoice', 'side', 'high' );
     }
     
     if ( wpinv_is_subscription_payment( $wpi_mb_invoice ) ) {
-        add_meta_box( 'wpinv-mb-renewals', __( 'Renewal Payments', 'invoicing' ), 'WPInv_Meta_Box_Details::renewals', 'wpi_invoice', 'side', 'high' );
+        add_meta_box( 'wpinv-mb-renewals', __( 'Renewal Payment', 'invoicing' ), 'WPInv_Meta_Box_Details::renewals', 'wpi_invoice', 'side', 'high' );
     }
     
     add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'WPInv_Meta_Box_Details::output', 'wpi_invoice', 'side', 'default' );
