@@ -112,7 +112,7 @@ class WPInv_Meta_Box_Details {
         
         $invoice = $wpi_mb_invoice;
         
-        if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
+        if ( !empty( $invoice ) && $invoice->is_recurring() && $invoice->is_parent() ) {
             $payments = $invoice->get_child_payments();
             
             $total_payments = (int)$invoice->get_total_payments();
@@ -131,8 +131,12 @@ class WPInv_Meta_Box_Details {
             }
             $times_billed   = $total_payments . ' / ' . ( ( $bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
             ?>
-            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_id(); ?></p>
-            <?php if ( !empty( $payments ) ) { ?>
+            <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
+            <?php
+            if ( $subscription_id = $invoice->get_subscription_id() ) {
+            ?>
+            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $subscription_id; ?></p>
+            <?php } if ( !empty( $payments ) ) { ?>
                 <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
                 <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
                 <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>

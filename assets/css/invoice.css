@@ -6,6 +6,10 @@ th {padding:8px 10px;}
 td {padding:3px 10px;}
 br {height:1px;padding: 0;margin:0;}
 a img {outline:none; border:none;}
+.wpinv-print .wpinv-wrap .table td,
+.wpinv-print .wpinv-wrap .table th {
+    vertical-align: middle;
+}
 .wpinv-wrap .table .itmid {width:10%;}
 .wpinv-wrap .table .ame {width:44%;}
 .wpinv-wrap .table .rate,
@@ -230,10 +234,29 @@ a img {outline:none; border:none;}
 .wpinv-to-address {
   padding: 0;
 }
-.wpinv-payments {
-  background: #ededed none repeat scroll 0 0;
-  margin: 30px 0;
-  padding: 20px 30px;
+.wpinv-payments,
+.wpinv-bank-info .bg-info {
+  background: #ededed;
+  margin: 20px 0;
+  padding: 15px 20px 5px 20px;
+  border: 1px solid #aaa;
+  color: #333
+}
+.wpinv-bank-info .bg-info {
+  margin: 0 0 25px 0;
+}
+.wpinv-bank-info {
+    margin-bottom: 30px
+}
+.wpinv-bank-info .wpinv-bank-t {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.wpinv-bank-info .table th,
+.wpinv-bank-info .table td {
+    padding: 8px;
+    background: none;
 }
 .wpinv-payments h4 {
   padding: 0 0 10px;
@@ -261,9 +284,6 @@ a img {outline:none; border:none;}
   margin: 0 0 30px;
   padding: 10px 0 0;
 }
-.wpinv-line-items .table-responsive {
-    border: none!important;
-}
 .wpinv-address .from,
 .wpinv-address .to {
     max-width: 60px
@@ -290,6 +310,21 @@ a img {outline:none; border:none;}
     background: none;
     vertical-align: middle;
     padding: 8px;
+}
+.wpinv-cart-sub-desc {
+    display: inline-block;
+    max-width: 85%;
+    float: left;
+    text-align: left;
+    font-style: italic;
+    font-size: 90%;
+}
+.wpinv-cart-sub-desc .label-primary {
+    font-weight: bold;
+    font-style: normal;
+}
+.wpinv-print .row-total td {
+    vertical-align: top !important;
 }
 @media print {
     .no-print {

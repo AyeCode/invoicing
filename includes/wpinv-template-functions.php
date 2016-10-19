@@ -13,7 +13,7 @@ if ( !defined( 'WPINC' ) ) {
 
 if ( !is_admin() ) {
     add_filter( 'single_template', 'wpinv_template', 10, 1 );
-    add_action( 'wpinv_invoice_after_body', 'wpinv_display_invoice_top_bar' );
+    add_action( 'wpinv_invoice_print_body_start', 'wpinv_display_invoice_top_bar' );
     add_action( 'wpinv_invoice_top_bar_left', 'wpinv_invoice_display_left_actions' );
     add_action( 'wpinv_invoice_top_bar_right', 'wpinv_invoice_display_right_actions' );
 }
@@ -65,10 +65,9 @@ function wpinv_invoice_display_right_actions( $invoice ) {
     
     if ( $user_id > 0 && $user_id == $current_user_id ) {
     ?>
-    <a class="btn btn-primary btn-sm" href="<?php echo esc_url( $invoice->get_view_invoice_url() ); ?>"><?php _e( 'View Invoice', 'invoicing' ); ?></a>
-    <a class="btn btn-primary btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+    <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
+    <a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
     <?php } ?>
-    <a class="btn btn-warning btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
     <?php
 }
 
@@ -790,7 +789,7 @@ function wpinv_display_from_address() {
         <div class="address"><?php echo wpautop( wp_kses_post( $address ) );?></div>
         <?php } ?>
         <?php if ( $email_from = wpinv_mail_get_from_address() ) { ?>
-        <div class="email_from"><?php echo $email_from;?></div>
+        <div class="email_from"><?php echo wp_sprintf( __( 'Email: %s' ), $email_from );?></div>
         <?php } ?>
     </div>
     <?php
@@ -827,44 +826,44 @@ function wpinv_display_invoice_details( $invoice ) {
     ?>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = wpinv_get_invoice_number( $invoice_id ) ) { ?>
-            <tr>
+            <tr class="wpi-row-number">
                 <td><?php _e( 'Invoice Number', 'invoicing' ); ?></td>
                 <td><?php echo esc_html( $invoice_number ); ?></td>
             </tr>
         <?php } ?>
-        <tr>
+        <tr class="wpi-row-status">
             <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
             <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>
-        <tr>
+        <tr class="wpi-row-parent">
             <td><?php _e( 'Parent Invoice', 'invoicing' ); ?></td>
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
-        <tr>
+        <tr class="wpi-row-gateway">
             <td><?php _e( 'Payment Method', 'invoicing' ); ?></td>
             <td><?php echo wpinv_get_payment_gateway_name( $invoice_id ); ?></td>
         </tr>
         <?php if ( $invoice_date = wpinv_get_invoice_date( $invoice_id ) ) { ?>
-            <tr>
+            <tr class="wpi-row-date">
                 <td><?php _e( 'Invoice Date', 'invoicing' ); ?></td>
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $owner_vat_number = wpinv_owner_vat_number() ) { ?>
-            <tr>
+            <tr class="wpi-row-ovatno">
                 <td><?php _e( 'Owner VAT Number', 'invoicing' ); ?></td>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
-            <tr>
+            <tr class="wpi-row-uvatno">
                 <td><?php _e( 'Your VAT Number', 'invoicing' ); ?></td>
                 <td><?php echo $user_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <tr class="table-active tr-total">
+        <tr class="table-active tr-total wpi-row-total">
             <td><strong><?php _e( 'Total Amount', 'invoicing' ) ?></strong></td>
             <td><strong><?php echo wpinv_payment_total( $invoice_id, true ); ?></strong></td>
         </tr>
@@ -919,8 +918,11 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
         $output .= '<div class="address">' . $address_row . '</div>';
     }
     
+    if ( $phone = $invoice->get_phone() ) {
+        $output .= '<div class="phone">' . wp_sprintf( __( 'Phone: %s' ), esc_html( $phone ) ) . '</div>';
+    }
     if ( $email = $invoice->get_email() ) {
-        $output .= '<div class="email">' . esc_html( $email ) . '</div>';
+        $output .= '<div class="email">' . wp_sprintf( __( 'Email: %s' ), esc_html( $email ) ) . '</div>';
     }
     $output .= '</div>';
     $output = apply_filters( 'wpinv_display_to_address', $output, $invoice_id );
@@ -934,12 +936,14 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
     $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
+    $use_taxes          = wpinv_use_taxes();
+    $tax_label          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl.)', 'invoicing' ) : __( '(Tax Excl.)', 'invoicing' ) ) : '';
     
     $cart_details       = $invoice->get_cart_details();
     $ajax_cart_details  = $cart_details;
     ob_start();
     ?>
-    <table class="table table-sm table-bordered table-striped">
+    <table class="table table-sm table-bordered table-responsive">
         <thead>
             <tr>
                 <th class="name"><strong><?php _e( "Item Name", "invoicing" );?></strong></th>
@@ -947,16 +951,16 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                 <?php if ($quantities_enabled) { ?>
                     <th class="qty"><strong><?php _e( "Qty", "invoicing" );?></strong></th>
                 <?php } ?>
-                <th class="total"><strong><?php _e( "Item Total", "invoicing" );?></strong></th>
                 <?php if ($use_taxes && !$zero_tax) { ?>
                     <th class="tax"><strong><?php _e( "Tax (%)", "invoicing" );?></strong></th>
                 <?php } ?>
+                <th class="total"><strong><?php echo __( "Item Total", "invoicing" ) . ' <span class="normal small">' . $tax_label . '<span>';?></strong></th>
             </tr>
         </thead>
         <tbody>
         <?php 
             if ( !empty( $cart_details ) ) {
-                do_action( 'wpinv_display_before_line_items', $cart_details, $invoice );
+                do_action( 'wpinv_display_line_items_start', $invoice );
                 
                 $count = 0;
                 foreach ( $cart_details as $key => $cart_item ) {
@@ -967,6 +971,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     
                     $item       = $item_id ? new WPInv_Item( $item_id ) : NULL;
                     $summary    = '';
+                    $cols       = 3;
                     if ( !empty($item) ) {
                         $item_name  = $item->get_name();
                         $summary    = $item->get_summary();
@@ -987,7 +992,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
                     }
                     
-                    $line_item = '<tr class="row_' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . ' wpinv-item">';
+                    $line_item = '<tr class="row-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . ' wpinv-item">';
                         $line_item .= '<td class="name">' . esc_html__( $item_name, 'invoicing' ) . wpinv_get_item_suffix( $item );
                         if ( $summary !== '' ) {
                             $line_item .= '<br/><small class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</small>';
@@ -996,21 +1001,62 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         
                         $line_item .= '<td class="rate">' . esc_html__( wpinv_price( $item_price, $invoice->get_currency() ) ) . '</td>';
                         if ($quantities_enabled) {
+                            $cols++;
                             $line_item .= '<td class="qty">' . $quantity . '</td>';
                         }
-                        $line_item .= '<td class="total">' . esc_html__( wpinv_price( $line_total, $invoice->get_currency() ) ) . '</td>';
-                        
                         if ($use_taxes && !$zero_tax) {
+                            $cols++;
                             $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
                         }
+                        $line_item .= '<td class="total">' . esc_html__( wpinv_price( $line_total, $invoice->get_currency() ) ) . '</td>';
                     $line_item .= '</tr>';
                     
-                    echo apply_filters( 'wpinv_display_line_item', $line_item, $cart_item, $invoice );
+                    echo apply_filters( 'wpinv_display_line_item', $line_item, $cart_item, $invoice, $cols );
 
                     $count++;
                 }
                 
-                do_action( 'wpinv_display_after_line_items', $cart_details, $invoice );
+                do_action( 'wpinv_display_before_subtotal', $invoice, $cols );
+                ?>
+                <tr class="row-sub-total row_odd">
+                    <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php echo apply_filters( 'wpinv_print_cart_subtotal_label', '<strong>' . __( 'Sub Total', 'invoicing' ) . ':</strong>', $invoice ); ?></td>
+                    <td class="total"><strong><?php _e( wpinv_subtotal( $invoice_id, true ) ) ?></strong></td>
+                </tr>
+                <?php
+                do_action( 'wpinv_display_after_subtotal', $invoice, $cols );
+                
+                if ( wpinv_discount( $invoice_id, false ) > 0 ) {
+                    do_action( 'wpinv_display_before_discount', $invoice, $cols );
+                    ?>
+                        <tr class="row-discount">
+                            <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php wpinv_get_discount_label( wpinv_discount_code( $invoice_id ) ); ?>:</td>
+                            <td class="total"><?php echo wpinv_discount( $invoice_id, true, true ); ?></td>
+                        </tr>
+                    <?php
+                    do_action( 'wpinv_display_after_discount', $invoice, $cols );
+                }
+                
+                if ( $use_taxes ) {
+                    do_action( 'wpinv_display_before_tax', $invoice, $cols );
+                    ?>
+                    <tr class="row-tax">
+                        <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php echo apply_filters( 'wpinv_print_cart_tax_label', '<strong>' . __( 'Tax', 'invoicing' ) . ':</strong>', $invoice ); ?></td>
+                        <td class="total"><?php _e( wpinv_tax( $invoice_id, true ) ) ?></td>
+                    </tr>
+                    <?php
+                    do_action( 'wpinv_display_after_tax', $invoice, $cols );
+                }
+                
+                do_action( 'wpinv_display_before_total', $invoice, $cols );
+                ?>
+                <tr class="table-active row-total">
+                    <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php echo apply_filters( 'wpinv_print_cart_total_label', '<strong>' . __( 'Total', 'invoicing' ) . ':</strong>', $invoice ); ?></td>
+                    <td class="total"><strong><?php _e( wpinv_payment_total( $invoice_id, true ) ) ?></strong></td>
+                </tr>
+                <?php
+                do_action( 'wpinv_display_after_total', $invoice, $cols );
+                
+                do_action( 'wpinv_display_line_end', $invoice, $cols );
             }
         ?>
         </tbody>
@@ -1024,7 +1070,7 @@ function wpinv_display_invoice_totals( $invoice_id = 0 ) {
     
     do_action( 'wpinv_before_display_totals_table', $invoice_id ); 
     ?>
-    <table class="table table-sm table-bordered">
+    <table class="table table-sm table-bordered table-responsive">
         <tbody>
             <?php do_action( 'wpinv_before_display_totals' ); ?>
             <tr class="row-sub-total">
@@ -1097,7 +1143,7 @@ function wpinv_display_style( $invoice ) {
     wp_print_styles( 'open-sans' );
     wp_print_styles( 'wpinv-single-style' );
 }
-add_action( 'wpinv_invoice_head', 'wpinv_display_style' );
+add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
 
 function wpinv_checkout_billing_details() {  
     $invoice_id = (int)wpinv_get_invoice_cart_id();
@@ -1319,6 +1365,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
         $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ) );
         $quantity       = !empty( $cart_item['quantity'] ) && $cart_item['quantity'] > 0 ? $cart_item['quantity'] : 1;
         $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ) );
+        $can_remove     = true;
         
         $summary = '';
         if ($wpi_item->is_package() && !empty($cart_item['meta']['post_id'])) {
@@ -1345,7 +1392,14 @@ function wpinv_admin_get_line_items($invoice = array()) {
             $line_item .= '<td class="price">' . $item_price . '</td>';
             
             if ( $item_quantities ) {
-                $line_item .= '<td class="qty">&nbsp;&times;&nbsp;' . $quantity . '</td>';
+                if ( count( $cart_items ) == 1 && $quantity <= 1 ) {
+                    $can_remove = false;
+                }
+                $line_item .= '<td class="qty" data-quantity="' . $quantity . '">&nbsp;&times;&nbsp;' . $quantity . '</td>';
+            } else {
+                if ( count( $cart_items ) == 1 ) {
+                    $can_remove = false;
+                }
             }
             $line_item .= '<td class="total">' . $item_subtotal . '</td>';
             
@@ -1353,7 +1407,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
                 $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
             }
             $line_item .= '<td class="action">';
-            if ( !$invoice->is_paid() ) {
+            if ( !$invoice->is_paid() && $can_remove ) {
                 $line_item .= '<i class="fa fa-remove wpinv-item-remove"></i>';
             }
             $line_item .= '</td>';
@@ -1892,22 +1946,17 @@ add_filter( 'the_content', 'wpinv_filter_success_page_content', 99999 );
 function wpinv_receipt_actions( $invoice ) {
     if ( !empty( $invoice ) ) {
         $actions = array(
-            'pay'    => array(
-                'url'  => $invoice->get_checkout_payment_url(),
-                'name' => __( 'Pay', 'invoicing' ),
-                'class' => 'btn-success'
-            ),
             'print'   => array(
-                'url'  => $invoice->get_print_url(),
-                'name' => __( 'Print', 'invoicing' ),
+                'url'  => $invoice->get_view_url(),
+                'name' => __( 'Print Invoice', 'invoicing' ),
                 'class' => 'btn-primary',
-                'attrs' => 'target="_blank"'
+            ),
+            'history'   => array(
+                'url'  => wpinv_get_history_page_uri(),
+                'name' => __( 'Invoice History', 'invoicing' ),
+                'class' => 'btn-warning',
             )
         );
-
-        if ( ! $invoice->needs_payment() ) {
-            unset( $actions['pay'] );
-        }
 
         $actions = apply_filters( 'wpinv_invoice_receipt_actions', $actions, $invoice );
         
@@ -1922,8 +1971,7 @@ function wpinv_receipt_actions( $invoice ) {
         }
     }
 }
-
-add_action( 'wpinv_before_start', 'wpinv_receipt_actions', -10, 1 );
+add_action( 'wpinv_receipt_start', 'wpinv_receipt_actions', -10, 1 );
 
 function wpinv_invoice_link( $invoice_id ) {
     $invoice = wpinv_get_invoice( $invoice_id );
@@ -1932,7 +1980,7 @@ function wpinv_invoice_link( $invoice_id ) {
         return NULL;
     }
     
-    $invoice_link = '<a href="' . esc_url( $invoice->get_view_invoice_url() ) . '">' . $invoice->get_number() . '</a>';
+    $invoice_link = '<a href="' . esc_url( $invoice->get_view_url() ) . '">' . $invoice->get_number() . '</a>';
     
     return apply_filters( 'wpinv_get_invoice_link', $invoice_link, $invoice );
 }
@@ -2011,11 +2059,12 @@ function wpinv_invoice_subscription_details( $invoice ) {
         <?php
     }
 }
-add_action( 'wpinv_after_receipt_billing', 'wpinv_invoice_subscription_details', 10, 1 );
 
-function wpinv_subscription_details_on_cart( $label ) {
-    $invoice = wpinv_get_invoice_cart();
-    if ( !empty( $invoice ) && $item_id = $invoice->get_recurring() ) {
+function wpinv_cart_total_label( $label, $invoice ) {
+    if ( empty( $invoice ) ) {
+        return $label;
+    }
+    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {
         $item               = new WPInv_Item( $item_id );
         $period             = $item->get_recurring_period();
         $interval           = $item->get_recurring_interval();
@@ -2023,11 +2072,52 @@ function wpinv_subscription_details_on_cart( $label ) {
         $initial_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
         $billing_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
         
+        $recurring_label    = '<span class="label label-primary label-recurring">' . __( 'Recurring Payment', 'invoicing' ) . '</span> ';
         $description        = wpinv_subscription_description_on_cart( $initial_amount, $billing_amount, $period, $interval, $bill_times );
         
-        $label              = '<span class="wpinv-cart-sub-desc">' . $description . '</span> ' . $label;
+        $label              = '<span class="wpinv-cart-sub-desc">' . $recurring_label . $description . '</span> ' . $label;
+    } else if ( $invoice->is_renewal() ) {
+        $recurring_label    = '<span class="label label-primary label-renewal">' . __( 'Renewal Payment', 'invoicing' ) . '</span> ';        
+        $label              = '<span class="wpinv-cart-sub-desc">' . $recurring_label . '</span> ' . $label;
     }
     
     return $label;
 }
-add_filter( 'wpinv_cart_total_label', 'wpinv_subscription_details_on_cart', 10, 1 );
+add_filter( 'wpinv_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
+add_filter( 'wpinv_email_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
+add_filter( 'wpinv_print_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
+
+add_action( 'wpinv_invoice_print_middle', 'wpinv_invoice_subscription_details', 10, 1 );
+
+function wpinv_invoice_print_description( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    if ( $description = wpinv_get_invoice_description( $invoice->ID ) ) {
+        ?>
+        <div class="row wpinv-lower">
+            <div class="col-sm-12 wpinv-description">
+                <?php echo wpautop( $description ); ?>
+            </div>
+        </div>
+        <?php
+    }
+}
+add_action( 'wpinv_invoice_print_middle', 'wpinv_invoice_print_description', 10.1, 1 );
+
+function wpinv_invoice_print_payment_info( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    
+    if ( $payments_info = wpinv_display_payments_info( $invoice->ID, false ) ) {
+        ?>
+        <div class="row wpinv-payments">
+            <div class="col-sm-12">
+                <?php echo $payments_info; ?>
+            </div>
+        </div>
+        <?php 
+    }
+}
+add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );

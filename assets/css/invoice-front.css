@@ -3488,3 +3488,10 @@ div td .meta p {
     float: left;
     text-align: left;
 }
+.wpinv-receipt-message {
+    margin: 0 5px 20px 5px;
+}
+.wpinv-receipt .wpi-row-ovatno,
+.wpinv-receipt  .wpi-row-uvatno {
+    display: none;
+}

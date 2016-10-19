@@ -588,11 +588,13 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   width: 48%;
   margin: 0 1%;
 }
-
+.wpinv .dashicons-print {
+    font-size: 13px !important;
+}
 /* recurring invoices */
 .wpinv .recur_next {
   color: #888;
-} 
+}
 .wpinv .recur_next .dashicons-clock {
   color: #888;
   float: left;
@@ -1158,6 +1160,16 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 .inside > p.wpi-meta-row a {
     text-decoration: none;
+}
+.wpi-meta-row.wpi-sub-label {
+  background: #f7f7f7;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  color: #777;
+  font-weight: bold;
+  margin: 10px auto auto auto;
+  padding: 7px 10px;
+  text-align: center;
 }
 .wpinv-flr {
     float: right;

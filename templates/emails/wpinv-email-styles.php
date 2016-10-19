@@ -237,3 +237,16 @@ img {
 #wpinv-email-billing {
     margin-bottom: 20px;
 }
+.wpinv-cart-sub-desc {
+    display: inline-block;
+    max-width: 85%;
+    float: left;
+    text-align: left;
+    font-size: 90%;
+}
+.wpinv-cart-sub-desc .label-primary {
+    font-weight: bold;
+}
+.wpinv_cart_footer_row .wpinv_cart_total {
+    vertical-align: top;
+}

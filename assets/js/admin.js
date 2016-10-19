@@ -255,7 +255,7 @@ jQuery(function($) {
         $('#wpinv_tax_rates tbody tr').each( function( rowIndex ) {
             $(this).children().find( 'input, select' ).each(function() {
                 var name = $( this ).attr( 'name' );
-                name = name.replace( /\[(\d+)\]/, '[' + ( rowIndex - 1 ) + ']');
+                name = name.replace( /\[(\d+)\]/, '[' + ( rowIndex ) + ']');
                 $( this ).attr( 'name', name ).attr( 'id', name );
             });
         });
@@ -503,8 +503,10 @@ jQuery(function($) {
             $('#wpinv_items').on('click', '.wpinv-item-remove', function(e) {
                 var item = $(this).closest('.item');
                 var count = $(document.body).find( '.wpinv-line-items > .item' ).length;
+                var qty = parseInt( $('.qty', item).data('quantity') );
+                qty = qty > 0 ? qty : 1;
 
-                if ( count === 1 ) {
+                if ( count === 1 && qty == 1 ) {
                     alert( WPInv_Admin.OneItemMin );
                     return false;
                 }
@@ -539,6 +541,8 @@ jQuery(function($) {
                         if (response && typeof response == 'object') {
                             if (response.success === true) {
                                 WPInv.update_inline_items(response.data, metaBox, gdTotals);
+                            } else if ( response.msg ) {
+                                alert( response.msg );
                             }
                         }
                     });

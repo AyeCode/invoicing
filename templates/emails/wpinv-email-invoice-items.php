@@ -149,7 +149,7 @@ do_action( 'wpinv_before_email_items', $invoice ); ?>
             <tr class="wpinv_cart_footer_row">
                 <?php do_action( 'wpinv_email_items_table_footer_first', $cart_items, $invoice ); ?>
                 <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_total_label text-right">
-                    <strong><?php _e( 'Total', 'invoicing' ); ?>:</strong>
+                    <?php echo apply_filters( 'wpinv_email_cart_total_label', '<strong>' . __( 'Total', 'invoicing' ) . ':</strong>', $invoice ); ?>
                 </td>
                 <td class="wpinv_cart_total text-right">
                     <span class="wpinv_cart_amount bold"><?php echo $invoice->get_total( true ); ?></span>

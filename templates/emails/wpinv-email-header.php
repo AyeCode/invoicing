@@ -11,6 +11,8 @@ if ( !isset( $email_heading ) ) {
 <html dir="<?php echo is_rtl() ? 'rtl' : 'ltr'?>">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex,nofollow">
         <title><?php echo wpinv_get_blogname(); ?></title>
     </head>
     <body <?php echo is_rtl() ? 'rightmargin' : 'leftmargin'; ?>="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
