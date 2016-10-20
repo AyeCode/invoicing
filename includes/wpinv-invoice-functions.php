@@ -1284,6 +1284,8 @@ function wpinv_payment_receipt( $atts, $content = null ) {
         $invoice_key = $session['invoice_key'];
     } elseif ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
         $invoice_key = $wpinv_receipt_args['invoice_key'];
+    } else if ( isset( $_GET['invoice_key'] ) ) {
+        $invoice_key = wpinv_get_payment_key( (int)$_GET['invoice-id'] );
     }
 
     // No key found

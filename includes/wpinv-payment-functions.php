@@ -45,7 +45,7 @@ function wpinv_get_subscription( $id = 0, $by_profile_id = false ) {
     $invoice_id = $wpdb->get_var( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wpinv_profile_id' AND meta_value = '{$id}' LIMIT 1" );
 
     if ( $invoice_id != null ) {
-        return wpinv_get_invoice( $invoice_id );;
+        return wpinv_get_invoice( $invoice_id );
     }
 
     return false;
@@ -122,18 +122,10 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     
     $total = $args['amount'];
     
-    $subtotal   = 0;
-    $tax        = 0;
-    $discount   = 0;
-    if ( (float)$total > 0 ) {
-        $subtotal   = $total - $parent_invoice->tax + $parent_invoice->discount;
-        $tax        = $parent_invoice->tax;
-        $discount   = $parent_invoice->discount;
-    }
-    
-    $subtotal   = $subtotal > 0 ? $subtotal : 0;
-    $tax        = $tax > 0 ? $tax : 0;
-    $discount   = $discount > 0 ? $discount : 0;
+    $recurring_totals   = $parent_invoice->get_recurring_totals();
+    $subtotal           = $recurring_totals['subtotal'];
+    $tax                = $recurring_totals['tax'];
+    $discount           = $recurring_totals['discount'];
     
     if ( $discount > 0 ) {
         $invoice->set( 'discount_code', $parent_invoice->discount_code );
@@ -288,4 +280,137 @@ function wpinv_get_pretty_subscription_period_name( $period ) {
     }
 
     return $frequency;
+}
+
+function wpinv_subscription_initial_payment_desc( $amount, $period, $interval ) {
+    $interval   = (int)$interval > 0 ? (int)$interval : 1;
+    
+    $description = '';
+    switch ( $period ) {
+        case 'D' :
+        case 'day' :
+            $description = wp_sprintf( _n( '%s for the first day.', '%s for the first %d days.', $interval, 'invoicing' ), $amount, $interval );
+            break;
+        case 'W' :
+        case 'week' :
+            $description = wp_sprintf( _n( '%s for the first week.', '%s for the first %d weeks.', $interval, 'invoicing' ), $amount, $interval );
+            break;
+        case 'M' :
+        case 'month' :
+            $description = wp_sprintf( _n( '%s for the first month.', '%s for the first %d months.', $interval, 'invoicing' ), $amount, $interval );
+            break;
+        case 'Y' :
+        case 'year' :
+            $description = wp_sprintf( _n( '%s for the first year.', '%s for the first %d years.', $interval, 'invoicing' ), $amount, $interval );
+            break;
+    }
+
+    return apply_filters( 'wpinv_subscription_initial_payment_desc', $description, $amount, $period, $interval );
+}
+
+function wpinv_subscription_recurring_payment_desc( $amount, $period, $interval, $bill_times = 0 ) {
+    $interval   = (int)$interval > 0 ? (int)$interval : 1;
+    $bill_times = (int)$bill_times > 0 ? (int)$bill_times : 0;
+    
+    $description = '';
+    switch ( $period ) {
+        case 'D' :
+        case 'day' :            
+            if ( (int)$bill_times > 0 ) {
+                if ( $interval > 1 ) {
+                    if ( $bill_times > 1 ) {
+                        $description = wp_sprintf( __( '%s for each %d days, for %d installments.', 'invoicing' ), $amount, $interval, $bill_times );
+                    } else {
+                        $description = wp_sprintf( __( '%s for %d days.', 'invoicing' ), $amount, $interval );
+                    }
+                } else {
+                    $description = wp_sprintf( _n( '%s for one day.', '%s for each day, for %d installments.', $bill_times, 'invoicing' ), $amount, $bill_times );
+                }
+            } else {
+                $description = wp_sprintf( _n( '%s for each day.', '%s for each %d days.', $interval, 'invoicing'), $amount, $interval );
+            }
+            break;
+        case 'W' :
+        case 'week' :            
+            if ( (int)$bill_times > 0 ) {
+                if ( $interval > 1 ) {
+                    if ( $bill_times > 1 ) {
+                        $description = wp_sprintf( __( '%s for each %d weeks, for %d installments.', 'invoicing' ), $amount, $interval, $bill_times );
+                    } else {
+                        $description = wp_sprintf( __( '%s for %d weeks.', 'invoicing' ), $amount, $interval );
+                    }
+                } else {
+                    $description = wp_sprintf( _n( '%s for one week.', '%s for each week, for %d installments.', $bill_times, 'invoicing' ), $amount, $bill_times );
+                }
+            } else {
+                $description = wp_sprintf( _n( '%s for each week.', '%s for each %d weeks.', $interval, 'invoicing' ), $amount, $interval );
+            }
+            break;
+        case 'M' :
+        case 'month' :            
+            if ( (int)$bill_times > 0 ) {
+                if ( $interval > 1 ) {
+                    if ( $bill_times > 1 ) {
+                        $description = wp_sprintf( __( '%s for each %d months, for %d installments.', 'invoicing' ), $amount, $interval, $bill_times );
+                    } else {
+                        $description = wp_sprintf( __( '%s for %d months.', 'invoicing' ), $amount, $interval );
+                    }
+                } else {
+                    $description = wp_sprintf( _n( '%s for one month.', '%s for each month, for %d installments.', $bill_times, 'invoicing' ), $amount, $bill_times );
+                }
+            } else {
+                $description = wp_sprintf( _n( '%s for each month.', '%s for each %d months.', $interval, 'invoicing' ), $amount, $interval );
+            }
+            break;
+        case 'Y' :
+        case 'year' :            
+            if ( (int)$bill_times > 0 ) {
+                if ( $interval > 1 ) {
+                    if ( $bill_times > 1 ) {
+                        $description = wp_sprintf( __( '%s for each %d years, for %d installments.', 'invoicing' ), $amount, $interval, $bill_times );
+                    } else {
+                        $description = wp_sprintf( __( '%s for %d years.', 'invoicing'), $amount, $interval );
+                    }
+                } else {
+                    $description = wp_sprintf( _n( '%s for one year.', '%s for each year, for %d installments.', $bill_times, 'invoicing' ), $amount, $bill_times );
+                }
+            } else {
+                $description = wp_sprintf( _n( '%s for each year.', '%s for each %d years.', $interval, 'invoicing' ), $amount, $interval );
+            }
+            break;
+    }
+
+    return apply_filters( 'wpinv_subscription_recurring_payment_desc', $description, $amount, $period, $interval, $bill_times );
+}
+
+function wpinv_subscription_payment_desc( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    
+    $description = '';
+    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {
+        $item               = new WPInv_Item( $item_id );
+        $period             = $item->get_recurring_period();
+        $interval           = $item->get_recurring_interval();
+        $bill_times         = (int)$item->get_recurring_limit();
+
+        $initial_total      = wpinv_format_amount( $invoice->get_total() );
+        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_totals() );
+        $initial_amount     = wpinv_price( $initial_total, $invoice->get_currency() );
+        $recurring_amount   = wpinv_price( $recurring_total, $invoice->get_currency() );
+        
+        $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times );
+        
+        if ( $initial_amount != $recurring_amount ) {
+            $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval );
+            
+            $description    = wp_sprintf( '%s Then %s', $initial, $recurring );
+        } else {
+            $description    = $recurring;
+            
+        }
+    }
+    
+    return apply_filters( 'wpinv_subscription_payment_desc', $description, $invoice );
 }

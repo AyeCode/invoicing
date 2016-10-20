@@ -1260,6 +1260,16 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_cart_details', $this->cart_details, $this->ID, $this );
     }
     
+    public function get_subtotal( $currency = false ) {
+        $subtotal = wpinv_format_amount( $this->subtotal, NULL, !$currency );
+        
+        if ( $currency ) {
+            $subtotal = wpinv_price( $subtotal, $this->get_currency() );
+        }
+        
+        return apply_filters( 'wpinv_get_invoice_subtotal', $subtotal, $this->ID, $this, $currency );
+    }
+    
     public function get_total( $currency = false ) {        
         $total = wpinv_format_amount( $this->total, NULL, !$currency );
         if ( $currency ) {
@@ -1269,14 +1279,62 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
     }
     
-    public function get_subtotal( $currency = false ) {
-        $subtotal = wpinv_format_amount( $this->subtotal, NULL, !$currency );
+    public function get_recurring_totals( $field = 'total', $currency = false ) {        
+        $totals             = array();
+        $totals['subtotal'] = $this->get_subtotal();
+        $totals['tax']      = $this->get_tax();
+        $totals['total']    = $this->get_total();
+        $totals['discount'] = $this->get_discount();
         
-        if ( $currency ) {
-            $subtotal = wpinv_price( $subtotal, $this->get_currency() );
+        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) && $discounts = $this->get_discounts( true ) ) {
+            $has_recurring = false;
+            foreach ( $discounts as $key => $code ) {
+                if ( wpinv_discount_is_recurring( $code, true ) ) {
+                    $has_recurring = true;
+                    break;
+                }
+            }
+            
+            if ( $has_recurring ) {
+                $cart_subtotal   = 0;
+                $cart_tax        = 0;
+
+                foreach ( $this->cart_details as $key => $item ) {
+                    $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
+                    $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
+                    $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
+                    
+                    if ( wpinv_prices_include_tax() ) {
+                        $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
+                    }
+                    
+                    $cart_subtotal  += (float)($item_subtotal);
+                    $cart_tax       += (float)($item_tax);
+                }
+                
+                $totals['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
+                $totals['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
+                $totals['total']    = wpinv_format_amount( ( $totals['subtotal'] + $totals['tax'] ), NULL, true );
+                $totals['discount'] = 0;
+            }
         }
         
-        return apply_filters( 'wpinv_get_invoice_subtotal', $subtotal, $this->ID, $this, $currency );
+        $totals = apply_filters( 'wpinv_get_invoice_recurring_totals', $totals, $this, $field, $currency );
+        
+        if ( isset( $totals[$field] ) ) {
+            return ( $currency ? wpinv_price( $totals[$field], $this->get_currency() ) : $totals[$field] );
+        }
+        
+        return $totals;
+    }
+    
+    public function get_final_tax( $currency = false ) {        
+        $final_total = wpinv_format_amount( $this->tax, NULL, !$currency );
+        if ( $currency ) {
+            $final_total = wpinv_price( $final_total, $this->get_currency() );
+        }
+        
+        return apply_filters( 'wpinv_get_invoice_final_total', $final_total, $this, $currency );
     }
     
     public function get_discounts( $array = false ) {

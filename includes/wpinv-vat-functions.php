@@ -879,7 +879,7 @@ function wpinv_settings_vat_settings( $settings ) {
             'type' => 'text',
             'size' => 'regular',
         );
-        
+        /*
         $vat_settings['vat_includes_tax_label'] = array(
             'id' => 'vat_includes_tax_label',
             'name' => __( 'Includes VAT label', 'invoicing' ),
@@ -919,7 +919,7 @@ function wpinv_settings_vat_settings( $settings ) {
             'placeholder' => __( 'Excluding {taxrate}% Tax', 'invoicing' ),
             'std' => __( 'Excluding {taxrate}% Tax', 'invoicing' )
         );
-        
+        */
         $vat_settings['vat_vies_check'] = array(
             'id' => 'vat_vies_check',
             'name' => __( 'Disable Vies check', 'invoicing' ),
@@ -940,13 +940,14 @@ function wpinv_settings_vat_settings( $settings ) {
             'desc' => __( 'Check this option if you do not want VAT numbers to be checked to have a correct format (not recommended). Each EU member state has its own format for a VAT number.<br>While we try to make sure the format rules are respected it is possible that a specific rule is not respected so a correct VAT number is not validated. If you encounter this situation, use this option to prevent simple checks.', 'invoicing' ),
             'type' => 'checkbox'
         );
-
+        /*
         $vat_settings['vat_email_receipt'] = array(
             'id' => 'vat_email_receipt',
             'name' => __( 'Enable sending the receipt as an email', 'invoicing' ),
             'desc' => __( 'Check this option if you want the email receipt message body to be the purchase confirmation.', 'invoicing' ),
             'type' => 'checkbox'
         );
+        */
         
         $vat_settings['disable_vat_same_country'] = array(
             'id' => 'disable_vat_same_country',
@@ -1002,7 +1003,7 @@ function wpinv_settings_vat_settings( $settings ) {
         $vat_settings['vat_allow_classes'] = array(
             'id' => 'vat_allow_classes',
             'name' => __( 'Allow the use of VAT rate classes', 'invoicing' ),
-            'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoices" menu heading (left) that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
+            'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoicing -> Settings -> Taxes -> EU VAT Rates" menu heading that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
             'type' => 'checkbox'
         );
     

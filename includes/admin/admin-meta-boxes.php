@@ -156,6 +156,7 @@ function wpinv_discount_metabox_details( $post ) {
     $max_total      = wpinv_get_discount_max_total( $discount_id );
     $max_uses       = wpinv_get_discount_max_uses( $discount_id );
     $single_use     = wpinv_discount_is_single_use( $discount_id );
+    $recurring      = (bool)wpinv_discount_is_recurring( $discount_id );
     
     $min_total      = $min_total > 0 ? $min_total : '';
     $max_total      = $max_total > 0 ? $max_total : '';
@@ -279,6 +280,19 @@ function wpinv_discount_metabox_details( $post ) {
             <td>
                 <input type="text" name="max_total" id="wpinv_discount_max_total" class="wpi-field-price wpi-price" value="<?php echo $max_total; ?>">
                 <p class="description"><?php _e( 'This allows you to set the maximum amount (subtotal, including taxes) allowed when using the discount.', 'invoicing' ); ?></p>
+            </td>
+        </tr>
+        <?php do_action( 'wpinv_discount_form_before_recurring', $post ); ?>
+        <tr>
+            <th valign="top" scope="row">
+                <label for="wpinv_discount_recurring"><?php _e( 'For recurring apply to', 'invoicing' ); ?></label>
+            </th>
+            <td>
+                <select id="wpinv_discount_recurring" name="recurring" class="medium-text">
+                    <option value="0" <?php selected( false, $recurring ); ?>><?php _e( 'All payments', 'invoicing' ); ?></option>
+                    <option value="1" <?php selected( true, $recurring ); ?>><?php _e( 'First payment only', 'invoicing' ); ?></option>
+                </select>
+                <p class="description"><?php _e( '<b>All payments:</b> apply this discount to all recurring payments of the recurring invoice. <br><b>First payment only:</b> apply this discount to only first payment of the recurring invoice.', 'invoicing' ); ?></p>
             </td>
         </tr>
         <?php do_action( 'wpinv_discount_form_before_max_uses', $post ); ?>

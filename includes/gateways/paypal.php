@@ -125,51 +125,50 @@ function wpinv_process_paypal_payment( $purchase_data ) {
 add_action( 'wpinv_gateway_paypal', 'wpinv_process_paypal_payment' );
 
 function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice ) {
-    if ( $invoice->is_recurring() ) {
-        $paypal_args['sra']     = '1';
-        $paypal_args['src']     = '1';
-        $paypal_args['cmd']     = '_xclick-subscriptions';
+    if ( $invoice->is_recurring() && $item_id = $invoice->get_recurring() ) {
+        $item   = new WPInv_Item( $item_id );
         
-        // Add cart items
+        if ( empty( $item ) ) {
+            return $paypal_args;
+        }
+
+        $period             = $item->get_recurring_period();
+        $interval           = $item->get_recurring_interval();
+        $bill_times         = (int)$item->get_recurring_limit();
+        
+        $initial_amount     = wpinv_format_amount( $invoice->get_total() );
+        $recurring_amount   = wpinv_format_amount( $invoice->get_recurring_totals() );
+        
+        $paypal_args['cmd'] = '_xclick-subscriptions';
+        $paypal_args['sra'] = '1';
+        $paypal_args['src'] = '1';
+        
+        // Set item description
+        $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( array( 'id' => $item->ID ) ), ENT_COMPAT, 'UTF-8' ) );
+        
+        if ( $initial_amount != $recurring_amount ) {
+            $paypal_args['a1']  = $initial_amount;
+            $paypal_args['p1']  = $interval;
+            $paypal_args['t1']  = $period;
+            
+            // Set the recurring amount
+            $paypal_args['a3']  = $recurring_amount;
+        } else {        
+            $paypal_args['a3']  = $initial_amount;
+        }
+        
+        $paypal_args['p3']  = $interval;
+        $paypal_args['t3']  = $period;
+        
+        if ( $bill_times > 1 ) {
+            // Make sure it's not over the max of 52
+            $paypal_args['srt'] = ( $bill_times <= 52 ? absint( $bill_times ) : 52 );
+        }
+                
+        // Remove cart items
         $i = 1;
         if( is_array( $purchase_data['cart_details'] ) && ! empty( $purchase_data['cart_details'] ) ) {
-            foreach ( $purchase_data['cart_details'] as $item ) {
-                $item_info      = new WPInv_Item( $item['id'] );
-                            
-                $item_amount    = round( ( $item['subtotal'] / $item['quantity'] ) - ( $item['discount'] / $item['quantity'] ), 2 );
-
-                if( $item_amount <= 0 ) {
-                    $item_amount = 0;
-                }
-                
-                $period       = $item_info->get_recurring_period(); // Set the recurring period
-                $interval     = $item_info->get_recurring_interval(); // One period unit (every week, every month, etc)
-                $limit        = (int)$item_info->get_recurring_limit();
-                
-                // Set item description
-                $paypal_args['item_name']  = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( $item ), ENT_COMPAT, 'UTF-8' ) );
-                
-                /*
-                $paypal_args['a1']  = 0;
-                $paypal_args['p1']  = $interval;
-                $paypal_args['t1']  = $period;
-                */
-                
-                $paypal_args['a3']  = $invoice->get_total();
-                $paypal_args['p3']  = $interval;
-                $paypal_args['t3']  = $period;
-                
-                if ( $limit > 1 ) {
-                    // Make sure it's not over the max of 52
-                    $paypal_args['srt'] = $limit;
-                }
-                
-                // Set tax amount
-                if ( isset( $paypal_args['tax_cart'] ) ) {
-                    $paypal_args['tax'] = $paypal_args['tax_cart'];
-                    unset( $paypal_args['tax_cart'] );
-                }
-                
+            foreach ( $purchase_data['cart_details'] as $item ) {                
                 if ( isset( $paypal_args['item_number_' . $i] ) ) {
                     unset( $paypal_args['item_number_' . $i] );
                 }
@@ -182,11 +181,18 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
                 if ( isset( $paypal_args['amount_' . $i] ) ) {
                     unset( $paypal_args['amount_' . $i] );
                 }
+                if ( isset( $paypal_args['discount_amount_' . $i] ) ) {
+                    unset( $paypal_args['discount_amount_' . $i] );
+                }
 
                 $i++;
             }
         }
         
+        if ( isset( $paypal_args['tax_cart'] ) ) {
+            unset( $paypal_args['tax_cart'] );
+        }
+                
         if ( isset( $paypal_args['upload'] ) ) {
             unset( $paypal_args['upload'] );
         }
@@ -551,8 +557,8 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
                 'item_id'           => $cart_item['id'],
                 'status'            => 'active',
                 'period'            => $item->get_recurring_period(),
-                'initial_amount'    => wpinv_payment_total( $parent_invoice_id ),
-                'recurring_amount'  => $invoice->get_total(),
+                'initial_amount'    => $invoice->get_total(),
+                'recurring_amount'  => $invoice->get_recurring_totals(),
                 'interval'          => $item->get_recurring_interval(),
                 'bill_times'        => $item->get_recurring_limit(),
                 'expiration'        => $invoice->get_new_expiration( $cart_item['id'] ),
