@@ -202,6 +202,7 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
         'max_uses'          => isset( $data['max_uses'] )         ? absint( $data['max_uses'] )                       : '',
         'items'             => isset( $data['items'] )            ? $data['items']                                    : array(),
         'excluded_items'    => isset( $data['excluded_items'] )   ? $data['excluded_items']                           : array(),
+        'is_recurring'      => isset( $data['recurring'] )        ? (bool)$data['recurring']                          : false,
         'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
         'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : false,
     );
@@ -445,7 +446,7 @@ function wpinv_is_discount_started( $code_id = null ) {
             $start_date = strtotime( $start_date );
 
             if ( $start_date < current_time( 'timestamp' ) ) {
-                // Discount has pased the start date
+                // Discount has past the start date
                 $return = true;
             } else {
                 wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active yet.', 'invoicing' ) );
@@ -470,7 +471,7 @@ function wpinv_check_discount_dates( $code_id = null ) {
             $start_date = strtotime( $start_date );
 
             if ( $start_date < current_time( 'timestamp' ) ) {
-                // Discount has pased the start date
+                // Discount has past the start date
                 $return = true;
             } else {
                 wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active yet.', 'invoicing' ) );
@@ -559,8 +560,22 @@ function wpinv_discount_is_single_use( $code_id = 0 ) {
     return (bool) apply_filters( 'wpinv_is_discount_single_use', $single_use, $code_id );
 }
 
+function wpinv_discount_is_recurring( $code_id = 0, $code = false ) {
+    if ( $code ) {
+        $discount = wpinv_get_discount_by_code( $code_id );
+        
+        if ( !empty( $discount ) ) {
+            $code_id = $discount->ID;
+        }
+    }
+    
+    $recurring = get_post_meta( $code_id, '_wpi_discount_is_recurring', true );
+    
+    return (bool) apply_filters( 'wpinv_is_discount_recurring', $recurring, $code_id, $code );
+}
+
 function wpinv_discount_item_reqs_met( $code_id = null ) {
-    $item_reqs = wpinv_get_discount_item_reqs( $code_id );
+    $item_reqs    = wpinv_get_discount_item_reqs( $code_id );
     $condition    = wpinv_get_discount_item_condition( $code_id );
     $excluded_ps  = wpinv_get_discount_excluded_items( $code_id );
     $cart_items   = wpinv_get_cart_contents();
@@ -571,7 +586,7 @@ function wpinv_discount_item_reqs_met( $code_id = null ) {
         $ret = true;
     }
 
-    // Normalize our data for item requiremetns, exlusions and cart data
+    // Normalize our data for item requirements, exclusions and cart data
     // First absint the items, then sort, and reset the array keys
     $item_reqs = array_map( 'absint', $item_reqs );
     asort( $item_reqs );

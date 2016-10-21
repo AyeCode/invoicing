@@ -19,30 +19,35 @@ function wpinv_get_payment_gateways() {
             'checkout_label' => __( 'PayPal Standard', 'invoicing' ),
             'ordering'       => 1,
         ),
+        '2co' => array(
+            'admin_label'    => __( '2Checkout', 'invoicing' ),
+            'checkout_label' => __( '2Checkout - Credit Card / Debit Card', 'invoicing' ),
+            'ordering'       => 2,
+        ),
+        'stripe' => array(
+            'admin_label'    => __( 'Stripe', 'invoicing' ),
+            'checkout_label' => __( 'Stripe - Credit / Debit Card', 'invoicing' ),
+            'ordering'       => 3,
+        ),
         'authorizenet' => array(
             'admin_label'    => __( 'Authorize.Net (AIM)', 'invoicing' ),
             'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 2,
+            'ordering'       => 4,
         ),
         'worldpay' => array(
             'admin_label'    => __( 'Worldpay', 'invoicing' ),
             'checkout_label' => __( 'Worldpay - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 3,
-        ),
-        '2co' => array(
-            'admin_label'    => __( '2Checkout', 'invoicing' ),
-            'checkout_label' => __( '2Checkout - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 4,
+            'ordering'       => 5,
         ),
         'bank_transfer' => array(
             'admin_label'    => __( 'Pre Bank Transfer', 'invoicing' ),
             'checkout_label' => __( 'Pre Bank Transfer', 'invoicing' ),
-            'ordering'       => 5,
+            'ordering'       => 6,
         ),
         'manual' => array(
             'admin_label'    => __( 'Test Payment', 'invoicing' ),
             'checkout_label' => __( 'Test Payment', 'invoicing' ),
-            'ordering'       => 6,
+            'ordering'       => 7,
         ),
     );
 
@@ -589,6 +594,63 @@ function wpinv_gateway_settings_2co( $setting ) {
     return $setting;
 }
 add_filter( 'wpinv_gateway_settings_2co', 'wpinv_gateway_settings_2co', 10, 1 );
+
+// Stripe Settings
+function wpinv_gateway_settings_stripe( $setting ) {
+    $setting['stripe_sandbox'] = array(
+            'type' => 'checkbox',
+            'id'   => 'stripe_sandbox',
+            'name' => __( 'Enable Test Mode', 'invoicing' ),
+            'desc' => __( 'Tick this to test payments through Stripe. For more info, visit https://stripe.com/docs/testing. Untick this when you are ready to accept payments.', 'invoicing' ),
+            'std'  => 1
+        );
+        
+    $setting['stripe_test_secret_key'] = array(
+            'type' => 'text',
+            'id'   => 'stripe_test_secret_key',
+            'name' => __( 'Test Secret Key', 'invoicing' ),
+            'desc' => __( 'Enter your test secret key, found in your Stripe Account > Account Settings > API Keys.', 'invoicing' ),
+            'std' => 'sk_test_jg1gyqIbrMKXjtQRHxmvbVfG',
+        );
+    
+    $setting['stripe_test_publishable_key'] = array(
+            'type' => 'text',
+            'id'   => 'stripe_test_publishable_key',
+            'name' => __( 'Test Publishable Key', 'invoicing' ),
+            'desc' => __( 'Enter your test publishable key, found in your Stripe Account > Account Settings > API Keys.', 'invoicing' ),
+            'std' => 'pk_test_6bcYQpl47APCQkixGwwNJnw4',
+        );
+    
+    $setting['stripe_live_secret_key'] = array(
+            'type' => 'text',
+            'id'   => 'stripe_live_secret_key',
+            'name' => __( 'Live Secret Key', 'invoicing' ),
+            'desc' => __( 'Enter your live secret key, found in your Stripe Account > Account Settings > API Keys.', 'invoicing' ),
+            'std' => 'sk_live_jg1gyqIbrMKXjtQRHxmvbVfG',
+        );
+    
+    $setting['stripe_live_publishable_key'] = array(
+            'type' => 'text',
+            'id'   => 'stripe_live_publishable_key',
+            'name' => __( 'Live Publishable Key', 'invoicing' ),
+            'desc' => __( 'Enter your live publishable key, found in your Stripe Account > Account Settings > API Keys.', 'invoicing' ),
+            'std' => 'pk_live_6bcYQpl47APCQkixGwwNJnw4',
+        );
+
+    $setting['stripe_ipn_url'] = array(
+            'type' => 'ipn_url',
+            'id'   => 'stripe_ipn_url',
+            'name' => __( 'Stripe Webhook URL', 'invoicing' ),
+            'std' => wpinv_get_ipn_url( 'stripe' ),
+            'desc' => __( 'Copy and paste this URL into your Stripe account, in Your Account > Account Settings > Webhooks.', 'invoicing' ),
+            'size' => 'large',
+            'custom' => 'stripe',
+            'readonly' => true
+        );
+        
+    return $setting;
+}
+add_filter( 'wpinv_gateway_settings_stripe', 'wpinv_gateway_settings_stripe', 10, 1 );
 
 function wpinv_is_test_mode( $gateway = '' ) {
     if ( empty( $gateway ) ) {

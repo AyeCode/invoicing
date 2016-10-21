@@ -2064,21 +2064,16 @@ function wpinv_cart_total_label( $label, $invoice ) {
     if ( empty( $invoice ) ) {
         return $label;
     }
-    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {
-        $item               = new WPInv_Item( $item_id );
-        $period             = $item->get_recurring_period();
-        $interval           = $item->get_recurring_interval();
-        $bill_times         = (int)$item->get_recurring_limit();
-        $initial_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
-        $billing_amount     = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
-        
-        $recurring_label    = '<span class="label label-primary label-recurring">' . __( 'Recurring Payment', 'invoicing' ) . '</span> ';
-        $description        = wpinv_subscription_description_on_cart( $initial_amount, $billing_amount, $period, $interval, $bill_times );
-        
-        $label              = '<span class="wpinv-cart-sub-desc">' . $recurring_label . $description . '</span> ' . $label;
+    
+    $prefix_label = '';
+    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {        
+        $prefix_label   = '<span class="label label-primary label-recurring">' . __( 'Recurring Payment', 'invoicing' ) . '</span> ' . wpinv_subscription_payment_desc( $invoice );
     } else if ( $invoice->is_renewal() ) {
-        $recurring_label    = '<span class="label label-primary label-renewal">' . __( 'Renewal Payment', 'invoicing' ) . '</span> ';        
-        $label              = '<span class="wpinv-cart-sub-desc">' . $recurring_label . '</span> ' . $label;
+        $prefix_label   = '<span class="label label-primary label-renewal">' . __( 'Renewal Payment', 'invoicing' ) . '</span> ';        
+    }
+    
+    if ( $prefix_label != '' ) {
+        $label  = '<span class="wpinv-cart-sub-desc">' . $prefix_label . '</span> ' . $label;
     }
     
     return $label;
@@ -2120,4 +2115,4 @@ function wpinv_invoice_print_payment_info( $invoice ) {
         <?php 
     }
 }
-add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );
+// add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );

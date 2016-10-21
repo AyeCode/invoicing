@@ -840,6 +840,10 @@ add_action( 'geodir_dashboard_links', 'wpinv_gdp_dashboard_invoice_history_link'
 remove_action( 'geodir_dashboard_links', 'geodir_payment_invoices_list_page_link' );
 
 function wpinv_wpi_to_gdp_update_status( $invoice_id, $new_status, $old_status ) {
+    if (!defined('GEODIRPAYMENT_VERSION')) {
+        return false;
+    }
+    
     $invoice    = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
