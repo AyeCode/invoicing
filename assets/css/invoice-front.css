@@ -3495,3 +3495,12 @@ div td .meta p {
 .wpinv-receipt  .wpi-row-uvatno {
     display: none;
 }
+#wpi-ip-country.wpi-vat-info {
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 0;
+}
+#wpi-ip-country.wpi-vat-info #wpinv-fields-box {
+    min-height: auto;
+    padding: 15px;
+}

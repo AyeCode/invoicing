@@ -7,7 +7,7 @@ if ( !defined( 'WPINC' ) ) {
 function wpinv_get_option( $key = '', $default = false ) {
     global $wpinv_options;
 
-    $value = ! empty( $wpinv_options[ $key ] ) ? $wpinv_options[ $key ] : $default;
+    $value = isset( $wpinv_options[ $key ] ) ? $wpinv_options[ $key ] : $default;
     $value = apply_filters( 'wpinv_get_option', $value, $key, $default );
 
     return apply_filters( 'wpinv_get_option_' . $key, $value, $key, $default );
@@ -397,6 +397,7 @@ function wpinv_get_registered_settings() {
                         'step' => '0.1',
                         'std'  => '20'
                     ),
+                    /*
                     'prices_include_tax' => array(
                         'id'   => 'prices_include_tax',
                         'name' => __( 'Prices entered with tax', 'invoicing' ),
@@ -425,6 +426,7 @@ function wpinv_get_registered_settings() {
                             'no'  => __( 'Excluding tax', 'invoicing' ),
                         ),
                     ),
+                    */
                 ),
                 'rates' => array(
                     'tax_rates' => array(
@@ -628,11 +630,23 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
 	if( !current_user_can( 'manage_options' ) ) {
 		return $input;
 	}
-
+	
 	$new_rates = !empty( $_POST['tax_rates'] ) ? array_values( $_POST['tax_rates'] ) : array();
-
-	update_option( 'wpinv_tax_rates', $new_rates );
-
+	
+	$tax_rates = array();
+	
+	if ( !empty( $new_rates ) ) {
+		foreach ( $new_rates as $rate ) {
+			if ( isset( $rate['country'] ) && empty( $rate['country'] ) && empty( $rate['state'] ) ) {
+				continue;
+			}
+			
+			$tax_rates[] = $rate;
+		}
+	}
+	
+	update_option( 'wpinv_tax_rates', $tax_rates );
+	
 	return $input;
 }
 add_filter( 'wpinv_settings_taxes-rates_sanitize', 'wpinv_settings_sanitize_tax_rates' );
@@ -1259,8 +1273,8 @@ function wpinv_tax_rates_callback($args) {
 					<input type="checkbox" name="tax_rates[0][global]" id="tax_rates[0][global]" value="1"/>
 					<label for="tax_rates[0][global]"><?php _e( 'Apply to whole country', 'invoicing' ); ?></label>
 				</td>
-				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="0.10" min="0.00" name="tax_rates[0][rate]" value=""/></td>
-                <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[0][name]" placeholder="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" value="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" /></td>
+				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="0.10" min="0.00" name="tax_rates[0][rate]" placeholder="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" value="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>"/></td>
+                <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[0][name]" /></td>
 				<td><span class="wpinv_remove_tax_rate button-secondary"><?php _e( 'Remove Rate', 'invoicing' ); ?></span></td>
 			</tr>
 		<?php endif; ?>

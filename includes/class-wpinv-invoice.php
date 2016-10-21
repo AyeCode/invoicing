@@ -1279,7 +1279,7 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
     }
     
-    public function get_recurring_totals( $field = 'total', $currency = false ) {        
+    public function get_recurring_totals( $field = '', $currency = false ) {        
         $totals             = array();
         $totals['subtotal'] = $this->get_subtotal();
         $totals['tax']      = $this->get_tax();

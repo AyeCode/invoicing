@@ -200,6 +200,7 @@ function wpinv_calculate_tax( $amount = 0, $country = false, $state = false, $it
 }
 
 function wpinv_prices_include_tax() {
+    return false; // TODO
     $ret = ( wpinv_get_option( 'prices_include_tax', false ) == 'yes' && wpinv_use_taxes() );
 
     return apply_filters( 'wpinv_prices_include_tax', $ret );
@@ -242,7 +243,8 @@ function wpinv_is_cart_taxed() {
 }
 
 function wpinv_prices_show_tax_on_checkout() {
-	$ret = ( wpinv_get_option( 'checkout_include_tax', false ) == 'yes' && wpinv_use_taxes() );
+	return false; // TODO
+    $ret = ( wpinv_get_option( 'checkout_include_tax', false ) == 'yes' && wpinv_use_taxes() );
 
 	return apply_filters( 'wpinv_taxes_on_prices_on_checkout', $ret );
 }

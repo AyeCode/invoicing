@@ -352,8 +352,8 @@ function wpinv_allow_vat_rules() {
 }
 
 function wpinv_allow_vat_classes() {
+    return false; // TODO
     global $wpinv_options;
-    
     return ( !empty( $wpinv_options['vat_allow_classes'] ) ? true : false );
 }
 
@@ -462,7 +462,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
             $country = 'GB';
         }
 
-        $rate = 0;
+        $rate = wpinv_lookup_rate( $country, $state, $rate, $class ); // Fix if there are no tax rated and you try to pay an invoice it does not add the fallback tax rate
 
         // Otherwise work out what rate to use
         // Case 1: It's a phyical item sold to a consumer
@@ -755,6 +755,12 @@ function wpinv_user_vat_info() {
     return $wpi_session->get( 'user_vat_info' );
 }
 
+function wpinv_owner_get_vat_name() {
+    $vat_name   = wpinv_get_option( 'vat_name' );
+    $vat_name   = !empty( $vat_name ) ? $vat_name : 'VAT';
+    return apply_filters( 'wpinv_owner_get_vat_name', $vat_name );
+}
+
 function wpinv_owner_vat_number() {
     $vat_number = wpinv_get_option( 'vat_number' );
     $vat_number = $vat_number ? maybe_unserialize($vat_number) : NULL;
@@ -1000,12 +1006,14 @@ function wpinv_settings_vat_settings( $settings ) {
             'std' => '1'
         );
     
+        /*
         $vat_settings['vat_allow_classes'] = array(
             'id' => 'vat_allow_classes',
             'name' => __( 'Allow the use of VAT rate classes', 'invoicing' ),
             'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoicing -> Settings -> Taxes -> EU VAT Rates" menu heading that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
             'type' => 'checkbox'
         );
+        */
     
         $vat_settings['vat_prevent_b2c_purchase'] = array(
             'id' => 'vat_prevent_b2c_purchase',
@@ -1782,7 +1790,7 @@ function wpinv_save_vat_information($company = '', $vat_number = '') {
     do_action('wpinv-save-vat-info', $company, $vat_number);
 }
 
-function wpinv_checkout_vat_validate() {
+function wpinv_checkout_vat_validate( $valid_data, $post ) {
     global $wpinv_options, $wpi_session;
     
     $wpi_session->set( 'user_vat_info', null );
@@ -1810,10 +1818,19 @@ function wpinv_checkout_vat_validate() {
     // This check is not needed if the VAT setup is set to ignore
     $vat_ignore = !empty( $_POST['wpinv_vat_ignore'] ) ? true : false;
     
-    // Is digital?
-    $is_digital = wpinv_vat_rule_is_digital();
+    $cart = wpinv_get_cart_contents();
     
-    if ( !$is_digital && $vat_ignore ) {
+    // Are any of the products digital?
+    $item_is_digital = false;
+    foreach ( $cart as $key => $item) {
+        $item_is_digital = wpinv_vat_rule_is_digital( $item['id'] );
+        
+        if ( $item_is_digital ) {
+            break;
+        }
+    }
+    
+    if ( !$item_is_digital && $vat_ignore ) {
         return;
     }
     
@@ -1833,10 +1850,10 @@ function wpinv_checkout_vat_validate() {
     $eu_state_ip_address = in_array( $ip_country_code, $eu_states );
     $buyer_and_billing_outside_eu = !$eu_state_billing && !$eu_state_ip_address;
     $no_vat_number = empty( $_POST['wpinv_vat_number'] );
-    
+
     // error_log("eu_state_billing: $eu_state_billing; buyer_and_billing_outside_eu: $buyer_and_billing_outside_eu; no_vat_number: $no_vat_number");
     // BMS 2015-04-19 Add the $amount check because it is possible the user has been given a 100% discount (see issue with David Kamp)
-    if ( $is_digital && !$buyer_and_billing_outside_eu && $no_vat_number && apply_filters( 'wpinv-checkout-requires-country', true, $amount ) ) {
+    if ( $item_is_digital && !$buyer_and_billing_outside_eu && $no_vat_number && apply_filters( 'wpinv-checkout-requires-country', true, $amount ) ) {
         // If the VAT number does not exist then check the
         // IP address matches the country code unless the
         // user has already been required to self-certify
@@ -1852,11 +1869,11 @@ function wpinv_checkout_vat_validate() {
         }
     }
     
-    // BMS 2014-12-21 Added for 1.3.1
+    // BMS 2014-12-21
     if ( !empty($wpinv_options['vat_prevent_b2c_purchase']) && !$buyer_and_billing_outside_eu && ( $no_vat_number || $vat_ignore ) ) {
         if ($eu_state_billing) {
             wpinv_set_error( 'vat_validation', __( 'Please enter and validate your VAT number to verify your purchase is by an EU business.', 'invoicing' ) );
-        } else if ( $is_digital && $eu_state_ip_address ) {
+        } else if ( $item_is_digital && $eu_state_ip_address ) {
             wpinv_set_error( 'vat_validation', __( 'Sales to non-EU entities cannot be completed because VAT must be applied.', 'invoicing' ) );
         }
     }
@@ -1926,6 +1943,7 @@ function wpinv_checkout_vat_validate() {
 
     $wpi_session->set( 'user_vat_info', $vat_info );
 }
+add_action( 'wpinv_checkout_error_checks', 'wpinv_checkout_vat_validate', 10, 2 );
 
 function wpinv_recalculated_tax() {
     define( 'WPINV_RECALCTAX', true );
@@ -1981,3 +1999,51 @@ function wpinv_recalculate_tax( $return = false ) {
 }
 add_action( 'wp_ajax_wpinv_recalculate_tax', 'wpinv_recalculate_tax' );
 add_action( 'wp_ajax_nopriv_wpinv_recalculate_tax', 'wpinv_recalculate_tax' );
+
+function wpinv_invoice_show_vat_info( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    
+    $vat_name   = wpinv_owner_get_vat_name();
+    $vat_number = wpinv_owner_vat_number();
+    $company    = wpinv_owner_vat_company_name();
+    if ( $vat_number || $company ) {
+    ?>
+    <div class="row wpinv-vat-info">
+        <div class="col-sm-12">
+            <strong><?php echo wp_sprintf( __( '%s Info', 'invoicing' ), $vat_name ); ?></strong>
+            <?php if ( $vat_number ) { ?>
+            <div class="vat-number"><span><?php echo wp_sprintf( __( '%s Number:', 'invoicing' ), $vat_name ); ?></span> <?php echo wpinv_owner_vat_number(); ?></div>
+            <?php } if ( $company ) { ?>
+            <div class="company"><span><?php echo __( 'Company:', 'invoicing' ); ?></span> <?php echo wpinv_owner_vat_company_name(); ?></div>
+            <?php } ?>
+        </div>
+    </div>
+    <?php
+    }
+}
+add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_show_vat_info', 11, 1 );
+
+function wpinv_invoice_show_vat_notice( $invoice ) {
+    if ( empty( $invoice ) ) {
+        return NULL;
+    }
+    
+    $label      = wpinv_get_option( 'vat_invoice_notice_label' );
+    $notice     = wpinv_get_option( 'vat_invoice_notice' );
+    if ( $label || $notice ) {
+    ?>
+    <div class="row wpinv-vat-notice">
+        <div class="col-sm-12">
+            <?php if ( $label ) { ?>
+            <label><?php echo __( $label, 'invoicing' ); ?> </label>
+            <?php } if ( $notice ) { ?>
+            <?php echo __( $notice, 'invoicing' ); ?>
+            <?php } ?>
+        </div>
+    </div>
+    <?php
+    }
+}
+add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_show_vat_notice', 999, 1 );

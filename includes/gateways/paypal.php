@@ -137,7 +137,7 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         $bill_times         = (int)$item->get_recurring_limit();
         
         $initial_amount     = wpinv_format_amount( $invoice->get_total() );
-        $recurring_amount   = wpinv_format_amount( $invoice->get_recurring_totals() );
+        $recurring_amount   = wpinv_format_amount( $invoice->get_recurring_totals( 'total' ) );
         
         $paypal_args['cmd'] = '_xclick-subscriptions';
         $paypal_args['sra'] = '1';
@@ -558,7 +558,7 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
                 'status'            => 'active',
                 'period'            => $item->get_recurring_period(),
                 'initial_amount'    => $invoice->get_total(),
-                'recurring_amount'  => $invoice->get_recurring_totals(),
+                'recurring_amount'  => $invoice->get_recurring_totals( 'total' ),
                 'interval'          => $item->get_recurring_interval(),
                 'bill_times'        => $item->get_recurring_limit(),
                 'expiration'        => $invoice->get_new_expiration( $cart_item['id'] ),

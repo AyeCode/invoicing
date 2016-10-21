@@ -396,7 +396,7 @@ function wpinv_subscription_payment_desc( $invoice ) {
         $bill_times         = (int)$item->get_recurring_limit();
 
         $initial_total      = wpinv_format_amount( $invoice->get_total() );
-        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_totals() );
+        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_totals( 'total' ) );
         $initial_amount     = wpinv_price( $initial_total, $invoice->get_currency() );
         $recurring_amount   = wpinv_price( $recurring_total, $invoice->get_currency() );
         

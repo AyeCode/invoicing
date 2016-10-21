@@ -2115,4 +2115,4 @@ function wpinv_invoice_print_payment_info( $invoice ) {
         <?php 
     }
 }
-add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );
+// add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );
