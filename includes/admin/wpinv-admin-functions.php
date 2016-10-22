@@ -176,7 +176,7 @@ function wpinv_admin_messages() {
 	}
 
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
-		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The invoice has been sent to customer.', 'invoicing' ), 'updated' );
+		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The invoice has been sent to the customer.', 'invoicing' ), 'updated' );
     }
     
     if ( isset( $_GET['wpinv-message'] ) && 'email_fail' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {

@@ -1001,7 +1001,7 @@ function wpinv_settings_vat_settings( $settings ) {
         $vat_settings['vat_2015_rules'] = array(
             'id' => 'vat_2015_rules',
             'name' => __( 'Enable 2015 rules', 'invoicing' ),
-            'desc' => __( 'Check if VAT should always be applied to consumer sales from IP addresses within the EU even if the billing address is outside the EU.<br>When checked, an option will be available to download current VAT rates from the Lyquidity web site if more recent rates are available. <br>When checked, you will be notified when the rates on our web site have been updated.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable unless you know what you are doing.', 'invoicing' ) . '</font>',
+            'desc' => __( 'Check if VAT should always be applied to consumer sales from IP addresses within the EU even if the billing address is outside the EU.<br>When checked, an option will be available to download current VAT rates from the euvatrates.com web site if more recent rates are available. <br>When checked, you will be notified when the rates on our web site have been updated.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable unless you know what you are doing.', 'invoicing' ) . '</font>',
             'type' => 'checkbox',
             'std' => '1'
         );
