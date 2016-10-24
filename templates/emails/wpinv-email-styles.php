@@ -123,7 +123,7 @@ $text_lighter_20 = wpinv_hex_lighter( $text, 20 );
 }
 
 #header_wrapper {
-    padding: 24px 36px;
+    padding: 22px 24px;
     display: block;
 }
 
@@ -249,4 +249,23 @@ img {
 }
 .wpinv_cart_footer_row .wpinv_cart_total {
     vertical-align: top;
+}
+#body_content .wpinv-note {
+    background-color: #f7f7f7;
+    border: 1px solid #f3f3f3;
+    margin: -8px 0 15px 0;
+    padding: 10px 20px;
+}
+#body_content .wpinv-note p {
+    margin: 0;
+}
+#body_content .wpinv-note {
+    padding: 7.5px 12.5px;
+}
+#body_content .wpinv-note-date {
+    font-size: 95%
+}
+#body_content .wpinv-note .description {
+    line-height: 137.5%;
+    margin-top: 3px;
 }

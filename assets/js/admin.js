@@ -168,6 +168,15 @@ jQuery(function($) {
     };
     
     wpinv_meta_boxes_notes.init();
+    
+    $('.post-type-wpi_invoice [name="post"]').on('click', function(e) {        
+        if (parseInt($(document.body).find( '.wpinv-line-items > .item' ).length) < 1) {
+            alert(WPInv_Admin.emptyInvoice);
+            $('#wpinv_invoice_item').focus();
+            return false;
+        }
+    });
+    
     var invDetails = jQuery('#gdmbx2-metabox-wpinv_details').html();
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
@@ -863,6 +872,26 @@ jQuery(function($) {
             });
         }
     };
+    
+    if (WPInv_Admin.hasPM) {
+        $('.wpi-gd-package .submitdelete').on('click', function(e) {        
+            if (!confirm(WPInv_Admin.deletePackage)) {
+                return false;
+            }
+        });
+        
+        $('.post-type-wpi_item .submitdelete').on('click', function(e) {        
+            if ($('#_wpi_current_type').val() == 'package' && !confirm(WPInv_Admin.deletePackage)) {
+                return false;
+            }
+        });
+        
+        $('.post-type-wpi_item .bulkactions input#doaction').on('click', function(e) {
+            if ($('[name="post[]"]:checked').val() && ($('[name="action"]').val() == 'trash' || $('[name="action"]').val() == 'delete') && !confirm(WPInv_Admin.deletePackage)) {
+                return false;
+            }
+        });
+    }
     
     WPInv.init();
 });

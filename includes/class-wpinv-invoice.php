@@ -631,6 +631,9 @@ final class WPInv_Invoice {
         global $wpi_session;
         
         $saved = false;
+        if ( empty( $this->items ) ) {
+            return $saved; // Don't save empty invoice.
+        }
         
         if ( empty( $this->key ) ) {
             $this->key = self::generate_key();
@@ -966,8 +969,8 @@ final class WPInv_Invoice {
             $comment_author       = $user->display_name;
             $comment_author_email = $user->user_email;
         } else {
-            $comment_author       = __( 'GeoDirectory', 'invoicing' );
-            $comment_author_email = strtolower( __( 'GeoDirectory', 'invoicing' ) ) . '@';
+            $comment_author       = __( 'System', 'invoicing' );
+            $comment_author_email = strtolower( __( 'System', 'invoicing' ) ) . '@';
             $comment_author_email .= isset( $_SERVER['HTTP_HOST'] ) ? str_replace( 'www.', '', $_SERVER['HTTP_HOST'] ) : 'noreply.com';
             $comment_author_email = sanitize_email( $comment_author_email );
         }
@@ -993,7 +996,7 @@ final class WPInv_Invoice {
         do_action( 'wpinv_insert_payment_note', $note_id, $this->ID, $note );
         
         if ( $customer_type ) {
-            add_comment_meta( $note_id, 'wpinv_customer_note', 1 );
+            add_comment_meta( $note_id, '_wpi_customer_note', 1 );
 
             do_action( 'wpinv_new_customer_note', array( 'invoice_id' => $this->ID, 'user_note' => $note ) );
         }
@@ -1279,12 +1282,13 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
     }
     
-    public function get_recurring_totals( $field = '', $currency = false ) {        
-        $totals             = array();
-        $totals['subtotal'] = $this->get_subtotal();
-        $totals['tax']      = $this->get_tax();
-        $totals['total']    = $this->get_total();
-        $totals['discount'] = $this->get_discount();
+    public function get_recurring_details( $field = '', $currency = false ) {        
+        $data                 = array();
+        $data['cart_details'] = $this->cart_details;
+        $data['subtotal']     = $this->get_subtotal();
+        $data['discount']     = $this->get_discount();
+        $data['tax']          = $this->get_tax();
+        $data['total']        = $this->get_total();
         
         if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) && $discounts = $this->get_discounts( true ) ) {
             $has_recurring = false;
@@ -1302,30 +1306,42 @@ final class WPInv_Invoice {
                 foreach ( $this->cart_details as $key => $item ) {
                     $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
                     $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
+                    $item_discount  = 0;
                     $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
                     
                     if ( wpinv_prices_include_tax() ) {
                         $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
                     }
                     
+                    $item_total     = $item_subtotal - $item_discount + $item_tax;
+                    // Do not allow totals to go negative
+                    if ( $item_total < 0 ) {
+                        $item_total = 0;
+                    }
+                    
                     $cart_subtotal  += (float)($item_subtotal);
+                    $cart_discount  += (float)($item_discount);
                     $cart_tax       += (float)($item_tax);
+                    
+                    $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
+                    $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
+                    $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
                 }
                 
-                $totals['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
-                $totals['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
-                $totals['total']    = wpinv_format_amount( ( $totals['subtotal'] + $totals['tax'] ), NULL, true );
-                $totals['discount'] = 0;
+                $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
+                $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
+                $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
+                $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
             }
         }
         
-        $totals = apply_filters( 'wpinv_get_invoice_recurring_totals', $totals, $this, $field, $currency );
+        $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
         
-        if ( isset( $totals[$field] ) ) {
-            return ( $currency ? wpinv_price( $totals[$field], $this->get_currency() ) : $totals[$field] );
+        if ( isset( $data[$field] ) ) {
+            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
         }
         
-        return $totals;
+        return $data;
     }
     
     public function get_final_tax( $currency = false ) {        

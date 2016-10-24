@@ -72,13 +72,16 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
             foreach ( $fields as $field => $name ) {
                 if ( isset( $_POST[ $name ] ) ) {
                     if ( $field == '_wpinv_price' ) {
-                        $value = wpinv_sanitize_amount( $_POST[ $name ] );
+                        if ( get_post_meta( $post_id, '_wpinv_type', true ) === 'package' ) {
+                            $value = wpinv_sanitize_amount( get_post_meta( $post_id, '_wpinv_price', true ) ); // Don't allow edit GD package item price.
+                        } else {
+                            $value = wpinv_sanitize_amount( $_POST[ $name ] );
+                        }
                     } else {
                         $value = is_string( $_POST[ $name ] ) ? sanitize_text_field( $_POST[ $name ] ) : $_POST[ $name ];
                     }
                     
                     $value = apply_filters( 'wpinv_item_metabox_save_' . $field, $value, $name );
-                    
                     update_post_meta( $post_id, $field, $value );
                 }
             }
@@ -108,7 +111,7 @@ function wpinv_bulk_and_quick_edit_save( $post_id, $post, $update = false ) {
 
     if ( $post->post_type == 'wpi_item' ) {
         // verify nonce
-        if ( isset( $_POST['_wpinv_item_price'] ) ) {
+        if ( isset( $_POST['_wpinv_item_price'] ) && get_post_meta( $post->ID, '_wpinv_type', true ) !== 'package' ) {
             update_post_meta( $post_id, '_wpinv_price', wpinv_sanitize_amount( $_POST['_wpinv_item_price'] ) );
         }
         

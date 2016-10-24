@@ -2116,3 +2116,43 @@ function wpinv_invoice_print_payment_info( $invoice ) {
     }
 }
 // add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_print_payment_info', 10, 1 );
+
+function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
+    if ( empty( $note ) ) {
+        return NULL;
+    }
+    
+    if ( is_int( $note ) ) {
+        $note = get_comment( $note );
+    }
+    
+    if ( !( is_object( $note ) && is_a( $note, 'WP_Comment' ) ) ) {
+        return NULL;
+    }
+    
+    $note_classes   = array( 'note' );
+    $note_classes[] = get_comment_meta( $note->comment_ID, '_wpi_customer_note', true ) ? 'customer-note' : '';
+    $note_classes[] = $note->comment_author === __( 'GeoDirectory', 'invoicing' ) ? 'system-note' : '';
+    $note_classes   = apply_filters( 'wpinv_invoice_note_class', array_filter( $note_classes ), $note );
+    $note_classes   = !empty( $note_classes ) ? implode( ' ', $note_classes ) : '';
+    
+    ob_start();
+    ?>
+    <li rel="<?php echo absint( $note->comment_ID ) ; ?>" class="<?php echo esc_attr( $note_classes ); ?>">
+        <div class="note_content">
+            <?php echo wpautop( wptexturize( wp_kses_post( $note->comment_content ) ) ); ?>
+        </div>
+        <p class="meta">
+            <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;<a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
+        </p>
+    </li>
+    <?php
+    $note_content = ob_get_clean();
+    $note_content = apply_filters( 'wpinv_get_invoice_note_line_item', $note_content, $note, $echo );
+    
+    if ( $echo ) {
+        echo $note_content;
+    } else {
+        return $note_content;
+    }
+}
