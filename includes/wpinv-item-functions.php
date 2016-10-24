@@ -173,9 +173,8 @@ function wpinv_item_cpt_singular_name( $item_id ) {
 
 function wpinv_get_item_types() {
     $item_types = array(
-            'custom'    => __( 'Custom', 'invoicing' ),
+            'custom'    => __( 'Standard', 'invoicing' ),
             'fee'       => __( 'Fee', 'invoicing' ),
-            'package'   => __( 'Package', 'invoicing' ),
         );
     return apply_filters( 'wpinv_get_item_types', $item_types );
 }
@@ -554,4 +553,24 @@ function wpinv_get_item_suffix( $item, $html = true ) {
     }
     
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
+}
+
+function wpinv_remove_item( $item = 0 ) {
+    if ( empty( $item ) ) {
+        return NULL;
+    }
+    
+    if ( is_int( $item ) ) {
+        $item = new WPInv_Item( $item );
+    }
+    
+    if ( !( is_object( $item ) && is_a( $item, 'WPInv_Item' ) ) ) {
+        return NULL;
+    }
+    
+    do_action( 'wpinv_pre_delete_item', $item );
+
+    wp_delete_post( $item->ID, true );
+
+    do_action( 'wpinv_post_delete_item', $item );
 }

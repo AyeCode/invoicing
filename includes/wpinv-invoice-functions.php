@@ -209,7 +209,23 @@ function wpinv_get_invoice_notes( $invoice_id = 0, $search = '' ) {
 
     add_action( 'pre_get_comments', 'wpinv_set_invoice_notes', 11 );
 
-    $notes = get_comments( array( 'post_id' => $invoice_id, 'order' => 'ASC', 'search' => $search ) );
+    $notes = get_comments( array( 'post_id' => $invoice_id, 'order' => 'DESC', 'search' => $search ) );
+    
+    apply_filters( 'wpinv_get_invoice_notes', $notes, $invoice_id, $search );
+
+    return $notes;
+}
+
+function wpinv_get_customer_invoice_notes( $invoice_id = 0 ) {
+    if ( empty( $invoice_id ) ) {
+        return false;
+    }
+
+    add_action( 'pre_get_comments', 'wpinv_set_invoice_notes', 11 );
+
+    $notes = get_comments( array( 'post_id' => $invoice_id, 'order' => 'DESC', 'meta_key' => '_wpi_customer_note', 'meta_value' => 1 ) );
+    
+    apply_filters( 'wpinv_get_customer_invoice_notes', $notes, $invoice_id );
 
     return $notes;
 }

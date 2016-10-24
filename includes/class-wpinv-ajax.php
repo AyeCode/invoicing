@@ -101,15 +101,8 @@ class WPInv_Ajax {
         if ( $post_id > 0 ) {
             $note_id = wpinv_insert_payment_note( $post_id, $note, $is_customer_note );
 
-            if ( $note_id > 0 ) {
-                echo '<li rel="' . esc_attr( $note_id ) . '" class="note ';
-                if ( $is_customer_note ) {
-                    echo 'customer-note';
-                }
-                echo '"><div class="note_content">';
-                echo wpautop( wptexturize( $note ) );
-                echo '</div><p class="meta"><a href="#" class="delete_note">'.__( 'Delete note', 'invoicing' ).'</a></p>';
-                echo '</li>';
+            if ( $note_id > 0 && !is_wp_error( $note_id ) ) {
+                wpinv_get_invoice_note_line_item( $note_id );
             }
         }
 

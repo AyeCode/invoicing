@@ -204,7 +204,10 @@ class WPInv_Meta_Box_Items {
         
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
         ?>
-        <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_format_amount( 0 ); ?>" value="<?php echo wpinv_format_amount( $price );?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
+        <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_format_amount( 0 ); ?>" value="<?php echo wpinv_format_amount( $price );?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_package(), true ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
+        <?php if ( $item->is_package() ) { ?>
+        <span class="description"><?php _e( 'GD package item price can be edited only from GD payment manager.', 'invoicing' ); ?></span>
+        <?php } ?>
         </p>
         <p class="wpinv-row-is-recurring">
             <label for="wpinv_is_recurring">
@@ -224,6 +227,7 @@ class WPInv_Meta_Box_Items {
                 ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
                 <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
         </p>
+        <input type="hidden" id="_wpi_current_type" value="<?php echo wpinv_get_item_type( $post->ID ); ?>" />
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
         <?php
     }
@@ -279,7 +283,7 @@ class WPInv_Meta_Box_Items {
                     'class'            => 'gdmbx2-text-medium wpinv-item-type',
                 ) ); ?>
         </p>
-        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Custom: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?><br><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
+        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Standard: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?><br><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );
     }

@@ -1208,3 +1208,12 @@ function wpinv_cart_discount_label( $code, $rate, $echo = true ) {
         return $label;
     }
 }
+
+function wpinv_check_delete_discount( $check, $post, $force_delete ) {
+    if ( $post->post_type == 'wpi_discount' && wpinv_get_discount_uses( $post->ID ) > 0 ) {
+        return true;
+    }
+    
+    return $check;
+}
+add_filter( 'pre_delete_post', 'wpinv_check_delete_discount', 10, 3 );

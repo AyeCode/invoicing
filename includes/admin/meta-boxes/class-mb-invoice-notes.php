@@ -14,19 +14,7 @@ class WPInv_Meta_Box_Notes {
 
         if ( $notes ) {
             foreach( $notes as $note ) {
-                $note_classes = get_comment_meta( $note->comment_ID, 'is_customer_note', true ) ? array( 'customer-note', 'note' ) : array( 'note' );
-                $note_classes = apply_filters( 'wpinv_note_class', $note_classes, $note );
-
-                ?>
-                <li rel="<?php echo absint( $note->comment_ID ) ; ?>" class="<?php echo esc_attr( implode( ' ', $note_classes ) ); ?>">
-                    <div class="note_content">
-                        <?php echo wpautop( wptexturize( wp_kses_post( $note->comment_content ) ) ); ?>
-                    </div>
-                    <p class="meta">
-                        <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;<a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
-                    </p>
-                </li>
-                <?php
+                wpinv_get_invoice_note_line_item( $note );
             }
 
         } else {
@@ -45,7 +33,7 @@ class WPInv_Meta_Box_Notes {
                     <option value=""><?php _e( 'Private note', 'invoicing' ); ?></option>
                     <option value="customer"><?php _e( 'Note to customer', 'invoicing' ); ?></option>
                 </select>
-                <a href="#" class="add_note button"><?php _e( 'Add', 'invoicing' ); ?></a>
+                <a href="#" class="add_note button"><?php _e( 'Add', 'invoicing' ); ?></a> <span class="description"><?php _e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'invoicing' ); ?></span>
             </p>
         </div>
         <?php
