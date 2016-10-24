@@ -34,7 +34,7 @@ function wpinv_delete_discount( $data ) {
     }
 
     $discount_id = $data['discount'];
-    wpinv_remove_discount( $discount_id, true );
+    wpinv_remove_discount( $discount_id );
 }
 add_action( 'wpinv_delete_discount', 'wpinv_delete_discount' );
 
@@ -262,7 +262,7 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
 function wpinv_remove_discount( $discount_id = 0 ) {
     do_action( 'wpinv_pre_delete_discount', $discount_id );
 
-    wp_delete_post( $discount_id );
+    wp_delete_post( $discount_id, true );
 
     do_action( 'wpinv_post_delete_discount', $discount_id );
 }
