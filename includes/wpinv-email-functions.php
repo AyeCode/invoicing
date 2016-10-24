@@ -59,7 +59,7 @@ add_action( 'wpinv_status_failed_to_onhold_notification', 'wpinv_onhold_invoice_
 // Processing invoice email
 add_action( 'wpinv_status_pending_to_processing_notification', 'wpinv_processing_invoice_notification' );
 
-// Completed invoice email
+// Paid invoice email
 add_action( 'wpinv_status_publish_notification', 'wpinv_completed_invoice_notification' );
 
 // Refunded invoice email
@@ -558,6 +558,66 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     return $sent;
 }
 
+function wpinv_user_note_notification( $invoice_id, $args = array() ) {
+    global $wpinv_email_search, $wpinv_email_replace;
+    
+    $email_type = 'user_note';
+    if ( !wpinv_email_is_enabled( $email_type ) ) {
+        return false;
+    }
+    
+    $invoice = wpinv_get_invoice( $invoice_id );
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    if ( !is_email( $recipient ) ) {
+        return false;
+    }
+    
+    $defaults = array(
+        'user_note' => ''
+    );
+
+    $args = wp_parse_args( $args, $defaults );
+        
+    $search                     = array();
+    $search['invoice_number']   = '{invoice_number}';
+    $search['invoice_date']     = '{invoice_date}';
+    $search['name']             = '{name}';
+    $search['customer_note']    = '{customer_note}';
+    
+    $replace                    = array();
+    $replace['invoice_number']  = $invoice->get_number();
+    $replace['invoice_date']    = $invoice->get_invoice_date();
+    $replace['name']            = $invoice->get_user_full_name();
+    $replace['customer_note']   = $args['user_note'];
+    
+    $wpinv_email_search     = $search;
+    $wpinv_email_replace    = $replace;
+    
+    $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
+    $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
+    $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
+    $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
+    
+    $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
+            'invoice'       => $invoice,
+            'email_type'    => $email_type,
+            'email_heading' => $email_heading,
+            'sent_to_admin' => false,
+            'plain_text'    => false,
+            'customer_note' => $args['user_note']
+        ) );
+        
+    $content        = wpinv_email_format_text( $content );
+    
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+        
+    return $sent;
+}
+
 function wpinv_mail_get_from_address() {
     $from_address = apply_filters( 'wpinv_mail_from_address', wpinv_get_option( 'email_from' ) );
     return sanitize_email( $from_address );
@@ -788,7 +848,7 @@ function wpinv_get_emails() {
         'completed_invoice' => array(
             'email_completed_invoice_header' => array(
                 'id'   => 'email_completed_invoice_header',
-                'name' => '<h3>' . __( 'Completed Invoice', 'invoicing' ) . '</h3>',
+                'name' => '<h3>' . __( 'Paid Invoice', 'invoicing' ) . '</h3>',
                 'desc' => __( 'Invoice complete emails are sent to users when their invoices are marked completed and usually indicate that their payment has been done.', 'invoicing' ),
                 'type' => 'header',
             ),
@@ -864,8 +924,8 @@ function wpinv_get_emails() {
         'user_invoice' => array(
             'email_user_invoice_header' => array(
                 'id'   => 'email_user_invoice_header',
-                'name' => '<h3>' . __( 'User Invoice', 'invoicing' ) . '</h3>',
-                'desc' => __( 'User invoice emails can be sent to users containing their invoice information and payment links.', 'invoicing' ),
+                'name' => '<h3>' . __( 'Customer Invoice', 'invoicing' ) . '</h3>',
+                'desc' => __( 'Customer invoice emails can be sent to customers containing their invoice information and payment links.', 'invoicing' ),
                 'type' => 'header',
             ),
             'email_user_invoice_active' => array(
@@ -899,12 +959,11 @@ function wpinv_get_emails() {
                 'std'  => 1
             ),
         ),
-        /*
         'user_note' => array(
             'email_user_note_header' => array(
                 'id'   => 'email_user_note_header',
-                'name' => '<h3>' . __( 'Invoice Note', 'invoicing' ) . '</h3>',
-                'desc' => __( 'User note emails are sent when you add a note to an invoice.', 'invoicing' ),
+                'name' => '<h3>' . __( 'Customer Note', 'invoicing' ) . '</h3>',
+                'desc' => __( 'Customer note emails are sent when you add a note to an invoice.', 'invoicing' ),
                 'type' => 'header',
             ),
             'email_user_note_active' => array(
@@ -913,6 +972,14 @@ function wpinv_get_emails() {
                 'desc' => __( 'Enable this email notification', 'invoicing' ),
                 'type' => 'checkbox',
                 'std'  => 1
+            ),
+            'email_user_note_subject' => array(
+                'id'   => 'email_user_note_subject',
+                'name' => __( 'Subject', 'invoicing' ),
+                'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
+                'type' => 'text',
+                'std'  => __( '[{site_title}] Note added to your invoice #{invoice_number} from {invoice_date}', 'invoicing' ),
+                'size' => 'large'
             ),
             'email_user_note_heading' => array(
                 'id'   => 'email_user_note_heading',
@@ -923,7 +990,6 @@ function wpinv_get_emails() {
                 'size' => 'large'
             ),
         ),
-        */
     );
 
     return apply_filters( 'wpinv_get_emails', $emails );
@@ -1141,3 +1207,39 @@ function wpinv_send_customer_invoice( $data = array() ) {
     exit;
 }
 add_action( 'wpinv_send_invoice', 'wpinv_send_customer_invoice' );
+
+function wpinv_send_customer_note_email( $data ) {
+    $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
+    
+    if ( empty( $invoice_id ) ) {
+        return;
+    }
+    
+    $sent = wpinv_user_note_notification( $invoice_id, $data );
+}
+add_action( 'wpinv_new_customer_note', 'wpinv_send_customer_note_email', 10, 1 );
+
+function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin ) {
+    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_customer_invoice_notes( $invoice->ID ) ) {
+        $date_format = get_option( 'date_format' );
+        $time_format = get_option( 'time_format' );
+        ?>
+        <div id="wpinv-email-notes">
+            <h3 class="wpinv-notes-t"><?php echo apply_filters( 'wpinv_email_invoice_notes_title', __( 'Invoice Notes', 'invoicing' ) ); ?></h3>
+            <ol class="wpinv-notes-lists">
+        <?php
+        foreach ( $invoice_notes as $note ) {
+            $note_time = strtotime( $note->comment_date );
+            ?>
+            <li class="comment wpinv-note">
+            <p class="wpinv-note-date meta"><?php printf( __( '%2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( $date_format, $note_time ), date_i18n( $time_format, $note_time ), $note_time ); ?></p>
+            <div class="wpinv-note-desc description"><?php echo wpautop( wptexturize( $note->comment_content ) ); ?></div>
+            </li>
+            <?php
+        }
+        ?>  </ol>
+        </div>
+        <?php
+    }
+}
+add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );

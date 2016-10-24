@@ -32,7 +32,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-completed">
-            <div class="gdmbx-th"><label><?php _e( 'Date Completed:', 'invoicing' );?></label></div>
+            <div class="gdmbx-th"><label><?php _e( 'Payment Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_completed;?></div>
         </div>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">

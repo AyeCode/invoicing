@@ -4,6 +4,14 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+function wpinv_gd_active() {
+    return (bool)defined( 'GEODIRECTORY_VERSION' );
+}
+
+function wpinv_pm_active() {
+    return (bool)wpinv_gd_active() && (bool)defined( 'GEODIRPAYMENT_VERSION' );
+}
+
 function wpinv_is_gd_post_type( $post_type ) {
     global $gd_posttypes;
     
@@ -33,6 +41,15 @@ function wpinv_geodir_integration() {
     }
 }
 add_action( 'admin_init', 'wpinv_geodir_integration' );
+
+function wpinv_get_gdp_package_type( $item_types ) {
+    if ( wpinv_pm_active() ) {
+        $item_types['package'] = __( 'Package', 'invoicing' );
+    }
+        
+    return $item_types;
+}
+add_filter( 'wpinv_get_item_types', 'wpinv_get_gdp_package_type', 10, 1 );
 
 function wpinv_update_package_item($package_id) {
     return wpinv_merge_gd_package_to_item($package_id, true);
@@ -82,7 +99,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
         return $item;
     }
 
-    $package = empty($package) ? geodir_get_package_info($package_id) : $package;
+    $package = empty($package) ? geodir_get_package_info_by_id($package_id, '') : $package;
 
     if ( empty($package) || !wpinv_is_gd_post_type( $package->post_type ) ) {
         return false;
@@ -857,3 +874,12 @@ function wpinv_wpi_to_gdp_update_status( $invoice_id, $new_status, $old_status )
     geodir_update_invoice_status( $invoice_id, $new_status, $invoice->is_recurring() );
 }
 add_action( 'wpinv_update_status', 'wpinv_wpi_to_gdp_update_status', 999, 3 );
+
+function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
+    $item = wpinv_get_item_by( 'package_id', $gd_package_id );
+    
+    if ( !empty( $item ) ) {
+        wpinv_remove_item( $item );
+    }
+}
+add_action( 'geodir_payment_post_delete_package', 'wpinv_gdp_to_wpi_delete_package', 10, 1 ) ;

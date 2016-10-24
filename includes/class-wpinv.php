@@ -295,6 +295,10 @@ class WPInv_Plugin {
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
+        $localize['hasGD']                      = wpinv_gd_active();;
+        $localize['hasPM']                      = wpinv_pm_active();
+        $localize['emptyInvoice']               = __( 'Add atleast one item to save invoice!', 'invoicing' );
+        $localize['deletePackage']              = __( 'Are you sure? GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }

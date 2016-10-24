@@ -99,9 +99,12 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     } else {
         $invoice->set( 'gateway', $args['gateway'] );
     }
+    
+    $recurring_details = $parent_invoice->get_recurring_details();
 
     // increase the earnings for each item in the subscription
-    $items          = $parent_invoice->get_cart_details();
+    $items = $recurring_details['cart_details'];
+    
     if ( $items ) {        
         $add_items      = array();
         $cart_details   = array();
@@ -122,10 +125,9 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     
     $total = $args['amount'];
     
-    $recurring_totals   = $parent_invoice->get_recurring_totals();
-    $subtotal           = $recurring_totals['subtotal'];
-    $tax                = $recurring_totals['tax'];
-    $discount           = $recurring_totals['discount'];
+    $subtotal           = $recurring_details['subtotal'];
+    $tax                = $recurring_details['tax'];
+    $discount           = $recurring_details['discount'];
     
     if ( $discount > 0 ) {
         $invoice->set( 'discount_code', $parent_invoice->discount_code );
@@ -396,7 +398,7 @@ function wpinv_subscription_payment_desc( $invoice ) {
         $bill_times         = (int)$item->get_recurring_limit();
 
         $initial_total      = wpinv_format_amount( $invoice->get_total() );
-        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_totals( 'total' ) );
+        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_details( 'total' ) );
         $initial_amount     = wpinv_price( $initial_total, $invoice->get_currency() );
         $recurring_amount   = wpinv_price( $recurring_total, $invoice->get_currency() );
         

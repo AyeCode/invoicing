@@ -298,14 +298,14 @@ function wpinv_discount_amount() {
 
 function wpinv_get_invoice_statuses() {
     $invoice_statuses = array(
-        'pending'   => __( 'Pending Payment', 'invoicing' ),
-        'publish'   => __( 'Completed', 'invoicing' ),
-        'processing'   => __( 'Processing', 'invoicing' ),
-        'onhold'    => __( 'On Hold', 'invoicing' ),
-        'refunded'  => __( 'Refunded', 'invoicing' ),
-        'cancelled' => __( 'Cancelled', 'invoicing' ),
-        'failed'    => __( 'Failed', 'invoicing' ),
-        'renewal'    => __( 'Renewal Payment', 'invoicing' )
+        'pending'       => __( 'Pending Payment', 'invoicing' ),
+        'publish'       => __( 'Paid', 'invoicing' ),
+        'processing'    => __( 'Processing', 'invoicing' ),
+        'onhold'        => __( 'On Hold', 'invoicing' ),
+        'refunded'      => __( 'Refunded', 'invoicing' ),
+        'cancelled'     => __( 'Cancelled', 'invoicing' ),
+        'failed'        => __( 'Failed', 'invoicing' ),
+        'renewal'       => __( 'Renewal Payment', 'invoicing' )
     );
 
     return apply_filters( 'wpinv_statuses', $invoice_statuses );

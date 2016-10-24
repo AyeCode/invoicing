@@ -105,9 +105,15 @@ ul.invoice_notes li .note_content:after {
     border-color: #efefef transparent
 }
 ul.invoice_notes li.customer-note .note_content {
-    background: #d7cad2
+    background: #a7cedc
 }
 ul.invoice_notes li.customer-note .note_content:after {
+    border-color: #a7cedc transparent
+}
+ul.invoice_notes li.system-note .note_content {
+    background: #d7cad2;
+}
+ul.invoice_notes li.system-note .note_content:after {
     border-color: #d7cad2 transparent
 }
 .add_note {
@@ -1321,4 +1327,9 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_discount .wp-list-table.widefat .column-status {
     width: 70px;
     text-align: center;
+}
+.post-type-wpi_discount #submitpost #delete-action,
+.post-type-wpi_discount #submitpost #visibility,
+.post-type-wpi_discount #submitpost .misc-pub-curtime {
+    display: none;
 }

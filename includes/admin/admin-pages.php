@@ -113,7 +113,14 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
         $row_actions['activate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'activate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Activate', 'invoicing' ) . '</a>';
     }
 
-    $row_actions['delete'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'delete_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Delete', 'invoicing' ) . '</a>';
+    if ( wpinv_get_discount_uses( $discount->ID ) > 0 ) {
+        if ( isset( $row_actions['delete'] ) ) {
+            unset( $row_actions['delete'] ); // Don't delete used discounts.
+        }
+    } else {
+        $row_actions['delete'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'delete_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Delete', 'invoicing' ) . '</a>';
+    }
+    
 
     $row_actions = apply_filters( 'wpinv_discount_row_actions', $row_actions, $discount );
 
