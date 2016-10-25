@@ -1272,9 +1272,10 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     
     $show_self_cert = "none";
     
-    $cart_total = wpinv_payment_total();
+    $invoice    = wpinv_get_invoice_cart();
+    $cart_total = $invoice->get_total();
     
-    $is_digital = wpinv_vat_rule_is_digital();
+    $is_digital = wpinv_invoice_has_digital_item( $invoice );
 
     // If there's no VAT number
     if ( $is_digital && ( empty( $vat_fields['vat_number'] ) || !$vat_fields['requires_vat'] ) ) {

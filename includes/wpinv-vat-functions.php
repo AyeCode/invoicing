@@ -560,7 +560,43 @@ function wpinv_item_vat_rule( $postID ) {
 }
 
 function wpinv_vat_rule_is_digital( $item_id = 0 ) {
-    return wpinv_item_vat_rule( $item_id ) == 'gidital' ? true : false;
+    return wpinv_item_get_vat_rule( $item_id ) == 'digital' ? true : false;
+}
+
+function wpinv_invoice_has_digital_item( $invoice = 0 ) {
+    if ( !wpinv_allow_vat_rules() ) {
+        return false;
+    }
+    
+    if ( empty( $invoice ) ) {
+        return true;
+    }
+    
+    if ( is_int( $invoice ) ) {
+        $invoice = new WPInv_Invoice( $invoice );
+    }
+    
+    if ( !( is_object( $invoice ) && is_a( $invoice, 'WPInv_Invoice' ) ) ) {
+        return true;
+    }
+    
+    $cart_items  = $invoice->get_cart_details();
+    
+    if ( !empty( $cart_items ) ) {
+        // Are any of the products digital?
+        $item_is_digital = false;
+        foreach ( $cart_items as $key => $item ) {
+            $item_is_digital = wpinv_vat_rule_is_digital( $item['id'] );
+            
+            if ( $item_is_digital ) {
+                break;
+            }
+        }
+    } else {
+        $item_is_digital = true;
+    }
+    
+    return $item_is_digital;
 }
 
 function wpinv_get_vat_number( $vat_number = '', $user_id = 0, $is_valid = false ) {
