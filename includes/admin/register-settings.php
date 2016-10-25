@@ -230,7 +230,7 @@ function wpinv_get_registered_settings() {
                     'invoice_history_page' => array(
                         'id'          => 'invoice_history_page',
                         'name'        => __( 'Invoice History Page', 'invoicing' ),
-                        'desc'        => __( 'This page shows a complete invoice history for the current user', 'invoicing' ),
+                        'desc'        => __( 'This page shows a invoice history for the current user', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
                         'chosen'      => true,
@@ -365,7 +365,7 @@ function wpinv_get_registered_settings() {
                     'disable_paypal_verification' => array(
                         'id'   => 'disable_paypal_verification',
                         'name' => __( 'Disable PayPal IPN Verification', 'invoicing' ),
-                        'desc' => __( 'If payments are not getting marked as complete, then check this box. This forces the site to use a slightly less secure method of verifying purchases.', 'invoicing' ),
+                        'desc' => __( 'If payments are not getting marked as paid, then check this box. This forces the site to use a slightly less secure method of verifying purchases.', 'invoicing' ),
                         'type' => 'checkbox',
                     ),
                 ),*/

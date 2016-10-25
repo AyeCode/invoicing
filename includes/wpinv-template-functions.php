@@ -22,6 +22,16 @@ function wpinv_template_path() {
     return apply_filters( 'wpinv_template_path', 'invoicing/' );
 }
 
+function wpinv_post_class( $classes, $class, $post_id ) {
+    global $pagenow, $typenow;
+
+    if ( $pagenow == 'edit.php' && $typenow == 'wpi_item' && get_post_type( $post_id ) == $typenow && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' ) {
+        $classes[] = 'wpi-gd-package';
+    }
+    return $classes;
+}
+add_filter( 'post_class', 'wpinv_post_class', 10, 3 );
+
 function wpinv_display_invoice_top_bar( $invoice ) {
     if ( empty( $invoice ) ) {
         return;
