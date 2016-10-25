@@ -580,7 +580,7 @@ jQuery(function($) {
             boxes.fadeOut('fast');
         },
         reset: function(config, me, updateTaxes) {
-            config.clearBox();
+            //config.clearBox();
 
             var tax = parseFloat($('#wpinv_checkout_form .wpinv_cart_tax_amount').attr('data-tax'));
             var total = parseFloat($('#wpinv_checkout_form .wpinv_cart_amount').attr('data-total'));
@@ -753,7 +753,7 @@ function wpinv_recalculate_taxes( state ) {
                 texts.html('');
                 var boxes = texts.parents(".wpi-vat-box")
                 boxes.fadeOut('fast'); }
-            , 5000 );
+            , 15000 );
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         jQuery('#wpinv_checkout_cart_wrap').unblock();
