@@ -1260,7 +1260,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
         $selected_country = "GB";
     }
     
-    if ( wpinv_disable_vat_for_same_country() && wpinv_is_base_country( $selected_country ) ) {
+    if ( wpinv_vat_same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
         $ignore_style       = "display:none";
         $disable_vat_fields = true;
         $requires_vat       = false;
