@@ -298,7 +298,8 @@ class WPInv_Plugin {
         $localize['hasGD']                      = wpinv_gd_active();;
         $localize['hasPM']                      = wpinv_pm_active();
         $localize['emptyInvoice']               = __( 'Add atleast one item to save invoice!', 'invoicing' );
-        $localize['deletePackage']              = __( 'Are you sure? GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
+        $localize['deletePackage']              = __( 'GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
+        $localize['deletePackages']             = __( 'GD package items should be deleted from GD payment manager only', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }

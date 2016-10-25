@@ -879,7 +879,7 @@ function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
     $item = wpinv_get_item_by( 'package_id', $gd_package_id );
     
     if ( !empty( $item ) ) {
-        wpinv_remove_item( $item );
+        wpinv_remove_item( $item, true );
     }
 }
 add_action( 'geodir_payment_post_delete_package', 'wpinv_gdp_to_wpi_delete_package', 10, 1 ) ;

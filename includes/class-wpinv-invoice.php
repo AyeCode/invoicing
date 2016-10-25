@@ -219,7 +219,7 @@ final class WPInv_Invoice {
         $invoice = get_post( $this->ID );
 
         if ( 'pending' == $invoice->post_status || 'preapproved' == $invoice->post_status ) {
-            return false; // This invoice was never completed
+            return false; // This invoice was never paid
         }
 
         $date = ( $date = $this->get_meta( '_wpinv_completed_date', true ) ) ? $date : $invoice->modified_date;
@@ -964,7 +964,7 @@ final class WPInv_Invoice {
         if ( empty( $this->ID ) )
             return false;
         
-        if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+        if ( ( is_user_logged_in() && current_user_can( 'manage_options' ) ) || $added_by_user ) {
             $user                 = get_user_by( 'id', get_current_user_id() );
             $comment_author       = $user->display_name;
             $comment_author_email = $user->user_email;
@@ -1301,6 +1301,7 @@ final class WPInv_Invoice {
             
             if ( $has_recurring ) {
                 $cart_subtotal   = 0;
+                $cart_discount   = 0;
                 $cart_tax        = 0;
 
                 foreach ( $this->cart_details as $key => $item ) {

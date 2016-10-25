@@ -549,6 +549,13 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     
+    if ( $sent ) {
+        $note = __( 'Invoice has been emailed to the user.', 'invoicing' );
+    } else {
+        $note = __( 'Fail to send invoice to the user!', 'invoicing' );
+    }
+    $invoice->add_note( $note ); // Add private note.
+    
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
@@ -670,7 +677,7 @@ function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
     remove_filter( 'wp_mail_from_name', 'wpinv_mail_get_from_name' );
     remove_filter( 'wp_mail_content_type', 'wpinv_mail_get_content_type' );
 
-    return true;//$sent;
+    return $sent;
 }
     
 function wpinv_get_emails() {
@@ -849,7 +856,7 @@ function wpinv_get_emails() {
             'email_completed_invoice_header' => array(
                 'id'   => 'email_completed_invoice_header',
                 'name' => '<h3>' . __( 'Paid Invoice', 'invoicing' ) . '</h3>',
-                'desc' => __( 'Invoice complete emails are sent to users when their invoices are marked completed and usually indicate that their payment has been done.', 'invoicing' ),
+                'desc' => __( 'Invoice paid emails are sent to users when their invoices are marked paid and usually indicate that their payment has been done.', 'invoicing' ),
                 'type' => 'header',
             ),
             'email_completed_invoice_active' => array(
@@ -864,7 +871,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Subject', 'invoicing' ),
                 'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
-                'std'  => __( '[{site_title}] Your invoice from {invoice_date} is complete', 'invoicing' ),
+                'std'  => __( '[{site_title}] Your invoice from {invoice_date} has been paid', 'invoicing' ),
                 'size' => 'large'
             ),
             'email_completed_invoice_heading' => array(
@@ -872,7 +879,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Email Heading', 'invoicing' ),
                 'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
-                'std'  => __( 'Your invoice is complete', 'invoicing' ),
+                'std'  => __( 'Your invoice has been paid', 'invoicing' ),
                 'size' => 'large'
             ),
             'email_completed_invoice_admin_bcc' => array(
