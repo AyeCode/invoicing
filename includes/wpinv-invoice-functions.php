@@ -578,10 +578,10 @@ add_action( 'wpinv_update_status', 'wpinv_record_status_change', 100, 3 );
 
 function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
     if ( $old_status == 'publish' || $old_status == 'complete' ) {
-        return; // Make sure that payments are only completed once
+        return; // Make sure that payments are only paid once
     }
 
-    // Make sure the payment completion is only processed when new status is complete
+    // Make sure the payment completion is only processed when new status is paid
     if ( $new_status != 'publish' && $new_status != 'complete' ) {
         return;
     }

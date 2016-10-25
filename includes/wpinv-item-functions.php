@@ -555,7 +555,7 @@ function wpinv_get_item_suffix( $item, $html = true ) {
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
 }
 
-function wpinv_remove_item( $item = 0 ) {
+function wpinv_remove_item( $item = 0, $force_delete = false ) {
     if ( empty( $item ) ) {
         return NULL;
     }
@@ -570,7 +570,32 @@ function wpinv_remove_item( $item = 0 ) {
     
     do_action( 'wpinv_pre_delete_item', $item );
 
-    wp_delete_post( $item->ID, true );
+    wp_delete_post( $item->ID, $force_delete );
 
     do_action( 'wpinv_post_delete_item', $item );
 }
+
+function wpinv_admin_action_delete() {
+    if ( !empty( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == 'wpi_item' && !empty( $_REQUEST['post'] ) && is_array( $_REQUEST['post'] ) ) {
+        $post_ids = array();
+        
+        foreach ( $_REQUEST['post'] as $post_id ) {
+            if ( get_post_meta( $post_id, '_wpinv_type', true ) != 'package' ) {
+                $post_ids[] = $post_id;
+            }
+        }
+        
+        $_REQUEST['post'] = $post_ids;
+    }
+}
+add_action( 'admin_action_trash', 'wpinv_admin_action_delete', -10 );
+add_action( 'admin_action_delete', 'wpinv_admin_action_delete', -10 );
+
+function wpinv_check_delete_item( $check, $post, $force_delete ) {
+    if ( $post->post_type == 'wpi_item' && get_post_meta( $post->ID, '_wpinv_type', true ) === 'package' && !$force_delete ) {
+        return true;
+    }
+    
+    return $check;
+}
+add_filter( 'pre_delete_post', 'wpinv_check_delete_item', 10, 3 );

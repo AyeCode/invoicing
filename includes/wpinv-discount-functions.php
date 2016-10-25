@@ -147,13 +147,19 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
     switch( strtolower( $field ) ) {
 
         case 'code':
+            $meta_query     = array();
+            $meta_query[]   = array(
+                'key'     => '_wpi_discount_code',
+                'value'   => $value,
+                'compare' => 'LIKE'
+            );
+            
             $discount = wpinv_get_discounts( array(
-                'meta_key'       => '_wpi_discount_code',
-                'meta_value'     => $value,
                 'posts_per_page' => 1,
-                'post_status'    => 'any'
+                'post_status'    => 'any',
+                'meta_query'     => $meta_query,
             ) );
-
+            
             if( $discount ) {
                 $discount = $discount[0];
             }
@@ -651,6 +657,7 @@ function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
 
     if ( empty( $code_id ) ) {
         $code_id = wpinv_get_discount_id_by_code( $code );
+        
         if( empty( $code_id ) ) {
             return false; // No discount was found
         }
@@ -659,61 +666,35 @@ function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
     if ( wpinv_discount_is_single_use( $code_id ) ) {
         $payments = array();
 
-        /*if (  WPInv()->customers->installed() ) {
-            $by_user_id = is_email( $user ) ? false : true;
-            $customer = new WPInv_Customer( $user, $by_user_id );
+        $user_id = 0;
+        if ( is_int( $user ) ) {
+            $user_id = $user;
+        } else if ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
+            $user_id = $user_data->ID;
+        } else if ( $user_data = get_user_by( 'login', $user ) ) {
+            $user_id = $user_data->ID;
+        }
 
-            $payments = explode( ',', $customer->payment_ids );
-        } else {*/
-            $user_found = false;
-
-            if ( is_email( $user ) ) {
-                $user_found = true; // All we need is the email
-                $key        = 'wpinv_payment_user_email';
-                $value      = $user;
-            } else {
-                $user_data = get_user_by( 'login', $user );
-
-                if ( $user_data ) {
-                    $user_found = true;
-                    $key        = '_wpinv_user_id';
-                    $value      = $user_data->ID;
-                }
-            }
-
-            if ( $user_found ) {
-                $query_args = array(
-                    'post_type'       => 'wpi_invoice',
-                    'meta_query'      => array(
-                        array(
-                            'key'     => $key,
-                            'value'   => $value,
-                            'compare' => '='
-                        )
-                    ),
-                    'fields'          => 'ids'
-                );
-
-                $payments = get_posts( $query_args ); // Get all payments with matching email
-            }
-        //}
+        if ( !$user_id ) {
+            $query    = array( 'user' => $user_id, 'limit' => false );
+            $payments = wpinv_get_invoices( $query ); // Get all payments with matching email
+        }
 
         if ( $payments ) {
             foreach ( $payments as $payment ) {
-                $payment = new WPInv_Invoice( $payment );
-
-                if( empty( $payment->discounts ) ) {
+                if ( $payment->has_status( array( 'cancelled', 'failed' ) ) ) {
                     continue;
                 }
 
-                if( in_array( $payment->status, array( 'cancelled', 'failed' ) ) ) {
+                $discounts = $payment->get_discounts( true );
+                if ( empty( $discounts ) ) {
                     continue;
                 }
 
-                $discounts = explode( ',', $payment->discounts );
+                $discounts = $discounts && !is_array( $discounts ) ? explode( ',', $discounts ) : $discounts;
 
-                if( is_array( $discounts ) ) {
-                    if( in_array( strtolower( $code ), $discounts ) ) {
+                if ( !empty( $discounts ) && is_array( $discounts ) ) {
+                    if ( in_array( strtolower( $code ), array_map( 'strtolower', $discounts ) ) ) {
                         wpinv_set_error( 'wpinv-discount-error', __( 'This discount has already been redeemed.', 'invoicing' ) );
                         $return = true;
                         break;

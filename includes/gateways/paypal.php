@@ -383,7 +383,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 		wpinv_process_paypal_refund( $data, $invoice_id );
 	} else {
 		if ( get_post_status( $invoice_id ) == 'publish' ) {
-			return; // Only complete payments once
+			return; // Only paid payments once
 		}
 
 		// Retrieve the total purchase amount (before PayPal)

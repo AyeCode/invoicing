@@ -2023,7 +2023,7 @@ function wpinv_invoice_show_vat_info( $invoice ) {
     <?php
     }
 }
-add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_show_vat_info', 11, 1 );
+//add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_invoice_show_vat_info', 11, 1 );
 
 function wpinv_invoice_show_vat_notice( $invoice ) {
     if ( empty( $invoice ) ) {
@@ -2037,9 +2037,9 @@ function wpinv_invoice_show_vat_notice( $invoice ) {
     <div class="row wpinv-vat-notice">
         <div class="col-sm-12">
             <?php if ( $label ) { ?>
-            <label><?php echo __( $label, 'invoicing' ); ?> </label>
+            <strong><?php _e( $label, 'invoicing' ); ?></strong>
             <?php } if ( $notice ) { ?>
-            <?php echo __( $notice, 'invoicing' ); ?>
+            <?php echo wpautop( wptexturize( __( $notice, 'invoicing' ) ) ) ?>
             <?php } ?>
         </div>
     </div>
