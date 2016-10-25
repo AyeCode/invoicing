@@ -436,7 +436,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
     
     $rate = isset( $wpinv_options['tax_rate'] ) ? (float)$wpinv_options['tax_rate'] : ( $requires_vat && isset( $wpinv_options['vat_eu_states'] ) ? $wpinv_options['vat_eu_states'] : 0 );
       
-    if ( wpinv_disable_vat_for_same_country() && wpinv_is_base_country( $country ) ) { // Disable VAT to same country
+    if ( wpinv_vat_same_country_rule() == 'no' && wpinv_is_base_country( $country ) ) { // Disable VAT to same country
         $rate = 0;
     } else if ( $requires_vat ) { // If VAT is not required return the default tax rate
         // OK, VAT is required so see if there is a VAT number
@@ -452,25 +452,23 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         // If there is a VAT number, the rate is zero
         // Grab the country either from the POST array or
         // use the original country
-
-        $base_country = wpinv_get_default_country();
-        
-        if ( $base_country === 'UK' ) {
-            $base_country = 'GB';
-        }
         if ( $country == 'UK' ) {
             $country = 'GB';
         }
 
-        $rate = wpinv_lookup_rate( $country, $state, $rate, $class ); // Fix if there are no tax rated and you try to pay an invoice it does not add the fallback tax rate
+        if ( !empty( $vat_number ) ) {
+            $rate = 0;
+        } else {
+            $rate = wpinv_lookup_rate( $country, $state, $rate, $class ); // Fix if there are no tax rated and you try to pay an invoice it does not add the fallback tax rate
+        }
 
         // Otherwise work out what rate to use
         // Case 1: It's a phyical item sold to a consumer
         if ( empty( $vat_number ) && !$is_digital ) {
             // If the consumer is in the same country as the shop, charge VAT at the rate in the shop's country
             // Otherwise zero
-            if ( $country == $base_country ) {
-                $rate = wpinv_lookup_rate( $base_country, null, $rate, $class );
+            if ( wpinv_is_base_country( $country ) ) {
+                $rate = wpinv_lookup_rate( $country, null, $rate, $class );
             } else {
                 // Default to the VAT default value.
                 // Case 1a: There's no billing country so use the the default VAT rate if it is available
@@ -482,7 +480,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
             }
         }
         // Case 2: There is no VAT number or its a company sale in the base country
-        else if ( empty( $vat_number ) || ( wpinv_force_vat_for_same_country() && $country == $base_country ) ) {
+        else if ( empty( $vat_number ) || ( wpinv_vat_same_country_rule() == 'always' && wpinv_is_base_country( $country ) ) ) {
             // Get here if this is is a digital item and there is no VAT number or there is a
             // VAT number but VAT has to be charged because the customer is in the same country
             // Default to the VAT default value.
@@ -648,16 +646,10 @@ function wpinv_lookup_rate( $country, $state, $rate, $class ) {
     return $rate;
 }
 
-function wpinv_force_vat_for_same_country() {
+function wpinv_vat_same_country_rule() {
     global $wpinv_options;
 
-    return	isset( $wpinv_options['vat_same_country'] ) && $wpinv_options['vat_same_country'];
-}
-
-function wpinv_disable_vat_for_same_country() {
-    global $wpinv_options;
-
-    return isset( $wpinv_options['disable_vat_same_country'] ) && $wpinv_options['disable_vat_same_country'];
+    return isset( $wpinv_options['vat_same_country_rule'] ) ? $wpinv_options['vat_same_country_rule'] : '';
 }
 
 function wpinv_is_base_country( $country ) {
@@ -809,7 +801,7 @@ function wpinv_vat_enqueue_vat_scripts() {
     $vars['isFront'] = is_admin() ? false : true;
     $vars['checkoutNonce'] = wp_create_nonce( 'wpinv_checkout_nonce' );
     $vars['baseCountry'] = wpinv_get_default_country();
-    $vars['disableVATSameCountry'] = wpinv_disable_vat_for_same_country();
+    $vars['disableVATSameCountry'] = ( wpinv_vat_same_country_rule() == 'no' ? true : false );
     
     wp_enqueue_script( 'wpinv-vat-validation-script' );
     wp_enqueue_script( 'wpinv-vat-script' );
@@ -946,27 +938,19 @@ function wpinv_settings_vat_settings( $settings ) {
             'desc' => __( 'Check this option if you do not want VAT numbers to be checked to have a correct format (not recommended). Each EU member state has its own format for a VAT number.<br>While we try to make sure the format rules are respected it is possible that a specific rule is not respected so a correct VAT number is not validated. If you encounter this situation, use this option to prevent simple checks.', 'invoicing' ),
             'type' => 'checkbox'
         );
-        /*
-        $vat_settings['vat_email_receipt'] = array(
-            'id' => 'vat_email_receipt',
-            'name' => __( 'Enable sending the receipt as an email', 'invoicing' ),
-            'desc' => __( 'Check this option if you want the email receipt message body to be the purchase confirmation.', 'invoicing' ),
-            'type' => 'checkbox'
-        );
-        */
         
-        $vat_settings['disable_vat_same_country'] = array(
-            'id' => 'disable_vat_same_country',
-            'name' => __('Disable VAT to same country?', 'invoicing' ),
-            'desc' => __('Check this option if you want disable VAT charge if sales are in the same country as the base country.', 'invoicing' ),
-            'type' => 'checkbox'
-        );
-
-        $vat_settings['vat_same_country'] = array(
-            'id' => 'vat_same_country',
-            'name' => __('Always apply VAT in same country', 'invoicing' ),
-            'desc' => __('Check this option if you want VAT to always be added if sales are in the same country as the base country.', 'invoicing' ),
-            'type' => 'checkbox'
+        $vat_settings['vat_same_country_rule'] = array(
+            'id'          => 'vat_same_country_rule',
+            'name'        => __( 'Same country rule', 'invoicing' ),
+            'desc'        => __( 'Select how you want handle VAT charge if sales are in the same country as the base country.', 'invoicing' ),
+            'type'        => 'select',
+            'options'     => array(
+                ''          => __( 'Normal', 'invoicing' ),
+                'no'        => __( 'No VAT', 'invoicing' ),
+                'always'    => __( 'Always apply VAT', 'invoicing' ),
+            ),
+            'placeholder' => __( 'Select a option', 'invoicing' ),
+            'std'         => ''
         );
         
         $vat_settings['vat_disable_fields'] = array(
