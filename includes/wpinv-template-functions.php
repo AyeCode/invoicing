@@ -1277,7 +1277,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     $is_digital = wpinv_vat_rule_is_digital();
 
     // If there's no VAT number
-    if ( $is_digital && empty( $vat_fields['vat_number'] ) || !$vat_fields['requires_vat'] ) {
+    if ( $is_digital && ( empty( $vat_fields['vat_number'] ) || !$vat_fields['requires_vat'] ) ) {
         if ( $vat_fields['ip_country_code'] != $vat_fields['selected_country'] ) {
             $show_self_cert = "block";
         }
