@@ -181,6 +181,8 @@ class WPInv_Plugin {
         $localize['decimal_sep']          = wpinv_decimal_seperator();
         $localize['decimals']             = wpinv_decimals();
         
+        $localize = apply_filters( 'wpinv_front_js_localize', $localize );
+        
         wp_enqueue_script( 'jquery-blockui' );
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );

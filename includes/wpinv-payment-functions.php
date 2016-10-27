@@ -79,7 +79,7 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     $invoice->set( 'key', $parent_invoice->get_key() );
     
     $invoice->set( 'ip', $parent_invoice->ip );
-    ///$invoice->set( 'user_id', $parent_invoice->get_user_id() );
+    $invoice->set( 'user_id', $parent_invoice->get_user_id() );
     $invoice->set( 'first_name', $parent_invoice->get_first_name() );
     $invoice->set( 'last_name', $parent_invoice->get_last_name() );
     ///$invoice->set( 'email', $parent_invoice->get_email() );
@@ -416,3 +416,10 @@ function wpinv_subscription_payment_desc( $invoice ) {
     
     return apply_filters( 'wpinv_subscription_payment_desc', $description, $invoice );
 }
+
+function wpinv_recurring_send_payment_failed( $invoice ) {
+    if ( !empty( $invoice->ID ) ) {
+        wpinv_failed_invoice_notification( $invoice->ID );
+    }
+}
+add_action( 'wpinv_recurring_payment_failed', 'wpinv_recurring_send_payment_failed', 10, 1 );
