@@ -8,7 +8,8 @@ $invoice            = wpinv_get_invoice_cart();
 $cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
-$tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl.)', 'invoicing' ) : __( '(Tax Excl.)', 'invoicing' ) ) : '';
+$tax_label          = wpinv_tax_label();
+$tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
 ?>
 <table id="wpinv_checkout_cart" class="table table-bordered table-hover">
     <thead>
@@ -20,9 +21,9 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
             <th class="wpinv_cart_item_qty text-right"><?php _e( 'Qty', 'invoicing' ); ?></th>
             <?php } ?>
             <?php if ( $use_taxes ) { ?>
-            <th class="wpinv_cart_item_tax text-right"><?php echo wp_sprintf( __( 'Tax %s', 'invoicing' ), '<span class="normal small">(%)</span>' ); ?></th>
+            <th class="wpinv_cart_item_tax text-right"><?php echo $tax_label . ' <span class="normal small">(%)</span>'; ?></th>
             <?php } ?>
-            <th class="wpinv_cart_item_subtotal text-right"><?php echo __( 'Item Total', 'invoicing' ) . ' <span class="normal small">' . $tax_label . '<span>'; ?></th>
+            <th class="wpinv_cart_item_subtotal text-right"><?php echo __( 'Item Total', 'invoicing' ) . ' <span class="normal small">' . $tax_title . '<span>'; ?></th>
             <?php do_action( 'wpinv_checkout_table_header_last' ); ?>
         </tr>
     </thead>
@@ -120,7 +121,7 @@ $tax_label          = $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl
             <tr class="wpinv_cart_footer_row wpinv_cart_tax_row"<?php if( !wpinv_is_cart_taxed() ) echo ' style="display:none;"'; ?>>
                 <?php do_action( 'wpinv_checkout_table_tax_first' ); ?>
                 <td colspan="<?php echo ( $cart_columns - 1 ); ?>" class="wpinv_cart_tax_label text-right">
-                    <strong><?php _e( 'Tax', 'invoicing' ); ?>:</strong>
+                    <strong><?php echo $tax_label; ?>:</strong>
                 </td>
                 <td class="wpinv_cart_tax text-right">
                     <span class="wpinv_cart_tax_amount" data-tax="<?php echo wpinv_get_cart_tax( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_tax( $cart_items ) ); ?></span>
