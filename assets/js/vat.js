@@ -12,11 +12,15 @@ jQuery(function($) {
         //      the user's billing address is in the same EU state; or 
         //      the user is in another EU state but has entered a VAT number; or
         //      the user's IP address outside the EU and the billing address is outside the EU
-        ip_country .css('display', 'none'); // Assume the prompt is not required
+        ip_country.css('display', 'none'); // Assume the prompt is not required
         if (WPInv_VAT_Vars.Apply2015Rules) {
             var buyer_and_billing_outside_eu = !vat_state && states.indexOf(ip_country.attr('value')) === -1;
-            var no_vat_number = $('#wpinv_vat_number').val().trim().length === 0;
-            var billing_and_ip_countries_same = taxdata.postdata.billing_country === ip_country.attr('value');
+            var no_vat_number = $('#wpinv_vat_number').val().trim().length === 0; 
+            var billing_and_ip_countries_same = taxdata.postdata.country === ip_country.attr('value');
+            
+            if (!$('#wpi_vat_info').is(':visible') && !billing_and_ip_countries_same) {
+                //no_vat_number = true;
+            }
 
             // If the billing address or the buyer is in the EU
             if (!buyer_and_billing_outside_eu && no_vat_number && !billing_and_ip_countries_same) {
@@ -32,7 +36,7 @@ jQuery(function($) {
             var me = this;
         },
         taxes: function(config) {
-            var has_vat = $('#wpi-vat-details').is(':visible');
+            var has_vat = $('#wpi_vat_info').is(':visible');
             var eu_states = WPInv_VAT.getEUStates();
             
             $('body').bind("wpinv_taxes_recalculated", function(event, taxdata) {
@@ -49,12 +53,15 @@ jQuery(function($) {
                 // Get the VAT state
                 var states = eu_states;
                 var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
-                if ( vat_state && WPInv_VAT_Vars.disableVATSameCountry && ( wpinv_is_base_country(taxdata.postdata.country) || wpinv_is_base_country(taxdata.postdata.country) ) ) {
+                if ( vat_state && WPInv_VAT_Vars.disableVATSameCountry && ( wpinv_is_base_country(taxdata.postdata.country) || wpinv_is_base_country(taxdata.postdata.wpinv_country) ) ) {
                     vat_state = false;
                 }
 
                 // Find the fieldset to make it visible as appropriate
-                var vat_info = $('#wpi-vat-details');
+                var vat_info = $('#wpi_vat_info');
+                if (vat_state) {
+                    vat_info.parent('.wpi-vat-details').show();
+                }
                 vat_info.css('display', vat_state ? "block" : "none");
                 
                 // Find the hidden field
@@ -69,8 +76,13 @@ jQuery(function($) {
                     return;
                 }
                 has_vat = vat_state;
-                console.log('72 : wpinv_recalculate_taxes()');
                 wpinv_recalculate_taxes();
+            });
+            
+            $('.wpi_vat_link').on('click', function(e) {
+                e.preventDefault();
+                $(e.currentTarget).parent().fadeOut('fast');
+                $('#wpi_vat_fields').fadeIn('slow');
             });
             
             // Insert new tax rate row
@@ -440,22 +452,23 @@ jQuery(function($) {
                             }
                         }
                         
+                        me.removeAttr('disabled');
                         if (validated) {
-                            me.removeAttr('disabled').hide();
-                            $('#wpinv_vat_reset').show();
+                            if (number.length === 0) {
+                            } else {
+                                me.hide();
+                                $('#wpinv_vat_reset').show();
+                            }
                             $('.wpinv-vat-stat font').html(message ? message : WPInv_VAT_Vars.VatValidated);
                             $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-1');
                         } else {
-                            me.removeAttr('disabled');
                             $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                             $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
                         }
-                        
                         // New for 2015 rule support
                         $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
 
                         config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
-                        console.log('457 : wpinv_recalculate_taxes()');
                         wpinv_recalculate_taxes();
                         return;
                     })
@@ -589,7 +602,7 @@ jQuery(function($) {
             var countryEl = edd_cc_addressEl.find('#wpinv_country').val();
 
             if (total === "0") {
-                $('.wpi-vat-details').hide();
+                $('#wpi_vat_info').hide();
                 $('#wpinv_vat_number_valid').val(1);
                 return;
             }
@@ -599,7 +612,8 @@ jQuery(function($) {
                 window.location.reload()
             }
 
-            $('.wpi-vat-details').show();
+            $('#wpi_vat_info').parent('.wpi-vat-details').show();
+            $('#wpi_vat_info').show();
 
             if (!updateTaxes) {
                 return;
@@ -647,11 +661,10 @@ jQuery(function($) {
                 if (json.success) {
                     $('#wpinv_company_original').val(json.data.company);
                     $('#wpinv_vat_number_original').val(json.data.number);
-                    $('#wpinv_company').val("");
-                    $('#wpinv_vat_number').val("");
+                    $('#wpinv_company').val(json.data.company); // TODO
+                    $('#wpinv_vat_number').val(json.data.number); // TODO
 
                     if (updateTaxes) {
-                        console.log('652 : wpinv_recalculate_taxes()');
                         wpinv_recalculate_taxes();
                     }
 

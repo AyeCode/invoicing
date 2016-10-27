@@ -1202,44 +1202,49 @@ function wpinv_checkout_billing_details() {
 }
 
 function wpinv_checkout_vat_fields( $billing_details ) {
-    global $wpi_session, $wpinv_options;
+    global $wpi_session, $wpinv_options, $wpi_country, $wpi_requires_vat;
+    
+    $invoice        = wpinv_get_invoice_cart();
+    $wpi_country    = $invoice->country;
     
     // Only display this field if VAT is required.
     // The company name will be collected with the VAT
     // number if VAT is being collected.
-    $requires_vat = apply_filters( 'wpinv_requires_vat', 0, false );
+    $requires_vat       = apply_filters( 'wpinv_requires_vat', 0, false );
+    $wpi_requires_vat   = $requires_vat;
     
-    $total = 1;
-    if ( $total == 0 ) {
+    $total      = $invoice->get_total();
+    if ( !$total > 0 ) {
         $requires_vat = false;
     }
     
     $company    = is_user_logged_in() ? wpinv_user_company() : '';
     $vat_number = wpinv_get_vat_number();
     
-    $valid = wpinv_get_vat_number( '', 0, true ) ? true : false; // True
+    $valid = $vat_number ? wpinv_get_vat_number( '', 0, true ) : 1;// ? true : false; // True TODO
     $vat_info = $wpi_session->get( 'user_vat_info' );
-    
+
     if ( is_array( $vat_info ) ) {
         $company = isset( $vat_info['company'] ) ? $vat_info['company'] : "";
         $vat_number = isset( $vat_info['number'] ) ? $vat_info['number'] : "";
         $valid = isset( $vat_info['valid'] ) ? $vat_info['valid'] : false;
     }
     
-    $empty = empty( $vat_number );
+    $empty      = empty( $vat_number );
+    $tax_label  = __( wpinv_owner_get_vat_name(), 'invoicing' );
 
     $validate_button_css    = "style='display:none;'";
     $reset_button_css       = "style='display:none;'";
     if ( !$empty && $valid ) {
-        $vat_vailidated_text    = __( 'VAT number validated', 'invoicing' );
+        $vat_vailidated_text    = wp_sprintf( __( '%s number validated', 'invoicing' ), $tax_label );
         $vat_vailidated_class   = 'wpinv-vat-stat-1';
         $reset_button_css       = "";
     } else if ( !$empty && !$valid ) {
-        $vat_vailidated_text    = __( 'VAT number not validated', 'invoicing' );
+        $vat_vailidated_text    = wp_sprintf( __( '%s number not validated', 'invoicing' ), $tax_label );
         $vat_vailidated_class   = 'wpinv-vat-stat-0';
         $validate_button_css    = "";
     } else {
-        $vat_vailidated_text    = __( 'VAT number not given', 'invoicing' );
+        $vat_vailidated_text    = wp_sprintf( __( '%s number not given', 'invoicing' ), $tax_label );
         $vat_vailidated_class   = 'wpinv-vat-stat-0';
         $validate_button_css    = "";
     }
@@ -1247,10 +1252,16 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     $disable_vat_fields = wpinv_disable_vat_fields();
 
     $ignore_style   = $requires_vat && !$disable_vat_fields ? "" : "display:none";
+    $link_style     = $empty ? '' : 'display:none';
+    $fields_style   = $empty ? 'display:none' : '';
 
     $ip_country_code = wpinv_get_ip_country();
     
-    $selected_country = apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : wpinv_get_default_country() );
+    if ( $invoice->country ) {
+        $selected_country = $invoice->country;
+    } else {
+        $selected_country = apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : wpinv_get_default_country() );
+    }
 
     if ( $ip_country_code == "UK" ) {
         $ip_country_code = "GB";
@@ -1268,64 +1279,70 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     
     $ip_address = wpinv_get_ip();
 
-    $vat_fields = compact( 'company', 'vat_number', 'valid', 'requires_vat', 'ignore_style', 'validate_button_css', 'reset_button_css', 'validated_text_css', 'not_validated_text_css', 'not_given_text_css', 'ip_country_code', 'selected_country', 'ip_address', 'disable_vat_fields' );
+    $wpi_vat_fields = compact( 'company', 'vat_number', 'valid', 'requires_vat', 'ignore_style', 'link_style', 'fields_style', 'validate_button_css', 'reset_button_css', 'validated_text_css', 'not_validated_text_css', 'not_given_text_css', 'ip_country_code', 'selected_country', 'ip_address', 'disable_vat_fields' );
     
     $show_self_cert = "none";
     
-    $cart_total = wpinv_payment_total();
-    
-    $is_digital = wpinv_vat_rule_is_digital();
+    $is_digital = wpinv_invoice_has_digital_item( $invoice );
 
     // If there's no VAT number
-    if ( $is_digital && ( empty( $vat_fields['vat_number'] ) || !$vat_fields['requires_vat'] ) ) {
-        if ( $vat_fields['ip_country_code'] != $vat_fields['selected_country'] ) {
+    if ( $is_digital && ( empty( $wpi_vat_fields['vat_number'] ) || !$wpi_vat_fields['requires_vat'] ) ) {
+        if ( $wpi_vat_fields['ip_country_code'] != $wpi_vat_fields['selected_country'] ) {
             $show_self_cert = "block";
         }
     }
     
     $page = '';
     if ( empty( $wpinv_options['vat_disable_ip_address_field'] ) ) {
-        $page = admin_url( 'admin-ajax.php?action=wpinv_ip_map_location&ip=' . $vat_fields['ip_address'] );
+        $page = admin_url( 'admin-ajax.php?action=wpinv_ip_map_location&ip=' . $wpi_vat_fields['ip_address'] );
     }
-    
+
     ?>
-    <div id="wpi-vat-details" class="wpi-vat-details clearfix panel panel-default" style="<?php echo $vat_fields['ignore_style']; ?>">
-        <div class="panel-heading"><h3 class="panel-title"><?php _e( 'VAT Details', 'invoicing' );?></h3></div>
-        <div id="wpinv-fields-box" class="panel-body">
-            <p class="wpi-cart-field wpi-col2 wpi-colf">
-                <label for="wpinv_company" class="wpi-label"><?php _e( 'Company Name', 'invoicing' );?></label>
-                <?php
-                echo wpinv_html_text( array(
-                        'id'            => 'wpinv_company',
-                        'name'          => 'wpinv_company',
-                        'value'         => $vat_fields['company'],
-                        'class'         => 'wpi-input form-control',
-                        'placeholder'   => __( 'Company name', 'invoicing' ),
-                    ) );
-                ?>
-                <input type="hidden" id="wpinv_company_original" name="wpinv_company_original" value="<?php echo esc_attr( $vat_fields['company'] ); ?>" />
-            </p>
-            <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-vat">
-                <label for="wpinv_vat_number" class="wpi-label"><?php _e( 'Vat Number', 'invoicing' );?></label>
-                <span id="wpinv_vat_number-wrap">
-                    <label for="wpinv_vat_number" class="wpinv-label"></label>
-                    <input type="text" class="wpi-input form-control" placeholder="<?php echo esc_attr__( 'Vat number', 'invoicing' );?>" value="<?php esc_attr_e( $vat_fields['vat_number'] );?>" id="wpinv_vat_number" name="wpinv_vat_number">
-                    <span class="wpinv-vat-stat <?php echo $vat_vailidated_class;?>"><i class="fa"></i>&nbsp;<font><?php echo $vat_vailidated_text;?></font></span>
-                </span>
-            </p>
-            <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-actions">
-                <input type="button" id="wpinv_vat_validate" class="<?php echo apply_filters('wpinv_button_style','button wpinv-vat-validate'); ?> btn btn-success" <?php echo $vat_fields['validate_button_css']; ?> value="<?php echo __("Validate VAT Number", 'invoicing'); ?>"/>
-                <input type="button" id="wpinv_vat_reset" class="<?php echo apply_filters('wpinv_button_style','button wpinv-vat-reset'); ?> btn btn-secondary" <?php echo $vat_fields['reset_button_css']; ?> value="<?php echo __("Reset", 'invoicing'); ?>"/>
-                <span class="wpi-vat-box wpi-vat-box-info"><span id="text"></span></span>
-                <span class="wpi-vat-box wpi-vat-box-error"><span id="text"></span></span>
-                <input type="hidden" id="wpinv_vat_number_valid" name="wpinv_vat_number_valid" value="<?php echo $vat_fields['valid'];?>" />
-                <input type="hidden" id="wpinv_vat_number_original" name="wpinv_vat_number_original" value="<?php echo $vat_fields['vat_number'];?>" />
-                <input type="hidden" id="wpinv_vat_ignore" name="wpinv_vat_ignore" value="<?php echo $vat_fields['requires_vat'] ? "0" : "1"; ?>" />
-                <input type="hidden" name="wpinv_wp_nonce" value="<?php echo wp_create_nonce( 'validate_vat_number' ) ?>" />
-            </p>
+    <div id="wpi-vat-details" class="wpi-vat-details clearfix" style="<?php echo $wpi_vat_fields['ignore_style']; ?>">
+        <div id="wpi_vat_info" class="clearfix panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title"><?php echo wp_sprintf( __( '%s Details', 'invoicing' ), $tax_label );?></h3></div>
+            <div id="wpinv-fields-box" class="panel-body">
+                <p id="wpi_show_vat_info" style="<?php echo $wpi_vat_fields['link_style']; ?>">
+                    <?php echo wp_sprintf( __( 'You can exclude sales tax if your business has a registered %s number.', 'invoicing' ), $tax_label ); ?>
+                    <a class="wpi_vat_link" href="#wpi_vat_fields"><?php echo wp_sprintf( __( 'Click here to enter %s details.', 'invoicing' ), $tax_label ); ?></a>
+                </p>
+                <div id="wpi_vat_fields" class="wpi_vat_info" style="<?php echo $wpi_vat_fields['fields_style']; ?>">
+                    <p class="wpi-cart-field wpi-col2 wpi-colf">
+                        <label for="wpinv_company" class="wpi-label"><?php _e( 'Company Name', 'invoicing' );?></label>
+                        <?php
+                        echo wpinv_html_text( array(
+                                'id'            => 'wpinv_company',
+                                'name'          => 'wpinv_company',
+                                'value'         => $wpi_vat_fields['company'],
+                                'class'         => 'wpi-input form-control',
+                                'placeholder'   => __( 'Company name', 'invoicing' ),
+                            ) );
+                        ?>
+                        <input type="hidden" id="wpinv_company_original" name="wpinv_company_original" value="<?php echo esc_attr( $wpi_vat_fields['company'] ); ?>" />
+                    </p>
+                    <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-vat">
+                        <label for="wpinv_vat_number" class="wpi-label"><?php echo wp_sprintf( __( '%s Number', 'invoicing' ), $tax_label );?></label>
+                        <span id="wpinv_vat_number-wrap">
+                            <label for="wpinv_vat_number" class="wpinv-label"></label>
+                            <input type="text" class="wpi-input form-control" placeholder="<?php echo esc_attr( wp_sprintf( __( '%s number', 'invoicing' ), $tax_label ) );?>" value="<?php esc_attr_e( $wpi_vat_fields['vat_number'] );?>" id="wpinv_vat_number" name="wpinv_vat_number">
+                            <span class="wpinv-vat-stat <?php echo $vat_vailidated_class;?>"><i class="fa"></i>&nbsp;<font><?php echo $vat_vailidated_text;?></font></span>
+                        </span>
+                    </p>
+                    <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-actions">
+                        <input type="button" id="wpinv_vat_validate" class="<?php echo apply_filters('wpinv_button_style','button wpinv-vat-validate'); ?> btn btn-success" <?php echo $wpi_vat_fields['validate_button_css']; ?> value="<?php echo wp_sprintf( __("Validate %s Number", 'invoicing'), $tax_label ); ?>"/>
+                        <input type="button" id="wpinv_vat_reset" class="<?php echo apply_filters('wpinv_button_style','button wpinv-vat-reset'); ?> btn btn-secondary" <?php echo $wpi_vat_fields['reset_button_css']; ?> value="<?php echo __("Reset", 'invoicing'); ?>"/>
+                        <span class="wpi-vat-box wpi-vat-box-info"><span id="text"></span></span>
+                        <span class="wpi-vat-box wpi-vat-box-error"><span id="text"></span></span>
+                        <input type="hidden" id="wpinv_vat_number_valid" name="wpinv_vat_number_valid" value="<?php echo $wpi_vat_fields['valid'];?>" />
+                        <input type="hidden" id="wpinv_vat_number_original" name="wpinv_vat_number_original" value="<?php echo $wpi_vat_fields['vat_number'];?>" />
+                        <input type="hidden" id="wpinv_vat_ignore" name="wpinv_vat_ignore" value="<?php echo $wpi_vat_fields['requires_vat'] ? "0" : "1"; ?>" />
+                        <input type="hidden" name="wpinv_wp_nonce" value="<?php echo wp_create_nonce( 'validate_vat_number' ) ?>" />
+                    </p>
+                </div>
+            </div>
         </div>
-    </fieldset>
-    <fieldset id="wpi-ip-country" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $vat_fields['ip_country_code']; ?>" style="display: <?php echo $show_self_cert; ?>;">
+    </div>
+    <div id="wpi-ip-country" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $wpi_vat_fields['ip_country_code']; ?>" style="display: <?php echo $show_self_cert; ?>;">
         <div id="wpinv-fields-box" class="panel-body">
             <span id="wpinv_vat_self_cert-wrap">
                 <input type="checkbox" id="wpinv_vat_self_cert" name="wpinv_vat_self_cert">
@@ -1335,7 +1352,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     </div>
     <?php 
     if ( empty( $wpinv_options['vat_disable_ip_address_field'] ) ) { 
-        $ip_link = '<a target="_blank" href="' . esc_url( $page ) . '" class="wpi-ip-address-link">' . $vat_fields['ip_address'] . '</a>';
+        $ip_link = '<a target="_blank" href="' . esc_url( $page ) . '" class="wpi-ip-address-link">' . $wpi_vat_fields['ip_address'] . '</a>';
     ?>
     <div class="wpi-ip-info clearfix panel panel-info">
         <div id="wpinv-fields-box" class="panel-body">

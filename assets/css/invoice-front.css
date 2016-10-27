@@ -10,6 +10,9 @@
 #wpinv-fields p.wpi-cart-field, #wpinv-fields .wpi-input {
     margin: 0;
 }
+.wpi-billing .wpi-cart-field {
+    height: 72px;
+}
 #wpinv-fields .wpi-col {
     width: 100%;
     clear: both;
@@ -3496,8 +3499,8 @@ div td .meta p {
     display: none;
 }
 #wpi-ip-country.wpi-vat-info {
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 0;
+    margin-right: 0;
     padding: 0;
 }
 #wpi-ip-country.wpi-vat-info #wpinv-fields-box {
