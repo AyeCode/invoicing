@@ -307,11 +307,13 @@ class WPInv_Meta_Box_Items {
         $status         = sanitize_text_field( $data['wpinv_status'] );
         $old_status     = !empty( $data['original_post_status'] ) ? sanitize_text_field( $data['original_post_status'] ) : $status;
         $number         = sanitize_text_field( $data['wpinv_number'] );
+        $overdue_date   = isset( $data['wpinv_overdue_date'] ) ? sanitize_text_field( $data['wpinv_overdue_date'] ) : '';
         //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
         //$discount       = sanitize_text_field( $data['wpinv_discount'] );
         
         $ip             = !empty( $invoice->get_ip() ) ? $invoice->get_ip() : wpinv_get_ip();
         
+        $invoice->set( 'overdue_date', $overdue_date );
         $invoice->set( 'first_name', $first_name );
         $invoice->set( 'last_name', $last_name );
         $invoice->set( 'company', $company );

@@ -51,7 +51,7 @@ jQuery(function($) {
                     $form.unblock();
                     $('#wpinv_purchase_submit', $form).before(res);
                 }
-            }, 'json');
+            });
         }
         return false;
     });
@@ -72,10 +72,11 @@ jQuery(function($) {
             StripeCheckout.configure({
                 key: WPInv.stripePublishableKey,
                 locale: 'auto',
-                token: function(token) {
+                token: function(token) {                    
                     // insert the token into the form so it gets submitted to the server
                     $form.append("<input type='hidden' name='wpi_stripe_token' value='" + token.id + "' />");
                     $form.append("<input type='hidden' name='wpi_stripe_email' value='" + token.email + "' />");
+                    
                     // submit
                     $form.submit();
                 }, opened: function(r) {

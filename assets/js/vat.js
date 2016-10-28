@@ -40,10 +40,10 @@ jQuery(function($) {
             var eu_states = WPInv_VAT.getEUStates();
             
             $('body').bind("wpinv_taxes_recalculated", function(event, taxdata) {
-                var edd_errors = $('.wpinv_errors');
-                if (edd_errors) {
-                    edd_errors.html("");
-                    edd_errors.css('display', "none");
+                var wpi_errors = $('.wpinv_errors');
+                if (wpi_errors) {
+                    wpi_errors.html("");
+                    wpi_errors.css('display', "none");
                 }
 
                 if (taxdata.postdata.wpinv_country === 'UK') {
@@ -342,16 +342,16 @@ jQuery(function($) {
                 });
             });
             
-            $('#edd_settings\\[edd_vat_company_name\\]').on('keyup', function(e) {
+            $('#wpinv_settings\\[wpinv_vat_company_name\\]').on('keyup', function(e) {
                 WPInv_VAT_Config.companyNameKeyUp(e);
             });
-            $('#edd_settings_taxes\\[edd_vat_company_name\\]').on('keyup', function(e) {
+            $('#wpinv_settings_taxes\\[wpinv_vat_company_name\\]').on('keyup', function(e) {
                 WPInv_VAT_Config.companyNameKeyUp(e);
             });
-            $('#edd_settings\\[edd_vat_number\\]').on('keyup', function(e) {
+            $('#wpinv_settings\\[wpinv_vat_number\\]').on('keyup', function(e) {
                 WPInv_VAT_Config.vatNumberKeyUp(e);
             });
-            $('#edd_settings_taxes\\[edd_vat_number\\]').on('keyup', function(e) {
+            $('#wpinv_settings_taxes\\[wpinv_vat_number\\]').on('keyup', function(e) {
                 WPInv_VAT_Config.vatNumberKeyUp(e);
             });
             
@@ -448,7 +448,7 @@ jQuery(function($) {
                                 $('#wpinv_vat_number_original').val(number);
                                 message = json.message ? json.message : '';
                             } else {
-                                error = json.error ? json.error : '';
+                                error = json.error ? json.error : json.message;
                             }
                         }
                         
@@ -468,7 +468,11 @@ jQuery(function($) {
                         // New for 2015 rule support
                         $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
 
-                        config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
+                        if (error) {
+                            config.showMessage(error + '<br>' + WPInv_VAT_Vars.PageWillBeRefreshed, 'error');
+                        } else {
+                            config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
+                        }
                         wpinv_recalculate_taxes();
                         return;
                     })
@@ -552,7 +556,7 @@ jQuery(function($) {
         },
         companyNameKeyUp: function(e) {
             // If the number is not yet valid then it will be displayed invalid and should stay that way
-            var valid = $('#edd_vat_number_valid').val();
+            var valid = $('#wpinv_vat_number_valid').val();
             if (valid === undefined || valid === "" || valid === "0") return false;
             // Grab the original and current
             var numberEl = $(e.currentTarget).val();
@@ -560,28 +564,28 @@ jQuery(function($) {
             // If the original is not set or the original and current ones are not the same the set to look invalid
             if (originalEl === undefined || originalEl.length === 0 || originalEl != numberEl) {
                 $('.vat_number_validated').hide();
-                $('#edd_vat_validate').removeAttr('disabled');
+                $('#wpinv_vat_validate').removeAttr('disabled');
                 $('.vat_number_not_validated').fadeIn().css("display", "inline-block");
             } else {
-                $('#edd_vat_validate').attr('disabled', 'disabled');
+                $('#wpinv_vat_validate').attr('disabled', 'disabled');
                 $('.vat_number_validated').fadeIn().css("display", "inline-block");
                 $('.vat_number_not_validated').hide();
             }
         },
         vatNumberKeyUp: function(e) {
             // If the number is not yet valid then it will be displayed invalid and should stay that way
-            var valid = $('#edd_vat_number_valid').val();
+            var valid = $('#wpinv_vat_number_valid').val();
             if (valid === undefined || valid === "" || valid === "0") return false;
             // Grab the original and current
             var numberEl = $(e.currentTarget).val();
-            var originalEl = $('#edd_vat_number_original').val();
+            var originalEl = $('#wpinv_vat_number_original').val();
             // If the original is not set or the original and current ones are not the same the set to look invalid
             if (originalEl === undefined || originalEl.length === 0 || originalEl != numberEl) {
                 $('.vat_number_validated').hide();
-                $('#edd_vat_validate').removeAttr('disabled');
+                $('#wpinv_vat_validate').removeAttr('disabled');
                 $('.vat_number_not_validated').fadeIn().css("display", "inline-block");
             } else {
-                $('#edd_vat_validate').attr('disabled', 'disabled');
+                $('#wpinv_vat_validate').attr('disabled', 'disabled');
                 $('.vat_number_validated').fadeIn().css("display", "inline-block");
                 $('.vat_number_not_validated').hide();
             }
@@ -598,8 +602,8 @@ jQuery(function($) {
             var tax = parseFloat($('#wpinv_checkout_form .wpinv_cart_tax_amount').attr('data-tax'));
             var total = parseFloat($('#wpinv_checkout_form .wpinv_cart_amount').attr('data-total'));
 
-            var edd_cc_addressEl = $('#wpinv-fields .wpi-billing');
-            var countryEl = edd_cc_addressEl.find('#wpinv_country').val();
+            var wpiCCaddressEl = $('#wpinv-fields .wpi-billing');
+            var countryEl = wpiCCaddressEl.find('#wpinv_country').val();
 
             if (total === "0") {
                 $('#wpi_vat_info').hide();
