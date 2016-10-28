@@ -13,6 +13,7 @@ if ( !defined( 'WPINC' ) ) {
 
 final class WPInv_Invoice {
     public $ID  = 0;
+    public $title;
     
     public $pending;
     public $items = array();
@@ -29,8 +30,8 @@ final class WPInv_Invoice {
     public $fees = array();
     public $fees_total = 0;
     public $discounts = '';
-        public $discount = 0;
-        public $discount_code = 0;
+    public $discount = 0;
+    public $discount_code = 0;
     public $date = '';
     public $completed_date = '';
     public $status      = 'pending';
@@ -181,6 +182,7 @@ final class WPInv_Invoice {
         // Other Identifiers
         $this->key             = $this->setup_invoice_key();
         $this->number          = $this->setup_invoice_number();
+        $this->title           = !empty( $invoice->post_title ) ? $invoice->post_title : $this->number;
         
         $this->full_name       = trim( $this->first_name . ' '. $this->last_name );
         
@@ -244,20 +246,11 @@ final class WPInv_Invoice {
     private function setup_fees() {
         $payment_fees = isset( $this->payment_meta['fees'] ) ? $this->payment_meta['fees'] : array();
         return $payment_fees;
-        /*
-        $invoice_fees = $this->get_meta( '_wpinv_fees' );
-        return $invoice_fees;
-        */
     }
         
     private function setup_currency() {
         $currency = isset( $this->payment_meta['currency'] ) ? $this->payment_meta['currency'] : apply_filters( 'wpinv_currency_default', wpinv_get_currency(), $this );
         return $currency;
-        /*
-        $currency = $this->get_meta( '_wpinv_currency', true );
-        $currency = $currency ? $currency : apply_filters( 'wpinv_currency_default', wpinv_get_currency(), $this );
-        return $currency;
-        */
     }
     
     private function setup_discount() {
@@ -400,19 +393,12 @@ final class WPInv_Invoice {
         return $self_certified;
     }
     
-    ///private function setup_email() {
-        ///$email = $this->get_meta( '_wpinv_email' );
-        ///return $email;
-    ///}
-    
     private function setup_phone() {
         $phone = $this->get_meta( '_wpinv_phone' );
         return $phone;
     }
     
     private function setup_address() {
-        //$address = ! empty( $this->payment_meta['user_info']['address'] ) ? $this->payment_meta['user_info']['address'] : '';
-        //return $address;
         $address = $this->get_meta( '_wpinv_address', true );
         return $address;
     }
@@ -726,10 +712,6 @@ final class WPInv_Invoice {
                         $this->update_meta( '_wpinv_last_name', $this->last_name );
                         $this->user_info['last_name'] = $this->last_name;
                         break;
-                    ///case 'email':
-                        ///$this->update_meta( '_wpinv_email', $this->email );
-                        ///$this->user_info['email'] = $this->email;
-                        ///break;
                     case 'phone':
                         $this->update_meta( '_wpinv_phone', $this->phone );
                         $this->user_info['phone'] = $this->phone;
@@ -1138,19 +1120,7 @@ final class WPInv_Invoice {
             $meta_key     = '_wpinv_payment_meta';
             $meta_value   = $current_meta;
 
-        } ///else if ( $meta_key == 'email' || $meta_key == '_wpinv_email' ) {
-
-            /*$meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
-            
-            update_post_meta( $this->ID, '_wpinv_email', $meta_value );
-
-            $current_meta = $this->get_meta();
-            $current_meta['user_info']['email']  = $meta_value;
-
-            $meta_key     = '_wpinv_payment_meta';
-            $meta_value   = $current_meta;
-        }*/
-        ///
+        }
 
         $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
         
@@ -1227,10 +1197,6 @@ final class WPInv_Invoice {
             if ( empty( $meta['key'] ) ) {
                 $meta['key'] = $this->setup_invoice_key();
             }
-
-            ///if ( empty( $meta['email'] ) ) {
-                ///$meta['email'] = $this->setup_email();
-            ///}
 
             if ( empty( $meta['date'] ) ) {
                 $meta['date'] = get_post_field( 'post_date', $this->ID );
@@ -2187,7 +2153,7 @@ final class WPInv_Invoice {
         );
 
         if ( $this->update_subscription( $args ) ) {
-            do_action( 'wpinv_subscription_failing', $this->id, $this );
+            do_action( 'wpinv_subscription_failing', $this->ID, $this );
             return true;
         }
 
@@ -2437,5 +2403,20 @@ final class WPInv_Invoice {
         }
         
         return false;
+    }
+    
+    public function has_vat() {
+        $requires_vat = false;
+        
+        if ( $this->country && $this->vat_number && $this->self_certified ) {
+            $default_country    = wpinv_get_default_country();
+            $eu_states          = wpinv_get_eu_states();
+            $gst_countries      = wpinv_get_gst_countries();
+            $country            = $this->country;
+            
+            $requires_vat       = ( in_array( $country, $eu_states ) && ( in_array( $default_country, $eu_states ) || ( wpinv_invoice_has_digital_item( $this ) ) ) ) || ( in_array( $country, $gst_countries ) && in_array( $default_country, $gst_countries ) );
+        }
+        
+        return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
     }
 }

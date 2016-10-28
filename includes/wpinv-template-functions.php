@@ -831,6 +831,7 @@ function wpinv_get_watermark( $id ) {
 
 function wpinv_display_invoice_details( $invoice ) {
     $invoice_id = $invoice->ID;
+    $vat_name   = wpinv_owner_get_vat_name();
     
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
     ?>
@@ -863,13 +864,13 @@ function wpinv_display_invoice_details( $invoice ) {
         <?php } ?>
         <?php if ( $owner_vat_number = wpinv_owner_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
-                <td><?php _e( 'Owner VAT Number', 'invoicing' ); ?></td>
+                <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-uvatno">
-                <td><?php _e( 'Your VAT Number', 'invoicing' ); ?></td>
+                <td><?php echo wp_sprintf( __( 'Your %s Number', 'invoicing' ), $vat_name ); ?></td>
                 <td><?php echo $user_vat_number; ?></td>
             </tr>
         <?php } ?>
@@ -946,8 +947,8 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
     $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
-    $use_taxes          = wpinv_use_taxes();
-    $tax_label          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? __( '(Tax Incl.)', 'invoicing' ) : __( '(Tax Excl.)', 'invoicing' ) ) : '';
+    $tax_label           = $use_taxes && $invoice->has_vat() ? wpinv_owner_get_vat_name() : __( 'Tax', 'invoicing' );
+    $tax_title          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
     
     $cart_details       = $invoice->get_cart_details();
     $ajax_cart_details  = $cart_details;
@@ -962,9 +963,9 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     <th class="qty"><strong><?php _e( "Qty", "invoicing" );?></strong></th>
                 <?php } ?>
                 <?php if ($use_taxes && !$zero_tax) { ?>
-                    <th class="tax"><strong><?php _e( "Tax (%)", "invoicing" );?></strong></th>
+                    <th class="tax"><strong><?php echo $tax_label . ' <span class="normal small">(%)</span>'; ?></strong></th>
                 <?php } ?>
-                <th class="total"><strong><?php echo __( "Item Total", "invoicing" ) . ' <span class="normal small">' . $tax_label . '<span>';?></strong></th>
+                <th class="total"><strong><?php echo __( "Item Total", "invoicing" ) . ' <span class="normal small">' . $tax_title . '<span>';?></strong></th>
             </tr>
         </thead>
         <tbody>
@@ -1050,7 +1051,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     do_action( 'wpinv_display_before_tax', $invoice, $cols );
                     ?>
                     <tr class="row-tax">
-                        <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php echo apply_filters( 'wpinv_print_cart_tax_label', '<strong>' . __( 'Tax', 'invoicing' ) . ':</strong>', $invoice ); ?></td>
+                        <td class="rate" colspan="<?php echo ( $cols - 1 ); ?>"><?php echo apply_filters( 'wpinv_print_cart_tax_label', '<strong>' . $tax_label . ':</strong>', $invoice ); ?></td>
                         <td class="total"><?php _e( wpinv_tax( $invoice_id, true ) ) ?></td>
                     </tr>
                     <?php

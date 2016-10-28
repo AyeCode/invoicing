@@ -5,7 +5,8 @@ if (typeof ajaxurl === 'undefined' || ajaxurl === null) {
 }
 
 jQuery(function($) {        
-    var valid = false;
+    var valid       = false;
+    var wpiSubmit   = true;
     $('#wpinv_checkout_form').on('submit', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
         $('.wpinv_errors').remove();
@@ -34,16 +35,64 @@ jQuery(function($) {
             data = wpinvRemoveQueryVar(data, 'wpinv_ajax');
 
             $.post(ajaxurl, data + '&action=wpinv_checkout', function (res) {
-                if ( $.trim(res) == 'OK' ) {
+                if (res && typeof res == 'object' && res.success) {
                     valid = true;
-                    $form.submit();
+                    
+                    var data    = new Object();
+                    data.form   = $form;
+                    data.totals = res.data;
+                    
+                    jQuery('body').trigger('wpinv_checkout_submit', data);
+                    
+                    if (wpiSubmit) {
+                        $form.submit();
+                    }
                 } else {
-                    $form.unblock();                    
+                    $form.unblock();
                     $('#wpinv_purchase_submit', $form).before(res);
                 }
-            });
+            }, 'json');
         }
         return false;
+    });
+    
+    $('body').bind("wpinv_checkout_submit", function(e, data) {
+        var $form = data.form;
+        
+        if ( $('input[name="wpi-gateway"]:checked', $form).val() != 'stripe' ) {
+            return;
+        }
+        e.preventDefault();
+        
+        try {
+            wpiSubmit = false;
+            
+            var amount  = ( data.totals.total ) * 100;
+            
+            StripeCheckout.configure({
+                key: WPInv.stripePublishableKey,
+                locale: 'auto',
+                token: function(token) {
+                    // insert the token into the form so it gets submitted to the server
+                    $form.append("<input type='hidden' name='wpi_stripe_token' value='" + token.id + "' />");
+                    $form.append("<input type='hidden' name='wpi_stripe_email' value='" + token.email + "' />");
+                    // submit
+                    $form.submit();
+                }, opened: function(r) {
+                }, closed: function(r) {
+                    $form.unblock();
+                }
+            }).open({
+                name: WPInv.stripeName,
+                description: WPInv.stripeDescription,
+                amount: amount,
+                zipCode: true,
+                email: WPInv.stripeEmail,
+                currency: WPInv.stripeCurrency
+            });
+        } catch(err) {
+            console.log(err);
+        }
     });
     
     var elB = $('#wpinv-fields');
