@@ -1068,8 +1068,18 @@ function wpinv_process_checkout() {
             
             $invoice->save();
         }
-        echo 'OK';
-        die();
+
+        $response['success']            = true;
+        $response['data']['subtotal']   = $invoice->get_subtotal();
+        $response['data']['subtotalf']  = $invoice->get_subtotal( true );
+        $response['data']['discount']   = $invoice->get_discount();
+        $response['data']['discountf']  = $invoice->get_discount( true );
+        $response['data']['tax']        = $invoice->get_tax();
+        $response['data']['taxf']       = $invoice->get_tax( true );
+        $response['data']['total']      = $invoice->get_total();
+        $response['data']['totalf']     = $invoice->get_total( true );
+        
+        wp_send_json( $response );
     }
     
     $user_info = array(
