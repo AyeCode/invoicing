@@ -378,6 +378,9 @@ jQuery(function($) {
                 if ($this.attr('data-dateFormat')) {
                     args.dateFormat = $this.attr('data-dateformat');
                 }
+                if ($this.attr('data-minDate')) {
+                    args.minDate = $this.attr('data-minDate');
+                }
                 $(this).datepicker(args);
             });
             

@@ -212,7 +212,7 @@ class WPInv_Plugin {
         wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_admin_style' );
         
-        if ( $post_type == 'wpi_discount' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
+        if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 

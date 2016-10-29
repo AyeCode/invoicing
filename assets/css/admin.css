@@ -1333,3 +1333,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_discount #submitpost .misc-pub-curtime {
     display: none;
 }
+textarea.wpi-email_overdue_content {
+    width: 100%;
+}
