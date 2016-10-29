@@ -32,7 +32,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
-        <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->has_status( array( 'pending', 'auto-draft' ) ) ) { ?>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft' ) ) ) ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
@@ -108,10 +108,14 @@ class WPInv_Meta_Box_Details {
         do_action( 'wpinv_metabox_resend_invoice_before', $wpi_mb_invoice );
         
         if ( $email = $wpi_mb_invoice->get_email() ) {
-            $email_url = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
+            $email_url      = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
+            $reminder_url   = add_query_arg( array( 'wpi_action' => 'send_reminder', 'invoice_id' => $post->ID ) );
         ?>
         <p class="wpi-meta-row wpi-resend-info"><?php esc_attr_e( 'This will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>
         <p class="wpi-meta-row wpi-resend-email"><a title="<?php esc_attr_e( 'Send invoice to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $email_url ); ?>" class="button button-secondary"><?php esc_attr_e( 'Resend Invoice', 'invoicing' ); ?></a></p>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && $wpi_mb_invoice->needs_payment() && ( $due_date = $wpi_mb_invoice->get_due_date() ) ) { ?>
+        <p class="wpi-meta-row wpi-send-reminder"><a title="<?php esc_attr_e( 'Send overdue reminder notification to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $reminder_url ); ?>" class="button button-secondary"><?php esc_attr_e( 'Send Reminder', 'invoicing' ); ?></a></p>
+        <?php } ?>
         <?php
         }
         

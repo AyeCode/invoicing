@@ -176,11 +176,11 @@ function wpinv_admin_messages() {
 	}
 
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
-		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The invoice has been sent to customer.', 'invoicing' ), 'updated' );
+		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The email has been sent to customer.', 'invoicing' ), 'updated' );
     }
     
     if ( isset( $_GET['wpinv-message'] ) && 'email_fail' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
-		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Fail to send invoice to the customer.', 'invoicing' ), 'error' );
+		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Fail to send email to the customer.', 'invoicing' ), 'error' );
     }
 
     if ( isset( $_GET['wpinv-message'] ) && 'invoice-note-deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
