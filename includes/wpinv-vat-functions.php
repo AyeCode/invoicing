@@ -840,6 +840,7 @@ function wpinv_vat_enqueue_vat_scripts() {
     $vars['checkoutNonce'] = wp_create_nonce( 'wpinv_checkout_nonce' );
     $vars['baseCountry'] = wpinv_get_default_country();
     $vars['disableVATSameCountry'] = ( wpinv_vat_same_country_rule() == 'no' ? true : false );
+    $vars['disableVATSimpleCheck'] = wpinv_get_option( 'vat_simple_check' ) ? true : false;
     
     wp_enqueue_script( 'wpinv-vat-validation-script' );
     wp_enqueue_script( 'wpinv-vat-script' );

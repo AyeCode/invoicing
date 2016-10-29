@@ -1271,6 +1271,27 @@ function wpinv_send_customer_invoice( $data = array() ) {
 }
 add_action( 'wpinv_send_invoice', 'wpinv_send_customer_invoice' );
 
+function wpinv_send_overdue_reminder( $data = array() ) {
+    $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
+    
+    if ( empty( $invoice_id ) ) {
+        return;
+    }
+
+    if ( !current_user_can( 'manage_options' ) ) {
+        wp_die( __( 'You do not have permission to send reminder notification', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
+    }
+    
+    $sent = wpinv_send_payment_reminder_notification( $invoice_id );
+    
+    $status = $sent ? 'email_sent' : 'email_fail';
+    
+    $redirect = add_query_arg( array( 'wpinv-message' => $status, 'wpi_action' => false, 'invoice_id' => false ) );
+    wp_redirect( $redirect );
+    exit;
+}
+add_action( 'wpinv_send_reminder', 'wpinv_send_overdue_reminder' );
+
 function wpinv_send_customer_note_email( $data ) {
     $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
     
@@ -1308,6 +1329,7 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin
 add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );
 
 function wpinv_email_payment_reminders() {    
+    global $wpi_auto_reminder;
     if ( !wpinv_get_option( 'email_overdue_active' ) ) {
         return;
     }
@@ -1355,7 +1377,8 @@ function wpinv_email_payment_reminders() {
             }
         }
 
-        $today = date_i18n( 'Y-m-d' );
+        $today              = date_i18n( 'Y-m-d' );
+        $wpi_auto_reminder  = true;
 
         foreach ( $date_to_send as $id => $values ) {
             if ( in_array( $today, $values ) ) {
@@ -1370,6 +1393,8 @@ function wpinv_email_payment_reminders() {
                 }
             }
         }
+        
+        $wpi_auto_reminder  = false;
     }
 }
 
@@ -1386,7 +1411,7 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
         return false;
     }
     
-    if ( !$invoice->has_status( 'pending' ) ) {
+    if ( !$invoice->needs_payment() ) {
         return false;
     }
     
@@ -1420,7 +1445,19 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    $content        = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+    
+    $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
+            'invoice'       => $invoice,
+            'email_type'    => $email_type,
+            'email_heading' => $email_heading,
+            'sent_to_admin' => false,
+            'plain_text'    => false,
+            'message_body'  => $message_body
+        ) );
+        
+    $content        = wpinv_email_format_text( $content );
 
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     if ( $sent ) {
@@ -1432,6 +1469,8 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
 add_action( 'wpinv_send_payment_reminder_notification', 'wpinv_send_payment_reminder_notification', 10, 1 );
 
 function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
+    global $wpi_auto_reminder;
+    
     $sent = get_post_meta( $invoice_id, '_wpinv_reminder_sent', true );
     
     if ( empty( $sent ) ) {
@@ -1440,5 +1479,13 @@ function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
     $sent[] = date_i18n( 'Y-m-d' );
     
     update_post_meta( $invoice_id, '_wpinv_reminder_sent', $sent );
+    
+    if ( $wpi_auto_reminder ) { // Auto reminder note.
+        $note = __( 'Manual reminder sent to the user.', 'invoicing' );
+        $invoice->add_note( $note, false, false, true );
+    } else { // Menual reminder note.
+        $note = __( 'Manual reminder sent to the user.', 'invoicing' );
+        $invoice->add_note( $note );
+    }
 }
 add_action( 'wpinv_payment_reminder_sent', 'wpinv_payment_reminder_sent', 10, 2 );

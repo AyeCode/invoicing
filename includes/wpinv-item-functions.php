@@ -589,25 +589,20 @@ function wpinv_can_delete_item( $post_id ) {
 
 function wpinv_admin_action_delete() {
     $screen = get_current_screen();
-    //wpinv_error_log( $_REQUEST, 'REQUEST 1', __FILE__, __LINE__ );
-    if ( !empty( $screen->post_type ) && $screen->post_type == 'wpi_item' && !empty( $_REQUEST['post'] ) ) {
-        if ( is_array( $_REQUEST['post'] ) ) {
-            $post_ids = array();
-            
-            foreach ( $_REQUEST['post'] as $post_id ) {
-                if ( !wpinv_can_delete_item( $post_id ) ) {
-                    continue;
-                }
-                
-                $post_ids[] = $post_id;
+    
+    if ( !empty( $screen->post_type ) && $screen->post_type == 'wpi_item' && !empty( $_REQUEST['post'] ) && is_array( $_REQUEST['post'] ) ) {
+        $post_ids = array();
+        
+        foreach ( $_REQUEST['post'] as $post_id ) {
+            if ( !wpinv_can_delete_item( $post_id ) ) {
+                continue;
             }
-        } else {
-            $post_ids = !wpinv_can_delete_item( $_REQUEST['post'] ) ? '' : $_REQUEST['post'];
+            
+            $post_ids[] = $post_id;
         }
         
         $_REQUEST['post'] = $post_ids;
     }
-    //wpinv_error_log( $_REQUEST, 'REQUEST 2', __FILE__, __LINE__ );
 }
 add_action( 'admin_action_trash', 'wpinv_admin_action_delete', -10 );
 add_action( 'admin_action_delete', 'wpinv_admin_action_delete', -10 );

@@ -961,7 +961,7 @@ final class WPInv_Invoice {
 
     
 
-    public function add_note( $note = '', $customer_type = false, $added_by_user = false ) {
+    public function add_note( $note = '', $customer_type = false, $added_by_user = false, $system = false ) {
         // Bail if no note specified
         if( !$note ) {
             return false;
@@ -970,7 +970,7 @@ final class WPInv_Invoice {
         if ( empty( $this->ID ) )
             return false;
         
-        if ( ( is_user_logged_in() && current_user_can( 'manage_options' ) ) || $added_by_user ) {
+        if ( ( ( is_user_logged_in() && current_user_can( 'manage_options' ) ) || $added_by_user ) && !$system ) {
             $user                 = get_user_by( 'id', get_current_user_id() );
             $comment_author       = $user->display_name;
             $comment_author_email = $user->user_email;
