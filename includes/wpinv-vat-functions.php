@@ -821,7 +821,7 @@ function wpinv_vat_enqueue_vat_scripts() {
     $vars['ErrorValidatingVATID'] = wp_sprintf( __( 'An error occurred validating the %s number supplied!', 'invoicing' ), $vat_name );
     $vars['ErrorResettingVATID'] = wp_sprintf( __( 'An error occurred resetting the %s number supplied!', 'invoicing' ), $vat_name );
     $vars['ErrorInvalidResponse'] = __( 'An invalid response has been received from the server!', 'invoicing' );
-    $vars['PageWillBeRefreshed'] = wp_sprintf( __( 'The page will be refreshed to update the %s.', 'invoicing' ), $vat_name );
+    $vars['PageWillBeRefreshed'] = wp_sprintf( __( 'The cart totals will be refreshed to update the %s.', 'invoicing' ), $vat_name );
     $vars['Apply2015Rules'] = !empty($wpinv_options['vat_2015_rules']);
     $vars['NoRateSet'] = __( 'You have not set a rate. Do you want to continue?', 'invoicing' );
     $vars['RateRequestResponseInvalid'] = __( 'The get rate request response is invalid', 'invoicing' );
@@ -1394,7 +1394,7 @@ function wpinv_ajax_vat_validate() {
             return $match;
         };
 
-        if ( empty( $wpinv_options['vat_disable_company_name_check'] ) || $valid_company( $result->company, $company ) ) {
+        if ( !empty( $wpinv_options['vat_disable_company_name_check'] ) || $valid_company( $result->company, $company ) ) {
             $response['success'] = true;
             $response['message'] = wp_sprintf( __( '%s number validated', 'invoicing' ), $vat_name );
         } else {           

@@ -21,7 +21,8 @@ class WPInv_Meta_Box_Details {
         $tax                = $tax > 0 ? wpinv_format_amount( $tax ) : '';
         $discount           = $discount > 0 ? wpinv_format_amount( $discount ) : '';
         $date_created       = $invoice->get_created_date();
-        $date_created       = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_created ) ) : '';
+        $datetime_created   = strtotime( $date_created );
+        $date_created       = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $datetime_created ) : '';
         $date_completed     = $invoice->get_completed_date();
         $date_completed     = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_completed ) ) : 'n/a';
         ?>
@@ -31,10 +32,20 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->has_status( array( 'pending', 'auto-draft' ) ) ) { ?>
+        <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
+            <div class="gdmbx-th"><label for="wpinv_overdue_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
+            <div class="gdmbx-td">
+                <input type="text" placeholder="<?php esc_attr_e( 'Y-m-d', 'invoicing' );?>" value="<?php echo esc_attr( $invoice->get_overdue_date() );?>" id="wpinv_overdue_date" name="wpinv_overdue_date" class="regular-text wpiDatepicker" data-minDate="<?php echo esc_attr( date_i18n( 'Y-m-d', $datetime_created ) );?>" data-dateFormat="yy-mm-dd">
+            </div>
+        </div>
+        <?php } ?>
+        <?php if ( $date_completed && $date_completed != 'n/a' ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-completed">
             <div class="gdmbx-th"><label><?php _e( 'Payment Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_completed;?></div>
         </div>
+        <?php } ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">
             <div class="gdmbx-th"><label for="wpinv_status"><?php _e( 'Invoice Status:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">

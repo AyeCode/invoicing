@@ -85,7 +85,7 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
             break;
         case 'status' :
-            $value   = $wpi_invoice->get_status( true );
+            $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
             break;
         case 'details' :
             $edit_link = get_edit_post_link( $post->ID );

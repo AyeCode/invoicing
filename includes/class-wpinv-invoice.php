@@ -33,6 +33,7 @@ final class WPInv_Invoice {
     public $discount = 0;
     public $discount_code = 0;
     public $date = '';
+    public $overdue_date = '';
     public $completed_date = '';
     public $status      = 'pending';
     public $post_status = 'pending';
@@ -130,6 +131,7 @@ final class WPInv_Invoice {
         // We have a payment, get the generic payment_meta item to reduce calls to it
         $this->payment_meta    = $this->get_meta();
         $this->date            = $invoice->post_date;
+        $this->overdue_date    = $this->setup_overdue_date();
         $this->completed_date  = $this->setup_completed_date();
         $this->status          = $invoice->post_status;
         $this->post_status     = $this->status;
@@ -215,6 +217,19 @@ final class WPInv_Invoice {
         }
 
         $this->post_name   = $post_name;
+    }
+    
+    private function setup_overdue_date() {
+        $overdue_date = $this->get_meta( '_wpinv_overdue_date' );
+        
+        if ( empty( $overdue_date ) ) {
+            $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days' ) ) );
+            $overdue_date = date_i18n( 'Y-m-d', $overdue_time );
+        } else if ( $overdue_date == 'none' ) {
+            $overdue_date = '';
+        }
+        
+        return $overdue_date;
     }
     
     private function setup_completed_date() {
@@ -774,6 +789,13 @@ final class WPInv_Invoice {
                         );
 
                         wp_update_post( $args );
+                        break;
+                    case 'overdue_date':
+                        if ( empty( $this->overdue_date ) ) {
+                            $this->overdue_date = 'none';
+                        }
+                        
+                        $this->update_meta( '_wpinv_overdue_date', $this->overdue_date );
                         break;
                     case 'completed_date':
                         $this->update_meta( '_wpinv_completed_date', $this->completed_date );
@@ -1474,6 +1496,10 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_created_date', $this->date, $this->ID, $this );
     }
     
+    public function get_overdue_date() {
+        return apply_filters( 'wpinv_overdue_date', $this->overdue_date, $this->ID, $this );
+    }
+    
     public function get_completed_date() {
         return apply_filters( 'wpinv_completed_date', $this->completed_date, $this->ID, $this );
     }
@@ -1952,21 +1978,41 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_invoice_has_recurring_item', $has_subscription, $this->cart_details );
     }
     
-    public function get_recurring() {
-        $item_id = NULL;
+    public function get_recurring( $object = false ) {
+        $item = NULL;
         
         if ( empty( $this->cart_details ) ) {
-            return $item_id;
+            return $item;
         }
         
         foreach( $this->cart_details as $cart_item ) {
             if ( !empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] )  ) {
-                $item_id = $cart_item['id'];
+                $item = $cart_item['id'];
                 break;
             }
         }
+        
+        if ( $object ) {
+            $item = $item ? new WPInv_Item( $item ) : NULL;
+            
+            apply_filters( 'wpinv_invoice_get_recurring_item', $item, $this );
+        }
 
-        return apply_filters( 'wpinv_invoice_get_recurring_item', $item_id, $this );
+        return apply_filters( 'wpinv_invoice_get_recurring_item_id', $item, $this );
+    }
+    
+    public function get_subscription_name() {
+        $item = $this->get_recurring( true );
+        
+        if ( empty( $item ) ) {
+            return NULL;
+        }
+        
+        if ( !($name = $item->get_name()) ) {
+            $name = $item->post_name;
+        }
+
+        return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
     }
         
     public function get_expiration() {

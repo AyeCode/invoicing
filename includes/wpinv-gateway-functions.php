@@ -26,7 +26,7 @@ function wpinv_get_payment_gateways() {
         ),
         'stripe' => array(
             'admin_label'    => __( 'Stripe', 'invoicing' ),
-            'checkout_label' => __( 'Stripe - Credit / Debit Card', 'invoicing' ),
+            'checkout_label' => __( 'Stripe Payment', 'invoicing' ),
             'ordering'       => 3,
         ),
         'authorizenet' => array(

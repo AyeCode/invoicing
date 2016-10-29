@@ -161,6 +161,12 @@ add_action( 'admin_init', 'wpinv_register_settings' );
 function wpinv_get_registered_settings() {
     $pages = wpinv_get_pages( true );
     
+    $due_payment_options       = array();
+    $due_payment_options[0]    = __( 'Now', 'invoicing' );
+    for ( $i = 1; $i <= 30; $i++ ) {
+        $due_payment_options[$i] = $i;
+    }    
+    
     $wpinv_settings = array(
         'general' => apply_filters( 'wpinv_settings_general',
             array(
@@ -460,6 +466,28 @@ function wpinv_get_registered_settings() {
                         'desc' => __( 'Email address to send invoice emails from. This will act as the "from" and "reply-to" address.', 'invoicing' ),
                         'std' => get_option( 'admin_email' ),
                         'type' => 'text',
+                    ),
+                    'overdue_settings_header' => array(
+                        'id'   => 'overdue_settings_header',
+                        'name' => '<h3>' . __( 'Due Payment Settings', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'overdue_active' => array(
+                        'id'   => 'overdue_active',
+                        'name' => __( 'Enable Due Payment Email', 'invoicing' ),
+                        'desc' => __( 'Check this to enable sending due payment notifications for pending inovices to users.', 'invoicing' ),
+                        'type' => 'checkbox',
+                        'std'  => false,
+                    ),
+                    'overdue_days' => array(
+                        'id'          => 'overdue_days',
+                        'name'        => __( 'Default overdue days', 'invoicing' ),
+                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overriden on individual Invoices.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => $due_payment_options,
+                        'chosen'      => true,
+                        'std'         => 0,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'email_template_header' => array(
                         'id'   => 'email_template_header',
@@ -981,7 +1009,7 @@ function wpinv_textarea_callback( $args ) {
     $size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
     $class = ( isset( $args['class'] ) && ! is_null( $args['class'] ) ) ? $args['class'] : 'large-text';
 
-	$html = '<textarea class="' . sanitize_html_class( $class ) . ' txtarea-' . sanitize_html_class( $size ) . '" cols="' . $args['cols'] . '" rows="' . $args['rows'] . '" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+	$html = '<textarea class="' . sanitize_html_class( $class ) . ' txtarea-' . sanitize_html_class( $size ) . ' wpi-' . esc_attr( sanitize_html_class( $sanitize_id ) ) . ' " cols="' . $args['cols'] . '" rows="' . $args['rows'] . '" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
 	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
 	echo $html;

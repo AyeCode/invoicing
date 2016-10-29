@@ -681,6 +681,14 @@ function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
 }
     
 function wpinv_get_emails() {
+    $overdue_days_options       = array();
+    $overdue_days_options[0]    = __( 'On the Due Date', 'invoicing' );
+    $overdue_days_options[1]    = __( '1 day after Due Date', 'invoicing' );
+    
+    for ( $i = 2; $i <= 10; $i++ ) {
+        $overdue_days_options[$i]   = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
+    }
+
 	// Default, built-in gateways
 	$emails = array(
 		'new_invoice' => array(
@@ -995,6 +1003,53 @@ function wpinv_get_emails() {
                 'type' => 'text',
                 'std'  => __( 'A note has been added to your invoice', 'invoicing' ),
                 'size' => 'large'
+            ),
+        ),
+        'overdue' => array(
+            'email_overdue_header' => array(
+                'id'   => 'email_overdue_header',
+                'name' => '<h3>' . __( 'Payment Reminder', 'invoicing' ) . '</h3>',
+                'desc' => __( 'Payment reminder emails are sent to user automatically.', 'invoicing' ),
+                'type' => 'header',
+            ),
+            'email_overdue_active' => array(
+                'id'   => 'email_overdue_active',
+                'name' => __( 'Enable/Disable', 'invoicing' ),
+                'desc' => __( 'Enable this email notification', 'invoicing' ),
+                'type' => 'checkbox',
+                'std'  => 1
+            ),
+            'email_due_reminder_days' => array(
+                'id'        => 'email_due_reminder_days',
+                'name'      => __( 'When to Send', 'sliced-invoices' ),
+                'desc'      => __( 'Check when you would like payment reminders sent out.', 'invoicing' ),
+                'default'   => '',
+                'type'      => 'multicheck',
+                'options'   => $overdue_days_options,
+            ),
+            'email_overdue_subject' => array(
+                'id'   => 'email_overdue_subject',
+                'name' => __( 'Subject', 'invoicing' ),
+                'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
+                'type' => 'text',
+                'std'  => __( '[{site_title}] Payment Reminder', 'invoicing' ),
+                'size' => 'large'
+            ),
+            'email_overdue_heading' => array(
+                'id'   => 'email_overdue_heading',
+                'name' => __( 'Email Heading', 'invoicing' ),
+                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'type' => 'text',
+                'std'  => __( 'Payment reminder for your invoice', 'invoicing' ),
+                'size' => 'large'
+            ),
+            'email_overdue_content' => array(
+                'id'   => 'email_overdue_content',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email.', 'invoicing' ),
+                'type' => 'textarea',
+                'std'  => __( '<p>Hi {invoice_user_full_name},</p><p>This is just a friendly reminder that invoice {invoice_number} {invoice_is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}.</p>', 'invoicing' ),
+                'class' => 'large',
             ),
         ),
     );
