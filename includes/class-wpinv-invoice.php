@@ -33,7 +33,7 @@ final class WPInv_Invoice {
     public $discount = 0;
     public $discount_code = 0;
     public $date = '';
-    public $overdue_date = '';
+    public $due_date = '';
     public $completed_date = '';
     public $status      = 'pending';
     public $post_status = 'pending';
@@ -131,7 +131,7 @@ final class WPInv_Invoice {
         // We have a payment, get the generic payment_meta item to reduce calls to it
         $this->payment_meta    = $this->get_meta();
         $this->date            = $invoice->post_date;
-        $this->overdue_date    = $this->setup_overdue_date();
+        $this->due_date        = $this->setup_due_date();
         $this->completed_date  = $this->setup_completed_date();
         $this->status          = $invoice->post_status;
         $this->post_status     = $this->status;
@@ -219,17 +219,17 @@ final class WPInv_Invoice {
         $this->post_name   = $post_name;
     }
     
-    private function setup_overdue_date() {
-        $overdue_date = $this->get_meta( '_wpinv_overdue_date' );
+    private function setup_due_date() {
+        $due_date = $this->get_meta( '_wpinv_due_date' );
         
-        if ( empty( $overdue_date ) ) {
+        if ( empty( $due_date ) ) {
             $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days' ) ) );
-            $overdue_date = date_i18n( 'Y-m-d', $overdue_time );
-        } else if ( $overdue_date == 'none' ) {
-            $overdue_date = '';
+            $due_date = date_i18n( 'Y-m-d', $overdue_time );
+        } else if ( $due_date == 'none' ) {
+            $due_date = '';
         }
         
-        return $overdue_date;
+        return $due_date;
     }
     
     private function setup_completed_date() {
@@ -790,12 +790,12 @@ final class WPInv_Invoice {
 
                         wp_update_post( $args );
                         break;
-                    case 'overdue_date':
-                        if ( empty( $this->overdue_date ) ) {
-                            $this->overdue_date = 'none';
+                    case 'due_date':
+                        if ( empty( $this->due_date ) ) {
+                            $this->due_date = 'none';
                         }
                         
-                        $this->update_meta( '_wpinv_overdue_date', $this->overdue_date );
+                        $this->update_meta( '_wpinv_due_date', $this->due_date );
                         break;
                     case 'completed_date':
                         $this->update_meta( '_wpinv_completed_date', $this->completed_date );
@@ -869,6 +869,8 @@ final class WPInv_Invoice {
         if ( true === $saved || $setup ) {
             $this->setup_invoice( $this->ID );
         }
+        
+        $this->refresh_item_ids();
         
         return $saved;
     }
@@ -1496,8 +1498,14 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_created_date', $this->date, $this->ID, $this );
     }
     
-    public function get_overdue_date() {
-        return apply_filters( 'wpinv_overdue_date', $this->overdue_date, $this->ID, $this );
+    public function get_due_date( $display = false ) {
+        $due_date = apply_filters( 'wpinv_due_date', $this->due_date, $this->ID, $this );
+        
+        if ( !$display || empty( $due_date ) ) {
+            return $due_date;
+        }
+        
+        return date_i18n( get_option( 'date_format' ), strtotime( $due_date ) );
     }
     
     public function get_completed_date() {
@@ -2464,5 +2472,21 @@ final class WPInv_Invoice {
         }
         
         return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
+    }
+    
+    public function refresh_item_ids() {
+        $item_ids = array();
+        
+        if ( !empty( $this->cart_details ) ) {
+            foreach ( $this->cart_details as $key => $item ) {
+                if ( !empty( $item['id'] ) ) {
+                    $item_ids[] = $item['id'];
+                }
+            }
+        }
+        
+        $item_ids = !empty( $item_ids ) ? implode( ',', array_unique( $item_ids ) ) : '';
+        
+        update_post_meta( $this->ID, '_wpinv_item_ids', $item_ids );
     }
 }

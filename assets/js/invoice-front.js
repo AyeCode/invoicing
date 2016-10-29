@@ -233,6 +233,8 @@ jQuery(function($) {
                 _nonce: WPInv.nonce
             };
 
+            $('.wpinv_errors').remove();
+            
             $msg.hide();
             $msgS.hide().find('.wpi-msg').html('');
             $msgF.hide().find('.wpi-msg').html('');

@@ -694,7 +694,28 @@ function wpinv_checkout_validate_gateway() {
 
 function wpinv_checkout_validate_discounts() {
     // Retrieve the discount stored in cookies
-    return wpinv_cart_discount_code();
+    $discounts = wpinv_get_cart_discounts();
+    
+    $error = false;
+    // If we have discounts, loop through them
+    if ( ! empty( $discounts ) ) {
+        foreach ( $discounts as $discount ) {
+            // Check if valid
+            if (  !wpinv_is_discount_valid( $discount, get_current_user_id() ) ) {
+                // Discount is not valid
+                $error = true;
+            }
+        }
+    } else {
+        // No discounts
+        return NULL;
+    }
+
+    if ( $error && !wpinv_get_errors() ) {
+        wpinv_set_error( 'invalid_discount', __( 'Discount code you entered is invalid', 'invoicing' ) );
+    }
+
+    return implode( ',', $discounts );
 }
 
 function wpinv_checkout_validate_cc() {

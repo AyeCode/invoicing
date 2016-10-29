@@ -575,27 +575,75 @@ function wpinv_remove_item( $item = 0, $force_delete = false ) {
     do_action( 'wpinv_post_delete_item', $item );
 }
 
+function wpinv_can_delete_item( $post_id ) {
+    if ( wpinv_item_in_use( $post_id ) ) {
+        return false; // Don't delete item already use in invoices.
+    }
+    
+    if ( get_post_meta( $post_id, '_wpinv_type', true ) == 'package' ) {
+        return false; // Don't delete item already use in invoices.
+    }
+    
+    return true;
+}
+
 function wpinv_admin_action_delete() {
-    if ( !empty( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == 'wpi_item' && !empty( $_REQUEST['post'] ) && is_array( $_REQUEST['post'] ) ) {
-        $post_ids = array();
-        
-        foreach ( $_REQUEST['post'] as $post_id ) {
-            if ( get_post_meta( $post_id, '_wpinv_type', true ) != 'package' ) {
+    $screen = get_current_screen();
+    //wpinv_error_log( $_REQUEST, 'REQUEST 1', __FILE__, __LINE__ );
+    if ( !empty( $screen->post_type ) && $screen->post_type == 'wpi_item' && !empty( $_REQUEST['post'] ) ) {
+        if ( is_array( $_REQUEST['post'] ) ) {
+            $post_ids = array();
+            
+            foreach ( $_REQUEST['post'] as $post_id ) {
+                if ( !wpinv_can_delete_item( $post_id ) ) {
+                    continue;
+                }
+                
                 $post_ids[] = $post_id;
             }
+        } else {
+            $post_ids = !wpinv_can_delete_item( $_REQUEST['post'] ) ? '' : $_REQUEST['post'];
         }
         
         $_REQUEST['post'] = $post_ids;
     }
+    //wpinv_error_log( $_REQUEST, 'REQUEST 2', __FILE__, __LINE__ );
 }
 add_action( 'admin_action_trash', 'wpinv_admin_action_delete', -10 );
 add_action( 'admin_action_delete', 'wpinv_admin_action_delete', -10 );
 
 function wpinv_check_delete_item( $check, $post, $force_delete ) {
-    if ( $post->post_type == 'wpi_item' && get_post_meta( $post->ID, '_wpinv_type', true ) === 'package' && !$force_delete ) {
-        return true;
+    if ( $post->post_type == 'wpi_item' ) {
+        if ( !wpinv_can_delete_item( $post->ID ) ) {
+            return true;
+        }
     }
     
     return $check;
 }
 add_filter( 'pre_delete_post', 'wpinv_check_delete_item', 10, 3 );
+
+function wpinv_item_in_use( $item_id ) {
+    global $wpdb, $wpi_items_in_use;
+    
+    if ( !$item_id > 0 ) {
+        return false;
+    }
+    
+    if ( !empty( $wpi_items_in_use ) ) {
+        if ( isset( $wpi_items_in_use[$item_id] ) ) {
+            return $wpi_items_in_use[$item_id];
+        }
+    } else {
+        $wpi_items_in_use = array();
+    }
+    
+    $statuses   = array_keys( wpinv_get_invoice_statuses() );
+    
+    $query  = "SELECT p.ID FROM " . $wpdb->posts . " AS p INNER JOIN " . $wpdb->postmeta . " AS pm ON p.ID = pm.post_id WHERE p.post_type = 'wpi_invoice' AND p.post_status IN( '" . implode( "','", $statuses ) . "' ) AND pm.meta_key = '_wpinv_item_ids' AND FIND_IN_SET( '" . (int)$item_id . "', pm.meta_value )";
+    $in_use = $wpdb->get_var( $query ) > 0 ? true : false;
+    
+    $wpi_items_in_use[$item_id] = $in_use;
+    
+    return $in_use;
+}

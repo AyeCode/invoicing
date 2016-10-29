@@ -469,19 +469,19 @@ function wpinv_get_registered_settings() {
                     ),
                     'overdue_settings_header' => array(
                         'id'   => 'overdue_settings_header',
-                        'name' => '<h3>' . __( 'Due Payment Settings', 'invoicing' ) . '</h3>',
+                        'name' => '<h3>' . __( 'Due Date Settings', 'invoicing' ) . '</h3>',
                         'type' => 'header',
                     ),
                     'overdue_active' => array(
                         'id'   => 'overdue_active',
-                        'name' => __( 'Enable Due Payment Email', 'invoicing' ),
-                        'desc' => __( 'Check this to enable sending due payment notifications for pending inovices to users.', 'invoicing' ),
+                        'name' => __( 'Enable Due Date', 'invoicing' ),
+                        'desc' => __( 'Check this to enable due date option for invoices.', 'invoicing' ),
                         'type' => 'checkbox',
                         'std'  => false,
                     ),
                     'overdue_days' => array(
                         'id'          => 'overdue_days',
-                        'name'        => __( 'Default overdue days', 'invoicing' ),
+                        'name'        => __( 'Default Due Date', 'invoicing' ),
                         'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overriden on individual Invoices.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $due_payment_options,
@@ -812,19 +812,18 @@ function wpinv_checkbox_callback( $args ) {
 
 function wpinv_multicheck_callback( $args ) {
 	global $wpinv_options;
-    
-    $sanitize_id = wpinv_sanitize_key( $args['id'] );
-
+	
+	$sanitize_id = wpinv_sanitize_key( $args['id'] );
+	
 	if ( ! empty( $args['options'] ) ) {
 		foreach( $args['options'] as $key => $option ):
 			$sanitize_key = wpinv_sanitize_key( $key );
-            
-            if ( isset( $wpinv_options[$args['id']][$key] ) ) { 
-                $enabled = $option;
-            } else { 
-                $enabled = NULL; 
-            }
-			echo '<input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $option ) . '" ' . checked($option, $enabled, false) . '/>&nbsp;';
+			if ( isset( $wpinv_options[$args['id']][$sanitize_key] ) ) { 
+				$enabled = $sanitize_key;
+			} else { 
+				$enabled = NULL; 
+			}
+			echo '<input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
 			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label><br/>';
 		endforeach;
 		echo '<p class="description">' . $args['desc'] . '</p>';
@@ -1132,7 +1131,7 @@ function wpinv_rich_editor_callback( $args ) {
 		wp_editor( stripslashes( $value ), 'wpinv_settings_' . esc_attr( $args['id'] ), array( 'textarea_name' => 'wpinv_settings[' . esc_attr( $args['id'] ) . ']', 'textarea_rows' => absint( $rows ) ) );
 		$html = ob_get_clean();
 	} else {
-		$html = '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+		$html = '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
 	}
 
 	$html .= '<br/><label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
