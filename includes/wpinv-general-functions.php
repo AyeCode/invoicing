@@ -378,3 +378,18 @@ function wpinv_user_can_print_invoice( $post ) {
     
     return apply_filters( 'wpinv_can_print_invoice', $allow, $post );
 }
+
+function wpinv_schedule_events() {
+    // hourly, daily and twicedaily
+    if ( !wp_next_scheduled( 'wpinv_register_schedule_event_twicedaily' ) ) {
+        wpinv_error_log( 'wpinv_schedule_events()' );
+        wp_schedule_event( current_time( 'timestamp' ), 'twicedaily', 'wpinv_register_schedule_event_twicedaily' );
+    }
+}
+add_action( 'wp', 'wpinv_schedule_events' );
+
+function wpinv_schedule_event_twicedaily() {
+    wpinv_error_log( 'wpinv_schedule_event_twicedaily()' );
+    wpinv_email_payment_reminders();
+}
+add_action( 'wpinv_register_schedule_event_twicedaily', 'wpinv_schedule_event_twicedaily' );

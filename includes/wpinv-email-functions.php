@@ -1043,13 +1043,14 @@ function wpinv_get_emails() {
                 'std'  => __( 'Payment reminder for your invoice', 'invoicing' ),
                 'size' => 'large'
             ),
-            'email_overdue_content' => array(
-                'id'   => 'email_overdue_content',
+            'email_overdue_body' => array(
+                'id'   => 'email_overdue_body',
                 'name' => __( 'Email Content', 'invoicing' ),
                 'desc' => __( 'The content of the email.', 'invoicing' ),
-                'type' => 'textarea',
-                'std'  => __( '<p>Hi {invoice_user_full_name},</p><p>This is just a friendly reminder that invoice {invoice_number} {invoice_is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}.</p>', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To pay now for this invoice please use the following link: <a href="{invoice_pay_link}">Pay Now</a></p>', 'invoicing' ),
                 'class' => 'large',
+                'size'  => 10,
             ),
         ),
     );
@@ -1305,3 +1306,139 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin
     }
 }
 add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );
+
+function wpinv_email_payment_reminders() {    
+    if ( !wpinv_get_option( 'email_overdue_active' ) ) {
+        return;
+    }
+    
+    if ( $reminder_days = wpinv_get_option( 'email_due_reminder_days' ) ) {
+        $reminder_days  = is_array( $reminder_days ) ? array_values( $reminder_days ) : '';
+        
+        if ( empty( $reminder_days ) ) {
+            return;
+        }
+        $reminder_days  = array_unique( array_map( 'absint', $reminder_days ) );
+        
+        $args = array(
+            'post_type'     => 'wpi_invoice',
+            'post_status'   => 'pending',
+            'fields'        => 'ids',
+            'numberposts'   => '-1',
+            'meta_query'    => array(
+                array(
+                    'key'       =>  '_wpinv_due_date',
+                    'value'     =>  array( '', 'none' ),
+                    'compare'   =>  'NOT IN',
+                )
+            ),
+            'meta_key'      => '_wpinv_due_date',
+            'orderby'       => 'meta_value',
+            'order'         => 'ASC',
+        );
+        
+        $invoices = get_posts( $args );
+        
+        if ( empty( $invoices ) ) {
+            return;
+        }
+        
+        $date_to_send   = array();
+        
+        foreach ( $invoices as $id ) {
+            $due_date = get_post_meta( $id, '_wpinv_due_date', true );
+            
+            foreach ( $reminder_days as $key => $days ) {
+                if ( $days !== '' ) {
+                    $date_to_send[$id][] = date_i18n( 'Y-m-d', strtotime( $due_date ) + ( $days * DAY_IN_SECONDS ) );
+                }
+            }
+        }
+
+        $today = date_i18n( 'Y-m-d' );
+
+        foreach ( $date_to_send as $id => $values ) {
+            if ( in_array( $today, $values ) ) {
+                $sent = get_post_meta( $id, '_wpinv_reminder_sent', true );
+
+                if ( isset( $sent ) && !empty( $sent ) ) {
+                    if ( !in_array( $today, $sent ) ) {
+                        do_action( 'wpinv_send_payment_reminder_notification', $id );
+                    }
+                } else {
+                    do_action( 'wpinv_send_payment_reminder_notification', $id );
+                }
+            }
+        }
+    }
+}
+
+function wpinv_send_payment_reminder_notification( $invoice_id ) {
+    global $wpinv_email_search, $wpinv_email_replace;
+    
+    $email_type = 'overdue';
+    if ( !wpinv_email_is_enabled( $email_type ) ) {
+        return false;
+    }
+    
+    $invoice    = wpinv_get_invoice( $invoice_id );
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
+    if ( !$invoice->has_status( 'pending' ) ) {
+        return false;
+    }
+    
+    $recipient  = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    if ( !is_email( $recipient ) ) {
+        return false;
+    }
+        
+    $search                     = array();
+    $search['full_name']        = '{full_name}';
+    $search['invoice_number']   = '{invoice_number}';
+    $search['invoice_due_date'] = '{invoice_due_date}';
+    $search['invoice_total']    = '{invoice_total}';
+    $search['invoice_link']     = '{invoice_link}';
+    $search['invoice_pay_link'] = '{invoice_pay_link}';
+    $search['is_was']           = '{is_was}';
+    
+    $replace                    = array();
+    $replace['full_name']       = $invoice->get_user_full_name();
+    $replace['invoice_number']  = $invoice->get_number();
+    $replace['invoice_due_date']= $invoice->get_due_date( true );
+    $replace['invoice_total']   = $invoice->get_total( true );
+    $replace['invoice_link']    = $invoice->get_view_url();
+    $replace['invoice_pay_link']= $invoice->get_checkout_payment_url();
+    $replace['is_was']          = strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' );
+
+    $wpinv_email_search         = $search;
+    $wpinv_email_replace        = $replace;
+    
+    $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
+    $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
+    $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
+    $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
+    $content        = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    if ( $sent ) {
+        do_action( 'wpinv_payment_reminder_sent', $invoice_id, $invoice );
+    }
+        
+    return $sent;
+}
+add_action( 'wpinv_send_payment_reminder_notification', 'wpinv_send_payment_reminder_notification', 10, 1 );
+
+function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
+    $sent = get_post_meta( $invoice_id, '_wpinv_reminder_sent', true );
+    
+    if ( empty( $sent ) ) {
+        $sent = array();
+    }
+    $sent[] = date_i18n( 'Y-m-d' );
+    
+    update_post_meta( $invoice_id, '_wpinv_reminder_sent', $sent );
+}
+add_action( 'wpinv_payment_reminder_sent', 'wpinv_payment_reminder_sent', 10, 2 );
