@@ -848,6 +848,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 .post-type-wpi_item #submitpost .misc-pub-visibility,
 .post-type-wpi_item #submitpost .misc-pub-curtime,
+.post-type-wpi_item #submitpost #delete-action,
 .post-type-wpi_item #postexcerpt .inside > p,
 .inline-edit-wpi_item .inline-edit-col-left .inline-edit-date,
 .inline-edit-wpi_item .inline-edit-col-left .inline-edit-group,

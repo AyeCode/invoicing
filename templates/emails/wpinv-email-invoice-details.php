@@ -37,6 +37,12 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
                 <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $invoice_date ) ), $invoice->get_invoice_date() ); ?></td>
             </tr>
         <?php } ?>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->needs_payment() && ( $due_date = $invoice->get_due_date() ) ) { ?>
+            <tr>
+                <td><?php _e( 'Due Date', 'invoicing' ); ?></td>
+                <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $due_date ) ), $invoice->get_due_date( true ) ); ?></td>
+            </tr>
+        <?php } ?>
         <?php if ( empty( $sent_to_admin ) && $owner_vat_number = wpinv_owner_vat_number() ) { ?>
             <tr>
                 <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>

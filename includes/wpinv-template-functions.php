@@ -862,6 +862,12 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->needs_payment() && ( $due_date = $invoice->get_due_date( true ) ) ) { ?>
+            <tr class="wpi-row-date">
+                <td><?php _e( 'Due Date', 'invoicing' ); ?></td>
+                <td><?php echo $due_date; ?></td>
+            </tr>
+        <?php } ?>
         <?php if ( $owner_vat_number = wpinv_owner_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
                 <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>

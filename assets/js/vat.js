@@ -413,8 +413,7 @@ jQuery(function($) {
                             return false;
                         }
                     }
-                    
-                    if ((vat_number && (vat_number.length > 0)) && !WPInv_VAT.validateVATID(numberEl, false)) {
+                    if (!WPInv_VAT_Vars.disableVATSimpleCheck && (vat_number && (vat_number.length > 0)) && !WPInv_VAT.validateVATID(numberEl, false)) {
                         WPInv_VAT_Config.showMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
                         return false;
                     }
