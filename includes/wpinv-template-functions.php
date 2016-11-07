@@ -1229,7 +1229,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     $vat_number = wpinv_get_vat_number();
     
     $valid = $vat_number ? wpinv_get_vat_number( '', 0, true ) : 1;// ? true : false; // True TODO
-    $vat_info = $wpi_session->get( 'user_vat_info' );
+    $vat_info = $wpi_session->get( 'user_vat_data' );
 
     if ( is_array( $vat_info ) ) {
         $company = isset( $vat_info['company'] ) ? $vat_info['company'] : "";

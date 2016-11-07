@@ -759,7 +759,7 @@ final class WPInv_Invoice {
                         $this->update_meta( '_wpinv_vat_number', $this->vat_number );
                         $this->user_info['vat_number'] = $this->vat_number;
                         
-                        $vat_info = $wpi_session->get( 'user_vat_info' );
+                        $vat_info = $wpi_session->get( 'user_vat_data' );
                         if ( $this->vat_number && !empty( $vat_info ) && isset( $vat_info['number'] ) && isset( $vat_info['valid'] ) && $vat_info['number'] == $this->vat_number ) {
                             $this->update_meta( '_wpinv_self_certified', (bool)$vat_info['valid'] );
                             $this->user_info['self_certified'] = (bool)$vat_info['valid'];

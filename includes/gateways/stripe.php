@@ -120,12 +120,46 @@ function wpinv_process_stripe_payment( $purchase_data ) {
                             wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
                         }
                         
-                        $tax_percentage  = 0;
+                        /*
+                         * If we have a signup fee or the recurring amount is different than the initial amount, we need to add it to the customer's
+                         * balance so that the subscription invoice amount is adjusted properly.
+                         *
+                         * Example: if the subscription is $10 per month and the signup fee is $5, this will add $5 to the account balance.
+                         *
+                         * When account balances are negative, Stripe discounts that amount on the next invoice.
+                         * When account balancces are positve, Stripe adds that amount to the next invoice.
+                         */
+
+                        $save_balance   = false;
+                        $tax_percentage = 0;
+                        
+                        if ( $subscription_data['initial_amount'] > $subscription_data['recurring_amount'] ) {
+                            $save_balance   = true;
+                            $amount         = $subscription_data['initial_amount'] - $subscription_data['recurring_amount'];
+                            $balance_amount = round( $customer->account_balance + ( $amount * 100 ), 0 ); // Add additional amount to initial payment (in cents)
+                            $customer->account_balance = $balance_amount;
+                        }
+
+                        if ( $subscription_data['initial_amount'] < $subscription_data['recurring_amount'] ) {
+                            $save_balance   = true;
+                            $amount         = $subscription_data['recurring_amount'] - $subscription_data['initial_amount'];
+                            $balance_amount = round( $customer->account_balance - ( $amount * 100 ), 0 ); // Add a discount to initial payment (in cents)
+                            $customer->account_balance = $balance_amount;
+                        }
+
+                        if ( !empty( $save_balance ) ) {
+                            $balance_changed = true;
+                            $customer->save();
+                        }
                         
                         try {
                             $subscription = $customer->subscriptions->create( array(
                                 'plan'        => $plan_id,
-                                'tax_percent' => $tax_percentage
+                                'tax_percent' => $tax_percentage,
+                                'metadata'    => array(
+                                    'invoice_id'    => $invoice->ID,
+                                    'bill_times'    => $subscription_data['bill_times']
+                                )
                             ) );
                             
                             do_action( 'wpinv_recurring_post_create_subscription', $subscription, $invoice, 'stripe' );

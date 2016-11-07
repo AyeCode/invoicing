@@ -443,7 +443,7 @@ function wpinv_get_vat_rate( $rate = 1, $country = '', $state = '', $item_id = 0
         // in the user's account
         $vat_number = wpinv_get_vat_number( '', 0, true );
         // A supplied VAT number may be in the session variable
-        $vat_info = $wpi_session->get( 'user_vat_info' );
+        $vat_info = $wpi_session->get( 'user_vat_data' );
         
         if ( is_array( $vat_info ) ) {
             $vat_number = isset( $vat_info['number'] ) && !empty( $vat_info['valid'] ) ? $vat_info['number'] : "";
@@ -780,7 +780,7 @@ function wpinv_process_euvatrates_data( $data, $response, $group = '' ) {
 function wpinv_user_vat_info() {
     global $wpi_session;
     
-    return $wpi_session->get( 'user_vat_info' );
+    return $wpi_session->get( 'user_vat_data' );
 }
 
 function wpinv_owner_get_vat_name() {
@@ -840,7 +840,7 @@ function wpinv_vat_enqueue_vat_scripts() {
     $vars['checkoutNonce'] = wp_create_nonce( 'wpinv_checkout_nonce' );
     $vars['baseCountry'] = wpinv_get_default_country();
     $vars['disableVATSameCountry'] = ( wpinv_vat_same_country_rule() == 'no' ? true : false );
-    $vars['disableVATSimpleCheck'] = wpinv_get_option( 'vat_simple_check' ) ? true : false;
+    $vars['disableVATSimpleCheck'] = wpinv_get_option( 'vat_offline_check' ) ? true : false;
     
     wp_enqueue_script( 'wpinv-vat-validation-script' );
     wp_enqueue_script( 'wpinv-vat-script' );
@@ -971,8 +971,8 @@ function wpinv_settings_vat_settings( $settings ) {
             'type' => 'checkbox'
         );
 
-        $vat_settings['vat_simple_check'] = array(
-            'id' => 'vat_simple_check',
+        $vat_settings['vat_offline_check'] = array(
+            'id' => 'vat_offline_check',
             'name' => __( 'Disable simple check', 'invoicing' ),
             'desc' => __( 'Check this option if you do not want VAT numbers to be checked to have a correct format (not recommended). Each EU member state has its own format for a VAT number.<br>While we try to make sure the format rules are respected it is possible that a specific rule is not respected so a correct VAT number is not validated. If you encounter this situation, use this option to prevent simple checks.', 'invoicing' ),
             'type' => 'checkbox'
@@ -1237,7 +1237,7 @@ function wpinv_settings_sanitize_vat_settings( $input ) {
         $message = '';
         
         if ( !empty( $wpinv_options['vat_vies_check'] ) ) {
-            if ( empty( $wpinv_options['vat_simple_check'] ) ) {
+            if ( empty( $wpinv_options['vat_offline_check'] ) ) {
                 $a['valid'] = wpinv_check_vat_offline( $input['vat_number'] );
             } else {
                 $a['valid'] = true;
@@ -1269,7 +1269,7 @@ add_filter( 'wpinv_settings_taxes-vat_sanitize', 'wpinv_settings_sanitize_vat_se
 function wpinv_ajax_vat_reset() {
     global $wpi_session;
     
-    $wpi_session->set( 'user_vat_info', null );
+    $wpi_session->set( 'user_vat_data', null );
     
     $company    = is_user_logged_in() ? wpinv_user_company() : '';
     $vat_number = wpinv_get_vat_number();
@@ -1300,7 +1300,7 @@ function wpinv_ajax_vat_validate() {
     $vat_ignore = !empty( $_POST['wpinv_vat_ignore'] ) ? sanitize_text_field( $_POST['wpinv_vat_ignore'] ) : false;
     if ( $vat_ignore ){
         $vat_info = array();
-        $wpi_session->set( 'user_vat_info', $vat_info );
+        $wpi_session->set( 'user_vat_data', $vat_info );
         $response['success'] = true;
         $response['message'] = wp_sprintf( __( 'Ignore %s', 'invoicing' ), $vat_name );
         
@@ -1312,7 +1312,7 @@ function wpinv_ajax_vat_validate() {
     $company = !empty( $_POST['company'] ) ? sanitize_text_field( $_POST['company'] ) : '';
     $vat_number = !empty( $_POST['number'] ) ? sanitize_text_field( $_POST['number'] ) : '';
     
-    $vat_info = $wpi_session->get( 'user_vat_info' );
+    $vat_info = $wpi_session->get( 'user_vat_data' );
     if ( !is_array( $vat_info ) || empty( $vat_info ) ) {
         $vat_info = array( 'company'=> $company, 'number' => '', 'valid' => true );
     }
@@ -1322,7 +1322,7 @@ function wpinv_ajax_vat_validate() {
             $response['success'] = true;
             $response['message'] = wp_sprintf( __( 'No %s number has been supplied. %s will be included', 'invoicing' ), $vat_name, $vat_name );
             
-            $vat_info = $wpi_session->get( 'user_vat_info' );
+            $vat_info = $wpi_session->get( 'user_vat_data' );
             $vat_info['number'] = "";
             $vat_info['valid'] = true;
             
@@ -1333,14 +1333,14 @@ function wpinv_ajax_vat_validate() {
             $vat_info['valid'] = false;
         }
 
-        $wpi_session->set( 'user_vat_info', $vat_info );
+        $wpi_session->set( 'user_vat_data', $vat_info );
         wp_send_json( $response );
     }
     
     // If there is a VAT number, there must also be a company name
     if ( empty( $company ) ) {
         $vat_info['valid'] = false;
-        $wpi_session->set( 'user_vat_info', $vat_info );
+        $wpi_session->set( 'user_vat_data', $vat_info );
         
         $response['error'] = __( 'Please enter your registered company name', 'invoicing' );
         wp_send_json( $response );
@@ -1351,12 +1351,12 @@ function wpinv_ajax_vat_validate() {
     // EU VIES site, perform a simple check that the format of the
     // VAT number is valid.
     if ( !empty( $wpinv_options['vat_vies_check'] ) ) {
-        if ( empty( $wpinv_options['vat_simple_check'] ) ) {
+        if ( empty( $wpinv_options['vat_offline_check'] ) ) {
             $valid = wpinv_check_vat_offline( $vat_number );
 
             if ( !$valid ) {
                 $vat_info['valid'] = false;
-                $wpi_session->set( 'user_vat_info', $vat_info );
+                $wpi_session->set( 'user_vat_data', $vat_info );
                 
                 $response['error'] = wp_sprintf( __( '%s number not validated', 'invoicing' ), $vat_name );
                 wp_send_json( $response );
@@ -1400,7 +1400,7 @@ function wpinv_ajax_vat_validate() {
             $response['message'] = wp_sprintf( __( '%s number validated', 'invoicing' ), $vat_name );
         } else {           
             $vat_info['valid'] = false;
-            $wpi_session->set( 'user_vat_info', $vat_info );
+            $wpi_session->set( 'user_vat_data', $vat_info );
             
             $response['success'] = false;
             $response['message'] = wp_sprintf( __( 'The company name associated with the %s number provided is not the same as the company name provided.', 'invoicing' ), $vat_name );
@@ -1413,7 +1413,7 @@ function wpinv_ajax_vat_validate() {
         $vat_info = array('company'=> $company, 'number' => $vat_number, 'valid' => true );
         wpinv_save_vat_information( $company, $vat_number );
 
-        $wpi_session->set( 'user_vat_info', $vat_info );
+        $wpi_session->set( 'user_vat_data', $vat_info );
     }
 
     wp_send_json( $response );
@@ -1482,6 +1482,7 @@ function wpinv_check_vies_vat( $vat_number, $country_code = '', $check = false )
     }
 }
 
+// REMOVE THIS
 function wpinv_check_vat_offline( $vat_number, $country_code = '', $formatted = false ) {
     if ( $country_code === '' ) {
         $country_code = substr( $vat_number, 0, 2 );
@@ -1628,6 +1629,7 @@ function wpinv_check_vat_offline( $vat_number, $country_code = '', $formatted = 
     return false;
 }
 
+// REMOVE THIS
 function wpinv_check_vat( $vat_number, $country_code = '' ) {
     global $wpinv_options;
     
@@ -1641,7 +1643,7 @@ function wpinv_check_vat( $vat_number, $country_code = '' ) {
         $country_code = substr( $vat_number, 0, 2 );
     }
         
-    if ( empty( $wpinv_options['vat_simple_check'] ) ) {
+    if ( empty( $wpinv_options['vat_offline_check'] ) ) {
         if ( !wpinv_check_vat_offline( $vat_number ) ) {
             return $return;
         }
@@ -1843,7 +1845,7 @@ function wpinv_checkout_vat_validate( $valid_data, $post ) {
     
     $vat_name  = __( wpinv_owner_get_vat_name(), 'invoicing' );
     
-    $wpi_session->set( 'user_vat_info', null );
+    $wpi_session->set( 'user_vat_data', null );
     
     if ( !isset( $_POST['wpinv_wp_nonce'] ) || !wp_verify_nonce( $_POST['wpinv_wp_nonce'], 'validate_vat_number' ) ) {
         wpinv_set_error( 'vat_validation', wp_sprintf( __( "Invalid %s validation request. You are cheating.", 'invoicing' ), $vat_name ) );
@@ -1970,7 +1972,7 @@ function wpinv_checkout_vat_validate( $valid_data, $post ) {
         if ( (!$vat_info['valid']) 
             || ( $vat_info['original_number'] !== $vat_info['number'] ) 
             || ( $vat_info['original_company'] !== $vat_info['company'] ) 
-            || ( ( empty($wpinv_options['vat_simple_check']) && !wpinv_check_vat_offline( $vat_info['number'], '', true ) ) )
+            || ( ( empty($wpinv_options['vat_offline_check']) && !wpinv_check_vat_offline( $vat_info['number'], '', true ) ) )
            )
         {
             $extra = ( $vat_info['original_number'] !== $vat_info['number'] )
@@ -1991,7 +1993,7 @@ function wpinv_checkout_vat_validate( $valid_data, $post ) {
         }
     }
 
-    $wpi_session->set( 'user_vat_info', $vat_info );
+    $wpi_session->set( 'user_vat_data', $vat_info );
 }
 add_action( 'wpinv_checkout_error_checks', 'wpinv_checkout_vat_validate', 10, 2 );
 
@@ -2106,4 +2108,29 @@ function wpinv_tax_label( $label = '' ) {
     }
     
     return $wpi_requires_vat ? __( wpinv_owner_get_vat_name(), 'invoicing' ) : ( $label ? $label : __( 'Tax', 'invoicing' ) );
+}
+
+function wpinv_check_vat_new( $vat_number, $country_code = '' ) {
+    global $wpinv_options, $geodir_euvat;
+    
+    $valid      = true;
+    $message    = 'VAT number validated';
+    if ( empty( $wpinv_options['vat_offline_check'] ) && !$geodir_euvat->offline_check( $vat_number, $country_code ) ) {
+        $valid      = false;
+        $message    = __( 'VAT number not validated', 'invoicing' );
+    }
+    
+    if ( empty( $wpinv_options['vat_offline_check'] ) ) {
+        $result = wpinv_check_vat( $input['vat_number'] );
+        
+        if ( empty( $result->valid ) ) {
+            $a['valid'] = false;
+            $message = $result->message;
+        } else {
+            $a['valid'] = ( strcasecmp( trim( $result->company ), trim( $input['vat_company_name'] ) ) == 0 ) || !empty( $wpinv_options['vat_disable_company_name_check'] );
+            $message = $a['valid'] ? __( 'VAT number validated', 'invoicing' ) : __( 'The company name associated with the VAT number provided is not the same as the company name provided.', 'invoicing' );
+        }
+    }
+    
+    return $return;
 }
