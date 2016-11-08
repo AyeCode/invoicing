@@ -151,7 +151,7 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
             $meta_query[]   = array(
                 'key'     => '_wpi_discount_code',
                 'value'   => $value,
-                'compare' => 'LIKE'
+                'compare' => '='
             );
             
             $discount = wpinv_get_discounts( array(
