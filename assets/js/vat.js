@@ -1,28 +1,15 @@
 jQuery(function($) {
     $('body').bind("wpinv_taxes_recalculated", function(event, taxdata) {        
-        // Get the VAT state
         var states = WPInv_VAT.getEUStates();
         var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
-
-        // New for 2015 rule support
         var ip_country = $('#wpi-ip-country');
-        // It's OK to not show the self-certify prompt whenever 
-        // The 2015 rules do not apply
-        // The 2015 rules do apply but
-        //      the user's billing address is in the same EU state; or 
-        //      the user is in another EU state but has entered a VAT number; or
-        //      the user's IP address outside the EU and the billing address is outside the EU
-        ip_country.css('display', 'none'); // Assume the prompt is not required
-        if (WPInv_VAT_Vars.Apply2015Rules) {
+
+        ip_country.css('display', 'none');
+        if (WPInv_VAT_Vars.ApplyVATRules) {
             var buyer_and_billing_outside_eu = !vat_state && states.indexOf(ip_country.attr('value')) === -1;
             var no_vat_number = $('#wpinv_vat_number').val().trim().length === 0; 
             var billing_and_ip_countries_same = taxdata.postdata.country === ip_country.attr('value');
-            
-            if (!$('#wpi_vat_info').is(':visible') && !billing_and_ip_countries_same) {
-                //no_vat_number = true;
-            }
 
-            // If the billing address or the buyer is in the EU
             if (!buyer_and_billing_outside_eu && no_vat_number && !billing_and_ip_countries_same) {
                 ip_country .css('display', 'block');
             }
@@ -50,25 +37,18 @@ jQuery(function($) {
                     taxdata.postdata.wpinv_country = 'GB';
                 }
 
-                // Get the VAT state
                 var states = eu_states;
                 var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
                 if ( vat_state && WPInv_VAT_Vars.disableVATSameCountry && ( wpinv_is_base_country(taxdata.postdata.country) || wpinv_is_base_country(taxdata.postdata.wpinv_country) ) ) {
                     vat_state = false;
                 }
 
-                // Find the fieldset to make it visible as appropriate
                 var vat_info = $('#wpi_vat_info');
                 if (vat_state) {
                     vat_info.parent('.wpi-vat-details').show();
                 }
                 vat_info.css('display', vat_state ? "block" : "none");
                 
-                // Find the hidden field
-                vat_info.find("[name='wpinv_vat_ignore']").val(vat_state ? "0" : "1");
-                $('#wpinv-non-vat-company').css('display', vat_state ? "none" : "block");
-                
-                // If the VAT state has changed, recalculate
                 if (has_vat == vat_state) {
                     if (vat_state) {
                         config.reset(config, $('#wpinv_vat_reset'), false);
@@ -79,13 +59,6 @@ jQuery(function($) {
                 wpinv_recalculate_taxes();
             });
             
-            $('.wpi_vat_link').on('click', function(e) {
-                e.preventDefault();
-                $(e.currentTarget).parent().fadeOut('fast');
-                $('#wpi_vat_fields').fadeIn('slow');
-            });
-            
-            // Insert new tax rate row
             $('#wpi_add_eu_states').on('click', function() {
                 var rate = $('#wpinv_settings_rates_vat_eu_states').val();
                 if (rate === null || rate === '') {
@@ -170,15 +143,12 @@ jQuery(function($) {
                         
                         countries.each(function(i, country_td) {
                             var country_el = jQuery(country_td);
-                            
-                            // Get the code for the selected option
                             var code = country_el.val();
                             
                             if (!vat_rates.rates[code]) {
                                 return;
                             }
                             
-                            // Code exists so find the rate field of the row
                             var rate_el = country_el.closest('tr').find('.wpinv_tax_rate input');
                             var rate_class = country_el.closest('tr').find('.wpinv_tax_rate input');
                             
@@ -341,20 +311,7 @@ jQuery(function($) {
                     $r.hide();
                 });
             });
-            
-            $('#wpinv_settings\\[wpinv_vat_company_name\\]').on('keyup', function(e) {
-                WPInv_VAT_Config.companyNameKeyUp(e);
-            });
-            $('#wpinv_settings_taxes\\[wpinv_vat_company_name\\]').on('keyup', function(e) {
-                WPInv_VAT_Config.companyNameKeyUp(e);
-            });
-            $('#wpinv_settings\\[wpinv_vat_number\\]').on('keyup', function(e) {
-                WPInv_VAT_Config.vatNumberKeyUp(e);
-            });
-            $('#wpinv_settings_taxes\\[wpinv_vat_number\\]').on('keyup', function(e) {
-                WPInv_VAT_Config.vatNumberKeyUp(e);
-            });
-            
+                        
             jQuery('#wpi_download_geoip2').on('click', function(e) {
                 e.preventDefault();
                 var me = $(this);
@@ -404,24 +361,22 @@ jQuery(function($) {
                     
                     if ((company && (company.length > 0)) || (vat_number && (vat_number.length > 0))) {
                         if (!(company && (company.length > 0))) {
-                        WPInv_VAT_Config.showMessage(WPInv_VAT_Vars.ReasonNoCompany, 'error');
-                        return false;
+                            WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.EmptyCompany, 'error');
+                            return false;
                         }
                         
                         if (!(vat_number && (vat_number.length > 0))) {
-                            WPInv_VAT_Config.showMessage(WPInv_VAT_Vars.ReasonNoVAT, 'error');
+                            WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.EmptyVAT, 'error');
                             return false;
                         }
                     }
                     if (!WPInv_VAT_Vars.disableVATSimpleCheck && (vat_number && (vat_number.length > 0)) && !WPInv_VAT.validateVATID(numberEl, false)) {
-                        WPInv_VAT_Config.showMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
+                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
                         return false;
                     }
                     
                     var number = numberEl.val();
-                    var nonce = $('input[name=wpinv_wp_nonce]').val();
-                    var validEl = $('#wpinv_vat_number_valid');
-                    validEl.val(0);
+                    var nonce = $('input[name=_wpi_nonce]').val();
                     var me = $(this);
                     me.attr('disabled', 'disabled');
                     $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-0 wpinv-vat-stat-1').addClass('wpinv-vat-stat-2');
@@ -431,8 +386,9 @@ jQuery(function($) {
                         action: 'wpinv_vat_validate',
                         company: company,
                         number: number,
-                        _wp_nonce: nonce,
-                        source: 'checkout'
+                        country: $('[name=wpinv_country]').val(),
+                        source: 'checkout',
+                        _wpi_nonce: nonce
                     };
                     
                     $.post(ajaxurl, data, function(json) {
@@ -442,9 +398,6 @@ jQuery(function($) {
                         if (json && typeof json == 'object') {                     
                             if (json.success === true) {
                                 validated = true;
-                                validEl.val(1);
-                                $('#wpinv_company_original').val(company);
-                                $('#wpinv_vat_number_original').val(number);
                                 message = json.message ? json.message : '';
                             } else {
                                 error = json.error ? json.error : json.message;
@@ -464,13 +417,13 @@ jQuery(function($) {
                             $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                             $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
                         }
-                        // New for 2015 rule support
+
                         $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
 
                         if (error) {
-                            config.showMessage(error + '<br>' + WPInv_VAT_Vars.PageWillBeRefreshed, 'error');
+                            config.displayMessage(error + '<br>' + WPInv_VAT_Vars.TotalsRefreshed, 'error');
                         } else {
-                            config.showMessage(WPInv_VAT_Vars.PageWillBeRefreshed, 'info');
+                            config.displayMessage(WPInv_VAT_Vars.TotalsRefreshed, 'info');
                         }
                         wpinv_recalculate_taxes();
                         return;
@@ -479,7 +432,7 @@ jQuery(function($) {
                         me.removeAttr('disabled');
                         $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                         $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
-                        WPInv_VAT_Config.showMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
+                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
                     });
                 });
             } else {
@@ -488,7 +441,7 @@ jQuery(function($) {
                     var company = companyEl.val();
                     
                     if (company.length == 0) {
-                        alert(WPInv_VAT_Vars.ReasonNoCompany);
+                        alert(WPInv_VAT_Vars.EmptyCompany);
                         return false;
                     }
                     
@@ -498,9 +451,7 @@ jQuery(function($) {
                     }
                     
                     var number = numberEl.val();
-                    var nonce = $('input[name=_wp_nonce]').val();
-                    var validEl = $('#wpi_vat_number_valid');
-                    validEl.val(0);
+                    var nonce = $('input[name=_wpi_nonce]').val();
                     var me = $(this);
                     me.attr('disabled', 'disabled');
                     $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-0 wpinv-vat-stat-1').addClass('wpinv-vat-stat-2');
@@ -510,7 +461,7 @@ jQuery(function($) {
                         action: 'wpinv_vat_validate',
                         company: company,
                         number: number,
-                        _wp_nonce: nonce,
+                        _wpi_nonce: nonce,
                         source: 'admin'
                     };
                     
@@ -521,7 +472,6 @@ jQuery(function($) {
                         if (json && typeof json == 'object') {                     
                             if (json.success === true) {
                                 validated = true;
-                                validEl.val(1);
                                 $('#wpi_vat_company_original').val(company);
                                 $('#wpi_vat_number_original').val(number);
                                 message = json.message ? json.message : '';
@@ -553,42 +503,6 @@ jQuery(function($) {
                 });
             }
         },
-        companyNameKeyUp: function(e) {
-            // If the number is not yet valid then it will be displayed invalid and should stay that way
-            var valid = $('#wpinv_vat_number_valid').val();
-            if (valid === undefined || valid === "" || valid === "0") return false;
-            // Grab the original and current
-            var numberEl = $(e.currentTarget).val();
-            var originalEl = $('#wpi_vat_company_original').val();
-            // If the original is not set or the original and current ones are not the same the set to look invalid
-            if (originalEl === undefined || originalEl.length === 0 || originalEl != numberEl) {
-                $('.vat_number_validated').hide();
-                $('#wpinv_vat_validate').removeAttr('disabled');
-                $('.vat_number_not_validated').fadeIn().css("display", "inline-block");
-            } else {
-                $('#wpinv_vat_validate').attr('disabled', 'disabled');
-                $('.vat_number_validated').fadeIn().css("display", "inline-block");
-                $('.vat_number_not_validated').hide();
-            }
-        },
-        vatNumberKeyUp: function(e) {
-            // If the number is not yet valid then it will be displayed invalid and should stay that way
-            var valid = $('#wpinv_vat_number_valid').val();
-            if (valid === undefined || valid === "" || valid === "0") return false;
-            // Grab the original and current
-            var numberEl = $(e.currentTarget).val();
-            var originalEl = $('#wpinv_vat_number_original').val();
-            // If the original is not set or the original and current ones are not the same the set to look invalid
-            if (originalEl === undefined || originalEl.length === 0 || originalEl != numberEl) {
-                $('.vat_number_validated').hide();
-                $('#wpinv_vat_validate').removeAttr('disabled');
-                $('.vat_number_not_validated').fadeIn().css("display", "inline-block");
-            } else {
-                $('#wpinv_vat_validate').attr('disabled', 'disabled');
-                $('.vat_number_validated').fadeIn().css("display", "inline-block");
-                $('.vat_number_not_validated').hide();
-            }
-        },
         clearBox: function(){
             var texts = $('.wpi-vat-box #text');
             texts.html('');
@@ -596,8 +510,6 @@ jQuery(function($) {
             boxes.fadeOut('fast');
         },
         reset: function(config, me, updateTaxes) {
-            //config.clearBox();
-
             var tax = parseFloat($('#wpinv_checkout_form .wpinv_cart_tax_amount').attr('data-tax'));
             var total = parseFloat($('#wpinv_checkout_form .wpinv_cart_amount').attr('data-total'));
 
@@ -606,11 +518,9 @@ jQuery(function($) {
 
             if (total === "0") {
                 $('#wpi_vat_info').hide();
-                $('#wpinv_vat_number_valid').val(1);
                 return;
             }
 
-            // If there is tax but no country element, refresh the page
             if (tax !== "0" && countryEl === undefined) {
                 window.location.reload()
             }
@@ -625,31 +535,27 @@ jQuery(function($) {
             var numberEl = $('#wpinv_vat_number');
             var number = numberEl.val();
 
-            // If there is no number and the validated element is already visible there's nothing to do.
             if (number.length === 0 && $('.wpinv-vat-stat').hasClass('wpinv-vat-stat-1')) {
                 return;
             }
 
-            var nonce  = $('input[name=wpinv_wp_nonce]').val();
+            var nonce  = $('input[name=_wpi_nonce]').val();
             
             me.attr('disabled', 'disabled');
             $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-0 wpinv-vat-stat-1').addClass('wpinv-vat-stat-2');
             $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatReseting);
 
             var validateButton = $('#wpinv_vat_validate');
-            validateButton.hide(); // Just in case
+            validateButton.hide();
 
             var data = {
                 action: 'wpinv_vat_reset',
-                _wp_nonce: nonce,
+                _wpi_nonce: nonce,
                 source: 'checkout'
             };
 
             $.post(ajaxurl, data, function (response) {
                 var json = response;
-                $('#wpinv_vat_number_valid').val(0);
-                $('#wpinv_vat_company_original').val("");
-                $('#wpinv_vat_number_original').val("");
                 $('#wpinv_company').val("");
                 $('#wpinv_vat_number').val("");
                 
@@ -662,8 +568,6 @@ jQuery(function($) {
                 me.hide();
 
                 if (json.success) {
-                    $('#wpinv_company_original').val(json.data.company);
-                    $('#wpinv_vat_number_original').val(json.data.number);
                     $('#wpinv_company').val(json.data.company); // TODO
                     $('#wpinv_vat_number').val(json.data.number); // TODO
 
@@ -674,14 +578,14 @@ jQuery(function($) {
                     return;
                 }
 
-                config.showMessage(json === undefined || json.message === undefined ? WPInv_VAT_Vars.ErrorInvalidResponse : json.message, 'error');
+                config.displayMessage(json === undefined || json.message === undefined ? WPInv_VAT_Vars.ErrorInvalidResponse : json.message, 'error');
             })
             .fail(function(jqXHR, textStatus, errorThrown){
                 me.removeAttr('disabled');
                 me.show();
                 $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                 $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
-                config.showMessage(WPInv_VAT_Vars.ErrorResettingVATID + " (" + textStatus +  " - " + errorThrown + ")", 'error');
+                config.displayMessage(WPInv_VAT_Vars.ErrorResettingVATID + " (" + textStatus +  " - " + errorThrown + ")", 'error');
             })
         },
         showDownloadError: function(message, button, reload) {
@@ -718,10 +622,10 @@ jQuery(function($) {
             $('#wpi_remove_eu_states').removeAttr('disabled');
             $('#wpi_vat_get_rates_group').removeAttr('disabled');
         },
-        showMessage: function(message, messageClass){
-            var box = $('.wpi-vat-box.wpi-vat-box-' + messageClass + ' #text');
+        displayMessage: function(m, c){
+            var box = $('.wpi-vat-box.wpi-vat-box-' + c + ' #text');
             if (box) {
-                box.html(message);
+                box.html(m);
                 box.parent().show().slideDown().css("display","inline-block");
             }
         }

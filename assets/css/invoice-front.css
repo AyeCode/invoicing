@@ -4,6 +4,9 @@
     padding-bottom: 10px;
     padding-top: 4px;
 }
+#wpi-vat-details .panel-body {
+    padding-top: 10px;
+}
 #wpinv-payment-mode-wrap .panel-body {
     padding: 0;
 }
@@ -29,27 +32,14 @@
 #wpinv-fields .wpi-coll {
     padding-right: 0;
 }
-#wpinv-fields .wpi-col.wpi-cart-field-vat {
-    clear: both;   
-}
-#wpinv-fields .wpi-col #wpinv_vat_number{
-    width: calc(50% - 6px);
-}
-#wpinv-fields #wpinv_vat_number-wrap {
-    position: relative;
-    display: block;
-    width: 100%;
+#wpinv-fields .wpi-col2.wpi-cart-field-vat {
+    position: relative;   
 }
 #wpinv-fields .wpinv-vat-stat {
     position: absolute;
-    top: 5px;
-    left: 50%;
 }
 #wpinv-fields .wpinv-vat-stat {
-    margin-left: 7px;
-}
-#wpinv-fields .wpinv-vat-stat {
-    margin-left: 7px;
+    margin-left: 1px;
 }
 #wpinv-fields .wpinv-vat-stat-0 {
     color: red;
@@ -75,27 +65,24 @@
     content:"\f021";
 }
 #wpinv-fields .wpi-vat-box {
-	margin: 10px 0 10px 0px !important;
-	display: none;
-	border: 1px solid;
-	clear: both;
-	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 0 #FFFFFF inset, 0 -1px 0 #FFFFFF inset;
-	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 0 #FFFFFF inset, 0 -1px 0 #FFFFFF inset;
-	box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 0 #FFFFFF inset, 0 -1px 0 #FFFFFF inset;
-	min-height: 20px;
-	width: 100%;
+    margin: 10px 0 0 0px !important;
+    display: none;
+    border: 1px solid;
+    clear: both;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    min-height: 20px;
+    width: 100%;
     padding: 5px 20px 5px 10px;
 }
 
 #wpinv-fields .wpi-vat-box-info {
-	border-color: #b7d2f2;
-	color: #2e6093;
-    background-color: #dbe7f8;
+	border-color: orange;
+    background-color: #fff6e6;
 }
 
 #wpinv-fields .wpi-vat-box-error {
-	border-color: #feabab;
-	color: #c31b00;
+    border-color: #feabab;
+    color: #c31b00;
     background-color: #ffdfdf;
 }
 #wpinv-fields #wpi-billing select {

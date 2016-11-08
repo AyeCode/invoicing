@@ -114,7 +114,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
         if ( !class_exists( 'Geodir_EUVat' ) ) {
-            require_once( WPINV_PLUGIN_DIR . 'includes/libraries/geodir-euvat/geodir-euvat.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
         
         $gateways = array_keys( wpinv_get_enabled_payment_gateways() );

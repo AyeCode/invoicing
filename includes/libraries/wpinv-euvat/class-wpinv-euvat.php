@@ -2,8 +2,51 @@
 // Exit if accessed directly.
 if (!defined( 'ABSPATH' ) ) exit;
 
-class Geodir_EUVat {
+class WPInv_EUVat {
+    private static $default_country;
+    private static $instance = false;
+    
+    public static function get_instance() {
+        if ( !self::$instance ) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+    
     public function __construct() {
+        self::$default_country = wpinv_get_default_country();
+    }
+    
+    public static function get_eu_states( $sort = true ) {
+        $eu_states = array( 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GB', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE' );
+        if ( $sort ) {
+            $sort = sort( $eu_states );
+        }
+        
+        return apply_filters( 'wpinv_get_eu_states', $eu_states, $sort );
+    }
+    
+    public static function get_gst_countries( $sort = true ) {
+        $gst_countries  = array( 'AU', 'NZ', 'CA', 'CN' );
+        
+        if ( $sort ) {
+            $sort = sort( $gst_countries );
+        }
+        
+        return apply_filters( 'wpinv_get_gst_countries', $gst_countries, $sort );
+    }
+    
+    public static function is_eu_state( $country_code ) {
+        $return = !empty( $country_code ) && in_array( strtoupper( $country_code ), self::get_eu_states() ) ? true : false;
+                
+        return apply_filters( 'wpinv_is_eu_state', $return, $country_code );
+    }
+    
+    public static function is_gst_country( $country_code ) {
+        $return = !empty( $country_code ) && in_array( strtoupper( $country_code ), self::get_gst_countries() ) ? true : false;
+                
+        return apply_filters( 'wpinv_is_gst_country', $return, $country_code );
     }
     
     public static function sanitize_vat( $vat_number, $country_code = '' ) {        
@@ -28,8 +71,8 @@ class Geodir_EUVat {
     }
     
     public static function offline_check( $vat_number, $country_code = '', $formatted = false ) {
-        $vat            = $this->sanitize_vat( $vat_number, $country_code );
-        $vat_number     = $vat['vat'];
+        $vat            = self::sanitize_vat( $vat_number, $country_code );
+        $vat_number     = $vat['vat_number'];
         $country_code   = $vat['iso'];
         $regex          = array();
         
@@ -171,7 +214,7 @@ class Geodir_EUVat {
     }
     
     public static function vies_check( $vat_number, $country_code = '', $result = false ) {
-        $vat            = $this->sanitize_vat( $vat_number, $country_code );
+        $vat            = self::sanitize_vat( $vat_number, $country_code );
         $vat_number     = $vat['vat'];
         $iso            = $vat['iso'];
         
@@ -204,7 +247,7 @@ class Geodir_EUVat {
                                 $return['number'] = trim( strip_tags( $matches[3][$key] ) );
                             break;
                             case 'name':
-                                $return['name'] = trim( strip_tags( $matches[3][$key] ) );
+                                $return['company'] = trim( strip_tags( $matches[3][$key] ) );
                             break;
                             case 'address':
                                 $address           = str_replace( array( "<br><br>", "<br /><br />", "<br/><br/>" ), "<br>", html_entity_decode( trim( $matches[3][$key] ) ) );
@@ -227,7 +270,31 @@ class Geodir_EUVat {
             return $result;
         }
     }
+    
+    public static function requires_vat( $requires_vat = false, $user_id = 0, $is_digital = null ) {
+        global $wpinv_options, $wpi_item_id, $wpi_country;
+        
+        if ( !empty( $_POST['wpinv_country'] ) ) {
+            $country_code = trim( $_POST['wpinv_country'] );
+        } else if ( !empty( $_POST['country'] ) ) {
+            $country_code = trim( $_POST['country'] );
+        } else if ( !empty( $wpi_country ) ) {
+            $country_code = $wpi_country;
+        } else {
+            $country_code = wpinv_user_country( '', $user_id );
+        }
+        
+        if ( $is_digital === null && $wpi_item_id ) {
+            $is_digital = $wpi_item_id ? wpinv_vat_rule_is_digital( $wpi_item_id ) : wpinv_allow_vat_rules();
+        }
+        
+        if ( !empty( $country_code ) ) {
+            $requires_vat = ( self::is_eu_state( $country_code ) && ( self::is_eu_state( self::$default_country ) || $is_digital ) ) || ( self::is_gst_country( $country_code ) && self::is_gst_country( self::$default_country ) );
+        }
+        
+        return apply_filters( 'wpinv_requires_vat', $requires_vat, $user_id );
+    }
 }
 
-global $geodir_euvat;
-$geodir_euvat = new Geodir_EUVat();
+global $wpinv_euvat;
+$wpinv_euvat = WPInv_EUVat::get_instance();

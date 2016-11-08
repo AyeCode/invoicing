@@ -13,7 +13,7 @@ var WPInv_VAT = {
 	        var vat_value = vatid.val();
 	        if (vatid == null) return;
 	        if (vat_value.length == 0) {
-	            if (showAlert) alert(WPInv_VAT_Vars.ReasonTooShort);
+	            if (showAlert) alert(WPInv_VAT_Vars.EmptyVAT);
 	            return false;
 	        }
 	        var result = (WPInv_VAT.checkVATNumber(vat_value));
