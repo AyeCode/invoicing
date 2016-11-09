@@ -469,7 +469,7 @@ function wpinv_get_cart_contents() {
 }
 
 function wpinv_get_cart_content_details() {
-    global $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
+    global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
     $cart_items = wpinv_get_cart_contents();
     
     if ( empty( $cart_items ) ) {
@@ -504,7 +504,7 @@ function wpinv_get_cart_content_details() {
         
         $subtotal           = $item_price * $quantity;
         $tax_rate           = wpinv_get_tax_rate( $_POST['country'], $_POST['state'], $wpi_item_id );
-        $tax_class          = wpinv_get_item_vat_class( $item_id );
+        $tax_class          = $wpinv_euvat->get_item_class( $item_id );
         $tax                = wpinv_get_cart_item_tax( $item_id, $subtotal - $discount );
         
         if ( wpinv_prices_include_tax() ) {
@@ -1144,7 +1144,7 @@ function wpinv_process_checkout() {
     if ( is_array( $vat_info ) ) {
         $invoice_data['user_info']['vat_number']        = $vat_info['number'];
         $invoice_data['user_info']['vat_rate']          = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state']);
-        $invoice_data['user_info']['self_certified']    = isset($vat_info['self_certified']) ? $vat_info['self_certified'] : false;
+        $invoice_data['user_info']['adddress_confirmed']    = isset($vat_info['adddress_confirmed']) ? $vat_info['adddress_confirmed'] : false;
 
         // Add the VAT rate to each item in the cart
         foreach( $invoice_data['cart_details'] as $key => $item_data) {
@@ -1154,7 +1154,7 @@ function wpinv_process_checkout() {
     }
     
     // Save vat fields.
-    $address_fields = array( 'vat_number', 'vat_rate', 'self_certified' );
+    $address_fields = array( 'vat_number', 'vat_rate', 'adddress_confirmed' );
     foreach ( $address_fields as $field ) {
         if ( isset( $invoice_data['user_info'][$field] ) ) {
             $invoice->set( $field, $invoice_data['user_info'][$field] );

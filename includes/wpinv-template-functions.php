@@ -1216,7 +1216,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     
     $tax_label          = __( wpinv_owner_get_vat_name(), 'invoicing' );
     $invoice            = wpinv_get_invoice_cart();
-    $is_digital         = wpinv_invoice_has_digital_item( $invoice );
+    $is_digital         = $wpinv_euvat->invoice_has_digital_rule( $invoice );
     $wpi_country        = $invoice->country;
     
     $requires_vat       = !wpinv_disable_vat_fields() && $invoice->get_total() > 0 && $wpinv_euvat->requires_vat( 0, false, $is_digital );
@@ -1234,11 +1234,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
         $validated  = isset( $vat_info['valid'] ) ? $vat_info['valid'] : false;
     }
     
-    if ( $invoice->country ) {
-        $selected_country = $invoice->country;
-    } else {
-        $selected_country = apply_filters( 'wpinv-get-country', !empty( $wpinv_options['vat_ip_country_default'] ) ? '' : wpinv_get_default_country() );
-    }
+    $selected_country = $invoice->country ? $invoice->country : wpinv_default_billing_country();
 
     if ( $ip_country_code == 'UK' ) {
         $ip_country_code = 'GB';
@@ -1654,16 +1650,7 @@ function wpinv_checkout_billing_info() {
     if ( wpinv_is_checkout() ) {
         $logged_in          = is_user_logged_in();
         $billing_details    = wpinv_checkout_billing_details();
-
-        if ( !empty( $billing_details['country'] ) ) {
-            $selected_country = $billing_details['country'];
-        } else {
-            $selected_country = apply_filters( 'wpinv-get-country', '' );
-            
-            if ( empty( $selected_country ) ) {
-                $selected_country = wpinv_get_default_country();
-            }
-        }
+        $selected_country   = !empty( $billing_details['country'] ) ? $billing_details['country'] : wpinv_default_billing_country();
         ?>
         <div id="wpinv-fields" class="clearfix">
             <div id="wpi-billing" class="wpi-billing clearfix panel panel-default">

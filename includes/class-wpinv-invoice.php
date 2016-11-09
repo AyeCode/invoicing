@@ -59,7 +59,7 @@ final class WPInv_Invoice {
     public $company = '';
     public $vat_number = '';
     public $vat_rate = '';
-    public $self_certified = '';
+    public $adddress_confirmed = '';
     
     public $full_name = '';
     public $parent_invoice = 0;
@@ -169,7 +169,7 @@ final class WPInv_Invoice {
         $this->company         = $this->user_info['company'];
         $this->vat_number      = $this->user_info['vat_number'];
         $this->vat_rate        = $this->user_info['vat_rate'];
-        $this->self_certified  = $this->user_info['self_certified'];
+        $this->adddress_confirmed  = $this->user_info['adddress_confirmed'];
         $this->address         = $this->user_info['address'];
         $this->city            = $this->user_info['city'];
         $this->country         = $this->user_info['country'];
@@ -403,9 +403,9 @@ final class WPInv_Invoice {
         return $vat_rate;
     }
     
-    private function setup_self_certified() {
-        $self_certified = $this->get_meta( '_wpinv_self_certified' );
-        return $self_certified;
+    private function setup_adddress_confirmed() {
+        $adddress_confirmed = $this->get_meta( '_wpinv_adddress_confirmed' );
+        return $adddress_confirmed;
     }
     
     private function setup_phone() {
@@ -453,7 +453,7 @@ final class WPInv_Invoice {
             'company'        => $this->company,
             'vat_number'     => $this->vat_number,
             'vat_rate'       => $this->vat_rate,
-            'self_certified' => $this->self_certified,
+            'adddress_confirmed' => $this->adddress_confirmed,
             'discount'       => $this->discounts,
         );
         
@@ -761,18 +761,19 @@ final class WPInv_Invoice {
                         
                         $vat_info = $wpi_session->get( 'user_vat_data' );
                         if ( $this->vat_number && !empty( $vat_info ) && isset( $vat_info['number'] ) && isset( $vat_info['valid'] ) && $vat_info['number'] == $this->vat_number ) {
-                            $this->update_meta( '_wpinv_self_certified', (bool)$vat_info['valid'] );
-                            $this->user_info['self_certified'] = (bool)$vat_info['valid'];
+                            $adddress_confirmed = isset( $vat_info['adddress_confirmed'] ) ? $vat_info['adddress_confirmed'] : false;
+                            $this->update_meta( '_wpinv_adddress_confirmed', (bool)$adddress_confirmed );
+                            $this->user_info['adddress_confirmed'] = (bool)$adddress_confirmed;
                         }
-                        
+    
                         break;
                     case 'vat_rate':
                         $this->update_meta( '_wpinv_vat_rate', $this->vat_rate );
                         $this->user_info['vat_rate'] = $this->vat_rate;
                         break;
-                    case 'self_certified':
-                        $this->update_meta( '_wpinv_self_certified', $this->self_certified );
-                        $this->user_info['self_certified'] = $this->self_certified;
+                    case 'adddress_confirmed':
+                        $this->update_meta( '_wpinv_adddress_confirmed', $this->adddress_confirmed );
+                        $this->user_info['adddress_confirmed'] = $this->adddress_confirmed;
                         break;
                     
                     case 'key':
@@ -1851,7 +1852,7 @@ final class WPInv_Invoice {
     }
     
     public function update_items($temp = false) {
-        global $wpi_current_id, $wpi_item_id, $wpi_nosave;
+        global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpi_nosave;
         
         if ( !empty( $this->cart_details ) ) {
             $wpi_nosave             = $temp;
@@ -1875,7 +1876,7 @@ final class WPInv_Invoice {
                 $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
                 
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
-                $tax_class  = wpinv_get_item_vat_class( $wpi_item_id );
+                $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
 
                 if ( wpinv_prices_include_tax() ) {
@@ -2460,15 +2461,14 @@ final class WPInv_Invoice {
     }
     
     public function has_vat() {
+        global $wpinv_euvat, $wpi_country;
+        
         $requires_vat = false;
         
-        if ( $this->country && $this->vat_number && $this->self_certified ) {
-            $default_country    = wpinv_get_default_country();
-            $eu_states          = wpinv_get_eu_states();
-            $gst_countries      = wpinv_get_gst_countries();
-            $country            = $this->country;
+        if ( $this->country && $this->vat_number ) {
+            $wpi_country        = $this->country;
             
-            $requires_vat       = ( in_array( $country, $eu_states ) && ( in_array( $default_country, $eu_states ) || ( wpinv_invoice_has_digital_item( $this ) ) ) ) || ( in_array( $country, $gst_countries ) && in_array( $default_country, $gst_countries ) );
+            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
         }
         
         return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );

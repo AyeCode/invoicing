@@ -60,7 +60,7 @@ jQuery(function($) {
             });
             
             $('#wpi_add_eu_states').on('click', function() {
-                var rate = $('#wpinv_settings_rates_vat_eu_states').val();
+                var rate = $('#wpinv_settings_rates_eu_fallback_rate').val();
                 if (rate === null || rate === '') {
                     if (!confirm(WPInv_VAT_Vars.NoRateSet)) return;
                 }
@@ -472,8 +472,6 @@ jQuery(function($) {
                         if (json && typeof json == 'object') {                     
                             if (json.success === true) {
                                 validated = true;
-                                $('#wpi_vat_company_original').val(company);
-                                $('#wpi_vat_number_original').val(number);
                                 message = json.message ? json.message : '';
                             } else {
                                 error = json.message ? json.message : json.error;

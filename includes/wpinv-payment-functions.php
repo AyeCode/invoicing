@@ -92,7 +92,7 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     $invoice->set( 'company', $parent_invoice->company );
     $invoice->set( 'vat_number', $parent_invoice->vat_number );
     $invoice->set( 'vat_rate', $parent_invoice->vat_rate );
-    $invoice->set( 'self_certified', $parent_invoice->self_certified );
+    $invoice->set( 'adddress_confirmed', $parent_invoice->adddress_confirmed );
 
     if ( empty( $args['gateway'] ) ) {
         $invoice->set( 'gateway', $parent_invoice->get_gateway() );

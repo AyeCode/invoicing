@@ -1756,3 +1756,9 @@ function wpinv_requireGeoIP2() {
 
     define( 'requireGeoIP2', true );
 }
+
+function wpinv_default_billing_country( $country = '', $user_id = 0 ) {
+    $country = !empty( $country ) ? $country : wpinv_get_default_country();
+    
+    return apply_filters( 'wpinv_default_billing_country', $country, $user_id );
+}
