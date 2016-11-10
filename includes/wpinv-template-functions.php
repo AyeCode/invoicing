@@ -788,7 +788,9 @@ function wpinv_get_business_address() {
 }
 
 function wpinv_display_from_address() {
-    $from_name = wpinv_owner_vat_company_name();
+    global $wpinv_euvat;
+    
+    $from_name = $wpinv_euvat->get_company_name();
     if (empty($from_name)) {
         $from_name = wpinv_get_business_name();
     }
@@ -830,8 +832,10 @@ function wpinv_get_watermark( $id ) {
 }
 
 function wpinv_display_invoice_details( $invoice ) {
+    global $wpinv_euvat;
+    
     $invoice_id = $invoice->ID;
-    $vat_name   = wpinv_owner_get_vat_name();
+    $vat_name   = $wpinv_euvat->get_vat_name();
     
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
     ?>
@@ -868,7 +872,7 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
-        <?php if ( $owner_vat_number = wpinv_owner_vat_number() ) { ?>
+        <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
                 <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>
                 <td><?php echo $owner_vat_number; ?></td>
@@ -948,12 +952,12 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
 }
 
 function wpinv_display_line_items( $invoice_id = 0 ) {
-    global $ajax_cart_details;
+    global $wpinv_euvat, $ajax_cart_details;
     $invoice            = wpinv_get_invoice( $invoice_id );
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
     $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
-    $tax_label           = $use_taxes && $invoice->has_vat() ? wpinv_owner_get_vat_name() : __( 'Tax', 'invoicing' );
+    $tax_label           = $use_taxes && $invoice->has_vat() ? $wpinv_euvat->get_vat_name() : __( 'Tax', 'invoicing' );
     $tax_title          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
     
     $cart_details       = $invoice->get_cart_details();
@@ -1214,18 +1218,18 @@ function wpinv_checkout_vat_fields( $billing_details ) {
     $ip_address         = wpinv_get_ip();
     $ip_country_code    = wpinv_get_ip_country();
     
-    $tax_label          = __( wpinv_owner_get_vat_name(), 'invoicing' );
+    $tax_label          = __( $wpinv_euvat->get_vat_name(), 'invoicing' );
     $invoice            = wpinv_get_invoice_cart();
     $is_digital         = $wpinv_euvat->invoice_has_digital_rule( $invoice );
     $wpi_country        = $invoice->country;
     
-    $requires_vat       = !wpinv_disable_vat_fields() && $invoice->get_total() > 0 && $wpinv_euvat->requires_vat( 0, false, $is_digital );
+    $requires_vat       = !$wpinv_euvat->hide_vat_fields() && $invoice->get_total() > 0 && $wpinv_euvat->requires_vat( 0, false, $is_digital );
     $wpi_requires_vat   = $requires_vat;
     
-    $company            = is_user_logged_in() ? wpinv_user_company() : '';
-    $vat_number         = wpinv_get_vat_number();
+    $company            = is_user_logged_in() ? $wpinv_euvat->get_user_company() : '';
+    $vat_number         = $wpinv_euvat->get_user_vat_number();
     
-    $validated          = $vat_number ? wpinv_get_vat_number( '', 0, true ) : 1;
+    $validated          = $vat_number ? $wpinv_euvat->get_user_vat_number( '', 0, true ) : 1;
     $vat_info           = $wpi_session->get( 'user_vat_data' );
 
     if ( is_array( $vat_info ) ) {
@@ -1244,7 +1248,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
         $selected_country = 'GB';
     }
     
-    if ( wpinv_vat_same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
+    if ( $wpinv_euvat->same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
         $requires_vat       = false;
     }
 
@@ -1303,7 +1307,7 @@ function wpinv_checkout_vat_fields( $billing_details ) {
             </div>
         </div>
     </div>
-    <div id="wpi-ip-country" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $ip_country_code; ?>" style="display:<?php echo $show_ip_country; ?>;">
+    <div id="wpinv_adddress_confirm" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $ip_country_code; ?>" style="display:<?php echo $show_ip_country; ?>;">
         <div id="wpinv-fields-box" class="panel-body">
             <span id="wpinv_adddress_confirmed-wrap">
                 <input type="checkbox" id="wpinv_adddress_confirmed" name="wpinv_adddress_confirmed" value="1">

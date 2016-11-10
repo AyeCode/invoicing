@@ -1045,6 +1045,8 @@ function wpinv_empty_cart() {
 }
 
 function wpinv_process_checkout() {
+    global $wpinv_euvat;
+    
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
@@ -1140,7 +1142,7 @@ function wpinv_process_checkout() {
         'card_info'         => $valid_data['cc_info']
     );
     
-    $vat_info   = wpinv_user_vat_info();
+    $vat_info   = $wpinv_euvat->current_vat_data();
     if ( is_array( $vat_info ) ) {
         $invoice_data['user_info']['vat_number']        = $vat_info['number'];
         $invoice_data['user_info']['vat_rate']          = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state']);

@@ -18,6 +18,19 @@ function wpinv_get_default_country() {
 	return apply_filters( 'wpinv_default_country', $country );
 }
 
+function wpinv_is_base_country( $country ) {
+    $base_country = wpinv_get_default_country();
+    
+    if ( $base_country === 'UK' ) {
+        $base_country = 'GB';
+    }
+    if ( $country == 'UK' ) {
+        $country = 'GB';
+    }
+
+    return ( $country && $country === $base_country ) ? true : false;
+}
+
 function wpinv_country_name( $country_code = '' ) { 
     $countries = wpinv_get_country_list();
     $country_code = $country_code == 'UK' ? 'GB' : $country_code;

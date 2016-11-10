@@ -1,17 +1,14 @@
 jQuery(function($) {
-    $('body').bind("wpinv_taxes_recalculated", function(event, taxdata) {        
-        var states = WPInv_VAT.getEUStates();
-        var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
-        var ip_country = $('#wpi-ip-country');
+    $('body').bind('wpinv_tax_recalculated', function(e, data) {
+        var el = $('#wpinv_adddress_confirm');
 
-        ip_country.css('display', 'none');
+        el.hide();
         if (WPInv_VAT_Vars.ApplyVATRules) {
-            var buyer_and_billing_outside_eu = !vat_state && states.indexOf(ip_country.attr('value')) === -1;
-            var no_vat_number = $('#wpinv_vat_number').val().trim().length === 0; 
-            var billing_and_ip_countries_same = taxdata.postdata.country === ip_country.attr('value');
+            var eu_state    = wpinv_is_eu_state(data.post.country);
+            var non_eu      = !eu_state && !wpinv_is_eu_state(el.attr('value'));
 
-            if (!buyer_and_billing_outside_eu && no_vat_number && !billing_and_ip_countries_same) {
-                ip_country .css('display', 'block');
+            if (!non_eu && $('#wpinv_vat_number').val().trim().length === 0 && data.post.country !== el.attr('value')) {
+                el.show();
             }
         }
     });
@@ -22,40 +19,68 @@ jQuery(function($) {
             
             var me = this;
         },
+        checkVATNumber: function(el, err) {
+            try {
+                if (el) {
+                    var valid = false;
+                    var msg = '';
+                    var value = el.val();
+                    
+                    if (value.length > 0) {
+                        if (checkVATNumber(value)) {
+                            valid = true;
+                        } else {
+                            msg = WPInv_VAT_Vars.ErrInvalidVat;
+                        }
+                    } else {
+                        msg = WPInv_VAT_Vars.EmptyVAT;
+                    }
+                    
+                    if (valid) {
+                        return true;
+                    } else if(err && msg) {
+                        alert(msg);
+                    }
+                    return false;
+                }
+                return;
+            } catch(e) {
+                if (err) {
+                    alert(WPInv_VAT_Vars.ErrValidateVAT + ": " + e.message);
+                }
+                return false;
+            }
+        },
         taxes: function(config) {
             var has_vat = $('#wpi_vat_info').is(':visible');
-            var eu_states = WPInv_VAT.getEUStates();
+            var eu_states = WPInv_VAT_Vars.EUStates;
             
-            $('body').bind("wpinv_taxes_recalculated", function(event, taxdata) {
-                var wpi_errors = $('.wpinv_errors');
-                if (wpi_errors) {
-                    wpi_errors.html("");
-                    wpi_errors.css('display', "none");
+            $('body').bind('wpinv_tax_recalculated', function(e, data) {
+                $('.wpinv_errors').html('').hide();
+
+                if (data.post.country === 'UK') {
+                    data.post.country = 'GB';
                 }
 
-                if (taxdata.postdata.wpinv_country === 'UK') {
-                    taxdata.postdata.wpinv_country = 'GB';
+                var eu_state = wpinv_is_eu_state(data.post.country);
+                if (eu_state && WPInv_VAT_Vars.disableVATSameCountry && wpinv_is_base_country(data.post.country)) {
+                    eu_state = false;
                 }
 
-                var states = eu_states;
-                var vat_state = (states.indexOf(taxdata.postdata.wpinv_country) >= 0 || states.indexOf(taxdata.postdata.country) >= 0);
-                if ( vat_state && WPInv_VAT_Vars.disableVATSameCountry && ( wpinv_is_base_country(taxdata.postdata.country) || wpinv_is_base_country(taxdata.postdata.wpinv_country) ) ) {
-                    vat_state = false;
+                if (eu_state) {
+                    $('#wpi_vat_info').show();
+                    $('#wpi_vat_info').parent('.wpi-vat-details').show();
+                } else {
+                    $('#wpi_vat_info').hide();
                 }
-
-                var vat_info = $('#wpi_vat_info');
-                if (vat_state) {
-                    vat_info.parent('.wpi-vat-details').show();
-                }
-                vat_info.css('display', vat_state ? "block" : "none");
                 
-                if (has_vat == vat_state) {
-                    if (vat_state) {
+                if (has_vat == eu_state) {
+                    if (eu_state) {
                         config.reset(config, $('#wpinv_vat_reset'), false);
                     }
                     return;
                 }
-                has_vat = vat_state;
+                has_vat = eu_state;
                 wpinv_recalculate_taxes();
             });
             
@@ -92,7 +117,7 @@ jQuery(function($) {
             
             $('#wpi_remove_eu_states').on('click', function() {
                 $('#wpinv_tax_rates select.wpinv-tax-country').each( function( i ) {
-                    if (jQuery(this).val() && jQuery.inArray(jQuery(this).val(), eu_states) !== -1) {
+                    if (jQuery(this).val() && wpinv_is_eu_state(jQuery(this).val())) {
                         if( $('#wpinv_tax_rates tbody tr').length === 1 ) {
                             $('#wpinv_tax_rates select').val('');
                             $('#wpinv_tax_rates select').trigger('change');
@@ -370,8 +395,8 @@ jQuery(function($) {
                             return false;
                         }
                     }
-                    if (!WPInv_VAT_Vars.disableVATSimpleCheck && (vat_number && (vat_number.length > 0)) && !WPInv_VAT.validateVATID(numberEl, false)) {
-                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
+                    if (!WPInv_VAT_Vars.disableVATSimpleCheck && (vat_number && (vat_number.length > 0)) && !WPInv_VAT_Config.checkVATNumber(numberEl, false)) {
+                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrValidateVAT, 'error');
                         return false;
                     }
                     
@@ -418,7 +443,11 @@ jQuery(function($) {
                             $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
                         }
 
-                        $('#wpi-ip-country').css('display', number.length > 0 || $('#wpinv_country').val() === $('#wpi-ip-country').attr('value') ? "none" : "block");
+                        if (number.length > 0 || $('#wpinv_country').val() === $('#wpinv_adddress_confirm').attr('value')) {
+                            $('#wpinv_adddress_confirm').hide();
+                        } else {
+                            $('#wpinv_adddress_confirm').show();
+                        }
 
                         if (error) {
                             config.displayMessage(error + '<br>' + WPInv_VAT_Vars.TotalsRefreshed, 'error');
@@ -432,7 +461,7 @@ jQuery(function($) {
                         me.removeAttr('disabled');
                         $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                         $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
-                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrorValidatingVATID, 'error');
+                        WPInv_VAT_Config.displayMessage(WPInv_VAT_Vars.ErrValidateVAT, 'error');
                     });
                 });
             } else {
@@ -446,7 +475,7 @@ jQuery(function($) {
                     }
                     
                     var numberEl = $('#wpinv_settings\\[vat_number\\]');
-                    if (!WPInv_VAT.validateVATID(numberEl, true)) {
+                    if (!WPInv_VAT.WPInv_VAT_Config(numberEl, true)) {
                         return false;
                     }
                     
@@ -496,7 +525,7 @@ jQuery(function($) {
                         me.removeAttr('disabled');
                         $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                         $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
-                        alert(WPInv_VAT_Vars.ErrorValidatingVATID);
+                        alert(WPInv_VAT_Vars.ErrValidateVAT);
                     });
                 });
             }
@@ -576,14 +605,14 @@ jQuery(function($) {
                     return;
                 }
 
-                config.displayMessage(json === undefined || json.message === undefined ? WPInv_VAT_Vars.ErrorInvalidResponse : json.message, 'error');
+                config.displayMessage(json === undefined || json.message === undefined ? WPInv_VAT_Vars.ErrInvalidResponse : json.message, 'error');
             })
             .fail(function(jqXHR, textStatus, errorThrown){
                 me.removeAttr('disabled');
                 me.show();
                 $('.wpinv-vat-stat font').html(WPInv_VAT_Vars.VatNotValidated);
                 $('.wpinv-vat-stat').removeClass('wpinv-vat-stat-2').addClass('wpinv-vat-stat-0');
-                config.displayMessage(WPInv_VAT_Vars.ErrorResettingVATID + " (" + textStatus +  " - " + errorThrown + ")", 'error');
+                config.displayMessage(WPInv_VAT_Vars.ErrResetVAT + " (" + textStatus +  " - " + errorThrown + ")", 'error');
             })
         },
         showDownloadError: function(message, button, reload) {
@@ -658,12 +687,11 @@ function wpinv_recalculate_taxes( state ) {
                 jQuery('#wpinv_checkout_cart_form').replaceWith(res.html);
                 jQuery('.wpinv-chdeckout-total', jQuery('#wpinv_checkout_form_wrap')).text(res.total);
 
-                var tax_data = new Object();
-                tax_data.postdata = postData;
-                tax_data.response = res;
-                tax_data.recalculated = true;
-                jQuery('body').trigger('wpinv_taxes_recalculated', [ tax_data ]);
-                jQuery('body').trigger('wpinv_vat_recalculated', [ tax_data ]);
+                var data = new Object();
+                data.post = postData;
+                data.response = res;
+                data.recalculated = true;
+                jQuery('body').trigger('wpinv_tax_recalculated', [data]);
             }
 
             setTimeout( function() { 
@@ -677,6 +705,10 @@ function wpinv_recalculate_taxes( state ) {
         jQuery('#wpinv_checkout_cart_wrap').unblock();
         console.log(errorThrown);
     });
+}
+
+function wpinv_is_eu_state( country ) {
+    return jQuery.inArray(country, WPInv_VAT_Vars.EUStates) !== -1 ? true : false;
 }
 
 function wpinv_is_base_country( country ) {
