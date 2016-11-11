@@ -202,10 +202,8 @@ class WPInv_API {
                 if ( $field == 'country' && empty( $value ) ) {
                     if ( !empty( $invoice->country ) ) {
                         $value = $invoice->country;
-                    } else if ( $billing_country = wpinv_get_ip_country() ) {
-                        $value = $billing_country;
                     } else {
-                        $value = wpinv_get_default_country();
+                        $value = wpinv_default_billing_country( '', $user_id );
                     }
                 }
                 
@@ -250,10 +248,8 @@ class WPInv_API {
                 $country = $invoice->country;
             } else if ( !empty( $data['billing_details']['country'] ) ) {
                 $country = $data['billing_details']['country'];
-            } else if ( $billing_country = wpinv_get_ip_country() ) {
-                $country = $billing_country;
             } else {
-                $country = wpinv_get_default_country();
+                $country = wpinv_default_billing_country( '', $invoice->get_user_id() );
             }
             
             if ( !empty( $invoice->state ) ) {

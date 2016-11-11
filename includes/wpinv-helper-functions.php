@@ -20,13 +20,11 @@ function wpinv_item_quantities_enabled() {
 function wpinv_get_ip() {
     $ip = '127.0.0.1';
 
-    if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-        //check ip from share internet
+    if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
         $ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
-    } elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-        //to check ip is pass from proxy
+    } elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
         $ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
-    } elseif( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+    } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
         $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
     }
     

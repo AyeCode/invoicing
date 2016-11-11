@@ -34,6 +34,8 @@ class WPInv_EUVat {
             add_action( 'wp_ajax_nopriv_wpinv_delete_vat_class', array( self::$instance, 'delete_class' ) );
             add_action( 'wp_ajax_wpinv_update_vat_rates', array( self::$instance, 'update_eu_rates' ) );
             add_action( 'wp_ajax_nopriv_wpinv_update_vat_rates', array( self::$instance, 'update_eu_rates' ) );
+            add_action( 'wp_ajax_wpinv_geoip2', array( self::$instance, 'geoip2_download_database' ) );
+            add_action( 'wp_ajax_nopriv_wpinv_geoip2', array( self::$instance, 'geoip2_download_database' ) );
         }
         
         add_action( 'wp_enqueue_scripts', array( self::$instance, 'enqueue_vat_scripts' ) );
@@ -45,6 +47,7 @@ class WPInv_EUVat {
         add_action( 'wp_ajax_wpinv_vat_reset', array( self::$instance, 'ajax_vat_reset' ) );
         add_action( 'wp_ajax_nopriv_wpinv_vat_reset', array( self::$instance, 'ajax_vat_reset' ) );
         add_action( 'wpinv_checkout_error_checks', array( self::$instance, 'checkout_vat_validate' ), 10, 2 );
+        add_action( 'wpinv_after_billing_fields', array( self::$instance, 'checkout_vat_fields' ) );
         add_action( 'wpinv_invoice_print_after_line_items', array( self::$instance, 'show_vat_notice' ), 999, 1 );
     }        
     
@@ -98,7 +101,8 @@ class WPInv_EUVat {
         $vars['ErrInvalidVat'] = wp_sprintf( __( 'The %s number supplied does not have a valid format!', 'invoicing' ), $vat_name );
         $vars['ErrInvalidResponse'] = __( 'An invalid response has been received from the server!', 'invoicing' );
         $vars['ApplyVATRules'] = self::allow_vat_rules();
-        $vars['RateRequestResponseInvalid'] = __( 'The get rate request response is invalid', 'invoicing' );
+        $vars['ErrResponse'] = __( 'The request response is invalid!', 'invoicing' );
+        $vars['ErrRateResponse'] = __( 'The get rate request response is invalid', 'invoicing' );
         $vars['PageRefresh'] = __( 'The page will be refreshed in 10 seconds to show the new options.', 'invoicing' );
         $vars['RequestResponseNotValidJSON'] = __( 'The get rate request response is not valid JSON', 'invoicing' );
         $vars['GetRateRequestFailed'] = __( 'The get rate request failed: ', 'invoicing' );
@@ -364,7 +368,304 @@ class WPInv_EUVat {
 
         return $settings;
     }
+    // IP Geolocation
+    public static function geoip2_download_database() {
+        $upload_dir         = wp_upload_dir();
         
+        $database_url       = 'http' . (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on' ? 's' : '') . '://geolite.maxmind.com/download/geoip/database/';
+        $destination_dir    = $upload_dir['basedir'] . '/invoicing';
+        
+        if ( !is_dir( $destination_dir ) ) { 
+            mkdir( $destination_dir );
+        }
+        
+        $database_files     = array(
+            'country'   => array(
+                'source'        => $database_url . 'GeoLite2-Country.mmdb.gz',
+                'destination'   => $destination_dir . '/GeoLite2-Country.mmdb',
+            ),
+            'city'      => array(
+                'source'        => $database_url . 'GeoLite2-City.mmdb.gz',
+                'destination'   => $destination_dir . '/GeoLite2-City.mmdb',
+            )
+        );
+
+        foreach( $database_files as $database => $files ) {
+            $result = self::geoip2_download_file( $files['source'], $files['destination'] );
+            
+            if ( empty( $result['success'] ) ) {
+                echo $result['message'];
+                exit;
+            }
+            
+            echo __( 'GeoIp2 database updated successfully.', 'invoicing' );
+        }
+        
+        exit;
+    }
+    
+    public static function geoip2_download_file( $source_url, $destination_file ) {
+        $success    = false;
+        $message    = '';
+        
+        if ( !function_exists( 'download_url' ) ) {
+            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        }
+
+        $temp_file  = download_url( $source_url );
+        
+        if ( is_wp_error( $temp_file ) ) {
+            $message = sprintf( __( 'Error while downloading GeoIp2 database( %s ): %s', 'invoicing' ), $source_url, $temp_file->get_error_message() );
+        } else {
+            $handle = gzopen( $temp_file, 'rb' );
+            
+            if ( $handle ) {
+                $fopen  = fopen( $destination_file, 'wb' );
+                if ( $fopen ) {
+                    while ( ( $data = gzread( $handle, 4096 ) ) != false ) {
+                        fwrite( $fopen, $data );
+                    }
+
+                    gzclose( $handle );
+                    fclose( $fopen );
+                        
+                    $success = true;
+                } else {
+                    gzclose( $handle );
+                    $message = sprintf( __( 'Error could not open destination GeoIp2 database file for writing: %s', 'invoicing' ), $destination_file );
+                }
+            } else {
+                $message = sprintf( __( 'Error could not open GeoIp2 database file for reading: %s', 'invoicing' ), $temp_file );
+            }
+            
+            if ( file_exists( $temp_file ) ) {
+                unlink( $temp_file );
+            }
+        }
+        
+        $return             = array();
+        $return['success']  = $success;
+        $return['message']  = $message;
+
+        return $return;
+    }
+    
+    public static function load_geoip2() {
+        if ( defined( 'WPINV_GEOIP2_LODDED' ) ) {
+            return;
+        }
+        
+        if ( !class_exists( '\MaxMind\Db\Reader' ) ) {
+            $maxmind_db_files = array(
+                'Reader/Decoder.php',
+                'Reader/InvalidDatabaseException.php',
+                'Reader/Metadata.php',
+                'Reader/Util.php',
+                'Reader.php',
+            );
+            
+            foreach ( $maxmind_db_files as $key => $file ) {
+                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/MaxMind/Db/' . $file );
+            }
+        }
+        
+        if ( !class_exists( '\GeoIp2\Database\Reader' ) ) {        
+            $geoip2_files = array(
+                'ProviderInterface.php',
+                'Compat/JsonSerializable.php',
+                'Database/Reader.php',
+                'Exception/GeoIp2Exception.php',
+                'Exception/AddressNotFoundException.php',
+                'Exception/AuthenticationException.php',
+                'Exception/HttpException.php',
+                'Exception/InvalidRequestException.php',
+                'Exception/OutOfQueriesException.php',
+                'Model/AbstractModel.php',
+                'Model/AnonymousIp.php',
+                'Model/Country.php',
+                'Model/City.php',
+                'Model/ConnectionType.php',
+                'Model/Domain.php',
+                'Model/Enterprise.php',
+                'Model/Insights.php',
+                'Model/Isp.php',
+                'Record/AbstractRecord.php',
+                'Record/AbstractPlaceRecord.php',
+                'Record/Country.php',
+                'Record/City.php',
+                'Record/Continent.php',
+                'Record/Location.php',
+                'Record/MaxMind.php',
+                'Record/Postal.php',
+                'Record/RepresentedCountry.php',
+                'Record/Subdivision.php',
+                'Record/Traits.php',
+                'WebService/Client.php',
+            );
+            
+            foreach ( $geoip2_files as $key => $file ) {
+                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/GeoIP2/' . $file );
+            }
+        }
+
+        define( 'WPINV_GEOIP2_LODDED', true );
+    }
+
+    public static function geoip2_country_dbfile() {
+        $upload_dir = wp_upload_dir();
+
+        if ( !isset( $upload_dir['basedir'] ) ) {
+            return false;
+        }
+
+        $filename = $upload_dir['basedir'] . '/invoicing/GeoLite2-Country.mmdb';
+        if ( !file_exists( $filename ) ) {
+            return false;
+        }
+        
+        return $filename;
+    }
+
+    public static function geoip2_city_dbfile() {
+        $upload_dir = wp_upload_dir();
+
+        if ( !isset( $upload_dir['basedir'] ) ) {
+            return false;
+        }
+
+        $filename = $upload_dir['basedir'] . '/invoicing/GeoLite2-City.mmdb';
+        if ( !file_exists( $filename ) ) {
+            return false;
+        }
+        
+        return $filename;
+    }
+
+    public static function geoip2_country_reader() {
+        try {
+            self::load_geoip2();
+
+            if ( $filename = self::geoip2_country_dbfile() ) {
+                return new \GeoIp2\Database\Reader( $filename );
+            }
+        } catch( Exception $e ) {
+            return false;
+        }
+        
+        return false;
+    }
+
+    public static function geoip2_city_reader() {
+        try {
+            self::load_geoip2();
+
+            if ( $filename = self::geoip2_city_dbfile() ) {
+                return new \GeoIp2\Database\Reader( $filename );
+            }
+        } catch( Exception $e ) {
+            return false;
+        }
+        
+        return false;
+    }
+
+    public static function geoip2_country_record( $ip_address ) {
+        try {
+            $reader = self::geoip2_country_reader();
+
+            if ( $reader ) {
+                $record = $reader->country( $ip_address );
+                
+                if ( !empty( $record->country->isoCode ) ) {
+                    return $record;
+                }
+            }
+        } catch(\InvalidArgumentException $e) {
+            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
+            
+            return false;
+        } catch(\GeoIp2\Exception\AddressNotFoundException $e) {
+            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
+            
+            return false;
+        } catch( Exception $e ) {
+            return false;
+        }
+        
+        return false;
+    }
+
+    public static function geoip2_city_record( $ip_address ) {
+        try {
+            $reader = self::geoip2_city_reader();
+
+            if ( $reader ) {
+                $record = $reader->city( $ip_address );
+                
+                if ( !empty( $record->country->isoCode ) ) {
+                    return $record;
+                }
+            }
+        } catch(\InvalidArgumentException $e) {
+            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
+            
+            return false;
+        } catch(\GeoIp2\Exception\AddressNotFoundException $e) {
+            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
+            
+            return false;
+        } catch( Exception $e ) {
+            return false;
+        }
+        
+        return false;
+    }
+
+    public static function geoip2_country_code( $ip_address ) {
+        $record = self::geoip2_country_record( $ip_address );
+        return !empty( $record->country->isoCode ) ? $record->country->isoCode : wpinv_get_default_country();
+    }
+
+    // Find country by IP address.
+    public static function get_country_by_ip( $ip = '' ) {
+        global $wpinv_ip_address_country;
+        
+        if ( !empty( $wpinv_ip_address_country ) ) {
+            return $wpinv_ip_address_country;
+        }
+        
+        if ( empty( $ip ) ) {
+            $ip = wpinv_get_ip();
+        }
+
+        $ip_country_service = wpinv_get_option( 'vat_ip_lookup' );
+        $is_default         = empty( $ip_country_service ) || $ip_country_service === 'default' ? true : false;
+
+        if ( !empty( $ip ) && $ip !== '127.0.0.1' ) { // For 127.0.0.1(localhost) use default country.
+            if ( function_exists( 'geoip_country_code_by_name') && ( $ip_country_service === 'geoip' || $is_default ) ) {
+                try {
+                    $wpinv_ip_address_country = geoip_country_code_by_name( $ip );
+                } catch( Exception $e ) {
+                    wpinv_error_log( $e->getMessage(), 'GeoIP Lookup( ' . $ip . ' )' );
+                }
+            } else if ( self::geoip2_country_dbfile() && ( $ip_country_service === 'geoip2' || $is_default ) ) {
+                $wpinv_ip_address_country = self::geoip2_country_code( $ip );
+            } else if ( function_exists( 'simplexml_load_file' ) && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
+                $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
+                
+                if ( !empty( $load_xml ) && !empty( $load_xml->geoplugin_countryCode ) ) {
+                    $wpinv_ip_address_country = (string)$load_xml->geoplugin_countryCode;
+                }
+            }
+        }
+
+        if ( empty( $wpinv_ip_address_country ) ) {
+            $wpinv_ip_address_country = wpinv_get_default_country();
+        }
+
+        return $wpinv_ip_address_country;
+    }
+    
     public static function sanitize_vat_settings( $input ) {
         global $wpinv_options;
         
@@ -1209,7 +1510,7 @@ class WPInv_EUVat {
             }
         } else {
             if ( $is_digital ) {
-                $ip_country_code = wpinv_get_ip_country();
+                $ip_country_code = self::get_country_by_ip();
                 
                 if ( $ip_country_code && self::is_eu_state( $ip_country_code ) ) {
                     $rate = self::find_rate( $ip_country_code, '', 0, $class );
@@ -1241,7 +1542,7 @@ class WPInv_EUVat {
         $result     = apply_filters( 'wpinv_get_user_country', $country, $user_id );
 
         if ( empty( $result ) ) {
-            $result = wpinv_get_ip_country();
+            $result = self::get_country_by_ip();
         }
 
         return $result;
@@ -1426,10 +1727,11 @@ class WPInv_EUVat {
     public static function ajax_vat_reset() {
         global $wpi_session;
         
-        $wpi_session->set( 'user_vat_data', null );
-        
         $company    = is_user_logged_in() ? self::get_user_company() : '';
         $vat_number = self::get_user_vat_number();
+        
+        $vat_info   = array('company' => $company, 'number' => $vat_number, 'valid' => false );
+        $wpi_session->set( 'user_vat_data', $vat_info );
         
         $response                       = array();
         $response['success']            = true;
@@ -1470,7 +1772,7 @@ class WPInv_EUVat {
             
         $vat_data           = array( 'company' => '', 'number' => '', 'valid' => false );
         
-        $ip_country_code    = wpinv_get_ip_country();
+        $ip_country_code    = self::get_country_by_ip();
         $is_eu_state        = self::is_eu_state( $country );
         $is_eu_state_ip     = self::is_eu_state( $ip_country_code );
         $is_non_eu_user     = !$is_eu_state && !$is_eu_state_ip;
@@ -1543,6 +1845,120 @@ class WPInv_EUVat {
         }
 
         $wpi_session->set( 'user_vat_data', $vat_data );
+    }
+    
+    public static function checkout_vat_fields( $billing_details ) {
+        global $wpi_session, $wpinv_options, $wpi_country, $wpi_requires_vat;
+        
+        $ip_address         = wpinv_get_ip();
+        $ip_country_code    = self::get_country_by_ip();
+        
+        $tax_label          = __( self::get_vat_name(), 'invoicing' );
+        $invoice            = wpinv_get_invoice_cart();
+        $is_digital         = self::invoice_has_digital_rule( $invoice );
+        $wpi_country        = $invoice->country;
+        
+        $requires_vat       = !self::hide_vat_fields() && $invoice->get_total() > 0 && self::requires_vat( 0, false, $is_digital );
+        $wpi_requires_vat   = $requires_vat;
+        
+        $company            = is_user_logged_in() ? self::get_user_company() : '';
+        $vat_number         = self::get_user_vat_number();
+        
+        $validated          = $vat_number ? self::get_user_vat_number( '', 0, true ) : 1;
+        $vat_info           = $wpi_session->get( 'user_vat_data' );
+
+        if ( is_array( $vat_info ) ) {
+            $company    = isset( $vat_info['company'] ) ? $vat_info['company'] : '';
+            $vat_number = isset( $vat_info['number'] ) ? $vat_info['number'] : '';
+            $validated  = isset( $vat_info['valid'] ) ? $vat_info['valid'] : false;
+        }
+        
+        $selected_country = $invoice->country ? $invoice->country : wpinv_default_billing_country();
+
+        if ( $ip_country_code == 'UK' ) {
+            $ip_country_code = 'GB';
+        }
+        
+        if ( $selected_country == 'UK' ) {
+            $selected_country = 'GB';
+        }
+        
+        if ( self::same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
+            $requires_vat       = false;
+        }
+
+        $display_vat_details    = $requires_vat ? 'block' : 'none';
+        $display_validate_btn   = 'none';
+        $display_reset_btn      = 'none';
+        
+        if ( !empty( $vat_number ) && $validated ) {
+            $vat_vailidated_text    = wp_sprintf( __( '%s number validated', 'invoicing' ), $tax_label );
+            $vat_vailidated_class   = 'wpinv-vat-stat-1';
+            $display_reset_btn      = 'block';
+        } else {
+            $vat_vailidated_text    = empty( $vat_number ) ? '' : wp_sprintf( __( '%s number not validated', 'invoicing' ), $tax_label );
+            $vat_vailidated_class   = empty( $vat_number ) ? '' : 'wpinv-vat-stat-0';
+            $display_validate_btn   = 'block';
+        }
+        
+        $show_ip_country        = $is_digital && ( empty( $vat_number ) || !$requires_vat ) && $ip_country_code != $selected_country ? 'block' : 'none';
+        ?>
+        <div id="wpi-vat-details" class="wpi-vat-details clearfix" style="display:<?php echo $display_vat_details; ?>">
+            <div id="wpi_vat_info" class="clearfix panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><?php echo wp_sprintf( __( '%s Details', 'invoicing' ), $tax_label );?></h3></div>
+                <div id="wpinv-fields-box" class="panel-body">
+                    <p id="wpi_show_vat_note">
+                        <?php echo wp_sprintf( __( 'Validate your registered %s number to exclude tax.', 'invoicing' ), $tax_label ); ?>
+                    </p>
+                    <div id="wpi_vat_fields" class="wpi_vat_info">
+                        <p class="wpi-cart-field wpi-col2 wpi-colf">
+                            <label for="wpinv_company" class="wpi-label"><?php _e( 'Company Name', 'invoicing' );?></label>
+                            <?php
+                            echo wpinv_html_text( array(
+                                    'id'            => 'wpinv_company',
+                                    'name'          => 'wpinv_company',
+                                    'value'         => $company,
+                                    'class'         => 'wpi-input form-control',
+                                    'placeholder'   => __( 'Company name', 'invoicing' ),
+                                ) );
+                            ?>
+                        </p>
+                        <p class="wpi-cart-field wpi-col2 wpi-coll wpi-cart-field-vat">
+                            <label for="wpinv_vat_number" class="wpi-label"><?php echo wp_sprintf( __( '%s Number', 'invoicing' ), $tax_label );?></label>
+                            <span id="wpinv_vat_number-wrap">
+                                <label for="wpinv_vat_number" class="wpinv-label"></label>
+                                <input type="text" class="wpi-input form-control" placeholder="<?php echo esc_attr( wp_sprintf( __( '%s number', 'invoicing' ), $tax_label ) );?>" value="<?php esc_attr_e( $vat_number );?>" id="wpinv_vat_number" name="wpinv_vat_number">
+                                <span class="wpinv-vat-stat <?php echo $vat_vailidated_class;?>"><i class="fa"></i>&nbsp;<font><?php echo $vat_vailidated_text;?></font></span>
+                            </span>
+                        </p>
+                        <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-actions">
+                            <button class="btn btn-success btn-sm wpinv-vat-validate" type="button" id="wpinv_vat_validate" style="display:<?php echo $display_validate_btn; ?>"><?php echo wp_sprintf( __("Validate %s Number", 'invoicing'), $tax_label ); ?></button>
+                            <button class="btn btn-danger btn-sm wpinv-vat-reset" type="button" id="wpinv_vat_reset" style="display:<?php echo $display_reset_btn; ?>"><?php echo wp_sprintf( __("Reset %s", 'invoicing'), $tax_label ); ?></button>
+                            <span class="wpi-vat-box wpi-vat-box-info"><span id="text"></span></span>
+                            <span class="wpi-vat-box wpi-vat-box-error"><span id="text"></span></span>
+                            <input type="hidden" name="_wpi_nonce" value="<?php echo wp_create_nonce( 'vat_validation' ) ?>" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="wpinv_adddress_confirm" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $ip_country_code; ?>" style="display:<?php echo $show_ip_country; ?>;">
+            <div id="wpinv-fields-box" class="panel-body">
+                <span id="wpinv_adddress_confirmed-wrap">
+                    <input type="checkbox" id="wpinv_adddress_confirmed" name="wpinv_adddress_confirmed" value="1">
+                    <label for="wpinv_adddress_confirmed"><?php _e('The country of your current location must be the same as the country of your billing location or you must confirm the billing address is your home country.', 'invoicing'); ?></label>
+                </span>
+            </div>
+        </div>
+        <?php if ( empty( $wpinv_options['hide_ip_address'] ) ) { 
+            $ip_link = '<a title="' . esc_attr( __( 'View more details on map', 'invoicing' ) ) . '" target="_blank" href="' . esc_url( admin_url( 'admin-ajax.php?action=wpinv_ip_geolocation&ip=' . $ip_address ) ) . '" class="wpi-ip-address-link">' . $ip_address . '&nbsp;&nbsp;<i class="fa fa-external-link-square" aria-hidden="true"></i></a>';
+        ?>
+        <div class="wpi-ip-info clearfix panel panel-info">
+            <div id="wpinv-fields-box" class="panel-body">
+                <span><?php echo wp_sprintf( __( "Your IP address is: %s", 'invoicing' ), $ip_link ); ?></span>
+            </div>
+        </div>
+        <?php }
     }
     
     public static function show_vat_notice( $invoice ) {

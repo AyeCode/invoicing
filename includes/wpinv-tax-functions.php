@@ -418,41 +418,40 @@ function wpinv_eu_fallback_rate_callback( $args ) {
 }
 
 function wpinv_vat_ip_lookup_callback( $args ) {
-    global $wpinv_options;
+    global $wpinv_options, $wpinv_euvat;
 
     $value =  isset( $wpinv_options[ $args['id'] ] ) ? $wpinv_options[ $args['id'] ]  : ( isset( $args['std'] ) ? $args['std'] : 'default' );
     
-    $ip_lookup_options = array(
-        'site' => __( 'Use default country', 'invoicing' ),
-        'default' => __( 'Let the plug-in choose the best available option', 'invoicing' )
-    );
-
-    if ( function_exists( 'simplexml_load_file' ) ) {
-        $ip_lookup_options = array( 'geoplugin' => __( 'GeoPlugin.net (if you choose this option consider donating)', 'invoicing' ) ) + $ip_lookup_options;
-    }
-
-    $geoip2_file_exists = wpinv_getGeoLiteCountryFilename();
-
-    if ( !function_exists( 'bcadd' ) ) {
-        $permit_geoip2 = __( 'GeoIP collection requires the BC Math PHP extension and it is not loaded on your version of PHP!', 'invoicing' );
-    } else {
-        $permit_geoip2 = ini_get('safe_mode') ? __( 'PHP safe mode detected!  GeoIP collection is not supported with PHP\'s safe mode enabled!', 'invoicing' ) : '';
+    $options = array();
+    if ( function_exists( 'geoip_country_code_by_name' ) ) {
+        $options['geoip'] = __( 'PHP GeoIP extension', 'invoicing' );
     }
     
-    if ( $geoip2_file_exists !== false && empty( $permit_geoip2 ) ) {
-        $ip_lookup_options = array( 'geoip2' => __( 'GeoIP2 functions', 'invoicing' ) ) + $ip_lookup_options;
+    $geoip2_database = $wpinv_euvat->geoip2_country_dbfile();
+    
+    if ( !function_exists( 'bcadd' ) ) {
+        $geoip2_message = __( 'GeoIP2 collection requires the BC Math PHP extension and it is not loaded on your version of PHP!', 'invoicing' );
+    } else {
+        $geoip2_message = ini_get('safe_mode') ? __( 'GeoIP2 is not supported with PHP safe mode enabled!', 'invoicing' ) : '';
     }
-
-    if ( function_exists( 'geoip_country_code_by_name' ) ) {
-        $ip_lookup_options = array('geoip' => __( 'PHP GeoIP extension functions', 'invoicing' ) ) + $ip_lookup_options;
+    
+    if ( $geoip2_database !== false && empty( $geoip2_message ) ) {
+        $options['geoip2'] = __( 'GeoIP2 Database', 'invoicing' );
     }
+    
+    if ( function_exists( 'simplexml_load_file' ) ) {
+        $options['geoplugin'] = __( 'geoPlugin Web Service', 'invoicing' );
+    }
+    
+    $options['site']    = __( 'Use default country', 'invoicing' );
+    $options['default'] = __( 'Let the plugin choose the best available option', 'invoicing' );
 
     $html = wpinv_html_select( array(
         'name'             => "wpinv_settings[{$args['id']}]",
         'selected'         => $value,
         'id'               => "wpinv_settings[{$args['id']}]",
         'class'            => isset($args['class']) ? $args['class'] : "",
-        'options'          => $ip_lookup_options,
+        'options'          => $options,
         'multiple'         => false,
         'chosen'           => false,
         'show_option_all'  => false,
@@ -460,18 +459,18 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     ));
     
     $desc = '<label for="wpinv_settings[' . $args['id'] . ']">';
-    $desc .= __( 'Choose the mechanism the plug-in should use to determine the country from the IP address of the visitor. The country is used as evidence to support the selected country of supply.', 'invoicing' );
-    $desc .= '<p>' . __( 'This is important because from Jan 2015 if you sell digital services you are required to collect and retain for 10 years evidence to justify why the consumer has been charged the VAT rate of one member state not the rate of another member state.<br>One of the few pieces of evidence available to an on-line store is the IP address of the visitor.', 'invoicing' ) . '</p><p>';
-    if ( empty( $permit_geoip2 ) ) {
-        if ( $geoip2_file_exists !== FALSE ) {
-            $desc .= __(  'The GeoIP2 database already exists:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_download_geoip2" action="refresh"" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Click to refresh the GeoIP2 database', 'invoicing' ) . ' (~18MB)"></input>';
+    $desc .= __( 'Choose the option the plugin should use to determine the country from the IP address of the visitor.', 'invoicing' );
+    $desc .= '<p>';
+    if ( empty( $geoip2_message ) ) {
+        if ( $geoip2_database ) {
+            $desc .= __(  'The GeoIP2 database already exists:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="update"" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Click to update the GeoIP2 database', 'invoicing' ) . ' (~53MB)"></input>';
         } else {
-            $desc .= __( 'The GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_download_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Click to download the GeoIP2 database', 'invoicing' ) . ' (~18MB)"></input><br>' . __(  'If you download the database another IP lookup mechanism will be available.', 'invoicing' );
+            $desc .= __( 'The GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Click to download the GeoIP2 database', 'invoicing' ) . ' (~53MB)"></input><br>' . __(  'After downloading the GeoIP2 database another IP lookup option will be available.', 'invoicing' );
         }
     } else {
-        $desc .= $permit_geoip2;
+        $desc .= $geoip2_message;
     }
-    $desc .= '</p><p>'. __( 'If you choose the GeoPlugin option please consider supporting the site: ', 'invoicing' ) . ' <a href="http://www.geoplugin.net/" target="_blank">GeoPlugin.net</a></p>';
+    $desc .= '</p><p>'. __( 'If you choose the GeoPlugin option please consider supporting the site: ', 'invoicing' ) . ' <a href="http://www.geoplugin.com/" target="_blank">GeoPlugin.com</a></p>';
     $desc .= '</label>';
     
     $html .= $desc;

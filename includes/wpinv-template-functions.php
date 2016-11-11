@@ -686,36 +686,65 @@ function wpinv_html_ajax_user_search( $args = array() ) {
     return $output;
 }
 
-function wpinv_ip_map_location() {
-    global $wpinv_options;
-
-    $ip = !empty( $_GET['ip'] ) ? sanitize_text_field( $_GET['ip'] ) : '';
-
-    $output = '';
-    $latitude = '';
-    $longitude = '';
-    $address = '';
-    try {
-        $xml = simplexml_load_file( "http://www.geoplugin.net/xml.gp?ip=" . $ip );
+function wpinv_ip_geolocation() {
+    $ip         = !empty( $_GET['ip'] ) ? sanitize_text_field( $_GET['ip'] ) : '';    
+    $content    = '';
+    $iso        = '';
+    $country    = '';
+    $region     = '';
+    $city       = '';
+    $longitude  = '';
+    $latitude   = '';
+    $credit     = '';
+    
+    if ( wpinv_get_option( 'vat_ip_lookup' ) == 'geoip2' && $geoip2_city = $wpinv_euvat->geoip2_city_record( $ip ) ) {
+        try {
+            $iso        = $geoip2_city->country->isoCode;
+            $country    = $geoip2_city->country->name;
+            $region     = !empty( $geoip2_city->subdivisions ) && !empty( $geoip2_city->subdivisions[0]->name ) ? $geoip2_city->subdivisions[0]->name : '';
+            $city       = $geoip2_city->city->name;
+            $longitude  = $geoip2_city->location->longitude;
+            $latitude   = $geoip2_city->location->latitude;
+            $credit     = __( 'Geolocated using the information by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">www.maxmind.com</a>', 'invoicing' );
+        } catch( Exception $e ) { }
+    }
+    
+    if ( !( $iso && $longitude && $latitude ) && function_exists( 'simplexml_load_file' ) ) {
+        try {
+            $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
             
-        if ( !empty( $xml ) && isset( $xml->geoplugin_countryCode ) && !empty( $xml->geoplugin_latitude ) && !empty( $xml->geoplugin_longitude ) ) {
-            $latitude = $xml->geoplugin_latitude;
-            $longitude = $xml->geoplugin_longitude;
-            $geoplugin_credit = $xml->geoplugin_credit;
-            $address = $xml->geoplugin_city. ', ' . $xml->geoplugin_regionName. ', ' . $xml->geoplugin_countryName. ' (' . $xml->geoplugin_countryCode . ')';
-            $output = "<p>Location: $address, Currency: $xml->geoplugin_currencyCode ($xml->geoplugin_currencySymbol)</p>";
-            $output .= "<p>Produced using information from <a href=\"http://www.geoplugin.net\" target=\"_blank\">geoplugin.net</a>";
-            $output .= "<br/>$xml->geoplugin_credit</p>";
-        } else {
-            $output =  "Unable to find information for '$ip'";
+            if ( !empty( $load_xml ) && isset( $load_xml->geoplugin_countryCode ) && !empty( $load_xml->geoplugin_latitude ) && !empty( $load_xml->geoplugin_longitude ) ) {
+                $iso        = $load_xml->geoplugin_countryCode;
+                $country    = $load_xml->geoplugin_countryName;
+                $region     = !empty( $load_xml->geoplugin_regionName ) ? $load_xml->geoplugin_regionName : '';
+                $city       = !empty( $load_xml->geoplugin_city ) ? $load_xml->geoplugin_city : '';
+                $longitude  = $load_xml->geoplugin_longitude;
+                $latitude   = $load_xml->geoplugin_latitude;
+                $credit     = $load_xml->geoplugin_credit;
+                $credit     = __( 'Geolocated using the information by geoPlugin, available from <a href="http://www.geoplugin.com" target="_blank">www.geoplugin.com</a>', 'invoicing' ) . '<br>' . $load_xml->geoplugin_credit;
+            }
+        } catch( Exception $e ) { }
+    }
+    
+    if ( $iso && $longitude && $latitude ) {
+        $address = '';
+        if ( $city ) {
+            $address .= $city . ', ';
         }
-    } catch( Exception $e ) {
-        wpinv_error_log( "AddressNotFoundException: " . $e->getMessage() ); 
-        $output = "Unable to find information for IP address: $ip";
+        
+        if ( $region ) {
+            $address .= $region . ', ';
+        }
+        
+        $address .= $country . ' (' . $iso . ')';
+        $content = '<p>'. sprintf( __( '<b>Address:</b> %s', 'invoicing' ), $address ) . '</p>';
+        $content .= '<p>'. $credit . '</p>';
+    } else {
+        $content = '<p>'. sprintf( __( 'Unable to find geolocation for the IP address: %s', 'invoicing' ), $ip ) . '</p>';
     }
     ?>
 <!DOCTYPE html>
-<html><head><title>IP : <?php echo $ip;?></title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.css" /><style>html,body{height:100%;margin:0;padding:0;width:100%}body{text-align:center;background:#fff;color:#222;font-size:small;}body,p{font-family: arial,sans-serif}#map{margin:auto;width:100%;height:calc(100% - 120px);min-height:240px}</style></head>
+<html><head><title><?php echo sprintf( __( 'IP: %s', 'invoicing' ), $ip );?></title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.css" /><style>html,body{height:100%;margin:0;padding:0;width:100%}body{text-align:center;background:#fff;color:#222;font-size:small;}body,p{font-family: arial,sans-serif}#map{margin:auto;width:100%;height:calc(100% - 120px);min-height:240px}</style></head>
 <body>
     <?php if ( $latitude && $latitude ) { ?>
     <div id="map"></div>
@@ -734,13 +763,13 @@ function wpinv_ip_map_location() {
         marker.bindPopup("<p><?php esc_attr_e( $address );?></p>");
     </script>
     <?php } ?>
-    <div style="height:100px"><?php echo $output; ?></div>
+    <div style="height:100px"><?php echo $content; ?></div>
 </body></html>
 <?php
     exit;
 }
-add_action( 'wp_ajax_wpinv_ip_map_location', 'wpinv_ip_map_location' );
-add_action( 'wp_ajax_nopriv_wpinv_ip_map_location', 'wpinv_ip_map_location' );
+add_action( 'wp_ajax_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
+add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
 
 // Set up the template for the invoice.
 function wpinv_template( $template ) {
@@ -1211,121 +1240,6 @@ function wpinv_checkout_billing_details() {
     
     return $user_info;
 }
-
-function wpinv_checkout_vat_fields( $billing_details ) {
-    global $wpi_session, $wpinv_options, $wpinv_euvat, $wpi_country, $wpi_requires_vat;
-    
-    $ip_address         = wpinv_get_ip();
-    $ip_country_code    = wpinv_get_ip_country();
-    
-    $tax_label          = __( $wpinv_euvat->get_vat_name(), 'invoicing' );
-    $invoice            = wpinv_get_invoice_cart();
-    $is_digital         = $wpinv_euvat->invoice_has_digital_rule( $invoice );
-    $wpi_country        = $invoice->country;
-    
-    $requires_vat       = !$wpinv_euvat->hide_vat_fields() && $invoice->get_total() > 0 && $wpinv_euvat->requires_vat( 0, false, $is_digital );
-    $wpi_requires_vat   = $requires_vat;
-    
-    $company            = is_user_logged_in() ? $wpinv_euvat->get_user_company() : '';
-    $vat_number         = $wpinv_euvat->get_user_vat_number();
-    
-    $validated          = $vat_number ? $wpinv_euvat->get_user_vat_number( '', 0, true ) : 1;
-    $vat_info           = $wpi_session->get( 'user_vat_data' );
-
-    if ( is_array( $vat_info ) ) {
-        $company    = isset( $vat_info['company'] ) ? $vat_info['company'] : '';
-        $vat_number = isset( $vat_info['number'] ) ? $vat_info['number'] : '';
-        $validated  = isset( $vat_info['valid'] ) ? $vat_info['valid'] : false;
-    }
-    
-    $selected_country = $invoice->country ? $invoice->country : wpinv_default_billing_country();
-
-    if ( $ip_country_code == 'UK' ) {
-        $ip_country_code = 'GB';
-    }
-    
-    if ( $selected_country == 'UK' ) {
-        $selected_country = 'GB';
-    }
-    
-    if ( $wpinv_euvat->same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
-        $requires_vat       = false;
-    }
-
-    $display_vat_details    = $requires_vat ? 'block' : 'none';
-    $display_validate_btn   = 'none';
-    $display_reset_btn      = 'none';
-    
-    if ( !empty( $vat_number ) && $validated ) {
-        $vat_vailidated_text    = wp_sprintf( __( '%s number validated', 'invoicing' ), $tax_label );
-        $vat_vailidated_class   = 'wpinv-vat-stat-1';
-        $display_reset_btn      = 'block';
-    } else {
-        $vat_vailidated_text    = wp_sprintf( __( '%s number not validated', 'invoicing' ), $tax_label );
-        $vat_vailidated_class   = 'wpinv-vat-stat-0';
-        $display_validate_btn   = 'block';
-    }
-    
-    $show_ip_country        = $is_digital && ( empty( $vat_number ) || !$requires_vat ) && $ip_country_code != $selected_country ? 'block' : 'none';
-    ?>
-    <div id="wpi-vat-details" class="wpi-vat-details clearfix" style="display:<?php echo $display_vat_details; ?>">
-        <div id="wpi_vat_info" class="clearfix panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title"><?php echo wp_sprintf( __( '%s Details', 'invoicing' ), $tax_label );?></h3></div>
-            <div id="wpinv-fields-box" class="panel-body">
-                <p id="wpi_show_vat_note">
-                    <?php echo wp_sprintf( __( 'Validate your registered %s number to exclude tax.', 'invoicing' ), $tax_label ); ?>
-                </p>
-                <div id="wpi_vat_fields" class="wpi_vat_info">
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_company" class="wpi-label"><?php _e( 'Company Name', 'invoicing' );?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_company',
-                                'name'          => 'wpinv_company',
-                                'value'         => $company,
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'Company name', 'invoicing' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll wpi-cart-field-vat">
-                        <label for="wpinv_vat_number" class="wpi-label"><?php echo wp_sprintf( __( '%s Number', 'invoicing' ), $tax_label );?></label>
-                        <span id="wpinv_vat_number-wrap">
-                            <label for="wpinv_vat_number" class="wpinv-label"></label>
-                            <input type="text" class="wpi-input form-control" placeholder="<?php echo esc_attr( wp_sprintf( __( '%s number', 'invoicing' ), $tax_label ) );?>" value="<?php esc_attr_e( $vat_number );?>" id="wpinv_vat_number" name="wpinv_vat_number">
-                            <span class="wpinv-vat-stat <?php echo $vat_vailidated_class;?>"><i class="fa"></i>&nbsp;<font><?php echo $vat_vailidated_text;?></font></span>
-                        </span>
-                    </p>
-                    <p class="wpi-cart-field wpi-col wpi-colf wpi-cart-field-actions">
-                        <button class="btn btn-success btn-sm wpinv-vat-validate" type="button" id="wpinv_vat_validate" style="display:<?php echo $display_validate_btn; ?>"><?php echo wp_sprintf( __("Validate %s Number", 'invoicing'), $tax_label ); ?></button>
-                        <button class="btn btn-danger btn-sm wpinv-vat-reset" type="button" id="wpinv_vat_reset" style="display:<?php echo $display_reset_btn; ?>"><?php echo wp_sprintf( __("Reset %s", 'invoicing'), $tax_label ); ?></button>
-                        <span class="wpi-vat-box wpi-vat-box-info"><span id="text"></span></span>
-                        <span class="wpi-vat-box wpi-vat-box-error"><span id="text"></span></span>
-                        <input type="hidden" name="_wpi_nonce" value="<?php echo wp_create_nonce( 'vat_validation' ) ?>" />
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="wpinv_adddress_confirm" class="wpi-vat-info clearfix panel panel-info" value="<?php echo $ip_country_code; ?>" style="display:<?php echo $show_ip_country; ?>;">
-        <div id="wpinv-fields-box" class="panel-body">
-            <span id="wpinv_adddress_confirmed-wrap">
-                <input type="checkbox" id="wpinv_adddress_confirmed" name="wpinv_adddress_confirmed" value="1">
-                <label for="wpinv_adddress_confirmed"><?php _e('The country of your current location must be the same as the country of your billing location or you must confirm the billing address is your home country.', 'invoicing'); ?></label>
-            </span>
-        </div>
-    </div>
-    <?php if ( empty( $wpinv_options['hide_ip_address'] ) ) { 
-        $ip_link = '<a title="' . esc_attr( __( 'View more details on map', 'invoicing' ) ) . '" target="_blank" href="' . esc_url( admin_url( 'admin-ajax.php?action=wpinv_ip_map_location&ip=' . $ip_address ) ) . '" class="wpi-ip-address-link">' . $ip_address . '&nbsp;&nbsp;<i class="fa fa-external-link-square" aria-hidden="true"></i></a>';
-    ?>
-    <div class="wpi-ip-info clearfix panel panel-info">
-        <div id="wpinv-fields-box" class="panel-body">
-            <span><?php echo wp_sprintf( __( "Your IP address is: %s", 'invoicing' ), $ip_link ); ?></span>
-        </div>
-    </div>
-    <?php }
-}
-add_action( 'wpinv_after_billing_fields', 'wpinv_checkout_vat_fields' );
 
 function wpinv_admin_get_line_items($invoice = array()) {
     $item_quantities    = wpinv_item_quantities_enabled();
@@ -1984,7 +1898,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
         $billing        = $billing_amount . ' / ' . $period;
         
         if ( $initial_amount != $billing_amount ) {
-            $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Inital subscription amount then billing cycle and amount', 'invoicing' ), $initial_amount, $billing );
+            $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing' ), $initial_amount, $billing );
         } else {
             $billing_cycle  = $billing;
         }

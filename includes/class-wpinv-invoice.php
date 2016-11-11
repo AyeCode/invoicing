@@ -2465,7 +2465,7 @@ final class WPInv_Invoice {
         
         $requires_vat = false;
         
-        if ( $this->country && $this->vat_number ) {
+        if ( $this->country ) {
             $wpi_country        = $this->country;
             
             $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
