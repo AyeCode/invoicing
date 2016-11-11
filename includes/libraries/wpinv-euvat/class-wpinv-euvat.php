@@ -398,7 +398,8 @@ class WPInv_EUVat {
                 exit;
             }
             
-            echo __( 'GeoIp2 database updated successfully.', 'invoicing' );
+            wpinv_update_option( 'wpinv_geoip2_date_updated', current_time( 'timestamp' ) );
+            echo sprintf(__( 'GeoIp2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
         }
         
         exit;

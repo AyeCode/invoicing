@@ -78,7 +78,6 @@ add_action( 'wpinv_email_billing_details', 'wpinv_email_billing_details', 10, 3 
 function wpinv_send_transactional_email() {
     $args       = func_get_args();
     $function   = current_filter() . '_notification';
-    wpinv_error_log( $args, $function, __FILE__, __LINE__ );
     do_action_ref_array( $function, $args );
 }
     

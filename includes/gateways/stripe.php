@@ -365,7 +365,7 @@ function wpinv_process_stripe_ipn() {
 
                 break;
         }
-
+        wpinv_error_log( $event->type, 'event->type', __FILE__, __LINE__ );
         do_action( 'wpinv_stripe_event_' . $event->type, $event );
 
         die( '1' ); // Completed successfully
@@ -386,13 +386,16 @@ function wpinv_recurring_process_stripe_ipn( $event ) {
     }
 
     $subscription = wpinv_get_subscription( $data->subscription, true );
-
-    if ( !$subscription || ( isset( $subscription->ID ) && $subscription->ID < 1 ) ) {
-        $subscription = wpinv_stripe_get_subscription( $data->customer, $data->subscription );
-
-        if ( !$subscription || $subscription->ID < 1 ) {
-            return;
-        }
+    if ( !empty( $data->object ) && $data->object == 'invoice' ) {
+        $data->metadata = isset( $data->lines->data[0]->metadata ) ? $data->lines->data[0]->metadata : NULL;
+    }
+    
+    if ( empty( $subscription ) && !empty( $data->metadata->invoice_id ) ) {
+        $subscription = wpinv_get_invoice( $data->metadata->invoice_id );
+    }
+    
+    if ( empty( $subscription ) ) {
+        return;
     }
 
     switch ( $event->type ) {
@@ -409,12 +412,9 @@ function wpinv_recurring_process_stripe_ipn( $event ) {
             $signup_date            = strtotime( $subscription->get_subscription_created() );
             $today                  = date( 'Y-n-d', $signup_date ) == date( 'Y-n-d', $data->date );
 
-            // Look to see if payment is same day as signup and we have set the transaction ID on the parent payment yet
-            if( $today ) {
-                // This is the first signup payment
+            if ( $today ) {
                 wpinv_set_payment_transaction_id( $subscription->ID, $args['transaction_id'] );
             } else {
-                // This is a renewal charge
                 $invoice = wpinv_recurring_add_subscription_payment( $subscription->ID, $args );
                 $invoice->renew_subscription();
             }
@@ -845,7 +845,7 @@ function wpinv_stripe_get_plan_id( $subscription = array(), $invoice = array() )
     $currency           = $subscription['currency'];
     $trial_period_days  = absint( $subscription['trial_period_days'] );
     
-    $plan_id            = sanitize_title( $name ) . '_' . $id . '_' . $recurring_amount . '_' . $period . '_' . $bill_times;
+    $plan_id            = sanitize_title( $name ) . '_' . $id . '_' . $initial_amount . '_' . $recurring_amount . '_' . $period . '_' . $bill_times;
     if ( !empty( $trial_period_days ) ) {
         $plan_id        .= '_' . $trial_period_days;
     }
@@ -855,9 +855,12 @@ function wpinv_stripe_get_plan_id( $subscription = array(), $invoice = array() )
         $plan       = \Stripe\Plan::retrieve( $plan_id );
         $plan_id    = is_array( $plan ) ? $plan['id'] : $plan->id;
     } catch ( Exception $e ) {
+        if ( $desc = wpinv_subscription_payment_desc( $invoice ) ) {
+            $name .= ' (' . $desc . ')';
+        }
         $args = array(
             'id'                => $plan_id,
-            'name'              => $name,
+            'name'              => stripslashes( html_entity_decode( $name, ENT_COMPAT, 'UTF-8' ) ),
             'amount'            => $recurring_amount * 100,
             'currency'          => $currency,
             'interval'          => $period,

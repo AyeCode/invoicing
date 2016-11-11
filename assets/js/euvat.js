@@ -415,11 +415,11 @@ jQuery(function($) {
                         alert(WPInv_VAT_Vars.EmptyCompany);
                         return false;
                     }
-                    var numberEl = $('#wpinv_settings\\[vat_number\\]');
-                    if (!WPInv_VAT.WPInv_VAT_Config(numberEl, true)) {
+                    var vatEl = $('#wpinv_settings\\[vat_number\\]');
+                    var number = vatEl.val();
+                    if (!WPInv_VAT_Vars.disableVATSimpleCheck && !WPInv_VAT_Config.checkVATNumber(vatEl, true)) {
                         return false;
                     }
-                    var number = numberEl.val();
                     var nonce = $('input[name=_wpi_nonce]').val();
                     var me = $(this);
                     me.attr('disabled', 'disabled');
