@@ -1193,6 +1193,8 @@ function wpinv_process_checkout() {
     
     // Set gateway
     $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
+    
+    do_action( 'wpinv_checkout_before_send_to_gateway', $invoice, $invoice_data );
 
     // Send info to the gateway for payment processing
     wpinv_send_to_gateway( $invoice_data['gateway'], $invoice_data );
@@ -1333,7 +1335,7 @@ function wpinv_payment_receipt( $atts, $content = null ) {
         $invoice_key = $session['invoice_key'];
     } elseif ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
         $invoice_key = $wpinv_receipt_args['invoice_key'];
-    } else if ( isset( $_GET['invoice_key'] ) ) {
+    } else if ( isset( $_GET['invoice-id'] ) ) {
         $invoice_key = wpinv_get_payment_key( (int)$_GET['invoice-id'] );
     }
 

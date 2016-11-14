@@ -407,7 +407,7 @@ function wpinv_subscription_payment_desc( $invoice ) {
         if ( $initial_amount != $recurring_amount ) {
             $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval );
             
-            $description    = wp_sprintf( '%s Then %s', $initial, $recurring );
+            $description    = wp_sprintf( __( '%s Then %s', 'invoicing' ), $initial, $recurring );
         } else {
             $description    = $recurring;
             

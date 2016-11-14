@@ -889,11 +889,6 @@ function wpinv_stripe_subscription_record_signup( $subscription, $invoice ) {
     // Set subscription_payment
     wpinv_update_invoice_meta( $invoice_id, '_wpi_subscription_payment', true );
     
-    $subscription = wpinv_stripe_get_subscription( $customer_id, $subscription_id );
-    if ( false === $subscription ) {
-        return;
-    }
-    
     $subscription_item_id   = $invoice->get_recurring();
     $subscription_item      = new WPInv_Item( $invoice->get_recurring() );
     
@@ -912,6 +907,6 @@ function wpinv_stripe_subscription_record_signup( $subscription, $invoice ) {
         );
         
         // Retrieve pending subscription from database and update it's status to active and set proper profile ID
-        $subscription->update_subscription( $args );
+        $invoice->update_subscription( $args );
     }
 }

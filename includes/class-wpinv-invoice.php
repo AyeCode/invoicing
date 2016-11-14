@@ -582,6 +582,7 @@ final class WPInv_Invoice {
         $post_data = array(
                         'post_title'    => $invoice_title,
                         'post_status'   => $this->status,
+                        'post_author'   => $this->user_id,
                         'post_type'     => 'wpi_invoice',
                         'post_date'     => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? $this->date : current_time( 'mysql' ),
                         'post_date_gmt' => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
@@ -2080,8 +2081,8 @@ final class WPInv_Invoice {
     }
     
     public function get_bill_times() {
-        $bill_times = $this->get_meta( '_wpinv_subscr_bill_times', true );
-        return $bill_times;
+        $subscription_data = $this->get_subscription_data();
+        return $subscription_data['bill_times'];
     }
 
     public function get_child_payments( $self = false ) {
@@ -2136,33 +2137,35 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_status_label() {
-        switch( $this->get_subscription_status() ) {
+        $status = $this->get_subscription_status();
+        
+        switch( $status ) {
             case 'active' :
-                $status = __( 'Active', 'invoicing' );
+                $status_label = __( 'Active', 'invoicing' );
                 break;
 
             case 'cancelled' :
-                $status = __( 'Cancelled', 'invoicing' );
+                $status_label = __( 'Cancelled', 'invoicing' );
                 break;
 
             case 'expired' :
-                $status = __( 'Expired', 'invoicing' );
+                $status_label = __( 'Expired', 'invoicing' );
                 break;
 
             case 'pending' :
-                $status = __( 'Pending', 'invoicing' );
+                $status_label = __( 'Pending', 'invoicing' );
                 break;
 
             case 'failing' :
-                $status = __( 'Failing', 'invoicing' );
+                $status_label = __( 'Failing', 'invoicing' );
                 break;
 
             default:
-                $status = $this->get_subscription_status();
+                $status_label = $status;
                 break;
         }
 
-        return $status;
+        return $status_label;
     }
     
     public function get_subscription_period( $full = false ) {
@@ -2439,17 +2442,42 @@ final class WPInv_Invoice {
         return date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $interval . ' ' . $period ) );
     }
     
-    public function get_subscription_data() {
+    public function get_subscription_data( $filed = '' ) {
         $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created' );
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {
-            if ( ( $value = $this->get_meta( '_wpinv_subscr_' . $field ) ) !== false ) {
-                $subscription_meta[ $field ] = $value;
+            $subscription_meta[ $field ] = $this->get_meta( '_wpinv_subscr_' . $field );
+        }
+        
+        $item = $this->get_recurring( true );
+        
+        if ( !empty( $item ) ) {
+            if ( empty( $subscription_meta['item_id'] ) ) {
+                $subscription_meta['item_id'] = $item->ID;
+            }
+            if ( empty( $subscription_meta['period'] ) ) {
+                $subscription_meta['period'] = $item->get_recurring_period();
+            }
+            if ( empty( $subscription_meta['interval'] ) ) {
+                $subscription_meta['interval'] = $item->get_recurring_interval();
+            }
+            if ( !$subscription_meta['bill_times'] && $subscription_meta['bill_times'] !== 0 ) {
+                $subscription_meta['bill_times'] = $item->get_recurring_limit();
+            }
+            if ( $subscription_meta['initial_amount'] === '' || $subscription_meta['recurring_amount'] === '' ) {
+                $subscription_meta['initial_amount']    = wpinv_format_amount( $this->get_total() );
+                $subscription_meta['recurring_amount']  = wpinv_format_amount( $this->get_recurring_details( 'total' ) );
             }
         }
         
-        return $subscription_meta;
+        if ( $filed === '' ) {
+            return apply_filters( 'wpinv_get_invoice_subscription_data', $subscription_meta, $this );
+        }
+        
+        $value = isset( $subscription_meta[$filed] ) ? $subscription_meta[$filed] : '';
+        
+        return apply_filters( 'wpinv_invoice_subscription_data_value', $value, $subscription_meta, $this );
     }
     
     public function is_paid() {

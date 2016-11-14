@@ -1883,7 +1883,6 @@ function wpinv_invoice_link( $invoice_id ) {
 function wpinv_invoice_subscription_details( $invoice ) {
     if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
         $total_payments = (int)$invoice->get_total_payments();
-        $bill_times     = (int)$invoice->get_bill_times();
         $payments       = $invoice->get_child_payments();
         
         $subscription   = $invoice->get_subscription_data();
@@ -1892,17 +1891,19 @@ function wpinv_invoice_subscription_details( $invoice ) {
             return;
         }
         
-        $period         = wpinv_get_pretty_subscription_period( $subscription['period'] );
+        $bill_times     = $subscription['bill_times'];
+        $period         = $subscription['period'];
+        $interval       = $subscription['interval'];
         $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
         $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );
-        $billing        = $billing_amount . ' / ' . $period;
+        $billing        = wpinv_subscription_recurring_payment_desc( $billing_amount, $period, $interval, $bill_times );
         
         if ( $initial_amount != $billing_amount ) {
-            $billing_cycle  = wp_sprintf( _x( '%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing' ), $initial_amount, $billing );
+            $billing_cycle  = wp_sprintf( __( '%s Then %s', 'invoicing' ), wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval ), $billing );
         } else {
             $billing_cycle  = $billing;
         }
-        $times_billed   = $total_payments . ' / ' . ( ( $bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
+        $times_billed   = $total_payments . ' / ' . ( ( (int)$bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
         ?>
         <div class="wpinv-subscriptions-details">
             <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>
