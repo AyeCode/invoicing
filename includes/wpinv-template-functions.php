@@ -1891,19 +1891,8 @@ function wpinv_invoice_subscription_details( $invoice ) {
             return;
         }
         
-        $bill_times     = $subscription['bill_times'];
-        $period         = $subscription['period'];
-        $interval       = $subscription['interval'];
-        $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
-        $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );
-        $billing        = wpinv_subscription_recurring_payment_desc( $billing_amount, $period, $interval, $bill_times );
-        
-        if ( $initial_amount != $billing_amount ) {
-            $billing_cycle  = wp_sprintf( __( '%s Then %s', 'invoicing' ), wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval ), $billing );
-        } else {
-            $billing_cycle  = $billing;
-        }
-        $times_billed   = $total_payments . ' / ' . ( ( (int)$bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
+        $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $invoice->get_currency() );
+        $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
         ?>
         <div class="wpinv-subscriptions-details">
             <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>

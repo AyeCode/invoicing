@@ -133,27 +133,16 @@ class WPInv_Meta_Box_Details {
             $total_payments = (int)$invoice->get_total_payments();
             $subscription   = $invoice->get_subscription_data();
             
-            $bill_times     = $subscription['bill_times'];
-            $period         = $subscription['period'];
-            $interval       = $subscription['interval'];
-            $initial_amount = wpinv_price( wpinv_format_amount( $subscription['initial_amount'] ), $invoice->get_currency() );
-            $billing_amount = wpinv_price( wpinv_format_amount( $subscription['recurring_amount'] ), $invoice->get_currency() );
-            $billing        = wpinv_subscription_recurring_payment_desc( $billing_amount, $period, $interval, $bill_times );
-            
-            if ( $initial_amount != $billing_amount ) {
-                $billing_cycle  = wp_sprintf( __( '%s Then %s', 'invoicing' ), wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval ), $billing );
-            } else {
-                $billing_cycle  = $billing;
-            }
-            $times_billed   = $total_payments . ' / ' . ( ( (int)$bill_times == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $bill_times );
+            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $invoice->get_currency() );
+            $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
             ?>
             <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
             <?php if ( $subscription_id = $invoice->get_subscription_id() ) { ?>
             <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $subscription_id; ?></p>
             <?php } ?>
             <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
-            <?php if ( !empty( $payments ) || ( $total_payments && $invoice->is_paid() ) ) { ?>
-                <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
+            <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
+            <?php if ( !empty( $payments ) || $invoice->is_paid() ) { ?>
                 <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
                 <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
                 <?php if ( !empty( $payments ) ) { ?>

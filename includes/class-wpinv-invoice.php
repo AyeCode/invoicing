@@ -2040,6 +2040,9 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_start( $formatted = true ) {
+        if ( !$this->is_paid() ) {
+            return '-';
+        }
         $start   = $this->get_subscription_created();
         
         if ( $formatted ) {
@@ -2052,6 +2055,9 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_end( $formatted = true ) {
+        if ( !$this->is_paid() ) {
+            return '-';
+        }
         $start          = $this->get_subscription_created();
         $interval       = $this->get_subscription_interval();
         $period         = $this->get_subscription_period( true );
@@ -2109,8 +2115,8 @@ final class WPInv_Invoice {
         return $invoices;
     }
 
-    public function get_total_payments() {
-        return count( $this->get_child_payments() ) + 1;
+    public function get_total_payments( $self = true ) {
+        return count( $this->get_child_payments( $self ) );
     }
     
     public function get_subscriptions( $limit = -1 ) {
@@ -2136,8 +2142,8 @@ final class WPInv_Invoice {
         return $subscription_status;
     }
     
-    public function get_subscription_status_label() {
-        $status = $this->get_subscription_status();
+    public function get_subscription_status_label( $status = '' ) {
+        $status = !empty( $status ) ? $status : $this->get_subscription_status();
         
         switch( $status ) {
             case 'active' :
@@ -2146,6 +2152,10 @@ final class WPInv_Invoice {
 
             case 'cancelled' :
                 $status_label = __( 'Cancelled', 'invoicing' );
+                break;
+                
+            case 'completed' :
+                $status_label = __( 'Completed', 'invoicing' );
                 break;
 
             case 'expired' :
@@ -2323,7 +2333,7 @@ final class WPInv_Invoice {
         $last_day       = cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
         $expiration     = date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $this->get_subscription_interval() . ' ' . $this->get_subscription_period( true ), $base_date ) );
 
-        if( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
+        if ( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
             $expiration = date_i18n( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
         }
 
@@ -2345,10 +2355,7 @@ final class WPInv_Invoice {
             'status'     => $status,
         );
 
-        if( $this->update_subscription( $args ) ) {
-            $note = sprintf( __( 'Subscription #%1$s: %2$s', 'invoicing' ), wpinv_get_invoice_number( $this->ID ), $status );
-            $this->add_note( $note, true );
-        }
+        $this->update_subscription( $args );
 
         do_action( 'wpinv_subscription_post_renew', $this->ID, $expiration, $this );
         do_action( 'wpinv_recurring_set_subscription_status', $this->ID, $status, $this );

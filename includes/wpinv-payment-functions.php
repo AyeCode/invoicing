@@ -391,30 +391,37 @@ function wpinv_subscription_payment_desc( $invoice ) {
     }
     
     $description = '';
-    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {
-        $item               = new WPInv_Item( $item_id );
-        $period             = $item->get_recurring_period();
-        $interval           = $item->get_recurring_interval();
-        $bill_times         = (int)$item->get_recurring_limit();
-
-        $initial_total      = wpinv_format_amount( $invoice->get_total() );
-        $recurring_total    = wpinv_format_amount( $invoice->get_recurring_details( 'total' ) );
-        $initial_amount     = wpinv_price( $initial_total, $invoice->get_currency() );
-        $recurring_amount   = wpinv_price( $recurring_total, $invoice->get_currency() );
-        
-        $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times );
-        
-        if ( $initial_amount != $recurring_amount ) {
-            $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval );
-            
-            $description    = wp_sprintf( __( '%s Then %s', 'invoicing' ), $initial, $recurring );
-        } else {
-            $description    = $recurring;
-            
-        }
+    if ( $invoice->is_parent() && $item = $invoice->get_recurring( true ) ) {
+        $description = wpinv_get_billing_cycle( $invoice->get_total(), $invoice->get_recurring_details( 'total' ), $item->get_recurring_period(), $item->get_recurring_interval(), $item->get_recurring_limit(), $invoice->get_currency() );
     }
     
     return apply_filters( 'wpinv_subscription_payment_desc', $description, $invoice );
+}
+
+function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $currency = '' ) {
+    $initial_total      = wpinv_format_amount( $initial );
+    $recurring_total    = wpinv_format_amount( $recurring );
+    
+    if ( $bill_times == 1 ) {
+        $recurring_total = $initial_total;
+    } else if ( $bill_times > 1 && $initial_total != $recurring_total ) {
+        $bill_times--;
+    }
+    
+    $initial_amount     = wpinv_price( $initial_total, $currency );
+    $recurring_amount   = wpinv_price( $recurring_total, $currency );
+    
+    $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times );
+        
+    if ( $initial_total != $recurring_total ) {
+        $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval );
+        
+        $description    = wp_sprintf( __( '%s Then %s', 'invoicing' ), $initial, $recurring );
+    } else {
+        $description    = $recurring;
+    }
+    
+    return apply_filters( 'wpinv_get_billing_cycle', $description, $initial, $recurring, $period, $interval, $bill_times, $currency );
 }
 
 function wpinv_recurring_send_payment_failed( $invoice ) {

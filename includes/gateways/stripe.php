@@ -414,8 +414,10 @@ function wpinv_recurring_process_stripe_ipn( $event ) {
 
             if ( $today ) {
                 wpinv_set_payment_transaction_id( $subscription->ID, $args['transaction_id'] );
+                wpinv_insert_payment_note( $subscription->ID, sprintf( __( 'Stripe Charge ID: %s', 'invoicing' ) , $args['transaction_id'] ) );
             } else {
                 $invoice = wpinv_recurring_add_subscription_payment( $subscription->ID, $args );
+                wpinv_insert_payment_note( $invoice->ID, sprintf( __( 'Stripe Charge ID: %s', 'invoicing' ) , $args['transaction_id'] ) );
                 $invoice->renew_subscription();
             }
 
