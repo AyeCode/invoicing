@@ -168,11 +168,13 @@ class WPInv_Item {
     }
     
     public function get_vat_rule() {
+        global $wpinv_euvat;
+        
         if( !isset( $this->vat_rule ) ) {
             $this->vat_rule = get_post_meta( $this->ID, '_wpinv_vat_rule', true );
 
             if ( empty( $this->vat_rule ) ) {        
-                $this->vat_rule = wpinv_allow_vat_rules() ? 'digital' : 'physical';
+                $this->vat_rule = $wpinv_euvat->allow_vat_rules() ? 'digital' : 'physical';
             }
         }
         

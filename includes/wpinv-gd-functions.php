@@ -509,7 +509,7 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         'zip'            => '',
         'vat_number'     => '',
         'vat_rate'       => '',
-        'self_certified' => '',
+        'adddress_confirmed' => '',
         'discount'       => array(),
     );
     

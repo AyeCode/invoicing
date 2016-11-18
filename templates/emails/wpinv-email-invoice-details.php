@@ -3,9 +3,11 @@
 if ( !defined('ABSPATH') )
     die('-1');
 
+global $wpinv_euvat;
+
 $sent_to_admin  = !empty( $sent_to_admin ) ? true : false;
 $invoice_url    = $sent_to_admin ? get_edit_post_link( $invoice->ID ) : get_permalink( $invoice->ID );
-$vat_name       = wpinv_owner_get_vat_name();
+$vat_name       = $wpinv_euvat->get_vat_name();
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
 <div id="wpinv-email-details">
@@ -43,7 +45,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
                 <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $due_date ) ), $invoice->get_due_date( true ) ); ?></td>
             </tr>
         <?php } ?>
-        <?php if ( empty( $sent_to_admin ) && $owner_vat_number = wpinv_owner_vat_number() ) { ?>
+        <?php if ( empty( $sent_to_admin ) && $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr>
                 <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>
                 <td><?php echo $owner_vat_number; ?></td>

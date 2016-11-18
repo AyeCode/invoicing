@@ -6,7 +6,7 @@ if ( !defined( 'WPINC' ) ) {
 
 class WPInv_Meta_Box_Items {
     public static function output( $post ) {        
-        global $ajax_cart_details;
+        global $wpinv_euvat, $ajax_cart_details;
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
@@ -63,13 +63,13 @@ class WPInv_Meta_Box_Items {
                                         </td>
                                         <td class="title">
                                             <input type="text" class="regular-text" placeholder="Item name" value="" name="_wpinv_quick[name]">
-                                            <?php if ( wpinv_allow_vat_rules() ) { ?>
+                                            <?php if ( $wpinv_euvat->allow_vat_rules() ) { ?>
                                             <div class="wp-clearfix">
                                                 <label class="wpi-vat-rule">
                                                     <span class="title"><?php _e( 'VAT rule type', 'invoicing' );?></span>
                                                     <span class="input-text-wrap">
                                                         <?php echo wpinv_html_select( array(
-                                                            'options'          => wpinv_vat_rule_types(),
+                                                            'options'          => $wpinv_euvat->get_rules(),
                                                             'name'             => '_wpinv_quick[vat_rule]',
                                                             'id'               => '_wpinv_quick_vat_rule',
                                                             'show_option_all'  => false,
@@ -79,13 +79,13 @@ class WPInv_Meta_Box_Items {
                                                     </span>
                                                 </label>
                                             </div>
-                                            <?php } if ( wpinv_allow_vat_classes() ) { ?>
+                                            <?php } if ( $wpinv_euvat->allow_vat_classes() ) { ?>
                                             <div class="wp-clearfix">
                                                 <label class="wpi-vat-class">
                                                     <span class="title"><?php _e( 'VAT class', 'invoicing' );?></span>
                                                     <span class="input-text-wrap">
                                                         <?php echo wpinv_html_select( array(
-                                                            'options'          => wpinv_vat_get_all_rate_classes(),
+                                                            'options'          => $wpinv_euvat->get_all_classes(),
                                                             'name'             => '_wpinv_quick[vat_class]',
                                                             'id'               => '_wpinv_quick_vat_class',
                                                             'show_option_all'  => false,
@@ -233,11 +233,13 @@ class WPInv_Meta_Box_Items {
     }
     
     public static function vat_rules( $post ) {
-        $rule_type = wpinv_item_get_vat_rule( $post->ID );
+        global $wpinv_euvat;
+        
+        $rule_type = $wpinv_euvat->get_item_rule( $post->ID );
         ?>
         <p><label for="wpinv_vat_rules"><strong><?php _e( 'Select how VAT rules will be applied:', 'invoicing' );?></strong></label>&nbsp;&nbsp;&nbsp;
         <?php echo wpinv_html_select( array(
-                    'options'          => wpinv_vat_rule_types(),
+                    'options'          => $wpinv_euvat->get_rules(),
                     'name'             => 'wpinv_vat_rules',
                     'id'               => 'wpinv_vat_rules',
                     'selected'         => $rule_type,
@@ -251,11 +253,13 @@ class WPInv_Meta_Box_Items {
         <?php
     }
     
-    public static function vat_classes( $post ) {        
-        $vat_class = wpinv_get_item_vat_class( $post->ID );
+    public static function vat_classes( $post ) {
+        global $wpinv_euvat;
+        
+        $vat_class = $wpinv_euvat->get_item_class( $post->ID );
         ?>
         <p><?php echo wpinv_html_select( array(
-                    'options'          => wpinv_vat_get_all_rate_classes(),
+                    'options'          => $wpinv_euvat->get_all_classes(),
                     'name'             => 'wpinv_vat_class',
                     'id'               => 'wpinv_vat_class',
                     'selected'         => $vat_class,

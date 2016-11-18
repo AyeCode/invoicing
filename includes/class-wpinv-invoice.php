@@ -59,7 +59,7 @@ final class WPInv_Invoice {
     public $company = '';
     public $vat_number = '';
     public $vat_rate = '';
-    public $self_certified = '';
+    public $adddress_confirmed = '';
     
     public $full_name = '';
     public $parent_invoice = 0;
@@ -169,7 +169,7 @@ final class WPInv_Invoice {
         $this->company         = $this->user_info['company'];
         $this->vat_number      = $this->user_info['vat_number'];
         $this->vat_rate        = $this->user_info['vat_rate'];
-        $this->self_certified  = $this->user_info['self_certified'];
+        $this->adddress_confirmed  = $this->user_info['adddress_confirmed'];
         $this->address         = $this->user_info['address'];
         $this->city            = $this->user_info['city'];
         $this->country         = $this->user_info['country'];
@@ -403,9 +403,9 @@ final class WPInv_Invoice {
         return $vat_rate;
     }
     
-    private function setup_self_certified() {
-        $self_certified = $this->get_meta( '_wpinv_self_certified' );
-        return $self_certified;
+    private function setup_adddress_confirmed() {
+        $adddress_confirmed = $this->get_meta( '_wpinv_adddress_confirmed' );
+        return $adddress_confirmed;
     }
     
     private function setup_phone() {
@@ -453,7 +453,7 @@ final class WPInv_Invoice {
             'company'        => $this->company,
             'vat_number'     => $this->vat_number,
             'vat_rate'       => $this->vat_rate,
-            'self_certified' => $this->self_certified,
+            'adddress_confirmed' => $this->adddress_confirmed,
             'discount'       => $this->discounts,
         );
         
@@ -582,6 +582,7 @@ final class WPInv_Invoice {
         $post_data = array(
                         'post_title'    => $invoice_title,
                         'post_status'   => $this->status,
+                        'post_author'   => $this->user_id,
                         'post_type'     => 'wpi_invoice',
                         'post_date'     => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? $this->date : current_time( 'mysql' ),
                         'post_date_gmt' => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
@@ -761,18 +762,19 @@ final class WPInv_Invoice {
                         
                         $vat_info = $wpi_session->get( 'user_vat_data' );
                         if ( $this->vat_number && !empty( $vat_info ) && isset( $vat_info['number'] ) && isset( $vat_info['valid'] ) && $vat_info['number'] == $this->vat_number ) {
-                            $this->update_meta( '_wpinv_self_certified', (bool)$vat_info['valid'] );
-                            $this->user_info['self_certified'] = (bool)$vat_info['valid'];
+                            $adddress_confirmed = isset( $vat_info['adddress_confirmed'] ) ? $vat_info['adddress_confirmed'] : false;
+                            $this->update_meta( '_wpinv_adddress_confirmed', (bool)$adddress_confirmed );
+                            $this->user_info['adddress_confirmed'] = (bool)$adddress_confirmed;
                         }
-                        
+    
                         break;
                     case 'vat_rate':
                         $this->update_meta( '_wpinv_vat_rate', $this->vat_rate );
                         $this->user_info['vat_rate'] = $this->vat_rate;
                         break;
-                    case 'self_certified':
-                        $this->update_meta( '_wpinv_self_certified', $this->self_certified );
-                        $this->user_info['self_certified'] = $this->self_certified;
+                    case 'adddress_confirmed':
+                        $this->update_meta( '_wpinv_adddress_confirmed', $this->adddress_confirmed );
+                        $this->user_info['adddress_confirmed'] = $this->adddress_confirmed;
                         break;
                     
                     case 'key':
@@ -1851,7 +1853,7 @@ final class WPInv_Invoice {
     }
     
     public function update_items($temp = false) {
-        global $wpi_current_id, $wpi_item_id, $wpi_nosave;
+        global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpi_nosave;
         
         if ( !empty( $this->cart_details ) ) {
             $wpi_nosave             = $temp;
@@ -1875,7 +1877,7 @@ final class WPInv_Invoice {
                 $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
                 
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
-                $tax_class  = wpinv_get_item_vat_class( $wpi_item_id );
+                $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
 
                 if ( wpinv_prices_include_tax() ) {
@@ -2038,6 +2040,9 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_start( $formatted = true ) {
+        if ( !$this->is_paid() ) {
+            return '-';
+        }
         $start   = $this->get_subscription_created();
         
         if ( $formatted ) {
@@ -2050,6 +2055,9 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_end( $formatted = true ) {
+        if ( !$this->is_paid() ) {
+            return '-';
+        }
         $start          = $this->get_subscription_created();
         $interval       = $this->get_subscription_interval();
         $period         = $this->get_subscription_period( true );
@@ -2079,8 +2087,8 @@ final class WPInv_Invoice {
     }
     
     public function get_bill_times() {
-        $bill_times = $this->get_meta( '_wpinv_subscr_bill_times', true );
-        return $bill_times;
+        $subscription_data = $this->get_subscription_data();
+        return $subscription_data['bill_times'];
     }
 
     public function get_child_payments( $self = false ) {
@@ -2107,8 +2115,8 @@ final class WPInv_Invoice {
         return $invoices;
     }
 
-    public function get_total_payments() {
-        return count( $this->get_child_payments() ) + 1;
+    public function get_total_payments( $self = true ) {
+        return count( $this->get_child_payments( $self ) );
     }
     
     public function get_subscriptions( $limit = -1 ) {
@@ -2134,34 +2142,40 @@ final class WPInv_Invoice {
         return $subscription_status;
     }
     
-    public function get_subscription_status_label() {
-        switch( $this->get_subscription_status() ) {
+    public function get_subscription_status_label( $status = '' ) {
+        $status = !empty( $status ) ? $status : $this->get_subscription_status();
+        
+        switch( $status ) {
             case 'active' :
-                $status = __( 'Active', 'invoicing' );
+                $status_label = __( 'Active', 'invoicing' );
                 break;
 
             case 'cancelled' :
-                $status = __( 'Cancelled', 'invoicing' );
+                $status_label = __( 'Cancelled', 'invoicing' );
+                break;
+                
+            case 'completed' :
+                $status_label = __( 'Completed', 'invoicing' );
                 break;
 
             case 'expired' :
-                $status = __( 'Expired', 'invoicing' );
+                $status_label = __( 'Expired', 'invoicing' );
                 break;
 
             case 'pending' :
-                $status = __( 'Pending', 'invoicing' );
+                $status_label = __( 'Pending', 'invoicing' );
                 break;
 
             case 'failing' :
-                $status = __( 'Failing', 'invoicing' );
+                $status_label = __( 'Failing', 'invoicing' );
                 break;
 
             default:
-                $status = $this->get_subscription_status();
+                $status_label = $status;
                 break;
         }
 
-        return $status;
+        return $status_label;
     }
     
     public function get_subscription_period( $full = false ) {
@@ -2319,7 +2333,7 @@ final class WPInv_Invoice {
         $last_day       = cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
         $expiration     = date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $this->get_subscription_interval() . ' ' . $this->get_subscription_period( true ), $base_date ) );
 
-        if( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
+        if ( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
             $expiration = date_i18n( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
         }
 
@@ -2341,10 +2355,7 @@ final class WPInv_Invoice {
             'status'     => $status,
         );
 
-        if( $this->update_subscription( $args ) ) {
-            $note = sprintf( __( 'Subscription #%1$s: %2$s', 'invoicing' ), wpinv_get_invoice_number( $this->ID ), $status );
-            $this->add_note( $note, true );
-        }
+        $this->update_subscription( $args );
 
         do_action( 'wpinv_subscription_post_renew', $this->ID, $expiration, $this );
         do_action( 'wpinv_recurring_set_subscription_status', $this->ID, $status, $this );
@@ -2438,17 +2449,42 @@ final class WPInv_Invoice {
         return date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $interval . ' ' . $period ) );
     }
     
-    public function get_subscription_data() {
+    public function get_subscription_data( $filed = '' ) {
         $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created' );
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {
-            if ( ( $value = $this->get_meta( '_wpinv_subscr_' . $field ) ) !== false ) {
-                $subscription_meta[ $field ] = $value;
+            $subscription_meta[ $field ] = $this->get_meta( '_wpinv_subscr_' . $field );
+        }
+        
+        $item = $this->get_recurring( true );
+        
+        if ( !empty( $item ) ) {
+            if ( empty( $subscription_meta['item_id'] ) ) {
+                $subscription_meta['item_id'] = $item->ID;
+            }
+            if ( empty( $subscription_meta['period'] ) ) {
+                $subscription_meta['period'] = $item->get_recurring_period();
+            }
+            if ( empty( $subscription_meta['interval'] ) ) {
+                $subscription_meta['interval'] = $item->get_recurring_interval();
+            }
+            if ( !$subscription_meta['bill_times'] && $subscription_meta['bill_times'] !== 0 ) {
+                $subscription_meta['bill_times'] = $item->get_recurring_limit();
+            }
+            if ( $subscription_meta['initial_amount'] === '' || $subscription_meta['recurring_amount'] === '' ) {
+                $subscription_meta['initial_amount']    = wpinv_format_amount( $this->get_total() );
+                $subscription_meta['recurring_amount']  = wpinv_format_amount( $this->get_recurring_details( 'total' ) );
             }
         }
         
-        return $subscription_meta;
+        if ( $filed === '' ) {
+            return apply_filters( 'wpinv_get_invoice_subscription_data', $subscription_meta, $this );
+        }
+        
+        $value = isset( $subscription_meta[$filed] ) ? $subscription_meta[$filed] : '';
+        
+        return apply_filters( 'wpinv_invoice_subscription_data_value', $value, $subscription_meta, $this );
     }
     
     public function is_paid() {
@@ -2460,15 +2496,14 @@ final class WPInv_Invoice {
     }
     
     public function has_vat() {
+        global $wpinv_euvat, $wpi_country;
+        
         $requires_vat = false;
         
-        if ( $this->country && $this->vat_number && $this->self_certified ) {
-            $default_country    = wpinv_get_default_country();
-            $eu_states          = wpinv_get_eu_states();
-            $gst_countries      = wpinv_get_gst_countries();
-            $country            = $this->country;
+        if ( $this->country ) {
+            $wpi_country        = $this->country;
             
-            $requires_vat       = ( in_array( $country, $eu_states ) && ( in_array( $default_country, $eu_states ) || ( wpinv_invoice_has_digital_item( $this ) ) ) ) || ( in_array( $country, $gst_countries ) && in_array( $default_country, $gst_countries ) );
+            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
         }
         
         return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
