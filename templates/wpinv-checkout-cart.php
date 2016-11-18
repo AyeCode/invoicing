@@ -3,12 +3,12 @@
  *  This template is used to display the Checkout page when items are in the cart
  */
 
-global $post, $ajax_cart_details, $wpi_cart_columns, $wpi_session;
+global $wpinv_euvat, $post, $ajax_cart_details, $wpi_cart_columns, $wpi_session;
 $invoice            = wpinv_get_invoice_cart();
 $cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
-$tax_label          = wpinv_tax_label();
+$tax_label          = $wpinv_euvat->tax_label();
 $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
 ?>
 <table id="wpinv_checkout_cart" class="table table-bordered table-hover">

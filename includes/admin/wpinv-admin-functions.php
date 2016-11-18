@@ -203,105 +203,17 @@ function wpinv_admin_messages() {
 }
 add_action( 'admin_notices', 'wpinv_admin_messages' );
 
-function wpinv_download_geoip2_file( $download_url, $db_file ) {
-    // Download the file from MaxMind, this places it in a temporary location.
-    $TempFile = download_url( $download_url );
-    
-    $result['state'] = false;
-    $result['message'] = __( 'Unknown error', 'invoicing' );
-
-    // If we failed, through a message, otherwise proceed.
-    if ( is_wp_error( $TempFile ) ) {
-        $message = sprintf( __( 'Error downloading GeoIP database from: %s - %s', 'invoicing' ), $download_url, $TempFile->get_error_message() );
-        wpinv_error_log( $message );
-    } else {
-        // Open the downloaded file to unzip it.
-        $ZipHandle = gzopen( $TempFile, 'rb' );
-            
-        // Create th new file to unzip to.
-        $DBfh = fopen( $db_file, 'wb' );
-
-        // If we failed to open the downloaded file, through an error and remove the temporary file.  Otherwise do the actual unzip.
-        if ( !$ZipHandle ) {
-            $result['message'] = sprintf( __( 'Error could not open downloaded GeoIP database for reading: %s', 'invoicing' ), $TempFile );
-            wpinv_error_log($result['message']);
-        } else {
-            // If we failed to open the new file, through and error and remove the temporary file.  Otherwise actually do the unzip.
-            if ( !$DBfh ) {
-                $result['message'] = sprintf( __( 'Error could not open destination GeoIP database for writing %s', 'invoicing' ), $DBFile );
-                wpinv_error_log($result['message']);
-            } else {
-                while ( ( $data = gzread( $ZipHandle, 4096 ) ) != false ) {
-                    fwrite( $DBfh, $data );
-                }
-
-                // Close the files.
-                gzclose( $ZipHandle );
-                fclose( $DBfh );
-                    
-                // Display the success message.
-                $result['message'] = "";
-                $result['state'] = true;
-            }
-        }
-        // Delete the temporary file.
-        if ( file_exists( $TempFile ) ) {
-            unlink( $TempFile );
-        }
-    }
-
-    return $result;
-}
-
-function wpinv_download_geoip2_database() {
-    $scheme = 'http' . (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on' ? 's' : '');
-
-    // This is the location of the file to download.
-    $download_urls = array(
-        'city' => $scheme . '://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz',
-        'country' => $scheme . '://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz'
-    );
-
-    $filenames = array(
-        'city' => '/invoicing/GeoLite2-City.mmdb',
-        'country' => '/invoicing/GeoLite2-Country.mmdb'
-    );
-
-    // Get the upload directory from WordPRess.
-    $upload_dir = wp_upload_dir();
-
-    // Check to see if the subdirectory we're going to upload to exists, if not create it.
-    if ( !is_dir( $upload_dir['basedir'] . '/invoicing' ) ) { 
-        mkdir( $upload_dir['basedir'] . '/invoicing' );
-    }
-
-    foreach( $download_urls as $key => $download_url ) {
-        // Create a variable with the name of the database file to download.
-        $db_file = $upload_dir['basedir'] . $filenames[$key];
-
-        $result = wpinv_download_geoip2_file( $download_url, $db_file );
-        if ( empty( $result['state'] ) ) {
-            echo $result['message'];
-            exit;
-        }
-        
-        echo __( 'GeoIP Database updated successfully!', 'invoicing' );
-    }
-    
-    exit;
-}
-add_action( 'wp_ajax_wpinv_download_geoip2', 'wpinv_download_geoip2_database' );
-add_action( 'wp_ajax_nopriv_wpinv_download_geoip2', 'wpinv_download_geoip2_database' );
-
 function wpinv_items_columns( $existing_columns ) {
+    global $wpinv_euvat;
+    
     $columns                = array();
     $columns['cb']          = $existing_columns['cb'];
     $columns['title']       = __( 'Title', 'invoicing' );
     $columns['price']       = __( 'Price', 'invoicing' );
-    if ( wpinv_allow_vat_rules() ) {
+    if ( $wpinv_euvat->allow_vat_rules() ) {
         $columns['vat_rule']    = __( 'VAT rule type', 'invoicing' );
     }
-    if ( wpinv_allow_vat_classes() ) {
+    if ( $wpinv_euvat->allow_vat_classes() ) {
         $columns['vat_class']   = __( 'VAT class', 'invoicing' );
     }
     $columns['type']        = __( 'Type', 'invoicing' );
@@ -329,7 +241,7 @@ function wpinv_item_quick_edit( $column_name, $post_type ) {
     if ( !( $post_type == 'wpi_item' && $column_name == 'price' ) ) {
         return;
     }
-    global $post;
+    global $wpinv_euvat, $post;
     
     $symbol    = wpinv_currency_symbol();
     $position  = wpinv_currency_position();
@@ -345,13 +257,13 @@ function wpinv_item_quick_edit( $column_name, $post_type ) {
                     <span class="input-text-wrap"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" placeholder="<?php echo wpinv_format_amount( 0 ); ?>" value="<?php echo wpinv_format_amount( $price );?>" name="_wpinv_item_price" class="wpi-field-price wpi-price" id="wpinv_item_price-<?php echo $post->ID;?>"><?php echo ( $position == 'right' ? $symbol . '&nbsp;' : '' );?></span>
                 </label>
             </div>
-            <?php if ( wpinv_allow_vat_rules() ) { $rule_type = wpinv_item_get_vat_rule( $post->ID ); ?>
+            <?php if ( $wpinv_euvat->allow_vat_rules() ) { $rule_type = $wpinv_euvat->get_item_rule( $post->ID ); ?>
             <div class="inline-edit-group wp-clearfix">
                 <label class="inline-edit-wpinv-vat-rate">
                     <span class="title"><?php _e( 'VAT rule type to use', 'invoicing' );?></span>
                     <span class="input-text-wrap">
                         <?php echo wpinv_html_select( array(
-                            'options'          => wpinv_vat_rule_types(),
+                            'options'          => $wpinv_euvat->get_rules(),
                             'name'             => '_wpinv_vat_rules',
                             'id'               => 'wpinv_vat_rules-' . $post->ID,
                             'selected'         => $rule_type,
@@ -362,13 +274,13 @@ function wpinv_item_quick_edit( $column_name, $post_type ) {
                     </span>
                 </label>
             </div>
-            <?php } if ( wpinv_allow_vat_classes() ) { $vat_class = wpinv_get_item_vat_class( $post->ID ); ?>
+            <?php } if ( $wpinv_euvat->allow_vat_classes() ) { $vat_class = $wpinv_euvat->get_item_class( $post->ID ); ?>
             <div class="inline-edit-group wp-clearfix">
                 <label class="inline-edit-wpinv-vat-class">
                     <span class="title"><?php _e( 'VAT class to use', 'invoicing' );?></span>
                     <span class="input-text-wrap">
                         <?php echo wpinv_html_select( array(
-                            'options'          => wpinv_vat_get_all_rate_classes(),
+                            'options'          => $wpinv_euvat->get_all_classes(),
                             'name'             => '_wpinv_vat_class',
                             'id'               => 'wpinv_vat_class-' . $post->ID,
                             'selected'         => $vat_class,
@@ -404,7 +316,7 @@ add_action( 'quick_edit_custom_box', 'wpinv_item_quick_edit', 10, 2 );
 add_action( 'bulk_edit_custom_box', 'wpinv_item_quick_edit', 10, 2 );
 
 function wpinv_items_table_custom_column( $column ) {
-    global $post, $wpi_item;
+    global $wpinv_euvat, $post, $wpi_item;
     
     if ( empty( $wpi_item ) || ( !empty( $wpi_item ) && $post->ID != $wpi_item->ID ) ) {
         $wpi_item = new WPInv_Item( $post->ID );
@@ -415,10 +327,10 @@ function wpinv_items_table_custom_column( $column ) {
             echo wpinv_item_price( $post->ID );
         break;
         case 'vat_rule' :
-            echo wpinv_item_vat_rule( $post->ID );
+            echo $wpinv_euvat->item_rule_label( $post->ID );
         break;
         case 'vat_class' :
-            echo wpinv_item_vat_class( $post->ID );
+            echo $wpinv_euvat->item_class_label( $post->ID );
         break;
         case 'type' :
             echo wpinv_item_type( $post->ID ) . '<span class="meta">' . $wpi_item->get_cpt_singular_name() . '</span>';
@@ -430,11 +342,11 @@ function wpinv_items_table_custom_column( $column ) {
            echo $post->ID;
            echo '<div class="hidden" id="wpinv_inline-' . $post->ID . '">
                     <div class="price">' . wpinv_get_item_price( $post->ID ) . '</div>';
-                    if ( wpinv_allow_vat_rules() ) {
-                        echo '<div class="vat_rule">' . wpinv_item_get_vat_rule( $post->ID ) . '</div>';
+                    if ( $wpinv_euvat->allow_vat_rules() ) {
+                        echo '<div class="vat_rule">' . $wpinv_euvat->get_item_rule( $post->ID ) . '</div>';
                     }
-                    if ( wpinv_allow_vat_classes() ) {
-                        echo '<div class="vat_class">' . wpinv_get_item_vat_class( $post->ID ) . '</div>';
+                    if ( $wpinv_euvat->allow_vat_classes() ) {
+                        echo '<div class="vat_class">' . $wpinv_euvat->get_item_class( $post->ID ) . '</div>';
                     }
                     echo '<div class="type">' . wpinv_get_item_type( $post->ID ) . '</div>
                 </div>';
@@ -444,13 +356,13 @@ function wpinv_items_table_custom_column( $column ) {
 add_action( 'manage_wpi_item_posts_custom_column', 'wpinv_items_table_custom_column' );
 
 function wpinv_add_items_filters() {
-    global $typenow;
+    global $wpinv_euvat, $typenow;
 
     // Checks if the current post type is 'item'
     if ( $typenow == 'wpi_item') {
-        if ( wpinv_allow_vat_rules() ) {
+        if ( $wpinv_euvat->allow_vat_rules() ) {
             echo wpinv_html_select( array(
-                    'options'          => array_merge( array( '' => __( 'All VAT rules', 'invoicing' ) ), wpinv_vat_rule_types() ),
+                    'options'          => array_merge( array( '' => __( 'All VAT rules', 'invoicing' ) ), $wpinv_euvat->get_rules() ),
                     'name'             => 'vat_rule',
                     'id'               => 'vat_rule',
                     'selected'         => ( isset( $_GET['vat_rule'] ) ? $_GET['vat_rule'] : '' ),
@@ -460,9 +372,9 @@ function wpinv_add_items_filters() {
                 ) );
         }
         
-        if ( wpinv_allow_vat_classes() ) {
+        if ( $wpinv_euvat->allow_vat_classes() ) {
             echo wpinv_html_select( array(
-                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), wpinv_vat_get_all_rate_classes() ),
+                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), $wpinv_euvat->get_all_classes() ),
                     'name'             => 'vat_class',
                     'id'               => 'vat_class',
                     'selected'         => ( isset( $_GET['vat_class'] ) ? $_GET['vat_class'] : '' ),

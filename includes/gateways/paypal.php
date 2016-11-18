@@ -146,13 +146,17 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         // Set item description
         $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( array( 'id' => $item->ID ) ), ENT_COMPAT, 'UTF-8' ) );
         
-        if ( $initial_amount != $recurring_amount ) {
+        if ( $initial_amount != $recurring_amount && $bill_times != 1 ) {
             $paypal_args['a1']  = $initial_amount;
             $paypal_args['p1']  = $interval;
             $paypal_args['t1']  = $period;
             
             // Set the recurring amount
             $paypal_args['a3']  = $recurring_amount;
+            
+            if ( $bill_times > 1 ) {
+                $bill_times--;
+            }
         } else {        
             $paypal_args['a3']  = $initial_amount;
         }
@@ -493,6 +497,7 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     if ( $today && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
         // This is the very first payment
         wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['txn_id'] );
+        wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $ipn_data['txn_id'] ) );
         return;
     }
     

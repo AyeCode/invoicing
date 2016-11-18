@@ -2,7 +2,9 @@
 
 namespace GeoIp2\Record;
 
-abstract class AbstractRecord implements \lyquidity\json\JsonSerializable
+use GeoIp2\Compat\JsonSerializable;
+
+abstract class AbstractRecord implements JsonSerializable
 {
     private $record;
 
@@ -25,7 +27,11 @@ abstract class AbstractRecord implements \lyquidity\json\JsonSerializable
         if ($this->__isset($attr)) {
             return $this->record[$key];
         } elseif ($this->validAttribute($attr)) {
-            return null;
+            if (preg_match('/^is_/', $key)) {
+                return false;
+            } else {
+                return null;
+            }
         } else {
             throw new \RuntimeException("Unknown attribute: $attr");
         }

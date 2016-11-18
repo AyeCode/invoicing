@@ -469,7 +469,7 @@ function wpinv_get_cart_contents() {
 }
 
 function wpinv_get_cart_content_details() {
-    global $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
+    global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
     $cart_items = wpinv_get_cart_contents();
     
     if ( empty( $cart_items ) ) {
@@ -504,7 +504,7 @@ function wpinv_get_cart_content_details() {
         
         $subtotal           = $item_price * $quantity;
         $tax_rate           = wpinv_get_tax_rate( $_POST['country'], $_POST['state'], $wpi_item_id );
-        $tax_class          = wpinv_get_item_vat_class( $item_id );
+        $tax_class          = $wpinv_euvat->get_item_class( $item_id );
         $tax                = wpinv_get_cart_item_tax( $item_id, $subtotal - $discount );
         
         if ( wpinv_prices_include_tax() ) {
@@ -1045,6 +1045,8 @@ function wpinv_empty_cart() {
 }
 
 function wpinv_process_checkout() {
+    global $wpinv_euvat;
+    
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
@@ -1140,11 +1142,11 @@ function wpinv_process_checkout() {
         'card_info'         => $valid_data['cc_info']
     );
     
-    $vat_info   = wpinv_user_vat_info();
+    $vat_info   = $wpinv_euvat->current_vat_data();
     if ( is_array( $vat_info ) ) {
         $invoice_data['user_info']['vat_number']        = $vat_info['number'];
         $invoice_data['user_info']['vat_rate']          = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state']);
-        $invoice_data['user_info']['self_certified']    = isset($vat_info['self_certified']) ? $vat_info['self_certified'] : false;
+        $invoice_data['user_info']['adddress_confirmed']    = isset($vat_info['adddress_confirmed']) ? $vat_info['adddress_confirmed'] : false;
 
         // Add the VAT rate to each item in the cart
         foreach( $invoice_data['cart_details'] as $key => $item_data) {
@@ -1154,7 +1156,7 @@ function wpinv_process_checkout() {
     }
     
     // Save vat fields.
-    $address_fields = array( 'vat_number', 'vat_rate', 'self_certified' );
+    $address_fields = array( 'vat_number', 'vat_rate', 'adddress_confirmed' );
     foreach ( $address_fields as $field ) {
         if ( isset( $invoice_data['user_info'][$field] ) ) {
             $invoice->set( $field, $invoice_data['user_info'][$field] );
@@ -1191,6 +1193,8 @@ function wpinv_process_checkout() {
     
     // Set gateway
     $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
+    
+    do_action( 'wpinv_checkout_before_send_to_gateway', $invoice, $invoice_data );
 
     // Send info to the gateway for payment processing
     wpinv_send_to_gateway( $invoice_data['gateway'], $invoice_data );
@@ -1331,7 +1335,7 @@ function wpinv_payment_receipt( $atts, $content = null ) {
         $invoice_key = $session['invoice_key'];
     } elseif ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
         $invoice_key = $wpinv_receipt_args['invoice_key'];
-    } else if ( isset( $_GET['invoice_key'] ) ) {
+    } else if ( isset( $_GET['invoice-id'] ) ) {
         $invoice_key = wpinv_get_payment_key( (int)$_GET['invoice-id'] );
     }
 

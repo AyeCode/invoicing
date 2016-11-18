@@ -40,7 +40,7 @@ class WPInv_Meta_Box_Billing_Details {
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
             <div class="gdmbx-th"><label for="wpinv_ip"><?php _e( 'IP Address', 'invoicing' );?><?php if ($invoice->ip) { ?>
-                &nbsp;&nbsp;<a href="<?php echo admin_url( 'admin-ajax.php?action=wpinv_ip_map_location&ip=' . $invoice->ip ); ?>" title="<?php esc_attr_e( 'View IP information', 'invoicing' );?>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a>
+                &nbsp;&nbsp;<a href="<?php echo admin_url( 'admin-ajax.php?action=wpinv_ip_geolocation&ip=' . $invoice->ip ); ?>" title="<?php esc_attr_e( 'View IP information', 'invoicing' );?>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a>
                 <?php } ?></label></div>
             <div class="gdmbx-td">
                 <input type="text" class="gdmbx2-text-large" value="<?php echo esc_attr( $invoice->ip );?>" readonly />

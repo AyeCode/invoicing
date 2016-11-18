@@ -314,6 +314,9 @@ a img {outline:none; border:none;}
     vertical-align: middle;
     padding: 8px;
 }
+.wpinv-wrap .wpinv-subscriptions-details table th:first-child {
+    width: 50%
+}
 .wpinv-cart-sub-desc {
     display: inline-block;
     max-width: 85%;

@@ -131,13 +131,15 @@ function wpinv_bulk_and_quick_edit_save( $post_id, $post, $update = false ) {
 add_action( 'save_post', 'wpinv_bulk_and_quick_edit_save', 10, 3 );
 
 function wpinv_register_item_meta_boxes() {    
+    global $wpinv_euvat;
+    
     add_meta_box( 'wpinv_field_prices', __( 'Item Price', 'invoicing' ), 'WPInv_Meta_Box_Items::prices', 'wpi_item', 'normal', 'high' );
 
-    if ( wpinv_allow_vat_rules() ) {
+    if ( $wpinv_euvat->allow_vat_rules() ) {
         add_meta_box( 'wpinv_field_vat_rules', __( 'VAT rules type to use', 'invoicing' ), 'WPInv_Meta_Box_Items::vat_rules', 'wpi_item', 'normal', 'high' );
     }
     
-    if ( wpinv_allow_vat_classes() ) {
+    if ( $wpinv_euvat->allow_vat_classes() ) {
         add_meta_box( 'wpinv_field_vat_classes', __( 'VAT rates class to use', 'invoicing' ), 'WPInv_Meta_Box_Items::vat_classes', 'wpi_item', 'normal', 'high' );
     }
     

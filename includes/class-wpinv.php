@@ -96,7 +96,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-vat-functions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-tax-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-template-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-address-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-invoice-functions.php' );
@@ -114,7 +114,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
         if ( !class_exists( 'Geodir_EUVat' ) ) {
-            require_once( WPINV_PLUGIN_DIR . 'includes/libraries/geodir-euvat/geodir-euvat.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
         
         $gateways = array_keys( wpinv_get_enabled_payment_gateways() );
@@ -167,10 +167,7 @@ class WPInv_Plugin {
         wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
         
         wp_enqueue_style( 'wpinv_front_style' );
-        
-        // VAT scripts
-        wpinv_vat_enqueue_vat_scripts();
-        
+               
         // Register scripts
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
         wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery', 'wpinv-vat-script' ),  WPINV_VERSION );

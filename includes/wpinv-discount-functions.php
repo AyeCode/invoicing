@@ -1224,3 +1224,9 @@ function wpinv_checkout_form_validate_discounts() {
     }
 }
 add_action( 'wpinv_before_checkout_form', 'wpinv_checkout_form_validate_discounts', -10 );
+
+function wpinv_discount_amount() {
+    $output = 0.00;
+    
+    return apply_filters( 'wpinv_discount_amount', $output );
+}

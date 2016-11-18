@@ -2,11 +2,12 @@
 
 namespace GeoIp2\Model;
 
+use GeoIp2\Compat\JsonSerializable;
 
 /**
  * @ignore
  */
-abstract class AbstractModel implements \lyquidity\json\JsonSerializable
+abstract class AbstractModel implements JsonSerializable
 {
     protected $raw;
 
@@ -23,7 +24,15 @@ abstract class AbstractModel implements \lyquidity\json\JsonSerializable
      */
     protected function get($field)
     {
-        return isset($this->raw[$field]) ? $this->raw[$field] : null;
+        if (isset($this->raw[$field])) {
+            return $this->raw[$field];
+        } else {
+            if (preg_match('/^is_/', $field)) {
+                return false;
+            } else {
+                return null;
+            }
+        }
     }
 
     /**

@@ -3,7 +3,7 @@
 if ( !defined('ABSPATH') )
     die('-1');
 
-global $ajax_cart_details;
+global $wpinv_euvat, $ajax_cart_details;
 $ajax_cart_details = $invoice->get_cart_details();
 $cart_items        = $ajax_cart_details;
 
@@ -11,7 +11,7 @@ $invoice_id         = $invoice->ID;
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
 $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
-$tax_label          = $use_taxes && $invoice->has_vat() ? wpinv_owner_get_vat_name() : __( 'Tax', 'invoicing' );
+$tax_label          = $use_taxes && $invoice->has_vat() ? $wpinv_euvat->get_vat_name() : __( 'Tax', 'invoicing' );
 $tax_title          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
 
 do_action( 'wpinv_before_email_items', $invoice ); ?>
