@@ -1533,24 +1533,28 @@ function wpinv_payment_mode_select() {
                     <?php
                     do_action( 'wpinv_payment_mode_before_gateways' );
                     $chosen_gateway = wpinv_get_chosen_gateway( $invoice_id );
-
-                    foreach ( $gateways as $gateway_id => $gateway ) {
-                        $checked = checked( $gateway_id, $chosen_gateway, false );
-                        $button_label = $gateway_id == 'paypal' ? __( 'Proceed to PayPal', 'invoicing' ) : '';
-                        $description = wpinv_get_gateway_description( $gateway_id );
-                        ?>
-                        <div class="list-group-item">
-                            <div class="radio">
-                                <label><input type="radio" data-payment-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
-                            </div>
-                            <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
-                            <?php if ( !empty( $description ) ) { ?>
-                            <div class="wpi-gateway-desc alert alert-info"><?php echo $description;?></div>
-                            <?php } ?> 
-                            <?php do_action( 'wpinv_' . $gateway_id . '_cc_form', $invoice_id ) ;?>
-                        </div>
-                        </div>
-                    <?php 
+                    
+                    if(!empty($gateways)){
+	                    foreach ( $gateways as $gateway_id => $gateway ) {
+		                    $checked = checked( $gateway_id, $chosen_gateway, false );
+		                    $button_label = $gateway_id == 'paypal' ? __( 'Proceed to PayPal', 'invoicing' ) : '';
+		                    $description = wpinv_get_gateway_description( $gateway_id );
+		                    ?>
+		                    <div class="list-group-item">
+			                    <div class="radio">
+				                    <label><input type="radio" data-payment-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
+			                    </div>
+			                    <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
+				                    <?php if ( !empty( $description ) ) { ?>
+					                    <div class="wpi-gateway-desc alert alert-info"><?php echo $description;?></div>
+				                    <?php } ?>
+				                    <?php do_action( 'wpinv_' . $gateway_id . '_cc_form', $invoice_id ) ;?>
+			                    </div>
+		                    </div>
+		                    <?php
+	                    }
+                    }else{
+	                    echo '<div class="alert alert-warning">'. __('No payment gateway active','invoicing') .'</div>';
                     }
 
                     do_action( 'wpinv_payment_mode_after_gateways' );

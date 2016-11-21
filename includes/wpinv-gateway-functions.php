@@ -106,7 +106,7 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
 function wpinv_is_gateway_active( $gateway ) {
     $gateways = wpinv_get_enabled_payment_gateways();
 
-    $ret = array_key_exists( $gateway, $gateways );
+    $ret = is_array($gateways) && $gateway ?  array_key_exists( $gateway, $gateways ) : false;
 
     return apply_filters( 'wpinv_is_gateway_active', $ret, $gateway, $gateways );
 }
@@ -283,12 +283,12 @@ function wpinv_show_gateways() {
 
 function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 	$gateways = array_keys( wpinv_get_enabled_payment_gateways() );
-    
+
     $chosen = false;
     if ( $invoice_id > 0 && $invoice = wpinv_get_invoice( $invoice_id ) ) {
         $chosen = $invoice->get_gateway();
     }
-    
+
 	$chosen   = isset( $_REQUEST['payment-mode'] ) ? sanitize_text_field( $_REQUEST['payment-mode'] ) : $chosen;
 
 	if ( false !== $chosen ) {
@@ -304,7 +304,12 @@ function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 	}
     
     if ( !wpinv_is_gateway_active( $enabled_gateway ) && !empty( $gateways ) ) {
-        $enabled_gateway = $gateways[0];
+        if(wpinv_is_gateway_active( wpinv_get_default_gateway()) ){
+            $enabled_gateway = wpinv_get_default_gateway();
+        }else{
+            $enabled_gateway = $gateways[0];
+        }
+
     }
 
 	return apply_filters( 'wpinv_chosen_gateway', $enabled_gateway );

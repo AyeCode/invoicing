@@ -133,7 +133,7 @@ class WPInv_EUVat {
     
     public static function section_vat_settings( $sections ) {
         if ( !empty( $sections ) ) {
-            $sections['vat'] = __( 'VAT Settings', 'invoicing' );
+            $sections['vat'] = __( 'EU VAT Settings', 'invoicing' );
             
             if ( self::allow_vat_classes() ) {
                 $sections['vat_rates'] = __( 'EU VAT Rates', 'invoicing' );
@@ -213,9 +213,9 @@ class WPInv_EUVat {
     public static function vat_settings( $settings ) {
         if ( !empty( $settings ) ) {    
             $vat_settings = array();
-            $vat_settings['vat_settings'] = array(
-                'id' => 'vat_settings',
-                'name' => '<h3>' . __( 'VAT Settings', 'invoicing' ) . '</h3>',
+            $vat_settings['vat_company_title'] = array(
+                'id' => 'vat_company_title',
+                'name' => '<h3>' . __( 'Your Company Details', 'invoicing' ) . '</h3>',
                 'desc' => '',
                 'type' => 'header',
                 'size' => 'regular'
@@ -223,65 +223,53 @@ class WPInv_EUVat {
             
             $vat_settings['vat_company_name'] = array(
                 'id' => 'vat_company_name',
-                'name' => __( 'Company Name', 'invoicing' ),
-                'desc' => __( 'Enter your company name as it appears on your VAT return (not case sensitive)', 'invoicing' ),
+                'name' => __( 'Your Company Name', 'invoicing' ),
+                'desc' => wp_sprintf(__( 'Your company name as it appears on your VAT return, you can verify it via your VAT ID on the %sEU VIES System.%s', 'invoicing' ), '<a href="http://ec.europa.eu/taxation_customs/vies/" target="_blank">', '</a>' ),
                 'type' => 'text',
                 'size' => 'regular',
             );
             
             $vat_settings['vat_number'] = array(
                 'id'   => 'vat_number',
-                'name' => __( 'VAT Number', 'invoicing' ),
+                'name' => __( 'Your VAT Number', 'invoicing' ),
                 'type' => 'vat_number',
                 'size' => 'regular',
             );
-            
-            $vat_settings['vat_name'] = array(
-                'id' => 'vat_name',
-                'name' => __( 'VAT Name', 'invoicing' ),
-                'desc' => __( 'Enter the VAT name', 'invoicing' ),
-                'type' => 'text',
-                'size' => 'regular',
-                'std' => 'VAT'
+
+            $vat_settings['vat_settings_title'] = array(
+                'id' => 'vat_settings_title',
+                'name' => '<h3>' . __( 'Apply VAT Settings', 'invoicing' ) . '</h3>',
+                'desc' => '',
+                'type' => 'header',
+                'size' => 'regular'
             );
-            
-            $vat_settings['vat_invoice_notice_label'] = array(
-                'id' => 'vat_invoice_notice_label',
-                'name' => __( 'Invoice notice label', 'invoicing' ),
-                'desc' => __( 'A label that should appear for the invoice notice if used', 'invoicing' ),
-                'type' => 'text',
-                'size' => 'regular',
+
+            $vat_settings['apply_vat_rules'] = array(
+                'id' => 'apply_vat_rules',
+                'name' => __( 'Enable VAT rules', 'invoicing' ),
+                'desc' => __( 'Apply VAT to consumer sales from IP addresses within the EU, even if the billing address is outside the EU.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable unless you know what you are doing.', 'invoicing' ) . '</font>',
+                'type' => 'checkbox',
+                'std' => '1'
             );
-            
-            $vat_settings['vat_invoice_notice'] = array(
-                'id' => 'vat_invoice_notice',
-                'name' => __( 'Invoice notice', 'invoicing' ),
-                'desc' => '<p>' . __( 'Enter the text that should appear in the invoice', 'invoicing' ) . '</p>' ,
-                'type' => 'text',
-                'size' => 'regular',
+
+            /*
+            $vat_settings['vat_allow_classes'] = array(
+                'id' => 'vat_allow_classes',
+                'name' => __( 'Allow the use of VAT rate classes', 'invoicing' ),
+                'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoicing -> Settings -> Taxes -> EU VAT Rates" menu heading that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
+                'type' => 'checkbox'
             );
-            
-            $vat_settings['vat_vies_check'] = array(
-                'id' => 'vat_vies_check',
-                'name' => __( 'Disable VIES check', 'invoicing' ),
-                'desc' => wp_sprintf( __( 'Check this option if you do not want VAT numbers to be checked with the %sEU VIES System.%s', 'invoicing' ), '<a href="http://ec.europa.eu/taxation_customs/vies/" target="_blank">', '</a>' ),
+            */
+
+            $vat_settings['vat_prevent_b2c_purchase'] = array(
+                'id' => 'vat_prevent_b2c_purchase',
+                'name' => __( 'Prevent EU B2C sales', 'invoicing' ),
+                'desc' => __( 'Enable this option if you are not registered for VAT in the EU.', 'invoicing' ),
                 'type' => 'checkbox'
             );
 
-            $vat_settings['vat_disable_company_name_check'] = array(
-                'id' => 'vat_disable_company_name_check',
-                'name' => __( 'Disable the company name check', 'invoicing' ),
-                'desc' => __( 'Check this option if you do not want the company name entered to be validated against the name registered with the VAT tax authority.', 'invoicing' ),
-                'type' => 'checkbox'
-            );
 
-            $vat_settings['vat_offline_check'] = array(
-                'id' => 'vat_offline_check',
-                'name' => __( 'Disable simple check', 'invoicing' ),
-                'desc' => __( 'Check this option if you do not want VAT numbers to be checked to have a correct format (not recommended). Each EU member state has its own format for a VAT number.<br>While we try to make sure the format rules are respected it is possible that a specific rule is not respected so a correct VAT number is not validated. If you encounter this situation, use this option to prevent simple checks.', 'invoicing' ),
-                'type' => 'checkbox'
-            );
-            
+
             $vat_settings['vat_same_country_rule'] = array(
                 'id'          => 'vat_same_country_rule',
                 'name'        => __( 'Same country rule', 'invoicing' ),
@@ -295,14 +283,22 @@ class WPInv_EUVat {
                 'placeholder' => __( 'Select a option', 'invoicing' ),
                 'std'         => ''
             );
-            
+
+            $vat_settings['vat_checkout_title'] = array(
+                'id' => 'vat_checkout_title',
+                'name' => '<h3>' . __( 'Checkout Fields', 'invoicing' ) . '</h3>',
+                'desc' => '',
+                'type' => 'header',
+                'size' => 'regular'
+            );
+
             $vat_settings['vat_disable_fields'] = array(
                 'id' => 'vat_disable_fields',
                 'name' => __( 'Disable VAT fields', 'invoicing' ),
-                'desc' => __( 'Check if the fields to collect VAT should NOT be shown, for example, if the plug-in is being used for GST.', 'invoicing' ),
+                'desc' => __( 'Disable VAT fields if Invoicing is being used for GST.', 'invoicing' ),
                 'type' => 'checkbox'
             );
-            
+
             $vat_settings['vat_ip_lookup'] = array(
                 'id'   => 'vat_ip_lookup',
                 'name' => __( 'IP Country lookup', 'invoicing' ),
@@ -310,45 +306,51 @@ class WPInv_EUVat {
                 'size' => 'regular',
                 'std' => 'default'
             );
-        
+
             $vat_settings['hide_ip_address'] = array(
                 'id' => 'hide_ip_address',
-                'name' => __( 'Hide IP address at checkout', 'invoicing' ),
-                'desc' => __( 'Check if the user IP address should not be shown on the checkout page.', 'invoicing' ),
+                'name' => __( 'Hide IP info at checkout', 'invoicing' ),
+                'desc' => __( 'Hide the user IP info at checkout.', 'invoicing' ),
                 'type' => 'checkbox'
             );
-        
+
             $vat_settings['vat_ip_country_default'] = array(
                 'id' => 'vat_ip_country_default',
                 'name' => __( 'Enable IP Country as Default', 'invoicing' ),
-                'desc' => __( 'By default it shows visitors the country of the site as the default country during checkout.<br>Enable this option to show the country of the visitor\'s IP address as the default (the address from their profile will be used if the user is signed in).', 'invoicing' ),
+                'desc' => __( 'Show the country of the users IP as the default country, otherwise the site default country will be used.', 'invoicing' ),
                 'type' => 'checkbox'
             );
-        
-            $vat_settings['apply_vat_rules'] = array(
-                'id' => 'apply_vat_rules',
-                'name' => __( 'Enable VAT rules', 'invoicing' ),
-                'desc' => __( 'Check if VAT should always be applied to consumer sales from IP addresses within the EU even if the billing address is outside the EU.<br>When checked, an option will be available to update current VAT rates if more recent rates are available.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable unless you know what you are doing.', 'invoicing' ) . '</font>',
-                'type' => 'checkbox',
-                'std' => '1'
+
+            $vat_settings['vies_validation_title'] = array(
+                'id' => 'vies_validation_title',
+                'name' => '<h3>' . __( 'VIES Validation', 'invoicing' ) . '</h3>',
+                'desc' => '',
+                'type' => 'header',
+                'size' => 'regular'
             );
-        
-            /*
-            $vat_settings['vat_allow_classes'] = array(
-                'id' => 'vat_allow_classes',
-                'name' => __( 'Allow the use of VAT rate classes', 'invoicing' ),
-                'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoicing -> Settings -> Taxes -> EU VAT Rates" menu heading that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
+
+            $vat_settings['vat_vies_check'] = array(
+                'id' => 'vat_vies_check',
+                'name' => __( 'Disable VIES VAT ID check', 'invoicing' ),
+                'desc' => wp_sprintf( __( 'Prevent VAT numbers from being validated by the %sEU VIES System.%s', 'invoicing' ), '<a href="http://ec.europa.eu/taxation_customs/vies/" target="_blank">', '</a>' ),
                 'type' => 'checkbox'
             );
-            */
-        
-            $vat_settings['vat_prevent_b2c_purchase'] = array(
-                'id' => 'vat_prevent_b2c_purchase',
-                'name' => __( 'Prevent sales to EU consumers', 'invoicing' ),
-                'desc' => __( 'Enable this option to prevent B2C sales to EU consumers reduce the circumstances in which VAT registration is required.', 'invoicing' ),
+
+            $vat_settings['vat_disable_company_name_check'] = array(
+                'id' => 'vat_disable_company_name_check',
+                'name' => __( 'Disable VIES name check', 'invoicing' ),
+                'desc' => wp_sprintf( __( 'Prevent company name from being validated by the %sEU VIES System.%s', 'invoicing' ), '<a href="http://ec.europa.eu/taxation_customs/vies/" target="_blank">', '</a>' ),
                 'type' => 'checkbox'
             );
-                    
+
+            $vat_settings['vat_offline_check'] = array(
+                'id' => 'vat_offline_check',
+                'name' => __( 'Disable basic checks', 'invoicing' ),
+                'desc' => __( 'This will disable basic JS correct format validation attempts, it is very rare this should need to be disabled.', 'invoicing' ),
+                'type' => 'checkbox'
+            );
+            
+
             $settings['vat'] = $vat_settings;
             
             if ( self::allow_vat_classes() ) {
@@ -505,7 +507,7 @@ class WPInv_EUVat {
             );
             
             foreach ( $geoip2_files as $key => $file ) {
-                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/GeoIP2/' . $file );
+                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/GeoIp2/' . $file );
             }
         }
 
@@ -1814,7 +1816,7 @@ class WPInv_EUVat {
         if ( $vat_number !== null ) {
             $vat_data['number'] = $vat_number;
             
-            if ( !$vat_data['valid'] || ( $vat_saved['original_number'] !== $vat_data['number'] ) || ( $vat_saved['original_company'] !== $vat_data['company'] ) ) {
+            if ( !$vat_data['valid'] || ( $vat_saved['number'] !== $vat_data['number'] ) || ( $vat_saved['company'] !== $vat_data['company'] ) ) {
                 if ( !empty( $wpinv_options['vat_vies_check'] ) ) {            
                     if ( empty( $wpinv_options['vat_offline_check'] ) && !self::offline_check( $vat_number ) ) {
                         $vat_data['valid'] = false;

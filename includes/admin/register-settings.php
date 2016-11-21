@@ -297,6 +297,38 @@ function wpinv_get_registered_settings() {
                         'max'  => '10',
                         'step' => '1'
                     ),
+                ),
+                'labels' => array(
+	                'labels' => array(
+		                'id'   => 'labels_settings',
+		                'name' => '<h3>' . __( 'Invoice Labels', 'invoicing' ) . '</h3>',
+		                'desc' => '',
+		                'type' => 'header',
+	                ),
+	                'vat_name' => array(
+		                'id' => 'vat_name',
+		                'name' => __( 'VAT Name', 'invoicing' ),
+		                'desc' => __( 'Enter the VAT name', 'invoicing' ),
+		                'type' => 'text',
+		                'size' => 'regular',
+		                'std' => 'VAT'
+	                ),
+	                'vat_invoice_notice_label' => array(
+		                'id' => 'vat_invoice_notice_label',
+		                'name' => __( 'Invoice notice label', 'invoicing' ),
+		                'desc' => __( 'Use this to add a invoice notice section (label) to your invoices', 'invoicing' ),
+		                'type' => 'text',
+		                'size' => 'regular',
+	                ),
+	                'vat_invoice_notice' => array(
+		                'id' => 'vat_invoice_notice',
+		                'name' => __( 'Invoice notice', 'invoicing' ),
+		                'desc' =>   __( 'Use this to add a invoice notice section (description) to your invoices', 'invoicing' ),
+		                'type' => 'text',
+		                'size' => 'regular',
+	                )
+
+
                 )
             )
         ),
@@ -720,6 +752,7 @@ function wpinv_get_registered_settings_sections() {
         'general' => apply_filters( 'wpinv_settings_sections_general', array(
             'main' => __( 'General Settings', 'invoicing' ),
             'currency' => __( 'Currency Settings', 'invoicing' ),
+            'labels' => __( 'Label Texts', 'invoicing' ),
         ) ),
         'gateways' => apply_filters( 'wpinv_settings_sections_gateways', array(
             'main' => __( 'Gateway Settings', 'invoicing' ),

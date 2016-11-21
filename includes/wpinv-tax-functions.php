@@ -394,7 +394,7 @@ function wpinv_vat_number_callback( $args ) {
     $html = '<input type="text" class="' . $size . '-text" id="wpinv_settings[' . $args['id'] . ']" name="wpinv_settings[' . $args['id'] . ']" placeholder="GB123456789" value="' . esc_attr( stripslashes( $vat_number ) ) . '"/>';
     $html .= '<span>&nbsp;<input type="button" id="wpinv_vat_validate" class="wpinv_validate_vat_button button-secondary" ' . $disabled . ' value="' . esc_attr__( 'Validate VAT Number', 'invoicing' ) . '" /></span>';
     $html .= '<span class="wpinv-vat-stat wpinv-vat-stat-' . (int)$vat_valid . '"><i class="fa"></i> <font>' . $validated_text . '</font></span>';
-    $html .= '<label for="wpinv_settings[' . $args['id'] . ']">' . '<p>' . __( 'Enter your VAT number including country identifier, eg: GB123456789', 'invoicing' ) . '<br/><b>' . __( 'If you are having difficulty validating the VAT number, check the "Disable VIES check" option below and save these settings.', 'invoicing' ) . '</b><br/><b>' . __( 'After saving, try again to validate the VAT number.', 'invoicing' ) . '</b></p>' . '</label>';
+    $html .= '<label for="wpinv_settings[' . $args['id'] . ']">' . '<p>' . __( 'Enter your VAT number including country identifier, eg: GB123456789 (Settings must be saved after validation)', 'invoicing' ).'</p>' . '</label>';
     $html .= '<input type="hidden" name="_wpi_nonce" value="' . wp_create_nonce( 'vat_validation' ) . '">';
 
     echo $html;
@@ -430,7 +430,7 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     $geoip2_database = $wpinv_euvat->geoip2_country_dbfile();
     
     if ( !function_exists( 'bcadd' ) ) {
-        $geoip2_message = __( 'GeoIP2 collection requires the BC Math PHP extension and it is not loaded on your version of PHP!', 'invoicing' );
+        $geoip2_message = __( 'GeoIP2 service requires the BC Math PHP extension, it is not loaded in your version of PHP!', 'invoicing' );
     } else {
         $geoip2_message = ini_get('safe_mode') ? __( 'GeoIP2 is not supported with PHP safe mode enabled!', 'invoicing' ) : '';
     }
@@ -444,7 +444,7 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     }
     
     $options['site']    = __( 'Use default country', 'invoicing' );
-    $options['default'] = __( 'Let the plugin choose the best available option', 'invoicing' );
+    $options['default'] = __( 'Auto', 'invoicing' );
 
     $html = wpinv_html_select( array(
         'name'             => "wpinv_settings[{$args['id']}]",
@@ -459,7 +459,7 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     ));
     
     $desc = '<label for="wpinv_settings[' . $args['id'] . ']">';
-    $desc .= __( 'Choose the option the plugin should use to determine the country from the IP address of the visitor.', 'invoicing' );
+    $desc .= __( 'Select the option Invoicing should use to determine the country from the IP address of the user.', 'invoicing' );
     $desc .= '<p>';
     if ( empty( $geoip2_message ) ) {
         if ( $geoip2_database ) {
@@ -468,14 +468,14 @@ function wpinv_vat_ip_lookup_callback( $args ) {
                 $date_updated = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $time_updated );
                 $last_updated = '<br>' . sprintf( __( 'The GeoIP2 database was last updated on: <b>%s</b>', 'invoicing' ), $date_updated );
             }
-            $desc .= __(  'The GeoIP2 database already exists:', 'invoicing' ) . $last_updated . '&nbsp;<input type="button" id="wpi_geoip2" action="update" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Update GeoIP2 database now (~53MB)', 'invoicing' ) . '"></input>';
+            $desc .= __(  'GeoIP2 database exists:', 'invoicing' ) . $last_updated . '&nbsp;<input type="button" id="wpi_geoip2" action="update" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Update GeoIP2 database now (~55MB)', 'invoicing' ) . '"></input>';
         } else {
-            $desc .= __( 'The GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Click to download the GeoIP2 database', 'invoicing' ) . ' (~53MB)"></input><br>' . __(  'After downloading the GeoIP2 database another IP lookup option will be available.', 'invoicing' );
+            $desc .= __( 'GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Download GeoIP2 database now', 'invoicing' ) . ' (~53MB)"></input><br>' . __(  'After downloading the GeoIP2 database the GeoIP2 lookup option will show.', 'invoicing' );
         }
     } else {
         $desc .= $geoip2_message;
     }
-    $desc .= '</p><p>'. __( 'If you choose the GeoPlugin option please consider supporting the site: ', 'invoicing' ) . ' <a href="http://www.geoplugin.com/" target="_blank">GeoPlugin.com</a></p>';
+    $desc .= '</p><p>'. __( 'GeoPlugin is a great free service please consider supporting them: ', 'invoicing' ) . ' <a href="http://www.geoplugin.com/" target="_blank">GeoPlugin.com</a></p>';
     $desc .= '</label>';
     
     $html .= $desc;
