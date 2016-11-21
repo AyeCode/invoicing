@@ -54,7 +54,7 @@ a img {outline:none; border:none;}
 .wpinv-wrap .table th {border-bottom: none;}
 .wpinv-wrap .wpinv-totals {float: right;}
 .wpinv-wrap .table .blank, .wpinv-wrap .table .table-active .blank { border: none; background: transparent; }
-.row { margin: 0 0 10px; }
+.row { margin: 0 0 25px; }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
   vertical-align: middle;
 }
@@ -85,31 +85,18 @@ a img {outline:none; border:none;}
   margin: 0 4px 0 0;
 }
 
-.wpinv-upper {
-  margin-bottom: 20px;
-  margin-top: 20px;
-  padding-top: 20px;
+.wpinv-print .row.wpinv-header {
+    margin-bottom: 30px;
 }
 .wpinv-business .logo {
   max-width: 300px;
-}
-.wpinv-middle {
-  margin-bottom: 20px;
 }
 .wpinv-title {
   font-size: 160%;
   text-align: right;
 }
-.wpinv-details {
-  float: right;
-  text-align: right;
-}
-.wpinv-details td {
-  text-align: right;
-}
 .wpinv-address {
-  padding: 10px 0 0;
-  line-height: normal;
+    margin-bottom: 7px;
 }
 .wpinv-address p {
   margin: 0;
@@ -142,11 +129,6 @@ a img {outline:none; border:none;}
   text-align: center;
   margin-top: 40px;
   margin-bottom: 40px;
-}
-.payment .wpinv-upper {
-  margin-bottom: 100px;
-  margin-top: 20px;
-  padding-top: 20px;
 }
 /* END BASIC RESETS */
 
@@ -231,12 +213,6 @@ a img {outline:none; border:none;}
   padding: 15px;
   text-align: center;
 }
-.wpinv-from-address {
-  padding-top: 0;
-}
-.wpinv-to-address {
-  padding: 0;
-}
 .wpinv-payments,
 .wpinv-bank-info .bg-info {
   background: #ededed;
@@ -246,7 +222,7 @@ a img {outline:none; border:none;}
   color: #333
 }
 .wpinv-bank-info .bg-info {
-  margin: 0 0 25px 0;
+  margin: 0 0 30px 0;
 }
 .wpinv-bank-info {
     margin-bottom: 30px
@@ -256,10 +232,21 @@ a img {outline:none; border:none;}
     font-weight: bold;
     margin-bottom: 10px;
 }
+.wpinv-line-details .table th,
+.wpinv-line-details .table td,
 .wpinv-bank-info .table th,
 .wpinv-bank-info .table td {
     padding: 8px;
     background: none;
+}
+.wpinv-line-details .table th,
+.wpinv-bank-info .table th {
+    width: 35%;
+}
+.wpinv-line-details .table .wpi-row-total th,
+.wpinv-line-details .table .wpi-row-total td {
+    background-color: #ededed;
+    
 }
 .wpinv-payments h4 {
   padding: 0 0 10px;
@@ -290,9 +277,6 @@ a img {outline:none; border:none;}
 .wpinv-address .from,
 .wpinv-address .to {
     max-width: 60px
-}
-.wpinv-details table tr td:nth-child(2) {
-    text-align: left;
 }
 .wpinv-subscriptions-details h3,
 .wpinv-renewal-payments h3 {
@@ -360,5 +344,10 @@ a img {outline:none; border:none;}
     
     .wpinv-top-bar {
         padding: 10px 0;
+    }
+    
+    .wpinv-line-details .table th,
+    .wpinv-bank-info .table th {
+        width: 45%!important;
     }
 }

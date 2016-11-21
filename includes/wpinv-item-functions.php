@@ -429,6 +429,10 @@ function wpinv_cart_item_tax( $item ) {
     }
     
     $tax        = $tax . $tax_rate;
+    
+    if ( $tax === '' ) {
+        $tax = 0; // Zero tax
+    }
 
     return apply_filters( 'wpinv_cart_item_tax_label', $tax, $item );
 }

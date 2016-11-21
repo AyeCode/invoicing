@@ -243,7 +243,7 @@ function wpinv_get_registered_settings() {
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     )
                 ),
-                'currency' => array(
+                'currency_section' => array(
                     'currency_settings' => array(
                         'id'   => 'currency_settings',
                         'name' => '<h3>' . __( 'Currency Settings', 'invoicing' ) . '</h3>',
@@ -751,7 +751,7 @@ function wpinv_get_registered_settings_sections() {
     $sections = array(
         'general' => apply_filters( 'wpinv_settings_sections_general', array(
             'main' => __( 'General Settings', 'invoicing' ),
-            'currency' => __( 'Currency Settings', 'invoicing' ),
+            'currency_section' => __( 'Currency Settings', 'invoicing' ),
             'labels' => __( 'Label Texts', 'invoicing' ),
         ) ),
         'gateways' => apply_filters( 'wpinv_settings_sections_gateways', array(

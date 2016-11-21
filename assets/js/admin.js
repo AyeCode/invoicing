@@ -280,7 +280,7 @@ jQuery(function($) {
             field_name: 'wpinv_state',
         };
         
-        $this.after('&nbsp;<i class="fa fa-refresh fa-spin"></i>');
+        $this.after('<spin class="wpi-loader"><i class="fa fa-refresh fa-spin"></i></spin>');
         $('#wpinv_state', elB).css({'opacity':'.5'});
         
         $.post(ajaxurl, data, function (response) {
@@ -301,7 +301,7 @@ jQuery(function($) {
                 $('#wpinv_state', elB).change();
             }
             
-            $this.next('.fa-refresh').remove();
+            $this.closest('div').find('.wpi-loader').remove();
             $('#wpinv_state', elB).css({'opacity':'1'});
         });
 

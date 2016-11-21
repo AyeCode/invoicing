@@ -35,6 +35,10 @@
     padding: 0;
     float: left;
 }
+.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  input,
+.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  select {
+    margin: 0;
+}
 #post-body select#invoice_note_type {
     width: auto;
 }
@@ -1138,6 +1142,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv-fill-user-details {
     margin-left: 5px;
     margin-top: 2px;
+    margin-bottom: 0;
 }
 #wpinv-address .button-small .fa {
     color: #333;
@@ -1184,6 +1189,12 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .gdmbx-wpinv-user-id .gdmbx-th,
 .gdmbx-wpinv-email .gdmbx-th {
     position: relative;
+}
+.gdmbx-wpinv-country .gdmbx-td {
+    position: relative;
+}
+.gdmbx-wpinv-country .gdmbx-td .wpi-loader {
+    margin-left: 5px;
 }
 .wpinv-new-user,
 .wpinv-new-cancel {
@@ -1336,4 +1347,68 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 textarea.wpi-email_overdue_content {
     width: 100%;
+}
+@media screen and (min-width:783px) and (max-width:1368px) {
+    .postbox-container #wpinv-address .wpinv-address .gdmbx-row  .gdmbx2-text-large {
+        max-width: 95%;
+    }
+}
+@media screen and (min-width:1201px) and (max-width:1368px) {
+    .postbox-container #wpinv-address .wpinv-address .gdmbx-row  select#post_author_override {
+        /*
+        max-width: 60%;
+        */
+    }
+}
+@media screen and (min-width:1001px) and (max-width:1200px) {
+    .postbox-container #wpinv-address .wpinv-address .gdmbx-row  select#post_author_override {
+        max-width: 60%;
+    }
+    #wpinv-address .wpinv-address .wpinv-new-user,
+    #wpinv-address .wpinv-address .wpinv-new-cancel {
+        left: 33%;
+    }
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row.gdmbx-wpinv-user-id,
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row.gdmbx-wpinv-email {
+        width: 65%;
+    }
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row.gdmbx-wpinv-ip {
+        width: 35%;
+    }
+}
+@media screen and (min-width:783px) and (max-width:1000px) {
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row.gdmbx-wpinv-user-id,
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row.gdmbx-wpinv-email {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 782px) {
+    .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
+        width: 100%;
+        float: none;
+    }
+    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-th,
+    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-td {
+        float: none;
+        clear: both;
+        width: 100%;
+    }
+    .postbox-container #wpinv-address .wpinv-address .gdmbx-row  select#post_author_override {
+        width: 60%;
+    }
+    .gdmbx2-wrap .wpinv-address.gdmbx-row input.gdmbx2-text-large,
+    .gdmbx2-wrap .wpinv-address.gdmbx-row select.gdmbx2-text-large {
+        width: 100%;
+    }
+    
+    .wpinv-address .button.wpinv-new-user,
+    .wpinv-address .button.wpinv-new-cancel    {
+        padding-bottom: 2px;
+        padding-top: 2px;
+    }
+    .gdmbx-wpinv-country .gdmbx-td .wpi-loader {
+        position: absolute;
+        top: -22px;
+        right: 5px;
+    }
 }
