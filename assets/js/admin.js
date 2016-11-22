@@ -280,7 +280,7 @@ jQuery(function($) {
             field_name: 'wpinv_state',
         };
         
-        $this.after('<spin class="wpi-loader"><i class="fa fa-refresh fa-spin"></i></spin>');
+        $this.closest('.gdmbx-row').find('.wpi-loader').show();
         $('#wpinv_state', elB).css({'opacity':'.5'});
         
         $.post(ajaxurl, data, function (response) {
@@ -301,7 +301,7 @@ jQuery(function($) {
                 $('#wpinv_state', elB).change();
             }
             
-            $this.closest('div').find('.wpi-loader').remove();
+            $this.closest('.gdmbx-row').find('.wpi-loader').hide();
             $('#wpinv_state', elB).css({'opacity':'1'});
         });
 
@@ -312,7 +312,7 @@ jQuery(function($) {
     $('#wpinv-fill-user-details').click(function(e){
         var metaBox = $(this).closest('.inside');
         var user_id = $('select[name="post_author_override"]', metaBox).val();
-        if ( !user_id ) {
+        if ( !user_id || $(this).attr('disabled') ) {
             return false;
         }
         
@@ -422,8 +422,10 @@ jQuery(function($) {
                                 
                 var mBox = $('#wpinv-address');
                 
+                $(this).hide();
+                $('#wpinv-fill-user-details', elB).attr('disabled', true);
+                $('.wpinv-new-cancel', mBox).show();
                 $('#wpinv_new_user', mBox).val(1);
-                //$('#wpinv_email', mBox).val('');
                 $('#wpinv_email', mBox).prop('required', 'required');
                 $('.gdmbx-wpinv-user-id', mBox).hide();
                 $('.gdmbx-wpinv-email', mBox).show();
@@ -433,9 +435,10 @@ jQuery(function($) {
                 e.preventDefault();
 
                 var mBox = $('#wpinv-address');
-                
+                $(this).hide();
+                $('#wpinv-fill-user-details', elB).attr('disabled', false);
+                $('.wpinv-new-user', mBox).show();
                 $('#wpinv_new_user', mBox).val(0);
-                //$('#wpinv_email', mBox).val($('#wpinv_email', mBox).data('value'));
                 $('#wpinv_email', mBox).prop('required', false);
                 $('.gdmbx-wpinv-email', mBox).hide();
                 $('.gdmbx-wpinv-user-id', mBox).show();
@@ -893,7 +896,7 @@ jQuery(function($) {
 function wpinvBlock(el, message) {
     message = typeof message != 'undefined' && message !== '' ? message : '';
     el.block({
-        message: '<i class="fa fa-refresh fa-spin"></i>' + message,
+        message: '<i class="fa fa-spinner fa-pulse fa-2x"></i>' + message,
         overlayCSS: {
             background: '#fff',
             opacity: 0.6

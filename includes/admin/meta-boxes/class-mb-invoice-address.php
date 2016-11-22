@@ -15,7 +15,6 @@ class WPInv_Meta_Box_Billing_Details {
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-user-id table-layout">
             <div class="gdmbx-th">
                 <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
-                <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
             </div>
             <div class="gdmbx-td gdmbx-customer-div">
             <?php wpinv_dropdown_users( array(
@@ -24,26 +23,25 @@ class WPInv_Meta_Box_Billing_Details {
                             'include_selected' => true,
                             'show' => 'user_email',
                             'orderby' => 'user_email',
-                            'class' => 'gdmbx2-text-medium'
+                            'class' => 'gdmbx2-text-large'
                         ) ); ?>
-            <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-email table-layout" style="display:none">
             <div class="gdmbx-th"><label for="wpinv_email"><?php _e( 'Email', 'invoicing' );?> <span class="required">*</span></label>
-            <a class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-close"></i><?php _e( 'Cancel', 'invoicing' );?></a>
             </div>
             <div class="gdmbx-td">
                 <input type="hidden" id="wpinv_new_user" name="wpinv_new_user" value="" />
                 <input type="email" class="gdmbx2-text-large" name="wpinv_email" id="wpinv_email" />
             </div>
         </div>
-        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
-            <div class="gdmbx-th"><label for="wpinv_ip"><?php _e( 'IP Address', 'invoicing' );?><?php if ($invoice->ip) { ?>
-                &nbsp;&nbsp;<a href="<?php echo admin_url( 'admin-ajax.php?action=wpinv_ip_geolocation&ip=' . $invoice->ip ); ?>" title="<?php esc_attr_e( 'View IP information', 'invoicing' );?>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a>
-                <?php } ?></label></div>
+        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-btns table-layout">
+            <div class="gdmbx-th"><label><?php _e( 'Actions', 'invoicing' );?></label>
+            </div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" value="<?php echo esc_attr( $invoice->ip );?>" readonly />
+                <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
+                <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
+                <a style="display:none" class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-close"></i><?php _e( 'Cancel', 'invoicing' );?> </a>
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-first-name table-layout">
@@ -83,7 +81,7 @@ class WPInv_Meta_Box_Billing_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-select gdmbx-wpinv-country table-layout">
-            <div class="gdmbx-th"><label for="wpinv_country"><?php _e( 'Country', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_country"><?php _e( 'Country', 'invoicing' );?> <span class="required">*</span> <span class="wpi-loader"><i class="fa fa-refresh fa-spin"></i></span></label></div>
             <div class="gdmbx-td">
                 <?php
                 echo wpinv_html_select( array(
@@ -141,6 +139,14 @@ class WPInv_Meta_Box_Billing_Details {
             <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?> <span class="required">*</span></label></div>
             <div class="gdmbx-td">
                 <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" required="required" />
+            </div>
+        </div>
+        <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
+            <div class="gdmbx-th"><label for="wpinv_ip"><?php _e( 'IP Address', 'invoicing' );?><?php if ($invoice->ip) { ?>
+                &nbsp;&nbsp;<a href="<?php echo admin_url( 'admin-ajax.php?action=wpinv_ip_geolocation&ip=' . $invoice->ip ); ?>" title="<?php esc_attr_e( 'View IP information', 'invoicing' );?>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a>
+                <?php } ?></label></div>
+            <div class="gdmbx-td">
+                <input type="text" class="gdmbx2-text-large" value="<?php echo esc_attr( $invoice->ip );?>" readonly />
             </div>
         </div>
     </div>

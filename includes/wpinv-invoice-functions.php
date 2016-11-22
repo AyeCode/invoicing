@@ -1415,6 +1415,8 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 }
 
 function wpinv_pay_for_invoice() {
+    global $wpinv_euvat;
+    
     if ( isset( $_GET['invoice_key'] ) ) {
         $checkout_uri   = wpinv_get_checkout_uri();
         $invoice_key    = sanitize_text_field( $_GET['invoice_key'] );
@@ -1439,6 +1441,14 @@ function wpinv_pay_for_invoice() {
                 $data['cart_discounts'] = $invoice->get_discounts( true );
                 
                 wpinv_set_checkout_session( $data );
+                
+                if ( wpinv_get_option( 'vat_ip_country_default' ) ) {
+                    $_POST['country']   = $wpinv_euvat->get_country_by_ip();
+                    $_POST['state']     = $_POST['country'] == $invoice->country ? $invoice->state : '';
+                    
+                    wpinv_recalculate_tax( true );
+                }
+                
             } else {
                 wpinv_set_error( 'invalid_invoice', __( 'This invoice not allowed to pay', 'invoicing' ) );
             }
