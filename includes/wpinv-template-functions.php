@@ -871,50 +871,50 @@ function wpinv_display_invoice_details( $invoice ) {
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = wpinv_get_invoice_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-number">
-                <td><?php _e( 'Invoice Number', 'invoicing' ); ?></td>
+                <th><?php _e( 'Invoice Number', 'invoicing' ); ?></th>
                 <td><?php echo esc_html( $invoice_number ); ?></td>
             </tr>
         <?php } ?>
         <tr class="wpi-row-status">
-            <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
+            <th><?php _e( 'Invoice Status', 'invoicing' ); ?></th>
             <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>
         <tr class="wpi-row-parent">
-            <td><?php _e( 'Parent Invoice', 'invoicing' ); ?></td>
+            <th><?php _e( 'Parent Invoice', 'invoicing' ); ?></th>
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
         <tr class="wpi-row-gateway">
-            <td><?php _e( 'Payment Method', 'invoicing' ); ?></td>
+            <th><?php _e( 'Payment Method', 'invoicing' ); ?></th>
             <td><?php echo wpinv_get_payment_gateway_name( $invoice_id ); ?></td>
         </tr>
         <?php if ( $invoice_date = wpinv_get_invoice_date( $invoice_id ) ) { ?>
             <tr class="wpi-row-date">
-                <td><?php _e( 'Invoice Date', 'invoicing' ); ?></td>
+                <th><?php _e( 'Invoice Date', 'invoicing' ); ?></th>
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>
         <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->needs_payment() && ( $due_date = $invoice->get_due_date( true ) ) ) { ?>
             <tr class="wpi-row-date">
-                <td><?php _e( 'Due Date', 'invoicing' ); ?></td>
+                <th><?php _e( 'Due Date', 'invoicing' ); ?></th>
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
-                <td><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></td>
+                <th><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></th>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-uvatno">
-                <td><?php echo wp_sprintf( __( 'Your %s Number', 'invoicing' ), $vat_name ); ?></td>
+                <th><?php echo wp_sprintf( __( 'Your %s Number', 'invoicing' ), $vat_name ); ?></th>
                 <td><?php echo $user_vat_number; ?></td>
             </tr>
         <?php } ?>
         <tr class="table-active tr-total wpi-row-total">
-            <td><strong><?php _e( 'Total Amount', 'invoicing' ) ?></strong></td>
+            <th><strong><?php _e( 'Total Amount', 'invoicing' ) ?></strong></th>
             <td><strong><?php echo wpinv_payment_total( $invoice_id, true ); ?></strong></td>
         </tr>
     </table>
@@ -1042,6 +1042,12 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
                     }
                     
+                    $line_item_tax = $item_tax . $tax_rate;
+                    
+                    if ( $line_item_tax === '' ) {
+                        $line_item_tax = 0; // Zero tax
+                    }
+                    
                     $line_item = '<tr class="row-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . ' wpinv-item">';
                         $line_item .= '<td class="name">' . esc_html__( $item_name, 'invoicing' ) . wpinv_get_item_suffix( $item );
                         if ( $summary !== '' ) {
@@ -1056,7 +1062,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         }
                         if ($use_taxes && !$zero_tax) {
                             $cols++;
-                            $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
+                            $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
                         }
                         $line_item .= '<td class="total">' . esc_html__( wpinv_price( $line_total, $invoice->get_currency() ) ) . '</td>';
                     $line_item .= '</tr>';
@@ -1285,6 +1291,11 @@ function wpinv_admin_get_line_items($invoice = array()) {
             $tax_rate = $tax_rate > 0 ? (float)wpinv_format_amount( $tax_rate, 2 ) : '';
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
         }
+        $line_item_tax = $item_tax . $tax_rate;
+        
+        if ( $line_item_tax === '' ) {
+            $line_item_tax = 0; // Zero tax
+        }
 
         $line_item = '<tr class="item item-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . '" data-item-id="' . $item_id . '">';
             $line_item .= '<td class="id">' . $item_id . '</td>';
@@ -1308,7 +1319,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
             $line_item .= '<td class="total">' . $item_subtotal . '</td>';
             
             if ( $use_taxes ) {
-                $line_item .= '<td class="tax">' . $item_tax . $tax_rate . '</td>';
+                $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
             }
             $line_item .= '<td class="action">';
             if ( !$invoice->is_paid() && $can_remove ) {

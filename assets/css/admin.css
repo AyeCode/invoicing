@@ -35,6 +35,10 @@
     padding: 0;
     float: left;
 }
+.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  input,
+.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  select {
+    margin: 0;
+}
 #post-body select#invoice_note_type {
     width: auto;
 }
@@ -45,7 +49,16 @@
 .gdmbx2-wrap .wpinv-address.gdmbx-row {
     margin: 0;
     padding: 0;
+    max-width: 900px;
 }
+.gdmbx2-wrap .wpinv-address > .gdmbx-row {
+    width: calc(50% - 14px) !important;
+    padding: 0 7px !important;
+}
+.gdmbx2-wrap .wpinv-address .gdmbx2-text-large {
+    width: 100% !important;
+}
+      
 .wpinv .gdmbx2-wrap select {
     height: auto;
 }
@@ -683,46 +696,74 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     display: none;
 }
 
-/* General Settings Styles
--------------------------------------------------------------- */
-.invoicing_page_wpinv-settings .form-table th {padding: 15px 10px 15px 0;}
-.invoicing_page_wpinv-settings .form-table td {padding: 12.5px 10px;}
-.invoicing_page_wpinv-settings .form-table label { color: #666; font-size: 14px; font-style: italic; margin: 4px 0 0; }
+/* General Settings Styles */
+.invoicing_page_wpinv-settings .form-table th {
+    padding: 15px 10px 15px 0;
+}
+.invoicing_page_wpinv-settings .form-table td {
+    padding: 12.5px 10px;
+}
+.invoicing_page_wpinv-settings .form-table label {
+    color: #666;
+    font-size: 14px;
+    font-style: italic;
+    margin: 4px 0 0;
+}
 .invoicing_page_wpinv-settings .form-table select + label,
-.invoicing_page_wpinv-settings .form-table input.regular-text ~ label { display:block; }
+.invoicing_page_wpinv-settings .form-table input.regular-text ~ label {
+    display: block;
+}
 .invoicing_page_wpinv-settings .form-table input.small-text ~ label,
-.invoicing_page_wpinv-settings .form-table input[type="checkbox"] + label { display: inline; }
+.invoicing_page_wpinv-settings .form-table input[type="checkbox"] + label {
+    display: inline;
+}
 .invoicing_page_wpinv-settings .form-table tr > th > strong,
-.invoicing_page_wpinv-settings .form-table tr > th > h3{ font-size: 1.2em; font-weight: 600; margin: 0 auto; }
+.invoicing_page_wpinv-settings .form-table tr > th > h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 0 auto;
+}
 .invoicing_page_wpinv-settings input.small-text[type="number"] {
     padding: 1px 1px 1px 6px;
-    line-height:  normal;
+    line-height: normal;
 }
 
-/* Tax rates
--------------------------------------------------------------- */
-.invoicing_page_wpinv-settings td.wpinv_tax_tdbox { padding: 0; }
-#wpinv_tax_rates { margin: 1em 0; }
+/* Tax rates */
+.invoicing_page_wpinv-settings td.wpinv_tax_tdbox {
+    padding: 0;
+}
+#wpinv_tax_rates {
+    margin: 1em 0;
+}
 #wpinv_tax_rates .wpinv_tax_country *,
 #wpinv_tax_rates .wpinv_tax_state *,
-#wpinv_tax_rates .wpinv_tax_name * { width: 100%; }
+#wpinv_tax_rates .wpinv_tax_name * {
+    width: 100%;
+}
 #wpinv_tax_rates .wpinv_tax_country,
 #wpinv_tax_rates .wpinv_tax_state,
 #wpinv_tax_rates .wpinv_tax_global,
 #wpinv_tax_rates .wpinv_tax_name {
     width: auto;
 }
-#wpinv_tax_rates .wpinv_tax_rate  {
+#wpinv_tax_rates .wpinv_tax_rate {
     width: 70px;
 }
-#wpinv_tax_rates .wpinv_tax_action  {
+#wpinv_tax_rates .wpinv_tax_action {
     width: 120px;
     text-align: center
 }
-#wpinv_tax_rates th { padding: 15px 10px; width: auto }
-#wpinv_tax_rates tbody td { border-bottom: solid 1px #efefef}
+#wpinv_tax_rates th {
+    padding: 15px 10px;
+    width: auto
+}
+#wpinv_tax_rates tbody td {
+    border-bottom: solid 1px #efefef
+}
 #wpinv_tax_rates thead th,
-#wpinv_tax_rates tfoot td {background-color: #fafafa}
+#wpinv_tax_rates tfoot td {
+    background-color: #fafafa
+}
 
 /* Vat Settings */
 .wpinv .wpinv-vat-stat {
@@ -855,7 +896,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_item #wpbody-content .wrap #message > p > a {
     display: none;
 }
-
 .wpi-wa {
     display: inline-block;
     float: none !important;
@@ -951,7 +991,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv_items_wrap table.wpinv-items tbody.wpinv-line-items tr:first-child td {
     border-top: medium none;
 }
-
 #wpinv_items_wrap table.wpinv-items tbody tr:last-child td {
     border-bottom: 1px solid #dfdfdf;
 }
@@ -983,7 +1022,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     text-align: right;
     width: 100px;
 }
-
 #wpinv_items_wrap table.wpinv-items th.tax,
 #wpinv_items_wrap table.wpinv-items td.tax {
     text-align: right;
@@ -994,7 +1032,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     color: #72777c;
     font-style: italic;
 }
-
 #wpinv_items tfoot.wpinv-totals td {
     line-height: normal;
 }
@@ -1020,7 +1057,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv_items tfoot.wpinv-totals tr.subtotal td {
     border-top: 1px dotted #dfdfdf;
 }
-
 #wpinv-quick-add {
     display: none;
 }
@@ -1135,10 +1171,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv-quick-add .wpi-item-actions .button {
     margin-right: 15px;    
 }
-#wpinv-fill-user-details {
-    margin-left: 5px;
-    margin-top: 2px;
-}
 #wpinv-address .button-small .fa {
     color: #333;
     margin-right: 3px;
@@ -1147,7 +1179,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     position: absolute;
     z-index: 999
 }
-
 .wpinv-row-recurring-fields input#wpinv_recurring_limit {
     width: 50px
 }
@@ -1181,21 +1212,29 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv-flr {
     float: right;
 }
-.gdmbx-wpinv-user-id .gdmbx-th,
-.gdmbx-wpinv-email .gdmbx-th {
+.wpinv-address > .gdmbx-row {
+    height: 3.6em;
+}
+#wpinv-address .wpinv-address > .gdmbx-row select {
+    font-size: 14px;
+    height: auto;
+}
+.gdmbx-wpinv-btns label {
+    text-indent: 1000px!important;
+    overflow: hidden;
+}
+.gdmbx-wpinv-country .gdmbx-td {
     position: relative;
 }
-.wpinv-new-user,
-.wpinv-new-cancel {
-    left: 240px;
-    position: absolute;
-    top: -4px;
+.gdmbx-wpinv-country .wpi-loader {
+    margin: 0 5px 0 0;
+    font-weight: normal;
+    float: right;
+    display: none;
 }
-.post-type-wpi_invoice #TB_window {
-    /*
-    height: auto !important;
-    max-height: 100% !important;
-    */
+.wpinv-address .wpinv-new-user,
+.wpinv-address .wpinv-new-cancel {
+    margin-left: 3px;
 }
 .post-type-wpi_invoice #TB_ajaxContent {
     max-height: calc(100% - 47px);
@@ -1208,7 +1247,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin: 5px 15px 2px;
     padding: 1px 12px;
 }
-.post-type-wpi_invoice #TB_ajaxContent .form-table th, .post-type-wpi_invoice #TB_ajaxContent .cmb-th {
+.post-type-wpi_invoice #TB_ajaxContent .form-table th,
+.post-type-wpi_invoice #TB_ajaxContent .cmb-th {
     padding: 5px 10px 5px 0;
 }
 .post-type-wpi_invoice .popup-form .form-field label {
@@ -1336,4 +1376,37 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 textarea.wpi-email_overdue_content {
     width: 100%;
+}
+@media screen and ( max-width: 782px) {
+    .wpinv-address .gdmbx-wpinv-btns .button-secondary {
+        padding: 4px 10px;
+    }
+}
+@media screen and (max-width: 640px) {
+    .gdmbx2-wrap .wpinv-address > .gdmbx-row {
+        padding: 0 !important;
+    }
+    .wpinv-address .gdmbx-wpinv-btns.gdmbx-row {
+        height: auto;
+    }
+}
+@media screen and (max-width: 480px) {
+    .gdmbx2-wrap .wpinv-address > .gdmbx-row {
+        width: 100% !important;
+        float: none;
+    }
+    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-th,
+    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-td {
+        float: none;
+        clear: both;
+        width: 100%;
+    }
+    .wpinv-address .gdmbx-wpinv-btns .gdmbx-th {
+        display: none;
+    }
+    #wpinv_items_wrap .wpinv-actions [type="button"],
+    #wpinv_items_wrap .wpinv-actions select {
+        width: 47%;
+        margin: 3px 2% 3px 0;
+    }
 }

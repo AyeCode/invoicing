@@ -16,7 +16,7 @@ function wpinv_columns( $columns ) {
         'cb'                => $columns['cb'],
         'ID'                => __( 'ID', 'invoicing' ),
         'details'           => __( 'Details', 'invoicing' ),
-        'email'             => __( 'Email', 'invoicing' ),
+        //'email'             => __( 'Email', 'invoicing' ),
         'customer'          => __( 'Customer', 'invoicing' ),
         'amount'            => __( 'Amount', 'invoicing' ),
         'invoice_date'      => __( 'Date', 'invoicing' ),
@@ -69,6 +69,9 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             $customer_name = $wpi_invoice->get_user_full_name();
             $customer_name = $customer_name != '' ? $customer_name : __( 'Customer', 'invoicing' );
             $value = '<a href="' . esc_url( get_edit_user_link( $wpi_invoice->get_user_id() ) ) . '">' . $customer_name . '</a>';
+            if ( $email = $wpi_invoice->get_email() ) {
+                $value .= '<br><a class="email" href="mailto:' . $email . '">' . $email . '</a>';
+            }
             break;
         case 'amount' :
             echo $wpi_invoice->get_total( true );

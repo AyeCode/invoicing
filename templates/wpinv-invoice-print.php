@@ -47,20 +47,21 @@ do_action( 'wpinv_invoice_print_before_display', $invoice ); ?><!DOCTYPE html>
         </htmlpageheader>
         <!-- End PDF header ///// -->
         
-        <?php do_action( 'wpinv_invoice_print_before_details', $invoice ); ?>
-        <div class="row wpinv-upper">
-            <div class="col-xs-12 col-md-6 col-sm-5">
-                <div class="row col-xs-12 col-sm-12 wpinv-from-address wpinv-address">
-                    <?php wpinv_display_from_address(); ?>
-                </div>
-                <div class="row col-xs-12 col-sm-12 wpinv-to-address wpinv-address wpinv-middle">
-                    <?php wpinv_display_to_address( $invoice_id ); ?>
-                </div>
+        <?php do_action( 'wpinv_invoice_print_before_addresses', $invoice ); ?>
+        <div class="row wpinv-addresses">
+            <div class="col-xs-12 col-sm-6 wpinv-address wpinv-from-address">
+                <?php wpinv_display_from_address(); ?>
             </div>
-            <div class="col-xs-12 col-md-6 col-sm-7">
-                <div class="col-xs-12 col-sm-10 wpinv-details">
-                    <?php wpinv_display_invoice_details( $invoice ); ?>
-                </div>
+            <div class="col-xs-12 col-sm-6 wpinv-address wpinv-to-address">
+                <?php wpinv_display_to_address( $invoice_id ); ?>
+            </div>
+        </div>
+        <?php do_action( 'wpinv_invoice_print_after_addresses', $invoice ); ?>
+        
+        <?php do_action( 'wpinv_invoice_print_before_details', $invoice ); ?>
+        <div class="row wpinv-details">
+            <div class="col-xs-12 wpinv-line-details">
+                <?php wpinv_display_invoice_details( $invoice ); ?>
             </div>
         </div>
         <?php do_action( 'wpinv_invoice_print_after_details', $invoice ); ?>

@@ -3494,3 +3494,13 @@ div td .meta p {
     min-height: auto;
     padding: 15px;
 }
+.wpinv-success .wpinv-receipt-details .table th,
+.wpinv-success .wpinv-bank-details .table th {
+    width: 35%;
+}
+@media screen and (max-width:767px) {    
+    .wpinv-success .wpinv-receipt-details .table th,
+    .wpinv-success .wpinv-bank-details .table th {
+        width: 45%!important;
+    }
+}
