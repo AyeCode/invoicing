@@ -202,39 +202,16 @@ function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = fa
     return $invoice->add_note( $note, $user_type, $added_by_user );
 }
 
-function wpinv_get_invoice_notes( $invoice_id = 0, $search = '' ) {
-    if ( empty( $invoice_id ) && empty( $search ) ) {
-        return false;
-    }
-
-    add_action( 'pre_get_comments', 'wpinv_set_invoice_notes', 11 );
-
-    $notes = get_comments( array( 'post_id' => $invoice_id, 'order' => 'DESC', 'search' => $search ) );
+function wpinv_get_invoice_notes( $invoice_id = 0, $type = '' ) {
+    global $invoicing;
     
-    apply_filters( 'wpinv_get_invoice_notes', $notes, $invoice_id, $search );
-
-    return $notes;
-}
-
-function wpinv_get_customer_invoice_notes( $invoice_id = 0 ) {
     if ( empty( $invoice_id ) ) {
-        return false;
+        return NULL;
     }
-
-    add_action( 'pre_get_comments', 'wpinv_set_invoice_notes', 11 );
-
-    $notes = get_comments( array( 'post_id' => $invoice_id, 'order' => 'DESC', 'meta_key' => '_wpi_customer_note', 'meta_value' => 1 ) );
     
-    apply_filters( 'wpinv_get_customer_invoice_notes', $notes, $invoice_id );
-
-    return $notes;
-}
-
-function wpinv_set_invoice_notes( $query ) {
-    $query->query_vars['type__in'] = 'wpinv_note';
-    $query->query_vars['type__not_in'] = array();
+    $notes = $invoicing->notes->get_invoice_notes( $invoice_id, $type );
     
-    return $query;
+    return apply_filters( 'wpinv_invoice_notes', $notes, $invoice_id, $type );
 }
 
 function wpinv_get_payment_key( $invoice_id = 0 ) {

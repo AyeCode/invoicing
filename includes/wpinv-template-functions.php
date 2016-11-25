@@ -303,7 +303,7 @@ function wpinv_html_dropdown( $name = 'wpinv_discounts', $selected = 0, $status 
         $options[0] = __( 'No discounts found', 'invoicing' );
     }
 
-    $output = $this->select( array(
+    $output = wpinv_html_select( array(
         'name'             => $name,
         'selected'         => $selected,
         'options'          => $options,
@@ -326,7 +326,7 @@ function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before 
         $start_year++;
     }
 
-    $output = $this->select( array(
+    $output = wpinv_html_select( array(
         'name'             => $name,
         'selected'         => $selected,
         'options'          => $options,
@@ -347,7 +347,7 @@ function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
         $month++;
     }
 
-    $output = $this->select( array(
+    $output = wpinv_html_select( array(
         'name'             => $name,
         'selected'         => $selected,
         'options'          => $options,
@@ -623,12 +623,12 @@ function wpinv_html_text( $args = array() ) {
 
 function wpinv_html_date_field( $args = array() ) {
     if( empty( $args['class'] ) ) {
-        $args['class'] = 'wpinv_datepicker';
-    } elseif( ! strpos( $args['class'], 'wpinv_datepicker' ) ) {
-        $args['class'] .= ' wpinv_datepicker';
+        $args['class'] = 'wpiDatepicker';
+    } elseif( ! strpos( $args['class'], 'wpiDatepicker' ) ) {
+        $args['class'] .= ' wpiDatepicker';
     }
 
-    return $this->text( $args );
+    return wpinv_html_text( $args );
 }
 
 function wpinv_html_textarea( $args = array() ) {
@@ -679,7 +679,7 @@ function wpinv_html_ajax_user_search( $args = array() ) {
     $args['class'] = 'wpinv-ajax-user-search ' . $args['class'];
 
     $output  = '<span class="wpinv_user_search_wrap">';
-        $output .= $this->text( $args );
+        $output .= wpinv_html_text( $args );
         $output .= '<span class="wpinv_user_search_results hidden"><a class="wpinv-ajax-user-cancel" title="' . __( 'Cancel', 'invoicing' ) . '" aria-label="' . __( 'Cancel', 'invoicing' ) . '" href="#">x</a><span></span></span>';
     $output .= '</span>';
 

@@ -140,6 +140,7 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     $invoice->save();
     
     wpinv_update_payment_status( $invoice->ID, 'publish' );
+    sleep(1);
     wpinv_update_payment_status( $invoice->ID, 'renewal' );
     
     $invoice = wpinv_get_invoice( $invoice->ID );

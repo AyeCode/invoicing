@@ -25,7 +25,11 @@ if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {
 require plugin_dir_path( __FILE__ ) . 'includes/class-wpinv.php';
 
 function wpinv_run() {
-    return WPInv_Plugin::run();
+    global $invoicing;
+    
+    $invoicing = WPInv_Plugin::run();
+    
+    return $invoicing;
 }
 
 // load WPInv_Plugin instance.

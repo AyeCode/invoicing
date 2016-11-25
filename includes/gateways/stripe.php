@@ -397,7 +397,7 @@ function wpinv_recurring_process_stripe_ipn( $event ) {
     if ( empty( $subscription ) ) {
         return;
     }
-
+    wpinv_error_log( $event->type, 'event->type', __FILE__, __LINE__ );
     switch ( $event->type ) {
         case 'invoice.payment_failed' :
             $subscription->failing_subscription();
@@ -417,8 +417,10 @@ function wpinv_recurring_process_stripe_ipn( $event ) {
                 wpinv_insert_payment_note( $subscription->ID, sprintf( __( 'Stripe Charge ID: %s', 'invoicing' ) , $args['transaction_id'] ) );
             } else {
                 $invoice = wpinv_recurring_add_subscription_payment( $subscription->ID, $args );
-                wpinv_insert_payment_note( $invoice->ID, sprintf( __( 'Stripe Charge ID: %s', 'invoicing' ) , $args['transaction_id'] ) );
-                $invoice->renew_subscription();
+                if ( !empty( $invoice ) ) {
+                    wpinv_insert_payment_note( $invoice->ID, sprintf( __( 'Stripe Charge ID: %s', 'invoicing' ) , $args['transaction_id'] ) );
+                    $invoice->renew_subscription();
+                }
             }
 
             do_action( 'wpinv_recurring_stripe_event_' . $event->type, $event );
@@ -912,3 +914,32 @@ function wpinv_stripe_subscription_record_signup( $subscription, $invoice ) {
         $invoice->update_subscription( $args );
     }
 }
+
+function wpinv_stripe_cancel_subscription( $subscription_id = '' ) {
+    if ( empty( $subscription_id ) ) {
+        return false;
+    }
+    
+    wpinv_stripe_set_api_key();
+    
+    try {
+        $subscription = \Stripe\Subscription::retrieve( $subscription_id );
+        return $subscription->cancel( array( 'at_period_end' => true ) );
+    } catch( Exception $e ) {
+        wpinv_error_log( $e->getMessage(), __( 'Stripe cancel subscription', 'invoicing' ) );
+    }
+    return false;
+}
+
+function wpinv_stripe_complete_subscription( $invoice_id, $invoice = NULL ) {
+    if ( !( is_object( $invoice ) && is_a( $invoice, 'WPInv_Invoice' ) ) && $invoice_id ) {
+        $invoice = wpinv_get_invoice( $invoice_id );
+    }
+    
+    if ( !empty( $invoice ) && $invoice->gateway == 'stripe' && $subscription_id = $invoice->get_subscription_id() ) {
+        return wpinv_stripe_cancel_subscription( $subscription_id );
+    }
+    
+    return false;
+}
+add_action( 'wpinv_subscription_completed', 'wpinv_stripe_complete_subscription', 10, 2 );
