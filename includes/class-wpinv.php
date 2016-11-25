@@ -19,6 +19,8 @@ class WPInv_Plugin {
             self::$instance = new WPInv_Plugin;
             self::$instance->includes();
             self::$instance->actions();
+            self::$instance->notes      = new WPInv_Notes();
+            self::$instance->reports    = new WPInv_Reports();
         }
         
         do_action( 'wpinv_loaded' );
@@ -109,9 +111,11 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
         if ( !class_exists( 'Geodir_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );

@@ -119,7 +119,7 @@ class WPInv_Ajax {
         $note_id = (int)$_POST['note_id'];
 
         if ( $note_id > 0 ) {
-            wp_delete_comment( $note_id );
+            wp_delete_comment( $note_id, true );
         }
 
         die();

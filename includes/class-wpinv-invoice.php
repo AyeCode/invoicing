@@ -2321,31 +2321,27 @@ final class WPInv_Invoice {
     }
     
     public function renew_subscription() {
-        $expires = $this->get_expiration_time();
-
-        // Determine what date to use as the start for the new expiration calculation
-        if ( $expires > current_time( 'timestamp' ) && $this->is_subscription_active() ) {
-            $base_date  = $expires;
-        } else {
-            $base_date  = current_time( 'timestamp' );
+        $parent_invoice = $this->get_parent_payment();
+        $parent_invoice = empty( $parent_invoice ) ? $this : $parent_invoice;
+        
+        $current_time   = current_time( 'timestamp' );
+        $start          = $this->get_subscription_created();
+        $start          = $start ? strtotime( $start ) : $current_time;
+        $expires        = $this->get_expiration_time();
+        
+        if ( !$expires ) {
+            $expires    = strtotime( '+' . $parent_invoice->get_subscription_interval() . ' ' . $parent_invoice->get_subscription_period( true ), $start );
         }
         
-        $last_day       = cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
-        $expiration     = date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $this->get_subscription_interval() . ' ' . $this->get_subscription_period( true ), $base_date ) );
-
-        if ( date( 'j', $base_date ) == $last_day && 'D' != $this->get_subscription_period() ) {
-            $expiration = date_i18n( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
-        }
-
+        $expiration     = date_i18n( 'Y-m-d 23:59:59', $expires );
         $expiration     = apply_filters( 'wpinv_subscription_renewal_expiration', $expiration, $this->ID, $this );
-
+        
         do_action( 'wpinv_subscription_pre_renew', $this->ID, $expiration, $this );
 
         $status       = 'active';
-        $times_billed = $this->get_total_payments();
-
-        // Complete subscription if applicable
-        if ( $this->get_bill_times() > 0 && $times_billed >= $this->get_bill_times() ) {
+        $bill_times   = $parent_invoice->get_bill_times();
+        $times_billed = $parent_invoice->get_total_payments();
+        if ( $bill_times > 0 && $times_billed >= $bill_times ) {
             $this->complete_subscription();
             $status = 'completed';
         }
@@ -2407,6 +2403,16 @@ final class WPInv_Invoice {
         $is_renewal = $this->parent_invoice && $this->parent_invoice != $this->ID ? true : false;
 
         return apply_filters( 'wpinv_invoice_is_renewal', $is_renewal, $this );
+    }
+    
+    public function get_parent_payment() {
+        $parent_payment = NULL;
+        
+        if ( $this->is_renewal() ) {
+            $parent_payment = wpinv_get_invoice( $this->parent_invoice );
+        }
+        
+        return $parent_payment;
     }
     
     public function is_subscription_active() {

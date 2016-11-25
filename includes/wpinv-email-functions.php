@@ -1303,7 +1303,7 @@ function wpinv_send_customer_note_email( $data ) {
 add_action( 'wpinv_new_customer_note', 'wpinv_send_customer_note_email', 10, 1 );
 
 function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin ) {
-    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_customer_invoice_notes( $invoice->ID ) ) {
+    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_invoice_notes( $invoice->ID, true ) ) {
         $date_format = get_option( 'date_format' );
         $time_format = get_option( 'time_format' );
         ?>

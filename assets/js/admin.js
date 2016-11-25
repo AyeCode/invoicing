@@ -891,6 +891,86 @@ jQuery(function($) {
     }
     
     WPInv.init();
+    
+    var WPInv_Export = {
+		init : function() {
+			this.submit();
+			this.clearMssage();
+		},
+
+		submit : function() {
+			var $this = this;
+
+			$(document.body).on( 'submit', '.wpi-export-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+
+				var submitBtn = $form.find('input[type="submit"]');
+
+				if (!submitBtn.attr('disabled')) {
+					var data = $form.serialize();
+
+					submitBtn.attr('disabled', true);
+					$form.find('.wpi-export-msg').remove();
+					$form.append( '<div class="wpi-export-msg"><div class="wpi-progress"><div></div></div><span class="wpi-export-loader"><i class="fa fa-spin fa-spinner"></i></span></div>' );
+
+					// start the process
+					$this.step( 1, data, $form, $this );
+				}
+			});
+		},
+
+		step : function( step, data, $form, $this ) {
+			var message = $form.find('.wpi-export-msg');
+            var post_data = {
+                action: 'wpinv_ajax_export',
+                step: step,
+                data: data,
+            };
+            
+            $.ajax({
+                url: ajaxurl,
+				type: 'POST',
+                cache: false,
+                dataType: 'json',
+                data: post_data,
+                beforeSend: function (jqXHR, settings) {},
+				success: function( res ) {
+					if (res && typeof res == 'object') {
+                        if( 'done' == res.step || res.error || res.success ) {
+                            $form.find('input[type="submit"]').removeAttr('disabled');
+                            if ( res.error ) {
+                                message.html('<div class="updated error"><p>' + res.error + '</p></div>');
+                            } else if ( res.success ) {
+                                message.html('<div id="wpi-export-success" class="updated notice is-dismissible"><p>' + res.message + '<span class="notice-dismiss"></span></p></div>');
+                            } else {
+                                message.remove();
+                                window.location = res.url;
+                            }
+                        } else {
+                            $('.wpi-progress div').animate({ width: res.percentage + '%' }, 50, function() {});
+                            $this.step( parseInt( res.step ), data, $form, $this );
+                        }
+                    } else {
+                        $form.find('input[type="submit"]').removeAttr('disabled');
+                        message.html('<div class="updated error"><p>Error!</p></div>');
+                    }
+				}
+			}).fail(function (res) {
+				if ( window.console && window.console.log ) {
+					console.log(res);
+				}
+			});
+
+		},
+		clearMssage : function() {
+			$('body').on( 'click', '#wpi-export-success .notice-dismiss', function() {
+				$(this).closest('#wpi-export-success').parent().slideUp('fast');
+			});
+		}
+
+	};
+	WPInv_Export.init();
 });
 
 function wpinvBlock(el, message) {
