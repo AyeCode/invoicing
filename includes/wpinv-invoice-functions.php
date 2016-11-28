@@ -1197,7 +1197,7 @@ function wpinv_get_invoices( $args ) {
         'return'   => 'objects',
         'paginate' => false,
     ) );
-
+    
     // Handle some BW compatibility arg names where wp_query args differ in naming.
     $map_legacy = array(
         'numberposts'    => 'limit',
@@ -1219,6 +1219,8 @@ function wpinv_get_invoices( $args ) {
         $args['page'] = get_query_var('paged');
     else if ( get_query_var( 'page' ) )
         $args['page'] = get_query_var( 'page' );
+    else if ( !empty( $args[ 'page' ] ) )
+        $args['page'] = $args[ 'page' ];
     else
         $args['page'] = 1;
 
@@ -1231,6 +1233,7 @@ function wpinv_get_invoices( $args ) {
         'post_status'    => $args['status'],
         'posts_per_page' => $args['limit'],
         'meta_query'     => array(),
+        'date_query'     => !empty( $args['date_query'] ) ? $args['date_query'] : array(),
         'fields'         => 'ids',
         'orderby'        => $args['orderby'],
         'order'          => $args['order'],
