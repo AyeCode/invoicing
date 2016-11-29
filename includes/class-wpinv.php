@@ -46,6 +46,10 @@ class WPInv_Plugin {
         add_action( 'init', array( &$this, 'init' ), 3 );
         add_action( 'init', array( 'WPInv_Shortcodes', 'init' ) );
         add_action( 'init', array( &$this, 'wpinv_actions' ) );
+        
+        if ( class_exists( 'BuddyPress' ) ) {
+            add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );
+        }
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
         
@@ -372,5 +376,9 @@ class WPInv_Plugin {
         }
         
         return $wp_query;
+    }
+    
+    public function bp_invoicing_init() {
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-bp-core.php' );
     }
 }
