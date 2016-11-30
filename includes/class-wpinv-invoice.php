@@ -1139,16 +1139,26 @@ final class WPInv_Invoice {
         }
 
         if ( $meta_key == 'key' || $meta_key == 'date' ) {
-
             $current_meta = $this->get_meta();
             $current_meta[ $meta_key ] = $meta_value;
 
             $meta_key     = '_wpinv_payment_meta';
             $meta_value   = $current_meta;
-
         }
 
         $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
+        
+        if ( $meta_key == '_wpinv_completed_date' && !empty( $meta_value ) ) {
+            $args = array(
+                'ID'                => $this->ID,
+                'post_date'         => $meta_value,
+                'edit_date'         => true,
+                'post_date_gmt'     => get_gmt_from_date( $meta_value ),
+                'post_modified'     => $meta_value,
+                'post_modified_gmt' => get_gmt_from_date( $meta_value )
+            );
+            wp_update_post( $args );
+        }
         
         return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
     }

@@ -4,9 +4,9 @@ if (typeof ajaxurl === 'undefined' || ajaxurl === null) {
     ajaxurl = WPInv.ajax_url;
 }
 
+window.wpiSubmit = typeof window.wpiSubmit !== 'undefined' ? window.wpiSubmit : true;
 jQuery(function($) {
     var valid = false;
-    var wpiSubmit = true;
     $('#wpinv_checkout_form').on('submit', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
         $('.wpinv_errors').remove();
@@ -36,7 +36,7 @@ jQuery(function($) {
                     data.form = $form;
                     data.totals = res.data;
                     jQuery('body').trigger('wpinv_checkout_submit', data);
-                    if (wpiSubmit) {
+                    if (window.wpiSubmit) {
                         $form.submit();
                     }
                 } else {
@@ -49,41 +49,6 @@ jQuery(function($) {
             });
         }
         return false;
-    });
-    $('body').bind("wpinv_checkout_submit", function(e, data) {
-        var $form = data.form;
-        if ($('input[name="wpi-gateway"]:checked', $form).val() != 'stripe') {
-            return;
-        }
-        e.preventDefault();
-        try {
-            wpiSubmit = false;
-            var amount = (data.totals.total) * 100;
-            StripeCheckout.configure({
-                key: WPInv.stripePublishableKey,
-                locale: 'auto',
-                token: function(token) {
-                    // insert the token into the form so it gets submitted to the server
-                    $form.append("<input type='hidden' name='wpi_stripe_token' value='" + token.id + "' />");
-                    $form.append("<input type='hidden' name='wpi_stripe_email' value='" + token.email + "' />");
-                    // submit
-                    $form.submit();
-                },
-                opened: function(r) {},
-                closed: function(r) {
-                    $form.unblock();
-                }
-            }).open({
-                name: WPInv.stripeName,
-                description: WPInv.stripeDescription,
-                amount: amount,
-                zipCode: true,
-                email: WPInv.stripeEmail,
-                currency: WPInv.stripeCurrency
-            });
-        } catch (err) {
-            console.log(err);
-        }
     });
     var elB = $('#wpinv-fields');
     $('#wpinv_country', elB).change(function(e) {

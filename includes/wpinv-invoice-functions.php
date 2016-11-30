@@ -1266,6 +1266,8 @@ function wpinv_get_invoices( $args ) {
 
     if ( 'objects' === $args['return'] ) {
         $return = array_map( 'wpinv_get_invoice', $invoices->posts );
+    } elseif ( 'self' === $args['return'] ) {
+        return $invoices;
     } else {
         $return = $invoices->posts;
     }

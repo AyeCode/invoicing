@@ -71,11 +71,11 @@ function wpinv_delete_option( $key = '' ) {
 function wpinv_get_settings() {
     $settings = get_option( 'wpinv_settings' );
 
-    if( empty( $settings ) ) {
+    if ( empty( $settings ) ) {
         // Update old settings with new single option
         $general_settings   = is_array( get_option( 'wpinv_settings_general' ) )    ? get_option( 'wpinv_settings_general' )    : array();
         $gateways_settings  = is_array( get_option( 'wpinv_settings_gateways' ) )   ? get_option( 'wpinv_settings_gateways' )   : array();
-        //$email_settings   = is_array( get_option( 'wpinv_settings_emails' ) )     ? get_option( 'wpinv_settings_emails' )     : array();
+        $email_settings     = is_array( get_option( 'wpinv_settings_emails' ) )     ? get_option( 'wpinv_settings_emails' )     : array();
         $tax_settings       = is_array( get_option( 'wpinv_settings_taxes' ) )      ? get_option( 'wpinv_settings_taxes' )      : array();
         //$misc_settings    = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
         $tool_settings      = is_array( get_option( 'wpinv_settings_tools' ) )      ? get_option( 'wpinv_settings_tools' )      : array();
@@ -299,36 +299,34 @@ function wpinv_get_registered_settings() {
                     ),
                 ),
                 'labels' => array(
-	                'labels' => array(
-		                'id'   => 'labels_settings',
-		                'name' => '<h3>' . __( 'Invoice Labels', 'invoicing' ) . '</h3>',
-		                'desc' => '',
-		                'type' => 'header',
-	                ),
-	                'vat_name' => array(
-		                'id' => 'vat_name',
-		                'name' => __( 'VAT Name', 'invoicing' ),
-		                'desc' => __( 'Enter the VAT name', 'invoicing' ),
-		                'type' => 'text',
-		                'size' => 'regular',
-		                'std' => 'VAT'
-	                ),
-	                'vat_invoice_notice_label' => array(
-		                'id' => 'vat_invoice_notice_label',
-		                'name' => __( 'Invoice notice label', 'invoicing' ),
-		                'desc' => __( 'Use this to add a invoice notice section (label) to your invoices', 'invoicing' ),
-		                'type' => 'text',
-		                'size' => 'regular',
-	                ),
-	                'vat_invoice_notice' => array(
-		                'id' => 'vat_invoice_notice',
-		                'name' => __( 'Invoice notice', 'invoicing' ),
-		                'desc' =>   __( 'Use this to add a invoice notice section (description) to your invoices', 'invoicing' ),
-		                'type' => 'text',
-		                'size' => 'regular',
-	                )
-
-
+                    'labels' => array(
+                        'id'   => 'labels_settings',
+                        'name' => '<h3>' . __( 'Invoice Labels', 'invoicing' ) . '</h3>',
+                        'desc' => '',
+                        'type' => 'header',
+                    ),
+                    'vat_name' => array(
+                        'id' => 'vat_name',
+                        'name' => __( 'VAT Name', 'invoicing' ),
+                        'desc' => __( 'Enter the VAT name', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => 'VAT'
+                    ),
+                    'vat_invoice_notice_label' => array(
+                        'id' => 'vat_invoice_notice_label',
+                        'name' => __( 'Invoice notice label', 'invoicing' ),
+                        'desc' => __( 'Use this to add a invoice notice section (label) to your invoices', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                    ),
+                    'vat_invoice_notice' => array(
+                        'id' => 'vat_invoice_notice',
+                        'name' => __( 'Invoice notice', 'invoicing' ),
+                        'desc' =>   __( 'Use this to add a invoice notice section (description) to your invoices', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                    )
                 )
             )
         ),
@@ -341,13 +339,6 @@ function wpinv_get_registered_settings() {
                         'desc' => '',
                         'type' => 'header',
                     ),
-                    /*
-                    'test_mode' => array(
-                        'id'   => 'test_mode',
-                        'name' => __( 'Test Mode', 'invoicing' ),
-                        'desc' => __( 'While in test mode no live transactions are processed. To fully use test mode, you must have a sandbox (test) account for the payment gateway you are testing.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),*/
                     'gateways' => array(
                         'id'      => 'gateways',
                         'name'    => __( 'Payment Gateways', 'invoicing' ),
@@ -362,51 +353,7 @@ function wpinv_get_registered_settings() {
                         'type'    => 'gateway_select',
                         'options' => wpinv_get_payment_gateways(),
                     ),
-                    /*
-                    'accepted_cards' => array(
-                        'id'      => 'accepted_cards',
-                        'name'    => __( 'Accepted Payment Method Icons', 'invoicing' ),
-                        'desc'    => __( 'Display icons for the selected payment methods', 'invoicing' ) . '<br/>' . __( 'You will also need to configure your gateway settings if you are accepting credit cards', 'invoicing' ),
-                        'type'    => 'payment_icons',
-                        'options' => apply_filters('wpinv_accepted_payment_icons', array(
-                                'mastercard'      => 'Mastercard',
-                                'visa'            => 'Visa',
-                                'americanexpress' => 'American Express',
-                                'discover'        => 'Discover',
-                                'paypal'          => 'PayPal',
-                            )
-                        ),
-                    ),
-                    */
                 ),
-                /*
-                'paypal' => array(
-                    'paypal_settings' => array(
-                        'id'   => 'paypal_settings',
-                        'name' => '<h3>' . __( 'PayPal Standard Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'paypal_email' => array(
-                        'id'   => 'paypal_email',
-                        'name' => __( 'PayPal Email', 'invoicing' ),
-                        'desc' => __( 'Enter your PayPal account\'s email', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                    ),
-                    'paypal_page_style' => array(
-                        'id'   => 'paypal_page_style',
-                        'name' => __( 'PayPal Page Style', 'invoicing' ),
-                        'desc' => __( 'Enter the name of the page style to use, or leave blank for default', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                    ),
-                    'disable_paypal_verification' => array(
-                        'id'   => 'disable_paypal_verification',
-                        'name' => __( 'Disable PayPal IPN Verification', 'invoicing' ),
-                        'desc' => __( 'If payments are not getting marked as paid, then check this box. This forces the site to use a slightly less secure method of verifying purchases.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
-                ),*/
             )
         ),
         /** Taxes Settings */
@@ -435,36 +382,6 @@ function wpinv_get_registered_settings() {
                         'step' => '0.1',
                         'std'  => '20'
                     ),
-                    /*
-                    'prices_include_tax' => array(
-                        'id'   => 'prices_include_tax',
-                        'name' => __( 'Prices entered with tax', 'invoicing' ),
-                        'desc' => __( 'This option affects how you enter prices.', 'invoicing' ),
-                        'type' => 'radio',
-                        'std'  => 'no',
-                        'options' => array(
-                            'yes' => __( 'Yes, I will enter prices inclusive of tax', 'invoicing' ),
-                            'no'  => __( 'No, I will enter prices exclusive of tax', 'invoicing' ),
-                        ),
-                    ),
-                    'display_tax_rate' => array(
-                        'id'   => 'display_tax_rate',
-                        'name' => __( 'Display Tax Rate on Prices', 'invoicing' ),
-                        'desc' => __( 'Some countries require a notice when item prices include tax.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
-                    'checkout_include_tax' => array(
-                        'id'   => 'checkout_include_tax',
-                        'name' => __( 'Display during checkout', 'invoicing' ),
-                        'desc' => __( 'Should prices on the checkout page be shown with or without tax?', 'invoicing' ),
-                        'type' => 'select',
-                        'std'  => 'no',
-                        'options' => array(
-                            'yes' => __( 'Including tax', 'invoicing' ),
-                            'no'  => __( 'Excluding tax', 'invoicing' ),
-                        ),
-                    ),
-                    */
                 ),
                 'rates' => array(
                     'tax_rates' => array(
@@ -612,107 +529,107 @@ function wpinv_get_registered_settings() {
 }
 
 function wpinv_settings_sanitize( $input = array() ) {
-	global $wpinv_options;
+    global $wpinv_options;
 
-	if ( empty( $_POST['_wp_http_referer'] ) ) {
-		return $input;
-	}
+    if ( empty( $_POST['_wp_http_referer'] ) ) {
+        return $input;
+    }
 
-	parse_str( $_POST['_wp_http_referer'], $referrer );
+    parse_str( $_POST['_wp_http_referer'], $referrer );
 
-	$settings = wpinv_get_registered_settings();
-	$tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : 'general';
-	$section  = isset( $referrer['section'] ) ? $referrer['section'] : 'main';
+    $settings = wpinv_get_registered_settings();
+    $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : 'general';
+    $section  = isset( $referrer['section'] ) ? $referrer['section'] : 'main';
 
-	$input = $input ? $input : array();
+    $input = $input ? $input : array();
     $input = apply_filters( 'wpinv_settings_tab_' . $tab . '_sanitize', $input );
-	$input = apply_filters( 'wpinv_settings_' . $tab . '-' . $section . '_sanitize', $input );
+    $input = apply_filters( 'wpinv_settings_' . $tab . '-' . $section . '_sanitize', $input );
 
-	// Loop through each setting being saved and pass it through a sanitization filter
-	foreach ( $input as $key => $value ) {
-		// Get the setting type (checkbox, select, etc)
-		$type = isset( $settings[ $tab ][ $key ]['type'] ) ? $settings[ $tab ][ $key ]['type'] : false;
+    // Loop through each setting being saved and pass it through a sanitization filter
+    foreach ( $input as $key => $value ) {
+        // Get the setting type (checkbox, select, etc)
+        $type = isset( $settings[ $tab ][ $key ]['type'] ) ? $settings[ $tab ][ $key ]['type'] : false;
 
-		if ( $type ) {
-			// Field type specific filter
-			$input[$key] = apply_filters( 'wpinv_settings_sanitize_' . $type, $value, $key );
-		}
+        if ( $type ) {
+            // Field type specific filter
+            $input[$key] = apply_filters( 'wpinv_settings_sanitize_' . $type, $value, $key );
+        }
 
-		// General filter
-		$input[ $key ] = apply_filters( 'wpinv_settings_sanitize', $input[ $key ], $key );
-	}
+        // General filter
+        $input[ $key ] = apply_filters( 'wpinv_settings_sanitize', $input[ $key ], $key );
+    }
 
-	// Loop through the whitelist and unset any that are empty for the tab being saved
-	$main_settings    = $section == 'main' ? $settings[ $tab ] : array(); // Check for extensions that aren't using new sections
-	$section_settings = ! empty( $settings[ $tab ][ $section ] ) ? $settings[ $tab ][ $section ] : array();
+    // Loop through the whitelist and unset any that are empty for the tab being saved
+    $main_settings    = $section == 'main' ? $settings[ $tab ] : array(); // Check for extensions that aren't using new sections
+    $section_settings = ! empty( $settings[ $tab ][ $section ] ) ? $settings[ $tab ][ $section ] : array();
 
-	$found_settings = array_merge( $main_settings, $section_settings );
+    $found_settings = array_merge( $main_settings, $section_settings );
 
-	if ( ! empty( $found_settings ) ) {
-		foreach ( $found_settings as $key => $value ) {
+    if ( ! empty( $found_settings ) ) {
+        foreach ( $found_settings as $key => $value ) {
 
-			// settings used to have numeric keys, now they have keys that match the option ID. This ensures both methods work
-			if ( is_numeric( $key ) ) {
-				$key = $value['id'];
-			}
+            // settings used to have numeric keys, now they have keys that match the option ID. This ensures both methods work
+            if ( is_numeric( $key ) ) {
+                $key = $value['id'];
+            }
 
-			if ( empty( $input[ $key ] ) ) {
-				unset( $wpinv_options[ $key ] );
-			}
-		}
-	}
+            if ( empty( $input[ $key ] ) ) {
+                unset( $wpinv_options[ $key ] );
+            }
+        }
+    }
 
-	// Merge our new settings with the existing
-	$output = array_merge( $wpinv_options, $input );
+    // Merge our new settings with the existing
+    $output = array_merge( $wpinv_options, $input );
 
-	add_settings_error( 'wpinv-notices', '', __( 'Settings updated.', 'invoicing' ), 'updated' );
+    add_settings_error( 'wpinv-notices', '', __( 'Settings updated.', 'invoicing' ), 'updated' );
 
-	return $output;
+    return $output;
 }
 
 function wpinv_settings_sanitize_misc_accounting( $input ) {
-	global $wpinv_options, $wpi_session;
+    global $wpinv_options, $wpi_session;
 
-	if ( !current_user_can( 'manage_options' ) ) {
-		return $input;
-	}
+    if ( !current_user_can( 'manage_options' ) ) {
+        return $input;
+    }
 
-	if( ! empty( $input['enable_sequential'] ) && !wpinv_get_option( 'enable_sequential' ) ) {
-		// Shows an admin notice about upgrading previous order numbers
-		$wpi_session->set( 'upgrade_sequential', '1' );
-	}
+    if( ! empty( $input['enable_sequential'] ) && !wpinv_get_option( 'enable_sequential' ) ) {
+        // Shows an admin notice about upgrading previous order numbers
+        $wpi_session->set( 'upgrade_sequential', '1' );
+    }
 
-	return $input;
+    return $input;
 }
 add_filter( 'wpinv_settings_misc-accounting_sanitize', 'wpinv_settings_sanitize_misc_accounting' );
 
 function wpinv_settings_sanitize_tax_rates( $input ) {
-	if( !current_user_can( 'manage_options' ) ) {
-		return $input;
-	}
-	
-	$new_rates = !empty( $_POST['tax_rates'] ) ? array_values( $_POST['tax_rates'] ) : array();
-	
-	$tax_rates = array();
-	
-	if ( !empty( $new_rates ) ) {
-		foreach ( $new_rates as $rate ) {
-			if ( isset( $rate['country'] ) && empty( $rate['country'] ) && empty( $rate['state'] ) ) {
-				continue;
-			}
-			
-			$tax_rates[] = $rate;
-		}
-	}
-	
-	update_option( 'wpinv_tax_rates', $tax_rates );
-	
-	return $input;
+    if( !current_user_can( 'manage_options' ) ) {
+        return $input;
+    }
+
+    $new_rates = !empty( $_POST['tax_rates'] ) ? array_values( $_POST['tax_rates'] ) : array();
+
+    $tax_rates = array();
+
+    if ( !empty( $new_rates ) ) {
+        foreach ( $new_rates as $rate ) {
+            if ( isset( $rate['country'] ) && empty( $rate['country'] ) && empty( $rate['state'] ) ) {
+                continue;
+            }
+            
+            $tax_rates[] = $rate;
+        }
+    }
+
+    update_option( 'wpinv_tax_rates', $tax_rates );
+
+    return $input;
 }
 add_filter( 'wpinv_settings_taxes-rates_sanitize', 'wpinv_settings_sanitize_tax_rates' );
 
 function wpinv_sanitize_text_field( $input ) {
-	return trim( $input );
+    return trim( $input );
 }
 add_filter( 'wpinv_settings_sanitize_text', 'wpinv_sanitize_text_field' );
 
