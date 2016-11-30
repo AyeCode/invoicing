@@ -52,7 +52,6 @@ function wpinv_run_install() {
     $options = wpinv_create_pages();
     
     // Populate some default values
-    // Populate some default values
     foreach( wpinv_get_registered_settings() as $tab => $sections ) {
         foreach( $sections as $section => $settings) {
             // Check for backwards compatibility
