@@ -2773,7 +2773,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border: 0;
 }
 .hidden {
-  display: none !important;
+  display: none; /* we cant have this as improtant, it breaks thngs on other plugins/themes */
 }
 .affix {
   position: fixed;
