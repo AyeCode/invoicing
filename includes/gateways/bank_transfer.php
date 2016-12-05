@@ -73,4 +73,4 @@ function wpinv_invoice_print_bank_info( $invoice ) {
         <?php
     }
 }
-add_action( 'wpinv_invoice_print_after_details', 'wpinv_invoice_print_bank_info', 10, 1 );
+add_action( 'wpinv_invoice_print_after_top_content', 'wpinv_invoice_print_bank_info', 10, 1 );

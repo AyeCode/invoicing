@@ -89,14 +89,14 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 	<?php do_action( 'wpinv_before_user_invoices_pagination' ); ?>
 
 	<?php if ( 1 < $user_invoices->max_num_pages ) : ?>
-		<div class="woocommerce-Pagination">
+		<div class="invoicing-Pagination">
 			<?php
 			$big = 999999;
 			echo paginate_links( array(
 				'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 				'format'  => '?paged=%#%',
 				'current' => max( 1, get_query_var( 'paged' ) ),
-				'total'   => ceil( $user_invoices->total / get_option( 'posts_per_page' ) ) // 20 items per page
+				'total'   => $user_invoices->max_num_pages
 			) );
 			?>
 		</div>

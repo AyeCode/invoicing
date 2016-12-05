@@ -76,6 +76,10 @@ class WPInv_Ajax {
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
             add_action( 'wp_ajax_wpinv_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+            
+            if ( !defined( 'WPI_AJAX_' . strtoupper( $nopriv ) ) ) {
+                define( 'WPI_AJAX_' . strtoupper( $nopriv ), 1 );
+            }
 
             if ( $nopriv ) {
                 add_action( 'wp_ajax_nopriv_wpinv_' . $ajax_event, array( __CLASS__, $ajax_event ) );
@@ -141,7 +145,7 @@ class WPInv_Ajax {
     }
     
     public static function add_invoice_item() {
-        global $wpi_userID;
+        global $wpi_userID, $wpinv_ip_address_country;
         check_ajax_referer( 'invoice-item', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
             die(-1);
@@ -227,6 +231,8 @@ class WPInv_Ajax {
         
         $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
         $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
+        
+        $wpinv_ip_address_country = $invoice->country;
 
         $invoice->recalculate_totals(true);
         
@@ -248,6 +254,8 @@ class WPInv_Ajax {
     }
     
     public static function remove_invoice_item() {
+        global $wpi_userID, $wpinv_ip_address_country;;
+        
         check_ajax_referer( 'invoice-item', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
             die(-1);
@@ -268,6 +276,10 @@ class WPInv_Ajax {
         
         if ( $invoice->is_paid() ) {
             die(); // Don't allow modify items for paid invoice.
+        }
+        
+        if ( !empty( $_POST['user_id'] ) ) {
+            $wpi_userID = absint( $_POST['user_id'] ); 
         }
 
         $item       = new WPInv_Item( $item_id );
@@ -304,6 +316,8 @@ class WPInv_Ajax {
         
         $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
         $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
+        
+        $wpinv_ip_address_country = $invoice->country;
         
         $invoice->recalculate_totals(true);
         
@@ -402,7 +416,7 @@ class WPInv_Ajax {
     }
     
     public static function admin_recalculate_totals() {
-        global $wpi_userID;
+        global $wpi_userID, $wpinv_ip_address_country;;
         
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
@@ -437,6 +451,8 @@ class WPInv_Ajax {
             $invoice->state = sanitize_text_field( $_POST['state'] );
             $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
         }
+        
+        $wpinv_ip_address_country = $invoice->country;
         
         $invoice = $invoice->recalculate_totals(true);
         
