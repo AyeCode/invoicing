@@ -37,7 +37,7 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
     
     $rate           = (float)wpinv_get_option( 'tax_rate', 0 );
     $user_address   = wpinv_get_user_address( $wpi_userID );
-
+    
     if( empty( $country ) ) {
         if( !empty( $_POST['wpinv_country'] ) ) {
             $country = $_POST['wpinv_country'];
@@ -63,7 +63,7 @@ function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
         }
         $state = !empty( $state ) ? $state : wpinv_get_default_state();
     }
-
+    
     if( !empty( $country ) ) {
         $tax_rates   = wpinv_get_tax_rates();
 

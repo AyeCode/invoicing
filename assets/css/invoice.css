@@ -98,6 +98,9 @@ a img {outline:none; border:none;}
 .wpinv-address {
     margin-bottom: 7px;
 }
+.wpinv-print .wpinv-address {
+    margin-bottom: 15px;
+}
 .wpinv-address p {
   margin: 0;
 }
@@ -243,6 +246,13 @@ a img {outline:none; border:none;}
 .wpinv-bank-info .table th {
     width: 35%;
 }
+.wpinv-print .wpinv-details .wpinv-line-details {
+    padding-left: 1.25em;
+}
+.wpinv-print .wpinv-details .table th,
+.wpinv-print .wpinv-details .table td {
+    width: auto;
+}
 .wpinv-line-details .table .wpi-row-total th,
 .wpinv-line-details .table .wpi-row-total td {
     background-color: #ededed;
@@ -335,6 +345,9 @@ a img {outline:none; border:none;}
     .wpinv-wrap .table .total {
         width: 22.5%;
     }
+    .wpinv-print .wpinv-details .wpinv-line-details {
+        padding-left: 1em;
+    }
 }
 @media screen and (max-width:767px) {
     .wpinv > .container.wpinv-wrap {
@@ -349,5 +362,8 @@ a img {outline:none; border:none;}
     .wpinv-line-details .table th,
     .wpinv-bank-info .table th {
         width: 45%!important;
+    }
+    .wpinv-print .wpinv-details .wpinv-line-details {
+        padding-left: 0;
     }
 }

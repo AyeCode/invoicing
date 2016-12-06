@@ -47,24 +47,25 @@ do_action( 'wpinv_invoice_print_before_display', $invoice ); ?><!DOCTYPE html>
         </htmlpageheader>
         <!-- End PDF header ///// -->
         
-        <?php do_action( 'wpinv_invoice_print_before_addresses', $invoice ); ?>
-        <div class="row wpinv-addresses">
-            <div class="col-xs-12 col-sm-6 wpinv-address wpinv-from-address">
-                <?php wpinv_display_from_address(); ?>
+        <?php do_action( 'wpinv_invoice_print_before_top_content', $invoice ); ?>
+        <div class="row wpinv-top-content">
+            <div class="col-xs-12 col-sm-6 wpinv-addresses">
+                <div class="col-xs-12 wpinv-address wpinv-from-address">
+                    <?php wpinv_display_from_address(); ?>
+                </div>
+                <div class="col-xs-12 wpinv-address wpinv-to-address">
+                    <?php wpinv_display_to_address( $invoice_id ); ?>
+                </div>
             </div>
-            <div class="col-xs-12 col-sm-6 wpinv-address wpinv-to-address">
-                <?php wpinv_display_to_address( $invoice_id ); ?>
+            <div class="col-xs-12 col-sm-6 wpinv-details">
+                <div class="col-xs-12 wpinv-line-details">
+                    <?php do_action( 'wpinv_invoice_print_before_details', $invoice ); ?>
+                    <?php wpinv_display_invoice_details( $invoice ); ?>
+                    <?php do_action( 'wpinv_invoice_print_after_details', $invoice ); ?>
+                </div>
             </div>
         </div>
-        <?php do_action( 'wpinv_invoice_print_after_addresses', $invoice ); ?>
-        
-        <?php do_action( 'wpinv_invoice_print_before_details', $invoice ); ?>
-        <div class="row wpinv-details">
-            <div class="col-xs-12 wpinv-line-details">
-                <?php wpinv_display_invoice_details( $invoice ); ?>
-            </div>
-        </div>
-        <?php do_action( 'wpinv_invoice_print_after_details', $invoice ); ?>
+        <?php do_action( 'wpinv_invoice_print_after_top_content', $invoice ); ?>
 
         <?php do_action( 'wpinv_invoice_print_middle', $invoice ); ?>
         

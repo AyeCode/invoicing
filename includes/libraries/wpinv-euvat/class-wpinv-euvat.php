@@ -1471,8 +1471,7 @@ class WPInv_EUVat {
         
         $requires_vat   = self::requires_vat( 0, false );
         $is_digital     = self::get_item_rule( $item_id ) == 'digital' ;
-        
-        $rate = isset( $wpinv_options['tax_rate'] ) ? (float)$wpinv_options['tax_rate'] : ( $requires_vat && isset( $wpinv_options['eu_fallback_rate'] ) ? $wpinv_options['eu_fallback_rate'] : 0 );
+        $rate           = $requires_vat && isset( $wpinv_options['eu_fallback_rate'] ) ? $wpinv_options['eu_fallback_rate'] : $rate;
           
         if ( self::same_country_rule() == 'no' && $base_country ) { // Disable VAT to same country
             $rate = 0;
