@@ -257,6 +257,10 @@ jQuery(function($) {
             $('#wpinv_state', elB).addClass('gdmbx2-text-large');
             if (typeof $this.data('change') === '1') {
                 $('#wpinv_state', elB).change();
+            } else {
+                window.wpiConfirmed = true;
+                $('#wpinv-recalc-totals').click();
+                window.wpiConfirmed = false;
             }
             $this.closest('.gdmbx-row').find('.wpi-loader').hide();
             $('#wpinv_state', elB).css({
@@ -264,6 +268,11 @@ jQuery(function($) {
             });
         });
         return false;
+    });
+    $('#wpinv_state', elB).live('change', function(e) {
+        window.wpiConfirmed = true;
+        $('#wpinv-recalc-totals').click();
+        window.wpiConfirmed = false;
     });
     $('#wpinv-fill-user-details').click(function(e) {
         var metaBox = $(this).closest('.inside');
@@ -506,6 +515,9 @@ jQuery(function($) {
                 if (user_id = $('[name="post_author_override"]').val()) {
                     data.user_id = user_id;
                 }
+                if (parseInt($('#wpinv_new_user').val()) == 1) {
+                    data.new_user = true;
+                }
                 if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
                     data.country = country;
                 }
@@ -575,6 +587,9 @@ jQuery(function($) {
                 if (user_id = $('[name="post_author_override"]').val()) {
                     data.user_id = user_id;
                 }
+                if (parseInt($('#wpinv_new_user').val()) == 1) {
+                    data.new_user = true;
+                }
                 if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
                     data.country = country;
                 }
@@ -604,7 +619,14 @@ jQuery(function($) {
                 if (!invoice_id > 0) {
                     return false;
                 }
-                if (!window.confirm(WPInv_Admin.confirmCalcTotals)) {
+                if (!parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0) {
+                    if (!window.wpiConfirmed) {
+                        alert(WPInv_Admin.emptyInvoice);
+                        $('#wpinv_invoice_item').focus();
+                    }
+                    return false;
+                }
+                if (!window.wpiConfirmed && !window.confirm(WPInv_Admin.confirmCalcTotals)) {
                     return false;
                 }
                 wpinvBlock(metaBox);
@@ -616,6 +638,9 @@ jQuery(function($) {
                 var user_id, country, state;
                 if (user_id = $('[name="post_author_override"]').val()) {
                     data.user_id = user_id;
+                }
+                if (parseInt($('#wpinv_new_user').val()) == 1) {
+                    data.new_user = true;
                 }
                 if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
                     data.country = country;
