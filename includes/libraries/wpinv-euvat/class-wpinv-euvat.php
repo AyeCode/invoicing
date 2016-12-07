@@ -1563,6 +1563,10 @@ class WPInv_EUVat {
     public static function get_user_vat_number( $vat_number = '', $user_id = 0, $is_valid = false ) {
         global $wpi_current_id;
         
+        if ( !empty( $_POST['new_user'] ) ) {
+            return '';
+        }
+        
         if ( empty( $user_id ) ) {
             $user_id = $wpi_current_id ? wpinv_get_user_id( $wpi_current_id ) : get_current_user_id();
         }
