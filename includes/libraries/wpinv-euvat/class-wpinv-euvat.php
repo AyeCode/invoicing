@@ -1561,14 +1561,14 @@ class WPInv_EUVat {
     }
     
     public static function get_user_vat_number( $vat_number = '', $user_id = 0, $is_valid = false ) {
-        global $wpi_current_id;
+        global $wpi_current_id, $wpi_userID;
         
         if ( !empty( $_POST['new_user'] ) ) {
             return '';
         }
         
         if ( empty( $user_id ) ) {
-            $user_id = $wpi_current_id ? wpinv_get_user_id( $wpi_current_id ) : get_current_user_id();
+            $user_id = !empty( $wpi_userID ) ? $wpi_userID : ( $wpi_current_id ? wpinv_get_user_id( $wpi_current_id ) : get_current_user_id() );
         }
 
         $vat_number = empty( $user_id ) ? '' : get_user_meta( $user_id, '_wpinv_vat_number', true );
@@ -1828,6 +1828,7 @@ class WPInv_EUVat {
                     $result = self::check_vat( $vat_number );
                     
                     if ( !empty( $result['valid'] ) ) {                
+                        $vat_data['valid'] = true;
                         $vies_company = !empty( $result['company'] ) ? $result['company'] : '';
                         $vies_company = apply_filters( 'wpinv_vies_company_name', $vies_company );
                     

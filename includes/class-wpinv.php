@@ -231,58 +231,9 @@ class WPInv_Plugin {
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
         
-        // Register scripts
-        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui', 'wpinv-gdmbx-script' ),  WPINV_VERSION );
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-        wp_register_script( 'wpinv-gdmbx-script', WPINV_PLUGIN_URL . 'assets/js/gdmbx' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
-        $localize = array(
-            'ajax_nonce'       => wp_create_nonce( 'ajax_nonce' ),
-            'ajaxurl'          => admin_url( '/admin-ajax.php' ),
-            'script_debug'     => defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? true : false,
-            'up_arrow_class'   => 'dashicons dashicons-arrow-up-alt2',
-            'down_arrow_class' => 'dashicons dashicons-arrow-down-alt2',
-            'defaults'         => array(
-                'color_picker' => false,
-                'date_picker'  => array(
-                    'changeMonth'     => true,
-                    'changeYear'      => true,
-                    'dateFormat'      => _x( 'yy-mm-dd', 'Valid formatDate string for jquery-ui datepicker', 'invoicing' ),
-                    'dayNames'        => explode( ',', __( 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday', 'invoicing' ) ),
-                    'dayNamesMin'     => explode( ',', __( 'Su, Mo, Tu, We, Th, Fr, Sa', 'invoicing' ) ),
-                    'dayNamesShort'   => explode( ',', __( 'Sun, Mon, Tue, Wed, Thu, Fri, Sat', 'invoicing' ) ),
-                    'monthNames'      => explode( ',', __( 'January, February, March, April, May, June, July, August, September, October, November, December', 'invoicing' ) ),
-                    'monthNamesShort' => explode( ',', __( 'Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec', 'invoicing' ) ),
-                    'nextText'        => __( 'Next', 'invoicing' ),
-                    'prevText'        => __( 'Prev', 'invoicing' ),
-                    'currentText'     => __( 'Today', 'invoicing' ),
-                    'closeText'       => __( 'Done', 'invoicing' ),
-                    'clearText'       => __( 'Clear', 'invoicing' ),
-                ),
-                'time_picker'  => array(
-                    'timeOnlyTitle' => __( 'Choose Time', 'invoicing' ),
-                    'timeText'      => __( 'Time', 'invoicing' ),
-                    'hourText'      => __( 'Hour', 'invoicing' ),
-                    'minuteText'    => __( 'Minute', 'invoicing' ),
-                    'secondText'    => __( 'Second', 'invoicing' ),
-                    'currentText'   => __( 'Now', 'invoicing' ),
-                    'closeText'     => __( 'Done', 'invoicing' ),
-                    'timeFormat'    => _x( 'hh:mm TT', 'Valid formatting string, as per http://trentrichardson.com/examples/timepicker/', 'invoicing' ),
-                    'controlType'   => 'select',
-                    'stepMinute'    => 5,
-                ),
-            ),
-            'strings' => array(
-                'upload_file'  => __( 'Use this file', 'invoicing' ),
-                'upload_files' => __( 'Use these files', 'invoicing' ),
-                'remove_image' => __( 'Remove Image', 'invoicing' ),
-                'remove_file'  => __( 'Remove', 'invoicing' ),
-                'file'         => __( 'File:', 'invoicing' ),
-                'download'     => __( 'Download', 'invoicing' ),
-                'check_toggle' => __( 'Select / Deselect All', 'invoicing' ),
-            ),
-        );
-
-        wp_localize_script( 'wpinv-gdmbx-script', 'gdmbx2_l10', apply_filters( 'wpinv_gdmbx2_localized_data', $localize ) );
+        
+        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui' ),  WPINV_VERSION );
         wp_enqueue_script( 'wpinv-admin-script' );
         
         $localize                               = array();
