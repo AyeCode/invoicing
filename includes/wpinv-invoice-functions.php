@@ -1109,7 +1109,7 @@ function wpinv_process_checkout() {
         'discount'          => wpinv_get_cart_items_discount_amount( $cart_items, $discounts ), // Discounted amount
         'tax'               => wpinv_get_cart_tax( $cart_items ),               // Taxed amount
         'price'             => wpinv_get_cart_total( $cart_items, $discounts ),    // Amount after taxes
-        'invoice_key'       => !empty( $invoice->get_key() ) ? $invoice->get_key() : $invoice->generate_key(),
+        'invoice_key'       => $invoice->get_key() ? $invoice->get_key() : $invoice->generate_key(),
         'user_email'        => $user['email'],
         'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
         'user_info'         => stripslashes_deep( $user_info ),

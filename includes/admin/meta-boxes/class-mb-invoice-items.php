@@ -315,7 +315,7 @@ class WPInv_Meta_Box_Items {
         //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
         //$discount       = sanitize_text_field( $data['wpinv_discount'] );
         
-        $ip             = !empty( $invoice->get_ip() ) ? $invoice->get_ip() : wpinv_get_ip();
+        $ip             = $invoice->get_ip() ? $invoice->get_ip() : wpinv_get_ip();
         
         $invoice->set( 'due_date', $due_date );
         $invoice->set( 'first_name', $first_name );
