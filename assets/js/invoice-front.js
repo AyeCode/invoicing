@@ -3,7 +3,6 @@ if (typeof ajaxurl === 'undefined' || ajaxurl === null) {
     // variable is undefined or null
     ajaxurl = WPInv.ajax_url;
 }
-
 window.wpiSubmit = typeof window.wpiSubmit !== 'undefined' ? window.wpiSubmit : true;
 jQuery(function($) {
     var valid = false;

@@ -887,6 +887,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     color: #333;
     font-size: 120%;
 }
+.post-type-wpi_invoice #submitpost #delete-action,
 .post-type-wpi_item #submitpost .misc-pub-visibility,
 .post-type-wpi_item #submitpost .misc-pub-curtime,
 .post-type-wpi_item #submitpost #delete-action,
