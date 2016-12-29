@@ -883,3 +883,11 @@ function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
     }
 }
 add_action( 'geodir_payment_post_delete_package', 'wpinv_gdp_to_wpi_delete_package', 10, 1 ) ;
+
+function wpinv_gdp_package_type_info( $post ) {
+    if ( wpinv_pm_active() ) {
+        ?><p class="wpi-m0"><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
+        <?php
+    }
+}
+add_action( 'wpinv_item_info_metabox_after', 'wpinv_gdp_package_type_info', 10, 1 ) ;

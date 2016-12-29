@@ -1,19 +1,13 @@
 <?php
 register_activation_hook( WPINV_PLUGIN_FILE, 'wpinv_plugin_activation' );
 register_deactivation_hook( WPINV_PLUGIN_FILE, 'wpinv_plugin_deactivation' );
-register_uninstall_hook( WPINV_PLUGIN_FILE, 'wpinv_plugin_uninstall' );
 
 function wpinv_plugin_activation( $network_wide = false ) {
-    error_log( 'plugin_activation' );
     wpinv_install( $network_wide );
 }
 
 function wpinv_plugin_deactivation() {
-    error_log( 'plugin_deactivation' );
-}
-
-function wpinv_plugin_uninstall() {
-    error_log( 'plugin_uninstall' );
+    // plugin deactivation stuff
 }
     
 function wpinv_install( $network_wide = false ) {

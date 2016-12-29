@@ -175,9 +175,29 @@ class WPInv_Meta_Box_Details {
     
     public static function payment_meta( $post ) {
         global $wpi_mb_invoice;
+
+        $set_dateway = empty( $wpi_mb_invoice->gateway ) ? true : false;
+        if ( !$set_dateway && !$wpi_mb_invoice->get_meta( '_wpinv_checkout', true ) && !$wpi_mb_invoice->is_paid() ) {
+            $set_dateway = true;
+        }
         
         ?>
-        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_invoice->gateway ) ); ?></p>
+        <p class="wpi-meta-row">
+        <?php if ( $set_dateway ) { $gateways = wpinv_get_enabled_payment_gateways( true ); ?>
+            <label for="wpinv_gateway"><?php _e( 'Gateway:', 'invoicing' ) ; ?></label>
+            <select required="required" id="wpinv_gateway" name="wpinv_gateway">
+                <?php foreach ( $gateways as $name => $gateway ) {
+                    if ( $wpi_mb_invoice->is_recurring() && !wpinv_gateway_support_subscription( $name ) ) {
+                        continue;
+                    }
+                    ?>
+                <option value="<?php echo $name;?>" <?php selected( $wpi_mb_invoice->gateway, $name );?>><?php echo !empty( $gateway['admin_label'] ) ? $gateway['admin_label'] : $gateway['checkout_label']; ?></option>
+                <?php } ?>
+            </select>
+        <?php } else { 
+            echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_invoice->gateway ) );
+        } ?>
+        </p>
         <?php if ( $wpi_mb_invoice->is_paid() ) { ?>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_invoice->get_key() ); ?></p>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_invoice ) ); ?></p>

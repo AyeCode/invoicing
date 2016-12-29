@@ -1339,6 +1339,11 @@ function wpinv_admin_get_line_items($invoice = array()) {
 }
 
 function wpinv_checkout_form() {
+    global $wpi_checkout_id;
+    
+    // Set current invoice id.
+    $wpi_checkout_id = wpinv_get_invoice_cart_id();
+    
     $form_action  = esc_url( wpinv_get_checkout_uri() );
 
     ob_start();
@@ -1548,12 +1553,12 @@ function wpinv_payment_mode_select() {
                     if(!empty($gateways)){
 	                    foreach ( $gateways as $gateway_id => $gateway ) {
 		                    $checked = checked( $gateway_id, $chosen_gateway, false );
-		                    $button_label = $gateway_id == 'paypal' ? __( 'Proceed to PayPal', 'invoicing' ) : '';
+		                    $button_label = wpinv_get_gateway_button_label( $gateway_id );
 		                    $description = wpinv_get_gateway_description( $gateway_id );
 		                    ?>
 		                    <div class="list-group-item">
 			                    <div class="radio">
-				                    <label><input type="radio" data-payment-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
+				                    <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
 			                    </div>
 			                    <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
 				                    <?php if ( !empty( $description ) ) { ?>

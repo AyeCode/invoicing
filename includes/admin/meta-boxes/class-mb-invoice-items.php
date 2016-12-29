@@ -287,7 +287,7 @@ class WPInv_Meta_Box_Items {
                     'class'            => 'gdmbx2-text-medium wpinv-item-type',
                 ) ); ?>
         </p>
-        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Standard: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?><br><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
+        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Standard: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?></p>
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );
     }
@@ -334,6 +334,9 @@ class WPInv_Meta_Box_Items {
         //$invoice->set( 'discount', $discount );
         $invoice->set( 'ip', $ip );
         $invoice->old_status = $_POST['original_post_status'];
+        if ( !empty( $data['wpinv_gateway'] ) ) {
+            $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
+        }
         $saved = $invoice->save();
         
         // Check for payment notes

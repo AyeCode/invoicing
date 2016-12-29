@@ -84,6 +84,8 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
     }
 
     if ( true === $sort ) {
+        uasort( $gateway_list, 'wpinv_sort_gateway_order' );
+        
         // Reorder our gateways so the default is first
         $default_gateway_id = wpinv_get_default_gateway();
 
@@ -96,6 +98,10 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
     }
 
     return apply_filters( 'wpinv_enabled_payment_gateways', $gateway_list );
+}
+
+function wpinv_sort_gateway_order( $a, $b ) {
+    return $a['ordering'] - $b['ordering'];
 }
 
 function wpinv_is_gateway_active( $gateway ) {
@@ -138,6 +144,10 @@ function wpinv_get_gateway_description( $gateway ) {
     $description = isset( $wpinv_options[$gateway . '_desc'] ) ? $wpinv_options[$gateway . '_desc'] : '';
 
     return apply_filters( 'wpinv_gateway_description', $description, $gateway );
+}
+
+function wpinv_get_gateway_button_label( $gateway ) {
+    return apply_filters( 'wpinv_gateway_' . $gateway . '_button_label', '' );
 }
 
 function wpinv_get_gateway_checkout_label( $gateway ) {
@@ -312,7 +322,6 @@ function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 
 function wpinv_record_gateway_error( $title = '', $message = '', $parent = 0 ) {
     return wpinv_error_log( $message, $title );
-	//return wpinv_record_log( $title, $message, $parent, 'gateway_error' );
 }
 
 function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publish' ) {

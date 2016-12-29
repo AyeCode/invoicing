@@ -1118,7 +1118,6 @@ final class WPInv_Invoice {
             // Status was changed.
             do_action( 'wpinv_status_' . $new_status, $this->ID, $old_status );
             do_action( 'wpinv_status_' . $old_status . '_to_' . $new_status, $this->ID, $old_status );
-            wpinv_error_log( 'wpinv_status_' . $old_status . '_to_' . $new_status, 'update_status', __FILE__, __LINE__ );
             do_action( 'wpinv_update_status', $this->ID, $new_status, $old_status );
         }
 
