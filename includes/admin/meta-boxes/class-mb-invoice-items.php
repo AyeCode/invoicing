@@ -126,7 +126,7 @@ class WPInv_Meta_Box_Items {
                                         <?php } ?>
                                         <td class="total"></td>
                                         <?php if ( $use_taxes ) { ?>
-                                        <td class="tax">0</td>
+                                        <td class="tax"></td>
                                         <?php } ?>
                                         <td class="action"></td>
                                     </tr>

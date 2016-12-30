@@ -12,14 +12,11 @@ class WPInv_Meta_Box_Details {
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
         
-        $status             = $invoice->get_status( false ); // Current status        
-        $tax                = $invoice->get_tax();
+        $status             = $invoice->get_status( false ); // Current status    
         $discount           = $invoice->get_discount();
         $discount_code      = $discount > 0 ? $invoice->get_discount_code() : '';
         $invoice_number     = $invoice->get_number();
         
-        $tax                = $tax > 0 ? wpinv_format_amount( $tax ) : '';
-        $discount           = $discount > 0 ? wpinv_format_amount( $discount ) : '';
         $date_created       = $invoice->get_created_date();
         $datetime_created   = strtotime( $date_created );
         $date_created       = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $datetime_created ) : '';
@@ -63,26 +60,14 @@ class WPInv_Meta_Box_Details {
             </div>
         </div>
         <?php do_action( 'wpinv_meta_box_details_inner', $post_id ); ?>
+        <?php if ( !( $is_paid = $invoice->is_paid() ) || $discount_code ) { ?>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount-code table-layout">
             <div class="gdmbx-th"><label for="wpinv_discount_code"><?php _e( 'Discount Code:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" maxlength="20" value="<?php echo esc_attr( $discount_code );?>" id="wpinv_discount_code" name="wpinv_discount_code" class="regular-text">
+                <input type="text" value="<?php echo esc_attr( $discount_code ); ?>" id="wpinv_discount" class="medium-text" <?php echo ( $discount_code ? 'readonly' : '' ); ?> /><?php if ( !$is_paid ) { ?><input value="<?php echo esc_attr_e( 'Apply', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-hide' : 'wpi-inlineb' ); ?>" id="wpinv-apply-code" type="button" /><input value="<?php echo esc_attr_e( 'Remove', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-inlineb' : 'wpi-hide' ); ?>" id="wpinv-remove-code" type="button" /><?php } ?>
             </div>
         </div>
-        <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount table-layout">
-            <div class="gdmbx-th"><label for="wpinv_dicount"><?php echo wp_sprintf( __( 'Discount (%s):', 'invoicing' ), $currency_symbol );?></label></div>
-            <div class="gdmbx-td">
-                <input type="text" maxlength="12" placeholder="0.00" value="<?php echo $discount;?>" id="wpinv_discount" name="wpinv_discount" class="regular-text wpi-price">
-            </div>
-        </div>
-        <?php /* ?>
-        <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-tax table-layout">
-            <div class="gdmbx-th"><label for="wpinv_tax"><?php echo wp_sprintf( __( 'Tax (%s):', 'invoicing' ), $currency_symbol );?></label></div>
-            <div class="gdmbx-td">
-                <input type="text" maxlength="12" placeholder="0.00" value="<?php echo $tax;?>" id="wpinv_tax" name="wpinv_tax" class="regular-text">
-            </div>
-        </div>
-        <?php */ ?>
+        <?php } ?>
     </div>
 </div>
 <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-save-send table-layout">
