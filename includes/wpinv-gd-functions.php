@@ -113,7 +113,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     $meta['cpt_name']           = get_post_type_plural_label($package->post_type);
     $meta['price']              = wpinv_format_amount( $package->amount, NULL, true );
     $meta['vat_rule']           = 'digital';
-    $meta['vat_class']          = '_exempt';
+    $meta['vat_class']          = '_standard';
     
     if ( !empty( $package->sub_active ) ) {
         $meta['is_recurring']       = 1;
@@ -176,7 +176,7 @@ function wpinv_print_checkout_errors() {
 add_action( 'geodir_checkout_page_content', 'wpinv_print_checkout_errors', -10 );
 
 function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
-    global $wpi_nosave;
+    global $wpi_nosave, $wpi_zero_tax;
     
     $invoice_info = geodir_get_invoice( $invoice_id );
     
@@ -221,6 +221,12 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                 $invoice_info->status = $pre_status;
             }
             $status = wpinv_gdp_to_wpi_status( $invoice_info->status );
+            
+            $wpi_zero_tax = false;
+            
+            if ( in_array( $status, array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
+                $wpi_zero_tax = true;
+            }
             
             $invoice_data                   = array();
             $invoice_data['invoice_id']     = $wpi_invoice_id;
@@ -278,6 +284,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                     'name'              => $post_item->get_name(),
                     'item_price'        => $post_item->get_price(),
                     'discount'          => $invoice_info->discount,
+                    'tax'               => 0.00,
                     'meta'              => array( 
                                             'post_id'       => $invoice_info->post_id,
                                             'invoice_title' => $invoice_info->post_title
@@ -297,6 +304,28 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             } else {
                 if ( !empty( $data ) ) {
                     update_post_meta( $data->ID, '_wpinv_gdp_id', $invoice_id );
+
+                    global $wpi_userID, $wpinv_ip_address_country;
+                    
+                    $checkout_session = wpinv_get_checkout_session();
+                    
+                    $data_session                   = array();
+                    $data_session['invoice_id']     = $data->ID;
+                    $data_session['cart_discounts'] = $data->get_discounts( true );
+                    
+                    wpinv_set_checkout_session( $data_session );
+                    
+                    $wpi_userID         = (int)$data->get_user_id();
+                    $_POST['country']   = !empty($data->country) ? $data->country : wpinv_get_default_country();
+                        
+                    $data->country      = sanitize_text_field( $_POST['country'] );
+                    $data->set( 'country', sanitize_text_field( $_POST['country'] ) );
+                    
+                    $wpinv_ip_address_country = $data->country;
+                    
+                    $data = $data->recalculate_totals(true);
+                    
+                    wpinv_set_checkout_session( $checkout_session );
                     
                     $update_data = array();
                     $update_data['tax_amount'] = $data->get_tax();
@@ -687,7 +716,7 @@ function wpinv_tool_merge_packages() {
 add_action( 'wpinv_tool_merge_packages', 'wpinv_tool_merge_packages' );
 
 function wpinv_tool_merge_invoices() {
-    global $wpdb;
+    global $wpdb, $wpi_gdp_inv_merge, $wpi_tax_rates;
     
     $sql = "SELECT `gdi`.`id`, `gdi`.`date`, `gdi`.`date_updated` FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NULL ORDER BY `gdi`.`id` ASC";
     $items = $wpdb->get_results( $sql );
@@ -696,8 +725,11 @@ function wpinv_tool_merge_invoices() {
     
     if ( !empty( $items ) ) {
         $success = true;
+        $wpi_gdp_inv_merge = true;
         
         foreach ( $items as $item ) {
+            $wpi_tax_rates = NULL;
+            
             $wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = 0 WHERE id = '" . $item->id . "'" );
             
             $merged = wpinv_cpt_save( $item->id );
@@ -725,6 +757,8 @@ function wpinv_tool_merge_invoices() {
                 wpinv_error_log( 'Invoice merge F : ' . $item->id );
             }
         }
+        
+        $wpi_gdp_inv_merge = false;
         
         if ( $count > 0 ) {
             $message = sprintf( _n( 'Total <b>%d</b> invoice is merged successfully.', 'Total <b>%d</b> invoices are merged successfully.', $count, 'invoicing' ), $count );
@@ -891,3 +925,14 @@ function wpinv_gdp_package_type_info( $post ) {
     }
 }
 add_action( 'wpinv_item_info_metabox_after', 'wpinv_gdp_package_type_info', 10, 1 ) ;
+
+function wpinv_gdp_to_gdi_set_zero_tax( $is_taxable, $item_id, $country , $state ) {
+    global $wpi_zero_tax;
+
+    if ( $wpi_zero_tax ) {
+        $is_taxable = false;
+    }
+
+    return $is_taxable;
+}
+add_action( 'wpinv_item_is_taxable', 'wpinv_gdp_to_gdi_set_zero_tax', 10, 4 ) ;
