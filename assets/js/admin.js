@@ -449,6 +449,128 @@ jQuery(function($) {
                 }
             });
             $('#wpinv_discount_type').trigger('change');
+            
+            $('#wpinv-apply-code').live('click', function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var $form = $(this).closest('form[name="post"]');
+                var invoice_id = parseInt($form.find('input#post_ID').val());
+                if (!invoice_id > 0) {
+                    return false;
+                }
+                
+                if (!parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0) {
+                    alert(WPInv_Admin.emptyInvoice);
+                    $('#wpinv_invoice_item').focus();
+                    return false;
+                }
+                
+                var discount_code = $('#wpinv_discount', $form).val();
+                
+                if (!discount_code) {
+                    $('#wpinv_discount', $form).focus();
+                    return false;
+                }
+                
+                $this.attr('disabled', true);
+                $this.after('<span class="wpi-refresh">&nbsp;&nbsp;<i class="fa fa-spin fa-refresh"></i></span>');
+
+                var data = {
+                    action: 'wpinv_admin_apply_discount',
+                    invoice_id: invoice_id,
+                    code: discount_code,
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post(WPInv_Admin.ajax_url, data, function(response) {
+                    var msg, success;
+                    if (response && typeof response == 'object') {
+                        if (response.success === true) {
+                            success = true;
+                            
+                            $('#wpinv_discount', $form).attr('readonly', true);
+                            $this.removeClass('wpi-inlineb').addClass('wpi-hide');
+                            $('#wpinv-remove-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
+                        }
+                        
+                        if (response.msg) {
+                            msg = response.msg;
+                        }
+                    }
+                    
+                    $this.attr('disabled', false);
+                    $this.closest('div').find('.wpi-refresh').remove();
+                    
+                    if (success) {
+                        console.log(success);
+                        window.wpiConfirmed = true;
+                        $('#wpinv-recalc-totals').click();
+                        window.wpiConfirmed = false;
+                    }
+                    
+                    if (msg) {
+                        alert(msg);
+                    }
+                });
+            });
+            
+            $('#wpinv-remove-code').live('click', function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var $form = $(this).closest('form[name="post"]');
+                var invoice_id = parseInt($form.find('input#post_ID').val());
+                var discount_code = $('#wpinv_discount', $form).val();
+                if (!invoice_id > 0) {
+                    return false;
+                }
+                
+                if (!invoice_id > 0 || !parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0 || !discount_code) {
+                    $this.removeClass('wpi-inlineb').addClass('wpi-hide');
+                    $('#wpinv_discount', $form).attr('readonly', false).val('');
+                    $('#wpinv-apply-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
+                    return false;
+                }
+                
+                $this.attr('disabled', true);
+                $this.after('<span class="wpi-refresh">&nbsp;&nbsp;<i class="fa fa-spin fa-refresh"></i></span>');
+
+                var data = {
+                    action: 'wpinv_admin_remove_discount',
+                    invoice_id: invoice_id,
+                    code: discount_code,
+                    _nonce: WPInv_Admin.wpinv_nonce
+                };
+                
+                $.post(WPInv_Admin.ajax_url, data, function(response) {
+                    var msg, success;
+                    if (response && typeof response == 'object') {
+                        if (response.success === true) {
+                            success = true;
+                            
+                            $this.removeClass('wpi-inlineb').addClass('wpi-hide');
+                            $('#wpinv_discount', $form).attr('readonly', false).val('');
+                            $('#wpinv-apply-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
+                        }
+                        
+                        if (response.msg) {
+                            msg = response.msg;
+                        }
+                    }
+                    
+                    $this.attr('disabled', false);
+                    $this.closest('div').find('.wpi-refresh').remove();
+                    
+                    if (success) {
+                        window.wpiConfirmed = true;
+                        $('#wpinv-recalc-totals').click();
+                        window.wpiConfirmed = false;
+                    }
+                    
+                    if (msg) {
+                        alert(msg);
+                    }
+                });
+            });
         },
         remove_item: function() {
             // Remove a remove from a purchase

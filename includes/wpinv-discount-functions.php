@@ -653,6 +653,8 @@ function wpinv_discount_item_reqs_met( $code_id = null ) {
 }
 
 function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
+    global $wpi_checkout_id;
+    
     $return = false;
 
     if ( empty( $code_id ) ) {
@@ -683,6 +685,11 @@ function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
         if ( $payments ) {
             foreach ( $payments as $payment ) {
                 if ( $payment->has_status( array( 'cancelled', 'failed' ) ) ) {
+                    continue;
+                }
+
+                // Don't count discount used for current invoice chekcout.
+                if ( !empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
                     continue;
                 }
 

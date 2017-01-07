@@ -1382,7 +1382,7 @@ class WPInv_EUVat {
         }
         
         $is_taxable = true;
-        
+
         if ( !empty( $item_id ) && self::get_item_class( $item_id ) == '_exempt' ) {
             $is_taxable = false;
         }
@@ -1391,7 +1391,9 @@ class WPInv_EUVat {
     }
     
     public static function find_rate( $country, $state, $rate, $class ) {
-        if ( $class === '_exempt' ) {
+        global $wpi_zero_tax;
+
+        if ( $class === '_exempt' || $wpi_zero_tax ) {
             return 0;
         }
 
@@ -1444,13 +1446,13 @@ class WPInv_EUVat {
     }
     
     public static function get_rate( $rate = 1, $country = '', $state = '', $item_id = 0 ) {
-        global $wpinv_options, $wpi_session, $wpi_item_id;
+        global $wpinv_options, $wpi_session, $wpi_item_id, $wpi_zero_tax;
         
         $item_id = $item_id > 0 ? $item_id : $wpi_item_id;
         $allow_vat_classes = self::allow_vat_classes();
         $class = $item_id ? self::get_item_class( $item_id ) : '_standard';
 
-        if ( $class === '_exempt' ) {
+        if ( $class === '_exempt' || $wpi_zero_tax ) {
             return 0;
         } else if ( !$allow_vat_classes ) {
             $class = '_standard';

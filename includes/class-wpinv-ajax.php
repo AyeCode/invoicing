@@ -68,6 +68,8 @@ class WPInv_Ajax {
             'create_invoice_item' => false,
             'get_billing_details' => false,
             'admin_recalculate_totals' => false,
+            'admin_apply_discount' => false,
+            'admin_remove_discount' => false,
             'check_email' => false,
             'run_tool' => false,
             'apply_discount' => false,
@@ -254,7 +256,7 @@ class WPInv_Ajax {
     }
     
     public static function remove_invoice_item() {
-        global $wpi_userID, $wpinv_ip_address_country;;
+        global $wpi_userID, $wpinv_ip_address_country;
         
         check_ajax_referer( 'invoice-item', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
@@ -416,7 +418,7 @@ class WPInv_Ajax {
     }
     
     public static function admin_recalculate_totals() {
-        global $wpi_userID, $wpinv_ip_address_country;;
+        global $wpi_userID, $wpinv_ip_address_country;
         
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
         if ( !current_user_can( 'manage_options' ) ) {
@@ -467,6 +469,96 @@ class WPInv_Ajax {
         $response['data']['discountf']  = $invoice->get_discount(true);
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
+        
+        wpinv_set_checkout_session($checkout_session);
+        
+        wp_send_json( $response );
+    }
+    
+    public static function admin_apply_discount() {
+        global $wpi_userID;
+        
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $invoice_id = absint( $_POST['invoice_id'] );
+        $discount_code = sanitize_text_field( $_POST['code'] );
+        if ( empty( $invoice_id ) || empty( $discount_code ) ) {
+            die();
+        }
+        
+        $invoice = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) || ( !empty( $invoice ) && $invoice->is_paid() ) ) {
+            die();
+        }
+        
+        $checkout_session = wpinv_get_checkout_session();
+        
+        $data                   = array();
+        $data['invoice_id']     = $invoice_id;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
+        
+        wpinv_set_checkout_session( $data );
+        
+        $response               = array();
+        $response['success']    = false;
+        $response['msg']        = __( 'This discount is invalid.', 'invoicing' );
+        $response['data']['code'] = $discount_code;
+        
+        if ( wpinv_is_discount_valid( $discount_code, $invoice->get_user_id() ) ) {
+            $discounts = wpinv_set_cart_discount( $discount_code );
+            
+            $response['success'] = true;
+            $response['msg'] = __( 'Discount has been applied successfully.', 'invoicing' );
+        }  else {
+            $errors = wpinv_get_errors();
+            if ( !empty( $errors['wpinv-discount-error'] ) ) {
+                $response['msg'] = $errors['wpinv-discount-error'];
+            }
+            wpinv_unset_error( 'wpinv-discount-error' );
+        }
+        
+        wpinv_set_checkout_session($checkout_session);
+        
+        wp_send_json( $response );
+    }
+    
+    public static function admin_remove_discount() {
+        global $wpi_userID;
+        
+        check_ajax_referer( 'wpinv-nonce', '_nonce' );
+        if ( !current_user_can( 'manage_options' ) ) {
+            die(-1);
+        }
+        
+        $invoice_id = absint( $_POST['invoice_id'] );
+        $discount_code = sanitize_text_field( $_POST['code'] );
+        if ( empty( $invoice_id ) || empty( $discount_code ) ) {
+            die();
+        }
+        
+        $invoice = wpinv_get_invoice( $invoice_id );
+        if ( empty( $invoice ) || ( !empty( $invoice ) && $invoice->is_paid() ) ) {
+            die();
+        }
+        
+        $checkout_session = wpinv_get_checkout_session();
+        
+        $data                   = array();
+        $data['invoice_id']     = $invoice_id;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
+        
+        wpinv_set_checkout_session( $data );
+        
+        $response               = array();
+        $response['success']    = false;
+        $response['msg']        = NULL;
+        
+        $discounts  = wpinv_unset_cart_discount( $discount_code );
+        $response['success'] = true;
+        $response['msg'] = __( 'Discount has been removed successfully.', 'invoicing' );
         
         wpinv_set_checkout_session($checkout_session);
         

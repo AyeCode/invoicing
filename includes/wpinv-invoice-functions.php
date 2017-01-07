@@ -1022,11 +1022,13 @@ function wpinv_empty_cart() {
 }
 
 function wpinv_process_checkout() {
-    global $wpinv_euvat;
+    global $wpinv_euvat, $wpi_checkout_id;
     
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
+    
+    $wpi_checkout_id = $invoice->ID;
     
     do_action( 'wpinv_pre_process_checkout' );
     
@@ -1170,6 +1172,8 @@ function wpinv_process_checkout() {
     
     // Set gateway
     $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
+    $invoice->update_meta( '_wpinv_mode', ( wpinv_is_test_mode( $invoice_data['gateway'] ) ? 'test' : 'live' ) );
+    $invoice->update_meta( '_wpinv_checkout', true );
     
     do_action( 'wpinv_checkout_before_send_to_gateway', $invoice, $invoice_data );
 
@@ -1178,8 +1182,6 @@ function wpinv_process_checkout() {
     die();
 }
 add_action( 'wpinv_payment', 'wpinv_process_checkout' );
-//add_action( 'wp_ajax_wpinv_process_checkout', 'wpinv_process_checkout' );
-//add_action( 'wp_ajax_nopriv_wpinv_process_checkout', 'wpinv_process_checkout' );
 
 function wpinv_get_invoices( $args ) {
     $args = wp_parse_args( $args, array(

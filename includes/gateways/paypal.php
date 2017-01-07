@@ -749,3 +749,8 @@ function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id ) {
     return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_url );
 }
 add_filter( 'wpinv_payment_details_transaction_id-paypal', 'wpinv_paypal_link_transaction_id', 10, 2 );
+
+function wpinv_gateway_paypal_button_label($label) {
+    return __( 'Proceed to PayPal', 'invoicing' );
+}
+add_filter( 'wpinv_gateway_paypal_button_label', 'wpinv_gateway_paypal_button_label', 10, 1 );

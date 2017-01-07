@@ -1460,6 +1460,22 @@ textarea.wpi-email_overdue_content {
 .wpi-export-file a {
     text-decoration: none;
 }
+#wpinv-details #wpinv_discount {
+    display: inline-block;
+    width: 120px;
+    text-align: center;
+}
+#wpinv-details #wpinv-apply-code,
+#wpinv-details #wpinv-remove-code {
+    display: inline-block;
+    margin: 2px 0 0 10px;
+}
+.wpi-hide {
+    display: none!important
+}
+.wpi-inlineb {
+    display: inline-block!important
+}
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {
         padding: 4px 10px;
