@@ -176,7 +176,7 @@ function wpinv_print_checkout_errors() {
 add_action( 'geodir_checkout_page_content', 'wpinv_print_checkout_errors', -10 );
 
 function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
-    global $wpi_nosave, $wpi_zero_tax;
+    global $wpi_nosave, $wpi_zero_tax, $wpi_gdp_inv_merge;
     
     $invoice_info = geodir_get_invoice( $invoice_id );
     
@@ -224,7 +224,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             
             $wpi_zero_tax = false;
             
-            if ( in_array( $status, array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
+            if ( $wpi_gdp_inv_merge && in_array( $status, array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
                 $wpi_zero_tax = true;
             }
             
@@ -665,6 +665,11 @@ function wpinv_merge_gd_invoices() {
         <td><p><?php _e( 'Merge GeoDirectory Payment Manager invoices to the Invoicing.', 'invoicing' ); ?></p></td>
         <td><input type="button" data-tool="merge_invoices" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
     </tr>
+	<tr>
+        <td><?php _e( 'Fix Taxes for Merged Invoices', 'invoicing' ); ?></td>
+        <td><p><?php _e( 'Fix taxes for NON-PAID invoices which are merged before, from GeoDirectory Payment Manager invoices to Invoicing. This will recalculate taxes for non-paid merged invoices.', 'invoicing' ); ?></p></td>
+        <td><input type="button" data-tool="merge_fix_taxes" class="button-primary wpinv-tool" value="<?php esc_attr_e( 'Run', 'invoicing' ); ?>"></td>
+    </tr>
     <tr>
         <td><?php _e( 'Merge Coupons', 'invoicing' ); ?></td>
         <td><p><?php _e( 'Merge GeoDirectory Payment Manager coupons to the Invoicing.', 'invoicing' ); ?></p></td>
@@ -936,3 +941,73 @@ function wpinv_gdp_to_gdi_set_zero_tax( $is_taxable, $item_id, $country , $state
     return $is_taxable;
 }
 add_action( 'wpinv_item_is_taxable', 'wpinv_gdp_to_gdi_set_zero_tax', 10, 4 ) ;
+
+function wpinv_tool_merge_fix_taxes() {
+    global $wpdb;
+    
+	$sql = "SELECT DISTINCT p.ID FROM `" . $wpdb->posts . "` AS p LEFT JOIN " . $wpdb->postmeta . " AS pm ON pm.post_id = p.ID WHERE p.post_type = 'wpi_item' AND pm.meta_key = '_wpinv_type' AND pm.meta_value = 'package'";
+	$items = $wpdb->get_results( $sql );
+	
+	if ( !empty( $items ) ) {
+		foreach ( $items as $item ) {
+			if ( get_post_meta( $item->ID, '_wpinv_vat_class', true ) == '_exempt' ) {
+				update_post_meta( $item->ID, '_wpinv_vat_class', '_standard' );
+			}
+		}
+	}
+		
+    $sql = "SELECT `p`.`ID`, gdi.id AS gdp_id FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NOT NULL AND p.post_status NOT IN( 'publish', 'complete', 'processing', 'renewal' ) ORDER BY `gdi`.`id` ASC";
+    $items = $wpdb->get_results( $sql );
+	
+	if ( !empty( $items ) ) {
+		$success = false;
+        $message = __( 'Taxes fixed for non-paid merged GD invoices.', 'invoicing' );
+		
+		global $wpi_userID, $wpinv_ip_address_country, $wpi_tax_rates;
+		
+		foreach ( $items as $item ) {
+			$wpi_tax_rates = NULL;               
+			$data = wpinv_get_invoice($item->ID);
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+			
+			$checkout_session = wpinv_get_checkout_session();
+			
+			$data_session                   = array();
+			$data_session['invoice_id']     = $data->ID;
+			$data_session['cart_discounts'] = $data->get_discounts( true );
+			
+			wpinv_set_checkout_session( $data_session );
+			
+			$wpi_userID         = (int)$data->get_user_id();
+			$_POST['country']   = !empty($data->country) ? $data->country : wpinv_get_default_country();
+				
+			$data->country      = sanitize_text_field( $_POST['country'] );
+			$data->set( 'country', sanitize_text_field( $_POST['country'] ) );
+			
+			$wpinv_ip_address_country = $data->country;
+			
+			$data->recalculate_totals(true);
+			
+			wpinv_set_checkout_session( $checkout_session );
+			
+			$update_data = array();
+			$update_data['tax_amount'] = $data->get_tax();
+			$update_data['paied_amount'] = $data->get_total();
+			$update_data['invoice_id'] = $data->ID;
+			
+			$wpdb->update( INVOICE_TABLE, $update_data, array( 'id' => $item->gdp_id ) );
+		}
+	} else {
+        $success = false;
+        $message = __( 'No invoices found to fix taxes!', 'invoicing' );
+    }
+	
+	$response = array();
+    $response['success'] = $success;
+    $response['data']['message'] = $message;
+    wp_send_json( $response );
+}
+add_action( 'wpinv_tool_merge_fix_taxes', 'wpinv_tool_merge_fix_taxes' );
