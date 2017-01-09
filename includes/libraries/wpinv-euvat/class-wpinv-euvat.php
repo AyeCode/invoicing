@@ -1038,7 +1038,29 @@ class WPInv_EUVat {
         $iso            = $vat['iso'];
         
         $url = 'http://ec.europa.eu/taxation_customs/vies/viesquer.do?ms=' . urlencode( $iso ) . '&iso=' . urlencode( $iso ) . '&vat=' . urlencode( $vat_number );
-        $response = file_get_contents( $url );
+        
+        if ( ini_get( 'allow_url_fopen' ) ) {
+            $response = file_get_contents( $url );
+        } else if ( function_exists( 'curl_init' ) ) {
+            $ch = curl_init();
+            
+            curl_setopt( $ch, CURLOPT_URL, $url );
+            curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30 );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            
+            $response = curl_exec( $ch );
+            
+            if ( curl_errno( $ch ) ) {
+                wpinv_error_log( curl_error( $ch ), 'VIES CHECK ERROR' );
+                $response = '';
+            }
+            
+            curl_close( $ch );
+        } else {
+            wpinv_error_log( 'To use VIES CHECK you must have allow_url_fopen is ON or cURL installed & active on your server.', 'VIES CHECK ERROR' );
+        }
         
         if ( empty( $response ) ) {
             return $result;
