@@ -265,6 +265,7 @@ class WPInv_Plugin {
         $localize['emptyInvoice']               = __( 'Add atleast one item to save invoice!', 'invoicing' );
         $localize['deletePackage']              = __( 'GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
         $localize['deletePackages']             = __( 'GD package items should be deleted from GD payment manager only', 'invoicing' );
+        $localize['deleteInvoiceFirst']         = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
         
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }

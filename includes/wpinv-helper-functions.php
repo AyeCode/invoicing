@@ -75,7 +75,7 @@ function wpinv_sanitize_amount( $amount ) {
     return apply_filters( 'wpinv_sanitize_amount', $amount );
 }
 
-function wpinv_get_invoice_statuses() {
+function wpinv_get_invoice_statuses( $trashed = false ) {
     $invoice_statuses = array(
         'pending'       => __( 'Pending Payment', 'invoicing' ),
         'publish'       => __( 'Paid', 'invoicing' ),
@@ -86,6 +86,10 @@ function wpinv_get_invoice_statuses() {
         'failed'        => __( 'Failed', 'invoicing' ),
         'renewal'       => __( 'Renewal Payment', 'invoicing' )
     );
+    
+    if ( $trashed ) {
+        $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
+    }
 
     return apply_filters( 'wpinv_statuses', $invoice_statuses );
 }
