@@ -580,15 +580,13 @@ function wpinv_remove_item( $item = 0, $force_delete = false ) {
 }
 
 function wpinv_can_delete_item( $post_id ) {
-    if ( wpinv_item_in_use( $post_id ) ) {
-        return false; // Don't delete item already use in invoices.
+    $return = current_user_can( 'manage_options' ) ? true : false;
+    
+    if ( $return && wpinv_item_in_use( $post_id ) ) {
+        $return = false; // Don't delete item already use in invoices.
     }
     
-    if ( get_post_meta( $post_id, '_wpinv_type', true ) == 'package' ) {
-        return false; // Don't delete item already use in invoices.
-    }
-    
-    return true;
+    return apply_filters( 'wpinv_can_delete_item', $return, $post_id );
 }
 
 function wpinv_admin_action_delete() {
@@ -613,7 +611,7 @@ add_action( 'admin_action_delete', 'wpinv_admin_action_delete', -10 );
 
 function wpinv_check_delete_item( $check, $post, $force_delete ) {
     if ( $post->post_type == 'wpi_item' ) {
-        if ( !wpinv_can_delete_item( $post->ID ) ) {
+        if ( $force_delete && !wpinv_can_delete_item( $post->ID ) ) {
             return true;
         }
     }
@@ -637,7 +635,7 @@ function wpinv_item_in_use( $item_id ) {
         $wpi_items_in_use = array();
     }
     
-    $statuses   = array_keys( wpinv_get_invoice_statuses() );
+    $statuses   = array_keys( wpinv_get_invoice_statuses( true ) );
     
     $query  = "SELECT p.ID FROM " . $wpdb->posts . " AS p INNER JOIN " . $wpdb->postmeta . " AS pm ON p.ID = pm.post_id WHERE p.post_type = 'wpi_invoice' AND p.post_status IN( '" . implode( "','", $statuses ) . "' ) AND pm.meta_key = '_wpinv_item_ids' AND FIND_IN_SET( '" . (int)$item_id . "', pm.meta_value )";
     $in_use = $wpdb->get_var( $query ) > 0 ? true : false;

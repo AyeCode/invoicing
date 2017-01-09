@@ -902,8 +902,15 @@ jQuery(function($) {
     };
     if (WPInv_Admin.hasPM) {
         $('.wpi-gd-package .submitdelete').on('click', function(e) {
-            alert(WPInv_Admin.deletePackage);
-            return false;
+            if ( $(this).closest('.wpi-gd-package').hasClass('wpi-inuse-pkg')) {
+                alert(WPInv_Admin.deleteInvoiceFirst);
+                return false;
+            } else if ( $(this).closest('.wpi-gd-package').hasClass('wpi-delete-pkg')) {
+                return true;
+            } else {
+                alert(WPInv_Admin.deletePackage);
+                return false;
+            }
         });
         if ($('.post-type-wpi_item #_wpi_current_type').val() == 'package') {
             $('.post-type-wpi_item #submitpost #delete-action').remove();

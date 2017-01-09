@@ -923,6 +923,34 @@ function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
 }
 add_action( 'geodir_payment_post_delete_package', 'wpinv_gdp_to_wpi_delete_package', 10, 1 ) ;
 
+function wpinv_can_delete_package_item( $return, $post_id ) {
+    if ( $return && function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && $package_id = get_post_meta( $post_id, '_wpinv_package_id', true ) ) {
+        $gd_package = geodir_get_package_info_by_id( $package_id, '' );
+        
+        if ( !empty( $gd_package ) ) {
+            $return = false;
+        }
+    }
+
+    return $return;
+}
+add_filter( 'wpinv_can_delete_item', 'wpinv_can_delete_package_item', 10, 2 );
+
+function wpinv_package_item_classes( $classes, $class, $post_id ) {
+    global $typenow;
+
+    if ( $typenow == 'wpi_item' && in_array( 'wpi-gd-package', $classes ) ) {
+        if ( wpinv_item_in_use( $post_id ) ) {
+            $classes[] = 'wpi-inuse-pkg';
+        } else if ( !( function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && geodir_get_package_info_by_id( (int)get_post_meta( $post_id, '_wpinv_package_id', true ), '' ) ) ) {
+            $classes[] = 'wpi-delete-pkg';
+        }
+    }
+
+    return $classes;
+}
+add_filter( 'post_class', 'wpinv_package_item_classes', 10, 3 );
+
 function wpinv_gdp_package_type_info( $post ) {
     if ( wpinv_pm_active() ) {
         ?><p class="wpi-m0"><?php _e( 'Package: GeoDirectory price packages items.', 'invoicing' );?></p>
