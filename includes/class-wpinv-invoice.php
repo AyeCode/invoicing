@@ -867,6 +867,8 @@ final class WPInv_Invoice {
             $this->update_meta( '_wpinv_total', wpinv_format_amount( $this->total, NULL, true ) );
             $this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
         }
+        
+        do_action( 'wpinv_invoice_save', $this, $saved );
 
         if ( true === $saved || $setup ) {
             $this->setup_invoice( $this->ID );

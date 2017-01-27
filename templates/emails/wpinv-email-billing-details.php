@@ -35,6 +35,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
     ?>
     <table class="table table-bordered table-sm wpi-billing-details">
         <tbody>
+            <?php do_action( 'wpinv_email_billing_fields_first', $invoice ); ?>
             <tr class="wpi-receipt-name">
                 <th class="text-left"><?php _e( 'Name', 'invoicing' ); ?></th>
                 <td><?php if ( $sent_to_admin && $invoice->user_id ) { ?><a href="<?php echo esc_url( add_query_arg( 'user_id', $invoice->get_user_id(), self_admin_url( 'user-edit.php' ) ) ) ;?>"><?php echo esc_html( $invoice->get_user_full_name() ); ?></a><?php } else { echo esc_html( $invoice->get_user_full_name() ); } ?></td>
@@ -59,6 +60,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
                 <td><?php echo esc_html( $invoice->phone ) ;?></td>
             </tr>
             <?php } ?>
+            <?php do_action( 'wpinv_email_billing_fields_last', $invoice ); ?>
         </tbody>
     </table>
 </div>

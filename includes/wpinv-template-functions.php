@@ -931,6 +931,11 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     $billing_details = $invoice->get_user_info();
     $output = '<div class="to col-xs-2"><strong>' . __( 'To:', 'invoicing' ) . '</strong></div>';
     $output .= '<div class="wrapper col-xs-10">';
+    
+    ob_start();
+    do_action( 'wpinv_display_to_address_top', $invoice );
+    $output .= ob_get_clean();
+    
     $output .= '<div class="name">' . esc_html( trim( $billing_details['first_name'] . ' ' . $billing_details['last_name'] ) ) . '</div>';
     if ( $company = $billing_details['company'] ) {
         $output .= '<div class="company">' . wpautop( wp_kses_post( $company ) ) . '</div>';
@@ -974,8 +979,13 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     if ( $email = $invoice->get_email() ) {
         $output .= '<div class="email">' . wp_sprintf( __( 'Email: %s' ), esc_html( $email ) ) . '</div>';
     }
+    
+    ob_start();
+    do_action( 'wpinv_display_to_address_bottom', $invoice );
+    $output .= ob_get_clean();
+    
     $output .= '</div>';
-    $output = apply_filters( 'wpinv_display_to_address', $output, $invoice_id );
+    $output = apply_filters( 'wpinv_display_to_address', $output, $invoice );
 
     echo $output;
 }
@@ -1244,7 +1254,7 @@ function wpinv_checkout_billing_details() {
         }
     }
     
-    return $user_info;
+    return apply_filters( 'wpinv_checkout_billing_details', $user_info, $invoice );
 }
 
 function wpinv_admin_get_line_items($invoice = array()) {
@@ -1594,6 +1604,7 @@ function wpinv_checkout_billing_info() {
             <div id="wpi-billing" class="wpi-billing clearfix panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Billing Details', 'invoicing' );?></h3></div>
                 <div id="wpinv-fields-box" class="panel-body">
+                    <?php do_action( 'wpinv_checkout_billing_fields_first', $billing_details ); ?>
                     <p class="wpi-cart-field wpi-col2 wpi-colf">
                         <label for="wpinv_first_name" class="wpi-label"><?php _e( 'First Name', 'invoicing' );?><span class="wpi-required">*</span></label>
                         <?php
@@ -1712,6 +1723,7 @@ function wpinv_checkout_billing_info() {
                             ) );
                         ?>
                     </p>
+                    <?php do_action( 'wpinv_checkout_billing_fields_last', $billing_details ); ?>
                     <div class="clearfix"></div>
                 </div>
             </div>
