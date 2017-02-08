@@ -1495,3 +1495,26 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
     
     return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
 }
+
+function wpinv_format_invoice_number( $number ) {
+    $padd  = wpinv_get_option( 'invoice_number_padd' );
+    
+    // TODO maintain old invoice numbers if invoice number settings not saved. Should be removed before stable release.
+    if ( $padd === '' || $padd === false || $padd === NULL ) {
+        return wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $number );
+    }
+    
+    $prefix  = wpinv_get_option( 'invoice_number_prefix' );
+    $postfix = wpinv_get_option( 'invoice_number_postfix' );
+    
+    $padd = absint( $padd );
+    $formatted_number = absint( $number );
+    
+    if ( $padd > 0 ) {
+        $formatted_number = zeroise( $formatted_number, $padd );
+    }    
+
+    $formatted_number = $prefix . $formatted_number . $postfix;
+
+    return apply_filters( 'wpinv_format_invoice_number', $formatted_number, $number, $prefix, $postfix, $padd );
+}

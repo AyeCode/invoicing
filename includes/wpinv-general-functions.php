@@ -218,7 +218,7 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
         $invoice_data['post_status']    = apply_filters( 'wpinv_default_invoice_status', 'pending' );
         $invoice_data['ping_status']    = 'closed';
         $invoice_data['post_author']    = !empty( $args['user_id'] ) ? $args['user_id'] : get_current_user_id();
-        $invoice_data['post_title']     = __( 'WPINV-', 'invoicing' );
+        $invoice_data['post_title']     = wpinv_format_invoice_number( '0' );
         $invoice_data['post_parent']    = absint( $args['parent'] );
         if ( !empty( $args['created_date'] ) ) {
             $invoice_data['post_date']      = $args['created_date'];
@@ -247,10 +247,12 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
         return $invoice_id;
     } else {
         if ( !$updating ) {
-            $update = array( 'ID' => $invoice_id, 'post_title' => wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id ), 'post_name' => sanitize_title( wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id ) ) );
+            $invoice_number = wpinv_format_invoice_number( $invoice_id );
+            
+            $update = array( 'ID' => $invoice_id, 'post_title' => $invoice_number, 'post_name' => sanitize_title( $invoice_number ) );
             wp_update_post( $update );
             
-            update_post_meta( $invoice_id, '_wpinv_number', wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id ) );
+            update_post_meta( $invoice_id, '_wpinv_number', $invoice_number );
         }
     }
 

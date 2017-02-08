@@ -523,7 +523,7 @@ final class WPInv_Invoice {
         $number = $this->get_meta( '_wpinv_number', true );
 
         if ( !$number ) {
-            $number = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
+            $number = wpinv_format_invoice_number( $this->ID );
         }
 
         return $number;
@@ -535,9 +535,9 @@ final class WPInv_Invoice {
         if ($number = $this->get_number()) {
             $invoice_title = $number;
         } else if ( ! empty( $this->ID ) ) {
-            $invoice_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
+            $invoice_title = wpinv_format_invoice_number( $this->ID );
         } else {
-            $invoice_title = __( 'WPINV-', 'invoicing' );
+            $invoice_title = wpinv_format_invoice_number( 0 );
         }
 
         if ( empty( $this->key ) ) {
@@ -599,7 +599,7 @@ final class WPInv_Invoice {
         } else {
             $invoice_id = wp_insert_post( $args );
             
-            $post_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id );
+            $post_title = wpinv_format_invoice_number( $invoice_id );
             global $wpdb;
             $wpdb->update( $wpdb->posts, array( 'post_title' => $post_title, 'post_name' => sanitize_title( $post_title ) ), array( 'ID' => $invoice_id ) );
             clean_post_cache( $invoice_id );
