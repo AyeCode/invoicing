@@ -436,7 +436,7 @@ function wpinv_get_registered_settings() {
                     'overdue_days' => array(
                         'id'          => 'overdue_days',
                         'name'        => __( 'Default Due Date', 'invoicing' ),
-                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overriden on individual Invoices.', 'invoicing' ),
+                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $due_payment_options,
                         'chosen'      => true,
@@ -536,6 +536,22 @@ function wpinv_get_registered_settings() {
                         'type' => 'text',
                         'size' => 'regular',
                         'std' => ''
+                    ),
+                    'guest_checkout_settings' => array(
+                        'id'   => 'guest_checkout_settings',
+                        'name' => '<h3>' . __( 'Pay via Invoice Link', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'guest_checkout' => array(
+                        'type'    => 'radio',
+                        'id'      => 'guest_checkout',
+                        'name'    => __( 'Pay via Invoice Link for non logged in user', 'invoicing' ),
+                        'desc'    => __( 'Select how invoice should be paid when non logged in user clicks on the invoice link that sent to them via for pay for invoice.', 'invoicing' ),
+                        'options' => array(
+                            0 => __( 'Ask them to log-in and redirect back to invoice checkout to pay.', 'invoicing' ),
+                            1 => __( 'Auto log-in the user via invoice link and take them to invoice checkout to pay.', 'invoicing' ),
+                        ),
+                        'std'     => 0,
                     ),
                 ),
             )

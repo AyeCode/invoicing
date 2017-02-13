@@ -1952,17 +1952,23 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this, $valid_invoice_statuses );
     }
     
-    public function get_checkout_payment_url( $on_checkout = false ) {
+    public function get_checkout_payment_url( $on_checkout = false, $secret = false ) {
         $pay_url = wpinv_get_checkout_uri();
 
         if ( is_ssl() ) {
             $pay_url = str_replace( 'http:', 'https:', $pay_url );
         }
+        
+        $key = $this->get_key();
 
         if ( $on_checkout ) {
-            $pay_url = add_query_arg( 'invoice_key', $this->get_key(), $pay_url );
+            $pay_url = add_query_arg( 'invoice_key', $key, $pay_url );
         } else {
-            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $this->get_key() ), $pay_url );
+            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $key ), $pay_url );
+        }
+        
+        if ( $secret ) {
+            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() ) ), $pay_url );
         }
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this );

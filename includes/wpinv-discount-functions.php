@@ -1176,7 +1176,7 @@ function wpinv_apply_preset_discount() {
 //add_action( 'init', 'wpinv_apply_preset_discount', 999 );
 
 function wpinv_get_discount_label( $code, $echo = true ) {
-    $label = wp_sprintf( __( 'Discount%1$s', 'invoicing' ), ( $code != '' ? ' (<code>' . $code . '</code>)': '' ) );
+    $label = wp_sprintf( __( 'Discount%1$s', 'invoicing' ), ( $code != '' && $code != 'none' ? ' (<code>' . $code . '</code>)': '' ) );
     $label = apply_filters( 'wpinv_get_discount_label', $label, $code );
 
     if ( $echo ) {
