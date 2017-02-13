@@ -628,11 +628,10 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         $invoice->set( 'date', $invoice_data['post_date'] );
     }
 
-    //if ( wpinv_get_option( 'enable_sequential' ) ) {
-        $number          = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice->ID ); // TODO
-        $invoice->set( 'number', $number );
-        update_option( 'wpinv_last_invoice_number', $number );
-    //}
+    $number = wpinv_format_invoice_number( $invoice->ID );
+    $invoice->set( 'number', $number );
+    update_option( 'wpinv_last_invoice_number', $number );
+    
     $invoice->save();
     
     do_action( 'wpinv_insert_invoice', $invoice->ID, $invoice_data );
@@ -1039,3 +1038,4 @@ function wpinv_tool_merge_fix_taxes() {
     wp_send_json( $response );
 }
 add_action( 'wpinv_tool_merge_fix_taxes', 'wpinv_tool_merge_fix_taxes' );
+remove_action( 'geodir_before_detail_fields' , 'geodir_build_coupon', 2 );

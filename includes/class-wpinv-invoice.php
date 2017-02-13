@@ -523,7 +523,7 @@ final class WPInv_Invoice {
         $number = $this->get_meta( '_wpinv_number', true );
 
         if ( !$number ) {
-            $number = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
+            $number = wpinv_format_invoice_number( $this->ID );
         }
 
         return $number;
@@ -535,9 +535,9 @@ final class WPInv_Invoice {
         if ($number = $this->get_number()) {
             $invoice_title = $number;
         } else if ( ! empty( $this->ID ) ) {
-            $invoice_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $this->ID );
+            $invoice_title = wpinv_format_invoice_number( $this->ID );
         } else {
-            $invoice_title = __( 'WPINV-', 'invoicing' );
+            $invoice_title = wpinv_format_invoice_number( 0 );
         }
 
         if ( empty( $this->key ) ) {
@@ -599,7 +599,7 @@ final class WPInv_Invoice {
         } else {
             $invoice_id = wp_insert_post( $args );
             
-            $post_title = wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $invoice_id );
+            $post_title = wpinv_format_invoice_number( $invoice_id );
             global $wpdb;
             $wpdb->update( $wpdb->posts, array( 'post_title' => $post_title, 'post_name' => sanitize_title( $post_title ) ), array( 'ID' => $invoice_id ) );
             clean_post_cache( $invoice_id );
@@ -1952,17 +1952,23 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this, $valid_invoice_statuses );
     }
     
-    public function get_checkout_payment_url( $on_checkout = false ) {
+    public function get_checkout_payment_url( $on_checkout = false, $secret = false ) {
         $pay_url = wpinv_get_checkout_uri();
 
         if ( is_ssl() ) {
             $pay_url = str_replace( 'http:', 'https:', $pay_url );
         }
+        
+        $key = $this->get_key();
 
         if ( $on_checkout ) {
-            $pay_url = add_query_arg( 'invoice_key', $this->get_key(), $pay_url );
+            $pay_url = add_query_arg( 'invoice_key', $key, $pay_url );
         } else {
-            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $this->get_key() ), $pay_url );
+            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $key ), $pay_url );
+        }
+        
+        if ( $secret ) {
+            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() ) ), $pay_url );
         }
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this );

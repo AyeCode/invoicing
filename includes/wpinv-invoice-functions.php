@@ -1411,6 +1411,8 @@ function wpinv_pay_for_invoice() {
             wpinv_die();
         }
         
+        do_action( 'wpinv_check_pay_for_invoice', $invoice_key );
+
         $invoice_id    = wpinv_get_invoice_id_by_key( $invoice_key );
         $user_can_view = wpinv_can_view_receipt( $invoice_key );
         if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
@@ -1445,6 +1447,39 @@ function wpinv_pay_for_invoice() {
     }
 }
 add_action( 'wpinv_pay_for_invoice', 'wpinv_pay_for_invoice' );
+
+function wpinv_handle_pay_via_invoice_link( $invoice_key ) {
+    if ( !empty( $invoice_key ) && !empty( $_REQUEST['_wpipay'] ) && !is_user_logged_in() && $invoice_id = wpinv_get_invoice_id_by_key( $invoice_key ) ) {
+        if ( $invoice = wpinv_get_invoice( $invoice_id ) ) {
+            $user_id = $invoice->get_user_id();
+            $secret = sanitize_text_field( $_GET['_wpipay'] );
+            
+            if ( $secret === md5( $user_id . '::' . $invoice->get_email() ) ) { // valid invoice link
+                $checkout_url = remove_query_arg( '_wpipay', get_permalink() );
+                
+                if ( (int)wpinv_get_option( 'guest_checkout' ) ) {
+                    $user = get_user_by( 'id', $user_id );
+                    
+                    if ( !empty( $user ) && !is_wp_error( $user ) && !empty( $user->user_login ) ) {
+                        wp_set_current_user( $user_id, $user->user_login );
+                        wp_set_auth_cookie( $user_id );
+                        do_action( 'wp_login', $user->user_login );
+                        
+                        wp_redirect( $checkout_url );
+                        wpinv_die();
+                    }
+                } else {
+                    $login_url = wp_login_url( $checkout_url );
+                    $login_url = apply_filters( 'wpinv_invoice_link_login_redirect', $login_url );
+                    
+                    wp_redirect( $login_url );
+                    wpinv_die();
+                }
+            }
+        }
+    }
+}
+add_action( 'wpinv_check_pay_for_invoice', 'wpinv_handle_pay_via_invoice_link' );
 
 function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = '' ) {
     $invoice_id = is_object( $invoice_id ) && !empty( $invoice_id->ID ) ? $invoice_id : $invoice_id;
@@ -1494,4 +1529,27 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
     $label = '<span class="label label-inv-' . $status . ' ' . $class . '">' . $status_display . '</span>';
     
     return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
+}
+
+function wpinv_format_invoice_number( $number ) {
+    $padd  = wpinv_get_option( 'invoice_number_padd' );
+    
+    // TODO maintain old invoice numbers if invoice number settings not saved. Should be removed before stable release.
+    if ( $padd === '' || $padd === false || $padd === NULL ) {
+        return wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $number );
+    }
+    
+    $prefix  = wpinv_get_option( 'invoice_number_prefix' );
+    $postfix = wpinv_get_option( 'invoice_number_postfix' );
+    
+    $padd = absint( $padd );
+    $formatted_number = absint( $number );
+    
+    if ( $padd > 0 ) {
+        $formatted_number = zeroise( $formatted_number, $padd );
+    }    
+
+    $formatted_number = $prefix . $formatted_number . $postfix;
+
+    return apply_filters( 'wpinv_format_invoice_number', $formatted_number, $number, $prefix, $postfix, $padd );
 }

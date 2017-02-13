@@ -77,7 +77,7 @@ function wpinv_get_settings() {
         $gateways_settings  = is_array( get_option( 'wpinv_settings_gateways' ) )   ? get_option( 'wpinv_settings_gateways' )   : array();
         $email_settings     = is_array( get_option( 'wpinv_settings_emails' ) )     ? get_option( 'wpinv_settings_emails' )     : array();
         $tax_settings       = is_array( get_option( 'wpinv_settings_taxes' ) )      ? get_option( 'wpinv_settings_taxes' )      : array();
-        //$misc_settings    = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
+        $misc_settings      = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
         $tool_settings      = is_array( get_option( 'wpinv_settings_tools' ) )      ? get_option( 'wpinv_settings_tools' )      : array();
 
         $settings = array_merge( $general_settings, $gateways_settings, $tax_settings, $tool_settings );
@@ -165,7 +165,12 @@ function wpinv_get_registered_settings() {
     $due_payment_options[0]    = __( 'Now', 'invoicing' );
     for ( $i = 1; $i <= 30; $i++ ) {
         $due_payment_options[$i] = $i;
-    }    
+    }
+    
+    $invoice_number_padd_options = array();
+    for ( $i = 0; $i <= 20; $i++ ) {
+        $invoice_number_padd_options[$i] = $i;
+    }
     
     $wpinv_settings = array(
         'general' => apply_filters( 'wpinv_settings_general',
@@ -431,7 +436,7 @@ function wpinv_get_registered_settings() {
                     'overdue_days' => array(
                         'id'          => 'overdue_days',
                         'name'        => __( 'Default Due Date', 'invoicing' ),
-                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overriden on individual Invoices.', 'invoicing' ),
+                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $due_payment_options,
                         'chosen'      => true,
@@ -498,18 +503,59 @@ function wpinv_get_registered_settings() {
             )
         ),
         /** Misc Settings */
-        /*'misc' => apply_filters('wpinv_settings_misc',
+        'misc' => apply_filters('wpinv_settings_misc',
             array(
                 'main' => array(
-                    'misc_settings' => array(
-                        'id'   => 'misc_settings',
-                        'name' => '<h3>' . __( 'Misc Settings', 'invoicing' ) . '</h3>',
+                    'invoice_number_format_settings' => array(
+                        'id'   => 'invoice_number_format_settings',
+                        'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
                         'type' => 'header',
+                    ),
+                    'invoice_number_padd' => array(
+                        'id'      => 'invoice_number_padd',
+                        'name'    => __( 'Minimum digits', 'invoicing' ),
+                        'desc'    => __( 'If the invoice number has less digits than this number, it is left padded with 0s. Ex: invoice number 108 will padded to 00108 if digits set to 5. The default 0 means no padding.', 'invoicing' ),
+                        'type'    => 'select',
+                        'options' => $invoice_number_padd_options,
+                        'std'     => 5,
+                        'chosen'  => true,
+                    ),
+                    'invoice_number_prefix' => array(
+                        'id' => 'invoice_number_prefix',
+                        'name' => __( 'Invoice Number prefix', 'invoicing' ),
+                        'desc' => __( 'A prefix to prepend to all invoice numbers. Ex: WPINV-', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => 'WPINV-',
+                        'placeholder' => 'WPINV-',
+                    ),
+                    'invoice_number_postfix' => array(
+                        'id' => 'invoice_number_postfix',
+                        'name' => __( 'Invoice Number postfix', 'invoicing' ),
+                        'desc' => __( 'A postfix to append to all invoice numbers.', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => ''
+                    ),
+                    'guest_checkout_settings' => array(
+                        'id'   => 'guest_checkout_settings',
+                        'name' => '<h3>' . __( 'Pay via Invoice Link', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'guest_checkout' => array(
+                        'type'    => 'radio',
+                        'id'      => 'guest_checkout',
+                        'name'    => __( 'Pay via Invoice Link for non logged in user', 'invoicing' ),
+                        'desc'    => __( 'Select how invoice should be paid when non logged in user clicks on the invoice link that sent to them via for pay for invoice.', 'invoicing' ),
+                        'options' => array(
+                            0 => __( 'Ask them to log-in and redirect back to invoice checkout to pay.', 'invoicing' ),
+                            1 => __( 'Auto log-in the user via invoice link and take them to invoice checkout to pay.', 'invoicing' ),
+                        ),
+                        'std'     => 0,
                     ),
                 ),
             )
         ),
-        */
         /** Misc Settings */
         'tools' => apply_filters('wpinv_settings_tools',
             array(
@@ -639,7 +685,7 @@ function wpinv_get_settings_tabs() {
     $tabs['gateways'] = __( 'Payment Gateways', 'invoicing' );
     $tabs['taxes']    = __( 'Taxes', 'invoicing' );
     $tabs['emails']   = __( 'Emails', 'invoicing' );
-    //$tabs['misc']   = __( 'Misc', 'invoicing' );
+    $tabs['misc']     = __( 'Misc', 'invoicing' );
     $tabs['tools']    = __( 'Tools', 'invoicing' );
 
     return apply_filters( 'wpinv_settings_tabs', $tabs );
