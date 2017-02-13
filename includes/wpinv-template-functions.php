@@ -687,6 +687,8 @@ function wpinv_html_ajax_user_search( $args = array() ) {
 }
 
 function wpinv_ip_geolocation() {
+    global $wpinv_euvat;
+    
     $ip         = !empty( $_GET['ip'] ) ? sanitize_text_field( $_GET['ip'] ) : '';    
     $content    = '';
     $iso        = '';
