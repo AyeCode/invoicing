@@ -1968,14 +1968,18 @@ final class WPInv_Invoice {
         }
         
         if ( $secret ) {
-            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() ) ), $pay_url );
+            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $key ) ), $pay_url );
         }
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this );
     }
     
-    public function get_view_url() {
+    public function get_view_url( $secret = false ) {
         $print_url = get_permalink( $this->ID );
+        
+        if ( $secret ) {
+            $print_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $this->get_key() ) ), $print_url );
+        }
 
         return apply_filters( 'wpinv_get_view_url', $print_url, $this );
     }
