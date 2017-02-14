@@ -6,7 +6,12 @@ if ( !defined('ABSPATH') )
 global $wpinv_euvat;
 
 $sent_to_admin  = !empty( $sent_to_admin ) ? true : false;
-$invoice_url    = $sent_to_admin ? get_edit_post_link( $invoice->ID ) : get_permalink( $invoice->ID );
+if ( $sent_to_admin ) {
+    $invoice_url = get_edit_post_link( $invoice->ID );
+} else {
+    $secret = !empty( $email_type ) && $email_type == 'user_invoice' ? true : false;
+    $invoice_url = $invoice->get_view_url( $secret );
+}
 $vat_name       = $wpinv_euvat->get_vat_name();
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>

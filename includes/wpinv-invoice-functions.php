@@ -1436,10 +1436,12 @@ function wpinv_pay_for_invoice() {
                 }
                 
             } else {
-                wpinv_set_error( 'invalid_invoice', __( 'This invoice not allowed to pay', 'invoicing' ) );
+                $checkout_uri = $invoice->get_view_url();
             }
         } else {
             wpinv_set_error( 'invalid_invoice', __( 'You are not allowed to view this invoice', 'invoicing' ) );
+            
+            $checkout_uri = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
         }
         
         wp_redirect( $checkout_uri );
@@ -1454,27 +1456,11 @@ function wpinv_handle_pay_via_invoice_link( $invoice_key ) {
             $user_id = $invoice->get_user_id();
             $secret = sanitize_text_field( $_GET['_wpipay'] );
             
-            if ( $secret === md5( $user_id . '::' . $invoice->get_email() ) ) { // valid invoice link
-                $checkout_url = remove_query_arg( '_wpipay', get_permalink() );
+            if ( $secret === md5( $user_id . '::' . $invoice->get_email() . '::' . $invoice_key ) ) { // valid invoice link
+                $redirect_to = remove_query_arg( '_wpipay', get_permalink() );
                 
-                if ( (int)wpinv_get_option( 'guest_checkout' ) ) {
-                    $user = get_user_by( 'id', $user_id );
-                    
-                    if ( !empty( $user ) && !is_wp_error( $user ) && !empty( $user->user_login ) ) {
-                        wp_set_current_user( $user_id, $user->user_login );
-                        wp_set_auth_cookie( $user_id );
-                        do_action( 'wp_login', $user->user_login );
-                        
-                        wp_redirect( $checkout_url );
-                        wpinv_die();
-                    }
-                } else {
-                    $login_url = wp_login_url( $checkout_url );
-                    $login_url = apply_filters( 'wpinv_invoice_link_login_redirect', $login_url );
-                    
-                    wp_redirect( $login_url );
-                    wpinv_die();
-                }
+                wpinv_guest_redirect( $redirect_to, $user_id );
+                wpinv_die();
             }
         }
     }

@@ -12,7 +12,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !is_admin() ) {
-    add_filter( 'single_template', 'wpinv_template', 10, 1 );
+    add_filter( 'template_include', 'wpinv_template', 10, 1 );
     add_action( 'wpinv_invoice_print_body_start', 'wpinv_display_invoice_top_bar' );
     add_action( 'wpinv_invoice_top_bar_left', 'wpinv_invoice_display_left_actions' );
     add_action( 'wpinv_invoice_top_bar_right', 'wpinv_invoice_display_right_actions' );
@@ -777,12 +777,25 @@ add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
 function wpinv_template( $template ) {
     global $post, $wp_query;
     
-    if ( is_single() && !empty( $post ) && get_post_type() == 'wpi_invoice' ) {
+    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && get_post_type() == 'wpi_invoice' ) {
         if ( wpinv_user_can_print_invoice( $post->ID ) ) {
             $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
         } else {
-            $wp_query->set_404();
-            $template = get_404_template();
+            if ( !is_user_logged_in() && !empty( $_REQUEST['_wpipay'] ) && $invoice = wpinv_get_invoice( $post->ID ) ) {
+                $user_id = $invoice->get_user_id();
+                $secret = sanitize_text_field( $_GET['_wpipay'] );
+
+                if ( $secret === md5( $user_id . '::' . $invoice->get_email() . '::' . $invoice->get_key() ) ) { // valid invoice link
+                    $redirect_to = remove_query_arg( '_wpipay', get_permalink() );
+
+                    wpinv_guest_redirect( $redirect_to, $user_id );
+                    wpinv_die();
+                }
+            }
+            $redirect_to = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
+
+            wp_redirect( $redirect_to );
+            wpinv_die();
         }
     }
 
