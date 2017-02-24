@@ -53,7 +53,7 @@ class WPInv_Meta_Box_Billing_Details {
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-last-name table-layout">
             <div class="gdmbx-th"><label for="wpinv_last_name"><?php _e( 'Last Name', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_last_name" id="wpinv_last_name" value="<?php echo esc_attr( $invoice->last_name );?>" required="required" />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_last_name" id="wpinv_last_name" value="<?php echo esc_attr( $invoice->last_name );?>" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-company table-layout">

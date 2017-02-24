@@ -348,6 +348,31 @@ class WPInv_Meta_Box_Items {
             wpinv_insert_payment_note( $invoice->ID, $note, $is_customer_note );
         }
         
+        // Update user address if empty.
+        if ( $saved && !empty( $invoice ) ) {
+            if ( $user_id = $invoice->get_user_id() ) {
+                $user_address = wpinv_get_user_address( $user_id, false );
+                
+                if (empty($user_address['first_name'])) {
+                    update_user_meta( $user_id, '_wpinv_first_name', $first_name );
+                    update_user_meta( $user_id, '_wpinv_last_name', $last_name );
+                } else if (empty($user_address['last_name']) && $user_address['first_name'] == $first_name) {
+                    update_user_meta( $user_id, '_wpinv_last_name', $last_name );
+                }
+                
+                if (empty($user_address['address']) || empty($user_address['city']) || empty($user_address['state']) || empty($user_address['country'])) {
+                    update_user_meta( $user_id, '_wpinv_address', $address );
+                    update_user_meta( $user_id, '_wpinv_city', $city );
+                    update_user_meta( $user_id, '_wpinv_state', $state );
+                    update_user_meta( $user_id, '_wpinv_country', $country );
+                    update_user_meta( $user_id, '_wpinv_zip', $zip );
+                    update_user_meta( $user_id, '_wpinv_phone', $phone );
+                }
+            }
+            
+            do_action( 'wpinv_invoice_metabox_saveed', $invoice );
+        }
+        
         return $saved;
     }
 }
