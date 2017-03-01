@@ -777,7 +777,7 @@ add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
 function wpinv_template( $template ) {
     global $post, $wp_query;
     
-    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && get_post_type() == 'wpi_invoice' ) {
+    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && get_post_type( $post->ID ) == 'wpi_invoice' ) {
         if ( wpinv_user_can_print_invoice( $post->ID ) ) {
             $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
         } else {
