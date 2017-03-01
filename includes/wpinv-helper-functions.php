@@ -508,3 +508,161 @@ function wpinv_format_hex( $hex ) {
 
     return $hex ? '#' . $hex : null;
 }
+
+/**
+ * Get truncated string with specified width.
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string being decoded.
+ * @param int $start The start position offset. Number of characters from the beginning of string.
+ *                      For negative value, number of characters from the end of the string.
+ * @param int $width The width of the desired trim. Negative widths count from the end of the string.
+ * @param string $trimmaker A string that is added to the end of string when string is truncated. Ex: "...".
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return string
+ */
+function wpinv_utf8_strimwidth( $str, $start, $width, $trimmaker = '', $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strimwidth' ) ) {
+        return mb_strimwidth( $str, $start, $width, $trimmaker, $encoding );
+    }
+    
+    return wpinv_utf8_substr( $str, $start, $width, $encoding ) . $trimmaker;
+}
+
+/**
+ * Get the string length.
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string being checked for length. 
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return int Returns the number of characters in string.
+ */
+function wpinv_utf8_strlen( $str, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strlen' ) ) {
+        return mb_strlen( $str, $encoding );
+    }
+        
+    return strlen( $str );
+}
+
+function wpinv_utf8_strtolower( $str, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strtolower' ) ) {
+        return mb_strtolower( $str, $encoding );
+    }
+    
+    return strtolower( $str );
+}
+
+function wpinv_utf8_strtoupper( $str, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strtoupper' ) ) {
+        return mb_strtoupper( $str, $encoding );
+    }
+    
+    return strtoupper( $str );
+}
+
+/**
+ * Find position of first occurrence of string in a string
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string being checked.
+ * @param string $find The string to find in input string.
+ * @param int $offset The search offset. Default "0". A negative offset counts from the end of the string.
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return int Returns the position of the first occurrence of search in the string.
+ */
+function wpinv_utf8_strpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strpos' ) ) {
+        return mb_strpos( $str, $find, $offset, $encoding );
+    }
+        
+    return strpos( $str, $find, $offset );
+}
+
+/**
+ * Find position of last occurrence of a string in a string.
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string being checked, for the last occurrence of search.
+ * @param string $find The string to find in input string.
+ * @param int $offset Specifies begin searching an arbitrary number of characters into the string.
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return int Returns the position of the last occurrence of search.
+ */
+function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strrpos' ) ) {
+        return mb_strrpos( $str, $find, $offset, $encoding );
+    }
+        
+    return strrpos( $str, $find, $offset );
+}
+
+/**
+ * Get the part of string.
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string to extract the substring from.
+ * @param int $start If start is non-negative, the returned string will start at the entered position in string, counting from zero.
+ *                      If start is negative, the returned string will start at the entered position from the end of string. 
+ * @param int|null $length Maximum number of characters to use from string.
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return string
+ */
+function wpinv_utf8_substr( $str, $start, $length = null, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_substr' ) ) {
+        if ( $length === null ) {
+            return mb_substr( $str, $start, wpinv_utf8_strlen( $str, $encoding ), $encoding );
+        } else {
+            return mb_substr( $str, $start, $length, $encoding );
+        }
+    }
+        
+    return substr( $str, $start, $length );
+}
+
+/**
+ * Get the width of string.
+ *
+ * @since 1.0.0
+ *
+ * @param string $str The string being decoded.
+ * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
+ * @return string The width of string.
+ */
+function wpinv_utf8_strwidth( $str, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strwidth' ) ) {
+        return mb_strwidth( $str, $encoding );
+    }
+    
+    return wpinv_utf8_strlen( $str, $encoding );
+}
+
+function wpinv_utf8_ucfirst( $str, $lower_str_end = false, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_strlen' ) ) {
+        $first_letter = wpinv_utf8_strtoupper( wpinv_utf8_substr( $str, 0, 1, $encoding ), $encoding );
+        $str_end = "";
+        
+        if ( $lower_str_end ) {
+            $str_end = wpinv_utf8_strtolower( wpinv_utf8_substr( $str, 1, wpinv_utf8_strlen( $str, $encoding ), $encoding ), $encoding );
+        } else {
+            $str_end = wpinv_utf8_substr( $str, 1, wpinv_utf8_strlen( $str, $encoding ), $encoding );
+        }
+
+        return $first_letter . $str_end;
+    }
+    
+    return ucfirst( $str );
+}
+
+function wpinv_utf8_ucwords( $str, $encoding = 'UTF-8' ) {
+    if ( function_exists( 'mb_convert_case' ) ) {
+        return mb_convert_case( $str, MB_CASE_TITLE, $encoding );
+    }
+    
+    return ucwords( $str );
+}
