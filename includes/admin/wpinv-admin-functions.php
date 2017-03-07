@@ -447,7 +447,7 @@ function wpinv_send_register_new_user( $data, $postarr ) {
                 'user_email' => sanitize_text_field( $email ),
                 'first_name' => $first_name,
                 'last_name' => $last_name,
-                'user_nicename' => mb_substr( $user_nicename, 0, 50 ),
+                'user_nicename' => wpinv_utf8_substr( $user_nicename, 0, 50 ),
                 'nickname' => $display_name,
                 'display_name' => $display_name,
             );
