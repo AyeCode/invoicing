@@ -2051,6 +2051,16 @@ final class WPInv_Invoice {
         return $expiration;
     }
     
+    public function get_cancelled_date( $formatted = true ) {
+        $cancelled_date = $this->get_subscription_status() == 'cancelled' ? $this->get_meta( '_wpinv_subscr_cancelled_on', true ) : '';
+        
+        if ( $formatted && $cancelled_date ) {
+            $cancelled_date = date_i18n( get_option( 'date_format' ), strtotime( $cancelled_date ) );
+        }
+        
+        return $cancelled_date;
+    }
+    
     public function get_subscription_created( $default = true ) {
         $created = $this->get_meta( '_wpinv_subscr_created', true );
         
@@ -2160,12 +2170,36 @@ final class WPInv_Invoice {
     
     public function get_subscription_status() {
         $subscription_status = $this->get_meta( '_wpinv_subscr_status', true );
+        
+        if ( empty( $subscription_status ) ) {
+            $bill_times   = (int)$this->get_bill_times();
+            $times_billed = (int)$this->get_total_payments();
+            $expiration = $this->get_subscription_end( false );
+            $expired = $bill_times != 0 && $expiration != '' && $expiration != '-' && strtotime( date_i18n( 'Y-m-d', strtotime( $expiration ) ) ) < strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) ) ? true : false;
+        
+            if ( (int)$bill_times == 0 ) {
+                $status = $expired ? 'expired' : 'active';
+            } else if ( $bill_times > 0 && $times_billed >= $bill_times ) {
+                $status = 'completed';
+            } else if ( $expired ) {
+                $status = 'expired';
+            } else if ( $bill_times > 0 ) {
+                $status = 'active';
+            }
+            
+            if ( $status && $status != $subscription_status ) {
+                $subscription_status = $status;
+                
+                $this->update_meta( '_wpinv_subscr_status', $status );
+            }
+        }
+        
         return $subscription_status;
     }
     
     public function get_subscription_status_label( $status = '' ) {
         $status = !empty( $status ) ? $status : $this->get_subscription_status();
-        
+
         switch( $status ) {
             case 'active' :
                 $status_label = __( 'Active', 'invoicing' );
@@ -2261,8 +2295,13 @@ final class WPInv_Invoice {
             } else {
                 $user = __( 'gateway', 'invoicing' );
             }
+            
+            $subscription_id = $this->get_subscription_id();
+            if ( !$subscription_id ) {
+                $subscription_id = $this->ID;
+            }
 
-            $note = sprintf( __( 'Subscription #%d cancelled by %s', 'invoicing' ), $this->ID, $user );
+            $note = sprintf( __( 'Subscription %s has been cancelled by %s', 'invoicing' ), $subscription_id, $user );
             $this->add_note( $note );
 
             do_action( 'wpinv_subscription_cancelled', $this->ID, $this );
@@ -2326,6 +2365,10 @@ final class WPInv_Invoice {
                 // Force an active subscription to expired if expiration date is in the past
                 $args['status'] = 'expired';
             }
+        }
+
+        if ( isset( $args['status'] ) && $args['status'] == 'cancelled' && empty( $args['cancelled_on'] ) ) {
+            $args['cancelled_on'] = date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) );
         }
 
         do_action( 'wpinv_subscription_pre_update', $args, $this );
@@ -2477,7 +2520,7 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_data( $filed = '' ) {
-        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created' );
+        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created', 'cancelled_on' );
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {

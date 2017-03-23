@@ -1950,6 +1950,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <th><?php _e( 'Start Date', 'invoicing' ) ;?></th>
                         <th><?php _e( 'Expiration Date', 'invoicing' ) ;?></th>
                         <th class="text-center"><?php _e( 'Times Billed', 'invoicing' ) ;?></th>
+                        <th class="text-center"><?php _e( 'Status', 'invoicing' ) ;?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1958,6 +1959,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td><?php echo $invoice->get_subscription_start(); ?></td>
                         <td><?php echo $invoice->get_subscription_end(); ?></td>
                         <td class="text-center"><?php echo $times_billed; ?></td>
+                        <td class="text-center"><?php echo $invoice->get_subscription_status_label() ;?><?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { echo '<br>' . $cancelled_date; } ?></td>
                     </tr>
                 </tbody>
             </table>

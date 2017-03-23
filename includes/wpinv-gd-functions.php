@@ -1039,3 +1039,16 @@ function wpinv_tool_merge_fix_taxes() {
 }
 add_action( 'wpinv_tool_merge_fix_taxes', 'wpinv_tool_merge_fix_taxes' );
 remove_action( 'geodir_before_detail_fields' , 'geodir_build_coupon', 2 );
+
+function wpinv_wpi_to_gdp_handle_subscription_cancel( $invoice_id, $invoice ) {
+    if ( wpinv_pm_active() && !empty( $invoice ) && $invoice->is_recurring() ) {
+        if ( $invoice->is_renewal() ) {
+            $invoice = $invoice->get_parent_payment();
+        }
+        
+        if ( !empty( $invoice ) ) {
+            wpinv_wpi_to_gdp_update_status( $invoice->ID, 'cancelled', $invoice->get_status() );
+        }
+    }
+}
+add_action( 'wpinv_subscription_cancelled', 'wpinv_wpi_to_gdp_handle_subscription_cancel', 10, 2 );

@@ -130,6 +130,12 @@ class WPInv_Meta_Box_Details {
             <?php if ( !empty( $payments ) || $invoice->is_paid() ) { ?>
                 <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
                 <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
+                <?php if ( $subscription_status = $invoice->get_subscription_status_label() ) { ?>
+                <p class="wpi-meta-row wpi-sub-status"><label><?php _e( 'Subscription Status:', 'invoicing' );?> </label><?php echo $subscription_status; ?></p>
+                <?php } ?>
+                <?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { ?>
+                <p class="wpi-meta-row wpi-cancel-date"><label><?php _e( 'Cancelled On:', 'invoicing' );?> </label><?php echo $cancelled_date; ?></p>
+                <?php } ?>
                 <?php if ( !empty( $payments ) ) { ?>
                 <p><strong><?php _e( 'Renewal Payments:', 'invoicing' ); ?></strong></p>
                 <ul id="wpi-sub-payments">
