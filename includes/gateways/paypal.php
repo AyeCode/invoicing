@@ -410,7 +410,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 			return;
 		}
 
-		if ( 'complete' == $payment_status || wpinv_is_test_mode( 'paypal' ) ) {
+		if ( 'complete' == $payment_status || 'completed' == $payment_status || 'processed' == $payment_status || wpinv_is_test_mode( 'paypal' ) ) {
 			wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $data['txn_id'] ) );
 			wpinv_set_payment_transaction_id( $invoice_id, $data['txn_id'] );
 			wpinv_update_payment_status( $invoice_id, 'publish' );
@@ -460,6 +460,8 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 			if ( ! empty( $note ) ) {
 				wpinv_insert_payment_note( $invoice_id, $note );
 			}
+		} else {
+			wpinv_insert_payment_note( $invoice_id, wp_sprintf( __( 'PayPal IPN has been received with invalid payment status: %s', 'invoicing' ), $payment_status ) );
 		}
 	}
 }

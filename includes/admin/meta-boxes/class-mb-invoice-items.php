@@ -334,6 +334,7 @@ class WPInv_Meta_Box_Items {
         //$invoice->set( 'discount', $discount );
         $invoice->set( 'ip', $ip );
         $invoice->old_status = $_POST['original_post_status'];
+        $invoice->currency = wpinv_get_currency();
         if ( !empty( $data['wpinv_gateway'] ) ) {
             $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
         }
