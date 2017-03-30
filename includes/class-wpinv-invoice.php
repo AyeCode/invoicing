@@ -2009,6 +2009,18 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_invoice_has_recurring_item', $has_subscription, $this->cart_details );
     }
     
+    public function is_free_trial() {
+        $is_free_trial = false;
+        
+        if ( $this->is_parent() && $item = $this->get_recurring( true ) ) {
+            if ( !empty( $item ) && $item->has_free_trial() ) {
+                $is_free_trial = true;
+            }
+        }
+
+        return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details );
+    }
+    
     public function get_recurring( $object = false ) {
         $item = NULL;
         
@@ -2325,6 +2337,8 @@ final class WPInv_Invoice {
             'initial_amount'    => '',
             'recurring_amount'  => '',
             'interval'          => 0,
+            'trial_interval'    => 0,
+            'trial_period'      => '',
             'bill_times'        => 0,
             'item_id'           => 0,
             'created'           => '',
@@ -2520,7 +2534,7 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_data( $filed = '' ) {
-        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created', 'cancelled_on' );
+        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'trial_period', 'trial_interval', 'expiration', 'profile_id', 'created', 'cancelled_on' );
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {
@@ -2538,6 +2552,17 @@ final class WPInv_Invoice {
             }
             if ( empty( $subscription_meta['interval'] ) ) {
                 $subscription_meta['interval'] = $item->get_recurring_interval();
+            }
+            if ( $item->has_free_trial() ) {
+                if ( empty( $subscription_meta['trial_period'] ) ) {
+                    $subscription_meta['trial_period'] = $item->get_trial_period();
+                }
+                if ( empty( $subscription_meta['trial_interval'] ) ) {
+                    $subscription_meta['trial_interval'] = $item->get_trial_interval();
+                }
+            } else {
+                $subscription_meta['trial_period']      = '';
+                $subscription_meta['trial_interval']    = 0;
             }
             if ( !$subscription_meta['bill_times'] && $subscription_meta['bill_times'] !== 0 ) {
                 $subscription_meta['bill_times'] = $item->get_recurring_limit();

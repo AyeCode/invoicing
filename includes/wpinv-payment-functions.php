@@ -285,7 +285,7 @@ function wpinv_get_pretty_subscription_period_name( $period ) {
     return $frequency;
 }
 
-function wpinv_subscription_initial_payment_desc( $amount, $period, $interval ) {
+function wpinv_subscription_initial_payment_desc( $amount, $period, $interval, $trial_period = '', $trial_interval = 0 ) {
     $interval   = (int)$interval > 0 ? (int)$interval : 1;
     
     $description = '';
@@ -308,10 +308,10 @@ function wpinv_subscription_initial_payment_desc( $amount, $period, $interval ) 
             break;
     }
 
-    return apply_filters( 'wpinv_subscription_initial_payment_desc', $description, $amount, $period, $interval );
+    return apply_filters( 'wpinv_subscription_initial_payment_desc', $description, $amount, $period, $interval, $trial_period, $trial_interval  );
 }
 
-function wpinv_subscription_recurring_payment_desc( $amount, $period, $interval, $bill_times = 0 ) {
+function wpinv_subscription_recurring_payment_desc( $amount, $period, $interval, $bill_times = 0, $trial_period = '', $trial_interval = 0 ) {
     $interval   = (int)$interval > 0 ? (int)$interval : 1;
     $bill_times = (int)$bill_times > 0 ? (int)$bill_times : 0;
     
@@ -383,7 +383,7 @@ function wpinv_subscription_recurring_payment_desc( $amount, $period, $interval,
             break;
     }
 
-    return apply_filters( 'wpinv_subscription_recurring_payment_desc', $description, $amount, $period, $interval, $bill_times );
+    return apply_filters( 'wpinv_subscription_recurring_payment_desc', $description, $amount, $period, $interval, $bill_times, $trial_period, $trial_interval );
 }
 
 function wpinv_subscription_payment_desc( $invoice ) {
@@ -393,13 +393,28 @@ function wpinv_subscription_payment_desc( $invoice ) {
     
     $description = '';
     if ( $invoice->is_parent() && $item = $invoice->get_recurring( true ) ) {
+        if ( $item->has_free_trial() ) {
+            $trial_period = $item->get_trial_period();
+            $trial_interval = $item->get_trial_interval();
+        } else {
+            $trial_period = '';
+            $trial_interval = 0;
+        }
+        
         $description = wpinv_get_billing_cycle( $invoice->get_total(), $invoice->get_recurring_details( 'total' ), $item->get_recurring_period(), $item->get_recurring_interval(), $item->get_recurring_limit(), $invoice->get_currency() );
     }
     
     return apply_filters( 'wpinv_subscription_payment_desc', $description, $invoice );
 }
 
-function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $currency = '' ) {
+function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $trial_period = '', $trial_interval = 0, $currency = '' ) {
+    wpinv_error_log( $initial, 'initial', __FILE__, __LINE__ );
+    wpinv_error_log( $recurring, 'recurring', __FILE__, __LINE__ );
+    wpinv_error_log( $period, 'period', __FILE__, __LINE__ );
+    wpinv_error_log( $interval, 'interval', __FILE__, __LINE__ );
+    wpinv_error_log( $bill_times, 'bill_times', __FILE__, __LINE__ );
+    wpinv_error_log( $trial_period, 'trial_period', __FILE__, __LINE__ );
+    wpinv_error_log( $trial_interval, 'trial_interval', __FILE__, __LINE__ );
     $initial_total      = wpinv_format_amount( $initial );
     $recurring_total    = wpinv_format_amount( $recurring );
     
@@ -412,17 +427,17 @@ function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bil
     $initial_amount     = wpinv_price( $initial_total, $currency );
     $recurring_amount   = wpinv_price( $recurring_total, $currency );
     
-    $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times );
+    $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times, $trial_period, $trial_interval );
         
     if ( $initial_total != $recurring_total ) {
-        $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval );
+        $initial        = wpinv_subscription_initial_payment_desc( $initial_amount, $period, $interval, $trial_period, $trial_interval );
         
         $description    = wp_sprintf( __( '%s Then %s', 'invoicing' ), $initial, $recurring );
     } else {
         $description    = $recurring;
     }
     
-    return apply_filters( 'wpinv_get_billing_cycle', $description, $initial, $recurring, $period, $interval, $bill_times, $currency );
+    return apply_filters( 'wpinv_get_billing_cycle', $description, $initial, $recurring, $period, $interval, $bill_times, $trial_period, $trial_interval, $currency );
 }
 
 function wpinv_recurring_send_payment_failed( $invoice ) {

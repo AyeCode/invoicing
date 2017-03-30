@@ -525,6 +525,14 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
                 'created'           => date_i18n( 'Y-m-d H:i:s', strtotime( $ipn_data['subscr_date'] ) )
             );
             
+            if ( $item->has_free_trial() ) {
+                $args['trial_period']      = $item->get_trial_period();
+                $args['trial_interval']    = $item->get_trial_interval();
+            } else {
+                $args['trial_period']      = '';
+                $args['trial_interval']    = 0;
+            }
+            
             // Retrieve pending subscription from database and update it's status to active and set proper profile ID
             $subscription->update_subscription( $args );
         }

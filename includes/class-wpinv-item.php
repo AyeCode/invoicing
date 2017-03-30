@@ -265,6 +265,53 @@ class WPInv_Item {
         return (int)apply_filters( 'wpinv_item_recurring_limit', $limit, $this->ID );
 
     }
+    
+    public function has_free_trial() {
+        $free_trial = get_post_meta( $this->ID, '_wpinv_free_trial', true );
+        $free_trial = $this->is_recurring() && !empty( $free_trial ) ? true : false;
+
+        return (bool)apply_filters( 'wpinv_item_has_free_trial', $free_trial, $this->ID );
+
+    }
+    
+    public function get_trial_period( $full = false ) {
+        $period = get_post_meta( $this->ID, '_wpinv_trial_period', true );
+        
+        if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
+            $period = 'D';
+        }
+        
+        if ( $full ) {
+            switch( $period ) {
+                case 'D':
+                    $period = 'day';
+                break;
+                case 'W':
+                    $period = 'week';
+                break;
+                case 'M':
+                    $period = 'month';
+                break;
+                case 'Y':
+                    $period = 'year';
+                break;
+            }
+        }
+
+        return apply_filters( 'wpinv_item_trial_period', $period, $full, $this->ID );
+
+    }
+    
+    public function get_trial_interval() {
+        $interval = absint( get_post_meta( $this->ID, '_wpinv_trial_interval', true ) );
+        
+        if ( !$interval > 0 ) {
+            $interval = 1;
+        }
+
+        return apply_filters( 'wpinv_item_trial_interval', $interval, $this->ID );
+
+    }
 
     public function is_free() {
         $is_free = false;

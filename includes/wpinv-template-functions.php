@@ -373,6 +373,8 @@ function wpinv_html_select( $args = array() ) {
         'data'             => array(),
         'onchange'         => null,
         'required'         => false,
+        'disabled'         => false,
+        'readonly'         => false,
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -405,6 +407,14 @@ function wpinv_html_select( $args = array() ) {
     
     if( !empty( $args['required'] ) ) {
         $options .= ' required="required"';
+    }
+    
+    if( !empty( $args['disabled'] ) ) {
+        $options .= ' disabled';
+    }
+    
+    if( !empty( $args['readonly'] ) ) {
+        $options .= ' readonly';
     }
 
     $class  = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
@@ -1938,7 +1948,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
             return;
         }
         
-        $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $invoice->get_currency() );
+        $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
         $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
         ?>
         <div class="wpinv-subscriptions-details">

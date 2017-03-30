@@ -678,6 +678,13 @@ function wpinv_process_before_send_to_gateway( $invoice, $invoice_data = array()
         $args['currency']              = $invoice->get_currency();
         $args['period']                = $subscription_item->get_recurring_period( true );
         $args['interval']              = $subscription_item->get_recurring_interval();
+        if ( $subscription_item->has_free_trial() ) {
+            $args['trial_period']      = $subscription_item->get_trial_period( true );
+            $args['trial_interval']    = $subscription_item->get_trial_interval();
+        } else {
+            $args['trial_period']      = '';
+            $args['trial_interval']    = 0;
+        }
         $args['bill_times']            = (int)$subscription_item->get_recurring_limit();
         
         $invoice->update_subscription( $args );

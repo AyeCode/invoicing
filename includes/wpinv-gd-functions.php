@@ -116,15 +116,23 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     $meta['vat_class']          = '_standard';
     
     if ( !empty( $package->sub_active ) ) {
+        $sub_num_trial_days = absint( $package->sub_num_trial_days );
+        
         $meta['is_recurring']       = 1;
         $meta['recurring_period']   = $package->sub_units;
         $meta['recurring_interval'] = absint( $package->sub_units_num );
         $meta['recurring_limit']    = absint( $package->sub_units_num_times );
+        $meta['free_trial']         = $sub_num_trial_days > 0 ? 1 : 0;
+        $meta['trial_period']       = $package->sub_num_trial_units;
+        $meta['trial_interval']     = $sub_num_trial_days;
     } else {
         $meta['is_recurring']       = 0;
         $meta['recurring_period']   = '';
         $meta['recurring_interval'] = '';
         $meta['recurring_limit']    = '';
+        $meta['free_trial']         = 0;
+        $meta['trial_period']       = '';
+        $meta['trial_interval']     = '';
     }
     
     $data  = array( 
@@ -421,9 +429,6 @@ function wpinv_wpi_to_gdp_status( $status ) {
         case 'processing':
         case 'renewal':
             $inv_status = 'confirmed';
-        break;
-        case 'refunded':
-            $inv_status = 'cancelled';
         break;
     }
     

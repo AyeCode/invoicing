@@ -117,8 +117,8 @@ class WPInv_Meta_Box_Details {
             
             $total_payments = (int)$invoice->get_total_payments();
             $subscription   = $invoice->get_subscription_data();
-            
-            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $invoice->get_currency() );
+
+            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
             $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
             ?>
             <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
