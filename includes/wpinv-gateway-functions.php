@@ -282,6 +282,10 @@ function wpinv_show_gateways() {
             $show_gateways = false;
         }
     }
+    
+    if ( !$show_gateways && wpinv_cart_has_recurring_item() ) {
+        $show_gateways = true;
+    }
 
     return apply_filters( 'wpinv_show_gateways', $show_gateways );
 }

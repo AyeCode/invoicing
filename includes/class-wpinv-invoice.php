@@ -1277,7 +1277,11 @@ final class WPInv_Invoice {
     }
     
     public function get_total( $currency = false ) {        
-        $total = wpinv_format_amount( $this->total, NULL, !$currency );
+        if ( $this->is_free_trial() ) {
+            $total = wpinv_format_amount( 0, NULL, !$currency );
+        } else {
+            $total = wpinv_format_amount( $this->total, NULL, !$currency );
+        }
         if ( $currency ) {
             $total = wpinv_price( $total, $this->get_currency() );
         }
@@ -1287,57 +1291,165 @@ final class WPInv_Invoice {
     
     public function get_recurring_details( $field = '', $currency = false ) {        
         $data                 = array();
+    $data['cart_details'] = $this->cart_details;
+        $data['subtotal']     = $this->get_subtotal();
+        $data['discount']     = $this->get_discount();
+        $data['tax']          = $this->get_tax();
+        $data['total']        = $this->get_total();
+    
+        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) ) {
+            $is_free_trial = $this->is_free_trial();
+            $discounts = $this->get_discounts( true );
+            
+            if ( $is_free_trial || !empty( $discounts ) ) {
+                $first_use_only = false;
+                
+                if ( !empty( $discounts ) ) {
+                    foreach ( $discounts as $key => $code ) {
+                        if ( wpinv_discount_is_recurring( $code, true ) ) {
+                            $first_use_only = true;
+                            break;
+                        }
+                    }
+                }
+                    
+                if ( !$first_use_only ) {
+                    $data['subtotal'] = wpinv_format_amount( $this->subtotal, NULL, true );
+                    $data['discount'] = wpinv_format_amount( $this->discount, NULL, true );
+                    $data['tax']      = wpinv_format_amount( $this->tax, NULL, true );
+                    $data['total']    = wpinv_format_amount( $this->total, NULL, true );
+                } else {
+                    $cart_subtotal   = 0;
+                    $cart_discount   = 0;
+                    $cart_tax        = 0;
+
+                    foreach ( $this->cart_details as $key => $item ) {
+                        $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
+                        $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
+                        $item_discount  = 0;
+                        $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
+                        
+                        if ( wpinv_prices_include_tax() ) {
+                            $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
+                        }
+                        
+                        $item_total     = $item_subtotal - $item_discount + $item_tax;
+                        // Do not allow totals to go negative
+                        if ( $item_total < 0 ) {
+                            $item_total = 0;
+                        }
+                        
+                        $cart_subtotal  += (float)($item_subtotal);
+                        $cart_discount  += (float)($item_discount);
+                        $cart_tax       += (float)($item_tax);
+                        
+                        $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
+                        $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
+                        $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
+                    }
+                    
+                    $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
+                    $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
+                    $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
+                    $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                }
+            }
+        }
+        
+        $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
+        wpinv_error_log( $data, 'data', __FILE__, __LINE__ );
+        if ( isset( $data[$field] ) ) {
+            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
+        }
+        
+        return $data;
+    }
+    
+    public function get_recurring_details1( $field = '', $currency = false ) {        
+        $data                 = array();
         $data['cart_details'] = $this->cart_details;
         $data['subtotal']     = $this->get_subtotal();
         $data['discount']     = $this->get_discount();
         $data['tax']          = $this->get_tax();
         $data['total']        = $this->get_total();
-        
-        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) && $discounts = $this->get_discounts( true ) ) {
-            $has_recurring = false;
-            foreach ( $discounts as $key => $code ) {
-                if ( wpinv_discount_is_recurring( $code, true ) ) {
-                    $has_recurring = true;
-                    break;
-                }
-            }
+        wpinv_error_log( $data, 'data 1', __FILE__, __LINE__ );
+        wpinv_error_log( $this->total, 'total', __FILE__, __LINE__ );
+        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) ) {
+            $discounts = $this->get_discounts( true );
+            $is_free_trial = $this->is_free_trial();
             
-            if ( $has_recurring ) {
-                $cart_subtotal   = 0;
-                $cart_discount   = 0;
-                $cart_tax        = 0;
-
-                foreach ( $this->cart_details as $key => $item ) {
-                    $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                    $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
-                    $item_discount  = 0;
-                    $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
-                    
-                    if ( wpinv_prices_include_tax() ) {
-                        $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
-                    }
-                    
-                    $item_total     = $item_subtotal - $item_discount + $item_tax;
-                    // Do not allow totals to go negative
-                    if ( $item_total < 0 ) {
-                        $item_total = 0;
-                    }
-                    
-                    $cart_subtotal  += (float)($item_subtotal);
-                    $cart_discount  += (float)($item_discount);
-                    $cart_tax       += (float)($item_tax);
-                    
-                    $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
-                    $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
-                    $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
-                }
+            if ( !empty( $discounts ) || $is_free_trial ) {
+                $first_use_only = false;
                 
-                $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
-                $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
-                $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
-                $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                if ( !empty( $discounts ) ) {
+                    foreach ( $discounts as $key => $code ) {
+                        if ( wpinv_discount_is_recurring( $code, true ) ) {
+                            $first_use_only = true;
+                            break;
+                        }
+                    }
+                }
+            
+                wpinv_error_log( $first_use_only, 'first_use_only', __FILE__, __LINE__ );
+                wpinv_error_log( $is_free_trial, 'is_free_trial', __FILE__, __LINE__ );
+                
+                if ( $first_use_only || $is_free_trial ) {
+                    $cart_subtotal   = 0;
+                    $cart_discount   = 0;
+                    $cart_tax        = 0;
+
+                    foreach ( $this->cart_details as $key => $item ) {
+                        if ( $is_free_trial ) {
+                            $item_subtotal = $item['subtotal'];
+                            $item_discount = $item['discount'];
+                            $item_tax = $item['tax'];
+                            $item_total = $item['price'];
+                        } else {
+                            $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
+                            $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
+                            $item_discount  = 0;
+                            if (!$first_use_only && $is_free_trial) {
+                                $item_subtotal -= $item_discount;
+                            }
+                            $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
+                            
+                            wpinv_error_log( $item_discount, 'item_discount', __FILE__, __LINE__ );
+                            if ( wpinv_prices_include_tax() ) {
+                                $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
+                            }
+                            
+                            $item_total     = $item_subtotal - $item_discount + $item_tax;
+                            // Do not allow totals to go negative
+                            if ( $item_total < 0 ) {
+                                $item_total = 0;
+                            }
+                        }
+                        
+                        $cart_subtotal  += (float)($item_subtotal);
+                        $cart_discount  += (float)($item_discount);
+                        $cart_tax       += (float)($item_tax);
+                        
+                        $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
+                        $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
+                        $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
+                    }
+                    
+                    if ( $cart_subtotal > 0 && $is_free_trial && !$first_use_only ) {
+                        //$cart_subtotal = $cart_subtotal - $cart_discount;
+                        
+                        if ( $cart_subtotal < 0 ) {
+                            $cart_subtotal = 0;
+                        }
+                    }
+                    
+                    $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
+                    $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
+                    $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
+                    $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                }
             }
         }
+        wpinv_error_log( $data, 'data 2', __FILE__, __LINE__ );
         
         $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
         
@@ -1943,7 +2055,7 @@ final class WPInv_Invoice {
     public function needs_payment() {
         $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
 
-        if ( $this->has_status( $valid_invoice_statuses ) && $this->get_total() > 0 ) {
+        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() ) ) {
             $needs_payment = true;
         } else {
             $needs_payment = false;
@@ -2145,6 +2257,10 @@ final class WPInv_Invoice {
             'fields'            => 'ids'
         ) );
         
+        if ( $this->is_free_trial() ) {
+            $self = false;
+        }
+        
         if ( $self && $this->is_paid() ) {
             if ( !empty( $invoices ) ) {
                 $invoices[] = (int)$this->ID;
@@ -2182,21 +2298,27 @@ final class WPInv_Invoice {
     
     public function get_subscription_status() {
         $subscription_status = $this->get_meta( '_wpinv_subscr_status', true );
-        
+
         if ( empty( $subscription_status ) ) {
-            $bill_times   = (int)$this->get_bill_times();
-            $times_billed = (int)$this->get_total_payments();
-            $expiration = $this->get_subscription_end( false );
-            $expired = $bill_times != 0 && $expiration != '' && $expiration != '-' && strtotime( date_i18n( 'Y-m-d', strtotime( $expiration ) ) ) < strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) ) ? true : false;
-        
-            if ( (int)$bill_times == 0 ) {
-                $status = $expired ? 'expired' : 'active';
-            } else if ( $bill_times > 0 && $times_billed >= $bill_times ) {
-                $status = 'completed';
-            } else if ( $expired ) {
-                $status = 'expired';
-            } else if ( $bill_times > 0 ) {
-                $status = 'active';
+            $status = 'pending';
+            
+            if ( $this->is_paid() ) {        
+                $bill_times   = (int)$this->get_bill_times();
+                $times_billed = (int)$this->get_total_payments();
+                $expiration = $this->get_subscription_end( false );
+                $expired = $bill_times != 0 && $expiration != '' && $expiration != '-' && strtotime( date_i18n( 'Y-m-d', strtotime( $expiration ) ) ) < strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) ) ? true : false;
+            
+                if ( (int)$bill_times == 0 ) {
+                    $status = $expired ? 'expired' : 'active';
+                } else if ( $bill_times > 0 && $times_billed >= $bill_times ) {
+                    $status = 'completed';
+                } else if ( $expired ) {
+                    $status = 'expired';
+                } else if ( $bill_times > 0 ) {
+                    $status = 'active';
+                } else {
+                    $status = 'pending';
+                }
             }
             
             if ( $status && $status != $subscription_status ) {

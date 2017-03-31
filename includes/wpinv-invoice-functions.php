@@ -280,12 +280,16 @@ function wpinv_cart_subtotal( $items = array() ) {
     return $price;
 }
 
-function wpinv_get_cart_total( $items = array(), $discounts = false ) {
+function wpinv_get_cart_total( $items = array(), $discounts = false, $invoice = array() ) {
     $subtotal  = (float)wpinv_get_cart_subtotal( $items );
     $discounts = (float)wpinv_get_cart_discounted_amount( $items );
     $cart_tax  = (float)wpinv_get_cart_tax( $items );
     $fees      = (float)wpinv_get_cart_fee_total();
-    $total     = $subtotal - $discounts + $cart_tax + $fees;
+    if ( !empty( $invoice ) && $invoice->is_free_trial() ) {
+        $total = 0;
+    } else {
+        $total     = $subtotal - $discounts + $cart_tax + $fees;
+    }
 
     if ( $total < 0 ) {
         $total = 0.00;
@@ -296,10 +300,10 @@ function wpinv_get_cart_total( $items = array(), $discounts = false ) {
     return wpinv_sanitize_amount( $total );
 }
 
-function wpinv_cart_total( $cart_items = array(), $echo = true ) {
+function wpinv_cart_total( $cart_items = array(), $echo = true, $invoice = array() ) {
     global $cart_total;
-    $total = wpinv_price( wpinv_format_amount( wpinv_get_cart_total( $cart_items ) ) );
-    $total = apply_filters( 'wpinv_cart_total', $total, $cart_items );
+    $total = wpinv_price( wpinv_format_amount( wpinv_get_cart_total( $cart_items, NULL, $invoice ) ) );
+    $total = apply_filters( 'wpinv_cart_total', $total, $cart_items, $invoice );
 
     // Todo - Show tax labels here (if needed)
     
@@ -437,6 +441,18 @@ function wpinv_cart_has_recurring_item() {
     }
     
     return apply_filters( 'wpinv_cart_has_recurring_item', $has_subscription, $cart_items );
+}
+
+function wpinv_cart_has_free_trial() {
+    $invoice = wpinv_get_invoice_cart();
+    
+    $free_trial = false;
+    
+    if ( !empty( $invoice ) && $invoice->is_free_trial() ) {
+        $free_trial = true;
+    }
+    
+    return apply_filters( 'wpinv_cart_has_free_trial', $free_trial, $invoice );
 }
 
 function wpinv_get_cart_contents() {

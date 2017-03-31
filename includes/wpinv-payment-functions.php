@@ -288,6 +288,12 @@ function wpinv_get_pretty_subscription_period_name( $period ) {
 function wpinv_subscription_initial_payment_desc( $amount, $period, $interval, $trial_period = '', $trial_interval = 0 ) {
     $interval   = (int)$interval > 0 ? (int)$interval : 1;
     
+    if ( $trial_interval > 0 && !empty( $trial_period ) ) {
+        $amount = __( 'Free', 'invoicing' );
+        $interval = $trial_interval;
+        $period = $trial_period;
+    }
+    
     $description = '';
     switch ( $period ) {
         case 'D' :
@@ -401,27 +407,28 @@ function wpinv_subscription_payment_desc( $invoice ) {
             $trial_interval = 0;
         }
         
-        $description = wpinv_get_billing_cycle( $invoice->get_total(), $invoice->get_recurring_details( 'total' ), $item->get_recurring_period(), $item->get_recurring_interval(), $item->get_recurring_limit(), $invoice->get_currency() );
+        $description = wpinv_get_billing_cycle( $invoice->get_total(), $invoice->get_recurring_details( 'total' ), $item->get_recurring_period(), $item->get_recurring_interval(), $item->get_recurring_limit(), $trial_period, $trial_interval, $invoice->get_currency() );
     }
     
     return apply_filters( 'wpinv_subscription_payment_desc', $description, $invoice );
 }
 
 function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $trial_period = '', $trial_interval = 0, $currency = '' ) {
-    wpinv_error_log( $initial, 'initial', __FILE__, __LINE__ );
-    wpinv_error_log( $recurring, 'recurring', __FILE__, __LINE__ );
-    wpinv_error_log( $period, 'period', __FILE__, __LINE__ );
-    wpinv_error_log( $interval, 'interval', __FILE__, __LINE__ );
+    wpinv_error_log( $initial . ' => ' . $recurring, 'initial => recurring', __FILE__, __LINE__ );
+    wpinv_error_log( $interval . ' => ' . $period, 'interval => period', __FILE__, __LINE__ );
+    wpinv_error_log( $trial_interval . ' => ' . $trial_period, 'trial interval => period', __FILE__, __LINE__ );
     wpinv_error_log( $bill_times, 'bill_times', __FILE__, __LINE__ );
-    wpinv_error_log( $trial_period, 'trial_period', __FILE__, __LINE__ );
-    wpinv_error_log( $trial_interval, 'trial_interval', __FILE__, __LINE__ );
     $initial_total      = wpinv_format_amount( $initial );
     $recurring_total    = wpinv_format_amount( $recurring );
     
-    if ( $bill_times == 1 ) {
-        $recurring_total = $initial_total;
-    } else if ( $bill_times > 1 && $initial_total != $recurring_total ) {
-        $bill_times--;
+    if ( $trial_interval > 0 && !empty( $trial_period ) ) {
+        // Free trial
+    } else {
+        if ( $bill_times == 1 ) {
+            $recurring_total = $initial_total;
+        } else if ( $bill_times > 1 && $initial_total != $recurring_total ) {
+            $bill_times--;
+        }
     }
     
     $initial_amount     = wpinv_price( $initial_total, $currency );
