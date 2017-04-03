@@ -146,7 +146,14 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         // Set item description
         $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( array( 'id' => $item->ID ) ), ENT_COMPAT, 'UTF-8' ) );
         
-        if ( $initial_amount != $recurring_amount && $bill_times != 1 ) {
+        if ( $invoice->is_free_trial() && $item->has_free_trial() ) {
+            $paypal_args['a1']  = $initial_amount;
+            $paypal_args['p1']  = $item->get_trial_interval();
+            $paypal_args['t1']  = $item->get_trial_period();
+            
+            // Set the recurring amount
+            $paypal_args['a3']  = $recurring_amount;
+        } else if ( $initial_amount != $recurring_amount && $bill_times != 1 ) {
             $paypal_args['a1']  = $initial_amount;
             $paypal_args['p1']  = $interval;
             $paypal_args['t1']  = $period;
@@ -157,7 +164,7 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
             if ( $bill_times > 1 ) {
                 $bill_times--;
             }
-        } else {        
+        } else {
             $paypal_args['a3']  = $initial_amount;
         }
         
@@ -512,9 +519,11 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
         foreach ( $cart_details as $cart_item ) {
             $item = new WPInv_Item( $cart_item['id'] );
             
+            $status = $invoice->is_free_trial() && $item->has_free_trial() ? 'trialing' : 'active';
+            
             $args = array(
                 'item_id'           => $cart_item['id'],
-                'status'            => 'active',
+                'status'            => $status,
                 'period'            => $item->get_recurring_period(),
                 'initial_amount'    => $invoice->get_total(),
                 'recurring_amount'  => $invoice->get_recurring_details( 'total' ),
@@ -533,7 +542,7 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
                 $args['trial_interval']    = 0;
             }
             
-            // Retrieve pending subscription from database and update it's status to active and set proper profile ID
+
             $subscription->update_subscription( $args );
         }
     }

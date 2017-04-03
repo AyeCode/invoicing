@@ -414,10 +414,6 @@ function wpinv_subscription_payment_desc( $invoice ) {
 }
 
 function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $trial_period = '', $trial_interval = 0, $currency = '' ) {
-    wpinv_error_log( $initial . ' => ' . $recurring, 'initial => recurring', __FILE__, __LINE__ );
-    wpinv_error_log( $interval . ' => ' . $period, 'interval => period', __FILE__, __LINE__ );
-    wpinv_error_log( $trial_interval . ' => ' . $trial_period, 'trial interval => period', __FILE__, __LINE__ );
-    wpinv_error_log( $bill_times, 'bill_times', __FILE__, __LINE__ );
     $initial_total      = wpinv_format_amount( $initial );
     $recurring_total    = wpinv_format_amount( $recurring );
     

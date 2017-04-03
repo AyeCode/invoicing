@@ -1950,6 +1950,16 @@ function wpinv_invoice_subscription_details( $invoice ) {
         
         $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
         $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
+        
+        $subscription_status = $invoice->get_subscription_status();
+        
+        $status_desc = '';
+        if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date( $subscription_status ) ) {
+            $status_desc = wp_sprintf( __( 'Until: %s', 'invoicing' ), $trial_end_date );
+        } else if ( $subscription_status == 'cancelled' && $cancelled_date = $invoice->get_cancelled_date( $subscription_status ) ) {
+            $status_desc = wp_sprintf( __( 'On: %s', 'invoicing' ), $cancelled_date );
+        }
+        $status_desc = $status_desc != '' ? '<span class="meta">' . $status_desc . '</span>' : '';
         ?>
         <div class="wpinv-subscriptions-details">
             <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>
@@ -1969,7 +1979,9 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td><?php echo $invoice->get_subscription_start(); ?></td>
                         <td><?php echo $invoice->get_subscription_end(); ?></td>
                         <td class="text-center"><?php echo $times_billed; ?></td>
-                        <td class="text-center"><?php echo $invoice->get_subscription_status_label() ;?><?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { echo '<br>' . $cancelled_date; } ?></td>
+                        <td class="text-center wpi-sub-status"><?php echo $invoice->get_subscription_status_label() ;?>
+                        <?php echo $status_desc; ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
