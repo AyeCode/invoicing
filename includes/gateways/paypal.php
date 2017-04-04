@@ -373,7 +373,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 		// No email associated with purchase, so store from PayPal
 		wpinv_update_invoice_meta( $invoice_id, '_wpinv_email', $data['payer_email'] );
 
-		// Setup and store the customers's details
+		// Setup and store the customer's details
 		$user_info = array(
 			'user_id'    => '-1',
 			'email'      => sanitize_text_field( $data['payer_email'] ),
@@ -504,6 +504,11 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
         return;
     }
 
+    if ( $invoice->is_free_trial() && !empty( $ipn_data['invoice'] ) ) {
+        wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Invoice ID: %s', 'invoicing' ) , $ipn_data['invoice'] ) );
+        wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['invoice'] );
+    }
+    
     wpinv_update_payment_status( $parent_invoice_id, 'publish' );
     sleep(1);
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ) );
@@ -575,7 +580,7 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     }
     
     if ( wpinv_get_id_by_transaction_id( $ipn_data['txn_id'] ) ) {
-        return; // Payment alreay recorded
+        return; // Payment already recorded
     }
 
     $currency_code = strtolower( $ipn_data['mc_currency'] );
@@ -705,18 +710,18 @@ function wpinv_process_paypal_refund( $data, $invoice_id = 0 ) {
 
 function wpinv_get_paypal_redirect( $ssl_check = false ) {
     if ( is_ssl() || ! $ssl_check ) {
-        $protocal = 'https://';
+        $protocol = 'https://';
     } else {
-        $protocal = 'http://';
+        $protocol = 'http://';
     }
 
     // Check the current payment mode
     if ( wpinv_is_test_mode( 'paypal' ) ) {
         // Test mode
-        $paypal_uri = $protocal . 'www.sandbox.paypal.com/cgi-bin/webscr';
+        $paypal_uri = $protocol . 'www.sandbox.paypal.com/cgi-bin/webscr';
     } else {
         // Live mode
-        $paypal_uri = $protocal . 'www.paypal.com/cgi-bin/webscr';
+        $paypal_uri = $protocol . 'www.paypal.com/cgi-bin/webscr';
     }
 
     return apply_filters( 'wpinv_paypal_uri', $paypal_uri );
@@ -765,15 +770,19 @@ function wpinv_paypal_get_transaction_id( $invoice_id ) {
 }
 add_filter( 'wpinv_payment_get_transaction_id-paypal', 'wpinv_paypal_get_transaction_id', 10, 1 );
 
-function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id ) {
-    $sandbox = wpinv_is_test_mode( 'paypal' ) ? '.sandbox' : '';
-    
-    $paypal_base_url = 'https://www' . $sandbox . '.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=';
-    $transaction_url = '<a href="' . esc_url( $paypal_base_url . $transaction_id ) . '" target="_blank">' . $transaction_id . '</a>';
+function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id, $invoice ) {
+    if ( $invoice->is_free_trial() || $transaction_id == $invoice_id ) { // Free trial does not have transaction at PayPal.
+        $transaction_url = $invoice->get_view_url();
+    } else {
+        $sandbox = wpinv_is_test_mode( 'paypal' ) ? '.sandbox' : '';
+        $transaction_url = 'https://www' . $sandbox . '.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=' . $transaction_id;
+    }
 
-    return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_url );
+    $transaction_link = '<a href="' . esc_url( $transaction_url ) . '" target="_blank">' . $transaction_id . '</a>';
+
+    return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_link, $invoice );
 }
-add_filter( 'wpinv_payment_details_transaction_id-paypal', 'wpinv_paypal_link_transaction_id', 10, 2 );
+add_filter( 'wpinv_payment_details_transaction_id-paypal', 'wpinv_paypal_link_transaction_id', 10, 3 );
 
 function wpinv_gateway_paypal_button_label($label) {
     return __( 'Proceed to PayPal', 'invoicing' );

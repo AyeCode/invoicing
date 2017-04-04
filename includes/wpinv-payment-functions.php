@@ -226,7 +226,7 @@ function wpinv_payment_link_transaction_id( $invoice = '' ) {
         return false;
     }
 
-    return apply_filters( 'wpinv_payment_details_transaction_id-' . $invoice->gateway, $invoice->get_transaction_id(), $invoice->ID );
+    return apply_filters( 'wpinv_payment_details_transaction_id-' . $invoice->gateway, $invoice->get_transaction_id(), $invoice->ID, $invoice );
 }
 
 function wpinv_get_pretty_subscription_period( $period ) {

@@ -50,7 +50,7 @@ function wpinv_authorizenet_cc_form( $invoice_id ) {
 }
 add_action( 'wpinv_authorizenet_cc_form', 'wpinv_authorizenet_cc_form', 10, 1 );
 
-function wpinv_process_authorizenet_payment( $purchase_data ) {
+function wpinv_process_authorizenet_payment_old( $purchase_data ) {
     if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
         wp_die( __( 'Nonce verification has failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
@@ -194,6 +194,213 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
     } else {
         wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed while processing a Authorize.net payment. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $invoice );
         // If errors are present, send the user back to the purchase page so they can be corrected
+        wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
+    }
+}
+
+function wpinv_process_authorizenet_payment( $purchase_data ) {
+    if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
+        wp_die( __( 'Nonce verification has failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
+    }
+    
+    // Collect payment data
+    $payment_data = array(
+        'price'         => $purchase_data['price'],
+        'date'          => $purchase_data['date'],
+        'user_email'    => $purchase_data['user_email'],
+        'invoice_key'   => $purchase_data['invoice_key'],
+        'currency'      => wpinv_get_currency(),
+        'items'         => $purchase_data['items'],
+        'user_info'     => $purchase_data['user_info'],
+        'cart_details'  => $purchase_data['cart_details'],
+        'gateway'       => 'authorizenet',
+        'status'        => 'pending'
+    );
+
+    // Record the pending payment
+    $invoice = wpinv_get_invoice( $purchase_data['invoice_id'] );
+    
+    $errors = wpinv_get_errors();
+    
+    if ( empty( $errors ) ) {
+        if ( !empty( $invoice ) ) {
+            $invoice_id = $invoice->ID;
+            $quantities_enabled = wpinv_item_quantities_enabled();
+            $use_taxes          = wpinv_use_taxes();
+            
+            $authorizenet_card  = !empty( $_POST['authorizenet'] ) ? $_POST['authorizenet'] : array();
+            $card_defaults      = array(
+                'cc_owner'          => $invoice->get_user_full_name(),
+                'cc_number'         => false,
+                'cc_expire_month'   => false,
+                'cc_expire_year'    => false,
+                'cc_cvv2'           => false,
+            );
+            $authorizenet_card = wp_parse_args( $authorizenet_card, $card_defaults );
+            
+            $authorizeAIM = wpinv_authorizenet_AIM();
+            $authorizeAIM->first_name       = $invoice->get_first_name();
+            $authorizeAIM->last_name        = $invoice->get_last_name();
+            $authorizeAIM->company          = $invoice->company;
+            $authorizeAIM->address          = wp_strip_all_tags( $invoice->get_address(), true );
+            $authorizeAIM->city             = $invoice->city;
+            $authorizeAIM->state            = $invoice->state;
+            $authorizeAIM->zip              = $invoice->zip;
+            $authorizeAIM->country          = $invoice->country;
+            $authorizeAIM->phone            = $invoice->phone;
+            $authorizeAIM->email            = $invoice->get_email();
+            $authorizeAIM->amount           = wpinv_sanitize_amount( $invoice->get_total() );
+            $authorizeAIM->card_num         = str_replace( ' ', '', sanitize_text_field( $authorizenet_card['cc_number'] ) );
+            $authorizeAIM->exp_date         = sanitize_text_field( $authorizenet_card['cc_expire_month'] ) . '/' . sanitize_text_field( $authorizenet_card['cc_expire_year'] );
+            $authorizeAIM->card_code        = sanitize_text_field( $authorizenet_card['cc_cvv2'] );
+            $authorizeAIM->invoice_num      = $invoice->ID;
+            
+            if ( $use_taxes && $invoice->get_tax() > 0 ) {
+                $authorizeAIM->tax  = $invoice->get_tax(); // TODO
+            }
+            
+            $line_items      = array();
+            $item_desc       = array();
+            
+            foreach ( $invoice->get_cart_details() as $item ) {            
+                $quantity       = $quantities_enabled && !empty( $item['quantity'] ) && $item['quantity'] > 0 ? $item['quantity'] : 1;
+                $line_items[]   = $item['id'] . '<|>' . $item['name'] . '<|><|>' . $quantity . '<|>' . $item['item_price'] . '<|>' . ( $use_taxes && !empty( $item['tax'] ) && $item['tax'] > 0 ? 'Y' : 'N' );
+                $item_desc[]    = $item['name'] . ' (' . $quantity . 'x ' . wpinv_price( wpinv_format_amount( $item['item_price'] ) ) . ')';
+            }
+            
+            $item_desc = '#' . $invoice->get_number() . ': ' . implode( ', ', $item_desc );
+            
+            if ( $use_taxes && $invoice->get_tax() > 0 ) {
+                $item_desc .= ', ' . wp_sprintf( __( 'Tax: %s', 'invoicing' ), $invoice->get_tax( true ) );
+            }
+            
+            $authorizeAIM->description  = html_entity_decode( $item_desc , ENT_QUOTES, 'UTF-8' );
+            
+            // Send payment request
+            $response   = wpinv_authorizenet_send_request( $data, $line_items );
+            
+            try {
+                $response = $transaction->authorizeAndCapture();
+                
+                if ( !empty( $response ) && $response->approved ) {
+                    // Empty the shopping cart
+                    wpinv_empty_cart();
+            
+                    wpinv_update_payment_status( $invoice_id, 'publish' );
+                    wpinv_set_payment_transaction_id( $invoice_id, $response->transaction_id );
+                    
+                    $message = array();
+                    if ( isset( $response->authorization_code ) ) {
+                        $message[] = wp_sprintf( __( 'Authorization Code: %s', 'invoicing' ), $response->authorization_code );
+                    }
+                    if ( isset( $response->avs_response ) ) {
+                        $message[] = wp_sprintf( __( 'AVS Response: %s', 'invoicing' ), $response->avs_response );
+                    }
+                    if ( isset( $response->transaction_id ) ) {
+                        $message[] = wp_sprintf( __( 'Transaction ID: %s', 'invoicing' ), $response->transaction_id );
+                    }
+                    if ( isset( $response->card_code_response ) ) {
+                        $message[] = wp_sprintf( __( 'Card Code Response: %s', 'invoicing' ), $response->card_code_response );
+                    }
+                    if ( isset( $response->cavv_response ) ) {
+                        $message[] = wp_sprintf( __( 'Cardholder Authentication Verification Response: %s', 'invoicing' ), $response->cavv_response );
+                    }
+                            
+                    wpinv_insert_payment_note( $invoice_id, sprintf( __( 'AUTHORIZE.NET PAYMENT: %s', 'invoicing' ) , implode( "<br>", $message ) ) );
+                    
+                    wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+                } else {
+                    if ( isset( $response->response_reason_text ) ) {
+                        $error = $response->response_reason_text;
+                    } elseif ( isset( $response->error_message ) ) {
+                        $error = $response->error_message;
+                    } else {
+                        $error = '';
+                    }
+                    
+                    $errorMsg = '';
+                    if ( strpos( strtolower( $error ), 'the credit card number is invalid' ) !== false ) {
+                        $errorMsg = __( 'Your card number is invalid!', 'invoicing' );
+                        wpinv_set_error( 'invalid_card', $errorMsg );
+                    } elseif( strpos( strtolower( $error ), 'this transaction has been declined' ) !== false ) {
+                        $errorMsg = __( 'Your card has been declined!', 'invoicing' );
+                        wpinv_set_error( 'invalid_card', $errorMsg );
+                    } elseif( isset( $response->response_reason_text ) ) {
+                        $errorMsg = __( $response->response_reason_text, 'invoicing' );
+                        wpinv_set_error( 'api_error', $errorMsg );
+                    } elseif( isset( $response->error_message ) ) {
+                        $errorMsg = __( $response->error_message, 'invoicing' );
+                        wpinv_set_error( 'api_error', $errorMsg );
+                    } else {
+                        $errorMsg = sprintf( __( 'An error occurred. Error data: %s!', 'invoicing' ), print_r( $response, true ) );
+                        wpinv_set_error( 'api_error', $errorMsg );
+                    }
+                    
+                    wpinv_record_gateway_error( __( 'Payment error:', 'invoicing' ), $errorMsg );
+                    wpinv_insert_payment_note( $invoice_id, wp_sprintf( __( 'Payment error: %s', 'invoicing' ), $errorMsg ) );
+                    
+                    wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
+                }
+            } catch ( AuthorizeNetException $e ) {
+                wpinv_set_error( 'request_error', $e->getMessage() );
+                wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), $e->getMessage() );            
+                wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
+            }
+            
+            if ( !empty( $response ) ) {
+                if ( !empty( $response['response_code'] ) ) {
+                    switch ( (int)$response['response_code'] ) {
+                        case 1: // Approved 
+                            $message = array();
+                            if ( isset( $response['authorization_code'] ) ) {
+                                $message[] = wp_sprintf( __( 'Authorization Code: %s', 'invoicing' ), $response['authorization_code'] );
+                            }
+                            if ( isset( $response['avs_response'] ) ) {
+                                $message[] = wp_sprintf( __( 'AVS Response: %s', 'invoicing' ), $response['avs_response'] );
+                            }
+                            if ( isset( $response['transaction_id'] ) ) {
+                                $message[] = wp_sprintf( __( 'Transaction ID: %s', 'invoicing' ), $response['transaction_id'] );
+                            }
+                            if ( isset( $response['card_code_response'] ) ) {
+                                $message[] = wp_sprintf( __( 'Card Code Response: %s', 'invoicing' ), $response['card_code_response'] );
+                            }
+                            if ( isset( $response_info['cavv_response'] ) ) {
+                                $message[] = wp_sprintf( __( 'Cardholder Authentication Verification Response: %s', 'invoicing' ), $response_info['cavv_response'] );
+                            }
+                            
+                            wpinv_update_payment_status( $invoice_id, 'publish' );
+                            wpinv_set_payment_transaction_id( $invoice_id, $response['transaction_id'] );
+                            wpinv_insert_payment_note( $invoice_id, sprintf( __( 'AUTHORIZE.NET PAYMENT: %s', 'invoicing' ) , implode( "<br>", $message ) ) );
+                            // Redirect
+                            wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+                        break;
+                        case 2: // Declined
+                            wpinv_record_gateway_error( __( 'Payment cancelled', 'invoicing' ), $response['error_message'], $invoice_id );
+                            wpinv_update_payment_status( $invoice_id, 'cancelled' );
+                            wpinv_insert_payment_note( $invoice_id, wp_sprintf( __( 'Payment cancelled %s', 'invoicing' ), $response['error_message'] ) );
+                        break;
+                        case 4: // Held for Review 
+                            wpinv_insert_payment_note( $invoice_id, wp_sprintf( __( 'Payment pending %s', 'invoicing' ), $response['error_message'] ) );
+                            // Redirect
+                            wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+                        break;
+                        case 3: // Error  
+                        default:
+                            wpinv_record_gateway_error( __( 'Payment failed', 'invoicing' ), $response['error_message'], $invoice_id );
+                            wpinv_update_payment_status( $invoice_id, 'failed' );
+                            wpinv_insert_payment_note( $invoice_id, wp_sprintf( __( 'Payment failed %s', 'invoicing' ), $response['error_message'] ) );
+                        break;
+                    }
+                }
+            }
+            
+            wpinv_send_to_failed_page( '?invoice-id=' . $invoice_id );
+        } else {
+            wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed while processing a Authorize.net payment. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $invoice );
+            // If errors are present, send the user back to the purchase page so they can be corrected
+            wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
+        }
+    } else {
         wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
     }
 }
@@ -342,4 +549,22 @@ function wpinv_authorizenet_valid_ipn( $md5_hash, $transaction_id, $amount ) {
     $amount                 = $amount ? $amount : '0.00';
     
     return ( $md5_hash == strtoupper( md5( $authorizenet_md5_hash . $authorizenet_login_id . $transaction_id . $amount ) ) );
+}
+
+function wpinv_authorizenet_AIM() {
+    if ( !class_exists( 'AuthorizeNetException' ) ) {
+        require_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/gateways/authorizenet/anet_php_sdk/AuthorizeNet.php';
+    }
+    
+    $authorizeAIM = new AuthorizeNetAIM( wpinv_get_option( 'authorizenet_login_id' ), wpinv_get_option( 'authorizenet_transaction_key' ) );
+    
+    if ( wpinv_is_test_mode( 'authorizenet' ) ) {
+        $authorizeAIM->setSandbox( true );
+    } else {
+        $authorizeAIM->setSandbox( false );
+    }
+    
+    $authorizeAIM->customer_ip = wpinv_get_ip();
+    
+    return $authorizeAIM;
 }

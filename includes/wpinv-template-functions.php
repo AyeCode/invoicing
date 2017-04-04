@@ -1954,9 +1954,9 @@ function wpinv_invoice_subscription_details( $invoice ) {
         $subscription_status = $invoice->get_subscription_status();
         
         $status_desc = '';
-        if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date( $subscription_status ) ) {
+        if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date() ) {
             $status_desc = wp_sprintf( __( 'Until: %s', 'invoicing' ), $trial_end_date );
-        } else if ( $subscription_status == 'cancelled' && $cancelled_date = $invoice->get_cancelled_date( $subscription_status ) ) {
+        } else if ( $subscription_status == 'cancelled' && $cancelled_date = $invoice->get_cancelled_date() ) {
             $status_desc = wp_sprintf( __( 'On: %s', 'invoicing' ), $cancelled_date );
         }
         $status_desc = $status_desc != '' ? '<span class="meta">' . $status_desc . '</span>' : '';
