@@ -136,7 +136,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                 <?php echo apply_filters( 'wpinv_cart_total_label', '<strong>' . __( 'Total', 'invoicing' ) . ':</strong>', $invoice ); ?>
             </td>
             <td class="wpinv_cart_total text-right">
-                <span class="wpinv_cart_amount bold" data-subtotal="<?php echo wpinv_get_cart_total( $cart_items ); ?>" data-total="<?php echo wpinv_get_cart_total(); ?>"><?php wpinv_cart_total( $cart_items ); ?></span>
+                <span class="wpinv_cart_amount bold" data-subtotal="<?php echo wpinv_get_cart_total( $cart_items ); ?>" data-total="<?php echo wpinv_get_cart_total( NULL, NULL, $invoice ); ?>"><?php wpinv_cart_total( $cart_items, true, $invoice ); ?></span>
             </td>
             <?php do_action( 'wpinv_checkout_table_footer_last' ); ?>
         </tr>

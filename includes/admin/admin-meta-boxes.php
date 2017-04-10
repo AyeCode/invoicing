@@ -68,6 +68,17 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
             $fields['_wpinv_recurring_period']   = 'wpinv_recurring_period';
             $fields['_wpinv_recurring_interval'] = 'wpinv_recurring_interval';
             $fields['_wpinv_recurring_limit']    = 'wpinv_recurring_limit';
+            $fields['_wpinv_free_trial']         = 'wpinv_free_trial';
+            $fields['_wpinv_trial_period']       = 'wpinv_trial_period';
+            $fields['_wpinv_trial_interval']     = 'wpinv_trial_interval';
+            
+            if ( !isset( $_POST['wpinv_is_recurring'] ) ) {
+                $_POST['wpinv_is_recurring'] = 0;
+            }
+            
+            if ( !isset( $_POST['wpinv_free_trial'] ) || empty( $_POST['wpinv_is_recurring'] ) ) {
+                $_POST['wpinv_free_trial'] = 0;
+            }
             
             foreach ( $fields as $field => $name ) {
                 if ( isset( $_POST[ $name ] ) ) {

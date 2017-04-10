@@ -255,6 +255,10 @@ function wpinv_recalculate_tax( $return = false ) {
 
     $invoice->save();
     
+    if ( $invoice->is_free_trial() ) {
+        $total = 0;
+    }
+    
     $response = array(
         'total'        => html_entity_decode( wpinv_price( wpinv_format_amount( $total ) ), ENT_COMPAT, 'UTF-8' ),
         'total_raw'    => $total,

@@ -666,3 +666,19 @@ function wpinv_utf8_ucwords( $str, $encoding = 'UTF-8' ) {
     
     return ucwords( $str );
 }
+
+function wpinv_period_in_days( $period, $unit ) {
+    $period = absint( $period );
+    
+    if ( $period > 0 ) {
+        if ( in_array( strtolower( $unit ), array( 'w', 'week', 'weeks' ) ) ) {
+            $period = $period * 7;
+        } else if ( in_array( strtolower( $unit ), array( 'm', 'month', 'months' ) ) ) {
+            $period = $period * 30;
+        } else if ( in_array( strtolower( $unit ), array( 'y', 'year', 'years' ) ) ) {
+            $period = $period * 365;
+        }
+    }
+    
+    return $period;
+}

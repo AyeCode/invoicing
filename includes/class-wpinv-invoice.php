@@ -1277,7 +1277,11 @@ final class WPInv_Invoice {
     }
     
     public function get_total( $currency = false ) {        
-        $total = wpinv_format_amount( $this->total, NULL, !$currency );
+        if ( $this->is_free_trial() ) {
+            $total = wpinv_format_amount( 0, NULL, !$currency );
+        } else {
+            $total = wpinv_format_amount( $this->total, NULL, !$currency );
+        }
         if ( $currency ) {
             $total = wpinv_price( $total, $this->get_currency() );
         }
@@ -1292,55 +1296,68 @@ final class WPInv_Invoice {
         $data['discount']     = $this->get_discount();
         $data['tax']          = $this->get_tax();
         $data['total']        = $this->get_total();
-        
-        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) && $discounts = $this->get_discounts( true ) ) {
-            $has_recurring = false;
-            foreach ( $discounts as $key => $code ) {
-                if ( wpinv_discount_is_recurring( $code, true ) ) {
-                    $has_recurring = true;
-                    break;
-                }
-            }
+    
+        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) ) {
+            $is_free_trial = $this->is_free_trial();
+            $discounts = $this->get_discounts( true );
             
-            if ( $has_recurring ) {
-                $cart_subtotal   = 0;
-                $cart_discount   = 0;
-                $cart_tax        = 0;
-
-                foreach ( $this->cart_details as $key => $item ) {
-                    $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                    $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
-                    $item_discount  = 0;
-                    $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
-                    
-                    if ( wpinv_prices_include_tax() ) {
-                        $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
-                    }
-                    
-                    $item_total     = $item_subtotal - $item_discount + $item_tax;
-                    // Do not allow totals to go negative
-                    if ( $item_total < 0 ) {
-                        $item_total = 0;
-                    }
-                    
-                    $cart_subtotal  += (float)($item_subtotal);
-                    $cart_discount  += (float)($item_discount);
-                    $cart_tax       += (float)($item_tax);
-                    
-                    $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
-                    $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
-                    $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
-                }
+            if ( $is_free_trial || !empty( $discounts ) ) {
+                $first_use_only = false;
                 
-                $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
-                $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
-                $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
-                $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                if ( !empty( $discounts ) ) {
+                    foreach ( $discounts as $key => $code ) {
+                        if ( wpinv_discount_is_recurring( $code, true ) ) {
+                            $first_use_only = true;
+                            break;
+                        }
+                    }
+                }
+                    
+                if ( !$first_use_only ) {
+                    $data['subtotal'] = wpinv_format_amount( $this->subtotal, NULL, true );
+                    $data['discount'] = wpinv_format_amount( $this->discount, NULL, true );
+                    $data['tax']      = wpinv_format_amount( $this->tax, NULL, true );
+                    $data['total']    = wpinv_format_amount( $this->total, NULL, true );
+                } else {
+                    $cart_subtotal   = 0;
+                    $cart_discount   = 0;
+                    $cart_tax        = 0;
+
+                    foreach ( $this->cart_details as $key => $item ) {
+                        $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
+                        $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
+                        $item_discount  = 0;
+                        $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
+                        
+                        if ( wpinv_prices_include_tax() ) {
+                            $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
+                        }
+                        
+                        $item_total     = $item_subtotal - $item_discount + $item_tax;
+                        // Do not allow totals to go negative
+                        if ( $item_total < 0 ) {
+                            $item_total = 0;
+                        }
+                        
+                        $cart_subtotal  += (float)($item_subtotal);
+                        $cart_discount  += (float)($item_discount);
+                        $cart_tax       += (float)($item_tax);
+                        
+                        $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
+                        $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
+                        $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
+                    }
+                    
+                    $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
+                    $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
+                    $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
+                    $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                }
             }
         }
         
         $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
-        
+
         if ( isset( $data[$field] ) ) {
             return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
         }
@@ -1943,7 +1960,7 @@ final class WPInv_Invoice {
     public function needs_payment() {
         $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
 
-        if ( $this->has_status( $valid_invoice_statuses ) && $this->get_total() > 0 ) {
+        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() ) ) {
             $needs_payment = true;
         } else {
             $needs_payment = false;
@@ -2009,6 +2026,18 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_invoice_has_recurring_item', $has_subscription, $this->cart_details );
     }
     
+    public function is_free_trial() {
+        $is_free_trial = false;
+        
+        if ( $this->is_parent() && $item = $this->get_recurring( true ) ) {
+            if ( !empty( $item ) && $item->has_free_trial() ) {
+                $is_free_trial = true;
+            }
+        }
+
+        return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details );
+    }
+    
     public function get_recurring( $object = false ) {
         $item = NULL;
         
@@ -2051,6 +2080,37 @@ final class WPInv_Invoice {
         return $expiration;
     }
     
+    public function get_cancelled_date( $formatted = true ) {
+        $cancelled_date = $this->get_subscription_status() == 'cancelled' ? $this->get_meta( '_wpinv_subscr_cancelled_on', true ) : '';
+        
+        if ( $formatted && $cancelled_date ) {
+            $cancelled_date = date_i18n( get_option( 'date_format' ), strtotime( $cancelled_date ) );
+        }
+        
+        return $cancelled_date;
+    }
+    
+    public function get_trial_end_date( $formatted = true ) {
+        if ( !$this->is_free_trial() || !$this->is_paid() ) {
+            return NULL;
+        }
+        
+        $trial_end_date = $this->get_subscription_status() == 'trialing' ? $this->get_meta( '_wpinv_subscr_trial_end', true ) : '';
+        
+        if ( empty( $trial_end_date ) ) {
+            $trial_start_time = strtotime( $this->get_subscription_start() );
+            $trial_start_time += ( wpinv_period_in_days( $this->get_subscription_trial_interval(), $this->get_subscription_trial_period() ) * DAY_IN_SECONDS ) ;
+            
+            $trial_end_date = date_i18n( 'Y-m-d H:i:s', $trial_start_time );
+        }
+        
+        if ( $formatted && $trial_end_date ) {
+            $trial_end_date = date_i18n( get_option( 'date_format' ), strtotime( $trial_end_date ) );
+        }
+        
+        return $trial_end_date;
+    }
+    
     public function get_subscription_created( $default = true ) {
         $created = $this->get_meta( '_wpinv_subscr_created', true );
         
@@ -2090,10 +2150,16 @@ final class WPInv_Invoice {
         
         $total_period = $start . '+' . ( $interval * $bill_times ) . ' ' . $period;
         
+        $end_time = strtotime( $start . '+' . ( $interval * $bill_times ) . ' ' . $period );
+        
+        if ( $this->is_free_trial() ) {
+            $end_time += ( wpinv_period_in_days( $this->get_subscription_trial_interval(), $this->get_subscription_trial_period() ) * DAY_IN_SECONDS ) ;
+        }
+        
         if ( $formatted ) {
-            $date = date_i18n( get_option( 'date_format' ), strtotime( $total_period ) );
+            $date = date_i18n( get_option( 'date_format' ), $end_time );
         } else {
-            $date = date_i18n( 'Y-m-d H:i:s', strtotime( $total_period ) );
+            $date = date_i18n( 'Y-m-d H:i:s', $end_time );
         }
 
         return $date;
@@ -2122,6 +2188,10 @@ final class WPInv_Invoice {
             'order'             => 'DESC',
             'fields'            => 'ids'
         ) );
+        
+        if ( $this->is_free_trial() ) {
+            $self = false;
+        }
         
         if ( $self && $this->is_paid() ) {
             if ( !empty( $invoices ) ) {
@@ -2160,12 +2230,42 @@ final class WPInv_Invoice {
     
     public function get_subscription_status() {
         $subscription_status = $this->get_meta( '_wpinv_subscr_status', true );
+
+        if ( empty( $subscription_status ) ) {
+            $status = 'pending';
+            
+            if ( $this->is_paid() ) {        
+                $bill_times   = (int)$this->get_bill_times();
+                $times_billed = (int)$this->get_total_payments();
+                $expiration = $this->get_subscription_end( false );
+                $expired = $bill_times != 0 && $expiration != '' && $expiration != '-' && strtotime( date_i18n( 'Y-m-d', strtotime( $expiration ) ) ) < strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) ) ? true : false;
+                
+                if ( (int)$bill_times == 0 ) {
+                    $status = $expired ? 'expired' : 'active';
+                } else if ( $bill_times > 0 && $times_billed >= $bill_times ) {
+                    $status = 'completed';
+                } else if ( $expired ) {
+                    $status = 'expired';
+                } else if ( $bill_times > 0 ) {
+                    $status = 'active';
+                } else {
+                    $status = 'pending';
+                }
+            }
+            
+            if ( $status && $status != $subscription_status ) {
+                $subscription_status = $status;
+                
+                $this->update_meta( '_wpinv_subscr_status', $status );
+            }
+        }
+        
         return $subscription_status;
     }
     
     public function get_subscription_status_label( $status = '' ) {
         $status = !empty( $status ) ? $status : $this->get_subscription_status();
-        
+
         switch( $status ) {
             case 'active' :
                 $status_label = __( 'Active', 'invoicing' );
@@ -2189,6 +2289,10 @@ final class WPInv_Invoice {
 
             case 'failing' :
                 $status_label = __( 'Failing', 'invoicing' );
+                break;
+                
+            case 'trialing' :
+                $status_label = __( 'Trialing', 'invoicing' );
                 break;
 
             default:
@@ -2236,6 +2340,51 @@ final class WPInv_Invoice {
         return $interval;
     }
     
+    public function get_subscription_trial_period( $full = false ) {
+        if ( !$this->is_free_trial() ) {
+            return '';
+        }
+        
+        $period = $this->get_meta( '_wpinv_subscr_trial_period', true );
+        
+        if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
+            $period = 'D';
+        }
+        
+        if ( $full ) {
+            switch( $period ) {
+                case 'D':
+                    $period = 'day';
+                break;
+                case 'W':
+                    $period = 'week';
+                break;
+                case 'M':
+                    $period = 'month';
+                break;
+                case 'Y':
+                    $period = 'year';
+                break;
+            }
+        }
+        
+        return $period;
+    }
+    
+    public function get_subscription_trial_interval() {
+        if ( !$this->is_free_trial() ) {
+            return 0;
+        }
+        
+        $interval = (int)$this->get_meta( '_wpinv_subscr_trial_interval', true );
+        
+        if ( !$interval > 0 ) {
+            $interval = 1;
+        }
+        
+        return $interval;
+    }
+    
     public function failing_subscription() {
         $args = array(
             'status' => 'failing'
@@ -2261,8 +2410,13 @@ final class WPInv_Invoice {
             } else {
                 $user = __( 'gateway', 'invoicing' );
             }
+            
+            $subscription_id = $this->get_subscription_id();
+            if ( !$subscription_id ) {
+                $subscription_id = $this->ID;
+            }
 
-            $note = sprintf( __( 'Subscription #%d cancelled by %s', 'invoicing' ), $this->ID, $user );
+            $note = sprintf( __( 'Subscription %s has been cancelled by %s', 'invoicing' ), $subscription_id, $user );
             $this->add_note( $note );
 
             do_action( 'wpinv_subscription_cancelled', $this->ID, $this );
@@ -2286,6 +2440,8 @@ final class WPInv_Invoice {
             'initial_amount'    => '',
             'recurring_amount'  => '',
             'interval'          => 0,
+            'trial_interval'    => 0,
+            'trial_period'      => '',
             'bill_times'        => 0,
             'item_id'           => 0,
             'created'           => '',
@@ -2297,8 +2453,7 @@ final class WPInv_Invoice {
         $args = wp_parse_args( $data, $defaults );
 
         if ( $args['expiration'] && strtotime( 'NOW', current_time( 'timestamp' ) ) > strtotime( $args['expiration'], current_time( 'timestamp' ) ) ) {
-            if ( 'active' == $args['status'] ) {
-                // Force an active subscription to expired if expiration date is in the past
+            if ( 'active' == $args['status'] || $args['status'] == 'trialing' ) {
                 $args['status'] = 'expired';
             }
         }
@@ -2322,10 +2477,13 @@ final class WPInv_Invoice {
         }
 
         if ( !empty( $args['expiration'] ) && $args['expiration'] && strtotime( 'NOW', current_time( 'timestamp' ) ) > strtotime( $args['expiration'], current_time( 'timestamp' ) ) ) {
-            if ( !isset( $args['status'] ) || ( isset( $args['status'] ) && 'active' == $args['status'] ) ) {
-                // Force an active subscription to expired if expiration date is in the past
+            if ( !isset( $args['status'] ) || ( isset( $args['status'] ) && ( 'active' == $args['status'] || $args['status'] == 'trialing' ) ) ) {
                 $args['status'] = 'expired';
             }
+        }
+
+        if ( isset( $args['status'] ) && $args['status'] == 'cancelled' && empty( $args['cancelled_on'] ) ) {
+            $args['cancelled_on'] = date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) );
         }
 
         do_action( 'wpinv_subscription_pre_update', $args, $this );
@@ -2438,8 +2596,10 @@ final class WPInv_Invoice {
     
     public function is_subscription_active() {
         $ret = false;
+        
+        $subscription_status = $this->get_subscription_status();
 
-        if( ! $this->is_subscription_expired() && ( $this->get_subscription_status() == 'active' || $this->get_subscription_status() == 'cancelled' ) ) {
+        if( ! $this->is_subscription_expired() && ( $subscription_status == 'active' || $subscription_status == 'cancelled' || $subscription_status == 'trialing' ) ) {
             $ret = true;
         }
 
@@ -2452,14 +2612,14 @@ final class WPInv_Invoice {
 
         if ( $subscription_status == 'expired' ) {
             $ret = true;
-        } else if ( 'active' === $subscription_status || 'cancelled' === $subscription_status ) {
+        } else if ( 'active' === $subscription_status || 'cancelled' === $subscription_status || 'trialing' == $subscription_status ) {
             $ret        = false;
             $expiration = $this->get_expiration_time();
 
             if ( $expiration && strtotime( 'NOW', current_time( 'timestamp' ) ) > $expiration ) {
                 $ret = true;
 
-                if ( 'active' === $subscription_status ) {
+                if ( 'active' === $subscription_status || 'trialing' === $subscription_status ) {
                     $this->expire_subscription();
                 }
             }
@@ -2468,16 +2628,22 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_subscription_is_expired', $ret, $this->ID, $this );
     }
     
-    public function get_new_expiration( $item_id = 0 ) {
+    public function get_new_expiration( $item_id = 0, $trial = true ) {
         $item   = new WPInv_Item( $item_id );
         $interval = $item->get_recurring_interval();
         $period = $item->get_recurring_period( true );
+        
+        $expiration_time = strtotime( '+' . $interval . ' ' . $period );
+        
+        if ( $trial && $this->is_free_trial() && $item->has_free_trial() ) {
+            $expiration_time += ( wpinv_period_in_days( $item->get_trial_interval(), $item->get_trial_period() ) * DAY_IN_SECONDS ) ;
+        }
 
-        return date_i18n( 'Y-m-d 23:59:59', strtotime( '+' . $interval . ' ' . $period ) );
+        return date_i18n( 'Y-m-d 23:59:59', $expiration_time );
     }
     
     public function get_subscription_data( $filed = '' ) {
-        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'expiration', 'profile_id', 'created' );
+        $fields = array( 'item_id', 'status', 'period', 'initial_amount', 'recurring_amount', 'interval', 'bill_times', 'trial_period', 'trial_interval', 'expiration', 'profile_id', 'created', 'cancelled_on' );
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {
@@ -2495,6 +2661,17 @@ final class WPInv_Invoice {
             }
             if ( empty( $subscription_meta['interval'] ) ) {
                 $subscription_meta['interval'] = $item->get_recurring_interval();
+            }
+            if ( $item->has_free_trial() ) {
+                if ( empty( $subscription_meta['trial_period'] ) ) {
+                    $subscription_meta['trial_period'] = $item->get_trial_period();
+                }
+                if ( empty( $subscription_meta['trial_interval'] ) ) {
+                    $subscription_meta['trial_interval'] = $item->get_trial_interval();
+                }
+            } else {
+                $subscription_meta['trial_period']      = '';
+                $subscription_meta['trial_interval']    = 0;
             }
             if ( !$subscription_meta['bill_times'] && $subscription_meta['bill_times'] !== 0 ) {
                 $subscription_meta['bill_times'] = $item->get_recurring_limit();

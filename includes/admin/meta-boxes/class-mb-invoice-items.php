@@ -194,6 +194,9 @@ class WPInv_Meta_Box_Items {
         $period         = $item->get_recurring_period();
         $interval       = absint( $item->get_recurring_interval() );
         $times          = absint( $item->get_recurring_limit() );
+        $free_trial     = $item->has_free_trial();
+        $trial_interval = $item->get_trial_interval();
+        $trial_period   = $item->get_trial_period();
         
         $intervals      = array();
         for ( $i = 1; $i <= 90; $i++ ) {
@@ -226,6 +229,14 @@ class WPInv_Meta_Box_Items {
                     'show_option_none' => false
                 ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
                 <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
+                <span class="clear wpi-trial-clr"></span>
+                <label class="wpinv-free-trial" for="wpinv_free_trial">
+                    <input type="checkbox" name="wpinv_free_trial" id="wpinv_free_trial" value="1" <?php checked( true, (bool)$free_trial ); ?> /> 
+                    <?php echo __( 'Offer free trial for', 'invoicing' ); ?>
+                </label>
+                <label class="wpinv-trial-interval" for="wpinv_trial_interval">
+                    <input class="small-text" type="number" value="<?php echo $trial_interval;?>" size="4" id="wpinv_trial_interval" name="wpinv_trial_interval" step="1" min="1"> <select class="wpinv-select" id="wpinv_trial_period" name="wpinv_trial_period"><option value="D" <?php selected( 'D', $trial_period );?>><?php _e( 'day(s)', 'invoicing' ); ?></option><option value="W" <?php selected( 'W', $trial_period );?>><?php _e( 'week(s)', 'invoicing' ); ?></option><option value="M" <?php selected( 'M', $trial_period );?>><?php _e( 'month(s)', 'invoicing' ); ?></option><option value="Y" <?php selected( 'Y', $trial_period );?>><?php _e( 'year(s)', 'invoicing' ); ?></option></select>
+                </label>
         </p>
         <input type="hidden" id="_wpi_current_type" value="<?php echo wpinv_get_item_type( $post->ID ); ?>" />
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
@@ -285,6 +296,7 @@ class WPInv_Meta_Box_Items {
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpinv-item-type',
+                    //'disabled'         => $item_type == 'package' ? true : false,
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Standard: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?></p>
@@ -334,6 +346,7 @@ class WPInv_Meta_Box_Items {
         //$invoice->set( 'discount', $discount );
         $invoice->set( 'ip', $ip );
         $invoice->old_status = $_POST['original_post_status'];
+        $invoice->currency = wpinv_get_currency();
         if ( !empty( $data['wpinv_gateway'] ) ) {
             $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
         }

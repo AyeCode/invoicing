@@ -131,7 +131,7 @@ class WPInv_API {
 
                     update_post_meta( $invoice->ID, '_wpinv_currency', $data['payment_details']['currency'] );
                     
-                    $invoice->gateway = $data['payment_details']['currency'];
+                    $invoice->currency = $data['payment_details']['currency'];
                 }
                 
                 update_post_meta( $invoice->ID, '_wpinv_gateway', $data['payment_details']['method_id'] );

@@ -117,9 +117,10 @@ class WPInv_Meta_Box_Details {
             
             $total_payments = (int)$invoice->get_total_payments();
             $subscription   = $invoice->get_subscription_data();
-            
-            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $invoice->get_currency() );
+
+            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
             $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
+            $subscription_status = $invoice->get_subscription_status();
             ?>
             <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
             <?php if ( $subscription_id = $invoice->get_subscription_id() ) { ?>
@@ -130,6 +131,15 @@ class WPInv_Meta_Box_Details {
             <?php if ( !empty( $payments ) || $invoice->is_paid() ) { ?>
                 <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
                 <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
+                <?php if ( $status_label = $invoice->get_subscription_status_label( $subscription_status ) ) { ?>
+                <p class="wpi-meta-row wpi-sub-status"><label><?php _e( 'Subscription Status:', 'invoicing' );?> </label><?php echo $status_label; ?></p>
+                <?php } ?>
+                <?php if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date() ) { ?>
+                <p class="wpi-meta-row wpi-trial-date"><label><?php _e( 'Trial Until:', 'invoicing' );?> </label><?php echo $trial_end_date; ?></p>
+                <?php } ?>
+                <?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { ?>
+                <p class="wpi-meta-row wpi-cancel-date"><label><?php _e( 'Cancelled On:', 'invoicing' );?> </label><?php echo $cancelled_date; ?></p>
+                <?php } ?>
                 <?php if ( !empty( $payments ) ) { ?>
                 <p><strong><?php _e( 'Renewal Payments:', 'invoicing' ); ?></strong></p>
                 <ul id="wpi-sub-payments">
