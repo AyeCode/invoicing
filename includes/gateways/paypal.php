@@ -64,7 +64,8 @@ function wpinv_process_paypal_payment( $purchase_data ) {
             'cancel_return' => wpinv_get_failed_transaction_uri( '?invoice-id=' . $invoice->ID ),
             'notify_url'    => $listener_url,
             'cbt'           => get_bloginfo( 'name' ),
-            'bn'            => 'WPInvoicing_SP'
+            'bn'            => 'WPInvoicing_SP',
+	        'lc'            => 'US' // this will force paypal site to english
         );
 
         $paypal_args['address1'] = $invoice->get_address();
