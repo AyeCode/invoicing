@@ -62,6 +62,14 @@ class WPInv_Session {
 			if ( !class_exists( 'Recursive_ArrayAccess' ) ) {
 				require_once WPINV_PLUGIN_DIR . 'includes/libraries/wp-session/class-recursive-arrayaccess.php';
 			}
+            
+			if ( !class_exists( 'WP_Session_Utils' ) ) {
+				require_once WPINV_PLUGIN_DIR . 'includes/libraries/wp-session/class-wp-session-utils.php';
+			}
+            
+			if ( defined( 'WP_CLI' ) && WP_CLI && !class_exists( 'WP_Session_Command' ) ) {
+				require_once WPINV_PLUGIN_DIR . 'includes/libraries/wp-session/wp-cli.php';
+			}
 
 			if ( !class_exists( 'WP_Session' ) ) {
 				require_once WPINV_PLUGIN_DIR . 'includes/libraries/wp-session/class-wp-session.php';
@@ -104,7 +112,12 @@ class WPInv_Session {
 	 * @return string Session ID
 	 */
 	public function get_id() {
-		return $this->session->session_id;
+		if ( $this->use_php_sessions ) {
+			$session_id = !empty( $_SESSION ) && function_exists( 'session_id' ) ? session_id() : NULL;
+		} else {
+			$session_id = !empty( $this->session ) && isset( $this->session->session_id ) ? $this->session->session_id : NULL;
+		}
+		return $session_id;
 	}
 
 	/**
