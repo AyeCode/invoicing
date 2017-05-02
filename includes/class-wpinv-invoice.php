@@ -2514,12 +2514,20 @@ final class WPInv_Invoice {
         
         $expiration     = date_i18n( 'Y-m-d 23:59:59', $expires );
         $expiration     = apply_filters( 'wpinv_subscription_renewal_expiration', $expiration, $this->ID, $this );
+        $bill_times     = $parent_invoice->get_bill_times();
+        $times_billed   = $parent_invoice->get_total_payments();
+        
+        if ( $parent_invoice->get_subscription_status() == 'trialing' && ( $times_billed > 0 || strtotime( date_i18n( 'Y-m-d' ) ) < strtotime( $parent_invoice->get_trial_end_date( false ) ) ) ) {
+            $args = array(
+                'status'     => 'active',
+            );
+
+            $parent_invoice->update_subscription( $args );
+        }
         
         do_action( 'wpinv_subscription_pre_renew', $this->ID, $expiration, $this );
 
         $status       = 'active';
-        $bill_times   = $parent_invoice->get_bill_times();
-        $times_billed = $parent_invoice->get_total_payments();
         if ( $bill_times > 0 && $times_billed >= $bill_times ) {
             $this->complete_subscription();
             $status = 'completed';
