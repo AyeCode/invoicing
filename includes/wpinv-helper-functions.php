@@ -203,28 +203,33 @@ function wpinv_get_currencies() {
         'AUD'  => __( 'Australian Dollars (&#36;)', 'invoicing' ),
         'BRL'  => __( 'Brazilian Real (R&#36;)', 'invoicing' ),
         'CAD'  => __( 'Canadian Dollars (&#36;)', 'invoicing' ),
-        'CZK'  => __( 'Czech Koruna', 'invoicing' ),
-        'DKK'  => __( 'Danish Krone', 'invoicing' ),
+        'CLP'  => __( 'Chilean Peso (&#36;)', 'invoicing' ),
+        'CNY'  => __( 'Chinese Yuan (&yen;)', 'invoicing' ),
+        'CZK'  => __( 'Czech Koruna (&#75;&#269;)', 'invoicing' ),
+        'DKK'  => __( 'Danish Krone (DKK)', 'invoicing' ),
         'HKD'  => __( 'Hong Kong Dollar (&#36;)', 'invoicing' ),
-        'HUF'  => __( 'Hungarian Forint', 'invoicing' ),
+        'HUF'  => __( 'Hungarian Forint (&#70;&#116;)', 'invoicing' ),
+        'INR'  => __( 'Indian Rupee (&#8377;)', 'invoicing' ),
         'ILS'  => __( 'Israeli Shekel (&#8362;)', 'invoicing' ),
         'JPY'  => __( 'Japanese Yen (&yen;)', 'invoicing' ),
-        'MYR'  => __( 'Malaysian Ringgits', 'invoicing' ),
+        'MYR'  => __( 'Malaysian Ringgit (&#82;&#77;)', 'invoicing' ),
         'MXN'  => __( 'Mexican Peso (&#36;)', 'invoicing' ),
         'NZD'  => __( 'New Zealand Dollar (&#36;)', 'invoicing' ),
-        'NOK'  => __( 'Norwegian Krone', 'invoicing' ),
-        'PHP'  => __( 'Philippine Pesos', 'invoicing' ),
-        'PLN'  => __( 'Polish Zloty', 'invoicing' ),
+        'NOK'  => __( 'Norwegian Krone (&#107;&#114;)', 'invoicing' ),
+        'PHP'  => __( 'Philippine Peso (&#8369;)', 'invoicing' ),
+        'PLN'  => __( 'Polish Zloty (&#122;&#322;)', 'invoicing' ),
         'SGD'  => __( 'Singapore Dollar (&#36;)', 'invoicing' ),
-        'SEK'  => __( 'Swedish Krona', 'invoicing' ),
-        'CHF'  => __( 'Swiss Franc', 'invoicing' ),
-        'TWD'  => __( 'Taiwan New Dollars', 'invoicing' ),
+        'SEK'  => __( 'Swedish Krona (&#107;&#114;)', 'invoicing' ),
+        'CHF'  => __( 'Swiss Franc (&#67;&#72;&#70;)', 'invoicing' ),
+        'TWD'  => __( 'Taiwan New Dollar (&#78;&#84;&#36;)', 'invoicing' ),
         'THB'  => __( 'Thai Baht (&#3647;)', 'invoicing' ),
-        'INR'  => __( 'Indian Rupee (&#8377;)', 'invoicing' ),
         'TRY'  => __( 'Turkish Lira (&#8378;)', 'invoicing' ),
         'RIAL' => __( 'Iranian Rial (&#65020;)', 'invoicing' ),
-        'RUB'  => __( 'Russian Rubles', 'invoicing' )
+        'RUB'  => __( 'Russian Ruble (&#8381;)', 'invoicing' ),
+        'ZAR'  => __( 'South African Rand (&#82;)', 'invoicing' )
     );
+    
+    asort( $currencies );
 
     return apply_filters( 'wpinv_currencies', $currencies );
 }
