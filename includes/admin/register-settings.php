@@ -172,6 +172,8 @@ function wpinv_get_registered_settings() {
         $invoice_number_padd_options[$i] = $i;
     }
     
+    $alert_wrapper_start = '<p style="color: #F00">';
+    $alert_wrapper_close = '</p>';
     $wpinv_settings = array(
         'general' => apply_filters( 'wpinv_settings_general',
             array(
@@ -349,6 +351,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Payment Gateways', 'invoicing' ),
                         'desc'    => __( 'Choose the payment gateways you want to enable.', 'invoicing' ),
                         'type'    => 'gateways',
+                        'std'     => array('manual'=>1),
                         'options' => wpinv_get_payment_gateways(),
                     ),
                     'default_gateway' => array(
@@ -356,6 +359,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Default Gateway', 'invoicing' ),
                         'desc'    => __( 'This gateway will be loaded automatically with the checkout page.', 'invoicing' ),
                         'type'    => 'gateway_select',
+                        'std'     => 'manual',
                         'options' => wpinv_get_payment_gateways(),
                     ),
                 ),
@@ -417,7 +421,7 @@ function wpinv_get_registered_settings() {
                     'email_from' => array(
                         'id'   => 'email_from',
                         'name' => __( 'From Email', 'invoicing' ),
-                        'desc' => __( 'Email address to send invoice emails from. This will act as the "from" and "reply-to" address.', 'invoicing' ),
+                        'desc' => sprintf (__( 'Email address to send invoice emails from. This will act as the "from" and "reply-to" address. %s If emails are not being sent it may be that your hosting prevents emails being sent if the email domains do not match.%s', 'invoicing' ), $alert_wrapper_start, $alert_wrapper_close),
                         'std' => get_option( 'admin_email' ),
                         'type' => 'text',
                     ),
