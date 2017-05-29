@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Invoicing
-Plugin URI: http://wpgeodirectory.com/
+Plugin URI: https://wpinvoicing.com/
 Description: Invoicing plugin.
-Version: 0.0.1
-Author: GeoDirectory
-Author URI: http://wpgeodirectory.com/
+Version: 0.0.2
+Author: AyeCode
+Author URI: https://wpinvoicing.com/
 License: GPLv3
 Update URL: https://github.com/AyeCode/invoicing/
 */
@@ -16,7 +16,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '0.0.1' );
+    define( 'WPINV_VERSION', '0.0.2' );
 }
 
 if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {
