@@ -221,34 +221,29 @@ class PaypalPro{
     var $apiUsername; 
     var $apiPassword;
     var $apiSignature;
-    var $apiEndpoint = 'https://api-3t.sandbox.paypal.com/nvp';
+    var $apiEndpoint;
     var $subject = '';
     var $authToken = '';
     var $authSignature = '';
     var $authTimestamp = '';
     var $useProxy = FALSE;
-    var $paypalURL = 'https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=';
+    var $paypalURL;
     var $version = '65.1';
     var $ackSuccess = 'SUCCESS';
     var $ackSuccessWarning = 'SUCCESSWITHWARNING';
     
     public function __construct($config = array()){
         $ppp_cred = get_option('wpinv_settings');
-        $this->apiUsername = $ppp_cred['paypalpro_api_username']; //'business_api1.spiderteams.com'
-        $this->apiPassword = $ppp_cred['paypalpro_api_password']; //'FV6U7ZK8QZ54J5LD'
-        $this->apiSignature = $ppp_cred['paypalpro_api_signature']; //'AFcWxV21C7fd0v3bYYYRCpSSRl31A-oiS1TjIEDLOje9zxbQsqIeBeam'
-        
-        if (count($config) > 0){
-            /*
-            foreach ($config as $key => $val){
-                if (isset($key) && $key == 'live' && $val == 1){
-                    $this->paypalURL = 'https://www.paypal.com/webscr&cmd=_express-checkout&token=';
-                }else if (isset($this->$key)){
-                    $this->$key = $val;
-                }
-            }
-             * 
-             */
+        $this->apiUsername = $ppp_cred['paypalpro_api_username'];
+        $this->apiPassword = $ppp_cred['paypalpro_api_password'];
+        $this->apiSignature = $ppp_cred['paypalpro_api_signature'];
+        if(isset($ppp_cred['paypalpro_sandbox']) AND $ppp_cred['paypalpro_sandbox'] == 1){
+            $this->apiEndpoint = 'https://api-3t.sandbox.paypal.com/nvp';
+            $this->paypalURL = 'https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=';
+        }
+        else {
+            $this->apiEndpoint = 'https://api-3t.paypal.com/nvp';
+            $this->paypalURL = 'https://www.paypal.com/webscr&cmd=_express-checkout&token=';
         }
         add_action( 'wpinv_gateway_paypalpro', array($this, 'process_paypal_call') );
     }
@@ -413,14 +408,14 @@ class PaypalPro{
                     'paymentAction' => 'sale',
                     'amount' => wpinv_sanitize_amount( $invoice->get_total() ),
                     'currencyCode' => wpinv_get_currency(),
-                    'creditCardType' => 'visa',
+                    'creditCardType' => $ppp_card['card_type'],
                     'creditCardNumber' => trim(str_replace(" ","",$ppp_card['cc_number'])),
                     'expMonth' => $ppp_card['cc_expire_month'],
                     'expYear' => $ppp_card['cc_expire_year'],
-                    'cvv' => $ppp_card['cc_cvv2'],
+                    'cvv2' => $ppp_card['cc_cvv2'],
                     'firstName' => $invoice->get_first_name(),
                     'lastName' => $invoice->get_last_name(),
-                    'address1'  => $invoice->get_address(),
+                    'street'  => $invoice->get_address(),
                     'phone' => $invoice->phone,
                     'city' => $invoice->city,
                     'zip'	=> $invoice->zip,
@@ -442,7 +437,7 @@ class PaypalPro{
                             wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
                     }else{
-                        $error = wp_sprintf( __( 'Paypal Pro payment error occurred %s', 'invoicing' ), $response['L_LONGMESSAGE0'] );
+                        $error = wp_sprintf( __( 'Paypal Pro payment error occurred. %s', 'invoicing' ), $response['L_LONGMESSAGE0'] );
                         wpinv_set_error( 'payment_error', $error );
                         wpinv_record_gateway_error( $error, $response );
                         wpinv_insert_payment_note( $invoice_id, $error );

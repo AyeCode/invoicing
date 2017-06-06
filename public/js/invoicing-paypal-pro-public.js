@@ -31,38 +31,14 @@
         
         $(document).ready(function() {
             //Card form validation on input fields
-            $('#paymentForm input[type=text]').on('keyup',function(){
-                cardFormValidate();
+            $('#card_number').on('keyup',function(){
+                cardFormValidate(jQuery);
             });
         });
-        
-        
-        //Submit card form
-    $("#cardSubmitBtn").on('click',function(){
-        if (cardFormValidate()) {
-            var formData = $('#paymentForm').serialize();
-            $.ajax({
-                type:'POST',
-                url:'payment_process.php',
-                dataType: "json",
-                data:formData,
-                beforeSend: function(){  
-                    $("#cardSubmitBtn").val('Processing....');
-                },
-                success:function(data){
-                    if (data.status == 1) {
-                    }else{
-                        $('#orderInfo').slideDown('slow');
-                        $('#orderInfo').html('<p>Wrong card details given, please try again.</p>');
-                    }
-                }
-            });
-        }
-    });
 
 })( jQuery );
 
-function cardFormValidate(){
+function cardFormValidate($){
     var cardValid = 0;
       
     //Card validation

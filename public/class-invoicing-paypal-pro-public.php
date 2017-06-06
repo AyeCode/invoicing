@@ -94,7 +94,7 @@ class Invoicing_Paypal_Pro_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/invoicing-paypal-pro-public.js', array( 'jquery' ), $this->version, false );
-                wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/jquery.creditCardValidator.js', array( 'jquery' ), $this->version, false );
+                wp_enqueue_script( 'cardValidator', plugin_dir_url( __FILE__ ) . 'js/jquery.creditCardValidator.js', array( 'jquery' ), $this->version, false );
 
 	}
         public function paypalpro_form($invoice_id){
