@@ -307,7 +307,9 @@ class PaypalPro{
         $args['body'] = $nvpreq;
         
         //getting response from server
-          $response = wp_remote_post($this->apiEndpoint, $args);
+        
+        $response = wp_remote_post($this->apiEndpoint, $args); 
+        if(is_wp_error($response)) return $response;
         
         //convrting NVPResponse to an Associative Array
         parse_str($response['body'], $resArray);

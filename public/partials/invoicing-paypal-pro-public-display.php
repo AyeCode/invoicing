@@ -35,7 +35,7 @@ $cc_owner = !empty( $invoice ) ? esc_attr( $invoice->get_user_full_name() ) : ''
                           <label class="col-sm-4" for="cvv"><?php _e('CVV', 'invoicing'); ?></label>
                           <div class="col-sm-8"><input type="text" placeholder="123" maxlength="3" id="cvv" name="paypalpro[cc_cvv2]"></div>
                       </div>
-                  <p class="alert alert-info"><?php _e('Name on card should match billing details above.', 'invoicing'); ?></p>
+                  <p class="alert alert-info"><?php _e('Name on card should match billing details above!', 'invoicing'); ?></p>
               </div>
   </div>
     <div id="orderInfo" style="display: none;"></div>
