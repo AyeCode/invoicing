@@ -218,32 +218,28 @@ class Invoicing_Paypal_Pro {
 
 class PaypalPro{
     //Configuration Options
-    var $apiUsername; 
-    var $apiPassword;
-    var $apiSignature;
-    var $apiEndpoint;
+    var $apiUsername = ''; 
+    var $apiPassword = '';
+    var $apiSignature = '';
+    var $apiEndpoint = 'https://api-3t.paypal.com/nvp';
     var $subject = '';
     var $authToken = '';
     var $authSignature = '';
     var $authTimestamp = '';
     var $useProxy = FALSE;
-    var $paypalURL;
+    var $paypalURL = 'https://www.paypal.com/webscr&cmd=_express-checkout&token=';
     var $version = '65.1';
     var $ackSuccess = 'SUCCESS';
     var $ackSuccessWarning = 'SUCCESSWITHWARNING';
     
     public function __construct($config = array()){
         $ppp_cred = get_option('wpinv_settings');
-        $this->apiUsername = $ppp_cred['paypalpro_api_username'];
-        $this->apiPassword = $ppp_cred['paypalpro_api_password'];
-        $this->apiSignature = $ppp_cred['paypalpro_api_signature'];
+        if(isset($ppp_cred['paypalpro_api_username'])) $this->apiUsername = $ppp_cred['paypalpro_api_username'];
+        if(isset($ppp_cred['paypalpro_api_password'])) $this->apiPassword = $ppp_cred['paypalpro_api_password'];
+        if(isset($ppp_cred['paypalpro_api_signature'])) $this->apiSignature = $ppp_cred['paypalpro_api_signature'];
         if(isset($ppp_cred['paypalpro_sandbox']) AND $ppp_cred['paypalpro_sandbox'] == 1){
             $this->apiEndpoint = 'https://api-3t.sandbox.paypal.com/nvp';
             $this->paypalURL = 'https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=';
-        }
-        else {
-            $this->apiEndpoint = 'https://api-3t.paypal.com/nvp';
-            $this->paypalURL = 'https://www.paypal.com/webscr&cmd=_express-checkout&token=';
         }
         add_action( 'wpinv_gateway_paypalpro', array($this, 'process_paypal_call') );
     }
@@ -262,13 +258,13 @@ class PaypalPro{
         
         switch($authMode) {
             case "3TOKEN" : 
-                $nvpHeaderStr = "&PWD=".urlencode($this->apiPassword)."&USER=".urlencode($this->apiUsername)."&SIGNATURE=".urlencode($this->apiSignature);
+                $nvpHeaderStr = "&PWD=".$this->apiPassword."&USER=".$this->apiUsername."&SIGNATURE=".$this->apiSignature;
                 break;
             case "FIRSTPARTY" :
-                $nvpHeaderStr = "&SUBJECT=".urlencode($this->subject);
+                $nvpHeaderStr = "&SUBJECT=".$this->subject;
                 break;
             case "THIRDPARTY" :
-                $nvpHeaderStr = "&PWD=".urlencode($this->apiPassword)."&USER=".urlencode($this->apiUsername)."&SIGNATURE=".urlencode($this->apiSignature)."&SUBJECT=".urlencode($subject);
+                $nvpHeaderStr = "&PWD=".$this->apiPassword."&USER=".$this->apiUsername."&SIGNATURE=".$this->apiSignature."&SUBJECT=".$subject;
                 break;		
             case "PERMISSION" :
                 $nvpHeaderStr = $this->formAutorization($this->authToken,$this->authSignature,$this->authTimestamp);
@@ -303,15 +299,15 @@ class PaypalPro{
     
         //check if version is included in $nvpStr else include the version.
         if(strlen(str_replace('VERSION=', '', strtoupper($nvpStr))) == strlen($nvpStr)) {
-            $nvpStr = "&VERSION=" . urlencode($this->version) . $nvpStr;	
+            $nvpStr = "&VERSION=" . $this->version . $nvpStr;	
         }
         
-        $nvpreq="METHOD=".urlencode($methodName).$nvpStr;
-        $args['timeout'] = 20;
+        $nvpreq="METHOD=".$methodName.$nvpStr;
+        $args['timeout'] = 30;
         $args['body'] = $nvpreq;
+        
         //getting response from server
           $response = wp_remote_post($this->apiEndpoint, $args);
-        //die(print_r($response));
         
         //convrting NVPResponse to an Associative Array
         parse_str($response['body'], $resArray);
@@ -331,12 +327,12 @@ class PaypalPro{
          */
         
         $recurringStr = (array_key_exists("recurring",$params) && $params['recurring'] == 'Y')?'&RECURRING=Y':'';
-        $nvpstr = "&PAYMENTACTION=".$params['paymentAction']."&AMT=".$params['amount']."&CREDITCARDTYPE=".$params['creditCardType']."&ACCT=".$params['creditCardNumber']."&EXPDATE=".$params['expMonth'].$params['expYear']."&CVV2=".$params['cvv']."&FIRSTNAME=".$params['firstName']."&LASTNAME=".$params['lastName']."&CITY=".$params['city']."&ZIP=".$params['zip']."&COUNTRYCODE=".$params['countryCode']."&CURRENCYCODE=".$params['currencyCode'].$recurringStr;
+        $nvpstr = "&PAYMENTACTION=".$params['paymentAction']."&AMT=".$params['amount']."&CREDITCARDTYPE=".$params['creditCardType']."&ACCT=".$params['creditCardNumber']."&EXPDATE=".$params['expMonth'].$params['expYear']."&CVV2=".$params['cvv2']."&FIRSTNAME=".$params['firstName']."&LASTNAME=".$params['lastName']."&STREET=".$params['street']."&CITY=".$params['city']."&STATE=".$params['state']."&ZIP=".$params['zip']."&COUNTRYCODE=".$params['countryCode']."&CURRENCYCODE=".$params['currencyCode'].$recurringStr;
     
         /* Make the API call to PayPal, using API signature.
            The API response is stored in an associative array called $resArray */
+        
         $resArray = $this->hashCall("DoDirectPayment",$nvpstr);
-    
         return $resArray;
     }
     
@@ -345,7 +341,7 @@ class PaypalPro{
         if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
             wp_die( __( 'Nonce verification has failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
         }
-
+        
         // Collect payment data
         $payment_data = array(
             'price'         => $purchase_data['price'],
@@ -362,7 +358,6 @@ class PaypalPro{
 
         // Record the pending payment
         $invoice = wpinv_get_invoice( $purchase_data['invoice_id'] );
-        
         if ( !empty( $invoice ) ) {
             $ppp_card  = !empty( $_POST['paypalpro'] ) ? $_POST['paypalpro'] : array();
             $card_defaults      = array(
@@ -394,8 +389,6 @@ class PaypalPro{
 
             $errors = wpinv_get_errors();
 
-            
-           // die(print_r($errors));
             if ( empty( $errors ) ) {
                 $invoice_id = $invoice->ID;
                 $quantities_enabled = wpinv_item_quantities_enabled();
@@ -405,7 +398,7 @@ class PaypalPro{
 
                     //Payment details
                 $paypalParams = array(
-                    'paymentAction' => 'sale',
+                    'paymentAction' => 'Sale',
                     'amount' => wpinv_sanitize_amount( $invoice->get_total() ),
                     'currencyCode' => wpinv_get_currency(),
                     'creditCardType' => $ppp_card['card_type'],
@@ -418,6 +411,7 @@ class PaypalPro{
                     'street'  => $invoice->get_address(),
                     'phone' => $invoice->phone,
                     'city' => $invoice->city,
+                    'state'  => $_POST['state'],
                     'zip'	=> $invoice->zip,
                     'countryCode' => $invoice->country,
                 );

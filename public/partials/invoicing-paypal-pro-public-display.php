@@ -17,28 +17,25 @@ $cc_owner = !empty( $invoice ) ? esc_attr( $invoice->get_user_full_name() ) : ''
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="card-payment form-horizontal wpi-cc-form panel panel-default">
     <div id="paymentSection" class="panel-body">
-              <input type="hidden" name="card_type" id="card_type" value=""/>
+              <input type="hidden" name="paypalpro[card_type]" id="card_type" value=""/>
               <div class="form-group required">
-                  <label class="col-sm-4" for="card_number">Card number </label>
+                  <label class="col-sm-4" for="card_number"><?php _e('Card number', 'invoicing') ?> </label>
                   <div class="col-sm-8"><input type="text" placeholder="1234 5678 9012 3456" id="card_number" name="paypalpro[cc_number]" class=""></div>
               </div>
               <div class="vertical">
                       <div class="form-group required">
-                          <label class="col-sm-4" for="expiry_month">Expiry month</label>
+                          <label class="col-sm-4" for="expiry_month"><?php _e('Expiry month', 'invoicing'); ?></label>
                           <div class="col-sm-8"><input type="text" placeholder="MM" maxlength="5" id="expiry_month" name="paypalpro[cc_expire_month]"></div>
                       </div>
                       <div class="form-group required">
-                          <label class="col-sm-4" for="expiry_year">Expiry year</label>
+                          <label class="col-sm-4" for="expiry_year"><?php _e('Expiry year', 'invoicing'); ?></label>
                           <div class="col-sm-8"><input type="text" placeholder="YYYY" maxlength="5" id="expiry_year" name="paypalpro[cc_expire_year]"></div>
                       </div>
                       <div class="form-group required">
-                          <label class="col-sm-4" for="cvv">CVV</label>
+                          <label class="col-sm-4" for="cvv"><?php _e('CVV', 'invoicing'); ?></label>
                           <div class="col-sm-8"><input type="text" placeholder="123" maxlength="3" id="cvv" name="paypalpro[cc_cvv2]"></div>
                       </div>
-              </div>
-              <div class="form-group required">
-                  <label class="col-sm-4" for="name_on_card">Name on card</label>
-                  <div class="col-sm-8"><input type="text" placeholder="Full name" id="name_on_card" name="paypalpro[cc_owner]"></div>
+                  <p class="alert alert-info"><?php _e('Name on card should match billing details above.', 'invoicing'); ?></p>
               </div>
   </div>
     <div id="orderInfo" style="display: none;"></div>
