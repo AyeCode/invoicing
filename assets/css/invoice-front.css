@@ -3498,6 +3498,11 @@ div td .meta p {
 .wpinv-success .wpinv-bank-details .table th {
     width: 35%;
 }
+#wpinv_checkout_wrap *, #wpinv_checkout_wrap *:after, #wpinv_checkout_wrap *:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
 @media screen and (max-width:767px) {    
     .wpinv-success .wpinv-receipt-details .table th,
     .wpinv-success .wpinv-bank-details .table th {
