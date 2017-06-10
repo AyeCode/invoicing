@@ -20,6 +20,9 @@ Invoicing plugin.
 
 == Changelog ==
 
+= 0.0.3 =
+Sets invalid trial days if package has different unit for trial & regular period - FIXED
+
 = 0.0.2 =
 First public beta release - RELEASE
 

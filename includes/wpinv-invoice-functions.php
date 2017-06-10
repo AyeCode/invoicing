@@ -570,6 +570,10 @@ function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
 add_action( 'wpinv_update_status', 'wpinv_record_status_change', 100, 3 );
 
 function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
+    global $wpi_has_free_trial;
+    
+    $wpi_has_free_trial = false;
+    
     if ( $old_status == 'publish' || $old_status == 'complete' ) {
         return; // Make sure that payments are only paid once
     }
@@ -584,6 +588,7 @@ function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
         return;
     }
 
+    $wpi_has_free_trial = $invoice->is_free_trial();
     $completed_date = $invoice->completed_date;
     $cart_details   = $invoice->cart_details;
 
