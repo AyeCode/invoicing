@@ -212,7 +212,6 @@ function wpinv_get_registered_settings() {
                         'id'   => 'logo',
                         'name' => __( 'Logo URL', 'invoicing' ),
                         'desc' => __( 'Store logo to print on invoices.', 'invoicing' ),
-                        'std'     => get_admin_url().'images/wordpress-logo.svg',
                         'type' => 'text',
                     ),
                     'store_address' => array(
