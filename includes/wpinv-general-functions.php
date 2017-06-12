@@ -282,7 +282,7 @@ function wpinv_get_prefix() {
 }
 
 function wpinv_get_business_logo() {
-    $business_logo = get_option( 'logo' );
+    $business_logo = wpinv_get_option( 'logo' );
     return apply_filters( 'wpinv_get_business_logo', $business_logo );
 }
 

@@ -208,6 +208,13 @@ function wpinv_get_registered_settings() {
                         'std'     => get_option('blogname'),
                         'type' => 'text',
                     ),
+                    'logo' => array(
+                        'id'   => 'logo',
+                        'name' => __( 'Logo URL', 'invoicing' ),
+                        'desc' => __( 'Store logo to print on invoices.', 'invoicing' ),
+                        'std'     => get_admin_url().'images/wordpress-logo.svg',
+                        'type' => 'text',
+                    ),
                     'store_address' => array(
                         'id'   => 'store_address',
                         'name' => __( 'Store Address', 'invoicing' ),
