@@ -19,11 +19,6 @@ function wpinv_get_payment_gateways() {
             'checkout_label' => __( 'PayPal Standard', 'invoicing' ),
             'ordering'       => 1,
         ),
-        '2co' => array(
-            'admin_label'    => __( '2Checkout', 'invoicing' ),
-            'checkout_label' => __( '2Checkout - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 2,
-        ),
         'authorizenet' => array(
             'admin_label'    => __( 'Authorize.Net (AIM)', 'invoicing' ),
             'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
@@ -594,39 +589,6 @@ function wpinv_ipn_url_callback( $args ) {
 
     echo $html;
 }
-
-// 2Checkout Settings
-function wpinv_gateway_settings_2co( $setting ) {
-    $setting['2co_sandbox'] = array(
-            'type' => 'checkbox',
-            'id'   => '2co_sandbox',
-            'name' => __( '2Checkout Sandbox', 'invoicing' ),
-            'desc' => __( '2Checkout sandbox can be used to test payments.', 'invoicing' ),
-            'std'  => 1
-        );
-        
-    $setting['2co_vendor_id'] = array(
-            'type' => 'text',
-            'id'   => '2co_vendor_id',
-            'name' => __( '2Checkout Account ID', 'invoicing' ),
-            'desc' => __( 'Enter your 2Checkout account id. Example : 1303908', 'invoicing' ),
-            'std' => '1303908',
-        );
-
-    $setting['2co_ipn_url'] = array(
-            'type' => 'ipn_url',
-            'id'   => '2co_ipn_url',
-            'name' => __( '2Checkout IPN Url', 'invoicing' ),
-            'std' => wpinv_get_ipn_url( '2co' ),
-            'desc' => __( 'Configure Instant Payment Notifications(IPN) url at 2Checkout.', 'invoicing' ),
-            'size' => 'large',
-            'custom' => '2co',
-            'readonly' => true
-        );
-        
-    return $setting;
-}
-add_filter( 'wpinv_gateway_settings_2co', 'wpinv_gateway_settings_2co', 10, 1 );
 
 function wpinv_is_test_mode( $gateway = '' ) {
     if ( empty( $gateway ) ) {

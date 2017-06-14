@@ -1484,6 +1484,12 @@ textarea.wpi-email_overdue_content {
 .wpi-inlineb {
     display: inline-block!important
 }
+.wpinv-items-wrap.wpi-recurring .wpinv-actions {
+    text-align: right
+}
+.wpinv-items-wrap.wpi-recurring #wpinv-recalc-totals {
+    float: none;
+}
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {
         padding: 4px 10px;

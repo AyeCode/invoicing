@@ -40,7 +40,7 @@ jQuery(function($) {
                     }
                 } else {
                     $form.unblock();
-                    if (res && res.search("#wpinv_adddress_confirm") !== 0) {
+                    if (res && res.search("wpinv_adddress_confirm") !== -1) {
                         $('#wpinv_adddress_confirm').show();
                     }
                     $('#wpinv_purchase_submit', $form).before(res);
