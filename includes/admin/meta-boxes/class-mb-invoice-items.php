@@ -20,6 +20,7 @@ class WPInv_Meta_Box_Items {
         $item_quantities    = wpinv_item_quantities_enabled();
         $use_taxes          = wpinv_use_taxes();
         $item_types         = wpinv_get_item_types();
+        $is_recurring       = $invoice->is_recurring();
         
         if (isset($item_types['package'])) {
             unset($item_types['package']);
@@ -31,9 +32,16 @@ class WPInv_Meta_Box_Items {
         }
         if ( $use_taxes ) {
             $cols++;
-        }        
+        }
+        $class = '';
+        if ( $invoice->is_paid() ) {
+            $class .= ' wpinv-paid';
+        }
+        if ( $is_recurring ) {
+            $class .= ' wpi-recurring';
+        }
         ?>
-        <div class="wpinv-items-wrap<?php echo ( $invoice->is_paid() ? ' wpinv-paid' : '' ); ?>" id="wpinv_items_wrap" data-status="<?php echo $invoice->status; ?>">
+        <div class="wpinv-items-wrap<?php echo $class; ?>" id="wpinv_items_wrap" data-status="<?php echo $invoice->status; ?>">
             <table id="wpinv_items" class="wpinv-items" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
@@ -169,6 +177,7 @@ class WPInv_Meta_Box_Items {
             <div class="wpinv-actions">
                 <?php
                     if ( !$invoice->is_paid() ) {
+                    if ( !$invoice->is_recurring() ) {
                     echo wpinv_item_dropdown( array(
                         'name'             => 'wpinv_invoice_item',
                         'id'               => 'wpinv_invoice_item',
@@ -176,7 +185,7 @@ class WPInv_Meta_Box_Items {
                         'show_recurring'   => true,
                     ) );
                     ?>
-                    <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                    <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
                     <?php } ?>
                 <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
             </div>

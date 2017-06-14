@@ -339,7 +339,7 @@ class WPInv_Item {
         }
         
         foreach ( $metas as $meta_key => $meta_value ) {
-            $meta_key = strpos('_wpinv_', $meta_key) !== 0 ? '_wpinv_' . $meta_key : $meta_key;
+            $meta_key = strpos($meta_key, '_wpinv_') !== 0 ? '_wpinv_' . $meta_key : $meta_key;
             
             $this->update_meta($meta_key, $meta_value);
         }

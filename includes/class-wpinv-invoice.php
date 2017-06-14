@@ -2291,6 +2291,10 @@ final class WPInv_Invoice {
                 $status_label = __( 'Failing', 'invoicing' );
                 break;
                 
+            case 'stopped' :
+                $status_label = __( 'Stopped', 'invoicing' );
+                break;
+                
             case 'trialing' :
                 $status_label = __( 'Trialing', 'invoicing' );
                 break;
@@ -2392,6 +2396,32 @@ final class WPInv_Invoice {
 
         if ( $this->update_subscription( $args ) ) {
             do_action( 'wpinv_subscription_failing', $this->ID, $this );
+            return true;
+        }
+
+        return false;
+    }
+    
+    public function stop_subscription() {
+        $args = array(
+            'status' => 'stopped'
+        );
+
+        if ( $this->update_subscription( $args ) ) {
+            do_action( 'wpinv_subscription_stopped', $this->ID, $this );
+            return true;
+        }
+
+        return false;
+    }
+    
+    public function restart_subscription() {
+        $args = array(
+            'status' => 'active'
+        );
+
+        if ( $this->update_subscription( $args ) ) {
+            do_action( 'wpinv_subscription_restarted', $this->ID, $this );
             return true;
         }
 
