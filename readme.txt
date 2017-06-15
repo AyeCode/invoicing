@@ -3,8 +3,8 @@ Contributors: stiofansisland, ayecode, paoltaia
 Donate link: http://wpgeodirectory.com/
 Tags: invoice, invoicing, invoice plugin, invoices, invoices plugin, invoicing plugin
 Requires at least: 3.1
-Tested up to: 4.7
-Stable tag: 0.0.2
+Tested up to: 4.8
+Stable tag: 0.0.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,7 +20,7 @@ Invoicing plugin.
 
 == Changelog ==
 
-= 0.0.2 =
+= 0.0.3 =
 First public beta release - RELEASE
 
 = 0.0.1 =
