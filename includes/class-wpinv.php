@@ -68,6 +68,8 @@ class WPInv_Plugin {
          * @param WPInv_Plugin $this. Current WPInv_Plugin instance. Passed by reference.
          */
         do_action_ref_array( 'wpinv_actions', array( &$this ) );
+
+        add_action( 'admin_init', array( &$this, 'activation_redirect') );
     }
     
     public function plugins_loaded() {
@@ -167,6 +169,24 @@ class WPInv_Plugin {
         }
         
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
+    }
+
+    public function activation_redirect() {
+        // Bail if no activation redirect
+        if ( !get_transient( '_wpinv_activation_redirect' ) ) {
+            return;
+        }
+
+        // Delete the redirect transient
+        delete_transient( '_wpinv_activation_redirect' );
+
+        // Bail if activating from network, or bulk
+        if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+            return;
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=general' ) );
+        exit;
     }
     
     public function enqueue_scripts() {

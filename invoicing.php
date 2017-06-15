@@ -3,7 +3,7 @@
 Plugin Name: Invoicing
 Plugin URI: https://wpinvoicing.com/
 Description: Invoicing plugin.
-Version: 0.0.3
+Version: 0.0.4
 Author: AyeCode
 Author URI: https://wpinvoicing.com/
 License: GPLv3
@@ -16,7 +16,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '0.0.3' );
+    define( 'WPINV_VERSION', '0.0.4' );
 }
 
 if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {

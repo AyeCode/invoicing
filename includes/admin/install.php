@@ -3,6 +3,7 @@ register_activation_hook( WPINV_PLUGIN_FILE, 'wpinv_plugin_activation' );
 register_deactivation_hook( WPINV_PLUGIN_FILE, 'wpinv_plugin_deactivation' );
 
 function wpinv_plugin_activation( $network_wide = false ) {
+    set_transient( '_wpinv_activation_redirect', true, 30 );
     wpinv_install( $network_wide );
 }
 
