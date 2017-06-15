@@ -201,6 +201,19 @@ function wpinv_get_registered_settings() {
                         'type'    => 'country_states',
                         'placeholder' => __( 'Select a state', 'invoicing' ),
                     ),
+                    'store_name' => array(
+                        'id'   => 'store_name',
+                        'name' => __( 'Store Name', 'invoicing' ),
+                        'desc' => __( 'Store name to print on invoices.', 'invoicing' ),
+                        'std'     => get_option('blogname'),
+                        'type' => 'text',
+                    ),
+                    'logo' => array(
+                        'id'   => 'logo',
+                        'name' => __( 'Logo URL', 'invoicing' ),
+                        'desc' => __( 'Store logo to print on invoices.', 'invoicing' ),
+                        'type' => 'text',
+                    ),
                     'store_address' => array(
                         'id'   => 'store_address',
                         'name' => __( 'Store Address', 'invoicing' ),
