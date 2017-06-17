@@ -12,9 +12,13 @@
  */
 $invoice = wpinv_get_invoice( $invoice_id );
 $cc_owner = !empty( $invoice ) ? esc_attr( $invoice->get_user_full_name() ) : '';
+$recuring = esc_attr(get_post_meta($invoice_id, 'paypalpro_rec_enable', TRUE));
+$period = esc_attr(get_post_meta($invoice_id, 'paypalpro_rec_period', TRUE));
+$frequency = esc_attr(get_post_meta($invoice_id, 'paypalpro_rec_frequency', TRUE));
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<!-- This file should primarily consist of HTML with a little bit of PHP -->
+<?php if($recuring == 'Y'){ ?><div class="alert alert-info"><?php echo sprintf(__("it will be a recurring payment for %s %ss", 'invoicing'), $frequency, $period); ?></div><?php } ?>
 <div class="card-payment form-horizontal wpi-cc-form panel panel-default">
     <div id="paymentSection" class="panel-body">
               <input type="hidden" name="paypalpro[card_type]" id="card_type" value=""/>

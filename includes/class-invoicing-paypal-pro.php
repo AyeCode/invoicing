@@ -155,6 +155,8 @@ class Invoicing_Paypal_Pro {
             
             $this->loader->add_action( 'wpinv_payment_gateways', $plugin_admin, 'add_gateway' );
             $this->loader->add_filter( 'wpinv_gateway_settings_paypalpro', $plugin_admin, 'paypalpro_settings'  );
+            $this->loader->add_action( 'add_meta_boxes_wpi_invoice', $plugin_admin, 'wpinv_meta_boxes' );
+            $this->loader->add_action( 'save_post', $plugin_admin, 'wpinv_save_meta', 10, 1 );
 	}
 
 	/**
@@ -171,7 +173,7 @@ class Invoicing_Paypal_Pro {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
                 
-                $this->loader->add_action( 'wpinv_paypalpro_cc_form', $plugin_public, 'paypalpro_form', 10, 1 );
+                $this->loader->add_action( 'wpinv_paypalpro_cc_form', $plugin_public, 'paypalpro_form');
 	}
 
 	/**
@@ -242,7 +244,9 @@ class PaypalPro{
             $this->paypalURL = 'https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=';
         }
         add_action( 'wpinv_gateway_paypalpro', array($this, 'process_paypal_call') );
+        add_filter( 'wpinv_paypalpro_support_subscription', array($this, 'test') );
     }
+    public function test(){return true; }
     public function nvpHeader(){
         $nvpHeaderStr = "";
     
@@ -307,12 +311,12 @@ class PaypalPro{
         $args['body'] = $nvpreq;
         
         //getting response from server
-        
         $response = wp_remote_post($this->apiEndpoint, $args); 
         if(is_wp_error($response)) return $response;
         
         //convrting NVPResponse to an Associative Array
         parse_str($response['body'], $resArray);
+        //die('<pre>'.print_r($resArray).'</pre>');
         return $resArray;
     }
     
@@ -328,7 +332,7 @@ class PaypalPro{
          * name value pair string with & as a delimiter
          */
         
-        $recurringStr = (array_key_exists("recurring",$params) && $params['recurring'] == 'Y')?'&RECURRING=Y':'';
+        $recurringStr = (array_key_exists("recurring",$params) && $params['recurring'] == 'Y')? "&RECURRING=Y&PROFILESTARTDATE=".gmdate("Y-m-d\TH:i:s\Z")."&BILLINGPERIOD=".$params['billingPeriod']."&BILLINGFREQUENCY=".$params['billingFrequency'] : "";
         $nvpstr = "&PAYMENTACTION=".$params['paymentAction']."&AMT=".$params['amount']."&CREDITCARDTYPE=".$params['creditCardType']."&ACCT=".$params['creditCardNumber']."&EXPDATE=".$params['expMonth'].$params['expYear']."&CVV2=".$params['cvv2']."&FIRSTNAME=".$params['firstName']."&LASTNAME=".$params['lastName']."&STREET=".$params['street']."&CITY=".$params['city']."&STATE=".$params['state']."&ZIP=".$params['zip']."&COUNTRYCODE=".$params['countryCode']."&CURRENCYCODE=".$params['currencyCode'].$recurringStr;
     
         /* Make the API call to PayPal, using API signature.
@@ -362,6 +366,11 @@ class PaypalPro{
         $invoice = wpinv_get_invoice( $purchase_data['invoice_id'] );
         if ( !empty( $invoice ) ) {
             $ppp_card  = !empty( $_POST['paypalpro'] ) ? $_POST['paypalpro'] : array();
+            $ppp_rec = array(
+                'enable' => get_post_meta($invoice->ID, 'paypalpro_rec_enable', TRUE),
+                'period' => get_post_meta($invoice->ID, 'paypalpro_rec_period', TRUE),
+                'frequency' => get_post_meta($invoice->ID, 'paypalpro_rec_frequency', TRUE),
+                );
             $card_defaults      = array(
                 'cc_owner'          => $invoice->get_user_full_name(),
                 'cc_number'         => false,
@@ -413,11 +422,14 @@ class PaypalPro{
                     'street'  => $invoice->get_address(),
                     'phone' => $invoice->phone,
                     'city' => $invoice->city,
-                    'state'  => $_POST['state'],
+                    'state'  => $invoice->state,
                     'zip'	=> $invoice->zip,
                     'countryCode' => $invoice->country,
+                    'recurring' => $ppp_rec['enable'],
+                    'billingPeriod' =>  $ppp_rec['period'],
+                    'billingFrequency'  => $ppp_rec['frequency'],
                 );
-
+                
                 try {
                     $response = $this->paypalCall($paypalParams);
                     $paymentStatus = strtoupper($response["ACK"]);

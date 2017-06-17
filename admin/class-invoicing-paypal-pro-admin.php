@@ -114,8 +114,8 @@ class Invoicing_Paypal_Pro_Admin {
             $settings['paypalpro_sandbox'] = array(
                     'type' => 'checkbox',
                     'id'   => 'paypalpro_sandbox',
-                    'name' => __( 'Paypal Pro Test Mode', 'invoicing' ),
-                    'desc' => __( 'This provides a special Test Environment to enable you to test your installation and integration to your website before going live.', 'invoicing' ),
+                    'name' => __( 'Paypal Pro Sandbox', 'invoicing' ),
+                    'desc' => __( 'Check this to test your installation and integration to your website before going live. Use paypal sandbox API credentials.', 'invoicing' ),
                     'std'  => 1
                 );
 
@@ -153,5 +153,124 @@ class Invoicing_Paypal_Pro_Admin {
                 */
             return $settings;
         }
+        
+        function wpinv_meta_boxes($post) {
+            $gateways = wpinv_get_enabled_payment_gateways( true );
+            if(isset($gateways['paypalpro'])){
+                add_meta_box(
+                        'paypalpro_recurring_metabox',
+                        __( 'Paypal Pro Recurring', 'invoicing' ),
+                        array($this, 'metabox_output'),
+                        'wpi_invoice',
+                        'side',
+                        'high'
+                );
+            }
+        }
+        
+        function metabox_output( $post ) {
+
+            // Add a nonce field so we can check for it later.
+                wp_nonce_field( 'myplugin_adpost_meta_awesome_box', 'adpost_meta_box_nonce' );
+
+                /*
+                 * Use get_post_meta() to retrieve an existing value
+                 * from the database and use the value for the form.
+                 */
+                $period = esc_attr(get_post_meta($post->ID, 'paypalpro_rec_period', TRUE));
+                $select_disable = $select_enable = '';
+                $enabled = get_post_meta($post->ID, 'paypalpro_rec_enable', TRUE);
+                if(empty($enabled) or $enabled == 'N' ) $select_disable = 'checked';
+                else $select_enable = 'checked';
+            ?>
+        <div class="inside">
+            <div class="gdmbx2-wrap form-table">
+                <div class="gdmbx2-metabox gdmbx-field-list">
+                    <div class="gdmbx-row gdmbx-type-text table-layout">
+                        <div class="gdmbx-td">
+                            <div class="paypal-radio-wrap">
+                                <input type="radio" value="N" id="paypalpro_rec_disable"  name="paypalpro_rec_enable" class="" <?php echo $select_disable ?>>
+                                <label for="paypalpro_rec_disable"><?php _e('Disable', 'invoicing'); ?></label>
+                            </div>
+                            <div class="paypal-radio-wrap">
+                                <input type="radio" value="Y" id="paypalpro_rec_enable" name="paypalpro_rec_enable" style="display: inline-block; margin-top: 0; " class="" <?php echo $select_enable; ?>>
+                                <label for="paypalpro_rec_enable"><?php _e('Enable', 'invoicing'); ?></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gdmbx-row gdmbx-type-text table-layout">
+                        <div class="gdmbx-th"><label for="paypalpro_rec_period">Billing Period</label></div>
+                        <div class="gdmbx-td">
+                            <select name="paypalpro_rec_period">
+                                <option value="Day" <?php selected($period, 'Day'); ?>>Day</option>
+                                <option value="Week" <?php selected($period, 'Week'); ?>>Week</option>
+                                <option value="SemiMonth" <?php selected($period, 'SemiMonth'); ?>>Semi Month</option>
+                                <option value="Month" <?php selected($period, 'Month'); ?>>Month</option>
+                                <option value="Year" <?php selected($period, 'Year'); ?>>Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="gdmbx-row gdmbx-type-text table-layout">
+                    <div class="gdmbx-th"><label for="paypalpro_rec_frequency">Billing Frequency</label></div>
+                    <div class="gdmbx-td">
+                        <input placeholder="Billing Frequency" value="<?php echo esc_attr(get_post_meta($post->ID, 'paypalpro_rec_frequency', TRUE)); ?>" id="paypalpro_rec_frequency" name="paypalpro_rec_frequency" class="regular-text" type="number" min="1">
+                    </div>
+                </div>
+                <div class="gdmbx-td"><i><?php _e('The combination of Billing Period and Billing Frequency cannot exceed one year.', 'invoicing'); ?> </i></div>
+                </div>
+            </div>
+        </div>
+            <?php 
+        }
+        
+        function wpinv_save_meta( $post_id ) {
+
+            /*
+             * We need to verify this came from our screen and with proper authorization,
+             * because the save_post action can be triggered at other times.
+             */
+
+            // Check if our nonce is set.
+            if ( ! isset( $_POST['adpost_meta_box_nonce'] ) ) {
+                    return;
+            }
+
+            // Verify that the nonce is valid.
+            if ( ! wp_verify_nonce( $_POST['adpost_meta_box_nonce'], 'myplugin_adpost_meta_awesome_box' ) ) {
+                    return;
+            }
+
+            // If this is an autosave, our form has not been submitted, so we don't want to do anything.
+            if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+                    return;
+            }
+
+            // Check the user's permissions.
+            if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+
+                    if ( ! current_user_can( 'edit_page', $post_id ) ) {
+                            return;
+                    }
+
+            } else {
+
+                    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+                            return;
+                    }
+            }
+
+            /* OK, it's safe for us to save the data now. */
+
+            // Add/update new value.
+            foreach ($_POST as $key => $val):
+                // Make sure that it is set.
+                
+                if ( in_array($key, array('paypalpro_rec_startdate', 'paypalpro_rec_period', 'paypalpro_rec_frequency', 'paypalpro_rec_enable')) and isset( $val ) ) {                    
+                    //Sanitize user input.
+                    $my_data = sanitize_text_field( $val );
+                    update_post_meta( $post_id, $key,  $my_data); // Add new value.
+                }
+            endforeach;
+        }  
 
 }
