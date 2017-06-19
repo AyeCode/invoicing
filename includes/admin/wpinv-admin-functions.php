@@ -355,6 +355,8 @@ function wpinv_items_table_custom_column( $column ) {
                 </div>';
         break;
     }
+    
+    do_action( 'wpinv_items_table_column_item_' . $column, $wpi_item, $post );
 }
 add_action( 'manage_wpi_item_posts_custom_column', 'wpinv_items_table_custom_column' );
 

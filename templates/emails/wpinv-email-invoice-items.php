@@ -52,9 +52,14 @@ do_action( 'wpinv_before_email_items', $invoice ); ?>
                                 $item_title = esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $wpi_item );
                                 echo '<span class="wpinv_email_cart_item_title">' . $item_title . '</span>';
                                 
+                                $summary = '';
                                 if ( !empty( $wpi_item ) && $wpi_item->is_package() && !empty( $item['meta']['post_id'] ) ) {
                                     $post_link = '<a href="' . get_permalink( $item['meta']['post_id'] ) .'" target="_blank">' . (!empty($item['meta']['invoice_title']) ? $item['meta']['invoice_title'] : get_the_title( $item['meta']['post_id']) ) . '</a>';
                                     $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $wpi_item->get_cpt_singular_name(), $post_link );
+                                }
+                                
+                                $summary = apply_filters( 'wpinv_email_invoice_line_item_summary', $summary, $item, $wpi_item, $invoice );
+                                if ( !empty( $summary ) ) {
                                     echo '<p class="small">' . $summary . '</p>';
                                 }
     

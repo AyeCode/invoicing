@@ -446,3 +446,13 @@ function wpinv_options_page() {
     $content = ob_get_clean(); 
     echo $content;
 }
+
+function wpinv_item_type_class( $classes, $class, $post_id ) {
+    global $pagenow, $typenow;
+
+    if ( $pagenow == 'edit.php' && $typenow == 'wpi_item' && get_post_type( $post_id ) == $typenow && $type = get_post_meta( $post_id, '_wpinv_type', true ) ) {
+        $classes[] = 'wpi-type-' . sanitize_html_class( $type );
+    }
+    return $classes;
+}
+add_filter( 'post_class', 'wpinv_item_type_class', 10, 3 );

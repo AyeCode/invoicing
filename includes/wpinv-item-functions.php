@@ -2,10 +2,12 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function wpinv_get_item_by( $field = '', $value = '' ) {
+function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
     if( empty( $field ) || empty( $value ) ) {
         return false;
     }
+    
+    $posts = array();
 
     switch( strtolower( $field ) ) {
         case 'id':
@@ -19,20 +21,16 @@ function wpinv_get_item_by( $field = '', $value = '' ) {
 
         case 'slug':
         case 'name':
-            $item = get_posts( array(
+            $posts = get_posts( array(
                 'post_type'      => 'wpi_item',
                 'name'           => $value,
                 'posts_per_page' => 1,
                 'post_status'    => 'any'
             ) );
 
-            if ( $item ) {
-                $item = $item[0];
-            }
-
             break;
         case 'package_id':
-            $item = get_posts( array(
+            $posts = get_posts( array(
                 'post_type'      => 'wpi_item',
                 'posts_per_page' => 1,
                 'post_status'    => 'any',
@@ -49,19 +47,69 @@ function wpinv_get_item_by( $field = '', $value = '' ) {
                     )
                 )
             ) );
-
-            if ( $item ) {
-                $item = $item[0];
+            
+            break;
+        case 'post':
+            $meta_query = array();
+            $meta_query[] = array(
+                'key'   => '_wpinv_post_id',
+                'value' => $value,
+            );
+            if ( !empty( $type ) ) {
+                $meta_query[] = array(
+                    'key'   => '_wpinv_type',
+                    'value' => $type,
+                );
             }
+            
+            $args = array(
+                'post_type'      => 'wpi_item',
+                'posts_per_page' => 1,
+                'post_status'    => 'any',
+                'orderby'        => 'ID',
+                'order'          => 'ASC',
+                'meta_query'     => array( $meta_query )
+            );
+            
+            $posts = get_posts( $args );
+            
+            break;
+        case 'custom':
+            $meta_query = array();
+            $meta_query[] = array(
+                'key'   => '_wpinv_custom_id',
+                'value' => $value,
+            );
+            if ( !empty( $type ) ) {
+                $meta_query[] = array(
+                    'key'   => '_wpinv_type',
+                    'value' => $type,
+                );
+            }
+            
+            if ( empty( $custom_id ) || empty( $custom_type ) ) {
+                return false;
+            }
+            
+            $args = array(
+                'post_type'      => 'wpi_item',
+                'posts_per_page' => 1,
+                'post_status'    => 'any',
+                'orderby'        => 'ID',
+                'order'          => 'ASC',
+                'meta_query'     => array( $meta_query )
+            );
+            
+            $posts = get_posts( $args );
 
             break;
 
         default:
             return false;
     }
-
-    if ( $item ) {
-        return new WPInv_Item( $item->ID );
+    
+    if ( !empty( $posts[0] ) ) {
+        return new WPInv_Item( $posts[0]->ID );
     }
 
     return false;
