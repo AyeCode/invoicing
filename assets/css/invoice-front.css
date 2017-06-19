@@ -3503,6 +3503,9 @@ div td .meta p {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+.wpi-form .panel-heading h3.panel-title {
+    margin: 0;
+}
 @media screen and (max-width:767px) {    
     .wpinv-success .wpinv-receipt-details .table th,
     .wpinv-success .wpinv-bank-details .table th {

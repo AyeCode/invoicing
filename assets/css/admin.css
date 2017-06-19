@@ -952,7 +952,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     width: 150px;
 }
 .post-type-wpi_item .fixed .column-type {
-    width: 130px;
+    width: 140px;
 }
 .post-type-wpi_item .fixed .column-type .meta {
     display: block;
