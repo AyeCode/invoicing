@@ -20,6 +20,9 @@ Invoicing plugin.
 
 == Changelog ==
 
+= 0.0.5 =
+Option added to make phone mandatory/optional in address fields - CHANGED
+
 = 0.0.4 =
 First public beta release - RELEASE
 

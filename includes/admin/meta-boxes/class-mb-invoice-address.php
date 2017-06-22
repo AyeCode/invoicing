@@ -136,9 +136,9 @@ class WPInv_Meta_Box_Billing_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-phone table-layout">
-            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?> <?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo '<span class="required">*</span>'; } ?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" required="required" />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" <?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo 'required="required"'; } ?> />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">
