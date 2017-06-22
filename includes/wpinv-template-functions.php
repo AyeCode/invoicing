@@ -1738,7 +1738,7 @@ function wpinv_checkout_billing_info() {
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?><?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_phone',
@@ -1746,7 +1746,7 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['phone'],
                                 'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Phone', 'invoicing' ),
-                                'required'      => true,
+                                'required'      => (bool)wpinv_get_option( 'phone_mandatory' ),
                             ) );
                         ?>
                     </p>

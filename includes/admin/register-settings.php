@@ -523,6 +523,18 @@ function wpinv_get_registered_settings() {
         'misc' => apply_filters('wpinv_settings_misc',
             array(
                 'main' => array(
+                    'fields_settings' => array(
+                        'id'   => 'fields_settings',
+                        'name' => '<h3>' . __( 'Fields Settings', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'phone_mandatory' => array(
+                        'id'   => 'phone_mandatory',
+                        'name' => __( 'Phone No. Mandatory?', 'invoicing' ),
+                        'desc' => __( 'Tick this to make phone number mandatory in invoice address fields.', 'invoicing' ),
+                        'type' => 'checkbox',
+                        'std'  => true,
+                    ),
                     'invoice_number_format_settings' => array(
                         'id'   => 'invoice_number_format_settings',
                         'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
