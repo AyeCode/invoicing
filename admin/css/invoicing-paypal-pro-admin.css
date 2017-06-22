@@ -1,0 +1,6 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+.paypal-radio-wrap{display: inline-block; width: 40%}
+#side-sortables .gdmbx2-wrap .paypal-radio-wrap label{display: inline-block}

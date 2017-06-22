@@ -1,0 +1,12 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+form #card_number {
+	background-image: url("images.png"), url("images.png");
+	background-position: 2px -121px, 260px -61px;
+	background-repeat: no-repeat;
+	background-size: 120px 361px, 120px 361px;
+	padding-left: 54px;
+	width: 225px;
+}
