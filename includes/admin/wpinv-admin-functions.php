@@ -495,7 +495,7 @@ function wpinv_send_register_new_user( $data, $postarr ) {
                     wp_send_new_user_notifications( $new_user_id, 'user' );
                 }
             } else {
-                wpinv_error_log( $user_id->get_error_message(), 'Invoice add new user', __FILE__, __LINE__ );
+                wpinv_error_log( $new_user_id->get_error_message(), 'Invoice add new user', __FILE__, __LINE__ );
             }
         }
     }

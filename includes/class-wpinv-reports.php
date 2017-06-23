@@ -70,7 +70,7 @@ class WPInv_Reports {
         }
         
         $current_page = admin_url( 'admin.php?page=wpinv-reports' );
-        $active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'export';
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'export';
         ?>
         <div class="wrap wpi-reports-wrap">
             <h1><?php echo esc_html( __( 'Reports', 'invoicing' ) ); ?></h1>

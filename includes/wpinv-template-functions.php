@@ -207,7 +207,7 @@ function wpinv_locate_tmpl( $template_names, $load = false, $require_once = true
 			}
 		}
 
-		if( $located ) {
+		if( !empty( $located ) ) {
 			break;
 		}
 	}
@@ -708,6 +708,7 @@ function wpinv_ip_geolocation() {
     $longitude  = '';
     $latitude   = '';
     $credit     = '';
+    $address    = '';
     
     if ( wpinv_get_option( 'vat_ip_lookup' ) == 'geoip2' && $geoip2_city = $wpinv_euvat->geoip2_city_record( $ip ) ) {
         try {
@@ -739,7 +740,6 @@ function wpinv_ip_geolocation() {
     }
     
     if ( $iso && $longitude && $latitude ) {
-        $address = '';
         if ( $city ) {
             $address .= $city . ', ';
         }
@@ -1048,6 +1048,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                 do_action( 'wpinv_display_line_items_start', $invoice );
                 
                 $count = 0;
+                $cols  = 3;
                 foreach ( $cart_details as $key => $cart_item ) {
                     $item_id    = !empty($cart_item['id']) ? absint( $cart_item['id'] ) : '';
                     $item_price = isset($cart_item["item_price"]) ? wpinv_format_amount( $cart_item["item_price"] ) : 0;
