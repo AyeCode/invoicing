@@ -357,7 +357,7 @@ function wpinv_options_page() {
     
     $settings_tabs = wpinv_get_settings_tabs();
     $settings_tabs = empty($settings_tabs) ? array() : $settings_tabs;
-    $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? $_GET['tab'] : 'general';
+    $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
     $sections      = wpinv_get_settings_tab_sections( $active_tab );
     $key           = 'main';
 

@@ -1222,7 +1222,7 @@ final class WPInv_Invoice {
         $decrease_customer_value = apply_filters( 'wpinv_decrease_customer_value_on_pending', true, $this );
         $decrease_purchase_count = apply_filters( 'wpinv_decrease_customer_purchase_count_on_pending', true, $this );
 
-        $this->completed_date = false;
+        $this->completed_date = '';
         $this->update_meta( '_wpinv_completed_date', '' );
     }
     
@@ -1600,6 +1600,8 @@ final class WPInv_Invoice {
         $_POST['wpinv_country'] = $this->country;
         $_POST['wpinv_state']   = $this->state;
         
+        $found_cart_key         = false;
+        
         if ($has_quantities) {
             $this->cart_details = !empty( $this->cart_details ) ? array_values( $this->cart_details ) : $this->cart_details;
             
@@ -1612,7 +1614,6 @@ final class WPInv_Invoice {
                 break;
             }
             
-            $found_cart_key = false;
             foreach ( $this->cart_details as $cart_key => $cart_item ) {
                 if ( $item_id != $cart_item['id'] ) {
                     continue;
@@ -1888,7 +1889,7 @@ final class WPInv_Invoice {
             $cart_subtotal          = 0;
             $cart_discount          = 0;
             $cart_tax               = 0;
-            $update_cart_details    = array();
+            $cart_details           = array();
             
             $_POST['wpinv_country'] = $this->country;
             $_POST['wpinv_state']   = $this->state;
@@ -2170,7 +2171,7 @@ final class WPInv_Invoice {
     }
     
     public function get_original_invoice_id() {        
-        return $this->parent_invoice_id;
+        return $this->parent_invoice;
     }
     
     public function get_bill_times() {

@@ -75,21 +75,19 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
             
             break;
         case 'custom':
+            if ( empty( $value ) || empty( $type ) ) {
+                return false;
+            }
+            
             $meta_query = array();
             $meta_query[] = array(
                 'key'   => '_wpinv_custom_id',
                 'value' => $value,
             );
-            if ( !empty( $type ) ) {
-                $meta_query[] = array(
-                    'key'   => '_wpinv_type',
-                    'value' => $type,
-                );
-            }
-            
-            if ( empty( $custom_id ) || empty( $custom_type ) ) {
-                return false;
-            }
+            $meta_query[] = array(
+                'key'   => '_wpinv_type',
+                'value' => $type,
+            );
             
             $args = array(
                 'post_type'      => 'wpi_item',
@@ -318,19 +316,13 @@ function wpinv_get_item_token( $url = '' ) {
     $hash    = apply_filters( 'wpinv_get_url_token_algorithm', 'sha256' );
     $secret  = apply_filters( 'wpinv_get_url_token_secret', hash( $hash, wp_salt() ) );
 
-    /*
-     * Add additional args to the URL for generating the token.
-     * Allows for restricting access to IP and/or user agent.
-     */
     $parts   = parse_url( $url );
     $options = array();
 
     if ( isset( $parts['query'] ) ) {
         wp_parse_str( $parts['query'], $query_args );
 
-        // o = option checks (ip, user agent).
         if ( ! empty( $query_args['o'] ) ) {
-            // Multiple options can be checked by separating them with a colon in the query parameter.
             $options = explode( ':', rawurldecode( $query_args['o'] ) );
 
             if ( in_array( 'ip', $options ) ) {
@@ -344,19 +336,14 @@ function wpinv_get_item_token( $url = '' ) {
         }
     }
 
-    /*
-     * Filter to modify arguments and allow custom options to be tested.
-     * Be sure to rawurlencode any custom options for consistent results.
-     */
     $args = apply_filters( 'wpinv_get_url_token_args', $args, $url, $options );
 
     $args['secret'] = $secret;
-    $args['token']  = false; // Removes a token if present.
+    $args['token']  = false;
 
     $url   = add_query_arg( $args, $url );
     $parts = parse_url( $url );
 
-    // In the event there isn't a path, set an empty one so we can MD5 the token
     if ( ! isset( $parts['path'] ) ) {
         $parts['path'] = '';
     }
@@ -373,14 +360,12 @@ function wpinv_validate_url_token( $url = '' ) {
     if ( isset( $parts['query'] ) ) {
         wp_parse_str( $parts['query'], $query_args );
 
-        // These are the only URL parameters that are allowed to affect the token validation
         $allowed = apply_filters( 'wpinv_url_token_allowed_params', array(
             'item',
             'ttl',
             'token'
         ) );
 
-        // Parameters that will be removed from the URL before testing the token
         $remove = array();
 
         foreach( $query_args as $key => $value ) {

@@ -22,6 +22,7 @@ Invoicing plugin.
 
 = 0.0.5 =
 Option added to make phone mandatory/optional in address fields - CHANGED
+Security vulnerability fixed - FIXED
 
 = 0.0.4 =
 First public beta release - RELEASE
