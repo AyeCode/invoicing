@@ -849,7 +849,7 @@ function wpinv_set_cart_discount( $code = '' ) {
     if ( empty( $data ) ) {
         $data = array();
     } else {
-        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
+        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'], '_wpinv_payment_meta', false ) ) {
             $payment_meta['user_info']['discount']  = implode( ',', $discounts );
             update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
         }
@@ -870,7 +870,7 @@ function wpinv_unset_cart_discount( $code = '' ) {
             
         $data = wpinv_get_checkout_session();
         $data['cart_discounts'] = $discounts;
-        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
+        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'], '_wpinv_payment_meta', false ) ) {
             $payment_meta['user_info']['discount']  = !empty( $discounts ) ? implode( ',', $discounts ) : '';
             update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
         }

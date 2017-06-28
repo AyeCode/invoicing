@@ -347,7 +347,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 	$payment_status = strtolower( $data['payment_status'] );
 	$currency_code  = strtolower( $data['mc_currency'] );
 	$business_email = isset( $data['business'] ) && is_email( $data['business'] ) ? trim( $data['business'] ) : trim( $data['receiver_email'] );
-	$payment_meta   = wpinv_get_invoice_meta( $invoice_id );
+	$payment_meta   = wpinv_get_invoice_meta( $invoice_id, '_wpinv_payment_meta', false );
 
 	if ( wpinv_get_payment_gateway( $invoice_id ) != 'paypal' ) {
 		return; // this isn't a PayPal standard IPN
