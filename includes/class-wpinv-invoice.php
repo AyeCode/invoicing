@@ -1228,14 +1228,6 @@ final class WPInv_Invoice {
     
     // get data
     public function get_meta( $meta_key = '_wpinv_payment_meta', $single = false ) {
-        if ( empty( $meta_key ) || $meta_key == 'payment_meta' ) {
-            $meta_key = '_wpinv_payment_meta';
-        }
-        
-        if ( $meta_key == '_wpinv_payment_meta' ) {
-            $single = false;
-        }
-        
         $meta = get_post_meta( $this->ID, $meta_key, $single );
 
         if ( $meta_key === '_wpinv_payment_meta' ) {
