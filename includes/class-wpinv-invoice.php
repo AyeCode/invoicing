@@ -1231,6 +1231,9 @@ final class WPInv_Invoice {
         $meta = get_post_meta( $this->ID, $meta_key, $single );
 
         if ( $meta_key === '_wpinv_payment_meta' ) {
+
+            if(!is_array($meta)){$meta = array();} // we need this to be an array so make sure it is.
+
             if ( empty( $meta['key'] ) ) {
                 $meta['key'] = $this->setup_invoice_key();
             }
