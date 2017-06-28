@@ -129,7 +129,7 @@ final class WPInv_Invoice {
         $this->ID              = absint( $invoice_id );
         
         // We have a payment, get the generic payment_meta item to reduce calls to it
-        $this->payment_meta    = $this->get_meta( '_wpinv_payment_meta', false );
+        $this->payment_meta    = $this->get_meta();
         $this->date            = $invoice->post_date;
         $this->due_date        = $this->setup_due_date();
         $this->completed_date  = $this->setup_completed_date();
@@ -220,7 +220,7 @@ final class WPInv_Invoice {
     }
     
     private function setup_due_date() {
-        $due_date = $this->get_meta( '_wpinv_due_date', true );
+        $due_date = $this->get_meta( '_wpinv_due_date' );
         
         if ( empty( $due_date ) ) {
             $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days' ) ) );
@@ -327,7 +327,7 @@ final class WPInv_Invoice {
         $amount = $this->get_meta( '_wpinv_total', true );
 
         if ( empty( $amount ) && '0.00' != $amount ) {
-            $meta   = $this->get_meta( '_wpinv_payment_meta', false );
+            $meta   = $this->get_meta( '_wpinv_payment_meta', true );
             $meta   = maybe_unserialize( $meta );
 
             if ( isset( $meta['amount'] ) ) {
@@ -339,11 +339,11 @@ final class WPInv_Invoice {
     }
     
     private function setup_mode() {
-        return $this->get_meta( '_wpinv_mode', true );
+        return $this->get_meta( '_wpinv_mode' );
     }
 
     private function setup_gateway() {
-        $gateway = $this->get_meta( '_wpinv_gateway', true );
+        $gateway = $this->get_meta( '_wpinv_gateway' );
         
         if ( empty( $gateway ) && 'publish' === $this->status || 'complete' === $this->status ) {
             $gateway = 'manual';
@@ -358,7 +358,7 @@ final class WPInv_Invoice {
     }
 
     private function setup_transaction_id() {
-        $transaction_id = $this->get_meta( '_wpinv_transaction_id', true );
+        $transaction_id = $this->get_meta( '_wpinv_transaction_id' );
 
         if ( empty( $transaction_id ) || (int) $transaction_id === (int) $this->ID ) {
             $gateway        = $this->gateway;
@@ -369,47 +369,47 @@ final class WPInv_Invoice {
     }
 
     private function setup_ip() {
-        $ip = $this->get_meta( '_wpinv_user_ip', true );
+        $ip = $this->get_meta( '_wpinv_user_ip' );
         return $ip;
     }
 
     ///private function setup_user_id() {
-        ///$user_id = $this->get_meta( '_wpinv_user_id', true );
+        ///$user_id = $this->get_meta( '_wpinv_user_id' );
         ///return $user_id;
     ///}
         
     private function setup_first_name() {
-        $first_name = $this->get_meta( '_wpinv_first_name', true );
+        $first_name = $this->get_meta( '_wpinv_first_name' );
         return $first_name;
     }
     
     private function setup_last_name() {
-        $last_name = $this->get_meta( '_wpinv_last_name', true );
+        $last_name = $this->get_meta( '_wpinv_last_name' );
         return $last_name;
     }
     
     private function setup_company() {
-        $company = $this->get_meta( '_wpinv_company', true );
+        $company = $this->get_meta( '_wpinv_company' );
         return $company;
     }
     
     private function setup_vat_number() {
-        $vat_number = $this->get_meta( '_wpinv_vat_number', true );
+        $vat_number = $this->get_meta( '_wpinv_vat_number' );
         return $vat_number;
     }
     
     private function setup_vat_rate() {
-        $vat_rate = $this->get_meta( '_wpinv_vat_rate', true );
+        $vat_rate = $this->get_meta( '_wpinv_vat_rate' );
         return $vat_rate;
     }
     
     private function setup_adddress_confirmed() {
-        $adddress_confirmed = $this->get_meta( '_wpinv_adddress_confirmed', true );
+        $adddress_confirmed = $this->get_meta( '_wpinv_adddress_confirmed' );
         return $adddress_confirmed;
     }
     
     private function setup_phone() {
-        $phone = $this->get_meta( '_wpinv_phone', true );
+        $phone = $this->get_meta( '_wpinv_phone' );
         return $phone;
     }
     
@@ -849,7 +849,7 @@ final class WPInv_Invoice {
                 'user_info'     => $this->user_info,
             );
             
-            $meta        = $this->get_meta( '_wpinv_payment_meta', false );
+            $meta        = $this->get_meta();
             $merged_meta = array_merge( $meta, $new_meta );
 
             // Only save the payment meta if it's changed
@@ -1140,7 +1140,7 @@ final class WPInv_Invoice {
         }
 
         if ( $meta_key == 'key' || $meta_key == 'date' ) {
-            $current_meta = $this->get_meta( '_wpinv_payment_meta', false );
+            $current_meta = $this->get_meta();
             $current_meta[ $meta_key ] = $meta_value;
 
             $meta_key     = '_wpinv_payment_meta';
@@ -1227,22 +1227,10 @@ final class WPInv_Invoice {
     }
     
     // get data
-    public function get_meta( $meta_key = '_wpinv_payment_meta', $single = false ) {
-        if ( empty( $meta_key ) || $meta_key == 'payment_meta' ) {
-            $meta_key = '_wpinv_payment_meta';
-        }
-        
-        if ( $meta_key == '_wpinv_payment_meta' ) {
-            $single = false;
-        }
-        
+    public function get_meta( $meta_key = '_wpinv_payment_meta', $single = true ) {
         $meta = get_post_meta( $this->ID, $meta_key, $single );
 
         if ( $meta_key === '_wpinv_payment_meta' ) {
-            if ( !is_array( $meta ) ) {
-                $meta = array();
-            }
-            
             if ( empty( $meta['key'] ) ) {
                 $meta['key'] = $this->setup_invoice_key();
             }
@@ -1251,7 +1239,7 @@ final class WPInv_Invoice {
                 $meta['date'] = get_post_field( 'post_date', $this->ID );
             }
         }
-        
+
         $meta = apply_filters( 'wpinv_get_invoice_meta_' . $meta_key, $meta, $this->ID );
 
         return apply_filters( 'wpinv_get_invoice_meta', $meta, $this->ID, $meta_key );
@@ -2698,7 +2686,7 @@ final class WPInv_Invoice {
         
         $subscription_meta = array();
         foreach ( $fields as $field ) {
-            $subscription_meta[ $field ] = $this->get_meta( '_wpinv_subscr_' . $field, true );
+            $subscription_meta[ $field ] = $this->get_meta( '_wpinv_subscr_' . $field );
         }
         
         $item = $this->get_recurring( true );
