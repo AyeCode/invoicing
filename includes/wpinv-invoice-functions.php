@@ -89,7 +89,7 @@ function wpinv_get_id_by_transaction_id( $key ) {
     return 0;
 }
 
-function wpinv_get_invoice_meta( $invoice_id = 0, $meta_key = '_wpinv_payment_meta', $single = true ) {
+function wpinv_get_invoice_meta( $invoice_id = 0, $meta_key = '_wpinv_payment_meta', $single = false ) {
     $invoice = new WPInv_Invoice( $invoice_id );
 
     return $invoice->get_meta( $meta_key, $single );
@@ -1401,7 +1401,7 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 	}
 
 	$user_id = (int) wpinv_get_user_id( $wpinv_receipt_args['id'] );
-    $invoice_meta = wpinv_get_invoice_meta( $wpinv_receipt_args['id'] );
+    $invoice_meta = wpinv_get_invoice_meta( $wpinv_receipt_args['id'], '_wpinv_payment_meta', false );
 
 	if ( is_user_logged_in() ) {
 		if ( $user_id === (int) get_current_user_id() ) {
