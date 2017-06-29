@@ -24,6 +24,7 @@ Invoicing plugin.
 Option added to make phone mandatory/optional in address fields - CHANGED
 Security vulnerability fixed - FIXED
 _wpinv_payment_meta should always return an array even if empty - FIXED
+No way to remove VAT Details input from frontend - FIXED
 
 = 0.0.4 =
 First public beta release - RELEASE

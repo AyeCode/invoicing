@@ -12,7 +12,8 @@ if ( $sent_to_admin ) {
     $secret = !empty( $email_type ) && $email_type == 'user_invoice' ? true : false;
     $invoice_url = $invoice->get_view_url( $secret );
 }
-$vat_name       = $wpinv_euvat->get_vat_name();
+$use_taxes = wpinv_use_taxes();
+$vat_name = $wpinv_euvat->get_vat_name();
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
 <div id="wpinv-email-details">
@@ -56,7 +57,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <?php if ( $user_vat_number = $invoice->vat_number ) { ?>
+        <?php if ( $use_taxes && $user_vat_number = $invoice->vat_number ) { ?>
             <tr>
                 <td><?php echo wp_sprintf( __( 'Invoice %s Number', 'invoicing' ), $vat_name ); ?></td>
                 <td><?php echo $user_vat_number; ?></td>

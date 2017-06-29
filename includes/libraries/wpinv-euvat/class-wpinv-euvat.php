@@ -41,14 +41,18 @@ class WPInv_EUVat {
         add_action( 'wp_enqueue_scripts', array( self::$instance, 'enqueue_vat_scripts' ) );
         add_filter( 'wpinv_default_billing_country', array( self::$instance, 'get_user_country' ), 10 );
         add_filter( 'wpinv_get_user_country', array( self::$instance, 'set_user_country' ), 10 );
-        add_filter( 'wpinv_tax_rate', array( self::$instance, 'get_rate' ), 10, 4 );
         add_action( 'wp_ajax_wpinv_vat_validate', array( self::$instance, 'ajax_vat_validate' ) );
         add_action( 'wp_ajax_nopriv_wpinv_vat_validate', array( self::$instance, 'ajax_vat_validate' ) );
         add_action( 'wp_ajax_wpinv_vat_reset', array( self::$instance, 'ajax_vat_reset' ) );
         add_action( 'wp_ajax_nopriv_wpinv_vat_reset', array( self::$instance, 'ajax_vat_reset' ) );
-        add_action( 'wpinv_checkout_error_checks', array( self::$instance, 'checkout_vat_validate' ), 10, 2 );
-        add_action( 'wpinv_after_billing_fields', array( self::$instance, 'checkout_vat_fields' ) );
         add_action( 'wpinv_invoice_print_after_line_items', array( self::$instance, 'show_vat_notice' ), 999, 1 );
+        if ( wpinv_use_taxes() ) {
+            add_action( 'wpinv_after_billing_fields', array( self::$instance, 'checkout_vat_fields' ) );
+            if ( self::allow_vat_rules() ) {
+                add_action( 'wpinv_checkout_error_checks', array( self::$instance, 'checkout_vat_validate' ), 10, 2 );
+                add_filter( 'wpinv_tax_rate', array( self::$instance, 'get_rate' ), 10, 4 );
+            }
+        }
     }        
     
     public static function get_eu_states( $sort = true ) {
@@ -91,6 +95,7 @@ class WPInv_EUVat {
         $vat_name   = self::get_vat_name();
         
         $vars = array();
+        $vars['UseTaxes'] = wpinv_use_taxes();
         $vars['EUStates'] = self::get_eu_states();
         $vars['NoRateSet'] = __( 'You have not set a rate. Do you want to continue?', 'invoicing' );
         $vars['EmptyCompany'] = __( 'Please enter your registered company name!', 'invoicing' );
@@ -100,7 +105,8 @@ class WPInv_EUVat {
         $vars['ErrResetVAT'] = wp_sprintf( __( 'Fail to reset the %s number!', 'invoicing' ), $vat_name );
         $vars['ErrInvalidVat'] = wp_sprintf( __( 'The %s number supplied does not have a valid format!', 'invoicing' ), $vat_name );
         $vars['ErrInvalidResponse'] = __( 'An invalid response has been received from the server!', 'invoicing' );
-        $vars['ApplyVATRules'] = self::allow_vat_rules();
+        $vars['ApplyVATRules'] = $vars['UseTaxes'] ? self::allow_vat_rules() : false;
+        $vars['HideVatFields'] = $vars['ApplyVATRules'] ? self::hide_vat_fields() : true;
         $vars['ErrResponse'] = __( 'The request response is invalid!', 'invoicing' );
         $vars['ErrRateResponse'] = __( 'The get rate request response is invalid', 'invoicing' );
         $vars['PageRefresh'] = __( 'The page will be refreshed in 10 seconds to show the new options.', 'invoicing' );
@@ -295,7 +301,7 @@ class WPInv_EUVat {
             $vat_settings['vat_disable_fields'] = array(
                 'id' => 'vat_disable_fields',
                 'name' => __( 'Disable VAT fields', 'invoicing' ),
-                'desc' => __( 'Disable VAT fields if Invoicing is being used for GST.', 'invoicing' ),
+                'desc' => __( 'Disable VAT fields if Invoicing is being used for GST.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable if you have enabled Prevent EU B2C sales, otherwise Prevent EU B2C sales setting will not work.', 'invoicing' ) . '</font>',
                 'type' => 'checkbox'
             );
 
@@ -1314,7 +1320,7 @@ class WPInv_EUVat {
     }
     
     public static function allow_vat_rules() {
-        return ( wpinv_get_option( 'apply_vat_rules' ) ? true : false );
+        return ( wpinv_use_taxes() && wpinv_get_option( 'apply_vat_rules' ) ? true : false );
     }
     
     public static function allow_vat_classes() {
@@ -1914,8 +1920,8 @@ class WPInv_EUVat {
             $selected_country = 'GB';
         }
         
-        if ( self::same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) ) {
-            $requires_vat       = false;
+        if ( $requires_vat && ( self::same_country_rule() == 'no' && wpinv_is_base_country( $selected_country ) || !self::allow_vat_rules() ) ) {
+            $requires_vat = false;
         }
 
         $display_vat_details    = $requires_vat ? 'block' : 'none';

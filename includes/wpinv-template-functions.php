@@ -890,6 +890,7 @@ function wpinv_display_invoice_details( $invoice ) {
     
     $invoice_id = $invoice->ID;
     $vat_name   = $wpinv_euvat->get_vat_name();
+    $use_taxes  = wpinv_use_taxes();
     
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
     ?>
@@ -932,7 +933,7 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <?php if ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
+        <?php if ( $use_taxes && $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-uvatno">
                 <th><?php echo wp_sprintf( __( 'Your %s Number', 'invoicing' ), $vat_name ); ?></th>
                 <td><?php echo $user_vat_number; ?></td>

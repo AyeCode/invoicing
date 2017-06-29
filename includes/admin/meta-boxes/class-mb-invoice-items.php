@@ -159,11 +159,13 @@ class WPInv_Meta_Box_Items {
                                     <td class="total"><?php echo wpinv_discount( $invoice->ID, true, true ); ?></td>
                                     <td class="action"></td>
                                 </tr>
+                                <?php if ( $use_taxes ) { ?>
                                 <tr class="tax">
                                     <td class="name"><?php _e( 'Tax:', 'invoicing' );?></td>
                                     <td class="total"><?php echo $tax;?></td>
                                     <td class="action"></td>
                                 </tr>
+                                <?php } ?>
                                 <tr class="total">
                                     <td class="name"><?php _e( 'Invoice Total:', 'invoicing' );?></td>
                                     <td class="total"><?php echo $total;?></td>
