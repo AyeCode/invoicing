@@ -49,7 +49,11 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
             ) );
             
             break;
-        case 'post':
+        case 'item_id':
+            if ( empty( $value ) ) {
+                return false;
+            }
+            
             $meta_query = array();
             $meta_query[] = array(
                 'key'   => '_wpinv_post_id',
@@ -72,7 +76,7 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
             );
             
             $posts = get_posts( $args );
-            
+
             break;
         case 'custom':
             if ( empty( $value ) || empty( $type ) ) {
@@ -81,7 +85,7 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
             
             $meta_query = array();
             $meta_query[] = array(
-                'key'   => '_wpinv_custom_id',
+                'key'   => '_wpinv_post_id',
                 'value' => $value,
             );
             $meta_query[] = array(
@@ -676,4 +680,89 @@ function wpinv_item_in_use( $item_id ) {
     $wpi_items_in_use[$item_id] = $in_use;
     
     return $in_use;
+}
+
+function wpinv_create_item( $args = array(), $wp_error = false, $force_update = false ) {
+    // Set some defaults
+    $defaults = array(
+        'type'               => 'custom',                                                // Optional. Item type. Default 'custom'.
+        'item_id'            => 0,                                                       // Required. Any integer number. Must be unique within item type.
+        'title'              => '',                                                      // Required. Item title.
+        'price'              => '0.00',                                                  // Optional. Item price. Default '0.00'.
+        'status'             => 'pending',                                               // Optional. pending, publish
+        'vat_rule'           => 'digital',                                               // Optional. digital => Digital item, physical => Physical item
+        'cpt_singular_name'  => '',                                                      // Optional. Sub title for item. Should be singular.
+        'cpt_name'           => '',                                                      // Optional. Sub title for item. Should be plural.
+        'is_recurring'       => 0,                                                       // Optional. 1 => Allow recurring or 0 => Don't allow recurring
+        'recurring_period'   => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
+        'recurring_interval' => 0,                                                       // Optional. Integer value between 1 - 90.
+        'recurring_limit'    => 0,                                                       // Optional. Any integer number. 0 for recurring forever until cancelled.
+        'free_trial'         => 0,                                                       // Optional. 1 => Allow free trial or 0 => Don't free trial
+        'trial_period'       => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
+        'trial_interval'     => 0,                                                       // Optional. Any integer number.
+        'excerpt'            => '',                                                      // Optional. Item short description
+    );
+    
+    $data = wp_parse_args( $args, $defaults );
+    
+    if ( empty( $data['item_id'] ) ) {
+        if ( $wp_error ) {
+            return new WP_Error( 'invalid_item_id', __( 'Invalid item ID.' ) );
+        } else {
+            return false;
+        }
+    }
+    
+    if ( empty( $data['type'] ) ) {
+        $data['type'] = 'custom';
+    }
+    
+    $item = wpinv_get_item_by( 'item_id', $data['item_id'], $data['type'] );
+        
+    if ( !$force_update && !empty( $item ) ) {
+        return $item;
+    }
+        
+    $meta                       = array();
+    $meta['type']               = $data['type'];
+    $meta['post_id']            = $data['item_id'];
+    $meta['cpt_singular_name']  = $data['cpt_singular_name'];
+    $meta['cpt_name']           = $data['cpt_name'];
+    $meta['price']              = wpinv_format_amount( $data['price'], NULL, true );
+    $meta['vat_rule']           = $data['vat_rule'];
+    $meta['vat_class']          = '_standard';
+    
+    if ( !empty( $data['is_recurring'] ) ) {
+        $meta['is_recurring']       = $data['is_recurring'];
+        $meta['recurring_period']   = $data['recurring_period'];
+        $meta['recurring_interval'] = absint( $data['recurring_interval'] );
+        $meta['recurring_limit']    = absint( $data['recurring_limit'] );
+        $meta['free_trial']         = $data['free_trial'];
+        $meta['trial_period']       = $data['trial_period'];
+        $meta['trial_interval']     = absint( $data['trial_interval'] );
+    } else {
+        $meta['is_recurring']       = 0;
+        $meta['recurring_period']   = '';
+        $meta['recurring_interval'] = '';
+        $meta['recurring_limit']    = '';
+        $meta['free_trial']         = 0;
+        $meta['trial_period']       = '';
+        $meta['trial_interval']     = '';
+    }
+    
+    $post_data  = array( 
+        'post_title'    => $data['title'],
+        'post_excerpt'  => $data['excerpt'],
+        'post_status'   => $data['status'],
+        'meta'          => $meta
+    );
+
+    if ( !empty( $item ) ) {
+        $item->update( $post_data, $wp_error );
+    } else {
+        $item = new WPInv_Item();
+        $item->create( $post_data, $wp_error );
+    }
+    
+    return $item;
 }
