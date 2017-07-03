@@ -57,7 +57,7 @@ jQuery(function($) {
                 if (eu_state && WPInv_VAT_Vars.disableVATSameCountry && wpinv_is_base_country(data.post.country)) {
                     eu_state = false;
                 }
-                if (eu_state) {
+                if (eu_state && !WPInv_VAT_Vars.HideVatFields) {
                     $('#wpi_vat_info').show();
                     $('#wpi_vat_info').parent('.wpi-vat-details').show();
                 } else {
@@ -484,8 +484,10 @@ jQuery(function($) {
             if (tax !== "0" && countryEl === undefined) {
                 window.location.reload()
             }
-            $('#wpi_vat_info').parent('.wpi-vat-details').show();
-            $('#wpi_vat_info').show();
+            if (!WPInv_VAT_Vars.HideVatFields) {
+                $('#wpi_vat_info').parent('.wpi-vat-details').show();
+                $('#wpi_vat_info').show();
+            }
             if (!updateTaxes) {
                 return;
             }
@@ -577,6 +579,9 @@ jQuery(function($) {
 });
 
 function wpinv_recalculate_taxes(state) {
+    if (!WPInv_VAT_Vars.UseTaxes) {
+        return false;
+    }
     var $address = jQuery('#wpi-billing');
     if (!state) {
         state = $address.find('#wpinv_state').val();
