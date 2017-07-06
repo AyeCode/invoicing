@@ -412,7 +412,7 @@ function wpinv_send_invoice_after_save( $post_id ) {
         return;
     }
     
-    if ( !current_user_can( 'manage_options' ) || get_post_type( $post_id ) != 'wpi_invoice' ) {
+    if ( !current_user_can( 'manage_options' ) || !(get_post_type( $post_id ) == 'wpi_invoice' || get_post_type( $post_id ) == 'wpi_quote')  ) {
         return;
     }
     

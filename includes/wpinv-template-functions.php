@@ -55,8 +55,7 @@ function wpinv_invoice_display_left_actions( $invoice ) {
         return;
     }
     
-    global $post;
-    if($post->post_type == 'wpi_invoice'){
+    if($invoice->post_type == 'wpi_invoice'){
     
         $user_id = (int)$invoice->get_user_id();
         $current_user_id = (int)get_current_user_id();
@@ -67,32 +66,23 @@ function wpinv_invoice_display_left_actions( $invoice ) {
             <?php
         }
     }
-    elseif ($post->post_type == 'wpi_quote'){
-        remove_query_arg('wpi_action');
-        add_query_arg( array( 'wpi_action' => 'process_quote' ));
-        ?>
-            <a class="btn btn-success btn-sm accept-quote" title="<?php esc_attr_e( 'Accept This Quotation', 'invoicing' ); ?>" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>&wpi_action=accept"><?php _e( 'Accept Quotation', 'invoicing' ); ?></a> &nbsp; 
-            <a class="btn btn-danger btn-sm decline-quote" title="<?php esc_attr_e( 'Decline This Quotation', 'invoicing' ); ?>" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>&action=decline"><?php _e( 'Decline Quotation', 'invoicing' ); ?></a>
-        <?php
-    }
+    do_action('wpinv_invoice_display_left_actions', $invoice);
 }
 
 function wpinv_invoice_display_right_actions( $invoice ) {
-    if ( empty( $invoice ) ) {
-        return;
-    }
-    global $post;
-    $type = ($post->post_type == 'wpi_invoice') ? __( 'Print Invoice', 'invoicing' ): __( 'Print Quotation', 'invoicing' );
-        
-    $user_id = (int)$invoice->get_user_id();
-    $current_user_id = (int)get_current_user_id();
+    if ( empty( $invoice ) ) return; //Exit if invoice is not set.
     
-    if ( $user_id > 0 && $user_id == $current_user_id ) {
-    ?>
-    <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php echo $type; ?></a>
-    <a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
-    <?php } ?>
-    <?php
+    if($invoice->post_type == 'wpi_invoice'){
+        $user_id = (int)$invoice->get_user_id();
+        $current_user_id = (int)get_current_user_id();
+
+        if ( $user_id > 0 && $user_id == $current_user_id ) {
+        ?>
+            <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a> &nbsp;
+            <a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+        <?php } 
+    }
+    do_action('wpinv_invoice_display_right_actions', $invoice);
 }
 
 function wpinv_before_invoice_content( $content ) {
