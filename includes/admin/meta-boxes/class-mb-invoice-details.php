@@ -22,6 +22,17 @@ class WPInv_Meta_Box_Details {
         $date_created       = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $datetime_created ) : '';
         $date_completed     = $invoice->get_completed_date();
         $date_completed     = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_completed ) ) : 'n/a';
+        if($post->post_type == 'wpi_invoice'){
+            $status_title = __( 'Invoice Status:', 'invoicing' );
+            $number_title = __( 'Invoice Number:', 'invoicing' );
+        } elseif($post->post_type == 'wpi_quote'){
+            $status_title = __( 'Quote Status:', 'invoicing' );
+            $number_title = __( 'Quote Number:', 'invoicing' );
+            unset($statuses['publish']);
+            unset($statuses['renewal']);
+            unset($statuses['refunded']);
+            $statuses['pending'] = "Pending";
+        }
         ?>
 <div class="gdmbx2-wrap form-table">
     <div class="gdmbx2-metabox gdmbx-field-list" id="gdmbx2-metabox-wpinv_details">
@@ -44,7 +55,7 @@ class WPInv_Meta_Box_Details {
         </div>
         <?php } ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">
-            <div class="gdmbx-th"><label for="wpinv_status"><?php _e( 'Invoice Status:', 'invoicing' );?></label></div>
+            <div class="gdmbx-th"><label for="wpinv_status"><?php echo $status_title; ?></label></div>
             <div class="gdmbx-td">
                 <select required="required" id="wpinv_status" name="wpinv_status" class="gdmbx2_select">
                     <?php foreach ( $statuses as $value => $label ) { ?>
@@ -54,7 +65,7 @@ class WPInv_Meta_Box_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-number table-layout">
-            <div class="gdmbx-th"><label for="wpinv_number"><?php _e( 'Invoice Number:', 'invoicing' );?></label></div>
+            <div class="gdmbx-th"><label for="wpinv_number"><?php echo $number_title; ?></label></div>
             <div class="gdmbx-td">
                 <input type="text" placeholder="<?php echo esc_attr( wpinv_format_invoice_number( 1 ) ); ?>" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text">
             </div>
@@ -89,15 +100,22 @@ class WPInv_Meta_Box_Details {
         if ( empty( $wpi_mb_invoice ) ) {
             return;
         }
-        
+        if($post->post_type == 'wpi_quote'){
+           $message =  __( 'This will send a copy of the quotation to the user&#8217;s email address.', 'invoicing' );
+           $button = __( 'Resend Quotation', 'invoicing' );
+        } else{
+            $message = __( 'This will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
+            $button = __( 'Resend Invoice', 'invoicing' );
+        }
+            
         do_action( 'wpinv_metabox_resend_invoice_before', $wpi_mb_invoice );
         
         if ( $email = $wpi_mb_invoice->get_email() ) {
             $email_url      = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
             $reminder_url   = add_query_arg( array( 'wpi_action' => 'send_reminder', 'invoice_id' => $post->ID ) );
         ?>
-        <p class="wpi-meta-row wpi-resend-info"><?php esc_attr_e( 'This will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>
-        <p class="wpi-meta-row wpi-resend-email"><a title="<?php esc_attr_e( 'Send invoice to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $email_url ); ?>" class="button button-secondary"><?php esc_attr_e( 'Resend Invoice', 'invoicing' ); ?></a></p>
+        <p class="wpi-meta-row wpi-resend-info"><?php echo $message;  ?></p>
+        <p class="wpi-meta-row wpi-resend-email"><a title="<?php esc_attr_e( 'Send invoice to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $email_url ); ?>" class="button button-secondary"><?php echo $button; ?></a></p>
         <?php if ( wpinv_get_option( 'overdue_active' ) && $wpi_mb_invoice->needs_payment() && ( $due_date = $wpi_mb_invoice->get_due_date() ) ) { ?>
         <p class="wpi-meta-row wpi-send-reminder"><a title="<?php esc_attr_e( 'Send overdue reminder notification to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $reminder_url ); ?>" class="button button-secondary"><?php esc_attr_e( 'Send Reminder', 'invoicing' ); ?></a></p>
         <?php } ?>
