@@ -209,7 +209,7 @@ function wpinv_discount_filters() {
 function wpinv_request( $vars ) {
     global $typenow, $wp_query, $wp_post_statuses;
 
-    if ( 'wpi_quote' === $typenow ) {
+    if ( 'wpi_invoice' === $typenow or 'wpi_quote' === $typenow ) {
         if ( !isset( $vars['post_status'] ) ) {
             $post_statuses = wpinv_get_invoice_statuses();
 
