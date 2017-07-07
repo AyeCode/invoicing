@@ -690,36 +690,36 @@ function wpinv_get_emails() {
 
 	// Default, built-in gateways
 	$emails = array(
-		'new_invoice' => array(
-            'email_new_invoice_header' => array(
-                'id'   => 'email_new_invoice_header',
-                'name' => '<h3>' . __( 'New Invoice', 'invoicing' ) . '</h3>',
-                'desc' => __( 'New invoice emails are sent to admin when a new invoice is received.', 'invoicing' ),
-                'type' => 'header',
-            ),
-            'email_new_invoice_active' => array(
-                'id'   => 'email_new_invoice_active',
-                'name' => __( 'Enable/Disable', 'invoicing' ),
-                'desc' => __( 'Enable this email notification', 'invoicing' ),
-                'type' => 'checkbox',
-                'std'  => 1
-            ),
-            'email_new_invoice_subject' => array(
-                'id'   => 'email_new_invoice_subject',
-                'name' => __( 'Subject', 'invoicing' ),
-                'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
-                'type' => 'text',
-                'std'  => __( '[{site_title}] New payment invoice ({invoice_number}) - {invoice_date}', 'invoicing' ),
-                'size' => 'large'
-            ),
-            'email_new_invoice_heading' => array(
-                'id'   => 'email_new_invoice_heading',
-                'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
-                'type' => 'text',
-                'std'  => __( 'New payment invoice', 'invoicing' ),
-                'size' => 'large'
-            ),
+            'new_invoice' => array(
+                'email_new_invoice_header' => array(
+                    'id'   => 'email_new_invoice_header',
+                    'name' => '<h3>' . __( 'New Invoice', 'invoicing' ) . '</h3>',
+                    'desc' => __( 'New invoice emails are sent to admin when a new invoice is received.', 'invoicing' ),
+                    'type' => 'header',
+                ),
+                'email_new_invoice_active' => array(
+                    'id'   => 'email_new_invoice_active',
+                    'name' => __( 'Enable/Disable', 'invoicing' ),
+                    'desc' => __( 'Enable this email notification', 'invoicing' ),
+                    'type' => 'checkbox',
+                    'std'  => 1
+                ),
+                'email_new_invoice_subject' => array(
+                    'id'   => 'email_new_invoice_subject',
+                    'name' => __( 'Subject', 'invoicing' ),
+                    'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
+                    'type' => 'text',
+                    'std'  => __( '[{site_title}] New payment invoice ({invoice_number}) - {invoice_date}', 'invoicing' ),
+                    'size' => 'large'
+                ),
+                'email_new_invoice_heading' => array(
+                    'id'   => 'email_new_invoice_heading',
+                    'name' => __( 'Email Heading', 'invoicing' ),
+                    'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
+                    'type' => 'text',
+                    'std'  => __( 'New payment invoice', 'invoicing' ),
+                    'size' => 'large'
+                ),
         ),
         'cancelled_invoice' => array(
             'email_cancelled_invoice_header' => array(

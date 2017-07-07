@@ -420,7 +420,7 @@ function wpinv_send_invoice_after_save( $post_id ) {
         wpinv_user_invoice_notification( $post_id );
     }
 }
-add_action( 'save_post', 'wpinv_send_invoice_after_save', 100, 1 );
+add_action( 'save_post_wpi_invoice', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
     if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && $data['post_type'] == 'wpi_invoice' ) {

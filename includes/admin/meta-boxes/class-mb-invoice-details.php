@@ -24,9 +24,12 @@ class WPInv_Meta_Box_Details {
         $date_completed     = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_completed ) ) : 'n/a';
         $title['status'] = __( 'Invoice Status:', 'invoicing' );
         $title['number'] = __( 'Invoice Number:', 'invoicing' );
+        $mail_notice = esc_attr__( 'After save invoice this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
         
-        $title = apply_filters('invoice_detail_metabox_titles', $title, $invoice);
-        $statuses = apply_filters('wpinv_metabox_statuses', $statuses, $invoice);
+        $title = apply_filters('wpinv_details_metabox_titles', $title, $invoice);
+        $statuses = apply_filters('wpinv_invoice_statuses', $statuses, $invoice);
+        $mail_notice = apply_filters('wpinv_metabox_mail_notice', $mail_notice, $invoice);
+        $post_obj = get_post_type_object($invoice->post_type);
         ?>
 <div class="gdmbx2-wrap form-table">
     <div class="gdmbx2-metabox gdmbx-field-list" id="gdmbx2-metabox-wpinv_details">
@@ -76,13 +79,13 @@ class WPInv_Meta_Box_Details {
     </div>
 </div>
 <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-save-send table-layout">
-    <p class="wpi-meta-row wpi-save-send"><label for="wpi_save_send"><?php _e( 'Send Invoice:', 'invoicing' ); ?></label>
+    <p class="wpi-meta-row wpi-save-send"><label for="wpi_save_send"><?php echo sprintf(__( 'Send %s:', 'invoicing' ),$post_obj->labels->singular_name) ; ?></label>
         <select id="wpi_save_send" name="wpi_save_send">
             <option value="1"><?php _e( 'Yes', 'invoicing' ); ?></option>
             <option value="" selected="selected"><?php _e( 'No', 'invoicing' ); ?></option>
         </select>
     </p>
-    <p class="wpi-meta-row wpi-send-info"><?php esc_attr_e( 'After save invoice this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' ); ?></p>
+    <p class="wpi-meta-row wpi-send-info"><?php echo $mail_notice; ?></p>
 </div>
 <?php wp_nonce_field( 'wpinv_details', 'wpinv_details_nonce' ) ;?>
         <?php
