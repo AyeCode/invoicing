@@ -345,7 +345,7 @@ final class WPInv_Invoice {
     private function setup_gateway() {
         $gateway = $this->get_meta( '_wpinv_gateway' );
         
-        if ( empty( $gateway ) && 'publish' === $this->status || 'complete' === $this->status ) {
+        if ( empty( $gateway ) && 'publish' === $this->status ) {
             $gateway = 'manual';
         }
         
@@ -667,13 +667,13 @@ final class WPInv_Invoice {
                                     $price = $item['price'];
                                     $taxes = $item['tax'];
 
-                                    if ( 'publish' === $this->status || 'complete' === $this->status || 'revoked' === $this->status ) {
+                                    if ( 'publish' === $this->status ) {
                                         $total_increase += $price;
                                     }
                                     break;
 
                                 case 'remove':
-                                    if ( 'publish' === $this->status || 'complete' === $this->status || 'revoked' === $this->status ) {
+                                    if ( 'publish' === $this->status ) {
                                         $total_decrease += $item['price'];
                                     }
                                     break;
@@ -681,7 +681,7 @@ final class WPInv_Invoice {
                         }
                         break;
                     case 'fees':
-                        if ( 'publish' !== $this->status && 'complete' !== $this->status && 'revoked' !== $this->status ) {
+                        if ( 'publish' !== $this->status ) {
                             break;
                         }
 
@@ -1106,10 +1106,10 @@ final class WPInv_Invoice {
            
             // Process any specific status functions
             switch( $new_status ) {
-                case 'refunded':
+                case 'wpi-refunded':
                     $this->process_refund();
                     break;
-                case 'failed':
+                case 'wpi-failed':
                     $this->process_failure();
                     break;
                 case 'pending':
@@ -1128,7 +1128,7 @@ final class WPInv_Invoice {
 
     public function refund() {
         $this->old_status        = $this->status;
-        $this->status            = 'refunded';
+        $this->status            = 'wpi-refunded';
         $this->pending['status'] = $this->status;
 
         $this->save();
@@ -1167,8 +1167,8 @@ final class WPInv_Invoice {
     private function process_refund() {
         $process_refund = true;
 
-        // If the payment was not in publish or revoked status, don't decrement stats as they were never incremented
-        if ( ( 'publish' != $this->old_status && 'revoked' != $this->old_status ) || 'refunded' != $this->status ) {
+        // If the payment was not in publish, don't decrement stats as they were never incremented
+        if ( 'publish' != $this->old_status || 'wpi-refunded' != $this->status ) {
             $process_refund = false;
         }
 
@@ -2187,7 +2187,7 @@ final class WPInv_Invoice {
             'post_type'         => 'wpi_invoice',
             'post_parent'       => (int)$this->ID,
             'posts_per_page'    => '999',
-            'post_status'       => array( 'publish', 'complete', 'processing', 'renewal' ),
+            'post_status'       => array( 'publish', 'wpi-processing', 'wpi-renewal' ),
             'orderby'           => 'ID',
             'order'             => 'DESC',
             'fields'            => 'ids'
@@ -2734,7 +2734,7 @@ final class WPInv_Invoice {
     }
     
     public function is_paid() {
-        if ( $this->has_status( array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
+        if ( $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
             return true;
         }
         

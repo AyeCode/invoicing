@@ -574,12 +574,12 @@ function wpinv_complete_payment( $invoice_id, $new_status, $old_status ) {
     
     $wpi_has_free_trial = false;
     
-    if ( $old_status == 'publish' || $old_status == 'complete' ) {
+    if ( $old_status == 'publish' ) {
         return; // Make sure that payments are only paid once
     }
 
     // Make sure the payment completion is only processed when new status is paid
-    if ( $new_status != 'publish' && $new_status != 'complete' ) {
+    if ( $new_status != 'publish' ) {
         return;
     }
 
@@ -1511,21 +1511,20 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
     
     switch ( $status ) {
         case 'publish' :
-        case 'complete' :
-        case 'renewal' :
+        case 'wpi-renewal' :
             $class = 'label-success';
         break;
         case 'pending' :
             $class = 'label-primary';
         break;
-        case 'processing' :
+        case 'wpi-processing' :
             $class = 'label-warning';
         break;
-        case 'onhold' :
+        case 'wpi-onhold' :
             $class = 'label-info';
         break;
-        case 'cancelled' :
-        case 'failed' :
+        case 'wpi-cancelled' :
+        case 'wpi-failed' :
             $class = 'label-danger';
         break;
         default:

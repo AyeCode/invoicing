@@ -877,7 +877,7 @@ function wpinv_get_watermark( $id ) {
         if ( $invoice->is_paid() ) {
             return __( 'Paid', 'invoicing' );
         }
-        if ( $invoice->has_status( array( 'cancelled' ) ) ) {
+        if ( $invoice->has_status( array( 'wpi-cancelled' ) ) ) {
             return __( 'Cancelled', 'invoicing' );
         }
     }

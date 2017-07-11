@@ -143,7 +143,8 @@ class WPInv_Plugin {
         }
         require_once( WPINV_PLUGIN_DIR . 'includes/gateways/manual.php' );
         
-        if ( is_admin() ) {
+        if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+            require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-meta-boxes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-details.php' );
@@ -151,6 +152,7 @@ class WPInv_Plugin {
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
+            
         }
         
         // include css inliner
