@@ -48,7 +48,7 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
         return;
     }
         
-    if ( $post->post_type == 'wpi_invoice' ) {
+    if ( $post->post_type == 'wpi_invoice' or $post->post_type == 'wpi_quote' ) {
         if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
             return;
         }

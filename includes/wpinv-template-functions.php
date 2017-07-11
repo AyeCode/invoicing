@@ -55,30 +55,34 @@ function wpinv_invoice_display_left_actions( $invoice ) {
         return;
     }
     
-    $user_id = (int)$invoice->get_user_id();
-    $current_user_id = (int)get_current_user_id();
+    if($invoice->post_type == 'wpi_invoice'){
     
-    if ( $user_id > 0 && $user_id == $current_user_id && $invoice->needs_payment() ) {
-    ?>
-    <a class="btn btn-success btn-sm" title="<?php esc_attr_e( 'Pay This Invoice', 'invoicing' ); ?>" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>"><?php _e( 'Pay For Invoice', 'invoicing' ); ?></a>
-    <?php
+        $user_id = (int)$invoice->get_user_id();
+        $current_user_id = (int)get_current_user_id();
+
+        if ( $user_id > 0 && $user_id == $current_user_id && $invoice->needs_payment() ) {
+            ?> 
+            <a class="btn btn-success btn-sm" title="<?php esc_attr_e( 'Pay This Invoice', 'invoicing' ); ?>" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>"><?php _e( 'Pay For Invoice', 'invoicing' ); ?></a>
+            <?php
+        }
     }
+    do_action('wpinv_invoice_display_left_actions', $invoice);
 }
 
 function wpinv_invoice_display_right_actions( $invoice ) {
-    if ( empty( $invoice ) ) {
-        return;
+    if ( empty( $invoice ) ) return; //Exit if invoice is not set.
+    
+    if($invoice->post_type == 'wpi_invoice'){
+        $user_id = (int)$invoice->get_user_id();
+        $current_user_id = (int)get_current_user_id();
+
+        if ( $user_id > 0 && $user_id == $current_user_id ) {
+        ?>
+            <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a> &nbsp;
+            <a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+        <?php } 
     }
-    
-    $user_id = (int)$invoice->get_user_id();
-    $current_user_id = (int)get_current_user_id();
-    
-    if ( $user_id > 0 && $user_id == $current_user_id ) {
-    ?>
-    <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
-    <a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
-    <?php } ?>
-    <?php
+    do_action('wpinv_invoice_display_right_actions', $invoice);
 }
 
 function wpinv_before_invoice_content( $content ) {
@@ -787,7 +791,7 @@ add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
 function wpinv_template( $template ) {
     global $post, $wp_query;
     
-    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && get_post_type( $post->ID ) == 'wpi_invoice' ) {
+    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && (get_post_type( $post->ID ) == 'wpi_invoice' or get_post_type( $post->ID ) == 'wpi_quote')) {
         if ( wpinv_user_can_print_invoice( $post->ID ) ) {
             $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
         } else {
@@ -893,21 +897,24 @@ function wpinv_display_invoice_details( $invoice ) {
     $use_taxes  = wpinv_use_taxes();
     
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
+    
+    if($invoice->post_type == 'wpi_invoice') $type = 'Invoice';
+    elseif($invoice->post_type == 'wpi_quote') $type = 'Quote';
     ?>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = wpinv_get_invoice_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-number">
-                <th><?php _e( 'Invoice Number', 'invoicing' ); ?></th>
+                <th><?php echo sprintf(__( '%s Number', 'invoicing' ), $type); ?></th>
                 <td><?php echo esc_html( $invoice_number ); ?></td>
             </tr>
         <?php } ?>
         <tr class="wpi-row-status">
-            <th><?php _e( 'Invoice Status', 'invoicing' ); ?></th>
+            <th><?php echo wp_sprintf(__( '%s Status', 'invoicing' ), $type); ?></th>
             <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>
         <tr class="wpi-row-parent">
-            <th><?php _e( 'Parent Invoice', 'invoicing' ); ?></th>
+            <th><?php echo wp_sprintf(__( 'Parent %s', 'invoicing' ), $type); ?></th>
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
@@ -917,7 +924,7 @@ function wpinv_display_invoice_details( $invoice ) {
         </tr>
         <?php if ( $invoice_date = wpinv_get_invoice_date( $invoice_id ) ) { ?>
             <tr class="wpi-row-date">
-                <th><?php _e( 'Invoice Date', 'invoicing' ); ?></th>
+                <th><?php echo wp_sprintf(__( '%s Date', 'invoicing' ), $type); ?></th>
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>

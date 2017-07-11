@@ -21,6 +21,8 @@ class WPInv_Meta_Box_Items {
         $use_taxes          = wpinv_use_taxes();
         $item_types         = wpinv_get_item_types();
         $is_recurring       = $invoice->is_recurring();
+        $post_type_object   = get_post_type_object($invoice->post_type);
+        $type_title         = $post_type_object->labels->singular_name;
         
         if (isset($item_types['package'])) {
             unset($item_types['package']);
@@ -187,7 +189,7 @@ class WPInv_Meta_Box_Items {
                         'show_recurring'   => true,
                     ) );
                     ?>
-                    <input type="button" value="<?php esc_attr_e( 'Add item to Invoice', 'invoicing' );?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                <input type="button" value="<?php echo sprintf(esc_attr__( 'Add item to %s', 'invoicing'), $type_title); ?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
                     <?php } ?>
                 <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
             </div>
