@@ -232,7 +232,7 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             
             $wpi_zero_tax = false;
             
-            if ( $wpi_gdp_inv_merge && in_array( $status, array( 'publish', 'complete', 'processing', 'renewal' ) ) ) {
+            if ( $wpi_gdp_inv_merge && in_array( $status, array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
                 $wpi_zero_tax = true;
             }
             
@@ -425,9 +425,8 @@ function wpinv_wpi_to_gdp_status( $status ) {
     
     switch ( $status ) {
         case 'publish':
-        case 'complete':
-        case 'processing':
-        case 'renewal':
+        case 'wpi-processing':
+        case 'wpi-renewal':
             $inv_status = 'confirmed';
         break;
     }
@@ -988,7 +987,7 @@ function wpinv_tool_merge_fix_taxes() {
 		}
 	}
 		
-    $sql = "SELECT `p`.`ID`, gdi.id AS gdp_id FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NOT NULL AND p.post_status NOT IN( 'publish', 'complete', 'processing', 'renewal' ) ORDER BY `gdi`.`id` ASC";
+    $sql = "SELECT `p`.`ID`, gdi.id AS gdp_id FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NOT NULL AND p.post_status NOT IN( 'publish', 'wpi-processing', 'wpi-renewal' ) ORDER BY `gdi`.`id` ASC";
     $items = $wpdb->get_results( $sql );
 	
 	if ( !empty( $items ) ) {
@@ -1052,7 +1051,7 @@ function wpinv_wpi_to_gdp_handle_subscription_cancel( $invoice_id, $invoice ) {
         }
         
         if ( !empty( $invoice ) ) {
-            wpinv_wpi_to_gdp_update_status( $invoice->ID, 'cancelled', $invoice->get_status() );
+            wpinv_wpi_to_gdp_update_status( $invoice->ID, 'wpi-cancelled', $invoice->get_status() );
         }
     }
 }

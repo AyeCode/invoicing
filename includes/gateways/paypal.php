@@ -356,7 +356,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 	// Verify payment recipient
 	if ( strcasecmp( $business_email, trim( wpinv_get_option( 'paypal_email', false ) ) ) != 0 ) {
 		wpinv_record_gateway_error( __( 'IPN Error', 'invoicing' ), sprintf( __( 'Invalid business email in IPN response. IPN data: %s', 'invoicing' ), json_encode( $data ) ), $invoice_id );
-		wpinv_update_payment_status( $invoice_id, 'failed' );
+		wpinv_update_payment_status( $invoice_id, 'wpi-failed' );
 		wpinv_insert_payment_note( $invoice_id, __( 'Payment failed due to invalid PayPal business email.', 'invoicing' ) );
 		return;
 	}
@@ -364,7 +364,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 	// Verify payment currency
 	if ( $currency_code != strtolower( $payment_meta['currency'] ) ) {
 		wpinv_record_gateway_error( __( 'IPN Error', 'invoicing' ), sprintf( __( 'Invalid currency in IPN response. IPN data: %s', 'invoicing' ), json_encode( $data ) ), $invoice_id );
-		wpinv_update_payment_status( $invoice_id, 'failed' );
+		wpinv_update_payment_status( $invoice_id, 'wpi-failed' );
 		wpinv_insert_payment_note( $invoice_id, __( 'Payment failed due to invalid currency in PayPal IPN.', 'invoicing' ) );
 		return;
 	}
@@ -406,14 +406,14 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 		if ( number_format( (float) $paypal_amount, 2 ) < number_format( (float) $payment_amount, 2 ) ) {
 			// The prices don't match
 			wpinv_record_gateway_error( __( 'IPN Error', 'invoicing' ), sprintf( __( 'Invalid payment amount in IPN response. IPN data: %s', 'invoicing' ), json_encode( $data ) ), $invoice_id );
-			wpinv_update_payment_status( $invoice_id, 'failed' );
+			wpinv_update_payment_status( $invoice_id, 'wpi-failed' );
 			wpinv_insert_payment_note( $invoice_id, __( 'Payment failed due to invalid amount in PayPal IPN.', 'invoicing' ) );
 			return;
 		}
 		if ( $purchase_key != wpinv_get_payment_key( $invoice_id ) ) {
 			// Purchase keys don't match
 			wpinv_record_gateway_error( __( 'IPN Error', 'invoicing' ), sprintf( __( 'Invalid purchase key in IPN response. IPN data: %s', 'invoicing' ), json_encode( $data ) ), $invoice_id );
-			wpinv_update_payment_status( $invoice_id, 'failed' );
+			wpinv_update_payment_status( $invoice_id, 'wpi-failed' );
 			wpinv_insert_payment_note( $invoice_id, __( 'Payment failed due to invalid purchase key in PayPal IPN.', 'invoicing' ) );
 			return;
 		}
@@ -692,7 +692,7 @@ function wpinv_process_paypal_refund( $data, $invoice_id = 0 ) {
 		return;
 	}
 
-	if ( get_post_status( $invoice_id ) == 'refunded' ) {
+	if ( get_post_status( $invoice_id ) == 'wpi-refunded' ) {
 		return; // Only refund payments once
 	}
 
@@ -706,7 +706,7 @@ function wpinv_process_paypal_refund( $data, $invoice_id = 0 ) {
 
 	wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Payment #%s Refunded for reason: %s', 'invoicing' ), $data['parent_txn_id'], $data['reason_code'] ) );
 	wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Refund Transaction ID: %s', 'invoicing' ), $data['txn_id'] ) );
-	wpinv_update_payment_status( $invoice_id, 'refunded' );
+	wpinv_update_payment_status( $invoice_id, 'wpi-refunded' );
 }
 
 function wpinv_get_paypal_redirect( $ssl_check = false ) {

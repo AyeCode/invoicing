@@ -684,7 +684,7 @@ function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
 
         if ( $payments ) {
             foreach ( $payments as $payment ) {
-                if ( $payment->has_status( array( 'cancelled', 'failed' ) ) ) {
+                if ( $payment->has_status( array( 'wpi-cancelled', 'wpi-failed' ) ) ) {
                     continue;
                 }
 

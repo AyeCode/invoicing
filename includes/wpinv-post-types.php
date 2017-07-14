@@ -178,7 +178,7 @@ function wpinv_change_default_title( $title ) {
 add_filter( 'enter_title_here', 'wpinv_change_default_title' );
 
 function wpinv_register_post_status() {
-    register_post_status( 'processing', array(
+    register_post_status( 'wpi-processing', array(
         'label'                     => _x( 'Processing', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,
@@ -186,7 +186,7 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'Processing <span class="count">(%s)</span>', 'Processing <span class="count">(%s)</span>', 'invoicing' )
     ) );
-    register_post_status( 'onhold', array(
+    register_post_status( 'wpi-onhold', array(
         'label'                     => _x( 'On Hold', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,
@@ -194,7 +194,7 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'invoicing' )
     ) );
-    register_post_status( 'cancelled', array(
+    register_post_status( 'wpi-cancelled', array(
         'label'                     => _x( 'Cancelled', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,
@@ -202,7 +202,7 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'invoicing' )
     ) );
-    register_post_status( 'refunded', array(
+    register_post_status( 'wpi-refunded', array(
         'label'                     => _x( 'Refunded', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,
@@ -210,7 +210,7 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'Refunded <span class="count">(%s)</span>', 'Refunded <span class="count">(%s)</span>', 'invoicing' )
     ) );
-    register_post_status( 'failed', array(
+    register_post_status( 'wpi-failed', array(
         'label'                     => _x( 'Failed', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,
@@ -218,7 +218,7 @@ function wpinv_register_post_status() {
         'show_in_admin_status_list' => true,
         'label_count'               => _n_noop( 'Failed <span class="count">(%s)</span>', 'Failed <span class="count">(%s)</span>', 'invoicing' )
     ) );
-    register_post_status( 'renewal', array(
+    register_post_status( 'wpi-renewal', array(
         'label'                     => _x( 'Renewal', 'Invoice status', 'invoicing' ),
         'public'                    => true,
         'exclude_from_search'       => true,

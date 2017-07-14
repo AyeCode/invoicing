@@ -146,7 +146,7 @@ function wpinv_get_sales_tax_for_year( $year = null ) {
     if ( ! empty( $year ) ) {
         $args = array(
             'post_type'      => 'wpi_invoice',
-            'post_status'    => array( 'publish', 'revoked' ),
+            'post_status'    => array( 'publish' ),
             'posts_per_page' => -1,
             'year'           => $year,
             'fields'         => 'ids'
