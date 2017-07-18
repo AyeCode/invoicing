@@ -2316,6 +2316,17 @@ final class WPInv_Invoice {
     public function get_subscription_period( $full = false ) {
         $period = $this->get_meta( '_wpinv_subscr_period', true );
         
+        // Fix period for old invoices
+        if ( $period == 'day' ) {
+            $period = 'D';
+        } else if ( $period == 'week' ) {
+            $period = 'W';
+        } else if ( $period == 'month' ) {
+            $period = 'M';
+        } else if ( $period == 'year' ) {
+            $period = 'Y';
+        }
+        
         if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
             $period = 'D';
         }
@@ -2356,6 +2367,17 @@ final class WPInv_Invoice {
         }
         
         $period = $this->get_meta( '_wpinv_subscr_trial_period', true );
+        
+        // Fix period for old invoices
+        if ( $period == 'day' ) {
+            $period = 'D';
+        } else if ( $period == 'week' ) {
+            $period = 'W';
+        } else if ( $period == 'month' ) {
+            $period = 'M';
+        } else if ( $period == 'year' ) {
+            $period = 'Y';
+        }
         
         if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
             $period = 'D';
