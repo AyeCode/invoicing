@@ -14,6 +14,7 @@ if ( !defined( 'WPINC' ) ) {
 final class WPInv_Invoice {
     public $ID  = 0;
     public $title;
+    public $post_type;
     
     public $pending;
     public $items = array();
@@ -119,7 +120,7 @@ final class WPInv_Invoice {
             return false;
         }
 
-        if( 'wpi_invoice' !== $invoice->post_type ) {
+        if( !('wpi_invoice' == $invoice->post_type OR 'wpi_quote' == $invoice->post_type) ) {
             return false;
         }
 
@@ -127,6 +128,7 @@ final class WPInv_Invoice {
         
         // Primary Identifier
         $this->ID              = absint( $invoice_id );
+        $this->post_type            = $invoice->post_type;
         
         // We have a payment, get the generic payment_meta item to reduce calls to it
         $this->payment_meta    = $this->get_meta();
@@ -583,7 +585,7 @@ final class WPInv_Invoice {
                         'post_title'    => $invoice_title,
                         'post_status'   => $this->status,
                         'post_author'   => $this->user_id,
-                        'post_type'     => 'wpi_invoice',
+                        'post_type'     => $this->post_type,
                         'post_date'     => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? $this->date : current_time( 'mysql' ),
                         'post_date_gmt' => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
                         'post_parent'   => $this->parent_invoice,
@@ -2184,7 +2186,7 @@ final class WPInv_Invoice {
 
     public function get_child_payments( $self = false ) {
         $invoices = get_posts( array(
-            'post_type'         => 'wpi_invoice',
+            'post_type'         => $this->post_type,
             'post_parent'       => (int)$this->ID,
             'posts_per_page'    => '999',
             'post_status'       => array( 'publish', 'wpi-processing', 'wpi-renewal' ),

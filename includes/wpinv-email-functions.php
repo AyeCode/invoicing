@@ -690,7 +690,7 @@ function wpinv_get_emails() {
 
 	// Default, built-in gateways
 	$emails = array(
-		'new_invoice' => array(
+            'new_invoice' => array(
             'email_new_invoice_header' => array(
                 'id'   => 'email_new_invoice_header',
                 'name' => '<h3>' . __( 'New Invoice', 'invoicing' ) . '</h3>',

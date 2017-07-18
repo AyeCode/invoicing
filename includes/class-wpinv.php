@@ -321,7 +321,7 @@ class WPInv_Plugin {
         
         $post_type = wpinv_admin_post_type();
         
-        if ( $post_type == 'wpi_invoice' || $add_class !== false ) {
+        if ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $add_class !== false ) {
             return $classes .= ' wpinv';
         } else {
             return $classes;
