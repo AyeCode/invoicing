@@ -662,10 +662,10 @@ function wpinv_process_before_send_to_gateway( $invoice, $invoice_data = array()
         $args['initial_amount']        = wpinv_format_amount( $invoice->get_total() );
         $args['recurring_amount']      = wpinv_format_amount( $invoice->get_recurring_details( 'total' ) );
         $args['currency']              = $invoice->get_currency();
-        $args['period']                = $subscription_item->get_recurring_period( true );
+        $args['period']                = $subscription_item->get_recurring_period();
         $args['interval']              = $subscription_item->get_recurring_interval();
         if ( $subscription_item->has_free_trial() ) {
-            $args['trial_period']      = $subscription_item->get_trial_period( true );
+            $args['trial_period']      = $subscription_item->get_trial_period();
             $args['trial_interval']    = $subscription_item->get_trial_interval();
         } else {
             $args['trial_period']      = '';

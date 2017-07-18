@@ -27,6 +27,7 @@ _wpinv_payment_meta should always return an array even if empty - FIXED
 No way to remove VAT Details input from frontend - FIXED
 Function added to create item from array of data - CHANGED
 Fix invoice status conflict with other plugin - CHANGED
+Shows incorrect trial end date - FIXED
 
 = 0.0.4 =
 First public beta release - RELEASE
