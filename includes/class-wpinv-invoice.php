@@ -272,7 +272,7 @@ final class WPInv_Invoice {
     
     private function setup_discount() {
         //$discount = $this->get_meta( '_wpinv_discount', true );
-        $discount = $this->subtotal - ( $this->total - $this->tax - $this->fees_total );
+        $discount = (float)$this->subtotal - ( (float)$this->total - (float)$this->tax - (float)$this->fees_total );
         if ( $discount < 0 ) {
             $discount = 0;
         }
@@ -295,10 +295,6 @@ final class WPInv_Invoice {
         }
 
         return $tax;
-        /*
-        $tax = $this->get_meta( '_wpinv_tax', true );
-        return $tax;
-        */
     }
 
     private function setup_subtotal() {
@@ -1966,7 +1962,7 @@ final class WPInv_Invoice {
     public function needs_payment() {
         $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
 
-        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() ) ) {
+        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() || $this->is_free() ) ) {
             $needs_payment = true;
         } else {
             $needs_payment = false;
@@ -2763,6 +2759,20 @@ final class WPInv_Invoice {
         }
         
         return false;
+    }
+    
+    public function is_free() {
+        $is_free = false;
+        
+        if ( !( (float)wpinv_format_amount( $this->get_total(), NULL, true ) > 0 ) ) {
+            if ( $this->is_parent() && $this->is_recurring() ) {
+                $is_free = (float)wpinv_format_amount( $this->get_recurring_details( 'total' ), NULL, true ) > 0 ? false : true;
+            } else {
+                $is_free = true;
+            }
+        }
+        
+        return apply_filters( 'wpinv_invoice_is_free', $is_free, $this );
     }
     
     public function has_vat() {

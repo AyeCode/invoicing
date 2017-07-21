@@ -1583,18 +1583,19 @@ function wpinv_payment_mode_select() {
     $gateways = wpinv_get_enabled_payment_gateways( true );
     $gateways = apply_filters( 'wpinv_payment_gateways_on_cart', $gateways );
     $page_URL = wpinv_get_current_page_url();
+    $invoice = wpinv_get_invoice( 0, true );
     
     do_action('wpinv_payment_mode_top');
-    $invoice_id = (int)wpinv_get_invoice_cart_id();
+    $invoice_id = (int)$invoice->ID;
+    $chosen_gateway = wpinv_get_chosen_gateway( $invoice_id );
     ?>
-    <div id="wpinv_payment_mode_select">
+    <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( $invoice->is_free() ? 'style="display:none;"' : '' ); ?>>
             <?php do_action( 'wpinv_payment_mode_before_gateways_wrap' ); ?>
             <div id="wpinv-payment-mode-wrap" class="panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Select Payment Method', 'invoicing' ); ?></h3></div>
                 <div class="panel-body list-group wpi-payment_methods">
                     <?php
                     do_action( 'wpinv_payment_mode_before_gateways' );
-                    $chosen_gateway = wpinv_get_chosen_gateway( $invoice_id );
                     
                     if(!empty($gateways)){
 	                    foreach ( $gateways as $gateway_id => $gateway ) {
