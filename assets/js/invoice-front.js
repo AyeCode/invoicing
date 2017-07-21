@@ -143,6 +143,7 @@ jQuery(function($) {
             } else {
                 $('div.payment_box').show();
             }
+            $('#wpinv_payment_mode_select').attr('data-gateway', $(this).val());
             if ($(this).data('button-text')) {
                 $('#wpinv-payment-button').val($(this).data('button-text'));
             } else {
@@ -190,12 +191,14 @@ jQuery(function($) {
                             $('#wpinv_discount_code', $box).val('');
                             //console.log('217 : wpinv_recalculate_taxes()');
                             //wpinv_recalculate_taxes();
-                            if ('0.00' == res.data.total_row) {
+                            if (res.data.free) {
                                 $('#wpinv_payment_mode_select', $this.checkout_form).hide();
-                                $('input[name="wpi-gateway"]', $this.checkout_form).val('manual');
+                                gw = 'manual';
                             } else {
                                 $('#wpinv_payment_mode_select', $this.checkout_form).show();
+                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).data('gateway');
                             }
+                            $('input[name="wpi-gateway"]', $this.checkout_form).val(gw);
                             $(document.body).trigger('wpinv_discount_applied', [res]);
                         }
                         if (res.msg) {
@@ -243,15 +246,15 @@ jQuery(function($) {
                         if (res.success) {
                             jQuery('#wpinv_checkout_cart_form', $this.checkout_form).replaceWith(res.data.html);
                             jQuery('.wpinv-chdeckout-total').text(res.data.total);
-                            var zero = '0' + WPInv.decimal_separator + '00';
-                            $('.wpinv_cart_amount').each(function() {
-                                if (WPInv.currency_sign + zero == $(this).data('total') || zero + WPInv.currency_sign == $(this).data('total')) {
-                                    // We are removing a 100% discount code so we need to force the payment gateway to reload
-                                    window.location.reload();
-                                }
-                                $(this).text(res.data.total);
-                            });
-                            console.log('291 : wpinv_recalculate_taxes()');
+                            if (res.data.free) {
+                                $('#wpinv_payment_mode_select', $this.checkout_form).hide();
+                                gw = 'manual';
+                            } else {
+                                $('#wpinv_payment_mode_select', $this.checkout_form).show();
+                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).data('gateway');
+                            }
+                            $('input[name="wpi-gateway"]', $this.checkout_form).val(gw);
+                            //console.log('291 : wpinv_recalculate_taxes()');
                             //wpinv_recalculate_taxes();
                             $(document.body).trigger('wpinv_discount_removed', [res]);
                         }

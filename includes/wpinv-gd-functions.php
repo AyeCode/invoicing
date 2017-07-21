@@ -505,6 +505,10 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
     if ( empty( $invoice_data ) ) {
         return false;
     }
+    
+    if ( !( !empty( $invoice_data['cart_details'] ) && is_array( $invoice_data['cart_details'] ) ) ) {
+        return new WP_Error( 'wpinv_invalid_items', __( 'Invoice must have atleast on item.', 'invoicing' ) );
+    }
 
     // default invoice args, note that status is checked for validity in wpinv_create_invoice()
     $default_args = array(
@@ -597,7 +601,7 @@ function wpinv_insert_invoice( $invoice_data = array() ) {
         $invoice->add_note( $invoice_data['private_note'] );
     }
     
-    if ( is_array( $invoice_data['cart_details'] ) && !empty( $invoice_data['cart_details'] ) ) {
+    if ( !empty( $invoice_data['cart_details'] ) && is_array( $invoice_data['cart_details'] ) ) {
         foreach ( $invoice_data['cart_details'] as $key => $item ) {
             $item_id    = !empty( $item['id'] ) ? $item['id'] : 0;
             $quantity   = !empty( $item['quantity'] ) ? $item['quantity'] : 1;

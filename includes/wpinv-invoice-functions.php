@@ -668,13 +668,18 @@ function wpinv_validate_checkout_fields() {
 function wpinv_checkout_validate_gateway() {
     $gateway = wpinv_get_default_gateway();
     
-    $has_subscription = wpinv_cart_has_recurring_item();
+    $invoice = wpinv_get_invoice_cart();
+    $has_subscription = $invoice->is_recurring();
+    if ( empty( $invoice ) ) {
+        wpinv_set_error( 'invalid_invoice', __( 'Your cart is empty.', 'invoicing' ) );
+        return $gateway;
+    }
 
     // Check if a gateway value is present
     if ( !empty( $_REQUEST['wpi-gateway'] ) ) {
         $gateway = sanitize_text_field( $_REQUEST['wpi-gateway'] );
 
-        if ( '0.00' == wpinv_get_cart_total() ) {
+        if ( $invoice->is_free() ) {
             $gateway = 'manual';
         } elseif ( !wpinv_is_gateway_active( $gateway ) ) {
             wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway is not enabled', 'invoicing' ) );

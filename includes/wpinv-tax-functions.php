@@ -262,6 +262,7 @@ function wpinv_recalculate_tax( $return = false ) {
     $response = array(
         'total'        => html_entity_decode( wpinv_price( wpinv_format_amount( $total ) ), ENT_COMPAT, 'UTF-8' ),
         'total_raw'    => $total,
+        'free'         => !( (float)$total > 0 ) && $invoice->is_free() ? true : false,
         'html'         => wpinv_checkout_cart( $invoice->cart_details, false ),
     );
     
