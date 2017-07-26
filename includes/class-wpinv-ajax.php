@@ -370,7 +370,7 @@ class WPInv_Ajax {
         
         $meta               = array();
         $meta['type']       = !empty($save_item['type']) ? sanitize_text_field($save_item['type']) : 'custom';
-        $meta['price']      = !empty($save_item['price']) ? wpinv_format_amount($save_item['price'], NULL, true ) : 0;
+        $meta['price']      = !empty($save_item['price']) ? wpinv_sanitize_amount( $save_item['price'] ) : 0;
         $meta['vat_rule']   = !empty($save_item['vat_rule']) ? sanitize_text_field($save_item['vat_rule']) : 'digital';
         $meta['vat_class']  = !empty($save_item['vat_class']) ? sanitize_text_field($save_item['vat_class']) : '_standard';
         

@@ -325,8 +325,8 @@ function wpinv_authorizenet_generate_subscription_params( $invoice, $card_info =
     
     $card_details       = wpinv_authorizenet_generate_card_info( $card_info );
     $subscription_name  = $invoice->get_subscription_name();
-    $initial_amount     = wpinv_format_amount( $invoice->get_total() );
-    $recurring_amount   = wpinv_format_amount( $invoice->get_recurring_details( 'total' ) );
+    $initial_amount     = wpinv_round_amount( $invoice->get_total() );
+    $recurring_amount   = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
     $interval           = $subscription_item->get_recurring_interval();
     $period             = $subscription_item->get_recurring_period();
     $bill_times         = (int)$subscription_item->get_recurring_limit();

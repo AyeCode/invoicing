@@ -427,7 +427,7 @@ function wpinv_get_cart_item_tax( $item_id = 0, $subtotal = '', $options = array
 function wpinv_cart_item_price( $item ) {
     $use_taxes  = wpinv_use_taxes();
     $item_id    = isset( $item['id'] ) ? $item['id'] : 0;
-    $price      = isset( $item['item_price'] ) ? wpinv_format_amount( $item['item_price'] ) : 0;
+    $price      = isset( $item['item_price'] ) ? wpinv_round_amount( $item['item_price'] ) : 0;
     $options    = isset( $item['options'] ) ? $item['options'] : array();
     $price_id   = isset( $options['price_id'] ) ? $options['price_id'] : false;
     $tax        = wpinv_price( wpinv_format_amount( $item['tax'] ) );
@@ -461,7 +461,7 @@ function wpinv_cart_item_tax( $item ) {
     if ( isset( $item['tax'] ) && $item['tax'] > 0 && $item['subtotal'] > 0 ) {
         $tax      = wpinv_price( wpinv_format_amount( $item['tax'] ) );
         $tax_rate = !empty( $item['vat_rate'] ) ? $item['vat_rate'] : ( $item['tax'] / $item['subtotal'] ) * 100;
-        $tax_rate = $tax_rate > 0 ? (float)wpinv_format_amount( $tax_rate, 2 ) : '';
+        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate ) : '';
         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate normal small">(' . $tax_rate . '%)</small>' : '';
     }
     
@@ -728,7 +728,7 @@ function wpinv_create_item( $args = array(), $wp_error = false, $force_update = 
     $meta['post_id']            = $data['item_id'];
     $meta['cpt_singular_name']  = $data['cpt_singular_name'];
     $meta['cpt_name']           = $data['cpt_name'];
-    $meta['price']              = wpinv_format_amount( $data['price'], NULL, true );
+    $meta['price']              = wpinv_round_amount( $data['price'] );
     $meta['vat_rule']           = $data['vat_rule'];
     $meta['vat_class']          = '_standard';
     

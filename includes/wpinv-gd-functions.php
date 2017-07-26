@@ -111,7 +111,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
     $meta['post_type']          = $package->post_type;
     $meta['cpt_singular_name']  = get_post_type_singular_label($package->post_type);
     $meta['cpt_name']           = get_post_type_plural_label($package->post_type);
-    $meta['price']              = wpinv_format_amount( $package->amount, NULL, true );
+    $meta['price']              = wpinv_round_amount( $package->amount );
     $meta['vat_rule']           = 'digital';
     $meta['vat_class']          = '_standard';
     
@@ -861,7 +861,7 @@ add_filter( 'pre_option_geodir_currencysym', 'wpinv_gdp_to_wpi_currency_sign', 1
 
 function wpinv_gdp_to_wpi_display_price( $price, $amount, $display = true , $decimal_sep, $thousand_sep ) {
     if ( !$display ) {
-        $price = wpinv_format_amount( $amount, NULL, true );
+        $price = wpinv_round_amount( $amount );
     } else {
         $price = wpinv_price( wpinv_format_amount( $amount ) );
     }

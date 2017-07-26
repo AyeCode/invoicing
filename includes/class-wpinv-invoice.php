@@ -276,7 +276,7 @@ final class WPInv_Invoice {
         if ( $discount < 0 ) {
             $discount = 0;
         }
-        $discount = wpinv_format_amount( $discount, NULL, true );
+        $discount = wpinv_round_amount( $discount );
         
         return $discount;
     }
@@ -809,10 +809,10 @@ final class WPInv_Invoice {
                         break;
                         
                     //case 'tax':
-                        //$this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
+                        //$this->update_meta( '_wpinv_tax', wpinv_round_amount( $this->tax ) );
                         //break;
                     case 'discount':
-                        $this->update_meta( '_wpinv_discount', wpinv_format_amount( $this->discount, NULL, true ) );
+                        $this->update_meta( '_wpinv_discount', wpinv_round_amount( $this->discount ) );
                         break;
                     case 'discount_code':
                         $this->update_meta( '_wpinv_discount_code', $this->discount_code );
@@ -833,9 +833,9 @@ final class WPInv_Invoice {
                 }
             }       
 
-            $this->update_meta( '_wpinv_subtotal', wpinv_format_amount( $this->subtotal, NULL, true ) );
-            $this->update_meta( '_wpinv_total', wpinv_format_amount( $this->total, NULL, true ) );
-            $this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
+            $this->update_meta( '_wpinv_subtotal', wpinv_round_amount( $this->subtotal ) );
+            $this->update_meta( '_wpinv_total', wpinv_round_amount( $this->total ) );
+            $this->update_meta( '_wpinv_tax', wpinv_round_amount( $this->tax ) );
             
             $this->items    = array_values( $this->items );
             
@@ -861,9 +861,9 @@ final class WPInv_Invoice {
             $this->pending = array();
             $saved         = true;
         } else {
-            $this->update_meta( '_wpinv_subtotal', wpinv_format_amount( $this->subtotal, NULL, true ) );
-            $this->update_meta( '_wpinv_total', wpinv_format_amount( $this->total, NULL, true ) );
-            $this->update_meta( '_wpinv_tax', wpinv_format_amount( $this->tax, NULL, true ) );
+            $this->update_meta( '_wpinv_subtotal', wpinv_round_amount( $this->subtotal ) );
+            $this->update_meta( '_wpinv_total', wpinv_round_amount( $this->total ) );
+            $this->update_meta( '_wpinv_tax', wpinv_round_amount( $this->tax ) );
         }
         
         do_action( 'wpinv_invoice_save', $this, $saved );
@@ -1015,7 +1015,7 @@ final class WPInv_Invoice {
     private function increase_subtotal( $amount = 0.00 ) {
         $amount          = (float) $amount;
         $this->subtotal += $amount;
-        $this->subtotal  = wpinv_format_amount( $this->subtotal, NULL, true );
+        $this->subtotal  = wpinv_round_amount( $this->subtotal );
 
         $this->recalculate_total();
     }
@@ -1023,7 +1023,7 @@ final class WPInv_Invoice {
     private function decrease_subtotal( $amount = 0.00 ) {
         $amount          = (float) $amount;
         $this->subtotal -= $amount;
-        $this->subtotal  = wpinv_format_amount( $this->subtotal, NULL, true );
+        $this->subtotal  = wpinv_round_amount( $this->subtotal );
 
         if ( $this->subtotal < 0 ) {
             $this->subtotal = 0;
@@ -1035,7 +1035,7 @@ final class WPInv_Invoice {
     private function increase_fees( $amount = 0.00 ) {
         $amount            = (float)$amount;
         $this->fees_total += $amount;
-        $this->fees_total  = wpinv_format_amount( $this->fees_total, NULL, true );
+        $this->fees_total  = wpinv_round_amount( $this->fees_total );
 
         $this->recalculate_total();
     }
@@ -1043,7 +1043,7 @@ final class WPInv_Invoice {
     private function decrease_fees( $amount = 0.00 ) {
         $amount            = (float) $amount;
         $this->fees_total -= $amount;
-        $this->fees_total  = wpinv_format_amount( $this->fees_total, NULL, true );
+        $this->fees_total  = wpinv_round_amount( $this->fees_total );
 
         if ( $this->fees_total < 0 ) {
             $this->fees_total = 0;
@@ -1056,7 +1056,7 @@ final class WPInv_Invoice {
         global $wpi_nosave;
         
         $this->total = $this->subtotal + $this->tax + $this->fees_total;
-        $this->total = wpinv_format_amount( $this->total, NULL, true );
+        $this->total = wpinv_round_amount( $this->total );
         
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
     }
@@ -1268,10 +1268,10 @@ final class WPInv_Invoice {
     }
     
     public function get_subtotal( $currency = false ) {
-        $subtotal = wpinv_format_amount( $this->subtotal, NULL, !$currency );
+        $subtotal = wpinv_round_amount( $this->subtotal );
         
         if ( $currency ) {
-            $subtotal = wpinv_price( $subtotal, $this->get_currency() );
+            $subtotal = wpinv_price( wpinv_format_amount( $subtotal, NULL, !$currency ), $this->get_currency() );
         }
         
         return apply_filters( 'wpinv_get_invoice_subtotal', $subtotal, $this->ID, $this, $currency );
@@ -1279,12 +1279,12 @@ final class WPInv_Invoice {
     
     public function get_total( $currency = false ) {        
         if ( $this->is_free_trial() ) {
-            $total = wpinv_format_amount( 0, NULL, !$currency );
+            $total = wpinv_round_amount( 0 );
         } else {
-            $total = wpinv_format_amount( $this->total, NULL, !$currency );
+            $total = wpinv_round_amount( $this->total );
         }
         if ( $currency ) {
-            $total = wpinv_price( $total, $this->get_currency() );
+            $total = wpinv_price( wpinv_format_amount( $total, NULL, !$currency ), $this->get_currency() );
         }
         
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
@@ -1315,10 +1315,10 @@ final class WPInv_Invoice {
                 }
                     
                 if ( !$first_use_only ) {
-                    $data['subtotal'] = wpinv_format_amount( $this->subtotal, NULL, true );
-                    $data['discount'] = wpinv_format_amount( $this->discount, NULL, true );
-                    $data['tax']      = wpinv_format_amount( $this->tax, NULL, true );
-                    $data['total']    = wpinv_format_amount( $this->total, NULL, true );
+                    $data['subtotal'] = wpinv_round_amount( $this->subtotal );
+                    $data['discount'] = wpinv_round_amount( $this->discount );
+                    $data['tax']      = wpinv_round_amount( $this->tax );
+                    $data['total']    = wpinv_round_amount( $this->total );
                 } else {
                     $cart_subtotal   = 0;
                     $cart_discount   = 0;
@@ -1331,7 +1331,7 @@ final class WPInv_Invoice {
                         $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
                         
                         if ( wpinv_prices_include_tax() ) {
-                            $item_subtotal -= wpinv_format_amount( $item_tax, NULL, true );
+                            $item_subtotal -= wpinv_round_amount( $item_tax );
                         }
                         
                         $item_total     = $item_subtotal - $item_discount + $item_tax;
@@ -1344,15 +1344,15 @@ final class WPInv_Invoice {
                         $cart_discount  += (float)($item_discount);
                         $cart_tax       += (float)($item_tax);
                         
-                        $data['cart_details'][$key]['discount']   = wpinv_format_amount( $item_discount, NULL, true );
-                        $data['cart_details'][$key]['tax']        = wpinv_format_amount( $item_tax, NULL, true );
-                        $data['cart_details'][$key]['price']      = wpinv_format_amount( $item_total, NULL, true );
+                        $data['cart_details'][$key]['discount']   = wpinv_round_amount( $item_discount );
+                        $data['cart_details'][$key]['tax']        = wpinv_round_amount( $item_tax );
+                        $data['cart_details'][$key]['price']      = wpinv_round_amount( $item_total );
                     }
                     
-                    $data['subtotal'] = wpinv_format_amount( $cart_subtotal, NULL, true );
-                    $data['discount'] = wpinv_format_amount( $cart_discount, NULL, true );
-                    $data['tax']      = wpinv_format_amount( $cart_tax, NULL, true );
-                    $data['total']    = wpinv_format_amount( ( $data['subtotal'] + $data['tax'] ), NULL, true );
+                    $data['subtotal'] = wpinv_round_amount( $cart_subtotal );
+                    $data['discount'] = wpinv_round_amount( $cart_discount );
+                    $data['tax']      = wpinv_round_amount( $cart_tax );
+                    $data['total']    = wpinv_round_amount( $data['subtotal'] + $data['tax'] );
                 }
             }
         }
@@ -1367,9 +1367,9 @@ final class WPInv_Invoice {
     }
     
     public function get_final_tax( $currency = false ) {        
-        $final_total = wpinv_format_amount( $this->tax, NULL, !$currency );
+        $final_total = wpinv_round_amount( $this->tax );
         if ( $currency ) {
-            $final_total = wpinv_price( $final_total, $this->get_currency() );
+            $final_total = wpinv_price( wpinv_format_amount( $final_total, NULL, !$currency ), $this->get_currency() );
         }
         
         return apply_filters( 'wpinv_get_invoice_final_total', $final_total, $this, $currency );
@@ -1390,11 +1390,11 @@ final class WPInv_Invoice {
 
             $this->discount = wpinv_get_cart_items_discount_amount( $this->items , $this->discounts );
         }
-        $discount   = wpinv_format_amount( $this->discount, NULL, !$currency );
+        $discount   = wpinv_round_amount( $this->discount );
         $dash       = $dash && $discount > 0 ? '&ndash;' : '';
         
         if ( $currency ) {
-            $discount = wpinv_price( $discount, $this->get_currency() );
+            $discount = wpinv_price( wpinv_format_amount( $discount, NULL, !$currency ), $this->get_currency() );
         }
         
         $discount   = $dash . $discount;
@@ -1407,10 +1407,10 @@ final class WPInv_Invoice {
     }
     
     public function get_tax( $currency = false ) {
-        $tax = wpinv_format_amount( $this->tax, NULL, !$currency );
+        $tax = wpinv_round_amount( $this->tax );
         
         if ( $currency ) {
-            $tax = wpinv_price( $tax, $this->get_currency() );
+            $tax = wpinv_price( wpinv_format_amount( $tax, NULL, !$currency ), $this->get_currency() );
         }
         
         return apply_filters( 'wpinv_get_invoice_tax', $tax, $this->ID, $this, $currency );
@@ -1641,10 +1641,10 @@ final class WPInv_Invoice {
             $discount_increased = $discount > 0 && $subtotal > 0 && $discount > (float)$cart_item['discount'] ? $discount - (float)$cart_item['discount'] : 0;
             $tax_increased      = $tax > 0 && $subtotal > 0 && $tax > (float)$cart_item['tax'] ? $tax - (float)$cart_item['tax'] : 0;
             // The total increase equals the number removed * the item_price
-            $total_increased    = wpinv_format_amount( $item_price, NULL, true );
+            $total_increased    = wpinv_round_amount( $item_price );
             
             if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_format_amount( $tax, NULL, true );
+                $subtotal -= wpinv_round_amount( $tax );
             }
 
             $total              = $subtotal - $discount + $tax;
@@ -1674,7 +1674,7 @@ final class WPInv_Invoice {
 
             // Sanitizing the price here so we don't have a dozen calls later
             $item_price = wpinv_sanitize_amount( $item_price );
-            $subtotal   = wpinv_format_amount( $item_price * $args['quantity'], NULL, true );
+            $subtotal   = wpinv_round_amount( $item_price * $args['quantity'] );
         
             $discount   = !empty( $args['discount'] ) ? $args['discount'] : 0;
             $tax_class  = !empty( $args['vat_class'] ) ? $args['vat_class'] : '';
@@ -1690,7 +1690,7 @@ final class WPInv_Invoice {
             $this->items[]  = $new_item;
 
             if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_format_amount( $tax, NULL, true );
+                $subtotal -= wpinv_round_amount( $tax );
             }
 
             $total      = $subtotal - $discount + $tax;
@@ -1703,12 +1703,12 @@ final class WPInv_Invoice {
             $this->cart_details[] = array(
                 'name'        => !empty($args['name']) ? $args['name'] : $item->get_name(),
                 'id'          => $item->ID,
-                'item_price'  => wpinv_format_amount( $item_price, NULL, true ),
+                'item_price'  => wpinv_round_amount( $item_price ),
                 'quantity'    => $args['quantity'],
                 'discount'    => $discount,
-                'subtotal'    => wpinv_format_amount( $subtotal, NULL, true ),
-                'tax'         => wpinv_format_amount( $tax, NULL, true ),
-                'price'       => wpinv_format_amount( $total, NULL, true ),
+                'subtotal'    => wpinv_round_amount( $subtotal ),
+                'tax'         => wpinv_round_amount( $tax ),
+                'price'       => wpinv_round_amount( $total ),
                 'vat_rate'    => $tax_rate,
                 'vat_class'   => $tax_class,
                 'meta'        => $args['meta'],
@@ -1822,16 +1822,16 @@ final class WPInv_Invoice {
             $discount           = !empty( $cart_item['discount'] ) ? $cart_item['discount'] : 0;
             $tax                = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
             
-            $discount_decrease  = (float)$cart_item['discount'] > 0 && $quantity > 0 ? wpinv_format_amount( ( (float)$cart_item['discount'] / $quantity ), NULL, true ) : 0;
+            $discount_decrease  = (float)$cart_item['discount'] > 0 && $quantity > 0 ? wpinv_round_amount( ( (float)$cart_item['discount'] / $quantity ) ) : 0;
             $discount_decrease  = $discount > 0 && $subtotal > 0 && (float)$cart_item['discount'] > $discount ? (float)$cart_item['discount'] - $discount : $discount_decrease; 
-            $tax_decrease       = (float)$cart_item['tax'] > 0 && $quantity > 0 ? wpinv_format_amount( ( (float)$cart_item['tax'] / $quantity ), NULL, true ) : 0;
+            $tax_decrease       = (float)$cart_item['tax'] > 0 && $quantity > 0 ? wpinv_round_amount( ( (float)$cart_item['tax'] / $quantity ) ) : 0;
             $tax_decrease       = $tax > 0 && $subtotal > 0 && (float)$cart_item['tax'] > $tax ? (float)$cart_item['tax'] - $tax : $tax_decrease;
             
             // The total increase equals the number removed * the item_price
-            $total_decrease     = wpinv_format_amount( $item_price, NULL, true );
+            $total_decrease     = wpinv_round_amount( $item_price );
             
             if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_format_amount( $tax, NULL, true );
+                $subtotal -= wpinv_round_amount( $tax );
             }
 
             $total              = $subtotal - $discount + $tax;
@@ -1898,7 +1898,7 @@ final class WPInv_Invoice {
             foreach ( $this->cart_details as $key => $item ) {
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                $amount     = wpinv_format_amount( $item_price * $quantity, NULL, true );
+                $amount     = wpinv_round_amount( $item_price * $quantity );
                 $subtotal   = $item_price * $quantity;
                 
                 $wpi_current_id         = $this->ID;
@@ -1911,7 +1911,7 @@ final class WPInv_Invoice {
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
 
                 if ( wpinv_prices_include_tax() ) {
-                    $subtotal -= wpinv_format_amount( $tax, NULL, true );
+                    $subtotal -= wpinv_round_amount( $tax );
                 }
 
                 $total      = $subtotal - $discount + $tax;
@@ -1924,12 +1924,12 @@ final class WPInv_Invoice {
                 $cart_details[] = array(
                     'id'          => $item['id'],
                     'name'        => $item['name'],
-                    'item_price'  => wpinv_format_amount( $item_price, NULL, true ),
+                    'item_price'  => wpinv_round_amount( $item_price ),
                     'quantity'    => $quantity,
                     'discount'    => $discount,
-                    'subtotal'    => wpinv_format_amount( $subtotal, NULL, true ),
-                    'tax'         => wpinv_format_amount( $tax, NULL, true ),
-                    'price'       => wpinv_format_amount( $total, NULL, true ),
+                    'subtotal'    => wpinv_round_amount( $subtotal ),
+                    'tax'         => wpinv_round_amount( $tax ),
+                    'price'       => wpinv_round_amount( $total ),
                     'vat_rate'    => $tax_rate,
                     'vat_class'   => $tax_class,
                     'meta'        => isset($item['meta']) ? $item['meta'] : array(),
@@ -1940,9 +1940,9 @@ final class WPInv_Invoice {
                 $cart_discount  += (float)($discount);
                 $cart_tax       += (float)($tax);
             }
-            $this->subtotal = wpinv_format_amount( $cart_subtotal, NULL, true );
-            $this->tax      = wpinv_format_amount( $cart_tax, NULL, true );
-            $this->discount = wpinv_format_amount( $cart_discount, NULL, true );
+            $this->subtotal = wpinv_round_amount( $cart_subtotal );
+            $this->tax      = wpinv_round_amount( $cart_tax );
+            $this->discount = wpinv_round_amount( $cart_discount );
             
             $this->recalculate_total();
             
@@ -2739,8 +2739,8 @@ final class WPInv_Invoice {
                 $subscription_meta['bill_times'] = $item->get_recurring_limit();
             }
             if ( $subscription_meta['initial_amount'] === '' || $subscription_meta['recurring_amount'] === '' ) {
-                $subscription_meta['initial_amount']    = wpinv_format_amount( $this->get_total() );
-                $subscription_meta['recurring_amount']  = wpinv_format_amount( $this->get_recurring_details( 'total' ) );
+                $subscription_meta['initial_amount']    = wpinv_round_amount( $this->get_total() );
+                $subscription_meta['recurring_amount']  = wpinv_round_amount( $this->get_recurring_details( 'total' ) );
             }
         }
         
@@ -2764,9 +2764,9 @@ final class WPInv_Invoice {
     public function is_free() {
         $is_free = false;
         
-        if ( !( (float)wpinv_format_amount( $this->get_total(), NULL, true ) > 0 ) ) {
+        if ( !( (float)wpinv_round_amount( $this->get_total() ) > 0 ) ) {
             if ( $this->is_parent() && $this->is_recurring() ) {
-                $is_free = (float)wpinv_format_amount( $this->get_recurring_details( 'total' ), NULL, true ) > 0 ? false : true;
+                $is_free = (float)wpinv_round_amount( $this->get_recurring_details( 'total' ) ) > 0 ? false : true;
             } else {
                 $is_free = true;
             }

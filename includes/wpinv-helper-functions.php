@@ -43,8 +43,9 @@ function wpinv_get_user_agent() {
 
 function wpinv_sanitize_amount( $amount ) {
     $is_negative   = false;
-    $thousands_sep = wpinv_thousands_seperator();
-    $decimal_sep   = wpinv_decimal_seperator();
+    $thousands_sep = wpinv_thousands_separator();
+    $decimal_sep   = wpinv_decimal_separator();
+    $decimals = wpinv_decimals();
 
     // Sanitize the amount
     if ( $decimal_sep == ',' && false !== ( $found = strpos( $amount, $decimal_sep ) ) ) {
@@ -65,7 +66,7 @@ function wpinv_sanitize_amount( $amount ) {
 
     $amount   = preg_replace( '/[^0-9\.]/', '', $amount );
 
-    $decimals = apply_filters( 'wpinv_sanitize_amount_decimals', 2, $amount );
+    $decimals = apply_filters( 'wpinv_sanitize_amount_decimals', $decimals, $amount );
     $amount   = number_format( (double) $amount, $decimals, '.', '' );
 
     if( $is_negative ) {
@@ -73,6 +74,14 @@ function wpinv_sanitize_amount( $amount ) {
     }
 
     return apply_filters( 'wpinv_sanitize_amount', $amount );
+}
+
+function wpinv_round_amount( $amount ) {
+    $decimals = wpinv_decimals();
+    
+    $amount = round( (double)$amount, wpinv_currency_decimal_filter( $decimals ) );
+
+    return apply_filters( 'wpinv_round_amount', $amount );
 }
 
 function wpinv_get_invoice_statuses( $trashed = false ) {
@@ -177,22 +186,22 @@ function wpinv_currency_position() {
     return apply_filters( 'wpinv_currency_position', $position );
 }
 
-function wpinv_thousands_seperator() {
-    $thousand_sep = wpinv_get_option( 'thousands_seperator', ',' );
+function wpinv_thousands_separator() {
+    $thousand_sep = wpinv_get_option( 'thousands_separator', ',' );
     
-    return apply_filters( 'wpinv_thousands_seperator', $thousand_sep );
+    return apply_filters( 'wpinv_thousands_separator', $thousand_sep );
 }
 
-function wpinv_decimal_seperator() {
-    $decimal_sep = wpinv_get_option( 'decimal_seperator', '.' );
+function wpinv_decimal_separator() {
+    $decimal_sep = wpinv_get_option( 'decimal_separator', '.' );
     
-    return apply_filters( 'wpinv_decimal_seperator', $decimal_sep );
+    return apply_filters( 'wpinv_decimal_separator', $decimal_sep );
 }
 
 function wpinv_decimals() {
-    $decimals = wpinv_get_option( 'decimals', 2 );
+    $decimals = apply_filters( 'wpinv_decimals', wpinv_get_option( 'decimals', 2 ) );
     
-    return apply_filters( 'wpinv_decimals', $decimals );
+    return absint( $decimals );
 }
 
 function wpinv_get_currencies() {
@@ -300,8 +309,8 @@ function wpinv_price( $amount = '', $currency = '' ) {
 }
 
 function wpinv_format_amount( $amount, $decimals = NULL, $calculate = false ) {
-    $thousands_sep = wpinv_thousands_seperator();
-    $decimal_sep   = wpinv_decimal_seperator();
+    $thousands_sep = wpinv_thousands_separator();
+    $decimal_sep   = wpinv_decimal_separator();
 
     if ( $decimals === NULL ) {
         $decimals = wpinv_decimals();
