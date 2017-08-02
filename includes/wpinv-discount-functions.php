@@ -947,7 +947,7 @@ function wpinv_get_cart_items_discount_amount( $items = array(), $discount = fal
         $amount += wpinv_get_cart_item_discount_amount( $item, $discount );
     }
     
-    $amount = wpinv_format_amount( $amount );
+    $amount = wpinv_round_amount( $amount );
 
     return $amount;
 }
@@ -1079,7 +1079,7 @@ function wpinv_get_cart_discounts_html( $items = array(), $discounts = false ) {
         ob_start();
         do_action( 'wpinv_checkout_table_discount_first', $items );
         $html .= ob_get_clean();
-        $html .= '<td class="wpinv_cart_discount_label text-right" colspan="' . $wpi_cart_columns . '">' . $remove_btn . '<strong>' . wpinv_cart_discount_label( $discount, $rate, false ) . '</strong></td><td class="wpinv_cart_discount text-right"><span data-discount="' . $amount . '" class="wpinv_cart_discount_amount">&ndash;' . wpinv_price( $amount ) . '</span></td>';
+        $html .= '<td class="wpinv_cart_discount_label text-right" colspan="' . $wpi_cart_columns . '">' . $remove_btn . '<strong>' . wpinv_cart_discount_label( $discount, $rate, false ) . '</strong></td><td class="wpinv_cart_discount text-right"><span data-discount="' . $amount . '" class="wpinv_cart_discount_amount">&ndash;' . wpinv_price( wpinv_format_amount( $amount ) ) . '</span></td>';
         ob_start();
         do_action( 'wpinv_checkout_table_discount_last', $items );
         $html .= ob_get_clean();

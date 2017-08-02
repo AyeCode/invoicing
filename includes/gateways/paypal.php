@@ -137,8 +137,8 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         $interval           = $item->get_recurring_interval();
         $bill_times         = (int)$item->get_recurring_limit();
         
-        $initial_amount     = wpinv_format_amount( $invoice->get_total() );
-        $recurring_amount   = wpinv_format_amount( $invoice->get_recurring_details( 'total' ) );
+        $initial_amount     = wpinv_round_amount( $invoice->get_total() );
+        $recurring_amount   = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
         
         $paypal_args['cmd'] = '_xclick-subscriptions';
         $paypal_args['sra'] = '1';

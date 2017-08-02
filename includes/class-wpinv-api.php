@@ -226,9 +226,9 @@ class WPInv_API {
     
     protected function set_discount( $invoice, $data ) {
         if ( isset( $data['discount'] ) ) {
-            $invoice->set( 'discount', wpinv_format_amount( $data['discount'], NULL, true ) );
+            $invoice->set( 'discount', wpinv_round_amount( $data['discount'] ) );
             
-            update_post_meta( $invoice->ID, '_wpinv_discount', wpinv_format_amount( $data['discount'], NULL, true ) );
+            update_post_meta( $invoice->ID, '_wpinv_discount', wpinv_round_amount( $data['discount'] ) );
             
             if ( isset( $data['discount_code'] ) ) {
                 $invoice->set( 'discount_code', $data['discount_code'] );
@@ -270,7 +270,7 @@ class WPInv_API {
                 $id                 = isset( $item['id'] ) ? sanitize_text_field( $item['id'] ) : '';
                 $title              = isset( $item['title'] ) ? sanitize_text_field( $item['title'] ) : '';
                 $desc               = isset( $item['description'] ) ? sanitize_text_field( $item['description'] ) : '';
-                $amount             = isset( $item['amount'] ) ? wpinv_format_amount( $item['amount'], NULL, true ) : 0;
+                $amount             = isset( $item['amount'] ) ? wpinv_round_amount( $item['amount'] ) : 0;
                 
                 if ( !empty( $item['vat_rates_class'] ) ) {
                     $vat_rates_class = $item['vat_rates_class'];
@@ -286,16 +286,16 @@ class WPInv_API {
                     'id'                => $id,
                     'title'             => esc_html( $title ),
                     'description'       => esc_html( $desc ),
-                    'amount'            => $amount > 0 ? wpinv_format_amount( $amount, NULL, true ) : 0,
-                    'subtotal'          => $amount > 0 ? wpinv_format_amount( $amount, NULL, true ) : 0,
+                    'amount'            => $amount > 0 ? wpinv_round_amount( $amount ) : 0,
+                    'subtotal'          => $amount > 0 ? wpinv_round_amount( $amount ) : 0,
                     'vat_rates_class'   => $vat_rates_class,
-                    'vat_rate'          => $vat_rate > 0 ? wpinv_format_amount( $vat_rate, NULL, true ) : 0,
-                    'tax'               => $tax > 0 ? wpinv_format_amount( $tax, NULL, true ) : 0,
+                    'vat_rate'          => $vat_rate > 0 ? wpinv_round_amount( $vat_rate ) : 0,
+                    'tax'               => $tax > 0 ? wpinv_round_amount( $tax ) : 0,
                 );
             }
 
-            update_post_meta( $invoice->ID, '_wpinv_tax', wpinv_format_amount( $total_tax, NULL, true ) );
-            $invoice->set( 'tax', wpinv_format_amount( $total_tax, NULL, true ) );
+            update_post_meta( $invoice->ID, '_wpinv_tax', wpinv_round_amount( $total_tax ) );
+            $invoice->set( 'tax', wpinv_round_amount( $total_tax ) );
             
             $items_array = apply_filters( 'wpinv_save_invoice_items', $items_array, $data['items'], $invoice );
             

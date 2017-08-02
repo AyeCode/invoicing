@@ -133,10 +133,10 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
         $invoice->set( 'discount_code', $parent_invoice->discount_code );
     }
     
-    $invoice->subtotal = wpinv_format_amount( $subtotal, NULL, true );
-    $invoice->tax      = wpinv_format_amount( $tax, NULL, true );
-    $invoice->discount = wpinv_format_amount( $discount, NULL, true );
-    $invoice->total    = wpinv_format_amount( $total, NULL, true );
+    $invoice->subtotal = wpinv_round_amount( $subtotal );
+    $invoice->tax      = wpinv_round_amount( $tax );
+    $invoice->discount = wpinv_round_amount( $discount );
+    $invoice->total    = wpinv_round_amount( $total );
     $invoice->save();
     
     wpinv_update_payment_status( $invoice->ID, 'publish' );
@@ -414,8 +414,8 @@ function wpinv_subscription_payment_desc( $invoice ) {
 }
 
 function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bill_times, $trial_period = '', $trial_interval = 0, $currency = '' ) {
-    $initial_total      = wpinv_format_amount( $initial );
-    $recurring_total    = wpinv_format_amount( $recurring );
+    $initial_total      = wpinv_round_amount( $initial );
+    $recurring_total    = wpinv_round_amount( $recurring );
     
     if ( $trial_interval > 0 && !empty( $trial_period ) ) {
         // Free trial
@@ -427,8 +427,8 @@ function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bil
         }
     }
     
-    $initial_amount     = wpinv_price( $initial_total, $currency );
-    $recurring_amount   = wpinv_price( $recurring_total, $currency );
+    $initial_amount     = wpinv_price( wpinv_format_amount( $initial_total ), $currency );
+    $recurring_amount   = wpinv_price( wpinv_format_amount( $recurring_total ), $currency );
     
     $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times, $trial_period, $trial_interval );
         

@@ -210,8 +210,8 @@ class WPInv_Plugin {
         $localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
         $localize['currency_symbol']      = wpinv_currency_symbol();
         $localize['currency_pos']         = wpinv_currency_position();
-        $localize['thousand_sep']         = wpinv_thousands_seperator();
-        $localize['decimal_sep']          = wpinv_decimal_seperator();
+        $localize['thousand_sep']         = wpinv_thousands_separator();
+        $localize['decimal_sep']          = wpinv_decimal_separator();
         $localize['decimals']             = wpinv_decimals();
         
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
@@ -270,8 +270,8 @@ class WPInv_Plugin {
         $localize['discount']                   = wpinv_discount_amount();
         $localize['currency_symbol']            = wpinv_currency_symbol();
         $localize['currency_pos']               = wpinv_currency_position();
-        $localize['thousand_sep']               = wpinv_thousands_seperator();
-        $localize['decimal_sep']                = wpinv_decimal_seperator();
+        $localize['thousand_sep']               = wpinv_thousands_separator();
+        $localize['decimal_sep']                = wpinv_decimal_separator();
         $localize['decimals']                   = wpinv_decimals();
         $localize['save_invoice']               = __( 'Save Invoice', 'invoicing' );
         $localize['status_publish']             = wpinv_status_nicename( 'publish' );

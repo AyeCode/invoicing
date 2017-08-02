@@ -172,6 +172,8 @@ function wpinv_get_registered_settings() {
         $invoice_number_padd_options[$i] = $i;
     }
     
+    $currency_symbol = wpinv_currency_symbol();
+    
     $alert_wrapper_start = '<p style="color: #F00">';
     $alert_wrapper_close = '</p>';
     $wpinv_settings = array(
@@ -284,10 +286,10 @@ function wpinv_get_registered_settings() {
                         'desc'    => __( 'Choose the location of the currency sign.', 'invoicing' ),
                         'type'    => 'select',
                         'options'  => array(
-                            'left'        => __( 'Left', 'invoicing' ) . ' (' . wpinv_currency_symbol() . '99.99)',
-                            'right'       => __( 'Right', 'invoicing' ) . ' (99.99' . wpinv_currency_symbol() . ')',
-                            'left_space'  => __( 'Left with space', 'invoicing' ) . ' (' . wpinv_currency_symbol() . ' 99.99)',
-                            'right_space' => __( 'Right with space', 'invoicing' ) . ' (99.99 ' . wpinv_currency_symbol() . ')'
+                            'left'        => __( 'Left', 'invoicing' ) . ' (' . $currency_symbol . wpinv_format_amount( '99.99' ) . ')',
+                            'right'       => __( 'Right', 'invoicing' ) . ' ('. wpinv_format_amount( '99.99' ) . $currency_symbol . ')',
+                            'left_space'  => __( 'Left with space', 'invoicing' ) . ' (' . $currency_symbol . ' ' . wpinv_format_amount( '99.99' ) . ')',
+                            'right_space' => __( 'Right with space', 'invoicing' ) . ' (' . wpinv_format_amount( '99.99' ) . ' ' . $currency_symbol . ')'
                         )
                     ),
                     'thousands_separator' => array(
@@ -401,7 +403,7 @@ function wpinv_get_registered_settings() {
                         'size' => 'small',
                         'min'  => '0',
                         'max'  => '99',
-                        'step' => '0.1',
+                        'step' => 'any',
                         'std'  => '20'
                     ),
                 ),
@@ -692,6 +694,8 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
             if ( isset( $rate['country'] ) && empty( $rate['country'] ) && empty( $rate['state'] ) ) {
                 continue;
             }
+            
+            $rate['rate'] = wpinv_sanitize_amount( $rate['rate'] );
             
             $tax_rates[] = $rate;
         }
@@ -1297,7 +1301,7 @@ function wpinv_tax_rates_callback($args) {
 					<input type="checkbox" name="tax_rates[<?php echo $sanitized_key; ?>][global]" id="tax_rates[<?php echo $sanitized_key; ?>][global]" value="1"<?php checked( true, ! empty( $rate['global'] ) ); ?>/>
 					<label for="tax_rates[<?php echo $sanitized_key; ?>][global]"><?php _e( 'Apply to whole country', 'invoicing' ); ?></label>
 				</td>
-				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="0.10" min="0.00" max="99" name="tax_rates[<?php echo $sanitized_key; ?>][rate]" value="<?php echo esc_html( $rate['rate'] ); ?>"/></td>
+				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="any" min="0" max="99" name="tax_rates[<?php echo $sanitized_key; ?>][rate]" value="<?php echo esc_html( $rate['rate'] ); ?>"/></td>
                 <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[<?php echo $sanitized_key; ?>][name]" value="<?php echo esc_html( $rate['name'] ); ?>"/></td>
 				<td class="wpinv_tax_action"><span class="wpinv_remove_tax_rate button-secondary"><?php _e( 'Remove Rate', 'invoicing' ); ?></span></td>
 			</tr>
@@ -1325,7 +1329,7 @@ function wpinv_tax_rates_callback($args) {
 					<input type="checkbox" name="tax_rates[0][global]" id="tax_rates[0][global]" value="1"/>
 					<label for="tax_rates[0][global]"><?php _e( 'Apply to whole country', 'invoicing' ); ?></label>
 				</td>
-				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="0.10" min="0.00" name="tax_rates[0][rate]" placeholder="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" value="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>"/></td>
+				<td class="wpinv_tax_rate"><input type="number" class="small-text" step="any" min="0" max="99" name="tax_rates[0][rate]" placeholder="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>" value="<?php echo (float)wpinv_get_option( 'tax_rate', 0 ) ;?>"/></td>
                 <td class="wpinv_tax_name"><input type="text" class="regular-text" name="tax_rates[0][name]" /></td>
 				<td><span class="wpinv_remove_tax_rate button-secondary"><?php _e( 'Remove Rate', 'invoicing' ); ?></span></td>
 			</tr>
@@ -1373,3 +1377,13 @@ function wpinv_set_settings_cap() {
 	return 'manage_options';
 }
 add_filter( 'option_page_capability_wpinv_settings', 'wpinv_set_settings_cap' );
+
+function wpinv_settings_sanitize_input( $value, $key ) {
+    if ( $key == 'tax_rate' || $key == 'eu_fallback_rate' ) {
+        $value = wpinv_sanitize_amount( $value );
+        $value = $value >= 100 ? 99 : $value;
+    }
+        
+    return $value;
+}
+add_filter( 'wpinv_settings_sanitize', 'wpinv_settings_sanitize_input', 10, 2 );

@@ -604,14 +604,14 @@ function wpinv_recalculate_taxes(state) {
                 var $wrap = jQuery('#wpinv_checkout_form_wrap');
                 jQuery('#wpinv_checkout_cart_form').replaceWith(res.html);
                 jQuery('.wpinv-chdeckout-total', $wrap).text(res.total);
-                if (res.data.free) {
-                    $('#wpinv_payment_mode_select', $wrap).hide();
+                if (res.free) {
+                    jQuery('#wpinv_payment_mode_select', $wrap).hide();
                     gw = 'manual';
                 } else {
-                    $('#wpinv_payment_mode_select', $wrap).show();
-                    gw = $('#wpinv_payment_mode_select', $wrap).data('gateway');
+                    jQuery('#wpinv_payment_mode_select', $wrap).show();
+                    gw = jQuery('#wpinv_payment_mode_select', $wrap).data('gateway');
                 }
-                $('input[name="wpi-gateway"]', $wrap).val(gw);
+                jQuery('input[name="wpi-gateway"]', $wrap).val(gw);
                 var data = new Object();
                 data.post = postData;
                 data.response = res;
