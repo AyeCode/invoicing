@@ -96,7 +96,10 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 				'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 				'format'  => '?paged=%#%',
 				'current' => max( 1, get_query_var( 'paged' ) ),
-				'total'   => $user_invoices->max_num_pages
+				'total'   => $user_invoices->max_num_pages,
+                'add_args' => array(
+                    'wpinv-cpt' => 'wpi_invoice',
+                )
 			) );
 			?>
 		</div>

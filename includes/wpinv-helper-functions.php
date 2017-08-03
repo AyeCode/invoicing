@@ -76,15 +76,17 @@ function wpinv_sanitize_amount( $amount ) {
 }
 
 function wpinv_get_invoice_statuses( $trashed = false ) {
+    global $post;
+    $invoice_statuses = array();
     $invoice_statuses = array(
-        'pending'       => __( 'Pending Payment', 'invoicing' ),
-        'publish'       => __( 'Paid', 'invoicing' ),
-        'wpi-processing'    => __( 'Processing', 'invoicing' ),
-        'wpi-onhold'        => __( 'On Hold', 'invoicing' ),
-        'wpi-refunded'      => __( 'Refunded', 'invoicing' ),
-        'wpi-cancelled'     => __( 'Cancelled', 'invoicing' ),
-        'wpi-failed'        => __( 'Failed', 'invoicing' ),
-        'wpi-renewal'       => __( 'Renewal Payment', 'invoicing' )
+        'pending' => __('Pending Payment', 'invoicing'),
+        'publish' => __('Paid', 'invoicing'),
+        'wpi-processing' => __('Processing', 'invoicing'),
+        'wpi-onhold' => __('On Hold', 'invoicing'),
+        'wpi-refunded' => __('Refunded', 'invoicing'),
+        'wpi-cancelled' => __('Cancelled', 'invoicing'),
+        'wpi-failed' => __('Failed', 'invoicing'),
+        'wpi-renewal' => __('Renewal Payment', 'invoicing')
     );
     
     if ( $trashed ) {

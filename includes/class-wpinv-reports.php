@@ -371,7 +371,7 @@ class WPInv_Reports {
     public function set_invoices_export( $request ) {
         $this->from_date    = isset( $request['from_date'] ) ? sanitize_text_field( $request['from_date'] ) : '';
         $this->to_date      = isset( $request['to_date'] ) ? sanitize_text_field( $request['to_date'] ) : '';
-        $this->status       = isset( $request['status'] ) ? sanitize_text_field( $request['status'] ) : 'publich';
+        $this->status       = isset( $request['status'] ) ? sanitize_text_field( $request['status'] ) : 'publish';
     }
     
     public function get_invoices_columns( $columns = array() ) {

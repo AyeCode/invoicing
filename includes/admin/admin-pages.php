@@ -8,6 +8,10 @@ add_action( 'admin_menu', 'wpinv_add_options_link', 10 );
 function wpinv_add_options_link() {
     global $menu;
 
+    if ( !current_user_can( 'manage_options' ) ) {
+        return;
+    }
+
     if ( current_user_can( 'manage_options' ) ) {
         $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
     }
