@@ -128,7 +128,7 @@ final class WPInv_Invoice {
         
         // Primary Identifier
         $this->ID              = absint( $invoice_id );
-        $this->post_type            = $invoice->post_type;
+        $this->post_type       = $invoice->post_type;
         
         // We have a payment, get the generic payment_meta item to reduce calls to it
         $this->payment_meta    = $this->get_meta();
@@ -1581,14 +1581,15 @@ final class WPInv_Invoice {
 
         // Set some defaults
         $defaults = array(
-            'quantity'  => 1,
-            'id'        => false,
-            'name'      => $item->get_name(),
-            'item_price'=> false,
-            'discount'  => 0,
-            'tax'       => 0.00,
-            'meta'      => array(),
-            'fees'      => array()
+            'quantity'      => 1,
+            'id'            => false,
+            'name'          => $item->get_name(),
+            'item_price'    => false,
+            'custom_price'  => '',
+            'discount'      => 0,
+            'tax'           => 0.00,
+            'meta'          => array(),
+            'fees'          => array()
         );
 
         $args = wp_parse_args( apply_filters( 'wpinv_add_item_args', $args, $item->ID ), $defaults );
@@ -1701,18 +1702,19 @@ final class WPInv_Invoice {
             }
         
             $this->cart_details[] = array(
-                'name'        => !empty($args['name']) ? $args['name'] : $item->get_name(),
-                'id'          => $item->ID,
-                'item_price'  => wpinv_round_amount( $item_price ),
-                'quantity'    => $args['quantity'],
-                'discount'    => $discount,
-                'subtotal'    => wpinv_round_amount( $subtotal ),
-                'tax'         => wpinv_round_amount( $tax ),
-                'price'       => wpinv_round_amount( $total ),
-                'vat_rate'    => $tax_rate,
-                'vat_class'   => $tax_class,
-                'meta'        => $args['meta'],
-                'fees'        => $args['fees'],
+                'name'          => !empty($args['name']) ? $args['name'] : $item->get_name(),
+                'id'            => $item->ID,
+                'item_price'    => wpinv_round_amount( $item_price ),
+                'custom_price'  => $args['custom_price'],
+                'quantity'      => $args['quantity'],
+                'discount'      => $discount,
+                'subtotal'      => wpinv_round_amount( $subtotal ),
+                'tax'           => wpinv_round_amount( $tax ),
+                'price'         => wpinv_round_amount( $total ),
+                'vat_rate'      => $tax_rate,
+                'vat_class'     => $tax_class,
+                'meta'          => $args['meta'],
+                'fees'          => $args['fees'],
             );
                         
             $subtotal = $subtotal - $discount;
@@ -1732,9 +1734,10 @@ final class WPInv_Invoice {
     public function remove_item( $item_id, $args = array() ) {
         // Set some defaults
         $defaults = array(
-            'quantity'   => 1,
-            'item_price' => false,
-            'cart_index' => false,
+            'quantity'      => 1,
+            'item_price'    => false,
+            'custom_price'  => '',
+            'cart_index'    => false,
         );
         $args = wp_parse_args( $args, $defaults );
 
@@ -1925,6 +1928,7 @@ final class WPInv_Invoice {
                     'id'          => $item['id'],
                     'name'        => $item['name'],
                     'item_price'  => wpinv_round_amount( $item_price ),
+                    'custom_price'=> isset($item['custom_price']) ? $item['custom_price'] : '',
                     'quantity'    => $quantity,
                     'discount'    => $discount,
                     'subtotal'    => wpinv_round_amount( $subtotal ),

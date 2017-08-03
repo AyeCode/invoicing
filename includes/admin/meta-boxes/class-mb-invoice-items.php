@@ -317,6 +317,27 @@ class WPInv_Meta_Box_Items {
         do_action( 'wpinv_item_info_metabox_after', $post );
     }
     
+    public static function meta_values( $post ) {
+        $meta_keys = apply_filters( 'wpinv_show_meta_values_for_keys', array(
+            'type',
+            'custom_id'
+        ) );
+        
+        if ( empty( $meta_keys ) ) {
+            return;
+        }
+        
+        do_action( 'wpinv_meta_values_metabox_before', $post );
+        
+        foreach ( $meta_keys as $meta_key ) {
+            ?>
+            <p class="wpi-mtb05"><label><strong><?php echo $meta_key; ?></strong>: <?php echo get_post_meta( $post->ID, '_wpinv_' . $meta_key, true ); ?></label></p>
+            <?php 
+        }
+        
+        do_action( 'wpinv_meta_values_metabox_after', $post );
+    }
+    
     public static function save( $post_id, $data, $post ) {
         $invoice        = new WPInv_Invoice( $post_id );
         
@@ -396,7 +417,7 @@ class WPInv_Meta_Box_Items {
                 }
             }
             
-            do_action( 'wpinv_invoice_metabox_saveed', $invoice );
+            do_action( 'wpinv_invoice_metabox_saved', $invoice );
         }
         
         return $saved;

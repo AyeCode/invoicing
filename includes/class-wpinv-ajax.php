@@ -209,13 +209,14 @@ class WPInv_Ajax {
         $quantity = wpinv_item_quantities_enabled() && !empty($_POST['qty']) && (int)$_POST['qty'] > 0 ? (int)$_POST['qty'] : 1;
 
         $args = array(
-            'id'         => $item_id,
-            'quantity'   => $quantity,
-            'item_price' => $item->get_price(),
-            'tax'        => 0.00,
-            'discount'   => 0,
-            'meta'       => array(),
-            'fees'       => array()
+            'id'            => $item_id,
+            'quantity'      => $quantity,
+            'item_price'    => $item->get_price(),
+            'custom_price'  => '',
+            'tax'           => 0.00,
+            'discount'      => 0,
+            'meta'          => array(),
+            'fees'          => array()
         );
 
         $invoice->add_item( $item_id, $args );

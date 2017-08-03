@@ -336,7 +336,7 @@ function wpinv_items_table_custom_column( $column ) {
             echo $wpinv_euvat->item_class_label( $post->ID );
         break;
         case 'type' :
-            echo wpinv_item_type( $post->ID ) . '<span class="meta">' . $wpi_item->get_cpt_singular_name() . '</span>';
+            echo wpinv_item_type( $post->ID ) . '<span class="meta">' . $wpi_item->get_custom_singular_name() . '</span>';
         break;
         case 'recurring' :
             echo ( wpinv_is_recurring_item( $post->ID ) ? '<i class="fa fa-check fa-recurring-y"></i>' : '<i class="fa fa-close fa-recurring-n"></i>' );

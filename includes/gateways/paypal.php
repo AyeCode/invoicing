@@ -86,7 +86,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         if( is_array( $purchase_data['cart_details'] ) && ! empty( $purchase_data['cart_details'] ) ) {
             foreach ( $purchase_data['cart_details'] as $item ) {
                 $item['quantity'] = $item['quantity'] > 0 ? $item['quantity'] : 1;
-                $item_amount = round( $item['subtotal'] / $item['quantity'], 2 );
+                $item_amount = wpinv_sanitize_amount( $item['subtotal'] / $item['quantity'], 2 );
 
                 if ( $item_amount <= 0 ) {
                     $item_amount = 0;
@@ -96,7 +96,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
                 $paypal_args['item_name_' . $i ]        = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( $item ), ENT_COMPAT, 'UTF-8' ) );
                 $paypal_args['quantity_' . $i ]         = $item['quantity'];
                 $paypal_args['amount_' . $i ]           = $item_amount;
-                $paypal_args['discount_amount_' . $i ]  = $item['discount'];
+                $paypal_args['discount_amount_' . $i ]  = wpinv_sanitize_amount( $item['discount'], 2 );
 
                 $i++;
             }
@@ -104,7 +104,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
 
         // Add taxes to the cart
         if ( wpinv_use_taxes() ) {
-            $paypal_args['tax_cart'] = wpinv_sanitize_amount( (float)$invoice->get_tax() );
+            $paypal_args['tax_cart'] = wpinv_sanitize_amount( (float)$invoice->get_tax(), 2 );
         }
 
         $paypal_args = apply_filters( 'wpinv_paypal_args', $paypal_args, $purchase_data, $invoice );
@@ -137,8 +137,8 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         $interval           = $item->get_recurring_interval();
         $bill_times         = (int)$item->get_recurring_limit();
         
-        $initial_amount     = wpinv_round_amount( $invoice->get_total() );
-        $recurring_amount   = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
+        $initial_amount     = wpinv_sanitize_amount( $invoice->get_total(), 2 );
+        $recurring_amount   = wpinv_sanitize_amount( $invoice->get_recurring_details( 'total' ), 2 );
         
         $paypal_args['cmd'] = '_xclick-subscriptions';
         $paypal_args['sra'] = '1';

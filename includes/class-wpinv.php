@@ -115,7 +115,10 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gd-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscription.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
@@ -147,12 +150,13 @@ class WPInv_Plugin {
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-meta-boxes.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-recurring-admin.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-details.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-items.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
-            
+            //require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
         }
         
         // include css inliner
