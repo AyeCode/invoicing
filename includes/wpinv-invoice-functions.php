@@ -557,6 +557,10 @@ function wpinv_get_cart_details( $invoice_id = 0 ) {
 }
 
 function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
+    if('wpi_invoice' != get_post_type($invoice_id)){
+        return;
+    }
+
     $invoice    = wpinv_get_invoice( $invoice_id );
     
     $old_status = wpinv_status_nicename( $old_status );
@@ -565,7 +569,7 @@ function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
     $status_change = sprintf( __( 'Invoice status changed from %s to %s', 'invoicing' ), $old_status, $new_status );
     
     // Add note
-    return $invoice->add_note( $status_change, 0 );
+    return $invoice->add_note( $status_change, false, false, true );
 }
 add_action( 'wpinv_update_status', 'wpinv_record_status_change', 100, 3 );
 
@@ -1242,10 +1246,12 @@ function wpinv_get_invoices( $args ) {
             $args[ $to ] = $args[ $from ];
         }
     }
-    
-    if ( get_query_var( 'paged' ) )
+
+    $wpinv_cpt = $_REQUEST[ 'wpinv-cpt' ];
+
+    if ( get_query_var( 'paged' ) && 'wpi_invoice' == $wpinv_cpt )
         $args['page'] = get_query_var('paged');
-    else if ( get_query_var( 'page' ) )
+    else if ( get_query_var( 'page' )  && 'wpi_invoice' == $wpinv_cpt )
         $args['page'] = get_query_var( 'page' );
     else if ( !empty( $args[ 'page' ] ) )
         $args['page'] = $args[ 'page' ];

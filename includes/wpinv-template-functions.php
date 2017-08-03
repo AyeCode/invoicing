@@ -877,7 +877,7 @@ function wpinv_get_watermark( $id ) {
     }
     $invoice = wpinv_get_invoice( $id );
     
-    if ( !empty( $invoice ) ) {
+    if ( !empty( $invoice ) && "wpi_invoice" === $invoice->post_type ) {
         if ( $invoice->is_paid() ) {
             return __( 'Paid', 'invoicing' );
         }
@@ -1643,7 +1643,7 @@ function wpinv_checkout_billing_info() {
                 <div id="wpinv-fields-box" class="panel-body">
                     <?php do_action( 'wpinv_checkout_billing_fields_first', $billing_details ); ?>
                     <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_first_name" class="wpi-label"><?php _e( 'First Name', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_first_name" class="wpi-label"><?php _e( 'First Name', 'invoicing' );?><?php if ( wpinv_get_option( 'fname_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_first_name',
@@ -1651,12 +1651,12 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['first_name'],
                                 'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'First name', 'invoicing' ),
-                                'required'      => true,
+                                'required'      => (bool)wpinv_get_option( 'fname_mandatory' ),
                             ) );
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_last_name" class="wpi-label"><?php _e( 'Last Name', 'invoicing' );?></label>
+                        <label for="wpinv_last_name" class="wpi-label"><?php _e( 'Last Name', 'invoicing' );?><?php if ( wpinv_get_option( 'lname_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_last_name',
@@ -1664,11 +1664,12 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['last_name'],
                                 'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Last name', 'invoicing' ),
+                                'required'      => (bool)wpinv_get_option( 'lname_mandatory' ),
                             ) );
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_address" class="wpi-label"><?php _e( 'Address', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_address" class="wpi-label"><?php _e( 'Address', 'invoicing' );?><?php if ( wpinv_get_option( 'address_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_address',
@@ -1676,12 +1677,12 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['address'],
                                 'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'Address', 'invoicing' ),
-                                'required'      => true,
+                                'required'      => (bool)wpinv_get_option( 'address_mandatory' ),
                             ) );
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_city" class="wpi-label"><?php _e( 'City', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_city" class="wpi-label"><?php _e( 'City', 'invoicing' );?><?php if ( wpinv_get_option( 'city_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'id'            => 'wpinv_city',
@@ -1689,12 +1690,12 @@ function wpinv_checkout_billing_info() {
                                 'value'         => $billing_details['city'],
                                 'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'City', 'invoicing' ),
-                                'required'      => true,
+                                'required'      => (bool)wpinv_get_option( 'city_mandatory' ),
                             ) );
                         ?>
                     </p>
                     <p id="wpinv_country_box" class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_country" class="wpi-label"><?php _e( 'Country', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_country" class="wpi-label"><?php _e( 'Country', 'invoicing' );?><?php if ( wpinv_get_option( 'country_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php echo wpinv_html_select( array(
                             'options'          => wpinv_get_country_list(),
                             'name'             => 'wpinv_country',
@@ -1704,11 +1705,11 @@ function wpinv_checkout_billing_info() {
                             'show_option_none' => false,
                             'class'            => 'wpi-input form-control required',
                             'placeholder'      => __( 'Choose a country', 'invoicing' ),
-                            'required'          => true,
+                            'required'          => (bool)wpinv_get_option( 'country_mandatory' ),
                         ) ); ?>
                     </p>
                     <p id="wpinv_state_box" class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_state" class="wpi-label"><?php _e( 'State / Province', 'invoicing' );?><span class="wpi-required">*</span></label>
+                        <label for="wpinv_state" class="wpi-label"><?php _e( 'State / Province', 'invoicing' );?><?php if ( wpinv_get_option( 'state_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         $states = wpinv_get_country_states( $selected_country );
                         if( !empty( $states ) ) {
@@ -1721,7 +1722,7 @@ function wpinv_checkout_billing_info() {
                                 'show_option_none' => false,
                                 'class'            => 'wpi-input form-control required',
                                 'placeholder'      => __( 'Choose a state', 'invoicing' ),
-                                'required'         => true,
+                                'required'         => (bool)wpinv_get_option( 'state_mandatory' ),
                             ) );
                         } else {
                             echo wpinv_html_text( array(
@@ -1730,13 +1731,13 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_state',
                                 'class'         => 'wpi-input form-control required',
                                 'placeholder'   => __( 'State / Province', 'invoicing' ),
-                                'required'      => true,
+                                'required'      => (bool)wpinv_get_option( 'state_mandatory' ),
                             ) );
                         }
                         ?>
                     </p>
                     <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_zip" class="wpi-label"><?php _e( 'ZIP / Postcode', 'invoicing' );?></label>
+                        <label for="wpinv_zip" class="wpi-label"><?php _e( 'ZIP / Postcode', 'invoicing' );?><?php if ( wpinv_get_option( 'zip_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
                         <?php
                         echo wpinv_html_text( array(
                                 'name'          => 'wpinv_zip',
@@ -1744,6 +1745,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_zip',
                                 'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'ZIP / Postcode', 'invoicing' ),
+                                'required'      => (bool)wpinv_get_option( 'zip_mandatory' ),
                             ) );
                         ?>
                     </p>
@@ -2100,7 +2102,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     
     $note_classes   = array( 'note' );
     $note_classes[] = get_comment_meta( $note->comment_ID, '_wpi_customer_note', true ) ? 'customer-note' : '';
-    $note_classes[] = $note->comment_author === __( 'GeoDirectory', 'invoicing' ) ? 'system-note' : '';
+    $note_classes[] = $note->comment_author === __( 'System', 'invoicing' ) ? 'system-note' : '';
     $note_classes   = apply_filters( 'wpinv_invoice_note_class', array_filter( $note_classes ), $note );
     $note_classes   = !empty( $note_classes ) ? implode( ' ', $note_classes ) : '';
     
@@ -2111,7 +2113,10 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
             <?php echo wpautop( wptexturize( wp_kses_post( $note->comment_content ) ) ); ?>
         </div>
         <p class="meta">
-            <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;<a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
+            <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;
+            <?php if($note->comment_author !== 'System') {?>
+                <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
+            <?php } ?>
         </p>
     </li>
     <?php

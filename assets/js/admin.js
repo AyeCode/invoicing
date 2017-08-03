@@ -95,6 +95,9 @@ jQuery(function($) {
             $('#wpinv-notes')
                 .on('click', 'a.add_note', this.add_invoice_note)
                 .on('click', 'a.delete_note', this.delete_invoice_note);
+            if($('ul.invoice_notes')[0]){
+                $('ul.invoice_notes')[0].scrollTop = $('ul.invoice_notes')[0].scrollHeight;
+            }
         },
         add_invoice_note: function() {
             if (!$('textarea#add_invoice_note').val()) {
@@ -115,7 +118,8 @@ jQuery(function($) {
                 _nonce: WPInv_Admin.add_invoice_note_nonce
             };
             $.post(WPInv_Admin.ajax_url, data, function(response) {
-                $('ul.invoice_notes').prepend(response);
+                $('ul.invoice_notes').append(response);
+                $('ul.invoice_notes')[0].scrollTop = $('ul.invoice_notes')[0].scrollHeight;
                 $('#wpinv-notes').unblock();
                 $('#add_invoice_note').val('');
             });

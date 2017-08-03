@@ -45,9 +45,9 @@ class WPInv_Meta_Box_Billing_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-first-name table-layout">
-            <div class="gdmbx-th"><label for="wpinv_first_name"><?php _e( 'First Name', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_first_name"><?php _e( 'First Name', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_first_name" id="wpinv_first_name" value="<?php echo esc_attr( $invoice->first_name );?>" required="required" />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_first_name" id="wpinv_first_name" value="<?php echo esc_attr( $invoice->first_name );?>" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-last-name table-layout">
@@ -69,19 +69,19 @@ class WPInv_Meta_Box_Billing_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-address table-layout">
-            <div class="gdmbx-th"><label for="wpinv_address"><?php _e( 'Address', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_address"><?php _e( 'Address', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_address" id="wpinv_address" value="<?php echo esc_attr( $invoice->address );?>" required="required" />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_address" id="wpinv_address" value="<?php echo esc_attr( $invoice->address );?>" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-city table-layout">
-            <div class="gdmbx-th"><label for="wpinv_city"><?php _e( 'City', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_city"><?php _e( 'City', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_city" id="wpinv_city" value="<?php echo esc_attr( $invoice->city );?>" required="required" />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_city" id="wpinv_city" value="<?php echo esc_attr( $invoice->city );?>" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-select gdmbx-wpinv-country table-layout">
-            <div class="gdmbx-th"><label for="wpinv_country"><?php _e( 'Country', 'invoicing' );?> <span class="required">*</span> <span class="wpi-loader"><i class="fa fa-refresh fa-spin"></i></span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_country"><?php _e( 'Country', 'invoicing' );?> <span class="wpi-loader"><i class="fa fa-refresh fa-spin"></i></span></label></div>
             <div class="gdmbx-td">
                 <?php
                 echo wpinv_html_select( array(
@@ -94,13 +94,13 @@ class WPInv_Meta_Box_Billing_Details {
                     'class'            => 'gdmbx2-text-large',
                     'chosen'           => false,
                     'placeholder'      => __( 'Choose a country', 'invoicing' ),
-                    'required'         => true,
+                    'required'         => false,
                 ) );
                 ?>
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-state table-layout">
-            <div class="gdmbx-th"><label for="wpinv_state"><?php _e( 'State', 'invoicing' );?> <span class="required">*</span></label></div>
+            <div class="gdmbx-th"><label for="wpinv_state"><?php _e( 'State', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
                 <?php
                 $states = wpinv_get_country_states( $invoice->country );
@@ -115,7 +115,7 @@ class WPInv_Meta_Box_Billing_Details {
                         'class'            => 'gdmbx2-text-large',
                         'chosen'           => false,
                         'placeholder'      => __( 'Choose a state', 'invoicing' ),
-                        'required'         => true,
+                        'required'         => false,
                     ) );
                 } else {
                     echo wpinv_html_text( array(
@@ -123,7 +123,7 @@ class WPInv_Meta_Box_Billing_Details {
                         'value' => ! empty( $invoice->state ) ? $invoice->state : '',
                         'id'    => 'wpinv_state',
                         'class' => 'gdmbx2-text-large',
-                        'required' => true,
+                        'required' => false,
                     ) );
                 }
                 ?>
@@ -136,9 +136,9 @@ class WPInv_Meta_Box_Billing_Details {
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-phone table-layout">
-            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?> <?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo '<span class="required">*</span>'; } ?></label></div>
+            <div class="gdmbx-th"><label for="wpinv_phone"><?php _e( 'Phone', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" <?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo 'required="required"'; } ?> />
+                <input type="text" class="gdmbx2-text-large" name="wpinv_phone" id="wpinv_phone" value="<?php echo esc_attr( $invoice->phone );?>" />
             </div>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-ip table-layout">

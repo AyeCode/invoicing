@@ -74,6 +74,7 @@ add_action( 'wpinv_email_footer', 'wpinv_email_footer' );
 add_action( 'wpinv_email_invoice_details', 'wpinv_email_invoice_details', 10, 3 );
 add_action( 'wpinv_email_invoice_items', 'wpinv_email_invoice_items', 10, 3 );
 add_action( 'wpinv_email_billing_details', 'wpinv_email_billing_details', 10, 3 );
+add_action( 'wpinv_email_before_note_details', 'wpinv_email_before_note_details', 10, 4 );
 
 function wpinv_send_transactional_email() {
     $args       = func_get_args();
@@ -91,6 +92,10 @@ function wpinv_new_invoice_notification( $invoice_id, $new_status = '' ) {
     
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
     
@@ -140,6 +145,10 @@ function wpinv_cancelled_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( empty( $invoice ) ) {
         return false;
     }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
+        return false;
+    }
     
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
@@ -187,6 +196,10 @@ function wpinv_failed_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( empty( $invoice ) ) {
         return false;
     }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
+        return false;
+    }
     
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
@@ -232,6 +245,10 @@ function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
     
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
     
@@ -289,6 +306,10 @@ function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) 
     if ( empty( $invoice ) ) {
         return false;
     }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
+        return false;
+    }
     
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
@@ -342,6 +363,10 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
     
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
     
@@ -399,6 +424,10 @@ function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
     if ( empty( $invoice ) ) {
         return false;
     }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
+        return false;
+    }
     
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
@@ -453,6 +482,10 @@ function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) 
     
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
     
@@ -512,6 +545,10 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
     
@@ -593,13 +630,15 @@ function wpinv_user_note_notification( $invoice_id, $args = array() ) {
     $search['invoice_date']     = '{invoice_date}';
     $search['name']             = '{name}';
     $search['customer_note']    = '{customer_note}';
-    
+    $search['invoice_quote']    = '{invoice_quote}';
+
     $replace                    = array();
     $replace['invoice_number']  = $invoice->get_number();
     $replace['invoice_date']    = $invoice->get_invoice_date();
     $replace['name']            = $invoice->get_user_full_name();
     $replace['customer_note']   = $args['user_note'];
-    
+    $replace['invoice_quote']   = $invoice->get_invoice_quote_type($invoice_id);
+
     $wpinv_email_search     = $search;
     $wpinv_email_replace    = $replace;
     
@@ -715,7 +754,7 @@ function wpinv_get_emails() {
             'email_new_invoice_heading' => array(
                 'id'   => 'email_new_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'New payment invoice', 'invoicing' ),
                 'size' => 'large'
@@ -746,7 +785,7 @@ function wpinv_get_emails() {
             'email_cancelled_invoice_heading' => array(
                 'id'   => 'email_cancelled_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Cancelled invoice', 'invoicing' ),
                 'size' => 'large'
@@ -777,7 +816,7 @@ function wpinv_get_emails() {
             'email_failed_invoice_heading' => array(
                 'id'   => 'email_failed_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Failed invoice', 'invoicing' ),
                 'size' => 'large'
@@ -808,7 +847,7 @@ function wpinv_get_emails() {
             'email_onhold_invoice_heading' => array(
                 'id'   => 'email_onhold_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Thank you for your invoice', 'invoicing' ),
                 'size' => 'large'
@@ -846,7 +885,7 @@ function wpinv_get_emails() {
             'email_processing_invoice_heading' => array(
                 'id'   => 'email_processing_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Thank you for your invoice', 'invoicing' ),
                 'size' => 'large'
@@ -884,7 +923,7 @@ function wpinv_get_emails() {
             'email_completed_invoice_heading' => array(
                 'id'   => 'email_completed_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Your invoice has been paid', 'invoicing' ),
                 'size' => 'large'
@@ -922,7 +961,7 @@ function wpinv_get_emails() {
             'email_refunded_invoice_heading' => array(
                 'id'   => 'email_refunded_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Your invoice has been refunded', 'invoicing' ),
                 'size' => 'large'
@@ -960,7 +999,7 @@ function wpinv_get_emails() {
             'email_user_invoice_heading' => array(
                 'id'   => 'email_user_invoice_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Your invoice {invoice_number} details', 'invoicing' ),
                 'size' => 'large'
@@ -998,7 +1037,7 @@ function wpinv_get_emails() {
             'email_user_note_heading' => array(
                 'id'   => 'email_user_note_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'A note has been added to your invoice', 'invoicing' ),
                 'size' => 'large'
@@ -1037,7 +1076,7 @@ function wpinv_get_emails() {
             'email_overdue_heading' => array(
                 'id'   => 'email_overdue_heading',
                 'name' => __( 'Email Heading', 'invoicing' ),
-                'desc' => __( 'Enter the the main heading contained within the email notification.', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
                 'std'  => __( 'Payment reminder for your invoice', 'invoicing' ),
                 'size' => 'large'
@@ -1488,3 +1527,13 @@ function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
     }
 }
 add_action( 'wpinv_payment_reminder_sent', 'wpinv_payment_reminder_sent', 10, 2 );
+
+function wpinv_email_before_note_details( $invoice, $email_type, $sent_to_admin, $customer_note ) {
+    if("wpi_invoice" === $invoice->post_type && !empty($customer_note)){
+        $before_note = '';
+        $before_note .= __( 'Hello, a note has just been added to your invoice:', 'invoicing' );
+        $before_note .= '<blockquote class="wpinv-note">'.wpautop( wptexturize( $customer_note ) ).'</blockquote>';
+        $before_note .= __( 'For your reference, your invoice details are shown below.', 'invoicing' );
+        echo $before_note;
+    }
+}

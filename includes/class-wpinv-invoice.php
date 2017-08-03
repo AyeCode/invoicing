@@ -140,7 +140,7 @@ final class WPInv_Invoice {
         $this->mode            = $this->setup_mode();
         $this->parent_invoice  = $invoice->post_parent;
         $this->post_name       = $this->setup_post_name( $invoice );
-        $this->status_nicename = $this->setup_status_nicename();
+        $this->status_nicename = $this->setup_status_nicename($invoice->post_status);
 
         // Items
         $this->fees            = $this->setup_fees();
@@ -196,12 +196,11 @@ final class WPInv_Invoice {
         return true;
     }
     
-    private function setup_status_nicename() {
+    private function setup_status_nicename($status) {
         $all_invoice_statuses  = wpinv_get_invoice_statuses();
-        
-        $status = array_key_exists( $this->status, $all_invoice_statuses ) ? $all_invoice_statuses[$this->status] : ucfirst( $this->status );
+        $status   = isset( $all_invoice_statuses[$status] ) ? $all_invoice_statuses[$status] : __( $status, 'invoicing' );
 
-        return $status;
+        return apply_filters( 'setup_status_nicename', $status );
     }
     
     private function setup_post_name( $post = NULL ) {
@@ -230,7 +229,7 @@ final class WPInv_Invoice {
         } else if ( $due_date == 'none' ) {
             $due_date = '';
         }
-        
+
         return $due_date;
     }
     
@@ -2803,5 +2802,20 @@ final class WPInv_Invoice {
         $item_ids = !empty( $item_ids ) ? implode( ',', array_unique( $item_ids ) ) : '';
         
         update_post_meta( $this->ID, '_wpinv_item_ids', $item_ids );
+    }
+
+    public function get_invoice_quote_type($post_id) {
+        if ( empty( $post_id ) ) {
+            return '';
+        }
+        $post_type = '';
+        $type = get_post_type($post_id);
+        if("wpi_invoice" === $type){
+            $post_type = __('Invoice', 'invoicing');
+        } else{
+            $post_type = __('Quote', 'invoicing');
+        }
+
+        return $post_type;
     }
 }

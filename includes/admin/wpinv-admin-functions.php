@@ -412,7 +412,7 @@ function wpinv_send_invoice_after_save( $post_id ) {
         return;
     }
     
-    if ( !current_user_can( 'manage_options' ) || !(get_post_type( $post_id ) == 'wpi_invoice' || get_post_type( $post_id ) == 'wpi_quote')  ) {
+    if ( !current_user_can( 'manage_options' ) || !(get_post_type( $post_id ) == 'wpi_invoice')  ) {
         return;
     }
     
@@ -423,7 +423,7 @@ function wpinv_send_invoice_after_save( $post_id ) {
 add_action( 'save_post_wpi_invoice', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
-    if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && $data['post_type'] == 'wpi_invoice' ) {
+    if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && ($data['post_type'] == 'wpi_invoice' || $data['post_type'] == 'wpi_quote') ) {
         $is_new_user = !empty( $postarr['wpinv_new_user'] ) ? true : false;
         $email = !empty( $postarr['wpinv_email'] ) && $postarr['wpinv_email'] && is_email( $postarr['wpinv_email'] ) ? $postarr['wpinv_email'] : NULL;
         
@@ -436,7 +436,14 @@ function wpinv_send_register_new_user( $data, $postarr ) {
             
             $user_login = sanitize_user( str_replace( ' ', '', $display_name ), true );
             if ( !( validate_username( $user_login ) && !username_exists( $user_login ) ) ) {
-                $user_login = sanitize_user( str_replace( ' ', '', $user_company ), true );
+                $new_user_login = strstr($email, '@', true);
+                if ( validate_username( $user_login ) && username_exists( $user_login ) ) {
+                    $user_login = sanitize_user($new_user_login, true );
+                }
+                if ( validate_username( $user_login ) && username_exists( $user_login ) ) {
+                    $user_append_text = rand(10,1000);
+                    $user_login = sanitize_user($new_user_login.$user_append_text, true );
+                }
                 
                 if ( !( validate_username( $user_login ) && !username_exists( $user_login ) ) ) {
                     $user_login = $email;
