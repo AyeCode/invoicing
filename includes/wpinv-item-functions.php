@@ -29,68 +29,19 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
             ) );
 
             break;
-        case 'package_id':
-            $posts = get_posts( array(
-                'post_type'      => 'wpi_item',
-                'posts_per_page' => 1,
-                'post_status'    => 'any',
-                'orderby'        => 'ID',
-                'order'          => 'ASC',
-                'meta_query'     => array(
-                    array(
-                        'key'   => '_wpinv_' . $field,
-                        'value' => $value,
-                    ),
-                    array(
-                        'key'   => '_wpinv_type',
-                        'value' => 'package',
-                    )
-                )
-            ) );
-            
-            break;
-        case 'item_id':
-            if ( empty( $value ) ) {
-                return false;
-            }
-            
-            $meta_query = array();
-            $meta_query[] = array(
-                'key'   => '_wpinv_post_id',
-                'value' => $value,
-            );
-            if ( !empty( $type ) ) {
-                $meta_query[] = array(
-                    'key'   => '_wpinv_type',
-                    'value' => $type,
-                );
-            }
-            
-            $args = array(
-                'post_type'      => 'wpi_item',
-                'posts_per_page' => 1,
-                'post_status'    => 'any',
-                'orderby'        => 'ID',
-                'order'          => 'ASC',
-                'meta_query'     => array( $meta_query )
-            );
-            
-            $posts = get_posts( $args );
-
-            break;
-        case 'custom':
+        case 'custom_id':
             if ( empty( $value ) || empty( $type ) ) {
                 return false;
             }
             
             $meta_query = array();
             $meta_query[] = array(
-                'key'   => '_wpinv_post_id',
-                'value' => $value,
-            );
-            $meta_query[] = array(
                 'key'   => '_wpinv_type',
                 'value' => $type,
+            );
+            $meta_query[] = array(
+                'key'   => '_wpinv_custom_id',
+                'value' => $value,
             );
             
             $args = array(
@@ -211,14 +162,14 @@ function wpinv_get_item_final_price( $item_id = 0, $amount_override = null ) {
     return apply_filters( 'wpinv_get_item_final_price', $price, $item_id );
 }
 
-function wpinv_item_cpt_singular_name( $item_id ) {
+function wpinv_item_custom_singular_name( $item_id ) {
     if( empty( $item_id ) ) {
         return false;
     }
 
     $item = new WPInv_Item( $item_id );
     
-    return $item->get_cpt_singular_name();
+    return $item->get_custom_singular_name();
 }
 
 function wpinv_get_item_types() {
@@ -461,7 +412,7 @@ function wpinv_cart_item_tax( $item ) {
     if ( isset( $item['tax'] ) && $item['tax'] > 0 && $item['subtotal'] > 0 ) {
         $tax      = wpinv_price( wpinv_format_amount( $item['tax'] ) );
         $tax_rate = !empty( $item['vat_rate'] ) ? $item['vat_rate'] : ( $item['tax'] / $item['subtotal'] ) * 100;
-        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate ) : '';
+        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate normal small">(' . $tax_rate . '%)</small>' : '';
     }
     
@@ -474,32 +425,38 @@ function wpinv_cart_item_tax( $item ) {
     return apply_filters( 'wpinv_cart_item_tax_label', $tax, $item );
 }
 
-function wpinv_get_cart_item_price( $item_id = 0, $options = array(), $remove_tax_from_inclusive = false ) {
+function wpinv_get_cart_item_price( $item_id = 0, $cart_item = array(), $options = array(), $remove_tax_from_inclusive = false ) {
     $price = 0;
-    $variable_prices = wpinv_has_variable_prices( $item_id );
+    
+    // Set custom price
+    if ( isset( $cart_item['custom_price'] ) && $cart_item['custom_price'] !== '' ) {
+        $price = $cart_item['custom_price'];
+    } else {
+        $variable_prices = wpinv_has_variable_prices( $item_id );
 
-    if ( $variable_prices ) {
-        $prices = wpinv_get_variable_prices( $item_id );
+        if ( $variable_prices ) {
+            $prices = wpinv_get_variable_prices( $item_id );
 
-        if ( $prices ) {
-            if( ! empty( $options ) ) {
-                $price = isset( $prices[ $options['price_id'] ] ) ? $prices[ $options['price_id'] ]['amount'] : false;
-            } else {
-                $price = false;
+            if ( $prices ) {
+                if( ! empty( $options ) ) {
+                    $price = isset( $prices[ $options['price_id'] ] ) ? $prices[ $options['price_id'] ]['amount'] : false;
+                } else {
+                    $price = false;
+                }
             }
         }
-    }
 
-    if( ! $variable_prices || false === $price ) {
-        // Get the standard Item price if not using variable prices
-        $price = wpinv_get_item_price( $item_id );
+        if( ! $variable_prices || false === $price ) {
+            // Get the standard Item price if not using variable prices
+            $price = wpinv_get_item_price( $item_id );
+        }
     }
 
     if ( $remove_tax_from_inclusive && wpinv_prices_include_tax() ) {
         $price -= wpinv_get_cart_item_tax( $item_id, $price, $options );
     }
 
-    return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $options );
+    return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $cart_item, $options, $remove_tax_from_inclusive );
 }
 
 function wpinv_get_cart_item_price_id( $item = array() ) {
@@ -685,52 +642,49 @@ function wpinv_item_in_use( $item_id ) {
 function wpinv_create_item( $args = array(), $wp_error = false, $force_update = false ) {
     // Set some defaults
     $defaults = array(
-        'type'               => 'custom',                                                // Optional. Item type. Default 'custom'.
-        'item_id'            => 0,                                                       // Required. Any integer number. Must be unique within item type.
-        'title'              => '',                                                      // Required. Item title.
-        'price'              => '0.00',                                                  // Optional. Item price. Default '0.00'.
-        'status'             => 'pending',                                               // Optional. pending, publish
-        'vat_rule'           => 'digital',                                               // Optional. digital => Digital item, physical => Physical item
-        'cpt_singular_name'  => '',                                                      // Optional. Sub title for item. Should be singular.
-        'cpt_name'           => '',                                                      // Optional. Sub title for item. Should be plural.
-        'is_recurring'       => 0,                                                       // Optional. 1 => Allow recurring or 0 => Don't allow recurring
-        'recurring_period'   => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
-        'recurring_interval' => 0,                                                       // Optional. Integer value between 1 - 90.
-        'recurring_limit'    => 0,                                                       // Optional. Any integer number. 0 for recurring forever until cancelled.
-        'free_trial'         => 0,                                                       // Optional. 1 => Allow free trial or 0 => Don't free trial
-        'trial_period'       => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
-        'trial_interval'     => 0,                                                       // Optional. Any integer number.
-        'excerpt'            => '',                                                      // Optional. Item short description
+        'type'                 => 'custom',                                                // Optional. Item type. Default 'custom'.
+        'title'                => '',                                                      // Required. Item title.
+        'custom_id'            => 0,                                                       // Optional. Any integer or non numeric id. Must be unique within item type.
+        'price'                => '0.00',                                                  // Optional. Item price. Default '0.00'.
+        'status'               => 'pending',                                               // Optional. pending, publish
+        'custom_name'          => '',                                                      // Optional. Plural sub title for item.
+        'custom_singular_name' => '',                                                      // Optional. Singular sub title for item.
+        'vat_rule'             => 'digital',                                               // Optional. digital => Digital item, physical => Physical item
+        'excerpt'              => '',                                                      // Optional. Item short description
+        /* Recurring item fields */
+        'is_recurring'         => 0,                                                       // Optional. 1 => Allow recurring or 0 => Don't allow recurring
+        'recurring_period'     => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
+        'recurring_interval'   => 0,                                                       // Optional. Integer value between 1 - 90.
+        'recurring_limit'      => 0,                                                       // Optional. Any integer number. 0 for recurring forever until cancelled.
+        'free_trial'           => 0,                                                       // Optional. 1 => Allow free trial or 0 => Don't free trial
+        'trial_period'         => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
+        'trial_interval'       => 0,                                                       // Optional. Any integer number.
     );
     
     $data = wp_parse_args( $args, $defaults );
-    
-    if ( empty( $data['item_id'] ) ) {
-        if ( $wp_error ) {
-            return new WP_Error( 'invalid_item_id', __( 'Invalid item ID.' ) );
-        } else {
-            return false;
-        }
-    }
     
     if ( empty( $data['type'] ) ) {
         $data['type'] = 'custom';
     }
     
-    $item = wpinv_get_item_by( 'item_id', $data['item_id'], $data['type'] );
-        
+    if ( !empty( $data['custom_id'] ) ) {
+        $item = wpinv_get_item_by( 'custom_id', $data['custom_id'], $data['type'] );
+    } else {
+        $item = NULL;
+    }
+    
     if ( !$force_update && !empty( $item ) ) {
         return $item;
     }
         
-    $meta                       = array();
-    $meta['type']               = $data['type'];
-    $meta['post_id']            = $data['item_id'];
-    $meta['cpt_singular_name']  = $data['cpt_singular_name'];
-    $meta['cpt_name']           = $data['cpt_name'];
-    $meta['price']              = wpinv_round_amount( $data['price'] );
-    $meta['vat_rule']           = $data['vat_rule'];
-    $meta['vat_class']          = '_standard';
+    $meta                           = array();
+    $meta['type']                   = $data['type'];
+    $meta['custom_id']              = $data['custom_id'];
+    $meta['custom_singular_name']   = $data['custom_singular_name'];
+    $meta['custom_name']            = $data['custom_name'];
+    $meta['price']                  = wpinv_round_amount( $data['price'] );
+    $meta['vat_rule']               = $data['vat_rule'];
+    $meta['vat_class']              = '_standard';
     
     if ( !empty( $data['is_recurring'] ) ) {
         $meta['is_recurring']       = $data['is_recurring'];

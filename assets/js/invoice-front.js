@@ -196,9 +196,9 @@ jQuery(function($) {
                                 gw = 'manual';
                             } else {
                                 $('#wpinv_payment_mode_select', $this.checkout_form).show();
-                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).data('gateway');
+                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).attr('data-gateway');
                             }
-                            $('input[name="wpi-gateway"]', $this.checkout_form).val(gw);
+                            $('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $this.checkout_form).prop('checked', true);
                             $(document.body).trigger('wpinv_discount_applied', [res]);
                         }
                         if (res.msg) {
@@ -251,9 +251,9 @@ jQuery(function($) {
                                 gw = 'manual';
                             } else {
                                 $('#wpinv_payment_mode_select', $this.checkout_form).show();
-                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).data('gateway');
+                                gw = $('#wpinv_payment_mode_select', $this.checkout_form).attr('data-gateway');
                             }
-                            $('input[name="wpi-gateway"]', $this.checkout_form).val(gw);
+                            $('input[name="wpi-gateway"][value="' + gw + '"]', $this.checkout_form).prop('checked', true);
                             //console.log('291 : wpinv_recalculate_taxes()');
                             //wpinv_recalculate_taxes();
                             $(document.body).trigger('wpinv_discount_removed', [res]);

@@ -737,7 +737,7 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
                 continue;
             }
             
-            $rate['rate'] = wpinv_sanitize_amount( $rate['rate'] );
+            $rate['rate'] = wpinv_sanitize_amount( $rate['rate'], 4 );
             
             $tax_rates[] = $rate;
         }
@@ -1422,7 +1422,7 @@ add_filter( 'option_page_capability_wpinv_settings', 'wpinv_set_settings_cap' );
 
 function wpinv_settings_sanitize_input( $value, $key ) {
     if ( $key == 'tax_rate' || $key == 'eu_fallback_rate' ) {
-        $value = wpinv_sanitize_amount( $value );
+        $value = wpinv_sanitize_amount( $value, 4 );
         $value = $value >= 100 ? 99 : $value;
     }
         

@@ -30,7 +30,6 @@ Fix invoice status conflict with other plugin - CHANGED
 Shows incorrect trial end date - FIXED
 Invoice notes should not counted in WP standard comments count - CHANGED
 Payment gateways should be hidden if invoice total is zero(except invoices with free trial) - FIXED
-Tax rate is limited to one decimal place - FIXED
 
 = 0.0.4 =
 First public beta release - RELEASE

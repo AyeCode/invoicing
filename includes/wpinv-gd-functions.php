@@ -79,7 +79,7 @@ function wpinv_merge_gd_packages_to_items( $force = false ) {
 }
 
 function wpinv_get_gd_package_item($package_id, $create = false) {
-    $item = wpinv_get_item_by('package_id', $package_id);
+    $item = wpinv_get_item_by('custom_id', $package_id, 'package');
     
     if (!$create) {
         return $item;
@@ -93,7 +93,7 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
         return false;
     }
     
-    $item = wpinv_get_item_by('package_id', $package_id);
+    $item = wpinv_get_item_by('custom_id', $package_id, 'package');
 
     if (!$force && !empty($item)) {
         return $item;
@@ -105,15 +105,14 @@ function wpinv_merge_gd_package_to_item($package_id, $force = false, $package = 
         return false;
     }
         
-    $meta                       = array();
-    $meta['type']               = 'package';
-    $meta['package_id']         = $package_id;
-    $meta['post_type']          = $package->post_type;
-    $meta['cpt_singular_name']  = get_post_type_singular_label($package->post_type);
-    $meta['cpt_name']           = get_post_type_plural_label($package->post_type);
-    $meta['price']              = wpinv_round_amount( $package->amount );
-    $meta['vat_rule']           = 'digital';
-    $meta['vat_class']          = '_standard';
+    $meta                           = array();
+    $meta['type']                   = 'package';
+    $meta['custom_id']              = $package_id;
+    $meta['custom_singular_name']   = get_post_type_singular_label($package->post_type);
+    $meta['custom_name']            = get_post_type_plural_label($package->post_type);
+    $meta['price']                  = wpinv_round_amount( $package->amount );
+    $meta['vat_rule']               = 'digital';
+    $meta['vat_class']              = '_standard';
     
     if ( !empty( $package->sub_active ) ) {
         $sub_num_trial_days = absint( $package->sub_num_trial_days );
@@ -239,11 +238,6 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             $invoice_data                   = array();
             $invoice_data['invoice_id']     = $wpi_invoice_id;
             $invoice_data['status']         = $status;
-            if ( $update ) {
-                //$invoice_data['private_note']   = __( 'Invoice was updated.', 'invoicing' );
-            } else {
-                $invoice_data['private_note']   = wp_sprintf( __( 'Invoice was created with status %s.', 'invoicing' ), wpinv_status_nicename( $status ) );
-            }
             $invoice_data['user_id']        = $invoice_info->user_id;
             $invoice_data['created_via']    = 'API';
             
@@ -259,7 +253,6 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
                 'gateway'           => $paymentmethod, 
                 'gateway_title'     => $payment_method_title,
                 'currency'          => geodir_get_currency_type(),
-                'paid'              => $status === 'publish' ? true : false
             );
             
             $user_address = wpinv_get_user_address( $invoice_info->user_id, false );
@@ -288,15 +281,16 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             if ( !empty( $post_item ) ) {
                 $cart_details  = array();
                 $cart_details[] = array(
-                    'id'                => $post_item->ID,
-                    'name'              => $post_item->get_name(),
-                    'item_price'        => $post_item->get_price(),
-                    'discount'          => $invoice_info->discount,
-                    'tax'               => 0.00,
-                    'meta'              => array( 
-                                            'post_id'       => $invoice_info->post_id,
-                                            'invoice_title' => $invoice_info->post_title
-                                        ),
+                    'id'            => $post_item->ID,
+                    'name'          => $post_item->get_name(),
+                    'item_price'    => $post_item->get_price(),
+                    'custom_price'  => '',
+                    'discount'      => $invoice_info->discount,
+                    'tax'           => 0.00,
+                    'meta'          => array( 
+                        'post_id'       => $invoice_info->post_id,
+                        'invoice_title' => $invoice_info->post_title
+                    ),
                 );
                 
                 $invoice_data['cart_details']  = $cart_details;
@@ -312,28 +306,6 @@ function wpinv_cpt_save( $invoice_id, $update = false, $pre_status = NULL ) {
             } else {
                 if ( !empty( $data ) ) {
                     update_post_meta( $data->ID, '_wpinv_gdp_id', $invoice_id );
-
-                    global $wpi_userID, $wpinv_ip_address_country;
-                    
-                    $checkout_session = wpinv_get_checkout_session();
-                    
-                    $data_session                   = array();
-                    $data_session['invoice_id']     = $data->ID;
-                    $data_session['cart_discounts'] = $data->get_discounts( true );
-                    
-                    wpinv_set_checkout_session( $data_session );
-                    
-                    $wpi_userID         = (int)$data->get_user_id();
-                    $_POST['country']   = !empty($data->country) ? $data->country : wpinv_get_default_country();
-                        
-                    $data->country      = sanitize_text_field( $_POST['country'] );
-                    $data->set( 'country', sanitize_text_field( $_POST['country'] ) );
-                    
-                    $wpinv_ip_address_country = $data->country;
-                    
-                    $data = $data->recalculate_totals(true);
-                    
-                    wpinv_set_checkout_session( $checkout_session );
                     
                     $update_data = array();
                     $update_data['tax_amount'] = $data->get_tax();
@@ -415,8 +387,19 @@ function wpinv_gdp_to_wpi_status( $status ) {
         case 'confirmed':
             $inv_status = 'publish';
         break;
+        case 'cancelled':
+            $inv_status = 'wpi-cancelled';
+        break;
+        case 'failed':
+            $inv_status = 'wpi-failed';
+        break;
+        case 'onhold':
+            $inv_status = 'wpi-onhold';
+        break;
+        case 'refunded':
+            $inv_status = 'wpi-refunded';
+        break;
     }
-    
     return $inv_status;
 }
 
@@ -428,6 +411,18 @@ function wpinv_wpi_to_gdp_status( $status ) {
         case 'wpi-processing':
         case 'wpi-renewal':
             $inv_status = 'confirmed';
+        break;
+        case 'wpi-cancelled':
+            $inv_status = 'cancelled';
+        break;
+        case 'wpi-failed':
+            $inv_status = 'failed';
+        break;
+        case 'wpi-onhold':
+            $inv_status = 'onhold';
+        break;
+        case 'wpi-refunded':
+            $inv_status = 'refunded';
         break;
     }
     
@@ -501,162 +496,6 @@ function wpinv_payment_set_coupon_code( $status, $invoice_id, $coupon_code ) {
 }
 add_filter( 'geodir_payment_set_coupon_code', 'wpinv_payment_set_coupon_code', 10, 3 );
 
-function wpinv_insert_invoice( $invoice_data = array() ) {
-    if ( empty( $invoice_data ) ) {
-        return false;
-    }
-    
-    if ( !( !empty( $invoice_data['cart_details'] ) && is_array( $invoice_data['cart_details'] ) ) ) {
-        return new WP_Error( 'wpinv_invalid_items', __( 'Invoice must have atleast on item.', 'invoicing' ) );
-    }
-
-    // default invoice args, note that status is checked for validity in wpinv_create_invoice()
-    $default_args = array(
-        'status'        => !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending',
-        'user_note'     => !empty( $invoice_data['note'] ) ? $invoice_data['note'] : null,
-        'invoice_id'    => !empty( $invoice_data['invoice_id'] ) ? (int)$invoice_data['invoice_id'] : 0,
-        'user_id'       => !empty( $invoice_data['user_id'] ) ? (int)$invoice_data['user_id'] : get_current_user_id(),
-    );
-
-    $invoice = wpinv_create_invoice( $default_args, $invoice_data );
-    if ( is_wp_error( $invoice ) ) {
-        return $invoice;
-    }
-
-    $gateway = !empty( $invoice_data['gateway'] ) ? $invoice_data['gateway'] : '';
-    $gateway = empty( $gateway ) && isset( $_POST['gateway'] ) ? $_POST['gateway'] : $gateway;
-    
-    if ( !empty( $gateway ) ) {
-        $gateway = wpinv_gdp_to_wpi_gateway( $gateway );
-        $invoice_data['payment_details']['gateway'] = $gateway;
-        $invoice_data['payment_details']['gateway_title'] = wpinv_gdp_to_wpi_gateway_title( $gateway );
-    }
-    
-    $user_info = array(
-        'user_id'        => '',
-        'first_name'     => '',
-        'last_name'      => '',
-        'email'          => '',
-        'company'        => '',
-        'phone'          => '',
-        'address'        => '',
-        'city'           => '',
-        'country'        => wpinv_get_default_country(),
-        'state'          => wpinv_get_default_state(),
-        'zip'            => '',
-        'vat_number'     => '',
-        'vat_rate'       => '',
-        'adddress_confirmed' => '',
-        'discount'       => array(),
-    );
-    
-    $user_info    = wp_parse_args( $invoice_data['user_info'], $user_info );
-    
-    $payment_details = array();
-    if ( !empty( $invoice_data['payment_details'] ) ) {
-        $payment_details = array(
-            'gateway'           => 'manual',
-            'gateway_title'     => __( 'Manual Payment', 'invoicing' ),
-            'currency'          => geodir_get_currency_type(),
-            'paid'              => false,
-            'transaction_id'    => '',
-        );
-        $payment_details = wp_parse_args( $invoice_data['payment_details'], $payment_details );
-    }
-    $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending' ) );
-    if ( !empty( $payment_details ) ) {
-        $invoice->set( 'currency', $payment_details['currency'] );
-        $invoice->set( 'gateway', $payment_details['gateway'] );
-        $invoice->set( 'gateway_title', $payment_details['gateway_title'] );
-        $invoice->set( 'transaction_id', $payment_details['transaction_id'] );
-    }
-
-    $invoice->set( 'user_info', $user_info );
-    ///$invoice->set( 'user_id', $user_info['user_id'] );
-    ///$invoice->set( 'email', $user_info['email'] );
-    $invoice->set( 'first_name', $user_info['first_name'] );
-    $invoice->set( 'last_name', $user_info['last_name'] );
-    $invoice->set( 'address', $user_info['address'] );
-    $invoice->set( 'company', $user_info['company'] );
-    $invoice->set( 'vat_number', $user_info['vat_number'] );
-    $invoice->set( 'phone', $user_info['phone'] );
-    $invoice->set( 'city', $user_info['city'] );
-    $invoice->set( 'country', $user_info['country'] );
-    $invoice->set( 'state', $user_info['state'] );
-    $invoice->set( 'zip', $user_info['zip'] );
-    $invoice->set( 'discounts', ( !empty( $user_info['discount'] ) ? $user_info['discount'] : array() ) );
-    $invoice->set( 'ip', wpinv_get_ip() );
-    if ( !empty( $invoice_data['invoice_key'] ) ) {
-        $invoice->set( 'key', $invoice_data['invoice_key'] );
-    }
-    $invoice->set( 'mode', ( wpinv_is_test_mode() ? 'test' : 'live' ) );
-    $invoice->set( 'parent_invoice', ( !empty( $invoice_data['parent'] ) ? absint( $invoice_data['parent'] ) : '' ) );
-    
-    // Add note
-    if ( !empty( $invoice_data['user_note'] ) ) {
-        $invoice->add_note( $invoice_data['user_note'], true );
-    }
-    
-    if ( !empty( $invoice_data['private_note'] ) ) {
-        $invoice->add_note( $invoice_data['private_note'] );
-    }
-    
-    if ( !empty( $invoice_data['cart_details'] ) && is_array( $invoice_data['cart_details'] ) ) {
-        foreach ( $invoice_data['cart_details'] as $key => $item ) {
-            $item_id    = !empty( $item['id'] ) ? $item['id'] : 0;
-            $quantity   = !empty( $item['quantity'] ) ? $item['quantity'] : 1;
-            $name       = !empty( $item['name'] ) ? $item['name'] : '';
-            $item_price = isset( $item['item_price'] ) ? $item['item_price'] : '';
-            
-            $post_item  = new WPInv_Item( $item_id );
-            if ( !empty( $post_item ) ) {
-                $name       = !empty( $name ) ? $name : $post_item->get_name();
-                $item_price = $item_price !== '' ? $item_price : $post_item->get_price();
-            } else {
-                continue;
-            }
-            
-            $args = array(
-                'name'          => $name,
-                'quantity'      => $quantity,
-                'item_price'    => $item_price,
-                'tax'           => !empty( $item['tax'] ) ? $item['tax'] : 0.00,
-                'discount'      => isset( $item['discount'] ) ? $item['discount'] : 0,
-                'meta'          => isset( $item['meta'] ) ? $item['meta'] : array(),
-                'fees'          => isset( $item['fees'] ) ? $item['fees'] : array(),
-            );
-
-            $invoice->add_item( $item_id, $args );
-        }
-    }
-
-    $invoice->increase_tax( wpinv_get_cart_fee_tax() );
-
-    if ( isset( $invoice_data['post_date'] ) ) {
-        $invoice->set( 'date', $invoice_data['post_date'] );
-    }
-
-    $number = wpinv_format_invoice_number( $invoice->ID );
-    $invoice->set( 'number', $number );
-    update_option( 'wpinv_last_invoice_number', $number );
-    
-    $invoice->save();
-    
-    do_action( 'wpinv_insert_invoice', $invoice->ID, $invoice_data );
-
-    if ( ! empty( $invoice->ID ) ) {
-        // payment method (and payment_complete() if `paid` == true)
-        if ( !empty( $payment_details['paid'] ) ) {
-            //$invoice->payment_complete( !empty( $payment_details['transaction_id'] ) ? $payment_details['transaction_id'] : $invoice->ID );
-        }
-            
-        return $invoice;
-    }
-
-    // Return false if no invoice was inserted
-    return false;
-}
-
 function wpinv_merge_gd_invoices() {
     if (!defined('GEODIRPAYMENT_VERSION')) {
         return;
@@ -695,7 +534,7 @@ function wpinv_tool_merge_packages() {
         $success = true;
         
         foreach ( $packages as $key => $package ) {
-            $item = wpinv_get_item_by('package_id', $package->pid);
+            $item = wpinv_get_item_by('custom_id', $package->pid, 'package');
             if ( !empty( $item ) ) {
                 continue;
             }
@@ -731,6 +570,7 @@ function wpinv_tool_merge_invoices() {
     global $wpdb, $wpi_gdp_inv_merge, $wpi_tax_rates;
     
     $sql = "SELECT `gdi`.`id`, `gdi`.`date`, `gdi`.`date_updated` FROM `" . INVOICE_TABLE . "` AS gdi LEFT JOIN `" . $wpdb->posts . "` AS p ON `p`.`ID` = `gdi`.`invoice_id` AND `p`.`post_type` = 'wpi_invoice' WHERE `p`.`ID` IS NULL ORDER BY `gdi`.`id` ASC";
+
     $items = $wpdb->get_results( $sql );
     
     $count = 0;
@@ -748,8 +588,6 @@ function wpinv_tool_merge_invoices() {
             
             if ( !empty( $merged ) && !empty( $merged->ID ) ) {
                 $count++;
-                
-                //$wpdb->query( "UPDATE `" . INVOICE_TABLE . "` SET `invoice_id` = '" . $merged->ID . "' WHERE id = '" . $item->id . "'" );
                 
                 $post_date = !empty( $item->date ) && $item->date != '0000-00-00 00:00:00' ? $item->date : current_time( 'mysql' );
                 $post_date_gmt = get_gmt_from_date( $post_date );
@@ -922,7 +760,7 @@ function wpinv_wpi_to_gdp_update_status( $invoice_id, $new_status, $old_status )
 add_action( 'wpinv_update_status', 'wpinv_wpi_to_gdp_update_status', 999, 3 );
 
 function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
-    $item = wpinv_get_item_by( 'package_id', $gd_package_id );
+    $item = wpinv_get_item_by( 'custom_id', $gd_package_id, 'package' );
     
     if ( !empty( $item ) ) {
         wpinv_remove_item( $item, true );
@@ -931,7 +769,7 @@ function wpinv_gdp_to_wpi_delete_package( $gd_package_id ) {
 add_action( 'geodir_payment_post_delete_package', 'wpinv_gdp_to_wpi_delete_package', 10, 1 ) ;
 
 function wpinv_can_delete_package_item( $return, $post_id ) {
-    if ( $return && function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && $package_id = get_post_meta( $post_id, '_wpinv_package_id', true ) ) {
+    if ( $return && function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && $package_id = get_post_meta( $post_id, '_wpinv_custom_id', true ) ) {
         $gd_package = geodir_get_package_info_by_id( $package_id, '' );
         
         if ( !empty( $gd_package ) ) {
@@ -949,7 +787,7 @@ function wpinv_package_item_classes( $classes, $class, $post_id ) {
     if ( $typenow == 'wpi_item' && in_array( 'wpi-gd-package', $classes ) ) {
         if ( wpinv_item_in_use( $post_id ) ) {
             $classes[] = 'wpi-inuse-pkg';
-        } else if ( !( function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && geodir_get_package_info_by_id( (int)get_post_meta( $post_id, '_wpinv_package_id', true ), '' ) ) ) {
+        } else if ( !( function_exists( 'geodir_get_package_info_by_id' ) && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' && geodir_get_package_info_by_id( (int)get_post_meta( $post_id, '_wpinv_custom_id', true ), '' ) ) ) {
             $classes[] = 'wpi-delete-pkg';
         }
     }
