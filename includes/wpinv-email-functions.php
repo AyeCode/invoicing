@@ -590,7 +590,7 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     } else {
         $note = __( 'Fail to send invoice to the user!', 'invoicing' );
     }
-    $invoice->add_note( $note ); // Add private note.
+    $invoice->add_note( $note, '', '', true ); // Add private note.
     
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
