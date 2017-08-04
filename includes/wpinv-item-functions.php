@@ -425,32 +425,38 @@ function wpinv_cart_item_tax( $item ) {
     return apply_filters( 'wpinv_cart_item_tax_label', $tax, $item );
 }
 
-function wpinv_get_cart_item_price( $item_id = 0, $options = array(), $remove_tax_from_inclusive = false ) {
+function wpinv_get_cart_item_price( $item_id = 0, $cart_item = array(), $options = array(), $remove_tax_from_inclusive = false ) {
     $price = 0;
-    $variable_prices = wpinv_has_variable_prices( $item_id );
+    
+    // Set custom price
+    if ( isset( $cart_item['custom_price'] ) && $cart_item['custom_price'] !== '' ) {
+        $price = $cart_item['custom_price'];
+    } else {
+        $variable_prices = wpinv_has_variable_prices( $item_id );
 
-    if ( $variable_prices ) {
-        $prices = wpinv_get_variable_prices( $item_id );
+        if ( $variable_prices ) {
+            $prices = wpinv_get_variable_prices( $item_id );
 
-        if ( $prices ) {
-            if( ! empty( $options ) ) {
-                $price = isset( $prices[ $options['price_id'] ] ) ? $prices[ $options['price_id'] ]['amount'] : false;
-            } else {
-                $price = false;
+            if ( $prices ) {
+                if( ! empty( $options ) ) {
+                    $price = isset( $prices[ $options['price_id'] ] ) ? $prices[ $options['price_id'] ]['amount'] : false;
+                } else {
+                    $price = false;
+                }
             }
         }
-    }
 
-    if( ! $variable_prices || false === $price ) {
-        // Get the standard Item price if not using variable prices
-        $price = wpinv_get_item_price( $item_id );
+        if( ! $variable_prices || false === $price ) {
+            // Get the standard Item price if not using variable prices
+            $price = wpinv_get_item_price( $item_id );
+        }
     }
 
     if ( $remove_tax_from_inclusive && wpinv_prices_include_tax() ) {
         $price -= wpinv_get_cart_item_tax( $item_id, $price, $options );
     }
 
-    return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $options );
+    return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $cart_item, $options, $remove_tax_from_inclusive );
 }
 
 function wpinv_get_cart_item_price_id( $item = array() ) {

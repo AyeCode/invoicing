@@ -246,8 +246,8 @@ class WPInv_Ajax {
         $response['data']['subtotalf']  = $invoice->get_subtotal(true);
         $response['data']['tax']        = $invoice->get_tax();
         $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->discount;
-        $response['data']['discountf']  = wpinv_price( $invoice->discount, $invoice->get_currency() );
+        $response['data']['discount']   = $invoice->get_discount();
+        $response['data']['discountf']  = $invoice->get_discount(true);
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
         
@@ -331,8 +331,8 @@ class WPInv_Ajax {
         $response['data']['subtotalf']  = $invoice->get_subtotal(true);
         $response['data']['tax']        = $invoice->get_tax();
         $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->discount;
-        $response['data']['discountf']  = wpinv_price( $invoice->discount, $invoice->get_currency() );
+        $response['data']['discount']   = $invoice->get_discount();
+        $response['data']['discountf']  = $invoice->get_discount(true);
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total(true);
         

@@ -713,7 +713,15 @@ function wpinv_get_cart_content_details() {
         $wpi_current_id         = $invoice->ID;
         $wpi_item_id            = $item_id;
         
-        $item_price         = wpinv_get_item_price( $item_id );
+        if ( isset( $item['custom_price'] ) && $item['custom_price'] !== '' ) {
+            $item_price = $item['custom_price'];
+        } else {
+            if ( isset( $item['item_price'] ) && $item['item_price'] !== '' && $item['item_price'] !== false ) {
+                $item_price = $item['item_price'];
+            } else {
+                $item_price = wpinv_get_item_price( $item_id );
+            }
+        }
         $discount           = wpinv_get_cart_item_discount_amount( $item );
         $discount           = apply_filters( 'wpinv_get_cart_content_details_item_discount_amount', $discount, $item );
         $quantity           = wpinv_get_cart_item_quantity( $item );

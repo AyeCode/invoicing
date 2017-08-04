@@ -1387,8 +1387,14 @@ final class WPInv_Invoice {
         if ( !empty( $this->discounts ) ) {
             global $ajax_cart_details;
             $ajax_cart_details = $this->get_cart_details();
+            
+            if ( !empty( $ajax_cart_details ) && count( $ajax_cart_details ) == count( $this->items ) ) {
+                $cart_items = $ajax_cart_details;
+            } else {
+                $cart_items = $this->items;
+            }
 
-            $this->discount = wpinv_get_cart_items_discount_amount( $this->items , $this->discounts );
+            $this->discount = wpinv_get_cart_items_discount_amount( $cart_items , $this->discounts );
         }
         $discount   = wpinv_round_amount( $this->discount );
         $dash       = $dash && $discount > 0 ? '&ndash;' : '';
@@ -1666,11 +1672,16 @@ final class WPInv_Invoice {
             
             $this->cart_details[$found_cart_key] = $cart_item;
         } else {
-            // Allow overriding the price
-            if( false !== $args['item_price'] ) {
-                $item_price = $args['item_price'];
+            // Set custom price.
+            if ( $args['custom_price'] !== '' ) {
+                $item_price = $args['custom_price'];
             } else {
-                $item_price = wpinv_get_item_price( $item->ID );
+                // Allow overriding the price
+                if ( false !== $args['item_price'] ) {
+                    $item_price = $args['item_price'];
+                } else {
+                    $item_price = wpinv_get_item_price( $item->ID );
+                }
             }
 
             // Sanitizing the price here so we don't have a dozen calls later
@@ -1705,7 +1716,7 @@ final class WPInv_Invoice {
                 'name'          => !empty($args['name']) ? $args['name'] : $item->get_name(),
                 'id'            => $item->ID,
                 'item_price'    => wpinv_round_amount( $item_price ),
-                'custom_price'  => $args['custom_price'],
+                'custom_price'  => ( $args['custom_price'] !== '' ? wpinv_round_amount( $args['custom_price'] ) : '' ),
                 'quantity'      => $args['quantity'],
                 'discount'      => $discount,
                 'subtotal'      => wpinv_round_amount( $subtotal ),
@@ -1899,6 +1910,8 @@ final class WPInv_Invoice {
             $_POST['wpinv_state']   = $this->state;
             
             foreach ( $this->cart_details as $key => $item ) {
+                //$item['item_price'] = $item['custom_price'];
+                wpinv_error_log( $item, 'item', __FILE__, __LINE__ );
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
                 $amount     = wpinv_round_amount( $item_price * $quantity );
@@ -1908,10 +1921,12 @@ final class WPInv_Invoice {
                 $wpi_item_id            = $item['id'];
                 
                 $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
+                wpinv_error_log( $discount, 'discount', __FILE__, __LINE__ );
                 
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
                 $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
+                wpinv_error_log( $tax, 'tax', __FILE__, __LINE__ );
 
                 if ( wpinv_prices_include_tax() ) {
                     $subtotal -= wpinv_round_amount( $tax );
@@ -1928,7 +1943,7 @@ final class WPInv_Invoice {
                     'id'          => $item['id'],
                     'name'        => $item['name'],
                     'item_price'  => wpinv_round_amount( $item_price ),
-                    'custom_price'=> isset($item['custom_price']) ? $item['custom_price'] : '',
+                    'custom_price'=> ( isset( $item['custom_price'] ) ? $item['custom_price'] : '' ),
                     'quantity'    => $quantity,
                     'discount'    => $discount,
                     'subtotal'    => wpinv_round_amount( $subtotal ),
