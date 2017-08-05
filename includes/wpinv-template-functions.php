@@ -88,7 +88,7 @@ function wpinv_invoice_display_right_actions( $invoice ) {
 function wpinv_before_invoice_content( $content ) {
     global $post;
 
-    if ( $post && $post->post_type == 'wpi_invoice' && is_singular( 'wpi_invoice' ) && is_main_query() ) {
+    if ( !empty( $post ) && $post->post_type == 'wpi_invoice' && is_singular( 'wpi_invoice' ) && is_main_query() ) {
         ob_start();
         do_action( 'wpinv_before_invoice_content', $post->ID );
         $content = ob_get_clean() . $content;
@@ -101,7 +101,7 @@ add_filter( 'the_content', 'wpinv_before_invoice_content' );
 function wpinv_after_invoice_content( $content ) {
     global $post;
 
-    if ( $post && $post->post_type == 'wpi_invoice' && is_singular( 'wpi_invoice' ) && is_main_query() ) {
+    if ( !empty( $post ) && $post->post_type == 'wpi_invoice' && is_singular( 'wpi_invoice' ) && is_main_query() ) {
         ob_start();
         do_action( 'wpinv_after_invoice_content', $post->ID );
         $content .= ob_get_clean();
@@ -1074,7 +1074,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     
                     if (!empty($item) && $item->is_package() && !empty($cart_item['meta']['post_id'])) {
                         $post_link = '<a href="' . get_edit_post_link( $cart_item['meta']['post_id'] ) .'" target="_blank">' . (!empty($cart_item['meta']['invoice_title']) ? $cart_item['meta']['invoice_title'] : get_the_title( $cart_item['meta']['post_id']) ) . '</a>';
-                        $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $item->get_cpt_singular_name(), $post_link );
+                        $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $item->get_custom_singular_name(), $post_link );
                     }
                     $summary = apply_filters( 'wpinv_print_invoice_line_item_summary', $summary, $cart_item, $item, $invoice );
                     
@@ -1083,7 +1083,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     if ( $use_taxes && $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
                         $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
                         $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
-                        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 2 ) : '';
+                        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
                     }
                     
@@ -1325,7 +1325,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
         $summary = '';
         if ($wpi_item->is_package() && !empty($cart_item['meta']['post_id'])) {
             $post_link = '<a href="' . get_edit_post_link( $cart_item['meta']['post_id'] ) .'" target="_blank">' . (!empty($cart_item['meta']['invoice_title']) ? $cart_item['meta']['invoice_title'] : get_the_title( $cart_item['meta']['post_id']) ) . '</a>';
-            $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $wpi_item->get_cpt_singular_name(), $post_link );
+            $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $wpi_item->get_custom_singular_name(), $post_link );
         }
         $summary = apply_filters( 'wpinv_admin_invoice_line_item_summary', $summary, $cart_item, $wpi_item, $invoice );
         
@@ -1334,7 +1334,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
         if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
             $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
             $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
-            $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate ) : '';
+            $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
         }
         $line_item_tax = $item_tax . $tax_rate;
@@ -1549,6 +1549,7 @@ function wpinv_discount_field() {
                 <div class="col-sm-3">
                     <button id="wpi-apply-discount" type="button" class="btn btn-success btn-sm"><?php _e( 'Apply Discount', 'invoicing' ); ?></button>
                 </div>
+                <div style="clear:both"></div>
                 <div class="col-sm-12 wpinv-discount-msg">
                     <div class="alert alert-success"><i class="fa fa-check-circle"></i><span class="wpi-msg"></span></div>
                     <div class="alert alert-error"><i class="fa fa-warning"></i><span class="wpi-msg"></span></div>
@@ -1705,7 +1706,7 @@ function wpinv_checkout_billing_info() {
                             'show_option_none' => false,
                             'class'            => 'wpi-input form-control required',
                             'placeholder'      => __( 'Choose a country', 'invoicing' ),
-                            'required'          => (bool)wpinv_get_option( 'country_mandatory' ),
+                            'required'         => (bool)wpinv_get_option( 'country_mandatory' ),
                         ) ); ?>
                     </p>
                     <p id="wpinv_state_box" class="wpi-cart-field wpi-col2 wpi-coll">

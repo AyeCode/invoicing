@@ -195,7 +195,7 @@ function wpinv_transaction_query( $type = 'start' ) {
     }
 }
 
-function wpinv_create_invoice( $args = array(), $data = array() ) {
+function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = false ) {
     $default_args = array(
         'status'        => '',
         'user_id'       => null,
@@ -228,7 +228,7 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
 
     if ( $args['status'] ) {
         if ( ! in_array( $args['status'], array_keys( wpinv_get_invoice_statuses() ) ) ) {
-            return new WP_Error( 'wpinv_invalid_invoice_status', __( 'Invalid invoice status', 'invoicing' ) );
+            return new WP_Error( 'wpinv_invalid_invoice_status', wp_sprintf( __( 'Invalid invoice status: %s', 'invoicing' ), $args['status'] ) );
         }
         $invoice_data['post_status']    = $args['status'];
     }
@@ -238,13 +238,13 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
     }
 
     if ( $updating ) {
-        $invoice_id = wp_update_post( $invoice_data );
+        $invoice_id = wp_update_post( $invoice_data, true );
     } else {
         $invoice_id = wp_insert_post( apply_filters( 'wpinv_new_invoice_data', $invoice_data ), true );
     }
 
     if ( is_wp_error( $invoice_id ) ) {
-        return $invoice_id;
+        return $wp_error ? $invoice_id : 0;
     } else {
         if ( !$updating ) {
             $invoice_number = wpinv_format_invoice_number( $invoice_id );
@@ -255,6 +255,8 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
             update_post_meta( $invoice_id, '_wpinv_number', $invoice_number );
         }
     }
+    
+    $invoice = wpinv_get_invoice( $invoice_id );
 
     if ( !$updating ) {
         update_post_meta( $invoice_id, '_wpinv_key', apply_filters( 'wpinv_generate_invoice_key', uniqid( 'wpinv_' ) ) );
@@ -262,17 +264,15 @@ function wpinv_create_invoice( $args = array(), $data = array() ) {
         update_post_meta( $invoice_id, '_wpinv_include_tax', get_option( 'wpinv_prices_include_tax' ) );
         update_post_meta( $invoice_id, '_wpinv_user_ip', wpinv_get_ip() );
         update_post_meta( $invoice_id, '_wpinv_user_agent', wpinv_get_user_agent() );
-        ///update_post_meta( $invoice_id, '_wpinv_user_id', 0 );
         update_post_meta( $invoice_id, '_wpinv_created_via', sanitize_text_field( $args['created_via'] ) );
+        
+        // Add invoice note
+        $invoice->add_note( wp_sprintf( __( 'Invoice is created with status %s.', 'invoicing' ), wpinv_status_nicename( $invoice->status ) ) );
     }
-
-    ///if ( is_numeric( $args['user_id'] ) ) {
-        ///update_post_meta( $invoice_id, '_wpinv_user_id', $args['user_id'] );
-    ///}
 
     update_post_meta( $invoice_id, '_wpinv_version', WPINV_VERSION );
 
-    return wpinv_get_invoice( $invoice_id );
+    return $invoice;
 }
 
 function wpinv_get_prefix() {

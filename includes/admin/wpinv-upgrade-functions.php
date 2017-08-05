@@ -28,5 +28,20 @@ add_action( 'admin_init', 'wpinv_automatic_upgrade' );
 function wpinv_v005_upgrades() {
     global $wpdb;
     
+    // Invoices status
     $wpdb->query( "UPDATE " . $wpdb->posts . " SET post_status = CONCAT( 'wpi-', post_status ) WHERE post_type = 'wpi_invoice' AND post_status IN( 'processing', 'onhold', 'refunded', 'cancelled', 'failed', 'renewal' )" );
+    
+    // Item meta key changes
+    $query = "SELECT DISTINCT post_id FROM " . $wpdb->postmeta . " WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id', '_wpinv_cpt_name', '_wpinv_cpt_singular_name' )";
+    $results = $wpdb->get_results( $query );
+    
+    if ( !empty( $results ) ) {
+        $wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_id' WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id' )" );
+        $wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_name' WHERE meta_key = '_wpinv_cpt_name'" );
+        $wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_singular_name' WHERE meta_key = '_wpinv_cpt_singular_name'" );
+        
+        foreach ( $results as $row ) {
+            clean_post_cache( $row->post_id );
+        }
+    }
 }

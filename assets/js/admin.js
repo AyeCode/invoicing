@@ -95,7 +95,7 @@ jQuery(function($) {
             $('#wpinv-notes')
                 .on('click', 'a.add_note', this.add_invoice_note)
                 .on('click', 'a.delete_note', this.delete_invoice_note);
-            if($('ul.invoice_notes')[0]){
+            if ($('ul.invoice_notes')[0]) {
                 $('ul.invoice_notes')[0].scrollTop = $('ul.invoice_notes')[0].scrollHeight;
             }
         },
