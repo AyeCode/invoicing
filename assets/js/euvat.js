@@ -609,9 +609,9 @@ function wpinv_recalculate_taxes(state) {
                     gw = 'manual';
                 } else {
                     jQuery('#wpinv_payment_mode_select', $wrap).show();
-                    gw = jQuery('#wpinv_payment_mode_select', $wrap).data('gateway');
+                    gw = jQuery('#wpinv_payment_mode_select', $wrap).attr('data-gateway');
                 }
-                jQuery('input[name="wpi-gateway"]', $wrap).val(gw);
+                jQuery('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $wrap).attr('checked', true);
                 var data = new Object();
                 data.post = postData;
                 data.response = res;

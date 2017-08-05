@@ -21,21 +21,14 @@ class WPInv_API {
         //wpinv_transaction_query( 'start' );
 
         try {
-            if ( ! isset( $data['invoice'] ) ) {
+            if ( empty( $data['invoice'] ) ) {
                 throw new WPInv_API_Exception( 'wpinv_api_missing_invoice_data', sprintf( __( 'No %1$s data specified to create %1$s', 'invoicing' ), 'invoice' ), 400 );
             }
 
-            $data = $data['invoice'];
+            $data = apply_filters( 'wpinv_api_create_invoice_data', $data['invoice'], $this );
 
-            // permission check
-            //if ( ! current_user_can( 'manage_options' ) ) {
-                //throw new WPInv_API_Exception( 'wpinv_api_user_cannot_create_invoice', __( 'You do not have permission to create invoices', 'invoicing' ), 401 );
-            //}
-
-            $data = apply_filters( 'wpinv_api_create_invoice_data', $data, $this );
-
-            $invoice = wpinv_insert_invoice( $data );
-            if ( is_wp_error( $invoice ) ) {
+            $invoice = wpinv_insert_invoice( $data, true );
+            if ( empty( $invoice->ID ) || is_wp_error( $invoice ) ) {
                 throw new WPInv_API_Exception( 'wpinv_api_cannot_create_invoice', sprintf( __( 'Cannot create invoice: %s', 'invoicing' ), implode( ', ', $invoice->get_error_messages() ) ), 400 );
             }
 
@@ -47,121 +40,7 @@ class WPInv_API {
             //wpinv_transaction_query( 'commit' );
 
             return wpinv_get_invoice( $invoice->ID );
-
         } catch ( WPInv_API_Exception $e ) {
-
-            //wpinv_transaction_query( 'rollback' );
-
-            return new WP_Error( $e->getErrorCode(), $e->getMessage(), array( 'status' => $e->getCode() ) );
-        }
-    }
-    
-    public function create_invoice( $data ) {
-        global $wpdb;
-        //wpinv_transaction_query( 'start' );
-
-        try {
-            if ( ! isset( $data['invoice'] ) ) {
-                throw new WPInv_API_Exception( 'wpinv_api_missing_invoice_data', sprintf( __( 'No %1$s data specified to create %1$s', 'invoicing' ), 'invoice' ), 400 );
-            }
-
-            $data = $data['invoice'];
-
-            // permission check
-            //if ( ! current_user_can( 'manage_options' ) ) {
-                //throw new WPInv_API_Exception( 'wpinv_api_user_cannot_create_invoice', __( 'You do not have permission to create invoices', 'invoicing' ), 401 );
-            //}
-
-            $data = apply_filters( 'wpinv_api_create_invoice_data', $data, $this );
-
-            // default invoice args, note that status is checked for validity in wpinv_create_invoice()
-            $default_invoice_args = array(
-                'status'        => isset( $data['status'] ) ? $data['status'] : '',
-                'user_note'     => isset( $data['note'] ) ? $data['note'] : null,
-                'invoice_id'    => isset( $data['invoice_id'] ) ? (int)$data['invoice_id'] : 0,
-            );
-
-            // if creating invoice for existing user
-            if ( ! empty( $data['user_id'] ) ) {
-                // make sure user exists
-                if ( false === get_user_by( 'id', $data['user_id'] ) ) {
-                    throw new WPInv_API_Exception( 'wpinv_api_invalid_user_id', __( 'User ID is invalid', 'invoicing' ), 400 );
-                }
-
-                $default_invoice_args['user_id'] = $data['user_id'];
-            }
-
-            // create the pending invoice
-            $invoice = $this->create_base_invoice( $default_invoice_args, $data );
-
-            if ( is_wp_error( $invoice ) ) {
-                throw new WPInv_API_Exception( 'wpinv_api_cannot_create_invoice', sprintf( __( 'Cannot create invoice: %s', 'invoicing' ), implode( ', ', $invoice->get_error_messages() ) ), 400 );
-            }
-            
-            // Add note
-            if ( !empty( $data['user_note'] ) ) {
-                $invoice->add_note( $data['user_note'], true );
-            }
-            
-            if ( !empty( $data['private_note'] ) ) {
-                $invoice->add_note( $data['private_note'] );
-            }
-
-            // billing address
-            $invoice = $this->set_billing_details( $invoice, $data );
-            
-            // items
-            $invoice = $this->set_discount( $invoice, $data );
-
-            // items
-            $invoice = $this->set_items( $invoice, $data );
-
-            // payment method (and payment_complete() if `paid` == true)
-            if ( isset( $data['payment_details'] ) && is_array( $data['payment_details'] ) ) {
-                // method ID & title are required
-                if ( empty( $data['payment_details']['method_id'] ) || empty( $data['payment_details']['method_title'] ) ) {
-                    throw new WPInv_API_Exception( 'wpinv_invalid_payment_details', __( 'Payment method ID and title are required', 'invoicing' ), 400 );
-                }
-                
-                 // set invoice currency
-                if ( isset( $data['payment_details']['currency'] ) ) {
-                    if ( ! array_key_exists( $data['payment_details']['currency'], wpinv_get_currencies() ) ) {
-                        throw new WPInv_API_Exception( 'wpinv_invalid_invoice_currency', __( 'Provided invoice currency is invalid', 'invoicing' ), 400 );
-                    }
-
-                    update_post_meta( $invoice->ID, '_wpinv_currency', $data['payment_details']['currency'] );
-                    
-                    $invoice->currency = $data['payment_details']['currency'];
-                }
-                
-                update_post_meta( $invoice->ID, '_wpinv_gateway', $data['payment_details']['method_id'] );
-                update_post_meta( $invoice->ID, '_wpinv_gateway_title', $data['payment_details']['method_title'] );
-                
-                $invoice->gateway = $data['payment_details']['method_id'];
-                $invoice->gateway_title = $data['payment_details']['method_title'];
-
-                // mark as paid if set
-                if ( isset( $data['payment_details']['paid'] ) && true === $data['payment_details']['paid'] ) {
-                    //$invoice->payment_complete( isset( $data['payment_details']['transaction_id'] ) ? $data['payment_details']['transaction_id'] : $invoice->ID );
-                }
-            }
-          
-            // set invoice meta
-            if ( isset( $data['invoice_meta'] ) && is_array( $data['invoice_meta'] ) ) {
-                $this->set_invoice_meta( $invoice->ID, $data['invoice_meta'] );
-            }
-
-            // HTTP 201 Created
-            $this->send_status( 201 );
-
-            do_action( 'wpinv_api_create_invoice', $invoice->ID, $data, $this );
-
-            //wpinv_transaction_query( 'commit' );
-
-            return wpinv_get_invoice( $invoice->ID );
-
-        } catch ( WPInv_API_Exception $e ) {
-
             //wpinv_transaction_query( 'rollback' );
 
             return new WP_Error( $e->getErrorCode(), $e->getMessage(), array( 'status' => $e->getCode() ) );
@@ -170,10 +49,6 @@ class WPInv_API {
     
     public function send_status( $code ) {
         status_header( $code );
-    }
-    
-    protected function create_base_invoice( $args, $data ) {
-        return wpinv_create_invoice( $args, $data );
     }
     
     protected function set_billing_details( $invoice, $data ) {
@@ -289,7 +164,7 @@ class WPInv_API {
                     'amount'            => $amount > 0 ? wpinv_round_amount( $amount ) : 0,
                     'subtotal'          => $amount > 0 ? wpinv_round_amount( $amount ) : 0,
                     'vat_rates_class'   => $vat_rates_class,
-                    'vat_rate'          => $vat_rate > 0 ? wpinv_round_amount( $vat_rate ) : 0,
+                    'vat_rate'          => $vat_rate,
                     'tax'               => $tax > 0 ? wpinv_round_amount( $tax ) : 0,
                 );
             }

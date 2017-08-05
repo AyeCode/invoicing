@@ -109,16 +109,16 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
             $use_taxes          = wpinv_use_taxes();
             
             $authorizeAIM = wpinv_authorizenet_AIM();
-            $authorizeAIM->first_name       = $invoice->get_first_name();
-            $authorizeAIM->last_name        = $invoice->get_last_name();
-            $authorizeAIM->company          = $invoice->company;
-            $authorizeAIM->address          = wp_strip_all_tags( $invoice->get_address(), true );
-            $authorizeAIM->city             = $invoice->city;
-            $authorizeAIM->state            = $invoice->state;
-            $authorizeAIM->zip              = $invoice->zip;
-            $authorizeAIM->country          = $invoice->country;
-            $authorizeAIM->phone            = $invoice->phone;
-            $authorizeAIM->email            = $invoice->get_email();
+            $authorizeAIM->first_name       = wpinv_utf8_substr( $invoice->get_first_name(), 0, 50 );
+            $authorizeAIM->last_name        = wpinv_utf8_substr( $invoice->get_last_name(), 0, 50 );
+            $authorizeAIM->company          = wpinv_utf8_substr( $invoice->company, 0, 50 );
+            $authorizeAIM->address          = wpinv_utf8_substr( wp_strip_all_tags( $invoice->get_address(), true ), 0, 60 );
+            $authorizeAIM->city             = wpinv_utf8_substr( $invoice->city, 0, 40 );
+            $authorizeAIM->state            = wpinv_utf8_substr( $invoice->state, 0, 40 );
+            $authorizeAIM->zip              = wpinv_utf8_substr( $invoice->zip, 0, 40 );
+            $authorizeAIM->country          = wpinv_utf8_substr( $invoice->country, 0, 60 );
+            $authorizeAIM->phone            = wpinv_utf8_substr( $invoice->phone, 0, 25 );
+            $authorizeAIM->email            = wpinv_utf8_substr( $invoice->get_email(), 0, 255 );
             $authorizeAIM->amount           = wpinv_sanitize_amount( $invoice->get_total() );
             $authorizeAIM->card_num         = str_replace( ' ', '', sanitize_text_field( $authorizenet_card['cc_number'] ) );
             $authorizeAIM->exp_date         = sanitize_text_field( $authorizenet_card['cc_expire_month'] ) . sanitize_text_field( $authorizenet_card['cc_expire_year'] );
@@ -128,9 +128,10 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
             $item_desc = array();
             foreach ( $invoice->get_cart_details() as $item ) {            
                 $quantity       = $quantities_enabled && !empty( $item['quantity'] ) && $item['quantity'] > 0 ? $item['quantity'] : 1;
-                $item_desc[]    = $item['name'] . ' (' . $quantity . 'x ' . wpinv_price( wpinv_format_amount( $item['item_price'] ) ) . ')';
+                $item_name      = wpinv_utf8_substr( $item['name'], 0, 31 );
+                $item_desc[]    = $item_name . ' (' . $quantity . 'x ' . wpinv_price( wpinv_format_amount( $item['item_price'] ) ) . ')';
                 
-                $authorizeAIM->addLineItem( $item['id'], $item['name'], '', $quantity, $item['item_price'], ( $use_taxes && !empty( $item['tax'] ) && $item['tax'] > 0 ? 'Y' : 'N' ) );
+                $authorizeAIM->addLineItem( $item['id'], $item_name, '', $quantity, $item['item_price'], ( $use_taxes && !empty( $item['tax'] ) && $item['tax'] > 0 ? 'Y' : 'N' ) );
             }
             
             $item_desc = '#' . $invoice->get_number() . ': ' . implode( ', ', $item_desc );
@@ -145,7 +146,10 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
                 $item_desc .= ', ' . wp_sprintf( __( 'Discount: %s', 'invoicing' ), $invoice->get_discount( true ) );
             }
             
-            $authorizeAIM->description  = html_entity_decode( $item_desc , ENT_QUOTES, 'UTF-8' );
+            $item_description = wpinv_utf8_substr( $item_desc, 0, 255 );
+            $item_description = html_entity_decode( $item_desc , ENT_QUOTES, 'UTF-8' );
+            
+            $authorizeAIM->description  = wpinv_utf8_substr( $item_description, 0, 255 );
             
             $is_recurring = $invoice->is_recurring(); // Recurring payment.
             
@@ -269,7 +273,7 @@ function wpinv_authorizenet_handle_response( $response, $invoice, $card_info = a
         return false;
     }
     
-    if ( !empty( $response->approved ) ) {
+    if ( $invoice->is_recurring() && !empty( $response->approved ) ) {
         $subscription = wpinv_authorizenet_create_new_subscription( $invoice, $response, $card_info );
 
         if ( !empty( $subscription ) && $subscription->isSuccessful() ) {

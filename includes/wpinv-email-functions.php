@@ -727,8 +727,8 @@ function wpinv_get_emails() {
         $overdue_days_options[$i]   = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
     }
 
-	// Default, built-in gateways
-	$emails = array(
+    // Default, built-in gateways
+    $emails = array(
             'new_invoice' => array(
             'email_new_invoice_header' => array(
                 'id'   => 'email_new_invoice_header',
@@ -1529,7 +1529,7 @@ function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
 add_action( 'wpinv_payment_reminder_sent', 'wpinv_payment_reminder_sent', 10, 2 );
 
 function wpinv_email_before_note_details( $invoice, $email_type, $sent_to_admin, $customer_note ) {
-    if("wpi_invoice" === $invoice->post_type && !empty($customer_note)){
+    if ("wpi_invoice" === $invoice->post_type && !empty($customer_note)) {
         $before_note = '';
         $before_note .= __( 'Hello, a note has just been added to your invoice:', 'invoicing' );
         $before_note .= '<blockquote class="wpinv-note">'.wpautop( wptexturize( $customer_note ) ).'</blockquote>';

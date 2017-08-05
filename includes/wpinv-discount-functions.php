@@ -969,7 +969,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
         $item['options'] = array();
     }
 
-    $price            = wpinv_get_cart_item_price( $item['id'], $item['options'] );
+    $price            = wpinv_get_cart_item_price( $item['id'], $item, $item['options'] );
     $discounted_price = $price;
 
     $discounts = false === $discount ? wpinv_get_cart_discounts() : $discount;
@@ -1014,7 +1014,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
                         foreach ( $cart_items as $cart_item ) {
                             if ( ! in_array( $cart_item['id'], $excluded_items ) ) {
                                 $options = !empty( $cart_item['options'] ) ? $cart_item['options'] : array();
-                                $item_price      = wpinv_get_cart_item_price( $cart_item['id'], $options );
+                                $item_price      = wpinv_get_cart_item_price( $cart_item['id'], $cart_item, $options );
                                 $items_subtotal += $item_price * $cart_item['quantity'];
                             }
                         }
