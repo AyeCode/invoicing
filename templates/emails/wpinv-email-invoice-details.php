@@ -21,12 +21,12 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = $invoice->get_number() ) { ?>
             <tr>
-                <td><?php _e( 'Invoice Number', 'invoicing' ); ?></td>
+                <td><?php echo apply_filters( 'wpinv_email_details_number', __( 'Invoice Number', 'invoicing' ), $invoice ); ?></td>
                 <td><a href="<?php echo esc_url( $invoice_url ) ;?>"><?php echo $invoice_number; ?></a></td>
             </tr>
         <?php } ?>
         <tr>
-            <td><?php _e( 'Invoice Status', 'invoicing' ); ?></td>
+            <td><?php echo apply_filters( 'wpinv_email_details_status', __( 'Invoice Status', 'invoicing' ), $invoice ); ?></td>
             <td><?php echo $invoice->get_status( true ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>
@@ -41,7 +41,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
         </tr>
         <?php if ( $invoice_date = $invoice->get_invoice_date( false ) ) { ?>
             <tr>
-                <td><?php _e( 'Invoice Date', 'invoicing' ); ?></td>
+                <td><?php echo apply_filters( 'wpinv_email_details_date', __( 'Invoice Date', 'invoicing' ), $invoice ); ?></td>
                 <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $invoice_date ) ), $invoice->get_invoice_date() ); ?></td>
             </tr>
         <?php } ?>

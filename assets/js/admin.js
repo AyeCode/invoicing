@@ -95,7 +95,7 @@ jQuery(function($) {
             $('#wpinv-notes')
                 .on('click', 'a.add_note', this.add_invoice_note)
                 .on('click', 'a.delete_note', this.delete_invoice_note);
-            if ($('ul.invoice_notes')[0]) {
+            if($('ul.invoice_notes')[0]){
                 $('ul.invoice_notes')[0].scrollTop = $('ul.invoice_notes')[0].scrollHeight;
             }
         },
@@ -251,7 +251,7 @@ jQuery(function($) {
         $.post(ajaxurl, data, function(response) {
             var selected = typeof $this.data('state') !== 'undefined' ? $this.data('state') : "";
             if ('nostates' === response) {
-                var text_field = '<input type="text" required="required" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
+                var text_field = '<input type="text" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
                 $('#wpinv_state', elB).replaceWith(text_field);
             } else {
                 $('#wpinv_state', elB).replaceWith(response);
