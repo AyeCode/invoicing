@@ -209,10 +209,6 @@ div.list-group-item:focus {
 #wpinv-discount-field #wpi-apply-code.btn-sm {
     vertical-align: text-top;
 }
-#wpinv-discount-field .wpinv-discount-msg {
-    clear: both;
-    float: none;
-}
 .wpinv-discount-msg .alert {
     margin-bottom: 0;
     margin-top: 15px;
@@ -3515,4 +3511,5 @@ div td .meta p {
     .wpinv-success .wpinv-bank-details .table th {
         width: 45%!important;
     }
+    #wpinv-fields p.wpi-cart-field.wpi-col2 {width: 100%;float: none;padding: 0;margin-bottom: 10px;}
 }
