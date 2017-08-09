@@ -1125,7 +1125,7 @@ add_filter( 'wpinv_settings_sections_emails', 'wpinv_settings_sections_emails', 
 
 function wpinv_email_is_enabled( $email_type ) {
     $emails = wpinv_get_emails();
-    $enabled = isset( $emails[$email_type] ) && wpinv_get_option( $email_type . '_active', 0 ) ? true : false;
+    $enabled = isset( $emails[$email_type] ) && wpinv_get_option( 'email_'. $email_type . '_active', 0 ) ? true : false;
 
     return apply_filters( 'wpinv_email_is_enabled', $enabled, $email_type );
 }
