@@ -115,7 +115,7 @@ class WPInv_Meta_Box_Details {
         ?>
         <p class="wpi-meta-row wpi-resend-info"><?php echo $text['message']; ?></p>
         <p class="wpi-meta-row wpi-resend-email"><a href="<?php echo esc_url( $email_actions['email_url'] ); ?>" class="button button-secondary"><?php echo $text['button_text']; ?></a></p>
-        <?php if ( wpinv_get_option( 'overdue_active' ) && "wpi_invoice" === $wpi_mb_invoice->post_type && $wpi_mb_invoice->needs_payment() && ( $due_date = $wpi_mb_invoice->get_due_date() )  ) { ?>
+        <?php if ( wpinv_get_option( 'overdue_active' ) && "wpi_invoice" === $wpi_mb_invoice->post_type && $wpi_mb_invoice->needs_payment() && ( $due_date = $wpi_mb_invoice->get_due_date() ) ) { ?>
         <p class="wpi-meta-row wpi-send-reminder"><a title="<?php esc_attr_e( 'Send overdue reminder notification to customer', 'invoicing' ); ?>" href="<?php echo esc_url( $email_actions['reminder_url'] ); ?>" class="button button-secondary"><?php esc_attr_e( 'Send Reminder', 'invoicing' ); ?></a></p>
         <?php } ?>
         <?php

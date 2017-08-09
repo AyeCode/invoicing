@@ -41,11 +41,13 @@ function wpinv_get_user_agent() {
     return apply_filters( 'wpinv_get_user_agent', $user_agent );
 }
 
-function wpinv_sanitize_amount( $amount ) {
+function wpinv_sanitize_amount( $amount, $decimals = NULL ) {
     $is_negative   = false;
     $thousands_sep = wpinv_thousands_separator();
     $decimal_sep   = wpinv_decimal_separator();
-    $decimals = wpinv_decimals();
+    if ( $decimals === NULL ) {
+        $decimals = wpinv_decimals();
+    }
 
     // Sanitize the amount
     if ( $decimal_sep == ',' && false !== ( $found = strpos( $amount, $decimal_sep ) ) ) {
@@ -66,22 +68,25 @@ function wpinv_sanitize_amount( $amount ) {
 
     $amount   = preg_replace( '/[^0-9\.]/', '', $amount );
 
-    $decimals = apply_filters( 'wpinv_sanitize_amount_decimals', $decimals, $amount );
-    $amount   = number_format( (double) $amount, $decimals, '.', '' );
+    $decimals = apply_filters( 'wpinv_sanitize_amount_decimals', absint( $decimals ), $amount );
+    $amount   = number_format( (double) $amount, absint( $decimals ), '.', '' );
 
     if( $is_negative ) {
         $amount *= -1;
     }
 
-    return apply_filters( 'wpinv_sanitize_amount', $amount );
+    return apply_filters( 'wpinv_sanitize_amount', $amount, $decimals );
 }
+add_filter( 'wpinv_sanitize_amount_decimals', 'wpinv_currency_decimal_filter', 10, 1 );
 
-function wpinv_round_amount( $amount ) {
-    $decimals = wpinv_decimals();
+function wpinv_round_amount( $amount, $decimals = NULL ) {
+    if ( $decimals === NULL ) {
+        $decimals = wpinv_decimals();
+    }
     
-    $amount = round( (double)$amount, wpinv_currency_decimal_filter( $decimals ) );
+    $amount = round( (double)$amount, wpinv_currency_decimal_filter( absint( $decimals ) ) );
 
-    return apply_filters( 'wpinv_round_amount', $amount );
+    return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 
 function wpinv_get_invoice_statuses( $trashed = false ) {
@@ -351,6 +356,7 @@ function wpinv_format_amount( $amount, $decimals = NULL, $calculate = false ) {
 
     return apply_filters( 'wpinv_amount_format', $formatted, $amount, $decimals, $decimal_sep, $thousands_sep, $calculate );
 }
+add_filter( 'wpinv_amount_format_decimals', 'wpinv_currency_decimal_filter', 10, 1 );
 
 function wpinv_sanitize_key( $key ) {
     $raw_key = $key;

@@ -92,14 +92,23 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 		<div class="invoicing-Pagination">
 			<?php
 			$big = 999999;
+			$wpinv_cpt = isset($_REQUEST['wpinv-cpt']) ? $_REQUEST['wpinv-cpt'] : '';
+
+			if (get_query_var('paged') && 'wpi_invoice' == $wpinv_cpt)
+				$current_page = get_query_var('paged');
+			elseif (get_query_var('page') && 'wpi_invoice' == $wpinv_cpt)
+				$current_page = get_query_var('page');
+			else
+				$current_page = 1;
+
 			echo paginate_links( array(
 				'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 				'format'  => '?paged=%#%',
-				'current' => max( 1, get_query_var( 'paged' ) ),
+				'current' => max( 1, $current_page ),
 				'total'   => $user_invoices->max_num_pages,
-                'add_args' => array(
-                    'wpinv-cpt' => 'wpi_invoice',
-                )
+				'add_args' => array(
+					'wpinv-cpt' => 'wpi_invoice',
+				)
 			) );
 			?>
 		</div>

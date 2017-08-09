@@ -69,7 +69,7 @@ class WPInv_Notes {
     public function get_invoice_notes( $invoice_id = 0, $type = '' ) {
         $args = array( 
             'post_id'   => $invoice_id,
-            'order'     => 'comment_date_gmt',
+            'orderby'   => 'comment_ID',
             'order'     => 'DESC',
         );
         

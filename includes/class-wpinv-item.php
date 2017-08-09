@@ -8,7 +8,6 @@ class WPInv_Item {
     private $vat_rule;
     private $vat_class;
     private $type;
-    private $cpt_singular_name;
 
     public $post_author = 0;
     public $post_date = '0000-00-00 00:00:00';
@@ -100,6 +99,11 @@ class WPInv_Item {
             $this->ID = $item->ID;
             $this->save_metas($data['meta']);
         }
+        
+        // Set custom id if not set.
+        if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
+            $item->save_metas( array( 'custom_id' => $id ) );
+        }
 
         do_action( 'wpinv_item_create', $id, $args );
 
@@ -128,6 +132,11 @@ class WPInv_Item {
         if (!empty($item) && !empty($data['meta'])) {
             $this->ID = $item->ID;
             $this->save_metas($data['meta']);
+        }
+        
+        // Set custom id if not set.
+        if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
+            $item->save_metas( array( 'custom_id' => $id ) );
         }
 
         do_action( 'wpinv_item_update', $id, $data );
@@ -192,14 +201,6 @@ class WPInv_Item {
         
         return apply_filters( 'wpinv_get_item_vat_class', $this->vat_class, $this->ID );
     }
-    
-    public function get_cpt_singular_name() {
-        if( ! isset( $this->cpt_singular_name ) ) {
-            $this->cpt_singular_name = get_post_meta( $this->ID, '_wpinv_cpt_singular_name', true );
-        }
-
-        return apply_filters( 'wpinv_item_get_cpt_singular_name', $this->cpt_singular_name, $this->ID );
-    }
 
     public function get_type() {
         if( ! isset( $this->type ) ) {
@@ -211,6 +212,24 @@ class WPInv_Item {
         }
 
         return apply_filters( 'wpinv_get_item_type', $this->type, $this->ID );
+    }
+    
+    public function get_custom_id() {
+        $custom_id = get_post_meta( $this->ID, '_wpinv_custom_id', true );
+
+        return apply_filters( 'wpinv_get_item_custom_id', $custom_id, $this->ID );
+    }
+    
+    public function get_custom_name() {
+        $custom_name = get_post_meta( $this->ID, '_wpinv_custom_name', true );
+
+        return apply_filters( 'wpinv_get_item_custom_name', $custom_name, $this->ID );
+    }
+    
+    public function get_custom_singular_name() {
+        $custom_singular_name = get_post_meta( $this->ID, '_wpinv_custom_singular_name', true );
+
+        return apply_filters( 'wpinv_get_item_custom_singular_name', $custom_singular_name, $this->ID );
     }
     
     public function is_recurring() {
@@ -378,7 +397,7 @@ class WPInv_Item {
         if ( ! empty( $fees ) && ! empty( $item_id ) ) {
             // Remove fees that don't belong to the specified Item
             foreach ( $fees as $key => $fee ) {
-                if ( (int) $item_id !== (int)$fee['item_id'] ) {
+                if ( (int) $item_id !== (int)$fee['custom_id'] ) {
                     unset( $fees[ $key ] );
                 }
             }
@@ -387,11 +406,11 @@ class WPInv_Item {
         if ( ! empty( $fees ) ) {
             // Remove fees that belong to a specific item but are not in the cart
             foreach( $fees as $key => $fee ) {
-                if( empty( $fee['item_id'] ) ) {
+                if( empty( $fee['custom_id'] ) ) {
                     continue;
                 }
 
-                if ( !wpinv_item_in_cart( $fee['item_id'] ) ) {
+                if ( !wpinv_item_in_cart( $fee['custom_id'] ) ) {
                     unset( $fees[ $key ] );
                 }
             }

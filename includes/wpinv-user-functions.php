@@ -29,7 +29,7 @@ function wpinv_get_users_invoices( $user = 0, $number = 20, $pagination = false,
 
     $args = array(
         'post_type'      => 'wpi_invoice',
-        'posts_per_page' => 2,
+        'posts_per_page' => 20,
         'paged'          => null,
         'post_status'    => array( 'publish', 'pending' ),
         'user'           => $user,
