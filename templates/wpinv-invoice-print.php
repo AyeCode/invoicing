@@ -8,7 +8,6 @@ $invoice = wpinv_get_invoice( $invoice_id );
 if ( empty( $invoice ) ) {
     exit;
 }
-$type = $post->post_type == 'wpi_invoice' ? __( 'Invoice', 'invoicing' ): __( 'Quotation', 'invoicing' );
 do_action( 'wpinv_invoice_print_before_display', $invoice ); ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -41,7 +40,7 @@ do_action( 'wpinv_invoice_print_before_display', $invoice ); ?><!DOCTYPE html>
                 </div>
 
                 <div class="col-xs-6 wpinv-title">
-                    <h2><?php echo $type; ?></h2>
+                    <h2><?php echo esc_html( _e( 'Invoice', 'invoicing' ) ); ?></h2>
                 </div>
             </div>
             <?php do_action( 'wpinv_invoice_print_after_header', $invoice ); ?>

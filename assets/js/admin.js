@@ -251,7 +251,7 @@ jQuery(function($) {
         $.post(ajaxurl, data, function(response) {
             var selected = typeof $this.data('state') !== 'undefined' ? $this.data('state') : "";
             if ('nostates' === response) {
-                var text_field = '<input type="text" required="required" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
+                var text_field = '<input type="text" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
                 $('#wpinv_state', elB).replaceWith(text_field);
             } else {
                 $('#wpinv_state', elB).replaceWith(response);

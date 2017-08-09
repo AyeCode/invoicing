@@ -81,7 +81,10 @@
     font-size: 13px;
 }
 ul.invoice_notes {
-    padding: 2px 0 0
+    padding: 2px 0 0;
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 ul.invoice_notes li p.meta .exact-date {
     border-bottom: 0px dotted #999

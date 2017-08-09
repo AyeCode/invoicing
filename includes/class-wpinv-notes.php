@@ -38,7 +38,7 @@ class WPInv_Notes {
     public function set_invoice_note_type( $query ) {
         $post_ID        = !empty( $query->query_vars['post_ID'] ) ? $query->query_vars['post_ID'] : $query->query_vars['post_id'];
         
-        if ( $post_ID && get_post_type( $post_ID ) == $this->invoice_post_type ) {
+        if ( $post_ID && in_array(get_post_type( $post_ID ), array($this->invoice_post_type, 'wpi_quote' )) ) {
             $query->query_vars['type__in']      = $this->comment_type;
             $query->query_vars['type__not_in']  = '';
         } else {        
@@ -70,7 +70,7 @@ class WPInv_Notes {
         $args = array( 
             'post_id'   => $invoice_id,
             'order'     => 'comment_date_gmt',
-            'order'     => 'DESC',
+            'order'     => 'ASC',
         );
         
         if ( $type == 'customer' ) {

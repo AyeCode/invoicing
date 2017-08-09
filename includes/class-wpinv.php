@@ -210,8 +210,8 @@ class WPInv_Plugin {
         $localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
         $localize['currency_symbol']      = wpinv_currency_symbol();
         $localize['currency_pos']         = wpinv_currency_position();
-        $localize['thousand_sep']         = wpinv_thousands_separator();
-        $localize['decimal_sep']          = wpinv_decimal_separator();
+        $localize['thousand_sep']         = wpinv_thousands_seperator();
+        $localize['decimal_sep']          = wpinv_decimal_seperator();
         $localize['decimals']             = wpinv_decimals();
         
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
@@ -270,8 +270,8 @@ class WPInv_Plugin {
         $localize['discount']                   = wpinv_discount_amount();
         $localize['currency_symbol']            = wpinv_currency_symbol();
         $localize['currency_pos']               = wpinv_currency_position();
-        $localize['thousand_sep']               = wpinv_thousands_separator();
-        $localize['decimal_sep']                = wpinv_decimal_separator();
+        $localize['thousand_sep']               = wpinv_thousands_seperator();
+        $localize['decimal_sep']                = wpinv_decimal_seperator();
         $localize['decimals']                   = wpinv_decimals();
         $localize['save_invoice']               = __( 'Save Invoice', 'invoicing' );
         $localize['status_publish']             = wpinv_status_nicename( 'publish' );
@@ -282,13 +282,15 @@ class WPInv_Plugin {
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
-        $localize['hasGD']                      = wpinv_gd_active();;
+        $localize['hasGD']                      = wpinv_gd_active();
         $localize['hasPM']                      = wpinv_pm_active();
         $localize['emptyInvoice']               = __( 'Add atleast one item to save invoice!', 'invoicing' );
         $localize['deletePackage']              = __( 'GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
         $localize['deletePackages']             = __( 'GD package items should be deleted from GD payment manager only', 'invoicing' );
         $localize['deleteInvoiceFirst']         = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
-        
+
+        $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
+
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }
     

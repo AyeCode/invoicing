@@ -1059,8 +1059,8 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                 $cols  = 3;
                 foreach ( $cart_details as $key => $cart_item ) {
                     $item_id    = !empty($cart_item['id']) ? absint( $cart_item['id'] ) : '';
-                    $item_price = isset($cart_item["item_price"]) ? wpinv_round_amount( $cart_item["item_price"] ) : 0;
-                    $line_total = isset($cart_item["subtotal"]) ? wpinv_round_amount( $cart_item["subtotal"] ) : 0;
+                    $item_price = isset($cart_item["item_price"]) ? wpinv_format_amount( $cart_item["item_price"] ) : 0;
+                    $line_total = isset($cart_item["subtotal"]) ? wpinv_format_amount( $cart_item["subtotal"] ) : 0;
                     $quantity   = !empty($cart_item['quantity']) && (int)$cart_item['quantity'] > 0 ? absint( $cart_item['quantity'] ) : 1;
                     
                     $item       = $item_id ? new WPInv_Item( $item_id ) : NULL;
@@ -1083,7 +1083,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     if ( $use_taxes && $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
                         $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
                         $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
-                        $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 2 ) : '';
+                        $tax_rate = $tax_rate > 0 ? (float)wpinv_format_amount( $tax_rate, 2 ) : '';
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
                     }
                     
@@ -1100,7 +1100,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         }
                         $line_item .= '</td>';
                         
-                        $line_item .= '<td class="rate">' . esc_html__( wpinv_price( wpinv_format_amount( $item_price ), $invoice->get_currency() ) ) . '</td>';
+                        $line_item .= '<td class="rate">' . esc_html__( wpinv_price( $item_price, $invoice->get_currency() ) ) . '</td>';
                         if ($quantities_enabled) {
                             $cols++;
                             $line_item .= '<td class="qty">' . $quantity . '</td>';
@@ -1109,7 +1109,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                             $cols++;
                             $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
                         }
-                        $line_item .= '<td class="total">' . esc_html__( wpinv_price( wpinv_format_amount( $line_total ), $invoice->get_currency() ) ) . '</td>';
+                        $line_item .= '<td class="total">' . esc_html__( wpinv_price( $line_total, $invoice->get_currency() ) ) . '</td>';
                     $line_item .= '</tr>';
                     
                     echo apply_filters( 'wpinv_display_line_item', $line_item, $cart_item, $invoice, $cols );
@@ -1334,7 +1334,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
         if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
             $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
             $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
-            $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate ) : '';
+            $tax_rate = $tax_rate > 0 ? (float)wpinv_format_amount( $tax_rate, 2 ) : '';
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
         }
         $line_item_tax = $item_tax . $tax_rate;

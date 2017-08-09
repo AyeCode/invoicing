@@ -257,7 +257,7 @@ function wpinv_item_quick_edit( $column_name, $post_type ) {
             <div class="inline-edit-group wp-clearfix">
                 <label class="inline-edit-wpinv-price">
                     <span class="title"><?php _e( 'Item price', 'invoicing' );?></span>
-                    <span class="input-text-wrap"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" name="_wpinv_item_price" class="wpi-field-price wpi-price" id="wpinv_item_price-<?php echo $post->ID;?>"><?php echo ( $position == 'right' ? $symbol . '&nbsp;' : '' );?></span>
+                    <span class="input-text-wrap"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" placeholder="<?php echo wpinv_format_amount( 0 ); ?>" value="<?php echo wpinv_format_amount( $price );?>" name="_wpinv_item_price" class="wpi-field-price wpi-price" id="wpinv_item_price-<?php echo $post->ID;?>"><?php echo ( $position == 'right' ? $symbol . '&nbsp;' : '' );?></span>
                 </label>
             </div>
             <?php if ( $wpinv_euvat->allow_vat_rules() ) { $rule_type = $wpinv_euvat->get_item_rule( $post->ID ); ?>

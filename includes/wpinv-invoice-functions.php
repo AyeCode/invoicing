@@ -501,7 +501,7 @@ function wpinv_get_cart_content_details() {
         $tax                = wpinv_get_cart_item_tax( $item_id, $subtotal - $discount );
         
         if ( wpinv_prices_include_tax() ) {
-            $subtotal -= wpinv_round_amount( $tax );
+            $subtotal -= wpinv_format_amount( $tax, NULL, true );
         }
         
         $total              = $subtotal - $discount + $tax;
@@ -514,14 +514,14 @@ function wpinv_get_cart_content_details() {
         $details[ $key ]  = array(
             'id'                => $item_id,
             'name'              => !empty($item['name']) ? $item['name'] : get_the_title( $item_id ),
-            'item_price'        => wpinv_round_amount( $item_price ),
+            'item_price'        => wpinv_format_amount( $item_price, NULL, true ),
             'quantity'          => $quantity,
-            'discount'          => wpinv_round_amount( $discount ),
-            'subtotal'          => wpinv_round_amount( $subtotal ),
-            'tax'               => wpinv_round_amount( $tax ),
-            'price'             => wpinv_round_amount( $total ),
+            'discount'          => wpinv_format_amount( $discount, NULL, true ),
+            'subtotal'          => wpinv_format_amount( $subtotal, NULL, true ),
+            'tax'               => wpinv_format_amount( $tax, NULL, true ),
+            'price'             => wpinv_format_amount( $total, NULL, true ),
             'vat_rates_class'   => $tax_class,
-            'vat_rate'          => wpinv_round_amount( $tax_rate ),
+            'vat_rate'          => wpinv_format_amount( $tax_rate, NULL, true ),
             'meta'              => isset( $item['meta'] ) ? $item['meta'] : array(),
             'fees'              => $fees,
         );

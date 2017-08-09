@@ -3511,4 +3511,5 @@ div td .meta p {
     .wpinv-success .wpinv-bank-details .table th {
         width: 45%!important;
     }
+    #wpinv-fields p.wpi-cart-field.wpi-col2 {width: 100%;float: none;padding: 0;margin-bottom: 10px;}
 }
