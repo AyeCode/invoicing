@@ -590,7 +590,7 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     } else {
         $note = __( 'Fail to send invoice to the user!', 'invoicing' );
     }
-    $invoice->add_note( $note ); // Add private note.
+    $invoice->add_note( $note, '', '', true ); // Add system note.
     
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -1124,7 +1124,7 @@ add_filter( 'wpinv_settings_sections_emails', 'wpinv_settings_sections_emails', 
 
 function wpinv_email_is_enabled( $email_type ) {
     $emails = wpinv_get_emails();
-    $enabled = isset( $emails[$email_type] ) && wpinv_get_option( $email_type . '_active', 1 ) ? true : false;
+    $enabled = isset( $emails[$email_type] ) && wpinv_get_option( $email_type . '_active', 0 ) ? true : false;
 
     return apply_filters( 'wpinv_email_is_enabled', $enabled, $email_type );
 }
