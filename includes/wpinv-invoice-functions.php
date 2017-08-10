@@ -198,6 +198,11 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         $invoice->set( 'date', $invoice_data['post_date'] );
     }
     
+    // Invoice due date
+    if ( isset( $invoice_data['due_date'] ) ) {
+        $invoice->set( 'due_date', $invoice_data['due_date'] );
+    }
+    
     $invoice->save();
     
     // Add notes
