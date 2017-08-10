@@ -245,15 +245,6 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
 
     if ( is_wp_error( $invoice_id ) ) {
         return $wp_error ? $invoice_id : 0;
-    } else {
-        if ( !$updating ) {
-            $invoice_number = wpinv_format_invoice_number( $invoice_id );
-            
-            $update = array( 'ID' => $invoice_id, 'post_title' => $invoice_number, 'post_name' => sanitize_title( $invoice_number ) );
-            wp_update_post( $update );
-            
-            update_post_meta( $invoice_id, '_wpinv_number', $invoice_number );
-        }
     }
     
     $invoice = wpinv_get_invoice( $invoice_id );

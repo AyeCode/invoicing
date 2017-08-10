@@ -102,7 +102,7 @@ class WPInv_Item {
         
         // Set custom id if not set.
         if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
-            $item->save_metas( array( 'custom_id' => $id ) );
+            $this->save_metas( array( 'custom_id' => $id ) );
         }
 
         do_action( 'wpinv_item_create', $id, $args );
@@ -136,7 +136,7 @@ class WPInv_Item {
         
         // Set custom id if not set.
         if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
-            $item->save_metas( array( 'custom_id' => $id ) );
+            $this->save_metas( array( 'custom_id' => $id ) );
         }
 
         do_action( 'wpinv_item_update', $id, $data );
@@ -350,6 +350,14 @@ class WPInv_Item {
 
         return (bool) apply_filters( 'wpinv_is_package_item', $is_package, $this->ID );
 
+    }
+    
+    public function is_editable() {
+        $editable = get_post_meta( $this->ID, '_wpinv_editable', true );
+
+        $is_editable = $editable === 0 || $editable === '0' ? false : true;
+
+        return (bool) apply_filters( 'wpinv_item_is_editable', $is_editable, $this->ID );
     }
     
     public function save_metas( $metas = array() ) {

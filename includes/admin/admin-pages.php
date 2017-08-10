@@ -239,6 +239,14 @@ function wpinv_request( $vars ) {
                         'orderby'  => 'meta_value'
                     )
                 );
+            } else if ( 'number' == $vars['orderby'] ) {
+                $vars = array_merge(
+                    $vars,
+                    array(
+                        'meta_key' => '_wpinv_number',
+                        'orderby'  => 'meta_value'
+                    )
+                );
             }
         }
     } else if ( 'wpi_item' == $typenow ) {
@@ -450,9 +458,52 @@ function wpinv_options_page() {
 function wpinv_item_type_class( $classes, $class, $post_id ) {
     global $pagenow, $typenow;
 
-    if ( $pagenow == 'edit.php' && $typenow == 'wpi_item' && get_post_type( $post_id ) == $typenow && $type = get_post_meta( $post_id, '_wpinv_type', true ) ) {
-        $classes[] = 'wpi-type-' . sanitize_html_class( $type );
+    if ( $pagenow == 'edit.php' && $typenow == 'wpi_item' && get_post_type( $post_id ) == $typenow ) {
+        if ( $type = get_post_meta( $post_id, '_wpinv_type', true ) ) {
+            $classes[] = 'wpi-type-' . sanitize_html_class( $type );
+        }
+        
+        if ( !wpinv_item_is_editable( $post_id ) ) {
+            $classes[] = 'wpi-editable-n';
+        }
     }
     return $classes;
 }
 add_filter( 'post_class', 'wpinv_item_type_class', 10, 3 );
+
+function wpinv_check_quick_edit() {
+    global $pagenow, $current_screen, $wpinv_item_screen;
+
+    if ( $pagenow == 'edit.php' && !empty( $current_screen->post_type ) ) {
+        if ( empty( $wpinv_item_screen ) ) {
+            if ( $current_screen->post_type == 'wpi_item' ) {
+                $wpinv_item_screen = 'y';
+            } else {
+                $wpinv_item_screen = 'n';
+            }
+        }
+
+        if ( $wpinv_item_screen == 'y' && $pagenow == 'edit.php' ) {
+            add_filter( 'post_row_actions', 'wpinv_item_disable_quick_edit', 10, 2 );
+            add_filter( 'page_row_actions', 'wpinv_item_disable_quick_edit', 10, 2 );
+        }
+    }
+}
+add_action( 'admin_head', 'wpinv_check_quick_edit', 10 );
+
+function wpinv_item_disable_quick_edit( $actions = array(), $row = null ) {
+    if ( isset( $actions['inline hide-if-no-js'] ) ) {
+        unset( $actions['inline hide-if-no-js'] );
+    }
+    
+    if ( !empty( $row->post_type ) && $row->post_type == 'wpi_item' && !wpinv_item_is_editable( $row ) ) {
+        if ( isset( $actions['trash'] ) ) {
+            unset( $actions['trash'] );
+        }
+        if ( isset( $actions['delete'] ) ) {
+            unset( $actions['delete'] );
+        }
+    }
+
+    return $actions;
+}

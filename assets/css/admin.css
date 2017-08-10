@@ -10,25 +10,30 @@
 .medium-text {
     width: 220px;
 }
+.w100 {
+    width: 100px!important;
+}
 /* invoice notes */
 .post-type-wpi_invoice .wp-list-table.widefat th#ID {
-    width: 80px;
+    width: 70px;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#details {
+.post-type-wpi_invoice .wp-list-table.widefat th#number {
     width: 120px;
 }
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date,
+.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date {
+    width: 120px;
+}
 .post-type-wpi_invoice .wp-list-table.widefat th#status {
-    width: 140px;
+    width: 150px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#amount {
-    width: 130px;
+    width: 110px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#customer {
-    width: 160px;
+    width: 170px;
 }
 .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
     width: 50%;
@@ -957,11 +962,17 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_item .fixed .column-type {
     width: 140px;
 }
-.post-type-wpi_item .fixed .column-type .meta {
+.post-type-wpi_item .fixed .column-type .meta,
+.post-type-wpi_invoice .type-wpi_invoice td .meta {
     display: block;
     font-size: 90%;
     font-style: italic;
-    line-height: normal;
+    color: #777;
+    margin: 0;
+}
+.type-wpi_invoice .meta.gateway {
+    white-space: nowrap;
+    word-wrap: normal;
 }
 .post-type-wpi_item #filter-by-date {
     display: none;
@@ -1492,6 +1503,21 @@ textarea.wpi-email_overdue_content {
 }
 .wpinv-items-wrap.wpi-recurring #wpinv-recalc-totals {
     float: none;
+}
+.post-type-wpi_item.wpi-editable-n #submitdiv #major-publishing-actions,
+.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status,
+.post-type-wpi_item.wpi-editable-n #setting-error-wpinv-edit-n .notice-dismiss {
+    display: none;
+}
+.post-type-wpi_invoice form#post #edit-slug-buttons {
+    display: none;
+}
+#gdmbx2-metabox-wpinv_details input#wpinv_number {
+    cursor: default;
+}
+.post-type-wpi_invoice form#post #titlediv [name="post_title"] {
+    cursor: not-allowed;
+    opacity: .75;
 }
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {
