@@ -375,7 +375,7 @@ class WPInv_Meta_Box_Items {
         $invoice->set( 'country', $country );
         $invoice->set( 'state', $state );
         $invoice->set( 'status', $status );
-        $invoice->set( 'number', $number );
+        //$invoice->set( 'number', $number );
         //$invoice->set( 'discounts', $discounts );
         //$invoice->set( 'discount', $discount );
         $invoice->set( 'ip', $ip );

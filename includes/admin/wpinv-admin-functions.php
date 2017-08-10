@@ -14,13 +14,12 @@ if ( !defined( 'WPINC' ) ) {
 function wpinv_columns( $columns ) {
     $columns = array(
         'cb'                => $columns['cb'],
-        'ID'                => __( 'ID', 'invoicing' ),
-        'details'           => __( 'Details', 'invoicing' ),
-        //'email'             => __( 'Email', 'invoicing' ),
+        'number'            => __( 'Number', 'invoicing' ),
         'customer'          => __( 'Customer', 'invoicing' ),
         'amount'            => __( 'Amount', 'invoicing' ),
         'invoice_date'      => __( 'Date', 'invoicing' ),
         'status'            => __( 'Status', 'invoicing' ),
+        'ID'                => __( 'ID', 'invoicing' ),
         'wpi_actions'       => __( 'Actions', 'invoicing' ),
     );
 
@@ -36,15 +35,16 @@ function wpinv_bulk_actions( $actions ) {
     return $actions;
 }
 add_filter( 'bulk_actions-edit-wpi_invoice', 'wpinv_bulk_actions' );
+add_filter( 'bulk_actions-edit-wpi_item', 'wpinv_bulk_actions' );
 
 function wpinv_sortable_columns( $columns ) {
     $columns = array(
-        'ID'     => array( 'ID', true ),
-        'amount' => array( 'amount', false ),
-        'invoice_date'   => array( 'date', false ),
-        'customer'   => array( 'customer', false ),
-        ///'email'   => array( 'email', false ),
-        'status'   => array( 'status', false ),
+        'ID'            => array( 'ID', true ),
+        'number'        => array( 'number', false ),
+        'amount'        => array( 'amount', false ),
+        'invoice_date'  => array( 'date', false ),
+        'customer'      => array( 'customer', false ),
+        'status'        => array( 'status', false ),
     );
     
     return apply_filters( 'wpi_invoice_table_sortable_columns', $columns );
@@ -89,10 +89,13 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             break;
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
+            if ( $wpi_invoice->is_paid() && $gateway_title = $wpi_invoice->get_gateway_title() ) {
+                $value .= '<br><small class="meta gateway">' . wp_sprintf( __( 'Via %s', 'invoicing' ), $gateway_title ) . '</small>';
+            }
             break;
-        case 'details' :
+        case 'number' :
             $edit_link = get_edit_post_link( $post->ID );
-            $value = '<a href="' . esc_url( $edit_link ) . '">' . __( 'View Invoice Details', 'invoicing' ) . '</a>';
+            $value = '<a title="' . esc_attr__( 'View Invoice Details', 'invoicing' ) . '" href="' . esc_url( $edit_link ) . '">' . $wpi_invoice->get_number() . '</a>';
             break;
         case 'wpi_actions' :
             $value = '';
@@ -152,7 +155,7 @@ function wpinv_admin_post_type( $id = 0 ) {
 }
 
 function wpinv_admin_messages() {
-	global $wpinv_options;
+	global $wpinv_options, $pagenow, $post;
 
 	if ( isset( $_GET['wpinv-message'] ) && 'discount_added' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
 		 add_settings_error( 'wpinv-notices', 'wpinv-discount-added', __( 'Discount code added.', 'invoicing' ), 'updated' );
@@ -201,6 +204,14 @@ function wpinv_admin_messages() {
 	if ( isset( $_GET['wpinv-message'] ) && 'invoice-updated' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-updated', __( 'The invoice has been successfully updated.', 'invoicing' ), 'updated' );
 	}
+    
+	if ( $pagenow == 'post.php' && !empty( $post->post_type ) && $post->post_type == 'wpi_item' && !wpinv_item_is_editable( $post ) ) {
+		$message = apply_filters( 'wpinv_item_non_editable_message', __( 'This item in not editable.', 'invoicing' ), $post->ID );
+
+		if ( !empty( $message ) ) {
+			add_settings_error( 'wpinv-notices', 'wpinv-edit-n', $message, 'updated' );
+		}
+	}
 
 	settings_errors( 'wpinv-notices' );
 }
@@ -239,84 +250,6 @@ function wpinv_items_sortable_columns( $columns ) {
     return $columns;
 }
 add_filter( 'manage_edit-wpi_item_sortable_columns', 'wpinv_items_sortable_columns' );
-
-function wpinv_item_quick_edit( $column_name, $post_type ) {
-    if ( !( $post_type == 'wpi_item' && $column_name == 'price' ) ) {
-        return;
-    }
-    global $wpinv_euvat, $post;
-    
-    $symbol    = wpinv_currency_symbol();
-    $position  = wpinv_currency_position();
-
-    $price     = wpinv_get_item_price( $post->ID );
-    $item_type = wpinv_get_item_type( $post->ID );
-    ?>
-    <fieldset class="inline-edit-col-right wpi-inline-item-col">
-        <div class="inline-edit-col">
-            <div class="inline-edit-group wp-clearfix">
-                <label class="inline-edit-wpinv-price">
-                    <span class="title"><?php _e( 'Item price', 'invoicing' );?></span>
-                    <span class="input-text-wrap"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" name="_wpinv_item_price" class="wpi-field-price wpi-price" id="wpinv_item_price-<?php echo $post->ID;?>"><?php echo ( $position == 'right' ? $symbol . '&nbsp;' : '' );?></span>
-                </label>
-            </div>
-            <?php if ( $wpinv_euvat->allow_vat_rules() ) { $rule_type = $wpinv_euvat->get_item_rule( $post->ID ); ?>
-            <div class="inline-edit-group wp-clearfix">
-                <label class="inline-edit-wpinv-vat-rate">
-                    <span class="title"><?php _e( 'VAT rule type to use', 'invoicing' );?></span>
-                    <span class="input-text-wrap">
-                        <?php echo wpinv_html_select( array(
-                            'options'          => $wpinv_euvat->get_rules(),
-                            'name'             => '_wpinv_vat_rules',
-                            'id'               => 'wpinv_vat_rules-' . $post->ID,
-                            'selected'         => $rule_type,
-                            'show_option_all'  => false,
-                            'show_option_none' => false,
-                            'class'            => 'gdmbx2-text-medium wpinv-vat-rules',
-                        ) ); ?>
-                    </span>
-                </label>
-            </div>
-            <?php } if ( $wpinv_euvat->allow_vat_classes() ) { $vat_class = $wpinv_euvat->get_item_class( $post->ID ); ?>
-            <div class="inline-edit-group wp-clearfix">
-                <label class="inline-edit-wpinv-vat-class">
-                    <span class="title"><?php _e( 'VAT class to use', 'invoicing' );?></span>
-                    <span class="input-text-wrap">
-                        <?php echo wpinv_html_select( array(
-                            'options'          => $wpinv_euvat->get_all_classes(),
-                            'name'             => '_wpinv_vat_class',
-                            'id'               => 'wpinv_vat_class-' . $post->ID,
-                            'selected'         => $vat_class,
-                            'show_option_all'  => false,
-                            'show_option_none' => false,
-                            'class'            => 'gdmbx2-text-medium wpinv-vat-class',
-                        ) ); ?>
-                    </span>
-                </label>
-            </div>
-            <?php } ?>
-            <div class="inline-edit-group wp-clearfix">
-                <label class="inline-edit-wpinv-type">
-                    <span class="title"><?php _e( 'Item type', 'invoicing' );?></span>
-                    <span class="input-text-wrap">
-                        <?php echo wpinv_html_select( array(
-                            'options'          => wpinv_get_item_types(),
-                            'name'             => '_wpinv_item_type',
-                            'id'               => 'wpinv_item_type-' . $post->ID,
-                            'selected'         => $item_type,
-                            'show_option_all'  => false,
-                            'show_option_none' => false,
-                            'class'            => 'gdmbx2-text-medium wpinv-item-type',
-                        ) ); ?>
-                    </span>
-                </label>
-            </div>
-        </div>
-    </fieldset>
-    <?php
-}
-add_action( 'quick_edit_custom_box', 'wpinv_item_quick_edit', 10, 2 );
-add_action( 'bulk_edit_custom_box', 'wpinv_item_quick_edit', 10, 2 );
 
 function wpinv_items_table_custom_column( $column ) {
     global $wpinv_euvat, $post, $wpi_item;

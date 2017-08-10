@@ -204,20 +204,21 @@ final class WPInv_Invoice {
     }
     
     private function setup_post_name( $post = NULL ) {
+        global $wpdb;
+        
         $post_name = '';
         
         if ( !empty( $post ) ) {
             if( !empty( $post->post_name ) ) {
                 $post_name = $post->post_name;
-            } else if ( !empty( $post->ID ) && !empty( $post->post_title ) ) {
-                $post_name = sanitize_title( $post->post_title );
-                
-                global $wpdb;
-                $wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
+            } else if ( !empty( $post->ID ) ) {
+                $post_name = 'inv-' . $post->ID;
+
+                $wpdb->update( $wpdb->posts, array( 'post_name' => 'inv-' . $post->ID ), array( 'ID' => $post->ID ) );
             }
         }
 
-        $this->post_name   = $post_name;
+        $this->post_name = $post_name;
     }
     
     private function setup_due_date() {
@@ -520,21 +521,27 @@ final class WPInv_Invoice {
         $number = $this->get_meta( '_wpinv_number', true );
 
         if ( !$number ) {
-            $number = wpinv_format_invoice_number( $this->ID );
+            $number = $this->ID;
+
+            if ( $this->status == 'auto-draft' ) {
+                if ( wpinv_get_option( 'sequential_invoice_number' ) ) {
+                    $next_number = wpinv_get_next_invoice_number();
+                    $number      = $next_number;
+                }
+            }
+            
+            $number = wpinv_format_invoice_number( $number );
         }
 
         return $number;
     }
     
     private function insert_invoice() {
-        $invoice_title = '';
+        global $wpdb;
 
-        if ($number = $this->get_number()) {
-            $invoice_title = $number;
-        } else if ( ! empty( $this->ID ) ) {
-            $invoice_title = wpinv_format_invoice_number( $this->ID );
-        } else {
-            $invoice_title = wpinv_format_invoice_number( 0 );
+        $invoice_number = $this->ID;
+        if ( $number = $this->get_meta( '_wpinv_number', true ) ) {
+            $invoice_number = $number;
         }
 
         if ( empty( $this->key ) ) {
@@ -573,11 +580,9 @@ final class WPInv_Invoice {
             'status'       => $this->status,
             'fees'         => $this->fees,
         );
-        
-        $post_name      = sanitize_title( $invoice_title );
 
         $post_data = array(
-                        'post_title'    => $invoice_title,
+                        'post_title'    => $invoice_number,
                         'post_status'   => $this->status,
                         'post_author'   => $this->user_id,
                         'post_type'     => $this->post_type,
@@ -590,27 +595,20 @@ final class WPInv_Invoice {
         // Create a blank invoice
         if ( !empty( $this->ID ) ) {
             $args['ID']         = $this->ID;
-            $args['post_name']  = $post_name;
-            
-            $invoice_id = wp_update_post( $args );
+
+            $invoice_id = wp_update_post( $args, true );
         } else {
-            $invoice_id = wp_insert_post( $args );
-            
-            $post_title = wpinv_format_invoice_number( $invoice_id );
-            global $wpdb;
-            $wpdb->update( $wpdb->posts, array( 'post_title' => $post_title, 'post_name' => sanitize_title( $post_title ) ), array( 'ID' => $invoice_id ) );
-            clean_post_cache( $invoice_id );
+            $invoice_id = wp_insert_post( $args, true );
         }
 
-        if ( !empty( $invoice_id ) ) {             
+        if ( is_wp_error( $invoice_id ) ) {
+            return false;
+        }
+
+        if ( !empty( $invoice_id ) ) {
             $this->ID  = $invoice_id;
             $this->_ID = $invoice_id;
-            
-            ///$this->pending['user_id'] = $this->user_id;
-            if ( isset( $this->pending['number'] ) ) {
-                $this->pending['number'] = $post_name;
-            }
-            
+
             $this->payment_meta = apply_filters( 'wpinv_payment_meta', $this->payment_meta, $payment_data );
             if ( ! empty( $this->payment_meta['fees'] ) ) {
                 $this->fees = array_merge( $this->fees, $this->payment_meta['fees'] );
@@ -647,7 +645,7 @@ final class WPInv_Invoice {
             } else {
                 $this->ID = $invoice_id;
             }
-        }        
+        }
 
         // If we have something pending, let's save it
         if ( !empty( $this->pending ) ) {
@@ -777,9 +775,6 @@ final class WPInv_Invoice {
                     case 'key':
                         $this->update_meta( '_wpinv_key', $this->key );
                         break;
-                    case 'number':
-                        $this->update_meta( '_wpinv_number', $this->number );
-                        break;
                     case 'date':
                         $args = array(
                             'ID'        => $this->ID,
@@ -806,19 +801,12 @@ final class WPInv_Invoice {
 
                         $this->user_info['discount'] = implode( ',', $this->discounts );
                         break;
-                        
-                    //case 'tax':
-                        //$this->update_meta( '_wpinv_tax', wpinv_round_amount( $this->tax ) );
-                        //break;
                     case 'discount':
                         $this->update_meta( '_wpinv_discount', wpinv_round_amount( $this->discount ) );
                         break;
                     case 'discount_code':
                         $this->update_meta( '_wpinv_discount_code', $this->discount_code );
                         break;
-                    //case 'fees':
-                        //$this->update_meta( '_wpinv_fees', $this->fees );
-                        //break;
                     case 'parent_invoice':
                         $args = array(
                             'ID'          => $this->ID,
@@ -830,7 +818,7 @@ final class WPInv_Invoice {
                         do_action( 'wpinv_save', $this, $key );
                         break;
                 }
-            }       
+            }
 
             $this->update_meta( '_wpinv_subtotal', wpinv_round_amount( $this->subtotal ) );
             $this->update_meta( '_wpinv_total', wpinv_round_amount( $this->total ) );

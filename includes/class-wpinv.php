@@ -292,14 +292,14 @@ class WPInv_Plugin {
         $localize['deletePackage']              = __( 'GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
         $localize['deletePackages']             = __( 'GD package items should be deleted from GD payment manager only', 'invoicing' );
         $localize['deleteInvoiceFirst']         = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
-		
-		$localize = apply_filters( 'wpinv_admin_js_localize', $localize );
-        
+
+        $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
+
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
     }
     
     public function admin_body_class( $classes ) {
-        global $pagenow;
+        global $pagenow, $post;
         
         $page = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : false;
 
@@ -326,22 +326,20 @@ class WPInv_Plugin {
         }
         
         $post_type = wpinv_admin_post_type();
-        
+
         if ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $add_class !== false ) {
             return $classes .= ' wpinv';
-        } else {
-            return $classes;
+        }
+        
+        if ( $pagenow == 'post.php' && $post_type == 'wpi_item' && !empty( $post ) && !wpinv_item_is_editable( $post ) ) {
+            $classes .= ' wpi-editable-n';
         }
 
         return $classes;
     }
     
     public function admin_print_scripts_edit_php() {
-        $post_type = wpinv_admin_post_type();
-        
-        if ( $post_type == 'wpi_item' ) {
-            wp_enqueue_script( 'wpinv-inline-edit-post', WPINV_PLUGIN_URL . 'assets/js/quick-edit.js', array( 'jquery', 'inline-edit-post' ), '', true );
-        }
+
     }
     
     public function wpinv_actions() {

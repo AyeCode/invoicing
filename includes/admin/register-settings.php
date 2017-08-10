@@ -584,6 +584,21 @@ function wpinv_get_registered_settings() {
                         'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
                         'type' => 'header',
                     ),
+                    'sequential_invoice_number' => array(
+                        'id'   => 'sequential_invoice_number',
+                        'name' => __( 'Sequential Invoice Numbers', 'invoicing' ),
+                        'desc' => __( 'Check this box to enable sequential invoice numbers.', 'invoicing' ),
+                        'type' => 'checkbox',
+                    ),
+                    'invoice_sequence_start' => array(
+                        'id'   => 'invoice_sequence_start',
+                        'name' => __( 'Sequential Starting Number', 'easy-digital-downloads' ),
+                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ),
+                        'type' => 'number',
+                        'size' => 'small',
+                        'std'  => '1',
+                        'class'=> 'w100'
+                    ),
                     'invoice_number_padd' => array(
                         'id'      => 'invoice_number_padd',
                         'name'    => __( 'Minimum digits', 'invoicing' ),
@@ -1026,10 +1041,11 @@ function wpinv_text_callback( $args ) {
 	} else {
 		$name = 'name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"';
 	}
+	$class = !empty( $args['class'] ) ? sanitize_html_class( $args['class'] ) : '';
 
 	$readonly = $args['readonly'] === true ? ' readonly="readonly"' : '';
 	$size     = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	$html     = '<input type="text" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '"' . $readonly . '/>';
+	$html     = '<input type="text" class="' . sanitize_html_class( $size ) . '-text ' . $class . '" id="wpinv_settings[' . $sanitize_id . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '"' . $readonly . '/>';
 	$html    .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
 	echo $html;
@@ -1057,9 +1073,10 @@ function wpinv_number_callback( $args ) {
 	$max  = isset( $args['max'] ) ? $args['max'] : 999999;
 	$min  = isset( $args['min'] ) ? $args['min'] : 0;
 	$step = isset( $args['step'] ) ? $args['step'] : 1;
+	$class = !empty( $args['class'] ) ? sanitize_html_class( $args['class'] ) : '';
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	$html = '<input type="number" step="' . esc_attr( $step ) . '" max="' . esc_attr( $max ) . '" min="' . esc_attr( $min ) . '" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '"/>';
+	$html = '<input type="number" step="' . esc_attr( $step ) . '" max="' . esc_attr( $max ) . '" min="' . esc_attr( $min ) . '" class="' . sanitize_html_class( $size ) . '-text ' . $class . '" id="wpinv_settings[' . $sanitize_id . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '"/>';
 	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
 	echo $html;

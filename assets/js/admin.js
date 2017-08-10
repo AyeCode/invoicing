@@ -95,7 +95,7 @@ jQuery(function($) {
             $('#wpinv-notes')
                 .on('click', 'a.add_note', this.add_invoice_note)
                 .on('click', 'a.delete_note', this.delete_invoice_note);
-            if($('ul.invoice_notes')[0]){
+            if ($('ul.invoice_notes')[0]) {
                 $('ul.invoice_notes')[0].scrollTop = $('ul.invoice_notes')[0].scrollHeight;
             }
         },
@@ -904,6 +904,13 @@ jQuery(function($) {
             });
         }
     };
+    $('.post-type-wpi_invoice form#post #titlediv [name="post_title"]').attr('readonly', true);
+    $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
+    $('.post-type-wpi_item.wpi-editable-n #submitdiv #major-publishing-actions').remove();
+    $('.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status').remove();
+    $('.post-type-wpi_item .posts .wpi-editable-n').each(function(e) {
+        $('.check-column [type="checkbox"]', $(this)).attr('disabled', true);
+    });
     if (WPInv_Admin.hasPM) {
         $('.wpi-gd-package .submitdelete').on('click', function(e) {
             if ( $(this).closest('.wpi-gd-package').hasClass('wpi-inuse-pkg')) {
