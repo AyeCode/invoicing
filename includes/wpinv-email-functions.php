@@ -1017,7 +1017,7 @@ function wpinv_get_emails() {
             'email_user_note_header' => array(
                 'id'   => 'email_user_note_header',
                 'name' => '<h3>' . __( 'Customer Note', 'invoicing' ) . '</h3>',
-                'desc' => __( 'Customer note emails are sent when you add a note to an invoice.', 'invoicing' ),
+                'desc' => __( 'Customer note emails are sent when you add a note to an invoice/quote.', 'invoicing' ),
                 'type' => 'header',
             ),
             'email_user_note_active' => array(
@@ -1032,7 +1032,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Subject', 'invoicing' ),
                 'desc' => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
                 'type' => 'text',
-                'std'  => __( '[{site_title}] Note added to your invoice #{invoice_number} from {invoice_date}', 'invoicing' ),
+                'std'  => __( '[{site_title}] Note added to your {invoice_quote} #{invoice_number} from {invoice_date}', 'invoicing' ),
                 'size' => 'large'
             ),
             'email_user_note_heading' => array(
@@ -1040,7 +1040,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Email Heading', 'invoicing' ),
                 'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
                 'type' => 'text',
-                'std'  => __( 'A note has been added to your invoice', 'invoicing' ),
+                'std'  => __( 'A note has been added to your {invoice_quote}', 'invoicing' ),
                 'size' => 'large'
             ),
         ),
