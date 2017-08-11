@@ -973,7 +973,7 @@ msgid "Enter the VAT name"
 msgstr ""
 
 #: includes/admin/register-settings.php:338
-msgid "Invoice notice label"
+msgid "Invoice Notice Label"
 msgstr ""
 
 #: includes/admin/register-settings.php:339

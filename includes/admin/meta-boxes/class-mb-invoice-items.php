@@ -312,7 +312,7 @@ class WPInv_Meta_Box_Items {
                     //'disabled'         => $item_type == 'package' ? true : false,
                 ) ); ?>
         </p>
-        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( 'Standard: standard item type', 'invoicing' );?><br><?php _e( 'Fee: like Registration Fee, Signup Fee etc.', 'invoicing' );?></p>
+        <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( '<b>Standard:</b> Standard item type', 'invoicing' );?><br><?php _e( '<b>Fee:</b> Like Registration Fee, Sign up Fee etc.', 'invoicing' );?></p>
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );
     }
