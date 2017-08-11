@@ -105,46 +105,6 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
 }
 add_action( 'save_post', 'wpinv_save_meta_boxes', 10, 3 );
 
-function wpinv_bulk_and_quick_edit_save( $post_id, $post, $update = false ) {
-    if ( !( !empty( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) ) {
-        return;
-    }
-    
-    // $post_id and $post are required
-    if ( empty( $post_id ) || empty( $post ) ) {
-        return;
-    }
-        
-    if ( !current_user_can( 'edit_post', $post_id ) || empty( $post->post_type ) ) {
-        return;
-    }
-    
-    // Dont' save meta boxes for revisions or autosaves
-    if ( defined( 'DOING_AUTOSAVE' ) || is_int( wp_is_post_revision( $post ) ) || is_int( wp_is_post_autosave( $post ) ) ) {
-        return;
-    }
-
-    if ( $post->post_type == 'wpi_item' ) {
-        // verify nonce
-        if ( isset( $_POST['_wpinv_item_price'] ) && get_post_meta( $post->ID, '_wpinv_type', true ) !== 'package' ) {
-            update_post_meta( $post_id, '_wpinv_price', wpinv_sanitize_amount( $_POST['_wpinv_item_price'] ) );
-        }
-        
-        if ( isset( $_POST['_wpinv_vat_class'] ) ) {
-            update_post_meta( $post_id, '_wpinv_vat_class', sanitize_text_field( $_POST['_wpinv_vat_class'] ) );
-        }
-
-        if ( isset( $_POST['_wpinv_vat_rules'] ) ) {
-            update_post_meta( $post_id, '_wpinv_vat_rule', sanitize_text_field( $_POST['_wpinv_vat_rules'] ) );
-        }
-        
-        if ( isset( $_POST['_wpinv_item_type'] ) ) {
-            update_post_meta( $post_id, '_wpinv_type', sanitize_text_field( $_POST['_wpinv_item_type'] ) );
-        }
-    }
-}
-add_action( 'save_post', 'wpinv_bulk_and_quick_edit_save', 10, 3 );
-
 function wpinv_register_item_meta_boxes() {    
     global $wpinv_euvat;
     

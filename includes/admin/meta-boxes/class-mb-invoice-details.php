@@ -64,7 +64,7 @@ class WPInv_Meta_Box_Details {
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-number table-layout">
             <div class="gdmbx-th"><label for="wpinv_number"><?php echo $title['number']; ?></label></div>
             <div class="gdmbx-td">
-                <input type="text" placeholder="<?php echo esc_attr( wpinv_format_invoice_number( 1 ) ); ?>" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text">
+                <input type="text" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text" readonly>
             </div>
         </div>
         <?php do_action( 'wpinv_meta_box_details_inner', $post_id ); ?>

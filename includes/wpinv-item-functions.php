@@ -101,6 +101,20 @@ function wpinv_is_free_item( $item_id = 0 ) {
     return $item->is_free();
 }
 
+function wpinv_item_is_editable( $item = 0 ) {
+    if ( !empty( $item ) && is_a( $item, 'WP_Post' ) ) {
+        $item = $item->ID;
+    }
+        
+    if ( empty( $item ) ) {
+        return true;
+    }
+
+    $item = new WPInv_Item( $item );
+    
+    return (bool) $item->is_editable();
+}
+
 function wpinv_get_item_price( $item_id = 0 ) {
     if( empty( $item_id ) ) {
         return false;
@@ -650,6 +664,7 @@ function wpinv_create_item( $args = array(), $wp_error = false, $force_update = 
         'custom_name'          => '',                                                      // Optional. Plural sub title for item.
         'custom_singular_name' => '',                                                      // Optional. Singular sub title for item.
         'vat_rule'             => 'digital',                                               // Optional. digital => Digital item, physical => Physical item
+        'editable'             => true,                                                    // Optional. Item editable from Items list page? Default true.
         'excerpt'              => '',                                                      // Optional. Item short description
         /* Recurring item fields */
         'is_recurring'         => 0,                                                       // Optional. 1 => Allow recurring or 0 => Don't allow recurring
@@ -683,6 +698,7 @@ function wpinv_create_item( $args = array(), $wp_error = false, $force_update = 
     $meta['custom_singular_name']   = $data['custom_singular_name'];
     $meta['custom_name']            = $data['custom_name'];
     $meta['price']                  = wpinv_round_amount( $data['price'] );
+    $meta['editable']               = (int)$data['editable'];
     $meta['vat_rule']               = $data['vat_rule'];
     $meta['vat_class']              = '_standard';
     
