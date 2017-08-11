@@ -169,7 +169,7 @@ class WPInv_Meta_Box_Items {
                                 </tr>
                                 <?php } ?>
                                 <tr class="total">
-                                    <td class="name"><?php _e( 'Invoice Total:', 'invoicing' );?></td>
+                                    <td class="name"><?php echo apply_filters( 'wpinv_invoice_items_total_label', __( 'Invoice Total:', 'invoicing' ), $invoice );?></td>
                                     <td class="total"><?php echo $total;?></td>
                                     <td class="action"></td>
                                 </tr>
