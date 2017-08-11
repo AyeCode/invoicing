@@ -138,7 +138,7 @@ msgid "Items which are NOT allowed to use this discount."
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:264
-msgid "Start date"
+msgid "Start Date"
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:268
@@ -149,7 +149,7 @@ msgid ""
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:274
-msgid "Expiration date"
+msgid "Expiration Date"
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:278
@@ -192,8 +192,8 @@ msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:311
 msgid ""
-"<b>All payments:</b> apply this discount to all recurring payments of the "
-"recurring invoice. <br><b>First payment only:</b> apply this discount to "
+"<b>All payments:</b> Apply this discount to all recurring payments of the "
+"recurring invoice. <br><b>First payment only:</b> Apply this discount to "
 "only first payment of the recurring invoice."
 msgstr ""
 
@@ -483,7 +483,7 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:80
 msgid ""
-"After save invoice this will send a copy of the invoice to the user&#8217;s "
+"After saving invoice this will send a copy of the invoice to the user&#8217;s "
 "email address."
 msgstr ""
 
@@ -755,11 +755,11 @@ msgid "Select item type."
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:311
-msgid "Standard: standard item type"
+msgid "Standard: Standard item type"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:311
-msgid "Fee: like Registration Fee, Signup Fee etc."
+msgid "Fee: Like Registration Fee, Sign up Fee etc."
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-notes.php:21
@@ -892,7 +892,7 @@ msgid "Invoice History Page"
 msgstr ""
 
 #: includes/admin/register-settings.php:259
-msgid "This page shows a invoice history for the current user"
+msgid "This page shows an invoice history for the current user"
 msgstr ""
 
 #: includes/admin/register-settings.php:269
@@ -977,7 +977,7 @@ msgid "Invoice Notice Label"
 msgstr ""
 
 #: includes/admin/register-settings.php:339
-msgid "Use this to add a invoice notice section (label) to your invoices"
+msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
 #: includes/admin/register-settings.php:345
@@ -985,7 +985,7 @@ msgid "Invoice notice"
 msgstr ""
 
 #: includes/admin/register-settings.php:346
-msgid "Use this to add a invoice notice section (description) to your invoices"
+msgid "Use this to add an invoice notice section (description) to your invoices"
 msgstr ""
 
 #: includes/admin/register-settings.php:358
@@ -1159,7 +1159,7 @@ msgid "Invoice Number"
 msgstr ""
 
 #: includes/admin/register-settings.php:533
-msgid "Minimum digits"
+msgid "Minimum Digits"
 msgstr ""
 
 #: includes/admin/register-settings.php:534
@@ -1170,19 +1170,19 @@ msgid ""
 msgstr ""
 
 #: includes/admin/register-settings.php:542
-msgid "Invoice Number prefix"
+msgid "Invoice Number Prefix"
 msgstr ""
 
 #: includes/admin/register-settings.php:543
-msgid "A prefix to prepend to all invoice numbers. Ex: WPINV-"
+msgid "Prefix for all invoice numbers. Ex: WPINV-"
 msgstr ""
 
 #: includes/admin/register-settings.php:551
-msgid "Invoice Number postfix"
+msgid "Invoice Number Postfix"
 msgstr ""
 
 #: includes/admin/register-settings.php:552
-msgid "A postfix to append to all invoice numbers."
+msgid "Postfix for all invoice numbers."
 msgstr ""
 
 #: includes/admin/register-settings.php:559
@@ -1196,7 +1196,7 @@ msgstr ""
 #: includes/admin/register-settings.php:566
 msgid ""
 "Select how invoice should be paid when non logged in user clicks on the "
-"invoice link that sent to them via for pay for invoice."
+"invoice link that sent to them via email for pay for invoice."
 msgstr ""
 
 #: includes/admin/register-settings.php:568
@@ -2301,7 +2301,7 @@ msgid "Apply VAT Settings"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:249
-msgid "Enable VAT rules"
+msgid "Enable VAT Rules"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:250
@@ -2315,7 +2315,7 @@ msgid "Do not disable unless you know what you are doing."
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:266
-msgid "Prevent EU B2C sales"
+msgid "Prevent EU B2C Sales"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:267
@@ -2323,7 +2323,7 @@ msgid "Enable this option if you are not registered for VAT in the EU."
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:275
-msgid "Same country rule"
+msgid "Same Country Rule"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:276
@@ -2345,7 +2345,7 @@ msgid "Always apply VAT"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:283
-msgid "Select a option"
+msgid "Select an option"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:289
@@ -2353,7 +2353,7 @@ msgid "Checkout Fields"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:297
-msgid "Disable VAT fields"
+msgid "Disable VAT Fields"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:298
@@ -2361,11 +2361,11 @@ msgid "Disable VAT fields if Invoicing is being used for GST."
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:304
-msgid "IP Country lookup"
+msgid "IP Country Look-up"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:312
-msgid "Hide IP info at checkout"
+msgid "Hide IP Info at Checkout"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:313
@@ -2387,7 +2387,7 @@ msgid "VIES Validation"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:334
-msgid "Disable VIES VAT ID check"
+msgid "Disable VIES VAT ID Check"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:335
@@ -2396,7 +2396,7 @@ msgid "Prevent VAT numbers from being validated by the %sEU VIES System.%s"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:341
-msgid "Disable VIES name check"
+msgid "Disable VIES Name Check"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:342
@@ -2405,7 +2405,7 @@ msgid "Prevent company name from being validated by the %sEU VIES System.%s"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:348
-msgid "Disable basic checks"
+msgid "Disable Basic Checks"
 msgstr ""
 
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:349

@@ -620,7 +620,7 @@ function wpinv_get_registered_settings() {
                     'invoice_number_postfix' => array(
                         'id' => 'invoice_number_postfix',
                         'name' => __( 'Invoice Number Postfix', 'invoicing' ),
-                        'desc' => __( 'Ppostfix for all invoice numbers.', 'invoicing' ),
+                        'desc' => __( 'Postfix for all invoice numbers.', 'invoicing' ),
                         'type' => 'text',
                         'size' => 'regular',
                         'std' => ''
