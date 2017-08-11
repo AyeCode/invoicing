@@ -226,7 +226,7 @@ function wpinv_discount_metabox_details( $post ) {
         <?php do_action( 'wpinv_discount_form_before_start', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_start"><?php _e( 'Start date', 'invoicing' ); ?></label>
+                <label for="wpinv_discount_start"><?php _e( 'Start Date', 'invoicing' ); ?></label>
             </th>
             <td>
                 <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_start" data-dateFormat="yy-mm-dd" name="start" value="<?php echo esc_attr( wpinv_get_discount_start_date( $discount_id ) ); ?>">
@@ -236,7 +236,7 @@ function wpinv_discount_metabox_details( $post ) {
         <?php do_action( 'wpinv_discount_form_before_expiration', $post ); ?>
         <tr>
             <th valign="top" scope="row">
-                <label for="wpinv_discount_expiration"><?php _e( 'Expiration date', 'invoicing' ); ?></label>
+                <label for="wpinv_discount_expiration"><?php _e( 'Expiration Date', 'invoicing' ); ?></label>
             </th>
             <td>
                 <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_expiration" data-dateFormat="yy-mm-dd" name="expiration" value="<?php echo esc_attr( wpinv_get_discount_expiration( $discount_id ) ); ?>">
@@ -273,7 +273,7 @@ function wpinv_discount_metabox_details( $post ) {
                     <option value="0" <?php selected( false, $recurring ); ?>><?php _e( 'All payments', 'invoicing' ); ?></option>
                     <option value="1" <?php selected( true, $recurring ); ?>><?php _e( 'First payment only', 'invoicing' ); ?></option>
                 </select>
-                <p class="description"><?php _e( '<b>All payments:</b> apply this discount to all recurring payments of the recurring invoice. <br><b>First payment only:</b> apply this discount to only first payment of the recurring invoice.', 'invoicing' ); ?></p>
+                <p class="description"><?php _e( '<b>All payments:</b> Apply this discount to all recurring payments of the recurring invoice. <br><b>First payment only:</b> Apply this discount to only first payment of the recurring invoice.', 'invoicing' ); ?></p>
             </td>
         </tr>
         <?php do_action( 'wpinv_discount_form_before_max_uses', $post ); ?>

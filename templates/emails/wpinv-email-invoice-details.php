@@ -17,7 +17,7 @@ $vat_name = $wpinv_euvat->get_vat_name();
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
 <div id="wpinv-email-details">
-    <h3 class="wpinv-details-t"><?php echo apply_filters( 'wpinv_email_details_title', __( 'Invoice Details', 'invoicing' ) ); ?></h3>
+    <h3 class="wpinv-details-t"><?php echo apply_filters( 'wpinv_email_details_title', __( 'Invoice Details', 'invoicing' ), $invoice ); ?></h3>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = $invoice->get_number() ) { ?>
             <tr>

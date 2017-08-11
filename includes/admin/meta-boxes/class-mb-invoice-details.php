@@ -24,7 +24,7 @@ class WPInv_Meta_Box_Details {
         $date_completed     = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_completed ) ) : 'n/a';
         $title['status'] = __( 'Invoice Status:', 'invoicing' );
         $title['number'] = __( 'Invoice Number:', 'invoicing' );
-        $mail_notice = esc_attr__( 'After save invoice this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
+        $mail_notice = esc_attr__( 'After saving invoice, this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
         
         $title = apply_filters('wpinv_details_metabox_titles', $title, $invoice);
         $statuses = apply_filters('wpinv_invoice_statuses', $statuses, $invoice);
