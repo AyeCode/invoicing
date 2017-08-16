@@ -670,26 +670,28 @@ function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
 
         $user_id = 0;
         if ( is_int( $user ) ) {
-            $user_id = $user;
+            $user_id = absint( $user );
         } else if ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
             $user_id = $user_data->ID;
         } else if ( $user_data = get_user_by( 'login', $user ) ) {
             $user_id = $user_data->ID;
+        } else if ( absint( $user ) > 0 ) {
+            $user_id = absint( $user );
         }
 
-        if ( !$user_id ) {
+        if ( !empty( $user_id ) ) {
             $query    = array( 'user' => $user_id, 'limit' => false );
-            $payments = wpinv_get_invoices( $query ); // Get all payments with matching email
+            $payments = wpinv_get_invoices( $query ); // Get all payments with matching user id
         }
 
         if ( $payments ) {
             foreach ( $payments as $payment ) {
-                if ( $payment->has_status( array( 'wpi-cancelled', 'wpi-failed' ) ) ) {
-                    continue;
-                }
-
                 // Don't count discount used for current invoice chekcout.
                 if ( !empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
+                    continue;
+                }
+                
+                if ( $payment->has_status( array( 'wpi-cancelled', 'wpi-failed' ) ) ) {
                     continue;
                 }
 
