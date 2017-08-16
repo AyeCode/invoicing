@@ -39,12 +39,11 @@ function wpinv_run_install() {
     if ( $current_version ) {
         update_option( 'wpinv_version_upgraded_from', $current_version );
     }
-        
+
+    wpinv_create_pages();
+
     // Pull options from WP, not GD Invoice's global
-    $current_options = get_option( 'wpinv_settings', array() );
-    
-    // Setup some default options
-    $options = wpinv_create_pages();
+    $options = get_option( 'wpinv_settings', array() );
     
     // Populate some default values
     foreach( wpinv_get_registered_settings() as $tab => $sections ) {
@@ -127,74 +126,35 @@ function wpinv_after_install() {
 add_action( 'admin_init', 'wpinv_after_install' );
 
 function wpinv_create_pages() {
-    global $wpinv_options;
-    
-    $options = array();
-    
-    // Checks if the purchase page option exists
-    if ( ! array_key_exists( 'checkout_page', $wpinv_options ) ) {
-        // Checkout Page
-        $checkout = wp_insert_post(
-            array(
-                'post_title'     => __( 'Checkout', 'invoicing' ),
-                'post_content'   => '[wpinv_checkout]',
-                'post_status'    => 'publish',
-                'post_author'    => 1,
-                'post_type'      => 'page',
-                'comment_status' => 'closed',
-                'post_name'      => 'wpi-checkout',
-                'page_template'  => 'full-width.php'
-            )
-        );
-        
-        // Invoice History (History) Page
-        $history = wp_insert_post(
-            array(
-                'post_title'     => __( 'Invoice History', 'invoicing' ),
-                'post_content'   => '[wpinv_history]',
-                'post_status'    => 'publish',
-                'post_author'    => 1,
-                'post_type'      => 'page',
-                'post_parent'    => $checkout,
-                'comment_status' => 'closed',
-                'page_template'  => 'full-width.php'
-            )
-        );
 
-        // Payment Confirmation (Success) Page
-        $success = wp_insert_post(
-            array(
-                'post_title'     => __( 'Payment Confirmation', 'invoicing' ),
-                'post_content'   => __( '[wpinv_receipt]', 'invoicing' ),
-                'post_status'    => 'publish',
-                'post_author'    => 1,
-                'post_parent'    => $checkout,
-                'post_type'      => 'page',
-                'comment_status' => 'closed',
-                'page_template'  => 'full-width.php'
-            )
-        );
+    $pages = apply_filters( 'wpinv_create_pages', array(
+        'checkout_page' => array(
+            'name'    => _x( 'wpi-checkout', 'Page slug', 'invoicing' ),
+            'title'   => _x( 'Checkout', 'Page title', 'invoicing' ),
+            'content' => '[' . apply_filters( 'wpinv_checkout_shortcode_tag', 'wpinv_checkout' ) . ']',
+            'parent' => '',
+        ),
+        'invoice_history_page' => array(
+            'name'    => _x( 'wpi-history', 'Page slug', 'invoicing' ),
+            'title'   => _x( 'Invoice History', 'Page title', 'invoicing' ),
+            'content' => '[' . apply_filters( 'wpinv_history_shortcode_tag', 'wpinv_history' ) . ']',
+            'parent' => 'wpi-checkout',
+        ),
+        'success_page' => array(
+            'name'    => _x( 'wpinv-receipt', 'Page slug', 'invoicing' ),
+            'title'   => _x( 'Payment Confirmation', 'Page title', 'invoicing' ),
+            'content' => '[' . apply_filters( 'wpinv_receipt_shortcode_tag', 'wpinv_receipt' ) . ']',
+            'parent' => 'wpi-checkout',
+        ),
+        'failure_page' => array(
+            'name'    => _x( 'wpinv-transaction-failed', 'Page slug', 'invoicing' ),
+            'title'   => _x( 'Transaction Failed', 'Page title', 'invoicing' ),
+            'content' => __( 'Your transaction failed, please try again or contact site support.', 'invoicing' ),
+            'parent' => 'wpi-checkout',
+        ),
+    ) );
 
-        // Failed Payment Page
-        $failed = wp_insert_post(
-            array(
-                'post_title'     => __( 'Transaction Failed', 'invoicing' ),
-                'post_content'   => __( 'Your transaction failed, please try again or contact site support.', 'invoicing' ),
-                'post_status'    => 'publish',
-                'post_author'    => 1,
-                'post_type'      => 'page',
-                'post_parent'    => $checkout,
-                'comment_status' => 'closed',
-                'page_template'  => 'full-width.php'
-            )
-        );
-
-        // Store our page IDs
-        $options['checkout_page']         = $checkout;
-        $options['success_page']          = $success;
-        $options['failure_page']          = $failed;
-        $options['invoice_history_page']  = $history;
+    foreach ( $pages as $key => $page ) {
+        wpinv_create_page( esc_sql( $page['name'] ), $key, $page['title'], $page['content'], $page['parent'] );
     }
-    
-    return $options;
 }

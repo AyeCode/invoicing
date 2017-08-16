@@ -25,7 +25,7 @@ class WPInv_Shortcodes {
         $function,
         $atts    = array(),
         $wrapper = array(
-            'class'  => 'wpinv',
+            'class'  => 'wpinv-invoices',
             'before' => null,
             'after'  => null
         )
@@ -50,11 +50,18 @@ class WPInv_Shortcodes {
     }
     
     public static function history( $atts, $content = null ) {
-        ob_start();
-        
-        wpinv_user_invoices();
-        
-        return ob_get_clean();
+        return self::shortcode_wrapper( array( __CLASS__, 'history_output' ), $atts );
+    }
+
+    /**
+     * Output the shortcode.
+     *
+     * @param array $atts
+     */
+    public static function history_output( $atts ) {
+        do_action( 'wpinv_before_user_invoice_history' );
+        wpinv_get_template_part( 'wpinv-invoice-history', $atts );
+        do_action( 'wpinv_after_user_invoice_history' );
     }
     
     public static function receipt( $atts, $content = null ) {
