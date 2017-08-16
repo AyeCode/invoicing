@@ -34,6 +34,7 @@ function wpinv_register_post_types() {
     $menu_icon = WPINV_PLUGIN_URL . '/assets/images/favicon.ico';
     $menu_icon = apply_filters( 'wpinv_menu_icon_invoice', $menu_icon );
 
+    $cap_type = 'wpi_invoice';
     $args = array(
         'labels'             => $labels,
         'description'        => __( 'This is where invoices are stored.', 'invoicing' ),
@@ -43,10 +44,27 @@ function wpinv_register_post_types() {
         'publicly_queryable' => true,
         'exclude_from_search'=> true,
         'show_ui'            => true,
-        'show_in_menu'       => 'wpinv',
+        'show_in_menu'       => current_user_can( 'manage_invoicing' ) ? 'wpinv' : true,
         'query_var'          => false,
         'rewrite'            => true,
-        'capability_type'    => 'post',
+        'capability_type'    => 'wpi_invoice',
+        'map_meta_cap'          => true,
+        'capabilities' => array(
+            'delete_post' => "delete_{$cap_type}",
+            'delete_posts' => "delete_{$cap_type}s",
+            'delete_private_posts' => "delete_private_{$cap_type}s",
+            'delete_published_posts' => "delete_published_{$cap_type}s",
+            'delete_others_posts' => "delete_others_{$cap_type}s",
+            'edit_post' => "edit_{$cap_type}",
+            'edit_posts' => "edit_{$cap_type}s",
+            'edit_others_posts' => "edit_other_{$cap_type}s",
+            'edit_private_posts' => "edit_private_{$cap_type}s",
+            'edit_published_posts' => "edit_published_{$cap_type}s",
+            'publish_posts' => "publish_{$cap_type}s",
+            'read_post' => "read_{$cap_type}",
+            'read_private_posts' => "read_private_{$cap_type}s",
+
+        ),
         'has_archive'        => false,
         'hierarchical'       => false,
         'menu_position'      => null,
@@ -74,17 +92,35 @@ function wpinv_register_post_types() {
         'not_found_in_trash' => __( 'No items found in trash.', 'invoicing' )
     );
     $items_labels = apply_filters( 'wpinv_items_labels', $items_labels );
-    
+
+    $cap_type = 'wpi_item';
     $invoice_item_args = array(
         'labels'                => $items_labels,
         'public'                => false,
         'show_ui'               => true,
-        'show_in_menu'          => 'wpinv',
+        'show_in_menu'          => current_user_can( 'manage_invoicing' ) ? 'wpinv' : false,
         'supports'              => array( 'title', 'excerpt' ),
         'register_meta_box_cb'  => 'wpinv_register_item_meta_boxes',
         'rewrite'               => false,
         'query_var'             => false,
+        'capability_type'       => 'wpi_item',
         'map_meta_cap'          => true,
+        'capabilities' => array(
+            'delete_post' => "delete_{$cap_type}",
+            'delete_posts' => "delete_{$cap_type}s",
+            'delete_private_posts' => "delete_private_{$cap_type}s",
+            'delete_published_posts' => "delete_published_{$cap_type}s",
+            'delete_others_posts' => "delete_others_{$cap_type}s",
+            'edit_post' => "edit_{$cap_type}",
+            'edit_posts' => "edit_{$cap_type}s",
+            'edit_others_posts' => "edit_other_{$cap_type}s",
+            'edit_private_posts' => "edit_private_{$cap_type}s",
+            'edit_published_posts' => "edit_published_{$cap_type}s",
+            'publish_posts' => "publish_{$cap_type}s",
+            'read_post' => "read_{$cap_type}",
+            'read_private_posts' => "read_private_{$cap_type}s",
+
+        ),
         'can_export'            => true,
     );
     $invoice_item_args = apply_filters( 'wpinv_register_post_type_invoice_item', $invoice_item_args );
@@ -108,6 +144,8 @@ function wpinv_register_post_types() {
         'not_found_in_trash' => __( 'No discounts found in trash.', 'invoicing' )
     );
     $labels = apply_filters( 'wpinv_discounts_labels', $labels );
+
+    $cap_type = 'wpi_discount';
     
     $args = array(
         'labels'             => $labels,
@@ -118,11 +156,27 @@ function wpinv_register_post_types() {
         'publicly_queryable' => false,
         'exclude_from_search'=> true,
         'show_ui'            => true,
-        'show_in_menu'       => 'wpinv',
+        'show_in_menu'       => current_user_can( 'manage_invoicing' ) ? 'wpinv' : false,
         'query_var'          => false,
         'rewrite'            => false,
-        'capability_type'    => 'post',
+        'capability_type'    => $cap_type,
         'map_meta_cap'       => true,
+        'capabilities' => array(
+            'delete_post' => "delete_{$cap_type}",
+            'delete_posts' => "delete_{$cap_type}s",
+            'delete_private_posts' => "delete_private_{$cap_type}s",
+            'delete_published_posts' => "delete_published_{$cap_type}s",
+            'delete_others_posts' => "delete_others_{$cap_type}s",
+            'edit_post' => "edit_{$cap_type}",
+            'edit_posts' => "edit_{$cap_type}s",
+            'edit_others_posts' => "edit_other_{$cap_type}s",
+            'edit_private_posts' => "edit_private_{$cap_type}s",
+            'edit_published_posts' => "edit_published_{$cap_type}s",
+            'publish_posts' => "publish_{$cap_type}s",
+            'read_post' => "read_{$cap_type}",
+            'read_private_posts' => "read_private_{$cap_type}s",
+
+        ),
         'has_archive'        => false,
         'hierarchical'       => false,
         'supports'           => array( 'title', 'excerpt' ),

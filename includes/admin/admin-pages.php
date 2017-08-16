@@ -8,15 +8,21 @@ add_action( 'admin_menu', 'wpinv_add_options_link', 10 );
 function wpinv_add_options_link() {
     global $menu;
 
+    if ( !(current_user_can( 'manage_invoicing' ) || current_user_can( 'manage_options' )) ) {
+        return;
+    }
+
+    $capability = apply_filters( 'invoicing_capability', 'manage_invoicing' );
+
     if ( current_user_can( 'manage_options' ) ) {
         $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
     }
 
-    $wpi_invoice            = get_post_type_object( 'wpi_invoice' );
+    $wpi_invoice = get_post_type_object( 'wpi_invoice' );
 
-    add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), 'manage_options', 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
+    add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
 
-    $wpi_settings_page   = add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), 'manage_options', 'wpinv-settings', 'wpinv_options_page' );
+    $wpi_settings_page   = add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), $capability, 'wpinv-settings', 'wpinv_options_page' );
 }
 
 add_action( 'admin_menu', 'wpinv_remove_admin_submenus', 999 );
