@@ -12,41 +12,29 @@ jQuery(function($) {
         if (valid) {
             return true;
         }
-        var fields = ['first_name', 'email', 'address', 'city', 'country', 'state'];
-        var err = [];
-        $.each(fields, function(i, field) {
-            if ($('#wpinv_' + field).length && !$('#wpinv_' + field).val()) {
-                err.push(field);
+        e.preventDefault();
+        wpinvBlock($form);
+        var data = $form.serialize();
+        data = wpinvRemoveQueryVar(data, 'action');
+        data = wpinvRemoveQueryVar(data, 'wpinv_ajax');
+        $.post(ajaxurl, data + '&action=wpinv_checkout', function(res) {
+            if (res && typeof res == 'object' && res.success) {
+                valid = true;
+                var data = new Object();
+                data.form = $form;
+                data.totals = res.data;
+                jQuery('body').trigger('wpinv_checkout_submit', data);
+                if (window.wpiSubmit) {
+                    $form.submit();
+                }
+            } else {
+                $form.unblock();
+                if (res && res.search("wpinv_adddress_confirm") !== -1) {
+                    $('#wpinv_adddress_confirm').show();
+                }
+                $('#wpinv_purchase_submit', $form).before(res);
             }
         });
-        if (err && err.length > 0) {
-            $('#wpinv_' + err[0]).focus();
-            return false;
-        } else {
-            e.preventDefault();
-            wpinvBlock($form);
-            var data = $form.serialize();
-            data = wpinvRemoveQueryVar(data, 'action');
-            data = wpinvRemoveQueryVar(data, 'wpinv_ajax');
-            $.post(ajaxurl, data + '&action=wpinv_checkout', function(res) {
-                if (res && typeof res == 'object' && res.success) {
-                    valid = true;
-                    var data = new Object();
-                    data.form = $form;
-                    data.totals = res.data;
-                    jQuery('body').trigger('wpinv_checkout_submit', data);
-                    if (window.wpiSubmit) {
-                        $form.submit();
-                    }
-                } else {
-                    $form.unblock();
-                    if (res && res.search("wpinv_adddress_confirm") !== -1) {
-                        $('#wpinv_adddress_confirm').show();
-                    }
-                    $('#wpinv_purchase_submit', $form).before(res);
-                }
-            });
-        }
         return false;
     });
     var elB = $('#wpinv-fields');
