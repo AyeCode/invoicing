@@ -1650,7 +1650,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_first_name',
                                 'name'          => 'wpinv_first_name',
                                 'value'         => $billing_details['first_name'],
-                                'class'         => 'wpi-input form-control required',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'First name', 'invoicing' ),
                                 'required'      => (bool)wpinv_get_option( 'fname_mandatory' ),
                             ) );
@@ -1676,7 +1676,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_address',
                                 'name'          => 'wpinv_address',
                                 'value'         => $billing_details['address'],
-                                'class'         => 'wpi-input form-control required',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'Address', 'invoicing' ),
                                 'required'      => (bool)wpinv_get_option( 'address_mandatory' ),
                             ) );
@@ -1689,7 +1689,7 @@ function wpinv_checkout_billing_info() {
                                 'id'            => 'wpinv_city',
                                 'name'          => 'wpinv_city',
                                 'value'         => $billing_details['city'],
-                                'class'         => 'wpi-input form-control required',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'City', 'invoicing' ),
                                 'required'      => (bool)wpinv_get_option( 'city_mandatory' ),
                             ) );
@@ -1704,7 +1704,7 @@ function wpinv_checkout_billing_info() {
                             'selected'         => $selected_country,
                             'show_option_all'  => false,
                             'show_option_none' => false,
-                            'class'            => 'wpi-input form-control required',
+                            'class'            => 'wpi-input form-control',
                             'placeholder'      => __( 'Choose a country', 'invoicing' ),
                             'required'         => (bool)wpinv_get_option( 'country_mandatory' ),
                         ) ); ?>
@@ -1721,7 +1721,7 @@ function wpinv_checkout_billing_info() {
                                 'selected'         => $billing_details['state'],
                                 'show_option_all'  => false,
                                 'show_option_none' => false,
-                                'class'            => 'wpi-input form-control required',
+                                'class'            => 'wpi-input form-control',
                                 'placeholder'      => __( 'Choose a state', 'invoicing' ),
                                 'required'         => (bool)wpinv_get_option( 'state_mandatory' ),
                             ) );
@@ -1730,7 +1730,7 @@ function wpinv_checkout_billing_info() {
                                 'name'          => 'wpinv_state',
                                 'value'         => $billing_details['state'],
                                 'id'            => 'wpinv_state',
-                                'class'         => 'wpi-input form-control required',
+                                'class'         => 'wpi-input form-control',
                                 'placeholder'   => __( 'State / Province', 'invoicing' ),
                                 'required'      => (bool)wpinv_get_option( 'state_mandatory' ),
                             ) );

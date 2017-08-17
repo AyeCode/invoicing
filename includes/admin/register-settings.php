@@ -27,14 +27,14 @@ function wpinv_update_option( $key = '', $value = false ) {
     // First let's grab the current settings
     $options = get_option( 'wpinv_settings' );
 
-    // Let's let devs alter that value coming in
+    // Let other plugin alter the value
     $value = apply_filters( 'wpinv_update_option', $value, $key );
 
     // Next let's try to update the value
     $options[ $key ] = $value;
     $did_update = update_option( 'wpinv_settings', $options );
 
-    // If it updated, let's update the global variable
+    // If it's updated, let's update the global variable
     if ( $did_update ) {
         global $wpinv_options;
         $wpinv_options[ $key ] = $value;

@@ -2,13 +2,6 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function wpinv_user_invoices( $current_page = 1 ) {    
-    global $current_page;
-    do_action( 'wpinv_before_user_invoices_template', $current_page );
-    wpinv_get_template_part( 'wpinv-invoice-history' );
-    do_action( 'wpinv_after_user_invoices_template', $current_page );
-}
-
 function wpinv_get_users_invoices( $user = 0, $number = 20, $pagination = false, $status = 'publish' ) {
     if ( empty( $user ) ) {
         $user = get_current_user_id();
