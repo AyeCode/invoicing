@@ -44,4 +44,6 @@ function wpinv_v005_upgrades() {
             clean_post_cache( $row->post_id );
         }
     }
+
+    wpinv_add_admin_caps();
 }
