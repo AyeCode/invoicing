@@ -718,7 +718,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin: 4px 0 0;
 }
 .invoicing_page_wpinv-settings .form-table select + label,
-.invoicing_page_wpinv-settings .form-table input.regular-text ~ label {
+.invoicing_page_wpinv-settings .form-table input.regular-text ~ label,
+.invoicing_page_wpinv-settings .form-table textarea ~ label{
     display: block;
 }
 .invoicing_page_wpinv-settings .form-table input.small-text ~ label,
