@@ -4,10 +4,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class WPInv_Item {
     public $ID = 0;
+    private $type;
+    private $title;
+    private $custom_id;
     private $price;
+    private $status;
+    private $custom_name;
+    private $custom_singular_name;
     private $vat_rule;
     private $vat_class;
-    private $type;
+    private $editable;
+    private $excerpt;
+    private $is_recurring;
+    private $recurring_period;
+    private $recurring_interval;
+    private $recurring_limit;
+    private $free_trial;
+    private $trial_period;
+    private $trial_interval;
 
     public $post_author = 0;
     public $post_date = '0000-00-00 00:00:00';
@@ -152,6 +166,14 @@ class WPInv_Item {
         return get_the_title( $this->ID );
     }
     
+    public function get_title() {
+        return get_the_title( $this->ID );
+    }
+    
+    public function get_status() {
+        return get_post_status( $this->ID );
+    }
+    
     public function get_summary() {
         return get_the_excerpt( $this->ID );
     }
@@ -168,12 +190,6 @@ class WPInv_Item {
         }
         
         return apply_filters( 'wpinv_get_item_price', $this->price, $this->ID );
-    }
-    
-    public function get_the_price() {
-        $item_price = wpinv_price( wpinv_format_amount( $this->price ) );
-        
-        return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
     }
     
     public function get_vat_rule() {
@@ -232,10 +248,22 @@ class WPInv_Item {
         return apply_filters( 'wpinv_get_item_custom_singular_name', $custom_singular_name, $this->ID );
     }
     
-    public function is_recurring() {
+    public function get_editable() {
+        $editable = get_post_meta( $this->ID, '_wpinv_editable', true );
+
+        return apply_filters( 'wpinv_item_get_editable', $editable, $this->ID );
+    }
+    
+    public function get_excerpt() {
+        $excerpt = get_the_excerpt( $this->ID );
+        
+        return apply_filters( 'wpinv_item_get_excerpt', $excerpt, $this->ID );
+    }
+    
+    public function get_is_recurring() {
         $is_recurring = get_post_meta( $this->ID, '_wpinv_is_recurring', true );
 
-        return (bool)apply_filters( 'wpinv_is_recurring_item', $is_recurring, $this->ID );
+        return apply_filters( 'wpinv_item_get_is_recurring', $is_recurring, $this->ID );
 
     }
     
@@ -264,7 +292,6 @@ class WPInv_Item {
         }
 
         return apply_filters( 'wpinv_item_recurring_period', $period, $full, $this->ID );
-
     }
     
     public function get_recurring_interval() {
@@ -275,22 +302,18 @@ class WPInv_Item {
         }
 
         return apply_filters( 'wpinv_item_recurring_interval', $interval, $this->ID );
-
     }
     
     public function get_recurring_limit() {
         $limit = get_post_meta( $this->ID, '_wpinv_recurring_limit', true );
 
         return (int)apply_filters( 'wpinv_item_recurring_limit', $limit, $this->ID );
-
     }
     
-    public function has_free_trial() {
+    public function get_free_trial() {
         $free_trial = get_post_meta( $this->ID, '_wpinv_free_trial', true );
-        $free_trial = $this->is_recurring() && !empty( $free_trial ) ? true : false;
 
-        return (bool)apply_filters( 'wpinv_item_has_free_trial', $free_trial, $this->ID );
-
+        return apply_filters( 'wpinv_item_get_free_trial', $free_trial, $this->ID );
     }
     
     public function get_trial_period( $full = false ) {
@@ -318,7 +341,6 @@ class WPInv_Item {
         }
 
         return apply_filters( 'wpinv_item_trial_period', $period, $full, $this->ID );
-
     }
     
     public function get_trial_interval() {
@@ -329,7 +351,24 @@ class WPInv_Item {
         }
 
         return apply_filters( 'wpinv_item_trial_interval', $interval, $this->ID );
+    }
+    
+    public function get_the_price() {
+        $item_price = wpinv_price( wpinv_format_amount( $this->price ) );
+        
+        return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
+    }
+    
+    public function is_recurring() {
+        $is_recurring = $this->get_is_recurring();
 
+        return (bool)apply_filters( 'wpinv_is_recurring_item', $is_recurring, $this->ID );
+    }
+    
+    public function has_free_trial() {
+        $free_trial = $this->is_recurring() && $this->get_free_trial() ? true : false;
+
+        return (bool)apply_filters( 'wpinv_item_has_free_trial', $free_trial, $this->ID );
     }
 
     public function is_free() {
@@ -353,7 +392,7 @@ class WPInv_Item {
     }
     
     public function is_editable() {
-        $editable = get_post_meta( $this->ID, '_wpinv_editable', true );
+        $editable = $this->get_editable();
 
         $is_editable = $editable === 0 || $editable === '0' ? false : true;
 
