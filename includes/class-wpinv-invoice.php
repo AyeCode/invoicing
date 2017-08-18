@@ -36,8 +36,8 @@ final class WPInv_Invoice {
     public $date = '';
     public $due_date = '';
     public $completed_date = '';
-    public $status      = 'pending';
-    public $post_status = 'pending';
+    public $status      = 'wpi-pending';
+    public $post_status = 'wpi-pending';
     public $old_status = '';
     public $status_nicename = '';
     public $user_id = 0;
@@ -237,7 +237,7 @@ final class WPInv_Invoice {
     private function setup_completed_date() {
         $invoice = get_post( $this->ID );
 
-        if ( 'pending' == $invoice->post_status || 'preapproved' == $invoice->post_status ) {
+        if ( 'wpi-pending' == $invoice->post_status || 'preapproved' == $invoice->post_status ) {
             return false; // This invoice was never paid
         }
 
@@ -1097,7 +1097,7 @@ final class WPInv_Invoice {
                 case 'wpi-failed':
                     $this->process_failure();
                     break;
-                case 'pending':
+                case 'wpi-pending':
                     $this->process_pending();
                     break;
             }
@@ -1192,7 +1192,7 @@ final class WPInv_Invoice {
         $process_pending = true;
 
         // If the payment was not in publish or revoked status, don't decrement stats as they were never incremented
-        if ( ( 'publish' != $this->old_status && 'revoked' != $this->old_status ) || 'pending' != $this->status ) {
+        if ( ( 'publish' != $this->old_status && 'revoked' != $this->old_status ) || 'wpi-pending' != $this->status ) {
             $process_pending = false;
         }
 
@@ -1962,7 +1962,7 @@ final class WPInv_Invoice {
     }
     
     public function needs_payment() {
-        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'pending' ), $this );
+        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'wpi-pending' ), $this );
 
         if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() || $this->is_free() ) ) {
             $needs_payment = true;

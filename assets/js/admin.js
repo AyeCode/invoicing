@@ -172,7 +172,7 @@ jQuery(function($) {
     if (wpi_stat_links.is(':visible')) {
         var publish_count = jQuery('.publish', wpi_stat_links).find('.count').text();
         jQuery('.publish', wpi_stat_links).find('a').html(WPInv_Admin.status_publish + ' <span class="count">' + publish_count + '</span>');
-        var pending_count = jQuery('.pending', wpi_stat_links).find('.count').text();
+        var pending_count = jQuery('.wpi-pending', wpi_stat_links).find('.count').text();
         jQuery('.pending', wpi_stat_links).find('a').html(WPInv_Admin.status_pending + ' <span class="count">' + pending_count + '</span>');
     }
     // Update tax rate state field based on selected rate country

@@ -68,7 +68,7 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
         'user_info'     => $purchase_data['user_info'],
         'cart_details'  => $purchase_data['cart_details'],
         'gateway'       => 'authorizenet',
-        'status'        => 'pending'
+        'status'        => 'wpi-pending'
     );
 
     // Record the pending payment

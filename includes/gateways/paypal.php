@@ -21,7 +21,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         'user_info'     => $purchase_data['user_info'],
         'cart_details'  => $purchase_data['cart_details'],
         'gateway'       => 'paypal',
-        'status'        => !empty( $purchase_data['buy_now'] ) ? 'private' : 'pending'
+        'status'        => 'wpi-pending'
     );
 
     // Record the pending payment
@@ -422,7 +422,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 			wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $data['txn_id'] ) );
 			wpinv_set_payment_transaction_id( $invoice_id, $data['txn_id'] );
 			wpinv_update_payment_status( $invoice_id, 'publish' );
-		} else if ( 'pending' == $payment_status && isset( $data['pending_reason'] ) ) {
+		} else if ( 'wpi-pending' == $payment_status && isset( $data['pending_reason'] ) ) {
 			// Look for possible pending reasons, such as an echeck
 			$note = '';
 
@@ -745,7 +745,7 @@ function wpinv_paypal_success_page_content( $content ) {
 
     $wpi_invoice = wpinv_get_invoice( $invoice_id );
     
-    if ( !empty( $wpi_invoice ) && 'pending' == $wpi_invoice->status ) {
+    if ( !empty( $wpi_invoice ) && 'wpi-pending' == $wpi_invoice->status ) {
         // Payment is still pending so show processing indicator to fix the Race Condition, issue #
         ob_start();
         wpinv_get_template_part( 'wpinv-payment-processing' );

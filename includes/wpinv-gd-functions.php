@@ -342,7 +342,7 @@ function wpinv_cpt_update( $invoice_id ) {
 }
 add_action('geodir_payment_invoice_updated', 'wpinv_cpt_update', 11, 1);
 
-function wpinv_payment_status_changed( $invoice_id, $new_status, $old_status = 'pending', $subscription = false ) {
+function wpinv_payment_status_changed( $invoice_id, $new_status, $old_status = 'wpi-pending', $subscription = false ) {
     $invoice_info = geodir_get_invoice( $invoice_id );
     if ( empty( $invoice_info ) ) {
         return false;
@@ -387,9 +387,12 @@ function wpinv_transaction_details_note( $invoice_id, $html ) {
 add_action( 'geodir_payment_invoice_transaction_details_changed', 'wpinv_transaction_details_note', 11, 2 );
 
 function wpinv_gdp_to_wpi_status( $status ) {
-    $inv_status = $status ? $status : 'pending';
+    $inv_status = $status ? $status : 'wpi-pending';
     
     switch ( $status ) {
+        case 'pending':
+            $inv_status = 'wpi-pending';
+        break;
         case 'confirmed':
             $inv_status = 'publish';
         break;
@@ -413,6 +416,9 @@ function wpinv_wpi_to_gdp_status( $status ) {
     $inv_status = $status ? $status : 'pending';
     
     switch ( $status ) {
+        case 'wpi-pending':
+            $inv_status = 'pending';
+        break;
         case 'publish':
         case 'wpi-processing':
         case 'wpi-renewal':

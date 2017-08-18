@@ -20,7 +20,7 @@ function wpinv_process_bank_transfer_payment( $purchase_data ) {
         'user_info'     => $purchase_data['user_info'],
         'cart_details'  => $purchase_data['cart_details'],
         'gateway'       => 'bank_transfer',
-        'status'        => 'pending'
+        'status'        => 'wpi-pending'
     );
 
     // Record the pending payment
@@ -28,7 +28,7 @@ function wpinv_process_bank_transfer_payment( $purchase_data ) {
     
     if ( !empty( $invoice ) ) {
         wpinv_set_payment_transaction_id( $invoice->ID, $invoice->generate_key() );
-        wpinv_update_payment_status( $invoice, 'pending' );
+        wpinv_update_payment_status( $invoice, 'wpi-pending' );
         
         // Empty the shopping cart
         wpinv_empty_cart();
@@ -43,7 +43,7 @@ function wpinv_process_bank_transfer_payment( $purchase_data ) {
 add_action( 'wpinv_gateway_bank_transfer', 'wpinv_process_bank_transfer_payment' );
 
 function wpinv_show_bank_info( $invoice ) {
-    if ( !empty( $invoice ) && $invoice->gateway == 'bank_transfer' && $invoice->status == 'pending' ) {
+    if ( !empty( $invoice ) && $invoice->gateway == 'bank_transfer' && $invoice->status == 'wpi-pending' ) {
         $bank_info = wpinv_get_bank_info( true );
         ?>
         <div class="wpinv-bank-details">
@@ -65,7 +65,7 @@ function wpinv_show_bank_info( $invoice ) {
 add_action( 'wpinv_before_receipt_details', 'wpinv_show_bank_info', 10, 1 );
 
 function wpinv_invoice_print_bank_info( $invoice ) {
-    if ( !empty( $invoice ) && $invoice->gateway == 'bank_transfer' && $invoice->status == 'pending' ) {
+    if ( !empty( $invoice ) && $invoice->gateway == 'bank_transfer' && $invoice->status == 'wpi-pending' ) {
         ?>
         <div class="row wpinv-bank-info">
             <?php echo wpinv_show_bank_info( $invoice ); ?>

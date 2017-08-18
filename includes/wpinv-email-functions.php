@@ -13,17 +13,17 @@ if ( !defined( 'WPINC' ) ) {
 
 function wpinv_init_transactional_emails() {
     $email_actions = apply_filters( 'wpinv_email_actions', array(
-        'wpinv_status_pending_to_processing',
-        'wpinv_status_pending_to_publish',
-        'wpinv_status_pending_to_cancelled',
-        'wpinv_status_pending_to_failed',
-        'wpinv_status_pending_to_onhold',
-        'wpinv_status_failed_to_processing',
-        'wpinv_status_failed_to_publish',
-        'wpinv_status_failed_to_onhold',
-        'wpinv_status_onhold_to_processing',
-        'wpinv_status_onhold_to_cancelled',
-        'wpinv_status_onhold_to_failed',
+        'wpinv_status_wpi-pending_to_wpi-processing',
+        'wpinv_status_wpi-pending_to_publish',
+        'wpinv_status_wpi-pending_to_wpi-cancelled',
+        'wpinv_status_wpi-pending_to_wpi-failed',
+        'wpinv_status_wpi-pending_to_wpi-onhold',
+        'wpinv_status_wpi-failed_to_wpi-processing',
+        'wpinv_status_wpi-failed_to_publish',
+        'wpinv_status_wpi-failed_to_wpi-onhold',
+        'wpinv_status_wpi-onhold_wpi-to_processing',
+        'wpinv_status_wpi-onhold_to_wpi-cancelled',
+        'wpinv_status_wpi-onhold_to_wpi-failed',
         'wpinv_status_publish',
         'wpinv_fully_refunded',
         'wpinv_partially_refunded',
@@ -37,27 +37,27 @@ function wpinv_init_transactional_emails() {
 add_action( 'init', 'wpinv_init_transactional_emails' );
 
 // New invoice email
-add_action( 'wpinv_status_pending_to_processing_notification', 'wpinv_new_invoice_notification' );
-add_action( 'wpinv_status_pending_to_publish_notification', 'wpinv_new_invoice_notification' );
-add_action( 'wpinv_status_pending_to_onhold_notification', 'wpinv_new_invoice_notification' );
-add_action( 'wpinv_status_failed_to_processing_notification', 'wpinv_new_invoice_notification' );
-add_action( 'wpinv_status_failed_to_publish_notification', 'wpinv_new_invoice_notification' );
-add_action( 'wpinv_status_failed_to_onhold_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-processing_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_publish_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-onhold_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-failed_to_wpi-processing_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-failed_to_publish_notification', 'wpinv_new_invoice_notification' );
+add_action( 'wpinv_status_wpi-failed_to_wpi-onhold_notification', 'wpinv_new_invoice_notification' );
 
 // Cancelled invoice email
-add_action( 'wpinv_status_pending_to_cancelled_notification', 'wpinv_cancelled_invoice_notification' );
-add_action( 'wpinv_status_onhold_to_cancelled_notification', 'wpinv_cancelled_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-cancelled_notification', 'wpinv_cancelled_invoice_notification' );
+add_action( 'wpinv_status_wpi-onhold_to_wpi-cancelled_notification', 'wpinv_cancelled_invoice_notification' );
 
 // Failed invoice email
-add_action( 'wpinv_status_pending_to_failed_notification', 'wpinv_failed_invoice_notification' );
-add_action( 'wpinv_status_onhold_to_failed_notification', 'wpinv_failed_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-failed_notification', 'wpinv_failed_invoice_notification' );
+add_action( 'wpinv_status_wpi-onhold_to_wpi-failed_notification', 'wpinv_failed_invoice_notification' );
 
 // On hold invoice email
-add_action( 'wpinv_status_pending_to_onhold_notification', 'wpinv_onhold_invoice_notification' );
-add_action( 'wpinv_status_failed_to_onhold_notification', 'wpinv_onhold_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-onhold_notification', 'wpinv_onhold_invoice_notification' );
+add_action( 'wpinv_status_wpi-failed_to_wpi-onhold_notification', 'wpinv_onhold_invoice_notification' );
 
 // Processing invoice email
-add_action( 'wpinv_status_pending_to_processing_notification', 'wpinv_processing_invoice_notification' );
+add_action( 'wpinv_status_wpi-pending_to_wpi-processing_notification', 'wpinv_processing_invoice_notification' );
 
 // Paid invoice email
 add_action( 'wpinv_status_publish_notification', 'wpinv_completed_invoice_notification' );
@@ -1383,7 +1383,7 @@ function wpinv_email_payment_reminders() {
         
         $args = array(
             'post_type'     => 'wpi_invoice',
-            'post_status'   => 'pending',
+            'post_status'   => 'wpi-pending',
             'fields'        => 'ids',
             'numberposts'   => '-1',
             'meta_query'    => array(

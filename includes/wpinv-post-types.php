@@ -232,6 +232,14 @@ function wpinv_change_default_title( $title ) {
 add_filter( 'enter_title_here', 'wpinv_change_default_title' );
 
 function wpinv_register_post_status() {
+    register_post_status( 'wpi-pending', array(
+        'label'                     => _x( 'Pending', 'Invoice status', 'invoicing' ),
+        'public'                    => true,
+        'exclude_from_search'       => true,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop( 'Pending <span class="count">(%s)</span>', 'Pending <span class="count">(%s)</span>', 'invoicing' )
+    ) );
     register_post_status( 'wpi-processing', array(
         'label'                     => _x( 'Processing', 'Invoice status', 'invoicing' ),
         'public'                    => true,

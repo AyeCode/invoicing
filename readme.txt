@@ -32,6 +32,7 @@ Invoice notes should not counted in WP standard comments count - CHANGED
 Payment gateways should be hidden if invoice total is zero(except invoices with free trial) - FIXED
 Allow for sequential invoice numbers - CHANGED
 Limit the discount to a single use per user sometimes not working - FIXED
+Invoice status "pending" changed to "wpi-pending" - CHANGED
 
 = 0.0.4 =
 First public beta release - RELEASE

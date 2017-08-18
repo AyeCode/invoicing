@@ -215,7 +215,7 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
     } else {
         $updating                       = false;
         $invoice_data['post_type']      = 'wpi_invoice';
-        $invoice_data['post_status']    = apply_filters( 'wpinv_default_invoice_status', 'pending' );
+        $invoice_data['post_status']    = apply_filters( 'wpinv_default_invoice_status', 'wpi-pending' );
         $invoice_data['ping_status']    = 'closed';
         $invoice_data['post_author']    = !empty( $args['user_id'] ) ? $args['user_id'] : get_current_user_id();
         $invoice_data['post_title']     = wpinv_format_invoice_number( '0' );

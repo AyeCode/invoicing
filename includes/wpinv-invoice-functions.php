@@ -134,7 +134,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         }
     }
     
-    $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'pending' ) );
+    $invoice->set( 'status', ( !empty( $invoice_data['status'] ) ? $invoice_data['status'] : 'wpi-pending' ) );
     
     if ( !empty( $payment_details ) ) {
         $invoice->set( 'currency', $payment_details['currency'] );
@@ -275,7 +275,7 @@ function wpinv_update_invoice( $invoice_data = array(), $wp_error = false ) {
         return 0;
     }
 
-    if ( !$invoice->has_status( array( 'pending' ) ) ) {
+    if ( !$invoice->has_status( array( 'wpi-pending' ) ) ) {
         if ( $wp_error ) {
             return new WP_Error( 'invalid_invoice_status', __( 'Only invoice with pending payment is allowed to update.', 'invoicing' ) );
         }
@@ -1987,7 +1987,7 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
         case 'wpi-renewal' :
             $class = 'label-success';
         break;
-        case 'pending' :
+        case 'wpi-pending' :
             $class = 'label-primary';
         break;
         case 'wpi-processing' :

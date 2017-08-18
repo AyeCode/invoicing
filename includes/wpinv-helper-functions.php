@@ -93,7 +93,7 @@ function wpinv_get_invoice_statuses( $trashed = false ) {
     global $post;
     $invoice_statuses = array();
     $invoice_statuses = array(
-        'pending' => __('Pending Payment', 'invoicing'),
+        'wpi-pending' => __('Pending Payment', 'invoicing'),
         'publish' => __('Paid', 'invoicing'),
         'wpi-processing' => __('Processing', 'invoicing'),
         'wpi-onhold' => __('On Hold', 'invoicing'),
