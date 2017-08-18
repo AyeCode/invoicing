@@ -299,7 +299,11 @@ class WPInv_Plugin {
     }
     
     public function admin_body_class( $classes ) {
-        global $pagenow, $post;
+        global $pagenow, $post, $current_screen;
+        
+        if ( !empty( $current_screen->post_type ) && ( $current_screen->post_type == 'wpi_invoice' || $current_screen->post_type == 'wpi_quote' ) ) {
+            $classes .= ' wpinv-cpt';
+        }
         
         $page = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : false;
 
