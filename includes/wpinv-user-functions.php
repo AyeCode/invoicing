@@ -24,7 +24,7 @@ function wpinv_get_users_invoices( $user = 0, $number = 20, $pagination = false,
         'post_type'      => 'wpi_invoice',
         'posts_per_page' => 20,
         'paged'          => null,
-        'post_status'    => array( 'publish', 'pending' ),
+        'post_status'    => array( 'publish', 'wpi-pending' ),
         'user'           => $user,
         'order'          => 'date',
     );

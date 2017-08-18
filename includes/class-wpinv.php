@@ -279,7 +279,7 @@ class WPInv_Plugin {
         $localize['decimals']                   = wpinv_decimals();
         $localize['save_invoice']               = __( 'Save Invoice', 'invoicing' );
         $localize['status_publish']             = wpinv_status_nicename( 'publish' );
-        $localize['status_pending']             = wpinv_status_nicename( 'pending' );
+        $localize['status_pending']             = wpinv_status_nicename( 'wpi-pending' );
         $localize['delete_tax_rate']            = __( 'Are you sure you wish to delete this tax rate?', 'invoicing' );
         $localize['OneItemMin']                 = __( 'Invoice must contain at least one item', 'invoicing' );
         $localize['DeleteInvoiceItem']          = __( 'Are you sure you wish to delete this item?', 'invoicing' );
