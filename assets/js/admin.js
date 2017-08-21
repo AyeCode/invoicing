@@ -902,7 +902,7 @@ jQuery(function($) {
             $('#wpinv_tools_table').on('click', '.wpinv-i-close', function(e) {
                 $(this).closest('tr').fadeOut();
             });
-        },
+        }
     };
     $('.post-type-wpi_invoice form#post #titlediv [name="post_title"]').attr('readonly', true);
     $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
@@ -1008,18 +1008,9 @@ jQuery(function($) {
             $('body').on('click', '#wpi-export-success .notice-dismiss', function() {
                 $(this).closest('#wpi-export-success').parent().slideUp('fast');
             });
-        },
+        }
     };
     WPInv_Export.init();
-
-    var placeSearch, autocomplete;
-    var componentForm = {
-        wpinv_address: 'short_name',
-        wpinv_city: 'long_name',
-        wpinv_state: 'short_name',
-        wpinv_country: 'short_name',
-        wpinv_zip: 'short_name'
-    };
 
 });
 
