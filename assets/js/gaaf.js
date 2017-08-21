@@ -7,7 +7,7 @@ jQuery(function ($) {
     function fillInAddress() {
         var place = autocomplete.getPlace();
         var temp_state = '';
-        console.log(place);
+        
         for (var i = 0; i < place.address_components.length; i++) {
 
             var address_type = place.address_components[i].types[0];
