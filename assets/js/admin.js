@@ -1011,6 +1011,7 @@ jQuery(function($) {
         }
     };
     WPInv_Export.init();
+
 });
 
 function wpinvBlock(el, message) {

@@ -38,11 +38,13 @@ class WPInv_Meta_Box_Billing_Details {
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-btns table-layout">
             <div class="gdmbx-th"><label><?php _e( 'Actions', 'invoicing' );?></label>
             </div>
-            <div class="gdmbx-td">
-                <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
-                <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
-                <a style="display:none" class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-close"></i><?php _e( 'Cancel', 'invoicing' );?> </a>
-            </div>
+            <?php if($invoice->has_status(array('wpi-pending', 'wpi-quote-pending'))){ ?>
+                <div class="gdmbx-td">
+                    <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
+                    <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
+                    <a style="display:none" class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-close"></i><?php _e( 'Cancel', 'invoicing' );?> </a>
+                </div>
+            <?php } ?>
         </div>
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-first-name table-layout">
             <div class="gdmbx-th"><label for="wpinv_first_name"><?php _e( 'First Name', 'invoicing' );?></label></div>

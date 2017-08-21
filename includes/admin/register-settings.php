@@ -641,6 +641,27 @@ function wpinv_get_registered_settings() {
                         ),
                         'std'     => 0,
                     ),
+                    'address_autofill_settings' => array(
+                        'id'   => 'address_autofill_settings',
+                        'name' => '<h3>' . __( 'Google Address Auto Complete', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'address_autofill_active' => array(
+                        'id'   => 'address_autofill_active',
+                        'name' => __( 'Enable/Disable', 'invoicing' ),
+                        'desc' => __( 'Enable google address auto complete', 'invoicing' ),
+                        'type' => 'checkbox',
+                        'std'  => 0
+                    ),
+                    'address_autofill_api' => array(
+                        'id' => 'address_autofill_api',
+                        'name' => __( 'Google Place API Key', 'invoicing' ),
+                        'desc' => wp_sprintf(__( 'Enter google place API key. For more information go to google place API %sdocumenation%s', 'invoicing' ), '<a href="https://developers.google.com/maps/documentation/javascript/places-autocomplete" target="_blank">', '</a>' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => ''
+                    ),
+
                 ),
             )
         ),
