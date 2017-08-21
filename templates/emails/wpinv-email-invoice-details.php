@@ -9,8 +9,8 @@ $sent_to_admin  = !empty( $sent_to_admin ) ? true : false;
 if ( $sent_to_admin ) {
     $invoice_url = get_edit_post_link( $invoice->ID );
 } else {
-    $secret = !empty( $email_type ) && $email_type == 'user_invoice' ? true : false;
-    $invoice_url = $invoice->get_view_url( $secret );
+    $with_key = !empty( $email_type ) && $email_type == 'user_invoice' ? true : false;
+    $invoice_url = $invoice->get_view_url( false, $with_key );
 }
 $use_taxes = wpinv_use_taxes();
 $vat_name = $wpinv_euvat->get_vat_name();

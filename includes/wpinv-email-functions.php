@@ -1473,7 +1473,7 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
     $replace['invoice_number']  = $invoice->get_number();
     $replace['invoice_due_date']= $invoice->get_due_date( true );
     $replace['invoice_total']   = $invoice->get_total( true );
-    $replace['invoice_link']    = $invoice->get_view_url( true );
+    $replace['invoice_link']    = $invoice->get_view_url( false, true );
     $replace['invoice_pay_link']= $invoice->get_checkout_payment_url( false, true );
     $replace['is_was']          = strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' );
 
