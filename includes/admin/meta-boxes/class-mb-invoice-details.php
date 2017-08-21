@@ -68,7 +68,7 @@ class WPInv_Meta_Box_Details {
             </div>
         </div>
         <?php do_action( 'wpinv_meta_box_details_inner', $post_id ); ?>
-        <?php if ( !( $is_paid = $invoice->is_paid() ) || $discount_code ) { ?>
+        <?php if ( !( $is_paid = ( $invoice->is_paid() || $invoice->is_refunded() ) ) || $discount_code ) { ?>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount-code table-layout">
             <div class="gdmbx-th"><label for="wpinv_discount_code"><?php _e( 'Discount Code:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
@@ -189,7 +189,7 @@ class WPInv_Meta_Box_Details {
         global $wpi_mb_invoice;
 
         $set_dateway = empty( $wpi_mb_invoice->gateway ) ? true : false;
-        if ( !$set_dateway && !$wpi_mb_invoice->get_meta( '_wpinv_checkout', true ) && !$wpi_mb_invoice->is_paid() ) {
+        if ( !$set_dateway && !$wpi_mb_invoice->get_meta( '_wpinv_checkout', true ) && !$wpi_mb_invoice->is_paid() && !$wpi_mb_invoice->is_refunded() ) {
             $set_dateway = true;
         }
         
@@ -210,8 +210,10 @@ class WPInv_Meta_Box_Details {
             echo wp_sprintf( __( '<label>Gateway:</label> %s', 'invoicing' ), wpinv_get_gateway_checkout_label( $wpi_mb_invoice->gateway ) );
         } ?>
         </p>
-        <?php if ( $wpi_mb_invoice->is_paid() ) { ?>
-        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $wpi_mb_invoice->get_key() ); ?></p>
+        <?php if ( $key = $wpi_mb_invoice->get_key() ) { ?>
+        <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Key:</label> %s', 'invoicing' ), $key ); ?></p>
+        <?php } ?>
+        <?php if ( $wpi_mb_invoice->is_paid() || $wpi_mb_invoice->is_refunded() ) { ?>
         <p class="wpi-meta-row"><?php echo wp_sprintf( __( '<label>Transaction ID:</label> %s', 'invoicing' ), wpinv_payment_link_transaction_id( $wpi_mb_invoice ) ); ?></p>
         <?php } ?>
         <?php
