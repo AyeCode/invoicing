@@ -6,6 +6,7 @@ jQuery(function ($) {
     autocomplete.addListener('place_changed', fillInAddress);
     function fillInAddress() {
         var place = autocomplete.getPlace();
+        console.log(place);
         var temp_state = '';
         
         for (var i = 0; i < place.address_components.length; i++) {
@@ -16,6 +17,10 @@ jQuery(function ($) {
                 case 'route':
                     var val = place.address_components[i]['short_name'];
                     document.getElementById('wpinv_address').value = val;
+                    break;
+                case 'postal_town':
+                    var val = place.address_components[i]['short_name'];
+                    document.getElementById('wpinv_city').value = val;
                     break;
                 case 'locality':
                     var val = place.address_components[i]['long_name'];

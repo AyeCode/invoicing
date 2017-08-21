@@ -2,10 +2,10 @@
 /*
 Plugin Name: Invoicing
 Plugin URI: https://wpinvoicing.com/
-Description: Invoicing plugin.
+Description: Invoicing plugin, this plugin allows you to send invoices (also EU VAT compliant) to people and have them pay you online.
 Version: 0.0.4
-Author: AyeCode
-Author URI: https://wpinvoicing.com/
+Author: AyeCode Ltd
+Author URI: https://wpinvoicing.com
 License: GPLv3
 Update URL: https://github.com/AyeCode/invoicing/
 */
@@ -16,7 +16,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '0.0.4' );
+    define( 'WPINV_VERSION', '0.0.41' );
 }
 
 if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {

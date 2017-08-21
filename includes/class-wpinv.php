@@ -274,7 +274,7 @@ class WPInv_Plugin {
             }
         }
 
-        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui' ),  WPINV_VERSION );
+        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
         wp_enqueue_script( 'wpinv-admin-script' );
         
         $localize                               = array();

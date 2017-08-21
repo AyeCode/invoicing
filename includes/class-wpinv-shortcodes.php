@@ -12,6 +12,7 @@ class WPInv_Shortcodes {
             'wpinv_checkout'  => __CLASS__ . '::checkout',
             'wpinv_history'  => __CLASS__ . '::history',
             'wpinv_receipt'  => __CLASS__ . '::receipt',
+            'wpinv_buy'  => __CLASS__ . '::buy',
         );
 
         foreach ( $shortcodes as $shortcode => $function ) {
@@ -66,5 +67,24 @@ class WPInv_Shortcodes {
     
     public static function receipt( $atts, $content = null ) {
         return wpinv_payment_receipt( $atts, $content );
+    }
+
+    public static function buy( $atts, $content = null ) {
+        $a = shortcode_atts( array(
+            'items' => '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
+            'title' => __('Buy Now', 'invoicing' ), // the button title
+            'post_id' => '', // any related post_id
+        ), $atts );
+        
+        $post_id = isset($a['post_id']) ? (int)$a['post_id'] : '';
+
+        $html = '<div class="wpi-buy-button-wrapper">';
+        $html .= '<input type="submit" name="submit" class="button button-primary wpi-buy-button" value="'.$a['title'].'" onclick="wpi_buy(\''.$a['items'].'\','.$post_id.');" />';
+        $html .= wp_nonce_field( 'wpinv_buy_items', 'wpinv_buy_nonce', true, false );
+        $html .= '</div>';
+
+
+        return $html;
+
     }
 }
