@@ -350,26 +350,30 @@ function wpinv_is_ssl_enforced() {
 
 function wpinv_user_can_print_invoice( $post ) {
     $allow = false;
-    
-    if ( !( $user_id = get_current_user_id() ) ) {
+
+    $post = get_post( $post );
+
+    if ( empty( $post->ID ) ) {
         return $allow;
     }
-    
-    if ( is_int( $post ) ) {
-        $post = get_post( $post );
+
+    $invoice = wpinv_get_invoice( $post->ID );
+    if ( empty( $invoice->ID ) ) {
+        return $allow;
+    }
+
+    // Don't allow trash, draft status
+    if ( $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
+        if ( current_user_can( 'manage_options' ) ) { // Admin user
+            $allow = true;
+        } else if ( is_user_logged_in() && (int)$invoice->get_user_id() === (int)get_current_user_id() ) { // Invoice owner
+            $allow = true;
+        } else if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) { // Invoice by key
+            $allow = true;
+        }
     }
     
-    // Allow to owner.
-    if ( is_object( $post ) && !empty( $post->post_author ) && $post->post_author == $user_id ) {
-        $allow = true;
-    }
-    
-    // Allow to admin user.
-    if ( current_user_can( 'manage_options' ) ) {
-        $allow = true;
-    }
-    
-    return apply_filters( 'wpinv_can_print_invoice', $allow, $post );
+    return apply_filters( 'wpinv_can_print_invoice', $allow, $post, $invoice );
 }
 
 function wpinv_schedule_events() {
@@ -384,3 +388,8 @@ function wpinv_schedule_event_twicedaily() {
     wpinv_email_payment_reminders();
 }
 add_action( 'wpinv_register_schedule_event_twicedaily', 'wpinv_schedule_event_twicedaily' );
+
+function wpinv_allow_guest_checkout() {
+    $return = wpinv_get_option( 'disable_guest_checkout', false );
+    return (bool) apply_filters( 'wpinv_allow_guest_checkout', !$return );
+}

@@ -72,8 +72,8 @@ class WPInv_Ajax {
             'admin_remove_discount' => false,
             'check_email' => false,
             'run_tool' => false,
-            'apply_discount' => false,
-            'remove_discount' => false,
+            'apply_discount' => true,
+            'remove_discount' => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -165,7 +165,7 @@ class WPInv_Ajax {
             die();
         }
         
-        if ( $invoice->is_paid() ) {
+        if ( $invoice->is_paid() || $invoice->is_refunded() ) {
             die(); // Don't allow modify items for paid invoice.
         }
         
@@ -277,7 +277,7 @@ class WPInv_Ajax {
             die();
         }
         
-        if ( $invoice->is_paid() ) {
+        if ( $invoice->is_paid() || $invoice->is_refunded() ) {
             die(); // Don't allow modify items for paid invoice.
         }
         
@@ -491,7 +491,7 @@ class WPInv_Ajax {
         }
         
         $invoice = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) || ( !empty( $invoice ) && $invoice->is_paid() ) ) {
+        if ( empty( $invoice ) || ( !empty( $invoice ) && ( $invoice->is_paid() || $invoice->is_refunded() ) ) ) {
             die();
         }
         
@@ -541,7 +541,7 @@ class WPInv_Ajax {
         }
         
         $invoice = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) || ( !empty( $invoice ) && $invoice->is_paid() ) ) {
+        if ( empty( $invoice ) || ( !empty( $invoice ) && ( $invoice->is_paid() || $invoice->is_refunded() ) ) ) {
             die();
         }
         
@@ -615,6 +615,8 @@ class WPInv_Ajax {
     }
     
     public static function apply_discount() {
+        global $wpi_userID;
+        
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
         
         $response = array();
@@ -626,9 +628,15 @@ class WPInv_Ajax {
             $response['msg']            = '';
             $response['data']['code']   = $discount_code;
             
-            $user = is_user_logged_in() ? get_current_user_id() : '';
+            $invoice = wpinv_get_invoice_cart();
+            if ( empty( $invoice->ID ) ) {
+                $response['msg'] = __( 'Invalid checkout request.', 'invoicing' );
+                wp_send_json( $response );
+            }
 
-            if ( wpinv_is_discount_valid( $discount_code, $user ) ) {
+            $wpi_userID = $invoice->get_user_id();
+
+            if ( wpinv_is_discount_valid( $discount_code, $wpi_userID ) ) {
                 $discount       = wpinv_get_discount_by_code( $discount_code );
                 $discounts      = wpinv_set_cart_discount( $discount_code );
                 $amount         = wpinv_format_discount_rate( wpinv_get_discount_type( $discount->ID ), wpinv_get_discount_amount( $discount->ID ) );

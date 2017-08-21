@@ -39,6 +39,9 @@ class WPInv_Meta_Box_Items {
         if ( $invoice->is_paid() ) {
             $class .= ' wpinv-paid';
         }
+        if ( $invoice->is_refunded() ) {
+            $class .= ' wpinv-refunded';
+        }
         if ( $is_recurring ) {
             $class .= ' wpi-recurring';
         }
@@ -180,7 +183,7 @@ class WPInv_Meta_Box_Items {
             </table>
             <div class="wpinv-actions">
                 <?php
-                    if ( !$invoice->is_paid() ) {
+                    if ( !$invoice->is_paid() && !$invoice->is_refunded() ) {
                     if ( !$invoice->is_recurring() ) {
                     echo wpinv_item_dropdown( array(
                         'name'             => 'wpinv_invoice_item',

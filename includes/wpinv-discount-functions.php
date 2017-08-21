@@ -1209,13 +1209,15 @@ function wpinv_check_delete_discount( $check, $post, $force_delete ) {
 add_filter( 'pre_delete_post', 'wpinv_check_delete_discount', 10, 3 );
 
 function wpinv_checkout_form_validate_discounts() {
+    global $wpi_checkout_id;
+    
     $discounts = wpinv_get_cart_discounts();
     
     if ( !empty( $discounts ) ) {
         $invalid = false;
         
         foreach ( $discounts as $key => $code ) {
-            if ( !wpinv_is_discount_valid( $code, get_current_user_id() ) ) {
+            if ( !wpinv_is_discount_valid( $code, (int)wpinv_get_user_id( $wpi_checkout_id ) ) ) {
                 $invalid = true;
                 
                 wpinv_unset_cart_discount( $code );

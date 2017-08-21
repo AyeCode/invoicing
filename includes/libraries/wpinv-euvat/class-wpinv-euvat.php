@@ -1616,8 +1616,10 @@ class WPInv_EUVat {
     }
     
     public static function get_user_company( $company = '', $user_id = 0 ) {
+        global $wpi_current_id, $wpi_userID;
+        
         if ( empty( $user_id ) ) {
-            $user_id = get_current_user_id();
+            $user_id = !empty( $wpi_userID ) ? $wpi_userID : ( $wpi_current_id ? wpinv_get_user_id( $wpi_current_id ) : get_current_user_id() );
         }
 
         $company = empty( $user_id ) ? "" : get_user_meta( $user_id, '_wpinv_company', true );
@@ -1898,7 +1900,7 @@ class WPInv_EUVat {
         $requires_vat       = !self::hide_vat_fields() && $invoice->get_total() > 0 && self::requires_vat( 0, false, $is_digital );
         $wpi_requires_vat   = $requires_vat;
         
-        $company            = is_user_logged_in() ? self::get_user_company() : '';
+        $company            = self::get_user_company();
         $vat_number         = self::get_user_vat_number();
         
         $validated          = $vat_number ? self::get_user_vat_number( '', 0, true ) : 1;

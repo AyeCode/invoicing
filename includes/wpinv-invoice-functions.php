@@ -156,9 +156,6 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     $invoice->set( 'zip', $user_info['zip'] );
     $invoice->set( 'discounts', $user_info['discount'] );
     $invoice->set( 'ip', ( !empty( $invoice_data['ip'] ) ? $invoice_data['ip'] : wpinv_get_ip() ) );
-    if ( !empty( $invoice_data['invoice_key'] ) ) {
-        $invoice->set( 'key', $invoice_data['invoice_key'] );
-    }
     $invoice->set( 'mode', ( wpinv_is_test_mode() ? 'test' : 'live' ) );
     $invoice->set( 'parent_invoice', ( !empty( $invoice_data['parent'] ) ? absint( $invoice_data['parent'] ) : '' ) );
     
@@ -300,11 +297,6 @@ function wpinv_update_invoice( $invoice_data = array(), $wp_error = false ) {
     // Invoice IP address
     if ( !empty( $invoice_data['ip'] ) ) {
         $invoice->set( 'ip', $invoice_data['ip'] );
-    }
-
-    // Invoice key
-    if ( !empty( $invoice_data['invoice_key'] ) ) {
-        $invoice->set( 'key', $invoice_data['invoice_key'] );
     }
     
     // User info
@@ -1125,7 +1117,8 @@ function wpinv_validate_checkout_fields() {
         wpinv_checkout_validate_agree_to_terms();
     }
     
-    $valid_data['logged_in_user']   = wpinv_checkout_validate_logged_in_user();
+    $valid_data['invoice_user'] = wpinv_checkout_validate_invoice_user();
+    $valid_data['current_user'] = wpinv_checkout_validate_current_user();
     
     // Return collected data
     return $valid_data;
@@ -1162,6 +1155,8 @@ function wpinv_checkout_validate_gateway() {
 }
 
 function wpinv_checkout_validate_discounts() {
+    global $wpi_cart;
+    
     // Retrieve the discount stored in cookies
     $discounts = wpinv_get_cart_discounts();
     
@@ -1170,7 +1165,7 @@ function wpinv_checkout_validate_discounts() {
     if ( ! empty( $discounts ) ) {
         foreach ( $discounts as $discount ) {
             // Check if valid
-            if (  !wpinv_is_discount_valid( $discount, get_current_user_id() ) ) {
+            if (  !wpinv_is_discount_valid( $discount, (int)$wpi_cart->get_user_id() ) ) {
                 // Discount is not valid
                 $error = true;
             }
@@ -1398,16 +1393,15 @@ function wpinv_checkout_validate_agree_to_terms() {
     }
 }
 
-function wpinv_checkout_validate_logged_in_user() {
-    $user_ID = get_current_user_id();
+function wpinv_checkout_validate_invoice_user() {
+    global $wpi_cart;
     
     $valid_user_data = array(
-        // Assume there will be errors
         'user_id' => -1
     );
     
     // Verify there is a user_ID
-    if ( $user_ID > 0 ) {
+    if ( $user_ID = (int)$wpi_cart->get_user_id() ) {
         // Get the logged in user data
         $user_data = get_userdata( $user_ID );
         $required_fields  = wpinv_checkout_required_fields();
@@ -1438,10 +1432,30 @@ function wpinv_checkout_validate_logged_in_user() {
             // Set invalid user error
             wpinv_set_error( 'invalid_user', __( 'The user billing information is invalid', 'invoicing' ) );
         }
+    } else {
+        // Set invalid user error
+        wpinv_set_error( 'invalid_user_id', __( 'The invalid invoice user id', 'invoicing' ) );
     }
 
     // Return user data
     return $valid_user_data;
+}
+
+function wpinv_checkout_validate_current_user() {
+    $data = array();
+    
+    if ( is_user_logged_in() ) {
+        $data['user_id'] = (int)get_current_user_id();
+    } else {
+        // If guest checkout allowed
+        if ( wpinv_allow_guest_checkout() ) {
+            $data['user_id'] = 0;
+        } else {
+            wpinv_set_error( 'logged_in_only', __( 'You must be logged in an account to pay for invoice', 'invoicing' ) );
+        }
+    }
+
+    return $data;
 }
 
 function wpinv_checkout_form_get_user( $valid_data = array() ) {
@@ -1449,26 +1463,23 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
     $user    = false;
     $is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
-    /*if ( $is_ajax ) {
-        // Do not create or login the user during the ajax submission (check for errors only)
-        return true;
-    } else */if ( is_user_logged_in() ) {
-        // Set the valid user as the logged in collected data
-        $user = $valid_data['logged_in_user'];
+    if ( empty( $valid_data['current_user'] ) ) {
+        $user = false;
+    } else {
+        // Set the valid invoice user
+        $user = $valid_data['invoice_user'];
     }
 
-    // Verify we have an user
+    // Verify invoice have an user
     if ( false === $user || empty( $user ) ) {
-        // Return false
         return false;
     }
-    
+
     $address_fields = array(
         'first_name',
         'last_name',
         'company',
         'vat_number',
-        ///'email',
         'phone',
         'address',
         'city',
@@ -1480,7 +1491,7 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
     foreach ( $address_fields as $field ) {
         $user[$field]  = !empty( $_POST['wpinv_' . $field] ) ? sanitize_text_field( $_POST['wpinv_' . $field] ) : false;
         
-        if ( !empty( $user['user_id'] ) ) {
+        if ( !empty( $user['user_id'] ) && $valid_data['current_user'] == $user['user_id'] ) {
             update_user_meta( $user['user_id'], '_wpinv_' . $field, $user[$field] );
         }
     }
@@ -1514,11 +1525,12 @@ function wpinv_empty_cart() {
 }
 
 function wpinv_process_checkout() {
-    global $wpinv_euvat, $wpi_checkout_id;
+    global $wpinv_euvat, $wpi_checkout_id, $wpi_cart;
     
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
+    $wpi_cart = $invoice;
     
     $wpi_checkout_id = $invoice->ID;
     
@@ -1871,20 +1883,26 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 		$wpinv_receipt_args['id'] = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? (int)$_GET['invoice-id'] : 0;
 	}
 
-	$user_id = (int) wpinv_get_user_id( $wpinv_receipt_args['id'] );
-    $invoice_meta = wpinv_get_invoice_meta( $wpinv_receipt_args['id'] );
+	if ( empty( $wpinv_receipt_args['id'] ) ) {
+		return $return;
+	}
 
-	if ( is_user_logged_in() ) {
-		if ( $user_id === (int) get_current_user_id() ) {
+	$invoice = wpinv_get_invoice( $wpinv_receipt_args['id'] );
+	if ( !( !empty( $invoice->ID ) && $invoice->get_key() === $invoice_key ) ) {
+		return $return;
+	}
+
+    if ( is_user_logged_in() ) {
+		if ( (int)$invoice->get_user_id() === (int) get_current_user_id() ) {
 			$return = true;
 		}
 	}
 
 	$session = wpinv_get_checkout_session();
-	if ( ! empty( $session ) && ! is_user_logged_in() ) {
-		if ( $session['invoice_key'] === $invoice_meta['key'] ) {
-			$return = true;
-		}
+	if ( isset( $_GET['invoice_key'] ) ) {
+		$return = $_GET['invoice_key'] === $invoice_key;
+	} else if ( $session && isset( $session['invoice_key'] ) ) {
+		$return = $session['invoice_key'] === $invoice_key;
 	}
 
 	return (bool) apply_filters( 'wpinv_can_view_receipt', $return, $invoice_key );
