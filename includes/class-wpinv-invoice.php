@@ -333,6 +333,10 @@ final class WPInv_Invoice {
             }
         }
 
+        if($amount < 0){
+            $amount = 0;
+        }
+
         return $amount;
     }
     
