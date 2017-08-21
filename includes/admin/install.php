@@ -6,6 +6,11 @@ function wpinv_plugin_activation($network_wide = false)
 {
     set_transient('_wpinv_activation_redirect', true, 30);
     wpinv_install($network_wide);
+
+    if(!wpinv_get_option('address_autofill_api') && $api_key = get_option('geodir_google_api_key')){
+        wpinv_update_option( 'address_autofill_api', $api_key);
+    }
+
 }
 
 function wpinv_plugin_deactivation()

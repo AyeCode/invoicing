@@ -8,15 +8,19 @@ jQuery(function ($) {
         var place = autocomplete.getPlace();
         console.log(place);
         var temp_state = '';
+        var street_number = '';
         
         for (var i = 0; i < place.address_components.length; i++) {
 
             var address_type = place.address_components[i].types[0];
 
             switch (address_type) {
+                case 'street_number':
+                    street_number = place.address_components[i]['short_name'];
+                    break;
                 case 'route':
-                    var val = place.address_components[i]['short_name'];
-                    document.getElementById('wpinv_address').value = val;
+                    var val = place.address_components[i]['long_name'];
+                    document.getElementById('wpinv_address').value = street_number ? street_number+" "+val : val;
                     break;
                 case 'postal_town':
                     var val = place.address_components[i]['short_name'];
