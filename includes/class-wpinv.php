@@ -221,6 +221,12 @@ class WPInv_Plugin {
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
         wp_enqueue_script( 'jquery-blockui' );
+        $autofill_api = wpinv_get_option('address_autofill_api');
+        $autofill_active = wpinv_get_option('address_autofill_active');
+        if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api) && wpinv_is_checkout()) {
+            wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
+            wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery'), '', true);
+        }
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
     }
@@ -258,7 +264,16 @@ class WPInv_Plugin {
         wp_enqueue_script( 'wp-color-picker' );
         
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-        
+
+        if ($post_type == 'wpi_invoice' || $post_type == 'wpi_quote' && ($pagenow == 'post-new.php' || $pagenow == 'post.php')) {
+            $autofill_api = wpinv_get_option('address_autofill_api');
+            $autofill_active = wpinv_get_option('address_autofill_active');
+            if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api)) {
+                wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
+                wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery'), '', true);
+            }
+        }
+
         wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui' ),  WPINV_VERSION );
         wp_enqueue_script( 'wpinv-admin-script' );
         
