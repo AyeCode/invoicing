@@ -238,7 +238,6 @@ jQuery(function($) {
     });
     var elB = $('#wpinv-address');
     $('#wpinv_country', elB).change(function(e) {
-        alert('fired');
         var $this = $(this);
         data = {
             action: 'wpinv_get_states_field',
