@@ -348,7 +348,7 @@ function wpinv_is_ssl_enforced() {
     return (bool) apply_filters( 'wpinv_is_ssl_enforced', $ssl_enforced );
 }
 
-function wpinv_user_can_print_invoice( $post ) {
+function wpinv_user_can_view_invoice( $post ) {
     $allow = false;
 
     $post = get_post( $post );
@@ -366,10 +366,18 @@ function wpinv_user_can_print_invoice( $post ) {
     if ( $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
         if ( current_user_can( 'manage_options' ) ) { // Admin user
             $allow = true;
-        } else if ( is_user_logged_in() && (int)$invoice->get_user_id() === (int)get_current_user_id() ) { // Invoice owner
-            $allow = true;
-        } else if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) { // Invoice by key
-            $allow = true;
+        } else {
+            if ( is_user_logged_in() ) {
+                if ( (int)$invoice->get_user_id() === (int)get_current_user_id() ) {
+                    $allow = true;
+                } else if ( !wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+                    $allow = true;
+                }
+            } else {
+                if ( !wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+                    $allow = true;
+                }
+            }
         }
     }
     
@@ -389,7 +397,7 @@ function wpinv_schedule_event_twicedaily() {
 }
 add_action( 'wpinv_register_schedule_event_twicedaily', 'wpinv_schedule_event_twicedaily' );
 
-function wpinv_allow_guest_checkout() {
-    $return = wpinv_get_option( 'disable_guest_checkout', false );
-    return (bool) apply_filters( 'wpinv_allow_guest_checkout', !$return );
+function wpinv_require_login_to_checkout() {
+    $return = wpinv_get_option( 'login_to_checkout', false );
+    return (bool) apply_filters( 'wpinv_require_login_to_checkout', $return );
 }

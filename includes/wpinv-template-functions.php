@@ -784,24 +784,10 @@ function wpinv_template( $template ) {
     global $post, $wp_query;
     
     if ( ( is_single() || is_404() ) && !empty( $post->ID ) && (get_post_type( $post->ID ) == 'wpi_invoice' or get_post_type( $post->ID ) == 'wpi_quote')) {
-        if ( wpinv_user_can_print_invoice( $post->ID ) ) {
+        if ( wpinv_user_can_view_invoice( $post->ID ) ) {
             $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
         } else {
-            if ( !is_user_logged_in() && !empty( $_REQUEST['_wpipay'] ) && $invoice = wpinv_get_invoice( $post->ID ) ) {
-                $user_id = $invoice->get_user_id();
-                $secret = sanitize_text_field( $_GET['_wpipay'] );
-
-                if ( $secret === md5( $user_id . '::' . $invoice->get_email() . '::' . $invoice->get_key() ) ) { // valid invoice link
-                    $redirect_to = remove_query_arg( '_wpipay', get_permalink() );
-
-                    wpinv_guest_redirect( $redirect_to, $user_id );
-                    wpinv_die();
-                }
-            }
-            $redirect_to = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
-
-            wp_redirect( $redirect_to );
-            wpinv_die();
+            $template = wpinv_get_template_part( 'wpinv-invalid-access', false, false );
         }
     }
 
@@ -1240,6 +1226,7 @@ function wpinv_display_style( $invoice ) {
     wp_print_styles( 'wpinv-single-style' );
 }
 add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
+add_action( 'wpinv_invalid_invoice_head', 'wpinv_display_style' );
 
 function wpinv_checkout_billing_details() {  
     $invoice_id = (int)wpinv_get_invoice_cart_id();
@@ -1909,9 +1896,9 @@ function wpinv_receipt_actions( $invoice ) {
     if ( !empty( $invoice ) ) {
         $actions = array();
 
-        if ( wpinv_user_can_print_invoice( $invoice->ID ) ) {
+        if ( wpinv_user_can_view_invoice( $invoice->ID ) ) {
             $actions['print']   = array(
-                'url'  => $invoice->get_view_url( false, true ),
+                'url'  => $invoice->get_view_url( true ),
                 'name' => __( 'Print Invoice', 'invoicing' ),
                 'class' => 'btn-primary',
             );
@@ -2130,3 +2117,37 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
         return $note_content;
     }
 }
+
+function wpinv_invalid_invoice_content() {
+    global $post;
+
+    $invoice = wpinv_get_invoice( $post->ID );
+
+    $error = __( 'This invoice is only viewable by clicking on the invoice link that sent to you via email.', 'invoicing' );
+    if ( !empty( $invoice->ID ) && $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
+        if ( is_user_logged_in() ) {
+            if ( wpinv_require_login_to_checkout() ) {
+                if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+                    $error = __( 'You are not allowed to view this invoice.', 'invoicing' );
+                }
+            }
+        } else {
+            if ( wpinv_require_login_to_checkout() ) {
+                if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+                    $error = __( 'You must be logged in to view this invoice.', 'invoicing' );
+                }
+            }
+        }
+    } else {
+        $error = __( 'This invoice is deleted or does not exist.', 'invoicing' );
+    }
+    ?>
+    <div class="row wpinv-row-invalid">
+        <div class="col-md-6 col-md-offset-3 wpinv-message error">
+            <h3><?php _e( 'Access Denied', 'invoicing' ); ?></h3>
+            <p class="wpinv-msg-text"><?php echo $error; ?></p>
+        </div>
+    </div>
+    <?php
+}
+add_action( 'wpinv_invalid_invoice_content', 'wpinv_invalid_invoice_content' );

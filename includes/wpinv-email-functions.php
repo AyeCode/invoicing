@@ -1087,7 +1087,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Email Content', 'invoicing' ),
                 'desc' => __( 'The content of the email.', 'invoicing' ),
                 'type' => 'rich_editor',
-                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To pay now for this invoice please use the following link: <a href="{invoice_pay_link}">Pay Now</a></p>', 'invoicing' ),
+                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To pay now for this invoice please use the following link: <a href="{invoice_link}">Pay Now</a></p>', 'invoicing' ),
                 'class' => 'large',
                 'size'  => 10,
             ),
@@ -1474,7 +1474,7 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
     $replace['invoice_due_date']= $invoice->get_due_date( true );
     $replace['invoice_total']   = $invoice->get_total( true );
     $replace['invoice_link']    = $invoice->get_view_url( true );
-    $replace['invoice_pay_link']= $invoice->get_checkout_payment_url( false, true );
+    $replace['invoice_pay_link']= $replace['invoice_link'];
     $replace['is_was']          = strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' );
 
     $wpinv_email_search         = $search;

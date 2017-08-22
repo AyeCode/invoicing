@@ -1442,16 +1442,22 @@ function wpinv_checkout_validate_invoice_user() {
 }
 
 function wpinv_checkout_validate_current_user() {
+    global $wpi_cart;
+
     $data = array();
     
     if ( is_user_logged_in() ) {
-        $data['user_id'] = (int)get_current_user_id();
+        if ( !wpinv_require_login_to_checkout() || ( wpinv_require_login_to_checkout() && (int)$wpi_cart->get_user_id() === (int)get_current_user_id() ) ) {
+            $data['user_id'] = (int)get_current_user_id();
+        } else {
+            wpinv_set_error( 'logged_in_only', __( 'You are not allowed to pay for this invoice', 'invoicing' ) );
+        }
     } else {
         // If guest checkout allowed
-        if ( wpinv_allow_guest_checkout() ) {
+        if ( !wpinv_require_login_to_checkout() ) {
             $data['user_id'] = 0;
         } else {
-            wpinv_set_error( 'logged_in_only', __( 'You must be logged in an account to pay for invoice', 'invoicing' ) );
+            wpinv_set_error( 'logged_in_only', __( 'You must be logged in to pay for this invoice', 'invoicing' ) );
         }
     }
 
@@ -1892,17 +1898,21 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 		return $return;
 	}
 
-    if ( is_user_logged_in() ) {
+	if ( is_user_logged_in() ) {
 		if ( (int)$invoice->get_user_id() === (int) get_current_user_id() ) {
 			$return = true;
 		}
 	}
 
 	$session = wpinv_get_checkout_session();
-	if ( isset( $_GET['invoice_key'] ) ) {
-		$return = $_GET['invoice_key'] === $invoice_key;
-	} else if ( $session && isset( $session['invoice_key'] ) ) {
-		$return = $session['invoice_key'] === $invoice_key;
+	if ( isset( $_GET['invoice_key'] ) || ( $session && isset( $session['invoice_key'] ) ) ) {
+		$check_key = isset( $_GET['invoice_key'] ) ? $_GET['invoice_key'] : $session['invoice_key'];
+
+		if ( wpinv_require_login_to_checkout() ) {
+			$return = $return && $check_key === $invoice_key;
+		} else {
+			$return = $check_key === $invoice_key;
+		}
 	}
 
 	return (bool) apply_filters( 'wpinv_can_view_receipt', $return, $invoice_key );

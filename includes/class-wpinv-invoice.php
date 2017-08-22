@@ -1999,18 +1999,14 @@ final class WPInv_Invoice {
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $with_key, $secret );
     }
     
-    public function get_view_url( $secret = false, $with_key = false ) {
-        $print_url = get_permalink( $this->ID );
-        
-        if ( $secret ) {
-            $print_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $this->get_key() ) ), $print_url );
-        }
-        
+    public function get_view_url( $with_key = false ) {
+        $invoice_url = get_permalink( $this->ID );
+
         if ( $with_key ) {
-            $print_url = add_query_arg( 'invoice_key', $this->get_key(), $print_url );
+            $invoice_url = add_query_arg( 'invoice_key', $this->get_key(), $invoice_url );
         }
 
-        return apply_filters( 'wpinv_get_view_url', $print_url, $this, $secret, $with_key );
+        return apply_filters( 'wpinv_get_view_url', $invoice_url, $this, $with_key );
     }
     
     public function generate_key( $string = '' ) {
