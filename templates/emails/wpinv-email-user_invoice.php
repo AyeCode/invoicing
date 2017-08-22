@@ -7,7 +7,7 @@ do_action( 'wpinv_email_header', $email_heading, $invoice, $email_type, $sent_to
 
 if ( $invoice->needs_payment() ) {
     ?>
-    <p><?php printf( __( 'An invoice has been created for you on %s. To pay for this invoice please use the following link: %s', 'invoicing' ), wpinv_get_business_name(), '<a href="' . esc_url( $invoice->get_checkout_payment_url( false, true ) ) . '">' . __( 'Pay Now', 'invoicing' ) . '</a>' ); ?></p>
+    <p><?php printf( __( 'An invoice has been created for you on %s. To pay for this invoice please use the following link: %s', 'invoicing' ), wpinv_get_business_name(), '<a href="' . esc_url( $invoice->get_view_url( true ) ) . '">' . __( 'Pay Now', 'invoicing' ) . '</a>' ); ?></p>
     <?php 
 }
 

@@ -625,21 +625,16 @@ function wpinv_get_registered_settings() {
                         'size' => 'regular',
                         'std' => ''
                     ),
-                    'guest_checkout_settings' => array(
-                        'id'   => 'guest_checkout_settings',
-                        'name' => '<h3>' . __( 'Pay via Invoice Link', 'invoicing' ) . '</h3>',
+                    'checkout_settings' => array(
+                        'id'   => 'checkout_settings',
+                        'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
                         'type' => 'header',
                     ),
-                    'guest_checkout' => array(
-                        'type'    => 'radio',
-                        'id'      => 'guest_checkout',
-                        'name'    => __( 'Pay via Invoice Link for non logged in user', 'invoicing' ),
-                        'desc'    => __( 'Select how invoice should be paid when non logged in user clicks on the invoice link sent to them via email to pay for invoice.', 'invoicing' ),
-                        'options' => array(
-                            0 => __( 'Ask them to log-in and redirect back to invoice checkout to pay.', 'invoicing' ),
-                            1 => __( 'Auto log-in the user via invoice link and take them to invoice checkout to pay.', 'invoicing' ),
-                        ),
-                        'std'     => 0,
+                    'login_to_checkout' => array(
+                        'id'   => 'login_to_checkout',
+                        'name' => __( 'Require Login To Checkout', 'invoicing' ),
+                        'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
+                        'type' => 'checkbox',
                     ),
                     'address_autofill_settings' => array(
                         'id'   => 'address_autofill_settings',

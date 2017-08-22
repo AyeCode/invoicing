@@ -349,6 +349,20 @@ a img {outline:none; border:none;}
 	border: 1px solid transparent;
 	border-radius: 4px;
 }
+.wpinv-invalid-invoice .wpinv-business {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.wpinv-invalid-invoice .wpinv-row-invalid {
+    margin-bottom: 100px;
+}
+.wpinv-invalid-invoice .wpinv-message {
+    min-width: 66.67%;
+}
+.wpinv-invalid-invoice .wpinv-msg-text {
+    margin-top: 15px;
+}
 
 @media print {
     .no-print {
