@@ -1002,10 +1002,10 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     }
     
     if ( $phone = $invoice->get_phone() ) {
-        $output .= '<div class="phone">' . wp_sprintf( __( 'Phone: %s' ), esc_html( $phone ) ) . '</div>';
+        $output .= '<div class="phone">' . wp_sprintf( __( 'Phone: %s', 'invoicing' ), esc_html( $phone ) ) . '</div>';
     }
     if ( $email = $invoice->get_email() ) {
-        $output .= '<div class="email">' . wp_sprintf( __( 'Email: %s' ), esc_html( $email ) ) . '</div>';
+        $output .= '<div class="email">' . wp_sprintf( __( 'Email: %s' , 'invoicing'), esc_html( $email ) ) . '</div>';
     }
     
     ob_start();

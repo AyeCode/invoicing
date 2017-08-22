@@ -1,5 +1,25 @@
 jQuery(function($) {
     //'use strict';
+
+    // Tooltips
+    $('.wpi-help-tip').tooltip({
+        content: function() {
+            return $(this).prop('title');
+        },
+        tooltipClass: 'wpi-ui-tooltip',
+        position: {
+            my: 'center top',
+            at: 'center bottom+10',
+            collision: 'flipfit'
+        },
+        hide: {
+            duration: 200
+        },
+        show: {
+            duration: 200
+        }
+    });
+
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
     var wpiSymbol = WPInv_Admin.currency_symbol;
@@ -1011,6 +1031,7 @@ jQuery(function($) {
         }
     };
     WPInv_Export.init();
+
 });
 
 function wpinvBlock(el, message) {
