@@ -125,8 +125,8 @@ function wpinv_get_gateway_admin_label( $gateway ) {
     $payment  = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : false;
 
     if( $gateway == 'manual' && $payment ) {
-        if( wpinv_get_payment_amount( $payment ) == 0 ) {
-            $label = __( 'Manual Payment', 'invoicing' );
+        if( !( (float)wpinv_payment_total( $payment ) > 0 ) ) {
+            $label = __( 'Free Purchase', 'invoicing' );
         }
     }
 
