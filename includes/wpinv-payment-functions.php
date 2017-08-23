@@ -74,15 +74,12 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     $invoice = new WPInv_Invoice();
     $invoice->set( 'parent_invoice', $parent_invoice_id );
     $invoice->set( 'currency', $parent_invoice->get_currency() );
-    //$invoice->set( 'status', 'publish' );
     $invoice->set( 'transaction_id', $args['transaction_id'] );
-    $invoice->set( 'key', $parent_invoice->get_key() );
-    
+    $invoice->set( 'key', $parent_invoice->generate_key() );
     $invoice->set( 'ip', $parent_invoice->ip );
     $invoice->set( 'user_id', $parent_invoice->get_user_id() );
     $invoice->set( 'first_name', $parent_invoice->get_first_name() );
     $invoice->set( 'last_name', $parent_invoice->get_last_name() );
-    ///$invoice->set( 'email', $parent_invoice->get_email() );
     $invoice->set( 'phone', $parent_invoice->phone );
     $invoice->set( 'address', $parent_invoice->address );
     $invoice->set( 'city', $parent_invoice->city );
