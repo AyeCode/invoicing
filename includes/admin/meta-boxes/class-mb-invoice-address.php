@@ -38,7 +38,7 @@ class WPInv_Meta_Box_Billing_Details {
         <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-btns table-layout">
             <div class="gdmbx-th"><label><?php _e( 'Actions', 'invoicing' );?></label>
             </div>
-            <?php if($invoice->has_status(array('wpi-pending', 'wpi-quote-pending'))){ ?>
+            <?php if($invoice->has_status(array('auto-draft', 'wpi-pending', 'wpi-quote-pending'))){ ?>
                 <div class="gdmbx-td">
                     <a id="wpinv-fill-user-details" class="button button-small button-secondary" title="<?php esc_attr_e( 'Fill User Details', 'invoicing' );?>" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-refresh"></i><?php _e( 'Fill User Details', 'invoicing' );?></a>
                     <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)"><i aria-hidden="true" class="fa fa-plus"></i><?php _e( 'Add New User', 'invoicing' );?></a>
