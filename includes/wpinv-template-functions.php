@@ -837,7 +837,7 @@ function wpinv_display_from_address() {
         <div class="address"><?php echo wpautop( wp_kses_post( $address ) );?></div>
         <?php } ?>
         <?php if ( $email_from = wpinv_mail_get_from_address() ) { ?>
-        <div class="email_from"><?php echo wp_sprintf( __( 'Email: %s' ), $email_from );?></div>
+        <div class="email_from"><?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), $email_from );?></div>
         <?php } ?>
     </div>
     <?php
