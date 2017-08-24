@@ -449,7 +449,7 @@ function wpinv_gateway_settings_bank_transfer( $setting ) {
     $setting['bank_transfer_ifsc'] = array(
             'type' => 'text',
             'id'   => 'bank_transfer_ifsc',
-            'name' => __( 'IFSC code', 'invoicing' ),
+            'name' => __( 'IFSC Code', 'invoicing' ),
             'desc' => __( 'Enter your bank IFSC code.', 'invoicing' ),
             'std'  =>  __( 'ICIC0001234', 'invoicing' ),
         );
@@ -465,9 +465,16 @@ function wpinv_gateway_settings_bank_transfer( $setting ) {
     $setting['bank_transfer_bic'] = array(
             'type' => 'text',
             'id'   => 'bank_transfer_bic',
-            'name' => __( 'BIC/Swift code', 'invoicing' ),
+            'name' => __( 'BIC/Swift Code', 'invoicing' ),
             'std'  =>  __( 'ICICGB2L129', 'invoicing' ),
         );
+
+    $setting['bank_transfer_sort_code'] = array(
+        'type' => 'text',
+        'id'   => 'bank_transfer_sort_code',
+        'name' => __( 'Sort Code', 'invoicing' ),
+        'std'  =>  __( '12-34-56', 'invoicing' ),
+    );
         
     $setting['bank_transfer_info'] = array(
             'id'   => 'bank_transfer_info',
@@ -635,12 +642,13 @@ function wpinv_get_bank_instructions() {
 
 function wpinv_get_bank_info( $filtered = false ) {
     $bank_fields = array(
-        'bank_transfer_ac_name' => __( 'Account Name', 'invoicing' ),
-        'bank_transfer_ac_no' => __( 'Account Number', 'invoicing' ),
-        'bank_transfer_bank_name' => __( 'Bank Name', 'invoicing' ),
-        'bank_transfer_ifsc' => __( 'IFSC code', 'invoicing' ),
-        'bank_transfer_iban' => __( 'IBAN', 'invoicing' ),
-        'bank_transfer_bic' => __( 'BIC/Swift code', 'invoicing' )
+        'bank_transfer_ac_name'     => __( 'Account Name', 'invoicing' ),
+        'bank_transfer_ac_no'       => __( 'Account Number', 'invoicing' ),
+        'bank_transfer_bank_name'   => __( 'Bank Name', 'invoicing' ),
+        'bank_transfer_ifsc'        => __( 'IFSC code', 'invoicing' ),
+        'bank_transfer_iban'        => __( 'IBAN', 'invoicing' ),
+        'bank_transfer_bic'         => __( 'BIC/Swift code', 'invoicing' ),
+        'bank_transfer_sort_code'   => __( 'Sort Code', 'invoicing' )
     );
     
     $bank_info = array();
