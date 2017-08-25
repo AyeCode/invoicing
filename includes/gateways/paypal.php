@@ -505,69 +505,39 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
         return;
     }
 
-    if ( $invoice->is_free_trial() && !empty( $ipn_data['invoice'] ) ) {
-        wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Invoice ID: %s', 'invoicing' ) , $ipn_data['invoice'] ) );
-        wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['invoice'] );
-    }
-    
-    wpinv_update_payment_status( $parent_invoice_id, 'publish' );
-    sleep(1);
-    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ) );
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Invoice ID: %s', 'invoicing' ) , $ipn_data['invoice'] ) );
+    wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['invoice'] );
     
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
     if ( false === $subscription ) {
         return;
     }
 
-    $cart_details   = $invoice->cart_details;
+    // Set payment to complete
+    wpinv_update_payment_status( $subscription->parent_payment_id, 'publish' );
+    sleep(1);
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ) );
 
-    if ( !empty( $cart_details ) ) {
-        foreach ( $cart_details as $cart_item ) {
-            $item = new WPInv_Item( $cart_item['id'] );
-            
-            $status = $invoice->is_free_trial() && $item->has_free_trial() ? 'trialing' : 'active';
-            
-            $args = array(
-                'item_id'           => $cart_item['id'],
-                'status'            => $status,
-                'period'            => $item->get_recurring_period(),
-                'initial_amount'    => $invoice->get_total(),
-                'recurring_amount'  => $invoice->get_recurring_details( 'total' ),
-                'interval'          => $item->get_recurring_interval(),
-                'bill_times'        => $item->get_recurring_limit(),
-                'expiration'        => $invoice->get_new_expiration( $cart_item['id'] ),
-                'profile_id'        => $ipn_data['subscr_id'],
-                'created'           => date_i18n( 'Y-m-d H:i:s', strtotime( $ipn_data['subscr_date'] ) )
-            );
-            
-            if ( $item->has_free_trial() ) {
-                $args['trial_period']      = $item->get_trial_period();
-                $args['trial_interval']    = $item->get_trial_interval();
-            } else {
-                $args['trial_period']      = '';
-                $args['trial_interval']    = 0;
-            }
-            
+    $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
 
-            $subscription->update_subscription( $args );
-        }
-    }
+    // Retrieve pending subscription from database and update it's status to active and set proper profile ID
+    $subscription->update( array( 'profile_id' => $ipn_data['subscr_id'], 'status' => $status ) );
 }
 
 /**
  * Process the subscription payment received IPN.
  */
 function wpinv_process_paypal_subscr_payment( $ipn_data ) {
-    $parent_invoice_id = absint( $ipn_data['custom'] );
-    
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
     if ( false === $subscription ) {
         return;
     }
+
+    $parent_invoice_id = absint( $ipn_data['custom'] );
     
     $transaction_id = wpinv_get_payment_transaction_id( $parent_invoice_id );
-    $signup_date    = strtotime( $subscription->get_subscription_created() );
-    $today          = date_i18n( 'Y-m-d', $signup_date ) == date_i18n( 'Y-m-d', strtotime( $ipn_data['payment_date'] ) );
+    $signup_date    = strtotime( $subscription->created );
+    $today          = date( 'Y-n-d', $signup_date ) == date( 'Y-n-d', strtotime( $ipn_data['payment_date'] ) );
 
     // Look to see if payment is same day as signup and we have set the transaction ID on the parent payment yet.
     if ( $today && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
@@ -597,15 +567,18 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
         'amount'         => $ipn_data['mc_gross'],
         'transaction_id' => $ipn_data['txn_id']
     );
-    
-    $invoice = wpinv_recurring_add_subscription_payment( $parent_invoice_id, $args );
-    
-    if ( !empty( $invoice ) ) {
-        sleep(1);
-        wpinv_insert_payment_note( $invoice->ID, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $ipn_data['txn_id'] ) );
 
-        $invoice->renew_subscription();
+    $invoice_id = $subscription->add_payment( $args );
+
+    if ( $invoice_id > 0 ) {
+        wpinv_update_payment_status( $invoice_id, 'publish' );
+        sleep(1);
+        wpinv_update_payment_status( $invoice_id, 'wpi-renewal' );
+        wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $ipn_data['txn_id'] ) );
+
+        $subscription->renew();
     }
+
 }
 
 /**
@@ -618,7 +591,7 @@ function wpinv_process_paypal_subscr_cancel( $ipn_data ) {
         return;
     }
 
-    $subscription->cancel_subscription();
+    $subscription->cancel();
 }
 
 /**
@@ -631,7 +604,7 @@ function wpinv_process_paypal_subscr_eot( $ipn_data ) {
         return;
     }
 
-    $subscription->complete_subscription();
+    $subscription->complete();
 }
 
 /**
@@ -644,7 +617,7 @@ function wpinv_process_paypal_subscr_failed( $ipn_data ) {
         return;
     }
 
-    $subscription->failing_subscription();
+    $subscription->failing();
 
     do_action( 'wpinv_recurring_payment_failed', $subscription );
 }
@@ -664,21 +637,26 @@ function wpinv_get_paypal_subscription( $ipn_data = array() ) {
         return false;
     }
 
-    $subscription = wpinv_get_subscription( $ipn_data['subscr_id'], true );
+    $subscription = new WPInv_Subscription( $ipn_data['subscr_id'], true );
 
-    if ( empty( $subscription ) ) {
-        $subs         = wpinv_get_subscriptions( array( 'parent_invoice_id' => $parent_invoice_id, 'numberposts' => 1 ) );
+    if( ! $subscription || $subscription->id < 1 ) {
+
+        $subs_db      = new WPInv_Subscriptions_DB;
+        $subs         = $subs_db->get_subscriptions( array( 'parent_payment_id' => $parent_invoice_id, 'number' => 1 ) );
         $subscription = reset( $subs );
 
-        if ( $subscription && $subscription->ID > 0 ) {
+        if( $subscription && $subscription->id > 0 ) {
+
             // Update the profile ID so it is set for future renewals
-            $subscription->update_subscription( array( 'profile_id' => sanitize_text_field( $ipn_data['subscr_id'] ) ) );
+            $subscription->update( array( 'profile_id' => sanitize_text_field( $ipn_data['subscr_id'] ) ) );
+
         } else {
-            $subscription = $invoice;
-            $subscription->update_subscription( array( 'profile_id' => sanitize_text_field( $ipn_data['subscr_id'] ) ) );
+
             // No subscription found with a matching payment ID, bail
-            //return false;
+            return false;
+
         }
+
     }
 
     return $subscription;
