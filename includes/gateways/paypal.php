@@ -565,7 +565,8 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
 
     $args = array(
         'amount'         => $ipn_data['mc_gross'],
-        'transaction_id' => $ipn_data['txn_id']
+        'transaction_id' => $ipn_data['txn_id'],
+        'gateway'        => 'paypal'
     );
 
     $invoice_id = $subscription->add_payment( $args );
