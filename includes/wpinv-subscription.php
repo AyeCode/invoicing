@@ -554,7 +554,7 @@ class WPInv_Subscription {
 
             }
 
-            $note = sprintf( __( 'Subscription #%d cancelled by %s', 'invoicing' ), $this->parent_payment_id, $user );
+            $note = sprintf( __( 'Subscription for Invoice #%d cancelled by %s', 'invoicing' ), $this->parent_payment_id, $user );
             $this->subscription_note_to_invoice( $this->parent_payment_id, $note );
 
 		    $this->status = 'cancelled';
