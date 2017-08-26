@@ -416,12 +416,12 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     }
 
     $subscriptionId     = (array)$subscription->subscriptionId;
-    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $invoice_id;
+    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
 
-    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ) );
-    wpinv_set_payment_transaction_id( $parent_invoice_id );
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Invoice ID: %s', 'invoicing' ) , $parent_invoice_id ) );
+    wpinv_set_payment_transaction_id( $parent_invoice_id, $subscription_id );
 
-    $subscription = wpinv_get_authorizenet_subscription( $subscription_id );
+    $subscription = wpinv_get_authorizenet_subscription( $subscription, $parent_invoice_id );
 
     if ( false === $subscription ) {
         return;
@@ -529,7 +529,7 @@ function wpinv_authorizenet_process_ipn() {
         return;
     }
     
-    $subscription_id = intval( $_POST['x_subscription_id'] );
+    $subscription_id = !empty($_POST['x_subscription_id']) ? intval( $_POST['x_subscription_id'] ) : false;
     
     if ( $subscription_id ) {
 
@@ -558,7 +558,7 @@ function wpinv_authorizenet_process_ipn() {
             $subscription->renew();
 
             do_action( 'wpinv_recurring_authorizenet_silent_post_payment', $subscription );
-            do_action( 'wpinv_authorizenet_renewal_payment', $transaction_id );
+            do_action( 'wpinv_authorizenet_renewal_payment', $subscription );
 
         } else if ( 2 == $response_code ) {
 
@@ -577,7 +577,7 @@ function wpinv_authorizenet_process_ipn() {
         } else {
 
             // Other Error
-            do_action( 'wpinv_authorizenet_renewal_payment_error', $subscription_id );
+            do_action( 'wpinv_authorizenet_renewal_payment_error', $subscription );
 
         }
         
@@ -589,8 +589,12 @@ add_action( 'wpinv_verify_authorizenet_ipn', 'wpinv_authorizenet_process_ipn' );
 /**
  * Retrieve the subscription
  */
-function wpinv_get_authorizenet_subscription( $subscription_id = 0 ) {
-    $parent_invoice_id = absint( $subscription_id );
+function wpinv_get_authorizenet_subscription( $subscription = array(), $invoice_id ) {
+    $parent_invoice_id = absint( $invoice_id );
+
+    if( empty( $subscription ) ) {
+        return false;
+    }
 
     if( empty( $parent_invoice_id ) ) {
         return false;
@@ -600,6 +604,9 @@ function wpinv_get_authorizenet_subscription( $subscription_id = 0 ) {
     if ( empty( $invoice ) ) {
         return false;
     }
+
+    $subscriptionId     = (array)$subscription->subscriptionId;
+    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
 
     $subscription = new WPInv_Subscription( $subscription_id, true );
 
