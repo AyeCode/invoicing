@@ -506,7 +506,7 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     }
 
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Invoice ID: %s', 'invoicing' ) , $ipn_data['invoice'] ) );
-    wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['invoice'] );
+    wpinv_set_payment_transaction_id( $parent_invoice_id, $ipn_data['txn_id'] );
     
     $subscription = wpinv_get_paypal_subscription( $ipn_data );
     if ( false === $subscription ) {
