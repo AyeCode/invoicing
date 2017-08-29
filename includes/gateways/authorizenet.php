@@ -172,7 +172,7 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
                     
                     $message = wp_sprintf( __( 'Authorize.Net Payment: %s with transaction id %s using %s and authorization code %s', 'invoicing' ), $response->response_reason_text, $response->transaction_id, strtoupper( $response->transaction_type ), $response->authorization_code );
                     
-                    wpinv_insert_payment_note( $invoice_id, $message );
+                    wpinv_insert_payment_note( $invoice_id, $message, '', '', true );
                     
                     do_action( 'wpinv_authorizenet_handle_response', $response, $invoice, $authorizenet_card );
                     
@@ -193,7 +193,7 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
                     
                     wpinv_set_error( 'payment_error', $error );
                     wpinv_record_gateway_error( $error, $response );
-                    wpinv_insert_payment_note( $invoice_id, $error );
+                    wpinv_insert_payment_note( $invoice_id, $error, '', '', true );
                     
                     wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
                 }
@@ -293,7 +293,7 @@ function wpinv_authorizenet_handle_response( $response, $invoice, $card_info = a
             
             wpinv_record_gateway_error( $error, $subscription );
             
-            wpinv_insert_payment_note( $invoice->ID, wp_sprintf( __( 'Authorize.Net subscription error occurred. %s', 'invoicing' ), $error ) );
+            wpinv_insert_payment_note( $invoice->ID, wp_sprintf( __( 'Authorize.Net subscription error occurred. %s', 'invoicing' ), $error ), '', '', true );
         }
     }
 }
@@ -418,7 +418,7 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     $subscriptionId     = (array)$subscription->subscriptionId;
     $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
 
-    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Invoice ID: %s', 'invoicing' ) , $parent_invoice_id ) );
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Invoice ID: %s', 'invoicing' ) , $parent_invoice_id ), '', '', true );
     wpinv_set_payment_transaction_id( $parent_invoice_id, $subscription_id );
 
     $subscription = wpinv_get_authorizenet_subscription( $subscription, $parent_invoice_id );
@@ -430,7 +430,7 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     // Set payment to complete
     wpinv_update_payment_status( $subscription->parent_payment_id, 'publish' );
     sleep(1);
-    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ) );
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ), '', '', true );
 
     $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
 
