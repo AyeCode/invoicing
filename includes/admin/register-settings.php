@@ -171,7 +171,9 @@ function wpinv_get_registered_settings() {
     for ( $i = 0; $i <= 20; $i++ ) {
         $invoice_number_padd_options[$i] = $i;
     }
-    
+
+    $invoice_number_start = wpinv_get_option('invoice_sequence_start', wpinv_get_last_invoice_number() + 1);
+
     $currency_symbol = wpinv_currency_symbol();
     
     $alert_wrapper_start = '<p style="color: #F00">';
@@ -592,11 +594,11 @@ function wpinv_get_registered_settings() {
                     ),
                     'invoice_sequence_start' => array(
                         'id'   => 'invoice_sequence_start',
-                        'name' => __( 'Sequential Starting Number', 'easy-digital-downloads' ),
+                        'name' => __( 'Sequential Starting Number', 'invoicing' ),
                         'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ),
                         'type' => 'number',
                         'size' => 'small',
-                        'std'  => '1',
+                        'std'  => $invoice_number_start,
                         'class'=> 'w100'
                     ),
                     'invoice_number_padd' => array(
@@ -1462,3 +1464,15 @@ function wpinv_settings_sanitize_input( $value, $key ) {
     return $value;
 }
 add_filter( 'wpinv_settings_sanitize', 'wpinv_settings_sanitize_input', 10, 2 );
+
+function wpinv_get_last_invoice_number(){
+    $invoice_number_start = 0;
+
+    $query = new WP_Query( array( 'post_type' => 'wpi_invoice', 'post_status' => 'any', 'posts_per_page' => 1, 'order' => 'DESC', 'fields' => 'ids' ) );
+
+    if ( ! empty( $query->posts ) && count($query->posts) > 0 ) {
+        $invoice_number_start = $query->posts[0];
+    }
+
+    return $invoice_number_start;
+}

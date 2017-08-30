@@ -53,5 +53,8 @@ function wpinv_v005_upgrades() {
         }
     }
 
+    $last_number = wpinv_get_last_invoice_number();
+    wpinv_update_option('invoice_sequence_start', $last_number + 1);
+
     wpinv_add_admin_caps();
 }
