@@ -232,6 +232,7 @@ function wpinv_get_currencies() {
         'MXN'  => __( 'Mexican Peso (&#36;)', 'invoicing' ),
         'NZD'  => __( 'New Zealand Dollar (&#36;)', 'invoicing' ),
         'NOK'  => __( 'Norwegian Krone (&#107;&#114;)', 'invoicing' ),
+        'PKR'  => __( 'Pakistani rupee (&#8360;)', 'invoicing' ),
         'PHP'  => __( 'Philippine Peso (&#8369;)', 'invoicing' ),
         'PLN'  => __( 'Polish Zloty (&#122;&#322;)', 'invoicing' ),
         'SGD'  => __( 'Singapore Dollar (&#36;)', 'invoicing' ),
@@ -245,7 +246,7 @@ function wpinv_get_currencies() {
         'ZAR'  => __( 'South African Rand (&#82;)', 'invoicing' )
     );
     
-    asort( $currencies );
+    //asort( $currencies ); // this
 
     return apply_filters( 'wpinv_currencies', $currencies );
 }

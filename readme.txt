@@ -1,4 +1,4 @@
-=== Invoicing - Invoice & Payments plugin ===
+=== Invoicing - Invoice & Payments Plugin ===
 Contributors: stiofansisland, paoltaia, ayecode
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
@@ -18,20 +18,20 @@ It can be used as payment system for 3rd party plugins too.
 
 = Features =
 
-* Create quotes and estimates to send to your clients (requires WPI quotes add-ons) - coming soon.
+* Create quotes and estimates to send to your clients [requires WPI quotes add-on](https://wordpress.org/plugins/invoicing-quotes/)
 * Quotes can be turned into invoices and client can pay online - coming soon.
 * Create and send invoices directly to receive single or recurring payments.
 * Accept payments via Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
 * Export payments and any other data through the reporting system.
 * Manage taxes.
 * VAT MOSS complaint (European Union VAT management system).
-* Easily create invoices programatically through other plugins.
+* Easily create invoices programmatically through other plugins.
 
-= A payment system for oher plugins and themes =
+= A payment system for other plugins and themes =
 
 Invoicing can be used as payment system with check out page by any plugin.
 
-[Here you find instrutions on how to integrate any plugin with Invoicing.](https://wpinvoicing.com/docs/adding-a-custom-item-type/)
+[Here you find instructions on how to integrate any plugin with Invoicing.](https://wpinvoicing.com/docs/adding-a-custom-item-type/)
 
 = Plugins currently using Invoicing as their Payment system are =
 
@@ -40,20 +40,20 @@ Invoicing can be used as payment system with check out page by any plugin.
 
 = Premium Add-ons and Payment Gateways =
 
-* [Stripe](https://wpinvoicing.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) direcly on your website via Stripe.
+* [Stripe](https://wpinvoicing.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
 * [PayPal Pro](https://wpinvoicing.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
 * [2CheckOut](https://wpinvoicing.com/downloads/2checkout-payment-gateway/) - Accept payments (single or recurring) via 2CO.
 * [PayFast](https://wpinvoicing.com/downloads/payfast-payment-gateway/) - Accept payments via PayFast.
 * [Sage Pay](https://wpinvoicing.com/downloads/sage-pay-payment-gateway/)  - Accept payments via Sage Pay
-* [Checkque Payment](https://wpinvoicing.com/downloads/category/gateways/)  - Accept payments via Cheques
-* [Cash on Delivery](https://wpinvoicing.com/downloads/category/gateways/) - Accept payments via Cash on Delivery
+* [Cheque Payment](https://wpinvoicing.com/downloads/cheque-payment-gateway/)  - Accept payments via Cheques
+* [Cash on Delivery](https://wpinvoicing.com/downloads/cash-on-delivery-payment-gateway/) - Accept payments via Cash on Delivery
 * [AffiliateWP Integration](https://wpinvoicing.com/downloads/affiliatewp-integration/) - Integrate with the [AffiliateWP plugin](https://affiliatewp.com/)
 
 New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpinvoicing.com/contact-form/). we will consider it.
 
 = Support =
 
-Get timely and friendly support for both Core Plugin and add-ons at our official website, [Invoicing Support](https://wpinvoicing.com/support)
+Get timely and friendly support for both Core Plugin and add-ons at our official website, [Invoicing Support](https://wpinvoicing.com/support/)
 
 == Installation ==
 
@@ -67,7 +67,7 @@ Get timely and friendly support for both Core Plugin and add-ons at our official
 
 Automatic installation is the easiest option. To do an automatic install of GeoDirectory, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
 
-In the search field type GeoDirectory and click Search Plugins. Once you've found our Direcotry plugin you install it by simply clicking Install Now. [Invoicing  basic installation](http://wpinvoicing.com/docs/basic-installation/)
+In the search field type GeoDirectory and click Search Plugins. Once you've found our Directory plugin you install it by simply clicking Install Now. [Invoicing  basic installation](http://wpinvoicing.com/docs/basic-installation/)
 
 = Manual installation =
 
@@ -95,6 +95,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 10. Client Invoice
 
 == Changelog ==
+
+= 1.0.1 =
+* Pakistani rupee - ADDED
 
 = 1.0.0 =
 
