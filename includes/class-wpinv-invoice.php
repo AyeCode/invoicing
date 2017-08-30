@@ -525,15 +525,7 @@ final class WPInv_Invoice {
         $number = $this->get_meta( '_wpinv_number', true );
 
         if ( !$number ) {
-            $number = $this->ID;
-
-            if ( $this->status == 'auto-draft' ) {
-                if ( wpinv_get_option( 'sequential_invoice_number' ) ) {
-                    $next_number = wpinv_get_next_invoice_number();
-                    $number      = $next_number;
-                }
-            }
-            
+            $number = wpinv_get_next_invoice_number($this->ID);
             $number = wpinv_format_invoice_number( $number );
         }
 

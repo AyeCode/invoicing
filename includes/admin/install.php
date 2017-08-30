@@ -83,11 +83,18 @@ function wpinv_run_install()
     update_option('wpinv_settings', $merged_options);
     update_option('wpinv_version', WPINV_VERSION);
 
+    $last_number = wpinv_get_last_invoice_number();
+    wpinv_update_option('invoice_sequence_start', $last_number + 1);
+
     // Check for PHP Session support, and enable if available
     $wpi_session->use_php_sessions();
 
     // Add a temporary option to note that GD Invoice pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
+
+    // Add Subscription tables
+    $db = new WPInv_Subscriptions_DB;
+    @$db->create_table();
 
     // Bail if activating from network, or bulk
     if (is_network_admin() || isset($_GET['activate-multi'])) {
