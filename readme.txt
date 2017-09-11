@@ -98,6 +98,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.1 =
 * Pakistani rupee - ADDED
+Option added to remove data on uninstall - CHANGED
 
 = 1.0.0 =
 

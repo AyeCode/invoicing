@@ -2036,14 +2036,17 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
     return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
 }
 
-function wpinv_format_invoice_number( $number ) {
-    $padd  = wpinv_get_option( 'invoice_number_padd' );
-    
-    // TODO maintain old invoice numbers if invoice number settings not saved. Should be removed before stable release.
-    if ( $padd === '' || $padd === false || $padd === NULL ) {
-        return wp_sprintf( __( 'WPINV-%d', 'invoicing' ), $number );
+function wpinv_format_invoice_number( $number, $type = '' ) {
+    $check = apply_filters( 'wpinv_pre_format_invoice_number', null, $number, $type );
+    if ( null !== $check ) {
+        return $check;
     }
-    
+
+    if ( !empty( $number ) && !is_numeric( $number ) ) {
+        return $number;
+    }
+
+    $padd  = wpinv_get_option( 'invoice_number_padd' );
     $prefix  = wpinv_get_option( 'invoice_number_prefix' );
     $postfix = wpinv_get_option( 'invoice_number_postfix' );
     
@@ -2059,35 +2062,60 @@ function wpinv_format_invoice_number( $number ) {
     return apply_filters( 'wpinv_format_invoice_number', $formatted_number, $number, $prefix, $postfix, $padd );
 }
 
-function wpinv_get_next_invoice_number() {
-    if ( ! wpinv_get_option( 'sequential_invoice_number' ) ) {
+function wpinv_get_next_invoice_number( $type = '' ) {
+    $check = apply_filters( 'wpinv_get_pre_next_invoice_number', null, $type );
+    if ( null !== $check ) {
+        return $check;
+    }
+    
+    if ( !wpinv_sequential_number_active() ) {
         return false;
     }
 
-    $number           = get_option( 'wpinv_last_invoice_number' );
-    $start            = wpinv_get_option( 'invoice_sequence_start', 1 );
+    $number = $last_number = get_option( 'wpinv_last_invoice_number' );
+    $start  = wpinv_get_option( 'invoice_sequence_start' );
+    if ( !absint( $start ) > 0 ) {
+        $start = 1;
+    }
     $increment_number = true;
+    $save_number = false;
 
-    if ( false !== $number ) {
-        if ( empty( $number ) ) {
-            $number = $start;
-            $increment_number = false;
-        }
-    } else {
-        $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => 'any' ) );
+    if ( !empty( $number ) && !is_numeric( $number ) && $number == wpinv_format_invoice_number( $number ) ) {
+        $number = wpinv_clean_invoice_number( $number );
+    }
 
-        if ( ! empty( $last_invoice[0] ) ) {
-            $number = wpinv_get_invoice_number( $last_invoice[0] );
-        }
+    if ( empty( $number ) ) {
+        if ( !( $last_number === 0 || $last_number === '0' ) ) {
+            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true ) ) ) );
 
-        if ( ! empty( $number ) && ! empty( $last_invoice[0] ) && $number !== (int) $last_invoice[0] ) {
-            $number = wpinv_clean_invoice_number( $number );
-        } else {
-            $number = $start;
-            $increment_number = false;
+            if ( !empty( $last_invoice[0] ) && $invoice_number = wpinv_get_invoice_number( $last_invoice[0] ) ) {
+                if ( is_numeric( $invoice_number ) ) {
+                    $number = $invoice_number;
+                } else {
+                    $number = wpinv_clean_invoice_number( $invoice_number );
+                }
+            }
+
+            if ( empty( $number ) ) {
+                $increment_number = false;
+                $number = $start;
+                $save_number = ( $number - 1 );
+            } else {
+                $save_number = $number;
+            }
         }
     }
 
+    if ( $start > $number ) {
+        $increment_number = false;
+        $number = $start;
+        $save_number = ( $number - 1 );
+    }
+
+    if ( $save_number !== false ) {
+        update_option( 'wpinv_last_invoice_number', $save_number );
+    }
+    
     $increment_number = apply_filters( 'wpinv_increment_payment_number', $increment_number, $number );
 
     if ( $increment_number ) {
@@ -2097,7 +2125,12 @@ function wpinv_get_next_invoice_number() {
     return apply_filters( 'wpinv_get_next_invoice_number', $number );
 }
 
-function wpinv_clean_invoice_number( $number ) {
+function wpinv_clean_invoice_number( $number, $type = '' ) {
+    $check = apply_filters( 'wpinv_pre_clean_invoice_number', null, $number, $type );
+    if ( null !== $check ) {
+        return $check;
+    }
+    
     $prefix  = wpinv_get_option( 'invoice_number_prefix' );
     $postfix = wpinv_get_option( 'invoice_number_postfix' );
 
@@ -2119,11 +2152,11 @@ function wpinv_save_number_post_saved( $post_ID, $post, $update ) {
     global $wpdb;
 
     if ( !$update && !get_post_meta( $post_ID, '_wpinv_number', true ) ) {
-        wpinv_update_invoice_number( $post_ID, $post->post_status != 'auto-draft' );
+        wpinv_update_invoice_number( $post_ID, $post->post_status != 'auto-draft', $post->post_type );
     }
 
     if ( !$update ) {
-        $wpdb->update( $wpdb->posts, array( 'post_name' => 'inv-' . $post_ID ), array( 'ID' => $post_ID ) );
+        $wpdb->update( $wpdb->posts, array( 'post_name' => wpinv_generate_post_name( $post_ID ) ), array( 'ID' => $post_ID ) );
         clean_post_cache( $post_ID );
     }
 }
@@ -2131,15 +2164,20 @@ add_action( 'save_post_wpi_invoice', 'wpinv_save_number_post_saved', 1, 3 );
 
 function wpinv_save_number_post_updated( $post_ID, $post_after, $post_before ) {
     if ( !empty( $post_after->post_type ) && $post_after->post_type == 'wpi_invoice' && $post_before->post_status == 'auto-draft' && $post_after->post_status != $post_before->post_status ) {
-        wpinv_update_invoice_number( $post_ID, true );
+        wpinv_update_invoice_number( $post_ID, true, $post_after->post_type );
     }
 }
 add_action( 'post_updated', 'wpinv_save_number_post_updated', 1, 3 );
 
-function wpinv_update_invoice_number( $post_ID, $save_sequential = false ) {
+function wpinv_update_invoice_number( $post_ID, $save_sequential = false, $type = '' ) {
     global $wpdb;
+    
+    $check = apply_filters( 'wpinv_pre_update_invoice_number', null, $post_ID, $save_sequential, $type );
+    if ( null !== $check ) {
+        return $check;
+    }
 
-    if ( wpinv_get_option( 'sequential_invoice_number' ) ) {
+    if ( wpinv_sequential_number_active() ) {
         $number = wpinv_get_next_invoice_number();
 
         if ( $save_sequential ) {
@@ -2158,4 +2196,15 @@ function wpinv_update_invoice_number( $post_ID, $save_sequential = false ) {
     clean_post_cache( $post_ID );
 
     return $number;
+}
+
+function wpinv_post_name_prefix( $post_type = 'wpi_invoice' ) {
+    return apply_filters( 'wpinv_post_name_prefix', 'inv-', $post_type );
+}
+
+function wpinv_generate_post_name( $post_ID ) {
+    $prefix = wpinv_post_name_prefix( get_post_type( $post_ID ) );
+    $post_name = sanitize_title( $prefix . $post_ID );
+
+    return apply_filters( 'wpinv_generate_post_name', $post_name, $post_ID, $prefix );
 }

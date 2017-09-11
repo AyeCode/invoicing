@@ -401,3 +401,12 @@ function wpinv_require_login_to_checkout() {
     $return = wpinv_get_option( 'login_to_checkout', false );
     return (bool) apply_filters( 'wpinv_require_login_to_checkout', $return );
 }
+
+function wpinv_sequential_number_active( $type = '' ) {
+    $check = apply_filters( 'wpinv_pre_check_sequential_number_active', null, $type );
+    if ( null !== $check ) {
+        return $check;
+    }
+    
+    return wpinv_get_option( 'sequential_invoice_number' );
+}
