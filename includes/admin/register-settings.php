@@ -161,6 +161,13 @@ add_action( 'admin_init', 'wpinv_register_settings' );
 function wpinv_get_registered_settings() {
     $pages = wpinv_get_pages( true );
     
+    $currencies = wpinv_get_currencies();
+    
+    $currency_code_options = array();
+    foreach ( $currencies as $code => $name ) {
+        $currency_code_options[ $code ] = $code . ' - ' . $name . ' (' . wpinv_currency_symbol( $code ) . ')';
+    }
+    
     $due_payment_options       = array();
     $due_payment_options[0]    = __( 'Now', 'invoicing' );
     for ( $i = 1; $i <= 30; $i++ ) {
@@ -173,6 +180,15 @@ function wpinv_get_registered_settings() {
     }
     
     $currency_symbol = wpinv_currency_symbol();
+    
+    $last_number = '';
+    if ( $last_invoice_number = get_option( 'wpinv_last_invoice_number' ) ) {
+        $last_invoice_number = is_numeric( $last_invoice_number ) ? $last_invoice_number : wpinv_clean_invoice_number( $last_invoice_number );
+
+        if ( !empty( $last_invoice_number ) ) {
+            $last_number = ' ' . wp_sprintf( __( "( Last Invoice's sequential number: <b>%s</b> )", 'invoicing' ), $last_invoice_number );
+        }
+    }
     
     $alert_wrapper_start = '<p style="color: #F00">';
     $alert_wrapper_close = '</p>';
@@ -277,7 +293,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Currency', 'invoicing' ),
                         'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
                         'type'    => 'select',
-                        'options' => wpinv_get_currencies(),
+                        'options' => $currency_code_options,
                         'chosen'  => true,
                     ),
                     'currency_position' => array(
@@ -539,7 +555,7 @@ function wpinv_get_registered_settings() {
                     'invoice_sequence_start' => array(
                         'id'   => 'invoice_sequence_start',
                         'name' => __( 'Sequential Starting Number', 'invoicing' ),
-                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ),
+                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ) . $last_number,
                         'type' => 'number',
                         'size' => 'small',
                         'std'  => '1',

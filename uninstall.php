@@ -52,12 +52,15 @@ if ( $remove_data ) {
     $wpdb->query( "DELETE FROM {$wpdb->comments} WHERE comment_type LIKE 'wpinv_note';" );
     $wpdb->query( "DELETE meta FROM {$wpdb->commentmeta} meta LEFT JOIN {$wpdb->comments} comments ON comments.comment_ID = meta.comment_id WHERE comments.comment_ID IS NULL;" );
     
+    // Delete user meta.
+    $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '%_wpinv_%' OR meta_key LIKE '%_wpi_invoice%' OR meta_key LIKE '%_wpi_item%' OR meta_key LIKE '%_wpi_discount%' OR meta_key LIKE '_wpi_stripe%' OR meta_key LIKE '%_wpi_quote%';" );
+    
     // Cleanup Cron Schedule
     wp_clear_scheduled_hook( 'wp_session_garbage_collection' );
     wp_clear_scheduled_hook( 'wpinv_register_schedule_event_twicedaily' );
     
     // Delete options.
-    $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE 'wpinv_%' OR option_name LIKE '_wpinv_%' OR option_name LIKE '\_transient\_wpinv\_%';" );
+    $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wpinv_%' OR option_name LIKE '_wpinv_%' OR option_name LIKE '\_transient\_wpinv\_%';" );
     
     // Clear any cached data that has been removed
     wp_cache_flush();
