@@ -212,9 +212,9 @@ final class WPInv_Invoice {
             if( !empty( $post->post_name ) ) {
                 $post_name = $post->post_name;
             } else if ( !empty( $post->ID ) ) {
-                $post_name = 'inv-' . $post->ID;
+                $post_name = wpinv_generate_post_name( $post->ID );
 
-                $wpdb->update( $wpdb->posts, array( 'post_name' => 'inv-' . $post->ID ), array( 'ID' => $post->ID ) );
+                $wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
             }
         }
 
@@ -528,13 +528,13 @@ final class WPInv_Invoice {
             $number = $this->ID;
 
             if ( $this->status == 'auto-draft' ) {
-                if ( wpinv_get_option( 'sequential_invoice_number' ) ) {
-                    $next_number = wpinv_get_next_invoice_number();
+                if ( wpinv_sequential_number_active( $this->post_type ) ) {
+                    $next_number = wpinv_get_next_invoice_number( $this->post_type );
                     $number      = $next_number;
                 }
             }
             
-            $number = wpinv_format_invoice_number( $number );
+            $number = wpinv_format_invoice_number( $number, $this->post_type );
         }
 
         return $number;

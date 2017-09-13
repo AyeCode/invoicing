@@ -878,52 +878,51 @@ function wpinv_display_invoice_details( $invoice ) {
     $use_taxes  = wpinv_use_taxes();
     
     $invoice_status = wpinv_get_invoice_status( $invoice_id );
-    
-    if($invoice->post_type == 'wpi_invoice') $type = 'Invoice';
-    elseif($invoice->post_type == 'wpi_quote') $type = 'Quote';
     ?>
     <table class="table table-bordered table-sm">
         <?php if ( $invoice_number = wpinv_get_invoice_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-number">
-                <th><?php echo sprintf(__( '%s Number', 'invoicing' ), $type); ?></th>
+                <th><?php echo apply_filters( 'wpinv_invoice_number_label', __( 'Invoice Number', 'invoicing' ), $invoice ); ?></th>
                 <td><?php echo esc_html( $invoice_number ); ?></td>
             </tr>
         <?php } ?>
         <tr class="wpi-row-status">
-            <th><?php echo wp_sprintf(__( '%s Status', 'invoicing' ), $type); ?></th>
+            <th><?php echo apply_filters( 'wpinv_invoice_status_label', __( 'Invoice Status', 'invoicing' ), $invoice ); ?></th>
             <td><?php echo wpinv_invoice_status_label( $invoice_status, wpinv_get_invoice_status( $invoice_id, true ) ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>
         <tr class="wpi-row-parent">
-            <th><?php echo wp_sprintf(__( 'Parent %s', 'invoicing' ), $type); ?></th>
+            <th><?php echo apply_filters( 'wpinv_invoice_parent_invoice_label', __( 'Parent Invoice', 'invoicing' ), $invoice ); ?></th>
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
-        <tr class="wpi-row-gateway">
-            <th><?php _e( 'Payment Method', 'invoicing' ); ?></th>
-            <td><?php echo wpinv_get_payment_gateway_name( $invoice_id ); ?></td>
-        </tr>
+        <?php if ( $gateway_name = wpinv_get_payment_gateway_name( $invoice_id ) ) { ?>
+            <tr class="wpi-row-gateway">
+                <th><?php echo apply_filters( 'wpinv_invoice_payment_method_label', __( 'Payment Method', 'invoicing' ), $invoice ); ?></th>
+                <td><?php echo $gateway_name; ?></td>
+            </tr>
+        <?php } ?>
         <?php if ( $invoice_date = wpinv_get_invoice_date( $invoice_id ) ) { ?>
             <tr class="wpi-row-date">
-                <th><?php echo wp_sprintf(__( '%s Date', 'invoicing' ), $type); ?></th>
+                <th><?php echo apply_filters( 'wpinv_invoice_date_label', __( 'Invoice Date', 'invoicing' ), $invoice ); ?></th>
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>
         <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->needs_payment() && ( $due_date = $invoice->get_due_date( true ) ) ) { ?>
             <tr class="wpi-row-date">
-                <th><?php _e( 'Due Date', 'invoicing' ); ?></th>
+                <th><?php echo apply_filters( 'wpinv_invoice_due_date_label', __( 'Due Date', 'invoicing' ), $invoice ); ?></th>
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
-                <th><?php echo wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ); ?></th>
+                <th><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
         <?php if ( $use_taxes && $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
             <tr class="wpi-row-uvatno">
-                <th><?php echo wp_sprintf( __( 'Your %s Number', 'invoicing' ), $vat_name ); ?></th>
+                <th><?php echo apply_filters( 'wpinv_invoice_user_vat_number_label', wp_sprintf( __( 'Invoice %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
                 <td><?php echo $user_vat_number; ?></td>
             </tr>
         <?php } ?>

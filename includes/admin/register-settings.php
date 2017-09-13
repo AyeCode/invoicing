@@ -161,6 +161,13 @@ add_action( 'admin_init', 'wpinv_register_settings' );
 function wpinv_get_registered_settings() {
     $pages = wpinv_get_pages( true );
     
+    $currencies = wpinv_get_currencies();
+    
+    $currency_code_options = array();
+    foreach ( $currencies as $code => $name ) {
+        $currency_code_options[ $code ] = $code . ' - ' . $name . ' (' . wpinv_currency_symbol( $code ) . ')';
+    }
+    
     $due_payment_options       = array();
     $due_payment_options[0]    = __( 'Now', 'invoicing' );
     for ( $i = 1; $i <= 30; $i++ ) {
@@ -173,6 +180,15 @@ function wpinv_get_registered_settings() {
     }
     
     $currency_symbol = wpinv_currency_symbol();
+    
+    $last_number = '';
+    if ( $last_invoice_number = get_option( 'wpinv_last_invoice_number' ) ) {
+        $last_invoice_number = is_numeric( $last_invoice_number ) ? $last_invoice_number : wpinv_clean_invoice_number( $last_invoice_number );
+
+        if ( !empty( $last_invoice_number ) ) {
+            $last_number = ' ' . wp_sprintf( __( "( Last Invoice's sequential number: <b>%s</b> )", 'invoicing' ), $last_invoice_number );
+        }
+    }
     
     $alert_wrapper_start = '<p style="color: #F00">';
     $alert_wrapper_close = '</p>';
@@ -277,7 +293,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Currency', 'invoicing' ),
                         'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
                         'type'    => 'select',
-                        'options' => wpinv_get_currencies(),
+                        'options' => $currency_code_options,
                         'chosen'  => true,
                     ),
                     'currency_position' => array(
@@ -525,9 +541,80 @@ function wpinv_get_registered_settings() {
         'misc' => apply_filters('wpinv_settings_misc',
             array(
                 'main' => array(
+                    'invoice_number_format_settings' => array(
+                        'id'   => 'invoice_number_format_settings',
+                        'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'sequential_invoice_number' => array(
+                        'id'   => 'sequential_invoice_number',
+                        'name' => __( 'Sequential Invoice Numbers', 'invoicing' ),
+                        'desc' => __( 'Check this box to enable sequential invoice numbers.', 'invoicing' ),
+                        'type' => 'checkbox',
+                    ),
+                    'invoice_sequence_start' => array(
+                        'id'   => 'invoice_sequence_start',
+                        'name' => __( 'Sequential Starting Number', 'invoicing' ),
+                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ) . $last_number,
+                        'type' => 'number',
+                        'size' => 'small',
+                        'std'  => '1',
+                        'class'=> 'w100'
+                    ),
+                    'invoice_number_padd' => array(
+                        'id'      => 'invoice_number_padd',
+                        'name'    => __( 'Minimum Digits', 'invoicing' ),
+                        'desc'    => __( 'If the invoice number has less digits than this number, it is left padded with 0s. Ex: invoice number 108 will padded to 00108 if digits set to 5. The default 0 means no padding.', 'invoicing' ),
+                        'type'    => 'select',
+                        'options' => $invoice_number_padd_options,
+                        'std'     => 5,
+                        'chosen'  => true,
+                    ),
+                    'invoice_number_prefix' => array(
+                        'id' => 'invoice_number_prefix',
+                        'name' => __( 'Invoice Number Prefix', 'invoicing' ),
+                        'desc' => __( 'Prefix for all invoice numbers. Ex: WPINV-', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => 'WPINV-',
+                        'placeholder' => 'WPINV-',
+                    ),
+                    'invoice_number_postfix' => array(
+                        'id' => 'invoice_number_postfix',
+                        'name' => __( 'Invoice Number Postfix', 'invoicing' ),
+                        'desc' => __( 'Postfix for all invoice numbers.', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std' => ''
+                    ),
+                    'checkout_settings' => array(
+                        'id'   => 'checkout_settings',
+                        'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'login_to_checkout' => array(
+                        'id'   => 'login_to_checkout',
+                        'name' => __( 'Require Login To Checkout', 'invoicing' ),
+                        'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
+                        'type' => 'checkbox',
+                    ),
+                    'uninstall_settings' => array(
+                        'id'   => 'uninstall_settings',
+                        'name' => '<h3>' . __( 'Uninstall Settings', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'remove_data_on_unistall' => array(
+                        'id'   => 'remove_data_on_unistall',
+                        'name' => __( 'Remove Data on Uninstall?', 'invoicing' ),
+                        'desc' => __( 'Check this box if you would like Invoicing plugin to completely remove all of its data when the plugin is deleted/uninstalled.', 'invoicing' ),
+                        'type' => 'checkbox',
+                        'std'  => ''
+                    ),
+                ),
+                'fields' => array(
                     'fields_settings' => array(
                         'id'   => 'fields_settings',
-                        'name' => '<h3>' . __( 'Fields Settings', 'invoicing' ) . '</h3>',
+                        'name' => '<h3>' . __( 'Address Fields', 'invoicing' ) . '</h3>',
                         'desc' => __( 'Tick fields which are mandatory in invoice address fields.', 'invoicing' ),
                         'type' => 'header',
                     ),
@@ -579,63 +666,6 @@ function wpinv_get_registered_settings() {
                         'type' => 'checkbox',
                         'std'  => true,
                     ),
-                    'invoice_number_format_settings' => array(
-                        'id'   => 'invoice_number_format_settings',
-                        'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'sequential_invoice_number' => array(
-                        'id'   => 'sequential_invoice_number',
-                        'name' => __( 'Sequential Invoice Numbers', 'invoicing' ),
-                        'desc' => __( 'Check this box to enable sequential invoice numbers.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
-                    'invoice_sequence_start' => array(
-                        'id'   => 'invoice_sequence_start',
-                        'name' => __( 'Sequential Starting Number', 'easy-digital-downloads' ),
-                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ),
-                        'type' => 'number',
-                        'size' => 'small',
-                        'std'  => '1',
-                        'class'=> 'w100'
-                    ),
-                    'invoice_number_padd' => array(
-                        'id'      => 'invoice_number_padd',
-                        'name'    => __( 'Minimum Digits', 'invoicing' ),
-                        'desc'    => __( 'If the invoice number has less digits than this number, it is left padded with 0s. Ex: invoice number 108 will padded to 00108 if digits set to 5. The default 0 means no padding.', 'invoicing' ),
-                        'type'    => 'select',
-                        'options' => $invoice_number_padd_options,
-                        'std'     => 5,
-                        'chosen'  => true,
-                    ),
-                    'invoice_number_prefix' => array(
-                        'id' => 'invoice_number_prefix',
-                        'name' => __( 'Invoice Number Prefix', 'invoicing' ),
-                        'desc' => __( 'Prefix for all invoice numbers. Ex: WPINV-', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => 'WPINV-',
-                        'placeholder' => 'WPINV-',
-                    ),
-                    'invoice_number_postfix' => array(
-                        'id' => 'invoice_number_postfix',
-                        'name' => __( 'Invoice Number Postfix', 'invoicing' ),
-                        'desc' => __( 'Postfix for all invoice numbers.', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => ''
-                    ),
-                    'checkout_settings' => array(
-                        'id'   => 'checkout_settings',
-                        'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'login_to_checkout' => array(
-                        'id'   => 'login_to_checkout',
-                        'name' => __( 'Require Login To Checkout', 'invoicing' ),
-                        'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
                     'address_autofill_settings' => array(
                         'id'   => 'address_autofill_settings',
                         'name' => '<h3>' . __( 'Google Address Auto Complete', 'invoicing' ) . '</h3>',
@@ -656,7 +686,6 @@ function wpinv_get_registered_settings() {
                         'size' => 'regular',
                         'std' => ''
                     ),
-
                 ),
             )
         ),
@@ -834,7 +863,8 @@ function wpinv_get_registered_settings_sections() {
             'main' => __( 'Email Settings', 'invoicing' ),
         ) ),
         'misc' => apply_filters( 'wpinv_settings_sections_misc', array(
-            'main' => __( 'Misc Settings', 'invoicing' ),
+            'main' => __( 'Miscellaneous', 'invoicing' ),
+            'fields' => __( 'Fields Settings', 'invoicing' ),
         ) ),
         'tools' => apply_filters( 'wpinv_settings_sections_tools', array(
             'main' => __( 'Diagnostic Tools', 'invoicing' ),
@@ -1462,3 +1492,13 @@ function wpinv_settings_sanitize_input( $value, $key ) {
     return $value;
 }
 add_filter( 'wpinv_settings_sanitize', 'wpinv_settings_sanitize_input', 10, 2 );
+
+function wpinv_on_update_settings( $old_value, $value, $option ) {
+    $old = !empty( $old_value['remove_data_on_unistall'] ) ? 1 : '';
+    $new = !empty( $value['remove_data_on_unistall'] ) ? 1 : '';
+    
+    if ( $old != $new ) {
+        update_option( 'wpinv_remove_data_on_invoice_unistall', $new );
+    }
+}
+add_action( 'update_option_wpinv_settings', 'wpinv_on_update_settings', 10, 3 );

@@ -37,7 +37,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
-        <?php if ( wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft' ) ) ) ) { ?>
+        <?php if ( $invoice->post_type == 'wpi_invoice' && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft' ) ) ) ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">

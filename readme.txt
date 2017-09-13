@@ -97,7 +97,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.1 =
-* Pakistani rupee - ADDED
+New currencies added - ADDED
+Option added to remove data on uninstall - CHANGED
+Show last invoice's sequential number - ADDED
 
 = 1.0.0 =
 

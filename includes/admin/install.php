@@ -15,7 +15,7 @@ function wpinv_plugin_activation($network_wide = false)
 
 function wpinv_plugin_deactivation()
 {
-    wpinv_remove_admin_caps();
+    //wpinv_remove_admin_caps();
 }
 
 function wpinv_install($network_wide = false)

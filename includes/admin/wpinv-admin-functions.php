@@ -339,21 +339,16 @@ function wpinv_add_items_filters() {
 }
 add_action( 'restrict_manage_posts', 'wpinv_add_items_filters', 100 );
 
-function wpinv_send_invoice_after_save( $post_id ) {
-    // If this is just a revision, don't send the email.
-    if ( wp_is_post_revision( $post_id ) ) {
+function wpinv_send_invoice_after_save( $invoice ) {
+    if ( empty( $_POST['wpi_save_send'] ) ) {
         return;
     }
     
-    if ( !current_user_can( 'manage_options' ) || !('wpi_invoice' == get_post_type( $post_id ))  ) {
-        return;
-    }
-    
-    if ( !empty( $_POST['wpi_save_send'] ) ) {
-        wpinv_user_invoice_notification( $post_id );
+    if ( !empty( $invoice->ID ) && !empty( $invoice->post_type ) && 'wpi_invoice' == $invoice->post_type ) {
+        wpinv_user_invoice_notification( $invoice->ID );
     }
 }
-add_action( 'save_post_wpi_invoice', 'wpinv_send_invoice_after_save', 100, 1 );
+add_action( 'wpinv_invoice_metabox_saved', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
     if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && ( 'wpi_invoice' == $data['post_type'] || 'wpi_quote' == $data['post_type'] ) ) {
