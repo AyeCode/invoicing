@@ -269,3 +269,36 @@ img {
     line-height: 137.5%;
     margin-top: 3px;
 }
+.btn {
+  display: inline-block;
+  padding: 0.2rem .6rem;
+  font-size: 95%;
+  font-weight: normal;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  text-decoration: none;
+}
+.btn-default {
+    color: <?php echo esc_attr( $base_text ); ?>;
+    background-color: <?php echo esc_attr( $base ); ?>;
+    border-color: <?php echo esc_attr( $base ); ?>;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #0275d8;
+  border-color: #0275d8;
+}
+.btn-success {
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+}
