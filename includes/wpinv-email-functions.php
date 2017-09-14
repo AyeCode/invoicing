@@ -1087,7 +1087,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Email Content', 'invoicing' ),
                 'desc' => __( 'The content of the email.', 'invoicing' ),
                 'type' => 'rich_editor',
-                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To pay now for this invoice please use the following link: <a href="{invoice_link}">Pay Now</a></p>', 'invoicing' ),
+                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To view / pay now for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
                 'class' => 'large',
                 'size'  => 10,
             ),
