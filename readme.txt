@@ -100,6 +100,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 New currencies added - ADDED
 Option added to remove data on uninstall - CHANGED
 Show last invoice's sequential number - ADDED
+Set PayPal landing page to Billing page - CHANGED
 
 = 1.0.0 =
 
