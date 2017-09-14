@@ -65,7 +65,8 @@ function wpinv_process_paypal_payment( $purchase_data ) {
             'notify_url'    => $listener_url,
             'cbt'           => get_bloginfo( 'name' ),
             'bn'            => 'WPInvoicing_SP',
-	        'lc'            => 'US' // this will force paypal site to english
+            'lc'            => 'US', // this will force paypal site to english
+            'landing_page'  => apply_filters( 'wpinv_paypal_standard_landing_page', 'billing', $invoice ), // 'login' or 'billing'. login - PayPal account login, billing - Non-PayPal account.
         );
 
         $paypal_args['address1'] = $invoice->get_address();
