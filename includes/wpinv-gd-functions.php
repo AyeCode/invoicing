@@ -753,21 +753,49 @@ add_action( 'geodir_dashboard_links', 'wpinv_gdp_dashboard_invoice_history_link'
 remove_action( 'geodir_dashboard_links', 'geodir_payment_invoices_list_page_link' );
 
 function wpinv_wpi_to_gdp_update_status( $invoice_id, $new_status, $old_status ) {
+    global $wpdb;
+
     if (!defined('GEODIRPAYMENT_VERSION')) {
         return false;
     }
-    
+
     $invoice    = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
     }
     
     remove_action( 'geodir_payment_invoice_status_changed', 'wpinv_payment_status_changed', 11, 4 );
-    
+
     $invoice_id = wpinv_wpi_to_gdp_id( $invoice_id );
     $new_status = wpinv_wpi_to_gdp_status( $new_status );
+
+    if ( empty( $invoice_id ) && !empty( $invoice->parent_invoice ) && $item = $invoice->get_recurring( true ) ) {
+        if ( $item->is_package() && $parent_invoice_id = wpinv_wpi_to_gdp_id( $invoice->parent_invoice ) ) {
+            $geodir_invoice = geodir_get_invoice( $parent_invoice_id );
+            if ( !empty( $geodir_invoice ) ) {
+                unset( $geodir_invoice->id );
+                $data = (array)$geodir_invoice;
+                $data['invoice_id'] = $invoice->ID;
+                $data['tax_amount'] = $invoice->get_tax();
+                $data['paied_amount'] = $invoice->get_total();
+                $data['discount'] = $invoice->get_discount();
+                $data['coupon_code'] = $invoice->get_discount_code();
+                $data['date'] = $invoice->get_invoice_date( false );
+                if ( !empty( $data['alive_days'] ) ) {
+                    $data['expire_date'] = date_i18n( 'Y-m-d', strtotime( $data['date'] . "+" . $data['alive_days'] . " days" ) );
+                }
+
+                if ( $wpdb->insert( INVOICE_TABLE, $data ) ) {
+                    $invoice_id = (int)$wpdb->insert_id;
+                    update_post_meta( $invoice->ID, '_wpinv_gdp_id', $invoice_id );
+                }
+            }
+        }
+    }
     
-    geodir_update_invoice_status( $invoice_id, $new_status, $invoice->is_recurring() );
+    if ( !empty( $invoice_id ) ) {
+        geodir_update_invoice_status( $invoice_id, $new_status, $invoice->is_recurring() );
+    }
 }
 add_action( 'wpinv_update_status', 'wpinv_wpi_to_gdp_update_status', 999, 3 );
 

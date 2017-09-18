@@ -101,6 +101,7 @@ New currencies added - ADDED
 Option added to remove data on uninstall - CHANGED
 Show last invoice's sequential number - ADDED
 Set PayPal landing page to Billing page - CHANGED
+GD Listing does not renewed on renewal payment - FIXED
 
 = 1.0.0 =
 
