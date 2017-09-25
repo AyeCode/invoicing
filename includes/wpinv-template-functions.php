@@ -1061,7 +1061,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     $item_tax       = '';
                     $tax_rate       = '';
                     if ( $use_taxes && $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
-                        $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
+                        $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ), $invoice->get_currency() );
                         $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
                         $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
@@ -1298,9 +1298,9 @@ function wpinv_admin_get_line_items($invoice = array()) {
             continue;
         }
         
-        $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ) );
+        $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ), $invoice->get_currency() );
         $quantity       = !empty( $cart_item['quantity'] ) && $cart_item['quantity'] > 0 ? $cart_item['quantity'] : 1;
-        $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ) );
+        $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ), $invoice->get_currency() );
         $can_remove     = true;
         
         $summary = '';
@@ -1313,7 +1313,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
         $item_tax       = '';
         $tax_rate       = '';
         if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
-            $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
+            $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ), $invoice->get_currency() );
             $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
             $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
