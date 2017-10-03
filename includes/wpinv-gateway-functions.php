@@ -627,7 +627,7 @@ function wpinv_listen_for_payment_ipn() {
         do_action( 'wpinv_verify_payment_ipn' );
         
         if ( !empty( $_GET['wpi-gateway'] ) ) {
-            wpinv_error_log( sanitize_text_field( $_GET['wpi-gateway'] ), 'wpinv_listen_for_payment_ipn()', __FILE__, __LINE__ );
+            wpinv_error_log( sanitize_text_field( $_GET['wpi-gateway'] ), 'WP Invoicing IPN', __FILE__, __LINE__ );
             do_action( 'wpinv_verify_' . sanitize_text_field( $_GET['wpi-gateway'] ) . '_ipn' );
         }
     }

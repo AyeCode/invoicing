@@ -51,8 +51,6 @@ class WPInv_Plugin {
             add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );
         }
 
-        add_filter( 'geodir_googlemap_script_extra', array( &$this,'add_google_maps_places_lib'), 101, 1 );
-
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
         
         if ( is_admin() ) {
@@ -115,7 +113,6 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
-        //require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gd-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
         //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
         //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
@@ -128,7 +125,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
-        if ( !class_exists( 'Geodir_EUVat' ) ) {
+        if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
         
@@ -225,35 +222,17 @@ class WPInv_Plugin {
         wp_enqueue_script( 'jquery-blockui' );
         $autofill_api = wpinv_get_option('address_autofill_api');
         $autofill_active = wpinv_get_option('address_autofill_active');
-        if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api) && wpinv_is_checkout()) {
-
-            // we don't need this if GD is installed.
-            if(!function_exists('geodir_templates_scripts')){
-                wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
+        if ( isset( $autofill_active ) && 1 == $autofill_active && !empty( $autofill_api ) && wpinv_is_checkout() ) {
+            if ( wp_script_is( 'google-maps-api', 'enqueued' ) ) {
+                wp_dequeue_script( 'google-maps-api' );
             }
-            wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery','google-maps-api'), '', true);
-            
+            wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array( 'jquery' ), '', false );
+            wp_enqueue_script( 'google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array( 'jquery', 'google-maps-api' ), '', true );
         }
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
     }
 
-    /**
-     * Add the places api to the google maps call.
-     *
-     * @param $extra
-     * @since 1.0.0
-     * @return string
-     */
-    public function add_google_maps_places_lib( $extra ) {
-
-        if ( wpinv_is_checkout() && ! str_replace( 'libraries=places', '', $extra ) ) {
-            $extra .= "&amp;libraries=places";
-        }
-
-        return $extra;
-    }
-    
     public function admin_enqueue_scripts() {
         global $post, $pagenow;
         
