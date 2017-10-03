@@ -645,10 +645,10 @@ function wpinv_get_invoice_vat_number( $invoice_id = 0 ) {
     return $invoice->vat_number;
 }
 
-function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false ) {
+function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false, $system = false ) {
     $invoice = new WPInv_Invoice( $invoice_id );
 
-    return $invoice->add_note( $note, $user_type, $added_by_user );
+    return $invoice->add_note( $note, $user_type, $added_by_user, $system );
 }
 
 function wpinv_get_invoice_notes( $invoice_id = 0, $type = '' ) {

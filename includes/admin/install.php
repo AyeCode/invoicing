@@ -89,6 +89,10 @@ function wpinv_run_install()
     // Add a temporary option to note that GD Invoice pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
 
+    // Add Subscription tables
+    $db = new WPInv_Subscriptions_DB;
+    @$db->create_table();
+
     // Bail if activating from network, or bulk
     if (is_network_admin() || isset($_GET['activate-multi'])) {
         return;
