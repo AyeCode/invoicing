@@ -543,6 +543,16 @@ final class WPInv_Invoice {
     private function insert_invoice() {
         global $wpdb;
 
+        if ( empty( $this->post_type ) ) {
+            if ( !empty( $this->ID ) && $post_type = get_post_type( $this->ID ) ) {
+                $this->post_type = $post_type;
+            } else if ( !empty( $this->parent_invoice ) && $post_type = get_post_type( $this->parent_invoice ) ) {
+                $this->post_type = $post_type;
+            } else {
+                $this->post_type = 'wpi_invoice';
+            }
+        }
+
         $invoice_number = $this->ID;
         if ( $number = $this->get_meta( '_wpinv_number', true ) ) {
             $invoice_number = $number;

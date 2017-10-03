@@ -223,10 +223,8 @@ class WPInv_Meta_Box_Items {
         
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
         ?>
-        <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_package(), true ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
-        <?php if ( $item->is_package() ) { ?>
-        <span class="description"><?php _e( 'GD package item price can be edited only from GD payment manager.', 'invoicing' ); ?></span>
-        <?php } ?>
+        <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
+        <?php do_action( 'wpinv_prices_metabox_price', $item ); ?>
         </p>
         <p class="wpinv-row-is-recurring">
             <label for="wpinv_is_recurring">

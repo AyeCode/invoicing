@@ -384,13 +384,6 @@ class WPInv_Item {
 
     }
     
-    public function is_package() {
-        $is_package = $this->get_type() == 'package' ? true : false;
-
-        return (bool) apply_filters( 'wpinv_is_package_item', $is_package, $this->ID );
-
-    }
-    
     public function is_editable() {
         $editable = $this->get_editable();
 

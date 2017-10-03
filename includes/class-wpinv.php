@@ -115,7 +115,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gd-functions.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gd-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
@@ -327,12 +327,7 @@ class WPInv_Plugin {
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
-        $localize['hasGD']                      = wpinv_gd_active();
-        $localize['hasPM']                      = wpinv_pm_active();
-        $localize['emptyInvoice']               = __( 'Add atleast one item to save invoice!', 'invoicing' );
-        $localize['deletePackage']              = __( 'GD package items should be deleted from GD payment manager only, otherwise it will break invoices that created with this package!', 'invoicing' );
-        $localize['deletePackages']             = __( 'GD package items should be deleted from GD payment manager only', 'invoicing' );
-        $localize['deleteInvoiceFirst']         = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
+        $localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
 
         $localize['enabled_gateways']           = wpinv_get_enabled_payment_gateways();
         $localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
