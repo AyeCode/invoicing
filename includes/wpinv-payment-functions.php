@@ -72,6 +72,7 @@ function wpinv_recurring_add_subscription_payment( $parent_invoice_id, $subscrip
     }
 
     $invoice = new WPInv_Invoice();
+    $invoice->set( 'post_type', 'wpi_invoice' );
     $invoice->set( 'parent_invoice', $parent_invoice_id );
     $invoice->set( 'currency', $parent_invoice->get_currency() );
     $invoice->set( 'transaction_id', $args['transaction_id'] );

@@ -22,16 +22,6 @@ function wpinv_template_path() {
     return apply_filters( 'wpinv_template_path', 'invoicing/' );
 }
 
-function wpinv_post_class( $classes, $class, $post_id ) {
-    global $pagenow, $typenow;
-
-    if ( $pagenow == 'edit.php' && $typenow == 'wpi_item' && get_post_type( $post_id ) == $typenow && get_post_meta( $post_id, '_wpinv_type', true ) == 'package' ) {
-        $classes[] = 'wpi-gd-package';
-    }
-    return $classes;
-}
-add_filter( 'post_class', 'wpinv_post_class', 10, 3 );
-
 function wpinv_display_invoice_top_bar( $invoice ) {
     if ( empty( $invoice ) ) {
         return;
@@ -1052,16 +1042,12 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                     }
                     $item_name  = !empty($cart_item['name']) ? $cart_item['name'] : $item_name;
                     
-                    if (!empty($item) && $item->is_package() && !empty($cart_item['meta']['post_id'])) {
-                        $post_link = '<a href="' . get_edit_post_link( $cart_item['meta']['post_id'] ) .'" target="_blank">' . (!empty($cart_item['meta']['invoice_title']) ? $cart_item['meta']['invoice_title'] : get_the_title( $cart_item['meta']['post_id']) ) . '</a>';
-                        $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $item->get_custom_singular_name(), $post_link );
-                    }
                     $summary = apply_filters( 'wpinv_print_invoice_line_item_summary', $summary, $cart_item, $item, $invoice );
                     
                     $item_tax       = '';
                     $tax_rate       = '';
                     if ( $use_taxes && $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
-                        $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
+                        $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ), $invoice->get_currency() );
                         $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
                         $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
                         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate">(' . $tax_rate . '%)</small>' : '';
@@ -1298,22 +1284,17 @@ function wpinv_admin_get_line_items($invoice = array()) {
             continue;
         }
         
-        $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ) );
+        $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ), $invoice->get_currency() );
         $quantity       = !empty( $cart_item['quantity'] ) && $cart_item['quantity'] > 0 ? $cart_item['quantity'] : 1;
-        $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ) );
+        $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ), $invoice->get_currency() );
         $can_remove     = true;
         
-        $summary = '';
-        if ($wpi_item->is_package() && !empty($cart_item['meta']['post_id'])) {
-            $post_link = '<a href="' . get_edit_post_link( $cart_item['meta']['post_id'] ) .'" target="_blank">' . (!empty($cart_item['meta']['invoice_title']) ? $cart_item['meta']['invoice_title'] : get_the_title( $cart_item['meta']['post_id']) ) . '</a>';
-            $summary = wp_sprintf( __( '%s: %s', 'invoicing' ), $wpi_item->get_custom_singular_name(), $post_link );
-        }
-        $summary = apply_filters( 'wpinv_admin_invoice_line_item_summary', $summary, $cart_item, $wpi_item, $invoice );
+        $summary = apply_filters( 'wpinv_admin_invoice_line_item_summary', '', $cart_item, $wpi_item, $invoice );
         
         $item_tax       = '';
         $tax_rate       = '';
         if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
-            $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ) );
+            $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ), $invoice->get_currency() );
             $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
             $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';

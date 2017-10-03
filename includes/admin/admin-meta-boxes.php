@@ -84,7 +84,7 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
                 if ( isset( $_POST[ $name ] ) ) {
                     if ( $field == '_wpinv_price' ) {
                         if ( get_post_meta( $post_id, '_wpinv_type', true ) === 'package' ) {
-                            $value = wpinv_sanitize_amount( get_post_meta( $post_id, '_wpinv_price', true ) ); // Don't allow edit GD package item price.
+                            $value = wpinv_sanitize_amount( get_post_meta( $post_id, '_wpinv_price', true ) );
                         } else {
                             $value = wpinv_sanitize_amount( $_POST[ $name ] );
                         }
