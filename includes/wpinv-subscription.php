@@ -273,7 +273,7 @@ class WPInv_Subscription {
 
         $invoice                 = new WPInv_Invoice();
         $parent                  = new WPInv_Invoice( $this->parent_payment_id );
-        $invoice->parent_payment = $this->parent_payment_id;
+        $invoice->post_parent    = $this->parent_payment_id;
         $invoice->user_id        = $parent->user_id;
         $invoice->currency       = $parent->currency;
         $invoice->transaction_id = $args['transaction_id'];

@@ -258,7 +258,7 @@ function wpinv_recurring_subscription_details() {
 									<td><?php echo $payment->ID; ?></td>
 									<td><?php echo wpinv_payment_total( $payment->ID ); ?></td>
 									<td><?php echo date_i18n( get_option( 'date_format' ), strtotime( $payment->post_date ) ); ?></td>
-									<td><?php echo wpinv_get_invoice_status( $payment, true ); ?></td>
+									<td><?php echo wpinv_get_invoice_status( $payment->ID, true ); ?></td>
 									<td>
 										<a title="<?php _e( 'View Details for Invoice.', 'invoicing' );
 										echo ' ' . $payment->ID; ?>" href="<?php echo get_edit_post_link( $payment->ID ); ?>">
