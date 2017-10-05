@@ -82,12 +82,14 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
             
             foreach ( $fields as $field => $name ) {
                 if ( isset( $_POST[ $name ] ) ) {
+                    $allowed = apply_filters( 'wpinv_item_allowed_save_meta_value', true, $field, $post_id );
+
+                    if ( !$allowed ) {
+                        continue;
+                    }
+
                     if ( $field == '_wpinv_price' ) {
-                        if ( get_post_meta( $post_id, '_wpinv_type', true ) === 'package' ) {
-                            $value = wpinv_sanitize_amount( get_post_meta( $post_id, '_wpinv_price', true ) );
-                        } else {
-                            $value = wpinv_sanitize_amount( $_POST[ $name ] );
-                        }
+                        $value = wpinv_sanitize_amount( $_POST[ $name ] );
                     } else {
                         $value = is_string( $_POST[ $name ] ) ? sanitize_text_field( $_POST[ $name ] ) : $_POST[ $name ];
                     }

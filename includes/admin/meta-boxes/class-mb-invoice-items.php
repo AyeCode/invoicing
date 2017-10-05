@@ -5,7 +5,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 class WPInv_Meta_Box_Items {
-    public static function output( $post ) {        
+    public static function output( $post ) {
         global $wpinv_euvat, $ajax_cart_details;
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
@@ -19,14 +19,10 @@ class WPInv_Meta_Box_Items {
         $total              = $invoice->get_total( true );
         $item_quantities    = wpinv_item_quantities_enabled();
         $use_taxes          = wpinv_use_taxes();
-        $item_types         = wpinv_get_item_types();
+        $item_types         = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
         $is_recurring       = $invoice->is_recurring();
         $post_type_object   = get_post_type_object($invoice->post_type);
         $type_title         = $post_type_object->labels->singular_name;
-        
-        if (isset($item_types['package'])) {
-            unset($item_types['package']);
-        }
         
         $cols = 5;
         if ( $item_quantities ) {
@@ -188,7 +184,6 @@ class WPInv_Meta_Box_Items {
                     echo wpinv_item_dropdown( array(
                         'name'             => 'wpinv_invoice_item',
                         'id'               => 'wpinv_invoice_item',
-                        'with_packages'    => false,
                         'show_recurring'   => true,
                     ) );
                     ?>
@@ -310,7 +305,6 @@ class WPInv_Meta_Box_Items {
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpinv-item-type',
-                    //'disabled'         => $item_type == 'package' ? true : false,
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( '<b>Standard:</b> Standard item type', 'invoicing' );?><br><?php _e( '<b>Fee:</b> Like Registration Fee, Sign up Fee etc.', 'invoicing' );?></p>

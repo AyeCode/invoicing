@@ -6,11 +6,6 @@ function wpinv_plugin_activation($network_wide = false)
 {
     set_transient('_wpinv_activation_redirect', true, 30);
     wpinv_install($network_wide);
-
-    if(!wpinv_get_option('address_autofill_api') && $api_key = get_option('geodir_google_api_key')){
-        wpinv_update_option( 'address_autofill_api', $api_key);
-    }
-
 }
 
 function wpinv_plugin_deactivation()
@@ -52,7 +47,7 @@ function wpinv_run_install()
     wpinv_create_pages();
     wpinv_add_admin_caps();
 
-    // Pull options from WP, not GD Invoice's global
+    // Pull Invoicing options.
     $options = get_option('wpinv_settings', array());
 
     // Populate some default values
@@ -86,7 +81,7 @@ function wpinv_run_install()
     // Check for PHP Session support, and enable if available
     $wpi_session->use_php_sessions();
 
-    // Add a temporary option to note that GD Invoice pages have been created
+    // Add a temporary option to note that Invoicing pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
 
     // Bail if activating from network, or bulk

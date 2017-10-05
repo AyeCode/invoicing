@@ -2,7 +2,7 @@
 /**
  * Fired when the plugin is uninstalled.
  *
- * @link       https://wpgeodirectory.com
+ * @link       https://wpinvoicing.com
  * @since      1.0.0
  *
  * @package    Invoicing
