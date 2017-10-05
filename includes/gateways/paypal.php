@@ -519,6 +519,7 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     wpinv_update_payment_status( $parent_invoice_id, 'publish' );
     sleep(1);
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ), '', '', true );
+    update_post_meta($parent_invoice_id,'_wpinv_subscr_profile_id', $ipn_data['subscr_id']);
 
     $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
     // Retrieve pending subscription from database and update it's status to active and set proper profile ID

@@ -271,72 +271,9 @@ class WPInv_Subscription {
             return false;
         }
 
-        $invoice                 = new WPInv_Invoice();
-        $parent                  = new WPInv_Invoice( $this->parent_payment_id );
-        $invoice->post_parent    = $this->parent_payment_id;
-        $invoice->user_id        = $parent->user_id;
-        $invoice->currency       = $parent->currency;
-        $invoice->transaction_id = $args['transaction_id'];
-        $invoice->key            = $parent->key;
-        $invoice->ip             = $parent->ip;
-        $invoice->address        = $parent->address;
-        $invoice->first_name     = $parent->first_name;
-        $invoice->last_name      = $parent->last_name;
-        $invoice->phone          = $parent->phone;
-        $invoice->city           = $parent->city;
-        $invoice->country        = $parent->country;
-        $invoice->state          = $parent->state;
-        $invoice->zip            = $parent->zip;
-        $invoice->company        = $parent->company;
-        $invoice->vat_number     = $parent->vat_number;
-        $invoice->vat_rate       = $parent->vat_rate;
-        $invoice->email          = $parent->email;
-        $invoice->adddress_confirmed = $parent->adddress_confirmed;
-
-        if( empty( $args['gateway'] ) ) {
-
-            $invoice->gateway    = $parent->gateway;
-
-        } else {
-
-            $invoice->gateway    = $args['gateway'];
-
-        }
-
-        $recurring_details = $parent->get_recurring_details();
-
-        // increase the earnings for each item in the subscription
-        $items = $recurring_details['cart_details'];
-
-        if ( $items ) {
-            $add_items      = array();
-            $cart_details   = array();
-
-            foreach ( $items as $item ) {
-                $add_item             = array();
-                $add_item['id']       = $item['id'];
-                $add_item['quantity'] = $item['quantity'];
-
-                $add_items[]    = $add_item;
-                $cart_details[] = $item;
-                break;
-            }
-
-            $invoice->items = $add_items;
-            $invoice->cart_details = $cart_details;
-        }
-
-        $total = $args['amount'];
-        $discount = $recurring_details['discount'];
-
-        if ( $discount > 0 ) {
-            $invoice->discount_code = $parent->discount_code;
-        }
-
-        $invoice->subtotal = wpinv_round_amount( $recurring_details['subtotal'] );
-        $invoice->tax      = wpinv_round_amount( $recurring_details['tax'] );
-        $invoice->discount = wpinv_round_amount( $discount );
-        $invoice->total    = wpinv_round_amount( $total );
+        $invoice = new WPInv_Invoice($this->parent_payment_id);
+        $invoice->ID = $invoice->title = $invoice->number ='';
+        $invoice->parent_invoice = $this->parent_payment_id;
         $invoice->save();
 
         do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
@@ -795,25 +732,6 @@ class WPInv_Subscription {
         }
 
         return false;
-    }
-
-    /**
-     * Add note to invoice
-     *
-     * @since  1.0.0
-     * @param  int $id The invoice ID
-     * @param  string $note The note for invoice
-     * @return bool
-     */
-    public function subscription_note_to_invoice( $id = 0, $note = '' ) {
-
-        if ( empty( $id ) ) {
-            return false;
-        }
-
-        $invoice = new WPInv_Invoice( $id );
-        $invoice->add_note( $note );
-
     }
 
 }
