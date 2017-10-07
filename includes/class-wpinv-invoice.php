@@ -293,6 +293,10 @@ final class WPInv_Invoice {
         if ( '' === $tax ) {            
             $tax = isset( $this->payment_meta['tax'] ) ? $this->payment_meta['tax'] : 0;
         }
+        
+        if ( $tax < 0 ) {
+            $tax = 0;
+        }
 
         return $tax;
     }
@@ -1956,6 +1960,12 @@ final class WPInv_Invoice {
                 $cart_discount  += (float)($discount);
                 $cart_tax       += (float)($tax);
             }
+            if ( $cart_subtotal < 0 ) {
+                $cart_subtotal = 0;
+            }
+            if ( $cart_tax < 0 ) {
+                $cart_tax = 0;
+            }
             $this->subtotal = wpinv_round_amount( $cart_subtotal );
             $this->tax      = wpinv_round_amount( $cart_tax );
             $this->discount = wpinv_round_amount( $cart_discount );
@@ -2109,7 +2119,7 @@ final class WPInv_Invoice {
     }
     
     public function get_trial_end_date( $formatted = true ) {
-        if ( !$this->is_free_trial() || !$this->is_paid() ) {
+        if ( !$this->is_free_trial() || ! ( $this->is_paid() || $this->is_refunded() ) ) {
             return NULL;
         }
         
@@ -2139,7 +2149,7 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_start( $formatted = true ) {
-        if ( !$this->is_paid() ) {
+        if ( ! ( $this->is_paid() || $this->is_refunded() ) ) {
             return '-';
         }
         $start   = $this->get_subscription_created();
@@ -2154,9 +2164,14 @@ final class WPInv_Invoice {
     }
     
     public function get_subscription_end( $formatted = true ) {
-        if ( !$this->is_paid() ) {
+        if ( ! ( $this->is_paid() || $this->is_refunded() ) ) {
             return '-';
         }
+
+        if ( $this->get_subscription_status() == 'cancelled' ) {
+            return $this->get_cancelled_date( $formatted );
+        }
+
         $start          = $this->get_subscription_created();
         $interval       = $this->get_subscription_interval();
         $period         = $this->get_subscription_period( true );
