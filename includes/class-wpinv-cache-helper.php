@@ -20,10 +20,10 @@ class WPInv_Cache_Helper {
 
     public static function init_hooks() {
         if ( false === ( $page_uris = get_transient( 'wpinv_cache_excluded_uris' ) ) ) {
-            $checkout_page = wpinv_get_option( 'checkout_page', '' );wpinv_error_log( $checkout_page, 'checkout_page', __FILE__, __LINE__ );
-            $success_page  = wpinv_get_option( 'success_page', '' );wpinv_error_log( $success_page, 'success_page', __FILE__, __LINE__ );
-            $failure_page  = wpinv_get_option( 'failure_page', '' );wpinv_error_log( $failure_page, 'failure_page', __FILE__, __LINE__ );
-            $history_page  = wpinv_get_option( 'invoice_history_page', '' );wpinv_error_log( $history_page, 'history_page', __FILE__, __LINE__ );
+            $checkout_page = wpinv_get_option( 'checkout_page', '' );
+            $success_page  = wpinv_get_option( 'success_page', '' );
+            $failure_page  = wpinv_get_option( 'failure_page', '' );
+            $history_page  = wpinv_get_option( 'invoice_history_page', '' );
             if ( empty( $checkout_page ) || empty( $success_page ) || empty( $failure_page ) || empty( $history_page ) ) {
                 return;
             }
