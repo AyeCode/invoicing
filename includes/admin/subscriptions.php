@@ -219,7 +219,7 @@ function wpinv_recurring_subscription_details() {
 							<?php wp_nonce_field( 'wpinv-recurring-update', 'wpinv-recurring-update-nonce', false, true ); ?>
 							<input type="submit" name="wpinv_update_subscription" id="wpinv_update_subscription" class="button button-primary" value="<?php _e( 'Update Subscription', 'invoicing' ); ?>"/>
 							<input type="hidden" name="sub_id" value="<?php echo absint( $sub->id ); ?>" />
-							<?php if( 'cancelled' != $sub->status && $sub->can_cancel() ) : ?>
+							<?php if( $sub->can_cancel() ) : ?>
 								<a class="button button-primary" href="<?php echo $sub->get_cancel_url(); ?>" ><?php _e( 'Cancel Subscription', 'invoicing' ); ?></a>
 							<?php endif; ?>
 							&nbsp;<input type="submit" name="wpinv_delete_subscription" class="wpinv-delete-subscription button" value="<?php _e( 'Delete Subscription', 'invoicing' ); ?>"/>

@@ -271,6 +271,10 @@ class WPInv_Subscription {
             return false;
         }
 
+        if(!$this->parent_payment_id){
+            return false;
+        }
+
         $invoice = new WPInv_Invoice($this->parent_payment_id);
         $invoice->ID = $invoice->title = $invoice->number ='';
         $invoice->parent_invoice = $this->parent_payment_id;
@@ -513,9 +517,23 @@ class WPInv_Subscription {
 	 * @return bool
 	 */
 	public function can_cancel() {
-
-		return apply_filters( 'wpinv_subscription_can_cancel', true, $this );
+        $ret = false;
+	    if( $this->gateway === 'manual' && in_array( $this->status, $this->get_cancellable_statuses() ) ) {
+            $ret = true;
+        }
+		return apply_filters( 'wpinv_subscription_can_cancel', $ret, $this );
 	}
+
+    /**
+     * Returns an array of subscription statuses that can be cancelled
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      array
+     */
+    public function get_cancellable_statuses() {
+        return apply_filters( 'wpinv_recurring_cancellable_statuses', array( 'active', 'trialling', 'failing' ) );
+    }
 
 	/**
 	 * Retrieves the URL to cancel subscription

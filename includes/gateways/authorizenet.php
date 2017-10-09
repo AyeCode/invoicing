@@ -276,8 +276,14 @@ function wpinv_authorizenet_handle_response( $response, $invoice, $card_info = a
 
     if ( $invoice->is_recurring() && !empty( $response->approved ) ) {
         $subscription = wpinv_authorizenet_create_new_subscription( $invoice, $response, $card_info );
+        $success = false;
+        if(wpinv_is_test_mode( 'authorizenet' )){
+            $success = true;
+        } else {
+            $success = $subscription->isSuccessful();
+        }
 
-        if ( !empty( $subscription ) && $subscription->isSuccessful() ) {
+        if ( !empty( $subscription ) && $success ) {
             do_action( 'wpinv_recurring_post_create_subscription', $subscription, $invoice, 'authorizenet' );
 
             wpinv_authorizenet_subscription_record_signup( $subscription, $invoice );
@@ -324,7 +330,7 @@ function wpinv_authorizenet_generate_subscription_params( $invoice, $card_info =
     }
 
     $subscription_item = $invoice->get_recurring( true );
-    if ( empty( $subscription_item ) ) {
+    if ( !$subscription_item->ID ) {
         return false;
     }
 
@@ -431,6 +437,7 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     wpinv_update_payment_status( $subscription->parent_payment_id, 'publish' );
     sleep(1);
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ), '', '', true );
+    update_post_meta($parent_invoice_id,'_wpinv_subscr_profile_id', $subscription_id);
 
     $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
 
@@ -537,7 +544,7 @@ function wpinv_authorizenet_process_ipn() {
 
         $subscription = new WPInv_Subscription( $subscription_id, true );
 
-        if ( empty( $subscription ) ) {
+        if ( !$subscription->id ) {
             return;
         }
 
@@ -588,10 +595,10 @@ add_action( 'wpinv_verify_authorizenet_ipn', 'wpinv_authorizenet_process_ipn' );
 /**
  * Retrieve the subscription
  */
-function wpinv_get_authorizenet_subscription( $subscription = array(), $invoice_id ) {
+function wpinv_get_authorizenet_subscription( $subscription_data = array(), $invoice_id ) {
     $parent_invoice_id = absint( $invoice_id );
 
-    if( empty( $subscription ) ) {
+    if( empty( $subscription_data ) ) {
         return false;
     }
 
@@ -604,7 +611,7 @@ function wpinv_get_authorizenet_subscription( $subscription = array(), $invoice_
         return false;
     }
 
-    $subscriptionId     = (array)$subscription->subscriptionId;
+    $subscriptionId     = (array)$subscription_data->subscriptionId;
     $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
 
     $subscription = new WPInv_Subscription( $subscription_id, true );
