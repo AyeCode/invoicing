@@ -83,7 +83,7 @@ function wpinv_get_discounts( $args = array() ) {
     }
 
     if( ! $discounts && ! empty( $args['s'] ) ) {
-        $args['meta_key']     = 'gd_discount_code';
+        $args['meta_key']     = '_wpi_discount_code';
         $args['meta_value']   = $args['s'];
         $args['meta_compare'] = 'LIKE';
         unset( $args['s'] );

@@ -989,7 +989,7 @@ final class WPInv_Invoice {
         $note_id = wp_insert_comment( wp_filter_comment( array(
             'comment_post_ID'      => $this->ID,
             'comment_content'      => $note,
-            'comment_agent'        => 'GeoDirectory',
+            'comment_agent'        => 'WPInvoicing',
             'user_id'              => is_admin() ? get_current_user_id() : 0,
             'comment_date'         => current_time( 'mysql' ),
             'comment_date_gmt'     => current_time( 'mysql', 1 ),

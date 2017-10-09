@@ -115,7 +115,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         $default_payment_details = array(
             'gateway'           => 'manual',
             'gateway_title'     => '',
-            'currency'          => geodir_get_currency_type(),
+            'currency'          => wpinv_get_default_country(),
             'transaction_id'    => '',
         );
         
@@ -126,7 +126,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         }
         
         if ( empty( $payment_details['currency'] ) ) {
-            $payment_details['currency'] = geodir_get_currency_type();
+            $payment_details['currency'] = wpinv_get_default_country();
         }
         
         if ( empty( $payment_details['gateway_title'] ) ) {

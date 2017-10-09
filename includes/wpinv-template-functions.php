@@ -456,7 +456,6 @@ function wpinv_item_dropdown( $args = array() ) {
         'data'              => array( 'search-type' => 'item' ),
         'show_option_all'   => false,
         'show_option_none'  => false,
-        'with_packages'     => true,
         'show_recurring'    => false,
     );
 
@@ -469,15 +468,7 @@ function wpinv_item_dropdown( $args = array() ) {
         'posts_per_page' => $args['number']
     );
     
-    if ( !$args['with_packages'] ) {
-        $item_args['meta_query'] = array(
-            array(
-                'key'       => '_wpinv_type',
-                'compare'   => '!=',
-                'value'     => 'package'
-            ),
-        );
-    }
+    $item_args  = apply_filters( 'wpinv_item_dropdown_query_args', $item_args, $args, $defaults );
 
     $items      = get_posts( $item_args );
     $options    = array();

@@ -51,8 +51,6 @@ class WPInv_Plugin {
             add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );
         }
 
-        add_filter( 'geodir_googlemap_script_extra', array( &$this,'add_google_maps_places_lib'), 101, 1 );
-
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
         
         if ( is_admin() ) {
@@ -115,9 +113,11 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
-        //require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gd-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
+        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscription.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
@@ -125,14 +125,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
-
-        if ( !class_exists( 'Geodir_EUVat' ) ) {
+        if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
         
@@ -156,11 +149,13 @@ class WPInv_Plugin {
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-meta-boxes.php' );
+            //require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-recurring-admin.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-details.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-items.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
+            //require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
         }
         
         // include css inliner
@@ -227,35 +222,17 @@ class WPInv_Plugin {
         wp_enqueue_script( 'jquery-blockui' );
         $autofill_api = wpinv_get_option('address_autofill_api');
         $autofill_active = wpinv_get_option('address_autofill_active');
-        if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api) && wpinv_is_checkout()) {
-
-            // we don't need this if GD is installed.
-            if(!function_exists('geodir_templates_scripts')){
-                wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
+        if ( isset( $autofill_active ) && 1 == $autofill_active && !empty( $autofill_api ) && wpinv_is_checkout() ) {
+            if ( wp_script_is( 'google-maps-api', 'enqueued' ) ) {
+                wp_dequeue_script( 'google-maps-api' );
             }
-            wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery','google-maps-api'), '', true);
-            
+            wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array( 'jquery' ), '', false );
+            wp_enqueue_script( 'google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array( 'jquery', 'google-maps-api' ), '', true );
         }
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
     }
 
-    /**
-     * Add the places api to the google maps call.
-     *
-     * @param $extra
-     * @since 1.0.0
-     * @return string
-     */
-    public function add_google_maps_places_lib( $extra ) {
-
-        if ( wpinv_is_checkout() && ! str_replace( 'libraries=places', '', $extra ) ) {
-            $extra .= "&amp;libraries=places";
-        }
-
-        return $extra;
-    }
-    
     public function admin_enqueue_scripts() {
         global $post, $pagenow;
         
@@ -281,9 +258,9 @@ class WPInv_Plugin {
         wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_admin_style' );
         
-        //if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
+        if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
-        //}
+        }
 
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
@@ -299,7 +276,6 @@ class WPInv_Plugin {
             }
         }
 
-        wp_enqueue_script('subscriptions-js', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array('jquery'), '', true);
         wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
         wp_enqueue_script( 'wpinv-admin-script' );
         
@@ -328,11 +304,6 @@ class WPInv_Plugin {
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
         $localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
-
-        $localize['enabled_gateways']           = wpinv_get_enabled_payment_gateways();
-        $localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
-        $localize['action_edit']                = __( 'Edit', 'invoicing' );
-        $localize['action_cancel']              = __( 'Cancel', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 
