@@ -103,6 +103,7 @@ Show last invoice's sequential number - ADDED
 Set PayPal landing page to Billing page - CHANGED
 GD Listing does not renewed on renewal payment - FIXED
 Changing currency should not reflected in existing invoices until invoices resaved - FIXED
+Negative total if discount is greater than item price - FIXED
 
 = 1.0.0 =
 

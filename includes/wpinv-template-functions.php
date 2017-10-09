@@ -877,7 +877,7 @@ function wpinv_display_invoice_details( $invoice ) {
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
-        <?php if ( $gateway_name = wpinv_get_payment_gateway_name( $invoice_id ) ) { ?>
+        <?php if ( ( $gateway_name = wpinv_get_payment_gateway_name( $invoice_id ) ) && ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
             <tr class="wpi-row-gateway">
                 <th><?php echo apply_filters( 'wpinv_invoice_payment_method_label', __( 'Payment Method', 'invoicing' ), $invoice ); ?></th>
                 <td><?php echo $gateway_name; ?></td>
@@ -901,7 +901,7 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <?php if ( $use_taxes && $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) { ?>
+        <?php if ( $use_taxes && ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) ) { ?>
             <tr class="wpi-row-uvatno">
                 <th><?php echo apply_filters( 'wpinv_invoice_user_vat_number_label', wp_sprintf( __( 'Invoice %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
                 <td><?php echo $user_vat_number; ?></td>

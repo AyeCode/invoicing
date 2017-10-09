@@ -30,7 +30,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
             <td><?php echo wpinv_invoice_link( $invoice->parent_invoice ); ?></td>
         </tr>
         <?php } ?>
-        <?php if ( $gateway_title = $invoice->get_gateway_title() ) { ?>
+        <?php if ( ( $gateway_title = $invoice->get_gateway_title() ) && ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
             <td><?php echo apply_filters( 'wpinv_invoice_payment_method_label', __( 'Payment Method', 'invoicing' ), $invoice ); ?></td>
             <td><?php echo $gateway_title; ?></td>
         <?php } ?>
@@ -46,13 +46,13 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
                 <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $due_date ) ), $invoice->get_due_date( true ) ); ?></td>
             </tr>
         <?php } ?>
-        <?php if ( empty( $sent_to_admin ) && $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
+        <?php if ( empty( $sent_to_admin ) && ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) ) { ?>
             <tr>
                 <td><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></td>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <?php if ( $use_taxes && $user_vat_number = $invoice->vat_number ) { ?>
+        <?php if ( $use_taxes && ( $user_vat_number = $invoice->vat_number ) ) { ?>
             <tr>
                 <td><?php echo apply_filters( 'wpinv_invoice_user_vat_number_label', wp_sprintf( __( 'Invoice %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></td>
                 <td><?php echo $user_vat_number; ?></td>
