@@ -82,6 +82,7 @@ class WPInv_Subscriptions {
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
         add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_checkout_add_subscription' ), 10, 2 );
+        add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
     }
 
     /**
@@ -124,19 +125,19 @@ class WPInv_Subscriptions {
 
             case 'updated' :
 
-                $message = __( 'Subscription updated successfully', 'invoicing' );
+                $message = __( 'Subscription updated successfully.', 'invoicing' );
 
                 break;
 
             case 'deleted' :
 
-                $message = __( 'Subscription deleted successfully', 'invoicing' );
+                $message = __( 'Subscription deleted successfully.', 'invoicing' );
 
                 break;
 
             case 'cancelled' :
 
-                $message = __( 'Subscription cancelled successfully', 'invoicing' );
+                $message = __( 'Subscription cancelled successfully.', 'invoicing' );
 
                 break;
 

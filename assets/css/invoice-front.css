@@ -339,6 +339,7 @@ a.bg-danger:hover,
 a.bg-danger:focus {
   background-color: #e4b9b9;
 }
+.wpinv-invoices .updated:not(.published) {display: inline-block;}
 @media print {
   .btn > .caret,
   .dropup > .btn > .caret {

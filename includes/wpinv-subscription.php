@@ -487,7 +487,7 @@ class WPInv_Subscription {
             if( is_user_logged_in() ) {
 
                 $userdata = get_userdata( get_current_user_id() );
-                $user     = $userdata->user_login;
+                $user     = $userdata->display_name;
 
             } else {
 
@@ -518,7 +518,7 @@ class WPInv_Subscription {
 	 */
 	public function can_cancel() {
         $ret = false;
-	    if( $this->gateway === 'manual' && in_array( $this->status, $this->get_cancellable_statuses() ) ) {
+	    if( $this->gateway === 'manual' || in_array( $this->status, $this->get_cancellable_statuses() ) ) {
             $ret = true;
         }
 		return apply_filters( 'wpinv_subscription_can_cancel', $ret, $this );

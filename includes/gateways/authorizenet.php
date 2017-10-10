@@ -212,14 +212,18 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
 }
 add_action( 'wpinv_gateway_authorizenet', 'wpinv_process_authorizenet_payment' );
 
-function wpinv_authorizenet_cancel_subscription( $subscription_id = '' ) {
-    if ( empty( $subscription_id ) ) {
+function wpinv_authorizenet_cancel_subscription( $subscription = '' ) {
+    if ( empty( $subscription->id ) ) {
         return false;
     }
     
     try {
         $authnetXML = wpinv_authorizenet_XML();
-        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription_id ) );
+        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription->id ) );
+
+        if(wpinv_is_test_mode( 'authorizenet' )){
+            return true;
+        }
 
         return $authnetXML->isSuccessful();
     } catch( Exception $e ) {

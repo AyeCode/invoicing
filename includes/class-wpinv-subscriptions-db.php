@@ -86,7 +86,7 @@ class WPInv_Subscriptions_DB extends Wpinv_DB {
         global $wpdb;
 
         $defaults = array(
-            'number'       => 20,
+            'number'       => get_option( 'posts_per_page' ),
             'offset'       => 0,
             'search'       => '',
             'customer_id'  => 0,
