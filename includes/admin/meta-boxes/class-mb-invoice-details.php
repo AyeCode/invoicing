@@ -145,7 +145,7 @@ class WPInv_Meta_Box_Details {
             <?php } ?>
             <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
             <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
-            <?php if ( !empty( $payments ) || $invoice->is_paid() ) { ?>
+            <?php if ( !empty( $payments ) || ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
                 <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
                 <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
                 <?php if ( $status_label = $invoice->get_subscription_status_label( $subscription_status ) ) { ?>

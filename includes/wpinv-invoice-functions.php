@@ -1497,7 +1497,7 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
     foreach ( $address_fields as $field ) {
         $user[$field]  = !empty( $_POST['wpinv_' . $field] ) ? sanitize_text_field( $_POST['wpinv_' . $field] ) : false;
         
-        if ( !empty( $user['user_id'] ) && $valid_data['current_user'] == $user['user_id'] ) {
+        if ( !empty( $user['user_id'] ) && !empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $user['user_id'] ) {
             update_user_meta( $user['user_id'], '_wpinv_' . $field, $user[$field] );
         }
     }
