@@ -125,6 +125,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
