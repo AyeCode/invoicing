@@ -37,7 +37,7 @@ if ( $remove_data ) {
     $settings = get_option( 'wpinv_settings' );
     
     // Delete pages.
-    $wpi_pages = array( 'checkout_page', 'success_page', 'failure_page', 'invoice_history_page', 'quote_history_page' );
+    $wpi_pages = array( 'checkout_page', 'success_page', 'failure_page', 'invoice_history_page', 'quote_history_page', 'invoice_subscription_page' );
     foreach ( $wpi_pages as $page ) {
         if ( !empty( $page ) && !empty( $settings[ $page ] ) ) {
             wp_delete_post( $settings[ $page ], true );

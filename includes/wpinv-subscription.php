@@ -728,6 +728,61 @@ class WPInv_Subscription {
 	}
 
     /**
+     * Retrieves the subscription status label
+     *
+     * @since  1.0.0
+     * @return int
+     */
+    public function get_status_label_html() {
+
+        switch( $get_status = $this->get_status() ) {
+            case 'active' :
+                $status = __( 'Active', 'invoicing' );
+                $class = 'label-info';
+                break;
+
+            case 'cancelled' :
+                $status = __( 'Cancelled', 'invoicing' );
+                $class = 'label-danger';
+                break;
+
+            case 'expired' :
+                $status = __( 'Expired', 'invoicing' );
+                $class = 'label-default';
+                break;
+
+            case 'pending' :
+                $status = __( 'Pending', 'invoicing' );
+                $class = 'label-primary';
+                break;
+
+            case 'failing' :
+                $status = __( 'Failing', 'invoicing' );
+                $class = 'label-danger';
+                break;
+
+            case 'trialling' :
+                $status = __( 'Trialling', 'invoicing' );
+                $class = 'label-info';
+                break;
+
+            case 'completed' :
+                $status = __( 'Completed', 'invoicing' );
+                $class = 'label-success';
+                break;
+
+            default:
+                $status = ucfirst( $this->get_status() );
+                $class = 'label-default';
+                break;
+        }
+
+        $label = '<span class="sub-status label label-sub-' . $get_status . ' ' . $class . '">' . $status . '</span>';
+
+        return apply_filters( 'wpinv_subscription_status_label_html', $label, $get_status, $status );
+    }
+
+    /**
      * Determines if a payment exists with the specified transaction ID
      *
      * @since  2.4

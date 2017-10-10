@@ -166,6 +166,12 @@ function wpinv_create_pages()
             'content' => __('Your transaction failed, please try again or contact site support.', 'invoicing'),
             'parent' => 'wpi-checkout',
         ),
+        'invoice_subscription_page' => array(
+            'name' => _x('wpinv-subscriptions', 'Page slug', 'invoicing'),
+            'title' => _x('Subscriptions History', 'Page title', 'invoicing'),
+            'content' => '[' . apply_filters('wpinv_subscriptions_shortcode_tag', 'wpinv_subscriptions') . ']',
+            'parent' => 'wpi-checkout',
+        ),
     ));
 
     foreach ($pages as $key => $page) {

@@ -55,13 +55,13 @@ if ($subs) { ?>
                     printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?>
                 </td>
                 <td><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?></td>
-                <td><?php echo $sub->get_status_label(); ?></td>
+                <td><?php echo $sub->get_status_label_html(); ?></td>
                 <td><?php echo get_the_title($sub->product_id); ?></td>
                 <td><?php echo wpinv_get_gateway_admin_label(wpinv_get_payment_gateway($sub->parent_payment_id)); ?></td>
                 <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
                 <td><?php
                     if ($sub->can_cancel()) {
-                        echo '<a class="button button-primary" href="' . $sub->get_cancel_url() . '" >' . __("Cancel", "invoicing") . '</a>';
+                        echo '<a class="btn btn-sm btn-primary" href="' . $sub->get_cancel_url() . '" >' . __("Cancel", "invoicing") . '</a>';
                     } ?>
                 </td>
             </tr>
