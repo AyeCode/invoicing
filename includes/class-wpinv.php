@@ -125,6 +125,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
@@ -248,8 +249,10 @@ class WPInv_Plugin {
         wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome' . $suffix . '.css', array(), '4.7.0' );
         wp_enqueue_style( 'font-awesome' );
         
-        wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
-        wp_enqueue_style( 'jquery-ui-css' );
+        if ($post_type == 'wpi_invoice' || $post_type == 'wpi_quote' && ($pagenow == 'post-new.php' || $pagenow == 'post.php')) {
+            wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
+            wp_enqueue_style( 'jquery-ui-css' );
+        }
         
         wp_register_style( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/css/chosen' . $suffix . '.css', array(), '1.6.2' );
         wp_enqueue_style( 'jquery-chosen' );
