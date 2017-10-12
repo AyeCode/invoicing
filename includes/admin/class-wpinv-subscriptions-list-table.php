@@ -140,6 +140,17 @@ class WPInv_Subscription_Reports_Table extends WP_List_Table {
 		return $item->$column_name;
 	}
 
+    /**
+     * Subscription id column
+     *
+     * @access      private
+     * @since       1.0.0
+     * @return      string
+     */
+    function column_sub_id( $item ) {
+        return '<a href="' . esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . $item->id ) ) . '" target="_blank">' . $item->id . '</a>';
+    }
+
 	/**
 	 * Customer column
 	 *
@@ -153,7 +164,6 @@ class WPInv_Subscription_Reports_Table extends WP_List_Table {
 
 		return '<a href="' . esc_url( get_edit_user_link( $item->customer_id ) ) . '" target="_blank">' . $customer . '</a>';
 	}
-
 
 	/**
 	 * Status column
@@ -257,6 +267,7 @@ class WPInv_Subscription_Reports_Table extends WP_List_Table {
 
 	function get_columns(){
 		$columns = array(
+			'sub_id'            => __( 'ID', 'invoicing' ),
 			'customer_id'       => __( 'Customer', 'invoicing' ),
 			'status'            => __( 'Status', 'invoicing' ),
 			'period'            => __( 'Billing Cycle', 'invoicing' ),

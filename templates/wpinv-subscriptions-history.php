@@ -34,6 +34,7 @@ if ($subs) { ?>
             <th class="sub-cycle"><span class="nobr">Billing Cycle</span></th>
             <th class="sub-billed"><span class="nobr">Times Billed</span></th>
             <th class="sub-status"><span class="nobr">Status</span></th>
+            <th class="sub-invoice"><span class="nobr">Invoice</span></th>
             <th class="sub-item"><span class="nobr">Item</span></th>
             <th class="sub-gateway"><span class="nobr">Gateway</span></th>
             <th class="sub-expiry"><span class="nobr">Expires On</span></th>
@@ -45,6 +46,7 @@ if ($subs) { ?>
         <?php
         $i = 1 + $offset;
         foreach ($subs as $sub) {
+            $invoice = $sub->get_original_payment_id();
             ?>
             <tr class="wpinv-sub-items wpinv-sub-item-<?php echo $sub->id; ?> wpinv-sub-item-<?php echo $sub->status; ?>">
                 <td><?php echo $i++; ?></td>
@@ -56,6 +58,7 @@ if ($subs) { ?>
                 </td>
                 <td><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?></td>
                 <td><?php echo $sub->get_status_label_html(); ?></td>
+                <td><a href="<?php echo get_permalink($invoice); ?>" target="_blank">#<?php echo $invoice; ?></a></td>
                 <td><?php echo get_the_title($sub->product_id); ?></td>
                 <td><?php echo wpinv_get_gateway_admin_label(wpinv_get_payment_gateway($sub->parent_payment_id)); ?></td>
                 <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
