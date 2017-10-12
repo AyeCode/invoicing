@@ -61,7 +61,7 @@ class WPInv_Ajax {
         $ajax_events = array(
             'add_note' => false,
             'delete_note' => false,
-            'get_states_field' => false,
+            'get_states_field' => true,
             'checkout' => false,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
