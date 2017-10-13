@@ -565,13 +565,19 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
     if ( false === $subscription ) {
         return;
     }
-    
+
+    $parent_invoice = wpinv_get_invoice( $parent_invoice_id );
+    if ( empty( $parent_invoice ) ) {
+        return;
+    }
+
     $transaction_id = wpinv_get_payment_transaction_id( $parent_invoice_id );
-    $signup_date    = strtotime( $subscription->get_subscription_created() );
-    $today          = date_i18n( 'Y-m-d', $signup_date ) == date_i18n( 'Y-m-d', strtotime( $ipn_data['payment_date'] ) );
+    $signup_date    = $subscription->get_subscription_created();
+    $payment_date   = $ipn_data['payment_date'];
+    $times_billed   = $parent_invoice->get_total_payments( false );
 
     // Look to see if payment is same day as signup and we have set the transaction ID on the parent payment yet.
-    if ( $today && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
+    if ( empty( $times_billed ) && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
         wpinv_update_payment_status( $parent_invoice_id, 'publish' );
         sleep(1);
         

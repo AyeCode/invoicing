@@ -96,6 +96,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.2 =
+Paying old recurring invoice treats as renewal payment and creates new invoice - FIXED
+
 = 1.0.1 =
 New currencies added - ADDED
 Option added to remove data on uninstall - CHANGED
