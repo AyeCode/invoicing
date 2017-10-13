@@ -688,25 +688,6 @@ function wpinv_process_paypal_refund( $data, $invoice_id = 0 ) {
 	wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Payment #%s Refunded for reason: %s', 'invoicing' ), $data['parent_txn_id'], $data['reason_code'] ), '', '', true );
 	wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Refund Transaction ID: %s', 'invoicing' ), $data['txn_id'] ), '', '', true );
 	wpinv_update_payment_status( $invoice_id, 'wpi-refunded' );
-
-    $db   = new WPInv_Subscriptions_DB;
-    $subs = $db->get_subscriptions( array( 'parent_payment_id' => $invoice_id, 'number' => 100 ) );
-
-    if( empty( $subs ) ) {
-        return;
-    }
-
-    foreach( $subs as $subscription ) {
-
-        if ( 'cancelled' !== $subscription->status ) {
-
-            // Cancel subscription
-            $subscription->cancel();
-            wpinv_insert_payment_note( $invoice_id, sprintf( __( 'Subscription #%d cancelled.', 'invoicing' ), $subscription->id ), '', '', true );
-
-        }
-
-    }
 }
 
 function wpinv_get_paypal_redirect( $ssl_check = false ) {
