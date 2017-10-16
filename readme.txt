@@ -98,6 +98,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.2 =
 Paying old recurring invoice treats as renewal payment and creates new invoice - FIXED
+VAT fields not displayed on checkout page for invoice with free trial - FIXED
 
 = 1.0.1 =
 New currencies added - ADDED
