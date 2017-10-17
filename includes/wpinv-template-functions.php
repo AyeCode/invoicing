@@ -231,6 +231,7 @@ function wpinv_checkout_meta_tags() {
 	$pages[] = wpinv_get_option( 'success_page' );
 	$pages[] = wpinv_get_option( 'failure_page' );
 	$pages[] = wpinv_get_option( 'invoice_history_page' );
+	$pages[] = wpinv_get_option( 'invoice_subscription_page' );
 
 	if( !wpinv_is_checkout() && !is_page( $pages ) ) {
 		return;
@@ -262,6 +263,11 @@ function wpinv_add_body_classes( $class ) {
 		$classes[] = 'wpinv-history';
 		$classes[] = 'wpinv-page';
 	}
+
+    if( wpinv_is_subscriptions_history_page() ) {
+        $classes[] = 'wpinv-subscription';
+        $classes[] = 'wpinv-page';
+    }
 
 	if( wpinv_is_test_mode() ) {
 		$classes[] = 'wpinv-test-mode';
@@ -895,6 +901,7 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
+        <?php do_action( 'wpinv_display_details_after_due_date', $invoice_id ); ?>
         <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
                 <th><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>

@@ -62,6 +62,12 @@ function wpinv_is_invoice_history_page() {
 	return apply_filters( 'wpinv_is_invoice_history_page', $ret );
 }
 
+function wpinv_is_subscriptions_history_page() {
+    $ret = wpinv_get_option( 'invoice_subscription_page', false );
+    $ret = $ret ? is_page( $ret ) : false;
+    return apply_filters( 'wpinv_is_subscriptions_history_page', $ret );
+}
+
 function wpinv_send_to_success_page( $args = null ) {
 	$redirect = wpinv_get_success_page_uri();
     
