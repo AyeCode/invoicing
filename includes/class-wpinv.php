@@ -217,6 +217,7 @@ class WPInv_Plugin {
         $localize['thousand_sep']         = wpinv_thousands_separator();
         $localize['decimal_sep']          = wpinv_decimal_separator();
         $localize['decimals']             = wpinv_decimals();
+        $localize['txtComplete']          = __( 'Complete', 'invoicing' );
         
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
