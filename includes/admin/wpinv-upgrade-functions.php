@@ -54,8 +54,44 @@ function wpinv_v005_upgrades() {
     }
 
     wpinv_add_admin_caps();
+    wpinv_update_new_email_settings();
 
     // Add Subscription tables
     $db = new WPInv_Subscriptions_DB;
     @$db->create_table();
+}
+
+function wpinv_update_new_email_settings(){
+    global $wpinv_options;
+
+    $current_options = get_option( 'wpinv_settings', array() );
+    $options = array();
+
+    // Populate some default values
+    foreach( wpinv_get_registered_settings() as $tab => $sections ) {
+        foreach( $sections as $section => $settings) {
+            // Check for backwards compatibility
+            $tab_sections = wpinv_get_settings_tab_sections( $tab );
+            if( ! is_array( $tab_sections ) || ! array_key_exists( $section, $tab_sections ) ) {
+                $section = 'main';
+                $settings = $sections;
+            }
+
+            foreach ( $settings as $option ) {
+                if ( !empty( $option['id'] ) && !isset( $wpinv_options[ $option['id'] ] ) ) {
+                    if ( 'checkbox' == $option['type'] && !empty( $option['std'] ) ) {
+                        $options[ $option['id'] ] = '1';
+                    } else if ( !empty( $option['std'] ) ) {
+                        $options[ $option['id'] ] = $option['std'];
+                    }
+                }
+            }
+        }
+    }
+
+    $merged_options_current     = array_merge( $wpinv_options, $options );
+    $merged_options     = array_merge( $merged_options_current, $current_options );
+    $wpinv_options      = $merged_options;
+
+    update_option( 'wpinv_settings', $merged_options );
 }
