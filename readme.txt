@@ -100,6 +100,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 Paying old recurring invoice treats as renewal payment and creates new invoice - FIXED
 VAT fields not displayed on checkout page for invoice with free trial - FIXED
 Payment button text confusing when invoice is non recurring & total is zero - FIXED
+wpinv_get_template_part() does not locate the template from the themes - FIXED
 
 = 1.0.1 =
 New currencies added - ADDED

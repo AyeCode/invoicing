@@ -19,7 +19,7 @@ if ( !is_admin() ) {
 }
 
 function wpinv_template_path() {
-    return apply_filters( 'wpinv_template_path', 'invoicing/' );
+    return apply_filters( 'wpinv_template_path', wpinv_get_theme_template_dir_name() );
 }
 
 function wpinv_display_invoice_top_bar( $invoice ) {
@@ -222,7 +222,7 @@ function wpinv_get_theme_template_paths() {
 }
 
 function wpinv_get_theme_template_dir_name() {
-	return trailingslashit( apply_filters( 'wpinv_templates_dir', 'wpinv_templates' ) );
+	return trailingslashit( apply_filters( 'wpinv_templates_dir', 'invoicing' ) );
 }
 
 function wpinv_checkout_meta_tags() {
