@@ -54,4 +54,8 @@ function wpinv_v005_upgrades() {
     }
 
     wpinv_add_admin_caps();
+
+    // Add Subscription tables
+    $db = new WPInv_Subscriptions_DB;
+    @$db->create_table();
 }

@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
 if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
@@ -13,7 +13,7 @@ if ( !defined( 'WPINC' ) ) {
 
 function wpinv_item_quantities_enabled() {
     $ret = wpinv_get_option( 'item_quantities', true );
-    
+
     return (bool) apply_filters( 'wpinv_item_quantities_enabled', $ret );
 }
 
@@ -27,7 +27,7 @@ function wpinv_get_ip() {
     } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
         $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
     }
-    
+
     return apply_filters( 'wpinv_get_ip', $ip );
 }
 
@@ -37,7 +37,7 @@ function wpinv_get_user_agent() {
     } else {
         $user_agent = '';
     }
-    
+
     return apply_filters( 'wpinv_get_user_agent', $user_agent );
 }
 
@@ -83,7 +83,7 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
     if ( $decimals === NULL ) {
         $decimals = wpinv_decimals();
     }
-    
+
     $amount = round( (double)$amount, wpinv_currency_decimal_filter( absint( $decimals ) ) );
 
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
@@ -102,7 +102,7 @@ function wpinv_get_invoice_statuses( $trashed = false ) {
         'wpi-failed' => __('Failed', 'invoicing'),
         'wpi-renewal' => __('Renewal Payment', 'invoicing')
     );
-    
+
     if ( $trashed ) {
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
@@ -119,7 +119,7 @@ function wpinv_status_nicename( $status ) {
 
 function wpinv_get_currency() {
     $currency = wpinv_get_option( 'currency', 'USD' );
-    
+
     return apply_filters( 'wpinv_currency', $currency );
 }
 
@@ -127,7 +127,7 @@ function wpinv_currency_symbol( $currency = '' ) {
     if ( empty( $currency ) ) {
         $currency = wpinv_get_currency();
     }
-    
+
     $symbols = apply_filters( 'wpinv_currency_symbols', array(
         'AED' => '&#x62f;.&#x625;',
         'AFN' => '&#x60b;',
@@ -300,25 +300,25 @@ function wpinv_currency_symbol( $currency = '' ) {
 
 function wpinv_currency_position() {
     $position = wpinv_get_option( 'currency_position', 'left' );
-    
+
     return apply_filters( 'wpinv_currency_position', $position );
 }
 
 function wpinv_thousands_separator() {
     $thousand_sep = wpinv_get_option( 'thousands_separator', ',' );
-    
+
     return apply_filters( 'wpinv_thousands_separator', $thousand_sep );
 }
 
 function wpinv_decimal_separator() {
     $decimal_sep = wpinv_get_option( 'decimal_separator', '.' );
-    
+
     return apply_filters( 'wpinv_decimal_separator', $decimal_sep );
 }
 
 function wpinv_decimals() {
     $decimals = apply_filters( 'wpinv_decimals', wpinv_get_option( 'decimals', 2 ) );
-    
+
     return absint( $decimals );
 }
 
@@ -485,7 +485,7 @@ function wpinv_get_currencies() {
         'ZAR' => __( 'South African Rand', 'invoicing' ),
         'ZMW' => __( 'Zambian Kwacha', 'invoicing' ),
     );
-    
+
     //asort( $currencies ); // this
 
     return apply_filters( 'wpinv_currencies', $currencies );
@@ -546,11 +546,11 @@ function wpinv_price( $amount = '', $currency = '' ) {
                 break;
         }
     }
-    
+
     if ( $negative ) {
         $price = '-' . $price;
     }
-    
+
     $price = apply_filters( 'wpinv_' . strtolower( $currency ) . '_currency_filter_' . $position, $price, $currency, $amount );
 
     return $price;
@@ -581,15 +581,15 @@ function wpinv_format_amount( $amount, $decimals = NULL, $calculate = false ) {
     if ( empty( $amount ) ) {
         $amount = 0;
     }
-    
+
     $decimals  = apply_filters( 'wpinv_amount_format_decimals', $decimals ? $decimals : 0, $amount, $calculate );
     $formatted = number_format( (float)$amount, $decimals, $decimal_sep, $thousands_sep );
-    
+
     if ( $calculate ) {
         if ( $thousands_sep === "," ) {
             $formatted = str_replace( ",", "", $formatted );
         }
-        
+
         if ( $decimal_sep === "," ) {
             $formatted = str_replace( ",", ".", $formatted );
         }
@@ -635,26 +635,26 @@ function wpinv_string_is_image_url( $str ) {
 
 function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = false ) {
     $should_log = apply_filters( 'wpinv_log_errors', WP_DEBUG );
-    
+
     if ( true === $should_log ) {
         $label = '';
         if ( $file && $file !== '' ) {
             $label .= basename( $file ) . ( $line ? '(' . $line . ')' : '' );
         }
-        
+
         if ( $title && $title !== '' ) {
             $label = $label !== '' ? $label . ' ' : '';
             $label .= $title . ' ';
         }
-        
+
         $label = $label !== '' ? trim( $label ) . ' : ' : '';
-        
+
         if ( is_array( $log ) || is_object( $log ) ) {
             error_log( $label . print_r( $log, true ) );
         } else {
             error_log( $label . $log );
         }
-        
+
         if ( $exit ) {
             exit;
         }
@@ -789,7 +789,7 @@ function wpinv_utf8_strimwidth( $str, $start, $width, $trimmaker = '', $encoding
     if ( function_exists( 'mb_strimwidth' ) ) {
         return mb_strimwidth( $str, $start, $width, $trimmaker, $encoding );
     }
-    
+
     return wpinv_utf8_substr( $str, $start, $width, $encoding ) . $trimmaker;
 }
 
@@ -798,7 +798,7 @@ function wpinv_utf8_strimwidth( $str, $start, $width, $trimmaker = '', $encoding
  *
  * @since 1.0.0
  *
- * @param string $str The string being checked for length. 
+ * @param string $str The string being checked for length.
  * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
  * @return int Returns the number of characters in string.
  */
@@ -806,7 +806,7 @@ function wpinv_utf8_strlen( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strlen' ) ) {
         return mb_strlen( $str, $encoding );
     }
-        
+
     return strlen( $str );
 }
 
@@ -814,7 +814,7 @@ function wpinv_utf8_strtolower( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strtolower' ) ) {
         return mb_strtolower( $str, $encoding );
     }
-    
+
     return strtolower( $str );
 }
 
@@ -822,7 +822,7 @@ function wpinv_utf8_strtoupper( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strtoupper' ) ) {
         return mb_strtoupper( $str, $encoding );
     }
-    
+
     return strtoupper( $str );
 }
 
@@ -841,7 +841,7 @@ function wpinv_utf8_strpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strpos' ) ) {
         return mb_strpos( $str, $find, $offset, $encoding );
     }
-        
+
     return strpos( $str, $find, $offset );
 }
 
@@ -860,7 +860,7 @@ function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strrpos' ) ) {
         return mb_strrpos( $str, $find, $offset, $encoding );
     }
-        
+
     return strrpos( $str, $find, $offset );
 }
 
@@ -871,7 +871,7 @@ function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
  *
  * @param string $str The string to extract the substring from.
  * @param int $start If start is non-negative, the returned string will start at the entered position in string, counting from zero.
- *                      If start is negative, the returned string will start at the entered position from the end of string. 
+ *                      If start is negative, the returned string will start at the entered position from the end of string.
  * @param int|null $length Maximum number of characters to use from string.
  * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
  * @return string
@@ -884,7 +884,7 @@ function wpinv_utf8_substr( $str, $start, $length = null, $encoding = 'UTF-8' ) 
             return mb_substr( $str, $start, $length, $encoding );
         }
     }
-        
+
     return substr( $str, $start, $length );
 }
 
@@ -901,7 +901,7 @@ function wpinv_utf8_strwidth( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strwidth' ) ) {
         return mb_strwidth( $str, $encoding );
     }
-    
+
     return wpinv_utf8_strlen( $str, $encoding );
 }
 
@@ -909,7 +909,7 @@ function wpinv_utf8_ucfirst( $str, $lower_str_end = false, $encoding = 'UTF-8' )
     if ( function_exists( 'mb_strlen' ) ) {
         $first_letter = wpinv_utf8_strtoupper( wpinv_utf8_substr( $str, 0, 1, $encoding ), $encoding );
         $str_end = "";
-        
+
         if ( $lower_str_end ) {
             $str_end = wpinv_utf8_strtolower( wpinv_utf8_substr( $str, 1, wpinv_utf8_strlen( $str, $encoding ), $encoding ), $encoding );
         } else {
@@ -918,7 +918,7 @@ function wpinv_utf8_ucfirst( $str, $lower_str_end = false, $encoding = 'UTF-8' )
 
         return $first_letter . $str_end;
     }
-    
+
     return ucfirst( $str );
 }
 
@@ -926,13 +926,13 @@ function wpinv_utf8_ucwords( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_convert_case' ) ) {
         return mb_convert_case( $str, MB_CASE_TITLE, $encoding );
     }
-    
+
     return ucwords( $str );
 }
 
 function wpinv_period_in_days( $period, $unit ) {
     $period = absint( $period );
-    
+
     if ( $period > 0 ) {
         if ( in_array( strtolower( $unit ), array( 'w', 'week', 'weeks' ) ) ) {
             $period = $period * 7;
@@ -942,6 +942,14 @@ function wpinv_period_in_days( $period, $unit ) {
             $period = $period * 365;
         }
     }
-    
+
     return $period;
+}
+
+if ( ! function_exists( 'cal_days_in_month' ) ) {
+    // Fallback in case the calendar extension is not loaded in PHP
+    // Only supports Gregorian calendar
+    function cal_days_in_month( $calendar, $month, $year ) {
+        return date( 't', mktime( 0, 0, 0, $month, 1, $year ) );
+    }
 }

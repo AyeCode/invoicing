@@ -125,61 +125,76 @@ class WPInv_Meta_Box_Details {
     }
     
     public static function subscriptions( $post ) {
-        global $wpi_mb_invoice;
-        
-        $invoice = $wpi_mb_invoice;
-        
-        if ( !empty( $invoice ) && $invoice->is_recurring() && $invoice->is_parent() ) {
-            $payments       = $invoice->get_child_payments();
-            
-            $total_payments = (int)$invoice->get_total_payments();
-            $subscription   = $invoice->get_subscription_data();
 
-            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
-            $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
-            $subscription_status = $invoice->get_subscription_status();
+        $invoice = wpinv_get_invoice( $post->ID );
+
+        if (!empty($invoice) && $invoice->is_recurring() && $invoice->is_parent()) {
+
+            $subs_db = new WPInv_Subscriptions_DB;
+            $subs = $subs_db->get_subscriptions(array('parent_payment_id' => $post->ID, 'number' => 1));
+            $sub = reset($subs);
+
+            if(!$sub){
+                _e('New Subscription will be created when customer will checkout and pay the invoice. Go to: <a href="'.admin_url( 'admin.php?page=wpinv-subscriptions' ).'">Subscriptions</a>', 'invoicing');
+                return;
+            }
+            $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($sub->period, $sub->frequency);
+            $billing = wpinv_price(wpinv_format_amount($sub->recurring_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id)) . ' / ' . $frequency;
+            $initial = wpinv_price(wpinv_format_amount($sub->initial_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id));
+
             ?>
-            <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
-            <?php if ( $subscription_id = $invoice->get_subscription_id() ) { ?>
-            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $subscription_id; ?></p>
+            <p class="wpi-meta-row wpi-sub-label <?php echo 'status-'.$sub->status; ?>"><?php _e('Recurring Payment', 'invoicing'); ?></p>
+            <?php if ($subscription_id = $invoice->get_subscription_id()) { ?>
+                <p class="wpi-meta-row wpi-sub-id">
+                    <label><?php _e('Subscription ID:', 'invoicing'); ?> </label><?php echo $subscription_id; ?></p>
             <?php } ?>
-            <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
-            <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
-            <?php if ( !empty( $payments ) || ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
-                <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
-                <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
-                <?php if ( $status_label = $invoice->get_subscription_status_label( $subscription_status ) ) { ?>
-                <p class="wpi-meta-row wpi-sub-status"><label><?php _e( 'Subscription Status:', 'invoicing' );?> </label><?php echo $status_label; ?></p>
-                <?php } ?>
-                <?php if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date() ) { ?>
-                <p class="wpi-meta-row wpi-trial-date"><label><?php _e( 'Trial Until:', 'invoicing' );?> </label><?php echo $trial_end_date; ?></p>
-                <?php } ?>
-                <?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { ?>
-                <p class="wpi-meta-row wpi-cancel-date"><label><?php _e( 'Cancelled On:', 'invoicing' );?> </label><?php echo $cancelled_date; ?></p>
-                <?php } ?>
-                <?php if ( !empty( $payments ) ) { ?>
-                <p><strong><?php _e( 'Renewal Payments:', 'invoicing' ); ?></strong></p>
+            <p class="wpi-meta-row wpi-bill-cycle">
+                <label><?php _e('Billing Cycle:', 'invoicing'); ?> </label><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?>
+            </p>
+            <p class="wpi-meta-row wpi-billed-times">
+                <label><?php _e('Times Billed:', 'invoicing'); ?> </label><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?>
+            </p>
+            <p class="wpi-meta-row wpi-start-date">
+                <label><?php _e('Start Date:', 'invoicing'); ?> </label><?php echo date_i18n(get_option('date_format'), strtotime($sub->created, current_time('timestamp'))); ?>
+            </p>
+            <p class="wpi-meta-row wpi-end-date"><label><?php if ('trialling' == $sub->status) : ?>
+                        <?php _e('Trialling Until:', 'invoicing'); ?>
+                    <?php else: ?>
+                        <?php _e('Expiration Date:', 'invoicing'); ?>
+                    <?php endif; ?></label><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?>
+            </p>
+            <?php if ($sub->status) { ?>
+                <p class="wpi-meta-row wpi-sub-status">
+                    <label><?php _e('Subscription Status:', 'invoicing'); ?> </label><?php echo $sub->get_status_label(); ?>
+                </p>
+            <?php } ?>
+            <?php
+            $payments = $sub->get_child_payments();
+            if (!empty($payments)) { ?>
+                <p><strong><?php _e('Renewal Payments:', 'invoicing'); ?></strong></p>
                 <ul id="wpi-sub-payments">
-                <?php foreach ( $payments as $invoice_id ) { ?>
-                    <li>
-                        <a href="<?php echo esc_url( get_edit_post_link( $invoice_id ) ); ?>"><?php echo wpinv_get_invoice_number( $invoice_id ); ?></a>&nbsp;&ndash;&nbsp;
-                        <span><?php echo wpinv_get_invoice_date( $invoice_id ); ?>&nbsp;&ndash;&nbsp;</span>
-                        <span><?php echo wpinv_payment_total( $invoice_id, true ); ?></span>
-                    </li>
-                <?php } ?>
+                    <?php foreach ($payments as $payment) {
+                        $invoice_id = $payment->ID;
+                        ?>
+                        <li>
+                            <a href="<?php echo esc_url(get_edit_post_link($invoice_id)); ?>"><?php echo wpinv_get_invoice_number($invoice_id); ?></a>&nbsp;&ndash;&nbsp;
+                            <span><?php echo wpinv_get_invoice_date($invoice_id); ?>&nbsp;&ndash;&nbsp;</span>
+                            <span><?php echo wpinv_payment_total($invoice_id, true); ?></span>
+                        </li>
+                    <?php } ?>
                 </ul>
-            <?php } }
+            <?php }
         }
     }
     
     public static function renewals( $post ) {
-        global $wpi_mb_invoice;
+        $invoice = wpinv_get_invoice( $post->ID );
         
-        if ( wpinv_is_subscription_payment( $wpi_mb_invoice ) ) {
-            $parent_url = get_edit_post_link( $wpi_mb_invoice->parent_invoice );
-            $parent_id  = wpinv_get_invoice_number( $wpi_mb_invoice->parent_invoice );
+        if ( wpinv_is_subscription_payment( $invoice ) ) {
+            $parent_url = get_edit_post_link( $invoice->parent_invoice );
+            $parent_id  = wpinv_get_invoice_number( $invoice->parent_invoice );
         ?>
-        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_invoice->get_subscription_id(); ?></p>
+        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_id(); ?></p>
         <p class="wpi-meta-row wpi-parent-id"><label><?php _e( 'Parent Invoice:', 'invoicing' );?> </label><a href="<?php echo esc_url( $parent_url ); ?>"><?php echo $parent_id; ?></a></p>
         <?php
         }

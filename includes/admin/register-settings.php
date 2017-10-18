@@ -265,7 +265,7 @@ function wpinv_get_registered_settings() {
                     'failure_page' => array(
                         'id'          => 'failure_page',
                         'name'        => __( 'Failed Transaction Page', 'invoicing' ),
-                        'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails', 'invoicing' ),
+                        'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
                         'chosen'      => true,
@@ -274,7 +274,16 @@ function wpinv_get_registered_settings() {
                     'invoice_history_page' => array(
                         'id'          => 'invoice_history_page',
                         'name'        => __( 'Invoice History Page', 'invoicing' ),
-                        'desc'        => __( 'This page shows an invoice history for the current user', 'invoicing' ),
+                        'desc'        => __( 'This page shows an invoice history for the current user. The <b>[wpinv_history]</b> short code should be on this page.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => $pages,
+                        'chosen'      => true,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
+                    ),
+                    'invoice_subscription_page' => array(
+                        'id'          => 'invoice_subscription_page',
+                        'name'        => __( 'Invoice Subscriptions Page', 'invoicing' ),
+                        'desc'        => __( 'This page shows an subscriptions history for the current user. The <b>[wpinv_subscriptions]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
                         'chosen'      => true,
