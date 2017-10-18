@@ -338,8 +338,18 @@ function wpinv_authorizenet_generate_subscription_params( $invoice, $card_info =
         return false;
     }
 
+    $item = $invoice->get_recurring( true );
+
+    if ( empty( $item ) ) {
+        $name = '';
+    }
+
+    if ( !($name = $item->get_name()) ) {
+        $name = $item->post_name;
+    }
+
     $card_details       = wpinv_authorizenet_generate_card_info( $card_info );
-    $subscription_name  = $invoice->get_subscription_name();
+    $subscription_name  = $name;
     $initial_amount     = wpinv_round_amount( $invoice->get_total() );
     $recurring_amount   = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
     $interval           = $subscription_item->get_recurring_interval();
