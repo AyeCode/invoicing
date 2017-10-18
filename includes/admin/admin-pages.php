@@ -442,9 +442,9 @@ function wpinv_options_page() {
                     do_action( 'wpinv_settings_tab_top', $active_tab );
                 }
 
-                do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section );
-                do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section );
-                do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section  );
+                do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section, $active_tab, $section );
+                do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section, $active_tab, $section );
+                do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section, $active_tab, $section );
 
                 // For backwards compatibility
                 if ( 'main' === $section ) {

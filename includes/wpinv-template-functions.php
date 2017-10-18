@@ -231,6 +231,7 @@ function wpinv_checkout_meta_tags() {
 	$pages[] = wpinv_get_option( 'success_page' );
 	$pages[] = wpinv_get_option( 'failure_page' );
 	$pages[] = wpinv_get_option( 'invoice_history_page' );
+	$pages[] = wpinv_get_option( 'invoice_subscription_page' );
 
 	if( !wpinv_is_checkout() && !is_page( $pages ) ) {
 		return;
@@ -262,6 +263,11 @@ function wpinv_add_body_classes( $class ) {
 		$classes[] = 'wpinv-history';
 		$classes[] = 'wpinv-page';
 	}
+
+    if( wpinv_is_subscriptions_history_page() ) {
+        $classes[] = 'wpinv-subscription';
+        $classes[] = 'wpinv-page';
+    }
 
 	if( wpinv_is_test_mode() ) {
 		$classes[] = 'wpinv-test-mode';

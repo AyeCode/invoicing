@@ -641,6 +641,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv .column-wpi_actions {
     text-align: center;
 }
+.wpinv-email-wc-row {padding: 10px;background: #fff;border-radius: 10px;}
 
 /*  ----------- */
 @media only screen and (min-width : 850px) and (max-width : 1100px) {
