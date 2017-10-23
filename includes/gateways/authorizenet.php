@@ -100,14 +100,14 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
         if ( empty( $authorizenet_card['cc_cvv2'] ) ) {
             wpinv_set_error( 'empty_cvv2', __( 'You must enter a valid CVV2!', 'invoicing' ) );
         }
-        
+
         $errors = wpinv_get_errors();
-    
+
         if ( empty( $errors ) ) {
             $invoice_id = $invoice->ID;
             $quantities_enabled = wpinv_item_quantities_enabled();
             $use_taxes          = wpinv_use_taxes();
-            
+
             $authorizeAIM = wpinv_authorizenet_AIM();
             $authorizeAIM->first_name       = wpinv_utf8_substr( $invoice->get_first_name(), 0, 50 );
             $authorizeAIM->last_name        = wpinv_utf8_substr( $invoice->get_last_name(), 0, 50 );
@@ -124,61 +124,61 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
             $authorizeAIM->exp_date         = sanitize_text_field( $authorizenet_card['cc_expire_month'] ) . sanitize_text_field( $authorizenet_card['cc_expire_year'] );
             $authorizeAIM->card_code        = sanitize_text_field( $authorizenet_card['cc_cvv2'] );
             $authorizeAIM->invoice_num      = $invoice->ID;
-            
+
             $item_desc = array();
-            foreach ( $invoice->get_cart_details() as $item ) {            
+            foreach ( $invoice->get_cart_details() as $item ) {
                 $quantity       = $quantities_enabled && !empty( $item['quantity'] ) && $item['quantity'] > 0 ? $item['quantity'] : 1;
                 $item_name      = wpinv_utf8_substr( $item['name'], 0, 31 );
                 $item_desc[]    = $item_name . ' (' . $quantity . 'x ' . wpinv_price( wpinv_format_amount( $item['item_price'] ) ) . ')';
-                
+
                 $authorizeAIM->addLineItem( $item['id'], $item_name, '', $quantity, $item['item_price'], ( $use_taxes && !empty( $item['tax'] ) && $item['tax'] > 0 ? 'Y' : 'N' ) );
             }
-            
+
             $item_desc = '#' . $invoice->get_number() . ': ' . implode( ', ', $item_desc );
-            
+
             if ( $use_taxes && $invoice->get_tax() > 0 ) {
                 $authorizeAIM->tax  = $invoice->get_tax();
-                
+
                 $item_desc .= ', ' . wp_sprintf( __( 'Tax: %s', 'invoicing' ), $invoice->get_tax( true ) );
             }
-            
+
             if ( $invoice->get_discount() > 0 ) {
                 $item_desc .= ', ' . wp_sprintf( __( 'Discount: %s', 'invoicing' ), $invoice->get_discount( true ) );
             }
-            
+
             $item_description = wpinv_utf8_substr( $item_desc, 0, 255 );
             $item_description = html_entity_decode( $item_desc , ENT_QUOTES, 'UTF-8' );
-            
+
             $authorizeAIM->description  = wpinv_utf8_substr( $item_description, 0, 255 );
-            
+
             $is_recurring = $invoice->is_recurring(); // Recurring payment.
-            
+
             if ( $is_recurring ) {
                 $authorizeAIM->recurring_billing = true;
             }
-            
+
             try {
                 if ( $is_recurring ) {
                     $response = $authorizeAIM->authorizeOnly();
                 } else {
                     $response = $authorizeAIM->authorizeAndCapture();
                 }
-                
+
                 if ( $response->approved || $response->held ) {
                     if ( $response->approved ) {
                         wpinv_update_payment_status( $invoice_id, 'publish' );
                     }
                     wpinv_set_payment_transaction_id( $invoice_id, $response->transaction_id );
-                    
+
                     $message = wp_sprintf( __( 'Authorize.Net Payment: %s with transaction id %s using %s and authorization code %s', 'invoicing' ), $response->response_reason_text, $response->transaction_id, strtoupper( $response->transaction_type ), $response->authorization_code );
-                    
-                    wpinv_insert_payment_note( $invoice_id, $message );
-                    
+
+                    wpinv_insert_payment_note( $invoice_id, $message, '', '', true );
+
                     do_action( 'wpinv_authorizenet_handle_response', $response, $invoice, $authorizenet_card );
-                    
+
                     wpinv_clear_errors();
                     wpinv_empty_cart();
-                    
+
                     wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
                 } else {
                     if ( !empty( $response->response_reason_text ) ) {
@@ -187,14 +187,14 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
                         $error = __( $response->error_message, 'invoicing' );
                     } else {
                         $error = wp_sprintf( __( 'Error data: %s', 'invoicing' ), print_r( $response, true ) );
-                    } 
-                    
+                    }
+
                     $error = wp_sprintf( __( 'Authorize.Net payment error occurred. %s', 'invoicing' ), $error );
-                    
+
                     wpinv_set_error( 'payment_error', $error );
                     wpinv_record_gateway_error( $error, $response );
-                    wpinv_insert_payment_note( $invoice_id, $error );
-                    
+                    wpinv_insert_payment_note( $invoice_id, $error, '', '', true );
+
                     wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
                 }
             } catch ( AuthorizeNetException $e ) {
@@ -212,31 +212,36 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
 }
 add_action( 'wpinv_gateway_authorizenet', 'wpinv_process_authorizenet_payment' );
 
-function wpinv_authorizenet_cancel_subscription( $subscription_id = '' ) {
-    if ( empty( $subscription_id ) ) {
+function wpinv_authorizenet_cancel_subscription( $subscription = '' ) {
+    if ( empty( $subscription->id ) ) {
         return false;
     }
     
     try {
         $authnetXML = wpinv_authorizenet_XML();
-        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription_id ) );
+        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription->id ) );
+
+        if(wpinv_is_test_mode( 'authorizenet' )){
+            return true;
+        }
 
         return $authnetXML->isSuccessful();
     } catch( Exception $e ) {
         wpinv_error_log( $e->getMessage(), __( 'Authorize.Net cancel subscription', 'invoicing' ) );
     }
-    
+
     return false;
 }
+add_action( 'wpinv_recurring_cancel_authorizenet_subscription', 'wpinv_authorizenet_cancel_subscription' );
 
 function wpinv_authorizenet_valid_ipn( $md5_hash, $transaction_id, $amount ) {
     $authorizenet_md5_hash = wpinv_get_option( 'authorizenet_md5_hash' );
     if ( empty( $authorizenet_md5_hash ) ) {
         return true;
     }
-    
+
     $compare_md5 = strtoupper( md5( $authorizenet_md5_hash . $transaction_id . $amount ) );
-    
+
     return hash_equals( $compare_md5, $md5_hash );
 }
 
@@ -244,17 +249,17 @@ function wpinv_authorizenet_AIM() {
     if ( !class_exists( 'AuthorizeNetException' ) ) {
         require_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/gateways/authorizenet/anet_php_sdk/AuthorizeNet.php';
     }
-    
+
     $authorizeAIM = new AuthorizeNetAIM( wpinv_get_option( 'authorizenet_login_id' ), wpinv_get_option( 'authorizenet_transaction_key' ) );
-    
+
     if ( wpinv_is_test_mode( 'authorizenet' ) ) {
         $authorizeAIM->setSandbox( true );
     } else {
         $authorizeAIM->setSandbox( false );
     }
-    
+
     $authorizeAIM->customer_ip = wpinv_get_ip();
-    
+
     return $authorizeAIM;
 }
 
@@ -262,9 +267,9 @@ function wpinv_authorizenet_XML() {
     if ( !class_exists( 'AuthnetXML' ) ) {
         require_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/gateways/authorizenet/Authorize.Net-XML/AuthnetXML.class.php';
     }
-    
+
     $authnetXML = new AuthnetXML( wpinv_get_option( 'authorizenet_login_id' ), wpinv_get_option( 'authorizenet_transaction_key' ), (bool)wpinv_is_test_mode( 'authorizenet' ) );
-    
+
     return $authnetXML;
 }
 
@@ -272,15 +277,21 @@ function wpinv_authorizenet_handle_response( $response, $invoice, $card_info = a
     if ( empty( $response ) || empty( $invoice ) ) {
         return false;
     }
-    
+
     if ( $invoice->is_recurring() && !empty( $response->approved ) ) {
         $subscription = wpinv_authorizenet_create_new_subscription( $invoice, $response, $card_info );
+        $success = false;
+        if(wpinv_is_test_mode( 'authorizenet' )){
+            $success = true;
+        } else {
+            $success = $subscription->isSuccessful();
+        }
 
-        if ( !empty( $subscription ) && $subscription->isSuccessful() ) {
+        if ( !empty( $subscription ) && $success ) {
             do_action( 'wpinv_recurring_post_create_subscription', $subscription, $invoice, 'authorizenet' );
-            
+
             wpinv_authorizenet_subscription_record_signup( $subscription, $invoice );
-            
+
             do_action( 'wpinv_recurring_post_record_signup', $subscription, $invoice, 'authorizenet' );
         } else {
             if ( isset( $subscription->messages->message ) ) {
@@ -290,10 +301,10 @@ function wpinv_authorizenet_handle_response( $response, $invoice, $card_info = a
                 $error = __( 'Your subscription cannot be created due to an error.', 'invoicing' );
                 wpinv_set_error( 'wpinv_authorize_recurring_error', $error );
             }
-            
+
             wpinv_record_gateway_error( $error, $subscription );
-            
-            wpinv_insert_payment_note( $invoice->ID, wp_sprintf( __( 'Authorize.Net subscription error occurred. %s', 'invoicing' ), $error ) );
+
+            wpinv_insert_payment_note( $invoice->ID, wp_sprintf( __( 'Authorize.Net subscription error occurred. %s', 'invoicing' ), $error ), '', '', true );
         }
     }
 }
@@ -303,9 +314,9 @@ function wpinv_authorizenet_create_new_subscription( $invoice, $response = array
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     $params = wpinv_authorizenet_generate_subscription_params( $invoice, $card_info, $response );
-    
+
     try {
         $authnetXML = wpinv_authorizenet_XML();
         $authnetXML->ARBCreateSubscriptionRequest( $params );
@@ -313,7 +324,7 @@ function wpinv_authorizenet_create_new_subscription( $invoice, $response = array
         $authnetXML = array();
         wpinv_error_log( $e->getMessage(), __( 'Authorize.Net cancel subscription', 'invoicing' ) );
     }
-    
+
     return $authnetXML;
 }
 
@@ -321,52 +332,62 @@ function wpinv_authorizenet_generate_subscription_params( $invoice, $card_info =
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     $subscription_item = $invoice->get_recurring( true );
-    if ( empty( $subscription_item ) ) {
+    if ( !$subscription_item->ID ) {
         return false;
     }
-    
+
+    $item = $invoice->get_recurring( true );
+
+    if ( empty( $item ) ) {
+        $name = '';
+    }
+
+    if ( !($name = $item->get_name()) ) {
+        $name = $item->post_name;
+    }
+
     $card_details       = wpinv_authorizenet_generate_card_info( $card_info );
-    $subscription_name  = $invoice->get_subscription_name();
+    $subscription_name  = $name;
     $initial_amount     = wpinv_round_amount( $invoice->get_total() );
     $recurring_amount   = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
     $interval           = $subscription_item->get_recurring_interval();
     $period             = $subscription_item->get_recurring_period();
     $bill_times         = (int)$subscription_item->get_recurring_limit();
     $bill_times         = $bill_times > 0 ? $bill_times : 9999;
-    
+
     $time_period        = wpinv_authorizenet_get_time_period( $interval, $period );
     $interval           = $time_period['interval'];
     $period             = $time_period['period'];
-    
+
     $current_tz = date_default_timezone_get();
     date_default_timezone_set( 'America/Denver' ); // Set same timezone as Authorize's server (Mountain Time) to prevent conflicts.
     $today = date( 'Y-m-d' );
     date_default_timezone_set( $current_tz );
-    
+
     $free_trial = $invoice->is_free_trial();
     if ( $free_trial && $subscription_item->has_free_trial() ) {
         $trial_interval    = $subscription_item->get_trial_interval();
         $trial_period      = $subscription_item->get_trial_period( true );
     }
-    
+
     $subscription = array();
     $subscription['name'] = $subscription_name;
-    
+
     $subscription['paymentSchedule'] = array(
         'interval'         => array( 'length' => $interval, 'unit' => $period ),
         'startDate'        => $today,
         'totalOccurrences' => $bill_times,
         'trialOccurrences' => $free_trial || ( $initial_amount != $recurring_amount ) ? 1 : 0,
     );
-    
+
     $subscription['amount'] = $recurring_amount;
     $subscription['trialAmount'] = $initial_amount;
     $subscription['payment'] = array( 'creditCard' => $card_details );
     $subscription['order'] = array( 'invoiceNumber' => $invoice->ID, 'description' => '#' . $invoice->get_number() );
     $subscription['customer'] = array( 'id' => $invoice->get_user_id(), 'email' => $invoice->get_email(), 'phoneNumber' => $invoice->phone );
-    
+
     $subscription['billTo'] = array(
         'firstName' => $invoice->get_first_name(),
         'lastName'  => $invoice->get_last_name(),
@@ -377,9 +398,9 @@ function wpinv_authorizenet_generate_subscription_params( $invoice, $card_info =
         'zip'       => $invoice->zip,
         'country'   => $invoice->country,
     );
-    
+
     $params = array( 'subscription' => $subscription );
-    
+
     return apply_filters( 'wpinv_authorizenet_generate_subscription_params', $params, $invoice, $card_info, $response );
 }
 
@@ -392,7 +413,7 @@ function wpinv_authorizenet_generate_card_info( $card_info = array() ) {
         'cc_cvv2'           => null,
     );
     $card_info = wp_parse_args( $card_info, $card_defaults );
-        
+
     $card_details = array(
         'cardNumber'     => str_replace( ' ', '', sanitize_text_field( $card_info['cc_number'] ) ),
         'expirationDate' => sanitize_text_field( $card_info['cc_expire_month'] ) . sanitize_text_field( $card_info['cc_expire_year'] ),
@@ -403,51 +424,45 @@ function wpinv_authorizenet_generate_card_info( $card_info = array() ) {
 }
 
 function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice ) {
-    if ( empty( $invoice ) || empty( $subscription ) ) {
-        return false;
-    }
-    
-    $subscription_item = $invoice->get_recurring( true );
-    if ( empty( $subscription_item ) ) {
-        return false;
-    }
-    
-    $invoice_id         = $invoice->ID;
-    $subscriptionId     = (array)$subscription->subscriptionId;
-    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $invoice_id;
+    $parent_invoice_id = absint( $invoice->ID );
 
-    wpinv_insert_payment_note( $invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ) );
-    
-    $status = $invoice->is_free_trial() && $subscription_item->has_free_trial() ? 'trialing' : 'active';
-    
-    $args = array(
-        'profile_id'        => $subscription_id,
-        'item_id'           => $subscription_item->ID,
-        'initial_amount'    => $invoice->get_total(),
-        'recurring_amount'  => $invoice->get_recurring_details( 'total' ),
-        'period'            => $subscription_item->get_recurring_period(),
-        'interval'          => $subscription_item->get_recurring_interval(),
-        'bill_times'        => $subscription_item->get_recurring_limit(),
-        'expiration'        => $invoice->get_new_expiration( $subscription_item->ID ),
-        'status'            => $status,
-        'created'           => current_time( 'mysql', 0 )
-    );
-    
-    if ( $invoice->is_free_trial() && $subscription_item->has_free_trial() ) {
-        $args['trial_period']      = $subscription_item->get_trial_period();
-        $args['trial_interval']    = $subscription_item->get_trial_interval();
-    } else {
-        $args['trial_period']      = '';
-        $args['trial_interval']    = 0;
+    if( empty( $parent_invoice_id ) ) {
+        return;
     }
-    
-    return $invoice->update_subscription( $args );
+
+    $invoice = wpinv_get_invoice( $parent_invoice_id );
+    if ( empty( $invoice ) ) {
+        return;
+    }
+
+    $subscriptionId     = (array)$subscription->subscriptionId;
+    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
+
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Invoice ID: %s', 'invoicing' ) , $parent_invoice_id ), '', '', true );
+    wpinv_set_payment_transaction_id( $parent_invoice_id, $subscription_id );
+
+    $subscription = wpinv_get_authorizenet_subscription( $subscription, $parent_invoice_id );
+
+    if ( false === $subscription ) {
+        return;
+    }
+
+    // Set payment to complete
+    wpinv_update_payment_status( $subscription->parent_payment_id, 'publish' );
+    sleep(1);
+    wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ), '', '', true );
+    update_post_meta($parent_invoice_id,'_wpinv_subscr_profile_id', $subscription_id);
+
+    $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
+
+    // Retrieve pending subscription from database and update it's status to active and set proper profile ID
+    $subscription->update( array( 'profile_id' => $subscription_id, 'status' => $status ) );
 }
 
 function wpinv_authorizenet_validate_checkout( $valid_data, $post ) {
     if ( !empty( $post['wpi-gateway'] ) && $post['wpi-gateway'] == 'authorizenet' ) {
         $error = false;
-        
+
         if ( empty( $post['authorizenet']['cc_owner'] ) ) {
             $error = true;
             wpinv_set_error( 'empty_card_name', __( 'You must enter the name on your card!', 'invoicing'));
@@ -468,19 +483,19 @@ function wpinv_authorizenet_validate_checkout( $valid_data, $post ) {
             $error = true;
             wpinv_set_error( 'empty_cvv2', __( 'You must enter a valid CVV2!', 'invoicing' ) );
         }
-        
+
         if ( $error ) {
             return;
         }
-        
+
         $invoice = wpinv_get_invoice_cart();
-        
+
         if ( !empty( $invoice ) && $subscription_item = $invoice->get_recurring( true ) ) {
             $subscription_item = $invoice->get_recurring( true );
-            
+
             $interval   = $subscription_item->get_recurring_interval();
             $period     = $subscription_item->get_recurring_period();
-            
+
             if ( $period == 'D' && ( $interval < 7 || $interval > 365 ) ) {
                 wpinv_set_error( 'authorizenet_subscription_error', __( 'Interval Length must be a value from 7 through 365 for day based subscriptions.', 'invoicing' ) );
             }
@@ -505,10 +520,10 @@ function wpinv_authorizenet_get_time_period( $subscription_interval, $subscripti
             if ( $subscription_interval > 12 ) {
                 $subscription_interval = 12;
             }
-            
+
             $interval = $subscription_interval;
             $period   = 'months';
-            
+
             if ( !( $subscription_interval === 1 || $subscription_interval === 2 || $subscription_interval === 3 || $subscription_interval === 6 || $subscription_interval === 12 ) ) {
                 $interval = $subscription_interval * 30;
                 $period   = 'days';
@@ -533,33 +548,108 @@ function wpinv_authorizenet_process_ipn() {
     if ( !( !empty( $_REQUEST['wpi-gateway'] ) && $_REQUEST['wpi-gateway'] == 'authorizenet' ) ) {
         return;
     }
-    
-    $subscription_id = intval( $_POST['x_subscription_id'] );
-    
+
+    $subscription_id = !empty($_POST['x_subscription_id']) ? intval( $_POST['x_subscription_id'] ) : false;
+
     if ( $subscription_id ) {
-        $transaction_id = sanitize_text_field( $_POST['x_trans_id'] );
-        $renewal_amount = sanitize_text_field( $_POST['x_amount'] );
+
         $response_code  = intval( $_POST['x_response_code'] );
         $reason_code    = intval( $_POST['x_response_reason_code'] );
 
+        $subscription = new WPInv_Subscription( $subscription_id, true );
+
+        if ( !$subscription->id ) {
+            return;
+        }
+
         if ( 1 == $response_code ) {
+
             // Approved
-            do_action( 'wpinv_authorizenet_renewal_payment', $transaction_id );
+            $transaction_id = sanitize_text_field( $_POST['x_trans_id'] );
+            $renewal_amount = sanitize_text_field( $_POST['x_amount'] );
+
+            $args = array(
+                'amount'         => $renewal_amount,
+                'transaction_id' => $transaction_id,
+                'gateway'        => 'authorizenet'
+            );
+
+            $subscription->add_payment( $args );
+            $subscription->renew();
+
+            do_action( 'wpinv_recurring_authorizenet_silent_post_payment', $subscription );
+            do_action( 'wpinv_authorizenet_renewal_payment', $subscription );
+
         } else if ( 2 == $response_code ) {
+
             // Declined
-            do_action( 'wpinv_authorizenet_renewal_payment_failed', $transaction_id );
-            do_action( 'wpinv_authorizenet_renewal_error', $transaction_id );
+            $subscription->failing();
+            do_action( 'wpinv_authorizenet_renewal_payment_failed', $subscription );
+            do_action( 'wpinv_authorizenet_renewal_error', $subscription );
+
         } else if ( 3 == $response_code || 8 == $reason_code ) {
+
             // An expired card
-            do_action( 'wpinv_authorizenet_renewal_payment_failed', $transaction_id );
-            do_action( 'wpinv_authorizenet_renewal_payment_error', $transaction_id );
+            $subscription->failing();
+            do_action( 'wpinv_authorizenet_renewal_payment_failed', $subscription );
+            do_action( 'wpinv_authorizenet_renewal_error', $subscription );
 
         } else {
+
             // Other Error
             do_action( 'wpinv_authorizenet_renewal_payment_error', $subscription );
+
         }
-        
+
         exit;
     }
 }
 add_action( 'wpinv_verify_authorizenet_ipn', 'wpinv_authorizenet_process_ipn' );
+
+/**
+ * Retrieve the subscription
+ */
+function wpinv_get_authorizenet_subscription( $subscription_data = array(), $invoice_id ) {
+    $parent_invoice_id = absint( $invoice_id );
+
+    if( empty( $subscription_data ) ) {
+        return false;
+    }
+
+    if( empty( $parent_invoice_id ) ) {
+        return false;
+    }
+
+    $invoice = wpinv_get_invoice( $parent_invoice_id );
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    $subscriptionId     = (array)$subscription_data->subscriptionId;
+    $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
+
+    $subscription = new WPInv_Subscription( $subscription_id, true );
+
+    if( ! $subscription || $subscription->id < 1 ) {
+
+        $subs_db      = new WPInv_Subscriptions_DB;
+        $subs         = $subs_db->get_subscriptions( array( 'parent_payment_id' => $parent_invoice_id, 'number' => 1 ) );
+        $subscription = reset( $subs );
+
+        if( $subscription && $subscription->id > 0 ) {
+
+            // Update the profile ID so it is set for future renewals
+            $subscription->update( array( 'profile_id' => sanitize_text_field( $subscription_id ) ) );
+
+        } else {
+
+            // No subscription found with a matching payment ID, bail
+            return false;
+
+        }
+
+    }
+
+    return $subscription;
+
+}
