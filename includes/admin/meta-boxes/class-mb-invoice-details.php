@@ -136,7 +136,7 @@ class WPInv_Meta_Box_Details {
             $sub = reset($subs);
 
             if(!$sub){
-                _e('New Subscription will be created when customer will checkout and pay the invoice. Go to: <a href="'.admin_url( 'admin.php?page=wpinv-subscriptions' ).'">Subscriptions</a>', 'invoicing');
+                _e('No <a href="'.admin_url( 'admin.php?page=wpinv-subscriptions' ).'">Subscriptions</a> found.', 'invoicing');
                 return;
             }
             $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($sub->period, $sub->frequency);

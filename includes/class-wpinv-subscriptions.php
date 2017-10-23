@@ -81,7 +81,8 @@ class WPInv_Subscriptions {
         add_action( 'init', array( $this, 'wpinv_post_actions' ) );
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
-        add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_checkout_add_subscription' ), 10, 2 );
+        add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_process_before_send_to_gateway' ), 10, 1 );
+        add_action( 'save_post_wpi_invoice', array( $this, 'wpinv_add_update_subscription' ), 10, 1 );
         add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
     }
 
@@ -263,19 +264,19 @@ class WPInv_Subscriptions {
     }
 
     /**
-     * Create subscription on checkout
+     * Create/Update subscription on invoice created/updated
      *
      * @access      public
      * @since       1.0.0
      * @return      void
      */
-    public function wpinv_checkout_add_subscription( $invoice, $invoice_data ) {
+    public function wpinv_add_update_subscription( $invoice_id ) {
 
-        if(!$invoice->ID){
+        if(!$invoice_id){
             return;
         }
 
-        $invoice_obj = new WPInv_Invoice($invoice->ID);
+        $invoice_obj = new WPInv_Invoice($invoice_id);
 
         if ( !$invoice_obj->is_recurring() ) {
             return;
@@ -320,8 +321,31 @@ class WPInv_Subscriptions {
             'transaction_id'    => '',
         );
 
-        // Now create the subscription record
-        $subscription = new WPInv_Subscription();
-        $subscription->create( $args );
+        $subs_db      = new WPInv_Subscriptions_DB;
+        $subs         = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_obj->ID, 'number' => 1 ) );
+        $subscription = reset( $subs );
+
+        if( $subscription && $subscription->id > 0 ) {
+
+            $subscription->update( $args );
+
+        } else {
+
+            $subscription = new WPInv_Subscription();
+            $subscription->create( $args );
+
+        }
+
+    }
+
+    /**
+     * Create/Update subscription on checkout
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      void
+     */
+    public function wpinv_process_before_send_to_gateway( $invoice ) {
+        $this->wpinv_add_update_subscription( $invoice->ID );
     }
 }

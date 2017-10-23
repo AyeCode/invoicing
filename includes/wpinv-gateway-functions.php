@@ -663,29 +663,6 @@ function wpinv_get_bank_info( $filtered = false ) {
     return apply_filters( 'wpinv_bank_info', $bank_info, $filtered );
 }
 
-function wpinv_process_before_send_to_gateway( $invoice, $invoice_data = array() ) {
-    if ( !empty( $invoice ) && $invoice->is_recurring() && $subscription_item = $invoice->get_recurring( true ) ) {        
-        $args                          = array();
-        $args['item_id']               = $subscription_item->ID;
-        $args['initial_amount']        = wpinv_round_amount( $invoice->get_total() );
-        $args['recurring_amount']      = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
-        $args['currency']              = $invoice->get_currency();
-        $args['period']                = $subscription_item->get_recurring_period();
-        $args['interval']              = $subscription_item->get_recurring_interval();
-        if ( $subscription_item->has_free_trial() ) {
-            $args['trial_period']      = $subscription_item->get_trial_period();
-            $args['trial_interval']    = $subscription_item->get_trial_interval();
-        } else {
-            $args['trial_period']      = '';
-            $args['trial_interval']    = 0;
-        }
-        $args['bill_times']            = (int)$subscription_item->get_recurring_limit();
-        
-        $invoice->update_subscription( $args );
-    }
-}
-add_action( 'wpinv_checkout_before_send_to_gateway', 'wpinv_process_before_send_to_gateway', 10, 2 );
-
 function wpinv_get_post_data( $method = 'request' ) {
     $data       = array();
     $request    = $_REQUEST;
