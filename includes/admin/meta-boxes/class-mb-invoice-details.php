@@ -51,6 +51,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-td"><?php echo $date_completed;?></div>
         </div>
         <?php } ?>
+        <?php do_action( 'wpinv_meta_box_details_after_due_date', $post_id ); ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">
             <div class="gdmbx-th"><label for="wpinv_status"><?php echo $title['status']; ?></label></div>
             <div class="gdmbx-td">
