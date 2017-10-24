@@ -230,7 +230,11 @@ class WPInv_Subscription {
 	 */
 	public function get_total_payments() {
 
-		return count( $this->get_child_payments() ) + 1;
+		if('pending' != $this->status){
+            return count( $this->get_child_payments() ) + 1;
+        } else {
+            return count($this->get_child_payments());
+        }
 
 	}
 
@@ -245,7 +249,11 @@ class WPInv_Subscription {
 		$times_billed = $this->get_total_payments();
 
 		if( ! empty( $this->trial_period ) ) {
-			$times_billed -= 1;
+            if('pending' != $this->status){
+                $times_billed = 0;
+            } else {
+                $times_billed -= 1;
+            }
 		}
 
 		return $times_billed;

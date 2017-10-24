@@ -145,9 +145,9 @@ class WPInv_Meta_Box_Details {
 
             ?>
             <p class="wpi-meta-row wpi-sub-label <?php echo 'status-'.$sub->status; ?>"><?php _e('Recurring Payment', 'invoicing'); ?></p>
-            <?php if ($subscription_id = $invoice->get_subscription_id()) { ?>
+            <?php if ($sub->id) { ?>
                 <p class="wpi-meta-row wpi-sub-id">
-                    <label><?php _e('Subscription ID:', 'invoicing'); ?> </label><?php echo $subscription_id; ?></p>
+                    <label><?php _e('Subscription ID:', 'invoicing'); ?> </label><a href="<?php echo esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . $sub->id ) ); ?>" title="<?php echo esc_attr( __( 'View or edit subscription', 'invoicing' ) ); ?>" target="_blank"><?php echo $sub->id; ?></a></p>
             <?php } ?>
             <p class="wpi-meta-row wpi-bill-cycle">
                 <label><?php _e('Billing Cycle:', 'invoicing'); ?> </label><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?>

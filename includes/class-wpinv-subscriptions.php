@@ -81,8 +81,7 @@ class WPInv_Subscriptions {
         add_action( 'init', array( $this, 'wpinv_post_actions' ) );
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
-        add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_process_before_send_to_gateway' ), 10, 1 );
-        add_action( 'save_post_wpi_invoice', array( $this, 'wpinv_add_update_subscription' ), 10, 1 );
+        add_action( 'wpi-pending_wpi_invoice', array( $this, 'wpinv_add_update_subscription' ), 10, 2 );
         add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
     }
 
@@ -270,9 +269,19 @@ class WPInv_Subscriptions {
      * @since       1.0.0
      * @return      void
      */
-    public function wpinv_add_update_subscription( $invoice_id ) {
+    public function wpinv_add_update_subscription( $invoice_id, $invoice ) {
 
-        if(!$invoice_id){
+        remove_action( 'save_post', __FUNCTION__ );
+
+        if(empty($invoice_id) || 'wpi_invoice' != get_post_type($invoice_id)){
+            return;
+        }
+
+        if ( defined( 'DOING_AUTOSAVE' ) ) {
+            return;
+        }
+
+        if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
             return;
         }
 
@@ -281,7 +290,6 @@ class WPInv_Subscriptions {
         if ( !$invoice_obj->is_recurring() ) {
             return;
         }
-
 
         $item_id = $invoice_obj->get_recurring();
         $item = new WPInv_Item( $item_id );
@@ -325,27 +333,12 @@ class WPInv_Subscriptions {
         $subs         = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_obj->ID, 'number' => 1 ) );
         $subscription = reset( $subs );
 
-        if( $subscription && $subscription->id > 0 ) {
-
-            $subscription->update( $args );
-
-        } else {
+        if( !$subscription || $subscription->id <= 0 ) {
 
             $subscription = new WPInv_Subscription();
             $subscription->create( $args );
 
         }
 
-    }
-
-    /**
-     * Create/Update subscription on checkout
-     *
-     * @access      public
-     * @since       1.0.0
-     * @return      void
-     */
-    public function wpinv_process_before_send_to_gateway( $invoice ) {
-        $this->wpinv_add_update_subscription( $invoice->ID );
     }
 }
