@@ -1897,7 +1897,7 @@ class WPInv_EUVat {
         $is_digital         = self::invoice_has_digital_rule( $invoice );
         $wpi_country        = $invoice->country;
         
-        $requires_vat       = !self::hide_vat_fields() && $invoice->get_total() > 0 && self::requires_vat( 0, false, $is_digital );
+        $requires_vat       = !self::hide_vat_fields() && !$invoice->is_free() && self::requires_vat( 0, false, $is_digital );
         $wpi_requires_vat   = $requires_vat;
         
         $company            = self::get_user_company();
