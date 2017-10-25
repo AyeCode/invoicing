@@ -89,6 +89,10 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             break;
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
+            $is_viewed = wpinv_is_invoice_viewed( $wpi_invoice->ID );
+            if(isset($is_viewed) && 1 == $is_viewed){
+                $value .= '&nbsp;&nbsp;<i class="fa fa-eye" title="'.__( 'Viewed by Customer', 'invoicing' ).'"></i>';
+            }
             if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && $gateway_title = $wpi_invoice->get_gateway_title() ) {
                 $value .= '<br><small class="meta gateway">' . wp_sprintf( __( 'Via %s', 'invoicing' ), $gateway_title ) . '</small>';
             }
