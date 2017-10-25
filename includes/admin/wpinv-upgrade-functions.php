@@ -66,9 +66,7 @@ function convert_old_subscriptions(){
 
     global $wpdb;
 
-    $query = "SELECT ". $wpdb->posts .".ID FROM ". $wpdb->posts ." INNER JOIN ". $wpdb->postmeta ." ON ( ". $wpdb->posts .".ID = ". $wpdb->postmeta .".post_id ) WHERE 1=1  AND ( 
-  ( ". $wpdb->postmeta .".meta_key = '_wpinv_subscr_item_id' AND ". $wpdb->postmeta .".meta_value > '0' )
-) AND ". $wpdb->posts .".post_type = 'wpi_invoice' GROUP BY ". $wpdb->posts .".ID ORDER BY ". $wpdb->posts .".post_date ASC ";
+    $query = "SELECT ". $wpdb->posts .".ID FROM ". $wpdb->posts ." INNER JOIN ". $wpdb->postmeta ." ON ( ". $wpdb->posts .".ID = ". $wpdb->postmeta .".post_id ) WHERE 1=1  AND ". $wpdb->postmeta .".meta_key = '_wpinv_subscr_status' AND (". $wpdb->postmeta .".meta_value = 'pending' OR ". $wpdb->postmeta .".meta_value = 'active' OR ". $wpdb->postmeta .".meta_value = 'cancelled' OR ". $wpdb->postmeta .".meta_value = 'completed' OR ". $wpdb->postmeta .".meta_value = 'expired' OR ". $wpdb->postmeta .".meta_value = 'trialing' OR ". $wpdb->postmeta .".meta_value = 'failing') AND ". $wpdb->posts .".post_type = 'wpi_invoice' GROUP BY ". $wpdb->posts .".ID ORDER BY ". $wpdb->posts .".post_date ASC";
 
     $results = $wpdb->get_results($query);
 
@@ -76,24 +74,29 @@ function convert_old_subscriptions(){
 
         $invoice = new WPInv_Invoice($row->ID);
 
-        $item_id = $invoice->get_meta( '_wpinv_subscr_item_id', true );
+        $item_id = $invoice->get_meta( '_wpinv_item_ids', true );
         $item = new WPInv_Item( $item_id );
+
+        if(!$item->is_recurring()){
+            continue;
+        }
 
         $period             = $item->get_recurring_period(true);
         $interval           = $item->get_recurring_interval();
         $bill_times         = (int)$item->get_recurring_limit();
         $initial_amount     = wpinv_sanitize_amount( $invoice->get_total(), 2 );
-        $recurring_amount   = wpinv_sanitize_amount( $invoice->get_meta( '_wpinv_subscr_recurring_amount', true ), 2 );
+        $recurring_amount   = wpinv_sanitize_amount( $invoice->get_recurring_details( 'total' ), 2 );
         $subscription_status = $invoice->get_meta( '_wpinv_subscr_status', true );
         $status             = empty($subscription_status) ? 'pending' : $subscription_status;
-        $expiration         = date( 'Y-m-d H:i:s', strtotime( '+' . $interval . ' ' . $period  . ' 23:59:59', current_time( 'timestamp' ) ) );
+        $expiration         = date( 'Y-m-d H:i:s', strtotime( '+' . $interval . ' ' . $period  . ' 23:59:59', strtotime($invoice->date) ) );
 
         $trial_period = '';
         if ( $invoice->is_free_trial() && $item->has_free_trial() ) {
             $trial_period       = $item->get_trial_period(true);
             $free_trial         = $item->get_free_trial();
             $trial_period       = ! empty( $invoice->is_free_trial() ) ? $free_trial . ' ' . $trial_period : '';
-            $expiration         = date( 'Y-m-d H:i:s', strtotime( '+' . $trial_period . ' 23:59:59', current_time( 'timestamp' ) ) );
+            $expiration         = date( 'Y-m-d H:i:s', strtotime( '+' . $trial_period . ' 23:59:59', strtotime($invoice->date) ) );
+            $status             = "trialing" === $status ? 'trialling' : $status;
         }
 
         $args = array(
@@ -109,7 +112,7 @@ function convert_old_subscriptions(){
             'created'           => date( 'Y-m-d H:i:s', strtotime($invoice->date) ),
             'expiration'        => $expiration,
             'trial_period'      => $trial_period,
-            'profile_id'        => '',
+            'profile_id'        => $invoice->ID,
             'transaction_id'    => '',
         );
 
