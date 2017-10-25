@@ -612,6 +612,7 @@ function wpinv_recalculate_taxes(state) {
                     gw = jQuery('#wpinv_payment_mode_select', $wrap).attr('data-gateway');
                 }
                 jQuery('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $wrap).attr('checked', true);
+                wpinvSetPaymentBtnText(jQuery('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $wrap), res.free);
                 var data = new Object();
                 data.post = postData;
                 data.response = res;

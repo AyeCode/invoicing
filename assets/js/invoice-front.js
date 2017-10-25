@@ -132,11 +132,7 @@ jQuery(function($) {
                 $('div.payment_box').show();
             }
             $('#wpinv_payment_mode_select').attr('data-gateway', $(this).val());
-            if ($(this).data('button-text')) {
-                $('#wpinv-payment-button').val($(this).data('button-text'));
-            } else {
-                $('#wpinv-payment-button').val($('#wpinv-payment-button').data('value'));
-            }
+            wpinvSetPaymentBtnText($(this), $('#wpinv_payment_mode_select').data('free'));
         },
         applyDiscount: function(e) {
             e.preventDefault();
@@ -187,6 +183,7 @@ jQuery(function($) {
                                 gw = $('#wpinv_payment_mode_select', $this.checkout_form).attr('data-gateway');
                             }
                             $('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $this.checkout_form).prop('checked', true);
+                            wpinvSetPaymentBtnText($('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $this.checkout_form), res.data.free);
                             $(document.body).trigger('wpinv_discount_applied', [res]);
                         }
                         if (res.msg) {
@@ -242,6 +239,7 @@ jQuery(function($) {
                                 gw = $('#wpinv_payment_mode_select', $this.checkout_form).attr('data-gateway');
                             }
                             $('input[name="wpi-gateway"][value="' + gw + '"]', $this.checkout_form).prop('checked', true);
+                            wpinvSetPaymentBtnText($('input[name="wpi-gateway"][value="' + gw + '"]', $this.checkout_form), res.data.free);
                             //console.log('291 : wpinv_recalculate_taxes()');
                             //wpinv_recalculate_taxes();
                             $(document.body).trigger('wpinv_discount_removed', [res]);
@@ -274,6 +272,15 @@ function wpinvBlock(el, message) {
         },
         ignoreIfBlocked: true
     });
+}
+
+function wpinvSetPaymentBtnText(el, free) {
+    var btnTxt = jQuery(el).data('button-text') ? jQuery(el).data('button-text') : jQuery('#wpinv-payment-button').data('value');
+    if (free) {
+        btnTxt = WPInv.txtComplete;
+    }
+    
+    jQuery('form#wpinv_checkout_form #wpinv-payment-button').val(btnTxt);
 }
 
 function wpinvUnblock(el) {

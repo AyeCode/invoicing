@@ -19,7 +19,7 @@ if ( !is_admin() ) {
 }
 
 function wpinv_template_path() {
-    return apply_filters( 'wpinv_template_path', 'invoicing/' );
+    return apply_filters( 'wpinv_template_path', wpinv_get_theme_template_dir_name() );
 }
 
 function wpinv_display_invoice_top_bar( $invoice ) {
@@ -222,7 +222,7 @@ function wpinv_get_theme_template_paths() {
 }
 
 function wpinv_get_theme_template_dir_name() {
-	return trailingslashit( apply_filters( 'wpinv_templates_dir', 'wpinv_templates' ) );
+	return trailingslashit( apply_filters( 'wpinv_templates_dir', 'invoicing' ) );
 }
 
 function wpinv_checkout_meta_tags() {
@@ -1550,7 +1550,7 @@ function wpinv_payment_mode_select() {
     $invoice_id = (int)$invoice->ID;
     $chosen_gateway = wpinv_get_chosen_gateway( $invoice_id );
     ?>
-    <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( $invoice->is_free() ? 'style="display:none;"' : '' ); ?>>
+    <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( $invoice->is_free() ? 'style="display:none;" data-free="1"' : '' ); ?>>
             <?php do_action( 'wpinv_payment_mode_before_gateways_wrap' ); ?>
             <div id="wpinv-payment-mode-wrap" class="panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Select Payment Method', 'invoicing' ); ?></h3></div>
