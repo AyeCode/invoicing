@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Invoicing 1.0.1\n"
+"Project-Id-Version: Invoicing 1.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-12 15:55+0100\n"
-"PO-Revision-Date: 2017-10-12 15:55+0100\n"
+"POT-Creation-Date: 2017-10-26 22:55+0100\n"
+"PO-Revision-Date: 2017-10-26 22:55+0100\n"
 "Last-Translator: \n"
 "Language-Team: AyeCode Ltd <info@ayecode.io>\n"
 "Language: en_US\n"
@@ -1838,39 +1838,43 @@ msgstr ""
 msgid "Buy Now"
 msgstr ""
 
-#: includes/class-wpinv.php:307
+#: includes/class-wpinv.php:220
+msgid "Complete"
+msgstr ""
+
+#: includes/class-wpinv.php:308
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/class-wpinv.php:310
+#: includes/class-wpinv.php:311
 msgid "Are you sure you wish to delete this tax rate?"
 msgstr ""
 
-#: includes/class-wpinv.php:311
+#: includes/class-wpinv.php:312
 msgid "Invoice must contain at least one item"
 msgstr ""
 
-#: includes/class-wpinv.php:312
+#: includes/class-wpinv.php:313
 msgid "Are you sure you wish to delete this item?"
 msgstr ""
 
-#: includes/class-wpinv.php:313
+#: includes/class-wpinv.php:314
 msgid ""
 "Fill the user's billing information? This will remove any currently entered "
 "billing information"
 msgstr ""
 
-#: includes/class-wpinv.php:314
+#: includes/class-wpinv.php:315
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
 msgstr ""
 
-#: includes/class-wpinv.php:315
+#: includes/class-wpinv.php:316
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/class-wpinv.php:316
+#: includes/class-wpinv.php:317
 msgid ""
 "This item is in use! Before delete this item, you need to delete all the "
 "invoice(s) using this item."
@@ -2028,7 +2032,7 @@ msgstr ""
 #: includes/gateways/paypal.php:300 includes/gateways/paypal.php:305
 #: includes/gateways/paypal.php:359 includes/gateways/paypal.php:367
 #: includes/gateways/paypal.php:409 includes/gateways/paypal.php:416
-#: includes/gateways/paypal.php:593 includes/gateways/worldpay.php:136
+#: includes/gateways/paypal.php:599 includes/gateways/worldpay.php:136
 msgid "IPN Error"
 msgstr ""
 
@@ -2073,8 +2077,8 @@ msgstr ""
 msgid "Payment failed due to invalid purchase key in PayPal IPN."
 msgstr ""
 
-#: includes/gateways/paypal.php:423 includes/gateways/paypal.php:580
-#: includes/gateways/paypal.php:606
+#: includes/gateways/paypal.php:423 includes/gateways/paypal.php:586
+#: includes/gateways/paypal.php:612
 #, php-format
 msgid "PayPal Transaction ID: %s"
 msgstr ""
@@ -2141,26 +2145,26 @@ msgstr ""
 msgid "PayPal Subscription ID: %s"
 msgstr ""
 
-#: includes/gateways/paypal.php:593
+#: includes/gateways/paypal.php:599
 msgid "Invalid currency in IPN response. IPN data: "
 msgstr ""
 
-#: includes/gateways/paypal.php:704
+#: includes/gateways/paypal.php:710
 #, php-format
 msgid "Partial PayPal refund processed: %s"
 msgstr ""
 
-#: includes/gateways/paypal.php:708
+#: includes/gateways/paypal.php:714
 #, php-format
 msgid "PayPal Payment #%s Refunded for reason: %s"
 msgstr ""
 
-#: includes/gateways/paypal.php:709
+#: includes/gateways/paypal.php:715
 #, php-format
 msgid "PayPal Refund Transaction ID: %s"
 msgstr ""
 
-#: includes/gateways/paypal.php:790
+#: includes/gateways/paypal.php:796
 msgid "Proceed to PayPal"
 msgstr ""
 
