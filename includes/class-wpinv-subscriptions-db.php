@@ -582,6 +582,7 @@ class WPInv_Subscriptions_DB extends Wpinv_DB {
         dbDelta( $sql );
 
         update_option( $this->table_name . '_wpinv_db_version', $this->version );
+        update_option( 'wpinv_db_version', WPINV_VERSION );
     }
 
 }

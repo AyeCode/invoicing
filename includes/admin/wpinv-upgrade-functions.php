@@ -20,8 +20,6 @@ function wpinv_automatic_upgrade() {
     if ( version_compare( $wpi_version, '0.0.5', '<' ) ) {
         wpinv_v005_upgrades();
     }
-
-    add_action('plugins_loaded', 'wpinv_upgrade_all', 10);
     
     update_option( 'wpinv_version', WPINV_VERSION );
 }
@@ -58,15 +56,21 @@ function wpinv_v005_upgrades() {
     wpinv_add_admin_caps();
 }
 
+add_action('plugins_loaded', 'wpinv_upgrade_all', 10);
+
 function wpinv_upgrade_all(){
 
-    wpinv_add_admin_caps();
+    $wpinv_db_ver = get_option('wpinv_db_version');
+    if ( $wpinv_db_ver != WPINV_VERSION) {
 
-    // Add Subscription tables
-    $db = new WPInv_Subscriptions_DB;
-    @$db->create_table();
+        wpinv_add_admin_caps();
 
-    convert_old_subscriptions();
+        // Add Subscription tables
+        $db = new WPInv_Subscriptions_DB;
+        @$db->create_table();
+
+        convert_old_subscriptions();
+    }
 }
 
 function convert_old_subscriptions(){
