@@ -20,6 +20,8 @@ function wpinv_automatic_upgrade() {
     if ( version_compare( $wpi_version, '0.0.5', '<' ) ) {
         wpinv_v005_upgrades();
     }
+
+    add_action('plugins_loaded', 'wpinv_upgrade_all', 10);
     
     update_option( 'wpinv_version', WPINV_VERSION );
 }
@@ -52,6 +54,11 @@ function wpinv_v005_upgrades() {
             clean_post_cache( $row->post_id );
         }
     }
+
+    wpinv_add_admin_caps();
+}
+
+function wpinv_upgrade_all(){
 
     wpinv_add_admin_caps();
 
