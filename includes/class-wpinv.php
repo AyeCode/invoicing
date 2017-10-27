@@ -206,7 +206,7 @@ class WPInv_Plugin {
         wp_enqueue_style( 'wpinv_front_style' );
                
         // Register scripts
-        wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
+        wp_register_script( 'wpinv-jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
         wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery', 'wpinv-vat-script' ),  WPINV_VERSION );
         
         $localize                         = array();
@@ -221,7 +221,7 @@ class WPInv_Plugin {
         
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
-        wp_enqueue_script( 'jquery-blockui' );
+        wp_enqueue_script( 'wpinv-jquery-blockui' );
         $autofill_api = wpinv_get_option('address_autofill_api');
         $autofill_active = wpinv_get_option('address_autofill_active');
         if ( isset( $autofill_active ) && 1 == $autofill_active && !empty( $autofill_api ) && wpinv_is_checkout() ) {
