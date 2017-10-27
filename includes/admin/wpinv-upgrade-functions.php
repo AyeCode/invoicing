@@ -56,12 +56,11 @@ function wpinv_v005_upgrades() {
     wpinv_add_admin_caps();
 }
 
-add_action('plugins_loaded', 'wpinv_upgrade_all', 10);
+if ( get_option('wpinv_db_version') != WPINV_VERSION ) {
+    add_action('plugins_loaded', 'wpinv_upgrade_all', 10);
+}
 
 function wpinv_upgrade_all(){
-
-    $wpinv_db_ver = get_option('wpinv_db_version');
-    if ( $wpinv_db_ver != WPINV_VERSION) {
 
         wpinv_add_admin_caps();
 
@@ -70,7 +69,6 @@ function wpinv_upgrade_all(){
         @$db->create_table();
 
         convert_old_subscriptions();
-    }
 }
 
 function convert_old_subscriptions(){
