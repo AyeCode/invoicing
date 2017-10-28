@@ -792,6 +792,18 @@ function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id, $invoic
 }
 add_filter( 'wpinv_payment_details_transaction_id-paypal', 'wpinv_paypal_link_transaction_id', 10, 3 );
 
+function wpinv_is_paypal_valid_for_use() {
+    return in_array( wpinv_get_currency(), apply_filters( 'wpinv_paypal_supported_currencies', array( 'AUD', 'BRL', 'CAD', 'MXN', 'NZD', 'HKD', 'SGD', 'USD', 'EUR', 'JPY', 'TRY', 'NOK', 'CZK', 'DKK', 'HUF', 'ILS', 'MYR', 'PHP', 'PLN', 'SEK', 'CHF', 'TWD', 'THB', 'GBP', 'RMB', 'RUB', 'INR' ) ) );
+}
+
+function wpinv_check_paypal_currency_support($gateway_list) {
+    if(!wpinv_is_paypal_valid_for_use()){
+        unset($gateway_list['paypal']);
+    }
+    return $gateway_list;
+}
+add_filter( 'wpinv_enabled_payment_gateways', 'wpinv_check_paypal_currency_support', 10, 1 );
+
 function wpinv_gateway_paypal_button_label($label) {
     return __( 'Proceed to PayPal', 'invoicing' );
 }

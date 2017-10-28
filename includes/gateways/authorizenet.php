@@ -563,3 +563,15 @@ function wpinv_authorizenet_process_ipn() {
     }
 }
 add_action( 'wpinv_verify_authorizenet_ipn', 'wpinv_authorizenet_process_ipn' );
+
+function wpinv_is_authorizenet_valid_for_use() {
+    return in_array( wpinv_get_currency(), apply_filters( 'wpinv_authorizenet_supported_currencies', array( 'AUD', 'CAD', 'CHF', 'DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'NZD', 'PLN', 'SEK', 'USD', 'ZAR' ) ) );
+}
+
+function wpinv_check_authorizenet_currency_support($gateway_list) {
+    if(!wpinv_is_authorizenet_valid_for_use()){
+        unset($gateway_list['authorizenet']);
+    }
+    return $gateway_list;
+}
+add_filter( 'wpinv_enabled_payment_gateways', 'wpinv_check_authorizenet_currency_support', 10, 1 );

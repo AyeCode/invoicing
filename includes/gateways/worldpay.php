@@ -141,3 +141,15 @@ function wpinv_process_worldpay_ipn() {
     return;
 }
 add_action( 'wpinv_verify_worldpay_ipn', 'wpinv_process_worldpay_ipn' );
+
+function wpinv_is_worldpay_valid_for_use() {
+    return in_array( wpinv_get_currency(), apply_filters( 'wpinv_worldpay_supported_currencies', array( 'AUD', 'ARS', 'CAD', 'CHF', 'DKK', 'EUR', 'HKD', 'MYR', 'GBP', 'NZD', 'NOK', 'SGD', 'LKR', 'SEK', 'TRY', 'USD', 'ZAR' )));
+}
+
+function wpinv_check_worldpay_currency_support($gateway_list) {
+    if(!wpinv_is_worldpay_valid_for_use()){
+        unset($gateway_list['worldpay']);
+    }
+    return $gateway_list;
+}
+add_filter( 'wpinv_enabled_payment_gateways', 'wpinv_check_worldpay_currency_support', 10, 1 );
