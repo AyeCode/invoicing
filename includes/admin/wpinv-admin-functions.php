@@ -181,6 +181,10 @@ function wpinv_admin_messages() {
 		add_settings_error( 'wpinv-notices', 'wpinv-deleted', __( 'The invoice has been deleted.', 'invoicing' ), 'updated' );
 	}
 
+    if ( isset( $_GET['wpinv-message'] ) && 'email_disabled' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+        add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Email notification is disabled. Please check settings.', 'invoicing' ), 'error' );
+    }
+
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The email has been sent to customer.', 'invoicing' ), 'updated' );
     }

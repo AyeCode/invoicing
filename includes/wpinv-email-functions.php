@@ -540,7 +540,7 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     
     $email_type = 'user_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
-        return false;
+        return -1;
     }
     
     $invoice = wpinv_get_invoice( $invoice_id );
@@ -1301,8 +1301,14 @@ function wpinv_send_customer_invoice( $data = array() ) {
     }
     
     $sent = wpinv_user_invoice_notification( $invoice_id );
-    
-    $status = $sent ? 'email_sent' : 'email_fail';
+
+    if( -1  == $sent ){
+        $status = 'email_disabled';
+    } elseif($sent) {
+        $status = 'email_sent';
+    } else {
+        $status = 'email_fail';
+    }
     
     $redirect = add_query_arg( array( 'wpinv-message' => $status, 'wpi_action' => false, 'invoice_id' => false ) );
     wp_redirect( $redirect );
