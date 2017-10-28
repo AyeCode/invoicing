@@ -386,7 +386,8 @@ function wpinv_settings_update_gateways( $input ) {
 add_filter( 'wpinv_settings_tab_gateways_sanitize', 'wpinv_settings_update_gateways', 10, 1 );
 
 // PayPal Standard settings
-function wpinv_gateway_settings_paypal( $setting ) {    
+function wpinv_gateway_settings_paypal( $setting ) {
+    $setting['paypal_active']['desc'] = $setting['paypal_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, BRL, CAD, CZK, DKK, EUR, HKD, HUF, ILS, JPY, MYR, MXN, NOK, NZD, PHP, PLN, GBP, SGD, SEK, CHF, TWD, THB, USD )', 'invoicing' );
     $setting['paypal_desc']['std'] = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
     
     $setting['paypal_sandbox'] = array(
@@ -492,7 +493,7 @@ add_filter( 'wpinv_gateway_settings_bank_transfer', 'wpinv_gateway_settings_bank
 
 // Authorize.Net settings
 function wpinv_gateway_settings_authorizenet( $setting ) {
-    $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( currencies supported: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
+    $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
     $setting['authorizenet_desc']['std'] = __( 'Pay using a Authorize.Net to process credit card / debit card transactions.', 'invoicing' );
     
     $setting['authorizenet_sandbox'] = array(
@@ -544,6 +545,7 @@ add_filter( 'wpinv_gateway_settings_authorizenet', 'wpinv_gateway_settings_autho
 
 // Worldpay settings
 function wpinv_gateway_settings_worldpay( $setting ) {
+    $setting['worldpay_active']['desc'] = $setting['worldpay_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, ARS, CAD, CHF, DKK, EUR, HKD, MYR, GBP, NZD, NOK, SGD, LKR, SEK, TRY, USD, ZAR )', 'invoicing' );
     $setting['worldpay_desc']['std'] = __( 'Pay using a Worldpay account to process credit card / debit card transactions.', 'invoicing' );
     
     $setting['worldpay_sandbox'] = array(
