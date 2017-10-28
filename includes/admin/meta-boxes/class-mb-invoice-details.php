@@ -108,7 +108,7 @@ class WPInv_Meta_Box_Details {
         
         if ( $email = $wpi_mb_invoice->get_email() ) {
             $email_actions = array();
-            $email_actions['email_url']      = add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) );
+            $email_actions['email_url']      = remove_query_arg('wpinv-message', add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) ));
             $email_actions['reminder_url']   = add_query_arg( array( 'wpi_action' => 'send_reminder', 'invoice_id' => $post->ID ) );
             
             $email_actions = apply_filters('wpinv_resend_invoice_email_actions', $email_actions );
