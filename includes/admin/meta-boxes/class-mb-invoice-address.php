@@ -94,7 +94,6 @@ class WPInv_Meta_Box_Billing_Details {
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-large',
-                    'chosen'           => false,
                     'placeholder'      => __( 'Choose a country', 'invoicing' ),
                     'required'         => false,
                 ) );
@@ -115,7 +114,6 @@ class WPInv_Meta_Box_Billing_Details {
                         'show_option_all'  => false,
                         'show_option_none' => false,
                         'class'            => 'gdmbx2-text-large',
-                        'chosen'           => false,
                         'placeholder'      => __( 'Choose a state', 'invoicing' ),
                         'required'         => false,
                     ) );

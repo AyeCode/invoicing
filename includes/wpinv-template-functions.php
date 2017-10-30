@@ -351,7 +351,6 @@ function wpinv_html_select( $args = array() ) {
         'class'            => '',
         'id'               => '',
         'selected'         => 0,
-        'chosen'           => false,
         'placeholder'      => null,
         'multiple'         => false,
         'show_option_all'  => _x( 'All', 'all dropdown items', 'invoicing' ),
@@ -374,10 +373,6 @@ function wpinv_html_select( $args = array() ) {
         $multiple = ' MULTIPLE';
     } else {
         $multiple = '';
-    }
-
-    if( $args['chosen'] ) {
-        $args['class'] .= ' wpinv-select-chosen';
     }
 
     if( $args['placeholder'] ) {
@@ -450,7 +445,6 @@ function wpinv_item_dropdown( $args = array() ) {
         'class'             => '',
         'multiple'          => false,
         'selected'          => 0,
-        'chosen'            => false,
         'number'            => 100,
         'placeholder'       => __( 'Choose a item', 'invoicing' ),
         'data'              => array( 'search-type' => 'item' ),
@@ -511,7 +505,6 @@ function wpinv_item_dropdown( $args = array() ) {
         'id'               => $args['id'],
         'class'            => $args['class'],
         'options'          => $options,
-        'chosen'           => $args['chosen'],
         'multiple'         => $args['multiple'],
         'placeholder'      => $args['placeholder'],
         'show_option_all'  => $args['show_option_all'],

@@ -137,7 +137,6 @@ function wpinv_register_settings() {
                         'min'         => isset( $option['min'] )         ? $option['min']         : null,
                         'max'         => isset( $option['max'] )         ? $option['max']         : null,
                         'step'        => isset( $option['step'] )        ? $option['step']        : null,
-                        'chosen'      => isset( $option['chosen'] )      ? $option['chosen']      : null,
                         'placeholder' => isset( $option['placeholder'] ) ? $option['placeholder'] : null,
                         'allow_blank' => isset( $option['allow_blank'] ) ? $option['allow_blank'] : true,
                         'readonly'    => isset( $option['readonly'] )    ? $option['readonly']    : false,
@@ -209,7 +208,6 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => wpinv_get_country_list(),
                         'std'     => 'GB',
-                        'chosen'  => true,
                         'placeholder' => __( 'Select a country', 'invoicing' ),
                     ),
                     'default_state' => array(
@@ -250,7 +248,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the checkout page where buyers will complete their payments. The <b>[wpinv_checkout]</b> short code must be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'success_page' => array(
@@ -259,7 +256,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the page buyers are sent to after completing their payments. The <b>[wpinv_receipt]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'failure_page' => array(
@@ -268,7 +264,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'invoice_history_page' => array(
@@ -277,7 +272,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This page shows an invoice history for the current user', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     )
                 ),
@@ -294,7 +288,6 @@ function wpinv_get_registered_settings() {
                         'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
                         'type'    => 'select',
                         'options' => $currency_code_options,
-                        'chosen'  => true,
                     ),
                     'currency_position' => array(
                         'id'      => 'currency_position',
@@ -474,7 +467,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $due_payment_options,
-                        'chosen'      => true,
                         'std'         => 0,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
@@ -568,7 +560,6 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => $invoice_number_padd_options,
                         'std'     => 5,
-                        'chosen'  => true,
                     ),
                     'invoice_number_prefix' => array(
                         'id' => 'invoice_number_prefix',
@@ -1193,12 +1184,6 @@ function wpinv_select_callback($args) {
 	} else {
 		$placeholder = '';
 	}
-
-	if ( isset( $args['chosen'] ) ) {
-		$chosen = 'class="wpinv-chosen"';
-	} else {
-		$chosen = '';
-	}
     
     if( !empty( $args['onchange'] ) ) {
         $onchange = ' onchange="' . esc_attr( $args['onchange'] ) . '"';
@@ -1206,7 +1191,7 @@ function wpinv_select_callback($args) {
         $onchange = '';
     }
 
-	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" ' . $chosen . 'data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
+	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
 
 	foreach ( $args['options'] as $option => $name ) {
 		$selected = selected( $option, $value, false );
@@ -1324,8 +1309,7 @@ function wpinv_country_states_callback($args) {
 
 	$states = wpinv_get_country_states();
 
-	$chosen = ( $args['chosen'] ? ' wpinv-chosen' : '' );
-	$class = empty( $states ) ? ' class="wpinv-no-states' . $chosen . '"' : 'class="' . $chosen . '"';
+	$class = empty( $states ) ? ' class="wpinv-no-states"' : '';
 	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
 
 	foreach ( $states as $option => $name ) {
@@ -1374,7 +1358,6 @@ function wpinv_tax_rates_callback($args) {
 						'show_option_all'  => false,
 						'show_option_none' => false,
 						'class'            => 'wpinv-tax-country',
-						'chosen'           => false,
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) );
 					?>
@@ -1390,7 +1373,6 @@ function wpinv_tax_rates_callback($args) {
 							'selected'         => $rate['state'],
 							'show_option_all'  => false,
 							'show_option_none' => false,
-							'chosen'           => false,
 							'placeholder'      => __( 'Choose a state', 'invoicing' )
 						) );
 					} else {
@@ -1421,7 +1403,6 @@ function wpinv_tax_rates_callback($args) {
 						'show_option_all'  => false,
 						'show_option_none' => false,
 						'class'            => 'wpinv-tax-country',
-						'chosen'           => false,
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) ); ?>
 				</td>

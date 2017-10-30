@@ -167,7 +167,6 @@ class WPInv_EUVat {
             'desc'        => __( 'The standard rate will apply where no explicit rate is provided.', 'invoicing' ),
             'type'        => 'select',
             'options'     => array_merge( $vat_classes, array( '_new' => __( 'Add New Rate Class', 'invoicing' ) ) ),
-            'chosen'      => true,
             'placeholder' => __( 'Select a VAT Rate', 'invoicing' ),
             'selected'    => $vat_class,
             'onchange'    => 'document.location.href="' . $current_url . '&wpi_sub=" + this.value;',

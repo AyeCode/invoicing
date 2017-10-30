@@ -256,13 +256,7 @@ class WPInv_Plugin {
             wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
             wp_enqueue_style( 'jquery-ui-css' );
         }
-        
-        wp_register_style( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/css/chosen' . $suffix . '.css', array(), '1.6.2' );
-        wp_enqueue_style( 'jquery-chosen' );
 
-        wp_register_script( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/js/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.6.2' );
-        wp_enqueue_script( 'jquery-chosen' );
-        
         wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_meta_box_style' );
         
