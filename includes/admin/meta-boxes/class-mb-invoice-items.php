@@ -23,7 +23,7 @@ class WPInv_Meta_Box_Items {
         $is_recurring       = $invoice->is_recurring();
         $post_type_object   = get_post_type_object($invoice->post_type);
         $type_title         = $post_type_object->labels->singular_name;
-        
+
         $cols = 5;
         if ( $item_quantities ) {
             $cols++;
@@ -160,7 +160,11 @@ class WPInv_Meta_Box_Items {
                                     <td class="total"><?php echo wpinv_discount( $invoice->ID, true, true ); ?></td>
                                     <td class="action"></td>
                                 </tr>
-                                <?php if ( $use_taxes ) { ?>
+                                <?php
+                                if(!$use_taxes && $invoice->get_tax() > 0){
+                                    $use_taxes = true;
+                                }
+                                if ( $use_taxes ) { ?>
                                 <tr class="tax">
                                     <td class="name"><?php _e( 'Tax:', 'invoicing' );?></td>
                                     <td class="total"><?php echo $tax;?></td>

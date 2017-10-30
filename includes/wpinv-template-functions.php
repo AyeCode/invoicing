@@ -992,7 +992,9 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
     $tax_label           = $use_taxes && $invoice->has_vat() ? $wpinv_euvat->get_vat_name() : __( 'Tax', 'invoicing' );
     $tax_title          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
-    
+    if(!$use_taxes && $invoice->get_tax() > 0){
+        $use_taxes = true;
+    }
     $cart_details       = $invoice->get_cart_details();
     $ajax_cart_details  = $cart_details;
     ob_start();
@@ -1253,35 +1255,35 @@ function wpinv_checkout_billing_details() {
 function wpinv_admin_get_line_items($invoice = array()) {
     $item_quantities    = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
-    
+
     if ( empty( $invoice ) ) {
         return NULL;
     }
-    
+
     $cart_items = $invoice->get_cart_details();
     if ( empty( $cart_items ) ) {
         return NULL;
     }
     ob_start();
-    
+
     do_action( 'wpinv_admin_before_line_items', $cart_items, $invoice );
-    
+
     $count = 0;
     foreach ( $cart_items as $key => $cart_item ) {
         $item_id    = $cart_item['id'];
         $wpi_item   = $item_id > 0 ? new WPInv_Item( $item_id ) : NULL;
-        
+
         if (empty($wpi_item)) {
             continue;
         }
-        
+
         $item_price     = wpinv_price( wpinv_format_amount( $cart_item['item_price'] ), $invoice->get_currency() );
         $quantity       = !empty( $cart_item['quantity'] ) && $cart_item['quantity'] > 0 ? $cart_item['quantity'] : 1;
         $item_subtotal  = wpinv_price( wpinv_format_amount( $cart_item['subtotal'] ), $invoice->get_currency() );
         $can_remove     = true;
-        
+
         $summary = apply_filters( 'wpinv_admin_invoice_line_item_summary', '', $cart_item, $wpi_item, $invoice );
-        
+
         $item_tax       = '';
         $tax_rate       = '';
         if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
@@ -1291,7 +1293,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
             $tax_rate = $tax_rate != '' ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
         }
         $line_item_tax = $item_tax . $tax_rate;
-        
+
         if ( $line_item_tax === '' ) {
             $line_item_tax = 0; // Zero tax
         }
@@ -1304,7 +1306,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
             }
             $line_item .= '</td>';
             $line_item .= '<td class="price">' . $item_price . '</td>';
-            
+
             if ( $item_quantities ) {
                 if ( count( $cart_items ) == 1 && $quantity <= 1 ) {
                     $can_remove = false;
@@ -1316,7 +1318,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
                 }
             }
             $line_item .= '<td class="total">' . $item_subtotal . '</td>';
-            
+
             if ( $use_taxes ) {
                 $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
             }
@@ -1326,11 +1328,11 @@ function wpinv_admin_get_line_items($invoice = array()) {
             }
             $line_item .= '</td>';
         $line_item .= '</tr>';
-        
+
         echo apply_filters( 'wpinv_admin_line_item', $line_item, $cart_item, $invoice );
-        
+
         $count++;
-    } 
+    }
     
     do_action( 'wpinv_admin_after_line_items', $cart_items, $invoice );
     
