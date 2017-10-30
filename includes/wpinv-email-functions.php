@@ -1060,7 +1060,7 @@ function wpinv_get_emails() {
             ),
             'email_due_reminder_days' => array(
                 'id'        => 'email_due_reminder_days',
-                'name'      => __( 'When to Send', 'sliced-invoices' ),
+                'name'      => __( 'When to Send', 'invoicing' ),
                 'desc'      => __( 'Check when you would like payment reminders sent out.', 'invoicing' ),
                 'default'   => '',
                 'type'      => 'multicheck',

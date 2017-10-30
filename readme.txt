@@ -4,7 +4,7 @@ Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 3.1
 Tested up to: 4.9
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -19,7 +19,7 @@ It can be used as payment system for 3rd party plugins too.
 = Features =
 
 * Create quotes and estimates to send to your clients [requires WPI quotes add-on](https://wordpress.org/plugins/invoicing-quotes/)
-* Quotes can be turned into invoices and client can pay online - coming soon.
+* Quotes can be turned into invoices and client can pay online.
 * Create and send invoices directly to receive single or recurring payments.
 * Accept payments via Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
 * Export payments and any other data through the reporting system.
@@ -54,6 +54,13 @@ New Payment Gateways and Add-ons will be created regularly. If there is a Paymen
 = Support =
 
 Get timely and friendly support for both Core Plugin and add-ons at our official website, [Invoicing Support](https://wpinvoicing.com/support/)
+
+= Origin =
+
+Work on Invoicing started in April 2016.
+We are proud the original base of the plugin was a fork of [EDD](https://wordpress.org/plugins/easy-digital-downloads/) with permission from Pippin.
+Additionally we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
+We worked on the plugin for over a year before it got its first public release, we stripped down the code to make it a simple lightweight payment and invoicing plugin with many additional features to fit the needs of our customers.
 
 == Installation ==
 
@@ -97,7 +104,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.2 =
-Paying old recurring invoice treats as renewal payment and creates new invoice - FIXED
+Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED
 VAT fields not displayed on checkout page for invoice with free trial - FIXED
 Payment button text confusing when invoice is non recurring & total is zero - FIXED
 wpinv_get_template_part() does not locate the template from the themes - FIXED
