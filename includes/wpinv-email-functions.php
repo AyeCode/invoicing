@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
 if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
@@ -74,22 +74,20 @@ add_action( 'wpinv_email_footer', 'wpinv_email_footer' );
 add_action( 'wpinv_email_invoice_details', 'wpinv_email_invoice_details', 10, 3 );
 add_action( 'wpinv_email_invoice_items', 'wpinv_email_invoice_items', 10, 3 );
 add_action( 'wpinv_email_billing_details', 'wpinv_email_billing_details', 10, 3 );
-add_action( 'wpinv_email_before_note_details', 'wpinv_email_before_note_details', 10, 4 );
 
 function wpinv_send_transactional_email() {
     $args       = func_get_args();
     $function   = current_filter() . '_notification';
     do_action_ref_array( $function, $args );
 }
-    
+
 function wpinv_new_invoice_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'new_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -98,49 +96,37 @@ function wpinv_new_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => true,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     return wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
 }
 
 function wpinv_cancelled_invoice_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'cancelled_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -149,49 +135,38 @@ function wpinv_cancelled_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => true,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     return wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
 }
 
 function wpinv_failed_invoice_notification( $invoice_id, $new_status = '' ) {
     global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'failed_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -200,49 +175,37 @@ function wpinv_failed_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => true,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     return wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
 }
 
 function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'onhold_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -251,57 +214,45 @@ function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => false,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
 function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'processing_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -310,57 +261,45 @@ function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) 
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => false,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
 function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'completed_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -369,57 +308,45 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => false,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
 function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'refunded_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -428,58 +355,46 @@ function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'           => $invoice,
             'email_type'        => $email_type,
             'email_heading'     => $email_heading,
             'sent_to_admin'     => false,
             'plain_text'        => false,
-            'partial_refund'    => false
+            'partial_refund'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
 function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'refunded_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -488,47 +403,37 @@ function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) 
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'           => $invoice,
             'email_type'        => $email_type,
             'email_heading'     => $email_heading,
             'sent_to_admin'     => false,
             'plain_text'        => false,
-            'partial_refund'    => true
+            'partial_refund'    => true,
+            'message_body'    => $message_body,
+
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
@@ -536,13 +441,12 @@ function wpinv_new_invoice_note_notification( $invoice_id, $new_status = '' ) {
 }
 
 function wpinv_user_invoice_notification( $invoice_id ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'user_invoice';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
@@ -551,46 +455,35 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     if ( !("wpi_invoice" === $invoice->post_type) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
+
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => false,
             'plain_text'    => false,
+            'message_body'    => $message_body,
         ) );
-    
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-    
+
     if ( $sent ) {
         $note = __( 'Invoice has been emailed to the user.', 'invoicing' );
     } else {
         $note = __( 'Fail to send invoice to the user!', 'invoicing' );
     }
-    
+
     $invoice->add_note( $note, '', '', true ); // Add system note.
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
@@ -598,69 +491,53 @@ function wpinv_user_invoice_notification( $invoice_id ) {
         $subject    .= ' - ADMIN BCC COPY';
         wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
-    
+
     return $sent;
 }
 
 function wpinv_user_note_notification( $invoice_id, $args = array() ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'user_note';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-    
+
     $defaults = array(
         'user_note' => ''
     );
 
     $args = wp_parse_args( $args, $defaults );
-        
-    $search                     = array();
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_date']     = '{invoice_date}';
-    $search['name']             = '{name}';
-    $search['customer_note']    = '{customer_note}';
-    $search['invoice_quote']    = '{invoice_quote}';
 
-    $replace                    = array();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_date']    = $invoice->get_invoice_date();
-    $replace['name']            = $invoice->get_user_full_name();
-    $replace['customer_note']   = $args['user_note'];
-    $replace['invoice_quote']   = $invoice->get_invoice_quote_type($invoice_id);
-
-    $wpinv_email_search     = $search;
-    $wpinv_email_replace    = $replace;
-    
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+    $message_body = str_replace( '{customer_note}', $args['user_note'], $message_body );
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
             'invoice'       => $invoice,
             'email_type'    => $email_type,
             'email_heading' => $email_heading,
             'sent_to_admin' => false,
             'plain_text'    => false,
-            'customer_note' => $args['user_note']
+            'message_body'    => $message_body,
         ) );
-        
-    $content        = wpinv_email_format_text( $content );
-    
+
+    $content = wpinv_email_format_text( $content, $invoice );
+
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
-        
+
     return $sent;
 }
 
@@ -678,10 +555,10 @@ function wpinv_mail_admin_bcc_active( $mail_type = '' ) {
     $active = apply_filters( 'wpinv_mail_admin_bcc_active', wpinv_get_option( 'email_' . $mail_type . '_admin_bcc' ) );
     return ( $active ? true : false );
 }
-    
+
 function wpinv_mail_get_content_type(  $content_type = 'text/html', $email_type = 'html' ) {
     $email_type = apply_filters( 'wpinv_mail_content_type', $email_type );
-    
+
     switch ( $email_type ) {
         case 'html' :
             $content_type = 'text/html';
@@ -693,10 +570,10 @@ function wpinv_mail_get_content_type(  $content_type = 'text/html', $email_type 
             $content_type = 'text/plain';
             break;
     }
-    
+
     return $content_type;
 }
-    
+
 function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
     add_filter( 'wp_mail_from', 'wpinv_mail_get_from_address' );
     add_filter( 'wp_mail_from_name', 'wpinv_mail_get_from_name' );
@@ -704,9 +581,9 @@ function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
 
     $message = wpinv_email_style_body( $message );
     $message = apply_filters( 'wpinv_mail_content', $message );
-    
+
     $sent  = wp_mail( $to, $subject, $message, $headers, $attachments );
-    
+
     if ( !$sent ) {
         $log_message = wp_sprintf( __( "\nTime: %s\nTo: %s\nSubject: %s\n", 'invoicing' ), date_i18n( 'F j Y H:i:s', current_time( 'timestamp' ) ), ( is_array( $to ) ? implode( ', ', $to ) : $to ), $subject );
         wpinv_error_log( $log_message, __( "Email from Invoicing plugin failed to send", 'invoicing' ), __FILE__, __LINE__ );
@@ -718,12 +595,12 @@ function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
 
     return $sent;
 }
-    
+
 function wpinv_get_emails() {
     $overdue_days_options       = array();
     $overdue_days_options[0]    = __( 'On the Due Date', 'invoicing' );
     $overdue_days_options[1]    = __( '1 day after Due Date', 'invoicing' );
-    
+
     for ( $i = 2; $i <= 10; $i++ ) {
         $overdue_days_options[$i]   = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
     }
@@ -760,6 +637,15 @@ function wpinv_get_emails() {
                 'std'  => __( 'New payment invoice', 'invoicing' ),
                 'size' => 'large'
             ),
+            'email_new_invoice_body' => array(
+                'id'   => 'email_new_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi Admin,</p><p>You have received payment from {name}..</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'cancelled_invoice' => array(
             'email_cancelled_invoice_header' => array(
@@ -791,6 +677,15 @@ function wpinv_get_emails() {
                 'std'  => __( 'Cancelled invoice', 'invoicing' ),
                 'size' => 'large'
             ),
+            'email_cancelled_invoice_body' => array(
+                'id'   => 'email_cancelled_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi Admin,</p><p>The invoice #{invoice_number} from {site_title} has been cancelled.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'failed_invoice' => array(
             'email_failed_invoice_header' => array(
@@ -821,7 +716,16 @@ function wpinv_get_emails() {
                 'type' => 'text',
                 'std'  => __( 'Failed invoice', 'invoicing' ),
                 'size' => 'large'
-            )
+            ),
+            'email_failed_invoice_body' => array(
+                'id'   => 'email_failed_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi Admin,</p><p>Payment for invoice #{invoice_number} from {site_title} has been failed.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'onhold_invoice' => array(
             'email_onhold_invoice_header' => array(
@@ -859,6 +763,15 @@ function wpinv_get_emails() {
                 'desc' => __( 'Check if you want to send this notification email to site Admin.', 'invoicing' ),
                 'type' => 'checkbox',
                 'std'  => 1
+            ),
+            'email_onhold_invoice_body' => array(
+                'id'   => 'email_onhold_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>Your invoice is on-hold until we confirm your payment has been received.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
             ),
         ),
         'processing_invoice' => array(
@@ -898,6 +811,15 @@ function wpinv_get_emails() {
                 'type' => 'checkbox',
                 'std'  => 1
             ),
+            'email_processing_invoice_body' => array(
+                'id'   => 'email_processing_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>Your invoice has been received and is now being processed.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'completed_invoice' => array(
             'email_completed_invoice_header' => array(
@@ -934,6 +856,15 @@ function wpinv_get_emails() {
                 'name' => __( 'Enable Admin BCC', 'invoicing' ),
                 'desc' => __( 'Check if you want to send this notification email to site Admin.', 'invoicing' ),
                 'type' => 'checkbox',
+            ),
+            'email_completed_invoice_body' => array(
+                'id'   => 'email_processing_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
             ),
             'std'  => 1
         ),
@@ -974,6 +905,15 @@ function wpinv_get_emails() {
                 'type' => 'checkbox',
                 'std'  => 1
             ),
+            'email_refunded_invoice_body' => array(
+                'id'   => 'email_refunded_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'user_invoice' => array(
             'email_user_invoice_header' => array(
@@ -1012,6 +952,15 @@ function wpinv_get_emails() {
                 'type' => 'checkbox',
                 'std'  => 1
             ),
+            'email_user_invoice_body' => array(
+                'id'   => 'email_user_invoice_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>An invoice has been created for you on {site_title}. To view / pay for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
+            ),
         ),
         'user_note' => array(
             'email_user_note_header' => array(
@@ -1042,6 +991,15 @@ function wpinv_get_emails() {
                 'type' => 'text',
                 'std'  => __( 'A note has been added to your {invoice_quote}', 'invoicing' ),
                 'size' => 'large'
+            ),
+            'email_user_note_body' => array(
+                'id'   => 'email_user_note_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email (wildcards and HTML are allowed).', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {name},</p><p>Following note has been added to your invoice:</p><blockquote class="wpinv-note">{customer_note}</blockquote>', 'invoicing' ),
+                'class' => 'large',
+                'size' => '10'
             ),
         ),
         'overdue' => array(
@@ -1087,7 +1045,7 @@ function wpinv_get_emails() {
                 'name' => __( 'Email Content', 'invoicing' ),
                 'desc' => __( 'The content of the email.', 'invoicing' ),
                 'type' => 'rich_editor',
-                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To view / pay now for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
+                'std'  => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To view / pay now for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
                 'class' => 'large',
                 'size'  => 10,
             ),
@@ -1099,27 +1057,27 @@ function wpinv_get_emails() {
 
 function wpinv_settings_emails( $settings = array() ) {
     $emails = wpinv_get_emails();
-    
+
     if ( !empty( $emails ) ) {
         foreach ( $emails as $key => $email ) {
             $settings[$key] = $email;
         }
     }
-    
+
     return apply_filters( 'wpinv_settings_get_emails', $settings );
 }
 add_filter( 'wpinv_settings_emails', 'wpinv_settings_emails', 10, 1 );
 
 function wpinv_settings_sections_emails( $settings ) {
     $emails = wpinv_get_emails();
-    
+
     if (!empty($emails)) {
         foreach  ($emails as $key => $email) {
             $settings[$key] = !empty( $email['email_' . $key . '_header']['name'] ) ? strip_tags( $email['email_' . $key . '_header']['name'] ) : $key;
         }
     }
-    
-    return $settings;    
+
+    return $settings;
 }
 add_filter( 'wpinv_settings_sections_emails', 'wpinv_settings_sections_emails', 10, 1 );
 
@@ -1142,94 +1100,96 @@ function wpinv_email_get_recipient( $email_type = '', $invoice_id = 0, $invoice 
             $recipient  = !empty( $invoice ) ? $invoice->get_email() : '';
         break;
     }
-    
+
     return apply_filters( 'wpinv_email_recipient', $recipient, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_subject( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $subject    = wpinv_get_option( 'email_' . $email_type . '_subject' );
-    
-    $subject    = wpinv_email_format_text( $subject );
-    
+
+    $subject    = wpinv_email_format_text( $subject, $invoice );
+
     return apply_filters( 'wpinv_email_subject', $subject, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_heading( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $email_heading = wpinv_get_option( 'email_' . $email_type . '_heading' );
-    
-    $email_heading = wpinv_email_format_text( $email_heading );
-    
+
+    $email_heading = wpinv_email_format_text( $email_heading, $invoice );
+
     return apply_filters( 'wpinv_email_heading', $email_heading, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_content( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $content    = wpinv_get_option( 'email_' . $email_type . '_body' );
-    
-    $content    = wpinv_email_format_text( $content );
-    
+
+    $content    = wpinv_email_format_text( $content, $invoice );
+
     return apply_filters( 'wpinv_email_content', $content, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_headers( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $from_name = wpinv_mail_get_from_address();
     $from_email = wpinv_mail_get_from_address();
-    
+
     $invoice    = !empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : NULL );
-    
+
     $headers    = "From: " . stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) . " <$from_email>\r\n";
     $headers    .= "Reply-To: ". $from_email . "\r\n";
     $headers    .= "Content-Type: " . wpinv_mail_get_content_type() . "\r\n";
-    
+
     return apply_filters( 'wpinv_email_headers', $headers, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_attachments( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $attachments = array();
-    
+
     return apply_filters( 'wpinv_email_attachments', $attachments, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_global_vars() {
     $blogname = wpinv_get_blogname();
-    
+
     $search                 = array();
     $replace                = array();
-    
+
     $search['blogname']     = '{blogname}';
     $search['sitename']     = '{sitename}';
     $search['site-title']   = '{site_title}';
-    
+
     $replace['blogname']    = $blogname;
     $replace['sitename']    = $blogname;
     $replace['site-title']  = $blogname;
-    
+
     return apply_filters( 'wpinv_email_global_vars', array( $search, $replace ) );
 }
 
-function wpinv_email_format_text( $content ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
-    if ( empty( $wpinv_email_search ) ) {
-        $wpinv_email_search = array();
+function wpinv_email_format_text( $content, $invoice ) {
+
+    $replace_array = array(
+        '{site_title}'      => wpinv_get_blogname(),
+        '{name}'            => $invoice->get_user_full_name(),
+        '{first_name}'      => $invoice->get_first_name(),
+        '{last_name}'       => $invoice->get_last_name(),
+        '{email}'           => $invoice->get_email(),
+        '{invoice_number}'  => $invoice->get_number(),
+        '{invoice_total}'   => $invoice->get_total(),
+        '{invoice_link}'    => $invoice->get_view_url( true ),
+        '{invoice_pay_link}'=> $invoice->get_view_url( true ),
+        '{invoice_date}'    => $invoice->get_invoice_date( true ),
+        '{invoice_due_date}'=> $invoice->get_due_date( true ),
+        '{invoice_quote}'   => $invoice->get_invoice_quote_type($invoice->ID),
+        '{is_was}'          => strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
+        '{date}'            => date_i18n( get_option( 'date_format' ), (int) current_time( 'timestamp' ) ),
+    );
+
+    $replace_array = apply_filters('wpinv_email_format_text', $replace_array, $content, $invoice->ID);
+
+    foreach ($replace_array as $key => $value) {
+        $content = str_replace( $key, $value, $content );
     }
-    
-    if ( empty( $wpinv_email_replace ) ) {
-        $wpinv_email_replace = array();
-    }
-    
-    $wpinv_email_search     = (array)apply_filters( 'wpinv_email_format_text_search', $wpinv_email_search );
-    $wpinv_email_replace    = (array)apply_filters( 'wpinv_email_format_text_replace', $wpinv_email_replace );
-    
-    $global_vars    = wpinv_email_global_vars();
-    
-    $search         = array_merge( $global_vars[0], $wpinv_email_search );
-    $replace        = array_merge( $global_vars[1], $wpinv_email_replace );
-    
-    if ( empty( $search ) || empty( $replace ) || !is_array( $search ) || !is_array( $replace ) ) {
-        return  $content;
-    }
-        
-    return str_replace( $search, $replace, $content );
+
+    return apply_filters( 'wpinv_email_content_replace', $content );
 }
 
 function wpinv_email_style_body( $content ) {
@@ -1238,7 +1198,7 @@ function wpinv_email_style_body( $content ) {
         ob_start();
         wpinv_get_template( 'emails/wpinv-email-styles.php' );
         $css = apply_filters( 'wpinv_email_styles', ob_get_clean() );
-        
+
         // apply CSS styles inline for picky email clients
         try {
             $emogrifier = new Emogrifier( $content, $css );
@@ -1291,7 +1251,7 @@ function wpinv_email_billing_details( $invoice, $email_type = '', $sent_to_admin
 
 function wpinv_send_customer_invoice( $data = array() ) {
     $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
-    
+
     if ( empty( $invoice_id ) ) {
         return;
     }
@@ -1299,11 +1259,11 @@ function wpinv_send_customer_invoice( $data = array() ) {
     if ( !current_user_can( 'manage_options' ) ) {
         wp_die( __( 'You do not have permission to send invoice notification', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
-    
+
     $sent = wpinv_user_invoice_notification( $invoice_id );
-    
+
     $status = $sent ? 'email_sent' : 'email_fail';
-    
+
     $redirect = add_query_arg( array( 'wpinv-message' => $status, 'wpi_action' => false, 'invoice_id' => false ) );
     wp_redirect( $redirect );
     exit;
@@ -1312,7 +1272,7 @@ add_action( 'wpinv_send_invoice', 'wpinv_send_customer_invoice' );
 
 function wpinv_send_overdue_reminder( $data = array() ) {
     $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
-    
+
     if ( empty( $invoice_id ) ) {
         return;
     }
@@ -1320,11 +1280,11 @@ function wpinv_send_overdue_reminder( $data = array() ) {
     if ( !current_user_can( 'manage_options' ) ) {
         wp_die( __( 'You do not have permission to send reminder notification', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
-    
+
     $sent = wpinv_send_payment_reminder_notification( $invoice_id );
-    
+
     $status = $sent ? 'email_sent' : 'email_fail';
-    
+
     $redirect = add_query_arg( array( 'wpinv-message' => $status, 'wpi_action' => false, 'invoice_id' => false ) );
     wp_redirect( $redirect );
     exit;
@@ -1333,11 +1293,11 @@ add_action( 'wpinv_send_reminder', 'wpinv_send_overdue_reminder' );
 
 function wpinv_send_customer_note_email( $data ) {
     $invoice_id = !empty( $data['invoice_id'] ) ? absint( $data['invoice_id'] ) : NULL;
-    
+
     if ( empty( $invoice_id ) ) {
         return;
     }
-    
+
     $sent = wpinv_user_note_notification( $invoice_id, $data );
 }
 add_action( 'wpinv_new_customer_note', 'wpinv_send_customer_note_email', 10, 1 );
@@ -1367,20 +1327,20 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin
 }
 add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );
 
-function wpinv_email_payment_reminders() {    
+function wpinv_email_payment_reminders() {
     global $wpi_auto_reminder;
     if ( !wpinv_get_option( 'email_overdue_active' ) ) {
         return;
     }
-    
+
     if ( $reminder_days = wpinv_get_option( 'email_due_reminder_days' ) ) {
         $reminder_days  = is_array( $reminder_days ) ? array_values( $reminder_days ) : '';
-        
+
         if ( empty( $reminder_days ) ) {
             return;
         }
         $reminder_days  = array_unique( array_map( 'absint', $reminder_days ) );
-        
+
         $args = array(
             'post_type'     => 'wpi_invoice',
             'post_status'   => 'wpi-pending',
@@ -1397,18 +1357,18 @@ function wpinv_email_payment_reminders() {
             'orderby'       => 'meta_value',
             'order'         => 'ASC',
         );
-        
+
         $invoices = get_posts( $args );
-        
+
         if ( empty( $invoices ) ) {
             return;
         }
-        
+
         $date_to_send   = array();
-        
+
         foreach ( $invoices as $id ) {
             $due_date = get_post_meta( $id, '_wpinv_due_date', true );
-            
+
             foreach ( $reminder_days as $key => $days ) {
                 if ( $days !== '' ) {
                     $date_to_send[$id][] = date_i18n( 'Y-m-d', strtotime( $due_date ) + ( $days * DAY_IN_SECONDS ) );
@@ -1432,93 +1392,69 @@ function wpinv_email_payment_reminders() {
                 }
             }
         }
-        
+
         $wpi_auto_reminder  = false;
     }
 }
 
 function wpinv_send_payment_reminder_notification( $invoice_id ) {
-    global $wpinv_email_search, $wpinv_email_replace;
-    
+
     $email_type = 'overdue';
     if ( !wpinv_email_is_enabled( $email_type ) ) {
         return false;
     }
-    
+
     $invoice    = wpinv_get_invoice( $invoice_id );
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     if ( !$invoice->needs_payment() ) {
         return false;
     }
-    
+
     $recipient  = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
-        
-    $search                     = array();
-    $search['full_name']        = '{full_name}';
-    $search['invoice_number']   = '{invoice_number}';
-    $search['invoice_due_date'] = '{invoice_due_date}';
-    $search['invoice_total']    = '{invoice_total}';
-    $search['invoice_link']     = '{invoice_link}';
-    $search['invoice_pay_link'] = '{invoice_pay_link}';
-    $search['is_was']           = '{is_was}';
-    
-    $replace                    = array();
-    $replace['full_name']       = $invoice->get_user_full_name();
-    $replace['invoice_number']  = $invoice->get_number();
-    $replace['invoice_due_date']= $invoice->get_due_date( true );
-    $replace['invoice_total']   = $invoice->get_total( true );
-    $replace['invoice_link']    = $invoice->get_view_url( true );
-    $replace['invoice_pay_link']= $replace['invoice_link'];
-    $replace['is_was']          = strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' );
 
-    $wpinv_email_search         = $search;
-    $wpinv_email_replace        = $replace;
-    
     $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
     $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
     $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
     $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
-    
+
     $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
-    
+
     $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
-            'invoice'       => $invoice,
-            'email_type'    => $email_type,
-            'email_heading' => $email_heading,
-            'sent_to_admin' => false,
-            'plain_text'    => false,
-            'message_body'  => $message_body
-        ) );
-        
-    $content        = wpinv_email_format_text( $content );
+        'invoice'       => $invoice,
+        'email_type'    => $email_type,
+        'email_heading' => $email_heading,
+        'sent_to_admin' => false,
+        'plain_text'    => false,
+        'message_body'  => $message_body
+    ) );
 
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     if ( $sent ) {
         do_action( 'wpinv_payment_reminder_sent', $invoice_id, $invoice );
     }
-        
+
     return $sent;
 }
 add_action( 'wpinv_send_payment_reminder_notification', 'wpinv_send_payment_reminder_notification', 10, 1 );
 
 function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
     global $wpi_auto_reminder;
-    
+
     $sent = get_post_meta( $invoice_id, '_wpinv_reminder_sent', true );
-    
+
     if ( empty( $sent ) ) {
         $sent = array();
     }
     $sent[] = date_i18n( 'Y-m-d' );
-    
+
     update_post_meta( $invoice_id, '_wpinv_reminder_sent', $sent );
-    
+
     if ( $wpi_auto_reminder ) { // Auto reminder note.
         $note = __( 'Manual reminder sent to the user.', 'invoicing' );
         $invoice->add_note( $note, false, false, true );
@@ -1528,13 +1464,3 @@ function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
     }
 }
 add_action( 'wpinv_payment_reminder_sent', 'wpinv_payment_reminder_sent', 10, 2 );
-
-function wpinv_email_before_note_details( $invoice, $email_type, $sent_to_admin, $customer_note ) {
-    if ("wpi_invoice" === $invoice->post_type && !empty($customer_note)) {
-        $before_note = '';
-        $before_note .= __( 'Hello, a note has just been added to your invoice:', 'invoicing' );
-        $before_note .= '<blockquote class="wpinv-note">'.wpautop( wptexturize( $customer_note ) ).'</blockquote>';
-        $before_note .= __( 'For your reference, your invoice details are shown below.', 'invoicing' );
-        echo $before_note;
-    }
-}
