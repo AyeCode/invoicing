@@ -426,7 +426,7 @@ class WPInv_Subscription {
 
 		$expiration = $this->expiration;
 
-		if( $check_expiration && $this->check_expiration() ) {
+		if( $check_expiration ) {
 
 			// check_expiration() updates $this->expiration so compare to $expiration above
 

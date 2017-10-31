@@ -87,7 +87,9 @@ function wpinv_run_install()
     // Add Subscription tables
     $db = new WPInv_Subscriptions_DB;
     @$db->create_table();
-    convert_old_subscriptions();
+    if ( get_option('wpinv_db_version') != WPINV_VERSION ) {
+        convert_old_subscriptions();
+    }
 
     // Bail if activating from network, or bulk
     if (is_network_admin() || isset($_GET['activate-multi'])) {

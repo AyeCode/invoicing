@@ -62,8 +62,6 @@ if ( get_option('wpinv_db_version') != WPINV_VERSION ) {
 
 function wpinv_upgrade_all(){
 
-        wpinv_add_admin_caps();
-
         // Add Subscription tables
         $db = new WPInv_Subscriptions_DB;
         @$db->create_table();
@@ -86,7 +84,7 @@ function convert_old_subscriptions(){
         $item_id = $invoice->get_meta( '_wpinv_item_ids', true );
         $item = new WPInv_Item( $item_id );
 
-        if(!$item->is_recurring()){
+        if($invoice->has_status('wpi-renewal') || !$item->is_recurring()){
             continue;
         }
 
@@ -122,7 +120,7 @@ function convert_old_subscriptions(){
             'expiration'        => $expiration,
             'trial_period'      => $trial_period,
             'profile_id'        => $invoice->ID,
-            'transaction_id'    => '',
+            'transaction_id'    => $invoice->get_transaction_id(),
         );
 
         $subs_db      = new WPInv_Subscriptions_DB;
@@ -132,8 +130,11 @@ function convert_old_subscriptions(){
         if( !$subscription || $subscription->id <= 0 ) {
 
             $subscription = new WPInv_Subscription();
-            $subscription->create( $args );
+            $new_sub = $subscription->create( $args );
 
+            if($new_sub->get_times_billed() >= $bill_times && 'active' == $new_sub->status || 'trialling' == $new_sub->status){
+                $new_sub->complete(); // Mark completed if all times billed
+            }
         }
 
     }
