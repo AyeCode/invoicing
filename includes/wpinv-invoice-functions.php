@@ -167,11 +167,16 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
             $item_price     = isset( $item['item_price'] ) ? $item['item_price'] : '';
             
             $post_item  = new WPInv_Item( $item_id );
-            if ( !empty( $post_item ) ) {
+if ( !empty( $post_item ) && $post_item->ID !==0) {
                 $name       = !empty( $name ) ? $name : $post_item->get_name();
                 $item_price = $item_price !== '' ? $item_price : $post_item->get_price();
             } else {
-                continue;
+                if ( FALSE !== get_post_status( $item_id ) ) {
+			$name = get_the_title($item_id);
+			$item_price = $item[ 'custom_price' ];
+		} else {
+			continue;
+		}
             }
             
             $args = array(
