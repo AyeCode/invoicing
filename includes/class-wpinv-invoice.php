@@ -1583,9 +1583,13 @@ final class WPInv_Invoice {
         
         $item = new WPInv_Item( $item_id );
 
+        $name = 'No Name';
         // Bail if this post isn't a item
         if( !$item || $item->post_type !== 'wpi_item' ) {
-            return false;
+            //return false;
+        } else {
+            $name = $item->get_name();
+            $item_id = $item->ID;
         }
         
         $has_quantities = wpinv_item_quantities_enabled();
@@ -1594,7 +1598,7 @@ final class WPInv_Invoice {
         $defaults = array(
             'quantity'      => 1,
             'id'            => false,
-            'name'          => $item->get_name(),
+            'name'          => $name,
             'item_price'    => false,
             'custom_price'  => '',
             'discount'      => 0,
@@ -1603,11 +1607,11 @@ final class WPInv_Invoice {
             'fees'          => array()
         );
 
-        $args = wp_parse_args( apply_filters( 'wpinv_add_item_args', $args, $item->ID ), $defaults );
+        $args = wp_parse_args( apply_filters( 'wpinv_add_item_args', $args, $item_id ), $defaults );
         $args['quantity']   = $has_quantities && $args['quantity'] > 0 ? absint( $args['quantity'] ) : 1;
 
         $wpi_current_id         = $this->ID;
-        $wpi_item_id            = $item->ID;
+        $wpi_item_id            = $item_id;
         $discounts              = $this->get_discounts();
         
         $_POST['wpinv_country'] = $this->country;
@@ -1685,7 +1689,7 @@ final class WPInv_Invoice {
                 if ( false !== $args['item_price'] ) {
                     $item_price = $args['item_price'];
                 } else {
-                    $item_price = wpinv_get_item_price( $item->ID );
+                    $item_price = wpinv_get_item_price( $item_id );
                 }
             }
 
@@ -1700,7 +1704,7 @@ final class WPInv_Invoice {
 
             // Setup the items meta item
             $new_item = array(
-                'id'       => $item->ID,
+                'id'       => $item_id,
                 'quantity' => $args['quantity'],
             );
 
@@ -1719,7 +1723,7 @@ final class WPInv_Invoice {
         
             $this->cart_details[] = array(
                 'name'          => !empty($args['name']) ? $args['name'] : $item->get_name(),
-                'id'            => $item->ID,
+                'id'            => $item_id,
                 'item_price'    => wpinv_round_amount( $item_price ),
                 'custom_price'  => ( $args['custom_price'] !== '' ? wpinv_round_amount( $args['custom_price'] ) : '' ),
                 'quantity'      => $args['quantity'],
