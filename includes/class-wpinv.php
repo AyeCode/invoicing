@@ -23,8 +23,6 @@ class WPInv_Plugin {
             self::$instance->reports    = new WPInv_Reports();
         }
         
-        do_action( 'wpinv_loaded' );
-        
         return self::$instance;
     }
     
@@ -75,6 +73,8 @@ class WPInv_Plugin {
     public function plugins_loaded() {
         /* Internationalize the text strings used. */
         $this->load_textdomain();
+        
+        do_action( 'wpinv_loaded' );
     }
     
     /**
