@@ -103,6 +103,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.3 =
+Invoice created date should not updated on invoice published - CHANGED
+
 = 1.0.2 =
 Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED
 VAT fields not displayed on checkout page for invoice with free trial - FIXED

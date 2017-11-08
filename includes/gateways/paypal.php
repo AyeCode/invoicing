@@ -423,7 +423,7 @@ function wpinv_process_paypal_web_accept_and_cart( $data, $invoice_id ) {
 			wpinv_insert_payment_note( $invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $data['txn_id'] ) );
 			wpinv_set_payment_transaction_id( $invoice_id, $data['txn_id'] );
 			wpinv_update_payment_status( $invoice_id, 'publish' );
-		} else if ( 'wpi-pending' == $payment_status && isset( $data['pending_reason'] ) ) {
+		} else if ( 'pending' == $payment_status && isset( $data['pending_reason'] ) ) {
 			// Look for possible pending reasons, such as an echeck
 			$note = '';
 

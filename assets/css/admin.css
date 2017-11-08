@@ -23,7 +23,8 @@
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date {
+.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date,
+.post-type-wpi_invoice .wp-list-table.widefat th#payment_date {
     width: 120px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#status {

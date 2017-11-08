@@ -17,7 +17,8 @@ function wpinv_columns( $columns ) {
         'number'            => __( 'Number', 'invoicing' ),
         'customer'          => __( 'Customer', 'invoicing' ),
         'amount'            => __( 'Amount', 'invoicing' ),
-        'invoice_date'      => __( 'Date', 'invoicing' ),
+        'invoice_date'      => __( 'Created Date', 'invoicing' ),
+        'payment_date'      => __( 'Payment Date', 'invoicing' ),
         'status'            => __( 'Status', 'invoicing' ),
         'ID'                => __( 'ID', 'invoicing' ),
         'wpi_actions'       => __( 'Actions', 'invoicing' ),
@@ -43,6 +44,7 @@ function wpinv_sortable_columns( $columns ) {
         'number'        => array( 'number', false ),
         'amount'        => array( 'amount', false ),
         'invoice_date'  => array( 'date', false ),
+        'payment_date'  => array( 'payment_date', true ),
         'customer'      => array( 'customer', false ),
         'status'        => array( 'status', false ),
     );
@@ -86,6 +88,21 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             $h_time = mysql2date( $date_format, $m_time );
             
             $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
+            break;
+        case 'payment_date' :
+            if ( $date_completed = $wpi_invoice->get_meta( '_wpinv_completed_date', true ) ) {
+                $date_format = get_option( 'date_format' );
+                $time_format = get_option( 'time_format' );
+                $date_time_format = $date_format . ' '. $time_format;
+                
+                $t_time = get_the_time( $date_time_format );
+                $m_time = $date_completed;
+                $h_time = mysql2date( $date_format, $m_time );
+                
+                $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
+            } else {
+                $value = '-';
+            }
             break;
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );

@@ -894,7 +894,7 @@ final class WPInv_Invoice {
 
         $fee = wp_parse_args( $args, $default_args );
         
-        if ( !empty( $fee['label'] ) ) {
+        if ( empty( $fee['label'] ) ) {
             return false;
         }
         
@@ -1152,7 +1152,8 @@ final class WPInv_Invoice {
 
         $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
         
-        if ( $meta_key == '_wpinv_completed_date' && !empty( $meta_value ) ) {
+        // Do not update created date on invoice marked as paid.
+        /*if ( $meta_key == '_wpinv_completed_date' && !empty( $meta_value ) ) {
             $args = array(
                 'ID'                => $this->ID,
                 'post_date'         => $meta_value,
@@ -1162,7 +1163,7 @@ final class WPInv_Invoice {
                 'post_modified_gmt' => get_gmt_from_date( $meta_value )
             );
             wp_update_post( $args );
-        }
+        }*/
         
         return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
     }

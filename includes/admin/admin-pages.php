@@ -253,6 +253,14 @@ function wpinv_request( $vars ) {
                         'orderby'  => 'meta_value'
                     )
                 );
+            } else if ( 'payment_date' == $vars['orderby'] ) {
+                $vars = array_merge(
+                    $vars,
+                    array(
+                        'meta_key' => '_wpinv_completed_date',
+                        'orderby'  => 'meta_value'
+                    )
+                );
             }
         }
     } else if ( 'wpi_item' == $typenow ) {
