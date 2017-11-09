@@ -37,7 +37,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     $invoice_data['invoice_id'] = !empty( $invoice_data['invoice_id'] ) ? (int)$invoice_data['invoice_id'] : 0;
     
     if ( empty( $invoice_data['status'] ) ) {
-        $invoice_data['status'] = 'pending';
+        $invoice_data['status'] = 'wpi-pending';
     }
     
     if ( empty( $invoice_data['ip'] ) ) {

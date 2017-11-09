@@ -71,20 +71,18 @@ class WPInv_Shortcodes {
 
     public static function buy( $atts, $content = null ) {
         $a = shortcode_atts( array(
-            'items' => '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
-            'title' => __('Buy Now', 'invoicing' ), // the button title
-            'post_id' => '', // any related post_id
+            'items'     => '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
+            'title'     => __( 'Buy Now', 'invoicing' ), // the button title
+            'post_id'   => '', // any related post_id
         ), $atts );
-        
-        $post_id = isset($a['post_id']) ? (int)$a['post_id'] : '';
+
+        $post_id = isset( $a['post_id'] ) ? (int)$a['post_id'] : '';
 
         $html = '<div class="wpi-buy-button-wrapper">';
-        $html .= '<input type="submit" name="submit" class="button button-primary wpi-buy-button" value="'.$a['title'].'" onclick="wpi_buy(\''.$a['items'].'\','.$post_id.');" />';
+        $html .= '<button class="button button-primary wpi-buy-button" type="button" onclick="wpi_buy(this,\'' . $a['items'] . '\',' . $post_id . ');">' . $a['title'] . '</button>';
         $html .= wp_nonce_field( 'wpinv_buy_items', 'wpinv_buy_nonce', true, false );
         $html .= '</div>';
 
-
         return $html;
-
     }
 }

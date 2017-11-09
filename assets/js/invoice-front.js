@@ -324,19 +324,19 @@ function wpinvRemoveQueryVar(url, parameter) {
  * Allow a invoice to be created for items via ajax.
  * @param items This is a comma separated and pipe separated for quantity eg:  item_id|quantity,item_id|quantity,item_id|quantity
  */
-function wpi_buy(items,$post_id){
+function wpi_buy(el, items, $post_id) {
     var $nonce = jQuery('#wpinv_buy_nonce').val();
+    jQuery(el).prop('disabled', true).append('<i style="margin-left:7px" class="fa fa-spin fa-refresh"></i>');
     jQuery.ajax({
-        url : ajaxurl,
-        type : 'post',
-        data : {
-            action : 'wpinv_buy_items',
-            items : items,
-            post_id : $post_id,
-            wpinv_buy_nonce : $nonce
+        url: ajaxurl,
+        type: 'post',
+        data: {
+            action: 'wpinv_buy_items',
+            items: items,
+            post_id: $post_id,
+            wpinv_buy_nonce: $nonce
         },
-        success : function( res ) {
-            console.log(res);
+        success: function(res) {
             if (typeof res == 'object' && res) {
                 if (res.success) {
                     window.location.href = res.success;
@@ -347,5 +347,7 @@ function wpi_buy(items,$post_id){
                 }
             }
         }
+    }).done(function(data) {
+        jQuery(el).prop('disabled', false).find('.fa').remove();
     });
 }

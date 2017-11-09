@@ -111,6 +111,7 @@ Paying old recurring invoice treated as renewal payment and creates new invoice 
 VAT fields not displayed on checkout page for invoice with free trial - FIXED
 Payment button text confusing when invoice is non recurring & total is zero - FIXED
 wpinv_get_template_part() does not locate the template from the themes - FIXED
+wpinv_buy shortcode redirects users to invoice instead of checkout page - FIXED
 
 = 1.0.1 =
 New currencies added - ADDED
