@@ -105,6 +105,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.3 =
 Invoice created date should not updated on invoice published - CHANGED
+Show recurring supported gateways in backend item page - CHANGED
 
 = 1.0.2 =
 Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED

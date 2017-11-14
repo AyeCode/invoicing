@@ -455,3 +455,24 @@ function wpinv_send_register_new_user( $data, $postarr ) {
     return $data;
 }
 add_filter( 'wp_insert_post_data', 'wpinv_send_register_new_user', 10, 2 );
+
+function wpinv_show_recurring_supported_gateways( $item_ID ) {
+    $all_gateways = wpinv_get_payment_gateways();
+
+    if ( !empty( $all_gateways ) ) {
+        $gateways = array();
+
+        foreach ( $all_gateways as $key => $gateway ) {
+            if ( wpinv_gateway_support_subscription( $key ) ) {
+                $gateways[] = $gateway['admin_label'];
+            }
+        }
+
+        if ( !empty( $gateways ) ) {
+            ?>
+            <span class="description"><?php echo wp_sprintf( __( 'Recurring payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ); ?></span>
+            <?php
+        }
+    }
+}
+add_action( 'wpinv_item_price_field', 'wpinv_show_recurring_supported_gateways', -10, 1 );

@@ -226,26 +226,28 @@ class WPInv_Meta_Box_Items {
                 <input type="checkbox" name="wpinv_is_recurring" id="wpinv_is_recurring" value="1" <?php checked( 1, $is_recurring ); ?> />
                 <?php echo apply_filters( 'wpinv_is_recurring_toggle_text', __( 'Is Recurring Item?', 'invoicing' ) ); ?>
             </label>
+            <?php do_action( 'wpinv_prices_metabox_is_recurring_field', $item ); ?>
         </p>
         <p class="wpinv-row-recurring-fields <?php echo $class;?>">
-                <label class="wpinv-period" for="wpinv_recurring_period"><?php _e( 'Recurring', 'invoicing' );?> <select class="wpinv-select " id="wpinv_recurring_period" name="wpinv_recurring_period"><option value="D" data-text="<?php esc_attr_e( 'day(s)', 'invoicing' ); ?>" <?php selected( 'D', $period );?>><?php _e( 'Daily', 'invoicing' ); ?></option><option value="W" data-text="<?php esc_attr_e( 'week(s)', 'invoicing' ); ?>" <?php selected( 'W', $period );?>><?php _e( 'Weekly', 'invoicing' ); ?></option><option value="M" data-text="<?php esc_attr_e( 'month(s)', 'invoicing' ); ?>" <?php selected( 'M', $period );?>><?php _e( 'Monthly', 'invoicing' ); ?></option><option value="Y" data-text="<?php esc_attr_e( 'year(s)', 'invoicing' ); ?>" <?php selected( 'Y', $period );?>><?php _e( 'Yearly', 'invoicing' ); ?></option></select></label>
-                <label class="wpinv-interval" for="wpinv_recurring_interval"> <?php _e( 'at every', 'invoicing' );?> <?php echo wpinv_html_select( array(
-                    'options'          => $intervals,
-                    'name'             => 'wpinv_recurring_interval',
-                    'id'               => 'wpinv_recurring_interval',
-                    'selected'         => $interval,
-                    'show_option_all'  => false,
-                    'show_option_none' => false
-                ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
-                <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
-                <span class="clear wpi-trial-clr"></span>
-                <label class="wpinv-free-trial" for="wpinv_free_trial">
-                    <input type="checkbox" name="wpinv_free_trial" id="wpinv_free_trial" value="1" <?php checked( true, (bool)$free_trial ); ?> /> 
-                    <?php echo __( 'Offer free trial for', 'invoicing' ); ?>
-                </label>
-                <label class="wpinv-trial-interval" for="wpinv_trial_interval">
-                    <input class="small-text" type="number" value="<?php echo $trial_interval;?>" size="4" id="wpinv_trial_interval" name="wpinv_trial_interval" step="1" min="1"> <select class="wpinv-select" id="wpinv_trial_period" name="wpinv_trial_period"><option value="D" <?php selected( 'D', $trial_period );?>><?php _e( 'day(s)', 'invoicing' ); ?></option><option value="W" <?php selected( 'W', $trial_period );?>><?php _e( 'week(s)', 'invoicing' ); ?></option><option value="M" <?php selected( 'M', $trial_period );?>><?php _e( 'month(s)', 'invoicing' ); ?></option><option value="Y" <?php selected( 'Y', $trial_period );?>><?php _e( 'year(s)', 'invoicing' ); ?></option></select>
-                </label>
+            <label class="wpinv-period" for="wpinv_recurring_period"><?php _e( 'Recurring', 'invoicing' );?> <select class="wpinv-select " id="wpinv_recurring_period" name="wpinv_recurring_period"><option value="D" data-text="<?php esc_attr_e( 'day(s)', 'invoicing' ); ?>" <?php selected( 'D', $period );?>><?php _e( 'Daily', 'invoicing' ); ?></option><option value="W" data-text="<?php esc_attr_e( 'week(s)', 'invoicing' ); ?>" <?php selected( 'W', $period );?>><?php _e( 'Weekly', 'invoicing' ); ?></option><option value="M" data-text="<?php esc_attr_e( 'month(s)', 'invoicing' ); ?>" <?php selected( 'M', $period );?>><?php _e( 'Monthly', 'invoicing' ); ?></option><option value="Y" data-text="<?php esc_attr_e( 'year(s)', 'invoicing' ); ?>" <?php selected( 'Y', $period );?>><?php _e( 'Yearly', 'invoicing' ); ?></option></select></label>
+            <label class="wpinv-interval" for="wpinv_recurring_interval"> <?php _e( 'at every', 'invoicing' );?> <?php echo wpinv_html_select( array(
+                'options'          => $intervals,
+                'name'             => 'wpinv_recurring_interval',
+                'id'               => 'wpinv_recurring_interval',
+                'selected'         => $interval,
+                'show_option_all'  => false,
+                'show_option_none' => false
+            ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
+            <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
+            <span class="clear wpi-trial-clr"></span>
+            <label class="wpinv-free-trial" for="wpinv_free_trial">
+                <input type="checkbox" name="wpinv_free_trial" id="wpinv_free_trial" value="1" <?php checked( true, (bool)$free_trial ); ?> /> 
+                <?php echo __( 'Offer free trial for', 'invoicing' ); ?>
+            </label>
+            <label class="wpinv-trial-interval" for="wpinv_trial_interval">
+                <input class="small-text" type="number" value="<?php echo $trial_interval;?>" size="4" id="wpinv_trial_interval" name="wpinv_trial_interval" step="1" min="1"> <select class="wpinv-select" id="wpinv_trial_period" name="wpinv_trial_period"><option value="D" <?php selected( 'D', $trial_period );?>><?php _e( 'day(s)', 'invoicing' ); ?></option><option value="W" <?php selected( 'W', $trial_period );?>><?php _e( 'week(s)', 'invoicing' ); ?></option><option value="M" <?php selected( 'M', $trial_period );?>><?php _e( 'month(s)', 'invoicing' ); ?></option><option value="Y" <?php selected( 'Y', $trial_period );?>><?php _e( 'year(s)', 'invoicing' ); ?></option></select>
+            </label>
+            <?php do_action( 'wpinv_prices_metabox_recurring_fields', $item ); ?>
         </p>
         <input type="hidden" id="_wpi_current_type" value="<?php echo wpinv_get_item_type( $post->ID ); ?>" />
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
