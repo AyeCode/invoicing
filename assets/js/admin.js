@@ -293,7 +293,7 @@ jQuery(function($) {
         });
         return false;
     });
-    $('#wpinv_state', elB).live('change', function(e) {
+    $('#wpinv_state', elB).on('change', function(e) {
         window.wpiConfirmed = true;
         $('#wpinv-recalc-totals').click();
         window.wpiConfirmed = false;
@@ -415,7 +415,7 @@ jQuery(function($) {
                 $('.gdmbx-wpinv-email', mBox).hide();
                 $('.gdmbx-wpinv-user-id', mBox).show();
             });
-            $('#wpinv-address #wpinv_email').live('change', function(e) {
+            $('#wpinv-address #wpinv_email').on('change', function(e) {
                 var metaBox = $(this).closest('.inside');
                 if (parseInt($('#wpinv_new_user', metaBox).val()) != 1) {
                     return false;
@@ -461,7 +461,7 @@ jQuery(function($) {
                     wpinvUnblock(metaBox);
                 });
             });
-            $('#wpinv_discount_type').live('change', function(e) {
+            $('#wpinv_discount_type').on('change', function(e) {
                 e.preventDefault();
                 var mBox = $(this).closest('.inside');
                 if ($(this).val() == 'flat') {
@@ -474,7 +474,7 @@ jQuery(function($) {
             });
             $('#wpinv_discount_type').trigger('change');
             
-            $('#wpinv-apply-code').live('click', function(e) {
+            $('#wpinv-apply-code').on('click', function(e) {
                 e.preventDefault();
                 var $this = $(this);
                 var $form = $(this).closest('form[name="post"]');
@@ -538,7 +538,7 @@ jQuery(function($) {
                 });
             });
             
-            $('#wpinv-remove-code').live('click', function(e) {
+            $('#wpinv-remove-code').on('click', function(e) {
                 e.preventDefault();
                 var $this = $(this);
                 var $form = $(this).closest('form[name="post"]');

@@ -11,7 +11,7 @@ class WPInv_Shortcodes {
         $shortcodes = array(
             'wpinv_checkout'  => __CLASS__ . '::checkout',
             'wpinv_history'  => __CLASS__ . '::history',
-            'wpinv_receipt'  => __CLASS__ . '::receipt',
+            'wpinv_receipt'  => __CLASS__ . '::success',
             'wpinv_buy'  => __CLASS__ . '::buy',
         );
 
@@ -22,26 +22,24 @@ class WPInv_Shortcodes {
         add_shortcode( 'wpinv_messages', __CLASS__ . '::messages' );
     }
 
-    public static function shortcode_wrapper(
-        $function,
-        $atts    = array(),
-        $wrapper = array(
-            'class'  => 'wpinv-invoices',
-            'before' => null,
-            'after'  => null
-        )
-    ) {
+    public static function shortcode_wrapper( $function, $atts = array(), $content = null, $wrapper = array( 'class' => 'wpi-g', 'before' => null, 'after' => null ) ) {
         ob_start();
 
         echo empty( $wrapper['before'] ) ? '<div class="' . esc_attr( $wrapper['class'] ) . '">' : $wrapper['before'];
-        call_user_func( $function, $atts );
+        call_user_func( $function, $atts, $content );
         echo empty( $wrapper['after'] ) ? '</div>' : $wrapper['after'];
 
         return ob_get_clean();
     }
 
     public static function checkout( $atts = array(), $content = null ) {
-        return wpinv_checkout_form( $atts, $content );
+        return self::shortcode_wrapper( array( __CLASS__, 'checkout_output' ), $atts, $content );
+    }
+
+    public static function checkout_output( $atts = array(), $content = null ) {
+        do_action( 'wpinv_checkout_content_before' );
+        echo wpinv_checkout_form( $atts, $content );
+        do_action( 'wpinv_checkout_content_after' );
     }
 
     public static function messages( $atts, $content = null ) {
@@ -65,8 +63,19 @@ class WPInv_Shortcodes {
         do_action( 'wpinv_after_user_invoice_history' );
     }
     
-    public static function receipt( $atts, $content = null ) {
-        return wpinv_payment_receipt( $atts, $content );
+    public static function success( $atts, $content = null ) {
+        return self::shortcode_wrapper( array( __CLASS__, 'success_output' ), $atts, $content );
+    }
+    
+    /**
+     * Output the shortcode.
+     *
+     * @param array $atts
+     */
+    public static function success_output( $atts, $content = null ) {
+        do_action( 'wpinv_success_content_before' );
+        echo wpinv_payment_receipt( $atts, $content );
+        do_action( 'wpinv_success_content_after' );
     }
 
     public static function buy( $atts, $content = null ) {
@@ -78,7 +87,7 @@ class WPInv_Shortcodes {
 
         $post_id = isset( $a['post_id'] ) ? (int)$a['post_id'] : '';
 
-        $html = '<div class="wpi-buy-button-wrapper">';
+        $html = '<div class="wpi-buy-button-wrapper wpi-g">';
         $html .= '<button class="button button-primary wpi-buy-button" type="button" onclick="wpi_buy(this,\'' . $a['items'] . '\',' . $post_id . ');">' . $a['title'] . '</button>';
         $html .= wp_nonce_field( 'wpinv_buy_items', 'wpinv_buy_nonce', true, false );
         $html .= '</div>';

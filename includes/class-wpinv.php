@@ -83,8 +83,10 @@ class WPInv_Plugin {
      * @since 1.0
      */
     public function load_textdomain() {
-        $locale = apply_filters( 'plugin_locale', get_locale(), 'invoicing' );
+        $locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+        $locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
         
+        unload_textdomain( 'invoicing' );
         load_textdomain( 'invoicing', WP_LANG_DIR . '/invoicing/invoicing-' . $locale . '.mo' );
         load_plugin_textdomain( 'invoicing', false, WPINV_PLUGIN_DIR . 'languages' );
         
@@ -324,9 +326,9 @@ class WPInv_Plugin {
         
         $page = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : false;
 
-        $add_class = false;
-        if ( $pagenow == 'admin.php' && $page ) {
-            $add_class = strpos( $page, 'wpinv-' );
+        $add_class = $page && $pagenow == 'admin.php' && strpos( $page, 'wpinv-' ) === 0 ? true : false;
+        if ( $add_class ) {
+            $classes .= ' wpi-' . wpinv_sanitize_key( $page );
         }
         
         $settings_class = array();
