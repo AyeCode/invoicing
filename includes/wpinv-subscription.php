@@ -287,6 +287,8 @@ class WPInv_Subscription {
         $invoice->ID = $invoice->title = $invoice->number ='';
         $invoice->parent_invoice = $this->parent_payment_id;
         $invoice->save();
+        update_post_meta($invoice->ID, '_wpinv_transaction_id', $args['transaction_id']);
+        update_post_meta($invoice->ID, '_wpinv_gateway', $args['gateway']);
 
         do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
         do_action( 'wpinv_recurring_record_payment', $invoice->ID, $this->parent_payment_id, $args['amount'], $args['transaction_id'] );

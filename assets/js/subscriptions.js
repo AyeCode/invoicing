@@ -6,7 +6,6 @@ jQuery( document ).ready( function ( $ ) {
 		init: function () {
 
 			//Recurring select field conditionals
-			this.edit_expiration();
 			this.edit_product_id();
 			this.edit_profile_id();
 			this.edit_txn_id();
@@ -33,21 +32,6 @@ jQuery( document ).ready( function ( $ ) {
             }
 
         },
-
-		edit_expiration: function() {
-
-			$('.wpinv-edit-sub-expiration').on('click', function(e) {
-				e.preventDefault();
-
-				var link = $(this);
-				var exp_input = $('input.wpinv-sub-expiration');
-				WPInv_Recurring.edit_subscription_input(link, exp_input);
-
-				$('.wpinv-sub-expiration').toggle();
-				$('#wpinv-sub-expiration-update-notice').slideToggle();
-			});
-
-		},
 
 		edit_profile_id: function() {
 

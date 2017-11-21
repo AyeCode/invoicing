@@ -186,9 +186,6 @@ function wpinv_recurring_subscription_details() {
 										</td>
 										<td>
 											<span class="wpinv-sub-expiration"><?php echo date_i18n( get_option( 'date_format' ), strtotime( $sub->expiration, current_time( 'timestamp' ) ) ); ?></span>
-											<input type="text" name="expiration" class="wpiDatepicker hidden wpinv-sub-expiration" data-dateFormat="mm/dd/yy" value="<?php echo esc_attr( $sub->expiration ); ?>" />
-											<span>&nbsp;&ndash;&nbsp;</span>
-											<a href="#" class="wpinv-edit-sub-expiration"><?php _e( 'Edit', 'invoicing' ); ?></a>
 										</td>
 									</tr>
 									<tr>
@@ -211,7 +208,6 @@ function wpinv_recurring_subscription_details() {
 							</table>
 						</div>
 						<div id="wpinv-sub-notices">
-							<div class="notice notice-info inline hidden" id="wpinv-sub-expiration-update-notice"><p><?php _e( 'Changing the expiration date will not affect when renewal payments are processed.', 'invoicing' ); ?></p></div>
 							<div class="notice notice-info inline hidden" id="wpinv-sub-product-update-notice"><p><?php _e( 'Changing the product assigned will not automatically adjust any pricing.', 'invoicing' ); ?></p></div>
 							<div class="notice notice-warning inline hidden" id="wpinv-sub-profile-id-update-notice"><p><?php _e( 'Changing the profile ID can result in renewals not being processed. Do this with caution.', 'invoicing' ); ?></p></div>
 						</div>

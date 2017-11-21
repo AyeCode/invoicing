@@ -30,7 +30,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
     // Check payment
     if ( ! $invoice ) {
         // Record the error
-        wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed before sending buyer to PayPal. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $payment );
+        wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed before sending buyer to PayPal. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $invoice );
         // Problems? send back
         wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
     } else {
@@ -321,6 +321,7 @@ function wpinv_process_paypal_ipn() {
 	$invoice_id = isset( $encoded_data_array['custom'] ) ? absint( $encoded_data_array['custom'] ) : 0;
     
 	wpinv_error_log( $encoded_data_array['txn_type'], 'PayPal txn_type', __FILE__, __LINE__ );
+	wpinv_error_log( print_r($encoded_data_array, true), 'PayPal IPN response', __FILE__, __LINE__ );
 
 	if ( has_action( 'wpinv_paypal_' . $encoded_data_array['txn_type'] ) ) {
 		// Allow PayPal IPN types to be processed separately

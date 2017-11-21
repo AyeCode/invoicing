@@ -280,6 +280,8 @@ class WPInv_Plugin {
 
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
+
+        wp_enqueue_script('subscriptions-js', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array('jquery'), WPINV_VERSION, true);
         
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
 
@@ -320,6 +322,9 @@ class WPInv_Plugin {
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
         $localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
+        $localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
+        $localize['action_edit']                = __( 'Edit', 'invoicing' );
+        $localize['action_cancel']              = __( 'Cancel', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 
