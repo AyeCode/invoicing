@@ -88,6 +88,13 @@ final class WPInv_Invoice {
 
         if ( $key === 'status' ) {
             $this->old_status = $this->status;
+	    if( wpinv_get_option( 'invoice_number_only_on_payment' ) ) {
+			if($value === 'wpi-pending') {
+				$this->number = $this->ID;
+			} else if($value === 'publish') { 
+				$this->number = $this->setup_invoice_number();
+			}
+		}
         }
 
         if ( ! in_array( $key, $ignore ) ) {
@@ -185,7 +192,15 @@ final class WPInv_Invoice {
 
         // Other Identifiers
         $this->key             = $this->setup_invoice_key();
-        $this->number          = $this->setup_invoice_number();
+        if( wpinv_get_option( 'invoice_number_only_on_payment' ) ) {
+		if($invoice->post_status === 'wpi-pending') {
+			$this->number  = $this->ID;
+		} else {
+			$this->number  = $this->setup_invoice_number();
+		}
+	} else {
+		$this->number      = $this->setup_invoice_number();
+	}
         $this->title           = !empty( $invoice->post_title ) ? $invoice->post_title : $this->number;
         
         $this->full_name       = trim( $this->first_name . ' '. $this->last_name );

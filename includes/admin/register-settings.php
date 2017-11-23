@@ -587,6 +587,12 @@ function wpinv_get_registered_settings() {
                         'size' => 'regular',
                         'std' => ''
                     ),
+		    'invoice_number_only_on_payment' => array(
+                        'id' => 'invoice_number_only_on_payment',
+                        'name' => __( 'Assign Invoice Number after Payment', 'invoicing' ),
+                        'desc' => __( 'Prevent dealing with unpaid invoices with a different number.', 'invoicing' ),
+                        'type' => 'checkbox',
+                    ),
                     'checkout_settings' => array(
                         'id'   => 'checkout_settings',
                         'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
