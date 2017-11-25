@@ -197,7 +197,7 @@ final class WPInv_Invoice {
     }
     
     private function setup_status_nicename($status) {
-        $all_invoice_statuses  = wpinv_get_invoice_statuses();
+        $all_invoice_statuses  = wpinv_get_invoice_statuses(false, $this);
         $status   = isset( $all_invoice_statuses[$status] ) ? $all_invoice_statuses[$status] : __( $status, 'invoicing' );
 
         return apply_filters( 'setup_status_nicename', $status );
@@ -2138,11 +2138,9 @@ final class WPInv_Invoice {
     }
     
     public function is_paid() {
-        if ( $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
-            return true;
-        }
-        
-        return false;
+        $is_paid = $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) );
+
+        return apply_filters( 'wpinv_invoice_is_paid', $is_paid, $this );
     }
     
     public function is_refunded() {

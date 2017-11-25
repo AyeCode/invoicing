@@ -89,7 +89,7 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 
-function wpinv_get_invoice_statuses( $trashed = false ) {
+function wpinv_get_invoice_statuses( $trashed = false, $invoice = false ) {
     global $post;
     $invoice_statuses = array();
     $invoice_statuses = array(
@@ -107,7 +107,7 @@ function wpinv_get_invoice_statuses( $trashed = false ) {
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
 
-    return apply_filters( 'wpinv_statuses', $invoice_statuses );
+    return apply_filters( 'wpinv_statuses', $invoice_statuses, $invoice );
 }
 
 function wpinv_status_nicename( $status ) {

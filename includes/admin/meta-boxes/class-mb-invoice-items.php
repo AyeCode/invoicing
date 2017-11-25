@@ -178,18 +178,20 @@ class WPInv_Meta_Box_Items {
                 </tfoot>
             </table>
             <div class="wpinv-actions">
+                <?php ob_start(); ?>
                 <?php
-                    if ( !$invoice->is_paid() && !$invoice->is_refunded() ) {
+                if ( !$invoice->is_paid() && !$invoice->is_refunded() ) {
                     if ( !$invoice->is_recurring() ) {
-                    echo wpinv_item_dropdown( array(
-                        'name'             => 'wpinv_invoice_item',
-                        'id'               => 'wpinv_invoice_item',
-                        'show_recurring'   => true,
-                    ) );
-                    ?>
-                <input type="button" value="<?php echo sprintf(esc_attr__( 'Add item to %s', 'invoicing'), $type_title); ?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
-                    <?php } ?>
+                        echo wpinv_item_dropdown( array(
+                            'name'             => 'wpinv_invoice_item',
+                            'id'               => 'wpinv_invoice_item',
+                            'show_recurring'   => true,
+                        ) );
+                        ?>
+                        <input type="button" value="<?php echo sprintf(esc_attr__( 'Add item to %s', 'invoicing'), $type_title); ?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
+                <?php } ?>
                 <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
+                <?php $item_actions = ob_get_clean(); echo apply_filters( 'wpinv_invoice_items_actions_content', $item_actions, $invoice, $post ); ?>
             </div>
         </div>
         <?php
