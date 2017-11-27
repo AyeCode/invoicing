@@ -73,12 +73,14 @@ class WPInv_Meta_Box_Details {
                 <input type="text" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text" readonly>
             </div>
         </div>
-        <?php do_action( 'wpinv_meta_box_details_inner', $post_id ); ?>
+        <?php do_action( 'wpinv_meta_box_details_inner', $post_id );
+        $disable_discount = apply_filters('wpinv_disable_apply_discount', false, $invoice, $post_id);
+        ?>
         <?php if ( !( $is_paid = ( $invoice->is_paid() || $invoice->is_refunded() ) ) || $discount_code ) { ?>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount-code table-layout">
             <div class="gdmbx-th"><label for="wpinv_discount_code"><?php _e( 'Discount Code:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" value="<?php echo esc_attr( $discount_code ); ?>" id="wpinv_discount" class="medium-text" <?php echo ( $discount_code ? 'readonly' : '' ); ?> /><?php if ( !$is_paid ) { ?><input value="<?php echo esc_attr_e( 'Apply', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-hide' : 'wpi-inlineb' ); ?>" id="wpinv-apply-code" type="button" /><input value="<?php echo esc_attr_e( 'Remove', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-inlineb' : 'wpi-hide' ); ?>" id="wpinv-remove-code" type="button" /><?php } ?>
+                <input type="text" value="<?php echo esc_attr( $discount_code ); ?>" id="wpinv_discount" class="medium-text" <?php echo ( $discount_code ? 'readonly' : '' ); ?> /><?php if ( !$is_paid && !$disable_discount ) { ?><input value="<?php echo esc_attr_e( 'Apply', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-hide' : 'wpi-inlineb' ); ?>" id="wpinv-apply-code" type="button" /><input value="<?php echo esc_attr_e( 'Remove', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-inlineb' : 'wpi-hide' ); ?>" id="wpinv-remove-code" type="button" /><?php } ?>
             </div>
         </div>
         <?php } ?>
