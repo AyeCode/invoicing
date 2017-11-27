@@ -231,6 +231,7 @@ function wpinv_checkout_meta_tags() {
 	$pages[] = wpinv_get_option( 'success_page' );
 	$pages[] = wpinv_get_option( 'failure_page' );
 	$pages[] = wpinv_get_option( 'invoice_history_page' );
+	$pages[] = wpinv_get_option( 'invoice_subscription_page' );
 
 	if( !wpinv_is_checkout() && !is_page( $pages ) ) {
 		return;
@@ -262,6 +263,11 @@ function wpinv_add_body_classes( $class ) {
 		$classes[] = 'wpinv-history';
 		$classes[] = 'wpinv-page';
 	}
+
+    if( wpinv_is_subscriptions_history_page() ) {
+        $classes[] = 'wpinv-subscription';
+        $classes[] = 'wpinv-page';
+    }
 
 	if( wpinv_is_test_mode() ) {
 		$classes[] = 'wpinv-test-mode';
@@ -895,6 +901,7 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
+        <?php do_action( 'wpinv_display_details_after_due_date', $invoice_id ); ?>
         <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
                 <th><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
@@ -1912,27 +1919,15 @@ function wpinv_invoice_link( $invoice_id ) {
 
 function wpinv_invoice_subscription_details( $invoice ) {
     if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
-        $total_payments = (int)$invoice->get_total_payments();
-        $payments       = $invoice->get_child_payments();
-        
-        $subscription   = $invoice->get_subscription_data();
-        
-        if ( !( !empty( $subscription ) && !empty( $subscription['item_id'] ) ) ) {
+        $subs_db = new WPInv_Subscriptions_DB;
+        $subs = $subs_db->get_subscriptions(array('parent_payment_id' => $invoice->ID, 'number' => 1));
+        $sub = reset($subs);
+        if(!$sub){
             return;
         }
-        
-        $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
-        $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
-        
-        $subscription_status = $invoice->get_subscription_status();
-        
-        $status_desc = '';
-        if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date() ) {
-            $status_desc = wp_sprintf( __( 'Until: %s', 'invoicing' ), $trial_end_date );
-        } else if ( $subscription_status == 'cancelled' && $cancelled_date = $invoice->get_cancelled_date() ) {
-            $status_desc = wp_sprintf( __( 'On: %s', 'invoicing' ), $cancelled_date );
-        }
-        $status_desc = $status_desc != '' ? '<span class="meta">' . $status_desc . '</span>' : '';
+        $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($sub->period, $sub->frequency);
+        $billing = wpinv_price(wpinv_format_amount($sub->recurring_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id)) . ' / ' . $frequency;
+        $initial = wpinv_price(wpinv_format_amount($sub->initial_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id));
         ?>
         <div class="wpinv-subscriptions-details">
             <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>
@@ -1948,18 +1943,19 @@ function wpinv_invoice_subscription_details( $invoice ) {
                 </thead>
                 <tbody>
                     <tr>
-                        <td><?php echo $billing_cycle; ?></td>
-                        <td><?php echo $invoice->get_subscription_start(); ?></td>
-                        <td><?php echo $invoice->get_subscription_end(); ?></td>
-                        <td class="text-center"><?php echo $times_billed; ?></td>
-                        <td class="text-center wpi-sub-status"><?php echo $invoice->get_subscription_status_label() ;?>
-                        <?php echo $status_desc; ?>
+                        <td><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?></td>
+                        <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->created, current_time('timestamp'))); ?></td>
+                        <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
+                        <td class="text-center"><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?></td>
+                        <td class="text-center wpi-sub-status"><?php echo $sub->get_status_label(); ?>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <?php if ( !empty( $payments ) ) { ?>
+        <?php
+        $payments = $sub->get_child_payments();
+        if ( !empty( $payments ) ) { ?>
         <div class="wpinv-renewal-payments">
             <h3 class="wpinv-renewals-t"><?php echo apply_filters( 'wpinv_renewal_payments_title', __( 'Renewal Payments', 'invoicing' ) ); ?></h3>
             <table class="table">
@@ -1972,9 +1968,13 @@ function wpinv_invoice_subscription_details( $invoice ) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ( $payments as $key => $invoice_id ) { ?>
+                    <?php
+                        $i = 1;
+                        foreach ( $payments as $payment ) {
+                        $invoice_id = $payment->ID;
+                    ?>
                     <tr>
-                        <th scope="row"><?php echo ( $key + 1 );?></th>
+                        <th scope="row"><?php echo $i++;?></th>
                         <td><?php echo wpinv_invoice_link( $invoice_id ) ;?></td>
                         <td><?php echo wpinv_get_invoice_date( $invoice_id ); ?></td>
                         <td class="text-right"><?php echo wpinv_payment_total( $invoice_id, true ); ?></td>

@@ -129,7 +129,12 @@ class WPInv_Plugin {
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
-        
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
         $gateways = array_keys( wpinv_get_enabled_payment_gateways() );
         if ( !empty( $gateways ) ) {
             foreach ( $gateways as $gateway ) {
@@ -269,12 +274,14 @@ class WPInv_Plugin {
         wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_admin_style' );
         
-        if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
+        //if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
-        }
+        //}
 
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
+
+        wp_enqueue_script('subscriptions-js', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array('jquery'), WPINV_VERSION, true);
         
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
 
@@ -315,6 +322,9 @@ class WPInv_Plugin {
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
         $localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
+        $localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
+        $localize['action_edit']                = __( 'Edit', 'invoicing' );
+        $localize['action_cancel']              = __( 'Cancel', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 

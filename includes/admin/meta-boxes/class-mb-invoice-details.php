@@ -37,6 +37,11 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
+        <?php $is_viewed = wpinv_is_invoice_viewed( $post_id ); ?>
+        <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-customer-viewed">
+            <div class="gdmbx-th"><label><?php _e( 'Viewed by Customer:', 'invoicing' );?></label></div>
+            <div class="gdmbx-td"><?php (1 == $is_viewed) ? _e( 'Yes', 'invoicing' ) : _e( 'No', 'invoicing' ); ?></div>
+        </div>
         <?php if ( $invoice->post_type == 'wpi_invoice' && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft' ) ) ) ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
@@ -51,6 +56,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-td"><?php echo $date_completed;?></div>
         </div>
         <?php } ?>
+        <?php do_action( 'wpinv_meta_box_details_after_due_date', $post_id ); ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">
             <div class="gdmbx-th"><label for="wpinv_status"><?php echo $title['status']; ?></label></div>
             <div class="gdmbx-td">
@@ -67,12 +73,14 @@ class WPInv_Meta_Box_Details {
                 <input type="text" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text" readonly>
             </div>
         </div>
-        <?php do_action( 'wpinv_meta_box_details_inner', $post_id ); ?>
+        <?php do_action( 'wpinv_meta_box_details_inner', $post_id );
+        $disable_discount = apply_filters('wpinv_disable_apply_discount', false, $invoice, $post_id);
+        ?>
         <?php if ( !( $is_paid = ( $invoice->is_paid() || $invoice->is_refunded() ) ) || $discount_code ) { ?>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount-code table-layout">
             <div class="gdmbx-th"><label for="wpinv_discount_code"><?php _e( 'Discount Code:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
-                <input type="text" value="<?php echo esc_attr( $discount_code ); ?>" id="wpinv_discount" class="medium-text" <?php echo ( $discount_code ? 'readonly' : '' ); ?> /><?php if ( !$is_paid ) { ?><input value="<?php echo esc_attr_e( 'Apply', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-hide' : 'wpi-inlineb' ); ?>" id="wpinv-apply-code" type="button" /><input value="<?php echo esc_attr_e( 'Remove', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-inlineb' : 'wpi-hide' ); ?>" id="wpinv-remove-code" type="button" /><?php } ?>
+                <input type="text" value="<?php echo esc_attr( $discount_code ); ?>" id="wpinv_discount" class="medium-text" <?php echo ( $discount_code ? 'readonly' : '' ); ?> /><?php if ( !$is_paid && !$disable_discount ) { ?><input value="<?php echo esc_attr_e( 'Apply', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-hide' : 'wpi-inlineb' ); ?>" id="wpinv-apply-code" type="button" /><input value="<?php echo esc_attr_e( 'Remove', 'invoicing' ); ?>" class="button button-small button-primary <?php echo ( $discount_code ? 'wpi-inlineb' : 'wpi-hide' ); ?>" id="wpinv-remove-code" type="button" /><?php } ?>
             </div>
         </div>
         <?php } ?>
@@ -125,61 +133,76 @@ class WPInv_Meta_Box_Details {
     }
     
     public static function subscriptions( $post ) {
-        global $wpi_mb_invoice;
-        
-        $invoice = $wpi_mb_invoice;
-        
-        if ( !empty( $invoice ) && $invoice->is_recurring() && $invoice->is_parent() ) {
-            $payments       = $invoice->get_child_payments();
-            
-            $total_payments = (int)$invoice->get_total_payments();
-            $subscription   = $invoice->get_subscription_data();
 
-            $billing_cycle  = wpinv_get_billing_cycle( $subscription['initial_amount'], $subscription['recurring_amount'], $subscription['period'], $subscription['interval'], $subscription['bill_times'], $subscription['trial_period'], $subscription['trial_interval'], $invoice->get_currency() );
-            $times_billed   = $total_payments . ' / ' . ( ( (int)$subscription['bill_times'] == 0 ) ? __( 'Until cancelled', 'invoicing' ) : $subscription['bill_times'] );
-            $subscription_status = $invoice->get_subscription_status();
+        $invoice = wpinv_get_invoice( $post->ID );
+
+        if (!empty($invoice) && $invoice->is_recurring() && $invoice->is_parent()) {
+
+            $subs_db = new WPInv_Subscriptions_DB;
+            $subs = $subs_db->get_subscriptions(array('parent_payment_id' => $post->ID, 'number' => 1));
+            $sub = reset($subs);
+
+            if(!$sub){
+                _e('No <a href="'.admin_url( 'admin.php?page=wpinv-subscriptions' ).'">Subscriptions</a> found.', 'invoicing');
+                return;
+            }
+            $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($sub->period, $sub->frequency);
+            $billing = wpinv_price(wpinv_format_amount($sub->recurring_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id)) . ' / ' . $frequency;
+            $initial = wpinv_price(wpinv_format_amount($sub->initial_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id));
+
             ?>
-            <p class="wpi-meta-row wpi-sub-label"><?php _e( 'Recurring Payment', 'invoicing' );?></p>
-            <?php if ( $subscription_id = $invoice->get_subscription_id() ) { ?>
-            <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $subscription_id; ?></p>
+            <p class="wpi-meta-row wpi-sub-label <?php echo 'status-'.$sub->status; ?>"><?php _e('Recurring Payment', 'invoicing'); ?></p>
+            <?php if ($sub->id) { ?>
+                <p class="wpi-meta-row wpi-sub-id">
+                    <label><?php _e('Subscription ID:', 'invoicing'); ?> </label><a href="<?php echo esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . $sub->id ) ); ?>" title="<?php echo esc_attr( __( 'View or edit subscription', 'invoicing' ) ); ?>" target="_blank"><?php echo $sub->id; ?></a></p>
             <?php } ?>
-            <p class="wpi-meta-row wpi-bill-cycle"><label><?php _e( 'Billing Cycle:', 'invoicing' );?> </label><?php echo $billing_cycle; ?></p>
-            <p class="wpi-meta-row wpi-billed-times"><label><?php _e( 'Times Billed:', 'invoicing' );?> </label><?php echo $times_billed; ?></p>
-            <?php if ( !empty( $payments ) || ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
-                <p class="wpi-meta-row wpi-start-date"><label><?php _e( 'Start Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_start(); ?></p>
-                <p class="wpi-meta-row wpi-end-date"><label><?php _e( 'Expiration Date:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_end(); ?></p>
-                <?php if ( $status_label = $invoice->get_subscription_status_label( $subscription_status ) ) { ?>
-                <p class="wpi-meta-row wpi-sub-status"><label><?php _e( 'Subscription Status:', 'invoicing' );?> </label><?php echo $status_label; ?></p>
-                <?php } ?>
-                <?php if ( $subscription_status == 'trialing' && $trial_end_date = $invoice->get_trial_end_date() ) { ?>
-                <p class="wpi-meta-row wpi-trial-date"><label><?php _e( 'Trial Until:', 'invoicing' );?> </label><?php echo $trial_end_date; ?></p>
-                <?php } ?>
-                <?php if ( $cancelled_date = $invoice->get_cancelled_date() ) { ?>
-                <p class="wpi-meta-row wpi-cancel-date"><label><?php _e( 'Cancelled On:', 'invoicing' );?> </label><?php echo $cancelled_date; ?></p>
-                <?php } ?>
-                <?php if ( !empty( $payments ) ) { ?>
-                <p><strong><?php _e( 'Renewal Payments:', 'invoicing' ); ?></strong></p>
+            <p class="wpi-meta-row wpi-bill-cycle">
+                <label><?php _e('Billing Cycle:', 'invoicing'); ?> </label><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?>
+            </p>
+            <p class="wpi-meta-row wpi-billed-times">
+                <label><?php _e('Times Billed:', 'invoicing'); ?> </label><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?>
+            </p>
+            <p class="wpi-meta-row wpi-start-date">
+                <label><?php _e('Start Date:', 'invoicing'); ?> </label><?php echo date_i18n(get_option('date_format'), strtotime($sub->created, current_time('timestamp'))); ?>
+            </p>
+            <p class="wpi-meta-row wpi-end-date"><label><?php if ('trialling' == $sub->status) : ?>
+                        <?php _e('Trialling Until:', 'invoicing'); ?>
+                    <?php else: ?>
+                        <?php _e('Expiration Date:', 'invoicing'); ?>
+                    <?php endif; ?></label><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?>
+            </p>
+            <?php if ($sub->status) { ?>
+                <p class="wpi-meta-row wpi-sub-status">
+                    <label><?php _e('Subscription Status:', 'invoicing'); ?> </label><?php echo $sub->get_status_label(); ?>
+                </p>
+            <?php } ?>
+            <?php
+            $payments = $sub->get_child_payments();
+            if (!empty($payments)) { ?>
+                <p><strong><?php _e('Renewal Payments:', 'invoicing'); ?></strong></p>
                 <ul id="wpi-sub-payments">
-                <?php foreach ( $payments as $invoice_id ) { ?>
-                    <li>
-                        <a href="<?php echo esc_url( get_edit_post_link( $invoice_id ) ); ?>"><?php echo wpinv_get_invoice_number( $invoice_id ); ?></a>&nbsp;&ndash;&nbsp;
-                        <span><?php echo wpinv_get_invoice_date( $invoice_id ); ?>&nbsp;&ndash;&nbsp;</span>
-                        <span><?php echo wpinv_payment_total( $invoice_id, true ); ?></span>
-                    </li>
-                <?php } ?>
+                    <?php foreach ($payments as $payment) {
+                        $invoice_id = $payment->ID;
+                        ?>
+                        <li>
+                            <a href="<?php echo esc_url(get_edit_post_link($invoice_id)); ?>"><?php echo wpinv_get_invoice_number($invoice_id); ?></a>&nbsp;&ndash;&nbsp;
+                            <span><?php echo wpinv_get_invoice_date($invoice_id); ?>&nbsp;&ndash;&nbsp;</span>
+                            <span><?php echo wpinv_payment_total($invoice_id, true); ?></span>
+                        </li>
+                    <?php } ?>
                 </ul>
-            <?php } }
+            <?php }
         }
     }
     
     public static function renewals( $post ) {
-        global $wpi_mb_invoice;
+        $invoice = wpinv_get_invoice( $post->ID );
         
-        if ( wpinv_is_subscription_payment( $wpi_mb_invoice ) ) {
-            $parent_url = get_edit_post_link( $wpi_mb_invoice->parent_invoice );
-            $parent_id  = wpinv_get_invoice_number( $wpi_mb_invoice->parent_invoice );
+        if ( wpinv_is_subscription_payment( $invoice ) ) {
+            $parent_url = get_edit_post_link( $invoice->parent_invoice );
+            $parent_id  = wpinv_get_invoice_number( $invoice->parent_invoice );
         ?>
-        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $wpi_mb_invoice->get_subscription_id(); ?></p>
+        <p class="wpi-meta-row wpi-sub-id"><label><?php _e( 'Subscription ID:', 'invoicing' );?> </label><?php echo $invoice->get_subscription_id(); ?></p>
         <p class="wpi-meta-row wpi-parent-id"><label><?php _e( 'Parent Invoice:', 'invoicing' );?> </label><a href="<?php echo esc_url( $parent_url ); ?>"><?php echo $parent_id; ?></a></p>
         <?php
         }

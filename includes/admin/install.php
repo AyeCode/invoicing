@@ -84,6 +84,13 @@ function wpinv_run_install()
     // Add a temporary option to note that Invoicing pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
 
+    // Add Subscription tables
+    $db = new WPInv_Subscriptions_DB;
+    @$db->create_table();
+    if ( get_option('wpinv_db_version') != WPINV_VERSION ) {
+        convert_old_subscriptions();
+    }
+
     // Bail if activating from network, or bulk
     if (is_network_admin() || isset($_GET['activate-multi'])) {
         return;
@@ -160,6 +167,12 @@ function wpinv_create_pages()
             'name' => _x('wpinv-transaction-failed', 'Page slug', 'invoicing'),
             'title' => _x('Transaction Failed', 'Page title', 'invoicing'),
             'content' => __('Your transaction failed, please try again or contact site support.', 'invoicing'),
+            'parent' => 'wpi-checkout',
+        ),
+        'invoice_subscription_page' => array(
+            'name' => _x('wpinv-subscriptions', 'Page slug', 'invoicing'),
+            'title' => _x('Subscriptions History', 'Page title', 'invoicing'),
+            'content' => '[' . apply_filters('wpinv_subscriptions_shortcode_tag', 'wpinv_subscriptions') . ']',
             'parent' => 'wpi-checkout',
         ),
     ));

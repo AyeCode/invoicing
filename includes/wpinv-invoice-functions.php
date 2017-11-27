@@ -645,10 +645,10 @@ function wpinv_get_invoice_vat_number( $invoice_id = 0 ) {
     return $invoice->vat_number;
 }
 
-function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false ) {
+function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false, $system = false ) {
     $invoice = new WPInv_Invoice( $invoice_id );
 
-    return $invoice->add_note( $note, $user_type, $added_by_user );
+    return $invoice->add_note( $note, $user_type, $added_by_user, $system );
 }
 
 function wpinv_get_invoice_notes( $invoice_id = 0, $type = '' ) {
@@ -2207,4 +2207,46 @@ function wpinv_generate_post_name( $post_ID ) {
     $post_name = sanitize_title( $prefix . $post_ID );
 
     return apply_filters( 'wpinv_generate_post_name', $post_name, $post_ID, $prefix );
+}
+
+function wpinv_is_invoice_viewed( $invoice_id ) {
+    if ( empty( $invoice_id ) ) {
+        return false;
+    }
+
+    $viewed_meta = get_post_meta( $invoice_id, '_wpinv_is_viewed', true );
+
+    if ( isset($viewed_meta) && 1 == $viewed_meta ) {
+        $is_viewed = true;
+    } else {
+        $is_viewed = false;
+    }
+
+    return apply_filters( 'wpinv_is_invoice_viewed', $is_viewed, $invoice_id );
+
+}
+
+add_action( 'init', 'wpinv_mark_invoice_viewed' );
+function wpinv_mark_invoice_viewed() {
+
+    if ( isset( $_GET['invoice_key'] ) ) {
+        $invoice_key = urldecode($_GET['invoice_key']);
+
+        $invoice_id = wpinv_get_invoice_id_by_key($invoice_key);
+        $invoice = new WPInv_Invoice($invoice_id);
+
+        if(!$invoice_id){
+            return;
+        }
+
+        if( is_user_logged_in()){
+            $current_user = wp_get_current_user();
+            if(!current_user_can('administrator') && $current_user->user_email == $invoice->get_email()){
+                update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
+            }
+        } else {
+            update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
+        }
+    }
+
 }
