@@ -295,8 +295,16 @@
   background-color: #ebcccc;
 }
 .wpi-g .table-responsive {
-  overflow-x: auto;
-  min-height: 0.01%;
+    min-height: 0.01%;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+@media screen and (max-width: 576px) {
+  .wpi-g .table-responsive {
+    display: block;
+  }
 }
 @media screen and (max-width: 767px) {
   .wpi-g .table-responsive {

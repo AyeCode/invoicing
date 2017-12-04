@@ -5,10 +5,8 @@ if ( !defined('ABSPATH') )
 
 do_action( 'wpinv_email_header', $email_heading, $invoice, $email_type, $sent_to_admin );
 
-if ( $invoice->needs_payment() ) {
-    ?>
-    <p><?php printf( __( 'An invoice has been created for you on %s. To view / pay for this invoice please use the following link: %s', 'invoicing' ), wpinv_get_business_name(), '<a class="btn btn-success" href="' . esc_url( $invoice->get_view_url( true ) ) . '">' . __( 'View / Pay', 'invoicing' ) . '</a>' ); ?></p>
-    <?php 
+if ( ! empty( $message_body ) ) {
+    echo wpautop( wptexturize( $message_body ) );
 }
 
 do_action( 'wpinv_email_invoice_details', $invoice, $email_type, $sent_to_admin );

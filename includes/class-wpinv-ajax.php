@@ -194,7 +194,7 @@ class WPInv_Ajax {
             if ( !$valid ) {
                 $response               = array();
                 $response['success']    = false;
-                $response['msg']        = __( 'You can not add item to invoice because recurring item must be paid individually!', 'invoicing' );
+                $response['msg']        = __( 'You can not add item because recurring item must be paid individually!', 'invoicing' );
                 wp_send_json( $response );
             }
         }
@@ -364,7 +364,7 @@ class WPInv_Ajax {
         if ( !empty( $invoice->cart_details ) && $invoice->get_recurring() ) {
             $response               = array();
             $response['success']    = false;
-            $response['msg']        = __( 'You can not add item to invoice because recurring item must be paid individually!', 'invoicing' );
+            $response['msg']        = __( 'You can not add item because recurring item must be paid individually!', 'invoicing' );
             wp_send_json( $response );
         }        
         
@@ -689,6 +689,7 @@ class WPInv_Ajax {
         
         wp_send_json( $response );
     }
+
 
     /**
      * Lets users buy items via ajax.

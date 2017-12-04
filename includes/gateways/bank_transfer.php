@@ -33,6 +33,8 @@ function wpinv_process_bank_transfer_payment( $purchase_data ) {
         // Empty the shopping cart
         wpinv_empty_cart();
         
+        do_action( 'wpinv_send_to_success_page', $invoice->ID, $payment_data );
+        
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
     } else {
         wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed while processing a bank transfer payment. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $invoice );
@@ -74,3 +76,14 @@ function wpinv_invoice_print_bank_info( $invoice ) {
     }
 }
 add_action( 'wpinv_invoice_print_after_top_content', 'wpinv_invoice_print_bank_info', 10, 1 );
+
+function wpinv_bank_transfer_send_notification( $invoice_ID, $payment_data = array() ) {
+    if ( !empty( $payment_data['gateway'] ) && $payment_data['gateway'] == 'bank_transfer' ) {
+        // Send invoice to user.
+        wpinv_user_invoice_notification( $invoice_ID );
+        
+        // Send invoice to admin.
+        wpinv_new_invoice_notification( $invoice_ID );
+    }
+}
+add_action( 'wpinv_send_to_success_page', 'wpinv_bank_transfer_send_notification', 10, 2 );

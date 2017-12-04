@@ -3,7 +3,7 @@ Contributors: stiofansisland, paoltaia, ayecode
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 3.1
-Tested up to: 4.9
+Tested up to: 4.9.1
 Stable tag: 1.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -107,13 +107,13 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 Invoice created date should not updated on invoice published - CHANGED
 Show recurring supported gateways in backend item page - CHANGED
 Fix front end style conflict - FIXED
+Subscription functionality improved - CHANGED
 
 = 1.0.2 =
 Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED
 VAT fields not displayed on checkout page for invoice with free trial - FIXED
 Payment button text confusing when invoice is non recurring & total is zero - FIXED
 wpinv_get_template_part() does not locate the template from the themes - FIXED
-wpinv_buy shortcode redirects users to invoice instead of checkout page - FIXED
 
 = 1.0.1 =
 New currencies added - ADDED

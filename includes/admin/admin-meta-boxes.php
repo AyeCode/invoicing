@@ -132,18 +132,40 @@ function wpinv_discount_metabox_details( $post ) {
     $discount_id    = $post->ID;
     $discount       = wpinv_get_discount( $discount_id );
     
-    $type           = wpinv_get_discount_type( $discount_id );
-    $item_reqs      = wpinv_get_discount_item_reqs( $discount_id );
-    $excluded_items = wpinv_get_discount_excluded_items( $discount_id );
-    $min_total      = wpinv_get_discount_min_total( $discount_id );
-    $max_total      = wpinv_get_discount_max_total( $discount_id );
-    $max_uses       = wpinv_get_discount_max_uses( $discount_id );
-    $single_use     = wpinv_discount_is_single_use( $discount_id );
-    $recurring      = (bool)wpinv_discount_is_recurring( $discount_id );
+    $type               = wpinv_get_discount_type( $discount_id );
+    $item_reqs          = wpinv_get_discount_item_reqs( $discount_id );
+    $excluded_items     = wpinv_get_discount_excluded_items( $discount_id );
+    $min_total          = wpinv_get_discount_min_total( $discount_id );
+    $max_total          = wpinv_get_discount_max_total( $discount_id );
+    $max_uses           = wpinv_get_discount_max_uses( $discount_id );
+    $single_use         = wpinv_discount_is_single_use( $discount_id );
+    $recurring          = (bool)wpinv_discount_is_recurring( $discount_id );
+    $start_date         = wpinv_get_discount_start_date( $discount_id );
+    $expiration_date    = wpinv_get_discount_expiration( $discount_id );
     
-    $min_total      = $min_total > 0 ? $min_total : '';
-    $max_total      = $max_total > 0 ? $max_total : '';
-    $max_uses       = $max_uses > 0 ? $max_uses : '';
+    if ( ! empty( $start_date ) && strpos( $start_date, '0000' ) === false ) {
+        $start_time         = strtotime( $start_date );
+        $start_h            = date_i18n( 'H', $start_time );
+        $start_m            = date_i18n( 'i', $start_time );
+        $start_date         = date_i18n( 'Y-m-d', $start_time );
+    } else {
+        $start_h            = '00';
+        $start_m            = '00';
+    }
+
+    if ( ! empty( $expiration_date ) && strpos( $expiration_date, '0000' ) === false ) {
+        $expiration_time    = strtotime( $expiration_date );
+        $expiration_h       = date_i18n( 'H', $expiration_time );
+        $expiration_m       = date_i18n( 'i', $expiration_time );
+        $expiration_date    = date_i18n( 'Y-m-d', $expiration_time );
+    } else {
+        $expiration_h       = '23';
+        $expiration_m       = '59';
+    }
+    
+    $min_total          = $min_total > 0 ? $min_total : '';
+    $max_total          = $max_total > 0 ? $max_total : '';
+    $max_uses           = $max_uses > 0 ? $max_uses : '';
 ?>
 <?php do_action( 'wpinv_discount_form_top', $post ); ?>
 <?php wp_nonce_field( 'wpinv_discount_metabox_nonce', 'wpinv_discount_metabox_nonce' ); ;?>
@@ -229,7 +251,15 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_start"><?php _e( 'Start Date', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_start" data-dateFormat="yy-mm-dd" name="start" value="<?php echo esc_attr( wpinv_get_discount_start_date( $discount_id ) ); ?>">
+                <input type="text" class="w120 wpiDatepicker" id="wpinv_discount_start" data-dateFormat="yy-mm-dd" name="start" value="<?php echo esc_attr( $start_date ); ?>"> @ <select id="wpinv_discount_start_h" name="start_h">
+                    <?php for ( $i = 0; $i <= 23; $i++ ) { $value = str_pad( $i, 2, '0', STR_PAD_LEFT ); ?>
+                    <option value="<?php echo $value;?>" <?php selected( $value, $start_h ); ?>><?php echo $value;?></option>
+                    <?php } ?>
+                </select> : <select id="wpinv_discount_start_m" name="start_m">
+                    <?php for ( $i = 0; $i <= 59; $i++ ) { $value = str_pad( $i, 2, '0', STR_PAD_LEFT ); ?>
+                    <option value="<?php echo $value;?>" <?php selected( $value, $start_m ); ?>><?php echo $value;?></option>
+                    <?php } ?>
+                </select>
                 <p class="description"><?php _e( 'Enter the start date for this discount code in the format of yyyy-mm-dd. For no start date, leave blank. If entered, the discount can only be used after or on this date.', 'invoicing' ); ?></p>
             </td>
         </tr>
@@ -239,7 +269,15 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_expiration"><?php _e( 'Expiration Date', 'invoicing' ); ?></label>
             </th>
             <td>
-                <input type="text" class="medium-text wpiDatepicker" id="wpinv_discount_expiration" data-dateFormat="yy-mm-dd" name="expiration" value="<?php echo esc_attr( wpinv_get_discount_expiration( $discount_id ) ); ?>">
+                <input type="text" class="w120 wpiDatepicker" id="wpinv_discount_expiration" data-dateFormat="yy-mm-dd" name="expiration" value="<?php echo esc_attr( $expiration_date ); ?>"> @ <select id="wpinv_discount_expiration_h" name="expiration_h">
+                    <?php for ( $i = 0; $i <= 23; $i++ ) { $value = str_pad( $i, 2, '0', STR_PAD_LEFT ); ?>
+                    <option value="<?php echo $value;?>" <?php selected( $value, $expiration_h ); ?>><?php echo $value;?></option>
+                    <?php } ?>
+                </select> : <select id="wpinv_discount_expiration_m" name="expiration_m">
+                    <?php for ( $i = 0; $i <= 59; $i++ ) { $value = str_pad( $i, 2, '0', STR_PAD_LEFT ); ?>
+                    <option value="<?php echo $value;?>" <?php selected( $value, $expiration_m ); ?>><?php echo $value;?></option>
+                    <?php } ?>
+                </select>
                 <p class="description"><?php _e( 'Enter the expiration date for this discount code in the format of yyyy-mm-dd. Leave blank for no expiration.', 'invoicing' ); ?></p>
             </td>
         </tr>
@@ -320,6 +358,14 @@ function wpinv_discount_metabox_save( $post_id, $post, $update = false ) {
     
     if ( !current_user_can( 'manage_options', $post_id ) ) {
         return;
+    }
+    
+    if ( !empty( $_POST['start'] ) && isset( $_POST['start_h'] ) && isset( $_POST['start_m'] ) && $_POST['start_h'] !== '' && $_POST['start_m'] !== '' ) {
+        $_POST['start'] = $_POST['start'] . ' ' . $_POST['start_h'] . ':' . $_POST['start_m'];
+    }
+
+    if ( !empty( $_POST['expiration'] ) && isset( $_POST['expiration_h'] ) && isset( $_POST['expiration_m'] ) ) {
+        $_POST['expiration'] = $_POST['expiration'] . ' ' . $_POST['expiration_h'] . ':' . $_POST['expiration_m'];
     }
     
     return wpinv_store_discount( $post_id, $_POST, $post, $update );

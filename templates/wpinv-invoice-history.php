@@ -19,7 +19,7 @@ $has_invoices   = 0 < $user_invoices->total;
 do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 
 <?php if ( $has_invoices ) { ?>
-	<table class="table table-bordered table-hover wpi-user-invoices">
+	<table class="table table-bordered table-hover table-responsive wpi-user-invoices">
 		<thead>
 			<tr>
 				<?php foreach ( wpinv_get_user_invoices_columns() as $column_id => $column_name ) : ?>
@@ -42,7 +42,10 @@ do_action( 'wpinv_before_user_invoices', $has_invoices ); ?>
 									<?php echo _x( '#', 'hash before invoice number', 'invoicing' ) . $invoice->get_number(); ?>
 								</a>
 
-							<?php elseif ( 'invoice-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID ); $dateYMD = wpinv_get_invoice_date( $invoice->ID, 'Y-m-d H:i:s' ); ?>
+							<?php elseif ( 'created-date' === $column_id ) : $date = wpinv_get_date_created( $invoice->ID ); $dateYMD = wpinv_get_date_created( $invoice->ID, 'Y-m-d H:i:s' ); ?>
+								<time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
+
+							<?php elseif ( 'payment-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID, '', false ); $dateYMD = wpinv_get_invoice_date( $invoice->ID, 'Y-m-d H:i:s', false ); ?>
 								<time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
 
 							<?php elseif ( 'invoice-status' === $column_id ) : ?>

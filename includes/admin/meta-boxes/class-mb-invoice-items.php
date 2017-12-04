@@ -7,7 +7,7 @@ if ( !defined( 'WPINC' ) ) {
 class WPInv_Meta_Box_Items {
     public static function output( $post ) {
         global $wpinv_euvat, $ajax_cart_details;
-        
+
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
         $ajax_cart_details  = $invoice->get_cart_details();
@@ -19,11 +19,14 @@ class WPInv_Meta_Box_Items {
         $total              = $invoice->get_total( true );
         $item_quantities    = wpinv_item_quantities_enabled();
         $use_taxes          = wpinv_use_taxes();
+        if ( !$use_taxes && (float)$invoice->get_tax() > 0 ) {
+            $use_taxes = true;
+        }
         $item_types         = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
         $is_recurring       = $invoice->is_recurring();
         $post_type_object   = get_post_type_object($invoice->post_type);
         $type_title         = $post_type_object->labels->singular_name;
-        
+
         $cols = 5;
         if ( $item_quantities ) {
             $cols++;
@@ -178,28 +181,30 @@ class WPInv_Meta_Box_Items {
                 </tfoot>
             </table>
             <div class="wpinv-actions">
+                <?php ob_start(); ?>
                 <?php
                     if ( !$invoice->is_paid() && !$invoice->is_refunded() ) {
-                    if ( !$invoice->is_recurring() ) {
-                    echo wpinv_item_dropdown( array(
-                        'name'             => 'wpinv_invoice_item',
-                        'id'               => 'wpinv_invoice_item',
-                        'show_recurring'   => true,
-                    ) );
+                        if ( !$invoice->is_recurring() ) {
+                            echo wpinv_item_dropdown( array(
+                                'name'             => 'wpinv_invoice_item',
+                                'id'               => 'wpinv_invoice_item',
+                                'show_recurring'   => true,
+                            ) );
                     ?>
                 <input type="button" value="<?php echo sprintf(esc_attr__( 'Add item to %s', 'invoicing'), $type_title); ?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
                     <?php } ?>
                 <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
+                <?php $item_actions = ob_get_clean(); echo apply_filters( 'wpinv_invoice_items_actions_content', $item_actions, $invoice, $post ); ?>
             </div>
         </div>
         <?php
     }
-    
+
     public static function prices( $post ) {        
         $symbol         = wpinv_currency_symbol();
         $position       = wpinv_currency_position();
         $item           = new WPInv_Item( $post->ID );
-        
+
         $price          = $item->get_price();
         $is_recurring   = $item->is_recurring();
         $period         = $item->get_recurring_period();
@@ -208,14 +213,14 @@ class WPInv_Meta_Box_Items {
         $free_trial     = $item->has_free_trial();
         $trial_interval = $item->get_trial_interval();
         $trial_period   = $item->get_trial_period();
-        
+
         $intervals      = array();
         for ( $i = 1; $i <= 90; $i++ ) {
             $intervals[$i] = $i;
         }
-        
+
         $interval       = $interval > 0 ? $interval : 1;
-        
+
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
         ?>
         <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
@@ -253,10 +258,10 @@ class WPInv_Meta_Box_Items {
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
         <?php
     }
-    
+
     public static function vat_rules( $post ) {
         global $wpinv_euvat;
-        
+
         $rule_type = $wpinv_euvat->get_item_rule( $post->ID );
         ?>
         <p><label for="wpinv_vat_rules"><strong><?php _e( 'Select how VAT rules will be applied:', 'invoicing' );?></strong></label>&nbsp;&nbsp;&nbsp;
@@ -274,7 +279,7 @@ class WPInv_Meta_Box_Items {
         <p class="wpi-m0"><?php _e( 'If you select Digital product rules, VAT will be charged at the rate that applies in the country of the consumer.  Only businesses in your country will be charged VAT.', 'invoicing' ); ?></p>
         <?php
     }
-    
+
     public static function vat_classes( $post ) {
         global $wpinv_euvat;
         
@@ -293,7 +298,7 @@ class WPInv_Meta_Box_Items {
         <p class="wpi-m0"><?php _e( 'Select the VAT rate class to use for this invoice item.', 'invoicing' ); ?></p>
         <?php
     }
-    
+
     public static function item_info( $post ) {
         $item_type = wpinv_get_item_type( $post->ID );
         do_action( 'wpinv_item_info_metabox_before', $post );
@@ -313,31 +318,31 @@ class WPInv_Meta_Box_Items {
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );
     }
-    
+
     public static function meta_values( $post ) {
         $meta_keys = apply_filters( 'wpinv_show_meta_values_for_keys', array(
             'type',
             'custom_id'
         ) );
-        
+
         if ( empty( $meta_keys ) ) {
             return;
         }
-        
+
         do_action( 'wpinv_meta_values_metabox_before', $post );
-        
+
         foreach ( $meta_keys as $meta_key ) {
             ?>
             <p class="wpi-mtb05"><label><strong><?php echo $meta_key; ?></strong>: <?php echo get_post_meta( $post->ID, '_wpinv_' . $meta_key, true ); ?></label></p>
             <?php 
         }
-        
+
         do_action( 'wpinv_meta_values_metabox_after', $post );
     }
-    
+
     public static function save( $post_id, $data, $post ) {
         $invoice        = new WPInv_Invoice( $post_id );
-        
+
         // Billing
         $first_name     = sanitize_text_field( $data['wpinv_first_name'] );
         $last_name      = sanitize_text_field( $data['wpinv_last_name'] );
@@ -349,7 +354,7 @@ class WPInv_Meta_Box_Items {
         $zip            = sanitize_text_field( $data['wpinv_zip'] );
         $country        = sanitize_text_field( $data['wpinv_country'] );
         $state          = sanitize_text_field( $data['wpinv_state'] );
-        
+
         // Details
         $status         = sanitize_text_field( $data['wpinv_status'] );
         $old_status     = !empty( $data['original_post_status'] ) ? sanitize_text_field( $data['original_post_status'] ) : $status;
@@ -357,9 +362,9 @@ class WPInv_Meta_Box_Items {
         $due_date       = isset( $data['wpinv_due_date'] ) ? sanitize_text_field( $data['wpinv_due_date'] ) : '';
         //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
         //$discount       = sanitize_text_field( $data['wpinv_discount'] );
-        
+
         $ip             = $invoice->get_ip() ? $invoice->get_ip() : wpinv_get_ip();
-        
+
         $invoice->set( 'due_date', $due_date );
         $invoice->set( 'first_name', $first_name );
         $invoice->set( 'last_name', $last_name );
@@ -382,28 +387,28 @@ class WPInv_Meta_Box_Items {
             $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
         }
         $saved = $invoice->save();
-        
+
         // Check for payment notes
         if ( !empty( $data['invoice_note'] ) ) {
             $note               = wp_kses( $data['invoice_note'], array() );
             $note_type          = sanitize_text_field( $data['invoice_note_type'] );
             $is_customer_note   = $note_type == 'customer' ? 1 : 0;
-        
+
             wpinv_insert_payment_note( $invoice->ID, $note, $is_customer_note );
         }
-        
+
         // Update user address if empty.
         if ( $saved && !empty( $invoice ) ) {
             if ( $user_id = $invoice->get_user_id() ) {
                 $user_address = wpinv_get_user_address( $user_id, false );
-                
+
                 if (empty($user_address['first_name'])) {
                     update_user_meta( $user_id, '_wpinv_first_name', $first_name );
                     update_user_meta( $user_id, '_wpinv_last_name', $last_name );
                 } else if (empty($user_address['last_name']) && $user_address['first_name'] == $first_name) {
                     update_user_meta( $user_id, '_wpinv_last_name', $last_name );
                 }
-                
+
                 if (empty($user_address['address']) || empty($user_address['city']) || empty($user_address['state']) || empty($user_address['country'])) {
                     update_user_meta( $user_id, '_wpinv_address', $address );
                     update_user_meta( $user_id, '_wpinv_city', $city );
@@ -413,10 +418,10 @@ class WPInv_Meta_Box_Items {
                     update_user_meta( $user_id, '_wpinv_phone', $phone );
                 }
             }
-            
+
             do_action( 'wpinv_invoice_metabox_saved', $invoice );
         }
-        
+
         return $saved;
     }
 }

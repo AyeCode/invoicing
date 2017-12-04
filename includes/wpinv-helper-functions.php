@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
 if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
@@ -13,7 +13,7 @@ if ( !defined( 'WPINC' ) ) {
 
 function wpinv_item_quantities_enabled() {
     $ret = wpinv_get_option( 'item_quantities', true );
-    
+
     return (bool) apply_filters( 'wpinv_item_quantities_enabled', $ret );
 }
 
@@ -27,7 +27,7 @@ function wpinv_get_ip() {
     } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
         $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
     }
-    
+
     return apply_filters( 'wpinv_get_ip', $ip );
 }
 
@@ -37,7 +37,7 @@ function wpinv_get_user_agent() {
     } else {
         $user_agent = '';
     }
-    
+
     return apply_filters( 'wpinv_get_user_agent', $user_agent );
 }
 
@@ -89,25 +89,25 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 
-function wpinv_get_invoice_statuses( $trashed = false ) {
+function wpinv_get_invoice_statuses( $trashed = false, $invoice = false ) {
     global $post;
-    $invoice_statuses = array();
+
     $invoice_statuses = array(
-        'wpi-pending' => __('Pending Payment', 'invoicing'),
-        'publish' => __('Paid', 'invoicing'),
-        'wpi-processing' => __('Processing', 'invoicing'),
-        'wpi-onhold' => __('On Hold', 'invoicing'),
-        'wpi-refunded' => __('Refunded', 'invoicing'),
-        'wpi-cancelled' => __('Cancelled', 'invoicing'),
-        'wpi-failed' => __('Failed', 'invoicing'),
-        'wpi-renewal' => __('Renewal Payment', 'invoicing')
+        'wpi-pending' => __( 'Pending Payment', 'invoicing' ),
+        'publish' => __( 'Paid', 'invoicing'),
+        'wpi-processing' => __( 'Processing', 'invoicing' ),
+        'wpi-onhold' => __( 'On Hold', 'invoicing' ),
+        'wpi-refunded' => __( 'Refunded', 'invoicing' ),
+        'wpi-cancelled' => __( 'Cancelled', 'invoicing' ),
+        'wpi-failed' => __( 'Failed', 'invoicing' ),
+        'wpi-renewal' => __( 'Renewal Payment', 'invoicing' )
     );
-    
+
     if ( $trashed ) {
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
 
-    return apply_filters( 'wpinv_statuses', $invoice_statuses );
+    return apply_filters( 'wpinv_statuses', $invoice_statuses, $invoice );
 }
 
 function wpinv_status_nicename( $status ) {
@@ -153,7 +153,7 @@ function wpinv_currency_symbol( $currency = '' ) {
         'BTC' => '&#3647;',
         'BTN' => 'Nu.',
         'BWP' => 'P',
-        'BYR' => 'Br',
+        'BYN' => 'Br',
         'BZD' => '&#36;',
         'CAD' => '&#36;',
         'CDF' => 'Fr',
@@ -350,7 +350,7 @@ function wpinv_get_currencies() {
         'BTC' => __( 'Bitcoin', 'invoicing' ),
         'BTN' => __( 'Bhutanese Ngultrum', 'invoicing' ),
         'BWP' => __( 'Botswana Pula', 'invoicing' ),
-        'BYR' => __( 'Belarusian Ruble', 'invoicing' ),
+        'BYN' => __( 'Belarusian Ruble', 'invoicing' ),
         'BZD' => __( 'Belize Dollar', 'invoicing' ),
         'CAD' => __( 'Canadian Dollar', 'invoicing' ),
         'CDF' => __( 'Congolese Franc', 'invoicing' ),
@@ -944,4 +944,14 @@ function wpinv_period_in_days( $period, $unit ) {
     }
     
     return $period;
+}
+
+function wpinv_cal_days_in_month( $calendar, $month, $year ) {
+    if ( function_exists( 'cal_days_in_month' ) ) {
+        return cal_days_in_month( $calendar, $month, $year );
+    }
+
+    // Fallback in case the calendar extension is not loaded in PHP
+    // Only supports Gregorian calendar
+    return date( 't', mktime( 0, 0, 0, $month, 1, $year ) );
 }

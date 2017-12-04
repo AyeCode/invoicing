@@ -24,7 +24,8 @@ class WPInv_Cache_Helper {
             $success_page  = wpinv_get_option( 'success_page', '' );
             $failure_page  = wpinv_get_option( 'failure_page', '' );
             $history_page  = wpinv_get_option( 'invoice_history_page', '' );
-            if ( empty( $checkout_page ) || empty( $success_page ) || empty( $failure_page ) || empty( $history_page ) ) {
+            $subscr_page   = wpinv_get_option( 'invoice_subscription_page', '' );
+            if ( empty( $checkout_page ) || empty( $success_page ) || empty( $failure_page ) || empty( $history_page ) || empty( $subscr_page ) ) {
                 return;
             }
 
@@ -35,12 +36,14 @@ class WPInv_Cache_Helper {
             $page_uris[] = 'p=' . $success_page;
             $page_uris[] = 'p=' . $failure_page;
             $page_uris[] = 'p=' . $history_page;
+            $page_uris[] = 'p=' . $subscr_page;
 
             // Exclude permalinks
             $checkout_page  = get_post( $checkout_page );
             $success_page   = get_post( $success_page );
             $failure_page   = get_post( $failure_page );
             $history_page   = get_post( $history_page );
+            $subscr_page    = get_post( $subscr_page );
 
             if ( ! is_null( $checkout_page ) ) {
                 $page_uris[] = '/' . $checkout_page->post_name;
@@ -53,6 +56,9 @@ class WPInv_Cache_Helper {
             }
             if ( ! is_null( $history_page ) ) {
                 $page_uris[] = '/' . $history_page->post_name;
+            }
+            if ( ! is_null( $subscr_page ) ) {
+                $page_uris[] = '/' . $subscr_page->post_name;
             }
 
             set_transient( 'wpinv_cache_excluded_uris', $page_uris );

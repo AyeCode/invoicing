@@ -106,7 +106,11 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             break;
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
-            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && $gateway_title = $wpi_invoice->get_gateway_title() ) {
+            $is_viewed = wpinv_is_invoice_viewed( $wpi_invoice->ID );
+            if ( 1 == $is_viewed ) {
+                $value .= '&nbsp;&nbsp;<i class="fa fa-eye" title="'.__( 'Viewed by Customer', 'invoicing' ).'"></i>';
+            }
+            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && ( $gateway_title = wpinv_get_gateway_admin_label( $wpi_invoice->get_gateway() ) ) ) {
                 $value .= '<br><small class="meta gateway">' . wp_sprintf( __( 'Via %s', 'invoicing' ), $gateway_title ) . '</small>';
             }
             break;
@@ -196,6 +200,10 @@ function wpinv_admin_messages() {
 
 	if ( isset( $_GET['wpinv-message'] ) && 'invoice_deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-deleted', __( 'The invoice has been deleted.', 'invoicing' ), 'updated' );
+	}
+
+	if ( isset( $_GET['wpinv-message'] ) && 'email_disabled' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Email notification is disabled. Please check settings.', 'invoicing' ), 'error' );
 	}
 
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
@@ -476,3 +484,24 @@ function wpinv_show_recurring_supported_gateways( $item_ID ) {
     }
 }
 add_action( 'wpinv_item_price_field', 'wpinv_show_recurring_supported_gateways', -10, 1 );
+
+function wpinv_post_updated_messages( $messages ) {
+    global $post, $post_ID;
+
+    $messages['wpi_discount'] = array(
+        0   => '',
+        1   => __( 'Discount updated.', 'invoicing' ),
+        2   => __( 'Custom field updated.', 'invoicing' ),
+        3   => __( 'Custom field deleted.', 'invoicing' ),
+        4   => __( 'Discount updated.', 'invoicing' ),
+        5   => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Discount restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+        6   => __( 'Discount updated.', 'invoicing' ),
+        7   => __( 'Discount saved.', 'invoicing' ),
+        8   => __( 'Discount submitted.', 'invoicing' ),
+        9   => wp_sprintf( __( 'Discount scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
+        10  => __( 'Discount draft updated.', 'invoicing' ),
+    );
+
+    return $messages;
+}
+add_filter( 'post_updated_messages', 'wpinv_post_updated_messages', 10, 1 );

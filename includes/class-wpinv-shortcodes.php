@@ -13,6 +13,7 @@ class WPInv_Shortcodes {
             'wpinv_history'  => __CLASS__ . '::history',
             'wpinv_receipt'  => __CLASS__ . '::success',
             'wpinv_buy'  => __CLASS__ . '::buy',
+            'wpinv_subscriptions'  => __CLASS__ . '::subscriptions',
         );
 
         foreach ( $shortcodes as $shortcode => $function ) {
@@ -35,7 +36,7 @@ class WPInv_Shortcodes {
     public static function checkout( $atts = array(), $content = null ) {
         return self::shortcode_wrapper( array( __CLASS__, 'checkout_output' ), $atts, $content );
     }
-
+    
     public static function checkout_output( $atts = array(), $content = null ) {
         do_action( 'wpinv_checkout_content_before' );
         echo wpinv_checkout_form( $atts, $content );
@@ -93,5 +94,20 @@ class WPInv_Shortcodes {
         $html .= '</div>';
 
         return $html;
+    }
+    
+    public static function subscriptions( $atts, $content = null ) {
+        return self::shortcode_wrapper( array( __CLASS__, 'subscriptions_output' ), $atts );
+    }
+
+    /**
+     * Output the shortcode.
+     *
+     * @param array $atts
+     */
+    public static function subscriptions_output( $atts ) {
+        do_action( 'wpinv_before_user_subscriptions' );
+        wpinv_get_template_part( 'wpinv-subscriptions-history', $atts );
+        do_action( 'wpinv_after_user_subscriptions' );
     }
 }

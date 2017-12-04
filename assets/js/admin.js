@@ -699,6 +699,10 @@ jQuery(function($) {
                 } else {
                     $quickAdd.slideDown('fast');
                 }
+                $('[name="_wpinv_quick[name]"]', $quickAdd).val('');
+                $('[name="_wpinv_quick[price]"]', $quickAdd).val('');
+                $('[name="_wpinv_quick[qty]"]', $quickAdd).val(1);
+                $('[name="_wpinv_quick[type]"]', $quickAdd).prop('selectedIndex',0);
                 return false;
             });
             $('#wpinv-quick-add').on('click', '#wpinv-save-item', function(e) {

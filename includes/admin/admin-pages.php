@@ -38,6 +38,7 @@ function wpinv_discount_columns( $existing_columns ) {
     $columns['code']        = __( 'Code', 'invoicing' );
     $columns['amount']      = __( 'Amount', 'invoicing' );
     $columns['usage']       = __( 'Usage / Limit', 'invoicing' );
+    $columns['start_date']  = __( 'Start Date', 'invoicing' );
     $columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
     $columns['status']      = __( 'Status', 'invoicing' );
 
@@ -73,14 +74,24 @@ function wpinv_discount_custom_column( $column ) {
             
             echo $usage;
         break;
-        case 'expiry_date' :
-            if ( wpinv_get_discount_expiration( $discount->ID ) ) {
-                $expiration = date_i18n( get_option( 'date_format' ), strtotime( wpinv_get_discount_expiration( $discount->ID ) ) );
+        case 'start_date' :
+            if ( $start_date = wpinv_get_discount_start_date( $discount->ID ) ) {
+                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $start_date ) );
             } else {
-                $expiration = __( 'Never', 'invoicing' );
+                $value = '-';
             }
                 
-            echo $expiration;
+            echo $value;
+        break;
+        case 'expiry_date' :
+            if ( $expiration = wpinv_get_discount_expiration( $discount->ID ) ) {
+                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $expiration ) );
+            } else {
+                $value = __( 'Never', 'invoicing' );
+            }
+                
+            echo $value;
+        break;
         break;
         case 'description' :
             echo wp_kses_post( $post->post_excerpt );
@@ -450,9 +461,9 @@ function wpinv_options_page() {
                     do_action( 'wpinv_settings_tab_top', $active_tab );
                 }
 
-                do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section );
-                do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section );
-                do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section  );
+                do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section, $active_tab, $section );
+                do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section, $active_tab, $section );
+                do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section, $active_tab, $section );
 
                 // For backwards compatibility
                 if ( 'main' === $section ) {

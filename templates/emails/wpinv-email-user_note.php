@@ -7,6 +7,10 @@ do_action( 'wpinv_email_header', $email_heading, $invoice, $email_type, $sent_to
 
 do_action( 'wpinv_email_before_note_details', $invoice, $email_type, $sent_to_admin, $customer_note );
 
+if ( ! empty( $message_body ) ) {
+    echo wpautop( wptexturize( $message_body ) );
+}
+
 do_action( 'wpinv_email_invoice_details', $invoice, $email_type, $sent_to_admin );
 
 do_action( 'wpinv_email_invoice_items', $invoice, $email_type, $sent_to_admin );

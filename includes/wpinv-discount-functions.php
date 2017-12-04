@@ -212,23 +212,20 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
         'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
         'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : false,
     );
-    
-    $start_timestamp        = strtotime( $meta['start'] );
 
-    if ( !empty( $meta['start'] ) ) {
-        $meta['start']      = date( 'Y-m-d H:i:s', $start_timestamp );
-    }
-        
     if ( $meta['type'] == 'percent' && (float)$meta['amount'] > 100 ) {
         $meta['amount'] = 100;
     }
 
-    if ( !empty( $meta['expiration'] ) ) {
-        $meta['expiration'] = date( 'Y-m-d H:i:s', strtotime( date( 'Y-m-d', strtotime( $meta['expiration'] ) ) . ' 23:59:59' ) );
-        $end_timestamp      = strtotime( $meta['expiration'] );
+    if ( !empty( $meta['start'] ) ) {
+        $meta['start']      = date_i18n( 'Y-m-d H:i:s', strtotime( $meta['start'] ) );
+    }
 
-        if ( !empty( $meta['start'] ) && $start_timestamp > $end_timestamp ) {
-            $meta['expiration'] = $meta['start']; // Set the expiration date to the start date if start is later than expiration date.
+    if ( !empty( $meta['expiration'] ) ) {
+        $meta['expiration'] = date_i18n( 'Y-m-d H:i:s', strtotime( $meta['expiration'] ) );
+
+        if ( !empty( $meta['start'] ) && strtotime( $meta['start'] ) > strtotime( $meta['expiration'] ) ) {
+            $meta['expiration'] = $meta['start'];
         }
     }
     
