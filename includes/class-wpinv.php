@@ -82,8 +82,11 @@ class WPInv_Plugin {
      *
      * @since 1.0
      */
-    public function load_textdomain() {
-        $locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+    public function load_textdomain( $locale = NULL ) {
+        if ( empty( $locale ) ) {
+            $locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+        }
+
         $locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
         
         unload_textdomain( 'invoicing' );

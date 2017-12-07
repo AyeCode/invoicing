@@ -416,3 +416,37 @@ function wpinv_sequential_number_active( $type = '' ) {
     
     return wpinv_get_option( 'sequential_invoice_number' );
 }
+
+function wpinv_switch_to_locale( $locale = NULL ) {
+    global $invoicing, $wpi_switch_locale;
+
+    if ( ! empty( $invoicing ) && function_exists( 'switch_to_locale' ) ) {
+        $locale = empty( $locale ) ? get_locale() : $locale;
+
+        switch_to_locale( $locale );
+
+        $wpi_switch_locale = $locale;
+
+        add_filter( 'plugin_locale', 'get_locale' );
+
+        $invoicing->load_textdomain();
+
+        do_action( 'wpinv_switch_to_locale', $locale );
+    }
+}
+
+function wpinv_restore_locale() {
+    global $invoicing, $wpi_switch_locale;
+    
+    if ( ! empty( $invoicing ) && function_exists( 'restore_previous_locale' ) && $wpi_switch_locale ) {
+        restore_previous_locale();
+
+        $wpi_switch_locale = NULL;
+
+        remove_filter( 'plugin_locale', 'get_locale' );
+
+        $invoicing->load_textdomain();
+
+        do_action( 'wpinv_restore_locale' );
+    }
+}

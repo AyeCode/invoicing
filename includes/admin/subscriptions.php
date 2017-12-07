@@ -107,7 +107,7 @@ function wpinv_recurring_subscription_details() {
 										</td>
 										<td>
 											<?php $subscriber = get_userdata( $sub->customer_id ); ?>
-											<a href="<?php echo esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&view=overview&id=' . $subscriber->ID ) ); ?>" target="_blank"><?php echo ! empty( $subscriber->display_name ) ? $subscriber->display_name : $subscriber->user_email; ?></a>
+											<a href="<?php echo esc_url( get_edit_user_link( $sub->customer_id ) ); ?>" target="_blank"><?php echo ! empty( $subscriber->display_name ) ? $subscriber->display_name : $subscriber->user_email; ?></a>
 										</td>
 									</tr>
 									<tr>

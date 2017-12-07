@@ -476,7 +476,12 @@ function wpinv_get_invoice( $invoice_id = 0, $cart = false ) {
     }
 
     $invoice = new WPInv_Invoice( $invoice_id );
-    return $invoice;
+
+    if ( ! empty( $invoice ) && ! empty( $invoice->ID ) ) {
+        return $invoice;
+    }
+    
+    return NULL;
 }
 
 function wpinv_get_invoice_cart( $invoice_id = 0 ) {
@@ -993,11 +998,14 @@ function wpinv_get_cart_details( $invoice_id = 0 ) {
     global $ajax_cart_details;
 
     $invoice      = wpinv_get_invoice_cart( $invoice_id );
-    $cart_details = !empty( $ajax_cart_details ) ? $ajax_cart_details : $invoice->cart_details;
-
-    $invoice_currency = $invoice->currency;
+    $cart_details = $ajax_cart_details;
+    if ( empty( $cart_details ) && ! empty( $invoice->cart_details ) ) {
+        $cart_details = $invoice->cart_details;
+    }
 
     if ( ! empty( $cart_details ) && is_array( $cart_details ) ) {
+        $invoice_currency = ! empty( $invoice->currency ) ? $invoice->currency : wpinv_get_default_country();
+
         foreach ( $cart_details as $key => $cart_item ) {
             $cart_details[ $key ]['currency'] = $invoice_currency;
 
