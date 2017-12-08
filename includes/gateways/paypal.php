@@ -321,7 +321,7 @@ function wpinv_process_paypal_ipn() {
 	$invoice_id = isset( $encoded_data_array['custom'] ) ? absint( $encoded_data_array['custom'] ) : 0;
     
 	wpinv_error_log( $encoded_data_array['txn_type'], 'PayPal txn_type', __FILE__, __LINE__ );
-	wpinv_error_log( $encoded_data_array, 'PayPal IPN response', __FILE__, __LINE__ );
+	//wpinv_error_log( $encoded_data_array, 'PayPal IPN response', __FILE__, __LINE__ );
 
 	if ( has_action( 'wpinv_paypal_' . $encoded_data_array['txn_type'] ) ) {
 		// Allow PayPal IPN types to be processed separately
@@ -524,9 +524,13 @@ function wpinv_process_paypal_subscr_signup( $ipn_data ) {
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $ipn_data['subscr_id'] ), '', '', true );
     update_post_meta($parent_invoice_id,'_wpinv_subscr_profile_id', $ipn_data['subscr_id']);
 
-    $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
+    $status     = 'trialling' == $subscription->status ? 'trialling' : 'active';
+    $diff_days  = absint( ( ( strtotime( $subscription->expiration ) - strtotime( $subscription->created ) ) / DAY_IN_SECONDS ) );
+    $created    = date_i18n( 'Y-m-d H:i:s' );
+    $expiration = date_i18n( 'Y-m-d 23:59:59', ( strtotime( $created ) + ( $diff_days * DAY_IN_SECONDS ) ) );
+
     // Retrieve pending subscription from database and update it's status to active and set proper profile ID
-    $subscription->update( array( 'profile_id' => $ipn_data['subscr_id'], 'status' => $status ) );
+    $subscription->update( array( 'profile_id' => $ipn_data['subscr_id'], 'status' => $status, 'created' => $created, 'expiration' => $expiration ) );
 }
 
 /**
@@ -754,18 +758,59 @@ function wpinv_paypal_get_transaction_id( $invoice_id ) {
 add_filter( 'wpinv_payment_get_transaction_id-paypal', 'wpinv_paypal_get_transaction_id', 10, 1 );
 
 function wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id, $invoice ) {
-    if ( $invoice->is_free_trial() || $transaction_id == $invoice_id ) { // Free trial does not have transaction at PayPal.
-        $transaction_url = $invoice->get_view_url();
+    if ( $transaction_id == $invoice_id ) {
+        $transaction_link = $transaction_id;
     } else {
-        $sandbox = wpinv_is_test_mode( 'paypal' ) ? '.sandbox' : '';
-        $transaction_url = 'https://www' . $sandbox . '.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=' . $transaction_id;
+        if ( ! empty( $invoice ) && ! empty( $invoice->mode ) ) {
+            $mode = $invoice->mode;
+        } else {
+            $mode = wpinv_is_test_mode( 'paypal' ) ? 'test' : 'live';
+        }
+
+        $sandbox = $mode == 'test' ? '.sandbox' : '';
+        $transaction_url = 'https://www' . $sandbox . '.paypal.com/webscr?cmd=_history-details-from-hub&id=' . $transaction_id;
+
+        $transaction_link = '<a href="' . esc_url( $transaction_url ) . '" target="_blank">' . $transaction_id . '</a>';
     }
 
-    $transaction_link = '<a href="' . esc_url( $transaction_url ) . '" target="_blank">' . $transaction_id . '</a>';
-
-    return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_link, $invoice );
+    return apply_filters( 'wpinv_paypal_link_payment_details_transaction_id', $transaction_link, $transaction_id, $invoice );
 }
 add_filter( 'wpinv_payment_details_transaction_id-paypal', 'wpinv_paypal_link_transaction_id', 10, 3 );
+
+function wpinv_paypal_profile_id_link( $profile_id, $subscription ) {
+    $link = $profile_id;
+
+    if ( ! empty( $profile_id ) && ! empty( $subscription ) && ( $invoice_id = $subscription->get_original_payment_id() ) ) {
+        $invoice = wpinv_get_invoice( $invoice_id );
+
+        if ( ! empty( $invoice ) && ! empty( $invoice->mode ) ) {
+            $mode = $invoice->mode;
+        } else {
+            $mode = wpinv_is_test_mode( 'paypal' ) ? 'test' : 'live';
+        }
+
+        $sandbox = $mode == 'test' ? '.sandbox' : '';
+        $url = 'https://www' . $sandbox . '.paypal.com/cgi-bin/webscr?cmd=_profile-recurring-payments&encrypted_profile_id=' . $profile_id;
+
+        $link = '<a href="' . esc_url( $url ) . '" target="_blank">' . $profile_id . '</a>';
+    }
+    
+    return apply_filters( 'wpinv_paypal_profile_id_link', $link, $profile_id, $subscription );
+}
+add_filter( 'wpinv_subscription_profile_link_paypal', 'wpinv_paypal_profile_id_link', 10, 2 );
+
+function wpinv_paypal_transaction_id_link( $transaction_id, $subscription ) {
+    if ( ! empty( $transaction_id ) && ! empty( $subscription ) && ( $invoice_id = $subscription->get_original_payment_id() ) ) {
+        $invoice = wpinv_get_invoice( $invoice_id );
+
+        if ( ! empty( $invoice ) ) {
+            return wpinv_paypal_link_transaction_id( $transaction_id, $invoice_id, $invoice );
+        }        
+    }
+    
+    return $transaction_id;
+}
+add_filter( 'wpinv_subscription_transaction_link_paypal', 'wpinv_paypal_transaction_id_link', 10, 2 );
 
 function wpinv_is_paypal_valid_for_use() {
     return in_array( wpinv_get_currency(), apply_filters( 'wpinv_paypal_supported_currencies', array( 'AUD', 'BRL', 'CAD', 'MXN', 'NZD', 'HKD', 'SGD', 'USD', 'EUR', 'JPY', 'TRY', 'NOK', 'CZK', 'DKK', 'HUF', 'ILS', 'MYR', 'PHP', 'PLN', 'SEK', 'CHF', 'TWD', 'THB', 'GBP', 'RMB', 'RUB', 'INR' ) ) );

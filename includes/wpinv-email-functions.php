@@ -1506,7 +1506,7 @@ function wpinv_payment_reminder_sent( $invoice_id, $invoice ) {
     update_post_meta( $invoice_id, '_wpinv_reminder_sent', $sent );
 
     if ( $wpi_auto_reminder ) { // Auto reminder note.
-        $note = __( 'Manual reminder sent to the user.', 'invoicing' );
+        $note = __( 'Automated reminder sent to the user.', 'invoicing' );
         $invoice->add_note( $note, false, false, true );
     } else { // Menual reminder note.
         $note = __( 'Manual reminder sent to the user.', 'invoicing' );

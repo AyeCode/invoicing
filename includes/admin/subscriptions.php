@@ -163,7 +163,7 @@ function wpinv_recurring_subscription_details() {
 											<label for="tablecell"><?php _e( 'Transaction ID:', 'invoicing' ); ?></label>
 										</td>
 										<td>
-											<span class="wpinv-sub-transaction-id"><?php echo $sub->get_transaction_id(); ?></span>
+											<span class="wpinv-sub-transaction-id"><?php echo apply_filters( 'wpinv_subscription_transaction_link_' . $sub->gateway, $sub->get_transaction_id(), $sub ); ?></span>
 											<input type="text" name="transaction_id" class="hidden wpinv-sub-transaction-id" value="<?php echo esc_attr( $sub->get_transaction_id() ); ?>" />
 											<span>&nbsp;&ndash;&nbsp;</span>
 											<a href="#" class="wpinv-edit-sub-transaction-id"><?php _e( 'Edit', 'invoicing' ); ?></a>

@@ -437,8 +437,6 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     $subscriptionId     = (array)$subscription->subscriptionId;
     $subscription_id    = !empty( $subscriptionId[0] ) ? $subscriptionId[0] : $parent_invoice_id;
 
-    wpinv_set_payment_transaction_id( $parent_invoice_id, $subscription_id );
-
     $subscription = wpinv_get_authorizenet_subscription( $subscription, $parent_invoice_id );
 
     if ( false === $subscription ) {
@@ -451,10 +449,13 @@ function wpinv_authorizenet_subscription_record_signup( $subscription, $invoice 
     wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'Authorize.Net Subscription ID: %s', 'invoicing' ) , $subscription_id ), '', '', true );
     update_post_meta($parent_invoice_id,'_wpinv_subscr_profile_id', $subscription_id);
 
-    $status = 'trialling' == $subscription->status ? 'trialling' : 'active';
+    $status     = 'trialling' == $subscription->status ? 'trialling' : 'active';
+    $diff_days  = absint( ( ( strtotime( $subscription->expiration ) - strtotime( $subscription->created ) ) / DAY_IN_SECONDS ) );
+    $created    = date_i18n( 'Y-m-d H:i:s' );
+    $expiration = date_i18n( 'Y-m-d 23:59:59', ( strtotime( $created ) + ( $diff_days * DAY_IN_SECONDS ) ) );
 
     // Retrieve pending subscription from database and update it's status to active and set proper profile ID
-    $subscription->update( array( 'profile_id' => $subscription_id, 'status' => $status ) );
+    $subscription->update( array( 'profile_id' => $subscription_id, 'status' => $status, 'created' => $created, 'expiration' => $expiration ) );
 }
 
 function wpinv_authorizenet_validate_checkout( $valid_data, $post ) {
@@ -646,3 +647,58 @@ function wpinv_check_authorizenet_currency_support( $gateway_list ) {
     return $gateway_list;
 }
 add_filter( 'wpinv_enabled_payment_gateways', 'wpinv_check_authorizenet_currency_support', 10, 1 );
+
+function wpinv_authorizenet_link_transaction_id( $transaction_id, $invoice_id, $invoice ) {
+    if ( $transaction_id == $invoice_id ) {
+        $link = $transaction_id;
+    } else {
+        if ( ! empty( $invoice ) && ! empty( $invoice->mode ) ) {
+            $mode = $invoice->mode;
+        } else {
+            $mode = wpinv_is_test_mode( 'authorizenet' ) ? 'test' : 'live';
+        }
+
+        $url = $mode == 'test' ? 'https://sandbox.authorize.net/' : 'https://authorize.net/';
+        $url .= 'ui/themes/sandbox/Transaction/TransactionReceipt.aspx?transid=' . $transaction_id;
+
+        $link = '<a href="' . esc_url( $url ) . '" target="_blank">' . $transaction_id . '</a>';
+    }
+
+    return apply_filters( 'wpinv_authorizenet_link_payment_details_transaction_id', $link, $transaction_id, $invoice );
+}
+add_filter( 'wpinv_payment_details_transaction_id-authorizenet', 'wpinv_authorizenet_link_transaction_id', 10, 3 );
+
+function wpinv_authorizenet_transaction_id_link( $transaction_id, $subscription ) {
+    if ( ! empty( $transaction_id ) && ! empty( $subscription ) && ( $invoice_id = $subscription->get_original_payment_id() ) ) {
+        $invoice = wpinv_get_invoice( $invoice_id );
+
+        if ( ! empty( $invoice ) ) {
+            return wpinv_authorizenet_link_transaction_id( $transaction_id, $invoice_id, $invoice );
+        }        
+    }
+    
+    return $transaction_id;
+}
+add_filter( 'wpinv_subscription_transaction_link_authorizenet', 'wpinv_authorizenet_transaction_id_link', 10, 2 );
+
+function wpinv_authorizenet_profile_id_link( $profile_id, $subscription ) {
+    $link = $profile_id;
+
+    if ( ! empty( $profile_id ) && ! empty( $subscription ) && ( $invoice_id = $subscription->get_original_payment_id() ) ) {
+        $invoice = wpinv_get_invoice( $invoice_id );
+
+        if ( ! empty( $invoice ) && ! empty( $invoice->mode ) ) {
+            $mode = $invoice->mode;
+        } else {
+            $mode = wpinv_is_test_mode( 'authorizenet' ) ? 'test' : 'live';
+        }
+
+        $url = $mode == 'test' ? 'https://sandbox.authorize.net/' : 'https://authorize.net/';
+        $url .= 'ui/themes/sandbox/ARB/SubscriptionDetail.aspx?SubscrID=' . $profile_id;
+
+        $link = '<a href="' . esc_url( $url ) . '" target="_blank">' . $profile_id . '</a>';
+    }
+    
+    return apply_filters( 'wpinv_authorizenet_profile_id_link', $link, $profile_id, $subscription );
+}
+add_filter( 'wpinv_subscription_profile_link_authorizenet', 'wpinv_authorizenet_profile_id_link', 10, 2 );

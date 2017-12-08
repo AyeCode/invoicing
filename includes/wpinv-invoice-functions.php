@@ -1678,6 +1678,12 @@ function wpinv_process_checkout() {
     // Allow the invoice data to be modified before it is sent to the gateway
     $invoice_data = apply_filters( 'wpinv_data_before_gateway', $invoice_data, $valid_data );
     
+    if ( $invoice_data['price'] && $invoice_data['gateway'] == 'manual' ) {
+        $mode = 'test';
+    } else {
+        $mode = wpinv_is_test_mode( $invoice_data['gateway'] ) ? 'test' : 'live';
+    }
+    
     // Setup the data we're storing in the purchase session
     $session_data = $invoice_data;
     // Make sure credit card numbers are never stored in sessions
@@ -1690,8 +1696,8 @@ function wpinv_process_checkout() {
     
     // Set gateway
     $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
-    $invoice->update_meta( '_wpinv_mode', ( wpinv_is_test_mode( $invoice_data['gateway'] ) ? 'test' : 'live' ) );
-    $invoice->update_meta( '_wpinv_checkout', true );
+    $invoice->update_meta( '_wpinv_mode', $mode );
+    $invoice->update_meta( '_wpinv_checkout', date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) ) );
     
     do_action( 'wpinv_checkout_before_send_to_gateway', $invoice, $invoice_data );
 

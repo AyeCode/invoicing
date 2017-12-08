@@ -22,7 +22,7 @@ function wpinv_automatic_upgrade() {
     }
     
     if ( version_compare( $wpi_version, '1.0.3', '<' ) ) {
-        wpinv_v103_upgrades();
+        wpinv_v110_upgrades();
     }
     
     update_option( 'wpinv_version', WPINV_VERSION );
@@ -60,7 +60,7 @@ function wpinv_v005_upgrades() {
     wpinv_add_admin_caps();
 }
 
-function wpinv_v103_upgrades() {
+function wpinv_v110_upgrades() {
     // Upgrade email settings
     wpinv_update_new_email_settings();
     
