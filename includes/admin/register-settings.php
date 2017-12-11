@@ -137,7 +137,6 @@ function wpinv_register_settings() {
                         'min'         => isset( $option['min'] )         ? $option['min']         : null,
                         'max'         => isset( $option['max'] )         ? $option['max']         : null,
                         'step'        => isset( $option['step'] )        ? $option['step']        : null,
-                        'chosen'      => isset( $option['chosen'] )      ? $option['chosen']      : null,
                         'placeholder' => isset( $option['placeholder'] ) ? $option['placeholder'] : null,
                         'allow_blank' => isset( $option['allow_blank'] ) ? $option['allow_blank'] : true,
                         'readonly'    => isset( $option['readonly'] )    ? $option['readonly']    : false,
@@ -209,7 +208,6 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => wpinv_get_country_list(),
                         'std'     => 'GB',
-                        'chosen'  => true,
                         'placeholder' => __( 'Select a country', 'invoicing' ),
                     ),
                     'default_state' => array(
@@ -250,7 +248,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the checkout page where buyers will complete their payments. The <b>[wpinv_checkout]</b> short code must be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'success_page' => array(
@@ -259,25 +256,30 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the page buyers are sent to after completing their payments. The <b>[wpinv_receipt]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'failure_page' => array(
                         'id'          => 'failure_page',
                         'name'        => __( 'Failed Transaction Page', 'invoicing' ),
-                        'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails', 'invoicing' ),
+                        'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'invoice_history_page' => array(
                         'id'          => 'invoice_history_page',
                         'name'        => __( 'Invoice History Page', 'invoicing' ),
-                        'desc'        => __( 'This page shows an invoice history for the current user', 'invoicing' ),
+                        'desc'        => __( 'This page shows an invoice history for the current user. The <b>[wpinv_history]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
-                        'chosen'      => true,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
+                    ),
+                    'invoice_subscription_page' => array(
+                        'id'          => 'invoice_subscription_page',
+                        'name'        => __( 'Invoice Subscriptions Page', 'invoicing' ),
+                        'desc'        => __( 'This page shows subscriptions history for the current user. The <b>[wpinv_subscriptions]</b> short code should be on this page.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => $pages,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     )
                 ),
@@ -294,7 +296,6 @@ function wpinv_get_registered_settings() {
                         'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
                         'type'    => 'select',
                         'options' => $currency_code_options,
-                        'chosen'  => true,
                     ),
                     'currency_position' => array(
                         'id'      => 'currency_position',
@@ -474,7 +475,6 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $due_payment_options,
-                        'chosen'      => true,
                         'std'         => 0,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
@@ -568,7 +568,6 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => $invoice_number_padd_options,
                         'std'     => 5,
-                        'chosen'  => true,
                     ),
                     'invoice_number_prefix' => array(
                         'id' => 'invoice_number_prefix',
@@ -1193,12 +1192,6 @@ function wpinv_select_callback($args) {
 	} else {
 		$placeholder = '';
 	}
-
-	if ( isset( $args['chosen'] ) ) {
-		$chosen = 'class="wpinv-chosen"';
-	} else {
-		$chosen = '';
-	}
     
     if( !empty( $args['onchange'] ) ) {
         $onchange = ' onchange="' . esc_attr( $args['onchange'] ) . '"';
@@ -1206,7 +1199,7 @@ function wpinv_select_callback($args) {
         $onchange = '';
     }
 
-	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" ' . $chosen . 'data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
+	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
 
 	foreach ( $args['options'] as $option => $name ) {
 		$selected = selected( $option, $value, false );
@@ -1262,7 +1255,7 @@ function wpinv_rich_editor_callback( $args ) {
 
 	if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
 		ob_start();
-		wp_editor( stripslashes( $value ), 'wpinv_settings_' . esc_attr( $args['id'] ), array( 'textarea_name' => 'wpinv_settings[' . esc_attr( $args['id'] ) . ']', 'textarea_rows' => absint( $rows ) ) );
+		wp_editor( stripslashes( $value ), 'wpinv_settings_' . esc_attr( $args['id'] ), array( 'textarea_name' => 'wpinv_settings[' . esc_attr( $args['id'] ) . ']', 'textarea_rows' => absint( $rows ), 'media_buttons' => false ) );
 		$html = ob_get_clean();
 	} else {
 		$html = '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
@@ -1324,8 +1317,7 @@ function wpinv_country_states_callback($args) {
 
 	$states = wpinv_get_country_states();
 
-	$chosen = ( $args['chosen'] ? ' wpinv-chosen' : '' );
-	$class = empty( $states ) ? ' class="wpinv-no-states' . $chosen . '"' : 'class="' . $chosen . '"';
+	$class = empty( $states ) ? ' class="wpinv-no-states"' : '';
 	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
 
 	foreach ( $states as $option => $name ) {
@@ -1374,7 +1366,6 @@ function wpinv_tax_rates_callback($args) {
 						'show_option_all'  => false,
 						'show_option_none' => false,
 						'class'            => 'wpinv-tax-country',
-						'chosen'           => false,
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) );
 					?>
@@ -1390,7 +1381,6 @@ function wpinv_tax_rates_callback($args) {
 							'selected'         => $rate['state'],
 							'show_option_all'  => false,
 							'show_option_none' => false,
-							'chosen'           => false,
 							'placeholder'      => __( 'Choose a state', 'invoicing' )
 						) );
 					} else {
@@ -1421,7 +1411,6 @@ function wpinv_tax_rates_callback($args) {
 						'show_option_all'  => false,
 						'show_option_none' => false,
 						'class'            => 'wpinv-tax-country',
-						'chosen'           => false,
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) ); ?>
 				</td>
@@ -1502,3 +1491,43 @@ function wpinv_on_update_settings( $old_value, $value, $option ) {
     }
 }
 add_action( 'update_option_wpinv_settings', 'wpinv_on_update_settings', 10, 3 );
+add_action( 'wpinv_settings_tab_bottom_emails_new_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_cancelled_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_failed_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_onhold_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_processing_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_completed_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_refunded_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_user_invoice', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_user_note', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+add_action( 'wpinv_settings_tab_bottom_emails_overdue', 'wpinv_settings_tab_bottom_emails', 10, 2 );
+
+function wpinv_settings_tab_bottom_emails( $active_tab, $section ) {
+    ?>
+    <div class="wpinv-email-wc-row ">
+        <div class="wpinv-email-wc-td">
+            <h3 class="wpinv-email-wc-title"><?php echo apply_filters( 'wpinv_settings_email_wildcards_title', __( 'Wildcards For Emails', 'invoicing' ) ); ?></h3>
+            <p class="wpinv-email-wc-description">
+                <?php
+                $description = __( 'The following wildcards can be used in email subjects, heading and content:<br>
+                    <strong>{site_title} :</strong> Site Title<br>
+                    <strong>{name} :</strong> Customer\'s full name<br>
+                    <strong>{first_name} :</strong> Customer\'s first name<br>
+                    <strong>{last_name} :</strong> Customer\'s last name<br>
+                    <strong>{email} :</strong> Customer\'s email address<br>
+                    <strong>{invoice_number} :</strong> The invoice number<br>
+                    <strong>{invoice_total} :</strong> The invoice total<br>
+                    <strong>{invoice_link} :</strong> The invoice link<br>
+                    <strong>{invoice_pay_link} :</strong> The payment link<br>
+                    <strong>{invoice_date} :</strong> The date the invoice was created<br>
+                    <strong>{invoice_due_date} :</strong> The date the invoice is due<br>
+                    <strong>{date} :</strong> Today\'s date.<br>
+                    <strong>{is_was} :</strong> If due date of invoice is past, displays "was" otherwise displays "is"<br>
+                    <strong>{invoice_label} :</strong> Invoices/quotes singular name. Ex: Invoice/Quote<br>', 'invoicing' );
+                echo apply_filters('wpinv_settings_email_wildcards_description', $description, $active_tab, $section);
+                ?>
+            </p>
+        </div>
+    </div>
+    <?php
+}

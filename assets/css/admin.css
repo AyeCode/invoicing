@@ -13,6 +13,9 @@
 .w100 {
     width: 100px!important;
 }
+.w120 {
+    width: 120px!important;
+}
 /* invoice notes */
 .post-type-wpi_invoice .wp-list-table.widefat th#ID {
     width: 70px;
@@ -23,7 +26,8 @@
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date {
+.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date,
+.post-type-wpi_invoice .wp-list-table.widefat th#payment_date {
     width: 120px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#status {
@@ -641,6 +645,11 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpinv .column-wpi_actions {
     text-align: center;
 }
+.wpinv-email-wc-row {
+    padding: 10px;
+    background: #fff;
+    border-radius: 10px;
+}
 
 /*  ----------- */
 @media only screen and (min-width : 850px) and (max-width : 1100px) {
@@ -705,40 +714,40 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 
 /* General Settings Styles */
-.invoicing_page_wpinv-settings .form-table th {
+.wpi-wpinv-settings .form-table th {
     padding: 15px 10px 15px 0;
 }
-.invoicing_page_wpinv-settings .form-table td {
+.wpi-wpinv-settings .form-table td {
     padding: 12.5px 10px;
 }
-.invoicing_page_wpinv-settings .form-table label {
+.wpi-wpinv-settings .form-table label {
     color: #666;
     font-size: 14px;
     font-style: italic;
     margin: 4px 0 0;
 }
-.invoicing_page_wpinv-settings .form-table select + label,
-.invoicing_page_wpinv-settings .form-table input.regular-text ~ label,
-.invoicing_page_wpinv-settings .form-table textarea ~ label{
+.wpi-wpinv-settings .form-table select + label,
+.wpi-wpinv-settings .form-table input.regular-text ~ label,
+.wpi-wpinv-settings .form-table textarea ~ label{
     display: block;
 }
-.invoicing_page_wpinv-settings .form-table input.small-text ~ label,
-.invoicing_page_wpinv-settings .form-table input[type="checkbox"] + label {
+.wpi-wpinv-settings .form-table input.small-text ~ label,
+.wpi-wpinv-settings .form-table input[type="checkbox"] + label {
     display: inline;
 }
-.invoicing_page_wpinv-settings .form-table tr > th > strong,
-.invoicing_page_wpinv-settings .form-table tr > th > h3 {
+.wpi-wpinv-settings .form-table tr > th > strong,
+.wpi-wpinv-settings .form-table tr > th > h3 {
     font-size: 1.2em;
     font-weight: 600;
     margin: 0 auto;
 }
-.invoicing_page_wpinv-settings input.small-text[type="number"] {
+.wpi-wpinv-settings input.small-text[type="number"] {
     padding: 1px 1px 1px 6px;
     line-height: normal;
 }
 
 /* Tax rates */
-.invoicing_page_wpinv-settings td.wpinv_tax_tdbox {
+.wpi-wpinv-settings td.wpinv_tax_tdbox {
     padding: 0;
 }
 #wpinv_tax_rates {
@@ -807,8 +816,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpi-taxes-vat_rates-_new #tab_container form p.submit {
     display: none;
 }
-.invoicing_page_wpinv-settings td.wpinv_vat_tdbox,
-.invoicing_page_wpinv-settings td.wpinv_tools_tdbox {
+.wpi-wpinv-settings td.wpinv_vat_tdbox,
+.wpi-wpinv-settings td.wpinv_tools_tdbox {
     padding: 0;
 }
 #wpinv_vat_rates {
@@ -974,6 +983,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .type-wpi_invoice .meta.gateway {
     white-space: nowrap;
     word-wrap: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .post-type-wpi_item #filter-by-date {
     display: none;
@@ -1313,7 +1324,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv-details #major-publishing-actions {
     border-top: none;
 }
-.invoicing_page_wpinv-settings td.wpinv_tools_tdbox {
+.wpi-wpinv-settings td.wpinv_tools_tdbox {
     padding: 0;
 }
 .wpi-tools-main #tab_container form > p.submit {
@@ -1389,9 +1400,19 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_discount .wp-list-table.widefat th#name {
     width: 150px;
 }
+.post-type-wpi_discount .wp-list-table.widefat .column-amount,
+.post-type-wpi_discount .wp-list-table.widefat .column-code,
+.post-type-wpi_discount .wp-list-table.widefat .column-usage,
 .post-type-wpi_discount .wp-list-table.widefat .column-status {
-    width: 70px;
+    width: 90px;
+}
+.post-type-wpi_discount .wp-list-table.widefat .column-usage,
+.post-type-wpi_discount .wp-list-table.widefat .column-status {
     text-align: center;
+}
+.post-type-wpi_discount .wp-list-table.widefat .column-start_date,
+.post-type-wpi_discount .wp-list-table.widefat .column-expiry_date  {
+    width: 130px;
 }
 .post-type-wpi_discount #submitpost #delete-action,
 .post-type-wpi_discount #submitpost #visibility,
@@ -1519,6 +1540,18 @@ textarea.wpi-email_overdue_content {
 .post-type-wpi_invoice form#post #titlediv [name="post_title"] {
     cursor: not-allowed;
     opacity: .75;
+}
+.wpi-wpinv-subscriptions .subscriptions .column-actions {
+    text-align: center;
+}
+.wpi-wpinv-subscriptions .subscriptions .column-sub_id {
+    width: 60px;
+}
+.wpi-wpinv-subscriptions .subscriptions .column-initial_amount {
+    width: 95px;
+}
+.wpi-wpinv-subscriptions .subscriptions .column-status {
+    width: 65px;
 }
 
 /* Tooltips */

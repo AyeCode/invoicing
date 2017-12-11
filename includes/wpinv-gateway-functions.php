@@ -387,6 +387,7 @@ add_filter( 'wpinv_settings_tab_gateways_sanitize', 'wpinv_settings_update_gatew
 
 // PayPal Standard settings
 function wpinv_gateway_settings_paypal( $setting ) {    
+    $setting['paypal_active']['desc'] = $setting['paypal_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, BRL, CAD, CZK, DKK, EUR, HKD, HUF, ILS, JPY, MYR, MXN, NOK, NZD, PHP, PLN, GBP, SGD, SEK, CHF, TWD, THB, USD )', 'invoicing' );
     $setting['paypal_desc']['std'] = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
     
     $setting['paypal_sandbox'] = array(
@@ -492,7 +493,7 @@ add_filter( 'wpinv_gateway_settings_bank_transfer', 'wpinv_gateway_settings_bank
 
 // Authorize.Net settings
 function wpinv_gateway_settings_authorizenet( $setting ) {
-    $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( currencies supported: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
+    $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
     $setting['authorizenet_desc']['std'] = __( 'Pay using a Authorize.Net to process credit card / debit card transactions.', 'invoicing' );
     
     $setting['authorizenet_sandbox'] = array(
@@ -544,6 +545,7 @@ add_filter( 'wpinv_gateway_settings_authorizenet', 'wpinv_gateway_settings_autho
 
 // Worldpay settings
 function wpinv_gateway_settings_worldpay( $setting ) {
+    $setting['worldpay_active']['desc'] = $setting['worldpay_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, ARS, CAD, CHF, DKK, EUR, HKD, MYR, GBP, NZD, NOK, SGD, LKR, SEK, TRY, USD, ZAR )', 'invoicing' );
     $setting['worldpay_desc']['std'] = __( 'Pay using a Worldpay account to process credit card / debit card transactions.', 'invoicing' );
     
     $setting['worldpay_sandbox'] = array(
@@ -662,29 +664,6 @@ function wpinv_get_bank_info( $filtered = false ) {
     
     return apply_filters( 'wpinv_bank_info', $bank_info, $filtered );
 }
-
-function wpinv_process_before_send_to_gateway( $invoice, $invoice_data = array() ) {
-    if ( !empty( $invoice ) && $invoice->is_recurring() && $subscription_item = $invoice->get_recurring( true ) ) {        
-        $args                          = array();
-        $args['item_id']               = $subscription_item->ID;
-        $args['initial_amount']        = wpinv_round_amount( $invoice->get_total() );
-        $args['recurring_amount']      = wpinv_round_amount( $invoice->get_recurring_details( 'total' ) );
-        $args['currency']              = $invoice->get_currency();
-        $args['period']                = $subscription_item->get_recurring_period();
-        $args['interval']              = $subscription_item->get_recurring_interval();
-        if ( $subscription_item->has_free_trial() ) {
-            $args['trial_period']      = $subscription_item->get_trial_period();
-            $args['trial_interval']    = $subscription_item->get_trial_interval();
-        } else {
-            $args['trial_period']      = '';
-            $args['trial_interval']    = 0;
-        }
-        $args['bill_times']            = (int)$subscription_item->get_recurring_limit();
-        
-        $invoice->update_subscription( $args );
-    }
-}
-add_action( 'wpinv_checkout_before_send_to_gateway', 'wpinv_process_before_send_to_gateway', 10, 2 );
 
 function wpinv_get_post_data( $method = 'request' ) {
     $data       = array();

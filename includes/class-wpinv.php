@@ -22,9 +22,7 @@ class WPInv_Plugin {
             self::$instance->notes      = new WPInv_Notes();
             self::$instance->reports    = new WPInv_Reports();
         }
-        
-        do_action( 'wpinv_loaded' );
-        
+
         return self::$instance;
     }
     
@@ -75,6 +73,8 @@ class WPInv_Plugin {
     public function plugins_loaded() {
         /* Internationalize the text strings used. */
         $this->load_textdomain();
+
+        do_action( 'wpinv_loaded' );
     }
     
     /**
@@ -82,9 +82,14 @@ class WPInv_Plugin {
      *
      * @since 1.0
      */
-    public function load_textdomain() {
-        $locale = apply_filters( 'plugin_locale', get_locale(), 'invoicing' );
+    public function load_textdomain( $locale = NULL ) {
+        if ( empty( $locale ) ) {
+            $locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+        }
+
+        $locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
         
+        unload_textdomain( 'invoicing' );
         load_textdomain( 'invoicing', WP_LANG_DIR . '/invoicing/invoicing-' . $locale . '.mo' );
         load_plugin_textdomain( 'invoicing', false, WPINV_PLUGIN_DIR . 'languages' );
         
@@ -114,10 +119,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
-        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
-        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
-        //require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscription.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
@@ -126,6 +128,12 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
@@ -256,20 +264,20 @@ class WPInv_Plugin {
             wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
             wp_enqueue_style( 'jquery-ui-css' );
         }
-        
-        wp_register_style( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/css/chosen' . $suffix . '.css', array(), '1.6.2' );
-        wp_enqueue_style( 'jquery-chosen' );
 
-        wp_register_script( 'jquery-chosen', WPINV_PLUGIN_URL . 'assets/js/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.6.2' );
-        wp_enqueue_script( 'jquery-chosen' );
-        
         wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_meta_box_style' );
         
         wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_admin_style' );
+
+        $enqueue = ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) );
+        if ( $page == 'wpinv-subscriptions' ) {
+            wp_enqueue_script( 'jquery-ui-datepicker' );
+        }
+        $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue );
         
-        if ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
+        if ( $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 
@@ -314,11 +322,20 @@ class WPInv_Plugin {
         $localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
         $localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
         $localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
+        $localize['emptyInvoice']               = __( 'Add at least one item to save invoice!', 'invoicing' );
         $localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
+        $localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
+        $localize['action_edit']                = __( 'Edit', 'invoicing' );
+        $localize['action_cancel']              = __( 'Cancel', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
+
+        if ( $page == 'wpinv-subscriptions' ) {
+            wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions' . $suffix . '.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
+            wp_enqueue_script( 'wpinv-sub-admin-script' );
+        }
     }
     
     public function admin_body_class( $classes ) {
@@ -330,9 +347,9 @@ class WPInv_Plugin {
         
         $page = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : false;
 
-        $add_class = false;
-        if ( $pagenow == 'admin.php' && $page ) {
-            $add_class = strpos( $page, 'wpinv-' );
+        $add_class = $page && $pagenow == 'admin.php' && strpos( $page, 'wpinv-' ) === 0 ? true : false;
+        if ( $add_class ) {
+            $classes .= ' wpi-' . wpinv_sanitize_key( $page );
         }
         
         $settings_class = array();

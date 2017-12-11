@@ -62,6 +62,12 @@ function wpinv_is_invoice_history_page() {
 	return apply_filters( 'wpinv_is_invoice_history_page', $ret );
 }
 
+function wpinv_is_subscriptions_history_page() {
+    $ret = wpinv_get_option( 'invoice_subscription_page', false );
+    $ret = $ret ? is_page( $ret ) : false;
+    return apply_filters( 'wpinv_is_subscriptions_history_page', $ret );
+}
+
 function wpinv_send_to_success_page( $args = null ) {
 	$redirect = wpinv_get_success_page_uri();
     
@@ -409,4 +415,38 @@ function wpinv_sequential_number_active( $type = '' ) {
     }
     
     return wpinv_get_option( 'sequential_invoice_number' );
+}
+
+function wpinv_switch_to_locale( $locale = NULL ) {
+    global $invoicing, $wpi_switch_locale;
+
+    if ( ! empty( $invoicing ) && function_exists( 'switch_to_locale' ) ) {
+        $locale = empty( $locale ) ? get_locale() : $locale;
+
+        switch_to_locale( $locale );
+
+        $wpi_switch_locale = $locale;
+
+        add_filter( 'plugin_locale', 'get_locale' );
+
+        $invoicing->load_textdomain();
+
+        do_action( 'wpinv_switch_to_locale', $locale );
+    }
+}
+
+function wpinv_restore_locale() {
+    global $invoicing, $wpi_switch_locale;
+    
+    if ( ! empty( $invoicing ) && function_exists( 'restore_previous_locale' ) && $wpi_switch_locale ) {
+        restore_previous_locale();
+
+        $wpi_switch_locale = NULL;
+
+        remove_filter( 'plugin_locale', 'get_locale' );
+
+        $invoicing->load_textdomain();
+
+        do_action( 'wpinv_restore_locale' );
+    }
 }

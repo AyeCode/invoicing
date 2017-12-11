@@ -2,40 +2,18 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function wpinv_get_users_invoices( $user = 0, $number = 20, $pagination = false, $status = 'publish' ) {
+function wpinv_get_users_invoices( $user = 0, $number = 20, $pagination = false, $status = 'publish', $orderby = 'ID', $order = 'DESC' ) {
     if ( empty( $user ) ) {
         $user = get_current_user_id();
     }
 
-    if ( 0 === $user ) {
+    if ( empty( $user ) ) {
         return false;
     }
 
-    if ( $pagination ) {
-        if ( get_query_var( 'paged' ) )
-            $paged = get_query_var('paged');
-        else if ( get_query_var( 'page' ) )
-            $paged = get_query_var( 'page' );
-        else
-            $paged = 1;
-    }
-
-    $args = array(
-        'post_type'      => 'wpi_invoice',
-        'posts_per_page' => 20,
-        'paged'          => null,
-        'post_status'    => array( 'publish', 'wpi-pending' ),
-        'user'           => $user,
-        'order'          => 'date',
-    );
-
-    $invoices = get_posts( $args );
-
-    // No invoices
-    if ( ! $invoices )
-        return false;
-
-    return $invoices;
+    $args = apply_filters( 'wpinv_get_users_invoices_args', array( 'user' => $user, 'limit' => $number, 'status' => $status, 'paginate' => $pagination, 'orderby' => $orderby, 'order' => $order ) );
+    
+    return wpinv_get_invoices( $args );
 }
 
 function wpinv_dropdown_users( $args = '' ) {

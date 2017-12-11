@@ -17,7 +17,8 @@ function wpinv_columns( $columns ) {
         'number'            => __( 'Number', 'invoicing' ),
         'customer'          => __( 'Customer', 'invoicing' ),
         'amount'            => __( 'Amount', 'invoicing' ),
-        'invoice_date'      => __( 'Date', 'invoicing' ),
+        'invoice_date'      => __( 'Created Date', 'invoicing' ),
+        'payment_date'      => __( 'Payment Date', 'invoicing' ),
         'status'            => __( 'Status', 'invoicing' ),
         'ID'                => __( 'ID', 'invoicing' ),
         'wpi_actions'       => __( 'Actions', 'invoicing' ),
@@ -43,6 +44,7 @@ function wpinv_sortable_columns( $columns ) {
         'number'        => array( 'number', false ),
         'amount'        => array( 'amount', false ),
         'invoice_date'  => array( 'date', false ),
+        'payment_date'  => array( 'payment_date', true ),
         'customer'      => array( 'customer', false ),
         'status'        => array( 'status', false ),
     );
@@ -87,9 +89,28 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             
             $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
             break;
+        case 'payment_date' :
+            if ( $date_completed = $wpi_invoice->get_meta( '_wpinv_completed_date', true ) ) {
+                $date_format = get_option( 'date_format' );
+                $time_format = get_option( 'time_format' );
+                $date_time_format = $date_format . ' '. $time_format;
+                
+                $t_time = get_the_time( $date_time_format );
+                $m_time = $date_completed;
+                $h_time = mysql2date( $date_format, $m_time );
+                
+                $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
+            } else {
+                $value = '-';
+            }
+            break;
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
-            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && $gateway_title = $wpi_invoice->get_gateway_title() ) {
+            $is_viewed = wpinv_is_invoice_viewed( $wpi_invoice->ID );
+            if ( 1 == $is_viewed ) {
+                $value .= '&nbsp;&nbsp;<i class="fa fa-eye" title="'.__( 'Viewed by Customer', 'invoicing' ).'"></i>';
+            }
+            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && ( $gateway_title = wpinv_get_gateway_admin_label( $wpi_invoice->get_gateway() ) ) ) {
                 $value .= '<br><small class="meta gateway">' . wp_sprintf( __( 'Via %s', 'invoicing' ), $gateway_title ) . '</small>';
             }
             break;
@@ -179,6 +200,10 @@ function wpinv_admin_messages() {
 
 	if ( isset( $_GET['wpinv-message'] ) && 'invoice_deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-deleted', __( 'The invoice has been deleted.', 'invoicing' ), 'updated' );
+	}
+
+	if ( isset( $_GET['wpinv-message'] ) && 'email_disabled' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Email notification is disabled. Please check settings.', 'invoicing' ), 'error' );
 	}
 
 	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
@@ -438,3 +463,45 @@ function wpinv_send_register_new_user( $data, $postarr ) {
     return $data;
 }
 add_filter( 'wp_insert_post_data', 'wpinv_send_register_new_user', 10, 2 );
+
+function wpinv_show_recurring_supported_gateways( $item_ID ) {
+    $all_gateways = wpinv_get_payment_gateways();
+
+    if ( !empty( $all_gateways ) ) {
+        $gateways = array();
+
+        foreach ( $all_gateways as $key => $gateway ) {
+            if ( wpinv_gateway_support_subscription( $key ) ) {
+                $gateways[] = $gateway['admin_label'];
+            }
+        }
+
+        if ( !empty( $gateways ) ) {
+            ?>
+            <span class="description"><?php echo wp_sprintf( __( 'Recurring payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ); ?></span>
+            <?php
+        }
+    }
+}
+add_action( 'wpinv_item_price_field', 'wpinv_show_recurring_supported_gateways', -10, 1 );
+
+function wpinv_post_updated_messages( $messages ) {
+    global $post, $post_ID;
+
+    $messages['wpi_discount'] = array(
+        0   => '',
+        1   => __( 'Discount updated.', 'invoicing' ),
+        2   => __( 'Custom field updated.', 'invoicing' ),
+        3   => __( 'Custom field deleted.', 'invoicing' ),
+        4   => __( 'Discount updated.', 'invoicing' ),
+        5   => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Discount restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+        6   => __( 'Discount updated.', 'invoicing' ),
+        7   => __( 'Discount saved.', 'invoicing' ),
+        8   => __( 'Discount submitted.', 'invoicing' ),
+        9   => wp_sprintf( __( 'Discount scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
+        10  => __( 'Discount draft updated.', 'invoicing' ),
+    );
+
+    return $messages;
+}
+add_filter( 'post_updated_messages', 'wpinv_post_updated_messages', 10, 1 );

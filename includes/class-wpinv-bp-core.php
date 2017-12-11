@@ -152,7 +152,10 @@ class WPInv_BP_Component extends BP_Component {
                                                 <?php echo _x( '#', 'hash before invoice number', 'invoicing' ) . $invoice->get_number(); ?>
                                             </a>
 
-                                        <?php elseif ( 'invoice-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID ); $dateYMD = wpinv_get_invoice_date( $invoice->ID, 'Y-m-d H:i:s' ); ?>
+                                        <?php elseif ( 'created-date' === $column_id ) : $date = wpinv_get_date_created( $invoice->ID ); $dateYMD = wpinv_get_date_created( $invoice->ID, 'Y-m-d H:i:s' ); ?>
+                                            <time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
+
+                                        <?php elseif ( 'payment-date' === $column_id ) : $date = wpinv_get_invoice_date( $invoice->ID, '', false ); $dateYMD = wpinv_get_invoice_date( $invoice->ID, 'Y-m-d H:i:s', false ); ?>
                                             <time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
 
                                         <?php elseif ( 'invoice-status' === $column_id ) : ?>

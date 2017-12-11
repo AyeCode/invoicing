@@ -364,7 +364,6 @@ function wpinv_vat_rates_callback( $args ) {
                                         'class'            => '',
                                         'options'          => $vat_groups,
                                         'multiple'         => false,
-                                        'chosen'           => false,
                                         'show_option_all'  => false,
                                         'show_option_none' => false
                                     ) );
@@ -458,7 +457,6 @@ function wpinv_vat_ip_lookup_callback( $args ) {
         'class'            => isset($args['class']) ? $args['class'] : "",
         'options'          => $options,
         'multiple'         => false,
-        'chosen'           => false,
         'show_option_all'  => false,
         'show_option_none' => false
     ));
