@@ -211,19 +211,14 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
 }
 add_action( 'wpinv_gateway_authorizenet', 'wpinv_process_authorizenet_payment' );
 
-function wpinv_authorizenet_cancel_subscription( $subscription = '' ) {
-    if ( empty( $subscription->id ) ) {
+function wpinv_authorizenet_cancel_subscription( $subscription_id = '' ) {
+    if ( empty( $subscription_id ) ) {
         return false;
     }
 
     try {
         $authnetXML = wpinv_authorizenet_XML();
-        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription->id ) );
-
-        if ( wpinv_is_test_mode( 'authorizenet' ) ) {
-            return true;
-        }
-
+        $authnetXML->ARBCancelSubscriptionRequest( array( 'subscriptionId' => $subscription_id ) );
         return $authnetXML->isSuccessful();
     } catch( Exception $e ) {
         wpinv_error_log( $e->getMessage(), __( 'Authorize.Net cancel subscription', 'invoicing' ) );
@@ -231,7 +226,15 @@ function wpinv_authorizenet_cancel_subscription( $subscription = '' ) {
 
     return false;
 }
-add_action( 'wpinv_recurring_cancel_authorizenet_subscription', 'wpinv_authorizenet_cancel_subscription' );
+
+function wpinv_recurring_cancel_authorizenet_subscription( $subscription, $valid = false ) {
+    if ( ! empty( $valid ) && ! empty( $subscription->profile_id ) ) {
+        return wpinv_authorizenet_cancel_subscription( $subscription->profile_id );
+    }
+    
+    return false;
+}
+add_action( 'wpinv_recurring_cancel_authorizenet_subscription', 'wpinv_recurring_cancel_authorizenet_subscription', 10, 2 );
 
 function wpinv_authorizenet_valid_ipn( $md5_hash, $transaction_id, $amount ) {
     $authorizenet_md5_hash = wpinv_get_option( 'authorizenet_md5_hash' );

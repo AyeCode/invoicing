@@ -1571,6 +1571,12 @@ textarea.wpi-email_overdue_content {
     text-shadow: none !important;
     z-index: 9999 !important;
 }
+.wpi-meta-row.wpi-meta-desc {
+    margin: 0;
+    line-height: normal;
+    font-size: 13px;
+    font-style: italic;
+}
 
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {

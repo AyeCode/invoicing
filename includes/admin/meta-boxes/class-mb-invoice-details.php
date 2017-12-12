@@ -42,6 +42,7 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
                 <input type="text" placeholder="<?php esc_attr_e( 'Y-m-d', 'invoicing' );?>" value="<?php echo esc_attr( $invoice->get_due_date() );?>" id="wpinv_due_date" name="wpinv_due_date" class="regular-text wpiDatepicker" data-minDate="<?php echo esc_attr( date_i18n( 'Y-m-d', $datetime_created ) );?>" data-dateFormat="yy-mm-dd">
+                <p class="wpi-meta-row wpi-meta-desc"><?php _e( 'Leave blank to disable sending auto reminder for this invoice.', 'invoicing' );?></p>
             </div>
         </div>
         <?php } ?>
