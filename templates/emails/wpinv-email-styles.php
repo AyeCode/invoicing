@@ -232,6 +232,7 @@ img {
     margin: 0;
 }
 
+.wpi-email-row,
 #wpinv-email-details,
 #wpinv-email-items,
 #wpinv-email-billing {
