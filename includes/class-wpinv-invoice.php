@@ -197,7 +197,7 @@ final class WPInv_Invoice {
     }
     
     private function setup_status_nicename( $status ) {
-        $all_invoice_statuses  = wpinv_get_invoice_statuses( true, $this );
+        $all_invoice_statuses  = wpinv_get_invoice_statuses( true, true, $this );
         $status   = isset( $all_invoice_statuses[$status] ) ? $all_invoice_statuses[$status] : __( $status, 'invoicing' );
 
         return apply_filters( 'setup_status_nicename', $status );
@@ -1086,8 +1086,8 @@ final class WPInv_Invoice {
 
     public function update_status( $new_status = false, $note = '', $manual = false ) {
         $old_status = ! empty( $this->old_status ) ? $this->old_status : get_post_status( $this->ID );
-        
-        if ( $old_status === $new_status && in_array( $new_status, array_keys( wpinv_get_invoice_statuses() ) ) ) {
+
+        if ( $old_status === $new_status && in_array( $new_status, array_keys( wpinv_get_invoice_statuses( true ) ) ) ) {
             return false; // Don't permit status changes that aren't changes
         }
 

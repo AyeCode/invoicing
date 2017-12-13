@@ -83,11 +83,10 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             $time_format = get_option( 'time_format' );
             $date_time_format = $date_format . ' '. $time_format;
             
-            $t_time = get_the_time( $date_time_format );
             $m_time = $post->post_date;
             $h_time = mysql2date( $date_format, $m_time );
             
-            $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
+            $value   = '<abbr title="' . $m_time . '">' . $h_time . '</abbr>';
             break;
         case 'payment_date' :
             if ( $date_completed = $wpi_invoice->get_meta( '_wpinv_completed_date', true ) ) {
@@ -95,11 +94,10 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
                 $time_format = get_option( 'time_format' );
                 $date_time_format = $date_format . ' '. $time_format;
                 
-                $t_time = get_the_time( $date_time_format );
                 $m_time = $date_completed;
                 $h_time = mysql2date( $date_format, $m_time );
                 
-                $value   = '<abbr title="' . $t_time . '">' . $h_time . '</abbr>';
+                $value   = '<abbr title="' . $m_time . '">' . $h_time . '</abbr>';
             } else {
                 $value = '-';
             }

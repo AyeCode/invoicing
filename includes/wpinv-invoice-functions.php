@@ -1023,6 +1023,10 @@ function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
         return;
     }
 
+    if ( ( $old_status == 'wpi-pending' && $new_status == 'draft' ) || ( $old_status == 'draft' && $new_status == 'wpi-pending' ) ) {
+        return;
+    }
+
     $invoice    = wpinv_get_invoice( $invoice_id );
     
     $old_status = wpinv_status_nicename( $old_status );
@@ -2101,7 +2105,7 @@ function wpinv_get_next_invoice_number( $type = '' ) {
 
     if ( empty( $number ) ) {
         if ( !( $last_number === 0 || $last_number === '0' ) ) {
-            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true ) ) ) );
+            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true, true ) ) ) );
 
             if ( !empty( $last_invoice[0] ) && $invoice_number = wpinv_get_invoice_number( $last_invoice[0] ) ) {
                 if ( is_numeric( $invoice_number ) ) {
@@ -2289,3 +2293,24 @@ function wpinv_get_subscription( $invoice ) {
     
     return false;
 }
+
+function wpinv_filter_posts_clauses( $clauses, $wp_query ) {
+    global $wpdb;
+
+    if ( ! empty( $wp_query->query_vars['orderby'] ) && $wp_query->query_vars['orderby'] == 'invoice_date' ) {
+        if ( !empty( $clauses['join'] ) ) {
+            $clauses['join'] .= " ";
+        }
+
+        if ( !empty( $clauses['fields'] ) ) {
+            $clauses['fields'] .= ", ";
+        }
+
+        $clauses['join'] .= "LEFT JOIN {$wpdb->postmeta} ON ( {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_wpinv_completed_date' )";
+        $clauses['fields'] .= "IF( {$wpdb->postmeta}.meta_value, {$wpdb->postmeta}.meta_value, {$wpdb->posts}.post_date ) AS invoice_date";
+        $clauses['orderby'] = "invoice_date DESC, {$wpdb->posts}.post_date DESC, {$wpdb->posts}.ID DESC";
+    }
+
+    return $clauses;
+}
+add_filter( 'posts_clauses', 'wpinv_filter_posts_clauses', 10, 2 );

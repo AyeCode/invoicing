@@ -89,7 +89,7 @@ class WPInv_Reports {
     }
     
     public function export() {
-        $statuses = wpinv_get_invoice_statuses();
+        $statuses = wpinv_get_invoice_statuses( true );
         $statuses = array_merge( array( 'any' => __( 'All Statuses', 'invoicing' ) ), $statuses );
         ?>
         <div class="metabox-holder">
@@ -417,6 +417,8 @@ class WPInv_Reports {
         
         if ( $this->status != 'any' ) {
             $args['status'] = $this->status;
+        } else {
+            $args['status'] = array_keys( wpinv_get_invoice_statuses( true ) );
         }
 
         if ( !empty( $this->from_date ) || !empty( $this->to_date ) ) {
@@ -461,7 +463,7 @@ class WPInv_Reports {
                     'gateway_nicename' => $invoice->get_gateway_title(),
                     'transaction_id'=> $invoice->gateway ? $invoice->get_transaction_id() : '',
                     'currency'      => $invoice->get_currency(),
-                    'due_date'      => $invoice->needs_payment() ? $invoice->get_due_date() : '',
+                    'due_date'      => $invoice->needs_payment() || $invoice->status == 'draft' ? $invoice->get_due_date() : '',
                 );
                 
                 $data[] = apply_filters( 'wpinv_export_invoice_row', $row, $invoice );
@@ -482,6 +484,8 @@ class WPInv_Reports {
         
         if ( $this->status != 'any' ) {
             $args['status'] = $this->status;
+        } else {
+            $args['status'] = array_keys( wpinv_get_invoice_statuses( true ) );
         }
 
         if ( !empty( $this->from_date ) || !empty( $this->to_date ) ) {
