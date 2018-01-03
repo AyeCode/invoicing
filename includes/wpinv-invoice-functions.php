@@ -1548,6 +1548,10 @@ function wpinv_process_checkout() {
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
     $wpi_cart = $invoice;
     
     $wpi_checkout_id = $invoice->ID;

@@ -1553,6 +1553,19 @@ textarea.wpi-email_overdue_content {
 .wpi-wpinv-subscriptions .subscriptions .column-status {
     width: 65px;
 }
+.wpi-mcheck-rows .wpi-mcheck-row {
+    float: none;
+    display: inline-block;
+}
+.wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row {
+    width: 33%;
+}
+.wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row {
+    width: 50%;
+}
+.wpi-mcheck-row input[type="checkbox"] {
+    margin-top: 3px;
+}
 
 /* Tooltips */
 .wpi-help-tip {
@@ -1577,10 +1590,17 @@ textarea.wpi-email_overdue_content {
     font-size: 13px;
     font-style: italic;
 }
+.wpinv.wpinv-pdf .manage-column.column-wpi_actions {
+    width: 110px;
+}
 
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {
         padding: 4px 10px;
+    }
+    .wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row,
+    .wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row  {
+        width: 50%;
     }
 }
 @media screen and (max-width: 640px) {
@@ -1609,5 +1629,9 @@ textarea.wpi-email_overdue_content {
     #wpinv_items_wrap .wpinv-actions select {
         width: 47%;
         margin: 3px 2% 3px 0;
+    }
+    .wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row,
+    .wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row  {
+        width: 100%;
     }
 }

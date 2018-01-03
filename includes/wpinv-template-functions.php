@@ -1948,8 +1948,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->created, current_time('timestamp'))); ?></td>
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
                         <td class="text-center"><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?></td>
-                        <td class="text-center wpi-sub-status"><?php echo $sub->get_status_label(); ?>
-                        </td>
+                        <td class="text-center wpi-sub-status"><?php echo $sub->get_status_label(); ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -1979,7 +1978,6 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td class="text-right"><?php echo wpinv_payment_total( $invoice_id, true ); ?></td>
                     </tr>
                     <?php $i++; } ?>
-                    <tr><td colspan="4" style="padding:0"></td></tr>
                 </tbody>
             </table>
         </div>
