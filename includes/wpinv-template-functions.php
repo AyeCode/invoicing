@@ -1915,20 +1915,18 @@ function wpinv_invoice_link( $invoice_id ) {
 }
 
 function wpinv_invoice_subscription_details( $invoice ) {
-    if ( !empty( $invoice ) && $invoice->is_recurring() && !wpinv_is_subscription_payment( $invoice ) ) {
-        $subs_db = new WPInv_Subscriptions_DB;
-        $subs = $subs_db->get_subscriptions(array('parent_payment_id' => $invoice->ID, 'number' => 1));
-        $sub = reset($subs);
+    if ( !empty( $invoice ) && $invoice->is_recurring() && ! wpinv_is_subscription_payment( $invoice ) ) {
+        $subscription = wpinv_get_subscription( $invoice, true );
 
-        if ( empty( $sub ) ) {
+        if ( empty( $subscription ) ) {
             return;
         }
 
-        $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($sub->period, $sub->frequency);
-        $billing = wpinv_price(wpinv_format_amount($sub->recurring_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id)) . ' / ' . $frequency;
-        $initial = wpinv_price(wpinv_format_amount($sub->initial_amount), wpinv_get_invoice_currency_code($sub->parent_payment_id));
+        $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($subscription->period, $subscription->frequency);
+        $billing = wpinv_price(wpinv_format_amount($subscription->recurring_amount), wpinv_get_invoice_currency_code($subscription->parent_payment_id)) . ' / ' . $frequency;
+        $initial = wpinv_price(wpinv_format_amount($subscription->initial_amount), wpinv_get_invoice_currency_code($subscription->parent_payment_id));
 
-        $payments = $sub->get_child_payments();
+        $payments = $subscription->get_child_payments();
         ?>
         <div class="wpinv-subscriptions-details">
             <h3 class="wpinv-subscriptions-t"><?php echo apply_filters( 'wpinv_subscription_details_title', __( 'Subscription Details', 'invoicing' ) ); ?></h3>
@@ -1945,10 +1943,10 @@ function wpinv_invoice_subscription_details( $invoice ) {
                 <tbody>
                     <tr>
                         <td><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?></td>
-                        <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->created, current_time('timestamp'))); ?></td>
-                        <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
-                        <td class="text-center"><?php echo $sub->get_times_billed() . ' / ' . (($sub->bill_times == 0) ? 'Until Cancelled' : $sub->bill_times); ?></td>
-                        <td class="text-center wpi-sub-status"><?php echo $sub->get_status_label(); ?></td>
+                        <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->created, current_time('timestamp'))); ?></td>
+                        <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->expiration, current_time('timestamp'))); ?></td>
+                        <td class="text-center"><?php echo $subscription->get_times_billed() . ' / ' . (($subscription->bill_times == 0) ? 'Until Cancelled' : $subscription->bill_times); ?></td>
+                        <td class="text-center wpi-sub-status"><?php echo $subscription->get_status_label(); ?></td>
                     </tr>
                 </tbody>
             </table>

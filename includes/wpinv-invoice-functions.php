@@ -2273,7 +2273,7 @@ function wpinv_mark_invoice_viewed() {
 }
 add_action( 'init', 'wpinv_mark_invoice_viewed' );
 
-function wpinv_get_subscription( $invoice ) {
+function wpinv_get_subscription( $invoice, $by_parent = false ) {
     if ( empty( $invoice ) ) {
         return false;
     }
@@ -2286,7 +2286,7 @@ function wpinv_get_subscription( $invoice ) {
         return false;
     }
     
-    $invoice_id = ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
+    $invoice_id = ! $by_parent && ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
     
     $subs_db    = new WPInv_Subscriptions_DB;
     $subs       = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_id, 'number' => 1 ) );
