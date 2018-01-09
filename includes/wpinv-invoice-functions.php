@@ -919,6 +919,9 @@ function wpinv_get_cart_content_details() {
         return false;
     }
     $invoice = wpinv_get_invoice_cart();
+	if ( empty( $invoice ) ) {
+        return false;
+    }
 
     $details = array();
     $length  = count( $cart_items ) - 1;
