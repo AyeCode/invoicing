@@ -250,6 +250,15 @@ function wpinv_get_registered_settings() {
                         'options'     => $pages,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
+                    'tandc_page' => array(
+                        'id'          => 'tandc_page',
+                        'name'        => __( 'Terms & Conditions', 'invoicing' ),
+                        'desc'        => __( 'If you select a "Terms & Conditions" page here the customer will be asked to accept them on checkout.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
+                        'chosen'      => true,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
+                    ),
                     'success_page' => array(
                         'id'          => 'success_page',
                         'name'        => __( 'Success Page', 'invoicing' ),
@@ -281,7 +290,7 @@ function wpinv_get_registered_settings() {
                         'type'        => 'select',
                         'options'     => $pages,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
-                    )
+                    ),
                 ),
                 'currency_section' => array(
                     'currency_settings' => array(
