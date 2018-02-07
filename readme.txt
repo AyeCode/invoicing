@@ -108,6 +108,7 @@ Invoice created date should not updated on invoice published - CHANGED
 Show recurring supported gateways in backend item page - CHANGED
 Fix front end style conflict - FIXED
 Subscription functionality improved - CHANGED
+Avada colorpicker conflicts - FIXED
 
 = 1.0.2 =
 Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED

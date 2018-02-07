@@ -1202,7 +1202,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     color: #333;
     margin-right: 3px;
 }
-.wp-picker-holder {
+body.wpi-wpinv-settings .wp-picker-holder {
     position: absolute;
     z-index: 999
 }
