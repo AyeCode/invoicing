@@ -665,6 +665,12 @@ function wpinv_get_registered_settings() {
                         'type' => 'checkbox',
                         'std'  => true,
                     ),
+                    'force_show_company' => array(
+                        'id'   => 'force_show_company',
+                        'name' => __( 'Force show company name at checkout.', 'invoicing' ),
+                        'type' => 'checkbox',
+                        'std'  => false,
+                    ),
                     'address_autofill_settings' => array(
                         'id'   => 'address_autofill_settings',
                         'name' => '<h3>' . __( 'Google Address Auto Complete', 'invoicing' ) . '</h3>',
