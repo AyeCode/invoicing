@@ -315,14 +315,12 @@ function wpinv_recurring_process_subscription_update() {
 		wp_die( __( 'Nonce verification failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
 	}
 
-	$expiration      = date( 'Y-m-d 23:59:59', strtotime( $_POST['expiration'] ) );
 	$profile_id      = sanitize_text_field( $_POST['profile_id'] );
 	$transaction_id  = sanitize_text_field( $_POST['transaction_id'] );
 	$product_id      = absint( $_POST['product_id'] );
 	$subscription    = new WPInv_Subscription( absint( $_POST['sub_id'] ) );
 	$subscription->update( array(
 		'status'         => sanitize_text_field( $_POST['status'] ),
-		'expiration'     => $expiration,
 		'profile_id'     => $profile_id,
 		'product_id'     => $product_id,
 		'transaction_id' => $transaction_id,

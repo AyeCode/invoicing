@@ -12,7 +12,7 @@ if ( !( $user_id = get_current_user_id() ) ) {
 
 global $current_page;
 $current_page   = empty( $current_page ) ? 1 : absint( $current_page );
-$query          = apply_filters( 'wpinv_user_invoices_query', array( 'user' => $user_id, 'page' => $current_page, 'paginate' => true ) );
+$query          = apply_filters( 'wpinv_user_invoices_query', array( 'user' => $user_id, 'page' => $current_page, 'paginate' => true, 'orderby' => 'invoice_date' ) );
 $user_invoices  = wpinv_get_invoices( $query );
 $has_invoices   = 0 < $user_invoices->total;
     

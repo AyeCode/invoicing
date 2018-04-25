@@ -81,7 +81,7 @@ class WPInv_Subscriptions {
         add_action( 'init', array( $this, 'wpinv_post_actions' ) );
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
-        add_action( 'wpi-pending_wpi_invoice', array( $this, 'wpinv_add_update_subscription' ), 10, 2 );
+        add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_checkout_add_subscription' ), -999, 2 );
         add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
     }
 
@@ -263,34 +263,18 @@ class WPInv_Subscriptions {
     }
 
     /**
-     * Create/Update subscription on invoice created/updated
+     * Create subscription on checkout
      *
      * @access      public
      * @since       1.0.0
      * @return      void
      */
-    public function wpinv_add_update_subscription( $invoice_id, $post ) {
-        remove_action( 'save_post', __FUNCTION__ );
-
-        if ( ! ( ! empty( $invoice_id ) && 'wpi_invoice' == get_post_type( $invoice_id ) ) ) {
-            return;
-        }
-
-        if ( defined( 'DOING_AUTOSAVE' ) ) {
-            return;
-        }
-
-        if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
-            return;
-        }
-
-        $invoice = new WPInv_Invoice( $invoice_id );
-
+    public function wpinv_checkout_add_subscription( $invoice, $invoice_data ) {
         if ( ! ( ! empty( $invoice->ID ) && $invoice->is_recurring() ) ) {
             return;
         }
-
-        $item    = $invoice->get_recurring( true );
+        
+        $item               = $invoice->get_recurring( true );
         if ( empty( $item ) ) {
             return;
         }
@@ -332,13 +316,13 @@ class WPInv_Subscriptions {
             'transaction_id'    => '',
         );
 
-        $subs_db      = new WPInv_Subscriptions_DB;
-        $subs         = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->ID, 'number' => 1 ) );
-        $subscription = reset( $subs );
+        $subscription = wpinv_get_subscription( $invoice );
 
-        if ( empty( $subscription ) || $subscription->id <= 0 ) {
+        if ( empty( $subscription ) ) {
             $subscription = new WPInv_Subscription();
             $subscription->create( $args );
         }
+        
+        return $subscription;
     }
 }

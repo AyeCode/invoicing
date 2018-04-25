@@ -250,6 +250,15 @@ function wpinv_get_registered_settings() {
                         'options'     => $pages,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
+                    'tandc_page' => array(
+                        'id'          => 'tandc_page',
+                        'name'        => __( 'Terms & Conditions', 'invoicing' ),
+                        'desc'        => __( 'If you select a "Terms & Conditions" page here the customer will be asked to accept them on checkout.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
+                        'chosen'      => true,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
+                    ),
                     'success_page' => array(
                         'id'          => 'success_page',
                         'name'        => __( 'Success Page', 'invoicing' ),
@@ -281,7 +290,7 @@ function wpinv_get_registered_settings() {
                         'type'        => 'select',
                         'options'     => $pages,
                         'placeholder' => __( 'Select a page', 'invoicing' ),
-                    )
+                    ),
                 ),
                 'currency_section' => array(
                     'currency_settings' => array(
@@ -949,20 +958,23 @@ function wpinv_checkbox_callback( $args ) {
 
 function wpinv_multicheck_callback( $args ) {
 	global $wpinv_options;
-	
+
 	$sanitize_id = wpinv_sanitize_key( $args['id'] );
-	
+	$class = !empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
+
 	if ( ! empty( $args['options'] ) ) {
-		foreach( $args['options'] as $key => $option ):
+		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . $sanitize_id . $class . '">';
+        foreach( $args['options'] as $key => $option ):
 			$sanitize_key = wpinv_sanitize_key( $key );
 			if ( isset( $wpinv_options[$args['id']][$sanitize_key] ) ) { 
 				$enabled = $sanitize_key;
 			} else { 
 				$enabled = NULL; 
 			}
-			echo '<input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
-			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label><br/>';
+			echo '<div class="wpi-mcheck-row"><input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
+			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label></div>';
 		endforeach;
+		echo '</div>';
 		echo '<p class="description">' . $args['desc'] . '</p>';
 	}
 }

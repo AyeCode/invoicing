@@ -7,7 +7,7 @@ if ( !defined( 'WPINC' ) ) {
 class WPInv_Meta_Box_Details {
     public static function output( $post ) {
         $currency_symbol    = wpinv_currency_symbol();
-        $statuses           = wpinv_get_invoice_statuses();
+        $statuses           = wpinv_get_invoice_statuses( true );
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
@@ -37,11 +37,12 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
             <div class="gdmbx-td"><?php echo $date_created;?></div>
         </div>
-        <?php if ( $invoice->post_type == 'wpi_invoice' && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft' ) ) ) ) { ?>
+        <?php if ( $invoice->post_type == 'wpi_invoice' && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft', 'draft' ) ) ) ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>
             <div class="gdmbx-td">
                 <input type="text" placeholder="<?php esc_attr_e( 'Y-m-d', 'invoicing' );?>" value="<?php echo esc_attr( $invoice->get_due_date() );?>" id="wpinv_due_date" name="wpinv_due_date" class="regular-text wpiDatepicker" data-minDate="<?php echo esc_attr( date_i18n( 'Y-m-d', $datetime_created ) );?>" data-dateFormat="yy-mm-dd">
+                <p class="wpi-meta-row wpi-meta-desc"><?php _e( 'Leave blank to disable sending auto reminder for this invoice.', 'invoicing' );?></p>
             </div>
         </div>
         <?php } ?>

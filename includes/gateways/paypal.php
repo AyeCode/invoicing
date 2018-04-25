@@ -146,7 +146,8 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         $paypal_args['src'] = '1';
         
         // Set item description
-        $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( wpinv_get_cart_item_name( array( 'id' => $item->ID ) ), ENT_COMPAT, 'UTF-8' ) );
+        $item_name                  = sprintf( '[%s] %s', $invoice->get_number(), wpinv_get_cart_item_name( array( 'id' => $item->ID ) ) );
+        $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( $item_name, ENT_COMPAT, 'UTF-8' ) );
         
         if ( $invoice->is_free_trial() && $item->has_free_trial() ) {
             $paypal_args['a1']  = $initial_amount;
