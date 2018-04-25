@@ -2134,3 +2134,26 @@ function wpinv_invalid_invoice_content() {
     <?php
 }
 add_action( 'wpinv_invalid_invoice_content', 'wpinv_invalid_invoice_content' );
+
+add_action( 'wpinv_checkout_billing_fields_last', 'wpinv_force_company_name_field');
+function wpinv_force_company_name_field(){
+    $invoice = wpinv_get_invoice_cart();
+    $user_id = wpinv_get_user_id( $invoice->ID );
+    $company = empty( $user_id ) ? "" : get_user_meta( $user_id, '_wpinv_company', true );
+    if ( 1 == wpinv_get_option( 'force_show_company' ) && !wpinv_use_taxes() ) {
+        ?>
+        <p class="wpi-cart-field wpi-col2 wpi-colf">
+            <label for="wpinv_company" class="wpi-label"><?php _e('Company Name', 'invoicing'); ?></label>
+            <?php
+            echo wpinv_html_text(array(
+                'id' => 'wpinv_company',
+                'name' => 'wpinv_company',
+                'value' => $company,
+                'class' => 'wpi-input form-control',
+                'placeholder' => __('Company name', 'invoicing'),
+            ));
+            ?>
+        </p>
+        <?php
+    }
+}

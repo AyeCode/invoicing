@@ -108,6 +108,7 @@ Invoice created date should not updated on invoice published - CHANGED
 Show recurring supported gateways in backend item page - CHANGED
 Fix front end style conflict - FIXED
 Subscription functionality improved - CHANGED
+Option to force show company name - ADDED
 Avada colorpicker conflicts - FIXED
 It is hard to link paypal payment to invoice at paypal site - CHANGED
 Fix the color picker conflict with Avada theme - FIXED
