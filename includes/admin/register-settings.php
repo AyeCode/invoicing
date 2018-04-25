@@ -943,20 +943,23 @@ function wpinv_checkbox_callback( $args ) {
 
 function wpinv_multicheck_callback( $args ) {
 	global $wpinv_options;
-	
+
 	$sanitize_id = wpinv_sanitize_key( $args['id'] );
-	
+	$class = !empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
+
 	if ( ! empty( $args['options'] ) ) {
-		foreach( $args['options'] as $key => $option ):
+		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . $sanitize_id . $class . '">';
+        foreach( $args['options'] as $key => $option ):
 			$sanitize_key = wpinv_sanitize_key( $key );
 			if ( isset( $wpinv_options[$args['id']][$sanitize_key] ) ) { 
 				$enabled = $sanitize_key;
 			} else { 
 				$enabled = NULL; 
 			}
-			echo '<input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
-			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label><br/>';
+			echo '<div class="wpi-mcheck-row"><input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
+			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label></div>';
 		endforeach;
+		echo '</div>';
 		echo '<p class="description">' . $args['desc'] . '</p>';
 	}
 }

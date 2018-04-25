@@ -919,6 +919,9 @@ function wpinv_get_cart_content_details() {
         return false;
     }
     $invoice = wpinv_get_invoice_cart();
+	if ( empty( $invoice ) ) {
+        return false;
+    }
 
     $details = array();
     $length  = count( $cart_items ) - 1;
@@ -1020,6 +1023,10 @@ function wpinv_get_cart_details( $invoice_id = 0 ) {
 
 function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
     if ( 'wpi_invoice' != get_post_type( $invoice_id ) ) {
+        return;
+    }
+
+    if ( ( $old_status == 'wpi-pending' && $new_status == 'draft' ) || ( $old_status == 'draft' && $new_status == 'wpi-pending' ) ) {
         return;
     }
 
@@ -1544,6 +1551,10 @@ function wpinv_process_checkout() {
     wpinv_clear_errors();
     
     $invoice = wpinv_get_invoice_cart();
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+    
     $wpi_cart = $invoice;
     
     $wpi_checkout_id = $invoice->ID;
@@ -2101,7 +2112,7 @@ function wpinv_get_next_invoice_number( $type = '' ) {
 
     if ( empty( $number ) ) {
         if ( !( $last_number === 0 || $last_number === '0' ) ) {
-            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true ) ) ) );
+            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true, true ) ) ) );
 
             if ( !empty( $last_invoice[0] ) && $invoice_number = wpinv_get_invoice_number( $last_invoice[0] ) ) {
                 if ( is_numeric( $invoice_number ) ) {
@@ -2265,7 +2276,7 @@ function wpinv_mark_invoice_viewed() {
 }
 add_action( 'init', 'wpinv_mark_invoice_viewed' );
 
-function wpinv_get_subscription( $invoice ) {
+function wpinv_get_subscription( $invoice, $by_parent = false ) {
     if ( empty( $invoice ) ) {
         return false;
     }
@@ -2278,7 +2289,7 @@ function wpinv_get_subscription( $invoice ) {
         return false;
     }
     
-    $invoice_id = ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
+    $invoice_id = ! $by_parent && ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
     
     $subs_db    = new WPInv_Subscriptions_DB;
     $subs       = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_id, 'number' => 1 ) );
@@ -2289,3 +2300,24 @@ function wpinv_get_subscription( $invoice ) {
     
     return false;
 }
+
+function wpinv_filter_posts_clauses( $clauses, $wp_query ) {
+    global $wpdb;
+
+    if ( ! empty( $wp_query->query_vars['orderby'] ) && $wp_query->query_vars['orderby'] == 'invoice_date' ) {
+        if ( !empty( $clauses['join'] ) ) {
+            $clauses['join'] .= " ";
+        }
+
+        if ( !empty( $clauses['fields'] ) ) {
+            $clauses['fields'] .= ", ";
+        }
+
+        $clauses['join'] .= "LEFT JOIN {$wpdb->postmeta} ON ( {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_wpinv_completed_date' )";
+        $clauses['fields'] .= "IF( {$wpdb->postmeta}.meta_value, {$wpdb->postmeta}.meta_value, {$wpdb->posts}.post_date ) AS invoice_date";
+        $clauses['orderby'] = "invoice_date DESC, {$wpdb->posts}.post_date DESC, {$wpdb->posts}.ID DESC";
+    }
+
+    return $clauses;
+}
+add_filter( 'posts_clauses', 'wpinv_filter_posts_clauses', 10, 2 );

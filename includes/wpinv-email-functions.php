@@ -1302,7 +1302,7 @@ function wpinv_send_customer_invoice( $data = array() ) {
     
     $sent = wpinv_user_invoice_notification( $invoice_id );
 
-    if ( -1 == $sent ) {
+    if ( -1 === $sent ) {
         $status = 'email_disabled';
     } elseif ( $sent ) {
         $status = 'email_sent';

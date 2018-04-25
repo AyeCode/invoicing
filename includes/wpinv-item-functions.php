@@ -648,7 +648,7 @@ function wpinv_item_in_use( $item_id ) {
         $wpi_items_in_use = array();
     }
     
-    $statuses   = array_keys( wpinv_get_invoice_statuses( true ) );
+    $statuses   = array_keys( wpinv_get_invoice_statuses( true, true ) );
     
     $query  = "SELECT p.ID FROM " . $wpdb->posts . " AS p INNER JOIN " . $wpdb->postmeta . " AS pm ON p.ID = pm.post_id WHERE p.post_type = 'wpi_invoice' AND p.post_status IN( '" . implode( "','", $statuses ) . "' ) AND pm.meta_key = '_wpinv_item_ids' AND FIND_IN_SET( '" . (int)$item_id . "', pm.meta_value )";
     $in_use = $wpdb->get_var( $query ) > 0 ? true : false;

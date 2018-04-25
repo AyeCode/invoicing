@@ -87,3 +87,14 @@ function wpinv_bank_transfer_send_notification( $invoice_ID, $payment_data = arr
     }
 }
 add_action( 'wpinv_send_to_success_page', 'wpinv_bank_transfer_send_notification', 10, 2 );
+
+function wpinv_invoice_email_bank_info( $invoice, $email_type = '', $sent_to_admin = false ) {
+    if ( !empty( $invoice ) && $invoice->gateway == 'bank_transfer' && $invoice->status == 'wpi-pending' ) {
+        ?>
+        <div class="wpi-email-row">
+            <?php echo wpinv_show_bank_info( $invoice ); ?>
+        </div>
+        <?php
+    }
+}
+add_action( 'wpinv_email_invoice_details', 'wpinv_invoice_email_bank_info', 9, 3 );
