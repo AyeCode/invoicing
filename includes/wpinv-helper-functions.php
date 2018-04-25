@@ -89,7 +89,7 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 
-function wpinv_get_invoice_statuses( $trashed = false, $invoice = false ) {
+function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice = false ) {
     global $post;
 
     $invoice_statuses = array(
@@ -103,6 +103,10 @@ function wpinv_get_invoice_statuses( $trashed = false, $invoice = false ) {
         'wpi-renewal' => __( 'Renewal Payment', 'invoicing' )
     );
 
+    if ( $draft ) {
+        $invoice_statuses['draft'] = __( 'Draft', 'invoicing' );
+    }
+
     if ( $trashed ) {
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
@@ -111,7 +115,7 @@ function wpinv_get_invoice_statuses( $trashed = false, $invoice = false ) {
 }
 
 function wpinv_status_nicename( $status ) {
-    $statuses = wpinv_get_invoice_statuses();
+    $statuses = wpinv_get_invoice_statuses( true, true );
     $status   = isset( $statuses[$status] ) ? $statuses[$status] : __( $status, 'invoicing' );
 
     return $status;
@@ -327,6 +331,7 @@ function wpinv_get_currencies() {
         'USD' => __( 'US Dollar', 'invoicing' ),
         'EUR' => __( 'Euro', 'invoicing' ),
         'GBP' => __( 'Pound Sterling', 'invoicing' ),
+        'AED' => __( 'United Arab Emirates', 'invoicing' ),
         'AFN' => __( 'Afghan Afghani', 'invoicing' ),
         'ALL' => __( 'Albanian Lek', 'invoicing' ),
         'AMD' => __( 'Armenian Dram', 'invoicing' ),
