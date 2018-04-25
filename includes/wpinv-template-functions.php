@@ -1766,6 +1766,23 @@ function wpinv_checkout_total() {
 }
 add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_total', 9998 );
 
+function wpinv_checkout_accept_tandc() {
+    $page = wpinv_get_option( 'tandc_page' );
+    if(isset($page) && (int)$page > 0 && apply_filters( 'wpinv_checkout_show_terms', true )){
+        $terms_link = esc_url( get_permalink( $page ) );
+        ?>
+        <div id="wpinv_checkout_tandc" class="panel panel-success">
+            <div class="panel-body">
+                <label class="">
+                    <input type="checkbox" class="wpi-terms-checkbox" name="wpi_terms" id="wpi-terms" <?php checked( apply_filters( 'wpinv_terms_is_checked_default', isset( $_POST['wpi_terms'] ) ), true ); ?>> <span><?php printf( __( 'I&rsquo;ve read and accept the <a href="%s" target="_blank" class="wpi-terms-and-conditions-link">terms &amp; conditions</a>', 'invoicing' ), $terms_link ); ?></span> <span class="wpi-required">*</span>
+                </label>
+            </div>
+        </div>
+        <?php
+    }
+}
+add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_accept_tandc', 9995 );
+
 function wpinv_checkout_submit() {
 ?>
 <div id="wpinv_purchase_submit" class="panel panel-success">
