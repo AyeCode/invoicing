@@ -331,6 +331,7 @@ function wpinv_get_currencies() {
         'USD' => __( 'US Dollar', 'invoicing' ),
         'EUR' => __( 'Euro', 'invoicing' ),
         'GBP' => __( 'Pound Sterling', 'invoicing' ),
+        'AED' => __( 'United Arab Emirates', 'invoicing' ),
         'AFN' => __( 'Afghan Afghani', 'invoicing' ),
         'ALL' => __( 'Albanian Lek', 'invoicing' ),
         'AMD' => __( 'Armenian Dram', 'invoicing' ),
