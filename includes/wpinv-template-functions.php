@@ -1766,6 +1766,23 @@ function wpinv_checkout_total() {
 }
 add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_total', 9998 );
 
+function wpinv_checkout_accept_tandc() {
+    $page = wpinv_get_option( 'tandc_page' );
+    if(isset($page) && (int)$page > 0 && apply_filters( 'wpinv_checkout_show_terms', true )){
+        $terms_link = esc_url( get_permalink( $page ) );
+        ?>
+        <div id="wpinv_checkout_tandc" class="panel panel-success">
+            <div class="panel-body">
+                <label class="">
+                    <input type="checkbox" class="wpi-terms-checkbox" name="wpi_terms" id="wpi-terms" <?php checked( apply_filters( 'wpinv_terms_is_checked_default', isset( $_POST['wpi_terms'] ) ), true ); ?>> <span><?php printf( __( 'I&rsquo;ve read and accept the <a href="%s" target="_blank" class="wpi-terms-and-conditions-link">terms &amp; conditions</a>', 'invoicing' ), $terms_link ); ?></span> <span class="wpi-required">*</span>
+                </label>
+            </div>
+        </div>
+        <?php
+    }
+}
+add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_accept_tandc', 9995 );
+
 function wpinv_checkout_submit() {
 ?>
 <div id="wpinv_purchase_submit" class="panel panel-success">
@@ -2117,3 +2134,26 @@ function wpinv_invalid_invoice_content() {
     <?php
 }
 add_action( 'wpinv_invalid_invoice_content', 'wpinv_invalid_invoice_content' );
+
+add_action( 'wpinv_checkout_billing_fields_last', 'wpinv_force_company_name_field');
+function wpinv_force_company_name_field(){
+    $invoice = wpinv_get_invoice_cart();
+    $user_id = wpinv_get_user_id( $invoice->ID );
+    $company = empty( $user_id ) ? "" : get_user_meta( $user_id, '_wpinv_company', true );
+    if ( 1 == wpinv_get_option( 'force_show_company' ) && !wpinv_use_taxes() ) {
+        ?>
+        <p class="wpi-cart-field wpi-col2 wpi-colf">
+            <label for="wpinv_company" class="wpi-label"><?php _e('Company Name', 'invoicing'); ?></label>
+            <?php
+            echo wpinv_html_text(array(
+                'id' => 'wpinv_company',
+                'name' => 'wpinv_company',
+                'value' => $company,
+                'class' => 'wpi-input form-control',
+                'placeholder' => __('Company name', 'invoicing'),
+            ));
+            ?>
+        </p>
+        <?php
+    }
+}
