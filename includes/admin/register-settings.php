@@ -546,6 +546,36 @@ function wpinv_get_registered_settings() {
                 ),
             )
         ),
+        /** Privacy Settings */
+        'privacy' => apply_filters('wpinv_settings_privacy',
+            array(
+                'main' => array(
+                    'invoicing_privacy_policy_settings' => array(
+                        'id'   => 'invoicing_privacy_policy_settings',
+                        'name' => '<h3>' . __( 'Privacy Policy', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'privacy_page' => array(
+                        'id'          => 'privacy_page',
+                        'name'        => __( 'Privacy Page', 'invoicing' ),
+                        'desc'        => __( 'If no privacy policy page set in Settings->Privacy default settings, this page will be used on checkout page.', 'invoicing' ),
+                        'type'        => 'select',
+                        'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
+                        'chosen'      => true,
+                        'placeholder' => __( 'Select a page', 'invoicing' ),
+                    ),
+                    'invoicing_privacy_checkout_message' => array(
+                        'id' => 'invoicing_privacy_checkout_message',
+                        'name' => __( 'Checkout privacy policy', 'invoicing' ),
+                        'desc' => __( 'Optionally add privacy policy message which will display on checkout page.', 'invoicing' ),
+                        'type' => 'textarea',
+                        'class'=> 'regular-text',
+                        'rows' => 4,
+                        'std'  => sprintf( __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our %s.', 'invoicing' ), '[wpinv_privacy_policy]' ),
+                    ),
+                ),
+            )
+        ),
         /** Misc Settings */
         'misc' => apply_filters('wpinv_settings_misc',
             array(
@@ -834,6 +864,7 @@ function wpinv_get_settings_tabs() {
     $tabs['gateways'] = __( 'Payment Gateways', 'invoicing' );
     $tabs['taxes']    = __( 'Taxes', 'invoicing' );
     $tabs['emails']   = __( 'Emails', 'invoicing' );
+    $tabs['privacy']  = __( 'Privacy', 'invoicing' );
     $tabs['misc']     = __( 'Misc', 'invoicing' );
     $tabs['tools']    = __( 'Tools', 'invoicing' );
 
@@ -875,6 +906,9 @@ function wpinv_get_registered_settings_sections() {
         ) ),
         'emails' => apply_filters( 'wpinv_settings_sections_emails', array(
             'main' => __( 'Email Settings', 'invoicing' ),
+        ) ),
+        'privacy' => apply_filters( 'wpinv_settings_sections_privacy', array(
+            'main' => __( 'Privacy policy', 'invoicing' ),
         ) ),
         'misc' => apply_filters( 'wpinv_settings_sections_misc', array(
             'main' => __( 'Miscellaneous', 'invoicing' ),
