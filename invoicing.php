@@ -7,6 +7,8 @@ Version: 1.0.3
 Author: AyeCode Ltd
 Author URI: https://wpinvoicing.com
 License: GPLv3
+Text Domain: userswp
+Domain Path: /languages
 */
 
 // MUST have WordPress.
