@@ -112,6 +112,7 @@ Option to force show company name - ADDED
 Avada colorpicker conflicts - FIXED
 It is hard to link paypal payment to invoice at paypal site - CHANGED
 Fix the color picker conflict with Avada theme - FIXED
+GDPR Compliance - ADDED
 
 = 1.0.2 =
 Paying old recurring invoice treated as renewal payment and creates new invoice - FIXED
