@@ -1768,18 +1768,21 @@ add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_total', 9998 );
 
 function wpinv_checkout_accept_tandc() {
     $page = wpinv_get_option( 'tandc_page' );
-    if(isset($page) && (int)$page > 0 && apply_filters( 'wpinv_checkout_show_terms', true )){
-        $terms_link = esc_url( get_permalink( $page ) );
-        ?>
-        <div id="wpinv_checkout_tandc" class="panel panel-success">
-            <div class="panel-body">
+    ?>
+    <div id="wpinv_checkout_tandc" class="panel panel-success">
+        <div class="panel-body">
+            <?php echo wpinv_get_policy_text(); ?>
+            <?php
+            if(isset($page) && (int)$page > 0 && apply_filters( 'wpinv_checkout_show_terms', true )){
+                $terms_link = esc_url( get_permalink( $page ) );
+                ?>
                 <label class="">
                     <input type="checkbox" class="wpi-terms-checkbox" name="wpi_terms" id="wpi-terms" <?php checked( apply_filters( 'wpinv_terms_is_checked_default', isset( $_POST['wpi_terms'] ) ), true ); ?>> <span><?php printf( __( 'I&rsquo;ve read and accept the <a href="%s" target="_blank" class="wpi-terms-and-conditions-link">terms &amp; conditions</a>', 'invoicing' ), $terms_link ); ?></span> <span class="wpi-required">*</span>
                 </label>
-            </div>
+            <?php } ?>
         </div>
-        <?php
-    }
+    </div>
+    <?php
 }
 add_action( 'wpinv_checkout_form_bottom', 'wpinv_checkout_accept_tandc', 9995 );
 
@@ -2156,4 +2159,30 @@ function wpinv_force_company_name_field(){
         </p>
         <?php
     }
+}
+
+/**
+ * Function to get privacy policy text.
+ *
+ * @since 1.0.13
+ * @return string
+ */
+function wpinv_get_policy_text() {
+    $privacy_page_id = get_option( 'wp_page_for_privacy_policy', 0 );
+
+    $text = wpinv_get_option('invoicing_privacy_checkout_message', sprintf( __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our %s.', 'invoicing' ), '[wpinv_privacy_policy]' ));
+
+    if(!$privacy_page_id){
+        $privacy_page_id = wpinv_get_option( 'privacy_page', 0 );
+    }
+
+    $privacy_link    = $privacy_page_id ? '<a href="' . esc_url( get_permalink( $privacy_page_id ) ) . '" class="wpinv-privacy-policy-link" target="_blank">' . __( 'privacy policy', 'invoicing' ) . '</a>' : __( 'privacy policy', 'invoicing' );
+
+    $find_replace = array(
+        '[wpinv_privacy_policy]' => $privacy_link,
+    );
+
+    $privacy_text = str_replace( array_keys( $find_replace ), array_values( $find_replace ), $text );
+
+    return wp_kses_post(wpautop($privacy_text));
 }
