@@ -17,7 +17,7 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '1.0.4' );
+    define( 'WPINV_VERSION', '1.0.3' );
 }
 
 if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {
