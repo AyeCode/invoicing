@@ -103,6 +103,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.4 =
+Invoice notes should not display in RSS feeds - FIXED
+
 = 1.0.3 =
 Invoice created date should not updated on invoice published - CHANGED
 Show recurring supported gateways in backend item page - CHANGED
