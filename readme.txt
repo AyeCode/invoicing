@@ -103,6 +103,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.5 =
+Update authorize.net SSL certificates - FIXED
+
 = 1.0.4 =
 Invoice notes should not display in RSS feeds - FIXED
 
