@@ -24,6 +24,7 @@ class WPInv_Notes {
     public function actions() {
         // Secure inovice notes
         add_action( 'pre_get_comments', array( $this, 'set_invoice_note_type' ), 11, 1 );
+        add_action( 'comment_feed_where', array( $this, 'wpinv_comment_feed_where' ), 10, 1 );
         
         // Count comments
         add_filter( 'wp_count_comments', array( $this, 'wp_count_comments' ), 11, 2 );
@@ -146,5 +147,9 @@ class WPInv_Notes {
         }
 
         return $stats;
+    }
+
+    function wpinv_comment_feed_where($where){
+        return $where . ( $where ? ' AND ' : '' ) . " comment_type != 'wpinv_note' ";
     }
 }
