@@ -240,6 +240,33 @@ function wpinv_admin_messages() {
 }
 add_action( 'admin_notices', 'wpinv_admin_messages' );
 
+add_action( 'admin_init', 'wpinv_show_test_payment_gateway_notice' );
+function wpinv_show_test_payment_gateway_notice(){
+    add_action( 'admin_notices', 'wpinv_test_payment_gateway_messages' );
+}
+
+function wpinv_test_payment_gateway_messages(){
+    $gateways = wpinv_get_enabled_payment_gateways();
+    $name = array(); $test_gateways = '';
+    if ($gateways) {
+        foreach ($gateways as $id => $gateway) {
+            if (wpinv_is_test_mode($id)) {
+                $name[] = $gateway['checkout_label'];
+            }
+        }
+        $test_gateways = implode(', ', $name);
+    }
+    if(isset($test_gateways) && !empty($test_gateways)){
+        $link = admin_url('admin.php?page=wpinv-settings&tab=gateways');
+        $notice = wp_sprintf( __('<strong>Important:</strong> Payment Gateway(s) %s are in testing mode and will not receive real payments. Go to <a href="%s"> Gateway Settings</a>.', 'invoicing'), $test_gateways, $link );
+        ?>
+        <div class="notice notice-warning is-dismissible">
+            <p><?php echo $notice; ?></p>
+        </div>
+        <?php
+    }
+}
+
 function wpinv_items_columns( $existing_columns ) {
     global $wpinv_euvat;
     
