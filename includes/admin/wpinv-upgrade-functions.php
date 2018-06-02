@@ -188,9 +188,11 @@ function wpinv_update_new_email_settings() {
 
     $current_options = get_option( 'wpinv_settings', array() );
     $options = array();
+    $registered_settings = wpinv_get_registered_settings();
+    $email_settings = $registered_settings['emails'];
 
     // Populate some default values
-    foreach( wpinv_get_registered_settings() as $tab => $sections ) {
+    foreach( $email_settings as $tab => $sections ) {
         foreach( $sections as $section => $settings) {
             // Check for backwards compatibility
             $tab_sections = wpinv_get_settings_tab_sections( $tab );
