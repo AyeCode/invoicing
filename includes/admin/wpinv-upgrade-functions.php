@@ -187,33 +187,25 @@ function wpinv_update_new_email_settings() {
     global $wpinv_options;
 
     $current_options = get_option( 'wpinv_settings', array() );
-    $options = array();
+    $options = array(
+        'email_new_invoice_body' => __( '<p>Hi Admin,</p><p>You have received payment invoice from {name}.</p>', 'invoicing' ),
+        'email_cancelled_invoice_body' => __( '<p>Hi Admin,</p><p>The invoice #{invoice_number} from {site_title} has been cancelled.</p>', 'invoicing' ),
+        'email_failed_invoice_body' => __( '<p>Hi Admin,</p><p>Payment for invoice #{invoice_number} from {site_title} has been failed.</p>', 'invoicing' ),
+        'email_onhold_invoice_body' => __( '<p>Hi {name},</p><p>Your invoice is on-hold until we confirm your payment has been received.</p>', 'invoicing' ),
+        'email_processing_invoice_body' => __( '<p>Hi {name},</p><p>Your invoice has been received at {site_title} and is now being processed.</p>', 'invoicing' ),
+        'email_refunded_invoice_body' => __( '<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>', 'invoicing' ),
+        'email_user_invoice_body' => __( '<p>Hi {name},</p><p>An invoice has been created for you on {site_title}. To view / pay for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
+        'email_user_note_body' => __( '<p>Hi {name},</p><p>Following note has been added to your {invoice_label}:</p><blockquote class="wpinv-note">{customer_note}</blockquote>', 'invoicing' ),
+        'email_overdue_body' => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To view / pay now for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
+    );
 
-    // Populate some default values
-    foreach( wpinv_get_registered_settings() as $tab => $sections ) {
-        foreach( $sections as $section => $settings) {
-            // Check for backwards compatibility
-            $tab_sections = wpinv_get_settings_tab_sections( $tab );
-            if( ! is_array( $tab_sections ) || ! array_key_exists( $section, $tab_sections ) ) {
-                $section = 'main';
-                $settings = $sections;
-            }
-
-            foreach ( $settings as $option ) {
-                if ( !empty( $option['id'] ) && !isset( $wpinv_options[ $option['id'] ] ) ) {
-                    if ( 'checkbox' == $option['type'] && !empty( $option['std'] ) ) {
-                        $options[ $option['id'] ] = '1';
-                    } else if ( !empty( $option['std'] ) ) {
-                        $options[ $option['id'] ] = $option['std'];
-                    }
-                }
-            }
+    foreach ($options as $option => $value){
+        if (!isset($current_options[$option])) {
+            $current_options[$option] = $value;
         }
     }
 
-    $merged_options_current = array_merge( $wpinv_options, $options );
-    $merged_options = array_merge( $merged_options_current, $current_options );
-    $wpinv_options = $merged_options;
+    $wpinv_options = $current_options;
 
-    update_option( 'wpinv_settings', $merged_options );
+    update_option( 'wpinv_settings', $current_options );
 }

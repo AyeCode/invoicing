@@ -105,6 +105,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.5 =
 Update authorize.net SSL certificates - FIXED
+Update activates sandbox mode for active payment gateways - FIXED
+Show warning if test mode active for payment gateways - ADDED
 
 = 1.0.4 =
 Invoice notes should not display in RSS feeds - FIXED
