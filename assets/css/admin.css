@@ -1559,6 +1559,7 @@ textarea.wpi-email_overdue_content {
     float: none;
     display: inline-block;
 }
+.wpi-mcheck-rows.wpi-mcheck-email_due_reminder_days .wpi-mcheck-row {display: block;}
 .wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row {
     width: 33%;
 }
