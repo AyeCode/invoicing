@@ -301,7 +301,7 @@
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
-#wpinv-fields .wpi-input.required {visibility: visible;}
+#wpinv-fields .wpi-input.required, .payment_box .required {visibility: visible;}
 @media screen and (max-width: 576px) {
   .wpi-g .table-responsive {
     display: block;

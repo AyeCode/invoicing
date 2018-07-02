@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Invoicing 1.0.4\n"
+"Project-Id-Version: Invoicing 1.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-25 13:52+0100\n"
-"PO-Revision-Date: 2018-05-25 13:52+0100\n"
+"POT-Creation-Date: 2018-06-02 11:13+0100\n"
+"PO-Revision-Date: 2018-06-02 11:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: AyeCode Ltd <info@ayecode.io>\n"
 "Language: en_US\n"
@@ -376,7 +376,7 @@ msgstr ""
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:52
 #: includes/admin/subscriptions.php:244
 #: includes/admin/wpinv-admin-functions.php:23
-#: includes/admin/wpinv-admin-functions.php:259
+#: includes/admin/wpinv-admin-functions.php:286
 #: includes/class-wpinv-reports.php:258 includes/class-wpinv-reports.php:379
 #: includes/wpinv-invoice-functions.php:1829
 msgid "ID"
@@ -765,7 +765,7 @@ msgid "<label>Transaction ID:</label> %s"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:54
-#: includes/admin/wpinv-admin-functions.php:249
+#: includes/admin/wpinv-admin-functions.php:276
 #: includes/wpinv-template-functions.php:1008
 msgid "Price"
 msgstr ""
@@ -791,12 +791,12 @@ msgid "Tax (%)"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:81
-#: includes/admin/wpinv-admin-functions.php:251
+#: includes/admin/wpinv-admin-functions.php:278
 msgid "VAT rule type"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:97
-#: includes/admin/wpinv-admin-functions.php:254
+#: includes/admin/wpinv-admin-functions.php:281
 msgid "VAT class"
 msgstr ""
 
@@ -835,7 +835,7 @@ msgid "Is Recurring Item?"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:237
-#: includes/admin/wpinv-admin-functions.php:257
+#: includes/admin/wpinv-admin-functions.php:284
 msgid "Recurring"
 msgstr ""
 
@@ -1767,7 +1767,7 @@ msgid ""
 msgstr ""
 
 #: includes/admin/subscriptions.php:246
-#: includes/admin/wpinv-admin-functions.php:258
+#: includes/admin/wpinv-admin-functions.php:285
 #: includes/class-wpinv-reports.php:259 includes/class-wpinv-reports.php:381
 #: includes/wpinv-template-functions.php:1982
 msgid "Date"
@@ -1905,70 +1905,140 @@ msgstr ""
 msgid "This item in not editable."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:248
+#: includes/admin/wpinv-admin-functions.php:261
+#, php-format
+msgid ""
+"<strong>Important:</strong> Payment Gateway(s) %s are in testing mode and "
+"will not receive real payments. Go to <a href=\"%s\"> Gateway Settings</a>."
+msgstr ""
+
+#: includes/admin/wpinv-admin-functions.php:275
 #: includes/wpinv-gateway-functions.php:193
 msgid "Title"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:256
+#: includes/admin/wpinv-admin-functions.php:283
 msgid "Type"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:326
+#: includes/admin/wpinv-admin-functions.php:353
 msgid "All VAT rules"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:338
+#: includes/admin/wpinv-admin-functions.php:365
 msgid "All VAT classes"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:349
+#: includes/admin/wpinv-admin-functions.php:376
 msgid "All item types"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:479
+#: includes/admin/wpinv-admin-functions.php:506
 #, php-format
 msgid "Recurring payments only supported by: %s"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:491
-#: includes/admin/wpinv-admin-functions.php:494
-#: includes/admin/wpinv-admin-functions.php:496
+#: includes/admin/wpinv-admin-functions.php:518
+#: includes/admin/wpinv-admin-functions.php:521
+#: includes/admin/wpinv-admin-functions.php:523
 msgid "Discount updated."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:492
+#: includes/admin/wpinv-admin-functions.php:519
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:493
+#: includes/admin/wpinv-admin-functions.php:520
 msgid "Custom field deleted."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:495
+#: includes/admin/wpinv-admin-functions.php:522
 #, php-format
 msgid "Discount restored to revision from %s"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:497
+#: includes/admin/wpinv-admin-functions.php:524
 msgid "Discount saved."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:498
+#: includes/admin/wpinv-admin-functions.php:525
 msgid "Discount submitted."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:499
+#: includes/admin/wpinv-admin-functions.php:526
 #, php-format
 msgid "Discount scheduled for: <strong>%1$s</strong>."
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:499
+#: includes/admin/wpinv-admin-functions.php:526
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:500
+#: includes/admin/wpinv-admin-functions.php:527
 msgid "Discount draft updated."
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:191
+#: includes/wpinv-email-functions.php:690
+msgid "<p>Hi Admin,</p><p>You have received payment invoice from {name}.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:192
+#: includes/wpinv-email-functions.php:730
+msgid ""
+"<p>Hi Admin,</p><p>The invoice #{invoice_number} from {site_title} has been "
+"cancelled.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:193
+#: includes/wpinv-email-functions.php:770
+msgid ""
+"<p>Hi Admin,</p><p>Payment for invoice #{invoice_number} from {site_title} "
+"has been failed.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:194
+#: includes/wpinv-email-functions.php:817
+msgid ""
+"<p>Hi {name},</p><p>Your invoice is on-hold until we confirm your payment "
+"has been received.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:195
+#: includes/wpinv-email-functions.php:864
+msgid ""
+"<p>Hi {name},</p><p>Your invoice has been received at {site_title} and is "
+"now being processed.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:196
+#: includes/wpinv-email-functions.php:958
+msgid "<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:197
+#: includes/wpinv-email-functions.php:1005
+msgid ""
+"<p>Hi {name},</p><p>An invoice has been created for you on {site_title}. To "
+"view / pay for this invoice please use the following link: <a class=\"btn "
+"btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:198
+#: includes/wpinv-email-functions.php:1045
+msgid ""
+"<p>Hi {name},</p><p>Following note has been added to your {invoice_label}:</"
+"p><blockquote class=\"wpinv-note\">{customer_note}</blockquote>"
+msgstr ""
+
+#: includes/admin/wpinv-upgrade-functions.php:199
+#: includes/wpinv-email-functions.php:1093
+msgid ""
+"<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
+"<a href=\"{invoice_link}\">#{invoice_number}</a> {is_was} due on "
+"{invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</"
+"p><p>To view / pay now for this invoice please use the following link: <a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
 #: includes/class-wpinv-ajax.php:197 includes/class-wpinv-ajax.php:367
@@ -8108,10 +8178,6 @@ msgstr ""
 msgid "The content of the email (wildcards and HTML are allowed)."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:690
-msgid "<p>Hi Admin,</p><p>You have received payment invoice from {name}.</p>"
-msgstr ""
-
 #: includes/wpinv-email-functions.php:698
 msgid "Cancelled Invoice"
 msgstr ""
@@ -8139,12 +8205,6 @@ msgstr ""
 msgid "Cancelled invoice"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:730
-msgid ""
-"<p>Hi Admin,</p><p>The invoice #{invoice_number} from {site_title} has been "
-"cancelled.</p>"
-msgstr ""
-
 #: includes/wpinv-email-functions.php:738
 msgid "Failed Invoice"
 msgstr ""
@@ -8161,12 +8221,6 @@ msgstr ""
 
 #: includes/wpinv-email-functions.php:762
 msgid "Failed invoice"
-msgstr ""
-
-#: includes/wpinv-email-functions.php:770
-msgid ""
-"<p>Hi Admin,</p><p>Payment for invoice #{invoice_number} from {site_title} "
-"has been failed.</p>"
 msgstr ""
 
 #: includes/wpinv-email-functions.php:778
@@ -8205,12 +8259,6 @@ msgstr ""
 msgid "Check if you want to send this notification email to site Admin."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:817
-msgid ""
-"<p>Hi {name},</p><p>Your invoice is on-hold until we confirm your payment "
-"has been received.</p>"
-msgstr ""
-
 #: includes/wpinv-email-functions.php:825
 msgid "Processing Invoice"
 msgstr ""
@@ -8219,12 +8267,6 @@ msgstr ""
 msgid ""
 "This is an invoice notification sent to users containing invoice details "
 "after payment."
-msgstr ""
-
-#: includes/wpinv-email-functions.php:864
-msgid ""
-"<p>Hi {name},</p><p>Your invoice has been received at {site_title} and is "
-"now being processed.</p>"
 msgstr ""
 
 #: includes/wpinv-email-functions.php:872
@@ -8268,10 +8310,6 @@ msgstr ""
 msgid "Your invoice has been refunded"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:958
-msgid "<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>"
-msgstr ""
-
 #: includes/wpinv-email-functions.php:966
 msgid "Customer Invoice"
 msgstr ""
@@ -8290,13 +8328,6 @@ msgstr ""
 msgid "Your invoice {invoice_number} details"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1005
-msgid ""
-"<p>Hi {name},</p><p>An invoice has been created for you on {site_title}. To "
-"view / pay for this invoice please use the following link: <a class=\"btn "
-"btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
-msgstr ""
-
 #: includes/wpinv-email-functions.php:1013
 msgid "Customer Note"
 msgstr ""
@@ -8313,12 +8344,6 @@ msgstr ""
 
 #: includes/wpinv-email-functions.php:1037
 msgid "A note has been added to your {invoice_label}"
-msgstr ""
-
-#: includes/wpinv-email-functions.php:1045
-msgid ""
-"<p>Hi {name},</p><p>Following note has been added to your {invoice_label}:</"
-"p><blockquote class=\"wpinv-note\">{customer_note}</blockquote>"
 msgstr ""
 
 #: includes/wpinv-email-functions.php:1053
@@ -8347,15 +8372,6 @@ msgstr ""
 
 #: includes/wpinv-email-functions.php:1091
 msgid "The content of the email."
-msgstr ""
-
-#: includes/wpinv-email-functions.php:1093
-msgid ""
-"<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
-"<a href=\"{invoice_link}\">#{invoice_number}</a> {is_was} due on "
-"{invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</"
-"p><p>To view / pay now for this invoice please use the following link: <a "
-"class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
 #: includes/wpinv-email-functions.php:1221
