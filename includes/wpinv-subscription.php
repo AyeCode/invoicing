@@ -569,7 +569,7 @@ class WPInv_Subscription {
                 $user = __( 'gateway', 'invoicing' );
             }
 
-            $note = sprintf( __( 'Subscription has been cancelled by %s', 'invoicing' ), $this->parent_payment_id, $user );
+            $note = sprintf( __( 'Subscription has been cancelled by %s', 'invoicing' ), $user );
             wpinv_insert_payment_note( $this->parent_payment_id, $note, '', '', true );
 
             $this->status = 'cancelled';
