@@ -103,6 +103,11 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.6 =
+Invoice print table design issue on mobile - FIXED
+Option to add custom style for invoice print page - ADDED
+Setting for transaction type in Authorize.net - ADDED
+
 = 1.0.5 =
 Update authorize.net SSL certificates - FIXED
 Upgrade from older version < 1.0.3 can sometimes activate sandbox mode for active payment gateways - FIXED

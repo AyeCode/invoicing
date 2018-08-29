@@ -1204,6 +1204,15 @@ function wpinv_display_style( $invoice ) {
 
     wp_print_styles( 'open-sans' );
     wp_print_styles( 'wpinv-single-style' );
+
+    $custom_css = wpinv_get_option('template_custom_css');
+    if(isset($custom_css) && !empty($custom_css)){
+        $custom_css     = wp_kses( $custom_css, array( '\'', '\"' ) );
+        $custom_css     = str_replace( '&gt;', '>', $custom_css );
+        echo '<style type="text/css">';
+        echo $custom_css;
+        echo '</style>';
+    }
 }
 add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
 add_action( 'wpinv_invalid_invoice_head', 'wpinv_display_style' );

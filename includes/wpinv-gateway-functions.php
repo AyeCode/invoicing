@@ -527,6 +527,18 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
             'desc' => __( 'The MD5 Hash security feature allows you to authenticate transaction responses from the Authorize.Net. If you are accepting recurring payments then md5 hash will helps to validate response from Authorize.net. It can be obtained from Authorize.Net Account > Settings > Security Settings > General Settings > MD5 Hash.', 'invoicing' ),
             'std' => '',
         );
+
+    $setting['authorizenet_transaction_type'] = array(
+        'id'          => 'authorizenet_transaction_type',
+        'name'        => __( 'Transaction Type', 'invoicing' ),
+        'desc'        => __( 'Choose transaction type.', 'invoicing' ),
+        'type'        => 'select',
+        'options'     => array(
+            'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
+            'authorize_only' => __( 'Authorize Only', 'invoicing' ),
+        ),
+        'std'         => 'authorize_capture'
+    );
         
     $setting['authorizenet_ipn_url'] = array(
             'type' => 'ipn_url',
