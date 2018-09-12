@@ -1576,7 +1576,7 @@ function wpinv_payment_mode_select() {
                                 </div>
                                 <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
                                     <?php if ( !empty( $description ) ) { ?>
-                                        <div class="wpi-gateway-desc alert alert-info"><?php echo $description;?></div>
+                                        <div class="wpi-gateway-desc alert alert-info"><?php _e( $description, 'invoicing' ); ?></div>
                                     <?php } ?>
                                     <?php do_action( 'wpinv_' . $gateway_id . '_cc_form', $invoice_id ) ;?>
                                 </div>

@@ -210,7 +210,7 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
             wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
         }
     } else {
-        wpinv_record_gateway_error( wp_sprintf( __( 'Authorize.Net payment error occurred. Payment creation failed while processing a Authorize.net payment. Payment data: %s', 'invoicing' ), print_r( $payment_data, true ) ), $invoice );
+        wpinv_record_gateway_error( wp_sprintf( __( 'Authorize.Net payment error occurred. Payment creation failed while processing a Authorize.Net payment. Payment data: %s', 'invoicing' ), print_r( $payment_data, true ) ), $invoice );
         wpinv_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['wpi-gateway'] );
     }
 }

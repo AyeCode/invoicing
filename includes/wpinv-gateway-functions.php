@@ -494,7 +494,7 @@ add_filter( 'wpinv_gateway_settings_bank_transfer', 'wpinv_gateway_settings_bank
 // Authorize.Net settings
 function wpinv_gateway_settings_authorizenet( $setting ) {
     $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
-    $setting['authorizenet_desc']['std'] = __( 'Pay using a Authorize.Net to process credit card / debit card transactions.', 'invoicing' );
+    $setting['authorizenet_desc']['std'] = __( 'Pay using a Authorize.Net to process Credit card / Debit card transactions.', 'invoicing' );
     
     $setting['authorizenet_sandbox'] = array(
             'type' => 'checkbox',
@@ -524,7 +524,7 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
             'type' => 'text',
             'id'   => 'authorizenet_md5_hash',
             'name' => __( 'MD5-Hash', 'invoicing' ),
-            'desc' => __( 'The MD5 Hash security feature allows you to authenticate transaction responses from the Authorize.Net. If you are accepting recurring payments then md5 hash will helps to validate response from Authorize.net. It can be obtained from Authorize.Net Account > Settings > Security Settings > General Settings > MD5 Hash.', 'invoicing' ),
+            'desc' => __( 'The MD5 Hash security feature allows to authenticate transaction responses from the Authorize.Net for recurring payments. It can be obtained from Authorize.Net Account > Settings > Security Settings > General Settings > MD5 Hash.', 'invoicing' ),
             'std' => '',
         );
 
@@ -558,7 +558,7 @@ add_filter( 'wpinv_gateway_settings_authorizenet', 'wpinv_gateway_settings_autho
 // Worldpay settings
 function wpinv_gateway_settings_worldpay( $setting ) {
     $setting['worldpay_active']['desc'] = $setting['worldpay_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, ARS, CAD, CHF, DKK, EUR, HKD, MYR, GBP, NZD, NOK, SGD, LKR, SEK, TRY, USD, ZAR )', 'invoicing' );
-    $setting['worldpay_desc']['std'] = __( 'Pay using a Worldpay account to process credit card / debit card transactions.', 'invoicing' );
+    $setting['worldpay_desc']['std'] = __( 'Pay using a Worldpay account to process Credit card / Debit card transactions.', 'invoicing' );
     
     $setting['worldpay_sandbox'] = array(
             'type' => 'checkbox',

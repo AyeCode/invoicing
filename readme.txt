@@ -108,6 +108,7 @@ Invoice print table design issue on mobile - FIXED
 Option to add custom style for invoice print page - ADDED
 Setting for transaction type in Authorize.net - ADDED
 Invoice not saving due to conflicts with ACFPro - FIXED
+Translation typos and consistency - FIXED
 
 = 1.0.5 =
 Update authorize.net SSL certificates - FIXED
