@@ -478,7 +478,7 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     } else {
         $desc .= $geoip2_message;
     }
-    $desc .= '</p><p>'. __( 'GeoPlugin is a great free service please consider supporting them: ', 'invoicing' ) . ' <a href="http://www.geoplugin.com/" target="_blank">GeoPlugin.com</a></p>';
+    $desc .= '</p><p>'. __( 'geoPlugin is a great free service please consider supporting them: ', 'invoicing' ) . ' <a href="http://www.geoplugin.com/" target="_blank">GeoPlugin.com</a></p>';
     $desc .= '</label>';
     
     $html .= $desc;

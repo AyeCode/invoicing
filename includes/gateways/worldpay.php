@@ -97,7 +97,7 @@ function wpinv_process_worldpay_payment( $purchase_data ) {
         <?php } ?>
     <?php } ?>
     <?php do_action( 'wpinv_worldpay_form_parameters', $invoice ); ?>
-    <input type="submit" name="wpi_worldpay_submit" value="<?php esc_attr_e( 'Pay by Debit/Credit Card (WorldPay)', 'invoicing' ) ;?>">
+    <input type="submit" name="wpi_worldpay_submit" value="<?php esc_attr_e( 'Pay by Credit Card / Debit Card (WorldPay)', 'invoicing' ) ;?>">
 </form>
 <script type="text/javascript">document.wpi_worldpay_form.submit();</script>
 <?php do_action( 'wpinv_worldpay_form_after', $invoice ); ?>

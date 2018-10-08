@@ -318,3 +318,9 @@ html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust
         padding-left: 0;
     }
 }
+
+@media screen and (max-width:420px) {
+    .wpinv-print .wpinv-subscriptions-details .table {
+        font-size: 10.5px;
+    }
+}

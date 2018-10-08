@@ -74,7 +74,7 @@ class WPInv_Meta_Box_Items {
                                         <td class="id">
                                         </td>
                                         <td class="title">
-                                            <input type="text" class="regular-text" placeholder="Item name" value="" name="_wpinv_quick[name]">
+                                            <input type="text" class="regular-text" placeholder="<?php _e( 'Item Name', 'invoicing' ); ?>" value="" name="_wpinv_quick[name]">
                                             <?php if ( $wpinv_euvat->allow_vat_rules() ) { ?>
                                             <div class="wp-clearfix">
                                                 <label class="wpi-vat-rule">

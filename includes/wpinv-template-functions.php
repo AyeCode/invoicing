@@ -1204,6 +1204,15 @@ function wpinv_display_style( $invoice ) {
 
     wp_print_styles( 'open-sans' );
     wp_print_styles( 'wpinv-single-style' );
+
+    $custom_css = wpinv_get_option('template_custom_css');
+    if(isset($custom_css) && !empty($custom_css)){
+        $custom_css     = wp_kses( $custom_css, array( '\'', '\"' ) );
+        $custom_css     = str_replace( '&gt;', '>', $custom_css );
+        echo '<style type="text/css">';
+        echo $custom_css;
+        echo '</style>';
+    }
 }
 add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
 add_action( 'wpinv_invalid_invoice_head', 'wpinv_display_style' );
@@ -1567,7 +1576,7 @@ function wpinv_payment_mode_select() {
                                 </div>
                                 <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
                                     <?php if ( !empty( $description ) ) { ?>
-                                        <div class="wpi-gateway-desc alert alert-info"><?php echo $description;?></div>
+                                        <div class="wpi-gateway-desc alert alert-info"><?php _e( $description, 'invoicing' ); ?></div>
                                     <?php } ?>
                                     <?php do_action( 'wpinv_' . $gateway_id . '_cc_form', $invoice_id ) ;?>
                                 </div>

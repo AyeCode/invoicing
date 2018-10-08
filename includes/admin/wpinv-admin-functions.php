@@ -530,3 +530,38 @@ function wpinv_post_updated_messages( $messages ) {
     return $messages;
 }
 add_filter( 'post_updated_messages', 'wpinv_post_updated_messages', 10, 1 );
+
+add_action('admin_init', 'admin_init_example_type');
+
+/**
+ * hook the posts search if we're on the admin page for our type
+ */
+function admin_init_example_type() {
+    global $typenow;
+
+    if ($typenow === 'wpi_invoice' || $typenow === 'wpi_quote' ) {
+        add_filter('posts_search', 'posts_search_example_type', 10, 2);
+    }
+}
+
+/**
+ * add query condition for search invoice by email
+ * @param string $search the search string so far
+ * @param WP_Query $query
+ * @return string
+ */
+function posts_search_example_type($search, $query) {
+    global $wpdb;
+
+    if ($query->is_main_query() && !empty($query->query['s'])) {
+        $conditions_str = "{$wpdb->posts}.post_author IN ( SELECT ID FROM {$wpdb->users} WHERE user_email LIKE '%" . esc_sql( $query->query['s'] ) . "%' )";
+        if ( ! empty( $search ) ) {
+            $search = preg_replace( '/^ AND /', '', $search );
+            $search = " AND ( {$search} OR ( {$conditions_str} ) )";
+        } else {
+            $search = " AND ( {$conditions_str} )";
+        }
+    }
+
+    return $search;
+}

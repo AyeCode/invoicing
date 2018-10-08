@@ -166,7 +166,13 @@ class WPInv_Plugin {
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );
             //require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
+            // load the user class only on the users.php page
+            global $pagenow;
+            if($pagenow=='users.php'){
+                new WPInv_Admin_Users();
+            }
         }
         
         // include css inliner
