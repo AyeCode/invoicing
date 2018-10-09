@@ -731,9 +731,24 @@ function wpinv_get_registered_settings() {
                         'std' => ''
                     ),
                 ),
+                'custom-css' => array(
+                    'css_settings' => array(
+                        'id'   => 'css_settings',
+                        'name' => '<h3>' . __( 'Custom CSS', 'invoicing' ) . '</h3>',
+                        'type' => 'header',
+                    ),
+                    'template_custom_css' => array(
+                        'id' => 'template_custom_css',
+                        'name' => __( 'Invoice Template CSS', 'invoicing' ),
+                        'desc' => __( 'Add CSS to modify appearance of the print invoice page.', 'invoicing' ),
+                        'type' => 'textarea',
+                        'class'=> 'regular-text',
+                        'rows' => 10,
+                    ),
+                ),
             )
         ),
-        /** Misc Settings */
+        /** Tools Settings */
         'tools' => apply_filters('wpinv_settings_tools',
             array(
                 'main' => array(
@@ -913,6 +928,7 @@ function wpinv_get_registered_settings_sections() {
         'misc' => apply_filters( 'wpinv_settings_sections_misc', array(
             'main' => __( 'Miscellaneous', 'invoicing' ),
             'fields' => __( 'Fields Settings', 'invoicing' ),
+            'custom-css' => __( 'Custom CSS', 'invoicing' ),
         ) ),
         'tools' => apply_filters( 'wpinv_settings_sections_tools', array(
             'main' => __( 'Diagnostic Tools', 'invoicing' ),

@@ -176,7 +176,7 @@ jQuery(function($) {
     var invDetails = jQuery('#gdmbx2-metabox-wpinv_details').html();
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
-        jQuery('#submitdiv', jQuery('.wpinv')).hide();
+        jQuery('#submitdiv', jQuery('.wpinv')).remove();
         jQuery('#major-publishing-actions', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
     }
     var invBilling = jQuery('#wpinv-address.postbox').html();

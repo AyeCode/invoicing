@@ -351,7 +351,7 @@ class WPInv_EUVat {
             $vat_settings['vat_offline_check'] = array(
                 'id' => 'vat_offline_check',
                 'name' => __( 'Disable Basic Checks', 'invoicing' ),
-                'desc' => __( 'This will disable basic JS correct format validation attempts, it is very rare this should need to be disabled.', 'invoicing' ),
+                'desc' => __( 'Disable basic JS checks for correct format of VAT number. (Not Recommended)', 'invoicing' ),
                 'type' => 'checkbox'
             );
             
@@ -406,7 +406,7 @@ class WPInv_EUVat {
             }
             
             wpinv_update_option( 'wpinv_geoip2_date_updated', current_time( 'timestamp' ) );
-            echo sprintf(__( 'GeoIp2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
+            echo sprintf(__( 'GeoIP2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
         }
         
         exit;
