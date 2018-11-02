@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 3.1
-Tested up to: 4.9
-Stable tag: 1.0.5
+Tested up to: 5.0
+Stable tag: 1.0.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,16 +38,33 @@ Invoicing can be used as payment system with check out page by any plugin.
 * [GeoDirectory](https://wpgeodirectory.com/) - GeoDirectory uses Invoicing to manage Invoices, taxes, VAT and payments.
 * [Paid Members](https://wordpress.org/plugins/members/) - Coming soon - An add-on for Members to create paid membership with custom roles and permissions.
 
-= Premium Add-ons and Payment Gateways =
+= Payment Gateways =
 
+* PayPal Standard (built in) - Accept Paypal and credit card payments (single or recurring) via paypal.
+* Authorize.Net (built in) - Accept credit card payments (single or recurring) via Authorize.Net.
+* Worldpay (built in) - Accept credit card payments (single or recurring) via Worldpay.
+* Pre Bank Transfer (built in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
 * [Stripe](https://wpinvoicing.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
 * [PayPal Pro](https://wpinvoicing.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
-* [2CheckOut](https://wpinvoicing.com/downloads/2checkout-payment-gateway/) - Accept payments (single or recurring) via 2CO.
 * [PayFast](https://wpinvoicing.com/downloads/payfast-payment-gateway/) - Accept payments via PayFast.
-* [Sage Pay](https://wpinvoicing.com/downloads/sage-pay-payment-gateway/)  - Accept payments via Sage Pay
 * [Cheque Payment](https://wpinvoicing.com/downloads/cheque-payment-gateway/)  - Accept payments via Cheques
+* [Mollie](https://wpinvoicing.com/downloads/mollie-payment-gateway/)  - Accept payment via Mollie (EUR only)
+* [GoCardless](https://wpinvoicing.com/downloads/gocardless-payment-gateway/)  - Accept payments via GoCardless (direct debits)
+* [Sage Pay](https://wpinvoicing.com/downloads/sage-pay-payment-gateway/)  - Accept payments via Sage Pay
+* [2CheckOut](https://wpinvoicing.com/downloads/2checkout-payment-gateway/) - Accept payments (single or recurring) via 2CO.
 * [Cash on Delivery](https://wpinvoicing.com/downloads/cash-on-delivery-payment-gateway/) - Accept payments via Cash on Delivery
+* [PayUmoney](https://wpinvoicing.com/downloads/payumoney-payment-gateway/) - Accept payments via PayUmoney
+* [WebPay](https://wpinvoicing.com/downloads/payumoney-payment-gateway/) - Accept payments via WebPay
+
+
+= Add-ons =
+
+* [Quotes](https://wordpress.org/plugins/invoicing-quotes/) - Create quotes, send them to clients and convert them to Invoices when accepted by the customer
+* [PDF Invoices](https://wpinvoicing.com/downloads/pdf-invoices/) - Send PDF invoices via email or let users download them
 * [AffiliateWP Integration](https://wpinvoicing.com/downloads/affiliatewp-integration/) - Integrate with the [AffiliateWP plugin](https://affiliatewp.com/)
+* [Contact form 7](https://wpinvoicing.com/downloads/contact-form-7/) - Send a invoice/quote when a user fills out a form
+* [Gravity Forms](https://wpinvoicing.com/downloads/gravity-forms/) - Send a invoice/quote when a user fills out a form
+
 
 New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpinvoicing.com/contact-form/). we will consider it.
 
