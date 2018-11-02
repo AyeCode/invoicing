@@ -214,10 +214,6 @@ class WPInv_Plugin {
     public function enqueue_scripts() {
         $suffix       = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
-        wp_deregister_style( 'font-awesome' );
-        wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome' . $suffix . '.css', array(), '4.7.0' );
-        wp_enqueue_style( 'font-awesome' );
-        
         wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_front_style' );
                
@@ -257,12 +253,6 @@ class WPInv_Plugin {
         $post_type  = wpinv_admin_post_type();
         $suffix     = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         $page       = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : '';
-
-        wp_deregister_style( 'font-awesome' );
-        wp_register_style( 'font-awesome', 'https://use.fontawesome.com/releases/v5.4.2/css/all.css', array(), '5.4.2' );
-        wp_register_style( 'font-awesome-shim', 'https://use.fontawesome.com/releases/v5.4.2/css/v4-shims.css', array(), '5.4.2' );
-        wp_enqueue_style( 'font-awesome-shim' );
-        wp_enqueue_style( 'font-awesome' );
 
         $jquery_ui_css = false;
         if ( ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $post_type == 'wpi_discount' ) && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
