@@ -111,6 +111,7 @@ Invoice not saving due to conflicts with ACFPro - FIXED
 Translation typos and consistency - FIXED
 Search invoice by user email in admin side invoice listing - ADDED
 Column displaying invoice count in admin side users listing - ADDED
+Updated to use Font Awesome 5 JS version - CHANGED
 
 = 1.0.5 =
 Update authorize.net SSL certificates - FIXED

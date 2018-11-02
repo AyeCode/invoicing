@@ -1054,8 +1054,10 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
                         $line_item_tax = 0; // Zero tax
                     }
 
+                    $action = apply_filters( 'wpinv_display_line_item_action', '', $cart_item, $invoice, $cols );
+
                     $line_item = '<tr class="row-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . ' wpinv-item">';
-                        $line_item .= '<td class="name">' . esc_html__( $item_name, 'invoicing' ) . wpinv_get_item_suffix( $item );
+                        $line_item .= '<td class="name">' . $action. esc_html__( $item_name, 'invoicing' ) . wpinv_get_item_suffix( $item );
                         if ( $summary !== '' ) {
                             $line_item .= '<br/><small class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</small>';
                         }
