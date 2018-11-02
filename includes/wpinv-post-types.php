@@ -70,7 +70,7 @@ function wpinv_register_post_types() {
         'hierarchical'       => false,
         'menu_position'      => null,
         'supports'           => array( 'title', 'author' ),
-        'menu_icon'          => $menu_icon,
+        'menu_icon'          => 'dashicons-media-spreadsheet',
     );
             
     $args = apply_filters( 'wpinv_register_post_type_invoice', $args );
