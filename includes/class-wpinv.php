@@ -214,17 +214,13 @@ class WPInv_Plugin {
     public function enqueue_scripts() {
         $suffix       = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
-        wp_deregister_style( 'font-awesome' );
-        wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome' . $suffix . '.css', array(), '4.7.0' );
-        wp_enqueue_style( 'font-awesome' );
-        
         wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_front_style' );
                
         // Register scripts
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
         wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery', 'wpinv-vat-script' ),  WPINV_VERSION );
-        
+
         $localize                         = array();
         $localize['ajax_url']             = admin_url( 'admin-ajax.php' );
         $localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
@@ -258,10 +254,6 @@ class WPInv_Plugin {
         $suffix     = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         $page       = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : '';
 
-        wp_deregister_style( 'font-awesome' );
-        wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome' . $suffix . '.css', array(), '4.7.0' );
-        wp_enqueue_style( 'font-awesome' );
-        
         $jquery_ui_css = false;
         if ( ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $post_type == 'wpi_discount' ) && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
             $jquery_ui_css = true;
@@ -283,7 +275,6 @@ class WPInv_Plugin {
         if ( $page == 'wpinv-subscriptions' ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
-        $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue );
         
         if ( $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -293,14 +284,21 @@ class WPInv_Plugin {
         wp_enqueue_script( 'wp-color-picker' );
         
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
+        wp_register_script('font-awesome', 'https://use.fontawesome.com/releases/v5.4.1/js/all.js', array('font-awesome-shim'), WPINV_VERSION);
+        wp_register_script('font-awesome-shim', 'https://use.fontawesome.com/releases/v5.4.1/js/v4-shims.js', array(), WPINV_VERSION);
 
-        if ($post_type == 'wpi_invoice' || $post_type == 'wpi_quote' && ($pagenow == 'post-new.php' || $pagenow == 'post.php')) {
+        if (($post_type == 'wpi_invoice' || $post_type == 'wpi_quote') && ($pagenow == 'post-new.php' || $pagenow == 'post.php')) {
             $autofill_api = wpinv_get_option('address_autofill_api');
             $autofill_active = wpinv_get_option('address_autofill_active');
             if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api)) {
                 wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
                 wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery'), '', true);
             }
+        }
+
+        if ( !wp_script_is( 'font-awesome', 'enqueued' ) ) {
+            wp_enqueue_script( 'font-awesome' );
+            wp_enqueue_script( 'font-awesome-shim' );
         }
 
         wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
