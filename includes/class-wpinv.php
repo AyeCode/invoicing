@@ -136,7 +136,8 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/abstract-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wp-font-awesome-settings.php' );
+        require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
+
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }

@@ -122,6 +122,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
+Use font awesome library - CHANGED
 
 = 1.0.6 =
 Invoice print table design issue on mobile - FIXED
