@@ -322,7 +322,7 @@ function wpinv_process_paypal_ipn() {
 	$invoice_id = isset( $encoded_data_array['custom'] ) ? absint( $encoded_data_array['custom'] ) : 0;
     
 	wpinv_error_log( $encoded_data_array['txn_type'], 'PayPal txn_type', __FILE__, __LINE__ );
-	//wpinv_error_log( $encoded_data_array, 'PayPal IPN response', __FILE__, __LINE__ );
+	wpinv_error_log( $encoded_data_array, 'PayPal IPN response', __FILE__, __LINE__ );
 
 	if ( has_action( 'wpinv_paypal_' . $encoded_data_array['txn_type'] ) ) {
 		// Allow PayPal IPN types to be processed separately
@@ -552,9 +552,11 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
 
     $transaction_id = wpinv_get_payment_transaction_id( $parent_invoice_id );
     $times_billed   = $subscription->get_times_billed();
+    $signup_date    = strtotime( $subscription->created );
+    $today          = date( 'Ynd', $signup_date ) == date( 'Ynd', strtotime( $ipn_data['payment_date'] ) );
 
     // Look to see if payment is same day as signup and we have set the transaction ID on the parent payment yet.
-    if ( empty( $times_billed ) && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
+    if ( (empty($times_billed) || $today) && ( !$transaction_id || $transaction_id == $parent_invoice_id ) ) {
         wpinv_update_payment_status( $parent_invoice_id, 'publish' );
         sleep(1);
         
@@ -563,7 +565,7 @@ function wpinv_process_paypal_subscr_payment( $ipn_data ) {
         wpinv_insert_payment_note( $parent_invoice_id, sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $ipn_data['txn_id'] ), '', '', true );
         return;
     }
-    
+
     if ( wpinv_get_id_by_transaction_id( $ipn_data['txn_id'] ) ) {
         return; // Payment already recorded
     }
