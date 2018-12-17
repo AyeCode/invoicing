@@ -565,3 +565,27 @@ function posts_search_example_type($search, $query) {
 
     return $search;
 }
+
+add_action( 'admin_init', 'wpinv_reset_invoice_count' );
+function wpinv_reset_invoice_count(){
+    if(isset($_GET['reset_invoice_count']) && 1 == $_GET['reset_invoice_count'] && isset($_GET['_nonce']) && wp_verify_nonce($_GET['_nonce'], 'reset_invoice_count')) {
+        wpinv_update_option('invoice_sequence_start', 1);
+        delete_option('wpinv_last_invoice_number');
+        $url = add_query_arg(array('reset_invoice_done' => 1));
+        $url = remove_query_arg(array('reset_invoice_count', '_nonce'), $url);
+        wp_redirect($url);
+        exit();
+    }
+}
+
+add_action('admin_notices', 'wpinv_invoice_count_reset_message');
+function wpinv_invoice_count_reset_message(){
+    if(isset($_GET['reset_invoice_done']) && 1 == $_GET['reset_invoice_done']) {
+        $notice = __('Invoice number sequence reset successfully.', 'invoicing');
+        ?>
+        <div class="notice notice-success is-dismissible">
+            <p><?php echo $notice; ?></p>
+        </div>
+        <?php
+    }
+}
