@@ -180,13 +180,16 @@ function wpinv_get_registered_settings() {
     
     $currency_symbol = wpinv_currency_symbol();
     
-    $last_number = '';
+    $last_number = $reset_number = '';
     if ( $last_invoice_number = get_option( 'wpinv_last_invoice_number' ) ) {
         $last_invoice_number = is_numeric( $last_invoice_number ) ? $last_invoice_number : wpinv_clean_invoice_number( $last_invoice_number );
 
         if ( !empty( $last_invoice_number ) ) {
             $last_number = ' ' . wp_sprintf( __( "( Last Invoice's sequential number: <b>%s</b> )", 'invoicing' ), $last_invoice_number );
         }
+
+        $nonce = wp_create_nonce('reset_invoice_count');
+        $reset_number = '<a href="'.add_query_arg(array('reset_invoice_count' => 1, '_nonce' => $nonce)).'" class="btn button">'.__('Force Reset Sequence', 'invoicing' ). '</a>';
     }
     
     $alert_wrapper_start = '<p style="color: #F00">';
@@ -588,7 +591,7 @@ function wpinv_get_registered_settings() {
                     'sequential_invoice_number' => array(
                         'id'   => 'sequential_invoice_number',
                         'name' => __( 'Sequential Invoice Numbers', 'invoicing' ),
-                        'desc' => __( 'Check this box to enable sequential invoice numbers.', 'invoicing' ),
+                        'desc' => __('Check this box to enable sequential invoice numbers.', 'invoicing' ) . $reset_number,
                         'type' => 'checkbox',
                     ),
                     'invoice_sequence_start' => array(

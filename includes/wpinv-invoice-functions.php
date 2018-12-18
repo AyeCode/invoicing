@@ -2102,8 +2102,8 @@ function wpinv_get_next_invoice_number( $type = '' ) {
         return false;
     }
 
-    $number = $last_number = get_option( 'wpinv_last_invoice_number' );
-    $start  = wpinv_get_option( 'invoice_sequence_start' );
+    $number = $last_number = get_option( 'wpinv_last_invoice_number', 0 );
+    $start  = wpinv_get_option( 'invoice_sequence_start', 1 );
     if ( !absint( $start ) > 0 ) {
         $start = 1;
     }
