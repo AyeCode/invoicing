@@ -799,6 +799,9 @@ function wpinv_update_item( $args = array(), $wp_error = false ) {
                 case 'trial_interval':
                     $value = absint( $value );
                 break;
+				case 'editable':
+                    $value = (int) $value;
+                break;
             }
 
             $post_data['meta'][ $meta_field ] = $value;
