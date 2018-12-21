@@ -125,6 +125,7 @@ Recurring invoice treated as renewal payment for first payment due to delay in I
 Use font awesome library - CHANGED
 Option to allow reset invoice sequence - ADDED
 Item editable meta value not working after update item - FIXED
+Item summary displays warning if not filled - FIXED
 
 = 1.0.6 =
 Invoice print table design issue on mobile - FIXED
