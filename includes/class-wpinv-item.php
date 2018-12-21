@@ -175,7 +175,8 @@ class WPInv_Item {
     }
     
     public function get_summary() {
-        return get_the_excerpt( $this->ID );
+        $post = get_post( $this->ID );
+        return !empty( $post->post_excerpt ) ? $post->post_excerpt : '';
     }
 
     public function get_price() {
