@@ -320,30 +320,36 @@ function wpinv_checkout_required_fields() {
     $require_billing_details = apply_filters( 'wpinv_checkout_required_billing_details', wpinv_use_taxes() );
     
     if ( $require_billing_details ) {
-        ///$required_fields['email'] = array(
-                ///'error_id' => 'invalid_email',
-                ///'error_message' => __( 'Please enter a valid email address', 'invoicing' )
-            ///);
-        $required_fields['first_name'] = array(
-                'error_id' => 'invalid_first_name',
-                'error_message' => __( 'Please enter your first name', 'invoicing' )
-            );
-        $required_fields['address'] = array(
-                'error_id' => 'invalid_address',
-                'error_message' => __( 'Please enter your address', 'invoicing' )
-            );
-        $required_fields['city'] = array(
-                'error_id' => 'invalid_city',
-                'error_message' => __( 'Please enter your billing city', 'invoicing' )
-            );
-        $required_fields['state'] = array(
-                'error_id' => 'invalid_state',
-                'error_message' => __( 'Please enter billing state / province', 'invoicing' )
-            );
-        $required_fields['country'] = array(
-                'error_id' => 'invalid_country',
-                'error_message' => __( 'Please select your billing country', 'invoicing' )
-            );
+		if ( (bool)wpinv_get_option( 'fname_mandatory' ) ) {
+			$required_fields['first_name'] = array(
+				'error_id' => 'invalid_first_name',
+				'error_message' => __( 'Please enter your first name', 'invoicing' )
+			);
+		}
+		if ( (bool)wpinv_get_option( 'address_mandatory' ) ) {
+			$required_fields['address'] = array(
+				'error_id' => 'invalid_address',
+				'error_message' => __( 'Please enter your address', 'invoicing' )
+			);
+		}
+		if ( (bool)wpinv_get_option( 'city_mandatory' ) ) {
+			$required_fields['city'] = array(
+				'error_id' => 'invalid_city',
+				'error_message' => __( 'Please enter your billing city', 'invoicing' )
+			);
+		}
+		if ( (bool)wpinv_get_option( 'state_mandatory' ) ) {
+			$required_fields['state'] = array(
+				'error_id' => 'invalid_state',
+				'error_message' => __( 'Please enter billing state / province', 'invoicing' )
+			);
+		}
+		if ( (bool)wpinv_get_option( 'country_mandatory' ) ) {
+			$required_fields['country'] = array(
+				'error_id' => 'invalid_country',
+				'error_message' => __( 'Please select your billing country', 'invoicing' )
+			);
+		}
     }
 
     return apply_filters( 'wpinv_checkout_required_fields', $required_fields );
