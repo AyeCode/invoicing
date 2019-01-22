@@ -122,6 +122,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.8 =
 Checkout fields mandatory is option not working - FIXED
+Buddypress profile page invoices tab is not responsive - FIXED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
