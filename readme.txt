@@ -120,6 +120,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.8 =
+Authorize.net recurring payment only authorize the payment but allow capture as well - FIXED
+
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
 Use font awesome library - CHANGED
