@@ -1413,14 +1413,14 @@ function wpinv_checkout_validate_agree_to_terms() {
 }
 
 function wpinv_checkout_validate_invoice_user() {
-    global $wpi_cart;
+    global $wpi_cart, $user_ID;
     
     $valid_user_data = array(
         'user_id' => -1
     );
     
     // Verify there is a user_ID
-    if ( $user_ID = (int)$wpi_cart->get_user_id() ) {
+    if ( $user_ID == (int)$wpi_cart->get_user_id() ) {
         // Get the logged in user data
         $user_data = get_userdata( $user_ID );
         $required_fields  = wpinv_checkout_required_fields();
