@@ -87,13 +87,19 @@ class WPInv_EUVat {
     }
     
     public static function enqueue_vat_scripts() {
+        if( wpinv_use_taxes() && wpinv_get_option( 'apply_vat_rules' ) ) {
+            self::load_vat_scripts();
+        }
+    }
+
+    public static function load_vat_scripts(){
         $suffix     = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-        
+
         wp_register_script( 'wpinv-vat-validation-script', WPINV_PLUGIN_URL . 'assets/js/jsvat' . $suffix . '.js', array( 'jquery' ),  WPINV_VERSION );
         wp_register_script( 'wpinv-vat-script', WPINV_PLUGIN_URL . 'assets/js/euvat' . $suffix . '.js', array( 'jquery' ),  WPINV_VERSION );
-        
+
         $vat_name   = self::get_vat_name();
-        
+
         $vars = array();
         $vars['UseTaxes'] = wpinv_use_taxes();
         $vars['EUStates'] = self::get_eu_states();
@@ -125,7 +131,7 @@ class WPInv_EUVat {
         $vars['baseCountry'] = wpinv_get_default_country();
         $vars['disableVATSameCountry'] = ( self::same_country_rule() == 'no' ? true : false );
         $vars['disableVATSimpleCheck'] = wpinv_get_option( 'vat_offline_check' ) ? true : false;
-        
+
         wp_enqueue_script( 'wpinv-vat-validation-script' );
         wp_enqueue_script( 'wpinv-vat-script' );
         wp_localize_script( 'wpinv-vat-script', 'WPInv_VAT_Vars', $vars );
@@ -133,7 +139,7 @@ class WPInv_EUVat {
 
     public static function enqueue_admin_scripts() {
         if( isset( $_GET['page'] ) && 'wpinv-settings' == $_GET['page'] ) {
-            self::enqueue_vat_scripts();
+            self::load_vat_scripts();
         }
     }
     

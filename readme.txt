@@ -124,6 +124,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 Add classes to invoice page buttons - ADDED
 Add invoicing pages to admin menu items metabox - ADDED
 filter added to wpinv_get_invoices query params - ADDED
+Authorize.net recurring payment only authorize the payment allow capture as well - FIXED
+Super Duper updated to v1.0.8 - CHANGED
+load vat js files when required - FIXED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
