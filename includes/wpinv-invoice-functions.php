@@ -1802,6 +1802,8 @@ function wpinv_get_invoices( $args ) {
         $wp_query_args['no_found_rows'] = true;
     }
 
+    $wp_query_args = apply_filters('wpinv_get_invoices_args', $wp_query_args, $args);
+
     // Get results.
     $invoices = new WP_Query( $wp_query_args );
 
