@@ -122,6 +122,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.8 =
 Add classes to invoice page buttons - ADDED
+Add invoicing pages to admin menu items metabox - ADDED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
