@@ -65,7 +65,9 @@ if ($subs) { ?>
                 <td><?php
                     if ($sub->can_cancel()) {
                         echo '<a class="btn btn-sm btn-primary" href="' . $sub->get_cancel_url() . '" >' . __("Cancel", "invoicing") . '</a>';
-                    } ?>
+                    }
+                    do_action('wpinv_subscription_item_actions', $sub);
+                    ?>
                 </td>
             </tr>
             <?php
