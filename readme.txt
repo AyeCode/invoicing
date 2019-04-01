@@ -121,6 +121,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.8 =
+Checkout fields mandatory is option not working - FIXED
+Buddypress profile page invoices tab is not responsive - FIXED
 Add classes to invoice page buttons - ADDED
 Add invoicing pages to admin menu items metabox - ADDED
 filter added to wpinv_get_invoices query params - ADDED

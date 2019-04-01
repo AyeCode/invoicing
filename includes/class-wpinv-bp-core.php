@@ -121,7 +121,7 @@ class WPInv_BP_Component extends BP_Component {
             
             do_action( 'wpinv_bp_invoices_before_content' );
             ?>
-            <div class="wpi-bp-invoices invoices invoicing" style="position:relative">
+            <div class="wpi-g wpi-bp-invoices invoices invoicing" style="position:relative">
                 <div id="pag-top" class="pagination">
                     <div class="pag-count" id="invoice-dir-count-top">
                         <?php echo $this->pagination_count(); ?>
@@ -130,7 +130,7 @@ class WPInv_BP_Component extends BP_Component {
                         <?php echo $this->pagination_links(); ?>
                     </div>
                 </div>
-                <table class="table table-bordered table-hover wpi-user-invoices" style="margin:0">
+                <table class="table table-bordered table-hover table-responsive wpi-user-invoices" style="margin:0">
                     <thead>
                         <tr>
                             <?php foreach ( wpinv_get_user_invoices_columns() as $column_id => $column_name ) : ?>
