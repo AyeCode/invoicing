@@ -158,8 +158,14 @@ function wpinv_process_authorizenet_payment( $purchase_data ) {
             }
 
             try {
+
                 if ( $is_recurring ) {
-                    $response = $authorizeAIM->authorizeOnly();
+                    $trx_type = wpinv_get_option('authorizenet_transaction_type_recurring', 'authorize_only');
+                    if('authorize_capture' == $trx_type){
+                        $response = $authorizeAIM->authorizeAndCapture();
+                    } else {
+                        $response = $authorizeAIM->authorizeOnly();
+                    }
                 } else {
                     $trx_type = wpinv_get_option('authorizenet_transaction_type', 'authorize_capture');
                     if('authorize_capture' == $trx_type){

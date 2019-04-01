@@ -539,6 +539,18 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
         ),
         'std'         => 'authorize_capture'
     );
+
+    $setting['authorizenet_transaction_type_recurring'] = array(
+        'id'          => 'authorizenet_transaction_type_recurring',
+        'name'        => __( 'Transaction Type for Recurring', 'invoicing' ),
+        'desc'        => __( 'Choose transaction type for recurring payments.', 'invoicing' ),
+        'type'        => 'select',
+        'options'     => array(
+            'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
+            'authorize_only' => __( 'Authorize Only', 'invoicing' ),
+        ),
+        'std'         => 'authorize_only'
+    );
         
     $setting['authorizenet_ipn_url'] = array(
             'type' => 'ipn_url',

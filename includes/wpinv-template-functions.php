@@ -59,9 +59,9 @@ function wpinv_invoice_display_right_actions( $invoice ) {
     }
 
     if ( $invoice->post_type == 'wpi_invoice' ) { ?>
-        <a class="btn btn-primary btn-sm" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
+        <a class="btn btn-primary btn-sm btn-print-invoice" onclick="window.print();" href="javascript:void(0)"><?php _e( 'Print Invoice', 'invoicing' ); ?></a>
         <?php if ( is_user_logged_in() ) { ?>
-        &nbsp;&nbsp;<a class="btn btn-warning btn-sm" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
+        &nbsp;&nbsp;<a class="btn btn-warning btn-sm btn-invoice-history" href="<?php echo esc_url( wpinv_get_history_page_uri() ); ?>"><?php _e( 'Invoice History', 'invoicing' ); ?></a>
         <?php }
     }
     do_action('wpinv_invoice_display_right_actions', $invoice);
