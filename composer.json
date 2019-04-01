@@ -1,5 +1,5 @@
 {
-  "name": "AyeCode/invoicing",
+  "name": "ayecode/invoicing",
   "type": "project",
   "description": "Invoicing is a lightweight Invoicing and Payments system for WordPress. It can be used by freelancers to manage their Invoices or by 3rd party Themes and Plugins as their payment system. ",
   "keywords": ["invoicing", "accounting"],
