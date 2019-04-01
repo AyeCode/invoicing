@@ -4,32 +4,6 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
-add_action( 'admin_menu', 'wpinv_add_options_link', 10 );
-function wpinv_add_options_link() {
-    global $menu;
-
-    if ( !(current_user_can( 'manage_invoicing' ) || current_user_can( 'manage_options' )) ) {
-        return;
-    }
-
-    $capability = apply_filters( 'invoicing_capability', 'manage_invoicing' );
-
-    if ( current_user_can( 'manage_options' ) ) {
-        $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
-    }
-
-    $wpi_invoice = get_post_type_object( 'wpi_invoice' );
-
-    add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
-
-    $wpi_settings_page   = add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), $capability, 'wpinv-settings', 'wpinv_options_page' );
-}
-
-add_action( 'admin_menu', 'wpinv_remove_admin_submenus', 999 );
-function wpinv_remove_admin_submenus() {
-    remove_submenu_page( 'edit.php?post_type=wpi_invoice', 'post-new.php?post_type=wpi_invoice' );
-}
-
 add_filter( 'manage_wpi_discount_posts_columns', 'wpinv_discount_columns' );
 function wpinv_discount_columns( $existing_columns ) {
     $columns                = array();
@@ -380,105 +354,6 @@ function wpinv_request( $vars ) {
     return $vars;
 }
 add_filter( 'request', 'wpinv_request' );
-
-function wpinv_options_page() {
-    $page       = isset( $_GET['page'] )                ? strtolower( $_GET['page'] )               : false;
-    
-    if ( $page !== 'wpinv-settings' ) {
-        return;
-    }
-    
-    $settings_tabs = wpinv_get_settings_tabs();
-    $settings_tabs = empty($settings_tabs) ? array() : $settings_tabs;
-    $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
-    $sections      = wpinv_get_settings_tab_sections( $active_tab );
-    $key           = 'main';
-
-    if ( is_array( $sections ) ) {
-        $key = key( $sections );
-    }
-
-    $registered_sections = wpinv_get_settings_tab_sections( $active_tab );
-    $section             = isset( $_GET['section'] ) && ! empty( $registered_sections ) && array_key_exists( $_GET['section'], $registered_sections ) ? $_GET['section'] : $key;
-    ob_start();
-    ?>
-    <div class="wrap">
-        <h1 class="nav-tab-wrapper">
-            <?php
-            foreach( wpinv_get_settings_tabs() as $tab_id => $tab_name ) {
-                $tab_url = add_query_arg( array(
-                    'settings-updated' => false,
-                    'tab' => $tab_id,
-                ) );
-
-                // Remove the section from the tabs so we always end up at the main section
-                $tab_url = remove_query_arg( 'section', $tab_url );
-                $tab_url = remove_query_arg( 'wpi_sub', $tab_url );
-
-                $active = $active_tab == $tab_id ? ' nav-tab-active' : '';
-
-                echo '<a href="' . esc_url( $tab_url ) . '" title="' . esc_attr( $tab_name ) . '" class="nav-tab' . $active . '">';
-                    echo esc_html( $tab_name );
-                echo '</a>';
-            }
-            ?>
-        </h1>
-        <?php
-        $number_of_sections = count( $sections );
-        $number = 0;
-        if ( $number_of_sections > 1 ) {
-            echo '<div><ul class="subsubsub">';
-            foreach( $sections as $section_id => $section_name ) {
-                echo '<li>';
-                $number++;
-                $tab_url = add_query_arg( array(
-                    'settings-updated' => false,
-                    'tab' => $active_tab,
-                    'section' => $section_id
-                ) );
-                $tab_url = remove_query_arg( 'wpi_sub', $tab_url );
-                $class = '';
-                if ( $section == $section_id ) {
-                    $class = 'current';
-                }
-                echo '<a class="' . $class . '" href="' . esc_url( $tab_url ) . '">' . $section_name . '</a>';
-
-                if ( $number != $number_of_sections ) {
-                    echo ' | ';
-                }
-                echo '</li>';
-            }
-            echo '</ul></div>';
-        }
-        ?>
-        <div id="tab_container">
-            <form method="post" action="options.php">
-                <table class="form-table">
-                <?php
-                settings_fields( 'wpinv_settings' );
-
-                if ( 'main' === $section ) {
-                    do_action( 'wpinv_settings_tab_top', $active_tab );
-                }
-
-                do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section, $active_tab, $section );
-                do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section, $active_tab, $section );
-                do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section, $active_tab, $section );
-
-                // For backwards compatibility
-                if ( 'main' === $section ) {
-                    do_action( 'wpinv_settings_tab_bottom', $active_tab );
-                }
-                ?>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-        </div><!-- #tab_container-->
-    </div><!-- .wrap -->
-    <?php
-    $content = ob_get_clean(); 
-    echo $content;
-}
 
 function wpinv_item_type_class( $classes, $class, $post_id ) {
     global $pagenow, $typenow;

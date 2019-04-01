@@ -74,6 +74,9 @@ class WPInv_Admin_Users {
             'fields'         => 'ids',
             'author'         => $user_id,
         );
+
+        $wp_query_args = apply_filters('wpinv_get_user_invoices_args', $wp_query_args, $user_id);
+
         $invoices = new WP_Query( $wp_query_args );
         $count = absint( $invoices->found_posts );
 

@@ -1413,14 +1413,14 @@ function wpinv_checkout_validate_agree_to_terms() {
 }
 
 function wpinv_checkout_validate_invoice_user() {
-    global $wpi_cart;
+    global $wpi_cart, $user_ID;
     
     $valid_user_data = array(
         'user_id' => -1
     );
     
     // Verify there is a user_ID
-    if ( $user_ID = (int)$wpi_cart->get_user_id() ) {
+    if ( $user_ID == (int)$wpi_cart->get_user_id() ) {
         // Get the logged in user data
         $user_data = get_userdata( $user_ID );
         $required_fields  = wpinv_checkout_required_fields();
@@ -1801,6 +1801,8 @@ function wpinv_get_invoices( $args ) {
     if ( ! $args['paginate' ] ) {
         $wp_query_args['no_found_rows'] = true;
     }
+
+    $wp_query_args = apply_filters('wpinv_get_invoices_args', $wp_query_args, $args);
 
     // Get results.
     $invoices = new WP_Query( $wp_query_args );

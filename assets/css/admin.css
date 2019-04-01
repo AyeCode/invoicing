@@ -714,6 +714,13 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 
 /* General Settings Styles */
+.wpi-wpinv-settings .form-table tbody tr:first-child th[scope="row"] {
+    min-height: 1.4rem;
+    display: inline-block;
+}
+.wpi-wpinv-settings .form-table tbody tr:first-child th[scope="row"] h3 {
+    position: absolute;
+}
 .wpi-wpinv-settings .form-table th {
     padding: 15px 10px 15px 0;
 }
@@ -1232,6 +1239,7 @@ body.wpi-wpinv-settings .wp-picker-holder,
 .inside > p.wpi-meta-row {
     line-height: normal;
     vertical-align: middle;
+    word-break: break-all;
 }
 .inside > p.wpi-meta-row a {
     text-decoration: none;

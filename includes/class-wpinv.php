@@ -168,6 +168,7 @@ class WPInv_Plugin {
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );
             //require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
             // load the user class only on the users.php page
@@ -221,7 +222,7 @@ class WPInv_Plugin {
                
         // Register scripts
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery', 'wpinv-vat-script' ),  WPINV_VERSION );
+        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery' ),  WPINV_VERSION );
 
         $localize                         = array();
         $localize['ajax_url']             = admin_url( 'admin-ajax.php' );
