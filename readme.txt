@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 3.1
-Tested up to: 5.0
-Stable tag: 1.0.7
+Tested up to: 5.1
+Stable tag: 1.0.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -136,7 +136,7 @@ Use font awesome library - CHANGED
 Option to allow reset invoice sequence - ADDED
 Item editable meta value not working after update item - FIXED
 Item summary displays warning if not filled - FIXED
-Super Duper updated to v1.0.6 - CHANGED
+
 
 = 1.0.6 =
 Invoice print table design issue on mobile - FIXED
