@@ -129,6 +129,7 @@ filter added to wpinv_get_invoices query params - ADDED
 Authorize.net recurring payment only authorize the payment allow capture as well - FIXED
 Super Duper updated to v1.0.10 - CHANGED
 load vat js files when required - FIXED
+Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
