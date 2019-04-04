@@ -2180,7 +2180,7 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 						?>
 						<label
 							for="<?php echo esc_attr( $this->get_field_id( $args['name'] ) ); ?>"><?php echo esc_attr( $args['title'] ); ?><?php echo $this->widget_field_desc( $args ); ?></label>
-						<select <?php echo $placeholder; ?> class="widefat"
+						<select <?php echo $placeholder; ?> class="widefat wpi_select2"
 							<?php echo $custom_attributes; ?>
 							                                id="<?php echo esc_attr( $this->get_field_id( $args['name'] ) ); ?>"
 							                                name="<?php echo esc_attr( $this->get_field_name( $args['name'] ) );

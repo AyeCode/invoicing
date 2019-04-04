@@ -61,7 +61,7 @@ class WPInv_Meta_Box_Details {
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-status">
             <div class="gdmbx-th"><label for="wpinv_status"><?php echo $title['status']; ?></label></div>
             <div class="gdmbx-td">
-                <select required="required" id="wpinv_status" name="wpinv_status" class="gdmbx2_select">
+                <select required="required" id="wpinv_status" name="wpinv_status" class="gdmbx2_select wpi_select2">
                     <?php foreach ( $statuses as $value => $label ) { ?>
                     <option value="<?php echo $value;?>" <?php selected( $status, $value );?>><?php echo $label;?></option>
                     <?php } ?>
@@ -89,7 +89,7 @@ class WPInv_Meta_Box_Details {
 </div>
 <div class="gdmbx-row gdmbx-type-text gdmbx-wpinv-save-send table-layout">
     <p class="wpi-meta-row wpi-save-send"><label for="wpi_save_send"><?php echo sprintf(__( 'Send %s:', 'invoicing' ),$post_obj->labels->singular_name) ; ?></label>
-        <select id="wpi_save_send" name="wpi_save_send">
+        <select id="wpi_save_send" name="wpi_save_send" class="wpi_select2">
             <option value="1"><?php _e( 'Yes', 'invoicing' ); ?></option>
             <option value="" selected="selected"><?php _e( 'No', 'invoicing' ); ?></option>
         </select>
@@ -215,7 +215,7 @@ class WPInv_Meta_Box_Details {
         <p class="wpi-meta-row">
         <?php if ( $set_dateway ) { $gateways = wpinv_get_enabled_payment_gateways( true ); ?>
             <label for="wpinv_gateway"><?php _e( 'Gateway:', 'invoicing' ) ; ?></label>
-            <select required="required" id="wpinv_gateway" name="wpinv_gateway">
+            <select required="required" id="wpinv_gateway" class="wpi_select2" name="wpinv_gateway">
                 <?php foreach ( $gateways as $name => $gateway ) {
                     if ( $wpi_mb_invoice->is_recurring() && !wpinv_gateway_support_subscription( $name ) ) {
                         continue;

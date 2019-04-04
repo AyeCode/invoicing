@@ -175,6 +175,7 @@ class WPInv_EUVat {
             'options'     => array_merge( $vat_classes, array( '_new' => __( 'Add New Rate Class', 'invoicing' ) ) ),
             'placeholder' => __( 'Select a VAT Rate', 'invoicing' ),
             'selected'    => $vat_class,
+            'class'       => 'wpi_select2',
             'onchange'    => 'document.location.href="' . $current_url . '&wpi_sub=" + this.value;',
         );
         
@@ -292,7 +293,8 @@ class WPInv_EUVat {
                     'always'    => __( 'Always apply VAT', 'invoicing' ),
                 ),
                 'placeholder' => __( 'Select an option', 'invoicing' ),
-                'std'         => ''
+                'std'         => '',
+                'class'   => 'wpi_select2',
             );
 
             $vat_settings['vat_checkout_title'] = array(
@@ -315,7 +317,8 @@ class WPInv_EUVat {
                 'name' => __( 'IP Country Look-up', 'invoicing' ),
                 'type' => 'vat_ip_lookup',
                 'size' => 'regular',
-                'std' => 'default'
+                'std' => 'default',
+                'class'   => 'wpi_select2',
             );
 
             $vat_settings['hide_ip_address'] = array(

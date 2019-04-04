@@ -361,7 +361,7 @@ function wpinv_vat_rates_callback( $args ) {
                                         'name'             => 'vat_rates[' . $state . '][group]',
                                         'selected'         => $vat_group,
                                         'id'               => 'vat_rates[' . $state . '][group]',
-                                        'class'            => '',
+                                        'class'            => 'wpi_select2',
                                         'options'          => $vat_groups,
                                         'multiple'         => false,
                                         'show_option_all'  => false,

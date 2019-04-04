@@ -20,6 +20,16 @@ jQuery(function($) {
         }
     });
 
+    wpi_select2();
+    function wpi_select2() {
+        if (jQuery("select.wpi_select2").length > 0) {
+            jQuery("select.wpi_select2").select2();
+            jQuery("select.wpi_select2_nostd").select2({
+                allow_single_deselect: 'true'
+            });
+        }
+    }
+
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
     var wpiSymbol = WPInv_Admin.currency_symbol;

@@ -130,6 +130,7 @@ Authorize.net recurring payment only authorize the payment allow capture as well
 Super Duper updated to v1.0.10 - CHANGED
 load vat js files when required - FIXED
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
+Use select2 for dropdown. - CHANGED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED

@@ -125,7 +125,7 @@ class WPInv_Reports {
                                     'id'               => 'wpi_export_status',
                                     'show_option_all'  => false,
                                     'show_option_none' => false,
-                                    'class'            => '',
+                                    'class'            => 'wpi_select2',
                                 ) ); ?>
                                 <?php wp_nonce_field( 'wpi_ajax_export', 'wpi_ajax_export' ); ?>
                                 </span>
