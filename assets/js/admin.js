@@ -280,6 +280,9 @@ jQuery(function($) {
         });
         $.post(ajaxurl, data, function(response) {
             var selected = typeof $this.data('state') !== 'undefined' ? $this.data('state') : "";
+            if($('#wpinv_state', elB).hasClass('select2-hidden-accessible')){
+                $('#wpinv_state', elB).select2("destroy");
+            }
             if ('nostates' === response) {
                 var text_field = '<input type="text" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
                 $('#wpinv_state', elB).replaceWith(text_field);
@@ -287,6 +290,7 @@ jQuery(function($) {
                 $('#wpinv_state', elB).replaceWith(response);
                 $('#wpinv_state', elB).find('option[value="' + selected + '"]').attr('selected', 'selected');
                 $('#wpinv_state', elB).find('option[value=""]').remove();
+                $('#wpinv_state', elB).select2();
             }
             $('#wpinv_state', elB).addClass('gdmbx2-text-large');
             if (typeof $this.data('change') === '1') {

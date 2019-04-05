@@ -5,6 +5,17 @@ if (typeof ajaxurl === 'undefined' || ajaxurl === null) {
 }
 window.wpiSubmit = typeof window.wpiSubmit !== 'undefined' ? window.wpiSubmit : true;
 jQuery(function($) {
+
+    wpi_select2();
+    function wpi_select2() {
+        if (jQuery("select.wpi_select2").length > 0) {
+            jQuery("select.wpi_select2").select2();
+            jQuery("select.wpi_select2_nostd").select2({
+                allow_single_deselect: 'true'
+            });
+        }
+    }
+
     var valid = false;
     $('#wpinv_checkout_form').on('submit', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
@@ -48,15 +59,21 @@ jQuery(function($) {
             field_name: 'wpinv_state',
         };
         $.post(ajaxurl, data, function(response) {
+            if($("#wpinv_state").hasClass('select2-hidden-accessible')){
+                $("#wpinv_state").select2("destroy");
+            }
             if ('nostates' === response) {
                 var text_field = '<input type="text" required="required" class="wpi-input required" id="wpinv_state" name="wpinv_state">';
                 $('#wpinv_state', elB).replaceWith(text_field);
             } else {
                 $('#wpinv_state', elB).replaceWith(response);
                 var changeState = function() {
-                    console.log('69 : wpinv_recalculate_taxes(' + $(this).val() + ')');
-                    wpinv_recalculate_taxes($(this).val());
+                    if (WPInv.UseTaxes) {
+                        console.log('69 : wpinv_recalculate_taxes(' + $(this).val() + ')');
+                        wpinv_recalculate_taxes($(this).val());
+                    }
                 };
+                $("#wpinv_state").select2();
                 $("#wpinv_state").unbind("change", changeState);
                 $("#wpinv_state").bind("change", changeState);
             }
@@ -64,15 +81,19 @@ jQuery(function($) {
             $('#wpinv_state', elB).addClass('form-control wpi-input required');
         }).done(function(data) {
             jQuery('#wpinv_state_box').unblock();
-            console.log('78 : wpinv_recalculate_taxes()');
-            wpinv_recalculate_taxes();
+            if (WPInv.UseTaxes) {
+                console.log('78 : wpinv_recalculate_taxes()');
+                wpinv_recalculate_taxes();
+            }
         });
         return false;
     });
     $('select#wpinv_state', elB).change(function(e) {
         $('.wpinv_errors').remove();
-        console.log('86 : wpinv_recalculate_taxes()');
-        wpinv_recalculate_taxes($(this).val());
+        if (WPInv.UseTaxes) {
+            console.log('86 : wpinv_recalculate_taxes()');
+            wpinv_recalculate_taxes($(this).val());
+        }
     });
     var WPInv_Checkout = {
         checkout_form: $('form#wpinv_checkout_form'),
@@ -255,8 +276,10 @@ jQuery(function($) {
             return false;
         },
         recalculate_taxes: function() {
-            console.log('308 : wpinv_recalculate_taxes()');
-            wpinv_recalculate_taxes();
+            if (WPInv.UseTaxes) {
+                console.log('308 : wpinv_recalculate_taxes()');
+                wpinv_recalculate_taxes();
+            }
         }
     }
     WPInv_Checkout.init();
