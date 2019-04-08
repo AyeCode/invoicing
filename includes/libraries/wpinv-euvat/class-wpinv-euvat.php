@@ -127,7 +127,6 @@ class WPInv_EUVat {
         $vars['VatNotValidated'] = wp_sprintf( __( '%s number not validated', 'invoicing' ), $vat_name );
         $vars['ConfirmDeleteClass'] = __( 'Are you sure you wish to delete this rates class?', 'invoicing' );
         $vars['isFront'] = is_admin() ? false : true;
-        $vars['checkoutNonce'] = wp_create_nonce( 'wpinv_checkout_nonce' );
         $vars['baseCountry'] = wpinv_get_default_country();
         $vars['disableVATSameCountry'] = ( self::same_country_rule() == 'no' ? true : false );
         $vars['disableVATSimpleCheck'] = wpinv_get_option( 'vat_offline_check' ) ? true : false;

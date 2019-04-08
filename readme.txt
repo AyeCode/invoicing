@@ -2,7 +2,7 @@
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
-Requires at least: 3.1
+Requires at least: 4.9
 Tested up to: 5.1
 Stable tag: 1.0.8
 License: GPLv3

@@ -234,7 +234,8 @@ class WPInv_Plugin {
         $localize['decimals']             = wpinv_decimals();
         $localize['txtComplete']          = __( 'Complete', 'invoicing' );
         $localize['UseTaxes']             = wpinv_use_taxes();
-        
+        $localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
+
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
         wp_enqueue_script( 'jquery-blockui' );
