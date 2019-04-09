@@ -379,7 +379,7 @@ function wpinv_add_items_filters() {
                 'selected'         => ( isset( $_GET['type'] ) ? $_GET['type'] : '' ),
                 'show_option_all'  => false,
                 'show_option_none' => false,
-                'class'            => 'gdmbx2-text-medium wpi_select2',
+                'class'            => 'gdmbx2-text-medium',
             ) );
 
         if ( isset( $_REQUEST['all_posts'] ) && '1' === $_REQUEST['all_posts'] ) {
