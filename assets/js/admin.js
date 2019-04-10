@@ -187,7 +187,7 @@ jQuery(function($) {
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
         jQuery('#submitdiv', jQuery('.wpinv')).remove();
-        jQuery('#major-publishing-actions', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
+        jQuery('#publishing-action', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
     }
     var invBilling = jQuery('#wpinv-address.postbox').html();
     if (invBilling) {
@@ -944,7 +944,7 @@ jQuery(function($) {
     };
     $('.post-type-wpi_invoice form#post #titlediv [name="post_title"]').attr('readonly', true);
     $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
-    $('.post-type-wpi_item.wpi-editable-n #submitdiv #major-publishing-actions').remove();
+    $('.post-type-wpi_item.wpi-editable-n #submitdiv #publishing-action').remove();
     $('.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status').remove();
     $('.post-type-wpi_item .posts .wpi-editable-n').each(function(e) {
         $('.check-column [type="checkbox"]', $(this)).attr('disabled', true);
