@@ -132,6 +132,7 @@ load vat js files when required - FIXED
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
 Use select2 for dropdown. - CHANGED
 Invoice set to paid due to conflict with duplicate page plugin - FIXED
+Discount should be calculated based on old item price if the item price changed after invoice created - FIXED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED

@@ -466,8 +466,12 @@ function wpinv_get_cart_item_price( $item_id = 0, $cart_item = array(), $options
         }
 
         if( ! $variable_prices || false === $price ) {
-            // Get the standard Item price if not using variable prices
-            $price = wpinv_get_item_price( $item_id );
+            if($cart_item['item_price'] > 0){
+                $price = $cart_item['item_price'];
+            } else {
+                // Get the standard Item price if not using variable prices
+                $price = wpinv_get_item_price( $item_id );
+            }
         }
     }
 

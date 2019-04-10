@@ -532,7 +532,7 @@ function wpinv_discount_is_min_met( $code_id = null ) {
             // Minimum has been met
             $return = true;
         } else {
-            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice of %s not met.', 'invoicing' ), wpinv_price( wpinv_format_amount( $min ) ) ) );
+            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $min ) ) ) );
         }
     }
 
@@ -551,7 +551,7 @@ function wpinv_discount_is_max_met( $code_id = null ) {
             // Minimum has been met
             $return = true;
         } else {
-            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Maximum invoice of %s not met.', 'invoicing' ), wpinv_price( wpinv_format_amount( $max ) ) ) );
+            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Maximum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $max ) ) ) );
         }
     }
 
@@ -1186,7 +1186,7 @@ function wpinv_get_discount_label( $code, $echo = true ) {
 }
 
 function wpinv_cart_discount_label( $code, $rate, $echo = true ) {
-    $label = wp_sprintf( __( '%1$s Discount: %2$s', 'invoicing' ), $rate, $code );
+    $label = wp_sprintf( __( 'Discount: %s', 'invoicing' ), $code );
     $label = apply_filters( 'wpinv_cart_discount_label', $label, $code, $rate );
 
     if ( $echo ) {
