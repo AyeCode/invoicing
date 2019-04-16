@@ -86,7 +86,7 @@ class WPInv_Meta_Box_Items {
                                                             'id'               => '_wpinv_quick_vat_rule',
                                                             'show_option_all'  => false,
                                                             'show_option_none' => false,
-                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule',
+                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule wpi_select2',
                                                         ) ); ?>
                                                     </span>
                                                 </label>
@@ -102,7 +102,7 @@ class WPInv_Meta_Box_Items {
                                                             'id'               => '_wpinv_quick_vat_class',
                                                             'show_option_all'  => false,
                                                             'show_option_none' => false,
-                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class',
+                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class wpi_select2',
                                                         ) ); ?>
                                                     </span>
                                                 </label>
@@ -119,7 +119,7 @@ class WPInv_Meta_Box_Items {
                                                             'selected'         => 'custom',
                                                             'show_option_all'  => false,
                                                             'show_option_none' => false,
-                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-type',
+                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-type wpi_select2',
                                                         ) ); ?>
                                                     </span>
                                                 </label>
@@ -189,6 +189,7 @@ class WPInv_Meta_Box_Items {
                                 'name'             => 'wpinv_invoice_item',
                                 'id'               => 'wpinv_invoice_item',
                                 'show_recurring'   => true,
+                                'class'            => 'wpi_select2',
                             ) );
                     ?>
                 <input type="button" value="<?php echo sprintf(esc_attr__( 'Add item to %s', 'invoicing'), $type_title); ?>" class="button button-primary" id="wpinv-add-item"><input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item"><?php } ?><input type="button" value="<?php esc_attr_e( 'Recalculate Totals', 'invoicing' );?>" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">
@@ -234,14 +235,15 @@ class WPInv_Meta_Box_Items {
             <?php do_action( 'wpinv_prices_metabox_is_recurring_field', $item ); ?>
         </p>
         <p class="wpinv-row-recurring-fields <?php echo $class;?>">
-            <label class="wpinv-period" for="wpinv_recurring_period"><?php _e( 'Recurring', 'invoicing' );?> <select class="wpinv-select " id="wpinv_recurring_period" name="wpinv_recurring_period"><option value="D" data-text="<?php esc_attr_e( 'day(s)', 'invoicing' ); ?>" <?php selected( 'D', $period );?>><?php _e( 'Daily', 'invoicing' ); ?></option><option value="W" data-text="<?php esc_attr_e( 'week(s)', 'invoicing' ); ?>" <?php selected( 'W', $period );?>><?php _e( 'Weekly', 'invoicing' ); ?></option><option value="M" data-text="<?php esc_attr_e( 'month(s)', 'invoicing' ); ?>" <?php selected( 'M', $period );?>><?php _e( 'Monthly', 'invoicing' ); ?></option><option value="Y" data-text="<?php esc_attr_e( 'year(s)', 'invoicing' ); ?>" <?php selected( 'Y', $period );?>><?php _e( 'Yearly', 'invoicing' ); ?></option></select></label>
+            <label class="wpinv-period" for="wpinv_recurring_period"><?php _e( 'Recurring', 'invoicing' );?> <select class="wpinv-select wpi_select2" id="wpinv_recurring_period" name="wpinv_recurring_period"><option value="D" data-text="<?php esc_attr_e( 'day(s)', 'invoicing' ); ?>" <?php selected( 'D', $period );?>><?php _e( 'Daily', 'invoicing' ); ?></option><option value="W" data-text="<?php esc_attr_e( 'week(s)', 'invoicing' ); ?>" <?php selected( 'W', $period );?>><?php _e( 'Weekly', 'invoicing' ); ?></option><option value="M" data-text="<?php esc_attr_e( 'month(s)', 'invoicing' ); ?>" <?php selected( 'M', $period );?>><?php _e( 'Monthly', 'invoicing' ); ?></option><option value="Y" data-text="<?php esc_attr_e( 'year(s)', 'invoicing' ); ?>" <?php selected( 'Y', $period );?>><?php _e( 'Yearly', 'invoicing' ); ?></option></select></label>
             <label class="wpinv-interval" for="wpinv_recurring_interval"> <?php _e( 'at every', 'invoicing' );?> <?php echo wpinv_html_select( array(
                 'options'          => $intervals,
                 'name'             => 'wpinv_recurring_interval',
                 'id'               => 'wpinv_recurring_interval',
                 'selected'         => $interval,
                 'show_option_all'  => false,
-                'show_option_none' => false
+                'show_option_none' => false,
+                'class'            => 'wpi_select2',
             ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
             <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
             <span class="clear wpi-trial-clr"></span>
@@ -250,7 +252,7 @@ class WPInv_Meta_Box_Items {
                 <?php echo __( 'Offer free trial for', 'invoicing' ); ?>
             </label>
             <label class="wpinv-trial-interval" for="wpinv_trial_interval">
-                <input class="small-text" type="number" value="<?php echo $trial_interval;?>" size="4" id="wpinv_trial_interval" name="wpinv_trial_interval" step="1" min="1"> <select class="wpinv-select" id="wpinv_trial_period" name="wpinv_trial_period"><option value="D" <?php selected( 'D', $trial_period );?>><?php _e( 'day(s)', 'invoicing' ); ?></option><option value="W" <?php selected( 'W', $trial_period );?>><?php _e( 'week(s)', 'invoicing' ); ?></option><option value="M" <?php selected( 'M', $trial_period );?>><?php _e( 'month(s)', 'invoicing' ); ?></option><option value="Y" <?php selected( 'Y', $trial_period );?>><?php _e( 'year(s)', 'invoicing' ); ?></option></select>
+                <input class="small-text" type="number" value="<?php echo $trial_interval;?>" size="4" id="wpinv_trial_interval" name="wpinv_trial_interval" step="1" min="1"> <select class="wpinv-select wpi_select2" id="wpinv_trial_period" name="wpinv_trial_period"><option value="D" <?php selected( 'D', $trial_period );?>><?php _e( 'day(s)', 'invoicing' ); ?></option><option value="W" <?php selected( 'W', $trial_period );?>><?php _e( 'week(s)', 'invoicing' ); ?></option><option value="M" <?php selected( 'M', $trial_period );?>><?php _e( 'month(s)', 'invoicing' ); ?></option><option value="Y" <?php selected( 'Y', $trial_period );?>><?php _e( 'year(s)', 'invoicing' ); ?></option></select>
             </label>
             <?php do_action( 'wpinv_prices_metabox_recurring_fields', $item ); ?>
         </p>
@@ -272,7 +274,7 @@ class WPInv_Meta_Box_Items {
                     'selected'         => $rule_type,
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium wpinv-vat-rules',
+                    'class'            => 'gdmbx2-text-medium wpinv-vat-rules wpi_select2',
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'When you select physical product rules, only consumers and businesses in your country will be charged VAT.  The VAT rate used will be the rate in your country.', 'invoicing' ); ?></p>
@@ -292,7 +294,7 @@ class WPInv_Meta_Box_Items {
                     'selected'         => $vat_class,
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium wpinv-vat-class',
+                    'class'            => 'gdmbx2-text-medium wpinv-vat-class wpi_select2',
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'Select the VAT rate class to use for this invoice item.', 'invoicing' ); ?></p>
@@ -311,7 +313,7 @@ class WPInv_Meta_Box_Items {
                     'selected'         => $item_type,
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium wpinv-item-type',
+                    'class'            => 'gdmbx2-text-medium wpinv-item-type wpi_select2',
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( '<b>Standard:</b> Standard item type', 'invoicing' );?><br><?php _e( '<b>Fee:</b> Like Registration Fee, Sign up Fee etc.', 'invoicing' );?></p>

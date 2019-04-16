@@ -1672,7 +1672,7 @@ function wpinv_checkout_billing_info() {
                             'selected'         => $selected_country,
                             'show_option_all'  => false,
                             'show_option_none' => false,
-                            'class'            => 'wpi-input form-control',
+                            'class'            => 'wpi-input form-control wpi_select2',
                             'placeholder'      => __( 'Choose a country', 'invoicing' ),
                             'required'         => (bool)wpinv_get_option( 'country_mandatory' ),
                         ) ); ?>
@@ -1689,7 +1689,7 @@ function wpinv_checkout_billing_info() {
                                 'selected'         => $billing_details['state'],
                                 'show_option_all'  => false,
                                 'show_option_none' => false,
-                                'class'            => 'wpi-input form-control',
+                                'class'            => 'wpi-input form-control wpi_select2',
                                 'placeholder'      => __( 'Choose a state', 'invoicing' ),
                                 'required'         => (bool)wpinv_get_option( 'state_mandatory' ),
                             ) );

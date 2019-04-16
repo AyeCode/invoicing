@@ -533,6 +533,7 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
         'name'        => __( 'Transaction Type', 'invoicing' ),
         'desc'        => __( 'Choose transaction type.', 'invoicing' ),
         'type'        => 'select',
+        'class'       => 'wpi_select2',
         'options'     => array(
             'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
             'authorize_only' => __( 'Authorize Only', 'invoicing' ),
@@ -545,6 +546,7 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
         'name'        => __( 'Transaction Type for Recurring', 'invoicing' ),
         'desc'        => __( 'Choose transaction type for recurring payments.', 'invoicing' ),
         'type'        => 'select',
+        'class'       => 'wpi_select2',
         'options'     => array(
             'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
             'authorize_only' => __( 'Authorize Only', 'invoicing' ),
