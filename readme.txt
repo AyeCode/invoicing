@@ -4,7 +4,7 @@ Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.1
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -120,6 +120,13 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.9 =
+Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
+Use select2 for dropdown. - CHANGED
+Invoice set to paid due to conflict with duplicate page plugin - FIXED
+Discount should be calculated based on old item price if the item price changed after invoice created - FIXED
+Super Duper updated to v1.0.12 - CHANGED
+
 = 1.0.8 =
 Checkout fields mandatory is option not working - FIXED
 Buddypress profile page invoices tab is not responsive - FIXED
@@ -127,12 +134,8 @@ Add classes to invoice page buttons - ADDED
 Add invoicing pages to admin menu items metabox - ADDED
 filter added to wpinv_get_invoices query params - ADDED
 Authorize.net recurring payment only authorize the payment allow capture as well - FIXED
-Super Duper updated to v1.0.12 - CHANGED
+Super Duper updated to v1.0.10 - CHANGED
 load vat js files when required - FIXED
-Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
-Use select2 for dropdown. - CHANGED
-Invoice set to paid due to conflict with duplicate page plugin - FIXED
-Discount should be calculated based on old item price if the item price changed after invoice created - FIXED
 
 = 1.0.7 =
 Recurring invoice treated as renewal payment for first payment due to delay in IPN - FIXED
