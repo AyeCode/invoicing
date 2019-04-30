@@ -21,9 +21,9 @@ class WPInv_Meta_Box_Billing_Details {
                             'name' => 'post_author_override',
                             'selected' => empty($post->ID) ? $user_ID : $post->post_author,
                             'include_selected' => true,
-                            'show' => 'user_email',
+                            'show' => 'display_name_with_email',
                             'orderby' => 'user_email',
-                            'class' => 'gdmbx2-text-large'
+                            'class' => 'gdmbx2-text-large wpi_select2'
                         ) ); ?>
             </div>
         </div>
@@ -93,7 +93,7 @@ class WPInv_Meta_Box_Billing_Details {
                     'selected'         => $invoice->country,
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-large',
+                    'class'            => 'gdmbx2-text-large wpi_select2',
                     'placeholder'      => __( 'Choose a country', 'invoicing' ),
                     'required'         => false,
                 ) );
@@ -113,7 +113,7 @@ class WPInv_Meta_Box_Billing_Details {
                         'selected'         => $invoice->state,
                         'show_option_all'  => false,
                         'show_option_none' => false,
-                        'class'            => 'gdmbx2-text-large',
+                        'class'            => 'gdmbx2-text-large wpi_select2',
                         'placeholder'      => __( 'Choose a state', 'invoicing' ),
                         'required'         => false,
                     ) );

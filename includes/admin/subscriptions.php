@@ -129,7 +129,7 @@ function wpinv_recurring_subscription_details() {
                                                 'with_packages'     => false,
                                                 'show_recurring'    => true,
                                                 'selected'          => $sub->product_id,
-                                                'class'             => 'wpinv-sub-product-id',
+                                                'class'             => 'wpinv-sub-product-id wpi_select2',
                                             ) );
 
                                             ?>
@@ -194,7 +194,7 @@ function wpinv_recurring_subscription_details() {
 											<label for="tablecell"><?php _e( 'Subscription Status:', 'invoicing' ); ?></label>
 										</td>
 										<td>
-											<select name="status">
+											<select name="status" class="wpi_select2">
 												<option value="pending"<?php selected( 'pending', $sub->status ); ?>><?php _e( 'Pending', 'invoicing' ); ?></option>
 												<option value="active"<?php selected( 'active', $sub->status ); ?>><?php _e( 'Active', 'invoicing' ); ?></option>
 												<option value="cancelled"<?php selected( 'cancelled', $sub->status ); ?>><?php _e( 'Cancelled', 'invoicing' ); ?></option>

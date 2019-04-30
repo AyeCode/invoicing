@@ -578,60 +578,6 @@ jQuery(function($) {
     WPInv_VAT_Config.init();
 });
 
-function wpinv_recalculate_taxes(state) {
-    if (!WPInv_VAT_Vars.UseTaxes) {
-        return false;
-    }
-    var $address = jQuery('#wpi-billing');
-    if (!state) {
-        state = $address.find('#wpinv_state').val();
-    }
-    var postData = {
-        action: 'wpinv_recalculate_tax',
-        nonce: WPInv_VAT_Vars.checkoutNonce,
-        country: $address.find('#wpinv_country').val(),
-        state: state
-    };
-    wpinvBlock(jQuery('#wpinv_checkout_cart_wrap'));
-    jQuery.ajax({
-        type: "POST",
-        data: postData,
-        dataType: "json",
-        url: ajaxurl,
-        success: function(res) {
-            jQuery('#wpinv_checkout_cart_wrap').unblock();
-            if (res && typeof res == 'object') {
-                var $wrap = jQuery('#wpinv_checkout_form_wrap');
-                jQuery('#wpinv_checkout_cart_form').replaceWith(res.html);
-                jQuery('.wpinv-chdeckout-total', $wrap).text(res.total);
-                if (res.free) {
-                    jQuery('#wpinv_payment_mode_select', $wrap).hide();
-                    gw = 'manual';
-                } else {
-                    jQuery('#wpinv_payment_mode_select', $wrap).show();
-                    gw = jQuery('#wpinv_payment_mode_select', $wrap).attr('data-gateway');
-                }
-                jQuery('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $wrap).attr('checked', true);
-                wpinvSetPaymentBtnText(jQuery('.wpi-payment_methods .wpi-pmethod[value="' + gw + '"]', $wrap), res.free);
-                var data = new Object();
-                data.post = postData;
-                data.response = res;
-                data.recalculated = true;
-                jQuery('body').trigger('wpinv_tax_recalculated', [data]);
-            }
-            setTimeout(function() {
-                var texts = jQuery('.wpi-vat-box #text');
-                texts.html('');
-                var boxes = texts.parents(".wpi-vat-box")
-                boxes.fadeOut('fast');
-            }, 15000);
-        }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        jQuery('#wpinv_checkout_cart_wrap').unblock();
-        console.log(errorThrown);
-    });
-}
-
 function wpinv_is_eu_state(country) {
     return jQuery.inArray(country, WPInv_VAT_Vars.EUStates) !== -1 ? true : false;
 }

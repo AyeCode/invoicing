@@ -215,14 +215,14 @@ class WPInv_Plugin {
     }
     
     public function enqueue_scripts() {
-        $suffix       = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
         wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_front_style' );
                
         // Register scripts
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front' . $suffix . '.js', array( 'jquery' ),  WPINV_VERSION );
+        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  WPINV_VERSION );
 
         $localize                         = array();
         $localize['ajax_url']             = admin_url( 'admin-ajax.php' );
@@ -233,7 +233,9 @@ class WPInv_Plugin {
         $localize['decimal_sep']          = wpinv_decimal_separator();
         $localize['decimals']             = wpinv_decimals();
         $localize['txtComplete']          = __( 'Complete', 'invoicing' );
-        
+        $localize['UseTaxes']             = wpinv_use_taxes();
+        $localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
+
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
         wp_enqueue_script( 'jquery-blockui' );
@@ -246,6 +248,10 @@ class WPInv_Plugin {
             wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array( 'jquery' ), '', false );
             wp_enqueue_script( 'google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array( 'jquery', 'google-maps-api' ), '', true );
         }
+
+        wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.css', array(), WPINV_VERSION, 'all' );
+        wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
+
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
     }
@@ -254,7 +260,7 @@ class WPInv_Plugin {
         global $post, $pagenow;
         
         $post_type  = wpinv_admin_post_type();
-        $suffix     = '';//defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         $page       = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : '';
 
         $jquery_ui_css = false;
@@ -297,7 +303,10 @@ class WPInv_Plugin {
             }
         }
 
-        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
+        wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.css', array(), WPINV_VERSION, 'all' );
+        wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
+
+        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
         wp_enqueue_script( 'wpinv-admin-script' );
         
         $localize                               = array();
@@ -335,7 +344,7 @@ class WPInv_Plugin {
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
 
         if ( $page == 'wpinv-subscriptions' ) {
-            wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions' . $suffix . '.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
+            wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
             wp_enqueue_script( 'wpinv-sub-admin-script' );
         }
     }

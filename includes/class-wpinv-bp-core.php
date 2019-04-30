@@ -329,6 +329,25 @@ class WPInv_BP_Component extends BP_Component {
         
         return $settings;
     }
+
+    public function wp_nav_menu_objects($items, $args){
+        if(!is_user_logged_in()){
+            return $items;
+        }
+
+        if(!apply_filters('wpinv_bp_invoice_history_redirect', true, $items, $args)){
+            return $items;
+        }
+
+        $user_id = get_current_user_id();
+        $link = bp_core_get_user_domain( $user_id ).WPINV_BP_SLUG;
+        $history_link = wpinv_get_history_page_uri();
+        foreach ( $items as $item ) {
+            $item->url = str_replace( $history_link, $link, $item->url );
+        }
+
+        return $items;
+    }
 }
 
 class WPInv_BP_Invoices_Template {
@@ -442,5 +461,6 @@ function wpinv_bp_setup_component() {
     add_action( 'wp_ajax_nopriv_invoicing_filter', array( $bp->invoicing, 'invoices_content' ) );
     add_filter( 'wpinv_settings_sections_general', array( $bp->invoicing, 'bp_section' ), 10, 1 );
     add_filter( 'wpinv_settings_general', array( $bp->invoicing, 'bp_settings' ), 10, 1 );
+    add_filter( 'wp_nav_menu_objects', array( $bp->invoicing, 'wp_nav_menu_objects' ), 10, 2 );
 }
 add_action( 'bp_loaded', 'wpinv_bp_setup_component' );

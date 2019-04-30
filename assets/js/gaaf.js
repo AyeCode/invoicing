@@ -64,7 +64,7 @@ jQuery(function ($) {
                                 $('#wpinv_state', elB).find('option[value=""]').remove();
                             }
 
-                            $('#wpinv_state', elB).addClass('gdmbx2-text-large');
+                            $('#wpinv_state', elB).addClass('gdmbx2-text-large wpi_select2');
                             if (typeof $this.data('change') === '1') {
                                 $('#wpinv_state', elB).change();
                             } else {

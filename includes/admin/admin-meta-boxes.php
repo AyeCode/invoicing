@@ -188,7 +188,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_type"><?php _e( 'Discount Type', 'invoicing' ); ?></label>
             </th>
             <td>
-                <select id="wpinv_discount_type" name="type" class="medium-text">
+                <select id="wpinv_discount_type" name="type" class="medium-text wpi_select2">
                     <?php foreach ( wpinv_get_discount_types() as $value => $label ) { ?>
                     <option value="<?php echo $value ;?>" <?php selected( $type, $value ); ?>><?php echo $label; ?></option>
                     <?php } ?>
@@ -218,7 +218,7 @@ function wpinv_discount_metabox_details( $post ) {
                         'id'                => 'items',
                         'selected'          => $item_reqs,
                         'multiple'          => true,
-                        'class'             => 'medium-text',
+                        'class'             => 'medium-text wpi_select2',
                         'placeholder'       => __( 'Select one or more Items', 'invoicing' ),
                         'show_recurring'    => true,
                     ) ); ?>
@@ -237,7 +237,7 @@ function wpinv_discount_metabox_details( $post ) {
                         'id'                => 'excluded_items',
                         'selected'          => $excluded_items,
                         'multiple'          => true,
-                        'class'             => 'medium-text',
+                        'class'             => 'medium-text wpi_select2',
                         'placeholder'       => __( 'Select one or more Items', 'invoicing' ),
                         'show_recurring'    => true,
                     ) ); ?>
@@ -307,7 +307,7 @@ function wpinv_discount_metabox_details( $post ) {
                 <label for="wpinv_discount_recurring"><?php _e( 'For recurring apply to', 'invoicing' ); ?></label>
             </th>
             <td>
-                <select id="wpinv_discount_recurring" name="recurring" class="medium-text">
+                <select id="wpinv_discount_recurring" name="recurring" class="medium-text wpi_select2">
                     <option value="0" <?php selected( false, $recurring ); ?>><?php _e( 'All payments', 'invoicing' ); ?></option>
                     <option value="1" <?php selected( true, $recurring ); ?>><?php _e( 'First payment only', 'invoicing' ); ?></option>
                 </select>

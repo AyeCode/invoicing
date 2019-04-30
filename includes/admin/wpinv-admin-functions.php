@@ -356,7 +356,7 @@ function wpinv_add_items_filters() {
                     'selected'         => ( isset( $_GET['vat_rule'] ) ? $_GET['vat_rule'] : '' ),
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium',
+                    'class'            => 'gdmbx2-text-medium wpi_select2',
                 ) );
         }
         
@@ -368,7 +368,7 @@ function wpinv_add_items_filters() {
                     'selected'         => ( isset( $_GET['vat_class'] ) ? $_GET['vat_class'] : '' ),
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium',
+                    'class'            => 'gdmbx2-text-medium wpi_select2',
                 ) );
         }
             

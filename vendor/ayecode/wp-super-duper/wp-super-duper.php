@@ -23,11 +23,12 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 	 * @since 1.0.9 Numbers saving as strings and not numbers which can cause block render issues on refresh - FIXED
 	 * @since 1.0.10 Some refactoring for page builders ( Avia builder for Enfold theme now supported ) - CHANGED
 	 * @since 1.0.11 Some refactoring for page builders - CHANGED
-	 * @ver 1.0.11
+	 * @since 1.0.12 A checkbox default value can make a argument true even when unchecked - FIXED
+	 * @ver 1.0.12
 	 */
 	class WP_Super_Duper extends WP_Widget {
 
-		public $version = "1.0.11";
+		public $version = "1.0.12";
 		public $block_code;
 		public $options;
 		public $base_id;
@@ -1252,6 +1253,8 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 		 *
 		 * @param $instance
 		 *
+		 * @since 1.0.12 Don't set checkbox default value if the value is empty.
+		 *
 		 * @return array
 		 */
 		public function argument_values( $instance ) {
@@ -1270,7 +1273,10 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 					$args['name'] = $key;
 					//
 					$argument_values[ $key ] = isset( $instance[ $key ] ) ? $instance[ $key ] : '';
-					if ( $argument_values[ $key ] == '' && isset( $args['default'] ) ) {
+					if($args['type']=='checkbox' && $argument_values[ $key ] == ''){
+						// don't set default for an empty checkbox
+					}
+					elseif ( $argument_values[ $key ] == '' && isset( $args['default'] ) ) {
 						$argument_values[ $key ] = $args['default'];
 					}
 				}

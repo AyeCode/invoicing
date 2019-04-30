@@ -20,6 +20,16 @@ jQuery(function($) {
         }
     });
 
+    wpi_select2();
+    function wpi_select2() {
+        if (jQuery("select.wpi_select2").length > 0) {
+            jQuery("select.wpi_select2").select2();
+            jQuery("select.wpi_select2_nostd").select2({
+                allow_single_deselect: 'true'
+            });
+        }
+    }
+
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
     var wpiSymbol = WPInv_Admin.currency_symbol;
@@ -177,7 +187,7 @@ jQuery(function($) {
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
         jQuery('#submitdiv', jQuery('.wpinv')).remove();
-        jQuery('#major-publishing-actions', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
+        jQuery('#publishing-action', '#wpinv-details').find('input[type=submit]').attr('name', 'save_invoice').val(WPInv_Admin.save_invoice);
     }
     var invBilling = jQuery('#wpinv-address.postbox').html();
     if (invBilling) {
@@ -270,6 +280,9 @@ jQuery(function($) {
         });
         $.post(ajaxurl, data, function(response) {
             var selected = typeof $this.data('state') !== 'undefined' ? $this.data('state') : "";
+            if($('#wpinv_state', elB).hasClass('select2-hidden-accessible')){
+                $('#wpinv_state', elB).select2("destroy");
+            }
             if ('nostates' === response) {
                 var text_field = '<input type="text" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
                 $('#wpinv_state', elB).replaceWith(text_field);
@@ -277,6 +290,7 @@ jQuery(function($) {
                 $('#wpinv_state', elB).replaceWith(response);
                 $('#wpinv_state', elB).find('option[value="' + selected + '"]').attr('selected', 'selected');
                 $('#wpinv_state', elB).find('option[value=""]').remove();
+                $('#wpinv_state', elB).select2();
             }
             $('#wpinv_state', elB).addClass('gdmbx2-text-large');
             if (typeof $this.data('change') === '1') {
@@ -930,7 +944,7 @@ jQuery(function($) {
     };
     $('.post-type-wpi_invoice form#post #titlediv [name="post_title"]').attr('readonly', true);
     $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
-    $('.post-type-wpi_item.wpi-editable-n #submitdiv #major-publishing-actions').remove();
+    $('.post-type-wpi_item.wpi-editable-n #submitdiv #publishing-action').remove();
     $('.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status').remove();
     $('.post-type-wpi_item .posts .wpi-editable-n').each(function(e) {
         $('.check-column [type="checkbox"]', $(this)).attr('disabled', true);

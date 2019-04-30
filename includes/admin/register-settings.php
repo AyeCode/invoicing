@@ -211,6 +211,7 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => wpinv_get_country_list(),
                         'std'     => 'GB',
+                        'class'   => 'wpi_select2',
                         'placeholder' => __( 'Select a country', 'invoicing' ),
                     ),
                     'default_state' => array(
@@ -218,6 +219,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Default State / Province', 'invoicing' ),
                         'desc'    => __( 'What state / province does your store operate from?', 'invoicing' ),
                         'type'    => 'country_states',
+                        'class'   => 'wpi_select2',
                         'placeholder' => __( 'Select a state', 'invoicing' ),
                     ),
                     'store_name' => array(
@@ -251,6 +253,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the checkout page where buyers will complete their payments. The <b>[wpinv_checkout]</b> short code must be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'tandc_page' => array(
@@ -259,7 +262,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'If you select a "Terms & Conditions" page here the customer will be asked to accept them on checkout.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
-                        'chosen'      => true,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'success_page' => array(
@@ -268,6 +271,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the page buyers are sent to after completing their payments. The <b>[wpinv_receipt]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'failure_page' => array(
@@ -276,6 +280,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'invoice_history_page' => array(
@@ -284,6 +289,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This page shows an invoice history for the current user. The <b>[wpinv_history]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'invoice_subscription_page' => array(
@@ -292,6 +298,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'This page shows subscriptions history for the current user. The <b>[wpinv_subscriptions]</b> short code should be on this page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => $pages,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                 ),
@@ -307,6 +314,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Currency', 'invoicing' ),
                         'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
                         'type'    => 'select',
+                        'class'       => 'wpi_select2',
                         'options' => $currency_code_options,
                     ),
                     'currency_position' => array(
@@ -314,6 +322,7 @@ function wpinv_get_registered_settings() {
                         'name'    => __( 'Currency Position', 'invoicing' ),
                         'desc'    => __( 'Choose the location of the currency sign.', 'invoicing' ),
                         'type'    => 'select',
+                        'class'   => 'wpi_select2',
                         'options'  => array(
                             'left'        => __( 'Left', 'invoicing' ) . ' (' . $currency_symbol . wpinv_format_amount( '99.99' ) . ')',
                             'right'       => __( 'Right', 'invoicing' ) . ' ('. wpinv_format_amount( '99.99' ) . $currency_symbol . ')',
@@ -404,6 +413,7 @@ function wpinv_get_registered_settings() {
                         'desc'    => __( 'This gateway will be loaded automatically with the checkout page.', 'invoicing' ),
                         'type'    => 'gateway_select',
                         'std'     => 'manual',
+                        'class'   => 'wpi_select2',
                         'options' => wpinv_get_payment_gateways(),
                     ),
                 ),
@@ -564,7 +574,7 @@ function wpinv_get_registered_settings() {
                         'desc'        => __( 'If no privacy policy page set in Settings->Privacy default settings, this page will be used on checkout page.', 'invoicing' ),
                         'type'        => 'select',
                         'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
-                        'chosen'      => true,
+                        'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
                     'invoicing_privacy_checkout_message' => array(
@@ -610,6 +620,7 @@ function wpinv_get_registered_settings() {
                         'type'    => 'select',
                         'options' => $invoice_number_padd_options,
                         'std'     => 5,
+                        'class'   => 'wpi_select2',
                     ),
                     'invoice_number_prefix' => array(
                         'id' => 'invoice_number_prefix',
@@ -1123,8 +1134,9 @@ function wpinv_gateway_select_callback($args) {
 	global $wpinv_options;
     
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
+    $class = !empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
 
-	echo '<select name="wpinv_settings[' . $sanitize_id . ']"" id="wpinv_settings[' . $sanitize_id . ']">';
+	echo '<select name="wpinv_settings[' . $sanitize_id . ']"" id="wpinv_settings[' . $sanitize_id . ']" class="'.$class.'" >';
 
 	foreach ( $args['options'] as $key => $option ) :
 		if ( isset( $args['selected'] ) && $args['selected'] !== null && $args['selected'] !== false ) {
@@ -1270,7 +1282,9 @@ function wpinv_select_callback($args) {
         $onchange = '';
     }
 
-	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
+    $class = !empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
+
+	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" class="'.$class.'"  name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" data-placeholder="' . esc_html( $placeholder ) . '"' . $onchange . ' />';
 
 	foreach ( $args['options'] as $option => $name ) {
 		$selected = selected( $option, $value, false );
@@ -1388,7 +1402,7 @@ function wpinv_country_states_callback($args) {
 
 	$states = wpinv_get_country_states();
 
-	$class = empty( $states ) ? ' class="wpinv-no-states"' : '';
+	$class = empty( $states ) ? ' class="wpinv-no-states"' : ' class="wpi_select2"';
 	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
 
 	foreach ( $states as $option => $name ) {
@@ -1436,7 +1450,7 @@ function wpinv_tax_rates_callback($args) {
 						'selected'         => $rate['country'],
 						'show_option_all'  => false,
 						'show_option_none' => false,
-						'class'            => 'wpinv-tax-country',
+						'class'            => 'wpinv-tax-country wpi_select2',
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) );
 					?>
@@ -1452,6 +1466,7 @@ function wpinv_tax_rates_callback($args) {
 							'selected'         => $rate['state'],
 							'show_option_all'  => false,
 							'show_option_none' => false,
+                            'class'            => 'wpi_select2',
 							'placeholder'      => __( 'Choose a state', 'invoicing' )
 						) );
 					} else {
@@ -1481,7 +1496,7 @@ function wpinv_tax_rates_callback($args) {
 						'name'             => 'tax_rates[0][country]',
 						'show_option_all'  => false,
 						'show_option_none' => false,
-						'class'            => 'wpinv-tax-country',
+						'class'            => 'wpinv-tax-country wpi_select2',
 						'placeholder'      => __( 'Choose a country', 'invoicing' )
 					) ); ?>
 				</td>
