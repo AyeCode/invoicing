@@ -1414,13 +1414,23 @@ function wpinv_checkout_validate_agree_to_terms() {
 
 function wpinv_checkout_validate_invoice_user() {
     global $wpi_cart, $user_ID;
-    
+
+    if(empty($wpi_cart)){
+        $wpi_cart = wpinv_get_invoice_cart();
+    }
+
+    $invoice_user = (int)$wpi_cart->get_user_id();
     $valid_user_data = array(
-        'user_id' => -1
+        'user_id' => $invoice_user
     );
+
+    // If guest checkout allowed
+    if ( !wpinv_require_login_to_checkout() ) {
+        return $valid_user_data;
+    }
     
     // Verify there is a user_ID
-    if ( $user_ID == (int)$wpi_cart->get_user_id() ) {
+    if ( $user_ID == $invoice_user ) {
         // Get the logged in user data
         $user_data = get_userdata( $user_ID );
         $required_fields  = wpinv_checkout_required_fields();
@@ -1484,12 +1494,9 @@ function wpinv_checkout_validate_current_user() {
 }
 
 function wpinv_checkout_form_get_user( $valid_data = array() ) {
-    // Initialize user
-    $user    = false;
-    $is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
-    if ( empty( $valid_data['current_user'] ) ) {
-        $user = false;
+    if ( !empty( $valid_data['current_user']['user_id'] ) ) {
+        $user = $valid_data['current_user'];
     } else {
         // Set the valid invoice user
         $user = $valid_data['invoice_user'];
@@ -1516,7 +1523,7 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
     foreach ( $address_fields as $field ) {
         $user[$field]  = !empty( $_POST['wpinv_' . $field] ) ? sanitize_text_field( $_POST['wpinv_' . $field] ) : false;
         
-        if ( !empty( $user['user_id'] ) && !empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $user['user_id'] ) {
+        if ( !empty( $user['user_id'] ) && !empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $valid_data['invoice_user']['user_id'] ) {
             update_user_meta( $user['user_id'], '_wpinv_' . $field, $user[$field] );
         }
     }

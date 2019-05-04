@@ -120,6 +120,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.10 =
+Invalid invoice user id error sometimes when require login to checkout disabled - FIXED
+
 = 1.0.9 =
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
 Use select2 for dropdown. - CHANGED

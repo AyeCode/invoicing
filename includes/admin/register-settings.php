@@ -80,7 +80,7 @@ function wpinv_get_settings() {
         $misc_settings      = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
         $tool_settings      = is_array( get_option( 'wpinv_settings_tools' ) )      ? get_option( 'wpinv_settings_tools' )      : array();
 
-        $settings = array_merge( $general_settings, $gateways_settings, $tax_settings, $tool_settings );
+        $settings = array_merge( $general_settings, $gateways_settings, $email_settings, $tax_settings, $misc_settings, $tool_settings );
 
         update_option( 'wpinv_settings', $settings );
 
