@@ -1604,6 +1604,77 @@ textarea.wpi-email_overdue_content {
     width: 110px;
 }
 
+.wpi-products .wpi-product {
+    background: #fff;
+    border: 1px solid #ccc;
+    display: inline-block;
+    position: relative;
+    margin: 0 0 15px 0;
+    box-sizing: border-box;
+    width: 32%;
+    margin-left: 2%; }
+.wpi-products .wpi-product:nth-child(3n+1) {
+    margin-left: 0; }
+@media screen and (max-width: 600px) {
+    .wpi-products .wpi-product {
+        width: calc(100% - 15px); } }
+.wpi-products .wpi-product:hover .wpi-product-image img {
+    opacity: 0.75; }
+.wpi-products .wpi-product:hover .wpi-product-image .wpi-product-info {
+    display: block; }
+.wpi-products .wpi-product a {
+    text-decoration: none; }
+.wpi-products .wpi-product h3 {
+    background: #f9f9f9;
+    padding: 15px;
+    margin: 0; }
+.wpi-products .wpi-product h3 .wpi-help-tip {
+    float: none;
+    margin: 0; }
+.wpi-products .wpi-product .wpi-product-image {
+    max-height: 198px;
+    display: block;
+    overflow: hidden;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    box-sizing: border-box; }
+.wpi-products .wpi-product .wpi-product-image img {
+    float: left; }
+@media screen and (max-width: 600px) {
+    .wpi-products .wpi-product .wpi-product-image {
+        max-height: 318px; } }
+.wpi-products .wpi-product .wpi-product-image .wpi-product-info {
+    position: absolute;
+    top: calc(50% - 14px);
+    left: calc(50% - 39px);
+    background: #000000b5;
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: #fff;
+    display: none; }
+@media screen and (max-width: 600px) {
+    .wpi-products .wpi-product .wpi-product-image .wpi-product-info {
+        display: block; } }
+.wpi-products .wpi-product .wpi-product-excerpt {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    padding: 5px 10px; }
+.wpi-products .wpi-product .wpi-product-excerpt p {
+    margin: 0; }
+.wpi-products .wpi-product .wpi-product-button {
+    min-height: 40px;
+    display: block;
+    background: #f9f9f9; }
+.wpi-products .wpi-product .wpi-product-button .addons-price-text {
+    margin: 10px 0 0 6px;
+    float: left; }
+.wpi-products .wpi-product .addons-button {
+    float: right;
+    margin: 5px 6px 0 0; }
+.wpi-products .wpi-product img {
+    max-width: 100%; }
+
 @media screen and ( max-width: 782px) {
     .wpinv-address .gdmbx-wpinv-btns .button-secondary {
         padding: 4px 10px;

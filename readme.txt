@@ -3,7 +3,7 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
-Tested up to: 5.1
+Tested up to: 5.2
 Stable tag: 1.0.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -122,6 +122,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED
+Extensions screen containing all available add ons for UsersWP and recommended plugins - ADDED
 
 = 1.0.9 =
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
