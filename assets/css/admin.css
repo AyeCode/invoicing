@@ -1322,9 +1322,8 @@ body.wpi-wpinv-settings .wp-picker-holder,
     margin: 0;
 }
 .gdmbx-wpinv-save-send #wpi_save_send {
-    height: auto !important;
     margin-left: 3px !important;
-    width: auto !important;
+    width: 60px !important;
 }
 .gdmbx-wpinv-save-send .wpi-send-info {
     color: #72777c;
