@@ -114,7 +114,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			'update_url' => '',
 		);
 
-		if($current_tab == 'addons' && isset($addon->info->id) && $addon->info->id){
+		if( ($current_tab == 'addons' || $current_tab =='gateways') && isset($addon->info->id) && $addon->info->id){
 			include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
 			if(!empty($addon->licensing->edd_slug)){$button_args['slug'] = $addon->licensing->edd_slug;}
 			$status = self::install_plugin_install_status($addon);
