@@ -87,7 +87,50 @@ class WPInv_BP_Component extends BP_Component {
             'item_css_id'     => 'invoices-my-invoices'
         );
 
-        parent::setup_nav( $main_nav, $sub_nav );
+        //parent::setup_nav( $main_nav, $sub_nav );
+    }
+
+    public function wpinv_buddypress_setup_nav() {
+
+        global $bp;
+
+        $user_domain    = bp_loggedin_user_domain();
+        $invoices_link  = trailingslashit( $user_domain . $this->slug );
+        $class          = ( 0 === $this->count ) ? 'no-count' : 'count';
+
+        $main_nav_name = sprintf(
+            __( 'My Invoices %s', 'invoicing' ),
+            sprintf(
+                '<span class="%s">%s</span>',
+                esc_attr( $class ),
+                bp_core_number_format( $this->count )
+            )
+        );
+
+        $main_nav = array(
+            'name'                => $main_nav_name,
+            'slug'                => $this->slug,
+            'position'            => $this->position,
+            'screen_function'     => array( $this, 'invoices_screen' ),
+            'default_subnav_slug' => 'invoices',
+            'item_css_id'         => $this->id
+        );
+
+        bp_core_new_nav_item( $main_nav );
+
+        $sub_nav[] = array(
+            'name'            => _x(
+                'My Invoices', 'Invoices screen sub nav', 'invoicing' ),
+            'slug'            => 'invoices',
+            'parent_url'      => $invoices_link,
+            'parent_slug'     => $this->slug,
+            'screen_function' => array( $this, 'invoices_screen' ),
+            'position'        => 10,
+            'item_css_id'     => 'invoices-my-invoices'
+        );
+
+
+        bp_core_new_subnav_item( $sub_nav );
     }
     
     public function setup_title() {
@@ -462,5 +505,6 @@ function wpinv_bp_setup_component() {
     add_filter( 'wpinv_settings_sections_general', array( $bp->invoicing, 'bp_section' ), 10, 1 );
     add_filter( 'wpinv_settings_general', array( $bp->invoicing, 'bp_settings' ), 10, 1 );
     add_filter( 'wp_nav_menu_objects', array( $bp->invoicing, 'wp_nav_menu_objects' ), 10, 2 );
+    add_action('bp_setup_nav', array($bp->invoicing, 'wpinv_buddypress_setup_nav'), 15);
 }
 add_action( 'bp_loaded', 'wpinv_bp_setup_component' );

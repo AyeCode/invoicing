@@ -123,6 +123,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED
 Extensions screen containing all available add ons for UsersWP and recommended plugins - ADDED
+Updated Font Awesome version to 1.0.11 - CHANGED
 
 = 1.0.9 =
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED

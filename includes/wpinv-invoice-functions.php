@@ -1607,7 +1607,7 @@ function wpinv_process_checkout() {
             if ( isset( $user[$field] ) ) {
                 $invoice->set( $field, $user[$field] );
             }
-            
+
             $invoice->save();
         }
 
@@ -1628,7 +1628,7 @@ function wpinv_process_checkout() {
         'user_id'        => $user['user_id'],
         'first_name'     => $user['first_name'],
         'last_name'      => $user['last_name'],
-        'email'          => $user['email'],
+        'email'          => $invoice->get_email(),
         'company'        => $user['company'],
         'phone'          => $user['phone'],
         'address'        => $user['address'],
@@ -1652,7 +1652,7 @@ function wpinv_process_checkout() {
         'tax'               => wpinv_get_cart_tax( $cart_items ),               // Taxed amount
         'price'             => wpinv_get_cart_total( $cart_items, $discounts ),    // Amount after taxes
         'invoice_key'       => $invoice->get_key() ? $invoice->get_key() : $invoice->generate_key(),
-        'user_email'        => $user['email'],
+        'user_email'        => $invoice->get_email(),
         'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
         'user_info'         => stripslashes_deep( $user_info ),
         'post_data'         => $_POST,
@@ -1680,7 +1680,7 @@ function wpinv_process_checkout() {
         if ( isset( $invoice_data['user_info'][$field] ) ) {
             $invoice->set( $field, $invoice_data['user_info'][$field] );
         }
-        
+
         $invoice->save();
     }
 
