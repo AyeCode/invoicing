@@ -14,6 +14,7 @@ class WPInv_Admin_Menus {
      */
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+        add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 99 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
         add_action( 'admin_head-nav-menus.php', array( $this, 'add_nav_menu_meta_boxes' ) );
     }
@@ -36,6 +37,26 @@ class WPInv_Admin_Menus {
         add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
 
         add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), $capability, 'wpinv-settings', array( $this, 'options_page' ));
+    }
+
+    public function add_addons_menu(){
+        if ( !apply_filters( 'wpi_show_addons_page', true ) ) {
+            return;
+        }
+
+        add_submenu_page(
+            "wpinv",
+            __('Invoicing extensions', 'invoicing'),
+            __('Extensions', 'userswp'),
+            'manage_options',
+            'wpi-addons',
+            array( $this, 'addons_page' )
+        );
+    }
+
+    public function addons_page(){
+        $addon_obj = new WPInv_Admin_Addons();
+        $addon_obj->output();
     }
 
     function options_page() {

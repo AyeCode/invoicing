@@ -960,3 +960,43 @@ function wpinv_cal_days_in_month( $calendar, $month, $year ) {
     // Only supports Gregorian calendar
     return date( 't', mktime( 0, 0, 0, $month, 1, $year ) );
 }
+
+/**
+ * Display a help tip for settings.
+ *
+ * @param  string $tip Help tip text
+ * @param  bool $allow_html Allow sanitized HTML if true or escape
+ *
+ * @return string
+ */
+function wpi_help_tip( $tip, $allow_html = false ) {
+    if ( $allow_html ) {
+        $tip = wpi_sanitize_tooltip( $tip );
+    } else {
+        $tip = esc_attr( $tip );
+    }
+
+    return '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . $tip . '"></span>';
+}
+
+/**
+ * Sanitize a string destined to be a tooltip.
+ *
+ * Tooltips are encoded with htmlspecialchars to prevent XSS. Should not be used in conjunction with esc_attr()
+ *
+ * @param string $var
+ * @return string
+ */
+function wpi_sanitize_tooltip( $var ) {
+    return htmlspecialchars( wp_kses( html_entity_decode( $var ), array(
+        'br'     => array(),
+        'em'     => array(),
+        'strong' => array(),
+        'small'  => array(),
+        'span'   => array(),
+        'ul'     => array(),
+        'li'     => array(),
+        'ol'     => array(),
+        'p'      => array(),
+    ) ) );
+}
