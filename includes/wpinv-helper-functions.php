@@ -1000,3 +1000,31 @@ function wpi_sanitize_tooltip( $var ) {
         'p'      => array(),
     ) ) );
 }
+
+/**
+ * Get all WPI screen ids.
+ *
+ * @return array
+ */
+function wpinv_get_screen_ids() {
+
+    $screen_id = sanitize_title( __( 'Invoicing', 'invoicing' ) );
+
+    $screen_ids = array(
+        'toplevel_page_' . $screen_id,
+        'wpi_invoice',
+        'wpi_item',
+        'wpi_quote',
+        'wpi_discount',
+        'edit-wpi_invoice',
+        'edit-wpi_item',
+        'edit-wpi_discount',
+        'edit-wpi_quote',
+        'invoicing_page_wpinv-settings',
+        'invoicing_page_wpinv-subscriptions',
+        'invoicing_page_wpinv-reports',
+        'invoicing_page_wpi-addons',
+    );
+
+    return apply_filters( 'wpinv_screen_ids', $screen_ids );
+}
