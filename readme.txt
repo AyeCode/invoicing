@@ -4,7 +4,7 @@ Donate link: https://wpinvoicing.com
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,7 +83,7 @@ We worked on the plugin for over a year before it got its first public release, 
 
 = Minimum Requirements =
 
-* WordPress 3.1 or greater
+* WordPress 4.9 or greater
 * PHP version 5.3 or greater
 * MySQL version 5.0 or greater
 
@@ -125,6 +125,7 @@ Invalid invoice user id error sometimes when require login to checkout disabled 
 Extensions screen containing all available add ons for UsersWP and recommended plugins - ADDED
 Updated Font Awesome version to 1.0.11 - CHANGED
 Setting to allow to enable renewal payment email notification which is disabled by default. - ADDED
+Export items to CSV export in reports page - ADDED
 
 = 1.0.9 =
 Invoice history menu item should redirect to my invoices in BuddyPress profile if BuddyPress active - FIXED
