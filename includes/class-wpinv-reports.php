@@ -254,10 +254,7 @@ class WPInv_Reports {
     }
     
     public function get_columns() {
-        $columns = array(
-            'id'   => __( 'ID',   'invoicing' ),
-            'date' => __( 'Date', 'invoicing' )
-        );
+        $columns = array();
         
         return apply_filters( 'wpinv_export_get_columns_' . $this->export, $columns );
     }

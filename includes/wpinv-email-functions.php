@@ -337,6 +337,10 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
         return false;
     }
 
+    if($invoice->is_renewal() && wpinv_email_is_enabled( 'completed_invoice_renewal' )){
+        return false;
+    }
+
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
@@ -879,6 +883,13 @@ function wpinv_get_emails() {
                 'desc' => __( 'Enable this email notification', 'invoicing' ),
                 'type' => 'checkbox',
                 'std'  => 1
+            ),
+            'email_completed_invoice_renewal_active' => array(
+                'id'   => 'email_completed_invoice_renewal_active',
+                'name' => __( 'Enable renewal notification', 'invoicing' ),
+                'desc' => __( 'Enable renewal invoice email notification. This notification will be sent on renewal.', 'invoicing' ),
+                'type' => 'checkbox',
+                'std'  => 0
             ),
             'email_completed_invoice_subject' => array(
                 'id'   => 'email_completed_invoice_subject',
