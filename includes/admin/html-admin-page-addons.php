@@ -47,12 +47,12 @@ add_ThickBox();
 							<h2>Membership benefit Includes:</h2>
 							<div class="feature-list">
 								<ul>
-										<li><span class="dashicons dashicons-yes-alt"></span> Gravity Forms</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Contact form 7</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Gravity Forms Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Contact form 7 Integration</li>
 										<li><span class="dashicons dashicons-yes-alt"></span> PDF Invoices</li>
 										<li><span class="dashicons dashicons-yes-alt"></span> AffiliateWP Integration</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Ninja forms</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Quotes</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Ninja forms Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Quotes Integration</li>
 									</ul>
 
 									<div class="feature-cta">
@@ -61,7 +61,7 @@ add_ThickBox();
 										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
 									</div>
 									<h3>Gateways -
-The official <br>Gateways for Invoicing, get paid the way you want!</h4>
+The official <br>Gateways for Invoicing, get paid the way you want! Check all payment gateway integration</h4>
 									<ul>
 
 										<li><span class="dashicons dashicons-yes-alt"></span> Stripe Payment Gateway</li>
