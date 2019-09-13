@@ -28,12 +28,12 @@ add_ThickBox();
 			?>
 
 			<div class="wpi-membership-tab-conatiner">
+				<div class="membership-content">
+<!--
 				<h2>With our WPInvoicing Membership you get access to all our products!</h2>
-				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>
+				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>-->
 				<?php if(defined('WP_EASY_UPDATES_ACTIVE')){?>
-
 					<h2>Have a membership key?</h2>
-
 					<p>
 						<?php
 						$wpeu_admin = new External_Updates_Admin('wpinvoicing.com','1');
@@ -41,8 +41,98 @@ add_ThickBox();
 						?>
 					</p>
 				<?php }?>
-			</div>
 
+				<div class="membership-cta-contet">
+					<div class="main-cta">
+							<h2>Membership benefit Includes:</h2>
+							<div class="feature-list">
+								<ul>
+										<li><span class="dashicons dashicons-yes-alt"></span> Gravity Forms Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Contact form 7 Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PDF Invoices</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> AffiliateWP Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Ninja forms Integration</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Quotes Integration</li>
+									</ul>
+
+									<div class="feature-cta">
+										<h3>Membership Starts from</h3>
+										<h4>$99</h4>
+										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
+									</div>
+									<h3>Gateways -
+The official <br>Gateways for Invoicing, get paid the way you want! Check all payment gateway integration</h4>
+									<ul>
+
+										<li><span class="dashicons dashicons-yes-alt"></span> Stripe Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PayFast Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PayPal Pro Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Mollie Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> GoCardless Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Cash on Delivery Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> 2Checkout Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Sage Pay Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Square Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> Cheque Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> FirstData Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PayUmoney Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PayUmoney Latam Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> PayPal Payflow Payment Gateway</li>
+										<li><span class="dashicons dashicons-yes-alt"></span> WebPay Payment Gateway</li>
+								</ul>
+							</div>
+
+
+					</div>
+					<div class="member-testimonials">
+						<h3>Testimonials</h3>
+						<div class="testimonial-content">
+							<div class="t-image">
+								<?php
+									echo '<img src="' . plugins_url( 'images/t-image2.png', dirname(__FILE__) ) . '" > ';
+								?>
+							</div>
+							<div class="t-content">
+								<p>
+									It works perfectly right out of the box and above all it’s VAT compliant, something crucial for everyone doing business with EU B2C and B2B customers.<br><br>
+
+Then I had a minor issue which required their support and they delivered an unparalleled example of how excellent support works.<br><br>
+
+Response was super fast, they analyzed the issue, delivered a patch in record time and solved this issue for good in the next release.<br><br>
+
+Many commercial plugins and theme companies from the WordPress scene should learn from them.
+								</p>
+								<p><strong>Pedstone </strong> (@pedstone)</p>
+							</div>
+						</div>
+
+						<div class="testimonial-content">
+							<div class="t-image">
+								<?php
+									echo '<img src="' . plugins_url( 'images/t-image1.png', dirname(__FILE__) ) . '" > ';
+								?>
+							</div>
+							<div class="t-content">
+								<p>
+									I have been looking for a basic invoicing system that will allow recurring invoices.
+This plugin is far from basic, with some nice in-depth options yet a great easy to use interface.<br><br>
+
+I tried numerous plugins in an attempt to give me what I needed, this is by far the best and there was no need to buy premium plugins to get the features I required.<br><br>
+Great job so far guys, can’t wait to see where this goes!
+								</p>
+								<p><strong>Coldcutt </strong>(@coldcutt)</p>
+							</div>
+						</div>
+					</div>
+					<div class="member-footer">
+						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
+						<a class="footer-link" href="post-new.php?post_type=wpi_invoice">Create Invoice</a>
+					</div>
+				</div>
+
+
+			</div>
+		</div>
 			<?php
 		}else{
 			$installed_plugins = get_plugins();
