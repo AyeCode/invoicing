@@ -28,19 +28,23 @@ class WPInv_BP_Component {
 
     public function setup_nav() {
 
-        if ( wpinv_get_option( 'wpinv_bp_hide_menu' ) ) {
+        if ( wpinv_get_option( 'wpinv_bp_hide_menu' ) || !is_user_logged_in()) {
             return;
         }
 
-        $this->setup_invoice_count();
-        $class          = ( 0 === $this->count ) ? 'no-count' : 'count';
+        if(bp_displayed_user_id() != bp_loggedin_user_id() && !current_user_can('administrator')){
+            return;
+        }
+
+        $count = $this->get_invoice_count();
+        $class = ( 0 === $count ) ? 'no-count' : 'count';
 
         $main_nav_name = sprintf(
             __( 'My Invoices %s', 'invoicing' ),
             sprintf(
                 '<span class="%s">%s</span>',
                 esc_attr( $class ),
-                bp_core_number_format( $this->count )
+                bp_core_number_format( $count )
             )
         );
 
@@ -193,7 +197,7 @@ class WPInv_BP_Component {
             'page'              => 1,
             'per_page'          => $per_page > 0 ? $per_page : 20,
             'max'               => false,
-            'user_id'           => bp_loggedin_user_id(),
+            'user_id'           => bp_displayed_user_id(),
         ), 'has_invoices' );
 
 
@@ -207,11 +211,11 @@ class WPInv_BP_Component {
         return apply_filters( 'wpinv_bp_has_invoices', $invoices_template->has_invoices(), $invoices_template, $r );
     }
     
-    public function setup_invoice_count() {
-        $query      = apply_filters( 'wpinv_user_invoices_count_query', array( 'user' => bp_loggedin_user_id(), 'limit' => '-1', 'return' => 'ids', 'paginate' => false ) );
+    public function get_invoice_count() {
+        $query      = apply_filters( 'wpinv_user_invoices_count_query', array( 'status' => 'all','user' => bp_displayed_user_id(), 'limit' => '-1', 'return' => 'ids', 'paginate' => false ) );
         $invoices   = wpinv_get_invoices( $query );
         
-        $this->count = !empty( $invoices ) ? count( $invoices ) : 0;
+        return !empty( $invoices ) ? count( $invoices ) : 0;
     }
     
     public function pagination_count() {
@@ -406,6 +410,10 @@ class WPInv_BP_Invoices_Template {
 }
 
 function wpinv_bp_setup_component() {
+
+    if(!class_exists( 'BuddyPress' )){
+        return;
+    }
 
     new WPInv_BP_Component();
 
