@@ -67,7 +67,7 @@
 .gdmbx2-wrap .wpinv-address .gdmbx2-text-large {
     width: 100% !important;
 }
-      
+
 .wpinv .gdmbx2-wrap select {
     height: auto;
 }
@@ -402,12 +402,12 @@ ul.invoice_notes li.system-note .note_content:after {
   background: #f8f8f8;
   font-weight: bold;
   border-bottom: 1px solid #e1e1e1;
-}  
+}
 .wpinv .wpinv_totals .total{
   background: #f8f8f8 none repeat scroll 0 0;
   font-weight: bold;
   border-top: 1px solid #e1e1e1;
-} 
+}
 
 /*
   options section
@@ -631,13 +631,13 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   float: left;
   font-size: 16px;
   margin: 2px 2px 0 0;
-} 
+}
 .wpinv tr .title a {
   font-weight: normal;
-} 
+}
 .wpinv tr .row-title .dashicons-controls-repeat{
   padding: 0 3px 0 0;
-} 
+}
 .wpinv tr:not(.level-0) .row-title .dashicons-controls-repeat{
   color: #888;
   padding: 0 3px 0 10px;
@@ -662,10 +662,10 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   .wpinv .repeatable .gdmbx-type-text-money {
     width: 33%;
   }
-}  
+}
 
 @media only screen and (min-width : 783px) and (max-width : 960px) {
-} 
+}
 
 @media only screen and (min-width : 490px) and (max-width : 659px) {
   .wpinv .repeatable .gdmbx-type-text-small {
@@ -677,7 +677,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   .wpinv .repeatable .gdmbx-type-text-money {
     width: 33%;
   }
-} 
+}
 
 @media only screen and (min-width : 300px) and (max-width : 489px) {
   #invoice_items_repeat .gdmbx-nested .gdmbx-row:nth-child(1) {
@@ -707,7 +707,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     min-width: 100%;
   }
 
-} 
+}
 
 .post-type-wpi_invoice .subsubsub .mine {
     display: none;
@@ -906,7 +906,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 .wpinv-fee-action i {
     cursor: pointer;
-    
+
 }
 .wpinv-fee-remove:hover  i {
     color: #333;
@@ -1038,7 +1038,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 #wpinv_items .action .fa-remove {
     cursor: pointer;
-    
+
 }
 #wpinv_items .action .fa-remove:hover {
     color: #333;
@@ -1203,7 +1203,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     font-size: 13px;
 }
 #wpinv-quick-add .wpi-item-actions .button {
-    margin-right: 15px;    
+    margin-right: 15px;
 }
 #wpinv-address .button-small .fa {
     color: #333;
@@ -1715,4 +1715,151 @@ textarea.wpi-email_overdue_content {
     .wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row  {
         width: 100%;
     }
+}
+
+
+/* memership tab */
+.easy-update {
+  font-size: 16px;
+}
+.membership-content {
+  max-width: 800px;
+  padding: 50px 20px;
+}
+
+.gd-membership-tab-conatiner input[type=text] {
+  min-width: 300px;
+}
+.membership-cta-contet {
+  background: #fff;
+  min-height: 500px;
+  margin-top: 30px;
+}
+.membership-cta-contet .main-cta {
+  background: #8AB747;
+  color: #fff;
+  padding: 40px;
+}
+.membership-cta-contet .main-cta h2 {
+  font-size: 30px;
+  color: #fff;
+  text-align: center;
+  margin: 0px;
+}
+.membership-cta-contet .feature-list {
+
+}
+.membership-cta-contet .feature-list h3 {
+  font-size: 20px;
+  color: #fff;
+  line-height: 1.3;
+  text-align: center;
+}
+.membership-cta-contet .feature-list ul {
+  margin: 0px;
+  padding: 40px 0px 10px 0px;
+  font-size: 18px;
+}
+.membership-cta-contet .feature-list ul li {
+  width: 48%;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+.membership-cta-contet .feature-list ul li span {
+ color: #353C7C;
+ font-size: 14px;
+}
+.membership-cta-contet .feature-cta {
+  vertical-align: top;
+  text-align: center;
+  padding-top: 0px;
+  background: #353C7C;
+  padding: 20px 0px 40px 0px;
+}
+
+.membership-cta-contet .feature-cta h3 {
+  font-size: 30px;
+  font-weight: 200;
+  color: #fff;
+  line-height: 1.2;
+  text-align: center;
+}
+.membership-cta-contet .feature-cta h4 {
+  font-size: 60px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin: 0px;
+}
+
+.membership-cta-contet .feature-cta a {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 20px 20px;
+  background: #8AB747;
+  border-radius: 5px;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1;
+}
+.membership-cta-contet .feature-cta a:hover {
+  opacity: .8;
+}
+
+.membership-cta-contet .member-testimonials {
+  padding: 60px;
+}
+.membership-cta-contet .member-testimonials h3 {
+  margin: 0px 0px 40px 0px;
+  text-align: center;
+  font-size: 30px;
+}
+.membership-cta-contet .testimonial-content {
+  padding: 0px 0px 40px 0px;
+}
+
+.membership-cta-contet .testimonial-content .image-profile {
+  max-width: 200px;
+  display: inline-block;
+}
+.membership-cta-contet .testimonial-content .t-image {
+  max-width: 100px;
+  display: inline-block;
+  vertical-align: top;
+}
+.membership-cta-contet .testimonial-content .t-image img {
+  max-width: 90%;
+}
+.membership-cta-contet .testimonial-content .t-content {
+  max-width: 500px;
+  display: inline-block;
+  vertical-align: top;
+  padding-left: 20px;
+
+}
+.membership-cta-contet .testimonial-content .t-content p {
+  font-size: 16px;
+}
+.membership-cta-contet .testimonial-content .t-content p strong {
+  display: block;
+}
+.membership-cta-contet .member-footer {
+  padding: 30px;
+  background: #ccc;
+}
+.membership-cta-contet .member-footer .footer-btn {
+  display: inline-block;
+  padding: 20px 20px;
+  background: #353C7C;
+  border-radius: 5px;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1;
+}
+.membership-cta-contet .member-footer .footer-link {
+  font-size: 16px;
+  float: right;
+  color: #353C7C;
 }
