@@ -61,7 +61,7 @@ add_ThickBox();
 										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
 									</div>
 									<h3>Gateways -
-The official <br>Gateways for Invoicing, get paid the way you want! Check all payment gateway integration</h4>
+The official <br>Gateways for Invoicing, get paid the way you want! Check all payment gateway integration</h3>
 									<ul>
 
 										<li><span class="dashicons dashicons-yes-alt"></span> Stripe Payment Gateway</li>
