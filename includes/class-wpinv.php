@@ -139,7 +139,6 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cardinal-commerce.php' );
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
