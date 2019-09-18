@@ -3,7 +3,7 @@
  *  This template is used to display the Checkout page when items are in the cart
  */
 
-global $wpinv_euvat, $post, $ajax_cart_details, $wpi_cart_columns, $wpi_session;
+global $wpinv_euvat, $post, $ajax_cart_details, $wpi_cart_columns;
 $invoice            = wpinv_get_invoice_cart();
 $cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();
 $quantities_enabled = wpinv_item_quantities_enabled();

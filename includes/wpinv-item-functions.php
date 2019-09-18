@@ -395,14 +395,11 @@ function wpinv_get_cart_item_tax( $item_id = 0, $subtotal = '', $options = array
 }
 
 function wpinv_cart_item_price( $item ) {
-    $use_taxes  = wpinv_use_taxes();
     $item_id    = isset( $item['id'] ) ? $item['id'] : 0;
     $price      = isset( $item['item_price'] ) ? wpinv_round_amount( $item['item_price'] ) : 0;
-    $options    = isset( $item['options'] ) ? $item['options'] : array();
-    $price_id   = isset( $options['price_id'] ) ? $options['price_id'] : false;
     $tax        = wpinv_price( wpinv_format_amount( $item['tax'] ) );
     
-    if ( !wpinv_is_free_item( $item_id, $price_id ) && !wpinv_item_is_tax_exclusive( $item_id ) ) {
+    if ( !wpinv_is_free_item( $item_id ) && !wpinv_item_is_tax_exclusive( $item_id ) ) {
         if ( wpinv_prices_show_tax_on_checkout() && !wpinv_prices_include_tax() ) {
             $price += $tax;
         }

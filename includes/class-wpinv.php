@@ -122,7 +122,8 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session-handler.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
@@ -134,10 +135,11 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/abstract-wpinv-privacy.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cardinal-commerce.php' );
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {

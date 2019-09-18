@@ -30,7 +30,7 @@ function wpinv_install($network_wide = false)
 
 function wpinv_run_install()
 {
-    global $wpdb, $wpinv_options, $wp_version, $wpi_session;
+    global $wpinv_options;
 
     // Setup the invoice Custom Post Type
     wpinv_register_post_types();
@@ -79,7 +79,7 @@ function wpinv_run_install()
     update_option('wpinv_version', WPINV_VERSION);
 
     // Check for PHP Session support, and enable if available
-    $wpi_session->use_php_sessions();
+    //$wpi_session->use_php_sessions();
 
     // Add a temporary option to note that Invoicing pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
