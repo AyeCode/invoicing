@@ -128,6 +128,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.11 =
 BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
 Remove use of WP_Session library and use transient instead - CHANGED
+Mark invoice viewed when a user view it from invoice history - FIXED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED

@@ -2255,39 +2255,44 @@ function wpinv_is_invoice_viewed( $invoice_id ) {
 
     $viewed_meta = get_post_meta( $invoice_id, '_wpinv_is_viewed', true );
 
-    if ( isset($viewed_meta) && 1 == $viewed_meta ) {
-        $is_viewed = true;
-    } else {
-        $is_viewed = false;
-    }
-
-    return apply_filters( 'wpinv_is_invoice_viewed', $is_viewed, $invoice_id );
+    return apply_filters( 'wpinv_is_invoice_viewed', 1 === (int)$viewed_meta, $invoice_id );
 }
 
 function wpinv_mark_invoice_viewed() {
 
-    if ( isset( $_GET['invoice_key'] ) ) {
+    if ( isset( $_GET['invoice_key'] ) || is_singular( 'wpi_invoice' ) || is_singular( 'wpi_quote' ) ) {
         $invoice_key = urldecode($_GET['invoice_key']);
+	    global $post;
 
-        $invoice_id = wpinv_get_invoice_id_by_key($invoice_key);
+        if(!empty($invoice_key)){
+	        $invoice_id = wpinv_get_invoice_id_by_key($invoice_key);
+        } else if(!empty( $post ) && ($post->post_type == 'wpi_invoice' || $post->post_type == 'wpi_quote')) {
+			$invoice_id = $post->ID;
+        } else {
+        	return;
+        }
+
         $invoice = new WPInv_Invoice($invoice_id);
 
         if(!$invoice_id){
             return;
         }
 
-        if( is_user_logged_in()){
-            $current_user = wp_get_current_user();
-            if(!current_user_can('administrator') && $current_user->user_email == $invoice->get_email()){
-                update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
-            }
-        } else {
-            update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
-        }
+	    if ( is_user_logged_in() ) {
+		    if ( (int)$invoice->get_user_id() === get_current_user_id() ) {
+			    update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
+		    } else if ( !wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+			    update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
+		    }
+	    } else {
+		    if ( !wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
+			    update_post_meta($invoice_id,'_wpinv_is_viewed', 1);
+		    }
+	    }
     }
 
 }
-add_action( 'init', 'wpinv_mark_invoice_viewed' );
+add_action( 'template_redirect', 'wpinv_mark_invoice_viewed' );
 
 function wpinv_get_subscription( $invoice, $by_parent = false ) {
     if ( empty( $invoice ) ) {
