@@ -22,7 +22,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 	/**
 	 * Stores session expiry.
 	 *
-	 * @var string session due to expire timestamp
+	 * @var int session due to expire timestamp
 	 */
 	protected $_session_expiring;
 
@@ -290,7 +290,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 	public function get_session( $customer_id, $default = false ) {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) ) {
-			return false;
+			return array();
 		}
 
         if ( !is_user_logged_in() ) {
