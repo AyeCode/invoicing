@@ -122,6 +122,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.11 =
 BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+Allow users to pay what they want - ADDED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED

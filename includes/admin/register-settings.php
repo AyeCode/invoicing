@@ -386,7 +386,36 @@ function wpinv_get_registered_settings() {
                         'desc' =>   __( 'Use this to add an invoice notice section (description) to your invoices', 'invoicing' ),
                         'type' => 'text',
                         'size' => 'regular',
-                    )
+                    ),
+                    'name_your_price' => array(
+                        'id'   => 'name_your_price_settings',
+                        'name' => '<h3>' . __( 'Name Your Price', 'invoicing' ) . '</h3>',
+                        'desc' => '',
+                        'type' => 'header',
+                    ),
+                    'suggested_price_text' => array(
+                        'id'   => 'suggested_price_text',
+                        'name' => __( 'Suggested Price Text', 'invoicing' ),
+                        'desc' => __( "The label used to indicate an item's suggested price", 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std'  => __( 'Suggested Price:', 'invoicing' ),
+                    ),
+                    'minimum_price_text' => array(
+                        'id'   => 'minimum_price_text',
+                        'name' => __( 'Minimum Price Text', 'invoicing' ),
+                        'desc' => __( "The label used to indicate an item's minimum price", 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std'  => __( 'Minimum Price:', 'invoicing' ),
+                    ),
+                    'name_your_price_text' => array(
+                        'id'   => 'name_your_price_text',
+                        'name' => __( 'Name Your Price Text', 'invoicing' ),
+                        'type' => 'text',
+                        'size' => 'regular',
+                        'std'  => __( 'Name Your Price', 'invoicing' ),
+                    ),
                 )
             )
         ),

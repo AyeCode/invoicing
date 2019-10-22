@@ -105,6 +105,28 @@ jQuery(function($) {
             this.checkout_form.on('click', 'input[name="wpi-gateway"]', this.payment_method_selected);
             this.init_payment_methods();
             //this.recalculate_taxes();
+
+            //show dynamic pricing
+            $('.wpinv-name-your-price-frontend').on( 'click', function( e ) {
+                e.preventDefault()
+
+                //Display the dynamic pricing form
+                $(this).parent().find('.name-your-price-miniform').slideDown()
+            })
+
+            //Update price
+            $(document).on('click', '.wpinv-update-dynamic-price-frontend', function(e) {
+                e.preventDefault()
+
+                var price = $(this).closest('.name-your-price-miniform').find('.wpi-field-price').val()
+                var item = $(this).closest('.name-your-price-miniform').find('.wpi-field-item').val()
+                var url = new URL( window.location.href );
+                url.searchParams.set('wpi_dynamic_item', item);
+                url.searchParams.set('wpi_dynamic_price', price);
+
+                window.location.href = url
+                
+            });
         },
         init_payment_methods: function() {
             var $checkout_form = this.checkout_form;

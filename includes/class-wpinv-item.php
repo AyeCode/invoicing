@@ -15,6 +15,8 @@ class WPInv_Item {
     private $vat_class;
     private $editable;
     private $excerpt;
+    private $is_dynamic_pricing;
+    private $minimum_price;
     private $is_recurring;
     private $recurring_period;
     private $recurring_interval;
@@ -261,6 +263,32 @@ class WPInv_Item {
         return apply_filters( 'wpinv_item_get_excerpt', $excerpt, $this->ID );
     }
     
+    /**
+     * Checks whether the item allows a user to set their own price
+     */
+    public function get_is_dynamic_pricing() {
+        $is_dynamic_pricing = get_post_meta( $this->ID, '_wpinv_dynamic_pricing', true );
+
+        return (int) apply_filters( 'wpinv_item_get_is_dynamic_pricing', $is_dynamic_pricing, $this->ID );
+
+    }
+
+    /**
+     * For dynamic prices, this is the minimum price that a user can set
+     */
+    public function get_minimum_price() {
+
+        //Fetch the minimum price and cast it to a float
+        $price = (float) get_post_meta( $this->ID, '_minimum_price', true );
+            
+        //Sanitize it
+        $price = wpinv_sanitize_amount( $price );
+
+        //Filter then return it
+        return apply_filters( 'wpinv_item_get_minimum_price', $price, $this->ID );
+
+    }
+
     public function get_is_recurring() {
         $is_recurring = get_post_meta( $this->ID, '_wpinv_is_recurring', true );
 
@@ -355,7 +383,7 @@ class WPInv_Item {
     }
     
     public function get_the_price() {
-        $item_price = wpinv_price( wpinv_format_amount( $this->price ) );
+        $item_price = wpinv_price( wpinv_format_amount( $this->get_price() ) );
         
         return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
     }
@@ -468,5 +496,12 @@ class WPInv_Item {
         }
 
         return (bool)apply_filters( 'wpinv_can_purchase_item', $can_purchase, $this );
+    }
+
+    /**
+     * Checks whether this item supports dynamic pricing or not
+     */
+    public function supports_dynamic_pricing() {
+        return (bool) apply_filters( 'wpinv_item_supports_dynamic_pricing', true, $this );
     }
 }

@@ -71,9 +71,15 @@ function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
             $fields['_wpinv_free_trial']         = 'wpinv_free_trial';
             $fields['_wpinv_trial_period']       = 'wpinv_trial_period';
             $fields['_wpinv_trial_interval']     = 'wpinv_trial_interval';
+            $fields['_wpinv_dynamic_pricing']    = 'wpinv_name_your_price';
+            $fields['_minimum_price']            = 'wpinv_minimum_price';
             
             if ( !isset( $_POST['wpinv_is_recurring'] ) ) {
                 $_POST['wpinv_is_recurring'] = 0;
+            }
+
+            if ( !isset( $_POST['wpinv_name_your_price'] ) ) {
+                $_POST['wpinv_name_your_price'] = 0;
             }
             
             if ( !isset( $_POST['wpinv_free_trial'] ) || empty( $_POST['wpinv_is_recurring'] ) ) {
