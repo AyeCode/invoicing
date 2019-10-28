@@ -1614,13 +1614,14 @@ function wpinv_payment_mode_select() {
 
                     if ( !empty( $gateways ) ) {
                         foreach ( $gateways as $gateway_id => $gateway ) {
-                            $checked = checked( $gateway_id, $chosen_gateway, false );
-                            $button_label = wpinv_get_gateway_button_label( $gateway_id );
-                            $description = wpinv_get_gateway_description( $gateway_id );
+                            $checked       = checked( $gateway_id, $chosen_gateway, false );
+                            $button_label  = wpinv_get_gateway_button_label( $gateway_id );
+                            $gateway_label = wpinv_get_gateway_checkout_label( $gateway_id );
+                            $description   = wpinv_get_gateway_description( $gateway_id );
                             ?>
                             <div class="list-group-item">
                                 <div class="radio">
-                                    <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
+                                    <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway_label ); ?></label>
                                 </div>
                                 <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
                                     <?php if ( !empty( $description ) ) { ?>
