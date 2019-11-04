@@ -78,9 +78,6 @@ function wpinv_run_install()
     update_option('wpinv_settings', $merged_options);
     update_option('wpinv_version', WPINV_VERSION);
 
-    // Check for PHP Session support, and enable if available
-    //$wpi_session->use_php_sessions();
-
     // Add a temporary option to note that Invoicing pages have been created
     set_transient('_wpinv_installed', $merged_options, 30);
 

@@ -1967,7 +1967,7 @@ function wpinv_pay_for_invoice() {
         if ( empty( $invoice_key ) ) {
             wpinv_set_error( 'invalid_invoice', __( 'Invoice not found', 'invoicing' ) );
             wp_redirect( $checkout_uri );
-            wpinv_die();
+            exit();
         }
         
         do_action( 'wpinv_check_pay_for_invoice', $invoice_key );
@@ -2003,8 +2003,8 @@ function wpinv_pay_for_invoice() {
             $checkout_uri = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
         }
         
-        wp_redirect( $checkout_uri );
-        wpinv_die();
+        wp_safe_redirect( $checkout_uri );
+        exit();
     }
 }
 add_action( 'wpinv_pay_for_invoice', 'wpinv_pay_for_invoice' );
@@ -2019,7 +2019,7 @@ function wpinv_handle_pay_via_invoice_link( $invoice_key ) {
                 $redirect_to = remove_query_arg( '_wpipay', get_permalink() );
                 
                 wpinv_guest_redirect( $redirect_to, $user_id );
-                wpinv_die();
+                exit();
             }
         }
     }

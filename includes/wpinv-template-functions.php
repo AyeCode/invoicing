@@ -1030,6 +1030,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
 
                     $item       = $item_id ? new WPInv_Item( $item_id ) : NULL;
                     $summary    = '';
+	                $item_name    = '';
                     $cols       = 3;
                     if ( !empty($item) ) {
                         $item_name  = $item->get_name();
