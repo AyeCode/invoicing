@@ -1620,7 +1620,8 @@ function wpinv_process_checkout() {
         $response['data']['taxf']       = $invoice->get_tax( true );
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total( true );
-        
+        $response['data']['free']       = $invoice->is_free() && ( ! ( (float) $response['data']['total'] > 0 ) || $invoice->is_free_trial() ) ? true : false;
+
         wp_send_json( $response );
     }
     

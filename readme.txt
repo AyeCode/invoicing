@@ -121,7 +121,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.11 =
-BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+* BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+* Problem in submitting the checkout form with full price discount - FIXED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED
