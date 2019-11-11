@@ -131,6 +131,7 @@ Remove use of WP_Session library and use transient instead - CHANGED
 Mark invoice viewed when a user view it from invoice history - FIXED
 100% discount with first time payment for recurring payment should not redirect to gateway - FIXED
 Fix 503 error while visiting checkout page if w3 total cache is active - FIXED
+Problem in submitting the checkout form with full price discount - FIXED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED

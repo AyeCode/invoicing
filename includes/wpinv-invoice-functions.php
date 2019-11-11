@@ -1620,7 +1620,8 @@ function wpinv_process_checkout() {
         $response['data']['taxf']       = $invoice->get_tax( true );
         $response['data']['total']      = $invoice->get_total();
         $response['data']['totalf']     = $invoice->get_total( true );
-        
+	    $response['data']['free']       = $invoice->is_free() && ( ! ( (float) $response['data']['total'] > 0 ) || $invoice->is_free_trial() ) ? true : false;
+
         wp_send_json( $response );
     }
     
@@ -2261,7 +2262,7 @@ function wpinv_is_invoice_viewed( $invoice_id ) {
 function wpinv_mark_invoice_viewed() {
 
     if ( isset( $_GET['invoice_key'] ) || is_singular( 'wpi_invoice' ) || is_singular( 'wpi_quote' ) ) {
-        $invoice_key = urldecode($_GET['invoice_key']);
+        $invoice_key = isset( $_GET['invoice_key'] ) ? urldecode($_GET['invoice_key']) : '';
 	    global $post;
 
         if(!empty($invoice_key)){
