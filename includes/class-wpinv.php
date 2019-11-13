@@ -193,9 +193,6 @@ class WPInv_Plugin {
     }
     
     public function admin_init() {
-        if (!(defined( 'DOING_AJAX' ) && DOING_AJAX)) {
-        }
-        
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
     }
 
