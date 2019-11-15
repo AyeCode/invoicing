@@ -55,6 +55,10 @@ Invoicing can be used as payment system with check out page by any plugin.
 * [Cash on Delivery](https://wpinvoicing.com/downloads/cash-on-delivery-payment-gateway/) - Accept payments via Cash on Delivery
 * [PayUmoney](https://wpinvoicing.com/downloads/payumoney-payment-gateway/) - Accept payments via PayUmoney
 * [WebPay](https://wpinvoicing.com/downloads/payumoney-payment-gateway/) - Accept payments via WebPay
+* [PayUmoney Latam](https://wpinvoicing.com/downloads/payumoney-latam-payment-gateway/) - Accept payments via PayUmoney Latam
+* [PayPal Payflow](https://wpinvoicing.com/downloads/paypal-payflow-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website.
+* [Square](https://wpinvoicing.com/downloads/square-payment-gateway/) - Accept payments via Square
+* [First Data](https://wpinvoicing.com/downloads/firstdata-payment-gateway/) - Accept payments via FirstData
 
 
 = Add-ons =
@@ -64,6 +68,7 @@ Invoicing can be used as payment system with check out page by any plugin.
 * [AffiliateWP Integration](https://wpinvoicing.com/downloads/affiliatewp-integration/) - Integrate with the [AffiliateWP plugin](https://affiliatewp.com/)
 * [Contact form 7](https://wpinvoicing.com/downloads/contact-form-7/) - Send a invoice/quote when a user fills out a form
 * [Gravity Forms](https://wpinvoicing.com/downloads/gravity-forms/) - Send a invoice/quote when a user fills out a form
+* [Ninja Forms](https://wordpress.org/plugins/ninja-forms/) - Send a invoice/quote when a user fills out a form
 
 
 New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpinvoicing.com/contact-form/). we will consider it.
@@ -122,6 +127,12 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.11 =
 BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+Remove use of WP_Session library and use transient instead - CHANGED
+Mark invoice viewed when a user view it from invoice history - FIXED
+100% discount with first time payment for recurring payment should not redirect to gateway - FIXED
+Fix 503 error while visiting checkout page if w3 total cache is active - FIXED
+Problem in submitting the checkout form with full price discount - FIXED
+Remove Yoast SEO metabox from edit invoice screen - FIXED
 Allow users to pay what they want - ADDED
 
 = 1.0.10 =

@@ -227,6 +227,9 @@ jQuery(function($) {
     // Insert new tax rate row
     $('#wpinv_add_tax_rate').on('click', function() {
         var row = $('#wpinv_tax_rates tbody tr:last');
+        row.find('.wpi_select2').each(function() {
+            $(this).select2('destroy');
+        });
         var clone = row.clone();
         var count = row.parent().find('tr').length;
         clone.find('td input').not(':input[type=checkbox]').val('');
@@ -242,6 +245,7 @@ jQuery(function($) {
             $(this).attr('for', name);
         });
         clone.insertAfter(row);
+        wpi_select2();
         return false;
     });
     // Remove tax row

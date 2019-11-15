@@ -734,6 +734,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin: 4px 0 0;
 }
 .wpi-wpinv-settings .form-table select + label,
+.wpi-wpinv-settings .form-table .wpi_select2 td label,
 .wpi-wpinv-settings .form-table input.regular-text ~ label,
 .wpi-wpinv-settings .form-table textarea ~ label{
     display: block;
@@ -763,7 +764,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv_tax_rates .wpinv_tax_country *,
 #wpinv_tax_rates .wpinv_tax_state *,
 #wpinv_tax_rates .wpinv_tax_name * {
-    width: 100%;
+    max-width: 100%;
 }
 #wpinv_tax_rates .wpinv_tax_country,
 #wpinv_tax_rates .wpinv_tax_state,

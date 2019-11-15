@@ -1030,6 +1030,7 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
 
                     $item       = $item_id ? new WPInv_Item( $item_id ) : NULL;
                     $summary    = '';
+	                $item_name    = '';
                     $cols       = 3;
                     if ( !empty($item) ) {
                         $item_name  = $item->get_name();
@@ -1435,17 +1436,7 @@ function wpinv_checkout_form() {
 function wpinv_checkout_cart( $cart_details = array(), $echo = true ) {
     global $ajax_cart_details;
     $ajax_cart_details = $cart_details;
-    /*
-    // Check if the Update cart button should be shown
-    if( wpinv_item_quantities_enabled() ) {
-        add_action( 'wpinv_cart_footer_buttons', 'wpinv_update_cart_button' );
-    }
-    
-    // Check if the Save Cart button should be shown
-    if( !wpinv_is_cart_saving_disabled() ) {
-        add_action( 'wpinv_cart_footer_buttons', 'wpinv_save_cart_button' );
-    }
-    */
+
     ob_start();
     do_action( 'wpinv_before_checkout_cart' );
     echo '<div id="wpinv_checkout_cart_form" method="post">';
@@ -1478,14 +1469,6 @@ function wpinv_empty_checkout_cart() {
 	echo wpinv_empty_cart_message();
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
-
-function wpinv_save_cart_button() {
-    if ( wpinv_is_cart_saving_disabled() )
-        return;
-?>
-    <a class="wpinv-cart-saving-button wpinv-submit button" id="wpinv-save-cart-button" href="<?php echo esc_url( add_query_arg( 'wpi_action', 'save_cart' ) ); ?>"><?php _e( 'Save Cart', 'invoicing' ); ?></a>
-<?php
-}
 
 function wpinv_update_cart_button() {
     if ( !wpinv_item_quantities_enabled() )

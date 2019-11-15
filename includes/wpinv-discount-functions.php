@@ -1140,40 +1140,6 @@ function wpinv_multiple_discounts_allowed() {
     return (bool) apply_filters( 'wpinv_multiple_discounts_allowed', $ret );
 }
 
-function wpinv_listen_for_cart_discount() {
-    global $wpi_session;
-    
-    if ( empty( $_REQUEST['discount'] ) || is_array( $_REQUEST['discount'] ) ) {
-        return;
-    }
-
-    $code = preg_replace('/[^a-zA-Z0-9-_]+/', '', $_REQUEST['discount'] );
-
-    $wpi_session->set( 'preset_discount', $code );
-}
-//add_action( 'init', 'wpinv_listen_for_cart_discount', 0 );
-
-function wpinv_apply_preset_discount() {
-    global $wpi_session;
-    
-    $code = $wpi_session->get( 'preset_discount' );
-
-    if ( !$code ) {
-        return;
-    }
-
-    if ( !wpinv_is_discount_valid( $code, '', false ) ) {
-        return;
-    }
-    
-    $code = apply_filters( 'wpinv_apply_preset_discount', $code );
-
-    wpinv_set_cart_discount( $code );
-
-    $wpi_session->set( 'preset_discount', null );
-}
-//add_action( 'init', 'wpinv_apply_preset_discount', 999 );
-
 function wpinv_get_discount_label( $code, $echo = true ) {
     $label = wp_sprintf( __( 'Discount%1$s', 'invoicing' ), ( $code != '' && $code != 'none' ? ' (<code>' . $code . '</code>)': '' ) );
     $label = apply_filters( 'wpinv_get_discount_label', $label, $code );

@@ -869,7 +869,7 @@ function wpinv_settings_sanitize( $input = array() ) {
 }
 
 function wpinv_settings_sanitize_misc_accounting( $input ) {
-    global $wpinv_options, $wpi_session;
+    global $wpi_session;
 
     if ( !current_user_can( 'manage_options' ) ) {
         return $input;
