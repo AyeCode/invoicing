@@ -206,16 +206,18 @@ class WPInv_Meta_Box_Items {
         $position       = wpinv_currency_position();
         $item           = new WPInv_Item( $post->ID );
 
-        $price          = $item->get_price();
-        $is_recurring   = $item->is_recurring();
-        $period         = $item->get_recurring_period();
-        $interval       = absint( $item->get_recurring_interval() );
-        $times          = absint( $item->get_recurring_limit() );
-        $free_trial     = $item->has_free_trial();
-        $trial_interval = $item->get_trial_interval();
-        $trial_period   = $item->get_trial_period();
+        $price                = $item->get_price();
+        $is_dynamic_pricing   = $item->get_is_dynamic_pricing();
+        $minimum_price        = $item->get_minimum_price();
+        $is_recurring         = $item->is_recurring();
+        $period               = $item->get_recurring_period();
+        $interval             = absint( $item->get_recurring_interval() );
+        $times                = absint( $item->get_recurring_limit() );
+        $free_trial           = $item->has_free_trial();
+        $trial_interval       = $item->get_trial_interval();
+        $trial_period         = $item->get_trial_period();
 
-        $intervals      = array();
+        $intervals            = array();
         for ( $i = 1; $i <= 90; $i++ ) {
             $intervals[$i] = $i;
         }
@@ -223,10 +225,38 @@ class WPInv_Meta_Box_Items {
         $interval       = $interval > 0 ? $interval : 1;
 
         $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
+
+        $minimum_price_style = 'margin-left: 24px;';
+        if(! $is_dynamic_pricing ) {
+            $minimum_price_style .= 'display: none;';
+        }
+
         ?>
         <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
         <?php do_action( 'wpinv_prices_metabox_price', $item ); ?>
         </p>
+
+    <?php if( $item->supports_dynamic_pricing() ) { ?>
+
+        <p class="wpinv-row-name-your-price">
+            <label>
+                <input type="checkbox" name="wpinv_name_your_price" id="wpinv_name_your_price" value="1" <?php checked( 1, $is_dynamic_pricing ); ?> />
+                <?php echo apply_filters( 'wpinv_name_your_price_toggle_text', __( 'User can set a custom price', 'invoicing' ) ); ?>
+            </label>
+            <?php do_action( 'wpinv_prices_metabox_name_your_price_field', $item ); ?>
+        </p>
+
+        <p class="wpinv-row-minimum-price" style="<?php echo $minimum_price_style; ?>">
+            <label>
+                <?php _e( 'Minimum Price', 'invoicing' ); ?>
+                <?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $minimum_price;?>" id="wpinv_minimum_price" name="wpinv_minimum_price" class="medium-text wpi-field-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?>
+            </label>
+
+            <?php do_action( 'wpinv_prices_metabox_minimum_price_field', $item ); ?>
+        </p>
+
+    <?php } ?>
+
         <p class="wpinv-row-is-recurring">
             <label for="wpinv_is_recurring">
                 <input type="checkbox" name="wpinv_is_recurring" id="wpinv_is_recurring" value="1" <?php checked( 1, $is_recurring ); ?> />

@@ -3520,6 +3520,21 @@ p.wpinv_error {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+#wpinv_checkout_wrap .name-your-price-miniform {
+    margin-top: 10px;
+    font-size: 12px;
+    display: none;
+}
+
+#wpinv_checkout_wrap .name-your-price-miniform .wpi-field-price {
+    margin-right: 10px;
+}
+
+#wpinv_checkout_wrap .name-your-price-miniform .btn {
+    vertical-align: top;
+}
+
 .wpi-form .panel-heading h3.panel-title {
     margin: 0;
 }

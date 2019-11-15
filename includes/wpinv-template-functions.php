@@ -1359,6 +1359,52 @@ function wpinv_checkout_form() {
     // Set current invoice id.
     $wpi_checkout_id = wpinv_get_invoice_cart_id();
 
+    //Maybe update the prices
+    if(! empty( $_GET['wpi_dynamic_item'] ) && ! empty( $_GET['wpi_dynamic_price'] ) ) {
+
+        //If the invoice exists, update it with new pricing details
+        if (! empty( $wpi_checkout_id ) ) {
+
+            $_invoice       = wpinv_get_invoice_cart();
+            $_cart_details  = $_invoice->get_cart_details();
+            $_dynamic_item  = sanitize_text_field( $_GET['wpi_dynamic_item'] );
+
+            //First, fetch the item
+            $item    = new WPInv_Item( $_dynamic_item );
+    
+            //Next, ensure it supports dynamic pricing...
+            if( $item->supports_dynamic_pricing() && $item->get_is_dynamic_pricing() ) {
+                
+                //... and that the new price is not lower than the minimum price
+                $_dynamic_price = (float) wpinv_sanitize_amount( sanitize_text_field( $_GET['wpi_dynamic_price'] ) );
+                if( $_dynamic_price < $item->get_minimum_price() ) {
+                    $_dynamic_price = $item->get_minimum_price();
+                }
+
+                //Finally, update our invoice with the new price
+                if ( !empty( $_cart_details ) ) {
+
+                    foreach ( $_cart_details as $key => $item ) {
+                        if ( !empty( $item['id'] ) && $_dynamic_item == $item['id'] ) {
+                            $_cart_details[$key]['custom_price'] = $_dynamic_price;
+                            $_cart_details[$key]['item_price']   = $_dynamic_price;
+                        }
+                    }
+
+                    $_meta = $_invoice->get_meta();
+                    $_meta['cart_details'] = $_cart_details;
+                    $_invoice->set( 'payment_meta', $_meta );
+                    $_invoice->set( 'cart_details', $_cart_details );
+                    $_invoice->recalculate_totals();
+
+                }
+
+            }
+            
+        }
+
+    }
+
     $form_action  = esc_url( wpinv_get_checkout_uri() );
 
     ob_start();
@@ -1551,13 +1597,14 @@ function wpinv_payment_mode_select() {
 
                     if ( !empty( $gateways ) ) {
                         foreach ( $gateways as $gateway_id => $gateway ) {
-                            $checked = checked( $gateway_id, $chosen_gateway, false );
-                            $button_label = wpinv_get_gateway_button_label( $gateway_id );
-                            $description = wpinv_get_gateway_description( $gateway_id );
+                            $checked       = checked( $gateway_id, $chosen_gateway, false );
+                            $button_label  = wpinv_get_gateway_button_label( $gateway_id );
+                            $gateway_label = wpinv_get_gateway_checkout_label( $gateway_id );
+                            $description   = wpinv_get_gateway_description( $gateway_id );
                             ?>
                             <div class="list-group-item">
                                 <div class="radio">
-                                    <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway['checkout_label'] ); ?></label>
+                                    <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway_label ); ?></label>
                                 </div>
                                 <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
                                     <?php if ( !empty( $description ) ) { ?>
@@ -2180,3 +2227,70 @@ function wpinv_get_policy_text() {
 
     return wp_kses_post(wpautop($privacy_text));
 }
+
+
+/**
+ * Allows the user to set their own price for an invoice item
+ */
+function wpinv_checkout_cart_item_name_your_price( $cart_item, $key ) {
+    
+    //Ensure we have an item id
+    if(! is_array( $cart_item ) || empty( $cart_item['id'] ) ) {
+        return;
+    }
+
+    //Fetch the item
+    $item_id = $cart_item['id'];
+    $item    = new WPInv_Item( $item_id );
+    
+    if(! $item->supports_dynamic_pricing() || !$item->get_is_dynamic_pricing() ) {
+        return;
+    }
+
+    //Fetch the dynamic pricing "strings"
+    $suggested_price_text = esc_html( wpinv_get_option( 'suggested_price_text', __( 'Suggested Price:', 'invoicing' ) ) );
+    $minimum_price_text   = esc_html( wpinv_get_option( 'minimum_price_text', __( 'Minimum Price:', 'invoicing' ) ) );
+    $name_your_price_text = esc_html( wpinv_get_option( 'name_your_price_text', __( 'Name Your Price', 'invoicing' ) ) );
+
+    //Display a "name_your_price" button
+    echo " &mdash; <a href='#' class='wpinv-name-your-price-frontend small'>$name_your_price_text</a></div>";
+
+    //Display a name_your_price form
+    echo '<div class="name-your-price-miniform">';
+    
+    //Maybe display the recommended price
+    if( $item->get_price() > 0 && !empty( $suggested_price_text ) ) {
+        $suggested_price = $item->get_the_price();
+        echo "<div>$suggested_price_text &mdash; $suggested_price</div>";
+    }
+
+    //Display the update price form
+    $symbol         = wpinv_currency_symbol();
+    $position       = wpinv_currency_position();
+    $minimum        = esc_attr( $item->get_minimum_price() );
+    $price          = esc_attr( $cart_item['item_price'] );
+    $update         = esc_attr__( "Update", 'invoicing' );
+
+    //Ensure it supports dynamic prici
+    if( $price < $minimum ) {
+        $price = $minimum;
+    }
+
+    echo '<label>';
+    echo $position != 'right' ? $symbol . '&nbsp;' : '';
+    echo "<input type='number' min='$minimum' placeholder='$price' value='$price' class='wpi-field-price' />";
+    echo $position == 'right' ? '&nbsp;' . $symbol : '' ;
+    echo "</label>";
+    echo "<input type='hidden' value='$item_id' class='wpi-field-item' />";
+    echo "<a class='btn btn-success wpinv-submit wpinv-update-dynamic-price-frontend'>$update</a>";
+
+    //Maybe display the minimum price
+    if( $item->get_minimum_price() > 0 && !empty( $minimum_price_text ) ) {
+        $minimum_price = wpinv_price( wpinv_format_amount( $item->get_minimum_price() ) );
+        echo "<div>$minimum_price_text &mdash; $minimum_price</div>";
+    }
+
+    echo "</div>";
+
+}
+add_action( 'wpinv_checkout_cart_item_price_after', 'wpinv_checkout_cart_item_name_your_price', 10, 2 );
