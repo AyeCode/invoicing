@@ -54,6 +54,9 @@ class WPInv_Session_Handler extends WPInv_Session {
 
 	    $this->_cookie = apply_filters( 'wpinv_cookie', 'wpinv_session_' . COOKIEHASH );
         add_action( 'init', array( $this, 'init' ), -1 );
+		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
+		add_action( 'wp', array( $this, 'set_customer_session_cookie' ), 10 );
+		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
 	}
 
 	/**
@@ -63,10 +66,6 @@ class WPInv_Session_Handler extends WPInv_Session {
 	 */
 	public function init() {
 		$this->init_session_cookie();
-
-		add_action( 'wp', array( $this, 'set_customer_session_cookie' ), 10 );
-		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
-		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
 
 		if ( ! is_user_logged_in() ) {
 			add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
