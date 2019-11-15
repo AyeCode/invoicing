@@ -279,7 +279,6 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
                 'slug'   => 'geodirectory',
                 'name'   => 'GeoDirectory',
                 'desc'   => __('Turn any WordPress theme into a global business directory portal.','invoicing'),
-                'thumbnail' => "https://ps.w.org/geodirectory/assets/banner-772x250.jpg"
             ),
             'userswp' => array(
                 'url'   => 'https://wordpress.org/plugins/userswp/',

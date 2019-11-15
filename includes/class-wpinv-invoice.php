@@ -1313,7 +1313,7 @@ final class WPInv_Invoice {
                 
                 if ( !empty( $discounts ) ) {
                     foreach ( $discounts as $key => $code ) {
-                        if ( wpinv_discount_is_recurring( $code, true ) ) {
+                        if ( wpinv_discount_is_recurring( $code, true ) && !$this->is_renewal() ) {
                             $first_use_only = true;
                             break;
                         }
@@ -1327,7 +1327,7 @@ final class WPInv_Invoice {
                     $data['total']    = wpinv_round_amount( $this->total );
                 } else {
                     $cart_subtotal   = 0;
-                    $cart_discount   = 0;
+                    $cart_discount   = $this->discount;
                     $cart_tax        = 0;
 
                     foreach ( $this->cart_details as $key => $item ) {
@@ -1354,11 +1354,16 @@ final class WPInv_Invoice {
                         $data['cart_details'][$key]['tax']        = wpinv_round_amount( $item_tax );
                         $data['cart_details'][$key]['price']      = wpinv_round_amount( $item_total );
                     }
-                    
+
+	                $total = $data['subtotal'] - $data['discount'] + $data['tax'];
+	                if ( $total < 0 ) {
+		                $total = 0;
+	                }
+
                     $data['subtotal'] = wpinv_round_amount( $cart_subtotal );
                     $data['discount'] = wpinv_round_amount( $cart_discount );
                     $data['tax']      = wpinv_round_amount( $cart_tax );
-                    $data['total']    = wpinv_round_amount( $data['subtotal'] + $data['tax'] );
+                    $data['total']    = wpinv_round_amount( $total );
                 }
             }
         }

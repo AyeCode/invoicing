@@ -321,16 +321,7 @@ class WPInv_Reports {
     }
     
     public function get_export_data() {
-        $data = array(
-            0 => array(
-                'id'   => '',
-                'data' => date( 'F j, Y' )
-            ),
-            1 => array(
-                'id'   => '',
-                'data' => date( 'F j, Y' )
-            )
-        );
+        $data = array();
 
         $data = apply_filters( 'wpinv_export_get_data', $data );
         $data = apply_filters( 'wpinv_export_get_data_' . $this->export, $data );
@@ -376,7 +367,11 @@ class WPInv_Reports {
             'id'            => __( 'ID',   'invoicing' ),
             'number'        => __( 'Number',   'invoicing' ),
             'date'          => __( 'Date', 'invoicing' ),
+            'due_date'      => __( 'Due Date', 'invoicing' ),
+            'completed_date'=> __( 'Payment Done Date', 'invoicing' ),
             'amount'        => __( 'Amount', 'invoicing' ),
+            'currency'      => __( 'Currency', 'invoicing' ),
+            'items'        => __( 'Items', 'invoicing' ),
             'status_nicename'  => __( 'Status Nicename', 'invoicing' ),
             'status'        => __( 'Status', 'invoicing' ),
             'tax'           => __( 'Tax', 'invoicing' ),
@@ -397,8 +392,6 @@ class WPInv_Reports {
             'gateway'       => __( 'Gateway', 'invoicing' ),
             'gateway_nicename'       => __( 'Gateway Nicename', 'invoicing' ),
             'transaction_id'=> __( 'Transaction ID', 'invoicing' ),
-            'currency'      => __( 'Currency', 'invoicing' ),
-            'due_date'      => __( 'Due Date', 'invoicing' ),
         );
 
         return $columns;
@@ -434,11 +427,16 @@ class WPInv_Reports {
         
         if ( !empty( $invoices ) ) {
             foreach ( $invoices as $invoice ) {
+                $items = $this->get_invoice_items($invoice);
                 $row = array(
                     'id'            => $invoice->ID,
                     'number'        => $invoice->get_number(),
                     'date'          => $invoice->get_invoice_date( false ),
+                    'due_date'      => $invoice->get_due_date( false ),
+                    'completed_date'=> $invoice->get_completed_date(),
                     'amount'        => wpinv_round_amount( $invoice->get_total() ),
+                    'currency'      => $invoice->get_currency(),
+                    'items'         => $items,
                     'status_nicename' => $invoice->get_status( true ),
                     'status'        => $invoice->get_status(),
                     'tax'           => $invoice->get_tax() > 0 ? wpinv_round_amount( $invoice->get_tax() ) : '',
@@ -459,8 +457,6 @@ class WPInv_Reports {
                     'gateway'       => $invoice->get_gateway(),
                     'gateway_nicename' => $invoice->get_gateway_title(),
                     'transaction_id'=> $invoice->gateway ? $invoice->get_transaction_id() : '',
-                    'currency'      => $invoice->get_currency(),
-                    'due_date'      => $invoice->needs_payment() || $invoice->status == 'draft' ? $invoice->get_due_date() : '',
                 );
                 
                 $data[] = apply_filters( 'wpinv_export_invoice_row', $row, $invoice );
@@ -508,5 +504,20 @@ class WPInv_Reports {
         }
 
         return $status;
+    }
+
+    public function get_invoice_items($invoice){
+        if(!$invoice){
+            return '';
+        }
+
+        $cart_details = $invoice->get_cart_details();
+        if(!empty($cart_details)){
+            $cart_details = maybe_serialize($cart_details);
+        } else {
+            $cart_details = '';
+        }
+
+        return $cart_details;
     }
 }

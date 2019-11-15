@@ -122,7 +122,8 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session-handler.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
@@ -134,7 +135,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/abstract-wpinv-privacy.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php' );
@@ -192,9 +193,6 @@ class WPInv_Plugin {
     }
     
     public function admin_init() {
-        if (!(defined( 'DOING_AJAX' ) && DOING_AJAX)) {
-        }
-        
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
     }
 
