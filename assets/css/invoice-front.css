@@ -3529,6 +3529,8 @@ p.wpinv_error {
 
 #wpinv_checkout_wrap .name-your-price-miniform .wpi-field-price {
     margin-right: 10px;
+    max-width: 100px;
+    display: inline-block;
 }
 
 #wpinv_checkout_wrap .name-your-price-miniform .btn {

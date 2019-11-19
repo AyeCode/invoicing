@@ -847,7 +847,7 @@ jQuery(function($) {
             $(document.body).on('change', '#wpinv_recurring_period', function(e) {
                 $this.recurring_period($(this).val());
             });
-            $( '#wpinv_name_your_price' ).on('change', function(e) {
+            $(document.body).on('change', '#wpinv_name_your_price', function(e) {
                 $( '.wpinv-row-minimum-price' ).toggle( this.checked )
             });
         },
