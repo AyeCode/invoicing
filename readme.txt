@@ -134,6 +134,7 @@ Fix 503 error while visiting checkout page if w3 total cache is active - FIXED
 Problem in submitting the checkout form with full price discount - FIXED
 Remove Yoast SEO metabox from edit invoice screen - FIXED
 Allow users to pay what they want - ADDED
+Display gateway in status column on admin side if invoice paid by offline payment gateways - ADDED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED
