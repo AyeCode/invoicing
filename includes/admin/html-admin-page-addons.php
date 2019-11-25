@@ -33,7 +33,7 @@ add_ThickBox();
 				<h2>With our WPInvoicing Membership you get access to all our products!</h2>
 				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>-->
 				<?php if(defined('WP_EASY_UPDATES_ACTIVE')){?>
-					<h2>Have a membership key?</h2>
+					<h2><?php _e("Have a membership key?","invoicing");?></h2>
 					<p>
 						<?php
 						$wpeu_admin = new External_Updates_Admin('wpinvoicing.com','1');
@@ -44,41 +44,33 @@ add_ThickBox();
 
 				<div class="membership-cta-contet">
 					<div class="main-cta">
-							<h2>Membership benefit Includes:</h2>
+							<h2><?php _e("Membership benefits Include:","invoicing");?></h2>
 							<div class="feature-list">
 								<ul>
-										<li><span class="dashicons dashicons-yes-alt"></span> Gravity Forms Integration</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Contact form 7 Integration</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PDF Invoices</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> AffiliateWP Integration</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Ninja forms Integration</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Quotes Integration</li>
+									<?php
+									$addon_obj = new WPInv_Admin_Addons();
+									if ($addons = $addon_obj->get_section_data( 'addons' ) ) {
+										foreach ( $addons as $addon ) {
+											echo '<li><i class="far fa-check-circle fa-sm"></i> '.esc_html( $addon->info->title ).'</li>';
+										}
+									}
+									?>
 									</ul>
 
 									<div class="feature-cta">
-										<h3>Membership Starts from</h3>
+										<h3><?php _e("Membership Starts from","invoicing");?></h3>
 										<h4>$99</h4>
-										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
+										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e("Buy Membership","invoicing");?></a>
 									</div>
-									<h3>Gateways -
-The official <br>Gateways for Invoicing, get paid the way you want! Check all payment gateway integration</h3>
+									<h3><?php _e("Included Gateways:","invoicing");?></h3>
 									<ul>
-
-										<li><span class="dashicons dashicons-yes-alt"></span> Stripe Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PayFast Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PayPal Pro Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Mollie Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> GoCardless Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Cash on Delivery Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> 2Checkout Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Sage Pay Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Square Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> Cheque Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> FirstData Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PayUmoney Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PayUmoney Latam Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> PayPal Payflow Payment Gateway</li>
-										<li><span class="dashicons dashicons-yes-alt"></span> WebPay Payment Gateway</li>
+										<?php
+										if ($addons = $addon_obj->get_section_data( 'gateways' ) ) {
+											foreach ( $addons as $addon ) {
+												echo '<li><i class="far fa-check-circle fa-sm"></i> '.esc_html( $addon->info->title ).'</li>';
+											}
+										}
+										?>
 								</ul>
 							</div>
 
@@ -125,8 +117,8 @@ Great job so far guys, can’t wait to see where this goes!
 						</div>
 					</div>
 					<div class="member-footer">
-						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank">Buy Membership</a>
-						<a class="footer-link" href="post-new.php?post_type=wpi_invoice">Create Invoice</a>
+						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e("Buy Membership","invoicing");?></a>
+						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php _e("Create Invoice","invoicing");?></a>
 					</div>
 				</div>
 
@@ -156,12 +148,12 @@ Great job so far guys, can’t wait to see where this goes!
 									<?php endif;
 
 									if(isset($addon->info->link) && substr( $addon->info->link, 0, 21 ) === "https://wordpress.org"){
-										echo '<a href="'.admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug).'&TB_iframe=true&width=770&height=660" class="thickbox" >';
+										echo '<a href="'.admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug).'&width=770&height=660&TB_iframe=true" class="thickbox" >';
 										echo '<span class="wpi-product-info">'.__('More info','invoicing').'</span>';
 										echo '</a>';
 									}elseif(isset($addon->info->link) && substr( $addon->info->link, 0, 23 ) === "https://wpinvoicing.com"){
 										if(defined('WP_EASY_UPDATES_ACTIVE')){
-											$url = admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug.'&TB_iframe=true&width=770&height=660&item_id='.$addon->info->id.'&update_url=https://wpinvoicing.com');
+											$url = admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug.'&width=770&height=660&item_id='.$addon->info->id.'&update_url=https://wpinvoicing.com&TB_iframe=true');
 										}else{
 											// if installed show activation link
 											if(isset($installed_plugins['wp-easy-updates/external-updates.php'])){

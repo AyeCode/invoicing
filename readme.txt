@@ -1,6 +1,6 @@
 === Invoicing - Invoice & Payments Plugin ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
-Donate link: https://wpinvoicing.com
+Donate link: https://www.ko-fi.com/stiofan
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.2
@@ -126,15 +126,17 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.11 =
-BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
-Remove use of WP_Session library and use transient instead - CHANGED
-Mark invoice viewed when a user view it from invoice history - FIXED
-100% discount with first time payment for recurring payment should not redirect to gateway - FIXED
-Fix 503 error while visiting checkout page if w3 total cache is active - FIXED
-Problem in submitting the checkout form with full price discount - FIXED
-Remove Yoast SEO metabox from edit invoice screen - FIXED
-Allow users to pay what they want - ADDED
-Display gateway in status column on admin side if invoice paid by offline payment gateways - ADDED
+* BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+* Remove use of WP_Session library and use transient instead - CHANGED
+* Mark invoice viewed when a user view it from invoice history - FIXED
+* 100% discount with first time payment for recurring payment should not redirect to gateway - FIXED
+* Fix 503 error while visiting checkout page if w3 total cache is active - FIXED
+* Problem in submitting the checkout form with full price discount - FIXED
+* Remove Yoast SEO metabox from edit invoice screen - FIXED
+* Allow users to pay what they want - ADDED
+* Display gateway in status column on admin side if invoice paid by offline payment gateways - ADDED
+* BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
+* View invoice link now uses exit instead of wp_die() function - CHANGED
 
 = 1.0.10 =
 Invalid invoice user id error sometimes when require login to checkout disabled - FIXED

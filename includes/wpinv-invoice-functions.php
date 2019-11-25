@@ -2004,8 +2004,10 @@ function wpinv_pay_for_invoice() {
             $checkout_uri = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
         }
         
-        wp_safe_redirect( $checkout_uri );
-        exit();
+        if(wp_redirect( $checkout_uri )){
+            exit;
+        };
+        wpinv_die();
     }
 }
 add_action( 'wpinv_pay_for_invoice', 'wpinv_pay_for_invoice' );
