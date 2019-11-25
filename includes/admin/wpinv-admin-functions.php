@@ -80,8 +80,6 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
             break;
         case 'invoice_date' :
             $date_format = get_option( 'date_format' );
-            $time_format = get_option( 'time_format' );
-            $date_time_format = $date_format . ' '. $time_format;
             
             $m_time = $post->post_date;
             $h_time = mysql2date( $date_format, $m_time );
@@ -91,8 +89,6 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
         case 'payment_date' :
             if ( $date_completed = $wpi_invoice->get_meta( '_wpinv_completed_date', true ) ) {
                 $date_format = get_option( 'date_format' );
-                $time_format = get_option( 'time_format' );
-                $date_time_format = $date_format . ' '. $time_format;
                 
                 $m_time = $date_completed;
                 $h_time = mysql2date( $date_format, $m_time );
@@ -105,10 +101,14 @@ function wpinv_posts_custom_column( $column_name, $post_id = 0 ) {
         case 'status' :
             $value   = $wpi_invoice->get_status( true ) . ( $wpi_invoice->is_recurring() && $wpi_invoice->is_parent() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '' );
             $is_viewed = wpinv_is_invoice_viewed( $wpi_invoice->ID );
+	        $gateway_title = wpinv_get_gateway_admin_label( $wpi_invoice->get_gateway() );
+	        $offline_gateways = apply_filters('wpinv_offline_payments', array('bank_transfer', 'cheque', 'cod'));
+	        $is_offline_payment = in_array($wpi_invoice->get_gateway(), $offline_gateways) ? true : false;
+
             if ( 1 == $is_viewed ) {
                 $value .= '&nbsp;&nbsp;<i class="fa fa-eye" title="'.__( 'Viewed by Customer', 'invoicing' ).'"></i>';
             }
-            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() ) && ( $gateway_title = wpinv_get_gateway_admin_label( $wpi_invoice->get_gateway() ) ) ) {
+            if ( ( $wpi_invoice->is_paid() || $wpi_invoice->is_refunded() || $is_offline_payment ) && ( isset( $gateway_title ) ) ) {
                 $value .= '<br><small class="meta gateway">' . wp_sprintf( __( 'Via %s', 'invoicing' ), $gateway_title ) . '</small>';
             }
             break;
