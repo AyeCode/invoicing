@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
-Tested up to: 5.2
-Stable tag: 1.0.10
+Tested up to: 5.3
+Stable tag: 1.0.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,6 +59,8 @@ Invoicing can be used as payment system with check out page by any plugin.
 * [PayPal Payflow](https://wpinvoicing.com/downloads/paypal-payflow-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website.
 * [Square](https://wpinvoicing.com/downloads/square-payment-gateway/) - Accept payments via Square
 * [First Data](https://wpinvoicing.com/downloads/firstdata-payment-gateway/) - Accept payments via FirstData
+* [Braintree](https://wpinvoicing.com/downloads/braintree-payment-gateway/) - Accept payments via Braintree
+* [eWay](https://wpinvoicing.com/downloads/eway-payment-gateway/) - Accept payments via eWay payment gateway
 
 
 = Add-ons =
