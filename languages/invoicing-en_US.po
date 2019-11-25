@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Invoicing 1.0.11\n"
+"Project-Id-Version: Invoicing 1.0.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 15:19+0530\n"
-"PO-Revision-Date: 2019-11-25 15:19+0530\n"
+"POT-Creation-Date: 2019-11-25 15:56+0530\n"
+"PO-Revision-Date: 2019-11-25 15:56+0530\n"
 "Last-Translator: \n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -790,11 +790,13 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:59
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:93
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:200
 msgid "Yes"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:59
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:94
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:200
 msgid "No"
 msgstr ""
 
@@ -1727,6 +1729,7 @@ msgid "Settings updated."
 msgstr ""
 
 #: includes/admin/register-settings.php:921
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1568
 msgid "General"
 msgstr ""
 
@@ -10606,28 +10609,28 @@ msgid ""
 "sources if they are added with `font-awesome` or `fontawesome` in the name."
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:139
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:251
 msgid "Select shortcode"
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:158
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:270
 msgid "Insert shortcode"
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:161
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:273
 msgid "Copy shortcode"
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:360
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:980
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:477
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1119
 msgid "Advanced Settings"
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1228
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1367
 #, php-format
 msgid "Placeholder for: %s"
 msgstr ""
 
-#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1513
+#: vendor/ayecode/wp-super-duper/wp-super-duper.php:1749
 msgid "Placeholder for: "
 msgstr ""

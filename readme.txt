@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.3
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -126,6 +126,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 10. Client Invoice
 
 == Changelog ==
+
+= 1.0.12 =
+Super Duper updated to v1.0.15 - CHANGED
 
 = 1.0.11 =
 * BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
