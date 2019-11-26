@@ -52,17 +52,17 @@
     },
     {
         "name": "ayecode/wp-super-duper",
-        "version": "1.0.12",
-        "version_normalized": "1.0.12.0",
+        "version": "1.0.15",
+        "version_normalized": "1.0.15.0",
         "source": {
             "type": "git",
             "url": "https://github.com/AyeCode/wp-super-duper.git",
-            "reference": "faf185c07962ae05beadc228b7d5103b82203139"
+            "reference": "f2ad18b34e9f1754be24dd48b2399861d9ddf397"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/AyeCode/wp-super-duper/zipball/faf185c07962ae05beadc228b7d5103b82203139",
-            "reference": "faf185c07962ae05beadc228b7d5103b82203139",
+            "url": "https://api.github.com/repos/AyeCode/wp-super-duper/zipball/f2ad18b34e9f1754be24dd48b2399861d9ddf397",
+            "reference": "f2ad18b34e9f1754be24dd48b2399861d9ddf397",
             "shasum": ""
         },
         "require": {
@@ -74,7 +74,7 @@
             "squizlabs/php_codesniffer": "^3.2",
             "wp-coding-standards/wpcs": "*"
         },
-        "time": "2019-04-09T11:56:13+00:00",
+        "time": "2019-10-29T18:28:08+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -104,17 +104,17 @@
     },
     {
         "name": "composer/installers",
-        "version": "v1.6.0",
-        "version_normalized": "1.6.0.0",
+        "version": "v1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/composer/installers.git",
-            "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b"
+            "reference": "141b272484481432cda342727a427dc1e206bfa0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/installers/zipball/cfcca6b1b60bc4974324efb5783c13dca6932b5b",
-            "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b",
+            "url": "https://api.github.com/repos/composer/installers/zipball/141b272484481432cda342727a427dc1e206bfa0",
+            "reference": "141b272484481432cda342727a427dc1e206bfa0",
             "shasum": ""
         },
         "require": {
@@ -128,7 +128,7 @@
             "composer/composer": "1.0.*@dev",
             "phpunit/phpunit": "^4.8.36"
         },
-        "time": "2018-08-27T06:10:37+00:00",
+        "time": "2019-08-12T15:00:31+00:00",
         "type": "composer-plugin",
         "extra": {
             "class": "Composer\\Installers\\Plugin",
@@ -172,6 +172,7 @@
             "RadPHP",
             "SMF",
             "Thelia",
+            "Whmcs",
             "WolfCMS",
             "agl",
             "aimeos",
@@ -194,6 +195,7 @@
             "installer",
             "itop",
             "joomla",
+            "known",
             "kohana",
             "laravel",
             "lavalite",

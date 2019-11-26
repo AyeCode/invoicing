@@ -343,7 +343,7 @@ class WPInv_Meta_Box_Items {
                     'selected'         => $item_type,
                     'show_option_all'  => false,
                     'show_option_none' => false,
-                    'class'            => 'gdmbx2-text-medium wpinv-item-type wpi_select2',
+                    'class'            => 'gdmbx2-text-medium wpinv-item-type',
                 ) ); ?>
         </p>
         <p class="wpi-m0"><?php _e( 'Select item type.', 'invoicing' );?><br><?php _e( '<b>Standard:</b> Standard item type', 'invoicing' );?><br><?php _e( '<b>Fee:</b> Like Registration Fee, Sign up Fee etc.', 'invoicing' );?></p>

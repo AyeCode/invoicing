@@ -108,18 +108,18 @@ jQuery(function($) {
 
             //show dynamic pricing
             $('.wpinv-name-your-price-frontend').on( 'click', function( e ) {
-                e.preventDefault()
+                e.preventDefault();
 
                 //Display the dynamic pricing form
-                $(this).parent().find('.name-your-price-miniform').slideDown()
+                $(this).parent().find('.name-your-price-miniform').slideToggle('slow');
             })
 
             //Update price
             $(document).on('click', '.wpinv-update-dynamic-price-frontend', function(e) {
-                e.preventDefault()
+                e.preventDefault();
 
-                var price = $(this).closest('.name-your-price-miniform').find('.wpi-field-price').val()
-                var item = $(this).closest('.name-your-price-miniform').find('.wpi-field-item').val()
+                var price = $(this).closest('.name-your-price-miniform').find('.wpi-field-price').val();
+                var item = $(this).closest('.name-your-price-miniform').find('.wpi-field-item').val();
                 var url = new URL( window.location.href );
                 url.searchParams.set('wpi_dynamic_item', item);
                 url.searchParams.set('wpi_dynamic_price', price);
