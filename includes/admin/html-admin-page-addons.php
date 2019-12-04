@@ -37,7 +37,7 @@ add_ThickBox();
 					<p>
 						<?php
 						$wpeu_admin = new External_Updates_Admin('wpinvoicing.com','1');
-						echo $wpeu_admin->render_licence_actions('wpinvoicing.com', 'membership',array(95, 106, 108));
+						echo $wpeu_admin->render_licence_actions('wpinvoicing.com', 'membership',array(95, 106, 108,12351));
 						?>
 					</p>
 				<?php }?>

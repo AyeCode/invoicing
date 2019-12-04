@@ -94,7 +94,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 		$wp_org_themes = array('supreme-directory','directory-starter');
 
 		$button_args = array(
-			'type' => $current_tab,
+			'type' => ($current_tab == 'addons' || $current_tab =='gateways') ? 'addons' : $current_tab,
 			'id' => isset($addon->info->id) ? absint($addon->info->id) : '',
 			'title' => isset($addon->info->title) ? $addon->info->title : '',
 			'button_text' => __('Free','invoicing'),
@@ -204,7 +204,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 		
 		// filter the button arguments
 		$button_args = apply_filters('edd_api_button_args',$button_args);
-
+//		print_r($button_args);
 		// set price text
 		if(isset($button_args['price_text'])){
 			?>
