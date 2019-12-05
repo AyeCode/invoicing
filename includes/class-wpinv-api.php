@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Contains the main API class
  *
  * @since 1.0.0
  * @package Invoicing
@@ -8,43 +8,102 @@
  
 // MUST have WordPress.
 if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
+/**
+ * The main API class
+ */
 class WPInv_API {
-    protected $post_type = 'wpi_invoice';
+
+    /**
+     * @param string A prefix for our REST routes
+     */
+    protected $api_namespace    = '';
     
-    public function __construct( $params = array() ) {
+    /**
+     * Class constructor. 
+     * 
+     * @since 1.0.13
+     * Sets the API namespace and inits hooks
+     */
+    public function __construct( $api_namespace = 'invoicing/v1' ) {
+        $this->api_namespace = apply_filters( 'invoicing_api_namespace', $api_namespace );
+
+        //Register REST routes
+        add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
     }
-    public function insert_invoice( $data ) {
-        global $wpdb;
-        //wpinv_transaction_query( 'start' );
 
-        try {
-            if ( empty( $data['invoice'] ) ) {
-                throw new WPInv_API_Exception( 'wpinv_api_missing_invoice_data', sprintf( __( 'No %1$s data specified to create %1$s', 'invoicing' ), 'invoice' ), 400 );
-            }
 
-            $data = apply_filters( 'wpinv_api_create_invoice_data', $data['invoice'], $this );
+	/**
+	 * Registers routes
+	 *
+     * @since 1.0.13
+	 */
+	public function register_rest_routes() {
+		
+		//Invoices
+		register_rest_route(
+			$this->api_namespace,
+			'/invoices',
+			array(
 
-            $invoice = wpinv_insert_invoice( $data, true );
-            if ( empty( $invoice->ID ) || is_wp_error( $invoice ) ) {
-                throw new WPInv_API_Exception( 'wpinv_api_cannot_create_invoice', sprintf( __( 'Cannot create invoice: %s', 'invoicing' ), implode( ', ', $invoice->get_error_messages() ) ), 400 );
-            }
+				//Create a single invoice
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'insert_invoice' ),
+					'permission_callback' => array( $this, 'can_manage_options' ),
+                ),
+				
+			)
+        );
+        
+    }
+    
+    /**
+     * Checks if the current user can manage options
+     * 
+     * @since 1.0.13
+     * @param WP_REST_Request $request
+     */
+    public function can_manage_options( $request ) {
+		return current_user_can( 'manage_options' );
+    }
 
-            // HTTP 201 Created
-            $this->send_status( 201 );
+    /**
+     * Creates a new invoice
+     * 
+     *  @param WP_REST_Request $request
+     *  @return mixed WP_Error or invoice data
+     */
+    public function insert_invoice( $request ) {
+        
+        // Fetch invoice data from the request
+        $invoice_data = wp_unslash( $request->get_params() );
 
-            do_action( 'wpinv_api_create_invoice', $invoice->ID, $data, $this );
-
-            //wpinv_transaction_query( 'commit' );
-
-            return wpinv_get_invoice( $invoice->ID );
-        } catch ( WPInv_API_Exception $e ) {
-            //wpinv_transaction_query( 'rollback' );
-
-            return new WP_Error( $e->getErrorCode(), $e->getMessage(), array( 'status' => $e->getCode() ) );
+        // Abort if no invoice data is provided
+        if( empty( $invoice_data ) ) {
+            return new WP_Error( 'missing_data', __( 'Invoice data not provided', 'invoicing' ) );
         }
+
+        // Try creating the invoice
+        $invoice = wpinv_insert_invoice( $invoice_data, true );
+
+        if ( is_wp_error( $invoice ) ) {
+            return $invoice;
+        }
+
+        // Fetch invoice data ...
+        $invoice_data = get_object_vars( $invoice );
+
+        // ... and formart some of it
+        foreach( $invoice_data as $key => $value ) {
+            $invoice_data[ $key ] = $invoice->get( $key );
+        }
+
+        //Return the invoice data
+        return rest_ensure_response( $invoice_data );
+
     }
     
     public function send_status( $code ) {

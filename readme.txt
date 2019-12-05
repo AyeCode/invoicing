@@ -129,6 +129,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
+* Ability to create an invoice via REST API and WP CLI - ADDED
 
 = 1.0.12 =
 * Super Duper updated to v1.0.15 - CHANGED
