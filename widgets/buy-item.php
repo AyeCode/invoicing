@@ -92,7 +92,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
 	     */
 	    $args = wp_parse_args( $args, $defaults );
 
-	    $post_id = isset( $a['post_id'] ) ? (int)$args['post_id'] : 0;
+	    $post_id = isset( $args['post_id'] ) ? (int)$args['post_id'] : 0;
 
 	    $html = '<div class="wpi-buy-button-wrapper wpi-g">';
 	    $html .= '<button class="button button-primary wpi-buy-button" type="button" onclick="wpi_buy(this,\'' . $args['buy_items'] . '\',' . $post_id . ');">' . $args['button_label'] . '</button>';

@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Invoicing history widget.
- *
- * @since 1.0.22
  */
 class WPInv_History_Widget extends WP_Super_Duper {
 

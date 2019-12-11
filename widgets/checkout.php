@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Invoicing checkout form widget.
  *
- * @since 1.0.22
  */
 class WPInv_Checkout_Widget extends WP_Super_Duper {
 
