@@ -1408,6 +1408,7 @@ function wpinv_checkout_form() {
     $form_action  = esc_url( wpinv_get_checkout_uri() );
 
     ob_start();
+	    do_action( 'wpinv_checkout_content_before' );
         echo '<div id="wpinv_checkout_wrap">';
 
         if ( wpinv_get_cart_contents() || wpinv_cart_has_fees() ) {
@@ -1430,6 +1431,7 @@ function wpinv_checkout_form() {
             do_action( 'wpinv_cart_empty' );
         }
         echo '</div><!--end #wpinv_checkout_wrap-->';
+	    do_action( 'wpinv_checkout_content_after' );
     return ob_get_clean();
 }
 

@@ -142,19 +142,19 @@ function wpinv_create_pages()
         'checkout_page' => array(
             'name' => _x('wpi-checkout', 'Page slug', 'invoicing'),
             'title' => _x('Checkout', 'Page title', 'invoicing'),
-            'content' => '[' . apply_filters('wpinv_checkout_shortcode_tag', 'wpinv_checkout') . ']',
+            'content' => '[wpinv_checkout]',
             'parent' => '',
         ),
         'invoice_history_page' => array(
             'name' => _x('wpi-history', 'Page slug', 'invoicing'),
             'title' => _x('Invoice History', 'Page title', 'invoicing'),
-            'content' => '[' . apply_filters('wpinv_history_shortcode_tag', 'wpinv_history') . ']',
+            'content' => '[wpinv_history]',
             'parent' => 'wpi-checkout',
         ),
         'success_page' => array(
             'name' => _x('wpinv-receipt', 'Page slug', 'invoicing'),
             'title' => _x('Payment Confirmation', 'Page title', 'invoicing'),
-            'content' => '[' . apply_filters('wpinv_receipt_shortcode_tag', 'wpinv_receipt') . ']',
+            'content' => '[wpinv_receipt]',
             'parent' => 'wpi-checkout',
         ),
         'failure_page' => array(
@@ -166,7 +166,7 @@ function wpinv_create_pages()
         'invoice_subscription_page' => array(
             'name' => _x('wpinv-subscriptions', 'Page slug', 'invoicing'),
             'title' => _x('Subscriptions History', 'Page title', 'invoicing'),
-            'content' => '[' . apply_filters('wpinv_subscriptions_shortcode_tag', 'wpinv_subscriptions') . ']',
+            'content' => '[wpinv_subscriptions]',
             'parent' => 'wpi-checkout',
         ),
     ));
