@@ -42,7 +42,6 @@ class WPInv_Plugin {
         /* Perform actions on admin initialization. */
         add_action( 'admin_init', array( &$this, 'admin_init') );
         add_action( 'init', array( &$this, 'init' ), 3 );
-        add_action( 'init', array( 'WPInv_Shortcodes', 'init' ) );
         add_action( 'init', array( &$this, 'wpinv_actions' ) );
         
         if ( class_exists( 'BuddyPress' ) ) {
