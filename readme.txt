@@ -127,8 +127,11 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.13 =
+* Extensions page Gateways not able to be installed via single key - FIXED
+
 = 1.0.12 =
-Super Duper updated to v1.0.15 - CHANGED
+* Super Duper updated to v1.0.15 - CHANGED
 
 = 1.0.11 =
 * BuddyPress profile my invoice tab showing count with paid only should show all - FIXED
