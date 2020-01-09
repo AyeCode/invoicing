@@ -75,6 +75,11 @@ class WPInv_Plugin {
         $this->load_textdomain();
 
         do_action( 'wpinv_loaded' );
+
+        // Fix oxygen page builder conflict
+        if ( function_exists( 'ct_css_output' ) ) {
+            wpinv_oxygen_fix_conflict();
+        }
     }
     
     /**
