@@ -7,7 +7,7 @@
  * @package  Invoicing
  * @since    1.0.13
  */
- 
+
 if ( !defined( 'WPINC' ) ) {
     exit;
 }
@@ -57,7 +57,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
         $post_type = get_post_type_object( $this->post_type );
 
 		if ( 'edit' === $request['context'] && ! current_user_can( $post_type->cap->edit_posts ) ) {
-			return new WP_Error( 'rest_forbidden_context', __( 'Sorry, you are not allowed to edit invoices.' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'rest_forbidden_context', __( 'Sorry, you are not allowed to edit invoices.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		// Read checks will be evaluated on a per invoice basis
@@ -213,7 +213,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		}
 
         // ... and the owner of the invoice
-		if( get_current_user_id() === $invoice->get_user_id() ) {
+		if( get_current_user_id() ===(int) $invoice->get_user_id() ) {
 			return true;
 		}
 
@@ -503,7 +503,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		// Abort early if we can't delete the invoice.
 		if ( ! $deleted ) {
-			return new WP_Error( 'rest_cannot_delete', __( 'The invoice cannot be deleted.' ), array( 'status' => 500 ) );
+			return new WP_Error( 'rest_cannot_delete', __( 'The invoice cannot be deleted.', 'invoicing' ), array( 'status' => 500 ) );
 		}
 
 		/**
@@ -567,7 +567,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
             // Exclude certain invoices
             'exclude'  => array(
-                'description' => __( 'Ensure result set excludes specific IDs.' ),
+                'description' => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
                 'type'        => 'array',
                 'items'       => array(
                     'type' => 'integer',
@@ -577,7 +577,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
             // Order invoices by
             'orderby'  => array(
-                'description' => __( 'Sort invoices by object attribute.' ),
+                'description' => __( 'Sort invoices by object attribute.', 'invoicing' ),
                 'type'        => 'string',
                 'default'     => 'date',
                 'enum'        => array(
@@ -591,7 +591,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
             // How to order
             'order'    => array(
-                'description' => __( 'Order sort attribute ascending or descending.' ),
+                'description' => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
                 'type'        => 'string',
                 'default'     => 'DESC',
                 'enum'        => array( 'ASC', 'DESC' ),
@@ -882,99 +882,99 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 			'properties' 		  => array(
 
 				'title'			  => array(
-					'description' => __( 'The title for the invoice.' ),
+					'description' => __( 'The title for the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'user_id'		  => array(
-					'description' => __( 'The ID of the owner of the invoice.' ),
+					'description' => __( 'The ID of the owner of the invoice.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'email'		  	  => array(
-					'description' => __( 'The email of the owner of the invoice.' ),
+					'description' => __( 'The email of the owner of the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'ip'			  => array(
-					'description' => __( 'The IP of the owner of the invoice.' ),
+					'description' => __( 'The IP of the owner of the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'user_info'       => array(
-					'description' => __( 'Information about the owner of the invoice.' ),
+					'description' => __( 'Information about the owner of the invoice.', 'invoicing' ),
 					'type'        => 'object',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'properties'  => array(
 
 						'first_name'      => array(
-							'description' => __( 'The first name of the owner of the invoice.' ),
+							'description' => __( 'The first name of the owner of the invoice.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'last_name'       => array(
-							'description' => __( 'The last name of the owner of the invoice.' ),
+							'description' => __( 'The last name of the owner of the invoice.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'company'         => array(
-							'description' => __( 'The company of the owner of the invoice.' ),
+							'description' => __( 'The company of the owner of the invoice.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'vat_number'      => array(
-							'description' => __( 'The VAT number of the owner of the invoice.' ),
+							'description' => __( 'The VAT number of the owner of the invoice.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'vat_rate'        => array(
-							'description' => __( 'The VAT rate applied on the invoice.' ),
+							'description' => __( 'The VAT rate applied on the invoice.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'address'        => array(
-							'description' => __( 'The address of the invoice owner.' ),
+							'description' => __( 'The address of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'city'            => array(
-							'description' => __( 'The city of the invoice owner.' ),
+							'description' => __( 'The city of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'country'         => array(
-							'description' => __( 'The country of the invoice owner.' ),
+							'description' => __( 'The country of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'state'           => array(
-							'description' => __( 'The state of the invoice owner.' ),
+							'description' => __( 'The state of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'zip'             => array(
-							'description' => __( 'The zip code of the invoice owner.' ),
+							'description' => __( 'The zip code of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
 
 						'phone'             => array(
-							'description' => __( 'The phone number of the invoice owner.' ),
+							'description' => __( 'The phone number of the invoice owner.', 'invoicing' ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit', 'embed' ),
 						),
@@ -982,115 +982,115 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				),
 
 				'id'           => array(
-					'description' => __( 'Unique identifier for the invoice.' ),
+					'description' => __( 'Unique identifier for the invoice.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'key'			  => array(
-					'description' => __( 'A unique key for the invoice.' ),
+					'description' => __( 'A unique key for the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'number'		  => array(
-					'description' => __( 'The invoice number.' ),
+					'description' => __( 'The invoice number.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'transaction_id'  => array(
-					'description' => __( 'The transaction id of the invoice.' ),
+					'description' => __( 'The transaction id of the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'gateway'		  => array(
-					'description' => __( 'The gateway used to process the invoice.' ),
+					'description' => __( 'The gateway used to process the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'gateway_title'	  => array(
-					'description' => __( 'The title of the gateway used to process the invoice.' ),
+					'description' => __( 'The title of the gateway used to process the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'total'	  		  => array(
-					'description' => __( 'The total amount of the invoice.' ),
+					'description' => __( 'The total amount of the invoice.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'discount'		  => array(
-					'description' => __( 'The discount applied to the invoice.' ),
+					'description' => __( 'The discount applied to the invoice.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'discount_code'	  => array(
-					'description' => __( 'The discount code applied to the invoice.' ),
+					'description' => __( 'The discount code applied to the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'tax'	  		  => array(
-					'description' => __( 'The tax applied to the invoice.' ),
+					'description' => __( 'The tax applied to the invoice.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'fees_total'	  => array(
-					'description' => __( 'The total fees applied to the invoice.' ),
+					'description' => __( 'The total fees applied to the invoice.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'subtotal'	  	  => array(
-					'description' => __( 'The sub-total for the invoice.' ),
+					'description' => __( 'The sub-total for the invoice.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'currency'	  	  => array(
-					'description' => __( 'The currency used to process the invoice.' ),
+					'description' => __( 'The currency used to process the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'cart_details'	  => array(
-					'description' => __( 'The cart details for invoice.' ),
+					'description' => __( 'The cart details for invoice.', 'invoicing' ),
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'required'	  => true,
 				),
 
 				'date'         => array(
-					'description' => __( "The date the object was published, in the site's timezone." ),
+					'description' => __( "The date the invoice was published, in the site's timezone.", 'invoicing' ),
 					'type'        => array( 'string', 'null' ),
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'due_date'     => array(
-					'description' => __( 'The due date for the invoice.' ),
+					'description' => __( 'The due date for the invoice.', 'invoicing' ),
 					'type'        => array( 'string', 'null' ),
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 
 				'completed_date'  => array(
-					'description' => __( 'The completed date for the invoice.' ),
+					'description' => __( 'The completed date for the invoice.', 'invoicing' ),
 					'type'        => array( 'string', 'null' ),
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit', 'embed' ),
@@ -1098,7 +1098,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				),
 				
 				'link'         => array(
-					'description' => __( 'URL to the invoice.' ),
+					'description' => __( 'URL to the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'format'      => 'uri',
 					'context'     => array( 'view', 'edit', 'embed' ),
@@ -1106,7 +1106,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				),
 
 				'mode'       	  => array(
-					'description' => __( 'The mode used to process the invoice.' ),
+					'description' => __( 'The mode used to process the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'enum'        => array( 'live', 'test' ),
 					'context'     => array( 'view', 'edit', 'embed' ),
@@ -1114,7 +1114,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				),
 
 				'slug'       	  => array(
-					'description' => __( 'An alphanumeric identifier for the invoice.' ),
+					'description' => __( 'An alphanumeric identifier for the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'arg_options' => array(
@@ -1124,24 +1124,24 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				),
 
 				'status'       	  => array(
-					'description' => __( 'A named status for the invoice.' ),
+					'description' => __( 'A named status for the invoice.', 'invoicing' ),
 					'type'        => 'string',
 					'enum'        => array_keys( wpinv_get_invoice_statuses( true, true ) ),
-					'context'     => array( 'view', 'edit', 'embed' ),
+					'context'     => array( 'view', 'edit' ),
 					'default'	  => 'wpi-pending',
 				),
 
 				'status_nicename' => array(
-					'description' => __( 'A human-readable status name for the invoice.' ),
+					'description' => __( 'A human-readable status name for the invoice.', 'invoicing' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit', 'embed' ),
+					'context'     => array( 'view', 'embed' ),
 					'readonly'    => true,
 				),
 
 				'post_type'       => array(
-					'description' => __( 'The post type for the invoice.' ),
+					'description' => __( 'The post type for the invoice.', 'invoicing' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit', 'embed' ),
+					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
 			),
@@ -1182,7 +1182,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		$links[] = array(
 			'rel'          => 'https://api.w.org/action-publish',
-			'title'        => __( 'The current user can mark this invoice as completed.' ),
+			'title'        => __( 'The current user can mark this invoice as completed.', 'invoicing' ),
 			'href'         => $href,
 			'targetSchema' => array(
 				'type'       => 'object',
@@ -1197,7 +1197,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		$links[] = array(
 			'rel'          => 'https://api.w.org/action-assign-author',
-			'title'        => __( 'The current user can change the owner of this invoice.' ),
+			'title'        => __( 'The current user can change the owner of this invoice.', 'invoicing' ),
 			'href'         => $href,
 			'targetSchema' => array(
 				'type'       => 'object',
@@ -1295,6 +1295,24 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @param array   $rels    Available link relations.
 		 */
 		return apply_filters( "wpinv_invoice_rest_link_relations", $rels );
+	}
+
+	/**
+	 * Sanitizes and validates the list of post statuses.
+	 *
+	 * @since 1.0.13
+	 *
+	 * @param string|array    $statuses  One or more post statuses.
+	 * @param WP_REST_Request $request   Full details about the request.
+	 * @param string          $parameter Additional parameter to pass to validation.
+	 * @return array|WP_Error A list of valid statuses, otherwise WP_Error object.
+	 */
+	public function sanitize_post_statuses( $statuses, $request, $parameter ) {
+
+		$statuses 	  = wp_parse_slug_list( $statuses );
+		$valid_statuses = array_keys( wpinv_get_invoice_statuses( true, true ) );
+		return array_intersect( $statuses, $valid_statuses );
+		
 	}
     
 }
