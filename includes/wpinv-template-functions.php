@@ -330,14 +330,24 @@ function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before 
 }
 
 function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
-    $month   = 1;
-    $options = array();
-    $selected = empty( $selected ) ? date( 'n' ) : $selected;
 
-    while ( $month <= 12 ) {
-        $options[ absint( $month ) ] = wpinv_month_num_to_name( $month );
-        $month++;
-    }
+    $options = array(
+        '1'  => __( 'January', 'invoicing' ),
+        '2'  => __( 'February', 'invoicing' ),
+        '3'  => __( 'March', 'invoicing' ),
+        '4'  => __( 'April', 'invoicing' ),
+        '5'  => __( 'May', 'invoicing' ),
+        '6'  => __( 'June', 'invoicing' ),
+        '7'  => __( 'July', 'invoicing' ),
+        '8'  => __( 'August', 'invoicing' ),
+        '9'  => __( 'September', 'invoicing' ),
+        '10' => __( 'October', 'invoicing' ),
+        '11' => __( 'November', 'invoicing' ),
+        '12' => __( 'December', 'invoicing' ),
+    );
+
+    // If no month is selected, default to the current month
+    $selected = empty( $selected ) ? date( 'n' ) : $selected;
 
     $output = wpinv_html_select( array(
         'name'             => $name,
@@ -916,6 +926,36 @@ function wpinv_display_invoice_details( $invoice ) {
 <?php
 }
 
+/**
+ * Retrieves the address markup to use on Invoices.
+ * 
+ * @since 1.0.13
+ * @see `wpinv_get_full_address_format`
+ * @see `wpinv_get_invoice_address_replacements`
+ * @param array $billing_details customer's billing details
+ * @return string
+ */
+function wpinv_get_invoice_address_markup( $billing_details ) {
+
+    // Retrieve the address markup...
+    $markup = wpinv_get_full_address_format();
+
+    // ... and the replacements.
+    $replacements = wpinv_get_invoice_address_replacements( $billing_details );
+
+    // Replace all available tags with their values.
+	foreach( $replacements as $key => $value ) {
+		$markup = str_ireplace( '{{' . $key . '}}', $value, $markup );
+    }
+    
+	// Remove unavailable tags.
+    $markup = preg_replace( "/\{\{\w+}\}/", '', $markup );
+
+    // Finally, clean then return the output.
+    return wpautop( wp_kses_post( trim( $markup ) ) );
+    
+}
+
 function wpinv_display_to_address( $invoice_id = 0 ) {
     $invoice = wpinv_get_invoice( $invoice_id );
     
@@ -935,35 +975,9 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     if ( $company = $billing_details['company'] ) {
         $output .= '<div class="company">' . wpautop( wp_kses_post( $company ) ) . '</div>';
     }
-    $address_row = '';
-    if ( $address = $billing_details['address'] ) {
-        $address_row .= wpautop( wp_kses_post( $address ) );
-    }
-    
-    $address_fields = array();
-    if ( !empty( $billing_details['city'] ) ) {
-        $address_fields[] = $billing_details['city'];
-    }
-    
-    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
-    if ( !empty( $billing_details['state'] ) ) {
-        $address_fields[] = wpinv_state_name( $billing_details['state'], $billing_country );
-    }
 
-    if ( !empty( $billing_country ) ) {
-        $address_fields[] = wpinv_country_name( $billing_country );
-    }
+    $address_row = wpinv_get_invoice_address_markup( $billing_details );
 
-    if ( !empty( $address_fields ) ) {
-        $address_fields = implode( ", ", $address_fields );
-        
-        if ( !empty( $billing_details['zip'] ) ) {
-            $address_fields .= ' ' . $billing_details['zip'];
-        }
-
-        $address_row .= wpautop( wp_kses_post( $address_fields ) );
-    }
-    
     if ( $address_row ) {
         $output .= '<div class="address">' . $address_row . '</div>';
     }
@@ -1408,6 +1422,7 @@ function wpinv_checkout_form() {
     $form_action  = esc_url( wpinv_get_checkout_uri() );
 
     ob_start();
+	    do_action( 'wpinv_checkout_content_before' );
         echo '<div id="wpinv_checkout_wrap">';
 
         if ( wpinv_get_cart_contents() || wpinv_cart_has_fees() ) {
@@ -1430,6 +1445,7 @@ function wpinv_checkout_form() {
             do_action( 'wpinv_cart_empty' );
         }
         echo '</div><!--end #wpinv_checkout_wrap-->';
+	    do_action( 'wpinv_checkout_content_after' );
     return ob_get_clean();
 }
 
@@ -1851,34 +1867,8 @@ function wpinv_receipt_billing_address( $invoice_id = 0 ) {
     }
 
     $billing_details = $invoice->get_user_info();
-    $address_row = '';
-    if ( $address = $billing_details['address'] ) {
-        $address_row .= wpautop( wp_kses_post( $address ) );
-    }
+    $address_row = wpinv_get_invoice_address_markup( $billing_details );
 
-    $address_fields = array();
-    if ( !empty( $billing_details['city'] ) ) {
-        $address_fields[] = $billing_details['city'];
-    }
-
-    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
-    if ( !empty( $billing_details['state'] ) ) {
-        $address_fields[] = wpinv_state_name( $billing_details['state'], $billing_country );
-    }
-
-    if ( !empty( $billing_country ) ) {
-        $address_fields[] = wpinv_country_name( $billing_country );
-    }
-
-    if ( !empty( $address_fields ) ) {
-        $address_fields = implode( ", ", $address_fields );
-
-        if ( !empty( $billing_details['zip'] ) ) {
-            $address_fields .= ' ' . $billing_details['zip'];
-        }
-
-        $address_row .= wpautop( wp_kses_post( $address_fields ) );
-    }
     ob_start();
     ?>
     <table class="table table-bordered table-sm wpi-billing-details">
@@ -2294,3 +2284,23 @@ function wpinv_checkout_cart_item_name_your_price( $cart_item, $key ) {
 
 }
 add_action( 'wpinv_checkout_cart_item_price_after', 'wpinv_checkout_cart_item_name_your_price', 10, 2 );
+
+function wpinv_oxygen_fix_conflict() {
+    global $ct_ignore_post_types;
+
+    if ( ! is_array( $ct_ignore_post_types ) ) {
+        $ct_ignore_post_types = array();
+    }
+
+    $post_types = array( 'wpi_discount', 'wpi_invoice', 'wpi_item' );
+
+    foreach ( $post_types as $post_type ) {
+        $ct_ignore_post_types[] = $post_type;
+
+        // Ignore post type
+        add_filter( 'pre_option_oxygen_vsb_ignore_post_type_' . $post_type, '__return_true', 999 );
+    }
+
+    remove_filter( 'template_include', 'wpinv_template', 10, 1 );
+    add_filter( 'template_include', 'wpinv_template', 999, 1 );
+}

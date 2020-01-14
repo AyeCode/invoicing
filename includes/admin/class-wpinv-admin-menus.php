@@ -47,7 +47,7 @@ class WPInv_Admin_Menus {
         add_submenu_page(
             "wpinv",
             __('Invoicing extensions', 'invoicing'),
-            __('Extensions', 'userswp'),
+            __('Extensions', 'invoicing'),
             'manage_options',
             'wpi-addons',
             array( $this, 'addons_page' )
