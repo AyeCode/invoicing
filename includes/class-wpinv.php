@@ -105,6 +105,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
         $wpinv_options = wpinv_get_settings();
         
+        require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
@@ -144,7 +145,6 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
-        require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
