@@ -2296,3 +2296,23 @@ function wpinv_checkout_cart_item_name_your_price( $cart_item, $key ) {
 
 }
 add_action( 'wpinv_checkout_cart_item_price_after', 'wpinv_checkout_cart_item_name_your_price', 10, 2 );
+
+function wpinv_oxygen_fix_conflict() {
+    global $ct_ignore_post_types;
+
+    if ( ! is_array( $ct_ignore_post_types ) ) {
+        $ct_ignore_post_types = array();
+    }
+
+    $post_types = array( 'wpi_discount', 'wpi_invoice', 'wpi_item' );
+
+    foreach ( $post_types as $post_type ) {
+        $ct_ignore_post_types[] = $post_type;
+
+        // Ignore post type
+        add_filter( 'pre_option_oxygen_vsb_ignore_post_type_' . $post_type, '__return_true', 999 );
+    }
+
+    remove_filter( 'template_include', 'wpinv_template', 10, 1 );
+    add_filter( 'template_include', 'wpinv_template', 999, 1 );
+}
