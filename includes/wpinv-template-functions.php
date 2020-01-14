@@ -926,6 +926,36 @@ function wpinv_display_invoice_details( $invoice ) {
 <?php
 }
 
+/**
+ * Retrieves the address markup to use on Invoices.
+ * 
+ * @since 1.0.13
+ * @see `wpinv_get_full_address_format`
+ * @see `wpinv_get_invoice_address_replacements`
+ * @param array $billing_details customer's billing details
+ * @return string
+ */
+function wpinv_get_invoice_address_markup( $billing_details ) {
+
+    // Retrieve the address markup...
+    $markup = wpinv_get_full_address_format();
+
+    // ... and the replacements.
+    $replacements = wpinv_get_invoice_address_replacements( $billing_details );
+
+    // Replace all available tags with their values.
+	foreach( $replacements as $key => $value ) {
+		$markup = str_ireplace( '{{' . $key . '}}', $value, $markup );
+    }
+    
+	// Remove unavailable tags.
+    $markup = preg_replace( "/\{\{\w+}\}/", '', $markup );
+
+    // Finally, clean then return the output.
+    return wpautop( wp_kses_post( trim( $markup ) ) );
+    
+}
+
 function wpinv_display_to_address( $invoice_id = 0 ) {
     $invoice = wpinv_get_invoice( $invoice_id );
     
@@ -945,35 +975,9 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     if ( $company = $billing_details['company'] ) {
         $output .= '<div class="company">' . wpautop( wp_kses_post( $company ) ) . '</div>';
     }
-    $address_row = '';
-    if ( $address = $billing_details['address'] ) {
-        $address_row .= wpautop( wp_kses_post( $address ) );
-    }
-    
-    $address_fields = array();
-    if ( !empty( $billing_details['city'] ) ) {
-        $address_fields[] = $billing_details['city'];
-    }
-    
-    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
-    if ( !empty( $billing_details['state'] ) ) {
-        $address_fields[] = wpinv_state_name( $billing_details['state'], $billing_country );
-    }
 
-    if ( !empty( $billing_country ) ) {
-        $address_fields[] = wpinv_country_name( $billing_country );
-    }
+    $address_row = wpinv_get_invoice_address_markup( $billing_details );
 
-    if ( !empty( $address_fields ) ) {
-        $address_fields = implode( ", ", $address_fields );
-        
-        if ( !empty( $billing_details['zip'] ) ) {
-            $address_fields .= ' ' . $billing_details['zip'];
-        }
-
-        $address_row .= wpautop( wp_kses_post( $address_fields ) );
-    }
-    
     if ( $address_row ) {
         $output .= '<div class="address">' . $address_row . '</div>';
     }
@@ -1863,34 +1867,8 @@ function wpinv_receipt_billing_address( $invoice_id = 0 ) {
     }
 
     $billing_details = $invoice->get_user_info();
-    $address_row = '';
-    if ( $address = $billing_details['address'] ) {
-        $address_row .= wpautop( wp_kses_post( $address ) );
-    }
+    $address_row = wpinv_get_invoice_address_markup( $billing_details );
 
-    $address_fields = array();
-    if ( !empty( $billing_details['city'] ) ) {
-        $address_fields[] = $billing_details['city'];
-    }
-
-    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
-    if ( !empty( $billing_details['state'] ) ) {
-        $address_fields[] = wpinv_state_name( $billing_details['state'], $billing_country );
-    }
-
-    if ( !empty( $billing_country ) ) {
-        $address_fields[] = wpinv_country_name( $billing_country );
-    }
-
-    if ( !empty( $address_fields ) ) {
-        $address_fields = implode( ", ", $address_fields );
-
-        if ( !empty( $billing_details['zip'] ) ) {
-            $address_fields .= ' ' . $billing_details['zip'];
-        }
-
-        $address_row .= wpautop( wp_kses_post( $address_fields ) );
-    }
     ob_start();
     ?>
     <table class="table table-bordered table-sm wpi-billing-details">

@@ -1568,3 +1568,79 @@ function wpinv_default_billing_country( $country = '', $user_id = 0 ) {
     
     return apply_filters( 'wpinv_default_billing_country', $country, $user_id );
 }
+
+/**
+ * Retrieves the address format to use on Invoices.
+ * 
+ * @since 1.0.13
+ * @see `wpinv_get_invoice_address_replacements`
+ * @return string
+ */
+function wpinv_get_full_address_format() {
+
+    $format = "{{address}} \n\n {{city}}, {{state}} \n\n {{country}} {{zip}}";
+    
+    /**
+	 * Filters the address format to use on Invoices.
+     * 
+     * New lines will be replaced by a `br` element. Double new lines will be replaced by a paragraph. HTML tags are allowed.
+	 *
+	 * @since 1.0.13
+	 *
+	 * @param string $format  The address format to use.
+	 */
+    return apply_filters( 'wpinv_get_full_address_format', $format );
+}
+
+/**
+ * Retrieves the address format replacements to use on Invoices.
+ * 
+ * @since 1.0.13
+ * @see `wpinv_get_full_address_format`
+ * @param array $billing_details customer's billing details
+ * @return array
+ */
+function wpinv_get_invoice_address_replacements( $billing_details ) {
+
+    $replacements = array(
+        'address'        => '',
+        'city'           => '',
+        'state'          => '',
+        'country'        => '',
+        'country_code'   => '',
+        'zip'            => '',
+    );
+
+    if( ! empty( $billing_details['address'] ) ) {
+        $replacements['address'] = sanitize_text_field( $billing_details['address'] );
+    }
+
+    if( ! empty( $billing_details['city'] ) ) {
+        $replacements['city'] = sanitize_text_field( $billing_details['city'] );
+    }
+
+    if( ! empty( $billing_details['zip'] ) ) {
+        $replacements['zip'] = sanitize_text_field( $billing_details['zip'] );
+    }
+    
+    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
+    if ( !empty( $billing_details['state'] ) ) {
+        $replacements['state'] = sanitize_text_field( wpinv_state_name( $billing_details['state'], $billing_country ) );
+    }
+
+    if ( !empty( $billing_country ) ) {
+        $replacements['country']      = wpinv_country_name( $billing_country );
+        $replacements['country_code'] = sanitize_text_field( $billing_country );
+    }
+    
+    /**
+	 * Filters the address format replacements to use on Invoices.
+     * 
+	 *
+	 * @since 1.0.13
+	 *
+	 * @param array $replacements  The address replacements to use.
+     * @param array $billing_details  The billing details to use.
+	 */
+    return apply_filters( 'wpinv_get_invoice_address_replacements', $replacements, $billing_details );
+}

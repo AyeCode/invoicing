@@ -6,33 +6,7 @@ if ( !defined('ABSPATH') )
 do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
 <div id="wpinv-email-billing">
     <h3 class="wpinv-address-t"><?php echo apply_filters( 'wpinv_email_billing_title', __( 'Billing Details', 'invoicing' ) ); ?></h3>
-    <?php 
-    $address_row = '';
-    if ( $address = $invoice->get_address() ) {
-        $address_row .= wpautop( wp_kses_post( $address ) );
-    }
-    
-    $address_fields = array();
-    if ( !empty( $invoice->city ) ) {
-        $address_fields[] = $invoice->city;
-    }
-    
-    $country_code = !empty( $invoice->country ) ? $invoice->country : '';
-    if ( !empty( $invoice->state ) ) {
-        $address_fields[] = wpinv_state_name( $invoice->state, $country_code );
-    }
-    
-    if ( !empty( $address_fields ) ) {
-        $address_fields = implode( ", ", $address_fields );
-        $address_row .= wpautop( wp_kses_post( $address_fields ) );
-    }
-    
-    if ( !empty( $country_code ) ) {
-        $country = wpinv_country_name( $country_code );
-        $address_row .= wpautop( wp_kses_post( trim( $country . '(' . $country_code . ')' . ' ' . $invoice->zip ) ) );
-    }
-    
-    ?>
+
     <table class="table table-bordered table-sm wpi-billing-details">
         <tbody>
             <?php do_action( 'wpinv_email_billing_fields_first', $invoice ); ?>
@@ -52,7 +26,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
             <?php } ?>
             <tr class="wpi-receipt-address">
                 <th class="text-left"><?php _e( 'Address', 'invoicing' ); ?></th>
-                <td><?php echo $address_row ;?></td>
+                <td><?php echo wpinv_get_invoice_address_markup( $invoice->get_user_info() ) ;?></td>
             </tr>
             <?php if ( $invoice->phone ) { ?>
             <tr class="wpi-receipt-phone">
