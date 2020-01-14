@@ -42,7 +42,6 @@ class WPInv_Plugin {
         /* Perform actions on admin initialization. */
         add_action( 'admin_init', array( &$this, 'admin_init') );
         add_action( 'init', array( &$this, 'init' ), 3 );
-        add_action( 'init', array( 'WPInv_Shortcodes', 'init' ) );
         add_action( 'init', array( &$this, 'wpinv_actions' ) );
         
         if ( class_exists( 'BuddyPress' ) ) {
@@ -50,7 +49,8 @@ class WPInv_Plugin {
         }
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
-        
+        add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
+
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
             add_action( 'admin_body_class', array( &$this, 'admin_body_class' ) );
@@ -127,7 +127,6 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-shortcodes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
@@ -139,6 +138,12 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/checkout.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-history.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-receipt.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
+	    require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
@@ -414,4 +419,17 @@ class WPInv_Plugin {
     public function bp_invoicing_init() {
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-bp-core.php' );
     }
+
+	/**
+	 * Register widgets
+	 *
+	 */
+	public function register_widgets() {
+		register_widget( "WPInv_Checkout_Widget" );
+		register_widget( "WPInv_History_Widget" );
+		register_widget( "WPInv_Receipt_Widget" );
+		register_widget( "WPInv_Subscriptions_Widget" );
+		register_widget( "WPInv_Buy_Item_Widget" );
+		register_widget( "WPInv_Messages_Widget" );
+	}
 }
