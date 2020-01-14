@@ -131,6 +131,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Extensions page Gateways not able to be installed via single key - FIXED
 * Shortcodes converted to Super Duper widgets - CHANGED
 * Oxygen plugin page builder breaks invoice template - FIXED
+* Error: Call to undefined function `wpinv_month_num_to_name` - FIXED
 
 = 1.0.12 =
 * Super Duper updated to v1.0.15 - CHANGED

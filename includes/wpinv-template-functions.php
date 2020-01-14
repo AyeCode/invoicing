@@ -330,14 +330,24 @@ function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before 
 }
 
 function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
-    $month   = 1;
-    $options = array();
-    $selected = empty( $selected ) ? date( 'n' ) : $selected;
 
-    while ( $month <= 12 ) {
-        $options[ absint( $month ) ] = wpinv_month_num_to_name( $month );
-        $month++;
-    }
+    $options = array(
+        '1'  => __( 'January', 'invoicing' ),
+        '2'  => __( 'February', 'invoicing' ),
+        '3'  => __( 'March', 'invoicing' ),
+        '4'  => __( 'April', 'invoicing' ),
+        '5'  => __( 'May', 'invoicing' ),
+        '6'  => __( 'June', 'invoicing' ),
+        '7'  => __( 'July', 'invoicing' ),
+        '8'  => __( 'August', 'invoicing' ),
+        '9'  => __( 'September', 'invoicing' ),
+        '10' => __( 'October', 'invoicing' ),
+        '11' => __( 'November', 'invoicing' ),
+        '12' => __( 'December', 'invoicing' ),
+    );
+
+    // If no month is selected, default to the current month
+    $selected = empty( $selected ) ? date( 'n' ) : $selected;
 
     $output = wpinv_html_select( array(
         'name'             => $name,
