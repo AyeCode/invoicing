@@ -21,6 +21,7 @@ class WPInv_Plugin {
             self::$instance->actions();
             self::$instance->notes      = new WPInv_Notes();
             self::$instance->reports    = new WPInv_Reports();
+            self::$instance->api        = new WPInv_API();
         }
 
         return self::$instance;
@@ -189,6 +190,12 @@ class WPInv_Plugin {
             if($pagenow=='users.php'){
                 new WPInv_Admin_Users();
             }
+        }
+
+        // Register cli commands
+        if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cli.php' );
+            WP_CLI::add_command( 'invoicing', 'WPInv_CLI' );
         }
         
         // include css inliner

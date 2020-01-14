@@ -129,6 +129,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
+* Ability to create, read, update and delete an invoice via REST API - ADDED
 * Filter invoice address format - ADDED
 * Shortcodes converted to Super Duper widgets - CHANGED
 * Oxygen plugin page builder breaks invoice template - FIXED
