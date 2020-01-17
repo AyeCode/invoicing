@@ -21,15 +21,23 @@ function wpinv_get_invoice_cart_id() {
     return NULL;
 }
 
+/**
+ * Create an invoice
+ * 
+ * @param  array         $invoice_data   An array of invoice properties.
+ * @param  bool          $wp_error       Whether to return false or WP_Error on failure.
+ * @return mixed         The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
+ */
 function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     if ( empty( $invoice_data ) ) {
         return false;
     }
     
     if ( !( !empty( $invoice_data['cart_details'] ) && is_array( $invoice_data['cart_details'] ) ) ) {
-        return $wp_error ? new WP_Error( 'wpinv_invalid_items', __( 'Invoice must have atleast on item.', 'invoicing' ) ) : 0;
+        return $wp_error ? new WP_Error( 'wpinv_invalid_items', __( 'Invoice must have atleast one item.', 'invoicing' ) ) : 0;
     }
     
+    // If no user id is provided, default to the current user id
     if ( empty( $invoice_data['user_id'] ) ) {
         $invoice_data['user_id'] = get_current_user_id();
     }
@@ -565,7 +573,7 @@ function wpinv_get_items( $invoice_id = 0 ) {
         foreach ( $items as $key => $item ) {
             $items[$key]['currency'] = $invoice_currency;
 
-            if ( !isset( $cart_item['subtotal'] ) ) {
+            if ( !isset( $item['subtotal'] ) ) {
                 $items[$key]['subtotal'] = $items[$key]['amount'] * 1;
             }
         }
