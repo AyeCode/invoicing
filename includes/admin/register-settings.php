@@ -871,7 +871,7 @@ function wpinv_settings_sanitize( $input = array() ) {
 function wpinv_settings_sanitize_misc_accounting( $input ) {
     global $wpi_session;
 
-    if ( !current_user_can( 'manage_options' ) ) {
+    if ( ! wpinv_current_user_can_manage_invoicing() ) {
         return $input;
     }
 
@@ -885,7 +885,7 @@ function wpinv_settings_sanitize_misc_accounting( $input ) {
 add_filter( 'wpinv_settings_misc-accounting_sanitize', 'wpinv_settings_sanitize_misc_accounting' );
 
 function wpinv_settings_sanitize_tax_rates( $input ) {
-    if( !current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         return $input;
     }
 
@@ -1583,7 +1583,7 @@ function wpinv_hook_callback( $args ) {
 }
 
 function wpinv_set_settings_cap() {
-	return 'manage_options';
+	return wpinv_get_capability();
 }
 add_filter( 'option_page_capability_wpinv_settings', 'wpinv_set_settings_cap' );
 

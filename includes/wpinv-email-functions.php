@@ -1307,7 +1307,7 @@ function wpinv_send_customer_invoice( $data = array() ) {
         return;
     }
 
-    if ( !current_user_can( 'manage_options' ) ) {
+    if ( !wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to send invoice notification', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
     
@@ -1334,7 +1334,7 @@ function wpinv_send_overdue_reminder( $data = array() ) {
         return;
     }
 
-    if ( !current_user_can( 'manage_options' ) ) {
+    if ( !wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to send reminder notification', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -1532,7 +1532,7 @@ function wpinv_invoice_notification_set_locale( $invoice, $email_type, $site = f
     }
 
     if ( is_int( $invoice ) ) {
-        $invoice = new wpinv_get_invoice( $invoice );
+        $invoice = wpinv_get_invoice( $invoice );
     }
 
     if ( ! empty( $invoice ) && is_object( $invoice ) ) {

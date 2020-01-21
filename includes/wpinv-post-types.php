@@ -12,7 +12,8 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 add_action( 'init', 'wpinv_register_post_types', 1 );
-function wpinv_register_post_types() {    
+function wpinv_register_post_types() {
+    
     $labels = array(
         'name'               => _x( 'Invoices', 'post type general name', 'invoicing' ),
         'singular_name'      => _x( 'Invoice', 'post type singular name', 'invoicing' ),
@@ -44,13 +45,14 @@ function wpinv_register_post_types() {
         'publicly_queryable' => true,
         'exclude_from_search'=> true,
         'show_ui'            => true,
-        'show_in_menu'       => current_user_can( 'manage_invoicing' ) ? 'wpinv' : true,
+        'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : true,
         'show_in_nav_menus'  => false,
         'query_var'          => false,
         'rewrite'            => true,
         'capability_type'    => 'wpi_invoice',
         'map_meta_cap'          => true,
         'capabilities' => array(
+            'create_posts'   => 'manage_invoicing',
             'delete_post' => "delete_{$cap_type}",
             'delete_posts' => "delete_{$cap_type}s",
             'delete_private_posts' => "delete_private_{$cap_type}s",
@@ -99,7 +101,7 @@ function wpinv_register_post_types() {
         'labels'                => $items_labels,
         'public'                => false,
         'show_ui'               => true,
-        'show_in_menu'          => current_user_can( 'manage_invoicing' ) ? 'wpinv' : false,
+        'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
         'show_in_nav_menus'     => false,
         'supports'              => array( 'title', 'excerpt' ),
         'register_meta_box_cb'  => 'wpinv_register_item_meta_boxes',
@@ -108,6 +110,7 @@ function wpinv_register_post_types() {
         'capability_type'       => 'wpi_item',
         'map_meta_cap'          => true,
         'capabilities' => array(
+            'create_posts'   => 'manage_invoicing',
             'delete_post' => "delete_{$cap_type}",
             'delete_posts' => "delete_{$cap_type}s",
             'delete_private_posts' => "delete_private_{$cap_type}s",
@@ -158,12 +161,13 @@ function wpinv_register_post_types() {
         'publicly_queryable' => false,
         'exclude_from_search'=> true,
         'show_ui'            => true,
-        'show_in_menu'       => current_user_can( 'manage_invoicing' ) ? 'wpinv' : false,
+        'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
         'query_var'          => false,
         'rewrite'            => false,
         'capability_type'    => $cap_type,
         'map_meta_cap'       => true,
         'capabilities' => array(
+            'create_posts'   => 'manage_invoicing',
             'delete_post' => "delete_{$cap_type}",
             'delete_posts' => "delete_{$cap_type}s",
             'delete_private_posts' => "delete_private_{$cap_type}s",
@@ -292,4 +296,3 @@ function wpinv_register_post_status() {
     ) );
 }
 add_action( 'init', 'wpinv_register_post_status', 10 );
-

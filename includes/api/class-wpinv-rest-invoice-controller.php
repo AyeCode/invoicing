@@ -214,18 +214,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	 * @return bool Whether the post can be read.
 	 */
 	public function check_read_permission( $invoice ) {
-
-		// An invoice can be read by an admin...
-		if ( current_user_can( 'manage_options' ) ||  current_user_can( 'view_invoices' ) ) {
-			return true;
-		}
-
-        // ... and the owner of the invoice
-		if( get_current_user_id() ===(int) $invoice->get_user_id() ) {
-			return true;
-		}
-
-		return false;
+		return wpinv_user_can_view_invoice( $invoice->ID );
     }
     
     /**
@@ -466,7 +455,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		}
 
 		// Ensure the current user can delete invoices
-		if ( current_user_can( 'manage_options' ) ||  current_user_can( 'delete_invoices' ) ) {
+		if ( wpinv_current_user_can_manage_invoicing() ||  current_user_can( 'delete_invoices', $request['id'] ) ) {
 			return new WP_Error( 
                 'rest_cannot_delete', 
                 __( 'Sorry, you are not allowed to delete this invoice.', 'invoicing' ), 

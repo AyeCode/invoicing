@@ -134,6 +134,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Shortcodes converted to Super Duper widgets - CHANGED
 * Oxygen plugin page builder breaks invoice template - FIXED
 * Error: Call to undefined function `wpinv_month_num_to_name` - FIXED
+* Users with a `manage_invoicing` capability can now manage all aspects of the plugin - ADDED
 
 = 1.0.12 =
 * Super Duper updated to v1.0.15 - CHANGED
