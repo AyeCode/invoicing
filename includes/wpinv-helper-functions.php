@@ -1028,3 +1028,19 @@ function wpinv_get_screen_ids() {
 
     return apply_filters( 'wpinv_screen_ids', $screen_ids );
 }
+
+/**
+ * Cleans up an array, comma- or space-separated list of scalar values.
+ *
+ * @since 1.0.13
+ *
+ * @param array|string $list List of values.
+ * @return array Sanitized array of values.
+ */
+function wpinv_parse_list( $list ) {
+	if ( ! is_array( $list ) ) {
+		return preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+	}
+
+	return $list;
+}
