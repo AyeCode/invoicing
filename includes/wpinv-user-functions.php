@@ -149,3 +149,29 @@ function wpinv_login_user( $user_id ) {
     
     return false;
 }
+
+/**
+ *  Returns the appropriate capability to check against
+ *
+ * @since 1.0.13
+ * @return string capability to check against
+ * @param string $capalibilty Optional. The alternative capability to check against.
+ */
+function wpinv_get_capability( $capalibilty = 'manage_invoicing' ) {
+
+	if ( current_user_can( 'manage_options' ) ) {
+		return 'manage_options';
+	};
+
+	return $capalibilty;
+}
+
+/**
+ *  Checks if the current user can manager invoicing
+ *
+ * @since 1.0.13
+ * @return bool
+ */
+function wpinv_current_user_can_manage_invoicing() {
+    return current_user_can( wpinv_get_capability() );
+}

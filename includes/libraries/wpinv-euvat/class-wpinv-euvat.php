@@ -717,7 +717,7 @@ class WPInv_EUVat {
     }
     
     public static function sanitize_vat_rates( $input ) {
-        if( !current_user_can( 'manage_options' ) ) {
+        if( !wpinv_current_user_can_manage_invoicing() ) {
             add_settings_error( 'wpinv-notices', '', __( 'Your account does not have permission to add rate classes.', 'invoicing' ), 'error' );
             return $input;
         }
@@ -751,7 +751,7 @@ class WPInv_EUVat {
         $response = array();
         $response['success'] = false;
         
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }
@@ -789,7 +789,7 @@ class WPInv_EUVat {
         $response = array();
         $response['success'] = false;
         
-        if ( !current_user_can( 'manage_options' ) || !isset( $_POST['class'] ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() || !isset( $_POST['class'] ) ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }
@@ -824,7 +824,7 @@ class WPInv_EUVat {
         $response['error']      = null;
         $response['data']       = null;
         
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }

@@ -2119,7 +2119,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
         </div>
         <p class="meta">
             <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;
-            <?php if ( $note->comment_author !== 'System' || current_user_can( 'manage_options' ) ) { ?>
+            <?php if ( $note->comment_author !== 'System' || wpinv_current_user_can_manage_invoicing() ) { ?>
                 <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
             <?php } ?>
         </p>

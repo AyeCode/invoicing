@@ -58,7 +58,7 @@ class WPInv_Reports {
     
     public function add_submenu() {
         global $wpi_reports_page;
-        $wpi_reports_page = add_submenu_page( 'wpinv', __( 'Reports', 'invoicing' ), __( 'Reports', 'invoicing' ), 'manage_options', 'wpinv-reports', array( $this, 'reports_page' ) );
+        $wpi_reports_page = add_submenu_page( 'wpinv', __( 'Reports', 'invoicing' ), __( 'Reports', 'invoicing' ), wpinv_get_capability(), 'wpinv-reports', array( $this, 'reports_page' ) );
     }
     
     public function reports_page() {
@@ -190,7 +190,7 @@ class WPInv_Reports {
         $response['success']    = false;
         $response['msg']        = __( 'Invalid export request found.', 'invoicing' );
         
-        if ( empty( $_POST['data'] ) || !current_user_can( 'manage_options' ) ) {
+        if ( empty( $_POST['data'] ) || ! wpinv_current_user_can_manage_invoicing() ) {
             wp_send_json( $response );
         }
 

@@ -95,7 +95,7 @@ class WPInv_Ajax {
     public static function add_note() {
         check_ajax_referer( 'add-invoice-note', '_nonce' );
 
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
 
@@ -119,7 +119,7 @@ class WPInv_Ajax {
     public static function delete_note() {
         check_ajax_referer( 'delete-invoice-note', '_nonce' );
 
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
 
@@ -150,7 +150,7 @@ class WPInv_Ajax {
     public static function add_invoice_item() {
         global $wpi_userID, $wpinv_ip_address_country;
         check_ajax_referer( 'invoice-item', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -261,7 +261,7 @@ class WPInv_Ajax {
         global $wpi_userID, $wpinv_ip_address_country;
         
         check_ajax_referer( 'invoice-item', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -344,7 +344,7 @@ class WPInv_Ajax {
     
     public static function create_invoice_item() {
         check_ajax_referer( 'invoice-item', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -396,7 +396,7 @@ class WPInv_Ajax {
     public static function get_billing_details() {
         check_ajax_referer( 'get-billing-details', '_nonce' );
         
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
 
@@ -423,7 +423,7 @@ class WPInv_Ajax {
         global $wpi_userID, $wpinv_ip_address_country;
         
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -481,7 +481,7 @@ class WPInv_Ajax {
         global $wpi_userID;
         
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -531,7 +531,7 @@ class WPInv_Ajax {
         global $wpi_userID;
         
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -569,7 +569,7 @@ class WPInv_Ajax {
     
     public static function check_email() {
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         
@@ -602,7 +602,7 @@ class WPInv_Ajax {
     
     public static function run_tool() {
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
         

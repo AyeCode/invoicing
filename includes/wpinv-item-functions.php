@@ -594,7 +594,7 @@ function wpinv_remove_item( $item = 0, $force_delete = false ) {
 }
 
 function wpinv_can_delete_item( $post_id ) {
-    $return = current_user_can( 'manage_options' ) ? true : false;
+    $return = wpinv_current_user_can_manage_invoicing() ? true : false;
     
     if ( $return && wpinv_item_in_use( $post_id ) ) {
         $return = false; // Don't delete item already use in invoices.

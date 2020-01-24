@@ -29,7 +29,7 @@ function wpinv_delete_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to delete discount codes', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -43,7 +43,7 @@ function wpinv_activate_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to edit discount codes', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -57,7 +57,7 @@ function wpinv_deactivate_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to create discount codes', 'invoicing' ), array( 'response' => 403 ) );
     }
 
