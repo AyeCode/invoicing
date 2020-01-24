@@ -121,6 +121,7 @@ function wpinv_register_post_types() {
             'publish_posts' => "publish_{$cap_type}s",
             'read_post' => "read_{$cap_type}",
             'read_private_posts' => "read_private_{$cap_type}s",
+            'create_posts' => "create_{$cap_type}s",
 
         ),
         'can_export'            => true,

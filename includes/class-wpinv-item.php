@@ -149,7 +149,7 @@ class WPInv_Item {
             $this->ID = $item->ID;
             $this->save_metas($data['meta']);
         }
-        
+
         // Set custom id if not set.
         if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
             $this->save_metas( array( 'custom_id' => $id ) );
@@ -440,6 +440,10 @@ class WPInv_Item {
             return false;
         }
         
+        if( '_wpinv_minimum_price' === $meta_key ) {
+            $meta_key = '_minimum_price';
+        }
+
         $meta_value = apply_filters( 'wpinv_update_item_meta_' . $meta_key, $meta_value, $this->ID );
 
         return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );

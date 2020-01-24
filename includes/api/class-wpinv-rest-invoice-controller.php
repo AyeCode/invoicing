@@ -145,7 +145,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @param WP_REST_Request     $request The request used.
          * @param array               $args Array of args used to retrieve the invoices
 		 */
-        $response       = apply_filters( "rest_wpinv_invoices_response", $response, $request, $args );
+        $response       = apply_filters( "wpinv_rest_invoices_response", $response, $request, $args );
 
         return rest_ensure_response( $response );
         
@@ -260,7 +260,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @param WP_HTTP_Response $response Response.
 		 * @param WP_REST_Request  $request The request used.
 		 */
-        $response       = apply_filters( "rest_wpinv_get_invoice_response", $response, $request );
+        $response       = apply_filters( "wpinv_rest_get_invoice_response", $response, $request );
 
         return rest_ensure_response( $response );
 
@@ -312,7 +312,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		$request->set_param( 'context', 'edit' );
 
 		// Prepare the updated data.
-		$invoice_data = wp_unslash( $this->prepare_item_for_database( $request ) );
+		$invoice_data = $this->prepare_item_for_database( $request );
 
 		if ( is_wp_error( $invoice_data ) ) {
 			return $invoice_data;
@@ -349,7 +349,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @param array           $invoice_data Invoice properties.
 		 * @param WP_REST_Request $request The request used.
 		 */
-        $response       = apply_filters( "rest_wpinv_create_invoice_response", $response, $request );
+        $response       = apply_filters( "wpinv_rest_create_invoice_response", $response, $request );
 
         return rest_ensure_response( $response );
 	}
@@ -406,7 +406,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		$request->set_param( 'context', 'edit' );
 
 		// Prepare the updated data.
-		$data_to_update = wp_unslash( $this->prepare_item_for_database( $request ) );
+		$data_to_update = $this->prepare_item_for_database( $request );
 
 		if ( is_wp_error( $data_to_update ) ) {
 			return $data_to_update;
@@ -593,7 +593,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
                     'date',
                     'id',
                     'modified',
-                    'title',
+                    'title'
                 ),
             ),
 
@@ -613,9 +613,8 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @since 1.0.13
 		 *
 		 * @param array        $query_params JSON Schema-formatted collection parameters.
-		 * @param WP_Post_Type $post_type    Post type object.
 		 */
-		return apply_filters( "rest_invoices_collection_params", $query_params, 'wpi-invoice' );
+		return apply_filters( "wpinv_rest_invoices_collection_params", $query_params );
     }
     
     /**
@@ -733,7 +732,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		}
 
-		$invoice_data = (array) $prepared_invoice;
+		$invoice_data = (array) wp_unslash( $prepared_invoice );
 
 		/**
 		 * Filters an invoice before it is inserted via the REST API.
@@ -1328,7 +1327,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 *
 		 * @param array   $links    Rest links.
 		 */
-		return apply_filters( "wpinv_invoice_rest_links", $links );
+		return apply_filters( "wpinv_rest_invoice_links", $links );
 
 	}
 
@@ -1371,7 +1370,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 *
 		 * @param array   $rels    Available link relations.
 		 */
-		return apply_filters( "wpinv_invoice_rest_link_relations", $rels );
+		return apply_filters( "wpinv_rest_invoice_link_relations", $rels );
 	}
 
 	/**
