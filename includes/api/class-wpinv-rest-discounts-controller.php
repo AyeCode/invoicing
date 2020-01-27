@@ -173,7 +173,7 @@ class WPInv_REST_Discounts_Controller extends WP_REST_Posts_Controller {
 	 * @since 1.0.13
 	 *
 	 * @param int $discount_id Supplied ID.
-	 * @return WPInv_Item|WP_Error Item object if ID is valid, WP_Error otherwise.
+	 * @return WP_Post|WP_Error Post object if ID is valid, WP_Error otherwise.
 	 */
 	protected function get_post( $discount_id ) {
 		
@@ -960,7 +960,7 @@ class WPInv_REST_Discounts_Controller extends WP_REST_Posts_Controller {
 	public function get_item_schema() {
 
 		// Maybe retrieve the schema from cache.
-		if ( $this->schema ) {
+		if (  empty( $this->schema ) ) {
 			return $this->add_additional_fields_schema( $this->schema );
 		}
 
@@ -1106,7 +1106,7 @@ class WPInv_REST_Discounts_Controller extends WP_REST_Posts_Controller {
 
 		$links[] = array(
 			'rel'          => 'https://api.w.org/action-publish',
-			'title'        => __( 'The current user can publish this discount.' ),
+			'title'        => __( 'The current user can publish this discount.', 'invoicing' ),
 			'href'         => $href,
 			'targetSchema' => array(
 				'type'       => 'object',
@@ -1206,6 +1206,5 @@ class WPInv_REST_Discounts_Controller extends WP_REST_Posts_Controller {
 	public function get_discount_types() {
 		return rest_ensure_response( wpinv_get_discount_types() );
 	}
-
     
 }
