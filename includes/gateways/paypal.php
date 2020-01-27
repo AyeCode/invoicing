@@ -259,7 +259,7 @@ function wpinv_process_paypal_ipn() {
 	}
 
 	// Convert collected post data to an array
-	parse_str( $encoded_data, $encoded_data_array );
+	wp_parse_str( $encoded_data, $encoded_data_array );
 
 	foreach ( $encoded_data_array as $key => $value ) {
 		if ( false !== strpos( $key, 'amp;' ) ) {

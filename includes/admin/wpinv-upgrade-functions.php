@@ -66,7 +66,7 @@ function wpinv_v110_upgrades() {
     
     // Add Subscription tables
     $db = new WPInv_Subscriptions_DB;
-    @$db->create_table();
+    /** @scrutinizer ignore-unhandled */ @$db->create_table();
 
     wpinv_convert_old_subscriptions();
 }

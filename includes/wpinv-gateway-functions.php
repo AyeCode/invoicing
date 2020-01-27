@@ -746,7 +746,7 @@ function wpinv_get_post_data( $method = 'request' ) {
     }
 
     // Convert collected post data to an array
-    parse_str( $encoded_data, $data );
+    wp_parse_str( $encoded_data, $data );
 
     foreach ( $data as $key => $value ) {
         if ( false !== strpos( $key, 'amp;' ) ) {
