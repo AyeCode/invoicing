@@ -78,7 +78,7 @@ class WPInv_Reports {
                 <a href="<?php echo add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
                 <?php do_action( 'wpinv_reports_page_tabs' ); ;?>
             </h2>
-            <div class="wpi-reports-content wpi-reports-<?php echo $active_tab; ?>">
+            <div class="wpi-reports-content wpi-reports-<?php echo esc_attr( $active_tab ); ?>">
             <?php
                 do_action( 'wpinv_reports_page_top' );
                 do_action( 'wpinv_reports_tab_' . $active_tab );
@@ -302,7 +302,7 @@ class WPInv_Reports {
     
     public function process_export_step() {
         if ( $this->step < 2 ) {
-            @unlink( $this->file );
+            /** @scrutinizer ignore-unhandled */ @unlink( $this->file );
             $this->print_columns();
         }
         

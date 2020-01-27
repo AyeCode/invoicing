@@ -812,11 +812,11 @@ function wpinv_get_registered_settings() {
 function wpinv_settings_sanitize( $input = array() ) {
     global $wpinv_options;
 
-    if ( empty( $_POST['_wp_http_referer'] ) ) {
+    if ( empty( wp_get_raw_referer() ) ) {
         return $input;
     }
 
-    parse_str( $_POST['_wp_http_referer'], $referrer );
+    wp_parse_str( wp_get_raw_referer(), $referrer );
 
     $settings = wpinv_get_registered_settings();
     $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : 'general';

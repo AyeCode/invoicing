@@ -349,6 +349,13 @@ function wpinv_add_items_filters() {
     // Checks if the current post type is 'item'
     if ( $typenow == 'wpi_item') {
         if ( $wpinv_euvat->allow_vat_rules() ) {
+
+            // Sanitize selected vat rule.
+            $vat_rule   = '';
+            if( isset( $_GET['vat_rule'] ) && array_key_exists(  $_GET['type'], $wpinv_euvat->get_rules() ) ) {
+                $class   =  $_GET['type'];
+            }
+
             echo wpinv_html_select( array(
                     'options'          => array_merge( array( '' => __( 'All VAT rules', 'invoicing' ) ), $wpinv_euvat->get_rules() ),
                     'name'             => 'vat_rule',
@@ -357,26 +364,43 @@ function wpinv_add_items_filters() {
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpi_select2',
+                    'placeholder'      => __( 'Select VAT rule', 'invoicing' ),
                 ) );
         }
-        
+
         if ( $wpinv_euvat->allow_vat_classes() ) {
+
+            $classes = $wpinv_euvat->get_all_classes();
+
+            // Sanitize selected vat class.
+            $class   = '';
+            if( isset( $_GET['vat_class'] ) && array_key_exists(  $_GET['vat_class'], $classes ) ) {
+                $class   =  $_GET['vat_class'];
+            }
+
             echo wpinv_html_select( array(
-                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), $wpinv_euvat->get_all_classes() ),
+                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), $classes ),
                     'name'             => 'vat_class',
                     'id'               => 'vat_class',
-                    'selected'         => ( isset( $_GET['vat_class'] ) ? $_GET['vat_class'] : '' ),
+                    'selected'         => $class,
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpi_select2',
+                    'placeholder'      => __( 'Select VAT class', 'invoicing' ),
                 ) );
         }
-            
+        
+        // Sanitize selected item type.
+        $type   = '';
+        if( isset( $_GET['type'] ) && array_key_exists(  $_GET['type'], wpinv_get_item_types() ) ) {
+            $class   =  $_GET['type'];
+        }
+
         echo wpinv_html_select( array(
                 'options'          => array_merge( array( '' => __( 'All item types', 'invoicing' ) ), wpinv_get_item_types() ),
                 'name'             => 'type',
                 'id'               => 'type',
-                'selected'         => ( isset( $_GET['type'] ) ? $_GET['type'] : '' ),
+                'selected'         => $type,
                 'show_option_all'  => false,
                 'show_option_none' => false,
                 'class'            => 'gdmbx2-text-medium',
