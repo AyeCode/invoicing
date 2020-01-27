@@ -24,7 +24,7 @@ class WPInv_Receipt_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_receipt',
             'name'          => __('Invoicing > Invoice Receipt','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-receipt-class',
+                'classname'   => 'wpinv-receipt-class  wpi-g',
                 'description' => esc_html__('Displays invoice receipt after checkout.','invoicing'),
             ),
             'arguments'     => array(

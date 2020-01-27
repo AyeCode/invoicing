@@ -25,7 +25,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_buy',
             'name'          => __('Invoicing > Buy Item Button','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-buy-item-class',
+                'classname'   => 'wpinv-buy-item-class  wpi-g',
                 'description' => esc_html__('Displays buy invoicing item button.','invoicing'),
             ),
             'arguments'     => array(
