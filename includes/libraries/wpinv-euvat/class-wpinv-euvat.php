@@ -666,11 +666,21 @@ class WPInv_EUVat {
                 }
             } else if ( self::geoip2_country_dbfile() && ( $ip_country_service === 'geoip2' || $is_default ) ) {
                 $wpinv_ip_address_country = self::geoip2_country_code( $ip );
-            } else if ( function_exists( 'simplexml_load_file' ) && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
+            } else if ( function_exists( 'simplexml_load_file' ) && ini_get('allow_url_fopen') && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
                 $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
                 
                 if ( !empty( $load_xml ) && !empty( $load_xml->geoplugin_countryCode ) ) {
                     $wpinv_ip_address_country = (string)$load_xml->geoplugin_countryCode;
+                }
+            }elseif(!empty( $ip )){
+                $url = 'http://ip-api.com/json/' . $ip;
+                $response = wp_remote_get($url);
+
+                if ( is_array( $response ) && wp_remote_retrieve_response_code( $response ) == '200' ) {
+                    $data = json_decode(wp_remote_retrieve_body( $response ),true);
+                    if(!empty($data['countryCode'])){
+                        $wpinv_ip_address_country = (string)$data['countryCode'];
+                    }
                 }
             }
         }
