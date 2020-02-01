@@ -127,6 +127,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.14 =
+* Change invoice address format based on the customer's billing country - ADDED
+
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
 * Ability to create, read, update and delete an invoice via REST API - ADDED
