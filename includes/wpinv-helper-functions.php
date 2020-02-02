@@ -1044,3 +1044,43 @@ function wpinv_parse_list( $list ) {
 
 	return $list;
 }
+
+/**
+ * Fetches data stored on disk.
+ *
+ * @since 1.0.14
+ *
+ * @param string $key Type of data to fetch.
+ * @return mixed Fetched data.
+ */
+function wpinv_get_data( $key ) {
+    
+    // Try fetching it from the cache.
+    $data = wp_cache_get( "wpinv-$key", 'wpinv' );
+    if( $data ) {
+        return $data;
+    }
+
+    $data = apply_filters( "wpinv_get_$key", include WPINV_PLUGIN_DIR . "includes/data/$key.php" );
+	wp_cache_set( "wpinv-$key", $data, 'wpinv' );
+
+	return $data;
+}
+
+/**
+ * (Maybe) Adds an empty option to an array of options.
+ *
+ * @since 1.0.14
+ *
+ * @param array $options
+ * @param bool $first_empty Whether or not the first item in the list should be empty
+ * @return mixed Fetched data.
+ */
+function wpinv_maybe_add_empty_option( $options, $first_empty ) {
+
+    if ( ! empty( $options ) && $first_empty ) {
+        return array_merge( array( '' => '' ), $options );
+    }
+    return $options;
+
+}

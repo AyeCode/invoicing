@@ -127,6 +127,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.14 =
+* More country states - ADDED
+* Rearrange address data into a data folder - CHANGED
+
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
 * Ability to create, read, update and delete an invoice via REST API - ADDED
