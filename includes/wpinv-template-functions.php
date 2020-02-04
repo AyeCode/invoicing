@@ -1596,7 +1596,6 @@ add_action( 'wpinv_checkout_form_top', 'wpinv_agree_to_terms_js' );
 function wpinv_payment_mode_select() {
     $gateways = wpinv_get_enabled_payment_gateways( true );
     $gateways = apply_filters( 'wpinv_payment_gateways_on_cart', $gateways );
-    $page_URL = wpinv_get_current_page_url();
     $invoice = wpinv_get_invoice( 0, true );
 
     do_action('wpinv_payment_mode_top');
@@ -1648,7 +1647,6 @@ add_action( 'wpinv_payment_mode_select', 'wpinv_payment_mode_select' );
 
 function wpinv_checkout_billing_info() {
     if ( wpinv_is_checkout() ) {
-        $logged_in          = is_user_logged_in();
         $billing_details    = wpinv_checkout_billing_details();
         $selected_country   = !empty( $billing_details['country'] ) ? $billing_details['country'] : wpinv_default_billing_country();
         ?>
@@ -2119,7 +2117,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
         </div>
         <p class="meta">
             <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;
-            <?php if ( $note->comment_author !== 'System' || current_user_can( 'manage_options' ) ) { ?>
+            <?php if ( $note->comment_author !== 'System' || wpinv_current_user_can_manage_invoicing() ) { ?>
                 <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
             <?php } ?>
         </p>

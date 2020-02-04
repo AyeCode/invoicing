@@ -364,7 +364,7 @@ function wpinv_discount_metabox_save( $post_id, $post, $update = false ) {
         return;
     }
     
-    if ( !current_user_can( 'manage_options', $post_id ) ) {
+    if ( !current_user_can( wpinv_get_capability(), $post_id ) ) {
         return;
     }
     

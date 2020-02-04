@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.3
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -130,10 +130,15 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
 * Ability to create, read, update and delete an invoice via REST API - ADDED
+* Ability to create, read, update and delete invoice items via REST API - ADDED
+* Ability to create, read, update and delete discounts via REST API - ADDED
 * Filter invoice address format - ADDED
 * Shortcodes converted to Super Duper widgets - CHANGED
 * Oxygen plugin page builder breaks invoice template - FIXED
 * Error: Call to undefined function `wpinv_month_num_to_name` - FIXED
+* Users with a `manage_invoicing` capability can now manage all aspects of the plugin - ADDED
+* Super Duper updated to 1.0.16 - CHANGED
+* Added alternative IP location service for servers with allow_url_fopen disabled - ADDED
 
 = 1.0.12 =
 * Super Duper updated to v1.0.15 - CHANGED

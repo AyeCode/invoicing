@@ -112,7 +112,6 @@ class WPInv_Plugin {
         $wpinv_options = wpinv_get_settings();
         
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
@@ -126,6 +125,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );

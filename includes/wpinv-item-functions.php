@@ -2,6 +2,10 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+function wpinv_get_item_by_id( $id ) {
+    return wpinv_get_item_by( 'id', $id );
+}
+
 function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
     if( empty( $field ) || empty( $value ) ) {
         return false;
@@ -94,6 +98,78 @@ function wpinv_get_item( $item = 0 ) {
     }
 
     return null;
+}
+
+function wpinv_get_all_items( $args = array() ) {
+
+    $args = wp_parse_args( $args, array(
+        'status'         => array( 'publish' ),
+        'limit'          => get_option( 'posts_per_page' ),
+        'page'           => 1,
+        'exclude'        => array(),
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'type'           => wpinv_item_types(),
+        'meta_query'     => array(),
+        'return'         => 'objects',
+        'paginate'       => false,
+    ) );
+
+    $wp_query_args = array(
+        'post_type'      => 'wpi_item',
+        'post_status'    => $args['status'],
+        'posts_per_page' => $args['limit'],
+        'meta_query'     => $args['meta_query'],
+        'fields'         => 'ids',
+        'orderby'        => $args['orderby'],
+        'order'          => $args['order'],
+        'paged'          => absint( $args['page'] ),
+    );
+
+    if ( ! empty( $args['exclude'] ) ) {
+        $wp_query_args['post__not_in'] = array_map( 'absint', $args['exclude'] );
+    }
+
+    if ( ! $args['paginate' ] ) {
+        $wp_query_args['no_found_rows'] = true;
+    }
+
+    if ( ! empty( $args['search'] ) ) {
+        $wp_query_args['s'] = $args['search'];
+    }
+
+    if ( ! empty( $args['type'] ) && $args['type'] !== wpinv_item_types() ) {
+        $types = wpinv_parse_list( $args['type'] );
+        $wp_query_args['meta_query'][] = array(
+            'key'     => '_wpinv_type',
+            'value'   => implode( ',', $types ),
+            'compare' => 'IN',
+        );
+    }
+
+    $wp_query_args = apply_filters('wpinv_get_items_args', $wp_query_args, $args);
+
+    // Get results.
+    $items = new WP_Query( $wp_query_args );
+
+    if ( 'objects' === $args['return'] ) {
+        $return = array_map( 'wpinv_get_item_by_id', $items->posts );
+    } elseif ( 'self' === $args['return'] ) {
+        return $items;
+    } else {
+        $return = $items->posts;
+    }
+
+    if ( $args['paginate' ] ) {
+        return (object) array(
+            'items'      => $return,
+            'total'         => $items->found_posts,
+            'max_num_pages' => $items->max_num_pages,
+        );
+    } else {
+        return $return;
+    }
+
 }
 
 function wpinv_is_free_item( $item_id = 0 ) {
@@ -594,7 +670,7 @@ function wpinv_remove_item( $item = 0, $force_delete = false ) {
 }
 
 function wpinv_can_delete_item( $post_id ) {
-    $return = current_user_can( 'manage_options' ) ? true : false;
+    $return = wpinv_current_user_can_manage_invoicing() ? true : false;
     
     if ( $return && wpinv_item_in_use( $post_id ) ) {
         $return = false; // Don't delete item already use in invoices.
@@ -680,6 +756,8 @@ function wpinv_create_item( $args = array(), $wp_error = false, $force_update = 
         'free_trial'           => 0,                                                       // Optional. 1 => Allow free trial or 0 => Don't free trial
         'trial_period'         => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
         'trial_interval'       => 0,                                                       // Optional. Any integer number.
+        'minimum_price'        => '0.00',                                                  // Optional. Minimum allowed prices for items with dynamic pricing.
+        'dynamic_pricing'      => 0,                                                       // Optional. Whether or not the item supports dynamic prices.
     );
 
     $data = wp_parse_args( $args, $defaults );
@@ -714,6 +792,8 @@ function wpinv_create_item( $args = array(), $wp_error = false, $force_update = 
     $meta['editable']               = (int)$data['editable'];
     $meta['vat_rule']               = $data['vat_rule'];
     $meta['vat_class']              = '_standard';
+    $meta['dynamic_pricing']        = (int) $data['dynamic_pricing'];
+    $meta['minimum_price']          = wpinv_round_amount( $data['minimum_price'] );
     
     if ( !empty( $data['is_recurring'] ) ) {
         $meta['is_recurring']       = $data['is_recurring'];
@@ -774,7 +854,25 @@ function wpinv_update_item( $args = array(), $wp_error = false ) {
         }
     }
 
-    $meta_fields = array( 'type', 'custom_id', 'custom_singular_name', 'custom_name', 'price', 'editable', 'vat_rule', 'vat_class', 'is_recurring', 'recurring_period', 'recurring_interval', 'recurring_limit', 'free_trial', 'trial_period', 'trial_interval' );
+    $meta_fields = array( 
+        'type', 
+        'custom_id', 
+        'custom_singular_name', 
+        'custom_name', 
+        'price', 
+        'editable', 
+        'vat_rule', 
+        'vat_class', 
+        'is_recurring', 
+        'recurring_period', 
+        'recurring_interval', 
+        'recurring_limit', 
+        'free_trial', 
+        'trial_period', 
+        'trial_interval', 
+        'minimum_price', 
+        'dynamic_pricing'
+    );
 
     $post_data = array();
     if ( isset( $args['title'] ) ) { 
@@ -793,6 +891,7 @@ function wpinv_update_item( $args = array(), $wp_error = false ) {
 
             switch ( $meta_field ) {
                 case 'price':
+                case 'minimum_price':
                     $value = wpinv_round_amount( $value );
                 break;
                 case 'recurring_interval':

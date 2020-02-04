@@ -24,7 +24,7 @@ class WPInv_History_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_history',
             'name'          => __('Invoicing > Invoice History','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-history-class',
+                'classname'   => 'wpinv-history-class wpi-g',
                 'description' => esc_html__('Displays invoice history.','invoicing'),
             ),
             'arguments'     => array(

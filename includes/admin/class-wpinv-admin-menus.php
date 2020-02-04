@@ -20,16 +20,22 @@ class WPInv_Admin_Menus {
     }
 
     public function admin_menu() {
-        global $menu;
+        global $menu, $submenu;
 
-        if ( !(current_user_can( 'manage_invoicing' ) || current_user_can( 'manage_options' )) ) {
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
             return;
         }
 
-        $capability = apply_filters( 'invoicing_capability', 'manage_invoicing' );
+        $capability = apply_filters( 'invoicing_capability', wpinv_get_capability() );
 
-        if ( current_user_can( 'manage_options' ) ) {
+        if ( wpinv_current_user_can_manage_invoicing() ) {
             $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
+
+            // Allow users with 'manage_invocing' capability to create new invoices
+            $submenu['post-new.php?post_type=wpi_invoice'][] = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
+            $submenu['post-new.php?post_type=wpi_item'][] = array( '', '', 'post-new.php?post_type=wpi_item', '' );
+            $submenu['post-new.php?post_type=wpi_discount'][] = array( '', '', 'post-new.php?post_type=wpi_discount', '' );
+
         }
 
         $wpi_invoice = get_post_type_object( 'wpi_invoice' );

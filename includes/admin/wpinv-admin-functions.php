@@ -176,55 +176,55 @@ function wpinv_admin_post_type( $id = 0 ) {
 function wpinv_admin_messages() {
 	global $wpinv_options, $pagenow, $post;
 
-	if ( isset( $_GET['wpinv-message'] ) && 'discount_added' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'discount_added' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		 add_settings_error( 'wpinv-notices', 'wpinv-discount-added', __( 'Discount code added.', 'invoicing' ), 'updated' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'discount_add_failed' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'discount_add_failed' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-discount-add-fail', __( 'There was a problem adding your discount code, please try again.', 'invoicing' ), 'error' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'discount_exists' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'discount_exists' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-discount-exists', __( 'A discount with that code already exists, please use a different code.', 'invoicing' ), 'error' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'discount_updated' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'discount_updated' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		 add_settings_error( 'wpinv-notices', 'wpinv-discount-updated', __( 'Discount code updated.', 'invoicing' ), 'updated' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'discount_update_failed' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'discount_update_failed' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-discount-updated-fail', __( 'There was a problem updating your discount code, please try again.', 'invoicing' ), 'error' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'invoice_deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'invoice_deleted' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-deleted', __( 'The invoice has been deleted.', 'invoicing' ), 'updated' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'email_disabled' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'email_disabled' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Email notification is disabled. Please check settings.', 'invoicing' ), 'error' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'email_sent' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-sent', __( 'The email has been sent to customer.', 'invoicing' ), 'updated' );
     }
     
-    if ( isset( $_GET['wpinv-message'] ) && 'email_fail' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+    if ( isset( $_GET['wpinv-message'] ) && 'email_fail' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-sent-fail', __( 'Fail to send email to the customer.', 'invoicing' ), 'error' );
     }
 
-    if ( isset( $_GET['wpinv-message'] ) && 'invoice-note-deleted' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+    if ( isset( $_GET['wpinv-message'] ) && 'invoice-note-deleted' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
         add_settings_error( 'wpinv-notices', 'wpinv-note-deleted', __( 'The invoice note has been deleted.', 'invoicing' ), 'updated' );
     }
 
-	if ( isset( $_GET['wpinv-message'] ) && 'settings-imported' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'settings-imported' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-settings-imported', __( 'The settings have been imported.', 'invoicing' ), 'updated' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'note-added' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'note-added' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-note-added', __( 'The invoice note has been added successfully.', 'invoicing' ), 'updated' );
 	}
 
-	if ( isset( $_GET['wpinv-message'] ) && 'invoice-updated' == $_GET['wpinv-message'] && current_user_can( 'manage_options' ) ) {
+	if ( isset( $_GET['wpinv-message'] ) && 'invoice-updated' == $_GET['wpinv-message'] && wpinv_current_user_can_manage_invoicing() ) {
 		add_settings_error( 'wpinv-notices', 'wpinv-updated', __( 'The invoice has been successfully updated.', 'invoicing' ), 'updated' );
 	}
     
@@ -349,6 +349,13 @@ function wpinv_add_items_filters() {
     // Checks if the current post type is 'item'
     if ( $typenow == 'wpi_item') {
         if ( $wpinv_euvat->allow_vat_rules() ) {
+
+            // Sanitize selected vat rule.
+            $vat_rule   = '';
+            if( isset( $_GET['vat_rule'] ) && array_key_exists(  $_GET['type'], $wpinv_euvat->get_rules() ) ) {
+                $class   =  $_GET['type'];
+            }
+
             echo wpinv_html_select( array(
                     'options'          => array_merge( array( '' => __( 'All VAT rules', 'invoicing' ) ), $wpinv_euvat->get_rules() ),
                     'name'             => 'vat_rule',
@@ -357,26 +364,43 @@ function wpinv_add_items_filters() {
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpi_select2',
+                    'placeholder'      => __( 'Select VAT rule', 'invoicing' ),
                 ) );
         }
-        
+
         if ( $wpinv_euvat->allow_vat_classes() ) {
+
+            $classes = $wpinv_euvat->get_all_classes();
+
+            // Sanitize selected vat class.
+            $class   = '';
+            if( isset( $_GET['vat_class'] ) && array_key_exists(  $_GET['vat_class'], $classes ) ) {
+                $class   =  $_GET['vat_class'];
+            }
+
             echo wpinv_html_select( array(
-                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), $wpinv_euvat->get_all_classes() ),
+                    'options'          => array_merge( array( '' => __( 'All VAT classes', 'invoicing' ) ), $classes ),
                     'name'             => 'vat_class',
                     'id'               => 'vat_class',
-                    'selected'         => ( isset( $_GET['vat_class'] ) ? $_GET['vat_class'] : '' ),
+                    'selected'         => $class,
                     'show_option_all'  => false,
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-medium wpi_select2',
+                    'placeholder'      => __( 'Select VAT class', 'invoicing' ),
                 ) );
         }
-            
+        
+        // Sanitize selected item type.
+        $type   = '';
+        if( isset( $_GET['type'] ) && array_key_exists(  $_GET['type'], wpinv_get_item_types() ) ) {
+            $class   =  $_GET['type'];
+        }
+
         echo wpinv_html_select( array(
                 'options'          => array_merge( array( '' => __( 'All item types', 'invoicing' ) ), wpinv_get_item_types() ),
                 'name'             => 'type',
                 'id'               => 'type',
-                'selected'         => ( isset( $_GET['type'] ) ? $_GET['type'] : '' ),
+                'selected'         => $type,
                 'show_option_all'  => false,
                 'show_option_none' => false,
                 'class'            => 'gdmbx2-text-medium',
@@ -401,7 +425,7 @@ function wpinv_send_invoice_after_save( $invoice ) {
 add_action( 'wpinv_invoice_metabox_saved', 'wpinv_send_invoice_after_save', 100, 1 );
 
 function wpinv_send_register_new_user( $data, $postarr ) {
-    if ( current_user_can( 'manage_options' ) && !empty( $data['post_type'] ) && ( 'wpi_invoice' == $data['post_type'] || 'wpi_quote' == $data['post_type'] ) ) {
+    if ( wpinv_current_user_can_manage_invoicing() && !empty( $data['post_type'] ) && ( 'wpi_invoice' == $data['post_type'] || 'wpi_quote' == $data['post_type'] ) ) {
         $is_new_user = !empty( $postarr['wpinv_new_user'] ) ? true : false;
         $email = !empty( $postarr['wpinv_email'] ) && $postarr['wpinv_email'] && is_email( $postarr['wpinv_email'] ) ? $postarr['wpinv_email'] : NULL;
         

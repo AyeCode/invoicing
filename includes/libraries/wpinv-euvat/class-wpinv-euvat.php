@@ -666,11 +666,21 @@ class WPInv_EUVat {
                 }
             } else if ( self::geoip2_country_dbfile() && ( $ip_country_service === 'geoip2' || $is_default ) ) {
                 $wpinv_ip_address_country = self::geoip2_country_code( $ip );
-            } else if ( function_exists( 'simplexml_load_file' ) && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
+            } else if ( function_exists( 'simplexml_load_file' ) && ini_get('allow_url_fopen') && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
                 $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
                 
                 if ( !empty( $load_xml ) && !empty( $load_xml->geoplugin_countryCode ) ) {
                     $wpinv_ip_address_country = (string)$load_xml->geoplugin_countryCode;
+                }
+            }elseif(!empty( $ip )){
+                $url = 'http://ip-api.com/json/' . $ip;
+                $response = wp_remote_get($url);
+
+                if ( is_array( $response ) && wp_remote_retrieve_response_code( $response ) == '200' ) {
+                    $data = json_decode(wp_remote_retrieve_body( $response ),true);
+                    if(!empty($data['countryCode'])){
+                        $wpinv_ip_address_country = (string)$data['countryCode'];
+                    }
                 }
             }
         }
@@ -717,7 +727,7 @@ class WPInv_EUVat {
     }
     
     public static function sanitize_vat_rates( $input ) {
-        if( !current_user_can( 'manage_options' ) ) {
+        if( !wpinv_current_user_can_manage_invoicing() ) {
             add_settings_error( 'wpinv-notices', '', __( 'Your account does not have permission to add rate classes.', 'invoicing' ), 'error' );
             return $input;
         }
@@ -751,7 +761,7 @@ class WPInv_EUVat {
         $response = array();
         $response['success'] = false;
         
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }
@@ -789,7 +799,7 @@ class WPInv_EUVat {
         $response = array();
         $response['success'] = false;
         
-        if ( !current_user_can( 'manage_options' ) || !isset( $_POST['class'] ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() || !isset( $_POST['class'] ) ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }
@@ -824,7 +834,7 @@ class WPInv_EUVat {
         $response['error']      = null;
         $response['data']       = null;
         
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !wpinv_current_user_can_manage_invoicing() ) {
             $response['error'] = __( 'Invalid access!', 'invoicing' );
             wp_send_json( $response );
         }

@@ -29,7 +29,7 @@ function wpinv_delete_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to delete discount codes', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -43,7 +43,7 @@ function wpinv_activate_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to edit discount codes', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -57,7 +57,7 @@ function wpinv_deactivate_discount( $data ) {
         wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
 
-    if( ! current_user_can( 'manage_options' ) ) {
+    if( ! wpinv_current_user_can_manage_invoicing() ) {
         wp_die( __( 'You do not have permission to create discount codes', 'invoicing' ), array( 'response' => 403 ) );
     }
 
@@ -95,6 +95,84 @@ function wpinv_get_discounts( $args = array() ) {
     }
 
     return false;
+}
+
+function wpinv_get_all_discounts( $args = array() ) {
+
+    $args = wp_parse_args( $args, array(
+        'status'         => array( 'publish' ),
+        'limit'          => get_option( 'posts_per_page' ),
+        'page'           => 1,
+        'exclude'        => array(),
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'type'           => array_keys( wpinv_get_discount_types() ),
+        'meta_query'     => array(),
+        'return'         => 'objects',
+        'paginate'       => false,
+    ) );
+
+    $wp_query_args = array(
+        'post_type'      => 'wpi_discount',
+        'post_status'    => $args['status'],
+        'posts_per_page' => $args['limit'],
+        'meta_query'     => $args['meta_query'],
+        'fields'         => 'ids',
+        'orderby'        => $args['orderby'],
+        'order'          => $args['order'],
+        'paged'          => absint( $args['page'] ),
+    );
+
+    if ( ! empty( $args['exclude'] ) ) {
+        $wp_query_args['post__not_in'] = array_map( 'absint', $args['exclude'] );
+    }
+
+    if ( ! $args['paginate' ] ) {
+        $wp_query_args['no_found_rows'] = true;
+    }
+
+    if ( ! empty( $args['search'] ) ) {
+
+        $wp_query_args['meta_query'][] = array(
+            'key'     => '_wpi_discount_code',
+            'value'   => $args['search'],
+            'compare' => 'LIKE',
+        );
+
+    }
+    
+    if ( ! empty( $args['type'] ) ) {
+        $types = wpinv_parse_list( $args['type'] );
+        $wp_query_args['meta_query'][] = array(
+            'key'     => '_wpi_discount_type',
+            'value'   => implode( ',', $types ),
+            'compare' => 'IN',
+        );
+    }
+
+    $wp_query_args = apply_filters('wpinv_get_discount_args', $wp_query_args, $args);
+
+    // Get results.
+    $discounts = new WP_Query( $wp_query_args );
+
+    if ( 'objects' === $args['return'] ) {
+        $return = array_map( 'get_post', $discounts->posts );
+    } elseif ( 'self' === $args['return'] ) {
+        return $discounts;
+    } else {
+        $return = $discounts->posts;
+    }
+
+    if ( $args['paginate' ] ) {
+        return (object) array(
+            'discounts'      => $return,
+            'total'         => $discounts->found_posts,
+            'max_num_pages' => $discounts->max_num_pages,
+        );
+    } else {
+        return $return;
+    }
+
 }
 
 function wpinv_has_active_discounts() {

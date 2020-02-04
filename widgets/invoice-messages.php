@@ -24,7 +24,7 @@ class WPInv_Messages_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_messages',
             'name'          => __('Invoicing > Invoice Messages','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-messages-class',
+                'classname'   => 'wpinv-messages-class  wpi-g',
                 'description' => esc_html__('Displays invoice error and warning messages on checkout page.','invoicing'),
             ),
             'arguments'     => array(

@@ -376,7 +376,7 @@ function wpinv_user_can_view_invoice( $post ) {
 
     // Don't allow trash, draft status
     if ( $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
-        if ( current_user_can( 'manage_options' ) ) { // Admin user
+        if ( wpinv_current_user_can_manage_invoicing() || current_user_can( 'view_invoices', $invoice->ID ) ) { // Admin user
             $allow = true;
         } else {
             if ( is_user_logged_in() ) {

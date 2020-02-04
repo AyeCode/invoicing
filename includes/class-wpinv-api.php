@@ -25,6 +25,11 @@ class WPInv_API {
      * @param WPInv_REST_Invoice_Controller Invoices controller
      */
     public $invoices_controller;
+
+    /**
+     * @param WPInv_REST_Items_Controller Items controller
+     */
+    public $items_controller;
     
     /**
      * Class constructor. 
@@ -40,6 +45,8 @@ class WPInv_API {
         // Set up class variables
         $this->api_namespace       = apply_filters( 'wpinv_rest_api_namespace', $api_namespace );
         $this->invoices_controller = new WPInv_REST_Invoice_Controller( $this->api_namespace );
+        $this->items_controller    = new WPInv_REST_Items_Controller( $this->api_namespace );
+        $this->discounts_controller= new WPInv_REST_Discounts_Controller( $this->api_namespace );
 
         //Register REST routes
         add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
@@ -53,8 +60,14 @@ class WPInv_API {
 	 */
 	public function register_rest_routes() {
 
-		//Invoices
-		$this->invoices_controller->register_routes();
+		// Invoices.
+        $this->invoices_controller->register_routes();
+        
+        // Items.
+        $this->items_controller->register_routes();
+
+        // Discounts.
+        $this->discounts_controller->register_routes();
         
     }
 
@@ -68,6 +81,12 @@ class WPInv_API {
         
         // Invoices
         require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-invoice-controller.php' );
+
+        // Items
+        require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-items-controller.php' );
+
+        // Discounts
+        require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-discounts-controller.php' );
 
     }
     

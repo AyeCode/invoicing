@@ -58,7 +58,7 @@ class WPInv_Reports {
     
     public function add_submenu() {
         global $wpi_reports_page;
-        $wpi_reports_page = add_submenu_page( 'wpinv', __( 'Reports', 'invoicing' ), __( 'Reports', 'invoicing' ), 'manage_options', 'wpinv-reports', array( $this, 'reports_page' ) );
+        $wpi_reports_page = add_submenu_page( 'wpinv', __( 'Reports', 'invoicing' ), __( 'Reports', 'invoicing' ), wpinv_get_capability(), 'wpinv-reports', array( $this, 'reports_page' ) );
     }
     
     public function reports_page() {
@@ -78,7 +78,7 @@ class WPInv_Reports {
                 <a href="<?php echo add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
                 <?php do_action( 'wpinv_reports_page_tabs' ); ;?>
             </h2>
-            <div class="wpi-reports-content wpi-reports-<?php echo $active_tab; ?>">
+            <div class="wpi-reports-content wpi-reports-<?php echo esc_attr( $active_tab ); ?>">
             <?php
                 do_action( 'wpinv_reports_page_top' );
                 do_action( 'wpinv_reports_tab_' . $active_tab );
@@ -190,7 +190,7 @@ class WPInv_Reports {
         $response['success']    = false;
         $response['msg']        = __( 'Invalid export request found.', 'invoicing' );
         
-        if ( empty( $_POST['data'] ) || !current_user_can( 'manage_options' ) ) {
+        if ( empty( $_POST['data'] ) || ! wpinv_current_user_can_manage_invoicing() ) {
             wp_send_json( $response );
         }
 
@@ -302,7 +302,7 @@ class WPInv_Reports {
     
     public function process_export_step() {
         if ( $this->step < 2 ) {
-            @unlink( $this->file );
+            /** @scrutinizer ignore-unhandled */ @unlink( $this->file );
             $this->print_columns();
         }
         
