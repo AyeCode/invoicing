@@ -316,8 +316,8 @@ function wpinv_discount_metabox_details( $post ) {
             </th>
             <td>
                 <select id="wpinv_discount_recurring" name="recurring" class="medium-text wpi_select2">
-                    <option value="0" <?php selected( false, $recurring ); ?>><?php _e( 'All payments', 'invoicing' ); ?></option>
-                    <option value="1" <?php selected( true, $recurring ); ?>><?php _e( 'First payment only', 'invoicing' ); ?></option>
+                    <option value="0" <?php selected( false, $recurring ); ?>><?php _e( 'First payment only', 'invoicing' ); ?></option>
+                    <option value="1" <?php selected( true, $recurring ); ?>><?php _e( 'All payments', 'invoicing' ); ?></option>
                 </select>
                 <p class="description"><?php _e( '<b>All payments:</b> Apply this discount to all recurring payments of the recurring invoice. <br><b>First payment only:</b> Apply this discount to only first payment of the recurring invoice.', 'invoicing' ); ?></p>
             </td>

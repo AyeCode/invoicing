@@ -1044,3 +1044,26 @@ function wpinv_parse_list( $list ) {
 
 	return $list;
 }
+
+/**
+ * Clean variables using sanitize_text_field.
+ *
+ * @param string|array $var Data to sanitize.
+ * @return string|array
+ */
+function wpinv_clean( $var ) {
+
+	if ( is_array( $var ) ) {
+		return array_map( 'wpinv_clean', $var );
+    }
+
+    if ( is_object( $var ) ) {
+		$object_vars = get_object_vars( $var );
+		foreach ( $object_vars as $property_name => $property_value ) {
+			$var->$property_name = wpinv_clean( $property_value );
+        }
+        return $var;
+	}
+    
+    return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+}

@@ -127,6 +127,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-discount.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php' );
