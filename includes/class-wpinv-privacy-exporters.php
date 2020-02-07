@@ -41,10 +41,11 @@ class WPInv_Privacy_Exporters {
         if ( 0 < count( $invoices ) ) {
             foreach ( $invoices as $invoice ) {
                 $data_to_export[] = array(
-                    'group_id'    => 'customer_invoices',
-                    'group_label' => __( 'Invoicing Data', 'invoicing' ),
-                    'item_id'     => "wpinv-{$invoice->ID}",
-                    'data'        => self::get_customer_invoice_data( $invoice ),
+                    'group_id'          => 'customer_invoices',
+                    'group_label'       => __( 'Invoicing Data', 'invoicing' ),
+                    'group_description' => __( 'Customer invoicing data.', 'invoicing' ),
+                    'item_id'           => "wpinv-{$invoice->ID}",
+                    'data'              => self::get_customer_invoice_data( $invoice ),
                 );
             }
             $done = 30 > count( $invoices );
