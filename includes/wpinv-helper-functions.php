@@ -1048,7 +1048,7 @@ function wpinv_parse_list( $list ) {
 /**
  * Clean variables using sanitize_text_field.
  *
- * @param string|array $var Data to sanitize.
+ * @param mixed $var Data to sanitize.
  * @return string|array
  */
 function wpinv_clean( $var ) {

@@ -376,6 +376,6 @@ function wpinv_discount_metabox_save( $post_id, $post, $update = false ) {
         $_POST['expiration'] = $_POST['expiration'] . ' ' . $_POST['expiration_h'] . ':' . $_POST['expiration_m'];
     }
     
-    return wpinv_store_discount( $post_id, $_POST, $post, $update );
+    return /** @scrutinizer ignore-call */ wpinv_store_discount( $post_id, $_POST, $post, $update );
 }
 add_action( 'save_post', 'wpinv_discount_metabox_save', 10, 3 );

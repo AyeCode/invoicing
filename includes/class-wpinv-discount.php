@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @property string $code
  * @property string $description
  * @property string $type
+ * @property string $type_name
  * @property string $expiration
  * @property string $start
  * @property string $status
@@ -84,7 +85,7 @@ class WPInv_Discount {
 			$data = self::get_data_by( 'id', $discount );
 		}
 
-		if ( $data ) {
+		if ( is_array( $data ) ) {
 			$this->init( $data );
 			return;
 		}
@@ -94,7 +95,7 @@ class WPInv_Discount {
 			$data = self::get_data_by( 'discount_code', $discount );
 		}
 
-		if ( $data ) {
+		if ( is_array( $data ) ) {
 			$this->init( $data );
 			return;
 		} 
@@ -174,7 +175,7 @@ class WPInv_Discount {
 			return $discount;
 		}
 
-		$args = wp_parse_args(
+		$args = array_merge(
 			$args,
 			array(
 				'post_type'      => 'wpi_discount',
@@ -268,7 +269,7 @@ class WPInv_Discount {
             return $return;
 		}
 
-        $return = wp_parse_args( $data, $return );
+        $return = array_merge( $return, $data );
 
         // Sanitize some keys.
         $return['amount']         = wpinv_sanitize_amount( $return['amount'] );
@@ -403,9 +404,9 @@ class WPInv_Discount {
 				return false;
 			}
 
-			$data[ 'ID' ] = $id;
-			$this->ID = $id;
-			$this->data['ID'] = $id;
+			$data[ 'ID' ] = (int) $id;
+			$this->ID = $data[ 'ID' ];
+			$this->data['ID'] = $data[ 'ID' ];
 
 		} else {
 			$this->update_status( $data['post_status'] );
@@ -527,7 +528,7 @@ class WPInv_Discount {
 	 * @return bool
 	 */
 	public function is_expired() {
-		$expired = empty ( $this->expires ) ? false : current_time( 'timestamp' ) > strtotime( $this->expires );
+		$expired = empty ( $this->expiration ) ? false : current_time( 'timestamp' ) > strtotime( $this->expiration );
 		return apply_filters( 'wpinv_is_discount_expired', $expired, $this->ID, $this, $this->code );
 	}
 
@@ -701,7 +702,7 @@ class WPInv_Discount {
 	 *
 	 * @since 1.0.14
 	 * @param int $by The number of usages to increas by.
-	 * @return bool
+	 * @return int
 	 */
 	public function increase_usage( $by = 1 ) {
 

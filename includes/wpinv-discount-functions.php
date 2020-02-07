@@ -253,7 +253,7 @@ function wpinv_store_discount( $post_id, $data ) {
 
     // Fetch existing data.
     $existing_data = WPInv_Discount::get_data_by( 'id', $post_id );
-    if( empty( $existing_data ) ) {
+    if( ! is_array( $existing_data ) ) {
         return false;
     }
 
@@ -425,10 +425,10 @@ function wpinv_get_discount_type( $discount = array(), $name = false ) {
 
     // Are we returning the name or just the type.
     if( $name ) {
-        return $discount->discount_type_name;
+        return $discount->type_name;
     }
 
-    return $discount->discount_type;
+    return $discount->type;
 }
 
 function wpinv_discount_status( $status ) {
@@ -683,7 +683,7 @@ function wpinv_discount_item_reqs_met( $code_id = null ) {
  * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
  * @param int|string $user The user id, login or email
  * @param int|array|string|WPInv_Discount $code_id discount data, object, ID or code.
- * @return boll
+ * @return bool
  */
 function wpinv_is_discount_used( $discount = array(), $user = '', $code_id = array() ) {
     
@@ -694,7 +694,7 @@ function wpinv_is_discount_used( $discount = array(), $user = '', $code_id = arr
     }
 
     $is_used = ! $discount->is_valid_for_user( $user );
-    $is_used = apply_filters( 'wpinv_is_discount_used', $is_used, $discount->code, $user, $discount->id, $discount );
+    $is_used = apply_filters( 'wpinv_is_discount_used', $is_used, $discount->code, $user, $discount->ID, $discount );
 
     if( $is_used ) {
         wpinv_set_error( 'wpinv-discount-error', __( 'This discount has already been redeemed.', 'invoicing' ) );
@@ -709,7 +709,7 @@ function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
     $user        = trim( $user );
 
     if ( wpinv_get_cart_contents() ) {
-        if ( $discount_id ) {
+        if ( $discount_id !== false ) {
             if (
                 wpinv_is_discount_active( $discount_id ) &&
                 wpinv_check_discount_dates( $discount_id ) &&
@@ -850,7 +850,7 @@ function wpinv_unset_all_cart_discounts() {
     return false;
 }
 
-function wpinv_get_cart_discounts( $items = array() ) {
+function wpinv_get_cart_discounts() {
     $session = wpinv_get_checkout_session();
     
     $discounts = !empty( $session['cart_discounts'] ) ? $session['cart_discounts'] : false;
@@ -946,7 +946,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $code_id = wpinv_get_discount_id_by_code( $discount );
 
             // Check discount exists
-            if( ! $code_id ) {
+            if( $code_id !== false ) {
                 continue;
             }
 
@@ -1045,7 +1045,7 @@ function wpinv_get_cart_discounts_html( $items = array(), $discounts = false ) {
     return apply_filters( 'wpinv_get_cart_discounts_html', $html, $discounts, $rate );
 }
 
-function wpinv_display_cart_discount( $formatted = false, $echo = false ) {
+function wpinv_display_cart_discount( /** @scrutinizer ignore-unused */ $formatted = false, $echo = false ) {
     $discounts = wpinv_get_cart_discounts();
 
     if ( empty( $discounts ) ) {
@@ -1077,7 +1077,7 @@ function wpinv_remove_cart_discount() {
 }
 add_action( 'wpinv_remove_cart_discount', 'wpinv_remove_cart_discount' );
 
-function wpinv_maybe_remove_cart_discount( $cart_key = 0 ) {
+function wpinv_maybe_remove_cart_discount() {
     $discounts = wpinv_get_cart_discounts();
 
     if ( !$discounts ) {
