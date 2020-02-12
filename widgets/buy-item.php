@@ -37,7 +37,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
                     'default'     => '',
                     'advanced'    => false
                 ),
-                'buy_items'  => array(
+                'items'  => array(
 	                'title'       => __( 'Items to buy', 'invoicing' ),
 	                'desc'        => __( 'Enter comma separated list of invoicing item id and quantity (item_id|quantity). Ex. 101|2 ', 'invoicing' ),
 	                'type'        => 'text',
