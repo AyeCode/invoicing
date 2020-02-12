@@ -129,6 +129,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - Added
+* Default buy now button text - ADDED
+* Users with a manage_invoicing capability can view subscriptions - ADDED
+* Missing "Add New" button on item overview pages - FIXED
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED

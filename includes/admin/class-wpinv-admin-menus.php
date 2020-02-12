@@ -32,8 +32,8 @@ class WPInv_Admin_Menus {
             $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
 
             // Allow users with 'manage_invocing' capability to create new invoices
-            $submenu['post-new.php?post_type=wpi_invoice'][] = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
-            $submenu['post-new.php?post_type=wpi_item'][] = array( '', '', 'post-new.php?post_type=wpi_item', '' );
+            $submenu['post-new.php?post_type=wpi_invoice'][]  = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
+            $submenu['post-new.php?post_type=wpi_item'][]     = array( '', '', 'post-new.php?post_type=wpi_item', '' );
             $submenu['post-new.php?post_type=wpi_discount'][] = array( '', '', 'post-new.php?post_type=wpi_discount', '' );
 
         }

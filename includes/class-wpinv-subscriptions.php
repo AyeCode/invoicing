@@ -106,7 +106,7 @@ class WPInv_Subscriptions {
             'wpinv',
             __( 'Subscriptions', 'invoicing' ),
             __( 'Subscriptions', 'invoicing' ),
-            'manage_invoicing',
+            wpinv_get_capability(),
             'wpinv-subscriptions',
             'wpinv_subscriptions_page'
         );
