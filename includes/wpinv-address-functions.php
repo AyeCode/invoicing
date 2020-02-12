@@ -1570,15 +1570,74 @@ function wpinv_default_billing_country( $country = '', $user_id = 0 ) {
 }
 
 /**
+ * Returns country address formats.
+ *
+ * These define how addresses are formatted for display in various countries.
+ *
+ * @return array
+ */
+function wpinv_get_address_formats() {
+
+		return apply_filters( 'wpinv_localisation_address_formats',
+			array(
+				'default' => "{{name}}\n{{company}}\n{{address}}\n{{city}}\n{{state}}\n{{zip}}\n{{country}}",
+				'AU'      => "{{name}}\n{{company}}\n{{address}}\n{{city}}\n{{state}} {{zip}}\n{{country}}",
+				'AT'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'BE'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'CA'      => "{{company}}\n{{name}}\n{{address}}\n{{city}} {{state_code}}&nbsp;&nbsp;{{zip}}\n{{country}}",
+				'CH'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'CL'      => "{{company}}\n{{name}}\n{{address}}\n{{state}}\n{{zip}} {{city}}\n{{country}}",
+				'CN'      => "{{country}} {{zip}}\n{{state}}, {{city}}, {{address}}\n{{company}}\n{{name}}",
+				'CZ'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'DE'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'EE'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'FI'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'DK'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'FR'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city_upper}}\n{{country}}",
+				'HK'      => "{{company}}\n{{first_name}} {{last_name_upper}}\n{{address}}\n{{city_upper}}\n{{state_upper}}\n{{country}}",
+				'HU'      => "{{name}}\n{{company}}\n{{city}}\n{{address}}\n{{zip}}\n{{country}}",
+				'IN'      => "{{company}}\n{{name}}\n{{address}}\n{{city}} {{zip}}\n{{state}}, {{country}}",
+				'IS'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'IT'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}}\n{{city}}\n{{state_upper}}\n{{country}}",
+				'JP'      => "{{zip}}\n{{state}} {{city}} {{address}}\n{{company}}\n{{last_name}} {{first_name}}\n{{country}}",
+				'TW'      => "{{company}}\n{{last_name}} {{first_name}}\n{{address}}\n{{state}}, {{city}} {{zip}}\n{{country}}",
+				'LI'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'NL'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'NZ'      => "{{name}}\n{{company}}\n{{address}}\n{{city}} {{zip}}\n{{country}}",
+				'NO'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'PL'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'PT'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'SK'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'RS'      => "{{name}}\n{{company}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'SI'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'ES'      => "{{name}}\n{{company}}\n{{address}}\n{{zip}} {{city}}\n{{state}}\n{{country}}",
+				'SE'      => "{{company}}\n{{name}}\n{{address}}\n{{zip}} {{city}}\n{{country}}",
+				'TR'      => "{{name}}\n{{company}}\n{{address}}\n{{zip}} {{city}} {{state}}\n{{country}}",
+				'UG'      => "{{name}}\n{{company}}\n{{address}}\n{{city}}\n{{state}}, {{country}}",
+				'US'      => "{{name}}\n{{company}}\n{{address}}\n{{city}}, {{state_code}} {{zip}}\n{{country}}",
+				'VN'      => "{{name}}\n{{company}}\n{{address}}\n{{city}}\n{{country}}",
+			)
+		);
+}
+
+/**
  * Retrieves the address format to use on Invoices.
  * 
  * @since 1.0.13
  * @see `wpinv_get_invoice_address_replacements`
  * @return string
  */
-function wpinv_get_full_address_format() {
+function wpinv_get_full_address_format( $country = false) {
 
-    $format = "{{address}} \n\n {{city}}, {{state}} \n\n {{country}} {{zip}}";
+    if( empty( $country ) ) {
+        $country = wpinv_get_default_country();
+    }
+
+    // Get all formats.
+	$formats = wpinv_get_address_formats();
+
+	// Get format for the specified country.
+	$format = ( $country && isset( $formats[ $country ] ) ) ? $formats[ $country ] : $formats['default'];
     
     /**
 	 * Filters the address format to use on Invoices.
@@ -1602,37 +1661,34 @@ function wpinv_get_full_address_format() {
  */
 function wpinv_get_invoice_address_replacements( $billing_details ) {
 
-    $replacements = array(
-        'address'        => '',
-        'city'           => '',
-        'state'          => '',
-        'country'        => '',
-        'country_code'   => '',
-        'zip'            => '',
+    $default_args = array(
+        'address'           => '',
+        'city'              => '',
+        'state'             => '',
+        'country'           => '',
+        'zip'               => '',
+        'first_name'        => '',
+		'last_name'         => '',
+		'company'           => '',
     );
 
-    if( ! empty( $billing_details['address'] ) ) {
-        $replacements['address'] = sanitize_text_field( $billing_details['address'] );
-    }
-
-    if( ! empty( $billing_details['city'] ) ) {
-        $replacements['city'] = sanitize_text_field( $billing_details['city'] );
-    }
-
-    if( ! empty( $billing_details['zip'] ) ) {
-        $replacements['zip'] = sanitize_text_field( $billing_details['zip'] );
-    }
+    $args    = array_map( 'trim', wp_parse_args( $billing_details, $default_args ) );
+    $state   = $args['state'];
+    $country = $args['country'];
     
-    $billing_country = !empty( $billing_details['country'] ) ? $billing_details['country'] : '';
-    if ( !empty( $billing_details['state'] ) ) {
-        $replacements['state'] = sanitize_text_field( wpinv_state_name( $billing_details['state'], $billing_country ) );
-    }
-
-    if ( !empty( $billing_country ) ) {
-        $replacements['country']      = wpinv_country_name( $billing_country );
-        $replacements['country_code'] = sanitize_text_field( $billing_country );
-    }
+    // Handle full country name.
+    $full_country = empty( $country ) ? $country : wpinv_country_name( $country );
     
+    // Handle full state name.
+    $full_state   = ( $country && $state ) ?  wpinv_state_name( $state, $country ) : $state;
+
+    $args['postcode']    = $args['zip'];
+    $args['name']        = $args['first_name'] . ' ' . $args['last_name'];
+    $args['state']       = $full_state;
+    $args['state_code']  = $state;
+    $args['country']     = $full_country;
+    $args['country_code']= $country;
+
     /**
 	 * Filters the address format replacements to use on Invoices.
      * 
@@ -1642,5 +1698,27 @@ function wpinv_get_invoice_address_replacements( $billing_details ) {
 	 * @param array $replacements  The address replacements to use.
      * @param array $billing_details  The billing details to use.
 	 */
-    return apply_filters( 'wpinv_get_invoice_address_replacements', $replacements, $billing_details );
+    $replacements = apply_filters( 'wpinv_get_invoice_address_replacements', $args, $billing_details );
+
+    $return = array();
+
+    foreach( $replacements as $key => $value ) {
+        $value  = is_scalar( $value ) ? trim( sanitize_text_field( $value ) ) : '';
+        $return['{{' . $key . '}}'] = $value;
+        $return['{{' . $key . '_upper}}'] = wpinv_utf8_strtoupper( $value );
+    }
+
+    return $return;
+
+}
+
+/**
+ * Trim white space and commas off a line.
+ *
+ * @param  string $line Line.
+ * @since 1.0.14
+ * @return string
+ */
+function wpinv_trim_formatted_address_line( $line ) {
+	return trim( $line, ', ' );
 }
