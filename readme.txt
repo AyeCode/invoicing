@@ -276,5 +276,5 @@ Tools added to merge GD packages & invoices - ADDED
 Discount can be enable/disable for relevant item - ADDED
 
 == Upgrade Notice ==
-[wpinv_buy] shortcode now uses button_label instead of title for the button label. Items are specified via the items attribute.
-**Example:** [wpinv_buy button_label ="Buy Now" items="15|1,32|2"]
+[wpinv_buy] shortcode now uses label instead of title for the button label. Items are specified via the items attribute.
+**Example:** [wpinv_buy label ="Buy Now" items="15|1,32|2"]

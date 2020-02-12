@@ -46,7 +46,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
 	                'placeholder' => __('Items to buy','invoicing'),
 	                'advanced'    => false
                 ),
-                'button_label'  => array(
+                'label'  => array(
 	                'title'       => __( 'Button Label', 'invoicing' ),
 	                'desc'        => __( 'Enter button label. Default "Buy Now".', 'invoicing' ),
 	                'type'        => 'text',
