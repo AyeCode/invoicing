@@ -1647,8 +1647,9 @@ function wpinv_get_full_address_format( $country = false) {
 	 * @since 1.0.13
 	 *
 	 * @param string $format  The address format to use.
+     * @param string $country The country who's address format is being retrieved.
 	 */
-    return apply_filters( 'wpinv_get_full_address_format', $format );
+    return apply_filters( 'wpinv_get_full_address_format', $format, $country );
 }
 
 /**
