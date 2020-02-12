@@ -2136,7 +2136,7 @@ function wpinv_invalid_invoice_content() {
 
     $invoice = wpinv_get_invoice( $post->ID );
 
-    $error = __( 'This invoice is only viewable by clicking on the invoice link that sent to you via email.', 'invoicing' );
+    $error = __( 'This invoice is only viewable by clicking on the invoice link that was sent to you via email.', 'invoicing' );
     if ( !empty( $invoice->ID ) && $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
         if ( is_user_logged_in() ) {
             if ( wpinv_require_login_to_checkout() ) {
