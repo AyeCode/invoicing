@@ -133,6 +133,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Users with a manage_invoicing capability can view subscriptions - ADDED
 * Missing "Add New" button on item overview pages - FIXED
 * Change invoice address format based on the customer's billing country - ADDED
+* More country states - ADDED
+* Rearrange address data into a data folder - CHANGED
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
