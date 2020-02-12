@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Change invoice address format based on the customer's billing country - ADDED
 * More country states - ADDED
 * Rearrange address data into a data folder - CHANGED
+* [wpinv_buy] shortcode now uses label instead of title for the button label - BREAKING CHANGE
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
@@ -277,7 +278,5 @@ Discount can be enable/disable for relevant item - ADDED
 
 == Upgrade Notice ==
 
-### 1.0.14 ###
-
-[wpinv_buy] shortcode now uses label instead of title for the button label. Items are specified via the items attribute.
-**Example:** [wpinv_buy label ="Buy Now" items="15|1,32|2"]
+= 1.0.14 =
+[wpinv_buy] shortcode now uses label instead of title for the button label - BREAKING CHANGE
