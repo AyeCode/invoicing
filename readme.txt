@@ -127,6 +127,11 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.14 =
+* Default buy now button text - ADDED
+* Users with a manage_invoicing capability can view subscriptions - ADDED
+* Missing "Add New" button on item overview pages - FIXED
+
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
 * Ability to create, read, update and delete an invoice via REST API - ADDED
