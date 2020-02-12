@@ -82,7 +82,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
 
 	    $defaults = array(
-		    'buy_items'     => '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
+		    'items'     	=> '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
 		    'button_label'  => __( 'Buy Now', 'invoicing' ), // the button title
 		    'post_id'   	=> '', // any related post_id
 	    );
@@ -94,12 +94,12 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
 
 		$html = '<div class="wpi-buy-button-wrapper wpi-g">';
 		
-		if ( empty( $args['buy_items'] ) ) {
+		if ( empty( $args['items'] ) ) {
 			$html .= __( 'No items selected', 'invoicing' );
 		} else {
 			$post_id = isset( $args['post_id'] ) && is_numeric( $args['post_id'] ) ? sanitize_text_field( $args['post_id'] ) : 0;
 			$label   = isset( $args['button_label'] ) ? sanitize_text_field( $args['button_label'] ) : __( 'Buy Now', 'invoicing' );
-			$items   = esc_attr( $args['buy_items'] );
+			$items   = esc_attr( $args['items'] );
 			$html   .= "<button class='button button-primary wpi-buy-button' type='button' onclick=\"wpi_buy(this, '$items','$post_id');\">$label</button>";
 		}
 	
