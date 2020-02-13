@@ -933,26 +933,35 @@ function wpinv_display_invoice_details( $invoice ) {
  * @see `wpinv_get_full_address_format`
  * @see `wpinv_get_invoice_address_replacements`
  * @param array $billing_details customer's billing details
+ * @param  string $separator How to separate address lines.
  * @return string
  */
-function wpinv_get_invoice_address_markup( $billing_details ) {
+function wpinv_get_invoice_address_markup( $billing_details, $separator = '<br/>' ) {
 
     // Retrieve the address markup...
-    $markup = wpinv_get_full_address_format();
+    $country= empty( $billing_details['country'] ) ? '' : $billing_details['country'];
+    $format = wpinv_get_full_address_format( $country );
 
     // ... and the replacements.
     $replacements = wpinv_get_invoice_address_replacements( $billing_details );
 
-    // Replace all available tags with their values.
-	foreach( $replacements as $key => $value ) {
-		$markup = str_ireplace( '{{' . $key . '}}', $value, $markup );
-    }
+    $formatted_address = str_ireplace( array_keys( $replacements ), $replacements, $format );
     
 	// Remove unavailable tags.
-    $markup = preg_replace( "/\{\{\w+}\}/", '', $markup );
+    $formatted_address = preg_replace( "/\{\{\w+\}\}/", '', $formatted_address );
 
-    // Finally, clean then return the output.
-    return wpautop( wp_kses_post( trim( $markup ) ) );
+    // Clean up white space.
+	$formatted_address = preg_replace( '/  +/', ' ', trim( $formatted_address ) );
+    $formatted_address = preg_replace( '/\n\n+/', "\n", $formatted_address );
+    
+    // Break newlines apart and remove empty lines/trim commas and white space.
+	$formatted_address = array_filter( array_map( 'wpinv_trim_formatted_address_line', explode( "\n", $formatted_address ) ) );
+
+    // Add html breaks.
+	$formatted_address = implode( $separator, $formatted_address );
+
+	// We're done!
+	return $formatted_address;
     
 }
 
@@ -971,11 +980,6 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     do_action( 'wpinv_display_to_address_top', $invoice );
     $output .= ob_get_clean();
     
-    $output .= '<div class="name">' . esc_html( trim( $billing_details['first_name'] . ' ' . $billing_details['last_name'] ) ) . '</div>';
-    if ( $company = $billing_details['company'] ) {
-        $output .= '<div class="company">' . wpautop( wp_kses_post( $company ) ) . '</div>';
-    }
-
     $address_row = wpinv_get_invoice_address_markup( $billing_details );
 
     if ( $address_row ) {
@@ -1879,12 +1883,6 @@ function wpinv_receipt_billing_address( $invoice_id = 0 ) {
                 <th class="text-left"><?php _e( 'Email', 'invoicing' ); ?></th>
                 <td><?php echo $billing_details['email'] ;?></td>
             </tr>
-            <?php if ( $billing_details['company'] ) { ?>
-            <tr class="wpi-receipt-company">
-                <th class="text-left"><?php _e( 'Company', 'invoicing' ); ?></th>
-                <td><?php echo esc_html( $billing_details['company'] ) ;?></td>
-            </tr>
-            <?php } ?>
             <tr class="wpi-receipt-address">
                 <th class="text-left"><?php _e( 'Address', 'invoicing' ); ?></th>
                 <td><?php echo $address_row ;?></td>
@@ -2138,7 +2136,7 @@ function wpinv_invalid_invoice_content() {
 
     $invoice = wpinv_get_invoice( $post->ID );
 
-    $error = __( 'This invoice is only viewable by clicking on the invoice link that sent to you via email.', 'invoicing' );
+    $error = __( 'This invoice is only viewable by clicking on the invoice link that was sent to you via email.', 'invoicing' );
     if ( !empty( $invoice->ID ) && $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
         if ( is_user_logged_in() ) {
             if ( wpinv_require_login_to_checkout() ) {

@@ -37,7 +37,7 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
                     'default'     => '',
                     'advanced'    => false
                 ),
-                'buy_items'  => array(
+                'items'  => array(
 	                'title'       => __( 'Items to buy', 'invoicing' ),
 	                'desc'        => __( 'Enter comma separated list of invoicing item id and quantity (item_id|quantity). Ex. 101|2 ', 'invoicing' ),
 	                'type'        => 'text',
@@ -46,13 +46,13 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
 	                'placeholder' => __('Items to buy','invoicing'),
 	                'advanced'    => false
                 ),
-                'button_label'  => array(
+                'label'  => array(
 	                'title'       => __( 'Button Label', 'invoicing' ),
 	                'desc'        => __( 'Enter button label. Default "Buy Now".', 'invoicing' ),
 	                'type'        => 'text',
 	                'desc_tip'    => true,
-	                'default'     => '',
-	                'advanced'    => true
+	                'default'     => __( 'Buy Now', 'invoicing' ),
+	                'advanced'    => false
                 ),
                 'post_id'  => array(
 	                'title'       => __( 'Post ID', 'invoicing' ),
@@ -82,9 +82,9 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
 
 	    $defaults = array(
-		    'buy_items'     => '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
-		    'button_label'  => __( 'Buy Now', 'invoicing' ), // the button title
-		    'post_id'   => '', // any related post_id
+		    'items'     	=> '', // should be used like: item_id|quantity,item_id|quantity,item_id|quantity
+		    'label'  	    => __( 'Buy Now', 'invoicing' ), // the button title
+		    'post_id'   	=> '', // any related post_id
 	    );
 
 	    /**
@@ -92,10 +92,17 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
 	     */
 	    $args = wp_parse_args( $args, $defaults );
 
-	    $post_id = isset( $args['post_id'] ) ? (int)$args['post_id'] : 0;
-
-	    $html = '<div class="wpi-buy-button-wrapper wpi-g">';
-	    $html .= '<button class="button button-primary wpi-buy-button" type="button" onclick="wpi_buy(this,\'' . $args['buy_items'] . '\',' . $post_id . ');">' . $args['button_label'] . '</button>';
+		$html = '<div class="wpi-buy-button-wrapper wpi-g">';
+		
+		if ( empty( $args['items'] ) ) {
+			$html .= __( 'No items selected', 'invoicing' );
+		} else {
+			$post_id = isset( $args['post_id'] ) && is_numeric( $args['post_id'] ) ? sanitize_text_field( $args['post_id'] ) : 0;
+			$label   = isset( $args['label'] ) ? sanitize_text_field( $args['label'] ) : __( 'Buy Now', 'invoicing' );
+			$items   = esc_attr( $args['items'] );
+			$html   .= "<button class='button button-primary wpi-buy-button' type='button' onclick=\"wpi_buy(this, '$items','$post_id');\">$label</button>";
+		}
+	
 	    $html .= wp_nonce_field( 'wpinv_buy_items', 'wpinv_buy_nonce', true, false );
 	    $html .= '</div>';
 

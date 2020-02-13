@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
 Requires at least: 4.9
 Tested up to: 5.3
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -126,6 +126,16 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 10. Client Invoice
 
 == Changelog ==
+
+= 1.0.14 =
+* Support for group_description for privacy exporters (thanks @garretthyder) - Added
+* Default buy now button text - ADDED
+* Users with a manage_invoicing capability can view subscriptions - ADDED
+* Missing "Add New" button on item overview pages - FIXED
+* Change invoice address format based on the customer's billing country - ADDED
+* More country states - ADDED
+* Rearrange address data into a data folder - CHANGED
+* [wpinv_buy] shortcode now uses label instead of title for the button label - BREAKING CHANGE
 
 = 1.0.13 =
 * Extensions page Gateways not able to be installed via single key - FIXED
@@ -268,4 +278,5 @@ Discount can be enable/disable for relevant item - ADDED
 
 == Upgrade Notice ==
 
-none yet.
+= 1.0.14 =
+[wpinv_buy] shortcode now uses label instead of title for the button label - BREAKING CHANGE
