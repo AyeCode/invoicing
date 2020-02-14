@@ -30,6 +30,11 @@ class WPInv_API {
      * @param WPInv_REST_Items_Controller Items controller
      */
     public $items_controller;
+
+    /**
+     * @param WPInv_REST_Discounts_Controller Discounts controller
+     */
+    public $discounts_controller;
     
     /**
      * Class constructor. 
@@ -68,6 +73,18 @@ class WPInv_API {
 
         // Discounts.
         $this->discounts_controller->register_routes();
+
+        /**
+		 * Fires when registering Invoicing REST routes.
+		 *
+		 *
+		 * @since 1.0.15
+		 *
+		 *
+		 * @param array           $invoice_data Invoice properties.
+		 * @param WP_REST_Request $request The request used.
+		 */
+        do_action( "wpinv_register_rest_routes", $this );
         
     }
 

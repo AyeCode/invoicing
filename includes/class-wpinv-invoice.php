@@ -198,6 +198,10 @@ final class WPInv_Invoice {
     
     private function setup_status_nicename( $status ) {
         $all_invoice_statuses  = wpinv_get_invoice_statuses( true, true, $this );
+
+        if ( $this->is_quote() && class_exists( 'Wpinv_Quotes_Shared' ) ) {
+            $all_invoice_statuses  = Wpinv_Quotes_Shared::wpinv_get_quote_statuses();
+        }
         $status   = isset( $all_invoice_statuses[$status] ) ? $all_invoice_statuses[$status] : __( $status, 'invoicing' );
 
         return apply_filters( 'setup_status_nicename', $status );
@@ -2157,6 +2161,15 @@ final class WPInv_Invoice {
         $is_paid = $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) );
 
         return apply_filters( 'wpinv_invoice_is_paid', $is_paid, $this );
+    }
+
+    /**
+     * Checks if this is a quote object.
+     * 
+     * @since 1.0.15
+     */
+    public function is_quote() {
+        return 'wpi_quote' === $this->post_type;
     }
     
     public function is_refunded() {
