@@ -1355,7 +1355,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
                 $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
             }
             $line_item .= '<td class="action">';
-            if ( !$invoice->is_paid() && !$invoice->is_refunded() && $can_remove ) {
+            if ( !$invoice->is_paid() && !$invoice->is_refunded() ) {
                 $line_item .= '<i class="fa fa-remove wpinv-item-remove"></i>';
             }
             $line_item .= '</td>';

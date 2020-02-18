@@ -1831,7 +1831,7 @@ final class WPInv_Invoice {
         $quantity   = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
         
         if ( count( $this->cart_details ) == 1 && ( $quantity - $args['quantity'] ) < 1 ) {
-            return false; // Invoice must contain at least one item.
+            //return false; // Invoice must contain at least one item.
         }
         
         $discounts  = $this->get_discounts();
