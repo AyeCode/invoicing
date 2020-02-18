@@ -357,6 +357,9 @@ class WPInv_Subscription {
             
             $invoice = wpinv_get_invoice( $invoice->ID );
 
+			// Send email notifications.
+			wpinv_completed_invoice_notification( $invoice->ID );
+
             do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
             do_action( 'wpinv_recurring_record_payment', $invoice->ID, $this->parent_payment_id, $args['amount'], $args['transaction_id'] );
             
