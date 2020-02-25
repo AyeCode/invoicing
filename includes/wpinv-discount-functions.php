@@ -209,7 +209,7 @@ function wpinv_get_discount( $discount_id = 0 ) {
  * Fetches a discount object.
  * 
  * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
- * @since 1.0.14
+ * @since 1.0.15
  * @return WPInv_Discount
  */
 function wpinv_get_discount_obj( $discount = 0 ) {
@@ -249,34 +249,70 @@ function wpinv_get_discount_by( $field = '', $value = '' ) {
  * @param array $data The discount's properties.
  * @return bool
  */
-function wpinv_store_discount( $post_id, $data ) {
-
-    // Fetch existing data.
-    $existing_data = WPInv_Discount::get_data_by( 'id', $post_id );
-    if( ! is_array( $existing_data ) ) {
-        return false;
-    }
-
+function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
     $meta = array(
-        'code'              => isset( $data['code'] )             ? sanitize_text_field( $data['code'] )              : $existing_data['code'],
-        'type'              => isset( $data['type'] )             ? sanitize_text_field( $data['type'] )              : $existing_data['type'],
-        'amount'            => isset( $data['amount'] )           ? wpinv_sanitize_amount( $data['amount'] )          : $existing_data['amount'],
-        'start'             => isset( $data['start'] )            ? sanitize_text_field( $data['start'] )             : $existing_data['start'],
-        'expiration'        => isset( $data['expiration'] )       ? sanitize_text_field( $data['expiration'] )        : $existing_data['expiration'],
-        'min_total'         => isset( $data['min_total'] )        ? wpinv_sanitize_amount( $data['min_total'] )       : $existing_data['min_total'],
-        'max_total'         => isset( $data['max_total'] )        ? wpinv_sanitize_amount( $data['max_total'] )       : $existing_data['max_total'],
-        'max_uses'          => isset( $data['max_uses'] )         ? absint( $data['max_uses'] )                       : $existing_data['max_uses'],
-        'items'             => isset( $data['items'] )            ? $data['items']                                    : $existing_data['items'],
-        'excluded_items'    => isset( $data['excluded_items'] )   ? $data['excluded_items']                           : $existing_data['excluded_items'],
-        'is_recurring'      => isset( $data['recurring'] )        ? (bool)$data['recurring']                          : $existing_data['is_recurring'],
+        'code'              => isset( $data['code'] )             ? sanitize_text_field( $data['code'] )              : '',
+        'type'              => isset( $data['type'] )             ? sanitize_text_field( $data['type'] )              : 'percent',
+        'amount'            => isset( $data['amount'] )           ? wpinv_sanitize_amount( $data['amount'] )          : '',
+        'start'             => isset( $data['start'] )            ? sanitize_text_field( $data['start'] )             : '',
+        'expiration'        => isset( $data['expiration'] )       ? sanitize_text_field( $data['expiration'] )        : '',
+        'min_total'         => isset( $data['min_total'] )        ? wpinv_sanitize_amount( $data['min_total'] )       : '',
+        'max_total'         => isset( $data['max_total'] )        ? wpinv_sanitize_amount( $data['max_total'] )       : '',
+        'max_uses'          => isset( $data['max_uses'] )         ? absint( $data['max_uses'] )                       : '',
+        'items'             => isset( $data['items'] )            ? $data['items']                                    : array(),
+        'excluded_items'    => isset( $data['excluded_items'] )   ? $data['excluded_items']                           : array(),
+        'is_recurring'      => isset( $data['recurring'] )        ? (bool)$data['recurring']                          : false,
         'is_single_use'     => isset( $data['single_use'] )       ? (bool)$data['single_use']                         : false,
-        'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : $existing_data['uses'],
+        'uses'              => isset( $data['uses'] )             ? (int)$data['uses']                                : false,
     );
 
-    // Merge it into the new data and save.
-    $data          = array_merge( $existing_data, $meta );
-    $discount      = wpinv_get_discount_obj( $data );
-    return $discount->save();
+    if ( $meta['type'] == 'percent' && (float)$meta['amount'] > 100 ) {
+        $meta['amount'] = 100;
+    }
+
+    if ( !empty( $meta['start'] ) ) {
+        $meta['start']      = date_i18n( 'Y-m-d H:i:s', strtotime( $meta['start'] ) );
+    }
+
+    if ( !empty( $meta['expiration'] ) ) {
+        $meta['expiration'] = date_i18n( 'Y-m-d H:i:s', strtotime( $meta['expiration'] ) );
+
+        if ( !empty( $meta['start'] ) && strtotime( $meta['start'] ) > strtotime( $meta['expiration'] ) ) {
+            $meta['expiration'] = $meta['start'];
+        }
+    }
+    
+    if ( $meta['uses'] === false ) {
+        unset( $meta['uses'] );
+    }
+    
+    if ( ! empty( $meta['items'] ) ) {
+        foreach ( $meta['items'] as $key => $item ) {
+            if ( 0 === intval( $item ) ) {
+                unset( $meta['items'][ $key ] );
+            }
+        }
+    }
+    
+    if ( ! empty( $meta['excluded_items'] ) ) {
+        foreach ( $meta['excluded_items'] as $key => $item ) {
+            if ( 0 === intval( $item ) ) {
+                unset( $meta['excluded_items'][ $key ] );
+            }
+        }
+    }
+    
+    $meta = apply_filters( 'wpinv_update_discount', $meta, $post_id, $post );
+    
+    do_action( 'wpinv_pre_update_discount', $meta, $post_id, $post );
+    
+    foreach( $meta as $key => $value ) {
+        update_post_meta( $post_id, '_wpi_discount_' . $key, $value );
+    }
+    
+    do_action( 'wpinv_post_update_discount', $meta, $post_id, $post );
+    
+    return $post_id;
 }
 
 /**
@@ -775,10 +811,12 @@ function wpinv_decrease_discount_usage( $discount, $by = 1 ) {
 
 function wpinv_format_discount_rate( $type, $amount ) {
     if ( $type == 'flat' ) {
-        return wpinv_price( wpinv_format_amount( $amount ) );
+        $rate = wpinv_price( wpinv_format_amount( $amount ) );
     } else {
-        return $amount . '%';
+        $rate = $amount . '%';
     }
+
+    return apply_filters( 'wpinv_format_discount_rate', $rate, $type, $amount );
 }
 
 function wpinv_set_cart_discount( $code = '' ) {    

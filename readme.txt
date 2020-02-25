@@ -127,7 +127,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 1.0.14 =
+= 1.0.15 =
 * Discount Object - ADDED
 
 = 1.0.13 =

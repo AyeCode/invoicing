@@ -2,7 +2,7 @@
 /**
  * Contains Discount calculation class
  *
- * @since   1.0.14
+ * @since   1.0.15
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Discount class.
  * 
- * @since 1.0.14
+ * @since 1.0.15
  * @property string $code
  * @property string $description
  * @property string $type
@@ -36,7 +36,7 @@ class WPInv_Discount {
 	/**
 	 * Discount ID.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @var integer|null
 	 */
 	public $ID = null;
@@ -44,15 +44,15 @@ class WPInv_Discount {
 	/**
 	 * Old discount status.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @var string
 	 */
 	public $old_status = 'draft';
 	
 	/**
-	 * Data array, with defaults.
+	 * Data array.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @var array
 	 */
 	protected $data = array();
@@ -61,7 +61,7 @@ class WPInv_Discount {
 	 * Discount constructor.
 	 *
 	 * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 */
 	public function __construct( $discount = array() ) {
         
@@ -107,7 +107,7 @@ class WPInv_Discount {
 	/**
 	 * Sets up object properties
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @param array $data An array containing the discount's data
 	 */
 	public function init( $data ) {
@@ -122,21 +122,14 @@ class WPInv_Discount {
 	 *
 	 *
 	 * @static
-	 *
-	 *
 	 * @param string $field The field to query against: 'ID', 'discount_code'
 	 * @param string|int $value The field value
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return array|bool array of discount details on success. False otherwise.
 	 */
 	public static function get_data_by( $field, $value ) {
 
-		// 'ID' is an alias of 'id'.
-		if ( 'ID' === $field ) {
-			$field = 'id';
-		}
-
-		if ( 'id' == $field ) {
+		if ( 'id' == strtolower( $field ) ) {
 			// Make sure the value is numeric to avoid casting objects, for example,
 			// to int 1.
 			if ( ! is_numeric( $value ) )
@@ -144,12 +137,13 @@ class WPInv_Discount {
 			$value = intval( $value );
 			if ( $value < 1 )
 				return false;
-		} else {
-			$value = trim( $value );
 		}
 
-		if ( !$value || ! is_string( $field ) )
+		if ( ! $value || ! is_string( $field ) ) {
 			return false;
+		}
+		
+		$field = trim( $field );
 
 		// prepare query args
 		switch ( strtolower( $field ) ) {
@@ -159,15 +153,20 @@ class WPInv_Discount {
 				break;
 			case 'discount_code':
 			case 'code':
+				$value       = trim( $value );
 				$discount_id = wp_cache_get( $value, 'WPInv_Discount_Codes' );
 				$args		 = array( 'meta_key' => '_wpi_discount_code', 'meta_value' => $value );
 				break;
 			case 'name':
 				$discount_id = 0;
-				$args		 = array( 'name' => $value );
+				$args		 = array( 'name' => trim( $value ) );
 				break;
 			default:
-				return false;
+				$args		 = apply_filters( "wpinv_discount_get_data_by_{$field}_args", null, $value );
+				if ( ! is_array( $args ) ) {
+					return apply_filters( "wpinv_discount_get_data_by_$field", false, $value );
+				}
+
 		}
 
 		// Check if there is a cached value.
@@ -228,7 +227,7 @@ class WPInv_Discount {
 	 * Sanitizes discount data
 	 *
 	 * @static
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 *
 	 * @return array the sanitized data
@@ -260,12 +259,12 @@ class WPInv_Discount {
 		
 				
 		// Arrays only please.
-		if (! is_array( $data ) ) {
+		if ( ! is_array( $data ) ) {
             return $return;
         }
 
 		// If an id is provided, ensure it is a valid discount.
-        if (! empty( $data['ID'] ) && is_numeric( $data['ID'] ) && 'wpi_discount' !== get_post_type( $data['ID'] ) ) {
+        if ( ! empty( $data['ID'] ) && ( ! is_numeric( $data['ID'] ) || 'wpi_discount' !== get_post_type( $data['ID'] ) ) ) {
             return $return;
 		}
 
@@ -302,7 +301,7 @@ class WPInv_Discount {
 		}
 
 		// Formart items.
-		foreach( wpinv_parse_list( 'excluded_items items') as $prop ) {
+		foreach( array( 'excluded_items', 'items' ) as $prop ) {
 
 			if( ! empty( $return[$prop] ) ) {
 				// Ensure that the property is an array of non-empty integers.
@@ -313,31 +312,44 @@ class WPInv_Discount {
 
 		}
 		
-		return apply_filters( 'sanitize_discount_data', $return, $data );
+		return apply_filters( 'wpinv_sanitize_discount_data', $return, $data );
 	}
 	
 	/**
 	 * Magic method for checking the existence of a certain custom field.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 *
 	 * @return bool Whether the given discount field is set.
 	 */
 	public function __isset( $key ){
-		return isset( $this->data[$key] );
+		return isset( $this->data[$key] ) || method_exists( $this, "get_$key");
 	}
 	
 	/**
 	 * Magic method for accessing discount properties.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 *
 	 * @param string $key Discount data to retrieve
 	 * @return mixed Value of the given discount property (if set).
 	 */
 	public function __get( $key ) {
+		return $this->get( $key );
+	}
+
+	/**
+	 * Magic method for accessing discount properties.
+	 *
+	 * @since 1.0.15
+	 * @access public
+	 *
+	 * @param string $key Discount data to retrieve
+	 * @return mixed Value of the given discount property (if set).
+	 */
+	public function get( $key ) {
 		
 		if ( $key == 'id' ) {
 			$key = 'ID';
@@ -351,6 +363,17 @@ class WPInv_Discount {
 			$value = null;
 		}
 		
+		/**
+		 * Filters a discount's property value.
+		 * 
+		 * The dynamic part ($key) can be any property name e.g items, code, type etc.
+		 * 
+		 * @param mixed          $value    The property's value.
+		 * @param int            $ID       The discount's ID.
+		 * @param WPInv_Discount $discount The discount object.
+		 * @param string         $code     The discount's discount code.
+		 * @param array          $data     The discount's data array.
+		 */
 		return apply_filters( "wpinv_get_discount_{$key}", $value, $this->ID, $this, $this->data['code'], $this->data );
 
 	}
@@ -360,7 +383,7 @@ class WPInv_Discount {
 	 *
 	 * This method does not update custom fields in the database.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 *
 	 */
@@ -374,15 +397,33 @@ class WPInv_Discount {
 			
 		}
 		
+		/**
+		 * Filters a discount's property value before it is saved.
+		 * 
+		 * 
+		 * 
+		 * The dynamic part ($key) can be any property name e.g items, code, type etc.
+		 * 
+		 * @param mixed          $value    The property's value.
+		 * @param int            $ID       The discount's ID.
+		 * @param WPInv_Discount $discount The discount object.
+		 * @param string         $code     The discount's discount code.
+		 * @param array          $data     The discount's data array.
+		 */
 		$value = apply_filters( "wpinv_set_discount_{$key}", $value, $this->ID, $this, $this->code, $this->data );
-		$this->data[$key] = $value;
+
+		if( method_exists( $this, "set_$key") ) {
+			call_user_func( array( $this, "set_$key" ), $value );
+		} else {
+			$this->data[$key] = $value;
+		}
 		
 	}
 	
 	/**
 	 * Saves (or updates) a discount to the database
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 * @return bool
 	 *
@@ -392,7 +433,7 @@ class WPInv_Discount {
 		$data = self::sanitize_discount_data( $this->data );
 
 		// Should we create a new post?
-		if(! $data[ 'ID' ] ) {
+		if( ! $data[ 'ID' ] ) {
 
 			$id = wp_insert_post( array(
 				'post_status'           => $data['status'],
@@ -409,7 +450,7 @@ class WPInv_Discount {
 			$this->data['ID'] = $data[ 'ID' ];
 
 		} else {
-			$this->update_status( $data['post_status'] );
+			$this->update_status( $data['status'] );
 		}
 
 		$meta = apply_filters( 'wpinv_update_discount', $data, $this->ID, $this );
@@ -417,23 +458,40 @@ class WPInv_Discount {
 		do_action( 'wpinv_pre_update_discount', $meta, $this->ID, $this );
 
 		foreach( wpinv_parse_list( 'ID date_created date_modified status description type_name' ) as $prop ) {
-			unset( $meta[$prop] );
+			if ( isset( $meta[$prop] ) ) {
+				unset( $meta[$prop] );
+			}
 		}
 
-		if( empty( $meta['uses'] ) ) {
+		if( isset( $meta['uses'] ) && empty( $meta['uses'] ) ) {
 			unset( $meta['uses'] );
 		}
 
-		// Save the metadata
+		// Save the metadata.
 		foreach( $meta as $key => $value ) {
 			update_post_meta( $this->ID, "_wpi_discount_$key", $value );
 		}
-		
+
+		$this->refresh();
+
+		do_action( 'wpinv_post_update_discount', $meta, $this->ID );
+
+		return true;		
+	}
+
+	/**
+	 * Refreshes the discount data.
+	 *
+	 * @since 1.0.15
+	 * @access public
+	 * @return bool
+	 *
+	 */
+	public function refresh(){
+
 		// Empty the cache for this discount.
 		wp_cache_delete( $this->ID, 'WPInv_Discounts' );
-		wp_cache_delete( $data['code'], 'WPInv_Discount_Codes' );
-
-		do_action( 'wpinv_post_update_discount', $meta, $this->ID, $this );
+		wp_cache_delete( $this->get( 'code' ), 'WPInv_Discount_Codes' );
 
 		$data = self::get_data_by( 'id', $this->ID );
 		if( is_array( $data ) ) {
@@ -442,13 +500,12 @@ class WPInv_Discount {
 			$this->init( array() );
 		}
 
-		return true;		
 	}
 
 	/**
 	 * Saves (or updates) a discount to the database
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @access public
 	 * @return bool
 	 *
@@ -456,14 +513,13 @@ class WPInv_Discount {
 	public function update_status( $status = 'publish' ){
 
 
-		if( $this->exists() && $this->old_status != $status ) {
+		if ( $this->exists() && $this->old_status != $status ) {
 
 			do_action( 'wpinv_pre_update_discount_status', $this->ID, $this->old_status, $status );
         	$updated = wp_update_post( array( 'ID' => $this->ID, 'post_status' => $status ) );
 			do_action( 'wpinv_post_update_discount_status', $this->ID, $this->old_status, $status );
 
-			wp_cache_delete( $this->ID, 'WPInv_Discounts' );
-			wp_cache_delete( $this->code, 'WPInv_Discount_Codes' );
+			$this->refresh();
 
 			return $updated !== 0;
 			
@@ -476,7 +532,7 @@ class WPInv_Discount {
 	/**
 	 * Checks whether a discount exists in the database or not
 	 * 
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 */
 	public function exists(){
 		return ! empty( $this->ID );
@@ -489,7 +545,7 @@ class WPInv_Discount {
 	 * 
 	 * 
 	 * @param  string $type the discount type to check against
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function is_type( $type ) {
@@ -499,7 +555,7 @@ class WPInv_Discount {
 	/**
 	 * Checks whether the discount is published or not
 	 * 
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function is_active() {
@@ -509,7 +565,7 @@ class WPInv_Discount {
 	/**
 	 * Checks whether the discount is has exided the usage limit or not
 	 * 
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function has_exceeded_limit() {
@@ -524,7 +580,7 @@ class WPInv_Discount {
 	/**
 	 * Checks if the discount is expired
 	 * 
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function is_expired() {
@@ -535,7 +591,7 @@ class WPInv_Discount {
 	/**
 	 * Checks the discount start date.
 	 * 
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function has_started() {
@@ -546,13 +602,13 @@ class WPInv_Discount {
 	/**
 	 * Check if a discount is valid for a given item id.
 	 *
-	 * @param  int|array  $item_ids
-	 * @since 1.0.14
+	 * @param  int|int[]  $item_ids
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function is_valid_for_items( $item_ids ) {
 		 
-		$item_ids = wpinv_parse_list( $item_ids );
+		$item_ids = array_map( 'intval',  wpinv_parse_list( $item_ids ) );
 		$included = array_intersect( $item_ids, $this->items );
 		$excluded = array_intersect( $item_ids, $this->excluded_items );
 
@@ -570,31 +626,18 @@ class WPInv_Discount {
 	 * Check if a discount is valid for the given amount
 	 *
 	 * @param  float  $amount The amount to check against
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function is_valid_for_amount( $amount ) {
-
-		$amount = floatval( $amount );
-
-		// check if it meets the minimum amount valid.
-		if( $this->min_total > 0 && $amount < $this->min_total ) {
-			return false;
-		}
-
-		// check if it meets the maximum amount valid.
-		if( $this->max_total > 0 && $amount > $this->max_total ) {
-			return false;
-		}
-
-		return true;
+		return $this->is_minimum_amount_met( $amount ) && $this->is_maximum_amount_met( $amount );
 	}
 
 	/**
 	 * Checks if the minimum amount is met
 	 *
 	 * @param  float  $amount The amount to check against
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function is_minimum_amount_met( $amount ) {
@@ -607,7 +650,7 @@ class WPInv_Discount {
 	 * Checks if the maximum amount is met
 	 *
 	 * @param  float  $amount The amount to check against
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function is_maximum_amount_met( $amount ) {
@@ -620,7 +663,7 @@ class WPInv_Discount {
 	 * Check if a discount is valid for the given user
 	 *
 	 * @param  int|string  $user
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function is_valid_for_user( $user ) {
@@ -641,7 +684,7 @@ class WPInv_Discount {
             $user_id = absint( $user );
 		}
 
-		if( empty( $user_id ) ) {
+		if ( empty( $user_id ) ) {
 			return true;
 		}
 		
@@ -652,7 +695,7 @@ class WPInv_Discount {
 		foreach ( $payments as $payment ) {
 
 			// Don't count discount used for current invoice checkout.
-			if ( !empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
+			if ( ! empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
 				continue;
 			}
 			
@@ -677,20 +720,20 @@ class WPInv_Discount {
 	/**
 	 * Deletes the discount from the database
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return boolean
 	 */
 	public function remove() {
 
-		if( empty( $this->ID ) ) {
+		if ( empty( $this->ID ) ) {
 			return true;
 		}
 
-		do_action( 'wpinv_pre_delete_discount', $this->ID );
+		do_action( 'wpinv_pre_delete_discount', $this->ID, $this->data );
 		wp_cache_delete( $this->ID, 'WPInv_Discounts' );
     	wp_delete_post( $this->ID, true );
 		wp_cache_delete( $this->code, 'WPInv_Discount_Codes' );
-    	do_action( 'wpinv_post_delete_discount', $this->ID );
+    	do_action( 'wpinv_post_delete_discount', $this->ID, $this->data );
 
 		$this->ID = null;
 		$this->data['id'] = null;
@@ -700,7 +743,7 @@ class WPInv_Discount {
 	/**
 	 * Increases a discount's usage.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @param int $by The number of usages to increas by.
 	 * @return int
 	 */
@@ -710,6 +753,7 @@ class WPInv_Discount {
 
 		if( $this->uses  < 0 ) {
 			$this->uses = 0;
+			update_post_meta( $this->ID, "_wpi_discount_uses", 0 );
 		}
 
 		$this->save();
@@ -726,13 +770,13 @@ class WPInv_Discount {
 	/**
 	 * Retrieves discount data
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return array
 	 */
 	public function get_data() {
 		$return = array();
 		foreach( array_keys( $this->data ) as $key ) {
-			$return[ $key ] = $this->$key;
+			$return[ $key ] = $this->get( $key );
 		}
 		return $return;
 	}
@@ -740,7 +784,7 @@ class WPInv_Discount {
 	/**
 	 * Retrieves discount data as json
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return string|false
 	 */
 	public function get_data_as_json() {
@@ -750,7 +794,7 @@ class WPInv_Discount {
 	/**
 	 * Checks if a discount can only be used once per user.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function get_is_single_use() {
@@ -760,7 +804,7 @@ class WPInv_Discount {
 	/**
 	 * Checks if a discount is recurring.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return bool
 	 */
 	public function get_is_recurring() {
@@ -770,7 +814,7 @@ class WPInv_Discount {
 	/**
 	 * Returns a discount's included items.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return array
 	 */
 	public function get_items() {
@@ -780,7 +824,7 @@ class WPInv_Discount {
 	/**
 	 * Returns a discount's discounted amount.
 	 *
-	 * @since 1.0.14
+	 * @since 1.0.15
 	 * @return float
 	 */
 	public function get_discounted_amount( $amount ) {
