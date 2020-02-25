@@ -127,6 +127,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.15 =
+* Send email notifications for successful renewals - ADDED
+
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - Added
 * Default buy now button text - ADDED
