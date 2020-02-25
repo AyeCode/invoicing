@@ -128,11 +128,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 1.0.15 =
-<<<<<<< HEAD
 * Send email notifications for successful renewals - ADDED
-=======
 * Remove invoice items (or reduce the number) - Added
->>>>>>> f9a016a10f2523a9eed52f7e43c6774a5444c70b
 
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - Added
