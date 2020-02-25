@@ -47,6 +47,10 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     if ( empty( $invoice_data['status'] ) ) {
         $invoice_data['status'] = 'wpi-pending';
     }
+
+    if ( empty( $invoice_data['post_type'] ) ) {
+        $invoice_data['post_type'] = 'wpi-invoice';
+    }
     
     if ( empty( $invoice_data['ip'] ) ) {
         $invoice_data['ip'] = wpinv_get_ip();
@@ -57,6 +61,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         'invoice_id'    => (int)$invoice_data['invoice_id'],
         'user_id'       => (int)$invoice_data['user_id'],
         'status'        => $invoice_data['status'],
+        'post_type'     => $invoice_data['post_type'],
     );
 
     $invoice = wpinv_create_invoice( $default_args, $invoice_data, true );
@@ -218,6 +223,15 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         $invoice->add_note( $invoice_data['user_note'], true );
     }
     
+    if ( $invoice->is_quote() ) {
+
+        if ( isset( $invoice_data['valid_until'] ) ) {
+            update_post_meta( $invoice->ID, 'wpinv_quote_valid_until', $invoice_data['valid_until'] );
+        }
+        return $invoice;
+
+    }
+
     do_action( 'wpinv_insert_invoice', $invoice->ID, $invoice_data );
 
     if ( ! empty( $invoice->ID ) ) {
@@ -280,7 +294,7 @@ function wpinv_update_invoice( $invoice_data = array(), $wp_error = false ) {
         return 0;
     }
 
-    if ( !$invoice->has_status( array( 'wpi-pending' ) ) ) {
+    if ( ! $invoice->has_status( array( 'wpi-pending' ) ) && ! $invoice->is_quote()  ) {
         if ( $wp_error ) {
             return new WP_Error( 'invalid_invoice_status', __( 'Only invoice with pending payment is allowed to update.', 'invoicing' ) );
         }
@@ -447,6 +461,15 @@ function wpinv_update_invoice( $invoice_data = array(), $wp_error = false ) {
     // Add user note
     if ( !empty( $invoice_data['user_note'] ) ) {
         $invoice->add_note( $invoice_data['user_note'], true );
+    }
+
+    if ( $invoice->is_quote() ) {
+
+        if ( isset( $invoice_data['valid_until'] ) ) {
+            update_post_meta( $invoice->ID, 'wpinv_quote_valid_until', $invoice_data['valid_until'] );
+        }
+        return $invoice;
+
     }
 
     global $wpi_userID, $wpinv_ip_address_country;

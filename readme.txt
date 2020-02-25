@@ -130,6 +130,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.15 =
 * Send email notifications for successful renewals - ADDED
 * Remove invoice items (or reduce the number) - Added
+* `WPInv_Invoice->setup_status_nicename()` now supports quotes - CHANGED
+* Created `WPInv_Invoice->is_quote()` method - ADDED
+* `wpinv_create_invoice()` and `wpinv_insert_invoice()` functions now support creating quotes - CHANGED
+* Invoices api now supports querying items by meta fields and dates - ADDED
 
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - Added

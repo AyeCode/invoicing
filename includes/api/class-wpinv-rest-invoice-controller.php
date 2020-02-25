@@ -65,7 +65,11 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
         $post_type = get_post_type_object( $this->post_type );
 
 		if ( 'edit' === $request['context'] && ! current_user_can( $post_type->cap->edit_posts ) ) {
-			return new WP_Error( 'rest_forbidden_context', __( 'Sorry, you are not allowed to edit invoices.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'rest_forbidden_context', __( 'Sorry, you are not allowed to edit items.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'rest_forbidden', __( 'Sorry, you must be logged in to view items.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		// Read checks will be evaluated on a per invoice basis
@@ -84,54 +88,30 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function get_items( $request ) {
 		
-		// Retrieve the list of registered invoice query parameters.
-        $registered = $this->get_collection_params();
-        
-        $args       = array();
-
-        foreach( array_keys( $registered ) as $key ) {
-
-            if( isset( $request[ $key] ) ) {
-                $args[ $key ] = $request[ $key];
-            }
-
-        }
-
-		/**
-		 * Filters the wpinv_get_invoices arguments for invoices requests.
-		 *
-		 *
-		 * @since 1.0.13
-		 *
-		 *
-		 * @param array           $args    Key value array of query var to query value.
-		 * @param WP_REST_Request $request The request used.
-		 */
-        $args       = apply_filters( "wpinv_rest_get_invoices_arguments", $args, $request, $this );
+		// Retrieve request query parameters.
+		$args          = $this->get_request_collection_params( $request );
 		
-		// Special args
-		$args[ 'return' ]   = 'objects';
-		$args[ 'paginate' ] = true;
-
-        // Run the query.
-		$query = wpinv_get_invoices( $args );
+		// WP_Query Args.
+		$wp_query_args = $this->get_collection_wp_query_params( $args, $request );
 		
+		// Get invoice ids...
+		$query         = new WP_Query( $wp_query_args );
+
+		// ... and map them into invoice objects.
+		$_invoices     = array_map( array( $this, 'get_post' ), $query->posts );
+
 		// Prepare the retrieved invoices
-		$invoices = array();
-		foreach( $query->invoices as $invoice ) {
+		$invoices      = array();
 
-			if ( ! $this->check_read_permission( $invoice ) ) {
-				continue;
+		foreach( $_invoices as $invoice ) {
+			if ( $this->check_read_permission( $invoice ) ) {
+				$invoices[] = $this->prepare_response_for_collection( $this->prepare_item_for_response( $invoice, $request ) );
 			}
-
-			$data       = $this->prepare_item_for_response( $invoice, $request );
-			$invoices[] = $this->prepare_response_for_collection( $data );
-
 		}
 
 		// Prepare the response.
 		$response = rest_ensure_response( $invoices );
-		$response->header( 'X-WP-Total', (int) $query->total );
+		$response->header( 'X-WP-Total', (int) $query->found_posts );
 		$response->header( 'X-WP-TotalPages', (int) $query->max_num_pages );
 
 		/**
@@ -161,7 +141,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	 */
 	protected function get_post( $invoice_id ) {
 		
-		$error     = new WP_Error( 'rest_invoice_invalid_id', __( 'Invalid invoice ID.', 'invoicing' ), array( 'status' => 404 ) );
+		$error     = new WP_Error( 'rest_invoice_invalid_id', __( 'Invalid item ID.', 'invoicing' ), array( 'status' => 404 ) );
 
         // Ids start from 1
         if ( (int) $invoice_id <= 0 ) {
@@ -169,7 +149,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		}
 
 		$invoice = wpinv_get_invoice( (int) $invoice_id );
-		if ( empty( $invoice ) ) {
+		if ( empty( $invoice ) || $this->post_type !== $invoice->post_type ) {
 			return $error;
         }
 
@@ -266,15 +246,15 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	public function create_item_permissions_check( $request ) {
 	
 		if ( ! empty( $request['id'] ) ) {
-			return new WP_Error( 'rest_invoice_exists', __( 'Cannot create existing invoice.', 'invoicing' ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invoice_exists', __( 'Cannot create existing item.', 'invoicing' ), array( 'status' => 400 ) );
 		}
 
 		$post_type = get_post_type_object( $this->post_type );
 
-		if ( ! current_user_can( $post_type->cap->create_posts ) ) {
+		if ( ! current_user_can( $post_type->cap->create_posts ) && ! wpinv_current_user_can_manage_invoicing() ) {
 			return new WP_Error( 
-                'rest_cannot_create', 
-                __( 'Sorry, you are not allowed to create invoices as this user.', 'invoicing' ), 
+                'rest_cannot_create',
+                __( 'Sorry, you are not allowed to create items as this user.', 'invoicing' ), 
                 array( 
                     'status' => rest_authorization_required_code(),
                 )
@@ -295,7 +275,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	public function create_item( $request ) {
 
 		if ( ! empty( $request['id'] ) ) {
-			return new WP_Error( 'rest_invoice_exists', __( 'Cannot create existing invoice.', 'invoicing' ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invoice_exists', __( 'Cannot create existing item.', 'invoicing' ), array( 'status' => 400 ) );
 		}
 
 		$request->set_param( 'context', 'edit' );
@@ -308,6 +288,8 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		}
 
 		// Try creating the invoice
+		$invoice_data['post_type']    = $this->post_type;
+		$invoice_data['private_note'] = __( 'Created via API.', 'invoicing' );
         $invoice = wpinv_insert_invoice( $invoice_data, true );
 
 		if ( is_wp_error( $invoice ) ) {
@@ -364,7 +346,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		if ( ! current_user_can(  $post_type->cap->edit_post, $invoice->ID  ) ) {
 			return new WP_Error( 
                 'rest_cannot_edit', 
-                __( 'Sorry, you are not allowed to update this invoice.', 'invoicing' ), 
+                __( 'Sorry, you are not allowed to update this item.', 'invoicing' ), 
                 array( 
                     'status' => rest_authorization_required_code(),
                 )
@@ -456,16 +438,16 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		// Ensure the current user can delete invoices
 		if ( wpinv_current_user_can_manage_invoicing() ||  current_user_can( 'delete_invoices', $request['id'] ) ) {
-			return new WP_Error( 
-                'rest_cannot_delete', 
-                __( 'Sorry, you are not allowed to delete this invoice.', 'invoicing' ), 
-                array( 
-                    'status' => rest_authorization_required_code(),
-                )
-            );
+			return true;
 		}
 
-		return true;
+		return new WP_Error( 
+			'rest_cannot_delete', 
+			__( 'Sorry, you are not allowed to delete this item.', 'invoicing' ), 
+			array( 
+				'status' => rest_authorization_required_code(),
+			)
+		);
 	}
 
 	/**
@@ -500,7 +482,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		// Abort early if we can't delete the invoice.
 		if ( ! $deleted ) {
-			return new WP_Error( 'rest_cannot_delete', __( 'The invoice cannot be deleted.', 'invoicing' ), array( 'status' => 500 ) );
+			return new WP_Error( 'rest_cannot_delete', __( 'The item cannot be deleted.', 'invoicing' ), array( 'status' => 500 ) );
 		}
 
 		/**
@@ -530,13 +512,13 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
         
         $query_params               = array(
 
-            // Invoice status.
+            // item status.
             'status'                => array(
-                'default'           => 'publish',
-                'description'       => __( 'Limit result set to invoices assigned one or more statuses.', 'invoicing' ),
+                'default'           => $this->get_post_statuses(),
+                'description'       => __( 'Limit result set to items assigned one or more statuses.', 'invoicing' ),
                 'type'              => 'array',
                 'items'             => array(
-                    'enum'          => array_keys( wpinv_get_invoice_statuses( true, true ) ),
+                    'enum'          => $this->get_post_statuses(),
                     'type'          => 'string',
                 ),
                 'sanitize_callback' => array( $this, 'sanitize_post_statuses' ),
@@ -544,13 +526,64 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
             // User.
             'user'                  => array(
-				'description'       => __( 'Limit result set to invoices for a specif user.', 'invoicing' ),
+				'description'       => __( 'Limit result set to items for a specif user. Accepts a user ID, or comma-separated list of IDs', 'invoicing' ),
+				'type'              => 'string',
+			),
+
+			// Exclude certain users
+            'exclude_users'  	    => array(
+                'description' 		=> __( 'Exclude items from specific users.', 'invoicing' ),
+                'type'        		=> 'array',
+                'items'       		=> array(
+                    'type' => 'integer',
+                ),
+                'default'     		=> array(),
+            ),
+			
+			// Items before.
+            'before_date'           => array(
+				'description'       => __( 'Limit result set to items created before a specific date. Accepts strtotime()-compatible string.', 'invoicing' ),
+				'type'              => 'string',
+			),
+
+            'meta_key'           => array(
+				'description'       => __( 'Filter items by custom field key.', 'invoicing' ),
+				'type'              => 'string',
+			),
+
+            'meta_compare_key'           => array(
+				'description'       => __( 'Comparison operator to test the `meta_key`.', 'invoicing' ),
+				'type'              => 'string',
+				'default'              => '=',
+				'enum'        		=> array_map( 'trim', explode( ',', '=, !=, >, >=, <, <=, LIKE NOT, LIKE, IN, NOT IN, BETWEEN, NOT BETWEEN, NOT EXISTS, REGEXP, NOT REGEXP, RLIKE' ) ),
+			),
+
+            'meta_value'           => array(
+				'description'       => __( 'Filter items by custom field value.', 'invoicing' ),
+				'type'              => 'string',
+			),
+
+            'meta_compare'           => array(
+				'description'       => __( 'Comparison operator to test the `meta_value`.', 'invoicing' ),
+				'type'              => 'string',
+				'default'              => '=',
+				'enum'        		=> array_map( 'trim', explode( ',', '=, !=, >, >=, <, <=, LIKE NOT, LIKE, IN, NOT IN, BETWEEN, NOT BETWEEN, NOT EXISTS, REGEXP, NOT REGEXP, RLIKE' ) ),
+			),
+
+			'meta_value_num'           => array(
+				'description'       => __( 'Filter items by a numeric custom field value.', 'invoicing' ),
 				'type'              => 'integer',
+			),
+
+			// items after.
+            'after_date'            => array(
+				'description'       => __( 'Limit result set to items created after a specific date. Accepts strtotime()-compatible string.', 'invoicing' ),
+				'type'              => 'string',
             ),
             
             // Number of results per page
             'limit'                 => array(
-				'description'       => __( 'Number of invoices to fetch.', 'invoicing' ),
+				'description'       => __( 'Number of items to fetch.', 'invoicing' ),
 				'type'              => 'integer',
 				'default'           => (int) get_option( 'posts_per_page' ),
             ),
@@ -562,7 +595,17 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				'default'           => 1,
             ),
 
-            // Exclude certain invoices
+            // limit to certain items
+            'include'  => array(
+                'description' => __( 'Limit result set to specific IDs.', 'invoicing' ),
+                'type'        => 'array',
+                'items'       => array(
+                    'type' => 'integer',
+                ),
+                'default'     => array(),
+			),
+			
+			// Exclude certain items
             'exclude'  => array(
                 'description' => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
                 'type'        => 'array',
@@ -572,23 +615,24 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
                 'default'     => array(),
             ),
 
-            // Order invoices by
-            'orderby'  => array(
-                'description' => __( 'Sort invoices by object attribute.', 'invoicing' ),
+            // Order items by
+            'orderby'  		  => array(
+                'description' => __( 'Sort retrieved items by parameter.', 'invoicing' ),
                 'type'        => 'string',
                 'default'     => 'date',
                 'enum'        => array(
-                    'author',
                     'date',
                     'id',
                     'modified',
-                    'title'
+					'title',
+					'meta_value',
+					'meta_value_num'
                 ),
             ),
 
             // How to order
             'order'    => array(
-                'description' => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
+                'description' => __( 'Designates ascending or descending order of ítems.', 'invoicing' ),
                 'type'        => 'string',
                 'default'     => 'DESC',
                 'enum'        => array( 'ASC', 'DESC' ),
@@ -604,6 +648,127 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		 * @param array        $query_params JSON Schema-formatted collection parameters.
 		 */
 		return apply_filters( "wpinv_rest_invoices_collection_params", $query_params );
+	}
+	
+	/**
+	 * Retrieves the request query params for the invoices collection.
+	 *
+	 * @since 1.0.15
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return array Request collection parameters.
+	 */
+	public function get_request_collection_params( $request ) {
+		
+		// Retrieve the list of registered invoice query parameters.
+		$registered = $this->get_collection_params();
+
+		// Default args
+		$args       = array(
+            'status'                => $this->get_post_statuses(),
+            'user'                  => null,
+            'exclude_users'  	    => array(),
+			'before_date'           => null,
+            'meta_key'              => null,
+            'meta_compare_key'      => '=',
+            'meta_value'            => null,
+            'meta_compare'          => '=',
+			'meta_value_num'        => null,
+            'after_date'            => null,
+            'limit'                 => (int) get_option( 'posts_per_page' ),
+			'page'     				=> 1,
+			'include'				=> array(),
+            'exclude'  				=> array(),
+            'orderby'  		  		=> 'date',
+            'order'    				=> 'DESC',
+		);
+
+		// Add any params from the requests.
+		foreach ( array_keys( $registered ) as $key ) {
+            if ( isset( $request[ $key] ) ) {
+                $args[ $key ] = $request[ $key];
+            }
+        }
+		
+		/**
+		 * Filters the requests collection parameters for the invoices controller.
+		 *
+		 *
+		 * @since 1.0.15
+		 *
+		 * @param array           $args    Request query args.
+		 * @param WP_REST_Request $request Full details about the request.
+		 */
+		return apply_filters( "wpinv_rest_invoices_collection_request_params", $args, $request );
+	}
+	
+	/**
+	 * Retrieves the WP_Query params for the invoices collection.
+	 *
+	 * @since 1.0.15
+	 * @param array           $args Request args.
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return array WP_Query parameters.
+	 */
+	public function get_collection_wp_query_params( $args, $request ) {
+		
+		// Prepare the parameters.
+		$wp_query_args = array(
+			'post_type'        => $this->post_type,
+			'post_status'      => $args['status'],
+			'author'           => $args['user'],
+			'author__not_in'   => $args['exclude_users'],
+			'posts_per_page'   => $args['limit'],
+			'paged'            => $args['page'],
+			'meta_key'         => $args['meta_key'],
+			'meta_compare_key' => $args['meta_compare_key'],
+			'meta_value'       => $args['meta_value'],
+			'meta_compare'     => $args['meta_compare'],
+			'meta_value_num'   => $args['meta_value_num'],
+			'post__in'         => $args['include'],
+			'post__in'         => $args['exclude'],
+			'date_query'       => array( array() ),
+			'fields'           => 'ids',
+			'orderby'          => $args['orderby'],
+			'order'            => $args['order'],
+		);
+
+		// Only admins can view other user's invoices.
+		if ( ! wpinv_current_user_can_manage_invoicing() ) {
+			$wp_query_args['author'] = get_current_user_id();
+		}
+
+		// No date specific params provided.
+		if ( empty( $args['before_date'] ) && empty( $args['after_date'] ) ) {
+			unset( $wp_query_args['date_query'] );
+		}
+
+		if ( ! empty( $args['before_date'] ) ) {
+			$wp_query_args['date_query'][0]['before'] = $args['before_date'];
+		}
+
+		if ( ! empty( $args['after_date'] ) ) {
+			$wp_query_args['date_query'][0]['after'] = $args['after_date'];
+		}
+
+		// Remove empty variables.
+		$wp_query_args = array_filter( $wp_query_args );
+
+		// This can be zero.
+		if ( ! is_null( $args['meta_value_num'] ) ) {
+			$wp_query_args['meta_value_num'] = $args['meta_value_num'];
+		}
+		
+		/**
+		 * Filters the invoices collection WP_Query parameters for the invoices controller.
+		 *
+		 *
+		 * @since 1.0.15
+		 *
+		 * @param array           $args          Request args.
+		 * @param array           $wp_query_args Generated WP_Query args args.
+		 * @param WP_REST_Request $request       Full details about the request.
+		 */
+		return apply_filters( "wpinv_rest_invoices_collection_wp_query_params", $wp_query_args, $args, $request );
     }
     
     /**
@@ -655,7 +820,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 		// Invoice status.
 		if ( ! empty( $schema['properties']['status'] ) && isset( $request['status'] ) ) {
 
-			if ( in_array( $request['status'], array_keys( wpinv_get_invoice_statuses( true, true ) ), true ) ) {
+			if ( in_array( $request['status'], $this->get_post_statuses(), true ) ) {
 				$prepared_invoice->status = $request['status'];
 			}
 
@@ -721,6 +886,16 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 
 		}
 
+		if ( ! empty( $schema['properties']['valid_until'] ) && isset( $request['valid_until'] ) ) {
+
+			if ( ! empty( $request['valid_until'] ) ) {
+				$prepared_invoice->valid_until = gmdate( 'Y-m-d', strtotime( $request['valid_until'] ) );
+			} else {
+				$prepared_invoice->valid_until = '';
+			}
+
+		}
+
 		$invoice_data = (array) wp_unslash( $prepared_invoice );
 
 		/**
@@ -778,6 +953,11 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				$data[$property] = $invoice->get( $property );
 			}
 
+		}
+
+		// Valid until
+		if ( rest_is_field_included( 'valid_until', $fields ) && $this->post_type === 'wpi_quote' ) {
+			$data['valid_until'] = get_post_meta( $invoice->ID, 'wpinv_quote_valid_until', true );
 		}
 
 		// Cart details
@@ -1191,7 +1371,7 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 				'status'       	  => array(
 					'description' => __( 'A named status for the invoice.', 'invoicing' ),
 					'type'        => 'string',
-					'enum'        => array_keys( wpinv_get_invoice_statuses( true, true ) ),
+					'enum'        => $this->get_post_statuses(),
 					'context'     => array( 'view', 'edit' ),
 					'default'	  => 'wpi-pending',
 				),
@@ -1373,11 +1553,18 @@ class WPInv_REST_Invoice_Controller extends WP_REST_Posts_Controller {
 	 * @return array|WP_Error A list of valid statuses, otherwise WP_Error object.
 	 */
 	public function sanitize_post_statuses( $statuses, $request, $parameter ) {
+		return array_intersect( wp_parse_slug_list( $statuses ), $this->get_post_statuses() );
+	}
 
-		$statuses 	  = wp_parse_slug_list( $statuses );
-		$valid_statuses = array_keys( wpinv_get_invoice_statuses( true, true ) );
-		return array_intersect( $statuses, $valid_statuses );
-		
+	/**
+	 * Retrieves a valid list of post statuses.
+	 *
+	 * @since 1.0.15
+	 *
+	 * @return array A list of registered item statuses.
+	 */
+	public function get_post_statuses() {
+		return array_keys( wpinv_get_invoice_statuses( true, true ) );
 	}
     
 }
