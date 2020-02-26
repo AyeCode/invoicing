@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * `wpinv_create_invoice()` and `wpinv_insert_invoice()` functions now support creating quotes - CHANGED
 * Invoices api now supports querying items by meta fields and dates - ADDED
 * Return canceled PayPal transactions to the checkout page instead of the payment failed page - CHANGED
+* Hide invoice counts on public facing UWP profile pages - ADDED
 
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - ADDED

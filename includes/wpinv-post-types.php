@@ -301,3 +301,18 @@ function wpinv_register_post_status() {
     ) );
 }
 add_action( 'init', 'wpinv_register_post_status', 10 );
+
+/**
+ * Hides invoice counts on public facing user profile pages.
+ * 
+ * @link https://wpinvoicing.com/support/topic/number-of-invoices-show-on-a-public-profile/
+ */
+function wpinv_hide_uwp_user_invoices_count( $counts ){
+
+    if ( apply_filters( 'wpinv_hide_uwp_user_invoices_count', true ) && isset( $counts['wpi_invoice'] ) ) {
+	    unset( $counts['wpi_invoice'] );
+    }
+
+    return $counts;
+}
+add_filter('uwp_get_user_post_counts', 'wpinv_hide_uwp_user_invoices_count' );
