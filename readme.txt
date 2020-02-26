@@ -1,7 +1,7 @@
 === Invoicing - Invoice & Payments Plugin ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://www.ko-fi.com/stiofan
-Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
+Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.3
 Stable tag: 1.0.13
