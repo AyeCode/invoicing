@@ -524,6 +524,10 @@ function wpinv_is_discount_expired( $discount = array() ) {
 
     if ( $discount->is_expired() ) {
         $discount->update_status( 'pending' );
+
+        if( empty( $started ) ) {
+            wpinv_set_error( 'wpinv-discount-error', __( 'This discount has expired.', 'invoicing' ) );
+        }
         return true;
     }
 
@@ -555,7 +559,7 @@ function wpinv_is_discount_started( $discount = array() ) {
  */
 function wpinv_check_discount_dates( $discount ) {
     $discount = wpinv_get_discount_obj( $discount );
-    $return   = wpinv_is_discount_started( $discount ) && wpinv_is_discount_expired( $discount );
+    $return   = wpinv_is_discount_started( $discount ) && ! wpinv_is_discount_expired( $discount );
     return apply_filters( 'wpinv_check_discount_dates', $return, $discount->ID, $discount, $discount->code );
 }
 
@@ -736,7 +740,7 @@ function wpinv_is_discount_used( $discount = array(), $user = '', $code_id = arr
         wpinv_set_error( 'wpinv-discount-error', __( 'This discount has already been redeemed.', 'invoicing' ) );
     }
 
-    return $is_used();
+    return $is_used;
 }
 
 function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
@@ -890,9 +894,7 @@ function wpinv_unset_all_cart_discounts() {
 
 function wpinv_get_cart_discounts() {
     $session = wpinv_get_checkout_session();
-    
-    $discounts = !empty( $session['cart_discounts'] ) ? $session['cart_discounts'] : false;
-    return $discounts;
+    return empty( $session['cart_discounts'] ) ? false : $session['cart_discounts'];
 }
 
 function wpinv_cart_has_discounts( $items = array() ) {
@@ -984,7 +986,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $code_id = wpinv_get_discount_id_by_code( $discount );
 
             // Check discount exists
-            if( $code_id !== false ) {
+            if( $code_id === false ) {
                 continue;
             }
 
