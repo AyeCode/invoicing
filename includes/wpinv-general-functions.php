@@ -208,7 +208,8 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
         'user_note'     => null,
         'invoice_id'    => 0,
         'created_via'   => '',
-        'parent'        => 0
+        'parent'        => 0,
+        'post_type'     => 'wpi_invoice'
     );
 
     $args           = wp_parse_args( $args, $default_args );
@@ -216,11 +217,11 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
 
     if ( $args['invoice_id'] > 0 ) {
         $updating           = true;
-        $invoice_data['post_type']  = 'wpi_invoice';
+        $invoice_data['post_type']  = $args['post_type'];
         $invoice_data['ID']         = $args['invoice_id'];
     } else {
         $updating                       = false;
-        $invoice_data['post_type']      = 'wpi_invoice';
+        $invoice_data['post_type']      = $args['post_type'];
         $invoice_data['post_status']    = apply_filters( 'wpinv_default_invoice_status', 'wpi-pending' );
         $invoice_data['ping_status']    = 'closed';
         $invoice_data['post_author']    = !empty( $args['user_id'] ) ? $args['user_id'] : get_current_user_id();
@@ -233,7 +234,7 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
     }
 
     if ( $args['status'] ) {
-        if ( ! in_array( $args['status'], array_keys( wpinv_get_invoice_statuses() ) ) ) {
+        if ( ! in_array( $args['status'], array_keys( wpinv_get_invoice_statuses() ) ) && 'wpi_invoice' === $invoice_data['post_type'] ) {
             return new WP_Error( 'wpinv_invalid_invoice_status', wp_sprintf( __( 'Invalid invoice status: %s', 'invoicing' ), $args['status'] ) );
         }
         $invoice_data['post_status']    = $args['status'];
@@ -264,7 +265,10 @@ function wpinv_create_invoice( $args = array(), $data = array(), $wp_error = fal
         update_post_meta( $invoice_id, '_wpinv_created_via', sanitize_text_field( $args['created_via'] ) );
         
         // Add invoice note
-        $invoice->add_note( wp_sprintf( __( 'Invoice is created with status %s.', 'invoicing' ), wpinv_status_nicename( $invoice->status ) ) );
+        if ( ! $invoice->is_quote() ) {
+            $invoice->add_note( wp_sprintf( __( 'Invoice is created with status %s.', 'invoicing' ), wpinv_status_nicename( $invoice->status ) ) );
+        }
+        
     }
 
     update_post_meta( $invoice_id, '_wpinv_version', WPINV_VERSION );

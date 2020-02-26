@@ -61,7 +61,7 @@ function wpinv_process_paypal_payment( $purchase_data ) {
             'custom'        => $invoice->ID,
             'rm'            => '2',
             'return'        => $return_url,
-            'cancel_return' => wpinv_get_failed_transaction_uri( '?invoice-id=' . $invoice->ID ),
+            'cancel_return' => $invoice->get_checkout_payment_url(),
             'notify_url'    => $listener_url,
             'cbt'           => get_bloginfo( 'name' ),
             'bn'            => 'WPInvoicing_SP',

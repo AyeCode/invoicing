@@ -127,8 +127,17 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.15 =
+* Send email notifications for successful renewals - ADDED
+* Remove invoice items (or reduce the number) - Added
+* `WPInv_Invoice->setup_status_nicename()` now supports quotes - CHANGED
+* Created `WPInv_Invoice->is_quote()` method - ADDED
+* `wpinv_create_invoice()` and `wpinv_insert_invoice()` functions now support creating quotes - CHANGED
+* Invoices api now supports querying items by meta fields and dates - ADDED
+* Return canceled PayPal transactions to the checkout page instead of the payment failed page - CHANGED
+
 = 1.0.14 =
-* Support for group_description for privacy exporters (thanks @garretthyder) - Added
+* Support for group_description for privacy exporters (thanks @garretthyder) - ADDED
 * Default buy now button text - ADDED
 * Users with a manage_invoicing capability can view subscriptions - ADDED
 * Missing "Add New" button on item overview pages - FIXED

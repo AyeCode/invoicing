@@ -622,8 +622,8 @@ jQuery(function($) {
                 var qty = parseInt($('.qty', item).data('quantity'));
                 qty = qty > 0 ? qty : 1;
                 if (count === 1 && qty == 1) {
-                    alert(WPInv_Admin.OneItemMin);
-                    return false;
+                    //alert(WPInv_Admin.OneItemMin);
+                    //return false;
                 }
                 if (confirm(WPInv_Admin.DeleteInvoiceItem)) {
                     e.preventDefault();
