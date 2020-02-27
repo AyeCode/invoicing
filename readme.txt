@@ -1,7 +1,7 @@
 === Invoicing - Invoice & Payments Plugin ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
 Donate link: https://www.ko-fi.com/stiofan
-Tags:  invoice, invoicing, recurring payments, paypal, quote, VAT MOSS, HTML invoice, HTML quote, estimate, HTML estimate, billing, bills, bill clients, invoice clients, email invoice, invoice online, recurring invoice, recurring billing, invoice generator, invoice system, accounting, ecommerce, check out, shopping cart, stripe, 2check out, authorize.met, paypal pro, sagepay, payfast
+Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.3
 Stable tag: 1.0.14
@@ -135,6 +135,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * `wpinv_create_invoice()` and `wpinv_insert_invoice()` functions now support creating quotes - CHANGED
 * Invoices api now supports querying items by meta fields and dates - ADDED
 * Return canceled PayPal transactions to the checkout page instead of the payment failed page - CHANGED
+* Discount Object - ADDED
+* AyeCode Connect notice now shows on extensions pages - ADDED
 
 = 1.0.14 =
 * Support for group_description for privacy exporters (thanks @garretthyder) - ADDED

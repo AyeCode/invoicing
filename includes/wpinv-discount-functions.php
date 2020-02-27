@@ -205,75 +205,50 @@ function wpinv_get_discount( $discount_id = 0 ) {
     return $discount;
 }
 
-function wpinv_get_discount_by_code( $code = '' ) {
-    if( empty( $code ) || ! is_string( $code ) ) {
-        return false;
-    }
+/**
+ * Fetches a discount object.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @since 1.0.15
+ * @return WPInv_Discount
+ */
+function wpinv_get_discount_obj( $discount = 0 ) {
+    return new WPInv_Discount( $discount );
+}
 
+/**
+ * Fetch a discount from the db/cache using its discount code.
+ * 
+ * @param string $code The discount code.
+ * @return bool|WP_Post
+ */
+function wpinv_get_discount_by_code( $code = '' ) {
     return wpinv_get_discount_by( 'code', $code );
 }
 
+/**
+ * Fetch a discount from the db/cache using a given field.
+ * 
+ * @param string $field The field to query against: 'ID', 'discount_code', 'code', 'name'
+ * @param string|int $value The field value
+ * @return bool|WP_Post
+ */
 function wpinv_get_discount_by( $field = '', $value = '' ) {
-    if( empty( $field ) || empty( $value ) ) {
+    $data = WPInv_Discount::get_data_by( $field, $value );
+    if( empty( $data ) ) {
         return false;
     }
 
-    if( ! is_string( $field ) ) {
-        return false;
-    }
-
-    switch( strtolower( $field ) ) {
-
-        case 'code':
-            $meta_query     = array();
-            $meta_query[]   = array(
-                'key'     => '_wpi_discount_code',
-                'value'   => $value,
-                'compare' => '='
-            );
-            
-            $discount = wpinv_get_discounts( array(
-                'posts_per_page' => 1,
-                'post_status'    => 'any',
-                'meta_query'     => $meta_query,
-            ) );
-            
-            if( $discount ) {
-                $discount = $discount[0];
-            }
-
-            break;
-
-        case 'id':
-            $discount = wpinv_get_discount( $value );
-
-            break;
-
-        case 'name':
-            $discount = get_posts( array(
-                'post_type'      => 'wpi_discount',
-                'name'           => $value,
-                'posts_per_page' => 1,
-                'post_status'    => 'any'
-            ) );
-
-            if( $discount ) {
-                $discount = $discount[0];
-            }
-
-            break;
-
-        default:
-            return false;
-    }
-
-    if( ! empty( $discount ) ) {
-        return $discount;
-    }
-
-    return false;
+    return get_post( $data['ID'] );
 }
 
+/**
+ * Updates a discount in the database.
+ * 
+ * @param int $post_id The discount's ID.
+ * @param array $data The discount's properties.
+ * @return bool
+ */
 function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
     $meta = array(
         'code'              => isset( $data['code'] )             ? sanitize_text_field( $data['code'] )              : '',
@@ -340,36 +315,44 @@ function wpinv_store_discount( $post_id, $data, $post, $update = false ) {
     return $post_id;
 }
 
-function wpinv_remove_discount( $discount_id = 0 ) {
-    do_action( 'wpinv_pre_delete_discount', $discount_id );
+/**
+ * Delectes a discount from the database.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_remove_discount( $discount = 0 ) {
 
-    wp_delete_post( $discount_id, true );
-
-    do_action( 'wpinv_post_delete_discount', $discount_id );
-}
-
-function wpinv_update_discount_status( $code_id = 0, $new_status = 'publish' ) {
-    $discount = wpinv_get_discount(  $code_id );
-
-    if ( $discount ) {
-        do_action( 'wpinv_pre_update_discount_status', $code_id, $new_status, $discount->post_status );
-
-        wp_update_post( array( 'ID' => $code_id, 'post_status' => $new_status ) );
-
-        do_action( 'wpinv_post_update_discount_status', $code_id, $new_status, $discount->post_status );
-
-        return true;
+    $discount = wpinv_get_discount_obj( $discount );
+    if( ! $discount->exists() ) {
+        return false;
     }
 
-    return false;
+    $discount->remove();
+    return true;
 }
 
-function wpinv_discount_exists( $code_id ) {
-    if ( wpinv_get_discount(  $code_id ) ) {
-        return true;
-    }
+/**
+ * Updates a discount status.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param string $new_status
+ * @return bool
+ */
+function wpinv_update_discount_status( $discount = 0, $new_status = 'publish' ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->update_status( $new_status );
+}
 
-    return false;
+/**
+ * Checks if a discount exists.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_discount_exists( $discount ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->exists();
 }
 
 function wpinv_is_discount_active( $code_id = null ) {
@@ -411,46 +394,77 @@ function wpinv_get_discount_expiration( $code_id = null ) {
     return apply_filters( 'wpinv_get_discount_expiration', $expiration, $code_id );
 }
 
-function wpinv_get_discount_max_uses( $code_id = null ) {
-    $max_uses = get_post_meta( $code_id, '_wpi_discount_max_uses', true );
-
-    return (int) apply_filters( 'wpinv_get_discount_max_uses', $max_uses, $code_id );
+/**
+ * Returns the number of maximum number of times a discount can been used.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return int
+ */
+function wpinv_get_discount_max_uses( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return (int) $discount->max_uses;
 }
 
-function wpinv_get_discount_uses( $code_id = null ) {
-    $uses = get_post_meta( $code_id, '_wpi_discount_uses', true );
-
-    return (int) apply_filters( 'wpinv_get_discount_uses', $uses, $code_id );
+/**
+ * Returns the number of times a discount has been used.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return int
+ */
+function wpinv_get_discount_uses( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return (int) $discount->uses;
 }
 
-function wpinv_get_discount_min_total( $code_id = null ) {
-    $min_total = get_post_meta( $code_id, '_wpi_discount_min_total', true );
-
-    return (float) apply_filters( 'wpinv_get_discount_min_total', $min_total, $code_id );
+/**
+ * Returns the minimum invoice amount required to use a discount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return float
+ */
+function wpinv_get_discount_min_total( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return (float) $discount->min_total;
 }
 
-function wpinv_get_discount_max_total( $code_id = null ) {
-    $max_total = get_post_meta( $code_id, '_wpi_discount_max_total', true );
-
-    return (float) apply_filters( 'wpinv_get_discount_max_total', $max_total, $code_id );
+/**
+ * Returns the maximum invoice amount required to use a discount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return float
+ */
+function wpinv_get_discount_max_total( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return (float) $discount->max_total;
 }
 
-function wpinv_get_discount_amount( $code_id = null ) {
-    $amount = get_post_meta( $code_id, '_wpi_discount_amount', true );
-
-    return (float) apply_filters( 'wpinv_get_discount_amount', $amount, $code_id );
+/**
+ * Returns a discount's amount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return float
+ */
+function wpinv_get_discount_amount( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return (float) $discount->amount;
 }
 
-function wpinv_get_discount_type( $code_id = null, $name = false ) {
-    $type = strtolower( get_post_meta( $code_id, '_wpi_discount_type', true ) );
-    
-    if ( $name ) {
-        $name = wpinv_get_discount_type_name( $type );
-        
-        return apply_filters( 'wpinv_get_discount_type_name', $name, $code_id );
+/**
+ * Returns a discount's type.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param bool $name 
+ * @return string
+ */
+function wpinv_get_discount_type( $discount = array(), $name = false ) {
+    $discount = wpinv_get_discount_obj( $discount );
+
+    // Are we returning the name or just the type.
+    if( $name ) {
+        return $discount->type_name;
     }
 
-    return apply_filters( 'wpinv_get_discount_type', $type, $code_id );
+    return $discount->type;
 }
 
 function wpinv_discount_status( $status ) {
@@ -469,24 +483,26 @@ function wpinv_discount_status( $status ) {
     return $name;
 }
 
-function wpinv_get_discount_excluded_items( $code_id = null ) {
-    $excluded_items = get_post_meta( $code_id, '_wpi_discount_excluded_items', true );
-
-    if ( empty( $excluded_items ) || ! is_array( $excluded_items ) ) {
-        $excluded_items = array();
-    }
-
-    return (array) apply_filters( 'wpinv_get_discount_excluded_items', $excluded_items, $code_id );
+/**
+ * Returns a discount's excluded items.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return array
+ */
+function wpinv_get_discount_excluded_items( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->excluded_items;
 }
 
-function wpinv_get_discount_item_reqs( $code_id = null ) {
-    $item_reqs = get_post_meta( $code_id, '_wpi_discount_items', true );
-
-    if ( empty( $item_reqs ) || ! is_array( $item_reqs ) ) {
-        $item_reqs = array();
-    }
-
-    return (array) apply_filters( 'wpinv_get_discount_item_reqs', $item_reqs, $code_id );
+/**
+ * Returns a discount's required items.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return array
+ */
+function wpinv_get_discount_item_reqs( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->items;
 }
 
 function wpinv_get_discount_item_condition( $code_id = 0 ) {
@@ -497,162 +513,136 @@ function wpinv_is_discount_not_global( $code_id = 0 ) {
     return (bool) get_post_meta( $code_id, '_wpi_discount_is_not_global', true );
 }
 
-function wpinv_is_discount_expired( $code_id = null ) {
-    $discount = wpinv_get_discount(  $code_id );
-    $return   = false;
+/**
+ * Checks if a given discount has expired.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_is_discount_expired( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
 
-    if ( $discount ) {
-        $expiration = wpinv_get_discount_expiration( $code_id );
-        if ( $expiration ) {
-            $expiration = strtotime( $expiration );
-            if ( $expiration < current_time( 'timestamp' ) ) {
-                // Discount is expired
-                wpinv_update_discount_status( $code_id, 'pending' );
-                $return = true;
-            }
+    if ( $discount->is_expired() ) {
+        $discount->update_status( 'pending' );
+
+        if( empty( $started ) ) {
+            wpinv_set_error( 'wpinv-discount-error', __( 'This discount has expired.', 'invoicing' ) );
         }
+        return true;
     }
 
-    return apply_filters( 'wpinv_is_discount_expired', $return, $code_id );
+    return false;
 }
 
-function wpinv_is_discount_started( $code_id = null ) {
-    $discount = wpinv_get_discount(  $code_id );
-    $return   = false;
+/**
+ * Checks if a given discount has started.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_is_discount_started( $discount = array() ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    $started  = $discount->has_started();
 
-    if ( $discount ) {
-        $start_date = wpinv_get_discount_start_date( $code_id );
-
-        if ( $start_date ) {
-            $start_date = strtotime( $start_date );
-
-            if ( $start_date < current_time( 'timestamp' ) ) {
-                // Discount has past the start date
-                $return = true;
-            } else {
-                wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active yet.', 'invoicing' ) );
-            }
-        } else {
-            // No start date for this discount, so has to be true
-            $return = true;
-        }
+    if( empty( $started ) ) {
+        wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active yet.', 'invoicing' ) );
     }
 
-    return apply_filters( 'wpinv_is_discount_started', $return, $code_id );
+    return $started;
 }
 
-function wpinv_check_discount_dates( $code_id = null ) {
-    $discount = wpinv_get_discount(  $code_id );
-    $return   = false;
-
-    if ( $discount ) {
-        $start_date = wpinv_get_discount_start_date( $code_id );
-
-        if ( $start_date ) {
-            $start_date = strtotime( $start_date );
-
-            if ( $start_date < current_time( 'timestamp' ) ) {
-                // Discount has past the start date
-                $return = true;
-            } else {
-                wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active yet.', 'invoicing' ) );
-            }
-        } else {
-            // No start date for this discount, so has to be true
-            $return = true;
-        }
-        
-        if ( $return ) {
-            $expiration = wpinv_get_discount_expiration( $code_id );
-            
-            if ( $expiration ) {
-                $expiration = strtotime( $expiration );
-                if ( $expiration < current_time( 'timestamp' ) ) {
-                    // Discount is expired
-                    wpinv_update_discount_status( $code_id, 'pending' );
-                    $return = true;
-                }
-            }
-        }
-    }
-    
-    return apply_filters( 'wpinv_check_discount_dates', $return, $code_id );
+/**
+ * Checks discount dates.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_check_discount_dates( $discount ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    $return   = wpinv_is_discount_started( $discount ) && ! wpinv_is_discount_expired( $discount );
+    return apply_filters( 'wpinv_check_discount_dates', $return, $discount->ID, $discount, $discount->code );
 }
 
-function wpinv_is_discount_maxed_out( $code_id = null ) {
-    $discount = wpinv_get_discount(  $code_id );
-    $return   = false;
+/**
+ * Checks if a discount is maxed out.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_is_discount_maxed_out( $discount ) {
+    $discount    = wpinv_get_discount_obj( $discount );
+    $maxed_out   = $discount->has_exceeded_limit();
 
-    if ( $discount ) {
-        $uses = wpinv_get_discount_uses( $code_id );
-        // Large number that will never be reached
-        $max_uses = wpinv_get_discount_max_uses( $code_id );
-        // Should never be greater than, but just in case
-        if ( $uses >= $max_uses && ! empty( $max_uses ) ) {
-            // Discount is maxed out
-            wpinv_set_error( 'wpinv-discount-error', __( 'This discount has reached its maximum usage.', 'invoicing' ) );
-            $return = true;
-        }
+    if ( $maxed_out ) {
+        wpinv_set_error( 'wpinv-discount-error', __( 'This discount has reached its maximum usage.', 'invoicing' ) );
     }
 
-    return apply_filters( 'wpinv_is_discount_maxed_out', $return, $code_id );
-}
+    return $maxed_out;
+} 
 
-function wpinv_discount_is_min_met( $code_id = null ) {
-    $discount = wpinv_get_discount( $code_id );
-    $return   = false;
+/**
+ * Checks if an amount meets a discount's minimum amount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_discount_is_min_met( $discount ) {
+    $discount    = wpinv_get_discount_obj( $discount );
+    $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $discount->ID );
+    $min_met     = $discount->is_minimum_amount_met( $cart_amount );
 
-    if ( $discount ) {
-        $min         = (float)wpinv_get_discount_min_total( $code_id );
-        $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $code_id );
-
-        if ( !$min > 0 || $cart_amount >= $min ) {
-            // Minimum has been met
-            $return = true;
-        } else {
-            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $min ) ) ) );
-        }
+    if ( ! $min_met ) {
+        wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $discount->min_total ) ) ) );
     }
 
-    return apply_filters( 'wpinv_is_discount_min_met', $return, $code_id );
+    return $min_met;
 }
 
-function wpinv_discount_is_max_met( $code_id = null ) {
-    $discount = wpinv_get_discount( $code_id );
-    $return   = false;
+/**
+ * Checks if an amount meets a discount's maximum amount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_discount_is_max_met( $discount ) {
+    $discount    = wpinv_get_discount_obj( $discount );
+    $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $discount->ID );
+    $max_met     = $discount->is_maximum_amount_met( $cart_amount );
 
-    if ( $discount ) {
-        $max         = (float)wpinv_get_discount_max_total( $code_id );
-        $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $code_id );
-
-        if ( !$max > 0 || $cart_amount <= $max ) {
-            // Minimum has been met
-            $return = true;
-        } else {
-            wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Maximum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $max ) ) ) );
-        }
+    if ( ! $max_met ) {
+        wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Maximum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $discount->max_total ) ) ) );
     }
 
-    return apply_filters( 'wpinv_is_discount_max_met', $return, $code_id );
+    return $max_met;
 }
 
-function wpinv_discount_is_single_use( $code_id = 0 ) {
-    $single_use = get_post_meta( $code_id, '_wpi_discount_is_single_use', true );
-    return (bool) apply_filters( 'wpinv_is_discount_single_use', $single_use, $code_id );
+/**
+ * Checks if a discount can only be used once per user.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_discount_is_single_use( $discount ) {
+    $discount    = wpinv_get_discount_obj( $discount );
+    return $discount->is_single_use;
 }
 
-function wpinv_discount_is_recurring( $code_id = 0, $code = false ) {
-    if ( $code ) {
-        $discount = wpinv_get_discount_by_code( $code_id );
-        
-        if ( !empty( $discount ) ) {
-            $code_id = $discount->ID;
-        }
+/**
+ * Checks if a discount is recurring.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param int|array|string|WPInv_Discount $code discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_discount_is_recurring( $discount = 0, $code = 0 ) {
+
+    if( ! empty( $discount ) ) {
+        $discount    = wpinv_get_discount_obj( $discount );
+    } else {
+        $discount    = wpinv_get_discount_obj( $code );
     }
     
-    $recurring = get_post_meta( $code_id, '_wpi_discount_is_recurring', true );
-    
-    return (bool) apply_filters( 'wpinv_is_discount_recurring', $recurring, $code_id, $code );
+    return $discount->is_recurring;
 }
 
 function wpinv_discount_item_reqs_met( $code_id = null ) {
@@ -727,68 +717,30 @@ function wpinv_discount_item_reqs_met( $code_id = null ) {
     return (bool) apply_filters( 'wpinv_is_discount_item_req_met', $ret, $code_id, $condition );
 }
 
-function wpinv_is_discount_used( $code = null, $user = '', $code_id = 0 ) {
-    global $wpi_checkout_id;
+/**
+ * Checks if a discount has already been used by the user.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param int|string $user The user id, login or email
+ * @param int|array|string|WPInv_Discount $code_id discount data, object, ID or code.
+ * @return bool
+ */
+function wpinv_is_discount_used( $discount = array(), $user = '', $code_id = array() ) {
     
-    $return = false;
-
-    if ( empty( $code_id ) ) {
-        $code_id = wpinv_get_discount_id_by_code( $code );
-        
-        if( empty( $code_id ) ) {
-            return false; // No discount was found
-        }
+    if( ! empty( $discount ) ) {
+        $discount = wpinv_get_discount_obj( $discount );
+    } else {
+        $discount = wpinv_get_discount_obj( $code_id );
     }
 
-    if ( wpinv_discount_is_single_use( $code_id ) ) {
-        $payments = array();
+    $is_used = ! $discount->is_valid_for_user( $user );
+    $is_used = apply_filters( 'wpinv_is_discount_used', $is_used, $discount->code, $user, $discount->ID, $discount );
 
-        $user_id = 0;
-        if ( is_int( $user ) ) {
-            $user_id = absint( $user );
-        } else if ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
-            $user_id = $user_data->ID;
-        } else if ( $user_data = get_user_by( 'login', $user ) ) {
-            $user_id = $user_data->ID;
-        } else if ( absint( $user ) > 0 ) {
-            $user_id = absint( $user );
-        }
-
-        if ( !empty( $user_id ) ) {
-            $query    = array( 'user' => $user_id, 'limit' => false );
-            $payments = wpinv_get_invoices( $query ); // Get all payments with matching user id
-        }
-
-        if ( $payments ) {
-            foreach ( $payments as $payment ) {
-                // Don't count discount used for current invoice chekcout.
-                if ( !empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
-                    continue;
-                }
-                
-                if ( $payment->has_status( array( 'wpi-cancelled', 'wpi-failed' ) ) ) {
-                    continue;
-                }
-
-                $discounts = $payment->get_discounts( true );
-                if ( empty( $discounts ) ) {
-                    continue;
-                }
-
-                $discounts = $discounts && !is_array( $discounts ) ? explode( ',', $discounts ) : $discounts;
-
-                if ( !empty( $discounts ) && is_array( $discounts ) ) {
-                    if ( in_array( strtolower( $code ), array_map( 'strtolower', $discounts ) ) ) {
-                        wpinv_set_error( 'wpinv-discount-error', __( 'This discount has already been redeemed.', 'invoicing' ) );
-                        $return = true;
-                        break;
-                    }
-                }
-            }
-        }
+    if( $is_used ) {
+        wpinv_set_error( 'wpinv-discount-error', __( 'This discount has already been redeemed.', 'invoicing' ) );
     }
 
-    return apply_filters( 'wpinv_is_discount_used', $return, $code, $user );
+    return $is_used;
 }
 
 function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
@@ -797,7 +749,7 @@ function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
     $user        = trim( $user );
 
     if ( wpinv_get_cart_contents() ) {
-        if ( $discount_id ) {
+        if ( $discount_id !== false ) {
             if (
                 wpinv_is_discount_active( $discount_id ) &&
                 wpinv_check_discount_dates( $discount_id ) &&
@@ -825,81 +777,50 @@ function wpinv_get_discount_id_by_code( $code ) {
     return false;
 }
 
-function wpinv_get_discounted_amount( $code, $base_price ) {
-    $amount      = $base_price;
-    $discount_id = wpinv_get_discount_id_by_code( $code );
-
-    if( $discount_id ) {
-        $type        = wpinv_get_discount_type( $discount_id );
-        $rate        = wpinv_get_discount_amount( $discount_id );
-
-        if ( $type == 'flat' ) {
-            // Set amount
-            $amount = $base_price - $rate;
-            if ( $amount < 0 ) {
-                $amount = 0;
-            }
-
-        } else {
-            // Percentage discount
-            $amount = $base_price - ( $base_price * ( $rate / 100 ) );
-        }
-
-    } else {
-
-        $amount = $base_price;
-
-    }
-
-    return apply_filters( 'wpinv_discounted_amount', $amount );
+/**
+ * Calculates the discounted amount.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param float $base_price The number of usages to increase by
+ * @return float
+ */
+function wpinv_get_discounted_amount( $discount, $base_price ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->get_discounted_amount( $base_price );
 }
 
-function wpinv_increase_discount_usage( $code ) {
-
-    $id   = wpinv_get_discount_id_by_code( $code );
-    $uses = wpinv_get_discount_uses( $id );
-
-    if ( $uses ) {
-        $uses++;
-    } else {
-        $uses = 1;
-    }
-
-    update_post_meta( $id, '_wpi_discount_uses', $uses );
-
-    do_action( 'wpinv_discount_increase_use_count', $uses, $id, $code );
-
-    return $uses;
-
+/**
+ * Increases a discount's usage count.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param int $by The number of usages to increase by.
+ * @return int the new number of uses.
+ */
+function wpinv_increase_discount_usage( $discount, $by = 1 ) {
+    $discount   = wpinv_get_discount_obj( $discount );
+    return $discount->increase_usage( $by );
 }
 
-function wpinv_decrease_discount_usage( $code ) {
-
-    $id   = wpinv_get_discount_id_by_code( $code );
-    $uses = wpinv_get_discount_uses( $id );
-
-    if ( $uses ) {
-        $uses--;
-    }
-
-    if ( $uses < 0 ) {
-        $uses = 0;
-    }
-
-    update_post_meta( $id, '_wpi_discount_uses', $uses );
-
-    do_action( 'wpinv_discount_decrease_use_count', $uses, $id, $code );
-
-    return $uses;
-
+/**
+ * Decreases a discount's usage count.
+ * 
+ * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param int $by The number of usages to decrease by.
+ * @return int the new number of uses.
+ */
+function wpinv_decrease_discount_usage( $discount, $by = 1 ) {
+    $discount   = wpinv_get_discount_obj( $discount );
+    return $discount->increase_usage( 0 - $by );
 }
 
 function wpinv_format_discount_rate( $type, $amount ) {
     if ( $type == 'flat' ) {
-        return wpinv_price( wpinv_format_amount( $amount ) );
+        $rate = wpinv_price( wpinv_format_amount( $amount ) );
     } else {
-        return $amount . '%';
+        $rate = $amount . '%';
     }
+
+    return apply_filters( 'wpinv_format_discount_rate', $rate, $type, $amount );
 }
 
 function wpinv_set_cart_discount( $code = '' ) {    
@@ -971,11 +892,9 @@ function wpinv_unset_all_cart_discounts() {
     return false;
 }
 
-function wpinv_get_cart_discounts( $items = array() ) {
+function wpinv_get_cart_discounts() {
     $session = wpinv_get_checkout_session();
-    
-    $discounts = !empty( $session['cart_discounts'] ) ? $session['cart_discounts'] : false;
-    return $discounts;
+    return empty( $session['cart_discounts'] ) ? false : $session['cart_discounts'];
 }
 
 function wpinv_cart_has_discounts( $items = array() ) {
@@ -1067,7 +986,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             $code_id = wpinv_get_discount_id_by_code( $discount );
 
             // Check discount exists
-            if( ! $code_id ) {
+            if( $code_id === false ) {
                 continue;
             }
 
@@ -1166,7 +1085,7 @@ function wpinv_get_cart_discounts_html( $items = array(), $discounts = false ) {
     return apply_filters( 'wpinv_get_cart_discounts_html', $html, $discounts, $rate );
 }
 
-function wpinv_display_cart_discount( $formatted = false, $echo = false ) {
+function wpinv_display_cart_discount( /** @scrutinizer ignore-unused */ $formatted = false, $echo = false ) {
     $discounts = wpinv_get_cart_discounts();
 
     if ( empty( $discounts ) ) {
@@ -1198,7 +1117,7 @@ function wpinv_remove_cart_discount() {
 }
 add_action( 'wpinv_remove_cart_discount', 'wpinv_remove_cart_discount' );
 
-function wpinv_maybe_remove_cart_discount( $cart_key = 0 ) {
+function wpinv_maybe_remove_cart_discount() {
     $discounts = wpinv_get_cart_discounts();
 
     if ( !$discounts ) {
@@ -1240,14 +1159,14 @@ function wpinv_cart_discount_label( $code, $rate, $echo = true ) {
     }
 }
 
-function wpinv_check_delete_discount( $check, $post, $force_delete ) {
+function wpinv_check_delete_discount( $check, $post ) {
     if ( $post->post_type == 'wpi_discount' && wpinv_get_discount_uses( $post->ID ) > 0 ) {
         return true;
     }
     
     return $check;
 }
-add_filter( 'pre_delete_post', 'wpinv_check_delete_discount', 10, 3 );
+add_filter( 'pre_delete_post', 'wpinv_check_delete_discount', 10, 2 );
 
 function wpinv_checkout_form_validate_discounts() {
     global $wpi_checkout_id;

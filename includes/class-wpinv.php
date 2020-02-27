@@ -55,6 +55,8 @@ class WPInv_Plugin {
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
             add_action( 'admin_body_class', array( &$this, 'admin_body_class' ) );
+            add_action( 'admin_init', array( &$this, 'init_ayecode_connect_helper' ) );
+
         } else {
             add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
         }
@@ -69,6 +71,26 @@ class WPInv_Plugin {
         do_action_ref_array( 'wpinv_actions', array( &$this ) );
 
         add_action( 'admin_init', array( &$this, 'activation_redirect') );
+    }
+
+    /**
+     * Maybe show the AyeCode Connect Notice.
+     */
+    public function init_ayecode_connect_helper(){
+        // AyeCode Connect notice
+        if ( is_admin() ){
+            // set the strings so they can be translated
+            $strings = array(
+                'connect_title' => __("WP Invoicing - an AyeCode product!","invoicing"),
+                'connect_external'  => __( "Please confirm you wish to connect your site?","invoicing" ),
+                'connect'           => sprintf( __( "<strong>Have a license?</strong> Forget about entering license keys or downloading zip files, connect your site for instant access. %slearn more%s","invoicing" ),"<a href='https://ayecode.io/introducing-ayecode-connect/' target='_blank'>","</a>" ),
+                'connect_button'    => __("Connect Site","invoicing"),
+                'connecting_button'    => __("Connecting...","invoicing"),
+                'error_localhost'   => __( "This service will only work with a live domain, not a localhost.","invoicing" ),
+                'error'             => __( "Something went wrong, please refresh and try again.","invoicing" ),
+            );
+            new AyeCode_Connect_Helper($strings,array('wpi-addons'));
+        }
     }
     
     public function plugins_loaded() {
@@ -127,6 +149,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-discount.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-notes.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php' );

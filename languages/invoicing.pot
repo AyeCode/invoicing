@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 13:37+0000\n"
+"POT-Creation-Date: 2020-02-26 15:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -43,9 +43,9 @@ msgid "From: $%d"
 msgstr ""
 
 #: includes/class-wpinv-addons.php:170
-#: includes/wpinv-discount-functions.php:463
-#: includes/wpinv-gateway-functions.php:186 includes/wpinv-subscription.php:766
-#: includes/wpinv-subscription.php:811
+#: includes/wpinv-discount-functions.php:477
+#: includes/wpinv-gateway-functions.php:186 includes/wpinv-subscription.php:769
+#: includes/wpinv-subscription.php:814
 #: includes/admin/class-wpinv-subscriptions-list-table.php:84
 #: includes/admin/subscriptions.php:199
 msgid "Active"
@@ -122,11 +122,11 @@ msgid ""
 msgstr ""
 
 #: includes/class-wpinv-ajax.php:197 includes/class-wpinv-ajax.php:367
-#: includes/wpinv-invoice-functions.php:384
+#: includes/wpinv-invoice-functions.php:398
 msgid "You can not add item because recurring item must be paid individually!"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:509 includes/wpinv-discount-functions.php:813
+#: includes/class-wpinv-ajax.php:509 includes/wpinv-discount-functions.php:765
 msgid "This discount is invalid."
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 msgid "Invoice %s created"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:2220 includes/wpinv-post-types.php:208
+#: includes/class-wpinv-invoice.php:2233 includes/wpinv-post-types.php:208
 #: includes/wpinv-template-functions.php:2008
 #: templates/wpinv-invoice-print.php:11
 #: templates/wpinv-subscriptions-history.php:37
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Invoice"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:2222
+#: includes/class-wpinv-invoice.php:2235
 msgid "Quote"
 msgstr ""
 
@@ -576,7 +576,7 @@ msgid "No data found for export."
 msgstr ""
 
 #: includes/class-wpinv-reports.php:367
-#: includes/wpinv-invoice-functions.php:1847
+#: includes/wpinv-invoice-functions.php:1870
 #: includes/admin/class-wpinv-subscriptions-list-table.php:270
 #: includes/admin/subscriptions.php:244
 #: includes/admin/wpinv-admin-functions.php:23
@@ -631,7 +631,7 @@ msgid "Status Nicename"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:376
-#: includes/wpinv-invoice-functions.php:1850
+#: includes/wpinv-invoice-functions.php:1873
 #: includes/wpinv-template-functions.php:1987
 #: templates/wpinv-subscriptions-history.php:36
 #: includes/admin/admin-pages.php:17
@@ -756,62 +756,93 @@ msgstr ""
 msgid "This subscription cannot be cancelled"
 msgstr ""
 
-#: includes/class-wpinv.php:252
+#: includes/class-wpinv.php:84
+msgid "WP Invoicing - an AyeCode product!"
+msgstr ""
+
+#: includes/class-wpinv.php:85
+msgid "Please confirm you wish to connect your site?"
+msgstr ""
+
+#: includes/class-wpinv.php:86
+#, php-format
+msgid ""
+"<strong>Have a license?</strong> Forget about entering license keys or "
+"downloading zip files, connect your site for instant access. %slearn more%s"
+msgstr ""
+
+#: includes/class-wpinv.php:87
+msgid "Connect Site"
+msgstr ""
+
+#: includes/class-wpinv.php:88
+msgid "Connecting..."
+msgstr ""
+
+#: includes/class-wpinv.php:89
+msgid "This service will only work with a live domain, not a localhost."
+msgstr ""
+
+#: includes/class-wpinv.php:90
+msgid "Something went wrong, please refresh and try again."
+msgstr ""
+
+#: includes/class-wpinv.php:275
 msgid "Complete"
 msgstr ""
 
-#: includes/class-wpinv.php:344
+#: includes/class-wpinv.php:367
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/class-wpinv.php:347
+#: includes/class-wpinv.php:370
 msgid "Are you sure you wish to delete this tax rate?"
 msgstr ""
 
-#: includes/class-wpinv.php:348
+#: includes/class-wpinv.php:371
 msgid "Invoice must contain at least one item"
 msgstr ""
 
-#: includes/class-wpinv.php:349
+#: includes/class-wpinv.php:372
 msgid "Are you sure you wish to delete this item?"
 msgstr ""
 
-#: includes/class-wpinv.php:350
+#: includes/class-wpinv.php:373
 msgid ""
 "Fill the user's billing information? This will remove any currently entered "
 "billing information"
 msgstr ""
 
-#: includes/class-wpinv.php:351
+#: includes/class-wpinv.php:374
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
 msgstr ""
 
-#: includes/class-wpinv.php:352
+#: includes/class-wpinv.php:375
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/class-wpinv.php:353
+#: includes/class-wpinv.php:376
 msgid "Add at least one item to save invoice!"
 msgstr ""
 
-#: includes/class-wpinv.php:354
+#: includes/class-wpinv.php:377
 msgid ""
 "This item is in use! Before delete this item, you need to delete all the "
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv.php:355
+#: includes/class-wpinv.php:378
 msgid "Are you sure you want to delete this subscription?"
 msgstr ""
 
-#: includes/class-wpinv.php:356 includes/admin/admin-pages.php:99
+#: includes/class-wpinv.php:379 includes/admin/admin-pages.php:99
 #: includes/admin/subscriptions.php:158 includes/admin/subscriptions.php:169
 msgid "Edit"
 msgstr ""
 
-#: includes/class-wpinv.php:357 includes/wpinv-template-functions.php:679
+#: includes/class-wpinv.php:380 includes/wpinv-template-functions.php:679
 #: includes/wpinv-template-functions.php:679
 #: templates/wpinv-subscriptions-history.php:67
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:45
@@ -844,73 +875,76 @@ msgstr ""
 msgid "You do not have permission to create discount codes"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:382
+#: includes/wpinv-discount-functions.php:365
 msgid "This discount is expired."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:388
+#: includes/wpinv-discount-functions.php:371
 msgid "This discount is not active."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:459
-#: includes/wpinv-subscription.php:774 includes/wpinv-subscription.php:821
+#: includes/wpinv-discount-functions.php:473
+#: includes/wpinv-subscription.php:777 includes/wpinv-subscription.php:824
 #: includes/admin/class-wpinv-subscriptions-list-table.php:86
 #: includes/admin/subscriptions.php:201
 msgid "Expired"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:466
+#: includes/wpinv-discount-functions.php:480
 msgid "Inactive"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:533
-#: includes/wpinv-discount-functions.php:558
+#: includes/wpinv-discount-functions.php:529
+msgid "This discount has expired."
+msgstr ""
+
+#: includes/wpinv-discount-functions.php:548
 msgid "This discount is not active yet."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:593
+#: includes/wpinv-discount-functions.php:577
 msgid "This discount has reached its maximum usage."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:613
+#: includes/wpinv-discount-functions.php:595
 #, php-format
 msgid "Minimum invoice amount should be %s"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:632
+#: includes/wpinv-discount-functions.php:613
 #, php-format
 msgid "Maximum invoice amount should be %s"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:693
-#: includes/wpinv-discount-functions.php:710
+#: includes/wpinv-discount-functions.php:683
+#: includes/wpinv-discount-functions.php:700
 msgid "The item requirements for this discount are not met."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:722
+#: includes/wpinv-discount-functions.php:712
 msgid "This discount is not valid for the cart contents."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:782
+#: includes/wpinv-discount-functions.php:740
 msgid "This discount has already been redeemed."
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:1153
+#: includes/wpinv-discount-functions.php:1072
 msgid "Remove discount"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:1222
+#: includes/wpinv-discount-functions.php:1141
 #, php-format
 msgid "Discount%1$s"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:1233
+#: includes/wpinv-discount-functions.php:1152
 #: includes/gateways/authorizenet.php:146
 #, php-format
 msgid "Discount: %s"
 msgstr ""
 
-#: includes/wpinv-discount-functions.php:1271
+#: includes/wpinv-discount-functions.php:1190
 msgid "The discount has been removed from cart."
 msgstr ""
 
@@ -1709,38 +1743,38 @@ msgstr ""
 msgid "BIC/Swift code"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:237
+#: includes/wpinv-general-functions.php:238
 #, php-format
 msgid "Invalid invoice status: %s"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:267
+#: includes/wpinv-general-functions.php:269
 #, php-format
 msgid "Invoice is created with status %s."
 msgstr ""
 
-#: includes/wpinv-general-functions.php:312
+#: includes/wpinv-general-functions.php:316
 #, php-format
 msgid "Thanks for using %s"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:326
+#: includes/wpinv-general-functions.php:330
 msgid "Please enter your first name"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:332
+#: includes/wpinv-general-functions.php:336
 msgid "Please enter your address"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:338
+#: includes/wpinv-general-functions.php:342
 msgid "Please enter your billing city"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:344
+#: includes/wpinv-general-functions.php:348
 msgid "Please enter billing state / province"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:350
+#: includes/wpinv-general-functions.php:354
 msgid "Please select your billing country"
 msgstr ""
 
@@ -1766,8 +1800,8 @@ msgstr ""
 msgid "Refunded"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:101 includes/wpinv-subscription.php:770
-#: includes/wpinv-subscription.php:816
+#: includes/wpinv-helper-functions.php:101 includes/wpinv-subscription.php:773
+#: includes/wpinv-subscription.php:819
 #: includes/wpinv-template-functions.php:856
 #: includes/admin/class-wpinv-subscriptions-list-table.php:89
 #: includes/admin/subscriptions.php:200
@@ -2440,100 +2474,99 @@ msgstr ""
 msgid "Invoice must have atleast one item."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:255
+#: includes/wpinv-invoice-functions.php:269
 msgid "Error in insert invoice."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:267
-#: includes/api/class-wpinv-rest-invoice-controller.php:164
+#: includes/wpinv-invoice-functions.php:281
 msgid "Invalid invoice ID."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:278
+#: includes/wpinv-invoice-functions.php:292
 msgid "Invalid invoice."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:285
+#: includes/wpinv-invoice-functions.php:299
 msgid "Only invoice with pending payment is allowed to update."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:435
+#: includes/wpinv-invoice-functions.php:449
 msgid "Error in update invoice."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1046
+#: includes/wpinv-invoice-functions.php:1069
 #, php-format
 msgid "Invoice status changed from %s to %s"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1143
+#: includes/wpinv-invoice-functions.php:1166
 msgid "You must accept terms and conditions"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1160
+#: includes/wpinv-invoice-functions.php:1183
 #: includes/wpinv-template-functions.php:1479
 msgid "Your cart is empty."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1171
+#: includes/wpinv-invoice-functions.php:1194
 msgid "The selected payment gateway is not enabled"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1173
+#: includes/wpinv-invoice-functions.php:1196
 msgid "The selected payment gateway doesnot support subscription payment"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1178
+#: includes/wpinv-invoice-functions.php:1201
 msgid "Only one subscription may be purchased through payment per checkout."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1206
+#: includes/wpinv-invoice-functions.php:1229
 msgid "Discount code you entered is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1218
+#: includes/wpinv-invoice-functions.php:1241
 msgid "The zip / postcode you entered for your billing address is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1419
+#: includes/wpinv-invoice-functions.php:1442
 msgid "You must agree to the terms of use"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1466
+#: includes/wpinv-invoice-functions.php:1489
 msgid "Please enter a valid email address"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1470
+#: includes/wpinv-invoice-functions.php:1493
 msgid "The user billing information is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1474
+#: includes/wpinv-invoice-functions.php:1497
 msgid "The invalid invoice user id"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1490
+#: includes/wpinv-invoice-functions.php:1513
 msgid "You are not allowed to pay for this invoice"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1497
+#: includes/wpinv-invoice-functions.php:1520
 msgid "You must be logged in to pay for this invoice"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1585
+#: includes/wpinv-invoice-functions.php:1608
 msgid "Your cart is empty"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1848
+#: includes/wpinv-invoice-functions.php:1871
 #: includes/admin/wpinv-admin-functions.php:20
 msgid "Created Date"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1849
+#: includes/wpinv-invoice-functions.php:1872
 #: includes/admin/wpinv-admin-functions.php:21
 msgid "Payment Date"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1851
+#: includes/wpinv-invoice-functions.php:1874
 #: includes/wpinv-template-functions.php:1136
 #: includes/wpinv-template-functions.php:1187
 #: templates/wpinv-checkout-cart.php:134
@@ -2542,20 +2575,20 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1862
+#: includes/wpinv-invoice-functions.php:1885
 msgid "Sorry, trouble retrieving payment receipt."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1899
+#: includes/wpinv-invoice-functions.php:1922
 #: templates/wpinv-invoice-history.php:8
 msgid "You are not allowed to access this section"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1977
+#: includes/wpinv-invoice-functions.php:2000
 msgid "Invoice not found"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:2010
+#: includes/wpinv-invoice-functions.php:2033
 msgid "You are not allowed to view this invoice"
 msgstr ""
 
@@ -2975,34 +3008,34 @@ msgid_plural "Renewal <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/wpinv-subscription.php:569
+#: includes/wpinv-subscription.php:572
 msgid "gateway"
 msgstr ""
 
-#: includes/wpinv-subscription.php:572
+#: includes/wpinv-subscription.php:575
 #, php-format
 msgid "Subscription has been cancelled by %s"
 msgstr ""
 
-#: includes/wpinv-subscription.php:778 includes/wpinv-subscription.php:826
+#: includes/wpinv-subscription.php:781 includes/wpinv-subscription.php:829
 #: includes/admin/class-wpinv-subscriptions-list-table.php:85
 #: includes/admin/subscriptions.php:198
 msgid "Pending"
 msgstr ""
 
-#: includes/wpinv-subscription.php:782 includes/wpinv-subscription.php:831
+#: includes/wpinv-subscription.php:785 includes/wpinv-subscription.php:834
 #: includes/admin/class-wpinv-subscriptions-list-table.php:90
 #: includes/admin/subscriptions.php:203
 msgid "Failing"
 msgstr ""
 
-#: includes/wpinv-subscription.php:786 includes/wpinv-subscription.php:836
+#: includes/wpinv-subscription.php:789 includes/wpinv-subscription.php:839
 #: includes/admin/class-wpinv-subscriptions-list-table.php:88
 #: includes/admin/subscriptions.php:202
 msgid "Trialling"
 msgstr ""
 
-#: includes/wpinv-subscription.php:790 includes/wpinv-subscription.php:841
+#: includes/wpinv-subscription.php:793 includes/wpinv-subscription.php:844
 #: includes/admin/class-wpinv-subscriptions-list-table.php:87
 #: includes/admin/subscriptions.php:204
 msgid "Completed"
@@ -3842,11 +3875,11 @@ msgid "For recurring apply to"
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:319
-msgid "All payments"
+msgid "First payment only"
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:320
-msgid "First payment only"
+msgid "All payments"
 msgstr ""
 
 #: includes/admin/admin-meta-boxes.php:322
@@ -5078,6 +5111,8 @@ msgid "Sorry, you are not allowed to view this discount."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-discounts-controller.php:275
+#: includes/api/class-wpinv-rest-invoice-controller.php:249
+#: includes/api/class-wpinv-rest-invoice-controller.php:278
 #: includes/api/class-wpinv-rest-items-controller.php:302
 msgid "Cannot create existing item."
 msgstr ""
@@ -5095,7 +5130,7 @@ msgid "Sorry, you are not allowed to update this discount."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-discounts-controller.php:420
-#: includes/api/class-wpinv-rest-invoice-controller.php:406
+#: includes/api/class-wpinv-rest-invoice-controller.php:388
 #: includes/api/class-wpinv-rest-items-controller.php:441
 msgid "An update request cannot be empty."
 msgstr ""
@@ -5117,13 +5152,13 @@ msgid "Number of discounts to fetch."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-discounts-controller.php:579
-#: includes/api/class-wpinv-rest-invoice-controller.php:560
+#: includes/api/class-wpinv-rest-invoice-controller.php:593
 #: includes/api/class-wpinv-rest-items-controller.php:598
 msgid "Current page to fetch."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-discounts-controller.php:586
-#: includes/api/class-wpinv-rest-invoice-controller.php:567
+#: includes/api/class-wpinv-rest-invoice-controller.php:610
 #: includes/api/class-wpinv-rest-items-controller.php:605
 msgid "Ensure result set excludes specific IDs."
 msgstr ""
@@ -5133,7 +5168,6 @@ msgid "Sort discounts by object attribute."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-discounts-controller.php:612
-#: includes/api/class-wpinv-rest-invoice-controller.php:591
 #: includes/api/class-wpinv-rest-items-controller.php:631
 msgid "Order sort attribute ascending or descending."
 msgstr ""
@@ -5210,216 +5244,271 @@ msgid "The current user can publish this discount."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-invoice-controller.php:68
-msgid "Sorry, you are not allowed to edit invoices."
+msgid "Sorry, you are not allowed to edit items."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:269
-#: includes/api/class-wpinv-rest-invoice-controller.php:298
-msgid "Cannot create existing invoice."
+#: includes/api/class-wpinv-rest-invoice-controller.php:72
+msgid "Sorry, you must be logged in to view items."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:277
-msgid "Sorry, you are not allowed to create invoices as this user."
+#: includes/api/class-wpinv-rest-invoice-controller.php:144
+#: includes/api/class-wpinv-rest-items-controller.php:184
+msgid "Invalid item ID."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:367
-msgid "Sorry, you are not allowed to update this invoice."
+#: includes/api/class-wpinv-rest-invoice-controller.php:257
+msgid "Sorry, you are not allowed to create items as this user."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:461
-msgid "Sorry, you are not allowed to delete this invoice."
+#: includes/api/class-wpinv-rest-invoice-controller.php:292
+msgid "Created via API."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:503
-msgid "The invoice cannot be deleted."
+#: includes/api/class-wpinv-rest-invoice-controller.php:349
+#: includes/api/class-wpinv-rest-items-controller.php:404
+msgid "Sorry, you are not allowed to update this item."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:536
-msgid "Limit result set to invoices assigned one or more statuses."
+#: includes/api/class-wpinv-rest-invoice-controller.php:446
+#: includes/api/class-wpinv-rest-items-controller.php:498
+msgid "Sorry, you are not allowed to delete this item."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:547
-msgid "Limit result set to invoices for a specif user."
+#: includes/api/class-wpinv-rest-invoice-controller.php:485
+#: includes/api/class-wpinv-rest-items-controller.php:540
+msgid "The item cannot be deleted."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:553
-msgid "Number of invoices to fetch."
+#: includes/api/class-wpinv-rest-invoice-controller.php:518
+#: includes/api/class-wpinv-rest-items-controller.php:573
+msgid "Limit result set to items assigned one or more statuses."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:577
-msgid "Sort invoices by object attribute."
+#: includes/api/class-wpinv-rest-invoice-controller.php:529
+msgid ""
+"Limit result set to items for a specif user. Accepts a user ID, or comma-"
+"separated list of IDs"
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:950
+#: includes/api/class-wpinv-rest-invoice-controller.php:535
+msgid "Exclude items from specific users."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:545
+msgid ""
+"Limit result set to items created before a specific date. Accepts strtotime()"
+"-compatible string."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:550
+msgid "Filter items by custom field key."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:555
+msgid "Comparison operator to test the `meta_key`."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:562
+msgid "Filter items by custom field value."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:567
+msgid "Comparison operator to test the `meta_value`."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:574
+msgid "Filter items by a numeric custom field value."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:580
+msgid ""
+"Limit result set to items created after a specific date. Accepts strtotime()-"
+"compatible string."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:586
+#: includes/api/class-wpinv-rest-items-controller.php:591
+msgid "Number of items to fetch."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:600
+msgid "Limit result set to specific IDs."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:620
+msgid "Sort retrieved items by parameter."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:635
+msgid "Designates ascending or descending order of ítems."
+msgstr ""
+
+#: includes/api/class-wpinv-rest-invoice-controller.php:1130
 msgid "The title for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:957
+#: includes/api/class-wpinv-rest-invoice-controller.php:1137
 msgid "The ID of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:963
+#: includes/api/class-wpinv-rest-invoice-controller.php:1143
 msgid "The email of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:970
+#: includes/api/class-wpinv-rest-invoice-controller.php:1150
 msgid "The IP of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:976
+#: includes/api/class-wpinv-rest-invoice-controller.php:1156
 msgid "Information about the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:982
+#: includes/api/class-wpinv-rest-invoice-controller.php:1162
 msgid "The first name of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:988
+#: includes/api/class-wpinv-rest-invoice-controller.php:1168
 msgid "The last name of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:994
+#: includes/api/class-wpinv-rest-invoice-controller.php:1174
 msgid "The company of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1000
+#: includes/api/class-wpinv-rest-invoice-controller.php:1180
 msgid "The VAT number of the owner of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1006
+#: includes/api/class-wpinv-rest-invoice-controller.php:1186
 msgid "The VAT rate applied on the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1012
+#: includes/api/class-wpinv-rest-invoice-controller.php:1192
 msgid "The address of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1018
+#: includes/api/class-wpinv-rest-invoice-controller.php:1198
 msgid "The city of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1024
+#: includes/api/class-wpinv-rest-invoice-controller.php:1204
 msgid "The country of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1030
+#: includes/api/class-wpinv-rest-invoice-controller.php:1210
 msgid "The state of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1036
+#: includes/api/class-wpinv-rest-invoice-controller.php:1216
 msgid "The zip code of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1042
+#: includes/api/class-wpinv-rest-invoice-controller.php:1222
 msgid "The phone number of the invoice owner."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1050
+#: includes/api/class-wpinv-rest-invoice-controller.php:1230
 msgid "Unique identifier for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1057
+#: includes/api/class-wpinv-rest-invoice-controller.php:1237
 msgid "A unique key for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1064
+#: includes/api/class-wpinv-rest-invoice-controller.php:1244
 msgid "The invoice number."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1071
+#: includes/api/class-wpinv-rest-invoice-controller.php:1251
 msgid "The transaction id of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1077
+#: includes/api/class-wpinv-rest-invoice-controller.php:1257
 msgid "The gateway used to process the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1083
+#: includes/api/class-wpinv-rest-invoice-controller.php:1263
 msgid "The title of the gateway used to process the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1089
+#: includes/api/class-wpinv-rest-invoice-controller.php:1269
 msgid "The total amount of the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1096
+#: includes/api/class-wpinv-rest-invoice-controller.php:1276
 msgid "The discount applied to the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1103
+#: includes/api/class-wpinv-rest-invoice-controller.php:1283
 msgid "The discount code applied to the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1110
+#: includes/api/class-wpinv-rest-invoice-controller.php:1290
 msgid "The tax applied to the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1117
+#: includes/api/class-wpinv-rest-invoice-controller.php:1297
 msgid "The total fees applied to the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1124
+#: includes/api/class-wpinv-rest-invoice-controller.php:1304
 msgid "The sub-total for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1131
+#: includes/api/class-wpinv-rest-invoice-controller.php:1311
 msgid "The currency used to process the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1137
+#: includes/api/class-wpinv-rest-invoice-controller.php:1317
 msgid "The cart details for invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1144
+#: includes/api/class-wpinv-rest-invoice-controller.php:1324
 msgid "The date the invoice was published, in the site's timezone."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1151
+#: includes/api/class-wpinv-rest-invoice-controller.php:1331
 msgid "The due date for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1158
+#: includes/api/class-wpinv-rest-invoice-controller.php:1338
 msgid "The completed date for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1166
+#: includes/api/class-wpinv-rest-invoice-controller.php:1346
 msgid "URL to the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1174
+#: includes/api/class-wpinv-rest-invoice-controller.php:1354
 msgid "The mode used to process the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1182
+#: includes/api/class-wpinv-rest-invoice-controller.php:1362
 msgid "An alphanumeric identifier for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1192
+#: includes/api/class-wpinv-rest-invoice-controller.php:1372
 msgid "A named status for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1200
+#: includes/api/class-wpinv-rest-invoice-controller.php:1380
 msgid "A human-readable status name for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1207
+#: includes/api/class-wpinv-rest-invoice-controller.php:1387
 msgid "The post type for the invoice."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1250
+#: includes/api/class-wpinv-rest-invoice-controller.php:1430
 msgid "The current user can mark this invoice as completed."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-invoice-controller.php:1265
+#: includes/api/class-wpinv-rest-invoice-controller.php:1445
 msgid "The current user can change the owner of this invoice."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-items-controller.php:93
 msgid "Sorry, you are not allowed to view invoice items."
-msgstr ""
-
-#: includes/api/class-wpinv-rest-items-controller.php:184
-msgid "Invalid item ID."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-items-controller.php:223
@@ -5434,28 +5523,8 @@ msgstr ""
 msgid "Cannot create existing invoice item."
 msgstr ""
 
-#: includes/api/class-wpinv-rest-items-controller.php:404
-msgid "Sorry, you are not allowed to update this item."
-msgstr ""
-
-#: includes/api/class-wpinv-rest-items-controller.php:498
-msgid "Sorry, you are not allowed to delete this item."
-msgstr ""
-
-#: includes/api/class-wpinv-rest-items-controller.php:540
-msgid "The item cannot be deleted."
-msgstr ""
-
-#: includes/api/class-wpinv-rest-items-controller.php:573
-msgid "Limit result set to items assigned one or more statuses."
-msgstr ""
-
 #: includes/api/class-wpinv-rest-items-controller.php:580
 msgid "Type of items to fetch."
-msgstr ""
-
-#: includes/api/class-wpinv-rest-items-controller.php:591
-msgid "Number of items to fetch."
 msgstr ""
 
 #: includes/api/class-wpinv-rest-items-controller.php:615
