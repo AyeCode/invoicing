@@ -49,7 +49,7 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     }
 
     if ( empty( $invoice_data['post_type'] ) ) {
-        $invoice_data['post_type'] = 'wpi-invoice';
+        $invoice_data['post_type'] = 'wpi_invoice';
     }
     
     if ( empty( $invoice_data['ip'] ) ) {
