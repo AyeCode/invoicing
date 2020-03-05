@@ -91,7 +91,7 @@ class WPInv_Discount {
 		}
 		
 		// Try fetching the discount by its discount code.
-		if ( ! empty( $discount ) && is_string( $discount ) ) {
+		if ( ! empty( $discount ) && is_scalar( $discount ) ) {
 			$data = self::get_data_by( 'discount_code', $discount );
 		}
 

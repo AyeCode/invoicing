@@ -1307,7 +1307,7 @@ final class WPInv_Invoice {
         $data['discount']     = $this->get_discount();
         $data['tax']          = $this->get_tax();
         $data['total']        = $this->get_total();
-    
+
         if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) ) {
             $is_free_trial = $this->is_free_trial();
             $discounts = $this->get_discounts( true );
@@ -1317,7 +1317,7 @@ final class WPInv_Invoice {
                 
                 if ( !empty( $discounts ) ) {
                     foreach ( $discounts as $key => $code ) {
-                        if ( wpinv_discount_is_recurring( $code, true ) && !$this->is_renewal() ) {
+                        if ( wpinv_discount_is_recurring( $code, true ) && ! $this->is_renewal() ) {
                             $first_use_only = true;
                             break;
                         }
@@ -1371,7 +1371,7 @@ final class WPInv_Invoice {
                 }
             }
         }
-        
+
         $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
 
         if ( isset( $data[$field] ) ) {
@@ -1379,6 +1379,34 @@ final class WPInv_Invoice {
         }
         
         return $data;
+    }
+
+    /**
+     * Checks if the invoice has a non-recurring discount.
+     * 
+     * This is usefull for example when the customer uses a 100% discount
+     * that is only valid for the first year of a subscription.
+     */
+    public function has_non_recurring_discount() {
+
+        // If the invoice is made up of free items, abort
+        if ( ! $this->get_subtotal() > 0 ) {
+            return false;
+        }
+
+        // Ensure there are discounts
+        $discounts = $this->get_discounts( true );
+        if ( empty( $discounts ) ) {
+            return false;
+        }
+
+        foreach ( array_values( $discounts ) as $discount_code ) {
+            if ( ! wpinv_discount_is_recurring( null, $discount_code ) && wpinv_get_discount_amount( $discount_code ) > 0 ) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     public function get_final_tax( $currency = false ) {        
@@ -2183,7 +2211,7 @@ final class WPInv_Invoice {
         
         if ( !( (float)wpinv_round_amount( $this->get_total() ) > 0 ) ) {
             if ( $this->is_parent() && $this->is_recurring() ) {
-                $is_free = (float)wpinv_round_amount( $this->get_recurring_details( 'total' ) ) > 0 ? false : true;
+                $is_free = ( $this->has_non_recurring_discount() || (float)wpinv_round_amount( $this->get_recurring_details( 'total' ) ) ) > 0 ? false : true;
             } else {
                 $is_free = true;
             }

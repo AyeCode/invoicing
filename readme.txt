@@ -127,6 +127,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.17 =
+* Ask for payment information for checkouts with a non-recurring discount of 100% - FIXED
+
 = 1.0.16 =
 * Conflict with Pricing Manager Addon - FIXED
 
