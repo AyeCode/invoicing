@@ -24,9 +24,9 @@ function wpinv_get_invoice_cart_id() {
 /**
  * Create an invoice
  * 
- * @param  array $invoice_data   An array of invoice properties.
- * @param  bool  $wp_error       Whether to return false or WP_Error on failure.
- * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
+ * @param  array         $invoice_data   An array of invoice properties.
+ * @param  bool          $wp_error       Whether to return false or WP_Error on failure.
+ * @return mixed         The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
  */
 function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     if ( empty( $invoice_data ) ) {
@@ -1469,7 +1469,7 @@ function wpinv_checkout_validate_invoice_user() {
         // Loop through required fields and show error messages
          if ( !empty( $required_fields ) ) {
             foreach ( $required_fields as $field_name => $value ) {
-                if ( in_array( $value, $required_fields ) && empty( $_POST[ 'wpinv_' . $field_name ] ) ) {
+                if ( in_array( $value, $required_fields ) && empty( $_POST[ $field_name ] ) ) {
                     wpinv_set_error( $value['error_id'], $value['error_message'] );
                 }
             }

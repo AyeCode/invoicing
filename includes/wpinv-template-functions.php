@@ -380,6 +380,10 @@ function wpinv_html_select( $args = array() ) {
 
     $args = wp_parse_args( $args, $defaults );
 
+    if ( isset( $args['field_required'] ) ) {
+        $args['required'] = $args['field_required'];
+    }
+
     $data_elements = '';
     foreach ( $args['data'] as $key => $value ) {
         $data_elements .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
@@ -452,6 +456,46 @@ function wpinv_html_select( $args = array() ) {
     $output .= '</select>';
 
     return $output;
+}
+
+function wpinv_html_state_select( $args = array() ) {
+
+    $key = 'country';
+    if ( ! empty( $args['key'] ) ) {
+        $key = $args['key'];
+    }
+
+    $selected_country = empty( $args[ $key ] ) ? wpinv_default_billing_country() : $args[ $key ];
+
+    if ( ! empty( $args['billing_details'] ) && ! empty( $args['billing_details']['country'] ) ) {
+        $selected_country = $args['billing_details']['country'];
+    }
+
+    $states = wpinv_get_country_states( $selected_country );
+
+    if( !empty( $states ) ) {
+        return wpinv_html_select( array(
+            'options'          => $states,
+            'name'             => $args['name'],
+            'id'               => $args['id'],
+            'selected'         => $args['value'],
+            'show_option_all'  => false,
+            'show_option_none' => false,
+            'class'            => 'wpi-input form-control wpi_select2',
+            'placeholder'      => $args['placeholder'],
+            'required'         => $args['field_required'],
+        ) );
+    }
+
+    return wpinv_html_text( array(
+            'name'          => 'wpinv_state',
+            'value'         => $args['value'],
+            'id'            => 'wpinv_state',
+            'class'         => 'wpi-input form-control',
+            'placeholder'   => $args['placeholder'],
+            'required'      => $args['field_required'],
+        ) );
+
 }
 
 function wpinv_item_dropdown( $args = array() ) {
@@ -584,6 +628,10 @@ function wpinv_html_text( $args = array() ) {
     );
 
     $args = wp_parse_args( $args, $defaults );
+
+    if ( isset( $args['field_required'] ) ) {
+        $args['required'] = $args['field_required'];
+    }
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
     $options = '';
@@ -1649,137 +1697,242 @@ function wpinv_payment_mode_select() {
 }
 add_action( 'wpinv_payment_mode_select', 'wpinv_payment_mode_select' );
 
+/**
+ * Sanitizes a checkout field
+ */
+function wpinv_sanitize_checkout_field_args( $args ) {
+
+    $name     = ( empty( $args['name'] ) ) ? wp_generate_password( 12, false ) : $args['name'];
+    $id       = ( empty( $args['id'] ) ) ? $name : $args['id'];
+
+    $defaults = array(
+        'id'                     => $name, // element id
+        'name'                   => $id, // input element name
+        'key'                    => ( ! isset( $args['key'] ) ) ? str_ireplace( 'wpinv_', '', $name ) : $args['key'], // value key in $billing_details
+        'input_class'            => 'wpi-input form-control', // input element class
+        'wrapper_class'          => 'wpi-cart-field wpi-col2', // p element class
+        'label_class'            => 'wpi-label', // label class
+        'validations'            => array(), // an array of validations e.g email etc
+        'placeholder'            => '', // First name.
+        'field_label'            => '', // 
+        'field_description'      => '',
+        'field_required'         => false,
+        'field_type'             => 'text',
+        'field_enabled'          => true,
+        'visible_in_email'       => true,
+        'visible_thank_you_page' => true,
+        'visible_order_details'  => true,
+    );
+
+    return wp_parse_args( $args, $defaults );
+
+}
+
+/**
+ * Returns default checkout fields.
+ */
+function wpinv_get_default_checkout_fields() {
+
+    $fields = array(
+
+        'wpinv_first_name'   => array(
+            'name'           => 'wpinv_first_name',
+            'placeholder'    => __( 'First name', 'invoicing' ),
+            'field_label'    => __( 'First name', 'invoicing' ),
+            'field_required' => (bool) wpinv_get_option( 'fname_mandatory' ),
+        ),
+
+        'wpinv_last_name'    => array(
+            'name'           => 'wpinv_last_name',
+            'placeholder'    => __( 'Last name', 'invoicing' ),
+            'field_label'    => __( 'Last name', 'invoicing' ),
+            'field_required' => (bool)wpinv_get_option( 'lname_mandatory' ),
+        ),
+
+        'wpinv_address'      => array(
+            'name'           => 'wpinv_address',
+            'placeholder'    => __( 'Address', 'invoicing' ),
+            'field_label'    => __( 'Address', 'invoicing' ),
+            'field_required' => (bool)wpinv_get_option( 'address_mandatory' ),
+        ),
+
+        'wpinv_city'         => array(
+            'name'           => 'wpinv_city',
+            'placeholder'    => __( 'City', 'invoicing' ),
+            'field_label'    => __( 'City', 'invoicing' ),
+            'field_required' => (bool)wpinv_get_option( 'city_mandatory' ),
+        ),
+
+        'wpinv_country'        => array(
+            'options'          => wpinv_get_country_list(),
+            'name'             => 'wpinv_country',
+            'show_option_all'  => false,
+            'show_option_none' => false,
+            'field_label'      => __( 'Country', 'invoicing' ),
+            'placeholder'      => __( 'Choose a country', 'invoicing' ),
+            'field_required'   => (bool)wpinv_get_option( 'country_mandatory' ),
+            'field_type'       => 'select',
+            'input_class'      => 'wpi-input form-control wpi_select2',
+        ),
+
+        'wpinv_state'          => array(
+            'field_type'       => 'state_select',
+            'field_required'   => (bool)wpinv_get_option( 'state_mandatory' ),
+            'field_label'      => __( 'State / Province', 'invoicing' ),
+            'placeholder'      => __( 'Choose a state', 'invoicing' ),
+            'name'             => 'wpinv_state',
+        ),
+
+        'wpinv_zip'          => array(
+            'name'           => 'wpinv_zip',
+            'placeholder'    => __( 'ZIP / Postcode', 'invoicing' ),
+            'field_label'    => __( 'ZIP / Postcode', 'invoicing' ),
+            'field_required' => (bool)wpinv_get_option( 'zip_mandatory' ),
+        ),
+
+        'wpinv_phone'        => array(
+            'name'           => 'wpinv_phone',
+            'placeholder'    => __( 'Phone', 'invoicing' ),
+            'field_label'    => __( 'Phone', 'invoicing' ),
+            'field_required' => (bool)wpinv_get_option( 'phone_mandatory' ),
+            'field_type'     => 'text',
+        ),
+
+    );
+
+    return array_map( 'wpinv_sanitize_checkout_field_args', $fields );
+
+}
+
+/**
+ * Returns custom checkout fields.
+ */
+function wpinv_get_custom_checkout_fields() {
+    return array_map( 'wpinv_sanitize_checkout_field_args', array() );
+}
+
+/**
+ * Returns an array of enabled checkout fields.
+ */
+function wpinv_get_checkout_checkout_fields( array $billing_details = array() ) {
+
+    if ( empty( $billing_details['country'] ) ) {
+        $billing_details['country'] = wpinv_default_billing_country();
+    }
+
+    $fields  = array_merge( wpinv_get_default_checkout_fields(), wpinv_get_custom_checkout_fields() );
+    $fields  = apply_filters('wpinv_checkout_fields', $fields, $billing_details );
+    $return  = array();
+
+    foreach ( $fields as $key => $field ) {
+
+        if ( empty( $field['field_enabled'] ) ) {
+            continue;
+        }
+
+        if ( isset( $field['key'] ) && isset( $billing_details[ $field['key'] ] ) ) {
+
+            if ( 'select' == $field['field_type'] ) {
+                $field['selected'] = $billing_details[ $field['key'] ];
+            } else {
+                $field['value'] = $billing_details[ $field['key'] ];
+            }
+            
+        }
+
+        $field['billing_details'] = $billing_details;
+        $field['class']           =  $field['input_class'];
+
+        $return[ $key ] = $field;
+    }
+
+    return array_map( 'wpinv_sanitize_checkout_field_args', $return );
+
+}
+
 function wpinv_checkout_billing_info() {
     if ( wpinv_is_checkout() ) {
+
+        // Prepare the billing details and checkout fields.
         $billing_details    = wpinv_checkout_billing_details();
-        $selected_country   = !empty( $billing_details['country'] ) ? $billing_details['country'] : wpinv_default_billing_country();
+        $checkout_fields    = wpinv_get_checkout_checkout_fields( $billing_details );
+
         ?>
         <div id="wpinv-fields" class="clearfix">
+            <?php do_action( 'wpinv_before_billing_fields', $billing_details ); ?>
             <div id="wpi-billing" class="wpi-billing clearfix panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Billing Details', 'invoicing' );?></h3></div>
                 <div id="wpinv-fields-box" class="panel-body">
-                    <?php do_action( 'wpinv_checkout_billing_fields_first', $billing_details ); ?>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_first_name" class="wpi-label"><?php _e( 'First Name', 'invoicing' );?><?php if ( wpinv_get_option( 'fname_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_first_name',
-                                'name'          => 'wpinv_first_name',
-                                'value'         => $billing_details['first_name'],
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'First name', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'fname_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_last_name" class="wpi-label"><?php _e( 'Last Name', 'invoicing' );?><?php if ( wpinv_get_option( 'lname_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_last_name',
-                                'name'          => 'wpinv_last_name',
-                                'value'         => $billing_details['last_name'],
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'Last name', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'lname_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_address" class="wpi-label"><?php _e( 'Address', 'invoicing' );?><?php if ( wpinv_get_option( 'address_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_address',
-                                'name'          => 'wpinv_address',
-                                'value'         => $billing_details['address'],
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'Address', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'address_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_city" class="wpi-label"><?php _e( 'City', 'invoicing' );?><?php if ( wpinv_get_option( 'city_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_city',
-                                'name'          => 'wpinv_city',
-                                'value'         => $billing_details['city'],
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'City', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'city_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p id="wpinv_country_box" class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_country" class="wpi-label"><?php _e( 'Country', 'invoicing' );?><?php if ( wpinv_get_option( 'country_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php echo wpinv_html_select( array(
-                            'options'          => wpinv_get_country_list(),
-                            'name'             => 'wpinv_country',
-                            'id'               => 'wpinv_country',
-                            'selected'         => $selected_country,
-                            'show_option_all'  => false,
-                            'show_option_none' => false,
-                            'class'            => 'wpi-input form-control wpi_select2',
-                            'placeholder'      => __( 'Choose a country', 'invoicing' ),
-                            'required'         => (bool)wpinv_get_option( 'country_mandatory' ),
-                        ) ); ?>
-                    </p>
-                    <p id="wpinv_state_box" class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_state" class="wpi-label"><?php _e( 'State / Province', 'invoicing' );?><?php if ( wpinv_get_option( 'state_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        $states = wpinv_get_country_states( $selected_country );
-                        if( !empty( $states ) ) {
-                            echo wpinv_html_select( array(
-                                'options'          => $states,
-                                'name'             => 'wpinv_state',
-                                'id'               => 'wpinv_state',
-                                'selected'         => $billing_details['state'],
-                                'show_option_all'  => false,
-                                'show_option_none' => false,
-                                'class'            => 'wpi-input form-control wpi_select2',
-                                'placeholder'      => __( 'Choose a state', 'invoicing' ),
-                                'required'         => (bool)wpinv_get_option( 'state_mandatory' ),
-                            ) );
-                        } else {
-                            echo wpinv_html_text( array(
-                                'name'          => 'wpinv_state',
-                                'value'         => $billing_details['state'],
-                                'id'            => 'wpinv_state',
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'State / Province', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'state_mandatory' ),
-                            ) );
+
+                    <?php 
+
+                        do_action( 'wpinv_checkout_billing_fields_first', $billing_details );
+
+                        $first_col = true;
+                        foreach ( $checkout_fields as $field_details ) {
+
+                            // If no field type is specified, abort.
+                            if ( empty( $field_details['field_type'] ) || empty( $field_details['field_enabled'] ) ) {
+                                continue;
+                            }
+
+                            $type = sanitize_html_class( $field_details['field_type'] );
+                            $name = esc_attr( $field_details['name'] );
+
+                            // Fire actions before a field is displayed.
+                            do_action( "wpinv_checkout_billing_fields_before_$name", $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_before_single_field", $name, $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_before_field_type_$type", $field_details, $billing_details );
+
+                            // Display the opening wrapper.
+                            $wrapper_class  = esc_attr( $field_details['wrapper_class'] );
+                            $wrapper_class .=  empty( $first_col ) ? ' wpi-coll' : ' wpi-colf';
+                            $wrapper_id     = "wpinv_{$name}_box";
+                            echo "<p id='$wrapper_id' class='$wrapper_class'>";
+
+                            // And (maybe) the label.
+                            $label = esc_html( $field_details['field_label'] );
+                            if ( ! empty( $label ) ) {
+
+                                // Is this field required?
+                                if ( ! empty( $field_details['field_required'] ) ) {
+                                    $label .= '<span class="wpi-required">*</span>';
+                                }
+
+                                $label_class = esc_attr( $field_details['label_class'] );
+                                $input_id    = esc_attr( $field_details['id'] );
+                                echo "<label for='$input_id' class='$label_class'>$label</label>";
+
+                            }
+
+                            // Finally, display the input.
+                            if ( function_exists( "wpinv_html_$type" ) ) {
+                                echo call_user_func( "wpinv_html_$type", $field_details );
+                            }
+
+                            // Fire actions when displaying a field.
+                            do_action( "wpinv_checkout_billing_fields_$name", $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_single_field", $name, $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_field_type_$type", $field_details, $billing_details );
+
+                            if ( ! empty( $field_details['field_description'] ) ) {
+                                echo "<div class='wpi-field-description'>{$field_details['field_description']}</div>";
+                            }
+
+                            echo "</p>";
+
+                            // Fire actions after a field is displayed.
+                            do_action( "wpinv_checkout_billing_fields_after_$name", $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_after_single_field", $name, $field_details, $billing_details );
+                            do_action( "wpinv_checkout_billing_fields_after_field_type_$type", $field_details, $billing_details );
+
+                            $first_col = ! $first_col;
                         }
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-colf">
-                        <label for="wpinv_zip" class="wpi-label"><?php _e( 'ZIP / Postcode', 'invoicing' );?><?php if ( wpinv_get_option( 'zip_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'name'          => 'wpinv_zip',
-                                'value'         => $billing_details['zip'],
-                                'id'            => 'wpinv_zip',
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'ZIP / Postcode', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'zip_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <p class="wpi-cart-field wpi-col2 wpi-coll">
-                        <label for="wpinv_phone" class="wpi-label"><?php _e( 'Phone', 'invoicing' );?><?php if ( wpinv_get_option( 'phone_mandatory' ) ) { echo '<span class="wpi-required">*</span>'; } ?></label>
-                        <?php
-                        echo wpinv_html_text( array(
-                                'id'            => 'wpinv_phone',
-                                'name'          => 'wpinv_phone',
-                                'value'         => $billing_details['phone'],
-                                'class'         => 'wpi-input form-control',
-                                'placeholder'   => __( 'Phone', 'invoicing' ),
-                                'required'      => (bool)wpinv_get_option( 'phone_mandatory' ),
-                            ) );
-                        ?>
-                    </p>
-                    <?php do_action( 'wpinv_checkout_billing_fields_last', $billing_details ); ?>
+
+                        do_action( 'wpinv_checkout_billing_fields_last', $billing_details );
+
+                    ?>
+
                     <div class="clearfix"></div>
                 </div>
             </div>
