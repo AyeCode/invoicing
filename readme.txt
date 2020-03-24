@@ -127,6 +127,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.17 =
+* Show confirmation message when cancelling subscriptions - CHANGED
+
 = 1.0.16 =
 * Conflict with Pricing Manager Addon - FIXED
 

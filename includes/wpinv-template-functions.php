@@ -898,20 +898,20 @@ function wpinv_display_invoice_details( $invoice ) {
                 <td><?php echo $invoice_date; ?></td>
             </tr>
         <?php } ?>
+        <?php do_action( 'wpinv_display_details_before_due_date', $invoice_id ); ?>
         <?php if ( wpinv_get_option( 'overdue_active' ) && $invoice->needs_payment() && ( $due_date = $invoice->get_due_date( true ) ) ) { ?>
             <tr class="wpi-row-date">
                 <th><?php echo apply_filters( 'wpinv_invoice_due_date_label', __( 'Due Date', 'invoicing' ), $invoice ); ?></th>
                 <td><?php echo $due_date; ?></td>
             </tr>
         <?php } ?>
-        <?php do_action( 'wpinv_display_details_before_due_date', $invoice_id ); ?>
+        <?php do_action( 'wpinv_display_details_after_due_date', $invoice_id ); ?>
         <?php if ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) { ?>
             <tr class="wpi-row-ovatno">
                 <th><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
                 <td><?php echo $owner_vat_number; ?></td>
             </tr>
         <?php } ?>
-        <?php do_action( 'wpinv_display_details_after_due_date', $invoice_id ); ?>
         <?php if ( $use_taxes && ( $user_vat_number = wpinv_get_invoice_vat_number( $invoice_id ) ) ) { ?>
             <tr class="wpi-row-uvatno">
                 <th><?php echo apply_filters( 'wpinv_invoice_user_vat_number_label', wp_sprintf( __( 'Invoice %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></th>
@@ -1466,7 +1466,7 @@ function wpinv_checkout_cart( $cart_details = array(), $echo = true ) {
     echo '</div>';
     do_action( 'wpinv_after_checkout_cart' );
     $content = ob_get_clean();
-    
+
     if ( $echo ) {
         echo $content;
     } else {
