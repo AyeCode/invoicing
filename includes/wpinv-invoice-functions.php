@@ -24,9 +24,9 @@ function wpinv_get_invoice_cart_id() {
 /**
  * Create an invoice
  * 
- * @param  array         $invoice_data   An array of invoice properties.
- * @param  bool          $wp_error       Whether to return false or WP_Error on failure.
- * @return mixed         The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
+ * @param  array $invoice_data   An array of invoice properties.
+ * @param  bool  $wp_error       Whether to return false or WP_Error on failure.
+ * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
  */
 function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     if ( empty( $invoice_data ) ) {

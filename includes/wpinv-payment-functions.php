@@ -146,7 +146,7 @@ function wpinv_subscription_payment_desc( $invoice ) {
     if ( empty( $invoice ) ) {
         return NULL;
     }
-    
+
     $description = '';
     if ( $invoice->is_parent() && $item = $invoice->get_recurring( true ) ) {
         if ( $item->has_free_trial() ) {
