@@ -64,7 +64,8 @@ if ($subs) { ?>
                 <td><?php echo date_i18n(get_option('date_format'), strtotime($sub->expiration, current_time('timestamp'))); ?></td>
                 <td><?php
                     if ($sub->can_cancel()) {
-                        echo '<a class="btn btn-sm btn-primary" href="' . $sub->get_cancel_url() . '" >' . __("Cancel", "invoicing") . '</a>';
+                        $message = esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' );
+                        echo '<a class="btn btn-sm btn-primary" onclick="return confirm(\'' . $message . '\')" href="' . $sub->get_cancel_url() . '" >' . __("Cancel", "invoicing") . '</a>';
                     }
                     do_action('wpinv_subscription_item_actions', $sub);
                     ?>
