@@ -1702,26 +1702,26 @@ add_action( 'wpinv_payment_mode_select', 'wpinv_payment_mode_select' );
  */
 function wpinv_sanitize_checkout_field_args( $args ) {
 
-    $name     = ( empty( $args['name'] ) ) ? wp_generate_password( 12, false ) : $args['name'];
+    $name     = ( empty( $args['name'] ) ) ? 'wpinv_' . wp_generate_password( 12, false ) : $args['name'];
     $id       = ( empty( $args['id'] ) ) ? $name : $args['id'];
 
     $defaults = array(
-        'id'                     => $name, // element id
-        'name'                   => $id, // input element name
+        'id'                     => $id, // element id
+        'name'                   => $name, // input element name
         'key'                    => ( ! isset( $args['key'] ) ) ? str_ireplace( 'wpinv_', '', $name ) : $args['key'], // value key in $billing_details
         'input_class'            => 'wpi-input form-control', // input element class
         'wrapper_class'          => 'wpi-cart-field wpi-col2', // p element class
         'label_class'            => 'wpi-label', // label class
-        'validations'            => array(), // an array of validations e.g email etc
         'placeholder'            => '', // First name.
-        'field_label'            => '', // 
+        'field_label'            => '',
         'field_description'      => '',
         'field_required'         => false,
+        'field_required_msg'     => sprintf(
+            __( '%s is required', 'invoicing' ),
+            ( empty( $args['field_label'] ) ) ? $name : $args['field_label']
+        ),
         'field_type'             => 'text',
-        'field_enabled'          => true,
-        'visible_in_email'       => true,
-        'visible_thank_you_page' => true,
-        'visible_order_details'  => true,
+        'show_in'                => array( 'email', 'checkout', 'details' ),
     );
 
     return wp_parse_args( $args, $defaults );
@@ -1732,121 +1732,63 @@ function wpinv_sanitize_checkout_field_args( $args ) {
  * Returns default checkout fields.
  */
 function wpinv_get_default_checkout_fields() {
-
-    $fields = array(
-
-        'wpinv_first_name'   => array(
-            'name'           => 'wpinv_first_name',
-            'placeholder'    => __( 'First name', 'invoicing' ),
-            'field_label'    => __( 'First name', 'invoicing' ),
-            'field_required' => (bool) wpinv_get_option( 'fname_mandatory' ),
-        ),
-
-        'wpinv_last_name'    => array(
-            'name'           => 'wpinv_last_name',
-            'placeholder'    => __( 'Last name', 'invoicing' ),
-            'field_label'    => __( 'Last name', 'invoicing' ),
-            'field_required' => (bool)wpinv_get_option( 'lname_mandatory' ),
-        ),
-
-        'wpinv_address'      => array(
-            'name'           => 'wpinv_address',
-            'placeholder'    => __( 'Address', 'invoicing' ),
-            'field_label'    => __( 'Address', 'invoicing' ),
-            'field_required' => (bool)wpinv_get_option( 'address_mandatory' ),
-        ),
-
-        'wpinv_city'         => array(
-            'name'           => 'wpinv_city',
-            'placeholder'    => __( 'City', 'invoicing' ),
-            'field_label'    => __( 'City', 'invoicing' ),
-            'field_required' => (bool)wpinv_get_option( 'city_mandatory' ),
-        ),
-
-        'wpinv_country'        => array(
-            'options'          => wpinv_get_country_list(),
-            'name'             => 'wpinv_country',
-            'show_option_all'  => false,
-            'show_option_none' => false,
-            'field_label'      => __( 'Country', 'invoicing' ),
-            'placeholder'      => __( 'Choose a country', 'invoicing' ),
-            'field_required'   => (bool)wpinv_get_option( 'country_mandatory' ),
-            'field_type'       => 'select',
-            'input_class'      => 'wpi-input form-control wpi_select2',
-        ),
-
-        'wpinv_state'          => array(
-            'field_type'       => 'state_select',
-            'field_required'   => (bool)wpinv_get_option( 'state_mandatory' ),
-            'field_label'      => __( 'State / Province', 'invoicing' ),
-            'placeholder'      => __( 'Choose a state', 'invoicing' ),
-            'name'             => 'wpinv_state',
-        ),
-
-        'wpinv_zip'          => array(
-            'name'           => 'wpinv_zip',
-            'placeholder'    => __( 'ZIP / Postcode', 'invoicing' ),
-            'field_label'    => __( 'ZIP / Postcode', 'invoicing' ),
-            'field_required' => (bool)wpinv_get_option( 'zip_mandatory' ),
-        ),
-
-        'wpinv_phone'        => array(
-            'name'           => 'wpinv_phone',
-            'placeholder'    => __( 'Phone', 'invoicing' ),
-            'field_label'    => __( 'Phone', 'invoicing' ),
-            'field_required' => (bool)wpinv_get_option( 'phone_mandatory' ),
-            'field_type'     => 'text',
-        ),
-
-    );
-
-    return array_map( 'wpinv_sanitize_checkout_field_args', $fields );
-
+    return array_map( 'wpinv_sanitize_checkout_field_args', wpinv_get_data( 'default-checkout-fields' ) );
 }
 
 /**
- * Returns custom checkout fields.
+ * Returns checkout fields.
  */
-function wpinv_get_custom_checkout_fields() {
-    return array_map( 'wpinv_sanitize_checkout_field_args', array() );
+function wpinv_get_checkout_fields() {
+    $checkout_fields = wpinv_get_option( 'checkout_fields', null );
+
+    if ( ! is_array( $checkout_fields ) ) {
+        $checkout_fields = wpinv_get_default_checkout_fields();
+    }
+
+    return array_map( 'wpinv_sanitize_checkout_field_args', $checkout_fields );
 }
 
 /**
  * Returns an array of enabled checkout fields.
  */
-function wpinv_get_checkout_checkout_fields( array $billing_details = array() ) {
+function wpinv_prepare_checkout_fields( array $billing_details = array() ) {
 
     if ( empty( $billing_details['country'] ) ) {
         $billing_details['country'] = wpinv_default_billing_country();
     }
 
-    $fields  = array_merge( wpinv_get_default_checkout_fields(), wpinv_get_custom_checkout_fields() );
-    $fields  = apply_filters('wpinv_checkout_fields', $fields, $billing_details );
-    $return  = array();
+    $fields       = wpinv_get_checkout_fields();
+    $fields       = apply_filters('wpinv_checkout_fields', $fields, $billing_details );
+    $field_types  = wpinv_get_data( 'field-types' );
 
     foreach ( $fields as $key => $field ) {
 
-        if ( empty( $field['field_enabled'] ) ) {
+        // Is the field type registered?
+        if ( empty( $field['field_type'] ) || empty( $field_types[ $field['field_type'] ] ) ) {
+            unset( $fields[ $key ] );
             continue;
         }
 
+        // Each field type has its own render callback.
+        $fields[ $key ]['render_cb'] = $field_types[ $field['field_type'] ]['render_cb'];
+
+        // Add the current field value.
         if ( isset( $field['key'] ) && isset( $billing_details[ $field['key'] ] ) ) {
 
             if ( 'select' == $field['field_type'] ) {
-                $field['selected'] = $billing_details[ $field['key'] ];
+                $fields[ $key ]['selected'] = $billing_details[ $field['key'] ];
             } else {
-                $field['value'] = $billing_details[ $field['key'] ];
+                $fields[ $key ]['value'] = $billing_details[ $field['key'] ];
             }
-            
+
         }
 
-        $field['billing_details'] = $billing_details;
-        $field['class']           =  $field['input_class'];
+        $fields[ $key ]['billing_details'] = $billing_details;
+        $fields[ $key ]['class']           =  $field['input_class'];
 
-        $return[ $key ] = $field;
     }
 
-    return array_map( 'wpinv_sanitize_checkout_field_args', $return );
+    return $fields;
 
 }
 
@@ -1854,8 +1796,8 @@ function wpinv_checkout_billing_info() {
     if ( wpinv_is_checkout() ) {
 
         // Prepare the billing details and checkout fields.
-        $billing_details    = wpinv_checkout_billing_details();
-        $checkout_fields    = wpinv_get_checkout_checkout_fields( $billing_details );
+        $billing_details = wpinv_checkout_billing_details();
+        $checkout_fields = wpinv_prepare_checkout_fields( $billing_details );
 
         ?>
         <div id="wpinv-fields" class="clearfix">
@@ -1871,13 +1813,8 @@ function wpinv_checkout_billing_info() {
                         $first_col = true;
                         foreach ( $checkout_fields as $field_details ) {
 
-                            // If no field type is specified, abort.
-                            if ( empty( $field_details['field_type'] ) || empty( $field_details['field_enabled'] ) ) {
-                                continue;
-                            }
-
                             $type = sanitize_html_class( $field_details['field_type'] );
-                            $name = esc_attr( $field_details['name'] );
+                            $name = sanitize_html_class( $field_details['name'] );
 
                             // Fire actions before a field is displayed.
                             do_action( "wpinv_checkout_billing_fields_before_$name", $field_details, $billing_details );
@@ -1906,8 +1843,8 @@ function wpinv_checkout_billing_info() {
                             }
 
                             // Finally, display the input.
-                            if ( function_exists( "wpinv_html_$type" ) ) {
-                                echo call_user_func( "wpinv_html_$type", $field_details );
+                            if ( function_exists( $field_details['render_cb'] ) ) {
+                                echo call_user_func( $field_details['render_cb'], $field_details );
                             }
 
                             // Fire actions when displaying a field.

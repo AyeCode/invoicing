@@ -1054,7 +1054,7 @@ function wpinv_parse_list( $list ) {
  * @return mixed Fetched data.
  */
 function wpinv_get_data( $key ) {
-    
+
     // Try fetching it from the cache.
     $data = wp_cache_get( "wpinv-$key", 'wpinv' );
     if( $data ) {

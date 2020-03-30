@@ -1,0 +1,41 @@
+{
+  "name": "invoicing",
+  "version": "1.0.17",
+  "description": "Invoicing Plugin for WordPress",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "css1": "postcss assets/css/postcss/field-editor.css -o assets/css/field-editor.css",
+    "js": "npx webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AyeCode/invoicing.git"
+  },
+  "keywords": [
+    "invoicing"
+  ],
+  "author": "AyeCode",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/AyeCode/invoicing/issues"
+  },
+  "homepage": "https://github.com/AyeCode/invoicing#readme",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "autoprefixer": "^9.7.5",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.4.2",
+    "cssnano": "^4.1.10",
+    "postcss-import": "^12.0.1",
+    "precss": "^4.0.0",
+    "vue-loader": "^15.9.1",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "vuedraggable": "^2.23.2"
+  }
+}

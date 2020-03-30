@@ -493,3 +493,46 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
 
     return $page_id;
 }
+
+/**
+ * Loads admin scripts and styles.
+ */
+function wpinv_enqueue_admin_scripts() {
+        
+    if( isset( $_GET['page'] ) && 'wpinv-settings' == $_GET['page'] ) {
+
+        // Sweetalert https://sweetalert2.github.io/.
+		wp_register_script( 'promise-polyfill', WPINV_PLUGIN_URL . 'assets/vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3', true );
+        wp_register_script( 'sweetalert2', WPINV_PLUGIN_URL . 'assets/vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
+
+        // Vue js.
+        wp_register_script( 'vue', WPINV_PLUGIN_URL . 'assets/vendor/vue/vue.min.js', array(), '2.6.11', true );
+
+        // Field editor styles.
+        if ( isset( $_GET['tab'] ) && 'checkout' === $_GET['tab'] ) {
+            $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/field-editor.css' );
+            wp_enqueue_style( 'wpinv-field-editor', WPINV_PLUGIN_URL . 'assets/css/field-editor.css', array(), $version );
+            
+            $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/dist/field-editor.js' );
+            wp_register_script( 'wpinv-field-editor', WPINV_PLUGIN_URL . 'assets/js/dist/field-editor.js', array( 'vue', 'sweetalert2' ), $version, true );
+            $params = array(
+                'fields'        => wpinv_get_checkout_fields(),
+                'defaultFields' => wpinv_get_default_checkout_fields(),
+                'fieldTypes'    => wpinv_get_data( 'field-types' ),
+                'fieldTypeKeys' => array_keys( wpinv_get_data( 'field-types' ) ),
+                'default_field' => wpinv_sanitize_checkout_field_args( array() ),
+                'deleteTitle'   => __( 'Are you sure?', 'invoicing' ),
+                'deleteText'    => __( "Your are about to delete this field and all it's data", 'invoicing' ),
+                'deleteButton'  => __( 'Yes, delete it!', 'invoicing' ),
+            );
+
+            // localize and enqueue the script with all of the variable inserted.
+		    wp_localize_script( 'wpinv-field-editor', 'wpinvFieldEditor', $params );
+
+		    wp_enqueue_script( 'wpinv-field-editor' );
+        }
+
+    }
+
+}
+add_action( 'admin_enqueue_scripts', 'wpinv_enqueue_admin_scripts', 1 );

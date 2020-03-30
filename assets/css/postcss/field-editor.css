@@ -1,0 +1,265 @@
+.wpinv-field-editor-main-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+
+    .wpinv-error,
+    .wpinv-required {
+        padding: 0;
+        color: #ff5722;
+    }
+
+    button.toggle-icon {
+        float: right;
+        margin: 0;
+        width: 38px;
+        height: 38px;
+        border: 0;
+        padding: 8px;
+        background: 0 0;
+        cursor: pointer;
+        outline: 0;
+        margin-top: -10px;
+    }
+
+    .wpinv-field-types-editor-wrapper {
+        flex: 0 0 360px;
+        max-width: 98%;
+        margin-right: 20px;
+        margin-bottom: 15px;
+        border: 1px #dfdfdf solid;
+        background: #ffffff;
+
+        .wpinv-field-types-editor-header {
+            font-size: 15px;
+            font-weight: normal;
+            line-height: 1;
+            padding: 8px 10px;
+            margin: 0;
+            border-bottom: 1px #dfdfdf solid;
+            text-shadow: 0 1px 0 #ffffff;
+            background: #f5f5f5;
+        }
+
+        .wpinv-field-types-editor-inside {
+            position: relative;
+            margin: 10px 0;
+            line-height: 1.4em;
+            padding: 0 12px 0 10px;
+
+            ul {
+
+                @media only screen and (min-width : 360px) {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                }
+
+                li {
+                    background: #fafafa;
+                    height: 37px;
+                    line-height: 37px;
+                    padding-left: 10px;
+                    font-weight: bold;
+                    font-size: 13px;
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    cursor: move;
+                    display: flex;
+                    border: 1px #dfdfdf solid;
+
+                    @media only screen and (min-width : 360px) {
+                        flex: 0 0 48%;
+                        justify-content: space-between;
+                        font-weight: initial;
+                        height: 30px;
+                        line-height: 30px;
+                    }
+
+                    &:hover {
+                        background: #eeeeee;
+                    }
+
+                    &.wpinv-undraggable,
+                    &.wpinv-undraggable:hover {
+                        opacity: 0.3;
+                        border: 1px #eae7e7 solid;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+        }
+    }
+
+}
+
+.wpinv-fields-editor-wrapper {
+    margin-bottom: 15px;
+    border: 1px #dfdfdf solid;
+    background: #f5f5f5;
+
+    .wpinv-field-editor-header {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 1;
+        padding: 8px 10px;
+        margin: 0;
+        border-bottom: 1px #dfdfdf solid;
+        text-shadow: 0 1px 0 #ffffff;
+    }
+
+    p {
+        padding: 0 10px;
+    }
+
+    .wpinv-field-editor-inside {
+        position: relative;
+        margin: 10px 0;
+        line-height: 1.4em;
+        padding: 0 12px 0 10px;
+
+        .wpinv-field-editor-fields-wrapper {
+            height: auto;
+            overflow: visible;
+            padding: 0.5em 0 0.5em 4px;
+            background-color: #ffffff;
+            border: 1px #dfdfdf solid;
+
+            .wpinv-field-editor-fields {
+                margin: 0 7px;
+                background: #fff;
+
+                .wpinv-field-editor-field {
+                    display: block;
+                    position: relative;
+                    margin: 5px 0;
+                    padding: 0;
+                    min-height: 20px;
+                    font-size: 13px;
+                    line-height: 25px;
+                    border: 1px #dfdfdf solid;
+
+                    .wpinv-field-editor-field-header {
+                        background: #fafafa;
+                        display: block;
+                        height: 37px;
+                        padding: 5px 10px;
+                        color: #333;
+                        text-decoration: none;
+                        font-weight: bold;
+                        box-sizing: border-box;
+                        overflow: hidden;
+                        display: flex;
+                        cursor: move;
+
+                        &:hover {
+                            background-color: #eeeeee;
+                        }
+
+                        .label {
+                            flex: 1;
+                        }
+
+                        .type {
+                            font-weight: initial;
+                        }
+
+                        .toggle-icon {
+                            margin-left: 4px;
+                            cursor: pointer;
+
+                            .dashicons {
+                                vertical-align: bottom;
+                            }
+                        }
+                    }
+
+                    &.active .wpinv-field-editor-field-header {
+                        background-color: #eeeeee;
+                    }
+
+                    &.sortable-ghost {
+                        opacity: 1;
+                        background: #ffffff;
+                        border: 1px dotted #333;
+                        color: #ffffff !important;
+
+                        .wpinv-field-editor-field-header {
+                            background: #ffffff !important;
+                            color: #ffffff !important;
+                        }
+
+                        *:not(.wpinv-field-editor-field-header) {
+                            opacity: 0;
+                        }
+                    }
+
+                    &.sortable-drag {
+                        opacity: 1;
+                        background: #ffffff;
+                        border: 1px dotted #333;
+                        color: #333 !important;
+                        transform: rotate(3deg);
+
+                        .wpinv-field-editor-field-header {
+                            color: #333 !important;
+                        }
+                    }
+
+                    .wpinv-field-editor-field-body {
+                        display: none;
+                        overflow: hidden;
+
+                        .wpinv-field-editor-field-body-inner {
+                            padding: 0 10px;
+
+                            .wpinv-field-editor-text-wrapper {
+                                display: block;
+                                width: 100%;
+                                font-style: normal;
+                                margin-bottom: 0;
+                                margin: 1em 0;
+
+                                div.label-text {
+                                    font-weight: 500;
+                                    font-size: 14px;
+                                    color: #666666;
+                                }
+
+                                div.input-field-wrapper input {
+                                    width: 100%;
+                                }
+                                
+                                @media only screen and (max-width : 360px) {
+                                    display: block;
+
+                                    span, input {
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .wpinv-field-editor-actions {
+            margin-bottom: 16px;
+
+            a {
+                text-decoration: none;
+            }
+
+            .wpinv-delete {
+                color: #bf360c;
+            }
+
+            .wpinv-toggle-advanced {
+                float: right;
+            }
+
+        }
+    }
+
+}
