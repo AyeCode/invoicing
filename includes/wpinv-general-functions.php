@@ -322,20 +322,22 @@ function wpinv_checkout_required_fields() {
 
     // Let payment gateways and other extensions determine if address fields should be required
     $require_billing_details = apply_filters( 'wpinv_checkout_required_billing_details', wpinv_use_taxes() );
-    $checkout_fields    = wpinv_get_checkout_checkout_fields();
+    $checkout_fields         = wpinv_get_checkout_fields();
 
     if ( $require_billing_details ) {
 
-        foreach( $checkout_fields as $key => $details ) {
+        foreach( $checkout_fields as $field_details ) {
 
-            if ( ! empty( $details['field_enabled'] ) &&  ! empty( $details['field_required'] ) ) {
+            if ( ! empty( $field_details['field_required'] ) ) {
 
-                $required_fields[ $details['key'] ] = array(
-                    'error_id'      => $details['name'],
-                    'error_message' => sprintf(
-                        __( '%s is required', 'invoicing' ),
-                        $details['field_label']
-                    )
+                $default_msg = sprintf(
+                    __( '%s is required', 'invoicing' ),
+                    $field_details['field_label']
+                );
+
+                $required_fields[ $field_details['name'] ] = array(
+                    'error_id'      => $field_details['key'],
+                    'error_message' => empty( $field_details['field_required_msg'] ) ? $default_msg : $field_details['field_required_msg'],
                 );
 
             }

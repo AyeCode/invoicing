@@ -1469,7 +1469,7 @@ function wpinv_checkout_validate_invoice_user() {
         // Loop through required fields and show error messages
          if ( !empty( $required_fields ) ) {
             foreach ( $required_fields as $field_name => $value ) {
-                if ( in_array( $value, $required_fields ) && empty( $_POST[ $field_name ] ) ) {
+                if ( empty( $_POST[ $field_name ] ) ) {
                     wpinv_set_error( $value['error_id'], $value['error_message'] );
                 }
             }
@@ -1494,7 +1494,7 @@ function wpinv_checkout_validate_invoice_user() {
         }
     } else {
         // Set invalid user error
-        wpinv_set_error( 'invalid_user_id', __( 'The invalid invoice user id', 'invoicing' ) );
+        wpinv_set_error( 'invalid_user_id', __( 'The invoice user id does not exist', 'invoicing' ) );
     }
 
     // Return user data
@@ -1538,6 +1538,27 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
         return false;
     }
 
+    // Save checkout fields.
+    $checkout_fields = wpinv_get_checkout_fields();
+    foreach ( $checkout_fields as $field ) {
+        $key           = $field['key'];
+        $name          = $field['name'];
+        $meta_key      = '_wpinv_' . $key;
+        $value         = isset( $_POST[ $name ] ) ? sanitize_text_field( $_POST[ $name ] ) : null;
+        $user[ $key ]  = $value;
+
+        if ( ! empty( $user['user_id'] ) && ! empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $valid_data['invoice_user']['user_id'] ) {
+
+            if ( isset( $_POST[ $name ] ) ) {
+                update_user_meta( $user['user_id'], $meta_key, $value );
+            } else {
+                $user[ $key ] = get_user_meta( $user['user_id'], $meta_key, true );
+            }
+
+        }
+    }
+
+    // Ensure some fields are set; for backwards compatibilty.
     $address_fields = array(
         'first_name',
         'last_name',
@@ -1550,12 +1571,10 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
         'country',
         'zip',
     );
-    
+
     foreach ( $address_fields as $field ) {
-        $user[$field]  = !empty( $_POST['wpinv_' . $field] ) ? sanitize_text_field( $_POST['wpinv_' . $field] ) : false;
-        
-        if ( !empty( $user['user_id'] ) && !empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $valid_data['invoice_user']['user_id'] ) {
-            update_user_meta( $user['user_id'], '_wpinv_' . $field, $user[$field] );
+        if ( ! isset( $user[$field] ) && ! empty( $user['user_id'] ) ) {
+            $user[$field] = get_user_meta( $user['user_id'], '_wpinv_' . $field, true );
         }
     }
 
@@ -1587,6 +1606,29 @@ function wpinv_empty_cart() {
     do_action( 'wpinv_empty_cart' );
 }
 
+/**
+ * Returns user info fields.
+ */
+function wpinv_get_userinfo_fields() {
+    return wp_list_pluck( wpinv_get_checkout_fields(), 'key' );
+}
+
+/**
+ * Returns the default address fields.
+ * 
+ * This are usually added directly to the invoice object and the user_info key of the invoice object.
+ */
+function wpinv_get_default_address_fields() {
+    return array( 'first_name', 'last_name', 'phone', 'address', 'city', 'country', 'state', 'zip', 'company' );
+}
+
+/**
+ * Returns the custom address fields which are only accessible via the user_info key of the invoice object.
+ */
+function wpinv_get_custom_userinfo_fields() {
+    return array_diff( wpinv_get_userinfo_fields(), wpinv_get_default_address_fields() );
+}
+
 function wpinv_process_checkout() {
     global $wpinv_euvat, $wpi_checkout_id, $wpi_cart;
     
@@ -1609,11 +1651,11 @@ function wpinv_process_checkout() {
     } else {
         // Validate the form $_POST data
         $valid_data = wpinv_validate_checkout_fields();
-        
+
         // Allow themes and plugins to hook to errors
         do_action( 'wpinv_checkout_error_checks', $valid_data, $_POST );
     }
-    
+
     $is_ajax    = defined( 'DOING_AJAX' ) && DOING_AJAX;
     
     // Validate the user
@@ -1632,8 +1674,12 @@ function wpinv_process_checkout() {
     }
 
     if ( $is_ajax ) {
+
         // Save address fields.
-        $address_fields = array( 'first_name', 'last_name', 'phone', 'address', 'city', 'country', 'state', 'zip', 'company' );
+        $address_fields = wpinv_get_default_address_fields();
+        $custom_fields  = wpinv_get_custom_userinfo_fields();
+        $address_fields = $address_fields + $custom_fields;
+
         foreach ( $address_fields as $field ) {
             if ( isset( $user[$field] ) ) {
                 $invoice->set( $field, $user[$field] );
@@ -1670,6 +1716,10 @@ function wpinv_process_checkout() {
         'zip'            => $user['zip'],
     );
     
+    foreach ( $custom_fields as $field ) {
+        $user_info[ $field ] = $user[ $field ];
+    }
+
     $cart_items = wpinv_get_cart_contents();
     $discounts  = wpinv_get_cart_discounts();
     

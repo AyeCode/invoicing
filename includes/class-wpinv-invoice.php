@@ -95,7 +95,13 @@ final class WPInv_Invoice {
         }
 
         if( '_ID' !== $key ) {
-            $this->$key = $value;
+
+            if ( in_array( $key, wpinv_get_custom_userinfo_fields() ) ) {
+                $this->user_info[ $key ] = $value;
+            } else {
+                $this->$key = $value;
+            }
+
         }
     }
 
@@ -520,6 +526,17 @@ final class WPInv_Invoice {
             }
         }
 
+        // Save custom user info.
+        if ( ! empty( $user_info['user_id'] ) ) {
+            foreach ( wpinv_get_custom_userinfo_fields() as $field ) {
+
+                if ( ! isset( $user_info[ $field ] ) ) {
+                    $user_info[ $field ] = get_post_meta( $this->ID, "_wpinv_$field", true );
+                }
+
+            }
+
+        }
         return $user_info;
     }
 
@@ -837,8 +854,15 @@ final class WPInv_Invoice {
                         wp_update_post( $args );
                         break;
                     default:
-                        do_action( 'wpinv_save', $this, $key );
-                        break;
+
+                        if ( in_array( $key, wpinv_get_custom_userinfo_fields() ) ) {
+                            update_post_meta( $this->ID, "_wpinv_$key", $value );
+                            $this->user_info[$key] = $value;
+                        } else {
+                            do_action( 'wpinv_save', $this, $key );
+                            break;
+                        }
+                        
                 }
             }
 

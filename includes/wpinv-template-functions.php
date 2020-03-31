@@ -458,14 +458,12 @@ function wpinv_html_select( $args = array() ) {
     return $output;
 }
 
+/**
+ * Renders a state select/input field.
+ */
 function wpinv_html_state_select( $args = array() ) {
 
-    $key = 'country';
-    if ( ! empty( $args['key'] ) ) {
-        $key = $args['key'];
-    }
-
-    $selected_country = empty( $args[ $key ] ) ? wpinv_default_billing_country() : $args[ $key ];
+    $selected_country = empty( $args[ 'country' ] ) ? wpinv_default_billing_country() : $args[ 'country' ];
 
     if ( ! empty( $args['billing_details'] ) && ! empty( $args['billing_details']['country'] ) ) {
         $selected_country = $args['billing_details']['country'];
@@ -488,13 +486,32 @@ function wpinv_html_state_select( $args = array() ) {
     }
 
     return wpinv_html_text( array(
-            'name'          => 'wpinv_state',
+            'name'          => $args['name'],
             'value'         => $args['value'],
-            'id'            => 'wpinv_state',
+            'id'            => $args['id'],
             'class'         => 'wpi-input form-control',
             'placeholder'   => $args['placeholder'],
             'required'      => $args['field_required'],
         ) );
+
+}
+
+/**
+ * Renders a country select field.
+ */
+function wpinv_html_country_select( $args = array() ) {
+
+    return wpinv_html_select( array(
+        'options'          => wpinv_get_country_list(),
+        'name'             => $args['name'],
+        'id'               => $args['id'],
+        'selected'         => $args['value'],
+        'show_option_all'  => false,
+        'show_option_none' => false,
+        'class'            => $args['class'],
+        'placeholder'      => $args['placeholder'],
+        'required'         => $args['field_required'],
+    ) );
 
 }
 
@@ -1745,20 +1762,25 @@ function wpinv_get_checkout_fields() {
         $checkout_fields = wpinv_get_default_checkout_fields();
     }
 
+    $checkout_fields = apply_filters('wpinv_checkout_fields', $checkout_fields );
+
     return array_map( 'wpinv_sanitize_checkout_field_args', $checkout_fields );
 }
 
 /**
  * Returns an array of enabled checkout fields.
  */
-function wpinv_prepare_checkout_fields( array $billing_details = array() ) {
+function wpinv_prepare_checkout_fields( $billing_details = array() ) {
+
+    if ( ! is_array( $billing_details ) ) {
+        $billing_details = array();
+    }
 
     if ( empty( $billing_details['country'] ) ) {
         $billing_details['country'] = wpinv_default_billing_country();
     }
 
     $fields       = wpinv_get_checkout_fields();
-    $fields       = apply_filters('wpinv_checkout_fields', $fields, $billing_details );
     $field_types  = wpinv_get_data( 'field-types' );
 
     foreach ( $fields as $key => $field ) {
@@ -1833,7 +1855,7 @@ function wpinv_checkout_billing_info() {
 
                                 // Is this field required?
                                 if ( ! empty( $field_details['field_required'] ) ) {
-                                    $label .= '<span class="wpi-required">*</span>';
+                                    $label .= '&nbsp;<span class="wpi-required">*</span>';
                                 }
 
                                 $label_class = esc_attr( $field_details['label_class'] );
