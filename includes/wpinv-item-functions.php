@@ -470,7 +470,12 @@ function wpinv_get_cart_item_tax( $item_id = 0, $subtotal = '', $options = array
     return apply_filters( 'wpinv_get_cart_item_tax', $tax, $item_id, $subtotal, $options );
 }
 
-function wpinv_cart_item_price( $item ) {
+function wpinv_cart_item_price( $item, $currency = '' ) {
+
+    if( empty( $currency ) ) {
+        $currency = wpinv_get_currency();
+    }
+
     $item_id    = isset( $item['id'] ) ? $item['id'] : 0;
     $price      = isset( $item['item_price'] ) ? wpinv_round_amount( $item['item_price'] ) : 0;
     $tax        = wpinv_price( wpinv_format_amount( $item['tax'] ) );
@@ -485,24 +490,33 @@ function wpinv_cart_item_price( $item ) {
         }        
     }
 
-    $price = wpinv_price( wpinv_format_amount( $price ) );
+    $price = wpinv_price( wpinv_format_amount( $price ), $currency );
 
     return apply_filters( 'wpinv_cart_item_price_label', $price, $item );
 }
 
-function wpinv_cart_item_subtotal( $item ) {
+function wpinv_cart_item_subtotal( $item, $currency = '' ) {
+
+    if( empty( $currency ) ) {
+        $currency = wpinv_get_currency();
+    }
+
     $subtotal   = isset( $item['subtotal'] ) ? $item['subtotal'] : 0;
-    $subtotal   = wpinv_price( wpinv_format_amount( $subtotal ) );
+    $subtotal   = wpinv_price( wpinv_format_amount( $subtotal ), $currency );
 
     return apply_filters( 'wpinv_cart_item_subtotal_label', $subtotal, $item );
 }
 
-function wpinv_cart_item_tax( $item ) {
+function wpinv_cart_item_tax( $item, $currency = '' ) {
     $tax        = '';
     $tax_rate   = '';
+
+    if( empty( $currency ) ) {
+        $currency = wpinv_get_currency();
+    }
     
     if ( isset( $item['tax'] ) && $item['tax'] > 0 && $item['subtotal'] > 0 ) {
-        $tax      = wpinv_price( wpinv_format_amount( $item['tax'] ) );
+        $tax      = wpinv_price( wpinv_format_amount( $item['tax'] ), $currency );
         $tax_rate = !empty( $item['vat_rate'] ) ? $item['vat_rate'] : ( $item['tax'] / $item['subtotal'] ) * 100;
         $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
         $tax_rate = $tax_rate != '' ? ' <small class="tax-rate normal small">(' . $tax_rate . '%)</small>' : '';

@@ -22,7 +22,7 @@ function wpinv_discount_columns( $existing_columns ) {
 add_action( 'manage_wpi_discount_posts_custom_column', 'wpinv_discount_custom_column' );
 function wpinv_discount_custom_column( $column ) {
     global $post;
-    
+
     $discount = $post;
 
     switch ( $column ) {

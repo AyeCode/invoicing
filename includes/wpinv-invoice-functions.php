@@ -757,8 +757,13 @@ function wpinv_get_cart_subtotal( $items = array() ) {
     return apply_filters( 'wpinv_get_cart_subtotal', $subtotal );
 }
 
-function wpinv_cart_subtotal( $items = array() ) {
-    $price = wpinv_price( wpinv_format_amount( wpinv_get_cart_subtotal( $items ) ) );
+function wpinv_cart_subtotal( $items = array(), $currency = '' ) {
+
+    if( empty( $currency ) ) {
+        $currency = wpinv_get_currency();
+    }
+
+    $price = wpinv_price( wpinv_format_amount( wpinv_get_cart_subtotal( $items ) ), $currency );
 
     return $price;
 }
@@ -785,7 +790,7 @@ function wpinv_get_cart_total( $items = array(), $discounts = false, $invoice = 
 
 function wpinv_cart_total( $cart_items = array(), $echo = true, $invoice = array() ) {
     global $cart_total;
-    $total = wpinv_price( wpinv_format_amount( wpinv_get_cart_total( $cart_items, NULL, $invoice ) ) );
+    $total = wpinv_price( wpinv_format_amount( wpinv_get_cart_total( $cart_items, NULL, $invoice ) ), $invoice->get_currency() );
     $total = apply_filters( 'wpinv_cart_total', $total, $cart_items, $invoice );
     
     $cart_total = $total;
@@ -814,9 +819,9 @@ function wpinv_get_cart_tax( $items = array() ) {
     return apply_filters( 'wpinv_get_cart_tax', wpinv_sanitize_amount( $cart_tax ) );
 }
 
-function wpinv_cart_tax( $items = array(), $echo = false ) {
+function wpinv_cart_tax( $items = array(), $echo = false, $currency = '' ) {
     $cart_tax = wpinv_get_cart_tax( $items );
-    $cart_tax = wpinv_price( wpinv_format_amount( $cart_tax ) );
+    $cart_tax = wpinv_price( wpinv_format_amount( $cart_tax ), $currency );
 
     $tax = apply_filters( 'wpinv_cart_tax', $cart_tax, $items );
 

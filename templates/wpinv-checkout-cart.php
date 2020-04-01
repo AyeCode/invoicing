@@ -5,6 +5,7 @@
 
 global $wpinv_euvat, $post, $ajax_cart_details, $wpi_cart_columns;
 $invoice            = wpinv_get_invoice_cart();
+$currency           = $invoice->get_currency();
 $cart_items         = !empty( $ajax_cart_details ) ? $ajax_cart_details : wpinv_get_cart_content_details();
 $quantities_enabled = wpinv_item_quantities_enabled();
 $use_taxes          = wpinv_use_taxes();
@@ -54,7 +55,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     </td>
                     <td class="wpinv_cart_item_price text-right">
                         <?php 
-                        echo wpinv_cart_item_price( $item );
+                        echo wpinv_cart_item_price( $item, $currency );
                         do_action( 'wpinv_checkout_cart_item_price_after', $item, $key );
                         ?>
                     </td>
@@ -69,7 +70,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <?php if ( $use_taxes ) { ?>
                     <td class="wpinv_cart_item_tax text-right">
                         <?php
-                        echo wpinv_cart_item_tax( $item );
+                        echo wpinv_cart_item_tax( $item, $currency );
                         //echo wpinv_get_cart_item_tax( $wpi_item->ID, $subtotal = '', $options = array() );
                         do_action( 'wpinv_cart_item_tax', $item, $key );
                         ?>
@@ -77,7 +78,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <?php } ?>
                     <td class="wpinv_cart_item_subtotal text-right">
                         <?php
-                        echo wpinv_cart_item_subtotal( $item );
+                        echo wpinv_cart_item_subtotal( $item, $currency );
                         do_action( 'wpinv_cart_item_subtotal', $item, $key );
                         ?>
                     </td>
@@ -107,7 +108,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <strong><?php _e( 'Sub-Total', 'invoicing' ); ?>:</strong>
                 </td>
                 <td class="wpinv_cart_subtotal text-right">
-                    <span class="wpinv_cart_subtotal_amount bold"><?php echo wpinv_cart_subtotal( $cart_items ); ?></span>
+                    <span class="wpinv_cart_subtotal_amount bold"><?php echo wpinv_cart_subtotal( $cart_items, $currency ); ?></span>
                 </td>
                 <?php do_action( 'wpinv_checkout_table_subtotal_last', $cart_items ); ?>
             </tr>
@@ -122,7 +123,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <strong><?php echo $tax_label; ?>:</strong>
                 </td>
                 <td class="wpinv_cart_tax text-right">
-                    <span class="wpinv_cart_tax_amount" data-tax="<?php echo wpinv_get_cart_tax( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_tax( $cart_items ) ); ?></span>
+                    <span class="wpinv_cart_tax_amount" data-tax="<?php echo wpinv_get_cart_tax( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_tax( $cart_items, false, $currency ) ); ?></span>
                 </td>
                 <?php do_action( 'wpinv_checkout_table_tax_last' ); ?>
             </tr>

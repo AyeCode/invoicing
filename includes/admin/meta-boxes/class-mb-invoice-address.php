@@ -9,6 +9,7 @@ class WPInv_Meta_Box_Billing_Details {
         global $user_ID;
         $post_id    = !empty( $post->ID ) ? $post->ID : 0;
         $invoice    = new WPInv_Invoice( $post_id );
+
 ?>
 <div class="gdmbx2-wrap form-table">
     <div id="gdmbx2-metabox-wpinv_address" class="gdmbx2-metabox gdmbx-field-list wpinv-address gdmbx-row">
@@ -149,6 +150,29 @@ class WPInv_Meta_Box_Billing_Details {
                 <input type="text" class="gdmbx2-text-large" value="<?php echo esc_attr( $invoice->ip );?>" readonly />
             </div>
         </div>
+
+        <?php if( ! $invoice->is_paid() ) { ?>
+
+            <div class="gdmbx-row gdmbx-type-select gdmbx-wpinv-currency table-layout">
+            <div class="gdmbx-th"><label for="wpinv_currency"><?php _e( 'Currency', 'invoicing' );?></label></div>
+            <div class="gdmbx-td">
+                <?php
+                echo wpinv_html_select( array(
+                    'options'          => array_merge( array( '' => __( 'Currency for the invoice', 'invoicing' ) ), wpinv_get_currencies() ),
+                    'name'             => 'wpinv_currency',
+                    'id'               => 'wpinv_currency',
+                    'selected'         => $invoice->get_currency(),
+                    'show_option_all'  => false,
+                    'show_option_none' => false,
+                    'class'            => 'gdmbx2-text-large wpi_select2',
+                    'placeholder'      => __( 'Choose a currency', 'invoicing' ),
+                    'required'         => true,
+                ) );
+                ?>
+            </div>
+        </div>
+
+        <?php } ?>
     </div>
 </div>
 <?php wp_nonce_field( 'wpinv_save_invoice', 'wpinv_save_invoice' ) ;?>

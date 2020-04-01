@@ -414,7 +414,20 @@ class WPInv_Meta_Box_Items {
         //$invoice->set( 'discount', $discount );
         $invoice->set( 'ip', $ip );
         $invoice->old_status = $_POST['original_post_status'];
-        $invoice->currency = wpinv_get_currency();
+        
+        $currency = $invoice->get_currency();
+        if ( ! empty( sanitize_text_field( $data['wpinv_currency'] ) ) ) {
+            $currency = sanitize_text_field( $data['wpinv_currency'] );
+        }
+
+        if ( empty( $currency ) ) {
+            $currency = wpinv_get_currency();
+        }
+
+        if ( ! $invoice->is_paid() ) {
+            $invoice->currency = $currency;
+        }
+
         if ( !empty( $data['wpinv_gateway'] ) ) {
             $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
         }

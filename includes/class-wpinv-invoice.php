@@ -639,7 +639,7 @@ final class WPInv_Invoice {
                 }
             }
 
-            $this->update_meta( '_wpinv_payment_meta', $this->payment_meta );            
+            $this->update_meta( '_wpinv_payment_meta', $this->payment_meta );    
             $this->new = true;
         }
 
