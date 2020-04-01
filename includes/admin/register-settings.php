@@ -508,6 +508,13 @@ function wpinv_get_registered_settings() {
                         'std' => get_option( 'admin_email' ),
                         'type' => 'text',
                     ),
+                    'admin_email' => array(
+                        'id'   => 'admin_email',
+                        'name' => __( 'Admin Email', 'invoicing' ),
+                        'desc' => __( 'Where should we send admin notifications?', 'invoicing' ),
+                        'std' => get_option( 'admin_email' ),
+                        'type' => 'text',
+                    ),
                     'overdue_settings_header' => array(
                         'id'   => 'overdue_settings_header',
                         'name' => '<h3>' . __( 'Due Date Settings', 'invoicing' ) . '</h3>',
