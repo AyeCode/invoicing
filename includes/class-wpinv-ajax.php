@@ -368,7 +368,7 @@ class WPInv_Ajax {
             wp_send_json( $response );
         }        
         
-        $save_item = $_POST['_wpinv_quick'];
+        $save_item = wp_unslash( $_POST['_wpinv_quick'] );
         
         $meta               = array();
         $meta['type']       = !empty($save_item['type']) ? sanitize_text_field($save_item['type']) : 'custom';
@@ -379,6 +379,7 @@ class WPInv_Ajax {
         $data                   = array();
         $data['post_title']     = sanitize_text_field($save_item['name']);
         $data['post_status']    = 'publish';
+        $data['post_excerpt']   = ! empty( $save_item['excerpt'] ) ? wp_kses_post( $save_item['excerpt'] ) : '';
         $data['meta']           = $meta;
         
         $item = new WPInv_Item();

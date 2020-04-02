@@ -718,6 +718,7 @@ jQuery(function($) {
                     $quickAdd.slideDown('fast');
                 }
                 $('[name="_wpinv_quick[name]"]', $quickAdd).val('');
+                $('#_wpinv_quickexcerpt', $quickAdd).val('');
                 $('[name="_wpinv_quick[price]"]', $quickAdd).val('');
                 $('[name="_wpinv_quick[qty]"]', $quickAdd).val(1);
                 $('[name="_wpinv_quick[type]"]', $quickAdd).prop('selectedIndex',0);
@@ -770,7 +771,9 @@ jQuery(function($) {
                         if (response.success === true) {
                             $('[name="_wpinv_quick[name]"]', metaBox).val('');
                             $('[name="_wpinv_quick[price]"]', metaBox).val('');
+                            $('#_wpinv_quickexcerpt', metaBox).val('');
                             WPInv.update_inline_items(response.data, metaBox, gdTotals);
+                            $('#wpinv-quick-add').slideUp('slow');
                         } else if (response.msg) {
                             alert(response.msg);
                         }
