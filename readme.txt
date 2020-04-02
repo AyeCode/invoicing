@@ -127,6 +127,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 1.0.18 =
+* Display customer notes on the invoice print page - ADDED
+* Use Responsive tables for invoice history invoice items table - CHANGED
+
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED
 * Ability to set the receiver email for admin invoice notifications - ADDED

@@ -1148,6 +1148,30 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     echo ob_get_clean();
 }
 
+/**
+ * @param WPInv_Invoice $invoice
+ */
+function wpinv_display_invoice_notes( $invoice ) {
+
+    $notes = wpinv_get_invoice_notes( $invoice->ID, 'customer' );
+
+    if ( empty( $notes ) ) {
+        return;
+    }
+
+    echo '<div class="wpi_invoice_notes_container">';
+    echo '<h2>' . __( 'Invoice Notes', 'invoicing' ) .'</h2>';
+    echo '<ul class="wpi_invoice_notes">';
+
+    foreach( $notes as $note ) {
+        wpinv_get_invoice_note_line_item( $note );
+    }
+
+    echo '</ul>';
+    echo '</div>';
+}
+add_action( 'wpinv_invoice_print_after_line_items', 'wpinv_display_invoice_notes' );
+
 function wpinv_display_invoice_totals( $invoice_id = 0 ) {
     $use_taxes = wpinv_use_taxes();
 
@@ -2115,7 +2139,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
         </div>
         <p class="meta">
             <abbr class="exact-date" title="<?php echo $note->comment_date; ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;
-            <?php if ( $note->comment_author !== 'System' || wpinv_current_user_can_manage_invoicing() ) { ?>
+            <?php if ( is_admin() && ( $note->comment_author !== 'System' || wpinv_current_user_can_manage_invoicing() ) ) { ?>
                 <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
             <?php } ?>
         </p>
