@@ -124,10 +124,23 @@ class WPInv_Meta_Box_Items {
                                                     </span>
                                                 </label>
                                             </div>
+
+                                            <div class="wp-clearfix">
+                                                <?php 
+                                                    echo wpinv_html_textarea( array(
+                                                        'name'  => '_wpinv_quick[excerpt]',
+                                                        'id'    => '_wpinv_quick_excerpt',
+                                                        'value' => '',
+                                                        'class' => 'large-text',
+                                                        'label' => __( 'Item description', 'invoicing' ),
+                                                    ) ); 
+                                                ?>
+                                            </div>
+
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-actions">
                                                     <span class="input-text-wrap">
-                                                        <input type="button" value="Save" class="button button-primary" id="wpinv-save-item"><input type="button" value="Cancel" class="button button-secondary" id="wpinv-cancel-item">
+                                                        <input type="button" value="<?php esc_attr_e( 'Add', 'invoicing' ); ?>" class="button button-primary" id="wpinv-save-item"><input type="button" value="Cancel" class="button button-secondary" id="wpinv-cancel-item">
                                                     </span>
                                                 </label>
                                             </div>
