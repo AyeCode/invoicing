@@ -278,6 +278,62 @@ html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust
     margin-top: 15px;
 }
 
+.wpi_invoice_notes_container {
+    position: relative;
+    min-width: 255px;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    background: #fff;
+    margin-bottom: 20px;
+    padding: 0;
+    line-height: 1;
+    border-bottom: 1px solid #ccd0d4;
+}
+
+.wpi_invoice_notes_container h2 {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+    display: block;
+    font-weight: 600;
+    border-bottom: 1px solid #ccd0d4;
+}
+
+.wpi_invoice_notes_container .wpi_invoice_notes {
+    padding: 20px 0 0;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    list-style-type: none;
+}
+
+.wpi_invoice_notes_container .note {
+    padding: 0 10px;
+}
+
+.wpi_invoice_notes_container .note_content {
+    background: #eeeeee;
+    padding: 20px 10px;
+    position: relative;
+}
+
+.wpi_invoice_notes_container .note_content p {
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.wpi_invoice_notes_container .meta {
+    padding: 10px;
+    color: #999;
+    margin: 0;
+    font-size: 11px;
+}
+
+.wpi_invoice_notes_container .exact-date {
+    border-bottom: 0px dotted #999;
+}
+
 @media print {
     .no-print {
         display: none !important;
