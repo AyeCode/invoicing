@@ -130,6 +130,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
 * Use Responsive tables for invoice history invoice items table - CHANGED
+* Ability to add item description on the quick add form - ADDED
 
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED
