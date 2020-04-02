@@ -304,7 +304,7 @@ html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust
     padding: 20px 0 0;
     max-height: 300px;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     list-style-type: none;
 }
 
@@ -332,6 +332,16 @@ html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust
 
 .wpi_invoice_notes_container .exact-date {
     border-bottom: 0px dotted #999;
+}
+
+.wpinv-print .wpinv-line-items {
+    overflow-x: auto;
+}
+
+@media screen and (max-width:400px) {
+    .wpinv-print .watermark.no-print {
+        left: 10%;
+    }
 }
 
 @media print {
