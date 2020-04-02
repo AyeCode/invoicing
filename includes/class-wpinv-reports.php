@@ -46,6 +46,7 @@ class WPInv_Reports {
             add_action( 'admin_menu', array( $this, 'add_submenu' ), 10 );
             add_action( 'wpinv_reports_tab_export', array( $this, 'export' ) );
             add_action( 'wp_ajax_wpinv_ajax_export', array( $this, 'ajax_export' ) );
+            add_action( 'wp_ajax_wpinv_ajax_discount_use_export', array( $this, 'discount_use_export' ) );
             
             // Export Invoices.
             add_action( 'wpinv_export_set_params_invoices', array( $this, 'set_invoices_export' ) );
@@ -134,6 +135,14 @@ class WPInv_Reports {
                                     <input type="submit" value="<?php _e( 'Generate CSV', 'invoicing' ); ?>" class="button-primary" />
                                 </span>
                             </form>
+                        </div>
+                    </div>
+
+                    <div class="postbox wpi-export-discount-uses">
+                        <h2 class="hndle ui-sortabled-handle"><span><?php _e( 'Discount Use','invoicing' ); ?></span></h2>
+                        <div class="inside">
+                            <p><?php _e( 'Download a CSV of discount uses.', 'invoicing' ); ?></p>
+                            <a class="button-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-ajax.php?action=wpinv_ajax_discount_use_export' ), 'wpi_discount_ajax_export', 'wpi_discount_ajax_export' ) ); ?>"><?php _e( 'Generate CSV', 'invoicing' ); ?></a>
                         </div>
                     </div>
                     
@@ -241,6 +250,64 @@ class WPInv_Reports {
         }
 
         wp_send_json( $response );
+    }
+
+    /**
+     * Handles discount exports.
+     */
+    public function discount_use_export() {
+
+        if ( ! wp_verify_nonce( $_GET['wpi_discount_ajax_export'], 'wpi_discount_ajax_export' ) || ! wpinv_current_user_can_manage_invoicing() ) {
+            wp_die( -1, 403 );
+        }
+
+        $args = array(
+            'post_type'      => 'wpi_discount',
+            'fields'         => 'ids',
+            'posts_per_page' => -1,
+        );
+
+        $discounts = get_posts( $args );
+
+        if ( empty( $discounts ) ) {
+            die ( __( 'You have not set up any discounts', 'invoicing' ) );
+        }
+
+        $output  = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
+
+        // Let the browser know what content we're streaming and how it should save the content.
+		$name = time();
+		header( "Content-Type:application/csv" );
+        header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.csv" );
+
+        // Output the csv column headers.
+		fputcsv( 
+            $output, 
+            array( 
+                __( 'Discount Id', 'invoicing' ),
+                __( 'Discount Code', 'invoicing' ),
+                __( 'Discount Type', 'invoicing' ),
+                __( 'Discount Amount', 'invoicing' ),
+                __( 'Uses', 'invoicing' ),
+            )
+        );
+
+        foreach ( $discounts as $discount ) {
+
+            $discount = (int) $discount;
+            $row      = array(
+                $discount,
+                get_post_meta( $discount, '_wpi_discount_code', true ),
+                get_post_meta( $discount, '_wpi_discount_type', true ),
+                get_post_meta( $discount, '_wpi_discount_amount', true ),
+                (int) get_post_meta( $discount, '_wpi_discount_uses', true )
+            );
+            fputcsv( $output, $row );
+        }
+
+        fclose( $output );
+        exit;
+
     }
     
     public function set_export_params( $request ) {

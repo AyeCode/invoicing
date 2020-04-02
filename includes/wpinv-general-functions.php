@@ -297,7 +297,7 @@ function wpinv_get_blogname() {
 }
 
 function wpinv_get_admin_email() {
-    $admin_email = get_option( 'admin_email' );
+    $admin_email = wpinv_get_option( 'admin_email', get_option( 'admin_email' ) );
     return apply_filters( 'wpinv_admin_email', $admin_email );
 }
 
