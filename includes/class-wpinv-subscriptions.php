@@ -266,6 +266,7 @@ class WPInv_Subscriptions {
      * Create subscription on checkout
      *
      * @access      public
+     * @param       WPInv_Invoice $invoice
      * @since       1.0.0
      * @return      void
      */
@@ -273,7 +274,7 @@ class WPInv_Subscriptions {
         if ( ! ( ! empty( $invoice->ID ) && $invoice->is_recurring() ) ) {
             return;
         }
-        
+
         $item               = $invoice->get_recurring( true );
         if ( empty( $item ) ) {
             return;

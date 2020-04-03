@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'wpinv_manual_cc_form', '__return_false' );
+add_filter( 'wpinv_manual_support_subscription', '__return_true' );
 
 function wpinv_process_manual_payment( $purchase_data ) {
     if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
@@ -49,6 +50,9 @@ function wpinv_process_manual_payment( $purchase_data ) {
         
         // Empty the shopping cart
         wpinv_empty_cart();
+
+        // (Maybe) set recurring hooks.
+        wpinv_start_manual_subscription_profile( $purchase_data['invoice_id'] );
         
         do_action( 'wpinv_send_to_success_page', $invoice->ID, $payment_data );
         
@@ -60,3 +64,89 @@ function wpinv_process_manual_payment( $purchase_data ) {
     }
 }
 add_action( 'wpinv_gateway_manual', 'wpinv_process_manual_payment' );
+
+/**
+ * Starts a manual subscription profile.
+ */
+function wpinv_start_manual_subscription_profile( $invoice_id ) {
+
+    // Retrieve the subscription.
+    $subscription = wpinv_get_subscription( $invoice_id );
+    if ( empty( $subscription ) ) {
+        return;
+    }
+
+    // Schedule an action to run when the subscription expires.
+    $action_id = as_schedule_single_action(
+        strtotime( $subscription->expiration ),
+        'wpinv_renew_manual_subscription_profile',
+        array( $invoice_id ),
+        'invoicing'
+    );
+
+    // Use the action id as the subscription id.
+    $subscription->update( 
+        array(
+            'profile_id' => $action_id, 
+            'status'     => 'trialling' == $subscription->status ? 'trialling' : 'active'
+        )
+    );
+
+}
+
+/**
+ * Renews a manual subscription profile.
+ */
+function wpinv_renew_manual_subscription_profile( $invoice_id ) {
+
+    // Retrieve the subscription.
+    $subscription = wpinv_get_subscription( $invoice_id );
+    if ( empty( $subscription ) ) {
+        return;
+    }
+
+    $times_billed = $subscription->get_times_billed();
+    $max_bills    = $subscription->bill_times;
+
+    // If we have not maxed out on bill times...
+    if ( empty( $bill_times ) || $times_billed > $max_bills ) {
+
+        // Renew the subscription.
+        $subscription->add_payment( array(
+            'amount'         => $subscription->recurring_amount,
+            'transaction_id' => time(),
+            'gateway'        => 'manual'
+        ) );
+
+        // Calculate the new expiration.
+        $new_expiration = strtotime( "+ {$subscription->frequency} {$subscription->period}", strtotime( $subscription->expiration ) );
+
+        // Schedule an action to run when the subscription expires.
+        $action_id = as_schedule_single_action(
+            $new_expiration,
+            'wpinv_renew_manual_subscription_profile',
+            array( $invoice_id ),
+            'invoicing'
+        );
+
+        $subscription->update(
+            array(
+                'expiration' => date_i18n( 'Y-m-d H:i:s', $new_expiration ),
+                'status'     => 'active',
+                'profile_id' => $action_id, 
+            )
+        );
+
+    } else {
+
+        // This subscription is complete. Let's mark it as such.
+        $subscription->update(
+            array(
+                'status' => 'completed'
+            )
+        );
+
+    }
+
+}
+ 
