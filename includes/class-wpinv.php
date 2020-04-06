@@ -134,6 +134,7 @@ class WPInv_Plugin {
         $wpinv_options = wpinv_get_settings();
         
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );

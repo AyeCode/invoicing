@@ -1198,7 +1198,9 @@ function wpinv_checkout_validate_gateway() {
         } elseif ( !wpinv_is_gateway_active( $gateway ) ) {
             wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway is not enabled', 'invoicing' ) );
         } elseif ( $has_subscription && !wpinv_gateway_support_subscription( $gateway ) ) {
-            wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway doesnot support subscription payment', 'invoicing' ) );
+            if ( apply_filters( 'wpinv_reject_non_recurring_gateway', true ) ) {
+                wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway does not support subscription payment', 'invoicing' ) );
+            }
         }
     }
 
