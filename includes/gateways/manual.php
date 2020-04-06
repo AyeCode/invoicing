@@ -149,4 +149,4 @@ function wpinv_renew_manual_subscription_profile( $invoice_id ) {
     }
 
 }
- 
+add_action( 'wpinv_renew_manual_subscription_profile', 'wpinv_renew_manual_subscription_profile' );

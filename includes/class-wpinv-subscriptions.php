@@ -275,6 +275,11 @@ class WPInv_Subscriptions {
             return;
         }
 
+        // Should we create a subscription for the invoice?
+        if ( apply_filters( 'wpinv_skip_invoice_subscription_creation', false, $invoice ) ) {
+            return;
+        }
+
         $item               = $invoice->get_recurring( true );
         if ( empty( $item ) ) {
             return;
