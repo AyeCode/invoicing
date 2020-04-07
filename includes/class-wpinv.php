@@ -54,7 +54,7 @@ class WPInv_Plugin {
 
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
-            add_action( 'admin_body_class', array( &$this, 'admin_body_class' ) );
+            add_filter( 'admin_body_class', array( &$this, 'admin_body_class' ) );
             add_action( 'admin_init', array( &$this, 'init_ayecode_connect_helper' ) );
 
         } else {
