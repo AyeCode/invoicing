@@ -132,6 +132,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Use Responsive tables for invoice history invoice items table - CHANGED
 * Ability to add item description on the quick add form - ADDED
 * Manual payments now supports subscriptions - CHANGED
+* Pass invoice object to `wpinv_invoice_is_free_trial` filter - ADDED
 
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED
