@@ -1058,6 +1058,7 @@ function wpinv_get_emails() {
                 'size' => '10'
             ),
         ),
+
         'overdue' => array(
             'email_overdue_header' => array(
                 'id'   => 'email_overdue_header',
