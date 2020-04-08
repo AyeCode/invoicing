@@ -2063,7 +2063,7 @@ final class WPInv_Invoice {
 
         return apply_filters( 'wpinv_invoice_has_recurring_item', $has_subscription, $this->cart_details );
     }
-    
+
     public function is_free_trial() {
         $is_free_trial = false;
         
@@ -2073,9 +2073,9 @@ final class WPInv_Invoice {
             }
         }
 
-        return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details );
+        return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details, $this );
     }
-    
+
     public function is_initial_free() {
         $is_initial_free = false;
         
