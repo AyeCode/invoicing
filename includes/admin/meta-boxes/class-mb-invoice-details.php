@@ -202,6 +202,20 @@ class WPInv_Meta_Box_Details {
         <?php
         }
     }
+
+    /**
+     * Renders a metabox to edit a payment form.
+     */
+    public static function payment_form( $post ) {
+        var_dump( $post );
+    }
+
+    /**
+     * Renders a metabox to design a payment form.
+     */
+    public static function payment_form_fields( $post ) {
+        var_dump( $post );
+    }
     
     public static function payment_meta( $post ) {
         global $wpi_mb_invoice;
