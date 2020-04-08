@@ -78,6 +78,45 @@ function wpinv_register_post_types() {
     $args = apply_filters( 'wpinv_register_post_type_invoice', $args );
     
     register_post_type( 'wpi_invoice', $args );
+
+    $cap_type = 'wpi_payment_form';
+    register_post_type(
+        'wpi_payment_form',
+        apply_filters(
+            'wpinv_register_post_type_payment_form',
+            array(
+                'labels'             => array(
+                    'name'               => _x( 'Payment Forms', 'post type general name', 'invoicing' ),
+                    'singular_name'      => _x( 'Payment Form', 'post type singular name', 'invoicing' ),
+                    'menu_name'          => _x( 'Payment Forms', 'admin menu', 'invoicing' ),
+                    'name_admin_bar'     => _x( 'Payment Form', 'add new on admin bar', 'invoicing' ),
+                    'add_new'            => _x( 'Add New', 'Payment Form', 'invoicing' ),
+                    'add_new_item'       => __( 'Add New Payment Form', 'invoicing' ),
+                    'new_item'           => __( 'New Payment Form', 'invoicing' ),
+                    'edit_item'          => __( 'Edit Payment Form', 'invoicing' ),
+                    'view_item'          => __( 'View Payment Form', 'invoicing' ),
+                    'all_items'          => __( 'Payment Forms', 'invoicing' ),
+                    'search_items'       => __( 'Search Payment Forms', 'invoicing' ),
+                    'parent_item_colon'  => __( 'Parent Payment Forms:', 'invoicing' ),
+                    'not_found'          => __( 'No payment forms found.', 'invoicing' ),
+                    'not_found_in_trash' => __( 'No payment forms found in trash.', 'invoicing' )
+                ),
+                'description'        => __( 'Stores payment forms.', 'invoicing' ),
+                'public'             => false,
+                'show_ui'            => true,
+                'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : true,
+                'show_in_nav_menus'  => false,
+                'query_var'          => false,
+                'rewrite'            => true,
+                'map_meta_cap'       => true,
+                'has_archive'        => false,
+                'hierarchical'       => false,
+                'menu_position'      => null,
+                'supports'           => array( 'title' ),
+                'menu_icon'          => 'dashicons-media-form',
+            )
+        )
+    );
     
     $items_labels = array(
         'name'               => _x( 'Items', 'post type general name', 'invoicing' ),

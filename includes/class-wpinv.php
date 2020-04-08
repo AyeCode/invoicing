@@ -393,7 +393,7 @@ class WPInv_Plugin {
     public function admin_body_class( $classes ) {
         global $pagenow, $post, $current_screen;
         
-        if ( !empty( $current_screen->post_type ) && ( $current_screen->post_type == 'wpi_invoice' || $current_screen->post_type == 'wpi_quote' ) ) {
+        if ( !empty( $current_screen->post_type ) && ( $current_screen->post_type == 'wpi_invoice' || $current_screen->post_type == 'wpi_payment_form' || $current_screen->post_type == 'wpi_quote' ) ) {
             $classes .= ' wpinv-cpt';
         }
         
