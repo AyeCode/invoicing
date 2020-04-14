@@ -207,14 +207,14 @@ class WPInv_Meta_Box_Details {
      * Renders a metabox to edit a payment form.
      */
     public static function payment_form( $post ) {
-        var_dump( $post );
+        WPInv_Meta_Box_Form_Items::output_options( $post );
     }
 
     /**
-     * Renders a metabox to design a payment form.
+     * Renders a metabox to select items.
      */
-    public static function payment_form_fields( $post ) {
-        var_dump( $post );
+    public static function payment_form_items( $post ) {
+        WPInv_Meta_Box_Form_Items::output( $post );
     }
     
     public static function payment_meta( $post ) {
