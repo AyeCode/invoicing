@@ -12,14 +12,8 @@ class WPInv_Meta_Box_Form_Items {
      * @param WP_Post $post
      */
     public static function output( $post ) {
-        global $wpinv_euvat, $ajax_cart_details;
 
-        $post_id             = ! empty( $post->ID ) ? $post->ID : 0;
-        $items               = get_post_meta( $post->ID, 'wpinv_payment_items', true );
-        $supports_discounts  = (int) get_post_meta( $post->ID, 'wpinv_form_supports_discounts', true );
-        $supports_quantities = (int) get_post_meta( $post->ID, 'wpinv_form_supports_quantities', true );
-        $enable_taxes        = (int) get_post_meta( $post->ID, 'wpinv_form_supports_quantities', true );
-        $item_types          = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
+        $items = get_post_meta( $post->ID, 'wpinv_payment_form_items', true );
 
         if ( empty( $items ) || ! is_array( $items ) ) {
             $items = array();
@@ -28,18 +22,7 @@ class WPInv_Meta_Box_Form_Items {
         ?>
 
         <div class="wpinv-items-wrap-pending" id="wpinv_items_wrap">
-            <table
-                id="wpinv_items"
-                class="wpinv-items"
-                cellspacing="0"
-                cellpadding="0"
-                data-supports-discouts="<?php echo $supports_discounts; ?>"
-                data-supports-discouts="<?php echo $supports_quantities; ?>"
-                data-supports-discouts="<?php echo $enable_taxes; ?>"
-                data-decimal-places="<?php echo esc_attr( wpinv_decimals() ); ?>"
-                data-currency-symbol="<?php echo esc_attr( wpinv_currency_symbol() ); ?>"
-                data-currency-position="<?php echo esc_attr( wpinv_currency_position() ); ?>"
-            >
+            <table id="wpinv_items" class="wpinv-items" cellspacing="0" cellpadding="0">
 
                 <thead>
                     <tr>
@@ -54,14 +37,21 @@ class WPInv_Meta_Box_Form_Items {
                 <tbody class="wpinv-line-items">
                     <?php
 
-                        foreach ( $items as $item ) {
-                            $id            = isset( $item['id'] ) ? (int) $item['id'] : 0;
-                            $name          = isset( $item['name'] ) ? sanitize_text_field( $item['name'] ) : __( 'No name', 'invoicing' );
-                            $price         = isset( $item['price'] ) ? wpinv_format_amount( $item['price'] ) : 0.00;
-                            $description   = isset( $item['description'] ) ? esc_textarea( $item['description'] ) : '';
+                        foreach ( $items as $item_data ) {
+
+                            $id   = isset( $item['id'] ) ? (int) $item['id'] : 0;
+                            $item = new WPInv_Item( $id );
+
+                            if ( empty( $item ) || $item->post_type != 'wpi_item' ) {
+                                continue;
+                            }
+                            
+                            $name          = isset( $item_data['name'] ) ? sanitize_text_field( $item_data['name'] ) : $item->get_name();
+                            $price         = isset( $item_data['price'] ) ? wpinv_format_amount( $item_data['price'] ) : $item->get_price();
+                            $description   = isset( $item_data['description'] ) ? esc_textarea( $item_data['description'] ) : $item->get_summary();
 
                     ?>
-                    
+
                     <tr class="item" data-item-id="<?php echo $id; ?>">
                         <td class="id"><?php echo $id; ?></td>
                         <td class="title">
@@ -78,66 +68,49 @@ class WPInv_Meta_Box_Form_Items {
 
                     <?php } ?>
 
-                </tbody>
-            </table>
-            <div id="wpinv-quick-add" style="display: none;">
-                <table cellspacing="0" cellpadding="0">
-                    <tr>
-                        <td class="id">
-                        </td>
+                    <tr class="item create-item" style="display:none;" id="wpinv-payment-form-quick-add">
+                        <td class="id"></td>
+
                         <td class="title">
-                            <input type="text" class="regular-text" placeholder="<?php _e( 'Item Name', 'invoicing' ); ?>" value="" name="_wpinv_quick[name]">
-
-                            <div class="wp-clearfix">
-                                <label class="wpi-item-type">
-                                    <span class="title"><?php _e( 'Item type', 'invoicing' );?></span>
-                                </label>
-                            </div>
-
-                            <div class="wp-clearfix">
-                                <?php 
-                                    echo wpinv_html_textarea( array(
-                                        'name'  => '_wpinv_quick[excerpt]',
-                                        'id'    => '_wpinv_quick_excerpt',
-                                        'value' => '',
-                                        'class' => 'large-text',
-                                        'label' => __( 'Item description', 'invoicing' ),
-                                    ) ); 
-                                ?>
-                            </div>
+                            <input type="text" class="regular-text" placeholder="<?php _e( 'Item Name', 'invoicing' ); ?>" value="" id="wpinv_create_payment_form_item_name" />
 
                             <div class="wp-clearfix">
                                 <label class="wpi-item-actions">
                                     <span class="input-text-wrap">
-                                        <input type="button" value="<?php esc_attr_e( 'Add', 'invoicing' ); ?>" class="button button-primary" id="wpinv-save-item"><input type="button" value="Cancel" class="button button-secondary" id="wpinv-cancel-item">
+                                        <input type="button" value="<?php esc_attr_e( 'Add', 'invoicing' ); ?>" class="button button-primary" id="wpinv-payment-form-save-item">
+                                        <input type="button" value="Cancel" class="button button-secondary" id="wpinv-payment-form-cancel-item">
                                     </span>
                                 </label>
                             </div>
                         </td>
 
-                        <td class="price">
-                            <input type="text" placeholder="0.00" class="wpi-field-price wpi-price" name="_wpinv_quick[price]" />
+                        <td class="meta">
+                            <textarea placeholder="<?php esc_attr_e( 'Item description', 'invoicing' ) ?>" id="wpinv_create_payment_form_item_description" class="large-text" rows="3"></textarea>
                         </td>
 
-                        <td class="action"></td>
+                        <td class="price">
+                            <input type="text" placeholder="0.00" class="wpi-field-price wpi-price" id="wpinv_create_payment_form_item_price" />
+                        </td>
+
                     </tr>
-                </table>
-            </div>
+                </tbody>
+            </table>
+
             <div class="wpinv-actions">
 
                 <?php
 
                     echo wpinv_item_dropdown( array(
-                        'name'             => 'wpinv_invoice_item',
-                        'id'               => 'wpinv_invoice_item',
+                        'name'             => 'wpinv_payment_form_item',
+                        'id'               => 'wpinv_payment_form_item',
                         'show_recurring'   => true,
                         'class'            => 'wpi_select2',
                     ) );
 
                 ?>
 
-                <input type="button" value="<?php esc_attr_e( 'Add item to form', 'invoicing'); ?>" class="button button-primary" id="wpinv-add-item" />
-                <input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-new-item" />
+                <input type="button" value="<?php esc_attr_e( 'Add item to form', 'invoicing'); ?>" class="button button-primary" id="wpinv-payment-form-add-item" />
+                <input type="button" value="<?php esc_attr_e( 'Create new item', 'invoicing' );?>" class="button button-primary" id="wpinv-payment-form-new-item" />
 
             </div>
         </div>
@@ -170,11 +143,41 @@ class WPInv_Meta_Box_Form_Items {
 
         ?>
 
-        <div class="wpinv-items-wrap-pending" id="wpinv_items_wrap">
+        <div class="wpinv-items-wrap-pending" id="wpinv_options_wrap">
             <table class="form-table">
                 <tbody>
 
-                <tr class="form-field-supports_quantities">
+                    <tr class="form-field-success_page">
+                        <th scope="row"><label for="field_success_page"><?php _e( 'Success Page', 'invoicing' ); ?></label></th>
+                        <td>
+                            <div>
+                                <input type="text" class="regular-text" name="success_page" id="field_success_page" value="<?php echo esc_attr( $values['success_page'] ); ?>">
+                                <p class="description"><?php _e( 'Where should we redirect users after successfuly completing their payment?', 'invoicing' ); ?></p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="form-field-button_text">
+                        <th scope="row"><label for="field_button_text"><?php _e( 'Button Text', 'invoicing' ); ?></label></th>
+                        <td>
+                            <div>
+                                <input type="text" class="regular-text" name="button_text" id="field_button_text" value="<?php echo esc_attr( $values['button_text'] ); ?>">
+                                <p class="description"><?php _e( 'Payment button text', 'invoicing' ); ?></p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="form-field-processing_text">
+                        <th scope="row"><label for="field_processing_text"><?php _e( 'Processing Text', 'invoicing' ); ?></label></th>
+                        <td>
+                            <div>
+                                <input type="text" class="regular-text" name="processing_text" id="field_processing_text" value="<?php echo esc_attr( $values['processing_text'] ); ?>">
+                                <p class="description"><?php _e( 'Processing payment button text', 'invoicing' ); ?></p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="form-field-supports_quantities">
                         <th scope="row"></th>
                         <td>
                             <div>
@@ -206,36 +209,6 @@ class WPInv_Meta_Box_Form_Items {
                                     <input type="checkbox" name="supports_discounts" id="field_supports_discounts" value="1" <?php checked( $values['supports_discounts'], 1 ); ?>>
                                     <span><?php _e( 'Enable coupon codes', 'invoicing' ); ?></span>
                                 </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-success_page">
-                        <th scope="row"><label for="field_success_page"><?php _e( 'Success Page', 'invoicing' ); ?></label></th>
-                        <td>
-                            <div>
-                                <input type="text" class="regular-text" name="success_page" id="field_success_page" value="<?php echo esc_attr( $values['success_page'] ); ?>">
-                                <p class="description"><?php _e( 'Where should we redirect users after successfuly completing their payment?', 'invoicing' ); ?></p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-button_text">
-                        <th scope="row"><label for="field_button_text"><?php _e( 'Button Text', 'invoicing' ); ?></label></th>
-                        <td>
-                            <div>
-                                <input type="text" class="regular-text" name="button_text" id="field_button_text" value="<?php echo esc_attr( $values['button_text'] ); ?>">
-                                <p class="description"><?php _e( 'Payment button text', 'invoicing' ); ?></p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-processing_text">
-                        <th scope="row"><label for="field_processing_text"><?php _e( 'Processing Text', 'invoicing' ); ?></label></th>
-                        <td>
-                            <div>
-                                <input type="text" class="regular-text" name="processing_text" id="field_processing_text" value="<?php echo esc_attr( $values['processing_text'] ); ?>">
-                                <p class="description"><?php _e( 'Processing payment button text', 'invoicing' ); ?></p>
                             </div>
                         </td>
                     </tr>

@@ -319,7 +319,8 @@ class WPInv_Plugin {
         wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
         wp_enqueue_style( 'wpinv_meta_box_style' );
         
-        wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), WPINV_VERSION );
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
+        wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), $version );
         wp_enqueue_style( 'wpinv_admin_style' );
 
         $enqueue = ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) );
@@ -384,6 +385,10 @@ class WPInv_Plugin {
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
+
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
+        wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script' ),  $version );
+        wp_enqueue_script( 'wpinv-admin-payment-form-script' );
 
         if ( $page == 'wpinv-subscriptions' ) {
             wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );

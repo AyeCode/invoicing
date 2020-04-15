@@ -861,10 +861,12 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     border: 0;
     box-shadow: none;
 }
-#wpinv-items .inside {
+#wpinv-items .inside,
+#wpinv-payment-form-items .inside {
     margin: 0;
 }
-#wpinv-items > .inside {
+#wpinv-items > .inside,
+#wpinv-payment-form-items > .inside {
     margin: 0;
     padding: 12px;
 }
@@ -997,7 +999,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_item #filter-by-date {
     display: none;
 }
-#wpinv-items .inside {
+#wpinv-items .inside,
+#wpinv-payment-form-items .inside {
     background: #fefefe;
     margin: 0;
     padding: 0;

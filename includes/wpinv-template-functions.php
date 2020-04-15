@@ -634,7 +634,8 @@ function wpinv_html_textarea( $args = array() ) {
         'label'       => null,
         'desc'        => null,
         'class'       => 'large-text',
-        'disabled'    => false
+        'disabled'    => false,
+        'placeholder' => '',
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -647,7 +648,7 @@ function wpinv_html_textarea( $args = array() ) {
 
     $output = '<span id="wpinv-' . wpinv_sanitize_key( $args['name'] ) . '-wrap">';
     $output .= '<label class="wpinv-label" for="' . wpinv_sanitize_key( $args['name'] ) . '">' . esc_html( $args['label'] ) . '</label>';
-    $output .= '<textarea name="' . esc_attr( $args['name'] ) . '" id="' . wpinv_sanitize_key( $args['name'] ) . '" class="' . $class . '"' . $disabled . '>' . esc_attr( $args['value'] ) . '</textarea>';
+    $output .= '<textarea name="' . esc_attr( $args['name'] ) . '" placeholder="' . esc_attr( $args['placeholder'] ) . '" id="' . wpinv_sanitize_key( $args['name'] ) . '" class="' . $class . '"' . $disabled . '>' . esc_attr( $args['value'] ) . '</textarea>';
 
     if ( ! empty( $args['desc'] ) ) {
         $output .= '<span class="wpinv-description">' . esc_html( $args['desc'] ) . '</span>';

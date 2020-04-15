@@ -64,7 +64,9 @@ class WPInv_Ajax {
             'get_states_field' => true,
             'checkout' => false,
             'add_invoice_item' => false,
+            'add_payment_form_item' => false,
             'remove_invoice_item' => false,
+            'create_payment_form_item' => false,
             'create_invoice_item' => false,
             'get_billing_details' => false,
             'admin_recalculate_totals' => false,
@@ -256,7 +258,158 @@ class WPInv_Ajax {
         
         wp_send_json( $response );
     }
-    
+
+    /**
+     * Handles the ajax requests to add a payment form item.
+     */
+    public static function add_payment_form_item() {
+
+        // Check nonce...
+        check_ajax_referer( 'invoice-item', '_nonce' );
+
+        // ... and user capability.
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            wp_send_json_error( __( 'You do not have permission to do that.', 'invoicing' ) );
+            die(-1);
+        }
+
+        // Prepare the item and the invoice.
+        $item_id = absint( $_POST['item_id'] );
+        $form_id = absint( $_POST['form_id'] );
+        
+        if ( empty( $item_id ) || empty( $form_id ) ) {
+            wp_send_json_error( __( 'Invalid form or item.', 'invoicing' ) );
+        }
+
+        $new_item = new WPInv_Item( $item_id );
+        if ( empty( $new_item ) || $new_item->post_type != 'wpi_item' ) {
+            wp_send_json_error( __( 'Invalid item.', 'invoicing' ) );
+        }
+
+        // Fetch existing items.
+        $items = get_post_meta( $form_id, 'wpinv_payment_form_items', true );
+
+        if ( empty( $items ) || is_array( $items ) ) {
+            $items = array();
+        }
+
+        // Only one recurring item per form please.
+        $has_recurring = wpinv_is_recurring_item( $item_id );
+        foreach ( $items as $index => $item_data ) {
+
+            $id   = $item_data['id'];
+            $item = new WPInv_Item( $id );
+
+            if ( empty( $item ) || $item->post_type != 'wpi_item' ) {
+                unset( $items[ $index ] );
+                continue;
+            }
+
+            if ( $item_id == $id ) {
+                unset( $items[ $index ] );
+            }
+
+            if ( $item->is_recurring() ) {
+                $has_recurring = true;
+            }
+
+        }
+
+        $items[] = array( 'id' => $new_item->ID );
+
+        // One recurring item per form.
+        if ( $has_recurring && 1 < count( $items ) ) {
+            wp_send_json_error( __( 'You can not add item because recurring items must be paid individually!', 'invoicing' ) );
+        }
+
+        update_post_meta( $form_id, 'wpinv_payment_form_items', $items );
+
+        ob_start();
+        WPInv_Meta_Box_Form_Items::output( get_post( $form_id ) );
+        $items = ob_get_clean();
+        
+        wp_send_json_success( $items );
+    }
+
+    /**
+     * Handles the ajax requests to Create a new payment form item.
+     */
+    public static function create_payment_form_item() {
+
+        // Check nonce...
+        check_ajax_referer( 'invoice-item', '_nonce' );
+
+        // ... and user capability.
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            wp_send_json_error( __( 'You do not have permission to do that.', 'invoicing' ) );
+            die(-1);
+        }
+
+        // Item data.
+        $form_id          = absint( $_POST['form_id'] );
+        $item_price       = wpinv_sanitize_amount( $_POST['item_price'] );
+        $item_name        = sanitize_text_field( $_POST['item_name'] );
+        $item_description = wp_kses_post( $_POST['item_description'] );
+        
+        if ( empty( $item_name ) ) {
+            wp_send_json_error( __( 'Specify a name for your item.', 'invoicing' ) );
+        }
+
+        // Fetch existing items.
+        $items = get_post_meta( $form_id, 'wpinv_payment_form_items', true );
+
+        if ( empty( $items ) || is_array( $items ) ) {
+            $items = array();
+        }
+
+        // Only one recurring item per form please.
+        foreach ( $items as $index => $item_data ) {
+
+            $id   = $item_data['id'];
+            $item = new WPInv_Item( $id );
+
+            if ( empty( $item ) || $item->post_type != 'wpi_item' ) {
+                unset( $items[ $index ] );
+                continue;
+            }
+
+            if ( $item->is_recurring() ) {
+                wp_send_json_error( __( 'You can not add item because recurring items must be paid individually!', 'invoicing' ) );
+            }
+
+        }
+
+        $data = array(
+            'post_title'   => $item_name,
+            'post_excerpt' => $item_description,
+            'post_status'  => 'publish',
+            'meta'         => array(
+                'type' => 'custom',
+                'price' => $item_price,
+                'vat_rule' => 'digital',
+                'vat_class' => '_standard',
+            )
+        );
+        
+        $item  = new WPInv_Item();
+        $item->create( $data );
+
+        if ( empty( $item ) ) {
+            wp_send_json_error( __( 'Error creating item', 'invoicing' ) );
+            die();
+        }
+
+        $items[] = array( 'id' => $item->ID );
+
+        update_post_meta( $form_id, 'wpinv_payment_form_items', $items );
+
+        ob_start();
+        WPInv_Meta_Box_Form_Items::output( get_post( $form_id ) );
+        $items = ob_get_clean();
+        
+        wp_send_json_success( $items );
+    }
+
     public static function remove_invoice_item() {
         global $wpi_userID, $wpinv_ip_address_country;
         
