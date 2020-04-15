@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.3
-Stable tag: 1.0.17
+Stable tag: 1.0.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -131,8 +131,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Display customer notes on the invoice print page - ADDED
 * Use Responsive tables for invoice history invoice items table - CHANGED
 * Ability to add item description on the quick add form - ADDED
-* Manual payments now supports subscriptions - CHANGED
-* Pass invoice object to `wpinv_invoice_is_free_trial` filter - ADDED
+* Manual payments now support subscriptions - CHANGED
+* Pass invoice object to `wpinv_invoice_is_free_trial` filter - 
+* PHP 7.4 compatibility - ADDED
 
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED

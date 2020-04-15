@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-01 15:34+0000\n"
+"POT-Creation-Date: 2020-04-15 07:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -95,12 +95,12 @@ msgstr ""
 #: includes/wpinv-discount-functions.php:43
 #: includes/wpinv-discount-functions.php:47
 #: includes/wpinv-discount-functions.php:57
-#: includes/wpinv-email-functions.php:1311
-#: includes/wpinv-email-functions.php:1338
+#: includes/wpinv-email-functions.php:1312
+#: includes/wpinv-email-functions.php:1339
 #: includes/wpinv-error-functions.php:17 includes/wpinv-item-functions.php:432
 #: includes/admin/subscriptions.php:315 includes/admin/subscriptions.php:378
 #: includes/gateways/authorizenet.php:57 includes/gateways/bank_transfer.php:9
-#: includes/gateways/manual.php:9 includes/gateways/paypal.php:10
+#: includes/gateways/manual.php:10 includes/gateways/paypal.php:10
 #: includes/gateways/worldpay.php:9
 msgid "Error"
 msgstr ""
@@ -126,31 +126,31 @@ msgstr ""
 msgid "You can not add item because recurring item must be paid individually!"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:509 includes/wpinv-discount-functions.php:765
+#: includes/class-wpinv-ajax.php:510 includes/wpinv-discount-functions.php:765
 msgid "This discount is invalid."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:516
+#: includes/class-wpinv-ajax.php:517
 msgid "Discount has been applied successfully."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:563
+#: includes/class-wpinv-ajax.php:564
 msgid "Discount has been removed successfully."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:634
+#: includes/class-wpinv-ajax.php:635
 msgid "Invalid checkout request."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:710
+#: includes/class-wpinv-ajax.php:711
 msgid "Security checks failed."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:828
+#: includes/class-wpinv-ajax.php:829
 msgid "Invoice failed to create"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:833
+#: includes/class-wpinv-ajax.php:834
 msgid "Items not valid."
 msgstr ""
 
@@ -243,7 +243,7 @@ msgid "Invoice %s created"
 msgstr ""
 
 #: includes/class-wpinv-invoice.php:2233 includes/wpinv-post-types.php:208
-#: includes/wpinv-template-functions.php:2008
+#: includes/wpinv-template-functions.php:2032
 #: templates/wpinv-invoice-print.php:11
 #: templates/wpinv-subscriptions-history.php:37
 #: includes/admin/class-wpinv-subscriptions-list-table.php:277
@@ -302,7 +302,7 @@ msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:78
 #: includes/class-wpinv-reports.php:448
-#: includes/wpinv-template-functions.php:1663
+#: includes/wpinv-template-functions.php:1687
 #: includes/admin/register-settings.php:711
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:51
 msgid "First Name"
@@ -310,7 +310,7 @@ msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:79
 #: includes/class-wpinv-reports.php:449
-#: includes/wpinv-template-functions.php:1676
+#: includes/wpinv-template-functions.php:1700
 #: includes/admin/register-settings.php:717
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:57
 msgid "Last Name"
@@ -334,9 +334,9 @@ msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:83
 #: includes/class-wpinv-reports.php:450
-#: includes/wpinv-template-functions.php:1689
-#: includes/wpinv-template-functions.php:1696
-#: includes/wpinv-template-functions.php:1887
+#: includes/wpinv-template-functions.php:1713
+#: includes/wpinv-template-functions.php:1720
+#: includes/wpinv-template-functions.php:1911
 #: includes/admin/register-settings.php:723
 #: templates/emails/wpinv-email-billing-details.php:28
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:75
@@ -345,8 +345,8 @@ msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:84
 #: includes/class-wpinv-reports.php:451
-#: includes/wpinv-template-functions.php:1702
-#: includes/wpinv-template-functions.php:1709
+#: includes/wpinv-template-functions.php:1726
+#: includes/wpinv-template-functions.php:1733
 #: includes/admin/register-settings.php:729
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:81
 msgid "City"
@@ -354,7 +354,7 @@ msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:85
 #: includes/class-wpinv-reports.php:453 includes/wpinv-tax-functions.php:324
-#: includes/wpinv-template-functions.php:1715
+#: includes/wpinv-template-functions.php:1739
 #: includes/admin/register-settings.php:735
 #: includes/admin/register-settings.php:1465
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:87
@@ -377,7 +377,7 @@ msgid "N/A"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:100
-#: includes/wpinv-template-functions.php:1983
+#: includes/wpinv-template-functions.php:2007
 #: templates/wpinv-subscriptions-history.php:34
 #: includes/admin/class-wpinv-subscriptions-list-table.php:273
 msgid "Billing Cycle"
@@ -390,7 +390,7 @@ msgid "Initial Amount"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:102
-#: includes/wpinv-template-functions.php:1986
+#: includes/wpinv-template-functions.php:2010
 #: templates/wpinv-subscriptions-history.php:35
 #: includes/admin/class-wpinv-subscriptions-list-table.php:275
 msgid "Times Billed"
@@ -411,7 +411,7 @@ msgid "Invoice Link"
 msgstr ""
 
 #. Name of the plugin
-#: includes/class-wpinv-privacy.php:17 includes/wpinv-helper-functions.php:1011
+#: includes/class-wpinv-privacy.php:17 includes/wpinv-helper-functions.php:1017
 #: includes/admin/class-wpinv-admin-menus.php:43
 #: includes/admin/class-wpinv-admin-menus.php:43
 #: includes/admin/class-wpinv-users.php:38
@@ -608,7 +608,7 @@ msgid "Uses"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:434
-#: includes/wpinv-invoice-functions.php:1875
+#: includes/wpinv-invoice-functions.php:1877
 #: includes/admin/class-wpinv-subscriptions-list-table.php:270
 #: includes/admin/subscriptions.php:244
 #: includes/admin/wpinv-admin-functions.php:23
@@ -623,7 +623,7 @@ msgid "Number"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:436
-#: includes/wpinv-template-functions.php:2009
+#: includes/wpinv-template-functions.php:2033
 #: includes/admin/subscriptions.php:246
 #: includes/admin/wpinv-admin-functions.php:285
 msgid "Date"
@@ -640,7 +640,7 @@ msgid "Payment Done Date"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:439
-#: includes/wpinv-template-functions.php:2010
+#: includes/wpinv-template-functions.php:2034
 #: includes/admin/admin-meta-boxes.php:210 includes/admin/admin-pages.php:13
 #: includes/admin/subscriptions.php:245
 #: includes/admin/wpinv-admin-functions.php:19
@@ -664,8 +664,8 @@ msgid "Status Nicename"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:443
-#: includes/wpinv-invoice-functions.php:1878
-#: includes/wpinv-template-functions.php:1987
+#: includes/wpinv-invoice-functions.php:1880
+#: includes/wpinv-template-functions.php:2011
 #: templates/wpinv-subscriptions-history.php:36
 #: includes/admin/admin-pages.php:17
 #: includes/admin/class-wpinv-subscriptions-list-table.php:272
@@ -676,14 +676,14 @@ msgstr ""
 
 #: includes/class-wpinv-reports.php:444
 #: includes/wpinv-template-functions.php:1015
-#: includes/wpinv-template-functions.php:1173
+#: includes/wpinv-template-functions.php:1197
 #: templates/emails/wpinv-email-invoice-items.php:14
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:1249
 msgid "Tax"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:445
-#: includes/wpinv-template-functions.php:1559
+#: includes/wpinv-template-functions.php:1583
 msgid "Discount"
 msgstr ""
 
@@ -692,7 +692,7 @@ msgid "User ID"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:447
-#: includes/wpinv-template-functions.php:1883
+#: includes/wpinv-template-functions.php:1907
 #: templates/emails/wpinv-email-billing-details.php:18
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:32
 msgid "Email"
@@ -704,9 +704,9 @@ msgid "Zipcode"
 msgstr ""
 
 #: includes/class-wpinv-reports.php:455
-#: includes/wpinv-template-functions.php:1770
-#: includes/wpinv-template-functions.php:1777
-#: includes/wpinv-template-functions.php:1892
+#: includes/wpinv-template-functions.php:1794
+#: includes/wpinv-template-functions.php:1801
+#: includes/wpinv-template-functions.php:1916
 #: templates/emails/wpinv-email-billing-details.php:33
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:140
 msgid "Phone"
@@ -820,62 +820,62 @@ msgstr ""
 msgid "Something went wrong, please refresh and try again."
 msgstr ""
 
-#: includes/class-wpinv.php:275
+#: includes/class-wpinv.php:276
 msgid "Complete"
 msgstr ""
 
-#: includes/class-wpinv.php:367
+#: includes/class-wpinv.php:368
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/class-wpinv.php:370
+#: includes/class-wpinv.php:371
 msgid "Are you sure you wish to delete this tax rate?"
 msgstr ""
 
-#: includes/class-wpinv.php:371
+#: includes/class-wpinv.php:372
 msgid "Invoice must contain at least one item"
 msgstr ""
 
-#: includes/class-wpinv.php:372
+#: includes/class-wpinv.php:373
 msgid "Are you sure you wish to delete this item?"
 msgstr ""
 
-#: includes/class-wpinv.php:373
+#: includes/class-wpinv.php:374
 msgid ""
 "Fill the user's billing information? This will remove any currently entered "
 "billing information"
 msgstr ""
 
-#: includes/class-wpinv.php:374
+#: includes/class-wpinv.php:375
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
 msgstr ""
 
-#: includes/class-wpinv.php:375
+#: includes/class-wpinv.php:376
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/class-wpinv.php:376
+#: includes/class-wpinv.php:377
 msgid "Add at least one item to save invoice!"
 msgstr ""
 
-#: includes/class-wpinv.php:377
+#: includes/class-wpinv.php:378
 msgid ""
 "This item is in use! Before delete this item, you need to delete all the "
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv.php:378
+#: includes/class-wpinv.php:379
 msgid "Are you sure you want to delete this subscription?"
 msgstr ""
 
-#: includes/class-wpinv.php:379 includes/admin/admin-pages.php:99
+#: includes/class-wpinv.php:380 includes/admin/admin-pages.php:99
 #: includes/admin/subscriptions.php:158 includes/admin/subscriptions.php:169
 msgid "Edit"
 msgstr ""
 
-#: includes/class-wpinv.php:380 includes/wpinv-template-functions.php:679
+#: includes/class-wpinv.php:381 includes/wpinv-template-functions.php:679
 #: includes/wpinv-template-functions.php:679
 #: templates/wpinv-subscriptions-history.php:68
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:46
@@ -1032,7 +1032,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:936
 #: includes/wpinv-email-functions.php:983
 #: includes/wpinv-email-functions.php:1030
-#: includes/wpinv-email-functions.php:1070
+#: includes/wpinv-email-functions.php:1071
 #: includes/admin/register-settings.php:770
 msgid "Enable/Disable"
 msgstr ""
@@ -1046,7 +1046,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:937
 #: includes/wpinv-email-functions.php:984
 #: includes/wpinv-email-functions.php:1031
-#: includes/wpinv-email-functions.php:1071
+#: includes/wpinv-email-functions.php:1072
 msgid "Enable this email notification"
 msgstr ""
 
@@ -1059,7 +1059,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:943
 #: includes/wpinv-email-functions.php:990
 #: includes/wpinv-email-functions.php:1037
-#: includes/wpinv-email-functions.php:1085
+#: includes/wpinv-email-functions.php:1086
 msgid "Subject"
 msgstr ""
 
@@ -1072,7 +1072,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:944
 #: includes/wpinv-email-functions.php:991
 #: includes/wpinv-email-functions.php:1038
-#: includes/wpinv-email-functions.php:1086
+#: includes/wpinv-email-functions.php:1087
 msgid "Enter the subject line for the invoice receipt email."
 msgstr ""
 
@@ -1089,7 +1089,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:951
 #: includes/wpinv-email-functions.php:998
 #: includes/wpinv-email-functions.php:1045
-#: includes/wpinv-email-functions.php:1093
+#: includes/wpinv-email-functions.php:1094
 msgid "Email Heading"
 msgstr ""
 
@@ -1115,7 +1115,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:966
 #: includes/wpinv-email-functions.php:1013
 #: includes/wpinv-email-functions.php:1053
-#: includes/wpinv-email-functions.php:1101
+#: includes/wpinv-email-functions.php:1102
 msgid "Email Content"
 msgstr ""
 
@@ -1155,7 +1155,7 @@ msgstr ""
 #: includes/wpinv-email-functions.php:804
 #: includes/wpinv-email-functions.php:952
 #: includes/wpinv-email-functions.php:1046
-#: includes/wpinv-email-functions.php:1094
+#: includes/wpinv-email-functions.php:1095
 msgid "Enter the main heading contained within the email notification."
 msgstr ""
 
@@ -1362,35 +1362,35 @@ msgid ""
 "</p><blockquote class=\"wpinv-note\">{customer_note}</blockquote>"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1064
+#: includes/wpinv-email-functions.php:1065
 msgid "Payment Reminder"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1065
+#: includes/wpinv-email-functions.php:1066
 msgid "Payment reminder emails are sent to user automatically."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1077
+#: includes/wpinv-email-functions.php:1078
 msgid "When to Send"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1078
+#: includes/wpinv-email-functions.php:1079
 msgid "Check when you would like payment reminders sent out."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1088
+#: includes/wpinv-email-functions.php:1089
 msgid "[{site_title}] Payment Reminder"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1096
+#: includes/wpinv-email-functions.php:1097
 msgid "Payment reminder for your invoice"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1102
+#: includes/wpinv-email-functions.php:1103
 msgid "The content of the email."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1104
+#: includes/wpinv-email-functions.php:1105
 #: includes/admin/wpinv-upgrade-functions.php:199
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
@@ -1400,37 +1400,38 @@ msgid ""
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1232
+#: includes/wpinv-email-functions.php:1233
 msgid "was"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1232
+#: includes/wpinv-email-functions.php:1233
 msgid "is"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1311
+#: includes/wpinv-email-functions.php:1312
 msgid "You do not have permission to send invoice notification"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1338
+#: includes/wpinv-email-functions.php:1339
 msgid "You do not have permission to send reminder notification"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1368
+#: includes/wpinv-email-functions.php:1369
+#: includes/wpinv-template-functions.php:1163
 #: includes/admin/admin-meta-boxes.php:30
 msgid "Invoice Notes"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1375
+#: includes/wpinv-email-functions.php:1376
 #, php-format
 msgid "%2$s at %3$s"
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1520
+#: includes/wpinv-email-functions.php:1521
 msgid "Automated reminder sent to the user."
 msgstr ""
 
-#: includes/wpinv-email-functions.php:1523
+#: includes/wpinv-email-functions.php:1524
 msgid "Manual reminder sent to the user."
 msgstr ""
 
@@ -1846,7 +1847,7 @@ msgid "Failed"
 msgstr ""
 
 #: includes/wpinv-helper-functions.php:103
-#: includes/wpinv-template-functions.php:2043
+#: includes/wpinv-template-functions.php:2067
 #: includes/admin/admin-meta-boxes.php:22
 msgid "Renewal Payment"
 msgstr ""
@@ -2537,7 +2538,7 @@ msgid "You must accept terms and conditions"
 msgstr ""
 
 #: includes/wpinv-invoice-functions.php:1188
-#: includes/wpinv-template-functions.php:1479
+#: includes/wpinv-template-functions.php:1503
 msgid "Your cart is empty."
 msgstr ""
 
@@ -2545,83 +2546,83 @@ msgstr ""
 msgid "The selected payment gateway is not enabled"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1201
-msgid "The selected payment gateway doesnot support subscription payment"
+#: includes/wpinv-invoice-functions.php:1202
+msgid "The selected payment gateway does not support subscription payment"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1206
+#: includes/wpinv-invoice-functions.php:1208
 msgid "Only one subscription may be purchased through payment per checkout."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1234
+#: includes/wpinv-invoice-functions.php:1236
 msgid "Discount code you entered is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1246
+#: includes/wpinv-invoice-functions.php:1248
 msgid "The zip / postcode you entered for your billing address is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1447
+#: includes/wpinv-invoice-functions.php:1449
 msgid "You must agree to the terms of use"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1494
+#: includes/wpinv-invoice-functions.php:1496
 msgid "Please enter a valid email address"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1498
+#: includes/wpinv-invoice-functions.php:1500
 msgid "The user billing information is invalid"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1502
+#: includes/wpinv-invoice-functions.php:1504
 msgid "The invalid invoice user id"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1518
+#: includes/wpinv-invoice-functions.php:1520
 msgid "You are not allowed to pay for this invoice"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1525
+#: includes/wpinv-invoice-functions.php:1527
 msgid "You must be logged in to pay for this invoice"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1613
+#: includes/wpinv-invoice-functions.php:1615
 msgid "Your cart is empty"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1876
+#: includes/wpinv-invoice-functions.php:1878
 #: includes/admin/wpinv-admin-functions.php:20
 msgid "Created Date"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1877
+#: includes/wpinv-invoice-functions.php:1879
 #: includes/admin/wpinv-admin-functions.php:21
 msgid "Payment Date"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1879
+#: includes/wpinv-invoice-functions.php:1881
 #: includes/wpinv-template-functions.php:1136
-#: includes/wpinv-template-functions.php:1187
+#: includes/wpinv-template-functions.php:1211
 #: templates/wpinv-checkout-cart.php:135
 #: templates/emails/wpinv-email-invoice-items.php:152
 #: includes/admin/meta-boxes/class-mb-invoice-items.php:58
 msgid "Total"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1890
+#: includes/wpinv-invoice-functions.php:1892
 msgid "Sorry, trouble retrieving payment receipt."
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:1927
+#: includes/wpinv-invoice-functions.php:1929
 #: templates/wpinv-invoice-history.php:8
 msgid "You are not allowed to access this section"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:2005
+#: includes/wpinv-invoice-functions.php:2007
 msgid "Invoice not found"
 msgstr ""
 
-#: includes/wpinv-invoice-functions.php:2038
+#: includes/wpinv-invoice-functions.php:2040
 msgid "You are not allowed to view this invoice"
 msgstr ""
 
@@ -3075,6 +3076,7 @@ msgid "Completed"
 msgstr ""
 
 #: includes/wpinv-tax-functions.php:281
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:143
 #: includes/admin/meta-boxes/class-mb-invoice-notes.php:36
 msgid "Add"
 msgstr ""
@@ -3219,12 +3221,12 @@ msgid "Pay For Invoice"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:62
-#: includes/wpinv-template-functions.php:1924
+#: includes/wpinv-template-functions.php:1948
 msgid "Print Invoice"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:64
-#: includes/wpinv-template-functions.php:1932
+#: includes/wpinv-template-functions.php:1956
 msgid "Invoice History"
 msgstr ""
 
@@ -3412,63 +3414,63 @@ msgid "Item Total"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:1105
-#: includes/wpinv-template-functions.php:1160
+#: includes/wpinv-template-functions.php:1184
 msgid "Sub Total"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1206
+#: includes/wpinv-template-functions.php:1230
 #, php-format
 msgid "Payment via %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1206
+#: includes/wpinv-template-functions.php:1230
 msgid "Manually"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1208
+#: includes/wpinv-template-functions.php:1232
 #, php-format
 msgid "Transaction ID: %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1497
+#: includes/wpinv-template-functions.php:1521
 msgid "Update Cart"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1560
+#: includes/wpinv-template-functions.php:1584
 msgid "Enter a discount code if you have one."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1564
+#: includes/wpinv-template-functions.php:1588
 msgid "Enter discount code"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1567
+#: includes/wpinv-template-functions.php:1591
 msgid "Apply Discount"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1612
+#: includes/wpinv-template-functions.php:1636
 msgid "Select Payment Method"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1638
+#: includes/wpinv-template-functions.php:1662
 msgid "No payment gateway active"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1659
+#: includes/wpinv-template-functions.php:1683
 #: includes/admin/admin-meta-boxes.php:28
 #: templates/emails/wpinv-email-billing-details.php:8
 msgid "Billing Details"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1670
+#: includes/wpinv-template-functions.php:1694
 msgid "First name"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1683
+#: includes/wpinv-template-functions.php:1707
 msgid "Last name"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1724
+#: includes/wpinv-template-functions.php:1748
 #: includes/admin/register-settings.php:1490
 #: includes/admin/register-settings.php:1536
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:91
@@ -3476,64 +3478,64 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1729
-#: includes/wpinv-template-functions.php:1750
+#: includes/wpinv-template-functions.php:1753
+#: includes/wpinv-template-functions.php:1774
 #: includes/admin/register-settings.php:741
 #: includes/admin/register-settings.php:1466
 msgid "State / Province"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1741
+#: includes/wpinv-template-functions.php:1765
 #: includes/admin/register-settings.php:1506
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:111
 #: includes/admin/meta-boxes/class-mb-invoice-address.php:118
 msgid "Choose a state"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1757
-#: includes/wpinv-template-functions.php:1764
+#: includes/wpinv-template-functions.php:1781
+#: includes/wpinv-template-functions.php:1788
 #: includes/admin/register-settings.php:747
 msgid "ZIP / Postcode"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1805
+#: includes/wpinv-template-functions.php:1829
 msgid "Proceed to Pay"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1818
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:174
+#: includes/wpinv-template-functions.php:1842
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:187
 msgid "Invoice Total:"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1839
+#: includes/wpinv-template-functions.php:1863
 #, php-format
 msgid ""
 "I&rsquo;ve read and accept the <a href=\"%s\" target=\"_blank\" class=\"wpi-"
 "terms-and-conditions-link\">terms &amp; conditions</a>"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1879 includes/admin/admin-pages.php:11
+#: includes/wpinv-template-functions.php:1903 includes/admin/admin-pages.php:11
 #: templates/emails/wpinv-email-billing-details.php:14
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:196
 msgid "Name"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1979
+#: includes/wpinv-template-functions.php:2003
 #: includes/admin/subscriptions.php:69
 msgid "Subscription Details"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1984
+#: includes/wpinv-template-functions.php:2008
 #: includes/admin/admin-meta-boxes.php:259 includes/admin/admin-pages.php:15
 msgid "Start Date"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1985
+#: includes/wpinv-template-functions.php:2009
 #: includes/admin/admin-meta-boxes.php:277
 msgid "Expiration Date"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1992
+#: includes/wpinv-template-functions.php:2016
 #: templates/wpinv-subscriptions-history.php:57
 #: includes/admin/subscriptions.php:94
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:159
@@ -3542,57 +3544,57 @@ msgctxt "Initial subscription amount then billing cycle and amount"
 msgid "%s then %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2003
+#: includes/wpinv-template-functions.php:2027
 msgid "Renewal Payments"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2041
+#: includes/wpinv-template-functions.php:2065
 #: includes/admin/meta-boxes/class-mb-invoice-details.php:153
 msgid "Recurring Payment"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2117
+#: includes/wpinv-template-functions.php:2141
 #, php-format
 msgid "%1$s - %2$s at %3$s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2119
+#: includes/wpinv-template-functions.php:2143
 msgid "Delete note"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2139
+#: includes/wpinv-template-functions.php:2163
 msgid ""
 "This invoice is only viewable by clicking on the invoice link that was sent "
 "to you via email."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2144
+#: includes/wpinv-template-functions.php:2168
 msgid "You are not allowed to view this invoice."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2150
+#: includes/wpinv-template-functions.php:2174
 msgid "You must be logged in to view this invoice."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2155
+#: includes/wpinv-template-functions.php:2179
 msgid "This invoice is deleted or does not exist."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2160
+#: includes/wpinv-template-functions.php:2184
 msgid "Access Denied"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2176
+#: includes/wpinv-template-functions.php:2200
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:1971
 msgid "Company Name"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2183
+#: includes/wpinv-template-functions.php:2207
 #: includes/libraries/wpinv-euvat/class-wpinv-euvat.php:1978
 msgid "Company name"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2200
+#: includes/wpinv-template-functions.php:2224
 #: includes/admin/register-settings.php:623
 #, php-format
 msgid ""
@@ -3600,27 +3602,27 @@ msgid ""
 "other purposes described in our %s."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2206
+#: includes/wpinv-template-functions.php:2230
 msgid "privacy policy"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2237
+#: includes/wpinv-template-functions.php:2261
 #: includes/admin/register-settings.php:402
 msgid "Suggested Price:"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2238
+#: includes/wpinv-template-functions.php:2262
 #: includes/admin/register-settings.php:410
 msgid "Minimum Price:"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2239
+#: includes/wpinv-template-functions.php:2263
 #: includes/admin/register-settings.php:392
 #: includes/admin/register-settings.php:417
 msgid "Name Your Price"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:2258
+#: includes/wpinv-template-functions.php:2282
 msgid "Update"
 msgstr ""
 
@@ -5062,7 +5064,7 @@ msgid "Type"
 msgstr ""
 
 #: includes/admin/wpinv-admin-functions.php:284
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
 msgid "Recurring"
 msgstr ""
 
@@ -12274,7 +12276,7 @@ msgid "Card Security Code (CVV2)"
 msgstr ""
 
 #: includes/gateways/authorizenet.php:57 includes/gateways/bank_transfer.php:9
-#: includes/gateways/manual.php:9 includes/gateways/paypal.php:10
+#: includes/gateways/manual.php:10 includes/gateways/paypal.php:10
 #: includes/gateways/worldpay.php:9
 msgid "Nonce verification has failed"
 msgstr ""
@@ -12360,7 +12362,7 @@ msgid ""
 "subscriptions."
 msgstr ""
 
-#: includes/gateways/bank_transfer.php:40 includes/gateways/manual.php:57
+#: includes/gateways/bank_transfer.php:40 includes/gateways/manual.php:61
 #: includes/gateways/paypal.php:33 includes/gateways/worldpay.php:107
 msgid "Payment Error"
 msgstr ""
@@ -12376,7 +12378,7 @@ msgstr ""
 msgid "Our Bank Details"
 msgstr ""
 
-#: includes/gateways/manual.php:57
+#: includes/gateways/manual.php:61
 #, php-format
 msgid ""
 "Payment creation failed while processing a manual (free or test) purchase. "
@@ -12697,127 +12699,131 @@ msgstr ""
 msgid "Item type"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:157
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:135
+msgid "Item description"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:170
 msgid "Sub Total:"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:168
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:181
 msgid "Tax:"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:195
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:208
 #, php-format
 msgid "Add item to %s"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:195
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:208
 msgid "Create new item"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:195
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:208
 msgid "Recalculate Totals"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:244
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:257
 msgid "User can set a custom price"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:251
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:264
 msgid "Minimum Price"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:263
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:276
 msgid "Is Recurring Item?"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:277
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:285
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:290
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:298
 msgid "day(s)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
 msgid "Daily"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:285
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:298
 msgid "week(s)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
 msgid "Weekly"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:285
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:298
 msgid "month(s)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
 msgid "Monthly"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:285
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:298
 msgid "year(s)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:268
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:281
 msgid "Yearly"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:269
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:282
 msgid "at every"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:278
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:291
 msgid "for"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:278
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:291
 msgid "time(s) <i>(select 0 for recurring forever until cancelled</i>)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:282
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:295
 msgid "Offer free trial for"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:299
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:312
 msgid "Select how VAT rules will be applied:"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:310
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:323
 msgid ""
 "When you select physical product rules, only consumers and businesses in "
 "your country will be charged VAT.  The VAT rate used will be the rate in "
 "your country."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:311
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:324
 msgid ""
 "If you select Digital product rules, VAT will be charged at the rate that "
 "applies in the country of the consumer.  Only businesses in your country "
 "will be charged VAT."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:330
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:343
 msgid "Select the VAT rate class to use for this invoice item."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:338
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:351
 msgid "Type:"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:349
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:362
 msgid "Select item type."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:349
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:362
 msgid "<b>Standard:</b> Standard item type"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-mb-invoice-items.php:349
+#: includes/admin/meta-boxes/class-mb-invoice-items.php:362
 msgid "<b>Fee:</b> Like Registration Fee, Sign up Fee etc."
 msgstr ""
 
