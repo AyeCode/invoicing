@@ -219,6 +219,60 @@ class WPInv_Meta_Box_Form_Items {
         <?php
     }
 
+    /**
+     * Output fields.
+     *
+     * @param WP_Post $post
+     */
+    public static function form_design ( $post ) {
+        ?>
+
+        <div id="wpinv-form-builder" style="display: flex; flex-flow: wrap;">
+
+            <div class="wpinv-form-builder-left" style="flex: 0 0 320px;">
+                <div class="wpinv-form-builder-tabs nav-tab-wrapper">
+                    <a @click.prevent="active_tab='new_item'" class="nav-tab" :class="{ 'nav-tab-active': active_tab=='new_item' }" href="#"><?php _e( 'Add new element', 'invoicing' ); ?></a>
+                    <a @click.prevent="active_tab='edit_item'" class="nav-tab" :class="{ 'nav-tab-active': active_tab=='edit_item' }" href="#"><?php _e( 'Edit element', 'invoicing' ); ?></a>
+                </div>
+
+                <div class="wpinv-form-builder-tab-content bsui" style="margin-top: 16px;">
+                    <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='new_item'">
+                        <div class="wpinv-form-builder-add-field-types">
+
+                            <draggable class="section" style="display: flex; flex-flow: wrap; justify-content: space-between;" v-model="elements" :group="{ name: 'fields', pull: 'clone', put: false }" :sort="false" :clone="addDraggedField" tag="ul" filter=".wpinv-undraggable">
+                                <li v-for="element in elements" style="width: 49%; background-color: #fafafa; margin-bottom: 9px; cursor: move; border: 1px solid #eeeeee;" @click.prevent="addField(element)">
+                                    <button class="button btn" style="width: 100%; cursor: move;">
+                                        <span v-if="element.icon" class="dashicons dashicon-" :class="'dashicon-' + element.icon"></span>
+                                        {{element.name}}
+                                    </button>
+                                </li>
+                            </draggable>
+
+                        </div>
+                    </div>
+
+                <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='edit_item'">
+                    <div class="wpinv-form-builder-edit-field-wrapper"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="wpinv-form-builder-right" style="flex: 1; padding-top: 40px;border-left: 1px solid #ddd;padding-left: 20px;min-height: 400px;margin-left: 10px;">
+
+            <draggable class="section bsui" v-model="form_elements" group="fields" tag="div" style="min-height: 100%; font-size: 16px;">
+                <div v-for="form_element in form_elements" class="form-group">
+                    <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
+                </div>
+            </draggable>
+
+        </div>
+
+        </div>
+        
+        <?php
+    }
+
     public static function save( $post_id, $data, $post ) {
 
     }

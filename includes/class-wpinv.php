@@ -19,9 +19,10 @@ class WPInv_Plugin {
             self::$instance = new WPInv_Plugin;
             self::$instance->includes();
             self::$instance->actions();
-            self::$instance->notes      = new WPInv_Notes();
-            self::$instance->reports    = new WPInv_Reports();
-            self::$instance->api        = new WPInv_API();
+            self::$instance->notes          = new WPInv_Notes();
+            self::$instance->reports        = new WPInv_Reports();
+            self::$instance->api            = new WPInv_API();
+            self::$instance->form_elements  = new WPInv_Payment_Form_Elements();
         }
 
         return self::$instance;
@@ -174,7 +175,8 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-receipt.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
-	    require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
+        require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
@@ -386,8 +388,18 @@ class WPInv_Plugin {
 
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
 
+        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
+        wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
+        wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
+
         $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
-        wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script' ),  $version );
+        wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable' ),  $version );
+        
+        wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
+            'elements'      => $this->form_elements->get_elements(),
+            'form_elements' => array(),
+        ) );
+        
         wp_enqueue_script( 'wpinv-admin-payment-form-script' );
 
         if ( $page == 'wpinv-subscriptions' ) {

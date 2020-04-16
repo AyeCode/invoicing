@@ -1,5 +1,36 @@
 jQuery(function($) {
 
+    console.log( wpinvPaymentFormAdmin )
+
+    // Init our vue app
+    var vm = new Vue({
+
+        el: '#wpinv-form-builder',
+
+        data: $.extend(
+            true,
+            {
+                active_tab: 'new_item',
+            },
+            wpinvPaymentFormAdmin
+        ),
+
+        methods: {
+
+            // Adds a field that has been dragged to the list of fields.
+            addDraggedField(field) {
+                return field
+            },
+
+            // Pushes a field to the list of fields.
+            addField(field) {
+                this.form_elements.push(field)
+            },
+
+        }
+
+    })
+
     var update_inline_items = function( html ) {
         $('#wpinv_items_wrap').replaceWith( html )
     }
