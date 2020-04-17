@@ -15,9 +15,15 @@ class WPInv_Payment_Form_Elements {
 
         foreach( $this->get_elements() as $element ) {
             $element = $element['type'];
+
             if ( method_exists( $this, "render_{$element}_template" ) ) {
                 add_action( 'wpinv_payment_form_render_element_template', array( $this, "render_{$element}_template" ), 10, 2 );
             }
+
+            if ( method_exists( $this, "edit_{$element}_template" ) ) {
+                add_action( 'wpinv_payment_form_edit_element_template', array( $this, "edit_{$element}_template" ), 10, 2 );
+            }
+
         }
         
     }
@@ -34,64 +40,117 @@ class WPInv_Payment_Form_Elements {
         $this->elements = array(
 
             array(
-                'type' => 'heading',
-                'name' => __( 'Heading', 'invoicing' ),
+                'type'     => 'heading',
+                'name'     => __( 'Heading', 'invoicing' ),
+                'defaults' => array(
+                    'level' => 'h1',
+                    'text'  => __( 'Heading', 'invoicing' ),
+                )
             ),
 
             array(
                 'type' => 'paragraph',
                 'name' => __( 'Paragraph', 'invoicing' ),
+                'defaults'  => array(
+                    'text'  => __( 'Paragraph text', 'invoicing' ),
+                )
             ),
 
             array(
                 'type' => 'text',
                 'name' => __( 'Text Input', 'invoicing' ),
+                'defaults'  => array(
+                    'placeholder'  => __( 'Enter some text', 'invoicing' ),
+                    'value'        => '',
+                    'label'        => __( 'Field Label', 'invoicing' ),
+                    'description'  => '',
+                    'required'     => false,
+                )
             ),
 
             array(
                 'type' => 'textarea',
                 'name' => __( 'Textarea', 'invoicing' ),
+                'defaults'         => array(
+                    'placeholder'  => __( 'Enter your text hear', 'invoicing' ),
+                    'value'        => '',
+                    'label'        => __( 'Textarea Label', 'invoicing' ),
+                    'description'  => '',
+                    'required'     => false,
+                )
             ),
 
             array(
                 'type' => 'select',
                 'name' => __( 'Dropdown', 'invoicing' ),
+                'defaults'         => array(
+                    'placeholder'  => __( 'Select a value', 'invoicing' ),
+                    'value'        => '',
+                    'label'        => __( 'Dropdown Label', 'invoicing' ),
+                )
             ),
 
             array(
                 'type' => 'checkbox',
                 'name' => __( 'Checkboxes', 'invoicing' ),
+                'defaults'         => array(
+                    'value'        => '1',
+                    'label'        => __( 'Checkbox Label', 'invoicing' ),
+                )
             ),
 
             array( 
                 'type' => 'radio',
                 'name' => __( 'Multiple Choice', 'invoicing' ),
+                'defaults'     => array(
+                    'label'    => __( 'Select one choice', 'invoicing' ),
+                    'choices'  => array(
+                        __( 'Choice One', 'invoicing' ),
+                        __( 'Choice Two', 'invoicing' ),
+                        __( 'Choice Three', 'invoicing' )
+                    ),
+                )
             ),
 
             array( 
                 'type' => 'date',
                 'name' => __( 'Date', 'invoicing' ),
+                'defaults' => array(
+                    'label'    => __( 'Date', 'invoicing' ),
+                )
             ),
 
             array( 
                 'type' => 'time',
                 'name' => __( 'Time', 'invoicing' ),
+                'defaults' => array(
+                    'label'    => __( 'Time', 'invoicing' ),
+                )
             ),
 
             array( 
                 'type' => 'number',
                 'name' => __( 'Number', 'invoicing' ),
+                'defaults' => array(
+                    'label'    => __( 'Number', 'invoicing' ),
+                )
             ),
 
             array( 
                 'type' => 'website',
                 'name' => __( 'Website', 'invoicing' ),
+                'defaults' => array(
+                    'label'    => __( 'Website', 'invoicing' ),
+                )
             ),
 
             array( 
                 'type' => 'email',
                 'name' => __( 'Email', 'invoicing' ),
-            ),
+                'defaults'  => array(
+                    'label' => __( 'Email Address', 'invoicing' ),
+                )
+            )
         );
 
         $this->elements = apply_filters( 'wpinv_filter_core_payment_form_elements', $this->elements );
@@ -111,8 +170,42 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_heading_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'heading' );
-        $label    = "$field.name";
-        echo "<h1 $restrict v-html='$label'></h1>";
+        echo "<component :is='$field.level' $restrict v-html='$field.text'></component>";
+    }
+
+    /**
+     * Renders the edit title element template.
+     */
+    public function edit_heading_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'heading' );
+        $label    = __( 'Heading', 'invoicing' );
+        $label2   = __( 'Select Heading Level', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $id2      = $field . '.id + "_edit2"';
+
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input class='form-control' :id='$id' v-model='$field.text' type='text' />
+                </div>
+
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+
+                    <select class='form-control custom-select' :id='$id2' v-model='$field.level'>
+                        <option value='h1'>H1</option>
+                        <option value='h2'>H2</option>
+                        <option value='h3'>H3</option>
+                        <option value='h4'>H4</option>
+                        <option value='h5'>H5</option>
+                        <option value='h6'>H6</option>
+                        <option value='h7'>H7</option>
+                    </select>
+                </div>
+            </div>
+        ";
+
     }
 
     /**
@@ -120,8 +213,26 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_paragraph_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'paragraph' );
-        $label    = "$field.name";
-        echo "<p $restrict v-html='$label'></p>";
+        $label    = "$field.text";
+        echo "<p $restrict v-html='$label' style='font-size: 16px;'></p>";
+    }
+
+    /**
+     * Renders the edit paragraph element template.
+     */
+    public function edit_paragraph_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'paragraph' );
+        $label    = __( 'Enter your text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
     }
 
     /**
@@ -129,9 +240,51 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_text_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'text' );
-        $label    = "$field.name";
-        echo "<div $restrict><label $restrict>{{" . $label . "}}</label>";
-        echo "<input class='form-control' type='text'></div>";
+        $label    = "$field.label";
+        echo "
+            <div $restrict>
+                <label :for='$field.id'>{{" . $label . "}}</label>
+                <input :required='$field.required' :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='text'>
+                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
+            </div>    
+        ";
+    }
+
+    /**
+     * Renders the edit text element template.
+     */
+    public function edit_text_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'text' );
+        $label    = __( 'Field Label', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $label2   = __( 'Placeholder text', 'invoicing' );
+        $id2      = $field . '.id + "_edit2"';
+        $label3   = __( 'Help text', 'invoicing' );
+        $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        $label5   = __( 'Is this field required?', 'invoicing' );
+        $id4      = $field . '.id + "_edit4"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input :id='$id' v-model='$field.label' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+                    <input :id='$id2' v-model='$field.placeholder' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id3'>$label3</label>
+                    <textarea placeholder='$label4' :id='$id3' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
+                <div class='form-group form-check'>
+                    <input :id='$id4' v-model='$field.required' type='checkbox' class='form-check-input' />
+                    <label class='form-check-label' :for='$id4'>$label5</label>
+                </div>
+            </div>
+        ";
+
     }
 
     /**
@@ -139,9 +292,51 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_textarea_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'textarea' );
-        $label    = "$field.name";
-        echo "<div $restrict><label>{{" . $label . "}}</label>";
-        echo "<textarea class='form-control' rows='3'></textarea></div>";
+        $label    = "$field.label";
+        echo "
+            <div $restrict>
+                <label :for='$field.id'>{{" . $label . "}}</label>
+                <textarea :required='$field.required' :placeholder='$field.placeholder' :id='$field.id' class='form-control' rows='3'></textarea>
+                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
+            </div>    
+        ";
+    }
+
+    /**
+     * Renders the edit textarea element template.
+     */
+    public function edit_textarea_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'textarea' );
+        $label    = __( 'Field Label', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $label2   = __( 'Placeholder text', 'invoicing' );
+        $id2      = $field . '.id + "_edit2"';
+        $label3   = __( 'Help text', 'invoicing' );
+        $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        $label5   = __( 'Is this field required?', 'invoicing' );
+        $id4      = $field . '.id + "_edit4"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input :id='$id' v-model='$field.label' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+                    <input :id='$id2' v-model='$field.placeholder' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id3'>$label3</label>
+                    <textarea placeholder='$label4' :id='$id3' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
+                <div class='form-group form-check'>
+                    <input :id='$id4' v-model='$field.required' type='checkbox' class='form-check-input' />
+                    <label class='form-check-label' :for='$id4'>$label5</label>
+                </div>
+            </div>
+        ";
+
     }
 
     /**

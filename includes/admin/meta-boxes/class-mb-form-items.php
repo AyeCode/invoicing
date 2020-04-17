@@ -251,8 +251,11 @@ class WPInv_Meta_Box_Form_Items {
                         </div>
                     </div>
 
-                <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='edit_item'">
-                    <div class="wpinv-form-builder-edit-field-wrapper"></div>
+                <div class="wpinv-form-builder-tab-pane bsui" v-if="active_tab=='edit_item'" style="font-size: 16px;">
+                    <div class="wpinv-form-builder-edit-field-wrapper">
+                        {{active_form_element}}
+                        <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
+                    </div>
                 </div>
 
             </div>

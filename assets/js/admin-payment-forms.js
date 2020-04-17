@@ -11,20 +11,43 @@ jQuery(function($) {
             true,
             {
                 active_tab: 'new_item',
+                active_form_element: null,
             },
             wpinvPaymentFormAdmin
         ),
 
         methods: {
 
+            // Highlights a field for editing.
+            highlightField(field) {
+                this.active_tab = 'edit_item'
+                this.active_form_element = field
+            },
+
+            // Returns the data for a new field.
+            getNewFieldData(field) {
+
+                // Let's generate a unique string to use as the field key.
+                var rand = Math.random() + this.form_elements.length
+                var key = rand.toString(36).replace(/[^a-z]+/g, '')
+
+                var new_field  = $.extend(true, {}, field.defaults)
+                new_field.id   = key
+                new_field.name = key
+                new_field.type = field.type
+                this.highlightField(new_field)
+                
+                return new_field
+            },
+
             // Adds a field that has been dragged to the list of fields.
             addDraggedField(field) {
-                return field
+                return this.getNewFieldData(field)
             },
 
             // Pushes a field to the list of fields.
             addField(field) {
-                this.form_elements.push(field)
+                this.form_elements.push( this.getNewFieldData(field) )
             },
 
         }
