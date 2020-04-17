@@ -1867,3 +1867,26 @@ textarea.wpi-email_overdue_content {
   float: right;
   color: #353C7C;
 }
+
+.wpinv-form-builder-element-preview {
+    padding: 10px;
+    cursor: move;
+}
+
+.wpinv-form-builder-element-preview:hover,
+.wpinv-form-builder-element-preview.active {
+    border: 1px dashed #ffb74d;
+    /*background-color: #fff3e0;*/
+}
+
+.wpinv-form-builder-element-preview h2 {
+    font-size: 23px !important;
+    padding: 0 !important;
+}
+
+.wpinv-form-builder-right input,
+.wpinv-form-builder-right button,
+.wpinv-form-builder-right select,
+.wpinv-form-builder-right textarea{
+    cursor: not-allowed !important;
+}

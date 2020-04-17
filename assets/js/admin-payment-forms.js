@@ -1,9 +1,7 @@
 jQuery(function($) {
 
-    console.log( wpinvPaymentFormAdmin )
-
     // Init our vue app
-    var vm = new Vue({
+    new Vue({
 
         el: '#wpinv-form-builder',
 
@@ -12,6 +10,7 @@ jQuery(function($) {
             {
                 active_tab: 'new_item',
                 active_form_element: null,
+                last_dropped: null,
             },
             wpinvPaymentFormAdmin
         ),
@@ -22,6 +21,7 @@ jQuery(function($) {
             highlightField(field) {
                 this.active_tab = 'edit_item'
                 this.active_form_element = field
+                return field
             },
 
             // Returns the data for a new field.
@@ -35,21 +35,36 @@ jQuery(function($) {
                 new_field.id   = key
                 new_field.name = key
                 new_field.type = field.type
-                this.highlightField(new_field)
                 
                 return new_field
             },
 
             // Adds a field that has been dragged to the list of fields.
             addDraggedField(field) {
-                return this.getNewFieldData(field)
+                this.last_dropped = this.getNewFieldData(field)
+                return this.last_dropped
             },
 
             // Pushes a field to the list of fields.
             addField(field) {
-                this.form_elements.push( this.getNewFieldData(field) )
+                this.form_elements.push( this.highlightField( this.getNewFieldData(field) ) )
             },
 
+            // Highlights the last dropped field.
+            highlightLastDroppedField() {
+                this.highlightField( this.last_dropped )
+            },
+
+            // Deletes a field.
+            removeField(field){
+                var index = this.form_elements.indexOf(field);
+
+                if (index > -1) {
+                    this.form_elements.splice(index, 1);
+                    this.active_tab = 'new_item'
+                    this.active_form_element = null
+                }
+            }
         }
 
     })

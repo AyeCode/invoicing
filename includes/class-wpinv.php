@@ -398,6 +398,7 @@ class WPInv_Plugin {
         wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
             'elements'      => $this->form_elements->get_elements(),
             'form_elements' => array(),
+            'items'         => $this->form_elements->get_published_items(),
         ) );
         
         wp_enqueue_script( 'wpinv-admin-payment-form-script' );

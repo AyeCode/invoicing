@@ -39,7 +39,7 @@ class WPInv_Meta_Box_Form_Items {
 
                         foreach ( $items as $item_data ) {
 
-                            $id   = isset( $item['id'] ) ? (int) $item['id'] : 0;
+                            $id   = isset( $item_data['id'] ) ? (int) $item_data['id'] : 0;
                             $item = new WPInv_Item( $id );
 
                             if ( empty( $item ) || $item->post_type != 'wpi_item' ) {
@@ -157,61 +157,6 @@ class WPInv_Meta_Box_Form_Items {
                         </td>
                     </tr>
 
-                    <tr class="form-field-button_text">
-                        <th scope="row"><label for="field_button_text"><?php _e( 'Button Text', 'invoicing' ); ?></label></th>
-                        <td>
-                            <div>
-                                <input type="text" class="regular-text" name="button_text" id="field_button_text" value="<?php echo esc_attr( $values['button_text'] ); ?>">
-                                <p class="description"><?php _e( 'Payment button text', 'invoicing' ); ?></p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-processing_text">
-                        <th scope="row"><label for="field_processing_text"><?php _e( 'Processing Text', 'invoicing' ); ?></label></th>
-                        <td>
-                            <div>
-                                <input type="text" class="regular-text" name="processing_text" id="field_processing_text" value="<?php echo esc_attr( $values['processing_text'] ); ?>">
-                                <p class="description"><?php _e( 'Processing payment button text', 'invoicing' ); ?></p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-supports_quantities">
-                        <th scope="row"></th>
-                        <td>
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="supports_quantities" id="field_supports_quantities" value="1" <?php checked( $values['supports_quantities'], 1 ); ?>>
-                                    <span><?php _e( 'Let users set custom item quantities', 'invoicing' ); ?></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-enable_taxes">
-                        <th scope="row"></th>
-                        <td>
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="enable_taxes" id="field_enable_taxes" value="1" <?php checked( $values['enable_taxes'], 1 ); ?>>
-                                    <span><?php _e( 'Enable tax calculations', 'invoicing' ); ?></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="form-field-supports_discounts">
-                        <th scope="row"></th>
-                        <td>
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="supports_discounts" id="field_supports_discounts" value="1" <?php checked( $values['supports_discounts'], 1 ); ?>>
-                                    <span><?php _e( 'Enable coupon codes', 'invoicing' ); ?></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
 
                 </tbody>
             </table>
@@ -253,8 +198,10 @@ class WPInv_Meta_Box_Form_Items {
 
                 <div class="wpinv-form-builder-tab-pane bsui" v-if="active_tab=='edit_item'" style="font-size: 16px;">
                     <div class="wpinv-form-builder-edit-field-wrapper">
-                        {{active_form_element}}
                         <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
+                        <div>
+                            <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)"><?php _e( 'Delete Field', 'invoicing' ); ?></button>
+                        </div>
                     </div>
                 </div>
 
@@ -263,12 +210,11 @@ class WPInv_Meta_Box_Form_Items {
 
         <div class="wpinv-form-builder-right" style="flex: 1; padding-top: 40px;border-left: 1px solid #ddd;padding-left: 20px;min-height: 400px;margin-left: 10px;">
 
-            <draggable class="section bsui" v-model="form_elements" group="fields" tag="div" style="min-height: 100%; font-size: 16px;">
-                <div v-for="form_element in form_elements" class="form-group">
+            <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 16px;">
+                <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="{ active: active_form_element==form_element &&  active_tab=='edit_item' }" @click="active_tab = 'edit_item'; active_form_element = form_element">
                     <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
                 </div>
             </draggable>
-
         </div>
 
         </div>
