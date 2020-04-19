@@ -183,7 +183,6 @@ class WPInv_Meta_Box_Form_Items {
                 <div class="wpinv-form-builder-tab-content bsui" style="margin-top: 16px;">
                     <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='new_item'">
                         <div class="wpinv-form-builder-add-field-types">
-
                             <draggable class="section" style="display: flex; flex-flow: wrap; justify-content: space-between;" v-model="elements" :group="{ name: 'fields', pull: 'clone', put: false }" :sort="false" :clone="addDraggedField" tag="ul" filter=".wpinv-undraggable">
                                 <li v-for="element in elements" style="width: 49%; background-color: #fafafa; margin-bottom: 9px; cursor: move; border: 1px solid #eeeeee;" @click.prevent="addField(element)">
                                     <button class="button btn" style="width: 100%; cursor: move;">
@@ -208,7 +207,7 @@ class WPInv_Meta_Box_Form_Items {
             </div>
         </div>
 
-        <div class="wpinv-form-builder-right" style="flex: 1; padding-top: 40px;border-left: 1px solid #ddd;padding-left: 20px;min-height: 400px;margin-left: 10px;">
+        <div class="wpinv-form-builder-right" style="flex: 1; padding-top: 40px;border-left: 1px solid #ddd;padding-left: 20px;min-height: 520px;margin-left: 10px;">
 
             <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 16px;">
                 <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="{ active: active_form_element==form_element &&  active_tab=='edit_item' }" @click="active_tab = 'edit_item'; active_form_element = form_element">

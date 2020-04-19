@@ -397,8 +397,14 @@ class WPInv_Plugin {
         
         wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
             'elements'      => $this->form_elements->get_elements(),
-            'form_elements' => array(),
-            'items'         => $this->form_elements->get_published_items(),
+            'form_elements' => wpinv_get_data( 'sample-payment-form' ),
+            'all_items'     => $this->form_elements->get_published_items(),
+            'currency'      => wpinv_currency_symbol(),
+            'position'      => wpinv_currency_position(),
+            'decimals'      => (int) wpinv_decimals(),
+            'thousands_sep' => wpinv_thousands_separator(),
+            'decimals_sep'  => wpinv_decimal_separator(),
+            'form_items'    => wpinv_get_data( 'sample-payment-form-items' ),
         ) );
         
         wp_enqueue_script( 'wpinv-admin-payment-form-script' );

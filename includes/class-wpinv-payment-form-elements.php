@@ -65,7 +65,16 @@ class WPInv_Payment_Form_Elements {
                     'text'         => __( 'Alert', 'invoicing' ),
                     'dismissible'  => false,
                 )
-                ),
+            ),
+
+            /*array( 
+                'type' => 'separator',
+                'name' => __( 'Separator', 'invoicing' ),
+                'defaults'  => array(
+                    'value'        => '',
+                    'dismissible'  => false,
+                )
+            ),*/
 
             array(
                 'type' => 'text',
@@ -208,9 +217,7 @@ class WPInv_Payment_Form_Elements {
                 'name' => __( 'Items', 'invoicing' ),
                 'defaults'  => array(
                     'value'        => '',
-                    'items'        => array(),
-                    'type'         => 'total',
-                    'show_total'   => false,
+                    'items_type'   => 'total',
                     'description'  => '',
                 )
             ),
@@ -851,6 +858,14 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the separator element template.
+     */
+    public function render_separator_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'separator' );
+        echo "<hr class='featurette-divider mt-0 mb-2' $restrict>";
+    }
+
+    /**
      * Renders the pay button element template.
      */
     public function render_pay_button_template( $field ) {
@@ -966,7 +981,7 @@ class WPInv_Payment_Form_Elements {
     /**
      * Renders the discount element template.
      */
-    public function render_discount_templates( $field ) {
+    public function render_discount_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'discount' );
         echo "
             <div $restrict class='discount_field  border rounded p-3'>
@@ -1021,31 +1036,61 @@ class WPInv_Payment_Form_Elements {
         echo "
             <div $restrict class='item_totals'>
 
-                <div v-if='$field.type == \"total\"'>
+                <div v-if='$field.items_type == \"total\"' class='border'>
+
+                    <div v-for='(item, index) in form_items'>
+                        <div class='row pl-2 pr-2 pt-2'>
+                            <div class='col-8'>{{item.title}}</div>
+                            <div class='col-4'>{{formatPrice(item.price)}}</div>
+                        </div>
+                        <small v-if='item.description' class='form-text text-muted pl-2 pr-2 m-0' v-html='item.description'></small>
+                    </div>
+
+                    <div class='mt-4 border-top'>
+                        <div class='row p-2'>
+                            <div class='col-8'><strong class='mr-5'>Total</strong></div>
+                            <div class='col-4'><strong>{{totalPrice}}</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if='$field.items_type == \"checkbox\"'>
+
+                    <div class='form-check' v-for='(item, index) in form_items'>
+                        <input class='form-check-input' type='checkbox' :id='$field.id + index'>
+                        <label class='form-check-label' :for='$field.id + index'>{{item.title}} &nbsp;<strong>{{formatPrice(item.price)}}</strong></label>
+                        <small v-if='item.description' class='form-text text-muted' v-html='item.description'></small>
+                    </div>
 
                 </div>
 
-                <div v-if='$field.type == \"checkboxes\"'>
+                <div v-if='$field.items_type == \"radio\"'>
+
+                    <div class='form-check' v-for='(item, index) in form_items'>
+                        <input class='form-check-input' type='radio' :name='$field.id' :id='$field.id + index'>
+                        <label class='form-check-label' :for='$field.id + index'>{{item.title}} &nbsp;<strong>{{formatPrice(item.price)}}</strong></label>
+                        <small v-if='item.description' class='form-text text-muted' v-html='item.description'></small>
+                    </div>
 
                 </div>
 
-                <div v-if='$field.type == \"radio\"'>
+                <div v-if='$field.items_type == \"select\"'>
 
+                    <select class='form-control custom-select'>
+                        <option value='' disabled selected='selected'>"        . __( 'Select an option', 'invoicing' ) ."</option>
+                        <option v-for='(item, index) in form_items' :value='index'>{{item.title}} &nbsp;{{formatPrice(item.price)}}</option>
+                    </select>
                 </div>
 
-                <div v-if='$field.show_total'>
+                <div v-if='$field.items_type == \"multi_select\"'>
+
+                    <select class='form-control custom-select' multiple>
+                        <option v-for='(item, index) in form_items' :value='index'>{{item.title}} &nbsp;{{formatPrice(item.price)}}</option>
+                    </select>
 
                 </div>
+                
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
-
-                <pre>
-// TODO: Ask admin to select which items he/she
-// wants to sell via this form
-            
-// TODO:- Let admin set whether they want customers to select some items,
-// a single item( use case variations), or be tied to all items ( i.e 
-// Only display the totals)
-                </pre>
             </div>
         ";
     }
@@ -1055,21 +1100,86 @@ class WPInv_Payment_Form_Elements {
      */
     public function edit_items_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'items' );
-        $label    = __( 'Items Type', 'invoicing' );
-        $label2   = __( 'Help Text', 'invoicing' );
+        $label    = __( 'Let customers...', 'invoicing' );
+        $label2   = __( 'Available Items', 'invoicing' );
         $label3   = esc_attr__( 'Add some help text for this element', 'invoicing' );
-        $label4   = __( 'Button Text', 'invoicing' );
-        $label5   = __( 'Items', 'invoicing' );
-        $label6   = esc_attr__( 'Select the items that you want to sell via this form.', 'invoicing' );
         $id       = $field . '.id + "_edit"';
         $id2      = $field . '.id + "_edit2"';
         $id3      = $field . '.id + "_edit3"';
         $id4      = $field . '.id + "_edit4"';
         echo "<div $restrict>
                 
-                <pre>
-                    {{items}}
-                </pre>
+                <label>$label2</label>
+
+                <draggable v-model='form_items' group='selectable_form_items'>
+                    <div class='wpinv-available-items-editor' v-for='(item, index) in form_items' :class='\"item_\" + item.id' :key='item.id'>
+
+                        <div class='wpinv-available-items-editor-header' @click.prevent='togglePanel(item.id)'>
+                            <span class='label'>{{item.title}}</span>
+                            <span class='price'>({{formatPrice(item.price)}})</span>
+                            <span class='toggle-icon'>
+                                <span class='dashicons dashicons-arrow-down'></span>
+                                <span class='dashicons dashicons-arrow-up' style='display:none'></span>
+                            </span>
+                        </div>
+
+                        <div class='wpinv-available-items-editor-body'>
+                            <div class='p-2'>
+
+                                <div class='form-group'>
+                                    <label :for='$id + item.id'>Item Name</label>
+                                    <input :id='$id + item.id' v-model='item.title' class='form-control' />
+                                </div>
+
+                                <div class='form-group'>
+                                    <label :for='$id + item.id + \"price\"'>Item Price</label>
+                                    <input :id='$id + item.id + \"price\"' v-model='item.price' class='form-control' />
+                                </div>
+
+                                <div class='form-group'>
+                                    <label :for='$id + item.id + \"description\"'>Item Description</label>
+                                    <textarea :id='$id + item.id + \"description\"' v-model='item.description' class='form-control'></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </draggable>
+
+                <small v-if='! form_items.length' class='form-text text-muted'> You have not set up any items. Please select an item below or create a new item.</small>
+
+                <div class='form-group mt-2'>
+
+                    <select class='form-control custom-select' v-model='selected_item'>
+                        <option value=''>"        . __( 'Add an item to the form', 'invoicing' ) ."</option>
+                        <option v-for='(item, index) in all_items' :value='index'>{{item.title}}</option>
+                    </select>
+
+                </div>
+
+                <div class='form-group'>
+                    <input type='button' value='Add item' class='button button-primary'  @click.prevent='addSelectedItem' :disabled='selected_item == \"\"'>
+                    <small>Or <a href='' @click.prevent='addNewItem'>create a new item</a>.</small>
+                </div>
+
+                <div class='form-group mt-5'>
+                    <label :for='$id2'>$label</label>
+
+                    <select class='form-control custom-select' :id='$id2' v-model='$field.items_type'>
+                        <option value='total'>"        . __( 'Buy all items on the list', 'invoicing' ) ."</option>
+                        <option value='radio'>"        . __( 'Select a single item from the list', 'invoicing' ) ."</option>
+                        <option value='checkbox'>"     . __( 'Select one or more items on the list', 'invoicing' ) ."</option>
+                        <option value='select'>"       . __( 'Select a single item from a dropdown', 'invoicing' ) ."</option>
+                        <option value='multi_select'>" . __( 'Select a one or more items from a dropdown', 'invoicing' ) ."</option>
+                    </select>
+
+                </div>
+
+                <div class='form-group'>
+                    <label :for='$id3'>Help Text</label>
+                    <textarea placeholder='$label3' :id='$id3' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
 
             </div>
         ";
@@ -1094,13 +1204,14 @@ class WPInv_Payment_Form_Elements {
 
         $options    = array();
         foreach ( $items as $item ) {
-            $title     = esc_html( $item->post_title );
-            $title    .= wpinv_get_item_suffix( $item->ID, false );
-            $id        = absint( $item->ID );
-            $price     = wpinv_sanitize_amount( get_post_meta( $id, '_wpinv_price', true ) );
-            $recurring = get_post_meta( $id, '_wpinv_is_recurring', true );
-            
-            $options[] = compact( 'title', 'id', 'price', 'recurring');
+            $title       = esc_html( $item->post_title );
+            $title      .= wpinv_get_item_suffix( $item->ID, false );
+            $id          = absint( $item->ID );
+            $price       = wpinv_sanitize_amount( get_post_meta( $id, '_wpinv_price', true ) );
+            $recurring   = (bool) get_post_meta( $id, '_wpinv_is_recurring', true );
+            $description = $item->post_excerpt;
+            $options[] = compact( 'title', 'id', 'price', 'recurring', 'description' );
+
         }
         return $options;
 

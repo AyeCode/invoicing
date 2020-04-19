@@ -1870,6 +1870,7 @@ textarea.wpi-email_overdue_content {
 
 .wpinv-form-builder-element-preview {
     padding: 10px;
+    box-sizing: border-box;
     cursor: move;
 }
 
@@ -1889,4 +1890,51 @@ textarea.wpi-email_overdue_content {
 .wpinv-form-builder-right select,
 .wpinv-form-builder-right textarea{
     cursor: not-allowed !important;
+}
+
+.wpinv-available-items-editor {
+    display: block;
+    position: relative;
+    margin: 5px 0;
+    padding: 0;
+    min-height: 20px;
+    font-size: 13px;
+    line-height: 25px;
+    border: 1px #dfdfdf solid;
+}
+
+.wpinv-available-items-editor-header {
+    background: #fafafa;
+    height: 37px;
+    padding: 5px 10px;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    cursor: move;
+    width: 100%;
+}
+
+.wpinv-available-items-editor-header .label{
+    flex: 1;
+}
+
+.wpinv-available-items-editor-header .price{
+    font-weight: initial;
+}
+
+.wpinv-available-items-editor-header .toggle-icon{
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.wpinv-available-items-editor-header .dashicons{
+    vertical-align: bottom;
+}
+
+.wpinv-available-items-editor-body {
+    display: none;
+    overflow: hidden;
 }

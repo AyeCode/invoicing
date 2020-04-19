@@ -11,9 +11,22 @@ jQuery(function($) {
                 active_tab: 'new_item',
                 active_form_element: null,
                 last_dropped: null,
+                selected_item: '',
             },
             wpinvPaymentFormAdmin
         ),
+
+        computed: {
+            totalPrice() {
+                var price = this.form_items.reduce(
+                    function( combined, item ) {
+                        return combined + parseFloat( item.price );
+                    },
+                    0
+                );
+                return this.formatPrice( price )
+            }
+        },
 
         methods: {
 
@@ -64,8 +77,89 @@ jQuery(function($) {
                     this.active_tab = 'new_item'
                     this.active_form_element = null
                 }
+            },
+
+            // Formats a price.
+            formatPrice(price){
+                var formated = parseFloat(price)
+
+                if ( isNaN(formated ) ) {
+                    formated = 0
+                }
+
+                return this.addCurrency( this.addCommas( this.addDecimals( formated ) ) )
+
+            },
+
+            // Adds decimals to a price.
+            addDecimals(price){
+                var decimals = price.toFixed( this.decimals ) + ''
+                return decimals.replace( '.', this.decimals_sep );
+            },
+
+            // Adds commas to a price.
+            addCommas(price){
+                var parts = price.toString().split( this.decimals_sep );
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,  this.thousands_sep  );
+                return parts.join( this.decimals_sep );
+            },
+
+            // Adds a currency to a price.
+            addCurrency(price){
+
+                if ( 'left' == this.position ) {
+                    return this.currency + '' + price
+                }
+
+                return price + '' + this.currency
+
+            },
+
+            // Adds a currency to a price.
+            addSelectedItem(){
+                this.form_items.push( this.all_items[this.selected_item] )
+                this.selected_item = ''
+            },
+
+            // Adds a currency to a price.
+            addNewItem(){
+
+                var rand = Math.random() + this.form_items.length
+                var key = rand.toString(36).replace(/[^a-z]+/g, '')
+
+                this.form_items.push({
+                    title: "New item",
+                    id: key,
+                    price: '0.00',
+                    recurring: false,
+                    description: ''
+                })
+
+            },
+
+            // Given a panel id( field key ), it toggles the panel.
+            togglePanel(id) {
+                var parent = $('.wpinv-available-items-editor.item_' + id)
+
+                // Toggle the body.
+                parent.find('.wpinv-available-items-editor-body').slideToggle( 400, function(){
+
+                    // Scroll to the first field.
+                    $('html, body').animate({
+                        //scrollTop: parent.offset().top
+                    }, 1000);
+                })
+
+                // Toggle the active class
+                parent.toggleClass('active')
+
+                // Toggle dashicons
+                parent.find('.wpinv-available-items-editor-header > .toggle-icon .dashicons-arrow-down').toggle()
+                parent.find('.wpinv-available-items-editor-header > .toggle-icon .dashicons-arrow-up').toggle()
+
             }
-        }
+
+        },
 
     })
 
