@@ -102,14 +102,17 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		$items    = $invoicing->form_elements->get_form_items( $args['form'] );
 
 		ob_start();
-
+		echo "<form class='wpinv_payment_form'>";
 		echo "<input type='hidden' name='form_id' value='{$args['form']}'/>";
-		echo wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+		wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
 
 		foreach ( $elements as $element ) {
 			do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $args['form'] );
 			do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $args['form'] );
 		}
+
+		echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
+		echo '</form>';
 
 		$content = ob_get_clean();
 		

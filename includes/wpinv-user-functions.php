@@ -175,3 +175,49 @@ function wpinv_get_capability( $capalibilty = 'manage_invoicing' ) {
 function wpinv_current_user_can_manage_invoicing() {
     return current_user_can( wpinv_get_capability() );
 }
+
+/**
+ *  Given an email address, it creates a new user.
+ *
+ * @since 1.0.19
+ * @return int|WP_Error
+ */
+function wpinv_create_user( $email ) {
+
+    // Prepare user values.
+	$args = array(
+		'user_login' => wpinv_generate_user_name( $email ),
+		'user_pass'  => wp_generate_password(),
+		'user_email' => $email,
+		'role'       => 'subscriber',
+    );
+        
+    return wp_insert_user( $args );
+
+}
+
+/**
+ *  Generates a unique user name from an email.
+ *
+ * @since 1.0.19
+ * @return bool|WP_User
+ */
+function wpinv_generate_user_name( $prefix = '' ) {
+
+    // If prefix is an email, retrieve the part before the email.
+	$prefix = strtok( $prefix, '@' );
+
+	// Trim to 4 characters max.
+	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
+
+	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
+	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {
+		$prefix = 'paywp';
+	}
+
+	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
+	if ( username_exists( $username ) ) {
+		return wpinv_generate_user_name( $prefix );
+	}
+
+}

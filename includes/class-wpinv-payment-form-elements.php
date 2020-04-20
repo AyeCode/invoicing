@@ -594,11 +594,11 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group input-group' v-for='(option, index) in $field.options'>
                     <input type='text' class='form-control' v-model='$field.options[index]'>
                     <div class='input-group-append'>
-                        <button class='btn btn-outline-secondary' type='button' @click.prevent='$field.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+                        <button class='button button-secondary border' type='button' @click.prevent='$field.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
                     </div>
                 </div>
                 <div class='form-group'>
-                    <button class='btn btn-outline-secondary' type='button' @click.prevent='$field.options.push(\"\")'>Add Option</button>
+                    <button class='button button-secondary' type='button' @click.prevent='$field.options.push(\"\")'>Add Option</button>
                 </div>
             </div>
         ";
@@ -763,11 +763,11 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group input-group' v-for='(option, index) in $field.options'>
                     <input type='text' class='form-control' v-model='$field.options[index]'>
                     <div class='input-group-append'>
-                        <button class='btn btn-outline-secondary' type='button' @click.prevent='$field.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+                        <button class='button button-secondary border' type='button' @click.prevent='$field.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
                     </div>
                 </div>
                 <div class='form-group'>
-                    <button class='btn btn-outline-secondary' type='button' @click.prevent='$field.options.push(\"\")'>Add Option</button>
+                    <button class='button button-secondary' type='button' @click.prevent='$field.options.push(\"\")'>Add Option</button>
                 </div>
             </div>
         ";
@@ -1287,13 +1287,13 @@ class WPInv_Payment_Form_Elements {
         echo "<div class='form-group'>";
 
         $class = 'btn btn-block submit-button ' . sanitize_html_class( $field['class'] );
-        echo aui()->button(
+        echo aui()->input(
             array(
                 'name'       => esc_attr( $field['id'] ),
                 'id'         => esc_attr( $field['id'] ),
-                'content'    => wp_kses_post( $field['label'] ),
+                'value'      => esc_attr( $field['label'] ),
                 'no_wrap'    => true,
-                'type'       => 'button',
+                'type'       => 'submit',
                 'class'      => $class,
             )
         );
@@ -1674,6 +1674,7 @@ class WPInv_Payment_Form_Elements {
                                 'placeholder' => __( 'Select an item', 'invoicing' ),
                                 'no_wrap'     => true,
                                 'options'     => $options,
+                                'class'       => 'wpi_select2'
                         )
                     );
                 ?>
@@ -1703,6 +1704,7 @@ class WPInv_Payment_Form_Elements {
                                 'no_wrap'     => true,
                                 'options'     => $options,
                                 'multiple'    => true,
+                                'class'       => 'wpi_select2',
                         )
                     );
                 ?>

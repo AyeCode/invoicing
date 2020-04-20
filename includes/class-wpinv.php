@@ -299,6 +299,9 @@ class WPInv_Plugin {
 
         wp_enqueue_script( 'wpinv-front-script' );
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
+
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );
+        wp_enqueue_script( 'wpinv-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'wpinv-front-script' ),  $version, true );
     }
 
     public function admin_enqueue_scripts( $hook ) {
