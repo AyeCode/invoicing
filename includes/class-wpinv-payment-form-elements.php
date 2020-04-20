@@ -206,6 +206,18 @@ class WPInv_Payment_Form_Elements {
             ),
 
             array( 
+                'type' => 'billing_email',
+                'name' => __( 'Billing Email', 'invoicing' ),
+                'defaults'  => array(
+                    'placeholder'  => 'jon@snow.com',
+                    'value'        => '',
+                    'label'        => __( 'Billing Email', 'invoicing' ),
+                    'description'  => '',
+                    'premade'      => true,
+                )
+            ),
+
+            array( 
                 'type' => 'discount',
                 'name' => __( 'Discount Input', 'invoicing' ),
                 'defaults'  => array(
@@ -223,17 +235,19 @@ class WPInv_Payment_Form_Elements {
                     'value'        => '',
                     'items_type'   => 'total',
                     'description'  => '',
+                    'premade'      => true,
                 )
             ),
 
             array( 
-                'type' => 'pay_button',
-                'name' => __( 'Payment Button', 'invoicing' ),
-                'defaults'  => array(
+                'type'       => 'pay_button',
+                'name'       => __( 'Payment Button', 'invoicing' ),
+                'defaults'   => array(
                     'value'        => '',
                     'class'        => 'btn-primary',
                     'label'        => __( 'Pay Now »', 'invoicing' ),
                     'description'  => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
+                    'premade'      => true,
                 )
             )
         );
@@ -776,6 +790,21 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the billing_email element template.
+     */
+    public function render_billing_email_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'billing_email' );
+        $label    = "$field.label";
+        echo "
+            <div $restrict>
+                <label :for='$field.id'>{{" . $label . "}}</label>
+                <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='email'>
+                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
+            </div>    
+        ";
+    }
+
+    /**
      * Renders the email element on the frontend.
      */
     public function frontend_render_email_template( $field ) {
@@ -789,6 +818,35 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
+                'placeholder' => esc_attr( $field['placeholder'] ),
+                'type'       => 'email',
+            )
+        );
+
+        if ( ! empty( $field['description'] ) ) {
+            $description = wp_kses_post( $field['description'] );
+            echo "<small class='form-text text-muted'>$description</small>";
+        }
+
+        echo '</div>';
+
+    }
+
+    /**
+     * Renders the billing email element on the frontend.
+     */
+    public function frontend_render_billing_email_template( $field ) {
+        
+        echo "<div class='form-group'>";
+
+        echo aui()->input(
+            array(
+                'name'       => 'billing_email',
+                'id'         => esc_attr( $field['id'] ),
+                'required'   => true,
+                'label'      => wp_kses_post( $field['label'] ),
+                'no_wrap'    => true,
+                'placeholder' => esc_attr( $field['placeholder'] ),
                 'type'       => 'email',
             )
         );
@@ -840,6 +898,39 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the edit billing_email element template.
+     */
+    public function edit_billing_email_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'billing_email' );
+        $label    = __( 'Field Label', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $label2   = __( 'Placeholder text', 'invoicing' );
+        $id2      = $field . '.id + "_edit2"';
+        $label3   = __( 'Help text', 'invoicing' );
+        $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        $label5   = __( 'Is this field required?', 'invoicing' );
+        $id4      = $field . '.id + "_edit4"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input :id='$id' v-model='$field.label' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+                    <input :id='$id2' v-model='$field.placeholder' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id3'>$label3</label>
+                    <textarea placeholder='$label4' :id='$id3' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
      * Renders the website element template.
      */
     public function render_website_template( $field ) {
@@ -868,6 +959,7 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
+                'placeholder' => esc_attr( $field['placeholder'] ),
                 'type'       => 'url',
             )
         );
@@ -946,6 +1038,7 @@ class WPInv_Payment_Form_Elements {
                 'id'         => esc_attr( $field['id'] ),
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
+                'placeholder' => esc_attr( $field['placeholder'] ),
                 'no_wrap'    => true,
                 'type'       => 'date',
             )
@@ -1026,6 +1119,7 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
+                'placeholder' => esc_attr( $field['placeholder'] ),
                 'type'       => 'time',
             )
         );
@@ -1104,6 +1198,7 @@ class WPInv_Payment_Form_Elements {
                 'id'         => esc_attr( $field['id'] ),
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
+                'placeholder' => esc_attr( $field['placeholder'] ),
                 'no_wrap'    => true,
                 'type'       => 'number',
             )
@@ -1524,7 +1619,7 @@ class WPInv_Payment_Form_Elements {
                         <label class='form-check-label' for=<?php echo $id . $index; ?>'><?php echo sanitize_text_field( $item['title'] ); ?>&nbsp;<strong><?php echo wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) ); ?></strong></label>
                     </div>
                     <?php if ( ! empty( $item['description'] )) { ?>
-                        <small class='form-text text-muted pl-2 pr-2 m-0'><?php echo wp_kses_post( $item['description'] ); ?></small>
+                        <small class='form-text text-muted pl-4 pr-2 m-0'><?php echo wp_kses_post( $item['description'] ); ?></small>
                     <?php } ?>
                 <?php } ?>
 

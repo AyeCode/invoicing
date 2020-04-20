@@ -36,7 +36,7 @@ class WPInv_Meta_Box_Payment_Form {
                         <div class="wpinv-form-builder-add-field-types">
                             <small class='form-text text-muted'><?php _e( 'Add an element by dragging it to the payment form.', 'invoicing' ); ?></small>
                             <draggable class="section mt-2" style="display: flex; flex-flow: wrap; justify-content: space-between;" v-model="elements" :group="{ name: 'fields', pull: 'clone', put: false }" :sort="false" :clone="addDraggedField" tag="ul" filter=".wpinv-undraggable">
-                                <li v-for="element in elements" style="width: 49%; background-color: #fafafa; margin-bottom: 9px; cursor: move; border: 1px solid #eeeeee;" @click.prevent="addField(element)">
+                                <li v-for="element in elements" style="width: 49%; background-color: #fafafa; margin-bottom: 9px; cursor: move; border: 1px solid #eeeeee;" @click.prevent="addField(element)" :class="{ 'd-none': element.defaults.premade }">
                                     <button class="button btn" style="width: 100%; cursor: move;">
                                         <span v-if="element.icon" class="dashicons dashicon-" :class="'dashicon-' + element.icon"></span>
                                         {{element.name}}
@@ -51,7 +51,7 @@ class WPInv_Meta_Box_Payment_Form {
                         <div class="wpinv-form-builder-edit-field-wrapper">
                             <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
                             <div>
-                                <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)"><?php _e( 'Delete Field', 'invoicing' ); ?></button>
+                                <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)" v-show="! active_form_element.premade"><?php _e( 'Delete Field', 'invoicing' ); ?></button>
                             </div>
                         </div>
                     </div>

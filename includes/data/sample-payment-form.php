@@ -60,13 +60,13 @@ return array(
 
         'placeholder' => 'jon@snow.com',
         'value'       => '',
-        'label'       => __( 'Email Address', 'invoicing' ),
+        'label'       => __( 'Billing Email', 'invoicing' ),
         'description' => '',
-        'required'    => false,
+        'required'    => true,
         'id'          => 'mmdwqzpox',
         'name'        => 'mmdwqzpox',
-        'type'        => 'email'
-
+        'type'        => 'billing_email',
+        'premade'     => true
     ),
 
     array(
@@ -76,7 +76,8 @@ return array(
         'description' => '',
         'id'          => 'kcicd',
         'name'        => 'kcicd',
-        'type'        => 'items'
+        'type'        => 'items',
+        'premade'     => true
 
     ),
 
@@ -88,7 +89,7 @@ return array(
         'description' => __( 'By continuing with your payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
         'id'          => 'rtqljyy',
         'name'        => 'rtqljyy',
-        'type'        => 'pay_button'
-
+        'type'        => 'pay_button',
+        'premade'     => true,
     )
 );
