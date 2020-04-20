@@ -11,6 +11,20 @@ class WPInv_Meta_Box_Payment_Form {
      *
      * @param WP_Post $post
      */
+    public static function output_shortcode( $post ) {
+
+        if ( ! is_numeric( $post ) ) {
+            $post = $post->ID;
+        }
+
+        echo "<input type='text' style='min-width: 220px;' value='[wpinv_payment_form form=$post]' disabled>";
+
+    }
+    /**
+     * Output fields.
+     *
+     * @param WP_Post $post
+     */
     public static function output ( $post ) {
         $success_page        = get_post_meta( $post->ID, 'wpinv_success_page', true );
         $success_page        = empty( $success_page ) ? wpinv_get_success_page_uri() : $success_page

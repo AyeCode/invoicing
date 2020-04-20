@@ -4,6 +4,25 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+add_filter( 'manage_wpi_payment_form_posts_columns', 'wpinv_payment_form_columns' );
+function wpinv_payment_form_columns( $existing_columns ) {
+    $date = $existing_columns['date'];
+    unset( $existing_columns['date'] );
+    $existing_columns['shortcode'] = __( 'Shortcode', 'invoicing' );
+    $existing_columns['date'] = $date;
+    return $existing_columns;
+}
+
+add_action( 'manage_wpi_payment_form_posts_custom_column', 'wpinv_payment_form_custom_column' );
+function wpinv_payment_form_custom_column( $column ) {
+    global $post;
+
+    if( 'shortcode' == $column ) {
+        WPInv_Meta_Box_Payment_Form::output_shortcode( $post );
+    }
+
+}
+
 add_filter( 'manage_wpi_discount_posts_columns', 'wpinv_discount_columns' );
 function wpinv_discount_columns( $existing_columns ) {
     $columns                = array();
