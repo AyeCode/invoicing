@@ -1760,13 +1760,15 @@ class WPInv_Payment_Form_Elements {
                                     <textarea :id='$id + item.id + \"description\"' v-model='item.description' class='form-control'></textarea>
                                 </div>
 
+                                <button type='button' class='button button-link button-link-delete' @click.prevent='removeItem(item)'>Delete Item</button>
+
                             </div>
                         </div>
 
                     </div>
                 </draggable>
 
-                <small v-if='! form_items.length' class='form-text text-muted'> You have not set up any items. Please select an item below or create a new item.</small>
+                <small v-if='! form_items.length' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
 
                 <div class='form-group mt-2'>
 

@@ -87,6 +87,21 @@ jQuery(function($) {
                 }
             },
 
+            // Deletes an item.
+            removeItem(item){
+                var index = this.form_items.indexOf(item);
+                var items = this.form_items
+
+                if (index > -1) {
+
+                    $( '.wpinv-available-items-editor.item_' + item.id ).find('.wpinv-available-items-editor-body').slideToggle(400)
+                    $( '.wpinv-available-items-editor.item_' + item.id ).fadeOut( 420, function(){
+                        items.splice(index, 1);
+                    })
+
+                }
+            },
+
             // Formats a price.
             formatPrice(price){
                 var formated = parseFloat(price)
