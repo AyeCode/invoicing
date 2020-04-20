@@ -176,6 +176,7 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
+        require_once( WPINV_PLUGIN_DIR . 'widgets/payment-form.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
@@ -205,7 +206,7 @@ class WPInv_Plugin {
             //require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-recurring-admin.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-details.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-items.php' );
-            require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-form-items.php' );
+            require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
@@ -300,7 +301,7 @@ class WPInv_Plugin {
         wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
     }
 
-    public function admin_enqueue_scripts() {
+    public function admin_enqueue_scripts( $hook ) {
         global $post, $pagenow;
         
         $post_type  = wpinv_admin_post_type();
@@ -388,31 +389,36 @@ class WPInv_Plugin {
 
         wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
 
-        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
-        wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
-        wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
+        // Load payment form scripts on our admin pages only.
+        if ( ( $hook == 'post-new.php' || $hook == 'post.php' ) && 'wpi_payment_form' === $post->post_type ) {
 
-        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
-        wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable' ),  $version );
+            wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
+            wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
+            wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
+
+            $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
+            wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable' ),  $version );
         
-        wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
-            'elements'      => $this->form_elements->get_elements(),
-            'form_elements' => wpinv_get_data( 'sample-payment-form' ),
-            'all_items'     => $this->form_elements->get_published_items(),
-            'currency'      => wpinv_currency_symbol(),
-            'position'      => wpinv_currency_position(),
-            'decimals'      => (int) wpinv_decimals(),
-            'thousands_sep' => wpinv_thousands_separator(),
-            'decimals_sep'  => wpinv_decimal_separator(),
-            'form_items'    => wpinv_get_data( 'sample-payment-form-items' ),
-        ) );
-        
-        wp_enqueue_script( 'wpinv-admin-payment-form-script' );
+            wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
+                'elements'      => $this->form_elements->get_elements(),
+                'form_elements' => $this->form_elements->get_form_elements( $post->ID ),
+                'all_items'     => $this->form_elements->get_published_items(),
+                'currency'      => wpinv_currency_symbol(),
+                'position'      => wpinv_currency_position(),
+                'decimals'      => (int) wpinv_decimals(),
+                'thousands_sep' => wpinv_thousands_separator(),
+                'decimals_sep'  => wpinv_decimal_separator(),
+                'form_items'    => $this->form_elements->get_form_items( $post->ID ),
+            ) );
+
+            wp_enqueue_script( 'wpinv-admin-payment-form-script' );
+        }
 
         if ( $page == 'wpinv-subscriptions' ) {
             wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
             wp_enqueue_script( 'wpinv-sub-admin-script' );
         }
+
     }
     
     public function admin_body_class( $classes ) {
@@ -491,6 +497,7 @@ class WPInv_Plugin {
 		register_widget( "WPInv_Receipt_Widget" );
 		register_widget( "WPInv_Subscriptions_Widget" );
 		register_widget( "WPInv_Buy_Item_Widget" );
-		register_widget( "WPInv_Messages_Widget" );
+        register_widget( "WPInv_Messages_Widget" );
+        register_widget( 'WPInv_Payment_Form_Widget' );
 	}
 }

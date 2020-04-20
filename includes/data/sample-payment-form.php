@@ -85,7 +85,7 @@ return array(
         'value'       =>'',
         'class'       => 'btn-primary',
         'label'       => __( 'Pay Now »', 'invoicing' ),
-        'description' => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
+        'description' => __( 'By continuing with your payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
         'id'          => 'rtqljyy',
         'name'        => 'rtqljyy',
         'type'        => 'pay_button'
