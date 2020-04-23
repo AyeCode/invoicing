@@ -134,6 +134,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Manual payments now support subscriptions - CHANGED
 * Pass invoice object to `wpinv_invoice_is_free_trial` filter - 
 * PHP 7.4 compatibility - ADDED
+* Send BCC email to admin for Payment Reminder - ADDED
 
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED

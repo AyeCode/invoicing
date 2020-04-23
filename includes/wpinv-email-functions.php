@@ -1097,6 +1097,13 @@ function wpinv_get_emails() {
                 'std'  => __( 'Payment reminder for your invoice', 'invoicing' ),
                 'size' => 'large'
             ),
+            'email_overdue_admin_bcc' => array(
+                'id'   => 'email_overdue_admin_bcc',
+                'name' => __( 'Enable Admin BCC', 'invoicing' ),
+                'desc' => __( 'Check if you want to send this notification email to site Admin.', 'invoicing' ),
+                'type' => 'checkbox',
+                'std'  => 1
+            ),
             'email_overdue_body' => array(
                 'id'   => 'email_overdue_body',
                 'name' => __( 'Email Content', 'invoicing' ),
@@ -1497,6 +1504,12 @@ function wpinv_send_payment_reminder_notification( $invoice_id ) {
     $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     if ( $sent ) {
         do_action( 'wpinv_payment_reminder_sent', $invoice_id, $invoice );
+    }
+
+    if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
+        $recipient  = wpinv_get_admin_email();
+        $subject    .= ' - ADMIN BCC COPY';
+        wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
     }
 
     do_action( 'wpinv_post_send_invoice_notification', $invoice, $email_type );
