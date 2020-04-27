@@ -52,6 +52,53 @@
         ]
     },
     {
+        "name": "ayecode/wp-ayecode-ui",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/AyeCode/wp-ayecode-ui.git",
+            "reference": "b5cf6c1b42d44f196c1ed6ef58616ca380065f6c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/AyeCode/wp-ayecode-ui/zipball/b5cf6c1b42d44f196c1ed6ef58616ca380065f6c",
+            "reference": "b5cf6c1b42d44f196c1ed6ef58616ca380065f6c",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "~1.0",
+            "php": ">=5.3.0"
+        },
+        "time": "2020-03-09T14:17:29+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "files": [
+                "ayecode-ui-loader.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-3.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "AyeCode Ltd",
+                "email": "contact@ayecode.io",
+                "homepage": "https://ayecode.io/",
+                "role": "Developer"
+            }
+        ],
+        "description": "A Bootstrap UI for WordPress plugins and themes.",
+        "homepage": "https://github.com/AyeCode/wp-ayecode-ui",
+        "keywords": [
+            "ayecode",
+            "boot",
+            "bootstrap"
+        ]
+    },
+    {
         "name": "ayecode/wp-font-awesome-settings",
         "version": "1.0.11",
         "version_normalized": "1.0.11.0",

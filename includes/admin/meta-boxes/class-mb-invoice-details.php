@@ -11,7 +11,6 @@ class WPInv_Meta_Box_Details {
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
-        
         $status             = $invoice->get_status( false ); // Current status    
         $discount           = $invoice->get_discount();
         $discount_code      = $discount > 0 ? $invoice->get_discount_code() : '';
@@ -201,6 +200,20 @@ class WPInv_Meta_Box_Details {
         <p class="wpi-meta-row wpi-parent-id"><label><?php _e( 'Parent Invoice:', 'invoicing' );?> </label><a href="<?php echo esc_url( $parent_url ); ?>"><?php echo $parent_id; ?></a></p>
         <?php
         }
+    }
+
+    /**
+     * Renders a metabox to edit a payment form.
+     */
+    public static function payment_form( $post ) {
+        WPInv_Meta_Box_Form_Items::output_options( $post );
+    }
+
+    /**
+     * Renders a metabox to select items.
+     */
+    public static function payment_form_items( $post ) {
+        WPInv_Meta_Box_Form_Items::output( $post );
     }
     
     public static function payment_meta( $post ) {

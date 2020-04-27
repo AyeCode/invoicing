@@ -130,6 +130,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 1.0.19 =
 * Exclude invoicing pages from Yoast XML page sitemap - ADDED
 * Bump tested upto WP version - CHANGED
+* Send BCC email to admin for Payment Reminder - ADDED
+* Ability to create payment forms - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
@@ -138,7 +140,6 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Manual payments now support subscriptions - CHANGED
 * Pass invoice object to `wpinv_invoice_is_free_trial` filter - 
 * PHP 7.4 compatibility - ADDED
-* Send BCC email to admin for Payment Reminder - ADDED
 
 = 1.0.17 =
 * Show confirmation message when cancelling subscriptions - CHANGED

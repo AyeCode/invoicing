@@ -63,6 +63,7 @@ class WPInv_Ajax {
             'delete_note' => false,
             'get_states_field' => true,
             'checkout' => false,
+            'payment_form'     => true,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
             'create_invoice_item' => false,
@@ -256,7 +257,8 @@ class WPInv_Ajax {
         
         wp_send_json( $response );
     }
-    
+
+
     public static function remove_invoice_item() {
         global $wpi_userID, $wpinv_ip_address_country;
         
@@ -691,6 +693,139 @@ class WPInv_Ajax {
         wp_send_json( $response );
     }
 
+    /**
+     * Payment forms.
+     *
+     * @since 1.0.18
+     */
+    public static function payment_form() {
+        global $invoicing;
+
+        // Check nonce.
+        if ( ! isset( $_POST['wpinv_payment_form'] ) || ! wp_verify_nonce( $_POST['wpinv_payment_form'], 'wpinv_payment_form' ) ) {
+            wp_send_json_error( __( 'Security checks failed.', 'invoicing' ) );
+        }
+
+        // Prepare submitted data...
+        $data     = wp_unslash( $_POST );
+
+        // ... form fields...
+        if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
+            wp_send_json_error( __( 'This payment form is no longer active.', 'invoicing' ) );
+        }
+
+        if ( empty( $data['billing_email'] ) || ! is_email( $data['billing_email'] ) ) {
+            wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
+        }
+
+        $prepared = array(
+            'billing_email'                    => sanitize_email( $data['billing_email'] ),
+            __( 'Billing Email', 'invoicing' ) => sanitize_email( $data['billing_email'] ),
+            __( 'Form Id', 'invoicing' )       => absint( $data['form_id'] ),
+        );
+
+        $prepared['billing_email'] = sanitize_email( $data['billing_email'] );
+
+        $fields = $invoicing->form_elements->get_form_elements( $data['form_id'] );
+
+        // ... and form items.
+        $items          = $invoicing->form_elements->get_form_items( $data['form_id'] );
+        $prepared_items = array();
+
+        if ( ! empty( $data['payment-form-items'] ) ) {
+
+            $selected_items   = wpinv_parse_list( $data['payment-form-items'] );
+
+            foreach( $items as $item ) {
+
+                if ( ! in_array( $item['id'], $selected_items ) ) {
+                    continue;
+                }
+
+                $prepared_items[] = array(
+                    'id'           => $item['id'],
+                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
+                    'name'         => $item['title'],
+                );
+
+            }
+
+        } else {
+
+            foreach( $items as $item ) {
+                $prepared_items[] = array(
+                    'id'           => $item['id'],
+                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
+                    'name'         => $item['title'],
+                );
+            }
+
+        }
+
+        // Are all required fields provided?
+        foreach ( $fields as $field ) {
+
+            if ( ! empty( $field['premade'] ) ) {
+                continue;
+            }
+
+            if ( ! empty( $field['required'] ) && empty( $data[ $field['id'] ] ) ) {
+                wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
+            }
+
+            if ( isset( $data[ $field['id'] ] ) ) {
+                $label = $field['id'];
+
+                if ( isset( $field['label'] ) ) {
+                    $label = $field['label'];
+                }
+
+                $prepared[ wpinv_clean( $label ) ] = wpinv_clean( $data[ $field['id'] ] );
+            }
+
+        }
+        
+        $user = get_user_by( 'email', $prepared['billing_email'] );
+
+        if ( empty( $user ) ) {
+            $user = wpinv_create_user( $prepared['billing_email'] );
+        }
+
+        if ( is_wp_error( $user ) ) {
+            wp_send_json_error( $user->get_error_message() );
+        }
+
+        if ( is_numeric( $user ) ) {
+            $user = get_user_by( 'id', $user );
+        }
+
+        // Create the invoice.
+        $created = wpinv_insert_invoice(
+            array(
+                'status'        =>  'wpi-pending',
+                'created_via'   =>  'wpi',
+                'user_id'       =>  $user->ID,
+                'cart_details'  =>  $prepared_items,
+            ),
+            true
+        );
+
+        if ( is_wp_error( $created ) ) {
+            wp_send_json_error( $created->get_error_message() );
+        }
+
+        if ( empty( $created ) ) {
+            wp_send_json_error( __( 'Could not create your invoice.', 'invoicing' ) );
+        }
+
+        unset( $prepared['billing_email'] );
+        update_post_meta( $created->ID, 'payment_form_data', $prepared );
+
+        wp_send_json_success( $created->get_view_url( true ) );
+
+    }
 
     /**
      * Lets users buy items via ajax.
