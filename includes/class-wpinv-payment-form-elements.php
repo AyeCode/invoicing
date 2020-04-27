@@ -543,7 +543,7 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
-                'options'    => $field['options'],
+                'options'    => array_combine( $field['options'], $field['options'] ),
             )
         );
 
@@ -634,6 +634,7 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
+                'value'      => esc_attr__( 'Yes', 'invoicing' ),
                 'type'       => 'checkbox',
             )
         );
@@ -711,12 +712,13 @@ class WPInv_Payment_Form_Elements {
 
         foreach( $field['options'] as $index => $option ) {
             $id    = $field['id'] . $index;
+            $name  = $field['id'];
             $value = esc_attr( $option );
             $label = wp_kses_post( $option );
 
             echo "
                 <div class='form-check'>
-                    <input class='form-check-input' type='radio' id='$id' value='$value'>
+                    <input class='form-check-input' type='radio' name='$name' id='$id' value='$value'>
                     <label class='form-check-label' for='$id'>$label</label>
                 </div>
             ";

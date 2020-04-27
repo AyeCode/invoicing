@@ -708,7 +708,6 @@ class WPInv_Ajax {
 
         // Prepare submitted data...
         $data     = wp_unslash( $_POST );
-        $prepared = array();
 
         // ... form fields...
         if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
@@ -718,6 +717,12 @@ class WPInv_Ajax {
         if ( empty( $data['billing_email'] ) || ! is_email( $data['billing_email'] ) ) {
             wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
         }
+
+        $prepared = array(
+            'billing_email'                    => sanitize_email( $data['billing_email'] ),
+            __( 'Billing Email', 'invoicing' ) => sanitize_email( $data['billing_email'] ),
+            __( 'Form Id', 'invoicing' )       => absint( $data['form_id'] ),
+        );
 
         $prepared['billing_email'] = sanitize_email( $data['billing_email'] );
 
@@ -815,6 +820,7 @@ class WPInv_Ajax {
             wp_send_json_error( __( 'Could not create your invoice.', 'invoicing' ) );
         }
 
+        unset( $prepared['billing_email'] );
         update_post_meta( $created->ID, 'payment_form_data', $prepared );
 
         wp_send_json_success( $created->get_view_url( true ) );

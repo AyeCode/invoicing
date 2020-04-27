@@ -11,7 +11,6 @@ class WPInv_Meta_Box_Details {
         
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
-        
         $status             = $invoice->get_status( false ); // Current status    
         $discount           = $invoice->get_discount();
         $discount_code      = $discount > 0 ? $invoice->get_discount_code() : '';
