@@ -216,7 +216,7 @@ class WPInv_Payment_Form_Elements {
                     'premade'      => true,
                 )
             ),
-
+/*
             array( 
                 'type' => 'discount',
                 'name' => __( 'Discount Input', 'invoicing' ),
@@ -226,7 +226,7 @@ class WPInv_Payment_Form_Elements {
                     'button_label' => __( 'Apply Coupon', 'invoicing' ),
                     'description'  => __( 'Have a discount code? Enter it above.', 'invoicing' ),
                 )
-            ),
+            ),*/
 
             array( 
                 'type' => 'items',
@@ -838,10 +838,16 @@ class WPInv_Payment_Form_Elements {
     public function frontend_render_billing_email_template( $field ) {
         
         echo "<div class='form-group'>";
+        $value = '';
 
+        if ( is_user_logged_in() ) {
+            $user  = wp_get_current_user();
+            $value = sanitize_email( $user->user_email );
+        }
         echo aui()->input(
             array(
                 'name'       => 'billing_email',
+                'value'      => $value,
                 'id'         => esc_attr( $field['id'] ),
                 'required'   => true,
                 'label'      => wp_kses_post( $field['label'] ),
@@ -1461,7 +1467,7 @@ class WPInv_Payment_Form_Elements {
         <div class="discount_field  border rounded p-3">
             <div class="discount_field_inner d-flex flex-column flex-md-row">
                 <input  placeholder="<?php echo $placeholder; ?>" class="form-control mr-2 mb-2" style="flex: 1;" type="text">
-                <button class="btn btn-secondary submit-button mb-2 wpinv-payment-form-coupon-button" type="submit"><?php echo $label; ?></button>
+                <a href="#" class="btn btn-secondary submit-button mb-2 wpinv-payment-form-coupon-button"><?php echo $label; ?></a>
             </div>
             <?php echo $description ?>
         </div>
@@ -1615,8 +1621,8 @@ class WPInv_Payment_Form_Elements {
 
                 <?php foreach( $items as $index => $item ) { ?>
                     <div  class="form-check">
-                        <input class='form-check-input' type='radio' name='<?php echo $id; ?>' id='<?php echo $id . $index; ?>'>
-                        <label class='form-check-label' for=<?php echo $id . $index; ?>'><?php echo sanitize_text_field( $item['title'] ); ?>&nbsp;<strong><?php echo wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) ); ?></strong></label>
+                        <input class='form-check-input' type='radio' value='<?php echo $item['id']; ?>' name='payment-form-items' id='<?php echo $id . $index; ?>'>
+                        <label class='form-check-label' for='<?php echo $id . $index; ?>'><?php echo sanitize_text_field( $item['title'] ); ?>&nbsp;<strong><?php echo wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) ); ?></strong></label>
                     </div>
                     <?php if ( ! empty( $item['description'] )) { ?>
                         <small class='form-text text-muted pl-4 pr-2 m-0'><?php echo wp_kses_post( $item['description'] ); ?></small>
@@ -1634,15 +1640,14 @@ class WPInv_Payment_Form_Elements {
                     foreach ( $items as $index => $item ) {
                         $title = sanitize_text_field(  $item['title'] );
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
-                        echo aui()->input(
-                            array(
-                                'name'       => $id,
-                                'id'         => $id . "_$index",
-                                'label'      => "$title &nbsp; ($price)",
-                                'no_wrap'    => true,
-                                'type'       => 'checkbox',
-                            )
-                        );
+                        $item_id    = esc_attr( $id . "_$index" );
+                        $value = esc_attr( $item['id'] );
+
+                        echo "
+                            <div class='custom-control custom-checkbox'>
+                                <input type='checkbox' name='payment-form-items[]' id='$item_id' value='$value' class='form-control custom-control-input'>
+                                <label for='$item_id' class='custom-control-label'>$title &nbsp; ($price)</label>
+                            </div>";
 
                         if ( ! empty( $item['description'] ) ) {
                             echo "<small class='form-text text-muted'>{$item['description']}</small>";
@@ -1669,7 +1674,7 @@ class WPInv_Payment_Form_Elements {
 
                     echo aui()->select(
                         array(
-                                'name'        => $id,
+                                'name'        => 'payment-form-items',
                                 'id'          => $id,
                                 'placeholder' => __( 'Select an item', 'invoicing' ),
                                 'no_wrap'     => true,
@@ -1698,7 +1703,7 @@ class WPInv_Payment_Form_Elements {
 
                     echo aui()->select(
                         array(
-                                'name'        => $id,
+                                'name'        => 'payment-form-items',
                                 'id'          => $id,
                                 'placeholder' => __( 'Select one or more items', 'invoicing' ),
                                 'no_wrap'     => true,

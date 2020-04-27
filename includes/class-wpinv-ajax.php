@@ -727,13 +727,36 @@ class WPInv_Ajax {
         $items          = $invoicing->form_elements->get_form_items( $data['form_id'] );
         $prepared_items = array();
 
-        foreach( $items as $item ) {
-            $prepared_items[] = array(
-                'id'           => $item['id'],
-                'item_price'   => wpinv_sanitize_amount( $item['price'] ),
-                'custom_price' => wpinv_sanitize_amount( $item['price'] ),
-                'name'         => $item['title'],
-            );
+        if ( ! empty( $data['payment-form-items'] ) ) {
+
+            $selected_items   = wpinv_parse_list( $data['payment-form-items'] );
+
+            foreach( $items as $item ) {
+
+                if ( ! in_array( $item['id'], $selected_items ) ) {
+                    continue;
+                }
+
+                $prepared_items[] = array(
+                    'id'           => $item['id'],
+                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
+                    'name'         => $item['title'],
+                );
+
+            }
+
+        } else {
+
+            foreach( $items as $item ) {
+                $prepared_items[] = array(
+                    'id'           => $item['id'],
+                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
+                    'name'         => $item['title'],
+                );
+            }
+
         }
 
         // Are all required fields provided?
@@ -747,7 +770,16 @@ class WPInv_Ajax {
                 wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
             }
 
-            $prepared[ $field['id'] ] = wpinv_clean( $data[ $field['id'] ] );
+            if ( isset( $data[ $field['id'] ] ) ) {
+                $label = $field['id'];
+
+                if ( isset( $field['label'] ) ) {
+                    $label = $field['label'];
+                }
+
+                $prepared[ wpinv_clean( $label ) ] = wpinv_clean( $data[ $field['id'] ] );
+            }
+
         }
         
         $user = get_user_by( 'email', $prepared['billing_email'] );
@@ -782,6 +814,8 @@ class WPInv_Ajax {
         if ( empty( $created ) ) {
             wp_send_json_error( __( 'Could not create your invoice.', 'invoicing' ) );
         }
+
+        update_post_meta( $created->ID, 'payment_form_data', $prepared );
 
         wp_send_json_success( $created->get_view_url( true ) );
 
