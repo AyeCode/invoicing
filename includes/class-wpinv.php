@@ -52,6 +52,7 @@ class WPInv_Plugin {
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
         add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
+        add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 
         if ( is_admin() ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
@@ -503,4 +504,42 @@ class WPInv_Plugin {
         register_widget( "WPInv_Messages_Widget" );
         register_widget( 'WPInv_Payment_Form_Widget' );
 	}
+    
+    /**
+     * Remove our pages from yoast sitemaps.
+     *
+     * @since 1.0.19
+     * @param int[] $excluded_posts_ids
+     */
+    function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
+
+        // Ensure that we have an array.
+        if ( ! is_array( $excluded_posts_ids ) ) {
+            $excluded_posts_ids = array();
+        }
+
+        // Prepare our pages.
+        $our_pages = array();
+    
+        // Checkout page.
+        $our_pages[] = wpinv_get_option( 'checkout_page', false );
+
+        // Success page.
+        $our_pages[] = wpinv_get_option( 'success_page', false );
+
+        // Failure page.
+        $our_pages[] = wpinv_get_option( 'failure_page', false );
+
+        // History page.
+        $our_pages[] = wpinv_get_option( 'invoice_history_page', false );
+
+        // Subscriptions page.
+        $our_pages[] = wpinv_get_option( 'invoice_subscription_page', false );
+
+        $our_pages   = array_map( 'intval', array_filter( $our_pages ) );
+
+        $excluded_posts_ids = $excluded_posts_ids + $our_pages;
+        return array_unique( $excluded_posts_ids );
+
+    }
 }
