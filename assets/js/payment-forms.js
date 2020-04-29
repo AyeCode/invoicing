@@ -88,7 +88,7 @@ jQuery(function($) {
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
         var val   = $( this ).val()
-console.log( form )
+
         form.find( '.wpinv-items-select-selector option' ).each( function() {
             var id = $(this).val()
             form.find( '*[data-id="' + id +'"]' )
@@ -116,6 +116,64 @@ console.log( form )
                 total = total + value;
             }
             
+        })
+
+        // Format the total.
+        total = total.toFixed(2) + '';
+        var parts = total.toString().split('.');
+		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		total =  parts.join('.');
+
+        var totals = form.find( '.wpinv-items-total' )
+
+        if ( 'left' == totals.data('currency-position') ) {
+            totals.text( totals.data('currency') + total )
+        } else {
+            totals.text( total + totals.data('currency') )
+        }
+
+    })
+
+    $( 'body').on( 'change', '.wpinv-items-select-selector', function( e ) {
+
+        var form  = $( this ).closest('.wpinv_payment_form')
+        var total = 0.0
+
+        form.find( '.wpinv-items-select-selector option' ).each( function() {
+            var id = $(this).val()
+            form.find( '*[data-id="' + id +'"]' )
+                .addClass('d-none')
+                .find('input')
+                .attr('name', '')
+        })
+
+        var val = $( this ).val()
+
+        if ( val ) {
+            $( val ).each( function( key, _val ) {
+
+                form
+                    .find( '*[data-id="' + _val +'"]' )
+                    .removeClass('d-none')
+                    .find('input')
+                    .attr('name', 'wpinv-items[' + _val + ']')
+
+            })
+        }
+
+        // Calculate the total of all items.
+        form.find( '.wpinv-item-price-input' ).each( function() {
+
+            if ( 0 == $( this ).attr('name').length ) {
+                return;
+            }
+
+            var value = parseFloat( $(this).val() )
+
+            if ( ! isNaN( value ) ) {
+                total = total + value;
+            }
+
         })
 
         // Format the total.
