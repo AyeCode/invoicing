@@ -732,35 +732,49 @@ class WPInv_Ajax {
         $items          = $invoicing->form_elements->get_form_items( $data['form_id'] );
         $prepared_items = array();
 
-        if ( ! empty( $data['payment-form-items'] ) ) {
+        if ( ! empty( $data['wpinv-items'] ) ) {
 
-            $selected_items   = wpinv_parse_list( $data['payment-form-items'] );
+            $selected_items = wpinv_clean( $data['wpinv-items'] );
 
-            foreach( $items as $item ) {
+            foreach ( $items as $item ) {
 
-                if ( ! in_array( $item['id'], $selected_items ) ) {
+                if ( ! isset( $selected_items[ $item['id'] ] ) ) {
                     continue;
                 }
 
-                $prepared_items[] = array(
-                    'id'           => $item['id'],
-                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
-                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
-                    'name'         => $item['title'],
-                );
+                // Custom pricing.
+                if ( ! empty( $item['custom_price'] ) ) {
+
+                    $minimum_price = wpinv_sanitize_amount( $item['minimum_price'] );
+                    $set_price     = wpinv_sanitize_amount( $selected_items[ $item['id'] ] );
+
+                    if ( $set_price < $minimum_price ) {
+                        wp_send_json_error( __( 'The provided amount is less than the minimum allowed value.', 'invoicing' ) );
+                    }
+
+                    $prepared_items[] = array(
+                        'id'           =>$item['id'],
+                        'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                        'custom_price' => $set_price,
+                        'name'         => $item['title'],
+                    );
+
+                } else {
+
+                    $prepared_items[] = array(
+                        'id'           => $item['id'],
+                        'item_price'   => wpinv_sanitize_amount( $item['price'] ),
+                        'custom_price' => wpinv_sanitize_amount( $item['price'] ),
+                        'name'         => $item['title'],
+                    );
+
+                }
 
             }
 
         } else {
 
-            foreach( $items as $item ) {
-                $prepared_items[] = array(
-                    'id'           => $item['id'],
-                    'item_price'   => wpinv_sanitize_amount( $item['price'] ),
-                    'custom_price' => wpinv_sanitize_amount( $item['price'] ),
-                    'name'         => $item['title'],
-                );
-            }
+            wp_send_json_error( __( 'You have not selected any items.', 'invoicing' ) );
 
         }
 
