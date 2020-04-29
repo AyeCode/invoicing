@@ -707,7 +707,7 @@ class WPInv_Ajax {
         }
 
         // Prepare submitted data...
-        $data     = wp_unslash( $_POST );
+        $data = wp_unslash( $_POST );
 
         // ... form fields...
         if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
