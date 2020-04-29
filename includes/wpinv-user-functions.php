@@ -217,7 +217,8 @@ function wpinv_generate_user_name( $prefix = '' ) {
 
 	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
 	if ( username_exists( $username ) ) {
-		return wpinv_generate_user_name( $prefix );
+		return wpinv_generate_user_name( $username );
 	}
 
+    return $username;
 }
