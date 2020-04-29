@@ -1760,10 +1760,12 @@ class WPInv_Payment_Form_Elements {
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
                         $item_id    = esc_attr( $id . "_$index" );
                         $value = esc_attr( $item['id'] );
+                        $checked = checked( ! isset( $selected_checkbox_item ), true, false );
+                        $selected_checkbox_item = 1;
 
                         echo "
                             <div class='custom-control custom-checkbox'>
-                                <input type='checkbox' name='payment-form-items[]' id='$item_id' value='$value' class='form-control custom-control-input'>
+                                <input type='checkbox' name='payment-form-items[]' id='$item_id' value='$value' class='wpi-payment-form-items-select-checkbox form-control custom-control-input' $checked>
                                 <label for='$item_id' class='custom-control-label'>$title &nbsp; ($price)</label>
                             </div>";
 
@@ -1773,6 +1775,80 @@ class WPInv_Payment_Form_Elements {
                     }
                 ?>
 
+                <div class="mt-3 border item_totals_type_checkbox_totals">
+
+                    <?php
+
+                        $total = 0;
+
+                        foreach ( $items as $item ) {
+
+                            $class = 'd-none';
+                            $name  = '';
+                            if ( ! empty( $item['required'] ) || ! isset( $totals_selected_checkbox_item ) ) {
+
+                                $total = $total + floatval( $item['price'] );
+                                $class = '';
+                                $name  = "wpinv-items[{$item['id']}]";
+
+                                if ( empty( $item['required'] ) ) {
+                                    $totals_selected_checkbox_item = 1;
+                                }
+
+                            }
+
+                            $class .= " wpinv_item_{$item['id']}";
+
+                    ?>
+
+                    <div  class="item_totals_item <?php echo $class; ?>" data-id="<?php echo (int) $item['id']; ?>">
+                        <div class='row pl-2 pr-2 pt-2'>
+                            <div class='col-8'><?php echo esc_html( $item['title'] ) ?></div>
+
+                            <?php  if ( empty( $item['custom_price'] ) ) { ?>
+
+                                <div class='col-4'>
+                                    <?php echo wpinv_price( wpinv_format_amount( $item['price'] ) ) ?>
+                                    <input name='<?php echo $name; ?>' type='hidden' class='wpinv-item-price-input' value='<?php echo floatval( $item['price'] ); ?>'>
+                                </div>
+
+                            <?php } else {?>
+
+                                <div class='col-4'>
+                                    <div class='input-group'>
+
+                                        <?php if ( 'left' == wpinv_currency_position() ) { ?>
+                                            <div class='input-group-prepend'>
+                                                <span class='input-group-text'><?php echo wpinv_currency_symbol(); ?></span>
+                                            </div>
+                                        <?php } ?>
+
+                                        <input type='number' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                    
+                                        <?php if ( 'left' != wpinv_currency_position() ) { ?>
+                                            <div class='input-group-append'>
+                                                <span class='input-group-text'><?php echo wpinv_currency_symbol(); ?></span>
+                                            </div>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                        <?php if ( ! empty( $item['description'] )) { ?>
+                            <small class='form-text text-muted pl-2 pr-2 m-0'><?php echo wp_kses_post( $item['description'] ); ?></small>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <div class='mt-4 border-top item_totals_total'>
+                    <div class='row p-2'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-total' data-currency='<?php echo wpinv_currency_symbol(); ?>' data-currency-position='<?php echo wpinv_currency_position(); ?>'><?php echo wpinv_price( wpinv_format_amount( $total ) ) ?></strong></div>
+                    </div>
+                </div>
+            </div>
             </div>
         <?php } ?>
 

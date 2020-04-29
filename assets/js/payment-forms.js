@@ -68,7 +68,63 @@ jQuery(function($) {
         })
 
         // Format the total.
-        var total = total.toFixed(2) + '';
+        total = total.toFixed(2) + '';
+        var parts = total.toString().split('.');
+		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		total =  parts.join('.');
+
+        var totals = form.find( '.wpinv-items-total' )
+
+        if ( 'left' == totals.data('currency-position') ) {
+            totals.text( totals.data('currency') + total )
+        } else {
+            totals.text( total + totals.data('currency') )
+        }
+
+    })
+
+    $( 'body').on( 'change', '.wpi-payment-form-items-select-checkbox', function( e ) {
+
+        var form  = $( this ).closest('.wpinv_payment_form')
+        var total = 0.0
+
+        form.find( '.wpi-payment-form-items-select-checkbox' ).each( function() {
+            var id = $(this).val()
+            form.find( '*[data-id="' + id +'"]' )
+                .addClass('d-none')
+                .find('input')
+                .attr('name', '')
+        })
+
+        form.find('.wpi-payment-form-items-select-checkbox:checked').each(function(){
+            var val = $(this).val()
+            
+            form
+                .find( '*[data-id="' + val +'"]' )
+                .removeClass('d-none')
+                .find('input')
+                .attr('name', 'wpinv-items[' + val + ']')
+        });
+
+        
+
+        // Calculate the total of all items.
+        form.find( '.wpinv-item-price-input' ).each( function() {
+
+            if ( 0 == $( this ).attr('name').length ) {
+                return;
+            }
+
+            var value = parseFloat( $(this).val() )
+
+            if ( ! isNaN( value ) ) {
+                total = total + value;
+            }
+
+        })
+
+        // Format the total.
+        total = total.toFixed(2) + '';
         var parts = total.toString().split('.');
 		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		total =  parts.join('.');
