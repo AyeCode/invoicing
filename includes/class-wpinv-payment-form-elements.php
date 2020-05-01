@@ -1517,82 +1517,8 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_items_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
-        echo "
-            <div $restrict class='item_totals'>
-
-                <div v-if='$field.items_type == \"total\"' class='border'>
-
-                    <div v-for='(item, index) in form_items'>
-                        <div class='row pl-2 pr-2 pt-2'>
-                            <div :class='{ \"col-6 pt-2\" : item.allow_quantities, \"col-8\" : !item.allow_quantities, \"pt-2\" : item.custom_price }'>{{item.title}}</div>
-                            <div class='col-2' v-if='item.allow_quantities'>
-                                <input type='number' class='form-control' value='1' min='1'>
-                            </div>
-                            <div class='col-4' :class='{ \"pt-2\" : item.allow_quantities }' v-if='! item.custom_price'>
-                                {{formatPrice(item.price)}}
-                            </div>
-                            <div class='col-4' v-if='item.custom_price'>
-                                <div class='input-group'>
-                                    <div class='input-group-prepend' v-if='\"left\" == position'>
-                                        <span class='input-group-text'>{{currency}}</span>
-                                    </div>
-                                    <input type='number' class='form-control' :placeholder='item.price' :value='item.price' :min='item.minimum_price'>
-                                    <div class='input-group-append' v-if='\"left\" != position'>
-                                        <span class='input-group-text'>{{currency}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <small v-if='item.description' class='form-text text-muted pl-2 pr-2 m-0' v-html='item.description'></small>
-                    </div>
-
-                    <div class='mt-4 border-top'>
-                        <div class='row p-2'>
-                            <div class='col-8'><strong class='mr-5'>Total</strong></div>
-                            <div class='col-4'><strong>{{totalPrice}}</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if='$field.items_type == \"checkbox\"'>
-
-                    <div class='form-check' v-for='(item, index) in form_items'>
-                        <input class='form-check-input' type='checkbox' :id='$field.id + index'>
-                        <label class='form-check-label' :for='$field.id + index'>{{item.title}} &nbsp;<strong>{{formatPrice(item.price)}}</strong></label>
-                        <small v-if='item.description' class='form-text text-muted' v-html='item.description'></small>
-                    </div>
-
-                </div>
-
-                <div v-if='$field.items_type == \"radio\"'>
-
-                    <div class='form-check' v-for='(item, index) in form_items'>
-                        <input class='form-check-input' type='radio' :name='$field.id' :id='$field.id + index'>
-                        <label class='form-check-label' :for='$field.id + index'>{{item.title}} &nbsp;<strong>{{formatPrice(item.price)}}</strong></label>
-                        <small v-if='item.description' class='form-text text-muted' v-html='item.description'></small>
-                    </div>
-
-                </div>
-
-                <div v-if='$field.items_type == \"select\"'>
-
-                    <select class='form-control custom-select'>
-                        <option value='' disabled selected='selected'>"        . __( 'Select an option', 'invoicing' ) ."</option>
-                        <option v-for='(item, index) in form_items' :value='index'>{{item.title}} &nbsp;{{formatPrice(item.price)}}</option>
-                    </select>
-                </div>
-
-                <div v-if='$field.items_type == \"multi_select\"'>
-
-                    <select class='form-control custom-select' multiple>
-                        <option v-for='(item, index) in form_items' :value='index'>{{item.title}} &nbsp;{{formatPrice(item.price)}}</option>
-                    </select>
-
-                </div>
-                
-                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
-            </div>
-        ";
+        $label     = __( 'Item totals placeholder. Item total will appear here.', 'invoicing' );
+        echo "<div $restrict class='item_totals p-4'>$label</div>";
     }
 
     /**
@@ -1688,7 +1614,13 @@ class WPInv_Payment_Form_Elements {
         <?php if ( 'radio' == $field[ 'items_type' ] ) { ?>
             <div class="item_totals_type_radio">
 
-                <?php foreach( $items as $index => $item ) { ?>
+                <?php
+                    foreach( $items as $index => $item ) {
+                
+                        if ( ! empty( $item['required'] ) ) {
+                            continue;
+                        }
+                ?>
                     <div  class="form-check">
                         <input class='form-check-input wpinv-items-selector' <?php checked( ! isset( $selected_radio_item ) ); $selected_radio_item = 1; ?> type='radio' value='<?php echo $item['id']; ?>' id='<?php echo $id . $index; ?>' name='wpinv-payment-form-selected-item'>
                         <label class='form-check-label' for='<?php echo $id . $index; ?>'><?php echo sanitize_text_field( $item['title'] ); ?>&nbsp;<strong><?php echo wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) ); ?></strong></label>
@@ -1802,6 +1734,11 @@ class WPInv_Payment_Form_Elements {
 
                 <?php
                     foreach ( $items as $index => $item ) {
+
+                        if ( ! empty( $item['required'] ) ) {
+                            continue;
+                        }
+
                         $title = sanitize_text_field(  $item['title'] );
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
                         $item_id    = esc_attr( $id . "_$index" );
@@ -1927,6 +1864,11 @@ class WPInv_Payment_Form_Elements {
                     $options  = array();
                     $selected = '';
                     foreach ( $items as $index => $item ) {
+
+                        if ( ! empty( $item['required'] ) ) {
+                            continue;
+                        }
+
                         $title = sanitize_text_field(  $item['title'] );
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
                         $options[ $item['id'] ] = "$title &nbsp; ($price)";
@@ -2058,6 +2000,11 @@ class WPInv_Payment_Form_Elements {
                     $selected = array();
 
                     foreach ( $items as $index => $item ) {
+
+                        if ( ! empty( $item['required'] ) ) {
+                            continue;
+                        }
+                    
                         $title = sanitize_text_field(  $item['title'] );
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
                         $options[ $item['id'] ] = "$title &nbsp; ($price)";
@@ -2201,6 +2148,7 @@ class WPInv_Payment_Form_Elements {
         $label5   = esc_attr__( 'Allow users to pay what they want', 'invoicing' );
         $label6   = esc_attr__( 'Enter the minimum price that a user can pay', 'invoicing' );
         $label7   = esc_attr__( 'Allow users to buy several quantities', 'invoicing' );
+        $label8   = esc_attr__( 'This item is required', 'invoicing' );
         echo "<div $restrict>
 
                 <label>$label2</label>
@@ -2245,6 +2193,11 @@ class WPInv_Payment_Form_Elements {
                                 <div class='form-group form-check'>
                                     <input :id='$id + item.id + \"quantities\"' v-model='item.allow_quantities' type='checkbox' class='form-check-input' />
                                     <label class='form-check-label' :for='$id + item.id + \"quantities\"'>$label7</label>
+                                </div>
+
+                                <div class='form-group form-check'>
+                                    <input :id='$id + item.id + \"required\"' v-model='item.required' type='checkbox' class='form-check-input' />
+                                    <label class='form-check-label' :for='$id + item.id + \"required\"'>$label8</label>
                                 </div>
 
                                 <div class='form-group'>

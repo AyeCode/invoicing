@@ -129,8 +129,26 @@ jQuery(function ($) {
 
 			// Adds a currency to a price.
 			addSelectedItem: function addSelectedItem() {
-				this.form_items.push(this.all_items[this.selected_item]);
-				this.selected_item = '';
+
+				if ( this.selected_item && this.all_items[this.selected_item].id ) {
+
+					var exists = false
+					var selected_item = this.all_items[this.selected_item]
+
+					$( this.form_items ).each( function( index, item ) {
+
+						if ( item.id && item.id == selected_item.id ) {
+							exists = true
+						}
+
+					} )
+
+					if ( ! exists ) {
+						this.form_items.push( selected_item );
+					}
+
+				}
+
 			},
 
 			// Adds a currency to a price.
