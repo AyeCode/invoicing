@@ -8,10 +8,62 @@ jQuery(function($) {
 
         // Calculate the total of all items.
         form.find( '.wpinv-item-price-input' ).each( function() {
+
+            if ( 0 == $( this ).attr('name').length ) {
+                return;
+            }
+
             var value = parseFloat( $(this).val() )
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
 
             if ( ! isNaN( value ) ) {
-                total = total + value;
+                total = total + ( value * quantity );
+            }
+            
+        })
+
+        // Format the total.
+        var total = total.toFixed(2) + '';
+        var parts = total.toString().split('.');
+		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		total =  parts.join('.');
+
+        var totals = form.find( '.wpinv-items-total' )
+
+        if ( 'left' == totals.data('currency-position') ) {
+            totals.text( totals.data('currency') + total )
+        } else {
+            totals.text( total + totals.data('currency') )
+        }
+
+    })
+
+    // Custom quantities
+    $( 'body').on( 'input', '.wpinv-item-quantity-input', function( e ) {
+
+        var form  = $( this ).closest('.wpinv_payment_form')
+        var total = 0.0
+
+        // Calculate the total of all items.
+        form.find( '.wpinv-item-price-input' ).each( function() {
+
+            if ( 0 == $( this ).attr('name').length ) {
+                return;
+            }
+
+            var value = parseFloat( $(this).val() )
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
+
+            if ( ! isNaN( value ) ) {
+                total = total + ( value * quantity );
             }
             
         })
@@ -42,14 +94,14 @@ jQuery(function($) {
             var id = $(this).val()
             form.find( '*[data-id="' + id +'"]' )
                 .addClass('d-none')
-                .find('input')
+                .find('input:not(.wpinv-item-quantity-input)')
                 .attr('name', '')
         })
 
         form
             .find( '*[data-id="' + val +'"]' )
             .removeClass('d-none')
-            .find('input')
+            .find('input:not(.wpinv-item-quantity-input)')
             .attr('name', 'wpinv-items[' + val + ']')
 
         // Calculate the total of all items.
@@ -61,8 +113,14 @@ jQuery(function($) {
 
             var value = parseFloat( $(this).val() )
 
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
+
             if ( ! isNaN( value ) ) {
-                total = total + value;
+                total = total + ( value * quantity );
             }
             
         })
@@ -93,14 +151,14 @@ jQuery(function($) {
             var id = $(this).val()
             form.find( '*[data-id="' + id +'"]' )
                 .addClass('d-none')
-                .find('input')
+                .find('input:not(.wpinv-item-quantity-input)')
                 .attr('name', '')
         })
 
         form
             .find( '*[data-id="' + val +'"]' )
             .removeClass('d-none')
-            .find('input')
+            .find('input:not(.wpinv-item-quantity-input)')
             .attr('name', 'wpinv-items[' + val + ']')
 
         // Calculate the total of all items.
@@ -112,8 +170,14 @@ jQuery(function($) {
 
             var value = parseFloat( $(this).val() )
 
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
+
             if ( ! isNaN( value ) ) {
-                total = total + value;
+                total = total + ( value * quantity );
             }
             
         })
@@ -134,7 +198,7 @@ jQuery(function($) {
 
     })
 
-    $( 'body').on( 'change', '.wpinv-items-select-selector', function( e ) {
+    $( 'body').on( 'change', '.wpinv-items-multiselect-selector', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
@@ -143,7 +207,7 @@ jQuery(function($) {
             var id = $(this).val()
             form.find( '*[data-id="' + id +'"]' )
                 .addClass('d-none')
-                .find('input')
+                .find('input:not(.wpinv-item-quantity-input)')
                 .attr('name', '')
         })
 
@@ -155,7 +219,7 @@ jQuery(function($) {
                 form
                     .find( '*[data-id="' + _val +'"]' )
                     .removeClass('d-none')
-                    .find('input')
+                    .find('input:not(.wpinv-item-quantity-input)')
                     .attr('name', 'wpinv-items[' + _val + ']')
 
             })
@@ -170,8 +234,14 @@ jQuery(function($) {
 
             var value = parseFloat( $(this).val() )
 
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
+
             if ( ! isNaN( value ) ) {
-                total = total + value;
+                total = total + ( value * quantity );
             }
 
         })
@@ -201,7 +271,7 @@ jQuery(function($) {
             var id = $(this).val()
             form.find( '*[data-id="' + id +'"]' )
                 .addClass('d-none')
-                .find('input')
+                .find('input:not(.wpinv-item-quantity-input)')
                 .attr('name', '')
         })
 
@@ -211,7 +281,7 @@ jQuery(function($) {
             form
                 .find( '*[data-id="' + val +'"]' )
                 .removeClass('d-none')
-                .find('input')
+                .find('input:not(.wpinv-item-quantity-input)')
                 .attr('name', 'wpinv-items[' + val + ']')
         });
 
@@ -226,8 +296,14 @@ jQuery(function($) {
 
             var value = parseFloat( $(this).val() )
 
+            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
+
+            if ( isNaN( quantity ) || 1 > quantity ) {
+                quantity = 1;
+            }
+
             if ( ! isNaN( value ) ) {
-                total = total + value;
+                total = total + ( value * quantity );
             }
 
         })

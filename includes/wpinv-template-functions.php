@@ -2206,6 +2206,7 @@ function wpinv_force_company_name_field(){
                 'value' => $company,
                 'class' => 'wpi-input form-control',
                 'placeholder' => __('Company name', 'invoicing'),
+                'required'      => true,
             ));
             ?>
         </p>

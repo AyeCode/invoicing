@@ -742,6 +742,17 @@ class WPInv_Ajax {
                     continue;
                 }
 
+                $quantity = 1;
+
+                if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
+
+                    $quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
+
+                    if ( empty( $quantity ) ) {
+                        $quantity = 1;
+                    }
+                }
+
                 // Custom pricing.
                 if ( ! empty( $item['custom_price'] ) ) {
 
@@ -757,6 +768,7 @@ class WPInv_Ajax {
                         'item_price'   => wpinv_sanitize_amount( $item['price'] ),
                         'custom_price' => $set_price,
                         'name'         => $item['title'],
+                        'quantity'     => $quantity,
                     );
 
                 } else {
@@ -766,6 +778,7 @@ class WPInv_Ajax {
                         'item_price'   => wpinv_sanitize_amount( $item['price'] ),
                         'custom_price' => wpinv_sanitize_amount( $item['price'] ),
                         'name'         => $item['title'],
+                        'quantity'     => $quantity,
                     );
 
                 }
