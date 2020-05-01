@@ -271,7 +271,8 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
             'invoicing-quotes' => array(
                 'url'   => 'https://wordpress.org/plugins/invoicing-quotes/',
                 'slug'   => 'invoicing-quotes',
-                'name'   => 'Quotes',
+				'name'   => 'Quotes',
+				'thumbnail'  => 'https://ps.w.org/invoicing-quotes/assets/banner-772x250.jpg',
                 'desc'   => __('Allows you to create quotes, send them to clients and convert them to Invoices when accepted by the customer.','invoicing'),
             ),
             'geodirectory' => array(
