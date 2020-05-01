@@ -17,7 +17,7 @@ jQuery(function($) {
     }
 
     var valid = false;
-    $('#wpinv_checkout_form').on('submit', function(e) {
+    $('body').on('submit', '#wpinv_checkout_form', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
         $('.wpinv_errors').remove();
         if (valid) {
@@ -95,9 +95,12 @@ jQuery(function($) {
             wpinv_recalculate_taxes($(this).val());
         }
     });
-    var WPInv_Checkout = {
+    window.WPInv_Checkout = {
         checkout_form: $('form#wpinv_checkout_form'),
         init: function() {
+
+            this.checkout_form = $('form#wpinv_checkout_form')
+
             if (!$(this.checkout_form).length) {
                 return;
             }

@@ -1517,8 +1517,8 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_items_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
-        $label     = __( 'Item totals placeholder. Item total will appear here.', 'invoicing' );
-        echo "<div $restrict class='item_totals p-4'>$label</div>";
+        $label     = __( 'Item totals placeholder. Item totals will appear here. Click to set items.', 'invoicing' );
+        echo "<div $restrict class='item_totals p-4 bg-warning'>$label</div>";
     }
 
     /**

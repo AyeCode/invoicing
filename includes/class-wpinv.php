@@ -268,7 +268,7 @@ class WPInv_Plugin {
                
         // Register scripts
         wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  WPINV_VERSION );
+        wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  filemtime( WPINV_PLUGIN_DIR . 'assets/js/invoice-front.js' ) );
 
         $localize                         = array();
         $localize['ajax_url']             = admin_url( 'admin-ajax.php' );

@@ -380,7 +380,9 @@ jQuery(function($) {
         $.post( WPInv.ajax_url, data + '&action=wpinv_payment_form', function(res) {
             
             if ( res.success ) {
-                window.location.href = res.data
+                form.unblock();
+                form.parent().html( res.data )
+                WPInv_Checkout.init();
             } else {
                 errors_el.text(res.data).removeClass('d-none')
             }
