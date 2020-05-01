@@ -738,6 +738,10 @@ class WPInv_Ajax {
 
             foreach ( $items as $item ) {
 
+                if ( ! empty( $item['required'] ) && ! isset( $selected_items[ $item['id'] ] ) ) {
+                    wp_send_json_error( __( 'A required item is missing.', 'invoicing' ) );
+                }
+
                 if ( ! isset( $selected_items[ $item['id'] ] ) ) {
                     continue;
                 }
