@@ -322,6 +322,7 @@ class WPInv_Meta_Box_Items {
         </p>
         <p class="wpi-m0"><?php _e( 'When you select physical product rules, only consumers and businesses in your country will be charged VAT.  The VAT rate used will be the rate in your country.', 'invoicing' ); ?></p>
         <p class="wpi-m0"><?php _e( 'If you select Digital product rules, VAT will be charged at the rate that applies in the country of the consumer.  Only businesses in your country will be charged VAT.', 'invoicing' ); ?></p>
+        <p class="wpi-m0"><?php _e( 'Select "Tax-Free" if you do not want to charge VAT for this item.', 'invoicing' ); ?></p>
         <?php
     }
 

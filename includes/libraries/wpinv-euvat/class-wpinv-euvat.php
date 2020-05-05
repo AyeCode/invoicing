@@ -1256,7 +1256,7 @@ class WPInv_EUVat {
     public static function get_rate_classes( $with_desc = false ) {        
         $rate_classes_option = get_option( '_wpinv_vat_rate_classes', true );
         $classes = maybe_unserialize( $rate_classes_option );
-        
+
         if ( empty( $classes ) || !is_array( $classes ) ) {
             $classes = array();
         }
@@ -1316,7 +1316,8 @@ class WPInv_EUVat {
     public static function get_rules() {
         $vat_rules = array(
             'digital' => __( 'Digital Product', 'invoicing' ),
-            'physical' => __( 'Physical Product', 'invoicing' )
+            'physical' => __( 'Physical Product', 'invoicing' ),    
+            '_exempt' => __( 'Tax-Free Product', 'invoicing' ),
         );
         return apply_filters( 'wpinv_get_vat_rules', $vat_rules );
     }
@@ -1366,7 +1367,7 @@ class WPInv_EUVat {
     
     public static function get_item_rule( $postID ) {        
         $rule_type = get_post_meta( $postID, '_wpinv_vat_rule', true );
-        
+
         if ( empty( $rule_type ) ) {        
             $rule_type = self::allow_vat_rules() ? 'digital' : 'physical';
         }
@@ -1385,7 +1386,7 @@ class WPInv_EUVat {
     public static function item_has_digital_rule( $item_id = 0 ) {        
         return self::get_item_rule( $item_id ) == 'digital' ? true : false;
     }
-    
+
     public static function invoice_has_digital_rule( $invoice = 0 ) {        
         if ( !self::allow_vat_rules() ) {
             return false;
@@ -1425,13 +1426,17 @@ class WPInv_EUVat {
         if ( !wpinv_use_taxes() ) {
             return false;
         }
-        
+
         $is_taxable = true;
 
         if ( !empty( $item_id ) && self::get_item_class( $item_id ) == '_exempt' ) {
             $is_taxable = false;
         }
-        
+
+        if ( !empty( $item_id ) && self::get_item_rule( $item_id ) == '_exempt' ) {
+            $is_taxable = false;
+        }
+
         return apply_filters( 'wpinv_item_is_taxable', $is_taxable, $item_id, $country , $state );
     }
     
