@@ -133,6 +133,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Send BCC email to admin for Payment Reminder - ADDED
 * Ability to create payment forms - ADDED
 * If VAT is enabled, you can now disable taxes on a per item basis - ADDED
+* If VAT is enabled, you can now disable taxes on a per invoice basis - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

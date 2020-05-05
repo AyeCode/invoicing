@@ -70,7 +70,13 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <?php if ( $use_taxes ) { ?>
                     <td class="wpinv_cart_item_tax text-right">
                         <?php
-                        echo wpinv_cart_item_tax( $item, $currency );
+
+                        if ( $invoice->is_taxable() ) {
+                            echo wpinv_cart_item_tax( $item, $currency );
+                        } else {
+                            echo 0;
+                        }
+
                         //echo wpinv_get_cart_item_tax( $wpi_item->ID, $subtotal = '', $options = array() );
                         do_action( 'wpinv_cart_item_tax', $item, $key );
                         ?>
@@ -123,7 +129,7 @@ $tax_title          = $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __
                     <strong><?php echo $tax_label; ?>:</strong>
                 </td>
                 <td class="wpinv_cart_tax text-right">
-                    <span class="wpinv_cart_tax_amount" data-tax="<?php echo wpinv_get_cart_tax( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_tax( $cart_items, false, $currency ) ); ?></span>
+                    <span class="wpinv_cart_tax_amount" data-tax="<?php echo wpinv_get_cart_tax( $cart_items ); ?>"><?php echo esc_html( wpinv_cart_tax( $cart_items, false, $currency, $invoice ) ); ?></span>
                 </td>
                 <?php do_action( 'wpinv_checkout_table_tax_last' ); ?>
             </tr>

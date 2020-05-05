@@ -409,6 +409,12 @@ class WPInv_Meta_Box_Items {
         //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
         //$discount       = sanitize_text_field( $data['wpinv_discount'] );
 
+        $disable_taxes = 0;
+
+        if ( ! empty( $data['disable_taxes'] ) ) {
+            $disable_taxes = 1;
+        }
+
         $ip             = $invoice->get_ip() ? $invoice->get_ip() : wpinv_get_ip();
 
         $invoice->set( 'due_date', $due_date );
@@ -423,9 +429,11 @@ class WPInv_Meta_Box_Items {
         $invoice->set( 'country', $country );
         $invoice->set( 'state', $state );
         $invoice->set( 'status', $status );
+        $invoice->set( 'set', $status );
         //$invoice->set( 'number', $number );
         //$invoice->set( 'discounts', $discounts );
         //$invoice->set( 'discount', $discount );
+        $invoice->set( 'disable_taxes', $disable_taxes );
         $invoice->set( 'ip', $ip );
         $invoice->old_status = $_POST['original_post_status'];
         

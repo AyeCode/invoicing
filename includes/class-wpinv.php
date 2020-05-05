@@ -356,7 +356,8 @@ class WPInv_Plugin {
         wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.css', array(), WPINV_VERSION, 'all' );
         wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
 
-        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  WPINV_VERSION );
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
+        wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  $version );
         wp_enqueue_script( 'wpinv-admin-script' );
         
         $localize                               = array();
@@ -424,7 +425,7 @@ class WPInv_Plugin {
         }
 
     }
-    
+
     public function admin_body_class( $classes ) {
         global $pagenow, $post, $current_screen;
         

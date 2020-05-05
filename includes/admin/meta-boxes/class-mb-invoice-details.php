@@ -6,16 +6,19 @@ if ( !defined( 'WPINC' ) ) {
 
 class WPInv_Meta_Box_Details {
     public static function output( $post ) {
+        global $wpinv_euvat;
+
         $currency_symbol    = wpinv_currency_symbol();
         $statuses           = wpinv_get_invoice_statuses( true );
-        
+
         $post_id            = !empty( $post->ID ) ? $post->ID : 0;
         $invoice            = new WPInv_Invoice( $post_id );
         $status             = $invoice->get_status( false ); // Current status    
         $discount           = $invoice->get_discount();
         $discount_code      = $discount > 0 ? $invoice->get_discount_code() : '';
         $invoice_number     = $invoice->get_number();
-        
+        $taxable            = $invoice->is_taxable();
+
         $date_created       = $invoice->get_created_date();
         $datetime_created   = strtotime( $date_created );
         $date_created       = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $datetime_created ) : '';
@@ -24,7 +27,7 @@ class WPInv_Meta_Box_Details {
         $title['status'] = __( 'Invoice Status:', 'invoicing' );
         $title['number'] = __( 'Invoice Number:', 'invoicing' );
         $mail_notice = esc_attr__( 'After saving invoice, this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
-        
+
         $title = apply_filters('wpinv_details_metabox_titles', $title, $invoice);
         $statuses = apply_filters('wpinv_invoice_statuses', $statuses, $invoice);
         $mail_notice = apply_filters('wpinv_metabox_mail_notice', $mail_notice, $invoice);
@@ -67,6 +70,7 @@ class WPInv_Meta_Box_Details {
                 </select>
             </div>
         </div>
+
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-number table-layout">
             <div class="gdmbx-th"><label for="wpinv_number"><?php echo $title['number']; ?></label></div>
             <div class="gdmbx-td">
@@ -76,6 +80,18 @@ class WPInv_Meta_Box_Details {
         <?php do_action( 'wpinv_meta_box_details_inner', $post_id );
         $disable_discount = apply_filters('wpinv_disable_apply_discount', false, $invoice, $post_id);
         ?>
+
+        <?php if ( $wpinv_euvat->allow_vat_rules() && ! ( $invoice->is_paid() || $invoice->is_refunded() ) ) { ?>
+        <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-taxable">
+            <div class="gdmbx-th">
+                <label for="wpinv_taxable">
+                    <input type="checkbox" name="disable_taxes" value="1" <?php checked( $taxable, false ); ?> id="wpinv_taxable">
+                    <?php _e( 'Disable taxes', 'invoicing' ); ?>
+                </label>
+            </div>
+        </div>
+        <?php } ?>
+
         <?php if ( !( $is_paid = ( $invoice->is_paid() || $invoice->is_refunded() ) ) && !$disable_discount || $discount_code ) { ?>
         <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-discount-code table-layout">
             <div class="gdmbx-th"><label for="wpinv_discount_code"><?php _e( 'Discount Code:', 'invoicing' );?></label></div>

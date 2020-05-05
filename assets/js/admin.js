@@ -316,6 +316,11 @@ jQuery(function($) {
         $('#wpinv-recalc-totals').click();
         window.wpiConfirmed = false;
     });
+    $('#wpinv_taxable').on('change', function(e) {
+        window.wpiConfirmed = true;
+        $('#wpinv-recalc-totals').click();
+        window.wpiConfirmed = false;
+    });
     $('#wpinv-fill-user-details').click(function(e) {
         var metaBox = $(this).closest('.inside');
         var user_id = $('select[name="post_author_override"]', metaBox).val();
@@ -787,6 +792,12 @@ jQuery(function($) {
                 var metaBox = $('#wpinv_items_wrap');
                 var gdTotals = $('.wpinv-totals', metaBox);
                 var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
+                var disable_taxes = 0
+
+                if ( $('#wpinv_taxable:checked').length > 0 ) {
+                    disable_taxes = 1
+                }
+
                 if (!invoice_id > 0) {
                     return false;
                 }
@@ -804,7 +815,8 @@ jQuery(function($) {
                 var data = {
                     action: 'wpinv_admin_recalculate_totals',
                     invoice_id: invoice_id,
-                    _nonce: WPInv_Admin.wpinv_nonce
+                    _nonce: WPInv_Admin.wpinv_nonce,
+                    disable_taxes: disable_taxes,
                 };
                 var user_id, country, state;
                 if (user_id = $('[name="post_author_override"]').val()) {

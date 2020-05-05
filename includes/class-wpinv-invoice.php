@@ -27,6 +27,7 @@ final class WPInv_Invoice {
     public $key = '';
     public $total = 0.00;
     public $subtotal = 0;
+    public $disable_taxes = 0;
     public $tax = 0;
     public $fees = array();
     public $fees_total = 0;
@@ -149,6 +150,7 @@ final class WPInv_Invoice {
 
         // Currency Based
         $this->total           = $this->setup_total();
+        $this->disable_taxes   = $this->setup_is_taxable();
         $this->tax             = $this->setup_tax();
         $this->fees_total      = $this->get_fees_total();
         $this->subtotal        = $this->setup_subtotal();
@@ -195,7 +197,7 @@ final class WPInv_Invoice {
 
         return true;
     }
-    
+
     private function setup_status_nicename( $status ) {
         $all_invoice_statuses  = wpinv_get_invoice_statuses( true, true, $this );
 
@@ -206,7 +208,7 @@ final class WPInv_Invoice {
 
         return apply_filters( 'setup_status_nicename', $status );
     }
-    
+
     private function setup_post_name( $post = NULL ) {
         global $wpdb;
         
@@ -291,6 +293,7 @@ final class WPInv_Invoice {
     }
     
     private function setup_tax() {
+
         $tax = $this->get_meta( '_wpinv_tax', true );
 
         // We don't have tax as it's own meta and no meta was passed
@@ -298,11 +301,18 @@ final class WPInv_Invoice {
             $tax = isset( $this->payment_meta['tax'] ) ? $this->payment_meta['tax'] : 0;
         }
         
-        if ( $tax < 0 ) {
+        if ( $tax < 0 || ! $this->is_taxable() ) {
             $tax = 0;
         }
 
         return $tax;
+    }
+
+    /**
+     * If taxes are enabled, allow users to enable/disable taxes per invoice.
+     */
+    private function setup_is_taxable() {
+        return (int) $this->get_meta( '_wpinv_disable_taxes', true );
     }
 
     private function setup_subtotal() {
@@ -323,7 +333,7 @@ final class WPInv_Invoice {
 
         return $subtotal;
     }
-    
+
     private function setup_discounts() {
         $discounts = ! empty( $this->payment_meta['user_info']['discount'] ) ? $this->payment_meta['user_info']['discount'] : array();
         return $discounts;
@@ -361,7 +371,7 @@ final class WPInv_Invoice {
         
         return $gateway;
     }
-    
+
     private function setup_gateway_title() {
         $gateway_title = wpinv_get_gateway_checkout_label( $this->gateway );
         return $gateway_title;
@@ -796,6 +806,9 @@ final class WPInv_Invoice {
                     
                     case 'key':
                         $this->update_meta( '_wpinv_key', $this->key );
+                        break;
+                    case 'disable_taxes':
+                        $this->update_meta( '_wpinv_disable_taxes', $this->disable_taxes );
                         break;
                     case 'date':
                         $args = array(
@@ -1426,14 +1439,23 @@ final class WPInv_Invoice {
     public function get_discount_code() {
         return $this->discount_code;
     }
-    
+
+    // Checks if the invoice is taxable. Does not check if taxes are enabled on the site.
+    public function is_taxable() {
+        return (int) $this->disable_taxes === 0;
+    }
+
     public function get_tax( $currency = false ) {
         $tax = wpinv_round_amount( $this->tax );
-        
+
         if ( $currency ) {
             $tax = wpinv_price( wpinv_format_amount( $tax, NULL, !$currency ), $this->get_currency() );
         }
-        
+
+        if ( ! $this->is_taxable() ) {
+            $tax = wpinv_round_amount( 0.00 );
+        }
+
         return apply_filters( 'wpinv_get_invoice_tax', $tax, $this->ID, $this, $currency );
     }
     
@@ -1920,10 +1942,10 @@ final class WPInv_Invoice {
             $cart_discount          = 0;
             $cart_tax               = 0;
             $cart_details           = array();
-            
+
             $_POST['wpinv_country'] = $this->country;
             $_POST['wpinv_state']   = $this->state;
-            
+
             foreach ( $this->cart_details as $key => $item ) {
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
@@ -1938,6 +1960,10 @@ final class WPInv_Invoice {
                 $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
                 $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
                 $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
+
+                if ( ! $this->is_taxable() ) {
+                    $tax = 0;
+                }
 
                 if ( wpinv_prices_include_tax() ) {
                     $subtotal -= wpinv_round_amount( $tax );
@@ -1965,7 +1991,7 @@ final class WPInv_Invoice {
                     'meta'        => isset($item['meta']) ? $item['meta'] : array(),
                     'fees'        => isset($item['fees']) ? $item['fees'] : array(),
                 );
-                
+
                 $cart_subtotal  += (float)($subtotal - $discount); // TODO
                 $cart_discount  += (float)($discount);
                 $cart_tax       += (float)($tax);

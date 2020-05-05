@@ -771,7 +771,7 @@ function wpinv_cart_subtotal( $items = array(), $currency = '' ) {
 function wpinv_get_cart_total( $items = array(), $discounts = false, $invoice = array() ) {
     $subtotal  = (float)wpinv_get_cart_subtotal( $items );
     $discounts = (float)wpinv_get_cart_discounted_amount( $items );
-    $cart_tax  = (float)wpinv_get_cart_tax( $items );
+    $cart_tax  = (float)wpinv_get_cart_tax( $items, $invoice );
     $fees      = (float)wpinv_get_cart_fee_total();
     if ( !empty( $invoice ) && $invoice->is_free_trial() ) {
         $total = 0;
@@ -802,7 +802,12 @@ function wpinv_cart_total( $cart_items = array(), $echo = true, $invoice = array
     echo $total;
 }
 
-function wpinv_get_cart_tax( $items = array() ) {
+function wpinv_get_cart_tax( $items = array(), $invoice = 0 ) {
+
+    if ( ! empty( $invoice ) && ! $invoice->is_taxable() ) {
+        return 0;
+    }
+
     $cart_tax = 0;
     $items    = !empty( $items ) ? $items : wpinv_get_cart_content_details();
 
@@ -819,8 +824,14 @@ function wpinv_get_cart_tax( $items = array() ) {
     return apply_filters( 'wpinv_get_cart_tax', wpinv_sanitize_amount( $cart_tax ) );
 }
 
-function wpinv_cart_tax( $items = array(), $echo = false, $currency = '' ) {
-    $cart_tax = wpinv_get_cart_tax( $items );
+function wpinv_cart_tax( $items = array(), $echo = false, $currency = '', $invoice = 0 ) {
+
+    if ( ! empty( $invoice && ! $invoice->is_taxable() ) ) {
+        echo wpinv_price( wpinv_format_amount( 0 ), $currency );
+        return;
+    }
+
+    $cart_tax = wpinv_get_cart_tax( $items, $invoice );
     $cart_tax = wpinv_price( wpinv_format_amount( $cart_tax ), $currency );
 
     $tax = apply_filters( 'wpinv_cart_tax', $cart_tax, $items );
@@ -997,6 +1008,9 @@ function wpinv_get_cart_content_details() {
         $tax_class          = $wpinv_euvat->get_item_class( $item_id );
         $tax                = wpinv_get_cart_item_tax( $item_id, $subtotal - $discount );
         
+        if ( ! $invoice->is_taxable() ) {
+            $tax = 0;
+        }
         if ( wpinv_prices_include_tax() ) {
             $subtotal -= wpinv_round_amount( $tax );
         }
@@ -1688,7 +1702,7 @@ function wpinv_process_checkout() {
         'fees'              => wpinv_get_cart_fees(),        // Any arbitrary fees that have been added to the cart
         'subtotal'          => wpinv_get_cart_subtotal( $cart_items ),    // Amount before taxes and discounts
         'discount'          => wpinv_get_cart_items_discount_amount( $cart_items, $discounts ), // Discounted amount
-        'tax'               => wpinv_get_cart_tax( $cart_items ),               // Taxed amount
+        'tax'               => wpinv_get_cart_tax( $cart_items, $invoice ),               // Taxed amount
         'price'             => wpinv_get_cart_total( $cart_items, $discounts ),    // Amount after taxes
         'invoice_key'       => $invoice->get_key() ? $invoice->get_key() : $invoice->generate_key(),
         'user_email'        => $invoice->get_email(),

@@ -435,13 +435,13 @@ class WPInv_Ajax {
         if ( empty( $invoice ) ) {
             die();
         }
-        
+
         $checkout_session = wpinv_get_checkout_session();
-        
+
         $data                   = array();
         $data['invoice_id']     = $invoice_id;
         $data['cart_discounts'] = $invoice->get_discounts( true );
-        
+
         wpinv_set_checkout_session( $data );
         
         if ( !empty( $_POST['user_id'] ) ) {
@@ -451,7 +451,13 @@ class WPInv_Ajax {
         if ( empty( $_POST['country'] ) ) {
             $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
         }
-            
+
+        $disable_taxes = 0;
+        if ( ! empty( $_POST['disable_taxes'] ) ) {
+            $disable_taxes = 1;
+        }
+        $invoice->set( 'disable_taxes', $disable_taxes );
+
         $invoice->country = sanitize_text_field( $_POST['country'] );
         $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
         if ( isset( $_POST['state'] ) ) {
@@ -476,7 +482,7 @@ class WPInv_Ajax {
         $response['data']['totalf']     = $invoice->get_total(true);
         
         wpinv_set_checkout_session($checkout_session);
-        
+
         wp_send_json( $response );
     }
     

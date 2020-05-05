@@ -1321,6 +1321,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
     if ( empty( $cart_items ) ) {
         return NULL;
     }
+
     ob_start();
 
     do_action( 'wpinv_admin_before_line_items', $cart_items, $invoice );
@@ -1343,7 +1344,7 @@ function wpinv_admin_get_line_items($invoice = array()) {
 
         $item_tax       = '';
         $tax_rate       = '';
-        if ( $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
+        if ( $invoice->is_taxable() && $cart_item['tax'] > 0 && $cart_item['subtotal'] > 0 ) {
             $item_tax = wpinv_price( wpinv_format_amount( $cart_item['tax'] ), $invoice->get_currency() );
             $tax_rate = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : ( $cart_item['tax'] / $cart_item['subtotal'] ) * 100;
             $tax_rate = $tax_rate > 0 ? (float)wpinv_round_amount( $tax_rate, 4 ) : '';
