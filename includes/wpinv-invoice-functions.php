@@ -1592,7 +1592,7 @@ function wpinv_set_checkout_session( $invoice_data = array() ) {
 
 function wpinv_get_checkout_session() {
 	global $wpi_session;
-    
+
     return $wpi_session->get( 'wpinv_checkout' );
 }
 
