@@ -1610,18 +1610,18 @@ function wpinv_empty_cart() {
 
 function wpinv_process_checkout() {
     global $wpinv_euvat, $wpi_checkout_id, $wpi_cart;
-    
+
     wpinv_clear_errors();
-    
+
     $invoice = wpinv_get_invoice_cart();
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     $wpi_cart = $invoice;
-    
+
     $wpi_checkout_id = $invoice->ID;
-    
+
     do_action( 'wpinv_pre_process_checkout' );
     
     if ( !wpinv_get_cart_contents() ) { // Make sure the cart isn't empty
@@ -1644,7 +1644,7 @@ function wpinv_process_checkout() {
     do_action( 'wpinv_checkout_user_error_checks', $user, $valid_data, $_POST );
     
     if ( false === $valid_data || wpinv_get_errors() || ! $user ) {
-        if ( $is_ajax ) {
+        if ( $is_ajax && 'wpinv_payment_form' != $_REQUEST['action'] ) {
             do_action( 'wpinv_ajax_checkout_errors' );
             die();
         } else {
@@ -1652,7 +1652,7 @@ function wpinv_process_checkout() {
         }
     }
 
-    if ( $is_ajax ) {
+    if ( $is_ajax && 'wpinv_payment_form' != $_REQUEST['action'] ) {
         // Save address fields.
         $address_fields = array( 'first_name', 'last_name', 'phone', 'address', 'city', 'country', 'state', 'zip', 'company' );
         foreach ( $address_fields as $field ) {

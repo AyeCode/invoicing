@@ -1629,7 +1629,7 @@ function wpinv_payment_mode_select() {
     $invoice = wpinv_get_invoice( 0, true );
 
     do_action('wpinv_payment_mode_top');
-    $invoice_id = (int)$invoice->ID;
+    $invoice_id = $invoice ? (int)$invoice->ID : 0;
     $chosen_gateway = wpinv_get_chosen_gateway( $invoice_id );
     ?>
     <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( ( $invoice && $invoice->is_free() ) ? 'style="display:none;" data-free="1"' : '' ); ?>>

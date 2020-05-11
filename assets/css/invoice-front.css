@@ -3547,3 +3547,7 @@ p.wpinv_error {
     }
     #wpinv-fields p.wpi-cart-field.wpi-col2 {width: 100%;float: none;padding: 0;margin-bottom: 10px;}
 }
+
+.wpi-pmethod {
+  margin-right: 10px;
+}

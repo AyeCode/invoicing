@@ -378,14 +378,19 @@ jQuery(function($) {
         var data = form.serialize();
 
         $.post( WPInv.ajax_url, data + '&action=wpinv_payment_form', function(res) {
-            
-            if ( res.success ) {
-                form.unblock();
-                form.parent().html( res.data )
-                WPInv_Checkout.init();
-            } else {
-                errors_el.text(res.data).removeClass('d-none')
+
+            if ( 'string' == typeof res ) {
+                errors_el.html(res).removeClass('d-none')
+                return
             }
+
+            if ( res.success ) {
+                window.location.href = decodeURIComponent( res.data )
+                return
+            }
+
+            errors_el.html(res.data).removeClass('d-none')
+
         })
 
         .fail( function( res ) {
@@ -397,5 +402,57 @@ jQuery(function($) {
         })
         
     })
+
+    $('.wpinv_payment_form').on('click', 'input[name="wpi-gateway"]', function ( e ) {
+
+        var form = $( this ).closest( '.wpinv_payment_form' );
+        var is_checked = $(this).is(':checked')
+
+        if ($('.wpi-payment_methods input.wpi-pmethod').length > 1) {
+
+            var target_payment_box = form.find('div.payment_box.' + $(this).attr('ID'));
+            if ( is_checked && !target_payment_box.is(':visible') ) {
+
+                // Hide all visible payment methods.
+                form.find('div.payment_box').filter(':visible').slideUp(250);
+                if ($(this).is(':checked')) {
+                    var content = $('div.payment_box.' + $(this).attr('ID')).html();
+                    content = content ? content.trim() : '';
+                    if (content) {
+                        $('div.payment_box.' + $(this).attr('ID')).slideDown(250);
+                    }
+                }
+            }
+
+        } else {
+
+            $('div.payment_box').show();
+
+        }
+        $('#wpinv_payment_mode_select').attr('data-gateway', $(this).val());
+        wpinvSetPaymentBtnText($(this), $('#wpinv_payment_mode_select').data('free'));
+    });
+
+    $('.wpinv_payment_form').find('.payment_box .form-horizontal .form-group').addClass('row')
+
+    $('.wpinv_payment_form').each( function() {
+
+        var $checkout_form = $( this );
+        var $payment_methods = $checkout_form.find('.wpi-payment_methods input[name="wpi-gateway"]');
+
+        // If there is one method, we can hide the radio input
+        if (1 === $payment_methods.length) {
+            $payment_methods.eq(0).hide();
+        }
+
+        // If there are none selected, select the first.
+        if (0 === $payment_methods.filter(':checked').length) {
+            $payment_methods.eq(0).prop('checked', true);
+        }
+
+        // Trigger click event for selected method
+        $payment_methods.filter(':checked').eq(0).trigger('click');
+
+    } )
 
 });

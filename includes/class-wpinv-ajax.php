@@ -893,20 +893,18 @@ class WPInv_Ajax {
         $data['cart_discounts'] = $created->get_discounts( true );
 
         wpinv_set_checkout_session( $data );
-        ob_start();
-            $form_action  = esc_url( wpinv_get_checkout_uri() );
-            echo '<form id="wpinv_checkout_form" action="' . $form_action . '" method="POST" class="wpi-form wpi-payment-form-checkout-form mt-4">';
-            
-                echo wpinv_display_line_items( $created->ID );
+        add_filter( 'wp_redirect', array( $invoicing->form_elements, 'send_redirect_response' ) );
+        add_action( 'wpinv_pre_send_back_to_checkout', array( $invoicing->form_elements, 'checkout_error' ) );
+        
+        if ( ! defined( 'WPINV_CHECKOUT' ) ) {
+            define( 'WPINV_CHECKOUT', true );
+        }
 
-                echo "<div class='mt-4'>";
-                    do_action( 'wpinv_payment_mode_select' );
-                    do_action( 'wpinv_checkout_form_bottom' );
-                echo "</div>";
+        wpinv_process_checkout();
 
-            echo "</form>";
-        wp_send_json_success( ob_get_clean() );
+        $invoicing->form_elements->checkout_error();
 
+        exit;
     }
 
     /**

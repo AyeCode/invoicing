@@ -32,9 +32,9 @@ function wpinv_process_bank_transfer_payment( $purchase_data ) {
         
         // Empty the shopping cart
         wpinv_empty_cart();
-        
+
         do_action( 'wpinv_send_to_success_page', $invoice->ID, $payment_data );
-        
+
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
     } else {
         wpinv_record_gateway_error( __( 'Payment Error', 'invoicing' ), sprintf( __( 'Payment creation failed while processing a bank transfer payment. Payment data: %s', 'invoicing' ), json_encode( $payment_data ) ), $invoice );

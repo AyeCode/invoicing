@@ -146,6 +146,7 @@ function wpinv_send_back_to_checkout( $args = array() ) {
 		$redirect = add_query_arg( $args, $redirect );
 	}
 
+    do_action( 'wpinv_pre_send_back_to_checkout', $args );
 	wp_redirect( apply_filters( 'wpinv_send_back_to_checkout', $redirect, $args ) );
 	exit;
 }

@@ -1519,7 +1519,11 @@ class WPInv_Payment_Form_Elements {
      * Renders the pay_button element on the frontend.
      */
     public function frontend_render_pay_button_template( $field ) {
-        
+
+        echo "<div class='mt-4 mb-4'>";
+            do_action( 'wpinv_payment_mode_select' );
+        echo "</div>";
+
         echo "<div class='form-group'>";
 
         $class = 'btn btn-block submit-button ' . sanitize_html_class( $field['class'] );
@@ -2552,6 +2556,33 @@ class WPInv_Payment_Form_Elements {
         }
 
         return wpinv_get_data( 'sample-payment-form' );
+    }
+
+    /**
+     * Sends a redrect response to payment details.
+     *
+     */
+    public function send_redirect_response( $url ) {
+        $url = urlencode( $url );
+        wp_send_json_success( $url );
+    }
+
+    /**
+     * Fired when a checkout error occurs
+     *
+     */
+    public function checkout_error() {
+
+        $errors = wpinv_get_errors();
+
+        if ( ! empty( $errors ) ) {
+            wpinv_print_errors();
+            exit;
+        }
+
+        wp_send_json_error( __( 'An error occured while processing your payment. Please try again.', 'invoicing' ) );
+        exit;
+
     }
 
 }
