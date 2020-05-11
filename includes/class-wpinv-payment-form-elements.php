@@ -1745,8 +1745,8 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_items_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
-        $label     = __( 'Item totals placeholder. Item totals will appear here. Click to set items.', 'invoicing' );
-        echo "<div $restrict class='item_totals p-4 bg-warning'>$label</div>";
+        $label     = __( 'Item totals will appear here. Click to set items.', 'invoicing' );
+        echo "<div $restrict class='item_totals p-4 bg-warning text-center'>$label</div>";
     }
 
     /**
@@ -2445,7 +2445,7 @@ class WPInv_Payment_Form_Elements {
 
                 <div class='form-group mt-2'>
 
-                    <select class='form-control custom-select' v-model='selected_item'>
+                    <select class='form-control custom-select' v-model='selected_item' @change='addSelectedItem'>
                         <option value=''>"        . __( 'Add an existing item to the form', 'invoicing' ) ."</option>
                         <option v-for='(item, index) in all_items' :value='index'>{{item.title}}</option>
                     </select>

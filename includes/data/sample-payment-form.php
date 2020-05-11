@@ -14,50 +14,6 @@ return array(
 
     array(
 
-        'level' => 'h2',
-        'text'  => __( 'Payment Form', 'invoicing' ),
-        'id'    => 'uiylyczw',
-        'name'  => 'uiylyczw',
-        'type'  => 'heading'
-    ),
-
-    array(
-
-        'text' => __( 'Fill the form below to place an order for my cool item', 'invoicing' ),
-        'id'   => 'pcvqjj',
-        'name' => 'pcvqjj',
-        'type' => 'paragraph'
-
-    ),
-
-    array(
-
-        'placeholder' => 'Jon',
-        'value'       => '',
-        'label'       => __( 'First Name', 'invoicing' ),
-        'description' => '',
-        'required'    => false,
-        'id'          => 'ynkzkjyc',
-        'name'        => 'ynkzkjyc',
-        'type'        => 'text'
-
-    ),
-
-    array(
-
-        'placeholder' => 'Snow',
-        'value'       => '',
-        'label'       => __( 'Last Name', 'invoicing' ),
-        'description' => '',
-        'required'    => false,
-        'id'          => 'wfjcdmzox',
-        'name'        => 'wfjcdmzox',
-        'type'        => 'text'
-
-    ),
-
-    array(
-
         'placeholder' => 'jon@snow.com',
         'value'       => '',
         'label'       => __( 'Billing Email', 'invoicing' ),
