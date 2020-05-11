@@ -737,6 +737,7 @@ class WPInv_Ajax {
         // ... and form items.
         $items          = $invoicing->form_elements->get_form_items( $data['form_id'] );
         $prepared_items = array();
+        $address_fields = array();
 
         if ( ! empty( $data['wpinv-items'] ) ) {
 
@@ -812,7 +813,26 @@ class WPInv_Ajax {
                 wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
             }
 
-            if ( isset( $data[ $field['id'] ] ) ) {
+            if ( $field['type'] == 'address' ) {
+
+                foreach ( $field['fields'] as $address_field ) {
+
+                    if ( empty( $address_field['visible'] ) ) {
+                        continue;
+                    }
+
+                    if ( ! empty( $address_field['required'] ) && empty( $data[ $address_field['name'] ] ) ) {
+                        wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
+                    }
+
+                    if ( isset( $data[ $address_field['name'] ] ) ) {
+                        $label = str_replace( 'wpinv_', '', $address_field['name'] );
+                        $address_fields[ $label ] = wpinv_clean( $data[ $address_field['name'] ] );
+                    }
+
+                }
+
+            } else if ( isset( $data[ $field['id'] ] ) ) {
                 $label = $field['id'];
 
                 if ( isset( $field['label'] ) ) {
@@ -823,7 +843,7 @@ class WPInv_Ajax {
             }
 
         }
-        
+
         $user = get_user_by( 'email', $prepared['billing_email'] );
 
         if ( empty( $user ) ) {
@@ -841,10 +861,11 @@ class WPInv_Ajax {
         // Create the invoice.
         $created = wpinv_insert_invoice(
             array(
-                'status'        =>  'wpi-pending',
-                'created_via'   =>  'wpi',
-                'user_id'       =>  $user->ID,
-                'cart_details'  =>  $prepared_items,
+                'status'        => 'wpi-pending',
+                'created_via'   => 'wpi',
+                'user_id'       => $user->ID,
+                'cart_details'  => $prepared_items,
+                'user_info'     => $address_fields,
             ),
             true
         );

@@ -206,6 +206,95 @@ class WPInv_Payment_Form_Elements {
             ),
 
             array( 
+                'type' => 'address',
+                'name' => __( 'Address', 'invoicing' ),
+                'defaults'  => array(
+
+                    'fields' => array(
+                        array(
+                            'placeholder'  => 'Jon',
+                            'value'        => '',
+                            'label'        => __( 'First Name', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_first_name',
+                        ),
+
+                        array(
+                            'placeholder'  => 'Snow',
+                            'value'        => '',
+                            'label'        => __( 'Last Name', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_last_name',
+                        ),
+                    
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'Address', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_address',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'City', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_city',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'Country', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_country',
+                        ),
+
+                        array(
+                            'placeholder'  => __( 'Choose a state', 'invoicing' ),
+                            'value'        => '',
+                            'label'        => __( 'State / Province', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_state',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'ZIP / Postcode', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_zip',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'Phone', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => true,
+                            'name'         => 'wpinv_phone',
+                        )
+                    )
+                )
+            ),
+
+            array( 
                 'type' => 'billing_email',
                 'name' => __( 'Billing Email', 'invoicing' ),
                 'defaults'  => array(
@@ -771,6 +860,145 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <button class='button button-secondary' type='button' @click.prevent='$field.options.push(\"\")'>Add Option</button>
                 </div>
+            </div>
+        ";
+
+    }
+
+    /**
+     * Renders the address element template.
+     */
+    public function render_address_template( $field ) {
+        $restrict    = $this->get_restrict_markup( $field, 'address' );
+
+        echo "
+            <div class='wpinv-address-wrapper' $restrict>
+                <draggable v-model='$field.fields' group='address_fields_preview'>
+                    <div class='form-group address-field-preview' v-for='(field, index) in $field.fields' :key='field.name' v-show='field.visible'>
+                        <label :for='field.name'>{{field.label}}<span class='text-danger' v-if='field.required'> *</span></label>
+                        <input class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
+                        <small v-if='field.description' class='form-text text-muted' v-html='field.description'></small>
+                    </div>
+                </draggable>
+            </div>
+        ";
+    }
+
+    /**
+     * Renders the address element on the frontend.
+     */
+    public function frontend_render_address_template( $field ) {
+        
+        echo "<div class='wpinv-address-fields'>";
+
+        foreach( $field['fields'] as $address_field ) {
+
+            if ( empty( $address_field['visible'] ) ) {
+                continue;
+            }
+
+            $class = esc_attr( $address_field['name'] );
+            echo "<div class='form-group $class'>";
+
+            $label = $address_field['label'];
+
+            if ( ! empty( $address_field['required'] ) ) {
+                $label .= "<span class='text-danger'> *</span>";
+            }
+            echo aui()->input(
+                array(
+                    'name'       => esc_attr( $address_field['name'] ),
+                    'id'         => esc_attr( $address_field['name'] ),
+                    'required'   => (bool) $address_field['required'],
+                    'label'      => wp_kses_post( $label ),
+                    'no_wrap'    => true,
+                    'placeholder' => esc_attr( $address_field['placeholder'] ),
+                    'type'       => 'text',
+                )
+            );
+
+            if ( ! empty( $address_field['description'] ) ) {
+                $description = wp_kses_post( $address_field['description'] );
+                echo "<small class='form-text text-muted'>$description</small>";
+            }
+    
+            echo '</div>';
+
+        }
+
+        echo '</div>';
+
+    }
+
+    /**
+     * Renders the edit address element template.
+     */
+    public function edit_address_template( $field ) {
+        $restrict  = $this->get_restrict_markup( $field, 'address' );
+        $label     = __( 'Field Label', 'invoicing' );
+        $label2    = __( 'Placeholder', 'invoicing' );
+        $label3    = __( 'Description', 'invoicing' );
+        $label4    = __( 'Is required', 'invoicing' );
+        $label5    = __( 'Is visible', 'invoicing' );
+        $id        = $field . '.id + "_edit_label"';
+        $id2       = $field . '.id + "_edit_placeholder"';
+        $id3       = $field . '.id + "_edit_description"';
+        $id4       = $field . '.id + "_edit_required"';
+        $id5       = $field . '.id + "_edit_visible"';
+        $id5       = $field . '.id + "_edit_visible"';
+        $id_main   = $field . '.id';
+
+        echo "
+            <div $restrict :id='$id_main'>
+                <draggable v-model='$field.fields' group='address_fields'>
+                    <div class='wpinv-form-address-field-editor' v-for='(field, index) in $field.fields' :class=\"[field.name, { 'visible' : field.visible }]\" :key='field.name'>
+
+                        <div class='wpinv-form-address-field-editor-header' @click.prevent='toggleAddressPanel($id_main, field.name)'>
+                            <span class='label'>{{field.label}}</span>
+                            <span class='toggle-visibility-icon' @click.prevent='field.visible = !field.visible;'>
+                                <span class='dashicons dashicons-hidden'></span>
+                                <span class='dashicons dashicons-visibility'></span>
+                            </span>
+                            <span class='toggle-icon'>
+                                <span class='dashicons dashicons-arrow-down'></span>
+                                <span class='dashicons dashicons-arrow-up' style='display:none'></span>
+                            </span>
+                        </div>
+
+                        <div class='wpinv-form-address-field-editor-editor-body'>
+                            <div class='p-2'>
+
+                                <div class='form-group'>
+                                    <label :for='$id + index'>$label</label>
+                                    <input :id='$id + index' v-model='field.label' class='form-control' />
+                                </div>
+
+                                <div class='form-group'>
+                                    <label :for='$id2 + index'>$label2</label>
+                                    <input :id='$id2 + index' v-model='field.placeholder' class='form-control' />
+                                </div>
+
+                                <div class='form-group'>
+                                    <label :for='$id3 + index'>$label3</label>
+                                    <textarea :id='$id3 + index' v-model='field.description' class='form-control'></textarea>
+                                </div>
+
+                                <div class='form-group form-check'>
+                                    <input :id='$id4 + index' v-model='field.required' type='checkbox' class='form-check-input' />
+                                    <label class='form-check-label' :for='$id4 + index'>$label4</label>
+                                </div>
+
+                                <div class='form-group form-check'>
+                                    <input :id='$id5 + index' v-model='field.visible' type='checkbox' class='form-check-input' />
+                                    <label class='form-check-label' :for='$id5 + index'>$label5</label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </draggable>
+
             </div>
         ";
 

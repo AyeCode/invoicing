@@ -1892,7 +1892,8 @@ textarea.wpi-email_overdue_content {
     cursor: not-allowed !important;
 }
 
-.wpinv-available-items-editor {
+.wpinv-available-items-editor,
+.wpinv-form-address-field-editor {
     display: block;
     position: relative;
     margin: 5px 0;
@@ -1903,7 +1904,8 @@ textarea.wpi-email_overdue_content {
     border: 1px #dfdfdf solid;
 }
 
-.wpinv-available-items-editor-header {
+.wpinv-available-items-editor-header,
+.wpinv-form-address-field-editor-header {
     background: #fafafa;
     height: 37px;
     padding: 5px 10px;
@@ -1917,7 +1919,32 @@ textarea.wpi-email_overdue_content {
     width: 100%;
 }
 
-.wpinv-available-items-editor-header .label{
+.wpinv-form-address-field-editor {
+    opacity: 0.3;
+}
+
+.wpinv-form-address-field-editor.visible {
+    opacity: 1;
+}
+
+.wpinv-form-address-field-editor .dashicons-hidden{
+    display: inline-block;
+}
+
+.wpinv-form-address-field-editor .dashicons-visibility{
+    display: none;
+}
+
+.wpinv-form-address-field-editor.visible .dashicons-hidden{
+    display: none;
+}
+
+.wpinv-form-address-field-editor.visible .dashicons-visibility{
+    display: inline-block;
+}
+
+.wpinv-available-items-editor-header .label,
+.wpinv-form-address-field-editor-header .label {
     flex: 1;
 }
 
@@ -1925,16 +1952,25 @@ textarea.wpi-email_overdue_content {
     font-weight: initial;
 }
 
-.wpinv-available-items-editor-header .toggle-icon{
+.wpinv-available-items-editor-header .toggle-icon,
+.wpinv-form-address-field-editor-header .toggle-icon,
+.wpinv-form-address-field-editor-header .toggle-visibility-icon {
     margin-left: 4px;
     cursor: pointer;
 }
 
-.wpinv-available-items-editor-header .dashicons{
+.wpinv-available-items-editor-header .dashicons,
+.wpinv-form-address-field-editor-header .dashicons{
     vertical-align: bottom;
 }
 
-.wpinv-available-items-editor-body {
+.wpinv-available-items-editor-body,
+.wpinv-form-address-field-editor-editor-body {
     display: none;
     overflow: hidden;
+}
+
+.address-field-preview:hover {
+    cursor: move;
+    background: rgb(250, 250, 250);
 }
