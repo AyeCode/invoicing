@@ -361,10 +361,18 @@ jQuery(function($) {
 
     })
 
+    window.wpinvPaymentFormSubmt = true
+    window.wpinvPaymentFormDelaySubmit = false
+    window.wpinvPaymentFormData = ''
     $( document ).on( 'submit', '.wpinv_payment_form', function( e ) {
         
         // Do not submit the form.
         e.preventDefault();
+
+        // Set defaults
+        wpinvPaymentFormSubmt = true
+        wpinvPaymentFormDelaySubmit = false
+        wpinvPaymentFormData = ''
 
         // instead, display a loading indicator.
         var form = $( this )
@@ -376,31 +384,59 @@ jQuery(function($) {
 
         // And submit the form to create an invoice.
         var data = form.serialize();
+        wpinvPaymentFormData = data
 
-        $.post( WPInv.ajax_url, data + '&action=wpinv_payment_form', function(res) {
+        window.wp.hooks.applyFilters( 'wpinv_payment_form_data', data, form )
 
-            if ( 'string' == typeof res ) {
-                errors_el.html(res).removeClass('d-none')
-                return
-            }
-
-            if ( res.success ) {
-                window.location.href = decodeURIComponent( res.data )
-                return
-            }
-
-            errors_el.html(res.data).removeClass('d-none')
-
-        })
-
-        .fail( function( res ) {
-            errors_el.html('Could not establish a connection to the server.').removeClass('d-none')
-        } )
-
-        .always(() => {
+        if ( ! window.wpinvPaymentFormSubmt ) {
             form.unblock();
-        })
-        
+            return;
+        }
+
+        var submit = function () {
+            return $.post(WPInv.ajax_url, wpinvPaymentFormData + '&action=wpinv_payment_form', function (res) {
+
+                if ('string' == typeof res) {
+                    errors_el.html(res).removeClass('d-none')
+                    return
+                }
+
+                if (res.success) {
+                    window.location.href = decodeURIComponent(res.data)
+                    return
+                }
+
+                errors_el.html(res.data).removeClass('d-none')
+
+            })
+
+                .fail(function (res) {
+                    errors_el.html('Could not establish a connection to the server.').removeClass('d-none')
+                })
+
+                .always(() => {
+                    form.unblock();
+                })
+        }
+
+        if ( wpinvPaymentFormDelaySubmit ) {
+            var local_submit = function( e, data ) {
+
+                if ( ! window.wpinvPaymentFormSubmt ) {
+                    form.unblock();
+                } else {
+                    submit()
+                }
+
+                $('body').unbind( 'wpinv_payment_form_delayed_submit', local_submit )
+
+            }
+            $('body').bind( 'wpinv_payment_form_delayed_submit', local_submit )
+
+        } else {
+            submit()
+        }
+
     })
 
     $('.wpinv_payment_form').on('click', 'input[name="wpi-gateway"]', function ( e ) {
