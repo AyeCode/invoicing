@@ -871,7 +871,7 @@ class WPInv_Ajax {
         $data['invoice_id']     = $created->ID;
         $data['cart_discounts'] = $created->get_discounts( true );
 
-        wpinv_set_checkout_session( $created );
+        wpinv_set_checkout_session( $data );
         ob_start();
             $form_action  = esc_url( wpinv_get_checkout_uri() );
             echo '<form id="wpinv_checkout_form" action="' . $form_action . '" method="POST" class="wpi-form wpi-payment-form-checkout-form mt-4">';
