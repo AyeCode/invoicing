@@ -365,7 +365,7 @@ jQuery(function($) {
     window.wpinvPaymentFormDelaySubmit = false
     window.wpinvPaymentFormData = ''
     $( document ).on( 'submit', '.wpinv_payment_form', function( e ) {
-        
+
         // Do not submit the form.
         e.preventDefault();
 
@@ -386,7 +386,7 @@ jQuery(function($) {
         var data = form.serialize();
         wpinvPaymentFormData = data
 
-        window.wp.hooks.applyFilters( 'wpinv_payment_form_data', data, form )
+        $( 'body' ).trigger( 'wpinv_payment_form_before_submit', form );
 
         if ( ! window.wpinvPaymentFormSubmt ) {
             form.unblock();
@@ -398,6 +398,7 @@ jQuery(function($) {
 
                 if ('string' == typeof res) {
                     errors_el.html(res).removeClass('d-none')
+                    form.unblock();
                     return
                 }
 
@@ -407,20 +408,19 @@ jQuery(function($) {
                 }
 
                 errors_el.html(res.data).removeClass('d-none')
+                form.unblock();
 
             })
 
                 .fail(function (res) {
                     errors_el.html('Could not establish a connection to the server.').removeClass('d-none')
-                })
-
-                .always(() => {
                     form.unblock();
                 })
+
         }
 
         if ( wpinvPaymentFormDelaySubmit ) {
-            var local_submit = function( e, data ) {
+            var local_submit = function() {
 
                 if ( ! window.wpinvPaymentFormSubmt ) {
                     form.unblock();
