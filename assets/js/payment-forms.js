@@ -482,6 +482,11 @@ jQuery(function($) {
             $checkout_form.find('.wpi-payment_methods_title').hide()
         }
 
+        if ( $payment_methods.length === 0) {
+            $checkout_form.find('.wpi-payment_methods_title').hide()
+            $checkout_form.find('.wpinv-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
+        }
+
         // If there are none selected, select the first.
         if (0 === $payment_methods.filter(':checked').length) {
             $payment_methods.eq(0).prop('checked', true);

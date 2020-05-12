@@ -1526,7 +1526,7 @@ class WPInv_Payment_Form_Elements {
 
         echo "<div class='form-group'>";
 
-        $class = 'btn btn-block submit-button ' . sanitize_html_class( $field['class'] );
+        $class = 'wpinv-payment-form-submit btn btn-block submit-button ' . sanitize_html_class( $field['class'] );
         echo aui()->input(
             array(
                 'name'       => esc_attr( $field['id'] ),
