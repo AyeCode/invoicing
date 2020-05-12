@@ -476,9 +476,10 @@ jQuery(function($) {
         var $checkout_form = $( this );
         var $payment_methods = $checkout_form.find('.wpi-payment_methods input[name="wpi-gateway"]');
 
-        // If there is one method, we can hide the radio input
+        // If there is one method, we can hide the radio input and the title.
         if (1 === $payment_methods.length) {
             $payment_methods.eq(0).hide();
+            $checkout_form.find('.wpi-payment_methods_title').hide()
         }
 
         // If there are none selected, select the first.

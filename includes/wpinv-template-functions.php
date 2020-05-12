@@ -1635,7 +1635,7 @@ function wpinv_payment_mode_select() {
     <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( ( $invoice && $invoice->is_free() ) ? 'style="display:none;" data-free="1"' : '' ); ?>>
             <?php do_action( 'wpinv_payment_mode_before_gateways_wrap' ); ?>
             <div id="wpinv-payment-mode-wrap" class="panel panel-default">
-                <div class="panel-heading"><h3 class="panel-title"><?php _e( 'Select Payment Method', 'invoicing' ); ?></h3></div>
+                <div class="panel-heading wpi-payment_methods_title"><h3 class="panel-title"><?php _e( 'Select Payment Method', 'invoicing' ); ?></h3></div>
                 <div class="panel-body list-group wpi-payment_methods">
                     <?php
                     do_action( 'wpinv_payment_mode_before_gateways' );
