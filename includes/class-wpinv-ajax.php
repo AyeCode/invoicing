@@ -932,6 +932,11 @@ class WPInv_Ajax {
         $total = 0;
         $tax   = 0;
         $sub_total = 0;
+        $country = wpinv_default_billing_country();
+
+        if ( ! empty( $_POST['wpinv_country'] ) ) {
+            $country = $_POST['wpinv_country'];
+        }
 
         if ( ! empty( $data['wpinv-items'] ) ) {
 
@@ -974,22 +979,7 @@ class WPInv_Ajax {
 
                 if ( wpinv_use_taxes() ) {
 
-                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
-
-                    if ( ! wpinv_prices_include_tax() ) {
-                        $pre_tax  = ( $price - $price * $rate * 0.01 );
-                        $item_tax = $price - $pre_tax;
-                    } else {
-                        $item_tax = $price * $rate * 0.01;
-                    }
-
-                    $tax = $tax + $item_tax;
-
-                }
-
-                if ( wpinv_use_taxes() ) {
-
-                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                    $rate = wpinv_get_tax_rate( $country, false, (int) $item['id'] );
 
                     if ( wpinv_prices_include_tax() ) {
                         $pre_tax  = ( $price - $price * $rate * 0.01 );

@@ -534,7 +534,8 @@ jQuery(function($) {
         $( form ).on( 'change', '.wpi-payment-form-items-select-checkbox', syncTaxes )
         $( form ).on( 'change', '.wpinv-items-select-selector', syncTaxes )
         $( form ).on( 'change', '.wpinv-items-multiselect-selector', syncTaxes )
-
+        $( form ).on( 'change', '#wpinv_country', syncTaxes )
+        
     }
 
     $('.wpinv_payment_form').each( function() {

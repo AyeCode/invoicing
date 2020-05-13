@@ -252,7 +252,7 @@ class WPInv_Payment_Form_Elements {
                         ),
 
                         array(
-                            'placeholder'  => '',
+                            'placeholder'  => __( 'Select your country' ),
                             'value'        => '',
                             'label'        => __( 'Country', 'invoicing' ),
                             'description'  => '',
@@ -876,7 +876,10 @@ class WPInv_Payment_Form_Elements {
                 <draggable v-model='$field.fields' group='address_fields_preview'>
                     <div class='form-group address-field-preview' v-for='(field, index) in $field.fields' :key='field.name' v-show='field.visible'>
                         <label :for='field.name'>{{field.label}}<span class='text-danger' v-if='field.required'> *</span></label>
-                        <input class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
+                        <input v-if='field.name !== \"wpinv_country\"' class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
+                        <select v-if='field.name == \"wpinv_country\"' class='form-control' :id='field.name'>
+                            <option v-if='field.placeholder'>{{field.placeholder}}</option>
+                        </select>
                         <small v-if='field.description' class='form-text text-muted' v-html='field.description'></small>
                     </div>
                 </draggable>
@@ -905,17 +908,37 @@ class WPInv_Payment_Form_Elements {
             if ( ! empty( $address_field['required'] ) ) {
                 $label .= "<span class='text-danger'> *</span>";
             }
-            echo aui()->input(
-                array(
-                    'name'       => esc_attr( $address_field['name'] ),
-                    'id'         => esc_attr( $address_field['name'] ),
-                    'required'   => (bool) $address_field['required'],
-                    'label'      => wp_kses_post( $label ),
-                    'no_wrap'    => true,
-                    'placeholder' => esc_attr( $address_field['placeholder'] ),
-                    'type'       => 'text',
-                )
-            );
+
+            if ( 'wpinv_country' == $address_field['name'] ) {
+
+                echo aui()->select( array(
+                    'options'          => wpinv_get_country_list(),
+                    'name'             => esc_attr( $address_field['name'] ),
+                    'id'               => esc_attr( $address_field['name'] ),
+                    'value'            => wpinv_default_billing_country(),
+                    'placeholder'      => esc_attr( $address_field['placeholder'] ),
+                    'required'         => (bool) $address_field['required'],
+                    'no_wrap'          => true,
+                    'label'            => wp_kses_post( $label ),
+                    'select2'          => false,
+                ));
+    
+            } else {
+
+                echo aui()->input(
+                    array(
+                        'name'       => esc_attr( $address_field['name'] ),
+                        'id'         => esc_attr( $address_field['name'] ),
+                        'required'   => (bool) $address_field['required'],
+                        'label'      => wp_kses_post( $label ),
+                        'no_wrap'    => true,
+                        'placeholder' => esc_attr( $address_field['placeholder'] ),
+                        'type'       => 'text',
+                    )
+                );
+
+            }
+            
 
             if ( ! empty( $address_field['description'] ) ) {
                 $description = wp_kses_post( $address_field['description'] );
@@ -1776,7 +1799,7 @@ class WPInv_Payment_Form_Elements {
 
                         if ( wpinv_use_taxes() ) {
 
-                            $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                            $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
 
                             if ( wpinv_prices_include_tax() ) {
                                 $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -1928,7 +1951,7 @@ class WPInv_Payment_Form_Elements {
 
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2089,7 +2112,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2258,7 +2281,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2373,7 +2396,7 @@ class WPInv_Payment_Form_Elements {
                         if ( ! empty( $item['required'] ) ) {
                             continue;
                         }
-                    
+
                         $title = sanitize_text_field(  $item['title'] );
                         $price = wpinv_price( wpinv_format_amount( (float) sanitize_text_field(  $item['price'] ) ) );
                         $options[ $item['id'] ] = "$title &nbsp; ($price)";
@@ -2427,7 +2450,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
