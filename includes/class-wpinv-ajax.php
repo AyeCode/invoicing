@@ -971,7 +971,21 @@ class WPInv_Ajax {
                 }
 
                 $price  = $quantity * floatval( $price );
-                $total  = $total + $price;
+
+                if ( wpinv_use_taxes() ) {
+
+                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+
+                    if ( ! wpinv_prices_include_tax() ) {
+                        $pre_tax  = ( $price - $price * $rate * 0.01 );
+                        $item_tax = $price - $pre_tax;
+                    } else {
+                        $item_tax = $price * $rate * 0.01;
+                    }
+
+                    $tax = $tax + $item_tax;
+
+                }
 
                 if ( wpinv_use_taxes() ) {
 
@@ -981,11 +995,16 @@ class WPInv_Ajax {
                         $pre_tax  = ( $price - $price * $rate * 0.01 );
                         $item_tax = $price - $pre_tax;
                     } else {
+                        $pre_tax  = $price;
                         $item_tax = $price * $rate * 0.01;
                     }
 
-                    $tax = $tax + $item_tax;
+                    $tax       = $tax + $item_tax;
+                    $sub_total = $sub_total + $pre_tax;
+                    $total     = $sub_total + $tax;
 
+                } else {
+                    $total  = $total + $price;
                 }
 
             }

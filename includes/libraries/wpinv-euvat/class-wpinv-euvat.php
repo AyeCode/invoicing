@@ -645,7 +645,7 @@ class WPInv_EUVat {
     // Find country by IP address.
     public static function get_country_by_ip( $ip = '' ) {
         global $wpinv_ip_address_country;
-        
+        return '';
         if ( !empty( $wpinv_ip_address_country ) ) {
             return $wpinv_ip_address_country;
         }
