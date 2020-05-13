@@ -535,7 +535,8 @@ jQuery(function($) {
         $( form ).on( 'change', '.wpinv-items-select-selector', syncTaxes )
         $( form ).on( 'change', '.wpinv-items-multiselect-selector', syncTaxes )
         $( form ).on( 'change', '#wpinv_country', syncTaxes )
-        
+        $( form ).on( 'change', '#wpinv_state', syncTaxes )
+
     }
 
     $('.wpinv_payment_form').each( function() {
@@ -565,6 +566,35 @@ jQuery(function($) {
         // Taxes.
         if ( $checkout_form.find('.wpinv-items-tax').length ) {
             wpinvPaymentFormUpdateTaxes( $checkout_form )
+        }
+
+        // States.
+        if ( $checkout_form.find('#wpinv_state').length ) {
+
+            $checkout_form.on( 'change', '#wpinv_country', function() {
+
+                wpinvBlock( $checkout_form.find('.wpinv_state') );
+
+                data = {
+                    action: 'wpinv_get_payment_form_states_field',
+                    country: $(this).val(),
+                    form: $checkout_form.find('input[name="form_id"]').val()
+                };
+
+                $.get(ajaxurl, data, function( res ) {
+
+                    if ( 'object' == typeof res ) {    
+                        $checkout_form.find('.wpinv_state').html( res.data )
+                    }
+
+                })
+
+                .always( function(data) {
+                    $checkout_form.find('.wpinv_state').unblock()
+                });
+
+            })
+
         }
 
     } )

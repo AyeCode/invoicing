@@ -116,7 +116,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		echo '</form>';
 
 		$content = ob_get_clean();
-		
+
 		return str_replace( 'sr-only', '', $content );
 
     }

@@ -876,8 +876,8 @@ class WPInv_Payment_Form_Elements {
                 <draggable v-model='$field.fields' group='address_fields_preview'>
                     <div class='form-group address-field-preview' v-for='(field, index) in $field.fields' :key='field.name' v-show='field.visible'>
                         <label :for='field.name'>{{field.label}}<span class='text-danger' v-if='field.required'> *</span></label>
-                        <input v-if='field.name !== \"wpinv_country\"' class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
-                        <select v-if='field.name == \"wpinv_country\"' class='form-control' :id='field.name'>
+                        <input v-if='field.name !== \"wpinv_country\" && field.name !== \"wpinv_state\"' class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
+                        <select v-else class='form-control' :id='field.name'>
                             <option v-if='field.placeholder'>{{field.placeholder}}</option>
                         </select>
                         <small v-if='field.description' class='form-text text-muted' v-html='field.description'></small>
@@ -915,7 +915,7 @@ class WPInv_Payment_Form_Elements {
                     'options'          => wpinv_get_country_list(),
                     'name'             => esc_attr( $address_field['name'] ),
                     'id'               => esc_attr( $address_field['name'] ),
-                    'value'            => wpinv_default_billing_country(),
+                    'value'            => wpinv_get_default_country(),
                     'placeholder'      => esc_attr( $address_field['placeholder'] ),
                     'required'         => (bool) $address_field['required'],
                     'no_wrap'          => true,
@@ -923,6 +923,40 @@ class WPInv_Payment_Form_Elements {
                     'select2'          => false,
                 ));
     
+            } else if ( 'wpinv_state' == $address_field['name'] ) {
+
+                $states = wpinv_get_country_states( wpinv_get_default_country() );
+                $state  = wpinv_get_default_state();
+
+                if ( ! empty( $states ) ) {
+
+                    echo aui()->select( array(
+                        'options'          => $states,
+                        'name'             => esc_attr( $address_field['name'] ),
+                        'id'               => esc_attr( $address_field['name'] ),
+                        'value'            => $state,
+                        'placeholder'      => esc_attr( $address_field['placeholder'] ),
+                        'required'         => (bool) $address_field['required'],
+                        'no_wrap'          => true,
+                        'label'            => wp_kses_post( $label ),
+                        'select2'          => false,
+                    ));
+
+                } else {
+
+                    echo aui()->input(
+                        array(
+                            'name'       => esc_attr( $address_field['name'] ),
+                            'id'         => esc_attr( $address_field['name'] ),
+                            'required'   => (bool) $address_field['required'],
+                            'label'      => wp_kses_post( $label ),
+                            'no_wrap'    => true,
+                            'type'       => 'text',
+                        )
+                    );
+
+                }
+
             } else {
 
                 echo aui()->input(
@@ -1799,7 +1833,7 @@ class WPInv_Payment_Form_Elements {
 
                         if ( wpinv_use_taxes() ) {
 
-                            $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
+                            $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
 
                             if ( wpinv_prices_include_tax() ) {
                                 $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -1951,7 +1985,7 @@ class WPInv_Payment_Form_Elements {
 
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2112,7 +2146,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2281,7 +2315,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -2450,7 +2484,7 @@ class WPInv_Payment_Form_Elements {
                                 $amount = floatval( $item['price'] );
                                 if ( wpinv_use_taxes() ) {
 
-                                    $rate = wpinv_get_tax_rate( wpinv_default_billing_country(), false, (int) $item['id'] );
+                                    $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
 
                                     if ( wpinv_prices_include_tax() ) {
                                         $pre_tax  = ( $amount - $amount * $rate * 0.01 );

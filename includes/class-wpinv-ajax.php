@@ -65,6 +65,7 @@ class WPInv_Ajax {
             'checkout' => false,
             'payment_form_get_taxes' => true,
             'payment_form'     => true,
+            'get_payment_form_states_field' => true,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
             'create_invoice_item' => false,
@@ -913,6 +914,88 @@ class WPInv_Ajax {
      *
      * @since 1.0.18
      */
+    public static function get_payment_form_states_field() {
+        global $invoicing;
+
+        if ( empty( $_GET['country'] ) || empty( $_GET['form'] ) ) {
+            exit;
+        }
+
+        $elements = $invoicing->form_elements->get_form_elements( $_GET['form'] );
+
+        if ( empty( $elements ) ) {
+            exit;
+        }
+
+        $address_fields = array();
+        foreach ( $elements as $element ) {
+            if ( 'address' === $element['type'] ) {
+                $address_fields = $element;
+                break;
+            }
+        }
+
+        if ( empty( $address_fields ) ) {
+            exit;
+        }
+
+        foreach( $address_fields['fields'] as $address_field ) {
+
+            if ( 'wpinv_state' == $address_field['name'] ) {
+
+                $label = $address_field['label'];
+
+                if ( ! empty( $address_field['required'] ) ) {
+                    $label .= "<span class='text-danger'> *</span>";
+                }
+
+                $states = wpinv_get_country_states( $_GET['country'] );
+
+                if ( ! empty( $states ) ) {
+
+                    $html = aui()->select(
+                            array(
+                                'options'          => $states,
+                                'name'             => esc_attr( $address_field['name'] ),
+                                'id'               => esc_attr( $address_field['name'] ),
+                                'placeholder'      => esc_attr( $address_field['placeholder'] ),
+                                'required'         => (bool) $address_field['required'],
+                                'no_wrap'          => true,
+                                'label'            => wp_kses_post( $label ),
+                                'select2'          => false,
+                            )
+                        );
+
+                } else {
+
+                    $html = aui()->input(
+                            array(
+                                'name'       => esc_attr( $address_field['name'] ),
+                                'id'         => esc_attr( $address_field['name'] ),
+                                'required'   => (bool) $address_field['required'],
+                                'label'      => wp_kses_post( $label ),
+                                'no_wrap'    => true,
+                                'type'       => 'text',
+                            )
+                        );
+
+                }
+
+                wp_send_json_success( str_replace( 'sr-only', '', $html ) );
+                exit;
+
+            }
+
+        }
+    
+        exit;
+    }
+
+    /**
+     * Payment forms.
+     *
+     * @since 1.0.18
+     */
     public static function payment_form_get_taxes() {
         global $invoicing;
 
@@ -928,14 +1011,19 @@ class WPInv_Ajax {
         }
 
         // ... and form items.
-        $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
-        $total = 0;
-        $tax   = 0;
+        $items     = $invoicing->form_elements->get_form_items( $data['form_id'] );
+        $total     = 0;
+        $tax       = 0;
         $sub_total = 0;
-        $country = wpinv_default_billing_country();
+        $country   = wpinv_default_billing_country();
+        $state     = false;
 
         if ( ! empty( $_POST['wpinv_country'] ) ) {
             $country = $_POST['wpinv_country'];
+        }
+
+        if ( ! empty( $_POST['wpinv_state'] ) ) {
+            $state = $_POST['wpinv_state'];
         }
 
         if ( ! empty( $data['wpinv-items'] ) ) {
@@ -979,7 +1067,7 @@ class WPInv_Ajax {
 
                 if ( wpinv_use_taxes() ) {
 
-                    $rate = wpinv_get_tax_rate( $country, false, (int) $item['id'] );
+                    $rate = wpinv_get_tax_rate( $country, $state, (int) $item['id'] );
 
                     if ( wpinv_prices_include_tax() ) {
                         $pre_tax  = ( $price - $price * $rate * 0.01 );
