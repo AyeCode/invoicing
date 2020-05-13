@@ -63,6 +63,7 @@ class WPInv_Ajax {
             'delete_note' => false,
             'get_states_field' => true,
             'checkout' => false,
+            'payment_form_get_taxes' => true,
             'payment_form'     => true,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
@@ -904,6 +905,98 @@ class WPInv_Ajax {
 
         $invoicing->form_elements->checkout_error();
 
+        exit;
+    }
+
+    /**
+     * Payment forms.
+     *
+     * @since 1.0.18
+     */
+    public static function payment_form_get_taxes() {
+        global $invoicing;
+
+        // Check nonce.
+        check_ajax_referer( 'wpinv_payment_form', 'wpinv_payment_form' );
+
+        // Prepare submitted data...
+        $data = wp_unslash( $_POST );
+
+        // ... form fields...
+        if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
+            exit;
+        }
+
+        // ... and form items.
+        $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
+        $total = 0;
+        $tax   = 0;
+        $sub_total = 0;
+
+        if ( ! empty( $data['wpinv-items'] ) ) {
+
+            $selected_items = wpinv_clean( $data['wpinv-items'] );
+
+            foreach ( $items as $item ) {
+
+                if ( ! isset( $selected_items[ $item['id'] ] ) ) {
+                    continue;
+                }
+
+                $quantity = 1;
+
+                if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
+
+                    $quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
+
+                    if ( 1 > $quantity ) {
+                        $quantity = 1;
+                    }
+
+                }
+
+                // Custom pricing.
+                $price = wpinv_sanitize_amount( $item['price'] );
+                if ( ! empty( $item['custom_price'] ) ) {
+
+                    $minimum_price = wpinv_sanitize_amount( $item['minimum_price'] );
+                    $set_price     = wpinv_sanitize_amount( $selected_items[ $item['id'] ] );
+
+                    if ( $set_price < $minimum_price ) {
+                        $set_price = $minimum_price;
+                    }
+
+                    $price = wpinv_sanitize_amount( $set_price );
+
+                }
+
+                $price  = $quantity * floatval( $price );
+                $total  = $total + $price;
+
+                if ( wpinv_use_taxes() ) {
+
+                    $rate = wpinv_get_tax_rate( false, false, (int) $item['id'] );
+
+                    if ( wpinv_prices_include_tax() ) {
+                        $pre_tax  = ( $price - $price * $rate * 0.01 );
+                        $item_tax = $price - $pre_tax;
+                    } else {
+                        $item_tax = $price * $rate * 0.01;
+                    }
+
+                    $tax = $tax + $item_tax;
+
+                }
+
+            }
+
+        }
+
+        wp_send_json_success( array(
+            'total'     => wpinv_price( wpinv_format_amount( $total ) ),
+            'tax'       => wpinv_price( wpinv_format_amount( $tax ) ),
+            'sub_total' => wpinv_price( wpinv_format_amount( $sub_total ) ),
+        ));
         exit;
     }
 

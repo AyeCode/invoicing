@@ -471,6 +471,36 @@ jQuery(function($) {
 
     $('.wpinv_payment_form').find('.payment_box .form-horizontal .form-group').addClass('row')
 
+    // Ensures that taxes on the form are in sync.
+    var wpinvPaymentFormUpdateTaxes = function( form ) {
+
+        var syncTaxes = function() {
+
+            var totals = $( form ).find('.item_totals')
+            wpinvBlock( totals );
+    
+            var data = $( form ).serialize();
+
+            $.post(WPInv.ajax_url, data + '&action=wpinv_payment_form_get_taxes', function (res) {
+
+                if ( 'object' == typeof res ) {
+                    $( form ).find('.wpinv-items-total').html( res.data.total )
+                    $( form ).find('.wpinv-items-tax').html( res.data.tax )
+                }
+
+            })
+
+            .always(function () {
+                totals.unblock();
+            })
+
+        }
+
+        $( form ).on( 'change', '.wpinv-item-quantity-input', syncTaxes )
+        $( form ).on( 'change', '.wpinv-item-price-input', syncTaxes )
+
+    }
+
     $('.wpinv_payment_form').each( function() {
 
         var $checkout_form = $( this );
@@ -494,6 +524,11 @@ jQuery(function($) {
 
         // Trigger click event for selected method
         $payment_methods.filter(':checked').eq(0).trigger('click');
+
+        // Taxes.
+        if ( $checkout_form.find('.wpinv-items-tax').length ) {
+            wpinvPaymentFormUpdateTaxes( $checkout_form )
+        }
 
     } )
 
