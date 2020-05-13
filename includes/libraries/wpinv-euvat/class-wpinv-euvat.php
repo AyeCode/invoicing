@@ -1163,7 +1163,7 @@ class WPInv_EUVat {
         
         return $return;
     }
-    
+
     public static function request_euvatrates( $group ) {
         $response               = array();
         $response['success']    = false;
@@ -1173,13 +1173,12 @@ class WPInv_EUVat {
         $euvatrates_url = 'https://euvatrates.com/rates.json';
         $euvatrates_url = apply_filters( 'wpinv_euvatrates_url', $euvatrates_url );
         $api_response   = wp_remote_get( $euvatrates_url );
-    
+
         try {
             if ( is_wp_error( $api_response ) ) {
                 $response['error']      = __( $api_response->get_error_message(), 'invoicing' );
             } else {
                 $body = json_decode( $api_response['body'] );
-                
                 if ( isset( $body->rates ) ) {
                     $rates = array();
                     
@@ -1803,14 +1802,14 @@ class WPInv_EUVat {
     
     public static function checkout_vat_validate( $valid_data, $post ) {
         global $wpinv_options, $wpi_session;
-        
+
         $vat_name  = __( self::get_vat_name(), 'invoicing' );
-        
+
         if ( !isset( $_POST['_wpi_nonce'] ) || !wp_verify_nonce( $_POST['_wpi_nonce'], 'vat_validation' ) ) {
             wpinv_set_error( 'vat_validation', wp_sprintf( __( "Invalid %s validation request.", 'invoicing' ), $vat_name ) );
             return;
         }
-        
+
         $vat_saved = $wpi_session->get( 'user_vat_data' );
         $wpi_session->set( 'user_vat_data', null );
         

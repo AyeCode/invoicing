@@ -105,6 +105,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		echo "<form class='wpinv_payment_form'>";
 		echo "<input type='hidden' name='form_id' value='{$args['form']}'/>";
 		wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+		wp_nonce_field( 'vat_validation', '_wpi_nonce' );
 
 		foreach ( $elements as $element ) {
 			do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $args['form'] );

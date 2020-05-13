@@ -46,22 +46,22 @@ function wpinv_get_payment_gateways() {
 
 function wpinv_payment_gateway_titles( $all_gateways ) {
     global $wpinv_options;
-    
+
     $gateways = array();
     foreach ( $all_gateways as $key => $gateway ) {
         if ( !empty( $wpinv_options[$key . '_title'] ) ) {
             $all_gateways[$key]['checkout_label'] = __( $wpinv_options[$key . '_title'], 'invoicing' );
         }
-        
+
         $gateways[$key] = isset( $wpinv_options[$key . '_ordering'] ) ? $wpinv_options[$key . '_ordering'] : ( isset( $gateway['ordering'] ) ? $gateway['ordering'] : '' );
     }
 
     asort( $gateways );
-    
+
     foreach ( $gateways as $gateway => $key ) {
         $gateways[$gateway] = $all_gateways[$gateway];
     }
-    
+
     return $gateways;
 }
 add_filter( 'wpinv_payment_gateways', 'wpinv_payment_gateway_titles', 1000, 1 );
