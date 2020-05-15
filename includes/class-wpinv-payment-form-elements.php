@@ -149,7 +149,6 @@ class WPInv_Payment_Form_Elements {
                 'type' => 'date',
                 'name' => __( 'Date', 'invoicing' ),
                 'defaults' => array(
-                    'placeholder'  => '',
                     'value'        => '',
                     'label'        => __( 'Date', 'invoicing' ),
                     'description'  => '',
@@ -161,7 +160,6 @@ class WPInv_Payment_Form_Elements {
                 'type' => 'time',
                 'name' => __( 'Time', 'invoicing' ),
                 'defaults' => array(
-                    'placeholder'  => '',
                     'value'        => '',
                     'label'        => __( 'Time', 'invoicing' ),
                     'description'  => '',
@@ -1340,7 +1338,6 @@ class WPInv_Payment_Form_Elements {
                 'id'         => esc_attr( $field['id'] ),
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
-                'placeholder' => esc_attr( $field['placeholder'] ),
                 'no_wrap'    => true,
                 'type'       => 'date',
             )
@@ -1362,8 +1359,6 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'date' );
         $label    = __( 'Field Label', 'invoicing' );
         $id       = $field . '.id + "_edit"';
-        $label2   = __( 'Placeholder text', 'invoicing' );
-        $id2      = $field . '.id + "_edit2"';
         $label3   = __( 'Help text', 'invoicing' );
         $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
         $id3      = $field . '.id + "_edit3"';
@@ -1374,10 +1369,6 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
-                </div>
-                <div class='form-group'>
-                    <label :for='$id2'>$label2</label>
-                    <input :id='$id2' v-model='$field.placeholder' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id3'>$label3</label>
@@ -1422,7 +1413,6 @@ class WPInv_Payment_Form_Elements {
                 'required'   => (bool) $field['required'],
                 'label'      => wp_kses_post( $field['label'] ),
                 'no_wrap'    => true,
-                'placeholder' => esc_attr( $field['placeholder'] ),
                 'type'       => 'time',
             )
         );
@@ -1443,8 +1433,6 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'time' );
         $label    = __( 'Field Label', 'invoicing' );
         $id       = $field . '.id + "_edit"';
-        $label2   = __( 'Placeholder text', 'invoicing' );
-        $id2      = $field . '.id + "_edit2"';
         $label3   = __( 'Help text', 'invoicing' );
         $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
         $id3      = $field . '.id + "_edit3"';
@@ -1455,10 +1443,6 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
-                </div>
-                <div class='form-group'>
-                    <label :for='$id2'>$label2</label>
-                    <input :id='$id2' v-model='$field.placeholder' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id3'>$label3</label>
