@@ -1818,7 +1818,14 @@ class WPInv_Payment_Form_Elements {
     public function render_items_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
         $label     = __( 'Item totals will appear here. Click to set items.', 'invoicing' );
-        echo "<div $restrict class='item_totals p-4 bg-warning text-center'>$label</div>";
+        $label2    = __( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' );
+        $label2   .= ' ' . __( 'To prevent this, limit customers to selecting a single item.', 'invoicing' );
+        echo "
+            <div $restrict class='item_totals text-center'>
+                <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
+                <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
+            </div>
+        ";
     }
 
     /**
@@ -2704,11 +2711,11 @@ class WPInv_Payment_Form_Elements {
                     <label :for='$id2'>$label</label>
 
                     <select class='form-control custom-select' :id='$id2' v-model='$field.items_type'>
-                        <option value='total'>"        . __( 'Buy all items on the list', 'invoicing' ) ."</option>
+                        <option value='total' :disabled='canCheckoutSeveralSubscriptions($field)'>"        . __( 'Buy all items on the list', 'invoicing' ) ."</option>
                         <option value='radio'>"        . __( 'Select a single item from the list', 'invoicing' ) ."</option>
-                        <option value='checkbox'>"     . __( 'Select one or more items on the list', 'invoicing' ) ."</option>
+                        <option value='checkbox' :disabled='canCheckoutSeveralSubscriptions($field)'>"     . __( 'Select one or more items on the list', 'invoicing' ) ."</option>
                         <option value='select'>"       . __( 'Select a single item from a dropdown', 'invoicing' ) ."</option>
-                        <option value='multi_select'>" . __( 'Select a one or more items from a dropdown', 'invoicing' ) ."</option>
+                        <option value='multi_select' :disabled='canCheckoutSeveralSubscriptions($field)'>" . __( 'Select a one or more items from a dropdown', 'invoicing' ) ."</option>
                     </select>
 
                 </div>
