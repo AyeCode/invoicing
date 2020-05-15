@@ -2723,9 +2723,16 @@ class WPInv_Payment_Form_Elements {
             'order'          => 'ASC',
             'posts_per_page' => -1,
             'post_status'    => array( 'publish' ),
+            'meta_query'     => array(
+                array(
+                    'key'       => '_wpinv_type',
+                    'compare'   => '!=',
+                    'value'     => 'package'
+                )
+            )
         );
     
-        $items      = get_posts( apply_filters( 'wpinv_item_dropdown_query_args', $item_args ) );
+        $items = get_posts( apply_filters( 'wpinv_payment_form_item_dropdown_query_args', $item_args ) );
 
         if ( empty( $items ) ) {
             return array();

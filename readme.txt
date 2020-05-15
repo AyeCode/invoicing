@@ -1,5 +1,5 @@
 === Invoicing - Invoice & Payments Plugin ===
-Contributors: stiofansisland, paoltaia, ayecode, Ismiaini
+Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9

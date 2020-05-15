@@ -254,11 +254,11 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
         $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
         
         $wpinv_ip_address_country = $invoice->country;
-        
+
         $invoice = $invoice->recalculate_totals( true );
-        
+
         wpinv_set_checkout_session( $checkout_session );
-                    
+
         return $invoice;
     }
     
