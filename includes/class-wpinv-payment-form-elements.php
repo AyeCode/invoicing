@@ -1018,7 +1018,7 @@ class WPInv_Payment_Form_Elements {
 
                         <div class='wpinv-form-address-field-editor-header' @click.prevent='toggleAddressPanel($id_main, field.name)'>
                             <span class='label'>{{field.label}}</span>
-                            <span class='toggle-visibility-icon' @click.prevent='field.visible = !field.visible;'>
+                            <span class='toggle-visibility-icon' @click.stop='field.visible = !field.visible;'>
                                 <span class='dashicons dashicons-hidden'></span>
                                 <span class='dashicons dashicons-visibility'></span>
                             </span>
