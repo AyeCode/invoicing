@@ -551,6 +551,20 @@ function wpinv_post_updated_messages( $messages ) {
         10  => __( 'Discount draft updated.', 'invoicing' ),
     );
 
+    $messages['wpi_payment_form'] = array(
+        0   => '',
+        1   => __( 'Payment Form updated.', 'invoicing' ),
+        2   => __( 'Custom field updated.', 'invoicing' ),
+        3   => __( 'Custom field deleted.', 'invoicing' ),
+        4   => __( 'Payment Form updated.', 'invoicing' ),
+        5   => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Payment Form restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+        6   => __( 'Payment Form updated.', 'invoicing' ),
+        7   => __( 'Payment Form saved.', 'invoicing' ),
+        8   => __( 'Payment Form submitted.', 'invoicing' ),
+        9   => wp_sprintf( __( 'Payment Form scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
+        10  => __( 'Payment Form draft updated.', 'invoicing' ),
+    );
+
     return $messages;
 }
 add_filter( 'post_updated_messages', 'wpinv_post_updated_messages', 10, 1 );
