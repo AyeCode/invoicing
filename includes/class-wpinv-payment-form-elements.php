@@ -445,7 +445,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'text' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='text'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -524,7 +525,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'textarea' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <textarea  :placeholder='$field.placeholder' :id='$field.id' class='form-control' rows='3'></textarea>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -606,7 +608,8 @@ class WPInv_Payment_Form_Elements {
         $placeholder = "$field.placeholder";
         $id          = $field . '.id';
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$id'>{{" . $label . "}}</label>
                 <select id='$id' class='form-control custom-select'  v-model='$field.value'>
                     <option v-if='$placeholder' value='' disabled>{{" . $placeholder . "}}</option>
@@ -702,6 +705,7 @@ class WPInv_Payment_Form_Elements {
         $label    = "$field.label";
         echo "
             <div class='form-check' $restrict>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <input  :id='$field.id' class='form-check-input' type='checkbox' />
                 <label class='form-check-label' :for='$field.id'>{{" . $label . "}}</label>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -776,7 +780,8 @@ class WPInv_Payment_Form_Elements {
         $label       = "$field.label";
         $id          = $field . '.id';
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <legend class='col-form-label' v-if='$label'>{{" . $label . "}}</legend>
                 <div class='form-check' v-for='(option, index) in $field.options'>
                     <input class='form-check-input' type='radio' :id='$id + index'>
@@ -874,7 +879,8 @@ class WPInv_Payment_Form_Elements {
         echo "
             <div class='wpinv-address-wrapper' $restrict>
                 <draggable v-model='$field.fields' group='address_fields_preview'>
-                    <div class='form-group address-field-preview' v-for='(field, index) in $field.fields' :key='field.name' v-show='field.visible'>
+                    <div class='form-group address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in $field.fields' :key='field.name' v-show='field.visible'>
+                        <div class='wpinv-payment-form-field-preview-overlay'></div>
                         <label :for='field.name'>{{field.label}}<span class='text-danger' v-if='field.required'> *</span></label>
                         <input v-if='field.name !== \"wpinv_country\" && field.name !== \"wpinv_state\"' class='form-control' type='text' :id='field.name' :placeholder='field.placeholder'>
                         <select v-else class='form-control' :id='field.name'>
@@ -1068,7 +1074,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'email' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='email'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -1230,7 +1237,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'website' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='url'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -1310,7 +1318,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'date' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='date'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -1390,7 +1399,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'time' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='time'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
@@ -1470,7 +1480,8 @@ class WPInv_Payment_Form_Elements {
         $restrict = $this->get_restrict_markup( $field, 'number' );
         $label    = "$field.label";
         echo "
-            <div $restrict>
+            <div $restrict class='wpinv-payment-form-field-preview'>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <label :for='$field.id'>{{" . $label . "}}</label>
                 <input  :placeholder='$field.placeholder' :id='$field.id' class='form-control' type='number'>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
