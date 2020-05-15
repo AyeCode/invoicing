@@ -3470,10 +3470,7 @@ p.wpinv_error {
 #wpinv_checkout_wrap .form-control {
     float: none;
 }
-.wpinv-receipt .wpinv-receipt-actions {
-    margin-bottom: 2.5em;
-    margin-top: -4.5em;
-}
+
 .wpinv-receipt-details .table-sm tr td:first-child,
 .wpinv-receipt-address .table-sm tr th,
 .wpinv-bank-details .table-sm tr th {
