@@ -1970,7 +1970,24 @@ textarea.wpi-email_overdue_content {
     overflow: hidden;
 }
 
-.address-field-preview:hover {
+.wpinv-address-wrapper .address-field-preview:hover {
     cursor: move;
-    background: rgb(250, 250, 250);
+}
+
+.wpinv-address-wrapper .wpinv-payment-form-field-preview-overlay:hover {
+    background: rgba(255, 235, 59, 0.08);
+    margin: -10px;
+}
+
+.wpinv-payment-form-field-preview {
+    position: relative;
+}
+
+.wpinv-payment-form-field-preview-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
 }
