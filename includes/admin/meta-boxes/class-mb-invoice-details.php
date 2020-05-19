@@ -35,10 +35,14 @@ class WPInv_Meta_Box_Details {
         ?>
 <div class="gdmbx2-wrap form-table">
     <div class="gdmbx2-metabox gdmbx-field-list" id="gdmbx2-metabox-wpinv_details">
-        <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-created">
-            <div class="gdmbx-th"><label><?php _e( 'Date Created:', 'invoicing' );?></label></div>
-            <div class="gdmbx-td"><?php echo $date_created;?></div>
+
+        <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-date-created table-layout">
+            <div class="gdmbx-th"><label for="wpinv_date_created"><?php _e( 'Date Created:', 'invoicing' );?></label></div>
+            <div class="gdmbx-td">
+                <input type="datetime-local" value="<?php echo esc_attr( date( 'Y-m-d\TH:i:s', $datetime_created ) );?>" id="wpinv_date_created" name="date_created" class="regular-text">
+            </div>
         </div>
+
         <?php if ( $invoice->post_type == 'wpi_invoice' && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->has_status( array( 'auto-draft', 'draft' ) ) ) ) { ?>
         <div class="gdmbx-row gdmbx-type-select gdmbx2-id-wpinv-date-overdue">
             <div class="gdmbx-th"><label for="wpinv_due_date"><?php _e( 'Due Date:', 'invoicing' );?></label></div>

@@ -1152,11 +1152,11 @@ add_action( 'wpinv_update_status', 'wpinv_complete_payment', 100, 3 );
 
 function wpinv_update_payment_status( $invoice_id, $new_status = 'publish' ) {    
     $invoice = !empty( $invoice_id ) && is_object( $invoice_id ) ? $invoice_id : wpinv_get_invoice( (int)$invoice_id );
-    
+
     if ( empty( $invoice ) ) {
         return false;
     }
-    
+
     return $invoice->update_status( $new_status );
 }
 
