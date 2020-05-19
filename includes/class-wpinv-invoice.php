@@ -137,6 +137,11 @@ final class WPInv_Invoice {
         $this->due_date        = $this->setup_due_date();
         $this->completed_date  = $this->setup_completed_date();
         $this->status          = $invoice->post_status;
+
+        if ( 'future' == $this->status ) {
+            $this->status = 'publish';
+        }
+
         $this->post_status     = $this->status;
         $this->mode            = $this->setup_mode();
         $this->parent_invoice  = $invoice->post_parent;
