@@ -438,7 +438,7 @@ class WPInv_Meta_Box_Items {
         $invoice->old_status = $_POST['original_post_status'];
         
         $currency = $invoice->get_currency();
-        if ( ! empty( sanitize_text_field( $data['wpinv_currency'] ) ) ) {
+        if ( ! empty( $data['wpinv_currency'] ) ) {
             $currency = sanitize_text_field( $data['wpinv_currency'] );
         }
 
