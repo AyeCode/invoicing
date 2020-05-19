@@ -16,6 +16,13 @@ jQuery(function($) {
         }
     }
 
+    // Do not require hidden fields.
+    $(document).ready( function() {
+        $( '#wpinv_checkout_form :input[required]:hidden' ).each(function(){
+            $(this).removeAttr('required')
+        });
+    } )
+
     var valid = false;
     $('body').on('submit', '#wpinv_checkout_form', function(e) {
         var $form = $(this).closest('#wpinv_checkout_form');
