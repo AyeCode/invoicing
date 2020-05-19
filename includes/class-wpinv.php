@@ -278,7 +278,7 @@ class WPInv_Plugin {
         $localize['thousand_sep']         = wpinv_thousands_separator();
         $localize['decimal_sep']          = wpinv_decimal_separator();
         $localize['decimals']             = wpinv_decimals();
-        $localize['txtComplete']          = __( 'Complete', 'invoicing' );
+        $localize['txtComplete']          = __( 'Continue', 'invoicing' );
         $localize['UseTaxes']             = wpinv_use_taxes();
         $localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
 

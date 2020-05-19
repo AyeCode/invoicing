@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * If VAT is enabled, you can now disable taxes on a per invoice basis - ADDED
 * Inovice action buttons not working on the 2019 theme - FIXED
 * Ability to change the invoice date - ADDED
+* CTA for free checkouts changed from "Complete" to "Continue" - CHANGED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
