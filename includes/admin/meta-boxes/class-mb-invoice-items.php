@@ -406,6 +406,7 @@ class WPInv_Meta_Box_Items {
         $old_status     = !empty( $data['original_post_status'] ) ? sanitize_text_field( $data['original_post_status'] ) : $status;
         $number         = sanitize_text_field( $data['wpinv_number'] );
         $due_date       = isset( $data['wpinv_due_date'] ) ? sanitize_text_field( $data['wpinv_due_date'] ) : '';
+        $date_created   = isset( $data['date_created'] ) ? sanitize_text_field( $data['date_created'] ) : '';
         //$discounts      = sanitize_text_field( $data['wpinv_discounts'] );
         //$discount       = sanitize_text_field( $data['wpinv_discount'] );
 
@@ -454,6 +455,24 @@ class WPInv_Meta_Box_Items {
             $invoice->set( 'gateway', sanitize_text_field( $data['wpinv_gateway'] ) );
         }
         $saved = $invoice->save();
+
+        if ( ! empty( $date_created ) && strtotime( $date_created, current_time( 'timestamp' ) ) ) {
+
+            $time = strtotime( $date_created, current_time( 'timestamp' ) );
+            $date = date( 'Y-m-d H:i:s', $time );
+            $date_gmt = get_gmt_from_date( $date );
+
+            wp_update_post(
+                array(
+                    'ID'            => $invoice->ID,
+                    'post_date'     => $date,
+                    'post_date_gmt' => $date_gmt,
+                    'edit_date'     => true,
+                )
+            );
+
+            $invoice->date = $date;
+        }
 
         // Check for payment notes
         if ( !empty( $data['invoice_note'] ) ) {
