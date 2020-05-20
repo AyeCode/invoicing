@@ -477,7 +477,7 @@ function wpinv_item_dropdown( $args = array() ) {
         'order'          => 'ASC',
         'posts_per_page' => $args['number']
     );
-    
+
     $item_args  = apply_filters( 'wpinv_item_dropdown_query_args', $item_args, $args, $defaults );
 
     $items      = get_posts( $item_args );

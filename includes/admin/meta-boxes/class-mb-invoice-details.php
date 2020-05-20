@@ -221,20 +221,6 @@ class WPInv_Meta_Box_Details {
         <?php
         }
     }
-
-    /**
-     * Renders a metabox to edit a payment form.
-     */
-    public static function payment_form( $post ) {
-        WPInv_Meta_Box_Form_Items::output_options( $post );
-    }
-
-    /**
-     * Renders a metabox to select items.
-     */
-    public static function payment_form_items( $post ) {
-        WPInv_Meta_Box_Form_Items::output( $post );
-    }
     
     public static function payment_meta( $post ) {
         global $wpi_mb_invoice;
@@ -243,7 +229,7 @@ class WPInv_Meta_Box_Details {
         if ( !$set_dateway && !$wpi_mb_invoice->get_meta( '_wpinv_checkout', true ) && !$wpi_mb_invoice->is_paid() && !$wpi_mb_invoice->is_refunded() ) {
             $set_dateway = true;
         }
-        
+
         ?>
         <p class="wpi-meta-row">
         <?php if ( $set_dateway ) { $gateways = wpinv_get_enabled_payment_gateways( true ); ?>

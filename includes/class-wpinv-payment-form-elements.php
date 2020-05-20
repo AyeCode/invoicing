@@ -2598,6 +2598,8 @@ class WPInv_Payment_Form_Elements {
      * Renders the items element template.
      */
     public function edit_items_template( $field ) {
+        global $wpinv_euvat, $post;
+
         $restrict = $this->get_restrict_markup( $field, 'items' );
         $label    = __( 'Let customers...', 'invoicing' );
         $label2   = __( 'Available Items', 'invoicing' );
@@ -2611,6 +2613,47 @@ class WPInv_Payment_Form_Elements {
         $label6   = esc_attr__( 'Enter the minimum price that a user can pay', 'invoicing' );
         $label7   = esc_attr__( 'Allow users to buy several quantities', 'invoicing' );
         $label8   = esc_attr__( 'This item is required', 'invoicing' );
+
+        // Item types.
+        $item_types      = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
+        $item_types_html = '';
+
+        foreach ( $item_types as $type => $label ) {
+            $type  = esc_attr( $type );
+            $label = esc_html( $label );
+            $item_types_html .= "<option value='$type'>$label</type>";
+        }
+
+        // Taxes.
+        $taxes = '';
+        if ( $wpinv_euvat->allow_vat_rules() ) {
+            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"rule\"'>";
+            $taxes .= __( 'VAT rule type', 'invoicing' );
+            $taxes .= "</label><select :id='$id + item.id + \"rule\"' class='form-control custom-select' v-model='item.rule'>";
+
+            foreach ( $wpinv_euvat->get_rules() as $type => $label ) {
+                $type   = esc_attr( $type );
+                $label  = esc_html( $label );
+                $taxes .= "<option value='$type'>$label</type>";
+            }
+
+            $taxes .= '</select></div>';
+        }
+
+        if ( $wpinv_euvat->allow_vat_classes() ) {
+            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"class\"'>";
+            $taxes .= __( 'VAT class', 'invoicing' );
+            $taxes .= "</label><select :id='$id + item.id + \"class\"' class='form-control custom-select' v-model='item.class'>";
+
+            foreach ( $wpinv_euvat->get_all_classes() as $type => $label ) {
+                $type   = esc_attr( $type );
+                $label  = esc_html( $label );
+                $taxes .= "<option value='$type'>$label</type>";
+            }
+
+            $taxes .= '</select></div>';
+        }
+
         echo "<div $restrict>
 
                 <label>$label2</label>
@@ -2640,6 +2683,15 @@ class WPInv_Payment_Form_Elements {
                                     <input :id='$id + item.id + \"price\"' v-model='item.price' class='form-control' />
                                     <small class='form-text text-muted' v-if='item.custom_price'>$label4</small>
                                 </div>
+
+                                <div class='form-group' v-if='item.new'>
+                                    <label :for='$id + item.id + \"type\"'>Item Type</label>
+                                    <select class='form-control custom-select' v-model='item.type'>
+                                        $item_types_html
+                                    </select>
+                                </div>
+
+                                <div v-if='item.new'>$taxes</div>
 
                                 <div class='form-group form-check'>
                                     <input :id='$id4 + item.id + \"custom_price\"' v-model='item.custom_price' type='checkbox' class='form-check-input' />
