@@ -424,6 +424,10 @@ class WPInv_Plugin {
             wp_enqueue_script( 'wpinv-sub-admin-script' );
         }
 
+        if ( $page == 'wpinv-reports' ) {
+            wp_enqueue_script( 'jquery-flot', WPINV_PLUGIN_URL . 'assets/js/jquery.flot.min.js', array( 'jquery' ), '0.7' );
+        }
+
     }
 
     public function admin_body_class( $classes ) {

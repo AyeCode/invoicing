@@ -44,15 +44,19 @@ class WPInv_Reports {
     public function actions() {
         if ( is_admin() ) {
             add_action( 'admin_menu', array( $this, 'add_submenu' ), 20 );
+            add_action( 'wpinv_reports_tab_reports', array( $this, 'reports' ) );
             add_action( 'wpinv_reports_tab_export', array( $this, 'export' ) );
             add_action( 'wp_ajax_wpinv_ajax_export', array( $this, 'ajax_export' ) );
             add_action( 'wp_ajax_wpinv_ajax_discount_use_export', array( $this, 'discount_use_export' ) );
-            
+
             // Export Invoices.
             add_action( 'wpinv_export_set_params_invoices', array( $this, 'set_invoices_export' ) );
             add_filter( 'wpinv_export_get_columns_invoices', array( $this, 'get_invoices_columns' ) );
             add_filter( 'wpinv_export_get_data_invoices', array( $this, 'get_invoices_data' ) );
             add_filter( 'wpinv_get_export_status_invoices', array( $this, 'invoices_export_status' ) );
+
+            // Reports.
+            add_action( 'wpinv_reports_view_earnings', array( $this, 'earnings_report' ) );
         }
         do_action( 'wpinv_class_reports_actions', $this );
     }
@@ -63,19 +67,22 @@ class WPInv_Reports {
     }
     
     public function reports_page() {
+
         if ( !wp_script_is( 'postbox', 'enqueued' ) ) {
             wp_enqueue_script( 'postbox' );
         }
+
         if ( !wp_script_is( 'jquery-ui-datepicker', 'enqueued' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
         
         $current_page = admin_url( 'admin.php?page=wpinv-reports' );
-        $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'export';
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'reports';
         ?>
         <div class="wrap wpi-reports-wrap">
             <h1><?php echo esc_html( __( 'Reports', 'invoicing' ) ); ?></h1>
             <h2 class="nav-tab-wrapper wp-clearfix">
+                <a href="<?php echo add_query_arg( array( 'tab' => 'reports', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'reports' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Reports', 'invoicing' ); ?></a>
                 <a href="<?php echo add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
                 <?php do_action( 'wpinv_reports_page_tabs' ); ;?>
             </h2>
@@ -87,6 +94,44 @@ class WPInv_Reports {
             ?>
         </div>
         <?php
+    }
+
+    /**
+     * Displays the reports graphs.
+     */
+    public function reports() {
+
+        $views = array(
+            'earnings'   => __( 'Earnings', 'invoicing' ),
+            'items'      => __( 'Items', 'invoicing' ),
+            'gateways'   => __( 'Payment Methods', 'invoicing' ),
+            'taxes'      => __( 'Taxes', 'invoicing' ),
+        );
+    
+        $views   = apply_filters( 'wpinv_report_views', $views );
+        $current = 'earnings';
+
+        if ( isset( $_GET['view'] ) && array_key_exists( $_GET['view'], $views ) )
+		$current = $_GET['view'];
+
+        ?>
+	        <form id="wpinv-reports-filter" method="get" class="tablenav">
+		        <select id="wpinv-reports-view" name="view">
+			        <option value="-1"><?php _e( 'Report Type', 'invoicing' ); ?></option>
+			            <?php foreach ( $views as $view_id => $label ) : ?>
+				            <option value="<?php echo esc_attr( $view_id ); ?>" <?php selected( $view_id, $current ); ?>><?php echo $label; ?></option>
+			            <?php endforeach; ?>
+		        </select>
+
+		        <?php do_action( 'wpinv_report_view_actions' ); ?>
+
+		        <input type="hidden" name="page" value="edd-reports"/>
+		        <?php submit_button( __( 'Show', 'invoicing' ), 'secondary', 'submit', false ); ?>
+	        </form>
+        <?php
+
+	    do_action( 'wpinv_reports_view_' . $current );
+
     }
     
     public function export() {
@@ -586,5 +631,94 @@ class WPInv_Reports {
         }
 
         return $cart_details;
+    }
+
+    /**
+     * Returns the periods filter.
+     */
+    public function period_filter( $args = array() ) {
+
+        ob_start();
+
+        echo '<form id="wpinv-graphs-filter" method="get" style="margin-bottom: 10px;" class="tablenav">';
+        echo '<input type="hidden" name="page" value="wpinv-reports">';
+
+        foreach ( $args as $key => $val ) {
+            $key = esc_attr($key);
+            $val = esc_attr($val);
+            echo "<input type='hidden' name='$key' value='$val'>";
+        }
+
+        echo '<select id="wpinv-graphs-date-options" name="range" style="min-width: 200px;" onChange="this.form.submit()">';
+
+        $ranges = array(
+            'today'        => __( 'Today', 'invoicing' ),
+            'yesterday'    => __( 'Yesterday', 'invoicing' ),
+            'this_week'    => __( 'This Week', 'invoicing' ),
+            'last_week'    => __( 'Last Week', 'invoicing' ),
+            '7_days_ago'   => __( 'Last 7 Days', 'invoicing' ),
+            '30_days_ago'  => __( 'Last 30 Days', 'invoicing' ),
+            'this_month'   => __( 'This Month', 'invoicing' ),
+            'last_month'   => __( 'Last Month', 'invoicing' ),
+            'this_quarter' => __( 'This Quarter', 'invoicing' ),
+            'last_quarter' => __( 'Last Quarter', 'invoicing' ),
+            'this_year'    => __( 'This Year', 'invoicing' ),
+            'last_year'    => __( 'Last Year', 'invoicing' ),
+        );
+
+        $range = isset( $_GET['range'] ) && isset( $ranges[ $_GET['range'] ] ) ? $_GET['range'] : '7_days_ago';
+
+        foreach ( $ranges as $val => $label ) {
+            $selected = selected( $range, $val, false );
+            echo "<option value='$val' $selected>$label</option>";
+        }
+
+        echo '</select></form>';
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Returns the the current date range.
+     */
+    public function get_date_range( $range ) {
+
+        $ranges = array(
+            'today'        => __( 'Today', 'invoicing' ),
+            'yesterday'    => __( 'Yesterday', 'invoicing' ),
+            'this_week'    => __( 'This Week', 'invoicing' ),
+            'last_week'    => __( 'Last Week', 'invoicing' ),
+            '7_days_ago'   => __( 'Last 7 Days', 'invoicing' ),
+            '30_days_ago'  => __( 'Last 30 Days', 'invoicing' ),
+            'this_month'   => __( 'This Month', 'invoicing' ),
+            'last_month'   => __( 'Last Month', 'invoicing' ),
+            'this_quarter' => __( 'This Quarter', 'invoicing' ),
+            'last_quarter' => __( 'Last Quarter', 'invoicing' ),
+            'this_year'    => __( 'This Year', 'invoicing' ),
+            'last_year'    => __( 'Last Year', 'invoicing' ),
+        );
+
+    }
+
+    /**
+     * Displays the earnings report.
+     */
+    public function earnings_report() {
+
+        echo '
+            <div class="postbox">
+                <div class="inside">
+                    <h3><span>' . __( 'Earnings Over Time', 'invoicing' ) .'</span></h3>
+                    ' . $this->period_filter() .'
+                    <div id="wpinv_report_graph" style="max-width:720px;height:300px"></div>
+                </div>
+            </div>
+
+            <script>
+                jQuery(document).ready( function() {
+                    jQuery.plot(jQuery("#wpinv_report_graph"), [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } });
+                })
+            </script>
+        ';
     }
 }
