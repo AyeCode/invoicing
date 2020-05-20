@@ -13,7 +13,104 @@ if ( !defined( 'WPINC' ) ) {
 
 add_action( 'init', 'wpinv_register_post_types', 1 );
 function wpinv_register_post_types() {
-    
+
+    $items_labels = array(
+        'name'               => _x( 'Items', 'post type general name', 'invoicing' ),
+        'singular_name'      => _x( 'Item', 'post type singular name', 'invoicing' ),
+        'menu_name'          => _x( 'Items', 'admin menu', 'invoicing' ),
+        'add_new'            => _x( 'Add New', 'wpi_item', 'invoicing' ),
+        'add_new_item'       => __( 'Add New Item', 'invoicing' ),
+        'new_item'           => __( 'New Item', 'invoicing' ),
+        'edit_item'          => __( 'Edit Item', 'invoicing' ),
+        'view_item'          => __( 'View Item', 'invoicing' ),
+        'all_items'          => __( 'Items', 'invoicing' ),
+        'search_items'       => __( 'Search Items', 'invoicing' ),
+        'parent_item_colon'  => '',
+        'not_found'          => __( 'No items found.', 'invoicing' ),
+        'not_found_in_trash' => __( 'No items found in trash.', 'invoicing' )
+    );
+    $items_labels = apply_filters( 'wpinv_items_labels', $items_labels );
+
+    $cap_type          = 'wpi_item';
+    $invoice_item_args = array(
+        'labels'                => $items_labels,
+        'description'           => __( 'This is where you can add new invoice items.', 'invoicing' ),
+        'public'                => false,
+        'has_archive'           => false,
+        '_builtin'              => false,
+        'show_ui'               => true,
+        'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
+        'show_in_nav_menus'     => false,
+        'supports'              => array( 'title', 'excerpt' ),
+        'register_meta_box_cb'  => 'wpinv_register_item_meta_boxes',
+        'rewrite'               => false,
+        'query_var'             => false,
+        'capability_type'       => $cap_type,
+        'map_meta_cap'          => true,
+        'show_in_admin_bar'     => true,
+        'capabilities'          => array(
+            //'create_posts'           => wpinv_get_capability(),
+            'delete_post'            => "delete_{$cap_type}",
+            'delete_posts'           => "delete_{$cap_type}s",
+            'delete_private_posts'   => "delete_private_{$cap_type}s",
+            'delete_published_posts' => "delete_published_{$cap_type}s",
+            'delete_others_posts'    => "delete_others_{$cap_type}s",
+            'edit_post'              => "edit_{$cap_type}",
+            'edit_posts'             => "edit_{$cap_type}s",
+            'edit_others_posts'      => "edit_others_{$cap_type}s",
+            'edit_private_posts'     => "edit_private_{$cap_type}s",
+            'edit_published_posts'   => "edit_published_{$cap_type}s",
+            'publish_posts'          => "publish_{$cap_type}s",
+            'read_post'              => "read_{$cap_type}",
+            'read_private_posts'     => "read_private_{$cap_type}s",
+            //'create_posts'           => "create_{$cap_type}s",
+
+        ),
+        'can_export'            => true,
+    );
+    $invoice_item_args = apply_filters( 'wpinv_register_post_type_invoice_item', $invoice_item_args );
+
+    register_post_type( 'wpi_item', $invoice_item_args );
+
+    $cap_type = 'wpi_payment_form';
+    register_post_type(
+        'wpi_payment_form',
+        apply_filters(
+            'wpinv_register_post_type_payment_form',
+            array(
+                'labels'             => array(
+                    'name'               => _x( 'Payment Forms', 'post type general name', 'invoicing' ),
+                    'singular_name'      => _x( 'Payment Form', 'post type singular name', 'invoicing' ),
+                    'menu_name'          => _x( 'Payment Forms', 'admin menu', 'invoicing' ),
+                    'name_admin_bar'     => _x( 'Payment Form', 'add new on admin bar', 'invoicing' ),
+                    'add_new'            => _x( 'Add New', 'Payment Form', 'invoicing' ),
+                    'add_new_item'       => __( 'Add New Payment Form', 'invoicing' ),
+                    'new_item'           => __( 'New Payment Form', 'invoicing' ),
+                    'edit_item'          => __( 'Edit Payment Form', 'invoicing' ),
+                    'view_item'          => __( 'View Payment Form', 'invoicing' ),
+                    'all_items'          => __( 'Payment Forms', 'invoicing' ),
+                    'search_items'       => __( 'Search Payment Forms', 'invoicing' ),
+                    'parent_item_colon'  => __( 'Parent Payment Forms:', 'invoicing' ),
+                    'not_found'          => __( 'No payment forms found.', 'invoicing' ),
+                    'not_found_in_trash' => __( 'No payment forms found in trash.', 'invoicing' )
+                ),
+                'description'        => __( 'Stores payment forms.', 'invoicing' ),
+                'public'             => false,
+                'show_ui'            => true,
+                'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : true,
+                'show_in_nav_menus'  => false,
+                'query_var'          => false,
+                'rewrite'            => true,
+                'map_meta_cap'       => true,
+                'has_archive'        => false,
+                'hierarchical'       => false,
+                'menu_position'      => null,
+                'supports'           => array( 'title' ),
+                'menu_icon'          => 'dashicons-media-form',
+            )
+        )
+    );
+
     $labels = array(
         'name'               => _x( 'Invoices', 'post type general name', 'invoicing' ),
         'singular_name'      => _x( 'Invoice', 'post type singular name', 'invoicing' ),
@@ -79,103 +176,6 @@ function wpinv_register_post_types() {
     
     register_post_type( 'wpi_invoice', $args );
 
-    $cap_type = 'wpi_payment_form';
-    register_post_type(
-        'wpi_payment_form',
-        apply_filters(
-            'wpinv_register_post_type_payment_form',
-            array(
-                'labels'             => array(
-                    'name'               => _x( 'Payment Forms', 'post type general name', 'invoicing' ),
-                    'singular_name'      => _x( 'Payment Form', 'post type singular name', 'invoicing' ),
-                    'menu_name'          => _x( 'Payment Forms', 'admin menu', 'invoicing' ),
-                    'name_admin_bar'     => _x( 'Payment Form', 'add new on admin bar', 'invoicing' ),
-                    'add_new'            => _x( 'Add New', 'Payment Form', 'invoicing' ),
-                    'add_new_item'       => __( 'Add New Payment Form', 'invoicing' ),
-                    'new_item'           => __( 'New Payment Form', 'invoicing' ),
-                    'edit_item'          => __( 'Edit Payment Form', 'invoicing' ),
-                    'view_item'          => __( 'View Payment Form', 'invoicing' ),
-                    'all_items'          => __( 'Payment Forms', 'invoicing' ),
-                    'search_items'       => __( 'Search Payment Forms', 'invoicing' ),
-                    'parent_item_colon'  => __( 'Parent Payment Forms:', 'invoicing' ),
-                    'not_found'          => __( 'No payment forms found.', 'invoicing' ),
-                    'not_found_in_trash' => __( 'No payment forms found in trash.', 'invoicing' )
-                ),
-                'description'        => __( 'Stores payment forms.', 'invoicing' ),
-                'public'             => false,
-                'show_ui'            => true,
-                'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : true,
-                'show_in_nav_menus'  => false,
-                'query_var'          => false,
-                'rewrite'            => true,
-                'map_meta_cap'       => true,
-                'has_archive'        => false,
-                'hierarchical'       => false,
-                'menu_position'      => null,
-                'supports'           => array( 'title' ),
-                'menu_icon'          => 'dashicons-media-form',
-            )
-        )
-    );
-    
-    $items_labels = array(
-        'name'               => _x( 'Items', 'post type general name', 'invoicing' ),
-        'singular_name'      => _x( 'Item', 'post type singular name', 'invoicing' ),
-        'menu_name'          => _x( 'Items', 'admin menu', 'invoicing' ),
-        'add_new'            => _x( 'Add New', 'wpi_item', 'invoicing' ),
-        'add_new_item'       => __( 'Add New Item', 'invoicing' ),
-        'new_item'           => __( 'New Item', 'invoicing' ),
-        'edit_item'          => __( 'Edit Item', 'invoicing' ),
-        'view_item'          => __( 'View Item', 'invoicing' ),
-        'all_items'          => __( 'Items', 'invoicing' ),
-        'search_items'       => __( 'Search Items', 'invoicing' ),
-        'parent_item_colon'  => '',
-        'not_found'          => __( 'No items found.', 'invoicing' ),
-        'not_found_in_trash' => __( 'No items found in trash.', 'invoicing' )
-    );
-    $items_labels = apply_filters( 'wpinv_items_labels', $items_labels );
-
-    $cap_type          = 'wpi_item';
-    $invoice_item_args = array(
-        'labels'                => $items_labels,
-        'description'           => __( 'This is where you can add new invoice items.', 'invoicing' ),
-        'public'                => false,
-        'has_archive'           => false,
-        '_builtin'              => false,
-        'show_ui'               => true,
-        'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
-        'show_in_nav_menus'     => false,
-        'supports'              => array( 'title', 'excerpt' ),
-        'register_meta_box_cb'  => 'wpinv_register_item_meta_boxes',
-        'rewrite'               => false,
-        'query_var'             => false,
-        'capability_type'       => $cap_type,
-        'map_meta_cap'          => true,
-        'show_in_admin_bar'     => true,
-        'capabilities'          => array(
-            //'create_posts'           => wpinv_get_capability(),
-            'delete_post'            => "delete_{$cap_type}",
-            'delete_posts'           => "delete_{$cap_type}s",
-            'delete_private_posts'   => "delete_private_{$cap_type}s",
-            'delete_published_posts' => "delete_published_{$cap_type}s",
-            'delete_others_posts'    => "delete_others_{$cap_type}s",
-            'edit_post'              => "edit_{$cap_type}",
-            'edit_posts'             => "edit_{$cap_type}s",
-            'edit_others_posts'      => "edit_others_{$cap_type}s",
-            'edit_private_posts'     => "edit_private_{$cap_type}s",
-            'edit_published_posts'   => "edit_published_{$cap_type}s",
-            'publish_posts'          => "publish_{$cap_type}s",
-            'read_post'              => "read_{$cap_type}",
-            'read_private_posts'     => "read_private_{$cap_type}s",
-            //'create_posts'           => "create_{$cap_type}s",
-
-        ),
-        'can_export'            => true,
-    );
-    $invoice_item_args = apply_filters( 'wpinv_register_post_type_invoice_item', $invoice_item_args );
-
-    register_post_type( 'wpi_item', $invoice_item_args );
-    
     $labels = array(
         'name'               => _x( 'Discounts', 'post type general name', 'invoicing' ),
         'singular_name'      => _x( 'Discount', 'post type singular name', 'invoicing' ),

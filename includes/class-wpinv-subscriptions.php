@@ -76,7 +76,7 @@ class WPInv_Subscriptions {
      */
     private function actions() {
 
-        add_action( 'admin_menu', array( $this, 'wpinv_subscriptions_list' ), 10 );
+        add_action( 'admin_menu', array( $this, 'wpinv_subscriptions_list' ), 40 );
         add_action( 'admin_notices', array( $this, 'notices' ) );
         add_action( 'init', array( $this, 'wpinv_post_actions' ) );
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
