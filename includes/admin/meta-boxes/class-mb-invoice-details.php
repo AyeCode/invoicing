@@ -229,7 +229,7 @@ class WPInv_Meta_Box_Details {
         if ( !$set_dateway && !$wpi_mb_invoice->get_meta( '_wpinv_checkout', true ) && !$wpi_mb_invoice->is_paid() && !$wpi_mb_invoice->is_refunded() ) {
             $set_dateway = true;
         }
-        
+
         ?>
         <p class="wpi-meta-row">
         <?php if ( $set_dateway ) { $gateways = wpinv_get_enabled_payment_gateways( true ); ?>
