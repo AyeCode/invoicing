@@ -139,6 +139,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * CTA for free checkouts changed from "Complete" to "Continue" - CHANGED
 * Unable to checkout when required fields are hidden via CSS - FIXED
 * Buy now buttons shortcode now visible - ADDED
+* Admin menus re-ordered to provide better hierachy - CHANGED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

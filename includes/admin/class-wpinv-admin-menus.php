@@ -14,7 +14,8 @@ class WPInv_Admin_Menus {
      */
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
-        add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 99 );
+        add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 100 );
+        add_action( 'admin_menu', array( $this, 'add_settings_menu' ), 60 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
         add_action( 'admin_head-nav-menus.php', array( $this, 'add_nav_menu_meta_boxes' ) );
     }
@@ -32,8 +33,8 @@ class WPInv_Admin_Menus {
             $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
 
             // Allow users with 'manage_invocing' capability to create new invoices
-            $submenu['post-new.php?post_type=wpi_invoice'][]  = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
             $submenu['post-new.php?post_type=wpi_item'][]     = array( '', '', 'post-new.php?post_type=wpi_item', '' );
+            $submenu['post-new.php?post_type=wpi_invoice'][]  = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
             $submenu['post-new.php?post_type=wpi_discount'][] = array( '', '', 'post-new.php?post_type=wpi_discount', '' );
 
         }
@@ -42,7 +43,20 @@ class WPInv_Admin_Menus {
 
         add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
 
-        add_submenu_page( 'wpinv', __( 'Invoice Settings', 'invoicing' ), __( 'Settings', 'invoicing' ), $capability, 'wpinv-settings', array( $this, 'options_page' ));
+    }
+
+    /**
+     * Registers the settings menu.
+     */
+    public function add_settings_menu() {
+        add_submenu_page(
+            'wpinv',
+            __( 'Invoice Settings', 'invoicing' ),
+            __( 'Settings', 'invoicing' ),
+            apply_filters( 'invoicing_capability', wpinv_get_capability() ),
+            'wpinv-settings',
+            array( $this, 'options_page' )
+        );
     }
 
     public function add_addons_menu(){

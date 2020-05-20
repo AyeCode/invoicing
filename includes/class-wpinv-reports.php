@@ -43,7 +43,7 @@ class WPInv_Reports {
     
     public function actions() {
         if ( is_admin() ) {
-            add_action( 'admin_menu', array( $this, 'add_submenu' ), 10 );
+            add_action( 'admin_menu', array( $this, 'add_submenu' ), 20 );
             add_action( 'wpinv_reports_tab_export', array( $this, 'export' ) );
             add_action( 'wp_ajax_wpinv_ajax_export', array( $this, 'ajax_export' ) );
             add_action( 'wp_ajax_wpinv_ajax_discount_use_export', array( $this, 'discount_use_export' ) );
