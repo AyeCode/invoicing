@@ -202,7 +202,9 @@ jQuery(function ($) {
 					recurring: false,
 					new: true,
 					type: 'custom',
-					description: ''
+					description: '',
+					rule: 'digital',
+					class: '_standard'
 				});
 			},
 

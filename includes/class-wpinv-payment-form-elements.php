@@ -2624,6 +2624,36 @@ class WPInv_Payment_Form_Elements {
             $item_types_html .= "<option value='$type'>$label</type>";
         }
 
+        // Taxes.
+        $taxes = '';
+        if ( $wpinv_euvat->allow_vat_rules() ) {
+            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"rule\"'>";
+            $taxes .= __( 'VAT rule type', 'invoicing' );
+            $taxes .= "</label><select :id='$id + item.id + \"rule\"' class='form-control custom-select' v-model='item.rule'>";
+
+            foreach ( $wpinv_euvat->get_rules() as $type => $label ) {
+                $type   = esc_attr( $type );
+                $label  = esc_html( $label );
+                $taxes .= "<option value='$type'>$label</type>";
+            }
+
+            $taxes .= '</select></div>';
+        }
+
+        if ( $wpinv_euvat->allow_vat_classes() ) {
+            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"class\"'>";
+            $taxes .= __( 'VAT class', 'invoicing' );
+            $taxes .= "</label><select :id='$id + item.id + \"class\"' class='form-control custom-select' v-model='item.class'>";
+
+            foreach ( $wpinv_euvat->get_all_classes() as $type => $label ) {
+                $type   = esc_attr( $type );
+                $label  = esc_html( $label );
+                $taxes .= "<option value='$type'>$label</type>";
+            }
+
+            $taxes .= '</select></div>';
+        }
+
         echo "<div $restrict>
 
                 <label>$label2</label>
@@ -2660,6 +2690,8 @@ class WPInv_Payment_Form_Elements {
                                         $item_types_html
                                     </select>
                                 </div>
+
+                                <div v-if='item.new'>$taxes</div>
 
                                 <div class='form-group form-check'>
                                     <input :id='$id4 + item.id + \"custom_price\"' v-model='item.custom_price' type='checkbox' class='form-check-input' />

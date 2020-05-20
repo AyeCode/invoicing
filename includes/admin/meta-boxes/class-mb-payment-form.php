@@ -209,8 +209,8 @@ class WPInv_Meta_Box_Payment_Form {
                 'meta'         => array(
                     'type'      => empty( $item['type'] ) ? 'custom' : $item['type'] ,
                     'price'     => wpinv_sanitize_amount( $item['price'] ),
-                    'vat_rule'  => 'digital',
-                    'vat_class' => '_standard',
+                    'vat_rule'  => empty( $item['rule'] ) ? 'digital' : $item['rule'],
+                    'vat_class' => empty( $item['class'] ) ? '_standard' : $item['class'],
                 )
             );
 
