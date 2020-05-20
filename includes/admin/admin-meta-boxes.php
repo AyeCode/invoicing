@@ -135,6 +135,7 @@ function wpinv_register_item_meta_boxes() {
         add_meta_box( 'wpinv_field_vat_classes', __( 'VAT rates class to use', 'invoicing' ), 'WPInv_Meta_Box_Items::vat_classes', 'wpi_item', 'normal', 'high' );
     }
     
+    add_meta_box( 'wpinv_field_item_shortcode', __( 'Shortcode', 'invoicing' ), 'WPInv_Meta_Box_Items::shortcode', 'wpi_item', 'side', 'core' );
     add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'WPInv_Meta_Box_Items::item_info', 'wpi_item', 'side', 'core' );
     add_meta_box( 'wpinv_field_meta_values', __( 'Item Meta Values', 'invoicing' ), 'WPInv_Meta_Box_Items::meta_values', 'wpi_item', 'side', 'core' );
 }

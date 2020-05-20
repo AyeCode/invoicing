@@ -386,6 +386,20 @@ class WPInv_Meta_Box_Items {
         do_action( 'wpinv_meta_values_metabox_after', $post );
     }
 
+    /**
+     * Display the items buy now shortcode.
+     */
+    public static function shortcode( $post ) {
+
+        if ( ! is_numeric( $post ) ) {
+            $post = $post->ID;
+        }
+        $label = '"' . __( 'Buy', 'invoicing' ) . '"';
+
+        echo "<input type='text' style='min-width: 100%; font-size: small;' value='[wpinv_buy items=$post label=$label]' disabled>";
+        echo "<p class='description'><a target='_blank' href='https://wpinvoicing.com/docs/core-plugin/core-shortcodes/#buy-button'>" . __( 'Learn More', 'invoicing' ) ."</a></p>";
+    }
+
     public static function save( $post_id, $data, $post ) {
         $invoice        = new WPInv_Invoice( $post_id );
 
