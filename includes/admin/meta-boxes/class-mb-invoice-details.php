@@ -221,20 +221,6 @@ class WPInv_Meta_Box_Details {
         <?php
         }
     }
-
-    /**
-     * Renders a metabox to edit a payment form.
-     */
-    public static function payment_form( $post ) {
-        WPInv_Meta_Box_Form_Items::output_options( $post );
-    }
-
-    /**
-     * Renders a metabox to select items.
-     */
-    public static function payment_form_items( $post ) {
-        WPInv_Meta_Box_Form_Items::output( $post );
-    }
     
     public static function payment_meta( $post ) {
         global $wpi_mb_invoice;

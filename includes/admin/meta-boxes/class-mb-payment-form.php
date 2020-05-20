@@ -207,18 +207,20 @@ class WPInv_Meta_Box_Payment_Form {
                 'post_excerpt' => wp_kses_post( $item['description'] ),
                 'post_status'  => 'publish',
                 'meta'         => array(
-                    'type'      => 'custom',
+                    'type'      => empty( $item['type'] ) ? 'custom' : $item['type'] ,
                     'price'     => wpinv_sanitize_amount( $item['price'] ),
                     'vat_rule'  => 'digital',
                     'vat_class' => '_standard',
                 )
             );
-            
+
             $new_item  = new WPInv_Item();
             $new_item->create( $data );
     
             if ( ! empty( $new_item ) ) {
                 $item['id'] = $new_item->ID;
+                unset( $item['new'] );
+                unset( $item['type'] );
                 $saved[] = $item;
             }
 
