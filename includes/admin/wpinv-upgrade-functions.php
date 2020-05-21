@@ -209,3 +209,144 @@ function wpinv_update_new_email_settings() {
 
     update_option( 'wpinv_settings', $current_options );
 }
+
+/**
+ * Creates the invoices table.
+ */
+function wpinv_create_invoices_table() {
+    global $wpdb;
+
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+    $table = $wpdb->prefix . 'getpaid_invoices';
+    $sql   = "CREATE TABLE $table (
+        id BIGINT(20) NOT NULL AUTO_INCREMENT,
+        invoice_id BIGINT(20) NOT NULL,
+        `key` VARCHAR(20),
+        number VARCHAR(20),
+        user_ip VARCHAR(100),
+        address VARCHAR(100),
+        zip VARCHAR(100),
+        city VARCHAR(100),
+        state VARCHAR(100),
+        country VARCHAR(100),
+        type VARCHAR(20) NOT NULL DEFAULT 'invoice',
+        mode VARCHAR(20) NOT NULL DEFAULT 'live',
+        gateway VARCHAR(100),
+        transaction_id VARCHAR(100),
+        currency VARCHAR(10),
+        subtotal FLOAT(20) NOT NULL DEFAULT 0,
+        tax FLOAT(20) NOT NULL DEFAULT 0,
+        fees_total FLOAT(20) NOT NULL DEFAULT 0,
+        total FLOAT(20) NOT NULL DEFAULT 0,
+        discount FLOAT(20) NOT NULL DEFAULT 0,
+        discount_code VARCHAR(20),
+        disable_taxes INT(2) NOT NULL DEFAULT 0,
+        due_date DATETIME,
+        completed_date DATETIME,
+        payment_meta TEXT,
+        company VARCHAR(100),
+        vat_number VARCHAR(100),
+        vat_rate VARCHAR(100),
+        adddress_confirmed INT(10),
+        PRIMARY KEY  (id),
+        KEY invoice_id (invoice_id),
+        KEY `key` ( `key` )
+        ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    dbDelta( $sql );
+}
+
+/**
+ * Copies data from meta tables to our custom tables.
+ */
+function wpinv_convert_old_invoices() {
+    global $wpdb;
+
+    $invoices = get_posts('post_type=wpi_invoice&posts_per_page=-1&fields=ids');
+    $currency = wpinv_get_currency();
+    foreach ( $invoices as $invoice ) {
+
+        $meta    = get_post_meta( $invoice );
+
+        $fields = array(
+            'invoice_id'     => '',
+            'type'           => '',
+            'number'         => '',
+            'mode'           => '',
+            'key'            => '',
+            'total'          => 0,
+            'subtotal'       => 0,
+            'disable_taxes'  => '0',
+            'tax'            => '0',
+            'fees_total'     => '0',
+            'discount'       => '0',
+            'discount_code'  => '',
+            'due_date'       => '',
+            'completed_date' => '',
+            'address'        => '',
+            'city'           => '',
+            'country'        => '',
+            'state'          => '',
+            'zip'            => '',
+            'transaction_id' => '',
+            'user_ip'        => '',
+            'gateway'        => '',
+            'currency'       => $currency,
+            'payment_meta'   => array(),
+            'company'        => '',
+            'vat_number'     => '',
+            'vat_rate'       => '',
+            'adddress_confirmed' => 0,
+        );
+
+        foreach ( array_keys( $fields ) as $field ) {
+            if ( isset( $meta[ $field ] ) ) {
+                $fields[ $field ] = $meta[ $field ][0];
+            }
+        }
+
+        if ( is_array( $fields['payment_meta'] ) ) {
+
+            if ( ! empty( $fields['payment_meta']['currency'] ) ) {
+                $fields['currency'] = $fields['payment_meta']['currency'];
+            }
+
+            if ( ! empty( $fields['payment_meta']['tax'] ) ) {
+                $fields['tax'] = $fields['payment_meta']['tax'];
+            }
+
+            if ( ! empty( $fields['payment_meta']['amount'] ) ) {
+                $fields['total'] = $fields['payment_meta']['amount'];
+            }
+
+            if ( ! empty( $fields['payment_meta']['fees'] ) ) {
+                $fees = 0;
+                foreach ( $fields['payment_meta']['fees'] as $fee ) {
+                    $fees += (float) $fee['amount'];
+                }
+                $fields['fees_total'] = $fees;
+            } else {
+                $fields['fees_total'] = $fields['total'];
+            }
+
+            if ( is_array( $fields['payment_meta']['cart_details'] ) ) {
+                foreach ( $fields['payment_meta']['cart_details'] as $item ) {
+                    if ( isset( $item['subtotal'] ) ) {
+                        $fields['subtotal'] += $item['subtotal'];
+                    }
+                }
+            }
+
+        } else {
+            $fields['payment_meta'] = array();
+        }
+
+        $fields['tax'] = (float) $fields['tax'];
+        $fields['fees_total'] = (float) $fields['fees_total'];
+        $fields['total'] = (float) $fields['total'];
+        $fields['subtotal'] = (float) $fields['subtotal'];
+        $fields['discount'] = $fields['subtotal'] - $fields['total'] - $fields['tax'] - $fields['fees_total'];
+    }
+
+}
