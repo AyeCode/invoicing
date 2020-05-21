@@ -117,7 +117,7 @@ class WPInv_Reports {
         ?>
 	        <form id="wpinv-reports-filter" method="get" class="tablenav">
 		        <select id="wpinv-reports-view" name="view">
-			        <option value="-1"><?php _e( 'Report Type', 'invoicing' ); ?></option>
+			        <option value="-1" disabled><?php _e( 'Report Type', 'invoicing' ); ?></option>
 			            <?php foreach ( $views as $view_id => $label ) : ?>
 				            <option value="<?php echo esc_attr( $view_id ); ?>" <?php selected( $view_id, $current ); ?>><?php echo $label; ?></option>
 			            <?php endforeach; ?>
@@ -659,9 +659,6 @@ class WPInv_Reports {
             '7_days_ago'   => __( 'Last 7 Days', 'invoicing' ),
             '30_days_ago'  => __( 'Last 30 Days', 'invoicing' ),
             'this_month'   => __( 'This Month', 'invoicing' ),
-            'last_month'   => __( 'Last Month', 'invoicing' ),
-            'this_quarter' => __( 'This Quarter', 'invoicing' ),
-            'last_quarter' => __( 'Last Quarter', 'invoicing' ),
             'this_year'    => __( 'This Year', 'invoicing' ),
             'last_year'    => __( 'Last Year', 'invoicing' ),
         );
@@ -681,23 +678,284 @@ class WPInv_Reports {
     /**
      * Returns the the current date range.
      */
-    public function get_date_range( $range ) {
+    public function get_sql_clauses( $range ) {
+
+        $date     = 'CAST(completed.meta_value AS DATE)';
+        $datetime = 'CAST(completed.meta_value AS DATETIME)';
+
+        // Prepare durations.
+        $today                = current_time( 'Y-m-d' );
+        $yesterday            = date( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) );
+        $sunday               = date( 'Y-m-d', strtotime( 'sunday this week', current_time( 'timestamp' ) ) );
+        $monday               = date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' ) ) );
+        $last_sunday          = date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) );
+        $last_monday          = date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) );
+        $seven_days_ago       = date( 'Y-m-d', strtotime( '-7 days', current_time( 'timestamp' ) ) );
+        $thirty_days_ago      = date( 'Y-m-d', strtotime( '-30 days', current_time( 'timestamp' ) ) );
+        $first_day_month  	  = date( 'Y-m-1', current_time( 'timestamp' ) );
+        $last_day_month  	  = date( 'Y-m-t', current_time( 'timestamp' ) );
+		$first_day_last_month = date( 'Y-m-d', strtotime( 'first day of last month', current_time( 'timestamp' ) ) );
+        $last_day_last_month  = date( 'Y-m-d', strtotime( 'last day of last month', current_time( 'timestamp' ) ) );
+        $first_day_year  	  = date( 'Y-1-1', current_time( 'timestamp' ) );
+        $last_day_year  	  = date( 'Y-12-31', current_time( 'timestamp' ) );
+		$first_day_last_year  = date( 'Y-m-d', strtotime( 'first day of last year', current_time( 'timestamp' ) ) );
+		$last_day_last_year   = date( 'Y-m-d', strtotime( 'last day of last year', current_time( 'timestamp' ) ) );
 
         $ranges = array(
-            'today'        => __( 'Today', 'invoicing' ),
-            'yesterday'    => __( 'Yesterday', 'invoicing' ),
-            'this_week'    => __( 'This Week', 'invoicing' ),
-            'last_week'    => __( 'Last Week', 'invoicing' ),
-            '7_days_ago'   => __( 'Last 7 Days', 'invoicing' ),
-            '30_days_ago'  => __( 'Last 30 Days', 'invoicing' ),
-            'this_month'   => __( 'This Month', 'invoicing' ),
-            'last_month'   => __( 'Last Month', 'invoicing' ),
-            'this_quarter' => __( 'This Quarter', 'invoicing' ),
-            'last_quarter' => __( 'Last Quarter', 'invoicing' ),
-            'this_year'    => __( 'This Year', 'invoicing' ),
-            'last_year'    => __( 'Last Year', 'invoicing' ),
+
+            'today'        => array(
+                "HOUR($datetime)",
+                "$date='$today'"
+            ),
+
+            'yesterday'    => array(
+                "HOUR($datetime)",
+                "$date='$yesterday'"
+            ),
+
+            'this_week'    => array(
+                "DAYNAME($date)",
+                "$date BETWEEN '$monday' AND '$sunday'"
+            ),
+
+            'last_week'    => array(
+                "DAYNAME($date)",
+                "$date BETWEEN '$last_monday' AND '$last_sunday'"  
+            ),
+
+            '7_days_ago'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$seven_days_ago' AND '$today'"  
+            ),
+
+            '30_days_ago'  => array(
+                "DAY($date)",
+                "$date BETWEEN '$thirty_days_ago' AND '$today'"    
+            ),
+
+            'this_month'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$first_day_month' AND '$last_day_month'"
+            ),
+
+            'last_month'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$first_day_last_month' AND '$last_day_last_month'"
+            ),
+
+            'this_year'    => array(
+                "MONTH($date)",
+                "$date BETWEEN '$first_day_year' AND '$last_day_year'"
+            ),
+
+            'last_year'    => array(
+                "MONTH($date)",
+                "$date BETWEEN '$first_day_last_year' AND '$last_day_last_year'"
+            ),
+
         );
 
+        if ( ! isset( $ranges[ $range ] ) ) {
+            return $ranges['7_days_ago'];
+        }
+        return $ranges[ $range ];
+
+    }
+    
+    /**
+     * Returns the the current date ranges results.
+     */
+    public function get_report_results( $range ) {
+        global $wpdb;
+
+        $clauses = $this->get_sql_clauses( $range );
+        $sql     = "SELECT
+                {$clauses[0]} AS completed_date,
+                SUM( total.meta_value ) AS amount
+            FROM $wpdb->posts
+            LEFT JOIN $wpdb->postmeta as total ON total.post_id = $wpdb->posts.ID AND total.meta_key='_wpinv_total'
+            LEFT JOIN $wpdb->postmeta as completed ON completed.post_id = $wpdb->posts.ID AND completed.meta_key='_wpinv_completed_date'
+            WHERE total.meta_key IS NOT NULL
+                AND completed.meta_key IS NOT NULL
+                AND $wpdb->posts.post_type = 'wpi_invoice'
+                AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'renewal' )
+                AND {$clauses[1]}
+            GROUP BY {$clauses[0]}
+        ";
+
+        return  wp_list_pluck( $wpdb->get_results( $sql ), 'amount', 'completed_date' );
+    }
+
+    /**
+     * Fill nulls.
+     */
+    public function fill_nulls( $data, $range ) {
+
+        $return = array();
+        $time   = current_time('timestamp');
+
+        switch ( $range ) {
+            case 'today' :
+            case 'yesterday' :
+                $hour  = 0;
+
+                while ( $hour < 23 ) {
+                    $amount = 0;
+                    if ( isset( $data[$hour] ) ) {
+                        $amount = floatval( $data[$hour] );
+                    }
+
+                    $time = strtotime( "$range $hour:00:00" ) * 1000;
+                    $return[] = array( $time, $amount );
+                    $hour++;
+                }
+
+                break;
+
+            case 'this_month' :
+            case 'last_month' :
+                $_range = str_replace( '_', ' ', $range );
+                $month  = date( 'n', strtotime( $_range, $time ) );
+                $year   = date( 'Y', strtotime( $_range, $time ) );
+                $days   = cal_days_in_month(
+                    CAL_GREGORIAN,
+                    $month,
+                    $year
+                );
+
+                $day = 1;
+                while ( $days != $day ) {
+                    $amount = 0;
+                    if ( isset( $data[$day] ) ) {
+                        $amount = floatval( $data[$day] );
+                    }
+
+                    $time = strtotime( "$year-$month-$day" ) * 1000;
+                    $return[] = array( $time, $amount );
+                    $day++;
+                }
+
+                break;
+
+            case 'this_week' :
+            case 'last_week' :
+                $_range = str_replace( '_', ' ', $range );
+                $days   = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+
+                foreach ( $days as $day ) {
+
+                    $amount = 0;
+                    if ( isset( $data[ ucfirst( $day ) ] ) ) {
+                        $amount = floatval( $data[ ucfirst( $day ) ] );
+                    }
+
+                    $time = strtotime( "$_range $day" ) * 1000;
+                    $return[] = array( $time, $amount );
+                }
+
+                break;
+
+            case 'this_year' :
+            case 'last_year' :
+                $_range = str_replace( '_', ' ', $range );
+                $year   = date( 'Y', strtotime( $_range, $time ) );
+                $months = array( '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12' );
+
+                foreach ( $months as $month ) {
+
+                    $amount = 0;
+                    if ( isset( $data[$month] ) ) {
+                        $amount = floatval( $data[$month] );
+                    }
+
+                    $_time     = strtotime("$year-$month-01") * 1000;
+                    $return[] = array( $_time, $amount );
+                }
+
+                break;
+            case '30_days_ago' :
+                $days = 30;
+
+                while ( $days > 1 ) {
+                    $amount = 0;
+                    $date   = date( 'j', strtotime( "-$days days", $time ) );
+                    if ( isset( $data[$date] ) ) {
+                        $amount = floatval( $data[$date] );
+                    }
+
+                    $_time = strtotime( "-$days days", $time ) * 1000;
+                    $return[] = array( $_time, $amount );
+                    $days--;
+                }
+
+                break;
+
+            default:
+                $days = 7;
+
+                while ( $days > 1 ) {
+                    $amount = 0;
+                    $date   = date( 'j', strtotime( "-$days days", $time ) );
+                    if ( isset( $data[$date] ) ) {
+                        $amount = floatval( $data[$date] );
+                    }
+
+                    $_time = strtotime( "-$days days", $time ) * 1000;
+                    $return[] = array( $_time, $amount );
+                    $days--;
+                }
+
+                break;
+
+        }
+
+        return $return;
+    }
+
+    /**
+     * Retrieves the stats.
+     */
+    public function get_stats() {
+        $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
+        $stats    = $this->get_report_results( $range );
+        return $this->fill_nulls( $stats, $range );
+    }
+
+    /**
+     * Retrieves the time format for stats.
+     */
+    public function get_time_format() {
+        $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
+
+        switch ( $range ) {
+            case 'today' :
+            case 'yesterday' :
+                return array( 'hour', '%h %p' );
+                break;
+
+            case 'this_month' :
+            case 'last_month' :
+                return array( 'day', '%b %d' );
+                break;
+
+            case 'this_week' :
+            case 'last_week' :
+                return array( 'day', '%b %d' );
+                break;
+
+            case 'this_year' :
+            case 'last_year' :
+                return array( 'month', '%b' );
+                break;
+            case '30_days_ago' :
+                return array( 'day', '%b %d' );
+                break;
+
+            default:
+                return array( 'day', '%b %d' );
+                break;
+
+        }
     }
 
     /**
@@ -705,18 +963,29 @@ class WPInv_Reports {
      */
     public function earnings_report() {
 
+        $data        = wp_json_encode( $this->get_stats() );
+        $time_format = $this->get_time_format();
         echo '
             <div class="postbox">
                 <div class="inside">
                     <h3><span>' . __( 'Earnings Over Time', 'invoicing' ) .'</span></h3>
-                    ' . $this->period_filter() .'
+                    ' . $this->period_filter() . '
                     <div id="wpinv_report_graph" style="max-width:720px;height:300px"></div>
                 </div>
             </div>
 
             <script>
                 jQuery(document).ready( function() {
-                    jQuery.plot(jQuery("#wpinv_report_graph"), [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } });
+                    jQuery.plot(
+                        jQuery("#wpinv_report_graph"),
+                        [' . $data .'],
+                        {
+                            xaxis:{
+                            mode: "time",
+                            timeformat: "' . $time_format[1] .'",
+                            minTickSize: [0.5, "' . $time_format[0] .'"]
+                        }
+                    });
                 })
             </script>
         ';
