@@ -57,6 +57,8 @@ class WPInv_Reports {
 
             // Reports.
             add_action( 'wpinv_reports_view_earnings', array( $this, 'earnings_report' ) );
+            add_action( 'wpinv_reports_view_gateways', array( $this, 'gateways_report' ) );
+            add_action( 'wpinv_reports_view_taxes', array( $this, 'tax_report' ) );
         }
         do_action( 'wpinv_class_reports_actions', $this );
     }
@@ -103,7 +105,6 @@ class WPInv_Reports {
 
         $views = array(
             'earnings'   => __( 'Earnings', 'invoicing' ),
-            'items'      => __( 'Items', 'invoicing' ),
             'gateways'   => __( 'Payment Methods', 'invoicing' ),
             'taxes'      => __( 'Taxes', 'invoicing' ),
         );
@@ -125,7 +126,7 @@ class WPInv_Reports {
 
 		        <?php do_action( 'wpinv_report_view_actions' ); ?>
 
-		        <input type="hidden" name="page" value="edd-reports"/>
+		        <input type="hidden" name="page" value="wpinv-reports"/>
 		        <?php submit_button( __( 'Show', 'invoicing' ), 'secondary', 'submit', false ); ?>
 	        </form>
         <?php
@@ -765,15 +766,16 @@ class WPInv_Reports {
     /**
      * Returns the the current date ranges results.
      */
-    public function get_report_results( $range ) {
+    public function get_report_results( $range, $key='_wpinv_total' ) {
         global $wpdb;
 
         $clauses = $this->get_sql_clauses( $range );
+        $key     = $wpdb->prepare( '%s', $key );
         $sql     = "SELECT
                 {$clauses[0]} AS completed_date,
                 SUM( total.meta_value ) AS amount
             FROM $wpdb->posts
-            LEFT JOIN $wpdb->postmeta as total ON total.post_id = $wpdb->posts.ID AND total.meta_key='_wpinv_total'
+            LEFT JOIN $wpdb->postmeta as total ON total.post_id = $wpdb->posts.ID AND total.meta_key=$key
             LEFT JOIN $wpdb->postmeta as completed ON completed.post_id = $wpdb->posts.ID AND completed.meta_key='_wpinv_completed_date'
             WHERE total.meta_key IS NOT NULL
                 AND completed.meta_key IS NOT NULL
@@ -917,8 +919,22 @@ class WPInv_Reports {
      */
     public function get_stats() {
         $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
-        $stats    = $this->get_report_results( $range );
-        return $this->fill_nulls( $stats, $range );
+        $earnings = $this->get_report_results( $range );
+        $taxes    = $this->get_report_results( $range, '_wpinv_tax' );
+
+        return array(
+
+            array(
+                'label' => __( 'Earnings', 'invoicing' ),
+                'data'  => $this->fill_nulls( $earnings, $range ),
+            ),
+
+            array(
+                'label' => __( 'Taxes', 'invoicing' ),
+                'data'  => $this->fill_nulls( $taxes, $range ),
+            )
+        );
+
     }
 
     /**
@@ -966,28 +982,86 @@ class WPInv_Reports {
         $data        = wp_json_encode( $this->get_stats() );
         $time_format = $this->get_time_format();
         echo '
-            <div class="postbox">
-                <div class="inside">
-                    <h3><span>' . __( 'Earnings Over Time', 'invoicing' ) .'</span></h3>
-                    ' . $this->period_filter() . '
-                    <div id="wpinv_report_graph" style="max-width:720px;height:300px"></div>
-                </div>
+            <div class="wpinv-report-container">
+                <h3><span>' . __( 'Earnings Over Time', 'invoicing' ) .'</span></h3>
+                ' . $this->period_filter() . '
+                <div id="wpinv_report_graph" style="height: 450px;"></div>
             </div>
 
             <script>
                 jQuery(document).ready( function() {
                     jQuery.plot(
                         jQuery("#wpinv_report_graph"),
-                        [' . $data .'],
+                        ' . $data .',
                         {
                             xaxis:{
-                            mode: "time",
-                            timeformat: "' . $time_format[1] .'",
-                            minTickSize: [0.5, "' . $time_format[0] .'"]
+                                mode: "time",
+                                timeformat: "' . $time_format[1] .'",
+                                minTickSize: [0.5, "' . $time_format[0] .'"]
+                            },
+
+                            yaxis: {
+                                min: 0
+                            },
+
+                            tooltip: true,
+
+                            series: {
+                                lines: { show: true },
+                                points: { show: true }
+                            },
+
+                            grid: {
+                                backgroundColor: { colors: [ "#fff", "#eee" ] },
+                            }
                         }
-                    });
+                    );
                 })
             </script>
         ';
     }
+
+    /**
+     * Displays the gateways report.
+     */
+    public function gateways_report() {
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-gateways-report-table.php' );
+
+        $table = new WPInv_Gateways_Report_Table();
+        $table->prepare_items();
+        $table->display();
+    }
+
+    /**
+     * Renders the Tax Reports
+     *
+     * @return void
+     */
+    public function tax_report() {
+
+        $year = isset( $_GET['year'] ) ? absint( $_GET['year'] ) : date( 'Y' );
+        ?>
+
+        <div class="metabox-holder" style="padding-top: 0;">
+            <div class="postbox">
+                <h3><span><?php _e('Tax Report','invoicing' ); ?></span></h3>
+                <div class="inside">
+                    <p><?php _e( 'This report shows the total amount collected in sales tax for the given year.', 'invoicing' ); ?></p>
+                    <form method="get">
+                        <span><?php echo $year; ?></span>: <strong><?php echo wpinv_sales_tax_for_year( $year ); ?></strong>&nbsp;&mdash;&nbsp;
+                        <select name="year">
+                            <?php for ( $i = 2014; $i <= date( 'Y' ); $i++ ) : ?>
+                            <option value="<?php echo $i; ?>"<?php selected( $year, $i ); ?>><?php echo $i; ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <input type="hidden" name="view" value="taxes" />
+                        <input type="hidden" name="page" value="wpinv-reports"/>
+                        <?php submit_button( __( 'Submit', 'invoicing' ), 'secondary', 'submit', false ); ?>
+                    </form>
+                </div><!-- .inside -->
+            </div><!-- .postbox -->
+        </div><!-- .metabox-holder -->
+        <?php
+    }
+
 }
