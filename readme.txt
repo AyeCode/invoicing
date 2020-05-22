@@ -140,6 +140,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Unable to checkout when required fields are hidden via CSS - FIXED
 * Buy now buttons shortcode now visible - ADDED
 * Admin menus re-ordered to provide better hierachy - CHANGED
+* Revenue reports - ADDED
+* Yoast SEO 14.1 style conflicts - FIXED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
