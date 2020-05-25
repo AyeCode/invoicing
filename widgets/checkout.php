@@ -25,7 +25,7 @@ class WPInv_Checkout_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_checkout',
             'name'          => __('Invoicing > Checkout','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-checkout-class wpi-g',
+                'classname'   => 'wpinv-payment-form-class bsui',
                 'description' => esc_html__('Displays checkout form.','invoicing'),
             ),
             'arguments'     => array(

@@ -1804,10 +1804,16 @@ class WPInv_Payment_Form_Elements {
         $label     = __( 'Item totals will appear here. Click to set items.', 'invoicing' );
         $label2    = __( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' );
         $label2   .= ' ' . __( 'To prevent this, limit customers to selecting a single item.', 'invoicing' );
+        $label3    = __( 'Item totals will appear here.', 'invoicing' );
         echo "
             <div $restrict class='item_totals text-center'>
-                <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
-                <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
+                <div v-if='!is_default'>
+                    <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
+                    <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
+                </div>
+                <div v-if='is_default'>
+                    <div class='p-4 bg-warning'>$label3</div>
+                </div>
             </div>
         ";
     }
@@ -1816,7 +1822,7 @@ class WPInv_Payment_Form_Elements {
      * Renders the items element on the frontend.
      */
     public function frontend_render_items_template( $field, $items ) {
-        
+
         echo "<div class='form-group item_totals'>";
         
         $id = esc_attr( $field['id'] );
@@ -2618,10 +2624,10 @@ class WPInv_Payment_Form_Elements {
         $item_types      = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
         $item_types_html = '';
 
-        foreach ( $item_types as $type => $label ) {
+        foreach ( $item_types as $type => $_label ) {
             $type  = esc_attr( $type );
-            $label = esc_html( $label );
-            $item_types_html .= "<option value='$type'>$label</type>";
+            $_label = esc_html( $_label );
+            $item_types_html .= "<option value='$type'>$_label</type>";
         }
 
         // Taxes.
@@ -2631,10 +2637,10 @@ class WPInv_Payment_Form_Elements {
             $taxes .= __( 'VAT rule type', 'invoicing' );
             $taxes .= "</label><select :id='$id + item.id + \"rule\"' class='form-control custom-select' v-model='item.rule'>";
 
-            foreach ( $wpinv_euvat->get_rules() as $type => $label ) {
-                $type   = esc_attr( $type );
-                $label  = esc_html( $label );
-                $taxes .= "<option value='$type'>$label</type>";
+            foreach ( $wpinv_euvat->get_rules() as $type => $_label ) {
+                $type    = esc_attr( $type );
+                $_label  = esc_html( $_label );
+                $taxes  .= "<option value='$type'>$_label</type>";
             }
 
             $taxes .= '</select></div>';
@@ -2645,10 +2651,10 @@ class WPInv_Payment_Form_Elements {
             $taxes .= __( 'VAT class', 'invoicing' );
             $taxes .= "</label><select :id='$id + item.id + \"class\"' class='form-control custom-select' v-model='item.class'>";
 
-            foreach ( $wpinv_euvat->get_all_classes() as $type => $label ) {
-                $type   = esc_attr( $type );
-                $label  = esc_html( $label );
-                $taxes .= "<option value='$type'>$label</type>";
+            foreach ( $wpinv_euvat->get_all_classes() as $type => $_label ) {
+                $type    = esc_attr( $type );
+                $_label  = esc_html( $_label );
+                $taxes  .= "<option value='$type'>$_label</type>";
             }
 
             $taxes .= '</select></div>';
@@ -2656,7 +2662,7 @@ class WPInv_Payment_Form_Elements {
 
         echo "<div $restrict>
 
-                <label>$label2</label>
+                <label v-if='!is_default'>$label2</label>
 
                 <draggable v-model='form_items' group='selectable_form_items'>
                     <div class='wpinv-available-items-editor' v-for='(item, index) in form_items' :class='\"item_\" + item.id' :key='item.id'>
@@ -2727,9 +2733,9 @@ class WPInv_Payment_Form_Elements {
                     </div>
                 </draggable>
 
-                <small v-if='! form_items.length' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
+                <small v-if='! form_items.length && !is_default' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
 
-                <div class='form-group mt-2'>
+                <div class='form-group mt-2' v-if='!is_default'>
 
                     <select class='form-control custom-select' v-model='selected_item' @change='addSelectedItem'>
                         <option value=''>"        . __( 'Add an existing item to the form', 'invoicing' ) ."</option>
@@ -2738,12 +2744,12 @@ class WPInv_Payment_Form_Elements {
 
                 </div>
 
-                <div class='form-group'>
+                <div class='form-group' v-if='!is_default'>
                     <input type='button' value='Add item' class='button button-primary'  @click.prevent='addSelectedItem' :disabled='selected_item == \"\"'>
                     <small>Or <a href='' @click.prevent='addNewItem'>create a new item</a>.</small>
                 </div>
 
-                <div class='form-group mt-5'>
+                <div class='form-group mt-5' v-if='!is_default'>
                     <label :for='$id2'>$label</label>
 
                     <select class='form-control custom-select' :id='$id2' v-model='$field.items_type'>
@@ -2826,6 +2832,23 @@ class WPInv_Payment_Form_Elements {
         }
 
         return wpinv_get_data( 'sample-payment-form-items' );
+
+    }
+
+    /**
+     * Converts form items for use.
+     */
+    public function convert_checkout_items( $items ) {
+
+        $converted = array();
+        foreach ( $items as $item ) {
+            $converted[] = array(
+                'title' => $item['name'],
+                'id'    => $item['id'],
+                'price' => $item['subtotal']
+            );
+        }
+        return $converted;
 
     }
 

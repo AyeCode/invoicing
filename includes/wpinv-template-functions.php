@@ -1398,85 +1398,49 @@ function wpinv_admin_get_line_items($invoice = array()) {
 }
 
 function wpinv_checkout_form() {
-    global $wpi_checkout_id;
+    global $wpi_checkout_id, $invoicing;
 
     // Set current invoice id.
     $wpi_checkout_id = wpinv_get_invoice_cart_id();
-
-    //Maybe update the prices
-    if(! empty( $_GET['wpi_dynamic_item'] ) && ! empty( $_GET['wpi_dynamic_price'] ) ) {
-
-        //If the invoice exists, update it with new pricing details
-        if (! empty( $wpi_checkout_id ) ) {
-
-            $_invoice       = wpinv_get_invoice_cart();
-            $_cart_details  = $_invoice->get_cart_details();
-            $_dynamic_item  = sanitize_text_field( $_GET['wpi_dynamic_item'] );
-
-            //First, fetch the item
-            $item    = new WPInv_Item( $_dynamic_item );
-    
-            //Next, ensure it supports dynamic pricing...
-            if( $item->supports_dynamic_pricing() && $item->get_is_dynamic_pricing() ) {
-                
-                //... and that the new price is not lower than the minimum price
-                $_dynamic_price = (float) wpinv_sanitize_amount( sanitize_text_field( $_GET['wpi_dynamic_price'] ) );
-                if( $_dynamic_price < $item->get_minimum_price() ) {
-                    $_dynamic_price = $item->get_minimum_price();
-                }
-
-                //Finally, update our invoice with the new price
-                if ( !empty( $_cart_details ) ) {
-
-                    foreach ( $_cart_details as $key => $item ) {
-                        if ( !empty( $item['id'] ) && $_dynamic_item == $item['id'] ) {
-                            $_cart_details[$key]['custom_price'] = $_dynamic_price;
-                            $_cart_details[$key]['item_price']   = $_dynamic_price;
-                        }
-                    }
-
-                    $_meta = $_invoice->get_meta();
-                    $_meta['cart_details'] = $_cart_details;
-                    $_invoice->set( 'payment_meta', $_meta );
-                    $_invoice->set( 'cart_details', $_cart_details );
-                    $_invoice->recalculate_totals();
-
-                }
-
-            }
-            
-        }
-
-    }
-
-    $form_action  = esc_url( wpinv_get_checkout_uri() );
+    $form_action     = esc_url( wpinv_get_checkout_uri() );
+    $payment_form    = wpinv_get_default_payment_form();
 
     ob_start();
 	    do_action( 'wpinv_checkout_content_before' );
-        echo '<div id="wpinv_checkout_wrap">';
 
-        if ( wpinv_get_cart_contents() || wpinv_cart_has_fees() ) {
+        if ( wpinv_get_cart_contents() ) {
+
+            // Get the form elements and items.
+	        $elements = $invoicing->form_elements->get_form_elements( $payment_form );
+	        $items    = $invoicing->form_elements->convert_checkout_items( wpinv_get_cart_contents() );
             ?>
-            <div id="wpinv_checkout_form_wrap" class="wpinv_clearfix table-responsive">
+            <div class="wpinv_checkout_form_wrap">
                 <?php do_action( 'wpinv_before_checkout_form' ); ?>
-                <form id="wpinv_checkout_form" class="wpi-form" action="<?php echo $form_action; ?>" method="POST">
+                <form class="wpinv_payment_form" action="<?php echo $form_action; ?>" method="POST">
+                    <input type='hidden' name='form_id' value='<?php echo esc_attr( $payment_form ); ?>'/>
                     <?php
-                    do_action( 'wpinv_checkout_form_top' );
-                    do_action( 'wpinv_checkout_billing_info' );
-                    do_action( 'wpinv_checkout_cart' );
-                    do_action( 'wpinv_payment_mode_select'  );
-                    do_action( 'wpinv_checkout_form_bottom' )
+                        wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+                        wp_nonce_field( 'vat_validation', '_wpi_nonce' );
+
+                        foreach ( $elements as $element ) {
+                            do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $payment_form );
+                            do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $payment_form );
+                        }
                     ?>
+                    <div class='wpinv_payment_form_errors alert alert-danger d-none'></div>
                 </form>
                 <?php do_action( 'wpinv_after_purchase_form' ); ?>
-            </div><!--end #wpinv_checkout_form_wrap-->
+            </div>
         <?php
+
         } else {
             do_action( 'wpinv_cart_empty' );
         }
         echo '</div><!--end #wpinv_checkout_wrap-->';
 	    do_action( 'wpinv_checkout_content_after' );
-    return ob_get_clean();
+        $content = ob_get_clean();
+
+		return str_replace( 'sr-only', '', $content );
 }
 
 function wpinv_checkout_cart( $cart_details = array(), $echo = true ) {

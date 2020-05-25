@@ -49,7 +49,12 @@ class WPInv_Meta_Box_Payment_Form {
             $post = $post->ID;
         }
 
-        echo "<input type='text' style='min-width: 220px;' value='[wpinv_payment_form form=$post]' disabled>";
+        if ( $post == wpinv_get_default_payment_form() ) {
+            echo '&mdash;';
+            return;
+        }
+
+        echo "<input type='text' style='min-width: 220px;' value='[getpaid_form id=$post]' disabled>";
 
     }
     /**

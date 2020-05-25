@@ -19,10 +19,10 @@ class WPInv_Plugin {
             self::$instance = new WPInv_Plugin;
             self::$instance->includes();
             self::$instance->actions();
-            self::$instance->notes          = new WPInv_Notes();
-            self::$instance->reports        = new WPInv_Reports();
-            self::$instance->api            = new WPInv_API();
-            self::$instance->form_elements  = new WPInv_Payment_Form_Elements();
+            self::$instance->notes                = new WPInv_Notes();
+            self::$instance->reports              = new WPInv_Reports();
+            self::$instance->api                  = new WPInv_API();
+            self::$instance->form_elements        = new WPInv_Payment_Form_Elements();
         }
 
         return self::$instance;
@@ -178,6 +178,7 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/payment-form.php' );
+        require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
@@ -239,6 +240,7 @@ class WPInv_Plugin {
     }
     
     public function admin_init() {
+        self::$instance->default_payment_form = wpinv_get_default_payment_form();
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
     }
 
@@ -414,6 +416,7 @@ class WPInv_Plugin {
                 'thousands_sep' => wpinv_thousands_separator(),
                 'decimals_sep'  => wpinv_decimal_separator(),
                 'form_items'    => $this->form_elements->get_form_items( $post->ID ),
+                'is_default'    => $post->ID == $this->default_payment_form,
             ) );
 
             wp_enqueue_script( 'wpinv-admin-payment-form-script' );
@@ -508,6 +511,7 @@ class WPInv_Plugin {
 		register_widget( "WPInv_Buy_Item_Widget" );
         register_widget( "WPInv_Messages_Widget" );
         register_widget( 'WPInv_Payment_Form_Widget' );
+        register_widget( 'WPInv_GetPaid_Widget' );
 	}
     
     /**

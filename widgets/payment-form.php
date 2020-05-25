@@ -40,14 +40,14 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
             'block-category'=> 'widgets',
             'block-keywords'=> "['invoicing','buy', 'buy item', 'pay', 'payment form']",
             'class_name'     => __CLASS__,
-            'base_id'       => 'wpinv_payment_form',
+            'base_id'       => 'getpaid_form',
             'name'          => __('Invoicing > Payment Form','invoicing'),
             'widget_ops'    => array(
                 'classname'   => 'wpinv-payment-form-class bsui',
                 'description' => esc_html__('Displays a payment form.','invoicing'),
             ),
             'arguments'           => array(
-                'form'            => array(
+                'id'              => array(
                     'title'       => __( 'Payment Form', 'invoicing' ),
                     'desc'        => __( 'Select your payment form.', 'invoicing' ),
 					'type'        => 'select',
@@ -77,7 +77,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		global $invoicing;
 
 		// Do we have a payment form?
-		if ( empty( $args['form'] ) ) {
+		if ( empty( $args['id'] ) ) {
 			return aui()->alert(
 				array(
 					'type'    => 'warning',
@@ -88,7 +88,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		}
 
 		// If yes, ensure that it is published.
-		if ( 'publish' != get_post_status( $args['form'] ) ) {
+		if ( 'publish' != get_post_status( $args['id'] ) ) {
 			return aui()->alert(
 				array(
 					'type'    => 'warning',
@@ -98,18 +98,18 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		}
 
 		// Get the form elements and items.
-		$elements = $invoicing->form_elements->get_form_elements( $args['form'] );
-		$items    = $invoicing->form_elements->get_form_items( $args['form'] );
+		$elements = $invoicing->form_elements->get_form_elements( $args['id'] );
+		$items    = $invoicing->form_elements->get_form_items( $args['id'] );
 
 		ob_start();
 		echo "<form class='wpinv_payment_form'>";
-		echo "<input type='hidden' name='form_id' value='{$args['form']}'/>";
+		echo "<input type='hidden' name='form_id' value='{$args['id']}'/>";
 		wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
 		wp_nonce_field( 'vat_validation', '_wpi_nonce' );
 
 		foreach ( $elements as $element ) {
-			do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $args['form'] );
-			do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $args['form'] );
+			do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $args['id'] );
+			do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $args['id'] );
 		}
 
 		echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";

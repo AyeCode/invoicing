@@ -461,3 +461,28 @@ function wpinv_restore_locale() {
         do_action( 'wpinv_restore_locale' );
     }
 }
+
+/**
+ * Returns the default form's id.
+ */
+function wpinv_get_default_payment_form() {
+    $form = get_option( 'wpinv_default_payment_form' );
+
+    if ( empty( $form ) || 'publish' != get_post_status( $form ) ) {
+        $form = wp_insert_post(
+            array(
+                'post_type'   => 'wpi_payment_form',
+                'post_title'  => __( 'Checkout (default)', 'invoicing' ),
+                'post_status' => 'publish',
+                'meta_input'  => array(
+                    'wpinv_form_elements' => wpinv_get_data( 'default-payment-form' ),
+                    'wpinv_form_items'    => array(),
+                )
+            )
+        );
+
+        update_option( 'wpinv_default_payment_form', $form );
+    }
+
+    return $form;
+}
