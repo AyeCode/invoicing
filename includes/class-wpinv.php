@@ -323,6 +323,8 @@ class WPInv_Plugin {
         if ( $jquery_ui_css ) {
             wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
             wp_enqueue_style( 'jquery-ui-css' );
+            wp_deregister_style( 'yoast-seo-select2' );
+	        wp_deregister_style( 'yoast-seo-monorepo' );
         }
 
         wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
@@ -335,6 +337,8 @@ class WPInv_Plugin {
         $enqueue = ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) );
         if ( $page == 'wpinv-subscriptions' ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
+            wp_deregister_style( 'yoast-seo-select2' );
+	        wp_deregister_style( 'yoast-seo-monorepo' );
         }
         
         if ( $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue ) ) {
