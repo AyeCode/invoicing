@@ -2878,6 +2878,39 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Converts an array of id => quantity for use.
+     */
+    public function convert_normal_items( $items ) {
+
+        $converted = array();
+        foreach ( $items as $item_id => $quantity ) {
+
+            $item   = new WPInv_Item( $item_id );
+
+            if( ! $item ) {
+                continue;
+            }
+
+            $converted[] = array(
+                'title'            => esc_html( $item->get_name() ) . wpinv_get_item_suffix( $item ),
+                'id'               => $item_id,
+                'price'            => $item->get_price(),
+                'custom_price'     => $item->get_is_dynamic_pricing(),
+                'recurring'        => $item->is_recurring(),
+                'description'      => $item->get_summary(),
+                'minimum_price'    => $item->get_minimum_price(),
+                'allow_quantities' => ! empty( $quantity ),
+                'quantity'         => empty( $quantity ) ? 1 : $quantity,
+                'required'         => true,
+            );
+
+        }
+
+        return $converted;
+
+    }
+
+    /**
      * Returns an array of elements for the currently being edited form.
      */
     public function get_form_elements( $id = false ) {
