@@ -2295,3 +2295,131 @@ function wpinv_oxygen_fix_conflict() {
     remove_filter( 'template_include', 'wpinv_template', 10, 1 );
     add_filter( 'template_include', 'wpinv_template', 999, 1 );
 }
+
+/**
+ * Helper function to display a payment form on the frontend.
+ */
+function getpaid_display_payment_form( $form ) {
+    global $invoicing;
+
+    // Ensure that it is published.
+	if ( 'publish' != get_post_status( $form ) ) {
+		return aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'This payment form is no longer active', 'invoicing' ),
+			)
+		);
+	}
+
+    // Get the form elements and items.
+    $form     = absint( $form );
+	$elements = $invoicing->form_elements->get_form_elements( $form );
+	$items    = $invoicing->form_elements->get_form_items( $form );
+
+	ob_start();
+	echo "<form class='wpinv_payment_form'>";
+	do_action( 'wpinv_payment_form_top' );
+	echo "<input type='hidden' name='form_id' value='$form'/>";
+	wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+	wp_nonce_field( 'vat_validation', '_wpi_nonce' );
+
+	foreach ( $elements as $element ) {
+		do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $form );
+		do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $form );
+	}
+
+	echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
+	do_action( 'wpinv_payment_form_bottom' );
+	echo '</form>';
+
+	$content = ob_get_clean();
+	return str_replace( 'sr-only', '', $content );
+}
+
+/**
+ * Helper function to display a item payment form on the frontend.
+ */
+function getpaid_display_item_payment_form( $items ) {
+    global $invoicing;
+
+    foreach ( array_keys( $items ) as $id ) {
+	    if ( 'publish' != get_post_status( $id ) ) {
+		    unset( $items[ $id ] );
+	    }
+    }
+
+    if ( empty( $items ) ) {
+		return aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'No published items found', 'invoicing' ),
+			)
+		);
+    }
+
+    $item_key = getpaid_convert_items_to_string( $items );
+
+    // Get the form elements and items.
+    $form     = wpinv_get_default_payment_form();
+	$elements = $invoicing->form_elements->get_form_elements( $form );
+	$items    = $invoicing->form_elements->convert_normal_items( $items );
+
+	ob_start();
+	echo "<form class='wpinv_payment_form'>";
+	do_action( 'wpinv_payment_form_top' );
+    echo "<input type='hidden' name='form_id' value='$form'/>";
+    echo "<input type='hidden' name='form_items' value='$item_key'/>";
+	wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+	wp_nonce_field( 'vat_validation', '_wpi_nonce' );
+
+	foreach ( $elements as $element ) {
+		do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $form );
+		do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $form );
+	}
+
+	echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
+	do_action( 'wpinv_payment_form_bottom' );
+	echo '</form>';
+
+	$content = ob_get_clean();
+	return str_replace( 'sr-only', '', $content );
+}
+
+/**
+ * Helper function to convert item string to array.
+ */
+function getpaid_convert_items_to_array( $items ) {
+    $items    = array_filter( array_map( 'trim', explode( ',', $items ) ) );
+    $prepared = array();
+
+    foreach ( $items as $item ) {
+        $data = array_map( 'trim', explode( '|', $item ) );
+
+        if ( empty( $data[0] ) || ! is_numeric( $data[0] ) ) {
+            continue;
+        }
+
+        $quantity = 1;
+        if ( isset( $data[1] ) && is_numeric( $data[1] ) ) {
+            $quantity = $data[1];
+        }
+
+        $prepared[ $data[0] ] = $quantity;
+
+    }
+
+    return $prepared;
+}
+
+/**
+ * Helper function to convert item array to string.
+ */
+function getpaid_convert_items_to_string( $items ) {
+    $prepared = array();
+
+    foreach ( $items as $item => $quantity ) {
+        $prepared[] = "$item|$quantity";
+    }
+    return implode( ',', $prepared );
+}

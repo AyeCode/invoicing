@@ -22,10 +22,10 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
             'block-keywords'=> "['invoicing','buy', 'buy item', 'form']",
             'class_name'     => __CLASS__,
             'base_id'       => 'getpaid',
-            'name'          => __('Invoicing > GetPaid Button','invoicing'),
+            'name'          => __('GetPaid','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-getpaid-class wpi-g bsui',
-                'description' => esc_html__('Displays a button that loads a payment form in a popup.','invoicing'),
+                'classname'   => 'getpaid bsui',
+                'description' => esc_html__('Show payment forms or buttons.','invoicing'),
             ),
             'arguments'     => array(
 
@@ -49,8 +49,8 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 				),
 
 				'item'  => array(
-	                'title'       => __( 'Item', 'invoicing' ),
-	                'desc'        => __( 'Enter an item id in case you want to sell an item', 'invoicing' ),
+	                'title'       => __( 'Items', 'invoicing' ),
+	                'desc'        => __( 'Enter comma separated list of invoicing item id and quantity (item_id|quantity). Ex. 101|2. This will be ignored in case you specify a form above. Enter 0 as the quantity to let users select their own quantities', 'invoicing' ),
 	                'type'        => 'text',
 	                'desc_tip'    => true,
 	                'default'     => '',
@@ -59,11 +59,11 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 				),
 
                 'button'  => array(
-	                'title'       => __( 'Button Label', 'invoicing' ),
-	                'desc'        => __( 'Enter button label. Default "Buy Now".', 'invoicing' ),
+	                'title'       => __( 'Button', 'invoicing' ),
+	                'desc'        => __( 'Enter button label in case you would like to display the forms in a popup.', 'invoicing' ),
 	                'type'        => 'text',
 	                'desc_tip'    => true,
-	                'default'     => __( 'Buy Now', 'invoicing' ),
+	                'default'     => '',
 	                'advanced'    => false
 				)
 
@@ -86,7 +86,7 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 */
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
 
-	    // Do we have a payment form?
+	    // Is the shortcode set up correctly?
 		if ( empty( $args['form'] ) && empty( $args['item'] ) ) {
 			return aui()->alert(
 				array(
@@ -94,66 +94,78 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 					'content' => __( 'No payment form or item selected', 'invoicing' ),
 				)
 			);
-
 		}
 
-	    $defaults = array(
-		    'item'    => '',
-		    'button'  => __( 'Buy Now', 'invoicing' ),
-		    'form'    => '',
-	    );
-
-	    /**
-	     * Parse incoming $args into an array and merge it with $defaults
-	     */
-		$args = wp_parse_args( $args, $defaults );
-		
-		// Payment form?
+		// Payment form or button?
 		if ( ! empty( $args['form'] ) ) {
-
-			// Ensure that it is published.
-			if ( 'publish' != get_post_status( $args['form'] ) ) {
-				return aui()->alert(
-					array(
-						'type'    => 'warning',
-						'content' => __( 'This payment form is no longer active', 'invoicing' ),
-					)
-				);
-			}
-
-			$attrs = array(
-				'form' => $args['form']
-			);
-
+			return $this->handle_payment_form(  $args );
 		} else {
-
-			// Ensure that it is published.
-			if ( 'publish' != get_post_status( $args['item'] ) ) {
-				return aui()->alert(
-					array(
-						'type'    => 'warning',
-						'content' => __( 'This item is no longer active', 'invoicing' ),
-					)
-				);
-			}
-
-			$attrs = array(
-				'item' => $args['item']
-			);
-
+			return $this->handle_buy_item(  $args );
 		}
 
-		$label = ! empty( $args['button'] ) ? sanitize_text_field( $args['button'] ) : __( 'Buy Now', 'invoicing' );
-		$attr  = '';
+	}
 
-		foreach( $attrs as $key => $val ) {
-			$key  = sanitize_text_field( $key );
-			$val  = esc_attr( $val );
-			$attr .= " $key='$val' ";
+	/**
+	 * Displaying a payment form
+	 *
+	 * @return string
+	 */
+    protected function handle_payment_form( $args = array() ) {
+
+		if ( empty( $args['button'] ) ) {
+			return getpaid_display_payment_form( $args['form'] );
 		}
 
-		return "<button class='btn btn-primary getpaid-payment-button' type='button' $attr>$label</button>";
+		return $this->payment_form_button( $args['form'], $args['button'] );
+	}
 
+	/**
+	 * Displays a payment form button.
+	 *
+	 * @return string
+	 */
+    protected function payment_form_button( $form, $button ) {
+		$label = sanitize_text_field( $button );
+		$form  = esc_attr( $form );
+		$nonce = wp_create_nonce('getpaid_ajax_form');
+		return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-form='$form'>$label</button>";
+	}
+
+	/**
+	 * Selling an item
+	 *
+	 * @return string
+	 */
+    protected function handle_buy_item( $args = array() ) {
+
+		if ( empty( $args['button'] ) ) {
+			return $this->buy_item_form( $args['item'] );
+		}
+
+		return $this->buy_item_button( $args['item'], $args['button'] );
+
+	}
+
+	/**
+	 * Displays a buy item form.
+	 *
+	 * @return string
+	 */
+    protected function buy_item_form( $item ) {
+		$items = getpaid_convert_items_to_array( $item );
+		return getpaid_display_item_payment_form( $items );
+	}
+
+	/**
+	 * Displays a buy item button.
+	 *
+	 * @return string
+	 */
+    protected function buy_item_button( $item, $button ) {
+		$label = sanitize_text_field( $button );
+		$item  = esc_attr( $item );
+		$nonce = wp_create_nonce('getpaid_ajax_form');
+		return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-item='$item'>$label</button>";
     }
 
 }

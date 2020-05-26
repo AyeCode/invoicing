@@ -23,10 +23,10 @@ class WPInv_Buy_Item_Widget extends WP_Super_Duper {
             'block-keywords'=> "['invoicing','buy', 'buy item']",
             'class_name'     => __CLASS__,
             'base_id'       => 'wpinv_buy',
-            'name'          => __('Invoicing > Buy Item Button','invoicing'),
+            'name'          => __('Get Paid > Buy Item Button (Deprecated)','invoicing'),
             'widget_ops'    => array(
                 'classname'   => 'wpinv-buy-item-class  wpi-g',
-                'description' => esc_html__('Displays buy invoicing item button.','invoicing'),
+                'description' => esc_html__('This widget is deprecated. Use the GetPaid widget instead.','invoicing'),
             ),
             'arguments'     => array(
                 'title'  => array(

@@ -394,10 +394,8 @@ class WPInv_Meta_Box_Items {
         if ( ! is_numeric( $post ) ) {
             $post = $post->ID;
         }
-        $label = '"' . __( 'Buy', 'invoicing' ) . '"';
 
-        echo "<input type='text' style='min-width: 100%; font-size: small;' value='[wpinv_buy items=$post label=$label]' disabled>";
-        echo "<p class='description'><a target='_blank' href='https://wpinvoicing.com/docs/core-plugin/core-shortcodes/#buy-button'>" . __( 'Learn More', 'invoicing' ) ."</a></p>";
+        echo "<input type='text' style='min-width: 100%; font-size: small;' value='[getpaid item=$post]' disabled>";
     }
 
     public static function save( $post_id, $data, $post ) {

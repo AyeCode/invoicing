@@ -51,6 +51,7 @@ class WPInv_Plugin {
         }
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+        add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
         add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
         add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 
@@ -177,7 +178,6 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
-        require_once( WPINV_PLUGIN_DIR . 'widgets/payment-form.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
@@ -514,7 +514,6 @@ class WPInv_Plugin {
 		register_widget( "WPInv_Subscriptions_Widget" );
 		register_widget( "WPInv_Buy_Item_Widget" );
         register_widget( "WPInv_Messages_Widget" );
-        register_widget( 'WPInv_Payment_Form_Widget' );
         register_widget( 'WPInv_GetPaid_Widget' );
 	}
     
@@ -524,7 +523,7 @@ class WPInv_Plugin {
      * @since 1.0.19
      * @param int[] $excluded_posts_ids
      */
-    function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
+    public function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
 
         // Ensure that we have an array.
         if ( ! is_array( $excluded_posts_ids ) ) {
@@ -555,4 +554,19 @@ class WPInv_Plugin {
         return array_unique( $excluded_posts_ids );
 
     }
+
+    public function wp_footer() {
+        echo '
+            <div class="bsui">
+                <div  id="getpaid-payment-modal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ';
+    }
+
 }

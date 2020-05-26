@@ -65,6 +65,7 @@ class WPInv_Ajax {
             'checkout' => false,
             'payment_form_get_taxes' => true,
             'payment_form'     => true,
+            'get_payment_form' => true,
             'get_payment_form_states_field' => true,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
@@ -702,6 +703,40 @@ class WPInv_Ajax {
     }
 
     /**
+     * Retrieves the markup for a payment form.
+     */
+    public static function get_payment_form() {
+
+        // Check nonce.
+        if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'getpaid_ajax_form' ) ) {
+            _e( 'Error: Reload the page and try again.', 'invoicing' );
+            exit;
+        }
+
+        // Is the request set up correctly?
+		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) ) {
+			echo aui()->alert(
+				array(
+					'type'    => 'warning',
+					'content' => __( 'No payment form or item provided', 'invoicing' ),
+				)
+            );
+            exit;
+        }
+
+        // Payment form or button?
+		if ( ! empty( $_GET['form'] ) ) {
+            echo getpaid_display_payment_form( $_GET['form'] );
+		} else {
+			$items = getpaid_convert_items_to_array( $_GET['item'] );
+		    echo getpaid_display_item_payment_form( $items );
+        }
+        
+        exit;
+
+    }
+
+    /**
      * Payment forms.
      *
      * @since 1.0.18
@@ -751,7 +786,14 @@ class WPInv_Ajax {
             $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
 
         } else {
-            $items   = $invoicing->form_elements->get_form_items( $data['form_id'] );
+
+            if ( isset( $data['form_items'] ) ) {
+                $items = getpaid_convert_items_to_array( $data['form_items'] );
+                $items = $invoicing->form_elements->convert_normal_items( $items );
+            } else {
+                $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
+            }
+
             $invoice = 0;
         }
 
@@ -1057,7 +1099,14 @@ class WPInv_Ajax {
             $state   = $invoice->state;
 
         } else {
-            $items     = $invoicing->form_elements->get_form_items( $data['form_id'] );
+
+            if ( isset( $data['form_items'] ) ) {
+                $items = getpaid_convert_items_to_array( $data['form_items'] );
+                $items = $invoicing->form_elements->convert_normal_items( $items );
+            } else {
+                $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
+            }
+
             $country   = wpinv_default_billing_country();
             $state     = false;
         }

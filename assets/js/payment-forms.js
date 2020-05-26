@@ -96,7 +96,7 @@ jQuery(function($) {
 
     })
 
-    $( '.wpinv_payment_form .wpinv-items-selector').on( 'input', function( e ) {
+    $( 'body').on( 'input', '.wpinv_payment_form .wpinv-items-selector', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
@@ -158,7 +158,7 @@ jQuery(function($) {
 
     })
 
-    $( '.wpinv_payment_form .wpinv-items-select-selector').on( 'change', function( e ) {
+    $( 'body').on( 'change', '.wpinv_payment_form .wpinv-items-select-selector', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
@@ -220,7 +220,7 @@ jQuery(function($) {
 
     })
 
-    $( '.wpinv_payment_form .wpinv-items-multiselect-selector').on( 'change', function( e ) {
+    $( 'body').on( 'change', '.wpinv_payment_form .wpinv-items-multiselect-selector', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
@@ -289,7 +289,7 @@ jQuery(function($) {
 
     })
 
-    $( '.wpi-payment-form-items-select-checkbox').on( 'change', function( e ) {
+    $( 'body').on( 'change', '.wpi-payment-form-items-select-checkbox', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
         var total = 0.0
@@ -355,7 +355,7 @@ jQuery(function($) {
     })
 
     // Apply discounts.
-    $( '.wpinv-payment-form-coupon-button').on( 'click', function( e ) {
+    $( 'body').on( 'click', '.wpinv-payment-form-coupon-button', function( e ) {
 
         // Prevent default behaviour...
         e.preventDefault();
@@ -539,9 +539,8 @@ jQuery(function($) {
 
     }
 
-    $('.wpinv_payment_form').each( function() {
+    var setup_form = function( $checkout_form ) {
 
-        var $checkout_form = $( this );
         var $payment_methods = $checkout_form.find('.wpi-payment_methods input[name="wpi-gateway"]');
 
         // If there is one method, we can hide the radio input and the title.
@@ -573,7 +572,7 @@ jQuery(function($) {
 
             $checkout_form.on( 'change', '#wpinv_country', function() {
 
-                wpinvBlock( $checkout_form.find('.wpinv_state') );
+            wpinvBlock( $checkout_form.find('.wpinv_state') );
 
                 data = {
                     action: 'wpinv_get_payment_form_states_field',
@@ -596,6 +595,42 @@ jQuery(function($) {
             })
 
         }
+
+    }
+
+    $('.wpinv_payment_form').each( function() {
+        setup_form( $( this ) );
+    } )
+
+    // Payment buttons.
+    $( document ).on( 'click', '.getpaid-payment-button', function( e ) {
+
+        // Do not submit the form.
+        e.preventDefault();
+
+        // Add the loader.
+        $('#getpaid-payment-modal .modal-body')
+            .html( '<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>' )
+
+        // Display the modal.
+        $('#getpaid-payment-modal').modal()
+
+        // Load the form via ajax.
+        var data    = $( this ).data()
+        data.action = 'wpinv_get_payment_form'
+
+        $.get( WPInv.ajax_url, data, function (res) {
+            $('#getpaid-payment-modal .modal-body').html( res )
+            $('#getpaid-payment-modal').modal('handleUpdate')
+            $('#getpaid-payment-modal .wpinv_payment_form').each( function() {
+                setup_form( $( this ) );
+            } )
+        })
+
+        .fail(function (res) {
+            $('#getpaid-payment-modal .modal-body').html('Could not establish a connection to the server.')
+            $('#getpaid-payment-modal').modal('handleUpdate')
+        })
 
     } )
 
