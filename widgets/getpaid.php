@@ -125,10 +125,7 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 * @return string
 	 */
     protected function payment_form_button( $form, $button ) {
-		$label = sanitize_text_field( $button );
-		$form  = esc_attr( $form );
-		$nonce = wp_create_nonce('getpaid_ajax_form');
-		return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-form='$form'>$label</button>";
+		return getpaid_get_payment_button( $button, $form );
 	}
 
 	/**
@@ -162,10 +159,7 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 * @return string
 	 */
     protected function buy_item_button( $item, $button ) {
-		$label = sanitize_text_field( $button );
-		$item  = esc_attr( $item );
-		$nonce = wp_create_nonce('getpaid_ajax_form');
-		return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-item='$item'>$label</button>";
+		return getpaid_get_payment_button( $button, null, $item );
     }
 
 }

@@ -559,7 +559,7 @@ class WPInv_Plugin {
         echo '
             <div class="bsui">
                 <div  id="getpaid-payment-modal" class="modal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="checkout" style="max-width: 650px;">
                         <div class="modal-content">
                             <div class="modal-body"></div>
                         </div>

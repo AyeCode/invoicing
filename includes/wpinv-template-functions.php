@@ -2387,6 +2387,58 @@ function getpaid_display_item_payment_form( $items ) {
 }
 
 /**
+ * Helper function to display an invoice payment form on the frontend.
+ */
+function getpaid_display_invoice_payment_form( $invoice_id ) {
+    global $invoicing;
+
+    $invoice = wpinv_get_invoice( $invoice_id );
+
+    if ( empty( $invoice ) ) {
+		return aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'Invoice not found', 'invoicing' ),
+			)
+		);
+    }
+
+    if ( $invoice->is_paid() ) {
+		return aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'Invoice has already been paid', 'invoicing' ),
+			)
+		);
+    }
+
+    // Get the form elements and items.
+    $form     = wpinv_get_default_payment_form();
+	$elements = $invoicing->form_elements->get_form_elements( $form );
+	$items    = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
+
+	ob_start();
+	echo "<form class='wpinv_payment_form'>";
+	do_action( 'wpinv_payment_form_top' );
+    echo "<input type='hidden' name='form_id' value='$form'/>";
+    echo "<input type='hidden' name='invoice_id' value='$invoice_id'/>";
+	wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
+	wp_nonce_field( 'vat_validation', '_wpi_nonce' );
+
+	foreach ( $elements as $element ) {
+		do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $form );
+		do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $form );
+	}
+
+	echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
+	do_action( 'wpinv_payment_form_bottom' );
+	echo '</form>';
+
+	$content = ob_get_clean();
+	return str_replace( 'sr-only', '', $content );
+}
+
+/**
  * Helper function to convert item string to array.
  */
 function getpaid_convert_items_to_array( $items ) {
@@ -2423,3 +2475,30 @@ function getpaid_convert_items_to_string( $items ) {
     }
     return implode( ',', $prepared );
 }
+
+/**
+ * Helper function to display a payment item.
+ * 
+ * Provide a label and one of $form, $items or $invoice.
+ */
+function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null ) {
+    $label = sanitize_text_field( $label );
+    $nonce = wp_create_nonce('getpaid_ajax_form');
+
+    if ( ! empty( $form ) ) {
+        $form  = esc_attr( $form );
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-form='$form'>$label</button>"; 
+    }
+	
+	if ( ! empty( $items ) ) {
+        $items  = esc_attr( $items );
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-item='$items'>$label</button>"; 
+    }
+    
+    if ( ! empty( $invoice ) ) {
+        $invoice  = esc_attr( $invoice );
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-invoice='$invoice'>$label</button>"; 
+    }
+
+}
+

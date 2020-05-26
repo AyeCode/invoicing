@@ -727,7 +727,9 @@ class WPInv_Ajax {
         // Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
             echo getpaid_display_payment_form( $_GET['form'] );
-		} else {
+		} else if( $_GET['invoice'] ) {
+		    echo getpaid_display_invoice_payment_form( $_GET['invoice'] );
+        } else {
 			$items = getpaid_convert_items_to_array( $_GET['item'] );
 		    echo getpaid_display_item_payment_form( $items );
         }
