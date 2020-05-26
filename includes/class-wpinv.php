@@ -128,10 +128,10 @@ class WPInv_Plugin {
          */
         require_once( WPINV_PLUGIN_DIR . 'language.php' );
     }
-        
+
     public function includes() {
         global $wpinv_options;
-        
+
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
         $wpinv_options = wpinv_get_settings();
         

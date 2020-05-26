@@ -1414,10 +1414,10 @@ function wpinv_checkout_form() {
 	        $elements = $invoicing->form_elements->get_form_elements( $payment_form );
 	        $items    = $invoicing->form_elements->convert_checkout_items( wpinv_get_cart_contents(), wpinv_get_invoice_cart() );
             ?>
-            <div class="wpinv_checkout_form_wrap">
-                <?php do_action( 'wpinv_before_checkout_form' ); ?>
-                <form class="wpinv_payment_form" action="<?php echo $form_action; ?>" method="POST">
-                    <input type='hidden' name='form_id' value='<?php echo esc_attr( $payment_form ); ?>'/>
+            <form class="wpinv_payment_form" action="<?php echo $form_action; ?>" method="POST">
+                <?php do_action( 'wpinv_main_checkout_form_top' ); ?>
+                <input type='hidden' name='form_id' value='<?php echo esc_attr( $payment_form ); ?>'/>
+                <input type='hidden' name='invoice_id' value='<?php echo esc_attr( $wpi_checkout_id ); ?>'/>
                     <?php
                         wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
                         wp_nonce_field( 'vat_validation', '_wpi_nonce' );
@@ -1427,10 +1427,9 @@ function wpinv_checkout_form() {
                             do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $payment_form );
                         }
                     ?>
-                    <div class='wpinv_payment_form_errors alert alert-danger d-none'></div>
-                </form>
-                <?php do_action( 'wpinv_after_purchase_form' ); ?>
-            </div>
+                <div class='wpinv_payment_form_errors alert alert-danger d-none'></div>
+                <?php do_action( 'wpinv_main_checkout_form_bottom' ); ?>
+            </form>
         <?php
 
         } else {
@@ -1476,7 +1475,12 @@ function wpinv_empty_cart_message() {
  * @return void
  */
 function wpinv_empty_checkout_cart() {
-	echo wpinv_empty_cart_message();
+    echo aui()->alert(
+        array(
+            'type'    => 'warning',
+            'content' => wpinv_empty_cart_message(),
+        )
+    );
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
 

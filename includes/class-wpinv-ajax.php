@@ -737,7 +737,24 @@ class WPInv_Ajax {
         $fields = $invoicing->form_elements->get_form_elements( $data['form_id'] );
 
         // ... and form items.
-        $items          = $invoicing->form_elements->get_form_items( $data['form_id'] );
+        if ( ! empty( $data['invoice_id'] ) ) {
+            $invoice = wpinv_get_invoice( $data['invoice_id'] );
+
+            if ( empty( $invoice ) ) {
+                wp_send_json_error( __( 'Invalid invoice.', 'invoicing' ) );
+            }
+
+            if ( $invoice->is_paid() ) {
+                wp_send_json_error( __( 'This invoice has already been paid.', 'invoicing' ) );
+            }
+
+            $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
+
+        } else {
+            $items   = $invoicing->form_elements->get_form_items( $data['form_id'] );
+            $invoice = 0;
+        }
+
         $prepared_items = array();
         $address_fields = array();
 
@@ -755,14 +772,14 @@ class WPInv_Ajax {
                     continue;
                 }
 
-                $quantity = 1;
+                $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
 
                 if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
 
-                    $quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
+                    $_quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
 
-                    if ( empty( $quantity ) ) {
-                        $quantity = 1;
+                    if ( ! empty( $_quantity ) ) {
+                        $quantity = $_quantity;
                     }
                 }
 
@@ -861,38 +878,55 @@ class WPInv_Ajax {
         }
 
         // Create the invoice.
-        $created = wpinv_insert_invoice(
-            array(
-                'status'        => 'wpi-pending',
-                'created_via'   => 'wpi',
-                'user_id'       => $user->ID,
-                'cart_details'  => $prepared_items,
-                'user_info'     => $address_fields,
-            ),
-            true
-        );
+        if ( empty( $invoice ) ) {
 
-        if ( is_wp_error( $created ) ) {
-            wp_send_json_error( $created->get_error_message() );
+            $invoice = wpinv_insert_invoice(
+                array(
+                    'status'        => 'wpi-pending',
+                    'created_via'   => 'payment_form',
+                    'user_id'       => $user->ID,
+                    'cart_details'  => $prepared_items,
+                    'user_info'     => $address_fields,
+                ),
+                true
+            );
+
+        } else {
+
+            $invoice = wpinv_update_invoice(
+                array(
+                    'ID'            => $invoice->ID,
+                    'status'        => 'wpi-pending',
+                    'cart_details'  => $prepared_items,
+                    'user_info'     => $address_fields,
+                ),
+                true
+            );
+
+        }
+        
+
+        if ( is_wp_error( $invoice ) ) {
+            wp_send_json_error( $invoice->get_error_message() );
         }
 
-        if ( empty( $created ) ) {
+        if ( empty( $invoice ) ) {
             wp_send_json_error( __( 'Could not create your invoice.', 'invoicing' ) );
         }
 
         unset( $prepared['billing_email'] );
-        update_post_meta( $created->ID, 'payment_form_data', $prepared );
+        update_post_meta( $invoice->ID, 'payment_form_data', $prepared );
 
-        $wpi_checkout_id = $created->ID;
+        $wpi_checkout_id = $invoice->ID;
         $cart_total = wpinv_price(
             wpinv_format_amount(
-                wpinv_get_cart_total( $created->get_cart_details(), NULL, $created ) ),
-                $created->get_currency()
+                wpinv_get_cart_total( $invoice->get_cart_details(), NULL, $invoice ) ),
+                $invoice->get_currency()
         );
 
         $data                   = array();
-        $data['invoice_id']     = $created->ID;
-        $data['cart_discounts'] = $created->get_discounts( true );
+        $data['invoice_id']     = $invoice->ID;
+        $data['cart_discounts'] = $invoice->get_discounts( true );
 
         wpinv_set_checkout_session( $data );
         add_filter( 'wp_redirect', array( $invoicing->form_elements, 'send_redirect_response' ) );
@@ -1010,20 +1044,35 @@ class WPInv_Ajax {
             exit;
         }
 
-        // ... and form items.
-        $items     = $invoicing->form_elements->get_form_items( $data['form_id'] );
+        // For existing invoices.
+        if ( ! empty( $data['invoice_id'] ) ) {
+            $invoice = wpinv_get_invoice( $data['invoice_id'] );
+
+            if ( empty( $invoice ) ) {
+                exit;
+            }
+
+            $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
+            $country = $invoice->country;
+            $state   = $invoice->state;
+
+        } else {
+            $items     = $invoicing->form_elements->get_form_items( $data['form_id'] );
+            $country   = wpinv_default_billing_country();
+            $state     = false;
+        }
+
+        // What we will calculate.
         $total     = 0;
         $tax       = 0;
         $sub_total = 0;
-        $country   = wpinv_default_billing_country();
-        $state     = false;
 
-        if ( ! empty( $_POST['wpinv_country'] ) ) {
-            $country = $_POST['wpinv_country'];
+        if ( ! empty( $data['wpinv_country'] ) ) {
+            $country = $data['wpinv_country'];
         }
 
-        if ( ! empty( $_POST['wpinv_state'] ) ) {
-            $state = $_POST['wpinv_state'];
+        if ( ! empty( $data['wpinv_state'] ) ) {
+            $state = $data['wpinv_state'];
         }
 
         if ( ! empty( $data['wpinv-items'] ) ) {
@@ -1036,7 +1085,7 @@ class WPInv_Ajax {
                     continue;
                 }
 
-                $quantity = 1;
+                $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
 
                 if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
 

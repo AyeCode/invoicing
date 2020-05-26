@@ -511,7 +511,7 @@ function wpinv_get_invoice( $invoice_id = 0, $cart = false ) {
     if ( ! empty( $invoice ) && ! empty( $invoice->ID ) ) {
         return $invoice;
     }
-    
+
     return NULL;
 }
 

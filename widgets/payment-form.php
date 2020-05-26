@@ -103,6 +103,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 
 		ob_start();
 		echo "<form class='wpinv_payment_form'>";
+		do_action( 'wpinv_payment_form_top' );
 		echo "<input type='hidden' name='form_id' value='{$args['id']}'/>";
 		wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
 		wp_nonce_field( 'vat_validation', '_wpi_nonce' );
@@ -113,6 +114,7 @@ class WPInv_Payment_Form_Widget extends WP_Super_Duper {
 		}
 
 		echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
+		do_action( 'wpinv_payment_form_bottom' );
 		echo '</form>';
 
 		$content = ob_get_clean();

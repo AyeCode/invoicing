@@ -1826,6 +1826,11 @@ class WPInv_Payment_Form_Elements {
         echo "<div class='form-group item_totals'>";
         
         $id = esc_attr( $field['id'] );
+
+        if ( empty( $field[ 'items_type' ] ) ) {
+            $field[ 'items_type' ] = 'total';
+        }
+
         if ( 'total' == $field[ 'items_type' ] ) {
             $total     = 0;
             $tax       = 0;
@@ -1870,6 +1875,11 @@ class WPInv_Payment_Form_Elements {
                         if ( ! empty( $item['custom_price'] ) ) {
                             $class .= ' pt-2';
                         }
+
+                        $quantity = 1;
+                        if ( ! empty( $item['quantity'] ) ) {
+                            $quantity = absint( $item['quantity'] );
+                        }
             
                 ?>
                     <div  class="item_totals_item">
@@ -1879,11 +1889,11 @@ class WPInv_Payment_Form_Elements {
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
                                 <div class='col-2'>
-                                    <input name='wpinv-item-<?php echo (int) $item['id']; ?>-quantity' type='number' class='form-control wpinv-item-quantity-input pr-1' value='1' min='1' required>
+                                    <input name='wpinv-item-<?php echo (int) $item['id']; ?>-quantity' type='number' class='form-control wpinv-item-quantity-input pr-1' value='<?php echo $quantity ?>' min='1' required>
                                 </div>
 
                             <?php } else { ?>
-                                <input type='hidden' class='wpinv-item-quantity-input' value='1'>
+                                <input type='hidden' class='wpinv-item-quantity-input' value='<?php echo $quantity ?>'>
                             <?php } if ( empty( $item['custom_price'] ) ) { ?>
 
                                 <div class='col-4 <?php echo $class2; ?>'>
@@ -2845,18 +2855,22 @@ class WPInv_Payment_Form_Elements {
 
             $item_id = $item['id'];
             $_item   = new WPInv_Item( $item_id );
-    
+
             if( ! $_item ) {
                 continue;
             }
 
             $converted[] = array(
-                'title'        => esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $_item ),
-                'id'           => $item['id'],
-                'price'        => $item['subtotal'],
-                'custom_price' => $_item->get_is_dynamic_pricing(),
-                'recurring'    => $_item->is_recurring(),
-                'description'  => apply_filters( 'wpinv_checkout_cart_line_item_summary', '', $item, $_item, $invoice ),
+                'title'            => esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $_item ),
+                'id'               => $item['id'],
+                'price'            => $item['subtotal'],
+                'custom_price'     => $_item->get_is_dynamic_pricing(),
+                'recurring'        => $_item->is_recurring(),
+                'description'      => apply_filters( 'wpinv_checkout_cart_line_item_summary', '', $item, $_item, $invoice ),
+                'minimum_price'    => $_item->get_minimum_price(),
+                'allow_quantities' => false,
+                'quantity'         => $item['quantity'],
+                'required'         => true,
             );
         }
         return $converted;
