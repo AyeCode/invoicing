@@ -39,9 +39,15 @@ class WPInv_Admin_Menus {
 
         }
 
-        $wpi_invoice = get_post_type_object( 'wpi_invoice' );
-
-        add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
+        add_menu_page(
+            __( 'GetPaid', 'invoicing' ),
+            __( 'GetPaid', 'invoicing' ),
+            $capability,
+            'wpinv',
+            null,
+            'data:image/svg+xml;base64,' . base64_encode( file_get_contents( WPINV_PLUGIN_DIR . 'assets/images/GetPaid.svg' ) ),
+            '54.123460'
+        );
 
     }
 

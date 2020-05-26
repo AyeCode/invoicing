@@ -2838,14 +2838,25 @@ class WPInv_Payment_Form_Elements {
     /**
      * Converts form items for use.
      */
-    public function convert_checkout_items( $items ) {
+    public function convert_checkout_items( $items, $invoice ) {
 
         $converted = array();
         foreach ( $items as $item ) {
+
+            $item_id = $item['id'];
+            $_item   = new WPInv_Item( $item_id );
+    
+            if( ! $_item ) {
+                continue;
+            }
+
             $converted[] = array(
-                'title' => $item['name'],
-                'id'    => $item['id'],
-                'price' => $item['subtotal']
+                'title'        => esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $_item ),
+                'id'           => $item['id'],
+                'price'        => $item['subtotal'],
+                'custom_price' => $_item->get_is_dynamic_pricing(),
+                'recurring'    => $_item->is_recurring(),
+                'description'  => apply_filters( 'wpinv_checkout_cart_line_item_summary', '', $item, $_item, $invoice ),
             );
         }
         return $converted;

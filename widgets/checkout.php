@@ -55,9 +55,7 @@ class WPInv_Checkout_Widget extends WP_Super_Duper {
 	 * @return mixed|string|bool
 	 */
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
-
 	    return wpinv_checkout_form();
-
     }
 
 }

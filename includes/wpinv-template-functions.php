@@ -1412,7 +1412,7 @@ function wpinv_checkout_form() {
 
             // Get the form elements and items.
 	        $elements = $invoicing->form_elements->get_form_elements( $payment_form );
-	        $items    = $invoicing->form_elements->convert_checkout_items( wpinv_get_cart_contents() );
+	        $items    = $invoicing->form_elements->convert_checkout_items( wpinv_get_cart_contents(), wpinv_get_invoice_cart() );
             ?>
             <div class="wpinv_checkout_form_wrap">
                 <?php do_action( 'wpinv_before_checkout_form' ); ?>
