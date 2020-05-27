@@ -631,3 +631,15 @@ function wpinv_invoice_count_reset_message(){
         <?php
     }
 }
+
+/**
+ * Remove trash link from the default form.
+ */
+function getpaid_remove_action_link( $actions, $post ) {
+    $post = get_post( $post );var_dump( $post ); exit;
+    if ( 'wpi_payment_form' == $post->post_type && $post->ID == wpinv_get_default_payment_form() ) {
+        unset( $actions['trash'] );
+    }
+    return $actions;
+}
+add_filter( 'post_row_actions', 'getpaid_remove_action_link', 10, 2 );
