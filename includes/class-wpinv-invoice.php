@@ -126,11 +126,11 @@ final class WPInv_Invoice {
         }
 
         do_action( 'wpinv_pre_setup_invoice', $this, $invoice_id );
-        
+
         // Primary Identifier
         $this->ID              = absint( $invoice_id );
         $this->post_type       = $invoice->post_type;
-        
+
         // We have a payment, get the generic payment_meta item to reduce calls to it
         $this->payment_meta    = $this->get_meta();
         $this->date            = $invoice->post_date;
@@ -2139,27 +2139,27 @@ final class WPInv_Invoice {
 
         return apply_filters( 'wpinv_invoice_get_recurring_item_id', $item, $this );
     }
-    
+
     public function get_subscription_name() {
         $item = $this->get_recurring( true );
-        
+
         if ( empty( $item ) ) {
             return NULL;
         }
-        
+
         if ( !($name = $item->get_name()) ) {
             $name = $item->post_name;
         }
 
         return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
     }
-    
+
     public function get_subscription_id() {
         $subscription_id = $this->get_meta( '_wpinv_subscr_profile_id', true );
-        
+
         if ( empty( $subscription_id ) && !empty( $this->parent_invoice ) ) {
             $parent_invoice = wpinv_get_invoice( $this->parent_invoice );
-            
+
             $subscription_id = $parent_invoice->get_meta( '_wpinv_subscr_profile_id', true );
         }
         

@@ -326,6 +326,26 @@ class WPInv_Payment_Form_Elements {
                 )
             ),
 
+            array(
+                'type' => 'terms',
+                'name' => __( 'Terms', 'invoicing' ),
+                'defaults'         => array(
+                    'value'        => '',
+                    'text'         => __( 'I\'ve read and accept the <a href="" target="_blank">terms &amp; conditions</a>', 'invoicing' ),
+                    'description'  => '',
+                    'required'     => true,
+                )
+            ),
+
+            array(
+                'type' => 'privacy',
+                'name' => __( 'Privacy', 'invoicing' ),
+                'defaults'         => array(
+                    'value'        => '',
+                    'text'         => __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our privacy policy.', 'invoicing' ),
+                )
+            ),
+
             array( 
                 'type'       => 'pay_button',
                 'name'       => __( 'Payment Button', 'invoicing' ),
@@ -412,9 +432,25 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders a privacy element template.
+     */
+    public function render_privacy_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'privacy' );
+        $label    = "$field.text";
+        echo "<p $restrict v-html='$label' style='font-size: 16px;'></p>";
+    }
+
+    /**
      * Renders the paragraph element on the frontend.
      */
     public function frontend_render_paragraph_template( $field ) {
+        echo "<p>{$field['text']}</p>";
+    }
+
+    /**
+     * Renders the privacy element on the frontend.
+     */
+    public function frontend_render_privacy_template( $field ) {
         echo "<p>{$field['text']}</p>";
     }
 
@@ -424,6 +460,24 @@ class WPInv_Payment_Form_Elements {
     public function edit_paragraph_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'paragraph' );
         $label    = __( 'Enter your text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
+     * Renders the edit privacy element template.
+     */
+    public function edit_privacy_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'privacy' );
+        $label    = __( 'Privacy Text', 'invoicing' );
         $id       = $field . '.id + "_edit"';
         echo "
             <div $restrict>
@@ -700,12 +754,26 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_checkbox_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'checkbox' );
-        $label    = "$field.label";
         echo "
             <div class='form-check' $restrict>
                 <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <input  :id='$field.id' class='form-check-input' type='checkbox' />
-                <label class='form-check-label' :for='$field.id'>{{" . $label . "}}</label>
+                <label class='form-check-label' :for='$field.id' v-html='$field.label'></label>
+                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
+            </div>    
+        ";
+    }
+
+    /**
+     * Renders the terms element template.
+     */
+    public function render_terms_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'terms' );
+        echo "
+            <div class='form-check' $restrict>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
+                <input  :id='$field.id' class='form-check-input' type='checkbox' />
+                <label class='form-check-label' :for='$field.id' v-html='$field.text'></label>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
@@ -739,6 +807,34 @@ class WPInv_Payment_Form_Elements {
 
     }
 
+        /**
+     * Renders the terms element on the frontend.
+     */
+    public function frontend_render_terms_template( $field ) {
+        
+        echo "<div class='form-group'>";
+
+        echo aui()->input(
+            array(
+                'name'       => esc_attr( $field['id'] ),
+                'id'         => esc_attr( $field['id'] ),
+                'required'   => (bool) $field['required'],
+                'label'      => wp_kses_post( $field['text'] ),
+                'no_wrap'    => true,
+                'value'      => esc_attr__( 'Yes', 'invoicing' ),
+                'type'       => 'checkbox',
+            )
+        );
+
+        if ( ! empty( $field['description'] ) ) {
+            $description = wp_kses_post( $field['description'] );
+            echo "<small class='form-text text-muted'>$description</small>";
+        }
+
+        echo '</div>';
+
+    }
+
     /**
      * Renders the edit checkbox element template.
      */
@@ -756,6 +852,37 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+                    <textarea placeholder='$label3' :id='$id2' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
+                <div class='form-group form-check'>
+                    <input :id='$id3' v-model='$field.required' type='checkbox' class='form-check-input' />
+                    <label class='form-check-label' :for='$id3'>$label4</label>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
+     * Renders the edit terms element template.
+     */
+    public function edit_terms_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'terms' );
+        $label    = __( 'Field Label', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $label2   = __( 'Help text', 'invoicing' );
+        $label3   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id2      = $field . '.id + "_edit2"';
+        $label4   = __( 'Is this field required?', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input :id='$id' v-model='$field.text' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id2'>$label2</label>

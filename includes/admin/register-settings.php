@@ -387,35 +387,6 @@ function wpinv_get_registered_settings() {
                         'type' => 'text',
                         'size' => 'regular',
                     ),
-                    'name_your_price' => array(
-                        'id'   => 'name_your_price_settings',
-                        'name' => '<h3>' . __( 'Name Your Price', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'suggested_price_text' => array(
-                        'id'   => 'suggested_price_text',
-                        'name' => __( 'Suggested Price Text', 'invoicing' ),
-                        'desc' => __( "The label used to indicate an item's suggested price", 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std'  => __( 'Suggested Price:', 'invoicing' ),
-                    ),
-                    'minimum_price_text' => array(
-                        'id'   => 'minimum_price_text',
-                        'name' => __( 'Minimum Price Text', 'invoicing' ),
-                        'desc' => __( "The label used to indicate an item's minimum price", 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std'  => __( 'Minimum Price:', 'invoicing' ),
-                    ),
-                    'name_your_price_text' => array(
-                        'id'   => 'name_your_price_text',
-                        'name' => __( 'Name Your Price Text', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std'  => __( 'Name Your Price', 'invoicing' ),
-                    ),
                 )
             )
         ),
@@ -613,15 +584,6 @@ function wpinv_get_registered_settings() {
                         'class'       => 'wpi_select2',
                         'placeholder' => __( 'Select a page', 'invoicing' ),
                     ),
-                    'invoicing_privacy_checkout_message' => array(
-                        'id' => 'invoicing_privacy_checkout_message',
-                        'name' => __( 'Checkout privacy policy', 'invoicing' ),
-                        'desc' => __( 'Optionally add privacy policy message which will display on checkout page.', 'invoicing' ),
-                        'type' => 'textarea',
-                        'class'=> 'regular-text',
-                        'rows' => 4,
-                        'std'  => sprintf( __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our %s.', 'invoicing' ), '[wpinv_privacy_policy]' ),
-                    ),
                 ),
             )
         ),
@@ -661,11 +623,11 @@ function wpinv_get_registered_settings() {
                     'invoice_number_prefix' => array(
                         'id' => 'invoice_number_prefix',
                         'name' => __( 'Invoice Number Prefix', 'invoicing' ),
-                        'desc' => __( 'Prefix for all invoice numbers. Ex: WPINV-', 'invoicing' ),
+                        'desc' => __( 'Prefix for all invoice numbers. Ex: INV-', 'invoicing' ),
                         'type' => 'text',
                         'size' => 'regular',
-                        'std' => 'WPINV-',
-                        'placeholder' => 'WPINV-',
+                        'std' => 'INV-',
+                        'placeholder' => 'INV-',
                     ),
                     'invoice_number_postfix' => array(
                         'id' => 'invoice_number_postfix',
@@ -700,66 +662,6 @@ function wpinv_get_registered_settings() {
                     ),
                 ),
                 'fields' => array(
-                    'fields_settings' => array(
-                        'id'   => 'fields_settings',
-                        'name' => '<h3>' . __( 'Address Fields', 'invoicing' ) . '</h3>',
-                        'desc' => __( 'Tick fields which are mandatory in invoice address fields.', 'invoicing' ),
-                        'type' => 'header',
-                    ),
-                    'fname_mandatory' => array(
-                        'id'   => 'fname_mandatory',
-                        'name' => __( 'First Name', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'lname_mandatory' => array(
-                        'id'   => 'lname_mandatory',
-                        'name' => __( 'Last Name', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'address_mandatory' => array(
-                        'id'   => 'address_mandatory',
-                        'name' => __( 'Address', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'city_mandatory' => array(
-                        'id'   => 'city_mandatory',
-                        'name' => __( 'City', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'country_mandatory' => array(
-                        'id'   => 'country_mandatory',
-                        'name' => __( 'Country', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'state_mandatory' => array(
-                        'id'   => 'state_mandatory',
-                        'name' => __( 'State / Province', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'zip_mandatory' => array(
-                        'id'   => 'zip_mandatory',
-                        'name' => __( 'ZIP / Postcode', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'phone_mandatory' => array(
-                        'id'   => 'phone_mandatory',
-                        'name' => __( 'Phone Number', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => true,
-                    ),
-                    'force_show_company' => array(
-                        'id'   => 'force_show_company',
-                        'name' => __( 'Force show company name at checkout.', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => false,
-                    ),
                     'address_autofill_settings' => array(
                         'id'   => 'address_autofill_settings',
                         'name' => '<h3>' . __( 'Google Address Auto Complete', 'invoicing' ) . '</h3>',

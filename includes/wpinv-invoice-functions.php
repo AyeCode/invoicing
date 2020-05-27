@@ -1169,26 +1169,17 @@ function wpinv_validate_checkout_fields() {
     if ( empty( $_POST ) ) {
         return false;
     }
-    
+
     // Start an array to collect valid data
     $valid_data = array(
         'gateway'          => wpinv_checkout_validate_gateway(), // Gateway fallback
         'discount'         => wpinv_checkout_validate_discounts(), // Set default discount
         'cc_info'          => wpinv_checkout_validate_cc() // Credit card info
     );
-    
-    // Validate agree to terms
-    $page = wpinv_get_option( 'tandc_page' );
-    if(isset($page) && (int)$page > 0 && apply_filters( 'wpinv_checkout_show_terms', true )){
-        // Validate agree to terms
-        if ( ! isset( $_POST['wpi_terms'] ) || !$_POST['wpi_terms'] ) {
-            wpinv_set_error( 'accept_terms', apply_filters( 'wpinv_accept_terms_error_text', __( 'You must accept terms and conditions', 'invoicing' ) ) );
-        }
-    }
-    
+
     $valid_data['invoice_user'] = wpinv_checkout_validate_invoice_user();
     $valid_data['current_user'] = wpinv_checkout_validate_current_user();
-    
+
     // Return collected data
     return $valid_data;
 }
