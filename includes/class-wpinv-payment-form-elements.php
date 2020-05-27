@@ -287,6 +287,26 @@ class WPInv_Payment_Form_Elements {
                             'required'     => false,
                             'visible'      => true,
                             'name'         => 'wpinv_phone',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'Company', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => false,
+                            'name'         => 'wpinv_company',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'VAT Number', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => false,
+                            'name'         => 'wpinv_vat_number',
                         )
                     )
                 )
