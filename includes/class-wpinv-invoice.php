@@ -1769,7 +1769,7 @@ final class WPInv_Invoice {
                 'meta'          => $args['meta'],
                 'fees'          => $args['fees'],
             );
-                        
+   
             $subtotal = $subtotal - $discount;
         }
         

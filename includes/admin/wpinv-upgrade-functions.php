@@ -218,41 +218,80 @@ function wpinv_create_invoices_table() {
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
+    // Create invoices table.
     $table = $wpdb->prefix . 'getpaid_invoices';
     $sql   = "CREATE TABLE $table (
-        id BIGINT(20) NOT NULL AUTO_INCREMENT,
-        invoice_id BIGINT(20) NOT NULL,
-        `key` VARCHAR(20),
-        number VARCHAR(20),
-        user_ip VARCHAR(100),
-        address VARCHAR(100),
-        zip VARCHAR(100),
-        city VARCHAR(100),
-        state VARCHAR(100),
-        country VARCHAR(100),
-        type VARCHAR(20) NOT NULL DEFAULT 'invoice',
-        mode VARCHAR(20) NOT NULL DEFAULT 'live',
-        gateway VARCHAR(100),
-        transaction_id VARCHAR(100),
-        currency VARCHAR(10),
-        subtotal FLOAT(20) NOT NULL DEFAULT 0,
-        tax FLOAT(20) NOT NULL DEFAULT 0,
-        fees_total FLOAT(20) NOT NULL DEFAULT 0,
-        total FLOAT(20) NOT NULL DEFAULT 0,
-        discount FLOAT(20) NOT NULL DEFAULT 0,
-        discount_code VARCHAR(20),
-        disable_taxes INT(2) NOT NULL DEFAULT 0,
-        due_date DATETIME,
-        completed_date DATETIME,
-        payment_meta TEXT,
-        company VARCHAR(100),
-        vat_number VARCHAR(100),
-        vat_rate VARCHAR(100),
-        adddress_confirmed INT(10),
-        PRIMARY KEY  (id),
-        KEY invoice_id (invoice_id),
-        KEY `key` ( `key` )
-        ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+            post_id BIGINT(20) NOT NULL,
+            number VARCHAR(20),
+            `key` VARCHAR(20),
+            `type` VARCHAR(20) NOT NULL DEFAULT 'invoice',
+            mode VARCHAR(20) NOT NULL DEFAULT 'live',
+
+            user_ip VARCHAR(100),
+            first_name VARCHAR(100),
+            last_name VARCHAR(100),
+            `address` VARCHAR(100),
+            address2 VARCHAR(100),
+            city VARCHAR(100),
+            `state` VARCHAR(100),
+            country VARCHAR(100),
+            zip VARCHAR(100),
+            adddress_confirmed INT(10),
+
+            gateway VARCHAR(100),
+            transaction_id VARCHAR(100),
+            currency VARCHAR(10),
+            subtotal FLOAT(20) NOT NULL DEFAULT 0,
+            tax FLOAT(20) NOT NULL DEFAULT 0,
+            fees_total FLOAT(20) NOT NULL DEFAULT 0,
+            total FLOAT(20) NOT NULL DEFAULT 0,
+            discount FLOAT(20) NOT NULL DEFAULT 0,
+            discount_code VARCHAR(20),
+            disable_taxes INT(2) NOT NULL DEFAULT 0,
+            due_date DATETIME,
+            completed_date DATETIME,
+            company VARCHAR(100),
+            vat_number VARCHAR(100),
+            vat_rate VARCHAR(100),
+
+            custom_meta TEXT,
+            PRIMARY KEY  (post_id),
+            KEY number (number),
+            KEY `key` ( `key` )
+            ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    dbDelta( $sql );
+
+    // Create invoice items table.
+    $table = $wpdb->prefix . 'getpaid_invoice_items';
+    $sql   = "CREATE TABLE $table (
+
+            // Links with external post types. 
+            item_id BIGINT(20) NOT NULL,
+            invoice_id BIGINT(20) NOT NULL,
+
+            // How this specific item appears on invoices. 
+            invoice_item_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+            invoice_item_name TEXT NOT NULL,
+            invoice_item_description TEXT NOT NULL,
+
+            // Used to calculate the cost of the item on invoices.
+            vat_rate FLOAT NOT NULL DEFAULT 0,
+            vat_class VARCHAR(100),
+            tax FLOAT NOT NULL DEFAULT 0,
+            item_price FLOAT NOT NULL DEFAULT 0,
+            custom_price FLOAT NOT NULL DEFAULT 0,
+            quantity INT(20) NOT NULL DEFAULT 1,
+            discount FLOAT NOT NULL DEFAULT 0,
+            subtotal FLOAT NOT NULL DEFAULT 0,
+            price FLOAT NOT NULL DEFAULT 0,
+            meta TEXT,
+            fees TEXT,
+            PRIMARY KEY  (invoice_item_id),
+            KEY item_id (item_id),
+            KEY invoice_id ( invoice_id )
+            ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
     dbDelta( $sql );
 }
