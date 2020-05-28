@@ -22,7 +22,7 @@ class WPInv_History_Widget extends WP_Super_Duper {
             'block-keywords'=> "['invoicing','history']",
             'class_name'     => __CLASS__,
             'base_id'       => 'wpinv_history',
-            'name'          => __('Invoicing > Invoice History','invoicing'),
+            'name'          => __('GetPaid > Invoice History','invoicing'),
             'widget_ops'    => array(
                 'classname'   => 'wpinv-history-class wpi-g',
                 'description' => esc_html__('Displays invoice history.','invoicing'),

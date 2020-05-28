@@ -19,10 +19,10 @@ class WPInv_Plugin {
             self::$instance = new WPInv_Plugin;
             self::$instance->includes();
             self::$instance->actions();
-            self::$instance->notes          = new WPInv_Notes();
-            self::$instance->reports        = new WPInv_Reports();
-            self::$instance->api            = new WPInv_API();
-            self::$instance->form_elements  = new WPInv_Payment_Form_Elements();
+            self::$instance->notes                = new WPInv_Notes();
+            self::$instance->reports              = new WPInv_Reports();
+            self::$instance->api                  = new WPInv_API();
+            self::$instance->form_elements        = new WPInv_Payment_Form_Elements();
         }
 
         return self::$instance;
@@ -51,6 +51,7 @@ class WPInv_Plugin {
         }
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+        add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
         add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
         add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 
@@ -128,10 +129,10 @@ class WPInv_Plugin {
          */
         require_once( WPINV_PLUGIN_DIR . 'language.php' );
     }
-        
+
     public function includes() {
         global $wpinv_options;
-        
+
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
         $wpinv_options = wpinv_get_settings();
         
@@ -177,7 +178,7 @@ class WPInv_Plugin {
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
 	    require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
         require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
-        require_once( WPINV_PLUGIN_DIR . 'widgets/payment-form.php' );
+        require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
         if ( !class_exists( 'WPInv_EUVat' ) ) {
@@ -239,6 +240,7 @@ class WPInv_Plugin {
     }
     
     public function admin_init() {
+        self::$instance->default_payment_form = wpinv_get_default_payment_form();
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
     }
 
@@ -321,6 +323,8 @@ class WPInv_Plugin {
         if ( $jquery_ui_css ) {
             wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
             wp_enqueue_style( 'jquery-ui-css' );
+            wp_deregister_style( 'yoast-seo-select2' );
+	        wp_deregister_style( 'yoast-seo-monorepo' );
         }
 
         wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
@@ -333,6 +337,8 @@ class WPInv_Plugin {
         $enqueue = ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) );
         if ( $page == 'wpinv-subscriptions' ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
+            wp_deregister_style( 'yoast-seo-select2' );
+	        wp_deregister_style( 'yoast-seo-monorepo' );
         }
         
         if ( $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue ) ) {
@@ -414,6 +420,7 @@ class WPInv_Plugin {
                 'thousands_sep' => wpinv_thousands_separator(),
                 'decimals_sep'  => wpinv_decimal_separator(),
                 'form_items'    => $this->form_elements->get_form_items( $post->ID ),
+                'is_default'    => $post->ID == $this->default_payment_form,
             ) );
 
             wp_enqueue_script( 'wpinv-admin-payment-form-script' );
@@ -422,6 +429,10 @@ class WPInv_Plugin {
         if ( $page == 'wpinv-subscriptions' ) {
             wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
             wp_enqueue_script( 'wpinv-sub-admin-script' );
+        }
+
+        if ( $page == 'wpinv-reports' ) {
+            wp_enqueue_script( 'jquery-flot', WPINV_PLUGIN_URL . 'assets/js/jquery.flot.min.js', array( 'jquery' ), '0.7' );
         }
 
     }
@@ -503,7 +514,7 @@ class WPInv_Plugin {
 		register_widget( "WPInv_Subscriptions_Widget" );
 		register_widget( "WPInv_Buy_Item_Widget" );
         register_widget( "WPInv_Messages_Widget" );
-        register_widget( 'WPInv_Payment_Form_Widget' );
+        register_widget( 'WPInv_GetPaid_Widget' );
 	}
     
     /**
@@ -512,7 +523,7 @@ class WPInv_Plugin {
      * @since 1.0.19
      * @param int[] $excluded_posts_ids
      */
-    function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
+    public function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
 
         // Ensure that we have an array.
         if ( ! is_array( $excluded_posts_ids ) ) {
@@ -543,4 +554,19 @@ class WPInv_Plugin {
         return array_unique( $excluded_posts_ids );
 
     }
+
+    public function wp_footer() {
+        echo '
+            <div class="bsui">
+                <div  id="getpaid-payment-modal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="checkout" style="max-width: 650px;">
+                        <div class="modal-content">
+                            <div class="modal-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ';
+    }
+
 }

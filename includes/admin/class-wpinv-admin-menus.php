@@ -21,27 +21,17 @@ class WPInv_Admin_Menus {
     }
 
     public function admin_menu() {
-        global $menu, $submenu;
-
-        if ( ! wpinv_current_user_can_manage_invoicing() ) {
-            return;
-        }
 
         $capability = apply_filters( 'invoicing_capability', wpinv_get_capability() );
-
-        if ( wpinv_current_user_can_manage_invoicing() ) {
-            $menu[] = array( '', 'read', 'separator-wpinv', '', 'wp-menu-separator wpinv' );
-
-            // Allow users with 'manage_invocing' capability to create new invoices
-            $submenu['post-new.php?post_type=wpi_item'][]     = array( '', '', 'post-new.php?post_type=wpi_item', '' );
-            $submenu['post-new.php?post_type=wpi_invoice'][]  = array( '', '', 'post-new.php?post_type=wpi_invoice', '' );
-            $submenu['post-new.php?post_type=wpi_discount'][] = array( '', '', 'post-new.php?post_type=wpi_discount', '' );
-
-        }
-
-        $wpi_invoice = get_post_type_object( 'wpi_invoice' );
-
-        add_menu_page( __( 'Invoicing', 'invoicing' ), __( 'Invoicing', 'invoicing' ), $capability, 'wpinv', null, $wpi_invoice->menu_icon, '54.123460' );
+        add_menu_page(
+            __( 'GetPaid', 'invoicing' ),
+            __( 'GetPaid', 'invoicing' ),
+            $capability,
+            'wpinv',
+            null,
+            'data:image/svg+xml;base64,' . base64_encode( file_get_contents( WPINV_PLUGIN_DIR . 'assets/images/GetPaid.svg' ) ),
+            '54.123460'
+        );
 
     }
 

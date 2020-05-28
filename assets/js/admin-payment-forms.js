@@ -240,4 +240,16 @@ jQuery(function ($) {
 
 	});
 
+	$( document ).ready( function() {
+
+		if ( wpinvPaymentFormAdmin && wpinvPaymentFormAdmin.is_default ) {
+			$('#minor-publishing').hide()
+			$('#delete-action').hide()
+			$('#wpinv-payment-form-shortcode').hide()
+		}
+
+		$('.post-type-wpi_payment_form #visibility').hide()
+		$('.post-type-wpi_payment_form .misc-pub-curtime').hide()
+	} )
+
 });

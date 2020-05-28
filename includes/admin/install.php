@@ -140,34 +140,34 @@ function wpinv_create_pages()
 
     $pages = apply_filters('wpinv_create_pages', array(
         'checkout_page' => array(
-            'name' => _x('wpi-checkout', 'Page slug', 'invoicing'),
+            'name' => _x('gp-checkout', 'Page slug', 'invoicing'),
             'title' => _x('Checkout', 'Page title', 'invoicing'),
             'content' => '[wpinv_checkout]',
             'parent' => '',
         ),
         'invoice_history_page' => array(
-            'name' => _x('wpi-history', 'Page slug', 'invoicing'),
+            'name' => _x('gp-history', 'Page slug', 'invoicing'),
             'title' => _x('Invoice History', 'Page title', 'invoicing'),
             'content' => '[wpinv_history]',
-            'parent' => 'wpi-checkout',
+            'parent' => 'gp-checkout',
         ),
         'success_page' => array(
-            'name' => _x('wpinv-receipt', 'Page slug', 'invoicing'),
+            'name' => _x('gp-receipt', 'Page slug', 'invoicing'),
             'title' => _x('Payment Confirmation', 'Page title', 'invoicing'),
             'content' => '[wpinv_receipt]',
-            'parent' => 'wpi-checkout',
+            'parent' => 'gp-checkout',
         ),
         'failure_page' => array(
-            'name' => _x('wpinv-transaction-failed', 'Page slug', 'invoicing'),
+            'name' => _x('gp-transaction-failed', 'Page slug', 'invoicing'),
             'title' => _x('Transaction Failed', 'Page title', 'invoicing'),
             'content' => __('Your transaction failed, please try again or contact site support.', 'invoicing'),
-            'parent' => 'wpi-checkout',
+            'parent' => 'gp-checkout',
         ),
         'invoice_subscription_page' => array(
-            'name' => _x('wpinv-subscriptions', 'Page slug', 'invoicing'),
+            'name' => _x('gp-subscriptions', 'Page slug', 'invoicing'),
             'title' => _x('Subscriptions History', 'Page title', 'invoicing'),
             'content' => '[wpinv_subscriptions]',
-            'parent' => 'wpi-checkout',
+            'parent' => 'gp-checkout',
         ),
     ));
 

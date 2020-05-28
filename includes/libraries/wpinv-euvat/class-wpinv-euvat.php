@@ -1836,18 +1836,6 @@ class WPInv_EUVat {
         $is_eu_state_ip     = self::is_eu_state( $ip_country_code );
         $is_non_eu_user     = !$is_eu_state && !$is_eu_state_ip;
 
-        if ( $is_digital && !$is_non_eu_user && empty( $vat_number ) && apply_filters( 'wpinv_checkout_requires_country', true, $amount ) ) {
-            $vat_data['adddress_confirmed'] = false;
-            
-            if ( !isset( $_POST['wpinv_adddress_confirmed'] ) ) {
-                if ( $ip_country_code != $country ) {
-                    wpinv_set_error( 'vat_validation', sprintf( __( 'The country of your current location must be the same as the country of your billing location or you must %s confirm %s the billing address is your home country.', 'invoicing' ), '<a href="#wpinv_adddress_confirm">', '</a>' ) );
-                }
-            } else {
-                $vat_data['adddress_confirmed'] = true;
-            }
-        }
-
         if ( !empty( $wpinv_options['vat_prevent_b2c_purchase'] ) && !$is_non_eu_user && ( empty( $vat_number ) || $no_vat ) ) {
             if ( $is_eu_state ) {
                 wpinv_set_error( 'vat_validation', wp_sprintf( __( 'Please enter and validate your %s number to verify your purchase is by an EU business.', 'invoicing' ), $vat_name ) );

@@ -274,6 +274,7 @@ function wpinv_items_columns( $existing_columns ) {
     $columns['cb']          = $existing_columns['cb'];
     $columns['title']       = __( 'Title', 'invoicing' );
     $columns['price']       = __( 'Price', 'invoicing' );
+    $columns['shortcode']   = __( 'Shortcode', 'invoicing' );
     if ( $wpinv_euvat->allow_vat_rules() ) {
         $columns['vat_rule']    = __( 'VAT rule type', 'invoicing' );
     }
@@ -314,6 +315,9 @@ function wpinv_items_table_custom_column( $column ) {
         break;
         case 'vat_rule' :
             echo $wpinv_euvat->item_rule_label( $post->ID );
+        break;
+        case 'shortcode' :
+            echo WPInv_Meta_Box_Items::shortcode( $post->ID );
         break;
         case 'vat_class' :
             echo $wpinv_euvat->item_class_label( $post->ID );

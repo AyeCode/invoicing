@@ -44,15 +44,21 @@ class WPInv_Reports {
     public function actions() {
         if ( is_admin() ) {
             add_action( 'admin_menu', array( $this, 'add_submenu' ), 20 );
+            add_action( 'wpinv_reports_tab_reports', array( $this, 'reports' ) );
             add_action( 'wpinv_reports_tab_export', array( $this, 'export' ) );
             add_action( 'wp_ajax_wpinv_ajax_export', array( $this, 'ajax_export' ) );
             add_action( 'wp_ajax_wpinv_ajax_discount_use_export', array( $this, 'discount_use_export' ) );
-            
+
             // Export Invoices.
             add_action( 'wpinv_export_set_params_invoices', array( $this, 'set_invoices_export' ) );
             add_filter( 'wpinv_export_get_columns_invoices', array( $this, 'get_invoices_columns' ) );
             add_filter( 'wpinv_export_get_data_invoices', array( $this, 'get_invoices_data' ) );
             add_filter( 'wpinv_get_export_status_invoices', array( $this, 'invoices_export_status' ) );
+
+            // Reports.
+            add_action( 'wpinv_reports_view_earnings', array( $this, 'earnings_report' ) );
+            add_action( 'wpinv_reports_view_gateways', array( $this, 'gateways_report' ) );
+            add_action( 'wpinv_reports_view_taxes', array( $this, 'tax_report' ) );
         }
         do_action( 'wpinv_class_reports_actions', $this );
     }
@@ -63,19 +69,22 @@ class WPInv_Reports {
     }
     
     public function reports_page() {
+
         if ( !wp_script_is( 'postbox', 'enqueued' ) ) {
             wp_enqueue_script( 'postbox' );
         }
+
         if ( !wp_script_is( 'jquery-ui-datepicker', 'enqueued' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
         
         $current_page = admin_url( 'admin.php?page=wpinv-reports' );
-        $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'export';
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'reports';
         ?>
         <div class="wrap wpi-reports-wrap">
             <h1><?php echo esc_html( __( 'Reports', 'invoicing' ) ); ?></h1>
             <h2 class="nav-tab-wrapper wp-clearfix">
+                <a href="<?php echo add_query_arg( array( 'tab' => 'reports', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'reports' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Reports', 'invoicing' ); ?></a>
                 <a href="<?php echo add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
                 <?php do_action( 'wpinv_reports_page_tabs' ); ;?>
             </h2>
@@ -87,6 +96,43 @@ class WPInv_Reports {
             ?>
         </div>
         <?php
+    }
+
+    /**
+     * Displays the reports graphs.
+     */
+    public function reports() {
+
+        $views = array(
+            'earnings'   => __( 'Earnings', 'invoicing' ),
+            'gateways'   => __( 'Payment Methods', 'invoicing' ),
+            'taxes'      => __( 'Taxes', 'invoicing' ),
+        );
+    
+        $views   = apply_filters( 'wpinv_report_views', $views );
+        $current = 'earnings';
+
+        if ( isset( $_GET['view'] ) && array_key_exists( $_GET['view'], $views ) )
+		$current = $_GET['view'];
+
+        ?>
+	        <form id="wpinv-reports-filter" method="get" class="tablenav">
+		        <select id="wpinv-reports-view" name="view">
+			        <option value="-1" disabled><?php _e( 'Report Type', 'invoicing' ); ?></option>
+			            <?php foreach ( $views as $view_id => $label ) : ?>
+				            <option value="<?php echo esc_attr( $view_id ); ?>" <?php selected( $view_id, $current ); ?>><?php echo $label; ?></option>
+			            <?php endforeach; ?>
+		        </select>
+
+		        <?php do_action( 'wpinv_report_view_actions' ); ?>
+
+		        <input type="hidden" name="page" value="wpinv-reports"/>
+		        <?php submit_button( __( 'Show', 'invoicing' ), 'secondary', 'submit', false ); ?>
+	        </form>
+        <?php
+
+	    do_action( 'wpinv_reports_view_' . $current );
+
     }
     
     public function export() {
@@ -587,4 +633,435 @@ class WPInv_Reports {
 
         return $cart_details;
     }
+
+    /**
+     * Returns the periods filter.
+     */
+    public function period_filter( $args = array() ) {
+
+        ob_start();
+
+        echo '<form id="wpinv-graphs-filter" method="get" style="margin-bottom: 10px;" class="tablenav">';
+        echo '<input type="hidden" name="page" value="wpinv-reports">';
+
+        foreach ( $args as $key => $val ) {
+            $key = esc_attr($key);
+            $val = esc_attr($val);
+            echo "<input type='hidden' name='$key' value='$val'>";
+        }
+
+        echo '<select id="wpinv-graphs-date-options" name="range" style="min-width: 200px;" onChange="this.form.submit()">';
+
+        $ranges = array(
+            'today'        => __( 'Today', 'invoicing' ),
+            'yesterday'    => __( 'Yesterday', 'invoicing' ),
+            'this_week'    => __( 'This Week', 'invoicing' ),
+            'last_week'    => __( 'Last Week', 'invoicing' ),
+            '7_days_ago'   => __( 'Last 7 Days', 'invoicing' ),
+            '30_days_ago'  => __( 'Last 30 Days', 'invoicing' ),
+            'this_month'   => __( 'This Month', 'invoicing' ),
+            'this_year'    => __( 'This Year', 'invoicing' ),
+            'last_year'    => __( 'Last Year', 'invoicing' ),
+        );
+
+        $range = isset( $_GET['range'] ) && isset( $ranges[ $_GET['range'] ] ) ? $_GET['range'] : '7_days_ago';
+
+        foreach ( $ranges as $val => $label ) {
+            $selected = selected( $range, $val, false );
+            echo "<option value='$val' $selected>$label</option>";
+        }
+
+        echo '</select></form>';
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Returns the the current date range.
+     */
+    public function get_sql_clauses( $range ) {
+
+        $date     = 'CAST(completed.meta_value AS DATE)';
+        $datetime = 'CAST(completed.meta_value AS DATETIME)';
+
+        // Prepare durations.
+        $today                = current_time( 'Y-m-d' );
+        $yesterday            = date( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) );
+        $sunday               = date( 'Y-m-d', strtotime( 'sunday this week', current_time( 'timestamp' ) ) );
+        $monday               = date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' ) ) );
+        $last_sunday          = date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) );
+        $last_monday          = date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) );
+        $seven_days_ago       = date( 'Y-m-d', strtotime( '-7 days', current_time( 'timestamp' ) ) );
+        $thirty_days_ago      = date( 'Y-m-d', strtotime( '-30 days', current_time( 'timestamp' ) ) );
+        $first_day_month  	  = date( 'Y-m-1', current_time( 'timestamp' ) );
+        $last_day_month  	  = date( 'Y-m-t', current_time( 'timestamp' ) );
+		$first_day_last_month = date( 'Y-m-d', strtotime( 'first day of last month', current_time( 'timestamp' ) ) );
+        $last_day_last_month  = date( 'Y-m-d', strtotime( 'last day of last month', current_time( 'timestamp' ) ) );
+        $first_day_year  	  = date( 'Y-1-1', current_time( 'timestamp' ) );
+        $last_day_year  	  = date( 'Y-12-31', current_time( 'timestamp' ) );
+		$first_day_last_year  = date( 'Y-m-d', strtotime( 'first day of last year', current_time( 'timestamp' ) ) );
+		$last_day_last_year   = date( 'Y-m-d', strtotime( 'last day of last year', current_time( 'timestamp' ) ) );
+
+        $ranges = array(
+
+            'today'        => array(
+                "HOUR($datetime)",
+                "$date='$today'"
+            ),
+
+            'yesterday'    => array(
+                "HOUR($datetime)",
+                "$date='$yesterday'"
+            ),
+
+            'this_week'    => array(
+                "DAYNAME($date)",
+                "$date BETWEEN '$monday' AND '$sunday'"
+            ),
+
+            'last_week'    => array(
+                "DAYNAME($date)",
+                "$date BETWEEN '$last_monday' AND '$last_sunday'"  
+            ),
+
+            '7_days_ago'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$seven_days_ago' AND '$today'"  
+            ),
+
+            '30_days_ago'  => array(
+                "DAY($date)",
+                "$date BETWEEN '$thirty_days_ago' AND '$today'"    
+            ),
+
+            'this_month'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$first_day_month' AND '$last_day_month'"
+            ),
+
+            'last_month'   => array(
+                "DAY($date)",
+                "$date BETWEEN '$first_day_last_month' AND '$last_day_last_month'"
+            ),
+
+            'this_year'    => array(
+                "MONTH($date)",
+                "$date BETWEEN '$first_day_year' AND '$last_day_year'"
+            ),
+
+            'last_year'    => array(
+                "MONTH($date)",
+                "$date BETWEEN '$first_day_last_year' AND '$last_day_last_year'"
+            ),
+
+        );
+
+        if ( ! isset( $ranges[ $range ] ) ) {
+            return $ranges['7_days_ago'];
+        }
+        return $ranges[ $range ];
+
+    }
+    
+    /**
+     * Returns the the current date ranges results.
+     */
+    public function get_report_results( $range, $key='_wpinv_total' ) {
+        global $wpdb;
+
+        $clauses = $this->get_sql_clauses( $range );
+        $key     = $wpdb->prepare( '%s', $key );
+        $sql     = "SELECT
+                {$clauses[0]} AS completed_date,
+                SUM( total.meta_value ) AS amount
+            FROM $wpdb->posts
+            LEFT JOIN $wpdb->postmeta as total ON total.post_id = $wpdb->posts.ID AND total.meta_key=$key
+            LEFT JOIN $wpdb->postmeta as completed ON completed.post_id = $wpdb->posts.ID AND completed.meta_key='_wpinv_completed_date'
+            WHERE total.meta_key IS NOT NULL
+                AND completed.meta_key IS NOT NULL
+                AND $wpdb->posts.post_type = 'wpi_invoice'
+                AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'renewal' )
+                AND {$clauses[1]}
+            GROUP BY {$clauses[0]}
+        ";
+
+        return  wp_list_pluck( $wpdb->get_results( $sql ), 'amount', 'completed_date' );
+    }
+
+    /**
+     * Fill nulls.
+     */
+    public function fill_nulls( $data, $range ) {
+
+        $return = array();
+        $time   = current_time('timestamp');
+
+        switch ( $range ) {
+            case 'today' :
+            case 'yesterday' :
+                $hour  = 0;
+
+                while ( $hour < 23 ) {
+                    $amount = 0;
+                    if ( isset( $data[$hour] ) ) {
+                        $amount = floatval( $data[$hour] );
+                    }
+
+                    $time = strtotime( "$range $hour:00:00" ) * 1000;
+                    $return[] = array( $time, $amount );
+                    $hour++;
+                }
+
+                break;
+
+            case 'this_month' :
+            case 'last_month' :
+                $_range = str_replace( '_', ' ', $range );
+                $month  = date( 'n', strtotime( $_range, $time ) );
+                $year   = date( 'Y', strtotime( $_range, $time ) );
+                $days   = cal_days_in_month(
+                    CAL_GREGORIAN,
+                    $month,
+                    $year
+                );
+
+                $day = 1;
+                while ( $days != $day ) {
+                    $amount = 0;
+                    if ( isset( $data[$day] ) ) {
+                        $amount = floatval( $data[$day] );
+                    }
+
+                    $time = strtotime( "$year-$month-$day" ) * 1000;
+                    $return[] = array( $time, $amount );
+                    $day++;
+                }
+
+                break;
+
+            case 'this_week' :
+            case 'last_week' :
+                $_range = str_replace( '_', ' ', $range );
+                $days   = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+
+                foreach ( $days as $day ) {
+
+                    $amount = 0;
+                    if ( isset( $data[ ucfirst( $day ) ] ) ) {
+                        $amount = floatval( $data[ ucfirst( $day ) ] );
+                    }
+
+                    $time = strtotime( "$_range $day" ) * 1000;
+                    $return[] = array( $time, $amount );
+                }
+
+                break;
+
+            case 'this_year' :
+            case 'last_year' :
+                $_range = str_replace( '_', ' ', $range );
+                $year   = date( 'Y', strtotime( $_range, $time ) );
+                $months = array( '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12' );
+
+                foreach ( $months as $month ) {
+
+                    $amount = 0;
+                    if ( isset( $data[$month] ) ) {
+                        $amount = floatval( $data[$month] );
+                    }
+
+                    $_time     = strtotime("$year-$month-01") * 1000;
+                    $return[] = array( $_time, $amount );
+                }
+
+                break;
+            case '30_days_ago' :
+                $days = 30;
+
+                while ( $days > 1 ) {
+                    $amount = 0;
+                    $date   = date( 'j', strtotime( "-$days days", $time ) );
+                    if ( isset( $data[$date] ) ) {
+                        $amount = floatval( $data[$date] );
+                    }
+
+                    $_time = strtotime( "-$days days", $time ) * 1000;
+                    $return[] = array( $_time, $amount );
+                    $days--;
+                }
+
+                break;
+
+            default:
+                $days = 7;
+
+                while ( $days > 1 ) {
+                    $amount = 0;
+                    $date   = date( 'j', strtotime( "-$days days", $time ) );
+                    if ( isset( $data[$date] ) ) {
+                        $amount = floatval( $data[$date] );
+                    }
+
+                    $_time = strtotime( "-$days days", $time ) * 1000;
+                    $return[] = array( $_time, $amount );
+                    $days--;
+                }
+
+                break;
+
+        }
+
+        return $return;
+    }
+
+    /**
+     * Retrieves the stats.
+     */
+    public function get_stats() {
+        $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
+        $earnings = $this->get_report_results( $range );
+        $taxes    = $this->get_report_results( $range, '_wpinv_tax' );
+
+        return array(
+
+            array(
+                'label' => __( 'Earnings', 'invoicing' ),
+                'data'  => $this->fill_nulls( $earnings, $range ),
+            ),
+
+            array(
+                'label' => __( 'Taxes', 'invoicing' ),
+                'data'  => $this->fill_nulls( $taxes, $range ),
+            )
+        );
+
+    }
+
+    /**
+     * Retrieves the time format for stats.
+     */
+    public function get_time_format() {
+        $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
+
+        switch ( $range ) {
+            case 'today' :
+            case 'yesterday' :
+                return array( 'hour', '%h %p' );
+                break;
+
+            case 'this_month' :
+            case 'last_month' :
+                return array( 'day', '%b %d' );
+                break;
+
+            case 'this_week' :
+            case 'last_week' :
+                return array( 'day', '%b %d' );
+                break;
+
+            case 'this_year' :
+            case 'last_year' :
+                return array( 'month', '%b' );
+                break;
+            case '30_days_ago' :
+                return array( 'day', '%b %d' );
+                break;
+
+            default:
+                return array( 'day', '%b %d' );
+                break;
+
+        }
+    }
+
+    /**
+     * Displays the earnings report.
+     */
+    public function earnings_report() {
+
+        $data        = wp_json_encode( $this->get_stats() );
+        $time_format = $this->get_time_format();
+        echo '
+            <div class="wpinv-report-container">
+                <h3><span>' . __( 'Earnings Over Time', 'invoicing' ) .'</span></h3>
+                ' . $this->period_filter() . '
+                <div id="wpinv_report_graph" style="height: 450px;"></div>
+            </div>
+
+            <script>
+                jQuery(document).ready( function() {
+                    jQuery.plot(
+                        jQuery("#wpinv_report_graph"),
+                        ' . $data .',
+                        {
+                            xaxis:{
+                                mode: "time",
+                                timeformat: "' . $time_format[1] .'",
+                                minTickSize: [0.5, "' . $time_format[0] .'"]
+                            },
+
+                            yaxis: {
+                                min: 0
+                            },
+
+                            tooltip: true,
+
+                            series: {
+                                lines: { show: true },
+                                points: { show: true }
+                            },
+
+                            grid: {
+                                backgroundColor: { colors: [ "#fff", "#eee" ] },
+                            }
+                        }
+                    );
+                })
+            </script>
+        ';
+    }
+
+    /**
+     * Displays the gateways report.
+     */
+    public function gateways_report() {
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-gateways-report-table.php' );
+
+        $table = new WPInv_Gateways_Report_Table();
+        $table->prepare_items();
+        $table->display();
+    }
+
+    /**
+     * Renders the Tax Reports
+     *
+     * @return void
+     */
+    public function tax_report() {
+
+        $year = isset( $_GET['year'] ) ? absint( $_GET['year'] ) : date( 'Y' );
+        ?>
+
+        <div class="metabox-holder" style="padding-top: 0;">
+            <div class="postbox">
+                <h3><span><?php _e('Tax Report','invoicing' ); ?></span></h3>
+                <div class="inside">
+                    <p><?php _e( 'This report shows the total amount collected in sales tax for the given year.', 'invoicing' ); ?></p>
+                    <form method="get">
+                        <span><?php echo $year; ?></span>: <strong><?php echo wpinv_sales_tax_for_year( $year ); ?></strong>&nbsp;&mdash;&nbsp;
+                        <select name="year">
+                            <?php for ( $i = 2014; $i <= date( 'Y' ); $i++ ) : ?>
+                            <option value="<?php echo $i; ?>"<?php selected( $year, $i ); ?>><?php echo $i; ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <input type="hidden" name="view" value="taxes" />
+                        <input type="hidden" name="page" value="wpinv-reports"/>
+                        <?php submit_button( __( 'Submit', 'invoicing' ), 'secondary', 'submit', false ); ?>
+                    </form>
+                </div><!-- .inside -->
+            </div><!-- .postbox -->
+        </div><!-- .metabox-holder -->
+        <?php
+    }
+
 }

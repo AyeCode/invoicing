@@ -287,6 +287,26 @@ class WPInv_Payment_Form_Elements {
                             'required'     => false,
                             'visible'      => true,
                             'name'         => 'wpinv_phone',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'Company', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => false,
+                            'name'         => 'wpinv_company',
+                        ),
+
+                        array(
+                            'placeholder'  => '',
+                            'value'        => '',
+                            'label'        => __( 'VAT Number', 'invoicing' ),
+                            'description'  => '',
+                            'required'     => false,
+                            'visible'      => false,
+                            'name'         => 'wpinv_vat_number',
                         )
                     )
                 )
@@ -323,6 +343,26 @@ class WPInv_Payment_Form_Elements {
                     'items_type'   => 'total',
                     'description'  => '',
                     'premade'      => true,
+                )
+            ),
+
+            array(
+                'type' => 'terms',
+                'name' => __( 'Terms', 'invoicing' ),
+                'defaults'         => array(
+                    'value'        => '',
+                    'text'         => __( 'I\'ve read and accept the <a href="" target="_blank">terms &amp; conditions</a>', 'invoicing' ),
+                    'description'  => '',
+                    'required'     => true,
+                )
+            ),
+
+            array(
+                'type' => 'privacy',
+                'name' => __( 'Privacy', 'invoicing' ),
+                'defaults'         => array(
+                    'value'        => '',
+                    'text'         => __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our privacy policy.', 'invoicing' ),
                 )
             ),
 
@@ -412,9 +452,25 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders a privacy element template.
+     */
+    public function render_privacy_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'privacy' );
+        $label    = "$field.text";
+        echo "<p $restrict v-html='$label' style='font-size: 16px;'></p>";
+    }
+
+    /**
      * Renders the paragraph element on the frontend.
      */
     public function frontend_render_paragraph_template( $field ) {
+        echo "<p>{$field['text']}</p>";
+    }
+
+    /**
+     * Renders the privacy element on the frontend.
+     */
+    public function frontend_render_privacy_template( $field ) {
         echo "<p>{$field['text']}</p>";
     }
 
@@ -424,6 +480,24 @@ class WPInv_Payment_Form_Elements {
     public function edit_paragraph_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'paragraph' );
         $label    = __( 'Enter your text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
+     * Renders the edit privacy element template.
+     */
+    public function edit_privacy_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'privacy' );
+        $label    = __( 'Privacy Text', 'invoicing' );
         $id       = $field . '.id + "_edit"';
         echo "
             <div $restrict>
@@ -700,12 +774,26 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_checkbox_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'checkbox' );
-        $label    = "$field.label";
         echo "
             <div class='form-check' $restrict>
                 <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <input  :id='$field.id' class='form-check-input' type='checkbox' />
-                <label class='form-check-label' :for='$field.id'>{{" . $label . "}}</label>
+                <label class='form-check-label' :for='$field.id' v-html='$field.label'></label>
+                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
+            </div>    
+        ";
+    }
+
+    /**
+     * Renders the terms element template.
+     */
+    public function render_terms_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'terms' );
+        echo "
+            <div class='form-check' $restrict>
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
+                <input  :id='$field.id' class='form-check-input' type='checkbox' />
+                <label class='form-check-label' :for='$field.id' v-html='$field.text'></label>
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
@@ -739,6 +827,34 @@ class WPInv_Payment_Form_Elements {
 
     }
 
+        /**
+     * Renders the terms element on the frontend.
+     */
+    public function frontend_render_terms_template( $field ) {
+        
+        echo "<div class='form-group'>";
+
+        echo aui()->input(
+            array(
+                'name'       => esc_attr( $field['id'] ),
+                'id'         => esc_attr( $field['id'] ),
+                'required'   => (bool) $field['required'],
+                'label'      => wp_kses_post( $field['text'] ),
+                'no_wrap'    => true,
+                'value'      => esc_attr__( 'Yes', 'invoicing' ),
+                'type'       => 'checkbox',
+            )
+        );
+
+        if ( ! empty( $field['description'] ) ) {
+            $description = wp_kses_post( $field['description'] );
+            echo "<small class='form-text text-muted'>$description</small>";
+        }
+
+        echo '</div>';
+
+    }
+
     /**
      * Renders the edit checkbox element template.
      */
@@ -756,6 +872,37 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
+                </div>
+                <div class='form-group'>
+                    <label :for='$id2'>$label2</label>
+                    <textarea placeholder='$label3' :id='$id2' v-model='$field.description' class='form-control' rows='3'></textarea>
+                </div>
+                <div class='form-group form-check'>
+                    <input :id='$id3' v-model='$field.required' type='checkbox' class='form-check-input' />
+                    <label class='form-check-label' :for='$id3'>$label4</label>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
+     * Renders the edit terms element template.
+     */
+    public function edit_terms_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'terms' );
+        $label    = __( 'Field Label', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        $label2   = __( 'Help text', 'invoicing' );
+        $label3   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id2      = $field . '.id + "_edit2"';
+        $label4   = __( 'Is this field required?', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <input :id='$id' v-model='$field.text' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id2'>$label2</label>
@@ -1804,10 +1951,16 @@ class WPInv_Payment_Form_Elements {
         $label     = __( 'Item totals will appear here. Click to set items.', 'invoicing' );
         $label2    = __( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' );
         $label2   .= ' ' . __( 'To prevent this, limit customers to selecting a single item.', 'invoicing' );
+        $label3    = __( 'Item totals will appear here.', 'invoicing' );
         echo "
             <div $restrict class='item_totals text-center'>
-                <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
-                <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
+                <div v-if='!is_default'>
+                    <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
+                    <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
+                </div>
+                <div v-if='is_default'>
+                    <div class='p-4 bg-warning'>$label3</div>
+                </div>
             </div>
         ";
     }
@@ -1816,10 +1969,15 @@ class WPInv_Payment_Form_Elements {
      * Renders the items element on the frontend.
      */
     public function frontend_render_items_template( $field, $items ) {
-        
+
         echo "<div class='form-group item_totals'>";
         
         $id = esc_attr( $field['id'] );
+
+        if ( empty( $field[ 'items_type' ] ) ) {
+            $field[ 'items_type' ] = 'total';
+        }
+
         if ( 'total' == $field[ 'items_type' ] ) {
             $total     = 0;
             $tax       = 0;
@@ -1864,6 +2022,11 @@ class WPInv_Payment_Form_Elements {
                         if ( ! empty( $item['custom_price'] ) ) {
                             $class .= ' pt-2';
                         }
+
+                        $quantity = 1;
+                        if ( ! empty( $item['quantity'] ) ) {
+                            $quantity = absint( $item['quantity'] );
+                        }
             
                 ?>
                     <div  class="item_totals_item">
@@ -1873,11 +2036,11 @@ class WPInv_Payment_Form_Elements {
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
                                 <div class='col-2'>
-                                    <input name='wpinv-item-<?php echo (int) $item['id']; ?>-quantity' type='number' class='form-control wpinv-item-quantity-input pr-1' value='1' min='1' required>
+                                    <input name='wpinv-item-<?php echo (int) $item['id']; ?>-quantity' type='number' class='form-control wpinv-item-quantity-input pr-1' value='<?php echo $quantity ?>' min='1' required>
                                 </div>
 
                             <?php } else { ?>
-                                <input type='hidden' class='wpinv-item-quantity-input' value='1'>
+                                <input type='hidden' class='wpinv-item-quantity-input' value='<?php echo $quantity ?>'>
                             <?php } if ( empty( $item['custom_price'] ) ) { ?>
 
                                 <div class='col-4 <?php echo $class2; ?>'>
@@ -2618,10 +2781,10 @@ class WPInv_Payment_Form_Elements {
         $item_types      = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
         $item_types_html = '';
 
-        foreach ( $item_types as $type => $label ) {
+        foreach ( $item_types as $type => $_label ) {
             $type  = esc_attr( $type );
-            $label = esc_html( $label );
-            $item_types_html .= "<option value='$type'>$label</type>";
+            $_label = esc_html( $_label );
+            $item_types_html .= "<option value='$type'>$_label</type>";
         }
 
         // Taxes.
@@ -2631,10 +2794,10 @@ class WPInv_Payment_Form_Elements {
             $taxes .= __( 'VAT rule type', 'invoicing' );
             $taxes .= "</label><select :id='$id + item.id + \"rule\"' class='form-control custom-select' v-model='item.rule'>";
 
-            foreach ( $wpinv_euvat->get_rules() as $type => $label ) {
-                $type   = esc_attr( $type );
-                $label  = esc_html( $label );
-                $taxes .= "<option value='$type'>$label</type>";
+            foreach ( $wpinv_euvat->get_rules() as $type => $_label ) {
+                $type    = esc_attr( $type );
+                $_label  = esc_html( $_label );
+                $taxes  .= "<option value='$type'>$_label</type>";
             }
 
             $taxes .= '</select></div>';
@@ -2645,10 +2808,10 @@ class WPInv_Payment_Form_Elements {
             $taxes .= __( 'VAT class', 'invoicing' );
             $taxes .= "</label><select :id='$id + item.id + \"class\"' class='form-control custom-select' v-model='item.class'>";
 
-            foreach ( $wpinv_euvat->get_all_classes() as $type => $label ) {
-                $type   = esc_attr( $type );
-                $label  = esc_html( $label );
-                $taxes .= "<option value='$type'>$label</type>";
+            foreach ( $wpinv_euvat->get_all_classes() as $type => $_label ) {
+                $type    = esc_attr( $type );
+                $_label  = esc_html( $_label );
+                $taxes  .= "<option value='$type'>$_label</type>";
             }
 
             $taxes .= '</select></div>';
@@ -2656,7 +2819,7 @@ class WPInv_Payment_Form_Elements {
 
         echo "<div $restrict>
 
-                <label>$label2</label>
+                <label v-if='!is_default'>$label2</label>
 
                 <draggable v-model='form_items' group='selectable_form_items'>
                     <div class='wpinv-available-items-editor' v-for='(item, index) in form_items' :class='\"item_\" + item.id' :key='item.id'>
@@ -2727,9 +2890,9 @@ class WPInv_Payment_Form_Elements {
                     </div>
                 </draggable>
 
-                <small v-if='! form_items.length' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
+                <small v-if='! form_items.length && !is_default' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
 
-                <div class='form-group mt-2'>
+                <div class='form-group mt-2' v-if='!is_default'>
 
                     <select class='form-control custom-select' v-model='selected_item' @change='addSelectedItem'>
                         <option value=''>"        . __( 'Add an existing item to the form', 'invoicing' ) ."</option>
@@ -2738,12 +2901,12 @@ class WPInv_Payment_Form_Elements {
 
                 </div>
 
-                <div class='form-group'>
+                <div class='form-group' v-if='!is_default'>
                     <input type='button' value='Add item' class='button button-primary'  @click.prevent='addSelectedItem' :disabled='selected_item == \"\"'>
                     <small>Or <a href='' @click.prevent='addNewItem'>create a new item</a>.</small>
                 </div>
 
-                <div class='form-group mt-5'>
+                <div class='form-group mt-5' v-if='!is_default'>
                     <label :for='$id2'>$label</label>
 
                     <select class='form-control custom-select' :id='$id2' v-model='$field.items_type'>
@@ -2826,6 +2989,71 @@ class WPInv_Payment_Form_Elements {
         }
 
         return wpinv_get_data( 'sample-payment-form-items' );
+
+    }
+
+    /**
+     * Converts form items for use.
+     */
+    public function convert_checkout_items( $items, $invoice ) {
+
+        $converted = array();
+        foreach ( $items as $item ) {
+
+            $item_id = $item['id'];
+            $_item   = new WPInv_Item( $item_id );
+
+            if( ! $_item ) {
+                continue;
+            }
+
+            $converted[] = array(
+                'title'            => esc_html( wpinv_get_cart_item_name( $item ) ) . wpinv_get_item_suffix( $_item ),
+                'id'               => $item['id'],
+                'price'            => $item['subtotal'],
+                'custom_price'     => $_item->get_is_dynamic_pricing(),
+                'recurring'        => $_item->is_recurring(),
+                'description'      => apply_filters( 'wpinv_checkout_cart_line_item_summary', '', $item, $_item, $invoice ),
+                'minimum_price'    => $_item->get_minimum_price(),
+                'allow_quantities' => false,
+                'quantity'         => $item['quantity'],
+                'required'         => true,
+            );
+        }
+        return $converted;
+
+    }
+
+    /**
+     * Converts an array of id => quantity for use.
+     */
+    public function convert_normal_items( $items ) {
+
+        $converted = array();
+        foreach ( $items as $item_id => $quantity ) {
+
+            $item   = new WPInv_Item( $item_id );
+
+            if( ! $item ) {
+                continue;
+            }
+
+            $converted[] = array(
+                'title'            => esc_html( $item->get_name() ) . wpinv_get_item_suffix( $item ),
+                'id'               => $item_id,
+                'price'            => $item->get_price(),
+                'custom_price'     => $item->get_is_dynamic_pricing(),
+                'recurring'        => $item->is_recurring(),
+                'description'      => $item->get_summary(),
+                'minimum_price'    => $item->get_minimum_price(),
+                'allow_quantities' => ! empty( $quantity ),
+                'quantity'         => empty( $quantity ) ? 1 : $quantity,
+                'required'         => true,
+            );
+
+        }
+
+        return $converted;
 
     }
 

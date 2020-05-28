@@ -22,7 +22,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
             'block-keywords'=> "['invoicing','subscriptions']",
             'class_name'     => __CLASS__,
             'base_id'       => 'wpinv_subscriptions',
-            'name'          => __('Invoicing > Subscriptions History','invoicing'),
+            'name'          => __('GetPaid > Subscriptions History','invoicing'),
             'widget_ops'    => array(
                 'classname'   => 'wpinv-checkout-class  wpi-g',
                 'description' => esc_html__('Displays subscriptions history.','invoicing'),

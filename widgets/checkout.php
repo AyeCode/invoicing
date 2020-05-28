@@ -23,10 +23,10 @@ class WPInv_Checkout_Widget extends WP_Super_Duper {
             'block-keywords'=> "['invoicing','checkout']",
             'class_name'     => __CLASS__,
             'base_id'       => 'wpinv_checkout',
-            'name'          => __('Invoicing > Checkout','invoicing'),
+            'name'          => __('GetPaid > Checkout','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-checkout-class wpi-g',
-                'description' => esc_html__('Displays checkout form.','invoicing'),
+                'classname'   => 'getpaid-checkout bsui',
+                'description' => esc_html__('Displays a checkout form.','invoicing'),
             ),
             'arguments'     => array(
                 'title'  => array(
@@ -55,9 +55,7 @@ class WPInv_Checkout_Widget extends WP_Super_Duper {
 	 * @return mixed|string|bool
 	 */
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
-
 	    return wpinv_checkout_form();
-
     }
 
 }
