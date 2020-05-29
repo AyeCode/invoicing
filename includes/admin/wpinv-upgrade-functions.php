@@ -13,40 +13,46 @@
 function wpinv_automatic_upgrade() {
     $wpi_version = get_option( 'wpinv_version' );
 
+    // Update tables.
+    if ( ! get_option( 'getpaid_created_invoice_tables' ) ) {
+        wpinv_v119_upgrades();
+        update_option( 'getpaid_created_invoice_tables', true );
+    }
+
     if ( $wpi_version == WPINV_VERSION ) {
         return;
     }
-    
+
     if ( version_compare( $wpi_version, '0.0.5', '<' ) ) {
         wpinv_v005_upgrades();
     }
-    
+
     if ( version_compare( $wpi_version, '1.0.3', '<' ) ) {
         wpinv_v110_upgrades();
     }
-    
+
     update_option( 'wpinv_version', WPINV_VERSION );
 }
 add_action( 'admin_init', 'wpinv_automatic_upgrade' );
 
 function wpinv_v005_upgrades() {
     global $wpdb;
-    
+
     // Invoices status
     $results = $wpdb->get_results( "SELECT ID FROM " . $wpdb->posts . " WHERE post_type = 'wpi_invoice' AND post_status IN( 'pending', 'processing', 'onhold', 'refunded', 'cancelled', 'failed', 'renewal' )" );
     if ( !empty( $results ) ) {
         $wpdb->query( "UPDATE " . $wpdb->posts . " SET post_status = CONCAT( 'wpi-', post_status ) WHERE post_type = 'wpi_invoice' AND post_status IN( 'pending', 'processing', 'onhold', 'refunded', 'cancelled', 'failed', 'renewal' )" );
-        
+
         // Clean post cache
         foreach ( $results as $row ) {
             clean_post_cache( $row->ID );
         }
     }
-    
+
     // Item meta key changes
     $query = "SELECT DISTINCT post_id FROM " . $wpdb->postmeta . " WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id', '_wpinv_cpt_name', '_wpinv_cpt_singular_name' )";
     $results = $wpdb->get_results( $query );
-    
+
     if ( !empty( $results ) ) {
         $wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_id' WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id' )" );
         $wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_name' WHERE meta_key = '_wpinv_cpt_name'" );
@@ -63,7 +69,7 @@ function wpinv_v005_upgrades() {
 function wpinv_v110_upgrades() {
     // Upgrade email settings
     wpinv_update_new_email_settings();
-    
+
     // Add Subscription tables
     $db = new WPInv_Subscriptions_DB;
     /** @scrutinizer ignore-unhandled */ @$db->create_table();
@@ -211,6 +217,14 @@ function wpinv_update_new_email_settings() {
 }
 
 /**
+ * Version 119 upgrades.
+ */
+function wpinv_v119_upgrades() {
+    wpinv_create_invoices_table();
+    wpinv_convert_old_invoices();
+}
+
+/**
  * Creates the invoices table.
  */
 function wpinv_create_invoices_table() {
@@ -232,7 +246,6 @@ function wpinv_create_invoices_table() {
             first_name VARCHAR(100),
             last_name VARCHAR(100),
             `address` VARCHAR(100),
-            address2 VARCHAR(100),
             city VARCHAR(100),
             `state` VARCHAR(100),
             country VARCHAR(100),
@@ -266,17 +279,13 @@ function wpinv_create_invoices_table() {
     // Create invoice items table.
     $table = $wpdb->prefix . 'getpaid_invoice_items';
     $sql   = "CREATE TABLE $table (
+            ID BIGINT(20) NOT NULL AUTO_INCREMENT,
+            post_id BIGINT(20) NOT NULL,
 
-            // Links with external post types. 
             item_id BIGINT(20) NOT NULL,
-            invoice_id BIGINT(20) NOT NULL,
+            item_name TEXT NOT NULL,
+            item_description TEXT NOT NULL,
 
-            // How this specific item appears on invoices. 
-            invoice_item_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-            invoice_item_name TEXT NOT NULL,
-            invoice_item_description TEXT NOT NULL,
-
-            // Used to calculate the cost of the item on invoices.
             vat_rate FLOAT NOT NULL DEFAULT 0,
             vat_class VARCHAR(100),
             tax FLOAT NOT NULL DEFAULT 0,
@@ -288,9 +297,9 @@ function wpinv_create_invoices_table() {
             price FLOAT NOT NULL DEFAULT 0,
             meta TEXT,
             fees TEXT,
-            PRIMARY KEY  (invoice_item_id),
+            PRIMARY KEY  (ID),
             KEY item_id (item_id),
-            KEY invoice_id ( invoice_id )
+            KEY post_id ( post_id )
             ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
     dbDelta( $sql );
@@ -303,89 +312,106 @@ function wpinv_convert_old_invoices() {
     global $wpdb;
 
     $invoices = get_posts('post_type=wpi_invoice&posts_per_page=-1&fields=ids');
-    $currency = wpinv_get_currency();
+    $invoices_table = $wpdb->prefix . 'getpaid_invoices';
+    $invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
+
+    if ( ! class_exists( 'WPInv_Legacy_Invoice' ) ) {
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-legacy-invoice.php' );
+    }
+
+    $invoice_rows = array();
+    $invoices_columns = array();
     foreach ( $invoices as $invoice ) {
 
-        $meta    = get_post_meta( $invoice );
+        $invoice = new WPInv_Legacy_Invoice( $invoice );
 
-        $fields = array(
-            'invoice_id'     => '',
-            'type'           => '',
-            'number'         => '',
-            'mode'           => '',
-            'key'            => '',
-            'total'          => 0,
-            'subtotal'       => 0,
-            'disable_taxes'  => '0',
-            'tax'            => '0',
-            'fees_total'     => '0',
-            'discount'       => '0',
-            'discount_code'  => '',
-            'due_date'       => '',
-            'completed_date' => '',
-            'address'        => '',
-            'city'           => '',
-            'country'        => '',
-            'state'          => '',
-            'zip'            => '',
-            'transaction_id' => '',
-            'user_ip'        => '',
-            'gateway'        => '',
-            'currency'       => $currency,
-            'payment_meta'   => array(),
-            'company'        => '',
-            'vat_number'     => '',
-            'vat_rate'       => '',
-            'adddress_confirmed' => 0,
+        $fields = array (
+            'post_id'        => $invoice->ID,
+            'type'           => 'invoice',
+            'number'         => $invoice->get_number(),
+            'mode'           => $invoice->mode,
+            'key'            => $invoice->get_key(),
+            'user_ip'        => $invoice->get_ip(),
+            'first_name'     => $invoice->get_first_name(),
+            'last_name'      => $invoice->get_last_name(),
+            'address'        => $invoice->get_address(),
+            'city'           => $invoice->city,
+            'state'          => $invoice->state,
+            'country'        => $invoice->country,
+            'zip'            => $invoice->zip,
+            'adddress_confirmed' => (int) $invoice->adddress_confirmed,
+            'gateway'        => $invoice->get_gateway(),
+            'transaction_id' => $invoice->get_transaction_id(),
+            'currency'       => $invoice->get_currency(),
+            'subtotal'       => $invoice->get_subtotal(),
+            'tax'            => $invoice->get_tax(),
+            'fees_total'     => $invoice->get_fees_total(),
+            'total'          => $invoice->get_total(),
+            'discount'       => $invoice->get_discount(),
+            'discount_code'  => $invoice->get_discount_code(),
+            'disable_taxes'  => $invoice->disable_taxes,
+            'due_date'       => $invoice->get_due_date(),
+            'completed_date' => $invoice->get_completed_date(),
+            'company'        => $invoice->company,
+            'vat_number'     => $invoice->vat_number,
+            'vat_rate'       => $invoice->vat_rate,
+            'custom_meta'    => $invoice->payment_meta
         );
+        $invoices_columns = array_keys ( $invoices_columns );
 
-        foreach ( array_keys( $fields ) as $field ) {
-            if ( isset( $meta[ $field ] ) ) {
-                $fields[ $field ] = $meta[ $field ][0];
+        foreach ( $fields as $key => $val ) {
+            if ( is_null( $val ) ) {
+                $val = '';
             }
+            $val = maybe_serialize( $val );
+            $fields[ $key ] = $wpdb->prepare( '%s', $val );
         }
 
-        if ( is_array( $fields['payment_meta'] ) ) {
+        $fields = implode( ', ', $fields );
+        $invoice_rows[] = "($fields)";
 
-            if ( ! empty( $fields['payment_meta']['currency'] ) ) {
-                $fields['currency'] = $fields['payment_meta']['currency'];
-            }
+        $item_rows    = array();
+        $item_columns = array();
+        foreach ( $invoice->get_cart_details() as $details ) {
+            $fields = array(
+                'post_id'          => $invoice->ID,
+                'item_id'          => $details['id'],
+                'item_name'        => $details['name'],
+                'item_description' => empty( $details['meta']['description'] ) ? '' : $details['meta']['description'],
+                'vat_rate'         => $details['vat_rate'],
+                'vat_class'        => empty( $details['vat_class'] ) ? '_standard' : $details['vat_class'],
+                'tax'              => $details['tax'],
+                'item_price'       => $details['item_price'],
+                'custom_price'     => $details['custom_price'],
+                'quantity'         => $details['quantity'],
+                'discount'         => $details['discount'],
+                'subtotal'         => $details['subtotal'],
+                'price'            => $details['price'],
+                'meta'             => $details['meta'],
+                'fees'             => $details['fees'],
+            );
 
-            if ( ! empty( $fields['payment_meta']['tax'] ) ) {
-                $fields['tax'] = $fields['payment_meta']['tax'];
-            }
+            $item_columns = array_keys ( $fields );
 
-            if ( ! empty( $fields['payment_meta']['amount'] ) ) {
-                $fields['total'] = $fields['payment_meta']['amount'];
-            }
-
-            if ( ! empty( $fields['payment_meta']['fees'] ) ) {
-                $fees = 0;
-                foreach ( $fields['payment_meta']['fees'] as $fee ) {
-                    $fees += (float) $fee['amount'];
+            foreach ( $fields as $key => $val ) {
+                if ( is_null( $val ) ) {
+                    $val = '';
                 }
-                $fields['fees_total'] = $fees;
-            } else {
-                $fields['fees_total'] = $fields['total'];
+                $val = maybe_serialize( $val );
+                $fields[ $key ] = $wpdb->prepare( '%s', $val );
             }
 
-            if ( is_array( $fields['payment_meta']['cart_details'] ) ) {
-                foreach ( $fields['payment_meta']['cart_details'] as $item ) {
-                    if ( isset( $item['subtotal'] ) ) {
-                        $fields['subtotal'] += $item['subtotal'];
-                    }
-                }
-            }
-
-        } else {
-            $fields['payment_meta'] = array();
+            $fields = implode( ', ', $fields );
+            $item_rows[] = "($fields)";
         }
 
-        $fields['tax'] = (float) $fields['tax'];
-        $fields['fees_total'] = (float) $fields['fees_total'];
-        $fields['total'] = (float) $fields['total'];
-        $fields['subtotal'] = (float) $fields['subtotal'];
-        $fields['discount'] = $fields['subtotal'] - $fields['total'] - $fields['tax'] - $fields['fees_total'];
+        $item_rows    = implode( ', ', $item_rows );
+        $item_columns = implode( ', ', $item_columns );
+        $wpdb->query( "INSERT INTO $invoice_items_table ($item_columns) VALUES $item_rows" );
     }
+
+    $invoice_rows = implode( ', ', $invoice_rows );
+    $invoices_columns = implode( ', ', $invoices_columns );
+    $wpdb->query( "INSERT INTO $invoices_table ($invoices_columns) VALUES $invoice_rows" );
 
 }
