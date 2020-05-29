@@ -14,9 +14,9 @@ function wpinv_automatic_upgrade() {
     $wpi_version = get_option( 'wpinv_version' );
 
     // Update tables.
-    if ( ! get_option( 'getpaid_created_invoice_tables' ) ) {
+    if ( ! get_option( 'getpaid_created_invoice_tablesbnks' ) ) {
         wpinv_v119_upgrades();
-        update_option( 'getpaid_created_invoice_tables', true );
+        update_option( 'getpaid_created_invoice_tablesbnks', true );
     }
 
     if ( $wpi_version == WPINV_VERSION ) {
@@ -220,7 +220,7 @@ function wpinv_update_new_email_settings() {
  * Version 119 upgrades.
  */
 function wpinv_v119_upgrades() {
-    wpinv_create_invoices_table();
+    //wpinv_create_invoices_table();
     wpinv_convert_old_invoices();
 }
 
@@ -311,7 +311,16 @@ function wpinv_create_invoices_table() {
 function wpinv_convert_old_invoices() {
     global $wpdb;
 
-    $invoices = get_posts('post_type=wpi_invoice&posts_per_page=-1&fields=ids');
+    $invoices = array_unique(
+        get_posts(
+            array(
+                'post_type'      => array( 'wpi_invoice', 'wpi_quote' ),
+                'posts_per_page' => -1,
+                'fields'         => 'ids',
+                'post_status'    => array_keys( wpinv_get_invoice_statuses( true ) ),
+            )
+        )
+    );
     $invoices_table = $wpdb->prefix . 'getpaid_invoices';
     $invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
 
@@ -320,17 +329,15 @@ function wpinv_convert_old_invoices() {
     }
 
     $invoice_rows = array();
-    $invoices_columns = array();
     foreach ( $invoices as $invoice ) {
 
         $invoice = new WPInv_Legacy_Invoice( $invoice );
-
         $fields = array (
             'post_id'        => $invoice->ID,
-            'type'           => 'invoice',
             'number'         => $invoice->get_number(),
-            'mode'           => $invoice->mode,
             'key'            => $invoice->get_key(),
+            'type'           => str_replace( 'wpi_', '', $invoice->post_type ),
+            'mode'           => $invoice->mode,
             'user_ip'        => $invoice->get_ip(),
             'first_name'     => $invoice->get_first_name(),
             'last_name'      => $invoice->get_last_name(),
@@ -357,7 +364,6 @@ function wpinv_convert_old_invoices() {
             'vat_rate'       => $invoice->vat_rate,
             'custom_meta'    => $invoice->payment_meta
         );
-        $invoices_columns = array_keys ( $invoices_columns );
 
         foreach ( $fields as $key => $val ) {
             if ( is_null( $val ) ) {
@@ -411,7 +417,6 @@ function wpinv_convert_old_invoices() {
     }
 
     $invoice_rows = implode( ', ', $invoice_rows );
-    $invoices_columns = implode( ', ', $invoices_columns );
-    $wpdb->query( "INSERT INTO $invoices_table ($invoices_columns) VALUES $invoice_rows" );
+    $wpdb->query( "INSERT INTO $invoices_table VALUES $invoice_rows" );
 
 }
