@@ -14,9 +14,9 @@ function wpinv_automatic_upgrade() {
     $wpi_version = get_option( 'wpinv_version' );
 
     // Update tables.
-    if ( ! get_option( 'getpaid_created_invoice_tablesbnks' ) ) {
+    if ( ! get_option( 'getpaid_created_invoice_tables' ) ) {
         wpinv_v119_upgrades();
-        update_option( 'getpaid_created_invoice_tablesbnks', true );
+        update_option( 'getpaid_created_invoice_tables', true );
     }
 
     if ( $wpi_version == WPINV_VERSION ) {
