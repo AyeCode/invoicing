@@ -133,7 +133,7 @@ class WPInv_Meta_Box_Details {
             
         $text = apply_filters('wpinv_resend_invoice_metabox_text', $text);
         do_action( 'wpinv_metabox_resend_invoice_before', $wpi_mb_invoice );
-        
+
         if ( $email = $wpi_mb_invoice->get_email() ) {
             $email_actions = array();
             $email_actions['email_url']      = remove_query_arg( 'wpinv-message', add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $post->ID ) ) );

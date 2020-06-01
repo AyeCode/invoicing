@@ -364,6 +364,9 @@ class WPInv_Invoice {
         $this->post_name       = $this->setup_post_name( $invoice );
         $this->status_nicename = $this->setup_status_nicename( $invoice->post_status );
 
+        $this->user_id         = ! empty( $invoice->post_author ) ? $invoice->post_author : get_current_user_id();
+        $this->email           = get_the_author_meta( 'email', $this->user_id );
+        $this->currency        = wpinv_get_currency();
         $this->setup_invoice_data( $data );
 
         // Other Identifiers
@@ -387,14 +390,14 @@ class WPInv_Invoice {
 
         $data = map_deep( $data, 'maybe_unserialize' );
 
-        $this->payment_meta    = $data->custom_meta;
+        $this->payment_meta    = is_array( $data->custom_meta ) ? $data->custom_meta : array();
         $this->due_date        = $data->due_date;
         $this->completed_date  = $data->completed_date;
         $this->mode            = $data->mode;
 
         // Items
         $this->fees            = $this->setup_fees();
-        $this->cart_details    = ! empty( $this->payment_meta['cart_details'] ) ? $this->payment_meta['cart_details'] : array();
+        $this->cart_details    = $this->setup_cart_details();
         $this->items           = ! empty( $this->payment_meta['items'] ) ? $this->payment_meta['items'] : array();
 
         // Currency Based
@@ -403,7 +406,7 @@ class WPInv_Invoice {
         $this->tax             = $data->tax;
         $this->fees_total      = $data->fees_total;
         $this->subtotal        = $data->subtotal;
-        $this->currency        = $data->currency;
+        $this->currency        = empty( $data->currency ) ? wpinv_get_currency() : $data->currency ;
 
         // Gateway based
         $this->gateway         = $data->gateway;
@@ -496,7 +499,47 @@ class WPInv_Invoice {
 
         $this->post_name = $post_name;
     }
-    
+
+    /**
+     * Set's up the cart details.
+     */
+    public function setup_cart_details() {
+        global $wpdb;
+
+        $table =  $wpdb->prefix . 'getpaid_invoice_items';
+        $items = $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d", $this->ID )
+        );
+
+        if ( empty( $items ) ) {
+            return array();
+        }
+
+        $details = array();
+
+        foreach ( $items as $item ) {
+            $item = (array) $item;
+            $details[] = array(
+                'name'          => $item['item_name'],
+                'id'            => $item['item_id'],
+                'item_price'    => $item['item_price'],
+                'custom_price'  => $item['custom_price'],
+                'quantity'      => $item['quantity'],
+                'discount'      => $item['discount'],
+                'subtotal'      => $item['subtotal'],
+                'tax'           => $item['tax'],
+                'price'         => $item['price'],
+                'vat_rate'      => $item['vat_rate'],
+                'vat_class'     => $item['vat_class'],
+                'meta'          => $item['meta'],
+                'fees'          => $item['fees'],
+            );
+        }
+
+        return map_deep( $details, 'maybe_unserialize' );
+
+    }
+
     /**
      * Convert this to an array.
      */
@@ -514,6 +557,42 @@ class WPInv_Invoice {
         return $gateway_title;
     }
     
+    /**
+     * Refreshes payment data.
+     */
+    private function refresh_payment_data() {
+
+        $payment_data = array(
+            'price'        => $this->total,
+            'date'         => $this->date,
+            'user_email'   => $this->email,
+            'invoice_key'  => $this->key,
+            'currency'     => $this->currency,
+            'items'        => $this->items,
+            'user_info' => array(
+                'user_id'    => $this->user_id,
+                'email'      => $this->email,
+                'first_name' => $this->first_name,
+                'last_name'  => $this->last_name,
+                'address'    => $this->address,
+                'phone'      => $this->phone,
+                'city'       => $this->city,
+                'country'    => $this->country,
+                'state'      => $this->state,
+                'zip'        => $this->zip,
+                'company'    => $this->company,
+                'vat_number' => $this->vat_number,
+                'discount'   => $this->discounts,
+            ),
+            'cart_details' => $this->cart_details,
+            'status'       => $this->status,
+            'fees'         => $this->fees,
+        );
+
+        $this->payment_meta = array_merge( $this->payment_meta, $payment_data );
+
+    }
+
     private function insert_invoice() {
 
         if ( empty( $this->post_type ) ) {
@@ -595,7 +674,8 @@ class WPInv_Invoice {
             $this->ID  = $invoice_id;
             $this->_ID = $invoice_id;
 
-            $this->payment_meta = apply_filters( 'wpinv_payment_meta', $this->payment_meta, $payment_data );
+            $this->payment_meta = array_merge( $this->payment_meta, $payment_data );
+
             if ( ! empty( $this->payment_meta['fees'] ) ) {
                 $this->fees = array_merge( $this->fees, $this->payment_meta['fees'] );
                 foreach( $this->fees as $fee ) {
@@ -615,6 +695,8 @@ class WPInv_Invoice {
      */
     public function save_special() {
         global $wpdb;
+
+        $this->refresh_payment_data();
 
         $fields = array (
             'post_id'        => $this->ID,
@@ -648,6 +730,7 @@ class WPInv_Invoice {
             'vat_rate'       => $this->vat_rate,
             'custom_meta'    => $this->payment_meta
         );
+        $fields = array_map( 'maybe_serialize', $fields );
 
         $table =  $wpdb->prefix . 'getpaid_invoices';
 
@@ -668,11 +751,11 @@ class WPInv_Invoice {
         }
 
         $table =  $wpdb->prefix . 'getpaid_invoice_items';
-        $wpdb->delete( $table, array( 'post_id' => $id ) );
+        $wpdb->delete( $table, array( 'post_id' => $this->ID ) );
 
         foreach ( $this->get_cart_details() as $details ) {
             $fields = array(
-                'post_id'          => $this->$id,
+                'post_id'          => $this->ID,
                 'item_id'          => $details['id'],
                 'item_name'        => $details['name'],
                 'item_description' => empty( $details['meta']['description'] ) ? '' : $details['meta']['description'],
@@ -863,19 +946,20 @@ class WPInv_Invoice {
             }
 
             $this->items    = array_values( $this->items );
-            
-            $new_meta = array(
-                'items'         => $this->items,
-                'cart_details'  => $this->cart_details,
-                'fees'          => $this->fees,
-                'currency'      => $this->currency,
-                'user_info'     => $this->user_info,
-            );
 
-            $this->payment_meta = array_merge( $this->payment_meta, $new_meta );
             $this->pending      = array();
             $saved              = true;
         }
+
+        $new_meta = array(
+            'items'         => $this->items,
+            'cart_details'  => $this->cart_details,
+            'fees'          => $this->fees,
+            'currency'      => $this->currency,
+            'user_info'     => $this->user_info,
+        );
+        $this->payment_meta = array_merge( $this->payment_meta, $new_meta );
+        $this->update_items();
 
         $this->save_special();
         do_action( 'wpinv_invoice_save', $this, $saved );
@@ -1246,7 +1330,7 @@ class WPInv_Invoice {
             if(!is_array($meta)){$meta = array();} // we need this to be an array so make sure it is.
 
             if ( empty( $meta['key'] ) ) {
-                $meta['key'] = $this->setup_invoice_key();
+                $meta['key'] = $this->key;
             }
 
             if ( empty( $meta['date'] ) ) {
