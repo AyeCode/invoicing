@@ -13,13 +13,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * WPInv_Gateawy_Reports_Table Class
+ * WPInv_Items_Reports_Table Class
  *
  * Renders the Gateway Reports table
  *
  * @since 1.0.19
  */
-class WPInv_Gateways_Report_Table extends WP_List_Table {
+class WPInv_Items_Report_Table extends WP_List_Table {
 
 	/**
 	 * @var int Number of items per page
@@ -54,7 +54,7 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	 * @return string Name of the primary column.
 	 */
 	protected function get_primary_column_name() {
-		return 'gateway';
+		return 'item';
 	}
 
 	/**
@@ -80,12 +80,11 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	public function get_columns() {
 
 		return array(
-			'gateway'  => __( 'Gateway', 'invoicing' ),
-			'sales'    => __( 'Total Sales', 'invoicing' ),
+			'item'     => __( 'Item', 'invoicing' ),
+			'sales'    => __( 'Quantity Sold', 'invoicing' ),
 			'total'    => __( 'Total Earnings', 'invoicing' ),
 			'discount' => __( 'Total Discounts', 'invoicing' ),
 			'tax'      => __( 'Total Taxes', 'invoicing' ),
-			'fees'     => __( 'Total Fees', 'invoicing' ),
 		);
 
 	}
@@ -119,33 +118,15 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	public function reports_data() {
 
 		$reports_data = $this->revenue_reports_data();
-		$gateways     = wpinv_get_payment_gateways();
-
-		foreach ( $gateways as $gateway_id => $gateway ) {
-
-			if ( ! empty( $reports_data[ $gateway_id ] ) ) {
-				continue;
-			}
-
-			$reports_data[] = array(
-				'gateway'  => $gateway_id,
-				'sales'    => 0,
-				'total'    => 0,
-				'discount' => 0,
-				'tax'      => 0,
-				'fees'     => 0,
-			);
-		}
 
 		$prepared = array();
 		foreach ( $reports_data as $report_data ) {
 			$prepared[] = array(
-				'gateway'  => wpinv_get_gateway_admin_label( $report_data['gateway'] ),
+				'item'     => $report_data['item_name'],
 				'sales'    => $report_data['sales'],
 				'total'    => wpinv_price( $report_data['total'] ),
 				'discount' => wpinv_price( $report_data['discount'] ),
 				'tax'      => wpinv_price( $report_data['tax'] ),
-				'fees'     => wpinv_price( $report_data['fees'] ),
 			);
 		}
 
@@ -160,30 +141,21 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	public function revenue_reports_data() {
 		global $wpdb;
 
-		$table =  $wpdb->prefix . 'getpaid_invoices';
-		$data  = $wpdb->get_results(
+		$table =  $wpdb->prefix . 'getpaid_invoice_items';
+		return $wpdb->get_results(
 			"SELECT
-				COUNT(posts.ID) as sales,
-				meta.gateway as gateway,
-				SUM(meta.total) as total,
-				SUM(meta.discount) as discount,
-				SUM(meta.tax) as tax,
-				SUM(meta.fees_total) as fees
-			FROM $wpdb->posts as posts
-			LEFT JOIN $table as meta ON meta.post_id = posts.ID
+				SUM(quantity) as sales,
+				item_name,
+				SUM(tax) as tax,
+				SUM(discount) as discount,
+				SUM(price) as total
+			FROM $table
+			LEFT JOIN $wpdb->posts ON $table.post_id = $wpdb->posts.ID
 			WHERE
-				meta.post_id IS NOT NULL
-				AND posts.post_type = 'wpi_invoice'
-                AND ( posts.post_status = 'publish' OR posts.post_status = 'renewal' )
-			GROUP BY meta.gateway", ARRAY_A);
-		
-		$return = array();
-
-		foreach ( $data as $gateway ) {
-			$return[ $gateway ['gateway']] = $gateway;
-		}
-
-		return $return;
+				$wpdb->posts.post_type = 'wpi_invoice'
+                AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'renewal' )
+			GROUP BY item_id
+			ORDER BY item_name ASC", ARRAY_A);
 
 	}
 

@@ -58,6 +58,7 @@ class WPInv_Reports {
             // Reports.
             add_action( 'wpinv_reports_view_earnings', array( $this, 'earnings_report' ) );
             add_action( 'wpinv_reports_view_gateways', array( $this, 'gateways_report' ) );
+            add_action( 'wpinv_reports_view_items', array( $this, 'items_report' ) );
             add_action( 'wpinv_reports_view_taxes', array( $this, 'tax_report' ) );
         }
         do_action( 'wpinv_class_reports_actions', $this );
@@ -105,6 +106,7 @@ class WPInv_Reports {
 
         $views = array(
             'earnings'   => __( 'Earnings', 'invoicing' ),
+            'items'      => __( 'Items', 'invoicing' ),
             'gateways'   => __( 'Payment Methods', 'invoicing' ),
             'taxes'      => __( 'Taxes', 'invoicing' ),
         );
@@ -681,8 +683,8 @@ class WPInv_Reports {
      */
     public function get_sql_clauses( $range ) {
 
-        $date     = 'CAST(completed.meta_value AS DATE)';
-        $datetime = 'CAST(completed.meta_value AS DATETIME)';
+        $date     = 'CAST(meta.completed_date AS DATE)';
+        $datetime = 'meta.completed_date';
 
         // Prepare durations.
         $today                = current_time( 'Y-m-d' );
@@ -715,42 +717,42 @@ class WPInv_Reports {
             ),
 
             'this_week'    => array(
-                "DAYNAME($date)",
+                "DAYNAME($datetime)",
                 "$date BETWEEN '$monday' AND '$sunday'"
             ),
 
             'last_week'    => array(
-                "DAYNAME($date)",
+                "DAYNAME($datetime)",
                 "$date BETWEEN '$last_monday' AND '$last_sunday'"  
             ),
 
             '7_days_ago'   => array(
-                "DAY($date)",
+                "DAY($datetime)",
                 "$date BETWEEN '$seven_days_ago' AND '$today'"  
             ),
 
             '30_days_ago'  => array(
-                "DAY($date)",
+                "DAY($datetime)",
                 "$date BETWEEN '$thirty_days_ago' AND '$today'"    
             ),
 
             'this_month'   => array(
-                "DAY($date)",
+                "DAY($datetime)",
                 "$date BETWEEN '$first_day_month' AND '$last_day_month'"
             ),
 
             'last_month'   => array(
-                "DAY($date)",
+                "DAY($datetime)",
                 "$date BETWEEN '$first_day_last_month' AND '$last_day_last_month'"
             ),
 
             'this_year'    => array(
-                "MONTH($date)",
+                "MONTH($datetime)",
                 "$date BETWEEN '$first_day_year' AND '$last_day_year'"
             ),
 
             'last_year'    => array(
-                "MONTH($date)",
+                "MONTH($datetime)",
                 "$date BETWEEN '$first_day_last_year' AND '$last_day_last_year'"
             ),
 
@@ -766,26 +768,27 @@ class WPInv_Reports {
     /**
      * Returns the the current date ranges results.
      */
-    public function get_report_results( $range, $key='_wpinv_total' ) {
+    public function get_report_results( $range ) {
         global $wpdb;
 
+        $table   = $wpdb->prefix . 'getpaid_invoices';
         $clauses = $this->get_sql_clauses( $range );
-        $key     = $wpdb->prepare( '%s', $key );
         $sql     = "SELECT
                 {$clauses[0]} AS completed_date,
-                SUM( total.meta_value ) AS amount
+                SUM( meta.total ) AS total,
+                SUM( meta.discount ) AS discount,
+                SUM( meta.tax ) AS tax,
+                SUM( meta.fees_total ) AS fees_total
             FROM $wpdb->posts
-            LEFT JOIN $wpdb->postmeta as total ON total.post_id = $wpdb->posts.ID AND total.meta_key=$key
-            LEFT JOIN $wpdb->postmeta as completed ON completed.post_id = $wpdb->posts.ID AND completed.meta_key='_wpinv_completed_date'
-            WHERE total.meta_key IS NOT NULL
-                AND completed.meta_key IS NOT NULL
+            LEFT JOIN $table as meta ON meta.post_id = $wpdb->posts.ID
+            WHERE meta.post_id IS NOT NULL
                 AND $wpdb->posts.post_type = 'wpi_invoice'
                 AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'renewal' )
                 AND {$clauses[1]}
             GROUP BY {$clauses[0]}
         ";
 
-        return  wp_list_pluck( $wpdb->get_results( $sql ), 'amount', 'completed_date' );
+        return $wpdb->get_results( $sql );
     }
 
     /**
@@ -918,9 +921,12 @@ class WPInv_Reports {
      * Retrieves the stats.
      */
     public function get_stats() {
-        $range    = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
-        $earnings = $this->get_report_results( $range );
-        $taxes    = $this->get_report_results( $range, '_wpinv_tax' );
+        $range     = isset( $_GET['range'] ) ? $_GET['range'] : '7_days_ago';
+        $results   = $this->get_report_results( $range );
+        $earnings  = wp_list_pluck( $results, 'total', 'completed_date' );
+        $taxes     = wp_list_pluck( $results, 'tax', 'completed_date' );
+        $discounts = wp_list_pluck( $results, 'discount', 'completed_date' );
+        $fees      = wp_list_pluck( $results, 'fees_total', 'completed_date' );
 
         return array(
 
@@ -932,6 +938,16 @@ class WPInv_Reports {
             array(
                 'label' => __( 'Taxes', 'invoicing' ),
                 'data'  => $this->fill_nulls( $taxes, $range ),
+            ),
+
+            array(
+                'label' => __( 'Discounts', 'invoicing' ),
+                'data'  => $this->fill_nulls( $discounts, $range ),
+            ),
+
+            array(
+                'label' => __( 'Fees', 'invoicing' ),
+                'data'  => $this->fill_nulls( $fees, $range ),
             )
         );
 
@@ -1033,12 +1049,27 @@ class WPInv_Reports {
     }
 
     /**
+     * Displays the items report.
+     */
+    public function items_report() {
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-items-report-table.php' );
+
+        $table = new WPInv_Items_Report_Table();
+        $table->prepare_items();
+        $table->display();
+        echo __( '* Items with no sales not shown.', 'invoicing' );
+    }
+
+    /**
      * Renders the Tax Reports
      *
      * @return void
      */
     public function tax_report() {
 
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-taxes-report-table.php' );
+        $table = new WPInv_Taxes_Reports_Table();
+        $table->prepare_items();
         $year = isset( $_GET['year'] ) ? absint( $_GET['year'] ) : date( 'Y' );
         ?>
 
@@ -1061,6 +1092,7 @@ class WPInv_Reports {
                 </div><!-- .inside -->
             </div><!-- .postbox -->
         </div><!-- .metabox-holder -->
+        <?php $table->display(); ?>
         <?php
     }
 

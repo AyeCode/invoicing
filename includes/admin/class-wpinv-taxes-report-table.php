@@ -13,13 +13,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * WPInv_Gateawy_Reports_Table Class
+ * WPInv_Taxes_Reports_Table Class
  *
  * Renders the Gateway Reports table
  *
  * @since 1.0.19
  */
-class WPInv_Gateways_Report_Table extends WP_List_Table {
+class WPInv_Taxes_Reports_Table extends WP_List_Table {
 
 	/**
 	 * @var int Number of items per page
@@ -54,7 +54,7 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	 * @return string Name of the primary column.
 	 */
 	protected function get_primary_column_name() {
-		return 'gateway';
+		return 'month';
 	}
 
 	/**
@@ -80,12 +80,8 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	public function get_columns() {
 
 		return array(
-			'gateway'  => __( 'Gateway', 'invoicing' ),
-			'sales'    => __( 'Total Sales', 'invoicing' ),
-			'total'    => __( 'Total Earnings', 'invoicing' ),
-			'discount' => __( 'Total Discounts', 'invoicing' ),
+			'month'    => __( 'Month', 'invoicing' ),
 			'tax'      => __( 'Total Taxes', 'invoicing' ),
-			'fees'     => __( 'Total Fees', 'invoicing' ),
 		);
 
 	}
@@ -114,76 +110,68 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	 * Build all the reports data
 	 *
 	 * @since 1.0.19
-	 * @return array $reports_data All the data for gateway reports
+	 * @return array $reports_data All the data for taxes reports
 	 */
 	public function reports_data() {
 
-		$reports_data = $this->revenue_reports_data();
-		$gateways     = wpinv_get_payment_gateways();
-
-		foreach ( $gateways as $gateway_id => $gateway ) {
-
-			if ( ! empty( $reports_data[ $gateway_id ] ) ) {
-				continue;
-			}
-
-			$reports_data[] = array(
-				'gateway'  => $gateway_id,
-				'sales'    => 0,
-				'total'    => 0,
-				'discount' => 0,
-				'tax'      => 0,
-				'fees'     => 0,
-			);
-		}
+		$reports_data = $this->taxes_reports_data();
+		$months       = array(
+			'1' => __( 'January', 'invoicing' ),
+			'2' => __( 'February', 'invoicing' ),
+			'3' => __( 'March', 'invoicing' ),
+			'4' => __( 'April', 'invoicing' ),
+			'5' => __( 'May', 'invoicing' ),
+			'6' => __( 'June', 'invoicing' ),
+			'7' => __( 'July', 'invoicing' ),
+			'8' => __( 'August', 'invoicing' ),
+			'9' => __( 'September', 'invoicing' ),
+			'10' => __( 'October', 'invoicing' ),
+			'11' => __( 'November', 'invoicing' ),
+			'12' => __( 'December', 'invoicing' ),
+		);
 
 		$prepared = array();
-		foreach ( $reports_data as $report_data ) {
+		foreach ( $months as $month => $label ) {
+
+			$tax = wpinv_price( 0 );
+			if ( ! empty( $reports_data[ $month ] ) ) {
+				$tax = wpinv_price( $reports_data[ $month ] );
+			}
+
 			$prepared[] = array(
-				'gateway'  => wpinv_get_gateway_admin_label( $report_data['gateway'] ),
-				'sales'    => $report_data['sales'],
-				'total'    => wpinv_price( $report_data['total'] ),
-				'discount' => wpinv_price( $report_data['discount'] ),
-				'tax'      => wpinv_price( $report_data['tax'] ),
-				'fees'     => wpinv_price( $report_data['fees'] ),
+				'month'    => $label,
+				'tax'      => $tax,
 			);
+
 		}
 
 		return $prepared;
 	}
 
 	/**
-	 * Retrieves report data.
+	 * Retrieves taxes data.
 	 *
 	 * @since 1.0.19
 	 */
-	public function revenue_reports_data() {
+	public function taxes_reports_data() {
 		global $wpdb;
 
 		$table =  $wpdb->prefix . 'getpaid_invoices';
+		$year  = isset( $_GET['year'] ) ? absint( $_GET['year'] ) : date( 'Y' );
 		$data  = $wpdb->get_results(
 			"SELECT
-				COUNT(posts.ID) as sales,
-				meta.gateway as gateway,
-				SUM(meta.total) as total,
-				SUM(meta.discount) as discount,
-				SUM(meta.tax) as tax,
-				SUM(meta.fees_total) as fees
+				MONTH(meta.completed_date) as _month,
+				SUM(meta.tax) as tax
 			FROM $wpdb->posts as posts
 			LEFT JOIN $table as meta ON meta.post_id = posts.ID
 			WHERE
 				meta.post_id IS NOT NULL
 				AND posts.post_type = 'wpi_invoice'
                 AND ( posts.post_status = 'publish' OR posts.post_status = 'renewal' )
-			GROUP BY meta.gateway", ARRAY_A);
-		
-		$return = array();
+				AND ( YEAR(meta.completed_date) = '$year' )
+			GROUP BY MONTH(meta.completed_date)");
 
-		foreach ( $data as $gateway ) {
-			$return[ $gateway ['gateway']] = $gateway;
-		}
-
-		return $return;
+		return wp_list_pluck( $data, 'tax', '_month' );
 
 	}
 

@@ -166,7 +166,7 @@ class WPInv_Meta_Box_Billing_Details {
                     'show_option_none' => false,
                     'class'            => 'gdmbx2-text-large wpi_select2',
                     'placeholder'      => __( 'Choose a currency', 'invoicing' ),
-                    'required'         => true,
+                    'required'         => false,
                 ) );
                 ?>
             </div>
