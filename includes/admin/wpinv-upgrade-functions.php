@@ -220,7 +220,7 @@ function wpinv_update_new_email_settings() {
  * Version 119 upgrades.
  */
 function wpinv_v119_upgrades() {
-    //wpinv_create_invoices_table();
+    wpinv_create_invoices_table();
     wpinv_convert_old_invoices();
 }
 
