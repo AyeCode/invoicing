@@ -693,12 +693,9 @@ class WPInv_Invoice {
     /**
      * Saves special fields in our custom table.
      */
-    public function save_special() {
-        global $wpdb;
+    public function get_special_fields() {
 
-        $this->refresh_payment_data();
-
-        $fields = array (
+        return array (
             'post_id'        => $this->ID,
             'number'         => $this->get_number(),
             'key'            => $this->get_key(),
@@ -730,6 +727,18 @@ class WPInv_Invoice {
             'vat_rate'       => $this->vat_rate,
             'custom_meta'    => $this->payment_meta
         );
+
+    }
+
+    /**
+     * Saves special fields in our custom table.
+     */
+    public function save_special() {
+        global $wpdb;
+
+        $this->refresh_payment_data();
+
+        $fields = $this->get_special_fields();
         $fields = array_map( 'maybe_serialize', $fields );
 
         $table =  $wpdb->prefix . 'getpaid_invoices';
@@ -1241,21 +1250,16 @@ class WPInv_Invoice {
             $meta_value   = $current_meta;
         }
 
-        $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
-        
-        // Do not update created date on invoice marked as paid.
-        /*if ( $meta_key == '_wpinv_completed_date' && !empty( $meta_value ) ) {
-            $args = array(
-                'ID'                => $this->ID,
-                'post_date'         => $meta_value,
-                'edit_date'         => true,
-                'post_date_gmt'     => get_gmt_from_date( $meta_value ),
-                'post_modified'     => $meta_value,
-                'post_modified_gmt' => get_gmt_from_date( $meta_value )
-            );
-            wp_update_post( $args );
-        }*/
-        
+        $key  = str_ireplace( '_wpinv_', '', $meta_key );
+        $this->$key = $meta_value;
+
+        $special = array_keys( $this->get_special_fields() );
+        if ( in_array( $key, $special ) ) {
+            $this->save_special();
+        } else {
+            $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
+        }
+
         return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
     }
 

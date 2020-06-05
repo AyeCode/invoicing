@@ -167,24 +167,14 @@ class WPInv_Session_Handler extends WPInv_Session {
 	}
 
 	/**
-	 * Generate a unique customer ID for guests, or return user ID if logged in.
-	 *
-	 * Uses Portable PHP password hashing framework to generate a unique cryptographically strong ID.
+	 * Generates session ids.
 	 *
 	 * @return string
 	 */
 	public function generate_customer_id() {
-		$customer_id = '';
-
-		if ( is_user_logged_in() ) {
-			$customer_id = get_current_user_id();
-		}
-
-		if ( empty( $customer_id ) ) {
-            $customer_id = wp_create_nonce('wpinv-session-customer-id');
-		}
-
-		return $customer_id;
+		require_once ABSPATH . 'wp-includes/class-phpass.php';
+		$hasher      = new PasswordHash( 8, false );
+		return md5( $hasher->get_random_bytes( 32 ) );
 	}
 
 	/**

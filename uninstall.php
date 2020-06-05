@@ -64,4 +64,17 @@ if ( $remove_data ) {
     
     // Clear any cached data that has been removed
     wp_cache_flush();
+
+    // Delete invoices table.
+    $table = $wpdb->prefix . 'getpaid_invoices';
+    if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+	    $wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
+    }
+
+    // Delete invoice items table.
+    $table = $wpdb->prefix . 'getpaid_invoice_items';
+    if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+	    $wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
+    }
+
 }

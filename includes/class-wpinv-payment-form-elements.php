@@ -2059,7 +2059,7 @@ class WPInv_Payment_Form_Elements {
                                             </div>
                                         <?php } ?>
 
-                                        <input type='number' name='wpinv-items[<?php echo (int) $item['id']; ?>]' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                        <input type='text' name='wpinv-items[<?php echo (int) $item['id']; ?>]' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
                                     
                                         <?php if ( 'left' != wpinv_currency_position() ) { ?>
                                             <div class='input-group-append'>
@@ -2211,7 +2211,7 @@ class WPInv_Payment_Form_Elements {
                                             </div>
                                         <?php } ?>
 
-                                        <input type='number' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                        <input type='text' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
                                     
                                         <?php if ( 'left' != wpinv_currency_position() ) { ?>
                                             <div class='input-group-append'>
@@ -2372,7 +2372,7 @@ class WPInv_Payment_Form_Elements {
                                             </div>
                                         <?php } ?>
 
-                                        <input type='number' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                        <input type='text' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
                                     
                                         <?php if ( 'left' != wpinv_currency_position() ) { ?>
                                             <div class='input-group-append'>
@@ -2541,7 +2541,7 @@ class WPInv_Payment_Form_Elements {
                                             </div>
                                         <?php } ?>
 
-                                        <input type='number' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                        <input type='text' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
                                     
                                         <?php if ( 'left' != wpinv_currency_position() ) { ?>
                                             <div class='input-group-append'>
@@ -2710,7 +2710,7 @@ class WPInv_Payment_Form_Elements {
                                             </div>
                                         <?php } ?>
 
-                                        <input type='number' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                                        <input type='text' name='<?php echo $name; ?>' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
                                     
                                         <?php if ( 'left' != wpinv_currency_position() ) { ?>
                                             <div class='input-group-append'>
