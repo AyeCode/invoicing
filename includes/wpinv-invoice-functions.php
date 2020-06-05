@@ -1947,15 +1947,13 @@ function wpinv_payment_receipt( $atts, $content = null ) {
     return $display;
 }
 
+/**
+ * Given an invoice key, this function returns the id.
+ */
 function wpinv_get_invoice_id_by_key( $key ) {
 	global $wpdb;
-
-	$invoice_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wpinv_key' AND meta_value = %s LIMIT 1", $key ) );
-
-	if ( $invoice_id != NULL )
-		return $invoice_id;
-
-	return 0;
+    $table      = $wpdb->prefix . 'getpaid_invoices';
+	return (int) $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $table WHERE`key` = %s LIMIT 1", $key ) );
 }
 
 function wpinv_can_view_receipt( $invoice_key = '' ) {
