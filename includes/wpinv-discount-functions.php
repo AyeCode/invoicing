@@ -997,7 +997,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
             if ( !empty( $reqs ) && wpinv_is_discount_not_global( $code_id ) ) {
                 foreach ( $reqs as $item_id ) {
                     if ( $item_id == $item['id'] && ! in_array( $item['id'], $excluded_items ) ) {
-                        $discounted_price -= $price - wpinv_get_discounted_amount( $discount, $price );
+                        $discounted_price -= wpinv_get_discounted_amount( $discount, $price );
                     }
                 }
             } else {
@@ -1027,7 +1027,7 @@ function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false
                             $discounted_price -= $adjustment;
                         }
                     } else {
-                        $discounted_price -= $price - wpinv_get_discounted_amount( $discount, $price );
+                        $discounted_price -= wpinv_get_discounted_amount( $discount, $price );
                     }
                 }
             }

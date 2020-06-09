@@ -974,7 +974,6 @@ class WPInv_Ajax {
             );
 
         }
-        
 
         if ( is_wp_error( $invoice ) ) {
             wp_send_json_error( $invoice->get_error_message() );
