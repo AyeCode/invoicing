@@ -354,15 +354,15 @@ class WPInv_Discount {
 		if ( $key == 'id' ) {
 			$key = 'ID';
 		}
-		
-		if( method_exists( $this, "get_$key") ) {
+
+		if ( method_exists( $this, "get_$key") ) {
 			$value 	= call_user_func( array( $this, "get_$key" ) );
 		} else if( isset( $this->data[$key] ) ) {
 			$value 	= $this->data[$key];
 		} else {
 			$value = null;
 		}
-		
+
 		/**
 		 * Filters a discount's property value.
 		 * 
@@ -607,7 +607,7 @@ class WPInv_Discount {
 	 * @return boolean
 	 */
 	public function is_valid_for_items( $item_ids ) {
-		 
+
 		$item_ids = array_map( 'intval',  wpinv_parse_list( $item_ids ) );
 		$included = array_intersect( $item_ids, $this->items );
 		$excluded = array_intersect( $item_ids, $this->excluded_items );
@@ -830,16 +830,20 @@ class WPInv_Discount {
 	public function get_discounted_amount( $amount ) {
 
 		if ( $this->type == 'flat' ) {
-            $amount = $amount - $this->amount;
+            $discount = $this->amount;
 		} else {
-            $amount = $amount - ( $amount * ( $this->amount / 100 ) );
+            $discount = ( $amount * ( $this->amount / 100 ) );
 		}
 
-		if ( $amount < 0 ) {
-			$amount = 0;
+		if ( $discount < 0 ) {
+			$discount = 0;
 		}
 
-		return apply_filters( 'wpinv_discounted_amount', $amount, $this->ID, $this, $this->code, $this->amount );
+		if ( $discount > $amount ) {
+			$discount = $amount;
+		}
+
+		return apply_filters( 'wpinv_discount_total_discount_amount', $discount, $amount, $this );
 	}
 	
 }

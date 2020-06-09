@@ -323,7 +323,7 @@ class WPInv_Payment_Form_Elements {
                     'premade'      => true,
                 )
             ),
-/*
+
             array( 
                 'type' => 'discount',
                 'name' => __( 'Discount Input', 'invoicing' ),
@@ -333,7 +333,7 @@ class WPInv_Payment_Form_Elements {
                     'button_label' => __( 'Apply Coupon', 'invoicing' ),
                     'description'  => __( 'Have a discount code? Enter it above.', 'invoicing' ),
                 )
-            ),*/
+            ),
 
             array( 
                 'type' => 'items',
@@ -1045,6 +1045,16 @@ class WPInv_Payment_Form_Elements {
         
         echo "<div class='wpinv-address-fields'>";
 
+        $country = '';
+        if ( is_user_logged_in() ) {
+            $user  = wp_get_current_user();
+            $country = sanitize_text_field( get_user_meta( $user->ID, '_wpinv_country', true ) );
+        }
+
+        if ( empty( $country ) ) {
+            $country = wpinv_get_default_country();
+        }
+
         foreach( $field['fields'] as $address_field ) {
 
             if ( empty( $address_field['visible'] ) ) {
@@ -1060,13 +1070,20 @@ class WPInv_Payment_Form_Elements {
                 $label .= "<span class='text-danger'> *</span>";
             }
 
+            // Default value.
+            $value     = '';
+            if ( is_user_logged_in() ) {
+                $user  = wp_get_current_user();
+                $value = sanitize_text_field( get_user_meta( $user->ID, '_' . $address_field['name'], true ) );
+            }
+
             if ( 'wpinv_country' == $address_field['name'] ) {
 
                 echo aui()->select( array(
                     'options'          => wpinv_get_country_list(),
                     'name'             => esc_attr( $address_field['name'] ),
                     'id'               => esc_attr( $address_field['name'] ),
-                    'value'            => wpinv_get_default_country(),
+                    'value'            => $country,
                     'placeholder'      => esc_attr( $address_field['placeholder'] ),
                     'required'         => (bool) $address_field['required'],
                     'no_wrap'          => true,
@@ -1076,8 +1093,11 @@ class WPInv_Payment_Form_Elements {
     
             } else if ( 'wpinv_state' == $address_field['name'] ) {
 
-                $states = wpinv_get_country_states( wpinv_get_default_country() );
-                $state  = wpinv_get_default_state();
+                $states = wpinv_get_country_states( $country );
+
+                if ( empty( $value ) ) {
+                    $value = wpinv_get_default_state();
+                }
 
                 if ( ! empty( $states ) ) {
 
@@ -1085,7 +1105,7 @@ class WPInv_Payment_Form_Elements {
                         'options'          => $states,
                         'name'             => esc_attr( $address_field['name'] ),
                         'id'               => esc_attr( $address_field['name'] ),
-                        'value'            => $state,
+                        'value'            => $value,
                         'placeholder'      => esc_attr( $address_field['placeholder'] ),
                         'required'         => (bool) $address_field['required'],
                         'no_wrap'          => true,
@@ -1103,6 +1123,7 @@ class WPInv_Payment_Form_Elements {
                             'label'      => wp_kses_post( $label ),
                             'no_wrap'    => true,
                             'type'       => 'text',
+                            'value'      => $value,
                         )
                     );
 
@@ -1119,6 +1140,7 @@ class WPInv_Payment_Form_Elements {
                         'no_wrap'    => true,
                         'placeholder' => esc_attr( $address_field['placeholder'] ),
                         'type'       => 'text',
+                        'value'      => $value,
                     )
                 );
 
@@ -1871,7 +1893,8 @@ class WPInv_Payment_Form_Elements {
         $restrict  = $this->get_restrict_markup( $field, 'discount' );
         ?>
 
-            <div <?php echo $restrict; ?> class="discount_field  border rounded p-3">
+            <div <?php echo $restrict; ?> class="discount_field border rounded p-3 wpinv-payment-form-field-preview">
+                <div class='wpinv-payment-form-field-preview-overlay'></div>
                 <div class="discount_field_inner d-flex flex-column flex-md-row">
                     <input  :placeholder="<?php echo $field ?>.input_label" class="form-control mr-2 mb-2" style="flex: 1;" type="text">
                     <button class="btn btn-secondary submit-button mb-2" type="submit" @click.prevent="">{{<?php echo $field; ?>.button_label}}</button>
@@ -1899,10 +1922,11 @@ class WPInv_Payment_Form_Elements {
     <div class="form-group">
         <div class="discount_field  border rounded p-3">
             <div class="discount_field_inner d-flex flex-column flex-md-row">
-                <input  placeholder="<?php echo $placeholder; ?>" class="form-control mr-2 mb-2" style="flex: 1;" type="text">
-                <a href="#" class="btn btn-secondary submit-button mb-2 wpinv-payment-form-coupon-button"><?php echo $label; ?></a>
+                <input name="discount" placeholder="<?php echo $placeholder; ?>" class="form-control mr-2 mb-2 getpaid-discount-field" style="flex: 1;" type="text">
+                <a href="#" class="btn btn-secondary submit-button mb-2 getpaid-discount-button"><?php echo $label; ?></a>
             </div>
             <?php echo $description ?>
+            <div class="wpinv_payment_form_coupon_errors alert alert-danger d-none mt-2"></div>
         </div>
     </div>
 
@@ -2080,11 +2104,17 @@ class WPInv_Payment_Form_Elements {
 
                 <div class='mt-4 border-top item_totals_total p-2'>
 
+                    <div class='row'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+                    </div>
+
+                    <div class='row' style='display: none;'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-discount'><?php echo wpinv_price( wpinv_format_amount( 0 ) ) ?></strong></div>
+                    </div>
+
                     <?php if ( wpinv_use_taxes() ) { ?>
-                        <div class='row'>
-                            <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
-                            <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
-                        </div>
                         <div class='row'>
                             <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
                             <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>
@@ -2231,11 +2261,18 @@ class WPInv_Payment_Form_Elements {
                 <?php } ?>
 
                 <div class='mt-4 border-top item_totals_total p-2'>
+
+                    <div class='row'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+                    </div>
+
+                    <div class='row' style='display: none;'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-discount'></strong></div>
+                    </div>
+
                     <?php if ( wpinv_use_taxes() ) { ?>
-                        <div class='row'>
-                            <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
-                            <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
-                        </div>
                         <div class='row'>
                             <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
                             <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>
@@ -2393,11 +2430,17 @@ class WPInv_Payment_Form_Elements {
 
                 <div class='mt-4 border-top item_totals_total p-2'>
 
+                    <div class='row'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+                    </div>
+
+                    <div class='row' style='display: none;'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-discount'><?php echo wpinv_price( wpinv_format_amount( 0 ) ) ?></strong></div>
+                    </div>
+
                     <?php if ( wpinv_use_taxes() ) { ?>
-                        <div class='row'>
-                            <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
-                            <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
-                        </div>
                         <div class='row'>
                             <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
                             <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>
@@ -2562,11 +2605,17 @@ class WPInv_Payment_Form_Elements {
 
                 <div class='mt-4 border-top item_totals_total p-2'>
 
+                    <div class='row'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+                    </div>
+
+                    <div class='row' style='display: none;'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-discount'><?php echo wpinv_price( wpinv_format_amount( 0 ) ) ?></strong></div>
+                    </div>
+
                     <?php if ( wpinv_use_taxes() ) { ?>
-                        <div class='row'>
-                            <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
-                            <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
-                        </div>
                         <div class='row'>
                             <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
                             <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>
@@ -2731,11 +2780,17 @@ class WPInv_Payment_Form_Elements {
 
                 <div class='mt-4 border-top item_totals_total p-2'>
 
+                    <div class='row'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+                    </div>
+
+                    <div class='row' style='display: none;'>
+                        <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                        <div class='col-4'><strong class='wpinv-items-discount'><?php echo wpinv_price( wpinv_format_amount( 0 ) ) ?></strong></div>
+                    </div>
+
                     <?php if ( wpinv_use_taxes() ) { ?>
-                        <div class='row'>
-                            <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
-                            <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
-                        </div>
                         <div class='row'>
                             <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
                             <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>

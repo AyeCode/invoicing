@@ -355,39 +355,62 @@ jQuery(function($) {
     })
 
     // Apply discounts.
-    $( 'body').on( 'click', '.wpinv-payment-form-coupon-button', function( e ) {
+    var applyDiscount = function( form ) {
 
-        // Prevent default behaviour...
-        e.preventDefault();
+        // Block the discount field.
+        var discount_field = form.find( '.discount_field' )
+        wpinvBlock(discount_field);
 
-        // ... then display a loading indicator.
-        var form = $( this ).closest('.wpinv_payment_form')
-        wpinvBlock(form);
-
-        // Then hide the errors
-        var errors_el = form.find( '.wpinv_payment_form_coupon_errors' )
-        errors_el.html('').addClass('d-none')
+        // Hide coupon errors.
+        var errors = discount_field.find( '.wpinv_payment_form_coupon_errors' ).html('').addClass('d-none')
 
         // And submit the form to create an invoice and apply the discount.
         var data = form.serialize();
 
         $.post( WPInv.ajax_url, data + '&action=wpinv_payment_form_discount', function(res) {
-            
+
             if ( res.success ) {
-                form.find('.item_totals_total .col-4 strong').text( res.data )
-                window.location.href = res.data
+                $( form ).find('.wpinv-items-total').html( res.data.total )
+                $( form ).find('.wpinv-items-tax').html( res.data.tax )
+                $( form ).find('.wpinv-items-sub-total').html( res.data.sub_total )
+
+                if ( res.data.discount ) {
+                    $( form ).find('.wpinv-items-discount').html( res.data.discount ).closest('.row').show()
+                } else {
+                    $( form ).find('.wpinv-items-discount').closest('.row').hide()
+                }
+
             } else {
-                errors_el.text(res.data).removeClass('d-none')
+                errors.html(res).removeClass('d-none')
             }
+
         })
 
         .fail( function( res ) {
-            errors_el.html('Could not establish a connection to the server.').removeClass('d-none')
+            errors.html('Could not establish a connection to the server.').removeClass('d-none')
         } )
 
         .always(() => {
-            form.unblock();
+            discount_field.unblock();
         })
+
+    }
+
+    // Apply a discount when the discount button is clicked.
+    $( 'body').on('click', '.wpinv_payment_form .getpaid-discount-button', function( e ) {
+        e.preventDefault();
+        applyDiscount( $( this ).closest('.wpinv_payment_form') )
+    } );
+
+    //Apply a discount when hitting enter key in the discount field
+    $( 'body').on('keypress', '.wpinv_payment_form .getpaid-discount-field', function( e ) {
+        if ( e.keyCode == '13' ) {
+            e.preventDefault();
+            applyDiscount( $( this ).closest('.wpinv_payment_form') )
+        }
+    });
+
+    $( 'body').on( 'click', '.wpinv-payment-form-coupon-button', function( e ) {
 
     })
 
@@ -517,6 +540,13 @@ jQuery(function($) {
                     $( form ).find('.wpinv-items-total').html( res.data.total )
                     $( form ).find('.wpinv-items-tax').html( res.data.tax )
                     $( form ).find('.wpinv-items-sub-total').html( res.data.sub_total )
+
+                    if ( res.data.discount ) {
+                        $( form ).find('.wpinv-items-discount').html( res.data.discount ).closest('.row').show()
+                    } else {
+                        $( form ).find('.wpinv-items-discount').closest('.row').hide()
+                    }
+
                 }
 
             })
