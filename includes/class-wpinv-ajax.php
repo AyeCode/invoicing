@@ -823,6 +823,7 @@ class WPInv_Ajax {
 
         $prepared_items = array();
         $address_fields = array();
+        $has_recurring  = false;
 
         if ( ! empty( $data['wpinv-items'] ) ) {
 
@@ -836,6 +837,10 @@ class WPInv_Ajax {
 
                 if ( ! isset( $selected_items[ $item['id'] ] ) ) {
                     continue;
+                }
+
+                if ( ! empty( $item['recurring'] ) ) {
+                    $has_recurring  = true;
                 }
 
                 $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
@@ -885,6 +890,10 @@ class WPInv_Ajax {
 
             wp_send_json_error( __( 'You have not selected any items.', 'invoicing' ) );
 
+        }
+
+        if ( $has_recurring && 1 != count( $prepared_items ) ) {
+            wp_send_json_error( __( 'Recurring items should be bought individually.', 'invoicing' ) );
         }
 
         // Are all required fields provided?
@@ -1120,8 +1129,10 @@ class WPInv_Ajax {
             $discount = self::payment_form_validate_discount( $data );
 
             if ( is_array( $discount ) ){
-                $discount = array_map( 'wpinv_format_amount', $discount );
-                $discount = array_map( 'wpinv_price', $discount );
+                $data['total']     = wpinv_price( wpinv_format_amount( $discount['total'] ) );
+                $data['sub_total'] = wpinv_price( wpinv_format_amount( $discount['sub_total'] ) );
+                $data['discount']  = wpinv_price( wpinv_format_amount( $discount['discount'] ) );
+                $data['tax']       = wpinv_price( wpinv_format_amount( $discount['tax'] ) );
                 wp_send_json_success( $discount );
             }
 
@@ -1165,6 +1176,7 @@ class WPInv_Ajax {
             $state = $data['wpinv_state'];
         }
 
+        $has_recurring  = false;
         if ( ! empty( $data['wpinv-items'] ) ) {
 
             $selected_items = wpinv_clean( $data['wpinv-items'] );
@@ -1173,6 +1185,10 @@ class WPInv_Ajax {
 
                 if ( ! isset( $selected_items[ $item['id'] ] ) ) {
                     continue;
+                }
+
+                if ( ! empty( $item['recurring'] ) ) {
+                    $has_recurring  = true;
                 }
 
                 $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
@@ -1229,10 +1245,12 @@ class WPInv_Ajax {
         }
 
         wp_send_json_success( array(
-            'total'     => wpinv_price( wpinv_format_amount( $total ) ),
-            'tax'       => wpinv_price( wpinv_format_amount( $tax ) ),
-            'sub_total' => wpinv_price( wpinv_format_amount( $sub_total ) ),
-            'discount'  => false,
+            'free'          => $total == 0,
+            'total'         => wpinv_price( wpinv_format_amount( $total ) ),
+            'tax'           => wpinv_price( wpinv_format_amount( $tax ) ),
+            'sub_total'     => wpinv_price( wpinv_format_amount( $sub_total ) ),
+            'has_recurring' => false,
+            'discount'      => false,
         ));
         exit;
     }
@@ -1274,8 +1292,11 @@ class WPInv_Ajax {
             exit;
         }
 
-        $data = array_map( 'wpinv_format_amount', $data );
-        $data = array_map( 'wpinv_price', $data );
+        $data['total']     = wpinv_price( wpinv_format_amount( $data['total'] ) );
+        $data['sub_total'] = wpinv_price( wpinv_format_amount( $data['sub_total'] ) );
+        $data['discount']  = wpinv_price( wpinv_format_amount( $data['discount'] ) );
+        $data['tax']       = wpinv_price( wpinv_format_amount( $data['tax'] ) );
+
         wp_send_json_success( $data );
         exit;
 
@@ -1363,6 +1384,7 @@ class WPInv_Ajax {
                 return __( 'This discount is not valid for the items in your cart', 'invoicing' );
             }
 
+            $has_recurring  = false;
             foreach ( $items as $item ) {
 
                 if ( ! isset( $selected_items[ $item['id'] ] ) ) {
@@ -1370,6 +1392,10 @@ class WPInv_Ajax {
                 }
 
                 $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
+
+                if ( ! empty( $item['recurring'] ) ) {
+                    $has_recurring  = true;
+                }
 
                 if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
 
@@ -1432,9 +1458,16 @@ class WPInv_Ajax {
             return sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max );
         }
 
+        $recurring_discount = $discount->get_is_recurring() && $has_recurring;
         $discount = $discount->get_discounted_amount( $total );
         $total    = $total - $discount;
-        return compact( 'total', 'tax', 'sub_total', 'discount' );
+        $free     = false;
+
+        if ( $total == 0 ) {
+            $free = true;
+        }
+
+        return compact( 'total', 'tax', 'sub_total', 'discount', 'recurring_discount', 'free', 'has_recurring' );
 
     }
 
