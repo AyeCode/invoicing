@@ -35,8 +35,8 @@ function wpinv_get_payment_gateways() {
             'ordering'       => 11,
         ),
         'manual' => array(
-            'admin_label'    => __( 'Test Payment', 'invoicing' ),
-            'checkout_label' => __( 'Test Payment', 'invoicing' ),
+            'admin_label'    => __( 'Manual Payment', 'invoicing' ),
+            'checkout_label' => __( 'Manual Payment', 'invoicing' ),
             'ordering'       => 12,
         ),
     );

@@ -1724,23 +1724,21 @@ function wpinv_process_checkout() {
         if ( isset( $invoice_data['user_info'][$field] ) ) {
             $invoice->set( $field, $invoice_data['user_info'][$field] );
         }
-
-        $invoice->save();
     }
+    $invoice->save();
 
     // Add the user data for hooks
     $valid_data['user'] = $user;
     
     // Allow themes and plugins to hook before the gateway
     do_action( 'wpinv_checkout_before_gateway', $_POST, $user_info, $valid_data );
-    
-    // If the total amount in the cart is 0, send to the manual gateway. This emulates a free invoice
-    if ( !$invoice_data['price'] ) {
-        // Revert to manual
+
+     // If it is free, abort.
+     if ( $invoice->is_free() && ( ! $invoice->is_recurring() || 0 ==  $invoice->get_recurring_details( 'total' ) ) ) {
         $invoice_data['gateway'] = 'manual';
         $_POST['wpi-gateway'] = 'manual';
     }
-    
+
     // Allow the invoice data to be modified before it is sent to the gateway
     $invoice_data = apply_filters( 'wpinv_data_before_gateway', $invoice_data, $valid_data );
     
@@ -1749,7 +1747,7 @@ function wpinv_process_checkout() {
     } else {
         $mode = wpinv_is_test_mode( $invoice_data['gateway'] ) ? 'test' : 'live';
     }
-    
+
     // Setup the data we're storing in the purchase session
     $session_data = $invoice_data;
     // Make sure credit card numbers are never stored in sessions

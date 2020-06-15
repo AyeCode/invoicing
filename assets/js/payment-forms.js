@@ -380,6 +380,12 @@ jQuery(function($) {
                     $( form ).find('.wpinv-items-discount').closest('.row').hide()
                 }
 
+                if ( res.data.free && ! res.data.has_recurring ) {
+                    form.find('#wpinv_payment_mode_select').hide()
+                } else {
+                    form.find('#wpinv_payment_mode_select').show()
+                }
+
             } else {
                 errors.html(res).removeClass('d-none')
             }
@@ -410,9 +416,12 @@ jQuery(function($) {
         }
     });
 
-    $( 'body').on( 'click', '.wpinv-payment-form-coupon-button', function( e ) {
-
-    })
+    // When the discount value changes.
+    $( 'body').on('change', '.wpinv_payment_form .getpaid-discount-field', function( e ) {
+        if ( $( this ).val().length != 0 ) {
+            applyDiscount( $( this ).closest('.wpinv_payment_form') )
+        }
+    });
 
     window.wpinvPaymentFormSubmt = true
     window.wpinvPaymentFormDelaySubmit = false
@@ -566,6 +575,14 @@ jQuery(function($) {
         $( form ).on( 'change', '.wpinv-items-multiselect-selector', syncTaxes )
         $( form ).on( 'change', '#wpinv_country', syncTaxes )
         $( form ).on( 'change', '#wpinv_state', syncTaxes )
+
+        // When the discount value changes.
+        $( form ).on('change', '.getpaid-discount-field', function( e ) {
+            if ( $( this ).val() == '' ) {
+                $( form ).find('.wpinv_payment_form_coupon_errors').html('').addClass('d-none')
+                syncTaxes()
+            }
+        });
 
     }
 
