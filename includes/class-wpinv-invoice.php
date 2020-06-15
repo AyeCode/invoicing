@@ -259,13 +259,14 @@ class WPInv_Invoice {
      * @param int|WPInv_Invoice|WP_Post $invoice The invoice.
      */
     public function __construct( $invoice = false ) {
-        
+
         // Do we have an invoice?
         if ( empty( $invoice ) ) {
             return false;
         }
 
         $this->setup_invoice( $invoice );
+
     }
 
     /**
@@ -1160,7 +1161,7 @@ class WPInv_Invoice {
     public function recalculate_total() {
         global $wpi_nosave;
         
-        $this->total = $this->subtotal + $this->tax + $this->fees_total;
+        $this->total = $this->subtotal + $this->tax + $this->fees_total - $this->discount;
         $this->total = wpinv_round_amount( $this->total );
         
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
@@ -1404,25 +1405,35 @@ class WPInv_Invoice {
 
         if ( $this->is_parent() || $this->is_renewal() ) {
 
-            if ( $this->is_free_trial() || ( $this->total == 0 && $this->discount_first_payment_only() ) ) {
-
-                $data['subtotal'] = wpinv_round_amount( $this->subtotal );
-                $data['discount'] = wpinv_round_amount( 0 );
-                $data['tax']      = wpinv_round_amount( $this->tax );
-                $data['total']    = wpinv_round_amount( $this->total + $this->discount );
-
+            // Use the parent to calculate recurring details.
+            if ( $this->is_renewal() ){
+                $parent = $this->get_parent_payment();
             } else {
-
-                $data['subtotal'] = wpinv_round_amount( $this->subtotal );
-                $data['discount'] = wpinv_round_amount( $this->discount );
-                $data['tax']      = wpinv_round_amount( $this->tax );
-                $data['total']    = wpinv_round_amount( $this->total );
-
+                $parent = $this;
             }
+
+            if ( empty( $parent ) ) {
+                $parent = $this;
+            }
+
+            // Subtotal.
+            $data['subtotal'] = wpinv_round_amount( $parent->subtotal );
+            $data['tax']      = wpinv_round_amount( $parent->tax );
+            $data['discount'] = wpinv_round_amount( $parent->discount );
+
+            if ( $data['discount'] > 0 && $parent->discount_first_payment_only() ) {
+                $data['discount'] = wpinv_round_amount( 0 );
+            }
+
+            $data['total'] = wpinv_round_amount( $data['subtotal'] + $data['tax'] - $data['discount'] );
 
         }
         
         $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
+
+        if ( $data['total'] < 0 ) {
+            $data['total'] = 0;
+        }
 
         if ( isset( $data[$field] ) ) {
             return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
@@ -1969,7 +1980,7 @@ class WPInv_Invoice {
             $_POST['wpinv_country'] = $this->country;
             $_POST['wpinv_state']   = $this->state;
 
-            foreach ( $this->cart_details as $key => $item ) {
+            foreach ( $this->cart_details as $item ) {
                 $item_price = $item['item_price'];
                 $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
                 $amount     = wpinv_round_amount( $item_price * $quantity );
@@ -2015,26 +2026,51 @@ class WPInv_Invoice {
                     'fees'        => isset($item['fees']) ? $item['fees'] : array(),
                 );
 
-                $cart_subtotal  += (float)($subtotal - $discount); // TODO
-                $cart_discount  += (float)($discount);
-                $cart_tax       += (float)($tax);
+                $cart_subtotal  += (float) $subtotal;
+                $cart_discount  += (float) $discount;
+                $cart_tax       += (float) $tax;
             }
+
             if ( $cart_subtotal < 0 ) {
                 $cart_subtotal = 0;
             }
+
+            if ( $cart_discount < 0 ) {
+                $cart_discount = 0;
+            }
+
             if ( $cart_tax < 0 ) {
                 $cart_tax = 0;
             }
+
             $this->subtotal = wpinv_round_amount( $cart_subtotal );
             $this->tax      = wpinv_round_amount( $cart_tax );
             $this->discount = wpinv_round_amount( $cart_discount );
-            
+
             $this->recalculate_total();
             
             $this->cart_details = $cart_details;
         }
 
         return $this;
+    }
+
+    /**
+     * Validates a whether the discount is valid.
+     */
+    public function validate_discount() {    
+        
+        $discounts = $this->get_discounts( true );
+
+        if ( empty( $discounts ) ) {
+            return false;
+        }
+
+        $discount = wpinv_get_discount_obj( $discounts[0] );
+
+        // Ensure it is active.
+        return $discount->exists();
+
     }
     
     public function recalculate_totals($temp = false) {        
@@ -2120,7 +2156,7 @@ class WPInv_Invoice {
      */
     public function is_free_trial() {
         $is_free_trial = false;
-        
+
         if ( $this->is_parent() && $item = $this->get_recurring( true ) ) {
             if ( ! empty( $item ) && ( $item->has_free_trial() || ( $this->total == 0 && $this->discount_first_payment_only() ) ) ) {
                 $is_free_trial = true;
@@ -2131,16 +2167,39 @@ class WPInv_Invoice {
     }
 
     /**
+     * Check if the free trial is a result of a discount.
+     */
+    public function is_free_trial_from_discount() {
+
+        $parent = $this;
+
+        if ( $this->is_renewal() ) {
+            $parent = $this->get_parent_payment();
+        }
+    
+        if ( $parent && $item = $parent->get_recurring( true ) ) {
+            return ! ( ! empty( $item ) && $item->has_free_trial() );
+        }
+        return false;
+
+    }
+
+    /**
      * Check if a discount is only applicable to the first payment.
      */
     public function discount_first_payment_only() {
 
         if ( empty( $this->discounts ) || ! $this->is_recurring() ) {
-            return false;
+            return true;
         }
 
         $discount = wpinv_get_discount_obj( $this->discounts[0] );
-        return $discount && $discount->exists() && $discount->get_is_recurring();
+
+        if ( ! $discount || ! $discount->exists() ) {
+            return true;
+        }
+
+        return ! $discount->get_is_recurring();
     }
 
     public function is_initial_free() {

@@ -9,23 +9,6 @@ function wpinv_process_manual_payment( $purchase_data ) {
     if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
         wp_die( __( 'Nonce verification has failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
     }
-
-    /*
-    * Purchase data comes in like this
-    *
-    $purchase_data = array(
-        'items' => array of item IDs,
-        'price' => total price of cart contents,
-        'invoice_key' =>  // Random key
-        'user_email' => $user_email,
-        'date' => date('Y-m-d H:i:s'),
-        'user_id' => $user_id,
-        'post_data' => $_POST,
-        'user_info' => array of user's information and used discount code
-        'cart_details' => array of cart details,
-        'gateway' => payment gateway,
-    );
-    */
     
     // Collect payment data
     $payment_data = array(

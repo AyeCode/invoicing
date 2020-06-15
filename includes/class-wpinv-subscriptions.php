@@ -296,8 +296,17 @@ class WPInv_Subscriptions {
 
         if ( $invoice->is_free_trial() ) {
             $status         = 'trialling';
-            $trial_period   = $item->get_trial_period( true );
-            $free_interval  = $item->get_trial_interval();
+
+            if ( $invoice->is_free_trial_from_discount() ) {
+
+                $trial_period   = $item->get_recurring_period( true );
+                $free_interval  = $item->get_recurring_interval();
+
+            } else {
+                $trial_period   = $item->get_trial_period( true );
+                $free_interval  = $item->get_trial_interval();
+            }
+
             $trial_period   = $free_interval . ' ' . $trial_period;
 
             $add_period     = $trial_period;

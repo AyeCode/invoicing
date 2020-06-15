@@ -641,8 +641,8 @@ function wpinv_discount_is_recurring( $discount = 0, $code = 0 ) {
     } else {
         $discount    = wpinv_get_discount_obj( $code );
     }
-    
-    return $discount->is_recurring;
+
+    return $discount->get_is_recurring();
 }
 
 function wpinv_discount_item_reqs_met( $code_id = null ) {

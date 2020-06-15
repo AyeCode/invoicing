@@ -380,7 +380,7 @@ jQuery(function($) {
                     $( form ).find('.wpinv-items-discount').closest('.row').hide()
                 }
 
-                if ( res.data.free && ( ! res.data.has_recurring || res.data.recurring_discount ) ) {
+                if ( res.data.free && ! res.data.has_recurring ) {
                     form.find('#wpinv_payment_mode_select').hide()
                 } else {
                     form.find('#wpinv_payment_mode_select').show()

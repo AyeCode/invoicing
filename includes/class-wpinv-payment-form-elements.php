@@ -2055,7 +2055,7 @@ class WPInv_Payment_Form_Elements {
                 ?>
                     <div  class="item_totals_item">
                         <div class='row pl-2 pr-2 pt-2'>
-                            <div class='<?php echo $class; ?>'><?php echo esc_html( $item['title'] ) ?></div>
+                            <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
 
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
@@ -2213,7 +2213,7 @@ class WPInv_Payment_Form_Elements {
 
                     <div  class="item_totals_item <?php echo $class3; ?>" data-id="<?php echo (int) $item['id']; ?>">
                         <div class='row pl-2 pr-2 pt-2'>
-                            <div class='<?php echo $class; ?>'><?php echo esc_html( $item['title'] ) ?></div>
+                            <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
 
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
@@ -2381,7 +2381,7 @@ class WPInv_Payment_Form_Elements {
 
                     <div  class="item_totals_item <?php echo $class3; ?>" data-id="<?php echo (int) $item['id']; ?>">
                         <div class='row pl-2 pr-2 pt-2'>
-                            <div class='<?php echo $class; ?>'><?php echo esc_html( $item['title'] ) ?></div>
+                            <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
 
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
@@ -2556,7 +2556,7 @@ class WPInv_Payment_Form_Elements {
 
                     <div  class="item_totals_item <?php echo $class3; ?>" data-id="<?php echo (int) $item['id']; ?>">
                         <div class='row pl-2 pr-2 pt-2'>
-                            <div class='<?php echo $class; ?>'><?php echo esc_html( $item['title'] ) ?></div>
+                            <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
 
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 
@@ -2731,7 +2731,7 @@ class WPInv_Payment_Form_Elements {
 
                     <div  class="item_totals_item <?php echo $class3; ?>" data-id="<?php echo (int) $item['id']; ?>">
                         <div class='row pl-2 pr-2 pt-2'>
-                            <div class='<?php echo $class; ?>'><?php echo esc_html( $item['title'] ) ?></div>
+                            <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
 
                             <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
 

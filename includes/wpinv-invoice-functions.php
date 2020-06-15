@@ -1724,9 +1724,8 @@ function wpinv_process_checkout() {
         if ( isset( $invoice_data['user_info'][$field] ) ) {
             $invoice->set( $field, $invoice_data['user_info'][$field] );
         }
-
-        $invoice->save();
     }
+    $invoice->save();
 
     // Add the user data for hooks
     $valid_data['user'] = $user;
@@ -1735,7 +1734,7 @@ function wpinv_process_checkout() {
     do_action( 'wpinv_checkout_before_gateway', $_POST, $user_info, $valid_data );
 
      // If it is free, abort.
-     if ( $invoice->is_free() && ! ( $invoice->is_recurring() || ! $invoice->has_free_lifetime_discount() ) ) {
+     if ( $invoice->is_free() && ( ! $invoice->is_recurring() || 0 ==  $invoice->get_recurring_details( 'total' ) ) ) {
         $invoice_data['gateway'] = 'manual';
         $_POST['wpi-gateway'] = 'manual';
     }
