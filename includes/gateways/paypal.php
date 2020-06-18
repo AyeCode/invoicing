@@ -40,14 +40,17 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         // Get the success url
         $return_url = add_query_arg( array(
                 'payment-confirm' => 'paypal',
-                'invoice-id' => $invoice->ID
+                'invoice-id'      => $invoice->ID,
+                'utm_nooverride'  => 1
             ), get_permalink( wpinv_get_option( 'success_page', false ) ) );
 
         // Get the PayPal redirect uri
-        $paypal_redirect = trailingslashit( wpinv_get_paypal_redirect() ) . '?';
+        $paypal_redirect = wpinv_get_paypal_redirect();
 
         // Setup PayPal arguments
         $paypal_args = array(
+            'cmd'           => '_cart',
+            'upload'        => '1',
             'business'      => wpinv_get_option( 'paypal_email', false ),
             'email'         => $invoice->get_email(),
             'first_name'    => $invoice->get_first_name(),
@@ -56,31 +59,16 @@ function wpinv_process_paypal_payment( $purchase_data ) {
             'no_shipping'   => '1',
             'shipping'      => '0',
             'no_note'       => '1',
-            'currency_code' => wpinv_get_currency(),
+            'currency_code' => $invoice->get_currency(),
             'charset'       => get_bloginfo( 'charset' ),
             'custom'        => $invoice->ID,
-            'rm'            => '2',
-            'return'        => $return_url,
+            'rm'            => is_ssl() ? 2 : 1,
+            'return'        => esc_url_raw( $return_url ),
             'cancel_return' => $invoice->get_checkout_payment_url(),
             'notify_url'    => $listener_url,
             'cbt'           => get_bloginfo( 'name' ),
             'bn'            => 'WPInvoicing_SP',
-            'lc'            => 'US', // this will force paypal site to english
-            'landing_page'  => apply_filters( 'wpinv_paypal_standard_landing_page', 'billing', $invoice ), // 'login' or 'billing'. login - PayPal account login, billing - Non-PayPal account.
         );
-
-        $paypal_args['address1'] = $invoice->get_address();
-        $paypal_args['city']     = $invoice->user_info['city'];
-        $paypal_args['state']    = $invoice->user_info['state'];
-        $paypal_args['country']  = $invoice->user_info['country'];
-        $paypal_args['zip']      = $invoice->user_info['zip'];
-
-        $paypal_extra_args = array(
-            'cmd'    => '_cart',
-            'upload' => '1'
-        );
-
-        $paypal_args = array_merge( $paypal_extra_args, $paypal_args );
 
         // Add cart items
         $i = 1;
@@ -104,8 +92,8 @@ function wpinv_process_paypal_payment( $purchase_data ) {
         }
 
         // Add taxes to the cart
-        if ( wpinv_use_taxes() ) {
-            $paypal_args['tax_cart'] = wpinv_sanitize_amount( (float)$invoice->get_tax(), 2 );
+        if ( wpinv_use_taxes() && $invoice->is_taxable() ) {
+            $paypal_args['tax_cart'] = wpinv_sanitize_amount( (float) $invoice->get_tax(), 2 );
         }
 
         $paypal_args = apply_filters( 'wpinv_paypal_args', $paypal_args, $purchase_data, $invoice );
@@ -127,16 +115,11 @@ function wpinv_process_paypal_payment( $purchase_data ) {
 add_action( 'wpinv_gateway_paypal', 'wpinv_process_paypal_payment' );
 
 function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice ) {
-    if ( $invoice->is_recurring() && $item_id = $invoice->get_recurring() ) {
-        $item   = new WPInv_Item( $item_id );
-        
-        if ( empty( $item ) ) {
-            return $paypal_args;
-        }
+    if ( $invoice->is_recurring() && $subscription = wpinv_get_subscription( $invoice->ID ) ) {
 
-        $period             = $item->get_recurring_period();
-        $interval           = $item->get_recurring_interval();
-        $bill_times         = (int)$item->get_recurring_limit();
+        $period             = strtoupper( substr( $subscription->period, 0, 1) );
+        $interval           = $subscription->frequency;
+        $bill_times         = (int) $subscription->bill_times;
         
         $initial_amount     = wpinv_sanitize_amount( $invoice->get_total(), 2 );
         $recurring_amount   = wpinv_sanitize_amount( $invoice->get_recurring_details( 'total' ), 2 );
@@ -146,9 +129,11 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
         $paypal_args['src'] = '1';
         
         // Set item description
-        $item_name                  = sprintf( '[%s] %s', $invoice->get_number(), wpinv_get_cart_item_name( array( 'id' => $item->ID ) ) );
+        $item_name                  = wpinv_get_cart_item_name( array( 'id' => $subscription->product_id ) );
         $paypal_args['item_name']   = stripslashes_deep( html_entity_decode( $item_name, ENT_COMPAT, 'UTF-8' ) );
-        
+        $paypal_args['item_number'] = $subscription->product_id;
+        $item   = new WPInv_Item( $subscription->period );
+
         if ( $invoice->is_free_trial() && $item->has_free_trial() ) {
             $paypal_args['a1']  = $initial_amount;
             $paypal_args['p1']  = $item->get_trial_interval();
@@ -160,7 +145,7 @@ function wpinv_get_paypal_recurring_args( $paypal_args, $purchase_data, $invoice
             $paypal_args['a1']  = $initial_amount;
             $paypal_args['p1']  = $interval;
             $paypal_args['t1']  = $period;
-            
+
             // Set the recurring amount
             $paypal_args['a3']  = $recurring_amount;
             
@@ -699,22 +684,7 @@ function wpinv_process_paypal_refund( $data, $invoice_id = 0 ) {
 }
 
 function wpinv_get_paypal_redirect( $ssl_check = false ) {
-    if ( is_ssl() || ! $ssl_check ) {
-        $protocol = 'https://';
-    } else {
-        $protocol = 'http://';
-    }
-
-    // Check the current payment mode
-    if ( wpinv_is_test_mode( 'paypal' ) ) {
-        // Test mode
-        $paypal_uri = $protocol . 'www.sandbox.paypal.com/cgi-bin/webscr';
-    } else {
-        // Live mode
-        $paypal_uri = $protocol . 'www.paypal.com/cgi-bin/webscr';
-    }
-
-    return apply_filters( 'wpinv_paypal_uri', $paypal_uri );
+    return apply_filters( 'wpinv_paypal_uri', wpinv_is_test_mode( 'paypal' ) ? 'https://www.sandbox.paypal.com/cgi-bin/webscr?test_ipn=1&' : 'https://www.paypal.com/cgi-bin/webscr?' );
 }
 
 function wpinv_paypal_success_page_content( $content ) {
@@ -726,7 +696,7 @@ function wpinv_paypal_success_page_content( $content ) {
         return $content;
     }
 
-    $invoice_id = !empty( $_GET['invoice-id'] ) ? absint( $_GET['invoice-id'] ) : wpinv_get_invoice_id_by_key( $session['invoice_key'] );
+    $invoice_id = ! empty( $_GET['invoice-id'] ) ? absint( $_GET['invoice-id'] ) : wpinv_get_invoice_id_by_key( $session['invoice_key'] );
 
     if ( empty(  $invoice_id ) ) {
         return $content;
@@ -734,7 +704,7 @@ function wpinv_paypal_success_page_content( $content ) {
 
     $wpi_invoice = wpinv_get_invoice( $invoice_id );
     
-    if ( !empty( $wpi_invoice ) && 'wpi-pending' == $wpi_invoice->status ) {
+    if ( ! empty( $wpi_invoice ) && 'wpi-pending' == $wpi_invoice->status ) {
         // Payment is still pending so show processing indicator to fix the Race Condition, issue #
         ob_start();
         wpinv_get_template_part( 'wpinv-payment-processing' );

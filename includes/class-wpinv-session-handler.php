@@ -57,6 +57,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
 		add_action( 'wp', array( $this, 'set_customer_session_cookie' ), 10 );
 		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
+
 	}
 
 	/**

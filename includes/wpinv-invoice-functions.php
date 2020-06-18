@@ -1577,13 +1577,11 @@ function wpinv_checkout_form_get_user( $valid_data = array() ) {
 
 function wpinv_set_checkout_session( $invoice_data = array() ) {
     global $wpi_session;
-    
     return $wpi_session->set( 'wpinv_checkout', $invoice_data );
 }
 
 function wpinv_get_checkout_session() {
 	global $wpi_session;
-
     return $wpi_session->get( 'wpinv_checkout' );
 }
 
@@ -1903,33 +1901,34 @@ function wpinv_payment_receipt( $atts, $content = null ) {
         'invoice_id'      => true
     ), $atts, 'wpinv_receipt' );
 
+    // Find the invoice.
     $session = wpinv_get_checkout_session();
+
     if ( isset( $_GET['invoice_key'] ) ) {
-        $invoice_key = urldecode( $_GET['invoice_key'] );
-    } else if ( $session && isset( $session['invoice_key'] ) ) {
-        $invoice_key = $session['invoice_key'];
-    } elseif ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
-        $invoice_key = $wpinv_receipt_args['invoice_key'];
+        $invoice_id = wpinv_get_invoice_id_by_key( urldecode( $_GET['invoice_key'] ) );
     } else if ( isset( $_GET['invoice-id'] ) ) {
-        $invoice_key = wpinv_get_payment_key( (int)$_GET['invoice-id'] );
+        $invoice_id = (int) $_GET['invoice-id'];
+    } else if ( $session && isset( $session['invoice_key'] ) ) {
+        $invoice_id = wpinv_get_invoice_id_by_key( $session['invoice_key'] );
+    } else if ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
+        $invoice_id = wpinv_get_invoice_id_by_key( $wpinv_receipt_args['invoice_key'] );
     }
 
-    // No key found
-    if ( ! isset( $invoice_key ) ) {
-        return '<p class="alert alert-error">' . $wpinv_receipt_args['error'] . '</p>';
+    // Did we find the invoice?
+    if ( empty( $invoice_id ) || ! $invoice = wpinv_get_invoice( $invoice_id ) ) {
+        return '<p class="alert alert-error">' . __( 'We could not find your invoice.', 'invoicing' ) . '</p>';
     }
 
-    $invoice_id    = wpinv_get_invoice_id_by_key( $invoice_key );
+    $invoice_key   = $invoice->get_key();
     $user_can_view = wpinv_can_view_receipt( $invoice_key );
     if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
-        $invoice_id     = (int)$_GET['invoice-id'];
-        $user_can_view  = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? true : false;
+        $user_can_view  = $_GET['invoice-id'] == $invoice->ID;
     }
 
     // Key was provided, but user is logged out. Offer them the ability to login and view the receipt
     if ( ! $user_can_view && ! empty( $invoice_key ) && ! is_user_logged_in() ) {
         // login redirect
-        return '<p class="alert alert-error">' . __( 'You are not allowed to access this section', 'invoicing' ) . '</p>';
+        return '<p class="alert alert-error">' . __( 'You must be logged in to view this receipt', 'invoicing' ) . '</p>';
     }
 
     if ( ! apply_filters( 'wpinv_user_can_view_receipt', $user_can_view, $wpinv_receipt_args ) ) {
@@ -1955,10 +1954,10 @@ function wpinv_get_invoice_id_by_key( $key ) {
 }
 
 function wpinv_can_view_receipt( $invoice_key = '' ) {
-	$return = false;
+	$return = current_user_can( 'manage_options' );
 
 	if ( empty( $invoice_key ) ) {
-		return $return;
+		return false;
 	}
 
 	global $wpinv_receipt_args;
@@ -1988,9 +1987,9 @@ function wpinv_can_view_receipt( $invoice_key = '' ) {
 		$check_key = isset( $_GET['invoice_key'] ) ? $_GET['invoice_key'] : $session['invoice_key'];
 
 		if ( wpinv_require_login_to_checkout() ) {
-			$return = $return && $check_key === $invoice_key;
+			$return = $return && $check_key == $invoice_key;
 		} else {
-			$return = $check_key === $invoice_key;
+			$return = $check_key == $invoice_key;
 		}
 	}
 
@@ -2336,6 +2335,9 @@ function wpinv_mark_invoice_viewed() {
 }
 add_action( 'template_redirect', 'wpinv_mark_invoice_viewed' );
 
+/**
+ * @return WPInv_Subscription
+ */
 function wpinv_get_subscription( $invoice, $by_parent = false ) {
     if ( empty( $invoice ) ) {
         return false;
