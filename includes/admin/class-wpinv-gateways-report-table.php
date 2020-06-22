@@ -142,10 +142,10 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 			$prepared[] = array(
 				'gateway'  => wpinv_get_gateway_admin_label( $report_data['gateway'] ),
 				'sales'    => $report_data['sales'],
-				'total'    => wpinv_price( $report_data['total'] ),
-				'discount' => wpinv_price( $report_data['discount'] ),
-				'tax'      => wpinv_price( $report_data['tax'] ),
-				'fees'     => wpinv_price( $report_data['fees'] ),
+				'total'    => wpinv_price( wpinv_format_amount( $report_data['total'] ) ),
+				'discount' => wpinv_price( wpinv_format_amount( $report_data['discount'] ) ),
+				'tax'      => wpinv_price( wpinv_format_amount( $report_data['tax'] ) ),
+				'fees'     => wpinv_price( wpinv_format_amount( $report_data['fees'] ) ),
 			);
 		}
 

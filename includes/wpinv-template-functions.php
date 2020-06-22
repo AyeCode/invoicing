@@ -923,6 +923,16 @@ function wpinv_display_invoice_details( $invoice ) {
             <th><strong><?php _e( 'Total Amount', 'invoicing' ) ?></strong></th>
             <td><strong><?php echo wpinv_payment_total( $invoice_id, true ); ?></strong></td>
         </tr>
+        <?php if ( $subscription = wpinv_get_subscription( $invoice_id ) ) { ?>
+        <tr class="table-active wpi-row-recurring-total">
+            <th><?php echo apply_filters( 'wpinv_invoice_parent_invoice_label', __( 'Recurring Amount', 'invoicing' ), $invoice ); ?></th>
+            <td><strong><?php echo wpinv_price( wpinv_format_amount( $subscription->recurring_amount ), $invoice->get_currency() ); ?></strong></td>
+        </tr>
+        <tr class="wpi-row-expires">
+            <th><?php echo apply_filters( 'wpinv_invoice_parent_invoice_label', __( 'Renews On', 'invoicing' ), $invoice ); ?></th>
+            <td><?php echo sanitize_text_field( $subscription->expiration ); ?></td>
+        </tr>
+        <?php } ?>
     </table>
 <?php
 }
