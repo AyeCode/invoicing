@@ -135,7 +135,7 @@ class WPInv_Taxes_Reports_Table extends WP_List_Table {
 
 			$tax = wpinv_price( 0 );
 			if ( ! empty( $reports_data[ $month ] ) ) {
-				$tax = wpinv_price( $reports_data[ $month ] );
+				$tax = wpinv_price( wpinv_format_amount( $reports_data[ $month ] ) );
 			}
 
 			$prepared[] = array(

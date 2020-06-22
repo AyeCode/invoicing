@@ -142,6 +142,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Admin menus re-ordered to provide better hierachy - CHANGED
 * Revenue reports - ADDED
 * Yoast SEO 14.1 style conflicts - FIXED
+* Show subscription details on receipt - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

@@ -124,9 +124,9 @@ class WPInv_Items_Report_Table extends WP_List_Table {
 			$prepared[] = array(
 				'item'     => $report_data['item_name'],
 				'sales'    => $report_data['sales'],
-				'total'    => wpinv_price( $report_data['total'] ),
-				'discount' => wpinv_price( $report_data['discount'] ),
-				'tax'      => wpinv_price( $report_data['tax'] ),
+				'total'    => wpinv_price( wpinv_format_amount( $report_data['total'] ) ),
+				'discount' => wpinv_price( wpinv_format_amount( $report_data['discount'] ) ),
+				'tax'      => wpinv_price( wpinv_format_amount( $report_data['tax'] ) ),
 			);
 		}
 
