@@ -311,6 +311,14 @@ class WPInv_EUVat {
                 'type' => 'checkbox'
             );
 
+            $vat_settings['maxmind_license_key'] = array(
+                'id'   => 'maxmind_license_key',
+                'name' => __( 'MaxMind License Key', 'invoicing' ),
+                'type' => 'text',
+                'size' => 'regular',
+                'desc' => '<a href="https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/">' . __( 'The key that will be used when dealing with MaxMind Geolocation services.', 'invoicing' ) . '</a>',
+            );
+
             $vat_settings['vat_ip_lookup'] = array(
                 'id'   => 'vat_ip_lookup',
                 'name' => __( 'IP Country Look-up', 'invoicing' ),
@@ -383,89 +391,130 @@ class WPInv_EUVat {
 
         return $settings;
     }
-    // IP Geolocation
-    public static function geoip2_download_database() {
-        $upload_dir         = wp_upload_dir();
-        
-        $database_url       = 'http' . (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on' ? 's' : '') . '://geolite.maxmind.com/download/geoip/database/';
-        $destination_dir    = $upload_dir['basedir'] . '/invoicing';
-        
-        if ( !is_dir( $destination_dir ) ) { 
-            mkdir( $destination_dir );
-        }
-        
-        $database_files     = array(
-            'country'   => array(
-                'source'        => $database_url . 'GeoLite2-Country.mmdb.gz',
-                'destination'   => $destination_dir . '/GeoLite2-Country.mmdb',
-            ),
-            'city'      => array(
-                'source'        => $database_url . 'GeoLite2-City.mmdb.gz',
-                'destination'   => $destination_dir . '/GeoLite2-City.mmdb',
-            )
-        );
 
-        foreach( $database_files as $database => $files ) {
-            $result = self::geoip2_download_file( $files['source'], $files['destination'] );
-            
-            if ( empty( $result['success'] ) ) {
-                echo $result['message'];
+    /**
+     * The folder for our maxmind databases.
+     */
+    public static function maxmind_folder() {
+
+        $upload_dir      = wp_upload_dir();
+        return $upload_dir['basedir'] . '/invoicing';
+
+    }
+
+    /**
+	 * Fetches the database from the MaxMind service.
+	 *
+	 * @param string $license_key The license key to be used when downloading the database.
+	 */
+    public static function geoip2_download_database() {
+
+        // Allow us to easily interact with the filesystem.
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+        global $wp_filesystem;
+
+        $license_key = wpinv_get_option( 'maxmind_license_key' );
+
+        if ( empty( $license_key ) ) {
+            echo __( 'Please enter your MaxMind license key then save the settings first before downloading the databases.', 'invoicing' );
+            exit;
+        }
+
+        // The database files that we will download.
+        $database_files     = array( 'GeoLite2-Country', 'GeoLite2-City' );
+
+        // The destination dir of all databases.
+        $destination_dir = self::maxmind_folder();
+
+        if ( ! $wp_filesystem->is_dir( $destination_dir ) ) { 
+            $wp_filesystem->mkdir( $destination_dir );
+        }
+
+        foreach( $database_files as $database ) {
+
+            $database_path = self::geoip2_download_file( $license_key, $database );
+            $target_path   = trailingslashit( $destination_dir ) .  $database . '.mmdb';
+
+            if ( is_wp_error( $database_path ) ) {
+                echo $database_path->get_error_message();
                 exit;
             }
-            
+
+            // Move the new database into position.
+		    $wp_filesystem->move( $database_path, $target_path, true );
+            $wp_filesystem->delete( dirname( $database_path ) );
+
             wpinv_update_option( 'wpinv_geoip2_date_updated', current_time( 'timestamp' ) );
-            echo sprintf(__( 'GeoIP2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
+            echo sprintf( __( 'GeoIP2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
         }
-        
+
         exit;
     }
-    
-    public static function geoip2_download_file( $source_url, $destination_file ) {
-        $success    = false;
-        $message    = '';
-        
-        if ( !function_exists( 'download_url' ) ) {
-            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+    /**
+     * Actually downloads and unzips a database.
+     * 
+     * @return string|WP_Error
+     */
+    public static function geoip2_download_file( $license_key, $database ) {
+
+        // The download URI of the database.
+        $source_url = add_query_arg(
+			array(
+                'license_key' => urlencode( sanitize_text_field( $license_key ) ),
+                'edition_id'  => $database,
+				'suffix'      => 'tar.gz',
+			),
+			'https://download.maxmind.com/app/geoip_download'
+        );
+
+        // Needed for the download_url call right below.
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+        // Download the file.
+        $tmp_archive_path = download_url( esc_url_raw( $source_url ) );
+
+        // Did we encounter an error?
+        if ( is_wp_error( $tmp_archive_path ) ) {
+
+            // Transform the error into something more informative.
+			$error_data = $tmp_archive_path->get_error_data();
+			if ( isset( $error_data['code'] ) ) {
+				switch ( $error_data['code'] ) {
+					case 401:
+						return new WP_Error(
+							'invoicing_maxmind_geolocation_database_license_key',
+							__( 'The MaxMind license key is invalid. If you have recently created this key, you may need to wait for it to become active.', 'invoicing' )
+						);
+				}
+			}
+
+            return new WP_Error( 'invoicing_maxmind_geolocation_database_download', __( 'Failed to download the MaxMind database.', 'invoicing' ) );
+
         }
 
-        $temp_file  = download_url( $source_url );
-        
-        if ( is_wp_error( $temp_file ) ) {
-            $message = sprintf( __( 'Error while downloading GeoIp2 database( %s ): %s', 'invoicing' ), $source_url, $temp_file->get_error_message() );
-        } else {
-            $handle = gzopen( $temp_file, 'rb' );
-            
-            if ( $handle ) {
-                $fopen  = fopen( $destination_file, 'wb' );
-                if ( $fopen ) {
-                    while ( ( $data = gzread( $handle, 4096 ) ) != false ) {
-                        fwrite( $fopen, $data );
-                    }
+        // Extract the database from the archive.
+        try {
+			$file      = new PharData( $tmp_archive_path );
+            $file_path = trailingslashit( dirname( $tmp_archive_path ) ) . trailingslashit( $file->current()->getFilename() ) . $database . '.mmdb';
 
-                    gzclose( $handle );
-                    fclose( $fopen );
-                        
-                    $success = true;
-                } else {
-                    gzclose( $handle );
-                    $message = sprintf( __( 'Error could not open destination GeoIp2 database file for writing: %s', 'invoicing' ), $destination_file );
-                }
-            } else {
-                $message = sprintf( __( 'Error could not open GeoIp2 database file for reading: %s', 'invoicing' ), $temp_file );
-            }
-            
-            if ( file_exists( $temp_file ) ) {
-                unlink( $temp_file );
-            }
+			$file->extractTo(
+				dirname( $tmp_archive_path ),
+				trailingslashit( $file->current()->getFilename() ) . $database . '.mmdb',
+				true
+            );
+
+		} catch ( Exception $exception ) {
+			return new WP_Error( 'invoicing_maxmind_geolocation_database_archive', $exception->getMessage() );
+		} finally {
+			// Remove the archive since we only care about a single file in it.
+            unlink( $tmp_archive_path );
         }
-        
-        $return             = array();
-        $return['success']  = $success;
-        $return['message']  = $message;
 
-        return $return;
+        return $file_path;
     }
-    
+
     public static function load_geoip2() {
         if ( defined( 'WPINV_GEOIP2_LODDED' ) ) {
             return;

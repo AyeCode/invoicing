@@ -86,6 +86,9 @@ We are proud the original base of the plugin was a fork of [EDD](https://wordpre
 Additionally we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
 We worked on the plugin for over a year before it got its first public release, we stripped down the code to make it a simple lightweight payment and invoicing plugin with many additional features to fit the needs of our customers.
 
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="https://www.maxmind.com">https://www.maxmind.com</a>
+
 == Installation ==
 
 = Minimum Requirements =
@@ -142,6 +145,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Admin menus re-ordered to provide better hierachy - CHANGED
 * Revenue reports - ADDED
 * Yoast SEO 14.1 style conflicts - FIXED
+* GeoIP2 database not downloading - FIXED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

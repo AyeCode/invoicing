@@ -471,9 +471,9 @@ function wpinv_vat_ip_lookup_callback( $args ) {
                 $date_updated = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $time_updated );
                 $last_updated = '<br>' . sprintf( __( 'The GeoIP2 database was last updated on: <b>%s</b>', 'invoicing' ), $date_updated );
             }
-            $desc .= __(  'GeoIP2 database exists:', 'invoicing' ) . $last_updated . '&nbsp;<input type="button" id="wpi_geoip2" action="update" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Update GeoIP2 database now (~55MB)', 'invoicing' ) . '"></input>';
+            $desc .= __(  'GeoIP2 database exists:', 'invoicing' ) . $last_updated . '&nbsp;<input type="button" id="wpi_geoip2" action="update" class="wpinv-refresh-geoip2-btn button-secondary" value="' . __( 'Update GeoIP2 database now (~30MB)', 'invoicing' ) . '"></input>';
         } else {
-            $desc .= __( 'GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Download GeoIP2 database now', 'invoicing' ) . ' (~53MB)"></input><br>' . __(  'After downloading the GeoIP2 database the GeoIP2 lookup option will show.', 'invoicing' );
+            $desc .= __( 'GeoIP2 database does not exist:', 'invoicing' ) . '&nbsp;<input type="button" id="wpi_geoip2" action="download" class="wpinv-download-geoip2-btn button-secondary" value="' . __( 'Download GeoIP2 database now', 'invoicing' ) . ' (~30MB)"></input><br>' . __(  'After downloading the GeoIP2 database the GeoIP2 lookup option will show.', 'invoicing' );
         }
     } else {
         $desc .= $geoip2_message;
