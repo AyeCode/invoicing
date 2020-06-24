@@ -1453,9 +1453,17 @@ class WPInv_Invoice {
     
     public function get_discounts( $array = false ) {
         $discounts = $this->discounts;
-        if ( $array && $discounts ) {
+
+        if ( ! is_array( $discounts ) ) {
             $discounts = explode( ',', $discounts );
         }
+
+        $discounts = array_filter( $discounts );
+
+        if ( ! $array ) {
+            $discounts = implode( ',', $discounts );
+        }
+
         return apply_filters( 'wpinv_payment_discounts', $discounts, $this->ID, $this, $array );
     }
     

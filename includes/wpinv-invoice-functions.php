@@ -1164,7 +1164,7 @@ function wpinv_cart_has_fees( $type = 'all' ) {
     return false;
 }
 
-function wpinv_validate_checkout_fields() {    
+function wpinv_validate_checkout_fields() {
     // Check if there is $_POST
     if ( empty( $_POST ) ) {
         return false;
@@ -1221,23 +1221,29 @@ function wpinv_checkout_validate_discounts() {
     
     // Retrieve the discount stored in cookies
     $discounts = wpinv_get_cart_discounts();
-    
-    $error = false;
-    // If we have discounts, loop through them
-    if ( ! empty( $discounts ) ) {
-        foreach ( $discounts as $discount ) {
-            // Check if valid
-            if (  !wpinv_is_discount_valid( $discount, (int)$wpi_cart->get_user_id() ) ) {
-                // Discount is not valid
-                $error = true;
-            }
-        }
-    } else {
-        // No discounts
+
+    if ( ! is_array( $discounts ) ) {
         return NULL;
     }
 
-    if ( $error && !wpinv_get_errors() ) {
+    $discounts = array_filter( $discounts );
+    $error    = false;
+
+    if ( empty( $discounts ) ) {
+        return NULL;
+    }
+
+    // If we have discounts, loop through them
+    foreach ( $discounts as $discount ) {
+        // Check if valid
+        if (  ! wpinv_is_discount_valid( $discount, (int) $wpi_cart->get_user_id() ) ) {
+            // Discount is not valid
+            $error = true;
+        }
+
+    }
+
+    if ( $error && ! wpinv_get_errors() ) {
         wpinv_set_error( 'invalid_discount', __( 'Discount code you entered is invalid', 'invoicing' ) );
     }
 
