@@ -147,6 +147,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Yoast SEO 14.1 style conflicts - FIXED
 * Show subscription details on receipt - ADDED
 * GeoIP2 database not downloading - FIXED
+* Pay now link working for logged out users - FIXED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
