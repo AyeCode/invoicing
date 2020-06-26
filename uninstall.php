@@ -54,11 +54,12 @@ if ( $remove_data ) {
     
     // Delete user meta.
     $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '%_wpinv_%' OR meta_key LIKE '%_wpi_invoice%' OR meta_key LIKE '%_wpi_item%' OR meta_key LIKE '%_wpi_discount%' OR meta_key LIKE '_wpi_stripe%' OR meta_key LIKE '%_wpi_quote%';" );
-    
+
     // Cleanup Cron Schedule
     wp_clear_scheduled_hook( 'wp_session_garbage_collection' );
     wp_clear_scheduled_hook( 'wpinv_register_schedule_event_twicedaily' );
-    
+    wp_clear_scheduled_hook( 'wpinv_register_schedule_event_daily' );
+
     // Delete options.
     $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wpinv_%' OR option_name LIKE '_wpinv_%' OR option_name LIKE '\_transient\_wpinv\_%';" );
     
