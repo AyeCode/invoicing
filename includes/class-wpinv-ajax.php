@@ -952,7 +952,7 @@ class WPInv_Ajax {
             $user = get_user_by( 'id', $user );
         }
 
-        if ( $discount ) {
+        if ( ! empty( $discount ) ) {
             $address_fields['discount'] = array( $data['discount'] );
         }
 

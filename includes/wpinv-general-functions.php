@@ -402,9 +402,16 @@ function wpinv_user_can_view_invoice( $post ) {
 }
 
 function wpinv_schedule_events() {
-    // hourly, daily and twicedaily
-    if ( !wp_next_scheduled( 'wpinv_register_schedule_event_twicedaily' ) ) {
-        wp_schedule_event( current_time( 'timestamp' ), 'twicedaily', 'wpinv_register_schedule_event_twicedaily' );
+
+    // Get the timestamp for the next event.
+    $timestamp = wp_next_scheduled( 'wpinv_register_schedule_event_twicedaily' );
+
+    if ( $timestamp ) {
+        wp_unschedule_event( $timestamp, 'wpinv_register_schedule_event_twicedaily' );
+    }
+
+    if ( ! wp_next_scheduled( 'wpinv_register_schedule_event_daily' ) ) {
+        wp_schedule_event( current_time( 'timestamp' ), 'daily', 'wpinv_register_schedule_event_daily' );
     }
 }
 add_action( 'wp', 'wpinv_schedule_events' );
@@ -412,7 +419,7 @@ add_action( 'wp', 'wpinv_schedule_events' );
 function wpinv_schedule_event_twicedaily() {
     wpinv_email_payment_reminders();
 }
-add_action( 'wpinv_register_schedule_event_twicedaily', 'wpinv_schedule_event_twicedaily' );
+add_action( 'wpinv_register_schedule_event_daily', 'wpinv_schedule_event_twicedaily' );
 
 function wpinv_require_login_to_checkout() {
     $return = wpinv_get_option( 'login_to_checkout', false );
