@@ -418,6 +418,7 @@ add_action( 'wp', 'wpinv_schedule_events' );
 
 function wpinv_schedule_event_twicedaily() {
     wpinv_email_payment_reminders();
+    wpinv_email_renewal_reminders();
 }
 add_action( 'wpinv_register_schedule_event_daily', 'wpinv_schedule_event_twicedaily' );
 

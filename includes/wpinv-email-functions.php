@@ -1059,6 +1059,62 @@ function wpinv_get_emails() {
             ),
         ),
 
+        'pre_payment' => array(
+            'email_pre_payment_header' => array(
+                'id'   => 'email_pre_payment_header',
+                'name' => '<h3>' . __( 'Renewal Reminder', 'invoicing' ) . '</h3>',
+                'desc' => __( 'Renewal reminder emails are sent to user automatically.', 'invoicing' ),
+                'type' => 'header',
+            ),
+            'email_pre_payment_active' => array(
+                'id'   => 'email_pre_payment_active',
+                'name' => __( 'Enable/Disable', 'invoicing' ),
+                'desc' => __( 'Enable this email notification', 'invoicing' ),
+                'type' => 'checkbox',
+                'std'  => 1
+            ),
+            'email_pre_payment_reminder_days' => array(
+                'id'            => 'email_pre_payment_reminder_days',
+                'name'          => __( 'When to Send', 'invoicing' ),
+                'desc'          => __( 'Enter a comma separated list of days before renewal when this email should be sent.', 'invoicing' ),
+                'default'       => '',
+                'type'          => 'text',
+                'std'           => '1,5,10',
+            ),
+            'email_pre_payment_subject' => array(
+                'id'   => 'email_pre_payment_subject',
+                'name' => __( 'Subject', 'invoicing' ),
+                'desc' => __( 'Enter the subject line for the email.', 'invoicing' ),
+                'type' => 'text',
+                'std'  => __( '[{site_title}] Renewal Reminder', 'invoicing' ),
+                'size' => 'large'
+            ),
+            'email_pre_payment_heading' => array(
+                'id'   => 'email_pre_payment_heading',
+                'name' => __( 'Email Heading', 'invoicing' ),
+                'desc' => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
+                'type' => 'text',
+                'std'  => __( 'Upcoming renewal reminder', 'invoicing' ),
+                'size' => 'large'
+            ),
+            'email_pre_payment_admin_bcc' => array(
+                'id'   => 'email_pre_payment_admin_bcc',
+                'name' => __( 'Enable Admin BCC', 'invoicing' ),
+                'desc' => __( 'Check if you want to send this notification email to site Admin.', 'invoicing' ),
+                'type' => 'checkbox',
+                'std'  => 1
+            ),
+            'email_pre_payment_body' => array(
+                'id'   => 'email_pre_payment_body',
+                'name' => __( 'Email Content', 'invoicing' ),
+                'desc' => __( 'The content of the email.', 'invoicing' ),
+                'type' => 'rich_editor',
+                'std'  => __( '<p>Hi {full_name},</p><p>Your subscription for invoice <a href="{invoice_link}">#{invoice_number}</a> will renew on {subscription_renewal_date}.</p>', 'invoicing' ),
+                'class' => 'large',
+                'size'  => 10,
+            ),
+        ),
+
         'overdue' => array(
             'email_overdue_header' => array(
                 'id'   => 'email_overdue_header',
@@ -1392,6 +1448,66 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin
 }
 add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );
 
+/**
+ * Sends renewal reminders.
+ */
+function wpinv_email_renewal_reminders() {
+    global $wpdb;
+
+    if ( ! wpinv_get_option( 'email_pre_payment_active' ) ) {
+        return;
+    }
+
+    $reminder_days = wpinv_get_option( 'email_pre_payment_reminder_days' );
+
+    if ( empty( $reminder_days ) ) {
+        return;
+    }
+
+    // How many days before renewal should we send this email?
+    $reminder_days = array_unique( array_map( 'absint', array_filter( wpinv_parse_list( $reminder_days ) ) ) );
+    if ( empty( $reminder_days ) ) {
+        return;
+    }
+
+    if ( 1 == count( $reminder_days ) ) {
+        $days  = $reminder_days[0];
+        $date  = date( 'Y-m-d', strtotime( "+$days days", current_time( 'timestamp' ) ) );
+        $where = $wpdb->prepare( "DATE(expiration)=%s", $date );
+    } else {
+        $in    = array();
+
+        foreach ( $reminder_days as $days ) {
+            $date  = date( 'Y-m-d', strtotime( "+$days days", current_time( 'timestamp' ) ) );
+            $in[]  = $wpdb->prepare( "%s", $date );
+        }
+
+        $in    = implode( ',', $in );
+        $where = "DATE(expiration) IN ($in)";
+    }
+
+    // Fetch subscriptions to send out reminders for.
+    $table = $wpdb->prefix . 'wpinv_subscriptions';
+
+    // Fetch invoices.
+	$subscriptions  = $wpdb->get_results(
+		"SELECT parent_payment_id, product_id, expiration FROM $table
+		WHERE
+            $where
+            AND status IN ( 'trialling', 'active' )");
+
+    foreach ( $subscriptions as $subscription ) {
+
+        // Skip packages.
+        if ( get_post_meta( $subscription->product_id, '_wpinv_type', true ) == 'package' ) {
+            continue;
+        }
+
+        wpinv_send_pre_payment_reminder_notification( $subscription->parent_payment_id, $subscription->expiration );
+    }
+
+}
+
 function wpinv_email_payment_reminders() {
     global $wpi_auto_reminder, $wpdb;
 
@@ -1460,6 +1576,56 @@ function wpinv_email_payment_reminders() {
 
         $wpi_auto_reminder  = false;
     }
+}
+
+/**
+ * Sends an upcoming renewal notification.
+ */
+function wpinv_send_pre_payment_reminder_notification( $invoice_id, $renewal_date ) {
+
+    $email_type = 'pre_payment';
+    if ( ! wpinv_email_is_enabled( $email_type ) ) {
+        return false;
+    }
+
+    $invoice    = wpinv_get_invoice( $invoice_id );
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    $recipient  = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    if ( ! is_email( $recipient ) ) {
+        return false;
+    }
+
+    $subject        = wpinv_email_get_subject( $email_type, $invoice_id, $invoice );
+    $email_heading  = wpinv_email_get_heading( $email_type, $invoice_id, $invoice );
+    $headers        = wpinv_email_get_headers( $email_type, $invoice_id, $invoice );
+    $message_body   = wpinv_email_get_content( $email_type, $invoice_id, $invoice );
+    $attachments    = wpinv_email_get_attachments( $email_type, $invoice_id, $invoice );
+
+    $renewal_date = date_i18n( 'Y-m-d', strtotime( $renewal_date ) );
+    $content        = wpinv_get_template_html( 'emails/wpinv-email-' . $email_type . '.php', array(
+            'invoice'       => $invoice,
+            'email_type'    => $email_type,
+            'email_heading' => str_replace( '{subscription_renewal_date}', $renewal_date, $email_heading ),
+            'sent_to_admin' => false,
+            'plain_text'    => false,
+            'message_body'  => str_replace( '{subscription_renewal_date}', $renewal_date, $message_body )
+        ) );
+
+    $content        = wpinv_email_format_text( $content, $invoice );
+
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+
+    if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
+        $recipient  = wpinv_get_admin_email();
+        $subject    .= ' - ADMIN BCC COPY';
+        wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    }
+
+    return $sent;
+
 }
 
 function wpinv_send_payment_reminder_notification( $invoice_id ) {

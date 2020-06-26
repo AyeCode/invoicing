@@ -18,7 +18,7 @@
     "ayecode/wp-font-awesome-settings": "^1.0",
     "ayecode/wp-super-duper": "^1.0",
     "ayecode/ayecode-connect-helper": "^1.0",
-    "ayecode/wp-ayecode-ui": "dev-master"
+    "ayecode/wp-ayecode-ui": "^0.1"
   },
   "minimum-stability": "dev"
 }
