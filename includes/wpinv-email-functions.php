@@ -1393,69 +1393,69 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type, $sent_to_admin
 add_action( 'wpinv_email_billing_details', 'wpinv_add_notes_to_invoice_email', 10, 3 );
 
 function wpinv_email_payment_reminders() {
-    global $wpi_auto_reminder;
-    if ( !wpinv_get_option( 'email_overdue_active' ) ) {
+    global $wpi_auto_reminder, $wpdb;
+
+    if ( ! wpinv_get_option( 'email_overdue_active' ) ) {
         return;
     }
 
     if ( $reminder_days = wpinv_get_option( 'email_due_reminder_days' ) ) {
-        $reminder_days  = is_array( $reminder_days ) ? array_values( $reminder_days ) : '';
 
+        // Get a list of all reminder dates.
+        $reminder_days  = is_array( $reminder_days ) ? array_values( $reminder_days ) : array();
+
+        // Ensure we have integers.
+        $reminder_days  = array_unique( array_map( 'absint', $reminder_days ) );
+
+        // Abort if non is selected.
         if ( empty( $reminder_days ) ) {
             return;
         }
-        $reminder_days  = array_unique( array_map( 'absint', $reminder_days ) );
 
-        $args = array(
-            'post_type'     => 'wpi_invoice',
-            'post_status'   => 'wpi-pending',
-            'fields'        => 'ids',
-            'numberposts'   => '-1',
-            'meta_query'    => array(
-                array(
-                    'key'       =>  '_wpinv_due_date',
-                    'value'     =>  array( '', 'none' ),
-                    'compare'   =>  'NOT IN',
-                )
-            ),
-            'meta_key'      => '_wpinv_due_date',
-            'orderby'       => 'meta_value',
-            'order'         => 'ASC',
-        );
+        // Fetch the max reminder day.
+        $max_date = max( $reminder_days );
 
-        $invoices = get_posts( $args );
+        // Todays date.
+        $today = date( 'Y-m-d', current_time( 'timestamp' ) );
 
-        if ( empty( $invoices ) ) {
-            return;
-        }
+        if ( empty( $max_date ) ) {
+            $where = $wpdb->prepare( "DATE(invoices.due_date)=%s", $today );
+        } else if ( 1 == count( $reminder_days ) ) {
+            $days  = $reminder_days[0];
+            $date  = date( 'Y-m-d', strtotime( "-$days days", current_time( 'timestamp' ) ) );
+            $where = $wpdb->prepare( "DATE(invoices.due_date)=%s", $date );
+        } else {
+            $in    = array();
 
-        $date_to_send   = array();
-
-        foreach ( $invoices as $id ) {
-            $due_date = get_post_meta( $id, '_wpinv_due_date', true );
-
-            foreach ( $reminder_days as $key => $days ) {
-                if ( $days !== '' ) {
-                    $date_to_send[$id][] = date_i18n( 'Y-m-d', strtotime( $due_date ) + ( $days * DAY_IN_SECONDS ) );
-                }
+            foreach ( $reminder_days as $days ) {
+                $date  = date( 'Y-m-d', strtotime( "-$days days", current_time( 'timestamp' ) ) );
+                $in[]  = $wpdb->prepare( "%s", $date );
             }
+
+            $in    = implode( ',', $in );
+            $where = "DATE(invoices.due_date) IN ($in)";
         }
 
-        $today              = date_i18n( 'Y-m-d' );
+        // Invoices table.
+        $table = $wpdb->prefix . 'getpaid_invoices';
+
+        // Fetch invoices.
+		$invoices  = $wpdb->get_col(
+			"SELECT posts.ID FROM $wpdb->posts as posts
+			LEFT JOIN $table as invoices ON invoices.post_id = posts.ID
+			WHERE
+                $where 
+				AND posts.post_type = 'wpi_invoice'
+                AND posts.post_status = 'wpi-pending'");
+
         $wpi_auto_reminder  = true;
 
-        foreach ( $date_to_send as $id => $values ) {
-            if ( in_array( $today, $values ) ) {
-                $sent = get_post_meta( $id, '_wpinv_reminder_sent', true );
+        foreach ( $invoices as $invoice ) {
 
-                if ( isset( $sent ) && !empty( $sent ) ) {
-                    if ( !in_array( $today, $sent ) ) {
-                        do_action( 'wpinv_send_payment_reminder_notification', $id );
-                    }
-                } else {
-                    do_action( 'wpinv_send_payment_reminder_notification', $id );
-                }
+            if ( 'payment_form' != get_post_meta( $invoice, 'wpinv_created_via', true ) ) {
+                do_action( 'wpinv_send_payment_reminder_notification', $invoice );
             }
+
         }
 
         $wpi_auto_reminder  = false;

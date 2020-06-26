@@ -237,6 +237,10 @@ function wpinv_insert_invoice( $invoice_data = array(), $wp_error = false ) {
     if ( ! empty( $invoice->ID ) ) {
         global $wpi_userID, $wpinv_ip_address_country;
         
+        if ( isset( $invoice_data['created_via'] ) ) {
+            update_post_meta( $invoice->ID, 'wpinv_created_via', $invoice_data['created_via'] );
+        }
+
         $checkout_session = wpinv_get_checkout_session();
         
         $data_session                   = array();
