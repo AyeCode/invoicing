@@ -1,0 +1,25 @@
+= 0.1.11 =
+* IOS scroll bar class .scrollbars-ios added - ADDED
+
+= 0.1.10 =
+* Embed item cover classes added - ADDED
+* Input group inside ability added - ADDED
+
+= 0.1.8 =
+* Checkbox / radio can now set an item selected by setting argument `checked` to true - ADDED
+
+= 0.1.7 =
+* variable $js_default_backend not defined in some cases - FIXED
+
+= 0.1.6 =
+* Separate backend settings added for JS/CSS - ADDED
+
+= 0.1.5 =
+* Fix stripslashes() expects parameter 1 to be string array given notice for the multiselect field - FIXED
+* Added button new window option - ADDED
+* Added badge component - ADDED
+
+= 0.1.4 =
+* Avada theme default JS settings added for compatibility - ADDED
+* Pagination component added - ADDED
+* $ver class property added - ADDED

@@ -1,0 +1,15 @@
+// buttons
+.hover-content{
+  display: none;
+}
+
+.btn,.badge,.hover-swap{
+  &:hover{
+    .hover-content{
+      display: initial;
+    }
+    .hover-content-original{
+      display: none;
+    }
+  }
+}
