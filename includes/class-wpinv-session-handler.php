@@ -283,12 +283,6 @@ class WPInv_Session_Handler extends WPInv_Session {
 			return array();
 		}
 
-        if ( !is_user_logged_in() ) {
-            if(!wp_verify_nonce( $customer_id, 'wpinv-session-customer-id' )){
-                return array();
-            }
-        }
-
         $key = $this->generate_key($customer_id);
         $value = get_transient($key);
 
