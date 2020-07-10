@@ -11,13 +11,13 @@ class WPInv_Reports {
     private $export;
     public $filetype;
     public $per_page;
-    
+
     public function __construct() {
         $this->init();
         $this->includes();
         $this->actions();
     }
-    
+
     public function init() {
         global $wp_filesystem;
 
@@ -27,20 +27,20 @@ class WPInv_Reports {
             global $wp_filesystem;
         }
         $this->wp_filesystem    = $wp_filesystem;
-        
+
         $this->export_dir       = $this->export_location();
         $this->export_url       = $this->export_location( true );
         $this->export           = 'invoicing';
         $this->filetype         = 'csv';
         $this->per_page         = 20;
-        
+
         do_action( 'wpinv_class_reports_init', $this );
     }
-    
+
     public function includes() {
         do_action( 'wpinv_class_reports_includes', $this );
     }
-    
+
     public function actions() {
         if ( is_admin() ) {
             add_action( 'admin_menu', array( $this, 'add_submenu' ), 20 );
@@ -63,12 +63,12 @@ class WPInv_Reports {
         }
         do_action( 'wpinv_class_reports_actions', $this );
     }
-    
+
     public function add_submenu() {
         global $wpi_reports_page;
         $wpi_reports_page = add_submenu_page( 'wpinv', __( 'Reports', 'invoicing' ), __( 'Reports', 'invoicing' ), wpinv_get_capability(), 'wpinv-reports', array( $this, 'reports_page' ) );
     }
-    
+
     public function reports_page() {
 
         if ( !wp_script_is( 'postbox', 'enqueued' ) ) {
@@ -78,7 +78,7 @@ class WPInv_Reports {
         if ( !wp_script_is( 'jquery-ui-datepicker', 'enqueued' ) ) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
-        
+
         $current_page = admin_url( 'admin.php?page=wpinv-reports' );
         $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'reports';
         ?>
@@ -95,6 +95,7 @@ class WPInv_Reports {
                 do_action( 'wpinv_reports_tab_' . $active_tab );
                 do_action( 'wpinv_reports_page_bottom' );
             ?>
+            </div>
         </div>
         <?php
     }
@@ -110,7 +111,7 @@ class WPInv_Reports {
             'gateways'   => __( 'Payment Methods', 'invoicing' ),
             'taxes'      => __( 'Taxes', 'invoicing' ),
         );
-    
+
         $views   = apply_filters( 'wpinv_report_views', $views );
         $current = 'earnings';
 
@@ -136,7 +137,7 @@ class WPInv_Reports {
 	    do_action( 'wpinv_reports_view_' . $current );
 
     }
-    
+
     public function export() {
         $statuses = wpinv_get_invoice_statuses( true );
         $statuses = array_merge( array( 'any' => __( 'All Statuses', 'invoicing' ) ), $statuses );
@@ -145,21 +146,21 @@ class WPInv_Reports {
             <div id="post-body">
                 <div id="post-body-content">
                     <?php do_action( 'wpinv_reports_tab_export_content_top' ); ?>
-                    
+
                     <div class="postbox wpi-export-invoices">
                         <h2 class="hndle ui-sortabled-handle"><span><?php _e( 'Invoices','invoicing' ); ?></span></h2>
                         <div class="inside">
                             <p><?php _e( 'Download a CSV of all payment invoices.', 'invoicing' ); ?></p>
                             <form id="wpi-export-invoices" class="wpi-export-form" method="post">
-                                <?php echo wpinv_html_date_field( array( 
-                                    'id' => 'wpi_export_from_date', 
+                                <?php echo wpinv_html_date_field( array(
+                                    'id' => 'wpi_export_from_date',
                                     'name' => 'from_date',
                                     'data' => array(
                                         'dateFormat' => 'yy-mm-dd'
                                     ),
                                     'placeholder' => __( 'From date', 'invoicing' ) )
                                 ); ?>
-                                <?php echo wpinv_html_date_field( array( 
+                                <?php echo wpinv_html_date_field( array(
                                     'id' => 'wpi_export_to_date',
                                     'name' => 'to_date',
                                     'data' => array(
@@ -193,22 +194,22 @@ class WPInv_Reports {
                             <a class="button-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-ajax.php?action=wpinv_ajax_discount_use_export' ), 'wpi_discount_ajax_export', 'wpi_discount_ajax_export' ) ); ?>"><?php _e( 'Generate CSV', 'invoicing' ); ?></a>
                         </div>
                     </div>
-                    
+
                     <?php do_action( 'wpinv_reports_tab_export_content_bottom' ); ?>
                 </div>
             </div>
         </div>
         <?php
     }
-    
+
     public function export_location( $relative = false ) {
         $upload_dir         = wp_upload_dir();
         $export_location    = $relative ? trailingslashit( $upload_dir['baseurl'] ) . 'cache' : trailingslashit( $upload_dir['basedir'] ) . 'cache';
         $export_location    = apply_filters( 'wpinv_export_location', $export_location, $relative );
-        
+
         return trailingslashit( $export_location );
     }
-    
+
     public function check_export_location() {
         try {
             if ( empty( $this->wp_filesystem ) ) {
@@ -218,41 +219,41 @@ class WPInv_Reports {
             if ( is_wp_error( $this->wp_filesystem ) ) {
                 return __( 'Filesystem ERROR: ' . $this->wp_filesystem->get_error_message(), 'invoicing' );
             }
-        
+
             $is_dir         = $this->wp_filesystem->is_dir( $this->export_dir );
             $is_writeable   = $is_dir && is_writeable( $this->export_dir );
-            
+
             if ( $is_dir && $is_writeable ) {
                return true;
             } else if ( $is_dir && !$is_writeable ) {
                if ( !$this->wp_filesystem->chmod( $this->export_dir, FS_CHMOD_DIR ) ) {
                    return wp_sprintf( __( 'Filesystem ERROR: Export location %s is not writable, check your file permissions.', 'invoicing' ), $this->export_dir );
                }
-               
+
                return true;
             } else {
                 if ( !$this->wp_filesystem->mkdir( $this->export_dir, FS_CHMOD_DIR ) ) {
                     return wp_sprintf( __( 'Filesystem ERROR: Could not create directory %s. This is usually due to inconsistent file permissions.', 'invoicing' ), $this->export_dir );
                 }
-                
+
                 return true;
             }
         } catch ( Exception $e ) {
             return $e->getMessage();
         }
     }
-    
+
     public function ajax_export() {
         $response               = array();
         $response['success']    = false;
         $response['msg']        = __( 'Invalid export request found.', 'invoicing' );
-        
+
         if ( empty( $_POST['data'] ) || ! wpinv_current_user_can_manage_invoicing() ) {
             wp_send_json( $response );
         }
 
         parse_str( $_POST['data'], $data );
-        
+
         $data['step']   = !empty( $_POST['step'] ) ? absint( $_POST['step'] ) : 1;
 
         $_REQUEST = (array)$data;
@@ -260,37 +261,37 @@ class WPInv_Reports {
             $response['msg']    = __( 'Security check failed.', 'invoicing' );
             wp_send_json( $response );
         }
-        
+
         if ( ( $error = $this->check_export_location( true ) ) !== true ) {
             $response['msg'] = __( 'Filesystem ERROR: ' . $error, 'invoicing' );
             wp_send_json( $response );
         }
-                        
+
         $this->set_export_params( $_REQUEST );
-        
+
         $return = $this->process_export_step();
         $done   = $this->get_export_status();
-        
+
         if ( $return ) {
             $this->step += 1;
-            
+
             $response['success']    = true;
             $response['msg']        = '';
-            
+
             if ( $done >= 100 ) {
                 $this->step     = 'done';
                 $new_filename   = 'wpi-' . $this->export . '-' . date( 'y-m-d-H-i' ) . '.' . $this->filetype;
                 $new_file       = $this->export_dir . $new_filename;
-                
+
                 if ( file_exists( $this->file ) ) {
                     $this->wp_filesystem->move( $this->file, $new_file, true );
                 }
-                
+
                 if ( file_exists( $new_file ) ) {
                     $response['data']['file'] = array( 'u' => $this->export_url . $new_filename, 's' => size_format( filesize( $new_file ), 2 ) );
                 }
             }
-            
+
             $response['data']['step']   = $this->step;
             $response['data']['done']   = $done;
         } else {
@@ -329,9 +330,9 @@ class WPInv_Reports {
         header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.csv" );
 
         // Output the csv column headers.
-		fputcsv( 
-            $output, 
-            array( 
+		fputcsv(
+            $output,
+            array(
                 __( 'Discount Id', 'invoicing' ),
                 __( 'Discount Code', 'invoicing' ),
                 __( 'Discount Type', 'invoicing' ),
@@ -357,23 +358,23 @@ class WPInv_Reports {
         exit;
 
     }
-    
+
     public function set_export_params( $request ) {
         $this->empty    = false;
         $this->step     = !empty( $request['step'] ) ? absint( $request['step'] ) : 1;
         $this->export   = !empty( $request['export'] ) ? $request['export'] : $this->export;
         $this->filename = 'wpi-' . $this->export . '-' . $request['wpi_ajax_export'] . '.' . $this->filetype;
         $this->file     = $this->export_dir . $this->filename;
-        
+
         do_action( 'wpinv_export_set_params_' . $this->export, $request );
     }
-    
+
     public function get_columns() {
         $columns = array();
-        
+
         return apply_filters( 'wpinv_export_get_columns_' . $this->export, $columns );
     }
-    
+
     protected function get_export_file() {
         $file = '';
 
@@ -385,11 +386,11 @@ class WPInv_Reports {
 
         return $file;
     }
-    
+
     protected function attach_export_data( $data = '' ) {
         $filedata   = $this->get_export_file();
         $filedata   .= $data;
-        
+
         $this->wp_filesystem->put_contents( $this->file, $filedata );
 
         $rows       = file( $this->file, FILE_SKIP_EMPTY_LINES );
@@ -398,7 +399,7 @@ class WPInv_Reports {
 
         $this->empty = count( $rows ) == $columns ? true : false;
     }
-    
+
     public function print_columns() {
         $column_data    = '';
         $columns        = $this->get_columns();
@@ -414,27 +415,27 @@ class WPInv_Reports {
 
         return $column_data;
     }
-    
+
     public function process_export_step() {
         if ( $this->step < 2 ) {
             /** @scrutinizer ignore-unhandled */ @unlink( $this->file );
             $this->print_columns();
         }
-        
+
         $return = $this->print_rows();
-        
+
         if ( $return ) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     public function get_export_status() {
         $status = 100;
         return apply_filters( 'wpinv_get_export_status_' . $this->export, $status );
     }
-    
+
     public function get_export_data() {
         $data = array();
 
@@ -443,7 +444,7 @@ class WPInv_Reports {
 
         return $data;
     }
-    
+
     public function print_rows() {
         $row_data   = '';
         $data       = $this->get_export_data();
@@ -469,14 +470,14 @@ class WPInv_Reports {
 
         return false;
     }
-    
+
     // Export Invoices.
     public function set_invoices_export( $request ) {
         $this->from_date    = isset( $request['from_date'] ) ? sanitize_text_field( $request['from_date'] ) : '';
         $this->to_date      = isset( $request['to_date'] ) ? sanitize_text_field( $request['to_date'] ) : '';
         $this->status       = isset( $request['status'] ) ? sanitize_text_field( $request['status'] ) : 'publish';
     }
-    
+
     public function get_invoices_columns( $columns = array() ) {
         $columns = array(
             'id'            => __( 'ID',   'invoicing' ),
@@ -511,7 +512,7 @@ class WPInv_Reports {
 
         return $columns;
     }
-        
+
     public function get_invoices_data( $response = array() ) {
         $args = array(
             'limit'    => $this->per_page,
@@ -519,7 +520,7 @@ class WPInv_Reports {
             'order'    => 'DESC',
             'orderby'  => 'date',
         );
-        
+
         if ( $this->status != 'any' ) {
             $args['status'] = $this->status;
         } else {
@@ -537,9 +538,9 @@ class WPInv_Reports {
         }
 
         $invoices = wpinv_get_invoices( $args );
-        
+
         $data = array();
-        
+
         if ( !empty( $invoices ) ) {
             foreach ( $invoices as $invoice ) {
                 $items = $this->get_invoice_items($invoice);
@@ -573,7 +574,7 @@ class WPInv_Reports {
                     'gateway_nicename' => $invoice->get_gateway_title(),
                     'transaction_id'=> $invoice->gateway ? $invoice->get_transaction_id() : '',
                 );
-                
+
                 $data[] = apply_filters( 'wpinv_export_invoice_row', $row, $invoice );
             }
 
@@ -583,13 +584,13 @@ class WPInv_Reports {
 
         return false;
     }
-    
+
     public function invoices_export_status() {
         $args = array(
             'limit'    => -1,
             'return'   => 'ids',
         );
-        
+
         if ( $this->status != 'any' ) {
             $args['status'] = $this->status;
         } else {
@@ -723,17 +724,17 @@ class WPInv_Reports {
 
             'last_week'    => array(
                 "DAYNAME($datetime)",
-                "$date BETWEEN '$last_monday' AND '$last_sunday'"  
+                "$date BETWEEN '$last_monday' AND '$last_sunday'"
             ),
 
             '7_days_ago'   => array(
                 "DAY($datetime)",
-                "$date BETWEEN '$seven_days_ago' AND '$today'"  
+                "$date BETWEEN '$seven_days_ago' AND '$today'"
             ),
 
             '30_days_ago'  => array(
                 "DAY($datetime)",
-                "$date BETWEEN '$thirty_days_ago' AND '$today'"    
+                "$date BETWEEN '$thirty_days_ago' AND '$today'"
             ),
 
             'this_month'   => array(
@@ -764,7 +765,7 @@ class WPInv_Reports {
         return $ranges[ $range ];
 
     }
-    
+
     /**
      * Returns the the current date ranges results.
      */
