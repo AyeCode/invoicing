@@ -17,6 +17,7 @@ class WPInv_Meta_Box_Details {
         $discount           = $invoice->get_discount();
         $discount_code      = $discount > 0 ? $invoice->get_discount_code() : '';
         $invoice_number     = $invoice->get_number();
+        $invoice_cc         = get_post_meta( $invoice->ID, 'wpinv_email_cc', true );
         $taxable            = $invoice->is_taxable();
 
         $date_created       = $invoice->get_created_date();
@@ -26,6 +27,7 @@ class WPInv_Meta_Box_Details {
         $date_completed     = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_completed ) ) : 'n/a';
         $title['status'] = __( 'Invoice Status:', 'invoicing' );
         $title['number'] = __( 'Invoice Number:', 'invoicing' );
+        $title['cc']     = __( 'Invoice CC:', 'invoicing' );
         $mail_notice = esc_attr__( 'After saving invoice, this will send a copy of the invoice to the user&#8217;s email address.', 'invoicing' );
 
         $title = apply_filters('wpinv_details_metabox_titles', $title, $invoice);
@@ -79,6 +81,14 @@ class WPInv_Meta_Box_Details {
             <div class="gdmbx-th"><label for="wpinv_number"><?php echo $title['number']; ?></label></div>
             <div class="gdmbx-td">
                 <input type="text" value="<?php echo esc_attr( $invoice_number );?>" id="wpinv_number" name="wpinv_number" class="regular-text" readonly>
+            </div>
+        </div>
+
+        <div class="gdmbx-row gdmbx-type-text gdmbx2-id-wpinv-cc table-layout">
+            <div class="gdmbx-th"><label for="wpinv_cc"><?php echo $title['cc']; ?></label></div>
+            <div class="gdmbx-td">
+                <input type="text" value="<?php echo esc_attr( $invoice_cc );?>" id="wpinv_cc" name="wpinv_cc" class="regular-text">
+                <p><?php _e( 'Enter a comma separated list of other emails you would like to receive notifications for this invoice.', 'invoicing' ); ?></p>
             </div>
         </div>
         <?php do_action( 'wpinv_meta_box_details_inner', $post_id );

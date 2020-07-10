@@ -468,6 +468,12 @@ class WPInv_Meta_Box_Items {
         }
         $saved = $invoice->save();
 
+        $emails = '';
+        if ( ! empty( $data['wpinv_cc'] ) ) {
+            $emails = wpinv_clean( $data['wpinv_cc'] );
+        }
+        update_post_meta( $invoice->ID, 'wpinv_email_cc', $emails );
+
         if ( ! empty( $date_created ) && strtotime( $date_created, current_time( 'timestamp' ) ) ) {
 
             $time = strtotime( $date_created, current_time( 'timestamp' ) );

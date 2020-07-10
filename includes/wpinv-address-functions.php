@@ -598,13 +598,13 @@ function wpinv_get_invoice_address_replacements( $billing_details ) {
 		'company'           => '',
     );
 
-    $args    = array_map( 'trim', wp_parse_args( $billing_details, $default_args ) );
+    $args    = map_deep( wp_parse_args( $billing_details, $default_args ), 'trim' );
     $state   = $args['state'];
     $country = $args['country'];
-    
+
     // Handle full country name.
     $full_country = empty( $country ) ? $country : wpinv_country_name( $country );
-    
+
     // Handle full state name.
     $full_state   = ( $country && $state ) ?  wpinv_state_name( $state, $country ) : $state;
 

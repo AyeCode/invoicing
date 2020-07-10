@@ -233,6 +233,7 @@ function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -254,7 +255,7 @@ function wpinv_onhold_invoice_notification( $invoice_id, $new_status = '' ) {
             'message_body'  => $message_body,
         ) );
     
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
     
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -283,6 +284,7 @@ function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) 
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -309,7 +311,7 @@ function wpinv_processing_invoice_notification( $invoice_id, $new_status = '' ) 
             'message_body'  => $message_body,
         ) );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -342,6 +344,7 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -363,7 +366,7 @@ function wpinv_completed_invoice_notification( $invoice_id, $new_status = '' ) {
             'message_body'  => $message_body,
         ) );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -392,6 +395,7 @@ function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -414,7 +418,7 @@ function wpinv_fully_refunded_notification( $invoice_id, $new_status = '' ) {
             'message_body'      => $message_body,
         ) );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -443,6 +447,7 @@ function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) 
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -465,7 +470,7 @@ function wpinv_partially_refunded_notification( $invoice_id, $new_status = '' ) 
             'message_body'      => $message_body,
         ) );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -497,6 +502,7 @@ function wpinv_user_invoice_notification( $invoice_id ) {
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -518,7 +524,7 @@ function wpinv_user_invoice_notification( $invoice_id ) {
             'message_body'  => $message_body,
         ) );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     if ( wpinv_mail_admin_bcc_active( $email_type ) ) {
         $recipient  = wpinv_get_admin_email();
@@ -551,6 +557,7 @@ function wpinv_user_note_notification( $invoice_id, $args = array() ) {
     }
 
     $recipient      = wpinv_email_get_recipient( $email_type, $invoice_id, $invoice );
+    $extra          = wpinv_email_get_cc_recipients( $email_type, $invoice_id, $invoice );
     if ( !is_email( $recipient ) ) {
         return false;
     }
@@ -583,7 +590,7 @@ function wpinv_user_note_notification( $invoice_id, $args = array() ) {
 
     $content        = wpinv_email_format_text( $content, $invoice );
 
-    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments );
+    $sent = wpinv_mail_send( $recipient, $subject, $content, $headers, $attachments, $extra );
 
     do_action( 'wpinv_post_send_invoice_notification', $invoice, $email_type );
 
@@ -623,13 +630,21 @@ function wpinv_mail_get_content_type(  $content_type = 'text/html', $email_type 
     return $content_type;
 }
     
-function wpinv_mail_send( $to, $subject, $message, $headers, $attachments ) {
+function wpinv_mail_send( $to, $subject, $message, $headers, $attachments, $cc = array() ) {
     add_filter( 'wp_mail_from', 'wpinv_mail_get_from_address' );
     add_filter( 'wp_mail_from_name', 'wpinv_mail_get_from_name' );
     add_filter( 'wp_mail_content_type', 'wpinv_mail_get_content_type' );
 
     $message = wpinv_email_style_body( $message );
     $message = apply_filters( 'wpinv_mail_content', $message );
+
+    if ( ! empty( $cc ) && is_array( $cc ) ) {
+        if ( ! is_array( $to ) ) {
+            $to = array( $to );
+        }
+
+        $to = array_unique( array_merge( $to, $cc ) );
+    }
 
     $sent  = wp_mail( $to, $subject, $message, $headers, $attachments );
 
@@ -1222,6 +1237,28 @@ function wpinv_email_get_recipient( $email_type = '', $invoice_id = 0, $invoice 
     }
 
     return apply_filters( 'wpinv_email_recipient', $recipient, $email_type, $invoice_id, $invoice );
+}
+
+/**
+ * Returns invoice CC recipients
+ */
+function wpinv_email_get_cc_recipients( $email_type = '', $invoice_id = 0, $invoice = array() ) {
+    switch ( $email_type ) {
+        case 'new_invoice':
+        case 'cancelled_invoice':
+        case 'failed_invoice':
+            return array();
+        break;
+        default:
+            $invoice    = !empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : NULL );
+            $recipient  = empty( $invoice ) ? '' : get_post_meta( $invoice->ID, 'wpinv_email_cc', true );
+            if ( empty( $recipient ) ) {
+                return array();
+            }
+            return  array_filter( array_map( 'trim', explode( ',', $recipient ) ) );
+        break;
+    }
+
 }
 
 function wpinv_email_get_subject( $email_type = '', $invoice_id = 0, $invoice = array() ) {
