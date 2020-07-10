@@ -1085,12 +1085,19 @@ function wpinv_record_status_change( $invoice_id, $new_status, $old_status ) {
     }
 
     $invoice    = wpinv_get_invoice( $invoice_id );
-    
+
+    if ( wpinv_use_taxes() && $new_status == 'publish' ) {
+        
+        if ( WPInv_EUVat::same_country_rule() == 'no' && wpinv_is_base_country( $invoice->country ) ) {
+            $invoice->add_note( __( 'VAT was reverse charged', 'invoicing' ), false, false, true );
+        }
+    }
+
     $old_status = wpinv_status_nicename( $old_status );
     $new_status = wpinv_status_nicename( $new_status );
 
     $status_change = sprintf( __( 'Invoice status changed from %s to %s', 'invoicing' ), $old_status, $new_status );
-    
+
     // Add note
     return $invoice->add_note( $status_change, false, false, true );
 }
