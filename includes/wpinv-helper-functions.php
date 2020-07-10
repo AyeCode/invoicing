@@ -659,7 +659,8 @@ function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = fal
         } else {
             error_log( $label . $log );
         }
-        
+
+        error_log( wp_debug_backtrace_summary() );
         if ( $exit ) {
             exit;
         }
