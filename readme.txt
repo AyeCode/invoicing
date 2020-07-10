@@ -149,6 +149,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * GeoIP2 database not downloading - FIXED
 * Pay now link working for logged out users - FIXED
 * Upcoming subscription renewal emails - ADDED
+* Ability to send invoice notifications to other emails (CC) other than the one currently being billed - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
