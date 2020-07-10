@@ -14,6 +14,7 @@ class WPInv_Admin_Menus {
      */
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+        add_action( 'admin_menu', array( $this, 'add_customers_menu' ), 18 );
         add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 100 );
         add_action( 'admin_menu', array( $this, 'add_settings_menu' ), 60 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
@@ -33,6 +34,37 @@ class WPInv_Admin_Menus {
             '54.123460'
         );
 
+    }
+
+    /**
+     * Registers the customers menu
+     */
+    public function add_customers_menu() {
+        add_submenu_page(
+            'wpinv',
+            __( 'Customers', 'invoicing' ),
+            __( 'Customers', 'invoicing' ),
+            wpinv_get_capability(),
+            'wpinv-customers',
+            array( $this, 'customers_page' )
+        );
+    }
+
+    /**
+     * Displays the customers page.
+     */
+    public function customers_page() {
+        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-customers-table.php' );
+        ?>
+        <div class="wrap wpi-customers-wrap">
+            <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?></h1>
+            <?php
+                $table = new WPInv_Customers_Table();
+                $table->prepare_items();
+                $table->display();
+            ?>
+        </div>
+        <?php
     }
 
     /**
