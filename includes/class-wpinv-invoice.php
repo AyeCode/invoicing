@@ -24,6 +24,11 @@ class WPInv_Invoice {
      * @var string the invoice post type.
      */
     public $post_type;
+
+    /**
+     * @var string the invoice description.
+     */
+    public $description;
     
     /**
      * @var array unsaved changes.
@@ -361,6 +366,7 @@ class WPInv_Invoice {
         }
 
         $this->post_status     = $this->status;
+        $this->description     = $invoice->post_excerpt;
         $this->parent_invoice  = $invoice->post_parent;
         $this->post_name       = $this->setup_post_name( $invoice );
         $this->status_nicename = $this->setup_status_nicename( $invoice->post_status );
@@ -653,6 +659,7 @@ class WPInv_Invoice {
             'post_status'   => $this->status,
             'post_author'   => $this->user_id,
             'post_type'     => $this->post_type,
+            'post_excerpt'  => $this->description,
             'post_date'     => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? $this->date : current_time( 'mysql' ),
             'post_date_gmt' => ! empty( $this->date ) && $this->date != '0000-00-00 00:00:00' ? get_gmt_from_date( $this->date ) : current_time( 'mysql', 1 ),
             'post_parent'   => $this->parent_invoice,

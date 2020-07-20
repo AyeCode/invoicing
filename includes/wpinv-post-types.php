@@ -168,7 +168,7 @@ function wpinv_register_post_types() {
         'has_archive'        => false,
         'hierarchical'       => false,
         'menu_position'      => null,
-        'supports'           => array( 'title', 'author' ),
+        'supports'           => array( 'title', 'author', 'excerpt'  ),
         'menu_icon'          => 'dashicons-media-spreadsheet',
     );
             
