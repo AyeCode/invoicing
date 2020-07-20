@@ -72,6 +72,42 @@ class WPInv_Customers_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Displays the country column.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @param WP_User $user
+	 *
+	 * @return string Column Name
+	 */
+	public function column_country( $user ) {
+		$country = wpinv_sanitize_country( $user->_wpinv_country );
+		if ( $country ) {
+			$country = wpinv_country_name( $country );
+		}
+		return sanitize_text_field( $country );
+	}
+
+	/**
+	 * Displays the state column.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @param WP_User $user
+	 *
+	 * @return string Column Name
+	 */
+	public function column_state( $user ) {
+		$country = wpinv_sanitize_country( $user->_wpinv_country );
+		$state   = $user->_wpinv_state;
+		if ( $state ) {
+			$state = wpinv_state_name( $state, $country );
+		}
+
+		return sanitize_text_field( $state );
+	}
+
+	/**
 	 * Generates content for a single row of the table
 	 * @since 1.0.19
 	 *
@@ -101,9 +137,12 @@ class WPInv_Customers_Table extends WP_List_Table {
 		$view_url    = esc_url( add_query_arg( 'user_id', $customer->ID, admin_url( 'user-edit.php' ) ) );
 		$row_actions = $this->row_actions(
 			array(
-				'view' => '<a href="' . $view_url . '">' . __( 'View', 'invoicing' ) . '</a>',
+				'view' => '<a href="' . $view_url . '#getpaid-fieldset-billing">' . __( 'Edit Details', 'invoicing' ) . '</a>',
 			)
 		);
+
+		// Get user's address.
+		$address = wpinv_get_user_address( $customer->ID );
 
 		// Customer email address.
 		$email       = sanitize_email( $customer->user_email );
@@ -113,7 +152,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 		$avatar = "<img src='$avatar' height='32' width='32'/>";
 
 		// Customer's name.
-		$name   = sanitize_text_field( "{$customer->display_name} ($customer->user_login)" );
+		$name   = sanitize_text_field( "{$address['first_name']} {$address['last_name']}" );
 
 		if ( ! empty( $name ) ) {
 			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";
@@ -121,7 +160,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 
 		$email = "<div class='row-title'><a href='$view_url'>$email</a></div>";
 
-		return "<div style='display: flex;'><div>$avatar</div><div style='margin-left: 10px;'>$name<strong>$email</strong></div></div>";
+		return "<div style='display: flex;'><div>$avatar</div><div style='margin-left: 10px;'>$name<strong>$email</strong>$row_actions</div></div>";
 
 	}
 
