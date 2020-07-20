@@ -2492,3 +2492,17 @@ function getpaid_get_payment_button( $label, $form = null, $items = null, $invoi
 
 }
 
+/**
+ * Display invoice description before line items.
+ *
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_the_invoice_description( $invoice ) {
+    if ( empty( $invoice->description ) ) {
+        return;
+    }
+
+    $description = wp_kses_post( $invoice->description );
+    echo "<div style='color: #616161; font-size: 90%; margin-bottom: 20px;'><em>$description</em></div>";
+}
+add_action( 'wpinv_invoice_print_before_line_items', 'getpaid_the_invoice_description' );

@@ -151,6 +151,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Upcoming subscription renewal emails - ADDED
 * Ability to send invoice notifications to other emails (CC) other than the one currently being billed - ADDED
 * VAT Reverse charge notice - ADDED
+* Ability to add descriptions/excerpts to invoices - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
