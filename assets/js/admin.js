@@ -224,6 +224,65 @@ jQuery(function($) {
         });
         return false;
     });
+
+    // Update state field based on selected country
+    var getpaid_user_edit_sync_state_and_country = function() {
+
+        // Ensure that we have both fields.
+        if ( ! $('.getpaid_js_field-country').length || ! $('.getpaid_js_field-state').length ) {
+            return
+        }
+
+        // fade the state field.
+        $('.getpaid_js_field-state').fadeTo(1000, 0.4);
+
+        // Prepare data.
+        data = {
+            action: 'wpinv_get_states_field',
+            country: $('.getpaid_js_field-country').val(),
+            field_name: $('.getpaid_js_field-country').attr('name').replace( 'country', 'state' )
+        };
+
+        // Fetch new states field.
+        $.post( ajaxurl, data )
+
+        .done( function( response ) {
+
+            var value = $('.getpaid_js_field-state').val()
+
+            if ( 'nostates' == response ) {
+                var text_field = '<input type="text" name="' + data.field_name + '" value="" class="getpaid_js_field-state regular-text"/>';
+                $('.getpaid_js_field-state').replaceWith(text_field);
+            } else {
+                var response = $(response)
+                response.addClass('getpaid_js_field-state regular-text')
+                response.attr( 'id', data.field_name)
+                $('.getpaid_js_field-state').replaceWith( response )
+            }
+
+            $('.getpaid_js_field-state').val( value )
+
+        })
+
+        .fail( function() {
+            var text_field = '<input type="text" name="' + data.field_name + '" value="" class="getpaid_js_field-state regular-text"/>';
+            $('.getpaid_js_field-state').replaceWith(text_field);
+        })
+
+        .always( function() {
+            // unfade the state field.
+            $('.getpaid_js_field-state').fadeTo(1000, 1);
+        })
+
+
+    }
+
+    // Sync on load.
+    getpaid_user_edit_sync_state_and_country();
+
+    // Sync on changes.
+    $(document.body).on('change', '.getpaid_js_field-country', getpaid_user_edit_sync_state_and_country);
+
     // Insert new tax rate row
     $('#wpinv_add_tax_rate').on('click', function() {
         var row = $('#wpinv_tax_rates tbody tr:last');

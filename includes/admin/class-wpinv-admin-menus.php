@@ -57,6 +57,11 @@ class WPInv_Admin_Menus {
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-customers-table.php' );
         ?>
         <div class="wrap wpi-customers-wrap">
+            <style>
+                .column-primary {
+                    width: 30%;
+                }
+            </style>
             <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?></h1>
             <?php
                 $table = new WPInv_Customers_Table();
