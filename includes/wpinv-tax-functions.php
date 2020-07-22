@@ -488,3 +488,29 @@ function wpinv_vat_ip_lookup_callback( $args ) {
     <span id="wpinv-geoip2-errors" class="wpinv_errors" style="display:none;padding:4px;"></span>
     <?php
 }
+
+/**
+ * Filters the VAT rules to ensure that each item has a VAT rule.
+ * 
+ * @param string|bool|null $vat_rule
+ */
+function getpaid_filter_vat_rule( $vat_rule ) {
+    global $wpinv_euvat;
+
+    if ( empty( $vat_rule ) ) {        
+        return $wpinv_euvat->allow_vat_rules() ? 'digital' : 'physical';
+    }
+
+    return $vat_rule;
+}
+add_filter( 'wpinv_get_item_vat_rule', 'getpaid_filter_vat_rule' );
+
+/**
+ * Filters the VAT class to ensure that each item has a VAT class.
+ * 
+ * @param string|bool|null $vat_rule
+ */
+function getpaid_filter_vat_class( $vat_class ) {
+    return empty( $vat_class ) ? '_standard' : $vat_class;
+}
+add_filter( 'wpinv_get_item_vat_class', 'getpaid_filter_vat_class' );

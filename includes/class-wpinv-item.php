@@ -1,510 +1,995 @@
 <?php
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class WPInv_Item {
+/**
+ * Item Class
+ *
+ */
+class WPInv_Item  extends GetPaid_Data {
+
+    /**
+     * Object id.
+     * 
+     * Here for backwards compatibility and should not be accessed directly.
+     */
     public $ID = 0;
-    private $type;
-    private $title;
-    private $custom_id;
-    private $price;
-    private $status;
-    private $custom_name;
-    private $custom_singular_name;
-    private $vat_rule;
-    private $vat_class;
-    private $editable;
-    private $excerpt;
-    private $is_dynamic_pricing;
-    private $minimum_price;
-    private $is_recurring;
-    private $recurring_period;
-    private $recurring_interval;
-    private $recurring_limit;
-    private $free_trial;
-    private $trial_period;
-    private $trial_interval;
 
-    public $post_author = 0;
-    public $post_date = '0000-00-00 00:00:00';
-    public $post_date_gmt = '0000-00-00 00:00:00';
-    public $post_content = '';
-    public $post_title = '';
-    public $post_excerpt = '';
-    public $post_status = 'publish';
-    public $comment_status = 'open';
-    public $ping_status = 'open';
-    public $post_password = '';
-    public $post_name = '';
-    public $to_ping = '';
-    public $pinged = '';
-    public $post_modified = '0000-00-00 00:00:00';
-    public $post_modified_gmt = '0000-00-00 00:00:00';
-    public $post_content_filtered = '';
-    public $post_parent = 0;
-    public $guid = '';
-    public $menu_order = 0;
-    public $post_mime_type = '';
-    public $comment_count = 0;
-    public $filter;
-
-
-    public function __construct( $_id = false, $_args = array() ) {
-        $item = WP_Post::get_instance( $_id );
-        return $this->setup_item( $item );
-    }
-
-    private function setup_item( $item ) {
-        if( ! is_object( $item ) ) {
-            return false;
-        }
-
-        if( ! is_a( $item, 'WP_Post' ) ) {
-            return false;
-        }
-
-        if( 'wpi_item' !== $item->post_type ) {
-            return false;
-        }
-
-        foreach ( $item as $key => $value ) {
-            switch ( $key ) {
-                default:
-                    $this->$key = $value;
-                    break;
-            }
-        }
-
-        return true;
-    }
-
-    public function __get( $key ) {
-        if ( method_exists( $this, 'get_' . $key ) ) {
-            return call_user_func( array( $this, 'get_' . $key ) );
-        } else {
-            return new WP_Error( 'wpinv-item-invalid-property', sprintf( __( 'Can\'t get property %s', 'invoicing' ), $key ) );
-        }
-    }
-
-    public function create( $data = array(), $wp_error = false ) {
-        if ( $this->ID != 0 ) {
-            return false;
-        }
-
-        $defaults = array(
-            'post_type'   => 'wpi_item',
-            'post_status' => 'draft',
-            'post_title'  => __( 'New Invoice Item', 'invoicing' )
-        );
-
-        $args = wp_parse_args( $data, $defaults );
-
-        do_action( 'wpinv_item_pre_create', $args );
-
-        $id = wp_insert_post( $args, $wp_error );
-        if ($wp_error && is_wp_error($id)) {
-            return $id;
-        }
-        if ( !$id ) {
-            return false;
-        }
-        
-        $item = WP_Post::get_instance( $id );
-        
-        if (!empty($item) && !empty($data['meta'])) {
-            $this->ID = $item->ID;
-            $this->save_metas($data['meta']);
-        }
-        
-        // Set custom id if not set.
-        if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
-            $this->save_metas( array( 'custom_id' => $id ) );
-        }
-
-        do_action( 'wpinv_item_create', $id, $args );
-
-        return $this->setup_item( $item );
-    }
-    
-    public function update( $data = array(), $wp_error = false ) {
-        if ( !$this->ID > 0 ) {
-            return false;
-        }
-        
-        $data['ID'] = $this->ID;
-
-        do_action( 'wpinv_item_pre_update', $data );
-        
-        $id = wp_update_post( $data, $wp_error );
-        if ($wp_error && is_wp_error($id)) {
-            return $id;
-        }
-        
-        if ( !$id ) {
-            return false;
-        }
-
-        $item = WP_Post::get_instance( $id );
-        if (!empty($item) && !empty($data['meta'])) {
-            $this->ID = $item->ID;
-            $this->save_metas($data['meta']);
-        }
-
-        // Set custom id if not set.
-        if ( empty( $data['meta']['custom_id'] ) && !$this->get_custom_id() ) {
-            $this->save_metas( array( 'custom_id' => $id ) );
-        }
-
-        do_action( 'wpinv_item_update', $id, $data );
-
-        return $this->setup_item( $item );
-    }
-
-    public function get_ID() {
-        return $this->ID;
-    }
-
-    public function get_name() {
-        return get_the_title( $this->ID );
-    }
-    
-    public function get_title() {
-        return get_the_title( $this->ID );
-    }
-    
-    public function get_status() {
-        return get_post_status( $this->ID );
-    }
-    
-    public function get_summary() {
-        $post = get_post( $this->ID );
-        return !empty( $post->post_excerpt ) ? $post->post_excerpt : '';
-    }
-
-    public function get_price() {
-        if ( ! isset( $this->price ) ) {
-            $this->price = get_post_meta( $this->ID, '_wpinv_price', true );
-            
-            if ( $this->price ) {
-                $this->price = wpinv_sanitize_amount( $this->price );
-            } else {
-                $this->price = 0;
-            }
-        }
-        
-        return apply_filters( 'wpinv_get_item_price', $this->price, $this->ID );
-    }
-    
-    public function get_vat_rule() {
-        global $wpinv_euvat;
-        
-        if( !isset( $this->vat_rule ) ) {
-            $this->vat_rule = get_post_meta( $this->ID, '_wpinv_vat_rule', true );
-
-            if ( empty( $this->vat_rule ) ) {        
-                $this->vat_rule = $wpinv_euvat->allow_vat_rules() ? 'digital' : 'physical';
-            }
-        }
-        
-        return apply_filters( 'wpinv_get_item_vat_rule', $this->vat_rule, $this->ID );
-    }
-    
-    public function get_vat_class() {
-        if( !isset( $this->vat_class ) ) {
-            $this->vat_class = get_post_meta( $this->ID, '_wpinv_vat_class', true );
-
-            if ( empty( $this->vat_class ) ) {        
-                $this->vat_class = '_standard';
-            }
-        }
-        
-        return apply_filters( 'wpinv_get_item_vat_class', $this->vat_class, $this->ID );
-    }
-
-    public function get_type() {
-        if( ! isset( $this->type ) ) {
-            $this->type = get_post_meta( $this->ID, '_wpinv_type', true );
-
-            if ( empty( $this->type ) ) {
-                $this->type = 'custom';
-            }
-        }
-
-        return apply_filters( 'wpinv_get_item_type', $this->type, $this->ID );
-    }
-    
-    public function get_custom_id() {
-        $custom_id = get_post_meta( $this->ID, '_wpinv_custom_id', true );
-
-        return apply_filters( 'wpinv_get_item_custom_id', $custom_id, $this->ID );
-    }
-    
-    public function get_custom_name() {
-        $custom_name = get_post_meta( $this->ID, '_wpinv_custom_name', true );
-
-        return apply_filters( 'wpinv_get_item_custom_name', $custom_name, $this->ID );
-    }
-    
-    public function get_custom_singular_name() {
-        $custom_singular_name = get_post_meta( $this->ID, '_wpinv_custom_singular_name', true );
-
-        return apply_filters( 'wpinv_get_item_custom_singular_name', $custom_singular_name, $this->ID );
-    }
-    
-    public function get_editable() {
-        $editable = get_post_meta( $this->ID, '_wpinv_editable', true );
-
-        return apply_filters( 'wpinv_item_get_editable', $editable, $this->ID );
-    }
-    
-    public function get_excerpt() {
-        $excerpt = get_the_excerpt( $this->ID );
-        
-        return apply_filters( 'wpinv_item_get_excerpt', $excerpt, $this->ID );
-    }
-    
     /**
-     * Checks whether the item allows a user to set their own price
+	 * Which data store to load.
+	 *
+	 * @var string
+	 */
+    protected $data_store_name = 'item';
+
+    /**
+	 * This is the name of this object type.
+	 *
+	 * @var string
+	 */
+	protected $object_type = 'item';
+
+    /**
+	 * Item Data array. This is the core item data exposed in APIs.
+	 *
+	 * @since 1.0.19
+	 * @var array
+	 */
+	protected $data = array(
+		'parent_id'            => 0,
+		'status'               => 'draft',
+		'version'              => '',
+		'date_created'         => null,
+        'date_modified'        => null,
+        'name'                 => '',
+        'description'          => '',
+        'author'               => 1,
+        'price'                => 0,
+        'vat_rule'             => null,
+        'vat_class'            => null,
+        'type'                 => 'custom',
+        'custom_id'            => null,
+        'custom_name'          => null,
+        'custom_singular_name' => null,
+        'is_editable'          => 1,
+        'is_dynamic_pricing'   => null,
+        'minimum_price'        => null,
+        'is_recurring'         => null,
+        'recurring_period'     => null,
+        'recurring_interval'   => null,
+        'recurring_limit'      => null,
+        'is_free_trial'        => null,
+        'trial_period'         => null,
+        'signup_fee'           => null,
+        'trial_interval'       => null,
+    );
+
+    /**
+	 * Stores meta in cache for future reads.
+	 *
+	 * A group must be set to to enable caching.
+	 *
+	 * @var string
+	 */
+	protected $cache_group = 'getpaid_items';
+
+    /**
+     * Stores a reference to the original WP_Post object
+     * 
+     * @var WP_Post
      */
-    public function get_is_dynamic_pricing() {
-        $is_dynamic_pricing = get_post_meta( $this->ID, '_wpinv_dynamic_pricing', true );
+    protected $post = null; 
 
-        return (int) apply_filters( 'wpinv_item_get_is_dynamic_pricing', $is_dynamic_pricing, $this->ID );
+    /**
+	 * Get the item if ID is passed, otherwise the item is new and empty.
+	 *
+	 * @param  int|object|WPInv_Item|WP_Post $item Item to read.
+	 */
+	public function __construct( $item = 0 ) {
+		parent::__construct( $item );
 
+		if ( is_numeric( $item ) && $item > 0 ) {
+			$this->set_id( $item );
+		} elseif ( $item instanceof self ) {
+			$this->set_id( $item->get_id() );
+		} elseif ( ! empty( $item->ID ) ) {
+			$this->set_id( $item->ID );
+		} else {
+			$this->set_object_read( true );
+		}
+
+        // Load the datastore.
+		$this->data_store = GetPaid_Data_Store::load( $this->data_store_name );
+
+		if ( $this->get_id() > 0 ) {
+            $this->post = get_post( $this->get_id() );
+			$this->data_store->read( $this );
+		}
+	}
+
+    /*
+	|--------------------------------------------------------------------------
+	| CRUD methods
+	|--------------------------------------------------------------------------
+	|
+	| Methods which create, read, update and delete items from the database.
+	|
+    */
+
+    /*
+	|--------------------------------------------------------------------------
+	| Getters
+	|--------------------------------------------------------------------------
+    */
+
+    /**
+	 * Get parent item ID.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_parent_id( $context = 'view' ) {
+		return (int) $this->get_prop( 'parent_id', $context );
     }
 
     /**
-     * For dynamic prices, this is the minimum price that a user can set
-     */
-    public function get_minimum_price() {
-
-        //Fetch the minimum price and cast it to a float
-        $price = (float) get_post_meta( $this->ID, '_minimum_price', true );
-            
-        //Sanitize it
-        $price = wpinv_sanitize_amount( $price );
-
-        //Filter then return it
-        return apply_filters( 'wpinv_item_get_minimum_price', $price, $this->ID );
-
+	 * Get item status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_status( $context = 'view' ) {
+		return $this->get_prop( 'status', $context );
     }
 
-    public function get_is_recurring() {
-        $is_recurring = get_post_meta( $this->ID, '_wpinv_is_recurring', true );
-
-        return apply_filters( 'wpinv_item_get_is_recurring', $is_recurring, $this->ID );
-
+    /**
+	 * Get plugin version when the item was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_version( $context = 'view' ) {
+		return $this->get_prop( 'version', $context );
     }
-    
-    public function get_recurring_period( $full = false ) {
-        $period = get_post_meta( $this->ID, '_wpinv_recurring_period', true );
-        
-        if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
-            $period = 'D';
+
+    /**
+	 * Get date when the item was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created( $context = 'view' ) {
+		return $this->get_prop( 'date_created', $context );
+    }
+
+    /**
+	 * Get GMT date when the item was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created_gmt( $context = 'view' ) {
+        $date = $this->get_date_created( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
         }
-        
-        if ( $full ) {
-            switch( $period ) {
-                case 'D':
-                    $period = 'day';
-                break;
-                case 'W':
-                    $period = 'week';
-                break;
-                case 'M':
-                    $period = 'month';
-                break;
-                case 'Y':
-                    $period = 'year';
-                break;
-            }
+		return $date;
+    }
+
+    /**
+	 * Get date when the item was last modified.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_modified( $context = 'view' ) {
+		return $this->get_prop( 'date_modified', $context );
+    }
+
+    /**
+	 * Get GMT date when the item was last modified.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_modified_gmt( $context = 'view' ) {
+        $date = $this->get_date_modified( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
         }
-
-        return apply_filters( 'wpinv_item_recurring_period', $period, $full, $this->ID );
+		return $date;
     }
-    
-    public function get_recurring_interval() {
-        $interval = (int)get_post_meta( $this->ID, '_wpinv_recurring_interval', true );
-        
-        if ( !$interval > 0 ) {
-            $interval = 1;
-        }
 
-        return apply_filters( 'wpinv_item_recurring_interval', $interval, $this->ID );
+    /**
+	 * Get the item name.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_name( $context = 'view' ) {
+		return $this->get_prop( 'name', $context );
     }
-    
-    public function get_recurring_limit() {
-        $limit = get_post_meta( $this->ID, '_wpinv_recurring_limit', true );
 
-        return (int)apply_filters( 'wpinv_item_recurring_limit', $limit, $this->ID );
+    /**
+	 * Alias of self::get_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_title( $context = 'view' ) {
+		return $this->get_name( $context );
     }
-    
-    public function get_free_trial() {
-        $free_trial = get_post_meta( $this->ID, '_wpinv_free_trial', true );
 
-        return apply_filters( 'wpinv_item_get_free_trial', $free_trial, $this->ID );
+    /**
+	 * Get the item description.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_description( $context = 'view' ) {
+		return $this->get_prop( 'description', $context );
     }
-    
-    public function get_trial_period( $full = false ) {
-        $period = get_post_meta( $this->ID, '_wpinv_trial_period', true );
-        
-        if ( !in_array( $period, array( 'D', 'W', 'M', 'Y' ) ) ) {
-            $period = 'D';
-        }
-        
-        if ( $full ) {
-            switch( $period ) {
-                case 'D':
-                    $period = 'day';
-                break;
-                case 'W':
-                    $period = 'week';
-                break;
-                case 'M':
-                    $period = 'month';
-                break;
-                case 'Y':
-                    $period = 'year';
-                break;
-            }
-        }
 
-        return apply_filters( 'wpinv_item_trial_period', $period, $full, $this->ID );
+    /**
+	 * Alias of self::get_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_excerpt( $context = 'view' ) {
+		return $this->get_description( $context );
     }
-    
-    public function get_trial_interval() {
-        $interval = absint( get_post_meta( $this->ID, '_wpinv_trial_interval', true ) );
-        
-        if ( !$interval > 0 ) {
-            $interval = 1;
-        }
 
-        return apply_filters( 'wpinv_item_trial_interval', $interval, $this->ID );
+    /**
+	 * Alias of self::get_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_summary( $context = 'view' ) {
+		return $this->get_description( $context );
     }
-    
+
+    /**
+	 * Get the owner of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_author( $context = 'view' ) {
+		return (int) $this->get_prop( 'author', $context );
+    }
+
+    /**
+	 * Get the price of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_price( $context = 'view' ) {
+        return wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
+    }
+
+    /**
+	 * Returns a formated price.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
     public function get_the_price() {
         $item_price = wpinv_price( wpinv_format_amount( $this->get_price() ) );
-        
+
         return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
     }
-    
-    public function is_recurring() {
-        $is_recurring = $this->get_is_recurring();
 
-        return (bool)apply_filters( 'wpinv_is_recurring_item', $is_recurring, $this->ID );
+    /**
+	 * Get the VAT rule of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_vat_rule( $context = 'view' ) {
+        return $this->get_prop( 'vat_rule', $context );
     }
-    
-    public function has_free_trial() {
-        $free_trial = $this->is_recurring() && $this->get_free_trial() ? true : false;
 
-        return (bool)apply_filters( 'wpinv_item_has_free_trial', $free_trial, $this->ID );
+    /**
+	 * Get the VAT class of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_vat_class( $context = 'view' ) {
+        return $this->get_prop( 'vat_class', $context );
     }
 
-    public function is_free() {
-        $is_free = false;
-        
-        $price = get_post_meta( $this->ID, '_wpinv_price', true );
+    /**
+	 * Get the type of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_type( $context = 'view' ) {
+        return $this->get_prop( 'type', $context );
+    }
 
-        if ( (float)$price == 0 ) {
-            $is_free = true;
+    /**
+	 * Get the custom id of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_custom_id( $context = 'view' ) {
+        return $this->get_prop( 'custom_id', $context );
+    }
+
+    /**
+	 * Get the custom name of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_custom_name( $context = 'view' ) {
+        return $this->get_prop( 'custom_name', $context );
+    }
+
+    /**
+	 * Get the custom singular name of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_custom_singular_name( $context = 'view' ) {
+        return $this->get_prop( 'custom_singular_name', $context );
+    }
+
+    /**
+	 * Checks if an item is editable..
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_editable( $context = 'view' ) {
+        return $this->get_prop( 'is_editable', $context );
+    }
+
+    /**
+	 * Alias of self::get_is_editable().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_editable( $context = 'view' ) {
+		return $this->get_is_editable( $context );
+    }
+
+    /**
+	 * Checks if dynamic pricing is enabled.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_dynamic_pricing( $context = 'view' ) {
+        return $this->get_prop( 'is_dynamic_pricing', $context );
+    }
+
+    /**
+	 * Returns the minimum price if dynamic pricing is enabled.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_minimum_price( $context = 'view' ) {
+        return $this->get_prop( 'minimum_price', $context );
+    }
+
+    /**
+	 * Checks if this is a recurring item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_recurring( $context = 'view' ) {
+        return $this->get_prop( 'is_recurring', $context );
+    }
+
+    /**
+	 * Get the recurring period.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $full Return abbreviation or in full.
+	 * @return string
+	 */
+	public function get_recurring_period( $full = false ) {
+        $period = $this->get_prop( 'recurring_period', 'view' );
+
+        if ( $full && ! is_bool( $full ) ) {
+            $full = false;
         }
+
+        return getpaid_sanitize_recurring_period( $period, $full );
+    }
+
+    /**
+	 * Get the recurring interval.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_recurring_interval( $context = 'view' ) {
+        return (int) $this->get_prop( 'recurring_interval', $context );
+    }
+
+    /**
+	 * Get the recurring limit.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_recurring_limit( $context = 'view' ) {
+        return (int) $this->get_prop( 'recurring_limit', $context );
+    }
+
+    /**
+	 * Checks if we have a free trial.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_free_trial( $context = 'view' ) {
+        return $this->get_prop( 'is_free_trial', $context );
+    }
+
+    /**
+	 * Alias for self::get_is_free_trial().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_free_trial( $context = 'view' ) {
+        return $this->get_is_free_trial( $context );
+    }
+
+    /**
+	 * Get the trial period.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $full Return abbreviation or in full.
+	 * @return string
+	 */
+	public function get_trial_period( $full = false ) {
+        $period = $this->get_prop( 'trial_period', 'view' );
+
+        if ( $full && ! is_bool( $full ) ) {
+            $full = false;
+        }
+
+        return getpaid_sanitize_recurring_period( $period, $full );
+    }
+
+    /**
+	 * Get the trial interval.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_trial_interval( $context = 'view' ) {
+        return (int) $this->get_prop( 'trial_interval', $context );
+    }
+
+    /**
+	 * Get the sign up fee.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_signup_fee( $context = 'view' ) {
+        return $this->get_prop( 'signup_fee', $context );
+    }
+
+    /**
+     * Margic method for retrieving a property.
+     */
+    public function __get( $key ) {
+
+        // Check if we have a helper method for that.
+        if ( method_exists( $this, 'get_' . $key ) ) {
+            return call_user_func( array( $this, 'get_' . $key ) );
+        }
+        
+        // Check if the key is in the associated $post object.
+        if ( ! empty( $this->post ) && isset( $this->post->$key ) ) {
+            return $this->post->$key;
+        }
+
+        return $this->get_prop( $key );
+
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| Setters
+	|--------------------------------------------------------------------------
+	|
+	| Functions for setting order data. These should not update anything in the
+	| database itself and should only change what is stored in the class
+	| object.
+    */
+    
+    /**
+	 * Set parent order ID.
+	 *
+	 * @since 1.0.19
+	 */
+	public function set_parent_id( $value ) {
+		if ( $value && ( $value === $this->get_id() || ! get_post( $value ) ) ) {
+			return;
+		}
+		$this->set_prop( 'parent_id', absint( $value ) );
+	}
+
+    /**
+	 * Sets item status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $status New status.
+	 * @return array details of change.
+	 */
+	public function set_status( $status ) {
+        $old_status = $this->get_status();
+        
+        $this->set_prop( 'status', $status );
+
+		return array(
+			'from' => $old_status,
+			'to'   => $status,
+		);
+    }
+
+    /**
+	 * Set plugin version when the item was created.
+	 *
+	 * @since 1.0.19
+	 * @param string $value Value to set.
+	 */
+	public function set_version( $value ) {
+		return $this->set_prop( 'version', $value );
+    }
+
+    /**
+	 * Set date when the item was created.
+	 *
+	 * @since 1.0.19
+	 * @param string $value Value to set.
+	 */
+	public function set_date_created( $value ) {
+		return $this->set_prop( 'date_created', $value );
+    }
+
+    /**
+	 * Set date when the item was last modified.
+	 *
+	 * @since 1.0.19
+	 * @param string $value Value to set.
+	 */
+	public function set_date_modified( $value ) {
+		return $this->set_prop( 'date_modified', $value );
+    }
+
+    /**
+	 * Set the item name.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value New name.
+	 * @return string
+	 */
+	public function set_name( $value ) {
+		return $this->set_prop( 'name', $value );
+    }
+
+    /**
+	 * Alias of self::set_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $value New name.
+	 * @return string
+	 */
+	public function set_title( $value ) {
+		return $this->set_name( $value );
+    }
+
+    /**
+	 * Set the item description.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value New description.
+	 * @return string
+	 */
+	public function set_description( $value ) {
+		return $this->set_prop( 'description', $value );
+    }
+
+    /**
+	 * Alias of self::set_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $value New description.
+	 * @return string
+	 */
+	public function set_excerpt( $value ) {
+		return $this->set_description( $value );
+    }
+
+    /**
+	 * Alias of self::get_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $value New description.
+	 */
+	public function set_summary( $value ) {
+		return $this->set_description( $value );
+    }
+
+    /**
+	 * Set the owner of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value New author.
+	 */
+	public function set_author( $value ) {
+		$this->set_prop( 'author', (int) $value );
+    }
+
+    /**
+	 * Set the price of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value New price.
+	 * @return string
+	 */
+	public function set_price( $value ) {
+        $this->set_prop( 'price', wpinv_sanitize_amount( $value ) );
+    }
+
+    /**
+	 * Set the VAT rule of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new rule.
+	 */
+	public function set_vat_rule( $value ) {
+        $this->set_prop( 'price', $value );
+    }
+
+    /**
+	 * Set the VAT class of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new class.
+	 */
+	public function set_vat_class( $value ) {
+        $this->set_prop( 'vat_class', $value );
+    }
+
+    /**
+	 * Set the type of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new item type.
+	 * @return string
+	 */
+	public function set_type( $value ) {
+
+        if ( empty( $value ) ) {
+            $value = 'custom';
+        }
+
+        $this->set_prop( 'type', $value );
+    }
+
+    /**
+	 * Set the custom id of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new custom id.
+	 */
+	public function set_custom_id( $value ) {
+        $this->set_prop( 'custom_id', $value );
+    }
+
+    /**
+	 * Set the custom name of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new custom id.
+	 */
+	public function set_custom_name( $value ) {
+        $this->set_prop( 'custom_name', $value );
+    }
+
+    /**
+	 * Set the custom singular name of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new custom id.
+	 */
+	public function set_custom_singular_name( $value ) {
+        $this->set_prop( 'custom_singular_name', $value );
+    }
+
+    /**
+	 * Sets if an item is editable..
+	 *
+	 * @since 1.0.19
+	 * @param  bool $value whether or not the item is editable.
+	 */
+	public function set_is_editable( $value ) {
+        $this->set_prop( 'is_editable', (int) $value );
+    }
+
+    /**
+	 * Sets if dynamic pricing is enabled.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $value whether or not dynamic pricing is allowed.
+	 */
+	public function set_is_dynamic_pricing( $value ) {
+        $this->get_prop( 'is_dynamic_pricing', (int) $value );
+    }
+
+    /**
+	 * Sets the minimum price if dynamic pricing is enabled.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value minimum price.
+	 */
+	public function set_minimum_price( $value ) {
+        $this->set_prop( 'minimum_price',  wpinv_sanitize_amount( $value ) );
+    }
+
+    /**
+	 * Sets if this is a recurring item.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $value whether or not dynamic pricing is allowed.
+	 */
+	public function set_is_recurring( $value ) {
+        $this->set_prop( 'is_recurring', (int) $value );
+    }
+
+    /**
+	 * Set the recurring period.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value new period.
+	 */
+	public function set_recurring_period( $value ) {
+        $this->set_prop( 'recurring_period', $value );
+    }
+
+    /**
+	 * Set the recurring interval.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value recurring interval.
+	 */
+	public function set_recurring_interval( $value ) {
+        return $this->set_prop( 'recurring_interval', (int) $value );
+    }
+
+    /**
+	 * Get the recurring limit.
+	 * @since 1.0.19
+	 * @param  int $value The recurring limit.
+	 * @return int
+	 */
+	public function set_recurring_limit( $value ) {
+        $this->get_prop( 'recurring_limit', (int) $value );
+    }
+
+    /**
+	 * Checks if we have a free trial.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $value whether or not it has a free trial.
+	 */
+	public function set_is_free_trial( $value ) {
+        $this->set_prop( 'is_free_trial', (int) $value );
+    }
+
+    /**
+	 * Set the trial period.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value trial period.
+	 */
+	public function set_trial_period( $value ) {
+        $this->set_prop( 'trial_period', $value );
+    }
+
+    /**
+	 * Set the trial interval.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value trial interval.
+	 */
+	public function Set_trial_interval( $value ) {
+        $this->set_prop( 'trial_interval', $value );
+    }
+
+    /**
+	 * Set the sign up fee.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value The signup fee.
+	 */
+	public function set_signup_fee( $value ) {
+        $this->set_prop( 'signup_fee', $value );
+    }
+
+    /**
+     * Create an item. For backwards compatibilty.
+     * 
+     * @deprecated
+     */
+    public function create( $data = array(), $wp_error = false ) {
+        $this->save();
+    }
+
+    /**
+     * Updates an item. For backwards compatibilty.
+     * 
+     * @deprecated
+     */
+    public function update( $data = array(), $wp_error = false ) {
+        $this->save();
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| Conditionals
+	|--------------------------------------------------------------------------
+	|
+	| Checks if a condition is true or false.
+	|
+	*/
+
+    /**
+	 * Checks whether the item is recurring.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+	public function is_recurring() {
+        (bool) $this->get_is_recurring();
+    }
+
+    /**
+	 * Checks whether the item has a free trial.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+    public function has_free_trial() {
+        $has_trial = $this->is_recurring() && (bool) $this->get_free_trial() ? true : false;
+
+        return (bool) apply_filters( 'wpinv_item_has_free_trial', $has_trial, $this->ID, $this );
+    }
+
+    /**
+	 * Checks whether the item has a sign up fee.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+    public function has_signup_fee() {
+        $has_signup_fee = $this->is_recurring() && $this->get_signup_fee() > 0 ? true : false;
+
+        return (bool) apply_filters( 'wpinv_item_has_signup_fee', $has_signup_fee, $this->ID, $this );
+    }
+
+    /**
+	 * Checks whether the item is free.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+    public function is_free() {
+        $price   = (float) $this->get_price();
+        $is_free = $price == 0;
 
         return (bool) apply_filters( 'wpinv_is_free_item', $is_free, $this->ID );
 
     }
+
+    /**
+	 * Checks the item status against a passed in status.
+	 *
+	 * @param array|string $status Status to check.
+	 * @return bool
+	 */
+	public function has_status( $status ) {
+		return apply_filters( 'getpaid_item_has_status', ( is_array( $status ) && in_array( $this->get_status(), $status, true ) ) || $this->get_status() === $status, $this, $status );
+    }
     
+    /**
+	 * Checks the item type against a passed in types.
+	 *
+	 * @param array|string $type Type to check.
+	 * @return bool
+	 */
+	public function is_type( $type ) {
+		return apply_filters( 'getpaid_item_is_type', ( is_array( $type ) && in_array( $this->get_type(), $type, true ) ) || $this->get_type() === $type, $this, $type );
+	}
+
+    /**
+	 * Checks whether the item is editable.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
     public function is_editable() {
-        $editable = $this->get_editable();
-
-        $is_editable = $editable === 0 || $editable === '0' ? false : true;
-
+        $is_editable = (int) $this->get_is_editable();
         return (bool) apply_filters( 'wpinv_item_is_editable', $is_editable, $this->ID );
     }
-    
-    public function save_metas( $metas = array() ) {
-        if ( empty( $metas ) ) {
-            return false;
-        }
-        
-        foreach ( $metas as $meta_key => $meta_value ) {
-            $meta_key = strpos($meta_key, '_wpinv_') !== 0 ? '_wpinv_' . $meta_key : $meta_key;
-            
-            $this->update_meta($meta_key, $meta_value);
-        }
 
-        return true;
-    }
 
-    public function update_meta( $meta_key = '', $meta_value = '', $prev_value = '' ) {
-        if ( empty( $meta_key ) ) {
-            return false;
-        }
-        
-        if( '_wpinv_minimum_price' === $meta_key ) {
-            $meta_key = '_minimum_price';
-        }
-
-        $meta_value = apply_filters( 'wpinv_update_item_meta_' . $meta_key, $meta_value, $this->ID );
-
-        return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
-    }
-    
-    public function get_fees( $type = 'fee', $item_id = 0 ) {
-        global $wpi_session;
-        
-        $fees = $wpi_session->get( 'wpi_cart_fees' );
-
-        if ( ! wpinv_get_cart_contents() ) {
-            // We can only get item type fees when the cart is empty
-            $type = 'custom';
-        }
-
-        if ( ! empty( $fees ) && ! empty( $type ) && 'all' !== $type ) {
-            foreach( $fees as $key => $fee ) {
-                if( ! empty( $fee['type'] ) && $type != $fee['type'] ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        if ( ! empty( $fees ) && ! empty( $item_id ) ) {
-            // Remove fees that don't belong to the specified Item
-            foreach ( $fees as $key => $fee ) {
-                if ( (int) $item_id !== (int)$fee['custom_id'] ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        if ( ! empty( $fees ) ) {
-            // Remove fees that belong to a specific item but are not in the cart
-            foreach( $fees as $key => $fee ) {
-                if( empty( $fee['custom_id'] ) ) {
-                    continue;
-                }
-
-                if ( !wpinv_item_in_cart( $fee['custom_id'] ) ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        return ! empty( $fees ) ? $fees : array();
-    }
-    
+    /**
+	 * Checks whether the item is purchasable.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
     public function can_purchase() {
-        $can_purchase = true;
+        $can_purchase = null != $this->get_id();
 
-        if ( !current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
+        if ( ! current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
             $can_purchase = false;
         }
 
-        return (bool)apply_filters( 'wpinv_can_purchase_item', $can_purchase, $this );
+        return (bool) apply_filters( 'wpinv_can_purchase_item', $can_purchase, $this );
     }
 
     /**
-     * Checks whether this item supports dynamic pricing or not
-     */
+	 * Checks whether the item supports dynamic pricing.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
     public function supports_dynamic_pricing() {
         return (bool) apply_filters( 'wpinv_item_supports_dynamic_pricing', true, $this );
     }

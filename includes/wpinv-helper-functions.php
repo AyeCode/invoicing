@@ -700,6 +700,19 @@ function wpinv_get_current_page_url( $nocache = false ) {
     return $uri;
 }
 
+/**
+ * Define a constant if it is not already defined.
+ *
+ * @since 1.0.19
+ * @param string $name  Constant name.
+ * @param mixed  $value Value.
+ */
+function getpaid_maybe_define_constant( $name, $value ) {
+	if ( ! defined( $name ) ) {
+		define( $name, $value );
+	}
+}
+
 function wpinv_get_php_arg_separator_output() {
 	return ini_get( 'arg_separator.output' );
 }
