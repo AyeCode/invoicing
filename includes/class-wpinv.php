@@ -135,8 +135,20 @@ class WPInv_Plugin {
 
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
         $wpinv_options = wpinv_get_settings();
-        
+
+        // Load composer packages.
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
+
+        // load AUI
+		require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
+
+        // Register autoloader.
+		try {
+			spl_autoload_register( array( $this, 'autoload' ), true );
+		} catch ( Exception $e ) {
+			log_noptin_message( $e->getMessage() );
+        }
+
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
@@ -236,7 +248,50 @@ class WPInv_Plugin {
         
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/install.php' );
     }
-    
+
+    /**
+	 * Class autoloader
+	 *
+	 * @param       string $class_name The name of the class to load.
+	 * @access      public
+	 * @since       1.0.19
+	 * @return      void
+	 */
+	public function autoload( $class_name ) {
+
+		// Normalize the class name...
+		$class_name  = strtolower( $class_name );
+
+		// ... and make sure it is our class.
+		if ( false === strpos( $class_name, 'getpaid_' ) && false === strpos( $class_name, 'wpinv_' ) ) {
+			return;
+		}
+
+		// Next, prepare the file name from the class.
+		$file_name = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
+
+		// And an array of possible locations in order of importance.
+		$locations = array(
+			'includes',
+			'includes/data-stores',
+            'includes/admin',
+            'includes/admin/meta-boxes'
+		);
+
+		// Base path of the classes.
+		$plugin_path = untrailingslashit( WPINV_PLUGIN_DIR );
+
+		foreach ( $locations as $location ) {
+
+			if ( file_exists( "$plugin_path/$location/$file_name" ) ) {
+				include "$plugin_path/$location/$file_name";
+				break;
+			}
+
+		}
+
+	}
+
     public function init() {
     }
     

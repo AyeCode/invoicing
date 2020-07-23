@@ -2037,3 +2037,31 @@ textarea.wpi-email_overdue_content {
     -ms-user-select: none;
     user-select: none;
 }
+
+.getpaid-mb-form-field {
+    padding: 5px 20px 5px 162px!important;
+    margin: 9px 0;
+    line-height: 24px;
+}
+
+.getpaid-mb-form-field label{
+    float: left;
+    width: 150px;
+    padding: 0;
+    margin: 0 0 0 -150px;
+}
+
+.getpaid-mb-form-field .dashicons{
+    vertical-align: bottom;
+}
+
+.getpaid-mb-form-field.form-field input[type="text"],
+.getpaid-mb-form-field.form-field input[type="password"],
+.getpaid-mb-form-field.form-field input[type="email"],
+.getpaid-mb-form-field.form-field input[type="number"], 
+.getpaid-mb-form-field.form-field input[type="tel"], 
+.getpaid-mb-form-field.form-field input[type="url"], 
+.getpaid-mb-form-field.form-field textarea {
+    float: left;
+    width: 50%;
+}

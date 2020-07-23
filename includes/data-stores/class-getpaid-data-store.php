@@ -21,7 +21,7 @@ class GetPaid_Data_Store {
 	/**
 	 * Contains an array of default GetPaid supported data stores.
 	 * Format of object name => class name.
-	 * Example: 'item' => 'GetPaid_Item_Data_Store_CPT'
+	 * Example: 'item' => 'GetPaid_Item_Data_Store'
 	 * You can also pass something like item-<type> for item stores and
 	 * that type will be used first when available, if a store is requested like
 	 * this and doesn't exist, then the store would fall back to 'item'.
@@ -30,7 +30,7 @@ class GetPaid_Data_Store {
 	 * @var array
 	 */
 	private $stores = array(
-		'item' => 'GetPaid_Item_Data_Store_CPT',
+		'item' => 'GetPaid_Item_Data_Store',
 	);
 
 	/**

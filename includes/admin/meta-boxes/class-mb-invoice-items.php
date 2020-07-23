@@ -1,10 +1,26 @@
 <?php
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+
+/**
+ * Item Data
+ *
+ * Display the item data meta box.
+ *
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
 }
 
+/**
+ * WPInv_Meta_Box_Items Class.
+ */
 class WPInv_Meta_Box_Items {
+
+    /**
+	 * Output the metabox.
+	 *
+	 * @param WP_Post $post
+	 */
     public static function output( $post ) {
         global $wpinv_euvat, $ajax_cart_details;
 

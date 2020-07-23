@@ -83,7 +83,7 @@ abstract class GetPaid_Data {
 	 * Contains a reference to the data store for this class.
 	 *
 	 * @since 1.0.19
-	 * @var object
+	 * @var GetPaid_Data_Store
 	 */
 	protected $data_store;
 
@@ -95,6 +95,14 @@ abstract class GetPaid_Data {
 	 * @var string
 	 */
 	protected $cache_group = '';
+
+	/**
+	 * Stores the last error.
+	 *
+	 * @since 1.0.19
+	 * @var string
+	 */
+	public $last_error = '';
 
 	/**
 	 * Stores additional meta data.
@@ -540,7 +548,6 @@ abstract class GetPaid_Data {
 		}
 
 		if ( ! empty( $this->cache_group ) ) {
-			// Prefix by group allows invalidation by group until https://core.trac.wordpress.org/ticket/4476 is implemented.
 			$cache_key = GetPaid_Cache_Helper::get_cache_prefix( $this->cache_group ) . GetPaid_Cache_Helper::get_cache_prefix( 'object_' . $this->get_id() ) . 'object_meta_' . $this->get_id();
 		}
 
@@ -673,6 +680,7 @@ abstract class GetPaid_Data {
 					$errors = new WP_Error();
 				}
 				$errors->add( $e->getCode(), $e->getMessage() );
+				$this->last_error = $e->getMessage();
 			}
 		}
 

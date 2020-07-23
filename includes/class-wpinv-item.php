@@ -10,13 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WPInv_Item  extends GetPaid_Data {
 
     /**
-     * Object id.
-     * 
-     * Here for backwards compatibility and should not be accessed directly.
-     */
-    public $ID = 0;
-
-    /**
 	 * Which data store to load.
 	 *
 	 * @var string
@@ -104,8 +97,10 @@ class WPInv_Item  extends GetPaid_Data {
 
 		if ( $this->get_id() > 0 ) {
             $this->post = get_post( $this->get_id() );
+            $this->ID   = $this->get_id();
 			$this->data_store->read( $this );
-		}
+        }
+
 	}
 
     /*
@@ -281,10 +276,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return float
 	 */
 	public function get_price( $context = 'view' ) {
-        return wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
+        return (float) wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
     }
 
     /**
@@ -371,10 +366,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_is_editable( $context = 'view' ) {
-        return $this->get_prop( 'is_editable', $context );
+        return (int) $this->get_prop( 'is_editable', $context );
     }
 
     /**
@@ -382,7 +377,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_editable( $context = 'view' ) {
 		return $this->get_is_editable( $context );
@@ -393,10 +388,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_is_dynamic_pricing( $context = 'view' ) {
-        return $this->get_prop( 'is_dynamic_pricing', $context );
+        return (int) $this->get_prop( 'is_dynamic_pricing', $context );
     }
 
     /**
@@ -404,10 +399,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return float
 	 */
 	public function get_minimum_price( $context = 'view' ) {
-        return $this->get_prop( 'minimum_price', $context );
+        return (float) wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) );
     }
 
     /**
@@ -415,10 +410,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_is_recurring( $context = 'view' ) {
-        return $this->get_prop( 'is_recurring', $context );
+        return (int) $this->get_prop( 'is_recurring', $context );
     }
 
     /**
@@ -465,10 +460,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_is_free_trial( $context = 'view' ) {
-        return $this->get_prop( 'is_free_trial', $context );
+        return (int) $this->get_prop( 'is_free_trial', $context );
     }
 
     /**
@@ -476,7 +471,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_free_trial( $context = 'view' ) {
         return $this->get_is_free_trial( $context );
@@ -504,7 +499,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_trial_interval( $context = 'view' ) {
         return (int) $this->get_prop( 'trial_interval', $context );
@@ -518,7 +513,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_signup_fee( $context = 'view' ) {
-        return $this->get_prop( 'signup_fee', $context );
+        return (float) $this->get_prop( 'signup_fee', $context );
     }
 
     /**
@@ -530,7 +525,7 @@ class WPInv_Item  extends GetPaid_Data {
         if ( method_exists( $this, 'get_' . $key ) ) {
             return call_user_func( array( $this, 'get_' . $key ) );
         }
-        
+
         // Check if the key is in the associated $post object.
         if ( ! empty( $this->post ) && isset( $this->post->$key ) ) {
             return $this->post->$key;
@@ -549,7 +544,7 @@ class WPInv_Item  extends GetPaid_Data {
 	| database itself and should only change what is stored in the class
 	| object.
     */
-    
+
     /**
 	 * Set parent order ID.
 	 *
@@ -571,7 +566,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function set_status( $status ) {
         $old_status = $this->get_status();
-        
+
         $this->set_prop( 'status', $status );
 
 		return array(
@@ -584,10 +579,9 @@ class WPInv_Item  extends GetPaid_Data {
 	 * Set plugin version when the item was created.
 	 *
 	 * @since 1.0.19
-	 * @param string $value Value to set.
 	 */
 	public function set_version( $value ) {
-		return $this->set_prop( 'version', $value );
+		$this->set_prop( 'version', $value );
     }
 
     /**
@@ -595,9 +589,18 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param string $value Value to set.
+     * @return bool Whether or not the date was set.
 	 */
 	public function set_date_created( $value ) {
-		return $this->set_prop( 'date_created', $value );
+        $date = strtotime( $value );
+
+        if ( $date ) {
+            $this->set_prop( 'date_created', date( 'Y-m-d H:i:s', $date ) );
+            return true;
+        }
+
+        return false;
+
     }
 
     /**
@@ -605,9 +608,18 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param string $value Value to set.
+     * @return bool Whether or not the date was set.
 	 */
 	public function set_date_modified( $value ) {
-		return $this->set_prop( 'date_modified', $value );
+        $date = strtotime( $value );
+
+        if ( $date ) {
+            $this->set_prop( 'date_modified', date( 'Y-m-d H:i:s', $date ) );
+            return true;
+        }
+
+        return false;
+
     }
 
     /**
@@ -615,10 +627,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $value New name.
-	 * @return string
 	 */
 	public function set_name( $value ) {
-		return $this->set_prop( 'name', $value );
+        $name = sanitize_text_field( $value );
+		$this->set_prop( 'name', $name );
     }
 
     /**
@@ -626,10 +638,9 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $value New name.
-	 * @return string
 	 */
 	public function set_title( $value ) {
-		return $this->set_name( $value );
+		$this->set_name( $value );
     }
 
     /**
@@ -637,10 +648,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $value New description.
-	 * @return string
 	 */
 	public function set_description( $value ) {
-		return $this->set_prop( 'description', $value );
+        $description = wp_kses_post( $value );
+		return $this->set_prop( 'description', $description );
     }
 
     /**
@@ -648,20 +659,19 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $value New description.
-	 * @return string
 	 */
 	public function set_excerpt( $value ) {
-		return $this->set_description( $value );
+		$this->set_description( $value );
     }
 
     /**
-	 * Alias of self::get_description().
+	 * Alias of self::set_description().
 	 *
 	 * @since 1.0.19
 	 * @param  string $value New description.
 	 */
 	public function set_summary( $value ) {
-		return $this->set_description( $value );
+		$this->set_description( $value );
     }
 
     /**
@@ -679,10 +689,9 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value New price.
-	 * @return string
-	 */
+]	 */
 	public function set_price( $value ) {
-        $this->set_prop( 'price', wpinv_sanitize_amount( $value ) );
+        $this->set_prop( 'price', (float) wpinv_sanitize_amount( $value ) );
     }
 
     /**
@@ -692,7 +701,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  string $value new rule.
 	 */
 	public function set_vat_rule( $value ) {
-        $this->set_prop( 'price', $value );
+        $this->set_prop( 'vat_rule', $value );
     }
 
     /**
@@ -735,7 +744,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * Set the custom name of the item.
 	 *
 	 * @since 1.0.19
-	 * @param  string $value new custom id.
+	 * @param  string $value new custom name.
 	 */
 	public function set_custom_name( $value ) {
         $this->set_prop( 'custom_name', $value );
@@ -745,7 +754,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * Set the custom singular name of the item.
 	 *
 	 * @since 1.0.19
-	 * @param  string $value new custom id.
+	 * @param  string $value new custom singular name.
 	 */
 	public function set_custom_singular_name( $value ) {
         $this->set_prop( 'custom_singular_name', $value );
@@ -755,17 +764,19 @@ class WPInv_Item  extends GetPaid_Data {
 	 * Sets if an item is editable..
 	 *
 	 * @since 1.0.19
-	 * @param  bool $value whether or not the item is editable.
+	 * @param  int|bool $value whether or not the item is editable.
 	 */
 	public function set_is_editable( $value ) {
-        $this->set_prop( 'is_editable', (int) $value );
+		if ( is_numeric( $value ) ) {
+			$this->set_prop( 'is_editable', (int) $value );
+		}
     }
 
     /**
 	 * Sets if dynamic pricing is enabled.
 	 *
 	 * @since 1.0.19
-	 * @param  bool $value whether or not dynamic pricing is allowed.
+	 * @param  int|bool $value whether or not dynamic pricing is allowed.
 	 */
 	public function set_is_dynamic_pricing( $value ) {
         $this->get_prop( 'is_dynamic_pricing', (int) $value );
@@ -778,14 +789,14 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  float $value minimum price.
 	 */
 	public function set_minimum_price( $value ) {
-        $this->set_prop( 'minimum_price',  wpinv_sanitize_amount( $value ) );
+        $this->set_prop( 'minimum_price',  (float) wpinv_sanitize_amount( $value ) );
     }
 
     /**
 	 * Sets if this is a recurring item.
 	 *
 	 * @since 1.0.19
-	 * @param  bool $value whether or not dynamic pricing is allowed.
+	 * @param  int|bool $value whether or not dynamic pricing is allowed.
 	 */
 	public function set_is_recurring( $value ) {
         $this->set_prop( 'is_recurring', (int) $value );
@@ -866,8 +877,17 @@ class WPInv_Item  extends GetPaid_Data {
      * 
      * @deprecated
      */
-    public function create( $data = array(), $wp_error = false ) {
-        $this->save();
+    public function create( $data = array() ) {
+
+		// Set the properties.
+		if ( is_array( $data ) ) {
+			$this->set_props( $data );
+		}
+
+		// Save the item.
+		$this->save();
+		
+		return true;
     }
 
     /**
@@ -875,8 +895,8 @@ class WPInv_Item  extends GetPaid_Data {
      * 
      * @deprecated
      */
-    public function update( $data = array(), $wp_error = false ) {
-        $this->save();
+    public function update( $data = array() ) {
+        $this->create( $data );
     }
 
     /*
@@ -895,7 +915,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
 	public function is_recurring() {
-        (bool) $this->get_is_recurring();
+        return (bool) $this->get_is_recurring();
     }
 
     /**
@@ -906,7 +926,6 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
     public function has_free_trial() {
         $has_trial = $this->is_recurring() && (bool) $this->get_free_trial() ? true : false;
-
         return (bool) apply_filters( 'wpinv_item_has_free_trial', $has_trial, $this->ID, $this );
     }
 
@@ -918,7 +937,6 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
     public function has_signup_fee() {
         $has_signup_fee = $this->is_recurring() && $this->get_signup_fee() > 0 ? true : false;
-
         return (bool) apply_filters( 'wpinv_item_has_signup_fee', $has_signup_fee, $this->ID, $this );
     }
 
@@ -929,11 +947,8 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
     public function is_free() {
-        $price   = (float) $this->get_price();
-        $is_free = $price == 0;
-
-        return (bool) apply_filters( 'wpinv_is_free_item', $is_free, $this->ID );
-
+        $is_free   = $this->get_price() == 0;
+        return (bool) apply_filters( 'wpinv_is_free_item', $is_free, $this->ID, $this );
     }
 
     /**
@@ -943,9 +958,10 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
 	public function has_status( $status ) {
-		return apply_filters( 'getpaid_item_has_status', ( is_array( $status ) && in_array( $this->get_status(), $status, true ) ) || $this->get_status() === $status, $this, $status );
+		$has_status = ( is_array( $status ) && in_array( $this->get_status(), $status, true ) ) || $this->get_status() === $status;
+		return (bool) apply_filters( 'getpaid_item_has_status', $has_status, $this, $status );
     }
-    
+
     /**
 	 * Checks the item type against a passed in types.
 	 *
@@ -953,7 +969,8 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
 	public function is_type( $type ) {
-		return apply_filters( 'getpaid_item_is_type', ( is_array( $type ) && in_array( $this->get_type(), $type, true ) ) || $this->get_type() === $type, $this, $type );
+		$is_type = ( is_array( $type ) && in_array( $this->get_type(), $type, true ) ) || $this->get_type() === $type;
+		return (bool) apply_filters( 'getpaid_item_is_type', $is_type, $this, $type );
 	}
 
     /**
@@ -963,10 +980,9 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
     public function is_editable() {
-        $is_editable = (int) $this->get_is_editable();
-        return (bool) apply_filters( 'wpinv_item_is_editable', $is_editable, $this->ID );
+        $is_editable = $this->get_is_editable();
+        return (bool) apply_filters( 'wpinv_item_is_editable', $is_editable, $this->ID, $this );
     }
-
 
     /**
 	 * Checks whether the item is purchasable.

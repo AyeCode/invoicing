@@ -1,6 +1,6 @@
 <?php
 /**
- * GetPaid_Order_Data_Store_CPT class file.
+ * GetPaid_Item_Data_Store class file.
  *
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,15 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Abstract Order Data Store: Stored in CPT.
+ * Abstract item Data Store: Stored in CPT.
  *
  * @version  1.0.19
  */
-abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
+class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 
 	/**
 	 * Internal meta type used to store order data.
 	 *
+	 * @since 1.0.19
 	 * @var string
 	 */
 	protected $meta_type = 'post';
@@ -63,6 +64,7 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 		$item->set_version( WPINV_VERSION );
 		$item->set_date_created( current_time('mysql') );
 
+		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
 				'getpaid_new_item_data',
@@ -72,7 +74,7 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 					'post_status'   => $this->get_post_status( $item ),
 					'ping_status'   => 'closed',
 					'post_author'   => $item->get_author( 'edit' ),
-					'post_title'    => $item->get_title( 'edit' ),
+					'post_title'    => $item->get_name( 'edit' ),
 					'post_parent'   => 0,
 					'post_excerpt'  => $item->get_description( 'edit' ),
 				)
@@ -86,22 +88,30 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 			$item->save_meta_data();
 			$item->apply_changes();
 			$this->clear_caches( $item );
+			return true;
 		}
+
+		if ( is_wp_error( $id ) ) {
+			$item->last_error = $id->get_error_message();
+		}
+		
+		return false;
 	}
 
 	/**
-	 * Method to read an order from the database.
+	 * Method to read an item from the database.
 	 *
 	 * @param WPInv_Item $item Item object.
 	 *
-	 * @throws Exception If passed item is invalid.
 	 */
 	public function read( &$item ) {
+
 		$item->set_defaults();
 		$item_object = get_post( $item->get_id() );
 
-		if ( ! $item->get_id() || ! $item_object || ! $item_object->post_type != 'wpi_item' ) {
-			throw new Exception( __( 'Invalid item.', 'invoicing' ) );
+		if ( ! $item->get_id() || ! $item_object || $item_object->post_type != 'wpi_item' ) {
+			$item->last_error = __( 'Invalid item.', 'invoicing' );
+			return false;
 		}
 
 		$item->set_props(
@@ -228,10 +238,10 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 	 * Read item data.
 	 *
 	 * @param WPInv_Item $item Item object.
-	 * @param object   $post_object Post object.
+	 * @param WP_Post   $post_object Post object.
 	 * @since 1.0.19
 	 */
-	protected function read_order_data( &$item, $post_object ) {
+	protected function read_item_data( &$item, $post_object ) {
 		$id = $item->get_id();
 
 		// Set item properties.
@@ -255,6 +265,7 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 				'trial_period'         => get_post_meta( $id, '_wpinv_trial_period', true ),
 				'signup_fee'           => get_post_meta( $id, '_wpinv_signup_fee', true ),
 				'trial_interval'       => get_post_meta( $id, '_wpinv_trial_interval', true ),
+				'version'              => get_post_meta( $id, '_wpinv_version', true ),
 			)
 		);
 
@@ -299,6 +310,11 @@ abstract class GetPaid_Item_Data_Store_CPT extends GetPaid_Data_Store_WP {
 		);
 
 		$props_to_update = $this->get_props_to_update( $item, $meta_key_to_props );
+
+		// Ensure that we have a custom id.
+        if ( ! $item->get_custom_id() ) {
+            $item->set_custom_id( $item->get_id() );
+        }
 
 		foreach ( $props_to_update as $meta_key => $prop ) {
 			$value = $item->{"get_$prop"}( 'edit' );

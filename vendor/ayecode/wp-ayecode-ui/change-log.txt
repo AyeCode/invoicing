@@ -1,3 +1,30 @@
+= 0.1.18 =
+* Hide grid view elements on small breakpoints - ADDED
+* Grid view 0 (list view) not going 100% if smaller grid view classes active - FIXED
+
+= 0.1.17 =
+* Added grid view hide secondary info classes - ADDED
+* Floating label classes added - ADDED
+
+= 0.1.16 =
+* bg-initial and bg-inherit background classes added - ADDED
+* Init flatpickr with class aui-flatpickr - ADDED
+
+= 0.1.15 =
+* Radio inputs now available - ADDED
+* Flatickr date/time picker script - ADDED
+* Use wp_kses_post() on label output instead of esc_attr() - CHANGED
+
+= 0.1.14 =
+* Popovers don't have full styling in compatibility mode - FIXED
+* Badges now support branding variants - ADDED
+
+= 0.1.13 =
+* Badge hover actions not working due to wrong nesting when using compatibility mode - FIXED
+* Classes added for badge absolute and angled positioning - ADDED
+* WP admin bar overlaps modal when open - FIXED
+* Select not using vendor prefix to hide default arrow - FIXED
+
 = 0.1.11 =
 * IOS scroll bar class .scrollbars-ios added - ADDED
 
