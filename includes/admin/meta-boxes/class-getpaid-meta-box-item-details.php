@@ -35,6 +35,13 @@ class GetPaid_Meta_Box_Item_Details {
         do_action( 'wpinv_item_details_metabox_before_price', $item );
 
         $position       = wpinv_currency_position();
+
+        echo '<div class="form-group row">';
+        echo '<div class="col-sm-2 col-form-label">' . __( 'Item Price', 'invoicing' ) . '</div>';
+        echo '<div class="col-sm-10">';
+
+        // Price.
+        echo '<div class="row"> <div class="col-sm-4">';
         echo aui()->input(
             array(
                 'id'          => 'wpinv_item_price',
@@ -43,46 +50,142 @@ class GetPaid_Meta_Box_Item_Details {
                 'placeholder' => wpinv_sanitize_amount( 0 ),
                 'help_text'   => __( 'Enter the item price without the currency symbol.', 'invoicing' ),
                 'value'       => $item->get_price( 'edit' ),
-                'label_type'  => 'horizontal',
                 'input_group_right' => 'left' == $position ? '' : wpinv_currency_symbol(),
                 'input_group_left'  => 'left' == $position ? wpinv_currency_symbol() : '',
             )
         );
 
+        // Recurring interval.
+        echo '</div> <div class="col-sm-4 wpinv_show_if_recurring">';
+        echo aui()->select(
+            array(
+                'id'          => 'wpinv_recurring_interval',
+                'name'        => 'wpinv_recurring_interval',
+                'label'       => __( 'Interval', 'invoicing' ),
+                'placeholder' => __( 'Select Interval', 'invoicing' ),
+                'value'       => $item->get_recurring_interval( 'edit' ),
+                'options'     => array(
+                    '1'  => __( 'every', 'invoicing' ),
+                    '2'  => __( 'every 2nd', 'invoicing' ),
+                    '3'  => __( 'every 3rd', 'invoicing' ),
+                    '4'  => __( 'every 4th', 'invoicing' ),
+                    '5'  => __( 'every 5th', 'invoicing' ),
+                    '6'  => __( 'every 6th', 'invoicing' ),
+                    '8'  => __( 'every 8th', 'invoicing' ),
+                    '9'  => __( 'every 9th', 'invoicing' ),
+                    '10' => __( 'every 10th', 'invoicing' ),
+                    '11' => __( 'every 11th', 'invoicing' ),
+                    '12' => __( 'every 12th', 'invoicing' ),
+                    '13' => __( 'every 13th', 'invoicing' ),
+                    '14' => __( 'every 14th', 'invoicing' ),
+                )
+            )
+        );
+
+        // Recurring Period.
+        echo '</div> <div class="col-sm-4 wpinv_show_if_recurring">';
+        echo aui()->select(
+            array(
+                'id'          => 'wpinv_recurring_period',
+                'name'        => 'wpinv_recurring_period',
+                'label'       => __( 'Period', 'invoicing' ),
+                'placeholder' => __( 'Select Period', 'invoicing' ),
+                'value'       => $item->get_recurring_period( 'edit' ),
+                'options'     => array(
+                    'D'  => __( 'day', 'invoicing' ),
+                    'W'  => __( 'week', 'invoicing' ),
+                    'M'  => __( 'month', 'invoicing' ),
+                    'Y'  => __( 'year', 'invoicing' ),
+                )
+            )
+        );
+
+        echo '</div></div>';
+
+        echo '</div></div>';
+
+
         do_action( 'wpinv_prices_metabox_price', $item );
 
         // Subscription toggle.
+        echo '<div class="form-group row">';
+        echo '<div class="col-sm-2 col-form-label">' . __( 'Is Recurring', 'invoicing' ) . '</div>';
+        echo '<div class="col-sm-10">';
         echo aui()->input(
 			array(
                 'id'          => 'wpinv_is_recurring',
                 'name'        => 'wpinv_is_recurring',
                 'type'        => 'checkbox',
-				'label'       => apply_filters( 'wpinv_is_recurring_toggle_text', __( 'Is Recurring Item?', 'invoicing' ) ),
+				'label'       => apply_filters( 'wpinv_is_recurring_toggle_text', __( 'Charge customers a recurring amount for this item', 'invoicing' ) ),
                 'value'       => '1',
                 'checked'     => $item->is_recurring(),
-                'label_type'  => 'horizontal',
 			)
         );
 
         do_action( 'wpinv_prices_metabox_is_recurring_field', $item );
+        echo '</div></div>';
+
+        // Dynamic pricing.
+        if( $item->supports_dynamic_pricing() ) {
+
+            do_action( 'wpinv_item_details_metabox_before_dynamic_pricing', $item );
+
+            // NYP toggle.
+            echo aui()->input(
+                array(
+                    'id'          => 'wpinv_name_your_price',
+                    'name'        => 'wpinv_name_your_price',
+                    'type'        => 'checkbox',
+                    'label'       => apply_filters( 'wpinv_name_your_price_toggle_text', __( 'User can set a custom price', 'invoicing' ) ),
+                    'value'       => '1',
+                    'checked'     => $item->user_can_set_their_price(),
+                    'label_type'  => 'horizontal',
+                )
+            );
+
+            do_action( 'wpinv_prices_metabox_name_your_price_field', $item );
+
+            $minimum_price_style = '';
+            if( $item->user_can_set_their_price() ) {
+                $minimum_price_style .= 'display: none;';
+            }
+            echo "<div class='wpinv-row-minimum-price' style='$minimum_price_style;'>";
+
+            echo aui()->input(
+                array(
+                    'id'          => 'wpinv_minimum_price',
+                    'name'        => 'wpinv_minimum_price',
+                    'label'       => __( 'Minimum Price', 'invoicing' ),
+                    'placeholder' => wpinv_sanitize_amount( 0 ),
+                    'help_text'   => __( "What's the minimum price that a customer can set.", 'invoicing' ),
+                    'value'       => $item->get_minimum_price( 'edit' ),
+                    'label_type'  => 'horizontal',
+                    'input_group_right' => 'left' == $position ? '' : wpinv_currency_symbol(),
+                    'input_group_left'  => 'left' == $position ? wpinv_currency_symbol() : '',
+                )
+            );
+
+            do_action( 'wpinv_prices_metabox_minimum_price_field', $item );
+
+            echo "</div>";
+
+            do_action( 'wpinv_item_details_metabox_dynamic_pricing', $item );
+        }
 
         // Recurring details.
         do_action( 'wpinv_item_details_metabox_before_recurring_section', $item );
 
-        echo "<div class='wpinv-item-recurring-details'>";
+        echo "<div class='wpinv-row-recurring-fields'>";
+
+        $class = $item->is_recurring() ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
 
         echo "</div>";
         do_action( 'wpinv_item_details_metabox_recurring_section', $item );
 
         echo "</div>";
+         
+         $item           = new WPInv_Item( $post->ID );
 
-        $symbol         = wpinv_currency_symbol();
-        
-        $item           = new WPInv_Item( $post->ID );
-
-        $price                = $item->get_price();
-        $is_dynamic_pricing   = $item->get_is_dynamic_pricing();
-        $minimum_price        = $item->get_minimum_price();
         $is_recurring         = $item->is_recurring();
         $period               = $item->get_recurring_period();
         $interval             = absint( $item->get_recurring_interval() );
@@ -97,52 +200,9 @@ class GetPaid_Meta_Box_Item_Details {
         }
 
         $interval       = $interval > 0 ? $interval : 1;
-
-        $class = $is_recurring ? 'wpinv-recurring-y' : 'wpinv-recurring-n';
-
-        $minimum_price_style = 'margin-left: 24px;';
-        if(! $is_dynamic_pricing ) {
-            $minimum_price_style .= 'display: none;';
-        }
-
-        ?>
-        <p class="wpinv-row-prices"><?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $price;?>" id="wpinv_item_price" name="wpinv_item_price" class="medium-text wpi-field-price wpi-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?><input type="hidden" name="wpinv_vat_meta_box_nonce" value="<?php echo wp_create_nonce( 'wpinv_item_meta_box_save' ) ;?>" />
-        <?php do_action( 'wpinv_prices_metabox_price', $item ); ?>
-        </p>
-
-    <?php if( $item->supports_dynamic_pricing() ) { ?>
-
-        <p class="wpinv-row-name-your-price">
-            <label>
-                <input type="checkbox" name="wpinv_name_your_price" id="wpinv_name_your_price" value="1" <?php checked( 1, $is_dynamic_pricing ); ?> />
-                <?php echo apply_filters( 'wpinv_name_your_price_toggle_text', __( 'User can set a custom price', 'invoicing' ) ); ?>
-            </label>
-            <?php do_action( 'wpinv_prices_metabox_name_your_price_field', $item ); ?>
-        </p>
-
-        <p class="wpinv-row-minimum-price" style="<?php echo $minimum_price_style; ?>">
-            <label>
-                <?php _e( 'Minimum Price', 'invoicing' ); ?>
-                <?php echo ( $position != 'right' ? $symbol . '&nbsp;' : '' );?><input type="text" maxlength="12" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" value="<?php echo $minimum_price;?>" id="wpinv_minimum_price" name="wpinv_minimum_price" class="medium-text wpi-field-price" <?php disabled( $item->is_editable(), false ); ?> /><?php echo ( $position == 'right' ? '&nbsp;' . $symbol : '' );?>
-            </label>
-
-            <?php do_action( 'wpinv_prices_metabox_minimum_price_field', $item ); ?>
-        </p>
-
-    <?php } ?>
-
-        
+/*
         <p class="wpinv-row-recurring-fields <?php echo $class;?>">
-            <label class="wpinv-period" for="wpinv_recurring_period"><?php _e( 'Recurring', 'invoicing' );?> <select class="wpinv-select wpi_select2" id="wpinv_recurring_period" name="wpinv_recurring_period"><option value="D" data-text="<?php esc_attr_e( 'day(s)', 'invoicing' ); ?>" <?php selected( 'D', $period );?>><?php _e( 'Daily', 'invoicing' ); ?></option><option value="W" data-text="<?php esc_attr_e( 'week(s)', 'invoicing' ); ?>" <?php selected( 'W', $period );?>><?php _e( 'Weekly', 'invoicing' ); ?></option><option value="M" data-text="<?php esc_attr_e( 'month(s)', 'invoicing' ); ?>" <?php selected( 'M', $period );?>><?php _e( 'Monthly', 'invoicing' ); ?></option><option value="Y" data-text="<?php esc_attr_e( 'year(s)', 'invoicing' ); ?>" <?php selected( 'Y', $period );?>><?php _e( 'Yearly', 'invoicing' ); ?></option></select></label>
-            <label class="wpinv-interval" for="wpinv_recurring_interval"> <?php _e( 'at every', 'invoicing' );?> <?php echo wpinv_html_select( array(
-                'options'          => $intervals,
-                'name'             => 'wpinv_recurring_interval',
-                'id'               => 'wpinv_recurring_interval',
-                'selected'         => $interval,
-                'show_option_all'  => false,
-                'show_option_none' => false,
-                'class'            => 'wpi_select2',
-            ) ); ?> <span id="wpinv_interval_text"><?php _e( 'day(s)', 'invoicing' );?></span></label>
+
             <label class="wpinv-times" for="wpinv_recurring_limit"> <?php _e( 'for', 'invoicing' );?> <input class="small-text" type="number" value="<?php echo $times;?>" size="4" id="wpinv_recurring_limit" name="wpinv_recurring_limit" step="1" min="0"> <?php _e( 'time(s) <i>(select 0 for recurring forever until cancelled</i>)', 'invoicing' );?></label>
             <span class="clear wpi-trial-clr"></span>
             <label class="wpinv-free-trial" for="wpinv_free_trial">
@@ -156,7 +216,7 @@ class GetPaid_Meta_Box_Item_Details {
         </p>
         <input type="hidden" id="_wpi_current_type" value="<?php echo wpinv_get_item_type( $post->ID ); ?>" />
         <?php do_action( 'wpinv_item_price_field', $post->ID ); ?>
-        <?php
+        <?php*/
     }
 
     /**

@@ -441,7 +441,13 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return int
 	 */
 	public function get_recurring_interval( $context = 'view' ) {
-        return (int) $this->get_prop( 'recurring_interval', $context );
+		$interval = absint( $this->get_prop( 'recurring_interval', $context ) );
+
+		if ( $interval < 1 ) {
+			$interval = 1;
+		}
+
+        return $interval;
     }
 
     /**
@@ -909,6 +915,16 @@ class WPInv_Item  extends GetPaid_Data {
 	*/
 
     /**
+	 * Checks whether the item has enabled dynamic pricing.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+	public function user_can_set_their_price() {
+        return (bool) $this->get_is_dynamic_pricing();
+	}
+	
+	/**
 	 * Checks whether the item is recurring.
 	 *
 	 * @since 1.0.19
