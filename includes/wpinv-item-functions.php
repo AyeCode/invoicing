@@ -182,18 +182,18 @@ function wpinv_is_free_item( $item_id = 0 ) {
     return $item->is_free();
 }
 
+/**
+ * Checks whether an item is editable.
+ * 
+ * @param WP_Post|WPInv_Item|Int $item The item to check for.
+ */
 function wpinv_item_is_editable( $item = 0 ) {
-    if ( !empty( $item ) && is_a( $item, 'WP_Post' ) ) {
-        $item = $item->ID;
-    }
-        
-    if ( empty( $item ) ) {
-        return true;
-    }
 
+    // Fetch the item.
     $item = new WPInv_Item( $item );
-    
-    return (bool) $item->is_editable();
+
+    // Check if it is editable.
+    return $item->is_editable();
 }
 
 function wpinv_get_item_price( $item_id = 0 ) {
@@ -940,4 +940,24 @@ function wpinv_update_item( $args = array(), $wp_error = false ) {
         return $return;
     }
     return 0;
+}
+
+/**
+ * Sanitizes a recurring period
+ */
+function getpaid_sanitize_recurring_period( $period, $full = false ) {
+
+    $periods = array(
+        'D' => 'day',
+        'W' => 'week',
+        'M' => 'month',
+        'Y' => 'year',
+    );
+
+    if ( ! isset( $periods[ $period ] ) ) {
+        $period = 'D';
+    }
+    
+    return $full ? $periods[ $period ] : $period;
+
 }

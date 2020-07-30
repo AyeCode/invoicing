@@ -166,7 +166,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 * Adds the Font Awesome styles.
 		 */
 		public function enqueue_style() {
-			
+
 			$css_setting = current_action() == 'wp_enqueue_scripts' ? 'css' : 'css_backend';
 
 			if($this->settings[$css_setting]){
@@ -174,6 +174,9 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				$url = $this->settings[$css_setting]=='core' ? $this->url.'assets/css/ayecode-ui.css' : $this->url.'assets/css/ayecode-ui-compatibility.css';
 				wp_register_style( 'ayecode-ui', $url, array(), $this->latest );
 				wp_enqueue_style( 'ayecode-ui' );
+
+				// flatpickr
+				wp_register_style( 'flatpickr', $this->url.'assets/css/flatpickr.min.css', array(), $this->latest );
 
 
 				// fix some wp-admin issues
@@ -249,11 +252,22 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 						jQuery(this).addClass('navbar-expand');
 
 						// vars
-						var $vlinks = jQuery(this).find('.navbar-nav').addClass("being-greedy w-100");
-						jQuery($vlinks).append('<li class="nav-item list-unstyled ml-auto greedy-btn d-none ">' +
+						var $vlinks = '';
+						var $dDownClass = '';
+						if(jQuery(this).find('.navbar-nav').length){
+							$vlinks = jQuery(this).find('.navbar-nav').addClass("being-greedy w-100");
+						}else if(jQuery(this).find('.nav').length){
+							$vlinks = jQuery(this).find('.nav').addClass("being-greedy w-100");
+							$dDownClass = ' mt-2 ';
+						}else{
+							return false;
+						}
+
+						jQuery($vlinks).append('<li class="nav-item list-unstyled ml-auto greedy-btn d-none dropdown ">' +
 							'<a href="javascript:void(0)" data-toggle="dropdown" class="nav-link"><i class="fas fa-ellipsis-h"></i> <span class="greedy-count badge badge-dark badge-pill"></span></a>' +
-							'<div class="dropdown"><ul class="greedy-links dropdown-menu  dropdown-menu-right"></ul></div>' +
+							'<ul class="greedy-links dropdown-menu  dropdown-menu-right '+$dDownClass+'"></ul>' +
 							'</li>');
+
 						var $hlinks = jQuery(this).find('.greedy-links');
 						var $btn = jQuery(this).find('.greedy-btn');
 
@@ -395,6 +409,20 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 					jQuery('[data-toggle="popover-html"]').popover({
 						html: true
 					});
+
+					// fix popover container compatibility
+					jQuery('[data-toggle="popover"],[data-toggle="popover-html"]').on('inserted.bs.popover', function () {
+						jQuery('body > .popover').wrapAll("<div class='bsui' />");
+					});
+				}
+
+				/**
+				 * Initiate flatpickrs on the page.
+				 */
+				function aui_init_flatpickr(){
+					if ( jQuery.isFunction(jQuery.fn.flatpickr) ) {
+						jQuery("input.aui-flatpickr").flatpickr();
+					}
 				}
 
 				// run on window loaded
@@ -404,6 +432,9 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
 					// init select2
 					aui_init_select2();
+
+					// init flatpickr
+					aui_init_flatpickr();
 
 					// init Greedy nav
 					aui_init_greedy_nav();
@@ -456,9 +487,12 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		public function enqueue_scripts() {
 
 			$js_setting = current_action() == 'wp_enqueue_scripts' ? 'js' : 'js_backend';
-			
+
 			// select2
 			wp_register_script( 'select2', $this->url.'assets/js/select2.min.js', array('jquery'), $this->select2_version );
+
+			// flatpickr
+			wp_register_script( 'flatpickr', $this->url.'assets/js/flatpickr.min.js', array(), $this->latest );
 
 			// Bootstrap file browser
 			wp_register_script( 'aui-custom-file-input', $url = $this->url.'assets/js/bs-custom-file-input.min.js', array('jquery'), $this->select2_version );
@@ -489,7 +523,15 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				$script = $this->inline_script();
 				wp_add_inline_script( 'bootstrap-dummy', $script  );
 			}
-			
+
+		}
+
+		/**
+		 * Enqueue flatpickr if called.
+		 */
+		public function enqueue_flatpickr(){
+			wp_enqueue_style( 'flatpickr' );
+			wp_enqueue_script( 'flatpickr' );
 		}
 
 		/**
@@ -536,7 +578,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
 		/**
 		 * Get a list of themes and their default JS settings.
-		 * 
+		 *
 		 * @return array
 		 */
 		public function theme_js_settings(){
@@ -909,7 +951,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				'.badge-secondary' => array('b'),
 				'.alert-secondary' => array('b','o'),
 				'.btn-link.btn-secondary' => array('c'),
-				);
+			);
 
 			$important_selectors = array(
 				'.bg-secondary' => array('b','f'),
@@ -1049,7 +1091,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
 		/**
 		 * Get developer examples.
-		 * 
+		 *
 		 * @return string
 		 */
 		public function get_examples(){

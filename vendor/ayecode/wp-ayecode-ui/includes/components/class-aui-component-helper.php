@@ -165,7 +165,7 @@ class AUI_Component_Helper {
 
 	/**
 	 * Build a font awesome icon from a class.
-	 * 
+	 *
 	 * @param $class
 	 * @param bool $space_after
 	 *
@@ -201,6 +201,22 @@ class AUI_Component_Helper {
 				$output .= ' '.sanitize_html_class($key).'="'.esc_attr($val).'" ';
 			}
 		}
+
+		return $output;
+	}
+
+	/**
+	 * @param $args
+	 *
+	 * @return string
+	 */
+	public static function help_text($text){
+		$output = '';
+
+		if($text){
+			$output .= '<small class="form-text text-muted">'.wp_kses_post($text).'</small>';
+		}
+
 
 		return $output;
 	}

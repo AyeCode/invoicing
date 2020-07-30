@@ -20,6 +20,7 @@ jQuery(function($) {
         }
     });
 
+    // Init select 2.
     wpi_select2();
     function wpi_select2() {
         if (jQuery("select.wpi_select2").length > 0) {
@@ -28,6 +29,44 @@ jQuery(function($) {
                 allow_single_deselect: 'true'
             });
         }
+    }
+
+    // Subscription items.
+    if ( $('#wpinv_is_recurring').length ) {
+
+        // Toggles the 'getpaid_is_subscription_item' class on the body.
+        var watch_subscription_change = function() {
+            $('body').toggleClass( 'getpaid_is_subscription_item', $('#wpinv_is_recurring').is(':checked') )
+            $('body').toggleClass( 'getpaid_is_not_subscription_item', ! $('#wpinv_is_recurring').is(':checked') )
+
+            $('.getpaid-price-input').toggleClass( 'col-sm-4', $('#wpinv_is_recurring').is(':checked') )
+            $('.getpaid-price-input').toggleClass( 'col-sm-12', ! $('#wpinv_is_recurring').is(':checked') )
+
+        }
+
+        // Toggle the class when the document is loaded...
+        watch_subscription_change();
+
+        // ... and whenever the checkbox changes.
+        $(document).on('change', '#wpinv_is_recurring', watch_subscription_change);
+
+    }
+
+    // Dynamic items.
+    if ( $('#wpinv_name_your_price').length ) {
+
+        // Toggles the 'getpaid_is_dynamic_item' class on the body.
+        var watch_dynamic_change = function() {
+            $('body').toggleClass( 'getpaid_is_dynamic_item', $('#wpinv_name_your_price').is(':checked') )
+            $('body').toggleClass( 'getpaid_is_not_dynamic_item', ! $('#wpinv_name_your_price').is(':checked') )
+        }
+
+        // Toggle the class when the document is loaded...
+        watch_dynamic_change();
+
+        // ... and whenever the checkbox changes.
+        $(document).on('change', '#wpinv_name_your_price', watch_dynamic_change);
+
     }
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;

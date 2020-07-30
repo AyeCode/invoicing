@@ -68,3 +68,24 @@ function wpinv_die( $message = '', $title = '', $status = 400 ) {
     add_filter( 'wp_die_handler', 'wpinv_die_handler', 10, 3 );
     wp_die( $message, $title, array( 'response' => $status ));
 }
+
+/**
+ * Wrapper for _doing_it_wrong().
+ *
+ * @since  1.0.19
+ * @param string $function Function used.
+ * @param string $message Message to log.
+ * @param string $version Version the message was added in.
+ */
+function getpaid_doing_it_wrong( $function, $message, $version ) {
+
+	$message .= ' Backtrace: ' . wp_debug_backtrace_summary();
+
+	if ( is_ajax() || defined( 'REST_REQUEST' ) ) {
+		do_action( 'doing_it_wrong_run', $function, $message, $version );
+		error_log( "{$function} was called incorrectly. {$message}. This message was added in version {$version}." );
+	} else {
+		_doing_it_wrong( $function, $message, $version );
+	}
+
+}
