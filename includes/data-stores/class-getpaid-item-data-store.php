@@ -45,7 +45,6 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_recurring_limit',
 		'_wpinv_free_trial',
 		'_wpinv_trial_period',
-		'_wpinv_signup_fee',
 		'_wpinv_trial_interval'
 	);
 
@@ -263,7 +262,6 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 				'recurring_limit'      => get_post_meta( $id, '_wpinv_recurring_limit', true ),
 				'is_free_trial'        => get_post_meta( $id, '_wpinv_free_trial', true ),
 				'trial_period'         => get_post_meta( $id, '_wpinv_trial_period', true ),
-				'signup_fee'           => get_post_meta( $id, '_wpinv_signup_fee', true ),
 				'trial_interval'       => get_post_meta( $id, '_wpinv_trial_interval', true ),
 				'version'              => get_post_meta( $id, '_wpinv_version', true ),
 			)
@@ -305,7 +303,6 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 			'_wpinv_recurring_limit'      => 'recurring_limit',
 			'_wpinv_free_trial'           => 'is_free_trial',
 			'_wpinv_trial_period'         => 'trial_period',
-			'_wpinv_signup_fee'           => 'signup_fee',
 			'_wpinv_trial_interval'       => 'trial_interval',
 		);
 

@@ -54,7 +54,6 @@ class WPInv_Item  extends GetPaid_Data {
         'recurring_limit'      => null,
         'is_free_trial'        => null,
         'trial_period'         => null,
-        'signup_fee'           => null,
         'trial_interval'       => null,
     );
 
@@ -512,17 +511,6 @@ class WPInv_Item  extends GetPaid_Data {
     }
 
     /**
-	 * Get the sign up fee.
-	 *
-	 * @since 1.0.19
-	 * @param  string $context View or edit context.
-	 * @return float
-	 */
-	public function get_signup_fee( $context = 'view' ) {
-        return (float) $this->get_prop( 'signup_fee', $context );
-    }
-
-    /**
      * Margic method for retrieving a property.
      */
     public function __get( $key ) {
@@ -785,7 +773,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  int|bool $value whether or not dynamic pricing is allowed.
 	 */
 	public function set_is_dynamic_pricing( $value ) {
-        $this->get_prop( 'is_dynamic_pricing', (int) $value );
+        $this->set_prop( 'is_dynamic_pricing', (int) $value );
     }
 
     /**
@@ -835,14 +823,14 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return int
 	 */
 	public function set_recurring_limit( $value ) {
-        $this->get_prop( 'recurring_limit', (int) $value );
+        $this->set_prop( 'recurring_limit', (int) $value );
     }
 
     /**
 	 * Checks if we have a free trial.
 	 *
 	 * @since 1.0.19
-	 * @param  bool $value whether or not it has a free trial.
+	 * @param  int|bool $value whether or not it has a free trial.
 	 */
 	public function set_is_free_trial( $value ) {
         $this->set_prop( 'is_free_trial', (int) $value );
@@ -864,18 +852,8 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @since 1.0.19
 	 * @param  int $value trial interval.
 	 */
-	public function Set_trial_interval( $value ) {
+	public function set_trial_interval( $value ) {
         $this->set_prop( 'trial_interval', $value );
-    }
-
-    /**
-	 * Set the sign up fee.
-	 *
-	 * @since 1.0.19
-	 * @param  float $value The signup fee.
-	 */
-	public function set_signup_fee( $value ) {
-        $this->set_prop( 'signup_fee', $value );
     }
 
     /**
@@ -892,7 +870,7 @@ class WPInv_Item  extends GetPaid_Data {
 
 		// Save the item.
 		$this->save();
-		
+
 		return true;
     }
 
@@ -946,17 +924,6 @@ class WPInv_Item  extends GetPaid_Data {
     }
 
     /**
-	 * Checks whether the item has a sign up fee.
-	 *
-	 * @since 1.0.19
-	 * @return bool
-	 */
-    public function has_signup_fee() {
-        $has_signup_fee = $this->is_recurring() && $this->get_signup_fee() > 0 ? true : false;
-        return (bool) apply_filters( 'wpinv_item_has_signup_fee', $has_signup_fee, $this->ID, $this );
-    }
-
-    /**
 	 * Checks whether the item is free.
 	 *
 	 * @since 1.0.19
@@ -998,6 +965,52 @@ class WPInv_Item  extends GetPaid_Data {
     public function is_editable() {
         $is_editable = $this->get_is_editable();
         return (bool) apply_filters( 'wpinv_item_is_editable', $is_editable, $this->ID, $this );
+	}
+
+	/**
+	 * Returns an array of cart fees.
+	 */
+	public function get_fees( $type = 'fee', $item_id = 0 ) {
+        global $wpi_session;
+        
+        $fees = $wpi_session->get( 'wpi_cart_fees' );
+
+        if ( ! wpinv_get_cart_contents() ) {
+            // We can only get item type fees when the cart is empty
+            $type = 'custom';
+        }
+
+        if ( ! empty( $fees ) && ! empty( $type ) && 'all' !== $type ) {
+            foreach( $fees as $key => $fee ) {
+                if( ! empty( $fee['type'] ) && $type != $fee['type'] ) {
+                    unset( $fees[ $key ] );
+                }
+            }
+        }
+
+        if ( ! empty( $fees ) && ! empty( $item_id ) ) {
+            // Remove fees that don't belong to the specified Item
+            foreach ( $fees as $key => $fee ) {
+                if ( (int) $item_id !== (int)$fee['custom_id'] ) {
+                    unset( $fees[ $key ] );
+                }
+            }
+        }
+
+        if ( ! empty( $fees ) ) {
+            // Remove fees that belong to a specific item but are not in the cart
+            foreach( $fees as $key => $fee ) {
+                if( empty( $fee['custom_id'] ) ) {
+                    continue;
+                }
+
+                if ( !wpinv_item_in_cart( $fee['custom_id'] ) ) {
+                    unset( $fees[ $key ] );
+                }
+            }
+        }
+
+        return ! empty( $fees ) ? $fees : array();
     }
 
     /**
@@ -1007,7 +1020,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
     public function can_purchase() {
-        $can_purchase = null != $this->get_id();
+        $can_purchase = null !== $this->get_id();
 
         if ( ! current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
             $can_purchase = false;

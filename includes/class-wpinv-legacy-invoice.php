@@ -12,58 +12,251 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 final class WPInv_Legacy_Invoice {
+
+    /**
+     * Invoice id.
+     */
     public $ID  = 0;
+
+    /**
+     * The title of the invoice. Usually the invoice number.
+     */
     public $title;
+
+    /**
+     * The post type - either wpi_quote or wpi_invoice
+     */
     public $post_type;
-    
+
+    /**
+     * An array of pending changes.
+     */
     public $pending;
+
+    /**
+     * An array of invoice items.
+     */
     public $items = array();
+
+    /**
+     * Information on the invoice client.
+     */
     public $user_info = array();
+
+    /**
+     * Payment information for the invoice.
+     */
     public $payment_meta = array();
-    
+
+    /**
+     * Whether this invoice exists in the db or not.
+     */
     public $new = false;
+
+    /**
+     * The invoice number.
+     */
     public $number = '';
+
+    /**
+     * Whether an actual payment occurred (live) or the transaction
+     * happened in a sandbox environment (test). 
+     */
     public $mode = 'live';
+
+    /**
+     * A unique key for this invoice.
+     */
     public $key = '';
+
+    /**
+     * The invoice total.
+     */
     public $total = 0.00;
+
+    /**
+     * The invoice subtotal.
+     */
     public $subtotal = 0;
+
+    /**
+     * 1 to disable taxes and 0 otherwise.
+     */
     public $disable_taxes = 0;
+
+    /**
+     * Total tax for this invoice.
+     */
     public $tax = 0;
+
+    /**
+     * Other fees for the invoice.
+     */
     public $fees = array();
+
+    /**
+     * Total amount of the fees.
+     */
     public $fees_total = 0;
+
+    /**
+     * A comma separated array of discount codes.
+     */
     public $discounts = '';
+
+    /**
+     * Total discount.
+     */
     public $discount = 0;
+
+    /**
+     * Main discount code.
+     */
     public $discount_code = 0;
+
+    /**
+     * The date the invoice was created.
+     */
     public $date = '';
+
+    /**
+     * The date that the invoice will be due.
+     */
     public $due_date = '';
+
+    /**
+     * The date the invoice was paid for.
+     */
     public $completed_date = '';
+
+    /**
+     * The invoice status.
+     */
     public $status      = 'wpi-pending';
+
+    /**
+     * Same as self::$status.
+     */
     public $post_status = 'wpi-pending';
+
+    /**
+     * The old invoice status (used when transitioning statuses).
+     */
     public $old_status = '';
+
+    /**
+     * A human readable status name.
+     */
     public $status_nicename = '';
+
+    /**
+     * The user id of the invoice client.
+     */
     public $user_id = 0;
+
+    /**
+     * The first name of the invoice client.
+     */
     public $first_name = '';
+
+    /**
+     * The last name of the invoice client.
+     */
     public $last_name = '';
+
+    /**
+     * The email address of the invoice client.
+     */
     public $email = '';
+
+    /**
+     * The phone number of the invoice client.
+     */
     public $phone = '';
+
+    /**
+     * The street address of the invoice client.
+     */
     public $address = '';
+
+    /**
+     * The city of the invoice client.
+     */
     public $city = '';
+
+    /**
+     * The country of the invoice client.
+     */
     public $country = '';
+
+    /**
+     * The state of the invoice client.
+     */
     public $state = '';
+
+    /**
+     * The postal code of the invoice client.
+     */
     public $zip = '';
+
+    /**
+     * The transaction id of the invoice.
+     */
     public $transaction_id = '';
+
+    /**
+     * The ip address of the invoice client.
+     */
     public $ip = '';
+
+    /**
+     * The gateway used to pay the invoice.
+     */
     public $gateway = '';
+
+    /**
+     * The title of the gateway used to pay for the invoice.
+     */
     public $gateway_title = '';
+
+    /**
+     * The currency of the invoice.
+     */
     public $currency = '';
+
+    /**
+     * The cart details of the invoice.
+     */
     public $cart_details = array();
-    
+
+    /**
+     * The company of the client.
+     */
     public $company = '';
+
+    /**
+     * The vat number of the client.
+     */
     public $vat_number = '';
+
+    /**
+     * The vat rate used on the invoice.
+     */
     public $vat_rate = '';
+
+    /**
+     * Whether or not the client confirmed the address
+     */
     public $adddress_confirmed = '';
     
+    /**
+     * The full name of the client.
+     */
     public $full_name = '';
+
+    /**
+     * The parent invoice id of this invoice.
+     */
     public $parent_invoice = 0;
     
     public function __construct( $invoice_id = false ) {

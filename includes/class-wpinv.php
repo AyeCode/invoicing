@@ -36,7 +36,7 @@ class WPInv_Plugin {
         define( 'WPINV_PLUGIN_DIR', plugin_dir_path( WPINV_PLUGIN_FILE ) );
         define( 'WPINV_PLUGIN_URL', plugin_dir_url( WPINV_PLUGIN_FILE ) );
     }
-    
+
     private function actions() {
         /* Internationalize the text strings used. */
         add_action( 'plugins_loaded', array( &$this, 'plugins_loaded' ) );
