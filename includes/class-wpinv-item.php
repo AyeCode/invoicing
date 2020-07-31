@@ -860,6 +860,7 @@ class WPInv_Item  extends GetPaid_Data {
      * Create an item. For backwards compatibilty.
      * 
      * @deprecated
+	 * @return int item id
      */
     public function create( $data = array() ) {
 
@@ -869,18 +870,18 @@ class WPInv_Item  extends GetPaid_Data {
 		}
 
 		// Save the item.
-		$this->save();
+		return $this->save();
 
-		return true;
     }
 
     /**
      * Updates an item. For backwards compatibilty.
      * 
      * @deprecated
+	 * @return int item id
      */
     public function update( $data = array() ) {
-        $this->create( $data );
+        return $this->create( $data );
     }
 
     /*

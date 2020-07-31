@@ -3032,11 +3032,11 @@ class WPInv_Payment_Form_Elements {
      * Returns an array of items for the currently being edited form.
      */
     public function get_form_items( $id = false ) {
-        
+
         if ( empty( $id ) ) {
             return wpinv_get_data( 'sample-payment-form-items' );
         }
-        
+
         $form_elements = get_post_meta( $id, 'wpinv_form_items', true );
 
         if ( is_array( $form_elements ) ) {
