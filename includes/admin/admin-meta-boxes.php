@@ -74,20 +74,17 @@ add_action( 'save_post', 'wpinv_save_meta_boxes', 10, 3 );
 function wpinv_register_item_meta_boxes() {    
     global $wpinv_euvat;
 
-    // Registers the item details metabox.
+    // Item details metabox.
     add_meta_box( 'wpinv_item_details', __( 'Item Details', 'invoicing' ), 'GetPaid_Meta_Box_Item_Details::output', 'wpi_item', 'normal', 'high' );
 
-    if ( $wpinv_euvat->allow_vat_rules() ) {
-        add_meta_box( 'wpinv_field_vat_rules', __( 'VAT rules type to use', 'invoicing' ), 'WPInv_Meta_Box_Items::vat_rules', 'wpi_item', 'normal', 'high' );
+    // If taxes are enabled, register the tax metabox.
+    if ( $wpinv_euvat->allow_vat_rules() || $wpinv_euvat->allow_vat_classes() ) {
+        add_meta_box( 'wpinv_item_vat', __( 'VAT / Tax', 'invoicing' ), 'GetPaid_Meta_Box_Item_VAT::output', 'wpi_item', 'normal', 'high' );
     }
+
+    // Item info.
+    add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'GetPaid_Meta_Box_Item_Info::output', 'wpi_item', 'side', 'core' );
     
-    if ( $wpinv_euvat->allow_vat_classes() ) {
-        add_meta_box( 'wpinv_field_vat_classes', __( 'VAT rates class to use', 'invoicing' ), 'WPInv_Meta_Box_Items::vat_classes', 'wpi_item', 'normal', 'high' );
-    }
-    
-    add_meta_box( 'wpinv_field_item_shortcode', __( 'Shortcode', 'invoicing' ), 'WPInv_Meta_Box_Items::shortcode', 'wpi_item', 'side', 'core' );
-    add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'WPInv_Meta_Box_Items::item_info', 'wpi_item', 'side', 'core' );
-    add_meta_box( 'wpinv_field_meta_values', __( 'Item Meta Values', 'invoicing' ), 'WPInv_Meta_Box_Items::meta_values', 'wpi_item', 'side', 'core' );
 }
 
 function wpinv_register_discount_meta_boxes() {

@@ -72,6 +72,9 @@ jQuery(function($) {
     // Non-editable items.
     $('.wpi-editable-n #post :input').attr( 'disabled', true );
 
+    // Rename excerpt to 'Item description'
+    $('body.post-type-wpi_item #postexcerpt h2.hndle span').text( WPInv_Admin.item_description )
+
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
     var wpiSymbol = WPInv_Admin.currency_symbol;
