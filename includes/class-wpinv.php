@@ -140,16 +140,12 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         // load AUI
-		require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
+        require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
 
-        // Register autoloader.
-		try {
-			spl_autoload_register( array( $this, 'autoload' ), true );
-		} catch ( Exception $e ) {
-			log_noptin_message( $e->getMessage() );
-        }
-
+        // Load the action scheduler.
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
+
+        // Load functions.
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
@@ -163,6 +159,14 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+
+        // Register autoloader.
+		try {
+			spl_autoload_register( array( $this, 'autoload' ), true );
+		} catch ( Exception $e ) {
+			wpinv_error_log( $e->getMessage(), '', __FILE__, 149, true );
+        }
+
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-discount.php' );

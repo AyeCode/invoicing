@@ -1,6 +1,6 @@
 <?php
 /**
- * Shared logic for WP based data.
+ * Shared logic for WP based data stores.
  *
  * @version 1.0.19
  */
@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * GetPaid_Data_Store_WP class.
+ * 
+ * Datastores that extend this class use CPTs to store data.
  */
 class GetPaid_Data_Store_WP {
 
@@ -22,7 +24,7 @@ class GetPaid_Data_Store_WP {
 	protected $meta_type = 'post';
 
 	/**
-	 * This only needs set if you are using a custom metadata type (for example payment tokens.
+	 * This only needs set if you are using a custom metadata type.
 	 *
 	 * @var string
 	 */
@@ -45,6 +47,15 @@ class GetPaid_Data_Store_WP {
 	 * @var array
 	 */
 	protected $must_exist_meta_keys = array();
+
+	/**
+	 * A map of meta keys to data props.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @var array
+	 */
+	protected $meta_key_to_props = array();
 
 	/**
 	 * Returns an array of meta for an object.
@@ -114,7 +125,7 @@ class GetPaid_Data_Store_WP {
 	protected function get_db_info() {
 		global $wpdb;
 
-		$meta_id_field = 'meta_id'; // for some reason users calls this umeta_id so we need to track this as well.
+		$meta_id_field = 'meta_id'; // users table calls this umeta_id so we need to track this as well.
 		$table         = $wpdb->prefix;
 
 		// If we are dealing with a type of metadata that is not a core type, the table should be prefixed.
@@ -189,6 +200,59 @@ class GetPaid_Data_Store_WP {
 	}
 
 	/**
+	 * Read object data.
+	 *
+	 * @param GetPaid_Data $object GetPaid_Data object.
+	 * @param WP_Post   $post_object Post object.
+	 * @since 1.0.19
+	 */
+	protected function read_object_data( &$object, $post_object ) {
+		$id    = $object->get_id();
+		$props = array();
+
+		foreach ( $this->meta_key_to_props as $meta_key => $prop ) {
+			$props[ $prop ] = get_post_meta( $id, $meta_key, true );
+		}
+
+		// Set object properties.
+		$object->set_props( $props );
+
+		// Gets extra data associated with the object if needed.
+		foreach ( $object->get_extra_data_keys() as $key ) {
+			$function = 'set_' . $key;
+			if ( is_callable( array( $object, $function ) ) ) {
+				$object->{$function}( get_post_meta( $object->get_id(), $key, true ) );
+			}
+		}
+	}
+
+	/**
+	 * Helper method that updates all the post meta for an object based on it's settings in the GetPaid_Data class.
+	 *
+	 * @param GetPaid_Data $object GetPaid_Data object.
+	 * @since 1.0.19
+	 */
+	protected function update_post_meta( &$object ) {
+
+		$updated_props   = array();
+		$props_to_update = $this->get_props_to_update( $object, $this->meta_key_to_props );
+		$object_type     = $object->get_object_type();
+
+		foreach ( $props_to_update as $meta_key => $prop ) {
+			$value = $object->{"get_$prop"}( 'edit' );
+			$value = is_string( $value ) ? wp_slash( $value ) : $value;
+
+			$updated = $this->update_or_delete_post_meta( $object, $meta_key, $value );
+
+			if ( $updated ) {
+				$updated_props[] = $prop;
+			}
+		}
+
+		do_action( "getpaid_{$object_type}_object_updated_props", $object, $updated_props );
+	}
+
+	/**
 	 * Update meta data in, or delete it from, the database.
 	 *
 	 * Avoids storing meta when it's either an empty string or empty array or null.
@@ -223,6 +287,68 @@ class GetPaid_Data_Store_WP {
 	 */
 	public function get_internal_meta_keys() {
 		return $this->internal_meta_keys;
+	}
+
+	/**
+	 * Clear any caches.
+	 *
+	 * @param GetPaid_Data $object GetPaid_Data object.
+	 * @since 1.0.19
+	 */
+	protected function clear_caches( &$object ) {
+		clean_post_cache( $object->get_id() );
+	}
+
+	/**
+	 * Method to delete a data object from the database.
+	 *
+	 * @param GetPaid_Data $object GetPaid_Data object.
+	 * @param array    $args Array of args to pass to the delete method.
+	 *
+	 * @return void
+	 */
+	public function delete( &$object, $args = array() ) {
+		$id          = $object->get_id();
+		$object_type = $object->get_object_type();
+		$args        = wp_parse_args(
+			$args,
+			array(
+				'force_delete' => false,
+			)
+		);
+
+		if ( ! $id ) {
+			return;
+		}
+
+		if ( $args['force_delete'] ) {
+			wp_delete_post( $id, true );
+			$object->set_id( 0 );
+			do_action( "getpaid_delete_$object_type", $id );
+		} else {
+			wp_trash_post( $id );
+			$object->set_status( 'trash' );
+			do_action( "getpaid_trash_$object_type", $id );
+		}
+	}
+
+	/**
+	 * Get the status to save to the post object.
+	 *
+	 *
+	 * @since 1.0.19
+	 * @param  GetPaid_Data $object GetPaid_Data object.
+	 * @return string
+	 */
+	protected function get_post_status( $object ) {
+		$object_status = $object->get_status( 'edit' );
+		$object_type   = $object->get_object_type();
+
+		if ( ! $object_status ) {
+			$object_status = apply_filters( "getpaid_default_{$object_type}_status", 'draft' );
+		}
+
+		return $object_status;
 	}
 
 }

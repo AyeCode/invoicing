@@ -37,8 +37,12 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
         'name'                 => '',
         'author'               => 1,
         'elements'             => null,
-        'items'                => null,
-    );
+		'items'                => null,
+		'earned'               => 0,
+		'refunded'             => 0,
+		'cancelled'            => 0,
+		'failed'               => 0,
+	);
 
     /**
 	 * Stores meta in cache for future reads.
@@ -51,10 +55,10 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 
     /**
      * Stores a reference to the original WP_Post object
-     * 
+     *
      * @var WP_Post
      */
-    protected $post = null; 
+    protected $post = null;
 
     /**
 	 * Get the item if ID is passed, otherwise the item is new and empty.
@@ -79,7 +83,6 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 
 		if ( $this->get_id() > 0 ) {
             $this->post = get_post( $this->get_id() );
-            $this->ID   = $this->get_id();
 			$this->data_store->read( $this );
         }
 
@@ -99,17 +102,6 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	| Getters
 	|--------------------------------------------------------------------------
     */
-
-    /**
-	 * Get form status.
-	 *
-	 * @since 1.0.19
-	 * @param  string $context View or edit context.
-	 * @return string
-	 */
-	public function get_status( $context = 'view' ) {
-		return $this->get_prop( 'status', $context );
-    }
 
     /**
 	 * Get plugin version when the form was created.
@@ -252,7 +244,7 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 					$item->set_quantity( $value );
 					$prepared[] = $item;
 				}
-				
+
 				continue;
 			}
 
@@ -276,7 +268,7 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 				$item->set_quantity( $value['quantity'] );
 				$item->set_allow_quantities( $value['allow_quantities'] );
 				$item->set_is_required( $value['required'] );
-				$item->set_custom_description( $value['required'] );
+				$item->set_custom_description( $value['description'] );
 				$prepared[] = $item;
 				continue;
 
@@ -284,6 +276,50 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 		}
 
 		return $prepared;
+	}
+
+	/**
+	 * Get the total amount earned via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_earned( $context = 'view' ) {
+		return $this->get_prop( 'earned', $context );
+	}
+
+	/**
+	 * Get the total amount refunded via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_refunded( $context = 'view' ) {
+		return $this->get_prop( 'refunded', $context );
+	}
+
+	/**
+	 * Get the total amount cancelled via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_cancelled( $context = 'view' ) {
+		return $this->get_prop( 'cancelled', $context );
+	}
+
+	/**
+	 * Get the total amount failed via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_failed( $context = 'view' ) {
+		return $this->get_prop( 'failed', $context );
 	}
 
     /*
@@ -295,24 +331,6 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	| database itself and should only change what is stored in the class
 	| object.
     */
-
-    /**
-	 * Sets item status.
-	 *
-	 * @since 1.0.19
-	 * @param  string $status New status.
-	 * @return array details of change.
-	 */
-	public function set_status( $status ) {
-        $old_status = $this->get_status();
-
-        $this->set_prop( 'status', $status );
-
-		return array(
-			'from' => $old_status,
-			'to'   => $status,
-		);
-    }
 
     /**
 	 * Set plugin version when the item was created.
@@ -368,8 +386,7 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	 * @param  string $value New name.
 	 */
 	public function set_name( $value ) {
-        $name = sanitize_text_field( $value );
-		$this->set_prop( 'name', $name );
+		$this->set_prop( 'name', sanitize_text_field( $value ) );
     }
 
     /**
@@ -391,30 +408,78 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	public function set_author( $value ) {
 		$this->set_prop( 'author', (int) $value );
 	}
-	
+
 	/**
 	 * Set the form elements.
 	 *
 	 * @since 1.0.19
-	 * @param  array $elements Form elements.
+	 * @param  array $value Form elements.
 	 */
 	public function set_elements( $value ) {
-		$this->set_prop( 'elements', $value );
+		if ( is_array( $value ) ) {
+			$this->set_prop( 'elements', $value );
+		}
 	}
-	
+
 	/**
 	 * Set the form items.
 	 *
 	 * @since 1.0.19
-	 * @param  array $elements Form elements.
+	 * @param  array $value Form elements.
 	 */
 	public function set_items( $value ) {
-		$this->set_prop( 'items', $value );
-    }
+		if ( is_array( $value ) ) {
+			$this->set_prop( 'items', $value );
+		}
+	}
+	
+	/**
+	 * Set the total amount earned via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value Amount earned.
+	 * @return array
+	 */
+	public function set_earned( $value ) {
+		return $this->set_prop( 'earned', $value );
+	}
+
+	/**
+	 * Set the total amount refunded via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value Amount refunded.
+	 * @return array
+	 */
+	public function set_refunded( $value ) {
+		return $this->set_prop( 'refunded', $value );
+	}
+
+	/**
+	 * Set the total amount cancelled via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value Amount cancelled.
+	 * @return array
+	 */
+	public function set_cancelled( $value ) {
+		return $this->set_prop( 'cancelled', $value );
+	}
+
+	/**
+	 * Set the total amount failed via this form.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value Amount cancelled.
+	 * @return array
+	 */
+	public function set_failed( $value ) {
+		return $this->set_prop( 'failed', $value );
+	}
 
     /**
      * Create an item. For backwards compatibilty.
-     * 
+     *
      * @deprecated
 	 * @return int item id
      */
@@ -432,7 +497,7 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 
     /**
      * Updates an item. For backwards compatibilty.
-     * 
+     *
      * @deprecated
 	 * @return int item id
      */

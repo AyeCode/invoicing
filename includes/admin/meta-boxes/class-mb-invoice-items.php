@@ -243,6 +243,11 @@ class WPInv_Meta_Box_Items {
     }
 
     public static function save( $post_id, $data, $post ) {
+
+        if ( empty( $_POST['wpinv_save_invoice'] ) || ! wp_verify_nonce( $_POST['wpinv_save_invoice'], 'wpinv_save_invoice' ) ) {
+            return;
+        }
+
         $invoice        = new WPInv_Invoice( $post_id );
 
         // Billing

@@ -42,7 +42,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	| CRUD methods
 	|--------------------------------------------------------------------------
 	|
-	| Methods which create, read, update and delete items from the database.
+	| Methods which create, read, update and delete items from the object.
 	|
     */
 
@@ -103,7 +103,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	}
 
 	/**
-	 * Returns whether or not quantities are allowed.
+	 * Returns whether or not customers can update the item quantity.
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.

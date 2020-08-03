@@ -173,6 +173,16 @@ abstract class GetPaid_Data {
 	}
 
 	/**
+	 * Get the object type.
+	 *
+	 * @since  1.0.19
+	 * @return string
+	 */
+	public function get_object_type() {
+		return $this->object_type;
+	}
+
+	/**
 	 * Returns the unique ID for this object.
 	 *
 	 * @since  1.0.19
@@ -181,6 +191,17 @@ abstract class GetPaid_Data {
 	public function get_id() {
 		return $this->id;
 	}
+
+	/**
+	 * Get form status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_status( $context = 'view' ) {
+		return $this->get_prop( 'status', $context );
+    }
 
 	/**
 	 * Delete an object, set the ID to 0, and return result.
@@ -616,6 +637,24 @@ abstract class GetPaid_Data {
 	public function set_id( $id ) {
 		$this->id = absint( $id );
 	}
+
+	/**
+	 * Sets item status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $status New status.
+	 * @return array details of change.
+	 */
+	public function set_status( $status ) {
+        $old_status = $this->get_status();
+
+        $this->set_prop( 'status', $status );
+
+		return array(
+			'from' => $old_status,
+			'to'   => $status,
+		);
+    }
 
 	/**
 	 * Set all props to default values.

@@ -19,7 +19,7 @@ class GetPaid_Data_Store {
 	private $instance = null;
 
 	/**
-	 * Contains an array of default GetPaid supported data stores.
+	 * Contains an array of default supported data stores.
 	 * Format of object name => class name.
 	 * Example: 'item' => 'GetPaid_Item_Data_Store'
 	 * You can also pass something like item-<type> for item stores and
@@ -30,7 +30,8 @@ class GetPaid_Data_Store {
 	 * @var array
 	 */
 	private $stores = array(
-		'item' => 'GetPaid_Item_Data_Store',
+		'item'         => 'GetPaid_Item_Data_Store',
+		'payment_form' => 'GetPaid_Payment_Form_Data_Store',
 	);
 
 	/**
@@ -71,7 +72,7 @@ class GetPaid_Data_Store {
 				$this->instance           = $store;
 			} else {
 				if ( ! class_exists( $store ) ) {
-					throw new Exception( __( 'Invalid data store.', 'invoicing' ) );
+					throw new Exception( __( 'Data store class does not exist.', 'invoicing' ) );
 				}
 				$this->current_class_name = $store;
 				$this->instance           = new $store();
@@ -120,6 +121,16 @@ class GetPaid_Data_Store {
 	 */
 	public function get_current_class_name() {
 		return $this->current_class_name;
+	}
+
+	/**
+	 * Returns the object type of the current data store.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_object_type() {
+		return $this->object_type;
 	}
 
 	/**
@@ -178,4 +189,5 @@ class GetPaid_Data_Store {
 			return call_user_func_array( array( $this->instance, $method ), $parameters );
 		}
 	}
+
 }
