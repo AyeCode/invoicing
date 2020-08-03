@@ -60,7 +60,7 @@ class GetPaid_Meta_Box_Payment_Form {
                     </div>
 
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-8 border-left">
                     <small class='form-text text-muted' v-if='form_elements.length'><?php _e( 'Click on any element to edit or delete it.', 'invoicing' ); ?></small>
                     <p class='form-text text-muted' v-if='! form_elements.length'><?php _e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
 
@@ -143,13 +143,15 @@ class GetPaid_Meta_Box_Payment_Form {
             // Save post data.
             $new_item->set_props(
                 array(
-                    'name'        => sanitize_text_field( $item['title'] ),
-                    'description' => wp_kses_post( $item['description'] ),
-                    'status'      => 'publish',
-                    'type'        => empty( $item['type'] ) ? 'custom' : $item['type'],
-                    'price'       => wpinv_sanitize_amount( $item['price'] ),
-                    'vat_rule'    => empty( $item['rule'] ) ? 'digital' : $item['rule'],
-                    'vat_class'   => empty( $item['class'] ) ? '_standard' : $item['class'],
+                    'name'               => sanitize_text_field( $item['title'] ),
+                    'description'        => wp_kses_post( $item['description'] ),
+                    'status'             => 'publish',
+                    'type'               => empty( $item['type'] ) ? 'custom' : $item['type'],
+                    'price'              => wpinv_sanitize_amount( $item['price'] ),
+                    'vat_rule'           => empty( $item['rule'] ) ? 'digital' : $item['rule'],
+                    'vat_class'          => empty( $item['class'] ) ? '_standard' : $item['class'],
+                    'is_dynamic_pricing' => empty( $item['custom_price'] ) ? 0 : (int) $item['custom_price'],
+                    'minimum_price'      => empty( $item['minimum_price'] ) ? 0 : (float) $item['minimum_price'],
                 )
             );
 
@@ -158,15 +160,17 @@ class GetPaid_Meta_Box_Payment_Form {
 
             if ( $new_item->get_id() ) {
                 $item['id'] = $new_item->get_id();
-                unset( $item['new'] );
-                unset( $item['type'] );
-                unset( $item['class'] );
-                unset( $item['rule'] );
-                unset( $item['price'] );
-                unset( $item['title'] );
                 $saved[] = $item;
             }
 
+        }
+
+        foreach ( $saved as $i => $item ) {
+            foreach ( array( 'new', 'type', 'class', 'rule', 'price', 'title', 'custom_price', 'minimum_price', 'recurring' ) as $key ) {
+                if ( isset( $item[ $key ] ) ) {
+                    unset( $saved[ $i ][ $key ] );
+                }
+            }
         }
 
         return $saved;

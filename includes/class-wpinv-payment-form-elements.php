@@ -2819,65 +2819,18 @@ class WPInv_Payment_Form_Elements {
         global $wpinv_euvat, $post;
 
         $restrict = $this->get_restrict_markup( $field, 'items' );
-        $label    = __( 'Let customers...', 'invoicing' );
-        $label2   = __( 'Available Items', 'invoicing' );
-        $label3   = esc_attr__( 'Add some help text for this element', 'invoicing' );
-        $id       = $field . '.id + "_edit"';
         $id2      = $field . '.id + "_edit2"';
         $id3      = $field . '.id + "_edit3"';
-        $id4      = $field . '.id + "_edit4"';
-        $label4   = esc_attr__( 'This will be shown to the customer as the recommended price', 'invoicing' );
-        $label5   = esc_attr__( 'Allow users to pay what they want', 'invoicing' );
-        $label6   = esc_attr__( 'Enter the minimum price that a user can pay', 'invoicing' );
-        $label7   = esc_attr__( 'Allow users to buy several quantities', 'invoicing' );
-        $label8   = esc_attr__( 'This item is required', 'invoicing' );
 
         // Item types.
-        $item_types      = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
-        $item_types_html = '';
+        $item_types = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
 
-        foreach ( $item_types as $type => $_label ) {
-            $type  = esc_attr( $type );
-            $_label = esc_html( $_label );
-            $item_types_html .= "<option value='$type'>$_label</type>";
-        }
-
-        // Taxes.
-        $taxes = '';
-        if ( $wpinv_euvat->allow_vat_rules() ) {
-            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"rule\"'>";
-            $taxes .= __( 'VAT rule type', 'invoicing' );
-            $taxes .= "</label><select :id='$id + item.id + \"rule\"' class='form-control custom-select' v-model='item.rule'>";
-
-            foreach ( $wpinv_euvat->get_rules() as $type => $_label ) {
-                $type    = esc_attr( $type );
-                $_label  = esc_html( $_label );
-                $taxes  .= "<option value='$type'>$_label</type>";
-            }
-
-            $taxes .= '</select></div>';
-        }
-
-        if ( $wpinv_euvat->allow_vat_classes() ) {
-            $taxes .= "<div class='form-group'> <label :for='$id + item.id + \"class\"'>";
-            $taxes .= __( 'VAT class', 'invoicing' );
-            $taxes .= "</label><select :id='$id + item.id + \"class\"' class='form-control custom-select' v-model='item.class'>";
-
-            foreach ( $wpinv_euvat->get_all_classes() as $type => $_label ) {
-                $type    = esc_attr( $type );
-                $_label  = esc_html( $_label );
-                $taxes  .= "<option value='$type'>$_label</type>";
-            }
-
-            $taxes .= '</select></div>';
-        }
-
-        echo "<div $restrict>
-
-                <label v-if='!is_default'>$label2</label>
-
+        ?>
+        <div <?php echo $restrict; ?>>
+            <div v-if="!is_default">
+                <div class="mb-1"><?php _e( 'Form Items', 'invoicing' ); ?></div>
                 <draggable v-model='form_items' group='selectable_form_items'>
-                    <div class='wpinv-available-items-editor' v-for='(item, index) in form_items' :class='\"item_\" + item.id' :key='item.id'>
+                    <div class='wpinv-available-items-editor' v-for='(item, index) in form_items' :class="'item_' + item.id" :key="item.id">
 
                         <div class='wpinv-available-items-editor-header' @click.prevent='togglePanel(item.id)'>
                             <span class='label'>{{item.title}}</span>
@@ -2889,98 +2842,155 @@ class WPInv_Payment_Form_Elements {
                         </div>
 
                         <div class='wpinv-available-items-editor-body'>
-                            <div class='p-2'>
+                            <div class='p-3'>
 
-                                <div class='form-group'>
-                                    <label :for='$id + item.id'>Item Name</label>
-                                    <input :id='$id + item.id' v-model='item.title' class='form-control' />
+                                <div class="form-group" v-if="! item.new">
+                                    <span class='form-text'>
+                                        <a target="_blank" :href="'<?php echo esc_url( admin_url( '/post.php?action=edit&post' ) ) ?>=' + item.id">
+                                            <?php _e( 'Edit the item name, price and other details', 'invoicing' ); ?>
+                                        </a>
+                                    </span>
                                 </div>
 
-                                <div class='form-group'>
-                                    <label :for='$id + item.id + \"price\"'>Item Price</label>
-                                    <input :id='$id + item.id + \"price\"' v-model='item.price' class='form-control' />
-                                    <small class='form-text text-muted' v-if='item.custom_price'>$label4</small>
+                                <div class='form-group' v-if="item.new">
+                                    <label class='mb-0 w-100'>
+                                        <span><?php _e( 'Item Name', 'invoicing' ); ?></span>
+                                        <input v-model='item.title' type='text' class='w-100'/>
+                                    </label>
+                                </div>
+
+                                <div class='form-group'  v-if="item.new">
+                                    <label class='mb-0 w-100'>
+                                        <span v-if='!item.custom_price'><?php _e( 'Item Price', 'invoicing' ); ?></span>
+                                        <span v-if='item.custom_price'><?php _e( 'Recommended Price', 'invoicing' ); ?></span>
+                                        <input v-model='item.price' type='text' class='w-100'/>
+                                    </label>
                                 </div>
 
                                 <div class='form-group' v-if='item.new'>
-                                    <label :for='$id + item.id + \"type\"'>Item Type</label>
-                                    <select class='form-control custom-select' v-model='item.type'>
-                                        $item_types_html
-                                    </select>
+                                    <label :for="'edit_item_type' + item.id" class='mb-0 w-100'>
+                                        <span><?php _e( 'Item Type', 'invoicing' ); ?></span>
+                                        <select class='w-100' v-model='item.type'>
+                                            <?php
+                                                foreach ( $item_types as $type => $_label ) {
+                                                    $type  = esc_attr( $type );
+                                                    $_label = esc_html( $_label );
+                                                    echo "<option value='$type'>$_label</type>";
+                                                }
+                                            ?>
+                                        </select>
+                                    </label>
                                 </div>
 
-                                <div v-if='item.new'>$taxes</div>
+                                <div v-if='item.new'>
+                                    <?php if ( $wpinv_euvat->allow_vat_rules() ) : ?>
+                                        <div class='form-group'>
+                                            <label class='w-100 mb-0'><?php _e( 'VAT Rule', 'invoicing' ) ; ?>
+                                                <select class='w-100' v-model='item.rule'>
+                                                    <?php
+                                                        foreach ( $wpinv_euvat->get_rules() as $type => $_label ) {
+                                                            $type  = esc_attr( $type );
+                                                            $_label = esc_html( $_label );
+                                                            echo "<option value='$type'>$_label</type>";
+                                                        }
+                                                    ?>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    <?php endif;?>
 
-                                <div class='form-group form-check'>
-                                    <input :id='$id4 + item.id + \"custom_price\"' v-model='item.custom_price' type='checkbox' class='form-check-input' />
-                                    <label class='form-check-label' :for='$id4 + item.id + \"custom_price\"'>$label5</label>
+                                    <?php if ( $wpinv_euvat->allow_vat_classes() ) : ?>
+                                        <div class='form-group'>
+                                            <label class='w-100 mb-0'><?php _e( 'VAT class', 'invoicing' ) ; ?>
+                                                <select class='w-100' v-model='item.class'>
+                                                    <?php
+                                                        foreach ( $wpinv_euvat->get_all_classes() as $type => $_label ) {
+                                                            $type  = esc_attr( $type );
+                                                            $_label = esc_html( $_label );
+                                                            echo "<option value='$type'>$_label</type>"; 
+                                                        }
+                                                    ?>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    <?php endif;?>
+                                                        
                                 </div>
 
-                                <div class='form-group' v-if='item.custom_price'>
-                                    <label :for='$id + item.id + \"minimum_price\"'>Minimum Price</label>
-                                    <input :id='$id + item.id + \"minimum_price\"' placeholder='0.00' v-model='item.minimum_price' class='form-control' />
-                                    <small class='form-text text-muted'>$label6</small>
+                                <label v-if='item.new' class='form-group'>
+                                    <input v-model='item.custom_price' type='checkbox' />
+                                    <span class='form-check-label'><?php _e( 'Allow users to pay what they want', 'invoicing' ); ?></span>
+                                </label>
+
+                                <div class='form-group' v-if='item.new && item.custom_price'>
+                                    <label class='mb-0 w-100'>
+                                        <span><?php _e( 'Minimum Price', 'invoicing' ); ?></span>
+                                        <input placeholder='0.00' v-model='item.minimum_price' class='w-100' />
+                                        <small class='form-text text-muted'><?php _e( 'Enter the minimum price that a user can pay', 'invoicing' ); ?></small>
+                                    </label>
                                 </div>
 
-                                <div class='form-group form-check'>
-                                    <input :id='$id + item.id + \"quantities\"' v-model='item.allow_quantities' type='checkbox' class='form-check-input' />
-                                    <label class='form-check-label' :for='$id + item.id + \"quantities\"'>$label7</label>
-                                </div>
+                                <label class='form-group'>
+                                    <input v-model='item.allow_quantities' type='checkbox' />
+                                    <span><?php _e( 'Allow users to buy several quantities', 'invoicing' ); ?></span>
+                                </label>
 
-                                <div class='form-group form-check'>
-                                    <input :id='$id + item.id + \"required\"' v-model='item.required' type='checkbox' class='form-check-input' />
-                                    <label class='form-check-label' :for='$id + item.id + \"required\"'>$label8</label>
-                                </div>
+                                <label class='form-group'>
+                                    <input v-model='item.required' type='checkbox' />
+                                    <span><?php _e( 'This item is required', 'invoicing' ); ?></span>
+                                </label>
 
                                 <div class='form-group'>
-                                    <label :for='$id + item.id + \"description\"'>Item Description</label>
-                                    <textarea :id='$id + item.id + \"description\"' v-model='item.description' class='form-control'></textarea>
+                                    <label class="mb-0 w-100">
+                                        <span><?php _e( 'Item Description', 'invoicing' ); ?></span>
+                                        <textarea v-model='item.description' class='w-100'></textarea>
+                                    </label>
                                 </div>
 
-                                <button type='button' class='button button-link button-link-delete' @click.prevent='removeItem(item)'>Delete Item</button>
+                                    <button type='button' class='button button-link button-link-delete' @click.prevent='removeItem(item)'><?php _e( 'Delete Item', 'invoicing' ); ?></button>
 
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
+                        </div>
                 </draggable>
 
-                <small v-if='! form_items.length && !is_default' class='form-text text-danger'> You have not set up any items. Please select an item below or create a new item.</small>
+                <small v-if='! form_items.length' class='form-text text-danger'><?php _e( 'You have not set up any items. Please select an item below or create a new item.', 'invoicing' ); ?></small>
 
-                <div class='form-group mt-2' v-if='!is_default'>
+                <div class='form-group mt-2'>
 
-                    <select class='form-control custom-select' v-model='selected_item' @change='addSelectedItem'>
-                        <option value=''>"        . __( 'Add an existing item to the form', 'invoicing' ) ."</option>
+                    <select class='w-100' style="padding: 6px 24px 6px 8px; border-color: #e0e0e0;" v-model='selected_item' @change='addSelectedItem'>
+                        <option value=''><?php _e( 'Select an item to add...', 'invoicing' ) ?></option>
                         <option v-for='(item, index) in all_items' :value='index'>{{item.title}}</option>
                     </select>
 
                 </div>
 
-                <div class='form-group' v-if='!is_default'>
-                    <input type='button' value='Add item' class='button button-primary'  @click.prevent='addSelectedItem' :disabled='selected_item == \"\"'>
-                    <small>Or <a href='' @click.prevent='addNewItem'>create a new item</a>.</small>
+                <div class='form-group'>
+                    <button @click.prevent='addNewItem' class="button button-link"><?php _e( 'Or create a new item.', 'invoicing' ) ?></button>
                 </div>
 
-                <div class='form-group mt-5' v-if='!is_default'>
-                    <label :for='$id2'>$label</label>
+                <div class='form-group mt-5'>
+                    <label :for='<?php echo $id2; ?>'><?php _e( 'Let customers...', 'invoicing' ) ?></label>
 
-                    <select class='form-control custom-select' :id='$id2' v-model='$field.items_type'>
-                        <option value='total' :disabled='canCheckoutSeveralSubscriptions($field)'>"        . __( 'Buy all items on the list', 'invoicing' ) ."</option>
-                        <option value='radio'>"        . __( 'Select a single item from the list', 'invoicing' ) ."</option>
-                        <option value='checkbox' :disabled='canCheckoutSeveralSubscriptions($field)'>"     . __( 'Select one or more items on the list', 'invoicing' ) ."</option>
-                        <option value='select'>"       . __( 'Select a single item from a dropdown', 'invoicing' ) ."</option>
-                        <option value='multi_select' :disabled='canCheckoutSeveralSubscriptions($field)'>" . __( 'Select a one or more items from a dropdown', 'invoicing' ) ."</option>
+                    <select class='w-100' style="padding: 6px 24px 6px 8px; border-color: #e0e0e0;" :id='<?php echo $id2; ?>' v-model='<?php echo $field; ?>.items_type'>
+                        <option value='total' :disabled='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)'><?php _e( 'Buy all items on the list', 'invoicing' ); ?></option>
+                        <option value='radio'><?php _e( 'Select a single item from the list', 'invoicing' ); ?></option>
+                        <option value='checkbox' :disabled='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)'><?php _e( 'Select one or more items on the list', 'invoicing' ) ;?></option>
+                        <option value='select'><?php _e( 'Select a single item from a dropdown', 'invoicing' ); ?></option>
+                        <option value='multi_select' :disabled='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)'><?php _e( 'Select a one or more items from a dropdown', 'invoicing' ) ;?></option>
                     </select>
 
                 </div>
-
-                <div class='form-group'>
-                    <label :for='$id3'>Help Text</label>
-                    <textarea placeholder='$label3' :id='$id3' v-model='$field.description' class='form-control' rows='3'></textarea>
-                </div>
-
             </div>
-        ";
+            <div class='form-group'>
+                <label :for='<?php echo $id3; ?>'><?php _e( 'Help Text', 'invoicing' ); ?></label>
+                <textarea placeholder='<?php esc_attr_e( 'Add some help text for this element', 'invoicing' ); ?>' :id='<?php echo $id3; ?>' v-model='<?php echo $field; ?>.description' class='form-control' rows='3'></textarea>
+            </div>
+
+        </div>
+
+        <?php
 
     }
 
@@ -2988,7 +2998,7 @@ class WPInv_Payment_Form_Elements {
      * Returns an array of all published items.
      */
     public function get_published_items() {
-    
+
         $item_args = array(
             'post_type'      => 'wpi_item',
             'orderby'        => 'title',
@@ -3003,8 +3013,8 @@ class WPInv_Payment_Form_Elements {
                 )
             )
         );
-    
-        $items = get_posts( apply_filters( 'wpinv_payment_form_item_dropdown_query_args', $item_args ) );
+
+        $items = get_posts( apply_filters( 'getpaid_payment_form_item_dropdown_query_args', $item_args ) );
 
         if ( empty( $items ) ) {
             return array();
@@ -3012,17 +3022,8 @@ class WPInv_Payment_Form_Elements {
 
         $options    = array();
         foreach ( $items as $item ) {
-            $title            = esc_html( $item->post_title );
-            $title           .= wpinv_get_item_suffix( $item->ID, false );
-            $id               = absint( $item->ID );
-            $price            = wpinv_sanitize_amount( get_post_meta( $id, '_wpinv_price', true ) );
-            $recurring        = (bool) get_post_meta( $id, '_wpinv_is_recurring', true );
-            $description      = $item->post_excerpt;
-            $custom_price     = (bool) get_post_meta( $id, '_wpinv_dynamic_pricing', true );
-            $minimum_price    = (float) get_post_meta( $id, '_minimum_price', true );
-            $allow_quantities = false;
-            $options[]        = compact( 'title', 'id', 'price', 'recurring', 'description', 'custom_price', 'minimum_price', 'allow_quantities' );
-
+            $item      = new GetPaid_Form_Item( $item );
+            $options[] = $item->prepare_data_for_use();
         }
         return $options;
 
@@ -3032,19 +3033,14 @@ class WPInv_Payment_Form_Elements {
      * Returns an array of items for the currently being edited form.
      */
     public function get_form_items( $id = false ) {
+        $form = new GetPaid_Payment_Form( $id );
 
-        if ( empty( $id ) ) {
-            return wpinv_get_data( 'sample-payment-form-items' );
+        // Is this a default form?
+        if ( $form->is_default() ) {
+            return array();
         }
 
-        $form_elements = get_post_meta( $id, 'wpinv_form_items', true );
-
-        if ( is_array( $form_elements ) ) {
-            return $form_elements;
-        }
-
-        return wpinv_get_data( 'sample-payment-form-items' );
-
+        return $form->get_items( 'view', 'arrays' );
     }
 
     /**

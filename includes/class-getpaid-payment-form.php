@@ -222,14 +222,19 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return GetPaid_Form_Item[]
+	 * @param  string $return objects or arrays.
+	 * @return GetPaid_Form_Item[]|array
 	 */
-	public function get_items( $context = 'view' ) {
+	public function get_items( $context = 'view', $return = 'objects' ) {
 		$items = $this->get_prop( 'items', $context );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
             $items = wpinv_get_data( 'sample-payment-form-items' );
-        }
+		}
+		
+		if ( 'view' != $context ) {
+			return $items;
+		}
 
 		// Convert the items.
 		$prepared = array();
@@ -275,7 +280,17 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 			}
 		}
 
-		return $prepared;
+
+		if ( 'objects' == $return ) {
+			return $prepared;
+		}
+		
+		$items = array();
+		foreach ( $prepared as $item ) {
+			$items[] = $item->prepare_data_for_use();
+		}
+
+		return $items;
 	}
 
 	/**

@@ -138,6 +138,25 @@ class GetPaid_Form_Item  extends WPInv_Item {
 
 	}
 
+	/**
+	 * Prepares form data for use.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function prepare_data_for_use() {
+
+		return array(
+			'title'            => sanitize_text_field( $this->get_name() ),
+			'id'               => $this->get_id(),
+			'price'            => $this->get_price(),
+			'recurring'        => $this->is_recurring(),
+			'description'      => $this->get_description(),
+			'allow_quantities' => $this->get_allow_quantities(),
+        );
+	}
+
     /*
 	|--------------------------------------------------------------------------
 	| Setters

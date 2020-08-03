@@ -1899,7 +1899,8 @@ textarea.wpi-email_overdue_content {
     min-height: 20px;
     font-size: 13px;
     line-height: 25px;
-    border: 1px #dfdfdf solid;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
 }
 
 .wpinv-available-items-editor-header,
