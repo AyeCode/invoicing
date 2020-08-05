@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Payment form class
  *
  */
-class GetPaid_Payment_Form  extends GetPaid_Data {
+class GetPaid_Payment_Form extends GetPaid_Data {
 
     /**
 	 * Which data store to load.
@@ -61,19 +61,19 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
     protected $post = null;
 
     /**
-	 * Get the item if ID is passed, otherwise the item is new and empty.
+	 * Get the form if ID is passed, otherwise the form is new and empty.
 	 *
-	 * @param  int|object|WPInv_Item|WP_Post $item Item to read.
+	 * @param  int|object|GetPaid_Payment_Form|WP_Post $form Form to read.
 	 */
-	public function __construct( $item = 0 ) {
-		parent::__construct( $item );
+	public function __construct( $form = 0 ) {
+		parent::__construct( $form );
 
-		if ( is_numeric( $item ) && $item > 0 ) {
-			$this->set_id( $item );
-		} elseif ( $item instanceof self ) {
-			$this->set_id( $item->get_id() );
-		} elseif ( ! empty( $item->ID ) ) {
-			$this->set_id( $item->ID );
+		if ( is_numeric( $form ) && $form > 0 ) {
+			$this->set_id( $form );
+		} elseif ( $form instanceof self ) {
+			$this->set_id( $form->get_id() );
+		} elseif ( ! empty( $form->ID ) ) {
+			$this->set_id( $form->ID );
 		} else {
 			$this->set_object_read( true );
 		}
@@ -261,30 +261,37 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 					continue;
 				}
 
-				// Cart items.
+				// Sub-total (Cart items).
 				if ( isset( $value['subtotal'] ) ) {
 					$item->set_price( $value['subtotal'] );
-					$item->set_quantity( $value['quantity'] );
-					$prepared[] = $item;
-					continue;
 				}
 
-				// Payment form item.
-				$item->set_quantity( $value['quantity'] );
-				$item->set_allow_quantities( $value['allow_quantities'] );
-				$item->set_is_required( $value['required'] );
-				$item->set_custom_description( $value['description'] );
+				if ( isset( $value['quantity'] ) ) {
+					$item->set_quantity( $value['quantity'] );
+				}
+
+				if ( isset( $value['allow_quantities'] ) ) {
+					$item->set_allow_quantities( $value['allow_quantities'] );
+				}
+
+				if ( isset( $value['required'] ) ) {
+					$item->set_is_required( $value['required'] );
+				}
+
+				if ( isset( $value['description'] ) ) {
+					$item->set_custom_description( $value['description'] );
+				}
+
 				$prepared[] = $item;
 				continue;
 
 			}
 		}
 
-
 		if ( 'objects' == $return ) {
 			return $prepared;
 		}
-		
+
 		$items = array();
 		foreach ( $prepared as $item ) {
 			$items[] = $item->prepare_data_for_use();
@@ -537,7 +544,7 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
 	 */
     public function is_default() {
         $is_default = $this->get_id() == wpinv_get_default_payment_form();
-        return (bool) apply_filters( 'wpinv_is_default_payment_form', $is_default, $this->ID, $this );
+        return (bool) apply_filters( 'wpinv_is_default_payment_form', $is_default, $this->get_id(), $this );
 	}
 
     /**
@@ -549,11 +556,38 @@ class GetPaid_Payment_Form  extends GetPaid_Data {
     public function is_active() {
         $is_active = null !== $this->get_id();
 
-        if ( ! current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
+        if ( $is_active && ! current_user_can( 'edit_post', $this->get_id() ) && $this->get_status() != 'publish' ) {
             $is_active = false;
         }
 
         return (bool) apply_filters( 'wpinv_is_payment_form_active', $is_active, $this );
+	}
+	
+	/**
+	 * Displays the payment form.
+	 *
+	 * @param bool $echo whether to return or echo the value.
+	 * @since 1.0.19
+	 */
+    public function display( $echo = true ) {
+		global $invoicing;
+		
+		// Ensure that it is active.
+		if ( ! $this->is_active() ) {
+			$html = aui()->alert(
+				array(
+					'type'    => 'warning',
+					'content' => __( 'This payment form is no longer active', 'invoicing' ),
+				)
+			);
+
+			if ( $echo ) {
+				echo $html;
+				return;
+			}
+
+			return $html;
+		}
     }
 
 }

@@ -24,9 +24,6 @@ class WPInv_Payment_Form_Elements {
                 add_action( 'wpinv_payment_form_edit_element_template', array( $this, "edit_{$element}_template" ), 10, 2 );
             }
 
-            if ( method_exists( $this, "frontend_render_{$element}_template" ) ) {
-                add_action( "wpinv_frontend_render_payment_form_$element", array( $this, "frontend_render_{$element}_template" ), 10, 3 );
-            }
 
         }
         
@@ -41,343 +38,7 @@ class WPInv_Payment_Form_Elements {
             return $this->elements;
         }
 
-        $this->elements = array(
-
-            array(
-                'type'     => 'heading',
-                'name'     => __( 'Heading', 'invoicing' ),
-                'defaults' => array(
-                    'level' => 'h2',
-                    'text'  => __( 'Heading', 'invoicing' ),
-                )
-            ),
-
-            array(
-                'type' => 'paragraph',
-                'name' => __( 'Paragraph', 'invoicing' ),
-                'defaults'  => array(
-                    'text'  => __( 'Paragraph text', 'invoicing' ),
-                )
-            ),
-
-            array( 
-                'type' => 'alert',
-                'name' => __( 'Alert', 'invoicing' ),
-                'defaults'  => array(
-                    'value'        => '',
-                    'class'        => 'alert-warning',
-                    'text'         => __( 'Alert', 'invoicing' ),
-                    'dismissible'  => false,
-                )
-            ),
-
-            /*array( 
-                'type' => 'separator',
-                'name' => __( 'Separator', 'invoicing' ),
-                'defaults'  => array(
-                    'value'        => '',
-                    'dismissible'  => false,
-                )
-            ),*/
-
-            array(
-                'type' => 'text',
-                'name' => __( 'Text Input', 'invoicing' ),
-                'defaults'  => array(
-                    'placeholder'  => __( 'Enter some text', 'invoicing' ),
-                    'value'        => '',
-                    'label'        => __( 'Field Label', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array(
-                'type' => 'textarea',
-                'name' => __( 'Textarea', 'invoicing' ),
-                'defaults'         => array(
-                    'placeholder'  => __( 'Enter your text hear', 'invoicing' ),
-                    'value'        => '',
-                    'label'        => __( 'Textarea Label', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array(
-                'type' => 'select',
-                'name' => __( 'Dropdown', 'invoicing' ),
-                'defaults'         => array(
-                    'placeholder'  => __( 'Select a value', 'invoicing' ),
-                    'value'        => '',
-                    'label'        => __( 'Dropdown Label', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                    'options'      => array(
-                        esc_attr__( 'Option One', 'invoicing' ),
-                        esc_attr__( 'Option Two', 'invoicing' ),
-                        esc_attr__( 'Option Three', 'invoicing' )
-                    ),
-                )
-            ),
-
-            array(
-                'type' => 'checkbox',
-                'name' => __( 'Checkbox', 'invoicing' ),
-                'defaults'         => array(
-                    'value'        => '',
-                    'label'        => __( 'Checkbox Label', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'radio',
-                'name' => __( 'Multiple Choice', 'invoicing' ),
-                'defaults'     => array(
-                    'label'    => __( 'Select one choice', 'invoicing' ),
-                    'options'  => array(
-                        esc_attr__( 'Choice One', 'invoicing' ),
-                        esc_attr__( 'Choice Two', 'invoicing' ),
-                        esc_attr__( 'Choice Three', 'invoicing' )
-                    ),
-                )
-            ),
-
-            array( 
-                'type' => 'date',
-                'name' => __( 'Date', 'invoicing' ),
-                'defaults' => array(
-                    'value'        => '',
-                    'label'        => __( 'Date', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'time',
-                'name' => __( 'Time', 'invoicing' ),
-                'defaults' => array(
-                    'value'        => '',
-                    'label'        => __( 'Time', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'number',
-                'name' => __( 'Number', 'invoicing' ),
-                'defaults' => array(
-                    'placeholder'  => '',
-                    'value'        => '',
-                    'label'        => __( 'Number', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'website',
-                'name' => __( 'Website', 'invoicing' ),
-                'defaults' => array(
-                    'placeholder'  => 'http://example.com',
-                    'value'        => '',
-                    'label'        => __( 'Website', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'email',
-                'name' => __( 'Email', 'invoicing' ),
-                'defaults'  => array(
-                    'placeholder'  => 'jon@snow.com',
-                    'value'        => '',
-                    'label'        => __( 'Email Address', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => false,
-                )
-            ),
-
-            array( 
-                'type' => 'address',
-                'name' => __( 'Address', 'invoicing' ),
-                'defaults'  => array(
-
-                    'fields' => array(
-                        array(
-                            'placeholder'  => 'Jon',
-                            'value'        => '',
-                            'label'        => __( 'First Name', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_first_name',
-                        ),
-
-                        array(
-                            'placeholder'  => 'Snow',
-                            'value'        => '',
-                            'label'        => __( 'Last Name', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_last_name',
-                        ),
-                    
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'Address', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_address',
-                        ),
-
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'City', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_city',
-                        ),
-
-                        array(
-                            'placeholder'  => __( 'Select your country' ),
-                            'value'        => '',
-                            'label'        => __( 'Country', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_country',
-                        ),
-
-                        array(
-                            'placeholder'  => __( 'Choose a state', 'invoicing' ),
-                            'value'        => '',
-                            'label'        => __( 'State / Province', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_state',
-                        ),
-
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'ZIP / Postcode', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_zip',
-                        ),
-
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'Phone', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => true,
-                            'name'         => 'wpinv_phone',
-                        ),
-
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'Company', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => false,
-                            'name'         => 'wpinv_company',
-                        ),
-
-                        array(
-                            'placeholder'  => '',
-                            'value'        => '',
-                            'label'        => __( 'VAT Number', 'invoicing' ),
-                            'description'  => '',
-                            'required'     => false,
-                            'visible'      => false,
-                            'name'         => 'wpinv_vat_number',
-                        )
-                    )
-                )
-            ),
-
-            array( 
-                'type' => 'billing_email',
-                'name' => __( 'Billing Email', 'invoicing' ),
-                'defaults'  => array(
-                    'placeholder'  => 'jon@snow.com',
-                    'value'        => '',
-                    'label'        => __( 'Billing Email', 'invoicing' ),
-                    'description'  => '',
-                    'premade'      => true,
-                )
-            ),
-
-            array( 
-                'type' => 'discount',
-                'name' => __( 'Discount Input', 'invoicing' ),
-                'defaults'  => array(
-                    'value'        => '',
-                    'input_label'  => __( 'Coupon Code', 'invoicing' ),
-                    'button_label' => __( 'Apply Coupon', 'invoicing' ),
-                    'description'  => __( 'Have a discount code? Enter it above.', 'invoicing' ),
-                )
-            ),
-
-            array( 
-                'type' => 'items',
-                'name' => __( 'Items', 'invoicing' ),
-                'defaults'  => array(
-                    'value'        => '',
-                    'items_type'   => 'total',
-                    'description'  => '',
-                    'premade'      => true,
-                )
-            ),
-
-            array(
-                'type' => 'terms',
-                'name' => __( 'Terms', 'invoicing' ),
-                'defaults'         => array(
-                    'value'        => '',
-                    'text'         => __( 'I\'ve read and accept the <a href="" target="_blank">terms &amp; conditions</a>', 'invoicing' ),
-                    'description'  => '',
-                    'required'     => true,
-                )
-            ),
-
-            array(
-                'type' => 'privacy',
-                'name' => __( 'Privacy', 'invoicing' ),
-                'defaults'         => array(
-                    'value'        => '',
-                    'text'         => __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our privacy policy.', 'invoicing' ),
-                )
-            ),
-
-            array( 
-                'type'       => 'pay_button',
-                'name'       => __( 'Payment Button', 'invoicing' ),
-                'defaults'   => array(
-                    'value'        => '',
-                    'class'        => 'btn-primary',
-                    'label'        => __( 'Pay Now »', 'invoicing' ),
-                    'description'  => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
-                    'premade'      => true,
-                )
-            )
-        );
+        $this->elements = wpinv_get_data( 'payment-form-elements' );
 
         $this->elements = apply_filters( 'wpinv_filter_core_payment_form_elements', $this->elements );
         return $this->elements;
@@ -397,14 +58,6 @@ class WPInv_Payment_Form_Elements {
     public function render_heading_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'heading' );
         echo "<component :is='$field.level' $restrict v-html='$field.text'></component>";
-    }
-
-    /**
-     * Renders the title element on the frontend.
-     */
-    public function frontend_render_heading_template( $field ) {
-        $tag = $field['level'];
-        echo "<$tag>{$field['text']}</$tag>";
     }
 
     /**
@@ -452,52 +105,11 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders a privacy element template.
-     */
-    public function render_privacy_template( $field ) {
-        $restrict = $this->get_restrict_markup( $field, 'privacy' );
-        $label    = "$field.text";
-        echo "<p $restrict v-html='$label' style='font-size: 16px;'></p>";
-    }
-
-    /**
-     * Renders the paragraph element on the frontend.
-     */
-    public function frontend_render_paragraph_template( $field ) {
-        echo "<p>{$field['text']}</p>";
-    }
-
-    /**
-     * Renders the privacy element on the frontend.
-     */
-    public function frontend_render_privacy_template( $field ) {
-        echo "<p>{$field['text']}</p>";
-    }
-
-    /**
      * Renders the edit paragraph element template.
      */
     public function edit_paragraph_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'paragraph' );
         $label    = __( 'Enter your text', 'invoicing' );
-        $id       = $field . '.id + "_edit"';
-        echo "
-            <div $restrict>
-                <div class='form-group'>
-                    <label :for='$id'>$label</label>
-                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
-                </div>
-            </div>
-        ";
-
-    }
-
-    /**
-     * Renders the edit privacy element template.
-     */
-    public function edit_privacy_template( $field ) {
-        $restrict = $this->get_restrict_markup( $field, 'privacy' );
-        $label    = __( 'Privacy Text', 'invoicing' );
         $id       = $field . '.id + "_edit"';
         echo "
             <div $restrict>
@@ -524,33 +136,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
-    }
-
-    /**
-     * Renders the text element on the frontend.
-     */
-    public function frontend_render_text_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'placeholder'=> esc_attr( $field['placeholder'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -604,34 +189,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
-    }
-
-    /**
-     * Renders the textarea element on the frontend.
-     */
-    public function frontend_render_textarea_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->textarea(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'placeholder'=> esc_attr( $field['placeholder'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'rows'       => 3,
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -690,34 +247,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>
         ";
-    }
-
-    /**
-     * Renders the select element on the frontend.
-     */
-    public function frontend_render_select_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->select(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'placeholder'=> esc_attr( $field['placeholder'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'options'    => array_combine( $field['options'], $field['options'] ),
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -785,77 +314,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the terms element template.
-     */
-    public function render_terms_template( $field ) {
-        $restrict = $this->get_restrict_markup( $field, 'terms' );
-        echo "
-            <div class='form-check' $restrict>
-                <div class='wpinv-payment-form-field-preview-overlay'></div>
-                <input  :id='$field.id' class='form-check-input' type='checkbox' />
-                <label class='form-check-label' :for='$field.id' v-html='$field.text'></label>
-                <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
-            </div>    
-        ";
-    }
-
-    /**
-     * Renders the checkbox element on the frontend.
-     */
-    public function frontend_render_checkbox_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'value'      => esc_attr__( 'Yes', 'invoicing' ),
-                'type'       => 'checkbox',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-        /**
-     * Renders the terms element on the frontend.
-     */
-    public function frontend_render_terms_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['text'] ),
-                'no_wrap'    => true,
-                'value'      => esc_attr__( 'Yes', 'invoicing' ),
-                'type'       => 'checkbox',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
      * Renders the edit checkbox element template.
      */
     public function edit_checkbox_template( $field ) {
@@ -872,37 +330,6 @@ class WPInv_Payment_Form_Elements {
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
-                </div>
-                <div class='form-group'>
-                    <label :for='$id2'>$label2</label>
-                    <textarea placeholder='$label3' :id='$id2' v-model='$field.description' class='form-control' rows='3'></textarea>
-                </div>
-                <div class='form-group form-check'>
-                    <input :id='$id3' v-model='$field.required' type='checkbox' class='form-check-input' />
-                    <label class='form-check-label' :for='$id3'>$label4</label>
-                </div>
-            </div>
-        ";
-
-    }
-
-    /**
-     * Renders the edit terms element template.
-     */
-    public function edit_terms_template( $field ) {
-        $restrict = $this->get_restrict_markup( $field, 'terms' );
-        $label    = __( 'Field Label', 'invoicing' );
-        $id       = $field . '.id + "_edit"';
-        $label2   = __( 'Help text', 'invoicing' );
-        $label3   = esc_attr__( 'Add some help text for this field', 'invoicing' );
-        $id2      = $field . '.id + "_edit2"';
-        $label4   = __( 'Is this field required?', 'invoicing' );
-        $id3      = $field . '.id + "_edit3"';
-        echo "
-            <div $restrict>
-                <div class='form-group'>
-                    <label :for='$id'>$label</label>
-                    <input :id='$id' v-model='$field.text' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id2'>$label2</label>
@@ -935,41 +362,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>
         ";
-    }
-
-    /**
-     * Renders the radio element on the frontend.
-     */
-    public function frontend_render_radio_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        if ( ! empty( $field['label'] ) ) {
-            $label = wp_kses_post( $field['label'] );
-            echo "<legend class='col-form-label'>$label</legend>";
-        }
-
-        foreach( $field['options'] as $index => $option ) {
-            $id    = $field['id'] . $index;
-            $name  = $field['id'];
-            $value = esc_attr( $option );
-            $label = wp_kses_post( $option );
-
-            echo "
-                <div class='form-check'>
-                    <input class='form-check-input' type='radio' name='$name' id='$id' value='$value'>
-                    <label class='form-check-label' for='$id'>$label</label>
-                </div>
-            ";
-        }
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -1036,128 +428,6 @@ class WPInv_Payment_Form_Elements {
                 </draggable>
             </div>
         ";
-    }
-
-    /**
-     * Renders the address element on the frontend.
-     */
-    public function frontend_render_address_template( $field ) {
-        
-        echo "<div class='wpinv-address-fields'>";
-
-        $country = '';
-        if ( is_user_logged_in() ) {
-            $user  = wp_get_current_user();
-            $country = sanitize_text_field( get_user_meta( $user->ID, '_wpinv_country', true ) );
-        }
-
-        if ( empty( $country ) ) {
-            $country = wpinv_get_default_country();
-        }
-
-        foreach( $field['fields'] as $address_field ) {
-
-            if ( empty( $address_field['visible'] ) ) {
-                continue;
-            }
-
-            $class = esc_attr( $address_field['name'] );
-            echo "<div class='form-group $class'>";
-
-            $label = $address_field['label'];
-
-            if ( ! empty( $address_field['required'] ) ) {
-                $label .= "<span class='text-danger'> *</span>";
-            }
-
-            // Default value.
-            $value     = '';
-            if ( is_user_logged_in() ) {
-                $user  = wp_get_current_user();
-                $value = sanitize_text_field( get_user_meta( $user->ID, '_' . $address_field['name'], true ) );
-            }
-
-            if ( 'wpinv_country' == $address_field['name'] ) {
-
-                echo aui()->select( array(
-                    'options'          => wpinv_get_country_list(),
-                    'name'             => esc_attr( $address_field['name'] ),
-                    'id'               => esc_attr( $address_field['name'] ),
-                    'value'            => $country,
-                    'placeholder'      => esc_attr( $address_field['placeholder'] ),
-                    'required'         => (bool) $address_field['required'],
-                    'no_wrap'          => true,
-                    'label'            => wp_kses_post( $label ),
-                    'select2'          => false,
-                ));
-    
-            } else if ( 'wpinv_state' == $address_field['name'] ) {
-
-                $states = wpinv_get_country_states( $country );
-
-                if ( empty( $value ) ) {
-                    $value = wpinv_get_default_state();
-                }
-
-                if ( ! empty( $states ) ) {
-
-                    echo aui()->select( array(
-                        'options'          => $states,
-                        'name'             => esc_attr( $address_field['name'] ),
-                        'id'               => esc_attr( $address_field['name'] ),
-                        'value'            => $value,
-                        'placeholder'      => esc_attr( $address_field['placeholder'] ),
-                        'required'         => (bool) $address_field['required'],
-                        'no_wrap'          => true,
-                        'label'            => wp_kses_post( $label ),
-                        'select2'          => false,
-                    ));
-
-                } else {
-
-                    echo aui()->input(
-                        array(
-                            'name'       => esc_attr( $address_field['name'] ),
-                            'id'         => esc_attr( $address_field['name'] ),
-                            'required'   => (bool) $address_field['required'],
-                            'label'      => wp_kses_post( $label ),
-                            'no_wrap'    => true,
-                            'type'       => 'text',
-                            'value'      => $value,
-                        )
-                    );
-
-                }
-
-            } else {
-
-                echo aui()->input(
-                    array(
-                        'name'       => esc_attr( $address_field['name'] ),
-                        'id'         => esc_attr( $address_field['name'] ),
-                        'required'   => (bool) $address_field['required'],
-                        'label'      => wp_kses_post( $label ),
-                        'no_wrap'    => true,
-                        'placeholder' => esc_attr( $address_field['placeholder'] ),
-                        'type'       => 'text',
-                        'value'      => $value,
-                    )
-                );
-
-            }
-            
-
-            if ( ! empty( $address_field['description'] ) ) {
-                $description = wp_kses_post( $address_field['description'] );
-                echo "<small class='form-text text-muted'>$description</small>";
-            }
-    
-            echo '</div>';
-
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -1266,68 +536,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the email element on the frontend.
-     */
-    public function frontend_render_email_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'placeholder' => esc_attr( $field['placeholder'] ),
-                'type'       => 'email',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
-     * Renders the billing email element on the frontend.
-     */
-    public function frontend_render_billing_email_template( $field ) {
-        
-        echo "<div class='form-group'>";
-        $value = '';
-
-        if ( is_user_logged_in() ) {
-            $user  = wp_get_current_user();
-            $value = sanitize_email( $user->user_email );
-        }
-        echo aui()->input(
-            array(
-                'name'       => 'billing_email',
-                'value'      => $value,
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => true,
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'placeholder' => esc_attr( $field['placeholder'] ),
-                'type'       => 'email',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
      * Renders the edit email element template.
      */
     public function edit_email_template( $field ) {
@@ -1414,34 +622,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the website element on the frontend.
-     */
-    public function frontend_render_website_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'placeholder' => esc_attr( $field['placeholder'] ),
-                'type'       => 'url',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
      * Renders the edit website element template.
      */
     public function edit_website_template( $field ) {
@@ -1495,33 +675,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the date element on the frontend.
-     */
-    public function frontend_render_date_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'type'       => 'date',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
      * Renders the edit date element template.
      */
     public function edit_date_template( $field ) {
@@ -1566,33 +719,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
-    }
-
-    /**
-     * Renders the time element on the frontend.
-     */
-    public function frontend_render_time_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'no_wrap'    => true,
-                'type'       => 'time',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -1643,34 +769,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the number element on the frontend.
-     */
-    public function frontend_render_number_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'required'   => (bool) $field['required'],
-                'label'      => wp_kses_post( $field['label'] ),
-                'placeholder' => esc_attr( $field['placeholder'] ),
-                'no_wrap'    => true,
-                'type'       => 'number',
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
-    }
-
-    /**
      * Renders the edit number element template.
      */
     public function edit_number_template( $field ) {
@@ -1712,14 +810,7 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_separator_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'separator' );
-        echo "<hr class='featurette-divider mt-0 mb-2' $restrict>";
-    }
-
-    /**
-     * Renders the separator element on the frontend.
-     */
-    public function frontend_render_separator_template( $field ) {
-        echo '<hr class="featurette-divider mt-0 mb-2" />';
+        echo "<hr class='featurette-divider' $restrict>";
     }
 
     /**
@@ -1734,38 +825,6 @@ class WPInv_Payment_Form_Elements {
                 <small v-if='$field.description' class='form-text text-muted' v-html='$field.description'></small>
             </div>    
         ";
-    }
-
-    /**
-     * Renders the pay_button element on the frontend.
-     */
-    public function frontend_render_pay_button_template( $field ) {
-
-        echo "<div class='mt-4 mb-4'>";
-            do_action( 'wpinv_payment_mode_select' );
-        echo "</div>";
-
-        echo "<div class='form-group'>";
-
-        $class = 'wpinv-payment-form-submit btn btn-block submit-button ' . sanitize_html_class( $field['class'] );
-        echo aui()->input(
-            array(
-                'name'       => esc_attr( $field['id'] ),
-                'id'         => esc_attr( $field['id'] ),
-                'value'      => esc_attr( $field['label'] ),
-                'no_wrap'    => true,
-                'type'       => 'submit',
-                'class'      => $class,
-            )
-        );
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = wp_kses_post( $field['description'] );
-            echo "<small class='form-text text-muted'>$description</small>";
-        }
-
-        echo '</div>';
-
     }
 
     /**
@@ -1824,25 +883,6 @@ class WPInv_Payment_Form_Elements {
                 </button>
             </div>    
         ";
-    }
-
-    /**
-     * Renders the alert element on the frontend.
-     */
-    public function frontend_render_alert_template( $field ) {
-        
-        echo "<div class='form-group'>";
-
-        echo aui()->alert(
-            array(
-                'content'     => wp_kses_post( $field['text'] ),
-                'dismissible' => $field['dismissible'],
-                'type'        => str_replace( 'alert-', '', $field['class'] ),
-            )
-        );
-
-        echo '</div>';
-
     }
 
     /**
@@ -1906,34 +946,6 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
-     * Renders the discount element on the frontend.
-     */
-    public function frontend_render_discount_template( $field ) {
-        
-        $placeholder = esc_attr( $field['input_label'] );
-        $label       = sanitize_text_field( $field['button_label'] );
-        $description = '';
-
-        if ( ! empty( $field['description'] ) ) {
-            $description = "<small class='form-text text-muted'>{$field['description']}</small>";
-        }
-?>
-
-    <div class="form-group">
-        <div class="discount_field  border rounded p-3">
-            <div class="discount_field_inner d-flex flex-column flex-md-row">
-                <input name="discount" placeholder="<?php echo $placeholder; ?>" class="form-control mr-2 mb-2 getpaid-discount-field" style="flex: 1;" type="text">
-                <a href="#" class="btn btn-secondary submit-button mb-2 getpaid-discount-button"><?php echo $label; ?></a>
-            </div>
-            <?php echo $description ?>
-            <div class="wpinv_payment_form_coupon_errors alert alert-danger d-none mt-2"></div>
-        </div>
-    </div>
-
-<?php
-    }
-
-    /**
      * Renders the discount element template.
      */
     public function edit_discount_template( $field ) {
@@ -1972,28 +984,150 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_items_template( $field ) {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
-        $label     = __( 'Item totals will appear here. Click to set items.', 'invoicing' );
-        $label2    = __( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' );
-        $label2   .= ' ' . __( 'To prevent this, limit customers to selecting a single item.', 'invoicing' );
-        $label3    = __( 'Item totals will appear here.', 'invoicing' );
-        echo "
-            <div $restrict class='item_totals text-center'>
-                <div v-if='!is_default'>
-                    <div v-if='canCheckoutSeveralSubscriptions($field)' class='p-4 bg-danger text-light'>$label2</div>
-                    <div v-if='! canCheckoutSeveralSubscriptions($field)' class='p-4 bg-warning'>$label</div>
-                </div>
+        ?>
+
+        <div <?php echo $restrict; ?> class='item_totals text-center'>
+            <div v-if='!is_default'>
+                <div v-if='! canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='p-4 bg-warning text-light'><?php _e( 'Item totals will appear here. Click to set items.', 'invoicing' ) ?></div>
+                <div v-if='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='p-4 bg-danger'><?php _e( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' ); _e( 'To prevent this, limit customers to selecting a single item.', 'invoicing' ); ?></div>
+            </div>
                 <div v-if='is_default'>
-                    <div class='p-4 bg-warning'>$label3</div>
+                    <div class='p-4 bg-warning'><?php _e( 'Item totals will appear here.', 'invoicing' ) ?></div>
                 </div>
             </div>
-        ";
+
+        <?php
     }
 
     /**
      * Renders the items element on the frontend.
      */
     public function frontend_render_items_template( $field, $items ) {
+        $tax       = 0;
+        $sub_total = 0;
+        $total     = 0;
 
+        ?>
+            <div class="border item_totals_type_total">
+                <?php
+                    foreach( $items as $item ) {
+                        $amount = floatval( $item['price'] );
+
+                        // Include the tax.
+                        if ( wpinv_use_taxes() ) {
+                            $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, (int) $item['id'] );
+
+                            if ( wpinv_prices_include_tax() ) {
+                                $pre_tax  = ( $amount - $amount * $rate * 0.01 );
+                                $item_tax = $amount - $pre_tax;
+                            } else {
+                                $pre_tax  = $amount;
+                                $item_tax = $amount * $rate * 0.01;
+                            }
+
+                            $tax       = $tax + $item_tax;
+                            $sub_total = $sub_total + $pre_tax;
+                            $total     = $sub_total + $tax;
+
+                        } else {
+                            $total  = $total + $amount;
+                        }
+
+                        $class  = 'col-8';
+                        $class2 = '';
+
+                        if ( ! empty( $item['allow_quantities'] ) ) {
+                            $class = 'col-6 pt-2';
+                            $class2 = 'pt-2';
+                        }
+
+                        if ( ! empty( $item['custom_price'] ) ) {
+                            $class .= ' pt-2';
+                        }
+
+                        $quantity = 1;
+                        if ( ! empty( $item['quantity'] ) ) {
+                            $quantity = absint( $item['quantity'] );
+                        }
+
+                ?>
+                <div  class="item_totals_item">
+                    <div class='row pl-2 pr-2 pt-2'>
+                        <div class='<?php echo $class; ?>'><?php echo sanitize_text_field( $item['title'] ) ?></div>
+
+                        <?php  if ( ! empty( $item['allow_quantities'] ) ) { ?>
+
+                            <div class='col-2'>
+                                <input name='wpinv-item-<?php echo (int) $item['id']; ?>-quantity' type='number' class='form-control wpinv-item-quantity-input pr-1' value='<?php echo $quantity ?>' min='1' required>
+                            </div>
+
+                        <?php } else { ?>
+                            <input type='hidden' class='wpinv-item-quantity-input' value='<?php echo $quantity ?>'>
+                        <?php } if ( empty( $item['custom_price'] ) ) { ?>
+
+                            <div class='col-4 <?php echo $class2; ?>'>
+                                <?php echo wpinv_price( wpinv_format_amount( $item['price'] ) ) ?>
+                                <input name='wpinv-items[<?php echo (int) $item['id']; ?>]' type='hidden' class='wpinv-item-price-input' value='<?php echo floatval( $item['price'] ); ?>'>
+                            </div>
+
+                        <?php } else {?>
+
+                        <div class='col-4'>
+                            <div class='input-group'>
+
+                                <?php if ( 'left' == wpinv_currency_position() ) { ?>
+                                    <div class='input-group-prepend'>
+                                        <span class='input-group-text'><?php echo wpinv_currency_symbol(); ?></span>
+                                    </div>
+                                <?php } ?>
+
+                                <input type='text' name='wpinv-items[<?php echo (int) $item['id']; ?>]' class='form-control wpinv-item-price-input' placeholder='<?php echo floatval( $item['price'] ); ?>' value='<?php echo floatval( $item['price'] ); ?>' min='<?php echo intval( $item['minimum_price'] ); ?>'>
+                            
+                                <?php if ( 'left' != wpinv_currency_position() ) { ?>
+                                    <div class='input-group-append'>
+                                        <span class='input-group-text'><?php echo wpinv_currency_symbol(); ?></span>
+                                    </div>
+                                <?php } ?>
+
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                </div>
+                <?php if ( ! empty( $item['description'] )) { ?>
+                    <small class='form-text text-muted pl-2 pr-2 m-0'><?php echo wp_kses_post( $item['description'] ); ?></small>
+                <?php } ?>
+            </div>
+        <?php } ?>
+
+        <div class='mt-4 border-top item_totals_total p-2'>
+
+            <div class='row'>
+                <div class='col-8'><strong class='mr-5'><?php _e( 'Sub Total', 'invoicing' ); ?></strong></div>
+                <div class='col-4'><strong class='wpinv-items-sub-total'><?php echo wpinv_price( wpinv_format_amount( $sub_total ) ) ?></strong></div>
+            </div>
+
+            <div class='row' style='display: none;'>
+                <div class='col-8'><strong class='mr-5'><?php _e( 'Discount', 'invoicing' ); ?></strong></div>
+                <div class='col-4'><strong class='wpinv-items-discount'><?php echo wpinv_price( wpinv_format_amount( 0 ) ) ?></strong></div>
+            </div>
+
+            <?php if ( wpinv_use_taxes() ) { ?>
+                <div class='row'>
+                    <div class='col-8'><strong class='mr-5'><?php _e( 'Tax', 'invoicing' ); ?></strong></div>
+                    <div class='col-4'><strong class='wpinv-items-tax' ><?php echo wpinv_price( wpinv_format_amount( $tax ) ) ?></strong></div>
+                </div>
+            <?php } ?>
+
+            <div class='row'>
+                <div class='col-8'><strong class='mr-5'><?php _e( 'Total', 'invoicing' ); ?></strong></div>
+                <div class='col-4'><strong class='wpinv-items-total' data-currency='<?php echo wpinv_currency_symbol(); ?>' data-currency-position='<?php echo wpinv_currency_position(); ?>'><?php echo wpinv_price( wpinv_format_amount( $total ) ) ?></strong></div>
+            </div>
+
+        </div>
+
+        </div>
+        <?php
         echo "<div class='form-group item_totals'>";
         
         $id = esc_attr( $field['id'] );

@@ -325,7 +325,8 @@ class WPInv_Plugin {
     public function enqueue_scripts() {
         $suffix       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
-        wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
+        wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
         wp_enqueue_style( 'wpinv_front_style' );
                
         // Register scripts
