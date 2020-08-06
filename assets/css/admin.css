@@ -2085,3 +2085,41 @@ textarea.wpi-email_overdue_content {
 .getpaid_is_dynamic_item .wpinv_hide_if_dynamic {
     display: none !important;
 }
+
+.getpaid-price-buttons label{
+    transition: all .3s ease-out;
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #eeeeee;
+    border: 1px solid #e0e0e0;
+}
+
+.getpaid-price-circles label {
+    padding: 20px 20px;
+    -moz-border-radius:50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.getpaid-price-circles label span{
+    display: block;
+    padding: 50%;
+    margin: -3em -50% 0;
+    position: relative;
+    top: 1.5em;
+    border: 1em solid transparent;
+    white-space: nowrap;
+}
+
+.getpaid-price-buttons input[type="radio"]{
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}
+
+.getpaid-price-buttons input[type="radio"]:checked + label,
+.getpaid-price-buttons label:hover {
+    color: #fff;
+    background-color: #1e73be;
+    border-color: #1e73be;
+}

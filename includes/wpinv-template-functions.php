@@ -1601,7 +1601,7 @@ function wpinv_agree_to_terms_js() {
 }
 add_action( 'wpinv_checkout_form_top', 'wpinv_agree_to_terms_js' );
 
-function wpinv_payment_mode_select() {
+function wpinv_payment_mode_select( $title ) {
     $gateways = wpinv_get_enabled_payment_gateways( true );
     $gateways = apply_filters( 'wpinv_payment_gateways_on_cart', $gateways );
     $invoice = wpinv_get_invoice( 0, true );
@@ -1614,7 +1614,7 @@ function wpinv_payment_mode_select() {
             <?php do_action( 'wpinv_payment_mode_before_gateways_wrap' ); ?>
             <div id="wpinv-payment-mode-wrap" class="panel panel-default">
                 <div class="panel-heading wpi-payment_methods_title">
-                    <h3 class="panel-title"><?php _e( 'Pay Via', 'invoicing' ); ?></h3>
+                    <h6 class="panel-title"><?php echo sanitize_text_field( $title ); ?></h6>
                 </div>
                 <div class="panel-body wpi-payment_methods">
                     <?php

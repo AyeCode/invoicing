@@ -312,6 +312,30 @@ return array(
             'items_type'   => 'total',
             'description'  => '',
             'premade'      => true,
+            'hide_cart'    => false,
+        )
+    ),
+
+    array( 
+        'type' => 'price_input',
+        'name' => __( 'Price Input', 'invoicing' ),
+        'defaults'  => array(
+            'placeholder'  => wpinv_format_amount(0),
+            'value'        => wpinv_format_amount(0),
+            'label'        => __( 'Enter Amount', 'invoicing' ),
+            'description'  => '',
+        )
+    ),
+
+    array( 
+        'type' => 'price_select',
+        'name' => __( 'Price Select', 'invoicing' ),
+        'defaults'  => array(
+            'description'  => '',
+            'label'        => __( 'Select Amount', 'invoicing' ),
+            'options'      => 'Option 1|10, Option 2|20',
+            'placeholder'  => '',
+            'select_type'  => 'select',
         )
     ),
 
@@ -319,11 +343,12 @@ return array(
         'type'       => 'pay_button',
         'name'       => __( 'Payment Button', 'invoicing' ),
         'defaults'   => array(
-            'value'        => '',
-            'class'        => 'btn-primary',
-            'label'        => __( 'Pay Now »', 'invoicing' ),
-            'description'  => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
-            'premade'      => true,
+            'gateway_select' => __( 'Select Payment Method', 'invoicing' ),
+            'value'          => '',
+            'class'          => 'btn-primary',
+            'label'          => __( 'Pay Now »', 'invoicing' ),
+            'description'    => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
+            'premade'        => true,
         )
     )
 );

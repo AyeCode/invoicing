@@ -81,6 +81,17 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	}
 	
 	/**
+	 * Returns the sub total.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_sub_total( $context = 'view' ) {
+		return $this->get_qantity( $context ) * $this->get_price( $context );
+	}
+
+	/**
 	 * Get the item qantity.
 	 *
 	 * @since 1.0.19
@@ -153,7 +164,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'price'            => $this->get_price(),
 			'recurring'        => $this->is_recurring(),
 			'description'      => $this->get_description(),
-			'allow_quantities' => $this->get_allow_quantities(),
+			'allow_quantities' => $this->allows_quantities(),
+			'required'         => $this->is_required(),
         );
 	}
 
@@ -239,6 +251,16 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	public function is_required() {
         return (bool) $this->get_is_required();
+	}
+
+	/**
+	 * Checks whether users can edit the quantities.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+	public function allows_quantities() {
+        return (bool) $this->get_allow_quantities();
 	}
 
 }

@@ -9,9 +9,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! isset( $gateway_select ) ) {
+    $gateway_select = __( 'Select Payment Method', 'invoicing' );
+}
+
 ?>
 <div class='mt-4 mb-4'>
-    <?php do_action( 'wpinv_payment_mode_select' ); ?>
+    <?php do_action( 'wpinv_payment_mode_select', $gateway_select ); ?>
 </div>
 
 <?php

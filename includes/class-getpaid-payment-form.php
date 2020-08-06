@@ -223,7 +223,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
 	 * @param  string $return objects or arrays.
-	 * @return GetPaid_Form_Item[]|array
+	 * @return GetPaid_Form_Item[]
 	 */
 	public function get_items( $context = 'view', $return = 'objects' ) {
 		$items = $this->get_prop( 'items', $context );
@@ -231,7 +231,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		if ( empty( $items ) || ! is_array( $items ) ) {
             $items = wpinv_get_data( 'sample-payment-form-items' );
 		}
-		
+
 		if ( 'view' != $context ) {
 			return $items;
 		}
@@ -562,7 +562,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
         return (bool) apply_filters( 'wpinv_is_payment_form_active', $is_active, $this );
 	}
-	
+
 	/**
 	 * Displays the payment form.
 	 *

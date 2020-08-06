@@ -3578,3 +3578,38 @@ p.wpinv_error {
 .wpi-pmethod {
   margin-right: 10px;
 }
+
+input[type="number"].getpaid-item-quantity-input,
+input[type="text"].getpaid-item-price-input {
+    width: 64px;
+    text-align: center;
+    padding: 0.3em;
+    vertical-align: middle;
+    line-height: 1;
+    margin: 0;
+    border-color: #dddddd;
+    background: #fff;
+    box-shadow: none;
+    border-radius: 0px;
+    min-height: 35px;
+	color: #666;
+	font-weight: normal;
+}
+
+.getpaid-form-cart-item-quantity {
+	text-align: center;
+}
+
+.getpaid-payment-form-items-cart-header  {
+	background-color: #fbfbfb;
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+    padding: .7em 1em;
+}
+
+.getpaid-payment-form-items-cart-item,
+.getpaid-form-cart-totals-col {
+	font-weight: 600;
+	padding: .7em 1em;
+    min-height: 3.25em;
+}

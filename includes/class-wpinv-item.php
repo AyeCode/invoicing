@@ -278,7 +278,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_price( $context = 'view' ) {
-        return (float) wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
+        return wpinv_format_amount( (float) wpinv_sanitize_amount( $this->get_prop( 'price', $context ) ) );
     }
 
     /**
@@ -289,7 +289,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_the_price() {
-        $item_price = wpinv_price( wpinv_format_amount( $this->get_price() ) );
+        $item_price = wpinv_price( $this->get_price() );
 
         return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
     }
@@ -401,7 +401,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_minimum_price( $context = 'view' ) {
-        return (float) wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) );
+        return wpinv_format_amount( (float) wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) ) );
     }
 
     /**
