@@ -53,6 +53,37 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the total payable element template.
+     */
+    public function render_total_payable_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'total_payable' );
+        $text     = __( 'The total payable amount will appear hear', 'invoicing' );
+        echo "
+            <div $restrict class='alert alert-info' role='alert'>
+                <span>$text</span>
+            </div>
+        ";
+    }
+
+    /**
+     * Renders the edit total payable element template.
+     */
+    public function edit_total_payable_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'total_payable' );
+        $label    = __( 'The total payable text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
      * Renders the title element template.
      */
     public function render_heading_template( $field ) {

@@ -350,5 +350,13 @@ return array(
             'description'    => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
             'premade'        => true,
         )
+    ),
+
+    array( 
+        'type'       => 'total_payable',
+        'name'       => __( 'Total Payable', 'invoicing' ),
+        'defaults'   => array(
+            'text' => __( 'Total to pay:', 'invoicing' ),
+        )
     )
 );
