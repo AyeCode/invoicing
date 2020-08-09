@@ -279,6 +279,23 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_price( $context = 'view' ) {
         return wpinv_format_amount( (float) wpinv_sanitize_amount( $this->get_prop( 'price', $context ) ) );
+	}
+	
+	/**
+	 * Get the inital price of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_initial_price( $context = 'view' ) {
+
+		$price = $this->get_price( $context );
+
+		if ( $this->has_free_trial() ) {
+			$price = wpinv_format_amount( 0 );
+		}
+        return apply_filters( 'wpinv_get_initial_item_price', $price, $this );
     }
 
     /**
@@ -413,6 +430,47 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_is_recurring( $context = 'view' ) {
         return (int) $this->get_prop( 'is_recurring', $context );
+	}
+	
+	/**
+	 * Get the recurring price of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_recurring_price( $context = 'view' ) {
+		$price = $this->get_price( $context );
+        return wpinv_format_amount( apply_filters( 'wpinv_get_recurring_item_price', $price, $this->ID ) );
+	}
+
+	/**
+	 * Get the first renewal date (in timestamps) of the item.
+	 *
+	 * @since 1.0.19
+	 * @return int
+	 */
+	public function get_first_renewal_date() {
+
+		$periods = array(
+			'D' => 'days',
+			'W' => 'weeks',
+			'M' => 'months',
+			'Y' => 'years',
+		);
+
+		$period   = $this->get_recurring_period();
+		$interval = $this->get_recurring_interval();
+
+		if ( $this->has_free_trial() ) {
+			$period   = $this->get_trial_period();
+			$interval = $this->get_trial_interval();
+		}
+
+		$period       = $periods[ $period ];
+		$interval     = empty( $interval ) ? 1 : $interval;
+		$next_renewal = strtotime( "+$interval $period", current_time( 'timestamp' ) );
+        return apply_filters( 'wpinv_get_first_renewal_date', $next_renewal, $this );
     }
 
     /**

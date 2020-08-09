@@ -153,6 +153,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * VAT Reverse charge notice - ADDED
 * Ability to add descriptions/excerpts to invoices - ADDED
 * Ability to view and edit customers - ADDED
+* Error shows if all discounts are expired - FIXED
+* Some discounts do not have a delete link - FIXED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

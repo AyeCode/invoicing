@@ -182,7 +182,7 @@ function wpinv_has_active_discounts() {
 
     if ( $discounts) {
         foreach ( $discounts as $discount ) {
-            if ( wpinv_is_discount_active( $discount->ID ) ) {
+            if ( wpinv_is_discount_active( $discount->ID, true ) ) {
                 $has_active = true;
                 break;
             }
@@ -355,19 +355,19 @@ function wpinv_discount_exists( $discount ) {
     return $discount->exists();
 }
 
-function wpinv_is_discount_active( $code_id = null ) {
+function wpinv_is_discount_active( $code_id = null, $silent = false ) {
     $discount = wpinv_get_discount(  $code_id );
     $return   = false;
 
     if ( $discount ) {
-        if ( wpinv_is_discount_expired( $code_id ) ) {
-            if( defined( 'DOING_AJAX' ) ) {
+        if ( wpinv_is_discount_expired( $code_id, $silent ) ) {
+            if( defined( 'DOING_AJAX' ) && ! $silent ) {
                 wpinv_set_error( 'wpinv-discount-error', __( 'This discount is expired.', 'invoicing' ) );
             }
         } elseif ( $discount->post_status == 'publish' ) {
             $return = true;
         } else {
-            if( defined( 'DOING_AJAX' ) ) {
+            if( defined( 'DOING_AJAX' ) && ! $silent ) {
                 wpinv_set_error( 'wpinv-discount-error', __( 'This discount is not active.', 'invoicing' ) );
             }
         }
@@ -519,13 +519,13 @@ function wpinv_is_discount_not_global( $code_id = 0 ) {
  * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
  * @return bool
  */
-function wpinv_is_discount_expired( $discount = array() ) {
+function wpinv_is_discount_expired( $discount = array(), $silent = false ) {
     $discount = wpinv_get_discount_obj( $discount );
 
     if ( $discount->is_expired() ) {
         $discount->update_status( 'pending' );
 
-        if( empty( $started ) ) {
+        if( empty( $silent ) ) {
             wpinv_set_error( 'wpinv-discount-error', __( 'This discount has expired.', 'invoicing' ) );
         }
         return true;
@@ -744,6 +744,12 @@ function wpinv_is_discount_used( $discount = array(), $user = '', $code_id = arr
 }
 
 function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
+
+    // Abort early if there is no discount code.
+    if ( empty( $code ) ) {
+        return false;
+    }
+
     $return      = false;
     $discount_id = wpinv_get_discount_id_by_code( $code );
     $user        = trim( $user );
@@ -1124,6 +1130,7 @@ function wpinv_maybe_remove_cart_discount() {
         return;
     }
 
+    $discounts = array_filter( $discounts );
     foreach ( $discounts as $discount ) {
         if ( !wpinv_is_discount_valid( $discount ) ) {
             wpinv_unset_cart_discount( $discount );
@@ -1172,7 +1179,8 @@ function wpinv_checkout_form_validate_discounts() {
     global $wpi_checkout_id;
     
     $discounts = wpinv_get_cart_discounts();
-    
+    $discounts = array_filter( $discounts );
+
     if ( !empty( $discounts ) ) {
         $invalid = false;
         
