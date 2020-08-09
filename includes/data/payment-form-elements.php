@@ -103,7 +103,7 @@ return array(
 
     array( 
         'type' => 'radio',
-        'name' => __( 'Multiple Choice', 'invoicing' ),
+        'name' => __( 'Radio', 'invoicing' ),
         'defaults'     => array(
             'label'    => __( 'Select one choice', 'invoicing' ),
             'options'  => array(
@@ -343,12 +343,20 @@ return array(
         'type'       => 'pay_button',
         'name'       => __( 'Payment Button', 'invoicing' ),
         'defaults'   => array(
-            'gateway_select' => __( 'Select Payment Method', 'invoicing' ),
             'value'          => '',
             'class'          => 'btn-primary',
             'label'          => __( 'Pay Now »', 'invoicing' ),
             'description'    => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
             'premade'        => true,
+        )
+    ),
+
+    array(
+        'type'       => 'gateway_select',
+        'name'       => __( 'Gateway Select', 'invoicing' ),
+        'defaults'   => array(
+            'text'    => __( 'Select Payment Method', 'invoicing' ),
+            'premade' => true,
         )
     ),
 

@@ -53,11 +53,42 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the gateway select element template.
+     */
+    public function render_gateway_select_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'gateway_select' );
+        $text     = __( 'The gateway select box will appear hear', 'invoicing' );
+        echo "
+            <div $restrict class='alert alert-info' role='alert'>
+                <span>$text</span>
+            </div>
+        ";
+    }
+
+    /**
+     * Renders the edit gateway select element template.
+     */
+    public function edit_gateway_select_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'gateway_select' );
+        $label    = __( 'The gateway select text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
      * Renders the total payable element template.
      */
     public function render_total_payable_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'total_payable' );
-        $text     = __( 'The total payable amount will appear hear', 'invoicing' );
+        $text     = __( 'The total payable amount will appear here', 'invoicing' );
         echo "
             <div $restrict class='alert alert-info' role='alert'>
                 <span>$text</span>
@@ -1030,18 +1061,12 @@ class WPInv_Payment_Form_Elements {
         $id2      = $field . '.id + "_edit2"';
         $label4   = esc_attr__( 'Button Type', 'invoicing' );
         $id3      = $field . '.id + "_edit3"';
-        $label4   = esc_attr__( 'Select Gateway Text', 'invoicing' );
-        $id3      = $field . '.id + "_edit4"';
 
         echo "
             <div $restrict>
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
-                </div>
-                <div class='form-group'>
-                    <label :for='$id3'>$label4</label>
-                    <input :id='$id3' v-model='$field.gateway_select' class='form-control' />
                 </div>
                 <div class='form-group'>
                     <label :for='$id2'>$label2</label>
@@ -1184,15 +1209,15 @@ class WPInv_Payment_Form_Elements {
         $restrict  = $this->get_restrict_markup( $field, 'items' );
         ?>
 
-        <div <?php echo $restrict; ?> class='item_totals text-center'>
+        <div <?php echo $restrict; ?> class='item_totals'>
             <div v-if='!is_default'>
-                <div v-if='! canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='p-4 bg-warning text-light'><?php _e( 'Item totals will appear here. Click to set items.', 'invoicing' ) ?></div>
-                <div v-if='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='p-4 bg-danger'><?php _e( 'Your form allows customers to buy several recurring items. This is not supported and will lead to unexpected behaviour.', 'invoicing' ); _e( 'To prevent this, limit customers to selecting a single item.', 'invoicing' ); ?></div>
+                <div v-if='! canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='alert alert-info' role='alert'><?php _e( 'Item totals will appear here. Click to set items.', 'invoicing' ) ?></div>
+                <div v-if='canCheckoutSeveralSubscriptions(<?php echo $field; ?>)' class='alert alert-danger' role='alert'><?php _e( 'Your form allows customers to buy several recurring items. This is not supported and might lead to unexpected behaviour.', 'invoicing' ); ?></div>
             </div>
-                <div v-if='is_default'>
-                    <div class='p-4 bg-warning'><?php _e( 'Item totals will appear here.', 'invoicing' ) ?></div>
-                </div>
+            <div v-if='is_default'>
+                <div class='alert alert-info' role='alert'><?php _e( 'Item totals will appear here.', 'invoicing' ) ?></div>
             </div>
+        </div>
 
         <?php
     }
