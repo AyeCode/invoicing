@@ -11,7 +11,6 @@ defined( 'ABSPATH' ) || exit;
 
 echo aui()->radio(
     array(
-        'type'       => 'checkbox',
         'name'       => esc_attr( $id ),
         'id'         => esc_attr( $id ) . uniqid( '_' ),
         'required'   => ! empty( $required ),

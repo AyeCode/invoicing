@@ -1127,3 +1127,51 @@ function wpinv_clean( $var ) {
     
     return is_string( $var ) ? sanitize_text_field( $var ) : $var;
 }
+
+/**
+ * Converts a price string into an options array.
+ *
+ * @param string $str Data to convert.
+ * @return string|array
+ */
+function getpaid_convert_price_string_to_options( $str ) {
+
+	$raw_options = array_map( 'trim', explode( ',', $str ) );
+    $options     = array();
+
+    foreach ( $raw_options as $option ) {
+
+        if ( '' == $option ) {
+            continue;
+        }
+
+        $option = array_map( 'trim', explode( '|', $option ) );
+
+        $price = null;
+        $label = null;
+
+        if ( isset( $option[0] ) && '' !=  $option[0] ) {
+            $label  = $option[0];
+        }
+
+        if ( isset( $option[1] ) && '' !=  $option[1] ) {
+            $price = $option[1];
+        }
+
+        if ( ! isset( $price ) ) {
+            $price = $label;
+        }
+
+        if ( ! isset( $price ) || ! is_numeric( $price ) ) {
+            continue;
+        }
+
+        if ( ! isset( $label ) ) {
+            $label = $price;
+        }
+
+        $options[ $price ] = $label;
+    }
+
+    return $options;
+}

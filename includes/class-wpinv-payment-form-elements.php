@@ -139,6 +139,66 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the edit price select element template.
+     */
+    public function edit_price_select_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'price_select' );
+        
+        $label3   = __( 'Help text', 'invoicing' );
+        $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
+        $id3      = $field . '.id + "_edit3"';
+        $label6   = __( 'Options', 'invoicing' );
+        $id6      = $field . '.id + "_edit5"';
+        ?>
+            <div <?php echo $restrict; ?>>
+                <small class='form-text text-muted mb-2'><?php _e( 'This amount will be added to the total amount for this form', 'invoicing' ); ?></small>
+                <div class='form-group'>
+                    <label class="d-block">
+                        <span><?php _e( 'Field Label', 'invoicing' ); ?></span>
+                        <input v-model='<?php echo $field; ?>.label' class='form-control' />
+                    </label>
+                </div>
+
+                <div class='form-group' v-if="<?php echo $field; ?>.select_type=='select'">
+                    <label class="d-block">
+                        <span><?php _e( 'Placeholder text', 'invoicing' ); ?></span>
+                        <input v-model='<?php echo $field; ?>.placeholder' class='form-control' />
+                    </label>
+                </div>
+
+                <div class='form-group'>
+                    <label class="d-block">
+                        <span><?php _e( 'Select Type', 'invoicing' ); ?></span>
+                        <select class='form-control custom-select' v-model='<?php echo $field; ?>.select_type'>
+                            <option value='select'><?php _e( 'Dropdown', 'invoicing' ) ?></option>
+                            <option value='checkboxes'><?php _e( 'Checkboxes', 'invoicing' ) ?></option>
+                            <option value='radios'><?php _e( 'Radio Buttons', 'invoicing' ) ?></option>
+                            <option value='buttons'><?php _e( 'Buttons', 'invoicing' ) ?></option>
+                            <option value='circles'><?php _e( 'Circles', 'invoicing' ) ?></option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class='form-group'>
+                    <label class="d-block">
+                        <span><?php _e( 'Options', 'invoicing' ); ?></span>
+                        <textarea placeholder='Basic|10,Pro|99,Business|199' v-model='<?php echo $field; ?>.options' class='form-control' rows='3'></textarea>
+                        <small class='form-text text-muted mb-2'><?php _e( 'Use commas to separate options and pipes to separate a label and its price. Do not include a currency symbol in the price.', 'invoicing' ); ?></small>
+                    </label>
+                </div>
+
+                <div class='form-group'>
+                    <label class="d-block">
+                        <span><?php _e( 'Help Text', 'invoicing' ); ?></span>
+                        <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='<?php echo $field; ?>.description' class='form-control' rows='3'></textarea>
+                    </label>
+                </div>
+            </div>
+        <?php
+
+    }
+
+    /**
      * Renders the price select element template.
      */
     public function render_price_select_template( $field ) {
@@ -187,6 +247,9 @@ class WPInv_Payment_Form_Elements {
 
                 <!-- Select -->
                 <select v-if='<?php echo esc_attr( $field ); ?>.select_type=="select"' class='form-control custom-select'>
+                    <option v-if="<?php echo esc_attr( $field ); ?>.placeholder" selected="selected">
+                        {{<?php echo esc_attr( $field ); ?>.placeholder}}
+                    </option>
                     <option v-for="(option, index) in <?php echo esc_attr( $field ); ?>.options.split(',')" :key="index">
                         {{option | optionize}}
                     </option>

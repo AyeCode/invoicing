@@ -23,7 +23,7 @@ if ( ! empty( $hide_cart ) ) {
 }
 
 // Display the cart totals.
-wpinv_get_template( 'payment-forms/cart.php', compact( 'form' ) );
+wpinv_get_template( 'payment-forms/cart.php', compact( 'form', 'items_type' ) );
 
 if ( ! empty( $hide_cart ) ) {
     echo '</div>';

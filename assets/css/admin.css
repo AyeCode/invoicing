@@ -2095,7 +2095,7 @@ textarea.wpi-email_overdue_content {
 }
 
 .getpaid-price-circles label {
-    padding: 20px 20px;
+    padding: 0 4px;
     -moz-border-radius:50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
