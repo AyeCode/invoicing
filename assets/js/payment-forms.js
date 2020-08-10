@@ -1,7 +1,175 @@
 jQuery(function($) {
 
+    /**
+     * Simple throttle function
+     * @param function callback The callback function
+     * @param int limit The number of milliseconds to wait for
+     */
+    function gp_throttle (callback, limit) {
+
+        // Ensure we have a limit.
+        if ( ! limit ) {
+            limit = 200
+        }
+
+        // Initially, we're not waiting
+        var wait = false;
+
+        // Ensure that the last call was handled
+        var did_last = true;
+
+        // We return a throttled function
+        return function () {
+
+            // If we're not waiting
+            if ( ! wait ) {
+
+                // We did the last action.
+                did_last = true;
+
+                // Execute users function
+                callback.bind(this).call();
+
+                // Prevent future invocations
+                wait = true;
+
+                // For a period of time...
+                setTimeout(function () {
+
+                    // then allow future invocations
+                    wait = false;
+
+                }, limit);
+
+            // If we're waiting...
+            } else {
+
+                // We did not do the last action.
+                did_last = false;
+
+                // Wait for a period of time...
+                var that = this
+                setTimeout(function () {
+
+                    // then ensure that we did the last call.
+                    if ( ! did_last ) {
+                        callback.bind(that).call();
+                        did_last = true
+                    }
+
+                }, limit);
+
+            }
+
+        }
+    }
+
+    // A local cache of prices.
+    var cached_prices = {}
+
+    // Fetch prices from the server.
+    var get_prices = function( form, form_data ) {
+
+        wpinvBlock(form);
+
+        return $.post( WPInv.ajax_url, form_data + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce )
+
+            .done( function( res ) {
+
+                // We have prices.
+                if ( res.success ) {
+
+                    // Cache the data.
+                    cached_prices[ form_data ] = res.data
+                    return;
+
+                }
+
+                // An error occured.
+                form.find('.getpaid-payment-form-errors').html(res).removeClass('d-none')
+
+            } )
+
+            .fail( function( res ) {
+                form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
+            } )
+
+            .always(() => {
+                form.unblock();
+            })
+
+        }
+
+    /**
+     * Refresh prices from the cache.
+     */
+    var handle_refresh = function( form, form_data ) {
+
+        // Hide any errors.
+        form.find('.getpaid-payment-form-errors').html('').addClass('d-none')
+
+        var data = cached_prices[ form_data ]
+
+        // Process item sub-totals.
+        if ( data.item_totals ) {
+
+            var item_totals = form.find('.getpaid-payment-form-element-items');
+
+            for ( var item_class in data.item_totals ) {
+                if ( data.item_totals.hasOwnProperty( item_class ) ) {
+                    item_totals.find(item_class).find('.getpaid-form-cart-item-subtotal').html(data.item_totals[item_class])
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Refresh prices either from cache or from the server.
+     */
+    var refresh_prices = function( form ) {
+
+        // Get form data.
+        var form_data = form.serialize()
+
+        // If we have the items in the cache...
+        if ( cached_prices[ form_data ] ) {
+            handle_refresh( form, form_data )
+            return
+        }
+
+        get_prices( form, form_data ).done( function () {
+            if ( cached_prices[ form_data ] ) {
+                handle_refresh( form, form_data )
+            }
+        })
+
+    }
+
+
+    // Handles field changes.
+    var on_field_change = function() {
+
+        // Sanitize the value.
+        $(this).val( $(this).val().replace(/[^0-9\.]/g,'') )
+
+        // Ensure that we have a value.
+        if ( '' == $(this).val() ) {
+            $(this).val('1')
+        }
+
+        // Refresh prices.
+        refresh_prices( $( this ).closest('.getpaid-payment-form') )
+    }
+
+    // Refresh when custom prices change.
+    $( 'body').on( 'input', '.getpaid-item-price-input', gp_throttle( on_field_change, 500 ) );
+
+    // Refresh when quantities change.
+    $( 'body').on( 'change', '.getpaid-item-quantity-input', gp_throttle( on_field_change, 500 ) );
+
     // Custom prices
-    $( 'body').on( 'input', '.wpinv-item-price-input', function( e ) {
+    $( 'body').on( 'change', '.wpinv-item-price-input', function( e ) {
 
         var form  = $( this ).closest('.wpinv_payment_form')
 
@@ -29,7 +197,7 @@ jQuery(function($) {
             if ( ! isNaN( value ) ) {
                 total = total + ( value * quantity );
             }
-            
+
         })
 
         // Format the total.
@@ -77,7 +245,7 @@ jQuery(function($) {
             if ( ! isNaN( value ) ) {
                 total = total + ( value * quantity );
             }
-            
+
         })
 
         // Format the total.
@@ -139,7 +307,7 @@ jQuery(function($) {
             if ( ! isNaN( value ) ) {
                 total = total + ( value * quantity );
             }
-            
+
         })
 
         // Format the total.
@@ -201,7 +369,7 @@ jQuery(function($) {
             if ( ! isNaN( value ) ) {
                 total = total + ( value * quantity );
             }
-            
+
         })
 
         // Format the total.
@@ -304,7 +472,7 @@ jQuery(function($) {
 
         form.find('.wpi-payment-form-items-select-checkbox:checked').each(function(){
             var val = $(this).val()
-            
+
             form
                 .find( '*[data-id="' + val +'"]' )
                 .removeClass('d-none')
@@ -540,7 +708,7 @@ jQuery(function($) {
 
             var totals = $( form ).find('.item_totals')
             wpinvBlock( totals );
-    
+
             var data = $( form ).serialize();
 
             $.post(WPInv.ajax_url, data + '&action=wpinv_payment_form_get_taxes', function (res) {
@@ -629,7 +797,7 @@ jQuery(function($) {
 
                 $.get(ajaxurl, data, function( res ) {
 
-                    if ( 'object' == typeof res ) {    
+                    if ( 'object' == typeof res ) {
                         $checkout_form.find('.wpinv_state').html( res.data )
                     }
 

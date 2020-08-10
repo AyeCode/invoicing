@@ -301,6 +301,29 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	}
 
 	/**
+	 * Get a single item belonging to the form.
+	 *
+	 * @since 1.0.19
+	 * @param  int $item_id The item id to return.
+	 * @return GetPaid_Form_Item|bool
+	 */
+	public function get_item( $item_id ) {
+
+		if ( empty( $item_id ) || ! is_numeric( $item_id ) ) {
+			return false;
+		}
+
+		foreach( $this->get_items() as $item ) {
+			if ( $item->get_id() == (int) $item_id ) {
+				return $item;
+			}
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Get the total amount earned via this form.
 	 *
 	 * @since 1.0.19
@@ -454,7 +477,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			$this->set_prop( 'items', $value );
 		}
 	}
-	
+
 	/**
 	 * Set the total amount earned via this form.
 	 *
@@ -564,6 +587,16 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	}
 
 	/**
+	 * Checks whether the form has a given item.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+    public function has_item( $item_id ) {
+        return false !== $this->get_item( $item_id );
+	}
+
+	/**
 	 * Displays the payment form.
 	 *
 	 * @param bool $echo whether to return or echo the value.
@@ -571,7 +604,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 */
     public function display( $echo = true ) {
 		global $invoicing;
-		
+
 		// Ensure that it is active.
 		if ( ! $this->is_active() ) {
 			$html = aui()->alert(

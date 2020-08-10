@@ -52,7 +52,7 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
                                             <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
                                         </div>
                                     <?php endif; ?>
-                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>]" value="<?php echo esc_attr( $item->get_minimum_price() ); ?>" placeholder="<?php echo esc_attr( $item->get_price() ); ?>" class="getpaid-item-price-input">
+                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( $item->get_price() ); ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input">
 
                                     <?php if( 'left' != $position ) : ?>
                                         <div class="input-group-append">
@@ -64,7 +64,7 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
                         } else {
                             echo $item->get_the_price();
                             ?>
-                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
+                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
                             <?php
                         }
                     }
@@ -74,13 +74,13 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
                         if ( $item->allows_quantities() ) {
                             ?>
-                                <input name='getpaid-item-<?php echo (int) $item->get_id(); ?>-quantity' type='number' class='getpaid-item-quantity-input pr-1' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
+                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input pr-1' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
                             <?php
                         } else {
                             echo (int) $item->get_qantity();
                             echo '&nbsp;&nbsp;&nbsp;';
                             ?>
-                                <input type='hidden' class='getpaid-item-quantity-input' value='<?php (int) $item->get_qantity(); ?>'>
+                                <input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (int) $item->get_qantity(); ?>'>
                             <?php
                         }
                     }

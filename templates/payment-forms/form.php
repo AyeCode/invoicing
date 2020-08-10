@@ -24,11 +24,11 @@ if ( ! $form->is_active() ) {
 do_action( 'getpaid_before_payment_form', $form );
 
 ?>
-<form class='getpaid-payment-form'>
+<form class='getpaid-payment-form' method='POST'>
     <?php do_action( 'getpaid_payment_form_top', $form ); ?>
-    <?php wp_nonce_field( 'getpaid_payment_form', 'getpaid_payment_form' ); ?>
     <?php wp_nonce_field( 'vat_validation', '_wpi_nonce' ); ?>
     <input type='hidden' name='form_id' value='<?php echo $form->get_id(); ?>'/>
+    <input type='hidden' name='getpaid_payment_form_submission' value='1'/>
     <?php do_action( 'getpaid_payment_form_before_elements', $form ); ?>
     <?php
         foreach ( $form->get_elements() as $element ) {

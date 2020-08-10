@@ -80,6 +80,7 @@ class WPInv_Ajax {
             'apply_discount' => true,
             'remove_discount' => true,
             'buy_items' => true,
+            'payment_form_refresh_prices' => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -1256,6 +1257,60 @@ class WPInv_Ajax {
     }
 
     /**
+     * Refresh prices.
+     *
+     * @since 1.0.19
+     */
+    public static function payment_form_refresh_prices() {
+
+        // Check nonce.
+        check_ajax_referer( 'getpaid_form_nonce' );
+
+        // ... form fields...
+        if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
+            _e( 'Error: Reload the page and try again.', 'invoicing' );
+            exit;
+        }
+
+        // Load the submission.
+        $submission = new GetPaid_Payment_Form_Submission();
+
+        // Do we have an error?
+        if ( ! empty( $submission->last_error ) ) {
+            echo $submission->last_error;
+            exit;
+        }
+
+        // Prepare the result.
+        $result = array(
+            'submission_id' => $submission->id,
+            'has_recurring' => $submission->has_recurring,
+            'totals'        => array(
+                'subtotal'  => wpinv_price( wpinv_format_amount( $submission->subtotal_amount ), $submission->get_currency() ),
+                'discount'  => wpinv_price( wpinv_format_amount( $submission->get_total_discount() ), $submission->get_currency() ),
+                'fees'      => wpinv_price( wpinv_format_amount( $submission->get_total_fees() ), $submission->get_currency() ),
+                'tax'       => wpinv_price( wpinv_format_amount( $submission->get_total_tax() ), $submission->get_currency() ),
+                'total'     => wpinv_price( wpinv_format_amount( $submission->get_total() ), $submission->get_currency() ),
+            ),
+        );
+
+        // Add invoice.
+        if ( $submission->has_invoice() ) {
+            $result['invoice'] = $submission->get_invoice()->ID;
+        }
+
+        // Add discount code.
+        if ( $submission->has_discount_code() ) {
+            $result['discount_code'] = $submission->get_discount_code();
+        }
+
+        // Filter the result.
+        $result = apply_filters( 'getpaid_payment_form_ajax_refresh_prices', $result, $submission );
+
+        wp_send_json_success( $result );
+    }
+
+    /**
      * Apply discounts.
      *
      * @since 1.0.19
@@ -1263,7 +1318,7 @@ class WPInv_Ajax {
     public static function payment_form_discount() {
 
         // Check nonce.
-        check_ajax_referer( 'wpinv_payment_form', 'wpinv_payment_form' );
+        check_ajax_referer( 'getpaid_form_nonce' );
 
         // Prepare submitted data...
         $data = wp_unslash( $_POST );
@@ -1318,23 +1373,6 @@ class WPInv_Ajax {
         // If yes, ensure that it exists.
         $discount = wpinv_get_discount_obj( $data['discount'] );
 
-        // Ensure it is active.
-        if ( ! $discount->exists() || ! $discount->is_active() || ! $discount->has_started() || $discount->is_expired() ) {
-            return __( 'This discount code is not valid', 'invoicing' );
-        }
-
-        // If it can only be used once per user...
-        if ( $discount->is_single_use ) {
-
-            if ( empty( $data['billing_email'] ) ) {
-                return __( 'Please enter your billing email before applying this discount', 'invoicing' );
-            }
-
-            if ( ! $discount->is_valid_for_user( $data['billing_email'] ) ) {
-                return __( 'You have already used this discount', 'invoicing' );
-            }
-
-        }
 
         // Prepare items.
         if ( ! empty( $data['invoice_id'] ) ) {
