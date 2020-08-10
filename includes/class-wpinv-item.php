@@ -278,7 +278,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_price( $context = 'view' ) {
-        return wpinv_format_amount( (float) wpinv_sanitize_amount( $this->get_prop( 'price', $context ) ) );
+        return wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
 	}
 	
 	/**
@@ -293,7 +293,7 @@ class WPInv_Item  extends GetPaid_Data {
 		$price = $this->get_price( $context );
 
 		if ( $this->has_free_trial() ) {
-			$price = wpinv_format_amount( 0 );
+			$price = wpinv_sanitize_amount( 0 );
 		}
         return apply_filters( 'wpinv_get_initial_item_price', $price, $this );
     }
@@ -418,7 +418,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_minimum_price( $context = 'view' ) {
-        return wpinv_format_amount( (float) wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) ) );
+        return wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) );
     }
 
     /**
@@ -441,7 +441,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_recurring_price( $context = 'view' ) {
 		$price = $this->get_price( $context );
-        return wpinv_format_amount( apply_filters( 'wpinv_get_recurring_item_price', $price, $this->ID ) );
+        return wpinv_sanitize_amount( apply_filters( 'wpinv_get_recurring_item_price', $price, $this->ID ) );
 	}
 
 	/**

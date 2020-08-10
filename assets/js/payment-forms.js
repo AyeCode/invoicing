@@ -110,14 +110,23 @@ jQuery(function($) {
 
         var data = cached_prices[ form_data ]
 
+        // Process totals.
+        if ( data.totals ) {
+
+            for ( var total in data.totals ) {
+                if ( data.totals.hasOwnProperty( total ) ) {
+                    form.find('.getpaid-form-cart-totals-total-' + total).html(data.totals[total])
+                }
+            }
+
+        }
+
         // Process item sub-totals.
-        if ( data.item_totals ) {
+        if ( data.items ) {
 
-            var item_totals = form.find('.getpaid-payment-form-element-items');
-
-            for ( var item_class in data.item_totals ) {
-                if ( data.item_totals.hasOwnProperty( item_class ) ) {
-                    item_totals.find(item_class).find('.getpaid-form-cart-item-subtotal').html(data.item_totals[item_class])
+            for ( var item in data.items ) {
+                if ( data.items.hasOwnProperty( item ) ) {
+                    form.find('.getpaid-form-cart-item-subtotal-' + item).html(data.items[item])
                 }
             }
 
@@ -168,101 +177,42 @@ jQuery(function($) {
     // Refresh when quantities change.
     $( 'body').on( 'change', '.getpaid-item-quantity-input', gp_throttle( on_field_change, 500 ) );
 
-    // Custom prices
-    $( 'body').on( 'change', '.wpinv-item-price-input', function( e ) {
+    // Refresh when country changes.
+    $( 'body').on( 'change', '#wpinv_country', function() {
 
-        var form  = $( this ).closest('.wpinv_payment_form')
+        var form = $( this ).closest('.getpaid-payment-form')
+        if ( form.find('#wpinv_state').length ) {
 
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
+            wpinvBlock( form.find('.wpinv_state') );
+
+                data = {
+                    action: 'wpinv_get_payment_form_states_field',
+                    country: $(this).val(),
+                    form: form.find('input[name="form_id"]').val()
+                };
+
+                $.get(ajaxurl, data, function( res ) {
+
+                    if ( 'object' == typeof res ) {
+                        form.find('.wpinv_state').html( res.data )
+                    }
+
+                })
+
+                .always( function(data) {
+                    form.find('.wpinv_state').unblock()
+                });
+
         }
 
-        var total = 0.0
+        refresh_prices( form )
+    } );
 
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
+    // Refresh when state changes.
+    $( 'body').on( 'change', '#wpinv_state', function() {
+        refresh_prices( $( this ).closest('.getpaid-payment-form') )
+    } );
 
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        var total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
-
-    // Custom quantities
-    $( 'body').on( 'input', '.wpinv-item-quantity-input', function( e ) {
-
-        var form  = $( this ).closest('.wpinv_payment_form')
-
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
-        }
-
-        var total = 0.0
-
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
-
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        var total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
 
     $( 'body').on( 'input', '.wpinv_payment_form .wpinv-items-selector', function( e ) {
 
@@ -669,9 +619,9 @@ jQuery(function($) {
 
     })
 
-    $('.wpinv_payment_form').on('click', 'input[name="wpi-gateway"]', function ( e ) {
+    $('body').on('click', 'input[name="wpi-gateway"]', function ( e ) {
 
-        var form = $( this ).closest( '.wpinv_payment_form' );
+        var form = $( this ).closest( '.getpaid-payment-form' );
         var is_checked = $(this).is(':checked')
 
         if ($('.wpi-payment_methods input.wpi-pmethod').length > 1) {
@@ -699,121 +649,36 @@ jQuery(function($) {
         wpinvSetPaymentBtnText($(this), $('#wpinv_payment_mode_select').data('free'));
     });
 
-    $('.wpinv_payment_form').find('.payment_box .form-horizontal .form-group').addClass('row')
+    // Set's up a checkout form. refresh_prices
+    var setup_form = function( form ) {
 
-    // Ensures that taxes on the form are in sync.
-    var wpinvPaymentFormUpdateTaxes = function( form ) {
+        form.find('.payment_box .form-horizontal .form-group').addClass('row')
 
-        var syncTaxes = function() {
-
-            var totals = $( form ).find('.item_totals')
-            wpinvBlock( totals );
-
-            var data = $( form ).serialize();
-
-            $.post(WPInv.ajax_url, data + '&action=wpinv_payment_form_get_taxes', function (res) {
-
-                if ( 'object' == typeof res ) {
-                    $( form ).find('.wpinv-items-total').html( res.data.total )
-                    $( form ).find('.wpinv-items-tax').html( res.data.tax )
-                    $( form ).find('.wpinv-items-sub-total').html( res.data.sub_total )
-
-                    if ( res.data.discount ) {
-                        $( form ).find('.wpinv-items-discount').html( res.data.discount ).closest('.row').show()
-                    } else {
-                        $( form ).find('.wpinv-items-discount').closest('.row').hide()
-                    }
-
-                }
-
-            })
-
-            .always(function () {
-                totals.unblock();
-            })
-
-        }
-
-        syncTaxes();
-        $( form ).on( 'change', '.wpinv-item-quantity-input', syncTaxes )
-        $( form ).on( 'change', '.wpinv-item-price-input', syncTaxes )
-        $( form ).on( 'change', '.wpinv-items-selector', syncTaxes )
-        $( form ).on( 'change', '.wpi-payment-form-items-select-checkbox', syncTaxes )
-        $( form ).on( 'change', '.wpinv-items-select-selector', syncTaxes )
-        $( form ).on( 'change', '.wpinv-items-multiselect-selector', syncTaxes )
-        $( form ).on( 'change', '#wpinv_country', syncTaxes )
-        $( form ).on( 'change', '#wpinv_state', syncTaxes )
-
-        // When the discount value changes.
-        $( form ).on('change', '.getpaid-discount-field', function( e ) {
-            if ( $( this ).val() == '' ) {
-                $( form ).find('.wpinv_payment_form_coupon_errors').html('').addClass('d-none')
-                syncTaxes()
-            }
-        });
-
-    }
-
-    var setup_form = function( $checkout_form ) {
-
-        var $payment_methods = $checkout_form.find('.wpi-payment_methods input[name="wpi-gateway"]');
+        var gateways = form.find('.getpaid-payment-form-element-gateway_select input[name="wpi-gateway"]');
 
         // If there is one method, we can hide the radio input and the title.
-        if (1 === $payment_methods.length) {
-            $payment_methods.eq(0).hide();
-            $checkout_form.find('.wpi-payment_methods_title').hide()
+        if ( 1 === gateways.length ) {
+            gateways.eq(0).hide();
+            form.find('.wpi-payment_methods_title').hide()
         }
 
-        if ( $payment_methods.length === 0) {
-            $checkout_form.find('.wpi-payment_methods_title').hide()
-            $checkout_form.find('.wpinv-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
+        if ( gateways.length === 0) {
+            form.find('.wpi-payment_methods_title').hide()
+            form.find('.getpaid-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
         }
 
         // If there are none selected, select the first.
-        if (0 === $payment_methods.filter(':checked').length) {
-            $payment_methods.eq(0).prop('checked', true);
+        if ( 0 === gateways.filter(':checked').length ) {
+            gateways.eq(0).prop( 'checked', true );
         }
 
-        // Trigger click event for selected method
-        $payment_methods.filter(':checked').eq(0).trigger('click');
-
-        // Taxes.
-        if ( $checkout_form.find('.wpinv-items-tax').length ) {
-            wpinvPaymentFormUpdateTaxes( $checkout_form )
-        }
-
-        // States.
-        if ( $checkout_form.find('#wpinv_state').length ) {
-
-            $checkout_form.on( 'change', '#wpinv_country', function() {
-
-            wpinvBlock( $checkout_form.find('.wpinv_state') );
-
-                data = {
-                    action: 'wpinv_get_payment_form_states_field',
-                    country: $(this).val(),
-                    form: $checkout_form.find('input[name="form_id"]').val()
-                };
-
-                $.get(ajaxurl, data, function( res ) {
-
-                    if ( 'object' == typeof res ) {
-                        $checkout_form.find('.wpinv_state').html( res.data )
-                    }
-
-                })
-
-                .always( function(data) {
-                    $checkout_form.find('.wpinv_state').unblock()
-                });
-
-            })
-
-        }
+        // Trigger click event for selected gateway.
+        gateways.filter(':checked').eq(0).trigger('click');
 
     }
 
-    $('.wpinv_payment_form').each( function() {
+    // Set up all active forms.
+    $('.getpaid-payment-form').each( function() {
         setup_form( $( this ) );
     } )
 
@@ -837,13 +702,13 @@ jQuery(function($) {
         $.get( WPInv.ajax_url, data, function (res) {
             $('#getpaid-payment-modal .modal-body').html( res )
             $('#getpaid-payment-modal').modal('handleUpdate')
-            $('#getpaid-payment-modal .wpinv_payment_form').each( function() {
+            $('#getpaid-payment-modal .getpaid-payment-form').each( function() {
                 setup_form( $( this ) );
             } )
         })
 
         .fail(function (res) {
-            $('#getpaid-payment-modal .modal-body').html('Could not establish a connection to the server.')
+            $('#getpaid-payment-modal .modal-body').html(WPInv.connectionError)
             $('#getpaid-payment-modal').modal('handleUpdate')
         })
 

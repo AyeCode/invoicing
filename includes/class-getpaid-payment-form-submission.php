@@ -249,6 +249,7 @@ class GetPaid_Payment_Form_Submission {
 					}
 
 					$item->set_price( $price );
+
 				}
 
 			}
@@ -341,9 +342,11 @@ class GetPaid_Payment_Form_Submission {
 
 		$this->items[ $item->get_id() ] = $item;
 
-		$this->subtotal_amount += $item->get_price();
+		$this->subtotal_amount += $item->get_price() * $item->get_qantity();
 
 		$this->process_item_discount( $item );
+
+		$this->process_item_tax( $item );
 	}
 
 	/**
@@ -359,6 +362,7 @@ class GetPaid_Payment_Form_Submission {
 	 * Returns all items.
 	 *
 	 * @since 1.0.19
+	 * @return GetPaid_Form_Item[]
 	 */
 	public function get_items() {
 		return $this->items;
@@ -372,7 +376,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function add_tax( $name, $amount ) {
-		$amount = wpinv_format_amount( wpinv_sanitize_amount( $amount ) );
+		$amount = (float) wpinv_sanitize_amount( $amount );
 
 		$this->total_tax_amount += $amount;
 
@@ -381,6 +385,49 @@ class GetPaid_Payment_Form_Submission {
 		} else {
 			$this->taxes[ $name ] = $amount;
 		}
+
+	}
+
+	/**
+	 * Whether or not we'll use taxes for the submission.
+	 *
+	 * @since 1.0.19
+	 */
+	public function use_taxes() {
+
+		$use_taxes = wpinv_use_taxes();
+
+		if ( $this->has_invoice() && $this->invoice->disable_taxes ) {
+			$use_taxes = false;
+		}
+
+		return apply_filters( 'getpaid_submission_use_taxes', $use_taxes, $this );
+
+	}
+
+	/**
+	 * Maybe process tax.
+	 *
+	 * @since 1.0.19 
+	 * @param GetPaid_Form_Item $item
+	 */
+	public function process_item_tax( $item ) {
+
+		// Abort early if we're not using taxes.
+		if ( ! $this->use_taxes() ) {
+			return;
+		}
+
+		$rate  = wpinv_get_tax_rate( $this->country, $this->state, $item->get_id() );
+		$price = $item->get_sub_total();
+
+		if ( wpinv_prices_include_tax() ) {
+			$item_tax = $price - ( $price - $price * $rate * 0.01 );
+		} else {
+			$item_tax = $price * $rate * 0.01;
+		}
+
+		$this->add_tax( 'Tax', $item_tax );
 
 	}
 
@@ -419,7 +466,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function add_discount( $name, $amount ) {
-		$amount = wpinv_format_amount( wpinv_sanitize_amount( $amount ) );
+		$amount = wpinv_sanitize_amount( $amount );
 
 		$this->total_discount_amount += $amount;
 
@@ -568,7 +615,7 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		// Fetch the discounted amount.
-		$discount = $this->discount->get_discounted_amount( $item->get_price() );
+		$discount = $this->discount->get_discounted_amount( $item->get_price() * $item->get_qantity() );
 
 		$this->add_discount( 'Discount', $discount );
 
@@ -609,7 +656,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function add_fee( $name, $amount ) {
-		$amount = wpinv_format_amount( wpinv_sanitize_amount( $amount ) );
+		$amount = wpinv_sanitize_amount( $amount );
 
 		$this->total_fees_amount += $amount;
 
@@ -658,7 +705,23 @@ class GetPaid_Payment_Form_Submission {
 	public function get_total() {
 		$total = $this->subtotal_amount + $this->get_total_fees() - $this->get_total_discount() + $this->get_total_tax();
 		$total = apply_filters( 'getpaid_get_submission_total_amount', $total, $this  );
-		return wpinv_format_amount( wpinv_sanitize_amount( $total ) );
+		return wpinv_sanitize_amount( $total );
+	}
+
+	/**
+	 * Whether payment details should be collected for this submission.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_payment_details() {
+		$collect = $this->subtotal_amount + $this->get_total_fees() - $this->get_total_discount() + $this->get_total_tax();
+
+		if ( $this->has_recurring ) {
+			$collect = true;
+		}
+
+		$collect = apply_filters( 'getpaid_submission_collect_payment_details', $collect, $this  );
+		return $collect;
 	}
 
 	/**

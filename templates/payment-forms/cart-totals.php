@@ -65,7 +65,7 @@ foreach ( $form->get_items() as $item ) {
                 <div class="col-12 offset-sm-6 col-sm-4">
                     <?php echo sanitize_text_field( $label ); ?>
                 </div>
-                <div class="col-12 col-sm-2">
+                <div class="col-12 col-sm-2 getpaid-form-cart-totals-total-<?php echo esc_attr( $key ); ?>">
                     <?php
                         do_action( "getpaid_payment_form_cart_totals_$key", $form );
 

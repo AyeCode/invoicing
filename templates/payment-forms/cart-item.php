@@ -15,7 +15,7 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 <div class='getpaid-payment-form-items-cart-item item-<?php echo $item->get_id(); ?>'>
     <div class="form-row">
         <?php foreach ( $columns as $key => $label ) : ?>
-            <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>">
+            <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo $item->get_id(); ?>">
                 <?php
                     do_action( "getpaid_payment_form_cart_item_$key", $form, $item );
 
