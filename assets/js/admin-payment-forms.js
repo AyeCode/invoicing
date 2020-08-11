@@ -236,6 +236,15 @@ jQuery(function ($) {
 				parent.find('.wpinv-available-items-editor-header > .toggle-icon .dashicons-arrow-up').toggle();
 			}
 
+		},
+
+		filters: {
+			optionize: function (value) {
+			  if (!value) return ''
+
+			  value = value.toString().split('|').splice(0,1).join('')
+			  return value.toString().trim()
+			}
 		}
 
 	});

@@ -146,6 +146,15 @@ return array(
     ),
 
     array(
+        'text'    => __( 'Select Payment Method', 'invoicing' ),
+        'id'          => 'gtscicd',
+        'name'        => 'gtscicd',
+        'type'        => 'gateway_select',
+        'premade'     => true
+
+    ),
+
+    array(
 
         'value'       =>'',
         'class'       => 'btn-primary',

@@ -5,6 +5,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 add_action( 'wpinv_paypal_cc_form', '__return_false' );
 add_filter( 'wpinv_paypal_support_subscription', '__return_true' );
 
+
+function wpinv_paypal_gateway_description_sandbox_notice( $description, $gateway ) {
+    if ( 'paypal' == $gateway && wpinv_is_test_mode( 'paypal' ) ) {
+        $description .= '<br>' . sprintf(
+            __( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal Sandbox Testing Guide%s for more details.', 'invoicing' ),
+            '<a href="https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/">',
+            '</a>'
+        );
+    }
+    return $description;
+
+}
+add_filter( 'wpinv_gateway_description', 'wpinv_paypal_gateway_description_sandbox_notice', 10, 2 );
+
 function wpinv_process_paypal_payment( $purchase_data ) {
     if( ! wp_verify_nonce( $purchase_data['gateway_nonce'], 'wpi-gateway' ) ) {
         wp_die( __( 'Nonce verification has failed', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );

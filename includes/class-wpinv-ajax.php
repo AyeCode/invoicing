@@ -63,9 +63,7 @@ class WPInv_Ajax {
             'delete_note' => false,
             'get_states_field' => true,
             'checkout' => false,
-            'payment_form_get_taxes' => true,
             'payment_form'     => true,
-            'payment_form_discount' => true,
             'get_payment_form' => true,
             'get_payment_form_states_field' => true,
             'add_invoice_item' => false,
@@ -80,6 +78,7 @@ class WPInv_Ajax {
             'apply_discount' => true,
             'remove_discount' => true,
             'buy_items' => true,
+            'payment_form_refresh_prices' => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -750,161 +749,84 @@ class WPInv_Ajax {
         global $invoicing, $wpi_checkout_id, $cart_total;
 
         // Check nonce.
-        if ( ! isset( $_POST['wpinv_payment_form'] ) || ! wp_verify_nonce( $_POST['wpinv_payment_form'], 'wpinv_payment_form' ) ) {
-            wp_send_json_error( __( 'Security checks failed.', 'invoicing' ) );
-        }
-
-        // Prepare submitted data...
-        $data = wp_unslash( $_POST );
+        check_ajax_referer( 'getpaid_form_nonce' );
 
         // ... form fields...
-        if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
-            wp_send_json_error( __( 'This payment form is no longer active.', 'invoicing' ) );
+        if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
+            _e( 'Error: Reload the page and try again.', 'invoicing' );
+            exit;
         }
 
-        if ( empty( $data['billing_email'] ) || ! is_email( $data['billing_email'] ) ) {
+        // Load the submission.
+        $submission = new GetPaid_Payment_Form_Submission();
+
+        // Do we have an error?
+        if ( ! empty( $submission->last_error ) ) {
+            echo $submission->last_error;
+            exit;
+        }
+
+        // We need a billing email.
+        if ( ! $submission->has_billing_email() || ! is_email( $submission->get_billing_email() ) ) {
             wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
         }
 
-        $prepared = array(
-            'billing_email'                    => sanitize_email( $data['billing_email'] ),
-            __( 'Billing Email', 'invoicing' ) => sanitize_email( $data['billing_email'] ),
-            __( 'Form Id', 'invoicing' )       => absint( $data['form_id'] ),
-        );
+        // Prepare items.
+        $items            = $submission->get_items();
+        $prepared_items   = array();
 
-        // Do we have a discount?
-        $discount = 0;
-        if ( ! empty( $data['discount'] ) ) {
+        if ( ! empty( $items ) ) {
 
-            // Validate discount.
-            $discount = self::payment_form_validate_discount( $data );
+            foreach( $items as $item_id => $item ) {
 
-            if ( is_string( $discount ) ){
-                wp_send_json_error( $discount );
-            }
+                if ( $item->can_purchase() ) {
+                    $prepared_items[] = array(
+                        'id'           => $item_id,
+                        'item_price'   => $item->get_price(),
+                        'custom_price' => $item->get_price(),
+                        'name'         => $item->get_name(),
+                        'quantity'     => $item->get_quantity(),
+                    );
+                }
 
-            if ( is_array( $discount ) ){
-                $discount = $discount[ 'discount' ];
-            }
-
-            if ( ! $discount ) {
-                $discount = 0;
             }
 
         }
 
-        $fields = $invoicing->form_elements->get_form_elements( $data['form_id'] );
-
-        // ... and form items.
-        if ( ! empty( $data['invoice_id'] ) ) {
-            $invoice = wpinv_get_invoice( $data['invoice_id'] );
-
-            if ( empty( $invoice ) ) {
-                wp_send_json_error( __( 'Invalid invoice.', 'invoicing' ) );
-            }
-
-            if ( $invoice->is_paid() ) {
-                wp_send_json_error( __( 'This invoice has already been paid.', 'invoicing' ) );
-            }
-
-            $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
-
-        } else {
-
-            if ( isset( $data['form_items'] ) ) {
-                $items = getpaid_convert_items_to_array( $data['form_items'] );
-                $items = $invoicing->form_elements->convert_normal_items( $items );
-            } else {
-                $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
-            }
-
-            $invoice = 0;
-        }
-
-        $prepared_items = array();
-        $address_fields = array();
-        $has_recurring  = false;
-
-        if ( ! empty( $data['wpinv-items'] ) ) {
-
-            $selected_items = wpinv_clean( $data['wpinv-items'] );
-
-            foreach ( $items as $item ) {
-
-                if ( ! empty( $item['required'] ) && ! isset( $selected_items[ $item['id'] ] ) ) {
-                    wp_send_json_error( __( 'A required item is missing.', 'invoicing' ) );
-                }
-
-                if ( ! isset( $selected_items[ $item['id'] ] ) ) {
-                    continue;
-                }
-
-                if ( ! empty( $item['recurring'] ) ) {
-                    $has_recurring  = true;
-                }
-
-                $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
-
-                if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
-
-                    $_quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
-
-                    if ( ! empty( $_quantity ) ) {
-                        $quantity = $_quantity;
-                    }
-                }
-
-                // Custom pricing.
-                if ( ! empty( $item['custom_price'] ) ) {
-
-                    $minimum_price = wpinv_sanitize_amount( $item['minimum_price'] );
-                    $set_price     = wpinv_sanitize_amount( $selected_items[ $item['id'] ] );
-
-                    if ( $set_price < $minimum_price ) {
-                        wp_send_json_error( __( 'The provided amount is less than the minimum allowed value.', 'invoicing' ) );
-                    }
-
-                    $prepared_items[] = array(
-                        'id'           =>$item['id'],
-                        'item_price'   => wpinv_sanitize_amount( $item['price'] ),
-                        'custom_price' => $set_price,
-                        'name'         => $item['title'],
-                        'quantity'     => $quantity,
-                    );
-
-                } else {
-
-                    $prepared_items[] = array(
-                        'id'           => $item['id'],
-                        'item_price'   => wpinv_sanitize_amount( $item['price'] ),
-                        'custom_price' => wpinv_sanitize_amount( $item['price'] ),
-                        'name'         => $item['title'],
-                        'quantity'     => $quantity,
-                    );
-
-                }
-
-            }
-
-        } else {
-
+        if ( empty( $prepared_items ) ) {
             wp_send_json_error( __( 'You have not selected any items.', 'invoicing' ) );
-
         }
 
-        if ( $has_recurring && 1 != count( $prepared_items ) ) {
+        if ( $submission->has_recurring && 1 != count( $prepared_items ) ) {
             wp_send_json_error( __( 'Recurring items should be bought individually.', 'invoicing' ) );
         }
 
+        // Prepare the submission details.
+        $prepared = array(
+            'billing_email'                    => sanitize_email( $submission->get_billing_email() ),
+            __( 'Billing Email', 'invoicing' ) => sanitize_email( $submission->get_billing_email() ),
+            __( 'Form Id', 'invoicing' )       => absint( $submission->payment_form->get_id() ),
+        );
+
+        // Address fields.
+        $address_fields = array();
+
+        // Add discount code.
+        if ( $submission->has_discount_code() ) {
+            $address_fields['discount'] = array( $submission->get_discount_code() );
+        }
+
         // Are all required fields provided?
-        foreach ( $fields as $field ) {
+        $data = $submission->get_data();
+
+        foreach ( $submission->payment_form->get_elements() as $field ) {
 
             if ( ! empty( $field['premade'] ) ) {
                 continue;
             }
 
-            if ( ! empty( $field['required'] ) && empty( $data[ $field['id'] ] ) ) {
-                wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
+            if ( ! $submission->is_required_field_set( $field ) ) {
+                wp_send_json_error( __( 'Fill all required fields.', 'invoicing' ) );
             }
 
             if ( $field['type'] == 'address' ) {
@@ -938,6 +860,7 @@ class WPInv_Ajax {
 
         }
 
+        // (Maybe) create the user.
         $user = get_user_by( 'email', $prepared['billing_email'] );
 
         if ( empty( $user ) ) {
@@ -952,12 +875,8 @@ class WPInv_Ajax {
             $user = get_user_by( 'id', $user );
         }
 
-        if ( ! empty( $discount ) ) {
-            $address_fields['discount'] = array( $data['discount'] );
-        }
-
         // Create the invoice.
-        if ( empty( $invoice ) ) {
+        if ( ! $submission->has_invoice() ) {
 
             $invoice = wpinv_insert_invoice(
                 array(
@@ -972,9 +891,15 @@ class WPInv_Ajax {
 
         } else {
 
+            $invoice = $submission->get_invoice();
+
+            if ( $invoice->is_paid() ) {
+                wp_send_json_error( __( 'This invoice has already been paid for.', 'invoicing' ) );
+            }
+
             $invoice = wpinv_update_invoice(
                 array(
-                    'ID'            => $invoice->ID,
+                    'ID'            => $submission->get_invoice()->ID,
                     'status'        => 'wpi-pending',
                     'cart_details'  => $prepared_items,
                     'user_info'     => $address_fields,
@@ -1104,371 +1029,68 @@ class WPInv_Ajax {
     }
 
     /**
-     * Apply taxes.
-     *
-     * @since 1.0.18
-     */
-    public static function payment_form_get_taxes() {
-        global $invoicing;
-
-        // Check nonce.
-        check_ajax_referer( 'wpinv_payment_form', 'wpinv_payment_form' );
-
-        // Prepare submitted data...
-        $data = wp_unslash( $_POST );
-
-        // ... form fields...
-        if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
-            exit;
-        }
-
-        // Do we have a discount?
-        if ( ! empty( $data['discount'] ) ) {
-
-            // Validate discount.
-            $discount = self::payment_form_validate_discount( $data );
-
-            if ( is_array( $discount ) ){
-                $data['total']     = wpinv_price( wpinv_format_amount( $discount['total'] ) );
-                $data['sub_total'] = wpinv_price( wpinv_format_amount( $discount['sub_total'] ) );
-                $data['discount']  = wpinv_price( wpinv_format_amount( $discount['discount'] ) );
-                $data['tax']       = wpinv_price( wpinv_format_amount( $discount['tax'] ) );
-                wp_send_json_success( $discount );
-            }
-
-        }        
-
-        // For existing invoices.
-        if ( ! empty( $data['invoice_id'] ) ) {
-            $invoice = wpinv_get_invoice( $data['invoice_id'] );
-
-            if ( empty( $invoice ) ) {
-                exit;
-            }
-
-            $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
-            $country = $invoice->country;
-            $state   = $invoice->state;
-
-        } else {
-
-            if ( isset( $data['form_items'] ) ) {
-                $items = getpaid_convert_items_to_array( $data['form_items'] );
-                $items = $invoicing->form_elements->convert_normal_items( $items );
-            } else {
-                $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
-            }
-
-            $country   = wpinv_default_billing_country();
-            $state     = false;
-        }
-
-        // What we will calculate.
-        $total     = 0;
-        $tax       = 0;
-        $sub_total = 0;
-
-        if ( ! empty( $data['wpinv_country'] ) ) {
-            $country = $data['wpinv_country'];
-        }
-
-        if ( ! empty( $data['wpinv_state'] ) ) {
-            $state = $data['wpinv_state'];
-        }
-
-        $has_recurring  = false;
-        if ( ! empty( $data['wpinv-items'] ) ) {
-
-            $selected_items = wpinv_clean( $data['wpinv-items'] );
-
-            foreach ( $items as $item ) {
-
-                if ( ! isset( $selected_items[ $item['id'] ] ) ) {
-                    continue;
-                }
-
-                if ( ! empty( $item['recurring'] ) ) {
-                    $has_recurring  = true;
-                }
-
-                $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
-
-                if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
-
-                    $quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
-
-                    if ( 1 > $quantity ) {
-                        $quantity = 1;
-                    }
-
-                }
-
-                // Custom pricing.
-                $price = wpinv_sanitize_amount( $item['price'] );
-                if ( ! empty( $item['custom_price'] ) ) {
-
-                    $minimum_price = wpinv_sanitize_amount( $item['minimum_price'] );
-                    $set_price     = wpinv_sanitize_amount( $selected_items[ $item['id'] ] );
-
-                    if ( $set_price < $minimum_price ) {
-                        $set_price = $minimum_price;
-                    }
-
-                    $price = wpinv_sanitize_amount( $set_price );
-
-                }
-
-                $price  = $quantity * floatval( $price );
-
-                if ( wpinv_use_taxes() ) {
-
-                    $rate = wpinv_get_tax_rate( $country, $state, (int) $item['id'] );
-
-                    if ( wpinv_prices_include_tax() ) {
-                        $pre_tax  = ( $price - $price * $rate * 0.01 );
-                        $item_tax = $price - $pre_tax;
-                    } else {
-                        $pre_tax  = $price;
-                        $item_tax = $price * $rate * 0.01;
-                    }
-
-                    $tax       = $tax + $item_tax;
-                    $sub_total = $sub_total + $pre_tax;
-                    $total     = $sub_total + $tax;
-
-                } else {
-                    $total  = $total + $price;
-                }
-
-            }
-
-        }
-
-        wp_send_json_success( array(
-            'free'          => $total == 0,
-            'total'         => wpinv_price( wpinv_format_amount( $total ) ),
-            'tax'           => wpinv_price( wpinv_format_amount( $tax ) ),
-            'sub_total'     => wpinv_price( wpinv_format_amount( $sub_total ) ),
-            'has_recurring' => false,
-            'discount'      => false,
-        ));
-        exit;
-    }
-
-    /**
-     * Apply discounts.
+     * Refresh prices.
      *
      * @since 1.0.19
      */
-    public static function payment_form_discount() {
+    public static function payment_form_refresh_prices() {
 
         // Check nonce.
-        check_ajax_referer( 'wpinv_payment_form', 'wpinv_payment_form' );
-
-        // Prepare submitted data...
-        $data = wp_unslash( $_POST );
+        check_ajax_referer( 'getpaid_form_nonce' );
 
         // ... form fields...
-        if ( empty( $data['form_id'] ) || 'publish' != get_post_status( $data['form_id'] ) ) {
+        if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
+            _e( 'Error: Reload the page and try again.', 'invoicing' );
             exit;
         }
 
-        // Do we have a discount?
-        if ( empty( $data['discount'] ) ) {
-            _e( 'Please enter your discount code', 'invoicing' );
+        // Load the submission.
+        $submission = new GetPaid_Payment_Form_Submission();
+
+        // Do we have an error?
+        if ( ! empty( $submission->last_error ) ) {
+            echo $submission->last_error;
             exit;
         }
 
-        // Validate discount.
-        $data = self::payment_form_validate_discount( $data );
+        // Prepare the result.
+        $result = array(
+            'submission_id' => $submission->id,
+            'has_recurring' => $submission->has_recurring,
+            'is_free'       => $submission->get_payment_details(),
+            'totals'        => array(
+                'subtotal'  => wpinv_price( wpinv_format_amount( $submission->subtotal_amount ), $submission->get_currency() ),
+                'discount'  => wpinv_price( wpinv_format_amount( $submission->get_total_discount() ), $submission->get_currency() ),
+                'fees'      => wpinv_price( wpinv_format_amount( $submission->get_total_fees() ), $submission->get_currency() ),
+                'tax'       => wpinv_price( wpinv_format_amount( $submission->get_total_tax() ), $submission->get_currency() ),
+                'total'     => wpinv_price( wpinv_format_amount( $submission->get_total() ), $submission->get_currency() ),
+            ),
+        );
 
-        if ( false === $data ) {
-            _e( 'There was an error applying your discount code', 'invoicing' );
-            exit;
-        }
+        // Add items.
+        $items = $submission->get_items();
+        if ( ! empty( $items ) ) {
+            $result['items'] = array();
 
-        if ( is_string( $data ) ) {
-            echo $data;
-            exit;
-        }
-
-        $data['total']     = wpinv_price( wpinv_format_amount( $data['total'] ) );
-        $data['sub_total'] = wpinv_price( wpinv_format_amount( $data['sub_total'] ) );
-        $data['discount']  = wpinv_price( wpinv_format_amount( $data['discount'] ) );
-        $data['tax']       = wpinv_price( wpinv_format_amount( $data['tax'] ) );
-
-        wp_send_json_success( $data );
-        exit;
-
-    }
-
-    /**
-     * Validates discounts.
-     *
-     * @since 1.0.19
-     */
-    public static function payment_form_validate_discount( $data ) {
-        global $invoicing;
-
-        // Do we have a discount?
-        if ( empty( $data['discount'] ) ) {
-            return false;
-        }
-
-        // If yes, ensure that it exists.
-        $discount = wpinv_get_discount_obj( $data['discount'] );
-
-        // Ensure it is active.
-        if ( ! $discount->exists() || ! $discount->is_active() || ! $discount->has_started() || $discount->is_expired() ) {
-            return __( 'This discount code is not valid', 'invoicing' );
-        }
-
-        // If it can only be used once per user...
-        if ( $discount->is_single_use ) {
-
-            if ( empty( $data['billing_email'] ) ) {
-                return __( 'Please enter your billing email before applying this discount', 'invoicing' );
+            foreach( $items as $item_id => $item ) {
+                $result['items']["$item_id"] = wpinv_price( wpinv_format_amount( $item->get_price() * $item->get_qantity() ) );
             }
-
-            if ( ! $discount->is_valid_for_user( $data['billing_email'] ) ) {
-                return __( 'You have already used this discount', 'invoicing' );
-            }
-
         }
 
-        // Prepare items.
-        if ( ! empty( $data['invoice_id'] ) ) {
-            $invoice = wpinv_get_invoice( $data['invoice_id'] );
-
-            if ( empty( $invoice ) ) {
-                return false;
-            }
-
-            $country = $invoice->country;
-            $state   = $invoice->state;
-            $items   = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
-
-        } else {
-
-            if ( isset( $data['form_items'] ) ) {
-                $items = getpaid_convert_items_to_array( $data['form_items'] );
-                $items = $invoicing->form_elements->convert_normal_items( $items );
-            } else {
-                $items = $invoicing->form_elements->get_form_items( $data['form_id'] );
-            }
-
-            $country   = wpinv_default_billing_country();
-            $state     = false;
-
+        // Add invoice.
+        if ( $submission->has_invoice() ) {
+            $result['invoice'] = $submission->get_invoice()->ID;
         }
 
-        // What we will calculate.
-        $total     = 0;
-        $tax       = 0;
-        $sub_total = 0;
-
-        if ( ! empty( $data['wpinv_country'] ) ) {
-            $country = $data['wpinv_country'];
+        // Add discount code.
+        if ( $submission->has_discount_code() ) {
+            $result['discount_code'] = $submission->get_discount_code();
         }
 
-        if ( ! empty( $data['wpinv_state'] ) ) {
-            $state = $data['wpinv_state'];
-        }
+        // Filter the result.
+        $result = apply_filters( 'getpaid_payment_form_ajax_refresh_prices', $result, $submission );
 
-        if ( ! empty( $data['wpinv-items'] ) ) {
-
-            $selected_items = wpinv_clean( $data['wpinv-items'] );
-
-            // Check if it is valid for the selected items.
-            if ( ! $discount->is_valid_for_items( array_keys( $selected_items ) ) ) {
-                return __( 'This discount is not valid for the items in your cart', 'invoicing' );
-            }
-
-            $has_recurring  = false;
-            foreach ( $items as $item ) {
-
-                if ( ! isset( $selected_items[ $item['id'] ] ) ) {
-                    continue;
-                }
-
-                $quantity = empty( $item['quantity'] ) ? 1 : absint( $item['quantity'] );
-
-                if ( ! empty( $item['recurring'] ) ) {
-                    $has_recurring  = true;
-                }
-
-                if ( ! empty( $item['allow_quantities'] ) && ! empty( $data["wpinv-item-{$item['id']}-quantity"] ) ) {
-
-                    $quantity = intval( $data["wpinv-item-{$item['id']}-quantity"] );
-
-                    if ( 1 > $quantity ) {
-                        $quantity = 1;
-                    }
-
-                }
-
-                // Custom pricing.
-                $price = wpinv_sanitize_amount( $item['price'] );
-                if ( ! empty( $item['custom_price'] ) ) {
-
-                    $minimum_price = wpinv_sanitize_amount( $item['minimum_price'] );
-                    $set_price     = wpinv_sanitize_amount( $selected_items[ $item['id'] ] );
-
-                    if ( $set_price < $minimum_price ) {
-                        $set_price = $minimum_price;
-                    }
-
-                    $price = wpinv_sanitize_amount( $set_price );
-
-                }
-
-                $price  = $quantity * floatval( $price );
-
-                if ( wpinv_use_taxes() ) {
-
-                    $rate = wpinv_get_tax_rate( $country, $state, (int) $item['id'] );
-
-                    if ( wpinv_prices_include_tax() ) {
-                        $pre_tax  = ( $price - $price * $rate * 0.01 );
-                        $item_tax = $price - $pre_tax;
-                    } else {
-                        $pre_tax  = $price;
-                        $item_tax = $price * $rate * 0.01;
-                    }
-
-                    $tax       = $tax + $item_tax;
-                    $sub_total = $sub_total + $pre_tax;
-                    $total     = $sub_total + $tax;
-
-                } else {
-                    $total  = $total + $price;
-                }
-
-            }
-
-        }
-
-        if ( ! $discount->is_minimum_amount_met( $total ) ) {
-            $min = wpinv_price( wpinv_format_amount( $discount->min_total ) );
-            return sprintf( __( 'The minimum total for using this discount is %s', 'invoicing' ), $min );
-        }
-
-        if ( ! $discount->is_maximum_amount_met( $total ) ) {
-            $max = wpinv_price( wpinv_format_amount( $discount->max_total ) );
-            return sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max );
-        }
-
-        $recurring_discount = $discount->get_is_recurring() && $has_recurring;
-        $discount = $discount->get_discounted_amount( $total );
-        $total    = $total - $discount;
-        $free     = false;
-
-        if ( $total == 0 ) {
-            $free = true;
-        }
-
-        return compact( 'total', 'tax', 'sub_total', 'discount', 'recurring_discount', 'free', 'has_recurring' );
-
+        wp_send_json_success( $result );
     }
 
     /**

@@ -25,8 +25,8 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
     add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'WPInv_Meta_Box_Details::output', 'wpi_invoice', 'side', 'default' );
     add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'WPInv_Meta_Box_Details::payment_meta', 'wpi_invoice', 'side', 'default' );
 
-    add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
-    add_meta_box( 'wpinv-payment-form-shortcode', __( 'Shortcode', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_shortcode', 'wpi_payment_form', 'side' );
+    add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
+    add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
    
     add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'WPInv_Meta_Box_Billing_Details::output', 'wpi_invoice', 'normal', 'high' );
     add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'WPInv_Meta_Box_Items::output', 'wpi_invoice', 'normal', 'high' );
@@ -40,34 +40,48 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
 }
 add_action( 'add_meta_boxes', 'wpinv_add_meta_boxes', 30, 2 );
 
-function wpinv_save_meta_boxes( $post_id, $post, $update = false ) {
+/**
+ * Saves meta boxes.
+ */
+function wpinv_save_meta_boxes( $post_id, $post ) {
     remove_action( 'save_post', __FUNCTION__ );
-    
-    // $post_id and $post are required
+
+    // $post_id and $post are required.
     if ( empty( $post_id ) || empty( $post ) ) {
         return;
     }
-        
-    if ( !current_user_can( 'edit_post', $post_id ) || empty( $post->post_type ) ) {
+
+    // Ensure that this user can edit the post.
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
         return;
     }
-    
+
     // Dont' save meta boxes for revisions or autosaves
     if ( defined( 'DOING_AUTOSAVE' ) || is_int( wp_is_post_revision( $post ) ) || is_int( wp_is_post_autosave( $post ) ) ) {
         return;
     }
-        
-    if ( $post->post_type == 'wpi_invoice' or $post->post_type == 'wpi_quote' ) {
-        if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
-            return;
-        }
-    
-        if ( isset( $_POST['wpinv_save_invoice'] ) && wp_verify_nonce( $_POST['wpinv_save_invoice'], 'wpinv_save_invoice' ) ) {
-            WPInv_Meta_Box_Items::save( $post_id, $_POST, $post );
-        }
-    } else if ( $post->post_type == 'wpi_item' ) {
-        GetPaid_Meta_Box_Item_Details::save( $post_id );
+
+    // Do not save for ajax requests.
+    if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
+        return;
     }
+
+    $post_types_map = array(
+        'wpi_invoice'      => 'WPInv_Meta_Box_Items',
+        'wpi_quote'        => 'WPInv_Meta_Box_Items',
+        'wpi_item'         => 'GetPaid_Meta_Box_Item_Details',
+        'wpi_payment_form' => 'GetPaid_Meta_Box_Payment_Form',
+    );
+
+    // Is this our post type?
+    if ( empty( $post->post_type ) || ! isset( $post_types_map[ $post->post_type ] ) ) {
+        return;
+    }
+
+    // Save the post.
+    $class = $post_types_map[ $post->post_type ];
+    $class::save( $post_id, $_POST, $post );
+
 }
 add_action( 'save_post', 'wpinv_save_meta_boxes', 10, 3 );
 

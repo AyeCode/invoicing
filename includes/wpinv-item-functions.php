@@ -957,7 +957,7 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
     if ( ! isset( $periods[ $period ] ) ) {
         $period = 'D';
     }
-    
+
     return $full ? $periods[ $period ] : $period;
 
 }

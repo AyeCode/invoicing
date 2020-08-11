@@ -1601,7 +1601,7 @@ function wpinv_agree_to_terms_js() {
 }
 add_action( 'wpinv_checkout_form_top', 'wpinv_agree_to_terms_js' );
 
-function wpinv_payment_mode_select() {
+function wpinv_payment_mode_select( $title ) {
     $gateways = wpinv_get_enabled_payment_gateways( true );
     $gateways = apply_filters( 'wpinv_payment_gateways_on_cart', $gateways );
     $invoice = wpinv_get_invoice( 0, true );
@@ -1613,8 +1613,10 @@ function wpinv_payment_mode_select() {
     <div id="wpinv_payment_mode_select" data-gateway="<?php echo $chosen_gateway; ?>" <?php echo ( ( $invoice && $invoice->is_free() ) ? 'style="display:none;" data-free="1"' : '' ); ?>>
             <?php do_action( 'wpinv_payment_mode_before_gateways_wrap' ); ?>
             <div id="wpinv-payment-mode-wrap" class="panel panel-default">
-                <div class="panel-heading wpi-payment_methods_title"><h3 class="panel-title"><?php _e( 'Select Payment Method', 'invoicing' ); ?></h3></div>
-                <div class="panel-body list-group wpi-payment_methods">
+                <div class="panel-heading wpi-payment_methods_title">
+                    <h6 class="panel-title"><?php echo sanitize_text_field( $title ); ?></h6>
+                </div>
+                <div class="panel-body wpi-payment_methods">
                     <?php
                     do_action( 'wpinv_payment_mode_before_gateways' );
 
@@ -1625,13 +1627,13 @@ function wpinv_payment_mode_select() {
                             $gateway_label = wpinv_get_gateway_checkout_label( $gateway_id );
                             $description   = wpinv_get_gateway_description( $gateway_id );
                             ?>
-                            <div class="list-group-item">
+                            <div class="pt-2 pb-2">
                                 <div class="radio">
                                     <label><input type="radio" data-button-text="<?php echo esc_attr( $button_label );?>" value="<?php echo esc_attr( $gateway_id ) ;?>" <?php echo $checked ;?> id="wpi_gateway_<?php echo esc_attr( $gateway_id );?>" name="wpi-gateway" class="wpi-pmethod"><?php echo esc_html( $gateway_label ); ?></label>
                                 </div>
                                 <div style="display:none;" class="payment_box wpi_gateway_<?php echo esc_attr( $gateway_id );?>" role="alert">
                                     <?php if ( !empty( $description ) ) { ?>
-                                        <div class="wpi-gateway-desc alert alert-info"><?php _e( $description, 'invoicing' ); ?></div>
+                                        <div class="wpi-gateway-desc"><?php _e( $description, 'invoicing' ); ?></div>
                                     <?php } ?>
                                     <?php do_action( 'wpinv_' . $gateway_id . '_cc_form', $invoice_id ) ;?>
                                 </div>
@@ -1639,7 +1641,7 @@ function wpinv_payment_mode_select() {
                             <?php
                         }
                     } else {
-                        echo '<div class="alert alert-warning">'. __( 'No payment gateway active', 'invoicing' ) .'</div>';
+                        echo '<div class="alert alert-danger">'. __( 'No payment gateway active', 'invoicing' ) .'</div>';
                     }
 
                     do_action( 'wpinv_payment_mode_after_gateways' );
@@ -2302,29 +2304,11 @@ function getpaid_display_payment_form( $form ) {
 		);
 	}
 
-    // Get the form elements and items.
-    $form     = absint( $form );
-	$elements = $invoicing->form_elements->get_form_elements( $form );
-	$items    = $invoicing->form_elements->get_form_items( $form );
+    // Get the form.
+    $form = new GetPaid_Payment_Form( $form );
+    $html = wpinv_get_template_html( 'payment-forms/form.php', compact( 'form' ) );
+    return str_replace( 'sr-only', '', $html );
 
-	ob_start();
-	echo "<form class='wpinv_payment_form'>";
-	do_action( 'wpinv_payment_form_top' );
-	echo "<input type='hidden' name='form_id' value='$form'/>";
-	wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
-	wp_nonce_field( 'vat_validation', '_wpi_nonce' );
-
-	foreach ( $elements as $element ) {
-		do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $form );
-		do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $form );
-	}
-
-	echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
-	do_action( 'wpinv_payment_form_bottom' );
-	echo '</form>';
-
-	$content = ob_get_clean();
-	return str_replace( 'sr-only', '', $content );
 }
 
 /**
@@ -2506,3 +2490,45 @@ function getpaid_the_invoice_description( $invoice ) {
     echo "<div style='color: #616161; font-size: 90%; margin-bottom: 20px;'><em>$description</em></div>";
 }
 add_action( 'wpinv_invoice_print_before_line_items', 'getpaid_the_invoice_description' );
+
+/**
+ * Render element on a form.
+ *
+ * @param array $element
+ * @param GetPaid_Payment_Form $form
+ */
+function getpaid_payment_form_element( $element, $form ) {
+
+    // Set up the args.
+    $element_type    = trim( $element['type'] );
+    $element['form'] = $form;
+    extract( $element );
+
+    // Try to locate the appropriate template.
+    $located = wpinv_locate_template( "payment-forms/elements/$element_type.php" );
+    
+    // Abort if this is not our element.
+    if ( empty( $located ) || ! file_exists( $located ) ) {
+        return;
+    }
+
+    // Generate the class and id of the element.
+    $wrapper_class = 'getpaid-payment-form-element-' . trim( esc_attr( $element_type ) );
+    $id            = isset( $id ) ? $id : uniqid( 'gp' );
+
+    // Echo the opening wrapper.
+    echo "<div class='getpaid-payment-form-element $wrapper_class'>";
+
+    // Fires before displaying a given element type's content.
+    do_action( "getpaid_before_payment_form_{$element_type}_element", $element, $form );
+
+    // Include the template for the element.
+    include $located;
+
+    // Fires after displaying a given element type's content.
+    do_action( "getpaid_payment_form_{$element_type}_element", $element, $form );
+
+    // Echo the closing wrapper.
+    echo '</div>';
+}
+add_action( 'getpaid_payment_form_element', 'getpaid_payment_form_element', 10, 2 );

@@ -140,16 +140,12 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 
         // load AUI
-		require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
+        require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
 
-        // Register autoloader.
-		try {
-			spl_autoload_register( array( $this, 'autoload' ), true );
-		} catch ( Exception $e ) {
-			log_noptin_message( $e->getMessage() );
-        }
-
+        // Load the action scheduler.
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
+
+        // Load functions.
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
@@ -163,6 +159,14 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+
+        // Register autoloader.
+		try {
+			spl_autoload_register( array( $this, 'autoload' ), true );
+		} catch ( Exception $e ) {
+			wpinv_error_log( $e->getMessage(), '', __FILE__, 149, true );
+        }
+
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-discount.php' );
@@ -321,7 +325,8 @@ class WPInv_Plugin {
     public function enqueue_scripts() {
         $suffix       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         
-        wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), WPINV_VERSION );
+        $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
+        wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
         wp_enqueue_style( 'wpinv_front_style' );
                
         // Register scripts
@@ -339,6 +344,8 @@ class WPInv_Plugin {
         $localize['txtComplete']          = __( 'Continue', 'invoicing' );
         $localize['UseTaxes']             = wpinv_use_taxes();
         $localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
+        $localize['formNonce']            = wp_create_nonce( 'getpaid_form_nonce' );
+        $localize['connectionError']      = __( 'Could not establish a connection to the server.', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_front_js_localize', $localize );
         
