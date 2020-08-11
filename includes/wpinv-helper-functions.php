@@ -1058,6 +1058,11 @@ function wpinv_get_screen_ids() {
  * @return array Sanitized array of values.
  */
 function wpinv_parse_list( $list ) {
+
+    if ( empty( $list ) ) {
+        $list = array();
+    }
+
 	if ( ! is_array( $list ) ) {
 		return preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
 	}

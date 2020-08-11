@@ -71,7 +71,7 @@ class WPInv_Item  extends GetPaid_Data {
      * 
      * @var WP_Post
      */
-    protected $post = null; 
+    protected $post = null;
 
     /**
 	 * Get the item if ID is passed, otherwise the item is new and empty.
@@ -592,7 +592,7 @@ class WPInv_Item  extends GetPaid_Data {
 	| Setters
 	|--------------------------------------------------------------------------
 	|
-	| Functions for setting order data. These should not update anything in the
+	| Functions for setting item data. These should not update anything in the
 	| database itself and should only change what is stored in the class
 	| object.
     */
