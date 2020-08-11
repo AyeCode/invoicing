@@ -88,17 +88,24 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * @return int
 	 */
 	public function get_sub_total( $context = 'view' ) {
-		return $this->get_qantity( $context ) * $this->get_price( $context );
+		return $this->get_quantity( $context ) * $this->get_price( $context );
 	}
 
 	/**
-	 * Get the item qantity.
+	 * @deprecated
+	 */
+	public function get_qantity( $context = 'view' ) {
+		return $this->get_quantity( $context );
+	}
+
+	/**
+	 * Get the item quantity.
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
 	 * @return int
 	 */
-	public function get_qantity( $context = 'view' ) {
+	public function get_quantity( $context = 'view' ) {
 		$quantity = (int) $this->quantity;
 
 		if ( empty( $quantity ) || 1 > $quantity ) {

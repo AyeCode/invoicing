@@ -155,7 +155,6 @@ jQuery(function($) {
 
     }
 
-
     // Handles field changes.
     var on_field_change = function() {
 
@@ -213,418 +212,12 @@ jQuery(function($) {
         refresh_prices( $( this ).closest('.getpaid-payment-form') )
     } );
 
-
-    $( 'body').on( 'input', '.wpinv_payment_form .wpinv-items-selector', function( e ) {
-
-        var form  = $( this ).closest('.wpinv_payment_form')
-        var total = 0.0
-        var val   = $( this ).val()
-
-        form.find( '.wpinv-items-selector' ).each( function() {
-            var id = $(this).val()
-            form.find( '*[data-id="' + id +'"]' )
-                .addClass('d-none')
-                .find('input:not(.wpinv-item-quantity-input)')
-                .attr('name', '')
-        })
-
-        form
-            .find( '*[data-id="' + val +'"]' )
-            .removeClass('d-none')
-            .find('input:not(.wpinv-item-quantity-input)')
-            .attr('name', 'wpinv-items[' + val + ']')
-
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
-        }
-
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
-
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
-
-    $( 'body').on( 'change', '.wpinv_payment_form .wpinv-items-select-selector', function( e ) {
-
-        var form  = $( this ).closest('.wpinv_payment_form')
-        var total = 0.0
-        var val   = $( this ).val()
-
-        form.find( '.wpinv-items-select-selector option' ).each( function() {
-            var id = $(this).val()
-            form.find( '*[data-id="' + id +'"]' )
-                .addClass('d-none')
-                .find('input:not(.wpinv-item-quantity-input)')
-                .attr('name', '')
-        })
-
-        form
-            .find( '*[data-id="' + val +'"]' )
-            .removeClass('d-none')
-            .find('input:not(.wpinv-item-quantity-input)')
-            .attr('name', 'wpinv-items[' + val + ']')
-
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
-        }
-
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
-
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
-
-    $( 'body').on( 'change', '.wpinv_payment_form .wpinv-items-multiselect-selector', function( e ) {
-
-        var form  = $( this ).closest('.wpinv_payment_form')
-        var total = 0.0
-
-        form.find( '.wpinv-items-select-selector option' ).each( function() {
-            var id = $(this).val()
-            form.find( '*[data-id="' + id +'"]' )
-                .addClass('d-none')
-                .find('input:not(.wpinv-item-quantity-input)')
-                .attr('name', '')
-        })
-
-        var val = $( this ).val()
-
-        if ( val ) {
-            $( val ).each( function( key, _val ) {
-
-                form
-                    .find( '*[data-id="' + _val +'"]' )
-                    .removeClass('d-none')
-                    .find('input:not(.wpinv-item-quantity-input)')
-                    .attr('name', 'wpinv-items[' + _val + ']')
-
-            })
-        }
-
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
-        }
-
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
-
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
-
-    $( 'body').on( 'change', '.wpi-payment-form-items-select-checkbox', function( e ) {
-
-        var form  = $( this ).closest('.wpinv_payment_form')
-        var total = 0.0
-
-        form.find( '.wpi-payment-form-items-select-checkbox' ).each( function() {
-            var id = $(this).val()
-            form.find( '*[data-id="' + id +'"]' )
-                .addClass('d-none')
-                .find('input:not(.wpinv-item-quantity-input)')
-                .attr('name', '')
-        })
-
-        form.find('.wpi-payment-form-items-select-checkbox:checked').each(function(){
-            var val = $(this).val()
-
-            form
-                .find( '*[data-id="' + val +'"]' )
-                .removeClass('d-none')
-                .find('input:not(.wpinv-item-quantity-input)')
-                .attr('name', 'wpinv-items[' + val + ']')
-        });
-
-        // Taxes.
-        if ( form.find('.wpinv-items-tax').length ) {
-            return;
-        }
-
-        // Calculate the total of all items.
-        form.find( '.wpinv-item-price-input' ).each( function() {
-
-            if ( 0 == $( this ).attr('name').length ) {
-                return;
-            }
-
-            var value = parseFloat( $(this).val() )
-
-            var quantity = parseInt( $(this).closest('.item_totals_item').find('.wpinv-item-quantity-input').val() )
-
-            if ( isNaN( quantity ) || 1 > quantity ) {
-                quantity = 1;
-            }
-
-            if ( ! isNaN( value ) ) {
-                total = total + ( value * quantity );
-            }
-
-        })
-
-        // Format the total.
-        total = total.toFixed(2) + '';
-        var parts = total.toString().split('.');
-		parts[0]  = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		total =  parts.join('.');
-
-        var totals = form.find( '.wpinv-items-total' )
-
-        if ( 'left' == totals.data('currency-position') ) {
-            totals.text( totals.data('currency') + total )
-        } else {
-            totals.text( total + totals.data('currency') )
-        }
-
-    })
-
-    // Apply discounts.
-    var applyDiscount = function( form ) {
-
-        // Block the discount field.
-        var discount_field = form.find( '.discount_field' )
-        wpinvBlock(discount_field);
-
-        // Hide coupon errors.
-        var errors = discount_field.find( '.wpinv_payment_form_coupon_errors' ).html('').addClass('d-none')
-
-        // And submit the form to create an invoice and apply the discount.
-        var data = form.serialize();
-
-        $.post( WPInv.ajax_url, data + '&action=wpinv_payment_form_discount', function(res) {
-
-            if ( res.success ) {
-                $( form ).find('.wpinv-items-total').html( res.data.total )
-                $( form ).find('.wpinv-items-tax').html( res.data.tax )
-                $( form ).find('.wpinv-items-sub-total').html( res.data.sub_total )
-
-                if ( res.data.discount ) {
-                    $( form ).find('.wpinv-items-discount').html( res.data.discount ).closest('.row').show()
-                } else {
-                    $( form ).find('.wpinv-items-discount').closest('.row').hide()
-                }
-
-                if ( res.data.free && ! res.data.has_recurring ) {
-                    form.find('#wpinv_payment_mode_select').hide()
-                } else {
-                    form.find('#wpinv_payment_mode_select').show()
-                }
-
-            } else {
-                errors.html(res).removeClass('d-none')
-            }
-
-        })
-
-        .fail( function( res ) {
-            errors.html('Could not establish a connection to the server.').removeClass('d-none')
-        } )
-
-        .always(() => {
-            discount_field.unblock();
-        })
-
-    }
-
-    // Apply a discount when the discount button is clicked.
-    $( 'body').on('click', '.wpinv_payment_form .getpaid-discount-button', function( e ) {
-        e.preventDefault();
-        applyDiscount( $( this ).closest('.wpinv_payment_form') )
-    } );
-
-    //Apply a discount when hitting enter key in the discount field
-    $( 'body').on('keypress', '.wpinv_payment_form .getpaid-discount-field', function( e ) {
-        if ( e.keyCode == '13' ) {
-            e.preventDefault();
-            applyDiscount( $( this ).closest('.wpinv_payment_form') )
-        }
-    });
-
-    // When the discount value changes.
-    $( 'body').on('change', '.wpinv_payment_form .getpaid-discount-field', function( e ) {
-        if ( $( this ).val().length != 0 ) {
-            applyDiscount( $( this ).closest('.wpinv_payment_form') )
-        }
-    });
-
-    window.wpinvPaymentFormSubmt = true
-    window.wpinvPaymentFormDelaySubmit = false
-    window.wpinvPaymentFormData = ''
-    $( document ).on( 'submit', '.wpinv_payment_form', function( e ) {
-
-        // Do not submit the form.
-        e.preventDefault();
-
-        // Set defaults
-        wpinvPaymentFormSubmt = true
-        wpinvPaymentFormDelaySubmit = false
-        wpinvPaymentFormData = ''
-
-        // instead, display a loading indicator.
-        var form = $( this )
-        wpinvBlock(form);
-
-        // Then hide the errors
-        var errors_el = form.find( '.wpinv_payment_form_errors' )
-        errors_el.html('').addClass('d-none')
-
-        // And submit the form to create an invoice.
-        var data = form.serialize();
-        wpinvPaymentFormData = data
-
-        $( 'body' ).trigger( 'wpinv_payment_form_before_submit', form );
-
-        if ( ! window.wpinvPaymentFormSubmt ) {
-            form.unblock();
-            return;
-        }
-
-        var submit = function () {
-            return $.post(WPInv.ajax_url, wpinvPaymentFormData + '&action=wpinv_payment_form', function (res) {
-
-                if ('string' == typeof res) {
-                    errors_el.html(res).removeClass('d-none')
-                    form.unblock();
-                    return
-                }
-
-                if (res.success) {
-                    window.location.href = decodeURIComponent(res.data)
-                    return
-                }
-
-                errors_el.html(res.data).removeClass('d-none')
-                form.unblock();
-
-            })
-
-                .fail(function (res) {
-                    errors_el.html('Could not establish a connection to the server.').removeClass('d-none')
-                    form.unblock();
-                })
-
-        }
-
-        if ( wpinvPaymentFormDelaySubmit ) {
-            var local_submit = function() {
-
-                if ( ! window.wpinvPaymentFormSubmt ) {
-                    form.unblock();
-                } else {
-                    submit()
-                }
-
-                $('body').unbind( 'wpinv_payment_form_delayed_submit', local_submit )
-
-            }
-            $('body').bind( 'wpinv_payment_form_delayed_submit', local_submit )
-
-        } else {
-            submit()
-        }
-
-    })
-
     $('body').on('click', 'input[name="wpi-gateway"]', function ( e ) {
 
         var form = $( this ).closest( '.getpaid-payment-form' );
         var is_checked = $(this).is(':checked')
 
-        if ($('.wpi-payment_methods input.wpi-pmethod').length > 1) {
+        if ( form.find('.wpi-payment_methods input.wpi-pmethod').length > 1) {
 
             var target_payment_box = form.find('div.payment_box.' + $(this).attr('ID'));
             if ( is_checked && !target_payment_box.is(':visible') ) {
@@ -649,31 +242,259 @@ jQuery(function($) {
         wpinvSetPaymentBtnText($(this), $('#wpinv_payment_mode_select').data('free'));
     });
 
-    // Set's up a checkout form. refresh_prices
+    /**
+     * Set's up a payment form for use.
+     *
+     * @param {string} form 
+     */
     var setup_form = function( form ) {
 
+        // Add the row class to gateway credit cards.
         form.find('.payment_box .form-horizontal .form-group').addClass('row')
 
+        // Get a list of all active gateways.
         var gateways = form.find('.getpaid-payment-form-element-gateway_select input[name="wpi-gateway"]');
 
-        // If there is one method, we can hide the radio input and the title.
+        // If there is one gateway, we can hide the radio input and the title.
         if ( 1 === gateways.length ) {
             gateways.eq(0).hide();
             form.find('.wpi-payment_methods_title').hide()
         }
 
+        // Hide the title if there is no gateway.
         if ( gateways.length === 0) {
             form.find('.wpi-payment_methods_title').hide()
             form.find('.getpaid-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
         }
 
-        // If there are none selected, select the first.
+        // If there is no gateway selected, select the first.
         if ( 0 === gateways.filter(':checked').length ) {
             gateways.eq(0).prop( 'checked', true );
         }
 
         // Trigger click event for selected gateway.
         gateways.filter(':checked').eq(0).trigger('click');
+
+        // Hides items that are not in an array.
+        /**
+         * @param {Array} selected_items The items to display.
+         */
+        function filter_form_cart( selected_items ) {
+
+            // Abort if there is no cart.
+            if ( 0 == form.find( ".getpaid-payment-form-items-cart" ).length ) {
+                return;
+            }
+
+            // Hide all selectable items.
+            form.find('.getpaid-payment-form-items-cart-item.getpaid-selectable').each( function() {
+                $( this ).find('.getpaid-item-price-input').attr( 'name', '' )
+                $( this ).find('.getpaid-item-quantity-input').attr( 'name', '' )
+                $( this ).hide()
+            })
+
+            // Display selected items.
+            $( selected_items ).each( function( index, item_id ) {
+        
+                if ( item_id ) {
+                    var item = form.find('.getpaid-payment-form-items-cart-item.item-' + item_id )
+                    item.find('.getpaid-item-price-input').attr( 'name', 'getpaid-items[' + item_id + '][price]' )
+                    item.find('.getpaid-item-quantity-input').attr( 'name', 'getpaid-items[' + item_id + '][quantity]' )
+                    item.show()
+                }
+
+            })
+
+            // Refresh prices.
+            refresh_prices( form )
+
+        }
+
+        // Radio select items.
+        if ( form.find('.getpaid-payment-form-items-radio').length ) {
+
+            // Hides displays the checked items.
+            var filter_totals = function() {
+                var selected_item = form.find(".getpaid-payment-form-items-radio .form-check-input:checked").val();
+                filter_form_cart([selected_item])
+            }
+
+            // Do this when the value changes.
+            var radio_items = form.find('.getpaid-payment-form-items-radio .form-check-input')
+
+            radio_items.on( 'change', filter_totals );
+
+            // If there are none selected, select the first.
+            if ( 0 === radio_items.filter(':checked').length ) {
+                radio_items.eq(0).prop( 'checked', true );
+            }
+
+            // Filter on page load.
+            filter_totals();
+        }
+
+        // Checkbox select items.
+        if ( form.find('.getpaid-payment-form-items-checkbox').length ) {
+
+            // Hides displays the checked items.
+            var filter_totals = function() {
+                var selected_items = form
+                    .find('.getpaid-payment-form-items-checkbox input:checked')
+                    .map( function(){
+                        return $(this).val();
+                    })
+                    .get()
+
+                filter_form_cart(selected_items)
+            }
+
+            // Do this when the value changes.
+            var checkbox_items = form.find('.getpaid-payment-form-items-checkbox input')
+
+            checkbox_items.on( 'change', filter_totals );
+
+            // If there are none selected, select the first.
+            if ( 0 === checkbox_items.filter(':checked').length ) {
+                checkbox_items.eq(0).prop( 'checked', true );
+            }
+
+            // Filter on page load.
+            filter_totals();
+        }
+
+        // "Select" select items.
+        if ( form.find('.getpaid-payment-form-items-select').length ) {
+
+            // Hides displays the selected items.
+            var filter_totals = function() {
+                var selected_item = form.find(".getpaid-payment-form-items-select select").val();
+                filter_form_cart([selected_item])
+            }
+
+            // Do this when the value changes.
+            var select_box = form.find(".getpaid-payment-form-items-select select")
+
+            select_box.on( 'change', filter_totals );
+
+            // If there are none selected, select the first.
+            if ( ! select_box.val() ) {
+                select_box.find("option:first").prop('selected','selected');
+            }
+
+            // Filter on page load.
+            filter_totals();
+        }
+
+        // Discounts.
+        if ( form.find('.getpaid-discount-field').length ) {
+
+            // Refresh prices when the discount button is clicked.
+            form.find('.getpaid-discount-button').on('click', function( e ) {
+                e.preventDefault();
+                refresh_prices( form )
+            } );
+
+            // Refresh prices when hitting enter key in the discount field.
+            form.find('.getpaid-discount-field').on('keypress', function( e ) {
+                if ( e.keyCode == '13' ) {
+                    e.preventDefault();
+                    refresh_prices( form )
+                }
+            } );
+
+            // Refresh prices when the discount value changes.
+            form.find('.getpaid-discount-field').on('change', function( e ) {
+                refresh_prices( form )
+            } );
+
+        }
+
+        // Submitting the payment form.
+        form.on( 'submit', function( e ) {
+
+            // Do not submit the form.
+            e.preventDefault();
+
+            // instead, display a loading indicator.
+            wpinvBlock(form);
+
+            // Hide any errors.
+            form.find('.getpaid-payment-form-errors').html('').addClass('d-none')
+
+            // Fetch the unique identifier for this form.
+            var unique_key = form.data('key')
+
+            // Save data to a global variable so that other plugins can alter it.
+            var data = {
+                'submit' : true,
+                'delay'  : false,
+                'data'   : form.serialize(),
+                'form'   : form,
+                'key'    : unique_key,
+            }
+
+            // Trigger submit event.
+            $( 'body' ).trigger( 'getpaid_payment_form_before_submit', [data] );
+
+            if ( ! data.submit ) {
+                form.unblock();
+                return;
+            }
+
+            // Handles the actual submission.
+            var submit = function () {
+                return $.post( WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce )
+                    .done( function( res ) {
+
+                        // An error occured.
+                        if ( 'string' == typeof res ) {
+                            form.find('.getpaid-payment-form-errors').html(res).removeClass('d-none')
+                            return
+                        }
+
+                        // Redirect to the thank you page.
+                        if ( res.success ) {
+                            window.location.href = decodeURIComponent(res.data)
+                            return
+                        }
+
+                        form.find('.getpaid-payment-form-errors').html(res.data).removeClass('d-none')
+        
+                    } )
+
+                    .fail( function( res ) {
+                        form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
+                    } )
+
+                    .always(() => {
+                        form.unblock();
+                    })
+
+            }
+
+            // Are we submitting after a delay?
+            if ( data.delay ) {
+
+                var local_submit = function() {
+
+                    if ( ! data.submit ) {
+                        form.unblock();
+                    } else {
+                        submit();
+                    }
+
+                    $('body').unbind( 'getpaid_payment_form_delayed_submit' + unique_key, local_submit )
+
+                }
+
+                $('body').bind( 'getpaid_payment_form_delayed_submit' + unique_key, local_submit )
+                return;
+            }
+
+            // If not, submit immeadiately.
+            submit()
+
+        })
 
     }
 

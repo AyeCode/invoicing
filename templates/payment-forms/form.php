@@ -24,7 +24,7 @@ if ( ! $form->is_active() ) {
 do_action( 'getpaid_before_payment_form', $form );
 
 ?>
-<form class='getpaid-payment-form' method='POST'>
+<form class='getpaid-payment-form' method='POST' data-key='<?php echo uniqid('gpf'); ?>'>
     <?php do_action( 'getpaid_payment_form_top', $form ); ?>
     <?php wp_nonce_field( 'vat_validation', '_wpi_nonce' ); ?>
     <input type='hidden' name='form_id' value='<?php echo $form->get_id(); ?>'/>

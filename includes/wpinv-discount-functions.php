@@ -1173,7 +1173,6 @@ function wpinv_check_delete_discount( $check, $post ) {
     
     return $check;
 }
-add_filter( 'pre_delete_post', 'wpinv_check_delete_discount', 10, 2 );
 
 function wpinv_checkout_form_validate_discounts() {
     global $wpi_checkout_id;

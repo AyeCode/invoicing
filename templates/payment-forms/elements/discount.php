@@ -26,7 +26,6 @@ if ( ! empty( $description ) ) {
             <a href="#" class="btn btn-secondary submit-button mb-2 getpaid-discount-button"><?php echo $label; ?></a>
         </div>
         <?php echo $description ?>
-        <div class="getpaid-discount-field-errors alert alert-danger d-none mt-2"></div>
     </div>
 </div>
 

@@ -17,9 +17,22 @@ if ( empty( $items_type ) ) {
     $items_type = 'total';
 }
 
+switch( $items_type ) {
+    case 'radio':
+        wpinv_get_template( 'payment-forms/variations/radio.php', compact( 'form', 'items_type' ) );
+        break;
+    case 'checkbox':
+        wpinv_get_template( 'payment-forms/variations/checkbox.php', compact( 'form', 'items_type' ) );
+        break;
+    case 'select':
+        wpinv_get_template( 'payment-forms/variations/select.php', compact( 'form', 'items_type' ) );
+        break;
+}
+
 // Display the cart totals.
 if ( ! empty( $hide_cart ) ) {
     echo '<div class="d-none">';
+    wpinv_get_template( 'payment-forms/cart.php', compact( 'form', 'items_type' ) );
 }
 
 // Display the cart totals.

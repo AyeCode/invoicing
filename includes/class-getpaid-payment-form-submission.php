@@ -320,6 +320,15 @@ class GetPaid_Payment_Form_Submission {
 		return $this->data;
 	}
 
+	/**
+	 * Checks if a required field is set.
+	 *
+	 * @since 1.0.19
+	 */
+	public function is_required_field_set( $field ) {
+		return empty( $field['required'] ) || ! empty( $this->data[ $field['id'] ] );
+	}
+
 	///////// Items //////////////
 
 	/**
