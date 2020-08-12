@@ -8,270 +8,1220 @@ if ( !defined( 'WPINC' ) ) {
 /**
  * Invoice class.
  */
-class WPInv_Invoice {
+class WPInv_Invoice extends GetPaid_Data {
 
     /**
-     * @var int the invoice ID.
-     */
-    public $ID  = 0;
+	 * Which data store to load.
+	 *
+	 * @var string
+	 */
+    protected $data_store_name = 'invoice';
 
     /**
-     * @var string the invoice title.
-     */
-    public $title;
+	 * This is the name of this object type.
+	 *
+	 * @var string
+	 */
+    protected $object_type = 'invoice';
 
     /**
-     * @var string the invoice post type.
-     */
-    public $post_type;
+	 * Item Data array. This is the core item data exposed in APIs.
+	 *
+	 * @since 1.0.19
+	 * @var array
+	 */
+	protected $data = array(
+		'parent_id'            => 0,
+		'status'               => 'wpi-pending',
+		'version'              => '',
+		'date_created'         => null,
+        'date_modified'        => null,
+        'due_date'             => null,
+        'completed_date'       => null,
+        'number'               => '',
+        'title'                => '',
+        'key'                  => '',
+        'description'          => '',
+        'author'               => 1,
+        'type'                 => 'invoice',
+        'mode'                 => 'live',
+        'user_ip'              => null,
+        'first_name'           => null,
+        'last_name'            => null,
+        'phone'                => null,
+        'email'                => null,
+        'country'              => null,
+        'city'                 => null,
+        'state'                => null,
+        'zip'                  => null,
+        'company'              => null,
+        'vat_number'           => null,
+        'vat_rate'             => null,
+        'address'              => null,
+        'address_confirmed'    => false,
+        'subtotal'             => 0,
+        'total_discount'       => 0,
+        'total_tax'            => 0,
+        'total_fees'           => 0,
+        'fees'                 => array(),
+        'discounts'            => array(),
+        'taxes'                => array(),
+        'items'                => array(),
+        'payment_form'         => 1,
+        'submission_id'        => null,
+        'discount_code'        => null,
+        'gateway'              => 'none',
+        'transaction_id'       => '',
+        'currency'             => '',
+        'disable_taxes'        => 0,
+    );
+
+    // user_info, payment_meta, cart_details, full_name
 
     /**
-     * @var string the invoice description.
-     */
-    public $description;
-    
-    /**
-     * @var array unsaved changes.
-     */
-    public $pending = array();
+	 * Stores meta in cache for future reads.
+	 *
+	 * A group must be set to to enable caching.
+	 *
+	 * @var string
+	 */
+	protected $cache_group = 'getpaid_invoices';
 
     /**
-     * @var array Invoice items.
+     * Stores a reference to the original WP_Post object
+     * 
+     * @var WP_Post
      */
-    public $items = array();
+    protected $post = null;
 
     /**
-     * @var array User info.
-     */
-    public $user_info = array();
-
-    /**
-     * @var array Payment meta.
-     */
-    public $payment_meta = array();
-    
-    /**
-     * @var bool whether or not the invoice is saved.
-     */
-    public $new = false;
-
-    /**
-     * @var string Invoice number.
-     */
-    public $number = '';
-
-    /**
-     * @var string test or live mode.
-     */
-    public $mode = 'live';
-
-    /**
-     * @var string invoice key.
-     */
-    public $key = '';
-
-    /**
-     * @var float invoice total.
-     */
-    public $total = 0.00;
-
-    /**
-     * @var float invoice subtotal.
-     */
-    public $subtotal = 0;
-
-    /**
-     * @var int 0 = taxable, 1 not taxable.
-     */
-    public $disable_taxes = 0;
-
-    /**
-     * @var float invoice tax.
-     */
-    public $tax = 0;
-
-    /**
-     * @var array invoice fees.
-     */
-    public $fees = array();
-
-    /**
-     * @var float total fees.
-     */
-    public $fees_total = 0;
-
-    /**
-     * @var array invoice discounts.
-     */
-    public $discounts = '';
-
-    /**
-     * @var float total discount.
-     */
-    public $discount = 0;
-
-    /**
-     * @var string discount code.
-     */
-    public $discount_code = '';
-
-    /**
-     * @var string date created.
-     */
-    public $date = '';
-
-    /**
-     * @var string date due.
-     */
-    public $due_date = '';
-
-    /**
-     * @var string date it was completed.
-     */
-    public $completed_date = '';
-
-    /**
-     * @var string invoice status.
-     */
-    public $status = 'wpi-pending';
-
-    /**
-     * @var string invoice status.
-     */
-    public $post_status = 'wpi-pending';
-
-    /**
-     * @var string old invoice status.
-     */
-    public $old_status = '';
-
-    /**
-     * @var string formatted invoice status.
-     */
-    public $status_nicename = '';
-
-    /**
-     * @var int invoice user id.
-     */
-    public $user_id = 0;
-
-    /**
-     * @var string user first name.
-     */
-    public $first_name = '';
-
-    /**
-     * @var string user last name.
-     */
-    public $last_name = '';
-
-    /**
-     * @var string user email.
-     */
-    public $email = '';
-
-    /**
-     * @var string user phone number.
-     */
-    public $phone = '';
-
-    /**
-     * @var string user address.
-     */
-    public $address = '';
-
-    /**
-     * @var string user city.
-     */
-    public $city = '';
-
-    /**
-     * @var string user country.
-     */
-    public $country = '';
-
-    /**
-     * @var string user state.
-     */
-    public $state = '';
-
-    /**
-     * @var string user zip.
-     */
-    public $zip = '';
-
-    /**
-     * @var string transaction id.
-     */
-    public $transaction_id = '';
-
-    /**
-     * @var string user ip.
-     */
-    public $ip = '';
-
-    /**
-     * @var string gateway.
-     */
-    public $gateway = '';
-
-    /**
-     * @var string gateway title.
-     */
-    public $gateway_title = '';
-
-    /**
-     * @var string currency.
-     */
-    public $currency = '';
-
-    /**
-     * @var array cart_details.
-     */
-    public $cart_details = array();
-    
-    /**
-     * @var string company.
-     */
-    public $company = '';
-
-    /**
-     * @var string vat number.
-     */
-    public $vat_number = '';
-
-    /**
-     * @var string vat rate.
-     */
-    public $vat_rate = '';
-
-    /**
-     * @var int whether or not the address is confirmed.
-     */
-    public $adddress_confirmed = '';
-
-    /**
-     * @var string full name.
-     */
-    public $full_name = '';
-
-    /**
-     * @var int parent.
-     */
-    public $parent_invoice = 0;
-
-    /**
-     * @param int|WPInv_Invoice|WP_Post $invoice The invoice.
-     */
+	 * Get the invoice if ID is passed, otherwise the invoice is new and empty.
+	 *
+	 * @param  int/string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, number or object to read.
+	 */
     public function __construct( $invoice = false ) {
 
-        // Do we have an invoice?
-        if ( empty( $invoice ) ) {
-            return false;
+        parent::__construct( $invoice );
+
+		if ( is_numeric( $invoice ) && getpaid_is_invoice_post_type( get_post_type( $invoice ) ) ) {
+			$this->set_id( $invoice );
+		} elseif ( $invoice instanceof self ) {
+			$this->set_id( $invoice->get_id() );
+		} elseif ( ! empty( $invoice->ID ) ) {
+			$this->set_id( $invoice->ID );
+		} elseif ( is_array( $invoice ) ) {
+			$this->set_props( $invoice );
+
+			if ( isset( $invoice['ID'] ) ) {
+				$this->set_id( $invoice['ID'] );
+			}
+
+		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_discount_id_by_code( $invoice, 'key' ) ) {
+			$this->set_id( $invoice_id );
+		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_discount_id_by_code( $invoice, 'number' ) ) {
+			$this->set_id( $invoice_id );
+		} else {
+			$this->set_object_read( true );
+		}
+
+        // Load the datastore.
+		$this->data_store = GetPaid_Data_Store::load( $this->data_store_name );
+
+		if ( $this->get_id() > 0 ) {
+            $this->post = get_post( $this->get_id() );
+            $this->ID   = $this->get_id();
+			$this->data_store->read( $this );
         }
 
-        $this->setup_invoice( $invoice );
+    }
 
+    /**
+	 * Given a discount code, it returns a discount id.
+	 *
+	 *
+	 * @static
+	 * @param string $discount_code
+	 * @since 1.0.15
+	 * @return int
+	 */
+	public static function get_discount_id_by_code( $invoice_key_or_number, $field = 'key' ) {
+        global $wpdb;
+
+		// Trim the code.
+        $key = trim( $invoice_key_or_number );
+        
+        // Valid fields.
+        $fields = array( 'key', 'number' );
+
+		// Ensure a value has been passed.
+		if ( empty( $key ) || ! in_array( $field, $fields ) ) {
+			return 0;
+		}
+
+		// Maybe retrieve from the cache.
+		$invoice_id   = wp_cache_get( $key, 'getpaid_invoice_keys_' . $field );
+		if ( ! empty( $invoice_id ) ) {
+			return $invoice_id;
+		}
+
+        // Fetch from the db.
+        $table       = $wpdb->prefix . 'getpaid_invoices';
+        $invoice_id  = $wpdb->get_var(
+            $wpdb->prepare( "SELECT `post_id` FROM $table WHERE $field=%s LIMIT 1", $key )
+        );
+
+		if ( empty( $invoice_id ) ) {
+			return 0;
+		}
+
+		// Update the cache with our data
+		wp_cache_add( $key, $invoice_id, 'getpaid_invoice_keys_' . $field );
+
+		return $invoice_id;
+    }
+    
+    /*
+	|--------------------------------------------------------------------------
+	| CRUD methods
+	|--------------------------------------------------------------------------
+	|
+	| Methods which create, read, update and delete items from the database.
+	|
+    */
+
+    /*
+	|--------------------------------------------------------------------------
+	| Getters
+	|--------------------------------------------------------------------------
+    */
+
+    /**
+	 * Get parent invoice ID.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_parent_id( $context = 'view' ) {
+		return (int) $this->get_prop( 'parent_id', $context );
+    }
+
+    /**
+	 * Get invoice status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_status( $context = 'view' ) {
+		return $this->get_prop( 'status', $context );
+    }
+
+    /**
+	 * Get plugin version when the invoice was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_version( $context = 'view' ) {
+		return $this->get_prop( 'version', $context );
+    }
+
+    /**
+	 * Get date when the invoice was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created( $context = 'view' ) {
+		return $this->get_prop( 'date_created', $context );
+    }
+
+    /**
+	 * Get GMT date when the invoice was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created_gmt( $context = 'view' ) {
+        $date = $this->get_date_created( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+    }
+
+    /**
+	 * Get date when the invoice was last modified.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_modified( $context = 'view' ) {
+		return $this->get_prop( 'date_modified', $context );
+    }
+
+    /**
+	 * Get GMT date when the invoice was last modified.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_modified_gmt( $context = 'view' ) {
+        $date = $this->get_date_modified( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+    }
+
+    /**
+	 * Get the invoice due date.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_due_date( $context = 'view' ) {
+		return $this->get_prop( 'due_date', $context );
+    }
+
+    /**
+	 * Alias for self::get_due_date().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_due( $context = 'view' ) {
+		return $this->get_due_date( $context );
+    }
+
+    /**
+	 * Get the invoice GMT due date.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_due_date_gmt( $context = 'view' ) {
+        $date = $this->get_due_date( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+    }
+
+    /**
+	 * Alias for self::get_due_date_gmt().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_gmt_date_due( $context = 'view' ) {
+		return $this->get_due_date_gmt( $context );
+    }
+
+    /**
+	 * Get date when the invoice was completed.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_completed_date( $context = 'view' ) {
+		return $this->get_prop( 'completed_date', $context );
+    }
+
+    /**
+	 * Alias for self::get_completed_date().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_completed( $context = 'view' ) {
+		return $this->get_completed_date( $context );
+    }
+
+    /**
+	 * Get GMT date when the invoice was was completed.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_completed_date_gmt( $context = 'view' ) {
+        $date = $this->get_completed_date( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+    }
+
+    /**
+	 * Alias for self::get_completed_date_gmt().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_gmt_completed_date( $context = 'view' ) {
+		return $this->get_completed_date_gmt( $context );
+    }
+
+    /**
+	 * Get the invoice number.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_number( $context = 'view' ) {
+        $number = $this->get_prop( 'number', $context );
+
+        if ( empty( $number ) ) {
+            $number = $this->generate_number();
+            $this->set_number( $number );
+        }
+
+		return $number;
+    }
+
+    /**
+	 * Get the invoice key.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_key( $context = 'view' ) {
+        $key = $this->get_prop( 'key', $context );
+
+        if ( empty( $key ) ) {
+            $key = $this->generate_key( $this->post_type );
+            $this->set_key( $key );
+        }
+
+		return $key;
+    }
+
+    /**
+	 * Get the invoice type.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_type( $context = 'view' ) {
+        return $this->get_prop( 'type', $context );
+    }
+
+    /**
+	 * Get the invoice mode.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_mode( $context = 'view' ) {
+        return $this->get_prop( 'mode', $context );
+    }
+
+    /**
+	 * Get the invoice name/title.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_name( $context = 'view' ) {
+        $name = $this->get_prop( 'title', $context );
+
+		return empty( $name ) ? $this->get_number( $context ) : $name;
+    }
+
+    /**
+	 * Alias of self::get_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_title( $context = 'view' ) {
+		return $this->get_name( $context );
+    }
+
+    /**
+	 * Get the invoice description.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_description( $context = 'view' ) {
+		return $this->get_prop( 'description', $context );
+    }
+
+    /**
+	 * Alias of self::get_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_excerpt( $context = 'view' ) {
+		return $this->get_description( $context );
+    }
+
+    /**
+	 * Alias of self::get_description().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_summary( $context = 'view' ) {
+		return $this->get_description( $context );
+    }
+
+    /**
+	 * Get the customer id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_author( $context = 'view' ) {
+		return (int) $this->get_prop( 'author', $context );
+    }
+
+    /**
+	 * Alias of self::get_author().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_id( $context = 'view' ) {
+		return $this->get_author( $context );
+    }
+
+     /**
+	 * Alias of self::get_author().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_id( $context = 'view' ) {
+		return $this->get_author( $context );
+    }
+
+    /**
+	 * Get the customer's ip.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_ip( $context = 'view' ) {
+		return $this->get_prop( 'user_ip', $context );
+    }
+
+    /**
+	 * Alias of self::get_ip().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_ip( $context = 'view' ) {
+		return $this->get_ip( $context );
+    }
+
+     /**
+	 * Alias of self::get_ip().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_ip( $context = 'view' ) {
+		return $this->get_ip( $context );
+    }
+
+    /**
+	 * Get the customer's first name.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_first_name( $context = 'view' ) {
+		return $this->get_prop( 'first_name', $context );
+    }
+
+    /**
+	 * Alias of self::get_first_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_first_name( $context = 'view' ) {
+		return $this->get_first_name( $context );
+    }
+
+     /**
+	 * Alias of self::get_first_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_first_name( $context = 'view' ) {
+		return $this->get_first_name( $context );
+    }
+
+    /**
+	 * Get the customer's last name.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_last_name( $context = 'view' ) {
+		return $this->get_prop( 'last_name', $context );
+    }
+    
+    /**
+	 * Alias of self::get_last_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_last_name( $context = 'view' ) {
+		return $this->get_last_name( $context );
+    }
+
+    /**
+	 * Alias of self::get_last_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_last_name( $context = 'view' ) {
+		return $this->get_last_name( $context );
+    }
+
+    /**
+	 * Get the customer's full name.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_full_name( $context = 'view' ) {
+		return trim( $this->get_first_name( $context ) . ' ' . $this->get_last_name( $context ) );
+    }
+
+    /**
+	 * Alias of self::get_full_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_full_name( $context = 'view' ) {
+		return $this->get_full_name( $context );
+    }
+
+    /**
+	 * Alias of self::get_full_name().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_full_name( $context = 'view' ) {
+		return $this->get_full_name( $context );
+    }
+
+    /**
+	 * Get the customer's phone number.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_phone( $context = 'view' ) {
+		return $this->get_prop( 'phone', $context );
+    }
+
+    /**
+	 * Alias of self::get_phone().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_phone_number( $context = 'view' ) {
+		return $this->get_phone( $context );
+    }
+
+    /**
+	 * Alias of self::get_phone().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_phone( $context = 'view' ) {
+		return $this->get_phone( $context );
+    }
+
+    /**
+	 * Alias of self::get_phone().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_phone( $context = 'view' ) {
+		return $this->get_phone( $context );
+    }
+
+    /**
+	 * Get the customer's email address.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_email( $context = 'view' ) {
+		return $this->get_prop( 'email', $context );
+    }
+
+    /**
+	 * Alias of self::get_email().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_email_address( $context = 'view' ) {
+		return $this->get_email( $context );
+    }
+
+    /**
+	 * Alias of self::get_email().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_email( $context = 'view' ) {
+		return $this->get_email( $context );
+    }
+
+    /**
+	 * Alias of self::get_email().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_email( $context = 'view' ) {
+		return $this->get_email( $context );
+    }
+
+    /**
+	 * Get the customer's country.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_country( $context = 'view' ) {
+		return $this->get_prop( 'country', $context );
+    }
+
+    /**
+	 * Alias of self::get_country().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_country( $context = 'view' ) {
+		return $this->get_country( $context );
+    }
+
+    /**
+	 * Alias of self::get_country().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_country( $context = 'view' ) {
+		return $this->get_country( $context );
+    }
+
+    /**
+	 * Get the customer's state.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_state( $context = 'view' ) {
+		return $this->get_prop( 'state', $context );
+    }
+
+    /**
+	 * Alias of self::get_state().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_user_state( $context = 'view' ) {
+		return $this->get_state( $context );
+    }
+
+    /**
+	 * Alias of self::get_state().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_state( $context = 'view' ) {
+		return $this->get_state( $context );
+    }
+
+    /**
+	 * Get the customer's city.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_city( $context = 'view' ) {
+		return $this->get_prop( 'city', $context );
+    }
+
+    /**
+	 * Alias of self::get_city().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_city( $context = 'view' ) {
+		return $this->get_city( $context );
+    }
+
+    /**
+	 * Alias of self::get_city().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_city( $context = 'view' ) {
+		return $this->get_city( $context );
+    }
+
+    /**
+	 * Get the customer's zip.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_zip( $context = 'view' ) {
+		return $this->get_prop( 'zip', $context );
+    }
+
+    /**
+	 * Alias of self::get_zip().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_zip( $context = 'view' ) {
+		return $this->get_zip( $context );
+    }
+
+    /**
+	 * Alias of self::get_zip().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_zip( $context = 'view' ) {
+		return $this->get_zip( $context );
+    }
+
+    /**
+	 * Get the customer's company.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_company( $context = 'view' ) {
+		return $this->get_prop( 'company', $context );
+    }
+
+    /**
+	 * Alias of self::get_company().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_company( $context = 'view' ) {
+		return $this->get_company( $context );
+    }
+
+    /**
+	 * Alias of self::get_company().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_company( $context = 'view' ) {
+		return $this->get_company( $context );
+    }
+
+    /**
+	 * Get the customer's vat number.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_vat_number( $context = 'view' ) {
+		return $this->get_prop( 'vat_number', $context );
+    }
+
+    /**
+	 * Alias of self::get_vat_number().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_vat_number( $context = 'view' ) {
+		return $this->get_vat_number( $context );
+    }
+
+    /**
+	 * Alias of self::get_vat_number().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_vat_number( $context = 'view' ) {
+		return $this->get_vat_number( $context );
+    }
+
+    /**
+	 * Get the customer's vat rate.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_vat_rate( $context = 'view' ) {
+		return $this->get_prop( 'vat_rate', $context );
+    }
+
+    /**
+	 * Alias of self::get_vat_rate().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_vat_rate( $context = 'view' ) {
+		return $this->get_vat_rate( $context );
+    }
+
+    /**
+	 * Alias of self::get_vat_rate().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_vat_rate( $context = 'view' ) {
+		return $this->get_vat_rate( $context );
+    }
+
+    /**
+	 * Get the customer's address.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_address( $context = 'view' ) {
+		return $this->get_prop( 'address', $context );
+    }
+
+    /**
+	 * Alias of self::get_address().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_user_address( $context = 'view' ) {
+		return $this->get_address( $context );
+    }
+
+    /**
+	 * Alias of self::get_address().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_customer_address( $context = 'view' ) {
+		return $this->get_address( $context );
+    }
+
+    /**
+	 * Get whether the customer has confirmed their address.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_address_confirmed( $context = 'view' ) {
+		return (bool) $this->get_prop( 'address_confirmed', $context );
+    }
+
+    /**
+	 * Alias of self::get_address_confirmed().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_user_address_confirmed( $context = 'view' ) {
+		return $this->get_address_confirmed( $context );
+    }
+
+    /**
+	 * Alias of self::get_address().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_customer_address_confirmed( $context = 'view' ) {
+		return $this->get_address_confirmed( $context );
+    }
+
+    /**
+	 * Get the invoice subtotal.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_subtotal( $context = 'view' ) {
+		return (float) $this->get_prop( 'subtotal', $context );
+    }
+
+    /**
+	 * Get the invoice discount total.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_total_discount( $context = 'view' ) {
+		return (float) $this->get_prop( 'total_discount', $context );
+    }
+
+    /**
+	 * Get the invoice tax total.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_total_tax( $context = 'view' ) {
+		return (float) $this->get_prop( 'total_tax', $context );
+    }
+
+    /**
+	 * Get the invoice fees total.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_total_fees( $context = 'view' ) {
+		return (float) $this->get_prop( 'total_fees', $context );
+    }
+
+    /**
+	 * Get the invoice total.
+	 *
+	 * @since 1.0.19
+     * @param  string $context View or edit context.
+     * @return float
+	 */
+	public function get_total( $context = 'view' ) {
+		$total = $this->get_subtotal( $context ) + $this->get_total_fees( $context ) - $this->get_total_discount(  $context  ) + $this->get_total_tax(  $context  );
+		$total = apply_filters( 'getpaid_get_invoice_total_amount', $total, $this  );
+		return (float) wpinv_sanitize_amount( $total );
+    }
+    
+    /**
+	 * Get the invoice fees.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_fees( $context = 'view' ) {
+		return wpinv_parse_list( $this->get_prop( 'fees', $context ) );
+    }
+
+    /**
+	 * Get the invoice discounts.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_discounts( $context = 'view' ) {
+		return wpinv_parse_list( $this->get_prop( 'discounts', $context ) );
+    }
+
+    /**
+	 * Get the invoice taxes.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_taxes( $context = 'view' ) {
+		return wpinv_parse_list( $this->get_prop( 'taxes', $context ) );
+    }
+
+    /**
+	 * Get the invoice items.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_items( $context = 'view' ) {
+		return wpinv_parse_list( $this->get_prop( 'items', $context ) );
+    }
+
+    /**
+	 * Get the invoice's payment form.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_payment_form( $context = 'view' ) {
+		return intval( $this->get_prop( 'payment_form', $context ) );
+    }
+
+    /**
+	 * Get the invoice's submission id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_submission_id( $context = 'view' ) {
+		return $this->get_prop( 'submission_id', $context );
+    }
+
+    /**
+	 * Get the invoice's discount code.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_discount_code( $context = 'view' ) {
+		return $this->get_prop( 'discount_code', $context );
+    }
+
+    /**
+	 * Get the invoice's gateway.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_gateway( $context = 'view' ) {
+		return $this->get_prop( 'gateway', $context );
+    }
+
+    /**
+	 * Get the invoice's transaction id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_transaction_id( $context = 'view' ) {
+		return $this->get_prop( 'transaction_id', $context );
+    }
+
+    /**
+	 * Get the invoice's currency.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_currency( $context = 'view' ) {
+        $currency = $this->get_prop( 'currency', $context );
+        return empty( $currency ) ? wpinv_get_currency() : $currency;
+    }
+
+    /**
+	 * Checks if we are charging taxes for this invoice.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_disable_taxes( $context = 'view' ) {
+        return (bool) $this->get_prop( 'disable_taxes', $context );
     }
 
     /**
@@ -810,7 +1760,7 @@ class WPInv_Invoice {
 
     public function save( $setup = false ) {
         global $wpi_session;
-        
+
         $saved = false;
         if ( empty( $this->items ) ) {
             return $saved;
@@ -1355,13 +2305,6 @@ class WPInv_Invoice {
         return apply_filters( 'wpinv_get_invoice_meta', $meta, $this->ID, $meta_key );
     }
     
-    public function get_description() {
-        $post = get_post( $this->ID );
-        
-        $description = !empty( $post ) ? $post->post_content : '';
-        return apply_filters( 'wpinv_get_description', $description, $this->ID, $this );
-    }
-    
     public function get_status( $nicename = false ) {
         if ( !$nicename ) {
             $status = $this->status;
@@ -1371,7 +2314,7 @@ class WPInv_Invoice {
         
         return apply_filters( 'wpinv_get_status', $status, $nicename, $this->ID, $this );
     }
-    
+
     public function get_cart_details() {
         return apply_filters( 'wpinv_cart_details', $this->cart_details, $this->ID, $this );
     }
@@ -1558,14 +2501,6 @@ class WPInv_Invoice {
         return apply_filters( 'wpinv_user_id', $this->user_id, $this->ID, $this );
     }
     
-    public function get_first_name() {
-        return apply_filters( 'wpinv_first_name', $this->first_name, $this->ID, $this );
-    }
-    
-    public function get_last_name() {
-        return apply_filters( 'wpinv_last_name', $this->last_name, $this->ID, $this );
-    }
-    
     public function get_user_full_name() {
         return apply_filters( 'wpinv_user_full_name', $this->full_name, $this->ID, $this );
     }
@@ -1574,32 +2509,8 @@ class WPInv_Invoice {
         return apply_filters( 'wpinv_user_info', $this->user_info, $this->ID, $this );
     }
     
-    public function get_email() {
-        return apply_filters( 'wpinv_user_email', $this->email, $this->ID, $this );
-    }
-    
-    public function get_address() {
-        return apply_filters( 'wpinv_address', $this->address, $this->ID, $this );
-    }
-    
-    public function get_phone() {
-        return apply_filters( 'wpinv_phone', $this->phone, $this->ID, $this );
-    }
-    
-    public function get_number() {
-        return apply_filters( 'wpinv_number', $this->number, $this->ID, $this );
-    }
-    
     public function get_items() {
         return apply_filters( 'wpinv_payment_meta_items', $this->items, $this->ID, $this );
-    }
-    
-    public function get_key() {
-        return apply_filters( 'wpinv_key', $this->key, $this->ID, $this );
-    }
-    
-    public function get_transaction_id() {
-        return apply_filters( 'wpinv_get_invoice_transaction_id', $this->transaction_id, $this->ID, $this );
     }
     
     public function get_gateway() {
@@ -1614,10 +2525,6 @@ class WPInv_Invoice {
     
     public function get_currency() {
         return apply_filters( 'wpinv_currency_code', $this->currency, $this->ID, $this );
-    }
-    
-    public function get_created_date() {
-        return apply_filters( 'wpinv_created_date', $this->date, $this->ID, $this );
     }
     
     public function get_due_date( $display = false ) {
@@ -1653,9 +2560,13 @@ class WPInv_Invoice {
     public function get_ip() {
         return apply_filters( 'wpinv_user_ip', $this->ip, $this->ID, $this );
     }
-        
+
+    /**
+     * Checks if the invoice has a given status.
+     */
     public function has_status( $status ) {
-        return apply_filters( 'wpinv_has_status', ( is_array( $status ) && in_array( $this->get_status(), $status ) ) || $this->get_status() === $status ? true : false, $this, $status );
+        $status = wpinv_parse_list( $status );
+        return apply_filters( 'wpinv_has_status', in_array( $this->get_status(), $status ), $status );
     }
     
     public function add_item( $item_id = 0, $args = array() ) {
@@ -2138,12 +3049,31 @@ class WPInv_Invoice {
 
         return apply_filters( 'wpinv_get_view_url', $invoice_url, $this, $with_key );
     }
-    
+
+    /**
+     * Generates a unique key for the invoice.
+     */
     public function generate_key( $string = '' ) {
         $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
-        return strtolower( md5( $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) ) );  // Unique key
+        return strtolower(
+            md5( $this->get_id() . $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) )
+        );
     }
-    
+
+    /**
+     * Generates a new number for the invoice.
+     */
+    public function generate_number() {
+        $number = $this->get_id();
+
+        if ( $this->has_status( 'auto-draft' ) && wpinv_sequential_number_active( $this->post_type ) ) {
+            $next_number = wpinv_get_next_invoice_number( $this->post_type );
+            $number      = $next_number;
+        }
+
+        $number = wpinv_format_invoice_number( $number, $this->post_type );
+    }
+
     public function is_recurring() {
         if ( empty( $this->cart_details ) ) {
             return false;

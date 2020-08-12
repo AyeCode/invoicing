@@ -11,6 +11,25 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+/**
+ * Returns an array of all invoice post types.
+ */
+function getpaid_get_invoice_post_types() {
+    $post_types = array(
+        'wpi_quote'   => __( 'Quote', 'invoicing' ),
+        'wpi_invoice' => __( 'Invoice', 'invoicing' ),
+    );
+    
+    return apply_filters( 'getpaid_invoice_post_types', $post_types );
+}
+
+/**
+ * Checks if this is an invocing post type.
+ */
+function getpaid_is_invoice_post_type( $post_type ) {
+    return array_key_exists( $post_type, getpaid_get_invoice_post_types() );
+}
+
 function wpinv_get_invoice_cart_id() {
     $wpinv_checkout = wpinv_get_checkout_session();
     

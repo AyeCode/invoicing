@@ -237,7 +237,7 @@ function wpinv_create_invoices_table() {
     $sql   = "CREATE TABLE $table (
 
             post_id BIGINT(20) NOT NULL,
-            number VARCHAR(100),
+            `number` VARCHAR(100),
             `key` VARCHAR(100),
             `type` VARCHAR(100) NOT NULL DEFAULT 'invoice',
             mode VARCHAR(100) NOT NULL DEFAULT 'live',

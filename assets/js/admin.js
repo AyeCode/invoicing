@@ -72,15 +72,16 @@ jQuery(function($) {
     // Non-editable items.
     $('.wpi-editable-n #post :input').attr( 'disabled', true );
 
-    // Rename excerpt to 'Item description'
+    // Rename excerpt to 'description'
     $('body.post-type-wpi_item #postexcerpt h2.hndle').text( WPInv_Admin.item_description )
+    $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
+    $('body.post-type-wpi_invoice #postexcerpt h2.hndle').text( WPInv_Admin.invoice_description )
 
     // Discount types.
     $(document).on('change', '#wpinv_discount_type', function() {
         $('#wpinv_discount_amount_wrap').removeClass('flat percent')
         $('#wpinv_discount_amount_wrap').addClass( $( this ).val() )
     });
-    $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
@@ -594,18 +595,6 @@ jQuery(function($) {
                     wpinvUnblock(metaBox);
                 });
             });
-            $('#wpinv_discount_type').on('change', function(e) {
-                e.preventDefault();
-                var mBox = $(this).closest('.inside');
-                if ($(this).val() == 'flat') {
-                    $('.wpi-discount-p', mBox).hide();
-                    $('.wpi-discount-f', mBox).show();
-                } else {
-                    $('.wpi-discount-p', mBox).show();
-                    $('.wpi-discount-f', mBox).hide();
-                }
-            });
-            $('#wpinv_discount_type').trigger('change');
             
             $('#wpinv-apply-code').on('click', function(e) {
                 e.preventDefault();
