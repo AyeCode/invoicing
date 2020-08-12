@@ -1415,9 +1415,10 @@ body.wpi-wpinv-settings .wp-picker-holder,
 }
 .post-type-wpi_discount .wp-list-table.widefat .column-amount,
 .post-type-wpi_discount .wp-list-table.widefat .column-code,
+.post-type-wpi_discount .wp-list-table.widefat .column-description,
 .post-type-wpi_discount .wp-list-table.widefat .column-usage,
 .post-type-wpi_discount .wp-list-table.widefat .column-status {
-    width: 90px;
+    min-width: 120px;
 }
 .post-type-wpi_discount .wp-list-table.widefat .column-usage,
 .post-type-wpi_discount .wp-list-table.widefat .column-status {
@@ -2065,6 +2066,14 @@ textarea.wpi-email_overdue_content {
 .getpaid-mb-form-field.form-field textarea {
     float: left;
     width: 50%;
+}
+
+#wpinv_discount_amount_wrap.flat .wpinv-if-percent {
+    display: none !important;
+}
+
+#wpinv_discount_amount_wrap.percent .wpinv-if-flat {
+    display: none !important;
 }
 
 /* Subscription items */

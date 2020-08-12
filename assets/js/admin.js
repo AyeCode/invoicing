@@ -73,7 +73,14 @@ jQuery(function($) {
     $('.wpi-editable-n #post :input').attr( 'disabled', true );
 
     // Rename excerpt to 'Item description'
-    $('body.post-type-wpi_item #postexcerpt h2.hndle span').text( WPInv_Admin.item_description )
+    $('body.post-type-wpi_item #postexcerpt h2.hndle').text( WPInv_Admin.item_description )
+
+    // Discount types.
+    $(document).on('change', '#wpinv_discount_type', function() {
+        $('#wpinv_discount_amount_wrap').removeClass('flat percent')
+        $('#wpinv_discount_amount_wrap').addClass( $( this ).val() )
+    });
+    $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;

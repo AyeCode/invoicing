@@ -44,7 +44,7 @@ class WPInv_Discount extends GetPaid_Data  {
         'description'          => null,
         'author'               => 1,
         'code'                 => null,
-        'type'                 => 'discount',
+        'type'                 => 'percent',
         'expiration'           => null,
         'start'                => null,
         'items'                => array(),
@@ -479,6 +479,33 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_amount( $context = 'view' ) {
 		return $this->get_prop( 'amount', $context );
 	}
+
+	/**
+	 * Get the discount's formated amount/rate.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_formatted_amount() {
+
+		if ( $this->is_type( 'flat' ) ) {
+			$rate = wpinv_price( wpinv_format_amount( $this->get_amount() ) );
+		} else {
+			$rate = $this->get_amount() . '%';
+		}
+
+		return apply_filters( 'wpinv_format_discount_rate', $rate, $this->get_type(), $this->get_amount() );
+	}
+
+	function wpinv_format_discount_rate( $type, $amount ) {
+		if ( $type == 'flat' ) {
+			$rate = wpinv_price( wpinv_format_amount( $amount ) );
+		} else {
+			$rate = $amount . '%';
+		}
+	
+		return apply_filters( 'wpinv_format_discount_rate', $rate, $type, $amount );
+	}
 	
 	/**
 	 * Get the discount's start date.
@@ -558,6 +585,22 @@ class WPInv_Discount extends GetPaid_Data  {
 	}
 
 	/**
+	 * Get the discount's usage, i.e uses / max uses.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_usage() {
+
+		if ( ! $this->has_limit() ) {
+			return $this->get_uses() . ' / ' . ' &infin;';
+		}
+
+		return $this->get_uses() . ' / ' . (int) $this->get_max_uses();
+
+	}
+
+	/**
 	 * Get the maximum number of time a discount can be used.
 	 *
 	 * @since 1.0.19
@@ -565,7 +608,8 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return int
 	 */
 	public function get_max_uses( $context = 'view' ) {
-		return $this->get_prop( 'max_uses', $context );
+		$max_uses = $this->get_prop( 'max_uses', $context );
+		return empty( $max_uses ) ? null : $max_uses;
 	}
 
 	/**
@@ -631,7 +675,8 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return float
 	 */
 	public function get_min_total( $context = 'view' ) {
-		return $this->get_prop( 'min_total', $context );
+		$minimum = $this->get_prop( 'min_total', $context );
+		return empty( $minimum ) ? null : $minimum;
 	}
 
 	/**
@@ -653,7 +698,8 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return float
 	 */
 	public function get_max_total( $context = 'view' ) {
-		return $this->get_prop( 'max_total', $context );
+		$maximum = $this->get_prop( 'max_total', $context );
+		return empty( $maximum ) ? null : $maximum;
 	}
 
 	/**
@@ -845,7 +891,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function set_code( $value ) {
 		$code = sanitize_text_field( $value );
-		$this->set_prop( 'author', $code );
+		$this->set_prop( 'code', $code );
 	}
 	
 	/**
@@ -889,11 +935,11 @@ class WPInv_Discount extends GetPaid_Data  {
 		$date = strtotime( $value );
 
         if ( $date ) {
-            $this->set_prop( 'start', date( 'Y-m-d H:i:s', $date ) );
+            $this->set_prop( 'start', date( 'Y-m-d H:i', $date ) );
             return true;
 		}
 		
-		$this->set_prop( 'expiration', '' );
+		$this->set_prop( 'start', '' );
 
         return false;
 	}
@@ -918,7 +964,7 @@ class WPInv_Discount extends GetPaid_Data  {
 		$date = strtotime( $value );
 
         if ( $date ) {
-            $this->set_prop( 'expiration', date( 'Y-m-d H:i:s', $date ) );
+            $this->set_prop( 'expiration', date( 'Y-m-d H:i', $date ) );
             return true;
         }
 
@@ -953,7 +999,9 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @param string $value New discount type.
 	 */
 	public function set_type( $value ) {
-		$this->set_prop( 'type', $value );
+		if ( $value && array_key_exists( sanitize_text_field( $value ), wpinv_get_discount_types() ) ) {
+			$this->set_prop( 'type', sanitize_text_field( $value ) );
+		}
 	}
 
 	/**
@@ -980,7 +1028,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @param int $value maximum usage count.
 	 */
 	public function set_max_uses( $value ) {
-		$this->set_prop( 'max_uses', (int) $value );
+		$this->set_prop( 'max_uses', absint( $value ) );
 	}
 
 	/**
@@ -1211,7 +1259,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return bool
 	 */
 	public function is_expired() {
-		$expired = $this->has_expiration_date() ? false : current_time( 'timestamp' ) > strtotime( $this->get_expiration_date() );
+		$expired = $this->has_expiration_date() ? current_time( 'timestamp' ) > strtotime( $this->get_expiration_date() ) : false;
 		return apply_filters( 'wpinv_is_discount_expired', $expired, $this->ID, $this, $this->code );
 	}
 

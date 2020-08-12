@@ -23,17 +23,44 @@ function wpinv_payment_form_custom_column( $column ) {
 
 }
 
+function wpinv_filter_discount_post_state( $post_states, $post ) {
+
+    if ( 'wpi_discount' == $post->post_type ) {
+        $discount = new WPInv_Discount( $post );
+
+        $status = $discount->is_expired() ? 'expired' : $discount->get_status();
+
+        if ( $status != 'publish' ) {
+            return array(
+                'discount_status' => wpinv_discount_status( $status ),
+            );
+        }
+
+        return array();
+        
+    }
+
+    return $post_states;
+
+}
+add_filter( 'display_post_states', 'wpinv_filter_discount_post_state', 10, 2 );
+
 add_filter( 'manage_wpi_discount_posts_columns', 'wpinv_discount_columns' );
-function wpinv_discount_columns( $existing_columns ) {
-    $columns                = array();
-    $columns['cb']          = $existing_columns['cb'];
-    $columns['name']        = __( 'Name', 'invoicing' );
+function wpinv_discount_columns( $columns ) {
+    
+    if ( isset( $columns['date'] ) ) {
+        unset( $columns['date'] );
+    }
+
+    if ( isset( $columns['title'] ) ) {
+        $columns['title'] = __( 'Name', 'invoicing' );
+    }
+
     $columns['code']        = __( 'Code', 'invoicing' );
     $columns['amount']      = __( 'Amount', 'invoicing' );
     $columns['usage']       = __( 'Usage / Limit', 'invoicing' );
     $columns['start_date']  = __( 'Start Date', 'invoicing' );
     $columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
-    $columns['status']      = __( 'Status', 'invoicing' );
 
     return $columns;
 }
@@ -42,57 +69,35 @@ add_action( 'manage_wpi_discount_posts_custom_column', 'wpinv_discount_custom_co
 function wpinv_discount_custom_column( $column ) {
     global $post;
 
-    $discount = $post;
+    $discount = new WPInv_Discount( $post );
 
     switch ( $column ) {
-        case 'name' :
-            echo get_the_title( $discount->ID );
-        break;
         case 'code' :
-            echo wpinv_get_discount_code( $discount->ID );
+            echo $discount->get_code();
         break;
         case 'amount' :
-            echo wpinv_format_discount_rate( wpinv_get_discount_type( $discount->ID ), wpinv_get_discount_amount( $discount->ID ) );
-        break;
-        case 'usage_limit' :
-            echo wpinv_get_discount_uses( $discount->ID );
+            echo $discount->get_formatted_amount();
         break;
         case 'usage' :
-            $usage = wpinv_get_discount_uses( $discount->ID ) . ' / ';
-            if ( wpinv_get_discount_max_uses( $discount->ID ) ) {
-                $usage .= wpinv_get_discount_max_uses( $discount->ID );
-            } else {
-                $usage .= ' &infin;';
-            }
-            
-            echo $usage;
+            echo $discount->get_usage();
         break;
         case 'start_date' :
-            if ( $start_date = wpinv_get_discount_start_date( $discount->ID ) ) {
-                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $start_date ) );
+            if ( $discount->has_start_date() ) {
+                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $discount->get_start_date() ) );
             } else {
-                $value = '-';
+                $value = '&mdash;';
             }
-                
+
             echo $value;
         break;
         case 'expiry_date' :
-            if ( $expiration = wpinv_get_discount_expiration( $discount->ID ) ) {
-                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $expiration ) );
+            if ( $discount->has_expiration_date() ) {
+                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $discount->get_expiration_date() ) );
             } else {
                 $value = __( 'Never', 'invoicing' );
             }
-                
+
             echo $value;
-        break;
-        break;
-        case 'description' :
-            echo wp_kses_post( $post->post_excerpt );
-        break;
-        case 'status' :
-            $status = wpinv_is_discount_expired( $discount->ID ) ? 'expired' : $discount->post_status;
-            
-            echo wpinv_discount_status( $status );
         break;
     }
 }
@@ -100,15 +105,15 @@ function wpinv_discount_custom_column( $column ) {
 add_filter( 'post_row_actions', 'wpinv_post_row_actions', 9999, 2 );
 function wpinv_post_row_actions( $actions, $post ) {
     $post_type = !empty( $post->post_type ) ? $post->post_type : '';
-    
+
     if ( $post_type == 'wpi_invoice' ) {
         $actions = array();
     }
-    
+
     if ( $post_type == 'wpi_discount' ) {
         $actions = wpinv_discount_row_actions( $post, $actions );
     }
-    
+
     return $actions;
 }
 
@@ -146,15 +151,15 @@ function wpinv_table_primary_column( $default, $screen_id ) {
     if ( 'edit-wpi_invoice' === $screen_id ) {
         return 'name';
     }
-    
+
     return $default;
 }
 
-function wpinv_discount_bulk_actions( $actions, $display = false ) {    
+function wpinv_discount_bulk_actions( $actions, $display = false ) {
     if ( !$display ) {
         return array();
     }
-    
+
     $actions = array(
         'activate'   => __( 'Activate', 'invoicing' ),
         'deactivate' => __( 'Deactivate', 'invoicing' ),
@@ -175,7 +180,7 @@ function wpinv_discount_bulk_actions( $actions, $display = false ) {
     echo "</select>";
 
     submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
-    
+
     echo '</div><div class="alignleft actions">';
 }
 add_filter( 'bulk_actions-edit-wpi_discount', 'wpinv_discount_bulk_actions', 10 );
@@ -184,7 +189,7 @@ function wpinv_disable_months_dropdown( $disable, $post_type ) {
     if ( $post_type == 'wpi_discount' ) {
         $disable = true;
     }
-    
+
     return $disable;
 }
 add_filter( 'disable_months_dropdown', 'wpinv_disable_months_dropdown', 10, 2 );
@@ -200,7 +205,7 @@ add_action( 'restrict_manage_posts', 'wpinv_restrict_manage_posts', 10 );
 
 function wpinv_discount_filters() {
     echo wpinv_discount_bulk_actions( array(), true );
-    
+
     ?>
     <select name="discount_type" id="dropdown_wpinv_discount_type">
         <option value=""><?php _e( 'Show all types', 'invoicing' ); ?></option>
@@ -235,7 +240,7 @@ function wpinv_request( $vars ) {
 
             $vars['post_status'] = array_keys( $post_statuses );
         }
-        
+
         if ( isset( $vars['orderby'] ) ) {
             if ( 'amount' == $vars['orderby'] ) {
                 $vars = array_merge(
@@ -304,7 +309,7 @@ function wpinv_request( $vars ) {
                 )
             );
         }
-        
+
         // Check if "orderby" is set to "type"
         if ( isset( $vars['orderby'] ) && 'type' == $vars['orderby'] ) {
             $vars = array_merge(
@@ -315,7 +320,7 @@ function wpinv_request( $vars ) {
                 )
             );
         }
-        
+
         // Check if "orderby" is set to "recurring"
         if ( isset( $vars['orderby'] ) && 'recurring' == $vars['orderby'] ) {
             $vars = array_merge(
@@ -336,7 +341,7 @@ function wpinv_request( $vars ) {
                     'compare' => '='
                 );
         }
-        
+
         // Filter vat class
         if ( isset( $_GET['vat_class'] ) && $_GET['vat_class'] !== '' ) {
             $meta_query[] = array(
@@ -345,7 +350,7 @@ function wpinv_request( $vars ) {
                     'compare' => '='
                 );
         }
-        
+
         // Filter item type
         if ( isset( $_GET['type'] ) && $_GET['type'] !== '' ) {
             $meta_query[] = array(
@@ -354,7 +359,7 @@ function wpinv_request( $vars ) {
                     'compare' => '='
                 );
         }
-        
+
         if ( !empty( $meta_query ) ) {
             $vars['meta_query'] = $meta_query;
         }
@@ -368,7 +373,7 @@ function wpinv_request( $vars ) {
                     'compare' => '='
                 );
         }
-        
+
         if ( !empty( $meta_query ) ) {
             $vars['meta_query'] = $meta_query;
         }
@@ -385,7 +390,7 @@ function wpinv_item_type_class( $classes, $class, $post_id ) {
         if ( $type = get_post_meta( $post_id, '_wpinv_type', true ) ) {
             $classes[] = 'wpi-type-' . sanitize_html_class( $type );
         }
-        
+
         if ( !wpinv_item_is_editable( $post_id ) ) {
             $classes[] = 'wpi-editable-n';
         }
@@ -418,7 +423,7 @@ function wpinv_item_disable_quick_edit( $actions = array(), $row = null ) {
     if ( isset( $actions['inline hide-if-no-js'] ) ) {
         unset( $actions['inline hide-if-no-js'] );
     }
-    
+
     if ( !empty( $row->post_type ) && $row->post_type == 'wpi_item' && !wpinv_item_is_editable( $row ) ) {
         if ( isset( $actions['trash'] ) ) {
             unset( $actions['trash'] );
