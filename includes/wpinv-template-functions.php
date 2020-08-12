@@ -531,6 +531,30 @@ function wpinv_item_dropdown( $args = array() ) {
     return $output;
 }
 
+/**
+ * Returns an array of published items.
+ */
+function wpinv_get_published_items_for_dropdown() {
+
+    $items = get_posts(
+        array(
+            'post_type'      => 'wpi_item',
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+            'posts_per_page' => '-1'
+        )
+    );
+
+    $options = array();
+    if ( $items ) {
+        foreach ( $items as $item ) {
+            $options[ $item->ID ] = esc_html( $item->post_title ) . wpinv_get_item_suffix( $item->ID, false );
+        }
+    }
+
+    return $options;
+}
+
 function wpinv_html_checkbox( $args = array() ) {
     $defaults = array(
         'name'     => null,

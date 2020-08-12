@@ -459,6 +459,7 @@ class WPInv_Plugin {
         $localize['action_edit']                = __( 'Edit', 'invoicing' );
         $localize['action_cancel']              = __( 'Cancel', 'invoicing' );
         $localize['item_description']           = __( 'Item Description', 'invoicing' );
+        $localize['discount_description']       = __( 'Discount Description', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 
