@@ -126,8 +126,8 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 
 		$discount->set_props(
 			array(
-				'date_created'  => 0 < $discount_object->post_date_gmt ? $discount_object->post_date_gmt : null,
-				'date_modified' => 0 < $discount_object->post_modified_gmt ? $discount_object->post_modified_gmt : null,
+				'date_created'  => 0 < $discount_object->post_date ? $discount_object->post_date : null,
+				'date_modified' => 0 < $discount_object->post_modified ? $discount_object->post_modified : null,
 				'status'        => $discount_object->post_status,
 				'name'          => $discount_object->post_title,
 				'author'        => $discount_object->post_author,

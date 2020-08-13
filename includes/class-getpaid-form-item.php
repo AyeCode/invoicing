@@ -37,6 +37,27 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	protected $allow_quantities = false;
 
+	/**
+	 * Associated invoice.
+	 *
+	 * @var int
+	 */
+	public $invoice_id = 0;
+
+	/**
+	 * Item discount.
+	 *
+	 * @var float
+	 */
+	public $item_discount = 0;
+
+	/**
+	 * Item tax.
+	 *
+	 * @var float
+	 */
+	public $item_tax = 0;
+
     /*
 	|--------------------------------------------------------------------------
 	| CRUD methods
@@ -79,7 +100,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 
 		return parent::get_description( $context );
 	}
-	
+
 	/**
 	 * Returns the sub total.
 	 *
@@ -160,7 +181,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * Prepares form data for use.
 	 *
 	 * @since 1.0.19
-	 * @param  string $context View or edit context.
 	 * @return array
 	 */
 	public function prepare_data_for_use() {
@@ -173,6 +193,28 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'description'      => $this->get_description(),
 			'allow_quantities' => $this->allows_quantities(),
 			'required'         => $this->is_required(),
+        );
+	}
+
+	/**
+	 * Prepares form data for saving (cart_details).
+	 *
+	 * @since 1.0.19
+	 * @return array
+	 */
+	public function prepare_data_for_saving() {
+
+		return array(
+			'post_id'           => $this->invoice_id,
+			'item_id'           => $this->get_id(),
+			'item_name'         => sanitize_text_field( $this->get_name() ),
+			'item_description'  => $this->get_description(),
+			'tax'               => $this->item_tax,
+			'item_price'        => $this->get_price(),
+			'quantity'          => (int) $this->get_quantity(),
+			'discount'          => $this->item_discount,
+			'subtotal'          => $this->get_sub_total(),
+			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount
         );
 	}
 

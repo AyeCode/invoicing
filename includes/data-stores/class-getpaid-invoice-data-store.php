@@ -22,19 +22,12 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * @var array
 	 */
 	protected $internal_meta_keys = array(
-		'_wpi_discount_code',
-		'_wpi_discount_amount',
-		'_wpi_discount_start',
-		'_wpi_discount_expiration',
-		'_wpi_discount_type',
-		'_wpi_discount_uses',
-		'_wpi_discount_is_single_use',
-		'_wpi_discount_items',
-		'_wpi_discount_excluded_items',
-		'_wpi_discount_max_uses',
-		'_wpi_discount_is_recurring',
-		'_wpi_discount_min_total',
-		'_wpi_discount_max_total',
+		'_wpinv_subscr_profile_id',
+		'_wpinv_taxes',
+		'_wpinv_fees',
+		'_wpinv_discounts',
+		'_wpinv_submission_id',
+		'_wpinv_payment_form',
 	);
 
 	/**
@@ -45,19 +38,12 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * @var array
 	 */
 	protected $meta_key_to_props = array(
-		'_wpi_discount_code'           => 'code',
-		'_wpi_discount_amount'         => 'amount',
-		'_wpi_discount_start'          => 'start',
-		'_wpi_discount_expiration'     => 'expiration',
-		'_wpi_discount_type'           => 'type',
-		'_wpi_discount_uses'           => 'uses',
-		'_wpi_discount_is_single_use'  => 'is_single_use',
-		'_wpi_discount_items'          => 'items',
-		'_wpi_discount_excluded_items' => 'excluded_items',
-		'_wpi_discount_max_uses'       => 'max_uses',
-		'_wpi_discount_is_recurring'   => 'is_recurring',
-		'_wpi_discount_min_total'      => 'min_total',
-		'_wpi_discount_max_total'      => 'max_total',
+		'_wpinv_subscr_profile_id' => 'subscription_id',
+		'_wpinv_taxes'             => 'taxes',
+		'_wpinv_fees'              => 'fees',
+		'_wpinv_discounts'         => 'discounts',
+		'_wpinv_submission_id'     => 'submission_id',
+		'_wpinv_payment_form'      => 'payment_form',
 	);
 
 	/*
@@ -87,6 +73,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 					'post_title'    => $invoice->get_number( 'edit' ),
 					'post_excerpt'  => $invoice->get_description( 'edit' ),
 					'post_parent'   => $invoice->get_parent_id( 'edit' ),
+					'post_name'     => $invoice->get_path( 'edit' ),
 				)
 			),
 			true
@@ -94,34 +81,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$invoice->set_id( $id );
-			$invoice->save_special();
-			$this->update_post_meta( $invoice );
-			$invoice->save_meta_data();
-			$invoice->apply_changes();
-			$this->clear_caches( $invoice );
-			return true;
-		}
-
-		if ( is_wp_error( $id ) ) {
-			$invoice->last_error = $id->get_error_message();
-		}
-
-		return false;
-	}
-
-	/**
-	 * Method to save special invoice fields in the database.
-	 *
-	 * @param WPInv_Invoice $invoice Invoice object.
-	 */
-	public function save_special( &$invoice ) {
-		$invoice->set_version( WPINV_VERSION );
-		$invoice->set_date_created( current_time('mysql') );
-
-
-		if ( $id && ! is_wp_error( $id ) ) {
-			$invoice->set_id( $id );
-			$invoice->save_special();
+			$this->save_special_fields( $invoice );
 			$this->update_post_meta( $invoice );
 			$invoice->save_meta_data();
 			$invoice->apply_changes();
@@ -147,51 +107,59 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$invoice->set_defaults();
 		$invoice_object = get_post( $invoice->get_id() );
 
-		if ( ! $invoice->get_id() || ! $invoice_object || $invoice_object->post_type != 'wpi_invoice' ) {
+		if ( ! $invoice->get_id() || ! $invoice_object || getpaid_is_invoice_post_type( $invoice_object->post_type ) ) {
 			$invoice->last_error = __( 'Invalid invoice.', 'invoicing' );
 			return false;
 		}
 
 		$invoice->set_props(
 			array(
-				'date_created'  => 0 < $discount_object->post_date_gmt ? $discount_object->post_date_gmt : null,
-				'date_modified' => 0 < $discount_object->post_modified_gmt ? $discount_object->post_modified_gmt : null,
-				'status'        => $discount_object->post_status,
-				'author'        => $discount_object->post_author,
-				'description'   => $discount_object->post_excerpt,
+				'date_created'  => 0 < $invoice_object->post_date ? $invoice_object->post_date : null,
+				'date_modified' => 0 < $invoice_object->post_modified ? $invoice_object->post_modified : null,
+				'status'        => $invoice_object->post_status,
+				'author'        => $invoice_object->post_author,
+				'description'   => $invoice_object->post_excerpt,
+				'parent_id'     => $invoice_object->post_parent,
+				'name'          => $invoice_object->post_title,
+				'path'          => $invoice_object->post_name,
+				'post_type'     => $invoice_object->post_type,
 			)
 		);
 
-		$this->read_object_data( $discount, $discount_object );
-		$discount->read_meta_data();
-		$discount->set_object_read( true );
+		$this->read_object_data( $invoice, $invoice_object );
+		$this->add_special_fields( $invoice );
+		$invoice->read_meta_data();
+		$invoice->set_object_read( true );
 
 	}
 
 	/**
-	 * Method to update a discount in the database.
+	 * Method to update an invoice in the database.
 	 *
-	 * @param WPInv_Discount $discount Discount object.
+	 * @param WPInv_Invoice $invoice Invoice object.
 	 */
-	public function update( &$discount ) {
-		$discount->save_meta_data();
-		$discount->set_version( WPINV_VERSION );
+	public function update( &$invoice ) {
+		$invoice->save_meta_data();
+		$invoice->set_version( WPINV_VERSION );
 
-		if ( null === $discount->get_date_created( 'edit' ) ) {
-			$discount->set_date_created(  current_time('mysql') );
+		if ( null === $invoice->get_date_created( 'edit' ) ) {
+			$invoice->set_date_created(  current_time('mysql') );
 		}
 
-		$changes = $discount->get_changes();
+		$changes = $invoice->get_changes();
 
 		// Only update the post when the post data changes.
-		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'post_excerpt' ), array_keys( $changes ) ) ) {
+		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'description', 'parent_id', 'post_excerpt', 'path' ), array_keys( $changes ) ) ) {
 			$post_data = array(
-				'post_date'         => $discount->get_date_created( 'edit' ),
-				'post_status'       => $discount->get_status( 'edit' ),
-				'post_title'        => $discount->get_name( 'edit' ),
-				'post_author'       => $discount->get_author( 'edit' ),
-				'post_modified'     => $discount->get_date_modified( 'edit' ),
-				'post_excerpt'      => $discount->get_description( 'edit' ),
+				'post_date'         => $invoice->get_date_created( 'edit' ),
+				'post_status'       => $invoice->get_status( 'edit' ),
+				'post_title'        => $invoice->get_name( 'edit' ),
+				'post_author'       => $invoice->get_user_id( 'edit' ),
+				'post_modified'     => $invoice->get_date_modified( 'edit' ),
+				'post_excerpt'      => $invoice->get_description( 'edit' ),
+				'post_parent'       => $invoice->get_parent_id( 'edit' ),
+				'post_name'         => $invoice->get_path( 'edit' ),
+				'post_type'         => $invoice->get_post_type( 'edit' ),
 			);
 
 			/**
@@ -203,16 +171,17 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			 * or an update purely from CRUD.
 			 */
 			if ( doing_action( 'save_post' ) ) {
-				$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->posts, $post_data, array( 'ID' => $discount->get_id() ) );
-				clean_post_cache( $discount->get_id() );
+				$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->posts, $post_data, array( 'ID' => $invoice->get_id() ) );
+				clean_post_cache( $invoice->get_id() );
 			} else {
-				wp_update_post( array_merge( array( 'ID' => $discount->get_id() ), $post_data ) );
+				wp_update_post( array_merge( array( 'ID' => $invoice->get_id() ), $post_data ) );
 			}
-			$discount->read_meta_data( true ); // Refresh internal meta data, in case things were hooked into `save_post` or another WP hook.
+			$invoice->read_meta_data( true ); // Refresh internal meta data, in case things were hooked into `save_post` or another WP hook.
 		}
-		$this->update_post_meta( $discount );
-		$discount->apply_changes();
-		$this->clear_caches( $discount );
+		$this->update_post_meta( $invoice );
+		$this->save_special_fields( $invoice );
+		$invoice->apply_changes();
+		$this->clear_caches( $invoice );
 	}
 
 	/*
@@ -220,46 +189,202 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	| Additional Methods
 	|--------------------------------------------------------------------------
 	*/
+
 	/**
-     * Returns a list of all special fields.
-	 * 
+     * Retrieves special fields and adds to the invoice.
+	 *
 	 * @param WPInv_Invoice $invoice Invoice object.
      */
-    public function get_special_fields( $invoice ) {
+    public function add_special_fields( &$invoice ) {
+		global $wpdb;
 
-        return array (
+		$table =  $wpdb->prefix . 'getpaid_invoices';
+        $data  = $wpdb->get_row(
+			$wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d LIMIT 1", $this->ID ),
+			ARRAY_A
+		);
+
+		// Abort if the data does not exist.
+		if ( empty( $data ) ) {
+			return;
+		}
+
+		$invoice->set_props( $data );
+
+	}
+
+	/**
+	 * Gets a list of special fields that need updated based on change state
+	 * or if they are present in the database or not.
+	 *
+	 * @param  WPInv_Invoice $invoice       The Invoice object.
+	 * @param  array   $meta_key_to_props   A mapping of prop => value.
+	 * @return array                        A mapping of field keys => prop names, filtered by ones that should be updated.
+	 */
+	protected function get_special_fields_to_update( $invoice, $special_fields ) {
+		$props_to_update = array();
+		$changed_props   = $invoice->get_changes();
+
+		// Props should be updated if they are a part of the $changed array or don't exist yet.
+		foreach ( $special_fields as $prop => $value ) {
+			if ( array_key_exists( $prop, $changed_props ) ) {
+				$props_to_update[ $prop ] = $value;
+			}
+		}
+
+		return $props_to_update;
+	}
+
+	/**
+     * Saves all special fields.
+	 *
+	 * @param WPInv_Invoice $invoice Invoice object.
+     */
+    public function save_special_fields( $invoice ) {
+		global $wpdb;
+
+		// Fields to update.
+		$fields = array (
             'post_id'        => $invoice->get_id(),
-            'number'         => $invoice->get_number(),
-            'key'            => $invoice->get_key(),
-            'type'           => str_replace( 'wpi_', '', $invoice->get_post_type() ),
-            'mode'           => $invoice->get_mode(),
-            'user_ip'        => $invoice->get_user_ip(),
-            'first_name'     => $invoice->get_first_name(),
-            'last_name'      => $invoice->get_last_name(),
-            'address'        => $invoice->get_address(),
-            'city'           => $invoice->get_city(),
-            'state'          => $invoice->get_state(),
-            'country'        => $invoice->get_country(),
-            'zip'            => $invoice->get_zip(),
-            'adddress_confirmed' => (int) $this->get_adddress_confirmed(),
-            'gateway'        => $invoice->get_gateway(),
-            'transaction_id' => $invoice->get_transaction_id(),
-            'currency'       => $invoice->get_currency(),
-            'subtotal'       => $invoice->get_subtotal(),
-            'tax'            => $invoice->get_tax(),
-            'fees_total'     => $invoice->get_fees_total(),
-            'total'          => $invoice->get_total(),
-            'discount'       => $invoice->get_discount(),
-            'discount_code'  => $invoice->get_discount_code(),
-            'disable_taxes'  => (int) $invoice->get_disable_taxes(),
-            'due_date'       => $invoice->get_due_date(),
-            'completed_date' => $invoice->get_completed_date(),
-            'company'        => $invoice->get_company(),
-            'vat_number'     => $invoice->get_vat_number(),
-            'vat_rate'       => $invoice->get_vat_rate(),
-            'custom_meta'    => $invoice->get_payment_meta(),
+            'number'         => $invoice->get_number( 'edit' ),
+            'key'            => $invoice->get_key( 'edit' ),
+            'type'           => $invoice->get_type( 'edit' ),
+            'mode'           => $invoice->get_mode( 'edit' ),
+            'user_ip'        => $invoice->get_user_ip( 'edit' ),
+            'first_name'     => $invoice->get_first_name( 'edit' ),
+            'last_name'      => $invoice->get_last_name( 'edit' ),
+            'address'        => $invoice->get_address( 'edit' ),
+            'city'           => $invoice->get_city( 'edit' ),
+            'state'          => $invoice->get_state( 'edit' ),
+            'country'        => $invoice->get_country( 'edit' ),
+            'zip'            => $invoice->get_zip( 'edit' ),
+            'address_confirmed' => (int) $invoice->get_address_confirmed( 'edit' ),
+            'gateway'        => $invoice->get_gateway( 'edit' ),
+            'transaction_id' => $invoice->get_transaction_id( 'edit' ),
+            'currency'       => $invoice->get_currency( 'edit' ),
+            'subtotal'       => $invoice->get_subtotal( 'edit' ),
+            'total_tax'      => $invoice->get_total_tax( 'edit' ),
+            'total_fees'     => $invoice->get_total_fees( 'edit' ),
+            'total_discount' => $invoice->get_total_discount( 'edit' ),
+            'discount_code'  => $invoice->get_discount_code( 'edit' ),
+            'disable_taxes'  => (int) $invoice->get_disable_taxes( 'edit' ),
+            'due_date'       => $invoice->get_due_date( 'edit' ),
+            'completed_date' => $invoice->get_completed_date( 'edit' ),
+            'company'        => $invoice->get_company( 'edit' ),
+            'vat_number'     => $invoice->get_vat_number( 'edit' ),
+            'vat_rate'       => $invoice->get_vat_rate( 'edit' ),
+		);
+
+		// The invoices table.
+		$table = $wpdb->prefix . 'getpaid_invoices';
+		$id    = (int) $invoice->get_id();
+		if ( $wpdb->get_var( "SELECT `post_id` FROM $table WHERE `post_id`= $id" ) ) {
+
+			$to_update = $this->get_special_fields_to_update( $invoice, $fields );
+
+			if ( empty( $to_update ) ) {
+				return;
+			}
+
+			$changes = array(
+				'tax'                => 'total_tax',
+				'fees_total'         => 'total_fees',
+				'discount'           => 'total_discount',
+				'adddress_confirmed' => 'address_confirmed',
+			);
+
+			foreach ( $changes as $to => $from ) {
+				if ( isset( $changes[ $from ] ) ) {
+					$changes[ $to ] = $changes[ $from ];
+					unset( $changes[ $from ] );
+				}
+			}
+
+			$changes['total'] = $invoice->get_total( 'edit' );
+            $wpdb->update( $table, $fields, array( 'post_id' => $id ) );
+
+        } else {
+
+			$fields['tax'] = $fields['total_tax'];
+			unset( $fields['total_tax'] );
+
+			$fields['fees_total'] = $fields['total_fees'];
+			unset( $fields['total_fees'] );
+
+			$fields['discount'] = $fields['total_discount'];
+			unset( $fields['total_discount'] );
+
+			$fields['adddress_confirmed'] = $fields['address_confirmed'];
+			unset( $fields['address_confirmed'] );
+			
+			$fields['total']   = $invoice->get_total( 'edit' );
+			$fields['post_id'] = $id;
+            $wpdb->insert( $table, $fields );
+
+		}
+
+	}
+
+	/**
+     * Set's up cart details.
+	 *
+	 * @param WPInv_Invoice $invoice Invoice object.
+     */
+    public function add_items( &$invoice ) {
+		global $wpdb;
+
+		$table =  $wpdb->prefix . 'getpaid_invoice_items';
+        $items = $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d", $this->ID )
         );
 
+        if ( empty( $items ) ) {
+            return;
+		}
+
+		foreach ( $items as $item_data ) {
+			$item = new GetPaid_Form_Item( $item_data->item_id );
+
+			// Set item data.
+			$item->item_tax      = wpinv_sanitize_amount( $item_data->tax );
+			$item->item_discount = wpinv_sanitize_amount( $item_data->tax );
+			$item->set_name( $item_data->item_name );
+			$item->set_description( $item_data->item_description );
+			$item->set_price( $item_data->item_price );
+			$item->set_quantity( $item_data->quantity );
+
+			$invoice->add_item( $item );
+		}
+
+	}
+
+	/**
+     * Saves cart details.
+	 *
+	 * @param WPInv_Invoice $invoice Invoice object.
+     */
+    public function save_items( $invoice ) {
+
+		// Delete previously existing items.
+		$this->delete_items( $invoice );
+
+		$table   =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
+        $to_save = $invoice->get_cart_details();
+
+		foreach ( $to_save as $item_data ) {
+			$GLOBALS['wpdb']->insert( $table, $item_data );
+		}
+
+	}
+
+	/**
+     * Deletes an invoice's cart details from the database.
+	 *
+	 * @param WPInv_Invoice $invoice Invoice object.
+     */
+    public function delete_items( $invoice ) {
+		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
+		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->ID ) );
     }
 
 }

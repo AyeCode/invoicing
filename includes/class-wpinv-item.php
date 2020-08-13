@@ -741,7 +741,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value New price.
-]	 */
+	 */
 	public function set_price( $value ) {
         $this->set_prop( 'price', (float) wpinv_sanitize_amount( $value ) );
     }

@@ -110,8 +110,8 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 
 		$form->set_props(
 			array(
-				'date_created'  => 0 < $form_object->post_date_gmt ? $form_object->post_date_gmt : null,
-				'date_modified' => 0 < $form_object->post_modified_gmt ? $form_object->post_modified_gmt : null,
+				'date_created'  => 0 < $form_object->post_date ? $form_object->post_date : null,
+				'date_modified' => 0 < $form_object->post_modified ? $form_object->post_modified : null,
 				'status'        => $form_object->post_status,
 				'name'          => $form_object->post_title,
 				'author'        => $form_object->post_author,

@@ -351,7 +351,7 @@ class GetPaid_Payment_Form_Submission {
 
 		$this->items[ $item->get_id() ] = $item;
 
-		$this->subtotal_amount += $item->get_price() * $item->get_qantity();
+		$this->subtotal_amount += $item->get_sub_total();
 
 		$this->process_item_discount( $item );
 

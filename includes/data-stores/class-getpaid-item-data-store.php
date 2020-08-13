@@ -137,8 +137,8 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$item->set_props(
 			array(
 				'parent_id'     => $item_object->post_parent,
-				'date_created'  => 0 < $item_object->post_date_gmt ? $item_object->post_date_gmt : null,
-				'date_modified' => 0 < $item_object->post_modified_gmt ? $item_object->post_modified_gmt : null,
+				'date_created'  => 0 < $item_object->post_date ? $item_object->post_date : null,
+				'date_modified' => 0 < $item_object->post_modified ? $item_object->post_modified : null,
 				'status'        => $item_object->post_status,
 				'name'          => $item_object->post_title,
 				'description'   => $item_object->post_excerpt,
