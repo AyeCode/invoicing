@@ -82,6 +82,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 			$form->save_meta_data();
 			$form->apply_changes();
 			$this->clear_caches( $form );
+			do_action( 'getpaid_create_payment_form', $form->get_id(), $form );
 			return true;
 		}
 
@@ -121,6 +122,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $form, $form_object );
 		$form->read_meta_data();
 		$form->set_object_read( true );
+		do_action( 'getpaid_read_payment_form', $form->get_id(), $form );
 
 	}
 
@@ -136,6 +138,9 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		if ( null === $form->get_date_created( 'edit' ) ) {
 			$form->set_date_created(  current_time('mysql') );
 		}
+
+		// Grab the current status so we can compare.
+		$previous_status = get_post_status( $form->get_id() );
 
 		$changes = $form->get_changes();
 
@@ -168,6 +173,16 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$this->update_post_meta( $form );
 		$form->apply_changes();
 		$this->clear_caches( $form );
+
+		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
+		$new_status = $form->get_status( 'edit' );
+
+		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
+			do_action( 'getpaid_new_payment_form', $form->get_id(), $form );
+		} else {
+			do_action( 'getpaid_update_payment_form', $form->get_id(), $form );
+		}
+
 	}
 
 	/*

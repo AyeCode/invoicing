@@ -310,6 +310,11 @@ class GetPaid_Data_Store_WP {
 	public function delete( &$object, $args = array() ) {
 		$id          = $object->get_id();
 		$object_type = $object->get_object_type();
+
+		if ( 'invoice' == $object_type ) {
+			$object_type = $object->get_type();
+		}
+
 		$args        = wp_parse_args(
 			$args,
 			array(

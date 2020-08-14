@@ -2419,3 +2419,59 @@ function wpinv_filter_posts_clauses( $clauses, $wp_query ) {
     return $clauses;
 }
 add_filter( 'posts_clauses', 'wpinv_filter_posts_clauses', 10, 2 );
+
+/**
+ * Processes an invoice refund.
+ * 
+ * @param int $invoice_id
+ * @param WPInv_Invoice $invoice
+ * @param array $status_transition
+ * @todo: descrease customer/store earnings
+ */
+function getpaid_maybe_process_refund( $invoice_id, $invoice, $status_transition ) {
+
+    if ( empty( $status_transition['from'] ) || ! $invoice->has_status( 'wpi-refunded' ) || in_array( $status_transition['from'], array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
+        return;
+    }
+
+    $discount_code = $invoice->get_discount_code();
+    if ( ! empty( $discount_code ) ) {
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        if ( $discount->exists() ) {
+            $discount->increase_usage( -1 );
+        }
+    
+    }
+
+    do_action( 'wpinv_pre_refund_invoice', $invoice, $invoice_id );
+    do_action( 'wpinv_refund_invoice', $invoice, $invoice_id );
+    do_action( 'wpinv_post_refund_invoice', $invoice, $invoice_id );
+}
+add_action( 'getpaid_invoice_status_wpi-refunded', 'getpaid_maybe_process_refund', 10, 3 );
+
+/**
+ * Fires when a payment fails.
+ * 
+ * @param int $invoice_id
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_maybe_process_failure( $invoice_id, $invoice ) {
+
+    if ( ! $invoice->has_status( 'wpi-failed' ) ) {
+        return;
+    }
+
+    $discount_code = $invoice->get_discount_code();
+    if ( ! empty( $discount_code ) ) {
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        if ( $discount->exists() ) {
+            $discount->increase_usage( -1 );
+        }
+
+    }
+
+    do_action( 'wpinv_invoice_payment_failed', $invoice, $invoice_id );
+}
+add_action( 'getpaid_invoice_status_wpi-failed', 'getpaid_maybe_process_failure', 10, 2 );

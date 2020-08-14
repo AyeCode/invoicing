@@ -86,6 +86,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$invoice->save_meta_data();
 			$invoice->apply_changes();
 			$this->clear_caches( $invoice );
+			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 			return true;
 		}
 
@@ -130,6 +131,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$this->add_special_fields( $invoice );
 		$invoice->read_meta_data();
 		$invoice->set_object_read( true );
+		do_action( 'getpaid_read_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 
 	}
 
@@ -145,6 +147,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		if ( null === $invoice->get_date_created( 'edit' ) ) {
 			$invoice->set_date_created(  current_time('mysql') );
 		}
+
+		// Grab the current status so we can compare.
+		$previous_status = get_post_status( $invoice->get_id() );
 
 		$changes = $invoice->get_changes();
 
@@ -182,6 +187,16 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$this->save_special_fields( $invoice );
 		$invoice->apply_changes();
 		$this->clear_caches( $invoice );
+
+		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
+		$new_status = $invoice->get_status( 'edit' );
+
+		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
+			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice->get_id(), $invoice );
+		} else {
+			do_action( 'getpaid_update_' . $invoice->get_type(), $invoice->get_id(), $invoice );
+		}
+
 	}
 
 	/*

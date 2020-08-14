@@ -295,6 +295,7 @@ class WPInv_Item  extends GetPaid_Data {
 		if ( $this->has_free_trial() ) {
 			$price = wpinv_sanitize_amount( 0 );
 		}
+
         return apply_filters( 'wpinv_get_initial_item_price', $price, $this );
     }
 

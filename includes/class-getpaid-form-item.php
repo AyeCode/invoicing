@@ -109,6 +109,17 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * @return int
 	 */
 	public function get_sub_total( $context = 'view' ) {
+		return $this->get_quantity( $context ) * $this->get_initial_price( $context );
+	}
+
+	/**
+	 * Returns the recurring sub total.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_recurring_sub_total( $context = 'view' ) {
 		return $this->get_quantity( $context ) * $this->get_price( $context );
 	}
 

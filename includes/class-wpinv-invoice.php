@@ -90,17 +90,37 @@ class WPInv_Invoice extends GetPaid_Data {
 
     /**
      * Stores a reference to the original WP_Post object
-     * 
+     *
      * @var WP_Post
      */
     protected $post = null;
 
     /**
      * Stores a reference to the recurring item id instead of looping through the items.
-     * 
+     *
      * @var int
      */
-    protected $recurring_item = null;
+	protected $recurring_item = null;
+
+	/**
+     * Stores an array of item totals.
+	 *
+	 * e.g $totals['discount'] = array(
+	 * 		'initial'   => 10,
+	 * 		'recurring' => 10,
+	 * )
+     *
+     * @var array
+     */
+	protected $totals = array();
+
+	/**
+	 * Stores the status transition information.
+	 *
+	 * @since 1.0.19
+	 * @var bool
+	 */
+	protected $status_transition = false;
 
     /**
 	 * Get the invoice if ID is passed, otherwise the invoice is new and empty.
@@ -157,7 +177,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Trim the code.
         $key = trim( $invoice_key_or_number );
-        
+
         // Valid fields.
         $fields = array( 'key', 'number' );
 
@@ -194,7 +214,7 @@ class WPInv_Invoice extends GetPaid_Data {
     public function _isset( $key ) {
         return isset( $this->data[$key] ) || method_exists( $this, "get_$key" );
     }
-    
+
     /*
 	|--------------------------------------------------------------------------
 	| CRUD methods
@@ -279,6 +299,25 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_version( $context = 'view' ) {
 		return $this->get_prop( 'version', $context );
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function get_invoice_date( $formatted = true ) {
+        $date_completed = $this->get_date_completed();
+        $invoice_date   = $date_completed != '0000-00-00 00:00:00' ? $date_completed : '';
+
+        if ( $invoice_date == '' ) {
+            $date_created   = $this->get_date_created();
+            $invoice_date   = $date_created != '0000-00-00 00:00:00' ? $date_created : '';
+        }
+
+        if ( $formatted && $invoice_date ) {
+            $invoice_date   = date_i18n( get_option( 'date_format' ), strtotime( $invoice_date ) );
+        }
+
+        return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->ID, $this );
     }
 
     /**
@@ -478,6 +517,25 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_type( $context = 'view' ) {
         return $this->get_prop( 'type', $context );
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function get_invoice_quote_type( $post_id ) {
+        if ( empty( $post_id ) ) {
+            return '';
+        }
+
+        $type = get_post_type( $post_id );
+
+        if ( 'wpi_invoice' === $type ) {
+            $post_type = __('Invoice', 'invoicing');
+        } else{
+            $post_type = __('Quote', 'invoicing');
+        }
+
+        return apply_filters('get_invoice_type_label', $post_type, $post_id);
     }
 
     /**
@@ -712,7 +770,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function get_last_name( $context = 'view' ) {
 		return $this->get_prop( 'last_name', $context );
     }
-    
+
     /**
 	 * Alias of self::get_last_name().
 	 *
@@ -1162,7 +1220,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_subtotal( $context = 'view' ) {
         $subtotal = (float) $this->get_prop( 'subtotal', $context );
-        
+
         // Backwards compatibility.
         if ( is_bool( $context ) && $context ) {
             return wpinv_price( wpinv_format_amount( $subtotal ), $this->get_currency() );
@@ -1191,6 +1249,19 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_total_tax( $context = 'view' ) {
 		return (float) $this->get_prop( 'total_tax', $context );
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function get_final_tax( $currency = false ) {
+		$tax = $this->get_total_tax();
+
+        if ( $currency ) {
+			return wpinv_price( wpinv_format_amount( $tax, NULL, false ), $this->get_currency() );
+        }
+
+        return $tax;
     }
 
     /**
@@ -1219,29 +1290,101 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Get the invoice total.
 	 *
 	 * @since 1.0.19
-     * @param  string $context View or edit context.
      * @return float
 	 */
-	public function get_total( $context = 'view' ) {
-		$total = $this->get_subtotal( $context ) + $this->get_total_fees( $context ) - $this->get_total_discount(  $context  ) + $this->get_total_tax(  $context  );
-		$total = apply_filters( 'getpaid_get_invoice_total_amount', $total, $this  );
-		return (float) wpinv_sanitize_amount( $total );
+	public function get_total() {
+		$total = $this->is_renewal() ? $this->get_recurring_total() : $this->get_initial_total();
+		return apply_filters( 'getpaid_get_invoice_total_amount', $total, $this  );
     }
 
     /**
-     * Calculates the initial total.
-     */
-    public function get_initial_total( $currency = false ) {        
-        if ( $this->is_free_trial() ) {
-            $total = wpinv_round_amount( 0 );
-        } else {
-            $total = wpinv_round_amount( $this->total );
+	 * Get the initial invoice total.
+	 *
+	 * @since 1.0.19
+     * @param  string $context View or edit context.
+     * @return float
+	 */
+    public function get_initial_total() {
+
+		if ( empty( $this->totals ) ) {
+			$this->recalculate_total();
+		}
+
+		$tax      = $this->totals['tax']['initial'];
+		$fee      = $this->totals['fee']['initial'];
+		$discount = $this->totals['discount']['initial'];
+		$subtotal = $this->totals['subtotal']['initial'];
+		$total    = $tax + $fee - $discount + $subtotal;
+
+		if ( 0 > $total ) {
+			$total = 0;
+		}
+
+        return apply_filters( 'wpinv_get_initial_invoice_total', $total, $this );
+	}
+
+	/**
+	 * Get the recurring invoice total.
+	 *
+	 * @since 1.0.19
+     * @param  string $context View or edit context.
+     * @return float
+	 */
+    public function get_recurring_total() {
+
+		if ( empty( $this->totals ) ) {
+			$this->recalculate_total();
+		}
+
+		$tax      = $this->totals['tax']['recurring'];
+		$fee      = $this->totals['fee']['recurring'];
+		$discount = $this->totals['discount']['recurring'];
+		$subtotal = $this->totals['subtotal']['recurring'];
+		$total    = $tax + $fee - $discount + $subtotal;
+
+		if ( 0 > $total ) {
+			$total = 0;
+		}
+
+        return apply_filters( 'wpinv_get_recurring_invoice_total', $total, $this );
+	}
+
+	/**
+	 * Returns recurring payment details.
+	 *
+	 * @since 1.0.19
+     * @param  string $field Optionally provide a field to return.
+	 * @param string $currency Whether to include the currency.
+     * @return float
+	 */
+    public function get_recurring_details( $field = '', $currency = false ) {
+
+		// Maybe recalculate totals.
+		if ( empty( $this->totals ) ) {
+			$this->recalculate_total();
+		}
+
+		// Prepare recurring totals.
+        $data = apply_filters(
+			'wpinv_get_invoice_recurring_details',
+			array(
+				'cart_details' => $this->get_cart_details(),
+				'subtotal'     => $this->totals['subtotal']['recurring'],
+				'discount'     => $this->totals['discount']['recurring'],
+				'tax'          => $this->totals['tax']['recurring'],
+				'fee'          => $this->totals['fee']['recurring'],
+				'total'        => $this->get_recurring_total(),
+			),
+			$this,
+			$field,
+			$currency
+		);
+
+        if ( isset( $data[$field] ) ) {
+            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
         }
-        if ( $currency ) {
-            $total = wpinv_price( wpinv_format_amount( $total, NULL, !$currency ), $this->get_currency() );
-        }
-        
-        return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
+
+        return $data;
     }
 
     /**
@@ -1435,6 +1578,80 @@ class WPInv_Invoice extends GetPaid_Data {
         }
 
         return $cart_details;
+	}
+
+	/**
+	 * Retrieves the recurring item.
+	 *
+	 * @return null|GetPaid_Form_Item
+	 */
+	public function get_recurring( $object = false ) {
+
+		// Are we returning an object?
+        if ( $object ) {
+            return $this->get_item( $this->recurring_item );
+        }
+
+        return $this->recurring_item;
+    }
+
+	/**
+	 * Retrieves the subscription name.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_subscription_name() {
+
+		// Retrieve the recurring name
+        $item = $this->get_recurring( true );
+
+		// Abort if it does not exist.
+        if ( empty( $item ) ) {
+            return '';
+        }
+
+		// Return the item name.
+        return apply_filters( 'wpinv_invoice_get_subscription_name', $item->get_name(), $this );
+	}
+
+	/**
+	 * Retrieves the view url.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_view_url() {
+        $invoice_url = get_permalink( $this->get_id() );
+		$invoice_url = add_query_arg( 'invoice_key', $this->get_key(), $invoice_url );
+        return apply_filters( 'wpinv_get_view_url', $invoice_url, $this );
+	}
+
+	/**
+	 * Retrieves the payment url.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_checkout_payment_url( $deprecated = false, $secret = false ) {
+
+		// Retrieve the checkout url.
+        $pay_url = wpinv_get_checkout_uri();
+
+		// Maybe force ssl.
+        if ( is_ssl() ) {
+            $pay_url = str_replace( 'http:', 'https:', $pay_url );
+        }
+
+		// Add the invoice key.
+		$pay_url = add_query_arg( 'invoice_key', $this->get_key(), $pay_url );
+
+		// (Maybe?) add a secret
+        if ( $secret ) {
+            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $this->get_key() ) ), $pay_url );
+        }
+
+        return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $deprecated, $secret );
     }
 
     /**
@@ -1462,6 +1679,90 @@ class WPInv_Invoice extends GetPaid_Data {
     */
 
     /**
+	 * Magic method for setting invoice properties.
+	 *
+	 * @since 1.0.19
+	 * @access public
+	 *
+	 * @param string $key Discount data to retrieve
+	 * @param  mixed $value new value.
+	 * @return mixed Value of the given invoice property (if set).
+	 */
+	public function set( $key, $value ) {
+
+        $setter = "set_$key";
+        if ( is_callable( array( $this, $setter ) ) ) {
+            $this->{$setter}( $value );
+        }
+
+	}
+
+	/**
+	 * Sets item status.
+	 *
+	 * @since 1.0.19
+	 * @param string $new_status    New status.
+	 * @param string $note          Optional note to add.
+	 * @param bool   $manual_update Is this a manual status change?.
+	 * @return array details of change.
+	 */
+	public function set_status( $new_status, $note = '', $manual_update = false ) {
+		$old_status = $this->get_status();
+
+		$this->set_prop( 'status', $new_status );
+
+		// If setting the status, ensure it's set to a valid status.
+		if ( true === $this->object_read ) {
+
+			// Only allow valid new status.
+			if ( ! array_key_exists( $new_status, wpinv_get_invoice_statuses( false, true ) ) ) {
+				$new_status = 'wpi-pending';
+			}
+
+			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
+			if ( $old_status && ! array_key_exists( $new_status, wpinv_get_invoice_statuses( false, true ) ) ) {
+				$old_status = 'wpi-pending';
+			}
+		}
+
+		if ( true === $this->object_read && $old_status !== $new_status ) {
+			$this->status_transition = array(
+				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
+				'to'     => $new_status,
+				'note'   => $note,
+				'manual' => (bool) $manual_update,
+			);
+
+			if ( $manual_update ) {
+				do_action( 'getpaid_' . $this->object_type .'_edit_status', $this->get_id(), $new_status );
+			}
+
+			$this->maybe_set_date_paid();
+
+		}
+
+		return array(
+			'from' => $old_status,
+			'to'   => $new_status,
+		);
+	}
+
+	/**
+	 * Maybe set date paid.
+	 *
+	 * Sets the date paid variable when transitioning to the payment complete
+	 * order status.
+	 *
+	 * @since 1.0.19
+	 */
+	public function maybe_set_date_paid() {
+
+		if ( ! $this->get_date_completed( 'edit' ) && $this->is_paid() ) {
+			$this->set_date_completed( current_time( 'mysql' ) );
+		}
+	}
+
+    /**
 	 * Set parent invoice ID.
 	 *
 	 * @since 1.0.19
@@ -1471,24 +1772,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			return;
 		}
 		$this->set_prop( 'parent_id', absint( $value ) );
-    }
-    
-    /**
-	 * Sets invoice status.
-	 *
-	 * @since 1.0.19
-	 * @param  string $status New status.
-	 * @return array details of change.
-	 */
-	public function set_status( $status ) {
-        $old_status = $this->get_status();
-
-        $this->set_prop( 'status', $status );
-
-		return array(
-			'from' => $old_status,
-			'to'   => $status,
-		);
     }
 
     /**
@@ -1510,12 +1793,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_date_created( $value ) {
         $date = strtotime( $value );
 
-        if ( $date ) {
+        if ( $date && $date !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'date_created', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
 
-        return false;
+        return $this->set_prop( 'date_created', '' );
 
     }
 
@@ -1529,11 +1812,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_due_date( $value ) {
         $date = strtotime( $value );
 
-        if ( $date ) {
+        if ( $date && $date !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'due_date', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
 
+		$this->set_prop( 'due_date', '' );
         return false;
 
     }
@@ -1558,11 +1842,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_completed_date( $value ) {
         $date = strtotime( $value );
 
-        if ( $date ) {
+        if ( $date && $date !== '0000-00-00 00:00:00'  ) {
             $this->set_prop( 'completed_date', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
 
+		$this->set_prop( 'completed_date', '' );
         return false;
 
     }
@@ -1587,11 +1872,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_date_modified( $value ) {
         $date = strtotime( $value );
 
-        if ( $date ) {
+        if ( $date && $date !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'date_modified', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
 
+		$this->set_prop( 'date_modified', '' );
         return false;
 
     }
@@ -2391,549 +2677,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_prop( 'subscription_id', $value );
     }
 
-    public function update_status( $new_status = false, $note = '', $manual = false ) {
-        $old_status = ! empty( $this->old_status ) ? $this->old_status : get_post_status( $this->ID );
-
-        if ( $old_status === $new_status && in_array( $new_status, array_keys( wpinv_get_invoice_statuses( true ) ) ) ) {
-            return false; // Don't permit status changes that aren't changes
-        }
-
-        $do_change = apply_filters( 'wpinv_should_update_invoice_status', true, $this->ID, $new_status, $old_status );
-        $updated = false;
-
-        if ( $do_change ) {
-            do_action( 'wpinv_before_invoice_status_change', $this->ID, $new_status, $old_status );
-
-            $update_post_data                   = array();
-            $update_post_data['ID']             = $this->ID;
-            $update_post_data['post_status']    = $new_status;
-            $update_post_data['edit_date']      = current_time( 'mysql', 0 );
-            $update_post_data['edit_date_gmt']  = current_time( 'mysql', 1 );
-            
-            $update_post_data = apply_filters( 'wpinv_update_invoice_status_fields', $update_post_data, $this->ID );
-
-            $updated = wp_update_post( $update_post_data );     
-           
-            // Process any specific status functions
-            switch( $new_status ) {
-                case 'wpi-refunded':
-                    $this->process_refund();
-                    break;
-                case 'wpi-failed':
-                    $this->process_failure();
-                    break;
-                case 'wpi-pending':
-                    $this->process_pending();
-                    break;
-            }
-            
-            // Status was changed.
-            do_action( 'wpinv_status_' . $new_status, $this->ID, $old_status );
-            do_action( 'wpinv_status_' . $old_status . '_to_' . $new_status, $this->ID, $old_status );
-            do_action( 'wpinv_update_status', $this->ID, $new_status, $old_status );
-        }
-
-        return $updated;
-    }
-
-    public function refund() {
-        $this->old_status        = $this->status;
-        $this->status            = 'wpi-refunded';
-        $this->pending['status'] = $this->status;
-
-        $this->save();
-    }
-
-    private function process_refund() {
-        $process_refund = true;
-
-        // If the payment was not in publish, don't decrement stats as they were never incremented
-        if ( 'publish' != $this->old_status || 'wpi-refunded' != $this->status ) {
-            $process_refund = false;
-        }
-
-        // Allow extensions to filter for their own payment types, Example: Recurring Payments
-        $process_refund = apply_filters( 'wpinv_should_process_refund', $process_refund, $this );
-
-        if ( false === $process_refund ) {
-            return;
-        }
-
-        do_action( 'wpinv_pre_refund_invoice', $this );
-        
-        $decrease_store_earnings = apply_filters( 'wpinv_decrease_store_earnings_on_refund', true, $this );
-        $decrease_customer_value = apply_filters( 'wpinv_decrease_customer_value_on_refund', true, $this );
-        $decrease_purchase_count = apply_filters( 'wpinv_decrease_customer_purchase_count_on_refund', true, $this );
-        
-        do_action( 'wpinv_post_refund_invoice', $this );
-    }
-
-    private function process_failure() {
-        $discounts = $this->discounts;
-        if ( empty( $discounts ) ) {
-            return;
-        }
-
-        if ( ! is_array( $discounts ) ) {
-            $discounts = array_map( 'trim', explode( ',', $discounts ) );
-        }
-
-        foreach ( $discounts as $discount ) {
-            wpinv_decrease_discount_usage( $discount );
-        }
-    }
-    
-    private function process_pending() {
-        $process_pending = true;
-
-        // If the payment was not in publish or revoked status, don't decrement stats as they were never incremented
-        if ( ( 'publish' != $this->old_status && 'revoked' != $this->old_status ) || 'wpi-pending' != $this->status ) {
-            $process_pending = false;
-        }
-
-        // Allow extensions to filter for their own payment types, Example: Recurring Payments
-        $process_pending = apply_filters( 'wpinv_should_process_pending', $process_pending, $this );
-
-        if ( false === $process_pending ) {
-            return;
-        }
-
-        $decrease_store_earnings = apply_filters( 'wpinv_decrease_store_earnings_on_pending', true, $this );
-        $decrease_customer_value = apply_filters( 'wpinv_decrease_customer_value_on_pending', true, $this );
-        $decrease_purchase_count = apply_filters( 'wpinv_decrease_customer_purchase_count_on_pending', true, $this );
-
-        $this->completed_date = '';
-        $this->update_meta( '_wpinv_completed_date', '' );
-    }
-
-    /**
-     * Returns recurring payment details.
-     */
-    public function get_recurring_details( $field = '', $currency = false ) {        
-        $data                 = array();
-        $data['cart_details'] = $this->cart_details;
-        $data['subtotal']     = $this->get_subtotal();
-        $data['discount']     = $this->get_discount();
-        $data['tax']          = $this->get_tax();
-        $data['total']        = $this->get_total();
-
-        if ( $this->is_parent() || $this->is_renewal() ) {
-
-            // Use the parent to calculate recurring details.
-            if ( $this->is_renewal() ){
-                $parent = $this->get_parent_payment();
-            } else {
-                $parent = $this;
-            }
-
-            if ( empty( $parent ) ) {
-                $parent = $this;
-            }
-
-            // Subtotal.
-            $data['subtotal'] = wpinv_round_amount( $parent->subtotal );
-            $data['tax']      = wpinv_round_amount( $parent->tax );
-            $data['discount'] = wpinv_round_amount( $parent->discount );
-
-            if ( $data['discount'] > 0 && $parent->discount_first_payment_only() ) {
-                $data['discount'] = wpinv_round_amount( 0 );
-            }
-
-            $data['total'] = wpinv_round_amount( $data['subtotal'] + $data['tax'] - $data['discount'] );
-
-        }
-        
-        $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
-
-        if ( $data['total'] < 0 ) {
-            $data['total'] = 0;
-        }
-
-        if ( isset( $data[$field] ) ) {
-            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
-        }
-        
-        return $data;
-    }
-    
-    public function get_final_tax( $currency = false ) {        
-        $final_total = wpinv_round_amount( $this->tax );
-        if ( $currency ) {
-            $final_total = wpinv_price( wpinv_format_amount( $final_total, NULL, !$currency ), $this->get_currency() );
-        }
-        
-        return apply_filters( 'wpinv_get_invoice_final_total', $final_total, $this, $currency );
-    }
-    
-    public function get_discounts( $array = false ) {
-        $discounts = $this->discounts;
-
-        if ( ! is_array( $discounts ) ) {
-            $discounts = explode( ',', $discounts );
-        }
-
-        $discounts = array_filter( $discounts );
-
-        if ( ! $array ) {
-            $discounts = implode( ',', $discounts );
-        }
-
-        return apply_filters( 'wpinv_payment_discounts', $discounts, $this->ID, $this, $array );
-    }
-    
-    
-    
-    
-    public function get_invoice_date( $formatted = true ) {
-        $date_completed = $this->completed_date;
-        $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? $date_completed : '';
-        
-        if ( $invoice_date == '' ) {
-            $date_created   = $this->date;
-            $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? $date_created : '';
-        }
-        
-        if ( $formatted && $invoice_date ) {
-            $invoice_date   = date_i18n( get_option( 'date_format' ), strtotime( $invoice_date ) );
-        }
-
-        return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->ID, $this );
-    }
-    
-    public function get_ip() {
-        return apply_filters( 'wpinv_user_ip', $this->ip, $this->ID, $this );
-    }
-
-    public function update_items($temp = false) {
-        global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpi_nosave;
-
-        if ( ! empty( $this->cart_details ) ) {
-            $wpi_nosave             = $temp;
-            $cart_subtotal          = 0;
-            $cart_discount          = 0;
-            $cart_tax               = 0;
-            $cart_details           = array();
-
-            $_POST['wpinv_country'] = $this->country;
-            $_POST['wpinv_state']   = $this->state;
-
-            foreach ( $this->cart_details as $item ) {
-                $item_price = $item['item_price'];
-                $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                $amount     = wpinv_round_amount( $item_price * $quantity );
-                $subtotal   = $item_price * $quantity;
-
-                $wpi_current_id         = $this->ID;
-                $wpi_item_id            = $item['id'];
-
-                $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
-
-                $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
-                $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
-                $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-
-                if ( ! $this->is_taxable() ) {
-                    $tax = 0;
-                }
-
-                if ( wpinv_prices_include_tax() ) {
-                    $subtotal -= wpinv_round_amount( $tax );
-                }
-
-                $total      = $subtotal - $discount + $tax;
-
-                // Do not allow totals to go negative
-                if( $total < 0 ) {
-                    $total = 0;
-                }
-
-                $cart_details[] = array(
-                    'id'          => $item['id'],
-                    'name'        => $item['name'],
-                    'item_price'  => wpinv_round_amount( $item_price ),
-                    'custom_price'=> ( isset( $item['custom_price'] ) ? $item['custom_price'] : '' ),
-                    'quantity'    => $quantity,
-                    'discount'    => $discount,
-                    'subtotal'    => wpinv_round_amount( $subtotal ),
-                    'tax'         => wpinv_round_amount( $tax ),
-                    'price'       => wpinv_round_amount( $total ),
-                    'vat_rate'    => $tax_rate,
-                    'vat_class'   => $tax_class,
-                    'meta'        => isset($item['meta']) ? $item['meta'] : array(),
-                    'fees'        => isset($item['fees']) ? $item['fees'] : array(),
-                );
-
-                $cart_subtotal  += (float) $subtotal;
-                $cart_discount  += (float) $discount;
-                $cart_tax       += (float) $tax;
-            }
-
-            if ( $cart_subtotal < 0 ) {
-                $cart_subtotal = 0;
-            }
-
-            if ( $cart_discount < 0 ) {
-                $cart_discount = 0;
-            }
-
-            if ( $cart_tax < 0 ) {
-                $cart_tax = 0;
-            }
-
-            $this->subtotal = wpinv_round_amount( $cart_subtotal );
-            $this->tax      = wpinv_round_amount( $cart_tax );
-            $this->discount = wpinv_round_amount( $cart_discount );
-
-            $this->recalculate_total();
-            
-            $this->cart_details = $cart_details;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Validates a whether the discount is valid.
-     */
-    public function validate_discount() {    
-        
-        $discounts = $this->get_discounts( true );
-
-        if ( empty( $discounts ) ) {
-            return false;
-        }
-
-        $discount = wpinv_get_discount_obj( $discounts[0] );
-
-        // Ensure it is active.
-        return $discount->exists();
-
-    }
-    
-    public function recalculate_totals($temp = false) {        
-        $this->update_items($temp);
-        $this->save( true );
-        
-        return $this;
-    }
-    
-    public function needs_payment() {
-        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'wpi-pending' ), $this );
-
-        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() || $this->is_free() || $this->is_initial_free() ) ) {
-            $needs_payment = true;
-        } else {
-            $needs_payment = false;
-        }
-
-        return apply_filters( 'wpinv_needs_payment', $needs_payment, $this, $valid_invoice_statuses );
-    }
-    
-    public function get_checkout_payment_url( $with_key = false, $secret = false ) {
-        $pay_url = wpinv_get_checkout_uri();
-
-        if ( is_ssl() ) {
-            $pay_url = str_replace( 'http:', 'https:', $pay_url );
-        }
-        
-        $key = $this->get_key();
-
-        if ( $with_key ) {
-            $pay_url = add_query_arg( 'invoice_key', $key, $pay_url );
-        } else {
-            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $key ), $pay_url );
-        }
-        
-        if ( $secret ) {
-            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $key ) ), $pay_url );
-        }
-
-        return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $with_key, $secret );
-    }
-    
-    public function get_view_url( $with_key = false ) {
-        $invoice_url = get_permalink( $this->ID );
-
-        if ( $with_key ) {
-            $invoice_url = add_query_arg( 'invoice_key', $this->get_key(), $invoice_url );
-        }
-
-        return apply_filters( 'wpinv_get_view_url', $invoice_url, $this, $with_key );
-    }
-
-    /**
-     * Generates a unique key for the invoice.
-     */
-    public function generate_key( $string = '' ) {
-        $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
-        return strtolower(
-            md5( $this->get_id() . $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) )
-        );
-    }
-
-    /**
-     * Generates a new number for the invoice.
-     */
-    public function generate_number() {
-        $number = $this->get_id();
-
-        if ( $this->has_status( 'auto-draft' ) && wpinv_sequential_number_active( $this->post_type ) ) {
-            $next_number = wpinv_get_next_invoice_number( $this->post_type );
-            $number      = $next_number;
-        }
-
-        $number = wpinv_format_invoice_number( $number, $this->post_type );
-    }
-
-    /**
-     * Check if the free trial is a result of a discount.
-     */
-    public function is_free_trial_from_discount() {
-
-        $parent = $this;
-
-        if ( $this->is_renewal() ) {
-            $parent = $this->get_parent_payment();
-        }
-    
-        if ( $parent && $item = $parent->get_recurring( true ) ) {
-            return ! ( ! empty( $item ) && $item->has_free_trial() );
-        }
-        return false;
-
-    }
-
-    /**
-     * Check if a discount is only applicable to the first payment.
-     */
-    public function discount_first_payment_only() {
-
-        if ( empty( $this->discounts ) || ! $this->is_recurring() ) {
-            return true;
-        }
-
-        $discount = wpinv_get_discount_obj( $this->discounts[0] );
-
-        if ( ! $discount || ! $discount->exists() ) {
-            return true;
-        }
-
-        return ! $discount->get_is_recurring();
-    }
-
-    public function is_initial_free() {
-        $is_initial_free = false;
-        
-        if ( ! ( (float)wpinv_round_amount( $this->get_total() ) > 0 ) && $this->is_parent() && $this->is_recurring() && ! $this->is_free_trial() && ! $this->is_free() ) {
-            $is_initial_free = true;
-        }
-
-        return apply_filters( 'wpinv_invoice_is_initial_free', $is_initial_free, $this->cart_details );
-    }
-
-    public function get_recurring( $object = false ) {
-        $item = NULL;
-        
-        if ( empty( $this->cart_details ) ) {
-            return $item;
-        }
-
-        foreach( $this->cart_details as $cart_item ) {
-            if ( !empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] )  ) {
-                $item = $cart_item['id'];
-                break;
-            }
-        }
-
-        if ( $object ) {
-            $item = $item ? new WPInv_Item( $item ) : NULL;
-            
-            apply_filters( 'wpinv_invoice_get_recurring_item', $item, $this );
-        }
-
-        return apply_filters( 'wpinv_invoice_get_recurring_item_id', $item, $this );
-    }
-
-    public function get_subscription_name() {
-        $item = $this->get_recurring( true );
-
-        if ( empty( $item ) ) {
-            return NULL;
-        }
-
-        if ( !($name = $item->get_name()) ) {
-            $name = $item->post_name;
-        }
-
-        return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
-    }
-    
-    public function is_refunded() {
-        $is_refunded = $this->has_status( array( 'wpi-refunded' ) );
-
-        return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
-    }
-    
-    public function is_free() {
-        $is_free = false;
-
-        if ( !( (float)wpinv_round_amount( $this->get_total() ) > 0 ) ) {
-            if ( $this->is_parent() && $this->is_recurring() ) {
-                $is_free = (float)wpinv_round_amount( $this->get_recurring_details( 'total' ) ) > 0 ? false : true;
-            } else {
-                $is_free = true;
-            }
-        }
-
-        return apply_filters( 'wpinv_invoice_is_free', $is_free, $this );
-    }
-    
-    public function has_vat() {
-        global $wpinv_euvat, $wpi_country;
-        
-        $requires_vat = false;
-        
-        if ( $this->country ) {
-            $wpi_country        = $this->country;
-            
-            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
-        }
-        
-        return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
-    }
-
-    public function refresh_item_ids() {
-        $item_ids = array();
-        
-        if ( ! empty( $this->cart_details ) ) {
-            foreach ( array_keys( $this->cart_details ) as $item ) {
-                if ( ! empty( $item['id'] ) ) {
-                    $item_ids[] = $item['id'];
-                }
-            }
-        }
-        
-        $item_ids = !empty( $item_ids ) ? implode( ',', array_unique( $item_ids ) ) : '';
-        
-        update_post_meta( $this->ID, '_wpinv_item_ids', $item_ids );
-    }
-    
-    public function get_invoice_quote_type( $post_id ) {
-        if ( empty( $post_id ) ) {
-            return '';
-        }
-
-        $type = get_post_type( $post_id );
-
-        if ( 'wpi_invoice' === $type ) {
-            $post_type = __('Invoice', 'invoicing');
-        } else{
-            $post_type = __('Quote', 'invoicing');
-        }
-
-        return apply_filters('get_invoice_type_label', $post_type, $post_id);
-    }
-
     /*
 	|--------------------------------------------------------------------------
 	| Boolean methods
@@ -2962,7 +2705,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if this is a recurring invoice.
      */
     public function is_recurring() {
-        return ! empty( $this->recurring_item );
+        return $this->is_renewal() || ! empty( $this->recurring_item );
     }
 
     /**
@@ -2970,6 +2713,35 @@ class WPInv_Invoice extends GetPaid_Data {
      */
     public function is_taxable() {
         return (int) $this->disable_taxes === 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function has_vat() {
+        global $wpinv_euvat, $wpi_country;
+
+        $requires_vat = false;
+
+        if ( $this->country ) {
+            $wpi_country        = $this->country;
+            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
+        }
+
+        return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
+	}
+
+	/**
+	 * Checks to see if the invoice requires payment.
+	 */
+	public function is_free() {
+        $is_free = ! ( (float) wpinv_round_amount( $this->get_initial_total() ) > 0 );
+
+		if ( $is_free && $this->is_recurring() ) {
+			$is_free = ! ( (float) wpinv_round_amount( $this->get_recurring_total() ) > 0 );
+		}
+
+        return apply_filters( 'wpinv_invoice_is_free', $is_free, $this );
     }
 
     /**
@@ -2978,6 +2750,22 @@ class WPInv_Invoice extends GetPaid_Data {
     public function is_paid() {
         $is_paid = $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) );
         return apply_filters( 'wpinv_invoice_is_paid', $is_paid, $this );
+	}
+
+	/**
+     * Checks if the invoice needs payment.
+     */
+	public function needs_payment() {
+		$needs_payment = ! $this->is_paid() && ! $this->is_free();
+        return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
+    }
+
+	/**
+     * Checks if the invoice is refunded.
+     */
+	public function is_refunded() {
+        $is_refunded = $this->has_status( 'wpi-refunded' );
+        return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
     }
 
     /**
@@ -2990,7 +2778,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
     /**
      * Checks if this is a quote object.
-     * 
+     *
      * @since 1.0.15
      */
     public function is_quote() {
@@ -2999,34 +2787,67 @@ class WPInv_Invoice extends GetPaid_Data {
 
     /**
      * Check if the invoice (or it's parent has a free trial).
-     * 
+     *
      */
     public function has_free_trial() {
+        return $this->is_recurring() && 0 == $this->get_initial_total();
+	}
+
+	/**
+     * @deprecated
+     */
+    public function is_free_trial() {
+        $this->has_free_trial();
+    }
+
+	/**
+     * Check if the initial payment if 0.
+     *
+     */
+	public function is_initial_free() {
+        $is_initial_free = ! ( (float) wpinv_round_amount( $this->get_initial_total() ) > 0 );
+        return apply_filters( 'wpinv_invoice_is_initial_free', $is_initial_free, $this->get_cart_details(), $this );
+    }
+	
+	/**
+     * Check if the recurring item has a free trial.
+     *
+     */
+    public function item_has_free_trial() {
 
         // Ensure we have a recurring item.
         if ( ! $this->is_recurring() ) {
-            return;
+            return false;
         }
 
         $item = new WPInv_Item( $this->recurring_item );
         return $item->has_free_trial();
-    }
+	}
 
-    /**
-     * Check if we are offering a free trial.
-     * 
-     * Returns true if it has a 100% discount for the first period.
+	/**
+     * Check if the free trial is a result of a discount.
      */
-    public function is_free_trial() {
-        $is_free_trial = false;
+    public function is_free_trial_from_discount() {
+		return $this->has_free_trial() && ! $this->item_has_free_trial();
+	}
+	
+	/**
+     * @deprecated
+     */
+    public function discount_first_payment_only() {
 
-        if ( $this->is_parent() && $item = $this->get_recurring( true ) ) {
-            if ( ! empty( $item ) && ( $item->has_free_trial() || ( $this->total == 0 && $this->discount_first_payment_only() ) ) ) {
-                $is_free_trial = true;
-            }
+		$discount_code = $this->get_discount_code();
+        if ( empty( $this->discount_code ) || ! $this->is_recurring() ) {
+            return true;
         }
 
-        return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details, $this );
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        if ( ! $discount || ! $discount->exists() ) {
+            return true;
+        }
+
+        return ! $discount->get_is_recurring();
     }
 
     /*
@@ -3074,7 +2895,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_item( $item_id ) {
         $items = $this->get_items();
-		return isset( $items[ $item_id ] ) ? $items[ $item_id ] : null;
+		return ( ! empty( $item_id ) && isset( $items[ $item_id ] ) ) ? $items[ $item_id ] : null;
     }
 
     /**
@@ -3112,13 +2933,13 @@ class WPInv_Invoice extends GetPaid_Data {
             $amount = $fees[ $fee ]['amount'] += $amount;
 			$fees[ $fee ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 
 		} else {
 			$fees[ $fee ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 		}
 
@@ -3166,13 +2987,13 @@ class WPInv_Invoice extends GetPaid_Data {
             $amount = $discounts[ $discount ]['amount'] += $amount;
 			$discounts[ $discount ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 
 		} else {
 			$discounts[ $discount ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 		}
 
@@ -3223,13 +3044,13 @@ class WPInv_Invoice extends GetPaid_Data {
             $amount = $taxes[ $tax ]['amount'] += $amount;
 			$taxes[ $tax ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 
 		} else {
 			$taxes[ $tax ] = array(
                 'amount'    => $amount,
-                'recurring' => $recurring,
+                'recurring' => (bool) $recurring,
             );
 		}
 
@@ -3267,15 +3088,27 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float The recalculated subtotal
 	 */
 	public function recalculate_subtotal() {
-        $items    = $this->get_items();
-        $subtotal = 0;
+        $items     = $this->get_items();
+		$subtotal  = 0;
+		$recurring = 0;
 
         foreach ( $items as $item ) {
-            $subtotal += $item->get_sub_total();
+			$subtotal  += $item->get_sub_total();
+			$recurring += $item->get_recurring_sub_total();
         }
 
-        $this->set_subtotal( $subtotal );
-        return $subtotal;
+		if ( $this->is_renewal() ) {
+			$this->set_subtotal( $recurring );
+		} else {
+			$this->set_subtotal( $subtotal );
+		}
+
+		$this->totals['subtotal'] = array(
+			'initial'   => $subtotal,
+			'recurring' => $recurring,
+		);
+
+        return $this->is_renewal() ? $recurring : $subtotal;
     }
 
     /**
@@ -3286,14 +3119,31 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function recalculate_total_discount() {
         $discounts = $this->get_discounts();
-        $discount  = 0;
+		$discount  = 0;
+		$recurring = 0;
 
-        foreach ( $discounts as $amount ) {
-            $discount += $amount;
-        }
+        foreach ( $discounts as $data ) {
 
-        $this->set_total_discount( $discount );
-        return $discount;
+			if ( $data['recurring'] ) {
+				$recurring += $data['amount'];
+			} else {
+				$discount += $data['amount'];
+			}
+
+		}
+
+		if ( $this->is_renewal() ) {
+			$this->set_total_discount( $recurring );
+		} else {
+			$this->set_total_discount( $discount );
+		}
+
+		$this->totals['discount'] = array(
+			'initial'   => $discount,
+			'recurring' => $recurring,
+		);
+
+		return $this->is_renewal() ? $recurring : $discount;
 
     }
 
@@ -3304,15 +3154,32 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float The recalculated tax
 	 */
 	public function recalculate_total_tax() {
-        $taxes = $this->get_taxes();
-        $tax   = 0;
+        $taxes     = $this->get_taxes();
+		$tax       = 0;
+		$recurring = 0;
 
-        foreach ( $taxes as $amount ) {
-            $tax += $amount;
-        }
+        foreach ( $taxes as $data ) {
 
-        $this->set_total_tax( $tax );
-        return $tax;
+			if ( $data['recurring'] ) {
+				$recurring += $data['amount'];
+			} else {
+				$tax += $data['amount'];
+			}
+
+		}
+
+		if ( $this->is_renewal() ) {
+			$this->set_total_tax( $recurring );
+		} else {
+			$this->set_total_tax( $tax );
+		}
+
+		$this->totals['tax'] = array(
+			'initial'   => $tax,
+			'recurring' => $recurring,
+		);
+
+		return $this->is_renewal() ? $recurring : $tax;
 
     }
 
@@ -3323,15 +3190,33 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float The recalculated fee
 	 */
 	public function recalculate_total_fees() {
-		$fees = $this->get_fees();
-        $fee  = 0;
+		$fees      = $this->get_fees();
+		$fee       = 0;
+		$recurring = 0;
 
-        foreach ( $fees as $amount ) {
-            $fee += $amount;
-        }
+        foreach ( $fees as $data ) {
+
+			if ( $data['recurring'] ) {
+				$recurring += $data['amount'];
+			} else {
+				$fee += $data['amount'];
+			}
+
+		}
+
+        if ( $this->is_renewal() ) {
+			$this->set_total_fees( $recurring );
+		} else {
+			$this->set_total_fees( $fee );
+		}
+
+		$this->totals['fee'] = array(
+			'initial'   => $fee,
+			'recurring' => $recurring,
+		);
 
         $this->set_total_fees( $fee );
-        return $fee;
+        return $this->is_renewal() ? $recurring : $fee;
     }
 
     /**
@@ -3346,6 +3231,15 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->recalculate_total_discount();
         $this->recalculate_total_tax();
 		return $this->get_total();
+	}
+
+	/**
+	 * @deprecated
+	 */
+    public function recalculate_totals( $temp = false ) {
+        $this->update_items( $temp );
+        $this->save( true );
+        return $this;
     }
 
     /**
@@ -3357,9 +3251,9 @@ class WPInv_Invoice extends GetPaid_Data {
 
     /**
      * Adds a note to an invoice.
-     * 
+     *
      * @param string $note The note being added.
-     * 
+     *
      */
     public function add_note( $note = '', $customer_type = false, $added_by_user = false, $system = false ) {
 
@@ -3367,7 +3261,7 @@ class WPInv_Invoice extends GetPaid_Data {
         if ( ! $note || $this->get_id() == 0 ) {
             return false;
         }
-        
+
         if ( ( ( is_user_logged_in() && wpinv_current_user_can_manage_invoicing() ) || $added_by_user ) && !$system ) {
             $user                 = get_user_by( 'id', get_current_user_id() );
             $comment_author       = $user->display_name;
@@ -3405,6 +3299,161 @@ class WPInv_Invoice extends GetPaid_Data {
         }
 
         return $note_id;
+	}
+
+	/**
+     * Generates a unique key for the invoice.
+     */
+    public function generate_key( $string = '' ) {
+        $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
+        return strtolower(
+            md5( $this->get_id() . $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) )
+        );
     }
+
+    /**
+     * Generates a new number for the invoice.
+     */
+    public function generate_number() {
+        $number = $this->get_id();
+
+        if ( $this->has_status( 'auto-draft' ) && wpinv_sequential_number_active( $this->post_type ) ) {
+            $next_number = wpinv_get_next_invoice_number( $this->post_type );
+            $number      = $next_number;
+        }
+
+        $number = wpinv_format_invoice_number( $number, $this->post_type );
+	}
+
+	/**
+	 * Handle the status transition.
+	 */
+	protected function status_transition() {
+		$status_transition = $this->status_transition;
+
+		// Reset status transition variable.
+		$this->status_transition = false;
+
+		if ( $status_transition ) {
+			try {
+
+				// Fire a hook for the status change.
+				do_action( 'getpaid_invoice_status_' . $status_transition['to'], $this->get_id(), $this, $status_transition );
+
+				// @deprecated this is deprecated and will be removed in the future.
+				do_action( 'wpinv_status_' . $status_transition['to'], $this->get_id(), $status_transition['from'] );
+
+				if ( ! empty( $status_transition['from'] ) ) {
+
+					/* translators: 1: old invoice status 2: new invoice status */
+					$transition_note = sprintf( __( 'Status changed from %1$s to %2$s.', 'invoicing' ), wpinv_status_nicename( $status_transition['from'] ), wpinv_status_nicename( $status_transition['to'] ) );
+
+					// Fire another hook.
+					do_action( 'getpaid_invoice_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
+					do_action( 'getpaid_invoice_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
+
+					// @deprecated this is deprecated and will be removed in the future.
+					do_action( 'wpinv_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->ID, $status_transition['from'] );
+
+					// Note the transition occurred.
+					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );
+
+					// Work out if this was for a payment, and trigger a payment_status hook instead.
+					if (
+						in_array( $status_transition['from'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed' ), true )
+						&& in_array( $status_transition['to'], array( 'publish', 'wpi-processing', 'wpi-renewal' ), true )
+					) {
+						do_action( 'getpaid_invoice_payment_status_changed', $this->get_id(), $this, $status_transition );
+					}
+				} else {
+					/* translators: %s: new invoice status */
+					$transition_note = sprintf( __( 'Status set to %s.', 'invoicing' ), wpinv_status_nicename( $status_transition['to'] ) );
+
+					// Note the transition occurred.
+					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );
+
+				}
+			} catch ( Exception $e ) {
+				$this->add_note( __( 'Error during status transition.', 'invoicing' ) . ' ' . $e->getMessage() );
+			}
+		}
+	}
+
+	/**
+	 * Updates an invoice status.
+	 */
+	public function update_status( $new_status = false, $note = '', $manual = false ) {
+
+		// Fires before updating a status.
+		do_action( 'wpinv_before_invoice_status_change', $this->ID, $new_status, $this->get_status( 'edit' ) );
+
+		// Update the status.
+		$this->set_status( $new_status, $note, $manual );
+
+		// Save the order.
+		return $this->save();
+
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function refresh_item_ids() {
+        $item_ids = implode( ',', array_unique( array_keys( $this->get_items() ) ) );
+        update_post_meta( $this->get_id(), '_wpinv_item_ids', $item_ids );
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function update_items( $temp = false ) {
+
+		$this->set_items( $this->get_items() );
+
+		if ( ! $temp ) {
+			$this->save();
+		}
+
+        return $this;
+	}
+
+	/**
+	 * @deprecated
+	 */
+    public function validate_discount() {
+
+        $discount_code = $this->get_discount_code();
+
+        if ( empty( $discount_code ) ) {
+            return false;
+        }
+
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        // Ensure it is active.
+        return $discount->exists();
+
+    }
+
+	/**
+	 * Refunds an invoice.
+	 */
+    public function refund() {
+		$this->set_status( 'wpi-refunded' );
+        $this->save();
+    }
+
+	/**
+	 * Save data to the database.
+	 *
+	 * @since 1.0.19
+	 * @return int invoice ID
+	 */
+	public function save() {
+		$this->maybe_set_date_paid();
+		parent::save();
+		$this->status_transition();
+		return $this->get_id();
+	}
 
 }
