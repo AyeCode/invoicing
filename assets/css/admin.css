@@ -92,7 +92,7 @@
 ul.invoice_notes {
     padding: 2px 0 0;
     max-height: 300px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 ul.invoice_notes li p.meta .exact-date {
@@ -2133,6 +2133,8 @@ textarea.wpi-email_overdue_content {
     border-color: #1e73be;
 }
 
-.post-type-wpi_invoice #astra_settings_meta_box {
+.post-type-wpi_invoice #post-body-content,
+.post-type-wpi_invoice #astra_settings_meta_box,
+.post-type-wpi_invoice #rank_math_metabox {
     display: none !important;
 }

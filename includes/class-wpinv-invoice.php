@@ -76,7 +76,9 @@ class WPInv_Invoice extends GetPaid_Data {
         'transaction_id'       => '',
         'currency'             => '',
         'disable_taxes'        => 0,
-        'subscription_id'      => null,
+		'subscription_id'      => null,
+		'is_viewed'            => false,
+		'email_cc'             => '',
     );
 
     /**
@@ -203,7 +205,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		// Update the cache with our data
-		wp_cache_add( $key, $invoice_id, 'getpaid_invoice_keys_' . $field );
+		wp_cache_set( $key, $invoice_id, 'getpaid_invoice_keys_' . $field );
 
 		return $invoice_id;
     }
@@ -329,6 +331,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_date_created( $context = 'view' ) {
 		return $this->get_prop( 'date_created', $context );
+	}
+	
+	/**
+	 * Alias for self::get_date_created().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_created_date( $context = 'view' ) {
+		return $this->get_date_created( $context );
     }
 
     /**
@@ -356,6 +369,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_date_modified( $context = 'view' ) {
 		return $this->get_prop( 'date_modified', $context );
+	}
+
+	/**
+	 * Alias for self::get_date_modified().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_modified_date( $context = 'view' ) {
+		return $this->get_date_modified( $context );
     }
 
     /**
@@ -922,7 +946,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_country( $context = 'view' ) {
-		return $this->get_prop( 'country', $context );
+		$country = $this->get_prop( 'country', $context );
+		return empty( $country ) ? wpinv_get_default_country() : $country;
     }
 
     /**
@@ -955,7 +980,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_state( $context = 'view' ) {
-		return $this->get_prop( 'state', $context );
+		$state = $this->get_prop( 'state', $context );
+		return empty( $state ) ? wpinv_get_default_state() : $state;
     }
 
     /**
@@ -1179,6 +1205,28 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
+	 * Get whether the customer has viewed the invoice or not.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_is_viewed( $context = 'view' ) {
+		return (bool) $this->get_prop( 'is_viewed', $context );
+	}
+
+	/**
+	 * Get other recipients for invoice communications.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_email_cc( $context = 'view' ) {
+		return $this->get_prop( 'email_cc', $context );
+	}
+
+	/**
 	 * Get whether the customer has confirmed their address.
 	 *
 	 * @since 1.0.19
@@ -2432,6 +2480,26 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
+	 * Set whether the customer has viewed the invoice or not.
+	 *
+	 * @since 1.0.19
+	 * @param  int|bool $value confirmed.
+	 */
+	public function set_is_viewed( $value ) {
+		$this->set_prop( 'is_viewed', $value );
+	}
+
+	/**
+	 * Set extra email recipients.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value email recipients.
+	 */
+	public function set_email_cc( $value ) {
+		$this->set_prop( 'email_cc', $value );
+	}
+	
+	/**
 	 * Set the customer's address confirmed status.
 	 *
 	 * @since 1.0.19
@@ -2774,6 +2842,14 @@ class WPInv_Invoice extends GetPaid_Data {
     public function has_status( $status ) {
         $status = wpinv_parse_list( $status );
         return apply_filters( 'wpinv_has_status', in_array( $this->get_status(), $status ), $status );
+	}
+	
+	/**
+     * Checks if the invoice is of a given type.
+     */
+    public function is_type( $type ) {
+        $type = wpinv_parse_list( $type );
+        return in_array( $this->get_type(), $type );
     }
 
     /**
@@ -3006,7 +3082,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_discount( $discount ) {
+	public function get_discount( $discount = false ) {
+
+		// Backwards compatibilty.
+		if ( empty( $discount ) ) {
+			return $this->get_total_discount();
+		}
+
         $discounts = $this->get_discounts();
 		return isset( $discounts[ $discount ] ) ? $discounts[ $discount ] : null;
     }
@@ -3322,7 +3404,9 @@ class WPInv_Invoice extends GetPaid_Data {
             $number      = $next_number;
         }
 
-        $number = wpinv_format_invoice_number( $number, $this->post_type );
+		$number = wpinv_format_invoice_number( $number, $this->post_type );
+
+		return $number;
 	}
 
 	/**

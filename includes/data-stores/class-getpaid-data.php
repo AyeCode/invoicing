@@ -378,8 +378,10 @@ abstract class GetPaid_Data {
         // Check if we have a helper method for that.
         if ( method_exists( $this, 'get_' . $key ) ) {
 
-			/* translators: %s: $key Key to set */
-			getpaid_doing_it_wrong( __FUNCTION__, sprintf( __( 'Object data such as "%s" should not be accessed directly. Use getters and setters.', 'getpaid' ), $key ), '1.0.19' );
+			if ( 'post_type' != $key ) {
+				/* translators: %s: $key Key to set */
+				getpaid_doing_it_wrong( __FUNCTION__, sprintf( __( 'Object data such as "%s" should not be accessed directly. Use getters and setters.', 'getpaid' ), $key ), '1.0.19' );
+			}
 
             return call_user_func( array( $this, 'get_' . $key ) );
         }

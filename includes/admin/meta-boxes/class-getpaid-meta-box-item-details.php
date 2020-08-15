@@ -49,7 +49,7 @@ class GetPaid_Meta_Box_Item_Details {
                 border-color: #7e8993;
             }
         </style>
-        <div class='bsui' style='max-width: 600px;padding-top: 10px;'>
+        <div class='bsui' style='max-width: 600px;padding-top: 10px; max-width: 820px;'>
 
             <?php do_action( 'wpinv_item_details_metabox_before_price', $item ); ?>
             <div class="form-group row">

@@ -531,7 +531,7 @@ function wpinv_get_invoice( $invoice_id = 0, $cart = false ) {
 
     $invoice = new WPInv_Invoice( $invoice_id );
 
-    if ( ! empty( $invoice ) && ! empty( $invoice->ID ) ) {
+    if ( $invoice->get_id() != 0 ) {
         return $invoice;
     }
 
