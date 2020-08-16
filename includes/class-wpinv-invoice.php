@@ -79,6 +79,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		'subscription_id'      => null,
 		'is_viewed'            => false,
 		'email_cc'             => '',
+		'template'             => 'quantity', // hours, amount only
     );
 
     /**
@@ -1224,6 +1225,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_email_cc( $context = 'view' ) {
 		return $this->get_prop( 'email_cc', $context );
+	}
+
+	/**
+	 * Get invoice template.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_template( $context = 'view' ) {
+		return $this->get_prop( 'template', $context );
 	}
 
 	/**
@@ -2498,7 +2510,19 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_email_cc( $value ) {
 		$this->set_prop( 'email_cc', $value );
 	}
-	
+
+	/**
+	 * Set the invoice template.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value email recipients.
+	 */
+	public function set_template( $value ) {
+		if ( in_array( $value, array( 'quantity', 'hours', 'amount' ) ) ) {
+			$this->set_prop( 'template', $value );
+		}
+	}
+
 	/**
 	 * Set the customer's address confirmed status.
 	 *
@@ -2834,7 +2858,14 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function is_refunded() {
         $is_refunded = $this->has_status( 'wpi-refunded' );
         return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
-    }
+	}
+
+	/**
+     * Checks if the invoice is draft.
+     */
+	public function is_draft() {
+        return $this->has_status( 'draft, auto-draft' );
+	}
 
     /**
      * Checks if the invoice has a given status.
@@ -2843,7 +2874,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $status = wpinv_parse_list( $status );
         return apply_filters( 'wpinv_has_status', in_array( $this->get_status(), $status ), $status );
 	}
-	
+
 	/**
      * Checks if the invoice is of a given type.
      */

@@ -40,7 +40,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                 <div id="gdmbx2-metabox-wpinv_address">
                     <div class="row">
                         <div class="col-12 col-sm-6">
-                            <div class="gdmbx-wpinv-user-id form-group">
+                            <div id="getpaid-invoice-user-id-wrapper" class="form-group">
                                 <div>
                                     <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
                                 </div>
@@ -58,13 +58,13 @@ class GetPaid_Meta_Box_Invoice_Address {
                                 ?>
                             </div>
 
-                            <div class="gdmbx-wpinv-email" style="display: none;">
-                                <input type="hidden" id="wpinv_new_user" name="wpinv_new_user" value="" />
+                            <div id="getpaid-invoice-email-wrapper" class="d-none">
+                                <input type="hidden" id="getpaid-invoice-create-new-user" name="wpinv_new_user" value="" />
                                 <?php
                                     echo aui()->input(
                                         array(
                                             'type'        => 'email',
-                                            'id'          => 'wpinv_email',
+                                            'id'          => 'getpaid-invoice-new-user-email',
                                             'name'        => 'wpinv_email',
                                             'label'       => __( 'Email', 'invoicing' ) . '<span class="required">*</span>',
                                             'label_type'  => 'vertical',
@@ -78,15 +78,15 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                         <div class="col-12 col-sm-6 form-group mt-sm-4">
                             <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
-                                <a id="wpinv-fill-user-details" class="button button-small button-secondary" href="javascript:void(0)">
+                                <a id="getpaid-invoice-fill-user-details" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-refresh"></i>
                                     <?php _e( 'Fill User Details', 'invoicing' );?>
                                 </a>
-                                <a class="wpinv-new-user button button-small button-secondary" href="javascript:void(0)">
+                                <a id="getpaid-invoice-create-new-user-button" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-plus"></i>
                                     <?php _e( 'Add New User', 'invoicing' );?>
                                 </a>
-                                <a style="display:none" class="wpinv-new-cancel button button-small button-secondary" href="javascript:void(0)">
+                                <a id="getpaid-invoice-cancel-create-new-user" class="button button-small button-secondary d-none" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-close"></i>
                                     <?php _e( 'Cancel', 'invoicing' );?>
                                 </a>

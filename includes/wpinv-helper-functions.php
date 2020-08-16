@@ -1184,3 +1184,12 @@ function getpaid_convert_price_string_to_options( $str ) {
 
     return $options;
 }
+
+/**
+ * Returns the help tip.
+ */
+function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
+    $additional_classes = sanitize_html_class( $additional_classes );
+    $tip                = esc_attr__( $tip );
+    return "<span class='wpi-help-tip dashicons dashicons-editor-help $additional_classes' title='$tip'></span>";
+}

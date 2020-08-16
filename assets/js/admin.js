@@ -76,12 +76,187 @@ jQuery(function($) {
     $('body.post-type-wpi_item #postexcerpt h2.hndle').text( WPInv_Admin.item_description )
     $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
     $('body.post-type-wpi_invoice #postexcerpt h2.hndle').text( WPInv_Admin.invoice_description )
+    $('body.post-type-wpi_invoice #postexcerpt p, body.post-type-wpi_item #postexcerpt p, body.post-type-wpi_discount #postexcerpt p').hide()
 
     // Discount types.
     $(document).on('change', '#wpinv_discount_type', function() {
         $('#wpinv_discount_amount_wrap').removeClass('flat percent')
         $('#wpinv_discount_amount_wrap').addClass( $( this ).val() )
     });
+
+    // Fill in user information.
+    $('#getpaid-invoice-fill-user-details').on( 'click', function(e) {
+        e.preventDefault()
+
+        var metabox = $(this).closest('.inside');
+        var user_id = metabox.find('#post_author_override').val()
+
+        // Ensure that we have a user id and that we are not adding a new user.
+        if ( ! user_id || $(this).attr('disabled') ) {
+            return;
+        }
+
+        // Let the user know that the billing details will be replaced.
+        if ( ! window.confirm( WPInv_Admin.FillBillingDetails ) ) {
+            return;
+        }
+
+        // Block the metabox.
+        wpinvBlock( metabox )
+
+        // Retrieve the user's billing address.
+        var data = {
+            action: 'wpinv_get_billing_details',
+            user_id: user_id,
+            _ajax_nonce: WPInv_Admin.wpinv_nonce
+        }
+
+        $.get( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+
+                if ( response.success ) {
+
+                    $.each(response.data, function(key, value) {
+
+                        // Retrieve the associated input.
+                        var el = $( '#wpinv_' + key )
+
+                        // If it exists...
+                        if ( el.length ) {
+                            el.val( value ).change()
+                        }
+
+                    });
+                }
+            })
+
+            .always( function( response ) {
+                wpinvUnblock( metabox );
+            })
+
+    })
+
+    // When clicking the create a new user button...
+    $('#getpaid-invoice-create-new-user-button').on('click', function(e) {
+        e.preventDefault()
+
+        // Hide the button and the customer select div.
+        $( '#getpaid-invoice-user-id-wrapper, #getpaid-invoice-create-new-user-button' ).addClass( 'd-none' )
+
+        // Display the email input and the cancel button.
+        $( '#getpaid-invoice-cancel-create-new-user, #getpaid-invoice-email-wrapper' ).removeClass( 'd-none' )
+
+        // Disable the fill user details button.
+        $( '#getpaid-invoice-fill-user-details' ).attr( 'disabled', true );
+
+        // Indicate that we will be creating a new user.
+        $( '#getpaid-invoice-create-new-user' ).val(1);
+
+        // The email field is now required.
+        $( '#getpaid-invoice-new-user-email' ).prop('required', 'required');
+ 
+    });
+
+    // When clicking the "cancel new user" button...
+    $( '#getpaid-invoice-cancel-create-new-user') .on('click', function(e) {
+        e.preventDefault();
+
+        // Hide the button and the email input divs.
+        $( '#getpaid-invoice-cancel-create-new-user, #getpaid-invoice-email-wrapper' ).addClass( 'd-none' )
+
+        // Display the add new user button and select customer divs.
+        $( '#getpaid-invoice-user-id-wrapper, #getpaid-invoice-create-new-user-button' ).removeClass( 'd-none' )
+
+        // Enable the fill user details button.
+        $( '#getpaid-invoice-fill-user-details' ).attr( 'disabled', false );
+
+        // We are no longer creating a new user.
+        $( '#getpaid-invoice-create-new-user' ).val(0);
+        $( '#getpaid-invoice-new-user-email' ).prop('required', false);
+
+    });
+
+    // When the new user's email changes...
+    $( '#getpaid-invoice-new-user-email' ).on('change', function(e) {
+        e.preventDefault();
+
+        // Hide any error messages.
+        $( this )
+            .removeClass( 'is-invalid' )
+            .parent()
+            .find('.invalid-feedback')
+            .remove()
+
+        var metabox = $(this).closest('.inside');
+        var email   = $(this).val()
+
+        // Block the metabox.
+        wpinvBlock( metabox )
+
+        // Ensure the email is unique.
+        var data = {
+            action: 'wpinv_check_new_user_email',
+            email: email,
+            _ajax_nonce: WPInv_Admin.wpinv_nonce
+        }
+
+        $.get( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+                if ( ! response.success ) {
+                    // Show error messages.
+                    $( '#getpaid-invoice-new-user-email' )
+                    .addClass( 'is-invalid' )
+                    .parent()
+                    .append('<div class="invalid-feedback">' + response +'</div>')
+                }
+            } )
+
+            .always( function( response ) {
+                wpinvUnblock( metabox );
+            })
+
+    });
+
+    // When the country changes, load the states field.
+    $( '.post-type-wpi_invoice' ).on( 'change', '#wpinv_country', function(e) {
+
+        // Ensure that we have the states field.
+        if ( ! $( '#wpinv_state' ).length ) {
+            return
+        }
+
+        var row = $(this).closest('.row');
+
+        // Block the row.
+        wpinvBlock( row )
+
+        // Fetch the states field.
+        var data = {
+            action: 'wpinv_get_aui_states_field',
+            country: $( '#wpinv_country' ).val(),
+            state: $( '#wpinv_state' ).val(),
+            _ajax_nonce: WPInv_Admin.wpinv_nonce
+        }
+
+        // Fetch new states field.
+        $.get( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+                if ( response.success ) {
+                    $( '#wpinv_state' ).closest('.form-group').replaceWith(response.data.html)
+
+                    if ( response.data.select ) {
+                        $( '#wpinv_state' ).select2()
+                    }
+                }
+            } )
+
+            .always( function( response ) {
+                wpinvUnblock( row );
+            })
+    })
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
@@ -383,46 +558,7 @@ jQuery(function($) {
         return false;
     });
     var elB = $('#wpinv-address');
-    $('#wpinv_country', elB).change(function(e) {
-        var $this = $(this);
-        data = {
-            action: 'wpinv_get_states_field',
-            country: $(this).val(),
-            field_name: 'wpinv_state',
-        };
-        $this.closest('.gdmbx-row').find('.wpi-loader').show();
-        $('#wpinv_state', elB).css({
-            'opacity': '.5'
-        });
-        $.post(ajaxurl, data, function(response) {
-            var selected = typeof $this.data('state') !== 'undefined' ? $this.data('state') : "";
-            if($('#wpinv_state', elB).hasClass('select2-hidden-accessible')){
-                $('#wpinv_state', elB).select2("destroy");
-            }
-            if ('nostates' === response) {
-                var text_field = '<input type="text" value="' + selected + '" id="wpinv_state" name="wpinv_state" />';
-                $('#wpinv_state', elB).replaceWith(text_field);
-            } else {
-                $('#wpinv_state', elB).replaceWith(response);
-                $('#wpinv_state', elB).find('option[value="' + selected + '"]').attr('selected', 'selected');
-                $('#wpinv_state', elB).find('option[value=""]').remove();
-                $('#wpinv_state', elB).select2();
-            }
-            $('#wpinv_state', elB).addClass('gdmbx2-text-large');
-            if (typeof $this.data('change') === '1') {
-                $('#wpinv_state', elB).change();
-            } else {
-                window.wpiConfirmed = true;
-                $('#wpinv-recalc-totals').click();
-                window.wpiConfirmed = false;
-            }
-            $this.closest('.gdmbx-row').find('.wpi-loader').hide();
-            $('#wpinv_state', elB).css({
-                'opacity': '1'
-            });
-        });
-        return false;
-    });
+
     $('#wpinv_state', elB).on('change', function(e) {
         window.wpiConfirmed = true;
         $('#wpinv-recalc-totals').click();
@@ -433,47 +569,7 @@ jQuery(function($) {
         $('#wpinv-recalc-totals').click();
         window.wpiConfirmed = false;
     });
-    $('#wpinv-fill-user-details').click(function(e) {
-        var metaBox = $(this).closest('.inside');
-        var user_id = $('select[name="post_author_override"]', metaBox).val();
-        if (!user_id || $(this).attr('disabled')) {
-            return false;
-        }
-        if (window.confirm(WPInv_Admin.FillBillingDetails)) {
-            var data = {
-                action: 'wpinv_get_billing_details',
-                user_id: user_id,
-                _nonce: WPInv_Admin.billing_details_nonce
-            };
-            wpinvBlock(metaBox);
-            $.post(WPInv_Admin.ajax_url, data, function(response) {
-                var elCountry = $('#wpinv_country', metaBox);
-                elCountry.removeAttr('data-state').removeAttr('data-change');
-                if (response && typeof response == 'object') {
-                    if (response.success === true && typeof response.data.billing_details == 'object') {
-                        var state = false;
-                        var country = false;
-                        $.each(response.data.billing_details, function(key, value) {
-                            if (key == 'state') {
-                                state = value;
-                            } else if (key == 'country') {
-                                country = value;
-                            } else {
-                                $('#wpinv_' + key, metaBox).val(value).change();
-                            }
-                        });
-                        if (country !== false) {
-                            if (state !== false) {
-                                elCountry.data('state', state).data('change', '1');
-                            }
-                            elCountry.val(country).change();
-                        }
-                    }
-                }
-                wpinvUnblock(metaBox);
-            });
-        }
-    });
+
     var WPInv = {
         init: function() {
             this.preSetup();
@@ -526,74 +622,6 @@ jQuery(function($) {
                     }
                 });
                 return false;
-            });
-            $('#wpinv-address').on('click', '.wpinv-new-user', function(e) {
-                e.preventDefault();
-                var mBox = $('#wpinv-address');
-                $(this).hide();
-                $('#wpinv-fill-user-details', elB).attr('disabled', true);
-                $('.wpinv-new-cancel', mBox).show();
-                $('#wpinv_new_user', mBox).val(1);
-                $('#wpinv_email', mBox).prop('required', 'required');
-                $('.gdmbx-wpinv-user-id', mBox).hide();
-                $('.gdmbx-wpinv-email', mBox).show();
-            });
-            $('#wpinv-address').on('click', '.wpinv-new-cancel', function(e) {
-                e.preventDefault();
-                var mBox = $('#wpinv-address');
-                $(this).hide();
-                $('#wpinv-fill-user-details', elB).attr('disabled', false);
-                $('.wpinv-new-user', mBox).show();
-                $('#wpinv_new_user', mBox).val(0);
-                $('#wpinv_email', mBox).prop('required', false);
-                $('.gdmbx-wpinv-email', mBox).hide();
-                $('.gdmbx-wpinv-user-id', mBox).show();
-            });
-            $('#wpinv-address #wpinv_email').on('change', function(e) {
-                var metaBox = $(this).closest('.inside');
-                if (parseInt($('#wpinv_new_user', metaBox).val()) != 1) {
-                    return false;
-                }
-                e.preventDefault();
-                wpinvBlock(metaBox);
-                var data = {
-                    action: 'wpinv_check_email',
-                    email: $(this).val(),
-                    _nonce: WPInv_Admin.wpinv_nonce
-                };
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    var elCountry = $('#wpinv_country', metaBox);
-                    elCountry.removeAttr('data-state').removeAttr('data-change');
-                    if (response && typeof response == 'object') {
-                        if (response.success === true && typeof response.data.billing_details == 'object') {
-                            if (!$('#post_author_override [value="' + response.data.id + '"]', metaBox).val()) {
-                                $('#post_author_override', metaBox).prepend('<option value="' + response.data.id + '">' + response.data.name + '</option>');
-                            }
-                            $('#post_author_override', metaBox).val(response.data.id);
-                            $('.wpinv-new-cancel', metaBox).click();
-                            var state = false;
-                            var country = false;
-                            $.each(response.data.billing_details, function(key, value) {
-                                if (key == 'state') {
-                                    state = value;
-                                } else if (key == 'country') {
-                                    country = value;
-                                } else {
-                                    if (key != 'email') {
-                                        $('#wpinv_' + key, metaBox).val(value).change();
-                                    }
-                                }
-                            });
-                            if (country !== false) {
-                                if (state !== false) {
-                                    elCountry.data('state', state).data('change', '1');
-                                }
-                                elCountry.val(country).change();
-                            }
-                        }
-                    }
-                    wpinvUnblock(metaBox);
-                });
             });
             
             $('#wpinv-apply-code').on('click', function(e) {
@@ -1095,6 +1123,12 @@ jQuery(function($) {
 
 });
 
+/**
+ * Blocks an HTML element to prevent interaction.
+ * 
+ * @param {String} el The element to block
+ * @param {String} message an optional message to display alongside the spinner
+ */
 function wpinvBlock(el, message) {
     message = typeof message != 'undefined' && message !== '' ? message : '';
     el.block({
@@ -1106,6 +1140,11 @@ function wpinvBlock(el, message) {
     });
 }
 
+/**
+ * Un-locks an HTML element to allow interaction.
+ * 
+ * @param {String} el The element to unblock
+ */
 function wpinvUnblock(el) {
     el.unblock();
 }

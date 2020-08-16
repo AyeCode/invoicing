@@ -473,7 +473,7 @@ function wpinv_get_states_field() {
         $args = array(
 			'name'    => $sanitized_field_name,
 			'id'      => $sanitized_field_name,
-			'class'   => $sanitized_field_name . ' wpinv-select wpi_select2',
+			'class'   => $sanitized_field_name . 'custom-select wpinv-select wpi_select2',
 			'options' => array_merge( array( '' => '' ), $states ),
 			'show_option_all'  => false,
 			'show_option_none' => false

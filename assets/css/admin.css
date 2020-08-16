@@ -861,15 +861,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     border: 0;
     box-shadow: none;
 }
-#wpinv-items .inside,
-#wpinv-payment-form-items .inside {
-    margin: 0;
-}
-#wpinv-items > .inside,
-#wpinv-payment-form-items > .inside {
-    margin: 0;
-    padding: 12px;
-}
 .wpinv_errors {
   background: #ffffe0 none repeat scroll 0 0;
   border: 1px solid #e6db55;
@@ -998,12 +989,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 .post-type-wpi_item #filter-by-date {
     display: none;
-}
-#wpinv-items .inside,
-#wpinv-payment-form-items .inside {
-    background: #fefefe;
-    margin: 0;
-    padding: 0;
 }
 #wpinv_items_wrap {
     margin: 0;
@@ -2135,6 +2120,7 @@ textarea.wpi-email_overdue_content {
 
 .post-type-wpi_invoice #post-body-content,
 .post-type-wpi_invoice #astra_settings_meta_box,
+.post-type-wpi_invoice #rank_math_metabox_link_suggestions,
 .post-type-wpi_invoice #rank_math_metabox {
     display: none !important;
 }

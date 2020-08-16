@@ -134,9 +134,9 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                             echo aui()->input(
                                 array(
                                     'type'        => 'text',
-                                    'id'          => 'wpinv_transaction_id',
-                                    'name'        => 'wpinv_transaction_id',
-                                    'label'       => __( 'Transaction ID:', 'invoicing' ),
+                                    'id'          => 'wpinv_currency',
+                                    'name'        => 'wpinv_currency',
+                                    'label'       => __( 'Currency:', 'invoicing' ),
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm',
                                     'value'       => $invoice->get_currency( 'edit' ),

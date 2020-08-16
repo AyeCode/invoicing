@@ -155,7 +155,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to view and edit customers - ADDED
 * Error shows if all discounts are expired - FIXED
 * Some discounts do not have a delete link - FIXED
-* Remove Astra metaboxes from the Invoice edit pages - ADDED
+* Remove Astra and RankMath metaboxes from the Invoice edit pages - ADDED
+* Change item prices on a per invoice basis - ADDED
+* Improve UI to change invoice item quantities - ADDED
+* Ability to charge hours, quantities or amounts only - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

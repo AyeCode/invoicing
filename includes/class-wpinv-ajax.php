@@ -62,6 +62,7 @@ class WPInv_Ajax {
             'add_note' => false,
             'delete_note' => false,
             'get_states_field' => true,
+            'get_aui_states_field' => true,
             'checkout' => false,
             'payment_form'     => true,
             'get_payment_form' => true,
@@ -73,7 +74,7 @@ class WPInv_Ajax {
             'admin_recalculate_totals' => false,
             'admin_apply_discount' => false,
             'admin_remove_discount' => false,
-            'check_email' => false,
+            'check_new_user_email' => false,
             'run_tool' => false,
             'apply_discount' => true,
             'remove_discount' => true,
@@ -400,31 +401,42 @@ class WPInv_Ajax {
         }
         die();
     }
-    
+
+    /**
+     * Retrieves a given user's billing address.
+     */
     public static function get_billing_details() {
-        check_ajax_referer( 'get-billing-details', '_nonce' );
-        
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        // Can the user manage the plugin?
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
 
-        $user_id            = (int)$_POST['user_id'];
-        $billing_details    = wpinv_get_user_address($user_id);
-        $billing_details    = apply_filters( 'wpinv_fill_billing_details', $billing_details, $user_id );
-        
-        if (isset($billing_details['user_id'])) {
-            unset($billing_details['user_id']);
-        }
-        
-        if (isset($billing_details['email'])) {
-            unset($billing_details['email']);
+        // Do we have a user id?
+        $user_id = $_GET['user_id'];
+
+        if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
+            die(-1);
         }
 
-        $response                               = array();
-        $response['success']                    = true;
-        $response['data']['billing_details']    = $billing_details;
-        
-        wp_send_json( $response );
+        // Fetch the billing details.
+        $billing_details    = wpinv_get_user_address( $user_id );
+        $billing_details    = apply_filters( 'wpinv_ajax_billing_details', $billing_details, $user_id );
+
+        // unset the user id and email.
+        $to_ignore = array( 'user_id', 'email' );
+
+        foreach ( $to_ignore as $key ) {
+            if ( isset( $billing_details[ $key ] ) ) {
+                unset( $billing_details[ $key ] );
+            }
+        }
+
+        wp_send_json_success( $billing_details );
+
     }
     
     public static function admin_recalculate_totals() {
@@ -580,38 +592,40 @@ class WPInv_Ajax {
         
         wp_send_json( $response );
     }
-    
-    public static function check_email() {
-        check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
+
+    /**
+     * Checks if a new users email is valid.
+     */
+    public static function check_new_user_email() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        // Can the user manage the plugin?
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
             die(-1);
         }
-        
-        $email = sanitize_text_field( $_POST['email'] );
-        
-        $response = array();
-        if ( is_email( $email ) && email_exists( $email ) && $user_data = get_user_by( 'email', $email ) ) {
-            $user_id            = $user_data->ID;
-            $user_login         = $user_data->user_login;
-            $display_name       = $user_data->display_name ? $user_data->display_name : $user_login;
-            $billing_details    = wpinv_get_user_address($user_id);
-            $billing_details    = apply_filters( 'wpinv_fill_billing_details', $billing_details, $user_id );
-            
-            if (isset($billing_details['user_id'])) {
-                unset($billing_details['user_id']);
-            }
-            
-            if (isset($billing_details['email'])) {
-                unset($billing_details['email']);
-            }
-            
-            $response['success']                    = true;
-            $response['data']['id']                 = $user_data->ID;
-            $response['data']['name']               = $user_data->user_email;
-            $response['data']['billing_details']    = $billing_details;
+
+        // We need an email address.
+        if ( empty( $_GET['email'] ) ) {
+            _e( "Provide the new user's email address", 'invoicing' );
+            exit;
         }
-        
-        wp_send_json( $response );
+
+        // Ensure the email is valid.
+        $email = sanitize_text_field( $_GET['email'] );
+        if ( ! is_email( $email ) ) {
+            _e( 'Invalid email address', 'invoicing' );
+            exit;
+        }
+
+        // And it does not exist.
+        if ( email_exists( $email ) ) {
+            _e( 'A user with this email address already exists', 'invoicing' );
+            exit;
+        }
+
+        wp_send_json_success( true );
     }
     
     public static function run_tool() {
@@ -1026,6 +1040,65 @@ class WPInv_Ajax {
         }
     
         exit;
+    }
+
+    /**
+     * Retrieves the states field for AUI forms.
+     */
+    public static function get_aui_states_field() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        // We need a country.
+        if ( empty( $_GET['country'] ) ) {
+            exit;
+        }
+
+        $states = wpinv_get_country_states( trim( $_GET['country'] ) );
+        $state  = isset( $_GET['state'] ) ? trim( $_GET['state'] ) : wpinv_get_default_state();
+
+        if ( empty( $states ) ) {
+
+            $html = aui()->input(
+                array(
+                    'type'        => 'text',
+                    'id'          => 'wpinv_state',
+                    'name'        => 'wpinv_state',
+                    'label'       => __( 'State', 'invoicing' ),
+                    'label_type'  => 'vertical',
+                    'placeholder' => 'Liège',
+                    'class'       => 'form-control-sm',
+                    'value'       => $state,
+                )
+            );
+
+        } else {
+
+            $html = aui()->select(
+                array(
+                    'id'          => 'wpinv_state',
+                    'name'        => 'wpinv_state',
+                    'label'       => __( 'State', 'invoicing' ),
+                    'label_type'  => 'vertical',
+                    'placeholder' => __( 'Select a state', 'invoicing' ),
+                    'class'       => 'form-control-sm',
+                    'value'       => $state,
+                    'options'     => $states,
+                    'data-allow-clear' => 'false',
+                    'select2'          => true,
+                )
+            );
+
+        }
+
+        wp_send_json_success(
+            array(
+                'html'   => $html,
+                'select' => ! empty ( $states )
+            )
+        );
+
     }
 
     /**

@@ -29,7 +29,7 @@ function wpinv_add_meta_boxes( $post_type, $post ) {
     add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
    
     add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', 'wpi_invoice', 'normal', 'high' );
-    add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'WPInv_Meta_Box_Items::output', 'wpi_invoice', 'normal', 'high' );
+    add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Items::output', 'wpi_invoice', 'normal', 'high' );
     add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'normal', 'high' );
     
     if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'payment_form_data', true ) ) {
