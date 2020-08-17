@@ -2124,3 +2124,68 @@ textarea.wpi-email_overdue_content {
 .post-type-wpi_invoice #rank_math_metabox {
     display: none !important;
 }
+
+.getpaid_invoice_items {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    table-layout: fixed;
+}
+
+.getpaid_invoice_items tr{
+    border-bottom: 1px solid #ddd;
+}
+
+.getpaid_invoice_items th {
+    text-align: left;
+    padding: 1em;
+    font-weight: 400;
+    color: #999;
+    background: #f8f8f8;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.getpaid_invoice_items td {
+    text-align: left;
+    padding: 1em;
+}
+
+#wpinv-items .has-items .hide-if-has-items,
+#wpinv-items .no-items .hide-if-no-items,
+#wpinv-items .amount .hide-if-amount,
+#wpinv-items .quantity .getpaid-hide-if-quantity,
+#wpinv-items .hours .getpaid-hide-if-hours {
+    display: none !important;
+}
+
+.getpaid-invoice-item-actions {
+    border-bottom: 1px solid #dfdfdf;
+    border-left: 1px solid #dfdfdf;
+    padding: 10px;
+    border-right: 1px solid #dfdfdf;
+    background: #f8f8f8;
+}
+
+#getpaid-add-items-to-invoice table {
+    border: 0;
+}
+
+#getpaid-add-items-to-invoice th {
+    padding: 0 1em 1em 1em;
+    text-align: left;
+}
+
+#getpaid-add-items-to-invoice th {
+    padding: 0 1em 1em 1em;
+    text-align: left;
+}
+
+#getpaid-add-items-to-invoice td {
+    padding: 1em;
+    text-align: left;
+    vertical-align: middle;
+}

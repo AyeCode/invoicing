@@ -67,6 +67,10 @@ class WPInv_Ajax {
             'payment_form'     => true,
             'get_payment_form' => true,
             'get_payment_form_states_field' => true,
+            'get_invoicing_items' => false,
+            'get_invoice_items' => false,
+            'add_invoice_items' => false,
+            'edit_invoice_item' => false,
             'add_invoice_item' => false,
             'remove_invoice_item' => false,
             'create_invoice_item' => false,
@@ -1040,6 +1044,211 @@ class WPInv_Ajax {
         }
     
         exit;
+    }
+
+    /**
+     * Get items belonging to a given invoice.
+     */
+    public static function get_invoice_items() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice and items.
+        if ( empty( $_POST['post_id'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+
+        // Ensure it exists.
+        if ( ! $invoice->get_id() ) {
+            exit;
+        }
+
+        // Return an array of invoice items.
+        $items = array();
+
+        foreach ( $invoice->get_items() as $item_id => $item ) {
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+        }
+
+        wp_send_json_success( compact( 'items' ) );
+    }
+
+    /**
+     * Edits an invoice item.
+     */
+    public static function edit_invoice_item() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice and item details.
+        if ( empty( $_POST['post_id'] ) || empty( $_POST['data'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+
+        // Ensure it exists and its not been paid for.
+        if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
+            exit;
+        }
+
+        // Format the data.
+        $data = wp_list_pluck( $_POST['data'], 'value', 'field' );
+
+        // Ensure that we have an item id.
+        if ( empty( $data['id'] ) ) {
+            exit;
+        }
+
+        // Abort if the invoice does not have the specified item.
+        $item = $invoice->get_item( (int) $data['id'] );
+
+        if ( empty( $item ) ) {
+            exit;
+        }
+
+        // Update the item.
+        $item->set_price( $data['price'] );
+        $item->set_name( $data['name'] );
+        $item->set_description( $data['description'] );
+        $item->set_quantity( $data['quantity'] );
+
+        // Add it to the invoice.
+        $invoice->add_item( $item );
+
+        // Update totals.
+        $invoice->recalculate_total();
+
+        // Save the invoice.
+        $invoice->save();
+
+        // Return an array of invoice items.
+        $items = array();
+
+        foreach ( $invoice->get_items() as $item_id => $item ) {
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+        }
+
+        wp_send_json_success( compact( 'items' ) );
+    }
+    /**
+     * Adds a items to an invoice.
+     */
+    public static function add_invoice_items() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice and items.
+        if ( empty( $_POST['post_id'] ) || empty( $_POST['items'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $alert   = false;
+
+        // Ensure it exists and its not been paid for.
+        if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
+            exit;
+        }
+
+        // Add the items.
+        foreach ( $_POST['items'] as $data ) {
+
+            $item = new GetPaid_Form_Item( $data[ 'id' ] );
+
+            if ( is_numeric( $data[ 'qty' ] ) && (int) $data[ 'qty' ] > 0 ) {
+                $item->set_quantity( $data[ 'qty' ] );
+            }
+
+            if ( $item->get_id() > 0 ) {
+                if ( ! $invoice->add_item( $item ) ) {
+                    $alert = __( 'An invoice can only contain one recurring item', 'invoicing' );
+                }
+            }
+
+        }
+
+        // Save the invoice.
+        $invoice->recalculate_total();
+        $invoice->save();
+
+        // Return an array of invoice items.
+        $items = array();
+
+        foreach ( $invoice->get_items() as $item_id => $item ) {
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+        }
+
+        wp_send_json_success( compact( 'items', 'alert' ) );
+    }
+
+    /**
+     * Retrieves items that should be added to an invoice.
+     */
+    public static function get_invoicing_items() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need a search term.
+        if ( empty( $_GET['search'] ) ) {
+            wp_send_json_success( array() );
+        }
+
+        // Retrieve items.
+        $item_args = array(
+            'post_type'      => 'wpi_item',
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+            'posts_per_page' => -1,
+            'post_status'    => array( 'publish' ),
+            's'              => trim( $_GET['search'] ),
+            'meta_query'     => array(
+                array(
+                    'key'       => '_wpinv_type',
+                    'compare'   => '!=',
+                    'value'     => 'package'
+                )
+            )
+        );
+
+        $items = get_posts( apply_filters( 'getpaid_ajax_invoice_items_query_args', $item_args ) );
+        $data  = array();
+
+        foreach ( $items as $item ) {
+            $item      = new GetPaid_Form_Item( $item );
+            $data[] = array(
+                'id'   => $item->get_id(),
+                'text' => $item->get_name()
+            );
+        }
+
+        wp_send_json_success( $data );
+
     }
 
     /**

@@ -31,6 +31,11 @@ jQuery(function($) {
         }
     }
 
+    // returns a random string
+    function random_string() {
+        return (Date.now().toString(36) + Math.random().toString(36).substr(2))
+    }
+
     // Subscription items.
     if ( $('#wpinv_is_recurring').length ) {
 
@@ -257,6 +262,336 @@ jQuery(function($) {
                 wpinvUnblock( row );
             })
     })
+
+    // Update template when it changes.
+    $( '#wpinv_template' ).on( 'change', function(e) {
+        $( this )
+            .closest('.getpaid-invoice-items-inner')
+            .removeClass( 'amount quantity hours' )
+            .addClass( $ ( this ).val() )
+    })
+
+    // Adding items to an invoice.
+    function getpaid_add_invoice_item_modal() {
+
+        // Contains an array of empty selections.
+        var empty_select = []
+
+        // Save a cache of the default row.
+        $( '#getpaid-add-items-to-invoice tbody' )
+            .data(
+                'row',
+                $( '#getpaid-add-items-to-invoice tbody' ).html()
+            )
+
+        // Init the select2 container.
+        var init_select2_item_search = function ( select ) {
+
+            $(select).select2({
+                minimumInputLength: 3,
+                allowClear: true,
+                dropdownParent: $('#getpaid-add-items-to-invoice'),
+                ajax: {
+                    url: WPInv_Admin.ajax_url,
+                    delay: 250,
+                    data: function (params) {
+
+                        var data = {
+                            action: 'wpinv_get_invoicing_items',
+                            search: params.term,
+                            _ajax_nonce: WPInv_Admin.wpinv_nonce
+                        }
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return data;
+                    },
+                    processResults: function (res) {
+
+                        if ( res.success ) {
+                            return {
+                                results: res.data
+                            };
+                        }
+
+                        return {
+                            results: []
+                        };
+                    }
+                },
+                templateResult: function( item ) {
+
+                    if ( item.loading ) {
+                        return WPInv_Admin.searching;
+                    }
+
+                    if ( ! item.id ) {
+                        return item.text;
+                    }
+
+                    return $( '<span>' + item.text + '</span>' )
+                }
+            });
+
+        }
+
+        init_select2_item_search( '.getpaid-item-search' )
+
+        // Add a unique id.
+        $( '.getpaid-item-search').data( 'key', random_string() )
+
+        // (Maybe) add another select box.
+        $( '#getpaid-add-items-to-invoice' ).on( 'change', '.getpaid-item-search', function( e ) {
+
+            var el = $( this )
+            var key = el.data( 'key' )
+
+            // If no value is selected, add it to empty selects.
+            if ( ! el.val() ) {
+                if ( -1 == $.inArray( key, empty_select ) ) {
+                    empty_select.push( key )
+                }
+                return;
+            }
+ 
+            // Maybe remove it from the list of empty selects.
+            var index = $.inArray( key, empty_select )
+            if ( -1 != index ) {
+                empty_select.splice(index, 1);
+            }
+
+            // If we no longer have an empty select, add one.
+            if ( empty_select.length ) {
+                return;
+            }
+
+            var key = random_string()
+            var row = $( '#getpaid-add-items-to-invoice tbody' ).data('row')
+            row = $( row ).appendTo( '#getpaid-add-items-to-invoice tbody' )
+            var select = row.find( '.getpaid-item-search' )
+            select.data( 'key', key )
+            init_select2_item_search( select )
+            empty_select.push( key )
+
+            $( '#getpaid-add-items-to-invoice' ).modal( 'handleUpdate' )
+
+        } )
+
+        // Reverts the modal.
+        var revert = function() {
+            empty_select = []
+
+            $( '#getpaid-add-items-to-invoice tbody' )
+                .html(
+                    $( '#getpaid-add-items-to-invoice tbody' ).data( 'row' )
+                )
+
+            init_select2_item_search( '.getpaid-item-search' )
+
+            // Add a unique id.
+            $( '.getpaid-item-search').data( 'key', random_string() )
+        }
+
+        // Cancel addition.
+        $( '#getpaid-add-items-to-invoice .getpaid-cancel' ).on( 'click', revert )
+
+        // Save addition.
+        $( '#getpaid-add-items-to-invoice .getpaid-add' ).on( 'click', function() {
+
+            // Retrieve selected items.
+            var items = $( '#getpaid-add-items-to-invoice tbody tr' )
+                .map( function() {
+                    if ( $( this ).find('select').val() ) {
+                        return {
+                            id : $( this ).find('select').val(),
+                            qty : $( this ).find('input').val()
+                        }
+                    }
+                })
+                .get()
+
+            // Revert the modal.
+            revert()
+
+            // If no items were selected, abort
+            if ( ! items.length ) {
+                return;
+            }
+
+            // Block the metabox.
+            wpinvBlock( '#wpinv-items .inside' )
+
+            // Add the items to the invoice.
+            var data = {
+                action: 'wpinv_add_invoice_items',
+                post_id: $('#post_ID').val(),
+                _ajax_nonce: WPInv_Admin.wpinv_nonce,
+                items: items,
+            }
+
+            $.post( WPInv_Admin.ajax_url, data )
+
+                .done( function( response ) {
+
+                    if ( response.success ) {
+                        getpaid_replace_invoice_items( response.data.items )
+
+                        if ( response.data.alert ) {
+                            alert( response.data.alert )
+                        }
+                    }
+
+                })
+
+                .always( function( response ) {
+                    wpinvUnblock( '#wpinv-items .inside' );
+                })
+        } )
+    }
+    getpaid_add_invoice_item_modal()
+
+    // Refresh invoice items.
+    if ( $( '#wpinv-items .getpaid-invoice-items-inner' ) .hasClass( 'has-items' ) ) {
+
+        // Refresh the items.
+        var data = {
+            action: 'wpinv_get_invoice_items',
+            post_id: $('#post_ID').val(),
+            _ajax_nonce: WPInv_Admin.wpinv_nonce
+        }
+
+        // Block the metabox.
+        wpinvBlock( '#wpinv-items .inside' )
+
+        $.post( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+
+                if ( response.success ) {
+                    getpaid_replace_invoice_items( response.data.items )
+                }
+
+            })
+
+            .always( function( response ) {
+                wpinvUnblock( '#wpinv-items .inside' );
+            })
+    }
+
+    /**
+     * Replaces all items with the provided items.
+     * 
+     * @param {Array} items New invoice items.
+     */
+    function getpaid_replace_invoice_items( items ) {
+
+        // Remove all existing items.
+        $( 'tr.getpaid-invoice-item' ).remove()
+        var _class = "no-items"
+
+        $.each( items, function( item_id, item ) {
+
+            _class  = 'has-items'
+            var row = $( 'tr.getpaid-invoice-item-template' ).clone()
+            row
+                .removeClass( 'getpaid-invoice-item-template d-none')
+                .addClass( 'getpaid-invoice-item item-' + item_id )
+            
+            $.each( item.texts, function( key, value ) {
+                row.find( '.' + key ).html( value )
+            } )
+
+            row
+                .data( 'inputs', item.inputs )
+                .appendTo( '#wpinv-items .getpaid_invoice_line_items' )
+
+        })
+
+        $( '.getpaid-invoice-items-inner' )
+            .removeClass( 'no-items has-items' )
+            .addClass( _class )
+    }
+
+    // Delete invoice items.
+    $( '.post-type-wpi_invoice' ).on( 'click', '.getpaid-item-actions .dashicons-trash', function(e) {
+        e.preventDefault();
+
+        $( this ).closest( '.getpaid-invoice-item' ).remove()
+
+        $( '.getpaid-invoice-items-inner' ).removeClass( 'no-items has-items' )
+
+        if ( $( 'tr.getpaid-invoice-item' ).length ) {
+            $( '.getpaid-invoice-items-inner' ).addClass( 'has-items' )
+        } else {
+            $( '.getpaid-invoice-items-inner' ).addClass( 'no-items' )
+        }
+
+    })
+
+    // Edit invoice items.
+    $( '.post-type-wpi_invoice' ).on( 'click', '.getpaid-item-actions .dashicons-edit', function(e) {
+        e.preventDefault();
+
+        var inputs = $( this ).closest( '.getpaid-invoice-item' ).data( 'inputs' )
+
+        // Enter value getpaid-edit-item-div
+        $.each( inputs, function( key, value ) {
+            $( '#getpaid-edit-invoice-item .getpaid-edit-item-div .' + key ).val( value )
+        } )
+
+        // Display the modal.
+        $('#getpaid-edit-invoice-item').modal()
+
+    })
+
+    // Cancel item edit.
+    $( '#getpaid-edit-invoice-item .getpaid-cancel' ).on( 'click', function() {
+        $( '#getpaid-edit-invoice-item .getpaid-edit-item-div :input' ).val('')
+    } )
+
+    // Save edited invoice item.
+    $( '#getpaid-edit-invoice-item .getpaid-save' ).on( 'click', function() {
+    
+        // Retrieve item data.
+        var data = $( '#getpaid-edit-invoice-item .getpaid-edit-item-div :input' )
+            .map( function() {
+                return {
+                    'field' : $( this ).attr( 'name' ),
+                    'value' : $( this ).val(),
+                }
+            })
+            .get()
+
+        $( '#getpaid-edit-invoice-item .getpaid-edit-item-div :input' ).val('')
+
+        // Block the metabox.
+        wpinvBlock( '#wpinv-items .inside' )
+
+        // Save the edit.
+        var post_data = {
+            action: 'wpinv_edit_invoice_item',
+            post_id: $('#post_ID').val(),
+            _ajax_nonce: WPInv_Admin.wpinv_nonce,
+            data: data,
+        }
+
+        $.post( WPInv_Admin.ajax_url, post_data )
+
+            .done( function( response ) {
+
+                if ( response.success ) {
+                    getpaid_replace_invoice_items( response.data.items )
+
+                    if ( response.data.alert ) {
+                        alert( response.data.alert )
+                    }
+                }
+
+            })
+
+            .always( function( response ) {
+                wpinvUnblock( '#wpinv-items .inside' );
+            })
+    } )
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
@@ -1131,7 +1466,7 @@ jQuery(function($) {
  */
 function wpinvBlock(el, message) {
     message = typeof message != 'undefined' && message !== '' ? message : '';
-    el.block({
+    jQuery( el ) .block({
         message: '<i class="fa fa-spinner fa-pulse fa-2x"></i>' + message,
         overlayCSS: {
             background: '#fff',
@@ -1146,5 +1481,5 @@ function wpinvBlock(el, message) {
  * @param {String} el The element to unblock
  */
 function wpinvUnblock(el) {
-    el.unblock();
+    jQuery( el ) .unblock();
 }

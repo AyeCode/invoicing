@@ -181,23 +181,6 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 )
                             );
 
-                            // Set currency.
-                            echo aui()->select(
-                                array(
-                                    'id'          => 'wpinv_currency',
-                                    'name'        => 'wpinv_currency',
-                                    'label'       => __( 'Currency', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'placeholder' => __( 'Select Invoice Currency', 'invoicing' ),
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_currency( 'edit' ),
-                                    'required'    => false,
-                                    'data-allow-clear' => 'false',
-                                    'select2'          => true,
-                                    'options'     => wpinv_get_currencies(),
-                                )
-                            );
-
                         }
 
                     ?>

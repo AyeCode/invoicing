@@ -204,7 +204,36 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'description'      => $this->get_description(),
 			'allow_quantities' => $this->allows_quantities(),
 			'required'         => $this->is_required(),
-        );
+		);
+
+	}
+
+	/**
+	 * Prepares form data for ajax use.
+	 *
+	 * @since 1.0.19
+	 * @return array
+	 */
+	public function prepare_data_for_invoice_edit_ajax() {
+
+		return array(
+			'id'     => $this->get_id(),
+			'texts'  => array(
+				'item-name'        => sanitize_text_field( $this->get_name() ),
+				'item-description' => wp_kses_post( $this->get_description() ),
+				'item-quantity'    => absint( $this->get_quantity() ),
+				'item-price'       => wpinv_price( $this->get_price() ),
+				'item-total'       => wpinv_price( $this->get_sub_total() ),
+			),
+			'inputs' => array(
+				'item-id'          => $this->get_id(),
+				'item-name'        => sanitize_text_field( $this->get_name() ),
+				'item-description' => wp_kses_post( $this->get_description() ),
+				'item-quantity'    => absint( $this->get_quantity() ),
+				'item-price'       => $this->get_price(),
+			)
+		);
+
 	}
 
 	/**

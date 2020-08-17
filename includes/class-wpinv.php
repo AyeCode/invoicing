@@ -461,6 +461,7 @@ class WPInv_Plugin {
         $localize['item_description']           = __( 'Item Description', 'invoicing' );
         $localize['discount_description']       = __( 'Discount Description', 'invoicing' );
         $localize['invoice_description']        = __( 'Invoice Description', 'invoicing' );
+        $localize['searching']                  = __( 'Searching', 'invoicing' );
 
         $localize = apply_filters( 'wpinv_admin_js_localize', $localize );
 

@@ -2981,6 +2981,12 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Do we have a recurring item?
 		if ( $item->is_recurring() ) {
+
+			// An invoice can only contain one recurring item.
+			if ( ! empty( $this->recurring_item ) ) {
+				return false;
+			}
+
 			$this->recurring_item = $item->get_id();
         }
 
@@ -2992,7 +2998,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $items[ $item->get_id() ] = $item;
 
         $this->set_prop( 'items', $items );
-
+		return true;
     }
 
     /**
