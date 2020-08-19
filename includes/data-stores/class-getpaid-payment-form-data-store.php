@@ -106,6 +106,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $form->get_id() || ! $form_object || $form_object->post_type != 'wpi_payment_form' ) {
 			$form->last_error = __( 'Invalid form.', 'invoicing' );
+			$form->set_id( 0 );
 			return false;
 		}
 

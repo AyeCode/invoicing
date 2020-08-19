@@ -29,7 +29,8 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_submission_id',
 		'_wpinv_payment_form',
 		'_wpinv_is_viewed',
-		'wpinv_email_cc'
+		'wpinv_email_cc',
+		'wpinv_template'
 	);
 
 	/**
@@ -48,6 +49,48 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_payment_form'      => 'payment_form',
 		'_wpinv_is_viewed'         => 'is_viewed',
 		'wpinv_email_cc'           => 'email_cc',
+		'wpinv_template'           => 'template',
+	);
+
+	/**
+	 * A map of database fields to data props.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @var array
+	 */
+	protected $database_fields_to_props = array(
+		'post_id'            => 'id',
+		'number'             => 'number',
+		'currency'           => 'currency',
+		'key'                => 'key',
+		'type'               => 'type',
+		'mode'               => 'mode',
+		'user_ip'            => 'user_ip',
+		'first_name'         => 'first_name',
+		'last_name'          => 'last_name',
+		'address'            => 'address',
+		'city'               => 'city',
+		'state'              => 'state',
+		'country'            => 'country',
+		'zip'                => 'zip',
+		'zip'                => 'zip',
+		'adddress_confirmed' => 'address_confirmed',
+		'gateway'            => 'gateway',
+		'transaction_id'     => 'transaction_id',
+		'currency'           => 'currency',
+		'subtotal'           => 'subtotal',
+		'tax'                => 'total_tax',
+		'fees_total'         => 'total_fees',
+		'discount'           => 'total_discount',
+		'total'              => 'total',
+		'discount_code'      => 'discount_code',
+		'disable_taxes'      => 'disable_taxes',
+		'due_date'           => 'due_date',
+		'completed_date'     => 'completed_date',
+		'company'            => 'company',
+		'vat_number'         => 'vat_number',
+		'vat_rate'           => 'vat_rate',
 	);
 
 	/*
@@ -63,6 +106,10 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	public function create( &$invoice ) {
 		$invoice->set_version( WPINV_VERSION );
 		$invoice->set_date_created( current_time('mysql') );
+
+		// Ensure both the key and number are set.
+		$invoice->get_key();
+		$invoice->get_number();
 
 		// Create a new post.
 		$id = wp_insert_post(
@@ -85,7 +132,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$invoice->set_id( $id );
+			getpaid_save_invoice_user_address( $invoice );
 			$this->save_special_fields( $invoice );
+			$this->save_items( $invoice );
 			$this->update_post_meta( $invoice );
 			$invoice->save_meta_data();
 			$invoice->apply_changes();
@@ -114,6 +163,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $invoice->get_id() || ! $invoice_object || ! getpaid_is_invoice_post_type( $invoice_object->post_type ) ) {
 			$invoice->last_error = __( 'Invalid invoice.', 'invoicing' );
+			$invoice->set_id( 0 );
 			return false;
 		}
 
@@ -131,8 +181,11 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			)
 		);
 
+		$invoice->set_type( $invoice_object->post_type );
+
 		$this->read_object_data( $invoice, $invoice_object );
 		$this->add_special_fields( $invoice );
+		$this->add_items( $invoice );
 		$invoice->read_meta_data();
 		$invoice->set_object_read( true );
 		do_action( 'getpaid_read_' . $invoice->get_type(), $invoice->get_id(), $invoice );
@@ -151,6 +204,10 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		if ( null === $invoice->get_date_created( 'edit' ) ) {
 			$invoice->set_date_created(  current_time('mysql') );
 		}
+
+		// Ensure both the key and number are set.
+		$invoice->get_key();
+		$invoice->get_number();
 
 		// Grab the current status so we can compare.
 		$previous_status = get_post_status( $invoice->get_id() );
@@ -189,7 +246,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		}
 		$this->update_post_meta( $invoice );
 		$this->save_special_fields( $invoice );
+		$this->save_items( $invoice );
 		$invoice->apply_changes();
+		getpaid_save_invoice_user_address( $invoice );
 		$this->clear_caches( $invoice );
 
 		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
@@ -219,10 +278,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		// Maybe retrieve from the cache.
 		$data   = wp_cache_get( $invoice->get_id(), 'getpaid_invoice_special_fields' );
-		$cached = true;
 
 		// If not found, retrieve from the db.
-		if ( empty( $data ) ) {
+		if ( false === $data ) {
 			$table =  $wpdb->prefix . 'getpaid_invoices';
 
 			$data  = $wpdb->get_row(
@@ -230,7 +288,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 				ARRAY_A
 			);
 
-			$cached = false;
+			// Update the cache with our data
+			wp_cache_set( $invoice->get_id(), $data, 'getpaid_invoice_special_fields' );
+
 		}
 
 		// Abort if the data does not exist.
@@ -238,12 +298,18 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			return;
 		}
 
-		// Update the cache with our data
-		if ( ! $cached ) {
-			wp_cache_set( $invoice->get_id(), $data, 'getpaid_invoice_special_fields' );
+		$props = array();
+
+		foreach ( $this->database_fields_to_props as $db_field => $prop ) {
+			
+			if ( $db_field == 'post_id' ) {
+				continue;
+			}
+
+			$props[ $prop ] = $data[ $db_field ];
 		}
 
-		$invoice->set_props( $data );
+		$invoice->set_props( $props );
 
 	}
 
@@ -252,21 +318,75 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * or if they are present in the database or not.
 	 *
 	 * @param  WPInv_Invoice $invoice       The Invoice object.
-	 * @param  array   $meta_key_to_props   A mapping of prop => value.
 	 * @return array                        A mapping of field keys => prop names, filtered by ones that should be updated.
 	 */
-	protected function get_special_fields_to_update( $invoice, $special_fields ) {
-		$props_to_update = array();
+	protected function get_special_fields_to_update( $invoice ) {
+		$fields_to_update = array();
 		$changed_props   = $invoice->get_changes();
 
 		// Props should be updated if they are a part of the $changed array or don't exist yet.
-		foreach ( $special_fields as $prop => $value ) {
+		foreach ( $this->database_fields_to_props as $database_field => $prop ) {
 			if ( array_key_exists( $prop, $changed_props ) ) {
-				$props_to_update[ $prop ] = $value;
+				$fields_to_update[ $database_field ] = $prop;
 			}
 		}
 
-		return $props_to_update;
+		return $fields_to_update;
+	}
+
+	/**
+	 * Helper method that updates all the database fields for an invoice based on it's settings in the WPInv_Invoice class.
+	 *
+	 * @param WPInv_Invoice $invoice WPInv_Invoice object.
+	 * @since 1.0.19
+	 */
+	protected function update_special_fields( &$invoice ) {
+		global $wpdb;
+
+		$updated_props    = array();
+		$fields_to_update = $this->get_special_fields_to_update( $invoice );
+
+		foreach ( $fields_to_update as $database_field => $prop ) {
+			$value = $invoice->{"get_$prop"}( 'edit' );
+			$value = is_string( $value ) ? wp_slash( $value ) : $value;
+			$value = is_bool( $value ) ? ( int ) $value : $value;
+			$updated_props[ $database_field ] = maybe_serialize( $value );
+		}
+
+		if ( ! empty( $updated_props ) ) {
+
+			$table = $wpdb->prefix . 'getpaid_invoices';
+			$wpdb->update( $table, $updated_props, array( 'post_id' => $invoice->get_id() ) );
+			wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_special_fields' );
+			do_action( "getpaid_invoice_update_database_fields", $invoice, $updated_props );
+
+		}
+
+	}
+
+	/**
+	 * Helper method that inserts special fields to the database.
+	 *
+	 * @param WPInv_Invoice $invoice WPInv_Invoice object.
+	 * @since 1.0.19
+	 */
+	protected function insert_special_fields( &$invoice ) {
+		global $wpdb;
+
+		$updated_props   = array();
+
+		foreach ( $this->database_fields_to_props as $database_field => $prop ) {
+			$value = $invoice->{"get_$prop"}( 'edit' );
+			$value = is_string( $value ) ? wp_slash( $value ) : $value;
+			$value = is_bool( $value ) ? ( int ) $value : $value;
+			$updated_props[ $database_field ] = maybe_serialize( $value );
+		}
+
+		$table = $wpdb->prefix . 'getpaid_invoices';
+		$wpdb->insert( $table, $updated_props );
+		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_special_fields' );
+		do_action( "getpaid_invoice_insert_database_fields", $invoice, $updated_props );
+
 	}
 
 	/**
@@ -277,86 +397,17 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
     public function save_special_fields( $invoice ) {
 		global $wpdb;
 
-		// Fields to update.
-		$fields = array (
-            'post_id'        => $invoice->get_id(),
-            'number'         => $invoice->get_number( 'edit' ),
-            'key'            => $invoice->get_key( 'edit' ),
-            'type'           => $invoice->get_type( 'edit' ),
-            'mode'           => $invoice->get_mode( 'edit' ),
-            'user_ip'        => $invoice->get_user_ip( 'edit' ),
-            'first_name'     => $invoice->get_first_name( 'edit' ),
-            'last_name'      => $invoice->get_last_name( 'edit' ),
-            'address'        => $invoice->get_address( 'edit' ),
-            'city'           => $invoice->get_city( 'edit' ),
-            'state'          => $invoice->get_state( 'edit' ),
-            'country'        => $invoice->get_country( 'edit' ),
-            'zip'            => $invoice->get_zip( 'edit' ),
-            'address_confirmed' => (int) $invoice->get_address_confirmed( 'edit' ),
-            'gateway'        => $invoice->get_gateway( 'edit' ),
-            'transaction_id' => $invoice->get_transaction_id( 'edit' ),
-            'currency'       => $invoice->get_currency( 'edit' ),
-            'subtotal'       => $invoice->get_subtotal( 'edit' ),
-            'total_tax'      => $invoice->get_total_tax( 'edit' ),
-            'total_fees'     => $invoice->get_total_fees( 'edit' ),
-            'total_discount' => $invoice->get_total_discount( 'edit' ),
-            'discount_code'  => $invoice->get_discount_code( 'edit' ),
-            'disable_taxes'  => (int) $invoice->get_disable_taxes( 'edit' ),
-            'due_date'       => $invoice->get_due_date( 'edit' ),
-            'completed_date' => $invoice->get_completed_date( 'edit' ),
-            'company'        => $invoice->get_company( 'edit' ),
-            'vat_number'     => $invoice->get_vat_number( 'edit' ),
-            'vat_rate'       => $invoice->get_vat_rate( 'edit' ),
-		);
-
-		// Update the cache with our data
-		wp_cache_set( $invoice->get_id(), $fields, 'getpaid_invoice_special_fields' );
-
 		// The invoices table.
 		$table = $wpdb->prefix . 'getpaid_invoices';
 		$id    = (int) $invoice->get_id();
+
 		if ( $wpdb->get_var( "SELECT `post_id` FROM $table WHERE `post_id`= $id" ) ) {
 
-			$to_update = $this->get_special_fields_to_update( $invoice, $fields );
+			$this->update_special_fields( $invoice );
 
-			if ( empty( $to_update ) ) {
-				return;
-			}
+		} else {
 
-			$changes = array(
-				'tax'                => 'total_tax',
-				'fees_total'         => 'total_fees',
-				'discount'           => 'total_discount',
-				'adddress_confirmed' => 'address_confirmed',
-			);
-
-			foreach ( $changes as $to => $from ) {
-				if ( isset( $changes[ $from ] ) ) {
-					$changes[ $to ] = $changes[ $from ];
-					unset( $changes[ $from ] );
-				}
-			}
-
-			$changes['total'] = $invoice->get_total( 'edit' );
-            $wpdb->update( $table, $fields, array( 'post_id' => $id ) );
-
-        } else {
-
-			$fields['tax'] = $fields['total_tax'];
-			unset( $fields['total_tax'] );
-
-			$fields['fees_total'] = $fields['total_fees'];
-			unset( $fields['total_fees'] );
-
-			$fields['discount'] = $fields['total_discount'];
-			unset( $fields['total_discount'] );
-
-			$fields['adddress_confirmed'] = $fields['address_confirmed'];
-			unset( $fields['address_confirmed'] );
-			
-			$fields['total']   = $invoice->get_total( 'edit' );
-			$fields['post_id'] = $id;
-            $wpdb->insert( $table, $fields );
+			$this->insert_special_fields( $invoice );
 
 		}
 
@@ -370,11 +421,23 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
     public function add_items( &$invoice ) {
 		global $wpdb;
 
-		$table =  $wpdb->prefix . 'getpaid_invoice_items';
-        $items = $wpdb->get_results(
-            $wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d", $invoice->get_id() )
-        );
+		// Maybe retrieve from the cache.
+		$items = wp_cache_get( $invoice->get_id(), 'getpaid_invoice_cart_details' );
 
+		// If not found, retrieve from the db.
+		if ( false === $items ) {
+			$table =  $wpdb->prefix . 'getpaid_invoice_items';
+
+			$items = $wpdb->get_results(
+				$wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d", $invoice->get_id() )
+			);
+
+			// Update the cache with our data
+			wp_cache_set( $invoice->get_id(), $items, 'getpaid_invoice_cart_details' );
+
+		}
+
+		// Abort if no items found.
         if ( empty( $items ) ) {
             return;
 		}
@@ -384,11 +447,12 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 			// Set item data.
 			$item->item_tax      = wpinv_sanitize_amount( $item_data->tax );
-			$item->item_discount = wpinv_sanitize_amount( $item_data->tax );
+			$item->item_discount = wpinv_sanitize_amount( $item_data->discount );
 			$item->set_name( $item_data->item_name );
 			$item->set_description( $item_data->item_description );
 			$item->set_price( $item_data->item_price );
 			$item->set_quantity( $item_data->quantity );
+			$item->set_item_meta( $item_data->meta );
 
 			$invoice->add_item( $item );
 		}
@@ -406,11 +470,14 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$this->delete_items( $invoice );
 
 		$table   =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
-        $to_save = $invoice->get_cart_details();
 
-		foreach ( $to_save as $item_data ) {
+		foreach ( $invoice->get_cart_details() as $item_data ) {
+			$item_data = array_map( 'maybe_serialize', $item_data );
 			$GLOBALS['wpdb']->insert( $table, $item_data );
 		}
+
+		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_cart_details' );
+		do_action( "getpaid_invoice_save_items", $invoice );
 
 	}
 
@@ -421,6 +488,16 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
      */
     public function delete_items( $invoice ) {
 		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
+		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
+	}
+	
+	/**
+     * Deletes an invoice's special fields from the database.
+	 *
+	 * @param WPInv_Invoice $invoice Invoice object.
+     */
+    public function delete_special_fields( $invoice ) {
+		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoices';
 		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
     }
 

@@ -132,6 +132,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $item->get_id() || ! $item_object || $item_object->post_type != 'wpi_item' ) {
 			$item->last_error = __( 'Invalid item.', 'invoicing' );
+			$item->set_id( 0 );
 			return false;
 		}
 

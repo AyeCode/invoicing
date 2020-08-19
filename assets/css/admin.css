@@ -21,8 +21,9 @@
     width: 70px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#number {
-    width: 120px;
+    width: 300px;
 }
+
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
@@ -37,7 +38,7 @@
     width: 110px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#customer {
-    width: 170px;
+    width: 180px;
 }
 .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
     width: 50%;
@@ -2158,7 +2159,9 @@ textarea.wpi-email_overdue_content {
 #wpinv-items .no-items .hide-if-no-items,
 #wpinv-items .amount .hide-if-amount,
 #wpinv-items .quantity .getpaid-hide-if-quantity,
-#wpinv-items .hours .getpaid-hide-if-hours {
+#wpinv-items .hours .getpaid-hide-if-hours,
+#wpinv-items .not-editable .hide-if-not-editable,
+#wpinv-items .editable .hide-if-editable {
     display: none !important;
 }
 
@@ -2188,4 +2191,66 @@ textarea.wpi-email_overdue_content {
     padding: 1em;
     text-align: left;
     vertical-align: middle;
+}
+
+.getpaid-invoice-status {
+    display: inline-block;
+    line-height: 2.5em;
+    color: #777;
+    background: #e5e5e5;
+    border-radius: 4px;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.getpaid-invoice-status.publish {
+    background: #b0bec5;
+}
+
+.getpaid-invoice-status.wpi-renewal {
+    background: #c8d7e1;
+}
+
+.getpaid-invoice-status.wpi-pending {
+    background: #cfd8dc;
+}
+
+.getpaid-invoice-status.wpi-failed {
+    background: #ffccbc;
+}
+
+.getpaid-invoice-status.wpi-cancelled {
+    background: #ffcdd2;
+}
+
+.getpaid-invoice-status > span {
+    margin: 0 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.post-type-wpi_invoice .wp-list-table .column-recurring{
+    width: 60px;
+}
+
+.getpaid-invoice-totals-row {
+    border-bottom: 1px solid #dfdfdf;
+    border-left: 1px solid #dfdfdf;
+    padding: 10px;
+    border-right: 1px solid #dfdfdf;
+    background: #f8f8f8;
+}
+
+.getpaid-invoice-totals-row .value{
+    font-size: 1em!important;
+    width: 10em;
+    margin: 0 0 0 .5em;
+    box-sizing: border-box;
+    font-weight: 700;
+}
+
+.getpaid-invoice-totals-row td{
+    padding: 0.4em;
 }

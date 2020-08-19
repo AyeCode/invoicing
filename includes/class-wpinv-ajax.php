@@ -1,103 +1,120 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Contains the ajax handlers.
  *
  * @since 1.0.0
  * @package Invoicing
  */
  
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * WPInv_Ajax class.
+ */
 class WPInv_Ajax {
-    public static function init() {
-        add_action( 'init', array( __CLASS__, 'define_ajax' ), 0 );
-        add_action( 'template_redirect', array( __CLASS__, 'do_wpinv_ajax' ), 0 );
-        self::add_ajax_events();
+
+    /**
+	 * Hook in ajax handlers.
+	 */
+	public static function init() {
+		add_action( 'init', array( __CLASS__, 'define_ajax' ), 0 );
+		add_action( 'template_redirect', array( __CLASS__, 'do_wpinv_ajax' ), 0 );
+		self::add_ajax_events();
     }
 
-    public static function define_ajax() {
-        if ( !empty( $_GET['wpinv-ajax'] ) ) {
-            if ( ! defined( 'DOING_AJAX' ) ) {
-                define( 'DOING_AJAX', true );
-            }
-            if ( ! defined( 'WC_DOING_AJAX' ) ) {
-                define( 'WC_DOING_AJAX', true );
-            }
-            // Turn off display_errors during AJAX events to prevent malformed JSON
-            if ( ! WP_DEBUG || ( WP_DEBUG && ! WP_DEBUG_DISPLAY ) ) {
-                /** @scrutinizer ignore-unhandled */ @ini_set( 'display_errors', 0 );
-            }
-            $GLOBALS['wpdb']->hide_errors();
-        }
-    }
-    
-    public static function do_wpinv_ajax() {
-        global $wp_query;
+    /**
+	 * Set GetPaid AJAX constant and headers.
+	 */
+	public static function define_ajax() {
 
-        if ( !empty( $_GET['wpinv-ajax'] ) ) {
-            $wp_query->set( 'wpinv-ajax', sanitize_text_field( $_GET['wpinv-ajax'] ) );
-        }
+		if ( ! empty( $_GET['wpinv-ajax'] ) ) {
+			getpaid_maybe_define_constant( 'DOING_AJAX', true );
+			getpaid_maybe_define_constant( 'WPInv_DOING_AJAX', true );
+			if ( ! WP_DEBUG || ( WP_DEBUG && ! WP_DEBUG_DISPLAY ) ) {
+				/** @scrutinizer ignore-unhandled */ @ini_set( 'display_errors', 0 );
+			}
+			$GLOBALS['wpdb']->hide_errors();
+		}
 
-        if ( $action = $wp_query->get( 'wpinv-ajax' ) ) {
-            self::wpinv_ajax_headers();
-            do_action( 'wpinv_ajax_' . sanitize_text_field( $action ) );
-            die();
-        }
     }
     
-    private static function wpinv_ajax_headers() {
-        send_origin_headers();
-        /** @scrutinizer ignore-unhandled */ @header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
-        /** @scrutinizer ignore-unhandled */ @header( 'X-Robots-Tag: noindex' );
-        send_nosniff_header();
-        nocache_headers();
-        status_header( 200 );
+    /**
+	 * Send headers for GetPaid Ajax Requests.
+	 *
+	 * @since 1.0.18
+	 */
+	private static function wpinv_ajax_headers() {
+		if ( ! headers_sent() ) {
+			send_origin_headers();
+			send_nosniff_header();
+			nocache_headers();
+			header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
+			header( 'X-Robots-Tag: noindex' );
+			status_header( 200 );
+		}
     }
     
+    /**
+	 * Check for GetPaid Ajax request and fire action.
+	 */
+	public static function do_wpinv_ajax() {
+		global $wp_query;
+
+		if ( ! empty( $_GET['wpinv-ajax'] ) ) {
+			$wp_query->set( 'wpinv-ajax', sanitize_text_field( wp_unslash( $_GET['wpinv-ajax'] ) ) );
+		}
+
+		$action = $wp_query->get( 'wpinv-ajax' );
+
+		if ( $action ) {
+			self::wpinv_ajax_headers();
+			$action = sanitize_text_field( $action );
+			do_action( 'wpinv_ajax_' . $action );
+			wp_die();
+		}
+
+    }
+
+    /**
+	 * Hook in ajax methods.
+	 */
     public static function add_ajax_events() {
+
+        // array( 'event' => is_frontend )
         $ajax_events = array(
-            'add_note' => false,
-            'delete_note' => false,
-            'get_states_field' => true,
-            'get_aui_states_field' => true,
-            'checkout' => false,
-            'payment_form'     => true,
-            'get_payment_form' => true,
+            'add_note'                    => false,
+            'delete_note'                 => false,
+            'get_states_field'            => true,
+            'get_aui_states_field'        => true,
+            'checkout'                    => false,
+            'payment_form'                => true,
+            'get_payment_form'            => true,
             'get_payment_form_states_field' => true,
-            'get_invoicing_items' => false,
-            'get_invoice_items' => false,
-            'add_invoice_items' => false,
-            'edit_invoice_item' => false,
-            'add_invoice_item' => false,
-            'remove_invoice_item' => false,
-            'create_invoice_item' => false,
-            'get_billing_details' => false,
-            'admin_recalculate_totals' => false,
-            'admin_apply_discount' => false,
-            'admin_remove_discount' => false,
-            'check_new_user_email' => false,
-            'run_tool' => false,
-            'apply_discount' => true,
-            'remove_discount' => true,
-            'buy_items' => true,
+            'get_invoicing_items'         => false,
+            'get_invoice_items'           => false,
+            'add_invoice_items'           => false,
+            'edit_invoice_item'           => false,
+            'remove_invoice_item'         => false,
+            'create_invoice_item'         => false,
+            'get_billing_details'         => false,
+            'recalculate_invoice_totals'  => false,
+            'admin_apply_discount'        => false,
+            'admin_remove_discount'       => false,
+            'check_new_user_email'        => false,
+            'run_tool'                    => false,
+            'apply_discount'              => true,
+            'remove_discount'             => true,
+            'buy_items'                   => true,
             'payment_form_refresh_prices' => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
             add_action( 'wp_ajax_wpinv_' . $ajax_event, array( __CLASS__, $ajax_event ) );
             add_action( 'wp_ajax_getpaid_' . $ajax_event, array( __CLASS__, $ajax_event ) );
-            
-            if ( !defined( 'WPI_AJAX_' . strtoupper( $nopriv ) ) ) {
-                define( 'WPI_AJAX_' . strtoupper( $nopriv ), 1 );
-            }
 
             if ( $nopriv ) {
                 add_action( 'wp_ajax_nopriv_wpinv_' . $ajax_event, array( __CLASS__, $ajax_event ) );
                 add_action( 'wp_ajax_nopriv_getpaid_' . $ajax_event, array( __CLASS__, $ajax_event ) );
-
                 add_action( 'wpinv_ajax_' . $ajax_event, array( __CLASS__, $ajax_event ) );
             }
         }
@@ -156,116 +173,6 @@ class WPInv_Ajax {
 
         wpinv_process_checkout();
         die(0);
-    }
-    
-    public static function add_invoice_item() {
-        global $wpi_userID, $wpinv_ip_address_country;
-        check_ajax_referer( 'invoice-item', '_nonce' );
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
-        }
-        
-        $item_id    = sanitize_text_field( $_POST['item_id'] );
-        $invoice_id = absint( $_POST['invoice_id'] );
-        
-        if ( !is_numeric( $invoice_id ) || !is_numeric( $item_id ) ) {
-            die();
-        }
-        
-        $invoice    = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) ) {
-            die();
-        }
-        
-        if ( $invoice->is_paid() || $invoice->is_refunded() ) {
-            die(); // Don't allow modify items for paid invoice.
-        }
-        
-        if ( !empty( $_POST['user_id'] ) ) {
-            $wpi_userID = absint( $_POST['user_id'] ); 
-        }
-
-        $item = new WPInv_Item( $item_id );
-        if ( !( !empty( $item ) && $item->post_type == 'wpi_item' ) ) {
-            die();
-        }
-        
-        // Validate item before adding to invoice because recurring item must be paid individually.
-        if ( !empty( $invoice->cart_details ) ) {
-            $valid = true;
-            
-            if ( $recurring_item = $invoice->get_recurring() ) {
-                if ( $recurring_item != $item_id ) {
-                    $valid = false;
-                }
-            } else if ( wpinv_is_recurring_item( $item_id ) ) {
-                $valid = false;
-            }
-            
-            if ( !$valid ) {
-                $response               = array();
-                $response['success']    = false;
-                $response['msg']        = __( 'You can not add item because recurring item must be paid individually!', 'invoicing' );
-                wp_send_json( $response );
-            }
-        }
-        
-        $checkout_session = wpinv_get_checkout_session();
-        
-        $data                   = array();
-        $data['invoice_id']     = $invoice_id;
-        $data['cart_discounts'] = $invoice->get_discounts( true );
-        
-        wpinv_set_checkout_session( $data );
-        
-        $quantity = wpinv_item_quantities_enabled() && !empty($_POST['qty']) && (int)$_POST['qty'] > 0 ? (int)$_POST['qty'] : 1;
-
-        $args = array(
-            'id'            => $item_id,
-            'quantity'      => $quantity,
-            'item_price'    => $item->get_price(),
-            'custom_price'  => '',
-            'tax'           => 0.00,
-            'discount'      => 0,
-            'meta'          => array(),
-            'fees'          => array()
-        );
-
-        $invoice->add_item( $item_id, $args );
-        $invoice->save();
-        
-        if ( empty( $_POST['country'] ) ) {
-            $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
-        }
-        if ( empty( $_POST['state'] ) ) {
-            $_POST['state'] = $invoice->state;
-        }
-         
-        $invoice->country   = sanitize_text_field( $_POST['country'] );
-        $invoice->state     = sanitize_text_field( $_POST['state'] );
-        
-        $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
-        $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
-        
-        $wpinv_ip_address_country = $invoice->country;
-
-        $invoice->recalculate_totals(true);
-        
-        $response                       = array();
-        $response['success']            = true;
-        $response['data']['items']      = wpinv_admin_get_line_items( $invoice );
-        $response['data']['subtotal']   = $invoice->get_subtotal();
-        $response['data']['subtotalf']  = $invoice->get_subtotal(true);
-        $response['data']['tax']        = $invoice->get_tax();
-        $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->get_discount();
-        $response['data']['discountf']  = $invoice->get_discount(true);
-        $response['data']['total']      = $invoice->get_total();
-        $response['data']['totalf']     = $invoice->get_total(true);
-        
-        wpinv_set_checkout_session($checkout_session);
-        
-        wp_send_json( $response );
     }
 
 
@@ -441,70 +348,6 @@ class WPInv_Ajax {
 
         wp_send_json_success( $billing_details );
 
-    }
-    
-    public static function admin_recalculate_totals() {
-        global $wpi_userID, $wpinv_ip_address_country;
-        
-        check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
-        }
-        
-        $invoice_id = absint( $_POST['invoice_id'] );        
-        $invoice    = wpinv_get_invoice( $invoice_id );
-        if ( empty( $invoice ) ) {
-            die();
-        }
-
-        $checkout_session = wpinv_get_checkout_session();
-
-        $data                   = array();
-        $data['invoice_id']     = $invoice_id;
-        $data['cart_discounts'] = $invoice->get_discounts( true );
-
-        wpinv_set_checkout_session( $data );
-        
-        if ( !empty( $_POST['user_id'] ) ) {
-            $wpi_userID = absint( $_POST['user_id'] ); 
-        }
-        
-        if ( empty( $_POST['country'] ) ) {
-            $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
-        }
-
-        $disable_taxes = 0;
-        if ( ! empty( $_POST['disable_taxes'] ) ) {
-            $disable_taxes = 1;
-        }
-        $invoice->set( 'disable_taxes', $disable_taxes );
-
-        $invoice->country = sanitize_text_field( $_POST['country'] );
-        $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
-        if ( isset( $_POST['state'] ) ) {
-            $invoice->state = sanitize_text_field( $_POST['state'] );
-            $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
-        }
-        
-        $wpinv_ip_address_country = $invoice->country;
-        
-        $invoice = $invoice->recalculate_totals(true);
-        
-        $response                       = array();
-        $response['success']            = true;
-        $response['data']['items']      = wpinv_admin_get_line_items( $invoice );
-        $response['data']['subtotal']   = $invoice->get_subtotal();
-        $response['data']['subtotalf']  = $invoice->get_subtotal(true);
-        $response['data']['tax']        = $invoice->get_tax();
-        $response['data']['taxf']       = $invoice->get_tax(true);
-        $response['data']['discount']   = $invoice->get_discount();
-        $response['data']['discountf']  = $invoice->get_discount(true);
-        $response['data']['total']      = $invoice->get_total();
-        $response['data']['totalf']     = $invoice->get_total(true);
-        
-        wpinv_set_checkout_session($checkout_session);
-
-        wp_send_json( $response );
     }
     
     public static function admin_apply_discount() {
@@ -1044,6 +887,57 @@ class WPInv_Ajax {
         }
     
         exit;
+    }
+
+    /**
+     * Recalculates invoice totals.
+     */
+    public static function recalculate_invoice_totals() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice.
+        if ( empty( $_POST['post_id'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+
+        // Ensure it exists.
+        if ( ! $invoice->get_id() ) {
+            exit;
+        }
+
+        // Maybe set the country, state, currency.
+        foreach ( array( 'country', 'state', 'currency' ) as $key ) {
+            if ( isset( $_POST[ $key ] ) ) {
+                $method = "set_$key";
+                $invoice->$method( $_POST[ $key ] );
+            }
+        }
+
+        // Maybe disable taxes.
+        $invoice->set_disable_taxes( ! empty( $_POST['taxes'] ) );
+
+        // Recalculate totals.
+        $invoice->recalculate_total();
+
+        $totals = array(
+            'subtotal' => wpinv_price( wpinv_format_amount( $invoice->get_subtotal() ) ),
+            'discount' => wpinv_price( wpinv_format_amount( $invoice->get_total_discount() ) ),
+            'tax'      => wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ) ),
+            'total'    => wpinv_price( wpinv_format_amount( $invoice->get_total() ) ),
+        );
+
+        $totals = apply_filters( 'getpaid_invoice_totals', $totals, $invoice );
+
+        wp_send_json_success( compact( 'totals' ) );
     }
 
     /**

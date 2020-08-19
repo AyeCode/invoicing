@@ -27,7 +27,7 @@ class GetPaid_Meta_Box_Item_Details {
         $item = new WPInv_Item( $post );
 
         // Nonce field.
-        wp_nonce_field( 'wpinv_item_meta_box_save', 'wpinv_vat_meta_box_nonce' );
+        wp_nonce_field( 'getpaid_meta_nonce', 'getpaid_meta_nonce' );
 
         // Set the currency position.
         $position = wpinv_currency_position();
@@ -165,7 +165,11 @@ class GetPaid_Meta_Box_Item_Details {
                                     )
                                 );
                                 do_action( 'wpinv_item_details_metabox_subscription_checkbox', $item );
+
                             ?>
+                            <div class="wpinv_show_if_recurring">
+                                <em><?php echo wpinv_get_recurring_gateways_text(); ?><em>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -290,11 +294,6 @@ class GetPaid_Meta_Box_Item_Details {
 	 * @param int $post_id
 	 */
 	public static function save( $post_id ) {
-
-        // verify nonce
-        if ( ! isset( $_POST['wpinv_vat_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wpinv_vat_meta_box_nonce'], 'wpinv_item_meta_box_save' ) ) {
-            return;
-        }
 
         // Prepare the item.
         $item = new WPInv_Item( $post_id );

@@ -2556,3 +2556,23 @@ function getpaid_payment_form_element( $element, $form ) {
     echo '</div>';
 }
 add_action( 'getpaid_payment_form_element', 'getpaid_payment_form_element', 10, 2 );
+
+/**
+ * Shows a list of gateways that support recurring payments.
+ */
+function wpinv_get_recurring_gateways_text() {
+    $gateways = array();
+
+    foreach ( wpinv_get_payment_gateways() as $key => $gateway ) {
+        if ( wpinv_gateway_support_subscription( $key ) ) {
+            $gateways[] = sanitize_text_field( $gateway['admin_label'] );
+        }
+    }
+
+    if ( empty( $gateways ) ) {
+        return "<span class='form-text text-danger'>" . __( 'No active gateway supports subscription payments.', 'invoicing' ) ."</span>";
+    }
+
+    return "<span class='form-text text-muted'>" . wp_sprintf( __( 'Subscription payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ) ."</span>";
+
+}

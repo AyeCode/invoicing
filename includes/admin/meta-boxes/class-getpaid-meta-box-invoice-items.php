@@ -31,6 +31,34 @@ class GetPaid_Meta_Box_Invoice_Items {
 
         // New item url.
         $new_item = admin_url( 'post-new.php?post_type=wpi_item' );
+
+        // Totals.
+        $totals = array(
+
+            'subtotal'  => array(
+                'label' => __( 'Items Subtotal', 'invoicing' ),
+                'value' => wpinv_price( wpinv_format_amount( $invoice->get_subtotal() ) ),
+            ),
+
+            'discount'  => array(
+                'label' => __( 'Total Discount', 'invoicing' ),
+                'value' => wpinv_price( wpinv_format_amount( $invoice->get_total_discount() ) ),
+            ),
+
+            'tax'       => array(
+                'label' => __( 'Total Tax', 'invoicing' ),
+                'value' => wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ) ),
+            ),
+
+            'total'     => array(
+                'label' => __( 'Invoice Total', 'invoicing' ),
+                'value' => wpinv_price( wpinv_format_amount( $invoice->get_total() ) ),
+            )
+        );
+
+        if ( ! wpinv_use_taxes() ) {
+            unset( $totals['tax'] );
+        }
         ?>
 
         <style>
@@ -45,7 +73,7 @@ class GetPaid_Meta_Box_Invoice_Items {
             }
         </style>
 
-                <div class="bsui getpaid-invoice-items-inner <?php echo sanitize_html_class( $invoice->get_template( 'edit' ) ); ?> <?php echo empty( $items ) ? 'no-items' : 'has-items'; ?>" style="margin-top: 1.5rem">
+                <div class="bsui getpaid-invoice-items-inner <?php echo sanitize_html_class( $invoice->get_template( 'edit' ) ); ?> <?php echo empty( $items ) ? 'no-items' : 'has-items'; ?> <?php echo $invoice->is_paid() || $invoice->is_refunded() ? 'not-editable' : 'editable'; ?>" style="margin-top: 1.5rem">
 
                     <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
                         <?php do_action( 'wpinv_meta_box_before_invoice_template_row', $invoice->get_id() ); ?>
@@ -116,11 +144,11 @@ class GetPaid_Meta_Box_Invoice_Items {
                                     <span class="getpaid-hide-if-hours getpaid-hide-if-quantity"><?php _e( 'Amount', 'invoicing' ) ?></span>
                                     <span class="hide-if-amount"><?php _e( 'Total', 'invoicing' ) ?></span>
                                 </th>
-                                <th class="getpaid-item-actions" width="70px">&nbsp;</th>
+                                <th class="getpaid-item-actions hide-if-not-editable" width="70px">&nbsp;</th>
                             </tr>
                         </thead>
 		                <tbody class="getpaid_invoice_line_items">
-                            <tr class="hide-if-has-items">
+                            <tr class="hide-if-has-items hide-if-not-editable">
                                 <td colspan="2" class="pt-4 pb-4">
                                     <button type="button" class="button button-primary add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php _e( 'Add Existing Items', 'invoicing' ) ?></button>
 	                                <a href="<?php echo esc_url( $new_item ); ?>" target="_blank" class="button button-secondary"><?php _e( 'Create New Item', 'invoicing' ) ?></a>
@@ -141,7 +169,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                     <span class="getpaid-hide-if-hours getpaid-hide-if-quantity item-price"></span>
                                     <span class="hide-if-amount item-total"></span>
                                 </td>
-                                <td class="getpaid-item-actions" width="70px">
+                                <td class="getpaid-item-actions hide-if-not-editable" width="70px">
                                     <span class="dashicons dashicons-edit"></span>
                                     <span class="dashicons dashicons-trash"></span>
                                 </td>
@@ -150,8 +178,26 @@ class GetPaid_Meta_Box_Invoice_Items {
                         </tbody>
                     </table>
 
+                    <div class="getpaid-invoice-totals-row">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 offset-sm-6">
+                                <table class="getpaid-invoice-totals text-right w-100">
+                                    <tbody>
+                                        <?php foreach ( apply_filters( 'getpaid_invoice_subtotal_rows', $totals, $invoice ) as $key => $data ) : ?>
+                                            <tr class="getpaid-totals-<?php echo sanitize_html_class( $key ); ?>">
+                                                <td class="label"><?php echo sanitize_text_field( $data['label'] ) ?>:</td>
+                                                <td width="1%"></td>
+                                                <td class="value"><?php echo sanitize_text_field( $data['value'] ) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Actions -->
-                    <div class="getpaid-invoice-item-actions hide-if-no-items">
+                    <div class="getpaid-invoice-item-actions hide-if-no-items hide-if-not-editable">
                         <div class="row">
                             <div class="text-left col-12 col-sm-8">
                                 <button type="button" class="button add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php _e( 'Add Existing Item', 'invoicing' ) ?></button>
@@ -162,6 +208,10 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 <button type="button" class="button button-primary recalculate-totals-button"><?php _e( 'Recalculate Totals', 'invoicing' ) ?></button>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="getpaid-invoice-item-actions hide-if-editable">
+                        <p class="description m-2 text-right text-muted"><?php _e( 'This invoice is no longer editable', 'invoicing' ); ?></p>
                     </div>
 
                     <!-- Add items to an invoice -->
@@ -179,7 +229,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                         <thead>
                                             <tr>
                                                 <th class="pl-0 text-left"><?php _e( 'Item', 'invoicing' ) ?></th>
-                                                <th class="pr-0 text-right">
+                                                <th class="pr-0 text-right hide-if-amount">
                                                     <span class="getpaid-hide-if-hours"><?php _e( 'Quantity', 'invoicing' ) ?></span>
                                                     <span class="getpaid-hide-if-quantity"><?php _e( 'Hours', 'invoicing' ) ?></span>
                                                 </th>
@@ -190,7 +240,7 @@ class GetPaid_Meta_Box_Invoice_Items {
 									            <td class="pl-0 text-left">
                                                     <select class="getpaid-item-search regular-text" data-placeholder="<?php esc_attr_e( 'Search for an item…', 'invoicing' ); ?>"></select>
                                                 </td>
-									            <td class="pr-0 text-right">
+									            <td class="pr-0 text-right hide-if-amount">
                                                     <input type="number" class="w100" step="1" min="1" autocomplete="off" value="1" placeholder="1">
                                                 </td>
                                             </tr>
@@ -223,10 +273,11 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <input type="text" name="name" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' ); ?>" class="form-control form-control-sm item-name">
                                         </label>
                                         <label class="form-group w-100">
-                                            <span><?php _e( 'Price', 'invoicing' ); ?></span>
+                                            <span class="getpaid-hide-if-hours getpaid-hide-if-quantity item-price"><?php _e( 'Amount', 'invoicing' ); ?></span>
+                                            <span class="hide-if-amount"><?php _e( 'Price', 'invoicing' ); ?></span>
                                             <input type="text" name="price" placeholder="<?php wpinv_sanitize_amount( 0 ); ?>" class="form-control form-control-sm item-price">
                                         </label>
-                                        <label class="form-group w-100">
+                                        <label class="form-group w-100 hide-if-amount">
                                             <span><?php _e( 'Quantity', 'invoicing' ); ?></span>
                                             <input type="number" name="quantity" placeholder="1" class="form-control form-control-sm item-quantity">
                                         </label>

@@ -37,6 +37,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                 <div class="bsui" style="margin-top: 1.5rem">
 
                     <div id="gdmbx2-metabox-wpinv-payment-meta" class="wpinv-payment-meta">
+
                     <?php
 
                         // Invoice key.
@@ -57,21 +58,23 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                         );
 
                         // View URL.
-                        echo aui()->input(
-                            array(
-                                'type'        => 'text',
-                                'id'          => 'wpinv_view_url',
-                                'name'        => 'wpinv_view_url',
-                                'label'       => __( 'Invoice URL:', 'invoicing' ),
-                                'label_type'  => 'vertical',
-                                'class'       => 'form-control-sm',
-                                'value'       => $invoice->get_view_url(),
-                                'extra_attributes' => array(
-                                    'onclick'  => 'this.select();',
-                                    'readonly' => 'true',
-                                ),
-                            )
-                        );
+                        if ( ! $invoice->is_draft() ) {
+                            echo aui()->input(
+                                array(
+                                    'type'        => 'text',
+                                    'id'          => 'wpinv_view_url',
+                                    'name'        => 'wpinv_view_url',
+                                    'label'       => __( 'Invoice URL:', 'invoicing' ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'form-control-sm',
+                                    'value'       => $invoice->get_view_url(),
+                                    'extra_attributes' => array(
+                                        'onclick'  => 'this.select();',
+                                        'readonly' => 'true',
+                                    ),
+                                )
+                            );
+                        }
 
                         // If the invoice is paid...
                         if ( $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -122,7 +125,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm',
                                     'value'       => $invoice->get_transaction_id( 'edit' ),
-                                    'help_text'   => apply_filters( 'wpinv_invoice_transaction_link_' . $invoice->get_gateway( 'edit' ), $invoice->get_transaction_id(), $invoice ),
+                                    'help_text'   => apply_filters( 'wpinv_invoice_transaction_link_' . $invoice->get_gateway( 'edit' ), '', $invoice->get_transaction_id(), $invoice ),
                                     'extra_attributes' => array(
                                         'onclick'  => 'this.select();',
                                         'readonly' => 'true',
@@ -150,21 +153,23 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                         } else {
 
                             // Payment URL.
-                            echo aui()->input(
-                                array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_payment_url',
-                                    'name'        => 'wpinv_payment_url',
-                                    'label'       => __( 'Payment URL:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_checkout_payment_url(),
-                                    'extra_attributes' => array(
-                                        'onclick'  => 'this.select();',
-                                        'readonly' => 'true',
-                                    ),
-                                )
-                            );
+                            if ( ! $invoice->is_draft() ) {
+                                echo aui()->input(
+                                    array(
+                                        'type'        => 'text',
+                                        'id'          => 'wpinv_payment_url',
+                                        'name'        => 'wpinv_payment_url',
+                                        'label'       => __( 'Payment URL:', 'invoicing' ),
+                                        'label_type'  => 'vertical',
+                                        'class'       => 'form-control-sm',
+                                        'value'       => $invoice->get_checkout_payment_url(),
+                                        'extra_attributes' => array(
+                                            'onclick'  => 'this.select();',
+                                            'readonly' => 'true',
+                                        ),
+                                    )
+                                );
+                            }
 
                             // Set gateway.
                             echo aui()->select(

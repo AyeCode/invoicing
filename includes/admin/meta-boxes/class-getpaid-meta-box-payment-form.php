@@ -78,7 +78,7 @@ class GetPaid_Meta_Box_Payment_Form {
         </div>
         <?php
 
-        wp_nonce_field( 'wpinv_save_payment_form', 'wpinv_save_payment_form' ) ;
+        wp_nonce_field( 'getpaid_meta_nonce', 'getpaid_meta_nonce' );
     }
 
     /**
@@ -87,11 +87,6 @@ class GetPaid_Meta_Box_Payment_Form {
 	 * @param int $post_id
 	 */
 	public static function save( $post_id ) {
-
-        // verify nonce
-        if ( ! isset( $_POST['wpinv_save_payment_form'] ) || ! wp_verify_nonce( $_POST['wpinv_save_payment_form'], 'wpinv_save_payment_form' ) ) {
-            return;
-        }
 
         // Prepare the form.
         $form = new GetPaid_Payment_Form( $post_id );

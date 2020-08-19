@@ -31,6 +31,31 @@ jQuery(function($) {
         }
     }
 
+    // Init date pickers.
+    $( '.wpiDatepicker' ).each( function(e) {
+        var el = $( this );
+        var args = {};
+
+        // Prepare args
+        if ( el.attr('data-changeMonth')) {
+            args.changeMonth = true;
+        }
+
+        if ($this.attr('data-changeYear')) {
+            args.changeYear = true;
+        }
+
+        if ($this.attr('data-dateFormat')) {
+            args.dateFormat = $this.attr('data-dateformat');
+        }
+
+        if ($this.attr('data-minDate')) {
+            args.minDate = $this.attr('data-minDate');
+        }
+
+        $(this).datepicker(args);
+    });
+
     // returns a random string
     function random_string() {
         return (Date.now().toString(36) + Math.random().toString(36).substr(2))
@@ -438,6 +463,8 @@ jQuery(function($) {
                         if ( response.data.alert ) {
                             alert( response.data.alert )
                         }
+
+                        recalculateTotals()
                     }
 
                 })
@@ -511,19 +538,48 @@ jQuery(function($) {
             .addClass( _class )
     }
 
-    // Delete invoice items.
+    // Delete invoice items. @todo delete on remote and recalculate totals.
     $( '.post-type-wpi_invoice' ).on( 'click', '.getpaid-item-actions .dashicons-trash', function(e) {
         e.preventDefault();
 
-        $( this ).closest( '.getpaid-invoice-item' ).remove()
+        // Block the metabox.
+        wpinvBlock( '#wpinv-items .inside' )
 
-        $( '.getpaid-invoice-items-inner' ).removeClass( 'no-items has-items' )
+        // Item details.
+        var inputs = $( this ).closest( '.getpaid-invoice-item' ).data( 'inputs' )
 
-        if ( $( 'tr.getpaid-invoice-item' ).length ) {
-            $( '.getpaid-invoice-items-inner' ).addClass( 'has-items' )
-        } else {
-            $( '.getpaid-invoice-items-inner' ).addClass( 'no-items' )
+        // Remove the item from the invoice.
+        var data = {
+            action: 'wpinv_remove_invoice_item',
+            post_id: $('#post_ID').val(),
+            _ajax_nonce: WPInv_Admin.wpinv_nonce,
+            item_id: inputs['item-id'],
         }
+
+        $.post( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+
+                if ( response.success ) {
+
+                    $( this ).closest( '.getpaid-invoice-item' ).remove()
+
+                    $( '.getpaid-invoice-items-inner' ).removeClass( 'no-items has-items' )
+
+                    if ( $( 'tr.getpaid-invoice-item' ).length ) {
+                        $( '.getpaid-invoice-items-inner' ).addClass( 'has-items' )
+                    } else {
+                        $( '.getpaid-invoice-items-inner' ).addClass( 'no-items' )
+                    }
+
+                    recalculateTotals()
+                }
+
+            })
+
+            .always( function( response ) {
+                wpinvUnblock( '#wpinv-items .inside' );
+            })
 
     })
 
@@ -584,6 +640,8 @@ jQuery(function($) {
                     if ( response.data.alert ) {
                         alert( response.data.alert )
                     }
+
+                    recalculateTotals()
                 }
 
             })
@@ -592,6 +650,63 @@ jQuery(function($) {
                 wpinvUnblock( '#wpinv-items .inside' );
             })
     } )
+
+    // Recalculate invoice totals.
+    function recalculateTotals() {
+
+        // Prepare arguments.
+        var data = {
+            country: $( '#wpinv_country' ).val(),
+            state: $( '#wpinv_state' ).val(),
+            currency: $( '#wpinv_currency' ).val(),
+            taxes: $( '#wpinv_taxable:checked' ).length,
+            action: 'wpinv_recalculate_invoice_totals',
+            post_id: $('#post_ID').val(),
+            _ajax_nonce: WPInv_Admin.wpinv_nonce,
+        }
+
+        // Block the metabox.
+        wpinvBlock( '#wpinv-items .inside' )
+
+        $.post( WPInv_Admin.ajax_url, data )
+
+            .done( function( response ) {
+
+                if ( response.success ) {
+
+                    var totals = response.data.totals
+
+                    $.each( totals, function( key, value ) {
+                        $( 'tr.getpaid-totals-' + key ).find('.value').html( value )
+                    } )
+
+                    if ( response.data.alert ) {
+                        alert( response.data.alert )
+                    }
+                }
+
+            })
+
+            .always( function( response ) {
+                wpinvUnblock( '#wpinv-items .inside' );
+            })
+
+    }
+    $( '#wpinv-items .recalculate-totals-button' ).on( 'click', function( e ) {
+        e.preventDefault()
+        recalculateTotals()
+    } )
+
+    // Prevent saving an invoice if there are no items.
+    $( '.post-type-wpi_invoice [name="post"] #submitpost [type="submit"]' ).on( 'click', function(e) {
+
+        if ( $( '.getpaid-invoice-item' ).length < 1) {
+            $( 'getpaid-invoice-item-actions' ).focus()
+            alert( WPInv_Admin.emptyInvoice );
+            return false;
+        }
+
+    });
 
     var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
     var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
@@ -739,13 +854,6 @@ jQuery(function($) {
         }
     };
     wpinv_meta_boxes_notes.init();
-    $('.post-type-wpi_invoice [name="post"] #submitpost [type="submit"]').on('click', function(e) {
-        if (parseInt($(document.body).find('.wpinv-line-items > .item').length) < 1) {
-            alert(WPInv_Admin.emptyInvoice);
-            $('#wpinv_invoice_item').focus();
-            return false;
-        }
-    });
     var invDetails = jQuery('#gdmbx2-metabox-wpinv_details').html();
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
@@ -908,29 +1016,10 @@ jQuery(function($) {
     var WPInv = {
         init: function() {
             this.preSetup();
-            this.remove_item();
-            this.add_item();
-            this.recalculateTotals();
             this.setup_tools();
         },
         preSetup: function() {
-            $('.wpiDatepicker').each(function(e) {
-                var $this = $(this);
-                var args = {};
-                if ($this.attr('data-changeMonth')) {
-                    args.changeMonth = true;
-                }
-                if ($this.attr('data-changeYear')) {
-                    args.changeYear = true;
-                }
-                if ($this.attr('data-dateFormat')) {
-                    args.dateFormat = $this.attr('data-dateformat');
-                }
-                if ($this.attr('data-minDate')) {
-                    args.minDate = $this.attr('data-minDate');
-                }
-                $(this).datepicker(args);
-            });
+            
             var wpinvColorPicker = $('.wpinv-color-picker');
             if (wpinvColorPicker.length) {
                 wpinvColorPicker.wpColorPicker();
@@ -958,362 +1047,7 @@ jQuery(function($) {
                 });
                 return false;
             });
-            
-            $('#wpinv-apply-code').on('click', function(e) {
-                e.preventDefault();
-                var $this = $(this);
-                var $form = $(this).closest('form[name="post"]');
-                var invoice_id = parseInt($form.find('input#post_ID').val());
-                if (!invoice_id > 0) {
-                    return false;
-                }
-                
-                if (!parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0) {
-                    alert(WPInv_Admin.emptyInvoice);
-                    $('#wpinv_invoice_item').focus();
-                    return false;
-                }
-                
-                var discount_code = $('#wpinv_discount', $form).val();
-                
-                if (!discount_code) {
-                    $('#wpinv_discount', $form).focus();
-                    return false;
-                }
-                
-                $this.attr('disabled', true);
-                $this.after('<span class="wpi-refresh">&nbsp;&nbsp;<i class="fa fa-spin fa-refresh"></i></span>');
 
-                var data = {
-                    action: 'wpinv_admin_apply_discount',
-                    invoice_id: invoice_id,
-                    code: discount_code,
-                    _nonce: WPInv_Admin.wpinv_nonce
-                };
-                
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    var msg, success;
-                    if (response && typeof response == 'object') {
-                        if (response.success === true) {
-                            success = true;
-                            
-                            $('#wpinv_discount', $form).attr('readonly', true);
-                            $this.removeClass('wpi-inlineb').addClass('wpi-hide');
-                            $('#wpinv-remove-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
-                        }
-                        
-                        if (response.msg) {
-                            msg = response.msg;
-                        }
-                    }
-                    
-                    $this.attr('disabled', false);
-                    $this.closest('div').find('.wpi-refresh').remove();
-                    
-                    if (success) {
-                        console.log(success);
-                        window.wpiConfirmed = true;
-                        $('#wpinv-recalc-totals').click();
-                        window.wpiConfirmed = false;
-                    }
-                    
-                    if (msg) {
-                        alert(msg);
-                    }
-                });
-            });
-            
-            $('#wpinv-remove-code').on('click', function(e) {
-                e.preventDefault();
-                var $this = $(this);
-                var $form = $(this).closest('form[name="post"]');
-                var invoice_id = parseInt($form.find('input#post_ID').val());
-                var discount_code = $('#wpinv_discount', $form).val();
-                if (!invoice_id > 0) {
-                    return false;
-                }
-                
-                if (!invoice_id > 0 || !parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0 || !discount_code) {
-                    $this.removeClass('wpi-inlineb').addClass('wpi-hide');
-                    $('#wpinv_discount', $form).attr('readonly', false).val('');
-                    $('#wpinv-apply-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
-                    return false;
-                }
-                
-                $this.attr('disabled', true);
-                $this.after('<span class="wpi-refresh">&nbsp;&nbsp;<i class="fa fa-spin fa-refresh"></i></span>');
-
-                var data = {
-                    action: 'wpinv_admin_remove_discount',
-                    invoice_id: invoice_id,
-                    code: discount_code,
-                    _nonce: WPInv_Admin.wpinv_nonce
-                };
-                
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    var msg, success;
-                    if (response && typeof response == 'object') {
-                        if (response.success === true) {
-                            success = true;
-                            
-                            $this.removeClass('wpi-inlineb').addClass('wpi-hide');
-                            $('#wpinv_discount', $form).attr('readonly', false).val('');
-                            $('#wpinv-apply-code', $form).removeClass('wpi-hide').addClass('wpi-inlineb');
-                        }
-                        
-                        if (response.msg) {
-                            msg = response.msg;
-                        }
-                    }
-                    
-                    $this.attr('disabled', false);
-                    $this.closest('div').find('.wpi-refresh').remove();
-                    
-                    if (success) {
-                        window.wpiConfirmed = true;
-                        $('#wpinv-recalc-totals').click();
-                        window.wpiConfirmed = false;
-                    }
-                    
-                    if (msg) {
-                        alert(msg);
-                    }
-                });
-            });
-        },
-        remove_item: function() {
-            // Remove a remove from a purchase
-            $('#wpinv_items').on('click', '.wpinv-item-remove', function(e) {
-                var item = $(this).closest('.item');
-                var count = $(document.body).find('.wpinv-line-items > .item').length;
-                var qty = parseInt($('.qty', item).data('quantity'));
-                qty = qty > 0 ? qty : 1;
-                if (count === 1 && qty == 1) {
-                    //alert(WPInv_Admin.OneItemMin);
-                    //return false;
-                }
-                if (confirm(WPInv_Admin.DeleteInvoiceItem)) {
-                    e.preventDefault();
-                    var metaBox = $('#wpinv_items_wrap');
-                    var gdTotals = $('.wpinv-totals', metaBox);
-                    var item_id = item.data('item-id');
-                    var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
-                    var index = $(item).index();
-                    if (!(item_id > 0 && invoice_id > 0)) {
-                        return false;
-                    }
-                    wpinvBlock(metaBox);
-                    var data = {
-                        action: 'wpinv_remove_invoice_item',
-                        invoice_id: invoice_id,
-                        item_id: item_id,
-                        index: index,
-                        _nonce: WPInv_Admin.invoice_item_nonce
-                    };
-                    $.post(WPInv_Admin.ajax_url, data, function(response) {
-                        item.remove();
-                        wpinvUnblock(metaBox);
-                        if (response && typeof response == 'object') {
-                            if (response.success === true) {
-                                WPInv.update_inline_items(response.data, metaBox, gdTotals);
-                            } else if (response.msg) {
-                                alert(response.msg);
-                            }
-                        }
-                    });
-                }
-            });
-        },
-        add_item: function() {
-            // Add a New Item from the Add Items to Items Box
-            $('.wpinv-actions').on('click', '#wpinv-add-item', function(e) {
-                e.preventDefault();
-                var metaBox = $('#wpinv_items_wrap');
-                var gdTotals = $('.wpinv-totals', metaBox);
-                var item_id = $('#wpinv_invoice_item').val();
-                var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
-                if (!(item_id > 0 && invoice_id > 0)) {
-                    return false;
-                }
-                wpinvBlock(metaBox);
-                var data = {
-                    action: 'wpinv_add_invoice_item',
-                    invoice_id: invoice_id,
-                    item_id: item_id,
-                    _nonce: WPInv_Admin.invoice_item_nonce
-                };
-                var user_id, country, state;
-                if (user_id = $('[name="post_author_override"]').val()) {
-                    data.user_id = user_id;
-                }
-                if (parseInt($('#wpinv_new_user').val()) == 1) {
-                    data.new_user = true;
-                }
-                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
-                    data.country = country;
-                }
-                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
-                    data.state = state;
-                }
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    wpinvUnblock(metaBox);
-                    if (response && typeof response == 'object') {
-                        if (response.success === true) {
-                            WPInv.update_inline_items(response.data, metaBox, gdTotals);
-                        } else if (response.msg) {
-                            alert(response.msg);
-                        }
-                    }
-                });
-            });
-            $('.wpinv-actions').on('click', '#wpinv-new-item', function(e) {
-                e.preventDefault();
-                var $quickAdd = $('#wpinv-quick-add');
-                if ($quickAdd.is(':visible')) {
-                    $quickAdd.slideUp('fast');
-                } else {
-                    $quickAdd.slideDown('fast');
-                }
-                return false;
-            });
-            $('#wpinv-quick-add').on('click', '#wpinv-cancel-item', function(e) {
-                e.preventDefault();
-                var $quickAdd = $('#wpinv-quick-add');
-                if ($quickAdd.is(':visible')) {
-                    $quickAdd.slideUp('fast');
-                } else {
-                    $quickAdd.slideDown('fast');
-                }
-                $('[name="_wpinv_quick[name]"]', $quickAdd).val('');
-                $('#_wpinv_quickexcerpt', $quickAdd).val('');
-                $('[name="_wpinv_quick[price]"]', $quickAdd).val('');
-                $('[name="_wpinv_quick[qty]"]', $quickAdd).val(1);
-                $('[name="_wpinv_quick[type]"]', $quickAdd).prop('selectedIndex',0);
-                return false;
-            });
-            $('#wpinv-quick-add').on('click', '#wpinv-save-item', function(e) {
-                e.preventDefault();
-                var metaBox = $('#wpinv_items_wrap');
-                var gdTotals = $('.wpinv-totals', metaBox);
-                var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
-                var item_title = $('[name="_wpinv_quick[name]"]', metaBox).val();
-                var item_price = $('[name="_wpinv_quick[price]"]', metaBox).val();
-                if (!(invoice_id > 0)) {
-                    return false;
-                }
-                if (!item_title) {
-                    $('[name="_wpinv_quick[name]"]', metaBox).focus();
-                    return false;
-                }
-                if (item_price === '') {
-                    $('[name="_wpinv_quick[price]"]', metaBox).focus();
-                    return false;
-                }
-                wpinvBlock(metaBox);
-                var data = {
-                    action: 'wpinv_create_invoice_item',
-                    invoice_id: invoice_id,
-                    _nonce: WPInv_Admin.invoice_item_nonce
-                };
-                var fields = $('[name^="_wpinv_quick["]');
-                for (var i in fields) {
-                    data[fields[i]['name']] = fields[i]['value'];
-                }
-                var user_id, country, state;
-                if (user_id = $('[name="post_author_override"]').val()) {
-                    data.user_id = user_id;
-                }
-                if (parseInt($('#wpinv_new_user').val()) == 1) {
-                    data.new_user = true;
-                }
-                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
-                    data.country = country;
-                }
-                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
-                    data.state = state;
-                }
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    wpinvUnblock(metaBox);
-                    if (response && typeof response == 'object') {
-                        if (response.success === true) {
-                            $('[name="_wpinv_quick[name]"]', metaBox).val('');
-                            $('[name="_wpinv_quick[price]"]', metaBox).val('');
-                            $('#_wpinv_quickexcerpt', metaBox).val('');
-                            WPInv.update_inline_items(response.data, metaBox, gdTotals);
-                            $('#wpinv-quick-add').slideUp('slow');
-                        } else if (response.msg) {
-                            alert(response.msg);
-                        }
-                    }
-                });
-            });
-        },
-        recalculateTotals: function() {
-            $('.wpinv-actions').on('click', '#wpinv-recalc-totals', function(e) {
-                e.preventDefault();
-                var metaBox = $('#wpinv_items_wrap');
-                var gdTotals = $('.wpinv-totals', metaBox);
-                var invoice_id = metaBox.closest('form[name="post"]').find('input#post_ID').val();
-                var disable_taxes = 0
-
-                if ( $('#wpinv_taxable:checked').length > 0 ) {
-                    disable_taxes = 1
-                }
-
-                if (!invoice_id > 0) {
-                    return false;
-                }
-                if (!parseInt($(document.body).find('.wpinv-line-items > .item').length) > 0) {
-                    if (!window.wpiConfirmed) {
-                        alert(WPInv_Admin.emptyInvoice);
-                        $('#wpinv_invoice_item').focus();
-                    }
-                    return false;
-                }
-                if (!window.wpiConfirmed && !window.confirm(WPInv_Admin.confirmCalcTotals)) {
-                    return false;
-                }
-                wpinvBlock(metaBox);
-                var data = {
-                    action: 'wpinv_admin_recalculate_totals',
-                    invoice_id: invoice_id,
-                    _nonce: WPInv_Admin.wpinv_nonce,
-                    disable_taxes: disable_taxes,
-                };
-                var user_id, country, state;
-                if (user_id = $('[name="post_author_override"]').val()) {
-                    data.user_id = user_id;
-                }
-                if (parseInt($('#wpinv_new_user').val()) == 1) {
-                    data.new_user = true;
-                }
-                if (country = $('#wpinv-address [name="wpinv_country"]').val()) {
-                    data.country = country;
-                }
-                if (state = $('#wpinv-address [name="wpinv_state"]').val()) {
-                    data.state = state;
-                }
-                $.post(WPInv_Admin.ajax_url, data, function(response) {
-                    wpinvUnblock(metaBox);
-                    if (response && typeof response == 'object') {
-                        if (response.success === true) {
-                            WPInv.update_inline_items(response.data, metaBox, gdTotals);
-                        }
-                    }
-                });
-            });
-        },
-        update_inline_items: function(data, metaBox, gdTotals) {
-            if (data.discount > 0) {
-                data.discountf = '&ndash;' + data.discountf;
-            }
-            $('.wpinv-line-items', metaBox).html(data.items);
-            $('.subtotal .total', gdTotals).html(data.subtotalf);
-            $('.tax .total', gdTotals).html(data.taxf);
-            $('.discount .total', gdTotals).html(data.discountf);
-            $('.total .total', gdTotals).html(data.totalf);
-            $('#wpinv-details input[name="wpinv_discount"]').val(data.discount);
-            $('#wpinv-details input[name="wpinv_tax"]').val(data.tax);
         },
 
         setup_tools: function() {

@@ -24,6 +24,13 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	protected $quantity = 1;
 
 	/**
+	 * Stores the item meta.
+	 *
+	 * @var array
+	 */
+	protected $meta = array();
+
+	/**
 	 * Is this item required?
 	 *
 	 * @var int
@@ -145,10 +152,28 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		if ( 'view' == $context ) {
-			return apply_filters( 'getpaid_payment_form_item_quanity', $quantity, $this );
+			return apply_filters( 'getpaid_payment_form_item_quantity', $quantity, $this );
 		}
 
 		return $quantity;
+
+	}
+
+	/**
+	 * Get the item meta data.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return meta
+	 */
+	public function get_item_meta( $context = 'view' ) {
+		$meta = $this->meta;
+
+		if ( 'view' == $context ) {
+			return apply_filters( 'getpaid_payment_form_item_meta', $meta, $this );
+		}
+
+		return $meta;
 
 	}
 
@@ -222,8 +247,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ),
 				'item-quantity'    => absint( $this->get_quantity() ),
-				'item-price'       => wpinv_price( $this->get_price() ),
-				'item-total'       => wpinv_price( $this->get_sub_total() ),
+				'item-price'       => wpinv_price( wpinv_format_amount ( $this->get_price() ) ),
+				'item-total'       => wpinv_price( wpinv_format_amount( $this->get_sub_total() ) ),
 			),
 			'inputs' => array(
 				'item-id'          => $this->get_id(),
@@ -254,7 +279,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'quantity'          => (int) $this->get_quantity(),
 			'discount'          => $this->item_discount,
 			'subtotal'          => $this->get_sub_total(),
-			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount
+			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount,
+			'meta'              => $this->get_item_meta(),
         );
 	}
 
@@ -282,6 +308,16 @@ class GetPaid_Form_Item  extends WPInv_Item {
 
 		$this->quantity = $quantity;
 
+	}
+
+	/**
+	 * Set the item meta data.
+	 *
+	 * @since 1.0.19
+	 * @param  array $meta The item meta data.
+	 */
+	public function set_item_meta( $meta ) {
+		$this->meta = maybe_unserialize( $meta );
 	}
 
 	/**

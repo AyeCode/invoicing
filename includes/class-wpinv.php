@@ -167,6 +167,7 @@ class WPInv_Plugin {
 			wpinv_error_log( $e->getMessage(), '', __FILE__, 149, true );
         }
 
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-getpaid-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-post-types.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-invoice.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-discount.php' );
@@ -218,15 +219,13 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/gateways/manual.php' );
         
         if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+            GetPaid_Post_Types_Admin::init();
+
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
-            require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-meta-boxes.php' );
             //require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-recurring-admin.php' );
-            require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-details.php' );
-            require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-items.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
-            require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-address.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php' );
             require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );

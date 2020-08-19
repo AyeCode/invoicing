@@ -792,10 +792,10 @@ abstract class GetPaid_Data {
 		if ( array_key_exists( $prop, $this->data ) ) {
 			if ( true === $this->object_read ) {
 				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
-					$this->changes[ $prop ] = $value;
+					$this->changes[ $prop ] = maybe_unserialize( $value );
 				}
 			} else {
-				$this->data[ $prop ] = $value;
+				$this->data[ $prop ] = maybe_unserialize( $value );
 			}
 		}
 	}
@@ -884,71 +884,4 @@ abstract class GetPaid_Data {
 		throw new Exception( $message, $code );
 	}
 
-	/**
-	 * Handle the status transition.
-	 */
-	protected function status_transition() {
-		$status_transition = $this->status_transition;
-
-		// Reset status transition variable.
-		$this->status_transition = false;
-
-		if ( $status_transition ) {
-			try {
-
-				$object = $this->object_type;
-
-				if ( 'invoice' == $object ) {
-					$this->get_type();
-				}
-
-				do_action( "wpinv_{$object}_status_" . $status_transition['to'], $this->get_id(), $this );
-
-				if ( ! empty( $status_transition['from'] ) ) {
-					/* translators: 1: old status 2: new status */
-					$transition_note = sprintf( __( 'Order status changed from %1$s to %2$s.', 'woocommerce' ), wc_get_order_status_name( $status_transition['from'] ), wc_get_order_status_name( $status_transition['to'] ) );
-
-					// Note the transition occurred.
-					$this->add_status_transition_note( $transition_note, $status_transition );
-
-					do_action( 'woocommerce_order_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
-					do_action( 'woocommerce_order_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
-
-					// Work out if this was for a payment, and trigger a payment_status hook instead.
-					if (
-						in_array( $status_transition['from'], apply_filters( 'woocommerce_valid_order_statuses_for_payment', array( 'pending', 'failed' ), $this ), true )
-						&& in_array( $status_transition['to'], wc_get_is_paid_statuses(), true )
-					) {
-						/**
-						 * Fires when the order progresses from a pending payment status to a paid one.
-						 *
-						 * @since 3.9.0
-						 * @param int Order ID
-						 * @param WC_Order Order object
-						 */
-						do_action( 'woocommerce_order_payment_status_changed', $this->get_id(), $this );
-					}
-				} else {
-					/* translators: %s: new order status */
-					$transition_note = sprintf( __( 'Order status set to %s.', 'woocommerce' ), wc_get_order_status_name( $status_transition['to'] ) );
-
-					// Note the transition occurred.
-					$this->add_status_transition_note( $transition_note, $status_transition );
-				}
-			} catch ( Exception $e ) {
-				$logger = wc_get_logger();
-				$logger->error(
-					sprintf(
-						'Status transition of order #%d errored!',
-						$this->get_id()
-					),
-					array(
-						'order' => $this,
-						'error' => $e,
-					)
-				);
-				$this->add_order_note( __( 'Error during status transition.', 'woocommerce' ) . ' ' . $e->getMessage() );
-			}
-		}
-	}
 }

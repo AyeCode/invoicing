@@ -122,6 +122,7 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $discount->get_id() || ! $discount_object || $discount_object->post_type != 'wpi_discount' ) {
 			$discount->last_error = __( 'Invalid discount.', 'invoicing' );
+			$discount->set_id( 0 );
 			return false;
 		}
 

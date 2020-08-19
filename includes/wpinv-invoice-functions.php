@@ -27,7 +27,7 @@ function getpaid_get_invoice_post_types() {
  * Checks if this is an invocing post type.
  */
 function getpaid_is_invoice_post_type( $post_type ) {
-    return array_key_exists( $post_type, getpaid_get_invoice_post_types() );
+    return $post_type && array_key_exists( $post_type, getpaid_get_invoice_post_types() );
 }
 
 function wpinv_get_invoice_cart_id() {
@@ -2372,30 +2372,40 @@ function wpinv_mark_invoice_viewed() {
 add_action( 'template_redirect', 'wpinv_mark_invoice_viewed' );
 
 /**
- * @return WPInv_Subscription
+ * Fetch a subscription given an invoice.
+ *
+ * @return WPInv_Subscription|bool
  */
-function wpinv_get_subscription( $invoice, $by_parent = false ) {
+function wpinv_get_subscription( $invoice ) {
+
+    // Abort if we do not have an invoice.
     if ( empty( $invoice ) ) {
         return false;
     }
-    
-    if ( ! is_object( $invoice ) && is_scalar( $invoice ) ) {
-        $invoice = wpinv_get_invoice( $invoice );
-    }
-    
-    if ( !( is_object( $invoice ) && ! empty( $invoice->ID ) && $invoice->is_recurring() ) ) {
+
+    // Retrieve the invoice.
+    $invoice = new WPInv_Invoice( $invoice );
+
+    // Ensure it is a recurring invoice.
+    if ( ! $invoice->is_recurring() ) {
         return false;
     }
-    
-    $invoice_id = ! $by_parent && ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
-    
-    $subs_db    = new WPInv_Subscriptions_DB;
-    $subs       = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_id, 'number' => 1 ) );
-    
+
+    // Fetch the subscription handler.
+    $subs_db    = new WPInv_Subscriptions_DB();
+
+    // Fetch the parent in case it is a renewal.
+    if ( $invoice->is_renewal() ) {
+        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_parent_id(), 'number' => 1 ) );
+    } else {
+        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_id(), 'number' => 1 ) );
+    }
+
+    // Return the subscription if it exists.
     if ( ! empty( $subs ) ) {
         return reset( $subs );
     }
-    
+
     return false;
 }
 

@@ -75,7 +75,7 @@ class WPInv_Invoice extends GetPaid_Data {
         'gateway'              => 'none',
         'transaction_id'       => '',
         'currency'             => '',
-        'disable_taxes'        => 0,
+        'disable_taxes'        => false,
 		'subscription_id'      => null,
 		'is_viewed'            => false,
 		'email_cc'             => '',
@@ -1543,7 +1543,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
     public function get_gateway_title() {
         $title =  wpinv_get_gateway_checkout_label( $this->get_gateway() );
-        return apply_filters( 'wpinv_gateway_title', $title, $this->ID, $this );
+        return apply_filters( 'wpinv_gateway_title', $title, $this->get_id(), $this );
     }
 
     /**
@@ -1828,7 +1828,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
 	 */
 	public function set_parent_id( $value ) {
-		if ( $value && ( $value === $this->get_id() || ! get_post( $value ) ) ) {
+		if ( $value && ( $value === $this->get_id() ) ) {
 			return;
 		}
 		$this->set_prop( 'parent_id', absint( $value ) );
@@ -1853,7 +1853,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_date_created( $value ) {
         $date = strtotime( $value );
 
-        if ( $date && $date !== '0000-00-00 00:00:00' ) {
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'date_created', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
@@ -1872,7 +1872,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_due_date( $value ) {
         $date = strtotime( $value );
 
-        if ( $date && $date !== '0000-00-00 00:00:00' ) {
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'due_date', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
@@ -1902,7 +1902,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_completed_date( $value ) {
         $date = strtotime( $value );
 
-        if ( $date && $date !== '0000-00-00 00:00:00'  ) {
+        if ( $date && $value !== '0000-00-00 00:00:00'  ) {
             $this->set_prop( 'completed_date', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
@@ -1932,7 +1932,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_date_modified( $value ) {
         $date = strtotime( $value );
 
-        if ( $date && $date !== '0000-00-00 00:00:00' ) {
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'date_modified', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
@@ -1962,7 +1962,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_type( $value ) {
         $type = sanitize_text_field( str_replace( 'wpi_', '', $value ) );
 		$this->set_prop( 'type', $type );
-    }
+	}
 
     /**
 	 * Set the invoice post type.
@@ -1972,6 +1972,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_post_type( $value ) {
         if ( getpaid_is_invoice_post_type( $value ) ) {
+			$this->set_type( $value );
             $this->set_prop( 'post_type', $value );
         }
     }
@@ -2068,7 +2069,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  int $value New author.
 	 */
 	public function set_author( $value ) {
-		$this->set_prop( 'author', (int) $value );
+		$user = get_user_by( 'id', (int) $value );
+
+		if ( $user && $user->ID ) {
+			$this->set_prop( 'author', $user->ID );
+			$this->set_prop( 'email', $user->user_email );
+		}
+		
     }
 
     /**
@@ -2759,6 +2766,16 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_prop( 'currency', $value );
     }
 
+	/**
+	 * Set whether to disable taxes.
+	 *
+	 * @since 1.0.19
+	 * @param  bool $value value.
+	 */
+	public function set_disable_taxes( $value ) {
+		$this->set_prop( 'disable_taxes', (bool) $value );
+	}
+
     /**
 	 * Set the subscription id.
 	 *
@@ -2804,7 +2821,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if this is a taxable invoice.
      */
     public function is_taxable() {
-        return (int) $this->disable_taxes === 0;
+        return $this->get_disable_taxes();
 	}
 
 	/**

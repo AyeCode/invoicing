@@ -79,6 +79,38 @@ function wpinv_store_address() {
     return apply_filters( 'wpinv_store_address', $address );
 }
 
+/**
+ * Saves a user address.
+ * 
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_save_invoice_user_address( $invoice ) {
+
+    $address_fields = array(
+        'first_name',
+        'last_name',
+        'company',
+        'vat_number',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'country',
+        'zip'
+    );
+
+    foreach ( $address_fields as $field ) {
+        $method = "get_{$field}";
+        $value = $invoice->$method();
+
+        // Only save if it is not empty.
+        if ( ! empty( $value ) ) {
+            update_user_meta( $invoice->get_user_id(), '_wpinv_' . $field, $value );
+        }
+    }
+
+}
+
 function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     global $wpi_userID;
     
@@ -87,12 +119,10 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     }
     
     $address_fields = array(
-        ///'user_id',
         'first_name',
         'last_name',
         'company',
         'vat_number',
-        ///'email',
         'phone',
         'address',
         'city',
