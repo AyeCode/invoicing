@@ -4,67 +4,6 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
-add_filter( 'manage_wpi_payment_form_posts_columns', 'wpinv_payment_form_columns' );
-function wpinv_payment_form_columns( $existing_columns ) {
-    $date = $existing_columns['date'];
-    unset( $existing_columns['date'] );
-    $existing_columns['shortcode'] = __( 'Shortcode', 'invoicing' );
-    $existing_columns['date'] = $date;
-    return $existing_columns;
-}
-
-add_action( 'manage_wpi_payment_form_posts_custom_column', 'wpinv_payment_form_custom_column' );
-function wpinv_payment_form_custom_column( $column ) {
-    global $post;
-
-    if( 'shortcode' == $column ) {
-        WPInv_Meta_Box_Payment_Form::output_shortcode( $post );
-    }
-
-}
-
-function wpinv_filter_discount_post_state( $post_states, $post ) {
-
-    if ( 'wpi_discount' == $post->post_type ) {
-        $discount = new WPInv_Discount( $post );
-
-        $status = $discount->is_expired() ? 'expired' : $discount->get_status();
-
-        if ( $status != 'publish' ) {
-            return array(
-                'discount_status' => wpinv_discount_status( $status ),
-            );
-        }
-
-        return array();
-        
-    }
-
-    return $post_states;
-
-}
-add_filter( 'display_post_states', 'wpinv_filter_discount_post_state', 10, 2 );
-
-add_filter( 'manage_wpi_discount_posts_columns', 'wpinv_discount_columns' );
-function wpinv_discount_columns( $columns ) {
-    
-    if ( isset( $columns['date'] ) ) {
-        unset( $columns['date'] );
-    }
-
-    if ( isset( $columns['title'] ) ) {
-        $columns['title'] = __( 'Name', 'invoicing' );
-    }
-
-    $columns['code']        = __( 'Code', 'invoicing' );
-    $columns['amount']      = __( 'Amount', 'invoicing' );
-    $columns['usage']       = __( 'Usage / Limit', 'invoicing' );
-    $columns['start_date']  = __( 'Start Date', 'invoicing' );
-    $columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
-
-    return $columns;
-}
-
 add_action( 'manage_wpi_discount_posts_custom_column', 'wpinv_discount_custom_column' );
 function wpinv_discount_custom_column( $column ) {
     global $post;
@@ -83,7 +22,7 @@ function wpinv_discount_custom_column( $column ) {
         break;
         case 'start_date' :
             if ( $discount->has_start_date() ) {
-                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $discount->get_start_date() ) );
+                $value = date_i18n( get_option( 'date_format' ), strtotime( $discount->get_start_date() ) );
             } else {
                 $value = '&mdash;';
             }
@@ -92,7 +31,7 @@ function wpinv_discount_custom_column( $column ) {
         break;
         case 'expiry_date' :
             if ( $discount->has_expiration_date() ) {
-                $value = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), strtotime( $discount->get_expiration_date() ) );
+                $value = date_i18n( get_option( 'date_format' ), strtotime( $discount->get_expiration_date() ) );
             } else {
                 $value = __( 'Never', 'invoicing' );
             }
@@ -275,93 +214,6 @@ function wpinv_request( $vars ) {
                     )
                 );
             }
-        }
-    } else if ( 'wpi_item' == $typenow ) {
-        // Check if 'orderby' is set to "price"
-        if ( isset( $vars['orderby'] ) && 'price' == $vars['orderby'] ) {
-            $vars = array_merge(
-                $vars,
-                array(
-                    'meta_key' => '_wpinv_price',
-                    'orderby'  => 'meta_value_num'
-                )
-            );
-        }
-
-        // Check if "orderby" is set to "vat_rule"
-        if ( isset( $vars['orderby'] ) && 'vat_rule' == $vars['orderby'] ) {
-            $vars = array_merge(
-                $vars,
-                array(
-                    'meta_key' => '_wpinv_vat_rule',
-                    'orderby'  => 'meta_value'
-                )
-            );
-        }
-
-        // Check if "orderby" is set to "vat_class"
-        if ( isset( $vars['orderby'] ) && 'vat_class' == $vars['orderby'] ) {
-            $vars = array_merge(
-                $vars,
-                array(
-                    'meta_key' => '_wpinv_vat_class',
-                    'orderby'  => 'meta_value'
-                )
-            );
-        }
-
-        // Check if "orderby" is set to "type"
-        if ( isset( $vars['orderby'] ) && 'type' == $vars['orderby'] ) {
-            $vars = array_merge(
-                $vars,
-                array(
-                    'meta_key' => '_wpinv_type',
-                    'orderby'  => 'meta_value'
-                )
-            );
-        }
-
-        // Check if "orderby" is set to "recurring"
-        if ( isset( $vars['orderby'] ) && 'recurring' == $vars['orderby'] ) {
-            $vars = array_merge(
-                $vars,
-                array(
-                    'meta_key' => '_wpinv_is_recurring',
-                    'orderby'  => 'meta_value'
-                )
-            );
-        }
-
-        $meta_query = !empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();
-        // Filter vat rule type
-        if ( isset( $_GET['vat_rule'] ) && $_GET['vat_rule'] !== '' ) {
-            $meta_query[] = array(
-                    'key'   => '_wpinv_vat_rule',
-                    'value' => sanitize_text_field( $_GET['vat_rule'] ),
-                    'compare' => '='
-                );
-        }
-
-        // Filter vat class
-        if ( isset( $_GET['vat_class'] ) && $_GET['vat_class'] !== '' ) {
-            $meta_query[] = array(
-                    'key'   => '_wpinv_vat_class',
-                    'value' => sanitize_text_field( $_GET['vat_class'] ),
-                    'compare' => '='
-                );
-        }
-
-        // Filter item type
-        if ( isset( $_GET['type'] ) && $_GET['type'] !== '' ) {
-            $meta_query[] = array(
-                    'key'   => '_wpinv_type',
-                    'value' => sanitize_text_field( $_GET['type'] ),
-                    'compare' => '='
-                );
-        }
-
-        if ( !empty( $meta_query ) ) {
-            $vars['meta_query'] = $meta_query;
         }
     } else if ( 'wpi_discount' == $typenow ) {
         $meta_query = !empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();

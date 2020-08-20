@@ -26,12 +26,29 @@ class GetPaid_Post_Types_Admin {
 		// Filter post actions.
 		add_filter( 'post_row_actions', 'GetPaid_Post_Types_Admin::post_row_actions', 10, 2 );
 
-		// Table columns.
+		// Invoice table columns.
 		add_filter( 'manage_wpi_invoice_posts_columns', array( __CLASS__, 'invoice_columns' ), 100 );
 		add_action( 'manage_wpi_invoice_posts_custom_column', array( __CLASS__, 'display_invoice_columns' ), 10, 2 );
 
+		// Items table columns.
+		add_filter( 'manage_wpi_item_posts_columns', array( __CLASS__, 'item_columns' ), 100 );
+		add_filter( 'manage_edit-wpi_item_sortable_columns', array( __CLASS__, 'sortable_item_columns' ), 20 );
+		add_action( 'manage_wpi_item_posts_custom_column', array( __CLASS__, 'display_item_columns' ), 10, 2 );
+		add_action( 'restrict_manage_posts', array( __CLASS__, 'add_item_filters' ), 100 );
+		add_action( 'parse_query', array( __CLASS__, 'filter_item_query' ), 100 );
+		add_action( 'request', array( __CLASS__, 'reorder_items' ), 100 );
+
+		// Payment forms columns.
+		add_filter( 'manage_wpi_payment_form_posts_columns', array( __CLASS__, 'payment_form_columns' ), 100 );
+		add_action( 'manage_wpi_payment_form_posts_custom_column', array( __CLASS__, 'display_payment_form_columns' ), 10, 2 );
+		add_filter( 'display_post_states', array( __CLASS__, 'filter_payment_form_state' ), 10, 2 );
+
+		// Discount table columns.
+		add_filter( 'manage_wpi_discount_posts_columns', array( __CLASS__, 'discount_columns' ), 100 );
+
 		// Deleting posts.
 		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
+		add_filter( 'display_post_states', array( __CLASS__, 'filter_discount_state' ), 10, 2 );
 	}
 
 	/**
@@ -237,6 +254,451 @@ class GetPaid_Post_Types_Admin {
 				
 				break;
 		}
+
+	}
+
+	/**
+	 * Returns an array of payment forms table columns.
+	 */
+	public static function payment_form_columns( $columns ) {
+
+		$columns = array(
+			'cb'                => $columns['cb'],
+			'title'             => __( 'Name', 'invoicing' ),
+			'shortcode'         => __( 'Shortcode', 'invoicing' ),
+			'earnings'          => __( 'Revenue', 'invoicing' ),
+			'refunds'           => __( 'Refunded', 'invoicing' ),
+			'items'             => __( 'Items', 'invoicing' ),
+			'date'              => __( 'Date', 'invoicing' ),
+		);
+
+		return apply_filters( 'wpi_payment_form_table_columns', $columns );
+
+	}
+
+	/**
+	 * Displays payment form table columns.
+	 */
+	public static function display_payment_form_columns( $column_name, $post_id ) {
+
+		// Retrieve the payment form.
+		$form = new GetPaid_Payment_Form( $post_id );
+
+		switch ( $column_name ) {
+
+			case 'earnings' :
+				echo wpinv_price( wpinv_format_amount( $form->get_earned() ) );
+				break;
+
+			case 'refunds' :
+				echo wpinv_price( wpinv_format_amount( $form->get_refunded() ) );
+				break;
+
+			case 'refunds' :
+				echo wpinv_price( wpinv_format_amount( $form->get_refunded() ) );
+				break;
+
+			case 'shortcode' :
+
+				if ( $form->is_default() ) {
+					echo '&mdash;';
+				} else {
+					echo '<input onClick="this.select()" type="text" value="[getpaid form=' . esc_attr( $form->get_id() ) . ']" style="width: 100%;" readonly/>';
+				}
+
+				break;
+
+			case 'items' :
+
+				$items = $form->get_items();
+
+				if ( $form->is_default() || empty( $items ) ) {
+					echo '&mdash;';
+					return;
+				}
+
+				$_items = array();
+
+				foreach ( $items as $item ) {
+					$url = $item->get_edit_url();
+
+					if ( empty( $url ) ) {
+						$_items[] = sanitize_text_field( $item->get_name() );
+					} else {
+						$_items[] = sprintf(
+							'<a href="%s">%s</a>',
+							esc_url( $url ),
+							sanitize_text_field( $item->get_name() )
+						);
+					}
+
+				}
+
+				echo implode( '<br>', $_items );
+
+				break;
+
+		}
+
+	}
+
+	/**
+	 * Filters post states.
+	 */
+	public static function filter_payment_form_state( $post_states, $post ) {
+
+		if ( 'wpi_payment_form' == $post->post_type && wpinv_get_default_payment_form() == $post->ID ) {
+			$post_states[ 'default_form' ] = __( 'Default Payment Form', 'invoicing' );
+		}
+	
+		return $post_states;
+
+	}
+
+	/**
+	 * Returns an array of coupon table columns.
+	 */
+	public static function discount_columns( $columns ) {
+
+		$columns = array(
+			'cb'                => $columns['cb'],
+			'title'             => __( 'Name', 'invoicing' ),
+			'code'              => __( 'Code', 'invoicing' ),
+			'amount'            => __( 'Amount', 'invoicing' ),
+			'usage'             => __( 'Usage / Limit', 'invoicing' ),
+			'start_date'        => __( 'Start Date', 'invoicing' ),
+			'expiry_date'       => __( 'Expiry Date', 'invoicing' ),
+		);
+
+	
+		$columns['code']        = __( 'Code', 'invoicing' );
+		$columns['amount']      = __( 'Amount', 'invoicing' );
+		$columns['usage']       = __( 'Usage / Limit', 'invoicing' );
+		$columns['start_date']  = __( 'Start Date', 'invoicing' );
+		$columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
+
+		return apply_filters( 'wpi_discount_table_columns', $columns );
+	}
+
+	/**
+	 * Filters post states.
+	 */
+	public static function filter_discount_state( $post_states, $post ) {
+
+		if ( 'wpi_discount' == $post->post_type ) {
+
+			$discount = new WPInv_Discount( $post );
+
+			$status = $discount->is_expired() ? 'expired' : $discount->get_status();
+
+			if ( $status != 'publish' ) {
+				return array(
+					'discount_status' => wpinv_discount_status( $status ),
+				);
+			}
+
+			return array();
+
+		}
+
+		return $post_states;
+
+	}
+
+	/**
+	 * Returns an array of items table columns.
+	 */
+	public static function item_columns( $columns ) {
+		global $wpinv_euvat;
+
+		$columns = array(
+			'cb'                => $columns['cb'],
+			'title'             => __( 'Name', 'invoicing' ),
+			'price'             => __( 'Price', 'invoicing' ),
+			'vat_rule'          => __( 'VAT rule', 'invoicing' ),
+			'vat_class'         => __( 'VAT class', 'invoicing' ),
+			'type'              => __( 'Type', 'invoicing' ),
+			'shortcode'         => __( 'Shortcode', 'invoicing' ),
+		);
+
+		if ( ! $wpinv_euvat->allow_vat_rules() ) {
+			unset( $columns['vat_rule'] );
+		}
+
+		if ( ! $wpinv_euvat->allow_vat_classes() ) {
+			unset( $columns['vat_class'] );
+		}
+
+		return apply_filters( 'wpi_item_table_columns', $columns );
+	}
+
+	/**
+	 * Returns an array of sortable items table columns.
+	 */
+	public static function sortable_item_columns( $columns ) {
+
+		return array_merge(
+			$columns,
+			array(
+				'price'     => 'price',
+				'vat_rule'  => 'vat_rule',
+				'vat_class' => 'vat_class',
+				'type'      => 'type',
+			)
+		);
+
+	}
+
+	/**
+	 * Displays items table columns.
+	 */
+	public static function display_item_columns( $column_name, $post_id ) {
+		global $wpinv_euvat;
+
+		$item = new WPInv_Item( $post_id );
+
+		switch ( $column_name ) {
+
+			case 'price' :
+
+				if ( ! $item->is_recurring() ) {
+					echo $item->get_the_price();
+					break;
+				}
+
+				$price = wp_sprintf(
+					__( '%s / %s', 'invoicing' ),
+					$item->get_the_price(),
+					WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_recurring_period(), $item->get_recurring_interval() )
+				);
+
+				if ( $item->get_the_price() == $item->get_the_initial_price() ) {
+					echo $price;
+					break;
+				}
+
+				echo $item->get_the_initial_price();
+
+				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), $price )  .'</span>';
+				break;
+
+			case 'vat_rule' :
+				echo $wpinv_euvat->item_rule_label( $item->get_id() );
+				break;
+
+			case 'vat_class' :
+				echo $wpinv_euvat->item_class_label( $item->get_id() );
+				break;
+
+			case 'shortcode' :
+				echo '<input onClick="this.select()" type="text" value="[getpaid item=' . esc_attr( $item->get_id() ) . ' button=\'Buy Now\']" style="width: 100%;" readonly/>';
+				break;
+
+			case 'type' :
+				echo wpinv_item_type( $item->get_id() ) . '<span class="meta">' . $item->get_custom_singular_name() . '</span>';
+				break;
+
+		}
+
+	}
+
+	/**
+	 * Lets users filter items using taxes.
+	 */
+	public static function add_item_filters( $post_type ) {
+		global $wpinv_euvat;
+
+		// Abort if we're not dealing with items.
+		if ( $post_type != 'wpi_item' ) {
+			return;
+		}
+
+		// Filter by vat rules.
+		if ( $wpinv_euvat->allow_vat_rules() ) {
+	
+			// Sanitize selected vat rule.
+			$vat_rule   = '';
+			if ( isset( $_GET['vat_rule'] ) && array_key_exists(  $_GET['vat_rule'], $wpinv_euvat->get_rules() ) ) {
+				$vat_rule   =  $_GET['vat_rule'];
+			}
+
+			// Filter by VAT rule.
+			echo wpinv_html_select(
+				array(
+					'options'          => array_merge(
+						array(
+							'' => __( 'All VAT rules', 'invoicing' )
+						),
+						$wpinv_euvat->get_rules()
+					),
+					'name'             => 'vat_rule',
+					'id'               => 'vat_rule',
+					'selected'         => $vat_rule,
+					'show_option_all'  => false,
+					'show_option_none' => false,
+					'class'            => 'gdmbx2-text-medium',
+				)
+			);
+
+			// Filter by VAT class.
+		}
+
+		// Filter by vat class.
+		if ( $wpinv_euvat->allow_vat_classes() ) {
+	
+			// Sanitize selected vat rule.
+			$vat_class   = '';
+			if ( isset( $_GET['vat_class'] ) && array_key_exists(  $_GET['vat_class'], $wpinv_euvat->get_all_classes() ) ) {
+				$vat_class   =  $_GET['vat_class'];
+			}
+
+			echo wpinv_html_select(
+				array(
+					'options'          => array_merge(
+						array(
+							'' => __( 'All VAT classes', 'invoicing' )
+						),
+						$wpinv_euvat->get_all_classes()
+					),
+					'name'             => 'vat_class',
+					'id'               => 'vat_class',
+					'selected'         => $vat_class,
+					'show_option_all'  => false,
+					'show_option_none' => false,
+					'class'            => 'gdmbx2-text-medium',
+				)
+			);
+
+		}
+
+		// Filter by item type.
+		$type   = '';
+		if( isset( $_GET['type'] ) && array_key_exists(  $_GET['type'], wpinv_get_item_types() ) ) {
+			$type   =  $_GET['type'];
+		}
+
+		echo wpinv_html_select(
+			array(
+				'options'          => array_merge(
+					array(
+						'' => __( 'All item types', 'invoicing' )
+					),
+					wpinv_get_item_types()
+				),
+				'name'             => 'type',
+				'id'               => 'type',
+				'selected'         => $type,
+				'show_option_all'  => false,
+				'show_option_none' => false,
+				'class'            => 'gdmbx2-text-medium',
+			)
+		);
+
+	}
+
+	/**
+	 * Filters the item query.
+	 */
+	public static function filter_item_query( $query ) {
+
+		// modify the query only if it admin and main query.
+		if ( ! ( is_admin() && $query->is_main_query() ) ){ 
+			return $query;
+		}
+
+		// we want to modify the query for our items.
+		if ( 'wpi_item' != $query->query['post_type'] ){
+			return $query;
+		}
+
+		if ( empty( $query->query_vars['meta_query'] ) ) {
+			$query->query_vars['meta_query'] = array();
+		}
+
+		// Filter vat rule type
+        if ( ! empty( $_GET['vat_rule'] ) ) {
+            $query->query_vars['meta_query'][] = array(
+                'key'     => '_wpinv_vat_rule',
+                'value'   => sanitize_text_field( $_GET['vat_rule'] ),
+                'compare' => '='
+            );
+        }
+
+        // Filter vat class
+        if ( ! empty( $_GET['vat_class'] ) ) {
+            $query->query_vars['meta_query'][] = array(
+                'key'     => '_wpinv_vat_class',
+                'value'   => sanitize_text_field( $_GET['vat_class'] ),
+                'compare' => '='
+            );
+        }
+
+        // Filter item type
+        if ( ! empty( $_GET['type'] ) ) {
+            $query->query_vars['meta_query'][] = array(
+                'key'     => '_wpinv_type',
+                'value'   => sanitize_text_field( $_GET['type'] ),
+                'compare' => '='
+            );
+		}
+
+	}
+
+	/**
+	 * Reorders items.
+	 */
+	public static function reorder_items( $vars ) {
+		global $typenow;
+
+		if ( 'wpi_item' !== $typenow || empty( $vars['orderby'] ) ) {
+			return $vars;
+		}
+
+		// By item type.
+		if ( 'type' == $vars['orderby'] ) {
+			return array_merge(
+				$vars,
+				array(
+					'meta_key' => '_wpinv_type',
+					'orderby'  => 'meta_value'
+				)
+			);
+		}
+
+		// By vat class.
+		if ( 'vat_class' == $vars['orderby'] ) {
+			return array_merge(
+				$vars,
+				array(
+					'meta_key' => '_wpinv_vat_class',
+					'orderby'  => 'meta_value'
+				)
+			);
+		}
+
+		// By vat rule.
+		if ( 'vat_rule' == $vars['orderby'] ) {
+			return array_merge(
+				$vars,
+				array(
+					'meta_key' => '_wpinv_vat_rule',
+					'orderby'  => 'meta_value'
+				)
+			);
+		}
+
+		// By price.
+		if ( 'price' == $vars['orderby'] ) {
+			return array_merge(
+				$vars,
+				array(
+					'meta_key' => '_wpinv_price',
+					'orderby'  => 'meta_value_num'
+				)
+			);
+		}
+
+		return $vars;
 
 	}
 

@@ -49,7 +49,7 @@ class GetPaid_Metaboxes {
 
 			// Resend invoice.
 			if ( ! $invoice->is_draft() ) {
-				add_meta_box( 'wpinv-mb-resend-invoice', __( 'Resend Invoice', 'invoicing' ), 'GetPaid_Meta_Box_Resend_Invoice::output', 'wpi_invoice', 'side', 'high' );
+				add_meta_box( 'wpinv-mb-resend-invoice', __( 'Resend Invoice', 'invoicing' ), 'GetPaid_Meta_Box_Resend_Invoice::output', 'wpi_invoice', 'side', 'low' );
 			}
 
 			// Subscriptions.

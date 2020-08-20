@@ -64,7 +64,7 @@ class GetPaid_Meta_Box_Item_Info {
                 </label>
 
                 <div class="col-sm-12">
-                    <input  onClick="this.select()" type="text" id="wpinv_item_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?>]" style="width: 100%;" />
+                    <input  onClick="this.select()" type="text" id="wpinv_item_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?>]" style="width: 100%;" readonly/>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@ class GetPaid_Meta_Box_Item_Info {
                 </label>
 
                 <div class="col-sm-12">
-                    <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" />
+                    <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" readonly/>
                 </div>
             </div>
 

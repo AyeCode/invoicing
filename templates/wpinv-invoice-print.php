@@ -9,7 +9,8 @@ if ( empty( $invoice ) ) {
     exit;
 }
 $type = $post->post_type == 'wpi_invoice' ? __( 'Invoice', 'invoicing' ): __( 'Quotation', 'invoicing' );
-do_action( 'wpinv_invoice_print_before_display', $invoice ); ?><!DOCTYPE html>
+do_action( 'wpinv_invoice_print_before_display', $invoice ); ?>
+<!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
     <meta charset="UTF-8">

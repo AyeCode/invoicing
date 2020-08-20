@@ -796,14 +796,19 @@ add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
 
 // Set up the template for the invoice.
 function wpinv_template( $template ) {
-    global $post, $wp_query;
-    
-    if ( ( is_single() || is_404() ) && !empty( $post->ID ) && (get_post_type( $post->ID ) == 'wpi_invoice' or get_post_type( $post->ID ) == 'wpi_quote')) {
+    global $post;
+
+    if ( ( is_single() || is_404() ) && ! empty( $post->ID ) && getpaid_is_invoice_post_type( get_post_type( $post->ID ) ) ) {
+
+        // If the user can view this invoice, display it.
         if ( wpinv_user_can_view_invoice( $post->ID ) ) {
-            $template = wpinv_get_template_part( 'wpinv-invoice-print', false, false );
+            return wpinv_get_template_part( 'wpinv-invoice-print', false, false );
+
+        // Else display an error message.
         } else {
-            $template = wpinv_get_template_part( 'wpinv-invalid-access', false, false );
+            return wpinv_get_template_part( 'wpinv-invalid-access', false, false );
         }
+
     }
 
     return $template;
@@ -1038,15 +1043,27 @@ function wpinv_display_to_address( $invoice_id = 0 ) {
     echo $output;
 }
 
+/**
+ * Displays invoice line items.
+ */
 function wpinv_display_line_items( $invoice_id = 0 ) {
     global $wpinv_euvat, $ajax_cart_details;
+
+    // Prepare the invoice.
+    $invoice = new WPInv_Invoice( $invoice_id );
+
+    // Abort if there is no invoice.
+    if ( ! $invoice->get_id() ) {
+        return;
+    }
+
     $invoice            = wpinv_get_invoice( $invoice_id );
     $quantities_enabled = wpinv_item_quantities_enabled();
     $use_taxes          = wpinv_use_taxes();
-    if ( !$use_taxes && (float)$invoice->get_tax() > 0 ) {
+    if ( !$use_taxes && (float)$invoice->get_total_tax() > 0 ) {
         $use_taxes = true;
     }
-    $zero_tax           = !(float)$invoice->get_tax() > 0 ? true : false;
+    $zero_tax           = !(float)$invoice->get_total_tax() > 0 ? true : false;
     $tax_label           = $use_taxes && $invoice->has_vat() ? $wpinv_euvat->get_vat_name() : __( 'Tax', 'invoicing' );
     $tax_title          = !$zero_tax && $use_taxes ? ( wpinv_prices_include_tax() ? wp_sprintf( __( '(%s Incl.)', 'invoicing' ), $tax_label ) : wp_sprintf( __( '(%s Excl.)', 'invoicing' ), $tax_label ) ) : '';
 

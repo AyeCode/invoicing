@@ -486,7 +486,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @return array
 	 */
 	public function set_earned( $value ) {
-		return $this->set_prop( 'earned', $value );
+		return $this->set_prop( 'earned', (float) $value );
 	}
 
 	/**
@@ -497,7 +497,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @return array
 	 */
 	public function set_refunded( $value ) {
-		return $this->set_prop( 'refunded', $value );
+		return $this->set_prop( 'refunded', (float) $value );
 	}
 
 	/**
@@ -508,7 +508,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @return array
 	 */
 	public function set_cancelled( $value ) {
-		return $this->set_prop( 'cancelled', $value );
+		return $this->set_prop( 'cancelled', (float) $value );
 	}
 
 	/**
@@ -519,7 +519,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @return array
 	 */
 	public function set_failed( $value ) {
-		return $this->set_prop( 'failed', $value );
+		return $this->set_prop( 'failed', (float) $value );
 	}
 
     /**

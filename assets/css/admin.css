@@ -955,8 +955,14 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     width: 90px;
 }
 .post-type-wpi_item .fixed .column-price {
-    width: 120px;
+    width: 180px;
 }
+
+.post-type-wpi_item .fixed .column-shortcode {
+    width: 280px;
+    text-align: right;
+}
+
 .post-type-wpi_item .fixed .column-recurring {
     text-align: center;
     width: 90px;
@@ -974,7 +980,16 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_item .fixed .column-type {
     width: 140px;
 }
+
+.post-type-wpi_payment_form .fixed .column-refunds,
+.post-type-wpi_payment_form .fixed .column-earnings,
+.post-type-wpi_payment_form .fixed .column-items,
+.post-type-wpi_payment_form .fixed .column-shortcode {
+    width: 14%;
+}
+
 .post-type-wpi_item .fixed .column-type .meta,
+.post-type-wpi_item .fixed .column-price .meta,
 .post-type-wpi_invoice .type-wpi_invoice td .meta {
     display: block;
     font-size: 90%;
@@ -1403,17 +1418,16 @@ body.wpi-wpinv-settings .wp-picker-holder,
 .post-type-wpi_discount .wp-list-table.widefat .column-code,
 .post-type-wpi_discount .wp-list-table.widefat .column-description,
 .post-type-wpi_discount .wp-list-table.widefat .column-usage,
-.post-type-wpi_discount .wp-list-table.widefat .column-status {
-    min-width: 120px;
-}
-.post-type-wpi_discount .wp-list-table.widefat .column-usage,
-.post-type-wpi_discount .wp-list-table.widefat .column-status {
-    text-align: center;
-}
 .post-type-wpi_discount .wp-list-table.widefat .column-start_date,
-.post-type-wpi_discount .wp-list-table.widefat .column-expiry_date  {
-    width: 130px;
+.post-type-wpi_discount .wp-list-table.widefat .column-expiry_date,
+.post-type-wpi_discount .wp-list-table.widefat .column-status {
+    min-width: 14%;
 }
+
+.post-type-wpi_discount .wp-list-table.widefat .column-title {
+    width: 30%;
+}
+
 .post-type-wpi_discount #submitpost #delete-action,
 .post-type-wpi_discount #submitpost #visibility,
 .post-type-wpi_discount #submitpost .misc-pub-curtime {
