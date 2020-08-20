@@ -21,54 +21,16 @@ do_action( 'wpinv_invoice_print_before_display', $invoice ); ?>
 
     <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 </head>
-<body class="body wpinv wpinv-print">
+<body class="body wpinv wpinv-print bsui">
+    <?php do_action( 'getpaid_invoice_top_bar', $invoice ); ?>
     <?php do_action( 'wpinv_invoice_print_body_start', $invoice ); ?>
     <div class="container wpinv-wrap">
         <?php if ( $watermark = wpinv_watermark( $invoice_id ) ) { ?>
             <div class="watermark no-print"><p><?php echo esc_html( $watermark ) ?></p></div>
         <?php } ?>
-        <!-- ///// Start PDF header -->
-        <htmlpageheader name="wpinv-pdf-header">
-            <?php do_action( 'wpinv_invoice_print_before_header', $invoice ); ?>
-            <div class="row wpinv-header">
-                <div class="col-xs-6 wpinv-business">
-                    <a target="_blank" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
-                        <?php if ( $logo = wpinv_get_business_logo() ) { ?>
-                        <img class="logo" src="<?php echo esc_url( $logo ); ?>">
-                        <?php } else { ?>
-                        <h1><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
-                        <?php } ?>
-                    </a>
-                </div>
 
-                <div class="col-xs-6 wpinv-title">
-                    <h2><?php echo $type; ?></h2>
-                </div>
-            </div>
-            <?php do_action( 'wpinv_invoice_print_after_header', $invoice ); ?>
-        </htmlpageheader>
-        <!-- End PDF header ///// -->
-        
-        <?php do_action( 'wpinv_invoice_print_before_top_content', $invoice ); ?>
-        <div class="row wpinv-top-content">
-            <div class="col-xs-12 col-sm-6 wpinv-addresses">
-                <div class="col-xs-12 wpinv-address wpinv-from-address">
-                    <?php wpinv_display_from_address(); ?>
-                </div>
-                <div class="col-xs-12 wpinv-address wpinv-to-address">
-                    <?php wpinv_display_to_address( $invoice_id ); ?>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 wpinv-details">
-                <div class="col-xs-12 wpinv-line-details">
-                    <?php do_action( 'wpinv_invoice_print_before_details', $invoice ); ?>
-                    <?php wpinv_display_invoice_details( $invoice ); ?>
-                    <?php do_action( 'wpinv_invoice_print_after_details', $invoice ); ?>
-                </div>
-            </div>
-        </div>
-        <?php do_action( 'wpinv_invoice_print_after_top_content', $invoice ); ?>
-
+        <?php do_action( 'getpaid_invoice_title', $invoice ); ?>
+        <?php do_action( 'getpaid_invoice_details', $invoice ); ?>
         <?php do_action( 'wpinv_invoice_print_middle', $invoice ); ?>
         
         <?php do_action( 'wpinv_invoice_print_before_line_items', $invoice ); ?>
