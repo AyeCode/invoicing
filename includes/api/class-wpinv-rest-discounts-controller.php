@@ -69,6 +69,7 @@ class WPInv_REST_Discounts_Controller extends WP_REST_Posts_Controller {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_discount_types' ),
+					'permission_callback' => '__return_true',
 				),
 			)
 		);

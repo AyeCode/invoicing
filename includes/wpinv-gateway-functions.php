@@ -761,14 +761,18 @@ function wpinv_get_post_data( $method = 'request' ) {
     return $data;
 }
 
+/**
+ * Checks if a given gateway supports subscription payments.
+ */
 function wpinv_gateway_support_subscription( $gateway ) {
-    $return = false;
-    
+    $supports = false;
+
     if ( wpinv_is_gateway_active( $gateway ) ) {
-        $return = apply_filters( 'wpinv_' . $gateway . '_support_subscription', false );
+        $supports = apply_filters( 'wpinv_' . $gateway . '_support_subscription', $supports );
+        $supports = apply_filters( 'getapid_gateway_support_subscription', $supports, $gateway );
     }
-    
-    return $return;
+
+    return $supports;
 }
 
 function wpinv_payment_gateways_on_cart( $gateways = array() ) {

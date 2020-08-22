@@ -183,20 +183,25 @@ class WPInv_Subscriptions {
      * @return mixed|string|void
      */
     public static function wpinv_get_pretty_subscription_frequency( $period, $frequency_count = 1) {
+
         $frequency = '';
         //Format period details
-        switch ( $period ) {
+        switch ( strtolower( $period ) ) {
             case 'day' :
-                $frequency = sprintf( _n('%d Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
+            case 'd' :
+                $frequency = sprintf( _n('Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'week' :
-                $frequency = sprintf( _n('%d Week', '%d Weeks', $frequency_count, 'invoicing'), $frequency_count);
+            case 'w' :
+                $frequency = sprintf( _n('Week', '%d Weeks', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'month' :
-                $frequency = sprintf( _n('%d Month', '%d Months', $frequency_count, 'invoicing'), $frequency_count);
+            case 'm' :
+                $frequency = sprintf( _n('Month', '%d Months', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'year' :
-                $frequency = sprintf( _n('%d Year', '%d Years', $frequency_count, 'invoicing'), $frequency_count);
+            case 'y' :
+                $frequency = sprintf( _n('Year', '%d Years', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             default :
                 $frequency = apply_filters( 'wpinv_recurring_subscription_frequency', $frequency, $period, $frequency_count );

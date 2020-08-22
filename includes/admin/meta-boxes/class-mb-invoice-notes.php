@@ -29,7 +29,7 @@ class WPInv_Meta_Box_Notes {
                 <textarea type="text" name="invoice_note" id="add_invoice_note" class="input-text" cols="20" rows="5"></textarea>
             </p>
             <p>
-                <select name="invoice_note_type" id="invoice_note_type" class="wpi_select2">
+                <select name="invoice_note_type" id="invoice_note_type" class="regular-text">
                     <option value=""><?php _e( 'Private note', 'invoicing' ); ?></option>
                     <option value="customer"><?php _e( 'Note to customer', 'invoicing' ); ?></option>
                 </select>

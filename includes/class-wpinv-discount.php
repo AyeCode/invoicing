@@ -714,13 +714,6 @@ class WPInv_Discount extends GetPaid_Data  {
 	}
 
 	/**
-     * Margic method for retrieving a property.
-     */
-    public function __get( $key ) {
-        return $this->get( $key );
-    }
-
-	/**
 	 * Magic method for accessing discount properties.
 	 *
 	 * @since 1.0.15
@@ -731,19 +724,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return mixed Value of the given discount property (if set).
 	 */
 	public function get( $key, $context = 'view' ) {
-
-		// Check if we have a helper method for that.
-        if ( method_exists( $this, 'get_' . $key ) ) {
-            return call_user_func( array( $this, 'get_' . $key ), $context );
-        }
-
-        // Check if the key is in the associated $post object.
-        if ( ! empty( $this->post ) && isset( $this->post->$key ) ) {
-            return $this->post->$key;
-        }
-
         return $this->get_prop( $key, $context );
-
 	}
 
 	/*
@@ -1119,29 +1100,6 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function set_maximum_total( $value ) {
 		$this->set_max_total( $value );
-	}
-
-	/**
-	 * Magic method for setting discount fields.
-	 *
-	 * This method does not update custom fields in the database.
-	 *
-	 * @since 1.0.15
-	 * @access public
-	 *
-	 */
-	public function __set( $key, $value ) {
-
-		if ( 'id' == strtolower( $key ) ) {
-			return $this->set_id( $value );
-		}
-
-		if ( method_exists( $this, "set_$key") ) {
-			call_user_func( array( $this, "set_$key" ), $value );
-		} else {
-			$this->set_prop( $key, $value );
-		}
-
 	}
 
 	/**

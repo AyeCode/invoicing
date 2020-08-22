@@ -220,26 +220,27 @@ function wpinv_get_discount_obj( $discount = 0 ) {
  * Fetch a discount from the db/cache using its discount code.
  *
  * @param string $code The discount code.
- * @return bool|WP_Post
+ * @return bool|WPInv_Discount
  */
 function wpinv_get_discount_by_code( $code = '' ) {
-    return wpinv_get_discount_by( 'code', $code );
+    return wpinv_get_discount_by( null, $code );
 }
 
 /**
  * Fetch a discount from the db/cache using a given field.
  *
- * @param string $field The field to query against: 'ID', 'discount_code', 'code', 'name'
+ * @param string $deprecated deprecated
  * @param string|int $value The field value
- * @return bool|WP_Post
+ * @return bool|WPInv_Discount
  */
-function wpinv_get_discount_by( $field = '', $value = '' ) {
-    $data = WPInv_Discount::get_data_by( $field, $value );
-    if( empty( $data ) ) {
-        return false;
+function wpinv_get_discount_by( $deprecated = null, $value = '' ) {
+    $discount = new WPInv_Discount( $value );
+
+    if ( $discount->get_id() != 0 ) {
+        return $discount;
     }
 
-    return get_post( $data['ID'] );
+    return  false;
 }
 
 /**
@@ -775,10 +776,16 @@ function wpinv_is_discount_valid( $code = '', $user = '', $set_error = true ) {
     return apply_filters( 'wpinv_is_discount_valid', $return, $discount_id, $code, $user );
 }
 
+/**
+ * Given a discount code, this function returns the discount's id.
+ * 
+ * @param string $code
+ * @return bool|false
+ */
 function wpinv_get_discount_id_by_code( $code ) {
     $discount = wpinv_get_discount_by_code( $code );
-    if( $discount ) {
-        return $discount->ID;
+    if ( $discount ) {
+        return $discount->get_id();
     }
     return false;
 }

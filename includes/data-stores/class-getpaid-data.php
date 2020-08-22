@@ -344,6 +344,58 @@ abstract class GetPaid_Data {
 	}
 
 	/**
+	 * Magic method for setting data fields.
+	 *
+	 * This method does not update custom fields in the database.
+	 *
+	 * @since 1.0.19
+	 * @access public
+	 *
+	 */
+	public function __set( $key, $value ) {
+
+		if ( 'id' == strtolower( $key ) ) {
+			return $this->set_id( $value );
+		}
+
+		if ( method_exists( $this, "set_$key") ) {
+
+			/* translators: %s: $key Key to set */
+			getpaid_doing_it_wrong( __FUNCTION__, sprintf( __( 'Object data such as "%s" should not be accessed directly. Use getters and setters.', 'getpaid' ), $key ), '1.0.19' );
+
+			call_user_func( array( $this, "set_$key" ), $value );
+		} else {
+			$this->set_prop( $key, $value );
+		}
+
+	}
+
+	/**
+     * Margic method for retrieving a property.
+     */
+    public function __get( $key ) {
+
+        // Check if we have a helper method for that.
+        if ( method_exists( $this, 'get_' . $key ) ) {
+
+			if ( 'post_type' != $key ) {
+				/* translators: %s: $key Key to set */
+				getpaid_doing_it_wrong( __FUNCTION__, sprintf( __( 'Object data such as "%s" should not be accessed directly. Use getters and setters.', 'getpaid' ), $key ), '1.0.19' );
+			}
+
+            return call_user_func( array( $this, 'get_' . $key ) );
+        }
+
+        // Check if the key is in the associated $post object.
+        if ( ! empty( $this->post ) && isset( $this->post->$key ) ) {
+            return $this->post->$key;
+        }
+
+		return $this->get_prop( $key );
+
+    }
+
+	/**
 	 * Get Meta Data by Key.
 	 *
 	 * @since  1.0.19
@@ -642,13 +694,13 @@ abstract class GetPaid_Data {
 	 * Sets item status.
 	 *
 	 * @since 1.0.19
-	 * @param  string $status New status.
+	 * @param string $status New status.
 	 * @return array details of change.
 	 */
 	public function set_status( $status ) {
         $old_status = $this->get_status();
 
-        $this->set_prop( 'status', $status );
+		$this->set_prop( 'status', $status );
 
 		return array(
 			'from' => $old_status,
@@ -740,10 +792,10 @@ abstract class GetPaid_Data {
 		if ( array_key_exists( $prop, $this->data ) ) {
 			if ( true === $this->object_read ) {
 				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
-					$this->changes[ $prop ] = $value;
+					$this->changes[ $prop ] = maybe_unserialize( $value );
 				}
 			} else {
-				$this->data[ $prop ] = $value;
+				$this->data[ $prop ] = maybe_unserialize( $value );
 			}
 		}
 	}
@@ -831,4 +883,5 @@ abstract class GetPaid_Data {
 	protected function error( $code, $message ) {
 		throw new Exception( $message, $code );
 	}
+
 }

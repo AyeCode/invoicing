@@ -295,6 +295,7 @@ class WPInv_Item  extends GetPaid_Data {
 		if ( $this->has_free_trial() ) {
 			$price = wpinv_sanitize_amount( 0 );
 		}
+
         return apply_filters( 'wpinv_get_initial_item_price', $price, $this );
     }
 
@@ -306,9 +307,18 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_the_price() {
-        $item_price = wpinv_price( $this->get_price() );
+        return wpinv_price( wpinv_format_amount( $this->get_price() ) );
+	}
 
-        return apply_filters( 'wpinv_get_the_item_price', $item_price, $this->ID );
+	/**
+	 * Returns the formated initial price.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+    public function get_the_initial_price() {
+        return wpinv_price( wpinv_format_amount( $this->get_initial_price() ) );
     }
 
     /**
@@ -566,7 +576,17 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_trial_interval( $context = 'view' ) {
         return (int) $this->get_prop( 'trial_interval', $context );
-    }
+	}
+	
+	/**
+	 * Get the item's edit url.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_edit_url() {
+        return get_edit_post_link( $this->get_id() );
+	}
 
     /**
      * Margic method for retrieving a property.
@@ -741,7 +761,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value New price.
-]	 */
+	 */
 	public function set_price( $value ) {
         $this->set_prop( 'price', (float) wpinv_sanitize_amount( $value ) );
     }

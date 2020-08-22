@@ -89,18 +89,22 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 
+/**
+ * Get all invoice statuses.
+ *
+ * @since 1.0.19
+ * @return array
+ */
 function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice = false ) {
-    global $post;
-
-    $invoice_statuses = array(
-        'wpi-pending' => __( 'Pending Payment', 'invoicing' ),
-        'publish' => __( 'Paid', 'invoicing'),
-        'wpi-processing' => __( 'Processing', 'invoicing' ),
-        'wpi-onhold' => __( 'On Hold', 'invoicing' ),
-        'wpi-refunded' => __( 'Refunded', 'invoicing' ),
-        'wpi-cancelled' => __( 'Cancelled', 'invoicing' ),
-        'wpi-failed' => __( 'Failed', 'invoicing' ),
-        'wpi-renewal' => __( 'Renewal Payment', 'invoicing' )
+	$invoice_statuses = array(
+		'wpi-pending'    => _x( 'Pending payment', 'Invoice status', 'invoicing' ),
+        'publish'        => _x( 'Paid', 'Invoice status', 'invoicing' ),
+        'wpi-processing' => _x( 'Processing', 'Invoice status', 'invoicing' ),
+		'wpi-onhold'     => _x( 'On hold', 'Invoice status', 'invoicing' ),
+		'wpi-cancelled'  => _x( 'Cancelled', 'Invoice status', 'invoicing' ),
+		'wpi-refunded'   => _x( 'Refunded', 'Invoice status', 'invoicing' ),
+        'wpi-failed'     => _x( 'Failed', 'Invoice status', 'invoicing' ),
+        'wpi-renewal'    => _x( 'Renewal Payment', 'Invoice status', 'invoicing' ),
     );
 
     if ( $draft ) {
@@ -111,7 +115,7 @@ function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice 
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
 
-    return apply_filters( 'wpinv_statuses', $invoice_statuses, $invoice );
+	return apply_filters( 'wpinv_statuses', $invoice_statuses, $invoice );
 }
 
 function wpinv_status_nicename( $status ) {
@@ -1179,4 +1183,27 @@ function getpaid_convert_price_string_to_options( $str ) {
     }
 
     return $options;
+}
+
+/**
+ * Returns the help tip.
+ */
+function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
+    $additional_classes = sanitize_html_class( $additional_classes );
+    $tip                = esc_attr__( $tip );
+    return "<span class='wpi-help-tip dashicons dashicons-editor-help $additional_classes' title='$tip'></span>";
+}
+
+/**
+ * Formats a date
+ */
+function getpaid_format_date( $date ) {
+
+    if ( empty( $date ) || $date == '0000-00-00 00:00:00' ) {
+        return '';
+    }
+
+
+    return date_i18n( get_option( 'date_format' ), strtotime( $date ) );
+
 }

@@ -27,7 +27,7 @@ class GetPaid_Meta_Box_Discount_Details {
         $discount = new WPInv_Discount( $post );
 
         // Nonce field.
-        wp_nonce_field( 'wpinv_discount_metabox_nonce', 'wpinv_discount_metabox_nonce' );
+        wp_nonce_field( 'getpaid_meta_nonce', 'getpaid_meta_nonce' );
 
         do_action( 'wpinv_discount_form_top', $discount );
 
@@ -373,11 +373,6 @@ class GetPaid_Meta_Box_Discount_Details {
 	 * @param int $post_id
 	 */
 	public static function save( $post_id ) {
-
-        // verify nonce
-        if ( ! isset( $_POST['wpinv_discount_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['wpinv_discount_metabox_nonce'], 'wpinv_discount_metabox_nonce' ) ) {
-            return;
-        }
 
         // Prepare the discount.
         $discount = new WPInv_Discount( $post_id );

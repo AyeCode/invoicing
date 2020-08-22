@@ -108,6 +108,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 			$item->save_meta_data();
 			$item->apply_changes();
 			$this->clear_caches( $item );
+			do_action( 'getpaid_new_item', $item->get_id(), $item );
 			return true;
 		}
 
@@ -131,14 +132,15 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $item->get_id() || ! $item_object || $item_object->post_type != 'wpi_item' ) {
 			$item->last_error = __( 'Invalid item.', 'invoicing' );
+			$item->set_id( 0 );
 			return false;
 		}
 
 		$item->set_props(
 			array(
 				'parent_id'     => $item_object->post_parent,
-				'date_created'  => 0 < $item_object->post_date_gmt ? $item_object->post_date_gmt : null,
-				'date_modified' => 0 < $item_object->post_modified_gmt ? $item_object->post_modified_gmt : null,
+				'date_created'  => 0 < $item_object->post_date ? $item_object->post_date : null,
+				'date_modified' => 0 < $item_object->post_modified ? $item_object->post_modified : null,
 				'status'        => $item_object->post_status,
 				'name'          => $item_object->post_title,
 				'description'   => $item_object->post_excerpt,
@@ -149,6 +151,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $item, $item_object );
 		$item->read_meta_data();
 		$item->set_object_read( true );
+		do_action( 'getpaid_read_item', $item->get_id(), $item );
 
 	}
 
@@ -164,6 +167,9 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		if ( null === $item->get_date_created( 'edit' ) ) {
 			$item->set_date_created(  current_time('mysql') );
 		}
+
+		// Grab the current status so we can compare.
+		$previous_status = get_post_status( $item->get_id() );
 
 		$changes = $item->get_changes();
 
@@ -198,6 +204,16 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$this->update_post_meta( $item );
 		$item->apply_changes();
 		$this->clear_caches( $item );
+
+		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
+		$new_status = $item->get_status( 'edit' );
+
+		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
+			do_action( 'getpaid_new_item', $item->get_id(), $item );
+		} else {
+			do_action( 'getpaid_update_item', $item->get_id(), $item );
+		}
+
 	}
 
 	/*

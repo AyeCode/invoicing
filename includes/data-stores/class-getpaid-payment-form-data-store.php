@@ -82,6 +82,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 			$form->save_meta_data();
 			$form->apply_changes();
 			$this->clear_caches( $form );
+			do_action( 'getpaid_create_payment_form', $form->get_id(), $form );
 			return true;
 		}
 
@@ -105,13 +106,14 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 
 		if ( ! $form->get_id() || ! $form_object || $form_object->post_type != 'wpi_payment_form' ) {
 			$form->last_error = __( 'Invalid form.', 'invoicing' );
+			$form->set_id( 0 );
 			return false;
 		}
 
 		$form->set_props(
 			array(
-				'date_created'  => 0 < $form_object->post_date_gmt ? $form_object->post_date_gmt : null,
-				'date_modified' => 0 < $form_object->post_modified_gmt ? $form_object->post_modified_gmt : null,
+				'date_created'  => 0 < $form_object->post_date ? $form_object->post_date : null,
+				'date_modified' => 0 < $form_object->post_modified ? $form_object->post_modified : null,
 				'status'        => $form_object->post_status,
 				'name'          => $form_object->post_title,
 				'author'        => $form_object->post_author,
@@ -121,6 +123,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $form, $form_object );
 		$form->read_meta_data();
 		$form->set_object_read( true );
+		do_action( 'getpaid_read_payment_form', $form->get_id(), $form );
 
 	}
 
@@ -136,6 +139,9 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		if ( null === $form->get_date_created( 'edit' ) ) {
 			$form->set_date_created(  current_time('mysql') );
 		}
+
+		// Grab the current status so we can compare.
+		$previous_status = get_post_status( $form->get_id() );
 
 		$changes = $form->get_changes();
 
@@ -168,6 +174,16 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$this->update_post_meta( $form );
 		$form->apply_changes();
 		$this->clear_caches( $form );
+
+		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
+		$new_status = $form->get_status( 'edit' );
+
+		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
+			do_action( 'getpaid_new_payment_form', $form->get_id(), $form );
+		} else {
+			do_action( 'getpaid_update_payment_form', $form->get_id(), $form );
+		}
+
 	}
 
 	/*

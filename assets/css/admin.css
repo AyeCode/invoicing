@@ -21,8 +21,9 @@
     width: 70px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#number {
-    width: 120px;
+    width: 300px;
 }
+
 .post-type-wpi_invoice #commentsdiv.postbox {
     display: none !important;
 }
@@ -37,7 +38,7 @@
     width: 110px;
 }
 .post-type-wpi_invoice .wp-list-table.widefat th#customer {
-    width: 170px;
+    width: 180px;
 }
 .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
     width: 50%;
@@ -92,7 +93,7 @@
 ul.invoice_notes {
     padding: 2px 0 0;
     max-height: 300px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 ul.invoice_notes li p.meta .exact-date {
@@ -861,15 +862,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     border: 0;
     box-shadow: none;
 }
-#wpinv-items .inside,
-#wpinv-payment-form-items .inside {
-    margin: 0;
-}
-#wpinv-items > .inside,
-#wpinv-payment-form-items > .inside {
-    margin: 0;
-    padding: 12px;
-}
 .wpinv_errors {
   background: #ffffe0 none repeat scroll 0 0;
   border: 1px solid #e6db55;
@@ -963,8 +955,14 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     width: 90px;
 }
 .post-type-wpi_item .fixed .column-price {
-    width: 120px;
+    width: 180px;
 }
+
+.post-type-wpi_item .fixed .column-shortcode {
+    width: 280px;
+    text-align: right;
+}
+
 .post-type-wpi_item .fixed .column-recurring {
     text-align: center;
     width: 90px;
@@ -982,7 +980,16 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .post-type-wpi_item .fixed .column-type {
     width: 140px;
 }
+
+.post-type-wpi_payment_form .fixed .column-refunds,
+.post-type-wpi_payment_form .fixed .column-earnings,
+.post-type-wpi_payment_form .fixed .column-items,
+.post-type-wpi_payment_form .fixed .column-shortcode {
+    width: 14%;
+}
+
 .post-type-wpi_item .fixed .column-type .meta,
+.post-type-wpi_item .fixed .column-price .meta,
 .post-type-wpi_invoice .type-wpi_invoice td .meta {
     display: block;
     font-size: 90%;
@@ -998,12 +1005,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 .post-type-wpi_item #filter-by-date {
     display: none;
-}
-#wpinv-items .inside,
-#wpinv-payment-form-items .inside {
-    background: #fefefe;
-    margin: 0;
-    padding: 0;
 }
 #wpinv_items_wrap {
     margin: 0;
@@ -1417,17 +1418,16 @@ body.wpi-wpinv-settings .wp-picker-holder,
 .post-type-wpi_discount .wp-list-table.widefat .column-code,
 .post-type-wpi_discount .wp-list-table.widefat .column-description,
 .post-type-wpi_discount .wp-list-table.widefat .column-usage,
-.post-type-wpi_discount .wp-list-table.widefat .column-status {
-    min-width: 120px;
-}
-.post-type-wpi_discount .wp-list-table.widefat .column-usage,
-.post-type-wpi_discount .wp-list-table.widefat .column-status {
-    text-align: center;
-}
 .post-type-wpi_discount .wp-list-table.widefat .column-start_date,
-.post-type-wpi_discount .wp-list-table.widefat .column-expiry_date  {
-    width: 130px;
+.post-type-wpi_discount .wp-list-table.widefat .column-expiry_date,
+.post-type-wpi_discount .wp-list-table.widefat .column-status {
+    min-width: 14%;
 }
+
+.post-type-wpi_discount .wp-list-table.widefat .column-title {
+    width: 30%;
+}
+
 .post-type-wpi_discount #submitpost #delete-action,
 .post-type-wpi_discount #submitpost #visibility,
 .post-type-wpi_discount #submitpost .misc-pub-curtime {
@@ -2131,4 +2131,140 @@ textarea.wpi-email_overdue_content {
     color: #fff;
     background-color: #1e73be;
     border-color: #1e73be;
+}
+
+.post-type-wpi_invoice #post-body-content,
+.post-type-wpi_invoice #astra_settings_meta_box,
+.post-type-wpi_invoice #rank_math_metabox_link_suggestions,
+.post-type-wpi_invoice #rank_math_metabox {
+    display: none !important;
+}
+
+.getpaid_invoice_items {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    table-layout: fixed;
+}
+
+.getpaid_invoice_items tr{
+    border-bottom: 1px solid #ddd;
+}
+
+.getpaid_invoice_items th {
+    text-align: left;
+    padding: 1em;
+    font-weight: 400;
+    color: #999;
+    background: #f8f8f8;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.getpaid_invoice_items td {
+    text-align: left;
+    padding: 1em;
+}
+
+#wpinv-items .has-items .hide-if-has-items,
+#wpinv-items .no-items .hide-if-no-items,
+#wpinv-items .amount .hide-if-amount,
+#wpinv-items .quantity .getpaid-hide-if-quantity,
+#wpinv-items .hours .getpaid-hide-if-hours,
+#wpinv-items .not-editable .hide-if-not-editable,
+#wpinv-items .editable .hide-if-editable {
+    display: none !important;
+}
+
+.getpaid-invoice-item-actions {
+    border-bottom: 1px solid #dfdfdf;
+    border-left: 1px solid #dfdfdf;
+    padding: 10px;
+    border-right: 1px solid #dfdfdf;
+    background: #f8f8f8;
+}
+
+#getpaid-add-items-to-invoice table {
+    border: 0;
+}
+
+#getpaid-add-items-to-invoice th {
+    padding: 0 1em 1em 1em;
+    text-align: left;
+}
+
+#getpaid-add-items-to-invoice th {
+    padding: 0 1em 1em 1em;
+    text-align: left;
+}
+
+#getpaid-add-items-to-invoice td {
+    padding: 1em;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.getpaid-invoice-status {
+    display: inline-block;
+    line-height: 2.5em;
+    color: #777;
+    background: #e5e5e5;
+    border-radius: 4px;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.getpaid-invoice-status.publish {
+    background: #b0bec5;
+}
+
+.getpaid-invoice-status.wpi-renewal {
+    background: #c8d7e1;
+}
+
+.getpaid-invoice-status.wpi-pending {
+    background: #cfd8dc;
+}
+
+.getpaid-invoice-status.wpi-failed {
+    background: #ffccbc;
+}
+
+.getpaid-invoice-status.wpi-cancelled {
+    background: #ffcdd2;
+}
+
+.getpaid-invoice-status > span {
+    margin: 0 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.post-type-wpi_invoice .wp-list-table .column-recurring{
+    width: 60px;
+}
+
+.getpaid-invoice-totals-row {
+    border-bottom: 1px solid #dfdfdf;
+    border-left: 1px solid #dfdfdf;
+    padding: 10px;
+    border-right: 1px solid #dfdfdf;
+    background: #f8f8f8;
+}
+
+.getpaid-invoice-totals-row .value{
+    font-size: 1em!important;
+    width: 10em;
+    margin: 0 0 0 .5em;
+    box-sizing: border-box;
+    font-weight: 700;
+}
+
+.getpaid-invoice-totals-row td{
+    padding: 0.4em;
 }

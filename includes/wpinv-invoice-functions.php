@@ -11,6 +11,25 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+/**
+ * Returns an array of all invoice post types.
+ */
+function getpaid_get_invoice_post_types() {
+    $post_types = array(
+        'wpi_quote'   => __( 'Quote', 'invoicing' ),
+        'wpi_invoice' => __( 'Invoice', 'invoicing' ),
+    );
+    
+    return apply_filters( 'getpaid_invoice_post_types', $post_types );
+}
+
+/**
+ * Checks if this is an invocing post type.
+ */
+function getpaid_is_invoice_post_type( $post_type ) {
+    return $post_type && array_key_exists( $post_type, getpaid_get_invoice_post_types() );
+}
+
 function wpinv_get_invoice_cart_id() {
     $wpinv_checkout = wpinv_get_checkout_session();
     
@@ -512,7 +531,7 @@ function wpinv_get_invoice( $invoice_id = 0, $cart = false ) {
 
     $invoice = new WPInv_Invoice( $invoice_id );
 
-    if ( ! empty( $invoice ) && ! empty( $invoice->ID ) ) {
+    if ( $invoice->get_id() != 0 ) {
         return $invoice;
     }
 
@@ -682,7 +701,7 @@ function wpinv_get_invoice_date( $invoice_id = 0, $format = '', $default = true 
 function wpinv_get_invoice_vat_number( $invoice_id = 0 ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     
-    return $invoice->vat_number;
+    return $invoice->get_vat_number();
 }
 
 function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false, $system = false ) {
@@ -2353,30 +2372,40 @@ function wpinv_mark_invoice_viewed() {
 add_action( 'template_redirect', 'wpinv_mark_invoice_viewed' );
 
 /**
- * @return WPInv_Subscription
+ * Fetch a subscription given an invoice.
+ *
+ * @return WPInv_Subscription|bool
  */
-function wpinv_get_subscription( $invoice, $by_parent = false ) {
+function wpinv_get_subscription( $invoice ) {
+
+    // Abort if we do not have an invoice.
     if ( empty( $invoice ) ) {
         return false;
     }
-    
-    if ( ! is_object( $invoice ) && is_scalar( $invoice ) ) {
-        $invoice = wpinv_get_invoice( $invoice );
-    }
-    
-    if ( !( is_object( $invoice ) && ! empty( $invoice->ID ) && $invoice->is_recurring() ) ) {
+
+    // Retrieve the invoice.
+    $invoice = new WPInv_Invoice( $invoice );
+
+    // Ensure it is a recurring invoice.
+    if ( ! $invoice->is_recurring() ) {
         return false;
     }
-    
-    $invoice_id = ! $by_parent && ! empty( $invoice->parent_invoice ) ? $invoice->parent_invoice : $invoice->ID;
-    
-    $subs_db    = new WPInv_Subscriptions_DB;
-    $subs       = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice_id, 'number' => 1 ) );
-    
+
+    // Fetch the subscription handler.
+    $subs_db    = new WPInv_Subscriptions_DB();
+
+    // Fetch the parent in case it is a renewal.
+    if ( $invoice->is_renewal() ) {
+        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_parent_id(), 'number' => 1 ) );
+    } else {
+        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_id(), 'number' => 1 ) );
+    }
+
+    // Return the subscription if it exists.
     if ( ! empty( $subs ) ) {
         return reset( $subs );
     }
-    
+
     return false;
 }
 
@@ -2400,3 +2429,59 @@ function wpinv_filter_posts_clauses( $clauses, $wp_query ) {
     return $clauses;
 }
 add_filter( 'posts_clauses', 'wpinv_filter_posts_clauses', 10, 2 );
+
+/**
+ * Processes an invoice refund.
+ * 
+ * @param int $invoice_id
+ * @param WPInv_Invoice $invoice
+ * @param array $status_transition
+ * @todo: descrease customer/store earnings
+ */
+function getpaid_maybe_process_refund( $invoice_id, $invoice, $status_transition ) {
+
+    if ( empty( $status_transition['from'] ) || ! $invoice->has_status( 'wpi-refunded' ) || in_array( $status_transition['from'], array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
+        return;
+    }
+
+    $discount_code = $invoice->get_discount_code();
+    if ( ! empty( $discount_code ) ) {
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        if ( $discount->exists() ) {
+            $discount->increase_usage( -1 );
+        }
+    
+    }
+
+    do_action( 'wpinv_pre_refund_invoice', $invoice, $invoice_id );
+    do_action( 'wpinv_refund_invoice', $invoice, $invoice_id );
+    do_action( 'wpinv_post_refund_invoice', $invoice, $invoice_id );
+}
+add_action( 'getpaid_invoice_status_wpi-refunded', 'getpaid_maybe_process_refund', 10, 3 );
+
+/**
+ * Fires when a payment fails.
+ * 
+ * @param int $invoice_id
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_maybe_process_failure( $invoice_id, $invoice ) {
+
+    if ( ! $invoice->has_status( 'wpi-failed' ) ) {
+        return;
+    }
+
+    $discount_code = $invoice->get_discount_code();
+    if ( ! empty( $discount_code ) ) {
+        $discount = wpinv_get_discount_obj( $discount_code );
+
+        if ( $discount->exists() ) {
+            $discount->increase_usage( -1 );
+        }
+
+    }
+
+    do_action( 'wpinv_invoice_payment_failed', $invoice, $invoice_id );
+}
+add_action( 'getpaid_invoice_status_wpi-failed', 'getpaid_maybe_process_failure', 10, 2 );

@@ -189,9 +189,9 @@ function wpinv_create_user( $email ) {
 		'user_login' => wpinv_generate_user_name( $email ),
 		'user_pass'  => wp_generate_password(),
 		'user_email' => $email,
-		'role'       => 'subscriber',
+        'role'       => 'subscriber',
     );
-        
+
     return wp_insert_user( $args );
 
 }
@@ -208,11 +208,11 @@ function wpinv_generate_user_name( $prefix = '' ) {
 	$prefix = strtok( $prefix, '@' );
 
 	// Trim to 4 characters max.
-	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
+	$prefix = sanitize_user( $prefix );
 
 	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
 	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {
-		$prefix = 'paywp';
+		$prefix = 'gtp';
 	}
 
 	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
