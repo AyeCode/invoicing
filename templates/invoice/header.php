@@ -11,15 +11,18 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-    <div class="wpinv-top-bar no-print">
+    <div class="no-print border-bottom pt-3 pb-3 bg-white">
         <div class="container">
             <div class="row">
-                <div class="col text-left">
-                    <?php do_action( 'getpaid_invoice_top_bar_left', $invoice );?>
+
+                <div class="col-12 col-sm-6 text-left pl-0">
+                    <?php do_action( 'getpaid_invoice_header_left', $invoice );?>
                 </div>
-                <div class="col text-right">
-                    <?php do_action( 'getpaid_invoice_top_bar_right', $invoice );?>
+
+                <div class="col-12 col-sm-6 text-right pr-0">
+                    <?php do_action( 'getpaid_invoice_header_right', $invoice );?>
                 </div>
+
             </div>
         </div>
     </div>

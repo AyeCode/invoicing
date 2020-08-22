@@ -9,20 +9,24 @@
 
 defined( 'ABSPATH' ) || exit;
 
-do_action( 'wpinv_invoice_print_before_top_content', $invoice );
-
 ?>
-        <div class="wpinv-top-content mt-3 mb-3">
+
+        <?php do_action( 'getpaid_before_invoice_details_main', $invoice ); ?>
+
+        <div class="getpaid-invoice-details mt-3 mb-3">
             <div class="row">
-                <div class="col">
+
+                <div class="col-12 col-sm-6">
                     <?php do_action( 'getpaid_invoice_details_left', $invoice ); ?>
                 </div>
 
-                <div class="col">
+                <div class="col-12 col-sm-6">
                     <?php do_action( 'getpaid_invoice_details_right', $invoice ); ?>
                 </div>
+
             </div>
         </div>
-<?php
 
-do_action( 'wpinv_invoice_print_after_top_content', $invoice );
+        <?php do_action( 'getpaid_after_invoice_details_main', $invoice ); ?>
+
+<?php

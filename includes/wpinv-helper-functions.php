@@ -1193,3 +1193,17 @@ function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
     $tip                = esc_attr__( $tip );
     return "<span class='wpi-help-tip dashicons dashicons-editor-help $additional_classes' title='$tip'></span>";
 }
+
+/**
+ * Formats a date
+ */
+function getpaid_format_date( $date ) {
+
+    if ( empty( $date ) || $date == '0000-00-00 00:00:00' ) {
+        return '';
+    }
+
+
+    return date_i18n( get_option( 'date_format' ), strtotime( $date ) );
+
+}

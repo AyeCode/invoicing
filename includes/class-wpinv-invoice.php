@@ -320,7 +320,7 @@ class WPInv_Invoice extends GetPaid_Data {
             $invoice_date   = date_i18n( get_option( 'date_format' ), strtotime( $invoice_date ) );
         }
 
-        return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->ID, $this );
+        return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->get_id(), $this );
     }
 
     /**
@@ -668,6 +668,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return array
 	 */
     public function get_user_info( $context = 'view' ) {
+
         $user_info = array(
             'user_id'    => $this->get_user_id( $context ),
             'email'      => $this->get_email( $context ),
@@ -682,8 +683,10 @@ class WPInv_Invoice extends GetPaid_Data {
             'company'    => $this->get_company( $context ),
             'vat_number' => $this->get_vat_number( $context ),
             'discount'   => $this->get_discount_code( $context ),
-        );
-        return apply_filters( 'wpinv_user_info', $user_info, $this->ID, $this );
+		);
+
+		return apply_filters( 'wpinv_user_info', $user_info, $this->get_id(), $this );
+
     }
 
     /**
@@ -3491,7 +3494,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					do_action( 'getpaid_invoice_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
 
 					// @deprecated this is deprecated and will be removed in the future.
-					do_action( 'wpinv_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->ID, $status_transition['from'] );
+					do_action( 'wpinv_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $status_transition['from'] );
 
 					// Note the transition occurred.
 					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );
@@ -3523,7 +3526,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function update_status( $new_status = false, $note = '', $manual = false ) {
 
 		// Fires before updating a status.
-		do_action( 'wpinv_before_invoice_status_change', $this->ID, $new_status, $this->get_status( 'edit' ) );
+		do_action( 'wpinv_before_invoice_status_change', $this->get_id(), $new_status, $this->get_status( 'edit' ) );
 
 		// Update the status.
 		$this->set_status( $new_status, $note, $manual );

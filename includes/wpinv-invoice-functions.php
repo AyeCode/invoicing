@@ -701,7 +701,7 @@ function wpinv_get_invoice_date( $invoice_id = 0, $format = '', $default = true 
 function wpinv_get_invoice_vat_number( $invoice_id = 0 ) {
     $invoice = new WPInv_Invoice( $invoice_id );
     
-    return $invoice->vat_number;
+    return $invoice->get_vat_number();
 }
 
 function wpinv_insert_payment_note( $invoice_id = 0, $note = '', $user_type = false, $added_by_user = false, $system = false ) {

@@ -1,8 +1,8 @@
 <?php
 /**
- * Displays right side of the invoice title.
+ * Displays right side of the type of invoice.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/invoice/title-right.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/invoice/invoice-type.php.
  *
  * @version 1.0.19
  */
