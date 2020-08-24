@@ -53,6 +53,13 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 */
 	protected $cache_group = 'getpaid_forms';
 
+	/**
+	 * Stores a reference to the invoice if the form is for an invoice..
+	 *
+	 * @var WPInv_Invoice
+	 */
+	public $invoice = 0;
+
     /**
      * Stores a reference to the original WP_Post object
      *
@@ -71,7 +78,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		if ( is_numeric( $form ) && $form > 0 ) {
 			$this->set_id( $form );
 		} elseif ( $form instanceof self ) {
+
 			$this->set_id( $form->get_id() );
+			$this->invoice = $form->invoice;
+
 		} elseif ( ! empty( $form->ID ) ) {
 			$this->set_id( $form->ID );
 		} else {
@@ -213,8 +223,30 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 		if ( empty( $elements ) || ! is_array( $elements ) ) {
             return wpinv_get_data( 'sample-payment-form' );
-        }
-        return $elements;
+		}
+
+		// Ensure that all required elements exist.
+		$_elements = array();
+		foreach ( $elements as $element ) {
+
+			if ( $element['type'] == 'pay_button' && ! $this->has_element_type( 'gateway_select' ) ) {
+
+				$_elements[] = array(
+					'text'        => __( 'Select Payment Method', 'invoicing' ),
+					'id'          => 'gtscicd',
+					'name'        => 'gtscicd',
+					'type'        => 'gateway_select',
+					'premade'     => true
+			
+				);
+
+			}
+
+			$_elements[] = $element;
+
+		}
+
+        return $_elements;
 	}
 
 	/**
@@ -232,14 +264,20 @@ class GetPaid_Payment_Form extends GetPaid_Data {
             $items = wpinv_get_data( 'sample-payment-form-items' );
 		}
 
-		if ( 'view' != $context ) {
-			return $items;
-		}
-
 		// Convert the items.
 		$prepared = array();
 
 		foreach ( $items as $key => $value ) {
+
+			if ( $value instanceof GetPaid_Form_Item ) {
+
+				if ( $value->can_purchase() ) {
+					$prepared[] = $value;
+				}
+
+				continue;
+
+			}
 
 			// $item_id => $quantity
 			if ( is_numeric( $key ) && is_numeric( $value ) ) {
@@ -288,7 +326,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			}
 		}
 
-		if ( 'objects' == $return ) {
+		if ( 'objects' == $return && 'view' == $context ) {
 			return $prepared;
 		}
 
@@ -317,6 +355,31 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			if ( $item->get_id() == (int) $item_id ) {
 				return $item;
 			}
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Gets a single element.
+	 *
+	 * @since 1.0.19
+	 * @param  string $element_type The element type to return.
+	 * @return array|bool
+	 */
+	public function get_element_type( $element_type ) {
+
+		if ( empty( $element_type ) || ! is_scalar( $element_type ) ) {
+			return false;
+		}
+
+		foreach ( $this->get_prop( 'elements' ) as $element ) {
+
+			if ( $element['type'] == $element_type ) {
+				return $element;
+			}
+
 		}
 
 		return false;
@@ -577,7 +640,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @return bool
 	 */
     public function is_active() {
-        $is_active = null !== $this->get_id();
+        $is_active = 0 !== (int) $this->get_id();
 
         if ( $is_active && ! current_user_can( 'edit_post', $this->get_id() ) && $this->get_status() != 'publish' ) {
             $is_active = false;
@@ -597,30 +660,57 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	}
 
 	/**
-	 * Displays the payment form.
+	 * Checks whether the form has a given element.
 	 *
-	 * @param bool $echo whether to return or echo the value.
 	 * @since 1.0.19
+	 * @return bool
 	 */
-    public function display( $echo = true ) {
-		global $invoicing;
+    public function has_element_type( $element_type ) {
+        return false !== $this->get_element_type( $element_type );
+	}
 
-		// Ensure that it is active.
-		if ( ! $this->is_active() ) {
-			$html = aui()->alert(
-				array(
-					'type'    => 'warning',
-					'content' => __( 'This payment form is no longer active', 'invoicing' ),
-				)
-			);
+	/**
+	 * Checks whether this form is recurring or not.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+    public function is_recurring() {
 
-			if ( $echo ) {
-				echo $html;
-				return;
+		if ( ! empty( $this->invoice ) ) {
+			return $this->invoice->is_recurring();
+		}
+
+		foreach ( $this->get_items() as $item ) {
+
+			if ( $item->is_recurring() ) {
+				return true;
 			}
 
-			return $html;
 		}
+
+        return false;
+	}
+
+	/**
+	 * Retrieves the form's html.
+	 *
+	 * @since 1.0.19
+	 */
+    public function get_html() {
+
+		// Return the HTML.
+		return wpinv_get_template_html( 'payment-forms/form.php', array( 'form' => $this ) );
+
+	}
+
+	/**
+	 * Displays the payment form.
+	 *
+	 * @since 1.0.19
+	 */
+    public function display() {
+		echo $this->get_html();
     }
 
 }

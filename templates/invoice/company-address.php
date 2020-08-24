@@ -32,7 +32,9 @@ if ( empty( $company_name ) ) {
                 <?php do_action( 'getpaid_company_address_top' ); ?>
 
                 <div class="name">
-                    <?php echo esc_html( $from_name ); ?>
+                    <a target="_blank" class="text-dark" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
+                        <?php echo esc_html( wpinv_get_business_name() ); ?>
+                    </a>
                 </div>
 
                 <?php if ( $address = wpinv_get_business_address() ) { ?>

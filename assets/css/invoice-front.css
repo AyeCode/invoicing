@@ -3592,12 +3592,8 @@ input[type="text"].getpaid-item-price-input {
     box-shadow: none;
     border-radius: 0px;
     min-height: 35px;
-	color: #666;
-	font-weight: normal;
-}
-
-.getpaid-form-cart-item-quantity {
-	text-align: center;
+	  color: #666;
+	  font-weight: normal;
 }
 
 .getpaid-payment-form-items-cart-header  {
@@ -3650,4 +3646,44 @@ input[type="text"].getpaid-item-price-input {
   color: #fff;
   background-color: #1e73be;
   border-color: #1e73be;
+}
+
+.getpaid-gateway-radio-div label {
+    line-height: 2;
+    text-align: left;
+}
+
+.getpaid-gateway-radio-div input {
+    display: inline-block;
+    margin: 0 1em 0 0;
+}
+
+.getpaid-gateway-description-div {
+	box-sizing: border-box;
+    width: 100%;
+    font-size: 0.92em;
+    border-radius: 2px;
+    color: #515151;
+    position: relative;
+    line-height: 1.5;
+    margin: 1em 0;
+    padding-left: 1.4em;
+}
+
+.getpaid-gateway-description {
+	background-color: #efefef;
+    padding: 1em;
+}
+
+.getpaid-gateway-description::before {
+    content: '';
+    display: block;
+    border: 1em solid #efefef;
+    border-right-color: transparent;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    position: absolute;
+    top: -1.0em;
+    left: 0;
+    margin: -1em 0 0 2em;
 }

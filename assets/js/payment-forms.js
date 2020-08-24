@@ -215,31 +215,20 @@ jQuery(function($) {
     $('body').on('click', 'input[name="wpi-gateway"]', function ( e ) {
 
         var form = $( this ).closest( '.getpaid-payment-form' );
-        var is_checked = $(this).is(':checked')
 
-        if ( form.find('.wpi-payment_methods input.wpi-pmethod').length > 1) {
+        // Hide all visible payment methods.
+        form
+            .find('.getpaid-gateway-description-div')
+            .filter(':visible')
+            .slideUp(250);
 
-            var target_payment_box = form.find('div.payment_box.' + $(this).attr('ID'));
-            if ( is_checked && !target_payment_box.is(':visible') ) {
+        // Display checked ones.
+        form
+            .find( 'input[name="wpi-gateway"]:checked' )
+            .closest( '.getpaid-gateways-select-gateway' )
+            .find( '.getpaid-gateway-description-div' )
+            .slideDown(250)
 
-                // Hide all visible payment methods.
-                form.find('div.payment_box').filter(':visible').slideUp(250);
-                if ($(this).is(':checked')) {
-                    var content = $('div.payment_box.' + $(this).attr('ID')).html();
-                    content = content ? content.trim() : '';
-                    if (content) {
-                        $('div.payment_box.' + $(this).attr('ID')).slideDown(250);
-                    }
-                }
-            }
-
-        } else {
-
-            $('div.payment_box').show();
-
-        }
-        $('#wpinv_payment_mode_select').attr('data-gateway', $(this).val());
-        wpinvSetPaymentBtnText($(this), $('#wpinv_payment_mode_select').data('free'));
     });
 
     /**
@@ -250,7 +239,7 @@ jQuery(function($) {
     var setup_form = function( form ) {
 
         // Add the row class to gateway credit cards.
-        form.find('.payment_box .form-horizontal .form-group').addClass('row')
+        form.find('.getpaid-gateway-description-div .form-horizontal .form-group').addClass('row')
 
         // Get a list of all active gateways.
         var gateways = form.find('.getpaid-payment-form-element-gateway_select input[name="wpi-gateway"]');
@@ -258,12 +247,12 @@ jQuery(function($) {
         // If there is one gateway, we can hide the radio input and the title.
         if ( 1 === gateways.length ) {
             gateways.eq(0).hide();
-            form.find('.wpi-payment_methods_title').hide()
+            form.find('.getpaid-gateways-select-title-div').hide()
         }
 
         // Hide the title if there is no gateway.
         if ( gateways.length === 0) {
-            form.find('.wpi-payment_methods_title').hide()
+            form.find('.getpaid-gateways-select-title-div').hide()
             form.find('.getpaid-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
         }
 

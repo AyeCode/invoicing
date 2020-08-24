@@ -13,7 +13,7 @@ if ( empty( $text ) ) {
     $text = __( 'Total to pay:', 'invoicing' );
 }
 ?>
-<div class="form-group">
+<div class="form-group mt-4">
     <strong><?php echo sanitize_text_field( $text ); ?></strong>
     <span class="getpaid-checkout-total-payable"></span>
 </div>

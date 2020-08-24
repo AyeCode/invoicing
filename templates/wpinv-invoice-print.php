@@ -40,12 +40,13 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 
     </head>
     
+
     <body class="body wpinv wpinv-print">
 
-    <?php do_action( 'getpaid_invoice', $invoice ); ?>
-
-    <?php do_action( 'wpinv_invoice_print_body_end', $invoice ); ?>
+        <?php do_action( 'getpaid_invoice', $invoice ); ?>
+        <?php do_action( 'wpinv_invoice_print_body_end', $invoice ); ?>
 
     </body>
+
 
 </html>

@@ -147,9 +147,9 @@ class WPInv_Invoice extends GetPaid_Data {
 				$this->set_id( $invoice['ID'] );
 			}
 
-		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_discount_id_by_code( $invoice, 'key' ) ) {
+		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
 			$this->set_id( $invoice_id );
-		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_discount_id_by_code( $invoice, 'number' ) ) {
+		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
 			$this->set_id( $invoice_id );
 		} else {
 			$this->set_object_read( true );
@@ -167,30 +167,35 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
-	 * Given a discount code, it returns a discount id.
+	 * Given an invoice key/number, it returns its id.
 	 *
 	 *
 	 * @static
-	 * @param string $discount_code
+	 * @param string $value The invoice key or number
+	 * @param string $field Either key or number.
 	 * @since 1.0.15
 	 * @return int
 	 */
-	public static function get_discount_id_by_code( $invoice_key_or_number, $field = 'key' ) {
+	public static function get_invoice_id_by_field( $value, $field = 'key' ) {
         global $wpdb;
 
-		// Trim the code.
-        $key = trim( $invoice_key_or_number );
+		// Trim the value.
+		$value = trim( $value );
+		
+		if ( empty( $value ) ) {
+			return 0;
+		}
 
         // Valid fields.
         $fields = array( 'key', 'number' );
 
-		// Ensure a value has been passed.
-		if ( empty( $key ) || ! in_array( $field, $fields ) ) {
+		// Ensure a field has been passed.
+		if ( empty( $field ) || ! in_array( $field, $fields ) ) {
 			return 0;
 		}
 
 		// Maybe retrieve from the cache.
-		$invoice_id   = wp_cache_get( $key, 'getpaid_invoice_keys_' . $field );
+		$invoice_id   = wp_cache_get( $field, "getpaid_invoice_{$field}s_to_ids" );
 		if ( ! empty( $invoice_id ) ) {
 			return $invoice_id;
 		}
@@ -198,7 +203,7 @@ class WPInv_Invoice extends GetPaid_Data {
         // Fetch from the db.
         $table       = $wpdb->prefix . 'getpaid_invoices';
         $invoice_id  = $wpdb->get_var(
-            $wpdb->prepare( "SELECT `post_id` FROM $table WHERE $field=%s LIMIT 1", $key )
+            $wpdb->prepare( "SELECT `post_id` FROM $table WHERE `$field`=%s LIMIT 1", $value )
         );
 
 		if ( empty( $invoice_id ) ) {
@@ -206,7 +211,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		// Update the cache with our data
-		wp_cache_set( $key, $invoice_id, 'getpaid_invoice_keys_' . $field );
+		wp_cache_set( $field, $invoice_id, "getpaid_invoice_{$field}s_to_ids" );
 
 		return $invoice_id;
     }

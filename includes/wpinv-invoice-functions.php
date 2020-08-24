@@ -30,14 +30,25 @@ function getpaid_is_invoice_post_type( $post_type ) {
     return $post_type && array_key_exists( $post_type, getpaid_get_invoice_post_types() );
 }
 
+/**
+ * Returns the current invoice's id.
+ */
 function wpinv_get_invoice_cart_id() {
-    $wpinv_checkout = wpinv_get_checkout_session();
-    
-    if ( !empty( $wpinv_checkout['invoice_id'] ) ) {
-        return $wpinv_checkout['invoice_id'];
+
+    // Ensure that we have an invoice key.
+    if ( empty( $_GET['invoice_key'] ) ) {
+        return 0;
     }
-    
-    return NULL;
+
+    // Retrieve an invoice using the key.
+    $invoice = new WPInv_Invoice( $_GET['invoice_key'] );
+
+    // Compare the invoice key and the parsed key.
+    if ( $invoice->get_id() != 0 && $invoice->get_key() == $_GET['invoice_key'] ) {
+        return $invoice->get_id();
+    }
+
+    return 0;
 }
 
 /**
