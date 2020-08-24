@@ -136,7 +136,7 @@ function wpinv_get_gateway_admin_label( $gateway ) {
 function wpinv_get_gateway_description( $gateway ) {
     global $wpinv_options;
 
-    $description = isset( $wpinv_options[$gateway . '_desc'] ) ? $wpinv_options[$gateway . '_desc'] : '';
+    $description = ! empty( $wpinv_options[$gateway . '_desc'] ) ? $wpinv_options[$gateway . '_desc'] : '';
 
     return apply_filters( 'wpinv_gateway_description', $description, $gateway );
 }
@@ -769,21 +769,32 @@ function wpinv_gateway_support_subscription( $gateway ) {
 
     if ( wpinv_is_gateway_active( $gateway ) ) {
         $supports = apply_filters( 'wpinv_' . $gateway . '_support_subscription', $supports );
-        $supports = apply_filters( 'getapid_gateway_support_subscription', $supports, $gateway );
+        $supports = apply_filters( 'getapid_gateway_supports_subscription', $supports, $gateway );
     }
 
     return $supports;
 }
 
-function wpinv_payment_gateways_on_cart( $gateways = array() ) {
-    if ( !empty( $gateways ) && wpinv_cart_has_recurring_item() ) {
-        foreach ( $gateways as $gateway => $info ) {
-            if ( !wpinv_gateway_support_subscription( $gateway ) ) {
+/**
+ * Filters payment form gateways.
+ * 
+ * @param array $gateways an array of gateways.
+ * @param GetPaid_Payment_Form $form payment form.
+ */
+function wpinv_payment_gateways_on_cart( $gateways, $form ) {
+
+    if ( $form->is_recurring() ) {
+
+        foreach ( array_keys( $gateways ) as $gateway ) {
+
+            if ( ! wpinv_gateway_support_subscription( $gateway ) ) {
                 unset( $gateways[$gateway] );
             }
+
         }
+
     }
-    
+
     return $gateways;
 }
-add_filter( 'wpinv_payment_gateways_on_cart', 'wpinv_payment_gateways_on_cart', 10, 1 );
+add_filter( 'getpaid_payment_form_gateways', 'wpinv_payment_gateways_on_cart', 10, 2 );

@@ -922,9 +922,11 @@ class WPInv_Ajax {
 
         // Prepare the result.
         $result = array(
+
             'submission_id' => $submission->id,
             'has_recurring' => $submission->has_recurring,
             'is_free'       => $submission->get_payment_details(),
+
             'totals'        => array(
                 'subtotal'  => wpinv_price( wpinv_format_amount( $submission->subtotal_amount ), $submission->get_currency() ),
                 'discount'  => wpinv_price( wpinv_format_amount( $submission->get_total_discount() ), $submission->get_currency() ),
@@ -932,6 +934,11 @@ class WPInv_Ajax {
                 'tax'       => wpinv_price( wpinv_format_amount( $submission->get_total_tax() ), $submission->get_currency() ),
                 'total'     => wpinv_price( wpinv_format_amount( $submission->get_total() ), $submission->get_currency() ),
             ),
+
+            'texts'         => array(
+                '.getpaid-checkout-total-payable' => wpinv_price( wpinv_format_amount( $submission->get_total() ), $submission->get_currency() ),
+            )
+
         );
 
         // Add items.

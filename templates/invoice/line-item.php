@@ -60,7 +60,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                     }
 
                     // Item sub total.
-                    if ( 'subtotal' == $key ) {
+                    if ( 'subtotal' == $column ) {
                         echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ), $invoice->get_currency() );
                     }
 

@@ -195,10 +195,10 @@ class GetPaid_Payment_Form_Submission {
                 return;
             }
 
-			$this->payment_form->set_items( $invoice->cart_details );
+			$this->payment_form->set_items( $invoice->get_items() );
 
-			$this->country = $invoice->country;
-			$this->state = $invoice->state;
+			$this->country = $invoice->get_country();
+			$this->state = $invoice->get_state();
 
 		// Default forms do not have items.
         } else if ( $form->is_default() && isset( $data['form_items'] ) ) {
@@ -346,7 +346,13 @@ class GetPaid_Payment_Form_Submission {
 
 		// Do we have a recurring item?
 		if ( $item->is_recurring() ) {
+
+			if ( $this->has_recurring ) {
+				$this->last_error = __( 'You can only buy one recurring item at a time.', 'invoicing' );
+			}
+
 			$this->has_recurring = true;
+
 		}
 
 		$this->items[ $item->get_id() ] = $item;
@@ -624,7 +630,7 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		// Fetch the discounted amount.
-		$discount = $this->discount->get_discounted_amount( $item->get_price() * $item->get_qantity() );
+		$discount = $this->discount->get_discounted_amount( $item->get_price() * $item->get_quantity() );
 
 		$this->add_discount( 'Discount', $discount );
 
