@@ -129,10 +129,11 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         'state',
         'country',
         'zip',
+        'phone',
     );
-    
+
     $user_info = get_userdata( $user_id );
-    
+
     $address = array();
     $address['user_id'] = $user_id;
     $address['email'] = !empty( $user_info ) ? $user_info->user_email : '';

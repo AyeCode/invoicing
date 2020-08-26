@@ -13,9 +13,9 @@ defined( 'ABSPATH' ) || exit;
 $totals = apply_filters(
     'getpaid_payment_form_cart_table_totals',
     array(
+        'subtotal' => __( 'Subtotal', 'invoicing' ),
         'tax'      => __( 'Tax', 'invoicing' ),
         'discount' => __( 'Discount', 'invoicing' ),
-        'subtotal' => __( 'Subtotal', 'invoicing' ),
         'total'    => __( 'Total', 'invoicing' ),
     ),
     $form

@@ -10,16 +10,18 @@
 defined( 'ABSPATH' ) || exit;
 
 // Cart table columns.
-$columns = apply_filters(
-    'getpaid_payment_form_cart_table_columns',
-    array(
-        'name'     => __( 'Item', 'invoicing' ),
-        'price'    => __( 'Price', 'invoicing' ),
-        'quantity' => __( 'Quantity', 'invoicing' ),
-        'subtotal' => __( 'Subtotal', 'invoicing' ),
-    ),
-    $form
+$columns = array(
+    'name'     => __( 'Item', 'invoicing' ),
+    'price'    => __( 'Price', 'invoicing' ),
+    'quantity' => __( 'Quantity', 'invoicing' ),
+    'subtotal' => __( 'Subtotal', 'invoicing' ),
 );
+
+if ( ! empty( $form->invoice ) ) {
+    $columns = getpaid_invoice_item_columns( $form->invoice );
+}
+
+$columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $form );
 
 ?>
     <div class="getpaid-payment-form-items-cart border">

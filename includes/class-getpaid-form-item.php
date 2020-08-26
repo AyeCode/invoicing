@@ -14,7 +14,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 *
 	 * @var string
 	 */
-	protected $custom_description = '';
+	protected $custom_description = null;
 
 	/**
 	 * Stores the item quantity.
@@ -93,6 +93,17 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	}
 
 	/**
+	 * Get the item name without a suffix.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_raw_name( $context = 'view' ) {
+		return parent::get_name( $context );
+	}
+
+	/**
 	 * Get the item description.
 	 *
 	 * @since 1.0.19
@@ -101,7 +112,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	public function get_description( $context = 'view' ) {
 
-		if ( ! empty( $this->custom_description ) ) {
+		if ( isset( $this->custom_description ) ) {
 			return $this->custom_description;
 		}
 
@@ -306,7 +317,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			$quantity = 1;
 		}
 
-		$this->quantity = $quantity;
+		$this->quantity = (int) $quantity;
 
 	}
 

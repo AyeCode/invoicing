@@ -8,23 +8,12 @@
  * @version 1.0.19
  */
 
+use Svg\Tag\Rect;
+
 defined( 'ABSPATH' ) || exit;
 
 // Totals rows.
-$totals = apply_filters(
-    'getpaid_invoice_line_totals',
-    array(
-        'subtotal' => __( 'Subtotal', 'invoicing' ),
-        'tax'      => __( 'Tax', 'invoicing' ),
-        'discount' => __( 'Discount', 'invoicing' ),
-        'total'    => __( 'Total', 'invoicing' ),
-    ),
-    $invoice
-);
-
-if ( ! wpinv_use_taxes() && isset( $totals['tax'] ) ) {
-    unset( $totals['tax'] );
-}
+$totals = getpaid_invoice_totals_rows( $invoice );
 
 do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
@@ -45,9 +34,6 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                     <?php
 
-                        // Fires when printing a cart total.
-                        do_action( "getpaid_invoice_cart_totals_$key", $invoice );
-
                         // Total tax.
                         if ( 'tax' == $key ) {
                             echo wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ), $invoice->get_currency() );
@@ -67,6 +53,9 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                         if ( 'total' == $key ) {
                             echo wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
                         }
+
+                        // Fires when printing a cart total.
+                        do_action( "getpaid_invoice_cart_totals_$key", $invoice );
 
                     ?>
 
