@@ -146,13 +146,14 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
 
         // Load functions.
+        require_once( WPINV_PLUGIN_DIR . 'includes/deprecated-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-tax-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-template-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-address-functions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-invoice-functions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/invoice-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-item-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-discount-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );

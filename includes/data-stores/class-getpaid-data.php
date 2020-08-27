@@ -137,12 +137,12 @@ abstract class GetPaid_Data {
 	 * If the object no longer exists, remove the ID.
 	 */
 	public function __wakeup() {
-		try {
-			$this->__construct( absint( $this->id ) );
-		} catch ( Exception $e ) {
+		$this->__construct( absint( $this->id ) );
+
+		if ( ! empty( $this->last_error ) ) {
 			$this->set_id( 0 );
-			$this->set_object_read( true );
 		}
+
 	}
 
 	/**
@@ -407,8 +407,10 @@ abstract class GetPaid_Data {
 	public function get_meta( $key = '', $single = true, $context = 'view' ) {
 
 		// Check if this is an internal meta key.
-		if ( $this->is_internal_meta_key( $key ) ) {
-			$function = 'get_' . $key;
+		$_key = str_replace( '_wpinv', '', $key );
+		$_key = str_replace( 'wpinv', '', $_key );
+		if ( $this->is_internal_meta_key( $_key ) ) {
+			$function = 'get_' . $_key;
 
 			if ( is_callable( array( $this, $function ) ) ) {
 				return $this->{$function}();
@@ -875,13 +877,23 @@ abstract class GetPaid_Data {
 	/**
 	 * When invalid data is found, throw an exception unless reading from the DB.
 	 *
-	 * @throws Exception Data Exception.
 	 * @since 1.0.19
 	 * @param string $code             Error code.
 	 * @param string $message          Error message.
 	 */
 	protected function error( $code, $message ) {
-		throw new Exception( $message, $code );
+		$this->last_error = $message;
+	}
+
+	/**
+	 * Checks if the object is saved in the database
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+	public function exists() {
+		$id = $this->get_id();
+		return ! empty( $id );
 	}
 
 }

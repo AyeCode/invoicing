@@ -490,7 +490,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
 		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
 	}
-	
+
 	/**
      * Deletes an invoice's special fields from the database.
 	 *

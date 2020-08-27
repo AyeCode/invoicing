@@ -441,64 +441,24 @@ a img {
     margin-top: 15px;
 }
 
-.wpi_invoice_notes_container {
-    position: relative;
-    min-width: 255px;
-    border: 1px solid #ccd0d4;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
-    background: #fff;
-    margin-bottom: 20px;
-    padding: 0;
-    line-height: 1;
-    border-bottom: 1px solid #ccd0d4;
+.getpaid-invoice-notes-title {
+    padding: 10px 12px;
 }
 
-.wpi_invoice_notes_container h2 {
-    font-size: 14px;
-    padding: 8px 12px;
-    margin: 0;
-    line-height: 1.4;
-    display: block;
-    font-weight: 600;
-    border-bottom: 1px solid #ccd0d4;
-}
-
-.wpi_invoice_notes_container .wpi_invoice_notes {
-    padding: 20px 0 0;
+.getpaid-invoice-notes {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: auto;
     list-style-type: none;
-}
-
-.wpi_invoice_notes_container .note {
-    padding: 0 10px;
-}
-
-.wpi_invoice_notes_container .note_content {
-    background: #eeeeee;
-    padding: 20px 10px;
-    position: relative;
-}
-
-.wpi_invoice_notes_container .note_content p {
     word-wrap: break-word;
-    margin: 0;
 }
 
-.wpi_invoice_notes_container .meta {
-    padding: 10px;
-    color: #999;
-    margin: 0;
-    font-size: 11px;
-}
-
-.wpi_invoice_notes_container .exact-date {
-    border-bottom: 0px dotted #999;
-}
-
-.wpinv-print .wpinv-line-items {
-    overflow-x: auto;
+.getpaid-invoice-notes .meta {
+    left: 1.5rem;
+    bottom: 6px;
+    color: #616161;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 .getpaid-company-address .invoice-company-address-value p {
@@ -533,6 +493,16 @@ a img {
 .getpaid-invoice-line-totals-col {
     font-weight: 600;
     padding: .5em 1em;
+}
+
+.getpaid-invoice-description {
+    margin-bottom: 20px;
+    border-left: 2px solid #2196F3;
+}
+
+.getpaid-invoice-line-totals-col.total {
+    border-top: 1px solid #dee2e6;
+    background-color: #fbfbfb
 }
 
 @media screen and (max-width:400px) {

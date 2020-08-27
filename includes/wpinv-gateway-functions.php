@@ -798,3 +798,441 @@ function wpinv_payment_gateways_on_cart( $gateways, $form ) {
     return $gateways;
 }
 add_filter( 'getpaid_payment_form_gateways', 'wpinv_payment_gateways_on_cart', 10, 2 );
+
+function wpinv_validate_checkout_fields() {
+    // Check if there is $_POST
+    if ( empty( $_POST ) ) {
+        return false;
+    }
+
+    // Start an array to collect valid data
+    $valid_data = array(
+        'gateway'          => wpinv_checkout_validate_gateway(), // Gateway fallback
+        'discount'         => wpinv_checkout_validate_discounts(), // Set default discount
+        'cc_info'          => wpinv_checkout_validate_cc() // Credit card info
+    );
+
+    $valid_data['invoice_user'] = wpinv_checkout_validate_invoice_user();
+    $valid_data['current_user'] = wpinv_checkout_validate_current_user();
+
+    // Return collected data
+    return $valid_data;
+}
+
+function wpinv_checkout_validate_gateway() {
+    $gateway = wpinv_get_default_gateway();
+    
+    $invoice = wpinv_get_invoice_cart();
+    $has_subscription = $invoice->is_recurring();
+    if ( empty( $invoice ) ) {
+        wpinv_set_error( 'invalid_invoice', __( 'Your cart is empty.', 'invoicing' ) );
+        return $gateway;
+    }
+
+    // Check if a gateway value is present
+    if ( !empty( $_REQUEST['wpi-gateway'] ) ) {
+        $gateway = sanitize_text_field( $_REQUEST['wpi-gateway'] );
+
+        if ( $invoice->is_free() ) {
+            $gateway = 'manual';
+        } elseif ( !wpinv_is_gateway_active( $gateway ) ) {
+            wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway is not enabled', 'invoicing' ) );
+        } elseif ( $has_subscription && !wpinv_gateway_support_subscription( $gateway ) ) {
+            if ( apply_filters( 'wpinv_reject_non_recurring_gateway', true ) ) {
+                wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway does not support subscription payment', 'invoicing' ) );
+            }
+        }
+    }
+
+    if ( $has_subscription && count( wpinv_get_cart_contents() ) > 1 ) {
+        wpinv_set_error( 'subscription_invalid', __( 'Only one subscription may be purchased through payment per checkout.', 'invoicing' ) );
+    }
+
+    return $gateway;
+}
+
+function wpinv_checkout_validate_discounts() {
+    global $wpi_cart;
+    
+    // Retrieve the discount stored in cookies
+    $discounts = wpinv_get_cart_discounts();
+
+    if ( ! is_array( $discounts ) ) {
+        return NULL;
+    }
+
+    $discounts = array_filter( $discounts );
+    $error    = false;
+
+    if ( empty( $discounts ) ) {
+        return NULL;
+    }
+
+    // If we have discounts, loop through them
+    foreach ( $discounts as $discount ) {
+        // Check if valid
+        if (  ! wpinv_is_discount_valid( $discount, (int) $wpi_cart->get_user_id() ) ) {
+            // Discount is not valid
+            $error = true;
+        }
+
+    }
+
+    if ( $error && ! wpinv_get_errors() ) {
+        wpinv_set_error( 'invalid_discount', __( 'Discount code you entered is invalid', 'invoicing' ) );
+    }
+
+    return implode( ',', $discounts );
+}
+
+function wpinv_checkout_validate_cc() {
+    $card_data = wpinv_checkout_get_cc_info();
+
+    // Validate the card zip
+    if ( !empty( $card_data['wpinv_zip'] ) ) {
+        if ( !wpinv_checkout_validate_cc_zip( $card_data['wpinv_zip'], $card_data['wpinv_country'] ) ) {
+            wpinv_set_error( 'invalid_cc_zip', __( 'The zip / postcode you entered for your billing address is invalid', 'invoicing' ) );
+        }
+    }
+
+    // This should validate card numbers at some point too
+    return $card_data;
+}
+
+function wpinv_checkout_get_cc_info() {
+	$cc_info = array();
+	$cc_info['card_name']      = isset( $_POST['card_name'] )       ? sanitize_text_field( $_POST['card_name'] )       : '';
+	$cc_info['card_number']    = isset( $_POST['card_number'] )     ? sanitize_text_field( $_POST['card_number'] )     : '';
+	$cc_info['card_cvc']       = isset( $_POST['card_cvc'] )        ? sanitize_text_field( $_POST['card_cvc'] )        : '';
+	$cc_info['card_exp_month'] = isset( $_POST['card_exp_month'] )  ? sanitize_text_field( $_POST['card_exp_month'] )  : '';
+	$cc_info['card_exp_year']  = isset( $_POST['card_exp_year'] )   ? sanitize_text_field( $_POST['card_exp_year'] )   : '';
+	$cc_info['card_address']   = isset( $_POST['wpinv_address'] )  ? sanitize_text_field( $_POST['wpinv_address'] ) : '';
+	$cc_info['card_city']      = isset( $_POST['wpinv_city'] )     ? sanitize_text_field( $_POST['wpinv_city'] )    : '';
+	$cc_info['card_state']     = isset( $_POST['wpinv_state'] )    ? sanitize_text_field( $_POST['wpinv_state'] )   : '';
+	$cc_info['card_country']   = isset( $_POST['wpinv_country'] )  ? sanitize_text_field( $_POST['wpinv_country'] ) : '';
+	$cc_info['card_zip']       = isset( $_POST['wpinv_zip'] )      ? sanitize_text_field( $_POST['wpinv_zip'] )     : '';
+
+	// Return cc info
+	return $cc_info;
+}
+
+/**
+ * Validates a zip code.
+ */
+function wpinv_checkout_validate_cc_zip( $zip = 0, $country_code = '' ) {
+
+    if ( empty( $zip ) || empty( $country_code ) ){
+        return false;
+    }
+
+    // Prepare the country code.
+    $country_code = strtoupper( trim( $country_code ) );
+
+    // Fetch the regexes.
+    $zip_regex = wpinv_get_data( 'zip-regexes' );
+
+    // Check if it is valid.
+    $is_valid = ! isset ( $zip_regex[ $country_code ] ) || preg_match( "/" . $zip_regex[ $country_code ] . "/i", $zip );
+
+    return apply_filters( 'wpinv_is_zip_valid', $is_valid, $zip, $country_code );
+}
+
+function wpinv_checkout_validate_agree_to_terms() {
+    // Validate agree to terms
+    if ( ! isset( $_POST['wpi_agree_to_terms'] ) || $_POST['wpi_agree_to_terms'] != 1 ) {
+        // User did not agree
+        wpinv_set_error( 'agree_to_terms', apply_filters( 'wpinv_agree_to_terms_text', __( 'You must agree to the terms of use', 'invoicing' ) ) );
+    }
+}
+
+function wpinv_checkout_validate_invoice_user() {
+    global $wpi_cart, $user_ID;
+
+    if(empty($wpi_cart)){
+        $wpi_cart = wpinv_get_invoice_cart();
+    }
+
+    $invoice_user = (int)$wpi_cart->get_user_id();
+    $valid_user_data = array(
+        'user_id' => $invoice_user
+    );
+
+    // If guest checkout allowed
+    if ( !wpinv_require_login_to_checkout() ) {
+        return $valid_user_data;
+    }
+    
+    // Verify there is a user_ID
+    if ( $user_ID == $invoice_user ) {
+        // Get the logged in user data
+        $user_data = get_userdata( $user_ID );
+        $required_fields  = wpinv_checkout_required_fields();
+
+        // Loop through required fields and show error messages
+         if ( !empty( $required_fields ) ) {
+            foreach ( $required_fields as $field_name => $value ) {
+                if ( in_array( $value, $required_fields ) && empty( $_POST[ 'wpinv_' . $field_name ] ) ) {
+                    wpinv_set_error( $value['error_id'], $value['error_message'] );
+                }
+            }
+        }
+
+        // Verify data
+        if ( $user_data ) {
+            // Collected logged in user data
+            $valid_user_data = array(
+                'user_id'     => $user_ID,
+                'email'       => isset( $_POST['wpinv_email'] ) ? sanitize_email( $_POST['wpinv_email'] ) : $user_data->user_email,
+                'first_name'  => isset( $_POST['wpinv_first_name'] ) && ! empty( $_POST['wpinv_first_name'] ) ? sanitize_text_field( $_POST['wpinv_first_name'] ) : $user_data->first_name,
+                'last_name'   => isset( $_POST['wpinv_last_name'] ) && ! empty( $_POST['wpinv_last_name']  ) ? sanitize_text_field( $_POST['wpinv_last_name']  ) : $user_data->last_name,
+            );
+
+            if ( !empty( $_POST[ 'wpinv_email' ] ) && !is_email( $_POST[ 'wpinv_email' ] ) ) {
+                wpinv_set_error( 'invalid_email', __( 'Please enter a valid email address', 'invoicing' ) );
+            }
+        } else {
+            // Set invalid user error
+            wpinv_set_error( 'invalid_user', __( 'The user billing information is invalid', 'invoicing' ) );
+        }
+    } else {
+        // Set invalid user error
+        wpinv_set_error( 'invalid_user_id', __( 'The invalid invoice user id', 'invoicing' ) );
+    }
+
+    // Return user data
+    return $valid_user_data;
+}
+
+function wpinv_checkout_validate_current_user() {
+    global $wpi_cart;
+
+    $data = array();
+    
+    if ( is_user_logged_in() ) {
+        if ( !wpinv_require_login_to_checkout() || ( wpinv_require_login_to_checkout() && (int)$wpi_cart->get_user_id() === (int)get_current_user_id() ) ) {
+            $data['user_id'] = (int)get_current_user_id();
+        } else {
+            wpinv_set_error( 'logged_in_only', __( 'You are not allowed to pay for this invoice', 'invoicing' ) );
+        }
+    } else {
+        // If guest checkout allowed
+        if ( !wpinv_require_login_to_checkout() ) {
+            $data['user_id'] = 0;
+        } else {
+            wpinv_set_error( 'logged_in_only', __( 'You must be logged in to pay for this invoice', 'invoicing' ) );
+        }
+    }
+
+    return $data;
+}
+
+function wpinv_checkout_form_get_user( $valid_data = array() ) {
+
+    if ( !empty( $valid_data['current_user']['user_id'] ) ) {
+        $user = $valid_data['current_user'];
+    } else {
+        // Set the valid invoice user
+        $user = $valid_data['invoice_user'];
+    }
+
+    // Verify invoice have an user
+    if ( false === $user || empty( $user ) ) {
+        return false;
+    }
+
+    $address_fields = array(
+        'first_name',
+        'last_name',
+        'company',
+        'vat_number',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'country',
+        'zip',
+    );
+    
+    foreach ( $address_fields as $field ) {
+        $user[$field]  = !empty( $_POST['wpinv_' . $field] ) ? sanitize_text_field( $_POST['wpinv_' . $field] ) : false;
+        
+        if ( !empty( $user['user_id'] ) && !empty( $valid_data['current_user']['user_id'] ) && $valid_data['current_user']['user_id'] == $valid_data['invoice_user']['user_id'] ) {
+            update_user_meta( $user['user_id'], '_wpinv_' . $field, $user[$field] );
+        }
+    }
+
+    // Return valid user
+    return $user;
+}
+
+function wpinv_process_checkout() {
+    global $wpinv_euvat, $wpi_checkout_id, $wpi_cart;
+
+    wpinv_clear_errors();
+
+    $invoice = wpinv_get_invoice_cart();
+    if ( empty( $invoice ) ) {
+        return false;
+    }
+
+    $wpi_cart = $invoice;
+
+    $wpi_checkout_id = $invoice->ID;
+
+    do_action( 'wpinv_pre_process_checkout' );
+    
+    if ( !wpinv_get_cart_contents() ) { // Make sure the cart isn't empty
+        $valid_data = false;
+        wpinv_set_error( 'empty_cart', __( 'Your cart is empty', 'invoicing' ) );
+    } else {
+        // Validate the form $_POST data
+        $valid_data = wpinv_validate_checkout_fields();
+        
+        // Allow themes and plugins to hook to errors
+        do_action( 'wpinv_checkout_error_checks', $valid_data, $_POST );
+    }
+    
+    $is_ajax    = defined( 'DOING_AJAX' ) && DOING_AJAX;
+    
+    // Validate the user
+    $user = wpinv_checkout_form_get_user( $valid_data );
+
+    // Let extensions validate fields after user is logged in if user has used login/registration form
+    do_action( 'wpinv_checkout_user_error_checks', $user, $valid_data, $_POST );
+    
+    if ( false === $valid_data || wpinv_get_errors() || ! $user ) {
+        if ( $is_ajax && 'wpinv_payment_form' != $_REQUEST['action'] ) {
+            do_action( 'wpinv_ajax_checkout_errors' );
+            die();
+        } else {
+            return false;
+        }
+    }
+
+    if ( $is_ajax && 'wpinv_payment_form' != $_REQUEST['action'] ) {
+        // Save address fields.
+        $address_fields = array( 'first_name', 'last_name', 'phone', 'address', 'city', 'country', 'state', 'zip', 'company' );
+        foreach ( $address_fields as $field ) {
+            if ( isset( $user[$field] ) ) {
+                $invoice->set( $field, $user[$field] );
+            }
+
+            $invoice->save();
+        }
+
+        $response['success']            = true;
+        $response['data']['subtotal']   = $invoice->get_subtotal();
+        $response['data']['subtotalf']  = $invoice->get_subtotal( true );
+        $response['data']['discount']   = $invoice->get_discount();
+        $response['data']['discountf']  = $invoice->get_discount( true );
+        $response['data']['tax']        = $invoice->get_tax();
+        $response['data']['taxf']       = $invoice->get_tax( true );
+        $response['data']['total']      = $invoice->get_total();
+        $response['data']['totalf']     = $invoice->get_total( true );
+	    $response['data']['free']       = $invoice->is_free() && ( ! ( (float) $response['data']['total'] > 0 ) || $invoice->has_free_trial() ) ? true : false;
+
+        wp_send_json( $response );
+    }
+    
+    $user_info = array(
+        'user_id'        => $user['user_id'],
+        'first_name'     => $user['first_name'],
+        'last_name'      => $user['last_name'],
+        'email'          => $invoice->get_email(),
+        'company'        => $user['company'],
+        'phone'          => $user['phone'],
+        'address'        => $user['address'],
+        'city'           => $user['city'],
+        'country'        => $user['country'],
+        'state'          => $user['state'],
+        'zip'            => $user['zip'],
+    );
+    
+    $cart_items = wpinv_get_cart_contents();
+    $discounts  = wpinv_get_cart_discounts();
+    
+    // Setup invoice information
+    $invoice_data = array(
+        'invoice_id'        => !empty( $invoice ) ? $invoice->ID : 0,
+        'items'             => $cart_items,
+        'cart_discounts'    => $discounts,
+        'fees'              => wpinv_get_cart_fees(),        // Any arbitrary fees that have been added to the cart
+        'subtotal'          => wpinv_get_cart_subtotal( $cart_items ),    // Amount before taxes and discounts
+        'discount'          => wpinv_get_cart_items_discount_amount( $cart_items, $discounts ), // Discounted amount
+        'tax'               => wpinv_get_cart_tax( $cart_items, $invoice ),               // Taxed amount
+        'price'             => wpinv_get_cart_total( $cart_items, $discounts ),    // Amount after taxes
+        'invoice_key'       => $invoice->get_key() ? $invoice->get_key() : $invoice->generate_key(),
+        'user_email'        => $invoice->get_email(),
+        'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+        'user_info'         => stripslashes_deep( $user_info ),
+        'post_data'         => $_POST,
+        'cart_details'      => $cart_items,
+        'gateway'           => $valid_data['gateway'],
+        'card_info'         => $valid_data['cc_info']
+    );
+    
+    $vat_info   = $wpinv_euvat->current_vat_data();
+    if ( is_array( $vat_info ) ) {
+        $invoice_data['user_info']['vat_number']        = $vat_info['number'];
+        $invoice_data['user_info']['vat_rate']          = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state']);
+        $invoice_data['user_info']['adddress_confirmed']    = isset($vat_info['adddress_confirmed']) ? $vat_info['adddress_confirmed'] : false;
+
+        // Add the VAT rate to each item in the cart
+        foreach( $invoice_data['cart_details'] as $key => $item_data) {
+            $rate = wpinv_get_tax_rate($invoice_data['user_info']['country'], $invoice_data['user_info']['state'], $item_data['id']);
+            $invoice_data['cart_details'][$key]['vat_rate'] = wpinv_round_amount( $rate, 4 );
+        }
+    }
+    
+    // Save vat fields.
+    $address_fields = array( 'vat_number', 'vat_rate', 'adddress_confirmed' );
+    foreach ( $address_fields as $field ) {
+        if ( isset( $invoice_data['user_info'][$field] ) ) {
+            $invoice->set( $field, $invoice_data['user_info'][$field] );
+        }
+    }
+    $invoice->save();
+
+    // Add the user data for hooks
+    $valid_data['user'] = $user;
+    
+    // Allow themes and plugins to hook before the gateway
+    do_action( 'wpinv_checkout_before_gateway', $_POST, $user_info, $valid_data );
+
+     // If it is free, abort.
+     if ( $invoice->is_free() && ( ! $invoice->is_recurring() || 0 ==  $invoice->get_recurring_details( 'total' ) ) ) {
+        $invoice_data['gateway'] = 'manual';
+        $_POST['wpi-gateway'] = 'manual';
+    }
+
+    // Allow the invoice data to be modified before it is sent to the gateway
+    $invoice_data = apply_filters( 'wpinv_data_before_gateway', $invoice_data, $valid_data );
+    
+    if ( $invoice_data['price'] && $invoice_data['gateway'] == 'manual' ) {
+        $mode = 'test';
+    } else {
+        $mode = wpinv_is_test_mode( $invoice_data['gateway'] ) ? 'test' : 'live';
+    }
+
+    // Setup the data we're storing in the purchase session
+    $session_data = $invoice_data;
+    // Make sure credit card numbers are never stored in sessions
+    if ( !empty( $session_data['card_info']['card_number'] ) ) {
+        unset( $session_data['card_info']['card_number'] );
+    }
+    
+    // Used for showing item links to non logged-in users after purchase, and for other plugins needing purchase data.
+    wpinv_set_checkout_session( $invoice_data );
+    
+    // Set gateway
+    $invoice->update_meta( '_wpinv_gateway', $invoice_data['gateway'] );
+    $invoice->update_meta( '_wpinv_mode', $mode );
+    $invoice->update_meta( '_wpinv_checkout', date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) ) );
+    
+    do_action( 'wpinv_checkout_before_send_to_gateway', $invoice, $invoice_data );
+
+    // Send info to the gateway for payment processing
+    wpinv_send_to_gateway( $invoice_data['gateway'], $invoice_data );
+    die();
+}
+add_action( 'wpinv_payment', 'wpinv_process_checkout' );

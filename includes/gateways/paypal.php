@@ -701,31 +701,30 @@ function wpinv_get_paypal_redirect( $ssl_check = false ) {
     return apply_filters( 'wpinv_paypal_uri', wpinv_is_test_mode( 'paypal' ) ? 'https://www.sandbox.paypal.com/cgi-bin/webscr?test_ipn=1&' : 'https://www.paypal.com/cgi-bin/webscr?' );
 }
 
+/**
+ * Confirms PayPal payments.
+ * 
+ * @param string $content Success page content.
+ */
 function wpinv_paypal_success_page_content( $content ) {
-    global $wpi_invoice;
-    
-    $session = wpinv_get_checkout_session();
 
-    if ( empty( $_GET['invoice-id'] ) && empty( $session['invoice_key'] )  ) {
+    // Retrieve the invoice.
+    $invoice_id = getpaid_get_current_invoice_id();
+    $invoice    = wpinv_get_invoice( $invoice_id );
+
+    // Ensure that it exists and that it is pending payment.
+    if ( empty( $invoice_id ) || ! $invoice->has_status( 'wpi-pending' ) ) {
         return $content;
     }
 
-    $invoice_id = ! empty( $_GET['invoice-id'] ) ? absint( $_GET['invoice-id'] ) : wpinv_get_invoice_id_by_key( $session['invoice_key'] );
-
-    if ( empty(  $invoice_id ) ) {
+    // Can the user view this invoice??
+    if ( ! wpinv_user_can_view_invoice( $invoice ) ) {
         return $content;
     }
 
-    $wpi_invoice = wpinv_get_invoice( $invoice_id );
-    
-    if ( ! empty( $wpi_invoice ) && 'wpi-pending' == $wpi_invoice->status ) {
-        // Payment is still pending so show processing indicator to fix the Race Condition, issue #
-        ob_start();
-        wpinv_get_template_part( 'wpinv-payment-processing' );
-        $content = ob_get_clean();
-    }
+    // Show payment processing indicator.
+    return wpinv_get_template_html( 'wpinv-payment-processing.php', compact( 'invoice' ) );
 
-    return $content;
 }
 add_filter( 'wpinv_payment_confirm_paypal', 'wpinv_paypal_success_page_content' );
 

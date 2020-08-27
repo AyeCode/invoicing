@@ -1307,34 +1307,43 @@ function wpinv_email_get_attachments( $email_type = '', $invoice_id = 0, $invoic
     return apply_filters( 'wpinv_email_attachments', $attachments, $email_type, $invoice_id, $invoice );
 }
 
+/**
+ * Searches for and replaces certain placeholders in an email.
+ */
 function wpinv_email_format_text( $content, $invoice ) {
+
     $replace_array = array(
         '{site_title}'      => wpinv_get_blogname(),
         '{date}'            => date_i18n( get_option( 'date_format' ), (int) current_time( 'timestamp' ) ),
     );
-    
-    if ( !empty( $invoice->ID ) ) {
+
+    $invoice = new WPInv_Invoice( $invoice );
+
+    if ( $invoice->get_id() ) {
+
         $replace_array = array_merge(
             $replace_array, 
             array(
-                '{name}'            => $invoice->get_user_full_name(),
-                '{full_name}'       => $invoice->get_user_full_name(),
-                '{first_name}'      => $invoice->get_first_name(),
-                '{last_name}'       => $invoice->get_last_name(),
-                '{email}'           => $invoice->get_email(),
-                '{invoice_number}'  => $invoice->get_number(),
-                '{invoice_total}'   => $invoice->get_total( true ),
-                '{invoice_link}'    => $invoice->get_view_url( true ),
-                '{invoice_pay_link}'=> $invoice->get_view_url( true ),
-                '{invoice_date}'    => $invoice->get_invoice_date( true ),
-                '{invoice_due_date}'=> $invoice->get_due_date( true ),
-                '{invoice_quote}'   => $invoice->get_invoice_quote_type( $invoice->ID ),
-                '{invoice_label}'   => $invoice->get_invoice_quote_type( $invoice->ID ),
-                '{is_was}'          => strtotime( $invoice->get_due_date() ) < strtotime( date_i18n( 'Y-m-d' ) ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
+                '{name}'            => sanitize_text_field( $invoice->get_user_full_name() ),
+                '{full_name}'       => sanitize_text_field( $invoice->get_user_full_name() ),
+                '{first_name}'      => sanitize_text_field( $invoice->get_first_name() ),
+                '{last_name}'       => sanitize_text_field( $invoice->get_last_name() ),
+                '{email}'           => sanitize_email( $invoice->get_email() ),
+                '{invoice_number}'  => sanitize_text_field( $invoice->get_number() ),
+                '{invoice_total}'   => wpinv_price( wpinv_format_amount( $invoice->get_total( true ) ) ),
+                '{invoice_link}'    => esc_url( $invoice->get_view_url() ),
+                '{invoice_pay_link}'=> esc_url( $invoice->get_checkout_payment_url() ),
+                '{invoice_date}'    => date( get_option( 'date_format' ), strtotime( $invoice->get_date_created(), current_time( 'timestamp' ) ) ),
+                '{invoice_due_date}'=> date( get_option( 'date_format' ), strtotime( $invoice->get_due_date(), current_time( 'timestamp' ) ) ),
+                '{invoice_quote}'   => sanitize_text_field( $invoice->get_type() ),
+                '{invoice_label}'   => sanitize_text_field( ucfirst( $invoice->get_type() ) ),
+                '{is_was}'          => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
             )
         );
+
     }
 
+    // Let third party plugins filter the arra.
     $replace_array = apply_filters( 'wpinv_email_format_text', $replace_array, $content, $invoice );
 
     foreach ( $replace_array as $key => $value ) {
@@ -1393,8 +1402,29 @@ function wpinv_email_invoice_details( $invoice, $email_type = '', $sent_to_admin
     wpinv_get_template( 'emails/wpinv-email-invoice-details.php', array( 'invoice' => $invoice, 'email_type' => $email_type, 'sent_to_admin' => $sent_to_admin ) );
 }
 
+/**
+ * Display line items in emails.
+ * 
+ * @param int|WPInv_Invoice $invoice
+ * @param string $email_type
+ * @param bool $sent_to_admin
+ */
 function wpinv_email_invoice_items( $invoice, $email_type = '', $sent_to_admin = false ) {
-    wpinv_get_template( 'emails/wpinv-email-invoice-items.php', array( 'invoice' => $invoice, 'email_type' => $email_type, 'sent_to_admin' => $sent_to_admin ) );
+
+    // Prepare the invoice.
+    $invoice = new WPInv_Invoice( $invoice );
+
+    // Abort if there is no invoice.
+    if ( 0 == $invoice->get_id() ) {
+        return;
+    }
+
+    // Prepare line items.
+    $columns = getpaid_invoice_item_columns( $invoice );
+    $columns = apply_filters( 'getpaid_invoice_line_items_table_columns', $columns, $invoice );
+
+    // Load the template.
+    wpinv_get_template( 'emails/wpinv-email-invoice-items.php', compact( 'invoice', 'columns', 'email_type', 'sent_to_admin' ) );
 }
 
 function wpinv_email_billing_details( $invoice, $email_type = '', $sent_to_admin = false ) {

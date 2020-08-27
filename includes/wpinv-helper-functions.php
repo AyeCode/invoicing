@@ -1085,13 +1085,13 @@ function wpinv_parse_list( $list ) {
 function wpinv_get_data( $key ) {
     
     // Try fetching it from the cache.
-    $data = wp_cache_get( "wpinv-$key", 'wpinv' );
+    $data = wp_cache_get( "wpinv-data-$key", 'wpinv' );
     if( $data ) {
         return $data;
     }
 
     $data = apply_filters( "wpinv_get_$key", include WPINV_PLUGIN_DIR . "includes/data/$key.php" );
-	wp_cache_set( "wpinv-$key", $data, 'wpinv' );
+	wp_cache_set( "wpinv-data-$key", $data, 'wpinv' );
 
 	return $data;
 }

@@ -21,7 +21,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
             </tr>
         <?php } ?>
         <tr>
-            <td><?php echo apply_filters( 'wpinv_invoice_status_label', __( 'Invoice Status', 'invoicing' ), $invoice ); ?></td>
+            <td><?php echo apply_filters( 'wpinv_invoice_status_title', __( 'Invoice Status', 'invoicing' ), $invoice ); ?></td>
             <td><?php echo $invoice->get_status( true ); ?></td>
         </tr>
         <?php if ( $invoice->is_renewal() ) { ?>

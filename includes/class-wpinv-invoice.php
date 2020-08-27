@@ -1,9 +1,12 @@
 <?php
+/**
+ * Contains the invoice class.
+ *
+ * @since 1.0.19
+ * @package Invoicing
+ */
 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Invoice class.
@@ -128,13 +131,13 @@ class WPInv_Invoice extends GetPaid_Data {
     /**
 	 * Get the invoice if ID is passed, otherwise the invoice is new and empty.
 	 *
-	 * @param  int/string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, number or object to read.
+	 * @param  int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object to read.
 	 */
     public function __construct( $invoice = false ) {
 
         parent::__construct( $invoice );
 
-		if ( is_numeric( $invoice ) && getpaid_is_invoice_post_type( get_post_type( $invoice ) ) ) {
+		if ( ! empty( $invoice ) && is_numeric( $invoice ) && getpaid_is_invoice_post_type( get_post_type( $invoice ) ) ) {
 			$this->set_id( $invoice );
 		} elseif ( $invoice instanceof self ) {
 			$this->set_id( $invoice->get_id() );
@@ -151,7 +154,9 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_id( $invoice_id );
 		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
 			$this->set_id( $invoice_id );
-		} else {
+		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'transaction_id' ) ) {
+			$this->set_id( $invoice_id );
+		}else {
 			$this->set_object_read( true );
 		}
 
@@ -172,7 +177,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @static
 	 * @param string $value The invoice key or number
-	 * @param string $field Either key or number.
+	 * @param string $field Either key, transaction_id or number.
 	 * @since 1.0.15
 	 * @return int
 	 */
@@ -181,13 +186,13 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Trim the value.
 		$value = trim( $value );
-		
+
 		if ( empty( $value ) ) {
 			return 0;
 		}
 
         // Valid fields.
-        $fields = array( 'key', 'number' );
+        $fields = array( 'key', 'number', 'transaction_id' );
 
 		// Ensure a field has been passed.
 		if ( empty( $field ) || ! in_array( $field, $fields ) ) {
@@ -195,7 +200,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		// Maybe retrieve from the cache.
-		$invoice_id   = wp_cache_get( $field, "getpaid_invoice_{$field}s_to_ids" );
+		$invoice_id   = wp_cache_get( $value, "getpaid_invoice_{$field}s_to_invoice_ids" );
 		if ( ! empty( $invoice_id ) ) {
 			return $invoice_id;
 		}
@@ -211,7 +216,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		// Update the cache with our data
-		wp_cache_set( $field, $invoice_id, "getpaid_invoice_{$field}s_to_ids" );
+		wp_cache_set( $value, $invoice_id, "getpaid_invoice_{$field}s_to_invoice_ids" );
 
 		return $invoice_id;
     }
@@ -278,6 +283,24 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_status( $context = 'view' ) {
 		return $this->get_prop( 'status', $context );
+	}
+	
+	/**
+	 * Retrieves an array of possible invoice statuses.
+	 *
+	 * @since 1.0.19
+	 * @return array
+	 */
+	public function get_all_statuses() {
+		
+		$statuses = wpinv_get_invoice_statuses( true, true, $this );
+
+		// For backwards compatibility.
+		if ( $this->is_quote() && class_exists( 'Wpinv_Quotes_Shared' ) ) {
+            $statuses = Wpinv_Quotes_Shared::wpinv_get_quote_statuses();
+		}
+
+		return $statuses;
     }
 
     /**
@@ -287,15 +310,11 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_status_nicename() {
-        $statuses = wpinv_get_invoice_statuses( true, true, $this );
-
-        if ( $this->is_quote() && class_exists( 'Wpinv_Quotes_Shared' ) ) {
-            $statuses = Wpinv_Quotes_Shared::wpinv_get_quote_statuses();
-        }
+		$statuses = $this->get_all_statuses();
 
         $status = isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : $this->get_status();
 
-        return apply_filters( 'wpinv_get_invoice_status_nicename', $status );
+        return apply_filters( 'wpinv_get_invoice_status_nicename', $status, $this );
     }
 
     /**
@@ -1720,6 +1739,28 @@ class WPInv_Invoice extends GetPaid_Data {
         }
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $deprecated, $secret );
+	}
+	
+	/**
+	 * Retrieves the receipt url.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_receipt_url() {
+
+		// Retrieve the checkout url.
+        $receipt_url = wpinv_get_success_page_uri();
+
+		// Maybe force ssl.
+        if ( is_ssl() ) {
+            $receipt_url = str_replace( 'http:', 'https:', $receipt_url );
+        }
+
+		// Add the invoice key.
+		$receipt_url = add_query_arg( 'invoice_key', $this->get_key(), $receipt_url );
+
+        return apply_filters( 'getpaid_get_invoice_receipt_url', $receipt_url, $this );
     }
 
     /**
@@ -1777,20 +1818,28 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_status( $new_status, $note = '', $manual_update = false ) {
 		$old_status = $this->get_status();
 
+		$statuses = $this->get_all_statuses();
+
+		if ( isset( $statuses[ 'draft' ] ) ) {
+			unset( $statuses[ 'draft' ] );
+		}
+
+
 		$this->set_prop( 'status', $new_status );
 
 		// If setting the status, ensure it's set to a valid status.
 		if ( true === $this->object_read ) {
 
 			// Only allow valid new status.
-			if ( ! array_key_exists( $new_status, wpinv_get_invoice_statuses( false, true ) ) ) {
+			if ( ! array_key_exists( $new_status, $statuses ) ) {
 				$new_status = 'wpi-pending';
 			}
 
 			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
-			if ( $old_status && ! array_key_exists( $new_status, wpinv_get_invoice_statuses( false, true ) ) ) {
+			if ( $old_status && ! array_key_exists( $new_status, $statuses ) ) {
 				$old_status = 'wpi-pending';
 			}
+
 		}
 
 		if ( true === $this->object_read && $old_status !== $new_status ) {
@@ -2873,7 +2922,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if the invoice needs payment.
      */
 	public function needs_payment() {
-		$needs_payment = ! $this->is_paid() && ! $this->is_free();
+		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_free();
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
     }
 
@@ -2883,6 +2932,14 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function is_refunded() {
         $is_refunded = $this->has_status( 'wpi-refunded' );
         return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
+	}
+
+	/**
+     * Checks if the invoice is due.
+     */
+	public function is_due() {
+		$due_date = $this->get_due_date();
+		return empty( $due_date ) ? false : current_time( 'timestamp' ) > strtotime( $due_date );
 	}
 
 	/**
@@ -2914,7 +2971,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * @since 1.0.15
      */
     public function is_quote() {
-        return $this->has_status( 'wpi_quote' );
+        return 'wpi_quote' == $this->get_post_type();
     }
 
     /**
@@ -3462,8 +3519,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $number = $this->get_id();
 
         if ( $this->has_status( 'auto-draft' ) && wpinv_sequential_number_active( $this->post_type ) ) {
-            $next_number = wpinv_get_next_invoice_number( $this->post_type );
-            $number      = $next_number;
+            $number = wpinv_get_next_invoice_number( $this->post_type );
         }
 
 		$number = wpinv_format_invoice_number( $number, $this->post_type );
@@ -3506,7 +3562,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 					// Work out if this was for a payment, and trigger a payment_status hook instead.
 					if (
-						in_array( $status_transition['from'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed' ), true )
+						in_array( $status_transition['from'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed', 'wpi-refunded' ), true )
 						&& in_array( $status_transition['to'], array( 'publish', 'wpi-processing', 'wpi-renewal' ), true )
 					) {
 						do_action( 'getpaid_invoice_payment_status_changed', $this->get_id(), $this, $status_transition );

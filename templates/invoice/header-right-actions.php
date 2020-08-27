@@ -26,6 +26,13 @@ defined( 'ABSPATH' ) || exit;
                 </a>
             <?php endif; ?>
 
+            <?php if ( wpinv_current_user_can_manage_invoicing() ) : ?>
+                &nbsp;&nbsp;
+                <a class="btn btn-secondary invoice-action-edit" href="<?php echo esc_url( get_edit_post_link( $invoice->get_id() ) ); ?>">
+                    <?php _e( 'Edit Invoice', 'invoicing' ); ?>
+                </a>
+            <?php endif; ?>
+
         <?php endif; ?>
 
         <?php do_action('wpinv_invoice_display_right_actions', $invoice ); ?>
