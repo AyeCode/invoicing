@@ -500,6 +500,11 @@ a img {
     border-left: 2px solid #2196F3;
 }
 
+.getpaid-invoice-line-totals-col.total {
+    border-top: 1px solid #dee2e6;
+    background-color: #fbfbfb
+}
+
 @media screen and (max-width:400px) {
     .wpinv-print .watermark.no-print {
         left: 10%;

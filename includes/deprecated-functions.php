@@ -12,28 +12,14 @@ defined( 'ABSPATH' ) || exit;
  * @deprecated
  */
 function wpinv_get_invoice_cart_id() {
-
-    // Ensure that we have an invoice key.
-    if ( empty( $_GET['invoice_key'] ) ) {
-        return 0;
-    }
-
-    // Retrieve an invoice using the key.
-    $invoice = new WPInv_Invoice( $_GET['invoice_key'] );
-
-    // Compare the invoice key and the parsed key.
-    if ( $invoice->get_id() != 0 && $invoice->get_key() == $_GET['invoice_key'] ) {
-        return $invoice->get_id();
-    }
-
-    return 0;
+    return getpaid_get_current_invoice_id();
 }
 
 /**
  * @deprecated
  */
 function wpinv_get_invoice_cart() {
-    return wpinv_get_invoice( wpinv_get_invoice_cart_id() );
+    return wpinv_get_invoice( getpaid_get_current_invoice_id() );
 }
 
 /**
@@ -212,13 +198,13 @@ function wpinv_discount_code( $invoice = 0 ) {
  */
 function wpinv_payment_total( $invoice = 0, $currency = false ) {
     $invoice  = new WPInv_Invoice( $invoice );
-    $discount = $invoice->get_total();
+    $total = $invoice->get_total();
 
     if ( $currency ) {
-        return wpinv_price( wpinv_format_amount( $discount ), $invoice->get_currency() );
+        return wpinv_price( wpinv_format_amount( $total ), $invoice->get_currency() );
     }
 
-    return $discount;
+    return $total;
 }
 
 /**
@@ -430,7 +416,7 @@ function wpinv_cart_has_fees() {
 /**
  * @deprecated
  */
-function wpinv_set_checkout_session( $invoice_data = array() ) {
+function wpinv_set_checkout_session() {
     return false;
 }
 
@@ -446,4 +432,47 @@ function wpinv_get_checkout_session() {
  */
 function wpinv_empty_cart() {
     return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_display_invoice_totals() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_billing_details() {
+    return array();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_register_post_types() {
+    GetPaid_Post_Types::register_post_types();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = '' ) {
+
+    // Fetch the invoice.
+    $invoice = new WPInv_Invoice( $invoice_id );
+
+    if ( 0 ==  $invoice->get_id() ) {
+        return false;
+    }
+
+    // Prepare the transaction id.
+    if ( empty( $transaction_id ) ) {
+        $transaction_id = $invoice_id;
+    }
+
+    // Set the transaction id;
+    $invoice->set_transaction_id( apply_filters( 'wpinv_set_payment_transaction_id', $transaction_id, $invoice ) );
+
+    // Save the invoice.
+    return $invoice->save();
 }

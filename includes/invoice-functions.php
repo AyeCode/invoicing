@@ -9,6 +9,68 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Retrieves the current invoice.
+ */
+function getpaid_get_current_invoice_id() {
+
+    // Ensure that we have an invoice key.
+    if ( empty( $_GET['invoice_key'] ) ) {
+        return 0;
+    }
+
+    // Retrieve an invoice using the key.
+    $invoice = new WPInv_Invoice( $_GET['invoice_key'] );
+
+    // Compare the invoice key and the parsed key.
+    if ( $invoice->get_id() != 0 && $invoice->get_key() == $_GET['invoice_key'] ) {
+        return $invoice->get_id();
+    }
+
+    return 0;
+}
+
+/**
+ * Checks if the current user cna view an invoice.
+ */
+function wpinv_user_can_view_invoice( $invoice ) {
+    $invoice = new WPInv_Invoice( $invoice );
+
+    // Abort if the invoice does not exist.
+    if ( 0 == $invoice->get_id() ) {
+        return false;
+    }
+
+    // Don't allow trash, draft status
+    if ( $invoice->is_draft() ) {
+        return false;
+    }
+
+    // If users are not required to login to check out, compare the invoice keys.
+    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && trim( $_GET['invoice_key'] ) == $invoice->get_key() ) {
+        return true;
+    }
+
+    // Always enable for admins..
+    if ( wpinv_current_user_can_manage_invoicing() || current_user_can( 'view_invoices', $invoice->get_id() ) ) { // Admin user
+        return true;
+    }
+
+    // Else, ensure that this is their invoice.
+    if ( is_user_logged_in() && $invoice->get_user_id() == get_current_user_id() ) {
+        return true;
+    }
+
+    return apply_filters( 'wpinv_current_user_can_view_invoice', false, $invoice );
+}
+
+/**
+ * Checks if the current user cna view an invoice receipt.
+ */
+function wpinv_can_view_receipt( $invoice ) {
+	return (bool) apply_filters( 'wpinv_can_view_receipt', wpinv_user_can_view_invoice( $invoice ), $invoice );
+}
+
+/**
  * Returns an array of all invoice post types.
  * 
  * @return array
@@ -326,7 +388,7 @@ function wpinv_get_invoice( $invoice = 0, $deprecated = false ) {
 
     // If we are retrieving the invoice from the cart...
     if ( $deprecated && empty( $invoice ) ) {
-        $invoice = (int) wpinv_get_invoice_cart_id();
+        $invoice = (int) getpaid_get_current_invoice_id();
     }
 
     // Retrieve the invoice.
@@ -344,7 +406,7 @@ function wpinv_get_invoice( $invoice = 0, $deprecated = false ) {
  * Retrieves several invoices.
  * 
  * @param array $args Args to search for.
- * @return WPInv_Invoice[]|int[]
+ * @return WPInv_Invoice[]|int[]|object
  */
 function wpinv_get_invoices( $args ) {
 
@@ -403,9 +465,9 @@ function wpinv_get_invoices( $args ) {
     if ( isset( $args['paginate'] ) ) {
         
         $paginate = $args['paginate'];
-        $args['nopaging']      = ! empty( $args['paginate'] );
-        $args['no_found_rows'] = ! empty( $args['paginate'] );
+        $args['no_found_rows'] = empty( $args['paginate'] );
         unset( $args['paginate'] );
+
     }
 
     // Whether to return objects or fields.
@@ -496,7 +558,7 @@ function wpinv_get_user_invoices_columns() {
     $columns = array(
 
             'invoice-number'  => array(
-                'title' => __( 'ID', 'invoicing' ),
+                'title' => __( 'Invoice', 'invoicing' ),
                 'class' => 'text-left'
             ),
 
@@ -530,105 +592,91 @@ function wpinv_get_user_invoices_columns() {
     return apply_filters( 'wpinv_user_invoices_columns', $columns );
 }
 
-function wpinv_payment_receipt( $atts, $content = null ) {
-    global $wpinv_receipt_args;
-
-    $wpinv_receipt_args = shortcode_atts( array(
-        'error'           => __( 'Sorry, trouble retrieving payment receipt.', 'invoicing' ),
-        'price'           => true,
-        'discount'        => true,
-        'items'           => true,
-        'date'            => true,
-        'notes'           => true,
-        'invoice_key'     => false,
-        'payment_method'  => true,
-        'invoice_id'      => true
-    ), $atts, 'wpinv_receipt' );
+/**
+ * Displays the invoice receipt.
+ */
+function wpinv_payment_receipt() {
 
     // Find the invoice.
-    $session = wpinv_get_checkout_session();
+    $invoice_id = getpaid_get_current_invoice_id();
+    $invoice = new WPInv_Invoice( $invoice_id );
 
-    if ( isset( $_GET['invoice_key'] ) ) {
-        $invoice_id = wpinv_get_invoice_id_by_key( urldecode( $_GET['invoice_key'] ) );
-    } else if ( isset( $_GET['invoice-id'] ) ) {
-        $invoice_id = (int) $_GET['invoice-id'];
-    } else if ( $session && isset( $session['invoice_key'] ) ) {
-        $invoice_id = wpinv_get_invoice_id_by_key( $session['invoice_key'] );
-    } else if ( isset( $wpinv_receipt_args['invoice_key'] ) && $wpinv_receipt_args['invoice_key'] ) {
-        $invoice_id = wpinv_get_invoice_id_by_key( $wpinv_receipt_args['invoice_key'] );
+    // Abort if non was found.
+    if ( empty( $invoice_id ) || $invoice->is_draft() ) {
+
+        return aui()->alert(
+            array(
+                'type'    => 'warning',
+                'content' => __( 'We could not find your invoice', 'invoicing' ),
+            )
+        );
+
     }
 
-    // Did we find the invoice?
-    if ( empty( $invoice_id ) || ! $invoice = wpinv_get_invoice( $invoice_id ) ) {
-        return '<p class="alert alert-error">' . __( 'We could not find your invoice.', 'invoicing' ) . '</p>';
+    // Can the user view this invoice?
+    if ( ! wpinv_can_view_receipt( $invoice_id ) ) {
+
+        return aui()->alert(
+            array(
+                'type'    => 'warning',
+                'content' => __( 'You are not allowed to view this receipt', 'invoicing' ),
+            )
+        );
+
     }
 
-    $invoice_key   = $invoice->get_key();
-    $user_can_view = wpinv_can_view_receipt( $invoice_key );
-    if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
-        $user_can_view  = $_GET['invoice-id'] == $invoice->ID;
-    }
+    // Load the template.
+    return wpinv_get_template_html( 'invoice-receipt.php', compact( 'invoice' ) );
 
-    // Key was provided, but user is logged out. Offer them the ability to login and view the receipt
-    if ( ! $user_can_view && ! empty( $invoice_key ) && ! is_user_logged_in() ) {
-        // login redirect
-        return '<p class="alert alert-error">' . __( 'You must be logged in to view this receipt', 'invoicing' ) . '</p>';
-    }
-
-    if ( ! apply_filters( 'wpinv_user_can_view_receipt', $user_can_view, $wpinv_receipt_args ) ) {
-        return '<p class="alert alert-error">' . $wpinv_receipt_args['error'] . '</p>';
-    }
-
-    ob_start();
-
-    wpinv_get_template_part( 'wpinv-invoice-receipt' );
-
-    $display = ob_get_clean();
-
-    return $display;
 }
 
-function wpinv_can_view_receipt( $invoice_key = '' ) {
-	$return = current_user_can( 'manage_options' );
+/**
+ * Displays the invoice history.
+ */
+function getpaid_invoice_history( $user_id = 0 ) {
 
-	if ( empty( $invoice_key ) ) {
-		return false;
-	}
+    // Ensure that we have a user id.
+    if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
+        $user_id = get_current_user_id();
+    }
 
-	global $wpinv_receipt_args;
+    // View user id.
+    if ( empty( $user_id ) ) {
 
-	$wpinv_receipt_args['id'] = wpinv_get_invoice_id_by_key( $invoice_key );
-	if ( isset( $_GET['invoice-id'] ) ) {
-		$wpinv_receipt_args['id'] = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? (int)$_GET['invoice-id'] : 0;
-	}
+        return aui()->alert(
+            array(
+                'type'    => 'warning',
+                'content' => __( 'You must be logged in to view your invoice history.', 'invoicing' ),
+            )
+        );
 
-	if ( empty( $wpinv_receipt_args['id'] ) ) {
-		return $return;
-	}
+    }
 
-	$invoice = wpinv_get_invoice( $wpinv_receipt_args['id'] );
-	if ( !( !empty( $invoice->ID ) && $invoice->get_key() === $invoice_key ) ) {
-		return $return;
-	}
+    // Fetch invoices.
+    $invoices = wpinv_get_invoices(
 
-	if ( is_user_logged_in() ) {
-		if ( (int)$invoice->get_user_id() === (int) get_current_user_id() ) {
-			$return = true;
-		}
-	}
+        array(
+            'page'     => ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1,
+            'user'     => $user_id,
+            'paginate' => true,
+        )
 
-	$session = wpinv_get_checkout_session();
-	if ( isset( $_GET['invoice_key'] ) || ( $session && isset( $session['invoice_key'] ) ) ) {
-		$check_key = isset( $_GET['invoice_key'] ) ? $_GET['invoice_key'] : $session['invoice_key'];
+    );
 
-		if ( wpinv_require_login_to_checkout() ) {
-			$return = $return && $check_key == $invoice_key;
-		} else {
-			$return = $check_key == $invoice_key;
-		}
-	}
+    if ( empty( $invoices->total ) ) {
 
-	return (bool) apply_filters( 'wpinv_can_view_receipt', $return, $invoice_key );
+        return aui()->alert(
+            array(
+                'type'    => 'info',
+                'content' => __( 'No invoices found.', 'invoicing' ),
+            )
+        );
+
+    }
+
+    // Load the template.
+    return wpinv_get_template_html( 'invoice-history.php', compact( 'invoices' ) );
+
 }
 
 function wpinv_pay_for_invoice() {
@@ -685,39 +733,6 @@ function wpinv_pay_for_invoice() {
 }
 add_action( 'wpinv_pay_for_invoice', 'wpinv_pay_for_invoice' );
 
-function wpinv_handle_pay_via_invoice_link( $invoice_key ) {
-    if ( !empty( $invoice_key ) && !empty( $_REQUEST['_wpipay'] ) && !is_user_logged_in() && $invoice_id = wpinv_get_invoice_id_by_key( $invoice_key ) ) {
-        if ( $invoice = wpinv_get_invoice( $invoice_id ) ) {
-            $user_id = $invoice->get_user_id();
-            $secret = sanitize_text_field( $_GET['_wpipay'] );
-            
-            if ( $secret === md5( $user_id . '::' . $invoice->get_email() . '::' . $invoice_key ) ) { // valid invoice link
-                $redirect_to = remove_query_arg( '_wpipay', get_permalink() );
-                
-                wpinv_guest_redirect( $redirect_to, $user_id );
-                exit();
-            }
-        }
-    }
-}
-add_action( 'wpinv_check_pay_for_invoice', 'wpinv_handle_pay_via_invoice_link' );
-
-function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = '' ) {
-    $invoice_id = is_object( $invoice_id ) && !empty( $invoice_id->ID ) ? $invoice_id : $invoice_id;
-    
-    if ( empty( $invoice_id ) && $invoice_id > 0 ) {
-        return false;
-    }
-    
-    if ( empty( $transaction_id ) ) {
-        $transaction_id = $invoice_id;
-    }
-
-    $transaction_id = apply_filters( 'wpinv_set_payment_transaction_id', $transaction_id, $invoice_id );
-    
-    return wpinv_update_invoice_meta( $invoice_id, '_wpinv_transaction_id', $transaction_id );
-}
-
 function wpinv_invoice_status_label( $status, $status_display = '' ) {
     if ( empty( $status_display ) ) {
         $status_display = wpinv_status_nicename( $status );
@@ -745,9 +760,9 @@ function wpinv_invoice_status_label( $status, $status_display = '' ) {
             $class = 'label-default';
         break;
     }
-    
+
     $label = '<span class="label label-inv-' . $status . ' ' . $class . '">' . $status_display . '</span>';
-    
+
     return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
 }
 

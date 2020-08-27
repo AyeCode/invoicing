@@ -878,7 +878,7 @@ function wpinv_template( $template ) {
         } else {
 
             return wpinv_get_template_part( 'wpinv-invalid-access', false, false );
-            
+
         }
 
     }
@@ -1183,53 +1183,6 @@ function wpinv_display_invoice_notes( $invoice ) {
 }
 add_action( 'getpaid_invoice_line_items', 'wpinv_display_invoice_notes', 60 );
 
-function wpinv_display_invoice_totals( $invoice_id = 0 ) {
-    $use_taxes = wpinv_use_taxes();
-
-    do_action( 'wpinv_before_display_totals_table', $invoice_id ); 
-    ?>
-    <table class="table table-sm table-bordered table-responsive">
-        <tbody>
-            <?php do_action( 'wpinv_before_display_totals' ); ?>
-            <tr class="row-sub-total">
-                <td class="rate"><strong><?php _e( 'Sub Total', 'invoicing' ); ?></strong></td>
-                <td class="total"><strong><?php _e( wpinv_subtotal( $invoice_id, true ) ) ?></strong></td>
-            </tr>
-            <?php do_action( 'wpinv_after_display_totals' ); ?>
-            <?php if ( wpinv_discount( $invoice_id, false ) > 0 ) { ?>
-                <tr class="row-discount">
-                    <td class="rate"><?php wpinv_get_discount_label( wpinv_discount_code( $invoice_id ) ); ?></td>
-                    <td class="total"><?php echo wpinv_discount( $invoice_id, true, true ); ?></td>
-                </tr>
-            <?php do_action( 'wpinv_after_display_discount' ); ?>
-            <?php } ?>
-            <?php if ( $use_taxes ) { ?>
-            <tr class="row-tax">
-                <td class="rate"><?php _e( 'Tax', 'invoicing' ); ?></td>
-                <td class="total"><?php _e( wpinv_tax( $invoice_id, true ) ) ?></td>
-            </tr>
-            <?php do_action( 'wpinv_after_display_tax' ); ?>
-            <?php } ?>
-            <?php if ( $fees = wpinv_get_fees( $invoice_id ) ) { ?>
-                <?php foreach ( $fees as $fee ) { ?>
-                    <tr class="row-fee">
-                        <td class="rate"><?php echo $fee['label']; ?></td>
-                        <td class="total"><?php echo $fee['amount_display']; ?></td>
-                    </tr>
-                <?php } ?>
-            <?php } ?>
-            <tr class="table-active row-total">
-                <td class="rate"><strong><?php _e( 'Total', 'invoicing' ) ?></strong></td>
-                <td class="total"><strong><?php _e( wpinv_payment_total( $invoice_id, true ) ) ?></strong></td>
-            </tr>
-            <?php do_action( 'wpinv_after_totals' ); ?>
-        </tbody>
-
-    </table>
-
-    <?php do_action( 'wpinv_after_totals_table' );
-}
-
 /**
  * Loads scripts on our invoice templates.
  */
@@ -1263,52 +1216,6 @@ function wpinv_display_style() {
 add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
 add_action( 'wpinv_invalid_invoice_head', 'wpinv_display_style' );
 
-function wpinv_checkout_billing_details() {
-    $invoice_id = (int)wpinv_get_invoice_cart_id();
-    if (empty($invoice_id)) {
-        wpinv_error_log( 'Invoice id not found', 'ERROR', __FILE__, __LINE__ );
-        return null;
-    }
-
-    $invoice = wpinv_get_invoice_cart( $invoice_id );
-    if (empty($invoice)) {
-        wpinv_error_log( 'Invoice not found', 'ERROR', __FILE__, __LINE__ );
-        return null;
-    }
-    $user_id        = $invoice->get_user_id();
-    $user_info      = $invoice->get_user_info();
-    $address_info   = wpinv_get_user_address( $user_id );
-
-    if ( empty( $user_info['first_name'] ) && !empty( $user_info['first_name'] ) ) {
-        $user_info['first_name'] = $user_info['first_name'];
-        $user_info['last_name'] = $user_info['last_name'];
-    }
-
-    if ( ( ( empty( $user_info['country'] ) && !empty( $address_info['country'] ) ) || ( empty( $user_info['state'] ) && !empty( $address_info['state'] ) && $user_info['country'] == $address_info['country'] ) ) ) {
-        $user_info['country']   = $address_info['country'];
-        $user_info['state']     = $address_info['state'];
-        $user_info['city']      = $address_info['city'];
-        $user_info['zip']       = $address_info['zip'];
-    }
-
-    $address_fields = array(
-        'user_id',
-        'company',
-        'vat_number',
-        'email',
-        'phone',
-        'address'
-    );
-
-    foreach ( $address_fields as $field ) {
-        if ( empty( $user_info[$field] ) ) {
-            $user_info[$field] = $address_info[$field];
-        }
-    }
-
-    return apply_filters( 'wpinv_checkout_billing_details', $user_info, $invoice );
-}
-
 
 /**
  * Displays the checkout page.
@@ -1317,7 +1224,7 @@ function wpinv_checkout_form() {
     global $wpi_checkout_id;
 
     // Retrieve the current invoice.
-    $invoice_id = wpinv_get_invoice_cart_id();
+    $invoice_id = getpaid_get_current_invoice_id();
 
     if ( empty( $invoice_id ) ) {
 
@@ -1482,51 +1389,22 @@ function wpinv_receipt_billing_address( $invoice_id = 0 ) {
     echo $output;
 }
 
+/**
+ * Filters the receipt page.
+ */
 function wpinv_filter_success_page_content( $content ) {
+
+    // Ensure this is our page.
     if ( isset( $_GET['payment-confirm'] ) && wpinv_is_success_page() ) {
-        if ( has_filter( 'wpinv_payment_confirm_' . sanitize_text_field( $_GET['payment-confirm'] ) ) ) {
-            $content = apply_filters( 'wpinv_payment_confirm_' . sanitize_text_field( $_GET['payment-confirm'] ), $content );
-        }
+
+        $gateway = sanitize_text_field( $_GET['payment-confirm'] );
+        return apply_filters( "wpinv_payment_confirm_$gateway", $content );
+
     }
 
     return $content;
 }
 add_filter( 'the_content', 'wpinv_filter_success_page_content', 99999 );
-
-function wpinv_receipt_actions( $invoice ) {
-    if ( !empty( $invoice ) ) {
-        $actions = array();
-
-        if ( wpinv_user_can_view_invoice( $invoice->get_id() ) ) {
-            $actions['print']   = array(
-                'url'  => $invoice->get_view_url( true ),
-                'name' => __( 'Print Invoice', 'invoicing' ),
-                'class' => 'btn-primary',
-            );
-        }
-
-        if ( is_user_logged_in() ) {
-            $actions['history'] = array(
-                'url'  => wpinv_get_history_page_uri(),
-                'name' => __( 'Invoice History', 'invoicing' ),
-                'class' => 'btn-warning',
-            );
-        }
-
-        $actions = apply_filters( 'wpinv_invoice_receipt_actions', $actions, $invoice );
-
-        if ( !empty( $actions ) ) {
-        ?>
-        <div class="wpinv-receipt-actions text-right">
-            <?php foreach ( $actions as $key => $action ) { $class = !empty($action['class']) ? sanitize_html_class( $action['class'] ) : ''; ?>
-            <a href="<?php echo esc_url( $action['url'] );?>" class="btn btn-sm <?php echo $class . ' ' . sanitize_html_class( $key );?>" <?php echo ( !empty($action['attrs']) ? $action['attrs'] : '' ) ;?>><?php echo esc_html( $action['name'] );?></a>
-            <?php } ?>
-        </div>
-        <?php
-        }
-    }
-}
-add_action( 'wpinv_receipt_start', 'wpinv_receipt_actions', -10, 1 );
 
 function wpinv_invoice_link( $invoice_id ) {
     $invoice = wpinv_get_invoice( $invoice_id );
@@ -1549,8 +1427,8 @@ function wpinv_invoice_subscription_details( $invoice ) {
         }
 
         $frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency($subscription->period, $subscription->frequency);
-        $billing = wpinv_price(wpinv_format_amount($subscription->recurring_amount), wpinv_get_invoice_currency_code($subscription->parent_payment_id)) . ' / ' . $frequency;
-        $initial = wpinv_price(wpinv_format_amount($subscription->initial_amount), wpinv_get_invoice_currency_code($subscription->parent_payment_id));
+        $billing = wpinv_price(wpinv_format_amount($subscription->recurring_amount), $invoice->get_currency() ) . ' / ' . $frequency;
+        $initial = wpinv_price(wpinv_format_amount($subscription->initial_amount), $invoice->get_currency() );
 
         $payments = $subscription->get_child_payments();
         ?>
@@ -1598,8 +1476,8 @@ function wpinv_invoice_subscription_details( $invoice ) {
                     <tr>
                         <th scope="row"><?php echo $i;?></th>
                         <td><?php echo wpinv_invoice_link( $invoice_id ) ;?></td>
-                        <td><?php echo wpinv_get_invoice_date( $invoice_id ); ?></td>
-                        <td class="text-right"><?php echo wpinv_payment_total( $invoice_id, true ); ?></td>
+                        <td><?php echo$invoice->get_date_created(); ?></td>
+                        <td class="text-right"><?php echo wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() ); ?></td>
                     </tr>
                     <?php $i++; } ?>
                 </tbody>
@@ -1730,30 +1608,6 @@ function wpinv_invalid_invoice_content() {
     <?php
 }
 add_action( 'wpinv_invalid_invoice_content', 'wpinv_invalid_invoice_content' );
-
-add_action( 'wpinv_checkout_billing_fields_last', 'wpinv_force_company_name_field');
-function wpinv_force_company_name_field(){
-    $invoice = wpinv_get_invoice_cart();
-    $user_id = wpinv_get_user_id( $invoice->get_id() );
-    $company = empty( $user_id ) ? "" : get_user_meta( $user_id, '_wpinv_company', true );
-    if ( 1 == wpinv_get_option( 'force_show_company' ) && !wpinv_use_taxes() ) {
-        ?>
-        <p class="wpi-cart-field wpi-col2 wpi-colf">
-            <label for="wpinv_company" class="wpi-label"><?php _e('Company Name', 'invoicing'); ?></label>
-            <?php
-            echo wpinv_html_text(array(
-                'id' => 'wpinv_company',
-                'name' => 'wpinv_company',
-                'value' => $company,
-                'class' => 'wpi-input form-control',
-                'placeholder' => __('Company name', 'invoicing'),
-                'required'      => true,
-            ));
-            ?>
-        </p>
-        <?php
-    }
-}
 
 /**
  * Function to get privacy policy text.

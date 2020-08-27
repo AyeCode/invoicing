@@ -24,7 +24,7 @@ class WPInv_Receipt_Widget extends WP_Super_Duper {
             'base_id'       => 'wpinv_receipt',
             'name'          => __('GetPaid > Invoice Receipt','invoicing'),
             'widget_ops'    => array(
-                'classname'   => 'wpinv-receipt-class  wpi-g',
+                'classname'   => 'wpinv-receipt-class bsui',
                 'description' => esc_html__('Displays invoice receipt after checkout.','invoicing'),
             ),
             'arguments'     => array(
@@ -54,16 +54,7 @@ class WPInv_Receipt_Widget extends WP_Super_Duper {
 	 * @return mixed|string|bool
 	 */
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
-
-	    ob_start();
-
-	    do_action( 'wpinv_success_content_before' );
-	    echo wpinv_payment_receipt( $args );
-	    do_action( 'wpinv_success_content_after' );
-
-	    $output = ob_get_clean();
-	    return trim($output);
-
+        return wpinv_payment_receipt();
     }
 
 }

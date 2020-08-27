@@ -1739,6 +1739,28 @@ class WPInv_Invoice extends GetPaid_Data {
         }
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $deprecated, $secret );
+	}
+	
+	/**
+	 * Retrieves the receipt url.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_receipt_url() {
+
+		// Retrieve the checkout url.
+        $receipt_url = wpinv_get_success_page_uri();
+
+		// Maybe force ssl.
+        if ( is_ssl() ) {
+            $receipt_url = str_replace( 'http:', 'https:', $receipt_url );
+        }
+
+		// Add the invoice key.
+		$receipt_url = add_query_arg( 'invoice_key', $this->get_key(), $receipt_url );
+
+        return apply_filters( 'getpaid_get_invoice_receipt_url', $receipt_url, $this );
     }
 
     /**
@@ -2900,7 +2922,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if the invoice needs payment.
      */
 	public function needs_payment() {
-		$needs_payment = ! $this->is_paid() && ! $this->is_free();
+		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_free();
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
     }
 
@@ -2910,6 +2932,14 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function is_refunded() {
         $is_refunded = $this->has_status( 'wpi-refunded' );
         return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
+	}
+
+	/**
+     * Checks if the invoice is due.
+     */
+	public function is_due() {
+		$due_date = $this->get_due_date();
+		return empty( $due_date ) ? false : current_time( 'timestamp' ) > strtotime( $due_date );
 	}
 
 	/**

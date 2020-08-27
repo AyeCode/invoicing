@@ -291,40 +291,6 @@ function wpinv_is_ssl_enforced() {
     return (bool) apply_filters( 'wpinv_is_ssl_enforced', $ssl_enforced );
 }
 
-/**
- * Checks if the current user cna view an invoice.
- */
-function wpinv_user_can_view_invoice( $invoice ) {
-    $invoice = new WPInv_Invoice( $invoice );
-
-    // Abort if the invoice does not exist.
-    if ( 0 == $invoice->get_id() ) {
-        return false;
-    }
-
-    // Don't allow trash, draft status
-    if ( $invoice->is_draft() ) {
-        return false;
-    }
-
-    // If users are not required to login to check out, compare the invoice keys.
-    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && trim( $_GET['invoice_key'] ) == $invoice->get_key() ) {
-        return true;
-    }
-
-    // Always enable for admins..
-    if ( wpinv_current_user_can_manage_invoicing() || current_user_can( 'view_invoices', $invoice->ID ) ) { // Admin user
-        return true;
-    }
-
-    // Else, ensure that this is their invoice.
-    if ( is_user_logged_in() && $invoice->get_user_id() == get_current_user_id() ) {
-        return true;
-    }
-
-    return apply_filters( 'wpinv_current_user_can_view_invoice', false, $invoice );
-}
-
 function wpinv_schedule_events() {
 
     // Get the timestamp for the next event.

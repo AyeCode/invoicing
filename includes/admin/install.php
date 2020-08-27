@@ -32,8 +32,8 @@ function wpinv_run_install()
 {
     global $wpinv_options;
 
-    // Setup the invoice Custom Post Type
-    wpinv_register_post_types();
+    // Setup the invoice Custom Post Type.
+    GetPaid_Post_Types::register_post_types();
 
     // Clear the permalinks
     flush_rewrite_rules(false);
