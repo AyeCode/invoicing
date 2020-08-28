@@ -21,6 +21,14 @@ $totals = apply_filters(
     $form
 );
 
+$currency = wpinv_get_currency();
+$country  = wpinv_get_default_country();
+
+if ( ! empty( $form->invoice ) ) {
+    $currency = $form->invoice->get_currency();
+    $country  = $form->invoice->get_country();
+}
+
 if ( ! wpinv_use_taxes() && isset( $totals['tax'] ) ) {
     unset( $totals['tax'] );
 }
@@ -34,11 +42,17 @@ $discount  = 0;
 
 // Calculate totals.
 foreach ( $form->get_items() as $item ) {
-    $amount = $item->get_price();
+
+    if ( ! empty( $form->invoice ) && 'amount' == $form->invoice->get_template() ) {
+        $amount = $item->get_price();
+    } else {
+        $amount = $item->get_sub_total();
+    }
+
 
     // Include the tax.
     if ( wpinv_use_taxes() ) {
-        $rate = wpinv_get_tax_rate( wpinv_get_default_country(), false, $item->get_id() );
+        $rate = wpinv_get_tax_rate( $country, false, $item->get_id() );
 
         if ( wpinv_prices_include_tax() ) {
             $pre_tax  = ( $amount - $amount * $rate * 0.01 );
@@ -63,31 +77,31 @@ foreach ( $form->get_items() as $item ) {
     <?php foreach ( $totals as $key => $label ) : ?>
         <div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?>">
             <div class="row">
-                <div class="col-12 offset-sm-6 col-sm-4">
+                <div class="col-12 offset-sm-5 col-sm-4">
                     <?php echo sanitize_text_field( $label ); ?>
                 </div>
-                <div class="col-12 col-sm-2 getpaid-form-cart-totals-total-<?php echo esc_attr( $key ); ?>">
+                <div class="col-12 col-sm-3 getpaid-form-cart-totals-total-<?php echo esc_attr( $key ); ?>">
                     <?php
                         do_action( "getpaid_payment_form_cart_totals_$key", $form );
 
                         // Total tax.
                         if ( 'tax' == $key ) {
-                            echo wpinv_price( wpinv_format_amount( $tax ) );
+                            echo wpinv_price( wpinv_format_amount( $tax ), $currency );
                         }
 
                         // Total discount.
                         if ( 'discount' == $key ) {
-                            echo wpinv_price( wpinv_format_amount( $discount ) );
+                            echo wpinv_price( wpinv_format_amount( $discount ), $currency );
                         }
 
                         // Sub total.
                         if ( 'subtotal' == $key ) {
-                            echo wpinv_price( wpinv_format_amount( $sub_total ) );
+                            echo wpinv_price( wpinv_format_amount( $sub_total ), $currency );
                         }
 
                         // Total.
                         if ( 'total' == $key ) {
-                            echo wpinv_price( wpinv_format_amount( $total ) );
+                            echo wpinv_price( wpinv_format_amount( $total ), $currency );
                         }
                     ?>
                 </div>

@@ -84,6 +84,40 @@ class WPInv_Payment_Form_Elements {
     }
 
     /**
+     * Renders the ip address element template.
+     */
+    public function render_ip_address_template( $field ) {
+        $restrict   = $this->get_restrict_markup( $field, 'ip_address' );
+        $ip_address = sanitize_text_field( wpinv_get_ip() );
+        $url        = esc_url( getpaid_ip_location_url( $ip_address ) );
+
+        echo "
+            <div $restrict class='getpaid-ip-info'>
+                <span>{{{$field}.text}}</span>
+                <a target='_blank' href='$url'>$ip_address&nbsp;&nbsp;<i class='fa fa-external-link-square' aria-hidden='true'></i></a>
+            </div>
+        ";
+    }
+
+    /**
+     * Renders the edit ip address element template.
+     */
+    public function edit_ip_address_template( $field ) {
+        $restrict = $this->get_restrict_markup( $field, 'ip_address' );
+        $label    = __( 'The IP Address text', 'invoicing' );
+        $id       = $field . '.id + "_edit"';
+        echo "
+            <div $restrict>
+                <div class='form-group'>
+                    <label :for='$id'>$label</label>
+                    <textarea :id='$id' v-model='$field.text' class='form-control' rows='3'></textarea>
+                </div>
+            </div>
+        ";
+
+    }
+
+    /**
      * Renders the total payable element template.
      */
     public function render_total_payable_template( $field ) {

@@ -772,92 +772,10 @@ function wpinv_html_ajax_user_search( $args = array() ) {
     return $output;
 }
 
-function wpinv_ip_geolocation() {
-    global $wpinv_euvat;
-    
-    $ip         = !empty( $_GET['ip'] ) ? sanitize_text_field( $_GET['ip'] ) : '';    
-    $content    = '';
-    $iso        = '';
-    $country    = '';
-    $region     = '';
-    $city       = '';
-    $longitude  = '';
-    $latitude   = '';
-    $credit     = '';
-    $address    = '';
-    
-    if ( wpinv_get_option( 'vat_ip_lookup' ) == 'geoip2' && $geoip2_city = $wpinv_euvat->geoip2_city_record( $ip ) ) {
-        try {
-            $iso        = $geoip2_city->country->isoCode;
-            $country    = $geoip2_city->country->name;
-            $region     = !empty( $geoip2_city->subdivisions ) && !empty( $geoip2_city->subdivisions[0]->name ) ? $geoip2_city->subdivisions[0]->name : '';
-            $city       = $geoip2_city->city->name;
-            $longitude  = $geoip2_city->location->longitude;
-            $latitude   = $geoip2_city->location->latitude;
-            $credit     = __( 'Geolocated using the information by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">www.maxmind.com</a>', 'invoicing' );
-        } catch( Exception $e ) { }
-    }
-    
-    if ( !( $iso && $longitude && $latitude ) && function_exists( 'simplexml_load_file' ) ) {
-        try {
-            $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
-            
-            if ( !empty( $load_xml ) && isset( $load_xml->geoplugin_countryCode ) && !empty( $load_xml->geoplugin_latitude ) && !empty( $load_xml->geoplugin_longitude ) ) {
-                $iso        = $load_xml->geoplugin_countryCode;
-                $country    = $load_xml->geoplugin_countryName;
-                $region     = !empty( $load_xml->geoplugin_regionName ) ? $load_xml->geoplugin_regionName : '';
-                $city       = !empty( $load_xml->geoplugin_city ) ? $load_xml->geoplugin_city : '';
-                $longitude  = $load_xml->geoplugin_longitude;
-                $latitude   = $load_xml->geoplugin_latitude;
-                $credit     = $load_xml->geoplugin_credit;
-                $credit     = __( 'Geolocated using the information by geoPlugin, available from <a href="http://www.geoplugin.com" target="_blank">www.geoplugin.com</a>', 'invoicing' ) . '<br>' . $load_xml->geoplugin_credit;
-            }
-        } catch( Exception $e ) { }
-    }
-    
-    if ( $iso && $longitude && $latitude ) {
-        if ( $city ) {
-            $address .= $city . ', ';
-        }
-        
-        if ( $region ) {
-            $address .= $region . ', ';
-        }
-        
-        $address .= $country . ' (' . $iso . ')';
-        $content = '<p>'. sprintf( __( '<b>Address:</b> %s', 'invoicing' ), $address ) . '</p>';
-        $content .= '<p>'. $credit . '</p>';
-    } else {
-        $content = '<p>'. sprintf( __( 'Unable to find geolocation for the IP address: %s', 'invoicing' ), $ip ) . '</p>';
-    }
-    ?>
-<!DOCTYPE html>
-<html><head><title><?php echo sprintf( __( 'IP: %s', 'invoicing' ), $ip );?></title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.css" /><style>html,body{height:100%;margin:0;padding:0;width:100%}body{text-align:center;background:#fff;color:#222;font-size:small;}body,p{font-family: arial,sans-serif}#map{margin:auto;width:100%;height:calc(100% - 120px);min-height:240px}</style></head>
-<body>
-    <?php if ( $latitude && $latitude ) { ?>
-    <div id="map"></div>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.js"></script>
-        <script type="text/javascript">
-        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib}),
-            latlng = new L.LatLng(<?php echo $latitude;?>, <?php echo $longitude;?>);
-
-        var map = new L.Map('map', {center: latlng, zoom: 12, layers: [osm]});
-
-        var marker = new L.Marker(latlng);
-        map.addLayer(marker);
-
-        marker.bindPopup("<p><?php esc_attr_e( $address );?></p>");
-    </script>
-    <?php } ?>
-    <div style="height:100px"><?php echo $content; ?></div>
-</body></html>
-<?php
-    exit;
-}
-add_action( 'wp_ajax_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
-add_action( 'wp_ajax_nopriv_wpinv_ip_geolocation', 'wpinv_ip_geolocation' );
+/**
+ * @deprecated.
+ */
+function wpinv_ip_geolocation() {}
 
 /**
  * Use our template to display invoices.
@@ -1007,7 +925,7 @@ function getpaid_invoice_meta( $invoice ) {
         'vat_number' => array(
             'label' => sprintf(
                 __( '%s Number', 'invoicing' ),
-                $GLOBALS['wpinv_euvat']->get_vat_name()
+                getpaid_tax()->get_vat_name()
             ),
             'value' => sanitize_text_field( $invoice->get_vat_number() ),
         ),
@@ -1213,6 +1131,33 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
     wpinv_get_template( 'invoice/line-items.php', compact( 'invoice', 'columns' ) );
 }
 add_action( 'getpaid_invoice_line_items', 'wpinv_display_line_items' );
+
+/**
+ * Displays invoice notices on invoices.
+ */
+function wpinv_display_invoice_notice() {
+
+    $label  = wpinv_get_option( 'vat_invoice_notice_label' );
+    $notice = wpinv_get_option( 'vat_invoice_notice' );
+
+    if ( empty( $label ) && empty( $notice ) ) {
+        return;
+    }
+
+    echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
+
+    if ( ! empty( $label ) ) {
+        $label = sanitize_text_field( $label );
+        echo "<h5>$label</h5>";
+    }
+
+    if ( ! empty( $notice ) ) {
+        echo '<small class="form-text text-muted">' . wpautop( wptexturize( $notice ) ) . '</small>';
+    }
+
+    echo '</div>';
+}
+add_action( 'getpaid_invoice_line_items', 'wpinv_display_invoice_notice', 100 );
 
 /**
  * @param WPInv_Invoice $invoice

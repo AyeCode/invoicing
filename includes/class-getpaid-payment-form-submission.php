@@ -132,9 +132,23 @@ class GetPaid_Payment_Form_Submission {
 	/**
 	 * Is the discount valid?
 	 *
-	 * @var string
+	 * @var bool
 	 */
-    public $is_discount_valid = true;
+	public $is_discount_valid = true;
+	
+	/**
+	 * Checks if we have a digital vat rule.
+	 *
+	 * @var bool
+	 */
+	public $has_digital = false;
+	
+	/**
+	 * Checks if we require vat.
+	 *
+	 * @var bool
+	 */
+    public $requires_vat = false;
 
     /**
 	 * Class constructor.
@@ -162,7 +176,7 @@ class GetPaid_Payment_Form_Submission {
 		// Prepare submitted data...
 		$data = wp_unslash( $data );
 
-		// Fitter the data.
+		// Filter the data.
 		$data = apply_filters( 'getpaid_submission_data', $data, $this );
 
 		$this->data = $data;
@@ -193,7 +207,12 @@ class GetPaid_Payment_Form_Submission {
             if ( empty( $invoice ) ) {
 				$this->last_error = __( 'Invalid invoice', 'invoicing' );
                 return;
-            }
+			}
+			
+			if ( $invoice->is_paid() ) {
+				$this->last_error = __( 'This invoice is already paid for.', 'invoicing' );
+                return;
+			}
 
 			$this->payment_form->set_items( $invoice->get_items() );
 
@@ -259,8 +278,11 @@ class GetPaid_Payment_Form_Submission {
 
 		}
 
+		// (Maybe) validate vat number.
+		$this->maybe_validate_vat();
+
 		// Fired when we are done processing a submission.
-		do_action( 'getpaid_process_submission', $this );
+		do_action_ref_array( 'getpaid_process_submission', array( &$this ) );
 
 		// Remove invalid discount.
 		$this->maybe_remove_discount();
@@ -295,6 +317,40 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function has_invoice() {
 		return ! empty( $this->invoice );
+	}
+
+	/**
+	 * Retrieves the vat number.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_vat_number() {
+
+		// Retrieve from the posted data.
+		if ( ! empty( $this->data['wpinv_vat_number'] ) ) {
+			return wpinv_clean( $this->data['wpinv_vat_number'] );
+		}
+
+		// Retrieve from the invoice.
+		return $this->has_invoice() ? $this->invoice->get_vat_number() : '';
+	}
+
+	/**
+	 * Retrieves the company.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_company() {
+
+		// Retrieve from the posted data.
+		if ( ! empty( $this->data['wpinv_company'] ) ) {
+			return wpinv_clean( $this->data['wpinv_company'] );
+		}
+
+		// Retrieve from the invoice.
+		return $this->has_invoice() ? $this->invoice->get_company() : '';
 	}
 	
 	/**
@@ -563,6 +619,7 @@ class GetPaid_Payment_Form_Submission {
 				$this->last_error = __( 'You have already used this discount', 'invoicing' );
 				return;
 			}
+
 		}
 
 		// Set the discount.
@@ -598,7 +655,7 @@ class GetPaid_Payment_Form_Submission {
 			$this->last_error = sprintf( __( 'The minimum total for using this discount is %s', 'invoicing' ), $min );
         }
 
-        if ( ! $$this->discount->is_maximum_amount_met( $total ) ) {
+        if ( ! $this->discount->is_maximum_amount_met( $total ) ) {
 			$this->is_discount_valid = false;
             $max = wpinv_price( wpinv_format_amount( $$this->discount->max_total ) );
 			$this->last_error = sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max );
@@ -757,6 +814,86 @@ class GetPaid_Payment_Form_Submission {
 	public function has_billing_email() {
 		$billing_email = $this->get_billing_email();
 		return ! empty( $billing_email );
+	}
+
+	/**
+	 * Validate VAT data.
+	 *
+	 * @since 1.0.19
+	 */
+	public function maybe_validate_vat() {
+		
+		// Make sure that taxes are enabled.
+		if ( ! wpinv_use_taxes() ) {
+			return;
+		}
+
+		// Check if we have a digital VAT rule.
+		$has_digital = false;
+
+		foreach ( $this->get_items() as $item ) {
+
+			if ( 'digital' == $item->get_vat_rule() ) {
+				$has_digital = true;
+				break;
+			}
+
+		}
+
+		$this->has_digital = $has_digital;
+
+		// Check if we require vat.
+		$requires_vat = (
+			( getpaid_is_eu_state( $this->country ) && ( getpaid_is_eu_state( wpinv_get_default_country() ) || $has_digital ) )
+			|| ( getpaid_is_gst_country( $this->country ) && getpaid_is_gst_country( wpinv_get_default_country() ) )
+		);
+
+		$this->requires_vat = $requires_vat;
+
+		// Abort if we are not calculating the taxes.
+		if ( ! $has_digital && ! $requires_vat ) {
+            return;
+		}
+
+		// Prepare variables.
+		$vat_number = $this->get_vat_number();
+		$company    = $this->get_company();
+		$ip_country = WPInv_EUVat::get_country_by_ip();
+        $is_eu      = getpaid_is_eu_state( $this->country );
+        $is_ip_eu   = getpaid_is_eu_state( $ip_country );
+		$is_non_eu  = ! $is_eu && ! $is_ip_eu;
+		$prevent_b2c = wpinv_get_option( 'vat_prevent_b2c_purchase' );
+
+		// If we're preventing business to consumer purchases...
+		if ( ! empty( $prevent_b2c ) && ! $is_non_eu && ( empty( $vat_number ) || ! $requires_vat ) ) {
+
+            if ( $is_eu ) {
+				$this->last_error = wp_sprintf(
+					__( 'Please enter your %s number to verify your purchase is by an EU business.', 'invoicing' ),
+					getpaid_vat_name()
+				);
+            } else if ( $has_digital && $is_ip_eu ) {
+
+				$this->last_error = wp_sprintf(
+					__( 'Sales to non-EU countries cannot be completed because %s must be applied.', 'invoicing' ),
+					getpaid_vat_name()
+				);
+
+			}
+
+		}
+		
+		// Abort if we are not validating vat.
+		if ( ! $is_eu || ! $requires_vat || empty( $vat_number ) ) {
+            return;
+		}
+
+		$is_valid = WPInv_EUVat::validate_vat_number( $vat_number, $company, $this->country );
+
+		if ( is_string( $is_valid ) ) {
+			$this->last_error = $is_valid;
+		}
+
 	}
 
 }

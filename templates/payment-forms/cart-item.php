@@ -11,11 +11,16 @@ defined( 'ABSPATH' ) || exit;
 
 do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
+$currency = wpinv_get_currency();
+if ( ! empty( $form->invoice ) ) {
+    $currency = $form->invoice->get_currency();
+}
+
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?>'>
     <div class="form-row">
         <?php foreach ( $columns as $key => $label ) : ?>
-            <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo $item->get_id(); ?>">
+            <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo $item->get_id(); ?>">
                 <?php
                     do_action( "getpaid_payment_form_cart_item_$key", $form, $item );
 
@@ -49,20 +54,20 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
                                 <div class="input-group input-group-sm">
                                     <?php if( 'left' == $position ) : ?>
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                            <span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
                                         </div>
                                     <?php endif; ?>
                                     <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( $item->get_price() ); ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input">
 
                                     <?php if( 'left' != $position ) : ?>
                                         <div class="input-group-append">
-                                            <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                            <span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             <?php
                         } else {
-                            echo $item->get_the_price();
+                            echo wpinv_price( wpinv_format_amount( $item->get_price() ), $currency );
                             ?>
                                 <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
                             <?php
@@ -87,7 +92,7 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
                     // Item sub total.
                     if ( 'subtotal' == $key ) {
-                        echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ) );
+                        echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ), $currency );
                     }
                 ?>
             </div>

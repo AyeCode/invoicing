@@ -4,6 +4,43 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+/**
+ * Retrieves the tax class.
+ * 
+ * @return WPInv_EUVat
+ */
+function getpaid_tax() {
+    return new WPInv_EUVat();
+}
+
+/**
+ * Checks if a given country is an EU state.
+ * 
+ * @return bool
+ */
+function getpaid_is_eu_state( $country ) {
+    return WPInv_EUVat::is_eu_state( $country );
+}
+
+/**
+ * Checks if a given country is GST country.
+ * 
+ * @return bool
+ */
+function getpaid_is_gst_country( $country ) {
+    return WPInv_EUVat::is_gst_country( $country );
+}
+
+/**
+ * Returns the vat name.
+ * 
+ * @return string
+ */
+function getpaid_vat_name() {
+    return getpaid_tax()->get_vat_name();
+}
+
+
 function wpinv_use_taxes() {
     $ret = wpinv_get_option( 'enable_taxes', false );
     
@@ -514,3 +551,77 @@ function getpaid_filter_vat_class( $vat_class ) {
     return empty( $vat_class ) ? '_standard' : $vat_class;
 }
 add_filter( 'wpinv_get_item_vat_class', 'getpaid_filter_vat_class' );
+
+/**
+ * Returns the ip address location url.
+ * 
+ */
+function getpaid_ip_location_url( $ip_address ) {
+
+    return add_query_arg(
+        array(
+            'action'   => 'wpinv_ip_geolocation',
+            'ip'       => $ip_address,
+            '_wpnonce' => wp_create_nonce( 'getpaid-ip-location' )
+        ),
+        admin_url( 'admin-ajax.php' )
+    );
+
+}
+
+/**
+ * GeoLocates an ip address.
+ * 
+ * @return array|bool
+ */
+function getpaid_geolocate_ip_address( $ip_address ) {
+
+    // Do we have an ip address?
+    if ( empty( $ip_address ) ) {
+        return false;
+    }
+
+    /**
+     * Retrieve ip address using max mind.
+     */
+    if ( wpinv_get_option( 'vat_ip_lookup' ) == 'geoip2' && $geoip2_city = getpaid_tax()->geoip2_city_record( $ip_address ) ) {
+
+        try {
+            $iso        = $geoip2_city->country->isoCode;
+            $country    = $geoip2_city->country->name;
+            $region     = ! empty( $geoip2_city->subdivisions ) && ! empty( $geoip2_city->subdivisions[0]->name ) ? $geoip2_city->subdivisions[0]->name : '';
+            $city       = $geoip2_city->city->name;
+            $longitude  = $geoip2_city->location->longitude;
+            $latitude   = $geoip2_city->location->latitude;
+            $credit     = __( 'Geolocated using the information by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">www.maxmind.com</a>', 'invoicing' );
+        } catch( Exception $e ) { }
+
+    }
+
+    // If that fails, GeoLocate using GeoPlugin.
+    if ( ( empty( $iso ) || empty( $longitude ) || empty( $latitude ) ) && function_exists( 'simplexml_load_file' ) ) {
+
+        try {
+            $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip_address );
+            
+            if ( ! empty( $load_xml ) && isset( $load_xml->geoplugin_countryCode ) && ! empty( $load_xml->geoplugin_latitude ) && ! empty( $load_xml->geoplugin_longitude ) ) {
+                $iso        = $load_xml->geoplugin_countryCode;
+                $country    = $load_xml->geoplugin_countryName;
+                $region     = ! empty( $load_xml->geoplugin_regionName ) ? $load_xml->geoplugin_regionName : '';
+                $city       = ! empty( $load_xml->geoplugin_city ) ? $load_xml->geoplugin_city : '';
+                $longitude  = $load_xml->geoplugin_longitude;
+                $latitude   = $load_xml->geoplugin_latitude;
+                $credit     = $load_xml->geoplugin_credit;
+                $credit     = __( 'Geolocated using the information by geoPlugin, available from <a href="http://www.geoplugin.com" target="_blank">www.geoplugin.com</a>', 'invoicing' ) . '<br>' . $load_xml->geoplugin_credit;
+            }
+        } catch( Exception $e ) { }
+
+    }
+
+   if ( empty( $iso )  ) {
+       return false;
+   }
+
+   return compact( 'iso', 'country', 'region', 'city', 'longitude', 'latitude', 'credit' );
+
+}

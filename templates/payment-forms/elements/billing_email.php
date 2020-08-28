@@ -18,7 +18,7 @@ if ( is_user_logged_in() ) {
 
 echo aui()->input(
     array(
-        'name'       => esc_attr( $id ),
+        'name'       => 'billing_email',
         'id'         => esc_attr( $id ) . uniqid( '_' ),
         'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'   => ! empty( $required ),
