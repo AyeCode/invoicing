@@ -371,7 +371,7 @@ function wpinv_get_registered_settings() {
                         'desc' => __( 'Enter the VAT name', 'invoicing' ),
                         'type' => 'text',
                         'size' => 'regular',
-                        'std' => 'VAT'
+                        'std' => __( 'VAT', 'invoicing' ),
                     ),
                     'vat_invoice_notice_label' => array(
                         'id' => 'vat_invoice_notice_label',

@@ -28,7 +28,7 @@ $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $
         <div class="getpaid-payment-form-items-cart-header">
             <div class="form-row">
             <?php foreach ( $columns as $key => $label ) : ?>
-                <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>">
+                <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>">
                     <?php echo sanitize_text_field( $label ); ?>
                 </div>
             <?php endforeach; ?>

@@ -23,6 +23,11 @@ class WPInv_Plugin {
             self::$instance->reports              = new WPInv_Reports();
             self::$instance->api                  = new WPInv_API();
             self::$instance->form_elements        = new WPInv_Payment_Form_Elements();
+
+            // Tax class.
+            $tax = new WPInv_EUVat();
+            $tax->init();
+            $GLOBALS['wpinv_euvat'] = $tax;
         }
 
         return self::$instance;
@@ -199,10 +204,13 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
-        if ( !class_exists( 'WPInv_EUVat' ) ) {
+        /**
+         * Load the tax class.
+         */
+        if ( ! class_exists( 'WPInv_EUVat' ) ) {
             require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
         }
-        
+
         $gateways = array_keys( wpinv_get_enabled_payment_gateways() );
         if ( !empty( $gateways ) ) {
             foreach ( $gateways as $gateway ) {

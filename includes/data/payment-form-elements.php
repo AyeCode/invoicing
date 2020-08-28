@@ -366,5 +366,13 @@ return array(
         'defaults'   => array(
             'text' => __( 'Total to pay:', 'invoicing' ),
         )
+    ),
+
+    array( 
+        'type'       => 'ip_address',
+        'name'       => __( 'IP Address', 'invoicing' ),
+        'defaults'   => array(
+            'text' => __( 'Your IP address is:', 'invoicing' ),
+        )
     )
 );

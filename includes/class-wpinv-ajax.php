@@ -100,6 +100,7 @@ class WPInv_Ajax {
             'run_tool'                    => false,
             'buy_items'                   => true,
             'payment_form_refresh_prices' => true,
+            'ip_geolocation'              => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -324,78 +325,79 @@ class WPInv_Ajax {
         }
 
         // Prepare items.
-        $items            = $submission->get_items();
-        $prepared_items   = array();
+        $items = $submission->get_items();
 
-        if ( ! empty( $items ) ) {
-
-            foreach( $items as $item_id => $item ) {
-
-                if ( $item->can_purchase() ) {
-                    $prepared_items[] = array(
-                        'id'           => $item_id,
-                        'item_price'   => $item->get_price(),
-                        'custom_price' => $item->get_price(),
-                        'name'         => $item->get_name(),
-                        'quantity'     => $item->get_quantity(),
-                    );
-                }
-
-            }
-
-        }
-
-        if ( empty( $prepared_items ) ) {
+        // Ensure that we have items.
+        if ( empty( $items ) ) {
             wp_send_json_error( __( 'You have not selected any items.', 'invoicing' ) );
         }
 
-        if ( $submission->has_recurring && 1 != count( $prepared_items ) ) {
-            wp_send_json_error( __( 'Recurring items should be bought individually.', 'invoicing' ) );
+        // Prepare the invoice.
+        if ( ! $submission->has_invoice() ) {
+            $invoice = new WPInv_Invoice();
+        } else {
+            $invoice = $submission->get_invoice();
         }
 
-        // Prepare the submission details.
-        $prepared = array(
-            'billing_email'                    => sanitize_email( $submission->get_billing_email() ),
-            __( 'Billing Email', 'invoicing' ) => sanitize_email( $submission->get_billing_email() ),
-            __( 'Form Id', 'invoicing' )       => absint( $submission->payment_form->get_id() ),
-        );
+        // Make sure that it is neither paid or refunded.
+        if ( $invoice->is_paid() || $invoice->is_refunded() ) {
+            wp_send_json_error( __( 'This invoice has already been paid for.', 'invoicing' ) );
+        }
 
-        // Address fields.
-        $address_fields = array();
+        // Set the billing email.
+        $invoice->set_email( sanitize_email( $submission->get_billing_email() ) );
 
-        // Add discount code.
+        // Payment form.
+        $invoice->set_payment_form( absint( $submission->get_payment_form()->get_id() ) );
+
+        // Discount code.
         if ( $submission->has_discount_code() ) {
-            $address_fields['discount'] = array( $submission->get_discount_code() );
+            $invoice->set_discount_code( $submission->get_discount_code() );
         }
 
-        // Are all required fields provided?
+        // Items, Fees, taxes and discounts.
+        $invoice->set_items( $items );
+        $invoice->set_fees( $submission->get_fees() );
+        $invoice->set_taxes( $submission->get_taxes() );
+        $invoice->set_discounts( $submission->get_discounts() );
+
+        // Prepared submission details.
+        $prepared = array();
+
+        // Raw submission details.
         $data = $submission->get_data();
 
+        // Loop throught the submitted details.
         foreach ( $submission->payment_form->get_elements() as $field ) {
 
             if ( ! empty( $field['premade'] ) ) {
                 continue;
             }
 
+            // If it is required and not set, abort.
             if ( ! $submission->is_required_field_set( $field ) ) {
-                wp_send_json_error( __( 'Fill all required fields.', 'invoicing' ) );
+                wp_send_json_error( __( 'Some required fields are not set.', 'invoicing' ) );
             }
 
+            // Handle address fields.
             if ( $field['type'] == 'address' ) {
 
                 foreach ( $field['fields'] as $address_field ) {
 
+                    // skip if it is not visible.
                     if ( empty( $address_field['visible'] ) ) {
                         continue;
                     }
 
+                    // If it is required and not set, abort
                     if ( ! empty( $address_field['required'] ) && empty( $data[ $address_field['name'] ] ) ) {
-                        wp_send_json_error( __( 'Some required fields have not been filled.', 'invoicing' ) );
+                        wp_send_json_error( __( 'Some required fields are not set.', 'invoicing' ) );
                     }
 
                     if ( isset( $data[ $address_field['name'] ] ) ) {
-                        $label = str_replace( 'wpinv_', '', $address_field['name'] );
-                        $address_fields[ $label ] = wpinv_clean( $data[ $address_field['name'] ] );
+                        $name   = str_replace( 'wpinv_', '', $address_field['name'] );
+                        $method = "set_$name";
+                        $invoice->$method( wpinv_clean( $data[ $address_field['name'] ] ) );
                     }
 
                 }
@@ -413,10 +415,14 @@ class WPInv_Ajax {
         }
 
         // (Maybe) create the user.
-        $user = get_user_by( 'email', $prepared['billing_email'] );
+        $user = get_current_user_id();
 
         if ( empty( $user ) ) {
-            $user = wpinv_create_user( $prepared['billing_email'] );
+            $user = get_user_by( 'email', $submission->get_billing_email() );
+        }
+
+        if ( empty( $user ) ) {
+            $user = wpinv_create_user( $submission->get_billing_email() );
         }
 
         if ( is_wp_error( $user ) ) {
@@ -427,71 +433,41 @@ class WPInv_Ajax {
             $user = get_user_by( 'id', $user );
         }
 
-        // Create the invoice.
-        if ( ! $submission->has_invoice() ) {
+        $invoice->set_user_id( $user->ID );
 
-            $invoice = wpinv_insert_invoice(
-                array(
-                    'status'        => 'wpi-pending',
-                    'created_via'   => 'payment_form',
-                    'user_id'       => $user->ID,
-                    'cart_details'  => $prepared_items,
-                    'user_info'     => $address_fields,
-                ),
-                true
-            );
+        $invoice->recalculate_total();
 
-        } else {
+        // Save the invoice.
+        $invoice->save();
 
-            $invoice = $submission->get_invoice();
-
-            if ( $invoice->is_paid() ) {
-                wp_send_json_error( __( 'This invoice has already been paid for.', 'invoicing' ) );
-            }
-
-            $invoice = wpinv_update_invoice(
-                array(
-                    'ID'            => $submission->get_invoice()->ID,
-                    'status'        => 'wpi-pending',
-                    'cart_details'  => $prepared_items,
-                    'user_info'     => $address_fields,
-                ),
-                true
-            );
-
+        // Was it saved successfully:
+        if ($invoice->get_id() == 0 ) {
+            wp_send_json_error( __( 'An error occured while saving your invoice.', 'invoicing' ) );
         }
 
-        if ( is_wp_error( $invoice ) ) {
-            wp_send_json_error( $invoice->get_error_message() );
-        }
+        // Save payment form data.
+        update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared );
 
-        if ( empty( $invoice ) ) {
-            wp_send_json_error( __( 'Could not create your invoice.', 'invoicing' ) );
-        }
-
-        unset( $prepared['billing_email'] );
-        update_post_meta( $invoice->ID, 'payment_form_data', $prepared );
-
-        $wpi_checkout_id = $invoice->ID;
-        $cart_total = wpinv_price(
-            wpinv_format_amount(
-                wpinv_get_cart_total( $invoice->get_cart_details(), NULL, $invoice ) ),
-                $invoice->get_currency()
+        // Backwards compatibility.
+        $wpi_checkout_id = $invoice->get_id();
+        $cart_total      = wpinv_price(
+            wpinv_format_amount( $invoice->get_total() ),
+            $invoice->get_currency()
         );
 
         $data                   = array();
-        $data['invoice_id']     = $invoice->ID;
-        $data['cart_discounts'] = $invoice->get_discounts( true );
+        $data['invoice_id']     = $invoice->get_id();
+        $data['cart_discounts'] = array ( $invoice->get_discount_code() );
 
         wpinv_set_checkout_session( $data );
         add_filter( 'wp_redirect', array( $invoicing->form_elements, 'send_redirect_response' ) );
         add_action( 'wpinv_pre_send_back_to_checkout', array( $invoicing->form_elements, 'checkout_error' ) );
-        
+
         if ( ! defined( 'WPINV_CHECKOUT' ) ) {
             define( 'WPINV_CHECKOUT', true );
         }
 
-        wpinv_process_checkout();
+        wpinv_process_checkout( $invoice, $submission->get_data() );
 
         $invoicing->form_elements->checkout_error();
 
@@ -893,6 +869,58 @@ class WPInv_Ajax {
             )
         );
 
+    }
+
+    /**
+     * IP geolocation.
+     *
+     * @since 1.0.19
+     */
+    public static function ip_geolocation() {
+
+        // Check nonce.
+        check_ajax_referer( 'getpaid-ip-location' );
+
+        // IP address.
+        if ( empty( $_GET['ip'] ) || ! rest_is_ip_address( $_GET['ip'] ) ) {
+            _e( 'Invalid IP Address.', 'invoicing' );
+            exit;
+        }
+
+        // Retrieve location info.
+        $location = getpaid_geolocate_ip_address( $_GET['ip'] );
+
+        if ( empty( $location ) ) {
+            _e( 'Unable to find geolocation for the IP Address.', 'invoicing' );
+            exit;
+        }
+
+        // Sorry.
+        extract( $location );
+
+        // Prepare the address.
+        $content = '';
+
+        if ( ! empty( $location['city'] ) ) {
+            $content .=  $location['city']  . ', ';
+        }
+        
+        if ( ! empty( $location['region'] ) ) {
+            $content .=  $location['region']  . ', ';
+        }
+        
+        $content .=  $location['country'] . ' (' . $location['iso'] . ')';
+
+        $location['address'] = $content;
+
+        $content  = '<p>'. sprintf( __( '<b>Address:</b> %s', 'invoicing' ), $content ) . '</p>';
+        $content .= '<p>'. $location['credit'] . '</p>';
+
+        $location['content'] = $content;
+
+        wpinv_get_template( 'geolocation.php', $location );
+
+        exit;
     }
 
     /**
