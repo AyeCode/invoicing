@@ -961,3 +961,61 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
     return $full ? $periods[ $period ] : $period;
 
 }
+
+/**
+ * Retrieves recurring price description.
+ * 
+ * @param WPInv_Item $item
+ */
+function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
+
+    // Abort if it is not recurring.
+    if ( ! $item->is_recurring() ) {
+        return '';
+    }
+
+    $initial_price   = wpinv_price( wpinv_sanitize_amount( $item->get_initial_price() ), $currency );
+    $recurring_price = wpinv_price( wpinv_sanitize_amount( $item->get_recurring_price() ), $currency );
+    $period          = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_recurring_period(), $item->get_recurring_interval() );
+    $period          = str_replace( '1 ', '', strtolower( $period ) );
+
+    // For free trial items.
+    if ( $item->has_free_trial() ) {
+        $trial_period = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_trial_period(), $item->get_trial_interval() );
+
+        if ( 0 == $item->get_initial_price() ) {
+            return sprintf(
+                __( 'Free for %s then %s every %s', 'invoicing' ),
+                strtolower( $trial_period ),
+                $recurring_price,
+                $period
+            );
+        }
+
+        return sprintf(
+            __( '%s for %s then %s every %s', 'invoicing' ),
+            $initial_price,
+            strtolower( $trial_period ),
+            $recurring_price,
+            $period
+        );
+
+    }
+
+    if ( $initial_price == $recurring_price ) {
+        return sprintf(
+            __( '%s every %s', 'invoicing' ),
+            $recurring_price,
+            $period
+        );
+    }
+
+    return sprintf(
+        __( '%s for %s then %s every %s', 'invoicing' ),
+        $initial_price,
+        $period,
+        $recurring_price,
+        $period
+    );
+
+}

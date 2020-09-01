@@ -1,18 +1,27 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Manual payment gateway
  *
- * @since 1.0.0
- * @package Invoicing
  */
- 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
 
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Manual Payment Gateway class.
+ *
+ */
 class WPInv_Plugin {
+
+    /**
+     * @param WPInv_Plugin
+     * @deprecated
+     */
     private static $instance;
+
+    /**
+     * @param array An array of payment gateways.
+     */
+    public $gateways;
     
     public static function run() {
         if ( !isset( self::$instance ) && !( self::$instance instanceof WPInv_Plugin ) ) {
@@ -32,7 +41,7 @@ class WPInv_Plugin {
 
         return self::$instance;
     }
-    
+
     public function __construct() {
         $this->define_constants();
     }
@@ -48,7 +57,9 @@ class WPInv_Plugin {
         
         /* Perform actions on admin initialization. */
         add_action( 'admin_init', array( &$this, 'admin_init') );
-        add_action( 'init', array( &$this, 'init' ), 3 );
+
+        // Init the plugin after WordPress inits.
+        add_action( 'init', array( $this, 'init' ), 1 );
         add_action( 'init', array( &$this, 'wpinv_actions' ) );
         
         if ( class_exists( 'BuddyPress' ) ) {
@@ -225,7 +236,6 @@ class WPInv_Plugin {
                 }
             }
         }
-        require_once( WPINV_PLUGIN_DIR . 'includes/gateways/manual.php' );
         
         if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
             GetPaid_Post_Types_Admin::init();
@@ -285,7 +295,8 @@ class WPInv_Plugin {
 		// And an array of possible locations in order of importance.
 		$locations = array(
 			'includes',
-			'includes/data-stores',
+            'includes/data-stores',
+            'includes/gateways',
             'includes/admin',
             'includes/admin/meta-boxes'
 		);
@@ -304,7 +315,24 @@ class WPInv_Plugin {
 
 	}
 
+    /**
+     * Inits hooks etc.
+     */
     public function init() {
+
+        // Load basic gateways.
+        $gateways = apply_filters(
+            'getpaid_default_gateways',
+            array(
+                'manual' => 'GetPaid_Manual_Gateway',
+                'paypal' => 'GetPaid_Paypal_Gateway',
+            )
+        );
+
+        foreach ( $gateways as $id => $class ) {
+            $this->gateways[ $id ] = new $class();
+        }
+
     }
     
     public function admin_init() {

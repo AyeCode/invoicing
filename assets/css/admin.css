@@ -2259,10 +2259,14 @@ textarea.wpi-email_overdue_content {
 
 .getpaid-invoice-totals-row .value{
     font-size: 1em!important;
-    width: 10em;
+    width: 14em;
     margin: 0 0 0 .5em;
     box-sizing: border-box;
     font-weight: 700;
+}
+
+.getpaid-invoice-totals-row .label{
+    vertical-align: top;
 }
 
 .getpaid-invoice-totals-row td{

@@ -107,10 +107,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$invoice->set_version( WPINV_VERSION );
 		$invoice->set_date_created( current_time('mysql') );
 
-		// Ensure both the key and number are set.
-		$invoice->get_key();
-		$invoice->get_number();
-
 		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
@@ -121,7 +117,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 					'post_status'   => $this->get_post_status( $invoice ),
 					'ping_status'   => 'closed',
 					'post_author'   => $invoice->get_user_id( 'edit' ),
-					'post_title'    => $invoice->get_number( 'edit' ),
+					'post_title'    => $invoice->get_title( 'edit' ),
 					'post_excerpt'  => $invoice->get_description( 'edit' ),
 					'post_parent'   => $invoice->get_parent_id( 'edit' ),
 					'post_name'     => $invoice->get_path( 'edit' ),
@@ -131,14 +127,28 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		);
 
 		if ( $id && ! is_wp_error( $id ) ) {
+
+			// Update the new id and regenerate a title.
 			$invoice->set_id( $id );
-			getpaid_save_invoice_user_address( $invoice );
+			wp_update_post( array( 'ID' => $invoice->get_id(), 'post_title' => $invoice->get_number( 'edit' ) ) );
+
+			// Ensure both the key and number are set.
+			$invoice->get_key();
+			$invoice->get_number();
+
+			// Save special fields and items.
 			$this->save_special_fields( $invoice );
 			$this->save_items( $invoice );
+
+			// Update meta data.
 			$this->update_post_meta( $invoice );
 			$invoice->save_meta_data();
+
+			// Apply changes.
 			$invoice->apply_changes();
 			$this->clear_caches( $invoice );
+
+			// Fires after a new invoice is created.
 			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 			return true;
 		}
@@ -244,11 +254,18 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			}
 			$invoice->read_meta_data( true ); // Refresh internal meta data, in case things were hooked into `save_post` or another WP hook.
 		}
+
+		// Update meta data.
 		$this->update_post_meta( $invoice );
+
+		// Save special fields and items.
 		$this->save_special_fields( $invoice );
 		$this->save_items( $invoice );
+
+		// Apply the changes.
 		$invoice->apply_changes();
-		getpaid_save_invoice_user_address( $invoice );
+
+		// Clear caches.
 		$this->clear_caches( $invoice );
 
 		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.

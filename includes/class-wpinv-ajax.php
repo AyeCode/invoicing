@@ -86,7 +86,6 @@ class WPInv_Ajax {
             'delete_note'                 => false,
             'get_states_field'            => true,
             'get_aui_states_field'        => true,
-            'checkout'                    => false,
             'payment_form'                => true,
             'get_payment_form'            => true,
             'get_payment_form_states_field' => true,
@@ -94,6 +93,7 @@ class WPInv_Ajax {
             'get_invoice_items'           => false,
             'add_invoice_items'           => false,
             'edit_invoice_item'           => false,
+            'remove_invoice_item'         => false,
             'get_billing_details'         => false,
             'recalculate_invoice_totals'  => false,
             'check_new_user_email'        => false,
@@ -159,15 +159,6 @@ class WPInv_Ajax {
         echo wpinv_get_states_field();
         
         die();
-    }
-    
-    public static function checkout() {
-        if ( ! defined( 'WPINV_CHECKOUT' ) ) {
-            define( 'WPINV_CHECKOUT', true );
-        }
-
-        wpinv_process_checkout();
-        die(0);
     }
 
     /**
@@ -299,7 +290,7 @@ class WPInv_Ajax {
      * @since 1.0.18
      */
     public static function payment_form() {
-        global $invoicing, $wpi_checkout_id, $cart_total;
+        global $invoicing;
 
         // Check nonce.
         check_ajax_referer( 'getpaid_form_nonce' );
@@ -322,6 +313,20 @@ class WPInv_Ajax {
         // We need a billing email.
         if ( ! $submission->has_billing_email() || ! is_email( $submission->get_billing_email() ) ) {
             wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
+        }
+
+        // Clear any checkout errors.
+        wpinv_clear_errors();
+
+        // Validate the gateway.
+        wpinv_checkout_validate_gateway( $submission );
+
+        // Allow themes and plugins to hook to errors
+        do_action( 'getpaid_checkout_error_checks', $submission );
+
+        // Do we have any errors?
+        if ( wpinv_get_errors() ) {
+            wp_send_json_error( getpaid_get_errors_html() );
         }
 
         // Prepare items.
@@ -368,7 +373,7 @@ class WPInv_Ajax {
         $data = $submission->get_data();
 
         // Loop throught the submitted details.
-        foreach ( $submission->payment_form->get_elements() as $field ) {
+        foreach ( $submission->get_payment_form()->get_elements() as $field ) {
 
             if ( ! empty( $field['premade'] ) ) {
                 continue;
@@ -435,6 +440,9 @@ class WPInv_Ajax {
 
         $invoice->set_user_id( $user->ID );
 
+        // Set gateway.
+        $invoice->set_gateway( $data['wpi-gateway'] );
+
         $invoice->recalculate_total();
 
         // Save the invoice.
@@ -446,29 +454,17 @@ class WPInv_Ajax {
         }
 
         // Save payment form data.
-        update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared );
+        if ( ! empty( $prepared ) ) {
+            update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared );
+        }
 
-        // Backwards compatibility.
-        $wpi_checkout_id = $invoice->get_id();
-        $cart_total      = wpinv_price(
-            wpinv_format_amount( $invoice->get_total() ),
-            $invoice->get_currency()
-        );
-
-        $data                   = array();
-        $data['invoice_id']     = $invoice->get_id();
-        $data['cart_discounts'] = array ( $invoice->get_discount_code() );
-
-        wpinv_set_checkout_session( $data );
+        // Process the checkout.
         add_filter( 'wp_redirect', array( $invoicing->form_elements, 'send_redirect_response' ) );
         add_action( 'wpinv_pre_send_back_to_checkout', array( $invoicing->form_elements, 'checkout_error' ) );
 
-        if ( ! defined( 'WPINV_CHECKOUT' ) ) {
-            define( 'WPINV_CHECKOUT', true );
-        }
+        wpinv_process_checkout( $invoice, $submission );
 
-        wpinv_process_checkout( $invoice, $submission->get_data() );
-
+        // If we are here, there was an error.
         $invoicing->form_elements->checkout_error();
 
         exit;
@@ -595,11 +591,18 @@ class WPInv_Ajax {
         // Recalculate totals.
         $invoice->recalculate_total();
 
+        $total = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
+
+        if ( $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
+            $recurring_total = wpinv_price( wpinv_format_amount( $invoice->get_recurring_total() ), $invoice->get_currency() );
+            $total          .= '<small class="form-text text-muted">' . sprintf( __( 'Recurring Price: %s', 'invoicing' ), $recurring_total ) . '</small>';
+        }
+
         $totals = array(
-            'subtotal' => wpinv_price( wpinv_format_amount( $invoice->get_subtotal() ) ),
-            'discount' => wpinv_price( wpinv_format_amount( $invoice->get_total_discount() ) ),
-            'tax'      => wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ) ),
-            'total'    => wpinv_price( wpinv_format_amount( $invoice->get_total() ) ),
+            'subtotal' => wpinv_price( wpinv_format_amount( $invoice->get_subtotal() ), $invoice->get_currency() ),
+            'discount' => wpinv_price( wpinv_format_amount( $invoice->get_total_discount() ), $invoice->get_currency() ),
+            'tax'      => wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ), $invoice->get_currency() ),
+            'total'    => $total,
         );
 
         $totals = apply_filters( 'getpaid_invoice_totals', $totals, $invoice );
@@ -636,7 +639,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
         }
 
         wp_send_json_success( compact( 'items' ) );
@@ -689,7 +692,11 @@ class WPInv_Ajax {
         $item->set_quantity( $data['quantity'] );
 
         // Add it to the invoice.
-        $invoice->add_item( $item );
+        $error = $invoice->add_item( $item );
+        $alert = false;
+        if ( is_wp_error( $error ) ) {
+            $alert = $error->get_error_message();
+        }
 
         // Update totals.
         $invoice->recalculate_total();
@@ -701,11 +708,62 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+        }
+
+        wp_send_json_success( compact( 'items', 'alert' ) );
+    }
+
+    /**
+     * Deletes an invoice item.
+     */
+    public static function remove_invoice_item() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice and an item.
+        if ( empty( $_POST['post_id'] ) || empty( $_POST['item_id'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+
+        // Ensure it exists and its not been paid for.
+        if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
+            exit;
+        }
+
+        // Abort if the invoice does not have the specified item.
+        $item = $invoice->get_item( (int) $_POST['item_id'] );
+
+        if ( empty( $item ) ) {
+            exit;
+        }
+
+        $invoice->remove_item( (int) $_POST['item_id'] );
+
+        // Update totals.
+        $invoice->recalculate_total();
+
+        // Save the invoice.
+        $invoice->save();
+
+        // Return an array of invoice items.
+        $items = array();
+
+        foreach ( $invoice->get_items() as $item_id => $item ) {
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
         }
 
         wp_send_json_success( compact( 'items' ) );
     }
+
     /**
      * Adds a items to an invoice.
      */
@@ -742,9 +800,12 @@ class WPInv_Ajax {
             }
 
             if ( $item->get_id() > 0 ) {
-                if ( ! $invoice->add_item( $item ) ) {
-                    $alert = __( 'An invoice can only contain one recurring item', 'invoicing' );
+                $error = $invoice->add_item( $item );
+
+                if ( is_wp_error( $error ) ) {
+                    $alert = $error->get_error_message();
                 }
+
             }
 
         }
@@ -757,7 +818,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax();
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency() );
         }
 
         wp_send_json_success( compact( 'items', 'alert' ) );

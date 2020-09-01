@@ -43,8 +43,7 @@ $column_count = count( $columns );
 
                 // Display the item totals.
                 foreach ( $invoice->get_items() as $item ) {
-                    noptin_dump( $item );
-                    wpinv_get_template( 'emails/invoice-items.php', compact( 'invoice', 'item', 'columns' ) );
+                    wpinv_get_template( 'emails/invoice-item.php', compact( 'invoice', 'item', 'columns' ) );
                 }
 
             ?>

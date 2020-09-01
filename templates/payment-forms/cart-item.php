@@ -11,10 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
-$currency = wpinv_get_currency();
-if ( ! empty( $form->invoice ) ) {
-    $currency = $form->invoice->get_currency();
-}
+$currency = $form->get_currency();
 
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?>'>
@@ -31,6 +28,12 @@ if ( ! empty( $form->invoice ) ) {
 
                         if ( ! empty( $description ) ) {
                             $description = wp_kses_post( $description );
+                            echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
+                        }
+
+                        $description = getpaid_item_recurring_price_help_text( $item, $currency );
+
+                        if ( $description ) {
                             echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
                         }
                     }

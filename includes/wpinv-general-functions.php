@@ -69,22 +69,15 @@ function wpinv_is_subscriptions_history_page() {
     return apply_filters( 'wpinv_is_subscriptions_history_page', $ret );
 }
 
-function wpinv_send_to_success_page( $args = null ) {
-	$redirect = wpinv_get_success_page_uri();
-    
-    if ( !empty( $args ) ) {
-        // Check for backward compatibility
-        if ( is_string( $args ) )
-            $args = str_replace( '?', '', $args );
+/**
+ * Redirects a user the success page.
+ */
+function wpinv_send_to_success_page( $args = array() ) {
+    $redirect = add_query_arg(
+        wp_parse_args( $args ),
+        wpinv_get_success_page_uri()
+    );
 
-        $args = wp_parse_args( $args );
-
-        $redirect = add_query_arg( $args, $redirect );
-    }
-
-    $gateway = isset( $_REQUEST['wpi-gateway'] ) ? $_REQUEST['wpi-gateway'] : '';
-    
-    $redirect = apply_filters( 'wpinv_success_page_redirect', $redirect, $gateway, $args );
     wp_redirect( $redirect );
     exit;
 }

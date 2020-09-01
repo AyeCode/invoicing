@@ -29,7 +29,7 @@ echo aui()->input(
         'label'             => empty( $label ) ? '' : wp_kses_post( $label ),
         'label_type'        => 'vertical',
         'help_text'         => empty( $description ) ? '' : wp_kses_post( $description ),
-        'input_group_right' => $position == 'right' ? wpinv_currency_symbol() : '',
-		'input_group_left'  => $position == 'left' ? wpinv_currency_symbol() : '',
+        'input_group_right' => $position == 'right' ? wpinv_currency_symbol( $form->get_currency() ) : '',
+		'input_group_left'  => $position == 'left' ? wpinv_currency_symbol( $form->get_currency() ) : '',
     )
 );

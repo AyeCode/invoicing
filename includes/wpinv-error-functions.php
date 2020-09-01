@@ -4,6 +4,19 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+/**
+ * Returns the errors as html
+ *
+ * @since  1.0.19
+ */
+function getpaid_get_errors_html() {
+
+    ob_start();
+    wpinv_print_errors();
+    return ob_get_clean();
+
+}
+
 function wpinv_print_errors() {
     $errors = wpinv_get_errors();
 
