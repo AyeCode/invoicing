@@ -443,7 +443,17 @@ jQuery(function($) {
 
                         // Redirect to the thank you page.
                         if ( res.success ) {
-                            window.location.href = decodeURIComponent(res.data)
+
+                            // Asume that the action is a redirect.
+                            if ( ! res.data.action ) {
+                                window.location.href = decodeURIComponent(res.data)
+                            }
+
+                            if ( 'auto_submit_form' == res.data.action ) {
+                                form.parent().append( '<div class="getpaid-checkout-autosubmit-form">' + res.data.form + '</div>' )
+                                $( '.getpaid-checkout-autosubmit-form form' ).submit()
+                            }
+
                             return
                         }
 

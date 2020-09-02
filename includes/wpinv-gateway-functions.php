@@ -17,11 +17,6 @@ function wpinv_get_payment_gateways() {
             'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
             'ordering'       => 4,
         ),
-        'worldpay' => array(
-            'admin_label'    => __( 'Worldpay', 'invoicing' ),
-            'checkout_label' => __( 'Worldpay - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 5,
-        ),
         'bank_transfer' => array(
             'admin_label'    => __( 'Pre Bank Transfer', 'invoicing' ),
             'checkout_label' => __( 'Pre Bank Transfer', 'invoicing' ),
@@ -29,7 +24,8 @@ function wpinv_get_payment_gateways() {
         ),
     );
 
-    return apply_filters( 'wpinv_payment_gateways', $gateways );
+    $gateways = apply_filters( 'wpinv_payment_gateways', $gateways );
+    return is_array( $gateways ) ? $gateways : array();
 }
 
 function wpinv_payment_gateway_titles( $all_gateways ) {
@@ -157,60 +153,85 @@ function wpinv_settings_sections_gateways( $settings ) {
 }
 add_filter( 'wpinv_settings_sections_gateways', 'wpinv_settings_sections_gateways', 10, 1 );
 
+/**
+ * Adds GateWay settings.
+ */
 function wpinv_settings_gateways( $settings ) {
-    $gateways = wpinv_get_payment_gateways();
-    
-    if (!empty($gateways)) {
-        foreach  ($gateways as $key => $gateway) {
-            $setting = array();
-            $setting[$key . '_header'] = array(
-                    'id'   => 'gateway_header',
-                    'name' => '<h3>' . wp_sprintf( __( '%s Settings', 'invoicing' ), $gateway['admin_label'] ) . '</h3>',
-                    'custom' => $key,
-                    'type' => 'gateway_header',
-                );
-            $setting[$key . '_active'] = array(
-                    'id'   => $key . '_active',
-                    'name' => __( 'Active', 'invoicing' ),
-                    'desc' => wp_sprintf( __( 'Enable %s', 'invoicing' ), $gateway['admin_label'] ),
-                    'type' => 'checkbox',
-                );
-                
-            $setting[$key . '_title'] = array(
-                    'id'   => $key . '_title',
-                    'name' => __( 'Title', 'invoicing' ),
-                    'desc' => __( 'This controls the title which the user sees during checkout.', 'invoicing' ),
-                    'type' => 'text',
-                    'std' => isset($gateway['checkout_label']) ? $gateway['checkout_label'] : ''
-                );
-            
-            $setting[$key . '_desc'] = array(
-                    'id'   => $key . '_desc',
-                    'name' => __( 'Description', 'invoicing' ),
-                    'desc' => __( 'This controls the description which the user sees during checkout.', 'invoicing' ),
-                    'type' => 'text',
-                    'size' => 'large'
-                );
-                
-            $setting[$key . '_ordering'] = array(
-                    'id'   => $key . '_ordering',
-                    'name' => __( 'Display Order', 'invoicing' ),
-                    'type' => 'number',
-                    'size' => 'small',
-                    'std'  => isset($gateway['ordering']) ? $gateway['ordering'] : '10',
-                    'min'  => '-100000',
-                    'max'  => '100000',
-                    'step' => '1'
-                );
-                
-            $setting = apply_filters( 'wpinv_gateway_settings', $setting, $key );
-            $setting = apply_filters( 'wpinv_gateway_settings_' . $key, $setting );
-            
-            $settings[$key] = $setting;
+
+    // Loop through each gateway.
+    foreach  ( wpinv_get_payment_gateways() as $key => $gateway ) {
+
+        $gateway_settings = array(
+
+            // Header.
+            "{$key}_header" => array(
+
+                'id'     => "{$key}_gateway_header",
+                'name'   => '<h3>' . wp_sprintf( __( '%s Settings', 'invoicing' ), $gateway['admin_label'] ) . '</h3>',
+                'custom' => $key,
+                'type'   => 'gateway_header',
+
+            ),
+
+            // Activate/Deactivate a gateway.
+            "{$key}_active" => array(
+                'id'   => $key . '_active',
+                'name' => __( 'Activate', 'invoicing' ),
+                'desc' => wp_sprintf( __( 'Enable %s', 'invoicing' ), $gateway['admin_label'] ),
+                'type' => 'checkbox',
+            ),
+
+            // Activate/Deactivate sandbox.
+            "{$key}_sandbox" => array(
+                'id'   => $key . '_sandbox',
+                'name' => __( 'Sandbox', 'invoicing' ),
+                'desc' => __( 'Enable sandbox to test payments', 'invoicing' ),
+                'type' => 'checkbox',
+            ),
+
+            // Checkout title.
+            "{$key}_title" => array(
+                'id'   => $key . '_title',
+                'name' => __( 'Checkout Title', 'invoicing' ),
+                'std'  => isset( $gateway['checkout_label'] ) ? $gateway['checkout_label'] : '',
+                'type' => 'text',
+            ),
+
+            // Checkout description.
+            "{$key}_desc" => array(
+                'id'   => $key . '_desc',
+                'name' => __( 'Checkout Description', 'invoicing' ),
+                'std'  => apply_filters( "getpaid_default_{$key}_checkout_description", '' ),
+                'type' => 'text',
+            ),
+
+            // Checkout order.
+            "{$key}_ordering" => array(
+                'id'   => $key . '_ordering',
+                'name' => __( 'Priority', 'invoicing' ),
+                'std'  => apply_filters( "getpaid_default_{$key}_checkout_description", '' ),
+                'type' => 'number',
+                'step' => '1',
+                'min'  => '-100000',
+                'max'  => '100000',
+                'std'  => isset( $gateway['ordering'] ) ? $gateway['ordering'] : '10',
+            ),
+
+        );
+
+        // Maybe remove the sandbox.
+        if ( ! apply_filters( "wpinv_{$key}_supports_sandbox", false ) ) {
+            unset( $gateway_settings["{$key}_sandbox"] );
         }
+  
+        $gateway_settings = apply_filters( 'wpinv_gateway_settings', $gateway_settings, $key, $gateway );
+        $gateway_settings = apply_filters( 'wpinv_gateway_settings_' . $key, $gateway_settings, $gateway );
+        
+        $settings[$key] = $gateway_settings;
     }
-    
-    return $settings;    
+
+    return $settings;
+
 }
 add_filter( 'wpinv_settings_gateways', 'wpinv_settings_gateways', 10, 1 );
 
@@ -550,51 +571,6 @@ function wpinv_gateway_settings_authorizenet( $setting ) {
     return $setting;
 }
 add_filter( 'wpinv_gateway_settings_authorizenet', 'wpinv_gateway_settings_authorizenet', 10, 1 );
-
-// Worldpay settings
-function wpinv_gateway_settings_worldpay( $setting ) {
-    $setting['worldpay_active']['desc'] = $setting['worldpay_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, ARS, CAD, CHF, DKK, EUR, HKD, MYR, GBP, NZD, NOK, SGD, LKR, SEK, TRY, USD, ZAR )', 'invoicing' );
-    $setting['worldpay_desc']['std'] = __( 'Pay using a Worldpay account to process Credit card / Debit card transactions.', 'invoicing' );
-    
-    $setting['worldpay_sandbox'] = array(
-            'type' => 'checkbox',
-            'id'   => 'worldpay_sandbox',
-            'name' => __( 'Worldpay Test Mode', 'invoicing' ),
-            'desc' => __( 'This provides a special Test Environment to enable you to test your installation and integration to your website before going live.', 'invoicing' ),
-            'std'  => 1
-        );
-        
-    $setting['worldpay_instId'] = array(
-            'type' => 'text',
-            'id'   => 'worldpay_instId',
-            'name' => __( 'Installation Id', 'invoicing' ),
-            'desc' => __( 'Your installation id. Ex: 211616', 'invoicing' ),
-            'std' => '211616',
-        );
-    /*
-    $setting['worldpay_accId1'] = array(
-            'type' => 'text',
-            'id'   => 'worldpay_accId1',
-            'name' => __( 'Merchant Code', 'invoicing' ),
-            'desc' => __( 'Your merchant code. Ex: 12345', 'invoicing' ),
-            'std' => '12345',
-        );
-    */
-    
-    $setting['worldpay_ipn_url'] = array(
-            'type' => 'ipn_url',
-            'id'   => 'worldpay_ipn_url',
-            'name' => __( 'Worldpay Callback Url', 'invoicing' ),
-            'std' => wpinv_get_ipn_url( 'worldpay' ),
-            'desc' => wp_sprintf( __( 'Login to your Worldpay Merchant Interface then enable Payment Response & Shopper Response. Next, go to the Payment Response URL field and type "%s" or "%s" for a dynamic payment response.', 'invoicing' ), '<font style="color:#000;font-style:normal">' . wpinv_get_ipn_url( 'worldpay' ) . '</font>', '<font style="color:#000;font-style:normal">&lt;wpdisplay item=MC_callback&gt;</font>' ),
-            'size' => 'large',
-            'custom' => 'worldpay',
-            'readonly' => true
-        );
-        
-    return $setting;
-}
-add_filter( 'wpinv_gateway_settings_worldpay', 'wpinv_gateway_settings_worldpay', 10, 1 );
 
 function wpinv_ipn_url_callback( $args ) {    
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
