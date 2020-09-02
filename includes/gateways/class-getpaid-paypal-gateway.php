@@ -24,7 +24,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription' );
+    protected $supports = array( 'subscription', 'sandbox' );
 
     /**
 	 * Payment method order.
@@ -83,7 +83,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $this->title             = __( 'PayPal Standard', 'invoicing' );
         $this->method_title      = __( 'PayPal Standard', 'invoicing' );
         $this->order_button_text = __( 'Proceed to PayPal', 'invoicing' );
-        $this->notify_url        = wpinv_get_ipn_url( 'paypal' );
+        $this->notify_url        = wpinv_get_ipn_url( $this->id );
 
         add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
         add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );

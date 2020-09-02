@@ -147,7 +147,16 @@ abstract class GetPaid_Payment_Gateway {
 			add_filter( "wpinv_{$this->id}_support_subscription", '__return_true' );
 		}
 
+		// Enable sandbox.
+		if ( $this->supports( 'sandbox' ) ) {
+			add_filter( "wpinv_{$this->id}_supports_sandbox", '__return_true' );
+		}
+
 		// Gateway settings.
+		add_filter( "wpinv_gateway_settings_{$this->id}", array( $this, 'admin_settings' ) );
+		
+
+		// Gateway checkout fiellds.
 		add_action( "wpinv_{$this->id}_cc_form", array( $this, 'payment_fields' ), 10, 2 );
 
 		// Process payment.
@@ -385,6 +394,24 @@ abstract class GetPaid_Payment_Gateway {
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
 	public function payment_fields( $invoice_id, $form ) {}
+
+	/**
+	 * Filters the gateway settings.
+	 * 
+	 * @param array $admin_settings
+	 */
+	public function admin_settings( $admin_settings ) {
+		return $admin_settings;
+	}
+
+	/**
+	 * Retrieves the value of a gateway setting.
+	 * 
+	 * @param string $option
+	 */
+	public function get_option( $option, $default = false ) {
+		return wpinv_get_option( $this->id . '_' . $option, $default );
+	}
 
 	/**
 	 * Check if a gateway supports a given feature.

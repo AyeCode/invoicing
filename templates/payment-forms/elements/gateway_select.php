@@ -47,7 +47,7 @@ if ( ! empty( $form->invoice ) ) {
 
             <?php foreach ( array_keys( $gateways ) as $gateway ) : ?>
 
-                <div class="pt-2 pb-2 getpaid-gateways-select-gateway getpaid-gateways-select-gateway-<?php echo sanitize_html_class( $gateway ) ;?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_$gateway_checkout_button_label", '' ) ); ?>'>
+                <div class="pt-2 pb-2 getpaid-gateways-select-gateway getpaid-gateways-select-gateway-<?php echo sanitize_html_class( $gateway ) ;?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_{$gateway}_checkout_button_label", '' ) ); ?>'>
 
                     <div class="getpaid-gateway-radio-div">
                         <label>

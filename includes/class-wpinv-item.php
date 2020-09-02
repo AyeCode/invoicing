@@ -290,13 +290,13 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_initial_price( $context = 'view' ) {
 
-		$price = $this->get_price( $context );
+		$price = (float) $this->get_price( $context );
 
 		if ( $this->has_free_trial() ) {
-			$price = wpinv_sanitize_amount( 0 );
+			$price = 0;
 		}
 
-        return apply_filters( 'wpinv_get_initial_item_price', $price, $this );
+        return wpinv_sanitize_amount( apply_filters( 'wpinv_get_initial_item_price', $price, $this ) );
     }
 
     /**

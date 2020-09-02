@@ -292,22 +292,22 @@ class WPInv_Plugin {
 		// Next, prepare the file name from the class.
 		$file_name = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
 
+        // Base path of the classes.
+        $plugin_path = untrailingslashit( WPINV_PLUGIN_DIR );
+
 		// And an array of possible locations in order of importance.
 		$locations = array(
-			'includes',
-            'includes/data-stores',
-            'includes/gateways',
-            'includes/admin',
-            'includes/admin/meta-boxes'
+            "$plugin_path/includes",
+            "$plugin_path/includes/data-stores",
+            "$plugin_path/includes/gateways",
+            "$plugin_path/includes/admin",
+            "$plugin_path/includes/admin/meta-boxes",
 		);
 
-		// Base path of the classes.
-		$plugin_path = untrailingslashit( WPINV_PLUGIN_DIR );
+		foreach ( apply_filters( 'getpaid_autoload_locations', $locations ) as $location ) {
 
-		foreach ( $locations as $location ) {
-
-			if ( file_exists( "$plugin_path/$location/$file_name" ) ) {
-				include "$plugin_path/$location/$file_name";
+			if ( file_exists( trailingslashit( $location ) . $file_name ) ) {
+				include trailingslashit( $location ) . $file_name;
 				break;
 			}
 
@@ -320,18 +320,22 @@ class WPInv_Plugin {
      */
     public function init() {
 
-        // Load basic gateways.
+        // Load default gateways.
         $gateways = apply_filters(
             'getpaid_default_gateways',
             array(
-                'manual' => 'GetPaid_Manual_Gateway',
-                'paypal' => 'GetPaid_Paypal_Gateway',
+                'manual'   => 'GetPaid_Manual_Gateway',
+                'paypal'   => 'GetPaid_Paypal_Gateway',
+                'worldpay' => 'GetPaid_Worldpay_Gateway',
             )
         );
 
         foreach ( $gateways as $id => $class ) {
             $this->gateways[ $id ] = new $class();
         }
+
+        // Fires after getpaid inits.
+        do_action( 'getpaid_init', $this );
 
     }
     
