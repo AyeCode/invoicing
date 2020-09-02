@@ -250,16 +250,22 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * @since 1.0.19
 	 * @return array
 	 */
-	public function prepare_data_for_invoice_edit_ajax() {
+	public function prepare_data_for_invoice_edit_ajax( $currency = '' ) {
+
+		$description = getpaid_item_recurring_price_help_text( $this, $currency );
+
+		if ( $description ) {
+			$description = "<div class='getpaid-subscription-help-text'>$description</div>";
+		}
 
 		return array(
 			'id'     => $this->get_id(),
 			'texts'  => array(
 				'item-name'        => sanitize_text_field( $this->get_name() ),
-				'item-description' => wp_kses_post( $this->get_description() ),
+				'item-description' => wp_kses_post( $this->get_description() ) . $description,
 				'item-quantity'    => absint( $this->get_quantity() ),
-				'item-price'       => wpinv_price( wpinv_format_amount ( $this->get_price() ) ),
-				'item-total'       => wpinv_price( wpinv_format_amount( $this->get_sub_total() ) ),
+				'item-price'       => wpinv_price( wpinv_format_amount ( $this->get_price() ), $currency ),
+				'item-total'       => wpinv_price( wpinv_format_amount( $this->get_sub_total() ), $currency ),
 			),
 			'inputs' => array(
 				'item-id'          => $this->get_id(),
@@ -283,7 +289,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		return array(
 			'post_id'           => $this->invoice_id,
 			'item_id'           => $this->get_id(),
-			'item_name'         => sanitize_text_field( $this->get_name() ),
+			'item_name'         => sanitize_text_field( $this->get_raw_name() ),
 			'item_description'  => $this->get_description(),
 			'tax'               => $this->item_tax,
 			'item_price'        => $this->get_price(),
@@ -292,7 +298,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'subtotal'          => $this->get_sub_total(),
 			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount,
 			'meta'              => $this->get_item_meta(),
-        );
+		);
+
 	}
 
     /*

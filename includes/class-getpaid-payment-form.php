@@ -430,6 +430,18 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		return $this->get_prop( 'failed', $context );
 	}
 
+	/**
+	 * Get the currency.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_currency() {
+		$currency = empty( $this->invoice ) ? wpinv_get_currency() : $this->invoice->get_currency();
+		return apply_filters( 'getpaid-payment-form-currency', $currency, $this );
+	}
+
     /*
 	|--------------------------------------------------------------------------
 	| Setters

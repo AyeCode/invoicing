@@ -1207,3 +1207,26 @@ function getpaid_format_date( $date ) {
     return date_i18n( get_option( 'date_format' ), strtotime( $date ) );
 
 }
+
+/**
+ * Limit length of a string.
+ *
+ * @param  string  $string string to limit.
+ * @param  integer $limit Limit size in characters.
+ * @return string
+ */
+function getpaid_limit_length( $string, $limit ) {
+    $str_limit = $limit - 3;
+
+	if ( function_exists( 'mb_strimwidth' ) ) {
+		if ( mb_strlen( $string ) > $limit ) {
+			$string = mb_strimwidth( $string, 0, $str_limit ) . '...';
+		}
+	} else {
+		if ( strlen( $string ) > $limit ) {
+			$string = substr( $string, 0, $str_limit ) . '...';
+		}
+	}
+    return $string;
+
+}

@@ -81,7 +81,7 @@ class WPInv_Subscriptions {
         add_action( 'init', array( $this, 'wpinv_post_actions' ) );
         add_action( 'init', array( $this, 'wpinv_get_actions' ) );
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
-        add_action( 'wpinv_checkout_before_send_to_gateway', array( $this, 'wpinv_checkout_add_subscription' ), -999, 2 );
+        add_action( 'getpaid_checkout_before_gateway', array( $this, 'add_subscription' ), -999 );
         add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
     }
 
@@ -189,19 +189,19 @@ class WPInv_Subscriptions {
         switch ( strtolower( $period ) ) {
             case 'day' :
             case 'd' :
-                $frequency = sprintf( _n('Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
+                $frequency = sprintf( _n('%d Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'week' :
             case 'w' :
-                $frequency = sprintf( _n('Week', '%d Weeks', $frequency_count, 'invoicing'), $frequency_count);
+                $frequency = sprintf( _n('%d Week', '%d Weeks', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'month' :
             case 'm' :
-                $frequency = sprintf( _n('Month', '%d Months', $frequency_count, 'invoicing'), $frequency_count);
+                $frequency = sprintf( _n('%d Month', '%d Months', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'year' :
             case 'y' :
-                $frequency = sprintf( _n('Year', '%d Years', $frequency_count, 'invoicing'), $frequency_count);
+                $frequency = sprintf( _n('%d Year', '%d Years', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             default :
                 $frequency = apply_filters( 'wpinv_recurring_subscription_frequency', $frequency, $period, $frequency_count );
@@ -268,15 +268,19 @@ class WPInv_Subscriptions {
     }
 
     /**
-     * Create subscription on checkout
+     * Creates a subscription on checkout
      *
      * @access      public
      * @param       WPInv_Invoice $invoice
      * @since       1.0.0
      * @return      void
      */
-    public function wpinv_checkout_add_subscription( $invoice, $invoice_data ) {
-        if ( ! ( ! empty( $invoice->ID ) && $invoice->is_recurring() ) ) {
+    public function add_subscription( $invoice ) {
+
+        $invoice = new WPInv_Invoice( $invoice );
+
+        // Abort if it is not recurring.
+        if ( ! $invoice->is_recurring() || $invoice->is_renewal() ) {
             return;
         }
 
@@ -285,64 +289,68 @@ class WPInv_Subscriptions {
             return;
         }
 
-        $item               = $invoice->get_recurring( true );
-        if ( empty( $item ) ) {
-            return;
-        }
+        // Get the recurring item.
+        $subscription_item = $invoice->get_recurring( true );
 
-        $invoice_date       = $invoice->get_invoice_date( false );
-        $status             = 'pending';
+        // Prepare the subscription details.
+        $period       = $subscription_item->get_recurring_period( true );
+        $interval     = $subscription_item->get_recurring_interval();
+        $add_period   = $interval . ' ' . $period;
+        $trial_period = '';
 
-        $period             = $item->get_recurring_period( true );
-        $interval           = $item->get_recurring_interval();
-        $bill_times         = (int)$item->get_recurring_limit();
-        $add_period         = $interval . ' ' . $period;
-        $trial_period       = '';
+        if ( $invoice->has_free_trial() ) {
 
-        if ( $invoice->is_free_trial() ) {
-            $status         = 'trialling';
-
-            if ( $invoice->is_free_trial_from_discount() ) {
-
-                $trial_period   = $item->get_recurring_period( true );
-                $free_interval  = $item->get_recurring_interval();
-
+            if ( $subscription_item->has_free_trial() ) {
+                $trial_period   = $subscription_item->get_trial_period( true );
+                $free_interval  = $subscription_item->get_trial_interval();
             } else {
-                $trial_period   = $item->get_trial_period( true );
-                $free_interval  = $item->get_trial_interval();
+                $trial_period   = $period;
+                $free_interval  = $interval;
             }
 
             $trial_period   = $free_interval . ' ' . $trial_period;
-
             $add_period     = $trial_period;
+
         }
 
-        $expiration         = date_i18n( 'Y-m-d H:i:s', strtotime( '+' . $add_period  . ' 23:59:59', strtotime( $invoice_date ) ) );
+        // Calculate the next renewal date.
+        $expiration = date( 'Y-m-d H:i:s', strtotime( "+ $add_period", current_time( 'timestamp' ) ) );
 
+        // Subscription arguments.
         $args = array(
-            'product_id'        => $item->ID,
-            'customer_id'       => $invoice->user_id,
-            'parent_payment_id' => $invoice->ID,
-            'status'            => $status,
+            'product_id'        => $subscription_item->get_id(),
+            'customer_id'       => $invoice->get_user_id(),
+            'parent_payment_id' => $invoice->get_id(),
+            'status'            => $invoice->has_free_trial() ? 'trialling' : 'pending',
             'frequency'         => $interval,
             'period'            => $period,
-            'initial_amount'    => $invoice->get_total(),
-            'recurring_amount'  => $invoice->get_recurring_details( 'total' ),
-            'bill_times'        => $bill_times,
-            'created'           => $invoice_date,
+            'initial_amount'    => $invoice->get_initial_total(),
+            'recurring_amount'  => $invoice->get_recurring_total(),
+            'bill_times'        => $subscription_item->get_recurring_limit(),
+            'created'           => current_time( 'mysql' ),
             'expiration'        => $expiration,
             'trial_period'      => $trial_period,
             'profile_id'        => '',
             'transaction_id'    => '',
         );
 
+        // Create or update the subscription.
         $subscription = wpinv_get_subscription( $invoice );
 
         if ( empty( $subscription ) ) {
+
             $subscription = new WPInv_Subscription();
             $subscription->create( $args );
+
+        } else {
+
+
+            unset( $args['transaction_id'] );
+            unset( $args['profile_id'] );
+            $subscription->update( $args );
+
         }
-        
+
         return $subscription;
     }
 }

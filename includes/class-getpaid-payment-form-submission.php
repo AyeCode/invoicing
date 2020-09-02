@@ -217,7 +217,8 @@ class GetPaid_Payment_Form_Submission {
 			$this->payment_form->set_items( $invoice->get_items() );
 
 			$this->country = $invoice->get_country();
-			$this->state = $invoice->get_state();
+			$this->state   = $invoice->get_state();
+			$this->invoice = $invoice;
 
 		// Default forms do not have items.
         } else if ( $form->is_default() && isset( $data['form_items'] ) ) {
@@ -468,7 +469,7 @@ class GetPaid_Payment_Form_Submission {
 
 		$use_taxes = wpinv_use_taxes();
 
-		if ( $this->has_invoice() && $this->invoice->disable_taxes ) {
+		if ( $this->has_invoice() && ! $this->invoice->is_taxable() ) {
 			$use_taxes = false;
 		}
 

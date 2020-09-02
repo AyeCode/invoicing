@@ -476,3 +476,10 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
     // Save the invoice.
     return $invoice->save();
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_send_to_gateway( $gateway, $payment_data ) {
+    do_action( 'wpinv_gateway_' . $gateway, $payment_data );
+}

@@ -21,11 +21,10 @@ $totals = apply_filters(
     $form
 );
 
-$currency = wpinv_get_currency();
+$currency = $form->get_currency();
 $country  = wpinv_get_default_country();
 
 if ( ! empty( $form->invoice ) ) {
-    $currency = $form->invoice->get_currency();
     $country  = $form->invoice->get_country();
 }
 

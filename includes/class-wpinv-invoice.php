@@ -550,7 +550,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $key = $this->get_prop( 'key', $context );
 
         if ( empty( $key ) ) {
-            $key = $this->generate_key( $this->post_type );
+            $key = $this->generate_key( $this->get_type() . '_' );
             $this->set_key( $key );
         }
 
@@ -1608,7 +1608,7 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
-	 * Retrieves the subscription id for an invoice.
+	 * Retrieves the remote subscription id for an invoice.
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
@@ -1670,7 +1670,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	/**
 	 * Retrieves the recurring item.
 	 *
-	 * @return null|GetPaid_Form_Item
+	 * @return null|GetPaid_Form_Item|int
 	 */
 	public function get_recurring( $object = false ) {
 
@@ -1837,6 +1837,11 @@ class WPInv_Invoice extends GetPaid_Data {
 
 			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
 			if ( $old_status && ! array_key_exists( $new_status, $statuses ) ) {
+				$old_status = 'wpi-pending';
+			}
+
+			// Paid - Renewal (i.e when duplicating a parent invoice )
+			if ( $new_status == 'wpi-renewal' && $old_status == 'publish' ) {
 				$old_status = 'wpi-pending';
 			}
 
@@ -2878,7 +2883,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if this is a taxable invoice.
      */
     public function is_taxable() {
-        return $this->get_disable_taxes();
+        return ! $this->get_disable_taxes();
 	}
 
 	/**
@@ -2901,10 +2906,10 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Checks to see if the invoice requires payment.
 	 */
 	public function is_free() {
-        $is_free = ! ( (float) wpinv_round_amount( $this->get_initial_total() ) > 0 );
+        $is_free = ( (float) wpinv_round_amount( $this->get_initial_total() ) == 0 );
 
-		if ( $is_free && $this->is_recurring() ) {
-			$is_free = ! ( (float) wpinv_round_amount( $this->get_recurring_total() ) > 0 );
+		if ( $this->is_recurring() && $this->get_recurring_total() > 0 ) {
+			$is_free = false;
 		}
 
         return apply_filters( 'wpinv_invoice_is_free', $is_free, $this );
@@ -3009,7 +3014,7 @@ class WPInv_Invoice extends GetPaid_Data {
             return false;
         }
 
-        $item = new WPInv_Item( $this->recurring_item );
+        $item = $this->get_recurring( true );
         return $item->has_free_trial();
 	}
 
@@ -3065,19 +3070,19 @@ class WPInv_Invoice extends GetPaid_Data {
 		if ( $item->is_recurring() ) {
 
 			// An invoice can only contain one recurring item.
-			if ( ! empty( $this->recurring_item ) ) {
-				return false;
+			if ( ! empty( $this->recurring_item  && $this->recurring_item != (int) $item->get_id() ) ) {
+				return new WP_Error( 'recurring_item', __( 'An invoice can only contain one recurring item', 'invoicing' ) );
 			}
 
 			$this->recurring_item = $item->get_id();
         }
 
         // Invoice id.
-        $item->invoice_id = $this->get_id();
+        $item->invoice_id = (int) $this->get_id();
 
         // Retrieve all items.
         $items = $this->get_items();
-        $items[ $item->get_id() ] = $item;
+        $items[ (int) $item->get_id() ] = $item;
 
         $this->set_prop( 'items', $items );
 		return true;
@@ -3089,7 +3094,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
 	 */
 	public function get_item( $item_id ) {
-        $items = $this->get_items();
+		$items   = $this->get_items();
+		$item_id = (int) $item_id;
 		return ( ! empty( $item_id ) && isset( $items[ $item_id ] ) ) ? $items[ $item_id ] : null;
     }
 
@@ -3099,7 +3105,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
 	 */
 	public function remove_item( $item_id ) {
-        $items = $this->get_items();
+		$items   = $this->get_items();
+		$item_id = (int) $item_id;
 
         if ( $item_id == $this->recurring_item ) {
             $this->recurring_item = null;
@@ -3264,7 +3271,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_tax( $tax ) {
+	public function get_tax( $tax = null ) {
+
+		// Backwards compatility.
+		if ( empty( $tax ) ) {
+			return $this->get_total_tax();
+		}
+
         $taxes = $this->get_taxes();
 		return isset( $taxes[ $tax ] ) ? $taxes[ $tax ] : null;
     }
@@ -3508,7 +3521,7 @@ class WPInv_Invoice extends GetPaid_Data {
     public function generate_key( $string = '' ) {
         $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
         return strtolower(
-            md5( $this->get_id() . $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) )
+            $string . md5( $this->get_id() . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) )
         );
     }
 
@@ -3643,7 +3656,68 @@ class WPInv_Invoice extends GetPaid_Data {
     public function refund() {
 		$this->set_status( 'wpi-refunded' );
         $this->save();
-    }
+	}
+
+	/**
+	 * Marks an invoice as paid.
+	 * 
+	 * @param string $transaction_id
+	 */
+    public function mark_paid( $transaction_id = null, $note = '' ) {
+
+		// Set the transaction id.
+		if ( empty( $transaction_id ) ) {
+			$transaction_id = $this->generate_key('trans_');
+		}
+
+		if ( ! $this->get_transaction_id() ) {
+			$this->set_transaction_id( $transaction_id );
+		}
+
+		if ( $this->is_paid() && 'wpi-processing' != $this->get_status() ) {
+			return $this->save();
+		}
+
+		// Set the completed date.
+		$this->set_date_completed( current_time( 'mysql' ) );
+
+		// Set the new status.
+		if ( $this->is_renewal() ) {
+
+			$_note = sprintf(
+				__( 'Renewed via %s', 'invoicing' ),
+				$this->get_gateway_title() . empty( $note ) ? '' : " ($note)"
+			);
+
+			if ( 'none' == $this->get_gateway() ) {
+				$_note = $note;
+			}
+
+			$this->set_status( 'wpi-renewal', $_note );
+
+		} else {
+
+			$_note = sprintf(
+				__( 'Paid via %s', 'invoicing' ),
+				$this->get_gateway_title() . empty( $note ) ? '' : " ($note)"
+			);
+
+			if ( 'none' == $this->get_gateway() ) {
+				$_note = $note;
+			}
+
+			$this->set_status( 'publish',$_note );
+
+		}
+
+		// Set checkout mode.
+		$mode = wpinv_is_test_mode( $this->get_gateway() ) ? 'test' : 'live';
+		$this->set_mode( $mode );
+
+		// Save the invoice.
+        $this->save();
+	}
+
 
 	/**
 	 * Save data to the database.

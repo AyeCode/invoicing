@@ -82,10 +82,21 @@ function wpinv_store_address() {
 /**
  * Saves a user address.
  * 
+ * This function is called whenever an invoice is created/updated to ensure the two are always in sync.
+ * 
  * @param WPInv_Invoice $invoice
  */
 function getpaid_save_invoice_user_address( $invoice ) {
 
+    // Retrieve the invoice.
+    $invoice = wpinv_get_invoice( $invoice );
+
+    // Abort if it does not exist.
+    if ( empty( $invoice ) ) {
+        return;
+    }
+
+    // Prepare the address fields.
     $address_fields = array(
         'first_name',
         'last_name',
@@ -110,6 +121,8 @@ function getpaid_save_invoice_user_address( $invoice ) {
     }
 
 }
+add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
+add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
 
 function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     global $wpi_userID;

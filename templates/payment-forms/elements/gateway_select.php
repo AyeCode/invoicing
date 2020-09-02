@@ -47,7 +47,7 @@ if ( ! empty( $form->invoice ) ) {
 
             <?php foreach ( array_keys( $gateways ) as $gateway ) : ?>
 
-                <div class="pt-2 pb-2 getpaid-gateways-select-gateway getpaid-gateways-select-gateway-<?php echo sanitize_html_class( $gateway ) ;?>">
+                <div class="pt-2 pb-2 getpaid-gateways-select-gateway getpaid-gateways-select-gateway-<?php echo sanitize_html_class( $gateway ) ;?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_$gateway_checkout_button_label", '' ) ); ?>'>
 
                     <div class="getpaid-gateway-radio-div">
                         <label>
@@ -57,15 +57,15 @@ if ( ! empty( $form->invoice ) ) {
                     </div>
 
                     <div class="getpaid-gateway-description-div" style="display: none;">
-
+                        <?php do_action( 'wpinv_' . $gateway . '_checkout_fields', $invoice_id ) ;?>
                         <?php if ( wpinv_get_gateway_description( $gateway ) ) : ?>
                             <div class="getpaid-gateway-description">
                                 <?php echo wpinv_get_gateway_description( $gateway ); ?>
                             </div>
                         <?php endif; ?>
 
-                        <?php do_action( 'getpaid_after_gateway_description', $invoice_id, $gateway ) ;?>
-                        <?php do_action( 'wpinv_' . $gateway . '_cc_form', $invoice_id ) ;?>
+                        <?php do_action( 'getpaid_after_gateway_description', $invoice_id, $gateway, $form ) ;?>
+                        <?php do_action( 'wpinv_' . $gateway . '_cc_form', $invoice_id, $form ) ;?>
 
                     </div>
 

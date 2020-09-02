@@ -1172,6 +1172,10 @@ function getpaid_invoice_totals_rows( $invoice ) {
  */
 function getpaid_new_invoice( $invoice_id, $invoice ) {
 
+    if ( ! $invoice->get_status() ) {
+        return;
+    }
+
     // Add an invoice created note.
     $invoice->add_note(
         wp_sprintf(

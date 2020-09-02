@@ -177,6 +177,10 @@ class WPInv_Subscription {
 
 		do_action( 'wpinv_recurring_update_subscription', $this->id, $args, $this );
 
+		if ( $ret && isset( $args['profile_id'] ) ) {
+			update_post_meta( $this->parent_payment_id, 'subscription_id', $args['profile_id'] );
+		}
+
 		return $ret;
 
 	}
@@ -261,112 +265,51 @@ class WPInv_Subscription {
      * @return bool
      */
     public function add_payment( $args = array() ) {
-        if ( ! $this->parent_payment_id ) {
+
+		// Do we have a parent invoice?
+        if ( ! $this->parent_payment_id || ! is_array( $args ) ) {
             return false;
         }
 
-        $args = wp_parse_args( $args, array(
-            'amount'         => '',
-            'transaction_id' => '',
-            'gateway'        => ''
-        ) );
-        
+		// Process each payment once.
         if ( empty( $args['transaction_id'] ) || $this->payment_exists( $args['transaction_id'] ) ) {
             return false;
         }
-        
+
+		// Ensure that the parent invoice is available.
         $parent_invoice = wpinv_get_invoice( $this->parent_payment_id );
-        if ( empty( $parent_invoice->ID ) ) {
+        if ( ! $parent_invoice->get_id() ) {
             return false;
         }
 
-        $invoice = new WPInv_Invoice();
-        $invoice->set( 'post_type', 'wpi_invoice' );
-        $invoice->set( 'parent_invoice', $this->parent_payment_id );
-        $invoice->set( 'currency', $parent_invoice->get_currency() );
-        $invoice->set( 'transaction_id', $args['transaction_id'] );
-        $invoice->set( 'key', $parent_invoice->generate_key() );
-        $invoice->set( 'ip', $parent_invoice->ip );
-        $invoice->set( 'user_id', $parent_invoice->get_user_id() );
-        $invoice->set( 'first_name', $parent_invoice->get_first_name() );
-        $invoice->set( 'last_name', $parent_invoice->get_last_name() );
-        $invoice->set( 'phone', $parent_invoice->phone );
-        $invoice->set( 'address', $parent_invoice->address );
-        $invoice->set( 'city', $parent_invoice->city );
-        $invoice->set( 'country', $parent_invoice->country );
-        $invoice->set( 'state', $parent_invoice->state );
-        $invoice->set( 'zip', $parent_invoice->zip );
-        $invoice->set( 'company', $parent_invoice->company );
-        $invoice->set( 'vat_number', $parent_invoice->vat_number );
-        $invoice->set( 'vat_rate', $parent_invoice->vat_rate );
-        $invoice->set( 'adddress_confirmed', $parent_invoice->adddress_confirmed );
+		// Duplicate the parent invoice.
+		$invoice = new WPInv_Invoice( $parent_invoice );
+		$invoice->set_id( 0 );
+		$invoice->set_parent_id( $parent_invoice->get_parent() );
+		$invoice->set_transaction_id( $args['transaction_id'] );
+		$invoice->set_key( $invoice->generate_key('renewal_') );
+		$invoice->set_number( '' );
+		$invoice->set_completed_date( current_time( 'mysql' ) );
 
-        if ( empty( $args['gateway'] ) ) {
-            $invoice->set( 'gateway', $parent_invoice->get_gateway() );
-        } else {
-            $invoice->set( 'gateway', $args['gateway'] );
-        }
-        
-        $recurring_details = $parent_invoice->get_recurring_details();
+		if ( ! empty( $args['gateway'] ) ) {
+			$invoice->set_gateway( $args['gateway'] );
+		}
 
-        // increase the earnings for each item in the subscription
-        $items = $recurring_details['cart_details'];
-        
-        if ( $items ) {        
-            $add_items      = array();
-            $cart_details   = array();
-            
-            foreach ( $items as $item ) {
-                $add_item             = array();
-                $add_item['id']       = $item['id'];
-                $add_item['quantity'] = $item['quantity'];
-                
-                $add_items[]    = $add_item;
-                $cart_details[] = $item;
-                break;
-            }
-            
-            $invoice->set( 'items', $add_items );
-            $invoice->cart_details = $cart_details;
-        }
-        
-        $total = $args['amount'];
-        
-        $subtotal           = $recurring_details['subtotal'];
-        $tax                = $recurring_details['tax'];
-        $discount           = $recurring_details['discount'];
-        
-        if ( $discount > 0 ) {
-            $invoice->set( 'discount_code', $parent_invoice->discount_code );
-        }
-        
-        $invoice->subtotal = wpinv_round_amount( $subtotal );
-        $invoice->tax      = wpinv_round_amount( $tax );
-        $invoice->discount = wpinv_round_amount( $discount );
-        $invoice->total    = wpinv_round_amount( $total );
+		$invoice->set_status( 'wpi-renewal' );
 
-        $invoice  = apply_filters( 'wpinv_subscription_add_payment_save', $invoice, $this, $args );
+		$invoice->save();
 
-        $invoice->save();
-        $invoice->update_meta( '_wpinv_subscription_id', $this->id );
-        
-        if ( !empty( $invoice->ID ) ) {
-            wpinv_update_payment_status( $invoice->ID, 'publish' );
-            sleep(1);
-            wpinv_update_payment_status( $invoice->ID, 'wpi-renewal' );
-            
-            $invoice = wpinv_get_invoice( $invoice->ID );
+		if ( ! $invoice->get_id() ) {
+			return 0;
+		}
 
-			// Send email notifications.
-			wpinv_completed_invoice_notification( $invoice->ID );
+		do_action( 'getpaid_after_create_subscription_renewal_invoice', $invoice, $this );
+		do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
+        do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->parent_payment_id, $invoice->get_recurring_total(), $invoice->get_transaction_id() );
 
-            do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
-            do_action( 'wpinv_recurring_record_payment', $invoice->ID, $this->parent_payment_id, $args['amount'], $args['transaction_id'] );
-            
-            return $invoice->ID;
-        }
+        update_post_meta( $invoice->get_id(), '_wpinv_subscription_id', $this->id );
 
-        return false;
+        return $invoice->get_id();
     }
 
 	/**
@@ -410,33 +353,14 @@ class WPInv_Subscription {
 	 */
 	public function renew() {
 
-		$expires = $this->get_expiration_time();
+		// Calculate new expiration
+		$expires        = $this->get_expiration_time();
+		$base_date      = $expires > current_time( 'timestamp' ) ? $expires : current_time( 'timestamp' );
+		$frequency      = isset( $this->frequency ) ? $this->frequency : 1;
+		$new_expiration = strtotime( "+ {$frequency} {$this->period}", strtotime( $base_date ) );
+		$new_expiration = apply_filters( 'wpinv_subscription_renewal_expiration', date( 'Y-m-d H:i:s', $new_expiration ), $this->id, $this );
 
-
-		// Determine what date to use as the start for the new expiration calculation
-		if( $expires > current_time( 'timestamp' ) && $this->is_active() ) {
-
-			$base_date  = $expires;
-
-		} else {
-
-			$base_date  = current_time( 'timestamp' );
-
-		}
-
-		$last_day = wpinv_cal_days_in_month( CAL_GREGORIAN, date( 'n', $base_date ), date( 'Y', $base_date ) );
-
-
-		$frequency = isset($this->frequency) ? $this->frequency : 1;
-		$expiration = date( 'Y-m-d H:i:s', strtotime( '+' . $frequency . ' ' . $this->period  . ' 23:59:59', $base_date ) );
-
-		if( date( 'j', $base_date ) == $last_day && 'day' != $this->period ) {
-			$expiration = date( 'Y-m-d H:i:s', strtotime( $expiration . ' +2 days' ) );
-		}
-
-		$expiration  = apply_filters( 'wpinv_subscription_renewal_expiration', $expiration, $this->id, $this );
-
-		do_action( 'wpinv_subscription_pre_renew', $this->id, $expiration, $this );
+		do_action( 'wpinv_subscription_pre_renew', $this->id, $new_expiration, $this );
 
 		$this->status = 'active';
 		$times_billed = $this->get_times_billed();
@@ -445,16 +369,19 @@ class WPInv_Subscription {
 		if ( $this->bill_times > 0 && $times_billed >= $this->bill_times ) {
 			$this->complete();
 			$this->status = 'completed';
+			return;
 		}
 
 		$args = array(
-			'expiration' => $expiration,
+			'expiration' => $new_expiration,
 			'status'     => $this->status,
 		);
 
         $this->subs_db->update( $this->id, $args );
 
-		do_action( 'wpinv_subscription_post_renew', $this->id, $expiration, $this );
+		$this->expiration = $new_expiration;
+
+		do_action( 'wpinv_subscription_post_renew', $this->id, $new_expiration, $this );
 		do_action( 'wpinv_recurring_set_subscription_status', $this->id, $this->status, $this );
 
 	}
@@ -543,7 +470,7 @@ class WPInv_Subscription {
 			$this->status = 'failing';
 
 			do_action( 'wpinv_subscription_failing', $this->id, $this );
-
+			do_action( 'wpinv_recurring_payment_failed', $this );
 
 		}
 
