@@ -33,7 +33,7 @@ defined( 'ABSPATH' ) || exit;
                                 </th>
 
                                 <td>
-                                    <?php echo wp_kses_post( $data['value'] ); ?>
+                                    <span class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
                                 </td>
 
                             </tr>

@@ -36,6 +36,15 @@ if ( $invoice->is_paid() ) {
         )
     );
 
+} else if ( $invoice->is_held() ) {
+
+    $alert = aui()->alert(
+        array(
+            'type'    => 'info',
+            'content' => __( 'This invoice will be processed as soon we verify your payment.', 'invoicing' ),
+        )
+    );
+
 } else if ( $invoice->needs_payment() ) {
 
     if ( $invoice->is_due() ) {
@@ -91,7 +100,7 @@ $actions = apply_filters(
 
 );
 
-if ( ! $invoice->needs_payment() && isset( $actions['pay'] ) ) {
+if ( ( ! $invoice->needs_payment() || $invoice->is_held() ) && isset( $actions['pay'] ) ) {
     unset( $actions['pay'] );
 }
 

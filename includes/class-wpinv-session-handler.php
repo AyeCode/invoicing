@@ -317,6 +317,3 @@ class WPInv_Session_Handler extends WPInv_Session {
 
 	}
 }
-
-global $wpi_session;
-$wpi_session = new WPInv_Session_Handler();

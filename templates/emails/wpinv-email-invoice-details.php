@@ -8,7 +8,7 @@ global $wpinv_euvat;
 $sent_to_admin  = !empty( $sent_to_admin ) ? true : false;
 $invoice_url = $invoice->get_view_url( true );
 $use_taxes = wpinv_use_taxes();
-$vat_name = $wpinv_euvat->get_vat_name();
+$vat_name = getpaid_tax()->get_vat_name();
 
 do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
 <div id="wpinv-email-details">
