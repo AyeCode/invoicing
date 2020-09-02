@@ -159,6 +159,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Change item prices on a per invoice basis - ADDED
 * Improve UI to change invoice item quantities - ADDED
 * Ability to charge hours, quantities or amounts only - ADDED
+* Worldpay - You can now specify an MD5 secret and callback password.
+* Worldpay - invoices are now automatically marked as paid or failed.
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
