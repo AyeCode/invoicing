@@ -73,10 +73,10 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	public function __construct() {
 
-        $this->method_title      = __( 'Worldpay', 'invoicing' );
-        $this->title             = __( 'Worldpay - Credit Card / Debit Card', 'invoicing' );
-        $this->order_button_text = __( 'Proceed to Worldpay', 'invoicing' );
-        $this->notify_url        = wpinv_get_ipn_url( $this->id );
+        $this->method_title         = __( 'Worldpay', 'invoicing' );
+        $this->title                = __( 'Worldpay - Credit Card / Debit Card', 'invoicing' );
+        $this->checkout_button_text = __( 'Proceed to Worldpay', 'invoicing' );
+        $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
         add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
         add_filter( 'getpaid_worldpay_args', array( $this, 'hash_args' ) );

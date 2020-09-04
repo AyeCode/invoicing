@@ -1,38 +1,57 @@
 <?php
-/*
-Plugin Name: Invoicing
-Plugin URI: https://wpinvoicing.com/
-Description: Invoicing plugin, this plugin allows you to send invoices (also EU VAT compliant) to people and have them pay you online.
-Version: 1.0.18
-Author: AyeCode Ltd
-Author URI: https://wpinvoicing.com
-License: GPLv3
-Text Domain: invoicing
-Domain Path: /languages
-*/
+/**
+ * Plugin Name: GetPaid
+ * Plugin URI: https://wpinvoicing.com/
+ * Description: A lightweight and VAT compliant payments and invoicing plugin.
+ * Version: 1.0.19
+ * Author: AyeCode Ltd
+ * Author URI: https://wpinvoicing.com
+ * Text Domain: invoicing
+ * Domain Path: /languages
+ * License: GPLv3
+ * Requires at least: 4.9
+ * Requires PHP: 5.3
+ *
+ * @package GetPaid
+ */
 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+defined( 'ABSPATH' ) || exit;
+
+// Define constants.
+if ( ! defined( 'WPINV_PLUGIN_FILE' ) ) {
+	define( 'WPINV_PLUGIN_FILE', __FILE__ );
 }
 
-if ( !defined( 'WPINV_VERSION' ) ) {
-    define( 'WPINV_VERSION', '1.0.18' );
+if ( ! defined( 'WPINV_VERSION' ) ) {
+	define( 'WPINV_VERSION', '1.0.19' );
 }
 
-if ( !defined( 'WPINV_PLUGIN_FILE' ) ) {
-    define( 'WPINV_PLUGIN_FILE', __FILE__ );
+// Include the main Invoicing class.
+if ( ! class_exists( 'WPInv_Plugin', false ) ) {
+	include_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/class-wpinv.php';
 }
 
-require plugin_dir_path( __FILE__ ) . 'includes/class-wpinv.php';
+/**
+ * Returns the main instance of Invoicing.
+ *
+ * @since  1.0.19
+ * @return WPInv_Plugin
+ */
+function getpaid() {
 
+    if ( empty( $GLOBALS['invoicing'] ) ) {
+        $GLOBALS['invoicing'] = new WPInv_Plugin();
+    }
+
+	return $GLOBALS['invoicing'];
+}
+
+/**
+ * @deprecated
+ */
 function wpinv_run() {
-    global $invoicing;
-    
-    $invoicing = WPInv_Plugin::run();
-    
-    return $invoicing;
+    return getpaid();
 }
 
-// load WPInv_Plugin instance.
-wpinv_run();
+// Kickstart the plugin.
+getpaid();

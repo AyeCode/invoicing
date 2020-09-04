@@ -80,10 +80,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	public function __construct() {
 
-        $this->title             = __( 'PayPal Standard', 'invoicing' );
-        $this->method_title      = __( 'PayPal Standard', 'invoicing' );
-        $this->order_button_text = __( 'Proceed to PayPal', 'invoicing' );
-        $this->notify_url        = wpinv_get_ipn_url( $this->id );
+        $this->title                = __( 'PayPal Standard', 'invoicing' );
+        $this->method_title         = __( 'PayPal Standard', 'invoicing' );
+        $this->checkout_button_text = __( 'Proceed to PayPal', 'invoicing' );
+        $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
         add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
         add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );

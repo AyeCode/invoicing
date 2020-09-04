@@ -2940,6 +2940,14 @@ class WPInv_Invoice extends GetPaid_Data {
 	}
 
 	/**
+     * Checks if the invoice is held.
+     */
+	public function is_held() {
+        $is_held = $this->has_status( 'wpi-onhold' );
+        return apply_filters( 'wpinv_invoice_is_held', $is_held, $this );
+	}
+
+	/**
      * Checks if the invoice is due.
      */
 	public function is_due() {

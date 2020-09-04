@@ -10,7 +10,7 @@ if ( !defined( 'WPINC' ) ) {
  * @return WPInv_EUVat
  */
 function getpaid_tax() {
-    return new WPInv_EUVat();
+    return getpaid()->tax;
 }
 
 /**

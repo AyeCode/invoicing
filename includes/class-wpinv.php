@@ -13,45 +13,106 @@ defined( 'ABSPATH' ) || exit;
 class WPInv_Plugin {
 
     /**
-     * @param WPInv_Plugin
-     * @deprecated
-     */
-    private static $instance;
+	 * GetPaid version.
+	 *
+	 * @var string
+	 */
+    public $version;
+
+    /**
+	 * Session instance.
+	 *
+	 * @var WPInv_Session|WPInv_Session_Handler
+	 */
+    public $session;
+    
+    /**
+	 * Notes instance.
+	 *
+	 * @var WPInv_Notes
+	 */
+    public $notes;
+    
+    /**
+	 * Reports instance.
+	 *
+	 * @var WPInv_Reports
+	 */
+    public $reports;
+    
+    /**
+	 * API instance.
+	 *
+	 * @var WPInv_API
+	 */
+    public $api;
+    
+    /**
+	 * Form elements instance.
+	 *
+	 * @var WPInv_Payment_Form_Elements
+	 */
+    public $form_elements;
+    
+    /**
+	 * Tax instance.
+	 *
+	 * @var WPInv_EUVat
+	 */
+	public $tax;
 
     /**
      * @param array An array of payment gateways.
      */
     public $gateways;
-    
-    public static function run() {
-        if ( !isset( self::$instance ) && !( self::$instance instanceof WPInv_Plugin ) ) {
-            self::$instance = new WPInv_Plugin;
-            self::$instance->includes();
-            self::$instance->actions();
-            self::$instance->notes                = new WPInv_Notes();
-            self::$instance->reports              = new WPInv_Reports();
-            self::$instance->api                  = new WPInv_API();
-            self::$instance->form_elements        = new WPInv_Payment_Form_Elements();
 
-            // Tax class.
-            $tax = new WPInv_EUVat();
-            $tax->init();
-            $GLOBALS['wpinv_euvat'] = $tax;
-        }
+    /**
+     * @param array An array of options.
+     */
+    public $options;
 
-        return self::$instance;
-    }
-
+    /**
+	 * Class constructor.
+	 */
     public function __construct() {
         $this->define_constants();
+        $this->includes();
+        $this->init_hooks();
+        $this->set_properties();
     }
-    
+
+    /**
+	 * Define class properties.
+	 */
+    public function set_properties() {
+
+        $this->session       = new WPInv_Session_Handler();
+        $GLOBALS['wpi_session'] = $this->session; // Backwards compatibility.
+        $this->notes         = new WPInv_Notes();
+        $this->reports       = new WPInv_Reports();
+        $this->api           = new WPInv_API();
+        $this->form_elements = new WPInv_Payment_Form_Elements();
+        $this->tax           = new WPInv_EUVat();
+        $this->tax->init();
+        $GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
+
+    }
+
+     /**
+	 * Define plugin constants.
+	 */
     public function define_constants() {
         define( 'WPINV_PLUGIN_DIR', plugin_dir_path( WPINV_PLUGIN_FILE ) );
         define( 'WPINV_PLUGIN_URL', plugin_dir_url( WPINV_PLUGIN_FILE ) );
+        $this->version = WPINV_VERSION;
     }
 
-    private function actions() {
+    /**
+	 * Hook into actions and filters.
+	 *
+	 * @since 1.0.19
+	 */
+    protected function init_hooks() {
         /* Internationalize the text strings used. */
         add_action( 'plugins_loaded', array( &$this, 'plugins_loaded' ) );
         
@@ -60,6 +121,7 @@ class WPInv_Plugin {
 
         // Init the plugin after WordPress inits.
         add_action( 'init', array( $this, 'init' ), 1 );
+        add_action( 'getpaid_init', array( $this, 'maybe_process_ipn' ), 5 );
         add_action( 'init', array( &$this, 'wpinv_actions' ) );
         
         if ( class_exists( 'BuddyPress' ) ) {
@@ -146,19 +208,19 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'language.php' );
     }
 
+    /**
+	 * Include required core files used in admin and on the frontend.
+	 */
     public function includes() {
-        global $wpinv_options;
 
+        // Start with the settings.
         require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
-        $wpinv_options = wpinv_get_settings();
+        $this->options = wpinv_get_settings();
+        $GLOBALS['wpinv_options'] = $this->options; // Backwards compatibility.
 
-        // Load composer packages.
+        // Packages/libraries.
         require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
-
-        // load AUI
         require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
-
-        // Load the action scheduler.
         require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
 
         // Load functions.
@@ -320,13 +382,17 @@ class WPInv_Plugin {
      */
     public function init() {
 
+        // Fires before getpaid inits.
+        do_action( 'before_getpaid_init', $this );
+
         // Load default gateways.
         $gateways = apply_filters(
             'getpaid_default_gateways',
             array(
-                'manual'   => 'GetPaid_Manual_Gateway',
-                'paypal'   => 'GetPaid_Paypal_Gateway',
-                'worldpay' => 'GetPaid_Worldpay_Gateway',
+                'manual'        => 'GetPaid_Manual_Gateway',
+                'paypal'        => 'GetPaid_Paypal_Gateway',
+                'worldpay'      => 'GetPaid_Worldpay_Gateway',
+                'bank_transfer' => 'GetPaid_Bank_Transfer_Gateway',
             )
         );
 
@@ -336,11 +402,29 @@ class WPInv_Plugin {
 
         // Fires after getpaid inits.
         do_action( 'getpaid_init', $this );
+        
+    }
+
+    /**
+     * Checks if this is an IPN request and processes it.
+     */
+    public function maybe_process_ipn() {
+
+        // Ensure that this is an IPN request.
+        if ( empty( $_GET['wpi-listener'] ) || 'IPN' !== $_GET['wpi-listener'] || empty( $_GET['wpi-gateway'] ) ) {
+            return;
+        }
+
+        $gateway = wpinv_clean( $_GET['wpi-gateway'] );
+
+        do_action( 'wpinv_verify_payment_ipn', $gateway );
+        do_action( "wpinv_verify_{$gateway}_ipn" );
+        exit;
 
     }
-    
+
     public function admin_init() {
-        self::$instance->default_payment_form = wpinv_get_default_payment_form();
+        $this->default_payment_form = wpinv_get_default_payment_form();
         add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
     }
 

@@ -3,7 +3,7 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
-Tested up to: 5.4
+Tested up to: 5.5
 Stable tag: 1.0.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -36,13 +36,12 @@ Invoicing can be used as payment system with check out page by any plugin.
 = Plugins currently using Invoicing as their Payment system are =
 
 * [GeoDirectory](https://wpgeodirectory.com/) - GeoDirectory uses Invoicing to manage Invoices, taxes, VAT and payments.
-* [Paid Members](https://wordpress.org/plugins/members/) - Coming soon - An add-on for Members to create paid membership with custom roles and permissions.
 
 = Payment Gateways =
 
 * PayPal Standard (built in) - Accept Paypal and credit card payments (single or recurring) via paypal.
 * Authorize.Net (built in) - Accept credit card payments (single or recurring) via Authorize.Net.
-* Worldpay (built in) - Accept credit card payments (single or recurring) via Worldpay.
+* Worldpay (built in) - Accept credit card payments via Worldpay.
 * Pre Bank Transfer (built in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
 * [Stripe](https://wpinvoicing.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
 * [PayPal Pro](https://wpinvoicing.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
