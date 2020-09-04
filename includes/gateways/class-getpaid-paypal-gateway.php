@@ -704,7 +704,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
         $invoice->add_note( sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $posted['subscr_id'] ), false, false, true );
 
-        // Use the action id as the subscription id.
+        // Update the subscription duration.
         $duration = strtotime( $subscription->expiration ) - strtotime( $subscription->created );
         $subscription->update( 
             array(

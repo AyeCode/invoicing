@@ -99,7 +99,7 @@ function wpinv_recurring_subscription_details() {
 										<td class="row-title">
 											<label for="tablecell"><?php _e( 'Times Billed:', 'invoicing' ); ?></label>
 										</td>
-										<td><?php echo $sub->get_times_billed() . ' / ' . ( ( $sub->bill_times == 0 ) ? 'Until Cancelled' : $sub->bill_times ); ?></td>
+										<td><?php echo $sub->get_times_billed() . ' / ' . ( ( $sub->bill_times == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $sub->bill_times ); ?></td>
 									</tr>
 									<tr>
 										<td class="row-title">

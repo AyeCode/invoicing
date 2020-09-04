@@ -1394,7 +1394,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?></td>
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->created, current_time('timestamp'))); ?></td>
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->expiration, current_time('timestamp'))); ?></td>
-                        <td class="text-center"><?php echo $subscription->get_times_billed() . ' / ' . (($subscription->bill_times == 0) ? 'Until Cancelled' : $subscription->bill_times); ?></td>
+                        <td class="text-center"><?php echo $subscription->get_times_billed() . ' / ' . (($subscription->bill_times == 0) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->bill_times); ?></td>
                         <td class="text-center wpi-sub-status"><?php echo $subscription->get_status_label(); ?></td>
                     </tr>
                 </tbody>

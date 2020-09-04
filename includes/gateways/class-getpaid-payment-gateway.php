@@ -120,11 +120,11 @@ abstract class GetPaid_Payment_Gateway {
 	public $new_method_label = '';
 
 	/**
-	 * Contains a users saved tokens for this gateway.
+	 * Contains a user's sandbox saved tokens for this gateway.
 	 *
 	 * @var array
 	 */
-	protected $tokens = array();
+	protected $sandbox_tokens = array();
 
 	/**
 	 * An array of features that this gateway supports.
@@ -216,6 +216,22 @@ abstract class GetPaid_Payment_Gateway {
 		}
 
 		return $this->tokens;
+	}
+
+	/**
+	 * Saves a token for this gateway.
+	 *
+	 * @since 1.0.19
+	 */
+	public function save_token( $token ) {
+
+		$tokens   = $this->get_tokens();
+		$tokens[] = $token;
+
+		update_user_meta( get_current_user_id(), "getpaid_{$this->id}_tokens", $tokens );
+
+		$this->tokens = $tokens;
+
 	}
 
 	/**
@@ -497,7 +513,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function save_payment_method_checkbox() {
-	
+
 		return sprintf(
 			'<p class="form-group getpaid-save-payment-method">
 				<label>

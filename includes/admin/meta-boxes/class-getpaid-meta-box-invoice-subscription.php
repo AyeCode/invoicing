@@ -84,7 +84,7 @@ class GetPaid_Meta_Box_Invoice_Subscription {
 
             <p class="wpi-meta-row wpi-billed-times">
                 <label><?php _e( 'Times Billed:', 'invoicing' ); ?></label>
-                <?php echo $subscription->get_times_billed() . ' / ' . ( ( $subscription->bill_times == 0 ) ? 'Until Cancelled' : $subscription->bill_times ); ?>
+                <?php echo $subscription->get_times_billed() . ' / ' . ( ( $subscription->bill_times == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->bill_times ); ?>
             </p>
 
             <p class="wpi-meta-row wpi-start-date">

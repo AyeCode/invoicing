@@ -198,7 +198,7 @@ class WPInv_Subscription_Reports_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	function column_bill_times( $item ) {
-		return $item->get_times_billed() . ' / ' . ( ( $item->bill_times == 0 ) ? 'Until Cancelled' : $item->bill_times );
+		return $item->get_times_billed() . ' / ' . ( ( $item->bill_times == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $item->bill_times );
 	}
 
 	/**
