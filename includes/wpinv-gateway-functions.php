@@ -8,19 +8,11 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns an array of payment gateways.
+ * 
+ * @return array
  */
 function wpinv_get_payment_gateways() {
-    // Default, built-in gateways
-    $gateways = array(
-        'authorizenet' => array(
-            'admin_label'    => __( 'Authorize.Net (AIM)', 'invoicing' ),
-            'checkout_label' => __( 'Authorize.Net - Credit Card / Debit Card', 'invoicing' ),
-            'ordering'       => 4,
-        ),
-    );
-
-    $gateways = apply_filters( 'wpinv_payment_gateways', $gateways );
-    return is_array( $gateways ) ? $gateways : array();
+    return apply_filters( 'wpinv_payment_gateways', array() );
 }
 
 function wpinv_payment_gateway_titles( $all_gateways ) {
@@ -128,8 +120,8 @@ function wpinv_get_gateway_checkout_label( $gateway ) {
     $gateways = wpinv_get_payment_gateways();
     $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['checkout_label'] : $gateway;
 
-    if( $gateway == 'manual' ) {
-        $label = __( 'Manual Payment', 'invoicing' );
+    if ( $gateway == 'none' ) {
+        $label = __( 'None', 'invoicing' );
     }
 
     return apply_filters( 'wpinv_gateway_checkout_label', ucfirst( $label ), $gateway );
@@ -417,84 +409,6 @@ function wpinv_gateway_settings_paypal( $setting ) {
 }
 add_filter( 'wpinv_gateway_settings_paypal', 'wpinv_gateway_settings_paypal', 10, 1 );
 
-// Authorize.Net settings
-function wpinv_gateway_settings_authorizenet( $setting ) {
-    $setting['authorizenet_active']['desc'] = $setting['authorizenet_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, CAD, CHF, DKK, EUR, GBP, JPY, NOK, NZD, PLN, SEK, USD, ZAR )', 'invoicing' );
-    $setting['authorizenet_desc']['std'] = __( 'Pay using a Authorize.Net to process Credit card / Debit card transactions.', 'invoicing' );
-    
-    $setting['authorizenet_sandbox'] = array(
-            'type' => 'checkbox',
-            'id'   => 'authorizenet_sandbox',
-            'name' => __( 'Authorize.Net Test Mode', 'invoicing' ),
-            'desc' => __( 'Enable Authorize.Net test mode to test payments.', 'invoicing' ),
-            'std'  => 1
-        );
-        
-    $setting['authorizenet_login_id'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_login_id',
-            'name' => __( 'API Login ID', 'invoicing' ),
-            'desc' => __( 'API Login ID can be obtained from Authorize.Net Account > Settings > Security Settings > General Security Settings > API Credentials & Keys. Example : 2j4rBekUnD', 'invoicing' ),
-            'std' => '2j4rBekUnD',
-        );
-    
-    $setting['authorizenet_transaction_key'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_transaction_key',
-            'name' => __( 'Transaction Key', 'invoicing' ),
-            'desc' => __( 'Transaction Key can be obtained from Authorize.Net Account > Settings > Security Settings > General Security Settings > API Credentials & Keys. Example : 4vyBUOJgR74679xa', 'invoicing' ),
-            'std' => '4vyBUOJgR74679xa',
-        );
-        
-    $setting['authorizenet_md5_hash'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_md5_hash',
-            'name' => __( 'MD5-Hash', 'invoicing' ),
-            'desc' => __( 'The MD5 Hash security feature allows to authenticate transaction responses from the Authorize.Net for recurring payments. It can be obtained from Authorize.Net Account > Settings > Security Settings > General Settings > MD5 Hash.', 'invoicing' ),
-            'std' => '',
-        );
-
-    $setting['authorizenet_transaction_type'] = array(
-        'id'          => 'authorizenet_transaction_type',
-        'name'        => __( 'Transaction Type', 'invoicing' ),
-        'desc'        => __( 'Choose transaction type.', 'invoicing' ),
-        'type'        => 'select',
-        'class'       => 'wpi_select2',
-        'options'     => array(
-            'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
-            'authorize_only' => __( 'Authorize Only', 'invoicing' ),
-        ),
-        'std'         => 'authorize_capture'
-    );
-
-    $setting['authorizenet_transaction_type_recurring'] = array(
-        'id'          => 'authorizenet_transaction_type_recurring',
-        'name'        => __( 'Transaction Type for Recurring', 'invoicing' ),
-        'desc'        => __( 'Choose transaction type for recurring payments.', 'invoicing' ),
-        'type'        => 'select',
-        'class'       => 'wpi_select2',
-        'options'     => array(
-            'authorize_capture' => __( 'Authorize And Capture', 'invoicing' ),
-            'authorize_only' => __( 'Authorize Only', 'invoicing' ),
-        ),
-        'std'         => 'authorize_only'
-    );
-        
-    $setting['authorizenet_ipn_url'] = array(
-            'type' => 'ipn_url',
-            'id'   => 'authorizenet_ipn_url',
-            'name' => __( 'Silent Post URL', 'invoicing' ),
-            'std' => wpinv_get_ipn_url( 'authorizenet' ),
-            'desc' => __( 'If you are accepting recurring payments then you must set this url at Authorize.Net Account > Settings > Transaction Format Settings > Transaction Response Settings > Silent Post URL.', 'invoicing' ),
-            'size' => 'large',
-            'custom' => 'authorizenet',
-            'readonly' => true
-        );
-        
-    return $setting;
-}
-add_filter( 'wpinv_gateway_settings_authorizenet', 'wpinv_gateway_settings_authorizenet', 10, 1 );
-
 /**
  * Displays the ipn url field.
  */
@@ -503,7 +417,7 @@ function wpinv_ipn_url_callback( $args ) {
     
     $attrs = $args['readonly'] ? ' readonly' : '';
 
-    $html = '<input style="background-color:#fefefe" type="text" ' . $attrs . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
+    $html = '<input class="regular-text" type="text" ' . $attrs . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
     $html .= '<label for="wpinv_settings[' . $sanitize_id . ']">'  . $args['desc'] . '</label>';
 
     echo $html;
@@ -517,7 +431,7 @@ function wpinv_ipn_url_callback( $args ) {
  * @return bool
  */
 function wpinv_is_test_mode( $gateway = '' ) {
-    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}__sandbox", false );
+    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", false );
     return apply_filters( 'wpinv_is_test_mode', $sandbox, $gateway );
 }
 

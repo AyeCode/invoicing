@@ -113,6 +113,11 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
             return;
         }
 
+        // Abort if it is canceled or complete.
+        if ( $subscription->status == 'completed' || $subscription->status == 'cancelled' ) {
+            return;
+        }
+
         // If we have not maxed out on bill times...
         $times_billed = $subscription->get_times_billed();
         $max_bills    = $subscription->bill_times;

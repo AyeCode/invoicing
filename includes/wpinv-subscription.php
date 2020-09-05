@@ -216,8 +216,8 @@ class WPInv_Subscription {
             'post_parent'    => (int) $this->parent_payment_id,
             'posts_per_page' => '999',
             'post_status'    => array( 'publish', 'wpi-processing', 'wpi-renewal' ),
-            'orderby'           => 'ID',
-            'order'             => 'DESC',
+            'orderby'        => 'ID',
+            'order'          => 'DESC',
             'post_type'      => 'wpi_invoice'
         ) );
 
@@ -262,40 +262,40 @@ class WPInv_Subscription {
      *
      * @since  2.4
      * @param  array $args Array of values for the payment, including amount and transaction ID
+	 * @param  WPInv_Invoice $invoice
      * @return bool
      */
-    public function add_payment( $args = array() ) {
-
-		// Do we have a parent invoice?
-        if ( ! $this->parent_payment_id || ! is_array( $args ) ) {
-            return false;
-        }
+    public function add_payment( $args = array(), $invoice = false ) {
 
 		// Process each payment once.
-        if ( empty( $args['transaction_id'] ) || $this->payment_exists( $args['transaction_id'] ) ) {
+        if ( ! empty( $args['transaction_id'] ) && $this->payment_exists( $args['transaction_id'] ) ) {
             return false;
         }
 
-		// Ensure that the parent invoice is available.
-        $parent_invoice = wpinv_get_invoice( $this->parent_payment_id );
-        if ( ! $parent_invoice->get_id() ) {
-            return false;
-        }
+		// Are we creating a new invoice?
+		if ( empty( $invoice ) ) {
+			$invoice = $this->create_payment();
 
-		// Duplicate the parent invoice.
-		$invoice = new WPInv_Invoice( $parent_invoice );
-		$invoice->set_id( 0 );
-		$invoice->set_parent_id( $parent_invoice->get_parent() );
-		$invoice->set_transaction_id( $args['transaction_id'] );
-		$invoice->set_key( $invoice->generate_key('renewal_') );
-		$invoice->set_number( '' );
+			if ( empty( $invoice ) ) {
+				return false;
+			}
+
+			$invoice->set_status( 'wpi-renewal' );
+
+		}
+
+		// Maybe set a transaction id.
+		if ( ! empty( $args['transaction_id'] ) ) {
+			$invoice->set_transaction_id( $args['transaction_id'] );
+		}
+
+		// Set the completed date.
 		$invoice->set_completed_date( current_time( 'mysql' ) );
 
+		// And the gateway.
 		if ( ! empty( $args['gateway'] ) ) {
 			$invoice->set_gateway( $args['gateway'] );
 		}
-
-		$invoice->set_status( 'wpi-renewal' );
 
 		$invoice->save();
 
@@ -310,6 +310,42 @@ class WPInv_Subscription {
         update_post_meta( $invoice->get_id(), '_wpinv_subscription_id', $this->id );
 
         return $invoice->get_id();
+	}
+
+	/**
+     * Creates a new invoice and returns it.
+     *
+     * @since  1.0.19
+     * @param  array $args Array of values for the payment, including amount and transaction ID
+     * @return WPInv_Invoice|bool
+     */
+    public function create_payment() {
+
+		// Do we have a parent invoice?
+        if ( ! $this->parent_payment_id ) {
+            return false;
+        }
+
+		// Ensure that the parent invoice is available.
+        $parent_invoice = wpinv_get_invoice( $this->parent_payment_id );
+        if ( empty( $parent_invoice ) ) {
+            return false;
+        }
+
+		// Duplicate the parent invoice.
+		$invoice = new WPInv_Invoice();
+		$invoice->set_props( $parent_invoice->get_data() );
+		$invoice->set_id( 0 );
+		$invoice->set_parent_id( $parent_invoice->get_parent() );
+		$invoice->set_transaction_id( '' );
+		$invoice->set_key( $invoice->generate_key( 'renewal_' ) );
+		$invoice->set_number( '' );
+		$invoice->set_completed_date( '' );
+		$invoice->set_status( 'wpi-pending' );
+		$invoice->recalculate_total();
+		$invoice->save();
+
+		return $invoice->get_id() ? $invoice : false;
     }
 
 	/**
@@ -791,21 +827,8 @@ class WPInv_Subscription {
      * @return bool
      */
     public function payment_exists( $txn_id = '' ) {
-        global $wpdb;
-
-        if ( empty( $txn_id ) ) {
-            return false;
-        }
-
-        $txn_id = esc_sql( $txn_id );
-
-        $purchase = $wpdb->get_var( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wpinv_transaction_id' AND meta_value = '{$txn_id}' LIMIT 1" );
-
-        if ( $purchase != null ) {
-            return true;
-        }
-
-        return false;
+		$invoice_id = WPInv_Invoice::get_invoice_id_by_field( $txn_id, 'transaction_id' );
+        return ! empty( $invoice_id );
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Contains invoice functions.
  *
  * @since 1.0.0
  * @package Invoicing

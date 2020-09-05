@@ -900,6 +900,11 @@ function getpaid_invoice_meta( $invoice ) {
             'value' => getpaid_format_date( $invoice->get_completed_date() ),
         ),
 
+        'gateway'   => array(
+            'label' => __( 'Payment Method', 'invoicing' ),
+            'value' => sanitize_text_field( $invoice->get_gateway_title() ),
+        ),
+
         'transaction_id' => array(
             'label' => __( 'Transaction ID', 'invoicing' ),
             'value' => sanitize_text_field( $invoice->get_transaction_id() ),
@@ -924,6 +929,10 @@ function getpaid_invoice_meta( $invoice ) {
     if ( ! $invoice->is_paid() ) {
         unset( $meta[ 'date_paid' ] );
         unset( $meta[ 'transaction_id' ] );
+    }
+
+    if ( ! $invoice->is_paid() || 'none' == $invoice->get_gateway() ) {
+        unset( $meta[ 'gateway' ] );
     }
 
     // Only display the due date if due dates are enabled.
@@ -1394,7 +1403,7 @@ function wpinv_invoice_subscription_details( $invoice ) {
                         <td><?php printf(_x('%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing'), $initial, $billing); ?></td>
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->created, current_time('timestamp'))); ?></td>
                         <td><?php echo date_i18n(get_option('date_format'), strtotime($subscription->expiration, current_time('timestamp'))); ?></td>
-                        <td class="text-center"><?php echo $subscription->get_times_billed() . ' / ' . (($subscription->bill_times == 0) ? 'Until Cancelled' : $subscription->bill_times); ?></td>
+                        <td class="text-center"><?php echo $subscription->get_times_billed() . ' / ' . (($subscription->bill_times == 0) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->bill_times); ?></td>
                         <td class="text-center wpi-sub-status"><?php echo $subscription->get_status_label(); ?></td>
                     </tr>
                 </tbody>

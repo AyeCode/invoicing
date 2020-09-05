@@ -1,103 +1,55 @@
 <?php
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * Contains item functions.
+ *
+ * @since 1.0.0
+ * @package Invoicing
+ */
+ 
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * Retrieves an item by it's ID.
+ * 
+ * @param int the item ID to retrieve.
+ * @return WPInv_Item|false
+ */
 function wpinv_get_item_by_id( $id ) {
-    return wpinv_get_item_by( 'id', $id );
+    $item = wpinv_get_item( $id );
+    return empty( $item ) || $id != $item->get_id() ? false : $item;
 }
 
+/**
+ * Retrieves an item by it's ID, Name, Slug or custom id.
+ * 
+ * @return WPInv_Item|false
+ */
 function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
-    if( empty( $field ) || empty( $value ) ) {
+
+    if ( 'id' == strtolower( $field ) ) {
+        return wpinv_get_item_by_id( $field );
+    }
+
+    $id = WPInv_Item::get_item_id_by_field( $value, strtolower( $field ), $type );
+    return $id ? wpinv_get_item( $id ) : false;
+
+}
+
+/**
+ * Retrieves an item by it's ID, name or custom_name.
+ * 
+ * @param int|WPInv_Item the item to retrieve.
+ * @return WPInv_Item|false
+ */
+function wpinv_get_item( $item = 0 ) {
+    
+    if ( empty( $item ) ) {
         return false;
     }
-    
-    $posts = array();
 
-    switch( strtolower( $field ) ) {
-        case 'id':
-            $item = new WPInv_Item( $value );
+    $item = new WPInv_Item( $item );
+    return $item->get_id() ? $item : false;
 
-            if ( !empty( $item ) && $item->post_type == 'wpi_item' ) {
-                return $item;
-            }
-            return false;
-
-            break;
-
-        case 'slug':
-        case 'name':
-            $posts = get_posts( array(
-                'post_type'      => 'wpi_item',
-                'name'           => $value,
-                'posts_per_page' => 1,
-                'post_status'    => 'any'
-            ) );
-
-            break;
-        case 'custom_id':
-            if ( empty( $value ) || empty( $type ) ) {
-                return false;
-            }
-            
-            $meta_query = array();
-            $meta_query[] = array(
-                'key'   => '_wpinv_type',
-                'value' => $type,
-            );
-            $meta_query[] = array(
-                'key'   => '_wpinv_custom_id',
-                'value' => $value,
-            );
-            
-            $args = array(
-                'post_type'      => 'wpi_item',
-                'posts_per_page' => 1,
-                'post_status'    => 'any',
-                'orderby'        => 'ID',
-                'order'          => 'ASC',
-                'meta_query'     => array( $meta_query )
-            );
-            
-            $posts = get_posts( $args );
-
-            break;
-
-        default:
-            return false;
-    }
-    
-    if ( !empty( $posts[0] ) ) {
-        $item = new WPInv_Item( $posts[0]->ID );
-
-        if ( !empty( $item ) && $item->post_type == 'wpi_item' ) {
-            return $item;
-        }
-    }
-
-    return false;
-}
-
-function wpinv_get_item( $item = 0 ) {
-    if ( is_numeric( $item ) ) {
-        $item = get_post( $item );
-        if ( ! $item || 'wpi_item' !== $item->post_type )
-            return null;
-        return $item;
-    }
-
-    $args = array(
-        'post_type'   => 'wpi_item',
-        'name'        => $item,
-        'numberposts' => 1
-    );
-
-    $item = get_posts($args);
-
-    if ( $item ) {
-        return $item[0];
-    }
-
-    return null;
 }
 
 function wpinv_get_all_items( $args = array() ) {
@@ -749,197 +701,94 @@ function wpinv_item_in_use( $item_id ) {
     return $in_use;
 }
 
-function wpinv_create_item( $args = array(), $wp_error = false, $force_update = false ) {
-    // Set some defaults
-    $defaults = array(
-        'type'                 => 'custom',                                                // Optional. Item type. Default 'custom'.
-        'title'                => '',                                                      // Required. Item title.
-        'custom_id'            => 0,                                                       // Optional. Any integer or non numeric id. Must be unique within item type.
-        'price'                => '0.00',                                                  // Optional. Item price. Default '0.00'.
-        'status'               => 'pending',                                               // Optional. pending, publish
-        'custom_name'          => '',                                                      // Optional. Plural sub title for item.
-        'custom_singular_name' => '',                                                      // Optional. Singular sub title for item.
-        'vat_rule'             => 'digital',                                               // Optional. digital => Digital item, physical => Physical item
-        'editable'             => true,                                                    // Optional. Item editable from Items list page? Default true.
-        'excerpt'              => '',                                                      // Optional. Item short description
-        /* Recurring item fields */
-        'is_recurring'         => 0,                                                       // Optional. 1 => Allow recurring or 0 => Don't allow recurring
-        'recurring_period'     => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
-        'recurring_interval'   => 0,                                                       // Optional. Integer value between 1 - 90.
-        'recurring_limit'      => 0,                                                       // Optional. Any integer number. 0 for recurring forever until cancelled.
-        'free_trial'           => 0,                                                       // Optional. 1 => Allow free trial or 0 => Don't free trial
-        'trial_period'         => 'M',                                                     // Optional. D => Daily, W => Weekly, M => Monthly, Y => Yearly
-        'trial_interval'       => 0,                                                       // Optional. Any integer number.
-        'minimum_price'        => '0.00',                                                  // Optional. Minimum allowed prices for items with dynamic pricing.
-        'dynamic_pricing'      => 0,                                                       // Optional. Whether or not the item supports dynamic prices.
-    );
+/**
+ * Create/Update an item.
+ * 
+ * @param array $args an array of arguments to create the item.
+ * 
+ *    Here are all the args (with defaults) that you can set/modify.
+ *    array(
+ *		  'ID'                   => 0,           - If specified, the item with that ID will be updated.
+ *        'parent_id'            => 0,           - Int. Parent item ID.
+ *		  'status'               => 'draft',     - String. Item status - either draft, pending or publish.
+ *		  'date_created'         => null,        - String. strtotime() compatible string.
+ *        'date_modified'        => null,        - String. strtotime() compatible string.
+ *        'name'                 => '',          - String. Required. Item name.
+ *        'description'          => '',          - String. Item description.
+ *        'author'               => 1,           - int. Owner of the item.
+ *        'price'                => 0,           - float. Item price.
+ *        'vat_rule'             => 'digital',   - string. VAT rule.
+ *        'vat_class'            => '_standard', - string. VAT class.
+ *        'type'                 => 'custom',    - string. Item type.
+ *        'custom_id'            => null,        - string. Custom item id.
+ *        'custom_name'          => null,        - string. Custom item name.
+ *        'custom_singular_name' => null,        - string. Custom item singular name.
+ *        'is_editable'          => 1,           - int|bool. Whether or not the item is editable.
+ *        'is_dynamic_pricing'   => 0,           - int|bool. Whether or not users can update the item price.
+ *        'minimum_price'        => 0,           - float. If dynamic, set the minimum price that a user can set..
+ *        'is_recurring'         => 0,           - int|bool. Whether or not this item is recurring.
+ *        'recurring_period'     => 'D',         - string. If recurring, set the recurring period as either days (D), weeks (W), months (M) or years (Y).
+ *        'recurring_interval'   => 1,           - int. The recurring interval.
+ *        'recurring_limit'      => 0,           - int. The recurring limit. Enter 0 for unlimited.
+ *        'is_free_trial'        => false,       - int|bool. Whether or not this item has a free trial.
+ *        'trial_period'         => 'D',         - string. If it has a free trial, set the trial period as either days (D), weeks (W), months (M) or years (Y).
+ *        'trial_interval'       => 1,           - int. The trial interval.
+ *    );
+ * @param bool $wp_error whether or not to return a WP_Error on failure.
+ * @return bool|WP_Error|WPInv_Item
+ */
+function wpinv_create_item( $args = array(), $wp_error = false ) {
 
-    $data = wp_parse_args( $args, $defaults );
+    // Prepare the item.
+    if ( ! empty( $args['custom_id'] ) && empty( $args['ID'] ) ) {
+        $type = empty( $args['type'] ) ? 'custom' : $args['type'];
+        $item = wpinv_get_item_by( 'custom_id', $args['custom_id'], $type );
 
-    if ( empty( $data['type'] ) ) {
-        $data['type'] = 'custom';
-    }
-
-    if ( !empty( $data['custom_id'] ) ) {
-        $item = wpinv_get_item_by( 'custom_id', $data['custom_id'], $data['type'] );
-    } else {
-        $item = NULL;
-    }
-
-    if ( !empty( $item ) ) {
-        if ( $force_update ) {
-            if ( empty( $args['ID'] ) ) {
-                $args['ID'] = $item->ID;
-            }
-            return wpinv_update_item( $args, $wp_error );
+        if ( ! empty( $item ) ) {
+            $args['ID'] = $item->get_id();
         }
 
-        return $item;
     }
 
-    $meta                           = array();
-    $meta['type']                   = $data['type'];
-    $meta['custom_id']              = $data['custom_id'];
-    $meta['custom_singular_name']   = $data['custom_singular_name'];
-    $meta['custom_name']            = $data['custom_name'];
-    $meta['price']                  = wpinv_round_amount( $data['price'] );
-    $meta['editable']               = (int)$data['editable'];
-    $meta['vat_rule']               = $data['vat_rule'];
-    $meta['vat_class']              = '_standard';
-    $meta['dynamic_pricing']        = (int) $data['dynamic_pricing'];
-    $meta['minimum_price']          = wpinv_round_amount( $data['minimum_price'] );
-    
-    if ( !empty( $data['is_recurring'] ) ) {
-        $meta['is_recurring']       = $data['is_recurring'];
-        $meta['recurring_period']   = $data['recurring_period'];
-        $meta['recurring_interval'] = absint( $data['recurring_interval'] );
-        $meta['recurring_limit']    = absint( $data['recurring_limit'] );
-        $meta['free_trial']         = $data['free_trial'];
-        $meta['trial_period']       = $data['trial_period'];
-        $meta['trial_interval']     = absint( $data['trial_interval'] );
+    // Do we have an item?
+    if ( ! empty( $args['ID'] ) ) {
+        $item = new WPInv_Item( $args['ID'] );
     } else {
-        $meta['is_recurring']       = 0;
-        $meta['recurring_period']   = '';
-        $meta['recurring_interval'] = '';
-        $meta['recurring_limit']    = '';
-        $meta['free_trial']         = 0;
-        $meta['trial_period']       = '';
-        $meta['trial_interval']     = '';
+        $item = new WPInv_Item();
     }
+
+    // Do we have an error?
+    if ( ! empty( $item->last_error ) ) {
+        return $wp_error ? new WP_Error( 'invalid_item', $item->last_error ) : false;
+    }
+
+    // Update item props.
+    $item->set_props( $args );
+
+    // Save the item.
+    $item->save();
     
-    $post_data  = array( 
-        'post_title'    => $data['title'],
-        'post_excerpt'  => $data['excerpt'],
-        'post_status'   => $data['status'],
-        'meta'          => $meta
-    );
-
-    $item = new WPInv_Item();
-    $return = $item->create( $post_data, $wp_error );
-
-    if ( $return && !empty( $item ) && !is_wp_error( $return ) ) {
-        return $item;
+    // Do we have an error?
+    if ( ! empty( $item->last_error ) ) {
+        return $wp_error ? new WP_Error( 'not_saved', $item->last_error ) : false;
     }
 
-    if ( $wp_error && is_wp_error( $return ) ) {
-        return $return;
+    // Was the item saved?
+    if ( ! $item->get_id() ) {
+        return $wp_error ? new WP_Error( 'not_saved', __( 'An error occured while saving the item', 'invoicing' ) ) : false;
     }
-    return 0;
+
+    return $item;
+
 }
 
+/**
+ * Updates an item.
+ * 
+ * @see wpinv_create_item()
+ */
 function wpinv_update_item( $args = array(), $wp_error = false ) {
-    $item = !empty( $args['ID'] ) ? new WPInv_Item( $args['ID'] ) : NULL;
-
-    if ( empty( $item ) || !( !empty( $item->post_type ) && $item->post_type == 'wpi_item' ) ) {
-        if ( $wp_error ) {
-            return new WP_Error( 'wpinv_invalid_item', __( 'Invalid item.', 'invoicing' ) );
-        }
-        return 0;
-    }
-    
-    if ( !empty( $args['custom_id'] ) ) {
-        $item_exists = wpinv_get_item_by( 'custom_id', $args['custom_id'], ( !empty( $args['type'] ) ? $args['type'] : $item->type ) );
-        
-        if ( !empty( $item_exists ) && $item_exists->ID != $args['ID'] ) {
-            if ( $wp_error ) {
-                return new WP_Error( 'wpinv_invalid_custom_id', __( 'Item with custom id already exists.', 'invoicing' ) );
-            }
-            return 0;
-        }
-    }
-
-    $meta_fields = array( 
-        'type', 
-        'custom_id', 
-        'custom_singular_name', 
-        'custom_name', 
-        'price', 
-        'editable', 
-        'vat_rule', 
-        'vat_class', 
-        'is_recurring', 
-        'recurring_period', 
-        'recurring_interval', 
-        'recurring_limit', 
-        'free_trial', 
-        'trial_period', 
-        'trial_interval', 
-        'minimum_price', 
-        'dynamic_pricing'
-    );
-
-    $post_data = array();
-    if ( isset( $args['title'] ) ) { 
-        $post_data['post_title'] = $args['title'];
-    }
-    if ( isset( $args['excerpt'] ) ) { 
-        $post_data['post_excerpt'] = $args['excerpt'];
-    }
-    if ( isset( $args['status'] ) ) { 
-        $post_data['post_status'] = $args['status'];
-    }
-    
-    foreach ( $meta_fields as $meta_field ) {
-        if ( isset( $args[ $meta_field ] ) ) { 
-            $value = $args[ $meta_field ];
-
-            switch ( $meta_field ) {
-                case 'price':
-                case 'minimum_price':
-                    $value = wpinv_round_amount( $value );
-                break;
-                case 'recurring_interval':
-                case 'recurring_limit':
-                case 'trial_interval':
-                    $value = absint( $value );
-                break;
-				case 'editable':
-                    $value = (int) $value;
-                break;
-            }
-
-            $post_data['meta'][ $meta_field ] = $value;
-        };
-    }
-
-    if ( empty( $post_data ) ) {
-        if ( $wp_error ) {
-            return new WP_Error( 'wpinv_invalid_item_data', __( 'Invalid item data.', 'invoicing' ) );
-        }
-        return 0;
-    }
-    $post_data['ID'] = $args['ID'];
-
-    $return = $item->update( $post_data, $wp_error );
-
-    if ( $return && !empty( $item ) && !is_wp_error( $return ) ) {
-        return $item;
-    }
-
-    if ( $wp_error && is_wp_error( $return ) ) {
-        return $return;
-    }
-    return 0;
+    return wpinv_create_item( $args, $wp_error );
 }
 
 /**

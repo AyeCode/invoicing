@@ -237,7 +237,7 @@ class WPInv_Plugin {
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
         require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
-        require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-error-functions.php' );
+        require_once( WPINV_PLUGIN_DIR . 'includes/error-functions.php' );
 
         // Register autoloader.
 		try {
@@ -393,6 +393,7 @@ class WPInv_Plugin {
                 'paypal'        => 'GetPaid_Paypal_Gateway',
                 'worldpay'      => 'GetPaid_Worldpay_Gateway',
                 'bank_transfer' => 'GetPaid_Bank_Transfer_Gateway',
+                'authorizenet'  => 'GetPaid_Authorize_Net_Gateway',
             )
         );
 

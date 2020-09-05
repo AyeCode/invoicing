@@ -81,12 +81,16 @@ class WPInv_Item  extends GetPaid_Data {
 	public function __construct( $item = 0 ) {
 		parent::__construct( $item );
 
-		if ( is_numeric( $item ) && $item > 0 ) {
+		if ( ! empty( $item ) && is_numeric( $item ) && 'wpi_item' == get_post_type( $item ) ) {
 			$this->set_id( $item );
 		} elseif ( $item instanceof self ) {
 			$this->set_id( $item->get_id() );
 		} elseif ( ! empty( $item->ID ) ) {
 			$this->set_id( $item->ID );
+		} elseif ( is_scalar( $item ) && $item_id = self::get_item_id_by_field( $item, 'custom_id' ) ) {
+			$this->set_id( $item_id );
+		} elseif ( is_scalar( $item ) && $item_id = self::get_item_id_by_field( $item, 'name' ) ) {
+			$this->set_id( $item_id );
 		} else {
 			$this->set_object_read( true );
 		}
@@ -587,6 +591,86 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_edit_url() {
         return get_edit_post_link( $this->get_id() );
 	}
+
+	/**
+	 * Given an item's name/custom id, it returns its id.
+	 *
+	 *
+	 * @static
+	 * @param string $value The item name or custom id.
+	 * @param string $field Either name or custom_id.
+	 * @param string $type in case you need to search for a given type.
+	 * @since 1.0.15
+	 * @return int
+	 */
+	public static function get_item_id_by_field( $value, $field = 'custom_id', $type = '' ) {
+
+		// Trim the value.
+		$value = trim( $value );
+
+		if ( empty( $value ) ) {
+			return 0;
+		}
+
+        // Valid fields.
+        $fields = array( 'custom_id', 'name', 'slug' );
+
+		// Ensure a field has been passed.
+		if ( empty( $field ) || ! in_array( $field, $fields ) ) {
+			return 0;
+		}
+
+		if ( $field == 'name' ) {
+			$field = 'slug';
+		} 
+
+		// Maybe retrieve from the cache.
+		$item_id = wp_cache_get( $value, "getpaid_{$type}_item_{$field}s_to_item_ids" );
+		if ( ! empty( $item_id ) ) {
+			return $item_id;
+		}
+
+		// Fetch from the db.
+		if ( $field =='slug' ) {
+			$items = get_posts(
+				array(
+					'post_type'      => 'wpi_item',
+					'name'           => $value,
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+				)
+			);
+		}
+
+		if ( $field =='custom_id' ) {
+			$items = get_posts(
+				array(
+					'post_type'      => 'wpi_item',
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+					'meta_query'     => array(
+						array(
+							'key'   => '_wpinv_type',
+                			'value' => $type,
+						),
+						array(
+							'key'   => '_wpinv_custom_id',
+                			'value' => $type,
+						)
+					)
+				)
+			);
+		}
+
+		if ( empty( $items ) ) {
+			return 0;
+		}
+
+		// Update the cache with our data
+		wp_cache_set( $value, $items[0]->ID, "getpaid_{$type}_item_{$field}s_to_item_ids" );
+
+		return $items[0]->ID;
+    }
 
     /**
      * Margic method for retrieving a property.
