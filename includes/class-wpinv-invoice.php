@@ -2815,7 +2815,9 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  string $value transaction id.
 	 */
 	public function set_transaction_id( $value ) {
-		$this->set_prop( 'transaction_id', $value );
+		if ( ! empty( $value ) ) {
+			$this->set_prop( 'transaction_id', $value );
+		}
     }
 
     /**

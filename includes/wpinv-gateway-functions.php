@@ -120,8 +120,8 @@ function wpinv_get_gateway_checkout_label( $gateway ) {
     $gateways = wpinv_get_payment_gateways();
     $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['checkout_label'] : $gateway;
 
-    if( $gateway == 'manual' ) {
-        $label = __( 'Manual Payment', 'invoicing' );
+    if ( $gateway == 'none' ) {
+        $label = __( 'None', 'invoicing' );
     }
 
     return apply_filters( 'wpinv_gateway_checkout_label', ucfirst( $label ), $gateway );
@@ -431,7 +431,7 @@ function wpinv_ipn_url_callback( $args ) {
  * @return bool
  */
 function wpinv_is_test_mode( $gateway = '' ) {
-    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}__sandbox", false );
+    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", false );
     return apply_filters( 'wpinv_is_test_mode', $sandbox, $gateway );
 }
 

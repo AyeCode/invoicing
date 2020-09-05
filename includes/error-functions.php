@@ -1,0 +1,112 @@
+<?php
+/**
+ * Contains error functions.
+ *
+ * @since 1.0.0
+ * @package Invoicing
+ */
+ 
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Returns the errors as html
+ *
+ * @param clear whether or not to clear the errors.
+ * @since  1.0.19
+ */
+function getpaid_get_errors_html( $clear = true ) {
+
+    $errors = '';
+    foreach ( wpinv_get_errors() as $error_id => $error ) {
+        $error_id = esc_attr( $error_id );
+        $error    = '<strong>' . __( 'Error', 'invoicing' ) . '</strong>: ' . wp_kses_post( $error ); 
+        $errors  .= "<p class='p-0' id='getpaid-error-$error_id'>$error</p>";
+    }
+
+    if ( $clear ){
+        wpinv_clear_errors();
+    }
+
+    return $errors;
+
+}
+
+/**
+ * Prints (then clears) all available errors.
+ */
+function wpinv_print_errors() {
+    echo getpaid_get_errors_html();
+}
+
+/**
+ * Returns all available errors.
+ * 
+ * @return array
+ */
+function wpinv_get_errors() {
+    $errors = getpaid()->session->get( 'wpinv_errors' );
+    return is_array( $errors ) ? $errors : array();
+}
+
+/**
+ * Adds an error to the list of errors.
+ * 
+ * @param string $error_id The error id.
+ * @param string $error_message The error message.
+ */
+function wpinv_set_error( $error_id, $error_message ) {
+    $errors              = wpinv_get_errors();
+    $errors[ $error_id ] = $error_message;
+    getpaid()->session->set( 'wpinv_errors', $errors );
+}
+
+/**
+ * Checks if there is an error.
+ * 
+ */
+function wpinv_has_errors() {
+    return count( wpinv_get_errors() ) > 0;
+}
+
+/**
+ * Clears all error.
+ * 
+ */
+function wpinv_clear_errors() {
+    getpaid()->session->set( 'wpinv_errors', null );
+}
+
+/**
+ * Clears a single error.
+ * 
+ */
+function wpinv_unset_error( $error_id ) {
+    $errors = wpinv_get_errors();
+
+    if ( isset( $errors[ $error_id ] ) ) {
+        unset( $errors[ $error_id ] );
+    }
+
+    getpaid()->session->set( 'wpinv_errors', $errors );
+}
+
+/**
+ * Wrapper for _doing_it_wrong().
+ *
+ * @since  1.0.19
+ * @param string $function Function used.
+ * @param string $message Message to log.
+ * @param string $version Version the message was added in.
+ */
+function getpaid_doing_it_wrong( $function, $message, $version ) {
+
+	$message .= ' Backtrace: ' . wp_debug_backtrace_summary();
+
+	if ( is_ajax() || defined( 'REST_REQUEST' ) ) {
+		do_action( 'doing_it_wrong_run', $function, $message, $version );
+		error_log( "{$function} was called incorrectly. {$message}. This message was added in version {$version}." );
+	} else {
+		_doing_it_wrong( $function, $message, $version );
+	}
+
+}

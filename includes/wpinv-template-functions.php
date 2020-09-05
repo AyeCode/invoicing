@@ -900,6 +900,11 @@ function getpaid_invoice_meta( $invoice ) {
             'value' => getpaid_format_date( $invoice->get_completed_date() ),
         ),
 
+        'gateway'   => array(
+            'label' => __( 'Payment Method', 'invoicing' ),
+            'value' => sanitize_text_field( $invoice->get_gateway_title() ),
+        ),
+
         'transaction_id' => array(
             'label' => __( 'Transaction ID', 'invoicing' ),
             'value' => sanitize_text_field( $invoice->get_transaction_id() ),
@@ -924,6 +929,10 @@ function getpaid_invoice_meta( $invoice ) {
     if ( ! $invoice->is_paid() ) {
         unset( $meta[ 'date_paid' ] );
         unset( $meta[ 'transaction_id' ] );
+    }
+
+    if ( ! $invoice->is_paid() || 'none' == $invoice->get_gateway() ) {
+        unset( $meta[ 'gateway' ] );
     }
 
     // Only display the due date if due dates are enabled.

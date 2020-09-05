@@ -71,131 +71,23 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
         $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
         add_filter( 'wpinv_renew_authorizenet_subscription_profile', array( $this, 'renew_subscription' ) );
+        add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
         parent::__construct();
     }
 
     /**
-	 * Displays the credit card entry field.
+	 * Displays the payment method select field.
 	 * 
 	 * @param int $invoice_id 0 or invoice id.
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
     public function payment_fields( $invoice_id, $form ) {
-        $id_prefix = esc_attr( uniqid( 'authorizenet' ) );
 
-        $months = array(
-            '01' => __( 'January', 'invoicing' ),
-            '02' => __( 'February', 'invoicing' ),
-            '03' => __( 'March', 'invoicing' ),
-            '04' => __( 'April', 'invoicing' ),
-            '05' => __( 'May', 'invoicing' ),
-            '06' => __( 'June', 'invoicing' ),
-            '07' => __( 'July', 'invoicing' ),
-            '08' => __( 'August', 'invoicing' ),
-            '09' => __( 'September', 'invoicing' ),
-            '10' => __( 'October', 'invoicing' ),
-            '11' => __( 'November', 'invoicing' ),
-            '12' => __( 'December', 'invoicing' ),
-        );
+        // Let the user select a payment method.
+        echo $this->saved_payment_methods();
 
-        $year  = (int) date( 'Y', current_time( 'timestamp' ) );
-        $years = array();
-
-        for ( $i = 0; $i <= 20; $i++ ) {
-            $years[ $year + $i ] = $year + $i;
-        }
-
-        ?>
-            <div class="authorizenet-cc-form card  mt-4">
-
-                <div class="card-header"><?php _e( 'Card Details', 'invoicing' ) ;?></div>
-
-                <div class="card-body">
-
-                    <?php
-
-                        echo aui()->input(
-                            array(
-                                'type'              => 'text',
-                                'name'              => 'authorizenet[cc_owner]',
-                                'id'                => "$id_prefix-cc-owner",
-                                'label'             => __( 'Full name (on the card)', 'invoicing' ),
-                                'label_type'        => 'vertical',
-                                'input_group_left'  => '<span class="input-group-text"><i class="fa fa-user"></i></span>',
-                            )
-                        );
-
-                        echo aui()->input(
-                            array(
-                                'name'              => 'authorizenet[cc_number]',
-                                'id'                => "$id_prefix-cc-number",
-                                'label'             => __( 'Card number', 'invoicing' ),
-                                'label_type'        => 'vertical',
-                                'input_group_left'  => '<span class="input-group-text"><i class="fa fa-credit-card"></i></span>',
-                            )
-                        );
-                    ?>
-
-                    <div class="row">
-
-                        <div class="col-sm-8">
-                            <div class="form-group">
-                                <label>
-                                    <span class="hidden-xs"><?php _e( 'Expiration', 'invoicing' ); ?></span>
-                                </label>
-                                <div class="form-inline">
-
-                                    <select class="form-control" style="width:45%" name="authorizenet[cc_expire_month]">
-                                        <option disabled><?php _e( 'MM', 'invoicing' ); ?></option>
-
-                                        <?php
-                                            foreach ( $months as $key => $month ) {
-                                                $key   = esc_attr( $key );
-                                                $month = wpinv_clean( $month );
-                                                echo "<option value='$key'>$month</option>" . PHP_EOL;
-                                            }
-                                        ?>
-                                    
-                                    </select>
-
-                                    <span style="width:10%; text-align: center"> / </span>
-            
-                                    <select class="form-control" style="width:45%" name="authorizenet[cc_expire_year]">
-                                        <option disabled><?php _e( 'YY', 'invoicing' ); ?></option>
-
-                                        <?php
-                                            foreach ( $years as $key => $year ) {
-                                                $key   = esc_attr( $key );
-                                                $year  = wpinv_clean( $year );
-                                                echo "<option value='$key'>$year</option>" . PHP_EOL;
-                                            }
-                                        ?>
-
-                                    </select>
-            
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <?php
-                                echo aui()->input(
-                                    array(
-                                        'name'              => 'authorizenet[cc_cvv2]',
-                                        'id'                => "$id_prefix-cc-cvv2",
-                                        'label'             => __( 'CCV', 'invoicing' ),
-                                        'label_type'        => 'vertical',
-                                    )
-                                );
-                            ?>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        <?php
-
+        // Show the credit card entry form.
+        echo $this->new_payment_method_entry( $this->get_cc_form( true ) );
     }
 
     /**
@@ -242,13 +134,13 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
                 'validationMode'           => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode', 
             )
         );
-log_noptin_message( $args );
+
         $response = $this->post( apply_filters( 'getpaid_authorizenet_customer_profile_args', $args, $invoice ), $invoice );
 
         if ( is_wp_error( $response ) ) {
             return $response;
         }
-        log_noptin_message( $response );
+
         update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $response->customerProfileId );
 
         // Save the payment token.
@@ -348,7 +240,7 @@ log_noptin_message( $args );
             $this->save_token(
                 array(
                     'id'      => $response->customerPaymentProfileId,
-                    'name'    => $this->get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
+                    'name'    => $this->get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
                     'default' => true
                 )
             );
@@ -404,7 +296,7 @@ log_noptin_message( $args );
         // Generate args.
         $args = array(
 
-            'getCustomerPaymentProfileRequest' => array(
+            'createTransactionRequest'         => array(
 
                 'merchantAuthentication'       => $this->get_auth_params(),
                 'refId'                        => $invoice->get_id(),
@@ -421,7 +313,7 @@ log_noptin_message( $args );
                     'order'                    => array(
                         'invoiceNumber'        => getpaid_limit_length( $invoice->get_number(), 20 ),
                     ),
-                    'lineItems'                => $this->get_line_items( $invoice ),
+                    'lineItems'                => array( 'lineItem' => $this->get_line_items( $invoice ) ),
                     'tax'                      => array(
                         'amount'               => $invoice->get_total_tax(),
                         'name'                 => getpaid_tax()->get_vat_name(),
@@ -435,7 +327,7 @@ log_noptin_message( $args );
                 )
             )
         );
-        log_noptin_message( $args );
+log_noptin_message( $args );
         return $this->post( apply_filters( 'getpaid_authorizenet_charge_customer_payment_profile_args', $args, $invoice ), $invoice );
 
     }
@@ -454,7 +346,10 @@ log_noptin_message( $args );
 
             case 1:
             case 4:
-                $invoice->set_transaction_id( $result->transactionResponse->transId );
+
+                if ( ! empty( $result->transactionResponse->transId ) ) {
+                    $invoice->set_transaction_id( $result->transactionResponse->transId );
+                }
 
                 if ( 1 == (int) $result->transactionResponse->responseCode ) {
                     $invoice->mark_paid();
@@ -671,13 +566,21 @@ log_noptin_message( $args );
             return $response;
         }
 
-        $response = json_decode( wp_remote_retrieve_body( $response ) );
+        $response = wp_unslash( wp_remote_retrieve_body( $response ) );
+        $response = preg_replace('/\xEF\xBB\xBF/', '', $response); // https://community.developer.authorize.net/t5/Integration-and-Testing/JSON-issues/td-p/48851
+        $response = json_decode( $response );
 
         if ( empty( $response ) ) {
             return new WP_Error( 'invalid_reponse', __( 'Invalid response', 'invoicing' ) );
         }
 
         if ( $response->messages->resultCode == 'Error' ) {
+
+            if ( ! empty( $response->transactionResponse ) && ! empty( $response->transactionResponse->errors ) ) {
+                $error = $response->transactionResponse->errors[0];
+                return new WP_Error( $error->errorCode, $error->errorText );
+            }
+
             return new WP_Error( $response->messages->message[0]->code, $response->messages->message[0]->text );
         }
 
@@ -728,7 +631,7 @@ log_noptin_message( $args );
             wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
             wpinv_send_back_to_checkout();
         }
-        log_noptin_message( $result );
+
         // Process the response.
         $this->process_charge_response( $result, $invoice );
 

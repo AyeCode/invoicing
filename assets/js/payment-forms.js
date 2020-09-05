@@ -241,6 +241,37 @@ jQuery(function($) {
         // Add the row class to gateway credit cards.
         form.find('.getpaid-gateway-description-div .form-horizontal .form-group').addClass('row')
 
+        // Hide the payment methods radio in case there is no payment method.
+        form.find( '.getpaid-saved-payment-methods' ).each( function() {
+
+            var list = $( this )
+
+            // When the payment method changes...
+            $( 'input', list ).on( 'change', function() {
+ 
+                if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
+                    list.closest( '.getpaid-gateway-description-div' ).find( '.getpaid-new-payment-method-form' ).slideDown();
+                } else {
+                    list.closest( '.getpaid-gateway-description-div' ).find( '.getpaid-new-payment-method-form' ).slideUp();
+                }
+
+            })
+
+            // payment methods yet.
+            if ( list.data( 'count' ) == '0' ) {
+                list.hide()
+            }
+
+            // If non is selected, select first.
+            if ( 0 === $( 'input', list ).filter(':checked').length ) {
+                $( 'input', list ).eq(0).prop( 'checked', true );
+            }
+
+            // Trigger click event for selected method.
+            $( 'input', list ).filter(':checked').trigger('change');
+
+        })
+
         // Get a list of all active gateways.
         var gateways = form.find('.getpaid-payment-form-element-gateway_select input[name="wpi-gateway"]');
 

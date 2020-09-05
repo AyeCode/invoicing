@@ -120,11 +120,11 @@ abstract class GetPaid_Payment_Gateway {
 	public $new_method_label = '';
 
 	/**
-	 * Contains a user's sandbox saved tokens for this gateway.
+	 * Contains a user's saved tokens for this gateway.
 	 *
 	 * @var array
 	 */
-	protected $sandbox_tokens = array();
+	protected $tokens = array();
 
 	/**
 	 * An array of features that this gateway supports.
@@ -200,13 +200,9 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 * @return array
 	 */
-	public function get_tokens() {
+	public function get_tokens( $sandbox = null ) {
 
-		if ( count( $this->tokens ) > 0 ) {
-			return $this->tokens;
-		}
-
-		if ( is_user_logged_in() && $this->supports( 'tokens' ) ) {
+		if ( is_user_logged_in() && $this->supports( 'tokens' ) && 0 == count( $this->tokens ) ) {
 			$tokens = get_user_meta( get_current_user_id(), "getpaid_{$this->id}_tokens", true );
 
 			if ( is_array( $tokens ) ) {
@@ -215,7 +211,13 @@ abstract class GetPaid_Payment_Gateway {
 
 		}
 
-		return $this->tokens;
+		if ( ! is_bool( $sandbox ) ) {
+			return $this->tokens;
+		}
+
+		$args = array( 'type' => $sandbox ? 'sandbox' : 'live' );
+		return wp_list_filter( $this->tokens, $args );
+
 	}
 
 	/**
@@ -444,14 +446,150 @@ abstract class GetPaid_Payment_Gateway {
 	}
 
 	/**
+	 * Returns the credit card form html.
+	 * 
+	 * @param bool $save whether or not to display the save button.
+	 */
+    public function get_cc_form( $save = false ) {
+
+		ob_start();
+
+        $id_prefix = esc_attr( uniqid( $this->id ) );
+
+        $months = array(
+            '01' => __( 'January', 'invoicing' ),
+            '02' => __( 'February', 'invoicing' ),
+            '03' => __( 'March', 'invoicing' ),
+            '04' => __( 'April', 'invoicing' ),
+            '05' => __( 'May', 'invoicing' ),
+            '06' => __( 'June', 'invoicing' ),
+            '07' => __( 'July', 'invoicing' ),
+            '08' => __( 'August', 'invoicing' ),
+            '09' => __( 'September', 'invoicing' ),
+            '10' => __( 'October', 'invoicing' ),
+            '11' => __( 'November', 'invoicing' ),
+            '12' => __( 'December', 'invoicing' ),
+        );
+
+        $year  = (int) date( 'Y', current_time( 'timestamp' ) );
+        $years = array();
+
+        for ( $i = 0; $i <= 10; $i++ ) {
+            $years[ $year + $i ] = $year + $i;
+        }
+
+        ?>
+            <div class="<?php echo esc_attr( $this->id );?>-cc-form getpaid-cc-form card  mt-4">
+
+
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-12 col-sm-6">
+
+                            <?php
+
+                                echo aui()->input(
+                                    array(
+                                        'name'              => $this->id . '[cc_number]',
+                                        'id'                => "$id_prefix-cc-number",
+                                        'label'             => __( 'Card number', 'invoicing' ),
+                                        'label_type'        => 'vertical',
+                                        'input_group_left'  => '<span class="input-group-text"><i class="fa fa-credit-card"></i></span>',
+                                    )
+                                );
+                            ?>
+
+                        </div>
+
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group">
+                                <label><?php _e( 'Expiration', 'invoicing' ); ?></label>
+                                <div class="form-row">
+
+                                    <div class="col">
+                                        <select class="form-control" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
+                                            <option disabled selected="selected"><?php _e( 'MM', 'invoicing' ); ?></option>
+
+                                            <?php
+                                                foreach ( $months as $key => $month ) {
+                                                    $key   = esc_attr( $key );
+                                                    $month = wpinv_clean( $month );
+                                                    echo "<option value='$key'>$month</option>" . PHP_EOL;
+                                                }
+                                            ?>
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <select class="form-control" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
+                                            <option disabled selected="selected"><?php _e( 'YY', 'invoicing' ); ?></option>
+
+                                            <?php
+                                                foreach ( $years as $key => $year ) {
+                                                    $key   = esc_attr( $key );
+                                                    $year  = wpinv_clean( $year );
+                                                    echo "<option value='$key'>$year</option>" . PHP_EOL;
+                                                }
+                                            ?>
+
+                                        </select>
+                                    </div>
+            
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-2">
+                            <?php
+                                echo aui()->input(
+                                    array(
+                                        'name'              => $this->id . '[cc_cvv2]',
+                                        'id'                => "$id_prefix-cc-cvv2",
+                                        'label'             => __( 'CCV', 'invoicing' ),
+                                        'label_type'        => 'vertical',
+                                    )
+                                );
+                            ?>
+                        </div>
+
+					</div>
+					
+					<?php
+
+						if ( $save ) {
+							echo $this->save_payment_method_checkbox();
+						}
+
+					?>
+                </div>
+
+            </div>
+		<?php
+		
+		return ob_get_clean();
+
+    }
+
+	/**
+	 * Displays a new payment method entry form.
+	 *
+	 * @since 1.0.19
+	 */
+	public function new_payment_method_entry( $form ) {
+		echo "<div class='getpaid-new-payment-method-form' style='display:none;'>$form</div>";
+	}
+
+	/**
 	 * Grab and display our saved payment methods.
 	 *
 	 * @since 1.0.19
 	 */
 	public function saved_payment_methods() {
-		$html = '<ul class="getpaid-saved-payment-methods" data-count="' . esc_attr( count( $this->get_tokens() ) ) . '">';
+		$html = '<ul class="getpaid-saved-payment-methods m-0 mt-2" data-count="' . esc_attr( count( $this->get_tokens( $this->is_sandbox() ) ) ) . '">';
 
-		foreach ( $this->get_tokens() as $token ) {
+		foreach ( $this->get_tokens( $this->is_sandbox() ) as $token ) {
 			$html .= $this->get_saved_payment_method_option_html( $token );
 		}
 

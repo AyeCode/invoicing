@@ -160,6 +160,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to charge hours, quantities or amounts only - ADDED
 * Worldpay - You can now specify an MD5 secret and callback password.
 * Worldpay - invoices are now automatically marked as paid or failed.
+* Authorize.NET - Get rid of the Authorize.NET SDK to improve on speed, size and reduce the required minimum PHP version.
+* Authorize.NET - Allow customers to save their payment profiles for quicker checkouts.
+* Authorize.NET - Replaced the deprecated md5 secret with a [signature key](https://support.authorize.net/s/article/MD5-Hash-End-of-Life-Signature-Key-Replacement)
+* Authorize.NET - Improve the subscriptions feature.
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

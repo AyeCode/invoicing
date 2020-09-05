@@ -483,3 +483,19 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
 function wpinv_send_to_gateway( $gateway, $payment_data ) {
     do_action( 'wpinv_gateway_' . $gateway, $payment_data );
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_die_handler() {
+    die();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_die( $message = '', $title = '', $status = 400 ) {
+    add_filter( 'wp_die_ajax_handler', 'wpinv_die_handler', 10, 3 );
+    add_filter( 'wp_die_handler', 'wpinv_die_handler', 10, 3 );
+    wp_die( $message, $title, array( 'response' => $status ));
+}
