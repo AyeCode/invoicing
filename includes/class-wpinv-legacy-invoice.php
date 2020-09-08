@@ -855,7 +855,6 @@ final class WPInv_Legacy_Invoice {
     }
 
     public function save( $setup = false ) {
-        global $wpi_session;
         
         $saved = false;
         if ( empty( $this->items ) ) {
@@ -985,7 +984,7 @@ final class WPInv_Legacy_Invoice {
                         $this->update_meta( '_wpinv_vat_number', $this->vat_number );
                         $this->user_info['vat_number'] = $this->vat_number;
                         
-                        $vat_info = $wpi_session->get( 'user_vat_data' );
+                        $vat_info = getpaid_session()->get( 'user_vat_data' );
                         if ( $this->vat_number && !empty( $vat_info ) && isset( $vat_info['number'] ) && isset( $vat_info['valid'] ) && $vat_info['number'] == $this->vat_number ) {
                             $adddress_confirmed = isset( $vat_info['adddress_confirmed'] ) ? $vat_info['adddress_confirmed'] : false;
                             $this->update_meta( '_wpinv_adddress_confirmed', (bool)$adddress_confirmed );

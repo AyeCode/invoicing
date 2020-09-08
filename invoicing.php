@@ -28,7 +28,7 @@ if ( ! defined( 'WPINV_VERSION' ) ) {
 
 // Include the main Invoicing class.
 if ( ! class_exists( 'WPInv_Plugin', false ) ) {
-	include_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/class-wpinv.php';
+	require_once plugin_dir_path( WPINV_PLUGIN_FILE ) . 'includes/class-wpinv.php';
 }
 
 /**

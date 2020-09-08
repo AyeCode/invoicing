@@ -1536,7 +1536,7 @@ class WPInv_EUVat {
     }
 
     public static function get_rate( $rate = 1, $country = '', $state = '', $item_id = 0 ) {
-        global $wpinv_options, $wpi_session, $wpi_item_id, $wpi_zero_tax;
+        global $wpinv_options, $wpi_item_id, $wpi_zero_tax;
 
         $item_id = $item_id > 0 ? $item_id : $wpi_item_id;
         $allow_vat_classes = self::allow_vat_classes();
@@ -1620,9 +1620,7 @@ class WPInv_EUVat {
     }
 
     public static function current_vat_data() {
-        global $wpi_session;
-
-        return $wpi_session->get( 'user_vat_data' );
+        return getpaid_session()->get( 'user_vat_data' );
     }
 
     public static function get_user_country( $country = '', $user_id = 0 ) {
@@ -1713,7 +1711,7 @@ class WPInv_EUVat {
     }
 
     public static function ajax_vat_validate() {
-        global $wpinv_options, $wpi_session;
+        global $wpinv_options;
 
         $is_checkout            = ( !empty( $_POST['source'] ) && $_POST['source'] == 'checkout' ) ? true : false;
         $response               = array();
@@ -1731,7 +1729,7 @@ class WPInv_EUVat {
 
             if ( !self::requires_vat( false, 0, self::invoice_has_digital_rule( $invoice ) ) ) {
                 $vat_info = array();
-                $wpi_session->set( 'user_vat_data', $vat_info );
+                getpaid_session()->set( 'user_vat_data', $vat_info );
 
                 self::save_user_vat_details();
 
@@ -1744,7 +1742,7 @@ class WPInv_EUVat {
         $company    = !empty( $_POST['company'] ) ? sanitize_text_field( $_POST['company'] ) : '';
         $vat_number = !empty( $_POST['number'] ) ? sanitize_text_field( $_POST['number'] ) : '';
 
-        $vat_info = $wpi_session->get( 'user_vat_data' );
+        $vat_info = getpaid_session()->get( 'user_vat_data' );
         if ( !is_array( $vat_info ) || empty( $vat_info ) ) {
             $vat_info = array( 'company'=> $company, 'number' => '', 'valid' => true );
         }
@@ -1754,7 +1752,7 @@ class WPInv_EUVat {
                 $response['success'] = true;
                 $response['message'] = wp_sprintf( __( 'No %s number has been applied. %s will be added to invoice totals', 'invoicing' ), $vat_name, $vat_name );
 
-                $vat_info = $wpi_session->get( 'user_vat_data' );
+                $vat_info = getpaid_session()->get( 'user_vat_data' );
                 $vat_info['number'] = "";
                 $vat_info['valid'] = true;
 
@@ -1765,13 +1763,13 @@ class WPInv_EUVat {
                 $vat_info['valid'] = false;
             }
 
-            $wpi_session->set( 'user_vat_data', $vat_info );
+            getpaid_session()->set( 'user_vat_data', $vat_info );
             wp_send_json( $response );
         }
 
         if ( empty( $company ) ) {
             $vat_info['valid'] = false;
-            $wpi_session->set( 'user_vat_data', $vat_info );
+            getpaid_session()->set( 'user_vat_data', $vat_info );
 
             $response['error'] = __( 'Please enter your registered company name!', 'invoicing' );
             wp_send_json( $response );
@@ -1780,7 +1778,7 @@ class WPInv_EUVat {
         if ( !empty( $wpinv_options['vat_vies_check'] ) ) {
             if ( empty( $wpinv_options['vat_offline_check'] ) && !self::offline_check( $vat_number ) ) {
                 $vat_info['valid'] = false;
-                $wpi_session->set( 'user_vat_data', $vat_info );
+                getpaid_session()->set( 'user_vat_data', $vat_info );
 
                 $response['error'] = wp_sprintf( __( '%s number not validated', 'invoicing' ), $vat_name );
                 wp_send_json( $response );
@@ -1806,7 +1804,7 @@ class WPInv_EUVat {
                 $response['message'] = wp_sprintf( __( '%s number validated', 'invoicing' ), $vat_name );
             } else {
                 $vat_info['valid'] = false;
-                $wpi_session->set( 'user_vat_data', $vat_info );
+                getpaid_session()->set( 'user_vat_data', $vat_info );
 
                 $response['success'] = false;
                 $response['message'] = wp_sprintf( __( 'The company name associated with the %s number provided is not the same as the company name provided.', 'invoicing' ), $vat_name );
@@ -1818,7 +1816,7 @@ class WPInv_EUVat {
             self::save_user_vat_details( $company, $vat_number );
 
             $vat_info = array('company' => $company, 'number' => $vat_number, 'valid' => true );
-            $wpi_session->set( 'user_vat_data', $vat_info );
+            getpaid_session()->set( 'user_vat_data', $vat_info );
         }
 
         wp_send_json( $response );
