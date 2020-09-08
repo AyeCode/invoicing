@@ -1,10 +1,10 @@
 <?php
 /**
  * GetPaid REST Posts controller class.
- * 
+ *
  * Extends the GetPaid_REST_Controller class to provide functionalities for endpoints
  * that store data using CPTs
- * 
+ *
  * @version 1.0.19
  */
 
@@ -274,7 +274,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		return $object->get_id() ? $object : new WP_Error( 'rest_object_invalid_id', __( 'Invalid ID.', 'invoicing' ), array( 'status' => 404 ) );
 
 	}
-	
+
 	/**
 	 * @deprecated
 	 */
@@ -425,7 +425,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$args['post_parent__in']      = $request['parent'];
 		$args['post_parent__not_in']  = $request['parent_exclude'];
 		$args['s']                    = $request['search'];
-		$args['post_status']          = $request['status'] == 'any' ? 'any' : wpinv_parse_list( $request['status'] );
+		$args['post_status']          = wpinv_parse_list( $request['status'] );
 
 		$args['date_query'] = array();
 		// Set before into date query. Date query must be specified as an array of an array.
@@ -551,6 +551,20 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			);
 		}
 
+		if ( is_callable( array( $object, 'get_owner' ) ) ) {
+			$links['owner']  = array(
+				'href'       => rest_url( 'wp/v2/users/' . call_user_func(  array( $object, 'get_owner' )  ) ),
+				'embeddable' => true,
+			);
+		}
+
+		if ( is_callable( array( $object, 'get_parent_id' ) ) ) {
+			$links['parent']  = array(
+				'href'       => rest_url( "$this->namespace/$this->rest_base/" . call_user_func(  array( $object, 'get_parent_id' )  ) ),
+				'embeddable' => true,
+			);
+		}
+
 		return $links;
 	}
 
@@ -647,14 +661,15 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$params['context']['default'] = 'view';
 
 		$params['status'] = array(
-			'default'           => 'any',
+			'default'           => $this->get_post_statuses(),
 			'description'       => __( 'Limit result set to resources assigned one or more statuses.', 'invoicing' ),
 			'type'              => array( 'array', 'string' ),
 			'items'             => array(
-				'enum'          => array_merge( array( 'any' ), $this->get_post_statuses() ),
+				'enum'          => $this->get_post_statuses(),
 				'type'          => 'string',
 			),
-			'sanitize_callback' => 'rest_validate_request_arg',
+			'validate_callback' => 'rest_validate_request_arg',
+			'sanitize_callback' => array( $this, 'sanitize_post_statuses' ),
 		);
 
 		$params['after'] = array(
@@ -662,12 +677,14 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			'type'               => 'string',
 			'format'             => 'string',
 			'validate_callback'  => 'rest_validate_request_arg',
+			'sanitize_callback'  => 'sanitize_text_field',
 		);
 		$params['before'] = array(
 			'description'        => __( 'Limit response to resources created before a given ISO8601 compliant date.', 'invoicing' ),
 			'type'               => 'string',
 			'format'             => 'string',
 			'validate_callback'  => 'rest_validate_request_arg',
+			'sanitize_callback'  => 'sanitize_text_field',
 		);
 		$params['exclude'] = array(
 			'description'       => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
@@ -677,6 +694,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			),
 			'default'           => array(),
 			'sanitize_callback' => 'wp_parse_id_list',
+			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['include'] = array(
 			'description'       => __( 'Limit result set to specific ids.', 'invoicing' ),
@@ -686,6 +704,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			),
 			'default'           => array(),
 			'sanitize_callback' => 'wp_parse_id_list',
+			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['offset'] = array(
 			'description'        => __( 'Offset the result set by a specific number of items.', 'invoicing' ),
@@ -925,6 +944,11 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 				continue;
 			}
 
+			// Or this current object does not support the field.
+			if ( ! $this->object_supports_field( $object, $key ) ) {
+				continue;
+			}
+
 			// Handle meta data.
 			if ( $key == 'meta_data' ) {
 				$data['meta_data'] = $this->prepare_object_meta_data( $object->get_meta_data() );
@@ -963,6 +987,18 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Checks if a key should be included in a response.
+	 *
+	 * @since  1.0.19
+	 * @param  GetPaid_Data $object  Data object.
+	 * @param  string       $field_key The key to check for.
+	 * @return bool
+	 */
+	public function object_supports_field( $object, $field_key ) {
+		return apply_filters( "getpaid_rest_{$this->post_type}_object_supports_key", true, $object, $field_key );
 	}
 
 	/**

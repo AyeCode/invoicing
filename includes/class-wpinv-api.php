@@ -1,15 +1,12 @@
 <?php
 /**
- * Contains the main API class
+ * Contains the main REST API Class
  *
- * @since 1.0.0
- * @package Invoicing
+ * @package  Invoicing
+ * @since    1.0.19
  */
- 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit;
-}
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * The main API class
@@ -17,88 +14,41 @@ if ( !defined( 'WPINC' ) ) {
 class WPInv_API {
 
     /**
-     * @param string A prefix for our REST routes
+     * The invoices controller class.
+     *
+     * @param WPInv_REST_Invoice_Controller
      */
-    public $api_namespace    = '';
+    public $invoices;
 
     /**
-     * @param WPInv_REST_Invoice_Controller Invoices controller
+     * The items controller class.
+     *
+     * @param WPInv_REST_Items_Controller
      */
-    public $invoices_controller;
+    public $items;
 
     /**
-     * @param WPInv_REST_Items_Controller Items controller
+     * The discounts controller class.
+     *
+     * @param WPInv_REST_Discounts_Controller
      */
-    public $items_controller;
+    public $discounts;
 
-    /**
-     * @param WPInv_REST_Discounts_Controller Discounts controller
-     */
-    public $discounts_controller;
-    
     /**
      * Class constructor. 
      * 
      * @since 1.0.13
      * Sets the API namespace and inits hooks
      */
-    public function __construct( $api_namespace = 'invoicing/v1' ) {
+    public function __construct() {
 
-        // Include controllers and related files
-        $this->includes();
+        // Init api controllers.
+        $this->invoices  = new WPInv_REST_Invoice_Controller();
+        $this->items     = new WPInv_REST_Items_Controller();
+        $this->discounts = new WPInv_REST_Discounts_Controller();
 
-        // Set up class variables
-        $this->api_namespace       = apply_filters( 'wpinv_rest_api_namespace', $api_namespace );
-        $this->invoices_controller = new WPInv_REST_Invoice_Controller();
-        $this->items_controller    = new WPInv_REST_Items_Controller();
-        $this->discounts_controller= new WPInv_REST_Discounts_Controller( $this->api_namespace );
-
-        //Register REST routes
-        add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+        // Fires after loading the rest api.
+        do_action( 'getpaid_rest_api_loaded', $this );
     }
-
-	/**
-	 * Registers routes
-	 *
-     * @since 1.0.13
-	 */
-	public function register_rest_routes() {
-
-        // Discounts.
-        $this->discounts_controller->register_routes();
-
-        /**
-		 * Fires when registering Invoicing REST routes.
-		 *
-		 *
-		 * @since 1.0.15
-		 *
-		 *
-		 * @param array           $invoice_data Invoice properties.
-		 * @param WP_REST_Request $request The request used.
-		 */
-        do_action( "wpinv_register_rest_routes", $this );
-        
-    }
-
-
-    /**
-     * Loads API files and controllers
-     * 
-     *  @return void
-     */
-    protected function includes() {
-        
-        // Invoices
-        require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-invoice-controller.php' );
-
-        // Items
-        require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-items-controller.php' );
-
-        // Discounts
-        require_once( WPINV_PLUGIN_DIR . 'includes/api/class-wpinv-rest-discounts-controller.php' );
-
-    }
-    
 
 }

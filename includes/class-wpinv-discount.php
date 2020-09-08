@@ -496,16 +496,6 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		return apply_filters( 'wpinv_format_discount_rate', $rate, $this->get_type(), $this->get_amount() );
 	}
-
-	function wpinv_format_discount_rate( $type, $amount ) {
-		if ( $type == 'flat' ) {
-			$rate = wpinv_price( wpinv_format_amount( $amount ) );
-		} else {
-			$rate = $amount . '%';
-		}
-	
-		return apply_filters( 'wpinv_format_discount_rate', $rate, $type, $amount );
-	}
 	
 	/**
 	 * Get the discount's start date.

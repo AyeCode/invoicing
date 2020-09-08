@@ -92,6 +92,8 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 					'description'       => __( 'Type of items to fetch.', 'invoicing' ),
 					'type'              => array( 'array', 'string' ),
 					'default'           => 'any',
+					'validate_callback' => 'rest_validate_request_arg',
+					'sanitize_callback' => 'wpinv_parse_list',
 					'items'             => array(
 						'enum'          => array_merge( array( 'any' ), wpinv_item_types() ),
 						'type'          => 'string',
@@ -104,16 +106,6 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 		// Filter collection parameters for the items controller.
 		return apply_filters( 'getpaid_rest_items_collection_params', $params, $this );
 
-	}
-	
-	/**
-	 * Get all the WP Query vars that are allowed for the API request.
-	 *
-	 * @return array
-	 */
-	protected function get_allowed_query_vars() {
-		$vars = array_merge( array( 'type' ), parent::get_allowed_query_vars() );
-		return apply_filters( 'getpaid_rest_items_allowed_query_vars', $vars, $this );
 	}
 
 	/**
@@ -129,19 +121,17 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 		$query_args = parent::prepare_items_query( $prepared_args );
 
 		// Retrieve items by type.
-		if (  isset( $query_args['type'] ) && 'any' != $query_args['type'] ) {
+		if ( ! in_array( 'any', $request['type'] ) ) {
 
 			if ( empty( $query_args['meta_query'] ) ) {
 				$query_args['meta_query'] = array();
 			}
 
-			$types = wpinv_parse_list( $query_args['type'] );
 			$query_args['meta_query'][] = array(
 				'key'     => '_wpinv_type',
-				'value'   => implode( ',', $types ),
+				'value'   => implode( ',', $request['type'] ),
 				'compare' => 'IN',
 			);
-			unset( $query_args['type'] );
 
 		}
 
@@ -158,6 +148,39 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 	 */
 	public function get_post_statuses() {
 		return array( 'draft', 'pending', 'publish' );
+	}
+
+	/**
+	 * Checks if a key should be included in a response.
+	 *
+	 * @since  1.0.19
+	 * @param  WPInv_Item   $item  Item object.
+	 * @param  string       $field_key The key to check for.
+	 * @return bool
+	 */
+	public function object_supports_field( $item, $field_key ) {
+
+		if ( 'minimum_price' == $field_key && ! $item->user_can_set_their_price() ) {
+			return false;
+		}
+
+		foreach( wpinv_parse_list( 'initial_price the_initial_price recurring_price the_recurring_price recurring_period recurring_interval recurring_limit is_free_trial trial_period trial_interval first_renewal_date' ) as $key ) {
+
+			if ( $key == $field_key && ! $item->is_recurring() ) {
+				return false;
+			}
+
+		}
+
+		foreach( wpinv_parse_list( 'trial_period trial_interval' ) as $key ) {
+
+			if ( $key == $field_key && ! $item->has_free_trial() ) {
+				return false;
+			}
+
+		}
+
+		return parent::object_supports_field( $item, $field_key );
 	}
 
 }
