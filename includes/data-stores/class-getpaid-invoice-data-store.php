@@ -228,6 +228,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'description', 'parent_id', 'post_excerpt', 'path' ), array_keys( $changes ) ) ) {
 			$post_data = array(
 				'post_date'         => $invoice->get_date_created( 'edit' ),
+				'post_date_gmt'     => $invoice->get_date_created_gmt( 'edit' ),
 				'post_status'       => $invoice->get_status( 'edit' ),
 				'post_title'        => $invoice->get_name( 'edit' ),
 				'post_author'       => $invoice->get_user_id( 'edit' ),

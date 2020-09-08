@@ -49,7 +49,7 @@ class WPInv_API {
 
         // Set up class variables
         $this->api_namespace       = apply_filters( 'wpinv_rest_api_namespace', $api_namespace );
-        $this->invoices_controller = new WPInv_REST_Invoice_Controller( $this->api_namespace );
+        $this->invoices_controller = new WPInv_REST_Invoice_Controller();
         $this->items_controller    = new WPInv_REST_Items_Controller( $this->api_namespace );
         $this->discounts_controller= new WPInv_REST_Discounts_Controller( $this->api_namespace );
 
@@ -57,16 +57,12 @@ class WPInv_API {
         add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
     }
 
-
 	/**
 	 * Registers routes
 	 *
      * @since 1.0.13
 	 */
 	public function register_rest_routes() {
-
-		// Invoices.
-        $this->invoices_controller->register_routes();
         
         // Items.
         $this->items_controller->register_routes();
