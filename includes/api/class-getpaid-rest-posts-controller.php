@@ -134,7 +134,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return bool
 	 */
 	public function check_post_permissions( $context = 'read', $object_id = 0 ) {
-		return true;
+
 		$contexts = array(
 			'read'   => 'read_private_posts',
 			'create' => 'publish_posts',
@@ -438,8 +438,9 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			$args['date_query'][0]['after'] = $request['after'];
 		}
 
-		// Force the post_type argument, since it's not a user input variable.
+		// Force the post_type & fields arguments, since they're not a user input variable.
 		$args['post_type'] = $this->post_type;
+		$args['fields']    = 'ids';
 
 		// Filter the query arguments for a request.
 		$args       = apply_filters( "getpaid_rest_{$this->post_type}_query", $args, $request );
@@ -449,12 +450,12 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$query_result = $posts_query->query( $query_args );
 
 		$posts = array();
-		foreach ( $query_result as $post ) {
-			if ( ! $this->check_post_permissions( 'read', $post->ID ) ) {
+		foreach ( $query_result as $post_id ) {
+			if ( ! $this->check_post_permissions( 'read', $post_id ) ) {
 				continue;
 			}
 
-			$data    = $this->prepare_item_for_response( $this->get_object( $post->ID ), $request );
+			$data    = $this->prepare_item_for_response( $this->get_object( $post_id ), $request );
 			$posts[] = $this->prepare_response_for_collection( $data );
 		}
 

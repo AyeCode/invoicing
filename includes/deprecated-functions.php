@@ -481,6 +481,7 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
  * @deprecated
  */
 function wpinv_send_to_gateway( $gateway, $payment_data ) {
+    $payment_data['gateway_nonce'] = wp_create_nonce('wpi-gateway');
     do_action( 'wpinv_gateway_' . $gateway, $payment_data );
 }
 
