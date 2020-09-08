@@ -736,6 +736,6 @@ function wpinv_process_checkout( $invoice, $submission ) {
     do_action( "getpaid_gateway_$submission_gateway", $invoice, $submission_data, $submission );
 
     // Backwards compatibility.
-    do_action( "wpinv_gateway_$submission_gateway", null, $invoice, $submission_data, $submission );
+    wpinv_send_to_gateway( $submission_gateway, $invoice->get_payment_meta() );
 
 }

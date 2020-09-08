@@ -268,10 +268,21 @@ class WPInv_Item  extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return string
+	 * @return int
 	 */
 	public function get_author( $context = 'view' ) {
 		return (int) $this->get_prop( 'author', $context );
+	}
+	
+	/**
+	 * Alias of self::get_author().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_owner( $context = 'view' ) {
+		return $this->get_author( $context );
     }
 
     /**
@@ -456,6 +467,17 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_recurring_price( $context = 'view' ) {
 		$price = $this->get_price( $context );
         return wpinv_sanitize_amount( apply_filters( 'wpinv_get_recurring_item_price', $price, $this->ID ) );
+	}
+
+	/**
+	 * Get the formatted recurring price of the item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+    public function get_the_recurring_price() {
+        return wpinv_price( wpinv_format_amount( $this->get_recurring_price() ) );
 	}
 
 	/**
@@ -838,6 +860,16 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function set_author( $value ) {
 		$this->set_prop( 'author', (int) $value );
+	}
+	
+	/**
+	 * Alias of self::set_author().
+	 *
+	 * @since 1.0.19
+	 * @param  int $value New author.
+	 */
+	public function set_owner( $value ) {
+		$this->set_author( $value );
     }
 
     /**

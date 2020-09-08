@@ -532,10 +532,9 @@ function wpinv_vat_ip_lookup_callback( $args ) {
  * @param string|bool|null $vat_rule
  */
 function getpaid_filter_vat_rule( $vat_rule ) {
-    global $wpinv_euvat;
 
     if ( empty( $vat_rule ) ) {        
-        return $wpinv_euvat->allow_vat_rules() ? 'digital' : 'physical';
+        return getpaid_tax()->allow_vat_rules() ? 'digital' : 'physical';
     }
 
     return $vat_rule;
