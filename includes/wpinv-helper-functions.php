@@ -920,3 +920,14 @@ function getpaid_limit_length( $string, $limit ) {
     return $string;
 
 }
+
+/**
+ * Returns the REST API handler.
+ * 
+ * This function should not be called before the init hook.
+ *
+ * @return WPInv_API
+ */
+function getpaid_api() {
+    return getpaid()->api;
+}

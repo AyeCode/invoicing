@@ -80,24 +80,6 @@ class WPInv_REST_Invoice_Controller extends GetPaid_REST_Posts_Controller {
 	}
 
 	/**
-	 * Get all the WP Query vars that are allowed for the API request.
-	 *
-	 * @return array
-	 */
-	protected function get_allowed_query_vars() {
-
-		$vars = array_merge(
-			array(
-				'customers',
-				'exclude_customers'
-			),
-			parent::get_allowed_query_vars()
-		);
-
-		return apply_filters( 'getpaid_rest_invoices_allowed_query_vars', $vars, $this );
-	}
-
-	/**
 	 * Determine the allowed query_vars for a get_items() response and
 	 * prepare for WP_Query.
 	 *
@@ -110,15 +92,13 @@ class WPInv_REST_Invoice_Controller extends GetPaid_REST_Posts_Controller {
 		$query_args = parent::prepare_items_query( $prepared_args );
 
 		// Retrieve invoices for specific customers.
-		if (  isset( $query_args['customers'] ) ) {
-			$query_args['author__in'] = $query_args['customers'];
-			unset( $query_args['customers'] );
+		if ( ! empty( $request['customers'] ) ) {
+			$query_args['author__in'] = $request['customers'];
 		}
 
 		// Skip invoices for specific customers.
-		if (  isset( $query_args['exclude_customers'] ) ) {
-			$query_args['author__not_in'] = $query_args['exclude_customers'];
-			unset( $query_args['exclude_customers'] );
+		if ( ! empty( $request['exclude_customers'] ) ) {
+			$query_args['author__not_in'] = $request['exclude_customers'];
 		}
 
 		return apply_filters( 'getpaid_rest_invoices_prepare_items_query', $query_args, $request, $this );
