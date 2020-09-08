@@ -1166,9 +1166,8 @@ class WPInv_Item  extends GetPaid_Data {
 	 * Returns an array of cart fees.
 	 */
 	public function get_fees( $type = 'fee', $item_id = 0 ) {
-        global $wpi_session;
         
-        $fees = $wpi_session->get( 'wpi_cart_fees' );
+        $fees = getpaid_session()->get( 'wpi_cart_fees' );
 
         if ( ! wpinv_get_cart_contents() ) {
             // We can only get item type fees when the cart is empty

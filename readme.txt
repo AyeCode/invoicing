@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.5
-Stable tag: 1.0.18
+Stable tag: 1.0.19
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 

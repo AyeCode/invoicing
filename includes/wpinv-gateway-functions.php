@@ -3,7 +3,6 @@
  * Contains gateway functions.
  *
  */
-
 defined( 'ABSPATH' ) || exit;
 
 /**

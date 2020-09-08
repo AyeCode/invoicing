@@ -778,7 +778,6 @@ function wpinv_settings_sanitize( $input = array() ) {
 }
 
 function wpinv_settings_sanitize_misc_accounting( $input ) {
-    global $wpi_session;
 
     if ( ! wpinv_current_user_can_manage_invoicing() ) {
         return $input;
@@ -786,7 +785,7 @@ function wpinv_settings_sanitize_misc_accounting( $input ) {
 
     if( ! empty( $input['enable_sequential'] ) && !wpinv_get_option( 'enable_sequential' ) ) {
         // Shows an admin notice about upgrading previous order numbers
-        $wpi_session->set( 'upgrade_sequential', '1' );
+        getpaid_session()->set( 'upgrade_sequential', '1' );
     }
 
     return $input;

@@ -924,10 +924,29 @@ function getpaid_limit_length( $string, $limit ) {
 /**
  * Returns the REST API handler.
  * 
- * This function should not be called before the init hook.
- *
  * @return WPInv_API
+ * @since 1.0.19
  */
 function getpaid_api() {
     return getpaid()->api;
+}
+
+/**
+ * Returns the session handler.
+ * 
+ * @return WPInv_Session_Handler
+ * @since 1.0.19
+ */
+function getpaid_session() {
+    return getpaid()->session;
+}
+
+/**
+ * Returns the notes handler.
+ * 
+ * @return WPInv_Notes
+ * @since 1.0.19
+ */
+function getpaid_notes() {
+    return getpaid()->notes;
 }

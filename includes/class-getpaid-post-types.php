@@ -17,7 +17,7 @@ class GetPaid_Post_Types {
     /**
 	 * Hook in methods.
 	 */
-	public static function init() {
+	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register_post_types' ), 1 );
 		add_action( 'init', array( __CLASS__, 'register_post_status' ), 4 );
 		add_action( 'getpaid_flush_rewrite_rules', array( __CLASS__, 'flush_rewrite_rules' ) );
@@ -331,4 +331,3 @@ class GetPaid_Post_Types {
 	}
 
 }
-GetPaid_Post_Types::init();
