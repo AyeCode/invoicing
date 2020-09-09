@@ -80,10 +80,33 @@ function wpinv_store_address() {
 }
 
 /**
+ * Returns an array of user address fields
+ * 
+ * @return array
+ */
+function getpaid_user_address_fields() {
+    return apply_filters(
+        'getpaid_user_address_fields',
+        array(
+            'first_name',
+            'last_name',
+            'company',
+            'vat_number',
+            'phone',
+            'address',
+            'city',
+            'state',
+            'country',
+            'zip'
+        )
+    );
+}
+
+/**
  * Saves a user address.
- * 
- * This function is called whenever an invoice is created/updated to ensure the two are always in sync.
- * 
+ *
+ * This function is called whenever an invoice is created/updated to ensure that the user address is always up to date.
+ *
  * @param WPInv_Invoice $invoice
  */
 function getpaid_save_invoice_user_address( $invoice ) {
@@ -96,82 +119,106 @@ function getpaid_save_invoice_user_address( $invoice ) {
         return;
     }
 
-    // Prepare the address fields.
-    $address_fields = array(
-        'first_name',
-        'last_name',
-        'company',
-        'vat_number',
-        'phone',
-        'address',
-        'city',
-        'state',
-        'country',
-        'zip'
-    );
+    foreach ( getpaid_user_address_fields() as $field ) {
 
-    foreach ( $address_fields as $field ) {
-        $method = "get_{$field}";
-        $value = $invoice->$method();
+        if ( is_callable( array( $invoice, "get_$field" ) ) ) {
+            $value = call_user_func( array( $invoice, "get_$field" ) );
 
-        // Only save if it is not empty.
-        if ( ! empty( $value ) ) {
-            update_user_meta( $invoice->get_user_id(), '_wpinv_' . $field, $value );
+            // Only save if it is not empty.
+            if ( ! empty( $value ) ) {
+                update_user_meta( $invoice->get_user_id(), '_wpinv_' . $field, $value );
+            }
+
         }
+
     }
 
 }
 add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
 add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
 
+/**
+ * Retrieves a saved user address.
+ *
+ * @param int $user_id The user id whose address we should get. Defaults to the current user id.
+ * @param bool $with_default Whether or not we should use the default country and state.
+ * @return array
+ */
 function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
-    global $wpi_userID;
-    
-    if( empty( $user_id ) ) {
-        $user_id = !empty( $wpi_userID ) ? $wpi_userID : get_current_user_id();
-    }
-    
-    $address_fields = array(
-        'first_name',
-        'last_name',
-        'company',
-        'vat_number',
-        'phone',
-        'address',
-        'city',
-        'state',
-        'country',
-        'zip',
-        'phone',
-    );
 
+    // Prepare the user id.
+    $user_id   = empty( $user_id ) ? get_current_user_id() : $user_id;
     $user_info = get_userdata( $user_id );
 
-    $address = array();
-    $address['user_id'] = $user_id;
-    $address['email'] = !empty( $user_info ) ? $user_info->user_email : '';
-    foreach ( $address_fields as $field ) {
-        $address[$field] = get_user_meta( $user_id, '_wpinv_' . $field, true );
+    // Abort if non exists.
+    if ( empty( $user_info ) ) {
+        return array();
     }
 
-    if ( !empty( $user_info ) ) {
-        if( empty( $address['first_name'] ) )
-            $address['first_name'] = $user_info->first_name;
-        
-        if( empty( $address['last_name'] ) )
-            $address['last_name'] = $user_info->last_name;
+    // Prepare the address.
+    $address = array(
+        'user_id' => $user_id,
+        'email'   => $user_info->user_email,
+    );
+
+    foreach ( getpaid_user_address_fields() as $field ) {
+        $address[$field] = getpaid_get_user_address_field( $user_id, $field );
     }
-    
-    $address['name'] = trim( trim( $address['first_name'] . ' ' . $address['last_name'] ), "," );
-    
-    if( empty( $address['state'] ) && $with_default )
+
+    if ( ! $with_default ) {
+        return $address;
+    }
+
+    if ( isset( $address['first_name'] ) && empty( $address['first_name'] ) ) {
+        $address['first_name'] = $user_info->first_name;
+    }
+
+    if ( isset( $address['last_name'] ) && empty( $address['last_name'] ) ) {
+        $address['last_name'] = $user_info->last_name;
+    }
+
+    if ( isset( $address['state'] ) && empty( $address['state'] ) ) {
         $address['state'] = wpinv_get_default_state();
+    }
 
-    if( empty( $address['country'] ) && $with_default )
+    if ( isset( $address['country'] ) && empty( $address['country'] ) ) {
         $address['country'] = wpinv_get_default_country();
-
+    }
 
     return $address;
+}
+
+/**
+ * Retrieves a saved user address field.
+ *
+ * @param int $user_id The user id whose address field we should get.
+ * @param string $field The field to use.
+ * @return string|null
+ */
+function getpaid_get_user_address_field( $user_id, $field ) {
+
+    $prefixes = array(
+        '_wpinv_',
+        'billing_',
+        ''
+    );
+
+    foreach ( $prefixes as $prefix ) {
+
+        // Meta table.
+        $value = get_user_meta( $user_id, $prefix . $field, true );
+        
+        // UWP table.
+        $value = ( empty( $value ) && function_exists( 'uwp_get_usermeta' ) ) ? uwp_get_usermeta( $user_id, $prefix . $field ) : $value;
+
+        if ( ! empty( $value ) ) {
+            return $value;
+        }
+
+    }
+
+    return null;
+
 }
 
 /**

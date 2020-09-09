@@ -157,6 +157,7 @@ function wpinv_get_template( $template_name, $args = array(), $template_path = '
  * First checks if there is a template overide, if not it loads the default template.
  * 
  * @param string $template_name e.g payment-forms/cart.php The template to locate.
+ * @param array $args An array of args to pass to the template.
  * @param string $template_path The templates directory relative to the theme's root dir. Defaults to 'invoicing'.
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
  */

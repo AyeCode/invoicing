@@ -18,9 +18,20 @@ function getpaid_get_errors_html( $clear = true ) {
 
     $errors = '';
     foreach ( wpinv_get_errors() as $error_id => $error ) {
-        $error_id = esc_attr( $error_id );
-        $error    = '<strong>' . __( 'Error', 'invoicing' ) . '</strong>: ' . wp_kses_post( $error ); 
-        $errors  .= "<p class='p-0' id='getpaid-error-$error_id'>$error</p>";
+        $type     = 'error';
+
+        if ( is_array( $error ) ) {
+            $type  = $error['type'];
+            $error = $error['text'];
+        }
+
+        $errors .= aui()->alert(
+            array(
+                'content'     => wp_kses_post( $error ),
+                'type'        => $type,
+            )
+        );
+
     }
 
     if ( $clear ){
@@ -53,10 +64,16 @@ function wpinv_get_errors() {
  * 
  * @param string $error_id The error id.
  * @param string $error_message The error message.
+ * @param string $type Either error, info, warning, primary, dark, light or success.
  */
-function wpinv_set_error( $error_id, $error_message ) {
+function wpinv_set_error( $error_id, $error_message, $type = 'error' ) {
+
     $errors              = wpinv_get_errors();
-    $errors[ $error_id ] = $error_message;
+    $errors[ $error_id ] = array(
+        'type' =>  $type,
+        'text' =>  $error_message,
+    );
+
     getpaid()->session->set( 'wpinv_errors', $errors );
 }
 

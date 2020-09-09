@@ -794,10 +794,10 @@ abstract class GetPaid_Data {
 		if ( array_key_exists( $prop, $this->data ) ) {
 			if ( true === $this->object_read ) {
 				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
-					$this->changes[ $prop ] = maybe_unserialize( $value );
+					$this->changes[ $prop ] = $value;
 				}
 			} else {
-				$this->data[ $prop ] = maybe_unserialize( $value );
+				$this->data[ $prop ] = $value;
 			}
 		}
 	}
