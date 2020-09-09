@@ -313,6 +313,8 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		// Abort if the data does not exist.
 		if ( empty( $data ) ) {
+			$invoice->set_object_read( true );
+			$invoice->set_props( wpinv_get_user_address( $invoice->get_user_id() ) );
 			return;
 		}
 
