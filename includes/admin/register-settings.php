@@ -1,102 +1,158 @@
 <?php
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+/**
+ * Contains settings related functions
+ *
+ * @package Invoicing
+ * @since   1.0.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Retrieves all default settings.
+ * 
+ * @return array
+ */
+function wpinv_get_settings() {
+    $defaults = array();
+
+    foreach ( array_values( wpinv_get_registered_settings() ) as $tab_settings ) {
+
+        foreach ( array_values( $tab_settings ) as $section_settings ) {
+
+            foreach ( $section_settings as $key => $setting ) {
+                if ( isset( $setting['std'] ) ) {
+                    $defaults[ $key ] = $setting['std'];
+                }
+            }
+
+        }
+
+    }
+
+    return $defaults;
+
 }
 
-function wpinv_get_option( $key = '', $default = false ) {
+/**
+ * Retrieves all settings.
+ * 
+ * @return array
+ */
+function wpinv_get_options() {
     global $wpinv_options;
 
-    $value = isset( $wpinv_options[ $key ] ) ? $wpinv_options[ $key ] : $default;
-    $value = apply_filters( 'wpinv_get_option', $value, $key, $default );
+    // Try fetching the saved options.
+    if ( ! is_array( $wpinv_options ) ) {
+        $wpinv_options = get_option( 'wpinv_settings' );
+    }
+
+    // If that fails, don't fetch the default settings to prevent a loop.
+    if ( ! is_array( $wpinv_options ) ) {
+        $wpinv_options = array();
+    }
+
+    return $wpinv_options;
+}
+
+/**
+ * Retrieves a single setting.
+ * 
+ * @param string $key the setting key.
+ * @param mixed $default The default value to use if the setting has not been set.
+ * @return array
+ */
+function wpinv_get_option( $key = '', $default = false ) {
+
+    $options = wpinv_get_options();
+    $value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
+    $value   = apply_filters( 'wpinv_get_option', $value, $key, $default );
 
     return apply_filters( 'wpinv_get_option_' . $key, $value, $key, $default );
 }
 
-function wpinv_update_option( $key = '', $value = false ) {
-    // If no key, exit
-    if ( empty( $key ) ) {
-        return false;
-    }
+/**
+ * Updates all settings.
+ * 
+ * @param array $options the new options.
+ * @return bool
+ */
+function wpinv_update_options( $options ) {
+    global $wpinv_options;
 
-    if ( empty( $value ) ) {
-        $remove_option = wpinv_delete_option( $key );
-        return $remove_option;
-    }
-
-    // First let's grab the current settings
-    $options = get_option( 'wpinv_settings' );
-
-    // Let other plugin alter the value
-    $value = apply_filters( 'wpinv_update_option', $value, $key );
-
-    // Next let's try to update the value
-    $options[ $key ] = $value;
-    $did_update = update_option( 'wpinv_settings', $options );
-
-    // If it's updated, let's update the global variable
-    if ( $did_update ) {
-        global $wpinv_options;
-        $wpinv_options[ $key ] = $value;
-    }
-
-    return $did_update;
-}
-
-function wpinv_delete_option( $key = '' ) {
-    // If no key, exit
-    if ( empty( $key ) ) {
-        return false;
-    }
-
-    // First let's grab the current settings
-    $options = get_option( 'wpinv_settings' );
-
-    // Next let's try to update the value
-    if( isset( $options[ $key ] ) ) {
-        unset( $options[ $key ] );
-    }
-
-    $did_update = update_option( 'wpinv_settings', $options );
-
-    // If it updated, let's update the global variable
-    if ( $did_update ){
-        global $wpinv_options;
+    // update the option.
+    if ( is_array( $options ) && update_option( 'wpinv_settings', $options ) ) {
         $wpinv_options = $options;
+        return true;
     }
 
-    return $did_update;
+    return false;
 }
 
-function wpinv_get_settings() {
-    $settings = get_option( 'wpinv_settings' );
+/**
+ * Updates a single setting.
+ * 
+ * @param string $key the setting key.
+ * @param mixed $value The setting value.
+ * @return bool
+ */
+function wpinv_update_option( $key = '', $value = false ) {
 
-    if ( empty( $settings ) ) {
-        // Update old settings with new single option
-        $general_settings   = is_array( get_option( 'wpinv_settings_general' ) )    ? get_option( 'wpinv_settings_general' )    : array();
-        $gateways_settings  = is_array( get_option( 'wpinv_settings_gateways' ) )   ? get_option( 'wpinv_settings_gateways' )   : array();
-        $email_settings     = is_array( get_option( 'wpinv_settings_emails' ) )     ? get_option( 'wpinv_settings_emails' )     : array();
-        $tax_settings       = is_array( get_option( 'wpinv_settings_taxes' ) )      ? get_option( 'wpinv_settings_taxes' )      : array();
-        $misc_settings      = is_array( get_option( 'wpinv_settings_misc' ) )       ? get_option( 'wpinv_settings_misc' )       : array();
-        $tool_settings      = is_array( get_option( 'wpinv_settings_tools' ) )      ? get_option( 'wpinv_settings_tools' )      : array();
-
-        $settings = array_merge( $general_settings, $gateways_settings, $email_settings, $tax_settings, $misc_settings, $tool_settings );
-
-        update_option( 'wpinv_settings', $settings );
-
+    // If no key, exit.
+    if ( empty( $key ) ) {
+        return false;
     }
-    return apply_filters( 'wpinv_get_settings', $settings );
+
+    // Maybe delete the option instead.
+    if ( is_null( $value ) ) {
+        return wpinv_delete_option( $key );
+    }
+
+    // Prepare the new options.
+    $options         = wpinv_get_options();
+    $options[ $key ] = apply_filters( 'wpinv_update_option', $value, $key );
+
+    // Save the new options.
+    return wpinv_update_options( $options );
+
 }
 
+/**
+ * Deletes a single setting.
+ * 
+ * @param string $key the setting key.
+ * @return bool
+ */
+function wpinv_delete_option( $key = '' ) {
+
+    // If no key, exit
+    if ( empty( $key ) ) {
+        return false;
+    }
+
+    $options = wpinv_get_options();
+
+    if ( isset( $options[ $key ] ) ) {
+        unset( $options[ $key ] );
+        return wpinv_update_options( $options );
+    }
+
+    return true;
+
+}
+
+/**
+ * Register settings after admin inits.
+ * 
+ */
 function wpinv_register_settings() {
-    if ( false == get_option( 'wpinv_settings' ) ) {
-        add_option( 'wpinv_settings' );
-    }
-    
-    $register_settings = wpinv_get_registered_settings();
-    
-    foreach ( $register_settings as $tab => $sections ) {
-        foreach ( $sections as $section => $settings) {
+
+    // Loop through all tabs.
+    foreach ( wpinv_get_registered_settings() as $tab => $sections ) {
+
+        // In each tab, loop through sections.
+        foreach ( $sections as $section => $settings ) {
+
             // Check for backwards compatibility
             $section_tabs = wpinv_get_settings_tab_sections( $tab );
             if ( ! is_array( $section_tabs ) || ! array_key_exists( $section, $section_tabs ) ) {
@@ -104,6 +160,7 @@ function wpinv_register_settings() {
                 $settings = $sections;
             }
 
+            // Register the setting section.
             add_settings_section(
                 'wpinv_settings_' . $tab . '_' . $section,
                 __return_null(),
@@ -112,614 +169,83 @@ function wpinv_register_settings() {
             );
 
             foreach ( $settings as $option ) {
-                // For backwards compatibility
-                if ( empty( $option['id'] ) ) {
-                    continue;
+                if ( ! empty( $option['id'] ) ) {
+                    wpinv_register_settings_option( $tab, $section, $option );
                 }
-
-                $name = isset( $option['name'] ) ? $option['name'] : '';
-
-                add_settings_field(
-                    'wpinv_settings[' . $option['id'] . ']',
-                    $name,
-                    function_exists( 'wpinv_' . $option['type'] . '_callback' ) ? 'wpinv_' . $option['type'] . '_callback' : 'wpinv_missing_callback',
-                    'wpinv_settings_' . $tab . '_' . $section,
-                    'wpinv_settings_' . $tab . '_' . $section,
-                    array(
-                        'section'     => $section,
-                        'id'          => isset( $option['id'] )          ? $option['id']          : null,
-                        'desc'        => ! empty( $option['desc'] )      ? $option['desc']        : '',
-                        'name'        => isset( $option['name'] )        ? $option['name']        : null,
-                        'size'        => isset( $option['size'] )        ? $option['size']        : null,
-                        'options'     => isset( $option['options'] )     ? $option['options']     : '',
-                        'selected'    => isset( $option['selected'] )    ? $option['selected']    : null,
-                        'std'         => isset( $option['std'] )         ? $option['std']         : '',
-                        'min'         => isset( $option['min'] )         ? $option['min']         : null,
-                        'max'         => isset( $option['max'] )         ? $option['max']         : null,
-                        'step'        => isset( $option['step'] )        ? $option['step']        : null,
-                        'placeholder' => isset( $option['placeholder'] ) ? $option['placeholder'] : null,
-                        'allow_blank' => isset( $option['allow_blank'] ) ? $option['allow_blank'] : true,
-                        'readonly'    => isset( $option['readonly'] )    ? $option['readonly']    : false,
-                        'faux'        => isset( $option['faux'] )        ? $option['faux']        : false,
-                        'onchange'    => !empty( $option['onchange'] )   ? $option['onchange']    : '',
-                        'custom'      => !empty( $option['custom'] )     ? $option['custom']      : '',
-                        'class'       =>  !empty( $option['class'] )     ? $option['class']      : '',
-                        'cols'        => !empty( $option['cols'] ) && (int)$option['cols'] > 0 ? (int)$option['cols'] : 50,
-                        'rows'        => !empty( $option['rows'] ) && (int)$option['rows'] > 0 ? (int)$option['rows'] : 5,
-                    )
-                );
             }
+
         }
     }
 
-    // Creates our settings in the options table
+    // Creates our settings in the options table.
     register_setting( 'wpinv_settings', 'wpinv_settings', 'wpinv_settings_sanitize' );
 }
 add_action( 'admin_init', 'wpinv_register_settings' );
 
-function wpinv_get_registered_settings() {
-    $pages = wpinv_get_pages( true );
-    
-    $currencies = wpinv_get_currencies();
-    
-    $currency_code_options = array();
-    foreach ( $currencies as $code => $name ) {
-        $currency_code_options[ $code ] = $code . ' - ' . $name . ' (' . wpinv_currency_symbol( $code ) . ')';
-    }
-    
-    $due_payment_options       = array();
-    $due_payment_options[0]    = __( 'Now', 'invoicing' );
-    for ( $i = 1; $i <= 30; $i++ ) {
-        $due_payment_options[$i] = $i;
-    }
-    
-    $invoice_number_padd_options = array();
-    for ( $i = 0; $i <= 20; $i++ ) {
-        $invoice_number_padd_options[$i] = $i;
-    }
-    
-    $currency_symbol = wpinv_currency_symbol();
-    
-    $last_number = $reset_number = '';
-    if ( $last_invoice_number = get_option( 'wpinv_last_invoice_number' ) ) {
-        $last_invoice_number = is_numeric( $last_invoice_number ) ? $last_invoice_number : wpinv_clean_invoice_number( $last_invoice_number );
+/**
+ * Register a single settings option.
+ * 
+ * @param string $tab
+ * @param string $section
+ * @param string $option
+ * 
+ */
+function wpinv_register_settings_option( $tab, $section, $option ) {
 
-        if ( !empty( $last_invoice_number ) ) {
-            $last_number = ' ' . wp_sprintf( __( "( Last Invoice's sequential number: <b>%s</b> )", 'invoicing' ), $last_invoice_number );
-        }
+    $name    = isset( $option['name'] ) ? $option['name'] : '';
+    $cb      = "wpinv_{$option['type']}_callback";
+    $section = "wpinv_settings_{$tab}_$section";
 
-        $nonce = wp_create_nonce('reset_invoice_count');
-        $reset_number = '<a href="'.add_query_arg(array('reset_invoice_count' => 1, '_nonce' => $nonce)).'" class="btn button">'.__('Force Reset Sequence', 'invoicing' ). '</a>';
-    }
-    
-    $alert_wrapper_start = '<p style="color: #F00">';
-    $alert_wrapper_close = '</p>';
-    $wpinv_settings = array(
-        'general' => apply_filters( 'wpinv_settings_general',
-            array(
-                'main' => array(
-                    'location_settings' => array(
-                        'id'   => 'location_settings',
-                        'name' => '<h3>' . __( 'Default Location', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'default_country' => array(
-                        'id'      => 'default_country',
-                        'name'    => __( 'Default Country', 'invoicing' ),
-                        'desc'    => __( 'Where does your store operate from?', 'invoicing' ),
-                        'type'    => 'select',
-                        'options' => wpinv_get_country_list(),
-                        'std'     => 'GB',
-                        'class'   => 'wpi_select2',
-                        'placeholder' => __( 'Select a country', 'invoicing' ),
-                    ),
-                    'default_state' => array(
-                        'id'      => 'default_state',
-                        'name'    => __( 'Default State / Province', 'invoicing' ),
-                        'desc'    => __( 'What state / province does your store operate from?', 'invoicing' ),
-                        'type'    => 'country_states',
-                        'class'   => 'wpi_select2',
-                        'placeholder' => __( 'Select a state', 'invoicing' ),
-                    ),
-                    'store_name' => array(
-                        'id'   => 'store_name',
-                        'name' => __( 'Store Name', 'invoicing' ),
-                        'desc' => __( 'Store name to print on invoices.', 'invoicing' ),
-                        'std'     => get_option('blogname'),
-                        'type' => 'text',
-                    ),
-                    'logo' => array(
-                        'id'   => 'logo',
-                        'name' => __( 'Logo URL', 'invoicing' ),
-                        'desc' => __( 'Store logo to print on invoices.', 'invoicing' ),
-                        'type' => 'text',
-                    ),
-                    'store_address' => array(
-                        'id'   => 'store_address',
-                        'name' => __( 'Store Address', 'invoicing' ),
-                        'desc' => __( 'Enter the store address to display on invoice', 'invoicing' ),
-                        'type' => 'textarea',
-                    ),
-                    'page_settings' => array(
-                        'id'   => 'page_settings',
-                        'name' => '<h3>' . __( 'Page Settings', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'checkout_page' => array(
-                        'id'          => 'checkout_page',
-                        'name'        => __( 'Checkout Page', 'invoicing' ),
-                        'desc'        => __( 'This is the checkout page where buyers will complete their payments. The <b>[wpinv_checkout]</b> short code must be on this page.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $pages,
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'tandc_page' => array(
-                        'id'          => 'tandc_page',
-                        'name'        => __( 'Terms & Conditions', 'invoicing' ),
-                        'desc'        => __( 'If you select a "Terms & Conditions" page here the customer will be asked to accept them on checkout.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'success_page' => array(
-                        'id'          => 'success_page',
-                        'name'        => __( 'Success Page', 'invoicing' ),
-                        'desc'        => __( 'This is the page buyers are sent to after completing their payments. The <b>[wpinv_receipt]</b> short code should be on this page.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $pages,
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'failure_page' => array(
-                        'id'          => 'failure_page',
-                        'name'        => __( 'Failed Transaction Page', 'invoicing' ),
-                        'desc'        => __( 'This is the page buyers are sent to if their transaction is cancelled or fails.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $pages,
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'invoice_history_page' => array(
-                        'id'          => 'invoice_history_page',
-                        'name'        => __( 'Invoice History Page', 'invoicing' ),
-                        'desc'        => __( 'This page shows an invoice history for the current user. The <b>[wpinv_history]</b> short code should be on this page.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $pages,
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'invoice_subscription_page' => array(
-                        'id'          => 'invoice_subscription_page',
-                        'name'        => __( 'Invoice Subscriptions Page', 'invoicing' ),
-                        'desc'        => __( 'This page shows subscriptions history for the current user. The <b>[wpinv_subscriptions]</b> short code should be on this page.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $pages,
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                ),
-                'currency_section' => array(
-                    'currency_settings' => array(
-                        'id'   => 'currency_settings',
-                        'name' => '<h3>' . __( 'Currency Settings', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'currency' => array(
-                        'id'      => 'currency',
-                        'name'    => __( 'Currency', 'invoicing' ),
-                        'desc'    => __( 'Choose your currency. Note that some payment gateways have currency restrictions.', 'invoicing' ),
-                        'type'    => 'select',
-                        'class'       => 'wpi_select2',
-                        'options' => $currency_code_options,
-                    ),
-                    'currency_position' => array(
-                        'id'      => 'currency_position',
-                        'name'    => __( 'Currency Position', 'invoicing' ),
-                        'desc'    => __( 'Choose the location of the currency sign.', 'invoicing' ),
-                        'type'    => 'select',
-                        'class'   => 'wpi_select2',
-                        'options'  => array(
-                            'left'        => __( 'Left', 'invoicing' ) . ' (' . $currency_symbol . wpinv_format_amount( '99.99' ) . ')',
-                            'right'       => __( 'Right', 'invoicing' ) . ' ('. wpinv_format_amount( '99.99' ) . $currency_symbol . ')',
-                            'left_space'  => __( 'Left with space', 'invoicing' ) . ' (' . $currency_symbol . ' ' . wpinv_format_amount( '99.99' ) . ')',
-                            'right_space' => __( 'Right with space', 'invoicing' ) . ' (' . wpinv_format_amount( '99.99' ) . ' ' . $currency_symbol . ')'
-                        )
-                    ),
-                    'thousands_separator' => array(
-                        'id'   => 'thousands_separator',
-                        'name' => __( 'Thousands Separator', 'invoicing' ),
-                        'desc' => __( 'The symbol (usually , or .) to separate thousands', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'small',
-                        'std'  => ',',
-                    ),
-                    'decimal_separator' => array(
-                        'id'   => 'decimal_separator',
-                        'name' => __( 'Decimal Separator', 'invoicing' ),
-                        'desc' => __( 'The symbol (usually , or .) to separate decimal points', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'small',
-                        'std'  => '.',
-                    ),
-                    'decimals' => array(
-                        'id'   => 'decimals',
-                        'name' => __( 'Number of Decimals', 'invoicing' ),
-                        'desc' => __( 'This sets the number of decimal points shown in displayed prices.', 'invoicing' ),
-                        'type' => 'number',
-                        'size' => 'small',
-                        'std'  => '2',
-                        'min'  => '0',
-                        'max'  => '10',
-                        'step' => '1'
-                    ),
-                ),
-                'labels' => array(
-                    'labels' => array(
-                        'id'   => 'labels_settings',
-                        'name' => '<h3>' . __( 'Invoice Labels', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'vat_name' => array(
-                        'id' => 'vat_name',
-                        'name' => __( 'VAT Name', 'invoicing' ),
-                        'desc' => __( 'Enter the VAT name', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => __( 'VAT', 'invoicing' ),
-                    ),
-                    'vat_invoice_notice_label' => array(
-                        'id' => 'vat_invoice_notice_label',
-                        'name' => __( 'Invoice Notice Label', 'invoicing' ),
-                        'desc' => __( 'Use this to add an invoice notice section (label) to your invoices', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                    ),
-                    'vat_invoice_notice' => array(
-                        'id' => 'vat_invoice_notice',
-                        'name' => __( 'Invoice notice', 'invoicing' ),
-                        'desc' =>   __( 'Use this to add an invoice notice section (description) to your invoices', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                    ),
-                )
-            )
-        ),
-        'gateways' => apply_filters('wpinv_settings_gateways',
-            array(
-                'main' => array(
-                    'gateway_settings' => array(
-                        'id'   => 'api_header',
-                        'name' => '<h3>' . __( 'Gateway Settings', 'invoicing' ) . '</h3>',
-                        'desc' => '',
-                        'type' => 'header',
-                    ),
-                    'gateways' => array(
-                        'id'      => 'gateways',
-                        'name'    => __( 'Payment Gateways', 'invoicing' ),
-                        'desc'    => __( 'Choose the payment gateways you want to enable.', 'invoicing' ),
-                        'type'    => 'gateways',
-                        'std'     => array('manual'=>1),
-                        'options' => wpinv_get_payment_gateways(),
-                    ),
-                    'default_gateway' => array(
-                        'id'      => 'default_gateway',
-                        'name'    => __( 'Default Gateway', 'invoicing' ),
-                        'desc'    => __( 'This gateway will be loaded automatically with the checkout page.', 'invoicing' ),
-                        'type'    => 'gateway_select',
-                        'std'     => 'manual',
-                        'class'   => 'wpi_select2',
-                        'options' => wpinv_get_payment_gateways(),
-                    ),
-                ),
-            )
-        ),
-        /** Taxes Settings */
-        'taxes' => apply_filters('wpinv_settings_taxes',
-            array(
-                'main' => array(
-                    'tax_settings' => array(
-                        'id'   => 'tax_settings',
-                        'name' => '<h3>' . __( 'Tax Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'enable_taxes' => array(
-                        'id'   => 'enable_taxes',
-                        'name' => __( 'Enable Taxes', 'invoicing' ),
-                        'desc' => __( 'Check this to enable taxes on invoices.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
-                    'tax_rate' => array(
-                        'id'   => 'tax_rate',
-                        'name' => __( 'Fallback Tax Rate', 'invoicing' ),
-                        'desc' => __( 'Enter a percentage, such as 6.5. Customers not in a specific rate will be charged this rate.', 'invoicing' ),
-                        'type' => 'number',
-                        'size' => 'small',
-                        'min'  => '0',
-                        'max'  => '99',
-                        'step' => 'any',
-                        'std'  => '20'
-                    ),
-                ),
-                'rates' => array(
-                    'tax_rates' => array(
-                        'id'   => 'tax_rates',
-                        'name' => '<h3>' . __( 'Tax Rates', 'invoicing' ) . '</h3>',
-                        'desc' => __( 'Enter tax rates for specific regions.', 'invoicing' ),
-                        'type' => 'tax_rates',
-                    ),
-                )
-            )
-        ),
-        /** Emails Settings */
-        'emails' => apply_filters('wpinv_settings_emails',
-            array(
-                'main' => array(
-                    'email_settings_header' => array(
-                        'id'   => 'email_settings_header',
-                        'name' => '<h3>' . __( 'Email Sender Options', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'email_from_name' => array(
-                        'id'   => 'email_from_name',
-                        'name' => __( 'From Name', 'invoicing' ),
-                        'desc' => __( 'Enter the sender\'s name appears in outgoing invoice emails. This should be your site name.', 'invoicing' ),
-                        'std' => esc_attr( get_bloginfo( 'name', 'display' ) ),
-                        'type' => 'text',
-                    ),
-                    'email_from' => array(
-                        'id'   => 'email_from',
-                        'name' => __( 'From Email', 'invoicing' ),
-                        'desc' => sprintf (__( 'Email address to send invoice emails from. This will act as the "from" and "reply-to" address. %s If emails are not being sent it may be that your hosting prevents emails being sent if the email domains do not match.%s', 'invoicing' ), $alert_wrapper_start, $alert_wrapper_close),
-                        'std' => get_option( 'admin_email' ),
-                        'type' => 'text',
-                    ),
-                    'admin_email' => array(
-                        'id'   => 'admin_email',
-                        'name' => __( 'Admin Email', 'invoicing' ),
-                        'desc' => __( 'Where should we send admin notifications?', 'invoicing' ),
-                        'std' => get_option( 'admin_email' ),
-                        'type' => 'text',
-                    ),
-                    'overdue_settings_header' => array(
-                        'id'   => 'overdue_settings_header',
-                        'name' => '<h3>' . __( 'Due Date Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'overdue_active' => array(
-                        'id'   => 'overdue_active',
-                        'name' => __( 'Enable Due Date', 'invoicing' ),
-                        'desc' => __( 'Check this to enable due date option for invoices.', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => false,
-                    ),
-                    'overdue_days' => array(
-                        'id'          => 'overdue_days',
-                        'name'        => __( 'Default Due Date', 'invoicing' ),
-                        'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => $due_payment_options,
-                        'std'         => 0,
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                    'email_template_header' => array(
-                        'id'   => 'email_template_header',
-                        'name' => '<h3>' . __( 'Email Template', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'email_header_image' => array(
-                        'id'   => 'email_header_image',
-                        'name' => __( 'Header Image', 'invoicing' ),
-                        'desc' => __( 'URL to an image you want to show in the email header. Upload images using the media uploader (Admin > Media).', 'invoicing' ),
-                        'std' => '',
-                        'type' => 'text',
-                    ),
-                    'email_footer_text' => array(
-                        'id'   => 'email_footer_text',
-                        'name' => __( 'Footer Text', 'invoicing' ),
-                        'desc' => __( 'The text to appear in the footer of all invoice emails.', 'invoicing' ),
-                        'std' => get_bloginfo( 'name', 'display' ) . ' - ' . __( 'Powered by GeoDirectory', 'invoicing' ),
-                        'type' => 'textarea',
-                        'class' => 'regular-text',
-                        'rows' => 2,
-                        'cols' => 37
-                    ),
-                    'email_base_color' => array(
-                        'id'   => 'email_base_color',
-                        'name' => __( 'Base Color', 'invoicing' ),
-                        'desc' => __( 'The base color for invoice email template. Default <code>#557da2</code>.', 'invoicing' ),
-                        'std' => '#557da2',
-                        'type' => 'color',
-                    ),
-                    'email_background_color' => array(
-                        'id'   => 'email_background_color',
-                        'name' => __( 'Background Color', 'invoicing' ),
-                        'desc' => __( 'The background color of email template. Default <code>#f5f5f5</code>.', 'invoicing' ),
-                        'std' => '#f5f5f5',
-                        'type' => 'color',
-                    ),
-                    'email_body_background_color' => array(
-                        'id'   => 'email_body_background_color',
-                        'name' => __( 'Body Background Color', 'invoicing' ),
-                        'desc' => __( 'The main body background color of email template. Default <code>#fdfdfd</code>.', 'invoicing' ),
-                        'std' => '#fdfdfd',
-                        'type' => 'color',
-                    ),
-                    'email_text_color' => array(
-                        'id'   => 'email_text_color',
-                        'name' => __( 'Body Text Color', 'invoicing' ),
-                        'desc' => __( 'The main body text color. Default <code>#505050</code>.', 'invoicing' ),
-                        'std' => '#505050',
-                        'type' => 'color',
-                    ),
-                    'email_settings' => array(
-                        'id'   => 'email_settings',
-                        'name' => '',
-                        'desc' => '',
-                        'type' => 'hook',
-                    ),
-                ),
-            )
-        ),
-        /** Privacy Settings */
-        'privacy' => apply_filters('wpinv_settings_privacy',
-            array(
-                'main' => array(
-                    'invoicing_privacy_policy_settings' => array(
-                        'id'   => 'invoicing_privacy_policy_settings',
-                        'name' => '<h3>' . __( 'Privacy Policy', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'privacy_page' => array(
-                        'id'          => 'privacy_page',
-                        'name'        => __( 'Privacy Page', 'invoicing' ),
-                        'desc'        => __( 'If no privacy policy page set in Settings->Privacy default settings, this page will be used on checkout page.', 'invoicing' ),
-                        'type'        => 'select',
-                        'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
-                        'class'       => 'wpi_select2',
-                        'placeholder' => __( 'Select a page', 'invoicing' ),
-                    ),
-                ),
-            )
-        ),
-        /** Misc Settings */
-        'misc' => apply_filters('wpinv_settings_misc',
-            array(
-                'main' => array(
-                    'invoice_number_format_settings' => array(
-                        'id'   => 'invoice_number_format_settings',
-                        'name' => '<h3>' . __( 'Invoice Number', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'sequential_invoice_number' => array(
-                        'id'   => 'sequential_invoice_number',
-                        'name' => __( 'Sequential Invoice Numbers', 'invoicing' ),
-                        'desc' => __('Check this box to enable sequential invoice numbers.', 'invoicing' ) . $reset_number,
-                        'type' => 'checkbox',
-                    ),
-                    'invoice_sequence_start' => array(
-                        'id'   => 'invoice_sequence_start',
-                        'name' => __( 'Sequential Starting Number', 'invoicing' ),
-                        'desc' => __( 'The number at which the invoice number sequence should begin.', 'invoicing' ) . $last_number,
-                        'type' => 'number',
-                        'size' => 'small',
-                        'std'  => '1',
-                        'class'=> 'w100'
-                    ),
-                    'invoice_number_padd' => array(
-                        'id'      => 'invoice_number_padd',
-                        'name'    => __( 'Minimum Digits', 'invoicing' ),
-                        'desc'    => __( 'If the invoice number has less digits than this number, it is left padded with 0s. Ex: invoice number 108 will padded to 00108 if digits set to 5. The default 0 means no padding.', 'invoicing' ),
-                        'type'    => 'select',
-                        'options' => $invoice_number_padd_options,
-                        'std'     => 5,
-                        'class'   => 'wpi_select2',
-                    ),
-                    'invoice_number_prefix' => array(
-                        'id' => 'invoice_number_prefix',
-                        'name' => __( 'Invoice Number Prefix', 'invoicing' ),
-                        'desc' => __( 'Prefix for all invoice numbers. Ex: INV-', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => 'INV-',
-                        'placeholder' => 'INV-',
-                    ),
-                    'invoice_number_postfix' => array(
-                        'id' => 'invoice_number_postfix',
-                        'name' => __( 'Invoice Number Postfix', 'invoicing' ),
-                        'desc' => __( 'Postfix for all invoice numbers.', 'invoicing' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => ''
-                    ),
-                    'checkout_settings' => array(
-                        'id'   => 'checkout_settings',
-                        'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'login_to_checkout' => array(
-                        'id'   => 'login_to_checkout',
-                        'name' => __( 'Require Login To Checkout', 'invoicing' ),
-                        'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
-                        'type' => 'checkbox',
-                    ),
-                    'uninstall_settings' => array(
-                        'id'   => 'uninstall_settings',
-                        'name' => '<h3>' . __( 'Uninstall Settings', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'remove_data_on_unistall' => array(
-                        'id'   => 'remove_data_on_unistall',
-                        'name' => __( 'Remove Data on Uninstall?', 'invoicing' ),
-                        'desc' => __( 'Check this box if you would like Invoicing plugin to completely remove all of its data when the plugin is deleted/uninstalled.', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => ''
-                    ),
-                ),
-                'fields' => array(
-                    'address_autofill_settings' => array(
-                        'id'   => 'address_autofill_settings',
-                        'name' => '<h3>' . __( 'Google Address Auto Complete', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'address_autofill_active' => array(
-                        'id'   => 'address_autofill_active',
-                        'name' => __( 'Enable/Disable', 'invoicing' ),
-                        'desc' => __( 'Enable google address auto complete', 'invoicing' ),
-                        'type' => 'checkbox',
-                        'std'  => 0
-                    ),
-                    'address_autofill_api' => array(
-                        'id' => 'address_autofill_api',
-                        'name' => __( 'Google Place API Key', 'invoicing' ),
-                        'desc' => wp_sprintf(__( 'Enter google place API key. For more information go to google place API %sdocumenation%s', 'invoicing' ), '<a href="https://developers.google.com/maps/documentation/javascript/places-autocomplete" target="_blank">', '</a>' ),
-                        'type' => 'text',
-                        'size' => 'regular',
-                        'std' => ''
-                    ),
-                ),
-                'custom-css' => array(
-                    'css_settings' => array(
-                        'id'   => 'css_settings',
-                        'name' => '<h3>' . __( 'Custom CSS', 'invoicing' ) . '</h3>',
-                        'type' => 'header',
-                    ),
-                    'template_custom_css' => array(
-                        'id' => 'template_custom_css',
-                        'name' => __( 'Invoice Template CSS', 'invoicing' ),
-                        'desc' => __( 'Add CSS to modify appearance of the print invoice page.', 'invoicing' ),
-                        'type' => 'textarea',
-                        'class'=> 'regular-text',
-                        'rows' => 10,
-                    ),
-                ),
-            )
-        ),
-        /** Tools Settings */
-        'tools' => apply_filters('wpinv_settings_tools',
-            array(
-                'main' => array(
-                    'tool_settings' => array(
-                        'id'   => 'tool_settings',
-                        'name' => '<h3>' . __( 'Diagnostic Tools', 'invoicing' ) . '</h3>',
-                        'desc' => __( 'Invoicing diagnostic tools', 'invoicing' ),
-                        'type' => 'tools',
-                    ),
-                ),
-            )
+    // Loop through all tabs.
+    add_settings_field(
+        'wpinv_settings[' . $option['id'] . ']',
+        $name,
+        function_exists( $cb ) ? $cb : 'wpinv_missing_callback',
+        $section,
+        $section,
+        array(
+            'section'     => $section,
+            'id'          => isset( $option['id'] )          ? $option['id']          : null,
+            'desc'        => isset( $option['desc'] )        ? $option['desc']        : '',
+            'name'        => isset( $option['name'] )        ? $option['name']        : null,
+            'size'        => isset( $option['size'] )        ? $option['size']        : null,
+            'options'     => isset( $option['options'] )     ? $option['options']     : '',
+            'selected'    => isset( $option['selected'] )    ? $option['selected']    : null,
+            'std'         => isset( $option['std'] )         ? $option['std']         : '',
+            'min'         => isset( $option['min'] )         ? $option['min']         : null,
+            'max'         => isset( $option['max'] )         ? $option['max']         : null,
+            'step'        => isset( $option['step'] )        ? $option['step']        : null,
+            'placeholder' => isset( $option['placeholder'] ) ? $option['placeholder'] : null,
+            'allow_blank' => isset( $option['allow_blank'] ) ? $option['allow_blank'] : true,
+            'readonly'    => isset( $option['readonly'] )    ? $option['readonly']    : false,
+            'faux'        => isset( $option['faux'] )        ? $option['faux']        : false,
+            'onchange'    => isset( $option['onchange'] )   ? $option['onchange']     : '',
+            'custom'      => isset( $option['custom'] )     ? $option['custom']       : '',
+            'class'       => isset( $option['class'] )     ? $option['class']         : '',
+            'cols'        => isset( $option['cols'] ) && (int) $option['cols'] > 0 ? (int) $option['cols'] : 50,
+            'rows'        => isset( $option['rows'] ) && (int) $option['rows'] > 0 ? (int) $option['rows'] : 5,
         )
     );
 
-    return apply_filters( 'wpinv_registered_settings', $wpinv_settings );
 }
 
+/**
+ * Returns an array of all registered settings.
+ * 
+ * @return array
+ */
+function wpinv_get_registered_settings() {
+    return apply_filters( 'wpinv_registered_settings', wpinv_get_data( 'admin-settings' ) );
+}
+
+/**
+ * Sanitizes settings before they are saved.
+ * 
+ * @return array
+ */
 function wpinv_settings_sanitize( $input = array() ) {
-    global $wpinv_options;
+
+    $wpinv_options = wpinv_get_options();
 
     if ( empty( wp_get_raw_referer() ) ) {
         return $input;
@@ -737,8 +263,9 @@ function wpinv_settings_sanitize( $input = array() ) {
 
     // Loop through each setting being saved and pass it through a sanitization filter
     foreach ( $input as $key => $value ) {
+
         // Get the setting type (checkbox, select, etc)
-        $type = isset( $settings[ $tab ][ $key ]['type'] ) ? $settings[ $tab ][ $key ]['type'] : false;
+        $type = isset( $settings[ $tab ][$section][ $key ]['type'] ) ? $settings[ $tab ][$section][ $key ]['type'] : false;
 
         if ( $type ) {
             // Field type specific filter
@@ -763,7 +290,7 @@ function wpinv_settings_sanitize( $input = array() ) {
                 $key = $value['id'];
             }
 
-            if ( empty( $input[ $key ] ) ) {
+            if ( ! isset( $input[ $key ] ) && isset( $wpinv_options[ $key ] ) ) {
                 unset( $wpinv_options[ $key ] );
             }
         }
