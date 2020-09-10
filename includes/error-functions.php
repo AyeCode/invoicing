@@ -44,7 +44,7 @@ function wpinv_print_errors() {
  * @return array
  */
 function wpinv_get_errors() {
-    $errors = getpaid()->session->get( 'wpinv_errors' );
+    $errors = getpaid_session()->get( 'wpinv_errors' );
     return is_array( $errors ) ? $errors : array();
 }
 
@@ -57,7 +57,7 @@ function wpinv_get_errors() {
 function wpinv_set_error( $error_id, $error_message ) {
     $errors              = wpinv_get_errors();
     $errors[ $error_id ] = $error_message;
-    getpaid()->session->set( 'wpinv_errors', $errors );
+    getpaid_session()->set( 'wpinv_errors', $errors );
 }
 
 /**
@@ -73,7 +73,7 @@ function wpinv_has_errors() {
  * 
  */
 function wpinv_clear_errors() {
-    getpaid()->session->set( 'wpinv_errors', null );
+    getpaid_session()->set( 'wpinv_errors', null );
 }
 
 /**
@@ -87,7 +87,7 @@ function wpinv_unset_error( $error_id ) {
         unset( $errors[ $error_id ] );
     }
 
-    getpaid()->session->set( 'wpinv_errors', $errors );
+    getpaid_session()->set( 'wpinv_errors', $errors );
 }
 
 /**

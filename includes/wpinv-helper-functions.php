@@ -928,7 +928,17 @@ function getpaid_limit_length( $string, $limit ) {
  * @since 1.0.19
  */
 function getpaid_api() {
-    return getpaid()->api;
+    return getpaid()->get( 'api' );
+}
+
+/**
+ * Returns the post types object.
+ * 
+ * @return GetPaid_Post_Types
+ * @since 1.0.19
+ */
+function getpaid_post_types() {
+    return getpaid()->get( 'post_types' );
 }
 
 /**
@@ -938,7 +948,7 @@ function getpaid_api() {
  * @since 1.0.19
  */
 function getpaid_session() {
-    return getpaid()->session;
+    return getpaid()->get( 'session' );
 }
 
 /**
@@ -948,5 +958,5 @@ function getpaid_session() {
  * @since 1.0.19
  */
 function getpaid_notes() {
-    return getpaid()->notes;
+    return getpaid()->get( 'notes' );
 }
