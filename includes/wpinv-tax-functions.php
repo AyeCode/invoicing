@@ -252,66 +252,6 @@ function wpinv_tax_amount() {
     return apply_filters( 'wpinv_tax_amount', $output );
 }
 
-function wpinv_recalculated_tax() {
-    define( 'WPINV_RECALCTAX', true );
-}
-add_action( 'wp_ajax_wpinv_recalculate_tax', 'wpinv_recalculated_tax', 1 );
-
-function wpinv_recalculate_tax( $return = false ) {
-    $invoice_id = (int)wpinv_get_invoice_cart_id();
-    if ( empty( $invoice_id ) ) {
-        return false;
-    }
-    
-    $invoice = wpinv_get_invoice_cart( $invoice_id );
-
-    if ( empty( $invoice ) ) {
-        return false;
-    }
-
-    if ( empty( $_POST['country'] ) ) {
-        $_POST['country'] = !empty($invoice->country) ? $invoice->country : wpinv_get_default_country();
-    }
-        
-    $invoice->country = sanitize_text_field($_POST['country']);
-    $invoice->set( 'country', sanitize_text_field( $_POST['country'] ) );
-    if (isset($_POST['state'])) {
-        $invoice->state = sanitize_text_field($_POST['state']);
-        $invoice->set( 'state', sanitize_text_field( $_POST['state'] ) );
-    }
-
-    $invoice->cart_details  = wpinv_get_cart_content_details();
-    
-    $subtotal               = wpinv_get_cart_subtotal( $invoice->cart_details );
-    $tax                    = wpinv_get_cart_tax( $invoice->cart_details );
-    $total                  = wpinv_get_cart_total( $invoice->cart_details );
-
-    $invoice->tax           = $tax;
-    $invoice->subtotal      = $subtotal;
-    $invoice->total         = $total;
-
-    $invoice->save();
-    
-    if ( $invoice->is_free_trial() ) {
-        $total = 0;
-    }
-    
-    $response = array(
-        'total'        => html_entity_decode( wpinv_price( wpinv_format_amount( $total ) ), ENT_COMPAT, 'UTF-8' ),
-        'total_raw'    => $total,
-        'free'         => !( (float)$total > 0 ) && $invoice->is_free() ? true : false,
-        'html'         => wpinv_checkout_cart( $invoice->cart_details, false ),
-    );
-    
-    if ( $return ) {
-        return $response;
-    }
-
-    wp_send_json( $response );
-}
-add_action( 'wp_ajax_wpinv_recalculate_tax', 'wpinv_recalculate_tax' );
-add_action( 'wp_ajax_nopriv_wpinv_recalculate_tax', 'wpinv_recalculate_tax' );
-
 // VAT Settings
 function wpinv_vat_rate_add_callback( $args ) {
     ?>

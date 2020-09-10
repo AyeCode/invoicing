@@ -104,7 +104,7 @@ add_action( 'getpaid_invoice_details', 'getpaid_invoice_details_main', 50 );
  * @return string
  */
 function wpinv_get_templates_dir() {
-    return WPINV_PLUGIN_DIR . 'templates';
+    return getpaid_template()->templates_dir;
 }
 
 /**
@@ -113,7 +113,7 @@ function wpinv_get_templates_dir() {
  * @return string
  */
 function wpinv_get_templates_url() {
-    return WPINV_PLUGIN_URL . 'templates';
+    return getpaid_template()->templates_url;
 }
 
 /**
@@ -126,29 +126,7 @@ function wpinv_get_templates_url() {
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
  */
 function wpinv_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
-
-    // Make variables available to the template.
-    if ( ! empty( $args ) && is_array( $args ) ) {
-		extract( $args );
-	}
-
-    // Locate the template.
-	$located = wpinv_locate_template( $template_name, $template_path, $default_path );
-
-    // Abort if the file does not exist.
-	if ( ! file_exists( $located ) ) {
-        _doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', $located ), '2.1' );
-		return;
-	}
-
-    // Fires before loading a template.
-	do_action( 'wpinv_before_template_part', $template_name, $template_path, $located, $args );
-
-    // Load the template.
-	include( $located );
-
-    // Fires after loading a template.
-	do_action( 'wpinv_after_template_part', $template_name, $template_path, $located, $args );
+    return getpaid_template()->display_template( $template_name, $args, $template_path, $default_path );
 }
 
 /**
@@ -162,9 +140,7 @@ function wpinv_get_template( $template_name, $args = array(), $template_path = '
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
  */
 function wpinv_get_template_html( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
-	ob_start();
-	wpinv_get_template( $template_name, $args, $template_path, $default_path );
-	return ob_get_clean();
+	return getpaid_template()->get_template( $template_name, $args, $template_path, $default_path );
 }
 
 /**
@@ -195,23 +171,7 @@ function wpinv_get_theme_template_dir_name() {
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
  */
 function wpinv_locate_template( $template_name, $template_path = '', $default_path = '' ) {
-
-    // Load the defaults for the template path and default path.
-    $template_path = empty( $template_path ) ? wpinv_template_path() : $template_path;
-    $default_path  = empty( $default_path ) ? WPINV_PLUGIN_DIR . 'templates/' : $default_path;
-
-    // Check if the template was overidden.
-    $template = locate_template(
-        array( trailingslashit( $template_path ) . $template_name )
-    );
-
-    // Maybe replace it with a default path.
-    if ( empty( $template ) && ! empty( $default_path ) ) {
-        $template = trailingslashit( $default_path ) . $template_name;
-    }
-
-    // Return what we found.
-    return apply_filters( 'wpinv_locate_template', $template, $template_name, $template_path, $default_path );
+    return getpaid_template()->locate_template( $template_name, $template_path, $default_path );
 }
 
 function wpinv_get_template_part( $slug, $name = null, $load = true ) {
@@ -1247,28 +1207,6 @@ function wpinv_checkout_form() {
 
 }
 
-function wpinv_checkout_cart( $cart_details = array(), $echo = true ) {
-    global $ajax_cart_details;
-    $ajax_cart_details = $cart_details;
-
-    ob_start();
-    do_action( 'wpinv_before_checkout_cart' );
-    echo '<div id="wpinv_checkout_cart_form" method="post">';
-        echo '<div id="wpinv_checkout_cart_wrap">';
-            wpinv_get_template_part( 'wpinv-checkout-cart' );
-        echo '</div>';
-    echo '</div>';
-    do_action( 'wpinv_after_checkout_cart' );
-    $content = ob_get_clean();
-
-    if ( $echo ) {
-        echo $content;
-    } else {
-        return $content;
-    }
-}
-add_action( 'wpinv_checkout_cart', 'wpinv_checkout_cart', 10 );
-
 function wpinv_empty_cart_message() {
 	return apply_filters( 'wpinv_empty_cart_message', '<span class="wpinv_empty_cart">' . __( 'Your cart is empty.', 'invoicing' ) . '</span>' );
 }
@@ -1288,19 +1226,6 @@ function wpinv_empty_checkout_cart() {
     );
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
-
-function wpinv_checkout_cart_columns() {
-    $default = 3;
-    if ( wpinv_item_quantities_enabled() ) {
-        $default++;
-    }
-
-    if ( wpinv_use_taxes() ) {
-        $default++;
-    }
-
-    return apply_filters( 'wpinv_checkout_cart_columns', $default );
-}
 
 function wpinv_receipt_billing_address( $invoice_id = 0 ) {
     $invoice = wpinv_get_invoice( $invoice_id );
@@ -1934,4 +1859,13 @@ function wpinv_get_recurring_gateways_text() {
 
     return "<span class='form-text text-muted'>" . wp_sprintf( __( 'Subscription payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ) ."</span>";
 
+}
+
+/**
+ * Returns the template.
+ * 
+ * @return GetPaid_Template
+ */
+function getpaid_template() {
+    return getpaid()->get( 'template' );
 }

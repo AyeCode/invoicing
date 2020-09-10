@@ -22,32 +22,11 @@ class WPInv_Plugin {
 	public $version;
 
 	/**
-	 * Session instance.
+	 * Data container.
 	 *
-	 * @var WPInv_Session_Handler
+	 * @var array
 	 */
-	public $session;
-
-	/**
-	 * Notes instance.
-	 *
-	 * @var WPInv_Notes
-	 */
-	public $notes;
-
-	/**
-	 * Reports instance.
-	 *
-	 * @var WPInv_Reports
-	 */
-	public $reports;
-
-	/**
-	 * API instance.
-	 *
-	 * @var WPInv_API
-	 */
-	public $api;
+	protected $data = array();
 
 	/**
 	 * Form elements instance.
@@ -69,13 +48,6 @@ class WPInv_Plugin {
 	public $gateways;
 
 	/**
-	 * Post types instance.
-	 *
-	 * @var GetPaid_Post_Types
-	 */
-	public $post_types;
-
-	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -86,21 +58,50 @@ class WPInv_Plugin {
 	}
 
 	/**
+	 * Sets a custom data property.
+	 * 
+	 * @param string $prop The prop to set.
+	 * @param mixed $value The value to retrieve.
+	 */
+	public function set( $prop, $value ) {
+		$this->data[ $prop ] = $value;
+	}
+
+	/**
+	 * Gets a custom data property.
+	 * 
+	 * @param string $prop The prop to set.
+	 * @return mixed The value.
+	 */
+	public function get( $prop ) {
+
+		if ( isset( $this->data[ $prop ] ) ) {
+			return $this->data[ $prop ];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Define class properties.
 	 */
 	public function set_properties() {
 
-		$this->session       = new WPInv_Session_Handler();
-		$GLOBALS['wpi_session'] = $this->session; // Backwards compatibility.
-		$this->notes         = new WPInv_Notes();
-		$this->reports       = new WPInv_Reports();
-		$this->api           = new WPInv_API();
+		// Sessions.
+		$this->set( 'session', new WPInv_Session_Handler() );
+		$GLOBALS['wpi_session'] = $this->get( 'session' ); // Backwards compatibility.
 		$this->form_elements = new WPInv_Payment_Form_Elements();
 		$this->tax           = new WPInv_EUVat();
-		$this->post_types    = new GetPaid_Post_Types();
 		$this->tax->init();
 		$GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
 
+		// Init other objects.
+		$this->set( 'reports', new WPInv_Reports() ); // TODO: Refactor.
+		$this->set( 'session', new WPInv_Session_Handler() );
+		$this->set( 'notes', new WPInv_Notes() );
+		$this->set( 'api', new WPInv_API() );
+		$this->set( 'post_types', new GetPaid_Post_Types() );
+		$this->set( 'template', new GetPaid_Template() );
 	}
 
 	 /**
@@ -147,10 +148,10 @@ class WPInv_Plugin {
 			add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 		}
 
+		// Fires after registering actions.
+		do_action( 'wpinv_actions', $this );
+		do_action( 'getpaid_actions', $this );
 		add_action( 'admin_init', array( &$this, 'activation_redirect') );
-
-		// Fires after registering core hooks.
-		do_action_ref_array( 'wpinv_actions', array( &$this ) );
 
 	}
 

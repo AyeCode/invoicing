@@ -500,3 +500,60 @@ function wpinv_die( $message = '', $title = '', $status = 400 ) {
     add_filter( 'wp_die_handler', 'wpinv_die_handler', 10, 3 );
     wp_die( $message, $title, array( 'response' => $status ));
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_cart_columns() {
+    return 4;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_set_cart_discount() {
+    return array();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_unset_cart_discount() {
+    return array();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_discounts_html() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_discounts_html() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_display_cart_discount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_multiple_discounts_allowed() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_items_discount_amount() {
+    return 0;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_discount_amount() {
+    return 0;
+}

@@ -1,32 +1,47 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Contains discount functions.
  *
  * @since 1.0.0
  * @package Invoicing
  */
+ 
+defined( 'ABSPATH' ) || exit;
 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
-
+/**
+ * Returns an array of discount type.
+ * 
+ * @return array
+ */
 function wpinv_get_discount_types() {
-    $discount_types = array(
-                        'percent'   => __( 'Percentage', 'invoicing' ),
-                        'flat'     => __( 'Flat Amount', 'invoicing' ),
-                    );
-    return (array)apply_filters( 'wpinv_discount_types', $discount_types );
+    return apply_filters(
+        'wpinv_discount_types',
+        array(
+            'percent'   => __( 'Percentage', 'invoicing' ),
+            'flat'     => __( 'Flat Amount', 'invoicing' ),
+        )
+    );
 }
 
+/**
+ * Returns the name of a discount type.
+ * 
+ * @return string
+ */
 function wpinv_get_discount_type_name( $type = '' ) {
     $types = wpinv_get_discount_types();
-    return isset( $types[ $type ] ) ? $types[ $type ] : '';
+    return isset( $types[ $type ] ) ? $types[ $type ] : $type;
 }
 
+/**
+ * Deletes a discount via the admin page.
+ * 
+ * @return string
+ */
 function wpinv_delete_discount( $data ) {
+
     if ( ! isset( $data['_wpnonce'] ) || ! wp_verify_nonce( $data['_wpnonce'], 'wpinv_discount_nonce' ) ) {
-        wp_die( __( 'Trying to cheat or something?', 'invoicing' ), __( 'Error', 'invoicing' ), array( 'response' => 403 ) );
+        exit;
     }
 
     if( ! wpinv_current_user_can_manage_invoicing() ) {
@@ -585,18 +600,12 @@ function wpinv_is_discount_maxed_out( $discount ) {
  * Checks if an amount meets a discount's minimum amount.
  *
  * @param int|array|string|WPInv_Discount $discount discount data, object, ID or code.
+ * @param float $amount The amount to check for.
  * @return bool
  */
-function wpinv_discount_is_min_met( $discount ) {
-    $discount    = wpinv_get_discount_obj( $discount );
-    $cart_amount = (float)wpinv_get_cart_discountable_subtotal( $discount->ID );
-    $min_met     = $discount->is_minimum_amount_met( $cart_amount );
-
-    if ( ! $min_met ) {
-        wpinv_set_error( 'wpinv-discount-error', sprintf( __( 'Minimum invoice amount should be %s', 'invoicing' ), wpinv_price( wpinv_format_amount( $discount->min_total ) ) ) );
-    }
-
-    return $min_met;
+function wpinv_discount_is_min_met( $discount, $amount = 0 ) {
+    $discount = wpinv_get_discount_obj( $discount );
+    return $discount->is_minimum_amount_met( $amount );
 }
 
 /**
@@ -836,62 +845,6 @@ function wpinv_format_discount_rate( $type, $amount ) {
     return apply_filters( 'wpinv_format_discount_rate', $rate, $type, $amount );
 }
 
-function wpinv_set_cart_discount( $code = '' ) {
-    if ( wpinv_multiple_discounts_allowed() ) {
-        // Get all active cart discounts
-        $discounts = wpinv_get_cart_discounts();
-    } else {
-        $discounts = false; // Only one discount allowed per purchase, so override any existing
-    }
-
-    if ( $discounts ) {
-        $key = array_search( strtolower( $code ), array_map( 'strtolower', $discounts ) );
-        if( false !== $key ) {
-            unset( $discounts[ $key ] ); // Can't set the same discount more than once
-        }
-        $discounts[] = $code;
-    } else {
-        $discounts = array();
-        $discounts[] = $code;
-    }
-    $discounts = array_values( $discounts );
-
-    $data = wpinv_get_checkout_session();
-    if ( empty( $data ) ) {
-        $data = array();
-    } else {
-        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
-            $payment_meta['user_info']['discount']  = implode( ',', $discounts );
-            update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
-        }
-    }
-    $data['cart_discounts'] = $discounts;
-
-    wpinv_set_checkout_session( $data );
-
-    return $discounts;
-}
-
-function wpinv_unset_cart_discount( $code = '' ) {
-    $discounts = wpinv_get_cart_discounts();
-
-    if ( $code && !empty( $discounts ) && in_array( $code, $discounts ) ) {
-        $key = array_search( $code, $discounts );
-        unset( $discounts[ $key ] );
-
-        $data = wpinv_get_checkout_session();
-        $data['cart_discounts'] = $discounts;
-        if ( !empty( $data['invoice_id'] ) && $payment_meta = wpinv_get_invoice_meta( $data['invoice_id'] ) ) {
-            $payment_meta['user_info']['discount']  = !empty( $discounts ) ? implode( ',', $discounts ) : '';
-            update_post_meta( $data['invoice_id'], '_wpinv_payment_meta', $payment_meta );
-        }
-
-        wpinv_set_checkout_session( $data );
-    }
-
-    return $discounts;
-}
-
 function wpinv_unset_all_cart_discounts() {
     $data = wpinv_get_checkout_session();
 
@@ -943,214 +896,6 @@ function wpinv_get_cart_discounted_amount( $items = array(), $discounts = false 
     return apply_filters( 'wpinv_get_cart_discounted_amount', $amount );
 }
 
-function wpinv_get_cart_items_discount_amount( $items = array(), $discount = false ) {
-    $items  = !empty( $items ) ? $items : wpinv_get_cart_content_details();
-
-    if ( empty( $discount ) || empty( $items ) ) {
-        return 0;
-    }
-
-    $amount = 0;
-
-    foreach ( $items as $item ) {
-        $amount += wpinv_get_cart_item_discount_amount( $item, $discount );
-    }
-
-    $amount = wpinv_round_amount( $amount );
-
-    return $amount;
-}
-
-function wpinv_get_cart_item_discount_amount( $item = array(), $discount = false ) {
-    global $wpinv_is_last_cart_item, $wpinv_flat_discount_total;
-
-    $amount = 0;
-
-    if ( empty( $item ) || empty( $item['id'] ) ) {
-        return $amount;
-    }
-
-    if ( empty( $item['quantity'] ) ) {
-        return $amount;
-    }
-
-    if ( empty( $item['options'] ) ) {
-        $item['options'] = array();
-    }
-
-    $price            = wpinv_get_cart_item_price( $item['id'], $item, $item['options'] );
-    $discounted_price = $price;
-
-    $discounts = false === $discount ? wpinv_get_cart_discounts() : $discount;
-    if ( empty( $discounts ) ) {
-        return $amount;
-    }
-
-    if ( $discounts ) {
-        if ( is_array( $discounts ) ) {
-            $discounts = array_values( $discounts );
-        } else {
-            $discounts = explode( ',', $discounts );
-        }
-    }
-
-    if( $discounts ) {
-        foreach ( $discounts as $discount ) {
-            $code_id = wpinv_get_discount_id_by_code( $discount );
-
-            // Check discount exists
-            if( $code_id === false ) {
-                continue;
-            }
-
-            $reqs           = wpinv_get_discount_item_reqs( $code_id );
-            $excluded_items = wpinv_get_discount_excluded_items( $code_id );
-
-            // Make sure requirements are set and that this discount shouldn't apply to the whole cart
-            if ( !empty( $reqs ) && wpinv_is_discount_not_global( $code_id ) ) {
-                foreach ( $reqs as $item_id ) {
-                    if ( $item_id == $item['id'] && ! in_array( $item['id'], $excluded_items ) ) {
-                        $discounted_price -= wpinv_get_discounted_amount( $discount, $price );
-                    }
-                }
-            } else {
-                // This is a global cart discount
-                if ( !in_array( $item['id'], $excluded_items ) ) {
-                    if ( 'flat' === wpinv_get_discount_type( $code_id ) ) {
-                        $items_subtotal    = 0.00;
-                        $cart_items        = wpinv_get_cart_contents();
-
-                        foreach ( $cart_items as $cart_item ) {
-                            if ( ! in_array( $cart_item['id'], $excluded_items ) ) {
-                                $options = !empty( $cart_item['options'] ) ? $cart_item['options'] : array();
-                                $item_price      = wpinv_get_cart_item_price( $cart_item['id'], $cart_item, $options );
-                                $items_subtotal += $item_price * $cart_item['quantity'];
-                            }
-                        }
-
-                        $subtotal_percent  = ( ( $price * $item['quantity'] ) / $items_subtotal );
-                        $code_amount       = wpinv_get_discount_amount( $code_id );
-                        $discounted_amount = $code_amount * $subtotal_percent;
-                        $discounted_price -= $discounted_amount;
-
-                        $wpinv_flat_discount_total += round( $discounted_amount, wpinv_currency_decimal_filter() );
-
-                        if ( $wpinv_is_last_cart_item && $wpinv_flat_discount_total < $code_amount ) {
-                            $adjustment = $code_amount - $wpinv_flat_discount_total;
-                            $discounted_price -= $adjustment;
-                        }
-                    } else {
-                        $discounted_price -= wpinv_get_discounted_amount( $discount, $price );
-                    }
-                }
-            }
-        }
-
-        $amount = ( $price - apply_filters( 'wpinv_get_cart_item_discounted_amount', $discounted_price, $discounts, $item, $price ) );
-
-        if ( 'flat' !== wpinv_get_discount_type( $code_id ) ) {
-            $amount = $amount * $item['quantity'];
-        }
-    }
-
-    return $amount;
-}
-
-function wpinv_cart_discounts_html( $items = array() ) {
-    echo wpinv_get_cart_discounts_html( $items );
-}
-
-function wpinv_get_cart_discounts_html( $items = array(), $discounts = false ) {
-    global $wpi_cart_columns;
-
-    $items  = !empty( $items ) ? $items : wpinv_get_cart_content_details();
-
-    if ( !$discounts ) {
-        $discounts = wpinv_get_cart_discounts( $items );
-    }
-
-    if ( !$discounts ) {
-        return;
-    }
-
-    $discounts = is_array( $discounts ) ? $discounts : array( $discounts );
-
-    $html = '';
-
-    foreach ( $discounts as $discount ) {
-        $discount_id    = wpinv_get_discount_id_by_code( $discount );
-        $discount_value = wpinv_get_discount_amount( $discount_id );
-        $rate           = wpinv_format_discount_rate( wpinv_get_discount_type( $discount_id ), $discount_value );
-        $amount         = wpinv_get_cart_items_discount_amount( $items, $discount );
-        $remove_btn     = '<a title="' . esc_attr__( 'Remove discount', 'invoicing' ) . '" data-code="' . $discount . '" data-value="' . $discount_value . '" class="wpi-discount-remove" href="javascript:void(0);">[<i class="fa fa-times" aria-hidden="true"></i>]</a> ';
-
-        $html .= '<tr class="wpinv_cart_footer_row wpinv_cart_discount_row">';
-        ob_start();
-        do_action( 'wpinv_checkout_table_discount_first', $items );
-        $html .= ob_get_clean();
-        $html .= '<td class="wpinv_cart_discount_label text-right" colspan="' . $wpi_cart_columns . '">' . $remove_btn . '<strong>' . wpinv_cart_discount_label( $discount, $rate, false ) . '</strong></td><td class="wpinv_cart_discount text-right"><span data-discount="' . $amount . '" class="wpinv_cart_discount_amount">&ndash;' . wpinv_price( wpinv_format_amount( $amount ) ) . '</span></td>';
-        ob_start();
-        do_action( 'wpinv_checkout_table_discount_last', $items );
-        $html .= ob_get_clean();
-        $html .= '</tr>';
-    }
-
-    return apply_filters( 'wpinv_get_cart_discounts_html', $html, $discounts, $rate );
-}
-
-function wpinv_display_cart_discount( /** @scrutinizer ignore-unused */ $formatted = false, $echo = false ) {
-    $discounts = wpinv_get_cart_discounts();
-
-    if ( empty( $discounts ) ) {
-        return false;
-    }
-
-    $discount_id  = wpinv_get_discount_id_by_code( $discounts[0] );
-    $amount       = wpinv_format_discount_rate( wpinv_get_discount_type( $discount_id ), wpinv_get_discount_amount( $discount_id ) );
-
-    if ( $echo ) {
-        echo $amount;
-    }
-
-    return $amount;
-}
-
-function wpinv_remove_cart_discount() {
-    if ( !isset( $_GET['discount_id'] ) || ! isset( $_GET['discount_code'] ) ) {
-        return;
-    }
-
-    do_action( 'wpinv_pre_remove_cart_discount', absint( $_GET['discount_id'] ) );
-
-    wpinv_unset_cart_discount( urldecode( $_GET['discount_code'] ) );
-
-    do_action( 'wpinv_post_remove_cart_discount', absint( $_GET['discount_id'] ) );
-
-    wp_redirect( wpinv_get_checkout_uri() ); wpinv_die();
-}
-add_action( 'wpinv_remove_cart_discount', 'wpinv_remove_cart_discount' );
-
-function wpinv_maybe_remove_cart_discount() {
-    $discounts = wpinv_get_cart_discounts();
-
-    if ( !$discounts ) {
-        return;
-    }
-
-    $discounts = array_filter( $discounts );
-    foreach ( $discounts as $discount ) {
-        if ( !wpinv_is_discount_valid( $discount ) ) {
-            wpinv_unset_cart_discount( $discount );
-        }
-    }
-}
-add_action( 'wpinv_post_remove_from_cart', 'wpinv_maybe_remove_cart_discount' );
-
-function wpinv_multiple_discounts_allowed() {
-    $ret = wpinv_get_option( 'allow_multiple_discounts', false );
-    return (bool) apply_filters( 'wpinv_multiple_discounts_allowed', $ret );
-}
-
 function wpinv_get_discount_label( $code, $echo = true ) {
     $label = wp_sprintf( __( 'Discount%1$s', 'invoicing' ), ( $code != '' && $code != 'none' ? ' (<code>' . $code . '</code>)': '' ) );
     $label = apply_filters( 'wpinv_get_discount_label', $label, $code );
@@ -1180,35 +925,6 @@ function wpinv_check_delete_discount( $check, $post ) {
 
     return $check;
 }
-
-function wpinv_checkout_form_validate_discounts() {
-    global $wpi_checkout_id;
-
-    $discounts = wpinv_get_cart_discounts();
-    $discounts = array_filter( $discounts );
-
-    if ( !empty( $discounts ) ) {
-        $invalid = false;
-
-        foreach ( $discounts as $key => $code ) {
-            if ( !wpinv_is_discount_valid( $code, (int)wpinv_get_user_id( $wpi_checkout_id ) ) ) {
-                $invalid = true;
-
-                wpinv_unset_cart_discount( $code );
-            }
-        }
-
-        if ( $invalid ) {
-            $errors = wpinv_get_errors();
-            $error  = !empty( $errors['wpinv-discount-error'] ) ? $errors['wpinv-discount-error'] . ' ' : '';
-            $error  .= __( 'The discount has been removed from cart.', 'invoicing' );
-            wpinv_set_error( 'wpinv-discount-error', $error );
-
-            wpinv_recalculate_tax( true );
-        }
-    }
-}
-add_action( 'wpinv_before_checkout_form', 'wpinv_checkout_form_validate_discounts', -10 );
 
 function wpinv_discount_amount() {
     $output = 0.00;

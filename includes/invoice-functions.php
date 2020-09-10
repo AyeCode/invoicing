@@ -533,19 +533,18 @@ function wpinv_get_invoice_id_by_key( $invoice_key ) {
  * 
  * @param int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object.
  * @param string $type Optionally filter by type i.e customer|system
- * @return WPInv_Invoice|null
+ * @return array|null
  */
 function wpinv_get_invoice_notes( $invoice = 0, $type = '' ) {
-    global $invoicing;
 
     // Prepare the invoice.
-    $invoice = new WPInv_Invoice( $invoice );
-    if ( ! $invoice->exists() ) {
+    $invoice = wpinv_get_invoice( $invoice );
+    if ( empty( $invoice ) ) {
         return NULL;
     }
 
     // Fetch notes.
-    $notes = $invoicing->notes->get_invoice_notes( $invoice->get_id(), $type );
+    $notes = getpaid_notes()->get_invoice_notes( $invoice->get_id(), $type );
 
     // Filter the notes.
     return apply_filters( 'wpinv_invoice_notes', $notes, $invoice->get_id(), $type );
@@ -678,60 +677,6 @@ function getpaid_invoice_history( $user_id = 0 ) {
     return wpinv_get_template_html( 'invoice-history.php', compact( 'invoices' ) );
 
 }
-
-function wpinv_pay_for_invoice() {
-    global $wpinv_euvat;
-    
-    if ( isset( $_GET['invoice_key'] ) ) {
-        $checkout_uri   = wpinv_get_checkout_uri();
-        $invoice_key    = sanitize_text_field( $_GET['invoice_key'] );
-        
-        if ( empty( $invoice_key ) ) {
-            wpinv_set_error( 'invalid_invoice', __( 'Invoice not found', 'invoicing' ) );
-            wp_redirect( $checkout_uri );
-            exit();
-        }
-        
-        do_action( 'wpinv_check_pay_for_invoice', $invoice_key );
-
-        $invoice_id    = wpinv_get_invoice_id_by_key( $invoice_key );
-        $user_can_view = wpinv_can_view_receipt( $invoice_key );
-        if ( $user_can_view && isset( $_GET['invoice-id'] ) ) {
-            $invoice_id     = (int)$_GET['invoice-id'];
-            $user_can_view  = $invoice_key == wpinv_get_payment_key( (int)$_GET['invoice-id'] ) ? true : false;
-        }
-        
-        if ( $invoice_id && $user_can_view && ( $invoice = wpinv_get_invoice( $invoice_id ) ) ) {
-            if ( $invoice->needs_payment() ) {
-                $data                   = array();
-                $data['invoice_id']     = $invoice_id;
-                $data['cart_discounts'] = $invoice->get_discounts( true );
-                
-                wpinv_set_checkout_session( $data );
-                
-                if ( wpinv_get_option( 'vat_ip_country_default' ) ) {
-                    $_POST['country']   = $wpinv_euvat->get_country_by_ip();
-                    $_POST['state']     = $_POST['country'] == $invoice->country ? $invoice->state : '';
-                    
-                    wpinv_recalculate_tax( true );
-                }
-                
-            } else {
-                $checkout_uri = $invoice->get_view_url();
-            }
-        } else {
-            wpinv_set_error( 'invalid_invoice', __( 'You are not allowed to view this invoice', 'invoicing' ) );
-            
-            $checkout_uri = is_user_logged_in() ? wpinv_get_history_page_uri() : wp_login_url( get_permalink() );
-        }
-        
-        if(wp_redirect( $checkout_uri )){
-            exit;
-        };
-        wpinv_die();
-    }
-}
-add_action( 'wpinv_pay_for_invoice', 'wpinv_pay_for_invoice' );
 
 function wpinv_invoice_status_label( $status, $status_display = '' ) {
     if ( empty( $status_display ) ) {
