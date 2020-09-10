@@ -156,7 +156,10 @@ class GetPaid_Post_Types {
 					'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
 					'show_in_nav_menus'     => false,
 					'supports'              => array( 'title', 'author', 'excerpt'  ),
-					'rewrite'               => true,
+					'rewrite'               => array(
+						'slug'              => 'invoice',
+						'with_front'        => false,
+					),
 					'query_var'             => false,
 					'capability_type'       => 'wpi_invoice',
 					'map_meta_cap'          => true,

@@ -151,8 +151,8 @@ class WPInv_Plugin {
 		// Fires after registering actions.
 		do_action( 'wpinv_actions', $this );
 		do_action( 'getpaid_actions', $this );
-
 		add_action( 'admin_init', array( &$this, 'activation_redirect') );
+
 	}
 
 	/**
@@ -694,13 +694,23 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function register_widgets() {
-		register_widget( "WPInv_Checkout_Widget" );
-		register_widget( "WPInv_History_Widget" );
-		register_widget( "WPInv_Receipt_Widget" );
-		register_widget( "WPInv_Subscriptions_Widget" );
-		register_widget( "WPInv_Buy_Item_Widget" );
-		register_widget( "WPInv_Messages_Widget" );
-		register_widget( 'WPInv_GetPaid_Widget' );
+		$widgets = apply_filters(
+			'getpaid_widget_classes',
+			array(
+				'WPInv_Checkout_Widget',
+				'WPInv_History_Widget',
+				'WPInv_Receipt_Widget',
+				'WPInv_Subscriptions_Widget',
+				'WPInv_Buy_Item_Widget',
+				'WPInv_Messages_Widget',
+				'WPInv_GetPaid_Widget'
+			)
+		);
+
+		foreach ( $widgets as $widget ) {
+			register_widget( $widget );
+		}
+		
 	}
 
 	/**
