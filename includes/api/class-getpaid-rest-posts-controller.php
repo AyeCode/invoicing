@@ -289,6 +289,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_item( $request ) {
+		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		// Fetch the item.
 		$object = $this->get_object( $request['id'] );
@@ -316,6 +317,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
+		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		// Can not create an existing item.
 		if ( ! empty( $request['id'] ) ) {
@@ -367,6 +369,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
+		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		// Fetch the item.
 		$object = $this->get_object( $request['id'] );
@@ -413,6 +416,8 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
+
 		$args                         = array();
 		$args['offset']               = $request['offset'];
 		$args['order']                = $request['order'];
@@ -503,6 +508,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function delete_item( $request ) {
+		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		// Fetch the item.
 		$item = $this->get_object( $request['id'] );
@@ -558,7 +564,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			);
 		}
 
-		if ( is_callable( array( $object, 'get_parent_id' ) ) ) {
+		if ( is_callable( array( $object, 'get_parent_id' ) ) && call_user_func(  array( $object, 'get_parent_id' )  ) ) {
 			$links['parent']  = array(
 				'href'       => rest_url( "$this->namespace/$this->rest_base/" . call_user_func(  array( $object, 'get_parent_id' )  ) ),
 				'embeddable' => true,
@@ -903,12 +909,14 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 *
 	 * @since  1.0.19
 	 * @param  WPInv_Invoice $invoice  Invoice items.
+	 * @param array            $fields Fields to include.
 	 * @return array
 	 */
 	protected function prepare_invoice_items( $invoice ) {
 		$items = array();
 
 		foreach( $invoice->get_items() as $item ) {
+
 			$item_data = $item->prepare_data_for_saving();
 
 			if ( 'amount' == $invoice->get_template() ) {
@@ -932,12 +940,10 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 */
 	protected function prepare_object_data( $object, $fields, $context = 'view' ) {
 
-		$data      = array();
-		$schema    = $this->get_item_schema();
-		$data_keys = array_keys( $schema['properties'] );
+		$data = array();
 
 		// Handle all writable props.
-		foreach ( $data_keys as $key ) {
+		foreach ( array_keys( $this->get_schema_properties() ) as $key ) {
 
 			// Abort if it is not included.
 			if ( ! empty( $fields ) && ! $this->is_field_included( $key, $fields ) ) {
@@ -981,9 +987,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 				continue;
 			}
 
-			// The value does not exist on an object.
-			$data[ $key ]     = apply_filters( "getpaid_{$this->post_type}_{$key}_object_data", null, $object );
-
 		}
 
 		return $data;
@@ -1018,6 +1021,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		$data    = $this->prepare_object_data( $object, $fields, $context );
 		$data    = $this->add_additional_fields_to_object( $data, $request );
+		$data    = $this->limit_object_to_requested_fields( $data, $fields );
 		$data    = $this->filter_response_by_context( $data, $context );
 
 		// Prepare the response.
