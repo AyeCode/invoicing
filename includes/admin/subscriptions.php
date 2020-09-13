@@ -59,6 +59,7 @@ function wpinv_recurring_subscription_details() {
 
 	$sub_id  = (int) $_GET['id'];
 	$sub     = new WPInv_Subscription( $sub_id );
+	$parent  = new WPInv_Invoice( $sub->parent_payment_id );
 
 	if ( empty( $sub ) ) {
 		die( __( 'Invalid subscription ID Provided.', 'invoicing' ) );
@@ -89,8 +90,8 @@ function wpinv_recurring_subscription_details() {
 										<td>
 											<?php
 											$frequency = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $sub->period, $sub->frequency );
-											$billing   = wpinv_price( wpinv_format_amount( $sub->recurring_amount ), wpinv_get_invoice_currency_code( $sub->parent_payment_id ) ) . ' / ' . $frequency;
-											$initial   = wpinv_price( wpinv_format_amount( $sub->initial_amount ), wpinv_get_invoice_currency_code( $sub->parent_payment_id ) );
+											$billing   = wpinv_price( wpinv_format_amount( $sub->recurring_amount ), $parent->get_currency() ) . ' / ' . $frequency;
+											$initial   = wpinv_price( wpinv_format_amount( $sub->initial_amount ), $parent->get_currency() );
 											printf( _x( '%s then %s', 'Initial subscription amount then billing cycle and amount', 'invoicing' ), $initial, $billing );
 											?>
 										</td>
@@ -115,7 +116,7 @@ function wpinv_recurring_subscription_details() {
 											<label for="tablecell"><?php _e( 'Initial Invoice:', 'invoicing' ); ?></label>
 										</td>
 										<td>
-                                            <a target="_blank" title="<?php _e( 'View invoice', 'invoicing' ); ?>" href="<?php echo esc_url( get_permalink( $sub->parent_payment_id ) ); ?>"><?php echo wpinv_get_invoice_number( $sub->parent_payment_id ); ?></a>&nbsp;&nbsp;&nbsp;<?php echo wp_sprintf( __( '( ID: %s )', 'invoicing' ), '<a title="' . esc_attr( __( 'View invoice details', 'invoicing' ) ) . '" href="' . get_edit_post_link( $sub->parent_payment_id ) . '" target="_blank">' . $sub->parent_payment_id . '</a>' ); ?></td>
+                                            <a target="_blank" title="<?php _e( 'View invoice', 'invoicing' ); ?>" href="<?php echo esc_url( get_permalink( $sub->parent_payment_id ) ); ?>"><?php echo wpinv_clean( $parent->get_number() ); ?></a>&nbsp;&nbsp;&nbsp;<?php echo wp_sprintf( __( '( ID: %s )', 'invoicing' ), '<a title="' . esc_attr( __( 'View invoice details', 'invoicing' ) ) . '" href="' . esc_html( get_edit_post_link( $sub->parent_payment_id ) ) . '" target="_blank">' . wpinv_clean( $sub->parent_payment_id ) . '</a>' ); ?></td>
 									</tr>
 									<tr>
 										<td class="row-title">
@@ -143,7 +144,7 @@ function wpinv_recurring_subscription_details() {
 										<td class="row-title">
 											<label for="tablecell"><?php _e( 'Payment Method:', 'invoicing' ); ?></label>
 										</td>
-										<td><?php echo wpinv_get_gateway_admin_label( wpinv_get_payment_gateway( $sub->parent_payment_id ) ); ?></td>
+										<td><?php echo wpinv_get_gateway_admin_label( $parent->get_gateway() ); ?></td>
 									</tr>
 									<tr>
 										<td class="row-title">
@@ -254,9 +255,9 @@ function wpinv_recurring_subscription_details() {
 							<?php foreach ( $payments as $payment ) : $invoice = wpinv_get_invoice( $payment->ID ); if ( empty( $invoice->ID ) ) continue; ?>
 								<tr>
 									<td><?php echo $payment->ID; ?></td>
-									<td><?php echo $invoice->get_total( true ); ?></td>
-									<td><?php echo $invoice->get_invoice_date(); ?></td>
-									<td><?php echo $invoice->get_status( true ); ?></td>
+									<td><?php echo wpinv_price( $invoice->get_total(), $invoice->get_currency() ); ?></td>
+									<td><?php echo wpinv_clean( $invoice->get_date_created() ); ?></td>
+									<td><?php echo wpinv_clean( $invoice->get_status_nicename() ); ?></td>
 									<td>
 										<a target="_blank" title="<?php _e( 'View invoice', 'invoicing' ); ?>" href="<?php echo esc_url( get_permalink( $payment->ID ) ); ?>"><?php echo $invoice->get_number(); ?></a>
 										<?php do_action( 'wpinv_subscription_payments_actions', $sub, $payment ); ?>
