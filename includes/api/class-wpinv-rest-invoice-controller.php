@@ -69,7 +69,27 @@ class WPInv_REST_Invoice_Controller extends GetPaid_REST_Posts_Controller {
 					),
 					'default'     		=> array(),
 					'sanitize_callback' => 'wp_parse_id_list',
-				)
+				),
+
+				'parent'  	            => array(
+					'description'       => __( 'Limit result set to those of particular parent IDs.', 'invoicing' ),
+					'type'              => 'array',
+					'items'             => array(
+						'type'          => 'integer',
+					),
+					'sanitize_callback' => 'wp_parse_id_list',
+					'default'           => array(),
+				),
+
+				'parent_exclude'  	    => array(
+					'description'       => __( 'Limit result set to all items except those of a particular parent ID.', 'invoicing' ),
+					'type'              => 'array',
+					'items'             => array(
+						'type'          => 'integer',
+					),
+					'sanitize_callback' => 'wp_parse_id_list',
+					'default'           => array(),
+				),
 
 			)
 

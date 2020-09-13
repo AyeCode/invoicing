@@ -2,8 +2,8 @@
 /**
  * GetPaid REST Posts controller class.
  *
- * Extends the GetPaid_REST_Controller class to provide functionalities for endpoints
- * that store data using CPTs
+ * Extends the GetPaid_REST_CRUD_Controller class to provide functionalities for endpoints
+ * that store CRUD data using CPTs
  *
  * @version 1.0.19
  */
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @package Invoicing
  */
-class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
+class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 
     /**
 	 * Post type.
@@ -32,13 +32,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	public $public = false;
 
 	/**
-	 * Contains this controller's class name.
-	 *
-	 * @var string
-	 */
-	public $crud_class;
-
-	/**
 	 * Registers the routes for the objects of the controller.
 	 *
 	 * @since 1.0.19
@@ -47,67 +40,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 */
 	public function register_namespace_routes( $namespace ) {
 
-		register_rest_route(
-			$namespace,
-			'/' . $this->rest_base,
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-					'args'                => $this->get_collection_params(),
-				),
-				array(
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'create_item' ),
-					'permission_callback' => array( $this, 'create_item_permissions_check' ),
-					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
-				),
-				'schema' => array( $this, 'get_public_item_schema' ),
-			)
-		);
-
-		$get_item_args = array(
-			'context' => $this->get_context_param( array( 'default' => 'view' ) ),
-		);
-
-		register_rest_route(
-			$namespace,
-			'/' . $this->rest_base . '/(?P<id>[\d]+)',
-			array(
-				'args'   => array(
-					'id' => array(
-						'description' => __( 'Unique identifier for the object.', 'invoicing' ),
-						'type'        => 'integer',
-					),
-				),
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_item' ),
-					'permission_callback' => array( $this, 'get_item_permissions_check' ),
-					'args'                => $get_item_args,
-				),
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
-					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
-				),
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
-					'args'                => array(
-						'force' => array(
-							'type'        => 'boolean',
-							'default'     => false,
-							'description' => __( 'Whether to bypass Trash and force deletion.', 'invoicing' ),
-						),
-					),
-				),
-				'schema' => array( $this, 'get_public_item_schema' ),
-			)
-		);
+		parent::register_namespace_routes( $namespace );
 
 		register_rest_route(
 			$namespace,
@@ -143,13 +76,9 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 			'batch'  => 'edit_others_posts',
 		);
 
-		if ( 'revision' === $this->post_type ) {
-			$permission = false;
-		} else {
-			$cap              = $contexts[ $context ];
-			$post_type_object = get_post_type_object( $this->post_type );
-			$permission       = current_user_can( $post_type_object->cap->$cap, $object_id );
-		}
+		$cap              = $contexts[ $context ];
+		$post_type_object = get_post_type_object( $this->post_type );
+		$permission       = current_user_can( $post_type_object->cap->$cap, $object_id );
 
 		return apply_filters( 'getpaid_rest_check_permissions', $permission, $context, $object_id, $this->post_type );
 	}
@@ -234,48 +163,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	}
 
 	/**
-	 * Saves a single object.
-	 *
-	 * @param GetPaid_Data $object Object to save.
-	 * @return WP_Error|GetPaid_Data
-	 */
-	protected function save_object( $object ) {
-		$object->save();
-
-		if ( ! empty( $object->last_error ) ) {
-			return new WP_Error( 'rest_cannot_save', $object->last_error, array( 'status' => 400 ) );
-		}
-
-		return new $this->crud_class( $object->get_id() );
-	}
-
-	/**
-	 * Returns the item's object.
-	 *
-	 * Child classes must implement this method.
-	 * @since 1.0.13
-	 *
-	 * @param int|WP_Post $object_id Supplied ID.
-	 * @return GetPaid_Data|WP_Error GetPaid_Data object if ID is valid, WP_Error otherwise.
-	 */
-	protected function get_object( $object_id ) {
-
-		// Do we have an object?
-		if ( empty( $this->crud_class ) || ! class_exists( $this->crud_class ) ) {
-			return new WP_Error( 'no_crud_class', __( 'You need to specify a CRUD class for this controller', 'invoicing' ) );
-		}
-
-		// Fetch the object.
-		$object = new $this->crud_class( $object_id );
-		if ( ! empty( $object->last_error ) ) {
-			return new WP_Error( 'rest_object_invalid_id', $object->last_error, array( 'status' => 404 ) );
-		}
-
-		return $object->get_id() ? $object : new WP_Error( 'rest_object_invalid_id', __( 'Invalid ID.', 'invoicing' ), array( 'status' => 404 ) );
-
-	}
-
-	/**
 	 * @deprecated
 	 */
 	public function get_post( $object_id ) {
@@ -289,22 +176,13 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_item( $request ) {
-		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
-		// Fetch the item.
-		$object = $this->get_object( $request['id'] );
-
-		if ( is_wp_error( $object ) ) {
-			return $object;
-		}
-
-		// Generate a response.
-		$data     = $this->prepare_item_for_response( $object, $request );
-		$response = rest_ensure_response( $data );
+		// Fetch item.
+		$response = parent::get_item( $request );
 
 		// (Maybe) add a link to the html pagee.
 		if ( $this->public && ! is_wp_error( $response ) ) {
-			$response->link_header( 'alternate', get_permalink( $object->get_id() ), array( 'type' => 'text/html' ) );
+			$response->link_header( 'alternate', get_permalink( $this->data_object->get_id() ), array( 'type' => 'text/html' ) );
 		}
 
 		return $response;
@@ -317,49 +195,26 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
-		// Can not create an existing item.
-		if ( ! empty( $request['id'] ) ) {
-			/* translators: %s: post type */
-			return new WP_Error( "getpaid_rest_{$this->post_type}_exists", __( 'Cannot create existing resource.', 'invoicing' ), array( 'status' => 400 ) );
+		// Create item.
+		$response = parent::create_item( $request );
+
+		// Fire a hook after an item is created.
+		if ( ! is_wp_error( $response ) ) {
+
+			/**
+			 * Fires after a single item is created or updated via the REST API.
+			 *
+			 * @param WP_Post         $post      Post object.
+			 * @param WP_REST_Request $request   Request object.
+			 * @param boolean         $creating  True when creating item, false when updating.
+			 */
+			do_action( "getpaid_rest_insert_{$this->post_type}", $this->data_object, $request, true );
+
 		}
-
-		// Generate a GetPaid_Data object from the request.
-		$object = $this->prepare_item_for_database( $request );
-		if ( is_wp_error( $object ) ) {
-			return $object;
-		}
-
-		// Save the object.
-		$object = $this->save_object( $object );
-		if ( is_wp_error( $object ) ) {
-			return $object;
-		}
-
-		// Save special fields.
-		$save_special = $this->update_additional_fields_for_object( $object, $request );
-		if ( is_wp_error( $save_special ) ) {
-			$object->delete( true );
-			return $save_special;
-		}
-
-		/**
-		 * Fires after a single item is created or updated via the REST API.
-		 *
-		 * @param WP_Post         $post      Post object.
-		 * @param WP_REST_Request $request   Request object.
-		 * @param boolean         $creating  True when creating item, false when updating.
-		 */
-		do_action( "getpaid_rest_insert_{$this->post_type}", $object, $request, true );
-
-		$request->set_param( 'context', 'edit' );
-		$response = $this->prepare_item_for_response( $object, $request );
-		$response = rest_ensure_response( $response );
-		$response->set_status( 201 );
-		$response->header( 'Location', rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $object->get_id() ) ) );
 
 		return $response;
+
 	}
 
 	/**
@@ -369,44 +224,26 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
-		// Fetch the item.
-		$object = $this->get_object( $request['id'] );
-		if ( is_wp_error( $object ) ) {
-			return $object;
+		// Create item.
+		$response = parent::update_item( $request );
+
+		// Fire a hook after an item is created.
+		if ( ! is_wp_error( $response ) ) {
+
+			/**
+			 * Fires after a single item is created or updated via the REST API.
+			 *
+			 * @param WP_Post         $post      Post object.
+			 * @param WP_REST_Request $request   Request object.
+			 * @param boolean         $creating  True when creating item, false when updating.
+			 */
+			do_action( "getpaid_rest_insert_{$this->post_type}", $this->data_object, $request, false );
+
 		}
 
-		// Prepare the item for saving.
-		$object = $this->prepare_item_for_database( $request );
-		if ( is_wp_error( $object ) ) {
-			return $object;
-		}
+		return $response;
 
-		// Save the item.
-		$object = $this->save_object( $object );
-		if ( is_wp_error( $object ) ) {
-			return $object;
-		}
-
-		// Save special fields (those added via hooks).
-		$save_special = $this->update_additional_fields_for_object( $object, $request );
-		if ( is_wp_error( $save_special ) ) {
-			return $save_special;
-		}
-
-		/**
-		 * Fires after a single item is created or updated via the REST API.
-		 *
-		 * @param GetPaid_Data    $object    GetPaid_Data object.
-		 * @param WP_REST_Request $request   Request object.
-		 * @param boolean         $creating  True when creating item, false when updating.
-		 */
-		do_action( "getpaid_rest_insert_{$this->post_type}", $object, $request, false );
-
-		$request->set_param( 'context', 'edit' );
-		$response = $this->prepare_item_for_response( $object, $request );
-		return rest_ensure_response( $response );
 	}
 
 	/**
@@ -416,7 +253,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		$args                         = array();
 		$args['offset']               = $request['offset'];
@@ -433,6 +269,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$args['post_status']          = wpinv_parse_list( $request['status'] );
 
 		$args['date_query'] = array();
+
 		// Set before into date query. Date query must be specified as an array of an array.
 		if ( isset( $request['before'] ) ) {
 			$args['date_query'][0]['before'] = $request['before'];
@@ -508,7 +345,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function delete_item( $request ) {
-		remove_filter( 'rest_post_dispatch', 'rest_filter_response_fields', 10, 3 );
 
 		// Fetch the item.
 		$item = $this->get_object( $request['id'] );
@@ -541,14 +377,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 */
 	protected function prepare_links( $object ) {
 
-		$links = array(
-			'self'       => array(
-				'href'   => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $object->get_id() ) ),
-			),
-			'collection' => array(
-				'href'   => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
-			),
-		);
+		$links = parent::prepare_links( $object );
 
 		if ( is_callable( array( $object, 'get_user_id' ) ) ) {
 			$links['user'] = array(
@@ -588,7 +417,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$query_args = array();
 		foreach ( $valid_vars as $var => $index ) {
 			if ( isset( $prepared_args[ $var ] ) ) {
-				$query_args[ $var ] = apply_filters( "getpaid_rest_query_var-{$var}", $prepared_args[ $var ] );
+				$query_args[ $var ] = apply_filters( "getpaid_rest_query_var-{$var}", $prepared_args[ $var ], $index );
 			}
 		}
 
@@ -662,108 +491,86 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return array
 	 */
 	public function get_collection_params() {
-		$params = parent::get_collection_params();
 
-		$params['context']['default'] = 'view';
+		return array_merge(
 
-		$params['status'] = array(
-			'default'           => $this->get_post_statuses(),
-			'description'       => __( 'Limit result set to resources assigned one or more statuses.', 'invoicing' ),
-			'type'              => array( 'array', 'string' ),
-			'items'             => array(
-				'enum'          => $this->get_post_statuses(),
-				'type'          => 'string',
-			),
-			'validate_callback' => 'rest_validate_request_arg',
-			'sanitize_callback' => array( $this, 'sanitize_post_statuses' ),
-		);
+			parent::get_collection_params(),
 
-		$params['after'] = array(
-			'description'        => __( 'Limit response to resources created after a given ISO8601 compliant date.', 'invoicing' ),
-			'type'               => 'string',
-			'format'             => 'string',
-			'validate_callback'  => 'rest_validate_request_arg',
-			'sanitize_callback'  => 'sanitize_text_field',
-		);
-		$params['before'] = array(
-			'description'        => __( 'Limit response to resources created before a given ISO8601 compliant date.', 'invoicing' ),
-			'type'               => 'string',
-			'format'             => 'string',
-			'validate_callback'  => 'rest_validate_request_arg',
-			'sanitize_callback'  => 'sanitize_text_field',
-		);
-		$params['exclude'] = array(
-			'description'       => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
-			'type'              => 'array',
-			'items'             => array(
-				'type'          => 'integer',
-			),
-			'default'           => array(),
-			'sanitize_callback' => 'wp_parse_id_list',
-			'validate_callback' => 'rest_validate_request_arg',
-		);
-		$params['include'] = array(
-			'description'       => __( 'Limit result set to specific ids.', 'invoicing' ),
-			'type'              => 'array',
-			'items'             => array(
-				'type'          => 'integer',
-			),
-			'default'           => array(),
-			'sanitize_callback' => 'wp_parse_id_list',
-			'validate_callback' => 'rest_validate_request_arg',
-		);
-		$params['offset'] = array(
-			'description'        => __( 'Offset the result set by a specific number of items.', 'invoicing' ),
-			'type'               => 'integer',
-			'sanitize_callback'  => 'absint',
-			'validate_callback'  => 'rest_validate_request_arg',
-		);
-		$params['order'] = array(
-			'description'        => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
-			'type'               => 'string',
-			'default'            => 'desc',
-			'enum'               => array( 'asc', 'desc' ),
-			'validate_callback'  => 'rest_validate_request_arg',
-		);
-		$params['orderby'] = array(
-			'description'        => __( 'Sort collection by object attribute.', 'invoicing' ),
-			'type'               => 'string',
-			'default'            => 'date',
-			'enum'               => array(
-				'date',
-				'id',
-				'include',
-				'title',
-				'slug',
-				'modified',
-			),
-			'validate_callback'  => 'rest_validate_request_arg',
-		);
-
-		$post_type_obj = get_post_type_object( $this->post_type );
-
-		if ( isset( $post_type_obj->hierarchical ) && $post_type_obj->hierarchical ) {
-			$params['parent'] = array(
-				'description'       => __( 'Limit result set to those of particular parent IDs.', 'invoicing' ),
-				'type'              => 'array',
-				'items'             => array(
-					'type'          => 'integer',
+			array(
+				'status' => array(
+					'default'           => $this->get_post_statuses(),
+					'description'       => __( 'Limit result set to resources assigned one or more statuses.', 'invoicing' ),
+					'type'              => array( 'array', 'string' ),
+					'items'             => array(
+						'enum'          => $this->get_post_statuses(),
+						'type'          => 'string',
+					),
+					'validate_callback' => 'rest_validate_request_arg',
+					'sanitize_callback' => array( $this, 'sanitize_post_statuses' ),
 				),
-				'sanitize_callback' => 'wp_parse_id_list',
-				'default'           => array(),
-			);
-			$params['parent_exclude'] = array(
-				'description'       => __( 'Limit result set to all items except those of a particular parent ID.', 'invoicing' ),
-				'type'              => 'array',
-				'items'             => array(
-					'type'          => 'integer',
+				'after' => array(
+					'description'        => __( 'Limit response to resources created after a given ISO8601 compliant date.', 'invoicing' ),
+					'type'               => 'string',
+					'format'             => 'string',
+					'validate_callback'  => 'rest_validate_request_arg',
+					'sanitize_callback'  => 'sanitize_text_field',
 				),
-				'sanitize_callback' => 'wp_parse_id_list',
-				'default'           => array(),
-			);
-		}
-
-		return $params;
+				'before' => array(
+					'description'        => __( 'Limit response to resources created before a given ISO8601 compliant date.', 'invoicing' ),
+					'type'               => 'string',
+					'format'             => 'string',
+					'validate_callback'  => 'rest_validate_request_arg',
+					'sanitize_callback'  => 'sanitize_text_field',
+				),
+				'exclude' => array(
+					'description'       => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
+					'type'              => 'array',
+					'items'             => array(
+						'type'          => 'integer',
+					),
+					'default'           => array(),
+					'sanitize_callback' => 'wp_parse_id_list',
+					'validate_callback' => 'rest_validate_request_arg',
+				),
+				'include' => array(
+					'description'       => __( 'Limit result set to specific ids.', 'invoicing' ),
+					'type'              => 'array',
+					'items'             => array(
+						'type'          => 'integer',
+					),
+					'default'           => array(),
+					'sanitize_callback' => 'wp_parse_id_list',
+					'validate_callback' => 'rest_validate_request_arg',
+				),
+				'offset' => array(
+					'description'        => __( 'Offset the result set by a specific number of items.', 'invoicing' ),
+					'type'               => 'integer',
+					'sanitize_callback'  => 'absint',
+					'validate_callback'  => 'rest_validate_request_arg',
+				),
+				'order' => array(
+					'description'        => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
+					'type'               => 'string',
+					'default'            => 'desc',
+					'enum'               => array( 'asc', 'desc' ),
+					'validate_callback'  => 'rest_validate_request_arg',
+				),
+				'orderby' => array(
+					'description'        => __( 'Sort collection by object attribute.', 'invoicing' ),
+					'type'               => 'string',
+					'default'            => 'date',
+					'enum'               => array(
+						'date',
+						'id',
+						'include',
+						'title',
+						'slug',
+						'modified',
+					),
+					'validate_callback'  => 'rest_validate_request_arg',
+				),
+			)
+		);
 	}
 
 	/**
@@ -776,7 +583,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	public function get_item_schema() {
 
 		// Maybe retrieve the schema from cache.
-		if ( $this->schema ) {
+		if ( ! empty( $this->schema ) ) {
 			return $this->add_additional_fields_schema( $this->schema );
 		}
 
@@ -795,16 +602,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 		$this->schema = $schema;
 
 		return $this->add_additional_fields_schema( $this->schema );
-	}
-
-	/**
-	 * Only return writable props from schema.
-	 *
-	 * @param  array $schema Schema.
-	 * @return bool
-	 */
-	public function filter_writable_props( $schema ) {
-		return empty( $schema['readonly'] );
 	}
 
 	/**
@@ -833,166 +630,6 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	}
 
 	/**
-	 * Prepare a single object for create or update.
-	 *
-	 * @since 1.0.19
-	 * @param  WP_REST_Request $request Request object.
-	 * @return GetPaid_Data|WP_Error Data object or WP_Error.
-	 */
-	protected function prepare_item_for_database( $request ) {
-
-		// Do we have an object?
-		if ( empty( $this->crud_class ) || ! class_exists( $this->crud_class ) ) {
-			return new WP_Error( 'no_crud_class', __( 'You need to specify a CRUD class for this controller', 'invoicing' ) );
-		}
-
-		// Prepare the object.
-		$id        = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
-		$object    = new $this->crud_class( $id );
-
-		// Abort if an error exists.
-		if ( ! empty( $object->last_error ) ) {
-			return new WP_Error( 'invalid_item', $object->last_error );
-		}
-
-		$schema    = $this->get_item_schema();
-		$data_keys = array_keys( array_filter( $schema['properties'], array( $this, 'filter_writable_props' ) ) );
-
-		// Handle all writable props.
-		foreach ( $data_keys as $key ) {
-			$value = $request[ $key ];
-
-			if ( ! is_null( $value ) ) {
-				switch ( $key ) {
-
-					case 'meta_data':
-						if ( is_array( $value ) ) {
-							foreach ( $value as $meta ) {
-								$object->update_meta_data( $meta['key'], $meta['value'], isset( $meta['id'] ) ? $meta['id'] : '' );
-							}
-						}
-						break;
-
-					default:
-						if ( is_callable( array( $object, "set_{$key}" ) ) ) {
-							$object->{"set_{$key}"}( $value );
-						}
-						break;
-				}
-			}
-
-		}
-
-		// Filters an object before it is inserted via the REST API..
-		return apply_filters( "getpaid_rest_pre_insert_{$this->post_type}_object", $object, $request );
-	}
-
-	/**
-	 * Retrieves data from a GetPaid class.
-	 *
-	 * @since  1.0.19
-	 * @param  GetPaid_Meta_Data[]    $meta_data  meta data objects.
-	 * @return array
-	 */
-	protected function prepare_object_meta_data( $meta_data ) {
-		$meta = array();
-
-		foreach( $meta_data as $object ) {
-			$meta[] = $object->get_data();
-		}
-
-		return $meta;
-	}
-
-	/**
-	 * Retrieves invoice items.
-	 *
-	 * @since  1.0.19
-	 * @param  WPInv_Invoice $invoice  Invoice items.
-	 * @param array            $fields Fields to include.
-	 * @return array
-	 */
-	protected function prepare_invoice_items( $invoice ) {
-		$items = array();
-
-		foreach( $invoice->get_items() as $item ) {
-
-			$item_data = $item->prepare_data_for_saving();
-
-			if ( 'amount' == $invoice->get_template() ) {
-				$item_data['quantity'] = 1;
-			}
-
-			$items[] = $item_data;
-		}
-
-		return $items;
-	}
-
-	/**
-	 * Retrieves data from a GetPaid class.
-	 *
-	 * @since  1.0.19
-	 * @param  GetPaid_Data    $object  Data object.
-	 * @param array            $fields Fields to include.
-	 * @param string           $context either view or edit.
-	 * @return array
-	 */
-	protected function prepare_object_data( $object, $fields, $context = 'view' ) {
-
-		$data = array();
-
-		// Handle all writable props.
-		foreach ( array_keys( $this->get_schema_properties() ) as $key ) {
-
-			// Abort if it is not included.
-			if ( ! empty( $fields ) && ! $this->is_field_included( $key, $fields ) ) {
-				continue;
-			}
-
-			// Or this current object does not support the field.
-			if ( ! $this->object_supports_field( $object, $key ) ) {
-				continue;
-			}
-
-			// Handle meta data.
-			if ( $key == 'meta_data' ) {
-				$data['meta_data'] = $this->prepare_object_meta_data( $object->get_meta_data() );
-				continue;
-			}
-
-			// Handle items.
-			if ( $key == 'items' && is_a( $object, 'WPInv_Invoice' )  ) {
-				$data['items'] = $this->prepare_invoice_items( $object );
-				continue;
-			}
-
-			// Booleans.
-			if ( is_callable( array( $object, $key ) ) ) {
-				$data[ $key ] = $object->$key( $context );
-				continue;
-			}
-
-			// Get object value.
-			if ( is_callable( array( $object, "get_{$key}" ) ) ) {
-				$value = $object->{"get_{$key}"}( $context );
-
-				// If the value is an instance of GetPaid_Data...
-				if ( is_a( $value, 'GetPaid_Data' ) ) {
-					$value = $value->get_data( $context );
-				}
-
-				// For objects, retrieves it's properties.
-				$data[ $key ] = is_object( $value ) ? get_object_vars( $value ) :  $value ;
-				continue;
-			}
-
-		}
-
-		return $data;
-	}
-
-	/**
 	 * Checks if a key should be included in a response.
 	 *
 	 * @since  1.0.19
@@ -1001,35 +638,8 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_Controller {
 	 * @return bool
 	 */
 	public function object_supports_field( $object, $field_key ) {
-		return apply_filters( "getpaid_rest_{$this->post_type}_object_supports_key", true, $object, $field_key );
-	}
-
-	/**
-	 * Prepare a single object output for response.
-	 *
-	 * @since  1.0.19
-	 * @param  GetPaid_Data    $object  Data object.
-	 * @param  WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
-	 */
-	public function prepare_item_for_response( $object, $request ) {
-
-		// Fetch the fields to include in this response.
-		$fields = $this->get_fields_for_response( $request );
-
-		// Prepare object data.
-		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
-		$data    = $this->prepare_object_data( $object, $fields, $context );
-		$data    = $this->add_additional_fields_to_object( $data, $request );
-		$data    = $this->limit_object_to_requested_fields( $data, $fields );
-		$data    = $this->filter_response_by_context( $data, $context );
-
-		// Prepare the response.
-		$response = rest_ensure_response( $data );
-		$response->add_links( $this->prepare_links( $object, $request ) );
-
-		// Filter item response.
-		return apply_filters( "getpaid_rest_prepare_{$this->post_type}_object", $response, $object, $request );
+		$supports = parent::object_supports_field( $object, $field_key );
+		return apply_filters( "getpaid_rest_{$this->post_type}_object_supports_key", $supports, $object, $field_key );
 	}
 
 }
