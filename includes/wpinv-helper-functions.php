@@ -960,3 +960,27 @@ function getpaid_session() {
 function getpaid_notes() {
     return getpaid()->get( 'notes' );
 }
+
+/**
+ * Queries the subscriptions database.
+ * 
+ * @param array $args Query arguments.For a list of all supported args, refer to GetPaid_Subscriptions_Query::prepare_query()
+ * @param string $return 'results' returns the found subscriptions, $count returns the total count while 'query' returns GetPaid_Subscriptions_Query
+ * 
+ * 
+ * @return int|array|WPInv_Subscription[]|GetPaid_Subscriptions_Query
+ */
+function getpaid_get_subscriptions( $args = array(), $return = 'results' ) {
+
+    $query = new GetPaid_Subscriptions_Query( $args );
+
+    if ( 'results' == $return ) {
+        return $query->get_results();
+    }
+
+    if ( 'count' == $return ) {
+        return $query->get_total();
+    }
+
+    return $query;
+}
