@@ -370,13 +370,6 @@ class GetPaid_Post_Types_Admin {
 			'expiry_date'       => __( 'Expiry Date', 'invoicing' ),
 		);
 
-	
-		$columns['code']        = __( 'Code', 'invoicing' );
-		$columns['amount']      = __( 'Amount', 'invoicing' );
-		$columns['usage']       = __( 'Usage / Limit', 'invoicing' );
-		$columns['start_date']  = __( 'Start Date', 'invoicing' );
-		$columns['expiry_date'] = __( 'Expiry Date', 'invoicing' );
-
 		return apply_filters( 'wpi_discount_table_columns', $columns );
 	}
 

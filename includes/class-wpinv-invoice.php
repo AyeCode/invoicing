@@ -201,19 +201,15 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Maybe retrieve from the cache.
 		$invoice_id   = wp_cache_get( $value, "getpaid_invoice_{$field}s_to_invoice_ids" );
-		if ( ! empty( $invoice_id ) ) {
+		if ( false !== $invoice_id ) {
 			return $invoice_id;
 		}
 
         // Fetch from the db.
         $table       = $wpdb->prefix . 'getpaid_invoices';
-        $invoice_id  = $wpdb->get_var(
+        $invoice_id  = (int) $wpdb->get_var(
             $wpdb->prepare( "SELECT `post_id` FROM $table WHERE `$field`=%s LIMIT 1", $value )
         );
-
-		if ( empty( $invoice_id ) ) {
-			return 0;
-		}
 
 		// Update the cache with our data
 		wp_cache_set( $value, $invoice_id, "getpaid_invoice_{$field}s_to_invoice_ids" );
