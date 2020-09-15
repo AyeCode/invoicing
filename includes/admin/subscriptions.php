@@ -22,16 +22,15 @@ function wpinv_subscriptions_page() {
 			<?php _e( 'Subscriptions', 'invoicing' ); ?>
 		</h1>
 		<?php
-		$subscribers_table = new WPInv_Subscription_Reports_Table();
+		$subscribers_table = new WPInv_Subscription_Lists_Table();
 		$subscribers_table->prepare_items();
 		?>
 
-		<form id="subscribers-filter" method="get">
+		<form id="subscribers-filter" class="bsui" method="get">
 
 			<input type="hidden" name="post_type" value="download" />
 			<input type="hidden" name="page" value="wpinv-subscriptions" />
 			<?php $subscribers_table->views(); ?>
-			<?php $subscribers_table->search_box( __( 'Search', 'wpinvoicing' ), 'subscriptions' ); ?>
 			<?php $subscribers_table->display(); ?>
 
 		</form>

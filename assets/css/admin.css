@@ -1555,18 +1555,57 @@ textarea.wpi-email_overdue_content {
     cursor: not-allowed;
     opacity: .75;
 }
-.wpi-wpinv-subscriptions .subscriptions .column-actions {
-    text-align: center;
+
+.wpi-wpinv-subscriptions .subscriptions .column-status,
+.wpi-wpinv-subscriptions .subscriptions .column-renewal_date,
+.wpi-wpinv-subscriptions .subscriptions .column-start_date,
+.wpi-wpinv-subscriptions .subscriptions .column-renewals,
+.wpi-wpinv-subscriptions .subscriptions .column-item {
+    width: 140px;
 }
-.wpi-wpinv-subscriptions .subscriptions .column-sub_id {
-    width: 60px;
+
+.getpaid-item-status-pending{
+    background-color: #f9fbe7;
+    color: #33691e;
+    border-bottom: 1px solid #dcedc8;
 }
-.wpi-wpinv-subscriptions .subscriptions .column-initial_amount {
-    width: 95px;
+
+.getpaid-item-status-canceled {
+    background-color: #ede7f6;
+    color: #311b92;
+    border-bottom: 1px solid #d1c4e9;
 }
-.wpi-wpinv-subscriptions .subscriptions .column-status {
-    width: 65px;
+
+.getpaid-item-status-failing {
+    background-color: #fff3e0;
+    border-bottom: 1px solid #ffe0b2;
+    color: #bf360c;
 }
+
+.getpaid-item-status-info {
+    background-color:#e0f7fa;
+    border-bottom: 1px solid#bbdefb;
+    color: #006064;
+}
+
+.getpaid-item-status-success {
+    background-color:#f1f8e9;
+    border-bottom: 1px solid#dcedc8;
+    color: #33691e;
+}
+
+.getpaid-item-status-expired {
+    background-color: #fbe9e7;
+    border-bottom: 1px solid#ffccbc;
+    color: #bf360c;
+}
+
+.getpaid-item-status-trial {
+    background-color: #eceff1;
+    border-bottom: 1px solid#9e9e9e;
+    color: #263238;
+}
+
 .wpi-mcheck-rows .wpi-mcheck-row {
     float: none;
     display: inline-block;

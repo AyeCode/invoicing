@@ -972,6 +972,19 @@ function getpaid_notes() {
  */
 function getpaid_get_subscriptions( $args = array(), $return = 'results' ) {
 
+    $args = wp_parse_args( $args, array() );
+
+    // Do not retrieve all fields if we just want the count.
+    if ( 'count' == $return ) {
+        $args['fields'] = 'id';
+        $args['number'] = 1;
+    }
+
+    // Do not count all matches if we just want the results.
+    if ( 'results' == $return ) {
+        $args['count_total'] = false;
+    }
+
     $query = new GetPaid_Subscriptions_Query( $args );
 
     if ( 'results' == $return ) {
@@ -1027,14 +1040,54 @@ function getpaid_get_subscription_status_classes() {
     return apply_filters(
         'getpaid_get_subscription_status_classes',
         array(
-            'pending'    => 'text-white bg-dark',
-            'trialling'  => 'text-dark bg-light',
-            'active'     => 'text-white bg-info',
-            'failing'    => 'text-dark bg-warning',
-            'expired'    => 'text-white bg-danger',
-            'completed'  => 'text-white bg-success',
-            'cancelled'  => 'text-white bg-secondary',
+            'pending'    => 'getpaid-item-status-pending',
+            'trialling'  => 'getpaid-item-status-trial',
+            'active'     => 'getpaid-item-status-info',
+            'failing'    => 'getpaid-item-status-failing',
+            'expired'    => 'getpaid-item-status-expired',
+            'completed'  => 'getpaid-item-status-success',
+            'cancelled'  => 'getpaid-item-status-canceled',
         )
     );
 
+}
+
+/**
+ * Counts subscriptions in each status.
+ * 
+ * @return int
+ */
+function getpaid_get_subscription_status_counts( $args = array() ) {
+
+    $statuses = array_keys( getpaid_get_subscription_statuses() );
+    $counts   = array();
+
+    foreach ( $statuses as $status ) {
+        $_args             = wp_parse_args( "status=$status", $args );
+        $counts[ $status ] = getpaid_get_subscriptions( $_args, 'count' );
+    }
+
+    return $counts;
+
+}
+
+/**
+ * Returns a period label..
+ * 
+ * @return array
+ */
+function getpaid_get_subscription_period_label( $period ) {
+
+    $periods = array(
+        'd'     => __( 'day', 'invoicing' ),
+        'day'   => __( 'day', 'invoicing' ),
+        'w'     => __( 'week', 'invoicing' ),
+        'week'  => __( 'week', 'invoicing' ),
+        'm'     => __( 'month', 'invoicing' ),
+        'month' => __( 'month', 'invoicing' ),
+        'y'     => __( 'year', 'invoicing' ),
+        'year'  => __( 'year', 'invoicing' ),
+    );
+
+    return isset( $periods[ $period ] ) ? strtolower( $periods[ $period ] ) : strtolower( $periods['d'] );
 }

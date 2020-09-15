@@ -613,7 +613,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @param string $value Bill times.
 	 */
 	public function set_transaction_id( $value ) {
-		$this->set_prop( 'transaction_id', $value );
+		$this->set_prop( 'transaction_id', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -714,7 +714,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @param  string $value the remote profile id.
 	 */
 	public function set_profile_id( $value ) {
-		$this->set_prop( 'profile_id', $value );
+		$this->set_prop( 'profile_id', sanitize_text_field( $value ) );
 	}
 
 	/*
@@ -1133,10 +1133,10 @@ class WPInv_Subscription extends GetPaid_Data {
     public function get_status_label_html() {
 
 		$status_label = sanitize_text_field( $this->get_status_label() );
-		$class        = sanitize_html_class( $this->get_status_class() );
+		$class        = esc_attr( $this->get_status_class() );
 		$status       = sanitize_html_class( $this->get_status_label() );
 
-		"<span class='bsui'><small class='d-inline-block py-1 px-2 rounded $class $status'>$status_label</small></span>";
+		return "<span class='bsui'><span class='d-inline-block py-2 px-3 rounded $class $status'>$status_label</span></span>";
     }
 
     /**
