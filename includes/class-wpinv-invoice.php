@@ -1834,7 +1834,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			unset( $statuses[ 'draft' ] );
 		}
 
-
 		$this->set_prop( 'status', $new_status );
 
 		// If setting the status, ensure it's set to a valid status.
@@ -1851,7 +1850,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			}
 
 			// Paid - Renewal (i.e when duplicating a parent invoice )
-			if ( $new_status == 'wpi-renewal' && $old_status == 'publish' ) {
+			if ( $new_status == 'wpi-pending' && $old_status == 'publish' && ! $this->get_id() ) {
 				$old_status = 'wpi-pending';
 			}
 
