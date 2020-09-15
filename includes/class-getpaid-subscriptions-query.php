@@ -109,7 +109,7 @@ class GetPaid_Subscriptions_Query {
 	 *
 	 * @since 1.0.19
 	 *
-	 * @param array $args Query vars, as passed to `GetPaid_Subscriptions_Query`.
+	 * @param  string|array $args Query vars, as passed to `GetPaid_Subscriptions_Query`.
 	 * @return array Complete query variables with undefined ones filled in with defaults.
 	 */
 	public static function fill_query_vars( $args ) {
@@ -234,16 +234,14 @@ class GetPaid_Subscriptions_Query {
 		if ( is_array( $qv['fields'] ) ) {
 			$qv['fields'] = array_unique( $qv['fields'] );
 
-			$this->query_fields = array();
+			$query_fields = array();
 			foreach ( $qv['fields'] as $field ) {
-				$field                = 'id' === strtolower( $field ) ? 'id' : sanitize_key( $field );
-				$this->query_fields[] = "$table.`$field`";
+				$field          = sanitize_key( $field );
+				$query_fields[] = "$table.`$field`";
 			}
-			$this->query_fields = implode( ',', $this->query_fields );
-		} elseif ( 'all' === $qv['fields'] ) {
-			$this->query_fields = "$table.*";
+			$this->query_fields = implode( ',', $query_fields );
 		} else {
-			$this->query_fields = "$table.id";
+			$this->query_fields = "$table.*";
 		}
 
 		if ( isset( $qv['count_total'] ) && $qv['count_total'] ) {
@@ -325,7 +323,7 @@ class GetPaid_Subscriptions_Query {
 
 		// Default order is by 'id' (latest subscriptions).
 		if ( empty( $qv['orderby'] ) ) {
-			$ordersby = array( 'id' );
+			$qv['orderby'] = array( 'id' );
 		}
 
 		// 'orderby' values may be an array, comma- or space-separated list.

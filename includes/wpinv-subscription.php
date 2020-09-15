@@ -1,256 +1,853 @@
 <?php
+/**
+ * Contains the subscription class.
+ *
+ * @since 1.0.19
+ * @package Invoicing
+ */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
+defined( 'ABSPATH' ) || exit;
 
 /**
  * The Subscription Class
  *
  * @since  1.0.0
  */
-class WPInv_Subscription {
+class WPInv_Subscription extends GetPaid_Data {
+
+	/**
+	 * Which data store to load.
+	 *
+	 * @var string
+	 */
+	protected $data_store_name = 'subscription';
+
+	/**
+	 * This is the name of this object type.
+	 *
+	 * @var string
+	 */
+	protected $object_type = 'subscription';
+
+	/**
+	 * Item Data array. This is the core item data exposed in APIs.
+	 *
+	 * @since 1.0.19
+	 * @var array
+	 */
+	protected $data = array(
+		'customer_id'       => 0,
+		'frequency'         => 1,
+		'period'            => 'D',
+		'initial_amount'    => null,
+		'recurring_amount'  => null,
+		'bill_times'        => 0,
+		'transaction_id'    => '',
+		'parent_payment_id' => null,
+		'product_id'        => 0,
+		'created'           => '0000-00-00 00:00:00',
+		'expiration'        => '0000-00-00 00:00:00',
+		'trial_period'      => null,
+		'status'            => 'pending',
+		'profile_id'        => '',
+		'gateway'           => '',
+		'customer'          => '',
+	);
+
+	/**
+	 * Stores the status transition information.
+	 *
+	 * @since 1.0.19
+	 * @var bool
+	 */
+	protected $status_transition = false;
 
 	private $subs_db;
 
-	public $id                = 0;
-	public $customer_id       = 0;
-	public $period            = '';
-	public $initial_amount    = '';
-	public $recurring_amount  = '';
-	public $bill_times        = 0;
-	public $transaction_id    = '';
-	public $parent_payment_id = 0;
-	public $product_id        = 0;
-	public $created           = '0000-00-00 00:00:00';
-	public $expiration        = '0000-00-00 00:00:00';
-	public $trial_period      = '';
-	public $status            = 'pending';
-	public $profile_id        = '';
-	public $gateway           = '';
-	public $customer;
-
 	/**
-	 * Get us started
+	 * Get the subscription if ID is passed, otherwise the subscription is new and empty.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @param  int|string|object|WPInv_Subscription $subscription Subscription id, profile_id, or object to read.
+	 * @param  bool $deprecated
 	 */
-	function __construct( $_id_or_object = 0, $_by_profile_id = false ) {
+	function __construct( $subscription = 0, $deprecated = false ) {
 
-		$this->subs_db = new WPInv_Subscriptions_DB;
+		parent::__construct( $subscription );
 
-		if( $_by_profile_id ) {
-
-			$_sub = $this->subs_db->get_by( 'profile_id', $_id_or_object );
-
-			if( empty( $_sub ) ) {
-				return false;
-			}
-
-			$_id_or_object = $_sub;
-
-		}
-
-		return $this->setup_subscription( $_id_or_object );
-	}
-
-	/**
-	 * Setup the subscription object
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	private function setup_subscription( $id_or_object = 0 ) {
-
-		if( empty( $id_or_object ) ) {
-			return false;
-		}
-
-		if( is_numeric( $id_or_object ) ) {
-
-			$sub = $this->subs_db->get( $id_or_object );
-
-		} elseif( is_object( $id_or_object ) ) {
-
-			$sub = $id_or_object;
-
-		}
-
-		if( empty( $sub ) ) {
-			return false;
-		}
-
-		foreach( $sub as $key => $value ) {
-			$this->$key = $value;
-		}
-
-		$this->customer = get_userdata( $this->customer_id );
-		$this->gateway  = wpinv_get_payment_gateway( $this->parent_payment_id );
-
-		do_action( 'wpinv_recurring_setup_subscription', $this );
-
-		return $this;
-	}
-
-	/**
-	 * Magic __get function to dispatch a call to retrieve a private property
-	 *
-	 * @since 1.0.0
-	 */
-	public function __get( $key ) {
-
-		if( method_exists( $this, 'get_' . $key ) ) {
-
-			return call_user_func( array( $this, 'get_' . $key ) );
-
+		if ( ! $deprecated && ! empty( $subscription ) && is_numeric( $subscription ) ) {
+			$this->set_id( $subscription );
+		} elseif ( $subscription instanceof self ) {
+			$this->set_id( $subscription->get_id() );
+		} elseif ( ! empty( $subscription->id ) ) {
+			$this->set_id( $subscription->id );
+		} elseif ( $deprecated && $subscription_id = self::get_subscription_id_by_field( $subscription, 'profile_id' ) ) {
+			$this->set_id( $subscription_id );
 		} else {
+			$this->set_object_read( true );
+		}
 
-			return new WP_Error( 'wpinv-subscription-invalid-property', sprintf( __( 'Can\'t get property %s', 'invoicing' ), $key ) );
+		// Load the datastore.
+		$this->data_store = GetPaid_Data_Store::load( $this->data_store_name );
 
+		if ( $this->get_id() > 0 ) {
+			$this->data_store->read( $this );
 		}
 
 	}
 
 	/**
-	 * Creates a subscription
+	 * Given an invoice id, profile id, transaction id, it returns the subscription's id.
 	 *
-	 * @since  1.0.0
-	 * @param  array  $data Array of attributes for a subscription
-	 * @return mixed  false if data isn't passed and class not instantiated for creation
+	 *
+	 * @static
+	 * @param string $value
+	 * @param string $field Either invoice_id, transaction_id or profile_id.
+	 * @since 1.0.19
+	 * @return int
 	 */
-	public function create( $data = array() ) {
+	public static function get_subscription_id_by_field( $value, $field = 'profile_id' ) {
+        global $wpdb;
 
-		if ( $this->id != 0 ) {
-			return false;
+		// Trim the value.
+		$value = trim( $value );
+
+		if ( empty( $value ) ) {
+			return 0;
 		}
 
-		$defaults = array(
-			'customer_id'       => 0,
-			'frequency'         => '',
-			'period'            => '',
-			'initial_amount'    => '',
-			'recurring_amount'  => '',
-			'bill_times'        => 0,
-			'parent_payment_id' => 0,
-			'product_id'        => 0,
-			'created'           => '',
-			'expiration'        => '',
-			'status'            => '',
-			'profile_id'        => '',
+		if ( 'invoice_id' == $field ) {
+			$field = 'parent_payment_id';
+		}
+
+        // Valid fields.
+        $fields = array(
+			'parent_payment_id',
+			'transaction_id',
+			'profile_id'
 		);
 
-		$args = wp_parse_args( $data, $defaults );
-
-		if( $args['expiration'] && strtotime( 'NOW', current_time( 'timestamp' ) ) > strtotime( $args['expiration'], current_time( 'timestamp' ) ) ) {
-
-			if( 'active' == $args['status'] || 'trialling' == $args['status'] ) {
-
-				// Force an active subscription to expired if expiration date is in the past
-				$args['status'] = 'expired';
-
-			}
+		// Ensure a field has been passed.
+		if ( empty( $field ) || ! in_array( $field, $fields ) ) {
+			return 0;
 		}
 
-		do_action( 'wpinv_subscription_pre_create', $args );
+		// Maybe retrieve from the cache.
+		$subscription_id   = wp_cache_get( $value, "getpaid_subscription_{$field}s_to_subscription_ids" );
+		if ( ! empty( $subscription_id ) ) {
+			return $subscription_id;
+		}
 
-		$id = $this->subs_db->insert( $args, 'subscription' );
+        // Fetch from the db.
+        $table            = $wpdb->prefix . 'wpinv_subscriptions';
+        $subscription_id  = (int) $wpdb->get_var(
+            $wpdb->prepare( "SELECT `id` FROM $table WHERE `$field`=%s LIMIT 1", $value )
+        );
 
-		do_action( 'wpinv_subscription_post_create', $id, $args );
+		if ( empty( $subscription_id ) ) {
+			return 0;
+		}
 
-		return $this->setup_subscription( $id );
+		// Update the cache with our data.
+		wp_cache_set( $value, $subscription_id, "getpaid_subscription_{$field}s_to_subscription_ids" );
 
+		return $subscription_id;
 	}
 
 	/**
-	 * Updates a subscription
-	 *
-	 * @since  1.0.0
-	 * @param  array $args Array of fields to update
-	 * @return bool
-	 */
-	public function update( $args = array() ) {
-
-		$ret = $this->subs_db->update( $this->id, $args );
-
-		do_action( 'wpinv_recurring_update_subscription', $this->id, $args, $this );
-
-		if ( $ret && isset( $args['profile_id'] ) ) {
-			update_post_meta( $this->parent_payment_id, 'subscription_id', $args['profile_id'] );
-		}
-
-		return $ret;
-
+     * Clears the subscription's cache.
+     */
+    public function clear_cache() {
+		wp_cache_delete( $this->get_parent_payment_id(), 'getpaid_subscription_parent_payment_ids_to_subscription_ids' );
+		wp_cache_delete( $this->get_transaction_id(), 'getpaid_subscription_transaction_ids_to_subscription_ids' );
+		wp_cache_delete( $this->get_profile_id(), 'getpaid_subscription_profile_ids_to_subscription_ids' );
+		wp_cache_delete( $this->get_id(), 'getpaid_subscriptions' );
 	}
 
 	/**
-	 * Delete the subscription
-	 *
-	 * @since  1.0.0
-	 * @return bool
-	 */
-	public function delete() {
-		return $this->subs_db->delete( $this->id );
+     * Checks if a subscription key is set.
+     */
+    public function _isset( $key ) {
+        return isset( $this->data[$key] ) || method_exists( $this, "get_$key" );
 	}
 
-    /**
-     * Retrieves the parent payment ID
+	/*
+	|--------------------------------------------------------------------------
+	| CRUD methods
+	|--------------------------------------------------------------------------
+	|
+	| Methods which create, read, update and delete subscriptions from the database.
+	|
+    */
+
+	/*
+	|--------------------------------------------------------------------------
+	| Getters
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Get customer id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_customer_id( $context = 'view' ) {
+		return (int) $this->get_prop( 'customer_id', $context );
+	}
+
+	/**
+	 * Get customer information.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return WP_User|false WP_User object on success, false on failure.
+	 */
+	public function get_customer( $context = 'view' ) {
+		return get_userdata( $this->get_customer_id( $context ) );
+	}
+
+	/**
+	 * Get parent invoice id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_parent_invoice_id( $context = 'view' ) {
+		return (int) $this->get_prop( 'parent_payment_id', $context );
+	}
+
+	/**
+	 * Alias for self::get_parent_invoice_id().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+    public function get_parent_payment_id( $context = 'view' ) {
+        return $this->get_parent_invoice_id( $context );
+	}
+
+	/**
+     * Alias for self::get_parent_invoice_id().
      *
      * @since  1.0.0
      * @return int
      */
-    public function get_original_payment_id() {
-        return $this->parent_payment_id;
+    public function get_original_payment_id( $context = 'view' ) {
+        return $this->get_parent_invoice_id( $context );
     }
+
+	/**
+	 * Get parent invoice.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return WPInv_Invoice
+	 */
+	public function get_parent_invoice( $context = 'view' ) {
+		return new WPInv_Invoice( $this->get_parent_invoice_id( $context ) );
+	}
+
+	/**
+	 * Alias for self::get_parent_invoice().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return WPInv_Invoice
+	 */
+    public function get_parent_payment( $context = 'view' ) {
+        return $this->get_parent_invoice( $context );
+	}
+
+	/**
+	 * Get subscription's product id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_product_id( $context = 'view' ) {
+		return (int) $this->get_prop( 'product_id', $context );
+	}
+
+	/**
+	 * Get the subscription product.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return WPInv_Item
+	 */
+	public function get_product( $context = 'view' ) {
+		return new WPInv_Item( $this->get_product_id( $context ) );
+	}
+
+	/**
+	 * Get parent invoice's gateway.
+	 *
+	 * Here for backwards compatibility.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_gateway( $context = 'view' ) {
+		return $this->get_parent_invoice( $context )->get_gateway();
+	}
+
+	/**
+	 * Get the period of a renewal.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_period( $context = 'view' ) {
+		return $this->get_prop( 'period', $context );
+	}
+
+	/**
+	 * Get number of periods each renewal is valid for.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_frequency( $context = 'view' ) {
+		return (int) $this->get_prop( 'frequency', $context );
+	}
+
+	/**
+	 * Get the initial amount for the subscription.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_initial_amount( $context = 'view' ) {
+		return (float) wpinv_sanitize_amount( $this->get_prop( 'initial_amount', $context ) );
+	}
+
+	/**
+	 * Get the recurring amount for the subscription.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_recurring_amount( $context = 'view' ) {
+		return (float) wpinv_sanitize_amount( $this->get_prop( 'recurring_amount', $context ) );
+	}
+
+	/**
+	 * Get number of times that this subscription can be renewed.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_bill_times( $context = 'view' ) {
+		return (int) $this->get_prop( 'bill_times', $context );
+	}
+
+	/**
+	 * Get transaction id of this subscription's parent invoice.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_transaction_id( $context = 'view' ) {
+		return $this->get_prop( 'transaction_id', $context );
+	}
+
+	/**
+	 * Get the date that the subscription was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_created( $context = 'view' ) {
+		return $this->get_prop( 'created', $context );
+	}
+
+	/**
+	 * Alias for self::get_created().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created( $context = 'view' ) {
+		return $this->get_created( $context );
+	}
+
+	/**
+	 * Retrieves the creation date in a timestamp
+	 *
+	 * @since  1.0.0
+	 * @return int
+	 */
+	public function get_time_created() {
+		$created = $this->get_date_created();
+		return empty( $created ) ? current_time( 'timestamp' ) : strtotime( $created, current_time( 'timestamp' ) );
+	}
+
+	/**
+	 * Get GMT date when the subscription was created.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_date_created_gmt( $context = 'view' ) {
+        $date = $this->get_date_created( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+	}
+
+	/**
+	 * Get the date that the subscription will renew.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_next_renewal_date( $context = 'view' ) {
+		return $this->get_prop( 'expiration', $context );
+	}
+
+	/**
+	 * Alias for self::get_next_renewal_date().
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_expiration( $context = 'view' ) {
+		return $this->get_next_renewal_date( $context );
+	}
+
+	/**
+	 * Retrieves the expiration date in a timestamp
+	 *
+	 * @since  1.0.0
+	 * @return int
+	 */
+	public function get_expiration_time() {
+		$expiration = $this->get_expiration();
+
+		if ( empty( $expiration ) || '0000-00-00 00:00:00' == $expiration ) {
+			return current_time( 'timestamp' );
+		}
+
+		$expiration = strtotime( $expiration, current_time( 'timestamp' ) );
+		return $expiration < current_time( 'timestamp' ) ? current_time( 'timestamp' ) : $expiration;
+	}
+
+	/**
+	 * Get GMT date when the subscription will renew.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_next_renewal_date_gmt( $context = 'view' ) {
+        $date = $this->get_next_renewal_date( $context );
+
+        if ( $date ) {
+            $date = get_gmt_from_date( $date );
+        }
+		return $date;
+	}
+
+	/**
+	 * Get the subscription's trial period.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_trial_period( $context = 'view' ) {
+		return $this->get_prop( 'trial_period', $context );
+	}
+
+	/**
+	 * Get the subscription's status.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_status( $context = 'view' ) {
+		return $this->get_prop( 'status', $context );
+	}
+
+	/**
+	 * Get the subscription's profile id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_profile_id( $context = 'view' ) {
+		return $this->get_prop( 'profile_id', $context );
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Setters
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Set customer id.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value The customer's id.
+	 */
+	public function set_customer_id( $value ) {
+		$this->set_prop( 'customer_id', (int) $value );
+	}
+
+	/**
+	 * Set parent invoice id.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value The parent invoice id.
+	 */
+	public function set_parent_invoice_id( $value ) {
+		$this->set_prop( 'parent_payment_id', (int) $value );
+	}
+
+	/**
+	 * Alias for self::set_parent_invoice_id().
+	 *
+	 * @since 1.0.19
+	 * @param  int $value The parent invoice id.
+	 */
+    public function set_parent_payment_id( $value ) {
+        $this->set_parent_invoice_id( $value );
+	}
+
+	/**
+     * Alias for self::set_parent_invoice_id().
+     *
+     * @since 1.0.19
+	 * @param  int $value The parent invoice id.
+     */
+    public function set_original_payment_id( $value ) {
+        $this->set_parent_invoice_id( $value );
+	}
+
+	/**
+	 * Set subscription's product id.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value The subscription product id.
+	 */
+	public function set_product_id( $value ) {
+		$this->set_prop( 'product_id', (int) $value );
+	}
+
+	/**
+	 * Set the period of a renewal.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value The renewal period.
+	 */
+	public function set_period( $value ) {
+		$this->set_prop( 'period', $value );
+	}
+
+	/**
+	 * Set number of periods each renewal is valid for.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value The subscription frequency.
+	 */
+	public function set_frequency( $value ) {
+		$value = empty( $value ) ? 1 : (int) $value;
+		$this->set_prop( 'frequency', absint( $value ) );
+	}
+
+	/**
+	 * Set the initial amount for the subscription.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value The initial subcription amount.
+	 */
+	public function set_initial_amount( $value ) {
+		$this->set_prop( 'initial_amount', wpinv_sanitize_amount( $value ) );
+	}
+
+	/**
+	 * Set the recurring amount for the subscription.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value The recurring subcription amount.
+	 */
+	public function set_recurring_amount( $value ) {
+		$this->set_prop( 'recurring_amount', wpinv_sanitize_amount( $value ) );
+	}
+
+	/**
+	 * Set number of times that this subscription can be renewed.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value Bill times.
+	 */
+	public function set_bill_times( $value ) {
+		$this->set_prop( 'bill_times', (int) $value );
+	}
+
+	/**
+	 * Get transaction id of this subscription's parent invoice.
+	 *
+	 * @since 1.0.19
+	 * @param string $value Bill times.
+	 */
+	public function set_transaction_id( $value ) {
+		$this->set_prop( 'transaction_id', $value );
+	}
+
+	/**
+	 * Set date when this subscription started.
+	 *
+	 * @since 1.0.19
+	 * @param string $value strtotime compliant date.
+	 */
+	public function set_created( $value ) {
+        $date = strtotime( $value );
+
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
+            $this->set_prop( 'created', date( 'Y-m-d H:i:s', $date ) );
+            return;
+        }
+
+		$this->set_prop( 'created', '' );
+
+	}
+
+	/**
+	 * Alias for self::set_created().
+	 *
+	 * @since 1.0.19
+	 * @param string $value strtotime compliant date.
+	 */
+	public function set_date_created( $value ) {
+		$this->set_created( $value );
+    }
+
+	/**
+	 * Set the date that the subscription will renew.
+	 *
+	 * @since 1.0.19
+	 * @param string $value strtotime compliant date.
+	 */
+	public function set_next_renewal_date( $value ) {
+		$date = strtotime( $value );
+
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
+            $this->set_prop( 'expiration', date( 'Y-m-d H:i:s', $date ) );
+            return;
+		}
+
+		$this->set_prop( 'expiration', '' );
+
+	}
+
+	/**
+	 * Alias for self::set_next_renewal_date().
+	 *
+	 * @since 1.0.19
+	 * @param string $value strtotime compliant date.
+	 */
+	public function set_expiration( $value ) {
+		$this->set_next_renewal_date( $value );
+    }
+
+	/**
+	 * Set the subscription's trial period.
+	 *
+	 * @since 1.0.19
+	 * @param string $value trial period e.g 1 year.
+	 */
+	public function set_trial_period( $value ) {
+		$this->set_prop( 'trial_period', $value );
+	}
+
+	/**
+	 * Set the subscription's status.
+	 *
+	 * @since 1.0.19
+	 * @param string $new_status    New subscription status.
+	 */
+	public function set_status( $new_status ) {
+
+		// Abort if this is not a valid status;
+		if ( ! array_key_exists( $new_status, getpaid_get_subscription_statuses() ) ) {
+			return;
+		}
+
+		$old_status = $this->get_status();
+		$this->set_prop( 'status', $new_status );
+
+		if ( true === $this->object_read && $old_status !== $new_status ) {
+			$this->status_transition = array(
+				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
+				'to'     => $new_status,
+			);
+		}
+
+	}
+
+	/**
+	 * Set the subscription's (remote) profile id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value the remote profile id.
+	 */
+	public function set_profile_id( $value ) {
+		$this->set_prop( 'profile_id', $value );
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Boolean methods
+	|--------------------------------------------------------------------------
+	|
+	| Return true or false.
+	|
+	*/
+
+	/**
+     * Checks if the subscription has a given status.
+	 *
+	 * @param string|array String or array of strings to check for.
+	 * @return bool
+     */
+    public function has_status( $status ) {
+        return in_array( $this->get_status(), wpinv_parse_list( $status ) );
+	}
+
+	/**
+     * Checks if the subscription has a trial period.
+	 *
+	 * @return bool
+     */
+    public function has_trial_period() {
+		$period = $this->get_trial_period();
+        return ! empty( $period );
+	}
+
+	/**
+	 * Is the subscription active?
+	 *
+	 * @return bool
+	 */
+	public function is_active() {
+		return $this->has_status( 'active trialling' ) && $this->get_expiration_time() > current_time( 'mysql' );
+	}
+
+	/**
+	 * Is the subscription expired?
+	 *
+	 * @return bool
+	 */
+	public function is_expired() {
+		return $this->has_status( 'expired' ) || ( $this->has_status( 'active cancelled trialling' ) && $this->get_expiration_time() < current_time( 'mysql' ) );
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Additional methods
+	|--------------------------------------------------------------------------
+	|
+	| Calculating subscription details.
+	|
+	*/
+
+	/**
+	 * Backwards compatibilty.
+	 */
+	public function create( $data = array() ) {
+
+		// Set the properties.
+		if ( is_array( $data ) ) {
+			$this->set_props( $data );
+		}
+
+		// Save the item.
+		return $this->save();
+
+	}
+
+	/**
+	 * Backwards compatibilty.
+	 */
+	public function update( $args = array() ) {
+		return $this->create( $args );
+	}
 
     /**
      * Retrieve renewal payments for a subscription
      *
      * @since  1.0.0
-     * @return array
+     * @return WP_Post[]
      */
     public function get_child_payments() {
-        $payments = get_posts( array(
-            'post_parent'    => (int) $this->parent_payment_id,
-            'posts_per_page' => '999',
-            'post_status'    => array( 'publish', 'wpi-processing', 'wpi-renewal' ),
-            'orderby'        => 'ID',
-            'order'          => 'DESC',
-            'post_type'      => 'wpi_invoice'
-        ) );
-
-        return $payments;
+        return get_posts(
+			array(
+            	'post_parent'    => $this->get_parent_payment_id(),
+            	'numberposts'    => -1,
+            	'post_status'    => array( 'publish', 'wpi-processing', 'wpi-renewal' ),
+            	'orderby'        => 'ID',
+            	'order'          => 'DESC',
+            	'post_type'      => 'wpi_invoice'
+			)
+		);
     }
 
     /**
-     * Counts the number of payments made to the subscription
+     * Counts the number of invoices generated for the subscription.
      *
-     * @since  2.4
+     * @since  1.0.0
      * @return int
      */
     public function get_total_payments() {
-        $child_payments = $this->get_child_payments();
-        $total_payments = !empty( $child_payments ) ? count( $child_payments ) : 0;
+		global $wpdb;
 
-        if ( 'pending' != $this->status ) {
-                $total_payments++;
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(ID) FROM $wpdb->posts WHERE post_parent=%d AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+				$this->get_parent_invoice_id()
+			)
+		);
+
+		// Maybe include parent invoice.
+        if ( ! $this->has_status( 'pending' ) ) {
+            $count++;
         }
 
-        return $total_payments;
+        return $count;
     }
 
     /**
-     * Returns the number of times the subscription has been billed
+     * Counts the number of payments for the subscription.
      *
      * @since  1.0.2
      * @return int
      */
     public function get_times_billed() {
-        $times_billed = (int)$this->get_total_payments();
+        $times_billed = $this->get_total_payments();
 
-        if ( ! empty( $this->trial_period ) && $times_billed > 0 ) {
+        if ( $this->has_trial_period() && $times_billed > 0 ) {
             $times_billed--;
         }
 
@@ -262,7 +859,7 @@ class WPInv_Subscription {
      *
      * @since  2.4
      * @param  array $args Array of values for the payment, including amount and transaction ID
-	 * @param  WPInv_Invoice $invoice
+	 * @param  WPInv_Invoice $invoice If adding an existing invoice.
      * @return bool
      */
     public function add_payment( $args = array(), $invoice = false ) {
@@ -305,7 +902,7 @@ class WPInv_Subscription {
 
 		do_action( 'getpaid_after_create_subscription_renewal_invoice', $invoice, $this );
 		do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
-        do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->parent_payment_id, $invoice->get_recurring_total(), $invoice->get_transaction_id() );
+        do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->get_parent_invoice_id(), $invoice->get_recurring_total(), $invoice->get_transaction_id() );
 
         update_post_meta( $invoice->get_id(), '_wpinv_subscription_id', $this->id );
 
@@ -316,27 +913,21 @@ class WPInv_Subscription {
      * Creates a new invoice and returns it.
      *
      * @since  1.0.19
-     * @param  array $args Array of values for the payment, including amount and transaction ID
      * @return WPInv_Invoice|bool
      */
     public function create_payment() {
 
-		// Do we have a parent invoice?
-        if ( ! $this->parent_payment_id ) {
-            return false;
-        }
+		$parent_invoice = $this->get_parent_payment();
 
-		// Ensure that the parent invoice is available.
-        $parent_invoice = wpinv_get_invoice( $this->parent_payment_id );
-        if ( empty( $parent_invoice ) ) {
-            return false;
-        }
+		if ( ! $parent_invoice->get_id() ) {
+			return false;
+		}
 
 		// Duplicate the parent invoice.
 		$invoice = new WPInv_Invoice();
 		$invoice->set_props( $parent_invoice->get_data() );
 		$invoice->set_id( 0 );
-		$invoice->set_parent_id( $parent_invoice->get_parent() );
+		$invoice->set_parent_id( $parent_invoice->get_id() );
 		$invoice->set_transaction_id( '' );
 		$invoice->set_key( $invoice->generate_key( 'renewal_' ) );
 		$invoice->set_number( '' );
@@ -349,76 +940,28 @@ class WPInv_Subscription {
     }
 
 	/**
-	 * Retrieves the transaction ID from the subscription
+	 * Renews or completes a subscription
 	 *
 	 * @since  1.0.0
-	 * @return bool
-	 */
-	public function get_transaction_id() {
-
-		if( empty( $this->transaction_id ) ) {
-
-			$txn_id = wpinv_get_payment_transaction_id( $this->parent_payment_id );
-
-			if( ! empty( $txn_id ) && (int) $this->parent_payment_id !== (int) $txn_id ) {
-				$this->set_transaction_id( $txn_id );
-			}
-
-		}
-
-		return $this->transaction_id;
-
-	}
-
-	/**
-	 * Stores the transaction ID for the subscription purchase
-	 *
-	 * @since  1.0.0.4
-	 * @return bool
-	 */
-	public function set_transaction_id( $txn_id = '' ) {
-		$this->update( array( 'transaction_id' => $txn_id ) );
-		$this->transaction_id = $txn_id;
-	}
-
-	/**
-	 * Renews a subscription
-	 *
-	 * @since  1.0.0
-	 * @return bool
+	 * @return int The subscription's id
 	 */
 	public function renew() {
 
-		// Calculate new expiration
-		$expires        = $this->get_expiration_time();
-		$base_date      = $expires > current_time( 'timestamp' ) ? $expires : current_time( 'timestamp' );
-		$frequency      = isset( $this->frequency ) ? $this->frequency : 1;
-		$new_expiration = strtotime( "+ {$frequency} {$this->period}", strtotime( $base_date ) );
-		$new_expiration = apply_filters( 'wpinv_subscription_renewal_expiration', date( 'Y-m-d H:i:s', $new_expiration ), $this->id, $this );
-
-		do_action( 'wpinv_subscription_pre_renew', $this->id, $new_expiration, $this );
-
-		$this->status = 'active';
-		$times_billed = $this->get_times_billed();
-
 		// Complete subscription if applicable
-		if ( $this->bill_times > 0 && $times_billed >= $this->bill_times ) {
-			$this->complete();
-			$this->status = 'completed';
-			return;
+		if ( $this->get_bill_times() > 0 && $this->get_times_billed() >= $this->get_bill_times() ) {
+			return $this->complete();
 		}
 
-		$args = array(
-			'expiration' => $new_expiration,
-			'status'     => $this->status,
-		);
+		// Calculate new expiration
+		$frequency      = $this->get_frequency();
+		$period         = $this->get_period();
+		$new_expiration = strtotime( "+ $frequency $period", $this->get_expiration_time() );
 
-        $this->subs_db->update( $this->id, $args );
+		$this->set_expiration( date( 'Y-m-d H:i:s',$new_expiration ) );
+		$this->set_status( 'active' );
+		return $this->save();
 
-		$this->expiration = $new_expiration;
-
-		do_action( 'wpinv_subscription_post_renew', $this->id, $new_expiration, $this );
-		do_action( 'wpinv_recurring_set_subscription_status', $this->id, $this->status, $this );
+		do_action( 'getpaid_subscription_renewed', $this );
 
 	}
 
@@ -428,64 +971,36 @@ class WPInv_Subscription {
 	 * Subscription is completed when the number of payments matches the billing_times field
 	 *
 	 * @since  1.0.0
-	 * @return void
+	 * @return int|bool Subscription id or false if the subscription is cancelled.
 	 */
 	public function complete() {
 
 		// Only mark a subscription as complete if it's not already cancelled.
-		if ( 'cancelled' === $this->status ) {
-			return;
+		if ( $this->has_status( 'cancelled' ) ) {
+			return false;
 		}
 
-		$args = array(
-			'status' => 'completed'
-		);
-
-		if( $this->subs_db->update( $this->id, $args ) ) {
-
-			$this->status = 'completed';
-
-			do_action( 'wpinv_subscription_completed', $this->id, $this );
-
-		}
+		$this->set_status( 'completed' );
+		return $this->save();
 
 	}
 
 	/**
 	 * Marks a subscription as expired
 	 *
-	 * Subscription is completed when the billing times is reached
-	 *
 	 * @since  1.0.0
-	 * @param  $check_expiration bool True if expiration date should be checked with merchant processor before expiring
-	 * @return void
+	 * @param  bool $check_expiration
+	 * @return int|bool Subscription id or false if $check_expiration is true and expiration date is in the future.
 	 */
 	public function expire( $check_expiration = false ) {
 
-		$expiration = $this->expiration;
-
-		if( $check_expiration ) {
-
-			// check_expiration() updates $this->expiration so compare to $expiration above
-
-			if( $expiration < $this->get_expiration() && current_time( 'timestamp' ) < $this->get_expiration_time() ) {
-
-				return false; // Do not mark as expired since real expiration date is in the future
-			}
-
+		if ( $check_expiration && $this->get_expiration_time() > current_time( 'timestamp' ) ) {
+			// Do not mark as expired since real expiration date is in the future
+			return false;
 		}
 
-		$args = array(
-			'status' => 'expired'
-		);
-
-		if( $this->subs_db->update( $this->id, $args ) ) {
-
-			$this->status = 'expired';
-
-			do_action( 'wpinv_subscription_expired', $this->id, $this );
-
-		}
+		$this->set_status( 'expired' );
+		return $this->save();
 
 	}
 
@@ -493,72 +1008,32 @@ class WPInv_Subscription {
 	 * Marks a subscription as failing
 	 *
 	 * @since  2.4.2
-	 * @return void
+	 * @return int Subscription id.
 	 */
 	public function failing() {
-
-		$args = array(
-			'status' => 'failing'
-		);
-
-		if( $this->subs_db->update( $this->id, $args ) ) {
-
-			$this->status = 'failing';
-
-			do_action( 'wpinv_subscription_failing', $this->id, $this );
-			do_action( 'wpinv_recurring_payment_failed', $this );
-
-		}
-
+		$this->set_status( 'failing' );
+		return $this->save();
 	}
 
     /**
      * Marks a subscription as cancelled
      *
      * @since  1.0.0
-     * @return void
+     * @return int Subscription id.
      */
     public function cancel() {
-        if ( 'cancelled' === $this->status ) {
-            return; // Already cancelled
-        }
-
-        $args = array(
-            'status' => 'cancelled'
-        );
-
-        if ( $this->subs_db->update( $this->id, $args ) ) {
-            if ( is_user_logged_in() ) {
-                $userdata = get_userdata( get_current_user_id() );
-                $user     = $userdata->display_name;
-            } else {
-                $user = __( 'gateway', 'invoicing' );
-            }
-
-            $note = sprintf( __( 'Subscription has been cancelled by %s', 'invoicing' ), $user );
-            wpinv_insert_payment_note( $this->parent_payment_id, $note, '', '', true );
-
-            $this->status = 'cancelled';
-
-            do_action( 'wpinv_subscription_cancelled', $this->id, $this );
-        }
+		$this->set_status( 'cancelled' );
+		return $this->save();
     }
 
 	/**
-	 * Determines if subscription can be cancelled
-	 *
-	 * This method is filtered by payment gateways in order to return true on subscriptions
-	 * that can be cancelled with a profile ID through the merchant processor
+	 * Determines if a subscription can be cancelled both locally and with a payment processor.
 	 *
 	 * @since  1.0.0
 	 * @return bool
 	 */
 	public function can_cancel() {
-        $ret = false;
-	    if( $this->gateway === 'manual' || in_array( $this->status, $this->get_cancellable_statuses() ) ) {
-            $ret = true;
-        }
-		return apply_filters( 'wpinv_subscription_can_cancel', $ret, $this );
+		return apply_filters( 'wpinv_subscription_can_cancel', $this->has_status( $this->get_cancellable_statuses() ), $this );
 	}
 
     /**
@@ -579,9 +1054,7 @@ class WPInv_Subscription {
 	 * @return string
 	 */
 	public function get_cancel_url() {
-
-		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'cancel_subscription', 'sub_id' => $this->id ) ), 'wpinv-recurring-cancel' );
-
+		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'cancel_subscription', 'sub_id' => $this->get_id() ) ), 'wpinv-recurring-cancel' );
 		return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
 	}
 
@@ -595,7 +1068,6 @@ class WPInv_Subscription {
 	 * @return bool
 	 */
 	public function can_renew() {
-
 		return apply_filters( 'wpinv_subscription_can_renew', true, $this );
 	}
 
@@ -606,9 +1078,7 @@ class WPInv_Subscription {
 	 * @return string
 	 */
 	public function get_renew_url() {
-
-		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'renew_subscription', 'sub_id' => $this->id ) ), 'wpinv-recurring-renew' );
-
+		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'renew_subscription', 'sub_id' => $this->get_id ) ), 'wpinv-recurring-renew' );
 		return apply_filters( 'wpinv_subscription_renew_url', $url, $this );
 	}
 
@@ -626,197 +1096,47 @@ class WPInv_Subscription {
 	 * Retrieves the URL to update subscription
 	 *
 	 * @since  1.0.0
-	 * @return void
-	 */
-	public function get_update_url() {
-
-		$url = add_query_arg( array( 'action' => 'update', 'subscription_id' => $this->id ) );
-
-		return apply_filters( 'wpinv_subscription_update_url', $url, $this );
-	}
-
-	/**
-	 * Determines if subscription is active
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function is_active() {
-
-		$ret = false;
-
-		if( ! $this->is_expired() && ( $this->status == 'active' || $this->status == 'cancelled' || $this->status == 'trialling' ) ) {
-			$ret = true;
-		}
-
-		return apply_filters( 'wpinv_subscription_is_active', $ret, $this->id, $this );
-
-	}
-
-	/**
-	 * Determines if subscription is expired
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function is_expired() {
-
-		$ret = false;
-
-		if ( $this->status == 'expired' ) {
-
-			$ret = true;
-
-		} elseif( 'active' === $this->status || 'cancelled' === $this->status || $this->status == 'trialling'  ) {
-
-			$ret        = false;
-			$expiration = $this->get_expiration_time();
-
-			if( $expiration && strtotime( 'NOW', current_time( 'timestamp' ) ) > $expiration ) {
-				$ret = true;
-
-				if ( 'active' === $this->status || $this->status == 'trialling'  ) {
-					$this->expire();
-				}
-			}
-
-		}
-
-		return apply_filters( 'wpinv_subscription_is_expired', $ret, $this->id, $this );
-
-	}
-
-	/**
-	 * Retrieves the expiration date
-	 *
-	 * @since  1.0.0
 	 * @return string
 	 */
-	public function get_expiration() {
-		return $this->expiration;
-	}
-
-	/**
-	 * Retrieves the expiration date in a timestamp
-	 *
-	 * @since  1.0.0
-	 * @return int
-	 */
-	public function get_expiration_time() {
-		return strtotime( $this->expiration, current_time( 'timestamp' ) );
-	}
-
-	/**
-	 * Retrieves the subscription status
-	 *
-	 * @since  1.0.0
-	 * @return int
-	 */
-	public function get_status() {
-
-		// Monitor for page load delays on pages with large subscription lists (IE: Subscriptions table in admin)
-		$this->is_expired();
-		return $this->status;
+	public function get_update_url() {
+		$url = add_query_arg( array( 'action' => 'update', 'subscription_id' => $this->get_id() ) );
+		return apply_filters( 'wpinv_subscription_update_url', $url, $this );
 	}
 
 	/**
 	 * Retrieves the subscription status label
 	 *
 	 * @since  1.0.0
-	 * @return int
+	 * @return string
 	 */
 	public function get_status_label() {
+		return getpaid_get_subscription_status_label( $this->get_status() );
+	}
 
-		switch( $this->get_status() ) {
-			case 'active' :
-				$status = __( 'Active', 'invoicing' );
-				break;
-
-			case 'cancelled' :
-				$status = __( 'Cancelled', 'invoicing' );
-				break;
-
-			case 'expired' :
-				$status = __( 'Expired', 'invoicing' );
-				break;
-
-			case 'pending' :
-				$status = __( 'Pending', 'invoicing' );
-				break;
-
-			case 'failing' :
-				$status = __( 'Failing', 'invoicing' );
-				break;
-
-			case 'trialling' :
-				$status = __( 'Trialling', 'invoicing' );
-				break;
-
-			case 'completed' :
-				$status = __( 'Completed', 'invoicing' );
-				break;
-
-			default:
-				$status = ucfirst( $this->get_status() );
-				break;
-		}
-
-		return $status;
+	/**
+	 * Retrieves the subscription status class
+	 *
+	 * @since  1.0.19
+	 * @return string
+	 */
+	public function get_status_class() {
+		$statuses = getpaid_get_subscription_status_classes();
+		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'text-white bg-secondary';
 	}
 
     /**
      * Retrieves the subscription status label
      *
      * @since  1.0.0
-     * @return int
+     * @return string
      */
     public function get_status_label_html() {
 
-        switch( $get_status = $this->get_status() ) {
-            case 'active' :
-                $status = __( 'Active', 'invoicing' );
-                $class = 'label-info';
-                break;
+		$status_label = sanitize_text_field( $this->get_status_label() );
+		$class        = sanitize_html_class( $this->get_status_class() );
+		$status       = sanitize_html_class( $this->get_status_label() );
 
-            case 'cancelled' :
-                $status = __( 'Cancelled', 'invoicing' );
-                $class = 'label-danger';
-                break;
-
-            case 'expired' :
-                $status = __( 'Expired', 'invoicing' );
-                $class = 'label-default';
-                break;
-
-            case 'pending' :
-                $status = __( 'Pending', 'invoicing' );
-                $class = 'label-primary';
-                break;
-
-            case 'failing' :
-                $status = __( 'Failing', 'invoicing' );
-                $class = 'label-danger';
-                break;
-
-            case 'trialling' :
-                $status = __( 'Trialling', 'invoicing' );
-                $class = 'label-info';
-                break;
-
-            case 'completed' :
-                $status = __( 'Completed', 'invoicing' );
-                $class = 'label-success';
-                break;
-
-            default:
-                $status = ucfirst( $this->get_status() );
-                $class = 'label-default';
-                break;
-        }
-
-        $label = '<span class="sub-status label label-sub-' . $get_status . ' ' . $class . '">' . $status . '</span>';
-
-        return apply_filters( 'wpinv_subscription_status_label_html', $label, $get_status, $status );
+		"<span class='bsui'><small class='d-inline-block py-1 px-2 rounded $class $status'>$status_label</small></span>";
     }
 
     /**
@@ -829,6 +1149,61 @@ class WPInv_Subscription {
     public function payment_exists( $txn_id = '' ) {
 		$invoice_id = WPInv_Invoice::get_invoice_id_by_field( $txn_id, 'transaction_id' );
         return ! empty( $invoice_id );
-    }
+	}
+
+	/**
+	 * Handle the status transition.
+	 */
+	protected function status_transition() {
+		$status_transition = $this->status_transition;
+
+		// Reset status transition variable.
+		$this->status_transition = false;
+
+		if ( $status_transition ) {
+			try {
+
+				// Fire a hook for the status change.
+				do_action( 'wpinv_subscription_' . $status_transition['to'], $this->get_id(), $this, $status_transition );
+				do_action( 'getpaid_subscription_' . $status_transition['to'], $this, $status_transition );
+
+				if ( ! empty( $status_transition['from'] ) ) {
+
+					/* translators: 1: old subscription status 2: new subscription status */
+					$transition_note = sprintf( __( 'Subscription status changed from %1$s to %2$s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['from'] ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
+
+					// Fire another hook.
+					do_action( 'getpaid_subscription_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
+					do_action( 'getpaid_subscription_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
+
+					// Note the transition occurred.
+					$this->get_parent_payment()->add_note( $transition_note, false, false, true );
+
+				} else {
+					/* translators: %s: new invoice status */
+					$transition_note = sprintf( __( 'Subscription status set to %s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
+
+					// Note the transition occurred.
+					$this->get_parent_payment()->add_note( $transition_note, false, false, true );
+
+				}
+			} catch ( Exception $e ) {
+				$this->get_parent_payment()->add_note( __( 'Error during subscription status transition.', 'invoicing' ) . ' ' . $e->getMessage() );
+			}
+		}
+
+	}
+
+	/**
+	 * Save data to the database.
+	 *
+	 * @since 1.0.19
+	 * @return int subscription ID
+	 */
+	public function save() {
+		parent::save();
+		$this->status_transition();
+		return $this->get_id();
+	}
 
 }

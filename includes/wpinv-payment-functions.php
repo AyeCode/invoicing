@@ -193,9 +193,10 @@ function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bil
     return apply_filters( 'wpinv_get_billing_cycle', $description, $initial, $recurring, $period, $interval, $bill_times, $trial_period, $trial_interval, $currency );
 }
 
-function wpinv_recurring_send_payment_failed( $invoice ) {
-    if ( !empty( $invoice->ID ) ) {
-        wpinv_failed_invoice_notification( $invoice->ID );
-    }
+/**
+ * @param WPInv_Subscription $subscription
+ */
+function wpinv_recurring_send_payment_failed( $subscription ) {
+    wpinv_failed_invoice_notification( $subscription->get_parent_payment_id() );
 }
-add_action( 'wpinv_recurring_payment_failed', 'wpinv_recurring_send_payment_failed', 10, 1 );
+add_action( 'getpaid_subscription_failing', 'wpinv_recurring_send_payment_failed', 10, 2 );

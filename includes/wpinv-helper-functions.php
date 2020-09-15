@@ -984,3 +984,57 @@ function getpaid_get_subscriptions( $args = array(), $return = 'results' ) {
 
     return $query;
 }
+
+/**
+ * Returns an array of valid subscription statuses.
+ * 
+ * @return array
+ */
+function getpaid_get_subscription_statuses() {
+
+    return apply_filters(
+        'getpaid_get_subscription_statuses',
+        array(
+            'pending'    => __( 'Pending', 'invoicing' ),
+            'trialling'  => __( 'Trialing', 'invoicing' ),
+            'active'     => __( 'Active', 'invoicing' ),
+            'failing'    => __( 'Failing', 'invoicing' ),
+            'expired'    => __( 'Expired', 'invoicing' ),
+            'completed'  => __( 'Complete', 'invoicing' ),
+            'cancelled'  =>__( 'Cancelled', 'invoicing' ),
+        )
+    );
+
+}
+
+/**
+ * Returns a subscription status label
+ * 
+ * @return string
+ */
+function getpaid_get_subscription_status_label( $status ) {
+    $statuses = getpaid_get_subscription_statuses();
+    return isset( $statuses[ $status ] ) ? $statuses[ $status ] : ucfirst( $status );
+}
+
+/**
+ * Returns an array of valid subscription status classes.
+ * 
+ * @return array
+ */
+function getpaid_get_subscription_status_classes() {
+
+    return apply_filters(
+        'getpaid_get_subscription_status_classes',
+        array(
+            'pending'    => 'text-white bg-dark',
+            'trialling'  => 'text-dark bg-light',
+            'active'     => 'text-white bg-info',
+            'failing'    => 'text-dark bg-warning',
+            'expired'    => 'text-white bg-danger',
+            'completed'  => 'text-white bg-success',
+            'cancelled'  => 'text-white bg-secondary',
+        )
+    );
+
+}
