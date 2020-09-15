@@ -894,7 +894,7 @@ function getpaid_format_date( $date ) {
     }
 
 
-    return date_i18n( get_option( 'date_format' ), strtotime( $date ) );
+    return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $date ) );
 
 }
 
@@ -1055,7 +1055,7 @@ function getpaid_get_subscription_status_classes() {
 /**
  * Counts subscriptions in each status.
  * 
- * @return int
+ * @return array
  */
 function getpaid_get_subscription_status_counts( $args = array() ) {
 
@@ -1074,7 +1074,7 @@ function getpaid_get_subscription_status_counts( $args = array() ) {
 /**
  * Returns a period label..
  * 
- * @return array
+ * @return string
  */
 function getpaid_get_subscription_period_label( $period ) {
 

@@ -246,8 +246,8 @@ class WPInv_Subscription_Lists_Table extends WP_List_Table {
 			return "&mdash;";
 		}
 
-		return date_i18n( get_option( 'date_format' ), strtotime( $expiration ) );
-		
+		return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $expiration ) );
+
 	}
 
 	/**
@@ -264,7 +264,7 @@ class WPInv_Subscription_Lists_Table extends WP_List_Table {
 			return "&mdash;";
 		}
 
-		return date_i18n( get_option( 'date_format' ), strtotime( $created ) );
+		return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $created ) );
 
 	}
 
@@ -293,7 +293,7 @@ class WPInv_Subscription_Lists_Table extends WP_List_Table {
 			);
 
 		} else if ( $initial != $recurring ) {
-			
+
 			// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring perio
 			$amount = sprintf(
 				_x( 'Initial payment of %1$s then %2$s / %3$s', 'Subscription amount on admin table. (e.g.:Initial payment of $100 then $120 / year)', 'invoicing' ),
@@ -335,7 +335,7 @@ class WPInv_Subscription_Lists_Table extends WP_List_Table {
 	 * @since       1.0.0
 	 * @return      string
 	 */
-	function column_item( $item ) {
+	public function column_item( $item ) {
 		$_item = get_post( $item->get_product_id() );
 
 		if ( ! empty( $_item ) ) {
@@ -423,6 +423,14 @@ class WPInv_Subscription_Lists_Table extends WP_List_Table {
 	 */
 	public function has_items() {
 		return ! empty( $this->current_total_count );
+	}
+
+	/**
+	 * Processes bulk actions.
+	 *
+	 */
+	public function process_bulk_action() {
+
 	}
 
 }
