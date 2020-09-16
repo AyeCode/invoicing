@@ -823,7 +823,7 @@ class WPInv_Subscription extends GetPaid_Data {
     public function get_total_payments() {
 		global $wpdb;
 
-		$count = $wpdb->get_var(
+		$count = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(ID) FROM $wpdb->posts WHERE post_parent=%d AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
 				$this->get_parent_invoice_id()
@@ -851,7 +851,7 @@ class WPInv_Subscription extends GetPaid_Data {
             $times_billed--;
         }
 
-        return $times_billed;
+        return (int) $times_billed;
     }
 
     /**
@@ -927,6 +927,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		$invoice = new WPInv_Invoice();
 		$invoice->set_props( $parent_invoice->get_data() );
 		$invoice->set_id( 0 );
+		$invoice->set_items( $parent_invoice->get_items() );
 		$invoice->set_parent_id( $parent_invoice->get_id() );
 		$invoice->set_transaction_id( '' );
 		$invoice->set_key( $invoice->generate_key( 'renewal_' ) );
