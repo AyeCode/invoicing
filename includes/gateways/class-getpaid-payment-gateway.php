@@ -388,6 +388,7 @@ abstract class GetPaid_Payment_Gateway {
 	 */
 	public function process_payment( $invoice, $submission_data, $submission ) {
 		// Process the payment then either redirect to the success page or the gateway.
+		do_action( 'getpaid_process_invoice_payment_' . $this->id, $invoice, $submission_data, $submission );
 	}
 
 	/**
@@ -402,7 +403,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @return WP_Error|bool True or false based on success, or a WP_Error object.
 	 */
 	public function process_refund( $invoice, $amount = null, $reason = '' ) {
-		return false;
+		return apply_filters( 'getpaid_process_invoice_refund_' . $this->id, false, $invoice, $amount, $reason );
 	}
 
 	/**
@@ -411,7 +412,9 @@ abstract class GetPaid_Payment_Gateway {
 	 * @param int $invoice_id 0 or invoice id.
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
-	public function payment_fields( $invoice_id, $form ) {}
+	public function payment_fields( $invoice_id, $form ) {
+		do_action( 'getpaid_getpaid_gateway_payment_fields_' . $this->id, $invoice_id, $form );
+	}
 
 	/**
 	 * Filters the gateway settings.

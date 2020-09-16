@@ -60,9 +60,9 @@ class GetPaid_Subscription_Data_Store {
 		unset( $fields['id'] );
 
 		foreach ( $fields as $key => $format ) {
-			$method     = "get_$key";
-			$values[]   = $subscription->$method( 'edit' );
-			$formats[]  = $format;
+			$method       = "get_$key";
+			$values[$key] = $subscription->$method( 'edit' );
+			$formats[]    = $format;
 		}
 
 		$result = $wpdb->insert( $wpdb->prefix . 'wpinv_subscriptions', $fields, $formats );
@@ -136,19 +136,15 @@ class GetPaid_Subscription_Data_Store {
 	public function update( &$subscription ) {
 		global $wpdb;
 
-		if ( null === $subscription->get_date_created( 'edit' ) ) {
-			$subscription->set_date_created(  current_time('mysql') );
-		}
-
 		$changes = $subscription->get_changes();
 		$values  = array();
 		$format  = array();
 
 		foreach ( $this->database_fields_to_data_type as $key => $format ) {
 			if ( array_key_exists( $key, $changes ) ) {
-				$method     = "get_$key";
-				$values[]   = $subscription->$method( 'edit' );
-				$formats[]  = $format;
+				$method       = "get_$key";
+				$values[$key] = $subscription->$method( 'edit' );
+				$formats[]    = $format;
 			}
 		}
 
@@ -162,7 +158,8 @@ class GetPaid_Subscription_Data_Store {
 			array(
 				'id' => $subscription->get_id(),
 			),
-			$formats
+			$formats,
+			'%d'
 		);
 
 		// Apply the changes.

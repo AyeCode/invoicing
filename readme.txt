@@ -164,6 +164,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Authorize.NET - Allow customers to save their payment profiles for quicker checkouts.
 * Authorize.NET - Replaced the deprecated md5 secret with a [signature key](https://support.authorize.net/s/article/MD5-Hash-End-of-Life-Signature-Key-Replacement)
 * Authorize.NET - Improve the subscriptions feature.
+* Admin can now manually renew a subscription - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

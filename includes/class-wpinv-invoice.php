@@ -313,6 +313,20 @@ class WPInv_Invoice extends GetPaid_Data {
         return apply_filters( 'wpinv_get_invoice_status_nicename', $status, $this );
     }
 
+	/**
+     * Retrieves the invoice status label html
+     *
+     * @since  1.0.0
+     * @return string
+     */
+    public function get_status_label_html() {
+
+		$status_label = sanitize_text_field( $this->get_status_nicename() );
+		$status       = sanitize_html_class( $this->get_status() );
+
+		return "<span class='bsui'><span class='d-inline-block py-2 px-3 rounded getpaid-invoice-status-$status'>$status_label</span></span>";
+	}
+
     /**
 	 * Get plugin version when the invoice was created.
 	 *
@@ -631,9 +645,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_name( $context = 'view' ) {
-        $name = $this->get_prop( 'title', $context );
-
-		return empty( $name ) ? $this->get_number( $context ) : $name;
+        return $this->get_prop( 'title', $context );
     }
 
     /**

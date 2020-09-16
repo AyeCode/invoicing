@@ -12,7 +12,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * Subscriptions table class.
  */
-class WPInv_Subscription_Lists_Table extends WP_List_Table {
+class WPInv_Subscriptions_List_Table extends WP_List_Table {
 
 	/**
 	 * URL of this page
