@@ -972,8 +972,6 @@ function getpaid_notes() {
  */
 function getpaid_get_subscriptions( $args = array(), $return = 'results' ) {
 
-    $args = wp_parse_args( $args, array() );
-
     // Do not retrieve all fields if we just want the count.
     if ( 'count' == $return ) {
         $args['fields'] = 'id';

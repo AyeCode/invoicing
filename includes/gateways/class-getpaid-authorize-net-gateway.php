@@ -910,22 +910,22 @@ log_noptin_message( $args );
         }
 
         // Fetch the associated subscription.
-        $subscription = new WPInv_Subscription( $_POST['x_subscription_id'], true );
+        $subscription_id = WPInv_Subscription::get_subscription_id_by_field( $_POST['x_subscription_id'] );
+        $subscription    = new WPInv_Subscription( $subscription_id );
 
         // Abort if it is missing or completed.
-        if ( empty( $subscription->id ) || $subscription->status == 'completed' ) {
+        if ( ! $subscription->get_id() || $subscription->has_status( 'completed' ) ) {
             return;
         }
 
         // Payment status.
         if ( 1 == $_POST['x_response_code'] ) {
 
-            $args = array(
-                'transaction_id' => wpinv_clean( $_POST['x_trans_id'] ),
-                'gateway'        => $this->id
-            );
-
-            $subscription->add_payment( $args );
+            $invoice = $subscription->create_payment();
+            $invoice->set_transaction_id( sanitize_text_field( $_POST['x_trans_id'] ) );
+            $invoice->set_status( 'wpi-renewal' );
+            $invoice->save();
+            $subscription->add_payment( $invoice );
             $subscription->renew();
 
         } else {

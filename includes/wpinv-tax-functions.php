@@ -541,8 +541,9 @@ function getpaid_geolocate_ip_address( $ip_address ) {
     if ( ( empty( $iso ) || empty( $longitude ) || empty( $latitude ) ) && function_exists( 'simplexml_load_file' ) ) {
 
         try {
-            $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip_address );
-            
+            $url      = esc_url( add_query_arg( 'ip', urlencode( $ip_address ), 'http://www.geoplugin.net/xml.gp' ) );
+            $load_xml = simplexml_load_file( $url );
+
             if ( ! empty( $load_xml ) && isset( $load_xml->geoplugin_countryCode ) && ! empty( $load_xml->geoplugin_latitude ) && ! empty( $load_xml->geoplugin_longitude ) ) {
                 $iso        = $load_xml->geoplugin_countryCode;
                 $country    = $load_xml->geoplugin_countryName;
