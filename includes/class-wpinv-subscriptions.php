@@ -83,6 +83,8 @@ class WPInv_Subscriptions {
         add_action( 'wpinv_cancel_subscription', array( $this, 'wpinv_process_cancellation' ) );
         add_action( 'getpaid_checkout_before_gateway', array( $this, 'add_subscription' ), -999 );
         add_action( 'wpinv_subscriptions_front_notices', array( $this, 'notices' ) );
+        add_action( 'getpaid_authenticated_admin_action_update_single_subscription', array( $this, 'admin_update_single_subscription' ) );
+        add_action( 'getpaid_authenticated_admin_action_subscription_manual_renew', array( $this, 'admin_renew_single_subscription' ) );
     }
 
     /**
@@ -353,4 +355,72 @@ class WPInv_Subscriptions {
 
         return $subscription;
     }
+
+    /**
+     * Fired when an admin updates a subscription via the single subscription single page.
+     *
+     * @param       array $data
+     * @since       1.0.19
+     */
+    public function admin_update_single_subscription( $args ) {
+
+        // Ensure the subscription exists and that a status has been given.
+        if ( empty( $args['subscription_id'] ) || empty( $args['subscription_status'] ) ) {
+            return;
+        }
+
+        // Retrieve the subscriptions.
+        $subscription = new WPInv_Subscription( $args['subscription_id'] );
+
+        if ( $subscription->get_id() ) {
+
+            $subscription->set_status( $args['subscription_status'] );
+            $subscription->save();
+            getpaid_admin()->show_info( __( 'Your changes have been saved', 'invoicing' ) );
+
+        }
+
+    }
+
+    /**
+     * Fired when an admin manually renews a subscription.
+     *
+     * @param       array $data
+     * @since       1.0.19
+     */
+    public function admin_renew_single_subscription( $args ) {
+
+        // Ensure the subscription exists and that a status has been given.
+        if ( empty( $args['id'] ) ) {
+            return;
+        }
+
+        // Retrieve the subscriptions.
+        $subscription = new WPInv_Subscription( $args['id'] );
+
+        if ( $subscription->get_id() ) {
+
+            $args = array( 'transaction_id', $subscription->get_parent_invoice()->generate_key( 'renewal_' ) );
+
+            if ( $subscription->add_payment( $args ) ) {
+                $subscription->renew();
+                getpaid_admin()->show_info( __( 'This subscription has been renewed and extended.', 'invoicing' ) );
+            } else {
+                getpaid_admin()->show_error( __( 'We are unable to renew this subscription as the parent invoice does not exist.', 'invoicing' ) );
+            }
+    
+            wp_safe_redirect(
+                add_query_arg(
+                    array(
+                        'getpaid-admin-action' => false,
+                        'getpaid-nonce'        => false,
+                    )
+                )
+            );
+            exit;
+
+        }
+
+    }
+
 }

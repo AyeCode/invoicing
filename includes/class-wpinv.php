@@ -102,6 +102,7 @@ class WPInv_Plugin {
 		$this->set( 'api', new WPInv_API() );
 		$this->set( 'post_types', new GetPaid_Post_Types() );
 		$this->set( 'template', new GetPaid_Template() );
+		$this->set( 'admin', new GetPaid_Admin() );
 	}
 
 	 /**
@@ -122,9 +123,6 @@ class WPInv_Plugin {
 		/* Internationalize the text strings used. */
 		add_action( 'plugins_loaded', array( &$this, 'plugins_loaded' ) );
 
-		/* Perform actions on admin initialization. */
-		add_action( 'admin_init', array( &$this, 'admin_init') );
-
 		// Init the plugin after WordPress inits.
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_action( 'getpaid_init', array( $this, 'maybe_process_ipn' ), 5 );
@@ -138,41 +136,12 @@ class WPInv_Plugin {
 		add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
-
-		if ( is_admin() ) {
-			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
-			add_filter( 'admin_body_class', array( &$this, 'admin_body_class' ) );
-			add_action( 'admin_init', array( &$this, 'init_ayecode_connect_helper' ) );
-
-		} else {
-			add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
-		}
+		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 
 		// Fires after registering actions.
 		do_action( 'wpinv_actions', $this );
 		do_action( 'getpaid_actions', $this );
-		add_action( 'admin_init', array( &$this, 'activation_redirect') );
 
-	}
-
-	/**
-	 * Maybe show the AyeCode Connect Notice.
-	 */
-	public function init_ayecode_connect_helper(){
-		// AyeCode Connect notice
-		if ( is_admin() ){
-			// set the strings so they can be translated
-			$strings = array(
-				'connect_title' => __("WP Invoicing - an AyeCode product!","invoicing"),
-				'connect_external'  => __( "Please confirm you wish to connect your site?","invoicing" ),
-				'connect'           => sprintf( __( "<strong>Have a license?</strong> Forget about entering license keys or downloading zip files, connect your site for instant access. %slearn more%s","invoicing" ),"<a href='https://ayecode.io/introducing-ayecode-connect/' target='_blank'>","</a>" ),
-				'connect_button'    => __("Connect Site","invoicing"),
-				'connecting_button'    => __("Connecting...","invoicing"),
-				'error_localhost'   => __( "This service will only work with a live domain, not a localhost.","invoicing" ),
-				'error'             => __( "Something went wrong, please refresh and try again.","invoicing" ),
-			);
-			new AyeCode_Connect_Helper($strings,array('wpi-addons'));
-		}
 	}
 
 	public function plugins_loaded() {
@@ -256,7 +225,6 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-subscriptions-list-table.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
@@ -418,29 +386,6 @@ class WPInv_Plugin {
 
 	}
 
-	public function admin_init() {
-		$this->default_payment_form = wpinv_get_default_payment_form();
-		add_action( 'admin_print_scripts-edit.php', array( &$this, 'admin_print_scripts_edit_php' ) );
-	}
-
-	public function activation_redirect() {
-		// Bail if no activation redirect
-		if ( !get_transient( '_wpinv_activation_redirect' ) ) {
-			return;
-		}
-
-		// Delete the redirect transient
-		delete_transient( '_wpinv_activation_redirect' );
-
-		// Bail if activating from network, or bulk
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
-			return;
-		}
-
-		wp_safe_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=general' ) );
-		exit;
-	}
-
 	public function enqueue_scripts() {
 		$suffix       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -489,188 +434,6 @@ class WPInv_Plugin {
 		wp_enqueue_script( 'wpinv-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'wpinv-front-script', 'wp-hooks' ),  $version, true );
 	}
 
-	public function admin_enqueue_scripts( $hook ) {
-		global $post, $pagenow;
-
-		$post_type  = wpinv_admin_post_type();
-		$suffix     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$page       = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : '';
-
-		$jquery_ui_css = false;
-		if ( ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $post_type == 'wpi_discount' ) && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) ) {
-			$jquery_ui_css = true;
-		} else if ( $page == 'wpinv-settings' || $page == 'wpinv-reports' ) {
-			$jquery_ui_css = true;
-		}
-		if ( $jquery_ui_css ) {
-			wp_register_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui' . $suffix . '.css', array(), '1.8.16' );
-			wp_enqueue_style( 'jquery-ui-css' );
-			wp_deregister_style( 'yoast-seo-select2' );
-			wp_deregister_style( 'yoast-seo-monorepo' );
-		}
-
-		wp_register_style( 'wpinv_meta_box_style', WPINV_PLUGIN_URL . 'assets/css/meta-box.css', array(), WPINV_VERSION );
-		wp_enqueue_style( 'wpinv_meta_box_style' );
-
-		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
-		wp_register_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array(), $version );
-		wp_enqueue_style( 'wpinv_admin_style' );
-
-		$enqueue = ( $post_type == 'wpi_discount' || $post_type == 'wpi_invoice' && ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) );
-		if ( $page == 'wpinv-subscriptions' ) {
-			wp_enqueue_script( 'jquery-ui-datepicker' );
-			wp_deregister_style( 'yoast-seo-select2' );
-			wp_deregister_style( 'yoast-seo-monorepo' );
-		}
-
-		if ( $enqueue_datepicker = apply_filters( 'wpinv_admin_enqueue_jquery_ui_datepicker', $enqueue ) ) {
-			wp_enqueue_script( 'jquery-ui-datepicker' );
-		}
-
-		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_script( 'wp-color-picker' );
-
-		wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-
-		if (($post_type == 'wpi_invoice' || $post_type == 'wpi_quote') && ($pagenow == 'post-new.php' || $pagenow == 'post.php')) {
-			$autofill_api = wpinv_get_option('address_autofill_api');
-			$autofill_active = wpinv_get_option('address_autofill_active');
-			if (isset($autofill_active) && 1 == $autofill_active && !empty($autofill_api)) {
-				wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array('jquery'), '', false);
-				wp_enqueue_script('google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array('jquery'), '', true);
-			}
-		}
-
-		wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.css', array(), WPINV_VERSION, 'all' );
-		wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
-
-		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
-		wp_register_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip' ),  $version );
-		wp_enqueue_script( 'wpinv-admin-script' );
-
-		$localize                               = array();
-		$localize['ajax_url']                   = admin_url( 'admin-ajax.php' );
-		$localize['post_ID']                    = isset( $post->ID ) ? $post->ID : '';
-		$localize['wpinv_nonce']                = wp_create_nonce( 'wpinv-nonce' );
-		$localize['add_invoice_note_nonce']     = wp_create_nonce( 'add-invoice-note' );
-		$localize['delete_invoice_note_nonce']  = wp_create_nonce( 'delete-invoice-note' );
-		$localize['invoice_item_nonce']         = wp_create_nonce( 'invoice-item' );
-		$localize['billing_details_nonce']      = wp_create_nonce( 'get-billing-details' );
-		$localize['tax']                        = wpinv_tax_amount();
-		$localize['discount']                   = wpinv_discount_amount();
-		$localize['currency_symbol']            = wpinv_currency_symbol();
-		$localize['currency_pos']               = wpinv_currency_position();
-		$localize['thousand_sep']               = wpinv_thousands_separator();
-		$localize['decimal_sep']                = wpinv_decimal_separator();
-		$localize['decimals']                   = wpinv_decimals();
-		$localize['save_invoice']               = __( 'Save Invoice', 'invoicing' );
-		$localize['status_publish']             = wpinv_status_nicename( 'publish' );
-		$localize['status_pending']             = wpinv_status_nicename( 'wpi-pending' );
-		$localize['delete_tax_rate']            = __( 'Are you sure you wish to delete this tax rate?', 'invoicing' );
-		$localize['OneItemMin']                 = __( 'Invoice must contain at least one item', 'invoicing' );
-		$localize['DeleteInvoiceItem']          = __( 'Are you sure you wish to delete this item?', 'invoicing' );
-		$localize['FillBillingDetails']         = __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' );
-		$localize['confirmCalcTotals']          = __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' );
-		$localize['AreYouSure']                 = __( 'Are you sure?', 'invoicing' );
-		$localize['emptyInvoice']               = __( 'Add at least one item to save invoice!', 'invoicing' );
-		$localize['errDeleteItem']              = __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' );
-		$localize['delete_subscription']        = __( 'Are you sure you want to delete this subscription?', 'invoicing' );
-		$localize['action_edit']                = __( 'Edit', 'invoicing' );
-		$localize['action_cancel']              = __( 'Cancel', 'invoicing' );
-		$localize['item_description']           = __( 'Item Description', 'invoicing' );
-		$localize['discount_description']       = __( 'Discount Description', 'invoicing' );
-		$localize['invoice_description']        = __( 'Invoice Description', 'invoicing' );
-		$localize['searching']                  = __( 'Searching', 'invoicing' );
-
-		$localize = apply_filters( 'wpinv_admin_js_localize', $localize );
-
-		wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', $localize );
-
-		// Load payment form scripts on our admin pages only.
-		if ( ( $hook == 'post-new.php' || $hook == 'post.php' ) && 'wpi_payment_form' === $post->post_type ) {
-
-			wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
-			wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
-			wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
-
-			$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
-			wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable' ),  $version );
-
-			wp_localize_script( 'wpinv-admin-payment-form-script', 'wpinvPaymentFormAdmin', array(
-				'elements'      => $this->form_elements->get_elements(),
-				'form_elements' => $this->form_elements->get_form_elements( $post->ID ),
-				'all_items'     => $this->form_elements->get_published_items(),
-				'currency'      => wpinv_currency_symbol(),
-				'position'      => wpinv_currency_position(),
-				'decimals'      => (int) wpinv_decimals(),
-				'thousands_sep' => wpinv_thousands_separator(),
-				'decimals_sep'  => wpinv_decimal_separator(),
-				'form_items'    => $this->form_elements->get_form_items( $post->ID ),
-				'is_default'    => $post->ID == $this->default_payment_form,
-			) );
-
-			wp_enqueue_script( 'wpinv-admin-payment-form-script' );
-		}
-
-		if ( $page == 'wpinv-subscriptions' ) {
-			wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
-			wp_enqueue_script( 'wpinv-sub-admin-script' );
-		}
-
-		if ( $page == 'wpinv-reports' ) {
-			wp_enqueue_script( 'jquery-flot', WPINV_PLUGIN_URL . 'assets/js/jquery.flot.min.js', array( 'jquery' ), '0.7' );
-		}
-
-	}
-
-	public function admin_body_class( $classes ) {
-		global $pagenow, $post, $current_screen;
-
-		if ( !empty( $current_screen->post_type ) && ( $current_screen->post_type == 'wpi_invoice' || $current_screen->post_type == 'wpi_payment_form' || $current_screen->post_type == 'wpi_quote' ) ) {
-			$classes .= ' wpinv-cpt';
-		}
-
-		$page = isset( $_GET['page'] ) ? strtolower( $_GET['page'] ) : false;
-
-		$add_class = $page && $pagenow == 'admin.php' && strpos( $page, 'wpinv-' ) === 0 ? true : false;
-		if ( $add_class ) {
-			$classes .= ' wpi-' . wpinv_sanitize_key( $page );
-		}
-
-		$settings_class = array();
-		if ( $page == 'wpinv-settings' ) {
-			if ( !empty( $_REQUEST['tab'] ) ) {
-				$settings_class[] = sanitize_text_field( $_REQUEST['tab'] );
-			}
-
-			if ( !empty( $_REQUEST['section'] ) ) {
-				$settings_class[] = sanitize_text_field( $_REQUEST['section'] );
-			}
-
-			$settings_class[] = isset( $_REQUEST['wpi_sub'] ) && $_REQUEST['wpi_sub'] !== '' ? sanitize_text_field( $_REQUEST['wpi_sub'] ) : 'main';
-		}
-
-		if ( !empty( $settings_class ) ) {
-			$classes .= ' wpi-' . wpinv_sanitize_key( implode( $settings_class, '-' ) );
-		}
-
-		$post_type = wpinv_admin_post_type();
-
-		if ( $post_type == 'wpi_invoice' || $post_type == 'wpi_quote' || $add_class !== false ) {
-			return $classes .= ' wpinv';
-		}
-
-		if ( $pagenow == 'post.php' && $post_type == 'wpi_item' && !empty( $post ) && !wpinv_item_is_editable( $post ) ) {
-			$classes .= ' wpi-editable-n';
-		}
-
-		return $classes;
-	}
-
-	public function admin_print_scripts_edit_php() {
-
-	}
-
 	public function wpinv_actions() {
 		if ( isset( $_REQUEST['wpi_action'] ) ) {
 			do_action( 'wpinv_' . wpinv_sanitize_key( $_REQUEST['wpi_action'] ), $_REQUEST );
@@ -678,7 +441,7 @@ class WPInv_Plugin {
 	}
 
 	public function pre_get_posts( $wp_query ) {
-		if ( !empty( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'wpi_invoice' && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
+		if ( ! is_admin() && !empty( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'wpi_invoice' && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
 			$wp_query->query_vars['post_status'] = array_keys( wpinv_get_invoice_statuses() );
 		}
 

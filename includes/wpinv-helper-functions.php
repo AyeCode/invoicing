@@ -1089,3 +1089,12 @@ function getpaid_get_subscription_period_label( $period ) {
 
     return isset( $periods[ $period ] ) ? strtolower( $periods[ $period ] ) : strtolower( $periods['d'] );
 }
+
+/**
+ * Returns the main admin class.
+ * 
+ * @return GetPaid_Admin
+ */
+function getpaid_admin() {
+    return getpaid()->get( 'admin' );
+}
