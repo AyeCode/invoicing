@@ -211,7 +211,7 @@ abstract class GetPaid_Data {
 	 * @return bool result
 	 */
 	public function delete( $force_delete = false ) {
-		if ( $this->data_store && $this->get_id() ) {
+		if ( $this->data_store ) {
 			$this->data_store->delete( $this, array( 'force_delete' => $force_delete ) );
 			$this->set_id( 0 );
 			return true;

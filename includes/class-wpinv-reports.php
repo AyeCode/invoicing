@@ -824,7 +824,7 @@ class WPInv_Reports {
                 $month  = date( 'n', strtotime( $_range, $time ) );
                 $year   = date( 'Y', strtotime( $_range, $time ) );
                 $days   = cal_days_in_month(
-                    defined( 'CAL_GREGORIAN' ) ? CAL_GREGORIAN : 1,
+                    CAL_GREGORIAN,
                     $month,
                     $year
                 );

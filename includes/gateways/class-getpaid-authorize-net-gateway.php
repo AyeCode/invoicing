@@ -925,7 +925,7 @@ log_noptin_message( $args );
             $invoice->set_transaction_id( sanitize_text_field( $_POST['x_trans_id'] ) );
             $invoice->set_status( 'wpi-renewal' );
             $invoice->save();
-            $subscription->add_payment( array(), $invoice );
+            $subscription->add_payment( $invoice );
             $subscription->renew();
 
         } else {

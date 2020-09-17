@@ -845,7 +845,7 @@ function getpaid_invoice_meta( $invoice ) {
                 __( '%s Status', 'invoicing' ),
                 ucfirst( $invoice->get_type() )
             ),
-            'value' => $invoice->get_status_label_html(),
+            'value' => sanitize_text_field( $invoice->get_status_nicename() ),
         ),
 
         'date' => array(

@@ -98,7 +98,7 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 			$discount->save_meta_data();
 			$discount->apply_changes();
 			$this->clear_caches( $discount );
-			do_action( 'getpaid_new_discount', $discount );
+			do_action( 'getpaid_new_discount', $discount->get_id(), $discount );
 			return true;
 		}
 
@@ -140,7 +140,7 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $discount, $discount_object );
 		$discount->read_meta_data();
 		$discount->set_object_read( true );
-		do_action( 'getpaid_read_discount', $discount );
+		do_action( 'getpaid_read_discount', $discount->get_id(), $discount );
 
 	}
 
@@ -197,9 +197,9 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 		$new_status = $discount->get_status( 'edit' );
 
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'getpaid_new_discount', $discount );
+			do_action( 'getpaid_new_discount', $discount->get_id(), $discount );
 		} else {
-			do_action( 'getpaid_update_discount', $discount );
+			do_action( 'getpaid_update_discount', $discount->get_id(), $discount );
 		}
 
 	}

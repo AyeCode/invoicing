@@ -327,13 +327,13 @@ class GetPaid_Data_Store_WP {
 		}
 
 		if ( $args['force_delete'] ) {
-			do_action( "getpaid_delete_$object_type", $object );
 			wp_delete_post( $id, true );
 			$object->set_id( 0 );
+			do_action( "getpaid_delete_$object_type", $id );
 		} else {
-			do_action( "getpaid_trash_$object_type", $object );
 			wp_trash_post( $id );
 			$object->set_status( 'trash' );
+			do_action( "getpaid_trash_$object_type", $id );
 		}
 	}
 

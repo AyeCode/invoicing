@@ -128,7 +128,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
                     $attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
                     $anchor = sanitize_text_field( $action['name'] );
 
-                    echo "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>";
+                    echo "<a href='$url' class='btn btn-sm $class $key' $attrs>$anchor</a>";
                 }
 
                 echo '</div>';

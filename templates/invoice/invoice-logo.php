@@ -10,12 +10,12 @@
 defined( 'ABSPATH' ) || exit;
 
 ?>
-<a target="_blank" class="logo-link text-dark" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
+<a target="_blank" class="logo-link" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
 
     <?php if ( $logo = wpinv_get_business_logo() ) { ?>
         <img class="logo" style="max-width:100%;" src="<?php echo esc_url( $logo ); ?>">
     <?php } else { ?>
-        <h1 class="pt-2"><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
+        <h1><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
     <?php } ?>
 
 </a>

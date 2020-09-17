@@ -123,7 +123,6 @@ class WPInv_Notes {
 
 		add_comment_meta( $note_id, '_wpi_customer_note', 1 );
 		do_action( 'wpinv_new_customer_note', array( 'invoice_id' => $invoice->get_id(), 'user_note' => $note ) );
-		do_action( 'getpaid_new_customer_note', $invoice, $note );
 		return $note_id;
 	}
 

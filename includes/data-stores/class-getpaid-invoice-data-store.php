@@ -23,7 +23,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 */
 	protected $internal_meta_keys = array(
 		'_wpinv_subscr_profile_id',
-		'_wpinv_subscription_id',
 		'_wpinv_taxes',
 		'_wpinv_fees',
 		'_wpinv_discounts',
@@ -42,8 +41,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * @var array
 	 */
 	protected $meta_key_to_props = array(
-		'_wpinv_subscr_profile_id' => 'remote_subscription_id',
-		'_wpinv_subscription_id'   => 'subscription_id',
+		'_wpinv_subscr_profile_id' => 'subscription_id',
 		'_wpinv_taxes'             => 'taxes',
 		'_wpinv_fees'              => 'fees',
 		'_wpinv_discounts'         => 'discounts',
@@ -151,7 +149,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$this->clear_caches( $invoice );
 
 			// Fires after a new invoice is created.
-			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 			return true;
 		}
 
@@ -200,7 +198,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$this->add_items( $invoice );
 		$invoice->read_meta_data();
 		$invoice->set_object_read( true );
-		do_action( 'getpaid_read_' . $invoice->get_type(), $invoice );
+		do_action( 'getpaid_read_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 
 	}
 
@@ -275,9 +273,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$new_status = $invoice->get_status( 'edit' );
 
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 		} else {
-			do_action( 'getpaid_update_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_update_' . $invoice->get_type(), $invoice->get_id(), $invoice );
 		}
 
 	}

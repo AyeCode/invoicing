@@ -628,7 +628,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public static function get_item_id_by_field( $value, $field = 'custom_id', $type = '' ) {
 
 		// Trim the value.
-		$value = sanitize_text_field( $value );
+		$value = trim( $value );
 
 		if ( empty( $value ) ) {
 			return 0;
