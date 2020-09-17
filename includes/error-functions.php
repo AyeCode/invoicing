@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 function getpaid_get_errors_html( $clear = true ) {
 
     $errors = '';
-    foreach ( wpinv_get_errors() as $error_id => $error ) {
+    foreach ( wpinv_get_errors() as $error ) {
         $type     = 'error';
 
         if ( is_array( $error ) ) {

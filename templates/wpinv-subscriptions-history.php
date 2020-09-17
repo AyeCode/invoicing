@@ -24,6 +24,7 @@ $subs = $db->get_subscriptions($args);
 ?>
 <?php
 do_action('wpinv_subscriptions_front_notices');
+wpinv_print_errors();
 do_action('wpinv_before_user_subscriptions', $subs);
 if ($subs) { ?>
     <table class="table table-bordered table-hover table-responsive wpi-user-subscriptions">

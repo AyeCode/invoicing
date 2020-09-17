@@ -71,6 +71,7 @@ class GetPaid_Subscription_Data_Store {
 			$subscription->set_id( $wpdb->insert_id );
 			$subscription->apply_changes();
 			$subscription->clear_cache();
+			update_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscription_id', $subscription->get_id() );
 			do_action( 'getpaid_new_subscription', $subscription );
 			return true;
 		}
@@ -168,8 +169,10 @@ class GetPaid_Subscription_Data_Store {
 		// Delete cache.
 		$subscription->clear_cache();
 
+		update_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscr_profile_id', $subscription->get_profile_id() );
+
 		// Fire a hook.
-		do_action( 'getpaid_update_subscription', $subscription->get_id(), $subscription );
+		do_action( 'getpaid_update_subscription', $subscription );
 
 	}
 
@@ -189,11 +192,14 @@ class GetPaid_Subscription_Data_Store {
 			)
 		);
 
+		delete_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscr_profile_id' );
+		delete_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscription_id' );
+
 		// Delete cache.
 		$subscription->clear_cache();
 
 		// Fire a hook.
-		do_action( 'getpaid_delete_subscription', $subscription->get_id(), $subscription );
+		do_action( 'getpaid_delete_subscription', $subscription );
 
 		$subscription->set_id( 0 );
 	}
