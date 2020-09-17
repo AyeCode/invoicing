@@ -13,7 +13,8 @@ defined( 'ABSPATH' ) || exit;
 
 <?php do_action( 'getpaid_invoice_before_line_items', $invoice ); ?>
 
-    <div class="getpaid-invoice-items mt-5 mb-4 border">
+    <h2 class="mt-5 mb-1 h4"><?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), ucfirst( $invoice->get_type() )); ?></h2>
+    <div class="getpaid-invoice-items mb-4 border">
 
 
         <div class="getpaid-invoice-items-header <?php echo sanitize_html_class( $invoice->get_template() ); ?>">

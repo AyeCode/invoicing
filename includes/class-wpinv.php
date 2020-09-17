@@ -103,6 +103,8 @@ class WPInv_Plugin {
 		$this->set( 'post_types', new GetPaid_Post_Types() );
 		$this->set( 'template', new GetPaid_Template() );
 		$this->set( 'admin', new GetPaid_Admin() );
+		$this->set( 'subscriptions', new WPInv_Subscriptions() );
+
 	}
 
 	 /**
@@ -127,6 +129,7 @@ class WPInv_Plugin {
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_action( 'getpaid_init', array( $this, 'maybe_process_ipn' ), 5 );
 		add_action( 'init', array( &$this, 'wpinv_actions' ) );
+		add_action( 'init', array( $this, 'maybe_do_authenticated_action' ) );
 
 		if ( class_exists( 'BuddyPress' ) ) {
 			add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );
@@ -223,7 +226,6 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
@@ -439,6 +441,21 @@ class WPInv_Plugin {
 			do_action( 'wpinv_' . wpinv_sanitize_key( $_REQUEST['wpi_action'] ), $_REQUEST );
 		}
 	}
+
+	/**
+     * Fires an action after verifying that a user can fire them.
+	 *
+	 * Note: If the action is on an invoice, subscription etc, esure that the
+	 * current user owns the invoice/subscription.
+     */
+    public function maybe_do_authenticated_action() {
+
+        if ( is_user_logged_in() && isset( $_REQUEST['getpaid-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
+            $key = sanitize_key( $_REQUEST['getpaid-action'] );
+            do_action( "getpaid_authenticated_action_$key", $_REQUEST );
+        }
+
+    }
 
 	public function pre_get_posts( $wp_query ) {
 		if ( ! is_admin() && !empty( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'wpi_invoice' && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {

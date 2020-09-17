@@ -557,3 +557,58 @@ function wpinv_get_cart_items_discount_amount() {
 function wpinv_get_cart_item_discount_amount() {
     return 0;
 }
+
+/**
+ * @deprecated.
+ */
+function wpinv_new_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_cancelled_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_failed_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_onhold_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_processing_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_completed_invoice_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_fully_refunded_notification() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_partially_refunded_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_new_invoice_note_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_user_invoice_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_user_note_notification() {}

@@ -82,7 +82,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 			$form->save_meta_data();
 			$form->apply_changes();
 			$this->clear_caches( $form );
-			do_action( 'getpaid_create_payment_form', $form->get_id(), $form );
+			do_action( 'getpaid_create_payment_form', $form );
 			return true;
 		}
 
@@ -123,7 +123,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $form, $form_object );
 		$form->read_meta_data();
 		$form->set_object_read( true );
-		do_action( 'getpaid_read_payment_form', $form->get_id(), $form );
+		do_action( 'getpaid_read_payment_form', $form );
 
 	}
 
@@ -179,9 +179,9 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$new_status = $form->get_status( 'edit' );
 
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'getpaid_new_payment_form', $form->get_id(), $form );
+			do_action( 'getpaid_new_payment_form', $form );
 		} else {
-			do_action( 'getpaid_update_payment_form', $form->get_id(), $form );
+			do_action( 'getpaid_update_payment_form', $form );
 		}
 
 	}
