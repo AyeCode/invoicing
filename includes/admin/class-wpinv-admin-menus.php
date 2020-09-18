@@ -15,6 +15,7 @@ class WPInv_Admin_Menus {
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
         add_action( 'admin_menu', array( $this, 'add_customers_menu' ), 18 );
+        add_action( 'admin_menu', array( $this, 'add_subscriptions_menu' ), 40 );
         add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 100 );
         add_action( 'admin_menu', array( $this, 'add_settings_menu' ), 60 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
@@ -47,6 +48,20 @@ class WPInv_Admin_Menus {
             wpinv_get_capability(),
             'wpinv-customers',
             array( $this, 'customers_page' )
+        );
+    }
+
+    /**
+     * Registers the subscriptions menu
+     */
+    public function add_subscriptions_menu() {
+        add_submenu_page(
+            'wpinv',
+            __( 'Subscriptions', 'invoicing' ),
+            __( 'Subscriptions', 'invoicing' ),
+            wpinv_get_capability(),
+            'wpinv-subscriptions',
+            'wpinv_subscriptions_page'
         );
     }
 

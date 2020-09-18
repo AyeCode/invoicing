@@ -108,7 +108,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 			$item->save_meta_data();
 			$item->apply_changes();
 			$this->clear_caches( $item );
-			do_action( 'getpaid_new_item', $item->get_id(), $item );
+			do_action( 'getpaid_new_item', $item );
 			return true;
 		}
 
@@ -151,7 +151,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$this->read_object_data( $item, $item_object );
 		$item->read_meta_data();
 		$item->set_object_read( true );
-		do_action( 'getpaid_read_item', $item->get_id(), $item );
+		do_action( 'getpaid_read_item', $item );
 
 	}
 
@@ -209,9 +209,9 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$new_status = $item->get_status( 'edit' );
 
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'getpaid_new_item', $item->get_id(), $item );
+			do_action( 'getpaid_new_item', $item );
 		} else {
-			do_action( 'getpaid_update_item', $item->get_id(), $item );
+			do_action( 'getpaid_update_item', $item );
 		}
 
 	}

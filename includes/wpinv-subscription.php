@@ -47,7 +47,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		'product_id'        => 0,
 		'created'           => '0000-00-00 00:00:00',
 		'expiration'        => '0000-00-00 00:00:00',
-		'trial_period'      => null,
+		'trial_period'      => '',
 		'status'            => 'pending',
 		'profile_id'        => '',
 		'gateway'           => '',
@@ -1055,7 +1055,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_cancel_url() {
-		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'cancel_subscription', 'sub_id' => $this->get_id() ) ), 'wpinv-recurring-cancel' );
+		$url = wp_nonce_url( add_query_arg( array( 'getpaid-action' => 'subscription_cancel', 'sub_id' => $this->get_id() ) ), 'getpaid-nonce' );
 		return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
 	}
 
@@ -1079,7 +1079,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_renew_url() {
-		$url = wp_nonce_url( add_query_arg( array( 'wpinv_action' => 'renew_subscription', 'sub_id' => $this->get_id ) ), 'wpinv-recurring-renew' );
+		$url = wp_nonce_url( add_query_arg( array( 'getpaid-action' => 'renew_subscription', 'sub_id' => $this->get_id ) ), 'getpaid-nonce' );
 		return apply_filters( 'wpinv_subscription_renew_url', $url, $this );
 	}
 
@@ -1173,12 +1173,12 @@ class WPInv_Subscription extends GetPaid_Data {
 					/* translators: 1: old subscription status 2: new subscription status */
 					$transition_note = sprintf( __( 'Subscription status changed from %1$s to %2$s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['from'] ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
 
-					// Fire another hook.
-					do_action( 'getpaid_subscription_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
-					do_action( 'getpaid_subscription_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
-
 					// Note the transition occurred.
 					$this->get_parent_payment()->add_note( $transition_note, false, false, true );
+
+					// Fire another hook.
+					do_action( 'getpaid_subscription_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
+					do_action( 'getpaid_subscription_status_changed', $this, $status_transition['from'], $status_transition['to'] );
 
 				} else {
 					/* translators: %s: new invoice status */
