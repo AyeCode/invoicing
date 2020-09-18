@@ -104,6 +104,7 @@ class WPInv_Plugin {
 		$this->set( 'template', new GetPaid_Template() );
 		$this->set( 'admin', new GetPaid_Admin() );
 		$this->set( 'subscriptions', new WPInv_Subscriptions() );
+		$this->set( 'invoice_emails', new GetPaid_Invoice_Notification_Emails() );
 
 	}
 
@@ -267,14 +268,12 @@ class WPInv_Plugin {
 
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
-			//require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-recurring-admin.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-getpaid-admin-profile.php' );
-			//require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
 			// load the user class only on the users.php page
 			global $pagenow;
 			if($pagenow=='users.php'){

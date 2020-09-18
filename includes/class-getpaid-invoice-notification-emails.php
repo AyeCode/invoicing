@@ -303,6 +303,13 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function user_invoice( $invoice ) {
 
+		// Only send this email for invoices created via the admin page.
+		$payment_form = $invoice->get_payment_form();
+
+		if ( 1 != $payment_form && wpinv_get_default_payment_form() != $payment_form ) {
+			return;
+		}
+
 		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
 		$recipient = $invoice->get_email();
 

@@ -40,7 +40,7 @@ class GetPaid_Notification_Email_Sender {
 		$data = apply_filters(
 			'getpaid_email_data',
 			array(
-				'to'          => array_filter( wpinv_parse_list( $to ) ),
+				'to'          => array_filter( array_unique( wpinv_parse_list( $to ) ) ),
 				'subject'     => $subject,
 				'email'       => $email,
 				'headers'     => $this->get_headers(),
@@ -58,22 +58,10 @@ class GetPaid_Notification_Email_Sender {
 		// Attach our own hooks.
 		$this->before_sending();
 
-		// Prepare the sending function.
-		$sending_function = apply_filters( 'getpaid_email_email_sending_function', 'wp_mail' );
-        $result           = false;
+        $result = false;
 
         foreach ( $this->wp_mail_data['to'] as $to ) {
-
-            // Send the actual email.
-            $result = call_user_func(
-                $sending_function,
-                $to,
-                html_entity_decode( $data['subject'], ENT_QUOTES, get_bloginfo( 'charset' ) ),
-                $data['email'],
-                $data['headers'],
-                $data['attachments']
-            );
-
+			$result = $this->_send( $to, $data );
         }
 
 		// Remove our hooks.
@@ -82,7 +70,40 @@ class GetPaid_Notification_Email_Sender {
 		$this->wp_mail_data = null;
 
 		return $result;
-    }
+	}
+
+	/**
+	 * Does the actual sending.
+     * 
+     * @param string $to The recipient's email.
+     * @param array $data The email's data.
+     * @param string $email The email body.
+     * @param array $attachments The email attachments.
+     * 
+     * @return bool
+	 */
+	protected function _send( $to, $data ) {
+
+		// Prepare the sending function.
+		$sending_function = apply_filters( 'getpaid_email_email_sending_function', 'wp_mail' );
+
+		// Send the actual email.
+		$result = call_user_func(
+			$sending_function,
+			$to,
+			html_entity_decode( $data['subject'], ENT_QUOTES, get_bloginfo( 'charset' ) ),
+			$data['email'],
+			$data['headers'],
+			$data['attachments']
+		);
+
+		if ( ! $result ) {
+			$log_message = wp_sprintf( __( "\nTime: %s\nTo: %s\nSubject: %s\n", 'invoicing' ), date_i18n( 'F j Y H:i:s', current_time( 'timestamp' ) ), $to, $data['subject'] );
+			wpinv_error_log( $log_message, __( 'Email from Invoicing plugin failed to send', 'invoicing' ), __FILE__, __LINE__ );
+		}
+
+		return $result;
+	}
     
     /**
 	 * Retrieves email headers.

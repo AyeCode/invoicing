@@ -715,6 +715,17 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 
 /* General Settings Styles */
+.wpi-wpinv-settings .form-table th {
+    position: relative;
+    padding-right: 24px;
+}
+
+.wpi-wpinv-settings .form-table th .wpi-help-tip {
+    position: absolute;
+    right: 0;
+    color: #616161;
+}
+
 .wpi-wpinv-settings .form-table tbody tr:first-child th[scope="row"] {
     min-height: 1.4rem;
     display: inline-block;
@@ -722,16 +733,13 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 .wpi-wpinv-settings .form-table tbody tr:first-child th[scope="row"] h3 {
     position: absolute;
 }
-.wpi-wpinv-settings .form-table th {
-    padding: 15px 10px 15px 0;
-}
+
 .wpi-wpinv-settings .form-table td {
     padding: 12.5px 10px;
 }
 .wpi-wpinv-settings .form-table label {
     color: #666;
     font-size: 14px;
-    font-style: italic;
     margin: 4px 0 0;
 }
 .wpi-wpinv-settings .form-table select + label,
@@ -1630,15 +1638,9 @@ textarea.wpi-email_overdue_content {
 
 .wpi-mcheck-rows .wpi-mcheck-row {
     float: none;
-    display: inline-block;
+    display: block;
 }
-.wpi-mcheck-rows.wpi-mcheck-email_due_reminder_days .wpi-mcheck-row {display: block;}
-.wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row {
-    width: 33%;
-}
-.wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row {
-    width: 50%;
-}
+
 .wpi-mcheck-row input[type="checkbox"] {
     margin-top: 3px;
 }
@@ -2332,4 +2334,28 @@ textarea.wpi-email_overdue_content {
 
 .getpaid-invoice-totals-row td{
     padding: 0.4em;
+}
+
+.wpi-wpinv-settings table.form-table input.regular-input,
+.wpi-wpinv-settings table.form-table input[type=date],
+.wpi-wpinv-settings table.form-table input[type=datetime-local],
+.wpi-wpinv-settings table.form-table input[type=datetime],
+.wpi-wpinv-settings table.form-table input[type=email],
+.wpi-wpinv-settings table.form-table input[type=number],
+.wpi-wpinv-settings table.form-table input[type=password],
+.wpi-wpinv-settings table.form-table input[type=tel],
+.wpi-wpinv-settings table.form-table input[type=text],
+.wpi-wpinv-settings table.form-table input[type=time],
+.wpi-wpinv-settings table.form-table input[type=url],
+.wpi-wpinv-settings table.form-table input[type=week],
+.wpi-wpinv-settings table.form-table textarea {
+    width: 620px;
+    margin: 0;
+    box-sizing: border-box;
+    vertical-align: top;
+    padding: 0 8px;
+}
+
+.getpaid-settings-editor-input {
+    width: 620px;
 }

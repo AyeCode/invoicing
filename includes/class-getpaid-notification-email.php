@@ -38,12 +38,35 @@ class GetPaid_Notification_Email {
     }
 
     /**
+	 * Retrieves an option
+	 *
+     * @return mixed
+	 */
+	public function get_option( $key ) {
+
+        $key   = "email_{$this->id}_$key";
+        $value = wpinv_get_option( $key, null );
+
+        if ( is_null( $value ) ) {
+            $options = wpinv_get_emails();
+
+            if ( ! isset( $options[ $this->id ] ) || ! isset( $options[ $this->id ][ $key ] ) ) {
+                return '';
+            }
+
+            $value = isset( $options[ $this->id ][ $key ]['std'] ) ? $options[ $this->id ][ $key ]['std'] : '';
+        }
+
+        return $value;
+    }
+
+    /**
 	 * Retrieves the email body.
 	 *
      * @return string
 	 */
 	public function get_body() {
-        $body = wpinv_get_option( "email_{$this->id}_body" );
+        $body = $this->get_option( 'body' );
         return apply_filters( 'getpaid_get_email_body', $body, $this->id, $this->object );
     }
 
@@ -53,7 +76,7 @@ class GetPaid_Notification_Email {
      * @return string
 	 */
 	public function get_subject() {
-        $subject = wpinv_get_option( "email_{$this->id}_subject" );
+        $subject = $this->get_option( 'subject' );
         return apply_filters( 'getpaid_get_email_subject', $subject, $this->id, $this->object );
     }
 
@@ -63,7 +86,7 @@ class GetPaid_Notification_Email {
      * @return string
 	 */
 	public function get_heading() {
-        $heading = wpinv_get_option( "email_{$this->id}_heading" );
+        $heading = $this->get_option( 'heading' );
         return apply_filters( 'getpaid_get_email_heading', $heading, $this->id, $this->object );
     }
 
@@ -73,7 +96,7 @@ class GetPaid_Notification_Email {
      * @return bool
 	 */
 	public function is_active() {
-        $is_active = (bool) wpinv_get_option( "email_{$this->id}_active", false );
+        $is_active = ! empty( $this->get_option( 'is_active' ) );
         return apply_filters( 'getpaid_email_type_is_active', $is_active, $this->id, $this->object );
     }
 
@@ -83,7 +106,7 @@ class GetPaid_Notification_Email {
      * @return bool
 	 */
 	public function include_admin_bcc() {
-        $include_admin_bcc = (bool) wpinv_get_option( "email_{$this->id}_admin_bcc", false );
+        $include_admin_bcc = ! empty( $this->get_option( 'admin_bcc' ) );
         return apply_filters( 'getpaid_email_type_include_admin_bcc', $include_admin_bcc, $this->id, $this->object );
     }
 
@@ -146,7 +169,7 @@ class GetPaid_Notification_Email {
 	 */
 	public function get_content( $merge_tags = array(), $extra_args = array() ) {
 
-        return wpinv_get_template_html(
+        $content = wpinv_get_template_html(
             "emails/wpinv-email-{$this->id}.php",
             array_merge(
                 $extra_args,
@@ -162,6 +185,7 @@ class GetPaid_Notification_Email {
             )
         );
 
+        return wpinv_email_style_body( $content );
     }
 
 }
