@@ -48,6 +48,11 @@ class GetPaid_Meta_Box_Item_Details {
             #poststuff .form-control {
                 border-color: #7e8993;
             }
+
+            .bsui label.col-sm-3.col-form-label {
+                font-weight: 600;
+            }
+
         </style>
         <div class='bsui' style='max-width: 600px;padding-top: 10px; max-width: 820px;'>
 
@@ -168,7 +173,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                             ?>
                             <div class="wpinv_show_if_recurring">
-                                <em><?php echo wpinv_get_recurring_gateways_text(); ?><em>
+                                <em><?php echo wpinv_get_recurring_gateways_text(); ?></em>
                             </div>
                         </div>
                     </div>

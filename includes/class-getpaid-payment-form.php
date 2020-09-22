@@ -269,6 +269,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 		foreach ( $items as $key => $value ) {
 
+			//Form items.
 			if ( $value instanceof GetPaid_Form_Item ) {
 
 				if ( $value->can_purchase() ) {
@@ -281,10 +282,25 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 			// $item_id => $quantity
 			if ( is_numeric( $key ) && is_numeric( $value ) ) {
-				$item   = new GetPaid_Form_Item( $key );
+				$item = new GetPaid_Form_Item( $key );
 
 				if ( $item->can_purchase() ) {
 					$item->set_quantity( $value );
+					$prepared[] = $item;
+				}
+
+				continue;
+			}
+
+			// $item_id => array( 'price' => 10 )
+			if ( is_numeric( $key ) && is_array( $value ) ) {
+				$item = new GetPaid_Form_Item( $key );
+
+				if ( isset( $value['price'] ) && $item->user_can_set_their_price() ) {
+					$item->set_price( $value['price'] );
+				}
+
+				if ( $item->can_purchase() ) {
 					$prepared[] = $item;
 				}
 

@@ -100,6 +100,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	| CRUD Methods
 	|--------------------------------------------------------------------------
 	*/
+
 	/**
 	 * Method to create a new invoice in the database.
 	 *
@@ -122,7 +123,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 					'post_title'    => $invoice->get_title( 'edit' ),
 					'post_excerpt'  => $invoice->get_description( 'edit' ),
 					'post_parent'   => $invoice->get_parent_id( 'edit' ),
-					'post_name'     => $invoice->get_path( 'edit' ),
 				)
 			),
 			true
@@ -132,11 +132,16 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 			// Update the new id and regenerate a title.
 			$invoice->set_id( $id );
-			wp_update_post( array( 'ID' => $invoice->get_id(), 'post_title' => $invoice->get_number( 'edit' ) ) );
 
-			// Ensure both the key and number are set.
-			$invoice->get_key();
-			$invoice->get_number();
+			$invoice->maybe_set_number();
+
+			wp_update_post(
+				array(
+					'ID'         => $invoice->get_id(),
+					'post_title' => $invoice->get_number( 'edit' ),
+					'post_name'  => $invoice->get_path( 'edit' )
+				)
+			);
 
 			// Save special fields and items.
 			$this->save_special_fields( $invoice );
@@ -218,8 +223,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		}
 
 		// Ensure both the key and number are set.
-		$invoice->get_key();
-		$invoice->get_number();
+		$invoice->get_path();
 
 		// Grab the current status so we can compare.
 		$previous_status = get_post_status( $invoice->get_id() );
@@ -416,12 +420,13 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 *
 	 * @param WPInv_Invoice $invoice Invoice object.
      */
-    public function save_special_fields( $invoice ) {
+    public function save_special_fields( & $invoice ) {
 		global $wpdb;
 
 		// The invoices table.
 		$table = $wpdb->prefix . 'getpaid_invoices';
 		$id    = (int) $invoice->get_id();
+		$invoice->maybe_set_key();
 
 		if ( $wpdb->get_var( "SELECT `post_id` FROM $table WHERE `post_id`= $id" ) ) {
 

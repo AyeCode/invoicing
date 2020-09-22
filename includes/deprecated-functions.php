@@ -612,3 +612,22 @@ function wpinv_user_invoice_notification() {}
  * @deprecated
  */
 function wpinv_user_note_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_invoice_status_label( $status, $status_display = '' ) {
+    return empty( $status_display ) ? sanitize_text_field( $status ) : sanitize_text_field( $status_display );
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_clean_invoice_number( $number ) {
+    return $number;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_update_invoice_number() {}

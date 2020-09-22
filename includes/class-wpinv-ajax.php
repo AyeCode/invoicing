@@ -273,7 +273,7 @@ class WPInv_Ajax {
         // Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
             getpaid_display_payment_form( $_GET['form'] );
-		} else if( $_GET['invoice'] ) {
+		} else if( ! empty( $_GET['invoice'] ) ) {
 		    echo getpaid_display_invoice_payment_form( $_GET['invoice'] );
         } else {
 			$items = getpaid_convert_items_to_array( $_GET['item'] );
@@ -333,7 +333,7 @@ class WPInv_Ajax {
         $items = $submission->get_items();
 
         // Ensure that we have items.
-        if ( empty( $items ) ) {
+        if ( empty( $items ) && 0 == count( $submission->get_fees() ) ) {
             wp_send_json_error( __( 'You have not selected any items.', 'invoicing' ) );
         }
 
@@ -440,6 +440,21 @@ class WPInv_Ajax {
 
         $invoice->set_user_id( $user->ID );
 
+        // User address.
+        $address_fields = wpinv_get_user_address( $user->ID );
+
+        foreach ( $address_fields as $key => $value ) {
+
+            if ( is_callable( $invoice, "get_$key" ) ) {
+                $current = call_user_func( array( $invoice, "get_$key" ) );
+
+                if ( empty( $current ) ) {
+                    $method = "set_$key";
+                    $invoice->$method( $value );
+                }
+            }
+
+        }
         // Set gateway.
         $invoice->set_gateway( $data['wpi-gateway'] );
 
@@ -449,7 +464,7 @@ class WPInv_Ajax {
         $invoice->save();
 
         // Was it saved successfully:
-        if ($invoice->get_id() == 0 ) {
+        if ( $invoice->get_id() == 0 ) {
             wp_send_json_error( __( 'An error occured while saving your invoice.', 'invoicing' ) );
         }
 

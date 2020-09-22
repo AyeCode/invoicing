@@ -67,7 +67,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									break;
 
 								case 'invoice-status':
-									echo wpinv_invoice_status_label( $invoice->get_status(), $invoice->get_status_nicename() );
+									echo $invoice->get_status_label_html();
 									
 									break;
 

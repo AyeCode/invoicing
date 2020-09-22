@@ -25,7 +25,7 @@ class GetPaid_Metaboxes {
 	public static function init() {
 
 		// Register metaboxes.
-		add_action( 'add_meta_boxes', 'GetPaid_Metaboxes::add_meta_boxes', 15, 2 );
+		add_action( 'add_meta_boxes', 'GetPaid_Metaboxes::add_meta_boxes', 5, 2 );
 
 		// Remove metaboxes.
 		add_action( 'add_meta_boxes', 'GetPaid_Metaboxes::remove_meta_boxes', 30 );

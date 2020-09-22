@@ -88,18 +88,18 @@ class GetPaid_Payment_Form_Submission {
 	protected $total_tax_amount = 0;
 
 	/**
-	 * The total fees amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_fees_amount = 0;
-
-	/**
 	 * An array of fees for the submission.
 	 *
 	 * @var array
 	 */
 	protected $fees = array();
+
+	/**
+	 * The total fees amount for the submission.
+	 *
+	 * @var float
+	 */
+	protected $total_fees_amount = 0;
 
 	/**
 	 * An array of discounts for the submission.
@@ -135,14 +135,14 @@ class GetPaid_Payment_Form_Submission {
 	 * @var bool
 	 */
 	public $is_discount_valid = true;
-	
+
 	/**
 	 * Checks if we have a digital vat rule.
 	 *
 	 * @var bool
 	 */
 	public $has_digital = false;
-	
+
 	/**
 	 * Checks if we require vat.
 	 *
@@ -208,7 +208,7 @@ class GetPaid_Payment_Form_Submission {
 				$this->last_error = __( 'Invalid invoice', 'invoicing' );
                 return;
 			}
-			
+
 			if ( $invoice->is_paid() ) {
 				$this->last_error = __( 'This invoice is already paid for.', 'invoicing' );
                 return;
@@ -221,8 +221,8 @@ class GetPaid_Payment_Form_Submission {
 			$this->invoice = $invoice;
 
 		// Default forms do not have items.
-        } else if ( $form->is_default() && isset( $data['form_items'] ) ) {
-			$this->payment_form->set_items( $data['form_items'] );
+        } else if ( $form->is_default() && isset( $data['getpaid-items'] ) ) {
+			$this->payment_form->set_items( wpinv_clean( $data['getpaid-items'] ) );
 		}
 
 		// User's country.
@@ -353,7 +353,7 @@ class GetPaid_Payment_Form_Submission {
 		// Retrieve from the invoice.
 		return $this->has_invoice() ? $this->invoice->get_company() : '';
 	}
-	
+
 	/**
 	 * Returns the appropriate currency for the submission.
 	 *
@@ -447,16 +447,16 @@ class GetPaid_Payment_Form_Submission {
 	 *
 	 * @since 1.0.19
 	 */
-	public function add_tax( $name, $amount ) {
+	public function add_tax( $name, $amount, $recurring = false ) {
 		$amount = (float) wpinv_sanitize_amount( $amount );
 
 		$this->total_tax_amount += $amount;
 
 		if ( isset( $this->taxes[ $name ] ) ) {
-			$this->taxes[ $name ] += $amount;
-		} else {
-			$this->taxes[ $name ] = $amount;
+			$amount += $this->taxes[ $name ]['amount'];
 		}
+
+		$this->taxes[ $name ] = compact( 'amount', 'recurring' );
 
 	}
 
@@ -480,7 +480,7 @@ class GetPaid_Payment_Form_Submission {
 	/**
 	 * Maybe process tax.
 	 *
-	 * @since 1.0.19 
+	 * @since 1.0.19
 	 * @param GetPaid_Form_Item $item
 	 */
 	public function process_item_tax( $item ) {
@@ -518,7 +518,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_tax( $name ) {
-		return isset( $this->taxes[ $name ] ) ? $this->taxes[ $name ] : 0;
+		return isset( $this->taxes[ $name ] ) ? $this->taxes[ $name ]['amount'] : 0;
 	}
 
 	/**
@@ -537,16 +537,16 @@ class GetPaid_Payment_Form_Submission {
 	 *
 	 * @since 1.0.19
 	 */
-	public function add_discount( $name, $amount ) {
+	public function add_discount( $name, $amount, $recurring = false ) {
 		$amount = wpinv_sanitize_amount( $amount );
 
 		$this->total_discount_amount += $amount;
 
 		if ( isset( $this->discounts[ $name ] ) ) {
-			$this->discounts[ $name ] += $amount;
-		} else {
-			$this->discounts[ $name ] = $amount;
+			$amount += $this->discounts[ $name ]['amount'];
 		}
+
+		$this->discounts[ $name ] = compact( 'amount', 'recurring' );
 
 	}
 
@@ -558,7 +558,7 @@ class GetPaid_Payment_Form_Submission {
 	public function remove_discount( $name ) {
 
 		if ( isset( $this->discounts[ $name ] ) ) {
-			$this->total_discount_amount -= $this->discounts[ $name ];
+			$this->total_discount_amount -= $this->discounts[ $name ]['amount'];
 			unset( $this->discounts[ $name ] );
 		}
 
@@ -690,7 +690,7 @@ class GetPaid_Payment_Form_Submission {
 		// Fetch the discounted amount.
 		$discount = $this->discount->get_discounted_amount( $item->get_price() * $item->get_quantity() );
 
-		$this->add_discount( 'Discount', $discount );
+		$this->add_discount( 'Discount', $discount, $this->discount->is_recurring() );
 
 	}
 
@@ -709,7 +709,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_discount( $name ) {
-		return isset( $this->discounts[ $name ] ) ? $this->discounts[ $name ] : 0;
+		return isset( $this->discounts[ $name ] ) ? $this->discounts[ $name ]['amount'] : 0;
 	}
 
 	/**
@@ -728,16 +728,15 @@ class GetPaid_Payment_Form_Submission {
 	 *
 	 * @since 1.0.19
 	 */
-	public function add_fee( $name, $amount ) {
+	public function add_fee( $name, $amount, $recurring = false ) {
 		$amount = wpinv_sanitize_amount( $amount );
 
 		$this->total_fees_amount += $amount;
-
 		if ( isset( $this->fees[ $name ] ) ) {
-			$this->fees[ $name ] += $amount;
-		} else {
-			$this->fees[ $name ] = $amount;
+			$amount += $this->fees[ $name ]['amount'];
 		}
+
+		$this->fees[ $name ] = compact( 'amount', 'recurring' );
 
 	}
 
@@ -756,7 +755,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_fee( $name ) {
-		return isset( $this->fees[ $name ] ) ? $this->fees[ $name ] : 0;
+		return isset( $this->fees[ $name ] ) ? $this->fees[ $name ]['amount'] : 0;
 	}
 
 	/**
@@ -823,7 +822,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function maybe_validate_vat() {
-		
+
 		// Make sure that taxes are enabled.
 		if ( ! wpinv_use_taxes() ) {
 			return;
@@ -883,7 +882,7 @@ class GetPaid_Payment_Form_Submission {
 			}
 
 		}
-		
+
 		// Abort if we are not validating vat.
 		if ( ! $is_eu || ! $requires_vat || empty( $vat_number ) ) {
             return;

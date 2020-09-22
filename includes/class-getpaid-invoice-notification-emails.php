@@ -16,14 +16,14 @@ class GetPaid_Invoice_Notification_Emails {
 
     /**
 	 * The array of invoice email actions.
-	 * 
+	 *
 	 * @param array
 	 */
 	public $invoice_actions;
 
     /**
 	 * Class constructor
-     * 
+     *
 	 */
 	public function __construct() {
 
@@ -41,12 +41,12 @@ class GetPaid_Invoice_Notification_Emails {
 				'getpaid_new_invoice'                   => 'user_invoice',
 				'getpaid_new_customer_note'             => 'user_note',
 				'getpaid_subscriptions_daily_cron'      => 'overdue',
-				
+
 			)
 		);
-		
+
     }
-    
+
     /**
 	 * Registers email hooks.
 	 */
@@ -59,7 +59,7 @@ class GetPaid_Invoice_Notification_Emails {
 			$email = new GetPaid_Notification_Email( $email_type );
 
 			if ( $email->is_active() && method_exists( $this, $email_type ) ) {
-				add_action( $hook, array( $this, $email_type ), 10, 2 );
+				add_action( $hook, array( $this, $email_type ), 100, 2 );
 			} else {
 				do_action( 'getpaid_hook_invoice_notification_email_invoice_trigger', $email );
 			}
@@ -70,7 +70,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Filters invoice merge tags.
-	 * 
+	 *
 	 * @param array $merge_tags
 	 * @param string $email_type
 	 * @param mixed|WPInv_Invoice|WPInv_Subscription $object
@@ -97,7 +97,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Generates invoice merge tags.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 * @return array
 	 */
@@ -132,7 +132,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Helper function to send an email.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 * @param GetPaid_Notification_Email $email
 	 * @param string $type
@@ -173,7 +173,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Also send emails to any cc users.
-	 * 
+	 *
 	 * @param array $recipients
 	 * @param GetPaid_Notification_Email $email
 	 */
@@ -195,7 +195,7 @@ class GetPaid_Invoice_Notification_Emails {
 
     /**
 	 * Sends a new invoice notification.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function new_invoice( $invoice ) {
@@ -209,7 +209,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a cancelled invoice notification.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function cancelled_invoice( $invoice ) {
@@ -223,7 +223,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a failed invoice notification.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function failed_invoice( $invoice ) {
@@ -237,7 +237,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a notification whenever an invoice is put on hold.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function onhold_invoice( $invoice ) {
@@ -251,7 +251,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a notification whenever an invoice is marked as processing payment.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function processing_invoice( $invoice ) {
@@ -265,7 +265,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a notification whenever an invoice is paid.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function completed_invoice( $invoice ) {
@@ -284,7 +284,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Sends a notification whenever an invoice is refunded.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function refunded_invoice( $invoice ) {
@@ -298,7 +298,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Notifies a user about new invoices
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function user_invoice( $invoice ) {
@@ -319,7 +319,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Notifies admin about new invoice notes
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice
 	 * @param string $note
 	 */

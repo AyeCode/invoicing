@@ -116,7 +116,7 @@ class WPInv_BP_Component {
                                             <time datetime="<?php echo strtotime( $dateYMD ); ?>" title="<?php echo $dateYMD; ?>"><?php echo $date; ?></time>
 
                                         <?php elseif ( 'invoice-status' === $column_id ) : ?>
-                                            <?php echo wpinv_invoice_status_label( $invoice_status, $invoice->get_status( true ) ) ; ?>
+                                            <?php echo $invoice->get_status_label_html() ; ?>
 
                                         <?php elseif ( 'invoice-total' === $column_id ) : ?>
                                             <?php echo $invoice->get_total( true ); ?>

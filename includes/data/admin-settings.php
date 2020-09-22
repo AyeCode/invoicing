@@ -34,7 +34,7 @@ $currency_symbol = wpinv_currency_symbol();
     
 $last_number = $reset_number = '';
 if ( $last_invoice_number = get_option( 'wpinv_last_invoice_number' ) ) {
-    $last_invoice_number = is_numeric( $last_invoice_number ) ? $last_invoice_number : wpinv_clean_invoice_number( $last_invoice_number );
+    $last_invoice_number = preg_replace( '/[^0-9]/', '', $last_invoice_number );
 
     if ( !empty( $last_invoice_number ) ) {
         $last_number = ' ' . wp_sprintf( __( "( Last Invoice's sequential number: <b>%s</b> )", 'invoicing' ), $last_invoice_number );
