@@ -653,6 +653,7 @@ class WPInv_Item  extends GetPaid_Data {
 		}
 
 		// Fetch from the db.
+		$items = array();
 		if ( $field =='slug' ) {
 			$items = get_posts(
 				array(

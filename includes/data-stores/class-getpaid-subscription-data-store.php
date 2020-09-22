@@ -65,7 +65,7 @@ class GetPaid_Subscription_Data_Store {
 			$formats[]    = $format;
 		}
 
-		$result = $wpdb->insert( $wpdb->prefix . 'wpinv_subscriptions', $fields, $formats );
+		$result = $wpdb->insert( $wpdb->prefix . 'wpinv_subscriptions', $values, $formats );
 
 		if ( $result ) {
 			$subscription->set_id( $wpdb->insert_id );

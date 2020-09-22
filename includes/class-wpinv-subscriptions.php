@@ -99,7 +99,7 @@ class WPInv_Subscriptions {
     public function user_cancel_single_subscription( $data ) {
 
         // Ensure there is a subscription to cancel.
-        if ( empty( $args['sub_id'] ) ) {
+        if ( empty( $data['sub_id'] ) ) {
             return;
         }
 

@@ -611,30 +611,35 @@ abstract class GetPaid_Data {
 	 * @param bool $force_read True to force a new DB read (and update cache).
 	 */
 	public function read_meta_data( $force_read = false ) {
+
+		// Reset meta data.
 		$this->meta_data = array();
-		$cache_loaded    = false;
 
-		if ( ! $this->get_id() ) {
+		// Maybe abort early.
+		if ( ! $this->get_id() || ! $this->data_store ) {
 			return;
 		}
 
-		if ( ! $this->data_store ) {
-			return;
+		// Only read from cache if the cache key is set.
+		$cache_key = null;
+		if ( ! $force_read && ! empty( $this->cache_group ) ) {
+			$cache_key     = GetPaid_Cache_Helper::get_cache_prefix( $this->cache_group ) . GetPaid_Cache_Helper::get_cache_prefix( 'object_' . $this->get_id() ) . 'object_meta_' . $this->get_id();
+			$raw_meta_data = wp_cache_get( $cache_key, $this->cache_group );
 		}
 
-		if ( ! empty( $this->cache_group ) ) {
-			$cache_key = GetPaid_Cache_Helper::get_cache_prefix( $this->cache_group ) . GetPaid_Cache_Helper::get_cache_prefix( 'object_' . $this->get_id() ) . 'object_meta_' . $this->get_id();
-		}
+		// Should we force read?
+		if ( empty( $raw_meta_data ) ) {
+			$raw_meta_data = $this->data_store->read_meta( $this );
 
-		if ( ! $force_read ) {
-			if ( ! empty( $this->cache_group ) ) {
-				$cached_meta  = wp_cache_get( $cache_key, $this->cache_group );
-				$cache_loaded = ! empty( $cached_meta );
+			if ( ! empty( $cache_key ) ) {
+				wp_cache_set( $cache_key, $raw_meta_data, $this->cache_group );
 			}
+
 		}
 
-		$raw_meta_data = $cache_loaded ? $cached_meta : $this->data_store->read_meta( $this );
-		if ( $raw_meta_data ) {
+		// Set meta data.
+		if ( is_array( $raw_meta_data ) ) {
+
 			foreach ( $raw_meta_data as $meta ) {
 				$this->meta_data[] = new GetPaid_Meta_Data(
 					array(
@@ -645,10 +650,8 @@ abstract class GetPaid_Data {
 				);
 			}
 
-			if ( ! $cache_loaded && ! empty( $this->cache_group ) ) {
-				wp_cache_set( $cache_key, $raw_meta_data, $this->cache_group );
-			}
 		}
+
 	}
 
 	/**

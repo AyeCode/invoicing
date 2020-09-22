@@ -220,7 +220,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$row_actions['view'] = '<a href="' . $view_url . '">' . __( 'View Subscription', 'invoicing' ) . '</a>';
 
 		// View invoice.
-		$invoice = get_post( $item->get_product_id() );
+		$invoice = get_post( $item->get_parent_invoice_id() );
 
 		if ( ! empty( $invoice ) ) {
 			$view_url    = get_edit_post_link( $invoice );

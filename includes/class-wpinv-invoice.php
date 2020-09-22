@@ -3578,16 +3578,14 @@ class WPInv_Invoice extends GetPaid_Data {
             return false;
         }
 
+		$author       = 'System';
+		$author_email = 'bot@wpinvoicing.com';
+
 		// If this is an admin comment or it has been added by the user.
-		if ( is_user_logged_in() && ( wpinv_current_user_can_manage_invoicing() || $added_by_user ) ) {
+		if ( is_user_logged_in() && ( ! $system || $added_by_user ) ) {
 			$user         = get_user_by( 'id', get_current_user_id() );
             $author       = $user->display_name;
             $author_email = $user->user_email;
-		} 
-
-		if ( $system ) {
-			$author       = 'System';
-            $author_email = 'bot@wpinvoicing.com';
 		}
 
 		return getpaid_notes()->add_invoice_note( $this, $note, $author, $author_email, $customer_type );
