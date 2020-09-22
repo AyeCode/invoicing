@@ -678,180 +678,83 @@ function getpaid_invoice_history( $user_id = 0 ) {
 
 }
 
-function wpinv_invoice_status_label( $status, $status_display = '' ) {
-    if ( empty( $status_display ) ) {
-        $status_display = wpinv_status_nicename( $status );
-    }
-    
-    switch ( $status ) {
-        case 'publish' :
-        case 'wpi-renewal' :
-            $class = 'label-success';
-        break;
-        case 'wpi-pending' :
-            $class = 'label-primary';
-        break;
-        case 'wpi-processing' :
-            $class = 'label-warning';
-        break;
-        case 'wpi-onhold' :
-            $class = 'label-info';
-        break;
-        case 'wpi-cancelled' :
-        case 'wpi-failed' :
-            $class = 'label-danger';
-        break;
-        default:
-            $class = 'label-default';
-        break;
-    }
-
-    $label = '<span class="label label-inv-' . $status . ' ' . $class . '">' . $status_display . '</span>';
-
-    return apply_filters( 'wpinv_invoice_status_label', $label, $status, $status_display );
-}
-
+/**
+ * Formats an invoice number given an invoice type.
+ */
 function wpinv_format_invoice_number( $number, $type = '' ) {
+
+    // Allow other plugins to overide this.
     $check = apply_filters( 'wpinv_pre_format_invoice_number', null, $number, $type );
     if ( null !== $check ) {
         return $check;
     }
 
-    if ( !empty( $number ) && !is_numeric( $number ) ) {
+    // Ensure that we have a numeric number.
+    if ( ! is_numeric( $number ) ) {
         return $number;
     }
 
-    $padd  = wpinv_get_option( 'invoice_number_padd' );
-    $prefix  = wpinv_get_option( 'invoice_number_prefix' );
-    $postfix = wpinv_get_option( 'invoice_number_postfix' );
-    
-    $padd = absint( $padd );
-    $formatted_number = absint( $number );
-    
-    if ( $padd > 0 ) {
-        $formatted_number = zeroise( $formatted_number, $padd );
-    }    
+    // Format the number.
+    $padd             = absint( (int) wpinv_get_option( 'invoice_number_padd' ) );
+    $prefix           = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_prefix', 'INV-' ) );
+    $postfix          = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_postfix' ) );
+    $formatted_number = zeroise( absint( $number ), $padd );
 
+    // Add the prefix and post fix.
     $formatted_number = $prefix . $formatted_number . $postfix;
 
     return apply_filters( 'wpinv_format_invoice_number', $formatted_number, $number, $prefix, $postfix, $padd );
 }
 
+/**
+ * Returns the next invoice number.
+ * 
+ * @param string $type.
+ * @return int|null|bool
+ */
 function wpinv_get_next_invoice_number( $type = '' ) {
+
+    // Allow plugins to overide this.
     $check = apply_filters( 'wpinv_get_pre_next_invoice_number', null, $type );
     if ( null !== $check ) {
         return $check;
     }
-    
-    if ( !wpinv_sequential_number_active() ) {
+
+    // Ensure sequential invoice numbers is active.
+    if ( ! wpinv_sequential_number_active() ) {
         return false;
     }
 
-    $number = $last_number = get_option( 'wpinv_last_invoice_number', 0 );
-    $start  = wpinv_get_option( 'invoice_sequence_start', 1 );
-    if ( !absint( $start ) > 0 ) {
-        $start = 1;
-    }
-    $increment_number = true;
-    $save_number = false;
+    // Retrieve the current number and the start number.
+    $number = (int) get_option( 'wpinv_last_invoice_number', 0 );
+    $start  = absint( (int) wpinv_get_option( 'invoice_sequence_start', 1 ) );
 
-    if ( !empty( $number ) && !is_numeric( $number ) && $number == wpinv_format_invoice_number( $number ) ) {
-        $number = wpinv_clean_invoice_number( $number );
-    }
+    // Ensure that we are starting at a positive integer.
+    $start  = max( $start, 1 );
 
-    if ( empty( $number ) ) {
-        if ( !( $last_number === 0 || $last_number === '0' ) ) {
-            $last_invoice = wpinv_get_invoices( array( 'limit' => 1, 'order' => 'DESC', 'orderby' => 'ID', 'return' => 'posts', 'fields' => 'ids', 'status' => array_keys( wpinv_get_invoice_statuses( true, true ) ) ) );
+    // If this is the first invoice, use the start number.
+    $number = max( $start, $number );
 
-            if ( !empty( $last_invoice[0] ) && $invoice_number = wpinv_get_invoice_number( $last_invoice[0] ) ) {
-                if ( is_numeric( $invoice_number ) ) {
-                    $number = $invoice_number;
-                } else {
-                    $number = wpinv_clean_invoice_number( $invoice_number );
-                }
-            }
+    // Format the invoice number.
+    $formatted_number = wpinv_format_invoice_number( $number, $type );
 
-            if ( empty( $number ) ) {
-                $increment_number = false;
-                $number = $start;
-                $save_number = ( $number - 1 );
-            } else {
-                $save_number = $number;
-            }
-        }
+    // Ensure that this number is unique.
+    $invoice_id = WPInv_Invoice::get_invoice_id_by_field( $formatted_number, 'number' );
+
+    // We found a match. Nice.
+    if ( empty( $invoice_id ) ) {
+        update_option( 'wpinv_last_invoice_number', $number );
+        return apply_filters( 'wpinv_get_next_invoice_number', $number );
     }
 
-    if ( $start > $number ) {
-        $increment_number = false;
-        $number = $start;
-        $save_number = ( $number - 1 );
-    }
+    update_option( 'wpinv_last_invoice_number', $number + 1 );
+    return wpinv_get_next_invoice_number( $type );
 
-    if ( $save_number !== false ) {
-        update_option( 'wpinv_last_invoice_number', $save_number );
-    }
-    
-    $increment_number = apply_filters( 'wpinv_increment_payment_number', $increment_number, $number );
-
-    if ( $increment_number ) {
-        $number++;
-    }
-
-    return apply_filters( 'wpinv_get_next_invoice_number', $number );
 }
 
-function wpinv_clean_invoice_number( $number, $type = '' ) {
-    $check = apply_filters( 'wpinv_pre_clean_invoice_number', null, $number, $type );
-    if ( null !== $check ) {
-        return $check;
-    }
-    
-    $prefix  = wpinv_get_option( 'invoice_number_prefix' );
-    $postfix = wpinv_get_option( 'invoice_number_postfix' );
-
-    $number = preg_replace( '/' . $prefix . '/', '', $number, 1 );
-
-    $length      = strlen( $number );
-    $postfix_pos = strrpos( $number, $postfix );
-    
-    if ( false !== $postfix_pos ) {
-        $number      = substr_replace( $number, '', $postfix_pos, $length );
-    }
-
-    $number = intval( $number );
-
-    return apply_filters( 'wpinv_clean_invoice_number', $number, $prefix, $postfix );
-}
-
-function wpinv_update_invoice_number( $post_ID, $save_sequential = false, $type = '' ) {
-    global $wpdb;
-
-    $check = apply_filters( 'wpinv_pre_update_invoice_number', null, $post_ID, $save_sequential, $type );
-    if ( null !== $check ) {
-        return $check;
-    }
-
-    if ( wpinv_sequential_number_active() ) {
-        $number = wpinv_get_next_invoice_number();
-
-        if ( $save_sequential ) {
-            update_option( 'wpinv_last_invoice_number', $number );
-        }
-    } else {
-        $number = $post_ID;
-    }
-
-    $number = wpinv_format_invoice_number( $number );
-
-    update_post_meta( $post_ID, '_wpinv_number', $number );
-
-    $wpdb->update( $wpdb->posts, array( 'post_title' => $number ), array( 'ID' => $post_ID ) );
-
-    clean_post_cache( $post_ID );
-
-    return $number;
-}
-
+/**
+ * The prefix used for invoice paths.
+ */
 function wpinv_post_name_prefix( $post_type = 'wpi_invoice' ) {
     return apply_filters( 'wpinv_post_name_prefix', 'inv-', $post_type );
 }
@@ -1112,10 +1015,9 @@ function getpaid_invoice_totals_rows( $invoice ) {
 /**
  * This function is called whenever an invoice is created.
  * 
- * @param int $invoice_id
  * @param WPInv_Invoice $invoice
  */
-function getpaid_new_invoice( $invoice_id, $invoice ) {
+function getpaid_new_invoice( $invoice ) {
 
     if ( ! $invoice->get_status() ) {
         return;
@@ -1130,29 +1032,28 @@ function getpaid_new_invoice( $invoice_id, $invoice ) {
     );
 
 }
-add_action( 'getpaid_new_invoice', 'getpaid_new_invoice', 10, 2 );
+add_action( 'getpaid_new_invoice', 'getpaid_new_invoice' );
 
 /**
  * This function updates invoice caches.
  * 
- * @param int $invoice_id
  * @param WPInv_Invoice $invoice
  */
-function getpaid_update_invoice_caches( $invoice_id, $invoice ) {
+function getpaid_update_invoice_caches( $invoice ) {
 
     // Cache invoice number.
-    wp_cache_set( $invoice->get_number(), $invoice_id, "getpaid_invoice_numbers_to_invoice_ids" );
+    wp_cache_set( $invoice->get_number(), $invoice->get_id(), "getpaid_invoice_numbers_to_invoice_ids" );
 
     // Cache invoice key.
-    wp_cache_set( $invoice->get_key(), $invoice_id, "getpaid_invoice_keys_to_invoice_ids" );
+    wp_cache_set( $invoice->get_key(), $invoice->get_id(), "getpaid_invoice_keys_to_invoice_ids" );
 
     // (Maybe) cache transaction id.
     $transaction_id = $invoice->get_transaction_id();
 
     if ( ! empty( $transaction_id ) ) {
-        wp_cache_set( $transaction_id, $invoice_id, "getpaid_invoice_transaction_ids_to_invoice_ids" );
+        wp_cache_set( $transaction_id, $invoice->get_id(), "getpaid_invoice_transaction_ids_to_invoice_ids" );
     }
 
 }
-add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5, 2 );
-add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5, 2 );
+add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5 );
+add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );

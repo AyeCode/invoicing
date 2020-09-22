@@ -540,15 +540,29 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_number( $context = 'view' ) {
-        $number = $this->get_prop( 'number', $context );
+		$number = $this->get_prop( 'number', $context );
 
-        if ( empty( $number ) ) {
-            $number = $this->generate_number();
-            $this->set_number( $number );
-        }
+		if ( empty( $number ) ) {
+			$number = $this->generate_number();
+			$this->set_number( $this->generate_number() );
+		}
 
 		return $number;
     }
+
+	/**
+	 * Set the invoice number.
+	 *
+	 * @since 1.0.19
+	 */
+	public function maybe_set_number() {
+        $number = $this->get_number();
+
+        if ( empty( $number ) || $this->get_id() == $number ) {
+			$this->set_number( $this->generate_number() );
+        }
+
+	}
 
     /**
 	 * Get the invoice key.
@@ -558,14 +572,22 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_key( $context = 'view' ) {
-        $key = $this->get_prop( 'key', $context );
+        return $this->get_prop( 'key', $context );
+	}
+
+	/**
+	 * Set the invoice key.
+	 *
+	 * @since 1.0.19
+	 */
+	public function maybe_set_key() {
+        $key = $this->get_key();
 
         if ( empty( $key ) ) {
             $key = $this->generate_key( $this->get_type() . '_' );
             $this->set_key( $key );
         }
 
-		return $key;
     }
 
     /**
@@ -616,12 +638,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_path( $context = 'view' ) {
-        $path = $this->get_prop( 'path', $context );
+        $path   = $this->get_prop( 'path', $context );
+		$prefix = wpinv_post_name_prefix( $this->get_post_type() );
 
-        if ( empty( $path ) ) {
-            $prefix = apply_filters( 'wpinv_post_name_prefix', 'inv-', $this->post_type );
-            $path   = sanitize_title( $prefix . $this->get_id() );
-        }
+		if ( 0 !== strpos( $path, $prefix ) ) {
+			$path = sanitize_title(  $prefix . $this->get_id()  );
+			$this->set_path( $path );
+		}
 
 		return $path;
     }
@@ -1622,7 +1645,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return int
 	 */
     public function get_subscription_id( $context = 'view' ) {
-		return $this->is_renewal() ? $this->get_parent()->get_subscription_id( $context ) : $this->get_subscription_id( $context );
+		return $this->is_renewal() ? $this->get_parent()->get_subscription_id( $context ) : $this->get_prop( 'subscription_id', $context );
 	}
 
 	/**
@@ -1679,7 +1702,8 @@ class WPInv_Invoice extends GetPaid_Data {
         $cart_details = array();
 
         foreach ( $items as $item_id => $item ) {
-            $cart_details[] = $item->prepare_data_for_saving();
+			$item->invoice_id = $this->get_id();
+            $cart_details[]   = $item->prepare_data_for_saving();
         }
 
         return $cart_details;
@@ -3586,13 +3610,12 @@ class WPInv_Invoice extends GetPaid_Data {
     public function generate_number() {
         $number = $this->get_id();
 
-        if ( $this->has_status( 'auto-draft' ) && wpinv_sequential_number_active( $this->post_type ) ) {
-            $number = wpinv_get_next_invoice_number( $this->post_type );
+        if ( wpinv_sequential_number_active( $this->get_post_type() ) ) {
+            $number = wpinv_get_next_invoice_number( $this->get_post_type() );
         }
 
-		$number = wpinv_format_invoice_number( $number, $this->post_type );
+		return wpinv_format_invoice_number( $number, $this->get_post_type() );
 
-		return $number;
 	}
 
 	/**
@@ -3782,6 +3805,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function save() {
 		$this->maybe_set_date_paid();
+		$this->maybe_set_key();
 		parent::save();
 		$this->clear_cache();
 		$this->status_transition();
