@@ -338,3 +338,19 @@ input[type="text"].getpaid-item-price-input {
     border-bottom: 1px solid#9e9e9e;
     color: #263238;
 }
+
+.getpaid-subscriptions th {
+	font-weight: 500;
+}
+
+.getpaid-subscription-item-actions {
+	color: #ddd;
+    font-size: 13px;
+    padding: 2px 0 0;
+    position: relative;
+    left: -9999em;
+}
+
+.getpaid-subscriptions-table-row:hover .getpaid-subscription-item-actions {
+    position: static;
+}
