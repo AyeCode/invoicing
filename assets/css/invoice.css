@@ -1,5 +1,5 @@
 html {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 body {
@@ -16,9 +16,11 @@ a:hover {
 }
 
 body {
-	background-color: #F2F1EF;
-	font-size: 15px;
-	font-family: 'Open Sans', -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+    font-weight: inherit;
+    font-size: 15px;
+    font-size: 1rem;
+    line-height: 1.85714285714286;
 }
 
 a img {
@@ -638,4 +640,16 @@ a img {
 
 .getpaid-invoice-meta-data th {
     font-weight: 500;
+}
+
+.getpaid-line-item-actions {
+    color: #ddd;
+    font-size: 13px;
+    padding: 2px 0 0;
+    position: relative;
+    left: -9999em;
+}
+
+.getpaid-invoice-item:hover .getpaid-line-item-actions {
+    position: static;
 }

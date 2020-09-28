@@ -130,7 +130,7 @@ class WPInv_Plugin {
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_action( 'getpaid_init', array( $this, 'maybe_process_ipn' ), 5 );
 		add_action( 'init', array( &$this, 'wpinv_actions' ) );
-		add_action( 'init', array( $this, 'maybe_do_authenticated_action' ) );
+		add_action( 'init', array( $this, 'maybe_do_authenticated_action' ), 100 );
 
 		if ( class_exists( 'BuddyPress' ) ) {
 			add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );

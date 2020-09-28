@@ -40,6 +40,23 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                             echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
                         }
 
+                        $actions = apply_filters( 'getpaid-invoice-page-line-item-actions', array(), $item, $invoice );
+
+                        if ( ! empty( $actions ) ) {
+
+                            $sanitized  = array();
+                            foreach ( $actions as $key => $action ) {
+                                $key         = sanitize_html_class( $key );
+                                $action      = wp_kses_post( $action );
+                                $sanitized[] = "<span class='$key'>$action</span>";
+                            }
+
+                            echo "<small class='form-text getpaid-line-item-actions'>";
+                            echo implode( ' | ', $sanitized );
+                            echo '</small>';
+
+                        }
+
                     }
 
                     // Item price.

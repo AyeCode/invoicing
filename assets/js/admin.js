@@ -1,3 +1,59 @@
+window.getpaid = window.getpaid || {}
+
+// Init the select2 container.
+getpaid.init_select2_item_search = function ( select, parent ) {
+
+    if ( ! parent ) {
+        parent = jQuery('#getpaid-add-items-to-invoice')
+    }
+
+    jQuery(select).select2({
+        minimumInputLength: 3,
+        allowClear: true,
+        dropdownParent: parent,
+        ajax: {
+            url: WPInv_Admin.ajax_url,
+            delay: 250,
+            data: function (params) {
+
+                var data = {
+                    action: 'wpinv_get_invoicing_items',
+                    search: params.term,
+                    _ajax_nonce: WPInv_Admin.wpinv_nonce
+                }
+
+                // Query parameters will be ?search=[term]&type=public
+                return data;
+            },
+            processResults: function (res) {
+
+                if ( res.success ) {
+                    return {
+                        results: res.data
+                    };
+                }
+
+                return {
+                    results: []
+                };
+            }
+        },
+        templateResult: function( item ) {
+
+            if ( item.loading ) {
+                return WPInv_Admin.searching;
+            }
+
+            if ( ! item.id ) {
+                return item.text;
+            }
+
+            return jQuery( '<span>' + item.text + '</span>' )
+        }
+    });
+
+}
+
 jQuery(function($) {
     //'use strict';
 
@@ -309,57 +365,7 @@ jQuery(function($) {
                 $( '#getpaid-add-items-to-invoice tbody' ).html()
             )
 
-        // Init the select2 container.
-        var init_select2_item_search = function ( select ) {
-
-            $(select).select2({
-                minimumInputLength: 3,
-                allowClear: true,
-                dropdownParent: $('#getpaid-add-items-to-invoice'),
-                ajax: {
-                    url: WPInv_Admin.ajax_url,
-                    delay: 250,
-                    data: function (params) {
-
-                        var data = {
-                            action: 'wpinv_get_invoicing_items',
-                            search: params.term,
-                            _ajax_nonce: WPInv_Admin.wpinv_nonce
-                        }
-
-                        // Query parameters will be ?search=[term]&type=public
-                        return data;
-                    },
-                    processResults: function (res) {
-
-                        if ( res.success ) {
-                            return {
-                                results: res.data
-                            };
-                        }
-
-                        return {
-                            results: []
-                        };
-                    }
-                },
-                templateResult: function( item ) {
-
-                    if ( item.loading ) {
-                        return WPInv_Admin.searching;
-                    }
-
-                    if ( ! item.id ) {
-                        return item.text;
-                    }
-
-                    return $( '<span>' + item.text + '</span>' )
-                }
-            });
-
-        }
-
-        init_select2_item_search( '.getpaid-item-search' )
+        getpaid.init_select2_item_search( '.getpaid-item-search' )
 
         // Add a unique id.
         $( '.getpaid-item-search').data( 'key', random_string() )
@@ -394,7 +400,7 @@ jQuery(function($) {
             row = $( row ).appendTo( '#getpaid-add-items-to-invoice tbody' )
             var select = row.find( '.getpaid-item-search' )
             select.data( 'key', key )
-            init_select2_item_search( select )
+            getpaid.init_select2_item_search( select )
             empty_select.push( key )
 
             $( '#getpaid-add-items-to-invoice' ).modal( 'handleUpdate' )
@@ -410,7 +416,7 @@ jQuery(function($) {
                     $( '#getpaid-add-items-to-invoice tbody' ).data( 'row' )
                 )
 
-            init_select2_item_search( '.getpaid-item-search' )
+                getpaid.init_select2_item_search( '.getpaid-item-search' )
 
             // Add a unique id.
             $( '.getpaid-item-search').data( 'key', random_string() )

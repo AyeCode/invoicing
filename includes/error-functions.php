@@ -74,7 +74,7 @@ function wpinv_set_error( $error_id, $error_message, $type = 'error' ) {
         'text' =>  $error_message,
     );
 
-    getpaid()->session->set( 'wpinv_errors', $errors );
+    getpaid_session()->set( 'wpinv_errors', $errors );
 }
 
 /**

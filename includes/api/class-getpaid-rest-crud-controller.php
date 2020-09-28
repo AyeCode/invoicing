@@ -177,7 +177,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 		// Can not create an existing item.
 		if ( ! empty( $request['id'] ) ) {
 			/* translators: %s: post type */
-			return new WP_Error( "getpaid_rest_{$this->post_type}_exists", __( 'Cannot create existing resource.', 'invoicing' ), array( 'status' => 400 ) );
+			return new WP_Error( "getpaid_rest_{$this->rest_base}_exists", __( 'Cannot create existing resource.', 'invoicing' ), array( 'status' => 400 ) );
 		}
 
 		// Generate a GetPaid_Data object from the request.
@@ -338,7 +338,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 		}
 
 		// Filters an object before it is inserted via the REST API..
-		return apply_filters( "getpaid_rest_pre_insert_{$this->post_type}_object", $object, $request );
+		return apply_filters( "getpaid_rest_pre_insert_{$this->rest_base}_object", $object, $request );
 	}
 
 	/**
@@ -486,7 +486,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 		$response->add_links( $this->prepare_links( $object, $request ) );
 
 		// Filter item response.
-		return apply_filters( "getpaid_rest_prepare_{$this->post_type}_object", $response, $object, $request );
+		return apply_filters( "getpaid_rest_prepare_{$this->rest_base}_object", $response, $object, $request );
 	}
 
 }
