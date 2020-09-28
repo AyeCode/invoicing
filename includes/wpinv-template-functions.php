@@ -1703,3 +1703,31 @@ function wpinv_get_recurring_gateways_text() {
 function getpaid_template() {
     return getpaid()->get( 'template' );
 }
+
+/**
+ * Displays pagination links.
+ * 
+ * @param array args
+ * @return string
+ */
+function getpaid_paginate_links( $args ) {
+
+    $args['type']     = 'array';
+    $args['mid_size'] = 1;
+    $pages        = paginate_links( $args );
+
+    if ( ! is_array( $pages ) ) {
+        return '';
+    }
+
+    $_pages = array();
+    foreach ( $pages as $page ) {
+        $_pages[] = str_replace( 'page-numbers', 'page-link text-decoration-none', $page );
+    }
+
+    $links  = "<nav>\n\t<ul class='pagination justify-content-end m-0'>\n\t\t<li class='page-item'>";
+    $links .= join( "</li>\n\t\t<li class='page-item'>", $_pages );
+    $links .= "</li>\n\t</ul>\n</nav>\n";
+
+    return $links;
+}

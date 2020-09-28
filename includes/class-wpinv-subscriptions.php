@@ -347,7 +347,7 @@ class WPInv_Subscriptions {
             getpaid_admin()->show_error( __( 'We are unable to delete this subscription. Please try again.', 'invoicing' ) );
         }
     
-        wp_safe_redirect(
+        $redirected = wp_safe_redirect(
             add_query_arg(
                 array(
                     'getpaid-admin-action' => false,
@@ -357,7 +357,9 @@ class WPInv_Subscriptions {
             )
         );
 
-        exit;
+        if ( $redirected ) {
+            exit;
+        }
 
     }
 

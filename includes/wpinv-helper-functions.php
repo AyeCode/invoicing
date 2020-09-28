@@ -1098,3 +1098,18 @@ function getpaid_get_subscription_period_label( $period ) {
 function getpaid_admin() {
     return getpaid()->get( 'admin' );
 }
+
+/**
+ * Formats a date into the website's date setting.
+ *
+ * @return string
+ */
+function getpaid_format_date_value( $date, $default = "&mdash;" ) {
+
+    if ( empty( $date ) || '0000-00-00 00:00:00' == $date ) {
+        return $default;
+    }
+
+    return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $date ) );
+
+}
