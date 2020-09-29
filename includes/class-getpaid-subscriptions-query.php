@@ -147,6 +147,8 @@ class GetPaid_Subscriptions_Query {
 	 *                                             Default is all.
 	 *     @type int[]        $customer_in         An array of customer ids to filter by.
 	 *     @type int[]        $customer_not_in     An array of customer ids whose subscriptions should be excluded.
+	 *     @type int[]        $invoice_in          An array of invoice ids to filter by.
+	 *     @type int[]        $invoice_not_in      An array of invoice ids whose subscriptions should be excluded.
 	 *     @type int[]        $product_in          An array of product ids to filter by.
 	 *     @type int[]        $product_not_in      An array of product ids whose subscriptions should be excluded.
 	 *     @type array        $date_created_query  A WP_Date_Query compatible array use to filter subscriptions by their date of creation.
@@ -285,6 +287,14 @@ class GetPaid_Subscriptions_Query {
 			$this->query_where .= " AND $table.`product_id` NOT IN ($product_not_in)";
 		}
 
+		if ( ! empty( $qv['invoice_in'] ) ) {
+			$invoice_in         = implode( ',', wp_parse_id_list( $qv['invoice_in'] ) );
+			$this->query_where .= " AND $table.`parent_payment_id` IN ($invoice_in)";
+		} elseif ( ! empty( $qv['invoice_not_in'] ) ) {
+			$invoice_not_in     = implode( ',', wp_parse_id_list( $qv['invoice_not_in'] ) );
+			$this->query_where .= " AND $table.`parent_payment_id` NOT IN ($invoice_not_in)";
+		}
+
 		if ( ! empty( $qv['include'] ) ) {
 			$include            = implode( ',', wp_parse_id_list( $qv['include'] ) );
 			$this->query_where .= " AND $table.`id` IN ($include)";
@@ -392,6 +402,10 @@ class GetPaid_Subscriptions_Query {
 
 		if ( 'all' == $qv['fields'] ) {
 			foreach ( $this->results as $key => $subscription ) {
+				wp_cache_set( $subscription->id, $subscription, 'getpaid_subscriptions' );
+				wp_cache_set( $subscription->profile_id, $subscription->id, 'getpaid_subscription_profile_ids_to_subscription_ids' );
+				wp_cache_set( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
+				wp_cache_set( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
 				$this->results[ $key ] = new WPInv_Subscription( $subscription );
 			}
 		}

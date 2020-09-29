@@ -62,8 +62,6 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	protected $status_transition = false;
 
-	private $subs_db;
-
 	/**
 	 * Get the subscription if ID is passed, otherwise the subscription is new and empty.
 	 *
@@ -733,7 +731,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return bool
      */
     public function has_status( $status ) {
-        return in_array( $this->get_status(), wpinv_parse_list( $status ) );
+        return in_array( $this->get_status(), wpinv_clean( wpinv_parse_list( $status ) ) );
 	}
 
 	/**
@@ -752,7 +750,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return bool
 	 */
 	public function is_active() {
-		return $this->has_status( 'active trialling' ) && $this->get_expiration_time() > current_time( 'mysql' );
+		return $this->has_status( 'active trialling' ) && ! $this->is_expired();
 	}
 
 	/**
@@ -762,6 +760,16 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	public function is_expired() {
 		return $this->has_status( 'expired' ) || ( $this->has_status( 'active cancelled trialling' ) && $this->get_expiration_time() < current_time( 'mysql' ) );
+	}
+
+	/**
+	 * Is this the last renewals?
+	 *
+	 * @return bool
+	 */
+	public function is_last_renewal() {
+		$max_bills = $this->get_bill_times();
+		return ! empty( $max_bills ) && $max_bills == $this->get_times_billed();
 	}
 
 	/*
@@ -1055,8 +1063,19 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_cancel_url() {
-		$url = wp_nonce_url( add_query_arg( array( 'getpaid-action' => 'subscription_cancel', 'sub_id' => $this->get_id() ) ), 'getpaid-nonce' );
+		$url = getpaid_get_authenticated_action_url( 'subscription_cancel', $this->get_view_url() );
 		return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
+	}
+
+	/**
+	 * Retrieves the URL to view a subscription
+	 *
+	 * @since  1.0.19
+	 * @return string
+	 */
+	public function get_view_url() {
+		$url = add_query_arg( 'subscription', $this->get_id(), get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
+		return apply_filters( 'getpaid_get_subscription_view_url', $url, $this );
 	}
 
 	/**

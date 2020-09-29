@@ -30,6 +30,9 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_authenticated_admin_action_update_single_subscription', array( $this, 'admin_update_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_renew', array( $this, 'admin_renew_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_delete', array( $this, 'admin_delete_single_subscription' ) );
+
+        // Filter invoice item row actions.
+        add_action( 'getpaid-invoice-page-line-item-actions', array( $this, 'filter_invoice_line_item_actions' ), 10, 3 );
     }
 
     /**
@@ -59,14 +62,15 @@ class WPInv_Subscriptions {
      * @param int $frequency_count The frequency of the period.
      * @return mixed|string|void
      */
-    public static function wpinv_get_pretty_subscription_frequency( $period, $frequency_count = 1) {
+    public static function wpinv_get_pretty_subscription_frequency( $period, $frequency_count = 1, $skip_1 = false ) {
 
         $frequency = '';
+
         //Format period details
         switch ( strtolower( $period ) ) {
             case 'day' :
             case 'd' :
-                $frequency = sprintf( _n('%d Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
+                $frequency = sprintf( _n( '%d Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
                 break;
             case 'week' :
             case 'w' :
@@ -85,7 +89,11 @@ class WPInv_Subscriptions {
                 break;
         }
 
-        return $frequency;
+        if ( $skip_1 && 1 == $frequency_count ) {
+            $frequency = str_replace( '1', '', $frequency );
+        }
+
+        return trim( $frequency );
 
     }
 
@@ -99,11 +107,11 @@ class WPInv_Subscriptions {
     public function user_cancel_single_subscription( $data ) {
 
         // Ensure there is a subscription to cancel.
-        if ( empty( $data['sub_id'] ) ) {
+        if ( empty( $data['subscription'] ) ) {
             return;
         }
 
-        $subscription = new WPInv_Subscription( (int) $data['sub_id'] );
+        $subscription = new WPInv_Subscription( (int) $data['subscription'] );
 
         // Ensure that it exists and that it belongs to the current user.
         if ( ! $subscription->get_id() || $subscription->get_customer_id() != get_current_user_id() ) {
@@ -118,15 +126,13 @@ class WPInv_Subscriptions {
         } else {
 
             $subscription->cancel();
-            wpinv_set_error( 'cancelled', __( 'This subscription is now cancelled.', 'invoicing' ), 'info' );
+            wpinv_set_error( 'cancelled', __( 'This subscription has been cancelled.', 'invoicing' ), 'info' );
         }
-
 
         $redirect = add_query_arg(
             array(
                 'getpaid-action' => false,
                 'getpaid-nonce'  => false,
-                'sub_id'         => false,
             )
         );
 
@@ -339,7 +345,7 @@ class WPInv_Subscriptions {
             getpaid_admin()->show_error( __( 'We are unable to delete this subscription. Please try again.', 'invoicing' ) );
         }
     
-        wp_safe_redirect(
+        $redirected = wp_safe_redirect(
             add_query_arg(
                 array(
                     'getpaid-admin-action' => false,
@@ -349,7 +355,40 @@ class WPInv_Subscriptions {
             )
         );
 
-        exit;
+        if ( $redirected ) {
+            exit;
+        }
+
+    }
+
+    /**
+     * Filters the invoice line items actions.
+     *
+     * @param array actions
+     * @param WPInv_Item $item
+     * @param WPInv_Invoice $invoice
+     */
+    public function filter_invoice_line_item_actions( $actions, $item, $invoice ) {
+
+        // Fetch item subscription.
+        $args  = array(
+            'invoice_in'  => $invoice->is_parent() ? $invoice->get_id() : $invoice->get_parent_id(),
+            'item_in'     => $item->get_id(),
+            'number'      => 1,
+            'count_total' => false,
+            'fields'      => 'id',
+        );
+
+        $subscription = new GetPaid_Subscriptions_Query( $args );
+        $subscription = $subscription->get_results();
+
+        // In case we found a match...
+        if ( ! empty( $subscription ) ) {
+            $url                     = esc_url( add_query_arg( 'subscription', (int) $subscription[0], get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) );
+            $actions['subscription'] = "<a href='$url' class='text-decoration-none'>" . __( 'Manage Subscription', 'getpaid-license-manager' ) . '</a>';
+        }
+
+        return $actions;
 
     }
 

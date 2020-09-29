@@ -434,13 +434,13 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 	$columns = apply_filters(
 		'getpaid_subscription_related_invoices_columns',
 		array(
-
 			'invoice'      => __( 'Invoice', 'invoicing' ),
 			'relationship' => __( 'Relationship', 'invoicing' ),
 			'date'         => __( 'Date', 'invoicing' ),
 			'status'       => __( 'Status', 'invoicing' ),
 			'total'        => __( 'Total', 'invoicing' ),
-		)
+		),
+		$subscription
 	);
 
 	// Prepare the invoices.
@@ -451,10 +451,16 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 		$payments = array_merge( array( $parent ), $payments );
 	}
 	
+	$table_class = 'w-100 bg-white';
+
+	if ( ! is_admin() ) {
+		$table_class = 'table table-bordered table-striped';
+	}
+
 	?>
 		<div class="m-0" style="overflow: auto;">
 
-			<table class="w-100 bg-white">
+			<table class="<?php echo $table_class; ?>">
 
 				<thead>
 					<tr>
@@ -471,14 +477,20 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 
 				<tbody>
 
+					<?php if ( empty( $payments ) ) : ?>
+						<tr>
+							<td colspan="<?php echo count($columns); ?>" class="p-2 text-left text-muted">
+								<?php _e( 'This subscription has no invoices.', 'invoicing' ); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
+
 					<?php
 
 						foreach( $payments as $payment ) :
 
 							// Ensure that we have an invoice.
-							if ( ! is_a( $payment, 'WPInv_Invoice' ) ) {
-								$payment = new WPInv_Invoice( $payment );
-							}
+							$payment = new WPInv_Invoice( $payment );
 
 							// Abort if the invoice is invalid.
 							if ( ! $payment->get_id() ) {
@@ -506,18 +518,29 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 												break;
 
 											case 'status':
-												echo $payment->get_status_label_html();
+
+												$status = $payment->get_status_nicename();
+												if ( is_admin() ) {
+													$status = $payment->get_status_label_html();
+												}
+
+												echo $status;
 												break;
 
 											case 'invoice':
 												$link    = esc_url( get_edit_post_link( $payment->get_id() ) );
+
+												if ( ! is_admin() ) {
+													$link = esc_url( $payment->get_view_url() );
+												}
+
 												$invoice = sanitize_text_field( $payment->get_number() );
 												echo "<a href='$link'>$invoice</a>";
 												break;
 										}
 
 									echo '</td>';
-								
+
 								}
 
 							echo '</tr>';

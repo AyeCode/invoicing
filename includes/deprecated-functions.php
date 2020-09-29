@@ -631,3 +631,8 @@ function wpinv_clean_invoice_number( $number ) {
  * @deprecated
  */
 function wpinv_update_invoice_number() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_invoice_subscription_details() {}
