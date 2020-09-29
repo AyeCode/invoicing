@@ -107,11 +107,11 @@ class WPInv_Subscriptions {
     public function user_cancel_single_subscription( $data ) {
 
         // Ensure there is a subscription to cancel.
-        if ( empty( $data['sub_id'] ) ) {
+        if ( empty( $data['subscription'] ) ) {
             return;
         }
 
-        $subscription = new WPInv_Subscription( (int) $data['sub_id'] );
+        $subscription = new WPInv_Subscription( (int) $data['subscription'] );
 
         // Ensure that it exists and that it belongs to the current user.
         if ( ! $subscription->get_id() || $subscription->get_customer_id() != get_current_user_id() ) {
@@ -126,15 +126,13 @@ class WPInv_Subscriptions {
         } else {
 
             $subscription->cancel();
-            wpinv_set_error( 'cancelled', __( 'This subscription is now cancelled.', 'invoicing' ), 'info' );
+            wpinv_set_error( 'cancelled', __( 'This subscription has been cancelled.', 'invoicing' ), 'info' );
         }
-
 
         $redirect = add_query_arg(
             array(
                 'getpaid-action' => false,
                 'getpaid-nonce'  => false,
-                'sub_id'         => false,
             )
         );
 

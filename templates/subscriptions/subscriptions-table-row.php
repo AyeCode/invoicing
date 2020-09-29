@@ -22,7 +22,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 
 			case 'subscription':
 				$subscription_id = (int) $subscription->get_id();
-				$url             = esc_url( add_query_arg( 'subscription', $subscription_id, get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) );
+				$url             = esc_url( $subscription->get_view_url() );
 				echo $widget->add_row_actions( "<a href='$url' class='text-decoration-none'>#$subscription_id</a>", $subscription );
 				break;
 

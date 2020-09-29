@@ -153,30 +153,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 
 		?>
 
-			<style>
-
-				.getpaid-subscriptions table {
-					font-size: 0.9em;
-					table-layout: fixed;
-				}
-
-				.getpaid-subscriptions-table-column-subscription {
-					font-weight: 500;
-				}
-
-				.getpaid-subscriptions-table-row span.label {
-					font-weight: 500;
-				}
-
-				.getpaid-subscriptions.bsui .table-bordered thead th {
-					border-bottom-width: 1px;
-				}
-
-				.getpaid-subscriptions.bsui .table-striped tbody tr:nth-of-type(odd) {
-					background-color: rgb(0 0 0 / 0.01);
-				}
-			</style>
-
 			<table class="table table-bordered table-striped">
 
 				<thead>
@@ -281,14 +257,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		$view_url        = esc_url( add_query_arg( 'subscription', (int) $subscription->get_id(), get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) );
 		$actions['view'] = "<a href='$view_url' class='text-decoration-none'>" . __( 'Manage Subscription', 'invoicing' ) . '</a>';
 
-		// View invoice action.
-		$invoice = $subscription->get_parent_payment();
-
-		if ( $invoice->get_id() ) {
-			$view_url           = esc_url( $invoice->get_view_url() );
-			$actions['invoice'] = "<a href='$view_url' class='text-decoration-none'>" . __( 'View Invoice', 'invoicing' ) . '</a>';
-		}
-
 		// Filter the actions.
 		$actions = apply_filters( 'getpaid_subscriptions_table_subscription_actions', $actions, $subscription );
 
@@ -392,7 +360,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				'expiry_date'      => __( 'Next payment', 'invoicing' ),
 				'payments'         => __( 'Payments', 'invoicing' ),
 				'item'             => __( 'Item', 'invoicing' ),
-				'invoice'          => __( 'Invoice', 'invoicing' ),
 			),
 			$subscription
 		);

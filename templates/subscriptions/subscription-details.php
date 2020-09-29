@@ -29,7 +29,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 </style>
 
 <h2 class="mb-1 h4"><?php _e( 'Subscription Details', 'invoicing' ); ?></h2>
-<table class="table table-bordered table-striped">
+<table class="table table-bordered">
 	<tbody>
 
 		<?php foreach ( $widget->get_single_subscription_columns( $subscription ) as $key => $label ) : ?>
@@ -79,19 +79,6 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / $frequency" );
 								break;
 
-							case 'invoice':
-								$invoice = $subscription->get_parent_invoice();
-
-								if ( $invoice->get_id() ) {
-									$view_url = esc_url( $invoice->get_view_url() );
-									$number   = sanitize_text_field( $invoice->get_number() );
-									echo "<a href='$view_url' class='text-decoration-none'>$number</a>";
-								} else {
-									echo "&mdash;";
-								}
-
-								break;
-
 							case 'item':
 								$item = get_post( $subscription->get_product_id() );
 
@@ -123,30 +110,22 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 	</tbody>
 </table>
 
-<?php
+<h2 class='mt-5 mb-1 h4'><?php _e( 'Subscription Invoices', 'invoicing' ); ?></h2>
 
-	$payments = $subscription->get_child_payments();
-	$parent   = $subscription->get_parent_invoice();
+<?php echo getpaid_admin_subscription_invoice_details_metabox( $subscription ); ?>
 
-	if ( $parent->get_id() ) {
-		$payments = array_merge( array( $parent ), $payments );
-	}
+<span class="form-text">
 
-	if ( empty( $payments ) ) {
-		return;
-	}
+	<?php
+		if ( $subscription->can_cancel() ) {
+			printf(
+				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
+				esc_url( $subscription->get_cancel_url() ),
+				esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
+				__( 'Cancel Subscription', 'invoicing' )
+			);
+		}
+	?>
 
-	$title = __( 'Related Invoices', 'invoicing' );
-
-	echo "<h2 class='mt-4 mb-1 h4'>$title</h2>";
-
-	foreach ( $payments as $payment ) {
-		$payment = new WPInv_Invoice( $payment );
-		$number  = sanitize_text_field( $payment->get_number() );
-		$url     = esc_url( $payment->get_view_url() );
-		$date    = sanitize_text_field( getpaid_format_date_value( $payment->get_date_created() ) );
-		$status  = $payment->get_status_nicename();
-		$amount  = wpinv_price( wpinv_format_amount( $payment->get_total() ), $payment->get_currency() );
-	}
-
-?>
+	<a href="<?php echo esc_url( get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Go Back', 'invoicing' ); ?></a>
+</span>

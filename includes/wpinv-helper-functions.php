@@ -1113,3 +1113,14 @@ function getpaid_format_date_value( $date, $default = "&mdash;" ) {
     return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $date ) );
 
 }
+
+/**
+ * Retrieves a URL to an authenticated action
+ *
+ * @param string $action
+ * @param string $base the base url
+ * @return string
+ */
+function getpaid_get_authenticated_action_url( $action, $base = false ) {
+    return wp_nonce_url( add_query_arg( 'getpaid-action', $action, $base ), 'getpaid-nonce', 'getpaid-nonce' );
+}

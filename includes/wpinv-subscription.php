@@ -1063,8 +1063,19 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_cancel_url() {
-		$url = wp_nonce_url( add_query_arg( array( 'getpaid-action' => 'subscription_cancel', 'sub_id' => $this->get_id() ) ), 'getpaid-nonce' );
+		$url = getpaid_get_authenticated_action_url( 'subscription_cancel', $this->get_view_url() );
 		return apply_filters( 'wpinv_subscription_cancel_url', $url, $this );
+	}
+
+	/**
+	 * Retrieves the URL to view a subscription
+	 *
+	 * @since  1.0.19
+	 * @return string
+	 */
+	public function get_view_url() {
+		$url = add_query_arg( 'subscription', $this->get_id(), get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
+		return apply_filters( 'getpaid_get_subscription_view_url', $url, $this );
 	}
 
 	/**
