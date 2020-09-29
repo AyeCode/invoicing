@@ -284,21 +284,6 @@ function wpinv_is_ssl_enforced() {
     return (bool) apply_filters( 'wpinv_is_ssl_enforced', $ssl_enforced );
 }
 
-function wpinv_schedule_events() {
-
-    // Get the timestamp for the next event.
-    $timestamp = wp_next_scheduled( 'wpinv_register_schedule_event_twicedaily' );
-
-    if ( $timestamp ) {
-        wp_unschedule_event( $timestamp, 'wpinv_register_schedule_event_twicedaily' );
-    }
-
-    if ( ! wp_next_scheduled( 'wpinv_register_schedule_event_daily' ) ) {
-        wp_schedule_event( current_time( 'timestamp' ), 'daily', 'wpinv_register_schedule_event_daily' );
-    }
-}
-add_action( 'wp', 'wpinv_schedule_events' );
-
 function wpinv_schedule_event_twicedaily() {
     wpinv_email_payment_reminders();
     wpinv_email_renewal_reminders();
