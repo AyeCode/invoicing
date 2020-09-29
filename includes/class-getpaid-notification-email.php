@@ -141,7 +141,7 @@ class GetPaid_Notification_Email {
             '{date}'       => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
         );
 
-        return apply_filters( 'getpaid_get_email_merge_tags', $merge_tags, $this->id, $this->object );
+        return apply_filters( 'getpaid_get_email_merge_tags', $merge_tags, $this->object, $this->id );
     }
 
     /**

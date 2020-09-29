@@ -240,18 +240,30 @@ class GetPaid_Post_Types_Admin {
 
 			case 'wpi_actions' :
 
-				if ( ! $invoice->is_draft() ) {
-					$url    = esc_url( $invoice->get_view_url() );
-					$print  = esc_attr__( 'Print invoice', 'invoicing' );
-					echo "&nbsp;<a href='$url' title='$print' target='_blank' style='color:#757575'><i class='fa fa-print' style='font-size: 1.4em;'></i></a>";
+				if ( $invoice->is_draft() ) {
+					return;
 				}
 
-				if ( $invoice->get_email() ) {
-					$url    = esc_url( add_query_arg( array( 'wpi_action' => 'send_invoice', 'invoice_id' => $invoice->get_id() ) ) );
-					$send   = esc_attr__( 'Send invoice to customer', 'invoicing' );
-					echo "&nbsp;&nbsp;<a href='$url' title='$send' style='color:#757575'><i class='fa fa-envelope' style='font-size: 1.4em;'></i></a>";
-				}
-				
+				$url    = esc_url( $invoice->get_view_url() );
+				$print  = esc_attr__( 'Print invoice', 'invoicing' );
+				echo "&nbsp;<a href='$url' title='$print' target='_blank' style='color:#757575'><i class='fa fa-print' style='font-size: 1.4em;'></i></a>";
+
+				$url    = esc_url(
+					wp_nonce_url(
+						add_query_arg(
+							array(
+								'getpaid-admin-action' => 'send_invoice',
+								'invoice_id'           => $invoice->get_id()
+							)
+						),
+						'getpaid-nonce',
+						'getpaid-nonce'
+					)
+				);
+
+				$send   = esc_attr__( 'Send invoice to customer', 'invoicing' );
+				echo "&nbsp;&nbsp;<a href='$url' title='$send' style='color:#757575'><i class='fa fa-envelope' style='font-size: 1.4em;'></i></a>";
+
 				break;
 		}
 

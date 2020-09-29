@@ -51,8 +51,11 @@ class GetPaid_Admin {
         add_action( 'admin_init', array( $this, 'init_ayecode_connect_helper' ) );
         add_action( 'admin_init', array( $this, 'activation_redirect') );
         add_action( 'admin_init', array( $this, 'maybe_do_admin_action') );
-        add_action( 'admin_notices', array( $this, 'show_notices' ) );
-        do_action( 'getpaid_init_admin_hooks', $this );
+		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
+		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
+		do_action( 'getpaid_init_admin_hooks', $this );
+
     }
 
     /**
@@ -272,6 +275,42 @@ class GetPaid_Admin {
         }
 
     }
+
+	/**
+     * Sends a payment reminder to a customer.
+	 * 
+	 * @param array $args
+     */
+    public function send_customer_invoice( $args ) {
+		$sent = getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $args['invoice_id'] ) );
+
+		if ( $sent ) {
+			$this->show_success( __( 'Invoice was successfully sent to the customer', 'invoicing' ) );
+		} else {
+			$this->show_error( __( 'Could not sent the invoice to the customer', 'invoicing' ) );
+		}
+
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
+		exit;
+	}
+
+	/**
+     * Sends a payment reminder to a customer.
+	 * 
+	 * @param array $args
+     */
+    public function send_customer_payment_reminder( $args ) {
+		$sent = getpaid()->get( 'invoice_emails' )->force_send_overdue_notice( new WPInv_Invoice( $args['invoice_id'] ) );
+
+		if ( $sent ) {
+			$this->show_success( __( 'Payment reminder was successfully sent to the customer', 'invoicing' ) );
+		} else {
+			$this->show_error( __( 'Could not sent payment reminder to the customer', 'invoicing' ) );
+		}
+
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
+		exit;
+	}
 
     /**
 	 * Returns an array of admin notices.
