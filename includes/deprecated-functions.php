@@ -636,3 +636,8 @@ function wpinv_update_invoice_number() {}
  * @deprecated
  */
 function wpinv_invoice_subscription_details() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_schedule_events() {}
