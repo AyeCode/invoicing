@@ -641,3 +641,40 @@ function wpinv_invoice_subscription_details() {}
  * @deprecated
  */
 function wpinv_schedule_events() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_email_payment_reminders() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_send_overdue_reminder() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_send_customer_note_email() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_send_payment_reminder_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_payment_reminder_sent() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_send_pre_payment_reminder_notification() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_email_renewal_reminders() {}
+
+function wpinv_send_customer_invoice() {}

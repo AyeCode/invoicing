@@ -37,14 +37,18 @@ class GetPaid_Meta_Box_Resend_Invoice {
         );
 
         $reminder_url = esc_url(
-            add_query_arg(
-                array(
-                    'wpi_action'    => 'send_reminder',
-                    'invoice_id'    => $invoice->get_id(),
-                    'wpinv-message' => false,
-                )
+            wp_nonce_url(
+                add_query_arg(
+                    array(
+                        'getpaid-admin-action' => 'send_invoice_reminder',
+                        'invoice_id'           => $invoice->get_id()
+                    )
+                ),
+                'getpaid-nonce',
+                'getpaid-nonce'
             )
         );
+
         ?>
             <p class="wpi-meta-row wpi-resend-info"><?php _e( "This will send a copy of the invoice to the customer's email address.", 'invoicing' ); ?></p>
             <p class="wpi-meta-row wpi-resend-email"><a href="<?php echo $email_url; ?>" class="button button-secondary"><?php _e( 'Resend Invoice', 'invoicing' ); ?></a></p>

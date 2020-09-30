@@ -548,8 +548,8 @@ return array(
             'std'      => 0
         ),
 
-        'email_due_reminder_days' => array(
-            'id'       => 'email_due_reminder_days',
+        'email_overdue_days' => array(
+            'id'       => 'email_overdue_days',
             'name'     => __( 'When to Send', 'invoicing' ),
             'desc'     => __( 'Check when you would like payment reminders sent out.', 'invoicing' ),
             'help-tip' => true,
@@ -590,17 +590,17 @@ return array(
 
     ),
 
-    'renewal' => array(
+    'renewal_reminder' => array(
 
-        'email_renewal_header' => array(
-            'id'       => 'email_renewal_header',
+        'email_renewal_reminder_header' => array(
+            'id'       => 'email_renewal_reminder_header',
             'name'     => '<h3>' . __( 'Renewal Reminder', 'invoicing' ) . '</h3>',
             'desc'     => __( 'These emails are sent to customers whenever their subscription is about to expire.', 'invoicing' ),
             'type'     => 'header',
         ),
 
-        'email_renewal_active' => array(
-            'id'       => 'email_renewal_active',
+        'email_renewal_reminder_active' => array(
+            'id'       => 'email_renewal_reminder_active',
             'name'     => __( 'Enable/Disable', 'invoicing' ),
             'desc'     => __( 'Enable this email notification', 'invoicing' ),
             'type'     => 'checkbox',
@@ -612,7 +612,7 @@ return array(
             'name'     => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'     => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
             'type'     => 'checkbox',
-            'std'      => 1
+            'std'      => 0
         ),
 
         'email_renewal_reminder_days' => array(
@@ -679,7 +679,7 @@ return array(
             'name'     => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'     => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
             'type'     => 'checkbox',
-            'std'      => 1
+            'std'      => 0
         ),
 
         'email_subscription_trial_subject' => array(
@@ -707,7 +707,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => __( 'The content of the email.', 'invoicing' ),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {first_name},</p><p>Your trial for {subscription_name} is now active and will expire on {subscription_expiry}.</p>', 'invoicing' ),
+            'std'      => __( '<p>Hi {first_name},</p><p>Your trial for {subscription_name} is now active and will renew on {subscription_renewal_date}.</p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => 10,
         ),

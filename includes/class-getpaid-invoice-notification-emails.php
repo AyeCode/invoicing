@@ -1,10 +1,8 @@
 <?php
 /**
- * Contains the notification emails management class.
+ * Contains the invoice notification emails management class.
  *
  */
-
-use function SimplePay\Core\Payments\Payment_Confirmation\get_content;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,16 +12,16 @@ defined( 'ABSPATH' ) || exit;
  */
 class GetPaid_Invoice_Notification_Emails {
 
-    /**
+	/**
 	 * The array of invoice email actions.
 	 *
 	 * @param array
 	 */
 	public $invoice_actions;
 
-    /**
+	/**
 	 * Class constructor
-     *
+	 *
 	 */
 	public function __construct() {
 
@@ -40,29 +38,36 @@ class GetPaid_Invoice_Notification_Emails {
 				'getpaid_invoice_status_wpi-refunded'   => 'refunded_invoice',
 				'getpaid_new_invoice'                   => 'user_invoice',
 				'getpaid_new_customer_note'             => 'user_note',
-				'getpaid_subscriptions_daily_cron'      => 'overdue',
+				'getpaid_daily_maintenance'             => 'overdue',
 
 			)
 		);
 
-    }
+		$this->init_hooks();
 
-    /**
+	}
+
+	/**
 	 * Registers email hooks.
 	 */
 	public function init_hooks() {
 
-		add_filter( 'getpaid_get_email_merge_tags', array( $this, 'invoice_merge_tags' ), 10, 3 );
+		add_filter( 'getpaid_get_email_merge_tags', array( $this, 'invoice_merge_tags' ), 10, 2 );
 		add_filter( 'getpaid_invoice_email_recipients', array( $this, 'filter_email_recipients' ), 10, 2 );
 		foreach ( $this->invoice_actions as $hook => $email_type ) {
 
 			$email = new GetPaid_Notification_Email( $email_type );
 
-			if ( $email->is_active() && method_exists( $this, $email_type ) ) {
-				add_action( $hook, array( $this, $email_type ), 100, 2 );
-			} else {
-				do_action( 'getpaid_hook_invoice_notification_email_invoice_trigger', $email );
+			if ( ! $email->is_active() ) {
+				continue;
 			}
+
+			if ( method_exists( $this, $email_type ) ) {
+				add_action( $hook, array( $this, $email_type ), 100, 2 );
+				continue;
+			}
+
+			do_action( 'getpaid_invoice_notification_email_register_hook', $email );
 
 		}
 
@@ -72,26 +77,25 @@ class GetPaid_Invoice_Notification_Emails {
 	 * Filters invoice merge tags.
 	 *
 	 * @param array $merge_tags
-	 * @param string $email_type
 	 * @param mixed|WPInv_Invoice|WPInv_Subscription $object
 	 */
-	public function invoice_merge_tags( $merge_tags, $email_type, $object ) {
+	public function invoice_merge_tags( $merge_tags, $object ) {
 
 		if ( is_a( $object, 'WPInv_Invoice' ) ) {
-			$merge_tags = array_merge(
+			return array_merge(
 				$merge_tags,
 				$this->get_invoice_merge_tags( $object )
 			);
 		}
 
 		if ( is_a( $object, 'WPInv_Subscription' ) ) {
-			$merge_tags = array_merge(
+			return array_merge(
 				$merge_tags,
 				$this->get_invoice_merge_tags( $object->get_parent_payment() )
 			);
 		}
 
-		return apply_filters( 'getpaid_invoice_notification_merge_tags', $merge_tags, $object, $email_type, $this );
+		return $merge_tags;
 
 	}
 
@@ -169,6 +173,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 		do_action( 'getpaid_after_send_invoice_notification', $type, $invoice, $email );
 
+		return $result;
 	}
 
 	/**
@@ -193,17 +198,17 @@ class GetPaid_Invoice_Notification_Emails {
 
 	}
 
-    /**
+	/**
 	 * Sends a new invoice notification.
 	 *
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function new_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = wpinv_get_admin_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -214,10 +219,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function cancelled_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = wpinv_get_admin_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -228,10 +233,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function failed_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = wpinv_get_admin_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -242,10 +247,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function onhold_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -256,10 +261,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function processing_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -275,10 +280,10 @@ class GetPaid_Invoice_Notification_Emails {
 			return;
 		}
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -289,10 +294,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function refunded_invoice( $invoice ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
 	}
 
@@ -304,17 +309,25 @@ class GetPaid_Invoice_Notification_Emails {
 	public function user_invoice( $invoice ) {
 
 		// Only send this email for invoices created via the admin page.
-		$payment_form = $invoice->get_payment_form();
-
-		if ( 1 != $payment_form && wpinv_get_default_payment_form() != $payment_form ) {
+		if ( $this->is_payment_form_invoice( $invoice->get_id() ) ) {
 			return;
 		}
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
 
+	}
+
+	/**
+	 * Checks if an invoice is a payment form invoice.
+	 *
+	 * @param int $invoice
+	 * @return bool
+	 */
+	public function is_payment_form_invoice( $invoice ) {
+		return empty( $_GET['getpaid-admin-action'] ) && 'payment_form' == get_post_meta( $invoice, 'wpinv_created_via', true );
 	}
 
 	/**
@@ -325,10 +338,96 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function user_note( $invoice, $note ) {
 
-		$email     = new GetPaid_Notification_Email( __METHOD__, $invoice );
+		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
-		$this->send_email( $invoice, $email, __METHOD__, $recipient, array( 'customer_note' => $note ) );
+		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient, array( 'customer_note' => $note ) );
+
+	}
+
+	/**
+	 * (Force) Sends overdue notices.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 */
+	public function force_send_overdue_notice( $invoice ) {
+		$email = new GetPaid_Notification_Email( 'overdue', $invoice );
+		return $this->send_email( $invoice, $email, 'overdue', $invoice->get_email() );
+	}
+
+	/**
+	 * Sends overdue notices.
+	 *
+	 * @TODO: Create an invoices query class.
+	 */
+	public function overdue() {
+		global $wpdb;
+
+		$email = new GetPaid_Notification_Email( __FUNCTION__ );
+
+		// Fetch reminder days.
+		$reminder_days = array_unique( wp_parse_id_list( $email->get_option( 'days' ) ) );
+
+		// Abort if non is set.
+		if ( empty( $reminder_days ) ) {
+			return;
+		}
+
+		// Retrieve date query.
+		$date_query = $this->get_date_query( $reminder_days );
+
+		// Invoices table.
+		$table = $wpdb->prefix . 'getpaid_invoices';
+
+		// Fetch invoices.
+		$invoices  = $wpdb->get_col(
+			"SELECT posts.ID FROM $wpdb->posts as posts
+			LEFT JOIN $table as invoices ON invoices.post_id = posts.ID
+			WHERE posts.post_type = 'wpi_invoice' AND posts.post_status = 'wpi-pending' $date_query");
+
+		foreach ( $invoices as $invoice ) {
+
+			// Only send this email for invoices created via the admin page.
+			if ( ! $this->is_payment_form_invoice( $invoice ) ) {
+				$invoice       = new WPInv_Invoice( $invoice );
+				$email->object = $invoice;
+
+				if ( $invoice->needs_payment() ) {
+					$this->send_email( $invoice, $email, __FUNCTION__, $invoice->get_email() );
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Calculates the date query for an invoices query
+	 *
+	 * @param array $reminder_days
+	 * @return string
+	 */
+	public function get_date_query( $reminder_days ) {
+
+		$date_query = array(
+			'relation'  => 'OR'
+		);
+
+		foreach ( $reminder_days as $days ) {
+			$date = date_parse( date( 'Y-m-d', strtotime( "-$days days", current_time( 'timestamp' ) ) ) );
+
+			$date_query[] = array(
+				'year'  => $date['year'],
+				'month' => $date['month'],
+				'day'   => $date['day'],
+			);
+
+		}
+
+		$date_query = new WP_Date_Query( $date_query, 'invoices.due_date' );
+
+		return $date_query->get_sql();
 
 	}
 

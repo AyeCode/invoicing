@@ -26,8 +26,6 @@ class GetPaid_Daily_Maintenance {
         // Fired everyday at 7 a.m (this might vary for sites with few visitors)
         add_action( 'getpaid_daily_maintenance', array( $this, 'backwards_compat' ) );
         add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_expire_subscriptions' ) );
-        add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_send_upcoming_renewal_reminders' ) );
-        add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_send_overdue_notices' ) );
 
     }
 
@@ -79,7 +77,7 @@ class GetPaid_Daily_Maintenance {
 			'status'             => 'trialling active failing cancelled',
             'date_expires_query' => array(
                 'before'    => 'today',
-                'inclusive' => true,
+                'inclusive' => false,
             ),
         );
 
