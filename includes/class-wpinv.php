@@ -69,7 +69,7 @@ class WPInv_Plugin {
 
 	/**
 	 * Gets a custom data property.
-	 * 
+	 *
 	 * @param string $prop The prop to set.
 	 * @return mixed The value.
 	 */
@@ -248,21 +248,6 @@ class WPInv_Plugin {
 		 */
 		if ( ! class_exists( 'WPInv_EUVat' ) ) {
 			require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
-		}
-
-		$gateways = array_keys( wpinv_get_enabled_payment_gateways() );
-		if ( !empty( $gateways ) ) {
-			foreach ( $gateways as $gateway ) {
-				if ( $gateway == 'manual' ) {
-					continue;
-				}
-
-				$gateway_file = WPINV_PLUGIN_DIR . 'includes/gateways/' . $gateway . '.php';
-
-				if ( file_exists( $gateway_file ) ) {
-					require_once( $gateway_file );
-				}
-			}
 		}
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
