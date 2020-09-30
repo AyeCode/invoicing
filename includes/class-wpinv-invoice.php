@@ -342,20 +342,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	/**
 	 * @deprecated
 	 */
-	public function get_invoice_date( $formatted = true ) {
-        $date_completed = $this->get_date_completed();
-        $invoice_date   = $date_completed != '0000-00-00 00:00:00' ? $date_completed : '';
+	public function get_invoice_date( $format = true ) {
+		$date      = getpaid_format_date( $this->get_date_completed() );
+		$date      = empty( $date ) ? $this->get_date_created() : $this->get_date_completed();
+		$formatted = getpaid_format_date( $date );
 
-        if ( $invoice_date == '' ) {
-            $date_created   = $this->get_date_created();
-            $invoice_date   = $date_created != '0000-00-00 00:00:00' ? $date_created : '';
-        }
+		if ( $format ) {
+			return $formatted;
+		}
 
-        if ( $formatted && $invoice_date ) {
-            $invoice_date   = date_i18n( get_option( 'date_format' ), strtotime( $invoice_date ) );
-        }
+		return empty( $formatted ) ? '' : $date;
 
-        return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->get_id(), $this );
     }
 
     /**

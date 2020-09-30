@@ -54,7 +54,7 @@ if ( $invoice->is_paid() ) {
                 'type'    => 'danger',
                 'content' => sprintf(
                     __( 'This invoice was due on %.', 'invoicing' ),
-                    date_i18n( get_option( 'date_format' ), strtotime( $invoice->get_due_date() ) )
+                    getpaid_format_date_value( $invoice->get_due_date() )
                 ),
             )
         );

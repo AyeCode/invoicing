@@ -134,8 +134,8 @@ class GetPaid_Post_Types_Admin {
 		switch ( $column_name ) {
 
 			case 'invoice_date' :
-				$date_time = sanitize_text_field( $invoice->get_created_date() );
-				$date      = mysql2date( get_option( 'date_format' ), $date_time );
+				$date_time = esc_attr( $invoice->get_created_date() );
+				$date      = getpaid_format_date_value( $date_time );
 				echo "<span title='$date_time'>$date</span>";
 				break;
 
@@ -189,11 +189,11 @@ class GetPaid_Post_Types_Admin {
 					// Display the overview status.
 					if ( wpinv_get_option( 'overdue_active' ) ) {
 						$due_date = $invoice->get_due_date();
+						$fomatted = getpaid_format_date( $due_date );
 
-						if ( ! empty( $due_date ) ) {
-							$date = mysql2date( get_option( 'date_format' ), $due_date );
-							$date = wp_sprintf( __( 'Due %s', 'invoicing' ), $date );
-							echo "<p class='description' style='color: #888;' title='$due_date'>$date</p>";
+						if ( ! empty( $fomatted ) ) {
+							$date = wp_sprintf( __( 'Due %s', 'invoicing' ), $fomatted );
+							echo "<p class='description' style='color: #888;' title='$due_date'>$fomatted</p>";
 						}
 					}
 
@@ -511,7 +511,7 @@ class GetPaid_Post_Types_Admin {
 	 * Lets users filter items using taxes.
 	 */
 	public static function add_item_filters( $post_type ) {
-		global $wpinv_euvat;
+		$wpinv_euvat = getpaid_tax();
 
 		// Abort if we're not dealing with items.
 		if ( $post_type != 'wpi_item' ) {
@@ -523,7 +523,8 @@ class GetPaid_Post_Types_Admin {
 	
 			// Sanitize selected vat rule.
 			$vat_rule   = '';
-			if ( isset( $_GET['vat_rule'] ) && array_key_exists(  $_GET['vat_rule'], $wpinv_euvat->get_rules() ) ) {
+			$vat_rules  = $wpinv_euvat->get_rules();
+			if ( isset( $_GET['vat_rule'] ) ) {
 				$vat_rule   =  $_GET['vat_rule'];
 			}
 
@@ -534,11 +535,11 @@ class GetPaid_Post_Types_Admin {
 						array(
 							'' => __( 'All VAT rules', 'invoicing' )
 						),
-						$wpinv_euvat->get_rules()
+						$vat_rules
 					),
 					'name'             => 'vat_rule',
 					'id'               => 'vat_rule',
-					'selected'         => $vat_rule,
+					'selected'         => in_array( $vat_rule, array_keys( $vat_rules ) ) ? $vat_rule : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
 					'class'            => 'gdmbx2-text-medium',
@@ -553,7 +554,8 @@ class GetPaid_Post_Types_Admin {
 	
 			// Sanitize selected vat rule.
 			$vat_class   = '';
-			if ( isset( $_GET['vat_class'] ) && array_key_exists(  $_GET['vat_class'], $wpinv_euvat->get_all_classes() ) ) {
+			$vat_classes = $wpinv_euvat->get_all_classes();
+			if ( isset( $_GET['vat_class'] ) ) {
 				$vat_class   =  $_GET['vat_class'];
 			}
 
@@ -563,11 +565,11 @@ class GetPaid_Post_Types_Admin {
 						array(
 							'' => __( 'All VAT classes', 'invoicing' )
 						),
-						$wpinv_euvat->get_all_classes()
+						$vat_classes
 					),
 					'name'             => 'vat_class',
 					'id'               => 'vat_class',
-					'selected'         => $vat_class,
+					'selected'         => in_array( $vat_class, array_keys( $vat_classes ) ) ? $vat_class : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
 					'class'            => 'gdmbx2-text-medium',
@@ -578,7 +580,7 @@ class GetPaid_Post_Types_Admin {
 
 		// Filter by item type.
 		$type   = '';
-		if( isset( $_GET['type'] ) && array_key_exists(  $_GET['type'], wpinv_get_item_types() ) ) {
+		if ( isset( $_GET['type'] ) ) {
 			$type   =  $_GET['type'];
 		}
 
@@ -592,7 +594,7 @@ class GetPaid_Post_Types_Admin {
 				),
 				'name'             => 'type',
 				'id'               => 'type',
-				'selected'         => $type,
+				'selected'         => in_array( $type, wpinv_item_types() ) ? $type : '',
 				'show_option_all'  => false,
 				'show_option_none' => false,
 				'class'            => 'gdmbx2-text-medium',

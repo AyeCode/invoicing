@@ -240,14 +240,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_renewal_date( $item ) {
-
-		$expiration = $item->get_expiration();
-		if ( ! $item->is_active() || empty( $expiration ) || '0000-00-00 00:00:00' == $expiration ) {
-			return "&mdash;";
-		}
-
-		return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $expiration ) );
-
+		return getpaid_format_date_value( $item->get_expiration() );
 	}
 
 	/**
@@ -258,14 +251,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_start_date( $item ) {
-
-		$created = $item->get_date_created();
-		if ( empty( $created ) || '0000-00-00 00:00:00' == $created ) {
-			return "&mdash;";
-		}
-
-		return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $created ) );
-
+		return getpaid_format_date_value( $item->get_date_created() );
 	}
 
 	/**

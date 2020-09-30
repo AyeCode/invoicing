@@ -1771,12 +1771,12 @@ final class WPInv_Legacy_Invoice {
     
     public function get_due_date( $display = false ) {
         $due_date = apply_filters( 'wpinv_due_date', $this->due_date, $this->ID, $this );
-        
-        if ( !$display || empty( $due_date ) ) {
+
+        if ( ! $display ) {
             return $due_date;
         }
         
-        return date_i18n( get_option( 'date_format' ), strtotime( $due_date ) );
+        return getpaid_format_date( $this->due_date );
     }
     
     public function get_completed_date() {
@@ -1793,7 +1793,7 @@ final class WPInv_Legacy_Invoice {
         }
         
         if ( $formatted && $invoice_date ) {
-            $invoice_date   = date_i18n( get_option( 'date_format' ), strtotime( $invoice_date ) );
+            $invoice_date   = getpaid_format_date( $invoice_date );
         }
 
         return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->ID, $this );

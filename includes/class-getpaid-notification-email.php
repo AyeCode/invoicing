@@ -138,7 +138,7 @@ class GetPaid_Notification_Email {
 
         $merge_tags = array(
             '{site_title}' => wpinv_get_blogname(),
-            '{date}'       => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
+            '{date}'       => getpaid_format_date_value( current_time( 'mysql' ) ),
         );
 
         return apply_filters( 'getpaid_get_email_merge_tags', $merge_tags, $this->object, $this->id );

@@ -137,6 +137,7 @@ class GetPaid_Metaboxes {
 	 */
 	public static function save_meta_boxes( $post_id, $post ) {
 		$post_id = absint( $post_id );
+		$data    = wp_unslash( $_POST );
 
 		// Do not save for ajax requests.
 		if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
@@ -154,12 +155,12 @@ class GetPaid_Metaboxes {
 		}
 
 		// Check the nonce.
-		if ( empty( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['getpaid_meta_nonce'] ), 'getpaid_meta_nonce' ) ) {
+		if ( empty( $data['getpaid_meta_nonce'] ) || ! wp_verify_nonce( $data['getpaid_meta_nonce'], 'getpaid_meta_nonce' ) ) {
 			return;
 		}
 
 		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
-		if ( empty( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== $post_id ) {
+		if ( empty( $data['post_ID'] ) || absint( $data['post_ID'] ) !== $post_id ) {
 			return;
 		}
 

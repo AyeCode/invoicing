@@ -45,7 +45,7 @@ class WPInv_Subscriptions {
      * Returns an invoice's subscription.
      *
      * @param WPInv_Invoice $invoice
-     * @return WPInv_Subscription|false
+     * @return WPInv_Subscription|bool
      */
     public function get_invoice_subscription( $invoice ) {
         $subscription_id = $invoice->get_subscription_id();

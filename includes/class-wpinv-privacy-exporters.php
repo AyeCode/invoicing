@@ -95,7 +95,7 @@ class WPInv_Privacy_Exporters {
             $period = wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $subscription->get_parent_payment()->get_currency() ) . ' / ' . $frequency;
             $initial_amt = wpinv_price( wpinv_format_amount( $subscription->get_initial_amount() ), $subscription->get_parent_payment()->get_currency() );
             $bill_times = $subscription->get_times_billed() . ' / ' . ( ( $subscription->get_bill_times() == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->get_bill_times() );
-            $renewal_date = ! empty( $subscription->expiration ) ? date_i18n( get_option( 'date_format' ), strtotime( $subscription->expiration ) ) : __( 'N/A', 'invoicing' );
+            $renewal_date = ! empty( $subscription->expiration ) ? getpaid_format_date( $subscription->expiration ) : __( 'N/A', 'invoicing' );
 
             $props_to_export['period'] = __( 'Billing Cycle', 'invoicing' );
             $props_to_export['initial_amount'] = __( 'Initial Amount', 'invoicing' );

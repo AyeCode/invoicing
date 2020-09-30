@@ -60,7 +60,7 @@ function wpinv_get_options() {
  * 
  * @param string $key the setting key.
  * @param mixed $default The default value to use if the setting has not been set.
- * @return array
+ * @return mixed
  */
 function wpinv_get_option( $key = '', $default = false ) {
 

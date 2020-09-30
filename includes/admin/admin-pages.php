@@ -21,22 +21,10 @@ function wpinv_discount_custom_column( $column ) {
             echo $discount->get_usage();
         break;
         case 'start_date' :
-            if ( $discount->has_start_date() ) {
-                $value = date_i18n( get_option( 'date_format' ), strtotime( $discount->get_start_date() ) );
-            } else {
-                $value = '&mdash;';
-            }
-
-            echo $value;
+            echo getpaid_format_date_value( $discount->get_start_date() );
         break;
         case 'expiry_date' :
-            if ( $discount->has_expiration_date() ) {
-                $value = date_i18n( get_option( 'date_format' ), strtotime( $discount->get_expiration_date() ) );
-            } else {
-                $value = __( 'Never', 'invoicing' );
-            }
-
-            echo $value;
+            echo getpaid_format_date_value( $discount->get_expiration_date(), __( 'Never', 'invoicing' ) );
         break;
     }
 }
@@ -143,7 +131,7 @@ function wpinv_restrict_manage_posts() {
 add_action( 'restrict_manage_posts', 'wpinv_restrict_manage_posts', 10 );
 
 function wpinv_discount_filters() {
-    echo wpinv_discount_bulk_actions( array(), true );
+    wpinv_discount_bulk_actions( array(), true );
 
     ?>
     <select name="discount_type" id="dropdown_wpinv_discount_type">

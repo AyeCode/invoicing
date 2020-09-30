@@ -53,7 +53,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									break;
 
 								case 'created-date':
-									echo date_i18n( get_option( 'date_format' ), strtotime( $invoice->get_date_created() ) );
+									echo getpaid_format_date_value( $invoice->get_date_created() );
 									break;
 
 								case 'payment-date':
@@ -61,7 +61,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									if ( $invoice->needs_payment() ) {
 										echo "&mdash;";
 									} else {
-										echo date_i18n( get_option( 'date_format' ), strtotime( $invoice->get_date_completed() ) );
+										echo getpaid_format_date_value( $invoice->get_date_completed() );
 									}
 									
 									break;

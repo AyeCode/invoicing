@@ -322,7 +322,7 @@ function wpinv_email_format_text( $content, $invoice ) {
 
     $replace_array = array(
         '{site_title}'      => wpinv_get_blogname(),
-        '{date}'            => date_i18n( get_option( 'date_format' ), (int) current_time( 'timestamp' ) ),
+        '{date}'            => getpaid_format_date( current_time( 'mysql' ) ),
     );
 
     $invoice = new WPInv_Invoice( $invoice );

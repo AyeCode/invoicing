@@ -288,14 +288,7 @@ add_action( 'getpaid_subscription_admin_display_subscription', 'getpaid_admin_su
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_start_date( $subscription ) {
-
-	$created = $subscription->get_date_created();
-	if ( empty( $created ) || '0000-00-00 00:00:00' == $created ) {
-		echo "&mdash;";
-	} else {
-		echo date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $created ) );
-	}
-
+	echo getpaid_format_date_value( $subscription->get_date_created() );
 }
 add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subscription_metabox_display_start_date' );
 
@@ -305,14 +298,7 @@ add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subs
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_renews_on( $subscription ) {
-
-	$expiration = $subscription->get_expiration();
-	if ( empty( $expiration ) || '0000-00-00 00:00:00' == $expiration ) {
-		echo "&mdash;";
-	} else {
-		echo date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $expiration ) );
-	}
-
+	echo getpaid_format_date_value( $subscription->get_expiration() );
 }
 add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subscription_metabox_display_renews_on' );
 
@@ -527,7 +513,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 												break;
 
 											case 'date':
-												echo date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $payment->get_date_created() ) );
+												echo getpaid_format_date_value( $payment->get_date_created() );
 												break;
 
 											case 'status':

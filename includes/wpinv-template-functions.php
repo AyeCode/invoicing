@@ -1352,7 +1352,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
                         printf(
                             __( '%1$s - %2$s at %3$s', 'invoicing' ),
                             $note->comment_author,
-                            date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ),
+                            getpaid_format_date_value( $note->comment_date ),
                             date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
                         );
                     ?>
@@ -1364,7 +1364,16 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
         <?php if ( is_admin() ) : ?>
 
             <p class="meta px-4 py-2">
-                <abbr class="exact-date" title="<?php echo esc_attr( $note->comment_date ); ?>"><?php printf( __( '%1$s - %2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( get_option( 'date_format' ), strtotime( $note->comment_date ) ), date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) ); ?></abbr>&nbsp;&nbsp;
+                <abbr class="exact-date" title="<?php echo esc_attr( $note->comment_date ); ?>">
+                    <?php
+                        printf(
+                            __( '%1$s - %2$s at %3$s', 'invoicing' ),
+                            $note->comment_author,
+                            getpaid_format_date_value( $note->comment_date ),
+                            date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
+                        );
+                    ?>
+                </abbr>&nbsp;&nbsp;
                 <?php if ( $note->comment_author !== 'System' && wpinv_current_user_can_manage_invoicing() ) { ?>
                     <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
                 <?php } ?>
