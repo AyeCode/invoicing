@@ -19,6 +19,12 @@ class WPInv_Subscriptions {
         // Fire gateway specific hooks when a subscription changes.
         add_action( 'getpaid_subscription_status_changed', array( $this, 'process_subscription_status_change' ), 10, 3 );
 
+        // De-activate a subscription whenever the invoice changes payment statuses.
+        add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        add_action( 'getpaid_invoice_status_wpi-cancelled', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        add_action( 'getpaid_invoice_status_wpi-pending', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+
         // Handles subscription cancelations.
         add_action( 'getpaid_authenticated_action_subscription_cancel', array( $this, 'user_cancel_single_subscription' ) );
 
@@ -33,6 +39,46 @@ class WPInv_Subscriptions {
 
         // Filter invoice item row actions.
         add_action( 'getpaid-invoice-page-line-item-actions', array( $this, 'filter_invoice_line_item_actions' ), 10, 3 );
+    }
+
+    /**
+     * Returns an invoice's subscription.
+     *
+     * @param WPInv_Invoice $invoice
+     * @return WPInv_Subscription|false
+     */
+    public function get_invoice_subscription( $invoice ) {
+        $subscription_id = $invoice->get_subscription_id();
+
+        // Fallback to the parent invoice if the child invoice has no subscription id.
+        if ( empty( $subscription_id && $invoice->is_renewal() ) ) {
+            $subscription_id = $invoice->get_parent_payment()->get_subscription_id();
+        }
+
+        // Fetch the subscription.
+        $subscription = new WPInv_Subscription( $subscription_id );
+
+        // Return subscription or use a fallback for backwards compatibility.
+        return $subscription->get_id() ? $subscription : wpinv_get_subscription( $invoice );
+    }
+
+    /**
+     * Deactivates the invoice subscription whenever an invoice status changes.
+     * 
+     * @param WPInv_Invoice $invoice
+     */
+    public function maybe_deactivate_invoice_subscription( $invoice ) {
+
+        $subscription = $this->get_invoice_subscription( $invoice );
+
+        // Abort if the subscription is missing or not active.
+        if ( empty( $subscription ) || ! $subscription->is_active() ) {
+            return;
+        }
+
+        $subscription->set_status( 'pending' );
+        $subscription->save();
+
     }
 
     /**
@@ -183,8 +229,6 @@ class WPInv_Subscriptions {
 
         // In case the subscription was deleted...
         if ( ! $subscription->get_id() ) {
-            $invoice->set_subscription_id(0);
-            $invoice->save();
             return $this->maybe_create_invoice_subscription( $invoice );
         }
 
@@ -207,7 +251,7 @@ class WPInv_Subscriptions {
      */
     public function update_invoice_subscription( $subscription, $invoice ) {
 
-        // Delete the subscription if an invoice is free.
+        // Delete the subscription if an invoice is free or nolonger recurring.
         if ( $invoice->is_free() || ! $invoice->is_recurring() ) {
             return $subscription->delete();
         }
@@ -222,6 +266,8 @@ class WPInv_Subscriptions {
         // Get the recurring item and abort if it does not exist.
         $subscription_item = $invoice->get_recurring( true );
         if ( ! $subscription_item->get_id() ) {
+            $invoice->set_subscription_id(0);
+            $invoice->save();
             return $subscription->delete();
         }
 
@@ -249,7 +295,7 @@ class WPInv_Subscriptions {
         }
 
         // Calculate the next renewal date.
-        $expiration = date( 'Y-m-d H:i:s', strtotime( "+ $interval $period", strtotime( $subscription->get_date_created() ) ) );
+        $expiration = date( 'Y-m-d H:i:s', strtotime( "+$interval $period", strtotime( $subscription->get_date_created() ) ) );
 
         $subscription->set_next_renewal_date( $expiration );
         return $subscription->save();

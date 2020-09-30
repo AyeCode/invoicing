@@ -1100,6 +1100,25 @@ function getpaid_get_subscription_period_label( $period ) {
 }
 
 /**
+ * Returns an invoice subscription.
+ * 
+ * @param WPInv_Invoice $invoice
+ * @return WPInv_Subscription|false
+ */
+function getpaid_get_invoice_subscription( $invoice ) {
+    return getpaid_subscriptions()->get_invoice_subscription( $invoice );
+}
+
+/**
+ * Returns the subscriptions controller.
+ * 
+ * @return WPInv_Subscriptions
+ */
+function getpaid_subscriptions() {
+    return getpaid()->get( 'subscriptions' );
+}
+
+/**
  * Returns the main admin class.
  * 
  * @return GetPaid_Admin

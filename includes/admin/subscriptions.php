@@ -157,8 +157,21 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 		)
 	);
 
-	if ( ! $sub->is_active() && isset( $fields['renews_on'] ) ) {
-		unset( $fields['renews_on'] );
+	if ( ! $sub->is_active() ) {
+
+		if ( isset( $fields['renews_on'] ) ) {
+			unset( $fields['renews_on'] );
+		}
+
+		if ( isset( $fields['gateway'] ) ) {
+			unset( $fields['gateway'] );
+		}
+		
+	}
+
+	$profile_id = $sub->get_profile_id();
+	if ( empty( $profile_id ) && isset( $fields['profile_id'] ) ) {
+		unset( $fields['profile_id'] );
 	}
 
 	?>

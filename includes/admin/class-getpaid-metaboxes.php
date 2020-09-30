@@ -53,8 +53,10 @@ class GetPaid_Metaboxes {
 			}
 
 			// Subscriptions.
-			if ( $invoice->is_recurring() ) {
-				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', 'wpi_invoice', 'side', 'high' );
+			$subscription = getpaid_get_invoice_subscription( $invoice );
+			if ( ! empty( $subscription ) ) {
+				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', 'wpi_invoice', 'advanced' );
+				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', 'wpi_invoice', 'advanced' );
 			}
 
 			// Invoice details.
@@ -70,7 +72,7 @@ class GetPaid_Metaboxes {
 			add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Items::output', 'wpi_invoice', 'normal', 'high' );
 			
 			// Invoice notes.
-			add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'normal', 'high' );
+			add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'side', 'low' );
 
 			// Payment form information.
 			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'payment_form_data', true ) ) {
