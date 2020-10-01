@@ -28,7 +28,7 @@ class GetPaid_Meta_Box_Invoice_Subscription {
         $subscription = getpaid_get_invoice_subscription( $invoice );
 
         echo '<div class="bsui">';
-        getpaid_admin_subscription_details_metabox( $subscription );
+        getpaid_admin_subscription_details_metabox( /** @scrutinizer ignore-type */$subscription );
         echo '</div>';
 
     }
@@ -47,7 +47,7 @@ class GetPaid_Meta_Box_Invoice_Subscription {
         $subscription = getpaid_get_invoice_subscription( $invoice );
 
         echo '<div class="bsui">';
-        getpaid_admin_subscription_invoice_details_metabox( $subscription );
+        getpaid_admin_subscription_invoice_details_metabox( /** @scrutinizer ignore-type */$subscription );
         echo '</div>';
 
     }

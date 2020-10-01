@@ -474,7 +474,7 @@ class GetPaid_Post_Types_Admin {
 				$price = wp_sprintf(
 					__( '%s / %s', 'invoicing' ),
 					$item->get_the_price(),
-					WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_recurring_period(), $item->get_recurring_interval() )
+					getpaid_get_subscription_period_label( $item->get_recurring_period(), $item->get_recurring_interval(), '' )
 				);
 
 				if ( $item->get_the_price() == $item->get_the_initial_price() ) {

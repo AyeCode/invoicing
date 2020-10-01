@@ -74,7 +74,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 								break;
 
 							case 'recurring_amount':
-								$frequency = sanitize_text_field( WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $subscription->get_period(), $subscription->get_frequency(), true ) );
+								$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 								$amount    = wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $subscription->get_parent_payment()->get_currency() );
 								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / $frequency" );
 								break;

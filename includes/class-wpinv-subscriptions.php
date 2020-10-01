@@ -106,41 +106,11 @@ class WPInv_Subscriptions {
      *
      * @param $period
      * @param int $frequency_count The frequency of the period.
+     * @deprecated
      * @return mixed|string|void
      */
-    public static function wpinv_get_pretty_subscription_frequency( $period, $frequency_count = 1, $skip_1 = false ) {
-
-        $frequency = '';
-
-        //Format period details
-        switch ( strtolower( $period ) ) {
-            case 'day' :
-            case 'd' :
-                $frequency = sprintf( _n( '%d Day', '%d Days', $frequency_count, 'invoicing'), $frequency_count);
-                break;
-            case 'week' :
-            case 'w' :
-                $frequency = sprintf( _n('%d Week', '%d Weeks', $frequency_count, 'invoicing'), $frequency_count);
-                break;
-            case 'month' :
-            case 'm' :
-                $frequency = sprintf( _n('%d Month', '%d Months', $frequency_count, 'invoicing'), $frequency_count);
-                break;
-            case 'year' :
-            case 'y' :
-                $frequency = sprintf( _n('%d Year', '%d Years', $frequency_count, 'invoicing'), $frequency_count);
-                break;
-            default :
-                $frequency = apply_filters( 'wpinv_recurring_subscription_frequency', $frequency, $period, $frequency_count );
-                break;
-        }
-
-        if ( $skip_1 && 1 == $frequency_count ) {
-            $frequency = str_replace( '1', '', $frequency );
-        }
-
-        return trim( $frequency );
-
+    public static function wpinv_get_pretty_subscription_frequency( $period, $frequency_count = 1 ) {
+        return getpaid_get_subscription_period_label( $period, $frequency_count );
     }
 
     /**

@@ -106,7 +106,7 @@ class GetPaid_Subscription_Notification_Emails {
 			'{subscription_id}'               => absint( $subscription->get_id() ),
 			'{subscription_recurring_amount}' => wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $invoice->get_currency() ),
 			'{subscription_initial_amount}'   => wpinv_price( wpinv_format_amount( $subscription->get_initial_amount() ), $invoice->get_currency() ),
-			'{subscription_recurring_period}' => strtolower( sanitize_text_field( WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $subscription->get_period(), $subscription->get_frequency(), true ) ) ),
+			'{subscription_recurring_period}' => getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' ),
 			'{subscription_bill_times}'       => $subscription->get_bill_times(),
 			'{subscription_url}'              => esc_url( $subscription->get_view_url() ),
 		);

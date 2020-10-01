@@ -574,11 +574,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value Amount earned.
-	 * @return array
 	 */
 	public function set_earned( $value ) {
 		$value = max( (float) $value, 0 );
-		return $this->set_prop( 'earned', $value );
+		$this->set_prop( 'earned', $value );
 	}
 
 	/**
@@ -586,11 +585,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value Amount refunded.
-	 * @return array
 	 */
 	public function set_refunded( $value ) {
 		$value = max( (float) $value, 0 );
-		return $this->set_prop( 'refunded', $value );
+		$this->set_prop( 'refunded', $value );
 	}
 
 	/**
@@ -598,11 +596,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value Amount cancelled.
-	 * @return array
 	 */
 	public function set_cancelled( $value ) {
 		$value = max( (float) $value, 0 );
-		return $this->set_prop( 'cancelled', $value );
+		$this->set_prop( 'cancelled', $value );
 	}
 
 	/**
@@ -610,11 +607,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  float $value Amount cancelled.
-	 * @return array
 	 */
 	public function set_failed( $value ) {
 		$value = max( (float) $value, 0 );
-		return $this->set_prop( 'failed', $value );
+		$this->set_prop( 'failed', $value );
 	}
 
     /**

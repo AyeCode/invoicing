@@ -825,46 +825,60 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
 
     $initial_price   = wpinv_price( wpinv_sanitize_amount( $item->get_initial_price() ), $currency );
     $recurring_price = wpinv_price( wpinv_sanitize_amount( $item->get_recurring_price() ), $currency );
-    $period          = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_recurring_period(), $item->get_recurring_interval() );
-    $period          = str_replace( '1 ', '', strtolower( $period ) );
+    $period          = getpaid_get_subscription_period_label( $item->get_recurring_period(), $item->get_recurring_interval(), '' );
 
     // For free trial items.
     if ( $item->has_free_trial() ) {
-        $trial_period = WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_trial_period(), $item->get_trial_interval() );
+        $trial_period = getpaid_get_subscription_period_label( $item->get_trial_period(), $item->get_trial_interval() );
 
         if ( 0 == $item->get_initial_price() ) {
+
             return sprintf(
-                __( 'Free for %s then %s every %s', 'invoicing' ),
-                strtolower( $trial_period ),
+
+                // translators: $1: is the trial period, $2: is the recurring price, $3: is the susbcription period
+                _x( 'Free for %1$s then %3$s / %4$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year)', 'invoicing' ),
+                $trial_period,
                 $recurring_price,
                 $period
+    
             );
+
         }
 
         return sprintf(
-            __( '%s for %s then %s every %s', 'invoicing' ),
+
+            // translators: $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period
+            _x( '%1$s for %2$s then %3$s / %4$s', 'Item subscription amount. (e.g.: $7 for 1 month then $120 / year)', 'invoicing' ),
             $initial_price,
-            strtolower( $trial_period ),
+            $trial_period,
             $recurring_price,
             $period
+
         );
 
     }
 
     if ( $initial_price == $recurring_price ) {
+
         return sprintf(
-            __( '%s every %s', 'invoicing' ),
+
+            // translators: $1: is the recurring price, $2: is the susbcription period
+            _x( '%1$s / %2$s', 'Item subscription amount. (e.g.: $120 / year)', 'invoicing' ),
             $recurring_price,
             $period
+
         );
+
     }
 
     return sprintf(
-        __( '%s for %s then %s every %s', 'invoicing' ),
+
+        // translators: $1: is the initial price, $2: is the recurring price, $3: is the susbcription period
+        _x( 'Initial payment of %1$s then %3$s / %4$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)', 'invoicing' ),
         $initial_price,
-        $period,
         $recurring_price,
         $period
+
     );
 
 }

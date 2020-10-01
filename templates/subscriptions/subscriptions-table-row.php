@@ -36,7 +36,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 				break;
 
 			case 'amount':
-				$frequency = sanitize_text_field( WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $subscription->get_period(), $subscription->get_frequency(), true ) );
+				$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 				$amount    = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $subscription->get_recurring_amount() ) ), $subscription->get_parent_payment()->get_currency() );
 				echo "<strong style='font-weight: 500;'>$amount</strong> / $frequency";
 				break;
