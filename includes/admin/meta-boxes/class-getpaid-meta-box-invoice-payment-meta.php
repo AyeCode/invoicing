@@ -58,23 +58,21 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                         );
 
                         // View URL.
-                        if ( ! $invoice->is_draft() ) {
-                            echo aui()->input(
-                                array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_view_url',
-                                    'name'        => 'wpinv_view_url',
-                                    'label'       => __( 'Invoice URL:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_view_url(),
-                                    'extra_attributes' => array(
-                                        'onclick'  => 'this.select();',
-                                        'readonly' => 'true',
-                                    ),
-                                )
-                            );
-                        }
+                        echo aui()->input(
+                            array(
+                                'type'        => 'text',
+                                'id'          => 'wpinv_view_url',
+                                'name'        => 'wpinv_view_url',
+                                'label'       => __( 'Invoice URL:', 'invoicing' ),
+                                'label_type'  => 'vertical',
+                                'class'       => 'form-control-sm',
+                                'value'       => $invoice->get_view_url(),
+                                'extra_attributes' => array(
+                                    'onclick'  => 'this.select();',
+                                    'readonly' => 'true',
+                                ),
+                            )
+                        );
 
                         // If the invoice is paid...
                         if ( $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -153,23 +151,21 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                         } else {
 
                             // Payment URL.
-                            if ( ! $invoice->is_draft() ) {
-                                echo aui()->input(
-                                    array(
-                                        'type'        => 'text',
-                                        'id'          => 'wpinv_payment_url',
-                                        'name'        => 'wpinv_payment_url',
-                                        'label'       => __( 'Payment URL:', 'invoicing' ),
-                                        'label_type'  => 'vertical',
-                                        'class'       => 'form-control-sm',
-                                        'value'       => $invoice->get_checkout_payment_url(),
-                                        'extra_attributes' => array(
-                                            'onclick'  => 'this.select();',
-                                            'readonly' => 'true',
-                                        ),
-                                    )
-                                );
-                            }
+                            echo aui()->input(
+                                array(
+                                    'type'        => 'text',
+                                    'id'          => 'wpinv_payment_url',
+                                    'name'        => 'wpinv_payment_url',
+                                    'label'       => __( 'Payment URL:', 'invoicing' ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'form-control-sm',
+                                    'value'       => $invoice->get_checkout_payment_url(),
+                                    'extra_attributes' => array(
+                                        'onclick'  => 'this.select();',
+                                        'readonly' => 'true',
+                                    ),
+                                )
+                            );
 
                             // Set gateway.
                             echo aui()->select(

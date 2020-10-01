@@ -48,7 +48,7 @@ class GetPaid_Metaboxes {
 			$invoice = new WPInv_Invoice( $post );
 
 			// Resend invoice.
-			if ( ! $invoice->is_draft() ) {
+			if ( ! $invoice->is_draft() && ! $invoice->is_paid() ) {
 				add_meta_box( 'wpinv-mb-resend-invoice', __( 'Resend Invoice', 'invoicing' ), 'GetPaid_Meta_Box_Resend_Invoice::output', 'wpi_invoice', 'side', 'low' );
 			}
 
@@ -63,7 +63,9 @@ class GetPaid_Metaboxes {
 			add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Details::output', 'wpi_invoice', 'side', 'default' );
 			
 			// Payment details.
-			add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', 'wpi_invoice', 'side', 'default' );
+			if ( ! $invoice->is_draft() ) {
+				add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', 'wpi_invoice', 'side', 'default' );
+			}
 
 			// Billing details.
 			add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', 'wpi_invoice', 'normal', 'high' );

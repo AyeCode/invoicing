@@ -231,43 +231,7 @@ add_action( 'getpaid_subscription_admin_display_customer', 'getpaid_admin_subscr
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_amount( $subscription ) {
-
-	$initial   = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $subscription->get_initial_amount() ) ), $subscription->get_parent_payment()->get_currency() );
-	$recurring = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $subscription->get_recurring_amount() ) ), $subscription->get_parent_payment()->get_currency() );
-	$period    = 1 == $subscription->get_frequency() ? getpaid_get_subscription_period_label( $subscription->get_period() ) : WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $subscription->get_period(),$subscription->get_frequency() );
-
-	if ( $subscription->has_trial_period() ) {
-
-		// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
-		$amount = sprintf(
-			_x( '%1$s trial for %2$s(s) then %3$s / %4$s', 'Subscription amount on admin table. (e.g.: $10 trial for 1 month then $120 / year)', 'invoicing' ),
-			$initial,
-			sanitize_text_field( $subscription->get_trial_period() ),
-			$recurring,
-			sanitize_text_field( strtolower( $period ) )
-		);
-
-	} else if ( $initial != $recurring ) {
-
-		// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring perio
-		$amount = sprintf(
-			_x( 'Initial payment of %1$s then %2$s / %3$s', 'Subscription amount on admin table. (e.g.:Initial payment of $100 then $120 / year)', 'invoicing' ),
-			$initial,
-			$recurring,
-			sanitize_text_field( strtolower( $period ) )
-		);
-
-	} else {
-
-		// translators: $1: is the recurring amount, $2: is the recurring period
-		$amount = sprintf(
-			_x( '%1$s / %2$s', 'Subscription amount on admin table. (e.g.: $120 / year)', 'invoicing' ),
-			$initial,
-			sanitize_text_field( strtolower( $period ) )
-		);
-
-	}
-
+	$amount    = sanitize_text_field( getpaid_get_formatted_subscription_amount( $subscription ) );
 	echo "<span>$amount</span>";
 }
 add_action( 'getpaid_subscription_admin_display_amount', 'getpaid_admin_subscription_metabox_display_amount' );
@@ -312,7 +276,6 @@ function getpaid_admin_subscription_metabox_display_renewals( $subscription ) {
 	echo $subscription->get_times_billed() . ' / ' . ( empty( $max_bills ) ? "&infin;" : $max_bills );
 }
 add_action( 'getpaid_subscription_admin_display_renewals', 'getpaid_admin_subscription_metabox_display_renewals' );
-
 /**
  * Displays the subscription item.
  *

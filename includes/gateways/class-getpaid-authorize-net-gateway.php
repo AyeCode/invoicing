@@ -612,7 +612,8 @@ log_noptin_message( $args );
         update_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', $payment_profile_id );
 
         // Check if this is a subscription or not.
-        if ( $invoice->is_recurring() && $subscription = wpinv_get_subscription( $invoice ) ) {
+        $subscription = getpaid_get_invoice_subscription( $invoice );
+        if ( ! empty( $subscription ) ) {
             $this->process_subscription( $invoice, $subscription );
         }
 
@@ -954,7 +955,7 @@ log_noptin_message( $args );
             return false;
         }
 
-        $hash  = hash_hmac ( 'sha512', file_get_contents('php://input'), hex2bin( $signature ) );
+        $hash  = hash_hmac ( 'sha512', file_get_contents( 'php://input' ), hex2bin( $signature ) );
 
         if ( hash_equals( $hash, $_SERVER['HTTP_X_ANET_SIGNATURE'] ) ) {
             wpinv_error_log( 'Successfully validated the IPN' );

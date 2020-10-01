@@ -2980,7 +2980,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_free();
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
     }
-
+  
 	/**
      * Checks if the invoice is refunded.
      */
@@ -3772,7 +3772,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 			$_note = sprintf(
 				__( 'Paid via %s', 'invoicing' ),
-				$this->get_gateway_title() . empty( $note ) ? '' : " ($note)"
+				$this->get_gateway() . empty( $note ) ? '' : " ($note)"
 			);
 
 			if ( 'none' == $this->get_gateway() ) {

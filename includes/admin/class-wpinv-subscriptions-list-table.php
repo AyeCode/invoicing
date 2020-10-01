@@ -120,7 +120,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function get_views() {
+	public function get_views() {
 
 		$current  = isset( $_GET['status'] ) ? $_GET['status'] : 'all';
 		$views    = array(
@@ -262,43 +262,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_amount( $item ) {
-
-		$initial   = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $item->get_initial_amount() ) ), $item->get_parent_payment()->get_currency() );
-		$recurring = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $item->get_recurring_amount() ) ), $item->get_parent_payment()->get_currency() );
-		$period    = 1 == $item->get_frequency() ? getpaid_get_subscription_period_label( $item->get_period() ) : WPInv_Subscriptions::wpinv_get_pretty_subscription_frequency( $item->get_period(),$item->get_frequency() );
-
-		if ( $item->has_trial_period() ) {
-
-			// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
-			$amount = sprintf(
-				_x( '%1$s trial for %2$s(s) then %3$s / %4$s', 'Subscription amount on admin table. (e.g.: $10 trial for 1 month then $120 / year)', 'invoicing' ),
-				$initial,
-				sanitize_text_field( $item->get_trial_period() ),
-				$recurring,
-				sanitize_text_field( strtolower( $period ) )
-			);
-
-		} else if ( $initial != $recurring ) {
-
-			// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring perio
-			$amount = sprintf(
-				_x( 'Initial payment of %1$s then %2$s / %3$s', 'Subscription amount on admin table. (e.g.:Initial payment of $100 then $120 / year)', 'invoicing' ),
-				$initial,
-				$recurring,
-				sanitize_text_field( strtolower( $period ) )
-			);
-
-		} else {
-
-			// translators: $1: is the recurring amount, $2: is the recurring period
-			$amount = sprintf(
-				_x( '%1$s / %2$s', 'Subscription amount on admin table. (e.g.: $120 / year)', 'invoicing' ),
-				$initial,
-				sanitize_text_field( strtolower( $period ) )
-			);
-
-		}
-
+		$amount = getpaid_get_formatted_subscription_amount( $item );
 		return "<span class='text-muted form-text mt-2 mb-2'>$amount</span>";
 	}
 

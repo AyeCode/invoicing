@@ -794,44 +794,6 @@ add_action( 'wpinv_invoice_print_before_display', 'getpaid_maybe_mark_invoice_as
 add_action( 'wpinv_before_receipt', 'getpaid_maybe_mark_invoice_as_viewed' );
 
 /**
- * Fetch a subscription given an invoice.
- *
- * @return WPInv_Subscription|bool
- */
-function wpinv_get_subscription( $invoice ) {
-
-    // Abort if we do not have an invoice.
-    if ( empty( $invoice ) ) {
-        return false;
-    }
-
-    // Retrieve the invoice.
-    $invoice = new WPInv_Invoice( $invoice );
-
-    // Ensure it is a recurring invoice.
-    if ( ! $invoice->is_recurring() ) {
-        return false;
-    }
-
-    // Fetch the subscription handler.
-    $subs_db    = new WPInv_Subscriptions_DB();
-
-    // Fetch the parent in case it is a renewal.
-    if ( $invoice->is_renewal() ) {
-        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_parent_id(), 'number' => 1 ) );
-    } else {
-        $subs = $subs_db->get_subscriptions( array( 'parent_payment_id' => $invoice->get_id(), 'number' => 1 ) );
-    }
-
-    // Return the subscription if it exists.
-    if ( ! empty( $subs ) ) {
-        return reset( $subs );
-    }
-
-    return false;
-}
-
-/**
  * Processes an invoice refund.
  * 
  * @param int $invoice_id

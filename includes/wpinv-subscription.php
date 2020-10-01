@@ -769,7 +769,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	public function is_last_renewal() {
 		$max_bills = $this->get_bill_times();
-		return ! empty( $max_bills ) && $max_bills == $this->get_times_billed();
+		return ! empty( $max_bills ) && $max_bills >= $this->get_times_billed();
 	}
 
 	/*
@@ -839,7 +839,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		);
 
 		// Maybe include parent invoice.
-        if ( ! $this->has_status( 'pending' ) ) {
+        if ( ! $this->get_parent_payment()->is_paid() ) {
             $count++;
         }
 
@@ -957,7 +957,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	public function renew() {
 
 		// Complete subscription if applicable
-		if ( $this->get_bill_times() > 0 && $this->get_times_billed() >= $this->get_bill_times() ) {
+		if ( $this->is_last_renewal() ) {
 			return $this->complete();
 		}
 
@@ -1224,6 +1224,18 @@ class WPInv_Subscription extends GetPaid_Data {
 		parent::save();
 		$this->status_transition();
 		return $this->get_id();
+	}
+
+	/**
+	 * Activates a subscription.
+	 *
+	 * @since 1.0.19
+	 * @return int subscription ID
+	 */
+	public function activate() {
+		$status = 'trialling' == $this->get_status() ? 'trialling' : 'active';
+		$this->set_status( $status );
+		return $this->save();
 	}
 
 }
