@@ -28,7 +28,7 @@ class GetPaid_Invoice_Notification_Emails {
 		$this->invoice_actions = apply_filters(
 			'getpaid_notification_email_invoice_triggers',
 			array(
-				'getpaid_new_invoice'                   => 'new_invoice',
+				'getpaid_new_invoice'                   => array( 'new_invoice', 'user_invoice' ),
 				'getpaid_invoice_status_wpi-cancelled'  => 'cancelled_invoice',
 				'getpaid_invoice_status_wpi-failed'     => 'failed_invoice',
 				'getpaid_invoice_status_wpi-onhold'     => 'onhold_invoice',
@@ -36,10 +36,8 @@ class GetPaid_Invoice_Notification_Emails {
 				'getpaid_invoice_status_publish'        => 'completed_invoice',
 				'getpaid_invoice_status_wpi-renewal'    => 'completed_invoice',
 				'getpaid_invoice_status_wpi-refunded'   => 'refunded_invoice',
-				'getpaid_new_invoice'                   => 'user_invoice',
 				'getpaid_new_customer_note'             => 'user_note',
 				'getpaid_daily_maintenance'             => 'overdue',
-
 			)
 		);
 
@@ -54,21 +52,37 @@ class GetPaid_Invoice_Notification_Emails {
 
 		add_filter( 'getpaid_get_email_merge_tags', array( $this, 'invoice_merge_tags' ), 10, 2 );
 		add_filter( 'getpaid_invoice_email_recipients', array( $this, 'filter_email_recipients' ), 10, 2 );
+
 		foreach ( $this->invoice_actions as $hook => $email_type ) {
+			$this->init_email_type_hook( $hook, $email_type );
+		}
+	}
 
-			$email = new GetPaid_Notification_Email( $email_type );
+	/**
+	 * Registers an email hook for an invoice action.
+	 * 
+	 * @param string $hook
+	 * @param string|array $email_type
+	 */
+	public function init_email_type_hook( $hook, $email_type ) {
 
+		$email_type = wpinv_parse_list( $email_type );
+
+		foreach ( $email_type as $type ) {
+
+			$email = new GetPaid_Notification_Email( $type );
+
+			// Abort if it is not active.
 			if ( ! $email->is_active() ) {
 				continue;
 			}
 
-			if ( method_exists( $this, $email_type ) ) {
-				add_action( $hook, array( $this, $email_type ), 100, 2 );
+			if ( method_exists( $this, $type ) ) {
+				add_action( $hook, array( $this, $type ), 100, 2 );
 				continue;
 			}
 
-			do_action( 'getpaid_invoice_notification_email_register_hook', $email );
-
+			do_action( 'getpaid_invoice_init_email_type_hook', $type );
 		}
 
 	}
@@ -119,6 +133,7 @@ class GetPaid_Invoice_Notification_Emails {
 			'{last_name}'           => sanitize_text_field( $invoice->get_last_name() ),
 			'{email}'               => sanitize_email( $invoice->get_email() ),
 			'{invoice_number}'      => sanitize_text_field( $invoice->get_number() ),
+			'{invoice_currency}'    => sanitize_text_field( $invoice->get_currency() ),
 			'{invoice_total}'       => wpinv_price( wpinv_format_amount( $invoice->get_total() ) ),
 			'{invoice_link}'        => esc_url( $invoice->get_view_url() ),
 			'{invoice_pay_link}'    => esc_url( $invoice->get_checkout_payment_url() ),

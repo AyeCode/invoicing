@@ -3648,10 +3648,18 @@ class WPInv_Invoice extends GetPaid_Data {
 
 					// Work out if this was for a payment, and trigger a payment_status hook instead.
 					if (
-						in_array( $status_transition['from'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed', 'wpi-refunded' ), true )
+						in_array( $status_transition['from'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed', 'wpi-refunded', 'wpi-onhold' ), true )
 						&& in_array( $status_transition['to'], array( 'publish', 'wpi-processing', 'wpi-renewal' ), true )
 					) {
 						do_action( 'getpaid_invoice_payment_status_changed', $this, $status_transition );
+					}
+
+					// Work out if this was for a payment reversal, and trigger a payment_status_reversed hook instead.
+					if (
+						in_array( $status_transition['from'], array( 'publish', 'wpi-processing', 'wpi-renewal' ), true )
+						&& in_array( $status_transition['to'], array( 'wpi-cancelled', 'wpi-pending', 'wpi-failed', 'wpi-refunded', 'wpi-onhold' ), true )
+					) {
+						do_action( 'getpaid_invoice_payment_status_reversed', $this, $status_transition );
 					}
 				} else {
 					/* translators: %s: new invoice status */

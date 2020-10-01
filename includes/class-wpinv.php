@@ -107,6 +107,7 @@ class WPInv_Plugin {
 		$this->set( 'invoice_emails', new GetPaid_Invoice_Notification_Emails() );
 		$this->set( 'subscription_emails', new GetPaid_Subscription_Notification_Emails() );
 		$this->set( 'daily_maintenace', new GetPaid_Daily_Maintenance() );
+		$this->set( 'payment_forms', new GetPaid_Payment_Forms() );
 
 	}
 

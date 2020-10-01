@@ -468,6 +468,10 @@ class WPInv_Ajax {
             wp_send_json_error( __( 'An error occured while saving your invoice.', 'invoicing' ) );
         }
 
+        if ( ! $submission->has_invoice() ) {
+            update_post_meta( $invoice->get_id(), 'wpinv_created_via', 'payment_form' );
+        }
+
         // Save payment form data.
         if ( ! empty( $prepared ) ) {
             update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared );

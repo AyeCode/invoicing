@@ -173,15 +173,15 @@ class GetPaid_Admin {
             'wpinv-admin-payment-form-script',
             'wpinvPaymentFormAdmin',
             array(
-				'elements'      => $this->form_elements->get_elements(),
-				'form_elements' => $this->form_elements->get_form_elements( $post->ID ),
-				'all_items'     => $this->form_elements->get_published_items(),
+				'elements'      => getpaid()->form_elements->get_elements(),
+				'form_elements' => getpaid()->form_elements->get_form_elements( $post->ID ),
+				'all_items'     => getpaid()->form_elements->get_published_items(),
 				'currency'      => wpinv_currency_symbol(),
 				'position'      => wpinv_currency_position(),
 				'decimals'      => (int) wpinv_decimals(),
 				'thousands_sep' => wpinv_thousands_separator(),
 				'decimals_sep'  => wpinv_decimal_separator(),
-				'form_items'    => $this->form_elements->get_form_items( $post->ID ),
+				'form_items'    => getpaid()->form_elements->get_form_items( $post->ID ),
 				'is_default'    => $post->ID == wpinv_get_default_payment_form(),
             )
         );

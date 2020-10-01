@@ -46,7 +46,6 @@ class GetPaid_Notification_Email {
 
         $key   = "email_{$this->id}_$key";
         $value = wpinv_get_option( $key, null );
-
         if ( is_null( $value ) ) {
             $options = wpinv_get_emails();
 
@@ -96,7 +95,7 @@ class GetPaid_Notification_Email {
      * @return bool
 	 */
 	public function is_active() {
-        $is_active = ! empty( $this->get_option( 'is_active' ) );
+        $is_active = ! empty( $this->get_option( 'active' ) );
         return apply_filters( 'getpaid_email_type_is_active', $is_active, $this->id, $this->object );
     }
 
