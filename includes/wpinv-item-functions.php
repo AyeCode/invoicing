@@ -767,7 +767,7 @@ function wpinv_create_item( $args = array(), $wp_error = false ) {
 
     // Save the item.
     $item->save();
-    
+
     // Do we have an error?
     if ( ! empty( $item->last_error ) ) {
         return $wp_error ? new WP_Error( 'not_saved', $item->last_error ) : false;
@@ -836,11 +836,11 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
             return sprintf(
 
                 // translators: $1: is the trial period, $2: is the recurring price, $3: is the susbcription period
-                _x( 'Free for %1$s then %3$s / %4$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year)', 'invoicing' ),
+                _x( 'Free for %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year)', 'invoicing' ),
                 $trial_period,
                 $recurring_price,
                 $period
-    
+
             );
 
         }
@@ -874,7 +874,7 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
     return sprintf(
 
         // translators: $1: is the initial price, $2: is the recurring price, $3: is the susbcription period
-        _x( 'Initial payment of %1$s then %3$s / %4$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)', 'invoicing' ),
+        _x( 'Initial payment of %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)', 'invoicing' ),
         $initial_price,
         $recurring_price,
         $period

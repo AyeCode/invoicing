@@ -44,7 +44,7 @@ class GetPaid_Checkout {
 		// Save the invoice.
 		$invoice->recalculate_total();
         $invoice->save();
-		
+
 		// Send to the gateway.
 		$this->post_process_submission( $invoice, $prepared );
 	}
@@ -290,10 +290,56 @@ class GetPaid_Checkout {
         add_filter( 'wp_redirect', array( $this, 'send_redirect_response' ) );
 		add_action( 'wpinv_pre_send_back_to_checkout', array( $this, 'checkout_error' ) );
 
-		wpinv_process_checkout( $invoice, $this->payment_form_submission );
+		$this->process_payment( $invoice );
 
         // If we are here, there was an error.
 		$this->checkout_error();
+
+	}
+
+	/**
+	 * Processes the actual payment.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 */
+	protected function process_payment( $invoice ) {
+
+		$submission = $this->payment_form_submission;
+
+		// No need to send free invoices to the gateway.
+		if ( $invoice->is_free() ) {
+			$invoice->set_gateway( 'none' );
+			$invoice->add_note( __( "This is a free invoice and won't be sent to the payment gateway", 'invoicing' ), false, false, true );
+			$invoice->mark_paid();
+			wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+		}
+
+		// Clear any checkout errors.
+		wpinv_clear_errors();
+
+		// Fires before sending to the gateway.
+		do_action( 'getpaid_checkout_before_gateway', $invoice, $submission );
+
+		// Allow the sumission data to be modified before it is sent to the gateway.
+		$submission_data    = $submission->get_data();
+		$submission_gateway = apply_filters( 'getpaid_gateway_submission_gateway', $invoice->get_gateway(), $submission, $invoice );
+		$submission_data    = apply_filters( 'getpaid_gateway_submission_data', $submission_data, $submission, $invoice );
+
+		// Validate the currency.
+		if ( ! apply_filters( "getpaid_gateway_{$submission_gateway}_is_valid_for_currency", true, $invoice->get_currency() ) ) {
+			wpinv_set_error( 'invalid_currency', __( 'The chosen payment gateway does not support the invoice currency', 'invoicing' ) );
+		}
+
+		// Check to see if we have any errors.
+		if ( wpinv_get_errors() ) {
+			wpinv_send_back_to_checkout();
+		}
+
+		// Send info to the gateway for payment processing
+		do_action( "getpaid_gateway_$submission_gateway", $invoice, $submission_data, $submission );
+
+		// Backwards compatibility.
+		wpinv_send_to_gateway( $submission_gateway, $invoice );
 
 	}
 

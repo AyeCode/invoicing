@@ -479,9 +479,33 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
 
 /**
  * @deprecated
+ * 
+ * @param string $gateway
+ * @param WPInv_Invoice $invoice
+ * @param string $gateway
  */
-function wpinv_send_to_gateway( $gateway, $payment_data ) {
-    $payment_data['gateway_nonce'] = wp_create_nonce('wpi-gateway');
+function wpinv_send_to_gateway( $gateway, $invoice ) {
+
+    $payment_data = array(
+        'invoice_id'        => $invoice->get_id(),
+        'items'             => $invoice->get_cart_details(),
+        'cart_discounts'    => array( $invoice->get_discount_code() ),
+        'fees'              => $invoice->get_total_fees(),
+        'subtotal'          => $invoice->get_subtotal(),
+        'discount'          => $invoice->get_total_discount(),
+        'tax'               => $invoice->get_total_tax(),
+        'price'             => $invoice->get_total(),
+        'invoice_key'       => $invoice->get_key(),
+        'user_email'        => $invoice->get_email(),
+        'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+        'user_info'         => $invoice->get_user_info(),
+        'post_data'         => stripslashes_deep( $_POST ),
+        'cart_details'      => $invoice->get_cart_details(),
+        'gateway'           => $gateway,
+        'card_info'         => array(),
+        'gateway_nonce'     => wp_create_nonce('wpi-gateway'),
+    );
+
     do_action( 'wpinv_gateway_' . $gateway, $payment_data );
 }
 
@@ -677,4 +701,58 @@ function wpinv_send_pre_payment_reminder_notification() {}
  */
 function wpinv_email_renewal_reminders() {}
 
+/**
+ * @deprecated
+ */
 function wpinv_send_customer_invoice() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_process_checkout() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_validate_current_user() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_validate_invoice_user() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_validate_agree_to_terms() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_validate_cc_zip() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_checkout_validate_gateway() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_show_gateways() {
+    return true;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_shop_supports_buy_now() {
+    return true;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_gateway_supports_buy_now() {
+    return true;
+}

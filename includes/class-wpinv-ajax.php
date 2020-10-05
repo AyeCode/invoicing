@@ -301,7 +301,8 @@ class WPInv_Ajax {
         }
 
         // Process the payment form.
-        $checkout = new GetPaid_Checkout( new GetPaid_Payment_Form_Submission() );
+        $checkout_class = apply_filters( 'getpaid_checkout_class', 'GetPaid_Checkout' );
+        $checkout       = new $checkout_class( new GetPaid_Payment_Form_Submission() );
         $checkout->process_checkout();
 
         exit;
