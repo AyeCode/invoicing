@@ -80,6 +80,37 @@ function wpinv_store_address() {
 }
 
 /**
+ * (Maybe) adds the default address to an invoice.
+ *
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_maybe_add_default_address( &$invoice ) {
+
+    $user_id = $invoice->get_user_id();
+
+    // Abort if the invoice belongs to no one.
+    if ( empty( $user_id ) ) {
+        return;
+    }
+
+    // Fill in defaults whenever necessary.
+    foreach ( wpinv_get_user_address( $user_id ) as $key => $value ) {
+
+        if ( is_callable( $invoice, "get_$key" ) ) {
+            $current = call_user_func( array( $invoice, "get_$key" ) );
+
+            if ( empty( $current ) ) {
+                $method = "set_$key";
+                $invoice->$method( $value );
+            }
+
+        }
+
+    }
+
+}
+
+/**
  * Returns an array of user address fields
  * 
  * @return array

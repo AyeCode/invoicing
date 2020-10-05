@@ -1574,31 +1574,4 @@ class WPInv_Payment_Form_Elements {
         return wpinv_get_data( 'sample-payment-form' );
     }
 
-    /**
-     * Sends a redrect response to payment details.
-     *
-     */
-    public function send_redirect_response( $url ) {
-        $url = urlencode( $url );
-        wp_send_json_success( $url );
-    }
-
-    /**
-     * Fired when a checkout error occurs
-     *
-     */
-    public function checkout_error() {
-
-        $errors = wpinv_get_errors();
-
-        if ( ! empty( $errors ) ) {
-            wpinv_print_errors();
-            exit;
-        }
-
-        wp_send_json_error( __( 'An error occured while processing your payment. Please try again.', 'invoicing' ) );
-        exit;
-
-    }
-
 }
