@@ -127,24 +127,6 @@ function wpinv_get_checkout_uri( $args = array() ) {
 	return apply_filters( 'wpinv_get_checkout_uri', $uri );
 }
 
-function wpinv_send_back_to_checkout( $args = array() ) {
-	$redirect = wpinv_get_checkout_uri();
-
-	if ( ! empty( $args ) ) {
-		// Check for backward compatibility
-		if ( is_string( $args ) )
-			$args = str_replace( '?', '', $args );
-
-		$args = wp_parse_args( $args );
-
-		$redirect = add_query_arg( $args, $redirect );
-	}
-
-    do_action( 'wpinv_pre_send_back_to_checkout', $args );
-	wp_redirect( apply_filters( 'wpinv_send_back_to_checkout', $redirect, $args ) );
-	exit;
-}
-
 function wpinv_get_success_page_url( $query_string = null ) {
 	$success_page = wpinv_get_option( 'success_page', 0 );
 	$success_page = get_permalink( $success_page );

@@ -288,7 +288,6 @@ class GetPaid_Checkout {
 
 		// Backwards compatibility.
         add_filter( 'wp_redirect', array( $this, 'send_redirect_response' ) );
-		add_action( 'wpinv_pre_send_back_to_checkout', array( $this, 'checkout_error' ) );
 
 		$this->process_payment( $invoice );
 
@@ -351,20 +350,5 @@ class GetPaid_Checkout {
         $url = urlencode( $url );
         wp_send_json_success( $url );
     }
-
-    /**
-     * Fired when a checkout error occurs
-     *
-     */
-    public function checkout_error() {
-
-        // Do we have any errors?
-        if ( wpinv_get_errors() ) {
-            wp_send_json_error( getpaid_get_errors_html() );
-		}
-
-        wp_send_json_error( __( 'An error occured while processing your payment. Please try again.', 'invoicing' ) );
-
-	}
 
 }
