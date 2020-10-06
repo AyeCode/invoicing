@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * Authorize.net Payment Gateway class.
  *
  */
-class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
+class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway {
 
     /**
 	 * Payment method id.
@@ -46,7 +46,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
 	 * @var string
 	 */
     protected $endpoint;
-    
+
     /**
 	 * Currencies this gateway is allowed for.
 	 *
@@ -70,14 +70,14 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
         $this->method_title         = __( 'Authorize.Net', 'invoicing' );
         $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
-        add_filter( 'wpinv_renew_authorizenet_subscription_profile', array( $this, 'renew_subscription' ) );
+        add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
         add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
         parent::__construct();
     }
 
     /**
 	 * Displays the payment method select field.
-	 * 
+	 *
 	 * @param int $invoice_id 0 or invoice id.
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
@@ -131,7 +131,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
                         'payment'          => $this->get_payment_information( $submission_data['authorizenet'] ),
                     )
                 ),
-                'validationMode'           => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode', 
+                'validationMode'           => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
             )
         );
 
@@ -148,7 +148,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
             $this->save_token(
                 array(
                     'id'      => $response->customerPaymentProfileIdList[0],
-                    'name'    => $this->get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
+                    'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
                     'default' => true,
                     'type'    => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
                 )
@@ -225,7 +225,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
                     // Payment information.
                     'payment'          => $this->get_payment_information( $submission_data['authorizenet'] )
                 ),
-                'validationMode'       => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode', 
+                'validationMode'       => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
             )
         );
 
@@ -240,7 +240,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
             $this->save_token(
                 array(
                     'id'      => $response->customerPaymentProfileId,
-                    'name'    => $this->get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
+                    'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
                     'default' => true
                 )
             );
@@ -253,7 +253,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
             false,
             true
         );
-        
+
 
         return $response->customerPaymentProfileId;
     }
@@ -327,7 +327,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Payment_Gateway {
                 )
             )
         );
-log_noptin_message( $args );
+
         return $this->post( apply_filters( 'getpaid_authorizenet_charge_customer_payment_profile_args', $args, $invoice ), $invoice );
 
     }
@@ -341,44 +341,39 @@ log_noptin_message( $args );
 	public function process_charge_response( $result, $invoice ) {
 
         wpinv_clear_errors();
+		$response_code = (int) $result->transactionResponse->responseCode;
 
-        switch ( (int) $result->transactionResponse->responseCode ) {
+		// Succeeded.
+		if ( 1 == $response_code || 4 == $response_code ) {
 
-            case 1:
-            case 4:
+			// Maybe set a transaction id.
+			if ( ! empty( $result->transactionResponse->transId ) ) {
+				$invoice->set_transaction_id( $result->transactionResponse->transId );
+			}
 
-                if ( ! empty( $result->transactionResponse->transId ) ) {
-                    $invoice->set_transaction_id( $result->transactionResponse->transId );
-                }
+			$invoice->add_note( sprintf( __( 'Authentication code: %s (%s).', 'invoicing' ), $result->transactionResponse->authCode, $result->transactionResponse->accountNumber ), false, false, true );
 
-                if ( 1 == (int) $result->transactionResponse->responseCode ) {
-                    $invoice->mark_paid();
-                } else {
-                    $invoice->set_status( 'wpi-onhold' );
-                    $invoice->add_note( 
-                        sprintf(
-                            __( 'Held for review: %s', 'invoicing' ),
-                            $result->transactionResponse->messages->message[0]->description
-                        )
-                    );
-                }
+			if ( 1 == $response_code ) {
+				return $invoice->mark_paid();
+			}
 
-                $invoice->add_note( sprintf( __( 'Authentication code: %s (%s).', 'invoicing' ), $result->transactionResponse->authCode, $result->transactionResponse->accountNumber ), false, false, true );
-                $invoice->save();
+			$invoice->set_status( 'wpi-onhold' );
+        	$invoice->add_note(
+                sprintf(
+                    __( 'Held for review: %s', 'invoicing' ),
+                    $result->transactionResponse->messages->message[0]->description
+                )
+			);
 
-                return;
+			return $invoice->save();
 
-            case 2:
-            case 3:
-                wpinv_set_error( 'card_declined', __( 'Credit card declined.', 'invoicing' ) );
+		}
 
-                if ( ! empty( $result->transactionResponse->errors ) ) {
-                    $errors = (object) $result->transactionResponse->errors;
-                    wpinv_set_error( $errors->error[0]->errorCode, $errors->error[0]->errorText );
-                }
+        wpinv_set_error( 'card_declined', __( 'Credit card declined.', 'invoicing' ) );
 
-                return;
-
+        if ( ! empty( $result->transactionResponse->errors ) ) {
+            $errors = (object) $result->transactionResponse->errors;
+            wpinv_set_error( $errors->error[0]->errorCode, esc_html( $errors->error[0]->errorText ) );
         }
 
     }
@@ -403,42 +398,6 @@ log_noptin_message( $args );
     }
 
     /**
-	 * Returns the card name.
-	 *
-	 *
-	 * @param string $card_number Card number.
-	 * @return string
-	 */
-	public function get_card_name( $card_number ) {
-
-        switch( $card_number ) {
-
-            case( preg_match ( '/^4/', $card_number ) >= 1 ):
-                return __( 'Visa', 'invoicing' );
-
-            case( preg_match ( '/^5[1-5]/', $card_number ) >= 1 ):
-                return __( 'Mastercard', 'invoicing' );
-
-            case( preg_match ( '/^3[47]/', $card_number ) >= 1 ):
-                return __( 'Amex', 'invoicing' );
-
-            case( preg_match ( '/^3(?:0[0-5]|[68])/', $card_number ) >= 1 ):
-                return __( 'Diners Club', 'invoicing' );
-
-            case( preg_match ( '/^6(?:011|5)/', $card_number ) >= 1 ):
-                return __( 'Discover', 'invoicing' );
-
-            case( preg_match ( '/^(?:2131|1800|35\d{3})/', $card_number ) >= 1 ):
-                return __( 'JCB', 'invoicing' );
-
-            default:
-            return __( 'Card', 'invoicing' );
-                break;
-        }
-
-    }
-
-    /**
 	 * Returns the customer profile meta name.
 	 *
 	 *
@@ -447,32 +406,6 @@ log_noptin_message( $args );
 	 */
 	public function get_customer_profile_meta_name( $invoice ) {
         return $this->is_sandbox( $invoice ) ? 'getpaid_authorizenet_sandbox_customer_profile_id' : 'getpaid_authorizenet_customer_profile_id';
-    }
-
-    /**
-	 * Returns the API URL.
-	 *
-	 *
-	 * @param WPInv_Invoice $invoice Invoice.
-	 * @return string
-	 */
-	public function get_api_url( $invoice ) {
-        return $this->is_sandbox( $invoice ) ? 'https://apitest.authorize.net/xml/v1/request.api' : 'https://api.authorize.net/xml/v1/request.api';
-    }
-
-    /**
-	 * Returns the API authentication params.
-	 *
-	 *
-	 * @return array
-	 */
-	public function get_auth_params() {
-
-        return array(
-            'name'           => $this->get_option( 'login_id' ),
-            'transactionKey' => $this->get_option( 'transaction_key' ),
-        );
-
     }
 
     /**
@@ -489,7 +422,7 @@ log_noptin_message( $args );
         $auth = $this->get_auth_params();
 
         if ( empty( $auth['name'] ) || empty( $auth['transactionKey'] ) ) {
-            return new WP_Error( 'invalid_settings', __( 'This gateway has not been set up.', 'invoicing') );
+            return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing') );
         }
 
         // Validate the payment method.
@@ -541,54 +474,6 @@ log_noptin_message( $args );
     }
 
     /**
-	 * Communicates with authorize.net
-	 *
-	 *
-	 * @param array $post Data to post.
-     * @param WPInv_Invoice $invoice Invoice.
-	 * @return stdClass|WP_Error
-	 */
-    public function post( $post, $invoice ){
-
-        $url      = $this->get_api_url( $invoice );
-        $response = wp_remote_post(
-            $url,
-            array(
-                'headers'          => array(
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ),
-                'body'             => json_encode( $post ),
-                'method'           => 'POST'
-            )
-        );
-
-        if ( is_wp_error( $response ) ) {
-            return $response;
-        }
-
-        $response = wp_unslash( wp_remote_retrieve_body( $response ) );
-        $response = preg_replace('/\xEF\xBB\xBF/', '', $response); // https://community.developer.authorize.net/t5/Integration-and-Testing/JSON-issues/td-p/48851
-        $response = json_decode( $response );
-
-        if ( empty( $response ) ) {
-            return new WP_Error( 'invalid_reponse', __( 'Invalid response', 'invoicing' ) );
-        }
-
-        if ( $response->messages->resultCode == 'Error' ) {
-
-            if ( ! empty( $response->transactionResponse ) && ! empty( $response->transactionResponse->errors ) ) {
-                $error = $response->transactionResponse->errors[0];
-                return new WP_Error( $error->errorCode, $error->errorText );
-            }
-
-            return new WP_Error( $response->messages->message[0]->code, $response->messages->message[0]->text );
-        }
-
-        return $response;
-
-    }
-
-    /**
 	 * Process Payment.
 	 *
 	 *
@@ -624,27 +509,39 @@ log_noptin_message( $args );
         }
 
         // Charge the payment profile.
-        $customer_profile = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
-        $result           = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
-
-        // Do we have an error?
-        if ( is_wp_error( $result ) ) {
-            wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
-            wpinv_send_back_to_checkout();
-        }
-
-        // Process the response.
-        $this->process_charge_response( $result, $invoice );
-
-        if ( wpinv_get_errors() ) {
-            wpinv_send_back_to_checkout();
-        }
+        $this->process_initial_payment( $invoice );
 
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
         exit;
 
-    }
+	}
+	
+	/**
+	 * Processes the initial payment.
+	 *
+     * @param WPInv_Invoice $invoice Invoice.
+	 */
+	protected function process_initial_payment( $invoice ) {
+
+		$payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
+        $customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
+		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
+
+		// Do we have an error?
+		if ( is_wp_error( $result ) ) {
+			wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
+			wpinv_send_back_to_checkout();
+		}
+
+		// Process the response.
+		$this->process_charge_response( $result, $invoice );
+
+		if ( wpinv_get_errors() ) {
+			wpinv_send_back_to_checkout();
+		}
+
+	}
 
     /**
 	 * Processes recurring payments.
@@ -656,315 +553,109 @@ log_noptin_message( $args );
 
         // Check if there is an initial amount to charge.
         if ( (float) $invoice->get_total() > 0 ) {
-
-            // Retrieve the payment method.
-            $payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
-            $customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
-            $result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
-
-            // Do we have an error?
-            if ( is_wp_error( $result ) ) {
-                wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
-                wpinv_send_back_to_checkout();
-            }
-
-            // Process the response.
-            $this->process_charge_response( $result, $invoice );
-
-            if ( wpinv_get_errors() ) {
-                wpinv_send_back_to_checkout();
-            }
-
+			$this->process_initial_payment( $invoice );
         }
 
-        // Recalculate the new subscription expiry.
-        $duration = strtotime( $subscription->expiration ) - strtotime( $subscription->created );
+        // Activate the subscription.
+        $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
         $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
 
-        // Schedule an action to run when the subscription expires.
-        $action_id = as_schedule_single_action(
-            strtotime( $expiry ),
-            'wpinv_renew_authorizenet_subscription_profile',
-            array( $invoice->get_id() ),
-            'invoicing'
-        );
+		$subscription->set_next_renewal_date( $expiry );
+		$subscription->set_date_created( current_time( 'mysql' ) );
+		$subscription->set_profile_id( $invoice->generate_key() );
+		$subscription->activate();
 
-        // Update the subscription.
-        $subscription->update( 
-            array(
-                'profile_id' => $action_id,
-                'status'     => 'trialling' == $subscription->status ? 'trialling' : 'active',
-                'created'    => current_time( 'mysql' ),
-                'expiration' => $expiry,
-            )
-        );
-
+		// Redirect to the success page.
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
     }
 
+	/**
+	 * (Maybe) renews an authorize.net subscription profile.
+	 *
+	 *
+	 * @param bool $should_expire
+     * @param WPInv_Subscription $subscription
+	 */
+	public function maybe_renew_subscription( $should_expire, $subscription ) {
+
+        // Ensure its our subscription && it's active.
+        if ( $this->id != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
+            return $should_expire;
+        }
+
+        // If this is the last renewal, complete the subscription.
+        if ( $subscription->is_last_renewal() ) {
+            $subscription->complete();
+            return false;
+        }
+
+		$this->renew_subscription( $subscription );
+        // Renew the subscription.
+        $subscription->add_payment(
+            array(
+                'transaction_id' => $subscription->get_parent_payment()->generate_key(),
+                'gateway'        => $this->id
+            )
+        );
+
+        $subscription->renew();
+
+        return false;
+
+	}
+
     /**
 	 * Renews a subscription.
 	 *
-     * @param int $invoice Invoice id.
+     * @param WPInv_Subscription $subscription
 	 */
-	public function renew_subscription( $invoice ) {
+	public function renew_subscription( $subscription ) {
 
-        // Retrieve the subscription.
-        $subscription = wpinv_get_subscription( $invoice );
-        if ( empty( $subscription ) ) {
-            return;
-        }
+		// Generate the renewal invoice.
+		$new_invoice = $subscription->create_payment();
+		$old_invoice = $subscription->get_parent_payment();
 
-        // Abort if it is canceled or complete.
-        if ( $subscription->status == 'completed' || $subscription->status == 'cancelled' ) {
-            return;
-        }
-
-        // Retrieve the invoice.
-        $invoice = new WPInv_Invoice( $invoice );
-
-        // If we have not maxed out on bill times...
-        $times_billed = $subscription->get_times_billed();
-        $max_bills    = $subscription->bill_times;
-
-        if ( empty( $max_bills ) || $max_bills > $times_billed ) {
-
-            $new_invoice = $subscription->create_payment();
-
-            if ( empty( $new_invoice ) ) {
-                $invoice->add_note( __( 'Error generating a renewal invoice.', 'invoicing' ), false, false, false );
-                $subscription->failing();
-                return;
-            }
-
-            // retrieve the payment method.
-            $payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
-            $customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
-            $result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $new_invoice );
-
-            // Do we have an error?
-            if ( is_wp_error( $result ) ) {
-                $invoice->add_note(
-                    sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), $result->get_error_message() ),
-                    true,
-                    false,
-                    true
-                );
-                $subscription->failing();
-                return;
-            }
-
-            // Process the response.
-            $this->process_charge_response( $result, $new_invoice );
-
-            if ( wpinv_get_errors() ) {
-
-                $invoice->add_note(
-                    sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), getpaid_get_errors_html() ),
-                    true,
-                    false,
-                    true
-                );
-                $subscription->failing();
-                return;
-
-            }
-
-            // Renew the subscription.
-            $subscription->add_payment(
-                array(
-                    'transaction_id' => $new_invoice->get_transaction_id(),
-                    'gateway'        => $this->id
-                ),
-                $new_invoice
-            );
-
-            // Renew/Complete the subscription.
-            $subscription->renew();
-
-            if ( 'completed' != $subscription->status ) {
-
-                // Schedule an action to run when the subscription expires.
-                $action_id = as_schedule_single_action(
-                    strtotime( $subscription->expiration ),
-                    'wpinv_renew_authorizenet_subscription_profile',
-                    array( $invoice->get_id() ),
-                    'invoicing'
-                );
-    
-                $subscription->update( array( 'profile_id' => $action_id, ) );
-    
-            }
-
-        }
-    }
-
-    /**
-	 * Cancels a subscription remotely
-	 *
-	 *
-	 * @param WPInv_Subscription $subscription Subscription.
-     * @param WPInv_Invoice $invoice Invoice.
-	 */
-	public function cancel_subscription( $subscription, $invoice ) {
-
-        if ( as_unschedule_action( 'wpinv_renew_authorizenet_subscription_profile', array( $invoice->get_id() ), 'invoicing' ) ) {
-            return;
-        }
-
-        // Backwards compatibility.
-        $this->post(
-            array(
-                'ARBCancelSubscriptionRequest' => array(
-                    'merchantAuthentication'   => $this->get_auth_params(),
-                    'subscriptionId'           => $subscription->profile_id,
-                )
-            ),
-            $invoice
-        );
-
-    }
-
-    /**
-	 * Processes ipns.
-	 *
-	 * @return void
-	 */
-	public function verify_ipn() {
-
-        $this->maybe_process_old_ipn();
-
-        // Validate the IPN.
-        if ( empty( $_POST ) || ! $this->validate_ipn() ) {
-		    wp_die( 'Authorize.NET IPN Request Failure', 'Authorize.NET IPN', array( 'response' => 500 ) );
-        }
-
-        // Event type.
-        $posted = json_decode( file_get_contents('php://input') );
-        if ( empty( $posted ) ) {
-            wp_die( 'Invalid JSON', 'Authorize.NET IPN', array( 'response' => 500 ) );
-        }
-
-        // Process the IPN.
-        $posted = (object) wp_unslash( $posted );
-
-        // Process refunds.
-        if ( 'net.authorize.payment.refund.created' == $posted->eventType ) {
-            $invoice = new WPInv_Invoice( $posted->payload->merchantReferenceId );
-
-            if ( $invoice->get_id() && $posted->payload->id == $invoice->get_transaction_id() ) {
-                $invoice->refund();
-            }
-
-        }
-
-        // Held funds approved.
-        if ( 'net.authorize.payment.fraud.approved' == $posted->eventType ) {
-            $invoice = new WPInv_Invoice( $posted->payload->id );
-
-            if ( $invoice->get_id() && $posted->payload->id == $invoice->get_transaction_id() ) {
-                $invoice->mark_paid( false, __( 'Payment released', 'invoicing' ));
-            }
-
-        }
-
-        // Held funds declined.
-        if ( 'net.authorize.payment.fraud.declined' == $posted->eventType ) {
-            $invoice = new WPInv_Invoice( $posted->payload->id );
-
-            if ( $invoice->get_id() && $posted->payload->id == $invoice->get_transaction_id() ) {
-                $invoice->set_status( 'wpi-failed', __( 'Payment desclined', 'invoicing' ) );
-                $invoice->save();
-            }
-
-        }
-
-        exit;
-
-    }
-
-    /**
-	 * Backwards compatibility.
-	 *
-	 * @return void
-	 */
-	public function maybe_process_old_ipn() {
-
-        // Ensure that we are using the old subscriptions.
-        if ( empty( $_POST['x_subscription_id'] ) ) {
-            return;
-        }
-
-        // Check validity.
-        $signature = $this->get_option( 'signature_key' );
-        if ( ! empty( $signature ) ) {
-            $login_id  = $this->get_option( 'login_id' );
-            $trans_id  = $_POST['x_trans_id'];
-            $amount    = $_POST['x_amount'];
-            $hash      = hash_hmac ( 'sha512', "^$login_id^$trans_id^$amount^", hex2bin( $signature ) );
-
-            if ( ! hash_equals( $hash, $_POST['x_SHA2_Hash'] ) ) {
-                exit;
-            }
-
-        }
-
-        // Fetch the associated subscription.
-        $subscription_id = WPInv_Subscription::get_subscription_id_by_field( $_POST['x_subscription_id'] );
-        $subscription    = new WPInv_Subscription( $subscription_id );
-
-        // Abort if it is missing or completed.
-        if ( ! $subscription->get_id() || $subscription->has_status( 'completed' ) ) {
-            return;
-        }
-
-        // Payment status.
-        if ( 1 == $_POST['x_response_code'] ) {
-
-            $invoice = $subscription->create_payment();
-            $invoice->set_transaction_id( sanitize_text_field( $_POST['x_trans_id'] ) );
-            $invoice->set_status( 'wpi-renewal' );
-            $invoice->save();
-            $subscription->add_payment( array(), $invoice );
-            $subscription->renew();
-
-        } else {
+        if ( empty( $new_invoice ) ) {
+            $old_invoice->add_note( __( 'Error generating a renewal invoice.', 'invoicing' ), false, false, false );
             $subscription->failing();
+            return;
         }
 
-        exit;
+		// Charge the payment method.
+		$payment_profile_id = get_post_meta( $old_invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
+		$customer_profile   = get_user_meta( $old_invoice->get_user_id(), $this->get_customer_profile_meta_name( $old_invoice ), true );
+		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $new_invoice );
 
-    }
+		// Do we have an error?
+		if ( is_wp_error( $result ) ) {
 
-    /**
-	 * Check Authorize.NET IPN validity.
-	 */
-	public function validate_ipn() {
+			$old_invoice->add_note(
+				sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), $result->get_error_message() ),
+				true,
+				false,
+				true
+			);
+			$subscription->failing();
+			return;
 
-        wpinv_error_log( 'Validating Authorize.NET IPN response' );
+		}
 
-        if ( empty( $_SERVER['HTTP_X_ANET_SIGNATURE'] ) ) {
-            return false;
-        }
+		// Process the response.
+		$this->process_charge_response( $result, $new_invoice );
 
-        $signature = $this->get_option( 'signature_key' );
+		if ( wpinv_get_errors() ) {
 
-        if ( empty( $signature ) ) {
-            wpinv_error_log( 'Error: You have not set a signature key' );
-            return false;
-        }
+			$old_invoice->add_note(
+				sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), getpaid_get_errors_html() ),
+				true,
+				false,
+				true
+			);
+			$subscription->failing();
+			return;
 
-        $hash  = hash_hmac ( 'sha512', file_get_contents( 'php://input' ), hex2bin( $signature ) );
-
-        if ( hash_equals( $hash, $_SERVER['HTTP_X_ANET_SIGNATURE'] ) ) {
-            wpinv_error_log( 'Successfully validated the IPN' );
-            return true;
-        }
-
-        wpinv_error_log( 'IPN hash is not valid' );
-        wpinv_error_log(  $_SERVER['HTTP_X_ANET_SIGNATURE']  );
-        return false;
+		}
 
     }
 
@@ -986,7 +677,7 @@ log_noptin_message( $args );
 
     /**
 	 * Filters the gateway settings.
-	 * 
+	 *
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
@@ -996,7 +687,7 @@ log_noptin_message( $args );
             implode( ', ', $this->currencies )
         );
 
-        $admin_settings['authorizenet_active']['desc'] .= $admin_settings['authorizenet_active']['desc'] . " ($currencies)";
+        $admin_settings['authorizenet_active']['desc'] .= " ($currencies)";
         $admin_settings['authorizenet_desc']['std']     = __( 'Pay securely using your credit or debit card.', 'invoicing' );
 
         $admin_settings['authorizenet_login_id'] = array(
