@@ -196,7 +196,6 @@ class WPInv_Plugin {
 		// Packages/libraries.
 		require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
 		require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/libraries/action-scheduler/action-scheduler.php' );
 
 		// Load functions.
 		require_once( WPINV_PLUGIN_DIR . 'includes/deprecated-functions.php' );
@@ -274,11 +273,6 @@ class WPInv_Plugin {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cli.php' );
 			WP_CLI::add_command( 'invoicing', 'WPInv_CLI' );
-		}
-
-		// include css inliner
-		if ( ! class_exists( 'Emogrifier' ) && class_exists( 'DOMDocument' ) ) {
-			include_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-emogrifier.php' );
 		}
 
 		require_once( WPINV_PLUGIN_DIR . 'includes/admin/install.php' );

@@ -96,7 +96,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	}
     
     /**
-	 * Add content to the WooCommerce emails.
+	 * Add content to the WPI emails.
 	 *
 	 * @param WPInv_Invoice $invoice Invoice.
 	 * @param string     $email_type Email format: plain text or HTML.

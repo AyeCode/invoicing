@@ -103,7 +103,16 @@ function getpaid_get_email_css() {
  */
 function wpinv_email_style_body( $content ) {
 
+    if ( ! class_exists( 'DOMDocument' ) ) {
+        return $content;
+    }
+
     $css = getpaid_get_email_css();
+
+    // include css inliner
+	if ( ! class_exists( 'Emogrifier' ) ) {
+		include_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-emogrifier.php' );
+    }
 
     // Inline the css.
     try {

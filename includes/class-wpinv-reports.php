@@ -327,7 +327,7 @@ class WPInv_Reports {
         // Let the browser know what content we're streaming and how it should save the content.
 		$name = time();
 		header( "Content-Type:application/csv" );
-        header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.csv" );
+        header( "Content-Disposition:attachment;filename=getpaid-discounts-$name.csv" );
 
         // Output the csv column headers.
 		fputcsv(

@@ -226,7 +226,7 @@ class GetPaid_Notification_Email_Sender {
  	 */
 	public function after_sending() {
 
-        do_action( 'after_noptin_sends_email', $this->wp_mail_data );
+        do_action( 'getpaid_after_send_email', $this->wp_mail_data );
 		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
 		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
