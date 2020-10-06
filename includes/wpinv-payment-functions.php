@@ -194,9 +194,32 @@ function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bil
 }
 
 /**
- * @param WPInv_Subscription $subscription
+ * Calculates the card name form a card number.
+ *
+ *
+ * @param string $card_number Card number.
+ * @return string
  */
-function wpinv_recurring_send_payment_failed( $subscription ) {
-    wpinv_failed_invoice_notification( $subscription->get_parent_payment_id() );
+function getpaid_get_card_name( $card_number ) {
+
+    // Known regexes.
+    $regexes = array(
+        '/^4/'                     => __( 'Visa', 'invoicing' ),
+        '/^5[1-5]/'                => __( 'Mastercard', 'invoicing' ),
+        '/^3[47]/'                 => __( 'Amex', 'invoicing' ),
+        '/^3(?:0[0-5]|[68])/'      => __( 'Diners Club', 'invoicing' ),
+        '/^6(?:011|5)/'            => __( 'Discover', 'invoicing' ),
+        '/^(?:2131|1800|35\d{3})/' => __( 'JCB', 'invoicing' ),
+    );
+
+    // Confirm if one matches.
+    foreach ( $regexes as $regex => $card ) {
+        if ( preg_match ( $regex, $card_number ) >= 1 ) {
+            return $card;
+        }
+    }
+
+    // None matched.
+    return __( 'Card', 'invoicing' );
+
 }
-add_action( 'getpaid_subscription_failing', 'wpinv_recurring_send_payment_failed', 10, 2 );
