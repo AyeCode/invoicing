@@ -1,31 +1,32 @@
 <?php
 /**
- * Contains functions related to Invoicing plugin.
+ * Contains helper functions.
  *
  * @since 1.0.0
  * @package Invoicing
  */
+ 
+defined( 'ABSPATH' ) || exit;
 
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
-
+/**
+ * Are we supporting item quantities?
+ */
 function wpinv_item_quantities_enabled() {
-    $ret = wpinv_get_option( 'item_quantities', true );
-
-    return (bool) apply_filters( 'wpinv_item_quantities_enabled', $ret );
+    return true;
 }
 
+/**
+ * Returns the user's ip address.
+ */
 function wpinv_get_ip() {
-    $ip = '127.0.0.1';
+    $ip = $_SERVER['REMOTE_ADDR'];
 
-    if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
-    } elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
-    } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+    if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+        //Check ip from share internet.
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+        //Check ip is pass from proxy.
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
     }
 
     return apply_filters( 'wpinv_get_ip', $ip );
@@ -41,43 +42,23 @@ function wpinv_get_user_agent() {
     return apply_filters( 'wpinv_get_user_agent', $user_agent );
 }
 
-function wpinv_sanitize_amount( $amount, $decimals = NULL ) {
-    $is_negative   = false;
-    $thousands_sep = wpinv_thousands_separator();
-    $decimal_sep   = wpinv_decimal_separator();
-    if ( $decimals === NULL ) {
-        $decimals = wpinv_decimals();
-    }
+/**
+ * Sanitizes an amount.
+ * 
+ * @param string $amount The amount to sanitize.
+ */
+function wpinv_sanitize_amount( $amount ) {
 
-    // Sanitize the amount
-    if ( $decimal_sep == ',' && false !== ( $found = strpos( $amount, $decimal_sep ) ) ) {
-        if ( ( $thousands_sep == '.' || $thousands_sep == ' ' ) && false !== ( $found = strpos( $amount, $thousands_sep ) ) ) {
-            $amount = str_replace( $thousands_sep, '', $amount );
-        } elseif( empty( $thousands_sep ) && false !== ( $found = strpos( $amount, '.' ) ) ) {
-            $amount = str_replace( '.', '', $amount );
-        }
+    // Format decimals.
+    $amount = str_replace( wpinv_decimal_separator(), '.', $amount );
 
-        $amount = str_replace( $decimal_sep, '.', $amount );
-    } elseif( $thousands_sep == ',' && false !== ( $found = strpos( $amount, $thousands_sep ) ) ) {
-        $amount = str_replace( $thousands_sep, '', $amount );
-    }
+    // Remove thousands.
+    $amount = str_replace( wpinv_thousands_separator(), '', $amount );
 
-    if( $amount < 0 ) {
-        $is_negative = true;
-    }
+    // Cast the remaining to a float.
+    return (float) preg_replace( '/[^0-9\.\-]/', '', $amount );
 
-    $amount   = preg_replace( '/[^0-9\.]/', '', $amount );
-
-    $decimals = apply_filters( 'wpinv_sanitize_amount_decimals', absint( $decimals ), $amount );
-    $amount   = number_format( (double) $amount, absint( $decimals ), '.', '' );
-
-    if( $is_negative ) {
-        $amount *= -1;
-    }
-
-    return apply_filters( 'wpinv_sanitize_amount', $amount, $decimals );
 }
-add_filter( 'wpinv_sanitize_amount_decimals', 'wpinv_currency_decimal_filter', 10, 1 );
 
 function wpinv_round_amount( $amount, $decimals = NULL ) {
     if ( $decimals === NULL ) {
@@ -127,9 +108,16 @@ function wpinv_status_nicename( $status ) {
 
 /**
  * Retrieves the default currency code.
+ * 
+ * @param string $current
  */
-function wpinv_get_currency() {
-    return apply_filters( 'wpinv_currency', wpinv_get_option( 'currency', 'USD' ) );
+function wpinv_get_currency( $current = '' ) {
+
+    if ( empty( $current ) ) {
+        $current = apply_filters( 'wpinv_currency', wpinv_get_option( 'currency', 'USD' ) );
+    }
+
+    return trim( strtoupper( $current ) );
 }
 
 /**
@@ -158,22 +146,46 @@ function wpinv_currency_position() {
     return apply_filters( 'wpinv_currency_position', $position );
 }
 
-function wpinv_thousands_separator() {
-    $thousand_sep = wpinv_get_option( 'thousands_separator', ',' );
-    
-    return apply_filters( 'wpinv_thousands_separator', $thousand_sep );
+/**
+ * Returns the thousands separator for a currency.
+ * 
+ * @param $string|null $current
+ */
+function wpinv_thousands_separator( $current = null ) {
+
+    if ( null == $current ) {
+        $current = wpinv_get_option( 'thousands_separator', '.' );
+    }
+
+    return trim( $current );
 }
 
-function wpinv_decimal_separator() {
-    $decimal_sep = wpinv_get_option( 'decimal_separator', '.' );
+/**
+ * Returns the decimal separator for a currency.
+ * 
+ * @param $string|null $current
+ */
+function wpinv_decimal_separator( $current = null ) {
+
+    if ( null == $current ) {
+        $current = wpinv_get_option( 'decimal_separator', '.' );
+    }
     
-    return apply_filters( 'wpinv_decimal_separator', $decimal_sep );
+    return trim( $current );
 }
 
-function wpinv_decimals() {
-    $decimals = apply_filters( 'wpinv_decimals', wpinv_get_option( 'decimals', 2 ) );
+/**
+ * Returns the number of decimals to use.
+ * 
+ * @param $string|null $current
+ */
+function wpinv_decimals( $current = null ) {
+
+    if ( null == $current ) {
+        $current = wpinv_get_option( 'decimals', 2 );
+    }
     
-    return absint( $decimals );
+    return absint( $current );
 }
 
 /**
@@ -190,113 +202,90 @@ function wpinv_get_currency_symbols() {
     return apply_filters( 'wpinv_currency_symbols', wpinv_get_data( 'currency-symbols' ) );
 }
 
-function wpinv_price( $amount = '', $currency = '' ) {
-    if( empty( $currency ) ) {
-        $currency = wpinv_get_currency();
-    }
+/**
+ * Get the price format depending on the currency position.
+ *
+ * @return string
+ */
+function getpaid_get_price_format() {
+	$currency_pos = wpinv_currency_position();
+	$format       = '%1$s%2$s';
 
-    $position = wpinv_currency_position();
+	switch ( $currency_pos ) {
+		case 'left':
+			$format = '%1$s%2$s';
+			break;
+		case 'right':
+			$format = '%2$s%1$s';
+			break;
+		case 'left_space':
+			$format = '%1$s&nbsp;%2$s';
+			break;
+		case 'right_space':
+			$format = '%2$s&nbsp;%1$s';
+			break;
+	}
 
-    $negative = $amount < 0;
-
-    if ( $negative ) {
-        $amount = substr( $amount, 1 );
-    }
-
-    $symbol = wpinv_currency_symbol( $currency );
-
-    if ( $position == 'left' || $position == 'left_space' ) {
-        switch ( $currency ) {
-            case "GBP" :
-            case "BRL" :
-            case "EUR" :
-            case "USD" :
-            case "AUD" :
-            case "CAD" :
-            case "HKD" :
-            case "MXN" :
-            case "NZD" :
-            case "SGD" :
-            case "JPY" :
-                $price = $position == 'left_space' ? $symbol . ' ' .  $amount : $symbol . $amount;
-                break;
-            default :
-                //$price = $currency . ' ' . $amount;
-                $price = $position == 'left_space' ? $symbol . ' ' .  $amount : $symbol . $amount;
-                break;
-        }
-    } else {
-        switch ( $currency ) {
-            case "GBP" :
-            case "BRL" :
-            case "EUR" :
-            case "USD" :
-            case "AUD" :
-            case "CAD" :
-            case "HKD" :
-            case "MXN" :
-            case "SGD" :
-            case "JPY" :
-                $price = $position == 'right_space' ? $amount . ' ' .  $symbol : $amount . $symbol;
-                break;
-            default :
-                //$price = $amount . ' ' . $currency;
-                $price = $position == 'right_space' ? $amount . ' ' .  $symbol : $amount . $symbol;
-                break;
-        }
-    }
-    
-    if ( $negative ) {
-        $price = '-' . $price;
-    }
-    
-    $price = apply_filters( 'wpinv_' . strtolower( $currency ) . '_currency_filter_' . $position, $price, $currency, $amount );
-
-    return $price;
+	return apply_filters( 'getpaid_price_format', $format, $currency_pos );
 }
 
-function wpinv_format_amount( $amount, $decimals = NULL, $calculate = false ) {
+/**
+ * Format the amount with a currency symbol.
+ *
+ * @param  float  $amount Raw price.
+ * @param  string $currency Currency.
+ * @return string
+ */
+function wpinv_price( $amount = 0, $currency = '' ) {
+
+    // Backwards compatibility.
+    $amount             = floatval( wpinv_sanitize_amount( str_replace( wpinv_thousands_separator(), '', $amount ) ) );
+
+    // Prepare variables.
+    $currency           = wpinv_get_currency( $currency );
+    $amount             = (float) $amount;
+    $unformatted_amount = $amount;
+    $negative           = $amount < 0;
+    $amount             = apply_filters( 'getpaid_raw_amount', floatval( $negative ? $amount * -1 : $amount ) );
+    $amount             = wpinv_format_amount( $amount );
+
+    // Format the amount.
+    $format             = getpaid_get_price_format();
+    $formatted_amount   = ( $negative ? '-' : '' ) . sprintf( $format, '<span class="getpaid-currency__symbol">' . wpinv_currency_symbol( $currency ) . '</span>', $amount );
+
+    // Filter the formatting.
+    return apply_filters( 'wpinv_price', $formatted_amount, $amount, $currency, $unformatted_amount );
+}
+
+/**
+ * Format an amount with separators.
+ *
+ * @param  float    $amount Raw amount.
+ * @param  null|int $decimals Number of decimals to use.
+ * @param  bool     $calculate Whether or not to apply separators.
+ * @return string
+ */
+function wpinv_format_amount( $amount, $decimals = null, $calculate = false ) {
     $thousands_sep = wpinv_thousands_separator();
     $decimal_sep   = wpinv_decimal_separator();
+    $decimals      = wpinv_decimals( $decimals );
 
-    if ( $decimals === NULL ) {
-        $decimals = wpinv_decimals();
-    }
+    // Format decimals.
+    $amount = str_replace( $decimal_sep, '.', $amount );
 
-    if ( $decimal_sep == ',' && false !== ( $sep_found = strpos( $amount, $decimal_sep ) ) ) {
-        $whole = substr( $amount, 0, $sep_found );
-        $part = substr( $amount, $sep_found + 1, ( strlen( $amount ) - 1 ) );
-        $amount = $whole . '.' . $part;
-    }
+    // Remove thousands.
+    $amount = str_replace( $thousands_sep, '', $amount );
 
-    if ( $thousands_sep == ',' && false !== ( $found = strpos( $amount, $thousands_sep ) ) ) {
-        $amount = str_replace( ',', '', $amount );
-    }
+    // Cast the remaining to a float.
+    $amount = floatval( $amount );
 
-    if ( $thousands_sep == ' ' && false !== ( $found = strpos( $amount, $thousands_sep ) ) ) {
-        $amount = str_replace( ' ', '', $amount );
-    }
-
-    if ( empty( $amount ) ) {
-        $amount = 0;
-    }
-    
-    $decimals  = apply_filters( 'wpinv_amount_format_decimals', $decimals ? $decimals : 0, $amount, $calculate );
-    $formatted = number_format( (float)$amount, $decimals, $decimal_sep, $thousands_sep );
-    
     if ( $calculate ) {
-        if ( $thousands_sep === "," ) {
-            $formatted = str_replace( ",", "", $formatted );
-        }
-        
-        if ( $decimal_sep === "," ) {
-            $formatted = str_replace( ",", ".", $formatted );
-        }
+        return $amount;
     }
 
-    return apply_filters( 'wpinv_amount_format', $formatted, $amount, $decimals, $decimal_sep, $thousands_sep, $calculate );
+    // Fomart the amount.
+    return number_format( $amount, $decimals, $decimal_sep, $thousands_sep );
 }
-add_filter( 'wpinv_amount_format_decimals', 'wpinv_currency_decimal_filter', 10, 1 );
 
 function wpinv_sanitize_key( $key ) {
     $raw_key = $key;
@@ -305,93 +294,31 @@ function wpinv_sanitize_key( $key ) {
     return apply_filters( 'wpinv_sanitize_key', $key, $raw_key );
 }
 
+/**
+ * Returns a file extesion.
+ * 
+ * @param $str the file whose extension should be retrieved.
+ */
 function wpinv_get_file_extension( $str ) {
-    $parts = explode( '.', $str );
-    return end( $parts );
+    $filetype = wp_check_filetype( $str );
+    return $filetype['ext'];
 }
 
-function wpinv_string_is_image_url( $str ) {
-    $ext = wpinv_get_file_extension( $str );
-
-    switch ( strtolower( $ext ) ) {
-        case 'jpeg';
-        case 'jpg';
-            $return = true;
-            break;
-        case 'png';
-            $return = true;
-            break;
-        case 'gif';
-            $return = true;
-            break;
-        default:
-            $return = false;
-            break;
-    }
-
-    return (bool)apply_filters( 'wpinv_string_is_image', $return, $str );
+/**
+ * Checks if a given string is an image URL.
+ * 
+ * @param string $string
+ */
+function wpinv_string_is_image_url( $string ) {
+    $extension = strtolower( wpinv_get_file_extension( $string ) );
+    return in_array( $extension, array( 'jpeg', 'jpg', 'png', 'gif', 'ico' ), true );
 }
 
-function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = false ) {
-    $should_log = apply_filters( 'wpinv_log_errors', WP_DEBUG );
-    
-    if ( true === $should_log ) {
-        $label = '';
-        if ( $file && $file !== '' ) {
-            $label .= basename( $file ) . ( $line ? '(' . $line . ')' : '' );
-        }
-        
-        if ( $title && $title !== '' ) {
-            $label = $label !== '' ? $label . ' ' : '';
-            $label .= $title . ' ';
-        }
-        
-        $label = $label !== '' ? trim( $label ) . ' : ' : '';
-        
-        if ( is_array( $log ) || is_object( $log ) ) {
-            error_log( $label . print_r( $log, true ) );
-        } else {
-            error_log( $label . $log );
-        }
-
-        error_log( wp_debug_backtrace_summary() );
-        if ( $exit ) {
-            exit;
-        }
-    }
-}
-
-function wpinv_is_ajax_disabled() {
-    $retval = false;
-    return apply_filters( 'wpinv_is_ajax_disabled', $retval );
-}
-
-function wpinv_get_current_page_url( $nocache = false ) {
-    global $wp;
-
-    if ( get_option( 'permalink_structure' ) ) {
-        $base = trailingslashit( home_url( $wp->request ) );
-    } else {
-        $base = add_query_arg( $wp->query_string, '', trailingslashit( home_url( $wp->request ) ) );
-        $base = remove_query_arg( array( 'post_type', 'name' ), $base );
-    }
-
-    $scheme = is_ssl() ? 'https' : 'http';
-    $uri    = set_url_scheme( $base, $scheme );
-
-    if ( is_front_page() ) {
-        $uri = home_url( '/' );
-    } elseif ( wpinv_is_checkout( array(), false ) ) {
-        $uri = wpinv_get_checkout_uri();
-    }
-
-    $uri = apply_filters( 'wpinv_get_current_page_url', $uri );
-
-    if ( $nocache ) {
-        $uri = wpinv_add_cache_busting( $uri );
-    }
-
-    return $uri;
+/**
+ * Returns the current URL.
+ */
+function wpinv_get_current_page_url() {
+    return ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 }
 
 /**
@@ -893,7 +820,7 @@ function getpaid_format_date( $date ) {
         return '';
     }
 
-    return date_i18n( /** @scrutinizer ignore-type */get_option( 'date_format' ), strtotime( $date ) );
+    return date_i18n( getpaid_date_format(), strtotime( $date ) );
 
 }
 
@@ -905,6 +832,24 @@ function getpaid_format_date( $date ) {
 function getpaid_format_date_value( $date, $default = "&mdash;" ) {
     $date = getpaid_format_date( $date );
     return empty( $date ) ? $default : $date;
+}
+
+/**
+ * Get the date format used all over the plugin.
+ *
+ * @return string
+ */
+function getpaid_date_format() {
+	return apply_filters( 'getpaid_date_format', get_option( 'date_format' ) );
+}
+
+/**
+ * Get the time format used all over the plugin.
+ *
+ * @return string
+ */
+function getpaid_time_format() {
+	return apply_filters( 'getpaid_time_format', get_option( 'time_format' ) );
 }
 
 /**

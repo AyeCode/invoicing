@@ -24,6 +24,7 @@ class GetPaid_Daily_Maintenance {
 		add_action( 'wp', array( $this, 'maybe_create_scheduled_event' ) );
 
 		// Fired everyday at 7 a.m (this might vary for sites with few visitors)
+		add_action( 'getpaid_daily_maintenance', array( $this, 'log_cron_run' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'backwards_compat' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_expire_subscriptions' ) );
 
@@ -90,6 +91,14 @@ class GetPaid_Daily_Maintenance {
 			}
 		}
 
+	}
+
+	/**
+	 * Logs cron runs.
+	 *
+	 */
+	public function log_cron_run() {
+		wpinv_error_log( "GetPaid Daily Cron" );
 	}
 
 }

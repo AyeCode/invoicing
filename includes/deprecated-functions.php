@@ -756,3 +756,10 @@ function wpinv_shop_supports_buy_now() {
 function wpinv_gateway_supports_buy_now() {
     return true;
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_is_ajax_disabled() {
+    return false;
+}
