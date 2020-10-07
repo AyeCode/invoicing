@@ -169,18 +169,7 @@ ul.invoice_notes li.system-note .note_content:after {
   line-height: 1.85;
 }
 .wpinv #minor-publishing { display: none; }
-/* fixes akismet style conflict */
-.wpinv .alert {
-  border: medium none;
-  height: 1px;
-  margin: 0;
-  padding: 0;
-}
-.wpinv .alert.result-message.error  {
-  margin: 15px 0;
-  padding: 10px 12px;
-  border-left: 4px solid #dc3232;
-}
+
 .wpinv span.updated {
   background: #fff none repeat scroll 0 0;
   border-left: 4px solid #7ad03a;

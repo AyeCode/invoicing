@@ -57,7 +57,7 @@ class WPInv_Payment_Form_Elements {
      */
     public function render_gateway_select_template( $field ) {
         $restrict = $this->get_restrict_markup( $field, 'gateway_select' );
-        $text     = __( 'The gateway select box will appear hear', 'invoicing' );
+        $text     = __( 'The gateway select box will appear here', 'invoicing' );
         echo "
             <div $restrict class='alert alert-info' role='alert'>
                 <span>$text</span>
