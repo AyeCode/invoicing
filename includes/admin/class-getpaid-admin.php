@@ -63,16 +63,17 @@ class GetPaid_Admin {
 	 *
 	 */
 	public function enqeue_scripts() {
-        global $current_screen;
+        global $current_screen, $pagenow;
 
-        $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$page    = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$editing = $pagenow == 'post.php' || $pagenow == 'post-new.php';
 
         if ( ! empty( $current_screen->post_type ) ) {
 			$page = $current_screen->post_type;
         }
 
         // General styles.
-        if ( false!== stripos( $page, 'wpi' ) ) {
+        if ( false !== stripos( $page, 'wpi' ) ) {
 
             // Styles.
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
@@ -92,7 +93,7 @@ class GetPaid_Admin {
         }
 
         // Payment form scripts.
-		if ( 'wpi_payment_form' == $page ) {
+		if ( 'wpi_payment_form' == $page && $editing ) {
             $this->load_payment_form_scripts();
         }
 
@@ -162,7 +163,7 @@ class GetPaid_Admin {
 	protected function load_payment_form_scripts() {
         global $post;
 
-        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
+        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
