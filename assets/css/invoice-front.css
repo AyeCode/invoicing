@@ -5,46 +5,6 @@
 	border: none !important;
 }
 
-.wpi-payment_methods .payment_box {
-		box-sizing: border-box;
-		width: 100%;
-		font-size: 0.92em;
-		border-radius: 2px;
-		color: #515151;
-		position: relative;
-	line-height: 1.5;
-	margin: 1em 0;
-	padding-left: 1.4em;
-}
-
-.wpi-gateway-desc {
-	background-color: #efefef;
-	padding: 1em;
-}
-
-.wpi-gateway-desc::before {
-		content: '';
-		display: block;
-		border: 1em solid #efefef;
-		border-right-color: transparent;
-		border-left-color: transparent;
-		border-top-color: transparent;
-		position: absolute;
-		top: -1.0em;
-		left: 0;
-		margin: -1em 0 0 2em;
-}
-
-.wpi-payment_methods input[type="radio"] {
-	display: inline-block;
-	margin: 0 1em 0 0;
-}
-
-.wpi-payment_methods label {
-	line-height: 2;
-	text-align: left;
-}
-
 .wpinv-receipt-details .getpaid-invoice-meta-data th {
 	width: 40%;
 	font-weight: 500;
@@ -215,19 +175,18 @@ input[type="text"].getpaid-item-price-input {
 
 .getpaid-gateway-description-div {
 	box-sizing: border-box;
-		width: 100%;
-		font-size: 0.92em;
-		border-radius: 2px;
-		color: #515151;
-		position: relative;
-		line-height: 1.5;
-		margin: 1em 0;
-		padding-left: 1.4em;
+	width: 100%;
+	font-size: 0.92em;
+	border-radius: 2px;
+	color: #515151;
+	position: relative;
+	line-height: 1.5;
+	margin: 1em 0;
 }
 
 .getpaid-gateway-description {
 	background-color: #efefef;
-		padding: 1em;
+	padding: 1em;
 }
 
 .getpaid-gateway-description::before {
