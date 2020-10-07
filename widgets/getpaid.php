@@ -113,7 +113,9 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
     protected function handle_payment_form( $args = array() ) {
 
 		if ( empty( $args['button'] ) ) {
-			return getpaid_display_payment_form( $args['form'] );
+			ob_start();
+			getpaid_display_payment_form( $args['form'] );
+			return ob_get_clean();
 		}
 
 		return $this->payment_form_button( $args['form'], $args['button'] );
@@ -150,7 +152,9 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 */
     protected function buy_item_form( $item ) {
 		$items = getpaid_convert_items_to_array( $item );
-		return getpaid_display_item_payment_form( $items );
+		ob_start();
+		getpaid_display_item_payment_form( $items );
+		return ob_get_clean();
 	}
 
 	/**

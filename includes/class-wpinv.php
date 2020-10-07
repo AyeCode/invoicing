@@ -408,7 +408,7 @@ class WPInv_Plugin {
 			wp_enqueue_script( 'google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array( 'jquery', 'google-maps-api' ), '', true );
 		}
 
-		wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.css', array(), WPINV_VERSION, 'all' );
+		wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.min.css', array(), WPINV_VERSION, 'all' );
 		wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
 
 		wp_enqueue_script( 'wpinv-front-script' );
