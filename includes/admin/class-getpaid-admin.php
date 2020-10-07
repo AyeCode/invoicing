@@ -248,7 +248,7 @@ class GetPaid_Admin {
     public function activation_redirect() {
 
 		// Bail if no activation redirect.
-		if ( ! get_transient( '_wpinv_activation_redirect' ) || is_ajax() ) {
+		if ( ! get_transient( '_wpinv_activation_redirect' ) || wp_doing_ajax() ) {
 			return;
 		}
 

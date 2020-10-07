@@ -292,7 +292,7 @@ class GetPaid_Checkout {
 		$this->process_payment( $invoice );
 
         // If we are here, there was an error.
-		$this->checkout_error();
+		wpinv_send_back_to_checkout();
 
 	}
 

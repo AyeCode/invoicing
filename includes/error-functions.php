@@ -119,7 +119,7 @@ function getpaid_doing_it_wrong( $function, $message, $version ) {
 
 	$message .= ' Backtrace: ' . wp_debug_backtrace_summary();
 
-	if ( is_ajax() || defined( 'REST_REQUEST' ) ) {
+	if ( wp_doing_ajax() || defined( 'REST_REQUEST' ) ) {
 		do_action( 'doing_it_wrong_run', $function, $message, $version );
 		error_log( "{$function} was called incorrectly. {$message}. This message was added in version {$version}." );
 	} else {
