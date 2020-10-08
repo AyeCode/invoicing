@@ -10,11 +10,19 @@
 defined( 'ABSPATH' ) || exit;
 
 $value = '';
+$class = '';
 
 if ( is_user_logged_in() ) {
     $user  = wp_get_current_user();
     $value = sanitize_email( $user->user_email );
+
+    if ( ! empty( $hide_billing_email ) ) {
+        $class = 'd-none';
+    }
+
 }
+
+echo "<span class='$class'";
 
 echo aui()->input(
     array(
@@ -29,3 +37,5 @@ echo aui()->input(
         'value'      => $value,
     )
 );
+
+echo '</span>';

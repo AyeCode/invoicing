@@ -805,8 +805,13 @@ class WPInv_Payment_Form_Elements {
         $id3      = $field . '.id + "_edit3"';
         $label5   = __( 'Is this field required?', 'invoicing' );
         $id4      = $field . '.id + "_edit4"';
+        $label6   = __( 'Hide if the user is logged in', 'invoicing' );
         echo "
             <div $restrict>
+                <label class='form-group'>
+                    <input v-model='$field.hide_billing_email' type='checkbox' />
+                    <span class='form-check-label'>$label6</span>
+                </label>
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />
@@ -840,10 +845,13 @@ class WPInv_Payment_Form_Elements {
         $label3   = __( 'Help text', 'invoicing' );
         $label4   = esc_attr__( 'Add some help text for this field', 'invoicing' );
         $id3      = $field . '.id + "_edit3"';
-        $label5   = __( 'Is this field required?', 'invoicing' );
-        $id4      = $field . '.id + "_edit4"';
+        $label6   = __( 'Hide if the user is logged in', 'invoicing' );
         echo "
             <div $restrict>
+                <label class='form-group'>
+                    <input v-model='$field.hide_billing_email' type='checkbox' />
+                    <span class='form-check-label'>$label6</span>
+                </label>
                 <div class='form-group'>
                     <label :for='$id'>$label</label>
                     <input :id='$id' v-model='$field.label' class='form-control' />

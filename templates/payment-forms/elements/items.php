@@ -32,7 +32,6 @@ switch( $items_type ) {
 // Display the cart totals.
 if ( ! empty( $hide_cart ) ) {
     echo '<div class="d-none">';
-    wpinv_get_template( 'payment-forms/cart.php', compact( 'form', 'items_type' ) );
 }
 
 // Display the cart totals.
