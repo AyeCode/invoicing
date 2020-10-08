@@ -11,7 +11,6 @@ jQuery(function ($) {
 			active_tab: 'new_item',
 			active_form_element: null,
 			last_dropped: null,
-			selected_item: ''
 		}, wpinvPaymentFormAdmin),
 
 		computed: {
@@ -166,46 +165,37 @@ jQuery(function ($) {
 			},
 
 			// Adds a currency to a price.
-			addSelectedItem: function addSelectedItem() {
+			addSelectedItem: function addSelectedItem( event ) {
 
-				if ( this.selected_item && this.all_items[this.selected_item].id ) {
+				var select = $(event.target).parent().find('select')
+				var selected_item = $( select ).select2( 'data' )[0]
 
-					var exists = false
-					var selected_item = this.all_items[this.selected_item]
+				// Abort if no item was selected.
+				if ( ! selected_item.form_data ) {
+					return
+				}
+	
+				// Only add the item if it was not previously added.
+				var exists = false
+				selected_item = selected_item.form_data
 
-					$( this.form_items ).each( function( index, item ) {
+				$( this.form_items ).each( function( index, item ) {
 
-						if ( item.id && item.id == selected_item.id ) {
-							exists = true
-						}
-
-					} )
-
-					if ( ! exists ) {
-						this.form_items.push( selected_item );
+					if ( item.id && item.id == selected_item.id ) {
+						exists = true
 					}
 
+				} )
+
+				if ( ! exists ) {
+					this.form_items.push( selected_item );
+					console.log(this.form_items)
 				}
 
-				this.selected_item = ''
+				$(select)
+					.val('')
+              		.trigger("change");
 
-			},
-
-			// Adds a currency to a price.
-			addNewItem: function addNewItem() {
-				var rand = Math.random() + this.form_items.length;
-				var key = rand.toString(36).replace(/[^a-z]+/g, '');
-				this.form_items.push({
-					title: "New item",
-					id: key,
-					price: '0.00',
-					recurring: false,
-					new: true,
-					type: 'custom',
-					description: '',
-					rule: 'digital',
-					class: '_standard'
-				});
 			},
 
 			// Given a panel id( field key ), it toggles the panel.
@@ -245,10 +235,27 @@ jQuery(function ($) {
 			  value = value.toString().split('|').splice(0,1).join('')
 			  return value.toString().trim()
 			}
+		},
+
+		directives: {
+			initItemSearch: {
+
+				// directive definition
+				inserted: function (el) {
+					getpaid.init_select2_item_search( el, $(el).parent() )
+
+					// emit event on change.
+					$(el).on( 'change', function() {
+						$(el).trigger( 'itemselected' )
+					});
+				}
+
+			}
 		}
 
 	});
 
+	// Remove the delete button on default forms.
 	$( document ).ready( function() {
 
 		if ( wpinvPaymentFormAdmin && wpinvPaymentFormAdmin.is_default ) {

@@ -269,7 +269,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 		foreach ( $items as $key => $value ) {
 
-			//Form items.
+			// Form items.
 			if ( $value instanceof GetPaid_Form_Item ) {
 
 				if ( $value->can_purchase() ) {

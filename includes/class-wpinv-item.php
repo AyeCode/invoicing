@@ -1215,7 +1215,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return bool
 	 */
     public function can_purchase() {
-        $can_purchase = null !== $this->get_id();
+        $can_purchase = $this->exists();
 
         if ( ! current_user_can( 'edit_post', $this->ID ) && $this->post_status != 'publish' ) {
             $can_purchase = false;

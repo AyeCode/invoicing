@@ -163,7 +163,7 @@ class GetPaid_Admin {
 	protected function load_payment_form_scripts() {
         global $post;
 
-        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.min.js', array(), WPINV_VERSION );
+        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
@@ -176,7 +176,6 @@ class GetPaid_Admin {
             array(
 				'elements'      => getpaid()->form_elements->get_elements(),
 				'form_elements' => getpaid()->form_elements->get_form_elements( $post->ID ),
-				'all_items'     => getpaid()->form_elements->get_published_items(),
 				'currency'      => wpinv_currency_symbol(),
 				'position'      => wpinv_currency_position(),
 				'decimals'      => (int) wpinv_decimals(),
