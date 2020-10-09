@@ -305,6 +305,7 @@ class WPInv_Plugin {
 			"$plugin_path/includes",
 			"$plugin_path/includes/data-stores",
 			"$plugin_path/includes/gateways",
+			"$plugin_path/includes/payments",
 			"$plugin_path/includes/api",
 			"$plugin_path/includes/admin",
 			"$plugin_path/includes/admin/meta-boxes",
