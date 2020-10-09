@@ -3270,41 +3270,25 @@ class WPInv_Invoice extends GetPaid_Data {
         }
     }
 
-    /**
-     * Adds a discount to the invoice.
-     *
-     * @param string $discount
-     * @param float $value
-     * @return WP_Error|Bool
-     */
-    public function add_discount( $discount, $value, $recurring = false ) {
+	/**
+	 * Adds a discount to the invoice.
+	 *
+	 * @param array $discount An array of discount details. name, initial_discount, and recurring_discount are required. Include discount_code if the discount is from a discount code.
+	 * @since 1.0.19
+	 */
+	public function add_discount( $discount ) {
 
-        $amount    = wpinv_sanitize_amount( $value );
-        $discounts = $this->get_discounts();
+		$discounts = $this->get_discounts();
+		$this->discounts[ $discount['name'] ] = $discount;
+		$this->set_prop( 'discounts', $discounts );
 
-        if ( isset( $discounts[ $discount ] ) && isset( $discounts[ $discount ]['amount'] ) ) {
-
-            $amount = $discounts[ $discount ]['amount'] += $amount;
-			$discounts[ $discount ] = array(
-                'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-
-		} else {
-			$discounts[ $discount ] = array(
-                'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-		}
-
-        $this->set_prop( 'discounts', $discount );
-
-    }
+	}
 
     /**
 	 * Retrieves a specific discount.
 	 *
 	 * @since 1.0.19
+	 * @return float
 	 */
 	public function get_discount( $discount = false ) {
 

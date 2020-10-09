@@ -46,13 +46,6 @@ class GetPaid_Payment_Form_Submission {
 	protected $invoice = null;
 
 	/**
-	 * The discount associated with the submission.
-	 *
-	 * @var WPInv_Discount
-	 */
-	protected $discount = null;
-
-	/**
 	 * The raw submission data.
 	 *
 	 * @var array
@@ -79,6 +72,13 @@ class GetPaid_Payment_Form_Submission {
 	 * @var float
 	 */
 	protected $total_discount_amount = 0;
+
+	/**
+	 * The total recurring discount amount for the submission.
+	 *
+	 * @var float
+	 */
+	protected $total_recurring_discount_amount = 0;
 
 	/**
 	 * The total tax amount for the submission.
@@ -235,9 +235,6 @@ class GetPaid_Payment_Form_Submission {
 			$this->country = $data['wpinv_state'];
 		}
 
-		// Handle discounts.
-		$this->maybe_prepare_discount();
-
 		// Handle items.
 		$selected_items = array();
 		if ( ! empty( $data['getpaid-items'] ) ) {
@@ -285,8 +282,8 @@ class GetPaid_Payment_Form_Submission {
 		// Fired when we are done processing a submission.
 		do_action_ref_array( 'getpaid_process_submission', array( &$this ) );
 
-		// Remove invalid discount.
-		$this->maybe_remove_discount();
+		// Handle discounts.
+		$this->process_discount();
 
 	}
 
@@ -416,8 +413,6 @@ class GetPaid_Payment_Form_Submission {
 
 		$this->subtotal_amount += $item->get_sub_total();
 
-		$this->process_item_discount( $item );
-
 		$this->process_item_tax( $item );
 	}
 
@@ -530,23 +525,48 @@ class GetPaid_Payment_Form_Submission {
 		return $this->taxes;
 	}
 
-	///////// DISCOUNTS //////////////
+	/*
+	|--------------------------------------------------------------------------
+	| Discounts
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with submission discounts. Discounts can be recurring
+	| or only one-time. They also do not have to come from a discount code.
+    */
+
+	/**
+	 * Prepares the submission's discount.
+	 *
+	 * @since 1.0.19
+	 */
+	public function process_discount() {
+
+		$total            = $this->subtotal_amount + $this->get_total_fees() + $this->get_total_tax();
+		$discount_handler = new GetPaid_Payment_Form_Submission_discount( $this, $total );
+
+		if ( ! $discount_handler->is_discount_valid ) {
+			$this->last_error = $discount_handler->discount_error;
+			return;
+		}
+
+		if ( $discount_handler->has_discount ) {
+			$this->add_discount( $discount_handler->calculate_discount( $this ) );
+		}
+
+		do_action( 'getpaid_submissions_process_discounts', array( &$this ) );
+	}
 
 	/**
 	 * Adds a discount to the submission.
 	 *
+	 * @param array $discount An array of discount details. name, initial_discount, and recurring_discount are required. Include discount_code if the discount is from a discount code.
 	 * @since 1.0.19
 	 */
-	public function add_discount( $name, $amount, $recurring = false ) {
-		$amount = wpinv_sanitize_amount( $amount );
+	public function add_discount( $discount ) {
 
-		$this->total_discount_amount += $amount;
-
-		if ( isset( $this->discounts[ $name ] ) ) {
-			$amount += $this->discounts[ $name ]['amount'];
-		}
-
-		$this->discounts[ $name ] = compact( 'amount', 'recurring' );
+		$this->total_discount_amount           += $discount['initial_discount'];
+		$this->total_recurring_discount_amount += $discount['recurring_discount'];
+		$this->discounts[ $discount['name'] ]   = $discount;
 
 	}
 
@@ -558,7 +578,9 @@ class GetPaid_Payment_Form_Submission {
 	public function remove_discount( $name ) {
 
 		if ( isset( $this->discounts[ $name ] ) ) {
-			$this->total_discount_amount -= $this->discounts[ $name ]['amount'];
+			$discount                               = $this->discounts[ $name ];
+			$this->total_discount_amount           -= $discount['initial_discount'];
+			$this->total_recurring_discount_amount -= $discount['recurring_discount'];
 			unset( $this->discounts[ $name ] );
 		}
 
@@ -571,127 +593,17 @@ class GetPaid_Payment_Form_Submission {
 	 * @return bool
 	 */
 	public function has_discount_code() {
-		return ! empty( $this->discount );
+		return ! empty( $this->discounts['discount_code'] );
 	}
 
 	/**
 	 * Returns the discount code.
 	 *
 	 * @since 1.0.19
-	 * @return bool
+	 * @return string
 	 */
 	public function get_discount_code() {
-		return $this->has_discount_code() ? $this->discount->code : '';
-	}
-
-	/**
-	 * Prepares an item discount.
-	 *
-	 * @since 1.0.19
-	 */
-	public function maybe_prepare_discount() {
-
-		// Do we have a discount?
-		if ( empty( $this->data['discount'] ) ) {
-			return;
-		}
-
-		// Fetch the discount.
-		$discount = wpinv_get_discount_obj( $this->data['discount'] );
-
-		// Ensure it is active.
-        if ( ! $discount->exists() || ! $discount->is_active() || ! $discount->has_started() || $discount->is_expired() ) {
-			$this->is_discount_valid = false;
-			$this->last_error = __( 'Invalid or expired discount code', 'invoicing' );
-			return;
-		}
-
-		// For single use discounts...
-		if ( $discount->is_single_use ) {
-
-			if ( ! $this->has_billing_email() ) {
-				$this->is_discount_valid = false;
-				$this->last_error = __( 'You need to enter your billing email before applying this discount', 'invoicing' );
-				return;
-			}
-
-			if ( ! $discount->is_valid_for_user( $this->get_billing_email() ) ) {
-				$this->is_discount_valid = false;
-				$this->last_error = __( 'You have already used this discount', 'invoicing' );
-				return;
-			}
-
-		}
-
-		// Set the discount.
-		$this->discount = $discount;
-
-	}
-
-	/**
-	 * Removes an invalid discount code.
-	 *
-	 * @since 1.0.19
-	 */
-	public function maybe_remove_discount() {
-
-		// Do we have a discount?
-		if ( empty( $this->has_discount_code() ) ) {
-			return;
-		}
-
-		// Fetch the discount amount.
-		$amount = $this->get_discount( 'Discount' );
-
-		// Abort early if this is a "zero" discount.
-		if ( empty( $amount ) ) {
-			return;
-		}
-
-		$total = $this->subtotal_amount + $this->get_total_fees() + $this->get_total_tax();
-
-		if ( ! $this->discount->is_minimum_amount_met( $total ) ) {
-			$this->is_discount_valid = false;
-            $min = wpinv_price( wpinv_format_amount( $$this->discount->min_total ) );
-			$this->last_error = sprintf( __( 'The minimum total for using this discount is %s', 'invoicing' ), $min );
-        }
-
-        if ( ! $this->discount->is_maximum_amount_met( $total ) ) {
-			$this->is_discount_valid = false;
-            $max = wpinv_price( wpinv_format_amount( $$this->discount->max_total ) );
-			$this->last_error = sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max );
-		}
-
-		if ( ! $this->is_discount_valid ) {
-			$this->discount = null;
-			$this->remove_discount( 'Discount' );
-		}
-
-    }
-
-	/**
-	 * Maybe process discount.
-	 *
-	 * @since 1.0.19
-	 * @param GetPaid_Form_Item $item
-	 */
-	public function process_item_discount( $item ) {
-
-		// Abort early if there is no discount.
-		if ( ! $this->has_discount_code() ) {
-			return;
-		}
-
-		// Ensure that it is valid for this item.
-		if ( ! $this->discount->is_valid_for_items( array( $item->get_id() ) ) ) {
-			return;
-		}
-
-		// Fetch the discounted amount.
-		$discount = $this->discount->get_discounted_amount( $item->get_price() * $item->get_quantity() );
-
-		$this->add_discount( 'Discount', $discount, $this->discount->is_recurring() );
-
+		return $this->has_discount_code() ? $this->discounts['discount_code']['discount_code'] : '';
 	}
 
 	/**
@@ -704,12 +616,12 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Gets a specific discount.
+	 * Returns the total recurring discount amount.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_discount( $name ) {
-		return isset( $this->discounts[ $name ] ) ? $this->discounts[ $name ]['amount'] : 0;
+	public function get_total_recurring_discount() {
+		return $this->total_recurring_discount_amount;
 	}
 
 	/**
