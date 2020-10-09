@@ -215,9 +215,9 @@ jQuery(function ($) {
 			},
 
 			// Toggles an address panel.
-			toggleAddressPanel: function togglePanel( container_id, field_class) {
+			toggleAddressPanel: function togglePanel( event ) {
 
-				var parent = $( '#' + container_id + ' .' + field_class );
+				var parent = $(event.target).closest( '.wpinv-form-address-field-editor' )
 
 				parent.find('.wpinv-form-address-field-editor-editor-body').slideToggle(400 ); // Toggle the active class
 				parent.toggleClass('active'); // Toggle dashicons

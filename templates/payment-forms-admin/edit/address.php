@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 <draggable v-model='active_form_element.fields' group='address_fields'>
     <div class='wpinv-form-address-field-editor' v-for='(field, index) in active_form_element.fields' :class="[field.name, { 'visible' : field.visible }]" :key='field.name'>
 
-        <div class='wpinv-form-address-field-editor-header' @click.prevent='toggleAddressPanel(active_form_element.id, field.name)'>
+        <div class='wpinv-form-address-field-editor-header' @click.prevent='toggleAddressPanel'>
             <span class='label'>{{field.label}}</span>
             <span class='toggle-visibility-icon' @click.stop='field.visible = !field.visible;'>
                 <span class='dashicons dashicons-hidden'></span>
@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
                 </span>
                 <span class='toggle-icon'>
                     <span class='dashicons dashicons-arrow-down'></span>
-                    <span class='dashicons dashicons-arrow-up' style='display:none'></span>
+                    <span class='dashicons dashicons-arrow-up'></span>
                 </span>
         </div>
 
@@ -52,12 +52,12 @@ defined( 'ABSPATH' ) || exit;
 
                 <div class='form-group form-check'>
                     <input :for="active_form_element.id + '_edit_required' + index" v-model='field.required' type='checkbox' class='form-check-input' />
-                    <label class='form-check-label' :for="active_form_element.id + '_edit_required' + index""><?php esc_html_e( 'Is required', 'invoicing' ); ?></label>
+                    <label class='form-check-label' :for="active_form_element.id + '_edit_required' + index"><?php esc_html_e( 'Is required', 'invoicing' ); ?></label>
                 </div>
 
                 <div class='form-group form-check'>
                     <input :for="active_form_element.id + '_edit_visible' + index" v-model='field.visible' type='checkbox' class='form-check-input' />
-                    <label class='form-check-label' :for="active_form_element.id + '_edit_visible' + index""><?php esc_html_e( 'Is visible', 'invoicing' ); ?></label>
+                    <label class='form-check-label' :for="active_form_element.id + '_edit_visible' + index"><?php esc_html_e( 'Is visible', 'invoicing' ); ?></label>
                 </div>
 
             </div>
