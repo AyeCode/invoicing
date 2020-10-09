@@ -533,7 +533,9 @@ function getpaid_geolocate_ip_address( $ip_address ) {
             $longitude  = $geoip2_city->location->longitude;
             $latitude   = $geoip2_city->location->latitude;
             $credit     = __( 'Geolocated using the information by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">www.maxmind.com</a>', 'invoicing' );
-        } catch( Exception $e ) { }
+        } catch( Exception $e ) {
+            wpinv_error_log( $e->getMessage(), 'MaxMind Exception', __FILE__, __LINE__ );
+        }
 
     }
 
@@ -554,7 +556,9 @@ function getpaid_geolocate_ip_address( $ip_address ) {
                 $credit     = $load_xml->geoplugin_credit;
                 $credit     = __( 'Geolocated using the information by geoPlugin, available from <a href="http://www.geoplugin.com" target="_blank">www.geoplugin.com</a>', 'invoicing' ) . '<br>' . $load_xml->geoplugin_credit;
             }
-        } catch( Exception $e ) { }
+        } catch( Exception $e ) {
+            wpinv_error_log( $e->getMessage(), 'GeoPlugin Exception', __FILE__, __LINE__ );
+        }
 
     }
 
