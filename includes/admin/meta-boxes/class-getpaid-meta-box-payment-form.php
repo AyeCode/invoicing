@@ -66,8 +66,11 @@ class GetPaid_Meta_Box_Payment_Form {
                     <p class='form-text text-muted' v-if='! form_elements.length'><?php _e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
 
                     <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 14px;">
-                        <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="{ active: active_form_element==form_element &&  active_tab=='edit_item' }" @click="active_tab = 'edit_item'; active_form_element = form_element">
-                            <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
+                        <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="[{ active: active_form_element==form_element &&  active_tab=='edit_item' }, form_element.type]" @click="active_tab = 'edit_item'; active_form_element = form_element">
+                            <div class="wpinv-form-builder-element-preview-inner">
+                                <div class="wpinv-payment-form-field-preview-overlay"></div>
+                                <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
+                            </div>
                         </div>
                     </draggable>
 

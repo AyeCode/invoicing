@@ -322,6 +322,7 @@ return array(
         'defaults'  => array(
             'placeholder'  => wpinv_format_amount(0),
             'value'        => wpinv_format_amount(0),
+            'minimum'      => wpinv_format_amount(0),
             'label'        => __( 'Enter Amount', 'invoicing' ),
             'description'  => '',
         )

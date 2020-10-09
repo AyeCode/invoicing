@@ -51,12 +51,12 @@ defined( 'ABSPATH' ) || exit;
                 </div>
 
                 <div class='form-group form-check'>
-                    <input :for="active_form_element.id + '_edit_required' + index" v-model='field.required' type='checkbox' class='form-check-input' />
+                    <input :id="active_form_element.id + '_edit_required' + index" v-model='field.required' type='checkbox' class='form-check-input' />
                     <label class='form-check-label' :for="active_form_element.id + '_edit_required' + index"><?php esc_html_e( 'Is required', 'invoicing' ); ?></label>
                 </div>
 
                 <div class='form-group form-check'>
-                    <input :for="active_form_element.id + '_edit_visible' + index" v-model='field.visible' type='checkbox' class='form-check-input' />
+                    <input :id="active_form_element.id + '_edit_visible' + index" v-model='field.visible' type='checkbox' class='form-check-input' />
                     <label class='form-check-label' :for="active_form_element.id + '_edit_visible' + index"><?php esc_html_e( 'Is visible', 'invoicing' ); ?></label>
                 </div>
 

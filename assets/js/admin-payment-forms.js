@@ -56,6 +56,13 @@ jQuery(function ($) {
 
 		methods: {
 
+			// Returns an array of visible fields.
+			visible_fields: function visible_fields( fields ) {
+				return fields.filter( function ( field ) {
+					return field.visible
+				});
+			},
+
 			canCheckoutSeveralSubscriptions: function canCheckoutSeveralSubscriptions( field ) {
 
 				// Has no recurring item or only has one item.
