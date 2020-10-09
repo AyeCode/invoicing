@@ -22,7 +22,7 @@ if ( is_user_logged_in() ) {
 
 }
 
-echo "<span class='$class'";
+echo "<span class='$class'>";
 
 echo aui()->input(
     array(
