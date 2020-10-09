@@ -19,7 +19,8 @@ getpaid.init_select2_item_search = function ( select, parent ) {
                 var data = {
                     action: 'wpinv_get_invoicing_items',
                     search: params.term,
-                    _ajax_nonce: WPInv_Admin.wpinv_nonce
+                    _ajax_nonce: WPInv_Admin.wpinv_nonce,
+                    post_id: WPInv_Admin.post_ID
                 }
 
                 // Query parameters will be ?search=[term]&type=public

@@ -1979,20 +1979,22 @@ textarea.wpi-email_overdue_content {
     opacity: 1;
 }
 
-.wpinv-form-address-field-editor .dashicons-hidden{
-    display: inline-block;
-}
-
-.wpinv-form-address-field-editor .dashicons-visibility{
+/** Panel visibility indicators*/
+.wpinv-form-address-field-editor:not(.visible) .wpinv-form-address-field-editor-header .dashicons-visibility {
     display: none;
 }
 
-.wpinv-form-address-field-editor.visible .dashicons-hidden{
+.wpinv-form-address-field-editor.visible .wpinv-form-address-field-editor-header .dashicons-hidden {
     display: none;
 }
 
-.wpinv-form-address-field-editor.visible .dashicons-visibility{
-    display: inline-block;
+/** Panel toggle arrows*/
+.wpinv-form-address-field-editor:not(.active) .wpinv-form-address-field-editor-header .dashicons-arrow-up {
+    display: none;
+}
+
+.wpinv-form-address-field-editor.active .wpinv-form-address-field-editor-header .dashicons-arrow-down {
+    display: none;
 }
 
 .wpinv-available-items-editor-header .label,
@@ -2060,6 +2062,7 @@ textarea.wpi-email_overdue_content {
 .wpinv-payment-form-left-fields-field .btn {
     width: 100%;
     cursor: move;
+    font-size: 14px;
 }
 
 .wpinv-payment-form-left-fields-field.sortable-ghost {

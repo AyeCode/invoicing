@@ -48,9 +48,10 @@ class GetPaid_Meta_Box_Payment_Form {
                         </div>
 
                         <!-- Edit an element -->
-                        <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='edit_item'" style="font-size: 16px;">
+                        <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='edit_item'" style="font-size: 14px;">
                             <div class="wpinv-form-builder-edit-field-wrapper">
                                 <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
+                                <?php do_action( 'getpaid_payment_form_edit_element_template', $post ); ?>
                                 <div>
                                     <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)" v-show="! active_form_element.premade"><?php _e( 'Delete Element', 'invoicing' ); ?></button>
                                 </div>
@@ -64,7 +65,7 @@ class GetPaid_Meta_Box_Payment_Form {
                     <small class='form-text text-muted' v-if='form_elements.length'><?php _e( 'Click on any element to edit or delete it.', 'invoicing' ); ?></small>
                     <p class='form-text text-muted' v-if='! form_elements.length'><?php _e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
 
-                    <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 16px;">
+                    <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 14px;">
                         <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="{ active: active_form_element==form_element &&  active_tab=='edit_item' }" @click="active_tab = 'edit_item'; active_form_element = form_element">
                             <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
                         </div>
