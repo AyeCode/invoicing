@@ -274,7 +274,7 @@ class WPInv_Ajax {
 		if ( ! empty( $_GET['form'] ) ) {
             getpaid_display_payment_form( $_GET['form'] );
 		} else if( ! empty( $_GET['invoice'] ) ) {
-		    echo getpaid_display_invoice_payment_form( $_GET['invoice'] );
+		    getpaid_display_invoice_payment_form( $_GET['invoice'] );
         } else {
 			$items = getpaid_convert_items_to_array( $_GET['item'] );
 		    getpaid_display_item_payment_form( $items );
@@ -314,13 +314,12 @@ class WPInv_Ajax {
      * @since 1.0.18
      */
     public static function get_payment_form_states_field() {
-        global $invoicing;
 
         if ( empty( $_GET['country'] ) || empty( $_GET['form'] ) ) {
             exit;
         }
 
-        $elements = $invoicing->form_elements->get_form_elements( $_GET['form'] );
+        $elements = getpaid_get_payment_form_elements( $_GET['form'] );
 
         if ( empty( $elements ) ) {
             exit;

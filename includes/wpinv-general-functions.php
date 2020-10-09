@@ -343,3 +343,40 @@ function wpinv_get_default_payment_form() {
 
     return $form;
 }
+
+/**
+ * Retrieves a given payment form's elements.
+ * 
+ * @param int $payment_form
+ */
+function getpaid_get_payment_form_elements( $payment_form ) {
+
+    if ( empty( $payment_form ) ) {
+        return wpinv_get_data( 'sample-payment-form' );
+    }
+
+    $form_elements = get_post_meta( $payment_form, 'wpinv_form_elements', true );
+
+    if ( is_array( $form_elements ) ) {
+        return $form_elements;
+    }
+
+    return wpinv_get_data( 'sample-payment-form' );
+
+}
+
+/**
+ * Returns an array of items for the given form.
+ * 
+ * @param int $payment_form
+ */
+function gepaid_get_form_items( $id ) {
+    $form = new GetPaid_Payment_Form( $id );
+
+    // Is this a default form?
+    if ( $form->is_default() ) {
+        return array();
+    }
+
+    return $form->get_items( 'view', 'arrays' );
+}

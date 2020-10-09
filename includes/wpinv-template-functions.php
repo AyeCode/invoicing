@@ -1513,52 +1513,33 @@ function getpaid_display_item_payment_form( $items ) {
  * Helper function to display an invoice payment form on the frontend.
  */
 function getpaid_display_invoice_payment_form( $invoice_id ) {
-    global $invoicing;
 
     $invoice = wpinv_get_invoice( $invoice_id );
 
     if ( empty( $invoice ) ) {
-		return aui()->alert(
+		echo aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice not found', 'invoicing' ),
 			)
-		);
+        );
+        return;
     }
 
     if ( $invoice->is_paid() ) {
-		return aui()->alert(
+		echo aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice has already been paid', 'invoicing' ),
 			)
-		);
+        );
+        return;
     }
 
-    // Get the form elements and items.
-    $form     = wpinv_get_default_payment_form();
-	$elements = $invoicing->form_elements->get_form_elements( $form );
-	$items    = $invoicing->form_elements->convert_checkout_items( $invoice->cart_details, $invoice );
+    $form = new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+    $form->set_items( $invoice->get_items() );
 
-	ob_start();
-	echo "<form class='wpinv_payment_form'>";
-	do_action( 'wpinv_payment_form_top' );
-    echo "<input type='hidden' name='form_id' value='$form'/>";
-    echo "<input type='hidden' name='invoice_id' value='$invoice_id'/>";
-	wp_nonce_field( 'wpinv_payment_form', 'wpinv_payment_form' );
-	wp_nonce_field( 'vat_validation', '_wpi_nonce' );
-
-	foreach ( $elements as $element ) {
-		do_action( 'wpinv_frontend_render_payment_form_element', $element, $items, $form );
-		do_action( "wpinv_frontend_render_payment_form_{$element['type']}", $element, $items, $form );
-	}
-
-	echo "<div class='wpinv_payment_form_errors alert alert-danger d-none'></div>";
-	do_action( 'wpinv_payment_form_bottom' );
-	echo '</form>';
-
-	$content = ob_get_clean();
-	return str_replace( 'sr-only', '', $content );
+    $form->display();
 }
 
 /**
@@ -1692,7 +1673,7 @@ add_action( 'getpaid_payment_form_element', 'getpaid_payment_form_element', 10, 
 function getpaid_payment_form_edit_element_template( $post ) {
 
     // Retrieve all elements.
-    $all_elements = wp_list_pluck( getpaid()->form_elements->get_elements(), 'type' );
+    $all_elements = wp_list_pluck( wpinv_get_data( 'payment-form-elements' ), 'type' );
 
     foreach ( $all_elements as $element ) {
 
@@ -1721,7 +1702,7 @@ add_action( 'getpaid_payment_form_edit_element_template', 'getpaid_payment_form_
 function getpaid_payment_form_render_element_preview_template() {
 
     // Retrieve all elements.
-    $all_elements = wp_list_pluck( getpaid()->form_elements->get_elements(), 'type' );
+    $all_elements = wp_list_pluck( wpinv_get_data( 'payment-form-elements' ), 'type' );
 
     foreach ( $all_elements as $element ) {
 

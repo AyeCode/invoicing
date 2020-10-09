@@ -90,8 +90,7 @@ class WPInv_Plugin {
 		// Sessions.
 		$this->set( 'session', new WPInv_Session_Handler() );
 		$GLOBALS['wpi_session'] = $this->get( 'session' ); // Backwards compatibility.
-		$this->form_elements = new WPInv_Payment_Form_Elements();
-		$this->tax           = new WPInv_EUVat();
+		$this->tax              = new WPInv_EUVat();
 		$this->tax->init();
 		$GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
 
@@ -242,7 +241,6 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-payment-form-elements.php' );
 
 		/**
 		 * Load the tax class.
