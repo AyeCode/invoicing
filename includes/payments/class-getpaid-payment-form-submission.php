@@ -102,6 +102,13 @@ class GetPaid_Payment_Form_Submission {
 	protected $total_fees_amount = 0;
 
 	/**
+	 * The total fees amount for the submission.
+	 *
+	 * @var float
+	 */
+	protected $total_recurring_fees_amount = 0;
+
+	/**
 	 * An array of discounts for the submission.
 	 *
 	 * @var array
@@ -542,7 +549,7 @@ class GetPaid_Payment_Form_Submission {
 	public function process_discount() {
 
 		$total            = $this->subtotal_amount + $this->get_total_fees() + $this->get_total_tax();
-		$discount_handler = new GetPaid_Payment_Form_Submission_discount( $this, $total );
+		$discount_handler = new GetPaid_Payment_Form_Submission_Discount( $this, $total );
 
 		if ( ! $discount_handler->is_discount_valid ) {
 			$this->last_error = $discount_handler->discount_error;
@@ -564,8 +571,8 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function add_discount( $discount ) {
 
-		$this->total_discount_amount           += $discount['initial_discount'];
-		$this->total_recurring_discount_amount += $discount['recurring_discount'];
+		$this->total_discount_amount           += wpinv_sanitize_amount( $discount['initial_discount'] );
+		$this->total_recurring_discount_amount += wpinv_sanitize_amount( $discount['recurring_discount'] );
 		$this->discounts[ $discount['name'] ]   = $discount;
 
 	}
@@ -633,22 +640,64 @@ class GetPaid_Payment_Form_Submission {
 		return $this->discounts;
 	}
 
-	///////// FEES //////////////
+	/*
+	|--------------------------------------------------------------------------
+	| Fees
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with submission fees. Fees can be recurring
+	| or only one-time. Price input and Price select elements are treated as 
+	| fees.
+    */
+
+	/**
+	 * Prepares the submission's fees.
+	 *
+	 * @since 1.0.19
+	 */
+	public function process_fees() {
+
+		$fees_processor = new GetPaid_Payment_Form_Submission_Fees( $this );
+
+		if ( ! empty( $fees_processor->fee_error) ) {
+			$this->last_error = $fees_processor->fee_error;
+			return;
+		}
+
+		foreach ( $fees_processor->fees as $fee ) {
+			$this->add_fee( $fee );
+		}
+
+		do_action( 'getpaid_submissions_process_fees', array( &$this ) );
+	}
 
 	/**
 	 * Adds a fee to the submission.
 	 *
+	 * @param array $fee An array of fee details. name, initial_fee, and recurring_fee are required.
 	 * @since 1.0.19
 	 */
-	public function add_fee( $name, $amount, $recurring = false ) {
-		$amount = wpinv_sanitize_amount( $amount );
+	public function add_fee( $fee ) {
 
-		$this->total_fees_amount += $amount;
+		$this->total_fees_amount           += wpinv_sanitize_amount( $fee['initial_fee'] );
+		$this->total_recurring_fees_amount += wpinv_sanitize_amount( $fee['recurring_fee'] );
+		$this->fees[ $fee['name'] ]         = $fee;
+
+	}
+
+	/**
+	 * Removes a fee from the submission.
+	 *
+	 * @since 1.0.19
+	 */
+	public function remove_fee( $name ) {
+
 		if ( isset( $this->fees[ $name ] ) ) {
-			$amount += $this->fees[ $name ]['amount'];
+			$fee                                = $this->fees[ $name ];
+			$this->total_fees_amount           -= $fee['initial_fee'];
+			$this->total_recurring_fees_amount -= $fee['recurring_fee'];
+			unset( $this->fees[ $name ] );
 		}
-
-		$this->fees[ $name ] = compact( 'amount', 'recurring' );
 
 	}
 
@@ -662,12 +711,12 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Retrieves a specific fee.
+	 * Returns the total recurring fees amount.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_fee( $name ) {
-		return isset( $this->fees[ $name ] ) ? $this->fees[ $name ]['amount'] : 0;
+	public function get_total_recurring_fees() {
+		return $this->total_recurring_fees_amount;
 	}
 
 	/**

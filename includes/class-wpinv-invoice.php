@@ -2738,18 +2738,11 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_fees( $value ) {
 
-        $this->set_prop( 'fees', array() );
+		if ( ! is_array( $value ) ) {
+			$value = array();
+		}
 
-        // Ensure that we have an array.
-        if ( ! is_array( $value ) ) {
-            return;
-        }
-
-        foreach ( $value as $name => $data ) {
-            if ( isset( $data['amount'] ) ) {
-                $this->add_fee( $name, $data['amount'], $data['recurring'] );
-            }
-        }
+		$this->set_prop( 'fees', $value );
 
     }
 
@@ -2760,7 +2753,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  array $value taxes.
 	 */
 	public function set_taxes( $value ) {
+
+		if ( ! is_array( $value ) ) {
+			$value = array();
+		}
+
 		$this->set_prop( 'taxes', $value );
+
     }
 
     /**
@@ -2770,18 +2769,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  array $value discounts.
 	 */
 	public function set_discounts( $value ) {
-		$this->set_prop( 'discounts', array() );
 
-        // Ensure that we have an array.
-        if ( ! is_array( $value ) ) {
-            return;
-        }
+		if ( ! is_array( $value ) ) {
+			$value = array();
+		}
 
-        foreach ( $value as $name => $data ) {
-            if ( isset( $data['amount'] ) ) {
-                $this->add_discount( $name, $data['amount'], $data['recurring'] );
-            }
-        }
+		$this->set_prop( 'discounts', $value );
     }
 
     /**
@@ -3217,33 +3210,16 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
-     * Adds a fee to the invoice.
-     *
-     * @param string $fee
-     * @param float $value
-     * @return WP_Error|Bool
-     */
-    public function add_fee( $fee, $value, $recurring = false ) {
+	 * Adds a fee to the invoice.
+	 *
+	 * @param array $fee An array of fee details. name, initial_fee, and recurring_fee are required.
+	 * @since 1.0.19
+	 */
+    public function add_fee( $fee ) {
 
-        $amount = wpinv_sanitize_amount( $value );
-        $fees   = $this->get_fees();
-
-        if ( isset( $fees[ $fee ] ) && isset( $fees[ $fee ]['amount'] ) ) {
-
-            $amount = $fees[ $fee ]['amount'] += $amount;
-			$fees[ $fee ] = array(
-				'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-
-		} else {
-			$fees[ $fee ] = array(
-                'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-		}
-
-        $this->set_prop( 'fees', $fee );
+		$fees = $this->get_fees();
+		$fees[ $fee['name'] ] = $fee;
+		$this->set_prop( 'fees', $fees );
 
     }
 
@@ -3279,7 +3255,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function add_discount( $discount ) {
 
 		$discounts = $this->get_discounts();
-		$this->discounts[ $discount['name'] ] = $discount;
+		$discounts[ $discount['name'] ] = $discount;
 		$this->set_prop( 'discounts', $discounts );
 
 	}
