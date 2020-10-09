@@ -88,6 +88,13 @@ class GetPaid_Payment_Form_Submission {
 	protected $total_tax_amount = 0;
 
 	/**
+	 * The total recurring tax amount for the submission.
+	 *
+	 * @var float
+	 */
+	protected $total_recurring_tax_amount = 0;
+
+	/**
 	 * An array of fees for the submission.
 	 *
 	 * @var array
@@ -143,20 +150,6 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public $is_discount_valid = true;
 
-	/**
-	 * Checks if we have a digital vat rule.
-	 *
-	 * @var bool
-	 */
-	public $has_digital = false;
-
-	/**
-	 * Checks if we require vat.
-	 *
-	 * @var bool
-	 */
-    public $requires_vat = false;
-
     /**
 	 * Class constructor.
 	 *
@@ -171,6 +164,7 @@ class GetPaid_Payment_Form_Submission {
 		if ( isset( $_POST['getpaid_payment_form_submission'] ) ) {
 			$this->load_data( $_POST );
 		}
+
 	}
 
 	/**
@@ -283,9 +277,6 @@ class GetPaid_Payment_Form_Submission {
 
 		}
 
-		// (Maybe) validate vat number.
-		$this->maybe_validate_vat();
-
 		// Fired when we are done processing a submission.
 		do_action_ref_array( 'getpaid_process_submission', array( &$this ) );
 
@@ -322,40 +313,6 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function has_invoice() {
 		return ! empty( $this->invoice );
-	}
-
-	/**
-	 * Retrieves the vat number.
-	 *
-	 * @since 1.0.19
-	 * @return string
-	 */
-	public function get_vat_number() {
-
-		// Retrieve from the posted data.
-		if ( ! empty( $this->data['wpinv_vat_number'] ) ) {
-			return wpinv_clean( $this->data['wpinv_vat_number'] );
-		}
-
-		// Retrieve from the invoice.
-		return $this->has_invoice() ? $this->invoice->get_vat_number() : '';
-	}
-
-	/**
-	 * Retrieves the company.
-	 *
-	 * @since 1.0.19
-	 * @return string
-	 */
-	public function get_company() {
-
-		// Retrieve from the posted data.
-		if ( ! empty( $this->data['wpinv_company'] ) ) {
-			return wpinv_clean( $this->data['wpinv_company'] );
-		}
-
-		// Retrieve from the invoice.
-		return $this->has_invoice() ? $this->invoice->get_company() : '';
 	}
 
 	/**
@@ -420,7 +377,6 @@ class GetPaid_Payment_Form_Submission {
 
 		$this->subtotal_amount += $item->get_sub_total();
 
-		$this->process_item_tax( $item );
 	}
 
 	/**
@@ -442,23 +398,47 @@ class GetPaid_Payment_Form_Submission {
 		return $this->items;
 	}
 
-	///////// TAXES //////////////
+	/*
+	|--------------------------------------------------------------------------
+	| Taxes
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with submission taxes. Taxes can be recurring
+	| or only one-time.
+    */
+
+	/**
+	 * Prepares the submission's taxes.
+	 *
+	 * @since 1.0.19
+	 */
+	public function process_taxes() {
+
+		$tax_processor = new GetPaid_Payment_Form_Submission_Taxes( $this );
+
+		if ( ! empty( $tax_processor->tax_error) ) {
+			$this->last_error = $tax_processor->tax_error;
+			return;
+		}
+
+		foreach ( $tax_processor->taxes as $tax ) {
+			$this->add_tax( $tax );
+		}
+
+		do_action_ref_array( 'getpaid_submissions_process_taxes', array( &$this ) );
+	}
 
 	/**
 	 * Adds a tax to the submission.
 	 *
+	 * @param array $tax An array of tax details. name, initial_tax, and recurring_tax are required.
 	 * @since 1.0.19
 	 */
-	public function add_tax( $name, $amount, $recurring = false ) {
-		$amount = (float) wpinv_sanitize_amount( $amount );
+	public function add_tax( $tax ) {
 
-		$this->total_tax_amount += $amount;
-
-		if ( isset( $this->taxes[ $name ] ) ) {
-			$amount += $this->taxes[ $name ]['amount'];
-		}
-
-		$this->taxes[ $name ] = compact( 'amount', 'recurring' );
+		$this->total_tax_amount           += wpinv_sanitize_amount( $tax['initial_tax'] );
+		$this->total_recurring_tax_amount += wpinv_sanitize_amount( $tax['recurring_tax'] );
+		$this->taxes[ $tax['name'] ]       = $tax;
 
 	}
 
@@ -480,32 +460,6 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Maybe process tax.
-	 *
-	 * @since 1.0.19
-	 * @param GetPaid_Form_Item $item
-	 */
-	public function process_item_tax( $item ) {
-
-		// Abort early if we're not using taxes.
-		if ( ! $this->use_taxes() ) {
-			return;
-		}
-
-		$rate  = wpinv_get_tax_rate( $this->country, $this->state, $item->get_id() );
-		$price = $item->get_sub_total();
-
-		if ( wpinv_prices_include_tax() ) {
-			$item_tax = $price - ( $price - $price * $rate * 0.01 );
-		} else {
-			$item_tax = $price * $rate * 0.01;
-		}
-
-		$this->add_tax( 'Tax', $item_tax );
-
-	}
-
-	/**
 	 * Returns the total tax amount.
 	 *
 	 * @since 1.0.19
@@ -515,12 +469,12 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Retrieves a specific tax.
+	 * Returns the total recurring tax amount.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_tax( $name ) {
-		return isset( $this->taxes[ $name ] ) ? $this->taxes[ $name ]['amount'] : 0;
+	public function get_total_recurring_tax() {
+		return $this->total_recurring_tax_amount;
 	}
 
 	/**
@@ -556,11 +510,21 @@ class GetPaid_Payment_Form_Submission {
 			return;
 		}
 
+		// Process any existing invoice discounts.
+		if ( $this->has_invoice() ) {
+			$discounts = $this->get_invoice()->get_discounts();
+
+			foreach ( $discounts as $discount ) {
+				$this->add_discount( $discount );
+			}
+
+		}
+
 		if ( $discount_handler->has_discount ) {
 			$this->add_discount( $discount_handler->calculate_discount( $this ) );
 		}
 
-		do_action( 'getpaid_submissions_process_discounts', array( &$this ) );
+		do_action_ref_array( 'getpaid_submissions_process_discounts', array( &$this ) );
 	}
 
 	/**
@@ -668,7 +632,7 @@ class GetPaid_Payment_Form_Submission {
 			$this->add_fee( $fee );
 		}
 
-		do_action( 'getpaid_submissions_process_fees', array( &$this ) );
+		do_action_ref_array( 'getpaid_submissions_process_fees', array( &$this ) );
 	}
 
 	/**
@@ -775,86 +739,6 @@ class GetPaid_Payment_Form_Submission {
 	public function has_billing_email() {
 		$billing_email = $this->get_billing_email();
 		return ! empty( $billing_email );
-	}
-
-	/**
-	 * Validate VAT data.
-	 *
-	 * @since 1.0.19
-	 */
-	public function maybe_validate_vat() {
-
-		// Make sure that taxes are enabled.
-		if ( ! wpinv_use_taxes() ) {
-			return;
-		}
-
-		// Check if we have a digital VAT rule.
-		$has_digital = false;
-
-		foreach ( $this->get_items() as $item ) {
-
-			if ( 'digital' == $item->get_vat_rule() ) {
-				$has_digital = true;
-				break;
-			}
-
-		}
-
-		$this->has_digital = $has_digital;
-
-		// Check if we require vat.
-		$requires_vat = (
-			( getpaid_is_eu_state( $this->country ) && ( getpaid_is_eu_state( wpinv_get_default_country() ) || $has_digital ) )
-			|| ( getpaid_is_gst_country( $this->country ) && getpaid_is_gst_country( wpinv_get_default_country() ) )
-		);
-
-		$this->requires_vat = $requires_vat;
-
-		// Abort if we are not calculating the taxes.
-		if ( ! $has_digital && ! $requires_vat ) {
-            return;
-		}
-
-		// Prepare variables.
-		$vat_number = $this->get_vat_number();
-		$company    = $this->get_company();
-		$ip_country = WPInv_EUVat::get_country_by_ip();
-        $is_eu      = getpaid_is_eu_state( $this->country );
-        $is_ip_eu   = getpaid_is_eu_state( $ip_country );
-		$is_non_eu  = ! $is_eu && ! $is_ip_eu;
-		$prevent_b2c = wpinv_get_option( 'vat_prevent_b2c_purchase' );
-
-		// If we're preventing business to consumer purchases...
-		if ( ! empty( $prevent_b2c ) && ! $is_non_eu && ( empty( $vat_number ) || ! $requires_vat ) ) {
-
-            if ( $is_eu ) {
-				$this->last_error = wp_sprintf(
-					__( 'Please enter your %s number to verify your purchase is by an EU business.', 'invoicing' ),
-					getpaid_vat_name()
-				);
-            } else if ( $has_digital && $is_ip_eu ) {
-
-				$this->last_error = wp_sprintf(
-					__( 'Sales to non-EU countries cannot be completed because %s must be applied.', 'invoicing' ),
-					getpaid_vat_name()
-				);
-
-			}
-
-		}
-
-		// Abort if we are not validating vat.
-		if ( ! $is_eu || ! $requires_vat || empty( $vat_number ) ) {
-            return;
-		}
-
-		$is_valid = WPInv_EUVat::validate_vat_number( $vat_number, $company, $this->country );
-
-		if ( is_string( $is_valid ) ) {
-			$this->last_error = $is_valid;
-		}
-
 	}
 
 }

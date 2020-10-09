@@ -3298,29 +3298,13 @@ class WPInv_Invoice extends GetPaid_Data {
      */
     public function add_tax( $tax, $value, $recurring = true ) {
 
-        if ( ! $this->is_taxable() ) {
-            return;
+        if ( $this->is_taxable() ) {
+
+            $taxes                 = $this->get_taxes();
+			$taxes[ $tax['name'] ] = $tax;
+			$this->set_prop( 'taxes', $tax );
+
         }
-
-        $amount    = wpinv_sanitize_amount( $value );
-        $taxes     = $this->get_taxes();
-
-        if ( isset( $taxes[ $tax ] ) && isset( $taxes[ $tax ]['amount'] ) ) {
-
-            $amount = $taxes[ $tax ]['amount'] += $amount;
-			$taxes[ $tax ] = array(
-                'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-
-		} else {
-			$taxes[ $tax ] = array(
-                'amount'    => $amount,
-                'recurring' => (bool) $recurring,
-            );
-		}
-
-        $this->set_prop( 'taxes', $tax );
 
     }
 
@@ -3346,7 +3330,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
 	 */
 	public function remove_tax( $tax ) {
-        $taxes = $this->get_discounts();
+        $taxes = $this->get_taxes();
         if ( isset( $taxes[ $tax ] ) ) {
             unset( $taxes[ $tax ] );
             $this->set_prop( 'taxes', $taxes );
