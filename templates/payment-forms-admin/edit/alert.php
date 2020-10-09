@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group form-check'>
-    <input :for="active_form_element.id + '_edit_dismissible'" v-model='active_form_element.dismissible' type='checkbox' class='form-check-input' />
+    <input :id="active_form_element.id + '_edit_dismissible'" v-model='active_form_element.dismissible' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit_dismissible'"><?php esc_html_e( 'Is Dismissible?', 'invoicing' ); ?></label>
 </div>
 

@@ -1925,10 +1925,17 @@ textarea.wpi-email_overdue_content {
     cursor: move;
 }
 
+.wpinv-form-builder-element-preview.address {
+    padding-bottom: 0;
+}
+
+.wpinv-form-builder-element-preview.address .address-field-preview:last-child {
+    margin-bottom: 0;
+}
+
 .wpinv-form-builder-element-preview:hover,
 .wpinv-form-builder-element-preview.active {
     border: 1px dashed #ffb74d;
-    /*background-color: #fff3e0;*/
 }
 
 .wpinv-form-builder-element-preview h2 {
@@ -2033,7 +2040,7 @@ textarea.wpi-email_overdue_content {
     margin: -10px;
 }
 
-.wpinv-payment-form-field-preview {
+.wpinv-form-builder-element-preview-inner {
     position: relative;
 }
 
@@ -2176,9 +2183,7 @@ textarea.wpi-email_overdue_content {
 }
 
 .getpaid-price-buttons input[type="radio"]{
-    visibility: hidden;
-    height: 0;
-    width: 0;
+    display: none;
 }
 
 .getpaid-price-buttons input[type="radio"]:checked + label,

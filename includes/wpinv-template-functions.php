@@ -1715,6 +1715,35 @@ function getpaid_payment_form_edit_element_template( $post ) {
 add_action( 'getpaid_payment_form_edit_element_template', 'getpaid_payment_form_edit_element_template' );
 
 /**
+ * Render an element's preview.
+ *
+ */
+function getpaid_payment_form_render_element_preview_template() {
+
+    // Retrieve all elements.
+    $all_elements = wp_list_pluck( getpaid()->form_elements->get_elements(), 'type' );
+
+    foreach ( $all_elements as $element ) {
+
+        // Try to locate the appropriate template.
+        $element = sanitize_key( $element );
+        $located = wpinv_locate_template( "payment-forms-admin/previews/$element.php" );
+
+        // Continue if this is not our element.
+        if ( empty( $located ) || ! file_exists( $located ) ) {
+            continue;
+        }
+
+        // Include the template for the element.
+        echo "<div v-if=\"form_element.type=='$element'\">";
+        include $located;
+        echo '</div>';
+    }
+
+}
+add_action( 'wpinv_payment_form_render_element_template', 'getpaid_payment_form_render_element_preview_template' );
+
+/**
  * Shows a list of gateways that support recurring payments.
  */
 function wpinv_get_recurring_gateways_text() {

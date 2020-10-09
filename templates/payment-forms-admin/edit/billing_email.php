@@ -18,11 +18,6 @@ defined( 'ABSPATH' ) || exit;
     </label>
 </div>
 
-<div class='form-group form-check'>
-    <input :for="active_form_element.id + '_edit_hide'" v-model='active_form_element.hide_billing_email' type='checkbox' class='form-check-input' />
-    <label class='form-check-label' :for="active_form_element.id + '_edit_hide'"><?php esc_html_e( 'Hide if the user is logged in', 'invoicing' ); ?></label>
-</div>
-
 <div class='form-group'>
     <label class="d-block">
         <span><?php esc_html_e( 'Placeholder text', 'invoicing' ); ?></span>
@@ -38,6 +33,11 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group form-check'>
-    <input :for="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
+    <input :id="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
+</div>
+
+<div class='form-group form-check'>
+    <input :id="active_form_element.id + '_edit_hide'" v-model='active_form_element.hide_billing_email' type='checkbox' class='form-check-input' />
+    <label class='form-check-label' :for="active_form_element.id + '_edit_hide'"><?php esc_html_e( 'Hide if the user is logged in', 'invoicing' ); ?></label>
 </div>

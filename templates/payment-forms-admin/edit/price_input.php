@@ -31,6 +31,13 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
     <label class="d-block">
+        <span><?php esc_html_e( 'Minimum Amount', 'invoicing' ); ?></span>
+        <input v-model='active_form_element.minimum' class='form-control' type="text"/>
+    </label>
+</div>
+
+<div class='form-group'>
+    <label class="d-block">
         <span><?php esc_html_e( 'Placeholder text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.placeholder' class='form-control' type="text"/>
     </label>
