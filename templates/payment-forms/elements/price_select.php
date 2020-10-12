@@ -31,7 +31,7 @@ if ( $select_type == 'select' ) {
             'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
             'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
             'label_type' => 'vertical',
-            'class'      => 'getpaid-price-select-dropdown',
+            'class'      => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
             'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
             'options'    => $options,
         )
@@ -47,7 +47,7 @@ if ( $select_type == 'radios' ) {
             'id'         => esc_attr( $id ) . uniqid( '_' ),
             'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
             'label_type' => 'vertical',
-            'class'      => 'getpaid-price-select-radio',
+            'class'      => 'getpaid-price-select-radio getpaid-refresh-on-change',
             'inline'     => false,
             'options'    => $options,
             'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
@@ -88,7 +88,7 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
         }
         echo "
             <span>
-                <input type='radio' class='getpaid-price-select-button' id='$_id' value='$price' name='$id' $checked />
+                <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change' id='$_id' value='$price' name='$id' $checked />
                 <label for='$_id' class='$class'><span>$label</span></label>
             </span>
             ";
@@ -110,7 +110,7 @@ if ( $select_type == 'checkboxes' ) {
         $processed ++;
         echo "
             <label class='d-block'>
-                <input type='checkbox' class='getpaid-price-select-checkbox' name='{$id}[]' value='$price' $checked />
+                <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change' name='{$id}[]' value='$price' $checked />
                 <span>$label</span>
             </label>
             ";

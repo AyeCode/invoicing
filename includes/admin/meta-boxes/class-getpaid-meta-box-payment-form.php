@@ -103,11 +103,8 @@ class GetPaid_Meta_Box_Payment_Form {
             $form_items = array();
         }
 
-        // ... and that new items are saved to the db.
-        $form_items = self::maybe_save_items( $form_items );
-
         // Add it to the form.
-        $form->set_items( $form_items );
+        $form->set_items( self::item_to_objects( $form_items ) );
 
         // Save form elements.
         $form_elements = json_decode( wp_unslash( $_POST['wpinv_form_elements'] ), true );
@@ -124,56 +121,22 @@ class GetPaid_Meta_Box_Payment_Form {
     }
 
     /**
-     * Saves unsaved form items.
-     */
-    public static function maybe_save_items( $items ) {
+	 * Converts an array fo form items to objects.
+	 *
+	 * @param array $items
+	 */
+	public static function item_to_objects( $items ) {
 
-        $saved = array();
+        $objects = array();
 
-        foreach( $items as $item ) {
-
-            if ( is_numeric( $item['id'] ) ) {
-                $saved[] = $item;
-                continue;
-            }
-
-            $new_item = new WPInv_Item();
-
-            // Save post data.
-            $new_item->set_props(
-                array(
-                    'name'               => sanitize_text_field( $item['title'] ),
-                    'description'        => wp_kses_post( $item['description'] ),
-                    'status'             => 'publish',
-                    'type'               => empty( $item['type'] ) ? 'custom' : $item['type'],
-                    'price'              => wpinv_sanitize_amount( $item['price'] ),
-                    'vat_rule'           => empty( $item['rule'] ) ? 'digital' : $item['rule'],
-                    'vat_class'          => empty( $item['class'] ) ? '_standard' : $item['class'],
-                    'is_dynamic_pricing' => empty( $item['custom_price'] ) ? 0 : (int) $item['custom_price'],
-                    'minimum_price'      => empty( $item['minimum_price'] ) ? 0 : (float) $item['minimum_price'],
-                )
-            );
-
-            // Save the item.
-            $new_item->save();
-
-            if ( $new_item->get_id() ) {
-                $item['id'] = $new_item->get_id();
-                $saved[] = $item;
-            }
-
+        foreach ( $items as $item ) {
+            $_item = new GetPaid_Form_Item( $item['id'] );
+            $_item->set_allow_quantities( (bool) $item['allow_quantities'] );
+            $_item->set_allow_quantities( (bool) $item['required'] );
+            $objects[] = $_item;
         }
 
-        foreach ( $saved as $i => $item ) {
-            foreach ( array( 'new', 'type', 'class', 'rule', 'price', 'title', 'custom_price', 'minimum_price', 'recurring' ) as $key ) {
-                if ( isset( $item[ $key ] ) ) {
-                    unset( $saved[ $i ][ $key ] );
-                }
-            }
-        }
-
-        return $saved;
-
+        return $objects;
     }
 
 }

@@ -26,14 +26,14 @@ defined( 'ABSPATH' ) || exit;
 <div class='form-group'>
     <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Alert Type', 'invoicing' ) ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
-        <option value='btn-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>
-        <option value='btn-secondary'><?php esc_html_e( 'Secondary', 'invoicing' ); ?></option>
-        <option value='btn-success'><?php esc_html_e( 'Success', 'invoicing' ); ?></option>
-        <option value='btn-danger'><?php esc_html_e( 'Danger', 'invoicing' ); ?></option>
-        <option value='btn-warning'><?php esc_html_e( 'Warning', 'invoicing' ); ?></option>
-        <option value='btn-info'><?php esc_html_e( 'Info', 'invoicing' ); ?></option>
-        <option value='btn-light'><?php esc_html_e( 'Light', 'invoicing' ); ?></option>
-        <option value='btn-dark'><?php esc_html_e( 'Dark', 'invoicing' ); ?></option>
-        <option value='btn-link'><?php esc_html_e( 'Link', 'invoicing' ); ?></option>
+        <option value='alert-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>
+        <option value='alert-secondary'><?php esc_html_e( 'Secondary', 'invoicing' ); ?></option>
+        <option value='alert-success'><?php esc_html_e( 'Success', 'invoicing' ); ?></option>
+        <option value='alert-danger'><?php esc_html_e( 'Danger', 'invoicing' ); ?></option>
+        <option value='alert-warning'><?php esc_html_e( 'Warning', 'invoicing' ); ?></option>
+        <option value='alert-info'><?php esc_html_e( 'Info', 'invoicing' ); ?></option>
+        <option value='alert-light'><?php esc_html_e( 'Light', 'invoicing' ); ?></option>
+        <option value='alert-dark'><?php esc_html_e( 'Dark', 'invoicing' ); ?></option>
+        <option value='alert-link'><?php esc_html_e( 'Link', 'invoicing' ); ?></option>
     </select>
 </div>

@@ -196,7 +196,6 @@ jQuery(function ($) {
 
 				if ( ! exists ) {
 					this.form_items.push( selected_item );
-					console.log(this.form_items)
 				}
 
 				$(select)

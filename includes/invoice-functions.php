@@ -492,9 +492,9 @@ function wpinv_get_invoices( $args ) {
             'total'         => $invoices->found_posts,
             'max_num_pages' => $invoices->max_num_pages,
         );
-    } else {
-        return $results;
     }
+
+    return $results;
 
 }
 

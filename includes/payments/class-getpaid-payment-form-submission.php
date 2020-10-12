@@ -17,6 +17,42 @@ class GetPaid_Payment_Form_Submission {
 	public $id = null;
 
 	/**
+	 * The raw submission data.
+	 *
+	 * @var array
+	 */
+	protected $data = null;
+
+	/**
+	 * Submission totals
+	 *
+	 * @var array
+	 */
+	protected $totals = array(
+
+		'subtotal'      => array(
+			'initial'   => 0,
+			'recurring' => 0,
+		),
+
+		'discount'      => array(
+			'initial'   => 0,
+			'recurring' => 0,
+		),
+
+		'fees'          => array(
+			'initial'   => 0,
+			'recurring' => 0,
+		),
+
+		'taxes'         => array(
+			'initial'   => 0,
+			'recurring' => 0,
+		),
+
+	);
+
+	/**
 	 * Sets the associated payment form.
 	 *
 	 * @var GetPaid_Payment_Form
@@ -46,53 +82,11 @@ class GetPaid_Payment_Form_Submission {
 	protected $invoice = null;
 
 	/**
-	 * The raw submission data.
+	 * The recurring item for the submission.
 	 *
-	 * @var array
+	 * @var int
 	 */
-	protected $data = null;
-
-	/**
-	 * Whether this submission contains a recurring item.
-	 *
-	 * @var bool
-	 */
-	public $has_recurring = false;
-
-	/**
-	 * The sub total amount for the submission.
-	 *
-	 * @var float
-	 */
-	public $subtotal_amount = 0;
-
-	/**
-	 * The total discount amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_discount_amount = 0;
-
-	/**
-	 * The total recurring discount amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_recurring_discount_amount = 0;
-
-	/**
-	 * The total tax amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_tax_amount = 0;
-
-	/**
-	 * The total recurring tax amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_recurring_tax_amount = 0;
+	public $has_recurring = 0;
 
 	/**
 	 * An array of fees for the submission.
@@ -100,20 +94,6 @@ class GetPaid_Payment_Form_Submission {
 	 * @var array
 	 */
 	protected $fees = array();
-
-	/**
-	 * The total fees amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_fees_amount = 0;
-
-	/**
-	 * The total fees amount for the submission.
-	 *
-	 * @var float
-	 */
-	protected $total_recurring_fees_amount = 0;
 
 	/**
 	 * An array of discounts for the submission.
@@ -143,13 +123,6 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public $last_error = null;
 
-	/**
-	 * Is the discount valid?
-	 *
-	 * @var bool
-	 */
-	public $is_discount_valid = true;
-
     /**
 	 * Class constructor.
 	 *
@@ -158,7 +131,7 @@ class GetPaid_Payment_Form_Submission {
 
 		// Set the state and country to the default state and country.
 		$this->country = wpinv_default_billing_country();
-		$this->state = wpinv_get_default_state();
+		$this->state   = wpinv_get_default_state();
 
 		// Do we have an actual submission?
 		if ( isset( $_POST['getpaid_payment_form_submission'] ) ) {
@@ -174,115 +147,78 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function load_data( $data ) {
 
-		// Prepare submitted data...
-		$data = wp_unslash( $data );
+		// Remove slashes from the submitted data...
+		$data       = wp_unslash( $data );
 
-		// Filter the data.
-		$data = apply_filters( 'getpaid_submission_data', $data, $this );
+		// Allow plugins to filter the data.
+		$data       = apply_filters( 'getpaid_submission_data', $data, $this );
 
+		// Cache it...
 		$this->data = $data;
 
-		$this->id = md5( wp_json_encode( $data ) );
+		// Then generate a unique id from the data.
+		$this->id   = md5( wp_json_encode( $data ) );
 
-		// Every submission needs an active payment form.
-		if ( empty( $data['form_id'] ) ) {
-			$this->last_error = __( 'Missing payment form', 'invoicing' );
-            return;
-		}
+		// Finally, process the submission.
+		try {
 
-		// Fetch the payment form.
-		$form = new GetPaid_Payment_Form( $data['form_id'] );
+			// Each process is passed an instance of the class (with reference)
+			// and should throw an Exception whenever it encounters one.
+			$processors = apply_filters(
+				'getpaid_payment_form_submission_processors',
+				array(
+					array( $this, 'process_payment_form' ),
+					array( $this, 'process_invoice' ),
+					array( $this, 'process_fees' ),
+					array( $this, 'process_items' ),
+					array( $this, 'process_taxes' ),
+					array( $this, 'process_discount' ),
+				),
+				$this		
+			);
 
-		if ( ! $form->is_active() ) {
-			$this->last_error = __( 'Payment form not active', 'invoicing' );
-			return;
-		}
-
-		// Fetch the payment form.
-		$this->payment_form = $form;
-
-		// For existing invoices, make sure that it is valid.
-        if ( ! empty( $data['invoice_id'] ) ) {
-            $invoice = wpinv_get_invoice( $data['invoice_id'] );
-
-            if ( empty( $invoice ) ) {
-				$this->last_error = __( 'Invalid invoice', 'invoicing' );
-                return;
+			foreach ( $processors as $processor ) {
+				call_user_func_array( $processor, array( &$this ) );
 			}
 
-			if ( $invoice->is_paid() ) {
-				$this->last_error = __( 'This invoice is already paid for.', 'invoicing' );
-                return;
-			}
-
-			$this->payment_form->set_items( $invoice->get_items() );
-
-			$this->country = $invoice->get_country();
-			$this->state   = $invoice->get_state();
-			$this->invoice = $invoice;
-
-		// Default forms do not have items.
-        } else if ( $form->is_default() && isset( $data['getpaid-items'] ) ) {
-			$this->payment_form->set_items( wpinv_clean( $data['getpaid-items'] ) );
-		}
-
-		// User's country.
-		if ( ! empty( $data['wpinv_country'] ) ) {
-			$this->country = $data['wpinv_country'];
-		}
-
-		// User's state.
-		if ( ! empty( $data['wpinv_state'] ) ) {
-			$this->country = $data['wpinv_state'];
-		}
-
-		// Handle items.
-		$selected_items = array();
-		if ( ! empty( $data['getpaid-items'] ) ) {
-			$selected_items = wpinv_clean( $data['getpaid-items'] );
-		}
-
-		foreach ( $this->payment_form->get_items() as $item ) {
-
-			// Continue if this is an optional item and it has not been selected.
-			if ( ! $item->is_required() && ! isset( $selected_items[ $item->get_id() ] ) ) {
-				continue;
-			}
-
-			// (maybe) let customers change the quantities and prices.
-			if ( isset( $selected_items[ $item->get_id() ] ) ) {
-
-				// Maybe change the quantities.
-				if ( $item->allows_quantities() && is_numeric( $selected_items[ $item->get_id() ]['quantity'] ) ) {
-					$item->set_quantity( (int) $selected_items[ $item->get_id() ]['quantity'] );
-				}
-
-				// Maybe change the price.
-				if ( $item->user_can_set_their_price() ) {
-					$price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
-
-					// But don't get lower than the minimum price.
-					if ( $price < $item->get_minimum_price() ) {
-						$price = $item->get_minimum_price();
-					}
-
-					$item->set_price( $price );
-
-				}
-
-			}
-
-			// Add the item to the form.
-			$this->add_item( $item );
-
+		} catch ( Exception $e ) {
+			$this->last_error = $e->getMessage();
 		}
 
 		// Fired when we are done processing a submission.
 		do_action_ref_array( 'getpaid_process_submission', array( &$this ) );
 
-		// Handle discounts.
-		$this->process_discount();
+	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| Payment Forms.
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with the submission's payment form. Ensure that the
+	| submission has an active payment form etc.
+    */
+
+	/**
+	 * Prepares the submission's payment form.
+	 *
+	 * @since 1.0.19
+	 */
+	public function process_payment_form() {
+
+		// Every submission needs an active payment form.
+		if ( empty( $this->data['form_id'] ) ) {
+			throw new Exception( __( 'Missing payment form', 'invoicing' ) );
+		}
+
+		// Fetch the payment form.
+		$this->payment_form = new GetPaid_Payment_Form( $this->data['form_id'] );
+
+		if ( ! $this->payment_form->is_active() ) {
+			throw new Exception( __( 'Payment form not active', 'invoicing' ) );
+		}
+
+		do_action_ref_array( 'getpaid_submissions_process_payment_form', array( &$this ) );
 	}
 
     /**
@@ -293,6 +229,49 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function get_payment_form() {
 		return $this->payment_form;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Invoices.
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with the submission's invoice. Some submissions
+	| might be for an existing invoice.
+	*/
+
+	/**
+	 * Prepares the submission's invoice.
+	 *
+	 * @since 1.0.19
+	 */
+	public function process_invoice() {
+
+		// Abort if there is no invoice.
+		if ( empty( $this->data['invoice_id'] ) ) {
+			return;
+		}
+
+		// If the submission is for an existing invoice, ensure that it exists
+		// and that it is not paid for.
+		$invoice = wpinv_get_invoice( $this->data['invoice_id'] );
+
+        if ( empty( $invoice ) ) {
+			throw new Exception( __( 'Invalid invoice', 'invoicing' ) );
+		}
+
+		if ( $invoice->is_paid() ) {
+			throw new Exception( __( 'This invoice is already paid for.', 'invoicing' ) );
+		}
+
+		$this->payment_form->set_items( $invoice->get_items() );
+		$this->payment_form->invoice = $invoice;
+
+		$this->country = $invoice->get_country();
+		$this->state   = $invoice->get_state();
+		$this->invoice = $invoice;
+
+		do_action_ref_array( 'getpaid_submissions_process_invoice', array( &$this ) );
 	}
 
 	/**
@@ -315,39 +294,30 @@ class GetPaid_Payment_Form_Submission {
 		return ! empty( $this->invoice );
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| Items.
+	|--------------------------------------------------------------------------
+	|
+	| Functions for dealing with the submission's items. Submissions can only have one
+	| recurring item. But can have an unlimited number of non-recurring items.
+	*/
+
 	/**
-	 * Returns the appropriate currency for the submission.
+	 * Prepares the submission's items.
 	 *
 	 * @since 1.0.19
-	 * @return string
 	 */
-	public function get_currency() {
-		if ( $this->has_invoice() ) {
-			return $this->invoice->get_currency();
+	public function process_items() {
+
+		$processor = new GetPaid_Payment_Form_Submission_Items( $this );
+
+		foreach ( $processor->items as $item ) {
+			$this->add_item( $item );
 		}
-		return wpinv_get_currency();
-    }
 
-    /**
-	 * Returns the raw submission data.
-	 *
-	 * @since 1.0.19
-	 * @return array
-	 */
-	public function get_data() {
-		return $this->data;
+		do_action_ref_array( 'getpaid_submissions_process_items', array( &$this ) );
 	}
-
-	/**
-	 * Checks if a required field is set.
-	 *
-	 * @since 1.0.19
-	 */
-	public function is_required_field_set( $field ) {
-		return empty( $field['required'] ) || ! empty( $this->data[ $field['id'] ] );
-	}
-
-	///////// Items //////////////
 
 	/**
 	 * Adds an item to the submission.
@@ -362,30 +332,63 @@ class GetPaid_Payment_Form_Submission {
 			return;
 		}
 
-		// Do we have a recurring item?
+		// Each submission can only contain one recurring item.
 		if ( $item->is_recurring() ) {
 
-			if ( $this->has_recurring ) {
-				$this->last_error = __( 'You can only buy one recurring item at a time.', 'invoicing' );
+			if ( $this->has_recurring != 0 ) {
+				throw new Exception( __( 'You can only buy one recurring item at a time.', 'invoicing' ) );
 			}
 
-			$this->has_recurring = true;
+			$this->has_recurring = $item->get_id();
 
 		}
 
-		$this->items[ $item->get_id() ] = $item;
-
-		$this->subtotal_amount += $item->get_sub_total();
+		// Update the items and totals.
+		$this->items[ $item->get_id() ]         = $item;
+		$this->totals['subtotal']['initial']   += $item->get_sub_total();
+		$this->totals['subtotal']['recurring'] += $item->get_recurring_sub_total();
 
 	}
 
 	/**
-	 * Retrieves a specific item.
+	 * Removes a specific item.
+	 * 
+	 * You should not call this method after the discounts and taxes
+	 * have been calculated.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_item( $item_id ) {
-		return isset( $this->items[ $item_id ] ) ? $this->items[ $item_id ] : null;
+	public function remove_item( $item_id ) {
+
+		if ( isset( $this->items[ $item_id ] ) ) {
+			$this->totals['subtotal']['initial']   -= $this->items[ $item_id ]->get_sub_total();
+			$this->totals['subtotal']['recurring'] -= $this->items[ $item_id ]->get_recurring_sub_total();
+
+			if ( $this->items[ $item_id ]->is_recurring() ) {
+				$this->has_recurring = 0;
+			}
+
+			unset( $this->items[ $item_id ] );
+		}
+		
+	}
+
+	/**
+	 * Returns the subtotal.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_subtotal() {
+		return $this->totals['subtotal']['initial'];
+	}
+
+	/**
+	 * Returns the recurring subtotal.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_recurring_subtotal() {
+		return $this->totals['subtotal']['recurring'];
 	}
 
 	/**
@@ -414,14 +417,23 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function process_taxes() {
 
-		$tax_processor = new GetPaid_Payment_Form_Submission_Taxes( $this );
-
-		if ( ! empty( $tax_processor->tax_error) ) {
-			$this->last_error = $tax_processor->tax_error;
+		// Abort if we're not using taxes.
+		if ( ! $this->use_taxes() ) {
 			return;
 		}
 
-		foreach ( $tax_processor->taxes as $tax ) {
+		// If a custom country && state has been passed in, use it to calculate taxes.
+		if ( ! empty( $this->data['wpinv_country'] ) ) {
+			$this->country = $this->data['wpinv_country'];
+		}
+
+		if ( ! empty( $this->data['wpinv_state'] ) ) {
+			$this->country = $this->data['wpinv_state'];
+		}
+
+		$processor = new GetPaid_Payment_Form_Submission_Taxes( $this );
+
+		foreach ( $processor->taxes as $tax ) {
 			$this->add_tax( $tax );
 		}
 
@@ -435,10 +447,23 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function add_tax( $tax ) {
+		$this->taxes[ $tax['name'] ]         = $tax;
+		$this->totals['taxes']['initial']   += wpinv_sanitize_amount( $tax['initial_tax'] );
+		$this->totals['taxes']['recurring'] += wpinv_sanitize_amount( $tax['recurring_tax'] );
+	}
 
-		$this->total_tax_amount           += wpinv_sanitize_amount( $tax['initial_tax'] );
-		$this->total_recurring_tax_amount += wpinv_sanitize_amount( $tax['recurring_tax'] );
-		$this->taxes[ $tax['name'] ]       = $tax;
+	/**
+	 * Removes a specific tax.
+	 *
+	 * @since 1.0.19
+	 */
+	public function remove_tax( $tax_name ) {
+
+		if ( isset( $this->taxes[ $tax_name ] ) ) {
+			$this->totals['taxes']['initial']   -= $this->taxes[ $tax_name ]['initial_tax'];
+			$this->totals['taxes']['recurring'] -= $this->taxes[ $tax_name ]['recurring_tax'];
+			unset( $this->taxes[ $tax_name ] );
+		}
 
 	}
 
@@ -460,21 +485,21 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Returns the total tax amount.
+	 * Returns the tax.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_tax() {
-		return $this->total_tax_amount;
+	public function get_tax() {
+		return $this->totals['taxes']['initial'];
 	}
 
 	/**
-	 * Returns the total recurring tax amount.
+	 * Returns the recurring tax.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_recurring_tax() {
-		return $this->total_recurring_tax_amount;
+	public function get_recurring_tax() {
+		return $this->totals['taxes']['recurring'];
 	}
 
 	/**
@@ -502,26 +527,12 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function process_discount() {
 
-		$total            = $this->subtotal_amount + $this->get_total_fees() + $this->get_total_tax();
-		$discount_handler = new GetPaid_Payment_Form_Submission_Discount( $this, $total );
+		$initial_total    = $this->get_subtotal() + $this->get_fee() + $this->get_tax();
+		$recurring_total  = $this->get_recurring_subtotal() + $this->get_recurring_fee() + $this->get_recurring_tax();
+		$processor        = new GetPaid_Payment_Form_Submission_Discount( $this, $initial_total, $recurring_total );
 
-		if ( ! $discount_handler->is_discount_valid ) {
-			$this->last_error = $discount_handler->discount_error;
-			return;
-		}
-
-		// Process any existing invoice discounts.
-		if ( $this->has_invoice() ) {
-			$discounts = $this->get_invoice()->get_discounts();
-
-			foreach ( $discounts as $discount ) {
-				$this->add_discount( $discount );
-			}
-
-		}
-
-		if ( $discount_handler->has_discount ) {
-			$this->add_discount( $discount_handler->calculate_discount( $this ) );
+		foreach ( $processor->discounts as $discount ) {
+			$this->add_discount( $discount );
 		}
 
 		do_action_ref_array( 'getpaid_submissions_process_discounts', array( &$this ) );
@@ -534,11 +545,9 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function add_discount( $discount ) {
-
-		$this->total_discount_amount           += wpinv_sanitize_amount( $discount['initial_discount'] );
-		$this->total_recurring_discount_amount += wpinv_sanitize_amount( $discount['recurring_discount'] );
 		$this->discounts[ $discount['name'] ]   = $discount;
-
+		$this->totals['discount']['initial']   += wpinv_sanitize_amount( $discount['initial_discount'] );
+		$this->totals['discount']['recurring'] += wpinv_sanitize_amount( $discount['recurring_discount'] );
 	}
 
 	/**
@@ -549,9 +558,8 @@ class GetPaid_Payment_Form_Submission {
 	public function remove_discount( $name ) {
 
 		if ( isset( $this->discounts[ $name ] ) ) {
-			$discount                               = $this->discounts[ $name ];
-			$this->total_discount_amount           -= $discount['initial_discount'];
-			$this->total_recurring_discount_amount -= $discount['recurring_discount'];
+			$this->totals['discount']['initial']   -= $this->discounts[ $name ]['initial_discount'];
+			$this->totals['discount']['recurring'] -= $this->discounts[ $name ]['recurring_discount'];
 			unset( $this->discounts[ $name ] );
 		}
 
@@ -578,21 +586,21 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Returns the total discount amount.
+	 * Returns the discount.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_discount() {
-		return $this->total_discount_amount;
+	public function get_discount() {
+		return $this->totals['discount']['initial'];
 	}
 
 	/**
-	 * Returns the total recurring discount amount.
+	 * Returns the recurring discount.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_recurring_discount() {
-		return $this->total_recurring_discount_amount;
+	public function get_recurring_discount() {
+		return $this->totals['discount']['recurring'];
 	}
 
 	/**
@@ -623,11 +631,6 @@ class GetPaid_Payment_Form_Submission {
 
 		$fees_processor = new GetPaid_Payment_Form_Submission_Fees( $this );
 
-		if ( ! empty( $fees_processor->fee_error) ) {
-			$this->last_error = $fees_processor->fee_error;
-			return;
-		}
-
 		foreach ( $fees_processor->fees as $fee ) {
 			$this->add_fee( $fee );
 		}
@@ -643,9 +646,9 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function add_fee( $fee ) {
 
-		$this->total_fees_amount           += wpinv_sanitize_amount( $fee['initial_fee'] );
-		$this->total_recurring_fees_amount += wpinv_sanitize_amount( $fee['recurring_fee'] );
 		$this->fees[ $fee['name'] ]         = $fee;
+		$this->totals['fees']['initial']   += wpinv_sanitize_amount( $fee['initial_fee'] );
+		$this->totals['fees']['recurring'] += wpinv_sanitize_amount( $fee['recurring_fee'] );
 
 	}
 
@@ -657,30 +660,29 @@ class GetPaid_Payment_Form_Submission {
 	public function remove_fee( $name ) {
 
 		if ( isset( $this->fees[ $name ] ) ) {
-			$fee                                = $this->fees[ $name ];
-			$this->total_fees_amount           -= $fee['initial_fee'];
-			$this->total_recurring_fees_amount -= $fee['recurring_fee'];
+			$this->totals['fees']['initial']   -= $this->fees[ $name ]['initial_fee'];
+			$this->totals['fees']['recurring'] -= $this->fees[ $name ]['recurring_fee'];
 			unset( $this->fees[ $name ] );
 		}
 
 	}
 
 	/**
-	 * Returns the total fees amount.
+	 * Returns the fees.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_fees() {
-		return $this->total_fees_amount;
+	public function get_fee() {
+		return $this->totals['fees']['initial'];
 	}
 
 	/**
-	 * Returns the total recurring fees amount.
+	 * Returns the recurring fees.
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_total_recurring_fees() {
-		return $this->total_recurring_fees_amount;
+	public function get_recurring_fee() {
+		return $this->totals['fees']['recurring'];
 	}
 
 	/**
@@ -692,7 +694,23 @@ class GetPaid_Payment_Form_Submission {
 		return $this->fees;
 	}
 
-	// MISC //
+	/**
+	 * Checks if there are any fees for the form.
+	 *
+	 * @return bool
+	 * @since 1.0.19
+	 */
+	public function has_fees() {
+		return count( $this->fees ) !== 0;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| MISC
+	|--------------------------------------------------------------------------
+	|
+	| Extra submission functions.
+    */
 
 	/**
 	 * Returns the total amount to collect for this submission.
@@ -700,9 +718,18 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_total() {
-		$total = $this->subtotal_amount + $this->get_total_fees() - $this->get_total_discount() + $this->get_total_tax();
-		$total = apply_filters( 'getpaid_get_submission_total_amount', $total, $this  );
-		return wpinv_sanitize_amount( $total );
+		$total = $this->get_subtotal() + $this->get_fee() + $this->get_tax() - $this->get_discount();
+		return max( $total, 0 );
+	}
+
+	/**
+	 * Returns the recurring total amount to collect for this submission.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_recurring_total() {
+		$total = $this->get_recurring_subtotal() + $this->get_recurring_fee() + $this->get_recurring_tax() - $this->get_recurring_discount();
+		return max( $total, 0 );
 	}
 
 	/**
@@ -710,15 +737,16 @@ class GetPaid_Payment_Form_Submission {
 	 *
 	 * @since 1.0.19
 	 */
-	public function get_payment_details() {
-		$collect = $this->subtotal_amount + $this->get_total_fees() - $this->get_total_discount() + $this->get_total_tax();
+	public function should_collect_payment_details() {
+		$initial   = $this->get_total();
+		$recurring = $this->get_recurring_total();
 
-		if ( $this->has_recurring ) {
-			$collect = true;
+		if ( $this->has_recurring == 0 ) {
+			$recurring = 0;
 		}
 
-		$collect = apply_filters( 'getpaid_submission_collect_payment_details', $collect, $this  );
-		return $collect;
+		$collect = $initial > 0 || $recurring > 0;
+		return apply_filters( 'getpaid_submission_should_collect_payment_details', $collect, $this  );
 	}
 
 	/**
@@ -727,8 +755,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_billing_email() {
-		$billing_email = empty( $this->data['billing_email'] ) ? '' : $this->data['billing_email'];
-		return apply_filters( 'getpaid_get_submission_billing_email', $billing_email, $this  );
+		return apply_filters( 'getpaid_get_submission_billing_email', $this->get_field( 'billing_email' ), $this  );
 	}
 
 	/**
@@ -739,6 +766,55 @@ class GetPaid_Payment_Form_Submission {
 	public function has_billing_email() {
 		$billing_email = $this->get_billing_email();
 		return ! empty( $billing_email );
+	}
+
+	/**
+	 * Returns the appropriate currency for the submission.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_currency() {
+		return $this->has_invoice() ? $this->invoice->get_currency() : wpinv_get_currency();
+    }
+
+    /**
+	 * Returns the raw submission data.
+	 *
+	 * @since 1.0.19
+	 * @return array
+	 */
+	public function get_data() {
+		return $this->data;
+	}
+
+	/**
+	 * Returns a field from the submission data
+	 *
+	 * @param string $field
+	 * @since 1.0.19
+	 * @return mixed
+	 */
+	public function get_field( $field ) {
+		return isset( $this->data[ $field ] ) ? $this->data[ $field ] : '';
+	}
+
+	/**
+	 * Checks if a required field is set.
+	 *
+	 * @since 1.0.19
+	 */
+	public function is_required_field_set( $field ) {
+		return empty( $field['required'] ) || ! empty( $this->data[ $field['id'] ] );
+	}
+
+	/**
+	 * Formats an amount
+	 *
+	 * @since 1.0.19
+	 */
+	public function format_amount( $amount ) {
+		return wpinv_price( $amount, $this->get_currency() );
 	}
 
 }

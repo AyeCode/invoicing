@@ -377,6 +377,6 @@ function gepaid_get_form_items( $id ) {
     if ( $form->is_default() ) {
         return array();
     }
-
+wpinv_error_log( $form->get_items( 'view', 'arrays' ) );
     return $form->get_items( 'view', 'arrays' );
 }

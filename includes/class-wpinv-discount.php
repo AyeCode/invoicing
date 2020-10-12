@@ -1241,7 +1241,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function has_allowed_items() {
 		$allowed_items = $this->get_allowed_items();
-		return empty( $allowed_items );
+		return ! empty( $allowed_items );
 	}
 
 	/**
@@ -1252,7 +1252,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function has_excluded_items() {
 		$excluded_items = $this->get_excluded_items();
-		return empty( $excluded_items );
+		return ! empty( $excluded_items );
 	}
 
 	/**
@@ -1264,7 +1264,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function is_valid_for_items( $item_ids ) {
 
-		$item_ids = array_map( 'intval',  wpinv_parse_list( $item_ids ) );
+		$item_ids = wp_parse_id_list( $item_ids );
 		$included = array_intersect( $item_ids, $this->get_allowed_items() );
 		$excluded = array_intersect( $item_ids, $this->get_excluded_items() );
 
@@ -1275,6 +1275,7 @@ class WPInv_Discount extends GetPaid_Data  {
 		if ( $this->has_allowed_items() && empty( $included ) ) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -1367,7 +1368,6 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return boolean
 	 */
 	public function is_valid_for_user( $user ) {
-		global $wpi_checkout_id;
 
 		// Ensure that the discount is single use.
 		if ( empty( $user ) || ! $this->is_single_use() ) {
@@ -1376,15 +1376,13 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		// Prepare the user id.
 		$user_id = 0;
-        if ( is_int( $user ) ) {
+        if ( is_numeric( $user ) ) {
             $user_id = absint( $user );
         } else if ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
             $user_id = $user_data->ID;
         } else if ( $user_data = get_user_by( 'login', $user ) ) {
             $user_id = $user_data->ID;
-        } else if ( absint( $user ) > 0 ) {
-            $user_id = absint( $user );
-		}
+        }
 
 		// Ensure that we have a user.
 		if ( empty( $user_id ) ) {
@@ -1392,33 +1390,17 @@ class WPInv_Discount extends GetPaid_Data  {
 		}
 
 		// Get all payments with matching user id.
-        $payments = wpinv_get_invoices( array( 'user' => $user_id, 'limit' => false ) );
+        $payments = wpinv_get_invoices( array( 'user' => $user_id, 'limit' => false, 'paginate' => false ) );
 		$code     = strtolower( $this->get_code() );
 
 		// For each payment...
 		foreach ( $payments as $payment ) {
 
-			// ... skip the current payment.
-			if ( ! empty( $wpi_checkout_id ) && $wpi_checkout_id == $payment->ID ) {
-				continue;
-			}
-
-			// And failed payments.
-			if ( $payment->has_status( array( 'wpi-cancelled', 'wpi-failed' ) ) ) {
-				continue;
-			}
-
-			// Retrieve all the discounts for the payment.
-			$discounts = $payment->get_discounts( true );
-			if ( empty( $discounts ) ) {
-				continue;
-			}
-
-			// And check if the current discount is amongst them.
-			$discounts = array_map( 'strtolower', wpinv_parse_list( $discounts ) );
-			if ( ! empty( $discounts ) && in_array( $code, $discounts ) ) {
+			// Only check for paid invoices.
+			if ( $payment->is_paid() && strtolower( $payment->get_discount_code() ) == $code ) {
 				return false;
 			}
+
 		}
 
 		return true;

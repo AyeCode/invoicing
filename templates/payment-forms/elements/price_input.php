@@ -30,6 +30,7 @@ echo aui()->input(
         'label_type'        => 'vertical',
         'help_text'         => empty( $description ) ? '' : wp_kses_post( $description ),
         'input_group_right' => $position == 'right' ? wpinv_currency_symbol( $form->get_currency() ) : '',
-		'input_group_left'  => $position == 'left' ? wpinv_currency_symbol( $form->get_currency() ) : '',
+        'input_group_left'  => $position == 'left' ? wpinv_currency_symbol( $form->get_currency() ) : '',
+        'class'             => 'getpaid-refresh-on-change',
     )
 );

@@ -280,7 +280,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 			}
 
-			// $item_id => $quantity
+			// $item_id => $quantity (buy buttons)
 			if ( is_numeric( $key ) && is_numeric( $value ) ) {
 				$item = new GetPaid_Form_Item( $key );
 
@@ -292,21 +292,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 				continue;
 			}
 
-			// $item_id => array( 'price' => 10 )
-			if ( is_numeric( $key ) && is_array( $value ) ) {
-				$item = new GetPaid_Form_Item( $key );
-
-				if ( isset( $value['price'] ) && $item->user_can_set_their_price() ) {
-					$item->set_price( $value['price'] );
-				}
-
-				if ( $item->can_purchase() ) {
-					$prepared[] = $item;
-				}
-
-				continue;
-			}
-
+			// Items saved via payment forms editor.
 			if ( is_array( $value ) && isset( $value['id'] ) ) {
 
 				$item = new GetPaid_Form_Item( $value['id'] );
@@ -340,6 +326,22 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 				continue;
 
 			}
+
+			// $item_id => array( 'price' => 10 ) (item variations)
+			if ( is_numeric( $key ) && is_array( $value ) ) {
+				$item = new GetPaid_Form_Item( $key );
+
+				if ( isset( $value['price'] ) && $item->user_can_set_their_price() ) {
+					$item->set_price( $value['price'] );
+				}
+
+				if ( $item->can_purchase() ) {
+					$prepared[] = $item;
+				}
+
+				continue;
+			}
+
 		}
 
 		if ( 'objects' == $return && 'view' == $context ) {

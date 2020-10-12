@@ -68,13 +68,13 @@ class GetPaid_Payment_Form_Submission_Fees {
 		}
 
 		$amount  = (float) wpinv_sanitize_amount( $data[ $element['id'] ] );
-		$minimum = (float) wpinv_sanitize_amount( $element['minimum'] );
+		$minimum = empty( $element['minimum'] ) ? 0 : (float) wpinv_sanitize_amount( $element['minimum'] );
 
 		if ( $amount < $minimum ) {
-			return $this->set_error( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), $minimum ) );
+			throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), $minimum ) );
 		}
 
-		$this['fees'][ $element['label'] ] = array(
+		$this->fees[ $element['label'] ] = array(
 			'name'          => $element['label'],
 			'initial_fee'   => $amount,
 			'recurring_fee' => 0,
@@ -102,29 +102,18 @@ class GetPaid_Payment_Form_Submission_Fees {
 		foreach ( $selected as $price ) {
 
 			if ( ! isset( $options[ $price ] ) ) {
-				return $this->set_error( __( 'You have selected an invalid amount', 'invoicing' ) );
+				throw new Exception( __( 'You have selected an invalid amount', 'invoicing' ) );
 			}
 
 			$total += (float) wpinv_sanitize_amount( $price );
 		}
 
-		$this['fees'][ $element['label'] ] = array(
+		$this->fees[ $element['label'] ] = array(
 			'name'          => $element['label'],
 			'initial_fee'   => $total,
 			'recurring_fee' => 0,
 		);
 
-	}
-
-	/**
-	 * Sets an error without overwriting the previous error.
-	 *
-	 * @param string $error
-	 */
-	public function set_error( $error ) {
-		if ( empty( $this->fee_error ) ) {
-			$this->fee_error    = $error;
-		}
 	}
 
 }

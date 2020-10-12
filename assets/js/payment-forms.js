@@ -126,11 +126,23 @@ jQuery(function($) {
 
             for ( var item in data.items ) {
                 if ( data.items.hasOwnProperty( item ) ) {
-                    form.find('.getpaid-form-cart-item-subtotal-' + item).html(data.items[item])
+                    form.find( '.getpaid-form-cart-item-subtotal-' + item ).html( data.items[item] )
                 }
             }
 
         }
+
+        // Process text updates.
+        if ( data.texts ) {
+
+            for ( var selector in data.texts ) {
+                if ( data.texts.hasOwnProperty( selector ) ) {
+                    form.find( selector ).html( data.texts[selector] )
+                }
+            }
+
+        }
+
     }
 
     /**
@@ -169,6 +181,9 @@ jQuery(function($) {
         // Refresh prices.
         refresh_prices( $( this ).closest('.getpaid-payment-form') )
     }
+
+    // Refresh prices.
+    $( 'body').on( 'input', '.getpaid-refresh-on-change', gp_throttle( on_field_change, 500 ) );
 
     // Refresh when custom prices change.
     $( 'body').on( 'input', '.getpaid-item-price-input', gp_throttle( on_field_change, 500 ) );

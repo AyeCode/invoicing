@@ -180,7 +180,7 @@ class GetPaid_Meta_Box_Discount_Details {
                         echo aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_items',
-                                'name'             => 'wpinv_discount_items',
+                                'name'             => 'wpinv_discount_items[]',
                                 'label'            => __( 'Items', 'invoicing' ),
                                 'placeholder'      => __( 'Select Items', 'invoicing' ),
                                 'value'            => $discount->get_items( 'edit' ),
@@ -208,7 +208,7 @@ class GetPaid_Meta_Box_Discount_Details {
                         echo aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_excluded_items',
-                                'name'             => 'wpinv_discount_excluded_items',
+                                'name'             => 'wpinv_discount_excluded_items[]',
                                 'label'            => __( 'Excluded Items', 'invoicing' ),
                                 'placeholder'      => __( 'Select Items', 'invoicing' ),
                                 'value'            => $discount->get_excluded_items( 'edit' ),
@@ -387,8 +387,8 @@ class GetPaid_Meta_Box_Discount_Details {
 				'is_single_use'        => isset( $_POST['wpinv_discount_single_use'] ),
                 'type'                 => isset( $_POST['wpinv_discount_type'] ) ? $_POST['wpinv_discount_type'] : null,
 				'is_recurring'         => isset( $_POST['wpinv_discount_recurring'] ),
-				'items'                => isset( $_POST['wpinv_discount_items'] ) ? $_POST['wpinv_discount_items'] : null,
-				'excluded_items'       => isset( $_POST['wpinv_discount_excluded_items'] ) ? $_POST['wpinv_discount_excluded_items'] : null,
+				'items'                => isset( $_POST['wpinv_discount_items'] ) ? $_POST['wpinv_discount_items'] : array(),
+				'excluded_items'       => isset( $_POST['wpinv_discount_excluded_items'] ) ? $_POST['wpinv_discount_excluded_items'] : array(),
 				'max_uses'             => isset( $_POST['wpinv_discount_max_uses'] ) ? $_POST['wpinv_discount_max_uses'] : null,
 				'min_total'            => isset( $_POST['wpinv_discount_min_total'] ) ? $_POST['wpinv_discount_min_total'] : null,
 				'max_total'            => isset( $_POST['wpinv_discount_max_total'] ) ? $_POST['wpinv_discount_max_total'] : null,
