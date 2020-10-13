@@ -812,7 +812,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
      */
     public function sandbox_notice( $description, $gateway ) {
         if ( 'paypal' == $gateway && wpinv_is_test_mode( 'paypal' ) ) {
-            $description .= '<br>' . sprintf(
+            $description .= '<br>&nbsp;<br>' . sprintf(
                 __( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal Sandbox Testing Guide%s for more details.', 'invoicing' ),
                 '<a href="https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/">',
                 '</a>'

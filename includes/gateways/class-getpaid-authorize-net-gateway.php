@@ -659,7 +659,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     public function sandbox_notice( $description, $gateway ) {
 
         if ( $this->id == $gateway && wpinv_is_test_mode( $this->id ) ) {
-            $description .= '<br>' . sprintf(
+            $description .= '<br>&nbsp;<br>' . sprintf(
                 __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %sAuthorize.NET Sandbox Testing Guide%s for more details.', 'invoicing' ),
                 '<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
                 '</a>'
