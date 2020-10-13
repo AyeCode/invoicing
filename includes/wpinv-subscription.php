@@ -769,7 +769,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	public function is_last_renewal() {
 		$max_bills = $this->get_bill_times();
-		return ! empty( $max_bills ) && $max_bills >= $this->get_times_billed();
+		return ! empty( $max_bills ) && $max_bills <= $this->get_times_billed();
 	}
 
 	/*

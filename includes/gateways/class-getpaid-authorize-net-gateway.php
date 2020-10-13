@@ -590,7 +590,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             return false;
         }
 
-		$this->renew_subscription( $subscription );
+        $this->renew_subscription( $subscription );
+
         // Renew the subscription.
         $subscription->add_payment(
             array(
