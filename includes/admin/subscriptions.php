@@ -462,13 +462,13 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 							echo '<tr>';
 
 								foreach ( array_keys( $columns ) as $key ) {
-									
+
 									echo '<td class="p-2 text-left">';
 
 										switch( $key ) {
 
 											case 'total':
-												echo '<strong>' . wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $payment->get_total ) ), $payment->get_currency() ) . '</strong>';
+												echo '<strong>' . wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $payment->get_total() ) ), $payment->get_currency() ) . '</strong>';
 												break;
 
 											case 'relationship':
