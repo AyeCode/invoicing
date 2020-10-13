@@ -705,7 +705,7 @@ class WPInv_Ajax {
             $data[] = array(
                 'id'        => (int) $item->get_id(),
                 'text'      => strip_tags( $item->get_name() ),
-                'form_data' => $is_payment_form ? $item->prepare_data_for_use() : '',
+                'form_data' => $is_payment_form ? $item->prepare_data_for_use( false ) : '',
             );
         }
 

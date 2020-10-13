@@ -132,7 +132,7 @@ class GetPaid_Meta_Box_Payment_Form {
         foreach ( $items as $item ) {
             $_item = new GetPaid_Form_Item( $item['id'] );
             $_item->set_allow_quantities( (bool) $item['allow_quantities'] );
-            $_item->set_allow_quantities( (bool) $item['required'] );
+            $_item->set_is_required( (bool) $item['required'] );
             $objects[] = $_item;
         }
 
