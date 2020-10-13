@@ -158,13 +158,13 @@ function wpinv_get_item_price( $item_id = 0 ) {
     return $item->get_price();
 }
 
-function wpinv_is_recurring_item( $item_id = 0 ) {
-    if( empty( $item_id ) ) {
-        return false;
-    }
-
-    $item = new WPInv_Item( $item_id );
-    
+/**
+ * Checks if the provided item is recurring.
+ *
+ * @param WPInv_Item|int $item
+ */
+function wpinv_is_recurring_item( $item = 0 ) {
+    $item = new WPInv_Item( $item ); 
     return $item->is_recurring();
 }
 
@@ -177,24 +177,6 @@ function wpinv_item_price( $item_id = 0 ) {
     $price = wpinv_price( wpinv_format_amount( $price ) );
     
     return apply_filters( 'wpinv_item_price', $price, $item_id );
-}
-
-function wpinv_item_show_price( $item_id = 0, $echo = true ) {
-    if ( empty( $item_id ) ) {
-        $item_id = get_the_ID();
-    }
-
-    $price = wpinv_item_price( $item_id );
-
-    $price           = apply_filters( 'wpinv_item_price', wpinv_sanitize_amount( $price ), $item_id );
-    $formatted_price = '<span class="wpinv_price" id="wpinv_item_' . $item_id . '">' . $price . '</span>';
-    $formatted_price = apply_filters( 'wpinv_item_price_after_html', $formatted_price, $item_id, $price );
-
-    if ( $echo ) {
-        echo $formatted_price;
-    } else {
-        return $formatted_price;
-    }
 }
 
 function wpinv_get_item_final_price( $item_id = 0, $amount_override = null ) {
@@ -256,46 +238,6 @@ function wpinv_item_type( $item_id ) {
 
     return apply_filters( 'wpinv_item_type', $item_type, $item_id );
 }
-
-function wpinv_record_item_in_log( $item_id = 0, $file_id, $user_info, $ip, $invoice_id ) {
-    global $wpinv_logs;
-    
-    if ( empty( $wpinv_logs ) ) {
-        return false;
-    }
-
-    $log_data = array(
-        'post_parent'	=> $item_id,
-        'log_type'		=> 'wpi_item'
-    );
-
-    $user_id = isset( $user_info['user_id'] ) ? $user_info['user_id'] : (int) -1;
-
-    $log_meta = array(
-        'user_info'	=> $user_info,
-        'user_id'	=> $user_id,
-        'file_id'	=> (int)$file_id,
-        'ip'		=> $ip,
-        'invoice_id'=> $invoice_id,
-    );
-
-    $wpinv_logs->insert_log( $log_data, $log_meta );
-}
-
-function wpinv_remove_item_logs_on_delete( $item_id = 0 ) {
-    if ( 'wpi_item' !== get_post_type( $item_id ) )
-        return;
-
-    global $wpinv_logs;
-    
-    if ( empty( $wpinv_logs ) ) {
-        return false;
-    }
-
-    // Remove all log entries related to this item
-    $wpinv_logs->delete_logs( $item_id );
-}
-add_action( 'delete_post', 'wpinv_remove_item_logs_on_delete' );
 
 function wpinv_get_random_item( $post_ids = true ) {
     wpinv_get_random_items( 1, $post_ids );
@@ -483,222 +425,30 @@ function wpinv_cart_item_tax( $item, $currency = '' ) {
     return apply_filters( 'wpinv_cart_item_tax_label', $tax, $item );
 }
 
-function wpinv_get_cart_item_price( $item_id = 0, $cart_item = array(), $options = array(), $remove_tax_from_inclusive = false ) {
-    $price = 0;
-    
-    // Set custom price
-    if ( isset( $cart_item['custom_price'] ) && $cart_item['custom_price'] !== '' ) {
-        $price = $cart_item['custom_price'];
-    } else {
-        $variable_prices = wpinv_has_variable_prices( $item_id );
-
-        if ( $variable_prices ) {
-            $prices = wpinv_get_variable_prices( $item_id );
-
-            if ( $prices ) {
-                if( ! empty( $options ) ) {
-                    $price = isset( $prices[ $options['price_id'] ] ) ? $prices[ $options['price_id'] ]['amount'] : false;
-                } else {
-                    $price = false;
-                }
-            }
-        }
-
-        if( ! $variable_prices || false === $price ) {
-            if($cart_item['item_price'] > 0){
-                $price = $cart_item['item_price'];
-            } else {
-                // Get the standard Item price if not using variable prices
-                $price = wpinv_get_item_price( $item_id );
-            }
-        }
-    }
-
-    if ( $remove_tax_from_inclusive && wpinv_prices_include_tax() ) {
-        $price -= wpinv_get_cart_item_tax( $item_id, $price, $options );
-    }
-
-    return apply_filters( 'wpinv_cart_item_price', $price, $item_id, $cart_item, $options, $remove_tax_from_inclusive );
-}
-
-function wpinv_get_cart_item_price_id( $item = array() ) {
-    if( isset( $item['item_number'] ) ) {
-        $price_id = isset( $item['item_number']['options']['price_id'] ) ? $item['item_number']['options']['price_id'] : null;
-    } else {
-        $price_id = isset( $item['options']['price_id'] ) ? $item['options']['price_id'] : null;
-    }
-    return $price_id;
-}
-
-function wpinv_get_cart_item_price_name( $item = array() ) {
-    $price_id = (int)wpinv_get_cart_item_price_id( $item );
-    $prices   = wpinv_get_variable_prices( $item['id'] );
-    $name     = ! empty( $prices[ $price_id ] ) ? $prices[ $price_id ]['name'] : '';
-    return apply_filters( 'wpinv_get_cart_item_price_name', $name, $item['id'], $price_id, $item );
-}
-
-function wpinv_get_cart_item_name( $item = array() ) {
-    $item_title = !empty( $item['name'] ) ? $item['name'] : get_the_title( $item['id'] );
-
-    if ( empty( $item_title ) ) {
-        $item_title = $item['id'];
-    }
-
-    /*
-    if ( wpinv_has_variable_prices( $item['id'] ) && false !== wpinv_get_cart_item_price_id( $item ) ) {
-        $item_title .= ' - ' . wpinv_get_cart_item_price_name( $item );
-    }
-    */
-
-    return apply_filters( 'wpinv_get_cart_item_name', $item_title, $item['id'], $item );
-}
-
-function wpinv_has_variable_prices( $item_id = 0 ) {
-    return false;
-}
-
-function wpinv_get_item_position_in_cart( $item_id = 0, $options = array() ) {
-    $cart_items = wpinv_get_cart_contents();
-
-    if ( !is_array( $cart_items ) ) {
-        return false; // Empty cart
-    } else {
-        foreach ( $cart_items as $position => $item ) {
-            if ( $item['id'] == $item_id ) {
-                if ( isset( $options['price_id'] ) && isset( $item['options']['price_id'] ) ) {
-                    if ( (int) $options['price_id'] == (int) $item['options']['price_id'] ) {
-                        return $position;
-                    }
-                } else {
-                    return $position;
-                }
-            }
-        }
-    }
-
-    return false; // Not found
-}
-
-function wpinv_get_cart_item_quantity( $item ) {
-    if ( wpinv_item_quantities_enabled() ) {
-        $quantity = !empty( $item['quantity'] ) && (int)$item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-    } else {
-        $quantity = 1;
-    }
-    
-    if ( $quantity < 1 ) {
-        $quantity = 1;
-    }
-    
-    return apply_filters( 'wpinv_get_cart_item_quantity', $quantity, $item );
-}
-
+/**
+ * Adds additional information suffixes to an item name.
+ *
+ * @param WPInv_Item|int $item
+ * @param bool $html
+ */
 function wpinv_get_item_suffix( $item, $html = true ) {
-    if ( empty( $item ) ) {
-        return NULL;
-    }
-    
-    if ( is_int( $item ) ) {
-        $item = new WPInv_Item( $item );
-    }
-    
-    if ( !( is_object( $item ) && is_a( $item, 'WPInv_Item' ) ) ) {
-        return NULL;
-    }
-    
+
+    $item   = new WPInv_Item( $item );
     $suffix = $item->is_recurring() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '';
-    
-    if ( !$html && $suffix ) {
-        $suffix = strip_tags( $suffix );
-    }
-    
+    $suffix = $html ? $suffix : strip_tags( $suffix );
+
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
 }
 
+/**
+ * Deletes an invoicing item.
+ * 
+ * @param WPInv_Item|int $item
+ * @param bool $force_delete
+ */
 function wpinv_remove_item( $item = 0, $force_delete = false ) {
-    if ( empty( $item ) ) {
-        return NULL;
-    }
-    
-    if ( is_int( $item ) ) {
-        $item = new WPInv_Item( $item );
-    }
-    
-    if ( !( is_object( $item ) && is_a( $item, 'WPInv_Item' ) ) ) {
-        return NULL;
-    }
-    
-    do_action( 'wpinv_pre_delete_item', $item );
-
-    wp_delete_post( $item->ID, $force_delete );
-
-    do_action( 'wpinv_post_delete_item', $item );
-}
-
-function wpinv_can_delete_item( $post_id ) {
-    $return = wpinv_current_user_can_manage_invoicing() ? true : false;
-    
-    if ( $return && wpinv_item_in_use( $post_id ) ) {
-        $return = false; // Don't delete item already use in invoices.
-    }
-    
-    return apply_filters( 'wpinv_can_delete_item', $return, $post_id );
-}
-
-function wpinv_admin_action_delete() {
-    $screen = get_current_screen();
-    
-    if ( !empty( $screen->post_type ) && $screen->post_type == 'wpi_item' && !empty( $_REQUEST['post'] ) && is_array( $_REQUEST['post'] ) ) {
-        $post_ids = array();
-        
-        foreach ( $_REQUEST['post'] as $post_id ) {
-            if ( !wpinv_can_delete_item( $post_id ) ) {
-                continue;
-            }
-            
-            $post_ids[] = $post_id;
-        }
-        
-        $_REQUEST['post'] = $post_ids;
-    }
-}
-add_action( 'admin_action_trash', 'wpinv_admin_action_delete', -10 );
-add_action( 'admin_action_delete', 'wpinv_admin_action_delete', -10 );
-
-function wpinv_check_delete_item( $check, $post, $force_delete ) {
-    if ( $post->post_type == 'wpi_item' ) {
-        if ( $force_delete && !wpinv_can_delete_item( $post->ID ) ) {
-            return true;
-        }
-    }
-    
-    return $check;
-}
-add_filter( 'pre_delete_post', 'wpinv_check_delete_item', 10, 3 );
-
-function wpinv_item_in_use( $item_id ) {
-    global $wpdb, $wpi_items_in_use;
-    
-    if ( !$item_id > 0 ) {
-        return false;
-    }
-    
-    if ( !empty( $wpi_items_in_use ) ) {
-        if ( isset( $wpi_items_in_use[$item_id] ) ) {
-            return $wpi_items_in_use[$item_id];
-        }
-    } else {
-        $wpi_items_in_use = array();
-    }
-    
-    $statuses   = array_keys( wpinv_get_invoice_statuses( true, true ) );
-    
-    $query  = "SELECT p.ID FROM " . $wpdb->posts . " AS p INNER JOIN " . $wpdb->postmeta . " AS pm ON p.ID = pm.post_id WHERE p.post_type = 'wpi_invoice' AND p.post_status IN( '" . implode( "','", $statuses ) . "' ) AND pm.meta_key = '_wpinv_item_ids' AND FIND_IN_SET( '" . (int)$item_id . "', pm.meta_value )";
-    $in_use = $wpdb->get_var( $query ) > 0 ? true : false;
-    
-    $wpi_items_in_use[$item_id] = $in_use;
-    
-    return $in_use;
+    $item = new WPInv_Item( $item );
+    $item->delete( $force_delete );
 }
 
 /**

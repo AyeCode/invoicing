@@ -763,3 +763,101 @@ function wpinv_gateway_supports_buy_now() {
 function wpinv_is_ajax_disabled() {
     return false;
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_remove_item_logs_on_delete() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_record_item_in_log() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_check_delete_item() {
+    return true;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_admin_action_delete() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_can_delete_item() {
+    return wpinv_current_user_can_manage_invoicing();
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_item_in_use() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_has_variable_prices() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_item_position_in_cart() {
+    return 1;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_quantity() {
+    return 1;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_price_name() {
+    return '';
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_name() {
+    return '';
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_price() {
+    return 0;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_price_id() {
+    return 0;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_item_show_price( $item_id = 0, $echo = true ) {
+
+    if ( $echo ) {
+        echo wpinv_item_price( $item_id );
+    } else {
+        return wpinv_item_price( $item_id );
+    }
+
+}

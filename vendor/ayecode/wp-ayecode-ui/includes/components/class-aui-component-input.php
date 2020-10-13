@@ -758,7 +758,7 @@ else{$eli.attr(\'type\',\'password\');}"
 						} else {
 							$option_label = isset($name['label']) ? $name['label'] : '';
 							$option_value = isset($name['value']) ? $name['value'] : '';
-							if(!empty($args['multiple']) && !empty($args['value'])){
+							if(!empty($args['multiple']) && !empty($args['value']) && is_array($args['value']) ){
 								$selected = in_array($option_value, stripslashes_deep($args['value'])) ? "selected" : "";
 							} elseif(!empty($args['value'])) {
 								$selected = selected($option_value,stripslashes_deep($args['value']), false);
@@ -852,7 +852,7 @@ else{$eli.attr(\'type\',\'password\');}"
 		$args   = wp_parse_args( $args, $defaults );
 
 		// for now lets use horizontal for floating
-		if( $args['label_type'] != 'hidden' ){$args['label_type'] = 'horizontal';}
+		if( $args['label_type'] == 'floating' ){$args['label_type'] = 'horizontal';}
 
 		$label_args = array(
 			'title'=> $args['label'],
