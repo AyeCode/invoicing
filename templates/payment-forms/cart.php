@@ -24,7 +24,7 @@ if ( ! empty( $form->invoice ) ) {
 $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $form );
 
 ?>
-    <div class="getpaid-payment-form-items-cart border">
+    <div class="getpaid-payment-form-items-cart border form-group">
         <div class="getpaid-payment-form-items-cart-header">
             <div class="form-row">
             <?php foreach ( $columns as $key => $label ) : ?>
