@@ -765,7 +765,7 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function has_billing_email() {
 		$billing_email = $this->get_billing_email();
-		return ! empty( $billing_email );
+		return ! empty( $billing_email ) && is_email( $billing_email );
 	}
 
 	/**

@@ -839,7 +839,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		);
 
 		// Maybe include parent invoice.
-        if ( ! $this->get_parent_payment()->is_paid() ) {
+        if ( $this->get_parent_payment()->is_paid() ) {
             $count++;
         }
 
@@ -855,7 +855,7 @@ class WPInv_Subscription extends GetPaid_Data {
     public function get_times_billed() {
         $times_billed = $this->get_total_payments();
 
-        if ( $this->has_trial_period() && $times_billed > 0 ) {
+        if ( (float) $this->get_initial_amount() == 0 && $times_billed > 0 ) {
             $times_billed--;
         }
 

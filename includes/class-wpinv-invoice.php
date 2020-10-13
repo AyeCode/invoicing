@@ -84,6 +84,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		'is_viewed'            => false,
 		'email_cc'             => '',
 		'template'             => 'quantity', // hours, amount only
+		'created_via'          => null,
     );
 
     /**
@@ -1280,6 +1281,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_template( $context = 'view' ) {
 		return $this->get_prop( 'template', $context );
+	}
+
+	/**
+	 * Get invoice source.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return bool
+	 */
+	public function get_created_via( $context = 'view' ) {
+		return $this->get_prop( 'created_via', $context );
 	}
 
 	/**
@@ -2622,12 +2634,22 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Set the invoice template.
 	 *
 	 * @since 1.0.19
-	 * @param  string $value email recipients.
+	 * @param  string $value template.
 	 */
 	public function set_template( $value ) {
 		if ( in_array( $value, array( 'quantity', 'hours', 'amount' ) ) ) {
 			$this->set_prop( 'template', $value );
 		}
+	}
+
+	/**
+	 * Set the invoice source.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value email recipients.
+	 */
+	public function created_via( $value ) {
+		$this->set_prop( 'created_via', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -3146,7 +3168,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->set_prop( 'items', $items );
 		return true;
 	}
-	
+
 	/**
 	 * Converts an array to an item.
 	 *
@@ -3159,7 +3181,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$item    = new GetPaid_Form_Item( $item_id );
 
 		// Set item data.
-		foreach( array( 'name', 'price', 'description' ) as $key ) {
+		foreach ( array( 'name', 'price', 'description' ) as $key ) {
 			if ( isset( $array[ "item_$key" ] ) ) {
 				$method = "set_$key";
 				$item->$method( $array[ "item_$key" ] );
@@ -3217,7 +3239,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
     public function add_fee( $fee ) {
 
-		$fees = $this->get_fees();
+		$fees                 = $this->get_fees();
 		$fees[ $fee['name'] ] = $fee;
 		$this->set_prop( 'fees', $fees );
 
@@ -3293,11 +3315,9 @@ class WPInv_Invoice extends GetPaid_Data {
     /**
      * Adds a tax to the invoice.
      *
-     * @param string $tax
-     * @param float $value
+     * @param array $tax An array of tax details. name, initial_tax, and recurring_tax are required.
      */
-    public function add_tax( $tax, $value, $recurring = true ) {
-
+    public function add_tax( $tax ) {
         if ( $this->is_taxable() ) {
 
             $taxes                 = $this->get_taxes();
@@ -3305,7 +3325,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_prop( 'taxes', $tax );
 
         }
-
     }
 
     /**
@@ -3353,18 +3372,15 @@ class WPInv_Invoice extends GetPaid_Data {
 			$recurring += $item->get_recurring_sub_total();
         }
 
-		if ( $this->is_renewal() ) {
-			$this->set_subtotal( $recurring );
-		} else {
-			$this->set_subtotal( $subtotal );
-		}
+		$current = $this->is_renewal() ? $recurring : $subtotal;
+		$this->set_subtotal( $current );
 
 		$this->totals['subtotal'] = array(
 			'initial'   => $subtotal,
 			'recurring' => $recurring,
 		);
 
-        return $this->is_renewal() ? $recurring : $subtotal;
+        return $current;
     }
 
     /**
@@ -3379,27 +3395,20 @@ class WPInv_Invoice extends GetPaid_Data {
 		$recurring = 0;
 
         foreach ( $discounts as $data ) {
-
-			if ( $data['recurring'] ) {
-				$recurring += $data['amount'];
-			} else {
-				$discount += $data['amount'];
-			}
-
+			$discount  += wpinv_sanitize_amount( $data['initial_discount'] );
+			$recurring += wpinv_sanitize_amount( $data['recurring_discount'] );
 		}
 
-		if ( $this->is_renewal() ) {
-			$this->set_total_discount( $recurring );
-		} else {
-			$this->set_total_discount( $discount );
-		}
+		$current = $this->is_renewal() ? $recurring : $discount;
+
+		$this->set_total_discount( $current );
 
 		$this->totals['discount'] = array(
 			'initial'   => $discount,
 			'recurring' => $recurring,
 		);
 
-		return $this->is_renewal() ? $recurring : $discount;
+		return $current;
 
     }
 
@@ -3415,27 +3424,19 @@ class WPInv_Invoice extends GetPaid_Data {
 		$recurring = 0;
 
         foreach ( $taxes as $data ) {
-
-			if ( $data['recurring'] ) {
-				$recurring += $data['amount'];
-			} else {
-				$tax += $data['amount'];
-			}
-
+			$tax       += wpinv_sanitize_amount( $data['initial_tax'] );
+			$recurring += wpinv_sanitize_amount( $data['recurring_tax'] );
 		}
 
-		if ( $this->is_renewal() ) {
-			$this->set_total_tax( $recurring );
-		} else {
-			$this->set_total_tax( $tax );
-		}
+		$current = $this->is_renewal() ? $recurring : $tax;
+		$this->set_total_tax( $current );
 
 		$this->totals['tax'] = array(
 			'initial'   => $tax,
 			'recurring' => $recurring,
 		);
 
-		return $this->is_renewal() ? $recurring : $tax;
+		return $current;
 
     }
 
@@ -3451,20 +3452,12 @@ class WPInv_Invoice extends GetPaid_Data {
 		$recurring = 0;
 
         foreach ( $fees as $data ) {
-
-			if ( $data['recurring'] ) {
-				$recurring += $data['amount'];
-			} else {
-				$fee += $data['amount'];
-			}
-
+			$fee       += wpinv_sanitize_amount( $data['initial_fee'] );
+			$recurring += wpinv_sanitize_amount( $data['recurring_fee'] );
 		}
 
-        if ( $this->is_renewal() ) {
-			$this->set_total_fees( $recurring );
-		} else {
-			$this->set_total_fees( $fee );
-		}
+		$current = $this->is_renewal() ? $recurring : $fee;
+		$this->set_total_fees( $current );
 
 		$this->totals['fee'] = array(
 			'initial'   => $fee,
@@ -3472,7 +3465,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		);
 
         $this->set_total_fees( $fee );
-        return $this->is_renewal() ? $recurring : $fee;
+        return $current;
     }
 
     /**

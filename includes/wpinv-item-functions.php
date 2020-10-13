@@ -814,7 +814,7 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
 /**
  * Retrieves recurring price description.
  * 
- * @param WPInv_Item $item
+ * @param WPInv_Item|GetPaid_Form_Item $item
  */
 function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
 
@@ -823,11 +823,16 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
         return '';
     }
 
-    $initial_price   = wpinv_price( wpinv_sanitize_amount( $item->get_initial_price() ), $currency );
-    $recurring_price = wpinv_price( wpinv_sanitize_amount( $item->get_recurring_price() ), $currency );
+    $initial_price   = wpinv_price( $item->get_initial_price(), $currency );
+    $recurring_price = wpinv_price( $item->get_recurring_price(), $currency );
     $period          = getpaid_get_subscription_period_label( $item->get_recurring_period(), $item->get_recurring_interval(), '' );
     $initial_class   = 'getpaid-item-initial-price';
     $recurring_class = 'getpaid-item-recurring-price';
+
+    if ( $item instanceof GetPaid_Form_Item ) {
+        $initial_price   = wpinv_price( $item->get_sub_total(), $currency );
+        $recurring_price = wpinv_price( $item->get_recurring_sub_total(), $currency );
+    }
 
     // For free trial items.
     if ( $item->has_free_trial() ) {

@@ -35,7 +35,7 @@ class GetPaid_Checkout {
 		// Validate the submission.
 		$this->validate_submission();
 
-		// Get the items and invoice.
+		// Prepare the invoice.
 		$items      = $this->get_submission_items();
 		$invoice    = $this->get_submission_invoice();
 		$invoice    = $this->process_submission_invoice( $invoice, $items );
@@ -64,26 +64,26 @@ class GetPaid_Checkout {
         }
 
 		// We need a billing email.
-        if ( ! $submission->has_billing_email() || ! is_email( $submission->get_billing_email() ) ) {
+        if ( ! $submission->has_billing_email() ) {
             wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
 		}
 
 		// Non-recurring gateways should not be allowed to process recurring invoices.
-		if ( $submission->has_recurring && ! wpinv_gateway_support_subscription( $data['wpi-gateway'] ) ) {
-			wp_send_json_error( __( 'The selected payment gateway does not support subscription payment.', 'invoicing' ) );
+		if ( $submission->should_collect_payment_details() && $submission->has_recurring && ! wpinv_gateway_support_subscription( $data['wpi-gateway'] ) ) {
+			wp_send_json_error( __( 'The selected payment gateway does not support subscription payments.', 'invoicing' ) );
 		}
-	
+
 		// Ensure the gateway is active.
-		if ( ! wpinv_is_gateway_active( $data['wpi-gateway'] ) ) {
+		if ( $submission->should_collect_payment_details() && ! wpinv_is_gateway_active( $data['wpi-gateway'] ) ) {
 			wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway is not active', 'invoicing' ) );
 		}
 
 		// Clear any existing errors.
 		wpinv_clear_errors();
-		
+
 		// Allow themes and plugins to hook to errors
 		do_action( 'getpaid_checkout_error_checks', $submission );
-		
+
 		// Do we have any errors?
         if ( wpinv_get_errors() ) {
             wp_send_json_error( getpaid_get_errors_html() );
@@ -101,8 +101,8 @@ class GetPaid_Checkout {
 		$items = $this->payment_form_submission->get_items();
 
         // Ensure that we have items.
-        if ( empty( $items ) && 0 == count( $this->payment_form_submission->get_fees() ) ) {
-            wp_send_json_error( __( 'Please select at least one item.', 'invoicing' ) );
+        if ( empty( $items ) && ! $this->payment_form_submission->has_fees() ) {
+            wp_send_json_error( __( 'Please provide at least one item or amount.', 'invoicing' ) );
 		}
 
 		return $items;
@@ -117,7 +117,9 @@ class GetPaid_Checkout {
 		$submission = $this->payment_form_submission;
 
 		if ( ! $submission->has_invoice() ) {
-			return new WPInv_Invoice();
+			$invoice = new WPInv_Invoice();
+			$invoice->created_via( 'payment_form' );
+			return $invoice;
         }
 
 		$invoice = $submission->get_invoice();
@@ -272,13 +274,8 @@ class GetPaid_Checkout {
 	protected function post_process_submission( $invoice, $prepared_payment_form_data ) {
 
 		// Ensure the invoice exists.
-        if ( $invoice->get_id() == 0 ) {
+        if ( ! $invoice->exists() ) {
             wp_send_json_error( __( 'An error occured while saving your invoice.', 'invoicing' ) );
-        }
-
-		// Was this invoice created via the payment form?
-        if ( ! $this->payment_form_submission->has_invoice() ) {
-            update_post_meta( $invoice->get_id(), 'wpinv_created_via', 'payment_form' );
         }
 
         // Save payment form data.

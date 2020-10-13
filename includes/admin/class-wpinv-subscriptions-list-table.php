@@ -340,7 +340,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			'subscription'      => __( 'Subscription', 'invoicing' ),
 			'start_date'        => __( 'Start Date', 'invoicing' ),
 			'renewal_date'      => __( 'Next Payment', 'invoicing' ),
-			'renewals'          => __( 'Renewals', 'invoicing' ),
+			'renewals'          => __( 'Payments', 'invoicing' ),
 			'item'              => __( 'Item', 'invoicing' ),
 			'status'            => __( 'Status', 'invoicing' ),
 		);

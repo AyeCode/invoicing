@@ -239,7 +239,7 @@ function getpaid_get_price_format() {
 function wpinv_price( $amount = 0, $currency = '' ) {
 
     // Backwards compatibility.
-    $amount             = floatval( wpinv_sanitize_amount( str_replace( wpinv_thousands_separator(), '', $amount ) ) );
+    $amount             = floatval( wpinv_sanitize_amount( $amount ) );
 
     // Prepare variables.
     $currency           = wpinv_get_currency( $currency );

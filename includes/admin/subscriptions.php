@@ -149,7 +149,7 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 			'amount'         => __( 'Amount', 'invoicing' ),
 			'start_date'     => __( 'Start Date', 'invoicing' ),
 			'renews_on'      => __( 'Next Payment', 'invoicing' ),
-			'renewals'       => __( 'Renewals', 'invoicing' ),
+			'renewals'       => __( 'Payments', 'invoicing' ),
 			'item'           => __( 'Item', 'invoicing' ),
 			'gateway'        => __( 'Payment Method', 'invoicing' ),
 			'profile_id'     => __( 'Profile ID', 'invoicing' ),

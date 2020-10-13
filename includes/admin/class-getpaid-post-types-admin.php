@@ -146,14 +146,14 @@ class GetPaid_Post_Types_Admin {
 
 				if ( $invoice->is_refunded() ) {
 					$refunded_amount = wpinv_price( wpinv_format_amount( 0 ), $invoice->get_currency() );
-					echo "<del>$formated_amount</del><ins>$refunded_amount</ins>";
+					echo "<del>$formated_amount</del>&nbsp;<ins>$refunded_amount</ins>";
 				} else {
 
 					$discount = $invoice->get_total_discount();
 
 					if ( ! empty( $discount ) ) {
 						$new_amount = wpinv_price( wpinv_format_amount( $amount + $discount ), $invoice->get_currency() );
-						echo "<del>$new_amount</del><ins>$formated_amount</ins>";
+						echo "<del>$new_amount</del>&nbsp;<ins>$formated_amount</ins>";
 					} else {
 						echo $formated_amount;
 					}

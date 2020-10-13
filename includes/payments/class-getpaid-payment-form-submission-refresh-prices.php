@@ -28,9 +28,9 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$this->response = array(
 			'submission_id' => $submission->id,
             'has_recurring' => $submission->has_recurring,
-            'is_free'       => $submission->should_collect_payment_details(),
+            'is_free'       => ! $submission->should_collect_payment_details(),
 		);
-		
+
 		$this->add_totals( $submission );
 		$this->add_texts( $submission );
 		$this->add_items( $submission );
