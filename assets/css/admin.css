@@ -1561,7 +1561,8 @@ textarea.wpi-email_overdue_content {
     width: 140px;
 }
 
-#getpaid_admin_subscription_invoice_details_metabox .inside {
+#poststuff #getpaid_admin_subscription_invoice_details_metabox .inside,
+#poststuff #wpinv-mb-subscription-invoices .inside {
     margin: 0;
     padding: 0;
 }

@@ -483,7 +483,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
         if ( $invoice && $this->id == $invoice->get_gateway() ) {
 
-			$posted['payment_status'] = strtolower( $posted['payment_status'] );
+            $posted['payment_status'] = sanitize_key( strtolower( $posted['payment_status'] ) );
+            $posted['txn_type']       = sanitize_key( strtolower( $posted['txn_type'] ) );
 
             wpinv_error_log( 'Found invoice #' . $invoice->get_number() );
             wpinv_error_log( 'Payment status:' . $posted['payment_status'] );

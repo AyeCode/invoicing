@@ -406,7 +406,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 	);
 
 	// Prepare the invoices.
-	$payments = $subscription->get_child_payments();
+	$payments = $subscription->get_child_payments( ! is_admin() );
 	$parent   = $subscription->get_parent_invoice();
 
 	if ( $parent->get_id() ) {

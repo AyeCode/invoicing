@@ -1019,3 +1019,66 @@ function getpaid_update_invoice_caches( $invoice ) {
 }
 add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5 );
 add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
+
+/**
+ * Duplicates an invoice.
+ * 
+ * Please note that this function does not save the duplicated invoice.
+ * 
+ * @param  WPInv_Invoice $old_invoice The invoice to duplicate
+ * @return WPInv_Invoice The new invoice.
+ */
+function getpaid_duplicate_invoice( $old_invoice ) {
+
+    // Create the new invoice.
+    $invoice = new WPInv_Invoice();
+    $invoice->set_props(
+
+        array(
+
+            // Basic info.
+            'template'             => $old_invoice->get_template(),
+            'email_cc'             => $old_invoice->get_email_cc(),
+            'post_type'            => $old_invoice->get_post_type(),
+            'user_ip'              => $old_invoice->get_user_ip(),
+            'parent_id'            => $old_invoice->get_parent_id(),
+            'mode'                 => $old_invoice->get_mode(),
+            'description'          => $old_invoice->get_description(),
+            'created_via'          => $old_invoice->get_created_via(),
+
+            // Payment info.
+            'disable_taxes'        => $old_invoice->get_disable_taxes(),
+            'currency'             => $old_invoice->get_currency(),
+            'gateway'              => $old_invoice->get_gateway(),
+            'discount_code'        => $old_invoice->get_discount_code(),
+            'payment_form'         => $old_invoice->get_payment_form(),
+            'submission_id'        => $old_invoice->get_submission_id(),
+            'subscription_id'      => $old_invoice->get_subscription_id(),
+            'fees'                 => $old_invoice->get_fees(),
+            'discounts'            => $old_invoice->get_discounts(),
+            'taxes'                => $old_invoice->get_taxes(),
+            'items'                => $old_invoice->get_items(),
+
+            // Billing details.
+            'user_id'              => $old_invoice->get_user_id(),
+            'first_name'           => $old_invoice->get_first_name(),
+            'last_name'            => $old_invoice->get_last_name(),
+            'address'              => $old_invoice->get_address(),
+            'vat_number'           => $old_invoice->get_vat_number(),
+            'company'              => $old_invoice->get_company(),
+            'zip'                  => $old_invoice->get_zip(),
+            'state'                => $old_invoice->get_state(),
+            'city'                 => $old_invoice->get_city(),
+            'country'              => $old_invoice->get_country(),
+            'phone'                => $old_invoice->get_phone(),
+            'address_confirmed'    => $old_invoice->get_address_confirmed(),
+
+        )
+
+    );
+
+    // Recalculate totals.
+    $invoice->recalculate_total();
+
+    return $invoice;
+}
