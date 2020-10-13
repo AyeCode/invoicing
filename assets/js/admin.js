@@ -9,7 +9,7 @@ getpaid.init_select2_item_search = function ( select, parent ) {
 
     jQuery(select).select2({
         minimumInputLength: 3,
-        allowClear: true,
+        allowClear: false,
         dropdownParent: parent,
         ajax: {
             url: WPInv_Admin.ajax_url,

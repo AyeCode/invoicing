@@ -15,13 +15,6 @@ jQuery(function ($) {
 
 		computed: {
 
-			totalPrice: function totalPrice() {
-				var price = this.form_items.reduce(function (combined, item) {
-					return combined + parseFloat(item.price);
-				}, 0);
-				return this.formatPrice(price);
-			},
-
 			elementString: function elementString() {
 				return JSON.stringify(this.form_elements);
 			},
@@ -29,28 +22,6 @@ jQuery(function ($) {
 			itemString: function itemString() {
 				return JSON.stringify(this.form_items);
 			},
-
-			hasRecurring: function hasRecurring() {
-
-				for( var i = 0; i < this.form_items.length; i++ ) {
-					if ( this.form_items[i].recurring ) {
-						return true;
-					}
-				}
-
-				return false;
-			},
-
-			hasRequiredItem: function hasRequiredItem() {
-
-				for( var i = 0; i < this.form_items.length; i++ ) {
-					if ( this.form_items[i].required ) {
-						return true;
-					}
-				}
-
-				return false;
-			}
 
 		},
 
@@ -61,22 +32,6 @@ jQuery(function ($) {
 				return fields.filter( function ( field ) {
 					return field.visible
 				});
-			},
-
-			canCheckoutSeveralSubscriptions: function canCheckoutSeveralSubscriptions( field ) {
-
-				// Has no recurring item or only has one item.
-				if ( ! this.hasRecurring || 2 > this.form_items.length ) {
-					return false;
-				}
-
-				// Check if users can buy more than 1 item.
-				if ( 'total' == field.items_type || 'checkbox' == field.items_type || 'multi_select' == field.items_type ) {
-					return true;
-				}
-
-				// Check if we have a required item.
-				return this.hasRequiredItem
 			},
 
 			// Highlights a field for editing.

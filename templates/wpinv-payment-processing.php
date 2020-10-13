@@ -7,7 +7,7 @@ if ( empty( $invoice ) ) {
 }
 
 $success_page_uri = wpinv_get_success_page_uri();
-if ( !empty( $wpi_invoice ) ) {
+if ( ! empty( $invoice ) ) {
     $success_page_uri = $invoice->get_receipt_url();
 }
 ?>
@@ -18,7 +18,7 @@ if ( !empty( $wpi_invoice ) ) {
             echo
             wp_sprintf(
                 __( 'Your payment is processing. This page will reload automatically in 10 seconds. If it does not, click <a href="%s">here</a>.', 'invoicing' ),
-                $success_page_uri
+                esc_url( $success_page_uri )
             );
         ?>
         <i class="fa fa-spin fa-refresh"></i>

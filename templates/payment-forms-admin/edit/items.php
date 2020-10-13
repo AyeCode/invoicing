@@ -78,16 +78,16 @@ defined( 'ABSPATH' ) || exit;
     </div>
 </div>
 
-<div class='form-group mt-5'>
+<div class='form-group mt-5' v-if="!is_default">
 
     <label class="w-100 d-block">
 
         <span><?php esc_html_e( 'Let customers...', 'invoicing' ) ?></span>
 
         <select class='w-100' style="padding: 6px 24px 6px 8px; border-color: #e0e0e0;" v-model='active_form_element.items_type'>
-            <option value='total' :disabled='canCheckoutSeveralSubscriptions(active_form_element)'><?php _e( 'Buy all items on the list', 'invoicing' ); ?></option>
+            <option value='total'><?php _e( 'Buy all items on the list', 'invoicing' ); ?></option>
             <option value='radio'><?php _e( 'Select a single item from the list', 'invoicing' ); ?></option>
-            <option value='checkbox' :disabled='canCheckoutSeveralSubscriptions(active_form_element)'><?php _e( 'Select one or more items on the list', 'invoicing' ) ;?></option>
+            <option value='checkbox'><?php _e( 'Select one or more items on the list', 'invoicing' ) ;?></option>
             <option value='select'><?php _e( 'Select a single item from a dropdown', 'invoicing' ); ?></option>
         </select>
 

@@ -703,8 +703,8 @@ class WPInv_Ajax {
         foreach ( $items as $item ) {
             $item      = new GetPaid_Form_Item( $item );
             $data[] = array(
-                'id'        => $item->get_id(),
-                'text'      => $item->get_name(),
+                'id'        => (int) $item->get_id(),
+                'text'      => strip_tags( $item->get_name() ),
                 'form_data' => $is_payment_form ? $item->prepare_data_for_use() : '',
             );
         }
