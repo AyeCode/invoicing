@@ -650,7 +650,6 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         $subscription->add_payment( array(), $new_invoice );
         $subscription->renew();
-
     }
 
     /**

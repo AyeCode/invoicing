@@ -46,7 +46,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin ); ?>
                 <td><?php echo wp_sprintf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $due_date ) ), $invoice->get_due_date( true ) ); ?></td>
             </tr>
         <?php } ?>
-        <?php do_action( 'wpinv_email_invoice_details_after_due_date', $invoice->ID ); ?>
+        <?php do_action( 'wpinv_email_invoice_details_after_due_date', $invoice->get_id() ); ?>
         <?php if ( empty( $sent_to_admin ) && ( $owner_vat_number = $wpinv_euvat->get_vat_number() ) ) { ?>
             <tr>
                 <td><?php echo apply_filters( 'wpinv_invoice_owner_vat_number_label', wp_sprintf( __( 'Owner %s Number', 'invoicing' ), $vat_name ), $invoice, $vat_name ); ?></td>

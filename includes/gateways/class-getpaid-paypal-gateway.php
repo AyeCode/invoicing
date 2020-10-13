@@ -285,7 +285,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
         // Fees.
 		foreach ( $invoice->get_fees() as $fee => $data ) {
-            $this->add_line_item( $fee, 1, $data['amount'] );
+            $this->add_line_item( $fee, 1, wpinv_sanitize_amount( $data['initial_fee'] ) );
         }
 
     }
