@@ -911,8 +911,8 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$invoice->save();
 
-		if ( ! $invoice->get_id() ) {
-			return 0;
+		if ( ! $invoice->exists() ) {
+			return false;
 		}
 
 		do_action( 'getpaid_after_create_subscription_renewal_invoice', $invoice, $this );

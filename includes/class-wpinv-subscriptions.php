@@ -191,14 +191,8 @@ class WPInv_Subscriptions {
         }
 
         // (Maybe) create a new subscription.
-        if ( ! $invoice->get_subscription_id() ) {
-            return $this->maybe_create_invoice_subscription( $invoice );
-        }
-
-        $subscription = new WPInv_Subscription( $invoice->get_subscription_id() );
-
-        // In case the subscription was deleted...
-        if ( ! $subscription->get_id() ) {
+        $subscription = $this->get_invoice_subscription( $invoice );
+        if ( empty( $subscription ) ) {
             return $this->maybe_create_invoice_subscription( $invoice );
         }
 
@@ -316,15 +310,17 @@ class WPInv_Subscriptions {
 
         if ( $subscription->get_id() ) {
 
+            do_action( 'getpaid_admin_renew_subscription', $subscription );
+
             $args = array( 'transaction_id', $subscription->get_parent_invoice()->generate_key( 'renewal_' ) );
 
-            if ( $subscription->add_payment( $args ) ) {
+            if ( ! $subscription->add_payment( $args ) ) {
+                getpaid_admin()->show_error( __( 'We are unable to renew this subscription as the parent invoice does not exist.', 'invoicing' ) );
+            } else {
                 $subscription->renew();
                 getpaid_admin()->show_info( __( 'This subscription has been renewed and extended.', 'invoicing' ) );
-            } else {
-                getpaid_admin()->show_error( __( 'We are unable to renew this subscription as the parent invoice does not exist.', 'invoicing' ) );
-            }
-    
+            } 
+
             wp_safe_redirect(
                 add_query_arg(
                     array(

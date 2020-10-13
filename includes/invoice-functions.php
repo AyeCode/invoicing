@@ -835,11 +835,11 @@ function getpaid_process_invoice_payment( $invoice_id ) {
     $invoice = new WPInv_Invoice( $invoice_id );
 
     // We only want to do this once.
-    if ( 1 ==  get_post_meta( $invoice_id, 'wpinv_processed_payment', true ) ) {
+    if ( 1 ==  get_post_meta( $invoice->get_id(), 'wpinv_processed_payment', true ) ) {
         return;
     }
 
-    update_post_meta( $invoice_id, 'wpinv_processed_payment', 1 );
+    update_post_meta( $invoice->get_id(), 'wpinv_processed_payment', 1 );
 
     // Fires when processing a payment.
     do_action( 'getpaid_process_payment', $invoice );

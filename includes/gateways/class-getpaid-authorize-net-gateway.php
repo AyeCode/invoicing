@@ -463,7 +463,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
                 'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
                 'description' => getpaid_limit_length( $item->get_description(), 255 ),
-                'quantity'    => (int) $invoice->get_template() == 'amount' ? 1 : $item->get_quantity(),
+                'quantity'    => (string) $invoice->get_template() == 'amount' ? 1 : $item->get_quantity(),
                 'unitPrice'   => (float) $item->get_price(),
                 'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
             );
@@ -613,7 +613,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             return;
         }
 
-		// Charge the payment method.
+        // Charge the payment method.
 		$payment_profile_id = get_post_meta( $old_invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
 		$customer_profile   = get_user_meta( $old_invoice->get_user_id(), $this->get_customer_profile_meta_name( $old_invoice ), true );
 		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $new_invoice );
