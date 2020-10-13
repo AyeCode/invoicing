@@ -281,22 +281,22 @@ abstract class GetPaid_Payment_Gateway {
 	 * @param string $content Success page content.
 	 * @return string
 	 */
-	public function get_confirm_payment( $content ) {
-		
+	public function confirm_payment( $content ) {
+
 		// Retrieve the invoice.
 		$invoice_id = getpaid_get_current_invoice_id();
 		$invoice    = wpinv_get_invoice( $invoice_id );
-	
+
 		// Ensure that it exists and that it is pending payment.
 		if ( empty( $invoice_id ) || ! $invoice->needs_payment() ) {
 			return $content;
 		}
-	
+
 		// Can the user view this invoice??
 		if ( ! wpinv_user_can_view_invoice( $invoice ) ) {
 			return $content;
 		}
-	
+
 		// Show payment processing indicator.
 		return wpinv_get_template_html( 'wpinv-payment-processing.php', compact( 'invoice' ) );
 	}

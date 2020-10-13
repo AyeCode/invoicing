@@ -184,6 +184,7 @@ jQuery(function($) {
 
     // Refresh prices.
     $( 'body').on( 'input', '.getpaid-refresh-on-change', gp_throttle( on_field_change, 500 ) );
+    $( 'body').on( 'input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', gp_throttle( on_field_change, 500 ) );
 
     // Refresh when custom prices change.
     $( 'body').on( 'input', '.getpaid-item-price-input', gp_throttle( on_field_change, 500 ) );

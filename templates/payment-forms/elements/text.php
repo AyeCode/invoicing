@@ -9,13 +9,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$label = empty( $label ) ? '' : wp_kses_post( $label );
+
+if ( ! empty( $required ) ) {
+    $label .= "<span class='text-danger'> *</span>";
+}
+
 echo aui()->input(
     array(
         'name'       => esc_attr( $id ),
         'id'         => esc_attr( $id ) . uniqid( '_' ),
         'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'   => ! empty( $required ),
-        'label'      => empty( $label ) ? '' : wp_kses_post( $label ),
+        'label'      => $label,
         'label_type' => 'vertical',
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
     )

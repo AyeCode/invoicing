@@ -30,7 +30,7 @@ echo aui()->input(
         'id'         => esc_attr( $id ) . uniqid( '_' ),
         'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'   => ! empty( $required ),
-        'label'      => empty( $label ) ? '' : wp_kses_post( $label ),
+        'label'      => empty( $label ) ? '' : wp_kses_post( $label ) . '<span class="text-danger"> *</span>',
         'label_type' => 'vertical',
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'       => 'email',

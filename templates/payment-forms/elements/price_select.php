@@ -16,6 +16,8 @@ if ( empty( $options ) ) {
 
 // Prepare price options.
 $options = getpaid_convert_price_string_to_options( $options );
+$keys    = array_keys( $options );
+$value   = empty( $options ) ? '' : $keys[0];
 
 // Prepare id.
 $id = esc_attr( $id );
@@ -29,6 +31,7 @@ if ( $select_type == 'select' ) {
             'name'       => $id,
             'id'         => $id . uniqid( '_' ),
             'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
+            'value'      => $value,
             'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
             'label_type' => 'vertical',
             'class'      => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
@@ -48,6 +51,7 @@ if ( $select_type == 'radios' ) {
             'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
             'label_type' => 'vertical',
             'class'      => 'getpaid-price-select-radio getpaid-refresh-on-change',
+            'value'      => $value,
             'inline'     => false,
             'options'    => $options,
             'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
@@ -58,7 +62,7 @@ if ( $select_type == 'radios' ) {
 
 
 // Display the label.
-if ( ! empty( $label ) && $select_type != 'select' ) {
+if ( ! empty( $label ) ) {
     $label = sanitize_text_field( $label );
     echo "<label>$label</label>";
 }
@@ -73,13 +77,11 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
     }
     echo "<div class='$class'>";
 
-    $processed = 0;
     foreach ( $options as $price => $label ) {
         $label   = sanitize_text_field( $label );
         $price   = esc_attr( $price );
         $_id     = $id . uniqid( '_' );
-        $checked = checked( $processed, 0, false );
-        $processed ++;
+        $checked = checked( $price, $value, false );
 
         $class = 'rounded';
 
@@ -102,12 +104,10 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
 if ( $select_type == 'checkboxes' ) {
     echo '<div class="form-group">';
 
-    $processed = 0;
     foreach ( $options as $price => $label ) {
         $label   = sanitize_text_field( $label );
         $price   = esc_attr( $price );
-        $checked = checked( $processed, 0, false );
-        $processed ++;
+        $checked = checked( $price, $value, false );
         echo "
             <label class='d-block'>
                 <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change' name='{$id}[]' value='$price' $checked />
