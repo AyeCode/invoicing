@@ -851,7 +851,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
 
     // Increase discount usage.
     $discount_code = $invoice->get_discount_code();
-    if ( ! empty( $discount_code ) ) {
+    if ( ! empty( $discount_code ) && ! $invoice->is_renewal() ) {
         $discount = wpinv_get_discount_obj( $discount_code );
 
         if ( $discount->exists() ) {

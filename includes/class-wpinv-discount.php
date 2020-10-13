@@ -1186,7 +1186,7 @@ class WPInv_Discount extends GetPaid_Data  {
 			$exceeded = ! ( (int) $this->get_max_uses() < $this->get_uses() );
 		}
 
-		return apply_filters( 'wpinv_is_discount_maxed_out', $exceeded, $this->ID, $this, $this->code );
+		return apply_filters( 'wpinv_is_discount_maxed_out', $exceeded, $this->get_id(), $this, $this->get_code() );
 	}
 
 	/**
@@ -1208,7 +1208,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function is_expired() {
 		$expired = $this->has_expiration_date() ? current_time( 'timestamp' ) > strtotime( $this->get_expiration_date() ) : false;
-		return apply_filters( 'wpinv_is_discount_expired', $expired, $this->ID, $this, $this->code );
+		return apply_filters( 'wpinv_is_discount_expired', $expired, $this->get_id(), $this, $this->get_code() );
 	}
 
 	/**
@@ -1230,7 +1230,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function has_started() {
 		$started = $this->has_start_date() ? true : current_time( 'timestamp' ) > strtotime( $this->get_start_date() );
-		return apply_filters( 'wpinv_is_discount_started', $started, $this->ID, $this, $this->code );
+		return apply_filters( 'wpinv_is_discount_started', $started, $this->get_id(), $this, $this->get_code() );
 	}
 
 	/**
@@ -1311,7 +1311,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function is_minimum_amount_met( $amount ) {
 		$amount = floatval( wpinv_sanitize_amount( $amount ) );
 		$min_met= ! ( $this->has_minimum_amount() && $amount < floatval( wpinv_sanitize_amount( $this->get_minimum_total() ) ) );
-		return apply_filters( 'wpinv_is_discount_min_met', $min_met, $this->ID, $this, $this->code, $amount );
+		return apply_filters( 'wpinv_is_discount_min_met', $min_met, $this->get_id(), $this, $this->get_code(), $amount );
 	}
 
 	/**
@@ -1335,7 +1335,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function is_maximum_amount_met( $amount ) {
 		$amount = floatval( wpinv_sanitize_amount( $amount ) );
 		$max_met= ! ( $this->has_maximum_amount() && $amount > floatval( wpinv_sanitize_amount( $this->get_maximum_total() ) ) );
-		return apply_filters( 'wpinv_is_discount_max_met', $max_met, $this->ID, $this, $this->code, $amount );
+		return apply_filters( 'wpinv_is_discount_max_met', $max_met, $this->get_id(), $this, $this->get_code(), $amount );
 	}
 
 	/**
@@ -1438,9 +1438,9 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		// Fire relevant hooks.
 		if( (int) $by > 0 ) {
-			do_action( 'wpinv_discount_increase_use_count', $this->uses, $this->ID, $this->code,  absint( $by ) );
+			do_action( 'wpinv_discount_increase_use_count', $this->get_uses(), $this->get_id(), $this->get_code(),  absint( $by ) );
 		} else {
-			do_action( 'wpinv_discount_decrease_use_count', $this->uses, $this->ID, $this->code, absint( $by ) );
+			do_action( 'wpinv_discount_decrease_use_count', $this->get_uses(), $this->get_id(), $this->get_code(), absint( $by ) );
 		}
 
 		// Return the number of times the discount has been used.
