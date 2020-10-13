@@ -340,9 +340,6 @@ jQuery(function($) {
 
             })
 
-            // Refresh prices.
-            refresh_prices( form )
-
         }
 
         // Radio select items.
@@ -419,6 +416,9 @@ jQuery(function($) {
             // Filter on page load.
             filter_totals();
         }
+
+        // Refresh prices.
+        refresh_prices( form )
 
         // Discounts.
         if ( form.find('.getpaid-discount-field').length ) {
