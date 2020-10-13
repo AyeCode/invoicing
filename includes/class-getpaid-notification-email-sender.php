@@ -41,7 +41,7 @@ class GetPaid_Notification_Email_Sender {
 			'getpaid_email_data',
 			array(
 				'to'          => array_filter( array_unique( wpinv_parse_list( $to ) ) ),
-				'subject'     => $subject,
+				'subject'     => htmlspecialchars_decode( strip_tags( $subject ), ENT_QUOTES ),
 				'email'       => $email,
 				'headers'     => $this->get_headers(),
 				'attachments' => $attachments,
