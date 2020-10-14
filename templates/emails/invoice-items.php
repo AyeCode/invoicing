@@ -2,9 +2,10 @@
 /**
  * Displays line items in emails.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-invoice-items.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/invoice-items.php.
  *
  * @version 1.0.19
+ * @var WPInv_Invoice $invoice
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -17,11 +18,11 @@ $column_count = count( $columns );
 
 <div id="wpinv-email-items">
 
-    <h3 class="wpinv-items-t">
-        <?php echo apply_filters( 'wpinv_email_items_title', __( 'Items', 'invoicing' ) ); ?>
+    <h3 class="invoice-items-title">
+        <?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), ucfirst( $invoice->get_type() )); ?>
     </h3>
 
-    <table id="wpinv_checkout_cart" class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover">
     
         <thead>
 
@@ -44,6 +45,11 @@ $column_count = count( $columns );
                 // Display the item totals.
                 foreach ( $invoice->get_items() as $item ) {
                     wpinv_get_template( 'emails/invoice-item.php', compact( 'invoice', 'item', 'columns' ) );
+                }
+
+                // Display the fee totals.
+                foreach ( $invoice->get_fees() as $fee ) {
+                    wpinv_get_template( 'emails/fee-item.php', compact( 'invoice', 'fee', 'columns' ) );
                 }
 
             ?>

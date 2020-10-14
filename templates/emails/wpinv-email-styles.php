@@ -1,9 +1,14 @@
 <?php
-// don't load directly
-if ( !defined('ABSPATH') )
-    die('-1');
+/**
+ * Template that generates the email styles.
+ *
+ * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-styles.php.
+ *
+ * @version 1.0.19
+ */
 
-// Load colours
+defined( 'ABSPATH' ) || exit;
+
 $bg              = wpinv_get_option( 'email_background_color', '#f5f5f5' );
 $body            = wpinv_get_option( 'email_body_background_color', '#fdfdfd' );
 $base            = wpinv_get_option( 'email_base_color', '#557da2' );

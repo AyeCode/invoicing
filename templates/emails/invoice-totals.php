@@ -5,6 +5,7 @@
  * This template can be overridden by copying it to yourtheme/invoicing/emails/invoice-totals.php.
  *
  * @version 1.0.19
+ * @var WPInv_Invoice $invoice
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -45,6 +46,10 @@ do_action( 'getpaid_before_email_line_totals', $invoice, $totals );
                 // Total tax.
                 if ( 'tax' == $key ) {
                     echo wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ), $invoice->get_currency() );
+                }
+
+                if ( 'fee' == $key ) {
+                    echo wpinv_price( wpinv_format_amount( $invoice->get_total_fees() ), $invoice->get_currency() );
                 }
 
                 // Total discount.

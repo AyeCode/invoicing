@@ -5,6 +5,9 @@
  * This template can be overridden by copying it to yourtheme/invoicing/emails/invoice-item.php.
  *
  * @version 1.0.19
+ * @var WPInv_Invoice $invoice
+ * @var GetPaid_Form_Item $item
+ * @var array $columns
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -35,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
 
                     if ( ! empty( $description ) ) {
                         $description = wp_kses_post( $description );
-                        echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
+                        echo "<p class='small'>$description</p>";
                     }
 
                 }
@@ -44,22 +47,20 @@ defined( 'ABSPATH' ) || exit;
                 if ( 'price' == $column ) {
 
                     // Display the item price (or recurring price if this is a renewal invoice)
-                    if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
-                        echo wpinv_price( wpinv_format_amount( $item->get_price() ), $invoice->get_currency() );
-                    } else {
-                        echo wpinv_price( wpinv_format_amount( $item->get_initial_price() ), $invoice->get_currency() );
-                    }
+                    $price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
+                    echo wpinv_price( $price );
 
                 }
 
                 // Item quantity.
                 if ( 'quantity' == $column ) {
-                    echo (int) $item->get_qantity();
+                    echo (int) $item->get_quantity();
                 }
 
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
-                    echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ), $invoice->get_currency() );
+                    $subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
+                    echo wpinv_price( $subtotal );
                 }
 
                 // Fires when printing a line item column.

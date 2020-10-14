@@ -1,8 +1,8 @@
 <?php
 /**
- * Template that generates the overdue emails.
+ * Template that generates the cancelled subscription email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-overdue.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-failed_cancelled.php.
  *
  * @version 1.0.19
  */
@@ -17,9 +17,6 @@ echo $message_body;
 
 // Print invoice details.
 do_action( 'wpinv_email_invoice_details', $invoice, $email_type, $sent_to_admin );
-
-// Print invoice items.
-do_action( 'wpinv_email_invoice_items', $invoice, $email_type, $sent_to_admin );
 
 // Print the billing details.
 do_action( 'wpinv_email_billing_details', $invoice, $email_type, $sent_to_admin );

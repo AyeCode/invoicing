@@ -1,8 +1,8 @@
 <?php
 /**
- * Template that generates the overdue emails.
+ * Template that generates the upcoming renewal subscription email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-overdue.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-renewal_reminder.php.
  *
  * @version 1.0.19
  */

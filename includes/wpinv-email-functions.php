@@ -42,7 +42,7 @@ add_action( 'wpinv_email_footer', 'wpinv_email_footer' );
 function wpinv_email_invoice_details( $invoice,  $email_type, $sent_to_admin ) {
 
     $args = compact( 'invoice', 'email_type', 'sent_to_admin' );
-    wpinv_get_template( 'emails/wpinv-email-invoice-details.php', $args );
+    wpinv_get_template( 'emails/invoice-details.php', $args );
 
 }
 add_action( 'wpinv_email_invoice_details', 'wpinv_email_invoice_details', 10, 3 );
@@ -62,7 +62,7 @@ function wpinv_email_invoice_items( $invoice, $email_type, $sent_to_admin ) {
     $columns = apply_filters( 'getpaid_invoice_line_items_table_columns', $columns, $invoice );
 
     // Load the template.
-    wpinv_get_template( 'emails/wpinv-email-invoice-items.php', compact( 'invoice', 'columns', 'email_type', 'sent_to_admin' ) );
+    wpinv_get_template( 'emails/invoice-items.php', compact( 'invoice', 'columns', 'email_type', 'sent_to_admin' ) );
 
 }
 add_action( 'wpinv_email_invoice_items', 'wpinv_email_invoice_items', 10, 3 );
