@@ -929,12 +929,12 @@ function getpaid_invoice_meta( $invoice ) {
         if ( ! empty ( $subscription ) ) {
 
             // Display the renewal date.
-            if ( $subscription->is_active() && 'cancelled' != $subscription->status ) {
+            if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
 
                 $meta[ 'renewal_date' ] = array(
 
                     'label' => __( 'Renews On', 'invoicing' ),
-                    'value' => getpaid_format_date( $subscription->expiration ),
+                    'value' => getpaid_format_date( $subscription->get_expiration() ),
         
                 );
 
@@ -946,7 +946,7 @@ function getpaid_invoice_meta( $invoice ) {
                 $meta[ 'recurring_total' ] = array(
 
                     'label' => __( 'Recurring Amount', 'invoicing' ),
-                    'value' => wpinv_price( wpinv_format_amount( $subscription->recurring_amount ), $invoice->get_currency() ),
+                    'value' => wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $invoice->get_currency() ),
         
                 );
 

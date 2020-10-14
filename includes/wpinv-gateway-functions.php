@@ -265,7 +265,7 @@ function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 	return apply_filters( 'wpinv_chosen_gateway', $enabled_gateway );
 }
 
-function wpinv_record_gateway_error( $title = '', $message = '', $parent = 0 ) {
+function wpinv_record_gateway_error( $title = '', $message = '' ) {
     return wpinv_error_log( $message, $title );
 }
 
