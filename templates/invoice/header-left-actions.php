@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
         <div class="getpaid-header-left-actions">
 
             <?php if ( $invoice->is_type( 'invoice' ) && $invoice->needs_payment() && ! $invoice->is_held() ): ?>
-                <a class="btn btn-primary invoice-action-pay" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>">
+                <a class="btn btn-sm btn-primary invoice-action-pay" href="<?php echo esc_url( $invoice->get_checkout_payment_url() ); ?>">
                     <?php _e( 'Pay For Invoice', 'invoicing' ); ?>
                 </a>
             <?php endif; ?>

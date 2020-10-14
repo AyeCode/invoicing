@@ -13,7 +13,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 ?>
 
-<div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo sanitize_html_class( $item->get_type() ); ?>'>
+<div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo sanitize_html_class( $item->get_type() ); ?> border-bottom'>
 
     <div class="form-row">
 

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
     <?php if ( $logo = wpinv_get_business_logo() ) { ?>
         <img class="logo" style="max-width:100%;" src="<?php echo esc_url( $logo ); ?>">
     <?php } else { ?>
-        <h1 class="pt-2"><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
+        <h1 class="h3"><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
     <?php } ?>
 
 </a>

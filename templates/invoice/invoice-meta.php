@@ -9,6 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$class = ! is_singular( 'page' ) ? 'table-sm' : '';
 ?>
 
         <?php do_action( 'getpaid_before_invoice_meta', $invoice ); ?>
@@ -16,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 
 
             <?php do_action( 'getpaid_before_invoice_meta_table', $invoice ); ?>
-            <table class="table table-bordered">
+            <table class="table <?php echo $class; ?> table-bordered">
                 <tbody>
 
                     <?php do_action( "getpaid_before_invoice_meta_rows", $invoice ); ?>

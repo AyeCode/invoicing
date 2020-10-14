@@ -961,6 +961,7 @@ function getpaid_invoice_totals_rows( $invoice ) {
         array(
             'subtotal' => __( 'Subtotal', 'invoicing' ),
             'tax'      => __( 'Tax', 'invoicing' ),
+            'fee'      => __( 'Fee', 'invoicing' ),
             'discount' => __( 'Discount', 'invoicing' ),
             'total'    => __( 'Total', 'invoicing' ),
         ),

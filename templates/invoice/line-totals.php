@@ -6,6 +6,7 @@
  * This template can be overridden by copying it to yourtheme/invoicing/invoice/line-totals.php.
  *
  * @version 1.0.19
+ * @var WPInv_Invoice $invoice
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,7 +17,7 @@ $totals = getpaid_invoice_totals_rows( $invoice );
 do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
 ?>
-<div class='border-top getpaid-invoice-line-totals'>
+<div class='getpaid-invoice-line-totals'>
     <div class="row">
         <div class="col-12 offset-sm-6 col-sm-6 border-left pl-0">
 
@@ -37,6 +38,11 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                                 // Total tax.
                                 if ( 'tax' == $key ) {
                                     echo wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ), $invoice->get_currency() );
+                                }
+
+                                // Total Fee.
+                                if ( 'fee' == $key ) {
+                                    echo wpinv_price( wpinv_format_amount( $invoice->get_total_fees() ), $invoice->get_currency() );
                                 }
 
                                 // Total discount.

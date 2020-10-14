@@ -5,6 +5,7 @@
  * This template can be overridden by copying it to yourtheme/invoicing/invoice/line-items.php.
  *
  * @version 1.0.19
+ * @var WPInv_Invoice $invoice
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -33,6 +34,11 @@ defined( 'ABSPATH' ) || exit;
             // Display the item totals.
             foreach ( $invoice->get_items() as $item ) {
                 wpinv_get_template( 'invoice/line-item.php', compact( 'invoice', 'item', 'columns' ) );
+            }
+
+            // Display the fee totals.
+            foreach ( $invoice->get_fees() as $fee ) {
+                wpinv_get_template( 'invoice/fee-item.php', compact( 'invoice', 'fee', 'columns' ) );
             }
 
             // Display the cart totals.

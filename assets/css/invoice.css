@@ -169,23 +169,23 @@ a img {
 /* Watermarks */
 .getpaid-watermark {
     display: block;
-    left: 25%;
+    left: 50%;
     min-height: 50%;
     min-width: 50%;
     position: absolute;
-    top: 33%;
+    top: 15%;
     z-index: 2;
     pointer-events: none;
 }
 
 .getpaid-watermark p {
-    color: rgb(57 104 3 / 11%);
-    font-size: 160px;
+    color: rgb(0 0 0 / 0.2);
+    font-size: 100px;
     font-weight: 500;
-    letter-spacing: -10px;
-    -webkit-transform: rotate(315deg);
-    transform: rotate(315deg);
+    -webkit-transform: rotate(325deg);
+    transform: rotate(325deg);
     text-align: center;
+    font-family: monospace;
 }
 
 /* Alert Messages */

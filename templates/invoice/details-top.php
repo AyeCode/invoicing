@@ -23,7 +23,7 @@ $watermark = wpinv_watermark( $invoice->get_id() )
 
         <?php endif; ?>
 
-        <div class="getpaid-invoice-details-top mt-3 mb-3">
+        <div class="getpaid-invoice-details-top mb-5">
             <div class="row">
                 <div class="col-12 col-sm-6 text-left">
                     <?php do_action( 'getpaid_invoice_details_top_left', $invoice ); ?>
