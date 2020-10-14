@@ -328,6 +328,10 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             )
         );
 
+        if ( 0 == $invoice->get_total_tax() ) {
+            unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
+        }
+
         return $this->post( apply_filters( 'getpaid_authorizenet_charge_customer_payment_profile_args', $args, $invoice ), $invoice );
 
     }
@@ -459,14 +463,32 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         foreach ( $invoice->get_items() as $item ) {
 
+            $amount  = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
             $items[] = array(
                 'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
                 'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
                 'description' => getpaid_limit_length( $item->get_description(), 255 ),
                 'quantity'    => (string) $invoice->get_template() == 'amount' ? 1 : $item->get_quantity(),
-                'unitPrice'   => (float) $item->get_price(),
+                'unitPrice'   => (float) $amount,
                 'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
             );
+
+        }
+
+        foreach ( $invoice->get_fees() as $fee_name => $fee ) {
+
+            $amount  = $invoice->is_renewal() ? $fee['recurring_fee'] : $fee['initial_fee'];
+
+            if ( $amount > 0 ) {
+                $items[] = array(
+                    'itemId'      => getpaid_limit_length( $fee_name, 31 ),
+                    'name'        => getpaid_limit_length( $fee_name, 31 ),
+                    'description' => getpaid_limit_length( $fee_name, 255 ),
+                    'quantity'    => '1',
+                    'unitPrice'   => (float) $amount,
+                    'taxable'     => false,
+                );
+            }
 
         }
 

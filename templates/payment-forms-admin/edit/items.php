@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 <div v-if="!is_default">
 
+    <small class='form-text text-muted mb-2'>
+        <?php esc_html_e( 'This section allows you to add an existing item to the form that users can then buy. If you do not add an item, ensure that you add a price select or input field to the form.', 'invoicing' ); ?>
+    </small>
+
     <label class='form-group'>
         <input v-model='active_form_element.hide_cart' type='checkbox' />
         <span class='form-check-label'><?php esc_html_e( 'Hide cart details', 'invoicing' ); ?></span>
