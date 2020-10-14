@@ -192,6 +192,10 @@ jQuery(function($) {
     // Refresh when quantities change.
     $( 'body').on( 'change', '.getpaid-item-quantity-input', gp_throttle( on_field_change, 500 ) );
 
+    $( 'body').on( 'change', '[name="getpaid-payment-form-selected-item"]', gp_throttle( function() {
+        refresh_prices( $( this ).closest('.getpaid-payment-form') )
+    }, 500 ) );
+
     // Refresh when country changes.
     $( 'body').on( 'change', '#wpinv_country', function() {
 
