@@ -44,7 +44,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                         }
 
                         // Price help text.
-                        $description = getpaid_item_recurring_price_help_text( $item, $currency );
+                        $description = getpaid_item_recurring_price_help_text( $item, $invoice->get_currency() );
                         if ( $description ) {
                             echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
                         }

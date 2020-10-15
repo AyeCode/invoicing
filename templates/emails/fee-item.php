@@ -66,7 +66,7 @@ defined( 'ABSPATH' ) || exit;
                 }
 
                 // Fires when printing a line item column.
-                do_action( "getpaid_email_fee_item_$column", $item, $invoice );
+                do_action( "getpaid_email_fee_item_$column", $fee, $invoice );
 
             ?>
 

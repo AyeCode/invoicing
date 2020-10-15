@@ -336,11 +336,14 @@ class WPInv_Ajax {
             exit;
         }
 
-        foreach( $address_fields['fields'] as $address_field ) {
+        foreach ( $address_fields['fields'] as $address_field ) {
 
             if ( 'wpinv_state' == $address_field['name'] ) {
 
-                $label = $address_field['label'];
+                $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
+                $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
+                $value       = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_wpinv_state', true ) : '';
+                $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( $address_field['label'] );
 
                 if ( ! empty( $address_field['required'] ) ) {
                     $label .= "<span class='text-danger'> *</span>";
@@ -350,35 +353,38 @@ class WPInv_Ajax {
 
                 if ( ! empty( $states ) ) {
 
-                    $html = aui()->select(
-                            array(
-                                'options'          => $states,
-                                'name'             => esc_attr( $address_field['name'] ),
-                                'id'               => esc_attr( $address_field['name'] ),
-                                'placeholder'      => esc_attr( $address_field['placeholder'] ),
-                                'required'         => (bool) $address_field['required'],
-                                'no_wrap'          => true,
-                                'label'            => wp_kses_post( $label ),
-                                'select2'          => false,
-                            )
-                        );
+                    $html = aui()->select( array(
+                        'options'          => $states,
+                        'name'             => 'wpinv_state',
+                        'id'               => 'wpinv_state' . uniqid(),
+                        'value'            => sanitize_text_field( $value ),
+                        'placeholder'      => $placeholder,
+                        'required'         => ! empty( $address_field['required'] ),
+                        'label'            => wp_kses_post( $label ),
+                        'label_type'       => 'vertical',
+                        'help_text'        => $description,
+                        'class'            => 'wpinv_state',
+                    ));
 
                 } else {
 
                     $html = aui()->input(
-                            array(
-                                'name'       => esc_attr( $address_field['name'] ),
-                                'id'         => esc_attr( $address_field['name'] ),
-                                'required'   => (bool) $address_field['required'],
-                                'label'      => wp_kses_post( $label ),
-                                'no_wrap'    => true,
-                                'type'       => 'text',
-                            )
-                        );
+                        array(
+                            'name'       => 'wpinv_state',
+                            'id'         => 'wpinv_state' . uniqid(),
+                            'placeholder'=> $placeholder,
+                            'required'   => ! empty( $address_field['required'] ),
+                            'label'      => wp_kses_post( $label ),
+                            'label_type' => 'vertical',
+                            'help_text'  => $description,
+                            'value'      => $value,
+                            'class'      => 'wpinv_state',
+                        )
+                    );
 
                 }
 
-                wp_send_json_success( str_replace( 'sr-only', '', $html ) );
+                wp_send_json_success( $html );
                 exit;
 
             }

@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
                     }
 
                     // Price help text
-                    $description = getpaid_item_recurring_price_help_text( $item, $currency );
+                    $description = getpaid_item_recurring_price_help_text( $item, $invoice->get_currency() );
                     if ( $description ) {
                         echo "<p class='small'>$description</p>";
                     }

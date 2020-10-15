@@ -120,6 +120,10 @@ jQuery(function($) {
                 // Retrieve form state.
                 var state = this.cached_states[ this.current_state_key() ]
 
+                if ( ! state ) {
+                    return this.fetch_state()
+                }
+
                 // Process totals.
                 if ( state.totals ) {
 
@@ -210,26 +214,28 @@ jQuery(function($) {
             update_state_field() {
 
                 // Ensure that we have a state field.
-                if ( this.form.find('#wpinv_state').length ) {
+                if ( this.form.find( '.wpinv_state' ).length ) {
 
-                    wpinvBlock( this.form.find('.wpinv_state') );
+                    var state = this.form.find( '.wpinv_state' ).parent()
+
+                    wpinvBlock( state );
 
                     data = {
                         action: 'wpinv_get_payment_form_states_field',
-                        country: this.form.find( '#wpinv_country' ).val(),
+                        country: this.form.find( '.wpinv_country' ).val(),
                         form: this.form.find( 'input[name="form_id"]' ).val()
                     };
 
                     $.get(ajaxurl, data, ( res ) => {
 
                         if ( 'object' == typeof res ) {
-                            this.form.find( '.wpinv_state' ).html( res.data )
+                            state.html( res.data )
                         }
 
                     })
 
                     .always( () => {
-                        this.form.find( '.wpinv_state' ).unblock()
+                        state.unblock()
                     });
 
                 }
@@ -256,13 +262,13 @@ jQuery(function($) {
                 this.form.on( 'change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
 
                 // Refresh when country changes.
-                this.form.on( 'change', '#wpinv_country', () => {
+                this.form.on( 'change', '.wpinv_country', () => {
                     this.update_state_field()
                     on_field_change()
                 } );
 
                 // Refresh when state changes.
-                this.form.on( 'change', '#wpinv_state', () => {
+                this.form.on( 'change', '.wpinv_state', () => {
                     on_field_change()
                 } );
 
