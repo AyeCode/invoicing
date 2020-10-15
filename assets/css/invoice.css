@@ -169,9 +169,8 @@ a img {
 /* Watermarks */
 .getpaid-watermark {
     display: block;
-    left: 50%;
-    min-height: 50%;
-    min-width: 50%;
+    left: 0;
+    right: 0;
     position: absolute;
     top: 15%;
     z-index: 2;
@@ -180,7 +179,7 @@ a img {
 
 .getpaid-watermark p {
     color: rgb(0 0 0 / 0.2);
-    font-size: 100px;
+    font-size: 200px;
     font-weight: 500;
     -webkit-transform: rotate(325deg);
     transform: rotate(325deg);

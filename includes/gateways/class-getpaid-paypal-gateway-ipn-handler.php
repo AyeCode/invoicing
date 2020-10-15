@@ -60,15 +60,11 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			wp_die( 'Invoice not paid via PayPal', 500 );
 		}
 
-		$posted['payment_status'] = sanitize_key( strtolower( $posted['payment_status'] ) );
+		$posted['payment_status'] = isset( $posted['payment_status'] ) ? sanitize_key( strtolower( $posted['payment_status'] ) ) : '';
 		$posted['txn_type']       = sanitize_key( strtolower( $posted['txn_type'] ) );
 
 		wpinv_error_log( 'Payment status:' . $posted['payment_status'] );
 		wpinv_error_log( 'IPN Type:' . $posted['txn_type'] );
-
-		if ( $this->gateway->is_sandbox( $invoice ) ) {
-			wpinv_error_log( $posted, 'Invoice was processed in sandbox hence logging the posted data' );
-		}
 
 		if ( method_exists( $this, 'ipn_txn_' . $posted['txn_type'] ) ) {
 			call_user_func( array( $this, 'ipn_txn_' . $posted['txn_type'] ), $invoice, $posted );
@@ -115,6 +111,10 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// Retrieve the associated invoice.
 		$posted  = wp_unslash( $_POST );
 		$invoice = $this->get_ipn_invoice( $posted );
+
+		if ( $this->gateway->is_sandbox( $invoice ) ) {
+			wpinv_error_log( $posted, 'Invoice was processed in sandbox hence logging the posted data' );
+		}
 
 		// Validate the IPN.
 		$posted['cmd'] = '_notify-validate';
@@ -179,7 +179,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			/* translators: %s: Amount. */
 			$invoice->update_status( 'wpi-processing', sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ) );
 
-			wpinv_error_log( "Currencies do not match: {$amount} instead of {$invoice->get_total()}", 'IPN Error', __FILE__, __LINE__, true );
+			wpinv_error_log( "Amounts do not match: {$amount} instead of {$invoice->get_total()}", 'IPN Error', __FILE__, __LINE__, true );
 		}
 
 		wpinv_error_log( $amount, 'Validated IPN Amount' );
@@ -200,7 +200,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			/* translators: %s: email address . */
 			$invoice->update_status( 'wpi-processing', sprintf( __( 'Validation error: PayPal IPN response from a different email address (%s).', 'invoicing' ), $receiver_email ) );
 
-			wpinv_error_log( "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}", 'IPN Error', __FILE__, __LINE__, true );
+			return wpinv_error_log( "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}", 'IPN Error', __FILE__, __LINE__, true );
 		}
 
 		wpinv_error_log( 'Validated PayPal Email' );
@@ -295,7 +295,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 */
 	protected function ipn_txn_subscr_signup( $invoice, $posted ) {
 
-		wpinv_error_log( $posted, 'Processing subscription signup' );
+		wpinv_error_log( 'Processing subscription signup' );
 
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_get_invoice_subscription( $invoice );
@@ -308,7 +308,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$business_email = isset( $posted['business'] ) && is_email( $posted['business'] ) ? trim( $posted['business'] ) : trim( $posted['receiver_email'] );
 		$this->validate_ipn_receiver_email( $invoice, $business_email );
 		$this->validate_ipn_currency( $invoice, $posted['mc_currency'] );
-		$this->validate_ipn_amount( $invoice, $posted['mc_gross'] );
 
 		// Activate the subscription.
 		$duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );

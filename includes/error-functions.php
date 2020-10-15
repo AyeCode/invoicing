@@ -167,11 +167,11 @@ function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = fal
         // ... and a backtrace.
         error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
 
-        // Maybe exit.
-        if ( $exit ) {
-            exit;
-        }
+    }
 
+    // Maybe exit.
+    if ( $exit ) {
+        exit;
     }
 
 }
