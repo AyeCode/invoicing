@@ -71,7 +71,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
         add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
-        add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
+        add_filter( 'getpaid_authorizenet_sandbox_notice', array( $this, 'sandbox_notice' ) );
         parent::__construct();
     }
 
@@ -677,16 +677,13 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     /**
      * Displays a notice on the checkout page if sandbox is enabled.
      */
-    public function sandbox_notice( $description, $gateway ) {
+    public function sandbox_notice() {
 
-        if ( $this->id == $gateway && wpinv_is_test_mode( $this->id ) ) {
-            $description .= '<br>&nbsp;<br>' . sprintf(
-                __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %sAuthorize.NET Sandbox Testing Guide%s for more details.', 'invoicing' ),
-                '<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
-                '</a>'
-            );
-        }
-        return $description;
+        return sprintf(
+            __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %sAuthorize.NET Sandbox Testing Guide%s for more details.', 'invoicing' ),
+            '<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
+            '</a>'
+        );
 
     }
 

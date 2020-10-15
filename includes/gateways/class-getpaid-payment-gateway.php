@@ -482,36 +482,35 @@ abstract class GetPaid_Payment_Gateway {
         }
 
         ?>
-            <div class="<?php echo esc_attr( $this->id );?>-cc-form getpaid-cc-form card  mt-4">
+            <div class="<?php echo esc_attr( $this->id );?>-cc-form getpaid-cc-form mt-1">
 
 
-                <div class="card-body">
+                <div class="getpaid-cc-card-inner">
                     <div class="row">
 
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12">
 
-                            <?php
-
-                                echo aui()->input(
-                                    array(
-                                        'name'              => $this->id . '[cc_number]',
-                                        'id'                => "$id_prefix-cc-number",
-                                        'label'             => __( 'Card number', 'invoicing' ),
-                                        'label_type'        => 'vertical',
-                                        'input_group_left'  => '<span class="input-group-text"><i class="fa fa-credit-card"></i></span>',
-                                    )
-                                );
-                            ?>
+							<div class="form-group">
+								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>"><?php _e( 'Card number', 'invoicing' ); ?></label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend ">
+										<span class="input-group-text">
+											<i class="fa fa-credit-card"></i>
+										</span>
+									</div>
+									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>authorizenet[cc_number]" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm">
+								</div>
+							</div>
 
                         </div>
 
-                        <div class="col-12 col-sm-4">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label><?php _e( 'Expiration', 'invoicing' ); ?></label>
                                 <div class="form-row">
 
                                     <div class="col">
-                                        <select class="form-control" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
+                                        <select class="form-control form-control-sm" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
                                             <option disabled selected="selected"><?php _e( 'MM', 'invoicing' ); ?></option>
 
                                             <?php
@@ -526,7 +525,7 @@ abstract class GetPaid_Payment_Gateway {
                                     </div>
 
                                     <div class="col">
-                                        <select class="form-control" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
+                                        <select class="form-control form-control-sm" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
                                             <option disabled selected="selected"><?php _e( 'YY', 'invoicing' ); ?></option>
 
                                             <?php
@@ -544,14 +543,15 @@ abstract class GetPaid_Payment_Gateway {
                             </div>
                         </div>
 
-                        <div class="col-12 col-sm-2">
+                        <div class="col-12">
                             <?php
                                 echo aui()->input(
                                     array(
                                         'name'              => $this->id . '[cc_cvv2]',
                                         'id'                => "$id_prefix-cc-cvv2",
                                         'label'             => __( 'CCV', 'invoicing' ),
-                                        'label_type'        => 'vertical',
+										'label_type'        => 'vertical',
+										'class'             => 'form-control-sm',
                                     )
                                 );
                             ?>

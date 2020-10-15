@@ -324,3 +324,7 @@ input[type="text"].getpaid-item-price-input {
 .wpinv-page .bsui a.btn {
     text-decoration: none;
 }
+
+.getpaid-cc-card-inner {
+	max-width: 460px;
+}

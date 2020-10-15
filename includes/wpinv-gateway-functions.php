@@ -103,6 +103,11 @@ function wpinv_get_gateway_admin_label( $gateway ) {
     return apply_filters( 'wpinv_gateway_admin_label', $label, $gateway );
 }
 
+/**
+ * Retrieves the gateway description.
+ * 
+ * @param string $gateway
+ */
 function wpinv_get_gateway_description( $gateway ) {
     global $wpinv_options;
 

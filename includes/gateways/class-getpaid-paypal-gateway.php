@@ -85,8 +85,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $this->checkout_button_text = __( 'Proceed to PayPal', 'invoicing' );
         $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
-        add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
-        add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
+		add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
+        add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
 
         parent::__construct();
     }
@@ -398,7 +398,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
                 $param_number = 1;
             }
 
-            $paypal_args[ 'a' . $param_number ] = $initial_amount ? 0 : $initial_amount;
+            $paypal_args[ 'a' . $param_number ] = $initial_amount ? $initial_amount : 0;
 
             // Sign Up interval
             $paypal_args[ 'p' . $param_number ] = $interval;
@@ -475,17 +475,15 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
     }
 
     /**
-     * Displays a notice on the checkout page if sandbox is enabled.
+     * Returns a sandbox notice.
      */
-    public function sandbox_notice( $description, $gateway ) {
-        if ( 'paypal' == $gateway && wpinv_is_test_mode( 'paypal' ) ) {
-            $description .= '<br>&nbsp;<br>' . sprintf(
-                __( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal Sandbox Testing Guide%s for more details.', 'invoicing' ),
-                '<a href="https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/">',
-                '</a>'
-            );
-        }
-        return $description;
+    public function sandbox_notice() {
+
+        return sprintf(
+			__( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal Sandbox Testing Guide%s for more details.', 'invoicing' ),
+			'<a href="https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/">',
+			'</a>'
+		);
 
     }
 

@@ -37,6 +37,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$this->add_fees( $submission );
 		$this->add_discounts( $submission );
 		$this->add_taxes( $submission );
+		$this->add_gateways( $submission );
 
 	}
 
@@ -189,6 +190,36 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$this->response = array_merge(
 			$this->response,
 			array( 'taxes' => $taxes )
+		);
+
+	}
+
+	/**
+	 * Adds gateways to a response for submission refresh prices.
+	 *
+	 * @param GetPaid_Payment_Form_Submission $submission
+	 */
+	public function add_gateways( $submission ) {
+
+		$gateways = array_keys( wpinv_get_enabled_payment_gateways() );
+
+		if ( $this->response['has_recurring'] ) {
+
+			foreach ( $gateways as $i => $gateway ) {
+
+				if ( ! wpinv_gateway_support_subscription( $gateway ) ) {
+					unset( $gateways[ $i ] );
+				}
+
+			}
+
+		}
+
+
+		$gateways = apply_filters( 'getpaid_submission_gateways', $gateways, $submission );
+		$this->response = array_merge(
+			$this->response,
+			array( 'gateways' => $gateways )
 		);
 
 	}

@@ -64,256 +64,339 @@ jQuery(function($) {
         }
     }
 
-    // A local cache of prices.
-    var cached_prices = {}
+    // Pass in a form to attach event listeners.
+    window.getpaid_form = function( form ) {
 
-    // Fetch prices from the server.
-    var get_prices = function( form, form_data ) {
+        return {
 
-        wpinvBlock(form);
+            // Cache states to reduce server requests.
+            cached_states: {},
 
-        return $.post( WPInv.ajax_url, form_data + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce )
+            // The current form.
+            form,
 
-            .done( function( res ) {
+            // Alerts the user whenever an error occurs.
+            show_error( error ) {
 
-                // We have prices.
-                if ( res.success ) {
+                // Display the error
+                form.find( '.getpaid-payment-form-errors' ).html( error ).removeClass( 'd-none' )
 
-                    // Cache the data.
-                    cached_prices[ form_data ] = res.data
-                    return;
+                // Animate to the error
+                $( 'html, body' ).animate({
+                    scrollTop: form.find( '.getpaid-payment-form-errors' ).offset().top
+                }, 2000);
+
+            },
+
+            // Hides the current error.
+            hide_error() {
+
+                // Hide the error
+                form.find( '.getpaid-payment-form-errors' ).html('').addClass('d-none')
+
+            },
+
+            // Caches a state.
+            cache_state( key, state ) {
+                this.cached_states[ key ] = state
+            },
+
+            // Returns the current cache key.
+            current_state_key() {
+                return this.form.serialize()
+            },
+
+            // Checks if the current state is cached.
+            is_current_state_cached() {
+                return this.cached_states.hasOwnProperty( this.current_state_key() )
+            },
+
+            // Switches to a given form state.
+            switch_state() {
+
+                // Hide any errors.
+                this.hide_error()
+
+                // Retrieve form state.
+                var state = this.cached_states[ this.current_state_key() ]
+
+                // Process totals.
+                if ( state.totals ) {
+
+                    for ( var total in state.totals ) {
+                        if ( state.totals.hasOwnProperty( total ) ) {
+                            this.form.find( '.getpaid-form-cart-totals-total-' + total ).html( state.totals[total] )
+                        }
+                    }
 
                 }
 
-                // An error occured.
-                form.find('.getpaid-payment-form-errors').html(res).removeClass('d-none')
+                // Process item sub-totals.
+                if ( state.items ) {
 
-            } )
+                    for ( var item in state.items ) {
+                        if ( state.items.hasOwnProperty( item ) ) {
+                            this.form.find( '.getpaid-form-cart-item-subtotal-' + item ).html( state.items[item] )
+                        }
+                    }
 
-            .fail( function( res ) {
-                form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
-            } )
-
-            .always(() => {
-                form.unblock();
-            })
-
-        }
-
-    /**
-     * Refresh prices from the cache.
-     */
-    var handle_refresh = function( form, form_data ) {
-
-        // Hide any errors.
-        form.find('.getpaid-payment-form-errors').html('').addClass('d-none')
-
-        var data = cached_prices[ form_data ]
-
-        // Process totals.
-        if ( data.totals ) {
-
-            for ( var total in data.totals ) {
-                if ( data.totals.hasOwnProperty( total ) ) {
-                    form.find('.getpaid-form-cart-totals-total-' + total).html(data.totals[total])
                 }
-            }
 
-        }
+                // Process text updates.
+                if ( state.texts ) {
 
-        // Process item sub-totals.
-        if ( data.items ) {
+                    for ( var selector in state.texts ) {
+                        if ( state.texts.hasOwnProperty( selector ) ) {
+                            this.form.find( selector ).html( state.texts[selector] )
+                        }
+                    }
 
-            for ( var item in data.items ) {
-                if ( data.items.hasOwnProperty( item ) ) {
-                    form.find( '.getpaid-form-cart-item-subtotal-' + item ).html( data.items[item] )
                 }
-            }
 
-        }
-
-        // Process text updates.
-        if ( data.texts ) {
-
-            for ( var selector in data.texts ) {
-                if ( data.texts.hasOwnProperty( selector ) ) {
-                    form.find( selector ).html( data.texts[selector] )
+                // Hide/Display Gateways.
+                if ( state.gateways ) {
+                    this.process_gateways( state.gateways, state )
                 }
-            }
 
-        }
+            },
 
-    }
+            // Refreshes the state either from cache or from the server.
+            refresh_state() {
 
-    /**
-     * Refresh prices either from cache or from the server.
-     */
-    var refresh_prices = function( form ) {
+                // If we have the state in the cache...
+                if ( this.is_current_state_cached() ) {
+                    return this.switch_state()
+                }
 
-        // Get form data.
-        var form_data = form.serialize()
+                // ... else, fetch from the server.
+                this.fetch_state()
+            },
 
-        // If we have the items in the cache...
-        if ( cached_prices[ form_data ] ) {
-            handle_refresh( form, form_data )
-            return
-        }
+            // Fetch a state from the server, and applies it to the form.
+            fetch_state() {
 
-        get_prices( form, form_data ).done( function () {
-            if ( cached_prices[ form_data ] ) {
-                handle_refresh( form, form_data )
-            }
-        })
+                // Block the form.
+                wpinvBlock( this.form );
 
-    }
+                // Return a promise.
+                var key = this.current_state_key()
+                return $.post( WPInv.ajax_url, key + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce )
 
-    // Handles field changes.
-    var on_field_change = function() {
+                .done( ( res ) => {
 
-        // Sanitize the value.
-        $(this).val( $(this).val().replace(/[^0-9\.]/g,'') )
+                    // If successful, cache the prices.
+                    if ( res.success ) {
+                        this.cache_state( key, res.data )
+                        return this.switch_state()
+                    }
 
-        // Ensure that we have a value.
-        if ( '' == $(this).val() ) {
-            $(this).val('1')
-        }
+                    // Else, display an error.
+                    this.show_error( res )
+                } )
 
-        // Refresh prices.
-        refresh_prices( $( this ).closest('.getpaid-payment-form') )
-    }
+                // Connection error.
+                .fail( () => {
+                    this.show_error( WPInv.connectionError )
+                } )
 
-    // Refresh prices.
-    $( 'body').on( 'input', '.getpaid-refresh-on-change', gp_throttle( on_field_change, 500 ) );
-    $( 'body').on( 'input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', gp_throttle( on_field_change, 500 ) );
+                // Unblock the form.
+                .always( () => {
+                    this.form.unblock();
+                })
 
-    // Refresh when custom prices change.
-    $( 'body').on( 'input', '.getpaid-item-price-input', gp_throttle( on_field_change, 500 ) );
+            },
 
-    // Refresh when quantities change.
-    $( 'body').on( 'change', '.getpaid-item-quantity-input', gp_throttle( on_field_change, 500 ) );
+            // Updates the state field.
+            update_state_field() {
 
-    $( 'body').on( 'change', '[name="getpaid-payment-form-selected-item"]', gp_throttle( function() {
-        refresh_prices( $( this ).closest('.getpaid-payment-form') )
-    }, 500 ) );
+                // Ensure that we have a state field.
+                if ( this.form.find('#wpinv_state').length ) {
 
-    // Refresh when country changes.
-    $( 'body').on( 'change', '#wpinv_country', function() {
+                    wpinvBlock( this.form.find('.wpinv_state') );
 
-        var form = $( this ).closest('.getpaid-payment-form')
-        if ( form.find('#wpinv_state').length ) {
+                    data = {
+                        action: 'wpinv_get_payment_form_states_field',
+                        country: this.form.find( '#wpinv_country' ).val(),
+                        form: this.form.find( 'input[name="form_id"]' ).val()
+                    };
 
-            wpinvBlock( form.find('.wpinv_state') );
+                    $.get(ajaxurl, data, ( res ) => {
 
-                data = {
-                    action: 'wpinv_get_payment_form_states_field',
-                    country: $(this).val(),
-                    form: form.find('input[name="form_id"]').val()
-                };
+                        if ( 'object' == typeof res ) {
+                            this.form.find( '.wpinv_state' ).html( res.data )
+                        }
 
-                $.get(ajaxurl, data, function( res ) {
+                    })
 
-                    if ( 'object' == typeof res ) {
-                        form.find('.wpinv_state').html( res.data )
+                    .always( () => {
+                        this.form.find( '.wpinv_state' ).unblock()
+                    });
+
+                }
+
+            },
+
+            // Attaches events to a form.
+            attach_events() {
+
+                // Cache the object.
+                var that = this
+
+                // Keeps the state in sync.
+                var on_field_change = gp_throttle(
+                    function() { that.refresh_state() },
+                    500
+                )
+
+                // Refresh prices.
+                this.form.on( 'input', '.getpaid-refresh-on-change', on_field_change );
+                this.form.on( 'input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change );
+                this.form.on( 'input', '.getpaid-item-price-input', on_field_change );
+                this.form.on( 'change', '.getpaid-item-quantity-input', on_field_change );
+                this.form.on( 'change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
+
+                // Refresh when country changes.
+                this.form.on( 'change', '#wpinv_country', () => {
+                    this.update_state_field()
+                    on_field_change()
+                } );
+
+                // Refresh when state changes.
+                this.form.on( 'change', '#wpinv_state', () => {
+                    on_field_change()
+                } );
+
+                // Watch for gateway clicks.
+                this.form.on( 'change', '.getpaid-gateway-radio input', () => {
+                    var gateway = this.form.find( '.getpaid-gateway-radio input:checked' ).val()
+                    form.find( '.getpaid-gateway-description' ).slideUp();
+                    form.find( `.getpaid-description-${gateway}` ).slideDown();
+                } );
+
+            },
+
+            // Processes gateways
+            process_gateways( enabled_gateways, state ) {
+
+                // Prepare the submit btn.
+                var submit_btn = this.form.find( '.getpaid-payment-form-submit' )
+                submit_btn.prop( 'disabled', false ).css('cursor', 'pointer')
+
+                // If it's free, hide the gateways and display the free checkout text...
+                if ( state.is_free ) {
+                    submit_btn.val( submit_btn.data( 'free' ) )
+                    this.form.find( '.getpaid-gateways' ).slideUp();
+                    return
+                }
+
+                // ... else show, the gateways and the pay text.
+                this.form.find( '.getpaid-gateways' ).slideDown();
+                submit_btn.val( submit_btn.data( 'pay' ) );
+
+                // Next, hide the no gateways errors and display the gateways div.
+                this.form.find( '.getpaid-no-recurring-gateways, .getpaid-no-active-gateways' ).addClass( 'd-none' );
+                this.form.find( '.getpaid-select-gateway-title-div, .getpaid-available-gateways-div, .getpaid-gateway-descriptions-div' ).removeClass( 'd-none' );
+
+                // If there are no gateways?
+                if ( enabled_gateways.length < 1 ) {
+
+                    this.form.find( '.getpaid-select-gateway-title-div, .getpaid-available-gateways-div, .getpaid-gateway-descriptions-div' ).addClass( 'd-none' );
+                    submit_btn.prop( 'disabled', true ).css('cursor', 'not-allowed');
+
+                    if ( state.has_recurring ) {
+                        this.form.find( '.getpaid-no-recurring-gateways' ).removeClass( 'd-none' );
+                        return
+                    }
+
+                    this.form.find( '.getpaid-no-active-gateways' ).removeClass( 'd-none' );
+                    return
+
+                }
+
+                // If only one gateway available, hide the radio button.
+                if ( enabled_gateways.length == 1 ) {
+                    this.form.find( '.getpaid-select-gateway-title-div' ).addClass( 'd-none' );
+                    this.form.find( '.getpaid-gateway-radio input' ).addClass( 'd-none' );
+                } else {
+                    this.form.find( '.getpaid-gateway-radio input' ).removeClass( 'd-none' );
+                }
+
+                // Hide all visible payment methods.
+                this.form.find( '.getpaid-gateway' ).addClass( 'd-none' );
+                this.form.find( '.getpaid-gateway-description' ).slideUp();
+
+                // Display enabled gateways.
+                $.each( enabled_gateways, ( index, value ) => {
+                    this.form.find( `.getpaid-gateway-${value}` ).removeClass( 'd-none' );
+                })
+
+                // If there is no gateway selected, select the first.
+                if ( 0 === this.form.find( '.getpaid-gateway-radio input:checked' ).length ) {
+                    this.form.find( '.getpaid-gateway:visible .getpaid-gateway-radio input' ).eq(0).prop( 'checked', true );
+                }
+
+                // Trigger change event for selected gateway.
+                this.form.find( '.getpaid-gateway-radio input:checked' ).trigger('change');
+            },
+
+            // Sets up payment tokens.
+            setup_saved_payment_tokens() {
+
+                // For each saved payment tokens list
+                this.form.find( '.getpaid-saved-payment-methods' ).each( function() {
+
+                var list = $( this )
+
+                // When the payment method changes...
+                $( 'input', list ).on( 'change', function() {
+    
+                    if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
+                        list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideDown();
+                    } else {
+                        list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideUp();
                     }
 
                 })
 
-                .always( function(data) {
-                    form.find('.wpinv_state').unblock()
-                });
+                // Hide the list if there are no saved payment methods.
+                if ( list.data( 'count' ) == '0' ) {
+                    list.hide()
+                }
 
+                // If non is selected, select first.
+                if ( 0 === $( 'input', list ).filter(':checked').length ) {
+                    $( 'input', list ).eq(0).prop( 'checked', true );
+                }
+
+                // Trigger change event for selected method.
+                $( 'input', list ).filter( ':checked' ).trigger( 'change' );
+
+        })
+
+            },
+
+            // Inits a form.
+            init() {
+
+                this.setup_saved_payment_tokens()
+                this.attach_events()
+                this.refresh_state()
+
+            },
         }
 
-        refresh_prices( form )
-    } );
-
-    // Refresh when state changes.
-    $( 'body').on( 'change', '#wpinv_state', function() {
-        refresh_prices( $( this ).closest('.getpaid-payment-form') )
-    } );
-
-    $('body').on('click', 'input[name="wpi-gateway"]', function ( e ) {
-
-        var form = $( this ).closest( '.getpaid-payment-form' );
-
-        // Hide all visible payment methods.
-        form
-            .find('.getpaid-gateway-description-div')
-            .filter(':visible')
-            .slideUp(250);
-
-        // Display checked ones.
-        form
-            .find( 'input[name="wpi-gateway"]:checked' )
-            .closest( '.getpaid-gateways-select-gateway' )
-            .find( '.getpaid-gateway-description-div' )
-            .slideDown(250)
-
-    });
+    }
 
     /**
      * Set's up a payment form for use.
      *
      * @param {string} form 
+     * @TODO Move this into the above class.
      */
     var setup_form = function( form ) {
 
         // Add the row class to gateway credit cards.
         form.find('.getpaid-gateway-description-div .form-horizontal .form-group').addClass('row')
-
-        // Hide the payment methods radio in case there is no payment method.
-        form.find( '.getpaid-saved-payment-methods' ).each( function() {
-
-            var list = $( this )
-
-            // When the payment method changes...
-            $( 'input', list ).on( 'change', function() {
- 
-                if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
-                    list.closest( '.getpaid-gateway-description-div' ).find( '.getpaid-new-payment-method-form' ).slideDown();
-                } else {
-                    list.closest( '.getpaid-gateway-description-div' ).find( '.getpaid-new-payment-method-form' ).slideUp();
-                }
-
-            })
-
-            // payment methods yet.
-            if ( list.data( 'count' ) == '0' ) {
-                list.hide()
-            }
-
-            // If non is selected, select first.
-            if ( 0 === $( 'input', list ).filter(':checked').length ) {
-                $( 'input', list ).eq(0).prop( 'checked', true );
-            }
-
-            // Trigger click event for selected method.
-            $( 'input', list ).filter(':checked').trigger('change');
-
-        })
-
-        // Get a list of all active gateways.
-        var gateways = form.find('.getpaid-payment-form-element-gateway_select input[name="wpi-gateway"]');
-
-        // If there is one gateway, we can hide the radio input and the title.
-        if ( 1 === gateways.length ) {
-            gateways.eq(0).hide();
-            form.find('.getpaid-gateways-select-title-div').hide()
-        }
-
-        // Hide the title if there is no gateway.
-        if ( gateways.length === 0) {
-            form.find('.getpaid-gateways-select-title-div').hide()
-            form.find('.getpaid-payment-form-submit').prop( 'disabled', true ).css('cursor', 'not-allowed');
-        }
-
-        // If there is no gateway selected, select the first.
-        if ( 0 === gateways.filter(':checked').length ) {
-            gateways.eq(0).prop( 'checked', true );
-        }
-
-        // Trigger click event for selected gateway.
-        gateways.filter(':checked').eq(0).trigger('click');
 
         // Hides items that are not in an array.
         /**
@@ -423,7 +506,7 @@ jQuery(function($) {
         }
 
         // Refresh prices.
-        refresh_prices( form )
+        getpaid_form( form ).init()
 
         // Discounts.
         if ( form.find('.getpaid-discount-field').length ) {
