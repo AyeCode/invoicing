@@ -47,7 +47,6 @@ function wpinv_email_invoice_details( $invoice,  $email_type, $sent_to_admin ) {
 }
 add_action( 'wpinv_email_invoice_details', 'wpinv_email_invoice_details', 10, 3 );
 
-
 /**
  * Display line items in emails.
  * 

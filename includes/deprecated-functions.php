@@ -861,3 +861,8 @@ function wpinv_item_show_price( $item_id = 0, $echo = true ) {
     }
 
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_total_label() {}

@@ -220,7 +220,7 @@ jQuery(function($) {
 
                     wpinvBlock( state );
 
-                    data = {
+                    var data = {
                         action: 'wpinv_get_payment_form_states_field',
                         country: this.form.find( '.wpinv_country' ).val(),
                         form: this.form.find( 'input[name="form_id"]' ).val()
@@ -388,6 +388,8 @@ jQuery(function($) {
                 this.attach_events()
                 this.refresh_state()
 
+                // Trigger setup event.
+                $( 'body' ).trigger( 'getpaid_setup_payment_form', [this.form] );
             },
         }
 

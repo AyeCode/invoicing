@@ -5,9 +5,12 @@
  * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-renewal_reminder.php.
  *
  * @version 1.0.19
+ * @var WPInv_Subscription $object
  */
 
 defined( 'ABSPATH' ) || exit;
+
+$invoice = $object->get_parent_payment();
 
 // Print the email header.
 do_action( 'wpinv_email_header', $email_heading, $invoice, $email_type, $sent_to_admin );

@@ -24,19 +24,7 @@
 .wpinv_cart_total_row th {
 	background-color: #f7f7f7;
 }
-.wpinv-cart-sub-desc {
-	display: inline-block;
-	max-width: 85%;
-	float: left;
-	text-align: left;
-}
-.wpinv-receipt-message {
-	margin: 0 5px 20px 5px;
-}
-.wpinv-receipt .wpi-row-ovatno,
-.wpinv-receipt  .wpi-row-uvatno {
-	display: none;
-}
+
 #wpinv_adddress_confirm.wpi-vat-info {
 	margin-left: 0;
 	margin-right: 0;
@@ -57,28 +45,6 @@
 	font-weight: 500;
 }
 
-#wpinv_checkout_wrap *, #wpinv_checkout_wrap *:after, #wpinv_checkout_wrap *:before {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-
-#wpinv_checkout_wrap .name-your-price-miniform {
-	margin-top: 10px;
-	font-size: 12px;
-	display: none;
-}
-
-#wpinv_checkout_wrap .name-your-price-miniform .wpi-field-price {
-	margin-right: 10px;
-	max-width: 100px;
-	display: inline-block;
-}
-
-#wpinv_checkout_wrap .name-your-price-miniform .btn {
-	vertical-align: top;
-}
-
 .wpi-form .panel-heading h3.panel-title {
 	margin: 0;
 }
@@ -90,39 +56,35 @@
 	#wpinv-fields p.wpi-cart-field.wpi-col2 {width: 100%;float: none;padding: 0;margin-bottom: 10px;}
 }
 
-.wpi-pmethod {
-	margin-right: 10px;
-}
-
 input[type="number"].getpaid-item-quantity-input,
 input[type="text"].getpaid-item-price-input {
-		width: 64px;
-		text-align: center;
-		padding: 0.3em;
-		vertical-align: middle;
-		line-height: 1;
-		margin: 0;
-		border-color: #dddddd;
-		background: #fff;
-		box-shadow: none;
-		border-radius: 0px;
-		min-height: 35px;
-		color: #666;
-		font-weight: normal;
+	width: 64px;
+	text-align: center;
+	padding: 0.3em;
+	vertical-align: middle;
+	line-height: 1;
+	margin: 0;
+	border-color: #dddddd;
+	background: #fff;
+	box-shadow: none;
+	border-radius: 0px;
+	min-height: 35px;
+	color: #666;
+	font-weight: normal;
 }
 
 .getpaid-payment-form-items-cart-header  {
 	background-color: #fbfbfb;
-		font-weight: 600;
-		border-bottom: 1px solid #dee2e6;
-		padding: .7em 1em;
+	font-weight: 600;
+	border-bottom: 1px solid #dee2e6;
+	padding: .7em 1em;
 }
 
 .getpaid-payment-form-items-cart-item,
 .getpaid-form-cart-totals-col {
 	font-weight: 600;
 	padding: .7em 1em;
-		min-height: 3.25em;
+	min-height: 3.25em;
 }
 
 .getpaid-price-buttons label{
@@ -164,13 +126,13 @@ input[type="text"].getpaid-item-price-input {
 }
 
 .getpaid-gateway-radio-div label {
-		line-height: 2;
-		text-align: left;
+	line-height: 2;
+	text-align: left;
 }
 
 .getpaid-gateway-radio-div input {
-		display: inline-block;
-		margin: 0 1em 0 0;
+	display: inline-block;
+	margin: 0 1em 0 0;
 }
 
 .getpaid-gateway-description-div {
@@ -187,19 +149,6 @@ input[type="text"].getpaid-item-price-input {
 .getpaid-gateway-description {
 	background-color: #efefef;
 	padding: 1em;
-}
-
-.getpaid-gateway-description::before {
-		content: '';
-		display: block;
-		border: 1em solid #efefef;
-		border-right-color: transparent;
-		border-left-color: transparent;
-		border-top-color: transparent;
-		position: absolute;
-		top: -1.0em;
-		left: 0;
-		margin: -1em 0 0 2em;
 }
 
 .bsui .page-numbers {

@@ -137,10 +137,11 @@ abstract class GetPaid_Payment_Gateway {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->enabled = wpinv_is_gateway_active( $this->id );
 
 		// Register gateway.
 		add_filter( 'wpinv_payment_gateways', array( $this, 'register_gateway' ) );
+
+		$this->enabled = wpinv_is_gateway_active( $this->id );
 
 		// Enable Subscriptions.
 		if ( $this->supports( 'subscription' ) ) {

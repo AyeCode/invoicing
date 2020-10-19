@@ -1165,28 +1165,6 @@ function wpinv_invoice_link( $invoice_id ) {
     return apply_filters( 'wpinv_get_invoice_link', $invoice_link, $invoice );
 }
 
-function wpinv_cart_total_label( $label, $invoice ) {
-    if ( empty( $invoice ) ) {
-        return $label;
-    }
-
-    $prefix_label = '';
-    if ( $invoice->is_parent() && $item_id = $invoice->get_recurring() ) {
-        $prefix_label   = '<span class="label label-primary label-recurring">' . __( 'Recurring Payment', 'invoicing' ) . '</span> ' . wpinv_subscription_payment_desc( $invoice );
-    } else if ( $invoice->is_renewal() ) {
-        $prefix_label   = '<span class="label label-primary label-renewal">' . __( 'Renewal Payment', 'invoicing' ) . '</span> ';        
-    }
-
-    if ( $prefix_label != '' ) {
-        $label  = '<span class="wpinv-cart-sub-desc">' . $prefix_label . '</span> ' . $label;
-    }
-
-    return $label;
-}
-add_filter( 'wpinv_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
-add_filter( 'wpinv_email_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
-add_filter( 'wpinv_print_cart_total_label', 'wpinv_cart_total_label', 10, 2 );
-
 function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     if ( empty( $note ) ) {
         return NULL;
