@@ -11,13 +11,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Returns the errors as html
  *
- * @param clear whether or not to clear the errors.
+ * @param bool $clear whether or not to clear the errors.
+ * @param bool $wrap whether or not to wrap the errors.
  * @since  1.0.19
  */
-function getpaid_get_errors_html( $clear = true ) {
+function getpaid_get_errors_html( $clear = true, $wrap = true ) {
 
     $errors = '';
-    foreach ( wpinv_get_errors() as $error ) {
+    foreach ( wpinv_get_errors() as $id => $error ) {
         $type     = 'error';
 
         if ( is_array( $error ) ) {
@@ -25,12 +26,21 @@ function getpaid_get_errors_html( $clear = true ) {
             $error = $error['text'];
         }
 
-        $errors .= aui()->alert(
-            array(
-                'content'     => wp_kses_post( $error ),
-                'type'        => $type,
-            )
-        );
+        if ( $wrap ) {
+
+            $errors .= aui()->alert(
+                array(
+                    'content'     => wp_kses_post( $error ),
+                    'type'        => $type,
+                )
+            );
+
+        } else {
+
+            $id      = esc_attr( $id );
+            $error   = wp_kses_post( $error );
+            $errors .= "<div data-code='$id'>$error</div>";
+        }
 
     }
 

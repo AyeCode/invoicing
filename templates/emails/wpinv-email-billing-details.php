@@ -31,7 +31,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
             <?php if ( $invoice->get_phone() ) { ?>
             <tr class="wpi-receipt-phone">
                 <th class="text-left"><?php _e( 'Phone', 'invoicing' ); ?></th>
-                <td><?php echo esc_html( $invoice->phone ) ;?></td>
+                <td><?php echo esc_html( $invoice->get_phone() ) ;?></td>
             </tr>
             <?php } ?>
             <?php do_action( 'wpinv_email_billing_fields_last', $invoice ); ?>

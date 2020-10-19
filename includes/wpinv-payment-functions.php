@@ -231,7 +231,7 @@ function wpinv_send_back_to_checkout() {
 
 	// Do we have any errors?
     if ( wpinv_get_errors() ) {
-        wp_send_json_error( getpaid_get_errors_html() );
+        wp_send_json_error( getpaid_get_errors_html( true, false ) );
     }
 
     wp_send_json_error( __( 'An error occured while processing your payment. Please try again.', 'invoicing' ) );
