@@ -329,7 +329,6 @@ jQuery(function($) {
 
                 // Hide all visible payment methods.
                 this.form.find( '.getpaid-gateway' ).addClass( 'd-none' );
-                this.form.find( '.getpaid-gateway-description' ).slideUp();
 
                 // Display enabled gateways.
                 $.each( enabled_gateways, ( index, value ) => {
@@ -337,12 +336,15 @@ jQuery(function($) {
                 })
 
                 // If there is no gateway selected, select the first.
-                if ( 0 === this.form.find( '.getpaid-gateway-radio input:checked' ).length ) {
+                if ( 0 === this.form.find( '.getpaid-gateway:visible input:checked' ).length ) {
                     this.form.find( '.getpaid-gateway:visible .getpaid-gateway-radio input' ).eq(0).prop( 'checked', true );
                 }
 
                 // Trigger change event for selected gateway.
-                this.form.find( '.getpaid-gateway-radio input:checked' ).trigger('change');
+                if ( 0 === this.form.find( '.getpaid-gateway-description:visible' ).length ) {
+                    this.form.find( '.getpaid-gateway-radio input:checked' ).trigger('change');
+                }
+
             },
 
             // Sets up payment tokens.
