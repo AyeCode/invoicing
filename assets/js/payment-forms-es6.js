@@ -84,7 +84,7 @@ jQuery(function($) {
                 // Animate to the error
                 $( 'html, body' ).animate({
                     scrollTop: form.find( '.getpaid-payment-form-errors' ).offset().top
-                }, 2000);
+                }, 500);
 
             },
 

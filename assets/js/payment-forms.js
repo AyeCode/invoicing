@@ -63,7 +63,7 @@ jQuery(function ($) {
 
                 $('html, body').animate({
                     scrollTop: form.find('.getpaid-payment-form-errors').offset().top
-                }, 2000);
+                }, 500);
             },
             // Hides the current error.
             hide_error: function hide_error() {
