@@ -16,6 +16,7 @@ $invoice = new WPInv_Invoice( $invoice );
 do_action( 'wpinv_success_content_before', $invoice );
 do_action( 'wpinv_before_receipt', $invoice );
 
+wpinv_print_errors();
 
 // Prepare header text.
 if ( $invoice->is_paid() ) {
