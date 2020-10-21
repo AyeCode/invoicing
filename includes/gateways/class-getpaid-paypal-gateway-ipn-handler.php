@@ -345,7 +345,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		// Abort if this is the first payment.
-		if ( date( 'Ynd', $subscription->get_date_created() ) == date( 'Ynd', strtotime( $posted['payment_date'] ) ) ) {
+		if ( date( 'Ynd', $subscription->get_time_created() ) == date( 'Ynd', strtotime( $posted['payment_date'] ) ) ) {
 			$invoice->set_transaction_id( sanitize_text_field( $posted['txn_id'] ) );
 			$invoice->save();
 			return;

@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.5
-Stable tag: 1.0.19
+Stable tag: 1.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -129,7 +129,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 1.0.19 =
+= 1.1.0 =
 * Exclude invoicing pages from Yoast XML page sitemap - ADDED
 * Bump tested upto WP version - CHANGED
 * Send BCC email to admin for Payment Reminder - ADDED

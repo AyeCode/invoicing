@@ -125,6 +125,8 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 				__( 'Cancel Subscription', 'invoicing' )
 			);
 		}
+
+		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
 
 	<a href="<?php echo esc_url( get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Go Back', 'invoicing' ); ?></a>

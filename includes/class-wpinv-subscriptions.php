@@ -96,7 +96,7 @@ class WPInv_Subscriptions {
             $gateway = sanitize_key( $gateway );
             $from    = sanitize_key( $from );
             $to      = sanitize_key( $to );
-            do_action( "getpaid_{$gateway}subscription_$to", $subscription, $from );
+            do_action( "getpaid_{$gateway}_subscription_$to", $subscription, $from );
         }
 
     }
