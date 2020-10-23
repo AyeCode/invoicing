@@ -344,6 +344,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
     }
 
     // Save the invoice.
+    $invoice->recalculate_total();
     $invoice->save();
 
     if ( ! $invoice->get_id() ) {

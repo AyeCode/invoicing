@@ -2187,7 +2187,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_prop( 'author', $user->ID );
 			$this->set_prop( 'email', $user->user_email );
 		}
-		
+
     }
 
     /**

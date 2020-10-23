@@ -19,7 +19,6 @@ $currency = $form->get_currency();
         <?php foreach ( $columns as $key => $label ) : ?>
             <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo $item->get_id(); ?>">
                 <?php
-                    do_action( "getpaid_payment_form_cart_item_$key", $form, $item );
 
                     // Item name.
                     if ( 'name' == $key ) {
@@ -97,6 +96,8 @@ $currency = $form->get_currency();
                     if ( 'subtotal' == $key ) {
                         echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ), $currency );
                     }
+
+                    do_action( "getpaid_payment_form_cart_item_$key", $item, $form );
                 ?>
             </div>
         <?php endforeach; ?>

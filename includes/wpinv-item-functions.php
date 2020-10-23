@@ -31,7 +31,7 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
     }
 
     $id = WPInv_Item::get_item_id_by_field( $value, strtolower( $field ), $type );
-    return $id ? wpinv_get_item( $id ) : false;
+    return empty( $id ) ? false : wpinv_get_item( $id );
 
 }
 
@@ -42,13 +42,13 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
  * @return WPInv_Item|false
  */
 function wpinv_get_item( $item = 0 ) {
-    
+
     if ( empty( $item ) ) {
         return false;
     }
 
     $item = new WPInv_Item( $item );
-    return $item->get_id() ? $item : false;
+    return $item->exists() ? $item : false;
 
 }
 

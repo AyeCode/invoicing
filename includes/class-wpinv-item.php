@@ -629,7 +629,6 @@ class WPInv_Item  extends GetPaid_Data {
 
 		// Trim the value.
 		$value = sanitize_text_field( $value );
-
 		if ( empty( $value ) ) {
 			return 0;
 		}
@@ -644,7 +643,7 @@ class WPInv_Item  extends GetPaid_Data {
 
 		if ( $field == 'name' ) {
 			$field = 'slug';
-		} 
+		}
 
 		// Maybe retrieve from the cache.
 		$item_id = wp_cache_get( $value, "getpaid_{$type}_item_{$field}s_to_item_ids" );
@@ -654,7 +653,7 @@ class WPInv_Item  extends GetPaid_Data {
 
 		// Fetch from the db.
 		$items = array();
-		if ( $field =='slug' ) {
+		if ( $field == 'slug' ) {
 			$items = get_posts(
 				array(
 					'post_type'      => 'wpi_item',
@@ -678,7 +677,7 @@ class WPInv_Item  extends GetPaid_Data {
 						),
 						array(
 							'key'   => '_wpinv_custom_id',
-                			'value' => $type,
+                			'value' => $value,
 						)
 					)
 				)
@@ -956,9 +955,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  int|bool $value whether or not the item is editable.
 	 */
 	public function set_is_editable( $value ) {
-		if ( is_numeric( $value ) ) {
-			$this->set_prop( 'is_editable', (int) $value );
-		}
+		$this->set_prop( 'is_editable', (int) $value );
     }
 
     /**

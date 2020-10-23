@@ -387,7 +387,7 @@ function wpinv_email_wrap_message( $message ) {
 }
 
 function wpinv_add_notes_to_invoice_email( $invoice, $email_type ) {
-    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_invoice_notes( $invoice->ID, true ) ) {
+    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_invoice_notes( $invoice->get_id(), true ) ) {
         $date_format = get_option( 'date_format' );
         $time_format = get_option( 'time_format' );
         ?>

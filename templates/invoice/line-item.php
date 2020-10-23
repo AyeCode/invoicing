@@ -49,6 +49,9 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                             echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
                         }
 
+                        // Fires before printing the line item actions.
+                        do_action( "getpaid_before_invoice_line_item_actions", $item, $invoice );
+
                         $actions = apply_filters( 'getpaid-invoice-page-line-item-actions', array(), $item, $invoice );
 
                         if ( ! empty( $actions ) ) {
