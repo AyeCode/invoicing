@@ -797,12 +797,11 @@ add_action( 'wpinv_before_receipt', 'getpaid_maybe_mark_invoice_as_viewed' );
 /**
  * Processes an invoice refund.
  * 
- * @param int $invoice_id
  * @param WPInv_Invoice $invoice
  * @param array $status_transition
  * @todo: descrease customer/store earnings
  */
-function getpaid_maybe_process_refund( $invoice_id, $invoice, $status_transition ) {
+function getpaid_maybe_process_refund( $invoice, $status_transition ) {
 
     if ( empty( $status_transition['from'] ) || ! in_array( $status_transition['from'], array( 'publish', 'wpi-processing', 'wpi-renewal' ) ) ) {
         return;
@@ -818,11 +817,11 @@ function getpaid_maybe_process_refund( $invoice_id, $invoice, $status_transition
 
     }
 
-    do_action( 'wpinv_pre_refund_invoice', $invoice, $invoice_id );
-    do_action( 'wpinv_refund_invoice', $invoice, $invoice_id );
-    do_action( 'wpinv_post_refund_invoice', $invoice, $invoice_id );
+    do_action( 'wpinv_pre_refund_invoice', $invoice, $invoice->get_id() );
+    do_action( 'wpinv_refund_invoice', $invoice, $invoice->get_id() );
+    do_action( 'wpinv_post_refund_invoice', $invoice, $invoice->get_id() );
 }
-add_action( 'getpaid_invoice_status_wpi-refunded', 'getpaid_maybe_process_refund', 10, 3 );
+add_action( 'getpaid_invoice_status_wpi-refunded', 'getpaid_maybe_process_refund', 10, 2 );
 
 
 /**

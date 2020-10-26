@@ -129,7 +129,7 @@ class GetPaid_Notification_Email_Sender {
 		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
-		add_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
+		add_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000 );
 
 	}
 

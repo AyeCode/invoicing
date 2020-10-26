@@ -728,10 +728,6 @@ jQuery(function($) {
         $('[name="original_post_status"]', $postForm).val(origStatus);
         $('[name="hidden_post_status"]', $postForm).val(origStatus);
         $('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + origStatus + '" id="post_status" name="post_status">');
-        $postForm.on('change', '[name="wpinv_status"]', function(e) {
-            e.preventDefault();
-            $('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + $(this).val() + '" id="post_status" name="post_status">');
-        });
     }
     $('input.wpi-price').on("contextmenu", function(e) {
         return false;

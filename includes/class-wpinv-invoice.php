@@ -3581,7 +3581,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					do_action( 'wpinv_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $status_transition['from'] );
 
 					// Note the transition occurred.
-					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );
+					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), false, $status_transition['manual'] );
 
 					// Work out if this was for a payment, and trigger a payment_status hook instead.
 					if (
