@@ -22,7 +22,6 @@ if ( ! $form->is_active() ) {
 
 // Fires before displaying a payment form.
 do_action( 'getpaid_before_payment_form', $form );
-
 ?>
 
 <form class='getpaid-payment-form bsui' method='POST' data-key='<?php echo uniqid('gpf'); ?>'>
@@ -74,7 +73,8 @@ do_action( 'getpaid_before_payment_form', $form );
             );
 
         }
-        
+
+        echo $extra_markup;
     ?>
 
 </form>

@@ -1351,7 +1351,9 @@ function getpaid_display_item_payment_form( $items ) {
         return;
     }
 
-    $form->display();
+    $form_items = esc_attr( getpaid_convert_items_to_string( $items ) );
+    $form_items = "<input type='hidden' name='getpaid-form-items' value='$form_items' />";
+    $form->display( $form_items );
 }
 
 /**

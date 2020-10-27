@@ -285,7 +285,14 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 				$item = new GetPaid_Form_Item( $key );
 
 				if ( $item->can_purchase() ) {
+
+					$value = (int) $value;
 					$item->set_quantity( $value );
+					if ( 0 == $value ) {
+						$item->set_quantity( 1 );
+						$item->set_allow_quantities( true );
+					}
+
 					$prepared[] = $item;
 				}
 
@@ -727,10 +734,16 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 */
-    public function get_html() {
+    public function get_html( $extra_markup = '' ) {
 
 		// Return the HTML.
-		return wpinv_get_template_html( 'payment-forms/form.php', array( 'form' => $this ) );
+		return wpinv_get_template_html(
+			'payment-forms/form.php',
+			array(
+				'form'         => $this,
+				'extra_markup' => $extra_markup,
+			)
+		);
 
 	}
 
@@ -739,8 +752,8 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 */
-    public function display() {
-		echo $this->get_html();
+    public function display( $extra_markup = '' ) {
+		echo $this->get_html( $extra_markup );
     }
 
 }

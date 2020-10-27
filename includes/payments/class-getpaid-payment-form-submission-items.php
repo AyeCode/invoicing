@@ -35,8 +35,9 @@ class GetPaid_Payment_Form_Submission_Items {
 		}
 
 		// For default forms, ensure that an item has been set.
-		if ( $payment_form->is_default() && ! $submission->has_invoice() ) {
-			$payment_form->set_items( $selected_items );
+		if ( $payment_form->is_default() && ! $submission->has_invoice() && isset( $data['getpaid-form-items'] ) ) {
+			$form_items = wpinv_clean( $data['getpaid-form-items'] );
+			$payment_form->set_items( getpaid_convert_items_to_array( $form_items ) );
 		}
 
 		// Process each individual item.
