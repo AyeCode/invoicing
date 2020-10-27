@@ -2346,8 +2346,9 @@ textarea.wpi-email_overdue_content {
 .wpi-wpinv-settings table.form-table input[type=time],
 .wpi-wpinv-settings table.form-table input[type=url],
 .wpi-wpinv-settings table.form-table input[type=week],
-.wpi-wpinv-settings table.form-table textarea {
-    width: 620px;
+.wpi-wpinv-settings table.form-table textarea,
+.wpi-wpinv-settings table.form-table select {
+    width: 25em;
     margin: 0;
     box-sizing: border-box;
     vertical-align: top;
