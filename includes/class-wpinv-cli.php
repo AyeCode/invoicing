@@ -56,7 +56,7 @@ class WPInv_CLI {
             return WP_CLI::error( $invoice->get_error_message() );
         }
 
-        $message = sprintf( __( 'Invoice %s created', 'invoicing' ), $invoice->ID );
+        $message = sprintf( __( 'Invoice %s created', 'invoicing' ), $invoice->get_id() );
         WP_CLI::success( $message );
     }
     

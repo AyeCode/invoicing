@@ -89,18 +89,23 @@ function wpinv_get_default_gateway() {
     return apply_filters( 'wpinv_default_gateway', $default );
 }
 
+/**
+ * Returns a gateway's name.
+ *
+ * @param string $gateway The gateway to key.
+ * @return string
+ */
 function wpinv_get_gateway_admin_label( $gateway ) {
-    $gateways = wpinv_get_payment_gateways();
-    $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['admin_label'] : $gateway;
-    $payment  = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : false;
 
-    if( $gateway == 'manual' && $payment ) {
-        if( !( (float)wpinv_payment_total( $payment ) > 0 ) ) {
-            $label = __( 'Free Purchase', 'invoicing' );
-        }
+    if ( empty( $gateway ) || 'none' == $gateway ) {
+        return esc_html__( 'No Gateway', 'invoicing' );
     }
 
-    return apply_filters( 'wpinv_gateway_admin_label', $label, $gateway );
+    $gateways = wpinv_get_payment_gateways();
+    $label    = isset( $gateways[ $gateway ] ) ? $gateways[ $gateway ]['admin_label'] : $gateway;
+    $gateway  = apply_filters( 'wpinv_gateway_admin_label', $label, $gateway );
+
+    return wpinv_clean( $gateway );
 }
 
 /**

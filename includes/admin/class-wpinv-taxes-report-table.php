@@ -68,7 +68,7 @@ class WPInv_Taxes_Reports_Table extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
-		return esc_html( $item[ $column_name ] );
+		return wp_kses_post( $item[ $column_name ] );
 	}
 
 	/**
@@ -167,7 +167,7 @@ class WPInv_Taxes_Reports_Table extends WP_List_Table {
 			WHERE
 				meta.post_id IS NOT NULL
 				AND posts.post_type = 'wpi_invoice'
-                AND ( posts.post_status = 'publish' OR posts.post_status = 'renewal' )
+                AND ( posts.post_status = 'publish' OR posts.post_status = 'wpi-renewal' )
 				AND ( YEAR(meta.completed_date) = '$year' )
 			GROUP BY MONTH(meta.completed_date)");
 

@@ -68,7 +68,7 @@ class WPInv_Gateways_Report_Table extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
-		return esc_html( $item[ $column_name ] );
+		return wp_kses_post( $item[ $column_name ] );
 	}
 
 	/**
