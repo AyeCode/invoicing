@@ -272,6 +272,30 @@ jQuery(function($) {
                     on_field_change()
                 } );
 
+                // Discounts.
+                if ( this.form.find('.getpaid-discount-field').length ) {
+
+                    // Refresh prices when the discount button is clicked.
+                    this.form.find('.getpaid-discount-button').on('click', function( e ) {
+                        e.preventDefault();
+                        on_field_change()
+                    } );
+
+                    // Refresh prices when hitting enter key in the discount field.
+                    this.form.find('.getpaid-discount-field').on('keypress', function( e ) {
+                        if ( e.keyCode == '13' ) {
+                            e.preventDefault();
+                            on_field_change()
+                        }
+                    } );
+
+                    // Refresh prices when the discount value changes.
+                    this.form.find('.getpaid-discount-field').on('change', function( e ) {
+                        on_field_change()
+                    } );
+
+                }
+
                 // Watch for gateway clicks.
                 this.form.on( 'change', '.getpaid-gateway-radio input', () => {
                     var gateway = this.form.find( '.getpaid-gateway-radio input:checked' ).val()
@@ -517,30 +541,6 @@ jQuery(function($) {
 
         // Refresh prices.
         getpaid_form( form ).init()
-
-        // Discounts.
-        if ( form.find('.getpaid-discount-field').length ) {
-
-            // Refresh prices when the discount button is clicked.
-            form.find('.getpaid-discount-button').on('click', function( e ) {
-                e.preventDefault();
-                refresh_prices( form )
-            } );
-
-            // Refresh prices when hitting enter key in the discount field.
-            form.find('.getpaid-discount-field').on('keypress', function( e ) {
-                if ( e.keyCode == '13' ) {
-                    e.preventDefault();
-                    refresh_prices( form )
-                }
-            } );
-
-            // Refresh prices when the discount value changes.
-            form.find('.getpaid-discount-field').on('change', function( e ) {
-                refresh_prices( form )
-            } );
-
-        }
 
         // Submitting the payment form.
         form.on( 'submit', function( e ) {
