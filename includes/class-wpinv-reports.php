@@ -85,8 +85,8 @@ class WPInv_Reports {
         <div class="wrap wpi-reports-wrap">
             <h1><?php echo esc_html( __( 'Reports', 'invoicing' ) ); ?></h1>
             <h2 class="nav-tab-wrapper wp-clearfix">
-                <a href="<?php echo add_query_arg( array( 'tab' => 'reports', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'reports' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Reports', 'invoicing' ); ?></a>
-                <a href="<?php echo add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
+                <a href="<?php echo esc_url( add_query_arg( array( 'tab' => 'reports', 'settings-updated' => false ), $current_page ) ); ?>" class="nav-tab <?php echo $active_tab == 'reports' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Reports', 'invoicing' ); ?></a>
+                <a href="<?php echo esc_url( add_query_arg( array( 'tab' => 'export', 'settings-updated' => false ), $current_page ) ); ?>" class="nav-tab <?php echo $active_tab == 'export' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Export', 'invoicing' ); ?></a>
                 <?php do_action( 'wpinv_reports_page_tabs' ); ;?>
             </h2>
             <div class="wpi-reports-content wpi-reports-<?php echo esc_attr( $active_tab ); ?>">

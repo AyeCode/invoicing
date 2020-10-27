@@ -26,6 +26,5 @@ defined( 'ABSPATH' ) || exit;
         <option value='h4'><?php esc_html_e( 'H4', 'invoicing' ); ?></option>
         <option value='h5'><?php esc_html_e( 'H5', 'invoicing' ); ?></option>
         <option value='h6'><?php esc_html_e( 'H6', 'invoicing' ); ?></option>
-        <option value='h7'><?php esc_html_e( 'H7', 'invoicing' ); ?></option>
     </select>
 </div>
