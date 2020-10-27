@@ -34,7 +34,7 @@ class GetPaid_Meta_Box_Item_Info {
             <div class="wpinv_item_type form-group row">
                 <label for="wpinv_item_type" class="col-sm-12 col-form-label">
                     <?php _e( 'Item Type', 'invoicing' );?>
-                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( self::get_tooltip( $post ) ); ?>"></span>
+                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php echo strip_tags( self::get_tooltip( $post ) ); ?>"></span>
                 </label>
 
                 <div class="col-sm-12">
@@ -105,8 +105,8 @@ class GetPaid_Meta_Box_Item_Info {
         ob_start();
         ?>
 
-        <?php _e( '<b>Standard:</b> Standard item type', 'invoicing' );?><br> <br>
-        <?php _e( '<b>Fee:</b> Like Registration Fee, Sign up Fee etc', 'invoicing' );?><br> <br>
+        <?php _e( 'Standard: Standard item type', 'invoicing' );?>
+        <?php _e( 'Fee: Like Registration Fee, Sign up Fee etc', 'invoicing' );?>
 
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );

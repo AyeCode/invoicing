@@ -611,6 +611,7 @@ function wpinv_cal_days_in_month( $calendar, $month, $year ) {
  * @return string
  */
 function wpi_help_tip( $tip, $allow_html = false ) {
+
     if ( $allow_html ) {
         $tip = wpi_sanitize_tooltip( $tip );
     } else {
@@ -629,17 +630,18 @@ function wpi_help_tip( $tip, $allow_html = false ) {
  * @return string
  */
 function wpi_sanitize_tooltip( $var ) {
-    return htmlspecialchars( wp_kses( html_entity_decode( $var ), array(
+    return wp_kses( html_entity_decode( $var ), array(
         'br'     => array(),
         'em'     => array(),
         'strong' => array(),
+        'b'      => array(),
         'small'  => array(),
         'span'   => array(),
         'ul'     => array(),
         'li'     => array(),
         'ol'     => array(),
         'p'      => array(),
-    ) ) );
+    ) );
 }
 
 /**
