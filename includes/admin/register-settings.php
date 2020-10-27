@@ -411,7 +411,6 @@ function wpinv_get_registered_settings_sections() {
         ) ),
         'misc' => apply_filters( 'wpinv_settings_sections_misc', array(
             'main' => __( 'Miscellaneous', 'invoicing' ),
-            'fields' => __( 'Fields Settings', 'invoicing' ),
             'custom-css' => __( 'Custom CSS', 'invoicing' ),
         ) ),
         'tools' => apply_filters( 'wpinv_settings_sections_tools', array(

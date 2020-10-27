@@ -383,11 +383,6 @@ class WPInv_Plugin {
 		$localize                         = array();
 		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
 		$localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
-		$localize['currency_symbol']      = wpinv_currency_symbol();
-		$localize['currency_pos']         = wpinv_currency_position();
-		$localize['thousand_sep']         = wpinv_thousands_separator();
-		$localize['decimal_sep']          = wpinv_decimal_separator();
-		$localize['decimals']             = wpinv_decimals();
 		$localize['txtComplete']          = __( 'Continue', 'invoicing' );
 		$localize['UseTaxes']             = wpinv_use_taxes();
 		$localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
@@ -397,15 +392,6 @@ class WPInv_Plugin {
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
 
 		wp_enqueue_script( 'jquery-blockui' );
-		$autofill_api = wpinv_get_option('address_autofill_api');
-		$autofill_active = wpinv_get_option('address_autofill_active');
-		if ( isset( $autofill_active ) && 1 == $autofill_active && !empty( $autofill_api ) && wpinv_is_checkout() ) {
-			if ( wp_script_is( 'google-maps-api', 'enqueued' ) ) {
-				wp_dequeue_script( 'google-maps-api' );
-			}
-			wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=' . $autofill_api . '&libraries=places', array( 'jquery' ), '', false );
-			wp_enqueue_script( 'google-maps-init', WPINV_PLUGIN_URL . 'assets/js/gaaf.js', array( 'jquery', 'google-maps-api' ), '', true );
-		}
 
 		wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.min.css', array(), WPINV_VERSION, 'all' );
 		wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );

@@ -1713,7 +1713,6 @@ class WPInv_EUVat {
     public static function ajax_vat_validate() {
         global $wpinv_options;
 
-        $is_checkout            = ( !empty( $_POST['source'] ) && $_POST['source'] == 'checkout' ) ? true : false;
         $response               = array();
         $response['success']    = false;
 
@@ -1724,21 +1723,6 @@ class WPInv_EUVat {
 
         $vat_name   = self::get_vat_name();
 
-        if ( $is_checkout ) {
-            $invoice = wpinv_get_invoice_cart();
-
-            if ( !self::requires_vat( false, 0, self::invoice_has_digital_rule( $invoice ) ) ) {
-                $vat_info = array();
-                getpaid_session()->set( 'user_vat_data', $vat_info );
-
-                self::save_user_vat_details();
-
-                $response['success'] = true;
-                $response['message'] = wp_sprintf( __( 'Ignore %s', 'invoicing' ), $vat_name );
-                wp_send_json( $response );
-            }
-        }
-
         $company    = !empty( $_POST['company'] ) ? sanitize_text_field( $_POST['company'] ) : '';
         $vat_number = !empty( $_POST['number'] ) ? sanitize_text_field( $_POST['number'] ) : '';
 
@@ -1748,21 +1732,8 @@ class WPInv_EUVat {
         }
 
         if ( empty( $vat_number ) ) {
-            if ( $is_checkout ) {
-                $response['success'] = true;
-                $response['message'] = wp_sprintf( __( 'No %s number has been applied. %s will be added to invoice totals', 'invoicing' ), $vat_name, $vat_name );
-
-                $vat_info = getpaid_session()->get( 'user_vat_data' );
-                $vat_info['number'] = "";
-                $vat_info['valid'] = true;
-
-                self::save_user_vat_details( $company );
-            } else {
-                $response['error'] = wp_sprintf( __( 'Please enter your %s number!', 'invoicing' ), $vat_name );
-
-                $vat_info['valid'] = false;
-            }
-
+            $response['error'] = wp_sprintf( __( 'Please enter your %s number!', 'invoicing' ), $vat_name );
+            $vat_info['valid'] = false;
             getpaid_session()->set( 'user_vat_data', $vat_info );
             wp_send_json( $response );
         }
@@ -1810,13 +1781,6 @@ class WPInv_EUVat {
                 $response['message'] = wp_sprintf( __( 'The company name associated with the %s number provided is not the same as the company name provided.', 'invoicing' ), $vat_name );
                 wp_send_json( $response );
             }
-        }
-
-        if ( $is_checkout ) {
-            self::save_user_vat_details( $company, $vat_number );
-
-            $vat_info = array('company' => $company, 'number' => $vat_number, 'valid' => true );
-            getpaid_session()->set( 'user_vat_data', $vat_info );
         }
 
         wp_send_json( $response );

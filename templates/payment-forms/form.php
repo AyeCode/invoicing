@@ -32,9 +32,6 @@ do_action( 'getpaid_before_payment_form', $form );
         // Fires when printing the top of a payment form.
         do_action( 'getpaid_payment_form_top', $form );
 
-        // Add the vat validation nonce.
-        wp_nonce_field( 'vat_validation', '_wpi_nonce' );
-
         // And the optional invoice id.
         if ( ! empty( $form->invoice ) ) {
             echo getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
