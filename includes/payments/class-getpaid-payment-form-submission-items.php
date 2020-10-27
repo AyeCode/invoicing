@@ -72,8 +72,9 @@ class GetPaid_Payment_Form_Submission_Items {
 			if ( $item->user_can_set_their_price() ) {
 				$price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
 
-				// But don't get lower than the minimum price.
-				$price = max( $price, $item->get_minimum_price() );
+				if ( $item->get_minimum_price() > $price ) {
+					throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), wpinv_sanitize_amount( $item->get_minimum_price() ) ) );
+				}
 
 				$item->set_price( $price );
 

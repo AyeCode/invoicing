@@ -52,6 +52,7 @@ $currency = $form->get_currency();
                         }
 
                         if ( $item->user_can_set_their_price() ) {
+                            $price = max( (float) $item->get_price(), (float) $item->get_minimum_price() );
                             ?>
                                 <div class="input-group input-group-sm">
                                     <?php if( 'left' == $position ) : ?>
@@ -59,7 +60,7 @@ $currency = $form->get_currency();
                                             <span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
                                         </div>
                                     <?php endif; ?>
-                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( $item->get_price() ); ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input">
+                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input">
 
                                     <?php if( 'left' != $position ) : ?>
                                         <div class="input-group-append">
