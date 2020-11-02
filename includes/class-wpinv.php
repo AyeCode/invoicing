@@ -417,16 +417,24 @@ class WPInv_Plugin {
      */
     public function maybe_do_authenticated_action() {
 
-        if ( is_user_logged_in() && isset( $_REQUEST['getpaid-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
-            $key = sanitize_key( $_REQUEST['getpaid-action'] );
-            do_action( "getpaid_authenticated_action_$key", $_REQUEST );
-        }
+		if ( isset( $_REQUEST['getpaid-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
+
+			$key = sanitize_key( $_REQUEST['getpaid-action'] );
+			if ( is_user_logged_in() ) {
+				do_action( "getpaid_authenticated_action_$key", $_REQUEST );
+			}
+
+			do_action( "getpaid_unauthenticated_action_$key", $_REQUEST );
+
+		}
+        
 
     }
 
 	public function pre_get_posts( $wp_query ) {
-		if ( ! is_admin() && !empty( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'wpi_invoice' && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
-			$wp_query->query_vars['post_status'] = array_keys( wpinv_get_invoice_statuses() );
+
+		if ( ! is_admin() && ! empty( $wp_query->query_vars['post_type'] ) && getpaid_is_invoice_post_type( $wp_query->query_vars['post_type'] ) && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
+			$wp_query->query_vars['post_status'] = array_keys( wpinv_get_invoice_statuses( false, false, $wp_query->query_vars['post_type'] ) );
 		}
 
 		return $wp_query;

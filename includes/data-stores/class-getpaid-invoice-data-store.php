@@ -158,7 +158,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$this->clear_caches( $invoice );
 
 			// Fires after a new invoice is created.
-			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_new_invoice', $invoice );
 			return true;
 		}
 
@@ -207,7 +207,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$this->add_items( $invoice );
 		$invoice->read_meta_data();
 		$invoice->set_object_read( true );
-		do_action( 'getpaid_read_' . $invoice->get_type(), $invoice );
+		do_action( 'getpaid_read_invoice', $invoice );
 
 	}
 
@@ -281,9 +281,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$new_status = $invoice->get_status( 'edit' );
 
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'getpaid_new_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_new_invoice', $invoice );
 		} else {
-			do_action( 'getpaid_update_' . $invoice->get_type(), $invoice );
+			do_action( 'getpaid_update_invoice', $invoice );
 		}
 
 	}
@@ -528,6 +528,24 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
     public function delete_special_fields( $invoice ) {
 		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoices';
 		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
-    }
+	}
+	
+	/**
+	 * Get the status to save to the post object.
+	 *
+	 *
+	 * @since 1.0.19
+	 * @param  WPInv_Invoice $object GetPaid_Data object.
+	 * @return string
+	 */
+	protected function get_post_status( $object ) {
+		$object_status = $object->get_status( 'edit' );
+
+		if ( ! $object_status ) {
+			$object_status = $object->get_default_status();
+		}
+
+		return $object_status;
+	}
 
 }

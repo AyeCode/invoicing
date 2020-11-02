@@ -59,7 +59,7 @@ class GetPaid_Subscription_Notification_Emails {
 				continue;
 			}
 
-			do_action( 'getpaid_subscription_notification_email_register_hook', $email );
+			do_action( 'getpaid_subscription_notification_email_register_hook', $email_type, $hook );
 
 		}
 

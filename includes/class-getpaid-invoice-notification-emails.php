@@ -82,7 +82,7 @@ class GetPaid_Invoice_Notification_Emails {
 				continue;
 			}
 
-			do_action( 'getpaid_invoice_init_email_type_hook', $type );
+			do_action( 'getpaid_invoice_init_email_type_hook', $type, $hook );
 		}
 
 	}
@@ -221,7 +221,7 @@ class GetPaid_Invoice_Notification_Emails {
 	public function new_invoice( $invoice ) {
 
 		// Only send this email for invoices created via the admin page.
-		if ( $this->is_payment_form_invoice( $invoice->get_id() ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || $this->is_payment_form_invoice( $invoice->get_id() ) ) {
 			return;
 		}
 
@@ -329,7 +329,7 @@ class GetPaid_Invoice_Notification_Emails {
 	public function user_invoice( $invoice ) {
 
 		// Only send this email for invoices created via the admin page.
-		if ( $this->is_payment_form_invoice( $invoice->get_id() ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || $this->is_payment_form_invoice( $invoice->get_id() ) ) {
 			return;
 		}
 

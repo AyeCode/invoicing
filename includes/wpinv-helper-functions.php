@@ -74,9 +74,13 @@ function wpinv_round_amount( $amount, $decimals = NULL ) {
  * Get all invoice statuses.
  *
  * @since 1.0.19
+ * @param bool $draft Whether or not to include the draft status.
+ * @param bool $trashed Whether or not to include the trash status.
+ * @param string|WPInv_Invoice $invoice The invoice object|post type|type
  * @return array
  */
 function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice = false ) {
+
 	$invoice_statuses = array(
 		'wpi-pending'    => _x( 'Pending payment', 'Invoice status', 'invoicing' ),
         'publish'        => _x( 'Paid', 'Invoice status', 'invoicing' ),
@@ -96,14 +100,24 @@ function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice 
         $invoice_statuses['trash'] = __( 'Trash', 'invoicing' );
     }
 
+    if ( $invoice instanceof WPInv_Invoice ) {
+        $invoice = $invoice->get_post_type();
+    }
+
 	return apply_filters( 'wpinv_statuses', $invoice_statuses, $invoice );
 }
 
-function wpinv_status_nicename( $status ) {
-    $statuses = wpinv_get_invoice_statuses( true, true );
-    $status   = isset( $statuses[$status] ) ? $statuses[$status] : __( $status, 'invoicing' );
+/**
+ * Returns the formated invoice status.
+ * 
+ * @param string $status The raw status
+ * @param string|WPInv_Invoice $invoice The invoice object|post type|type
+ */
+function wpinv_status_nicename( $status, $invoice = false ) {
+    $statuses = wpinv_get_invoice_statuses( true, true, $invoice );
+    $status   = isset( $statuses[$status] ) ? $statuses[$status] : $status;
 
-    return $status;
+    return sanitize_text_field( $status );
 }
 
 /**

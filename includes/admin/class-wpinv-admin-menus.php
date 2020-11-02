@@ -204,6 +204,7 @@ class WPInv_Admin_Menus {
                         do_action( 'wpinv_settings_tab_top_' . $active_tab . '_' . $section, $active_tab, $section );
                         do_settings_sections( 'wpinv_settings_' . $active_tab . '_' . $section, $active_tab, $section );
                         do_action( 'wpinv_settings_tab_bottom_' . $active_tab . '_' . $section, $active_tab, $section );
+                        do_action( 'getpaid_settings_tab_bottom', $active_tab, $section );
 
                         // For backwards compatibility
                         if ( 'main' === $section ) {

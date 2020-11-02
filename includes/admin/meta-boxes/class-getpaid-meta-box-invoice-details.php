@@ -56,12 +56,22 @@ class GetPaid_Meta_Box_Invoice_Details {
                     <?php
 
                         // Date created.
+                        $label = sprintf(
+                            __( '%s Date:', 'invoicing' ),
+                            ucfirst( $invoice->get_type() )
+                        );
+
+                        $info  = sprintf(
+                            __( 'The date this %s was created.', 'invoicing' ),
+                            strtolower( $invoice->get_type() )
+                        );
+
                         echo aui()->input(
                             array(
                                 'type'        => 'datepicker',
                                 'id'          => 'wpinv_date_created',
                                 'name'        => 'date_created',
-                                'label'       => __( 'Invoice Date:', 'invoicing' ) . getpaid_get_help_tip( __( 'The date this invoice was created. This allows you to backdate an invoice.', 'invoicing' ) ),
+                                'label'       => $label . getpaid_get_help_tip( $info ),
                                 'label_type'  => 'vertical',
                                 'placeholder' => 'YYYY-MM-DD 00:00',
                                 'class'       => 'form-control-sm',
@@ -94,29 +104,45 @@ class GetPaid_Meta_Box_Invoice_Details {
                         }
 
                         do_action( 'wpinv_meta_box_details_after_due_date', $invoice->get_id() );
-                        
+                        do_action( 'getpaid_metabox_after_due_date', $invoice );
+
                         // Status.
+                        $label = sprintf(
+                            __( '%s Status:', 'invoicing' ),
+                            ucfirst( $invoice->get_type() )
+                        );
+
                         echo aui()->select(
                             array(
                                 'id'               => 'wpinv_status',
                                 'name'             => 'wpinv_status',
-                                'label'            => __( 'Invoice Status:', 'invoicing' ),
+                                'label'            => $label,
                                 'label_type'       => 'vertical',
                                 'placeholder'      => __( 'Select Status', 'invoicing' ),
                                 'value'            => $invoice->get_status( 'edit' ),
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
-                                'options'          => wpinv_get_invoice_statuses( true )
+                                'options'          => wpinv_get_invoice_statuses( true, false, $invoice )
                             )
                         );
 
                         // Invoice number.
+                        $label = sprintf(
+                            __( '%s Number:', 'invoicing' ),
+                            ucfirst( $invoice->get_type() )
+                        );
+
+                        $info  = sprintf(
+                            __( 'Each %s number must be unique.', 'invoicing' ),
+                            strtolower( $invoice->get_type() )
+                        );
+
                         echo aui()->input(
                             array(
                                 'type'        => 'text',
                                 'id'          => 'wpinv_number',
                                 'name'        => 'wpinv_number',
-                                'label'       => __( 'Invoice Number:', 'invoicing' ) . getpaid_get_help_tip( __( 'Each invoice number must be unique.', 'invoicing' ) ),
+                                'label'       => $label . getpaid_get_help_tip( $info ),
                                 'label_type'  => 'vertical',
                                 'placeholder' => __( 'Autogenerate', 'invoicing' ),
                                 'class'       => 'form-control-sm',

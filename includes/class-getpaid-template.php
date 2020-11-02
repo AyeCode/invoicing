@@ -129,8 +129,9 @@ class GetPaid_Template {
         // Load the defaults for the template path and default path.
         $template_path = empty( $template_path ) ? 'invoicing' : $template_path;
         $default_path  = empty( $default_path ) ? $this->templates_dir : $default_path;
+        $default_path  = apply_filters( 'getpaid_template_default_template_path', $default_path, $template_name );
 
-         // Is it overidden?
+        // Is it overidden?
         $template = locate_template(
             array( trailingslashit( $template_path ) . $template_name ),
             array( 'wpinv-' . $template_name )

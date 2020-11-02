@@ -162,8 +162,8 @@ jQuery(function($) {
     // Rename excerpt to 'description'
     $('body.post-type-wpi_item #postexcerpt h2.hndle').text( WPInv_Admin.item_description )
     $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
-    $('body.post-type-wpi_invoice #postexcerpt h2.hndle').text( WPInv_Admin.invoice_description )
-    $('body.post-type-wpi_invoice #postexcerpt p, body.post-type-wpi_item #postexcerpt p, body.post-type-wpi_discount #postexcerpt p').hide()
+    $('body.getpaid-is-invoice-cpt #postexcerpt h2.hndle').text( WPInv_Admin.invoice_description )
+    $('body.getpaid-is-invoice-cpt #postexcerpt p, body.post-type-wpi_item #postexcerpt p, body.post-type-wpi_discount #postexcerpt p').hide()
 
     // Discount types.
     $(document).on('change', '#wpinv_discount_type', function() {
@@ -307,7 +307,7 @@ jQuery(function($) {
     });
 
     // When the country changes, load the states field.
-    $( '.post-type-wpi_invoice' ).on( 'change', '#wpinv_country', function(e) {
+    $( '.getpaid-is-invoice-cpt' ).on( 'change', '#wpinv_country', function(e) {
 
         // Ensure that we have the states field.
         if ( ! $( '#wpinv_state' ).length ) {
@@ -545,8 +545,8 @@ jQuery(function($) {
             .addClass( _class )
     }
 
-    // Delete invoice items. @todo delete on remote and recalculate totals.
-    $( '.post-type-wpi_invoice' ).on( 'click', '.getpaid-item-actions .dashicons-trash', function(e) {
+    // Delete invoice items.
+    $( '.getpaid-is-invoice-cpt' ).on( 'click', '.getpaid-item-actions .dashicons-trash', function(e) {
         e.preventDefault();
 
         // Block the metabox.
@@ -591,7 +591,7 @@ jQuery(function($) {
     })
 
     // Edit invoice items.
-    $( '.post-type-wpi_invoice' ).on( 'click', '.getpaid-item-actions .dashicons-edit', function(e) {
+    $( '.getpaid-is-invoice-cpt' ).on( 'click', '.getpaid-item-actions .dashicons-edit', function(e) {
         e.preventDefault();
 
         var inputs = $( this ).closest( '.getpaid-invoice-item' ).data( 'inputs' )
@@ -704,100 +704,15 @@ jQuery(function($) {
         recalculateTotals()
     } )
 
-    // Prevent saving an invoice if there are no items.
-    $( '.post-type-wpi_invoice [name="post"] #submitpost [type="submit"]' ).on( 'click', function(e) {
+    var $postForm = $('.getpaid-is-invoice-cpt form#post');
 
-        if ( $( '.getpaid-invoice-item' ).length < 1) {
-            $( 'getpaid-invoice-item-actions' ).focus()
-            alert( WPInv_Admin.emptyInvoice );
-            return false;
-        }
-
-    });
-
-    var wpiGlobalTax = WPInv_Admin.tax != 0 ? WPInv_Admin.tax : 0;
-    var wpiGlobalDiscount = WPInv_Admin.discount != 0 ? WPInv_Admin.discount : 0;
-    var wpiSymbol = WPInv_Admin.currency_symbol;
-    var wpiPosition = WPInv_Admin.currency_pos;
-    var wpiThousandSep = WPInv_Admin.thousand_sep;
-    var wpiDecimalSep = WPInv_Admin.decimal_sep;
-    var wpiDecimals = WPInv_Admin.decimals;
-    var $postForm = $('.post-type-wpi_invoice form#post');
     if ($('[name="wpinv_status"]', $postForm).length) {
         var origStatus = $('[name="wpinv_status"]', $postForm).val();
         $('[name="original_post_status"]', $postForm).val(origStatus);
         $('[name="hidden_post_status"]', $postForm).val(origStatus);
         $('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + origStatus + '" id="post_status" name="post_status">');
     }
-    $('input.wpi-price').on("contextmenu", function(e) {
-        return false;
-    });
-    $(document).on('keypress', 'input.wpi-price', function(e) {
-        var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-        if ($.inArray(e.key, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "."]) !== -1) {
-            return true;
-        } else if (e.ctrlKey || e.shiftKey) {
-            return false;
-        } else if ($.inArray(key, [8, 35, 36, 37, 39, 46]) !== -1) {
-            return true;
-        }
-        return false;
-    });
-    // sorts out the number to enable calculations
-    function wpinvRawNumber(x) {
-        // removes the thousand seperator
-        var parts = x.toString().split(wpiThousandSep);
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '');
-        var amount = parts.join('');
-        // makes the decimal seperator a period
-        var output = amount.toString().replace(/\,/g, '.');
-        output = parseFloat(output);
-        if (isNaN(output)) {
-            output = 0;
-        }
-        if (output && output < 0) {
-            output = output * (-1);
-        }
-        return output;
-    }
-    // formats number into users format
-    function wpinvFormatNumber(nStr) {
-        var num = nStr.split('.');
-        var x1 = num[0];
-        var x2 = num.length > 1 ? wpiDecimalSep + num[1] : '';
-        var rgx = /(\d+)(\d{3})/;
-        while (rgx.test(x1)) {
-            x1 = x1.replace(rgx, '$1' + wpiThousandSep + '$2');
-        }
-        return x1 + x2;
-    }
-    // format the amounts
-    function wpinvFormatAmount(amount) {
-        if (typeof amount !== 'number') {
-            amount = parseFloat(amount);
-        }
-        // do the symbol position formatting   
-        var formatted = 0;
-        var amount = amount.toFixed(wpiDecimals);
-        switch (wpiPosition) {
-            case 'left':
-                formatted = wpiSymbol + wpinvFormatNumber(amount);
-                break;
-            case 'right':
-                formatted = wpinvFormatNumber(amount) + wpiSymbol;
-                break;
-            case 'left_space':
-                formatted = wpiSymbol + ' ' + wpinvFormatNumber(amount);
-                break;
-            case 'right_space':
-                formatted = wpinvFormatNumber(amount) + ' ' + wpiSymbol;
-                break;
-            default:
-                formatted = wpiSymbol + wpinvFormatNumber(amount);
-                break;
-        }
-        return formatted;
-    }
+
     /**
      * Invoice Notes Panel
      */
@@ -858,6 +773,7 @@ jQuery(function($) {
     };
     wpinv_meta_boxes_notes.init();
     var invDetails = jQuery('#gdmbx2-metabox-wpinv_details').html();
+    console.log(invDetails)
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
         jQuery('#submitdiv', jQuery('.wpinv')).remove();
@@ -872,7 +788,7 @@ jQuery(function($) {
     if (!jQuery('#post input[name="post_title"]').val() && (wpinvNumber = jQuery('#wpinv-details input[name="wpinv_number"]').val())) {
         jQuery('#post input[name="post_title"]').val(wpinvNumber);
     }
-    var wpi_stat_links = jQuery('.post-type-wpi_invoice .subsubsub');
+    var wpi_stat_links = jQuery('.getpaid-is-invoice-cpt .subsubsub');
     if (wpi_stat_links.is(':visible')) {
         var publish_count = jQuery('.publish', wpi_stat_links).find('.count').text();
         jQuery('.publish', wpi_stat_links).find('a').html(WPInv_Admin.status_publish + ' <span class="count">' + publish_count + '</span>');
@@ -1101,7 +1017,7 @@ jQuery(function($) {
             });
         }
     };
-    $('.post-type-wpi_invoice form#post #titlediv [name="post_title"]').attr('readonly', true);
+    $('.getpaid-is-invoice-cpt form#post #titlediv [name="post_title"]').attr('readonly', true);
     $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
     $('.post-type-wpi_item.wpi-editable-n #submitdiv #publishing-action').remove();
     $('.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status').remove();

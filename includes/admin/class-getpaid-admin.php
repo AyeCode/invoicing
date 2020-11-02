@@ -119,7 +119,7 @@ class GetPaid_Admin {
 	protected function get_admin_i18() {
         global $post;
 
-        return array(
+        $i18n = array(
             'ajax_url'                  => admin_url( 'admin-ajax.php' ),
             'post_ID'                   => isset( $post->ID ) ? $post->ID : '',
             'wpinv_nonce'               => wp_create_nonce( 'wpinv-nonce' ),
@@ -139,11 +139,9 @@ class GetPaid_Admin {
             'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
             'delete_tax_rate'           => __( 'Are you sure you wish to delete this tax rate?', 'invoicing' ),
             'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
-            'OneItemMin'                => __( 'Invoice must contain at least one item', 'invoicing' ),
             'FillBillingDetails'        => __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' ),
             'confirmCalcTotals'         => __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' ),
             'AreYouSure'                => __( 'Are you sure?', 'invoicing' ),
-            'emptyInvoice'              => __( 'Add at least one item to save invoice!', 'invoicing' ),
             'errDeleteItem'             => __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' ),
             'delete_subscription'       => __( 'Are you sure you want to delete this subscription?', 'invoicing' ),
             'action_edit'               => __( 'Edit', 'invoicing' ),
@@ -154,6 +152,21 @@ class GetPaid_Admin {
             'searching'                 => __( 'Searching', 'invoicing' ),
         );
 
+		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {
+
+			$invoice              = new WPInv_Invoice( $post );
+			$i18n['save_invoice'] = sprintf(
+				__( 'Save %s', 'invoicing' ),
+				ucfirst( $invoice->get_type() )
+			);
+
+			$i18n['invoice_description'] = sprintf(
+				__( '%s Description', 'invoicing' ),
+				ucfirst( $invoice->get_type() )
+			);
+
+		}
+		return $i18n;
     }
 
     /**
@@ -213,6 +226,10 @@ class GetPaid_Admin {
 
         if ( in_array( $page, wpinv_parse_list( 'wpi_invoice wpi_payment_form wpi_quote' ) ) ) {
             $classes .= ' wpinv-cpt wpinv';
+		}
+		
+		if ( getpaid_is_invoice_post_type( $page ) ) {
+            $classes .= ' getpaid-is-invoice-cpt';
         }
 
 		if ( $pagenow == 'post.php' && $page == 'wpi_item' && ! empty( $post ) && ! wpinv_item_is_editable( $post ) ) {

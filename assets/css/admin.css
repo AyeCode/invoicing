@@ -16,30 +16,36 @@
 .w120 {
     width: 120px!important;
 }
+
 /* invoice notes */
-.post-type-wpi_invoice .wp-list-table.widefat th#ID {
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#ID {
     width: 70px;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#number {
+
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#number {
     width: 300px;
 }
 
-.post-type-wpi_invoice #commentsdiv.postbox {
+.getpaid-is-invoice-cpt #commentsdiv.postbox {
     display: none !important;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#invoice_date,
-.post-type-wpi_invoice .wp-list-table.widefat th#payment_date {
+
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#invoice_date {
     width: 120px;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#status {
+
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#status {
     width: 150px;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#amount {
+
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#amount {
     width: 110px;
 }
-.post-type-wpi_invoice .wp-list-table.widefat th#customer {
+
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#customer {
     width: 180px;
 }
+
 .postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
     width: 50%;
     padding: 0;
@@ -699,7 +705,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 
 }
 
-.post-type-wpi_invoice .subsubsub .mine {
+.getpaid-is-invoice-cpt .subsubsub .mine {
     display: none;
 }
 
@@ -904,7 +910,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     color: #333;
     font-size: 120%;
 }
-.post-type-wpi_invoice #submitpost #delete-action,
+.getpaid-is-invoice-cpt #submitpost #delete-action,
 .post-type-wpi_item #submitpost .misc-pub-visibility,
 .post-type-wpi_item #submitpost .misc-pub-curtime,
 .post-type-wpi_item #submitpost #delete-action,
@@ -987,7 +993,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 
 .post-type-wpi_item .fixed .column-type .meta,
 .post-type-wpi_item .fixed .column-price .meta,
-.post-type-wpi_invoice .type-wpi_invoice td .meta {
+.getpaid-is-invoice-cpt .type-wpi_invoice td .meta {
     display: block;
     font-size: 90%;
     font-style: italic;
@@ -1283,35 +1289,35 @@ body.wpi-wpinv-settings .wp-picker-holder,
 .wpinv-address .wpinv-new-cancel {
     margin-left: 3px;
 }
-.post-type-wpi_invoice #TB_ajaxContent {
+.getpaid-is-invoice-cpt #TB_ajaxContent {
     max-height: calc(100% - 47px);
     min-width: 95% !important;
     width: auto !important;
 }
-.post-type-wpi_invoice #TB_ajaxContent .alert {
+.getpaid-is-invoice-cpt #TB_ajaxContent .alert {
     border: medium none;
     height: auto;
     margin: 5px 15px 2px;
     padding: 1px 12px;
 }
-.post-type-wpi_invoice #TB_ajaxContent .form-table th,
-.post-type-wpi_invoice #TB_ajaxContent .cmb-th {
+.getpaid-is-invoice-cpt #TB_ajaxContent .form-table th,
+.getpaid-is-invoice-cpt #TB_ajaxContent .cmb-th {
     padding: 5px 10px 5px 0;
 }
-.post-type-wpi_invoice .popup-form .form-field label {
+.getpaid-is-invoice-cpt .popup-form .form-field label {
     float: left;
     font-weight: bold;
     margin: 10px 0 5px;
     width: 100%;
 }
-.post-type-wpi_invoice #TB_ajaxContent .form-table td {
+.getpaid-is-invoice-cpt #TB_ajaxContent .form-table td {
     margin-bottom: 0;
     padding: 5px 0;
 }
-.post-type-wpi_invoice #TB_ajaxContent .show-password #pass1-text {
+.getpaid-is-invoice-cpt #TB_ajaxContent .show-password #pass1-text {
     width: 25em;
 }
-.post-type-wpi_invoice .result-message {
+.getpaid-is-invoice-cpt .result-message {
     display: none;
 }
 .gdmbx-wpinv-save-send {
@@ -1542,13 +1548,13 @@ textarea.wpi-email_overdue_content {
 .post-type-wpi_item.wpi-editable-n #setting-error-wpinv-edit-n .notice-dismiss {
     display: none;
 }
-.post-type-wpi_invoice form#post #edit-slug-buttons {
+.getpaid-is-invoice-cpt form#post #edit-slug-buttons {
     display: none;
 }
 #gdmbx2-metabox-wpinv_details input#wpinv_number {
     cursor: default;
 }
-.post-type-wpi_invoice form#post #titlediv [name="post_title"] {
+.getpaid-is-invoice-cpt form#post #titlediv [name="post_title"] {
     cursor: not-allowed;
     opacity: .75;
 }
@@ -2194,10 +2200,10 @@ textarea.wpi-email_overdue_content {
     border-color: #1e73be;
 }
 
-.post-type-wpi_invoice #post-body-content,
-.post-type-wpi_invoice #astra_settings_meta_box,
-.post-type-wpi_invoice #rank_math_metabox_link_suggestions,
-.post-type-wpi_invoice #rank_math_metabox {
+.getpaid-is-invoice-cpt #post-body-content,
+.getpaid-is-invoice-cpt #astra_settings_meta_box,
+.getpaid-is-invoice-cpt #rank_math_metabox_link_suggestions,
+.getpaid-is-invoice-cpt #rank_math_metabox {
     display: none !important;
 }
 
@@ -2306,7 +2312,8 @@ textarea.wpi-email_overdue_content {
     text-overflow: ellipsis;
 }
 
-.post-type-wpi_invoice .wp-list-table .column-recurring{
+.getpaid-is-invoice-cpt .wp-list-table .column-recurring,
+.post-type-wpi_quote .wp-list-table .column-recurring{
     width: 60px;
 }
 

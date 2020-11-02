@@ -29,6 +29,9 @@ defined( 'ABSPATH' ) || exit;
             // Fires when printing the invoice line items.
             do_action( 'getpaid_invoice_line_items', $invoice );
 
+            // Print notifications.
+            wpinv_print_errors();
+
             // Print the closing wrapper.
             echo '</div>';
 

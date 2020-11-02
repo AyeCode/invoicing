@@ -698,7 +698,9 @@ function wpinv_format_invoice_number( $number, $type = '' ) {
     // Format the number.
     $padd             = absint( (int) wpinv_get_option( 'invoice_number_padd' ) );
     $prefix           = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_prefix', 'INV-' ) );
+    $prefix           = sanitize_text_field( apply_filters( 'getpaid_invoice_type_prefix', $prefix, $type ) );
     $postfix          = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_postfix' ) );
+    $postfix          = sanitize_text_field( apply_filters( 'getpaid_invoice_type_postfix', $postfix, $type ) );
     $formatted_number = zeroise( absint( $number ), $padd );
 
     // Add the prefix and post fix.
@@ -988,9 +990,10 @@ function getpaid_new_invoice( $invoice ) {
 
     // Add an invoice created note.
     $invoice->add_note(
-        wp_sprintf(
-            __( 'Invoice created with the status "%s".', 'invoicing' ),
-            wpinv_status_nicename( $invoice->get_status() )
+        sprintf(
+            __( '%s created with the status "%s".', 'invoicing' ),
+            ucfirst( $invoice->get_type() ),
+            wpinv_status_nicename( $invoice->get_status(), $invoice  )
         )
     );
 

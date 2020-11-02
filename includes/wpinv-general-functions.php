@@ -43,11 +43,17 @@ function wpinv_get_success_page_uri() {
 	return apply_filters( 'wpinv_get_success_page_uri', get_permalink( $page_id ) );
 }
 
-function wpinv_get_history_page_uri() {
-	$page_id = wpinv_get_option( 'invoice_history_page', 0 );
-	$page_id = absint( $page_id );
-
-	return apply_filters( 'wpinv_get_history_page_uri', get_permalink( $page_id ) );
+/**
+ * Retrieves the invoice/quote history page URL.
+ * 
+ * @param string $post_type The post type or invoice type.
+ * @return string The history page URL.
+ */
+function wpinv_get_history_page_uri( $post_type = 'wpi_invoice' ) {
+    $post_type = sanitize_key( str_replace( 'wpi_', '', $post_type ) );
+	$page_id   = wpinv_get_option( "{$post_type}_history_page", 0 );
+	$page_id   = absint( $page_id );
+	return apply_filters( 'wpinv_get_history_page_uri', get_permalink( $page_id ), $post_type );
 }
 
 function wpinv_is_success_page() {

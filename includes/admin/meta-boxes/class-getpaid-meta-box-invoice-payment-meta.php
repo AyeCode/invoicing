@@ -46,7 +46,10 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 'type'        => 'text',
                                 'id'          => 'wpinv_key',
                                 'name'        => 'wpinv_key',
-                                'label'       => __( 'Invoice Key:', 'invoicing' ),
+                                'label'       => sprintf(
+                                    __( '%s Key:', 'invoicing' ),
+                                    ucfirst( $invoice->get_type() )
+                                ),
                                 'label_type'  => 'vertical',
                                 'class'       => 'form-control-sm',
                                 'value'       => $invoice->get_key( 'edit' ),
@@ -63,7 +66,10 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 'type'        => 'text',
                                 'id'          => 'wpinv_view_url',
                                 'name'        => 'wpinv_view_url',
-                                'label'       => __( 'Invoice URL:', 'invoicing' ),
+                                'label'       => sprintf(
+                                    __( '%s URL:', 'invoicing' ),
+                                    ucfirst( $invoice->get_type() )
+                                ),
                                 'label_type'  => 'vertical',
                                 'class'       => 'form-control-sm',
                                 'value'       => $invoice->get_view_url(),
@@ -150,37 +156,44 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 
                         } else {
 
-                            // Payment URL.
-                            echo aui()->input(
-                                array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_payment_url',
-                                    'name'        => 'wpinv_payment_url',
-                                    'label'       => __( 'Payment URL:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_checkout_payment_url(),
-                                    'extra_attributes' => array(
-                                        'onclick'  => 'this.select();',
-                                        'readonly' => 'true',
-                                    ),
-                                )
-                            );
+                            if ( 'wpi_invoice' == $invoice->get_post_type() ) {
 
-                            // Set gateway.
-                            echo aui()->select(
-                                array(
-                                    'id'               => 'wpinv_gateway',
-                                    'name'             => 'wpinv_gateway',
-                                    'label'            => __( 'Gateway:', 'invoicing' ),
-                                    'label_type'       => 'vertical',
-                                    'placeholder'      => __( 'Select Gateway', 'invoicing' ),
-                                    'value'            => $invoice->get_gateway( 'edit' ),
-                                    'select2'          => true,
-                                    'data-allow-clear' => 'false',
-                                    'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
-                                )
-                            );
+                                // Payment URL.
+                                echo aui()->input(
+                                    array(
+                                        'type'        => 'text',
+                                        'id'          => 'wpinv_payment_url',
+                                        'name'        => 'wpinv_payment_url',
+                                        'label'       => __( 'Payment URL:', 'invoicing' ),
+                                        'label_type'  => 'vertical',
+                                        'class'       => 'form-control-sm',
+                                        'value'       => $invoice->get_checkout_payment_url(),
+                                        'extra_attributes' => array(
+                                            'onclick'  => 'this.select();',
+                                            'readonly' => 'true',
+                                        ),
+                                    )
+                                );
+
+                                // Set gateway.
+                                echo aui()->select(
+                                    array(
+                                        'id'               => 'wpinv_gateway',
+                                        'name'             => 'wpinv_gateway',
+                                        'label'            => __( 'Gateway:', 'invoicing' ),
+                                        'label_type'       => 'vertical',
+                                        'placeholder'      => __( 'Select Gateway', 'invoicing' ),
+                                        'value'            => $invoice->get_gateway( 'edit' ),
+                                        'select2'          => true,
+                                        'data-allow-clear' => 'false',
+                                        'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
+                                    )
+                                );
+
+                            }
+
+
+
 
                         }
 

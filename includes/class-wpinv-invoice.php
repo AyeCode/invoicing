@@ -290,15 +290,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return array
 	 */
 	public function get_all_statuses() {
-
-		$statuses = wpinv_get_invoice_statuses( true, true, $this );
-
-		// For backwards compatibility.
-		if ( $this->is_quote() && class_exists( 'Wpinv_Quotes_Shared' ) ) {
-            $statuses = Wpinv_Quotes_Shared::wpinv_get_quote_statuses();
-		}
-
-		return $statuses;
+		return wpinv_get_invoice_statuses( true, true, $this );
     }
 
     /**
@@ -637,10 +629,10 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_path( $context = 'view' ) {
         $path   = $this->get_prop( 'path', $context );
-		$prefix = wpinv_post_name_prefix( $this->get_post_type() );
+		$prefix = $this->get_type();
 
 		if ( 0 !== strpos( $path, $prefix ) ) {
-			$path = sanitize_title(  $prefix . $this->get_id()  );
+			$path = sanitize_title(  $prefix . '-' . $this->get_id()  );
 			$this->set_path( $path );
 		}
 
@@ -1812,7 +1804,21 @@ class WPInv_Invoice extends GetPaid_Data {
 		$receipt_url = add_query_arg( 'invoice_key', $this->get_key(), $receipt_url );
 
         return apply_filters( 'getpaid_get_invoice_receipt_url', $receipt_url, $this );
-    }
+	}
+	
+	/**
+	 * Retrieves the default status.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_default_status() {
+
+		$type   = $this->get_type();
+		$status = "wpi-$type-pending";
+		return str_replace( '-invoice', '', $status );
+
+	}
 
     /**
 	 * Magic method for accessing invoice properties.
@@ -1882,12 +1888,12 @@ class WPInv_Invoice extends GetPaid_Data {
 
 			// Only allow valid new status.
 			if ( ! array_key_exists( $new_status, $statuses ) ) {
-				$new_status = 'wpi-pending';
+				$new_status = $this->get_default_status();
 			}
 
 			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
 			if ( $old_status && ! array_key_exists( $new_status, $statuses ) ) {
-				$old_status = 'wpi-pending';
+				$old_status = $this->get_default_status();
 			}
 
 			// Paid - Renewal (i.e when duplicating a parent invoice )
@@ -3571,7 +3577,7 @@ class WPInv_Invoice extends GetPaid_Data {
 				if ( ! empty( $status_transition['from'] ) ) {
 
 					/* translators: 1: old invoice status 2: new invoice status */
-					$transition_note = sprintf( __( 'Status changed from %1$s to %2$s.', 'invoicing' ), wpinv_status_nicename( $status_transition['from'] ), wpinv_status_nicename( $status_transition['to'] ) );
+					$transition_note = sprintf( __( 'Status changed from %1$s to %2$s.', 'invoicing' ), wpinv_status_nicename( $status_transition['from'], $this ), wpinv_status_nicename( $status_transition['to'], $this  ) );
 
 					// Fire another hook.
 					do_action( 'getpaid_invoice_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this );
@@ -3600,7 +3606,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					}
 				} else {
 					/* translators: %s: new invoice status */
-					$transition_note = sprintf( __( 'Status set to %s.', 'invoicing' ), wpinv_status_nicename( $status_transition['to'] ) );
+					$transition_note = sprintf( __( 'Status set to %s.', 'invoicing' ), wpinv_status_nicename( $status_transition['to'], $this  ) );
 
 					// Note the transition occurred.
 					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );

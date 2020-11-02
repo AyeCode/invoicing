@@ -44,41 +44,82 @@ class GetPaid_Metaboxes {
 		global $wpinv_euvat;
 
 		// For invoices...
-		if ( $post_type == 'wpi_invoice' ) {
+		if ( getpaid_is_invoice_post_type( $post_type ) ) {
 			$invoice = new WPInv_Invoice( $post );
 
 			// Resend invoice.
 			if ( ! $invoice->is_draft() && ! $invoice->is_paid() ) {
-				add_meta_box( 'wpinv-mb-resend-invoice', __( 'Resend Invoice', 'invoicing' ), 'GetPaid_Meta_Box_Resend_Invoice::output', 'wpi_invoice', 'side', 'low' );
+
+				add_meta_box(
+					'wpinv-mb-resend-invoice',
+					sprintf(
+						__( 'Resend %s', 'invoicing' ),
+						ucfirst( $invoice->get_type() )
+					),
+					'GetPaid_Meta_Box_Resend_Invoice::output',
+					$post_type,
+					'side',
+					'low'
+				);
+
 			}
 
 			// Subscriptions.
 			$subscription = getpaid_get_invoice_subscription( $invoice );
 			if ( ! empty( $subscription ) ) {
-				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', 'wpi_invoice', 'advanced' );
-				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', 'wpi_invoice', 'advanced' );
+				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', $post_type, 'advanced' );
+				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
 			}
 
 			// Invoice details.
-			add_meta_box( 'wpinv-details', __( 'Invoice Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Details::output', 'wpi_invoice', 'side', 'default' );
-			
+			add_meta_box(
+				'wpinv-details',
+				sprintf(
+					__( '%s Details', 'invoicing' ),
+					ucfirst( $invoice->get_type() )
+				),
+				'GetPaid_Meta_Box_Invoice_Details::output',
+				$post_type,
+				'side'
+			);
+
 			// Payment details.
 			if ( ! $invoice->is_draft() ) {
-				add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', 'wpi_invoice', 'side', 'default' );
+				add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', $post_type, 'side', 'default' );
 			}
 
 			// Billing details.
-			add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', 'wpi_invoice', 'normal', 'high' );
+			add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', $post_type, 'normal', 'high' );
 			
 			// Invoice items.
-			add_meta_box( 'wpinv-items', __( 'Invoice Items', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Items::output', 'wpi_invoice', 'normal', 'high' );
+			add_meta_box(
+				'wpinv-items',
+				sprintf(
+					__( '%s Items', 'invoicing' ),
+					ucfirst( $invoice->get_type() )
+				),
+				'GetPaid_Meta_Box_Invoice_Items::output',
+				$post_type,
+				'normal',
+				'high'
+			);
 			
 			// Invoice notes.
-			add_meta_box( 'wpinv-notes', __( 'Invoice Notes', 'invoicing' ), 'WPInv_Meta_Box_Notes::output', 'wpi_invoice', 'side', 'low' );
+			add_meta_box(
+				'wpinv-notes',
+				sprintf(
+					__( '%s Notes', 'invoicing' ),
+					ucfirst( $invoice->get_type() )
+				),
+				'WPInv_Meta_Box_Notes::output',
+				$post_type,
+				'side',
+				'low'
+			);
 
 			// Payment form information.
 			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'payment_form_data', true ) ) {
-				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', 'wpi_invoice', 'side', 'high' );
+				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', $post_type, 'side', 'high' );
 			}
 		}
 
@@ -171,17 +212,24 @@ class GetPaid_Metaboxes {
 			return;
 		}
 
+		if ( getpaid_is_invoice_post_type( $post->post_type ) ) {
+
+			// We need this save event to run once to avoid potential endless loops.
+			self::$saved_meta_boxes = true;
+
+			return GetPaid_Meta_Box_Invoice_Address::save( $post_id );
+
+		}
+
 		// Ensure this is our post type.
 		$post_types_map = array(
-			'wpi_invoice'      => 'GetPaid_Meta_Box_Invoice_Address',
-			'wpi_quote'        => 'GetPaid_Meta_Box_Invoice_Address',
 			'wpi_item'         => 'GetPaid_Meta_Box_Item_Details',
 			'wpi_payment_form' => 'GetPaid_Meta_Box_Payment_Form',
 			'wpi_discount'     => 'GetPaid_Meta_Box_Discount_Details',
 		);
 
 		// Is this our post type?
-		if ( empty( $post->post_type ) || ! isset( $post_types_map[ $post->post_type ] ) ) {
+		if ( ! isset( $post_types_map[ $post->post_type ] ) ) {
 			return;
 		}
 

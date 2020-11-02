@@ -155,9 +155,9 @@ function wpinv_discount_filters() {
 function wpinv_request( $vars ) {
     global $typenow, $wp_query, $wp_post_statuses;
 
-    if ( 'wpi_invoice' === $typenow ) {
+    if ( getpaid_is_invoice_post_type( $typenow ) ) {
         if ( !isset( $vars['post_status'] ) ) {
-            $post_statuses = wpinv_get_invoice_statuses();
+            $post_statuses = wpinv_get_invoice_statuses( false, false, $typenow );
 
             foreach ( $post_statuses as $status => $value ) {
                 if ( isset( $wp_post_statuses[ $status ] ) && false === $wp_post_statuses[ $status ]->show_in_admin_all_list ) {

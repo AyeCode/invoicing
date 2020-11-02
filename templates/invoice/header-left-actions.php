@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
                 </a>
             <?php endif; ?>
 
-            <?php do_action('wpinv_invoice_display_left_actions', $invoice ); ?>
+            <?php do_action( 'wpinv_invoice_display_left_actions', $invoice ); ?>
 
         </div>
 

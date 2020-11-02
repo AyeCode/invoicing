@@ -175,10 +175,11 @@ function wpinv_convert_old_invoices() {
                 'post_type'      => array( 'wpi_invoice', 'wpi_quote' ),
                 'posts_per_page' => -1,
                 'fields'         => 'ids',
-                'post_status'    => array_keys( wpinv_get_invoice_statuses( true ) ),
+                'post_status'    => array_keys( get_post_stati() ),
             )
         )
     );
+
     $invoices_table = $wpdb->prefix . 'getpaid_invoices';
     $invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
 

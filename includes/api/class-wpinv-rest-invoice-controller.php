@@ -133,7 +133,7 @@ class WPInv_REST_Invoice_Controller extends GetPaid_REST_Posts_Controller {
 	 * @return array A list of registered item statuses.
 	 */
 	public function get_post_statuses() {
-		return array_keys( wpinv_get_invoice_statuses( true ) );
+		return array_keys( wpinv_get_invoice_statuses( true, false, $this->post_type ) );
 	}
 
 	/**

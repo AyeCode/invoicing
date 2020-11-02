@@ -216,7 +216,7 @@ class WPInv_Subscriptions {
     public function update_invoice_subscription( $subscription, $invoice ) {
 
         // Delete the subscription if an invoice is free or nolonger recurring.
-        if ( $invoice->is_free() || ! $invoice->is_recurring() ) {
+        if ( ! $invoice->is_type( 'invoice' ) || $invoice->is_free() || ! $invoice->is_recurring() ) {
             return $subscription->delete();
         }
 
