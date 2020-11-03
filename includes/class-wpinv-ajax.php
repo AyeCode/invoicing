@@ -253,10 +253,7 @@ class WPInv_Ajax {
     public static function get_payment_form() {
 
         // Check nonce.
-        if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'getpaid_ajax_form' ) ) {
-            _e( 'Error: Reload the page and try again.', 'invoicing' );
-            exit;
-        }
+        check_ajax_referer( 'getpaid_form_nonce' );
 
         // Is the request set up correctly?
 		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) ) {

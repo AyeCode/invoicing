@@ -223,7 +223,8 @@ jQuery(function($) {
                     var data = {
                         action: 'wpinv_get_payment_form_states_field',
                         country: this.form.find( '.wpinv_country' ).val(),
-                        form: this.form.find( 'input[name="form_id"]' ).val()
+                        form: this.form.find( 'input[name="form_id"]' ).val(),
+                        _ajax_nonce: WPInv.formNonce
                     };
 
                     $.get(ajaxurl, data, ( res ) => {
@@ -660,8 +661,9 @@ jQuery(function($) {
         $('#getpaid-payment-modal').modal()
 
         // Load the form via ajax.
-        var data    = $( this ).data()
-        data.action = 'wpinv_get_payment_form'
+        var data         = $( this ).data()
+        data.action      = 'wpinv_get_payment_form'
+        data._ajax_nonce = WPInv.formNonce
 
         $.get( WPInv.ajax_url, data, function (res) {
             $('#getpaid-payment-modal .modal-body').html( res )

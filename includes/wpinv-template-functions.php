@@ -1434,21 +1434,20 @@ function getpaid_convert_items_to_string( $items ) {
  */
 function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null ) {
     $label = sanitize_text_field( $label );
-    $nonce = wp_create_nonce('getpaid_ajax_form');
 
     if ( ! empty( $form ) ) {
         $form  = esc_attr( $form );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-form='$form'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-form='$form'>$label</button>"; 
     }
 	
 	if ( ! empty( $items ) ) {
         $items  = esc_attr( $items );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-item='$items'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-item='$items'>$label</button>"; 
     }
     
     if ( ! empty( $invoice ) ) {
         $invoice  = esc_attr( $invoice );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-nonce='$nonce' data-invoice='$invoice'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-invoice='$invoice'>$label</button>"; 
     }
 
 }
