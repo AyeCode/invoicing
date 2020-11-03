@@ -81,11 +81,6 @@ jQuery(function($) {
                 // Display the error
                 form.find( '.getpaid-payment-form-errors' ).html( error ).removeClass( 'd-none' )
 
-                // Animate to the error
-                $( 'html, body' ).animate({
-                    scrollTop: form.find( '.getpaid-payment-form-errors' ).offset().top
-                }, 500);
-
             },
 
             // Hides the current error.
