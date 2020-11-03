@@ -185,6 +185,7 @@ input[type="text"].getpaid-item-price-input {
 }
 
 .getpaid-item-status-pending,
+.getpaid-invoice-status-wpi-quote-pending,
 .getpaid-invoice-status-wpi-pending {
     background-color: #f9fbe7;
     color: #33691e;
@@ -199,6 +200,7 @@ input[type="text"].getpaid-item-price-input {
 }
 
 .getpaid-item-status-failing,
+.getpaid-invoice-status-wpi-quote-declined,
 .getpaid-invoice-status-wpi-failed {
     background-color: #fff3e0;
     border-bottom: 1px solid #ffe0b2;
@@ -213,6 +215,7 @@ input[type="text"].getpaid-item-price-input {
 }
 
 .getpaid-item-status-success,
+.getpaid-invoice-status-wpi-quote-accepted,
 .getpaid-invoice-status-publish {
     background-color:#f1f8e9;
     border-bottom: 1px solid#dcedc8;

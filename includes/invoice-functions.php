@@ -553,12 +553,17 @@ function wpinv_get_invoice_notes( $invoice = 0, $type = '' ) {
 
 /**
  * Returns an array of columns to display on the invoices page.
+ * 
+ * @param string $post_type
  */
-function wpinv_get_user_invoices_columns() {
+function wpinv_get_user_invoices_columns( $post_type = 'wpi_invoice' ) {
+
+    $label   = getpaid_get_post_type_label( $post_type, false );
+    $label   = empty( $label ) ? __( 'Invoice', 'invoicing' ) : sanitize_text_field( $label );
     $columns = array(
 
             'invoice-number'  => array(
-                'title' => __( 'Invoice', 'invoicing' ),
+                'title' => $label,
                 'class' => 'text-left'
             ),
 
@@ -589,7 +594,7 @@ function wpinv_get_user_invoices_columns() {
 
         );
 
-    return apply_filters( 'wpinv_user_invoices_columns', $columns );
+    return apply_filters( 'wpinv_user_invoices_columns', $columns, $post_type );
 }
 
 /**
@@ -633,12 +638,15 @@ function wpinv_payment_receipt() {
 /**
  * Displays the invoice history.
  */
-function getpaid_invoice_history( $user_id = 0 ) {
+function getpaid_invoice_history( $user_id = 0, $post_type = 'wpi_invoice' ) {
 
     // Ensure that we have a user id.
     if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
         $user_id = get_current_user_id();
     }
+
+    $label = getpaid_get_post_type_label( $post_type );
+    $label = empty( $label ) ? __( 'Invoices', 'invoicing' ) : sanitize_text_field( $label );
 
     // View user id.
     if ( empty( $user_id ) ) {
@@ -646,7 +654,10 @@ function getpaid_invoice_history( $user_id = 0 ) {
         return aui()->alert(
             array(
                 'type'    => 'warning',
-                'content' => __( 'You must be logged in to view your invoice history.', 'invoicing' ),
+                'content' => sprintf(
+                    __( 'You must be logged in to view your %s.', 'invoicing' ),
+                    strtolower( $label )
+                )
             )
         );
 
@@ -656,9 +667,11 @@ function getpaid_invoice_history( $user_id = 0 ) {
     $invoices = wpinv_get_invoices(
 
         array(
-            'page'     => ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1,
-            'user'     => $user_id,
-            'paginate' => true,
+            'page'      => ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1,
+            'user'      => $user_id,
+            'paginate'  => true,
+            'type'      => $post_type,
+            'status'    => array_keys( wpinv_get_invoice_statuses( false, false, $post_type ) ),
         )
 
     );
@@ -668,14 +681,17 @@ function getpaid_invoice_history( $user_id = 0 ) {
         return aui()->alert(
             array(
                 'type'    => 'info',
-                'content' => __( 'No invoices found.', 'invoicing' ),
+                'content' => sprintf(
+                    __( 'No %s found.', 'invoicing' ),
+                    strtolower( $label )
+                )
             )
         );
 
     }
 
     // Load the template.
-    return wpinv_get_template_html( 'invoice-history.php', compact( 'invoices' ) );
+    return wpinv_get_template_html( 'invoice-history.php', compact( 'invoices', 'post_type' ) );
 
 }
 

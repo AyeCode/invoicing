@@ -950,3 +950,20 @@ function getpaid_admin() {
 function getpaid_get_authenticated_action_url( $action, $base = false ) {
     return wp_nonce_url( add_query_arg( 'getpaid-action', $action, $base ), 'getpaid-nonce', 'getpaid-nonce' );
 }
+
+/**
+ * Returns a post type label.
+ *
+ * @return string
+ */
+function getpaid_get_post_type_label( $post_type, $plural = true ) {
+
+    $post_type = get_post_type_object( $post_type );
+
+    if ( ! is_object( $post_type ) ) {
+        return null;
+    }
+
+    return $plural ? $post_type->labels->name : $post_type->labels->singular_name;
+
+}
