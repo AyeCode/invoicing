@@ -58,8 +58,9 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					'fees'      => $submission->format_amount( $submission->get_fee() ),
 					'tax'       => $submission->format_amount( $submission->get_tax() ),
 					'total'     => $submission->format_amount( $submission->get_total() ),
+					'raw_total' => html_entity_decode( sanitize_text_field( $submission->format_amount( $submission->get_total() ) ), ENT_QUOTES ),
 				),
-	
+
 				'recurring'     => array(
 					'subtotal'  => $submission->format_amount( $submission->get_recurring_subtotal() ),
 					'discount'  => $submission->format_amount( $submission->get_recurring_discount() ),

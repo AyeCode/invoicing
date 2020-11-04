@@ -306,18 +306,20 @@ jQuery(function($) {
 
                 // Prepare the submit btn.
                 var submit_btn = this.form.find( '.getpaid-payment-form-submit' )
+                var free_label = submit_btn.data( 'free' ).replace( /%price%/gi, state.totals.raw_total );
+                var btn_label  = submit_btn.data( 'pay' ).replace( /%price%/gi, state.totals.raw_total );
                 submit_btn.prop( 'disabled', false ).css('cursor', 'pointer')
 
                 // If it's free, hide the gateways and display the free checkout text...
                 if ( state.is_free ) {
-                    submit_btn.val( submit_btn.data( 'free' ) )
+                    submit_btn.val( free_label )
                     this.form.find( '.getpaid-gateways' ).slideUp();
                     return
                 }
 
                 // ... else show, the gateways and the pay text.
                 this.form.find( '.getpaid-gateways' ).slideDown();
-                submit_btn.val( submit_btn.data( 'pay' ) );
+                submit_btn.val( btn_label );
 
                 // Next, hide the no gateways errors and display the gateways div.
                 this.form.find( '.getpaid-no-recurring-gateways, .getpaid-no-active-gateways' ).addClass( 'd-none' );
