@@ -1626,3 +1626,52 @@ function getpaid_paginate_links( $args ) {
 
     return $links;
 }
+
+/**
+ * Displays the states select markup.
+ * 
+ * @param string country
+ * @param string state
+ * @return string
+ */
+function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false ) {
+
+    $states = wpinv_get_country_states( $country );
+    $uniqid = uniqid( '_' );
+
+    if ( ! empty( $states ) ) {
+
+        return aui()->select( array(
+            'options'          => $states,
+            'name'             => 'wpinv_state',
+            'id'               => 'wpinv_state' . $uniqid,
+            'value'            => sanitize_text_field( $state ),
+            'placeholder'      => $placeholder,
+            'required'         => $required,
+            'label'            => wp_kses_post( $label ),
+            'label_type'       => 'vertical',
+            'help_text'        => $help_text,
+            'class'            => 'getpaid-address-field wpinv_state',
+            'wrap_class'       => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__state',
+            'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
+        ));
+
+    }
+
+    return aui()->input(
+        array(
+            'name'        => 'wpinv_state',
+            'id'          => 'wpinv_state' . $uniqid,
+            'placeholder' => $placeholder,
+            'required'    => $required,
+            'label'       => wp_kses_post( $label ),
+            'label_type'  => 'vertical',
+            'help_text'   => $help_text,
+            'value'       => sanitize_text_field( $state ),
+            'class'       => 'getpaid-address-field wpinv_state',
+            'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__state',
+            'label_class' => 'getpaid-address-field-label getpaid-address-field-label__state',
+        )
+    );
+
+}

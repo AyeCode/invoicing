@@ -39,18 +39,22 @@ foreach ( $fields as $address_field ) {
     // Display the country.
     if ( 'wpinv_country' == $address_field['name'] ) {
 
-        echo aui()->select( array(
-            'options'          => wpinv_get_country_list(),
-            'name'             => 'wpinv_country',
-            'id'               => 'wpinv_country' . $uniqid,
-            'value'            => sanitize_text_field( $country ),
-            'placeholder'      => $placeholder,
-            'required'         => ! empty( $address_field['required'] ),
-            'label'            => wp_kses_post( $label ),
-            'label_type'       => 'vertical',
-            'help_text'        => $description,
-            'class'            => 'wpinv_country',
-        ));
+        echo aui()->select(
+            array(
+                'options'     => wpinv_get_country_list(),
+                'name'        => 'wpinv_country',
+                'id'          => 'wpinv_country' . $uniqid,
+                'value'       => sanitize_text_field( $country ),
+                'placeholder' => $placeholder,
+                'required'    => ! empty( $address_field['required'] ),
+                'label'       => wp_kses_post( $label ),
+                'label_type'  => 'vertical',
+                'help_text'   => $description,
+                'class'       => 'getpaid-address-field wpinv_country',
+                'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__country',
+                'label_class' => 'getpaid-address-field-label getpaid-address-field-label__country',
+            )
+        );
         continue;
 
     }
@@ -58,59 +62,38 @@ foreach ( $fields as $address_field ) {
     // Display the state.
     if ( 'wpinv_state' == $address_field['name'] ) {
 
-        $states = wpinv_get_country_states( $country );
-
         if ( empty( $value ) ) {
             $value = wpinv_get_default_state();
         }
 
-        if ( ! empty( $states ) ) {
-
-            echo aui()->select( array(
-                'options'          => $states,
-                'name'             => 'wpinv_state',
-                'id'               => 'wpinv_state' . $uniqid,
-                'value'            => sanitize_text_field( $value ),
-                'placeholder'      => $placeholder,
-                'required'         => ! empty( $address_field['required'] ),
-                'label'            => wp_kses_post( $label ),
-                'label_type'       => 'vertical',
-                'help_text'        => $description,
-                'class'            => 'wpinv_state',
-            ));
-
-            continue;
-
-        }
-        
-        echo aui()->input(
-            array(
-                'name'       => 'wpinv_state',
-                'id'         => 'wpinv_state' . $uniqid,
-                'placeholder'=> $placeholder,
-                'required'   => ! empty( $address_field['required'] ),
-                'label'      => wp_kses_post( $label ),
-                'label_type' => 'vertical',
-                'help_text'  => $description,
-                'value'      => $value,
-                'class'      => 'wpinv_state',
-            )
+        echo getpaid_get_states_select_markup (
+            $country,
+            $value,
+            $placeholder,
+            $label,
+            $description,
+            ! empty( $address_field['required'] )
         );
+
         continue;
     }
 
+    $key = str_replace( 'wpinv_', '', $address_field['name'] );
+    $key = esc_attr( str_replace( '_', '-', $key ) );
     echo aui()->input(
         array(
-            'name'       => esc_attr( $address_field['name'] ),
-            'id'         => esc_attr( $address_field['name'] ) . $uniqid,
-            'required'   => ! empty( $address_field['required'] ),
-            'placeholder'=> $placeholder,
-            'label'      => wp_kses_post( $label ),
-            'label_type' => 'vertical',
-            'help_text'  => $description,
-            'type'       => 'text',
-            'value'      => $value,
-            'class'      => esc_attr( $address_field['name'] ),
+            'name'        => esc_attr( $address_field['name'] ),
+            'id'          => esc_attr( $address_field['name'] ) . $uniqid,
+            'required'    => ! empty( $address_field['required'] ),
+            'placeholder' => $placeholder,
+            'label'       => wp_kses_post( $label ),
+            'label_type'  => 'vertical',
+            'help_text'   => $description,
+            'type'        => 'text',
+            'value'       => $value,
+            'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
+            'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__' . $key,
+            'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
         )
     );
 

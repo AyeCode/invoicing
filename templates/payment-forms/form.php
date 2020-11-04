@@ -24,7 +24,7 @@ if ( ! $form->is_active() ) {
 do_action( 'getpaid_before_payment_form', $form );
 ?>
 
-<form class='getpaid-payment-form bsui' method='POST' data-key='<?php echo uniqid('gpf'); ?>'>
+<form class='getpaid-payment-form getpaid-payment-form-<?php echo absint( $form->get_id() ); ?> bsui' method='POST' data-key='<?php echo uniqid('gpf'); ?>'>
 
 
     <?php 

@@ -211,7 +211,7 @@ jQuery(function($) {
                 // Ensure that we have a state field.
                 if ( this.form.find( '.wpinv_state' ).length ) {
 
-                    var state = this.form.find( '.wpinv_state' ).parent()
+                    var state = this.form.find( '.getpaid-address-field-wrapper__state' )
 
                     wpinvBlock( state );
 
@@ -225,13 +225,13 @@ jQuery(function($) {
                     $.get(ajaxurl, data, ( res ) => {
 
                         if ( 'object' == typeof res ) {
-                            state.html( res.data )
+                            state.replaceWith( res.data )
                         }
 
                     })
 
                     .always( () => {
-                        state.unblock()
+                        this.form.find( '.getpaid-address-field-wrapper__state' ).unblock()
                     });
 
                 }
