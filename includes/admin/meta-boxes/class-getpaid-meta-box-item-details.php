@@ -42,7 +42,6 @@ class GetPaid_Meta_Box_Item_Details {
 
         ?>
         <input type="hidden" id="_wpi_current_type" value="<?php echo esc_attr( $item->get_type( 'edit' ) ); ?>" />
-        <input type="hidden" id="_wpi_is_editable" value="<?php echo (int) $item->is_editable(); ?>" />
         <style>
             #poststuff .input-group-text,
             #poststuff .form-control {

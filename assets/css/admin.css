@@ -1543,11 +1543,7 @@ textarea.wpi-email_overdue_content {
 .wpinv-items-wrap.wpi-recurring #wpinv-recalc-totals {
     float: none;
 }
-.post-type-wpi_item.wpi-editable-n #submitdiv #major-publishing-actions,
-.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status,
-.post-type-wpi_item.wpi-editable-n #setting-error-wpinv-edit-n .notice-dismiss {
-    display: none;
-}
+
 .getpaid-is-invoice-cpt form#post #edit-slug-buttons {
     display: none;
 }

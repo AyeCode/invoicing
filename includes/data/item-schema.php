@@ -142,13 +142,6 @@ return array(
 		'context'     => array( 'view', 'edit', 'embed' ),
 	),
 
-	'is_editable'     => array(
-		'description' => __( 'Whether or not the item is editable.', 'invoicing' ),
-		'type'        => 'integer',
-		'enum'        => array( 0, 1 ),
-		'context'     => array( 'view', 'edit', 'embed' ),
-	),
-
 	'is_dynamic_pricing'     => array(
 		'description' => __( 'Whether or not customers can enter their own prices when checking out.', 'invoicing' ),
 		'type'        => 'integer',

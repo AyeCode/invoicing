@@ -232,10 +232,6 @@ class GetPaid_Admin {
             $classes .= ' getpaid-is-invoice-cpt';
         }
 
-		if ( $pagenow == 'post.php' && $page == 'wpi_item' && ! empty( $post ) && ! wpinv_item_is_editable( $post ) ) {
-			$classes .= ' wpi-editable-n';
-		}
-
 		return $classes;
     }
 
