@@ -20,6 +20,7 @@ $country = empty( $country ) ? wpinv_get_default_country() : $country;
 // A prefix for all ids (so that a form can be included in the same page multiple times).
 $uniqid = uniqid( '_' );
 
+echo "<div class='row'>";
 foreach ( $fields as $address_field ) {
 
     // Skip if it is hidden.
@@ -27,6 +28,8 @@ foreach ( $fields as $address_field ) {
         continue;
     }
 
+    $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
+    $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
     $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
     $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
     $value       = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_' . $address_field['name'], true ) : '';
@@ -51,7 +54,7 @@ foreach ( $fields as $address_field ) {
                 'label_type'  => 'vertical',
                 'help_text'   => $description,
                 'class'       => 'getpaid-address-field wpinv_country',
-                'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__country',
+                'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__country",
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__country',
             )
         );
@@ -72,7 +75,8 @@ foreach ( $fields as $address_field ) {
             $placeholder,
             $label,
             $description,
-            ! empty( $address_field['required'] )
+            ! empty( $address_field['required'] ),
+            $wrap_class
         );
 
         continue;
@@ -92,9 +96,10 @@ foreach ( $fields as $address_field ) {
             'type'        => 'text',
             'value'       => $value,
             'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
-            'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__' . $key,
+            'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__$key",
             'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
         )
     );
 
 }
+echo "</div>";

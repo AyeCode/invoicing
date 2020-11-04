@@ -1634,7 +1634,7 @@ function getpaid_paginate_links( $args ) {
  * @param string state
  * @return string
  */
-function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false ) {
+function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12' ) {
 
     $states = wpinv_get_country_states( $country );
     $uniqid = uniqid( '_' );
@@ -1652,7 +1652,7 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'label_type'       => 'vertical',
             'help_text'        => $help_text,
             'class'            => 'getpaid-address-field wpinv_state',
-            'wrap_class'       => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__state',
+            'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
             'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
         ));
 
@@ -1669,9 +1669,31 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'help_text'   => $help_text,
             'value'       => sanitize_text_field( $state ),
             'class'       => 'getpaid-address-field wpinv_state',
-            'wrap_class'  => 'getpaid-address-field-wrapper getpaid-address-field-wrapper__state',
+            'wrap_class'  => "$wrapper_class getpaid-address-field-wrapper__state",
             'label_class' => 'getpaid-address-field-label getpaid-address-field-label__state',
         )
     );
 
+}
+
+/**
+ * Retrieves an element's grid width.
+ * 
+ * @param array element
+ * @return string
+ */
+function getpaid_get_form_element_grid_class( $element ) {
+
+    $class = "col-12";
+    $width = empty( $element['grid_width'] ) ? 'full' : $element['grid_width'];
+
+    if ( $width == 'half' ) {
+        $class = "col-12 col-md-6";
+    }
+
+    if ( $width == 'third' ) {
+        $class = "col-12 col-md-4";
+    }
+
+    return $class;
 }

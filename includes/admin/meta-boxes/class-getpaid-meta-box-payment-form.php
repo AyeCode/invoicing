@@ -52,6 +52,14 @@ class GetPaid_Meta_Box_Payment_Form {
                             <div class="wpinv-form-builder-edit-field-wrapper">
                                 <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
                                 <?php do_action( 'getpaid_payment_form_edit_element_template', $post ); ?>
+                                <div class='form-group'>
+                                    <label :for="active_form_element.id + '_grid_width'"><?php esc_html_e( 'Width', 'invoicing' ) ?></label>
+                                    <select class='form-control custom-select' :id="active_form_element.id + '_grid_width'" v-model='gridWidth'>
+                                        <option value='full'><?php esc_html_e( 'Full Width', 'invoicing' ); ?></option>
+                                        <option value='half'><?php esc_html_e( 'Half Width', 'invoicing' ); ?></option>
+                                        <option value='third'><?php esc_html_e( '1/3 Width', 'invoicing' ); ?></option>
+                                    </select>
+                                </div>
                                 <div>
                                     <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)" v-show="! active_form_element.premade"><?php _e( 'Delete Element', 'invoicing' ); ?></button>
                                 </div>
@@ -65,14 +73,16 @@ class GetPaid_Meta_Box_Payment_Form {
                     <small class='form-text text-muted' v-if='form_elements.length'><?php _e( 'Click on any element to edit or delete it.', 'invoicing' ); ?></small>
                     <p class='form-text text-muted' v-if='! form_elements.length'><?php _e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
 
-                    <draggable class="section bsui" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 14px;">
-                        <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="[{ active: active_form_element==form_element &&  active_tab=='edit_item' }, form_element.type]" @click="active_tab = 'edit_item'; active_form_element = form_element">
-                            <div class="wpinv-form-builder-element-preview-inner">
-                                <div class="wpinv-payment-form-field-preview-overlay"></div>
-                                <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
+                    <div class="container-fluid">
+                        <draggable class="section row" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 14px;">
+                            <div v-for="form_element in form_elements" class="wpinv-form-builder-element-preview" :class="[{ active: active_form_element==form_element &&  active_tab=='edit_item' }, form_element.type, grid_class( form_element ) ]" @click="active_tab = 'edit_item'; active_form_element = form_element">
+                                <div class="wpinv-form-builder-element-preview-inner">
+                                    <div class="wpinv-payment-form-field-preview-overlay"></div>
+                                    <?php do_action( 'wpinv_payment_form_render_element_template', 'form_element', $post ); ?>
+                                </div>
                             </div>
-                        </div>
-                    </draggable>
+                        </draggable>
+                    </div>
 
                     <textarea style="display:none;" name="wpinv_form_elements" v-model="elementString"></textarea>
                     <textarea style="display:none;" name="wpinv_form_items" v-model="itemString"></textarea>

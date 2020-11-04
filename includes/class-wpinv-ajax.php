@@ -337,6 +337,8 @@ class WPInv_Ajax {
 
             if ( 'wpinv_state' == $address_field['name'] ) {
 
+                $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
+                $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
                 $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
                 $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
                 $value       = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_wpinv_state', true ) : '';
@@ -352,7 +354,8 @@ class WPInv_Ajax {
                     $placeholder,
                     $label,
                     $description,
-                    ! empty( $address_field['required'] )
+                    ! empty( $address_field['required'] ),
+                    $wrap_class
                 );
 
                 wp_send_json_success( $html );
