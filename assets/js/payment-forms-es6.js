@@ -410,6 +410,9 @@ jQuery(function($) {
                 this.attach_events()
                 this.refresh_state()
 
+                // Hide billing email.
+                this.form.find( '.getpaid-payment-form-element-billing_email span.d-none' ).closest( '.col-12' ).addClass( 'd-none' )
+
                 // Trigger setup event.
                 $( 'body' ).trigger( 'getpaid_setup_payment_form', [this.form] );
             },

@@ -11,8 +11,8 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='wpinv-address-wrapper'>
-    <div class='form-group address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in visible_fields( form_element.fields )' :key='field.name'>
+<div class='wpinv-address-wrapper row'>
+    <div class='form-group address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in visible_fields( form_element.fields )' :class='grid_class( field )' :key='field.name'>
         <label class="d-block w-100">
             <span>{{field.label}}<span class='text-danger' v-if='field.required'> *</span><span>
             <input v-if='field.name !== "wpinv_country" && field.name !== "wpinv_state"' class='form-control' type='text' :placeholder='field.placeholder'>

@@ -23,9 +23,42 @@ jQuery(function ($) {
 				return JSON.stringify(this.form_items);
 			},
 
+			gridWidth: {
+
+				get: function get() {
+
+					if ( this.active_form_element.grid_width ) {
+					  return this.active_form_element.grid_width;
+					}
+
+					return 'full';
+				},
+
+				set: function set( grid_width ) {
+					this.$set( this.active_form_element, 'grid_width', grid_width )
+				}
+
+			},
+
 		},
 
 		methods: {
+
+			// Returns the grid width class
+			grid_class: function grid_class( field ) {
+
+				var grid_class = 'col-12'
+
+				if ( 'half' == field.grid_width ) {
+					grid_class = 'col-12 col-md-6';
+				}
+
+				if ( 'third' == field.grid_width ) {
+					grid_class = 'col-12 col-md-4';
+				}
+
+				return grid_class
+			},
 
 			// Returns an array of visible fields.
 			visible_fields: function visible_fields( fields ) {

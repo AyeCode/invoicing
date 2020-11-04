@@ -325,6 +325,9 @@ jQuery(function ($) {
                 this.attach_events();
                 this.refresh_state(); // Trigger setup event.
 
+                // Hide billing email.
+                this.form.find( '.getpaid-payment-form-element-billing_email span.d-none' ).closest( '.col-12' ).addClass( 'd-none' )
+
                 $('body').trigger('getpaid_setup_payment_form', [this.form]);
             }
         };

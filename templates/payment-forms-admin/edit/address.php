@@ -45,6 +45,17 @@ defined( 'ABSPATH' ) || exit;
 
                 <div class='form-group'>
                     <label class="d-block">
+                        <span><?php esc_html_e( 'Width', 'invoicing' ) ?></span>
+                        <select class='form-control custom-select' v-model='field.grid_width'>
+                            <option value='full'><?php esc_html_e( 'Full Width', 'invoicing' ); ?></option>
+                            <option value='half'><?php esc_html_e( 'Half Width', 'invoicing' ); ?></option>
+                            <option value='third'><?php esc_html_e( '1/3 Width', 'invoicing' ); ?></option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class='form-group'>
+                    <label class="d-block">
                         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
                         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='field.description' class='form-control' rows='3'></textarea>
                     </label>
