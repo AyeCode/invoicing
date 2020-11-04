@@ -346,40 +346,14 @@ class WPInv_Ajax {
                     $label .= "<span class='text-danger'> *</span>";
                 }
 
-                $states = wpinv_get_country_states( $_GET['country'] );
-
-                if ( ! empty( $states ) ) {
-
-                    $html = aui()->select( array(
-                        'options'          => $states,
-                        'name'             => 'wpinv_state',
-                        'id'               => 'wpinv_state' . uniqid(),
-                        'value'            => sanitize_text_field( $value ),
-                        'placeholder'      => $placeholder,
-                        'required'         => ! empty( $address_field['required'] ),
-                        'label'            => wp_kses_post( $label ),
-                        'label_type'       => 'vertical',
-                        'help_text'        => $description,
-                        'class'            => 'wpinv_state',
-                    ));
-
-                } else {
-
-                    $html = aui()->input(
-                        array(
-                            'name'       => 'wpinv_state',
-                            'id'         => 'wpinv_state' . uniqid(),
-                            'placeholder'=> $placeholder,
-                            'required'   => ! empty( $address_field['required'] ),
-                            'label'      => wp_kses_post( $label ),
-                            'label_type' => 'vertical',
-                            'help_text'  => $description,
-                            'value'      => $value,
-                            'class'      => 'wpinv_state',
-                        )
-                    );
-
-                }
+                $html = getpaid_get_states_select_markup (
+                    sanitize_text_field( $_GET['country'] ),
+                    $value,
+                    $placeholder,
+                    $label,
+                    $description,
+                    ! empty( $address_field['required'] )
+                );
 
                 wp_send_json_success( $html );
                 exit;

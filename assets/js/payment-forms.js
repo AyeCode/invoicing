@@ -59,8 +59,7 @@ jQuery(function ($) {
             // Alerts the user whenever an error occurs.
             show_error: function show_error(error) {
                 // Display the error
-                form.find('.getpaid-payment-form-errors').html(error).removeClass('d-none'); // Animate to the error
-
+                form.find('.getpaid-payment-form-errors').html(error).removeClass('d-none');
             },
             // Hides the current error.
             hide_error: function hide_error() {
@@ -160,9 +159,11 @@ jQuery(function ($) {
             },
             // Updates the state field.
             update_state_field: function update_state_field() {
+                var _this2 = this;
+
                 // Ensure that we have a state field.
                 if (this.form.find('.wpinv_state').length) {
-                    var state = this.form.find('.wpinv_state').parent();
+                    var state = this.form.find('.getpaid-address-field-wrapper__state');
                     wpinvBlock(state);
                     var data = {
                         action: 'wpinv_get_payment_form_states_field',
@@ -172,16 +173,16 @@ jQuery(function ($) {
                     };
                     $.get(ajaxurl, data, function (res) {
                         if ('object' == _typeof(res)) {
-                            state.html(res.data);
+                            state.replaceWith(res.data);
                         }
                     }).always(function () {
-                        state.unblock();
+                        _this2.form.find('.getpaid-address-field-wrapper__state').unblock();
                     });
                 }
             },
             // Attaches events to a form.
             attach_events: function attach_events() {
-                var _this2 = this;
+                var _this3 = this;
 
                 // Cache the object.
                 var that = this; // Keeps the state in sync.
@@ -197,7 +198,7 @@ jQuery(function ($) {
                 this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change); // Refresh when country changes.
 
                 this.form.on('change', '.wpinv_country', function () {
-                    _this2.update_state_field();
+                    _this3.update_state_field();
 
                     on_field_change();
                 }); // Refresh when state changes.
@@ -227,7 +228,7 @@ jQuery(function ($) {
 
 
                 this.form.on('change', '.getpaid-gateway-radio input', function () {
-                    var gateway = _this2.form.find('.getpaid-gateway-radio input:checked').val();
+                    var gateway = _this3.form.find('.getpaid-gateway-radio input:checked').val();
 
                     form.find('.getpaid-gateway-description').slideUp();
                     form.find(".getpaid-description-".concat(gateway)).slideDown();
@@ -235,7 +236,7 @@ jQuery(function ($) {
             },
             // Processes gateways
             process_gateways: function process_gateways(enabled_gateways, state) {
-                var _this3 = this;
+                var _this4 = this;
 
                 // Prepare the submit btn.
                 var submit_btn = this.form.find('.getpaid-payment-form-submit');
@@ -279,7 +280,7 @@ jQuery(function ($) {
                 this.form.find('.getpaid-gateway').addClass('d-none'); // Display enabled gateways.
 
                 $.each(enabled_gateways, function (index, value) {
-                    _this3.form.find(".getpaid-gateway-".concat(value)).removeClass('d-none');
+                    _this4.form.find(".getpaid-gateway-".concat(value)).removeClass('d-none');
                 }); // If there is no gateway selected, select the first.
 
                 if (0 === this.form.find('.getpaid-gateway:visible input:checked').length) {
