@@ -866,3 +866,246 @@ function wpinv_item_show_price( $item_id = 0, $echo = true ) {
  * @deprecated
  */
 function wpinv_cart_total_label() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_html_dropdown() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_has_active_discounts() {
+    return true;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discounts() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_all_discounts() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_valid() {
+    return true;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_active() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_update_discount_status() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_exists() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_store_discount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_remove_discount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_code() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_start_date() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_expiration() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_max_uses() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_min_total() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_max_total() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_amount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_item_reqs_met() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_used() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_id_by_code() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discounted_amount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_increase_discount_usage() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_decrease_discount_usage() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_format_discount_rate() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_unset_all_cart_discounts() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_discounts() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_has_discounts() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_discounted_amount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_label() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_discount_label() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_check_delete_discount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_amount() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_expired() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_started() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_check_discount_dates() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_maxed_out() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_is_min_met() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_is_max_met() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_is_single_use() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_excluded_items() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_item_reqs() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_item_condition() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_is_discount_not_global() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_type() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_uses() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_discount_by_code() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_discount_bulk_actions() {}

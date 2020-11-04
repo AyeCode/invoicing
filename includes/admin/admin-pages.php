@@ -49,24 +49,59 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
     $edit_link = get_edit_post_link( $discount->ID );
     $row_actions['edit'] = '<a href="' . esc_url( $edit_link ) . '">' . __( 'Edit', 'invoicing' ) . '</a>';
 
-    if( in_array( strtolower( $discount->post_status ),  array(  'publish' ) ) ) {
-        $row_actions['deactivate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'deactivate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Deactivate', 'invoicing' ) . '</a>';
-    } elseif( in_array( strtolower( $discount->post_status ),  array( 'pending', 'draft' ) ) ) {
-        $row_actions['activate'] = '<a href="' . esc_url( wp_nonce_url( add_query_arg( array( 'wpi_action' => 'activate_discount', 'discount' => $discount->ID ) ), 'wpinv_discount_nonce' ) ) . '">' . __( 'Activate', 'invoicing' ) . '</a>';
+    if ( in_array( strtolower( $discount->post_status ),  array(  'publish' ) ) ) {
+
+        $url    = esc_url(
+                    wp_nonce_url(
+                        add_query_arg(
+                            array(
+                                'getpaid-admin-action' => 'deactivate_discount',
+                                'discount'             => $discount->ID,
+                            )
+                        ),
+                        'getpaid-nonce',
+                        'getpaid-nonce'
+                    )
+                );
+		$anchor = __( 'Deactivate', 'invoicing' );
+		$title  = esc_attr__( 'Are you sure you want to deactivate this discount?', 'invoicing' );
+        $row_actions['deactivate'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
+
+    } else if( in_array( strtolower( $discount->post_status ),  array( 'pending', 'draft' ) ) ) {
+
+        $url    = esc_url(
+            wp_nonce_url(
+                add_query_arg(
+                    array(
+                        'getpaid-admin-action' => 'activate_discount',
+                        'discount'             => $discount->ID,
+                    )
+                ),
+                'getpaid-nonce',
+                'getpaid-nonce'
+            )
+        );
+		$anchor = __( 'Activate', 'invoicing' );
+		$title  = esc_attr__( 'Are you sure you want to activate this discount?', 'invoicing' );
+        $row_actions['activate'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
+
     }
 
-    $delete_url = esc_url(
+    $url    = esc_url(
         wp_nonce_url(
             add_query_arg(
                 array(
-                    'wpi_action' => 'delete_discount',
-                    'discount' => $discount->ID
+                    'getpaid-admin-action' => 'delete_discount',
+                    'discount'             => $discount->ID,
                 )
             ),
-            'wpinv_discount_nonce'
+            'getpaid-nonce',
+            'getpaid-nonce'
         )
     );
-    $row_actions['delete'] = '<a href="' . $delete_url . '">' . __( 'Delete', 'invoicing' ) . '</a>';
+	$anchor = __( 'Delete', 'invoicing' );
+	$title  = esc_attr__( 'Are you sure you want to delete this discount?', 'invoicing' );
+    $row_actions['delete'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
 
     $row_actions = apply_filters( 'wpinv_discount_row_actions', $row_actions, $discount );
 
@@ -81,36 +116,6 @@ function wpinv_table_primary_column( $default, $screen_id ) {
 
     return $default;
 }
-
-function wpinv_discount_bulk_actions( $actions, $display = false ) {
-    if ( !$display ) {
-        return array();
-    }
-
-    $actions = array(
-        'activate'   => __( 'Activate', 'invoicing' ),
-        'deactivate' => __( 'Deactivate', 'invoicing' ),
-        'delete'     => __( 'Delete', 'invoicing' ),
-    );
-    $two = '';
-    $which = 'top';
-    echo '</div><div class="alignleft actions bulkactions">';
-    echo '<label for="bulk-action-selector-' . esc_attr( $which ) . '" class="screen-reader-text">' . __( 'Select bulk action' ) . '</label>';
-    echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr( $which ) . "\">";
-    echo '<option value="-1">' . __( 'Bulk Actions' ) . "</option>";
-
-    foreach ( $actions as $name => $title ) {
-        $class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
-
-        echo "" . '<option value="' . $name . '"' . $class . '>' . $title . "</option>";
-    }
-    echo "</select>";
-
-    submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
-
-    echo '</div><div class="alignleft actions">';
-}
-add_filter( 'bulk_actions-edit-wpi_discount', 'wpinv_discount_bulk_actions', 10 );
 
 function wpinv_disable_months_dropdown( $disable, $post_type ) {
     if ( $post_type == 'wpi_discount' ) {
@@ -131,7 +136,6 @@ function wpinv_restrict_manage_posts() {
 add_action( 'restrict_manage_posts', 'wpinv_restrict_manage_posts', 10 );
 
 function wpinv_discount_filters() {
-    wpinv_discount_bulk_actions( array(), true );
 
     ?>
     <select name="discount_type" id="dropdown_wpinv_discount_type">

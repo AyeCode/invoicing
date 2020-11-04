@@ -128,7 +128,7 @@ class GetPaid_Admin {
             'invoice_item_nonce'        => wp_create_nonce( 'invoice-item' ),
             'billing_details_nonce'     => wp_create_nonce( 'get-billing-details' ),
             'tax'                       => wpinv_tax_amount(),
-            'discount'                  => wpinv_discount_amount(),
+            'discount'                  => 0,
             'currency_symbol'           => wpinv_currency_symbol(),
             'currency_pos'              => wpinv_currency_position(),
             'thousand_sep'              => wpinv_thousands_separator(),

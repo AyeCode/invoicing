@@ -294,34 +294,6 @@ function wpinv_add_body_classes( $class ) {
 }
 add_filter( 'body_class', 'wpinv_add_body_classes' );
 
-function wpinv_html_dropdown( $name = 'wpinv_discounts', $selected = 0, $status = '' ) {
-    $args = array( 'nopaging' => true );
-
-    if ( ! empty( $status ) )
-        $args['post_status'] = $status;
-
-    $discounts = wpinv_get_discounts( $args );
-    $options   = array();
-
-    if ( $discounts ) {
-        foreach ( $discounts as $discount ) {
-            $options[ absint( $discount->ID ) ] = esc_html( get_the_title( $discount->ID ) );
-        }
-    } else {
-        $options[0] = __( 'No discounts found', 'invoicing' );
-    }
-
-    $output = wpinv_html_select( array(
-        'name'             => $name,
-        'selected'         => $selected,
-        'options'          => $options,
-        'show_option_all'  => false,
-        'show_option_none' => false,
-    ) );
-
-    return $output;
-}
-
 function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before = 5, $years_after = 0 ) {
     $current     = date( 'Y' );
     $start_year  = $current - absint( $years_before );

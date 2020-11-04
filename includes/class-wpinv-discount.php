@@ -41,7 +41,7 @@ class WPInv_Discount extends GetPaid_Data  {
 		'date_created'         => null,
         'date_modified'        => null,
         'name'                 => 'no-name',
-        'description'          => null,
+        'description'          => '',
         'author'               => 1,
         'code'                 => null,
         'type'                 => 'percent',

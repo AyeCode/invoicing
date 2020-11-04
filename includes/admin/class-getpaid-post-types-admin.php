@@ -45,6 +45,7 @@ class GetPaid_Post_Types_Admin {
 
 		// Discount table columns.
 		add_filter( 'manage_wpi_discount_posts_columns', array( __CLASS__, 'discount_columns' ), 100 );
+		add_filter( 'bulk_actions-edit-wpi_discount', '__return_empty_array', 100 );
 
 		// Deleting posts.
 		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
