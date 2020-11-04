@@ -1109,3 +1109,28 @@ function wpinv_get_discount_by_code() {}
  * @deprecated
  */
 function wpinv_discount_bulk_actions() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_check_quick_edit() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_item_disable_quick_edit() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_table_primary_column() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_disable_months_dropdown() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_item_type_class() {}

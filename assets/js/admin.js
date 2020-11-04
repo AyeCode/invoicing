@@ -156,9 +156,6 @@ jQuery(function($) {
 
     }
 
-    // Non-editable items.
-    $('.wpi-editable-n #post :input').attr( 'disabled', true );
-
     // Rename excerpt to 'description'
     $('body.post-type-wpi_item #postexcerpt h2.hndle').text( WPInv_Admin.item_description )
     $('body.post-type-wpi_discount #postexcerpt h2.hndle').text( WPInv_Admin.discount_description )
@@ -1018,12 +1015,7 @@ jQuery(function($) {
         }
     };
     $('.getpaid-is-invoice-cpt form#post #titlediv [name="post_title"]').attr('readonly', true);
-    $('.post-type-wpi_item.wpi-editable-n form#post').attr('action', 'javascript:void(0)');
-    $('.post-type-wpi_item.wpi-editable-n #submitdiv #publishing-action').remove();
-    $('.post-type-wpi_item.wpi-editable-n #submitdiv #misc-publishing-actions a.edit-post-status').remove();
-    $('.post-type-wpi_item .posts .wpi-editable-n').each(function(e) {
-        $('.check-column [type="checkbox"]', $(this)).attr('disabled', true);
-    });
+
     WPInv.init();
     var WPInv_Export = {
         init: function() {
