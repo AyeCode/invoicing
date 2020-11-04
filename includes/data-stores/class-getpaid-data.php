@@ -115,7 +115,7 @@ abstract class GetPaid_Data {
 	/**
 	 * Default constructor.
 	 *
-	 * @param int|object|array $read ID to load from the DB (optional) or already queried data.
+	 * @param int|object|array|string $read ID to load from the DB (optional) or already queried data.
 	 */
 	public function __construct( $read = 0 ) {
 		$this->data         = array_merge( $this->data, $this->extra_data );

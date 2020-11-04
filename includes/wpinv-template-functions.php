@@ -1679,7 +1679,7 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 /**
  * Retrieves an element's grid width.
  * 
- * @param array element
+ * @param array $element
  * @return string
  */
 function getpaid_get_form_element_grid_class( $element ) {

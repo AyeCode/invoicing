@@ -126,7 +126,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Stores the status transition information.
 	 *
 	 * @since 1.0.19
-	 * @var bool
+	 * @var bool|array
 	 */
 	protected $status_transition = false;
 
@@ -135,12 +135,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @param  int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object to read.
 	 */
-    public function __construct( $invoice = false ) {
+    public function __construct( $invoice = 0 ) {
 
         parent::__construct( $invoice );
 
-		if ( ! empty( $invoice ) && is_numeric( $invoice ) && getpaid_is_invoice_post_type( get_post_type( $invoice ) ) ) {
-			$this->set_id( $invoice );
+		if ( ! empty( $invoice ) && is_numeric( $invoice ) && getpaid_is_invoice_post_type( get_post_type( (int) $invoice ) ) ) {
+			$this->set_id( (int) $invoice );
 		} elseif ( $invoice instanceof self ) {
 			$this->set_id( $invoice->get_id() );
 		} elseif ( ! empty( $invoice->ID ) ) {
@@ -152,11 +152,11 @@ class WPInv_Invoice extends GetPaid_Data {
 				$this->set_id( $invoice['ID'] );
 			}
 
-		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
+		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
 			$this->set_id( $invoice_id );
-		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
+		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
 			$this->set_id( $invoice_id );
-		} elseif ( is_scalar( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'transaction_id' ) ) {
+		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'transaction_id' ) ) {
 			$this->set_id( $invoice_id );
 		}else {
 			$this->set_object_read( true );
@@ -805,7 +805,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_first_name( $context = 'view' ) {
 		return $this->get_first_name( $context );
@@ -816,7 +816,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_first_name( $context = 'view' ) {
 		return $this->get_first_name( $context );
@@ -838,7 +838,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_last_name( $context = 'view' ) {
 		return $this->get_last_name( $context );
@@ -849,7 +849,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_last_name( $context = 'view' ) {
 		return $this->get_last_name( $context );
@@ -871,7 +871,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_full_name( $context = 'view' ) {
 		return $this->get_full_name( $context );
@@ -882,7 +882,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_full_name( $context = 'view' ) {
 		return $this->get_full_name( $context );
@@ -904,7 +904,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_phone_number( $context = 'view' ) {
 		return $this->get_phone( $context );
@@ -915,7 +915,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_phone( $context = 'view' ) {
 		return $this->get_phone( $context );
@@ -926,7 +926,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_phone( $context = 'view' ) {
 		return $this->get_phone( $context );
@@ -959,7 +959,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_email( $context = 'view' ) {
 		return $this->get_email( $context );
@@ -970,7 +970,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_email( $context = 'view' ) {
 		return $this->get_email( $context );
@@ -993,7 +993,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_country( $context = 'view' ) {
 		return $this->get_country( $context );
@@ -1004,7 +1004,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_country( $context = 'view' ) {
 		return $this->get_country( $context );
@@ -1027,7 +1027,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_user_state( $context = 'view' ) {
 		return $this->get_state( $context );
@@ -1038,7 +1038,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return string
 	 */
 	public function get_customer_state( $context = 'view' ) {
 		return $this->get_state( $context );
@@ -1366,7 +1366,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$tax = $this->get_total_tax();
 
         if ( $currency ) {
-			return wpinv_price( wpinv_format_amount( $tax, NULL, false ), $this->get_currency() );
+			return wpinv_price( $tax, $this->get_currency() );
         }
 
         return $tax;
@@ -1409,7 +1409,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Get the invoice totals.
 	 *
 	 * @since 1.0.19
-     * @return float
+     * @return array
 	 */
 	public function get_totals() {
 		return $this->totals;
@@ -1473,7 +1473,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
      * @param  string $field Optionally provide a field to return.
 	 * @param string $currency Whether to include the currency.
-     * @return float
+     * @return float|string
 	 */
     public function get_recurring_details( $field = '', $currency = false ) {
 
@@ -1976,7 +1976,8 @@ class WPInv_Invoice extends GetPaid_Data {
             return true;
         }
 
-        return $this->set_prop( 'date_created', '' );
+		$this->set_prop( 'date_created', '' );
+		return false;
 
     }
 
@@ -2157,7 +2158,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_description( $value ) {
         $description = wp_kses_post( $value );
-		return $this->set_prop( 'description', $description );
+		$this->set_prop( 'description', $description );
     }
 
     /**
@@ -2961,16 +2962,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @deprecated
 	 */
 	public function has_vat() {
-        global $wpinv_euvat, $wpi_country;
-
-        $requires_vat = false;
-
-        if ( $this->country ) {
-            $wpi_country        = $this->country;
-            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
-        }
-
-        return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
+        return $this->is_taxable();
 	}
 
 	/**
@@ -3109,14 +3101,8 @@ class WPInv_Invoice extends GetPaid_Data {
      */
     public function discount_first_payment_only() {
 
-		$discount_code = $this->get_discount_code();
-        if ( empty( $this->discount_code ) || ! $this->is_recurring() ) {
-            return true;
-        }
-
-        $discount = wpinv_get_discount_obj( $discount_code );
-
-        if ( ! $discount || ! $discount->exists() ) {
+		$discount = wpinv_get_discount_obj( $this->get_discount_code() );
+        if ( ! $discount->exists() || ! $this->is_recurring() ) {
             return true;
         }
 

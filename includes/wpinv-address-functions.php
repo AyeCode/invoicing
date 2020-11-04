@@ -56,7 +56,7 @@ function wpinv_country_name( $country_code = '' ) {
 }
 
 function wpinv_get_default_state() {
-	$state = wpinv_get_option( 'default_state', false );
+	$state = wpinv_get_option( 'default_state', '' );
 
 	return apply_filters( 'wpinv_default_state', $state );
 }
