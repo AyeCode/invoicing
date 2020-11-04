@@ -240,17 +240,19 @@ jQuery(function ($) {
 
                 // Prepare the submit btn.
                 var submit_btn = this.form.find('.getpaid-payment-form-submit');
+                var free_label = submit_btn.data('free').replace(/%price%/gi, state.totals.raw_total);
+                var btn_label = submit_btn.data('pay').replace(/%price%/gi, state.totals.raw_total);
                 submit_btn.prop('disabled', false).css('cursor', 'pointer'); // If it's free, hide the gateways and display the free checkout text...
 
                 if (state.is_free) {
-                    submit_btn.val(submit_btn.data('free'));
+                    submit_btn.val(free_label);
                     this.form.find('.getpaid-gateways').slideUp();
                     return;
                 } // ... else show, the gateways and the pay text.
 
 
                 this.form.find('.getpaid-gateways').slideDown();
-                submit_btn.val(submit_btn.data('pay')); // Next, hide the no gateways errors and display the gateways div.
+                submit_btn.val(btn_label); // Next, hide the no gateways errors and display the gateways div.
 
                 this.form.find('.getpaid-no-recurring-gateways, .getpaid-no-active-gateways').addClass('d-none');
                 this.form.find('.getpaid-select-gateway-title-div, .getpaid-available-gateways-div, .getpaid-gateway-descriptions-div').removeClass('d-none'); // If there are no gateways?
@@ -323,10 +325,9 @@ jQuery(function ($) {
             init: function init() {
                 this.setup_saved_payment_tokens();
                 this.attach_events();
-                this.refresh_state(); // Trigger setup event.
+                this.refresh_state(); // Hide billing email.
 
-                // Hide billing email.
-                this.form.find( '.getpaid-payment-form-element-billing_email span.d-none' ).closest( '.col-12' ).addClass( 'd-none' )
+                this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Trigger setup event.
 
                 $('body').trigger('getpaid_setup_payment_form', [this.form]);
             }

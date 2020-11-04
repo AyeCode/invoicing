@@ -346,7 +346,8 @@ return array(
         'defaults'   => array(
             'value'          => '',
             'class'          => 'btn-primary',
-            'label'          => __( 'Pay Now »', 'invoicing' ),
+            'label'          => __( 'Pay %price% »', 'invoicing' ),
+            'free'           => __( 'Continue »', 'invoicing' ),
             'description'    => __( 'By continuing with our payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
             'premade'        => true,
         )
