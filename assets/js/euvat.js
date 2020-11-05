@@ -57,7 +57,7 @@ jQuery(function($) {
                 if (eu_state && WPInv_VAT_Vars.disableVATSameCountry && wpinv_is_base_country(data.post.country)) {
                     eu_state = false;
                 }
-                if (eu_state && !WPInv_VAT_Vars.HideVatFields) {
+                if (eu_state) {
                     $('#wpi_vat_info').show();
                     $('#wpi_vat_info').parent('.wpi-vat-details').show();
                 } else {
@@ -484,10 +484,7 @@ jQuery(function($) {
             if (tax !== "0" && countryEl === undefined) {
                 window.location.reload()
             }
-            if (!WPInv_VAT_Vars.HideVatFields) {
-                $('#wpi_vat_info').parent('.wpi-vat-details').show();
-                $('#wpi_vat_info').show();
-            }
+
             if (!updateTaxes) {
                 return;
             }

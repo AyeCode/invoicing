@@ -209,7 +209,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		// Prepare variables.
 		$vat_number  = $this->get_vat_number( $submission );
 		$company     = $this->get_company( $submission );
-		$ip_country  = WPInv_EUVat::get_country_by_ip();
+		$ip_country  = getpaid_get_ip_country();
         $is_eu       = $this->is_eu_country( $submission->country );
         $is_ip_eu    = $this->is_eu_country( $ip_country );
 

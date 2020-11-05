@@ -99,7 +99,6 @@ class WPInv_Ajax {
             'check_new_user_email'        => false,
             'run_tool'                    => false,
             'payment_form_refresh_prices' => true,
-            'ip_geolocation'              => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -750,58 +749,6 @@ class WPInv_Ajax {
             )
         );
 
-    }
-
-    /**
-     * IP geolocation.
-     *
-     * @since 1.0.19
-     */
-    public static function ip_geolocation() {
-
-        // Check nonce.
-        check_ajax_referer( 'getpaid-ip-location' );
-
-        // IP address.
-        if ( empty( $_GET['ip'] ) || ! rest_is_ip_address( $_GET['ip'] ) ) {
-            _e( 'Invalid IP Address.', 'invoicing' );
-            exit;
-        }
-
-        // Retrieve location info.
-        $location = getpaid_geolocate_ip_address( $_GET['ip'] );
-
-        if ( empty( $location ) ) {
-            _e( 'Unable to find geolocation for the IP Address.', 'invoicing' );
-            exit;
-        }
-
-        // Sorry.
-        extract( $location );
-
-        // Prepare the address.
-        $content = '';
-
-        if ( ! empty( $location['city'] ) ) {
-            $content .=  $location['city']  . ', ';
-        }
-        
-        if ( ! empty( $location['region'] ) ) {
-            $content .=  $location['region']  . ', ';
-        }
-        
-        $content .=  $location['country'] . ' (' . $location['iso'] . ')';
-
-        $location['address'] = $content;
-
-        $content  = '<p>'. sprintf( __( '<b>Address:</b> %s', 'invoicing' ), $content ) . '</p>';
-        $content .= '<p>'. $location['credit'] . '</p>';
-
-        $location['content'] = $content;
-
-        wpinv_get_template( 'geolocation.php', $location );
-
-        exit;
     }
 
     /**

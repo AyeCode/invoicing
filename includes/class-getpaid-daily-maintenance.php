@@ -27,6 +27,7 @@ class GetPaid_Daily_Maintenance {
 		add_action( 'getpaid_daily_maintenance', array( $this, 'log_cron_run' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'backwards_compat' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_expire_subscriptions' ) );
+		add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_update_geoip_databases' ) );
 
 	}
 
@@ -99,6 +100,20 @@ class GetPaid_Daily_Maintenance {
 	 */
 	public function log_cron_run() {
 		wpinv_error_log( 'GetPaid Daily Cron' );
+	}
+
+	/**
+	 * Updates GeoIP databases.
+	 *
+	 */
+	public function maybe_update_geoip_databases() {
+		$updated = get_transient( 'getpaid_updated_geoip_databases' );
+
+		if ( false === $updated ) {
+			set_transient( 'getpaid_updated_geoip_databases', 1, 15 * DAY_IN_SECONDS );
+			do_action( 'getpaid_update_geoip_databases' );
+		}
+
 	}
 
 }

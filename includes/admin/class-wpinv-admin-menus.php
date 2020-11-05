@@ -312,24 +312,6 @@ class WPInv_Admin_Menus {
             $items['pages'][] = $item;
         }
 
-        $wpinv_tandc_page_id = (int)wpinv_get_option( 'tandc_page' );
-        if($wpinv_tandc_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_tandc_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Terms & Conditions','invoicing');
-            $item->url = get_permalink( $wpinv_tandc_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
-
-            $items['pages'][] = $item;
-        }
-
         $wpinv_success_page_id = (int)wpinv_get_option( 'success_page' );
         if($wpinv_success_page_id > 0){
             $item = new stdClass();
