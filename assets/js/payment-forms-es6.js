@@ -222,7 +222,7 @@ jQuery(function($) {
                         _ajax_nonce: WPInv.formNonce
                     };
 
-                    $.get(ajaxurl, data, ( res ) => {
+                    $.get( WPInv.ajax_url, data, ( res ) => {
 
                         if ( 'object' == typeof res ) {
                             state.replaceWith( res.data )

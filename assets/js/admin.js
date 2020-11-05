@@ -800,7 +800,7 @@ jQuery(function($) {
             country: $(this).val(),
             field_name: $this.attr('name').replace('country', 'state')
         };
-        $.post(ajaxurl, data, function(response) {
+        $.post(WPInv_Admin.ajax_url, data, function(response) {
             if ('nostates' == response) {
                 var text_field = '<input type="text" name="' + data.field_name + '" value=""/>';
                 $this.parent().next().find('select').replaceWith(text_field);
@@ -831,7 +831,7 @@ jQuery(function($) {
         };
 
         // Fetch new states field.
-        $.post( ajaxurl, data )
+        $.post( WPInv_Admin.ajax_url, data )
 
         .done( function( response ) {
 
@@ -953,7 +953,7 @@ jQuery(function($) {
                     country: $(this).val(),
                     field_name: 'wpinv_settings[default_state]'
                 };
-                $.post(ajaxurl, data, function(response) {
+                $.post(WPInv_Admin.ajax_url, data, function(response) {
                     if ('nostates' == response) {
                         $tr.next().hide();
                     } else {
@@ -1046,7 +1046,7 @@ jQuery(function($) {
                 data: data,
             };
             $.ajax({
-                url: ajaxurl,
+                url: WPInv_Admin.ajax_url,
                 type: 'POST',
                 cache: false,
                 dataType: 'json',
