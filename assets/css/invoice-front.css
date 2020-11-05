@@ -280,3 +280,10 @@ input[type="text"].getpaid-item-price-input {
 .getpaid-cc-card-inner {
 	max-width: 460px;
 }
+
+.getpaid-payment-modal-close {
+	position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 200;
+}
