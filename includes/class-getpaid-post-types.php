@@ -65,7 +65,7 @@ class GetPaid_Post_Types {
 					'show_ui'               => true,
 					'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
 					'show_in_nav_menus'     => false,
-					'supports'              => array( 'title', 'excerpt' ),
+					'supports'              => array( 'title', 'excerpt', 'thumbnail' ),
 					'rewrite'               => false,
 					'query_var'             => false,
 					'capability_type'       => 'wpi_item',
