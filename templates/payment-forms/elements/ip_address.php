@@ -14,10 +14,9 @@ if ( empty( $text ) ) {
 }
 
 $ip_address = sanitize_text_field( wpinv_get_ip() );
-$url        = esc_url( getpaid_ip_location_url( $ip_address ) );
 
 ?>
 <div class="form-group getpaid-ip-info">
     <span><?php echo wp_kses_post( $text ); ?></span>
-    <a target='_blank' href='<?php echo $url; ?>'><?php echo $ip_address; ?>&nbsp;&nbsp;<i class='fa fa-external-link-square' aria-hidden='true'></i></a>
+    <strong><?php echo $ip_address; ?></strong>
 </div>

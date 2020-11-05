@@ -279,7 +279,10 @@ function wpinv_settings_sanitize( $input = array() ) {
         }
 
         // General filter
-        $input[ $key ] = apply_filters( 'wpinv_settings_sanitize', $input[ $key ], $key );
+		$input[ $key ] = apply_filters( 'wpinv_settings_sanitize', $input[ $key ], $key );
+
+		// Key specific filter.
+		$input[ $key ] = apply_filters( "wpinv_settings_sanitize_$key", $input[ $key ] );
     }
 
     // Loop through the whitelist and unset any that are empty for the tab being saved

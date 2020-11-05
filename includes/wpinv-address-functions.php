@@ -19,6 +19,16 @@ function wpinv_get_default_country() {
 }
 
 /**
+ * GeoLocates an IP Address.
+ *
+ * @return string
+ */
+function getpaid_get_ip_country( $ip_address = '' ) {
+    $country = GetPaid_Geolocation::geolocate_ip( $ip_address, true );
+    return $country['country'];
+}
+
+/**
  * Sanitizes a country code.
  * 
  * @param string $country The country code to sanitize

@@ -107,6 +107,7 @@ class WPInv_Plugin {
 		$this->set( 'subscription_emails', new GetPaid_Subscription_Notification_Emails() );
 		$this->set( 'daily_maintenace', new GetPaid_Daily_Maintenance() );
 		$this->set( 'payment_forms', new GetPaid_Payment_Forms() );
+		$this->set( 'maxmind', new GetPaid_MaxMind_Geolocation() );
 
 	}
 
@@ -306,6 +307,7 @@ class WPInv_Plugin {
 			"$plugin_path/includes/data-stores",
 			"$plugin_path/includes/gateways",
 			"$plugin_path/includes/payments",
+			"$plugin_path/includes/geolocation",
 			"$plugin_path/includes/api",
 			"$plugin_path/includes/admin",
 			"$plugin_path/includes/admin/meta-boxes",

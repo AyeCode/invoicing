@@ -109,15 +109,6 @@ return array(
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
                 ),
-                'tandc_page' => array(
-                    'id'          => 'tandc_page',
-                    'name'        => __( 'Terms & Conditions', 'invoicing' ),
-                    'desc'        => __( 'If you select a "Terms & Conditions" page here the customer will be asked to accept them on checkout.', 'invoicing' ),
-                    'type'        => 'select',
-                    'options'     => wpinv_get_pages( true,  __( 'Select a page', 'invoicing' )),
-                    'class'       => 'wpi_select2',
-                    'placeholder' => __( 'Select a page', 'invoicing' ),
-                ),
                 'success_page' => array(
                     'id'          => 'success_page',
                     'name'        => __( 'Success Page', 'invoicing' ),
@@ -501,6 +492,15 @@ return array(
                     'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
                     'type' => 'checkbox',
                 ),
+
+                'maxmind_license_key' => array(
+                    'id'   => 'maxmind_license_key',
+                    'name' => __( 'MaxMind License Key', 'invoicing' ),
+                    'type' => 'text',
+                    'size' => 'regular',
+                    'desc' => __( "Enter you license key if you would like to use MaxMind to automatically detect a customer's country.", 'invoicing' ) . ' <a href="https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/">' . __( 'How to generate a free license key.', 'invoicing' ) . '</a>',
+                ),
+
                 'uninstall_settings' => array(
                     'id'   => 'uninstall_settings',
                     'name' => '<h3>' . __( 'Uninstall Settings', 'invoicing' ) . '</h3>',

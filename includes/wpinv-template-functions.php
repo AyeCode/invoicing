@@ -706,11 +706,6 @@ function wpinv_html_ajax_user_search( $args = array() ) {
 }
 
 /**
- * @deprecated.
- */
-function wpinv_ip_geolocation() {}
-
-/**
  * Use our template to display invoices.
  * 
  * @param string $template the template that is currently being used.

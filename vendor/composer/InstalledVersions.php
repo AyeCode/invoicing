@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '5bb76a7b209229589b146996e14f6d6ee9eb39d8',
+    'reference' => '58e08ab4fbfabf9d48bdecf0dce878830040d4ea',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -40,7 +40,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '5bb76a7b209229589b146996e14f6d6ee9eb39d8',
+      'reference' => '58e08ab4fbfabf9d48bdecf0dce878830040d4ea',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
@@ -77,6 +77,15 @@ private static $installed = array (
       array (
       ),
       'reference' => 'b93bcf0fa1fccb0b7d176b0967d969691cd74cca',
+    ),
+    'maxmind-db/reader' => 
+    array (
+      'pretty_version' => 'v1.6.0',
+      'version' => '1.6.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'febd4920bf17c1da84cef58e56a8227dfb37fbe4',
     ),
     'roundcube/plugin-installer' => 
     array (

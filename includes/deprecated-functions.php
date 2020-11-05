@@ -1134,3 +1134,23 @@ function wpinv_disable_months_dropdown() {}
  * @deprecated
  */
 function wpinv_item_type_class() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_vat_ip_lookup_callback() {}
+
+/**
+ * @deprecated.
+ */
+function wpinv_ip_geolocation() {}
+
+/**
+ * @deprecated
+ */
+function getpaid_ip_location_url() {}
+
+/**
+ * @deprecated
+ */
+function getpaid_geolocate_ip_address() {}

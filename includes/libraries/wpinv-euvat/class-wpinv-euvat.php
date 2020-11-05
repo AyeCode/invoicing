@@ -38,8 +38,6 @@ class WPInv_EUVat {
             add_action( 'wp_ajax_nopriv_wpinv_delete_vat_class', array( $this, 'delete_class' ) );
             add_action( 'wp_ajax_wpinv_update_vat_rates', array( $this, 'update_eu_rates' ) );
             add_action( 'wp_ajax_nopriv_wpinv_update_vat_rates', array( $this, 'update_eu_rates' ) );
-            add_action( 'wp_ajax_wpinv_geoip2', array( $this, 'geoip2_download_database' ) );
-            add_action( 'wp_ajax_nopriv_wpinv_geoip2', array( $this, 'geoip2_download_database' ) );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_vat_scripts' ) );
@@ -110,7 +108,6 @@ class WPInv_EUVat {
         $vars['ErrInvalidVat'] = wp_sprintf( __( 'The %s number supplied does not have a valid format!', 'invoicing' ), $vat_name );
         $vars['ErrInvalidResponse'] = __( 'An invalid response has been received from the server!', 'invoicing' );
         $vars['ApplyVATRules'] = $vars['UseTaxes'] ? self::allow_vat_rules() : false;
-        $vars['HideVatFields'] = $vars['ApplyVATRules'] ? self::hide_vat_fields() : true;
         $vars['ErrResponse'] = __( 'The request response is invalid!', 'invoicing' );
         $vars['ErrRateResponse'] = __( 'The get rate request response is invalid', 'invoicing' );
         $vars['PageRefresh'] = __( 'The page will be refreshed in 10 seconds to show the new options.', 'invoicing' );
@@ -302,37 +299,6 @@ class WPInv_EUVat {
                 'size' => 'regular'
             );
 
-            $vat_settings['vat_disable_fields'] = array(
-                'id' => 'vat_disable_fields',
-                'name' => __( 'Disable VAT Fields', 'invoicing' ),
-                'desc' => __( 'Disable VAT fields if Invoicing is being used for GST.', 'invoicing' ) . '<br><font style="color:red">' . __( 'Do not disable if you have enabled Prevent EU B2C sales, otherwise Prevent EU B2C sales setting will not work.', 'invoicing' ) . '</font>',
-                'type' => 'checkbox'
-            );
-
-            $vat_settings['maxmind_license_key'] = array(
-                'id'   => 'maxmind_license_key',
-                'name' => __( 'MaxMind License Key', 'invoicing' ),
-                'type' => 'text',
-                'size' => 'regular',
-                'desc' => '<a href="https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/">' . __( 'The key that will be used when dealing with MaxMind Geolocation services.', 'invoicing' ) . '</a>',
-            );
-
-            $vat_settings['vat_ip_lookup'] = array(
-                'id'   => 'vat_ip_lookup',
-                'name' => __( 'IP Country Look-up', 'invoicing' ),
-                'type' => 'vat_ip_lookup',
-                'size' => 'regular',
-                'std' => 'default',
-                'class'   => 'wpi_select2',
-            );
-
-            $vat_settings['vat_ip_country_default'] = array(
-                'id' => 'vat_ip_country_default',
-                'name' => __( 'Enable IP Country as Default', 'invoicing' ),
-                'desc' => __( 'Show the country of the users IP as the default country, otherwise the site default country will be used.', 'invoicing' ),
-                'type' => 'checkbox'
-            );
-
             $vat_settings['vies_validation_title'] = array(
                 'id' => 'vies_validation_title',
                 'name' => '<h3>' . __( 'VIES Validation', 'invoicing' ) . '</h3>',
@@ -384,352 +350,84 @@ class WPInv_EUVat {
     }
 
     /**
-     * The folder for our maxmind databases.
-     */
-    public static function maxmind_folder() {
-
-        $upload_dir      = wp_upload_dir();
-        return $upload_dir['basedir'] . '/invoicing';
-
-    }
-
-    /**
-	 * Fetches the database from the MaxMind service.
 	 *
-	 * @param string $license_key The license key to be used when downloading the database.
+	 * @deprecated
 	 */
-    public static function geoip2_download_database() {
-
-        // Allow us to easily interact with the filesystem.
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-        global $wp_filesystem;
-
-        $license_key = wpinv_get_option( 'maxmind_license_key' );
-
-        if ( empty( $license_key ) ) {
-            echo __( 'Please enter your MaxMind license key then save the settings first before downloading the databases.', 'invoicing' );
-            exit;
-        }
-
-        // The database files that we will download.
-        $database_files     = array( 'GeoLite2-Country', 'GeoLite2-City' );
-
-        // The destination dir of all databases.
-        $destination_dir = self::maxmind_folder();
-
-        if ( ! $wp_filesystem->is_dir( $destination_dir ) ) {
-            $wp_filesystem->mkdir( $destination_dir );
-        }
-
-        foreach( $database_files as $database ) {
-
-            $database_path = self::geoip2_download_file( $license_key, $database );
-            $target_path   = trailingslashit( $destination_dir ) .  $database . '.mmdb';
-
-            if ( is_wp_error( $database_path ) ) {
-                echo $database_path->get_error_message();
-                exit;
-            }
-
-            // Move the new database into position.
-		    $wp_filesystem->move( $database_path, $target_path, true );
-            $wp_filesystem->delete( dirname( $database_path ) );
-
-            wpinv_update_option( 'wpinv_geoip2_date_updated', current_time( 'timestamp' ) );
-            echo sprintf( __( 'GeoIP2 %s database updated successfully.', 'invoicing' ), $database ) . ' ';
-        }
-
-        exit;
+    public static function maxmind_folder() {
+        return false;
     }
 
     /**
-     * Actually downloads and unzips a database.
-     *
-     * @return string|WP_Error
+	 *
+	 * @deprecated
+	 */
+    public static function geoip2_download_database() {}
+
+    /**
+	 *
+	 * @deprecated
+	 */
+    public static function geoip2_download_file() {}
+
+    /**
+     * @deprecated
      */
-    public static function geoip2_download_file( $license_key, $database ) {
+    public static function load_geoip2() {}
 
-        // The download URI of the database.
-        $source_url = add_query_arg(
-			array(
-                'license_key' => urlencode( sanitize_text_field( $license_key ) ),
-                'edition_id'  => $database,
-				'suffix'      => 'tar.gz',
-			),
-			'https://download.maxmind.com/app/geoip_download'
-        );
-
-        // Needed for the download_url call right below.
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-
-        // Download the file.
-        $tmp_archive_path = download_url( esc_url_raw( $source_url ) );
-
-        // Did we encounter an error?
-        if ( is_wp_error( $tmp_archive_path ) ) {
-
-            // Transform the error into something more informative.
-			$error_data = $tmp_archive_path->get_error_data();
-			if ( isset( $error_data['code'] ) ) {
-				switch ( $error_data['code'] ) {
-					case 401:
-						return new WP_Error(
-							'invoicing_maxmind_geolocation_database_license_key',
-							__( 'The MaxMind license key is invalid. If you have recently created this key, you may need to wait for it to become active.', 'invoicing' )
-						);
-				}
-			}
-
-            return new WP_Error( 'invoicing_maxmind_geolocation_database_download', __( 'Failed to download the MaxMind database.', 'invoicing' ) );
-
-        }
-
-        // Extract the database from the archive.
-        try {
-			$file      = new PharData( $tmp_archive_path );
-            $file_path = trailingslashit( dirname( $tmp_archive_path ) ) . trailingslashit( $file->current()->getFilename() ) . $database . '.mmdb';
-
-			$file->extractTo(
-				dirname( $tmp_archive_path ),
-				trailingslashit( $file->current()->getFilename() ) . $database . '.mmdb',
-				true
-            );
-
-		} catch ( Exception $exception ) {
-			return new WP_Error( 'invoicing_maxmind_geolocation_database_archive', $exception->getMessage() );
-		} finally {
-			// Remove the archive since we only care about a single file in it.
-            unlink( $tmp_archive_path );
-        }
-
-        return $file_path;
-    }
-
-    public static function load_geoip2() {
-        if ( defined( 'WPINV_GEOIP2_LODDED' ) ) {
-            return;
-        }
-
-        if ( !class_exists( '\MaxMind\Db\Reader' ) ) {
-            $maxmind_db_files = array(
-                'Reader/Decoder.php',
-                'Reader/InvalidDatabaseException.php',
-                'Reader/Metadata.php',
-                'Reader/Util.php',
-                'Reader.php',
-            );
-
-            foreach ( $maxmind_db_files as $key => $file ) {
-                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/MaxMind/Db/' . $file );
-            }
-        }
-
-        if ( !class_exists( '\GeoIp2\Database\Reader' ) ) {
-            $geoip2_files = array(
-                'ProviderInterface.php',
-                'Compat/JsonSerializable.php',
-                'Database/Reader.php',
-                'Exception/GeoIp2Exception.php',
-                'Exception/AddressNotFoundException.php',
-                'Exception/AuthenticationException.php',
-                'Exception/HttpException.php',
-                'Exception/InvalidRequestException.php',
-                'Exception/OutOfQueriesException.php',
-                'Model/AbstractModel.php',
-                'Model/AnonymousIp.php',
-                'Model/Country.php',
-                'Model/City.php',
-                'Model/ConnectionType.php',
-                'Model/Domain.php',
-                'Model/Enterprise.php',
-                'Model/Insights.php',
-                'Model/Isp.php',
-                'Record/AbstractRecord.php',
-                'Record/AbstractPlaceRecord.php',
-                'Record/Country.php',
-                'Record/City.php',
-                'Record/Continent.php',
-                'Record/Location.php',
-                'Record/MaxMind.php',
-                'Record/Postal.php',
-                'Record/RepresentedCountry.php',
-                'Record/Subdivision.php',
-                'Record/Traits.php',
-                'WebService/Client.php',
-            );
-
-            foreach ( $geoip2_files as $key => $file ) {
-                require_once( WPINV_PLUGIN_DIR . 'includes/libraries/GeoIp2/' . $file );
-            }
-        }
-
-        define( 'WPINV_GEOIP2_LODDED', true );
-    }
-
+    /**
+     * @deprecated
+     */
     public static function geoip2_country_dbfile() {
-        $upload_dir = wp_upload_dir();
-
-        if ( !isset( $upload_dir['basedir'] ) ) {
-            return false;
-        }
-
-        $filename = $upload_dir['basedir'] . '/invoicing/GeoLite2-Country.mmdb';
-        if ( !file_exists( $filename ) ) {
-            return false;
-        }
-
-        return $filename;
+        return false;
     }
 
+    /**
+     * @deprecated
+     */
     public static function geoip2_city_dbfile() {
-        $upload_dir = wp_upload_dir();
-
-        if ( !isset( $upload_dir['basedir'] ) ) {
-            return false;
-        }
-
-        $filename = $upload_dir['basedir'] . '/invoicing/GeoLite2-City.mmdb';
-        if ( !file_exists( $filename ) ) {
-            return false;
-        }
-
-        return $filename;
+        return false;
     }
 
+    /**
+     * @deprecated
+     */
     public static function geoip2_country_reader() {
-        try {
-            self::load_geoip2();
-
-            if ( $filename = self::geoip2_country_dbfile() ) {
-                return new \GeoIp2\Database\Reader( $filename );
-            }
-        } catch( Exception $e ) {
-            return false;
-        }
-
         return false;
     }
 
+    /**
+     * @deprecated
+     */
     public static function geoip2_city_reader() {
-        try {
-            self::load_geoip2();
-
-            if ( $filename = self::geoip2_city_dbfile() ) {
-                return new \GeoIp2\Database\Reader( $filename );
-            }
-        } catch( Exception $e ) {
-            return false;
-        }
-
         return false;
     }
 
-    public static function geoip2_country_record( $ip_address ) {
-        try {
-            $reader = self::geoip2_country_reader();
-
-            if ( $reader ) {
-                $record = $reader->country( $ip_address );
-
-                if ( !empty( $record->country->isoCode ) ) {
-                    return $record;
-                }
-            }
-        } catch(\InvalidArgumentException $e) {
-            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
-
-            return false;
-        } catch(\GeoIp2\Exception\AddressNotFoundException $e) {
-            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
-
-            return false;
-        } catch( Exception $e ) {
-            return false;
-        }
-
+    /**
+     * @deprecated
+     */
+    public static function geoip2_country_record() {
         return false;
     }
 
-    public static function geoip2_city_record( $ip_address ) {
-        try {
-            $reader = self::geoip2_city_reader();
-
-            if ( $reader ) {
-                $record = $reader->city( $ip_address );
-
-                if ( !empty( $record->country->isoCode ) ) {
-                    return $record;
-                }
-            }
-        } catch(\InvalidArgumentException $e) {
-            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
-
-            return false;
-        } catch(\GeoIp2\Exception\AddressNotFoundException $e) {
-            wpinv_error_log( $e->getMessage(), 'GeoIp2 Lookup( ' . $ip_address . ' )' );
-
-            return false;
-        } catch( Exception $e ) {
-            return false;
-        }
-
+    /**
+     * @deprecated
+     */
+    public static function geoip2_city_record() {
         return false;
     }
 
-    public static function geoip2_country_code( $ip_address ) {
-        $record = self::geoip2_country_record( $ip_address );
-        return !empty( $record->country->isoCode ) ? $record->country->isoCode : wpinv_get_default_country();
+    /**
+     * @deprecated
+     */
+    public static function geoip2_country_code() {
+        wpinv_get_default_country();
     }
 
-    // Find country by IP address.
-    public static function get_country_by_ip( $ip = '' ) {
-        global $wpinv_ip_address_country;
-        return '';
-        if ( !empty( $wpinv_ip_address_country ) ) {
-            return $wpinv_ip_address_country;
-        }
-
-        if ( empty( $ip ) ) {
-            $ip = wpinv_get_ip();
-        }
-
-        $ip_country_service = wpinv_get_option( 'vat_ip_lookup' );
-        $is_default         = empty( $ip_country_service ) || $ip_country_service === 'default' ? true : false;
-
-        if ( !empty( $ip ) && $ip !== '127.0.0.1' ) { // For 127.0.0.1(localhost) use default country.
-            if ( function_exists( 'geoip_country_code_by_name') && ( $ip_country_service === 'geoip' || $is_default ) ) {
-                try {
-                    $wpinv_ip_address_country = geoip_country_code_by_name( $ip );
-                } catch( Exception $e ) {
-                    wpinv_error_log( $e->getMessage(), 'GeoIP Lookup( ' . $ip . ' )' );
-                }
-            } else if ( self::geoip2_country_dbfile() && ( $ip_country_service === 'geoip2' || $is_default ) ) {
-                $wpinv_ip_address_country = self::geoip2_country_code( $ip );
-            } else if ( function_exists( 'simplexml_load_file' ) && ini_get('allow_url_fopen') && ( $ip_country_service === 'geoplugin' || $is_default ) ) {
-                $load_xml = simplexml_load_file( 'http://www.geoplugin.net/xml.gp?ip=' . $ip );
-
-                if ( !empty( $load_xml ) && !empty( $load_xml->geoplugin_countryCode ) ) {
-                    $wpinv_ip_address_country = (string)$load_xml->geoplugin_countryCode;
-                }
-            }elseif(!empty( $ip )){
-                $url = 'http://ip-api.com/json/' . $ip;
-                $response = wp_remote_get($url);
-
-                if ( is_array( $response ) && wp_remote_retrieve_response_code( $response ) == '200' ) {
-                    $data = json_decode(wp_remote_retrieve_body( $response ),true);
-                    if(!empty($data['countryCode'])){
-                        $wpinv_ip_address_country = (string)$data['countryCode'];
-                    }
-                }
-            }
-        }
-
-        if ( empty( $wpinv_ip_address_country ) ) {
-            $wpinv_ip_address_country = wpinv_get_default_country();
-        }
-
-        return $wpinv_ip_address_country;
+    /**
+     * @deprecated
+     */
+    public static function get_country_by_ip() {
+        return getpaid_get_ip_country();
     }
 
     public static function sanitize_vat_settings( $input ) {
@@ -894,11 +592,10 @@ class WPInv_EUVat {
         wp_send_json( $response );
     }
 
-    public static function hide_vat_fields() {
-        $hide = wpinv_get_option( 'vat_disable_fields' );
-
-        return apply_filters( 'wpinv_hide_vat_fields', $hide );
-    }
+    /**
+     * @deprecated
+     */
+    public static function hide_vat_fields() {}
 
     public static function same_country_rule() {
         $same_country_rule = wpinv_get_option( 'vat_same_country_rule' );
@@ -1604,7 +1301,7 @@ class WPInv_EUVat {
             }
         } else {
             if ( $is_digital ) {
-                $ip_country_code = self::get_country_by_ip();
+                $ip_country_code = getpaid_get_ip_country();
 
                 if ( $ip_country_code && self::is_eu_state( $ip_country_code ) ) {
                     $rate = self::find_rate( $ip_country_code, '', 0, $class );
@@ -1626,15 +1323,11 @@ class WPInv_EUVat {
     public static function get_user_country( $country = '', $user_id = 0 ) {
         $user_address = wpinv_get_user_address( $user_id, false );
 
-        if ( wpinv_get_option( 'vat_ip_country_default' ) ) {
-            $country = '';
-        }
-
         $country    = empty( $user_address ) || !isset( $user_address['country'] ) || empty( $user_address['country'] ) ? $country : $user_address['country'];
         $result     = apply_filters( 'wpinv_get_user_country', $country, $user_id );
 
         if ( empty( $result ) ) {
-            $result = self::get_country_by_ip();
+            $result = getpaid_get_ip_country();
         }
 
         return $result;
