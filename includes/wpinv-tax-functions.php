@@ -1,11 +1,13 @@
 <?php
-// MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
-}
+/**
+ * Contains the tax functions.
+ *
+ */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
- * Retrieves the tax class.
+ * Returns the tax class objet.
  * 
  * @return WPInv_EUVat
  */
