@@ -171,7 +171,7 @@ jQuery(function ($) {
                         form: this.form.find('input[name="form_id"]').val(),
                         _ajax_nonce: WPInv.formNonce
                     };
-                    $.get(ajaxurl, data, function (res) {
+                    $.get(WPInv.ajax_url, data, function (res) {
                         if ('object' == _typeof(res)) {
                             state.replaceWith(res.data);
                         }
