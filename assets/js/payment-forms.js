@@ -524,7 +524,7 @@ jQuery(function ($) {
         // Do not submit the form.
         e.preventDefault(); // Add the loader.
 
-        $('#getpaid-payment-modal .modal-body').html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>'); // Display the modal.
+        $('#getpaid-payment-modal .modal-body-wrapper').html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>'); // Display the modal.
 
         $('#getpaid-payment-modal').modal(); // Load the form via ajax.
 
@@ -532,13 +532,13 @@ jQuery(function ($) {
         data.action = 'wpinv_get_payment_form';
         data._ajax_nonce = WPInv.formNonce;
         $.get(WPInv.ajax_url, data, function (res) {
-            $('#getpaid-payment-modal .modal-body').html(res);
+            $('#getpaid-payment-modal .modal-body-wrapper').html(res);
             $('#getpaid-payment-modal').modal('handleUpdate');
             $('#getpaid-payment-modal .getpaid-payment-form').each(function () {
                 setup_form($(this));
             });
         }).fail(function (res) {
-            $('#getpaid-payment-modal .modal-body').html(WPInv.connectionError);
+            $('#getpaid-payment-modal .modal-body-wrapper').html(WPInv.connectionError);
             $('#getpaid-payment-modal').modal('handleUpdate');
         });
     });
