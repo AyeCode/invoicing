@@ -149,7 +149,7 @@ class GetPaid_Geolocation {
 		if ( '' === $geolocation['country'] && $api_fallback ) {
 			$geolocation['country'] = self::geolocate_via_api( $ip_address );
 		}
-		noptin_dump( $geolocation );exit;
+
 		// It's possible that we're in a local environment, in which case the geolocation needs to be done from the
 		// external address.
 		if ( '' === $geolocation['country'] && $fallback ) {
