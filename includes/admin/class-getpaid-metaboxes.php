@@ -41,7 +41,67 @@ class GetPaid_Metaboxes {
 	 * Register core metaboxes.
 	 */
 	public static function add_meta_boxes( $post_type, $post ) {
-		global $wpinv_euvat;
+
+		// For invoices...
+		self::add_invoice_meta_boxes( $post_type, $post );
+
+		// For payment forms.
+		self::add_payment_form_meta_boxes( $post_type );
+
+		// For invoice items.
+		self::add_item_meta_boxes( $post_type );
+
+		// For invoice discounts.
+		if ( $post_type == 'wpi_discount' ) {
+			add_meta_box( 'wpinv_discount_details', __( 'Discount Details', 'invoicing' ), 'GetPaid_Meta_Box_Discount_Details::output', 'wpi_discount', 'normal', 'high' );
+		}
+
+	}
+
+	/**
+	 * Register core metaboxes.
+	 */
+	protected static function add_payment_form_meta_boxes( $post_type ) {
+
+		// For payment forms.
+		if ( $post_type == 'wpi_payment_form' ) {
+
+			// Design payment form.
+			add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
+
+			// Payment form information.
+			add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
+
+		}
+
+	}
+
+	/**
+	 * Register core metaboxes.
+	 */
+	protected static function add_item_meta_boxes( $post_type ) {
+
+		if ( $post_type == 'wpi_item' ) {
+
+			// Item details.
+			add_meta_box( 'wpinv_item_details', __( 'Item Details', 'invoicing' ), 'GetPaid_Meta_Box_Item_Details::output', 'wpi_item', 'normal', 'high' );
+
+			// If taxes are enabled, register the tax metabox.
+			if ( getpaid_tax()->allow_vat_rules() || getpaid_tax()->allow_vat_classes() ) {
+				add_meta_box( 'wpinv_item_vat', __( 'VAT / Tax', 'invoicing' ), 'GetPaid_Meta_Box_Item_VAT::output', 'wpi_item', 'normal', 'high' );
+			}
+
+			// Item info.
+			add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'GetPaid_Meta_Box_Item_Info::output', 'wpi_item', 'side', 'core' );
+
+		}
+
+	}
+
+	/**
+	 * Register invoice metaboxes.
+	 */
+	protected static function add_invoice_meta_boxes( $post_type, $post ) {
 
 		// For invoices...
 		if ( getpaid_is_invoice_post_type( $post_type ) ) {
@@ -54,7 +114,7 @@ class GetPaid_Metaboxes {
 					'wpinv-mb-resend-invoice',
 					sprintf(
 						__( 'Resend %s', 'invoicing' ),
-						ucfirst( $invoice->get_type() )
+						ucfirst( $invoice->get_invoice_quote_type() )
 					),
 					'GetPaid_Meta_Box_Resend_Invoice::output',
 					$post_type,
@@ -76,7 +136,7 @@ class GetPaid_Metaboxes {
 				'wpinv-details',
 				sprintf(
 					__( '%s Details', 'invoicing' ),
-					ucfirst( $invoice->get_type() )
+					ucfirst( $invoice->get_invoice_quote_type() )
 				),
 				'GetPaid_Meta_Box_Invoice_Details::output',
 				$post_type,
@@ -96,7 +156,7 @@ class GetPaid_Metaboxes {
 				'wpinv-items',
 				sprintf(
 					__( '%s Items', 'invoicing' ),
-					ucfirst( $invoice->get_type() )
+					ucfirst( $invoice->get_invoice_quote_type() )
 				),
 				'GetPaid_Meta_Box_Invoice_Items::output',
 				$post_type,
@@ -109,7 +169,7 @@ class GetPaid_Metaboxes {
 				'wpinv-notes',
 				sprintf(
 					__( '%s Notes', 'invoicing' ),
-					ucfirst( $invoice->get_type() )
+					ucfirst( $invoice->get_invoice_quote_type() )
 				),
 				'WPInv_Meta_Box_Notes::output',
 				$post_type,
@@ -118,49 +178,16 @@ class GetPaid_Metaboxes {
 			);
 
 			// Shipping Address.
-			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'shipping_address', true ) ) {
+			if ( get_post_meta( $invoice->get_id(), 'shipping_address', true ) ) {
 				add_meta_box( 'wpinv-invoice-shipping-details', __( 'Shipping Address', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Shipping_Address::output', $post_type, 'side', 'high' );
 			}
 
 			// Payment form information.
-			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'payment_form_data', true ) ) {
+			if ( get_post_meta( $invoice->get_id(), 'payment_form_data', true ) ) {
 				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', $post_type, 'side', 'high' );
 			}
 
 		}
-
-		// For payment forms.
-		if ( $post_type == 'wpi_payment_form' ) {
-
-			// Design payment form.
-			add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
-
-			// Payment form information.
-			add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
-
-		}
-
-		// For invoice items.
-		if ( $post_type == 'wpi_item' ) {
-
-			// Item details.
-			add_meta_box( 'wpinv_item_details', __( 'Item Details', 'invoicing' ), 'GetPaid_Meta_Box_Item_Details::output', 'wpi_item', 'normal', 'high' );
-
-			// If taxes are enabled, register the tax metabox.
-			if ( $wpinv_euvat->allow_vat_rules() || $wpinv_euvat->allow_vat_classes() ) {
-				add_meta_box( 'wpinv_item_vat', __( 'VAT / Tax', 'invoicing' ), 'GetPaid_Meta_Box_Item_VAT::output', 'wpi_item', 'normal', 'high' );
-			}
-
-			// Item info.
-			add_meta_box( 'wpinv_field_item_info', __( 'Item info', 'invoicing' ), 'GetPaid_Meta_Box_Item_Info::output', 'wpi_item', 'side', 'core' );
-
-		}
-
-		// For invoice discounts.
-		if ( $post_type == 'wpi_discount' ) {
-			add_meta_box( 'wpinv_discount_details', __( 'Discount Details', 'invoicing' ), 'GetPaid_Meta_Box_Discount_Details::output', 'wpi_discount', 'normal', 'high' );
-		}
-		
 
 	}
 

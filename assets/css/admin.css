@@ -46,33 +46,11 @@
     width: 180px;
 }
 
-.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-row {
-    width: 50%;
-    padding: 0;
-    float: left;
-}
-.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  input,
-.postbox-container #wpinv-address .gdmbx2-wrap .wpinv-address.gdmbx-row  select {
-    margin: 0;
-}
 #post-body select#invoice_note_type {
     width: auto;
 }
 .gdmbx-row.gdmbx-row-wrap {
     float: none !important;
-}
-
-.gdmbx2-wrap .wpinv-address.gdmbx-row {
-    margin: 0;
-    padding: 0;
-    max-width: 900px;
-}
-.gdmbx2-wrap .wpinv-address > .gdmbx-row {
-    width: calc(50% - 14px) !important;
-    padding: 0 7px !important;
-}
-.gdmbx2-wrap .wpinv-address .gdmbx2-text-large {
-    width: 100% !important;
 }
 
 .wpinv .gdmbx2-wrap select {

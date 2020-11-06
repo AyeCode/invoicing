@@ -14,27 +14,6 @@
 	line-height: 1 !important;
 }
 
-.wpinv-receipt-details .label {
-	font-size: inherit;
-}
-.wpinv-receipt-details .tr-total td {
-	background-color: #f7f7f7;
-}
-.wpinv_cart_total_row td,
-.wpinv_cart_total_row th {
-	background-color: #f7f7f7;
-}
-
-#wpinv_adddress_confirm.wpi-vat-info {
-	margin-left: 0;
-	margin-right: 0;
-	padding: 0;
-}
-#wpinv_adddress_confirm.wpi-vat-info #wpinv-fields-box {
-	min-height: auto;
-	padding: 15px;
-}
-
 .wpinv-success .wpinv-receipt-details .table th,
 .wpinv-success .getpaid-bank-transfer-details .table th {
 	width: 35%;

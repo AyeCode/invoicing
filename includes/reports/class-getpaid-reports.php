@@ -1,0 +1,125 @@
+<?php
+/**
+ * Contains the reports class
+ *
+ *
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * GetPaid_Reports Class.
+ */
+class GetPaid_Reports {
+
+	/**
+	 * Class constructor.
+	 *
+	 */
+	public function __construct() {
+		add_action( 'admin_menu', array( $this, 'register_reports_page' ), 20 );
+		add_action( 'wpinv_reports_tab_reports', array( $this, 'display_reports_tab' ) );
+		add_action( 'wpinv_reports_tab_export', array( $this, 'display_exports_tab' ) );
+	}
+
+	/**
+	 * Registers the reports page.
+	 *
+	 */
+	public function register_reports_page() {
+
+		add_submenu_page(
+            'wpinv',
+            __( 'Reports', 'invoicing' ),
+            __( 'Reports', 'invoicing' ),
+            wpinv_get_capability(),
+            'wpinv-reports',
+            array( $this, 'display_reports_page' )
+		);
+
+	}
+
+	/**
+	 * Displays the reports page.
+	 *
+	 */
+	public function display_reports_page() {
+
+		// Prepare variables.
+		$tabs        = $this->get_tabs();
+		$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'reports';
+		$current_tab = array_key_exists( $current_tab, $tabs ) ? $current_tab : 'reports';
+
+		// Display the current tab.
+		?>
+
+        <div class="wrap">
+
+			<h1><?php echo sanitize_text_field( $tabs[ $current_tab ] ); ?></h1>
+
+			<nav class="nav-tab-wrapper">
+
+				<?php
+					foreach( $tabs as $key => $label ) {
+
+						$key   = sanitize_text_field( $key );
+						$label = sanitize_text_field( $label );
+						$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab';
+						$url   = esc_url(
+							add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
+						);
+
+						echo "\n\t\t\t<a href='$url' class='$class'>$label</a>";
+
+					}
+				?>
+
+			</nav>
+
+			<div class="bsui <?php echo esc_attr( $current_tab ); ?>">
+				<?php do_action( "wpinv_reports_tab_{$current_tab}" ); ?>
+			</div>
+
+        </div>
+		<?php
+
+	}
+
+	/**
+	 * Retrieves reports page tabs.
+	 *
+	 * @return array
+	 */
+	public function get_tabs() {
+
+		$tabs = array(
+			'reports' => __( 'Reports', 'invoicing' ),
+			'export'  => __( 'Export', 'invoicing' ),
+		);
+
+		return apply_filters( 'getpaid_report_tabs', $tabs );
+	}
+
+	/**
+	 * Displays the reports tab.
+	 *
+	 */
+	public function display_reports_tab() {
+
+		$reports = new GetPaid_Reports_Report();
+		$reports->display();
+
+	}
+
+	/**
+	 * Displays the exports tab.
+	 *
+	 */
+	public function display_exports_tab() {
+
+		$exports = new GetPaid_Reports_Export();
+		$exports->display();
+
+	}
+
+}

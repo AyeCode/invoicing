@@ -579,6 +579,17 @@ function getpaid_hidden_field( $name, $value ) {
     echo "<input type='hidden' name='$name' value='$value' />";
 }
 
+/**
+ * Displays a submit field.
+ */
+function getpaid_submit_field( $value, $name = 'submit', $class = 'btn-primary' ) {
+    $name  = sanitize_text_field( $name );
+    $value = esc_attr( $value );
+    $class = esc_attr( $class );
+
+    echo "<input type='submit' name='$name' value='$value' class='btn $class' />";
+}
+
 function wpinv_html_text( $args = array() ) {
     // Backwards compatibility
     if ( func_num_args() > 1 ) {

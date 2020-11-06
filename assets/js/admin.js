@@ -98,16 +98,16 @@ jQuery(function($) {
             args.changeMonth = true;
         }
 
-        if ($this.attr('data-changeYear')) {
+        if (el.attr('data-changeYear')) {
             args.changeYear = true;
         }
 
-        if ($this.attr('data-dateFormat')) {
-            args.dateFormat = $this.attr('data-dateformat');
+        if (el.attr('data-dateFormat')) {
+            args.dateFormat = el.attr('data-dateformat');
         }
 
-        if ($this.attr('data-minDate')) {
-            args.minDate = $this.attr('data-minDate');
+        if (el.attr('data-minDate')) {
+            args.minDate = el.attr('data-minDate');
         }
 
         $(this).datepicker(args);
