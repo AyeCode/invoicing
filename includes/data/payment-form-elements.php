@@ -177,7 +177,11 @@ return array(
         'name' => __( 'Address', 'invoicing' ),
         'defaults'  => array(
 
-            'fields' => array(
+            'address_type'            => 'billing',
+            'billing_address_title'   => __( 'Billing Address', 'invoicing' ),
+            'shipping_address_title'  => __( 'Shipping Address', 'invoicing' ),
+            'shipping_address_toggle' => __( 'Same billing & shipping address.', 'invoicing' ),
+            'fields'                  => array(
                 array(
                     'placeholder'  => 'Jon',
                     'value'        => '',
@@ -186,6 +190,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_first_name',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -196,6 +201,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_last_name',
+                    'grid_width'   => 'full',
                 ),
             
                 array(
@@ -206,6 +212,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_address',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -216,6 +223,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_city',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -226,6 +234,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_country',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -236,6 +245,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_state',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -246,6 +256,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_zip',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -256,6 +267,7 @@ return array(
                     'required'     => false,
                     'visible'      => true,
                     'name'         => 'wpinv_phone',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -266,6 +278,7 @@ return array(
                     'required'     => false,
                     'visible'      => false,
                     'name'         => 'wpinv_company',
+                    'grid_width'   => 'full',
                 ),
 
                 array(
@@ -276,6 +289,7 @@ return array(
                     'required'     => false,
                     'visible'      => false,
                     'name'         => 'wpinv_vat_number',
+                    'grid_width'   => 'full',
                 )
             )
         )

@@ -145,7 +145,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	public function get_vat_number( $submission ) {
 
 		// Retrieve from the posted number.
-		$vat_number = $submission->get_field( 'wpinv_vat_number' );
+		$vat_number = $submission->get_field( 'wpinv_vat_number', 'billing' );
 		if ( ! empty( $vat_number ) ) {
 			return wpinv_clean( $vat_number );
 		}
@@ -164,7 +164,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	public function get_company( $submission ) {
 
 		// Retrieve from the posted data.
-		$company = $submission->get_field( 'wpinv_company' );
+		$company = $submission->get_field( 'wpinv_company', 'billing' );
 		if ( ! empty( $company ) ) {
 			return wpinv_clean( $company );
 		}

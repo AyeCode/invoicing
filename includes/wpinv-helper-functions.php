@@ -976,3 +976,42 @@ function getpaid_get_post_type_label( $post_type, $plural = true ) {
     return $plural ? $post_type->labels->name : $post_type->labels->singular_name;
 
 }
+
+/**
+ * Retrieves an array
+ *
+ * @return mixed|null
+ */
+function getpaid_get_array_field( $array, $key, $secondary_key = null ) {
+
+    if ( ! is_array( $array ) ) {
+        return null;
+    }
+
+    if ( ! empty( $secondary_key ) ) {
+        $array = isset( $array[ $secondary_key ] ) ? $array[ $secondary_key ] : array();
+        return getpaid_get_array_field( $array, $key );
+    }
+
+    return isset( $array[ $key ] ) ? $array[ $key ] : null;
+
+}
+
+/**
+ * Merges an empty array
+ *
+ * @return array
+ */
+function getpaid_array_merge_if_empty( $args, $defaults ) {
+
+    foreach ( $defaults as $key => $value ) {
+
+        if ( array_key_exists( $key, $args ) && empty( $args[ $key ] ) ) {
+            $args[ $key ] = $value;
+        }
+
+    }
+
+    return $args;
+
+}

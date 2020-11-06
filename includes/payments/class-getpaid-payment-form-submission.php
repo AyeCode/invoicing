@@ -423,12 +423,14 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		// If a custom country && state has been passed in, use it to calculate taxes.
-		if ( ! empty( $this->data['wpinv_country'] ) ) {
-			$this->country = $this->data['wpinv_country'];
+		$country = $this->get_field( 'wpinv_country', 'billing' );
+		if ( ! empty( $country ) ) {
+			$this->country = $country;
 		}
 
-		if ( ! empty( $this->data['wpinv_state'] ) ) {
-			$this->country = $this->data['wpinv_state'];
+		$state = $this->get_field( 'wpinv_state', 'billing' );
+		if ( ! empty( $state ) ) {
+			$this->state = $state;
 		}
 
 		$processor = new GetPaid_Payment_Form_Submission_Taxes( $this );
@@ -793,10 +795,10 @@ class GetPaid_Payment_Form_Submission {
 	 *
 	 * @param string $field
 	 * @since 1.0.19
-	 * @return mixed
+	 * @return mixed|null
 	 */
-	public function get_field( $field ) {
-		return isset( $this->data[ $field ] ) ? $this->data[ $field ] : '';
+	public function get_field( $field, $sub_array_key = null ) {
+		return getpaid_get_array_field( $this->data, $field, $sub_array_key );
 	}
 
 	/**

@@ -158,17 +158,17 @@ jQuery(function ($) {
                     });
             },
             // Updates the state field.
-            update_state_field: function update_state_field() {
-                var _this2 = this;
+            update_state_field: function update_state_field(wrapper) {
+                wrapper = $(wrapper); // Ensure that we have a state field.
 
-                // Ensure that we have a state field.
-                if (this.form.find('.wpinv_state').length) {
-                    var state = this.form.find('.getpaid-address-field-wrapper__state');
+                if (wrapper.find('.wpinv_state').length) {
+                    var state = wrapper.find('.getpaid-address-field-wrapper__state');
                     wpinvBlock(state);
                     var data = {
                         action: 'wpinv_get_payment_form_states_field',
-                        country: this.form.find('.wpinv_country').val(),
+                        country: wrapper.find('.wpinv_country').val(),
                         form: this.form.find('input[name="form_id"]').val(),
+                        name: state.find('.wpinv_state').attr('name'),
                         _ajax_nonce: WPInv.formNonce
                     };
                     $.get(WPInv.ajax_url, data, function (res) {
@@ -176,13 +176,13 @@ jQuery(function ($) {
                             state.replaceWith(res.data);
                         }
                     }).always(function () {
-                        _this2.form.find('.getpaid-address-field-wrapper__state').unblock();
+                        wrapper.find('.getpaid-address-field-wrapper__state').unblock();
                     });
                 }
             },
             // Attaches events to a form.
             attach_events: function attach_events() {
-                var _this3 = this;
+                var _this2 = this;
 
                 // Cache the object.
                 var that = this; // Keeps the state in sync.
@@ -195,15 +195,19 @@ jQuery(function ($) {
                 this.form.on('input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change);
                 this.form.on('input', '.getpaid-item-price-input', on_field_change);
                 this.form.on('change', '.getpaid-item-quantity-input', on_field_change);
-                this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change); // Refresh when country changes.
+                this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change); // Update states when country changes.
 
-                this.form.on('change', '.wpinv_country', function () {
-                    _this3.update_state_field();
+                this.form.on('change', '.getpaid-shipping-address-wrapper .wpinv_country', function () {
+                    _this2.update_state_field('.getpaid-shipping-address-wrapper');
+                }); // Refresh when country changes.
+
+                this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_country', function () {
+                    _this2.update_state_field('.getpaid-billing-address-wrapper');
 
                     on_field_change();
                 }); // Refresh when state changes.
 
-                this.form.on('change', '.wpinv_state', function () {
+                this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_state', function () {
                     on_field_change();
                 }); // Discounts.
 
@@ -228,7 +232,7 @@ jQuery(function ($) {
 
 
                 this.form.on('change', '.getpaid-gateway-radio input', function () {
-                    var gateway = _this3.form.find('.getpaid-gateway-radio input:checked').val();
+                    var gateway = _this2.form.find('.getpaid-gateway-radio input:checked').val();
 
                     form.find('.getpaid-gateway-description').slideUp();
                     form.find(".getpaid-description-".concat(gateway)).slideDown();
@@ -236,7 +240,7 @@ jQuery(function ($) {
             },
             // Processes gateways
             process_gateways: function process_gateways(enabled_gateways, state) {
-                var _this4 = this;
+                var _this3 = this;
 
                 // Prepare the submit btn.
                 var submit_btn = this.form.find('.getpaid-payment-form-submit');
@@ -282,7 +286,7 @@ jQuery(function ($) {
                 this.form.find('.getpaid-gateway').addClass('d-none'); // Display enabled gateways.
 
                 $.each(enabled_gateways, function (index, value) {
-                    _this4.form.find(".getpaid-gateway-".concat(value)).removeClass('d-none');
+                    _this3.form.find(".getpaid-gateway-".concat(value)).removeClass('d-none');
                 }); // If there is no gateway selected, select the first.
 
                 if (0 === this.form.find('.getpaid-gateway:visible input:checked').length) {
@@ -321,13 +325,39 @@ jQuery(function ($) {
                     $('input', list).filter(':checked').trigger('change');
                 });
             },
+            // Handles toggling shipping address on and off.
+            handleAddressToggle: function handleAddressToggle(address_toggle) {
+                var wrapper = address_toggle.closest('.getpaid-payment-form-element-address'); // Hide titles and shipping address.
+
+                wrapper.find('.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper').addClass('d-none');
+                address_toggle.on('change', function () {
+                    if ($(this).is(':checked')) {
+                        // Hide titles and shipping address.
+                        wrapper.find('.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper').addClass('d-none'); // Show general title.
+
+                        wrapper.find('.getpaid-shipping-billing-address-title').removeClass('d-none');
+                    } else {
+                        // Show titles and shipping address.
+                        wrapper.find('.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper').removeClass('d-none'); // Hide general title.
+
+                        wrapper.find('.getpaid-shipping-billing-address-title').addClass('d-none');
+                    }
+                });
+            },
             // Inits a form.
             init: function init() {
                 this.setup_saved_payment_tokens();
                 this.attach_events();
                 this.refresh_state(); // Hide billing email.
 
-                this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Trigger setup event.
+                this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Handle shipping address.
+
+                var address_toggle = this.form.find('[name ="same-shipping-address"]');
+
+                if (address_toggle.length > 0) {
+                    this.handleAddressToggle(address_toggle);
+                } // Trigger setup event.
+
 
                 $('body').trigger('getpaid_setup_payment_form', [this.form]);
             }

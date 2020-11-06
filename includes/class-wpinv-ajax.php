@@ -354,7 +354,8 @@ class WPInv_Ajax {
                     $label,
                     $description,
                     ! empty( $address_field['required'] ),
-                    $wrap_class
+                    $wrap_class,
+                    wpinv_clean( $_GET['name'] )
                 );
 
                 wp_send_json_success( $html );
