@@ -39,14 +39,18 @@ class GetPaid_Checkout {
 		$items      = $this->get_submission_items();
 		$invoice    = $this->get_submission_invoice();
 		$invoice    = $this->process_submission_invoice( $invoice, $items );
-		$prepared   = $this->prepare_submission_data_for_saving( $invoice );
+		$prepared   = $this->prepare_submission_data_for_saving();
+
+		$this->prepare_billing_info( $invoice );
+
+		$shipping   = $this->prepare_shipping_info( $invoice );
 
 		// Save the invoice.
 		$invoice->recalculate_total();
         $invoice->save();
 
 		// Send to the gateway.
-		$this->post_process_submission( $invoice, $prepared );
+		$this->post_process_submission( $invoice, $prepared, $shipping );
 	}
 
 	/**
@@ -201,9 +205,9 @@ class GetPaid_Checkout {
 	/**
      * Prepares submission data for saving to the database.
      *
-	 * @param WPInv_Invoice $invoice
+	 * @return array
      */
-    public function prepare_submission_data_for_saving( &$invoice ) {
+    public function prepare_submission_data_for_saving() {
 
 		$submission = $this->payment_form_submission;
 
@@ -211,57 +215,103 @@ class GetPaid_Checkout {
         $prepared = array();
 
         // Raw submission details.
-		$data = $submission->get_data();
-		
-		// Loop throught the submitted details.
+		$data     = $submission->get_data();
+
+		// Loop through the submitted details.
         foreach ( $submission->get_payment_form()->get_elements() as $field ) {
 
 			// Skip premade fields.
-            if ( ! empty( $field['premade'] ) ) {
+            if ( ! empty( $field['premade'] ) || $field['type'] == 'address' ) {
                 continue;
             }
 
             // If it is required and not set, abort.
             if ( ! $submission->is_required_field_set( $field ) ) {
-                wp_send_json_error( __( 'Some required fields are not set.', 'invoicing' ) );
+                wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
             }
 
-            // Handle address fields.
-            if ( $field['type'] == 'address' ) {
-
-                foreach ( $field['fields'] as $address_field ) {
-
-                    // skip if it is not visible.
-                    if ( empty( $address_field['visible'] ) ) {
-                        continue;
-                    }
-
-                    // If it is required and not set, abort
-                    if ( ! empty( $address_field['required'] ) && empty( $data[ $address_field['name'] ] ) ) {
-                        wp_send_json_error( __( 'Some required fields are not set.', 'invoicing' ) );
-                    }
-
-                    if ( isset( $data[ $address_field['name'] ] ) ) {
-                        $name   = str_replace( 'wpinv_', '', $address_field['name'] );
-                        $method = "set_$name";
-                        $invoice->$method( wpinv_clean( $data[ $address_field['name'] ] ) );
-                    }
-
-                }
-
-            } else if ( isset( $data[ $field['id'] ] ) ) {
+            // Handle misc fields.
+            if ( isset( $data[ $field['id'] ] ) ) {
                 $label = $field['id'];
 
                 if ( isset( $field['label'] ) ) {
                     $label = $field['label'];
                 }
 
-                $prepared[ wpinv_clean( $label ) ] = wpinv_clean( $data[ $field['id'] ] );
+				$prepared[ wpinv_clean( $label ) ] = wp_kses_post( $data[ $field['id'] ] );
+
             }
 
 		}
-		
+
 		return $prepared;
+
+	}
+
+	/**
+     * Retrieves address details.
+     *
+	 * @return array
+	 * @param WPInv_Invoice $invoice
+	 * @param string $type
+     */
+    public function prepare_address_details( $invoice, $type = 'billing' ) {
+
+		$data     = $this->payment_form_submission->get_data();
+		$type     = sanitize_key( $type );
+		$address  = array();
+		$prepared = array();
+
+		if ( ! empty( $data[ $type ] ) ) {
+			$address = $data[ $type ];
+		}
+
+		// Clean address details.
+		foreach ( $address as $key => $value ) {
+			$key             = sanitize_key( $key );
+			$key             = str_replace( 'wpinv_', '', $key );
+			$value           = wpinv_clean( $value );
+			$prepared[ $key] = apply_filters( "getpaid_checkout_{$type}_address_$key", $value, $this->payment_form_submission, $invoice );
+		}
+
+		// Filter address details.
+		$prepared = apply_filters( "getpaid_checkout_{$type}_address", $prepared, $this->payment_form_submission, $invoice );
+
+		// Remove non-whitelisted values.
+		return array_filter( $prepared, 'getpaid_is_address_field_whitelisted', ARRAY_FILTER_USE_KEY );
+
+	}
+
+	/**
+     * Prepares the billing details.
+     *
+	 * @return array
+	 * @param WPInv_Invoice $invoice
+     */
+    protected function prepare_billing_info( &$invoice ) {
+
+		$billing_address = $this->prepare_address_details( $invoice, 'billing' );
+
+		// Update the invoice with the billing details.
+		$invoice->set_props( $billing_address );
+
+	}
+
+	/**
+     * Prepares the shipping details.
+     *
+	 * @return array
+	 * @param WPInv_Invoice $invoice
+     */
+    protected function prepare_shipping_info( $invoice ) {
+
+		$data = $this->payment_form_submission->get_data();
+
+		if ( empty( $data['same-shipping-address'] ) ) {
+			return $this->prepare_address_details( $invoice, 'shipping' );
+		}
+
+		return $this->prepare_address_details( $invoice, 'billing' );
 
 	}
 
@@ -270,17 +320,23 @@ class GetPaid_Checkout {
 	 *
 	 * @param WPInv_Invoice $invoice
 	 * @param array $prepared_payment_form_data
+	 * @param array $shipping
 	 */
-	protected function post_process_submission( $invoice, $prepared_payment_form_data ) {
+	protected function post_process_submission( $invoice, $prepared_payment_form_data, $shipping ) {
 
 		// Ensure the invoice exists.
         if ( ! $invoice->exists() ) {
-            wp_send_json_error( __( 'An error occured while saving your invoice.', 'invoicing' ) );
+            wp_send_json_error( __( 'An error occured while saving your invoice. Please try again.', 'invoicing' ) );
         }
 
         // Save payment form data.
         if ( ! empty( $prepared_payment_form_data ) ) {
             update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared_payment_form_data );
+		}
+
+		// Save payment form data.
+        if ( ! empty( $shipping ) ) {
+            update_post_meta( $invoice->get_id(), 'shipping_address', $shipping );
 		}
 
 		// Backwards compatibility.
@@ -300,18 +356,15 @@ class GetPaid_Checkout {
 	 */
 	protected function process_payment( $invoice ) {
 
-		$submission = $this->payment_form_submission;
+		// Clear any checkout errors.
+		wpinv_clear_errors();
 
 		// No need to send free invoices to the gateway.
 		if ( $invoice->is_free() ) {
-			$invoice->set_gateway( 'none' );
-			$invoice->add_note( __( "This is a free invoice and won't be sent to the payment gateway", 'invoicing' ), false, false, true );
-			$invoice->mark_paid();
-			wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+			$this->process_free_payment( $invoice );
 		}
 
-		// Clear any checkout errors.
-		wpinv_clear_errors();
+		$submission = $this->payment_form_submission;
 
 		// Fires before sending to the gateway.
 		do_action( 'getpaid_checkout_before_gateway', $invoice, $submission );
@@ -323,7 +376,7 @@ class GetPaid_Checkout {
 
 		// Validate the currency.
 		if ( ! apply_filters( "getpaid_gateway_{$submission_gateway}_is_valid_for_currency", true, $invoice->get_currency() ) ) {
-			wpinv_set_error( 'invalid_currency', __( 'The chosen payment gateway does not support the invoice currency', 'invoicing' ) );
+			wpinv_set_error( 'invalid_currency', __( 'The chosen payment gateway does not support this currency', 'invoicing' ) );
 		}
 
 		// Check to see if we have any errors.
@@ -336,6 +389,20 @@ class GetPaid_Checkout {
 
 		// Backwards compatibility.
 		wpinv_send_to_gateway( $submission_gateway, $invoice );
+
+	}
+
+	/**
+	 * Marks the invoice as paid in case the checkout is free.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 */
+	protected function process_free_payment( $invoice ) {
+
+		$invoice->set_gateway( 'none' );
+		$invoice->add_note( __( "This is a free invoice and won't be sent to the payment gateway", 'invoicing' ), false, false, true );
+		$invoice->mark_paid();
+		wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
 	}
 

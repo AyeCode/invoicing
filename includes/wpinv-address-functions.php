@@ -126,21 +126,32 @@ function getpaid_maybe_add_default_address( &$invoice ) {
  * @return array
  */
 function getpaid_user_address_fields() {
+
     return apply_filters(
         'getpaid_user_address_fields',
         array(
-            'first_name',
-            'last_name',
-            'company',
-            'vat_number',
-            'phone',
-            'address',
-            'city',
-            'state',
-            'country',
-            'zip'
+            'first_name' => __( 'First Name', 'invoicing' ),
+            'last_name'  => __( 'Last Name', 'invoicing' ),
+            'country'    => __( 'Country', 'invoicing' ),
+            'state'      => __( 'State', 'invoicing' ),
+            'city'       => __( 'City', 'invoicing' ),
+            'zip'        => __( 'Zip/Postal Code', 'invoicing' ),
+            'address'    => __( 'Address', 'invoicing' ),
+            'phone'      => __( 'Phone Number', 'invoicing' ),
+            'company'    => __( 'Company', 'invoicing' ),
+            'vat_number' => __( 'VAT Number', 'invoicing' ),
         )
     );
+
+}
+
+/**
+ * Checks whether or not an address field is whitelisted.
+ * 
+ * @return bool
+ */
+function getpaid_is_address_field_whitelisted( $key ) {
+    return array_key_exists( $key, getpaid_user_address_fields() );
 }
 
 /**
@@ -160,7 +171,7 @@ function getpaid_save_invoice_user_address( $invoice ) {
         return;
     }
 
-    foreach ( getpaid_user_address_fields() as $field ) {
+    foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
 
         if ( is_callable( array( $invoice, "get_$field" ) ) ) {
             $value = call_user_func( array( $invoice, "get_$field" ) );
@@ -202,7 +213,7 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         'email'   => $user_info->user_email,
     );
 
-    foreach ( getpaid_user_address_fields() as $field ) {
+    foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
         $address[$field] = getpaid_get_user_address_field( $user_id, $field );
     }
 
@@ -210,23 +221,15 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         return $address;
     }
 
-    if ( isset( $address['first_name'] ) && empty( $address['first_name'] ) ) {
-        $address['first_name'] = $user_info->first_name;
-    }
+    $defaults = array(
+        'first_name' => $user_info->first_name,
+        'last_name'  => $user_info->last_name,
+        'state'      => wpinv_get_default_state(),
+        'state'      => wpinv_get_default_country(),
+    );
 
-    if ( isset( $address['last_name'] ) && empty( $address['last_name'] ) ) {
-        $address['last_name'] = $user_info->last_name;
-    }
+    return getpaid_array_merge_if_empty( $address, $defaults );
 
-    if ( isset( $address['state'] ) && empty( $address['state'] ) ) {
-        $address['state'] = wpinv_get_default_state();
-    }
-
-    if ( isset( $address['country'] ) && empty( $address['country'] ) ) {
-        $address['country'] = wpinv_get_default_country();
-    }
-
-    return $address;
 }
 
 /**

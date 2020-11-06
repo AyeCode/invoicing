@@ -1601,7 +1601,7 @@ function getpaid_paginate_links( $args ) {
  * @param string state
  * @return string
  */
-function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12' ) {
+function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12', $field_name = 'wpinv_state' ) {
 
     $states = wpinv_get_country_states( $country );
     $uniqid = uniqid( '_' );
@@ -1610,8 +1610,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 
         return aui()->select( array(
             'options'          => $states,
-            'name'             => 'wpinv_state',
-            'id'               => 'wpinv_state' . $uniqid,
+            'name'             => esc_attr( $field_name ),
+            'id'               => sanitize_html_class( $field_name ) . $uniqid,
             'value'            => sanitize_text_field( $state ),
             'placeholder'      => $placeholder,
             'required'         => $required,
@@ -1627,8 +1627,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 
     return aui()->input(
         array(
-            'name'        => 'wpinv_state',
-            'id'          => 'wpinv_state' . $uniqid,
+            'name'        => esc_attr( $field_name ),
+            'id'          => sanitize_html_class( $field_name ) . $uniqid,
             'placeholder' => $placeholder,
             'required'    => $required,
             'label'       => wp_kses_post( $label ),

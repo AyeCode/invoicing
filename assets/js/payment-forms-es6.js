@@ -206,19 +206,22 @@ jQuery(function($) {
             },
 
             // Updates the state field.
-            update_state_field() {
+            update_state_field( wrapper ) {
+
+                wrapper = $( wrapper )
 
                 // Ensure that we have a state field.
-                if ( this.form.find( '.wpinv_state' ).length ) {
+                if ( wrapper.find( '.wpinv_state' ).length ) {
 
-                    var state = this.form.find( '.getpaid-address-field-wrapper__state' )
+                    var state = wrapper.find( '.getpaid-address-field-wrapper__state' )
 
                     wpinvBlock( state );
 
                     var data = {
                         action: 'wpinv_get_payment_form_states_field',
-                        country: this.form.find( '.wpinv_country' ).val(),
+                        country: wrapper.find( '.wpinv_country' ).val(),
                         form: this.form.find( 'input[name="form_id"]' ).val(),
+                        name: state.find( '.wpinv_state' ).attr( 'name' ),
                         _ajax_nonce: WPInv.formNonce
                     };
 
@@ -231,7 +234,7 @@ jQuery(function($) {
                     })
 
                     .always( () => {
-                        this.form.find( '.getpaid-address-field-wrapper__state' ).unblock()
+                        wrapper.find( '.getpaid-address-field-wrapper__state' ).unblock()
                     });
 
                 }
@@ -257,14 +260,19 @@ jQuery(function($) {
                 this.form.on( 'change', '.getpaid-item-quantity-input', on_field_change );
                 this.form.on( 'change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
 
+                // Update states when country changes.
+                this.form.on( 'change', '.getpaid-shipping-address-wrapper .wpinv_country', () => {
+                    this.update_state_field( '.getpaid-shipping-address-wrapper' )
+                } );
+
                 // Refresh when country changes.
-                this.form.on( 'change', '.wpinv_country', () => {
-                    this.update_state_field()
+                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_country', () => {
+                    this.update_state_field( '.getpaid-billing-address-wrapper' )
                     on_field_change()
                 } );
 
                 // Refresh when state changes.
-                this.form.on( 'change', '.wpinv_state', () => {
+                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state', () => {
                     on_field_change()
                 } );
 
@@ -401,7 +409,39 @@ jQuery(function($) {
                 // Trigger change event for selected method.
                 $( 'input', list ).filter( ':checked' ).trigger( 'change' );
 
-        })
+            })
+
+            },
+
+            // Handles toggling shipping address on and off.
+            handleAddressToggle( address_toggle ) {
+
+                var wrapper = address_toggle.closest( '.getpaid-payment-form-element-address' )
+
+                // Hide titles and shipping address.
+                wrapper.find( '.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper' ).addClass( 'd-none' )
+
+                address_toggle.on( 'change', function() {
+
+                    if ( $( this ).is(':checked') ) {
+
+                        // Hide titles and shipping address.
+                        wrapper.find( '.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper' ).addClass( 'd-none' )
+
+                        // Show general title.
+                        wrapper.find( '.getpaid-shipping-billing-address-title' ).removeClass( 'd-none' )
+
+                    } else {
+
+                        // Show titles and shipping address.
+                        wrapper.find( '.getpaid-billing-address-title, .getpaid-shipping-address-title, .getpaid-shipping-address-wrapper' ).removeClass( 'd-none' )
+
+                        // Hide general title.
+                        wrapper.find( '.getpaid-shipping-billing-address-title' ).addClass( 'd-none' )
+
+                    }
+
+                });
 
             },
 
@@ -414,6 +454,13 @@ jQuery(function($) {
 
                 // Hide billing email.
                 this.form.find( '.getpaid-payment-form-element-billing_email span.d-none' ).closest( '.col-12' ).addClass( 'd-none' )
+
+                // Handle shipping address.
+                var address_toggle = this.form.find( '[name ="same-shipping-address"]' )
+
+                if ( address_toggle.length > 0 ) {
+                    this.handleAddressToggle( address_toggle )
+                }
 
                 // Trigger setup event.
                 $( 'body' ).trigger( 'getpaid_setup_payment_form', [this.form] );

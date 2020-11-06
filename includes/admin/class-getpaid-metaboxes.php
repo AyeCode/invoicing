@@ -117,10 +117,16 @@ class GetPaid_Metaboxes {
 				'low'
 			);
 
+			// Shipping Address.
+			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'shipping_address', true ) ) {
+				add_meta_box( 'wpinv-invoice-shipping-details', __( 'Shipping Address', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Shipping_Address::output', $post_type, 'side', 'high' );
+			}
+
 			// Payment form information.
 			if ( ! empty( $post->ID ) && get_post_meta( $post->ID, 'payment_form_data', true ) ) {
 				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', $post_type, 'side', 'high' );
 			}
+
 		}
 
 		// For payment forms.
