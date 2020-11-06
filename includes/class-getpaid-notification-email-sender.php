@@ -42,7 +42,7 @@ class GetPaid_Notification_Email_Sender {
 			array(
 				'to'          => array_filter( array_unique( wpinv_parse_list( $to ) ) ),
 				'subject'     => htmlspecialchars_decode( strip_tags( $subject ), ENT_QUOTES ),
-				'email'       => $email,
+				'email'       => apply_filters( 'wpinv_mail_content', $email ),
 				'headers'     => $this->get_headers(),
 				'attachments' => $attachments,
 			),
