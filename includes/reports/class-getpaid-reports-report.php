@@ -13,11 +13,6 @@ defined( 'ABSPATH' ) || exit;
 class GetPaid_Reports_Report {
 
 	/**
-	 * @var string
-	 */
-	public $current_view;
-
-	/**
 	 * @var array
 	 */
 	public $views;
@@ -29,18 +24,20 @@ class GetPaid_Reports_Report {
 	public function __construct() {
 
 		$this->views        = array(
-            'earnings'   => __( 'Earnings', 'invoicing' ),
-            'items'      => __( 'Items', 'invoicing' ),
-            'gateways'   => __( 'Payment Methods', 'invoicing' ),
-            'taxes'      => __( 'Taxes', 'invoicing' ),
+
+            'items'     => array(
+				'label' => __( 'Items', 'invoicing' ),
+				'class' => 'GetPaid_Reports_Report_Items',
+			),
+
+			'gateways'  => array(
+				'label' => __( 'Payment Methods', 'invoicing' ),
+				'class' => 'GetPaid_Reports_Report_Gateways',
+			),
+
         );
 
 		$this->views        = apply_filters( 'wpinv_report_views', $this->views );
-		$this->current_view = 'earnings';
-
-		if ( isset( $_GET['view'] ) && array_key_exists( $_GET['view'], $this->views ) ) {
-			$this->current_view = sanitize_text_field( $_GET['view'] );
-		}
 
 	}
 
@@ -51,60 +48,61 @@ class GetPaid_Reports_Report {
 	public function display() {
 		?>
 
-			<form method="get" class="d-block mt-4 getpaid-change-view">
+		<div class="mt-4" style="max-width: 1200px;">
 
-				<?php
+			<div class="row">
+				<div class="col-12 col-md-8">
+					<?php echo $this->display_left(); ?>
+				</div>
 
-					getpaid_hidden_field( 'page', 'wpinv-reports' );
-					getpaid_hidden_field( 'tab', 'reports' );
+				<div class="col-12 col-md-4">
+					<?php echo $this->display_right(); ?>
+				</div>
+			</div>
 
-					echo aui()->select(
-						array(
-							'name'        => 'view',
-							'id'          => 'view' . uniqid( '_' ),
-							'placeholder' => __( 'Select a report', 'invoicing' ),
-							'label'       => __( 'Report Type', 'invoicing' ),
-							'options'     => $this->views,
-							'no_wrap'     => true,
-						)
-					);
-
-					echo "&nbsp;";
-
-					getpaid_submit_field( __( 'Show', 'invoicing' ), '', 'btn-secondary' );
-
-				?>
-
-	        </form>
+		</div>
 
 		<?php
-
-		$this->display_current_view();
 
 	}
 
 	/**
-	 * Displays a single reports view.
+	 * Displays the left side.
 	 *
 	 */
-	public function display_current_view() {
+	public function display_left() {
+		$earnings = new GetPaid_Reports_Report_Earnings();
+		$earnings->display();
+	}
 
-		$default_classes = array(
-			'earnings'   => 'GetPaid_Reports_Report_Earnings',
-			'items'      => 'GetPaid_Reports_Report_Items',
-			'gateways'   => 'GetPaid_Reports_Report_Gateways',
-			'taxes'      => 'GetPaid_Reports_Report_Taxes',
-		);
-		$class = 'GetPaid_Reports_Report_' . ucfirst( $this->current_view );
+	/**
+	 * Displays the right side.
+	 *
+	 */
+	public function display_right() {
 
-		if ( isset( $default_classes[ $this->current_view ] ) ) {
+		?>
 
-			$class = new $default_classes[ $this->current_view ]();
-			$class->display();
+			<?php foreach ( $this->views as $view ) : ?>
+				<div class="row mb-4">
+					<div class="col-12">
+						<div class="card m-0 p-0" style="max-width:100%">
+							<div class="card-header">
+								<strong><?php echo $view['label']; ?></strong>
+							</div>
+							<div class="card-body">
+								<?php
+									$class = $view['class'];
+									$class = new $class();
+									$class->display_stats();
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
 
-		}
-
-		do_action( 'wpinv_reports_tab' . $this->current_view );
+		<?php
 
 	}
 

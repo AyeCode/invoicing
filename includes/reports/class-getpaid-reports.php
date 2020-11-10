@@ -83,6 +83,9 @@ class GetPaid_Reports {
         </div>
 		<?php
 
+			wp_enqueue_script( 'chart-js', WPINV_PLUGIN_URL . 'assets/js/chart.bundle.min.js', array( 'jquery' ), '2.9.4', true );
+			wp_enqueue_style( 'chart-js', WPINV_PLUGIN_URL . 'assets/css/chart.min.css', array(), '2.9.4' );
+
 	}
 
 	/**
