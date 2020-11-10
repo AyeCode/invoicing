@@ -25,7 +25,14 @@ class GetPaid_Admin {
 	 *
 	 * @var         string
 	 */
-    public $admin_url;
+	public $admin_url;
+	
+	/**
+	 * Reports components.
+	 *
+	 * @var GetPaid_Reports
+	 */
+    public $reports;
 
     /**
 	 * Class constructor.
@@ -33,7 +40,8 @@ class GetPaid_Admin {
 	public function __construct(){
 
         $this->admin_path  = plugin_dir_path( __FILE__ );
-        $this->admin_url   = plugins_url( '/', __FILE__ );
+		$this->admin_url   = plugins_url( '/', __FILE__ );
+		$this->reports     = new GetPaid_Reports();
 
         if ( is_admin() ) {
 			$this->init_admin_hooks();
@@ -100,10 +108,6 @@ class GetPaid_Admin {
         if ( $page == 'wpinv-subscriptions' ) {
 			wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
 			wp_enqueue_script( 'wpinv-sub-admin-script' );
-		}
-
-		if ( $page == 'wpinv-reports' ) {
-			wp_enqueue_script( 'jquery-flot', WPINV_PLUGIN_URL . 'assets/js/jquery.flot.min.js', array( 'jquery' ), '0.7' );
 		}
 
 		if ( $page == 'wpinv-subscriptions' ) {

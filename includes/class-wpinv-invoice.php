@@ -592,10 +592,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	}
 
 	/**
-	 * @deprecated
+	 * Returns the post type name.
+	 *
+	 * @since 1.0.19
+	 * @return string
 	 */
 	public function get_invoice_quote_type() {
-        ucfirst( $this->get_type() );
+        return getpaid_get_post_type_label( $this->get_post_type(), false );
     }
 
     /**

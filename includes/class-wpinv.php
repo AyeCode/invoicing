@@ -95,7 +95,6 @@ class WPInv_Plugin {
 		$GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
 
 		// Init other objects.
-		$this->set( 'reports', new WPInv_Reports() ); // TODO: Refactor.
 		$this->set( 'session', new WPInv_Session_Handler() );
 		$this->set( 'notes', new WPInv_Notes() );
 		$this->set( 'api', new WPInv_API() );
@@ -225,7 +224,6 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session-handler.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-reports.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
@@ -308,6 +306,7 @@ class WPInv_Plugin {
 			"$plugin_path/includes/gateways",
 			"$plugin_path/includes/payments",
 			"$plugin_path/includes/geolocation",
+			"$plugin_path/includes/reports",
 			"$plugin_path/includes/api",
 			"$plugin_path/includes/admin",
 			"$plugin_path/includes/admin/meta-boxes",
