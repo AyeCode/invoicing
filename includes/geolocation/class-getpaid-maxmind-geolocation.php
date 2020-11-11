@@ -87,7 +87,7 @@ class GetPaid_MaxMind_Geolocation {
 			return $license_key;
 		}
 
-		$this->update_database( $tmp_database_path );
+		$this->update_database( /** @scrutinizer ignore-type */ $tmp_database_path );
 
 	}
 

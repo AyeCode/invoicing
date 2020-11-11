@@ -35,6 +35,11 @@ class GetPaid_Reports_Report {
 				'class' => 'GetPaid_Reports_Report_Gateways',
 			),
 
+			'discounts'  => array(
+				'label' => __( 'Discount Codes', 'invoicing' ),
+				'class' => 'GetPaid_Reports_Report_Discounts',
+			),
+
         );
 
 		$this->views        = apply_filters( 'wpinv_report_views', $this->views );

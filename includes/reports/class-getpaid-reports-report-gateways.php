@@ -95,7 +95,7 @@ class GetPaid_Reports_Report_Gateways extends GetPaid_Reports_Abstract_Report {
 	public function get_data() {
 
 		$data     = wp_list_pluck( $this->stats, 'total' );
-		$colors   = array( '#007bff','#28a745','#333333','#c3e6cb','#dc3545','#6c757d', '#00bcd4', '#00695C', '#03a9f4', '#2196f3', '#3f51b5', '#673ab7', '#9c27b0', '#e91e63', '#f44336', '#8bc34a', '#4caf50' );
+		$colors   = array( '#009688','#4caf50','#8bc34a','#00bcd4','#03a9f4','#2196f3' );
 
 		shuffle( $colors );
 

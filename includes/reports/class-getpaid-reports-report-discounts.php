@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains the class that displays the items report.
+ * Contains the class that displays the discounts report.
  *
  *
  */
@@ -8,37 +8,35 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * GetPaid_Reports_Report_Items Class.
+ * GetPaid_Reports_Report_Discounts Class.
  */
-class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
+class GetPaid_Reports_Report_Discounts extends GetPaid_Reports_Abstract_Report {
 
 	/**
-	 * Retrieves the earning sql.
+	 * Retrieves the discounts sql.
 	 *
 	 */
 	public function get_sql( $range ) {
 		global $wpdb;
 
 		$table      = $wpdb->prefix . 'getpaid_invoices';
-		$table2     = $wpdb->prefix . 'getpaid_invoice_items';
 		$clauses    = $this->get_range_sql( $range );
 
 		$sql        = "SELECT
-				item.item_name AS item_name,
-				item.item_id AS item_id,
-				SUM(price) as total
+				meta.discount_code AS discount_code,
+				SUM(total) as total
             FROM $wpdb->posts
             LEFT JOIN $table as meta ON meta.post_id = $wpdb->posts.ID
-				INNER JOIN $table2 as item ON item.post_id = wp_posts.ID
             WHERE meta.post_id IS NOT NULL
+				AND meta.discount_code != ''
                 AND $wpdb->posts.post_type = 'wpi_invoice'
                 AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'wpi-renewal' )
                 AND {$clauses[1]}
-            GROUP BY item_id
+            GROUP BY discount_code
 			ORDER BY total DESC
         ";
 
-		return apply_filters( 'getpaid_items_graphs_get_sql', $sql, $range );
+		return apply_filters( 'getpaid_discounts_graphs_get_sql', $sql, $range );
 
 	}
 
@@ -70,8 +68,8 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 			} else {
 
 				$normalized[] = array(
-					'total'     => wpinv_round_amount( wpinv_sanitize_amount( $stat->total ) ),
-					'item_name' => strip_tags( $stat->item_name ),
+					'total'         => wpinv_round_amount( wpinv_sanitize_amount( $stat->total ) ),
+					'discount_code' => strip_tags( $stat->discount_code ),
 				);
 
 			}
@@ -82,8 +80,8 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 		if ( $others > 0 ) {
 
 			$normalized[] = array(
-				'total'     => wpinv_round_amount( wpinv_sanitize_amount( $others ) ),
-				'item_name' => esc_html__( 'Others', 'invoicing' ),
+				'total'         => wpinv_round_amount( wpinv_sanitize_amount( $others ) ),
+				'discount_code' => esc_html__( 'Others', 'invoicing' ),
 			);
 
 		}
@@ -114,7 +112,7 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 	 *
 	 */
 	public function get_labels() {
-		return wp_list_pluck( $this->stats, 'item_name' );
+		return wp_list_pluck( $this->stats, 'discount_code' );
 	}
 
 	/**
@@ -124,12 +122,12 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 	public function display_stats() {
 		?>
 
-			<canvas id="getpaid-chartjs-earnings-items"></canvas>
+			<canvas id="getpaid-chartjs-earnings-discount_code"></canvas>
 
 			<script>
 				window.addEventListener( 'DOMContentLoaded', function() {
 
-					var ctx = document.getElementById( 'getpaid-chartjs-earnings-items' ).getContext('2d');
+					var ctx = document.getElementById( 'getpaid-chartjs-earnings-discount_code' ).getContext('2d');
 					new Chart(
 						ctx,
 						{
