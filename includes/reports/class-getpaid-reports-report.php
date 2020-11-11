@@ -81,6 +81,26 @@ class GetPaid_Reports_Report {
 	}
 
 	/**
+	 * Retrieves the download url.
+	 *
+	 */
+	public function get_download_url( $graph, $file_type) {
+
+		return wp_nonce_url(
+			add_query_arg(
+				array(
+					'getpaid-admin-action' => 'download_graph',
+					'file_type'            => urlencode( $file_type ),
+					'graph'                => urlencode( $graph ),
+				)
+			),
+			'getpaid-nonce',
+			'getpaid-nonce'
+		);
+
+	}
+
+	/**
 	 * Displays the right side.
 	 *
 	 */
@@ -88,12 +108,30 @@ class GetPaid_Reports_Report {
 
 		?>
 
-			<?php foreach ( $this->views as $view ) : ?>
+			<?php foreach ( $this->views as $key => $view ) : ?>
 				<div class="row mb-4">
 					<div class="col-12">
 						<div class="card m-0 p-0" style="max-width:100%">
 							<div class="card-header">
-								<strong><?php echo $view['label']; ?></strong>
+								<div class="row">
+									<div class="col-9">
+										<strong><?php echo $view['label']; ?></strong>
+									</div>
+									<div class="col-3">
+										<a title="<?php esc_attr_e( 'Download JSON', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'json' ) ); ?>">
+											<i class="fa fa-download text-dark" style="font-size: 16px" aria-hidden="true"></i>
+											<span class="screen-reader-text"><?php _e( 'Download JSON', 'invoicing' ); ?></span>
+										</a>
+										<a title="<?php esc_attr_e( 'Download CSV', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'csv' ) ); ?>">
+											<i class="fa fa-file-csv text-dark" style="font-size: 16px" aria-hidden="true"></i>
+											<span class="screen-reader-text"><?php _e( 'Download CSV', 'invoicing' ); ?></span>
+										</a>
+										<a title="<?php esc_attr_e( 'Download XML', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'xml' ) ); ?>">
+											<i class="fa fa-file-code text-dark" style="font-size: 16px" aria-hidden="true"></i>
+											<span class="screen-reader-text"><?php _e( 'Download XML', 'invoicing' ); ?></span>
+										</a>
+									</div>
+								</div>
 							</div>
 							<div class="card-body">
 								<?php

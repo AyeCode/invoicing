@@ -13,6 +13,11 @@ defined( 'ABSPATH' ) || exit;
 class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 
 	/**
+	 * @var string
+	 */
+	public $field = 'item_name';
+
+	/**
 	 * Retrieves the earning sql.
 	 *
 	 */

@@ -13,6 +13,11 @@ defined( 'ABSPATH' ) || exit;
 class GetPaid_Reports_Report_Discounts extends GetPaid_Reports_Abstract_Report {
 
 	/**
+	 * @var string
+	 */
+	public $field = 'discount_code';
+
+	/**
 	 * Retrieves the discounts sql.
 	 *
 	 */

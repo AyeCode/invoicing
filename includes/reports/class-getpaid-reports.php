@@ -20,6 +20,7 @@ class GetPaid_Reports {
 		add_action( 'admin_menu', array( $this, 'register_reports_page' ), 20 );
 		add_action( 'wpinv_reports_tab_reports', array( $this, 'display_reports_tab' ) );
 		add_action( 'wpinv_reports_tab_export', array( $this, 'display_exports_tab' ) );
+		add_action( 'getpaid_authenticated_admin_action_download_graph', array( $this, 'download_graph' ) );
 	}
 
 	/**
@@ -122,6 +123,20 @@ class GetPaid_Reports {
 
 		$exports = new GetPaid_Reports_Export();
 		$exports->display();
+
+	}
+
+	/**
+	 * Donwnloads a graph.
+	 *
+	 * @param array $args
+	 */
+	public function download_graph( $args ) {
+
+		if ( ! empty( $args['graph'] ) ) {
+			$downloader = new GetPaid_Graph_Downloader();
+			$downloader->download( $args['graph'] );
+		}
 
 	}
 
