@@ -1154,3 +1154,22 @@ function getpaid_ip_location_url() {}
  * @deprecated
  */
 function getpaid_geolocate_ip_address() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_validate_url_token() {
+    return false;
+}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_item_token() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_item_in_cart() {
+    return false;
+}

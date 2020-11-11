@@ -1163,46 +1163,8 @@ class WPInv_Item  extends GetPaid_Data {
 	/**
 	 * Returns an array of cart fees.
 	 */
-	public function get_fees( $type = 'fee', $item_id = 0 ) {
-        
-        $fees = getpaid_session()->get( 'wpi_cart_fees' );
-
-        if ( ! wpinv_get_cart_contents() ) {
-            // We can only get item type fees when the cart is empty
-            $type = 'custom';
-        }
-
-        if ( ! empty( $fees ) && ! empty( $type ) && 'all' !== $type ) {
-            foreach( $fees as $key => $fee ) {
-                if( ! empty( $fee['type'] ) && $type != $fee['type'] ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        if ( ! empty( $fees ) && ! empty( $item_id ) ) {
-            // Remove fees that don't belong to the specified Item
-            foreach ( $fees as $key => $fee ) {
-                if ( (int) $item_id !== (int)$fee['custom_id'] ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        if ( ! empty( $fees ) ) {
-            // Remove fees that belong to a specific item but are not in the cart
-            foreach( $fees as $key => $fee ) {
-                if( empty( $fee['custom_id'] ) ) {
-                    continue;
-                }
-
-                if ( !wpinv_item_in_cart( $fee['custom_id'] ) ) {
-                    unset( $fees[ $key ] );
-                }
-            }
-        }
-
-        return ! empty( $fees ) ? $fees : array();
+	public function get_fees() {
+        return array();
     }
 
     /**

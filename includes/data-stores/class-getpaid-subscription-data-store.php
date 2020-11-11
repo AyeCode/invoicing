@@ -139,7 +139,7 @@ class GetPaid_Subscription_Data_Store {
 
 		$changes = $subscription->get_changes();
 		$values  = array();
-		$format  = array();
+		$formats = array();
 
 		foreach ( $this->database_fields_to_data_type as $key => $format ) {
 			if ( array_key_exists( $key, $changes ) ) {

@@ -797,6 +797,7 @@ class WPInv_EUVat {
         $vat            = self::sanitize_vat( $vat_number, $country_code );
         $vat_number     = $vat['vat'];
         $iso            = $vat['iso'];
+        $response       = false;
 
         $url = 'http://ec.europa.eu/taxation_customs/vies/viesquer.do?ms=' . urlencode( $iso ) . '&iso=' . urlencode( $iso ) . '&vat=' . urlencode( $vat_number );
 

@@ -107,7 +107,7 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 			);
 		}
 
-		return apply_filters( 'getpaid_earning_graphs_get_datasets', $datasets, $key, $labels );
+		return apply_filters( 'getpaid_earning_graphs_get_datasets', $datasets, $labels );
 	}
 
 	/**

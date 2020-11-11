@@ -106,6 +106,8 @@ class GetPaid_MaxMind_Database_Service {
 	protected function extract_downloaded_database( $tmp_archive_path ) {
 
 		// Extract the database from the archive.
+		$tmp_database_path = '';
+
 		try {
 
 			$file              = new PharData( $tmp_archive_path );
