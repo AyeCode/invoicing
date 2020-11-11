@@ -84,7 +84,7 @@ class GetPaid_Reports_Report {
 	 * Retrieves the download url.
 	 *
 	 */
-	public function get_download_url( $graph, $file_type) {
+	public function get_download_url( $graph, $file_type ) {
 
 		return wp_nonce_url(
 			add_query_arg(

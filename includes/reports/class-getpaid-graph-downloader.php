@@ -63,8 +63,8 @@ class GetPaid_Graph_Downloader {
 	 */
 	public function prepare_file_type( $graph ) {
 
-		$file_type = empty( $_GET['file_type'] ) ? 'csv' : sanitize_text_field( $_GET['file_type'] );
-		$file_name = "getpaid-$graph-" . current_time( 'Y-m-d' );
+		$file_type = empty( $_REQUEST['file_type'] ) ? 'csv' : sanitize_text_field( $_REQUEST['file_type'] );
+		$file_name = wpinv_sanitize_key( "getpaid-$graph-" . current_time( 'Y-m-d' ) );
 
 		header( "Content-Type:application/$file_type" );
 		header( "Content-Disposition:attachment;filename=$file_name.$file_type" );
@@ -113,6 +113,7 @@ class GetPaid_Graph_Downloader {
 		// Loop through 
 		foreach ( $stats as $stat ) {
 			$row  = array_values( $this->prepare_row( $stat, $headers ) );
+			$row  = array_map( 'maybe_serialize', $row );
 			fputcsv( $stream, $row );
 		}
 

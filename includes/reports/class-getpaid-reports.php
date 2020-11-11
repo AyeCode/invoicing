@@ -21,6 +21,8 @@ class GetPaid_Reports {
 		add_action( 'wpinv_reports_tab_reports', array( $this, 'display_reports_tab' ) );
 		add_action( 'wpinv_reports_tab_export', array( $this, 'display_exports_tab' ) );
 		add_action( 'getpaid_authenticated_admin_action_download_graph', array( $this, 'download_graph' ) );
+		add_action( 'getpaid_authenticated_admin_action_export_invoices', array( $this, 'export_invoices' ) );
+
 	}
 
 	/**
@@ -136,6 +138,20 @@ class GetPaid_Reports {
 		if ( ! empty( $args['graph'] ) ) {
 			$downloader = new GetPaid_Graph_Downloader();
 			$downloader->download( $args['graph'] );
+		}
+
+	}
+
+	/**
+	 * Exports invoices.
+	 *
+	 * @param array $args
+	 */
+	public function export_invoices( $args ) {
+
+		if ( ! empty( $args['post_type'] ) ) {
+			$downloader = new GetPaid_Invoice_Exporter();
+			$downloader->export( $args['post_type'], $args );
 		}
 
 	}
