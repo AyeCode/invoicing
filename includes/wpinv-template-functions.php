@@ -650,16 +650,6 @@ function wpinv_html_text( $args = array() ) {
     return $output;
 }
 
-function wpinv_html_date_field( $args = array() ) {
-    if( empty( $args['class'] ) ) {
-        $args['class'] = 'wpiDatepicker';
-    } elseif( ! strpos( $args['class'], 'wpiDatepicker' ) ) {
-        $args['class'] .= ' wpiDatepicker';
-    }
-
-    return wpinv_html_text( $args );
-}
-
 function wpinv_html_textarea( $args = array() ) {
     $defaults = array(
         'name'        => 'textarea',

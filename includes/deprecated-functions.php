@@ -1173,3 +1173,9 @@ function wpinv_get_item_token() {}
 function wpinv_item_in_cart() {
     return false;
 }
+
+/**
+ * @deprecated
+ */
+function wpinv_html_date_field() {}
+

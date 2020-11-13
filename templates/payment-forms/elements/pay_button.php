@@ -13,6 +13,8 @@ $class = empty( $class ) ? 'btn-primary' : sanitize_html_class( $class );
 $label = empty( $label ) ? esc_attr__( 'Pay %price% »', 'invoicing' ) : esc_attr( $label );
 $free  = empty( $free ) ? esc_attr__( 'Continue »', 'invoicing' ) : esc_attr( $free );
 
+do_action( 'getpaid_before_payment_form_pay_button', $form );
+
 echo aui()->input(
     array(
         'name'             => esc_attr( $id ),
@@ -27,3 +29,5 @@ echo aui()->input(
         )
     )
 );
+
+do_action( 'getpaid_after_payment_form_pay_button', $form );

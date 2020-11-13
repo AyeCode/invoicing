@@ -88,29 +88,10 @@ jQuery(function($) {
         }
     }
 
-    // Init date pickers.
-    $( '.wpiDatepicker' ).each( function(e) {
+    // Init item selector.
+    $( '.getpaid-ajax-item-selector' ).each( function() {
         var el = $( this );
-        var args = {};
-
-        // Prepare args
-        if ( el.attr('data-changeMonth')) {
-            args.changeMonth = true;
-        }
-
-        if (el.attr('data-changeYear')) {
-            args.changeYear = true;
-        }
-
-        if (el.attr('data-dateFormat')) {
-            args.dateFormat = el.attr('data-dateformat');
-        }
-
-        if (el.attr('data-minDate')) {
-            args.minDate = el.attr('data-minDate');
-        }
-
-        $(this).datepicker(args);
+        getpaid.init_select2_item_search( el, $(el).parent() )
     });
 
     // returns a random string

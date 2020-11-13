@@ -25,6 +25,8 @@ foreach ( $fields as $address_field ) {
         continue;
     }
 
+    do_action( 'getpaid_payment_form_address_field_before_' . $address_field['name'], $field_type, $address_field );
+
     // Prepare variables.
     $field_name  = $address_field['name'];
     $field_name  = "{$field_type}[$field_name]";
@@ -58,12 +60,11 @@ foreach ( $fields as $address_field ) {
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__country',
             )
         );
-        continue;
 
     }
 
     // Display the state.
-    if ( 'wpinv_state' == $address_field['name'] ) {
+    else if ( 'wpinv_state' == $address_field['name'] ) {
 
         if ( empty( $value ) ) {
             $value = wpinv_get_default_state();
@@ -80,28 +81,30 @@ foreach ( $fields as $address_field ) {
             $field_name
         );
 
-        continue;
+    } else {
+
+        $key = str_replace( 'wpinv_', '', $address_field['name'] );
+        $key = esc_attr( str_replace( '_', '-', $key ) );
+        echo aui()->input(
+            array(
+                'name'        => esc_attr( $field_name ),
+                'id'          => sanitize_html_class( $field_name ) . $uniqid,
+                'required'    => ! empty( $address_field['required'] ),
+                'placeholder' => $placeholder,
+                'label'       => wp_kses_post( $label ),
+                'label_type'  => 'vertical',
+                'help_text'   => $description,
+                'type'        => 'text',
+                'value'       => sanitize_text_field( $value ),
+                'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
+                'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__$key",
+                'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
+            )
+        );
+
     }
 
-    $key = str_replace( 'wpinv_', '', $address_field['name'] );
-    $key = esc_attr( str_replace( '_', '-', $key ) );
-    echo aui()->input(
-        array(
-            'name'        => esc_attr( $field_name ),
-            'id'          => sanitize_html_class( $field_name ) . $uniqid,
-            'required'    => ! empty( $address_field['required'] ),
-            'placeholder' => $placeholder,
-            'label'       => wp_kses_post( $label ),
-            'label_type'  => 'vertical',
-            'help_text'   => $description,
-            'type'        => 'text',
-            'value'       => sanitize_text_field( $value ),
-            'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
-            'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__$key",
-            'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
-        )
-    );
-
+    do_action( 'getpaid_payment_form_address_field_after_' . $address_field['name'], $field_type, $address_field );
 }
 
 echo "</div>";

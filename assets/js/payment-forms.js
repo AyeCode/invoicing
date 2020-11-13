@@ -191,7 +191,7 @@ jQuery(function ($) {
                     that.refresh_state();
                 }, 500); // Refresh prices.
 
-                this.form.on('input', '.getpaid-refresh-on-change', on_field_change);
+                this.form.on('change', '.getpaid-refresh-on-change', on_field_change);
                 this.form.on('input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change);
                 this.form.on('input', '.getpaid-item-price-input', on_field_change);
                 this.form.on('change', '.getpaid-item-quantity-input', on_field_change);

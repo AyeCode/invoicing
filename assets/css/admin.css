@@ -1417,97 +1417,10 @@ body.wpi-wpinv-settings .wp-picker-holder,
 textarea.wpi-email_overdue_content {
     width: 100%;
 }
-/* Export */
-.wpi-reports-export {
-    padding-top: 10px;
-}
-.wpi-export-invoices form > span {
-    margin-right: 5px;
-}
-.wpi-export-invoices form > span > select {
-    vertical-align: inherit;
-}
-.wpi-reports-export .wpiDatepicker {
-    width: 12em;
-}
-.wpi-export-form {
-    position: relative;
-}
+
 #wpinv-submit-wrap [type="submit"] {
     vertical-align: top;
     line-height: normal;
-}
-.wpi-export-form .wpi-progress {
-    width: calc(100% - 50px);
-    height: 16px;
-    background-color: #ddd;
-    float: left;
-    position: relative;
-}
-.wpi-export-form .wpi-progress div {
-    background-color: orange;
-    height: 100%;
-    width: 0;
-    display: block
-}
-.wpi-export-form .wpi-progress > span {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    display: block;
-    font-size: 13px;
-    line-height: 14px;
-    text-align: center;
-    vertical-align: top;
-    top: 0;
-}
-.wpi-export-form .wpi-msg-wrap {
-    padding: 12px;
-    background-color: #f4f4f4;
-    border-style: solid;
-    border-width: 1px 0;
-    border-color: #eae9e9;
-    overflow: auto;
-    margin: 20px -12px -23px;
-    position: relative;
-}
-.wpi-export-form .wpi-msg-wrap .wpi-export-loader {
-    display: inline-block;
-    float: right;
-    margin: 0;
-    vertical-align: middle;
-    width: 40px;
-    height: 16px;
-    text-align: center;
-}
-.wpi-export-form .wpi-export-loader .fa {
-    font-size: 17px;
-    color: orange;
-}
-.wpi-export-form .wpi-export-loader .fa-spin {
-    color: #000;
-}
-.wpi-msg-wrap .updated {
-    margin: 0 0 2px 0 !important;
-}
-.wpi-export-file {
-    display: block;
-    padding-top: 7px;
-    clear: both;
-    display: block;
-}
-.wpi-export-file a {
-    text-decoration: none;
-}
-#wpinv-details #wpinv_discount {
-    display: inline-block;
-    width: 120px;
-    text-align: center;
-}
-#wpinv-details #wpinv-apply-code,
-#wpinv-details #wpinv-remove-code {
-    display: inline-block;
-    margin: 2px 0 0 10px;
 }
 .wpi-hide {
     display: none!important
