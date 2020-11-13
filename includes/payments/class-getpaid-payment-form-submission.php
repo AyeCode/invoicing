@@ -328,7 +328,7 @@ class GetPaid_Payment_Form_Submission {
 	public function add_item( $item ) {
 
 		// Make sure that it is available for purchase.
-		if ( ! $item->can_purchase() ) {
+		if ( ! $item->can_purchase() || isset( $this->items[ $item->get_id() ] ) ) {
 			return;
 		}
 
