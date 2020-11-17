@@ -272,12 +272,56 @@ return array(
                     'name' => '<h3>' . __( 'Tax Settings', 'invoicing' ) . '</h3>',
                     'type' => 'header',
                 ),
+
                 'enable_taxes' => array(
-                    'id'   => 'enable_taxes',
-                    'name' => __( 'Enable Taxes', 'invoicing' ),
-                    'desc' => __( 'Check this to enable taxes on invoices.', 'invoicing' ),
-                    'type' => 'checkbox',
+                    'id'       => 'enable_taxes',
+                    'name'     => __( 'Enable Taxes', 'invoicing' ),
+                    'desc'     => __( 'Enable tax rates and calculations.', 'invoicing' ),
+                    'type'     => 'checkbox',
+                    'std'      => 0,
                 ),
+
+                'tax_subtotal_rounding' => array(
+                    'id'                => 'tax_subtotal_rounding',
+                    'name'              => __( 'Rounding', 'invoicing' ),
+                    'desc'              => __( 'Round tax at subtotal level, instead of rounding per tax rate', 'invoicing' ),
+                    'type'              => 'checkbox',
+                    'std'               => 1,
+                ),
+
+                'prices_include_tax' => array(
+                    'id'      => 'prices_include_tax',
+                    'name'    => __( 'Prices entered with tax', 'invoicing' ),
+                    'options' => array(
+                        'yes' => __( 'Yes, I will enter prices inclusive of tax', 'invoicing' ),
+                        'no'  => __( 'No, I will enter prices exclusive of tax', 'invoicing' ),
+                    ),
+                    'type'    => 'select',
+                    'std'     => 'no',
+                ),
+
+                'tax_base'              => array(
+                    'id'                => 'tax_base',
+                    'name'              => __( 'Calculate tax based on', 'invoicing' ),
+                    'options'           => array(
+                        'billing'       => __( 'Customer billing address', 'invoicing' ),
+                        'base'          => __( 'Shop base address', 'invoicing' ),
+                    ),
+                    'type'              => 'select',
+                    'std'               => 'billing',
+                ),
+
+                'tax_display_totals'    => array(
+                    'id'                => 'tax_display_totals',
+                    'name'              => __( 'Display tax totals', 'invoicing' ),
+                    'options'           => array(
+                        'single'        => __( 'As a single total', 'invoicing' ),
+                        'individual'    => __( 'As individual tax rates', 'invoicing' ),
+                    ),
+                    'type'              => 'select',
+                    'std'               => 'individual',
+                ),
+
                 'tax_rate' => array(
                     'id'   => 'tax_rate',
                     'name' => __( 'Fallback Tax Rate', 'invoicing' ),

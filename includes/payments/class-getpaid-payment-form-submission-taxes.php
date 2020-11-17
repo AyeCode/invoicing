@@ -18,18 +18,6 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 */
 	public $taxes = array();
 
-	/**
-	 * Initial tax.
-	 * @var float
-	 */
-	protected $initial_tax = 0;
-
-	/**
-	 * Recurring tax.
-	 * @var float
-	 */
-	protected $recurring_tax = 0;
-
     /**
 	 * Class constructor
 	 *
@@ -46,15 +34,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		// Process any existing invoice taxes.
 		if ( $submission->has_invoice() ) {
-			$this->taxes = $submission->get_invoice()->get_taxes();
+			$this->taxes = array_replace( $submission->get_invoice()->get_taxes(), $this->taxes );
 		}
-
-		// Add VAT.
-		$this->taxes['vat'] = array(
-			'name'          => 'vat',
-			'initial_tax'   => $this->initial_tax,
-			'recurring_tax' => $this->recurring_tax,
-		);
 
 	}
 
@@ -67,18 +48,22 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 */
 	public function process_item_tax( $item, $submission ) {
 
-		$rate     = wpinv_get_tax_rate( $submission->country, $submission->state, $item->get_id() );
-		$price    = $item->get_sub_total();
-		$item_tax = $price * $rate * 0.01;
+		$rates    = getpaid_get_item_tax_rates( $item, $submission->country, $submission->state );
+		$taxes    = getpaid_calculate_item_taxes( $item->get_sub_total(), $rates );
+		$r_taxes  = getpaid_calculate_item_taxes( $item->get_recurring_sub_total(), $rates );
 
-		if ( wpinv_prices_include_tax() ) {
-			$item_tax = $price - ( $price - $price * $rate * 0.01 );
-		}
+		foreach ( $taxes as $name => $amount ) {
+			$recurring = isset( $r_taxes[ $name ] ) ? $r_taxes[ $name ] : 0;
+			$tax       = getpaid_prepare_item_tax( $item, $name, $amount, $recurring );
 
-		$this->initial_tax += $item_tax;
+			if ( ! isset( $this->taxes[ $name ] ) ) {
+				$this->taxes[ $name ] = $tax;
+				continue;
+			}
 
-		if ( $item->is_recurring() ) {
-			$this->recurring_tax += $item_tax;
+			$this->taxes[ $name ]['initial_tax']   += $tax['initial_tax'];
+			$this->taxes[ $name ]['recurring_tax'] += $tax['recurring_tax'];
+
 		}
 
 	}

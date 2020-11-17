@@ -11,6 +11,9 @@ if ( !defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
+/**
+ * This class is used to migrate invoices to the new store.
+ */
 final class WPInv_Legacy_Invoice {
 
     /**
@@ -304,17 +307,9 @@ final class WPInv_Legacy_Invoice {
     private function setup_invoice( $invoice_id ) {
         $this->pending = array();
 
-        if ( empty( $invoice_id ) ) {
-            return false;
-        }
-
         $invoice = get_post( $invoice_id );
 
-        if( !$invoice || is_wp_error( $invoice ) ) {
-            return false;
-        }
-
-        if( !('wpi_invoice' == $invoice->post_type OR 'wpi_quote' == $invoice->post_type) ) {
+        if ( ! $invoice || is_wp_error( $invoice ) ) {
             return false;
         }
 
@@ -339,7 +334,7 @@ final class WPInv_Legacy_Invoice {
         $this->mode            = $this->setup_mode();
         $this->parent_invoice  = $invoice->post_parent;
         $this->post_name       = $this->setup_post_name( $invoice );
-        $this->status_nicename = $this->setup_status_nicename($invoice->post_status);
+        $this->status_nicename = $this->setup_status_nicename( $invoice->post_status );
 
         // Items
         $this->fees            = $this->setup_fees();
@@ -397,32 +392,11 @@ final class WPInv_Legacy_Invoice {
     }
 
     private function setup_status_nicename( $status ) {
-        $all_invoice_statuses  = wpinv_get_invoice_statuses( true, true, $this );
-
-        if ( $this->is_quote() && class_exists( 'Wpinv_Quotes_Shared' ) ) {
-            $all_invoice_statuses  = Wpinv_Quotes_Shared::wpinv_get_quote_statuses();
-        }
-        $status   = isset( $all_invoice_statuses[$status] ) ? $all_invoice_statuses[$status] : __( $status, 'invoicing' );
-
-        return apply_filters( 'setup_status_nicename', $status );
+        return $status;
     }
 
-    private function setup_post_name( $post = NULL ) {
-        global $wpdb;
-        
-        $post_name = '';
-        
-        if ( !empty( $post ) ) {
-            if( !empty( $post->post_name ) ) {
-                $post_name = $post->post_name;
-            } else if ( !empty( $post->ID ) ) {
-                $post_name = wpinv_generate_post_name( $post->ID );
-
-                $wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
-            }
-        }
-
-        $this->post_name = $post_name;
+    private function setup_post_name( $post ) {
+        $this->post_name = $post->post_name;
     }
     
     private function setup_due_date() {
@@ -1000,36 +974,7 @@ final class WPInv_Legacy_Invoice {
         $this->save();
     }
 
-    public function update_meta( $meta_key = '', $meta_value = '', $prev_value = '' ) {
-        if ( empty( $meta_key ) ) {
-            return false;
-        }
-
-        if ( $meta_key == 'key' || $meta_key == 'date' ) {
-            $current_meta = $this->get_meta();
-            $current_meta[ $meta_key ] = $meta_value;
-
-            $meta_key     = '_wpinv_payment_meta';
-            $meta_value   = $current_meta;
-        }
-
-        $meta_value = apply_filters( 'wpinv_update_payment_meta_' . $meta_key, $meta_value, $this->ID );
-        
-        // Do not update created date on invoice marked as paid.
-        /*if ( $meta_key == '_wpinv_completed_date' && !empty( $meta_value ) ) {
-            $args = array(
-                'ID'                => $this->ID,
-                'post_date'         => $meta_value,
-                'edit_date'         => true,
-                'post_date_gmt'     => get_gmt_from_date( $meta_value ),
-                'post_modified'     => $meta_value,
-                'post_modified_gmt' => get_gmt_from_date( $meta_value )
-            );
-            wp_update_post( $args );
-        }*/
-        
-        return update_post_meta( $this->ID, $meta_key, $meta_value, $prev_value );
-    }
+    public function update_meta() {}
 
     // get data
     public function get_meta( $meta_key = '_wpinv_payment_meta', $single = true ) {
@@ -1093,91 +1038,12 @@ final class WPInv_Legacy_Invoice {
         if ( $currency ) {
             $total = wpinv_price( wpinv_format_amount( $total, NULL, !$currency ), $this->get_currency() );
         }
-        
+
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
     }
-    
-    public function get_recurring_details( $field = '', $currency = false ) {        
-        $data                 = array();
-        $data['cart_details'] = $this->cart_details;
-        $data['subtotal']     = $this->get_subtotal();
-        $data['discount']     = $this->get_discount();
-        $data['tax']          = $this->get_tax();
-        $data['total']        = $this->get_total();
-    
-        if ( !empty( $this->cart_details ) && ( $this->is_parent() || $this->is_renewal() ) ) {
-            $is_free_trial = $this->is_free_trial();
-            $discounts = $this->get_discounts( true );
-            
-            if ( $is_free_trial || !empty( $discounts ) ) {
-                $first_use_only = false;
-                
-                if ( !empty( $discounts ) ) {
-                    foreach ( $discounts as $key => $code ) {
-                        if ( wpinv_discount_is_recurring( $code, true ) && !$this->is_renewal() ) {
-                            $first_use_only = true;
-                            break;
-                        }
-                    }
-                }
-                    
-                if ( !$first_use_only ) {
-                    $data['subtotal'] = wpinv_round_amount( $this->subtotal );
-                    $data['discount'] = wpinv_round_amount( $this->discount );
-                    $data['tax']      = wpinv_round_amount( $this->tax );
-                    $data['total']    = wpinv_round_amount( $this->total );
-                } else {
-                    $cart_subtotal   = 0;
-                    $cart_discount   = $this->discount;
-                    $cart_tax        = 0;
 
-                    foreach ( $this->cart_details as $key => $item ) {
-                        $item_quantity  = $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                        $item_subtotal  = !empty( $item['subtotal'] ) ? $item['subtotal'] : $item['item_price'] * $item_quantity;
-                        $item_discount  = 0;
-                        $item_tax       = $item_subtotal > 0 && !empty( $item['vat_rate'] ) ? ( $item_subtotal * 0.01 * (float)$item['vat_rate'] ) : 0;
-                        
-                        if ( wpinv_prices_include_tax() ) {
-                            $item_subtotal -= wpinv_round_amount( $item_tax );
-                        }
-                        
-                        $item_total     = $item_subtotal - $item_discount + $item_tax;
-                        // Do not allow totals to go negative
-                        if ( $item_total < 0 ) {
-                            $item_total = 0;
-                        }
-                        
-                        $cart_subtotal  += (float)($item_subtotal);
-                        $cart_discount  += (float)($item_discount);
-                        $cart_tax       += (float)($item_tax);
-                        
-                        $data['cart_details'][$key]['discount']   = wpinv_round_amount( $item_discount );
-                        $data['cart_details'][$key]['tax']        = wpinv_round_amount( $item_tax );
-                        $data['cart_details'][$key]['price']      = wpinv_round_amount( $item_total );
-                    }
+    public function get_recurring_details() {}
 
-	                $total = $data['subtotal'] - $data['discount'] + $data['tax'];
-	                if ( $total < 0 ) {
-		                $total = 0;
-	                }
-
-                    $data['subtotal'] = wpinv_round_amount( $cart_subtotal );
-                    $data['discount'] = wpinv_round_amount( $cart_discount );
-                    $data['tax']      = wpinv_round_amount( $cart_tax );
-                    $data['total']    = wpinv_round_amount( $total );
-                }
-            }
-        }
-        
-        $data = apply_filters( 'wpinv_get_invoice_recurring_details', $data, $this, $field, $currency );
-
-        if ( isset( $data[$field] ) ) {
-            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
-        }
-        
-        return $data;
-    }
-    
     public function get_final_tax( $currency = false ) {        
         $final_total = wpinv_round_amount( $this->tax );
         if ( $currency ) {
@@ -1261,7 +1127,7 @@ final class WPInv_Legacy_Invoice {
         return apply_filters( 'wpinv_get_invoice_fees', $fees, $this->ID, $this );
     }
     
-    public function get_fees_total( $type = 'all' ) {
+    public function get_fees_total() {
         $fees_total = (float) 0.00;
 
         $payment_fees = isset( $this->payment_meta['fees'] ) ? $this->payment_meta['fees'] : array();
@@ -1272,22 +1138,7 @@ final class WPInv_Legacy_Invoice {
         }
 
         return apply_filters( 'wpinv_get_invoice_fees_total', $fees_total, $this->ID, $this );
-        /*
-        $fees = $this->get_fees( $type );
 
-        $fees_total = 0;
-        if ( ! empty( $fees ) && is_array( $fees ) ) {
-            foreach ( $fees as $fee_id => $fee ) {
-                if( 'all' != $type && !empty( $fee['type'] ) && $type != $fee['type'] ) {
-                    continue;
-                }
-
-                $fees_total += $fee['amount'];
-            }
-        }
-
-        return apply_filters( 'wpinv_get_invoice_fees_total', $fees_total, $this->ID, $this );
-        */
     }
 
     public function get_user_id() {
@@ -1342,11 +1193,7 @@ final class WPInv_Legacy_Invoice {
         return apply_filters( 'wpinv_gateway', $this->gateway, $this->ID, $this );
     }
     
-    public function get_gateway_title() {
-        $this->gateway_title = !empty( $this->gateway_title ) ? $this->gateway_title : wpinv_get_gateway_checkout_label( $this->gateway );
-        
-        return apply_filters( 'wpinv_gateway_title', $this->gateway_title, $this->ID, $this );
-    }
+    public function get_gateway_title() {}
     
     public function get_currency() {
         return apply_filters( 'wpinv_currency_code', $this->currency, $this->ID, $this );
@@ -1393,462 +1240,21 @@ final class WPInv_Legacy_Invoice {
     public function has_status( $status ) {
         return apply_filters( 'wpinv_has_status', ( is_array( $status ) && in_array( $this->get_status(), $status ) ) || $this->get_status() === $status ? true : false, $this, $status );
     }
+
+    public function add_item() {}
+
+    public function remove_item() {}
     
-    public function add_item( $item_id = 0, $args = array() ) {
-        global $wpi_current_id, $wpi_item_id;
-        
-        $item = new WPInv_Item( $item_id );
+    public function update_items() {}
 
-        // Bail if this post isn't a item
-        if( !$item || $item->post_type !== 'wpi_item' ) {
-            return false;
-        }
-        
-        $has_quantities = wpinv_item_quantities_enabled();
+    public function recalculate_totals() {}
 
-        // Set some defaults
-        $defaults = array(
-            'quantity'      => 1,
-            'id'            => false,
-            'name'          => $item->get_name(),
-            'item_price'    => false,
-            'custom_price'  => '',
-            'discount'      => 0,
-            'tax'           => 0.00,
-            'meta'          => array(),
-            'fees'          => array()
-        );
+    public function needs_payment() {}
 
-        $args = wp_parse_args( apply_filters( 'wpinv_add_item_args', $args, $item->ID ), $defaults );
-        $args['quantity']   = $has_quantities && $args['quantity'] > 0 ? absint( $args['quantity'] ) : 1;
+    public function get_checkout_payment_url() {}
 
-        $wpi_current_id         = $this->ID;
-        $wpi_item_id            = $item->ID;
-        $discounts              = $this->get_discounts();
-        
-        $_POST['wpinv_country'] = $this->country;
-        $_POST['wpinv_state']   = $this->state;
-        
-        $found_cart_key         = false;
-        
-        if ($has_quantities) {
-            $this->cart_details = !empty( $this->cart_details ) ? array_values( $this->cart_details ) : $this->cart_details;
-            
-            foreach ( $this->items as $key => $cart_item ) {
-                if ( (int)$item_id !== (int)$cart_item['id'] ) {
-                    continue;
-                }
+    public function get_view_url() {}
 
-                $this->items[ $key ]['quantity'] += $args['quantity'];
-                break;
-            }
-            
-            foreach ( $this->cart_details as $cart_key => $cart_item ) {
-                if ( $item_id != $cart_item['id'] ) {
-                    continue;
-                }
-
-                $found_cart_key = $cart_key;
-                break;
-            }
-        }
-        
-        if ($has_quantities && $found_cart_key !== false) {
-            $cart_item          = $this->cart_details[$found_cart_key];
-            $item_price         = $cart_item['item_price'];
-            $quantity           = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
-            $tax_rate           = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : 0;
-            
-            $new_quantity       = $quantity + $args['quantity'];
-            $subtotal           = $item_price * $new_quantity;
-            
-            $args['quantity']   = $new_quantity;
-            $discount           = !empty( $args['discount'] ) ? $args['discount'] : 0;
-            $tax                = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-            
-            $discount_increased = $discount > 0 && $subtotal > 0 && $discount > (float)$cart_item['discount'] ? $discount - (float)$cart_item['discount'] : 0;
-            $tax_increased      = $tax > 0 && $subtotal > 0 && $tax > (float)$cart_item['tax'] ? $tax - (float)$cart_item['tax'] : 0;
-            // The total increase equals the number removed * the item_price
-            $total_increased    = wpinv_round_amount( $item_price );
-            
-            if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_round_amount( $tax );
-            }
-
-            $total              = $subtotal - $discount + $tax;
-
-            // Do not allow totals to go negative
-            if( $total < 0 ) {
-                $total = 0;
-            }
-            
-            $cart_item['quantity']  = $new_quantity;
-            $cart_item['subtotal']  = $subtotal;
-            $cart_item['discount']  = $discount;
-            $cart_item['tax']       = $tax;
-            $cart_item['price']     = $total;
-            
-            $subtotal               = $total_increased - $discount_increased;
-            $tax                    = $tax_increased;
-            
-            $this->cart_details[$found_cart_key] = $cart_item;
-        } else {
-            // Set custom price.
-            if ( $args['custom_price'] !== '' ) {
-                $item_price = $args['custom_price'];
-            } else {
-                // Allow overriding the price
-                if ( false !== $args['item_price'] ) {
-                    $item_price = $args['item_price'];
-                } else {
-                    $item_price = wpinv_get_item_price( $item->ID );
-                }
-            }
-
-            // Sanitizing the price here so we don't have a dozen calls later
-            $item_price = wpinv_sanitize_amount( $item_price );
-            $subtotal   = wpinv_round_amount( $item_price * $args['quantity'] );
-        
-            $discount   = !empty( $args['discount'] ) ? $args['discount'] : 0;
-            $tax_class  = !empty( $args['vat_class'] ) ? $args['vat_class'] : '';
-            $tax_rate   = !empty( $args['vat_rate'] ) ? $args['vat_rate'] : 0;
-            $tax        = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-
-            // Setup the items meta item
-            $new_item = array(
-                'id'       => $item->ID,
-                'quantity' => $args['quantity'],
-            );
-
-            $this->items[]  = $new_item;
-
-            if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_round_amount( $tax );
-            }
-
-            $total      = $subtotal - $discount + $tax;
-
-            // Do not allow totals to go negative
-            if( $total < 0 ) {
-                $total = 0;
-            }
-        
-            $this->cart_details[] = array(
-                'name'          => !empty($args['name']) ? $args['name'] : $item->get_name(),
-                'id'            => $item->ID,
-                'item_price'    => wpinv_round_amount( $item_price ),
-                'custom_price'  => ( $args['custom_price'] !== '' ? wpinv_round_amount( $args['custom_price'] ) : '' ),
-                'quantity'      => $args['quantity'],
-                'discount'      => $discount,
-                'subtotal'      => wpinv_round_amount( $subtotal ),
-                'tax'           => wpinv_round_amount( $tax ),
-                'price'         => wpinv_round_amount( $total ),
-                'vat_rate'      => $tax_rate,
-                'vat_class'     => $tax_class,
-                'meta'          => $args['meta'],
-                'fees'          => $args['fees'],
-            );
-   
-            $subtotal = $subtotal - $discount;
-        }
-        
-        $added_item = end( $this->cart_details );
-        $added_item['action']  = 'add';
-        
-        $this->pending['items'][] = $added_item;
-        
-        $this->increase_subtotal( $subtotal );
-        $this->increase_tax( $tax );
-
-        return true;
-    }
-    
-    public function remove_item( $item_id, $args = array() ) {
-        // Set some defaults
-        $defaults = array(
-            'quantity'      => 1,
-            'item_price'    => false,
-            'custom_price'  => '',
-            'cart_index'    => false,
-        );
-        $args = wp_parse_args( $args, $defaults );
-
-        // Bail if this post isn't a item
-        if ( get_post_type( $item_id ) !== 'wpi_item' ) {
-            return false;
-        }
-        
-        $this->cart_details = !empty( $this->cart_details ) ? array_values( $this->cart_details ) : $this->cart_details;
-
-        foreach ( $this->items as $key => $item ) {
-            if ( !empty($item['id']) && (int)$item_id !== (int)$item['id'] ) {
-                continue;
-            }
-
-            if ( false !== $args['cart_index'] ) {
-                $cart_index = absint( $args['cart_index'] );
-                $cart_item  = ! empty( $this->cart_details[ $cart_index ] ) ? $this->cart_details[ $cart_index ] : false;
-
-                if ( ! empty( $cart_item ) ) {
-                    // If the cart index item isn't the same item ID, don't remove it
-                    if ( !empty($cart_item['id']) && $cart_item['id'] != $item['id'] ) {
-                        continue;
-                    }
-                }
-            }
-
-            $item_quantity = $this->items[ $key ]['quantity'];
-            if ( $item_quantity > $args['quantity'] ) {
-                $this->items[ $key ]['quantity'] -= $args['quantity'];
-                break;
-            } else {
-                unset( $this->items[ $key ] );
-                break;
-            }
-        }
-
-        $found_cart_key = false;
-        if ( false === $args['cart_index'] ) {
-            foreach ( $this->cart_details as $cart_key => $item ) {
-                if ( $item_id != $item['id'] ) {
-                    continue;
-                }
-
-                if ( false !== $args['item_price'] ) {
-                    if ( isset( $item['item_price'] ) && (float) $args['item_price'] != (float) $item['item_price'] ) {
-                        continue;
-                    }
-                }
-
-                $found_cart_key = $cart_key;
-                break;
-            }
-        } else {
-            $cart_index = absint( $args['cart_index'] );
-
-            if ( ! array_key_exists( $cart_index, $this->cart_details ) ) {
-                return false; // Invalid cart index passed.
-            }
-
-            if ( (int) $this->cart_details[ $cart_index ]['id'] > 0 && (int) $this->cart_details[ $cart_index ]['id'] !== (int) $item_id ) {
-                return false; // We still need the proper Item ID to be sure.
-            }
-
-            $found_cart_key = $cart_index;
-        }
-        
-        $cart_item  = $this->cart_details[$found_cart_key];
-        $quantity   = !empty( $cart_item['quantity'] ) ? $cart_item['quantity'] : 1;
-        
-        if ( count( $this->cart_details ) == 1 && ( $quantity - $args['quantity'] ) < 1 ) {
-            //return false; // Invoice must contain at least one item.
-        }
-        
-        $discounts  = $this->get_discounts();
-        
-        if ( $quantity > $args['quantity'] ) {
-            $item_price         = $cart_item['item_price'];
-            $tax_rate           = !empty( $cart_item['vat_rate'] ) ? $cart_item['vat_rate'] : 0;
-            
-            $new_quantity       = max( $quantity - $args['quantity'], 1);
-            $subtotal           = $item_price * $new_quantity;
-            
-            $args['quantity']   = $new_quantity;
-            $discount           = !empty( $cart_item['discount'] ) ? $cart_item['discount'] : 0;
-            $tax                = $subtotal > 0 && $tax_rate > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-            
-            $discount_decrease  = (float)$cart_item['discount'] > 0 && $quantity > 0 ? wpinv_round_amount( ( (float)$cart_item['discount'] / $quantity ) ) : 0;
-            $discount_decrease  = $discount > 0 && $subtotal > 0 && (float)$cart_item['discount'] > $discount ? (float)$cart_item['discount'] - $discount : $discount_decrease; 
-            $tax_decrease       = (float)$cart_item['tax'] > 0 && $quantity > 0 ? wpinv_round_amount( ( (float)$cart_item['tax'] / $quantity ) ) : 0;
-            $tax_decrease       = $tax > 0 && $subtotal > 0 && (float)$cart_item['tax'] > $tax ? (float)$cart_item['tax'] - $tax : $tax_decrease;
-            
-            // The total increase equals the number removed * the item_price
-            $total_decrease     = wpinv_round_amount( $item_price );
-            
-            if ( wpinv_prices_include_tax() ) {
-                $subtotal -= wpinv_round_amount( $tax );
-            }
-
-            $total              = $subtotal - $discount + $tax;
-
-            // Do not allow totals to go negative
-            if( $total < 0 ) {
-                $total = 0;
-            }
-            
-            $cart_item['quantity']  = $new_quantity;
-            $cart_item['subtotal']  = $subtotal;
-            $cart_item['discount']  = $discount;
-            $cart_item['tax']       = $tax;
-            $cart_item['price']     = $total;
-            
-            $added_item             = $cart_item;
-            $added_item['id']       = $item_id;
-            $added_item['price']    = $total_decrease;
-            $added_item['quantity'] = $args['quantity'];
-            
-            $subtotal_decrease      = $total_decrease - $discount_decrease;
-            
-            $this->cart_details[$found_cart_key] = $cart_item;
-            
-            $remove_item = end( $this->cart_details );
-        } else {
-            $item_price     = $cart_item['item_price'];
-            $discount       = !empty( $cart_item['discount'] ) ? $cart_item['discount'] : 0;
-            $tax            = !empty( $cart_item['tax'] ) ? $cart_item['tax'] : 0;
-        
-            $subtotal_decrease  = ( $item_price * $quantity ) - $discount;
-            $tax_decrease       = $tax;
-
-            unset( $this->cart_details[$found_cart_key] );
-            
-            $remove_item             = $args;
-            $remove_item['id']       = $item_id;
-            $remove_item['price']    = $subtotal_decrease;
-            $remove_item['quantity'] = $args['quantity'];
-        }
-        
-        $remove_item['action']      = 'remove';
-        $this->pending['items'][]   = $remove_item;
-               
-        $this->decrease_subtotal( $subtotal_decrease );
-        $this->decrease_tax( $tax_decrease );
-        
-        return true;
-    }
-    
-    public function update_items($temp = false) {
-        global $wpinv_euvat, $wpi_current_id, $wpi_item_id, $wpi_nosave;
-        
-        if ( !empty( $this->cart_details ) ) {
-            $wpi_nosave             = $temp;
-            $cart_subtotal          = 0;
-            $cart_discount          = 0;
-            $cart_tax               = 0;
-            $cart_details           = array();
-
-            $_POST['wpinv_country'] = $this->country;
-            $_POST['wpinv_state']   = $this->state;
-
-            foreach ( $this->cart_details as $key => $item ) {
-                $item_price = $item['item_price'];
-                $quantity   = wpinv_item_quantities_enabled() && $item['quantity'] > 0 ? absint( $item['quantity'] ) : 1;
-                $amount     = wpinv_round_amount( $item_price * $quantity );
-                $subtotal   = $item_price * $quantity;
-                
-                $wpi_current_id         = $this->ID;
-                $wpi_item_id            = $item['id'];
-                
-                $discount   = wpinv_get_cart_item_discount_amount( $item, $this->get_discounts() );
-                
-                $tax_rate   = wpinv_get_tax_rate( $this->country, $this->state, $wpi_item_id );
-                $tax_class  = $wpinv_euvat->get_item_class( $wpi_item_id );
-                $tax        = $item_price > 0 ? ( ( $subtotal - $discount ) * 0.01 * (float)$tax_rate ) : 0;
-
-                if ( ! $this->is_taxable() ) {
-                    $tax = 0;
-                }
-
-                if ( wpinv_prices_include_tax() ) {
-                    $subtotal -= wpinv_round_amount( $tax );
-                }
-
-                $total      = $subtotal - $discount + $tax;
-
-                // Do not allow totals to go negative
-                if( $total < 0 ) {
-                    $total = 0;
-                }
-
-                $cart_details[] = array(
-                    'id'          => $item['id'],
-                    'name'        => $item['name'],
-                    'item_price'  => wpinv_round_amount( $item_price ),
-                    'custom_price'=> ( isset( $item['custom_price'] ) ? $item['custom_price'] : '' ),
-                    'quantity'    => $quantity,
-                    'discount'    => $discount,
-                    'subtotal'    => wpinv_round_amount( $subtotal ),
-                    'tax'         => wpinv_round_amount( $tax ),
-                    'price'       => wpinv_round_amount( $total ),
-                    'vat_rate'    => $tax_rate,
-                    'vat_class'   => $tax_class,
-                    'meta'        => isset($item['meta']) ? $item['meta'] : array(),
-                    'fees'        => isset($item['fees']) ? $item['fees'] : array(),
-                );
-
-                $cart_subtotal  += (float)($subtotal - $discount); // TODO
-                $cart_discount  += (float)($discount);
-                $cart_tax       += (float)($tax);
-            }
-            if ( $cart_subtotal < 0 ) {
-                $cart_subtotal = 0;
-            }
-            if ( $cart_tax < 0 ) {
-                $cart_tax = 0;
-            }
-            $this->subtotal = wpinv_round_amount( $cart_subtotal );
-            $this->tax      = wpinv_round_amount( $cart_tax );
-            $this->discount = wpinv_round_amount( $cart_discount );
-            
-            $this->recalculate_total();
-            
-            $this->cart_details = $cart_details;
-        }
-
-        return $this;
-    }
-    
-    public function recalculate_totals($temp = false) {        
-        $this->update_items($temp);
-        $this->save( true );
-        
-        return $this;
-    }
-    
-    public function needs_payment() {
-        $valid_invoice_statuses = apply_filters( 'wpinv_valid_invoice_statuses_for_payment', array( 'wpi-pending' ), $this );
-
-        if ( $this->has_status( $valid_invoice_statuses ) && ( $this->get_total() > 0 || $this->is_free_trial() || $this->is_free() || $this->is_initial_free() ) ) {
-            $needs_payment = true;
-        } else {
-            $needs_payment = false;
-        }
-
-        return apply_filters( 'wpinv_needs_payment', $needs_payment, $this, $valid_invoice_statuses );
-    }
-    
-    public function get_checkout_payment_url( $with_key = false, $secret = false ) {
-        $pay_url = wpinv_get_checkout_uri();
-
-        if ( is_ssl() ) {
-            $pay_url = str_replace( 'http:', 'https:', $pay_url );
-        }
-        
-        $key = $this->get_key();
-
-        if ( $with_key ) {
-            $pay_url = add_query_arg( 'invoice_key', $key, $pay_url );
-        } else {
-            $pay_url = add_query_arg( array( 'wpi_action' => 'pay_for_invoice', 'invoice_key' => $key ), $pay_url );
-        }
-        
-        if ( $secret ) {
-            $pay_url = add_query_arg( array( '_wpipay' => md5( $this->get_user_id() . '::' . $this->get_email() . '::' . $key ) ), $pay_url );
-        }
-
-        return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $with_key, $secret );
-    }
-    
-    public function get_view_url( $with_key = false ) {
-        $invoice_url = get_permalink( $this->ID );
-
-        if ( $with_key ) {
-            $invoice_url = add_query_arg( 'invoice_key', $this->get_key(), $invoice_url );
-        }
-
-        return apply_filters( 'wpinv_get_view_url', $invoice_url, $this, $with_key );
-    }
-    
     public function generate_key( $string = '' ) {
         $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
         return strtolower( md5( $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) ) );  // Unique key
@@ -1886,16 +1292,8 @@ final class WPInv_Legacy_Invoice {
         return apply_filters( 'wpinv_invoice_is_free_trial', $is_free_trial, $this->cart_details, $this );
     }
 
-    public function is_initial_free() {
-        $is_initial_free = false;
-        
-        if ( ! ( (float)wpinv_round_amount( $this->get_total() ) > 0 ) && $this->is_parent() && $this->is_recurring() && ! $this->is_free_trial() && ! $this->is_free() ) {
-            $is_initial_free = true;
-        }
+    public function is_initial_free() {}
 
-        return apply_filters( 'wpinv_invoice_is_initial_free', $is_initial_free, $this->cart_details );
-    }
-    
     public function get_recurring( $object = false ) {
         $item = NULL;
         
@@ -1919,132 +1317,33 @@ final class WPInv_Legacy_Invoice {
         return apply_filters( 'wpinv_invoice_get_recurring_item_id', $item, $this );
     }
 
-    public function get_subscription_name() {
-        $item = $this->get_recurring( true );
+    public function get_subscription_name() {}
 
-        if ( empty( $item ) ) {
-            return NULL;
-        }
+    public function get_subscription_id() {}
 
-        if ( !($name = $item->get_name()) ) {
-            $name = $item->post_name;
-        }
-
-        return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
-    }
-
-    public function get_subscription_id() {
-        $subscription_id = $this->get_meta( '_wpinv_subscr_profile_id', true );
-
-        if ( empty( $subscription_id ) && !empty( $this->parent_invoice ) ) {
-            $parent_invoice = wpinv_get_invoice( $this->parent_invoice );
-
-            $subscription_id = $parent_invoice->get_meta( '_wpinv_subscr_profile_id', true );
-        }
-        
-        return $subscription_id;
-    }
-    
     public function is_parent() {
-        $is_parent = empty( $this->parent_invoice ) ? true : false;
-
-        return apply_filters( 'wpinv_invoice_is_parent', $is_parent, $this );
-    }
-    
-    public function is_renewal() {
-        $is_renewal = $this->parent_invoice && $this->parent_invoice != $this->ID ? true : false;
-
-        return apply_filters( 'wpinv_invoice_is_renewal', $is_renewal, $this );
-    }
-    
-    public function get_parent_payment() {
-        $parent_payment = NULL;
-        
-        if ( $this->is_renewal() ) {
-            $parent_payment = wpinv_get_invoice( $this->parent_invoice );
-        }
-        
-        return $parent_payment;
-    }
-    
-    public function is_paid() {
-        $is_paid = $this->has_status( array( 'publish', 'wpi-processing', 'wpi-renewal' ) );
-
-        return apply_filters( 'wpinv_invoice_is_paid', $is_paid, $this );
+        return ! empty( $this->parent_invoice );
     }
 
-    /**
-     * Checks if this is a quote object.
-     * 
-     * @since 1.0.15
-     */
-    public function is_quote() {
-        return 'wpi_quote' === $this->post_type;
-    }
-    
-    public function is_refunded() {
-        $is_refunded = $this->has_status( array( 'wpi-refunded' ) );
+    public function is_renewal() {}
 
-        return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
-    }
-    
+    public function get_parent_payment() {}
+
+    public function is_paid() {}
+
+    public function is_quote() {}
+
+    public function is_refunded() {}
+
     public function is_free() {
-        $is_free = false;
-        
-        if ( !( (float)wpinv_round_amount( $this->get_total() ) > 0 ) ) {
-            if ( $this->is_parent() && $this->is_recurring() ) {
-                $is_free = (float)wpinv_round_amount( $this->get_recurring_details( 'total' ) ) > 0 ? false : true;
-            } else {
-                $is_free = true;
-            }
-        }
-        
-        return apply_filters( 'wpinv_invoice_is_free', $is_free, $this );
+        $total = (float) wpinv_round_amount( $this->get_total() );
+        return $total > 0 && ! $this->is_recurring();
     }
-    
-    public function has_vat() {
-        global $wpinv_euvat, $wpi_country;
-        
-        $requires_vat = false;
-        
-        if ( $this->country ) {
-            $wpi_country        = $this->country;
-            
-            $requires_vat       = $wpinv_euvat->requires_vat( $requires_vat, $this->get_user_id(), $wpinv_euvat->invoice_has_digital_rule( $this ) );
-        }
-        
-        return apply_filters( 'wpinv_invoice_has_vat', $requires_vat, $this );
-    }
-    
-    public function refresh_item_ids() {
-        $item_ids = array();
-        
-        if ( !empty( $this->cart_details ) ) {
-            foreach ( $this->cart_details as $key => $item ) {
-                if ( !empty( $item['id'] ) ) {
-                    $item_ids[] = $item['id'];
-                }
-            }
-        }
-        
-        $item_ids = !empty( $item_ids ) ? implode( ',', array_unique( $item_ids ) ) : '';
-        
-        update_post_meta( $this->ID, '_wpinv_item_ids', $item_ids );
-    }
-    
-    public function get_invoice_quote_type( $post_id ) {
-        if ( empty( $post_id ) ) {
-            return '';
-        }
 
-        $type = get_post_type( $post_id );
+    public function has_vat() {}
 
-        if ( 'wpi_invoice' === $type ) {
-            $post_type = __('Invoice', 'invoicing');
-        } else{
-            $post_type = __('Quote', 'invoicing');
-        }
+    public function refresh_item_ids() {}
 
-        return apply_filters('get_invoice_type_label', $post_type, $post_id);
-    }
+    public function get_invoice_quote_type() {}
+
 }

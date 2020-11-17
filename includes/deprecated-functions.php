@@ -1179,3 +1179,37 @@ function wpinv_item_in_cart() {
  */
 function wpinv_html_date_field() {}
 
+/**
+ * @deprecated
+ */
+function wpinv_get_formatted_tax_rate() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_cart_item_tax() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_item_price() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_item_subtotal() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_cart_item_tax() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_calculate_tax() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_tax_rate() {}
