@@ -116,10 +116,6 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 				$value  = wpinv_round_amount( wpinv_sanitize_amount( $value ) );
 			}
 
-			if ( $field === 'items' ) {
-				$value  = $invoice->get_cart_details();
-			}
-
 			$prepared[ $field ] = wpinv_clean( $value );
 
 		}
@@ -168,7 +164,8 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 			'fees',
 			'discounts',
 			'taxes',
-			'items',
+			'cart_details',
+			'item_ids',
 			'payment_form',
 			'discount_code',
 			'gateway',

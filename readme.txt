@@ -168,6 +168,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to enter prices with tax - ADDED
 * All matching tax rates are now applied - CHANGED
 * Ability to calculate tax based on base address instead of shop address - ADDED
+* Invoice exports now include the item ids - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED
