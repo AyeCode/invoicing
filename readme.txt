@@ -165,6 +165,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Authorize.NET - Replaced the deprecated md5 secret with a [signature key](https://support.authorize.net/s/article/MD5-Hash-End-of-Life-Signature-Key-Replacement)
 * Authorize.NET - Improve the subscriptions feature.
 * Admin can now manually renew a subscription - ADDED
+* Ability to enter prices with tax - ADDED
+* All matching tax rates are now applied - CHANGED
+* Ability to calculate tax based on base address instead of shop address - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

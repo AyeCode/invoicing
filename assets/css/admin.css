@@ -2243,6 +2243,7 @@ textarea.wpi-email_overdue_content {
 .wpi-wpinv-settings table.form-table textarea,
 .wpi-wpinv-settings table.form-table select {
     width: 25em;
+    max-width: 100%;
     margin: 0;
     box-sizing: border-box;
     vertical-align: top;

@@ -69,12 +69,19 @@ function wpinv_sanitize_amount( $amount ) {
 
 }
 
-function wpinv_round_amount( $amount, $decimals = NULL ) {
-    if ( $decimals === NULL ) {
+/**
+ * Rounds an amount.
+ * 
+ * @param float $amount
+ * @param int|null $decimals
+ */
+function wpinv_round_amount( $amount, $decimals = null ) {
+
+    if ( $decimals === null ) {
         $decimals = wpinv_decimals();
     }
     
-    $amount = round( (double)$amount, wpinv_currency_decimal_filter( absint( $decimals ) ) );
+    $amount = round( (float) $amount, absint( $decimals ) );
 
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }

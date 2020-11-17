@@ -182,10 +182,17 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	 */
 	public function add_taxes( $submission ) {
 
-		$taxes = array();
-
+		$taxes  = array();
+		$markup = '';
         foreach ( $submission->get_taxes() as $name => $data ) {
-			$taxes[$name] = $submission->format_amount( $data['initial_tax'] );
+			$name          = sanitize_text_field( $name );
+			$amount        = $submission->format_amount( $data['initial_tax'] );
+			$taxes[$name]  = $amount;
+			$markup       .= "<small class='form-text'>$name : $amount</small>";
+		}
+
+		if ( wpinv_display_individual_tax_rates() ) {
+			$this->response['texts']['.getpaid-form-cart-totals-total-tax'] = $markup;
 		}
 
 		$this->response = array_merge(

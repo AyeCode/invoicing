@@ -42,134 +42,168 @@ function getpaid_vat_name() {
     return getpaid_tax()->get_vat_name();
 }
 
-
+/**
+ * Checks whether or not taxes are enabled.
+ *
+ * @return bool
+ */
 function wpinv_use_taxes() {
+
     $ret = wpinv_get_option( 'enable_taxes', false );
-    
-    return (bool) apply_filters( 'wpinv_use_taxes', $ret );
+    return (bool) apply_filters( 'wpinv_use_taxes', ! empty( $ret ) );
+
 }
 
-function wpinv_get_tax_rates() {
-    $rates = get_option( 'wpinv_tax_rates', array() );
-    
-    return apply_filters( 'wpinv_get_tax_rates', $rates );
+/**
+ * Checks whether or not an invoice is taxable.
+ *
+ * @param WPInv_Invoice $invoice
+ * @return bool
+ */
+function wpinv_is_invoice_taxable( $invoice ) {
+    return $invoice->is_taxable();
 }
 
-function wpinv_get_tax_rate( $country = false, $state = false, $item_id = 0 ) {
-    global $wpinv_euvat, $wpi_tax_rates, $wpi_userID;
-    $wpi_tax_rates = !empty( $wpi_tax_rates ) ? $wpi_tax_rates : array();
-    
-    if ( !empty( $wpi_tax_rates ) && !empty( $item_id ) && isset( $wpi_tax_rates[$item_id] ) ) {
-        return $wpi_tax_rates[$item_id];
-    }
-    
-    if ( !$wpinv_euvat->item_is_taxable( $item_id, $country, $state ) ) {
-        $wpi_tax_rates[$item_id] = 0;
-        return 0;
-    }
-
-    $is_global = false;
-    if ( $item_id == 'global' ) {
-        $is_global = true;
-        $item_id = 0;
-    }
-    
-    $rate           = (float)wpinv_get_option( 'tax_rate', 0 );
-    $user_address   = wpinv_get_user_address( $wpi_userID );
-    
-    if( empty( $country ) ) {
-        if( !empty( $_POST['wpinv_country'] ) ) {
-            $country = $_POST['wpinv_country'];
-        } elseif( !empty( $_POST['wpinv_country'] ) ) {
-            $country = $_POST['wpinv_country'];
-        } elseif( !empty( $_POST['country'] ) ) {
-            $country = $_POST['country'];
-        } elseif( is_user_logged_in() && !empty( $user_address ) ) {
-            $country = $user_address['country'];
-        }
-        $country = !empty( $country ) ? $country : wpinv_get_default_country();
-    }
-
-    if( empty( $state ) ) {
-        if( !empty( $_POST['wpinv_state'] ) ) {
-            $state = $_POST['wpinv_state'];
-        } elseif( !empty( $_POST['wpinv_state'] ) ) {
-            $state = $_POST['wpinv_state'];
-        } elseif( !empty( $_POST['state'] ) ) {
-            $state = $_POST['state'];
-        } elseif( is_user_logged_in() && !empty( $user_address ) ) {
-            $state = $user_address['state'];
-        }
-        $state = !empty( $state ) ? $state : wpinv_get_default_state();
-    }
-    
-    if( !empty( $country ) ) {
-        $tax_rates   = wpinv_get_tax_rates();
-
-        if( !empty( $tax_rates ) ) {
-            // Locate the tax rate for this country / state, if it exists
-            foreach( $tax_rates as $key => $tax_rate ) {
-                if( $country != $tax_rate['country'] )
-                    continue;
-
-                if( !empty( $tax_rate['global'] ) ) {
-                    if( !empty( $tax_rate['rate'] ) ) {
-                        $rate = number_format( $tax_rate['rate'], 4 );
-                    }
-                } else {
-
-                    if( empty( $tax_rate['state'] ) || strtolower( $state ) != strtolower( $tax_rate['state'] ) )
-                        continue;
-
-                    $state_rate = $tax_rate['rate'];
-                    if( 0 !== $state_rate || !empty( $state_rate ) ) {
-                        $rate = number_format( $state_rate, 4 );
-                    }
-                }
-            }
-        }
-    }
-    
-    $rate = apply_filters( 'wpinv_tax_rate', $rate, $country, $state, $item_id );
-    
-    if ( !empty( $item_id ) ) {
-        $wpi_tax_rates[$item_id] = $rate;
-    } else if ( $is_global ) {
-        $wpi_tax_rates['global'] = $rate;
-    }
-    
-    return $rate;
+/**
+ * Checks whether or not an item is taxable.
+ *
+ * @param WPInv_Item|GetPaid_Form_Item $item
+ * @return bool
+ */
+function wpinv_is_item_taxable( $item ) {
+    return '_exempt' != $item->get_vat_rule();
 }
 
-function wpinv_get_formatted_tax_rate( $country = false, $state = false, $item_id ) {
-    $rate = wpinv_get_tax_rate( $country, $state, $item_id );
-    $rate = round( $rate, 4 );
-    $formatted = $rate .= '%';
-    return apply_filters( 'wpinv_formatted_tax_rate', $formatted, $rate, $country, $state, $item_id );
+/**
+ * Checks whether or not taxes are calculated based on the store address.
+ *
+ * @return bool
+ */
+function wpinv_use_store_address_as_tax_base() {
+    $use_base = wpinv_get_option( 'tax_base', 'billing' ) == 'base';
+    return (bool) apply_filters( 'wpinv_use_store_address_as_tax_base', $use_base );
 }
 
-function wpinv_calculate_tax( $amount = 0, $country = false, $state = false, $item_id = 0 ) {
-    $rate = wpinv_get_tax_rate( $country, $state, $item_id );
-    $tax  = 0.00;
-
-    if ( wpinv_use_taxes() ) {        
-        if ( wpinv_prices_include_tax() ) {
-            $pre_tax = ( $amount / ( ( 1 + $rate ) * 0.01 ) );
-            $tax     = $amount - $pre_tax;
-        } else {
-            $tax = $amount * $rate * 0.01;
-        }
-
-    }
-
-    return apply_filters( 'wpinv_taxed_amount', $tax, $rate, $country, $state, $item_id );
-}
-
+/**
+ * Checks whether or not prices include tax.
+ *
+ * @return bool
+ */
 function wpinv_prices_include_tax() {
-    return false; // TODO
-    $ret = ( wpinv_get_option( 'prices_include_tax', false ) == 'yes' && wpinv_use_taxes() );
+    $is_inclusive = wpinv_get_option( 'prices_include_tax', 'no' ) == 'yes';
+    return (bool) apply_filters( 'wpinv_prices_include_tax', $is_inclusive );
+}
 
-    return apply_filters( 'wpinv_prices_include_tax', $ret );
+/**
+ * Checks whether we should round per rate or per subtotal
+ *
+ * @return bool
+ */
+function wpinv_round_tax_per_tax_rate() {
+    $subtotal_rounding = wpinv_get_option( 'tax_subtotal_rounding', 1 );
+    return (bool) apply_filters( 'wpinv_round_tax_per_tax_rate', empty( $subtotal_rounding ) );
+}
+
+/**
+ * Checks whether we should display individual tax rates.
+ *
+ * @return bool
+ */
+function wpinv_display_individual_tax_rates() {
+    $individual = wpinv_get_option( 'tax_display_totals', 'single' ) == 'individual';
+    return (bool) apply_filters( 'wpinv_display_individual_tax_rates', $individual );
+}
+
+/**
+ * Retrieves the default tax rate.
+ *
+ * @return float
+ */
+function wpinv_get_default_tax_rate() {
+    $rate = wpinv_get_option( 'tax_rate', false );
+    return (float) apply_filters( 'wpinv_get_default_tax_rate', floatval( $rate ) );
+}
+
+/**
+ * Retrieves an array of all tax rates.
+ *
+ * @return array
+ */
+function wpinv_get_tax_rates() {
+    return GetPaid_Tax::get_all_tax_rates();
+}
+
+/**
+ * Retrieves an item's tax rates.
+ *
+ * @param WPInv_Item|GetPaid_Form_Item $item
+ * @param string $country
+ * @param string $state
+ * @return array
+ */
+function getpaid_get_item_tax_rates( $item, $country = '', $state = '' ) {
+
+    // Abort if the item is not taxable.
+    if ( ! wpinv_is_item_taxable( $item ) ) {
+        return array();
+    }
+
+    // Maybe use the store address.
+    if ( wpinv_use_store_address_as_tax_base() ) {
+        $country = wpinv_get_default_country();
+        $state   = wpinv_get_default_state();
+    }
+
+    // Retrieve tax rates.
+    $tax_rates = GetPaid_Tax::get_address_tax_rates( $country, $state );
+
+    // Fallback to the default tax rates if non were found.
+    if ( empty( $tax_rates ) ) {
+        $tax_rates = GetPaid_Tax::get_default_tax_rates();
+    }
+
+    return apply_filters( 'getpaid_get_item_tax_rates', $tax_rates, $item, $country, $state );
+}
+
+/**
+ * Retrieves an item's taxes.
+ *
+ * @param float $amount
+ * @param array $rates
+ * @return array
+ */
+function getpaid_calculate_item_taxes( $amount, $rates ) {
+
+    $is_inclusive = wpinv_prices_include_tax();
+    $taxes        = GetPaid_Tax::calc_tax( $amount, $rates, $is_inclusive );
+
+    return apply_filters( 'getpaid_calculate_taxes', $taxes, $amount, $rates );
+}
+
+/**
+ * Prepares an item's tax.
+ *
+ * @param WPInv_Item|GetPaid_Form_Item $item
+ * @param string $tax_name
+ * @param float $tax_amount
+ * @param float $recurring_tax_amount
+ * @return array
+ */
+function getpaid_prepare_item_tax( $item, $tax_name, $tax_amount, $recurring_tax_amount ) {
+
+    $initial_tax   = $tax_amount;
+	$recurring_tax = 0;
+
+    if ( $item->is_recurring() ) {
+		$recurring_tax = $recurring_tax_amount;
+	}
+
+	return array(
+		'name'          => sanitize_text_field( $tax_name ),
+		'initial_tax'   => $initial_tax,
+		'recurring_tax' => $recurring_tax,
+    );
+
 }
 
 function wpinv_sales_tax_for_year( $year = null ) {

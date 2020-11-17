@@ -1062,7 +1062,7 @@ class WPInv_EUVat {
 
     public static function get_vat_rates( $class ) {
         if ( $class === '_standard' ) {
-            return wpinv_get_tax_rates();
+            return GetPaid_Tax::get_all_tax_rates();
         }
 
         $rates = self::get_non_standard_rates();
@@ -1185,7 +1185,7 @@ class WPInv_EUVat {
             return 0;
         }
 
-        $tax_rates   = wpinv_get_tax_rates();
+        $tax_rates   = GetPaid_Tax::get_all_tax_rates();
 
         if ( $class !== '_standard' ) {
             $class_rates = self::get_vat_rates( $class );
