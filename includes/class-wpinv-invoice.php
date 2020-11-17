@@ -1550,6 +1550,16 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_items( $context = 'view' ) {
         return $this->get_prop( 'items', $context );
+	}
+	
+	/**
+	 * Get the invoice item ids.
+	 *
+	 * @since 1.0.19
+	 * @return string
+	 */
+	public function get_item_ids() {
+		return implode( ', ', wp_list_pluck( $this->get_cart_details(), 'item_id' ) );
     }
 
     /**
@@ -1705,7 +1715,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $items        = $this->get_items();
         $cart_details = array();
 
-        foreach ( $items as $item_id => $item ) {
+        foreach ( $items as $item ) {
 			$item->invoice_id = $this->get_id();
             $cart_details[]   = $item->prepare_data_for_saving();
         }
