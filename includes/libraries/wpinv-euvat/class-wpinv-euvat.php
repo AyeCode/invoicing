@@ -31,13 +31,6 @@ class WPInv_EUVat {
             add_action( 'wpinv_settings_sections_taxes', array( $this, 'section_vat_settings' ) );
             add_action( 'wpinv_settings_taxes', array( $this, 'vat_settings' ) );
             add_filter( 'wpinv_settings_taxes-vat_sanitize', array( $this, 'sanitize_vat_settings' ) );
-            add_filter( 'wpinv_settings_taxes-vat_rates_sanitize', array( $this, 'sanitize_vat_rates' ) );
-            add_action( 'wp_ajax_wpinv_add_vat_class', array( $this, 'add_class' ) );
-            add_action( 'wp_ajax_nopriv_wpinv_add_vat_class', array( $this, 'add_class' ) );
-            add_action( 'wp_ajax_wpinv_delete_vat_class', array( $this, 'delete_class' ) );
-            add_action( 'wp_ajax_nopriv_wpinv_delete_vat_class', array( $this, 'delete_class' ) );
-            add_action( 'wp_ajax_wpinv_update_vat_rates', array( $this, 'update_eu_rates' ) );
-            add_action( 'wp_ajax_nopriv_wpinv_update_vat_rates', array( $this, 'update_eu_rates' ) );
         }
 
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_vat_scripts' ) );
@@ -46,9 +39,6 @@ class WPInv_EUVat {
         add_action( 'wp_ajax_wpinv_vat_validate', array( $this, 'ajax_vat_validate' ) );
         add_action( 'wp_ajax_nopriv_wpinv_vat_validate', array( $this, 'ajax_vat_validate' ) );
 
-        if ( wpinv_use_taxes() && self::allow_vat_rules() ) {
-            add_filter( 'wpinv_tax_rate', array( $this, 'get_rate' ), 10, 4 );
-        }
     }
 
     public static function get_eu_states( $sort = true ) {
@@ -148,73 +138,10 @@ class WPInv_EUVat {
         return $sections;
     }
 
-    public static function vat_rates_settings() {
-        $vat_classes = self::get_rate_classes();
-        $vat_rates = array();
-        $vat_class = isset( $_REQUEST['wpi_sub'] ) && $_REQUEST['wpi_sub'] !== '' && isset( $vat_classes[$_REQUEST['wpi_sub']] )? sanitize_text_field( $_REQUEST['wpi_sub'] ) : '_new';
-        $current_url = remove_query_arg( 'wpi_sub' );
-
-        $vat_rates['vat_rates_header'] = array(
-            'id' => 'vat_rates_header',
-            'name' => '<h3>' . __( 'Manage VAT Rates', 'invoicing' ) . '</h3>',
-            'desc' => '',
-            'type' => 'header',
-            'size' => 'regular'
-        );
-        $vat_rates['vat_rates_class'] = array(
-            'id'          => 'vat_rates_class',
-            'name'        => __( 'Edit VAT Rates', 'invoicing' ),
-            'desc'        => __( 'The standard rate will apply where no explicit rate is provided.', 'invoicing' ),
-            'type'        => 'select',
-            'options'     => array_merge( $vat_classes, array( '_new' => __( 'Add New Rate Class', 'invoicing' ) ) ),
-            'placeholder' => __( 'Select a VAT Rate', 'invoicing' ),
-            'selected'    => $vat_class,
-            'class'       => 'wpi_select2',
-            'onchange'    => 'document.location.href="' . $current_url . '&wpi_sub=" + this.value;',
-        );
-
-        if ( $vat_class != '_standard' && $vat_class != '_new' ) {
-            $vat_rates['vat_rate_delete'] = array(
-                'id'   => 'vat_rate_delete',
-                'type' => 'vat_rate_delete',
-            );
-        }
-
-        if ( $vat_class == '_new' ) {
-            $vat_rates['vat_rates_settings'] = array(
-                'id' => 'vat_rates_settings',
-                'name' => '<h3>' . __( 'Add New Rate Class', 'invoicing' ) . '</h3>',
-                'type' => 'header',
-            );
-            $vat_rates['vat_rate_name'] = array(
-                'id'   => 'vat_rate_name',
-                'name' => __( 'Name', 'invoicing' ),
-                'desc' => __( 'A short name for the new VAT Rate class', 'invoicing' ),
-                'type' => 'text',
-                'size' => 'regular',
-            );
-            $vat_rates['vat_rate_desc'] = array(
-                'id'   => 'vat_rate_desc',
-                'name' => __( 'Description', 'invoicing' ),
-                'desc' => __( 'Manage VAT Rate class', 'invoicing' ),
-                'type' => 'text',
-                'size' => 'regular',
-            );
-            $vat_rates['vat_rate_add'] = array(
-                'id'   => 'vat_rate_add',
-                'type' => 'vat_rate_add',
-            );
-        } else {
-            $vat_rates['vat_rates'] = array(
-                'id'   => 'vat_rates',
-                'name' => '<h3>' . $vat_classes[$vat_class] . '</h3>',
-                'desc' => self::get_class_desc( $vat_class ),
-                'type' => 'vat_rates',
-            );
-        }
-
-        return $vat_rates;
-    }
+    /**
+     * @deprecated
+     */
+    public static function vat_rates_settings() {}
 
     public static function vat_settings( $settings ) {
         if ( !empty( $settings ) ) {
@@ -258,23 +185,12 @@ class WPInv_EUVat {
                 'std' => '1'
             );
 
-            /*
-            $vat_settings['vat_allow_classes'] = array(
-                'id' => 'vat_allow_classes',
-                'name' => __( 'Allow the use of VAT rate classes', 'invoicing' ),
-                'desc' =>  __( 'When enabled this option makes it possible to define alternative rate classes so rates for items that do not use the standard VAT rate in all member states can be defined.<br>A menu option will appear under the "Invoicing -> Settings -> Taxes -> EU VAT Rates" menu heading that will take you to a page on which new classes can be defined and rates entered. A meta-box will appear in the invoice page in which you are able to select one of the alternative classes you create so the rates associated with the class will be applied to invoice.<br>By default the standard rates class will be used just as they are when this option is not enabled.', 'invoicing' ),
-                'type' => 'checkbox'
-            );
-            */
-
             $vat_settings['vat_prevent_b2c_purchase'] = array(
                 'id' => 'vat_prevent_b2c_purchase',
                 'name' => __( 'Prevent EU B2C Sales', 'invoicing' ),
                 'desc' => __( 'Enable this option if you are not registered for VAT in the EU.', 'invoicing' ),
                 'type' => 'checkbox'
             );
-
-
 
             $vat_settings['vat_same_country_rule'] = array(
                 'id'          => 'vat_same_country_rule',
@@ -331,19 +247,6 @@ class WPInv_EUVat {
 
             $settings['vat'] = $vat_settings;
 
-            if ( self::allow_vat_classes() ) {
-                $settings['vat_rates'] = self::vat_rates_settings();
-            }
-
-            $eu_fallback_rate = array(
-                'id'   => 'eu_fallback_rate',
-                'name' => '<h3>' . __( 'VAT rate for EU member states', 'invoicing' ) . '</h3>',
-                'type' => 'eu_fallback_rate',
-                'desc' => __( 'Enter the VAT rate to be charged for EU member states. You can edit the rates for each member state when a country rate has been set up by pressing this button.', 'invoicing' ),
-                'std'  => '20',
-                'size' => 'small'
-            );
-            $settings['rates']['eu_fallback_rate'] = $eu_fallback_rate;
         }
 
         return $settings;
@@ -464,133 +367,25 @@ class WPInv_EUVat {
         return $input;
     }
 
-    public static function sanitize_vat_rates( $input ) {
-        if( !wpinv_current_user_can_manage_invoicing() ) {
-            add_settings_error( 'wpinv-notices', '', __( 'Your account does not have permission to add rate classes.', 'invoicing' ), 'error' );
-            return $input;
-        }
+    /**
+     * @deprecated
+     */
+    public static function sanitize_vat_rates() {}
 
-        $vat_classes = self::get_rate_classes();
-        $vat_class = !empty( $_REQUEST['wpi_vat_class'] ) && isset( $vat_classes[$_REQUEST['wpi_vat_class']] )? sanitize_text_field( $_REQUEST['wpi_vat_class'] ) : '';
+    /**
+     * @deprecated
+     */
+    public static function add_class() {}
 
-        if ( empty( $vat_class ) ) {
-            add_settings_error( 'wpinv-notices', '', __( 'No valid VAT rates class contained in the request to save rates.', 'invoicing' ), 'error' );
+    /**
+     * @deprecated
+     */
+    public static function delete_class() {}
 
-            return $input;
-        }
-
-        $new_rates = ! empty( $_POST['vat_rates'] ) ? array_values( $_POST['vat_rates'] ) : array();
-
-        if ( $vat_class === '_standard' ) {
-            // Save the active rates in the invoice settings
-            update_option( 'wpinv_tax_rates', $new_rates );
-        } else {
-            // Get the existing set of rates
-            $rates = self::get_non_standard_rates();
-            $rates[$vat_class] = $new_rates;
-
-            update_option( 'wpinv_vat_rates', $rates );
-        }
-
-        return $input;
-    }
-
-    public static function add_class() {
-        $response = array();
-        $response['success'] = false;
-
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            $response['error'] = __( 'Invalid access!', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        $vat_class_name = !empty( $_POST['name'] ) ? sanitize_text_field( $_POST['name'] ) : false;
-        $vat_class_desc = !empty( $_POST['desc'] ) ? sanitize_text_field( $_POST['desc'] ) : false;
-
-        if ( empty( $vat_class_name ) ) {
-            $response['error'] = __( 'Select the VAT rate name', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        $vat_classes = (array)self::get_rate_classes();
-
-        if ( !empty( $vat_classes ) && in_array( strtolower( $vat_class_name ), array_map( 'strtolower', array_values( $vat_classes ) ) ) ) {
-            $response['error'] = wp_sprintf( __( 'A VAT Rate name "%s" already exists', 'invoicing' ), $vat_class_name );
-            wp_send_json( $response );
-        }
-
-        $rate_class_key = normalize_whitespace( 'wpi-' . $vat_class_name );
-        $rate_class_key = sanitize_key( str_replace( " ", "-", $rate_class_key ) );
-
-        $vat_classes = (array)self::get_rate_classes( true );
-        $vat_classes[$rate_class_key] = array( 'name' => $vat_class_name, 'desc' => $vat_class_desc );
-
-        update_option( '_wpinv_vat_rate_classes', $vat_classes );
-
-        $response['success'] = true;
-        $response['redirect'] = admin_url( 'admin.php?page=wpinv-settings&tab=taxes&section=vat_rates&wpi_sub=' . $rate_class_key );
-
-        wp_send_json( $response );
-    }
-
-    public static function delete_class() {
-        $response = array();
-        $response['success'] = false;
-
-        if ( !wpinv_current_user_can_manage_invoicing() || !isset( $_POST['class'] ) ) {
-            $response['error'] = __( 'Invalid access!', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        $vat_class = isset( $_POST['class'] ) && $_POST['class'] !== '' ? sanitize_text_field( $_POST['class'] ) : false;
-        $vat_classes = (array)self::get_rate_classes();
-
-        if ( !isset( $vat_classes[$vat_class] ) ) {
-            $response['error'] = __( 'Requested class does not exists', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        if ( $vat_class == '_new' || $vat_class == '_standard' ) {
-            $response['error'] = __( 'You can not delete standard rates class', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        $vat_classes = (array)self::get_rate_classes( true );
-        unset( $vat_classes[$vat_class] );
-
-        update_option( '_wpinv_vat_rate_classes', $vat_classes );
-
-        $response['success'] = true;
-        $response['redirect'] = admin_url( 'admin.php?page=wpinv-settings&tab=taxes&section=vat_rates&wpi_sub=_new' );
-
-        wp_send_json( $response );
-    }
-
-    public static function update_eu_rates() {
-        $response               = array();
-        $response['success']    = false;
-        $response['error']      = null;
-        $response['data']       = null;
-
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            $response['error'] = __( 'Invalid access!', 'invoicing' );
-            wp_send_json( $response );
-        }
-
-        $group      = !empty( $_POST['group'] ) ? sanitize_text_field( $_POST['group'] ) : '';
-        $euvatrates = self::request_euvatrates( $group );
-
-        if ( !empty( $euvatrates ) ) {
-            if ( !empty( $euvatrates['success'] ) && !empty( $euvatrates['rates'] ) ) {
-                $response['success']        = true;
-                $response['data']['rates']  = $euvatrates['rates'];
-            } else if ( !empty( $euvatrates['error'] ) ) {
-                $response['error']          = $euvatrates['error'];
-            }
-        }
-
-        wp_send_json( $response );
-    }
+    /**
+     * @deprecated
+     */
+    public static function update_eu_rates() {}
 
     /**
      * @deprecated
@@ -903,54 +698,11 @@ class WPInv_EUVat {
         return $return;
     }
 
-    public static function request_euvatrates( $group ) {
-        $response               = array();
-        $response['success']    = false;
-        $response['error']      = null;
-        $response['eurates']    = null;
-
-        $euvatrates_url = 'https://euvatrates.com/rates.json';
-        $euvatrates_url = apply_filters( 'wpinv_euvatrates_url', $euvatrates_url );
-        $api_response   = wp_remote_get( $euvatrates_url );
-
-        try {
-            if ( is_wp_error( $api_response ) ) {
-                $response['error']      = __( $api_response->get_error_message(), 'invoicing' );
-            } else {
-                $body = json_decode( $api_response['body'] );
-                if ( isset( $body->rates ) ) {
-                    $rates = array();
-
-                    foreach ( $body->rates as $country_code => $rate ) {
-                        $vat_rate = array();
-                        $vat_rate['country']        = $rate->country;
-                        $vat_rate['standard']       = (float)$rate->standard_rate;
-                        $vat_rate['reduced']        = (float)$rate->reduced_rate;
-                        $vat_rate['superreduced']   = (float)$rate->super_reduced_rate;
-                        $vat_rate['parking']        = (float)$rate->parking_rate;
-
-                        if ( $group !== '' && in_array( $group, array( 'standard', 'reduced', 'superreduced', 'parking' ) ) ) {
-                            $vat_rate_group = array();
-                            $vat_rate_group['country'] = $rate->country;
-                            $vat_rate_group[$group]    = $vat_rate[$group];
-
-                            $vat_rate = $vat_rate_group;
-                        }
-
-                        $rates[$country_code] = $vat_rate;
-                    }
-
-                    $response['success']    = true;
-                    $response['rates']      = apply_filters( 'wpinv_process_euvatrates', $rates, $api_response, $group );
-                } else {
-                    $response['error']      = __( 'No EU rates found!', 'invoicing' );
-                }
-            }
-        } catch ( Exception $e ) {
-            $response['error'] = __( $e->getMessage(), 'invoicing' );
-        }
-
-        return apply_filters( 'wpinv_response_euvatrates', $response, $group );
+    /**
+     * @deprecated
+     */
+    public static function request_euvatrates() {
+        return array();
     }
 
     public static function requires_vat( $requires_vat = false, $user_id = 0, $is_digital = null ) {

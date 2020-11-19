@@ -736,43 +736,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     line-height: normal;
 }
 
-/* Tax rates */
-.wpi-wpinv-settings td.wpinv_tax_tdbox {
-    padding: 0;
-}
-#wpinv_tax_rates {
-    margin: 1em 0;
-}
-#wpinv_tax_rates .wpinv_tax_country *,
-#wpinv_tax_rates .wpinv_tax_state *,
-#wpinv_tax_rates .wpinv_tax_name * {
-    max-width: 100%;
-}
-#wpinv_tax_rates .wpinv_tax_country,
-#wpinv_tax_rates .wpinv_tax_state,
-#wpinv_tax_rates .wpinv_tax_global,
-#wpinv_tax_rates .wpinv_tax_name {
-    width: auto;
-}
-#wpinv_tax_rates .wpinv_tax_rate {
-    width: 70px;
-}
-#wpinv_tax_rates .wpinv_tax_action {
-    width: 120px;
-    text-align: center
-}
-#wpinv_tax_rates th {
-    padding: 15px 10px;
-    width: auto
-}
-#wpinv_tax_rates tbody td {
-    border-bottom: solid 1px #efefef
-}
-#wpinv_tax_rates thead th,
-#wpinv_tax_rates tfoot td {
-    background-color: #fafafa
-}
-
 /* Vat Settings */
 .wpinv .wpinv-vat-stat {
     margin-left: 7px;

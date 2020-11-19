@@ -111,11 +111,11 @@ class GetPaid_Tax {
 			'getpaid_get_default_tax_rates',
 			array(
 				array(
-				'country'   => wpinv_get_default_country(),
-				'state'     => wpinv_get_default_state(),
-				'global'    => true,
-				'rate'      => wpinv_get_default_tax_rate(),
-				'name'      => __( 'Base Tax', 'invoicing' ),
+					'country'   => wpinv_get_default_country(),
+					'state'     => wpinv_get_default_state(),
+					'global'    => true,
+					'rate'      => wpinv_get_default_tax_rate(),
+					'name'      => __( 'Base Tax', 'invoicing' ),
 				)
 			)
 		);
@@ -132,11 +132,15 @@ class GetPaid_Tax {
 	public static function get_address_tax_rates( $country, $state ) {
 
 		$all_tax_rates  = self::get_all_tax_rates();
-		$matching_rates = wp_list_filter( $all_tax_rates, array( 'country' => $country ) );
+		$matching_rates = array_merge(
+			wp_list_filter( $all_tax_rates, array( 'country' => $country ) ),
+			wp_list_filter( $all_tax_rates, array( 'country' => '' ) )
+		);
 
 		foreach ( $matching_rates as $i => $rate ) {
 
-			if ( empty( $rate['global'] ) && $rate['state'] != $state ) {
+			$states = array_filter( wpinv_clean( explode( ',', $rate['state'] ) ) );
+			if ( empty( $rate['global'] ) && ! in_array( $state, $states ) ) {
 				unset( $matching_rates[ $i ] );
 			}
 

@@ -169,6 +169,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * All matching tax rates are now applied - CHANGED
 * Ability to calculate tax based on base address instead of shop address - ADDED
 * Invoice exports now include the item ids - ADDED
+* Users can now set a tax rate for all countries - ADDED
+* Users can now set a tax rate for multiple states - ADDED
 
 = 1.0.18 =
 * Display customer notes on the invoice print page - ADDED

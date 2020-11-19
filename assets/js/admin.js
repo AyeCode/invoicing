@@ -773,25 +773,6 @@ jQuery(function($) {
         var pending_count = jQuery('.wpi-pending', wpi_stat_links).find('.count').text();
         jQuery('.pending', wpi_stat_links).find('a').html(WPInv_Admin.status_pending + ' <span class="count">' + pending_count + '</span>');
     }
-    // Update tax rate state field based on selected rate country
-    $(document.body).on('change', '#wpinv_tax_rates select.wpinv-tax-country', function() {
-        var $this = $(this);
-        data = {
-            action: 'wpinv_get_states_field',
-            country: $(this).val(),
-            field_name: $this.attr('name').replace('country', 'state')
-        };
-        $.post(WPInv_Admin.ajax_url, data, function(response) {
-            if ('nostates' == response) {
-                var text_field = '<input type="text" name="' + data.field_name + '" value=""/>';
-                $this.parent().next().find('select').replaceWith(text_field);
-            } else {
-                $this.parent().next().find('input,select').show();
-                $this.parent().next().find('input,select').replaceWith(response);
-            }
-        });
-        return false;
-    });
 
     // Update state field based on selected country
     var getpaid_user_edit_sync_state_and_country = function() {
@@ -851,52 +832,43 @@ jQuery(function($) {
     // Sync on changes.
     $(document.body).on('change', '.getpaid_js_field-country', getpaid_user_edit_sync_state_and_country);
 
-    // Insert new tax rate row
-    $('#wpinv_add_tax_rate').on('click', function() {
-        var row = $('#wpinv_tax_rates tbody tr:last');
-        row.find('.wpi_select2').each(function() {
-            $(this).select2('destroy');
-        });
-        var clone = row.clone();
-        var count = row.parent().find('tr').length;
-        clone.find('td input').not(':input[type=checkbox]').val('');
-        clone.find('td [type="checkbox"]').attr('checked', false);
-        clone.find('input, select').each(function() {
-            var name = $(this).attr('name');
-            name = name.replace(/\[(\d+)\]/, '[' + parseInt(count) + ']');
-            $(this).attr('name', name).attr('id', name);
-        });
-        clone.find('label').each(function() {
-            var name = $(this).attr('for');
-            name = name.replace(/\[(\d+)\]/, '[' + parseInt(count) + ']');
-            $(this).attr('for', name);
-        });
-        clone.insertAfter(row);
-        wpi_select2();
-        return false;
-    });
-    // Remove tax row
-    $(document.body).on('click', '#wpinv_tax_rates .wpinv_remove_tax_rate', function() {
-        var tax_rates = $('#wpinv_tax_rates tbody tr:visible');
-        var count = tax_rates.length;
-        if (count === 1) {
-            $('#wpinv_tax_rates select').val('');
-            $('#wpinv_tax_rates input[type="text"]').val('');
-            $('#wpinv_tax_rates input[type="number"]').val('');
-            $('#wpinv_tax_rates input[type="checkbox"]').attr('checked', false);
-        } else {
-            $(this).closest('tr').remove();
-        }
-        /* re-index after deleting */
-        $('#wpinv_tax_rates tbody tr').each(function(rowIndex) {
-            $(this).children().find('input, select').each(function() {
+    /**
+     * Reindexes the tax table.
+     */
+    function wpinv_reindex_tax_table() {
+
+        $( '#wpinv_tax_rates tbody tr' ).each( function( rowIndex ) {
+
+            $(this).find(":input[name^='tax_rates']").each(function() {
+                console.log( this )
                 var name = $(this).attr('name');
-                name = name.replace(/\[(\d+)\]/, '[' + (rowIndex) + ']');
+                name = name.replace( /\[(\d+)\]/, '[' + ( rowIndex ) + ']' );
                 $(this).attr('name', name).attr('id', name);
             });
+
         });
-        return false;
+
+    }
+
+    // Inserts a new tax rate row
+    $( '.wpinv_add_tax_rate' ).on( 'click', function( e ) {
+
+        e.preventDefault()
+        var html = $('#tmpl-wpinv-tax-rate-row').html()
+        $( '#wpinv_tax_rates tbody' ).append( html )
+        wpinv_reindex_tax_table();
+
     });
+
+    // Remove tax row.
+    $( document ).on('click', '#wpinv_tax_rates .wpinv_remove_tax_rate', function( e ) {
+
+        e.preventDefault()
+        $(this).closest('tr').remove();
+        wpinv_reindex_tax_table();
+ 
+    });
+
     var elB = $('#wpinv-address');
 
     $('#wpinv_state', elB).on('change', function(e) {
@@ -998,89 +970,6 @@ jQuery(function($) {
     $('.getpaid-is-invoice-cpt form#post #titlediv [name="post_title"]').attr('readonly', true);
 
     WPInv.init();
-    var WPInv_Export = {
-        init: function() {
-            this.submit();
-            this.clearMessage();
-        },
-        submit: function() {
-            var $this = this;
-            $('.wpi-export-form').submit(function(e) {
-                e.preventDefault();
-                var $form = $(this);
-                var submitBtn = $form.find('input[type="submit"]');
-                if (!submitBtn.attr('disabled')) {
-                    var data = $form.serialize();
-                    submitBtn.attr('disabled', true);
-                    $form.find('.wpi-msg-wrap').remove();
-                    $form.append('<div class="wpi-msg-wrap"><div class="wpi-progress"><div></div><span>0%</span></div><span class="wpi-export-loader"><i class="fa fa-spin fa-spinner"></i></span></div>');
-                    // start the process
-                    $this.step(1, data, $form, $this);
-                }
-            });
-        },
-        step: function(step, data, $form, $this) {
-            var message = $form.find('.wpi-msg-wrap');
-            var post_data = {
-                action: 'wpinv_ajax_export',
-                step: step,
-                data: data,
-            };
-            $.ajax({
-                url: WPInv_Admin.ajax_url,
-                type: 'POST',
-                cache: false,
-                dataType: 'json',
-                data: post_data,
-                beforeSend: function(jqXHR, settings) {},
-                success: function(res) {
-                    if (res && typeof res == 'object') {
-                        if (res.success) {
-                            if ('done' == res.data.step || res.data.done >= 100) {
-                                $form.find('input[type="submit"]').removeAttr('disabled');
-                                $('.wpi-progress > span').text(parseInt(res.data.done) + '%');
-                                $('.wpi-progress div').animate({
-                                    width: res.data.done + '%'
-                                }, 100, function() {});
-                                if (res.msg) {
-                                    message.html('<div id="wpi-export-success" class="updated notice is-dismissible"><p>' + msg + '<span class="notice-dismiss"></span></p></div>');
-                                }
-                                if (res.data.file && res.data.file.u) {
-                                    message.append('<span class="wpi-export-file"><a href="' + res.data.file.u + '" target="_blank"><i class="fa fa-download"></i> ' + res.data.file.u + '</a><span> - ' + res.data.file.s + '<span><span>');
-                                }
-                                message.find('.wpi-export-loader').html('<i class="fa fa-check-circle"></i>');
-                            } else {
-                                var next = parseInt(res.data.step) > 0 ? parseInt(res.data.step) : 1;
-                                $('.wpi-progress > span').text(parseInt(res.data.done) + '%');
-                                $('.wpi-progress div').animate({
-                                    width: res.data.done + '%'
-                                }, 100, function() {});
-                                $this.step(parseInt(next), data, $form, $this);
-                            }
-                        } else {
-                            $form.find('input[type="submit"]').removeAttr('disabled');
-                            if (res.msg) {
-                                message.html('<div class="updated error"><p>' + res.msg + '</p></div>');
-                            }
-                        }
-                    } else {
-                        $form.find('input[type="submit"]').removeAttr('disabled');
-                        message.html('<div class="updated error">' + res + '</div>');
-                    }
-                }
-            }).fail(function(res) {
-                if (window.console && window.console.log) {
-                    console.log(res);
-                }
-            });
-        },
-        clearMessage: function() {
-            $('body').on('click', '#wpi-export-success .notice-dismiss', function() {
-                $(this).closest('#wpi-export-success').parent().slideUp('fast');
-            });
-        }
-    };
-    WPInv_Export.init();
 
 });
 

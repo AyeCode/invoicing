@@ -1213,3 +1213,8 @@ function wpinv_calculate_tax() {}
  * @deprecated
  */
 function wpinv_get_tax_rate() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_eu_fallback_rate_callback() {}

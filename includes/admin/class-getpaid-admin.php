@@ -62,6 +62,7 @@ class GetPaid_Admin {
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
+        add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
     }
@@ -327,6 +328,18 @@ class GetPaid_Admin {
 
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
 		exit;
+	}
+
+	/**
+     * Resets tax rates.
+	 * 
+     */
+    public function admin_reset_tax_rates() {
+
+		update_option( 'wpinv_tax_rates', wpinv_get_data( 'tax-rates' ) );
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+		exit;
+
 	}
 
     /**
