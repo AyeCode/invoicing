@@ -341,7 +341,55 @@ return array(
                     'desc' => __( 'Enter tax rates for specific regions.', 'invoicing' ),
                     'type' => 'tax_rates',
                 ),
-            )
+            ),
+
+            'vat'    => array(
+
+                'vat_company_name' => array(
+                    'id' => 'vat_company_name',
+                    'name' => __( 'Company Name', 'invoicing' ),
+                    'desc' => wp_sprintf(__( 'Verify your company name and  VAT number on the %sEU VIES System.%s', 'invoicing' ), '<a href="http://ec.europa.eu/taxation_customs/vies/" target="_blank">', '</a>' ),
+                    'type' => 'text',
+                    'size' => 'regular',
+                ),
+
+                'vat_number' => array(
+                    'id'   => 'vat_number',
+                    'name' => __( 'VAT Number', 'invoicing' ),
+                    'desc' => __( 'Enter your VAT number including the country identifier, eg: GB123456789', 'invoicing' ),
+                    'type' => 'text',
+                    'size' => 'regular',
+                ),
+
+                'vat_prevent_b2c_purchase' => array(
+                    'id' => 'vat_prevent_b2c_purchase',
+                    'name' => __( 'Prevent B2C Sales', 'invoicing' ),
+                    'desc' => __( 'Require everyone in the EU to provide a VAT number.', 'invoicing' ),
+                    'type' => 'checkbox'
+                ),
+
+                'validate_vat_number' => array(
+                    'id'   => 'validate_vat_number',
+                    'name' => __( 'Validate VAT Number', 'invoicing' ),
+                    'desc' => __( 'Validate VAT numbers with VIES.', 'invoicing' ),
+                    'type' => 'checkbox'
+                ),
+
+                'vat_same_country_rule' => array(
+                    'id'          => 'vat_same_country_rule',
+                    'name'        => __( 'Same Country Rule', 'invoicing' ),
+                    'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
+                    'type'        => 'select',
+                    'options'     => array(
+                        'no'        => __( 'Do not charge Tax', 'invoicing' ),
+                        'always'    => __( 'Charge Tax', 'invoicing' ),
+                    ),
+                    'placeholder' => __( 'Select an option', 'invoicing' ),
+                    'std'         => 'always',
+                ),
+
+            ),
+
         )
     ),
     /** Emails Settings */

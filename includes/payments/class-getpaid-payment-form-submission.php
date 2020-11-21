@@ -443,6 +443,11 @@ class GetPaid_Payment_Form_Submission {
 			$this->state = $state;
 		}
 
+		// Abort if the country is not taxable.
+		if ( wpinv_is_country_taxable( $this->country ) ) {
+			return;
+		}
+
 		$processor = new GetPaid_Payment_Form_Submission_Taxes( $this );
 
 		foreach ( $processor->taxes as $tax ) {

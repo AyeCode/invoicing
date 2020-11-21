@@ -159,7 +159,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	}
 
 	/**
-	 * Checks if we requires a VAT number.
+	 * Checks if we require a VAT number.
 	 *
 	 * @param bool $ip_in_eu Whether the customer IP is from the EU
 	 * @param bool $country_in_eu Whether the customer country is from the EU
@@ -193,7 +193,6 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		// Prepare variables.
 		$vat_number  = $this->get_vat_number( $submission );
-		$company     = $this->get_company( $submission );
 		$ip_country  = getpaid_get_ip_country();
         $is_eu       = $this->is_eu_country( $submission->country );
         $is_ip_eu    = $this->is_eu_country( $ip_country );
@@ -216,10 +215,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
             return;
 		}
 
-		$is_valid = WPInv_EUVat::validate_vat_number( $vat_number, $company, $submission->country );
-
-		if ( is_string( $is_valid ) ) {
-			throw new Exception( $is_valid );
+		if ( ! wpinv_validate_vat_number( $vat_number, $submission->country ) ) {
+			throw new Exception( __( 'Your VAT number is invalid', 'invoicing' ) );
 		}
 
 	}

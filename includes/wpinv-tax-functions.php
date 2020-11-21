@@ -65,6 +65,20 @@ function wpinv_is_invoice_taxable( $invoice ) {
 }
 
 /**
+ * Checks whether or not a given country is taxable.
+ *
+ * @param string $country
+ * @return bool
+ */
+function wpinv_is_country_taxable( $country ) {
+    $is_eu     = getpaid_is_eu_state( $country );
+    $is_exempt = $is_eu && $country == wpinv_is_base_country( $country ) && wpinv_same_country_exempt_vat();
+    
+    return (bool) apply_filters( 'wpinv_is_country_taxable', ! $is_exempt, $country ); 
+
+}
+
+/**
  * Checks whether or not an item is taxable.
  *
  * @param WPInv_Item|GetPaid_Form_Item $item
@@ -122,6 +136,15 @@ function wpinv_display_individual_tax_rates() {
 function wpinv_get_default_tax_rate() {
     $rate = wpinv_get_option( 'tax_rate', false );
     return (float) apply_filters( 'wpinv_get_default_tax_rate', floatval( $rate ) );
+}
+
+/**
+ * Checks if we should exempt same country vat.
+ *
+ * @return bool
+ */
+function wpinv_same_country_exempt_vat() {
+    return 'no' == wpinv_get_option( 'vat_same_country_rule' );
 }
 
 /**
@@ -204,6 +227,108 @@ function getpaid_prepare_item_tax( $item, $tax_name, $tax_amount, $recurring_tax
 		'recurring_tax' => $recurring_tax,
     );
 
+}
+
+/**
+ * Sanitizes a VAT number.
+ *
+ * @param string $vat_number
+ * @return string
+ */
+function wpinv_sanitize_vat_number( $vat_number ) {
+    return str_replace( array(' ', '.', '-', '_', ',' ), '', strtoupper( trim( $vat_number ) ) );
+}
+
+/**
+ * Validates a vat number via a REGEX.
+ *
+ * @param string $vat_number
+ * @return bool
+ */
+function wpinv_regex_validate_vat_number( $vat_number ) {
+
+    $country    = substr( $vat_number, 0, 2 );
+    $vatin      = substr( $vat_number, 2 );
+    $regexes    = wpinv_get_data( 'vat-number-regexes' );
+
+    if ( isset( $regexes[ $country ] ) ) {
+
+        $regex = $regexes[ $country ];
+        $regex = '/^(?:' . $regex . ')$/';
+        return 1 === preg_match( $regex, $vatin );
+
+    }
+
+    // Not an EU state, use filters to validate the number.
+    return apply_filters( 'wpinv_regex_validate_vat_number', true, $vat_number );
+}
+
+/**
+ * Validates a vat number via a VIES.
+ *
+ * @param string $vat_number
+ * @return bool
+ */
+function wpinv_vies_validate_vat_number( $vat_number ) {
+
+    $country    = substr( $vat_number, 0, 2 );
+    $vatin      = substr( $vat_number, 2 );
+
+    $url        = add_query_arg(
+        array(
+            'ms'  => urlencode( $country ),
+            'iso' => urlencode( $country ),
+            'vat' => urlencode( $vatin ),
+        ),
+        'http://ec.europa.eu/taxation_customs/vies/viesquer.do'
+    );
+
+    $response   = wp_remote_get( $url );
+    $response   = wp_remote_retrieve_body( $response );
+
+    // Fallback gracefully if the VIES website is down.
+    if ( empty( $response ) ) {
+        return true;
+    }
+
+    return 1 !== preg_match( '/invalid VAT number/i', $response );
+
+}
+
+/**
+ * Validates a vat number.
+ *
+ * @param string $vat_number
+ * @param string $country
+ * @return bool
+ */
+function wpinv_validate_vat_number( $vat_number, $country ) {
+    
+    // Abort if we are not validating this.
+    if ( ! wpinv_should_validate_vat_number() || empty( $vat_number ) ) {
+        return true;
+    }
+
+    // In case the vat number does not have a country code...
+    $vat_number = wpinv_sanitize_vat_number( $vat_number );
+    $_country   = substr( $vat_number, 0, 2 );
+    $_country   = $_country == wpinv_country_name( $_country );
+
+    if ( $_country ) {
+        $vat_number = strtoupper( $country ) . $vat_number;
+    }
+
+    return wpinv_regex_validate_vat_number( $vat_number ) && wpinv_vies_validate_vat_number( $vat_number );
+}
+
+/**
+ * Checks whether or not we should validate vat numbers.
+ *
+ * @return bool
+ */
+function wpinv_should_validate_vat_number() {
+    $validate = wpinv_get_option( 'validate_vat_number' );
+	return ! empty( $validate );
 }
 
 function wpinv_sales_tax_for_year( $year = null ) {
@@ -398,25 +523,6 @@ function wpinv_vat_rates_callback( $args ) {
     echo $content;
 }
 
-function wpinv_vat_number_callback( $args ) {
-    global $wpinv_euvat;
-    
-    $vat_number     = $wpinv_euvat->get_vat_number();
-    $vat_valid      = $wpinv_euvat->is_vat_validated();
-
-    $size           = ( isset( $args['size'] ) && !is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-    $validated_text = $vat_valid ? __( 'VAT number validated', 'invoicing' ) : __( 'VAT number not validated', 'invoicing' );
-    $disabled       = $vat_valid ? 'disabled="disabled"' : " ";
-    
-    $html = '<input type="text" class="' . $size . '-text" id="wpinv_settings[' . $args['id'] . ']" name="wpinv_settings[' . $args['id'] . ']" placeholder="GB123456789" value="' . esc_attr( stripslashes( $vat_number ) ) . '"/>';
-    $html .= '<span>&nbsp;<input type="button" id="wpinv_vat_validate" class="wpinv_validate_vat_button button-secondary" ' . $disabled . ' value="' . esc_attr__( 'Validate VAT Number', 'invoicing' ) . '" /></span>';
-    $html .= '<span class="wpinv-vat-stat wpinv-vat-stat-' . (int)$vat_valid . '"><i class="fa"></i> <font>' . $validated_text . '</font></span>';
-    $html .= '<label for="wpinv_settings[' . $args['id'] . ']">' . '<p>' . __( 'Enter your VAT number including country identifier, eg: GB123456789 (Settings must be saved after validation)', 'invoicing' ).'</p>' . '</label>';
-    $html .= '<input type="hidden" name="_wpi_nonce" value="' . wp_create_nonce( 'vat_validation' ) . '">';
-
-    echo $html;
-}
-
 /**
  * Filters the VAT rules to ensure that each item has a VAT rule.
  * 
@@ -425,7 +531,7 @@ function wpinv_vat_number_callback( $args ) {
 function getpaid_filter_vat_rule( $vat_rule ) {
 
     if ( empty( $vat_rule ) ) {        
-        return getpaid_tax()->allow_vat_rules() ? 'digital' : 'physical';
+        return 'digital';
     }
 
     return $vat_rule;

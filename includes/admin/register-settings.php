@@ -401,8 +401,9 @@ function wpinv_get_registered_settings_sections() {
             'main' => __( 'Gateway Settings', 'invoicing' ),
         ) ),
         'taxes' => apply_filters( 'wpinv_settings_sections_taxes', array(
-            'main' => __( 'Tax Settings', 'invoicing' ),
-            'rates' => __( 'Tax Rates', 'invoicing' ),
+            'main'  => __( 'Tax Settings', 'invoicing' ),
+			'rates' => __( 'Tax Rates', 'invoicing' ),
+			'vat'   => __( 'EU VAT Settings', 'invoicing' )
         ) ),
         'emails' => apply_filters( 'wpinv_settings_sections_emails', array(
             'main' => __( 'Email Settings', 'invoicing' ),

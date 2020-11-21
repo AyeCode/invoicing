@@ -1218,3 +1218,8 @@ function wpinv_get_tax_rate() {}
  * @deprecated
  */
 function wpinv_eu_fallback_rate_callback() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_vat_number_callback() {}

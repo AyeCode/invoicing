@@ -3490,8 +3490,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	/**
 	 * @deprecated
 	 */
-    public function recalculate_totals( $temp = false ) {
-        $this->update_items( $temp );
+    public function recalculate_totals() {
+        $this->recalculate_total();
         $this->save( true );
         return $this;
     }
