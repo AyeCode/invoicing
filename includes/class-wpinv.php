@@ -91,7 +91,6 @@ class WPInv_Plugin {
 		$this->set( 'session', new WPInv_Session_Handler() );
 		$GLOBALS['wpi_session'] = $this->get( 'session' ); // Backwards compatibility.
 		$this->tax              = new WPInv_EUVat();
-		$this->tax->init();
 		$GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
 
 		// Init other objects.
