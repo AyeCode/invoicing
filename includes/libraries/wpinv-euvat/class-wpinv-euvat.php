@@ -272,51 +272,24 @@ class WPInv_EUVat {
         return __( 'Standard Rates', 'invoicing' );
     }
 
-    public static function get_rate_classes( $with_desc = false ) {
-        $rate_classes_option = get_option( '_wpinv_vat_rate_classes', true );
-        $classes = maybe_unserialize( $rate_classes_option );
-
-        if ( empty( $classes ) || !is_array( $classes ) ) {
-            $classes = array();
-        }
-
-        $rate_classes = array();
-        if ( !array_key_exists( '_standard', $classes ) ) {
-            if ( $with_desc ) {
-                $rate_classes['_standard'] = array( 'name' => self::standard_rates_label(), 'desc' => __( 'EU member states standard VAT rates', 'invoicing' ) );
-            } else {
-                $rate_classes['_standard'] = self::standard_rates_label();
-            }
-        }
-
-        foreach ( $classes as $key => $class ) {
-            $name = !empty( $class['name'] ) ? __( $class['name'], 'invoicing' ) : $key;
-            $desc = !empty( $class['desc'] ) ? __( $class['desc'], 'invoicing' ) : '';
-
-            if ( $with_desc ) {
-                $rate_classes[$key] = array( 'name' => $name, 'desc' => $desc );
-            } else {
-                $rate_classes[$key] = $name;
-            }
-        }
-
-        return $rate_classes;
+    /**
+     * @deprecated
+     */
+    public static function get_rate_classes() {
+        return array();
     }
 
+    /**
+     * @deprecated
+     */
     public static function get_all_classes() {
-        $classes            = self::get_rate_classes();
-        $classes['_exempt'] = __( 'Exempt (0%)', 'invoicing' );
-
-        return apply_filters( 'wpinv_vat_get_all_classes', $classes );
+        return array();
     }
 
-    public static function get_class_desc( $rate_class ) {
-        $rate_classes = self::get_rate_classes( true );
-
-        if ( !empty( $rate_classes ) && isset( $rate_classes[$rate_class] ) && isset( $rate_classes[$rate_class]['desc'] ) ) {
-            return $rate_classes[$rate_class]['desc'];
-        }
-
+    /**
+     * @deprecated
+     */
+    public static function get_class_desc() {
         return '';
     }
 
@@ -334,19 +307,18 @@ class WPInv_EUVat {
         return apply_filters( 'wpinv_get_vat_rules', $vat_rules );
     }
 
-    public static function get_vat_rates( $class ) {
-        if ( $class === '_standard' ) {
-            return GetPaid_Tax::get_all_tax_rates();
-        }
-
-        $rates = self::get_non_standard_rates();
-
-        return array_key_exists( $class, $rates ) ? $rates[$class] : array();
+    /**
+     * @deprecated
+     */
+    public static function get_vat_rates() {
+        return array();
     }
 
+    /**
+     * @deprecated
+     */
     public static function get_non_standard_rates() {
-        $option = get_option( 'wpinv_vat_rates', array());
-        return is_array( $option ) ? $option : array();
+        return array();
     }
 
     /**
@@ -363,41 +335,32 @@ class WPInv_EUVat {
         return wpinv_use_taxes();
     }
 
+    /**
+     * @deprecated
+     */
     public static function get_item_class( $postID ) {
-        $class = get_post_meta( $postID, '_wpinv_vat_class', true );
-
-        if ( empty( $class ) ) {
-            $class = '_standard';
-        }
-
-        return apply_filters( 'wpinv_get_item_vat_class', $class, $postID );
+        return get_post_meta( $postID, '_wpinv_vat_class', true );
     }
 
-    public static function item_class_label( $postID ) {
-        $vat_classes = self::get_all_classes();
-
-        $class = self::get_item_class( $postID );
-        $class = isset( $vat_classes[$class] ) ? $vat_classes[$class] : __( $class, 'invoicing' );
-
-        return apply_filters( 'wpinv_item_class_label', $class, $postID );
+    /**
+     * @deprecated
+     */
+    public static function item_class_label() {
+        return '';
     }
 
+    /**
+     * @deprecated
+     */
     public static function get_item_rule( $postID ) {
-        $rule_type = get_post_meta( $postID, '_wpinv_vat_rule', true );
-
-        if ( empty( $rule_type ) ) {
-            $rule_type = 'digital';
-        }
-
-        return apply_filters( 'wpinv_item_get_vat_rule', $rule_type, $postID );
+        return get_post_meta( $postID, '_wpinv_vat_rule', true );
     }
 
-    public static function item_rule_label( $postID ) {
-        $vat_rules  = self::get_rules();
-        $vat_rule   = self::get_item_rule( $postID );
-        $vat_rule   = isset( $vat_rules[$vat_rule] ) ? $vat_rules[$vat_rule] : $vat_rule;
-
-        return apply_filters( 'wpinv_item_rule_label', $vat_rule, $postID );
+    /**
+     * @deprecated
+     */
+    public static function item_rule_label() {
+        return '';
     }
 
     /**
