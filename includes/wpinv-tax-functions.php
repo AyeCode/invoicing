@@ -547,3 +547,74 @@ function getpaid_filter_vat_class( $vat_class ) {
     return empty( $vat_class ) ? '_standard' : $vat_class;
 }
 add_filter( 'wpinv_get_item_vat_class', 'getpaid_filter_vat_class' );
+
+/**
+ * Returns a list of all tax classes.
+ * 
+ * @return array
+ */
+function getpaid_get_tax_classes() {
+
+    return apply_filters(
+        'getpaid_tax_classes',
+        array(
+            '_standard' => __( 'Standard Tax Rate', 'invoicing' ),
+            '_reduced'  => __( 'Reduced Tax Rate', 'invoicing' ),
+            '_exempt'   => __( 'Tax Exempt', 'invoicing' ),
+        )
+    );
+
+}
+
+/**
+ * Returns a list of all tax rules.
+ * 
+ * @return array
+ */
+function getpaid_get_tax_rules() {
+
+    return apply_filters(
+        'getpaid_tax_rules',
+        array(
+            'physical' => __( 'Physical Item', 'invoicing' ),
+            'digital'  => __( 'Digital Item', 'invoicing' ),
+        )
+    );
+
+}
+
+/**
+ * Returns the label of a tax class.
+ * 
+ * @param string $tax_class
+ * @return string
+ */
+function getpaid_get_tax_class_label( $tax_class ) {
+
+    $classes = getpaid_get_tax_classes();
+
+    if ( isset( $classes[ $tax_class ] ) ) {
+        return sanitize_text_field( $classes[ $tax_class ] );
+    }
+
+    return sanitize_text_field( $tax_class );
+
+}
+
+/**
+ * Returns the label of a tax rule.
+ * 
+ * @param string $tax_rule
+ * @return string
+ */
+function getpaid_get_tax_rule_label( $tax_rule ) {
+
+    $rules = getpaid_get_tax_rules();
+
+    if ( isset( $rules[ $tax_rule ] ) ) {
+        return sanitize_text_field( $rules[ $tax_rule ] );
+    }
+
+    return sanitize_text_field( $tax_rule );
+
+}

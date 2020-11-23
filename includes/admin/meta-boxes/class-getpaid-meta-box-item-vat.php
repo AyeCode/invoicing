@@ -22,7 +22,6 @@ class GetPaid_Meta_Box_Item_VAT {
 	 * @param WP_Post $post
 	 */
     public static function output( $post ) {
-        global $wpinv_euvat;
 
         // Prepare the item.
         $item = new WPInv_Item( $post );
@@ -32,18 +31,14 @@ class GetPaid_Meta_Box_Item_VAT {
         do_action( 'wpinv_item_before_vat_metabox', $item );
 
         // Output the vat rules settings.
-        if ( $wpinv_euvat->allow_vat_rules() ) {
-            do_action( 'wpinv_item_vat_metabox_before_vat_rules', $item );
-            self::output_vat_rules( $item, $wpinv_euvat );
-            do_action( 'wpinv_item_vat_metabox_vat_rules', $item );
-        }
+        do_action( 'wpinv_item_vat_metabox_before_vat_rules', $item );
+        self::output_vat_rules( $item );
+        do_action( 'wpinv_item_vat_metabox_vat_rules', $item );
 
         // Output vat class settings.
-        if ( $wpinv_euvat->allow_vat_classes() ) {
-            do_action( 'wpinv_item_vat_metabox_before_vat_rules', $item );
-            self::output_vat_classes( $item, $wpinv_euvat );
-            do_action( 'wpinv_item_vat_metabox_vat_class', $item );
-        }
+        do_action( 'wpinv_item_vat_metabox_before_vat_rules', $item );
+        self::output_vat_classes( $item );
+        do_action( 'wpinv_item_vat_metabox_vat_class', $item );
 
         do_action( 'wpinv_item_vat_metabox', $item );
 
@@ -54,9 +49,8 @@ class GetPaid_Meta_Box_Item_VAT {
 	 * Output the VAT rules settings.
 	 *
 	 * @param WPInv_Item $item
-     * @param WPInv_EUVat $wpinv_euvat
 	 */
-    public static function output_vat_rules( $item, $wpinv_euvat ) {
+    public static function output_vat_rules( $item ) {
         ?>
 
             <div class="wpinv_vat_rules">
@@ -76,7 +70,7 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'select2'          => true,
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
-                                    'options'          => $wpinv_euvat->get_rules()
+                                    'options'          => getpaid_get_tax_rules(),
                                 )
                             );
                         ?>
@@ -96,9 +90,8 @@ class GetPaid_Meta_Box_Item_VAT {
 	 * Output the VAT class settings.
 	 *
 	 * @param WPInv_Item $item
-     * @param WPInv_EUVat $wpinv_euvat
 	 */
-    public static function output_vat_classes( $item, $wpinv_euvat ) {
+    public static function output_vat_classes( $item ) {
         ?>
 
             <div class="wpinv_vat_classes">
@@ -118,7 +111,7 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'select2'          => true,
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
-                                    'options'          => $wpinv_euvat->get_all_classes()
+                                    'options'          => getpaid_get_tax_classes(),
                                 )
                             );
                         ?>

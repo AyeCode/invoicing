@@ -9,10 +9,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-global $wpinv_euvat;
-
 // Prepare the company name.
-$company_name = $wpinv_euvat->get_company_name();
+$company_name = wpinv_get_option( 'vat_company_name' );
 
 if ( empty( $company_name ) ) {
     $company_name = wpinv_get_business_name();

@@ -415,7 +415,6 @@ class GetPaid_Post_Types_Admin {
 	 * Returns an array of items table columns.
 	 */
 	public static function item_columns( $columns ) {
-		global $wpinv_euvat;
 
 		$columns = array(
 			'cb'                => $columns['cb'],
@@ -427,11 +426,8 @@ class GetPaid_Post_Types_Admin {
 			'shortcode'         => __( 'Shortcode', 'invoicing' ),
 		);
 
-		if ( ! $wpinv_euvat->allow_vat_rules() ) {
+		if ( ! wpinv_use_taxes() ) {
 			unset( $columns['vat_rule'] );
-		}
-
-		if ( ! $wpinv_euvat->allow_vat_classes() ) {
 			unset( $columns['vat_class'] );
 		}
 
@@ -459,8 +455,7 @@ class GetPaid_Post_Types_Admin {
 	 * Displays items table columns.
 	 */
 	public static function display_item_columns( $column_name, $post_id ) {
-		global $wpinv_euvat;
-
+ 
 		$item = new WPInv_Item( $post_id );
 
 		switch ( $column_name ) {
@@ -489,11 +484,11 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'vat_rule' :
-				echo $wpinv_euvat->item_rule_label( $item->get_id() );
+				echo getpaid_get_tax_rule_label( $item->get_vat_rule() );
 				break;
 
 			case 'vat_class' :
-				echo $wpinv_euvat->item_class_label( $item->get_id() );
+				echo getpaid_get_tax_class_label( $item->get_vat_class() );
 				break;
 
 			case 'shortcode' :
@@ -512,7 +507,6 @@ class GetPaid_Post_Types_Admin {
 	 * Lets users filter items using taxes.
 	 */
 	public static function add_item_filters( $post_type ) {
-		$wpinv_euvat = getpaid_tax();
 
 		// Abort if we're not dealing with items.
 		if ( $post_type != 'wpi_item' ) {
@@ -520,11 +514,11 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// Filter by vat rules.
-		if ( $wpinv_euvat->allow_vat_rules() ) {
+		if ( wpinv_use_taxes() ) {
 	
 			// Sanitize selected vat rule.
 			$vat_rule   = '';
-			$vat_rules  = $wpinv_euvat->get_rules();
+			$vat_rules  = getpaid_get_tax_rules();
 			if ( isset( $_GET['vat_rule'] ) ) {
 				$vat_rule   =  $_GET['vat_rule'];
 			}
@@ -548,14 +542,10 @@ class GetPaid_Post_Types_Admin {
 			);
 
 			// Filter by VAT class.
-		}
-
-		// Filter by vat class.
-		if ( $wpinv_euvat->allow_vat_classes() ) {
 	
 			// Sanitize selected vat rule.
 			$vat_class   = '';
-			$vat_classes = $wpinv_euvat->get_all_classes();
+			$vat_classes = getpaid_get_tax_classes();
 			if ( isset( $_GET['vat_class'] ) ) {
 				$vat_class   =  $_GET['vat_class'];
 			}
