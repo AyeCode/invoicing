@@ -444,7 +444,7 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		// Abort if the country is not taxable.
-		if ( wpinv_is_country_taxable( $this->country ) ) {
+		if ( ! wpinv_is_country_taxable( $this->country ) ) {
 			return;
 		}
 

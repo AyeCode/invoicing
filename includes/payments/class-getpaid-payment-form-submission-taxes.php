@@ -49,6 +49,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	public function process_item_tax( $item, $submission ) {
 
 		$rates    = getpaid_get_item_tax_rates( $item, $submission->country, $submission->state );
+		$rates    = getpaid_filter_item_tax_rates( $item, $rates );
 		$taxes    = getpaid_calculate_item_taxes( $item->get_sub_total(), $rates );
 		$r_taxes  = getpaid_calculate_item_taxes( $item->get_recurring_sub_total(), $rates );
 
@@ -183,11 +184,10 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 */
 	public function validate_vat( $submission ) {
 
-		$has_digital = $this->has_digital_item( $submission );
-		$in_eu       = $this->is_eu_transaction( $submission->country );
+		$in_eu = $this->is_eu_transaction( $submission->country );
 
 		// Abort if we are not validating vat numbers.
-		if ( ! $has_digital && ! $in_eu ) {
+		if ( ! $in_eu ) {
             return;
 		}
 
@@ -197,7 +197,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
         $is_eu       = $this->is_eu_country( $submission->country );
         $is_ip_eu    = $this->is_eu_country( $ip_country );
 
-		// If we're preventing business to consumer purchases, ensure
+		// If we're preventing business to consumer purchases,
 		if ( $this->requires_vat( $is_ip_eu, $is_eu ) && empty( $vat_number ) ) {
 
 			// Ensure that a vat number has been specified.
@@ -211,7 +211,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		}
 
 		// Abort if we are not validating vat (vat number should exist, user should be in eu and business too).
-		if ( ! $is_eu || ! $in_eu || empty( $vat_number ) ) {
+		if ( ! $in_eu ) {
             return;
 		}
 

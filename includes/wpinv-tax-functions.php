@@ -73,7 +73,7 @@ function wpinv_is_invoice_taxable( $invoice ) {
 function wpinv_is_country_taxable( $country ) {
     $is_eu     = getpaid_is_eu_state( $country );
     $is_exempt = $is_eu && $country == wpinv_is_base_country( $country ) && wpinv_same_country_exempt_vat();
-    
+
     return (bool) apply_filters( 'wpinv_is_country_taxable', ! $is_exempt, $country ); 
 
 }
@@ -186,6 +186,32 @@ function getpaid_get_item_tax_rates( $item, $country = '', $state = '' ) {
     }
 
     return apply_filters( 'getpaid_get_item_tax_rates', $tax_rates, $item, $country, $state );
+}
+
+/**
+ * Filters an item's tax rate.
+ *
+ * @param WPInv_Item|GetPaid_Form_Item $item
+ * @param array $rates
+ * @return array
+ */
+function getpaid_filter_item_tax_rates( $item, $rates ) {
+
+    $tax_class = $item->get_vat_class();
+
+    foreach ( $rates as $i => $rate ) {
+
+        if ( $tax_class == '_reduced' ) {
+            $rates[ $i ]['rate'] = empty( $rate['reduced_rate'] ) ? 0 : $rate['reduced_rate'];
+        }
+
+        if ( $tax_class == '_exempt' ) {
+            $rates[ $i ]['rate'] = 0;
+        }
+
+    }
+
+    return apply_filters( 'getpaid_filter_item_tax_rates', $rates, $item );
 }
 
 /**
@@ -303,7 +329,7 @@ function wpinv_vies_validate_vat_number( $vat_number ) {
  * @return bool
  */
 function wpinv_validate_vat_number( $vat_number, $country ) {
-    
+
     // Abort if we are not validating this.
     if ( ! wpinv_should_validate_vat_number() || empty( $vat_number ) ) {
         return true;
