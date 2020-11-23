@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_rules" class="col-sm-3 col-form-label">
-                        <?php _e( 'VAT Rule', 'invoicing' );?>
+                        <?php _e( 'Tax Rule', 'invoicing' );?>
                     </label>
                     <div class="col-sm-8">
                         <?php
@@ -65,7 +65,7 @@ class GetPaid_Meta_Box_Item_VAT {
                                 array(
                                     'id'               => 'wpinv_vat_rules',
                                     'name'             => 'wpinv_vat_rules',
-                                    'placeholder'      => __( 'Select VAT rule', 'invoicing' ),
+                                    'placeholder'      => __( 'Select tax rule', 'invoicing' ),
                                     'value'            => $item->get_vat_rule( 'edit' ),
                                     'select2'          => true,
                                     'data-allow-clear' => 'false',
@@ -74,9 +74,6 @@ class GetPaid_Meta_Box_Item_VAT {
                                 )
                             );
                         ?>
-                    </div>
-                    <div class="col-sm-1 pt-2 pl-0">
-                        <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'When you select physical product rules, only consumers and businesses in your country will be charged VAT. The VAT rate used will be the rate in your country. <br><br>If you select Digital product rules, VAT will be charged at the rate that applies in the country of the consumer. Only businesses in your country will be charged VAT.', 'invoicing' ); ?>"></span>
                     </div>
                 </div>
 
@@ -98,7 +95,7 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_class" class="col-sm-3 col-form-label">
-                        <?php _e( 'VAT Class', 'invoicing' );?>
+                        <?php _e( 'Tax Class', 'invoicing' );?>
                     </label>
                     <div class="col-sm-8">
                         <?php
@@ -106,7 +103,7 @@ class GetPaid_Meta_Box_Item_VAT {
                                 array(
                                     'id'               => 'wpinv_vat_class',
                                     'name'             => 'wpinv_vat_class',
-                                    'placeholder'      => __( 'Select VAT class', 'invoicing' ),
+                                    'placeholder'      => __( 'Select tax class', 'invoicing' ),
                                     'value'            => $item->get_vat_class( 'edit' ),
                                     'select2'          => true,
                                     'data-allow-clear' => 'false',
@@ -115,9 +112,6 @@ class GetPaid_Meta_Box_Item_VAT {
                                 )
                             );
                         ?>
-                    </div>
-                    <div class="col-sm-1 pt-2 pl-0">
-                        <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Select the VAT rate class to use for this invoice item', 'invoicing' ); ?>"></span>
                     </div>
                 </div>
 

@@ -936,9 +936,9 @@ function wpinv_tax_rate_callback( $tax_rate, $key, $echo = true ) {
 	include plugin_dir_path( __FILE__ ) . 'views/html-tax-rate-edit.php';
 
 	if ( $echo ) {
-		echo ob_get_clean( $echo );
+		echo ob_get_clean();
 	} else {
-		return ob_get_clean( $echo ); 
+		return ob_get_clean(); 
 	}
 
 }

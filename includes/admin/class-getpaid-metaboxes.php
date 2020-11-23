@@ -87,8 +87,8 @@ class GetPaid_Metaboxes {
 			add_meta_box( 'wpinv_item_details', __( 'Item Details', 'invoicing' ), 'GetPaid_Meta_Box_Item_Details::output', 'wpi_item', 'normal', 'high' );
 
 			// If taxes are enabled, register the tax metabox.
-			if ( getpaid_tax()->allow_vat_rules() || getpaid_tax()->allow_vat_classes() ) {
-				add_meta_box( 'wpinv_item_vat', __( 'VAT / Tax', 'invoicing' ), 'GetPaid_Meta_Box_Item_VAT::output', 'wpi_item', 'normal', 'high' );
+			if ( wpinv_use_taxes() ) {
+				add_meta_box( 'wpinv_item_vat', __( 'Tax', 'invoicing' ), 'GetPaid_Meta_Box_Item_VAT::output', 'wpi_item', 'normal', 'high' );
 			}
 
 			// Item info.
