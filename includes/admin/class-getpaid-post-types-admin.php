@@ -537,7 +537,6 @@ class GetPaid_Post_Types_Admin {
 					'selected'         => in_array( $vat_rule, array_keys( $vat_rules ) ) ? $vat_rule : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
-					'class'            => 'gdmbx2-text-medium',
 				)
 			);
 
@@ -563,7 +562,6 @@ class GetPaid_Post_Types_Admin {
 					'selected'         => in_array( $vat_class, array_keys( $vat_classes ) ) ? $vat_class : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
-					'class'            => 'gdmbx2-text-medium',
 				)
 			);
 
@@ -588,7 +586,6 @@ class GetPaid_Post_Types_Admin {
 				'selected'         => in_array( $type, wpinv_item_types() ) ? $type : '',
 				'show_option_all'  => false,
 				'show_option_none' => false,
-				'class'            => 'gdmbx2-text-medium',
 			)
 		);
 

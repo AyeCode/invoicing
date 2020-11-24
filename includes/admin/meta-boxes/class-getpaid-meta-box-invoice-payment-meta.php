@@ -36,7 +36,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
         </style>
                 <div class="bsui" style="margin-top: 1.5rem">
 
-                    <div id="gdmbx2-metabox-wpinv-payment-meta" class="wpinv-payment-meta">
+                    <div class="wpinv-payment-meta">
 
                     <?php
 

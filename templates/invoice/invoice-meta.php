@@ -9,15 +9,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$class = ! is_singular( 'page' ) ? 'table-sm' : '';
+$class = ! is_singular( 'page' ) ? 'px-1' : '';
 ?>
 
         <?php do_action( 'getpaid_before_invoice_meta', $invoice ); ?>
         <div class="getpaid-invoice-meta-data">
 
-
             <?php do_action( 'getpaid_before_invoice_meta_table', $invoice ); ?>
-            <table class="table <?php echo $class; ?> table-bordered">
+            <table class="table table-bordered">
                 <tbody>
 
                     <?php do_action( "getpaid_before_invoice_meta_rows", $invoice ); ?>
@@ -29,11 +28,11 @@ $class = ! is_singular( 'page' ) ? 'table-sm' : '';
 
                             <tr class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>">
 
-                                <th>
+                                <th class="<?php echo $class; ?>">
                                     <?php echo sanitize_text_field( $data['label'] ); ?>
                                 </th>
 
-                                <td>
+                                <td class="<?php echo $class; ?>">
                                     <span class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
                                 </td>
 

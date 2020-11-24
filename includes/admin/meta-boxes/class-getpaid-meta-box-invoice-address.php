@@ -31,13 +31,12 @@ class GetPaid_Meta_Box_Invoice_Address {
         ?>
 
         <style>
-            #gdmbx2-metabox-wpinv_address label {
+            #wpinv-address label {
                 margin-bottom: 3px;
                 font-weight: 600;
             }
         </style>
             <div class="bsui" style="margin-top: 1.5rem; max-width: 820px;">
-                <div id="gdmbx2-metabox-wpinv_address">
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <div id="getpaid-invoice-user-id-wrapper" class="form-group">
@@ -294,7 +293,6 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                     </div>
 
-                </div>
             </div>
         <?php
     }

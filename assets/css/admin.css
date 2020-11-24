@@ -1,20 +1,5 @@
-.wpi-form-table.form-table th {
-    padding: 12.5px 10px 12.5px 0;
-}
-.wpi-form-table.form-table td {
-    padding: 10px;
-}
-.wpi-form-table p.description {
-    line-height: normal;
-}
-.medium-text {
-    width: 220px;
-}
 .w100 {
     width: 100px!important;
-}
-.w120 {
-    width: 120px!important;
 }
 
 /* invoice notes */
@@ -49,13 +34,6 @@
 #post-body select#invoice_note_type {
     width: auto;
 }
-.gdmbx-row.gdmbx-row-wrap {
-    float: none !important;
-}
-
-.wpinv .gdmbx2-wrap select {
-    height: auto;
-}
 #wpinv-details #wpinv-vat-rates-list td {
     padding: 5px 10px;
     font-size: 13px
@@ -71,9 +49,7 @@
 #poststuff #wpinv-notes .inside ul.invoice_notes li {
     padding: 0 10px
 }
-.gdmbx2-wrap .gdmbx-row label {
-    font-size: 13px;
-}
+
 ul.invoice_notes {
     padding: 2px 0 0;
     max-height: 300px;
@@ -179,19 +155,6 @@ ul.invoice_notes li.system-note .note_content:after {
 /*
   Edit invoice sidebar info section
 */
-.wpinv #side-sortables .inside .gdmbx2-metabox .gdmbx-row {
-  padding: 0 0 5px;
-}
-.wpinv #side-sortables .gdmbx-th label::after, .wpinv .inner-sidebar .gdmbx-th label::after {
-  border-bottom: none;
-  padding-top: 0;
-}
-.wpinv #side-sortables .gdmbx-row:not(:last-of-type), .wpinv .postbox-container .gdmbx-row:not(:last-of-type) {
-  border-bottom: none;
-}
-.wpinv #side-sortables .gdmbx-th, .wpinv .inner-sidebar .gdmbx-th {
-  padding-bottom: 0;
-}
 .wpinv #side-sortables .prefix {
   float: left;
   font-weight: bold;
@@ -202,20 +165,12 @@ ul.invoice_notes li.system-note .note_content:after {
 .wpinv #side-sortables select {
   width: 100%;
 }
-.wpinv #side-sortables .gdmbx-row .gdmbx2-metabox-description, .inner-sidebar .gdmbx-row .gdmbx2-metabox-description {
-  padding-bottom: 0;
-}
+
 .wpinv .button-small {
   font-weight: normal;
 }
 .wpinv .button-small.pull-right {
   float: right;
-}
-.wpinv #side-sortables .gdmbx-th label {
-  padding-bottom: 2px;
-}
-.wpinv #side-sortables .gdmbx-type-multicheck p {
-  margin-top: 4px;
 }
 
 /*
@@ -240,92 +195,10 @@ ul.invoice_notes li.system-note .note_content:after {
 /*
   Edit invoice list item section
 */
-.wpinv #wpinv-items .gdmbx-row.gdmbx-repeat-group-wrap {
-  padding: 0;
-}
-.wpinv .gdmbx2-metabox .gdmbx-repeat-group-wrap {
-    max-width: 100%;
-    padding-bottom: 0 !important;
-}
-.wpinv .gdmbx-group-title.gdmbxhandle-title {
-  background: #f1f1f1 none repeat scroll 0 0;
-}
-.wpinv .gdmbx2-metabox .gdmbx-repeat-group-wrap .gdmbx-repeatable-grouping {
-  border-bottom: 1px solid #e9e9e9;
-}
-.wpinv .postbox-container .gdmbx-repeat-group-field {
-  margin: 5px 0;
-  padding: 0;
-}
-.wpinv .gdmbx-repeat-group-wrap .gdmbx-th, .wpinv .postbox-container .gdmbx-th {
-  padding: 0;
-  width: 100%;
-}
-.wpinv .gdmbx-repeat-group-wrap .gdmbx-th + .gdmbx-td, .wpinv .postbox-container .gdmbx-th + .gdmbx-td {
-  float: none;
-  width: 100%;
-}
-
 .wpinv .repeatable input, .wpinv .repeatable textarea, .wpinv .repeatable select {
   padding: 3px 5px !important;
 }
-.wpinv .repeatable .gdmbx-type-text-small {
-  width: 15%;
-  float: left;
-  margin: 0 7px 0 0;
-}
-.wpinv .repeatable .gdmbx-type-text {
-  float: left;
-  width: 33%;
-  margin: 0 7px 0 0;
-}
-
 /* Money field */
-.wpinv .repeatable .gdmbx-type-text-money {
-    float: right;
-    margin: 0;
-    width: 30%
-}
-.wpinv .repeatable .gdmbx-type-select-vat-rates-class {
-    width: 25%;
-    float: left;
-    margin: 0;
-}
-.wpinv .repeatable .gdmbx-type-text-money .gdmbx-td {
-  line-height: 2.2;
-  text-align: right;
-  font-size: 14px;
-}
-.wpinv .repeatable .gdmbx-type-text-money label {
-  float: right;
-  width: 100%;
-}
-.wpinv .repeatable .gdmbx-type-text-money label .pull-left {
-  float: left;
-}
-.wpinv .repeatable .gdmbx-type-text-money label .pull-right {
-  float: right;
-}
-.wpinv .repeatable .gdmbx-type-text-money .currency_symbol {
-  float: left;
-  margin: 0 3px 0 10px;
-}
-.wpinv .repeatable .gdmbx-type-text-money input {
-    float: left;
-    margin: 0;
-    width: 43%;
-}
-.wpinv .repeatable .gdmbx-type-text-money .item_total_wrap {
-  float: right;
-  width: 55%;
-}
-.wpinv .repeatable .gdmbx-type-text-money .item_total_wrap  .currency_symbol {
-  float: none;
-}
-
-.wpinv .repeatable .gdmbx-type-text-small input {
-    width: 99%;
-}
 .wpinv .repeatable input.regular-text {
   width: 99%;
 }
@@ -333,21 +206,11 @@ ul.invoice_notes li.system-note .note_content:after {
   width: 100%;
   height: 45px;
 }
-.wpinv .repeatable .gdmbx_textarea_small {
-  color: #555;
-  font-size: 12px;
-}
-.wpinv .repeatable .gdmbx-row.gdmbx-remove-field-row {
-  padding: 5px 0 3px;
-}
 .wpinv .pre_defined_products {
   float: left;
   margin: 5px 20px 0 0;
 }
-.wpinv .gdmbx-row.gdmbx-type-title.gdmbx2-id-wpinv-calc-total {
-  margin: -50px 0 0;
-  padding: 0 !important;
-}
+
 .wpinv .wpinv_totals {
   border: 1px solid #e5e5e5;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
@@ -389,113 +252,17 @@ ul.invoice_notes li.system-note .note_content:after {
 .wpinv #wpbody-content .metabox-holder {
   padding-top: 0;
 }
-.wpinv .gdmbx2_options_page h2 {
-  margin: 0 0 20px;
-}
-.wpinv .gdmbx2_options_page h2.nav-tab-wrapper {
-  margin: 0;
-  padding: 0;
-  border-bottom: none;
-}
-.wpinv .gdmbx2_options_page .postbox {
-  border-top: none;
-}
-.wpinv .gdmbx2_options_page .nav-tab-active, .wpinv .gdmbx2_options_page .nav-tab-active:focus, .wpinv .gdmbx2_options_page .nav-tab-active:focus:active, .wpinv .gdmbx2_options_page .nav-tab-active:hover {
-  background: #fff none repeat scroll 0 0;
-  border-bottom: medium none;
-  color: #000;
-}
+
 .wpinv label small {
   color: #888;
   font-weight: normal;
   font-size: 11px;
-}
-.wpinv .gdmbx-type-checkbox .gdmbx-td label span.gdmbx2-metabox-description {
-  color: #444;
-  float: left;
-  font-size: 14px;
-  font-style: normal;
-  margin: 3px 0 0 10px !important;
-}
-.wpinv .gdmbx-type-checkbox .gdmbx-td input {
-  float: left;
-  margin: 10px 0 0 !important;
-}
-.wpinv_options .gdmbx-form form {
-  margin: 0;
-  padding: 0 20px;
-}
-.wpinv_options .gdmbx-form .metabox-holder h3.title {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 20px 0 0 20px;
-}
-.wpinv_options .gdmbx-form .metabox-holder h3.gdmbx2-metabox-title {
-  border-top: 1px solid #ddd;
-  font-size: 16px;
-  margin-top: 15px;
-  padding: 20px 0 0;
-}
-.wpinv_options .gdmbx-form .metabox-holder .desc {
-  background: #f8f8f8 none repeat scroll 0 0;
-  border: 1px solid #e5e5e5;
-  border-radius: 3px;
-  margin: 10px 20px;
-  padding: 15px 20px 15px 12px;
-}
-.wpinv_options .gdmbx-form .metabox-holder .desc::before {
-  color: #777;
-  content: "\f348";
-  float: left;
-  font-family: dashicons;
-  font-size: 26px;
-  line-height: 14px;
-  margin: 0 5px 0 0;
-  padding: 0;
-}
-.wpinv_options .gdmbx-form .metabox-holder p.gdmbx2-metabox-description, .wpinv_options .gdmbx-form .metabox-holder span.gdmbx2-metabox-description {
-  color: #888;
-  display: block;
-  font-style: italic;
-  margin: 0;
-  padding-top: 0.5em;
-  font-size: 12px;
-}
-
-.wpinv_options .gdmbx-row.gdmbx-repeat-group-wrap {
-  padding-top: 30px;
-}
-.wpinv_options .gdmbx-repeatableing .inside {
-  margin: 5px 0 10px;
-}
-.wpinv_options .gdmbx-repeatableing .inside .gdmbx-row {
-  margin: 0;
-  padding: 10px 0;
-}
-.wpinv_options .gdmbx-form form .button-primary {
-  font-size: 16px;
-  height: 32px;
-  line-height: 16px;
-  margin: 20px 0;
-  padding: 0 15px 2px;
 }
 .wpinv_import_form {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #ddd;
   padding: 10px 30px 5px;
   margin-bottom: 40px;
-}
-.wpinv .gdmbx2-id-wildcard-title .gdmbx-td {
-  background: #f8f8f8 none repeat scroll 0 0;
-  border: 1px solid #e6e6e6;
-  border-radius: 3px;
-  padding: 10px 20px 15px;
-}
-.wpinv .gdmbx2-id-wildcard-title .gdmbx-td h3.gdmbx2-metabox-title {
-  border: medium none;
-  font-size: 16px;
-  margin: 0;
-  padding: 5px 0 0;
 }
 .wpinv .labeled-chart-container {
   min-height: 180px;
@@ -625,57 +392,11 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     border-radius: 10px;
 }
 
-/*  ----------- */
-@media only screen and (min-width : 850px) and (max-width : 1100px) {
-  .wpinv .repeatable .gdmbx-type-text-small {
-    width: 18%;
-  }
-  .wpinv .repeatable .gdmbx-type-text {
-    width: 30%;
-  }
-  .wpinv .repeatable .gdmbx-type-text-money {
-    width: 33%;
-  }
-}
-
-@media only screen and (min-width : 783px) and (max-width : 960px) {
-}
-
-@media only screen and (min-width : 490px) and (max-width : 659px) {
-  .wpinv .repeatable .gdmbx-type-text-small {
-    width: 18%;
-  }
-  .wpinv .repeatable .gdmbx-type-text {
-    width: 30%;
-  }
-  .wpinv .repeatable .gdmbx-type-text-money {
-    width: 33%;
-  }
-}
-
 @media only screen and (min-width : 300px) and (max-width : 489px) {
-  #invoice_items_repeat .gdmbx-nested .gdmbx-row:nth-child(1) {
-    width: 30%;
-  }
-  #invoice_items_repeat .gdmbx-nested .gdmbx-row:nth-child(2) {
-    width: 65%;
-    float: right;
-  }
-  #invoice_items_repeat .gdmbx-nested .gdmbx-row:nth-child(3) {
-    clear: left;
-    width: 30%;
-    margin: 10px 0;
-  }
-  #invoice_items_repeat .gdmbx-nested .gdmbx-row:nth-child(4) {
-    width: 65%;
-    margin: 10px 0;
-  }
+
   .wpinv .pre_defined_products {
     margin: 10px 0;
     width: 100%;
-  }
-  .wpinv .gdmbx-row.gdmbx-type-title.gdmbx2-id-wpinv-calc-total {
-    margin: 0;
   }
   .wpinv .wpinv_totals {
     min-width: 100%;
@@ -796,15 +517,6 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv_vat_rates thead th,
 #wpinv_vat_rates tfoot td {
     background-color: #fafafa;
-}
-#wpinv-items .gdmbx2-id-wpinv-calc-total {
-    margin: 0;
-}
-#wpinv-items .gdmbx-repeat-group-wrap .gdmbx-repeatable-grouping {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    box-shadow: none;
 }
 .wpinv_errors {
   background: #ffffe0 none repeat scroll 0 0;
@@ -1206,26 +918,6 @@ body.wpi-wpinv-settings .wp-picker-holder,
 .wpinv-flr {
     float: right;
 }
-.wpinv-address > .gdmbx-row {
-    height: 3.6em;
-}
-#wpinv-address .wpinv-address > .gdmbx-row select {
-    font-size: 14px;
-    height: auto;
-}
-.gdmbx-wpinv-btns label {
-    text-indent: 1000px!important;
-    overflow: hidden;
-}
-.gdmbx-wpinv-country .gdmbx-td {
-    position: relative;
-}
-.gdmbx-wpinv-country .wpi-loader {
-    margin: 0 5px 0 0;
-    font-weight: normal;
-    float: right;
-    display: none;
-}
 .wpinv-address .wpinv-new-user,
 .wpinv-address .wpinv-new-cancel {
     margin-left: 3px;
@@ -1260,24 +952,6 @@ body.wpi-wpinv-settings .wp-picker-holder,
 }
 .getpaid-is-invoice-cpt .result-message {
     display: none;
-}
-.gdmbx-wpinv-save-send {
-    background: #f5f5f5 !important;
-    border-top: 1px solid #ddd !important;
-    margin: 12px -12px -12px -12px !important;
-    padding: 12px 12px 5px 12px !important;
-}
-.gdmbx-wpinv-save-send p {
-    margin: 0;
-}
-.gdmbx-wpinv-save-send #wpi_save_send {
-    margin-left: 3px !important;
-    width: 60px !important;
-}
-.gdmbx-wpinv-save-send .wpi-send-info {
-    color: #72777c;
-    line-height: 15px !important;
-    font-size: 12px;
 }
 #wpinv-details #major-publishing-actions {
     border-top: none;
@@ -1400,9 +1074,6 @@ textarea.wpi-email_overdue_content {
 
 .getpaid-is-invoice-cpt form#post #edit-slug-buttons {
     display: none;
-}
-#gdmbx2-metabox-wpinv_details input#wpinv_number {
-    cursor: default;
 }
 .getpaid-is-invoice-cpt form#post #titlediv [name="post_title"] {
     cursor: not-allowed;
@@ -1590,36 +1261,14 @@ textarea.wpi-email_overdue_content {
     max-width: 100%; }
 
 @media screen and ( max-width: 782px) {
-    .wpinv-address .gdmbx-wpinv-btns .button-secondary {
-        padding: 4px 10px;
-    }
     .wpi-mcheck-rows.wpi-w33p .wpi-mcheck-row,
     .wpi-mcheck-rows.wpi-w50p .wpi-mcheck-row  {
         width: 50%;
     }
 }
-@media screen and (max-width: 640px) {
-    .gdmbx2-wrap .wpinv-address > .gdmbx-row {
-        padding: 0 !important;
-    }
-    .wpinv-address .gdmbx-wpinv-btns.gdmbx-row {
-        height: auto;
-    }
-}
+
 @media screen and (max-width: 480px) {
-    .gdmbx2-wrap .wpinv-address > .gdmbx-row {
-        width: 100% !important;
-        float: none;
-    }
-    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-th,
-    .gdmbx2-wrap .wpinv-address.gdmbx-row .gdmbx-td {
-        float: none;
-        clear: both;
-        width: 100%;
-    }
-    .wpinv-address .gdmbx-wpinv-btns .gdmbx-th {
-        display: none;
-    }
+
     #wpinv_items_wrap .wpinv-actions [type="button"],
     #wpinv_items_wrap .wpinv-actions select {
         width: 47%;

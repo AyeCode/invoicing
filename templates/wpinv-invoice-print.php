@@ -22,7 +22,7 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 
 ?><!DOCTYPE html>
 
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> class="bsui">
 
 
     <head>
@@ -34,14 +34,14 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <title><?php wp_title() ?></title>
+        <title>#<?php echo sanitize_text_field( $invoice->get_number() ); ?></title>
 
         <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 
     </head>
     
 
-    <body class="body wpinv wpinv-print">
+    <body class="body wpinv wpinv-print" style="font-weight: 400;">
 
         <?php do_action( 'getpaid_invoice', $invoice ); ?>
         <?php do_action( 'wpinv_invoice_print_body_end', $invoice ); ?>

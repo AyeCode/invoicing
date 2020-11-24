@@ -947,7 +947,6 @@ function wpinv_display_style() {
     wp_register_style( 'wpinv-single-style', WPINV_PLUGIN_URL . 'assets/css/invoice.css', array(), filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice.css' ) );
 
     // Load required styles
-    wp_print_styles( 'open-sans' );
     wp_print_styles( 'wpinv-single-style' );
     wp_print_styles( 'ayecode-ui' );
 

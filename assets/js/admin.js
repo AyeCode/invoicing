@@ -750,7 +750,7 @@ jQuery(function($) {
         }
     };
     wpinv_meta_boxes_notes.init();
-    var invDetails = jQuery('#gdmbx2-metabox-wpinv_details').html();
+    var invDetails = jQuery('#wpinv-details .inside').html();
     console.log(invDetails)
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
@@ -759,7 +759,7 @@ jQuery(function($) {
     }
     var invBilling = jQuery('#wpinv-address.postbox').html();
     if (invBilling) {
-        jQuery('#post_author_override', '#authordiv').remove(); //.addClass('gdmbx2-text-medium').detach().prependTo(jQuery('.gdmbx-customer-div'));
+        jQuery('#post_author_override', '#authordiv').remove();
         jQuery('#authordiv', jQuery('.wpinv')).hide();
     }
     var wpinvNumber;

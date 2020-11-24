@@ -44,7 +44,7 @@ class GetPaid_Meta_Box_Invoice_Details {
             }
         </style>
 
-                <div class="bsui" style="margin-top: 1.5rem" id="gdmbx2-metabox-wpinv_details">
+                <div class="bsui" style="margin-top: 1.5rem">
 
                     <?php if ( ! $invoice->is_draft() ) : ?>
                         <div class="form-group">

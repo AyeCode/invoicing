@@ -18,7 +18,7 @@ class WPInv_Meta_Box_Payment_Form {
             return;
         }
 
-        echo '<div class="gdmbx2-wrap form-table"> <div class="gdmbx2-metabox gdmbx-field-list">';
+        echo '<div class="bsui"> <div class="form-row">';
 
         foreach ( $details as $key => $value ) {
             $key = sanitize_text_field( $key );
@@ -28,10 +28,7 @@ class WPInv_Meta_Box_Payment_Form {
             }
 
             $value = esc_html( $value );
-
-            echo "<div class='gdmbx-row gdmbx-type-select'>";
-            echo "<div class='gdmbx-th'><label>$key:</label></div>";
-            echo "<div class='gdmbx-td'>$value</div></div>";
+            echo "<div class='col-6 form-group'><strong>$key:</strong></div><div class='col-6 form-group'>$value</div>";
         }
 
         echo "</div></div>";
