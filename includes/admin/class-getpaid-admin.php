@@ -105,11 +105,6 @@ class GetPaid_Admin {
             $this->load_payment_form_scripts();
         }
 
-        if ( $page == 'wpinv-subscriptions' ) {
-			wp_register_script( 'wpinv-sub-admin-script', WPINV_PLUGIN_URL . 'assets/js/subscriptions.js', array( 'wpinv-admin-script' ),  WPINV_VERSION );
-			wp_enqueue_script( 'wpinv-sub-admin-script' );
-		}
-
 		if ( $page == 'wpinv-subscriptions' ) {
 			wp_enqueue_script( 'postbox' );
 		}
