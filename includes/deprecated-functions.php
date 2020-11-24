@@ -1223,3 +1223,18 @@ function wpinv_eu_fallback_rate_callback() {}
  * @deprecated
  */
 function wpinv_vat_number_callback() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_vat_rate_add_callback() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_vat_rate_delete_callback() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_vat_rates_callbacks() {}

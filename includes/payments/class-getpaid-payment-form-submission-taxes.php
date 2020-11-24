@@ -202,10 +202,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 			// Ensure that a vat number has been specified.
 			throw new Exception(
-				wp_sprintf(
-					__( 'Please enter your %s number to verify your purchase is by an EU business.', 'invoicing' ),
-					getpaid_vat_name()
-				)
+				__( 'Please enter your VAT number to verify your purchase is by an EU business.', 'invoicing' )
 			);
 
 		}

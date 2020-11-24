@@ -36,13 +36,6 @@ class WPInv_Plugin {
 	public $form_elements;
 
 	/**
-	 * Tax instance.
-	 *
-	 * @var WPInv_EUVat
-	 */
-	public $tax;
-
-	/**
 	 * @param array An array of payment gateways.
 	 */
 	public $gateways;
@@ -90,8 +83,7 @@ class WPInv_Plugin {
 		// Sessions.
 		$this->set( 'session', new WPInv_Session_Handler() );
 		$GLOBALS['wpi_session'] = $this->get( 'session' ); // Backwards compatibility.
-		$this->tax              = new WPInv_EUVat();
-		$GLOBALS['wpinv_euvat'] = $this->tax; // Backwards compatibility.
+		$GLOBALS['wpinv_euvat'] = new WPInv_EUVat(); // Backwards compatibility.
 
 		// Init other objects.
 		$this->set( 'session', new WPInv_Session_Handler() );
@@ -239,13 +231,6 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
-
-		/**
-		 * Load the tax class.
-		 */
-		if ( ! class_exists( 'WPInv_EUVat' ) ) {
-			require_once( WPINV_PLUGIN_DIR . 'includes/libraries/wpinv-euvat/class-wpinv-euvat.php' );
-		}
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			GetPaid_Post_Types_Admin::init();

@@ -113,7 +113,7 @@ return array(
 	'vat_rule'       => array(
 		'description' => __( 'VAT rule applied to the item.', 'invoicing' ),
 		'type'        => 'string',
-		'enum'        => array_keys( getpaid_tax()->get_rules() ),
+		'enum'        => array_keys( getpaid_get_tax_rules() ),
 		'context'     => array( 'view', 'edit', 'embed' ),
 	),
 
@@ -121,7 +121,7 @@ return array(
 		'description' => __( 'VAT class for the item.', 'invoicing' ),
 		'type'        => 'string',
 		'context'     => array( 'view', 'edit', 'embed' ),
-		'enum'        => array_keys( getpaid_tax()->get_vat_groups() ),
+		'enum'        => array_keys( getpaid_get_tax_classes() ),
 	),
 
 	'custom_id'       => array(

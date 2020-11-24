@@ -316,7 +316,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                     'lineItems'                => array( 'lineItem' => $this->get_line_items( $invoice ) ),
                     'tax'                      => array(
                         'amount'               => $invoice->get_total_tax(),
-                        'name'                 => getpaid_tax()->get_vat_name(),
+                        'name'                 => __( 'TAX', 'invoicing' ),
                     ),
                     'poNumber'                 => getpaid_limit_length( $invoice->get_number(), 25 ),
                     'customer'                 => array(

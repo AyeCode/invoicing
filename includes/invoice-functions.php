@@ -1159,10 +1159,7 @@ function getpaid_get_invoice_meta( $invoice ) {
         ),
 
         'vat_number' => array(
-            'label' => sprintf(
-                __( '%s Number', 'invoicing' ),
-                getpaid_tax()->get_vat_name()
-            ),
+            'label' => __( 'VAT Number', 'invoicing' ),
             'value' => sanitize_text_field( $invoice->get_vat_number() ),
         ),
 
