@@ -24,7 +24,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription' );
+    protected $supports = array( 'subscription', 'addons' );
 
     /**
 	 * Payment method order.

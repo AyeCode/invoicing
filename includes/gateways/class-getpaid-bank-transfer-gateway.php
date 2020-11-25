@@ -19,13 +19,20 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 */
     public $id = 'bank_transfer';
 
+	/**
+	 * An array of features that this gateway supports.
+	 *
+	 * @var array
+	 */
+	protected $supports = array( 'addons' );
+
     /**
 	 * Payment method order.
 	 *
 	 * @var int
 	 */
 	public $order = 8;
-    
+
     /**
 	 * Class constructor.
 	 */

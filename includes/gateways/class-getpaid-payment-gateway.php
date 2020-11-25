@@ -153,6 +153,12 @@ abstract class GetPaid_Payment_Gateway {
 			add_filter( "wpinv_{$this->id}_supports_sandbox", '__return_true' );
 		}
 
+		// Invoice addons.
+		if ( $this->supports( 'addons' ) ) {
+			add_filter( "getpaid_{$this->id}_supports_addons", '__return_true' );
+			add_action( "getpaid_process_{$this->id}_invoice_addons", array( $this, 'process_addons' ) );
+		}
+
 		// Gateway settings.
 		add_filter( "wpinv_gateway_settings_{$this->id}", array( $this, 'admin_settings' ) );
 		
@@ -308,6 +314,17 @@ abstract class GetPaid_Payment_Gateway {
 	 * @return void
 	 */
 	public function verify_ipn() {}
+
+	/**
+	 * Processes invoice addons.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Form_Item[] $items
+	 * @return WPInv_Invoice
+	 */
+	public function process_addons( $invoice, $items ) {
+
+	}
 
 	/**
 	 * Get a link to the transaction on the 3rd party gateway site (if applicable).

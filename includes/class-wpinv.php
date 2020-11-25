@@ -412,7 +412,6 @@ class WPInv_Plugin {
 			do_action( "getpaid_unauthenticated_action_$key", $_REQUEST );
 
 		}
-        
 
     }
 
