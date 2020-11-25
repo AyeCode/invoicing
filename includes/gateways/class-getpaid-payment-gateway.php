@@ -156,7 +156,7 @@ abstract class GetPaid_Payment_Gateway {
 		// Invoice addons.
 		if ( $this->supports( 'addons' ) ) {
 			add_filter( "getpaid_{$this->id}_supports_addons", '__return_true' );
-			add_action( "getpaid_process_{$this->id}_invoice_addons", array( $this, 'process_addons' ) );
+			add_action( "getpaid_process_{$this->id}_invoice_addons", array( $this, 'process_addons' ), 10, 2 );
 		}
 
 		// Gateway settings.

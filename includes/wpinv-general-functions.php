@@ -79,10 +79,13 @@ function wpinv_is_subscriptions_history_page() {
  * Redirects a user the success page.
  */
 function wpinv_send_to_success_page( $args = array() ) {
+
     $redirect = add_query_arg(
         wp_parse_args( $args ),
         wpinv_get_success_page_uri()
     );
+
+    $redirect = apply_filters( 'wpinv_send_to_success_page_url', $redirect, $args );
 
     wp_redirect( $redirect );
     exit;
