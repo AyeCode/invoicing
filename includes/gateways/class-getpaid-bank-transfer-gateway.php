@@ -318,4 +318,21 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		return $admin_settings;
 	}
 
+	/**
+	 * Processes invoice addons.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Form_Item[] $items
+	 * @return WPInv_Invoice
+	 */
+	public function process_addons( $invoice, $items ) {
+
+        foreach ( $items as $item ) {
+            $invoice->add_item( $item );
+        }
+
+        $invoice->recalculate_total();
+        $invoice->save();
+	}
+
 }
