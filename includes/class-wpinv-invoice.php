@@ -1348,7 +1348,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_total_discount( $context = 'view' ) {
-		return (float) $this->get_prop( 'total_discount', $context );
+		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total_discount', $context ) ) );
     }
 
     /**
@@ -1359,7 +1359,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_total_tax( $context = 'view' ) {
-		return (float) $this->get_prop( 'total_tax', $context );
+		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total_tax', $context ) ) );
 	}
 
 	/**
@@ -1383,7 +1383,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float
 	 */
 	public function get_total_fees( $context = 'view' ) {
-		return (float) $this->get_prop( 'total_fees', $context );
+		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total_fees', $context ) ) );
     }
 
     /**
@@ -1441,6 +1441,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$total = 0;
 		}
 
+		$total = wpinv_round_amount( wpinv_sanitize_amount( $total ) );
         return apply_filters( 'wpinv_get_initial_invoice_total', $total, $this );
 	}
 
@@ -1467,6 +1468,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$total = 0;
 		}
 
+		$total = wpinv_round_amount( wpinv_sanitize_amount( $total ) );
         return apply_filters( 'wpinv_get_recurring_invoice_total', $total, $this );
 	}
 

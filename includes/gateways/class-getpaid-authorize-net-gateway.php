@@ -675,6 +675,72 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     }
 
     /**
+	 * Processes invoice addons.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Form_Item[] $items
+	 * @return WPInv_Invoice
+	 */
+	public function process_addons( $invoice, $items ) {
+
+        global $getpaid_authorize_addons;
+
+        $getpaid_authorize_addons = array();
+        foreach ( $items as $item ) {
+
+            if ( is_null( $invoice->get_item( $item->get_id() ) ) && ! is_wp_error( $invoice->add_item( $item ) ) ) {
+                $getpaid_authorize_addons[] = $item;
+            }
+
+        }
+
+        if ( empty( $getpaid_authorize_addons ) ) {
+            return;
+        }
+
+        $invoice->recalculate_total();
+
+        $payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
+		$customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
+
+        add_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ), 10, 2 );
+        $result = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
+        remove_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ) );
+
+        if ( is_wp_error( $result ) ) {
+            wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
+            return;
+        }
+
+        $invoice->save();
+    }
+
+    /**
+	 * Processes invoice addons.
+	 *
+     * @param array $args
+	 * @return array
+	 */
+    public function filter_addons_request( $args ) {
+
+        global $getpaid_authorize_addons;
+        $total = 0;
+
+        foreach ( $getpaid_authorize_addons as $addon ) {
+            $total += $addon->get_sub_total();
+        }
+
+        $args['createTransactionRequest']['transactionRequest']['amount'] = $total;
+
+        if ( isset( $args['createTransactionRequest']['transactionRequest']['tax'] ) ) {
+            unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
+        }
+
+        return $args;
+
+    }
+
+    /**
      * Displays a notice on the checkout page if sandbox is enabled.
      */
     public function sandbox_notice() {
