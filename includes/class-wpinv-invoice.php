@@ -2129,8 +2129,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  string $value mode.
 	 */
 	public function set_mode( $value ) {
-        if ( ! in_array( $value, array( 'live', 'test' ) ) ) {
-            $this->set_prop( 'value', $value );
+        if ( in_array( $value, array( 'live', 'test' ) ) ) {
+            $this->set_prop( 'mode', $value );
         }
     }
 
