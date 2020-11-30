@@ -10,7 +10,9 @@
 defined( 'ABSPATH' ) || exit;
 
 // Fetch the invoice.
-$invoice = new WPInv_Invoice( $GLOBALS['post'] );
+if ( empty( $invoice ) ) {
+    $invoice = new WPInv_Invoice( $GLOBALS['post'] );
+}
 
 // Abort if it does not exist.
 if ( $invoice->get_id() == 0 ) {

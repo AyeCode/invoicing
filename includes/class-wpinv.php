@@ -404,12 +404,13 @@ class WPInv_Plugin {
 
 		if ( isset( $_REQUEST['getpaid-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
 
-			$key = sanitize_key( $_REQUEST['getpaid-action'] );
+			$key  = sanitize_key( $_REQUEST['getpaid-action'] );
+			$data = wp_unslash( $_REQUEST );
 			if ( is_user_logged_in() ) {
-				do_action( "getpaid_authenticated_action_$key", $_REQUEST );
+				do_action( "getpaid_authenticated_action_$key", $data );
 			}
 
-			do_action( "getpaid_unauthenticated_action_$key", $_REQUEST );
+			do_action( "getpaid_unauthenticated_action_$key", $data );
 
 		}
 

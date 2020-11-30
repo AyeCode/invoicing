@@ -46,6 +46,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 
 		add_action( 'wpinv_receipt_end', array( $this, 'thankyou_page' ) );
 		add_action( 'getpaid_invoice_line_items', array( $this, 'thankyou_page' ), 40 );
+		add_action( 'wpinv_pdf_content_billing', array( $this, 'thankyou_page' ), 11 );
 		add_action( 'wpinv_email_invoice_details', array( $this, 'email_instructions' ), 10, 3 );
 
     }
@@ -95,13 +96,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			}
 
 			$this->bank_details( $invoice );
-			
+
 			echo '</div>';
-        
+
         }
 
 	}
-    
+
     /**
 	 * Add content to the WPI emails.
 	 *
