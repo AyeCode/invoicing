@@ -29,13 +29,9 @@ function wpinv_discount_custom_column( $column ) {
     }
 }
 
-add_filter( 'post_row_actions', 'wpinv_post_row_actions', 9999, 2 );
+add_filter( 'post_row_actions', 'wpinv_post_row_actions', 90, 2 );
 function wpinv_post_row_actions( $actions, $post ) {
     $post_type = !empty( $post->post_type ) ? $post->post_type : '';
-
-    if ( $post_type == 'wpi_invoice' ) {
-        $actions = array();
-    }
 
     if ( $post_type == 'wpi_discount' ) {
         $actions = wpinv_discount_row_actions( $post, $actions );

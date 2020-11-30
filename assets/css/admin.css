@@ -305,9 +305,6 @@ ul.invoice_notes li.system-note .note_content:after {
 /*
  * Columns/ list view
  */
-.wpinv .manage-column.column-wpi_actions {
-  width: 80px;
-}
 .wpinv .manage-column.column-comments {
   width: 50px;
 }
@@ -383,9 +380,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   color: #888;
   padding: 0 3px 0 10px;
 }
-.wpinv .column-wpi_actions {
-    text-align: center;
-}
+
 .wpinv-email-wc-row {
     padding: 10px;
     background: #fff;
