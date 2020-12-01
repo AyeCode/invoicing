@@ -602,6 +602,17 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
+	 * Get the invoice post type label.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_label( $context = 'view' ) {
+        return getpaid_get_post_type_label( $this->get_post_type( $context ), false );
+	}
+
+	/**
 	 * Get the invoice post type.
 	 *
 	 * @since 1.0.19
