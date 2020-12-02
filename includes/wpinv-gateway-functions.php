@@ -183,6 +183,7 @@ function wpinv_settings_gateways( $settings ) {
                 'name' => __( 'Sandbox', 'invoicing' ),
                 'desc' => __( 'Enable sandbox to test payments', 'invoicing' ),
                 'type' => 'checkbox',
+                'std'  => '1',
             ),
 
             // Checkout title.
@@ -391,13 +392,13 @@ function wpinv_ipn_url_callback( $args ) {
 
 /**
  * Checks if a gateway is in test mode.
- * 
+ *
  * @param string $gateway The gateway to check for.
- * 
+ *
  * @return bool
  */
 function wpinv_is_test_mode( $gateway = '' ) {
-    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", false );
+    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", true );
     return apply_filters( 'wpinv_is_test_mode', $sandbox, $gateway );
 }
 
