@@ -59,7 +59,7 @@ function getpaid_invoice_header_right_actions( $invoice ) {
 add_action( 'getpaid_invoice_header_right', 'getpaid_invoice_header_right_actions', 10 );
 
 /**
- * Displays the invoice title, watermark, logo etc.
+ * Displays the invoice title, logo etc.
  */
 function getpaid_invoice_details_top( $invoice ) {
     if ( ! empty( $invoice ) ) {
@@ -751,31 +751,25 @@ function wpinv_display_from_address() {
 }
 add_action( 'getpaid_invoice_details_left', 'wpinv_display_from_address', 10 );
 
-function wpinv_watermark( $id = 0 ) {
-    $output = wpinv_get_watermark( $id );
-    return apply_filters( 'wpinv_get_watermark', $output, $id );
+/**
+ * Generates a watermark text for an invoice.
+ * 
+ * @param WPInv_Invoice $invoice
+ * @return string
+ */
+function wpinv_watermark( $invoice ) {
+    $watermark = wpinv_get_watermark( $invoice );
+    return apply_filters( 'wpinv_get_watermark', $watermark, $invoice );
 }
 
-function wpinv_get_watermark( $id ) {
-    if ( !$id > 0 ) {
-        return NULL;
-    }
-
-    $invoice = wpinv_get_invoice( $id );
-    
-    if ( !empty( $invoice ) && "wpi_invoice" === $invoice->post_type ) {
-        if ( $invoice->is_paid() ) {
-            return __( 'Paid', 'invoicing' );
-        }
-        if ( $invoice->is_refunded() ) {
-            return __( 'Refunded', 'invoicing' );
-        }
-        if ( $invoice->has_status( array( 'wpi-cancelled' ) ) ) {
-            return __( 'Cancelled', 'invoicing' );
-        }
-    }
-    
-    return NULL;
+/**
+ * Generates a watermark text for an invoice.
+ * 
+ * @param WPInv_Invoice $invoice
+ * @return string
+ */
+function wpinv_get_watermark( $invoice ) {
+    return $invoice->get_status_nicename();
 }
 
 /**
@@ -920,9 +914,9 @@ function wpinv_display_invoice_notes( $invoice ) {
     }
 
     // Echo the note.
-    echo '<div class="getpaid-invoice-notes-wrapper border position-relative w-100 mb-4 p-0">';
-    echo '<h3 class="getpaid-invoice-notes-title text-dark bg-light border-bottom m-0 d-block">' . __( 'Notes', 'invoicing' ) .'</h3>';
-    echo '<ul class="getpaid-invoice-notes mt-4 p-0">';
+    echo '<div class="getpaid-invoice-notes-wrapper position-relative my-4">';
+    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . __( 'Notes', 'invoicing' ) .'</h2>';
+    echo '<ul class="getpaid-invoice-notes text-break overflow-auto list-unstyled p-0 m-0">';
 
     foreach( $notes as $note ) {
         wpinv_get_invoice_note_line_item( $note );
@@ -1061,48 +1055,6 @@ function wpinv_empty_checkout_cart() {
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
 
-function wpinv_receipt_billing_address( $invoice_id = 0 ) {
-    $invoice = wpinv_get_invoice( $invoice_id );
-
-    if ( empty( $invoice ) ) {
-        return NULL;
-    }
-
-    $billing_details = $invoice->get_user_info();
-    $address_row = wpinv_get_invoice_address_markup( $billing_details );
-
-    ob_start();
-    ?>
-    <table class="table table-bordered table-sm wpi-billing-details">
-        <tbody>
-            <tr class="wpi-receipt-name">
-                <th class="text-left"><?php _e( 'Name', 'invoicing' ); ?></th>
-                <td><?php echo esc_html( trim( $billing_details['first_name'] . ' ' . $billing_details['last_name'] ) ) ;?></td>
-            </tr>
-            <tr class="wpi-receipt-email">
-                <th class="text-left"><?php _e( 'Email', 'invoicing' ); ?></th>
-                <td><?php echo $billing_details['email'] ;?></td>
-            </tr>
-            <tr class="wpi-receipt-address">
-                <th class="text-left"><?php _e( 'Address', 'invoicing' ); ?></th>
-                <td><?php echo $address_row ;?></td>
-            </tr>
-            <?php if ( $billing_details['phone'] ) { ?>
-            <tr class="wpi-receipt-phone">
-                <th class="text-left"><?php _e( 'Phone', 'invoicing' ); ?></th>
-                <td><?php echo esc_html( $billing_details['phone'] ) ;?></td>
-            </tr>
-            <?php } ?>
-        </tbody>
-    </table>
-    <?php
-    $output = ob_get_clean();
-    
-    $output = apply_filters( 'wpinv_receipt_billing_address', $output, $invoice_id );
-
-    echo $output;
-}
-
 /**
  * Filters the receipt page.
  */
@@ -1153,13 +1105,13 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
 
     ob_start();
     ?>
-    <li rel="<?php echo absint( $note->comment_ID ) ; ?>" class="<?php echo esc_attr( $note_classes ); ?> mt-4 pl-3 pr-3">
-        <div class="note_content bg-light border position-relative p-4">
+    <li rel="<?php echo absint( $note->comment_ID ) ; ?>" class="<?php echo esc_attr( $note_classes ); ?> mb-2">
+        <div class="note_content">
 
-            <?php echo wpautop( wptexturize( wp_kses_post( $note->comment_content ) ) ); ?>
+            <?php echo wptexturize( wp_kses_post( $note->comment_content ) ); ?>
 
             <?php if ( ! is_admin() ) : ?>
-                <em class="meta position-absolute form-text">
+                <em class="small form-text text-muted mt-0">
                     <?php
                         printf(
                             __( '%1$s - %2$s at %3$s', 'invoicing' ),
@@ -1205,40 +1157,6 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     }
 }
 
-function wpinv_invalid_invoice_content() {
-    global $post;
-
-    $invoice = wpinv_get_invoice( $post->ID );
-
-    $error = __( 'This invoice is only viewable by clicking on the invoice link that was sent to you via email.', 'invoicing' );
-    if ( !empty( $invoice->get_id() ) && $invoice->has_status( array_keys( wpinv_get_invoice_statuses() ) ) ) {
-        if ( is_user_logged_in() ) {
-            if ( wpinv_require_login_to_checkout() ) {
-                if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
-                    $error = __( 'You are not allowed to view this invoice.', 'invoicing' );
-                }
-            }
-        } else {
-            if ( wpinv_require_login_to_checkout() ) {
-                if ( isset( $_GET['invoice_key'] ) && $_GET['invoice_key'] === $invoice->get_key() ) {
-                    $error = __( 'You must be logged in to view this invoice.', 'invoicing' );
-                }
-            }
-        }
-    } else {
-        $error = __( 'This invoice is deleted or does not exist.', 'invoicing' );
-    }
-    ?>
-    <div class="row wpinv-row-invalid">
-        <div class="col-md-6 col-md-offset-3 wpinv-message error">
-            <h3><?php _e( 'Access Denied', 'invoicing' ); ?></h3>
-            <p class="wpinv-msg-text"><?php echo $error; ?></p>
-        </div>
-    </div>
-    <?php
-}
-add_action( 'wpinv_invalid_invoice_content', 'wpinv_invalid_invoice_content' );
-
 /**
  * Function to get privacy policy text.
  *
@@ -1272,7 +1190,7 @@ function wpinv_oxygen_fix_conflict() {
         $ct_ignore_post_types = array();
     }
 
-    $post_types = array( 'wpi_discount', 'wpi_invoice', 'wpi_item' );
+    $post_types = array( 'wpi_discount', 'wpi_invoice', 'wpi_item', 'wpi_payment_form' );
 
     foreach ( $post_types as $post_type ) {
         $ct_ignore_post_types[] = $post_type;

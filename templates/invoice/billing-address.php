@@ -15,7 +15,7 @@ $phone       = $invoice->get_phone();
 $email       = $invoice->get_email();
 
 ?>
-    <div class="getpaid-billing-address form-group">
+    <div class="getpaid-billing-address form-group text-break">
 
         <div class="row">
 

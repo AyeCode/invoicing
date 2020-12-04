@@ -20,12 +20,8 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             <?php endif; ?>
 
-            <div class="footer-text no-print">
+            <div class="footer-text d-print-none">
                 <?php echo wpinv_get_business_footer(); ?>
-            </div>
-
-            <div class="print-only">
-                <?php _e( 'Page ', 'invoicing' ) ?> {PAGENO}/{nbpg}
             </div>
 
         </div>

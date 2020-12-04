@@ -1,129 +1,5 @@
-html {
-    font-family: sans-serif;
-    line-height: 1.15;
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent
-}
-
-th {
-    font-weight: 500;
-}
-
-.wpinv-business .logo {
-	max-width: 300px
-}
-
-/* END BASIC RESETS */
-
-.print-only{
-    visibility: hidden
-}
-
-/* Watermarks */
-.getpaid-watermark {
-    display: block;
-    left: 0;
-    right: 0;
-    position: absolute;
-    top: 15%;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.getpaid-watermark p {
-    color: rgb(0 0 0 / 0.2);
-    font-size: 200px;
-    font-weight: 500;
-    -webkit-transform: rotate(325deg);
-    transform: rotate(325deg);
-    text-align: center;
-    font-family: monospace;
-}
-
-.wpinv-subscriptions-details h3,
-.wpinv-renewal-payments h3 {
-    margin-bottom: 7px;
-}
-
-
-.wpinv-cart-sub-desc {
-    display: inline-block;
-    max-width: 85%;
-    float: left;
-    text-align: left;
-    font-style: italic;
-    font-size: 95%;
-}
-
-.wpinv-cart-sub-desc .label-primary {
-    font-weight: bold;
-    font-style: normal;
-}
-
-.wpinv-print .row-total td {
-    vertical-align: top !important;
-}
-
-.wpinv-print .wpinv-vat-info {
-    margin: 20px 0;
-}
-
-.wpinv-print .alert-danger {
-    color: #a94442;
-    background-color: #f2dede;
-    border-color: #ebccd1;
-}
-
-.wpinv-print .alert-success {
-    color: #3c763d;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
-}
-
-.wpinv-print .alert {
-    display: none;
-    padding: 15px;
-    margin-top: 10px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-}
-
-.wpinv-invalid-invoice .wpinv-business {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.wpinv-invalid-invoice .wpinv-row-invalid {
-    margin-bottom: 100px;
-}
-
-.wpinv-invalid-invoice .wpinv-message {
-    min-width: 66.67%;
-}
-
-.wpinv-invalid-invoice .wpinv-msg-text {
-    margin-top: 15px;
-}
-
-.getpaid-invoice-notes-title {
-    padding: 10px 12px;
-}
-
 .getpaid-invoice-notes {
     max-height: 300px;
-    overflow-y: auto;
-    overflow-x: auto;
-    list-style-type: none;
-    word-wrap: break-word;
-}
-
-.getpaid-invoice-notes .meta {
-    left: 1.5rem;
-    bottom: 6px;
-    color: #616161;
-    font-size: 12px;
-    font-weight: 400;
 }
 
 .getpaid-company-address .invoice-company-address-value p {
@@ -166,16 +42,17 @@ th {
     background-color: #fbfbfb
 }
 
-@media screen and (max-width:400px) {
-    .wpinv-print .watermark.no-print {
-        left: 10%;
-    }
-}
-
 @media screen and (min-width: 1200px) {
     .wpinv-print .bsui .container {
         max-width:880px;
     }
+}
+
+@media screen and (min-width: 576px) {
+    .bsui .border-sm-left {
+        border-left: 1px solid #dee2e6 !important;
+    }
+    
 }
 
 @media print {
@@ -206,10 +83,6 @@ th {
         max-width: 16.66667%;
     }
 
-    .no-print {
-        display: none !important;
-    }
-
     .wpinv > .container.wpinv-wrap {
         border: none;
         padding: 0;
@@ -224,16 +97,16 @@ th {
     .wpinv-print .wpinv-details .wpinv-line-details {
         padding-left: 1em;
     }
+
+    .bsui .border-sm-left {
+        border-left: 1px solid #dee2e6 !important;
+    }
 }
 
 @media screen and (max-width:767px) {
     .wpinv > .container.wpinv-wrap {
         padding: 15px;
         margin: 15px;
-    }
-
-    .wpinv-top-bar {
-        padding: 10px 0;
     }
 
     .wpinv-line-details .table th,

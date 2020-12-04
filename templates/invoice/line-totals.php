@@ -19,7 +19,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 ?>
 <div class='getpaid-invoice-line-totals'>
     <div class="row">
-        <div class="col-12 offset-sm-6 col-sm-6 border-left pl-0">
+        <div class="col-12 offset-sm-6 col-sm-6 border-sm-left pl-sm-0">
 
             <?php foreach ( $totals as $key => $label ) : ?>
 
@@ -27,11 +27,11 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                     <div class="row">
 
-                        <div class="col-12 col-sm-8 getpaid-invoice-line-totals-label">
+                        <div class="col-8 getpaid-invoice-line-totals-label">
                             <?php echo sanitize_text_field( $label ); ?>
                         </div>
 
-                        <div class="col-12 col-sm-2 getpaid-invoice-line-totals-value">
+                        <div class="col-2 getpaid-invoice-line-totals-value">
 
                             <?php
 

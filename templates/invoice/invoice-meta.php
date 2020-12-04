@@ -28,11 +28,11 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
 
                             <tr class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>">
 
-                                <th class="<?php echo $class; ?>">
+                                <th class="<?php echo $class; ?> w-50">
                                     <?php echo sanitize_text_field( $data['label'] ); ?>
                                 </th>
 
-                                <td class="<?php echo $class; ?>">
+                                <td class="<?php echo $class; ?> text-break w-50">
                                     <span class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
                                 </td>
 

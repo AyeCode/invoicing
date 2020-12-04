@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
             $actions   = array();
 
             $actions[] = sprintf(
-                '<a href="javascript:void(0)" class="btn btn-sm btn-secondary invoice-action-print" onclick="window.print();">%s</a>',
+                '<a href="javascript:void(0)" class="btn btn-sm m-1 d-inline-block btn-secondary invoice-action-print d-none d-lg-inline-block" onclick="window.print();">%s</a>',
                 sprintf(
                     __( 'Print %s', 'invoicing' ),
                     ucfirst( $invoice->get_type() )
@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
             if ( is_user_logged_in() ) {
 
                 $actions[] = sprintf(
-                    '<a href="%s" class="btn btn-sm btn-secondary invoice-action-history">%s</a>',
+                    '<a href="%s" class="btn btn-sm btn-secondary m-1 d-inline-block invoice-action-history">%s</a>',
                     esc_url( wpinv_get_history_page_uri( $invoice->get_post_type() ) ),
                     sprintf(
                         __( '%s History', 'invoicing' ),
@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
             if ( wpinv_current_user_can_manage_invoicing() ) {
 
                 $actions[] = sprintf(
-                    '<a href="%s" class="btn btn-sm btn-secondary invoice-action-edit">%s</a>',
+                    '<a href="%s" class="btn btn-sm btn-secondary m-1 d-inline-block invoice-action-edit">%s</a>',
                     esc_url( get_edit_post_link( $invoice->get_id() ) ),
                     sprintf(
                         __( 'Edit %s', 'invoicing' ),
@@ -53,7 +53,7 @@ defined( 'ABSPATH' ) || exit;
             }
 
             $actions = apply_filters( 'getpaid_invoice_header_right_actions_array', $actions, $invoice );
-            echo implode( "&nbsp;&nbsp;", $actions );
+            echo implode( '', $actions );
 
         ?>
 

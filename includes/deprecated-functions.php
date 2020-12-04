@@ -1238,3 +1238,13 @@ function wpinv_vat_rate_delete_callback() {}
  * @deprecated
  */
 function wpinv_vat_rates_callbacks() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_invalid_invoice_content() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_receipt_billing_address() {}

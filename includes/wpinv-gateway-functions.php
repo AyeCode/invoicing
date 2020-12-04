@@ -398,8 +398,9 @@ function wpinv_ipn_url_callback( $args ) {
  * @return bool
  */
 function wpinv_is_test_mode( $gateway = '' ) {
-    $sandbox = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", true );
-    return apply_filters( 'wpinv_is_test_mode', $sandbox, $gateway );
+    $sandbox  = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", true );
+    $supports = apply_filters( "wpinv_{$gateway}_supports_sandbox", false );
+    return apply_filters( 'wpinv_is_test_mode', $sandbox && $supports, $gateway );
 }
 
 /**

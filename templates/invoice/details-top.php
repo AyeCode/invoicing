@@ -9,27 +9,17 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$watermark = wpinv_watermark( $invoice->get_id() )
-
 ?>
 
         <?php do_action( 'getpaid_before_invoice_details_top', $invoice ); ?>
 
-        <?php if ( ! empty( $watermark ) ) : ?>
-
-            <div class="getpaid-watermark no-print">
-                <p><?php echo sanitize_text_field( $watermark ) ?></p>
-            </div>
-
-        <?php endif; ?>
-
         <div class="getpaid-invoice-details-top mb-5">
             <div class="row">
-                <div class="col-12 col-sm-6 text-left">
+                <div class="col-12 col-sm-6 text-sm-left">
                     <?php do_action( 'getpaid_invoice_details_top_left', $invoice ); ?>
                 </div>
 
-                <div class="col-12 col-sm-6 text-right">
+                <div class="col-12 col-sm-6 text-sm-right">
                     <?php do_action( 'getpaid_invoice_details_top_right', $invoice ); ?>
                 </div>
             </div>
