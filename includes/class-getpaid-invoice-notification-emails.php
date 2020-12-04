@@ -126,7 +126,7 @@ class GetPaid_Invoice_Notification_Emails {
 			return array();
 		}
 
-		return array(
+		$merge_tags = array(
 			'{name}'                => sanitize_text_field( $invoice->get_user_full_name() ),
 			'{full_name}'           => sanitize_text_field( $invoice->get_user_full_name() ),
 			'{first_name}'          => sanitize_text_field( $invoice->get_first_name() ),
@@ -140,13 +140,14 @@ class GetPaid_Invoice_Notification_Emails {
 			'{invoice_receipt_link}'=> esc_url( $invoice->get_receipt_url() ),
 			'{invoice_date}'        => getpaid_format_date_value( $invoice->get_date_created() ),
 			'{invoice_due_date}'    => getpaid_format_date_value( $invoice->get_due_date(), __( 'on receipt', 'invoicing' ) ),
-			'{invoice_quote}'       => sanitize_text_field( $invoice->get_type() ),
-			'{invoice_label}'       => sanitize_text_field( ucfirst( $invoice->get_type() ) ),
+			'{invoice_quote}'       => sanitize_text_field( strtolower( $invoice->get_label() ) ),
+			'{invoice_label}'       => sanitize_text_field( ucfirst( $invoice->get_label() ) ),
 			'{invoice_description}' => wp_kses_post( $invoice->get_description() ),
 			'{subscription_name}'   => wp_kses_post( $invoice->get_subscription_name() ),
 			'{is_was}'              => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
+		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}
 
 	/**

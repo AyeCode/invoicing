@@ -23,14 +23,14 @@ defined( 'ABSPATH' ) || exit;
             // Print the opening wrapper.
             echo '<div class="container bg-white border mt-4 mb-4 p-4 position-relative flex-grow-1">';
 
+            // Print notifications.
+            wpinv_print_errors();
+
             // Fires when printing the invoice details.
             do_action( 'getpaid_invoice_details', $invoice );
 
             // Fires when printing the invoice line items.
             do_action( 'getpaid_invoice_line_items', $invoice );
-
-            // Print notifications.
-            wpinv_print_errors();
 
             // Print the closing wrapper.
             echo '</div>';
