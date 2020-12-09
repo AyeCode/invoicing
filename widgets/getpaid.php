@@ -163,7 +163,8 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 * @return string
 	 */
     protected function buy_item_button( $item, $button ) {
-		return getpaid_get_payment_button( $button, null, $item );
+		$button = getpaid_get_payment_button( $button, null, $item );
+		return apply_filters( 'getpaid_buy_item_button_widget', $button, $item );
     }
 
 }

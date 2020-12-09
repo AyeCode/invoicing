@@ -512,7 +512,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         // Do we have an error?
         if ( is_wp_error( $payment_profile_id ) ) {
             wpinv_set_error( $payment_profile_id->get_error_code(), $payment_profile_id->get_error_message() );
-            wpinv_send_back_to_checkout();
+            wpinv_send_back_to_checkout( $invoice );
         }
 
         // Save the payment method to the order.
@@ -553,14 +553,14 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		// Do we have an error?
 		if ( is_wp_error( $result ) ) {
 			wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
-			wpinv_send_back_to_checkout();
+			wpinv_send_back_to_checkout( $invoice );
 		}
 
 		// Process the response.
 		$this->process_charge_response( $result, $invoice );
 
 		if ( wpinv_get_errors() ) {
-			wpinv_send_back_to_checkout();
+			wpinv_send_back_to_checkout( $invoice );
 		}
 
 	}

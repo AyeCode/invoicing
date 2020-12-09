@@ -49,6 +49,8 @@ class GetPaid_Checkout {
 		$invoice->recalculate_total();
         $invoice->save();
 
+		do_action( 'getpaid_checkout_invoice_updated', $invoice );
+
 		// Send to the gateway.
 		$this->post_process_submission( $invoice, $prepared, $shipping );
 	}
@@ -345,7 +347,7 @@ class GetPaid_Checkout {
 		$this->process_payment( $invoice );
 
         // If we are here, there was an error.
-		wpinv_send_back_to_checkout();
+		wpinv_send_back_to_checkout( $invoice );
 
 	}
 
@@ -381,7 +383,7 @@ class GetPaid_Checkout {
 
 		// Check to see if we have any errors.
 		if ( wpinv_get_errors() ) {
-			wpinv_send_back_to_checkout();
+			wpinv_send_back_to_checkout( $invoice );
 		}
 
 		// Send info to the gateway for payment processing

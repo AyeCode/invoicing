@@ -464,7 +464,7 @@ function wpinv_get_invoices( $args ) {
     // Show all posts.
     $paginate = true;
     if ( isset( $args['paginate'] ) ) {
-        
+
         $paginate = $args['paginate'];
         $args['no_found_rows'] = empty( $args['paginate'] );
         unset( $args['paginate'] );

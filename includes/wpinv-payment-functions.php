@@ -226,8 +226,14 @@ function getpaid_get_card_name( $card_number ) {
 
 /**
  * Sends an error response during checkout.
+ * 
+ * @param WPInv_Invoice|int|null $invoice
  */
-function wpinv_send_back_to_checkout() {
+function wpinv_send_back_to_checkout( $invoice = null ) {
+
+    if ( ! empty( $invoice ) ) {
+        do_action( 'getpaid_checkout_invoice_exception', $invoice );
+    }
 
 	// Do we have any errors?
     if ( wpinv_get_errors() ) {
