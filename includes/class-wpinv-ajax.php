@@ -267,11 +267,11 @@ class WPInv_Ajax {
 
         // Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
-            getpaid_display_payment_form( $_GET['form'] );
+            getpaid_display_payment_form( urldecode( $_GET['form'] ) );
 		} else if( ! empty( $_GET['invoice'] ) ) {
-		    getpaid_display_invoice_payment_form( $_GET['invoice'] );
+		    getpaid_display_invoice_payment_form( urldecode( $_GET['invoice'] ) );
         } else {
-			$items = getpaid_convert_items_to_array( $_GET['item'] );
+			$items = getpaid_convert_items_to_array( urldecode( $_GET['item'] ) );
 		    getpaid_display_item_payment_form( $items );
         }
 

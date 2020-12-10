@@ -76,6 +76,10 @@ class GetPaid_Meta_Box_Item_Info {
 
                 <div class="col-sm-12">
                     <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" readonly/>
+                    <small class="form-text text-muted">
+                        <?php _e( 'Or use the following URL in a link:', 'invoicing' );?>
+                        <code>#getpaid-item-<?php echo intval( $item->get_id() ); ?>|0</code>
+                    </small>
                 </div>
             </div>
 

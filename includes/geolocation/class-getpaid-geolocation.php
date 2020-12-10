@@ -40,8 +40,8 @@ class GetPaid_Geolocation {
 	 * @var array
 	 */
 	protected static $geoip_apis = array(
-		'ipinfo.io'  => 'https://ipinfo.io/%s/json',
 		'ip-api.com' => 'http://ip-api.com/json/%s',
+		'ipinfo.io'  => 'https://ipinfo.io/%s/json',
 	);
 
 	/**
