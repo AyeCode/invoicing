@@ -750,4 +750,18 @@ abstract class GetPaid_Payment_Gateway {
 		return $validation;
 	}
 
+	/**
+	 * Displays an error
+	 *
+	 */
+	public function show_error( $code, $message, $type ) {
+
+		if ( is_admin() ) {
+			getpaid_admin()->{"show_$type"}( $message );
+		}
+
+		wpinv_set_error( $code, $message, $type );
+
+	}
+
 }
