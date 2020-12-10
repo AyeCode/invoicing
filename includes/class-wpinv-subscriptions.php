@@ -385,7 +385,7 @@ class WPInv_Subscriptions {
         // Fetch item subscription.
         $args  = array(
             'invoice_in'  => $invoice->is_parent() ? $invoice->get_id() : $invoice->get_parent_id(),
-            'item_in'     => $item->get_id(),
+            'product_in'  => $item->get_id(),
             'number'      => 1,
             'count_total' => false,
             'fields'      => 'id',
@@ -397,7 +397,7 @@ class WPInv_Subscriptions {
         // In case we found a match...
         if ( ! empty( $subscription ) ) {
             $url                     = esc_url( add_query_arg( 'subscription', (int) $subscription[0], get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) );
-            $actions['subscription'] = "<a href='$url' class='text-decoration-none'>" . __( 'Manage Subscription', 'getpaid-license-manager' ) . '</a>';
+            $actions['subscription'] = "<a href='$url' class='text-decoration-none'>" . __( 'Manage Subscription', 'invoicing' ) . '</a>';
         }
 
         return $actions;
