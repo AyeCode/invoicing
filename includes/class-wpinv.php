@@ -201,7 +201,7 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-discount-functions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-user-functions.php' );
+		require_once( WPINV_PLUGIN_DIR . 'includes/user-functions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'includes/error-functions.php' );
 
 		// Register autoloader.
