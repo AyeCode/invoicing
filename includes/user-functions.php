@@ -112,11 +112,13 @@ function getpaid_get_user_content_tabs() {
         'invoices'      => array(
             'label'     => __( 'Invoices', 'invoicing' ), // Name of the tab.
             'content'   => '[wpinv_history]', // Content of the tab. Or specify "callback" to provide a callback instead.
+            'icon'      => 'fas fa-file-invoice', // Shown on some profile plugins.
         ),
 
         'subscriptions' => array(
             'label'     => __( 'Subscriptions', 'invoicing' ),
             'content'   => '[wpinv_subscriptions]',
+            'icon'      => 'fas fa-redo',
         )
     );
 
@@ -137,7 +139,7 @@ function getpaid_prepare_user_content_tab( $tab ) {
     }
 
     if ( ! empty( $tab['content'] ) ) {
-        return convert_smilies( capital_P_dangit( wp_filter_content_tags( the_content( shortcode_unautop( wpautop( wptexturize( do_blocks( $tab['content'] ) ) ) ) ) ) ) );
+        return convert_smilies( capital_P_dangit( wp_filter_content_tags( do_shortcode( shortcode_unautop( wpautop( wptexturize( do_blocks( $tab['content'] ) ) ) ) ) ) ) );
     }
 
     $notice = aui()->alert(
@@ -148,4 +150,132 @@ function getpaid_prepare_user_content_tab( $tab ) {
     );
 
     return "<div class='bsui'>$notice</div>";
+}
+
+/*
+ |--------------------------------------------------------------------------
+ | UsersWP
+ |--------------------------------------------------------------------------
+ |
+ | Functions that integrate GetPaid and UsersWP.
+*/
+
+/**
+ * Add our tabs to UsersWP account tabs.
+ *
+ * @since 1.0.19
+ * @param  array $tabs
+ * @return array
+ */
+function getpaid_filter_userswp_account_tabs( $tabs ) {
+
+    // Abort if the integration is inactive.
+    if ( ! getpaid_is_userswp_integration_active() ) {
+        return $tabs;
+    }
+
+    $new_tabs   = array();
+
+    foreach ( getpaid_get_user_content_tabs() as $slug => $tab ) {
+
+        $new_tabs[ $slug ] = array(
+            'title' => $tab[ 'label'],
+            'icon'  =>  $tab[ 'icon'],
+        );
+
+    }
+
+    return array_merge( $new_tabs, $tabs );
+}
+add_filter( 'uwp_account_available_tabs', 'getpaid_filter_userswp_account_tabs' );
+
+/**
+ * Display our UsersWP account tabs.
+ *
+ * @since 1.0.19
+ * @param  array $tabs
+ * @return array
+ */
+function getpaid_display_userswp_account_tabs( $tab ) {
+
+    $our_tabs = getpaid_get_user_content_tabs();
+
+    if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
+        echo getpaid_prepare_user_content_tab( $our_tabs[ $tab ] );
+    }
+
+}
+add_action( 'uwp_account_form_display', 'getpaid_display_userswp_account_tabs' );
+
+
+/**
+ * Filters the account page title.
+ *
+ * @since  1.0.19
+ * @param  string $title Current title.
+ * @param  string $tab   Current tab.
+ * @return string Title.
+ */
+function getpaid_filter_userswp_account_title( $title, $tab ) {
+
+    $our_tabs   = getpaid_get_user_content_tabs();
+
+    if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
+        return $our_tabs[ $tab ]['label'];
+    }
+
+    return $title;
+}
+add_filter( 'uwp_account_page_title', 'getpaid_filter_userswp_account_title', 10, 2 );
+
+/**
+ * Registers the UsersWP integration settings.
+ *
+ * @since  1.0.19
+ * @param  array $settings An array of integration settings.
+ * @return array
+ */
+function getpaid_register_userswp_settings( $settings ) {
+
+    if ( defined( 'USERSWP_PLUGIN_FILE' ) ) {
+
+        $settings[] = array(
+
+            'id'       => 'userswp',
+            'label'    => __( 'UsersWP', 'invoicing' ),
+            'settings' => array(
+
+                'userswp_settings' => array(
+                    'id'   => 'userswp_settings',
+                    'name' => '<h3>' . __( 'UsersWP', 'invoicing' ) . '</h3>',
+                    'type' => 'header',
+                ),
+
+                'enable_userswp' => array(
+                    'id'         => 'enable_userswp',
+                    'name'       => __( 'Enable Integration', 'invoicing' ),
+                    'desc'       => __( 'Display GetPaid items on UsersWP account page.', 'invoicing' ),
+                    'type'       => 'checkbox',
+                    'std'        => 1,
+                )
+
+            )
+
+        );
+
+    }
+
+    return $settings;
+}
+add_filter( 'getpaid_integration_settings', 'getpaid_register_userswp_settings' );
+
+/**
+ * Checks if the integration is enabled.
+ *
+ * @since  1.0.19
+ * @return bool
+ */
+function getpaid_is_userswp_integration_active() {
+    $enabled = wpinv_get_option( 'enable_userswp', 1 );
+    return defined( 'USERSWP_PLUGIN_FILE' ) && ! empty( $enabled );
 }

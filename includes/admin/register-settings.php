@@ -241,7 +241,16 @@ function wpinv_register_settings_option( $tab, $section, $option ) {
  * @return array
  */
 function wpinv_get_registered_settings() {
-    return apply_filters( 'wpinv_registered_settings', wpinv_get_data( 'admin-settings' ) );
+	return array_filter( apply_filters( 'wpinv_registered_settings', wpinv_get_data( 'admin-settings' ) ) );
+}
+
+/**
+ * Returns an array of all integration settings.
+ * 
+ * @return array
+ */
+function getpaid_get_integration_settings() {
+    return apply_filters( 'getpaid_integration_settings', array() );
 }
 
 /**
@@ -363,7 +372,12 @@ function wpinv_get_settings_tabs() {
     $tabs['general']  = __( 'General', 'invoicing' );
     $tabs['gateways'] = __( 'Payment Gateways', 'invoicing' );
     $tabs['taxes']    = __( 'Taxes', 'invoicing' );
-    $tabs['emails']   = __( 'Emails', 'invoicing' );
+	$tabs['emails']   = __( 'Emails', 'invoicing' );
+
+	if ( count( getpaid_get_integration_settings() ) > 0 ) {
+		$tabs['integrations'] = __( 'Integrations', 'invoicing' );
+	}
+
     $tabs['privacy']  = __( 'Privacy', 'invoicing' );
     $tabs['misc']     = __( 'Misc', 'invoicing' );
     $tabs['tools']    = __( 'Tools', 'invoicing' );
@@ -407,7 +421,10 @@ function wpinv_get_registered_settings_sections() {
         ) ),
         'emails' => apply_filters( 'wpinv_settings_sections_emails', array(
             'main' => __( 'Email Settings', 'invoicing' ),
-        ) ),
+		) ),
+
+		'integrations' => wp_list_pluck( getpaid_get_integration_settings(), 'label', 'id' ),
+
         'privacy' => apply_filters( 'wpinv_settings_sections_privacy', array(
             'main' => __( 'Privacy policy', 'invoicing' ),
         ) ),

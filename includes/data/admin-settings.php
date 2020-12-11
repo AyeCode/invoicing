@@ -502,6 +502,10 @@ return array(
             ),
         )
     ),
+
+    // Integrations.
+    'integrations' => wp_list_pluck( getpaid_get_integration_settings(), 'settings', 'id' ),
+
     /** Privacy Settings */
     'privacy' => apply_filters('wpinv_settings_privacy',
         array(
