@@ -49,7 +49,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'name'             => 'post_author_override',
                                             'selected'         => $invoice->get_id() ? $invoice->get_user_id( 'edit' ) : get_current_user_id(),
                                             'include_selected' => true,
-                                            'show'             => 'display_name_with_email',
+                                            'show'             => 'display_name_with_login',
                                             'orderby'          => 'user_email',
                                             'class'            => 'wpi_select2 form-control'
                                         )

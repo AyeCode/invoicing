@@ -1248,3 +1248,20 @@ function wpinv_invalid_invoice_content() {}
  * @deprecated
  */
 function wpinv_receipt_billing_address() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_guest_redirect() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_login_user() {}
+
+/**
+ * @deprecated
+ */
+function wpinv_get_users_invoices() {
+    return array();
+}
