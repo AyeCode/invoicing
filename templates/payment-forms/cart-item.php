@@ -60,7 +60,7 @@ $currency = $form->get_currency();
                                             <span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
                                         </div>
                                     <?php endif; ?>
-                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input">
+                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input border">
 
                                     <?php if( 'left' != $position ) : ?>
                                         <div class="input-group-append">
@@ -82,7 +82,7 @@ $currency = $form->get_currency();
 
                         if ( $item->allows_quantities() ) {
                             ?>
-                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input pr-1' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
+                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input pr-1 border' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
                             <?php
                         } else {
                             echo (int) $item->get_qantity();
