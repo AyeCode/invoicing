@@ -109,16 +109,16 @@ function getpaid_get_user_content_tabs() {
     $tabs = array(
 
         // Slug - invoices.
-        'invoices'      => array(
+        'gp-invoices'   => array(
             'label'     => __( 'Invoices', 'invoicing' ), // Name of the tab.
             'content'   => '[wpinv_history]', // Content of the tab. Or specify "callback" to provide a callback instead.
             'icon'      => 'fas fa-file-invoice', // Shown on some profile plugins.
         ),
 
-        'subscriptions' => array(
-            'label'     => __( 'Subscriptions', 'invoicing' ),
-            'content'   => '[wpinv_subscriptions]',
-            'icon'      => 'fas fa-redo',
+        'gp-subscriptions' => array(
+            'label'        => __( 'Subscriptions', 'invoicing' ),
+            'content'      => '[wpinv_subscriptions]',
+            'icon'         => 'fas fa-redo',
         )
     );
 
@@ -150,6 +150,25 @@ function getpaid_prepare_user_content_tab( $tab ) {
     );
 
     return "<div class='bsui'>$notice</div>";
+}
+
+/**
+ * Generates the current integrations tab URL.
+ *
+ * @since 1.0.19
+ * @param string $tab
+ * @param string $default
+ * @return array
+ */
+function getpaid_get_tab_url( $tab, $default ) {
+    global $getpaid_tab_url;
+
+    if ( empty( $getpaid_tab_url ) ) {
+        return $default;
+    }
+
+    return sprintf( $getpaid_tab_url, $tab );
+
 }
 
 /*
@@ -197,10 +216,12 @@ add_filter( 'uwp_account_available_tabs', 'getpaid_filter_userswp_account_tabs' 
  * @return array
  */
 function getpaid_display_userswp_account_tabs( $tab ) {
+    global $getpaid_tab_url;
 
     $our_tabs = getpaid_get_user_content_tabs();
 
     if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
+        $getpaid_tab_url = add_query_arg( 'type', '%s', uwp_get_account_page_url() );
         echo getpaid_prepare_user_content_tab( $our_tabs[ $tab ] );
     }
 

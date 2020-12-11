@@ -254,7 +254,8 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		$actions = array();
 
 		// View subscription action.
-		$view_url        = esc_url( add_query_arg( 'subscription', (int) $subscription->get_id(), get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) );
+		$view_url        = getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
+		$view_url        = esc_url( add_query_arg( 'subscription', (int) $subscription->get_id(), $view_url ) );
 		$actions['view'] = "<a href='$view_url' class='text-decoration-none'>" . __( 'Manage Subscription', 'invoicing' ) . '</a>';
 
 		// Filter the actions.

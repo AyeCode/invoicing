@@ -1074,7 +1074,10 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_view_url() {
-		$url = add_query_arg( 'subscription', $this->get_id(), get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
+
+		$url = getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
+		$url = add_query_arg( 'subscription', $this->get_id(), $url );
+
 		return apply_filters( 'getpaid_get_subscription_view_url', $url, $this );
 	}
 

@@ -129,5 +129,5 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
 
-	<a href="<?php echo esc_url( get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Go Back', 'invoicing' ); ?></a>
+	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Go Back', 'invoicing' ); ?></a>
 </span>
