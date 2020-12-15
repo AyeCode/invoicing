@@ -608,7 +608,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function saved_payment_methods() {
-		$html = '<ul class="getpaid-saved-payment-methods m-0 mt-2" data-count="' . esc_attr( count( $this->get_tokens( $this->is_sandbox() ) ) ) . '">';
+		$html = '<ul class="getpaid-saved-payment-methods list-unstyled m-0 mt-2" data-count="' . esc_attr( count( $this->get_tokens( $this->is_sandbox() ) ) ) . '">';
 
 		foreach ( $this->get_tokens( $this->is_sandbox() ) as $token ) {
 			$html .= $this->get_saved_payment_method_option_html( $token );

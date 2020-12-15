@@ -12,9 +12,6 @@
 	font-weight: 500;
 }
 
-.wpi-form .panel-heading h3.panel-title {
-	margin: 0;
-}
 @media screen and (max-width:767px) {    
 	.wpinv-success .wpinv-receipt-details .table th,
 	.wpinv-success .wpinv-bank-details .table th {
@@ -25,31 +22,8 @@
 input[type="number"].getpaid-item-quantity-input,
 input[type="text"].getpaid-item-price-input {
 	width: 64px;
-	text-align: center;
-	padding: 0.3em;
-	vertical-align: middle;
 	line-height: 1;
-	margin: 0;
-	border-color: #dddddd;
-	background: #fff;
-	box-shadow: none;
-	border-radius: 0px;
 	min-height: 35px;
-	color: #666;
-	font-weight: normal;
-}
-
-.getpaid-payment-form-items-cart-header  {
-	background-color: #fbfbfb;
-	font-weight: 600;
-	border-bottom: 1px solid #dee2e6;
-	padding: .7em 1em;
-}
-
-.getpaid-payment-form-items-cart-item,
-.getpaid-form-cart-totals-col {
-	padding: .7em 1em;
-	min-height: 3.25em;
 }
 
 .getpaid-price-buttons label{
@@ -90,16 +64,6 @@ input[type="text"].getpaid-item-price-input {
 	border-color: #1e73be;
 }
 
-.getpaid-gateway-radio-div label {
-	line-height: 2;
-	text-align: left;
-}
-
-.getpaid-gateway-radio-div input {
-	display: inline-block;
-	margin: 0 1em 0 0;
-}
-
 .getpaid-gateway-description-div {
 	box-sizing: border-box;
 	width: 100%;
@@ -111,34 +75,8 @@ input[type="text"].getpaid-item-price-input {
 	margin: 1em 0;
 }
 
-.getpaid-gateway-description {
-	background-color: #efefef;
-	padding: 1em;
-}
-
-.bsui .page-numbers {
-	display: inline-block;
-    margin-right: 16px;
-}
-
-.getpaid-payment-form.bsui label {
-	margin-bottom: .15rem;
-}
-
-.getpaid-new-payment-method,
-.getpaid-payment-method {
-	list-style-type: none;
-}
-
-.getpaid-new-payment-method label,
-.getpaid-payment-method label{
-	font-weight: 500;
-}
-
-.getpaid-public-items-archive-single-item .inner{
+.getpaid-public-items-archive-single-item .inner {
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-	margin-right: 10px;
-	min-height: 100%;
 }
 
 .getpaid-public-items-archive-single-item:hover .inner{
@@ -147,62 +85,6 @@ input[type="text"].getpaid-item-price-input {
 
 .wp-block-getpaid-public-items-getpaid-public-items-loop .item-name {
 	font-size: 1.3rem;
-}
-
-.getpaid-item-status-pending,
-.getpaid-invoice-status-wpi-quote-pending,
-.getpaid-invoice-status-wpi-pending {
-    background-color: #f9fbe7;
-    color: #33691e;
-    border-bottom: 1px solid #dcedc8;
-}
-
-.getpaid-item-status-canceled,
-.getpaid-invoice-status-wpi-cancelled {
-    background-color: #ede7f6;
-    color: #311b92;
-    border-bottom: 1px solid #d1c4e9;
-}
-
-.getpaid-item-status-failing,
-.getpaid-invoice-status-wpi-quote-declined,
-.getpaid-invoice-status-wpi-failed {
-    background-color: #fff3e0;
-    border-bottom: 1px solid #ffe0b2;
-    color: #bf360c;
-}
-
-.getpaid-item-status-info,
-.getpaid-invoice-status-wpi-renewal {
-    background-color:#e0f7fa;
-    border-bottom: 1px solid#bbdefb;
-    color: #006064;
-}
-
-.getpaid-item-status-success,
-.getpaid-invoice-status-wpi-quote-accepted,
-.getpaid-invoice-status-publish {
-    background-color:#f1f8e9;
-    border-bottom: 1px solid#dcedc8;
-    color: #33691e;
-}
-
-.getpaid-item-status-expired,
-.getpaid-invoice-status-wpi-onhold {
-    background-color: #fbe9e7;
-    border-bottom: 1px solid#ffccbc;
-    color: #bf360c;
-}
-
-.getpaid-item-status-trial,
-.getpaid-invoice-status-wpi-processing {
-    background-color: #eceff1;
-    border-bottom: 1px solid#9e9e9e;
-    color: #263238;
-}
-
-.getpaid-subscriptions th {
-	font-weight: 500;
 }
 
 .getpaid-subscription-item-actions {

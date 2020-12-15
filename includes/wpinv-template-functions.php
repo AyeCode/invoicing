@@ -1350,7 +1350,7 @@ function getpaid_the_invoice_description( $invoice ) {
     }
 
     $description = wp_kses_post( $description );
-    echo "<small class='getpaid-invoice-description text-dark p-2 form-text'><em>$description</em></small>";
+    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>$description</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
 
@@ -1491,25 +1491,7 @@ function getpaid_template() {
  * @return string
  */
 function getpaid_paginate_links( $args ) {
-
-    $args['type']     = 'array';
-    $args['mid_size'] = 1;
-    $pages        = paginate_links( $args );
-
-    if ( ! is_array( $pages ) ) {
-        return '';
-    }
-
-    $_pages = array();
-    foreach ( $pages as $page ) {
-        $_pages[] = str_replace( 'page-numbers', 'page-link text-decoration-none', $page );
-    }
-
-    $links  = "<nav>\n\t<ul class='pagination justify-content-end m-0'>\n\t\t<li class='page-item'>";
-    $links .= join( "</li>\n\t\t<li class='page-item'>", $_pages );
-    $links .= "</li>\n\t</ul>\n</nav>\n";
-
-    return $links;
+    return str_replace( 'page-link dots', 'page-link text-dark', aui()->pagination( $args ) );
 }
 
 /**

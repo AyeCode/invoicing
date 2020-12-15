@@ -1144,7 +1144,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	public function get_status_class() {
 		$statuses = getpaid_get_subscription_status_classes();
-		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'text-white bg-secondary';
+		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'badge-dark';
 	}
 
     /**
@@ -1157,9 +1157,9 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$status_label = sanitize_text_field( $this->get_status_label() );
 		$class        = esc_attr( $this->get_status_class() );
-		$status       = sanitize_html_class( $this->get_status_label() );
+		$status       = sanitize_html_class( $this->get_status() );
 
-		return "<span class='bsui'><span class='d-inline-block py-2 px-3 rounded $class $status'>$status_label</span></span>";
+		return "<span class='bsui'><span class='badge $class $status'>$status_label</span></span>";
     }
 
     /**

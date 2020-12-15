@@ -308,6 +308,17 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
 	/**
+	 * Retrieves the invoice status class
+	 *
+	 * @since  1.0.19
+	 * @return string
+	 */
+	public function get_status_class() {
+		$statuses = getpaid_get_invoice_status_classes();
+		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'badge-dark';
+	}
+
+	/**
      * Retrieves the invoice status label html
      *
      * @since  1.0.0
@@ -317,8 +328,9 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$status_label = sanitize_text_field( $this->get_status_nicename() );
 		$status       = sanitize_html_class( $this->get_status() );
+		$class        = esc_attr( $this->get_status_class() );
 
-		return "<span class='bsui'><span class='d-inline-block py-2 px-3 rounded getpaid-invoice-status-$status'>$status_label</span></span>";
+		return "<span class='bsui'><span class='badge $class $status'>$status_label</span></span>";
 	}
 
     /**

@@ -14,7 +14,7 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 $currency = $form->get_currency();
 
 ?>
-<div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?>'>
+<div class='getpaid-payment-form-items-cart-item px-3 py-2 getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?>'>
     <div class="form-row">
         <?php foreach ( $columns as $key => $label ) : ?>
             <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo $item->get_id(); ?>">
@@ -60,7 +60,7 @@ $currency = $form->get_currency();
                                             <span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
                                         </div>
                                     <?php endif; ?>
-                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input border">
+                                    <input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border border">
 
                                     <?php if( 'left' != $position ) : ?>
                                         <div class="input-group-append">
@@ -82,7 +82,7 @@ $currency = $form->get_currency();
 
                         if ( $item->allows_quantities() ) {
                             ?>
-                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input pr-1 border' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
+                                <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
                             <?php
                         } else {
                             echo (int) $item->get_qantity();

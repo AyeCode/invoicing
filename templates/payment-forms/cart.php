@@ -27,7 +27,7 @@ do_action( 'getpaid_before_payment_form_cart', $form );
 
 ?>
     <div class="getpaid-payment-form-items-cart border form-group">
-        <div class="getpaid-payment-form-items-cart-header">
+        <div class="getpaid-payment-form-items-cart-header border-bottom py-2 px-3 font-weight-bold bg-light">
             <div class="form-row">
             <?php foreach ( $columns as $key => $label ) : ?>
                 <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>">

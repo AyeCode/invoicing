@@ -1099,55 +1099,6 @@ textarea.wpi-email_overdue_content {
     text-align: right;
 }
 
-.getpaid-item-status-pending,
-.getpaid-invoice-status-wpi-pending {
-    background-color: #f9fbe7;
-    color: #33691e;
-    border-bottom: 1px solid #dcedc8;
-}
-
-.getpaid-item-status-canceled,
-.getpaid-invoice-status-wpi-cancelled {
-    background-color: #ede7f6;
-    color: #311b92;
-    border-bottom: 1px solid #d1c4e9;
-}
-
-.getpaid-item-status-failing,
-.getpaid-invoice-status-wpi-failed {
-    background-color: #fff3e0;
-    border-bottom: 1px solid #ffe0b2;
-    color: #bf360c;
-}
-
-.getpaid-item-status-info,
-.getpaid-invoice-status-wpi-renewal {
-    background-color:#e0f7fa;
-    border-bottom: 1px solid#bbdefb;
-    color: #006064;
-}
-
-.getpaid-item-status-success,
-.getpaid-invoice-status-publish {
-    background-color:#f1f8e9;
-    border-bottom: 1px solid#dcedc8;
-    color: #33691e;
-}
-
-.getpaid-item-status-expired,
-.getpaid-invoice-status-wpi-onhold {
-    background-color: #fbe9e7;
-    border-bottom: 1px solid#ffccbc;
-    color: #bf360c;
-}
-
-.getpaid-item-status-trial,
-.getpaid-invoice-status-wpi-processing {
-    background-color: #eceff1;
-    border-bottom: 1px solid#9e9e9e;
-    color: #263238;
-}
-
 .wpi-mcheck-rows .wpi-mcheck-row {
     float: none;
     display: block;

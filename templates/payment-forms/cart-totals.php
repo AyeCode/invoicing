@@ -37,7 +37,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 ?>
 <div class='border-top getpaid-payment-form-items-cart-totals'>
     <?php foreach ( $totals as $key => $label ) : ?>
-        <div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?>">
+        <div class="getpaid-form-cart-totals-col px-3 py-2 getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?>">
             <div class="row">
                 <div class="col-12 offset-sm-5 col-sm-3">
                     <?php echo sanitize_text_field( $label ); ?>

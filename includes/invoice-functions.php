@@ -1248,3 +1248,29 @@ function getpaid_get_invoice_meta( $invoice ) {
     return $meta;
 
 }
+
+/**
+ * Returns an array of valid invoice status classes.
+ *
+ * @return array
+ */
+function getpaid_get_invoice_status_classes() {
+
+	return apply_filters(
+		'getpaid_get_invoice_status_classes',
+		array(
+            'wpi-quote-declined' => 'badge-danger',
+            'wpi-failed'         => 'badge-danger',
+			'wpi-processing'     => 'badge-info',
+			'wpi-onhold'         => 'badge-warning',
+			'wpi-quote-accepted' => 'badge-success',
+			'publish'            => 'badge-success',
+			'wpi-renewal'        => 'badge-primary',
+            'wpi-cancelled'      => 'badge-secondary',
+            'wpi-pending'        => 'badge-dark',
+            'wpi-quote-pending'  => 'badge-dark',
+            'wpi-refunded'       => 'badge-secondary',
+		)
+	);
+
+}

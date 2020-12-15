@@ -57,7 +57,7 @@ if ( ! empty( $form->invoice ) ) {
 
             <?php foreach ( array_keys( $gateways ) as $gateway ) : ?>
 
-                <div class="mb-2 mt-2 bg-light border getpaid-gateway-description getpaid-description-<?php echo sanitize_html_class( $gateway ) ;?>" style="display: none;">
+                <div class="my-2 p-3 bg-light border getpaid-gateway-description getpaid-description-<?php echo sanitize_html_class( $gateway ) ;?>" style="display: none;">
                     <?php
 
                         $description = wpinv_get_gateway_description( $gateway );

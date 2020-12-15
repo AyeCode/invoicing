@@ -23,7 +23,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 			case 'subscription':
 				$subscription_id = (int) $subscription->get_id();
 				$url             = esc_url( $subscription->get_view_url() );
-				echo $widget->add_row_actions( "<a href='$url' class='text-decoration-none'>#$subscription_id</a>", $subscription );
+				echo $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>#$subscription_id</a>", $subscription );
 				break;
 
 			case 'status':
@@ -38,7 +38,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 			case 'amount':
 				$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 				$amount    = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $subscription->get_recurring_amount() ) ), $subscription->get_parent_payment()->get_currency() );
-				echo "<strong style='font-weight: 500;'>$amount</strong> / $frequency";
+				echo "<span>$amount</span> / $frequency";
 				break;
 
 		endswitch;

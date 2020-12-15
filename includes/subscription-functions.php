@@ -83,13 +83,13 @@ function getpaid_get_subscription_status_classes() {
 	return apply_filters(
 		'getpaid_get_subscription_status_classes',
 		array(
-			'pending'    => 'getpaid-item-status-pending',
-			'trialling'  => 'getpaid-item-status-trial',
-			'active'     => 'getpaid-item-status-info',
-			'failing'    => 'getpaid-item-status-failing',
-			'expired'    => 'getpaid-item-status-expired',
-			'completed'  => 'getpaid-item-status-success',
-			'cancelled'  => 'getpaid-item-status-canceled',
+			'pending'    => 'badge-dark',
+			'trialling'  => 'badge-info',
+			'active'     => 'badge-success',
+			'failing'    => 'badge-warning',
+			'expired'    => 'badge-danger',
+			'completed'  => 'badge-primary',
+			'cancelled'  => 'badge-secondary',
 		)
 	);
 
