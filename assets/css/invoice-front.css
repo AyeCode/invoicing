@@ -48,7 +48,6 @@ input[type="text"].getpaid-item-price-input {
 
 .getpaid-payment-form-items-cart-item,
 .getpaid-form-cart-totals-col {
-	font-weight: 600;
 	padding: .7em 1em;
 	min-height: 3.25em;
 }
@@ -252,4 +251,8 @@ input[type="text"].getpaid-item-price-input {
     top: 0;
     right: 0;
     z-index: 200;
+}
+
+.getpaid-form-cart-item-price {
+	min-width: 120px !important;
 }
