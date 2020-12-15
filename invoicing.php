@@ -3,7 +3,7 @@
  * Plugin Name: GetPaid Beta
  * Plugin URI: https://wpinvoicing.com/
  * Description: A lightweight and VAT compliant payments and invoicing plugin.
- * Version: 2.0.0-beta
+ * Version: 2.0.1-beta
  * Author: AyeCode Ltd
  * Author URI: https://wpinvoicing.com
  * Text Domain: invoicing
@@ -23,7 +23,7 @@ if ( ! defined( 'WPINV_PLUGIN_FILE' ) ) {
 }
 
 if ( ! defined( 'WPINV_VERSION' ) ) {
-	define( 'WPINV_VERSION', '2.0.0-beta' );
+	define( 'WPINV_VERSION', '2.0.1-beta' );
 }
 
 // Include the main Invoicing class.
