@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal
 Requires at least: 4.9
 Tested up to: 5.6
-Stable tag: 2.0.1-beta
+Stable tag: 2.0.2-beta
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -128,6 +128,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 10. Client Invoice
 
 == Changelog ==
+
+= 2.0.2-beta =
+* Fix "minimum value" error with number settings fields - FIXED
 
 = 2.0.1-beta =
 * Add the raw_html settings field type - ADDED

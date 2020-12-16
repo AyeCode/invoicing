@@ -255,8 +255,8 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	public function admin_settings( $admin_settings ) {
 
-        $admin_settings['worldpay_desc']['std']    = __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' );
-		$admin_settings['worldpay_active']['desc'] = __( 'Enable bank transfer', 'invoicing' );
+        $admin_settings['bank_transfer_desc']['std']    = __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' );
+		$admin_settings['bank_transfer_active']['desc'] = __( 'Enable bank transfer', 'invoicing' );
 
 		$locale  = $this->get_country_locale();
 

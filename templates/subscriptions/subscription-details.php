@@ -36,7 +36,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 
 			<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
 
-				<th class="w-25" style="font-weight: 500;">
+				<th class="w-25 font-weight-bold">
 					<?php echo sanitize_text_field( $label ); ?>
 				</th>
 

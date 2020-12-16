@@ -720,8 +720,8 @@ function wpinv_number_callback( $args ) {
 	$desc = wp_kses_post( $args['desc'] );
 	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
 	$attr = wpinv_settings_attrs_helper( $args );
-	$max  = absint( $args['max'] );
-	$min  = absint( $args['min'] );
+	$max  = intval( $args['max'] );
+	$min  = intval( $args['min'] );
 	$step = floatval( $args['step'] );
 
 	?>

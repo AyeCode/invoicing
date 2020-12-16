@@ -431,7 +431,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 								$key   = esc_attr( $key );
 								$label = sanitize_text_field( $label );
 
-								echo "<th class='subscription-invoice-field-$key bg-light p-2 text-left color-dark'>$label</th>";
+								echo "<th class='subscription-invoice-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>

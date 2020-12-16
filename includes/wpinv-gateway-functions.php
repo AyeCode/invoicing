@@ -209,7 +209,7 @@ function wpinv_settings_gateways( $settings ) {
                 'std'  => apply_filters( "getpaid_default_{$key}_checkout_description", '' ),
                 'type' => 'number',
                 'step' => '1',
-                'min'  => '-100000',
+                'min'  => '0',
                 'max'  => '100000',
                 'std'  => isset( $gateway['ordering'] ) ? $gateway['ordering'] : '10',
             ),
