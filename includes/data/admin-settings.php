@@ -108,6 +108,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'help-tip'    => true,
                 ),
                 'success_page' => array(
                     'id'          => 'success_page',
@@ -117,6 +118,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'help-tip'    => true,
                 ),
                 'failure_page' => array(
                     'id'          => 'failure_page',
@@ -126,6 +128,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'help-tip'    => true,
                 ),
                 'invoice_history_page' => array(
                     'id'          => 'invoice_history_page',
@@ -135,6 +138,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'help-tip'    => true,
                 ),
                 'invoice_subscription_page' => array(
                     'id'          => 'invoice_subscription_page',
@@ -144,6 +148,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'help-tip'    => true,
                 ),
             ),
             'currency_section' => array(

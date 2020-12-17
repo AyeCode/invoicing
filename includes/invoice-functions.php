@@ -91,7 +91,7 @@ function getpaid_get_invoice_post_types() {
  * @param string $post_type The post type to check for.
  */
 function getpaid_is_invoice_post_type( $post_type ) {
-    return ! empty( $post_type ) && array_key_exists( $post_type, getpaid_get_invoice_post_types() );
+    return is_scalar( $post_type ) && ! empty( $post_type ) && array_key_exists( $post_type, getpaid_get_invoice_post_types() );
 }
 
 /**
