@@ -3730,12 +3730,11 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_date_completed( current_time( 'mysql' ) );
 
 		// Set the new status.
+		$gateway = sanitize_text_field( $this->get_gateway_title() );
 		if ( $this->is_renewal() ) {
 
-			$_note = sprintf(
-				__( 'Renewed via %s', 'invoicing' ),
-				$this->get_gateway_title() . empty( $note ) ? '' : " ($note)"
-			);
+			$_note = wp_sprintf( __( 'Renewed via %s', 'invoicing' ), $gateway );
+			$_note = $_note . empty( $note ) ? '' : " ($note)";
 
 			if ( 'none' == $this->get_gateway() ) {
 				$_note = $note;
@@ -3745,16 +3744,14 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		} else {
 
-			$_note = sprintf(
-				__( 'Paid via %s', 'invoicing' ),
-				$this->get_gateway_title() . empty( $note ) ? '' : " ($note)"
-			);
+			$_note = wp_sprintf( __( 'Paid via %s', 'invoicing' ), $gateway );
+			$_note = $_note . empty( $note ) ? '' : " ($note)";
 
 			if ( 'none' == $this->get_gateway() ) {
 				$_note = $note;
 			}
 
-			$this->set_status( 'publish',$_note );
+			$this->set_status( 'publish', $_note );
 
 		}
 
