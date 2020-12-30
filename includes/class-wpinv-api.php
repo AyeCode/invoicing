@@ -35,6 +35,13 @@ class WPInv_API {
     public $discounts;
 
     /**
+     * The settings controller class.
+     *
+     * @param GetPaid_REST_Settings_Controller
+     */
+    public $settings;
+
+    /**
      * Class constructor. 
      * 
      * @since 1.0.13
@@ -46,6 +53,7 @@ class WPInv_API {
         $this->invoices  = new WPInv_REST_Invoice_Controller();
         $this->items     = new WPInv_REST_Items_Controller();
         $this->discounts = new WPInv_REST_Discounts_Controller();
+        $this->settings  = new GetPaid_REST_Settings_Controller();
 
         // Fires after loading the rest api.
         do_action( 'getpaid_rest_api_loaded', $this );
