@@ -392,8 +392,6 @@ function wpinv_get_settings_tab_sections( $tab = false ) {
 
     if( $tab && ! empty( $sections[ $tab ] ) ) {
         $tabs = $sections[ $tab ];
-    } else if ( $tab ) {
-        $tabs = false;
     }
 
     return $tabs;
