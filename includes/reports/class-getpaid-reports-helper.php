@@ -196,7 +196,7 @@ class GetPaid_Reports_Helper {
 					$prepared['invoices'] = "{$join_type} JOIN {$wpdb->prefix}getpaid_invoices AS invoices ON posts.ID = invoices.post_id";
 					break;
 				case 'invoice_item':
-					$prepared['invoice_items'] = "{$join_type} JOIN {$wpdb->prefix}getpaid_invoice_items AS invoice_items ON posts.ID = invoices.post_id";
+					$prepared['invoice_items'] = "{$join_type} JOIN {$wpdb->prefix}getpaid_invoice_items AS invoice_items ON posts.ID = invoice_items.post_id";
 					break;
 			}
 		}

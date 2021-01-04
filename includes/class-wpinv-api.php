@@ -56,6 +56,13 @@ class WPInv_API {
     public $sales;
 
     /**
+     * The top sellers report controller class.
+     *
+     * @param GetPaid_REST_Report_Top_Sellers_Controller
+     */
+    public $top_sellers;
+
+    /**
      * Class constructor. 
      * 
      * @since 1.0.13
@@ -64,12 +71,13 @@ class WPInv_API {
     public function __construct() {
 
         // Init api controllers.
-        $this->invoices  = new WPInv_REST_Invoice_Controller();
-        $this->items     = new WPInv_REST_Items_Controller();
-        $this->discounts = new WPInv_REST_Discounts_Controller();
-        $this->settings  = new GetPaid_REST_Settings_Controller();
-        $this->reports   = new GetPaid_REST_Reports_Controller();
-        $this->sales     = new GetPaid_REST_Report_Sales_Controller();
+        $this->invoices    = new WPInv_REST_Invoice_Controller();
+        $this->items       = new WPInv_REST_Items_Controller();
+        $this->discounts   = new WPInv_REST_Discounts_Controller();
+        $this->settings    = new GetPaid_REST_Settings_Controller();
+        $this->reports     = new GetPaid_REST_Reports_Controller();
+        $this->sales       = new GetPaid_REST_Report_Sales_Controller();
+        $this->top_sellers = new GetPaid_REST_Report_Top_Sellers_Controller();
 
         // Fires after loading the rest api.
         do_action( 'getpaid_rest_api_loaded', $this );

@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * GetPaid REST reports controller class.
  *
- * @package Invoicing
+ * @package GetPaid
  */
 class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Controller {
 
@@ -663,6 +663,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		);
 
 		return $this->add_additional_fields_schema( $schema );
+
 	}
 
 }
