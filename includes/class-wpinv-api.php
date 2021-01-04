@@ -49,6 +49,13 @@ class WPInv_API {
     public $reports;
 
     /**
+     * The sales report controller class.
+     *
+     * @param GetPaid_REST_Report_Sales_Controller
+     */
+    public $sales;
+
+    /**
      * Class constructor. 
      * 
      * @since 1.0.13
@@ -62,6 +69,7 @@ class WPInv_API {
         $this->discounts = new WPInv_REST_Discounts_Controller();
         $this->settings  = new GetPaid_REST_Settings_Controller();
         $this->reports   = new GetPaid_REST_Reports_Controller();
+        $this->sales     = new GetPaid_REST_Report_Sales_Controller();
 
         // Fires after loading the rest api.
         do_action( 'getpaid_rest_api_loaded', $this );
