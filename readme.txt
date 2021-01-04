@@ -134,6 +134,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add the settings REST API endpoint - ADDED
 * Add sales REST API endpoint - ADDED
 * Add top-sellers REST API endpoint - ADDED
+* Add top-earners REST API endpoint - ADDED
 
 = 2.0.1-beta =
 * Add the raw_html settings field type - ADDED

@@ -85,6 +85,10 @@ class GetPaid_REST_Reports_Controller extends GetPaid_REST_Controller {
 				'description' => __( 'List of top selling items.', 'invoicing' ),
 			),
 			array(
+				'slug'        => 'top_earners',
+				'description' => __( 'List of top earning items.', 'invoicing' ),
+			),
+			array(
 				'slug'        => 'invoices/totals',
 				'description' => __( 'Invoice totals.', 'invoicing' ),
 			),

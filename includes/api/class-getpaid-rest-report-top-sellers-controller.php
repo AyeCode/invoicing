@@ -105,7 +105,7 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 		}
 
 		$response->add_links( $links );
-		return apply_filters( 'getpaid_rest_prepare_report_top_sellers', $response, $top_seller, $request );
+		return apply_filters( 'getpaid_rest_prepare_report_' . $this->rest_base, $response, $top_seller, $request );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 	public function get_item_schema() {
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'top_sellers_report',
+			'title'      => $this->rest_base,
 			'type'       => 'object',
 			'properties' => array(
 				'name' => array(
