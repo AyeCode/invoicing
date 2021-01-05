@@ -142,7 +142,7 @@ function getpaid_doing_it_wrong( $function, $message, $version ) {
  * Logs a debugging message.
  * 
  * @param string $log The message to log.
- * @param string $title The title of the message.
+ * @param string|bool $title The title of the message, or pass false to disable the backtrace.
  * @param string $file The file from which the error was logged.
  * @param string $line The line that contains the error.
  * @param bool $exit Whether or not to exit function execution.
@@ -175,7 +175,9 @@ function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = fal
         error_log( trim ( $log ) );
 
         // ... and a backtrace.
-        error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+        if ( false !== $title ) {
+            error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+        }
 
     }
 

@@ -73,16 +73,20 @@ function wpinv_sanitize_amount( $amount ) {
  * Rounds an amount.
  * 
  * @param float $amount
- * @param float|int|null $decimals
+ * @param float|string|int|null $decimals
  */
-function wpinv_round_amount( $amount, $decimals = null ) {
+function wpinv_round_amount( $amount, $decimals = null, $use_sprintf = false ) {
 
     if ( $decimals === null ) {
         $decimals = wpinv_decimals();
     }
 
-    $amount = round( (float) $amount, absint( $decimals ) );
-    //$amount = (double) sprintf( "%.{$decimals}f", (float) $amount );
+    if ( $use_sprintf ) {
+        $amount = sprintf( "%.{$decimals}f", (float) $amount );
+    } else {
+        $amount = round( (float) $amount, absint( $decimals ) );
+    }
+
     return apply_filters( 'wpinv_round_amount', $amount, $decimals );
 }
 

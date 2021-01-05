@@ -92,18 +92,6 @@ class GetPaid_REST_Reports_Controller extends GetPaid_REST_Controller {
 				'slug'        => 'invoices/counts',
 				'description' => __( 'Invoice counts.', 'invoicing' ),
 			),
-			array(
-				'slug'        => 'items/totals',
-				'description' => __( 'Item totals.', 'invoicing' ),
-			),
-			array(
-				'slug'        => 'customers/totals',
-				'description' => __( 'Customer totals.', 'invoicing' ),
-			),
-			array(
-				'slug'        => 'discounts/totals',
-				'description' => __( 'Discount totals.', 'invoicing' ),
-			)
 		);
 
 		return apply_filters( 'getpaid_available_api_reports', $reports );
