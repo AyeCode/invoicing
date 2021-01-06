@@ -971,6 +971,88 @@ jQuery(function($) {
 
     WPInv.init();
 
+    /**
+     * Retrieves a report.
+     * @param {string} report 
+     * @param {object} args 
+     */
+    function getStats( report, args ) {
+
+        // Reports.
+        return $.ajax(
+            {
+                url: WPInv_Admin.rest_root + 'getpaid/v1/reports/' + report,
+                method: 'GET',
+                data: args,
+                beforeSend: function ( xhr ) {
+                    xhr.setRequestHeader( 'X-WP-Nonce', WPInv_Admin.rest_nonce );
+                }
+            }
+        );
+
+    }
+
+    /**
+     * Feeds a stat onto the page.
+     * @param {string} stat
+     * @param {string} current 
+     * @param {string} previous 
+     */
+    function feedStat( stat, current, previous ) {
+
+        // Abort if it is not supported.
+        var $el = $( '.getpaid-report-cards .card.' + stat );
+        if ( $el.length == 0 ) {
+            return
+        }
+
+        $el.find( '.getpaid-report-card-value' ).text( current )
+        $el.find( '.getpaid-report-card-previous-value' ).text( previous )
+
+    }
+
+    // Fetch reports.
+    if ( $( '.row.getpaid-report-cards' ).length ) {
+
+        getStats( 'sales', { period : WPInv_Admin.date_range } )
+            .done( function ( response ) {
+
+                var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    function cb(start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+
+    $('#getpaid-reports-datepicker').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    cb(start, end);
+                $('#getpaid-reports-datepicker').daterangepicker();
+                getStats( 'sales', response[0].previous_range )
+                    .done( function ( second_response ) {
+
+                        for ( var stat in response[0] ) {
+                            if ( response[0].hasOwnProperty( stat ) ) {
+                                feedStat( stat, response[0][stat], second_response[0][stat] )
+                            }
+                        }
+
+                    } );
+            } );
+
+    }
+
 });
 
 /**

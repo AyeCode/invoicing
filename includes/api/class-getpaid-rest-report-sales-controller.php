@@ -221,7 +221,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		$data    = $report_data;
 		unset( $data->invoice_counts, $data->invoices, $data->coupons, $data->refunds, $data->invoice_items );
-		$data    = $this->add_additional_fields_to_object( $data, $request );
+		$data    = $this->add_additional_fields_to_object( (array) $data, $request );
 		$data    = $this->filter_response_by_context( $data, $context );
 
 		// Wrap the data in a response object.
@@ -231,7 +231,34 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'href' => rest_url( sprintf( '%s/reports', $this->namespace ) ),
 			),
 		) );
+// average_sales, average_total_sales, currency, start_date, end_date, interval, net_refunds, net_sales: 20
+//refunded_discount: 0
+//refunded_fees: 0
+//refunded_items: 0
+/*subtotal: 0
+thousands_sep: ","
+total_discount: 0
+total_fees: 0
+total_invoices: 3
+total_items: 3
+total_refunded_tax: 0
+total_refunds: 0
+total_sales: 22
+total_tax: 2*/
 
+// totals - keyed by date
+/*discount: 0
+fees: 0
+invoices: 0
+items: 0
+refunded_fees: 0
+refunded_items: 0
+refunded_subtotal: 0
+refunded_tax: 0
+refunds: 0
+sales: 0
+subtotal: 0
+tax: 0*/
 		return apply_filters( 'getpaid_rest_prepare_report_sales', $response, $report_data, $request );
 	}
 
@@ -260,6 +287,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			'refunded_items' => $this->count_refunded_items(), // invoice_item_count, post_date
 			'invoices'       => $this->query_invoice_totals(), // total_sales, total_tax, total_discount, total_fees, subtotal, post_date
 			'refunds'        => $this->query_refunded_totals(), // total_sales, total_tax, total_discount, total_fees, subtotal, post_date
+			'previous_range' => $this->previous_range,
 		);
 
 		// Calculated totals.
@@ -613,6 +641,15 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'interval' => array(
 					'description' => __( 'Number of months/days in the report period.', 'invoicing' ),
 					'type'        => 'integer',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
+				'previous_range'  => array(
+					'description' => __( 'The previous report period.', 'invoicing' ),
+					'type'        => 'array',
+					'items'       => array(
+						'type'    => 'string',
+					),
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),

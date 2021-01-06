@@ -3763,7 +3763,6 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->save();
 	}
 
-
 	/**
 	 * Save data to the database.
 	 *

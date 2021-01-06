@@ -121,7 +121,10 @@ class GetPaid_Admin {
         $i18n = array(
             'ajax_url'                  => admin_url( 'admin-ajax.php' ),
             'post_ID'                   => isset( $post->ID ) ? $post->ID : '',
-            'wpinv_nonce'               => wp_create_nonce( 'wpinv-nonce' ),
+			'wpinv_nonce'               => wp_create_nonce( 'wpinv-nonce' ),
+			'rest_nonce'                => wp_create_nonce( 'wp_rest' ),
+			'rest_root'                 => esc_url_raw( rest_url() ),
+			'date_range'                => isset( $_GET['date_range'] ) ? sanitize_text_field( $_GET['date_range'] ) : '7_days',
             'add_invoice_note_nonce'    => wp_create_nonce( 'add-invoice-note' ),
             'delete_invoice_note_nonce' => wp_create_nonce( 'delete-invoice-note' ),
             'invoice_item_nonce'        => wp_create_nonce( 'invoice-item' ),
