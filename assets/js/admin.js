@@ -226,7 +226,7 @@ jQuery(function($) {
 
         // The email field is now required.
         $( '#getpaid-invoice-new-user-email' ).prop('required', 'required');
- 
+
     });
 
     // When clicking the "cancel new user" button...
@@ -368,7 +368,7 @@ jQuery(function($) {
                 }
                 return;
             }
- 
+
             // Maybe remove it from the list of empty selects.
             var index = $.inArray( key, empty_select )
             if ( -1 != index ) {
@@ -497,7 +497,7 @@ jQuery(function($) {
 
     /**
      * Replaces all items with the provided items.
-     * 
+     *
      * @param {Array} items New invoice items.
      */
     function getpaid_replace_invoice_items( items ) {
@@ -513,7 +513,7 @@ jQuery(function($) {
             row
                 .removeClass( 'getpaid-invoice-item-template d-none')
                 .addClass( 'getpaid-invoice-item item-' + item_id )
-            
+
             $.each( item.texts, function( key, value ) {
                 row.find( '.' + key ).html( value )
             } )
@@ -597,7 +597,7 @@ jQuery(function($) {
 
     // Save edited invoice item.
     $( '#getpaid-edit-invoice-item .getpaid-save' ).on( 'click', function() {
-    
+
         // Retrieve item data.
         var data = $( '#getpaid-edit-invoice-item .getpaid-edit-item-div :input' )
             .map( function() {
@@ -872,7 +872,7 @@ jQuery(function($) {
         e.preventDefault()
         $(this).closest('tr').remove();
         wpinv_reindex_tax_table();
- 
+
     });
 
     var elB = $('#wpinv-address');
@@ -894,7 +894,7 @@ jQuery(function($) {
             this.setup_tools();
         },
         preSetup: function() {
-            
+
             var wpinvColorPicker = $('.wpinv-color-picker');
             if (wpinvColorPicker.length) {
                 wpinvColorPicker.wpColorPicker();
@@ -979,8 +979,8 @@ jQuery(function($) {
 
     /**
      * Retrieves a report.
-     * @param {string} report 
-     * @param {object} args 
+     * @param {string} report
+     * @param {object} args
      */
     function getStats( report, args ) {
 
@@ -1001,8 +1001,8 @@ jQuery(function($) {
     /**
      * Feeds a stat onto the page.
      * @param {string} stat
-     * @param {string} current 
-     * @param {string} previous 
+     * @param {string} current
+     * @param {string} previous
      */
     function feedStat( stat, current, previous ) {
 
@@ -1017,7 +1017,7 @@ jQuery(function($) {
             $el.find( '.getpaid-report-card-value' ).text( current )
             $el.find( '.getpaid-report-card-previous-value' ).text( previous )
         } else {
-    
+
             $el.find( '.getpaid-report-card-value' ).text( getpaid.currency.format( current ) )
             $el.find( '.getpaid-report-card-previous-value' ).text( getpaid.currency.format( previous ) )
 
@@ -1030,7 +1030,7 @@ jQuery(function($) {
             $el.find( '.getpaid-report-card-growth' )
                 .addClass( 'text-success' )
                 .html( '<i class="fas fa-arrow-up fa-sm pr-1"></i>' + parseFloat(growth).toFixed(2) + percentage )
-                
+
         } else if( current < previous ) {
             var loss = ( current - previous ) * 100 / previous;
             $el.find( '.getpaid-report-card-growth' )
@@ -1038,6 +1038,98 @@ jQuery(function($) {
                 .html( '<i class="fas fa-arrow-down fa-sm pr-1"></i>' + parseFloat(loss).toFixed(2) + percentage )
 
         }
+    }
+
+    /**
+     * Draws a graph.
+     * @param {string} stat
+     * @param {object} current
+     * @param {object} previous
+     */
+    function drawGraph( stat, current, previous ) {
+
+        // Abort if it is not supported.
+        if ( $( '#getpaid-chartjs-' + stat ).length == 0 ) {
+            return
+        }
+
+        var labels           = []
+        var previous_dataset = []
+        var current_dataset  = []
+        var ctx              = document.getElementById( 'getpaid-chartjs-' + stat ).getContext('2d');
+
+        for ( var date in current[0]['totals'] ) {
+            if ( current[0]['totals'].hasOwnProperty( date ) ) {
+                labels.push( date )
+                current_dataset.push(current[0]['totals'][date][stat])
+            }
+        }
+
+        for ( var date in previous[0]['totals'] ) {
+            if ( previous[0]['totals'].hasOwnProperty( date ) ) {
+                previous_dataset.push(previous[0]['totals'][date][stat])
+            }
+        }
+
+        new Chart(
+            ctx,
+            {
+                type: 'line',
+                data: {
+                    'labels': labels,
+                    'datasets': [
+                        {
+                            label: $( '#getpaid-chartjs-' + stat ).closest( '.card' ).find( '.card-header strong' ).text(),
+                            data: current_dataset,
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)'
+                        },
+                        {
+                            label: 'Previous Period',
+                            data: previous_dataset,
+                            backgroundColor: 'rgba(255, 255, 255, 0)',
+                            borderColor: '#17a2b8',
+                            borderDash: [10,5],
+                            pointBackgroundColor: '#17a2b8'
+                        }
+                    ]
+                },
+                options: {
+                    tooltips: {
+                        mode: 'index',
+                        intersect: true
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function(value, index, values) {
+
+                                    if ( ! window.Intl || [ 'invoices', 'items' ].indexOf(stat) > -1 ) {
+                                        return value
+                                    } else {
+                                        return getpaid.currency.format( value )
+                                    }
+
+                                }
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                maxTicksLimit: 15,
+
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+
+
+            }
+        );
     }
 
     // Handle reports.
@@ -1077,6 +1169,12 @@ jQuery(function($) {
                             }
                         }
 
+                        // Draw graphs.
+                        var graphs = [ 'discount', 'refunds', 'sales', 'tax', 'fees', 'invoices', 'items', 'refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax' ]
+                        for ( var i = 0; i < graphs.length; i++ ) {
+                            drawGraph( graphs[i], response, second_response )
+                        }
+
                     } );
             } );
 
@@ -1086,7 +1184,7 @@ jQuery(function($) {
 
 /**
  * Blocks an HTML element to prevent interaction.
- * 
+ *
  * @param {String} el The element to block
  * @param {String} message an optional message to display alongside the spinner
  */
@@ -1103,7 +1201,7 @@ function wpinvBlock(el, message) {
 
 /**
  * Un-locks an HTML element to allow interaction.
- * 
+ *
  * @param {String} el The element to unblock
  */
 function wpinvUnblock(el) {

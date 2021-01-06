@@ -208,8 +208,35 @@ class GetPaid_Reports_Report {
 	 *
 	 */
 	public function display_left() {
-		$earnings = new GetPaid_Reports_Report_Earnings();
-		$earnings->display();
+		$graphs = array(
+			'sales'    => __( 'Earnings', 'invoicing' ),
+			'refunds'  => __( 'Refunds', 'invoicing' ),
+			'tax'      => __( 'Taxes', 'invoicing' ),
+			'fees'     => __( 'Fees', 'invoicing' ),
+			'discount' => __( 'Discounts', 'invoicing' ),
+			'invoices' => __( 'Invoices', 'invoicing' ),
+			'items'    => __( 'Purchased Items', 'invoicing' ),
+		);
+
+		?>
+
+			<?php foreach ( $graphs as $key => $graph ) : ?>
+				<div class="row mb-4">
+					<div class="col-12">
+						<div class="card m-0 p-0" style="max-width:100%">
+							<div class="card-header">
+								<strong><?php echo wpinv_clean( $graph ); ?></strong>
+							</div>
+							<div class="card-body">
+								<canvas id="getpaid-chartjs-<?php echo sanitize_key( $key ); ?>"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+
+		<?php
+
 	}
 
 	/**
