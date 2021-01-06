@@ -233,34 +233,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'href' => rest_url( sprintf( '%s/reports', $this->namespace ) ),
 			),
 		) );
-// average_sales, average_total_sales, currency, start_date, end_date, interval, net_refunds, net_sales: 20
-//refunded_discount: 0
-//refunded_fees: 0
-//refunded_items: 0
-/*subtotal: 0
-thousands_sep: ","
-total_discount: 0
-total_fees: 0
-total_invoices: 3
-total_items: 3
-total_refunded_tax: 0
-total_refunds: 0
-total_sales: 22
-total_tax: 2*/
 
-// totals - keyed by date
-/*discount: 0
-fees: 0
-invoices: 0
-items: 0
-refunded_fees: 0
-refunded_items: 0
-refunded_subtotal: 0
-refunded_tax: 0
-refunds: 0
-sales: 0
-subtotal: 0
-tax: 0*/
 		return apply_filters( 'getpaid_rest_prepare_report_sales', $response, $report_data, $request );
 	}
 

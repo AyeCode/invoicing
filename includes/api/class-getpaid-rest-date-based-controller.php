@@ -46,7 +46,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	public function get_date_range( $request ) {
 
 		// If not supported, assume all time.
-		if ( ! in_array( $request['period'], array( 'custom', 'today', 'yesterday', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'year', 'last_year' ) ) ) {
+		if ( ! in_array( $request['period'], array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'year', 'last_year' ) ) ) {
 			$request['period'] = '7_days';
 		}
 
@@ -159,6 +159,48 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		return array(
 			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
 			'after'  => date( 'Y-m-d', strtotime( '-2 days', current_time( 'timestamp' ) ) ),
+		);
+
+	}
+
+	/**
+	 * Retrieves this week's date range.
+	 *
+	 * @return array The appropriate date range.
+	 */
+	public function get_week_date_range() {
+
+		// Set the previous date range.
+		$this->previous_range = array(
+			'period' => 'last_week',
+		);
+
+		// Generate the report.
+		return array(
+			'before' => date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) ),
+			'after'  => date( 'Y-m-d', strtotime( 'sunday last week'  ) ),
+		);
+
+	}
+
+	/**
+	 * Retrieves last week's date range.
+	 *
+	 * @return array The appropriate date range.
+	 */
+	public function get_last_week_date_range() {
+
+		// Set the previous date range.
+		$this->previous_range = array(
+			'period' => 'custom',
+			'before' => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) ),
+			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) - 8 * DAY_IN_SECONDS ),
+		);
+
+		// Generate the report.
+		return array(
+			'before' => date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' )  ) ),
+			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) - DAY_IN_SECONDS ),
 		);
 
 	}
@@ -424,7 +466,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 			'period' => array(
 				'description'       => __( 'Limit to results of a specific period.', 'invoicing' ),
 				'type'              => 'string',
-				'enum'              => array( 'custom', 'today', 'yesterday', '7_days', '30_days', '60_days' , '90_days', '180_days', 'month', 'last_month', 'year', 'last_year' ),
+				'enum'              => array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days' , '90_days', '180_days', 'month', 'last_month', 'year', 'last_year', 'quarter', 'last_quarter' ),
 				'validate_callback' => 'rest_validate_request_arg',
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => '7_days',
