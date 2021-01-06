@@ -94,7 +94,7 @@ class GetPaid_Reports_Report {
 		$range = $this->get_range();
 		?>
 
-			<form method="get" class="getpaid-filter-earnings">
+			<form method="get" class="getpaid-filter-earnings float-right">
 				<?php getpaid_hidden_field( 'page', 'wpinv-reports' );  ?>
 				<?php getpaid_hidden_field( 'tab', 'reports' );  ?>
 				<select name='date_range'>
@@ -103,12 +103,14 @@ class GetPaid_Reports_Report {
 					<?php endforeach;?>
 				</select>
 				<span class="getpaid-date-range-picker <?php echo 'custom' == $range ? '' : 'd-none'; ?>">
-					<input type="text" name="from" class="getpaid-from" />
+					<input type="text" name="from" class="getpaid-from align-middle" />
 						<?php _e( 'to', 'invoicing' ); ?>
-					<input type="text" name="from" class="getpaid-to" />
+					<input type="text" name="to" class="getpaid-to align-middle" />
 				</span>
-				<span class="getpaid-date-range-picker <?php echo 'custom' != $range ? '' : 'd-none'; ?>"></span>
-
+				<button type="submit" class="button button-primary">
+					<i class="fa fa-chevron-right fa-lg"></i>
+					<span class="screen-reader-text"><?php _e( 'Next', 'invoicing' ); ?></span>
+				</button>
 			</form>
 
 		<?php
@@ -148,42 +150,6 @@ class GetPaid_Reports_Report {
 				<!-- Period SelectorCard -->
 
 			</section>
-			
-			<div class="row getpaid-report-cards">
-				<?php foreach( $this->get_cards() as $key => $card ) : ?>
-					<div class="col-lg-4 col-md-6 mb-4">
-
-						<!-- <?php echo sanitize_text_field(  $card['label']  ); ?> Card -->
-						<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
-
-							<div class="card-body">
-
-								<p class="getpaid-current text-uppercase small mb-2">
-									<strong><?php echo sanitize_text_field( $card['label']  ); ?></strong>
-									<span title="<?php echo esc_attr( $card['description'] ); ?>" class="wpi-help-tip dashicons dashicons-editor-help text-muted" style="margin-top: -2px;"></span>
-								</p>
-								<h5 class="font-weight-bold mb-0">
-									<span class="getpaid-report-card-value">
-										<span class="spinner is-active float-none"></span>
-									</span>
-									<small class="getpaid-report-card-growth ml-2"></small>
-								</h5>
-
-								<hr>
-
-								<p class="getpaid-previous text-uppercase text-muted small mb-2"><strong><?php _e( 'Previous Period', 'invoicing' ); ?></strong></p>
-								<h5 class="getpaid-report-card-previous-value font-weight-bold text-muted mb-0">
-									<span class="spinner is-active float-none"></span>
-								</h5>
-
-							</div>
-
-						</div>
-						<!-- <?php echo sanitize_text_field( $card['label'] ); ?> Card -->
-
-					</div>
-				<?php endforeach; ?>
-			</div>
 
 			<div class="row">
 				<div class="col-12 col-md-8">
@@ -191,6 +157,42 @@ class GetPaid_Reports_Report {
 				</div>
 
 				<div class="col-12 col-md-4">
+					<div class="row getpaid-report-cards">
+						<?php foreach( $this->get_cards() as $key => $card ) : ?>
+							<div class="col-12 mb-4">
+
+								<!-- <?php echo sanitize_text_field(  $card['label']  ); ?> Card -->
+								<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
+
+									<div class="card-body">
+
+										<p class="getpaid-current text-uppercase small mb-2">
+											<strong><?php echo sanitize_text_field( $card['label']  ); ?></strong>
+											<span title="<?php echo esc_attr( $card['description'] ); ?>" class="wpi-help-tip dashicons dashicons-editor-help text-muted" style="margin-top: -2px;"></span>
+										</p>
+										<h5 class="font-weight-bold mb-0">
+											<span class="getpaid-report-card-value">
+												<span class="spinner is-active float-none"></span>
+											</span>
+											<small class="getpaid-report-card-growth ml-2"></small>
+										</h5>
+
+										<hr>
+
+										<p class="getpaid-previous text-uppercase text-muted small mb-2"><strong><?php _e( 'Previous Period', 'invoicing' ); ?></strong></p>
+										<h5 class="getpaid-report-card-previous-value font-weight-bold text-muted mb-0">
+											<span class="spinner is-active float-none"></span>
+										</h5>
+
+									</div>
+
+								</div>
+								<!-- <?php echo sanitize_text_field( $card['label'] ); ?> Card -->
+
+							</div>
+						<?php endforeach; ?>
+					</div>
+
 					<?php echo $this->display_right(); ?>
 				</div>
 			</div>

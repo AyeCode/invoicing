@@ -237,35 +237,6 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 	 */
 	public function display_range_selector() {
 
-		?>
-
-			<form method="get" class="getpaid-filter-earnings">
-				<?php
-
-					getpaid_hidden_field( 'page', 'wpinv-reports' );
-					getpaid_hidden_field( 'tab', 'reports' );
-
-					$html = aui()->select(
-						array(
-							'name'        => 'date_range',
-							'id'          => 'view' . uniqid( '_' ),
-							'placeholder' => __( 'Select a date range', 'invoicing' ),
-							'label'       => __( 'Date Range', 'invoicing' ),
-							'options'     => $this->get_periods(),
-							'value'       => $this->get_range(),
-							'no_wrap'     => true,
-							'extra_attributes' => array(
-								'onChange'        => 'this.form.submit()',
-							),
-						)
-					);
-
-					echo str_replace( 'custom-select', '', $html );
-				?>
-
-			</form>
-
-		<?php
 	}
 
 }

@@ -214,8 +214,10 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$report_data->decimal_places    = wpinv_decimals();
 		$report_data->thousands_sep     = wpinv_thousands_separator();
 		$report_data->decimals_sep      = wpinv_decimal_separator();
-		$report_data->start_date        = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS ) );
-		$report_data->end_date          = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['before'] ) - DAY_IN_SECONDS ) );
+		$report_data->start_date        = date( 'Y-m-d', strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS );
+		$report_data->end_date          = date( 'Y-m-d', strtotime( $this->report_range['before'] ) - DAY_IN_SECONDS );
+		$report_data->start_date_locale = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS ) );
+		$report_data->end_date_locale   = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['before'] ) - DAY_IN_SECONDS ) );
 		$report_data->decimals_sep      = wpinv_decimal_separator();
 
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';

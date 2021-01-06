@@ -55,6 +55,12 @@ getpaid.init_select2_item_search = function ( select, parent ) {
 
 }
 
+// Currency formatter.
+getpaid.currency = new Intl.NumberFormat( undefined,  {
+    style: 'currency',
+    currency: WPInv_Admin.currency,
+  })
+
 jQuery(function($) {
     //'use strict';
 
@@ -1006,42 +1012,65 @@ jQuery(function($) {
             return
         }
 
-        $el.find( '.getpaid-report-card-value' ).text( current )
-        $el.find( '.getpaid-report-card-previous-value' ).text( previous )
+        // Fill in card revenue.
+        if ( ! window.Intl || [ 'total_invoices', 'total_items', 'refunded_items' ].indexOf(stat) > -1 ) {
+            $el.find( '.getpaid-report-card-value' ).text( current )
+            $el.find( '.getpaid-report-card-previous-value' ).text( previous )
+        } else {
+    
+            $el.find( '.getpaid-report-card-value' ).text( getpaid.currency.format( current ) )
+            $el.find( '.getpaid-report-card-previous-value' ).text( getpaid.currency.format( previous ) )
 
+        }
+
+        // Fill in growth.
+        var percentage = ( current == 0 || previous == 0 ) ? '' : '%';
+        if ( current > previous ) {
+            var growth = ( current - previous ) * 100 / previous;
+            $el.find( '.getpaid-report-card-growth' )
+                .addClass( 'text-success' )
+                .html( '<i class="fas fa-arrow-up fa-sm pr-1"></i>' + parseFloat(growth).toFixed(2) + percentage )
+                
+        } else if( current < previous ) {
+            var loss = ( current - previous ) * 100 / previous;
+            $el.find( '.getpaid-report-card-growth' )
+                .addClass( 'text-danger' )
+                .html( '<i class="fas fa-arrow-down fa-sm pr-1"></i>' + parseFloat(loss).toFixed(2) + percentage )
+
+        }
     }
 
-    // Fetch reports.
+    // Handle reports.
     if ( $( '.row.getpaid-report-cards' ).length ) {
+
+        // Period selects.
+        $( '.getpaid-filter-earnings select' ).on(
+            'change', function() {
+
+                if ( 'custom' == $( this ).val() ) {
+                    $( '.getpaid-date-range-picker' ).removeClass( 'd-none' )
+                    $( '.getpaid-date-range-viewer' ).addClass( 'd-none' )
+                } else {
+                    $( '.getpaid-date-range-picker' ).addClass( 'd-none' )
+                    $( '.getpaid-date-range-viewer' ).removeClass( 'd-none' )
+                }
+
+            }
+        );
+        $( '.getpaid-filter-earnings select' ).trigger( 'change' );
 
         getStats( 'sales', { period : WPInv_Admin.date_range } )
             .done( function ( response ) {
+                console.log( response[0] )
 
-                var start = moment().subtract(29, 'days');
-    var end = moment();
+                // Fill in date ranges.
+                $( '.getpaid-date-range-picker .getpaid-from' ).val( response[0].start_date )
+                $( '.getpaid-date-range-picker .getpaid-to' ).val( response[0].end_date )
 
-    function cb(start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-    }
-
-    $('#getpaid-reports-datepicker').daterangepicker({
-        startDate: start,
-        endDate: end,
-        ranges: {
-           'Today': [moment(), moment()],
-           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-           'This Month': [moment().startOf('month'), moment().endOf('month')],
-           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-    }, cb);
-
-    cb(start, end);
-                $('#getpaid-reports-datepicker').daterangepicker();
                 getStats( 'sales', response[0].previous_range )
                     .done( function ( second_response ) {
 
+                        // Fill in report cards.
                         for ( var stat in response[0] ) {
                             if ( response[0].hasOwnProperty( stat ) ) {
                                 feedStat( stat, response[0][stat], second_response[0][stat] )
