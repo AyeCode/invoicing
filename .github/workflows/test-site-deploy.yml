@@ -1,0 +1,19 @@
+on: push
+name: 🚀 Deploy to test site
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2.3.2
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ${{ secrets.DEV_FTP_URL }}
+        username: ${{ secrets.DEV_FTP_USER }}
+        password: ${{ secrets.DEV_FTP_PASS }}
+        port: ${{ secrets.DEV_FTP_PORT }}
+        server-dir: 'public_html/getpaid/wp-content/plugins/invoicing/'
+        protocol: ftp
