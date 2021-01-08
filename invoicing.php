@@ -54,4 +54,4 @@ function wpinv_run() {
 }
 
 // Kickstart the plugin.
-getpaid();
+add_action( 'plugins_loaded', 'getpaid', 0 );
