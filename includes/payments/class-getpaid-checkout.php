@@ -46,6 +46,7 @@ class GetPaid_Checkout {
 		$shipping   = $this->prepare_shipping_info( $invoice );
 
 		// Save the invoice.
+		$invoice->set_is_viewed( true );
 		$invoice->recalculate_total();
         $invoice->save();
 

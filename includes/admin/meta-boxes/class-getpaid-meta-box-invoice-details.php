@@ -46,6 +46,7 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                 <div class="bsui" style="margin-top: 1.5rem">
 
+                    <?php do_action( 'getpaid_invoice_edit_before_viewed_by_customer', $invoice ); ?>
                     <?php if ( ! $invoice->is_draft() ) : ?>
                         <div class="form-group">
                             <strong><?php _e( 'Viewed by Customer:', 'invoicing' );?></strong>
