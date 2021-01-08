@@ -203,6 +203,8 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                         }
 
+                        do_action( 'getpaid_metabox_after_invoice_details', $invoice );
+
                     ?>
 
                 </div>

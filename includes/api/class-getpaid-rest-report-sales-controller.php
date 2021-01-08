@@ -276,7 +276,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$this->report_data->total_refunds      = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'total_sales' ) ) );
 		$this->report_data->refunded_discount  = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'total_discount' ) ) );
 		$this->report_data->refunded_fees      = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'total_fees' ) ) );
-		$this->report_data->subtotal           = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'subtotal' ) ) );
+		$this->report_data->refunded_subtotal  = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'subtotal' ) ) );
 		$this->report_data->net_refunds        = wpinv_round_amount( $this->report_data->total_refunds + max( 0, $this->report_data->total_refunded_tax ) );
 
 
@@ -320,7 +320,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'order_by'       => 'post_date ASC',
 				'query_type'     => 'get_results',
 				'filter_range'   => $this->report_range,
-				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded' ),
+				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded', 'wpi-renewal' ),
 			)
 		);
 
@@ -351,7 +351,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'order_by'       => 'post_date ASC',
 				'query_type'     => 'get_results',
 				'filter_range'   => $this->report_range,
-				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded' ),
+				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded', 'wpi-renewal' ),
 			)
 		);
 
@@ -382,7 +382,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'order_by'       => 'post_date ASC',
 				'query_type'     => 'get_results',
 				'filter_range'   => $this->report_range,
-				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded' ),
+				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-refunded', 'wpi-renewal' ),
 			)
 		);
 
@@ -457,7 +457,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'order_by'       => 'post_date ASC',
 				'query_type'     => 'get_results',
 				'filter_range'   => $this->report_range,
-				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold' ),
+				'invoice_status' => array( 'publish', 'wpi-processing', 'wpi-onhold', 'wpi-renewal' ),
 			)
 		);
 
