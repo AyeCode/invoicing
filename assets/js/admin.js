@@ -757,7 +757,7 @@ jQuery(function($) {
     };
     wpinv_meta_boxes_notes.init();
     var invDetails = jQuery('#wpinv-details .inside').html();
-    console.log(invDetails)
+
     if (invDetails) {
         jQuery('#submitpost', jQuery('.wpinv')).detach().appendTo(jQuery('#wpinv-details'));
         jQuery('#submitdiv', jQuery('.wpinv')).remove();
@@ -846,7 +846,6 @@ jQuery(function($) {
         $( '#wpinv_tax_rates tbody tr' ).each( function( rowIndex ) {
 
             $(this).find(":input[name^='tax_rates']").each(function() {
-                console.log( this )
                 var name = $(this).attr('name');
                 name = name.replace( /\[(\d+)\]/, '[' + ( rowIndex ) + ']' );
                 $(this).attr('name', name).attr('id', name);
@@ -1151,9 +1150,8 @@ jQuery(function($) {
         );
         $( '.getpaid-filter-earnings select' ).trigger( 'change' );
 
-        getStats( 'sales', { period : WPInv_Admin.date_range } )
+        getStats( 'sales', WPInv_Admin.date_range )
             .done( function ( response ) {
-                console.log( response[0] )
 
                 // Fill in date ranges.
                 $( '.getpaid-date-range-picker .getpaid-from' ).val( response[0].start_date )
@@ -1161,7 +1159,7 @@ jQuery(function($) {
 
                 getStats( 'sales', response[0].previous_range )
                     .done( function ( second_response ) {
-
+                        
                         // Fill in report cards.
                         for ( var stat in response[0] ) {
                             if ( response[0].hasOwnProperty( stat ) ) {

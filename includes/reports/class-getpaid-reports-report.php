@@ -68,17 +68,19 @@ class GetPaid_Reports_Report {
 	public function get_periods() {
 
 		$periods = array(
-			'today'     => __( 'Today', 'invoicing' ),
-			'yesterday' => __( 'Yesterday', 'invoicing' ),
-			'week'      => __( 'This week', 'invoicing' ),
-			'last_week' => __( 'Last week', 'invoicing' ),
-			'7_days'    => __( 'Last 7 days', 'invoicing' ),
-			'month'     => __( 'This month', 'invoicing' ),
-			'last_month' => __( 'Last month', 'invoicing' ),
-			'30_days'   => __( 'Last 30 days', 'invoicing' ),
-			'year'      => __( 'This year', 'invoicing' ),
-			'last_year' => __( 'Last Year', 'invoicing' ),
-			'custom'    => __( 'Custom Date Range', 'invoicing' ),
+			'today'        => __( 'Today', 'invoicing' ),
+			'yesterday'    => __( 'Yesterday', 'invoicing' ),
+			'week'         => __( 'This week', 'invoicing' ),
+			'last_week'    => __( 'Last week', 'invoicing' ),
+			'7_days'       => __( 'Last 7 days', 'invoicing' ),
+			'month'        => __( 'This month', 'invoicing' ),
+			'last_month'   => __( 'Last month', 'invoicing' ),
+			'30_days'      => __( 'Last 30 days', 'invoicing' ),
+			'quarter'      => __( 'This Quarter', 'invoicing' ),
+			'last_quarter' => __( 'Last Quarter', 'invoicing' ),
+			'year'         => __( 'This year', 'invoicing' ),
+			'last_year'    => __( 'Last Year', 'invoicing' ),
+			'custom'       => __( 'Custom Date Range', 'invoicing' ),
 		);
 
 		return apply_filters( 'getpaid_earning_periods', $periods );

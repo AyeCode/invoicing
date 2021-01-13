@@ -118,13 +118,29 @@ class GetPaid_Admin {
 	protected function get_admin_i18() {
         global $post;
 
+		$date_range = array(
+			'period' => isset( $_GET['date_range'] ) ? sanitize_text_field( $_GET['date_range'] ) : '7_days'
+		);
+
+		if ( $date_range['period'] == 'custom' ) {
+			
+			if ( isset( $_GET['from'] ) ) {
+				$date_range[ 'after' ] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['from'] ), current_time( 'timestamp' ) ) - DAY_IN_SECONDS );
+			}
+
+			if ( isset( $_GET['to'] ) ) {
+				$date_range[ 'before' ] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['to'] ), current_time( 'timestamp' ) ) + DAY_IN_SECONDS );
+			}
+
+		}
+
         $i18n = array(
             'ajax_url'                  => admin_url( 'admin-ajax.php' ),
             'post_ID'                   => isset( $post->ID ) ? $post->ID : '',
 			'wpinv_nonce'               => wp_create_nonce( 'wpinv-nonce' ),
 			'rest_nonce'                => wp_create_nonce( 'wp_rest' ),
 			'rest_root'                 => esc_url_raw( rest_url() ),
-			'date_range'                => isset( $_GET['date_range'] ) ? sanitize_text_field( $_GET['date_range'] ) : '7_days',
+			'date_range'                => $date_range,
             'add_invoice_note_nonce'    => wp_create_nonce( 'add-invoice-note' ),
             'delete_invoice_note_nonce' => wp_create_nonce( 'delete-invoice-note' ),
             'invoice_item_nonce'        => wp_create_nonce( 'invoice-item' ),

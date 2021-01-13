@@ -46,7 +46,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	public function get_date_range( $request ) {
 
 		// If not supported, assume all time.
-		if ( ! in_array( $request['period'], array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'year', 'last_year' ) ) ) {
+		if ( ! in_array( $request['period'], array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'quarter', 'last_quarter', 'year', 'last_year' ) ) ) {
 			$request['period'] = '7_days';
 		}
 
@@ -101,7 +101,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		}
 
 		// 3 months max for day view
-		if ( ( $before - $after ) / MONTH_IN_SECONDS > 3 ) {
+		if ( floor( ( $before - $after ) / MONTH_IN_SECONDS ) > 3 ) {
 			$this->groupby = 'month';
 		}
 
@@ -177,8 +177,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'sunday last week'  ) ),
+			'before' => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' )  ) + 8 * DAY_IN_SECONDS ),
+			'after'  => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' )  ) ),
 		);
 
 	}
@@ -333,7 +333,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) ),
+			'before' => date( 'Y-m-01', strtotime( 'next month', current_time( 'timestamp' ) ) ),
 			'after'  => date( 'Y-m-t', strtotime( 'last month', current_time( 'timestamp' ) ) ),
 		);
 
@@ -362,6 +362,104 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	}
 
 	/**
+	 * Retrieves this quarter date range.
+	 *
+	 * @return array The available quarters.
+	 */
+	public function get_quarters() {
+
+		$last_year = (int) date('Y') - 1;
+		$next_year = (int) date('Y') + 1;
+		$year      = (int) date('Y');
+		return array(
+
+			array(
+				'after'  => "$last_year-06-30",
+				'before' => "$last_year-10-01",
+			),
+
+			array(
+				'before' => "$year-01-01",
+				'after'  => "$last_year-09-30",
+			),
+
+			array(
+				'before' => "$year-04-01",
+				'after'  => "$last_year-12-31",
+			),
+
+			array(
+				'before' => "$year-07-01",
+				'after'  => "$year-03-31",
+			),
+
+			array(
+				'after'  => "$year-06-30",
+				'before' => "$year-10-01",
+			),
+
+			array(
+				'before' => "$next_year-01-01",
+				'after'  => "$year-09-30",
+			)
+
+		);
+
+	}
+
+	/**
+	 * Retrieves the current quater.
+	 *
+	 * @return int The current quarter.
+	 */
+	public function get_quarter() {
+
+		$month    = (int) date( 'n', current_time( 'timestamp' ) );
+		$quarters = array( 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 );
+		return $quarters[ $month - 1 ];
+
+	}
+
+	/**
+	 * Retrieves this quarter date range.
+	 *
+	 * @return array The appropriate date range.
+	 */
+	public function get_quarter_date_range() {
+
+		// Set the previous date range.
+		$this->previous_range = array(
+			'period' => 'last_quarter',
+		);
+
+		// Generate the report.
+		$quarters = $this->get_quarters();
+		return $quarters[ $this->get_quarter() + 1 ];
+
+	}
+
+	/**
+	 * Retrieves last quarter's date range.
+	 *
+	 * @return array The appropriate date range.
+	 */
+	public function get_last_quarter_date_range() {
+
+		$quarters = $this->get_quarters();
+		$quarter  = $this->get_quarter();
+
+		// Set the previous date range.
+		$this->previous_range = array_merge(
+			$quarters[ $quarter - 1 ],
+			array( 'period' => 'custom' )
+		);
+
+		// Generate the report.
+		return $quarters[ $quarter ];
+
+	}
+
+	/**
 	 * Retrieves this year date range.
 	 *
 	 * @return array The appropriate date range.
@@ -377,7 +475,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) ),
+			'before' => date( 'Y-m-d', strtotime( 'next year January 1st', current_time( 'timestamp' ) ) ),
 			'after'  => date( 'Y-m-d', strtotime( 'last year December 31st', current_time( 'timestamp' ) ) ),
 		);
 
@@ -466,7 +564,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 			'period' => array(
 				'description'       => __( 'Limit to results of a specific period.', 'invoicing' ),
 				'type'              => 'string',
-				'enum'              => array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days' , '90_days', '180_days', 'month', 'last_month', 'year', 'last_year', 'quarter', 'last_quarter' ),
+				'enum'              => array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days' , '90_days', '180_days', 'month', 'last_month', 'quarter', 'last_quarter', 'year', 'last_year', 'quarter', 'last_quarter' ),
 				'validate_callback' => 'rest_validate_request_arg',
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => '7_days',
