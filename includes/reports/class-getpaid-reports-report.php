@@ -110,7 +110,7 @@ class GetPaid_Reports_Report {
 				</span>
 				<button type="submit" class="button button-primary">
 					<i class="fa fa-chevron-right fa-lg"></i>
-					<span class="screen-reader-text"><?php _e( 'Next', 'invoicing' ); ?></span>
+					<span class="screen-reader-text"><?php _e( 'View Reports', 'invoicing' ); ?></span>
 				</button>
 			</form>
 
@@ -224,7 +224,7 @@ class GetPaid_Reports_Report {
 			<?php foreach ( $graphs as $key => $graph ) : ?>
 				<div class="row mb-4">
 					<div class="col-12">
-						<div class="card m-0 p-0" style="max-width:100%">
+						<div class="card m-0 p-0 single-report-card" style="max-width:100%">
 							<div class="card-header">
 								<strong><?php echo wpinv_clean( $graph ); ?></strong>
 							</div>

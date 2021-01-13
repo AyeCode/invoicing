@@ -1148,7 +1148,10 @@ jQuery(function($) {
 
             }
         );
+
         $( '.getpaid-filter-earnings select' ).trigger( 'change' );
+
+        wpinvBlock( '.single-report-card' );
 
         getStats( 'sales', WPInv_Admin.date_range )
             .done( function ( response ) {
@@ -1159,7 +1162,9 @@ jQuery(function($) {
 
                 getStats( 'sales', response[0].previous_range )
                     .done( function ( second_response ) {
-                        
+
+                        wpinvUnblock( '.single-report-card' );
+
                         // Fill in report cards.
                         for ( var stat in response[0] ) {
                             if ( response[0].hasOwnProperty( stat ) ) {
@@ -1189,10 +1194,13 @@ jQuery(function($) {
 function wpinvBlock(el, message) {
     message = typeof message != 'undefined' && message !== '' ? message : '';
     jQuery( el ) .block({
-        message: '<i class="fa fa-spinner fa-pulse fa-2x"></i>' + message,
+        message: '<span class="bsui"><span class="spinner is-active float-none"></span></span>' + message,
         overlayCSS: {
             background: '#fff',
             opacity: 0.6
+        },
+        css: { 
+            border: 'none' 
         }
     });
 }
