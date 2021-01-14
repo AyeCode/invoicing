@@ -60,9 +60,11 @@ class GetPaid_Admin {
         add_action( 'admin_init', array( $this, 'activation_redirect') );
         add_action( 'admin_init', array( $this, 'maybe_do_admin_action') );
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+		add_action( 'getpaid_authenticated_admin_action_rate_plugin', array( $this, 'redirect_to_wordpress_rating_page' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
+		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
     }
@@ -186,7 +188,69 @@ class GetPaid_Admin {
 
 		}
 		return $i18n;
-    }
+	}
+
+	/**
+	 * Change the admin footer text on GetPaid admin pages.
+	 *
+	 * @since  2.0.0
+	 * @param  string $footer_text
+	 * @return string
+	 */
+	public function admin_footer_text( $footer_text ) {
+		global $current_screen;
+
+		$page    = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+        if ( ! empty( $current_screen->post_type ) ) {
+			$page = $current_screen->post_type;
+        }
+
+        // General styles.
+        if ( apply_filters( 'getpaid_display_admin_footer_text', wpinv_current_user_can_manage_invoicing() ) && false !== stripos( $page, 'wpi' ) ) {
+
+			// Change the footer text
+			if ( ! get_user_meta( get_current_user_id(), 'getpaid_admin_footer_text_rated', true ) ) {
+
+				$rating_url  = esc_url(
+					wp_nonce_url(
+						admin_url( 'admin.php?page=wpinv-reports&getpaid-admin-action=rate_plugin' ),
+						'getpaid-nonce',
+						'getpaid-nonce'
+						)
+				);
+
+				$footer_text = sprintf(
+					/* translators: %s: five stars */
+					__( 'If you like <strong>GetPaid</strong>, please leave us a %s rating. A huge thanks in advance!', 'invoicing' ),
+					"<a href='$rating_url'>&#9733;&#9733;&#9733;&#9733;&#9733;</a>"
+				);
+
+			} else {
+
+				$footer_text = sprintf(
+					/* translators: %s: GetPaid */
+					__( 'Thank you for using %s!', 'invoicing' ),
+					"<a href='https://wpgetpaid.com/' target='_blank'><strong>GetPaid</strong></a>"
+				);
+
+			}
+
+		}
+
+		return $footer_text;
+	}
+
+	/**
+	 * Redirects to wp.org to rate the plugin.
+	 *
+	 * @since  2.0.0
+	 */
+	public function redirect_to_wordpress_rating_page() {
+		update_user_meta( get_current_user_id(), 'getpaid_admin_footer_text_rated', 1 );
+		wp_redirect( 'https://wordpress.org/support/plugin/invoicing/reviews?rate=5#new-post' );
+		exit;
+	}
 
     /**
 	 * Loads payment form js.
