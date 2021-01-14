@@ -455,6 +455,9 @@ jQuery(function($) {
                 // Hide billing email.
                 this.form.find( '.getpaid-payment-form-element-billing_email span.d-none' ).closest( '.col-12' ).addClass( 'd-none' )
 
+                // Hide empty gateway descriptions.
+                this.form.find( '.getpaid-gateway-description:not(:has(*))' ).remove()
+
                 // Handle shipping address.
                 var address_toggle = this.form.find( '[name ="same-shipping-address"]' )
 

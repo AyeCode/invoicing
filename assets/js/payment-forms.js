@@ -349,8 +349,8 @@ jQuery(function ($) {
 				this.setup_saved_payment_tokens();
 				this.attach_events();
 				this.refresh_state(); // Hide billing email.
-
 				this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Handle shipping address.
+				this.form.find( '.getpaid-gateway-description:not(:has(*))' ).remove()
 
 				var address_toggle = this.form.find('[name ="same-shipping-address"]');
 
