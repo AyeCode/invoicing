@@ -28,6 +28,7 @@ if ( ! empty( $form->invoice ) ) {
 
 ?>
 
+    <?php do_action( 'getpaid_before_payment_form_gateway_select', $form ); ?>
     <div class="mt-4 mb-4 getpaid-gateways">
 
         <?php do_action( 'wpinv_payment_mode_top', $invoice_id, $chosen_gateway, $gateways, $form ); ?>
@@ -104,4 +105,4 @@ if ( ! empty( $form->invoice ) ) {
         <?php do_action( 'wpinv_payment_mode_bottom', $invoice_id, $chosen_gateway, $gateways, $form ); ?>
 
     </div>
-
+    <?php do_action( 'getpaid_after_payment_form_gateway_select', $form ); ?>

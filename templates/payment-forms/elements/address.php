@@ -52,6 +52,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 		<?php
 			$field_type = 'billing';
 			include plugin_dir_path( __FILE__ ) . 'address-fields.php';
+			do_action( 'getpaid_after_payment_form_billing_fields', $form );
 		?>
 	</div>
 	<!-- End Billing Address -->
@@ -63,7 +64,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 
 	<?php
-		
+
 		echo aui()->input(
 		    array(
 			    'type'       => 'checkbox',
@@ -97,6 +98,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 		<?php
 			$field_type = 'shipping';
 			include plugin_dir_path( __FILE__ ) . 'address-fields.php';
+			do_action( 'getpaid_after_payment_form_shipping_fields', $form );
 		?>
 	</div>
 	<!-- End Shipping Address -->

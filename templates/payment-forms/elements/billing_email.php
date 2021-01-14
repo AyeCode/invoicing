@@ -22,6 +22,8 @@ if ( is_user_logged_in() ) {
 
 }
 
+do_action( 'getpaid_before_payment_form_billing_email', $form );
+
 echo "<span class='$class'>";
 
 echo aui()->input(
@@ -39,3 +41,5 @@ echo aui()->input(
 );
 
 echo '</span>';
+
+do_action( 'getpaid_after_payment_form_billing_email', $form );
