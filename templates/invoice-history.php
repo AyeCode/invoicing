@@ -72,7 +72,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									break;
 
 								case 'invoice-total':
-									echo wpinv_price( $invoice->get_total() );
+									echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
 
 									break;
 

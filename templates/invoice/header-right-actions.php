@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
                 '<a href="javascript:void(0)" class="btn btn-sm m-1 d-inline-block btn-secondary invoice-action-print d-none d-lg-inline-block" onclick="window.print();">%s</a>',
                 sprintf(
                     __( 'Print %s', 'invoicing' ),
-                    ucfirst( $invoice->get_type() )
+                    ucfirst( $invoice->get_invoice_quote_type() )
                 )
             );
 
@@ -33,7 +33,7 @@ defined( 'ABSPATH' ) || exit;
                     esc_url( wpinv_get_history_page_uri( $invoice->get_post_type() ) ),
                     sprintf(
                         __( '%s History', 'invoicing' ),
-                        ucfirst( $invoice->get_type() )
+                        ucfirst( $invoice->get_invoice_quote_type() )
                     )
                 );
 
@@ -46,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
                     esc_url( get_edit_post_link( $invoice->get_id() ) ),
                     sprintf(
                         __( 'Edit %s', 'invoicing' ),
-                        ucfirst( $invoice->get_type() )
+                        ucfirst( $invoice->get_invoice_quote_type() )
                     )
                 );
 

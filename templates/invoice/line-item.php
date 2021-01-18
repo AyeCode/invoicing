@@ -76,7 +76,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
                         // Display the item price (or recurring price if this is a renewal invoice)
                         $price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
-                        echo wpinv_price( $price );
+                        echo wpinv_price( $price, $invoice->get_currency() );
 
                     }
 
@@ -88,7 +88,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                     // Item sub total.
                     if ( 'subtotal' == $column ) {
                         $subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
-                        echo wpinv_price( $subtotal );
+                        echo wpinv_price( $subtotal, $invoice->get_currency() );
                     }
 
                     // Fires when printing a line item column.

@@ -178,12 +178,12 @@ class GetPaid_Admin {
 			$invoice              = new WPInv_Invoice( $post );
 			$i18n['save_invoice'] = sprintf(
 				__( 'Save %s', 'invoicing' ),
-				ucfirst( $invoice->get_type() )
+				ucfirst( $invoice->get_invoice_quote_type() )
 			);
 
 			$i18n['invoice_description'] = sprintf(
 				__( '%s Description', 'invoicing' ),
-				ucfirst( $invoice->get_type() )
+				ucfirst( $invoice->get_invoice_quote_type() )
 			);
 
 		}

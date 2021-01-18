@@ -23,7 +23,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin );
 <div id="wpinv-email-details">
 
     <h3 class="invoice-details-title">
-        <?php echo sprintf( esc_html__( '%s Details', 'invoicing' ), ucfirst( $invoice->get_type() )); ?>
+        <?php echo sprintf( esc_html__( '%s Details', 'invoicing' ), ucfirst( $invoice->get_invoice_quote_type() )); ?>
     </h3>
 
     <table class="table table-bordered table-sm">

@@ -59,12 +59,12 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Date created.
                         $label = sprintf(
                             __( '%s Date:', 'invoicing' ),
-                            ucfirst( $invoice->get_type() )
+                            ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
                         $info  = sprintf(
                             __( 'The date this %s was created.', 'invoicing' ),
-                            strtolower( $invoice->get_type() )
+                            strtolower( $invoice->get_invoice_quote_type() )
                         );
 
                         echo aui()->input(
@@ -110,7 +110,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Status.
                         $label = sprintf(
                             __( '%s Status:', 'invoicing' ),
-                            ucfirst( $invoice->get_type() )
+                            ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
                         echo aui()->select(
@@ -130,12 +130,12 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Invoice number.
                         $label = sprintf(
                             __( '%s Number:', 'invoicing' ),
-                            ucfirst( $invoice->get_type() )
+                            ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
                         $info  = sprintf(
                             __( 'Each %s number must be unique.', 'invoicing' ),
-                            strtolower( $invoice->get_type() )
+                            strtolower( $invoice->get_invoice_quote_type() )
                         );
 
                         echo aui()->input(

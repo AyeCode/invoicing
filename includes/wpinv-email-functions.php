@@ -346,13 +346,13 @@ function wpinv_email_format_text( $content, $invoice ) {
                 '{last_name}'       => sanitize_text_field( $invoice->get_last_name() ),
                 '{email}'           => sanitize_email( $invoice->get_email() ),
                 '{invoice_number}'  => sanitize_text_field( $invoice->get_number() ),
-                '{invoice_total}'   => wpinv_price( $invoice->get_total( true ) ),
+                '{invoice_total}'   => sanitize_text_field( wpinv_price( $invoice->get_total( true ), $invoice->get_currency() ) ),
                 '{invoice_link}'    => esc_url( $invoice->get_view_url() ),
                 '{invoice_pay_link}'=> esc_url( $invoice->get_checkout_payment_url() ),
                 '{invoice_date}'    => date( get_option( 'date_format' ), strtotime( $invoice->get_date_created(), current_time( 'timestamp' ) ) ),
                 '{invoice_due_date}'=> date( get_option( 'date_format' ), strtotime( $invoice->get_due_date(), current_time( 'timestamp' ) ) ),
-                '{invoice_quote}'   => sanitize_text_field( $invoice->get_type() ),
-                '{invoice_label}'   => sanitize_text_field( ucfirst( $invoice->get_type() ) ),
+                '{invoice_quote}'   => sanitize_text_field( $invoice->get_invoice_quote_type() ),
+                '{invoice_label}'   => sanitize_text_field( ucfirst( $invoice->get_invoice_quote_type() ) ),
                 '{is_was}'          => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
             )
         );

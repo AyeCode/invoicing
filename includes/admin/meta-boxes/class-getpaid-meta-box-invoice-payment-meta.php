@@ -48,7 +48,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 'name'        => 'wpinv_key',
                                 'label'       => sprintf(
                                     __( '%s Key:', 'invoicing' ),
-                                    ucfirst( $invoice->get_type() )
+                                    ucfirst( $invoice->get_invoice_quote_type() )
                                 ),
                                 'label_type'  => 'vertical',
                                 'class'       => 'form-control-sm',
@@ -68,7 +68,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 'name'        => 'wpinv_view_url',
                                 'label'       => sprintf(
                                     __( '%s URL:', 'invoicing' ),
-                                    ucfirst( $invoice->get_type() )
+                                    ucfirst( $invoice->get_invoice_quote_type() )
                                 ),
                                 'label_type'  => 'vertical',
                                 'class'       => 'form-control-sm',
