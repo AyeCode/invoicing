@@ -173,7 +173,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
                 'address1'       => wpinv_clean( $invoice->get_address() ),
                 'town'           => wpinv_clean( $invoice->get_city() ),
                 'region'         => wpinv_clean( $invoice->get_state() ),
-                'amountString'   => wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() ),
+                'amountString'   => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
                 'countryString'  => wpinv_clean( wpinv_country_name( $invoice->get_country() ) ),
                 'compName'       => wpinv_clean( $invoice->get_company() ),
             ),

@@ -151,7 +151,7 @@ function wpinv_subtotal( $invoice = 0, $currency = false ) {
     $subtotal = $invoice->get_subtotal();
 
     if ( $currency ) {
-        return wpinv_price( wpinv_format_amount( $subtotal ), $invoice->get_currency() );
+        return wpinv_price( $subtotal, $invoice->get_currency() );
     }
 
     return $subtotal;
@@ -165,7 +165,7 @@ function wpinv_tax( $invoice = 0, $currency = false ) {
     $tax      = $invoice->get_total_tax();
 
     if ( $currency ) {
-        return wpinv_price( wpinv_format_amount( $tax ), $invoice->get_currency() );
+        return wpinv_price( $tax, $invoice->get_currency() );
     }
 
     return $tax;
@@ -179,7 +179,7 @@ function wpinv_discount( $invoice = 0, $currency = false, $deprecated ) {
     $discount = $invoice->get_total_discount();
 
     if ( $currency ) {
-        return wpinv_price( wpinv_format_amount( $discount ), $invoice->get_currency() );
+        return wpinv_price( $discount, $invoice->get_currency() );
     }
 
     return $discount;
@@ -201,7 +201,7 @@ function wpinv_payment_total( $invoice = 0, $currency = false ) {
     $total = $invoice->get_total();
 
     if ( $currency ) {
-        return wpinv_price( wpinv_format_amount( $total ), $invoice->get_currency() );
+        return wpinv_price( $total, $invoice->get_currency() );
     }
 
     return $total;

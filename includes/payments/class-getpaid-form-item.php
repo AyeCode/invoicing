@@ -270,8 +270,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ) . $description,
 				'item-quantity'    => absint( $this->get_quantity() ),
-				'item-price'       => wpinv_price( wpinv_format_amount ( $this->get_price() ), $currency ),
-				'item-total'       => wpinv_price( wpinv_format_amount( $this->get_sub_total() ), $currency ),
+				'item-price'       => wpinv_price( $this->get_price(), $currency ),
+				'item-total'       => wpinv_price( $this->get_sub_total(), $currency ),
 			),
 			'inputs' => array(
 				'item-id'          => $this->get_id(),

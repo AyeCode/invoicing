@@ -358,7 +358,7 @@ function wpinv_should_validate_vat_number() {
 }
 
 function wpinv_sales_tax_for_year( $year = null ) {
-    return wpinv_price( wpinv_format_amount( wpinv_get_sales_tax_for_year( $year ) ) );
+    return wpinv_price( wpinv_get_sales_tax_for_year( $year ) );
 }
 
 function wpinv_get_sales_tax_for_year( $year = null ) {

@@ -407,17 +407,17 @@ class WPInv_Ajax {
         // Recalculate totals.
         $invoice->recalculate_total();
 
-        $total = wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() );
+        $total = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
 
         if ( $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
-            $recurring_total = wpinv_price( wpinv_format_amount( $invoice->get_recurring_total() ), $invoice->get_currency() );
+            $recurring_total = wpinv_price( $invoice->get_recurring_total(), $invoice->get_currency() );
             $total          .= '<small class="form-text text-muted">' . sprintf( __( 'Recurring Price: %s', 'invoicing' ), $recurring_total ) . '</small>';
         }
 
         $totals = array(
-            'subtotal' => wpinv_price( wpinv_format_amount( $invoice->get_subtotal() ), $invoice->get_currency() ),
-            'discount' => wpinv_price( wpinv_format_amount( $invoice->get_total_discount() ), $invoice->get_currency() ),
-            'tax'      => wpinv_price( wpinv_format_amount( $invoice->get_total_tax() ), $invoice->get_currency() ),
+            'subtotal' => wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() ),
+            'discount' => wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() ),
+            'tax'      => wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() ),
             'total'    => $total,
         );
 

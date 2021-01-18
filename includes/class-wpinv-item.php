@@ -322,7 +322,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_the_price() {
-        return wpinv_price( wpinv_format_amount( $this->get_price() ) );
+        return wpinv_price( $this->get_price() );
 	}
 
 	/**
@@ -333,7 +333,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_the_initial_price() {
-        return wpinv_price( wpinv_format_amount( $this->get_initial_price() ) );
+        return wpinv_price( $this->get_initial_price() );
     }
 
     /**
@@ -477,7 +477,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_the_recurring_price() {
-        return wpinv_price( wpinv_format_amount( $this->get_recurring_price() ) );
+        return wpinv_price( $this->get_recurring_price() );
 	}
 
 	/**

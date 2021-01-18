@@ -1225,7 +1225,7 @@ function getpaid_get_invoice_meta( $invoice ) {
                 $meta[ 'recurring_total' ] = array(
 
                     'label' => __( 'Recurring Amount', 'invoicing' ),
-                    'value' => wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $invoice->get_currency() ),
+                    'value' => wpinv_price( $subscription->get_recurring_amount(), $invoice->get_currency() ),
         
                 );
 
@@ -1238,7 +1238,7 @@ function getpaid_get_invoice_meta( $invoice ) {
     $meta[ 'invoice_total' ] = array(
 
         'label' => __( 'Total Amount', 'invoicing' ),
-        'value' => wpinv_price( wpinv_format_amount( $invoice->get_total() ), $invoice->get_currency() ),
+        'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
 
     );
 

@@ -468,7 +468,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 										switch( $key ) {
 
 											case 'total':
-												echo '<strong>' . wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $payment->get_total() ) ), $payment->get_currency() ) . '</strong>';
+												echo '<strong>' . wpinv_price( $payment->get_total(), $payment->get_currency() ) . '</strong>';
 												break;
 
 											case 'relationship':

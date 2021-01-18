@@ -346,7 +346,7 @@ function wpinv_email_format_text( $content, $invoice ) {
                 '{last_name}'       => sanitize_text_field( $invoice->get_last_name() ),
                 '{email}'           => sanitize_email( $invoice->get_email() ),
                 '{invoice_number}'  => sanitize_text_field( $invoice->get_number() ),
-                '{invoice_total}'   => wpinv_price( wpinv_format_amount( $invoice->get_total( true ) ) ),
+                '{invoice_total}'   => wpinv_price( $invoice->get_total( true ) ),
                 '{invoice_link}'    => esc_url( $invoice->get_view_url() ),
                 '{invoice_pay_link}'=> esc_url( $invoice->get_checkout_payment_url() ),
                 '{invoice_date}'    => date( get_option( 'date_format' ), strtotime( $invoice->get_date_created(), current_time( 'timestamp' ) ) ),

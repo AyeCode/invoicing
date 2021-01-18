@@ -58,6 +58,11 @@ function wpinv_get_user_agent() {
  */
 function wpinv_sanitize_amount( $amount ) {
 
+    // Abort early to avoid multiplying decimals by 100;
+    if ( '.' !== wpinv_decimal_separator() ) {
+        return floatval( $amount );
+    }
+
     // Format decimals.
     $amount = str_replace( wpinv_decimal_separator(), '.', $amount );
 

@@ -243,8 +243,8 @@ function getpaid_get_plural_subscription_period_label( $period, $interval ) {
  */
 function getpaid_get_formatted_subscription_amount( $subscription ) {
 
-	$initial   = wpinv_price( wpinv_format_amount( $subscription->get_initial_amount() ), $subscription->get_parent_payment()->get_currency() );
-	$recurring = wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $subscription->get_parent_payment()->get_currency() );
+	$initial   = wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
+	$recurring = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
 	$period    = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 
 	// Trial periods.

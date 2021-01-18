@@ -70,7 +70,7 @@ $currency = $form->get_currency();
                                 </div>
                             <?php
                         } else {
-                            echo wpinv_price( wpinv_format_amount( $item->get_price() ), $currency );
+                            echo wpinv_price( $item->get_price(), $currency );
                             ?>
                                 <input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
                             <?php
@@ -95,7 +95,7 @@ $currency = $form->get_currency();
 
                     // Item sub total.
                     if ( 'subtotal' == $key ) {
-                        echo wpinv_price( wpinv_format_amount( $item->get_sub_total() ), $currency );
+                        echo wpinv_price( $item->get_sub_total(), $currency );
                     }
 
                     do_action( "getpaid_payment_form_cart_item_$key", $item, $form );

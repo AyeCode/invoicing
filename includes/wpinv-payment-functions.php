@@ -177,8 +177,8 @@ function wpinv_get_billing_cycle( $initial, $recurring, $period, $interval, $bil
         }
     }
     
-    $initial_amount     = wpinv_price( wpinv_format_amount( $initial_total ), $currency );
-    $recurring_amount   = wpinv_price( wpinv_format_amount( $recurring_total ), $currency );
+    $initial_amount     = wpinv_price( $initial_total, $currency );
+    $recurring_amount   = wpinv_price( $recurring_total, $currency );
     
     $recurring          = wpinv_subscription_recurring_payment_desc( $recurring_amount, $period, $interval, $bill_times, $trial_period, $trial_interval );
         

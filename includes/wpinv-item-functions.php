@@ -174,7 +174,7 @@ function wpinv_item_price( $item_id = 0 ) {
     }
 
     $price = wpinv_get_item_price( $item_id );
-    $price = wpinv_price( wpinv_format_amount( $price ) );
+    $price = wpinv_price( $price );
     
     return apply_filters( 'wpinv_item_price', $price, $item_id );
 }

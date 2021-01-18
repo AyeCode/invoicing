@@ -489,7 +489,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_formatted_amount() {
 
 		if ( $this->is_type( 'flat' ) ) {
-			$rate = wpinv_price( wpinv_format_amount( $this->get_amount() ) );
+			$rate = wpinv_price( $this->get_amount() );
 		} else {
 			$rate = $this->get_amount() . '%';
 		}

@@ -58,7 +58,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 								break;
 
 							case 'initial_amount':
-								echo wpinv_price( wpinv_format_amount( $subscription->get_initial_amount() ), $subscription->get_parent_payment()->get_currency() );
+								echo wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
 
 								if ( $subscription->has_trial_period() ) {
 
@@ -75,7 +75,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 
 							case 'recurring_amount':
 								$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
-								$amount    = wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $subscription->get_parent_payment()->get_currency() );
+								$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
 								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / $frequency" );
 								break;
 

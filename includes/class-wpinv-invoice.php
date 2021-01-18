@@ -1357,7 +1357,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Backwards compatibility.
         if ( is_bool( $context ) && $context ) {
-            return wpinv_price( wpinv_format_amount( $subtotal ), $this->get_currency() );
+            return wpinv_price( $subtotal, $this->get_currency() );
         }
 
         return $subtotal;

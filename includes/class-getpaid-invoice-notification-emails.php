@@ -134,7 +134,7 @@ class GetPaid_Invoice_Notification_Emails {
 			'{email}'               => sanitize_email( $invoice->get_email() ),
 			'{invoice_number}'      => sanitize_text_field( $invoice->get_number() ),
 			'{invoice_currency}'    => sanitize_text_field( $invoice->get_currency() ),
-			'{invoice_total}'       => wpinv_price( wpinv_format_amount( $invoice->get_total() ) ),
+			'{invoice_total}'       => wpinv_price( $invoice->get_total() ),
 			'{invoice_link}'        => esc_url( $invoice->get_view_url() ),
 			'{invoice_pay_link}'    => esc_url( $invoice->get_checkout_payment_url() ),
 			'{invoice_receipt_link}'=> esc_url( $invoice->get_receipt_url() ),

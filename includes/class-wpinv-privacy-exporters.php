@@ -92,8 +92,8 @@ class WPInv_Privacy_Exporters {
 
         if ( $invoice->is_recurring() && !empty( $subscription ) ) {
             $frequency = getpaid_get_subscription_period_label( $subscription->get_period(),$subscription->get_frequency() );
-            $period = wpinv_price( wpinv_format_amount( $subscription->get_recurring_amount() ), $subscription->get_parent_payment()->get_currency() ) . ' / ' . $frequency;
-            $initial_amt = wpinv_price( wpinv_format_amount( $subscription->get_initial_amount() ), $subscription->get_parent_payment()->get_currency() );
+            $period = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() ) . ' / ' . $frequency;
+            $initial_amt = wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
             $bill_times = $subscription->get_times_billed() . ' / ' . ( ( $subscription->get_bill_times() == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->get_bill_times() );
             $renewal_date = ! empty( $subscription->get_expiration() ) ? getpaid_format_date( $subscription->get_expiration() ) : __( 'N/A', 'invoicing' );
 
