@@ -121,16 +121,13 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Screenshots ==
 
-1. General Settings.
-2. Payment Gateways.
-3. Taxes and VAT MOSS Settings.
-4. Email Settings.
-5. Miscellaneous.
-6. Add new Invoice.
-7. Invoice Details.
-8. Invoice Items.
-9. Invoice Notes.
-10. Client Invoice
+1. Recurring service subscription.
+2. One-time digital product payment.
+3. Donations/Fundraising example.
+4. Admin payment forms list table.
+5. Admin subscriptions list table.
+6. Admin earnings report.
+7. Sample crowdfunding payment form.
 
 == Changelog ==
 
