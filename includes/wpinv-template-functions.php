@@ -1521,6 +1521,9 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'class'            => 'getpaid-address-field wpinv_state',
             'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
             'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
+            'extra_attributes' => array(
+                'autocomplete' => "address-level1",
+            ),
         ));
 
     }
@@ -1538,6 +1541,9 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'class'       => 'getpaid-address-field wpinv_state',
             'wrap_class'  => "$wrapper_class getpaid-address-field-wrapper__state",
             'label_class' => 'getpaid-address-field-label getpaid-address-field-label__state',
+            'extra_attributes' => array(
+                'autocomplete' => "address-level1",
+            ),
         )
     );
 

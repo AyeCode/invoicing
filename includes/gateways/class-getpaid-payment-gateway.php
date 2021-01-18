@@ -516,7 +516,7 @@ abstract class GetPaid_Payment_Gateway {
 											<i class="fa fa-credit-card"></i>
 										</span>
 									</div>
-									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>authorizenet[cc_number]" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm">
+									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>authorizenet[cc_number]" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm" autocomplete="cc-number">
 								</div>
 							</div>
 
@@ -528,7 +528,7 @@ abstract class GetPaid_Payment_Gateway {
                                 <div class="form-row">
 
                                     <div class="col">
-                                        <select class="form-control form-control-sm" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
+                                        <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
                                             <option disabled selected="selected"><?php _e( 'MM', 'invoicing' ); ?></option>
 
                                             <?php
@@ -543,7 +543,7 @@ abstract class GetPaid_Payment_Gateway {
                                     </div>
 
                                     <div class="col">
-                                        <select class="form-control form-control-sm" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
+                                        <select class="form-control form-control-sm" autocomplete="cc-exp-year" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
                                             <option disabled selected="selected"><?php _e( 'YY', 'invoicing' ); ?></option>
 
                                             <?php
@@ -570,6 +570,9 @@ abstract class GetPaid_Payment_Gateway {
                                         'label'             => __( 'CCV', 'invoicing' ),
 										'label_type'        => 'vertical',
 										'class'             => 'form-control-sm',
+										'extra_attributes'  => array(
+											'autocomplete'  => "cc-csc",
+										),
                                     )
                                 );
                             ?>

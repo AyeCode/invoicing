@@ -37,6 +37,9 @@ echo aui()->input(
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'       => 'email',
         'value'      => $value,
+        'extra_attributes' => array(
+            'autocomplete' => 'billing email',
+        ),
     )
 );
 

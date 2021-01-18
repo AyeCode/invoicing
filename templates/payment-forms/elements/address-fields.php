@@ -58,6 +58,9 @@ foreach ( $fields as $address_field ) {
                 'class'       => 'getpaid-address-field wpinv_country',
                 'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__country",
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__country',
+                'extra_attributes' => array(
+                    'autocomplete' => "$field_type country",
+                ),
             )
         );
 
@@ -83,8 +86,26 @@ foreach ( $fields as $address_field ) {
 
     } else {
 
-        $key = str_replace( 'wpinv_', '', $address_field['name'] );
-        $key = esc_attr( str_replace( '_', '-', $key ) );
+        $key      = str_replace( 'wpinv_', '', $address_field['name'] );
+        $key      = esc_attr( str_replace( '_', '-', $key ) );
+        $autocomplete = '';
+        $replacements = array(
+            'zip'        => 'postal-code',
+            'first_name' => 'given-name',
+            'last_name'  => 'family-name',
+            'company'    => 'organization',
+            'address'    => 'street-address',
+            'phone'      => 'tel',
+            'city'       => 'address-level2',
+        );
+
+
+        if ( isset( $replacements[ $key ] ) ) {
+            $autocomplete = array(
+                'autocomplete' => "$field_type {$replacements[ $key ]}",
+            );
+        }
+
         echo aui()->input(
             array(
                 'name'        => esc_attr( $field_name ),
@@ -99,6 +120,7 @@ foreach ( $fields as $address_field ) {
                 'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
                 'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__$key",
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
+                'extra_attributes' => $autocomplete,
             )
         );
 
