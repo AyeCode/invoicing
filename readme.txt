@@ -128,6 +128,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 5. Admin subscriptions list table.
 6. Admin earnings report.
 7. Sample crowdfunding payment form.
+8. Invoice edit screen.
+9. Single invoice view page.
 
 == Changelog ==
 
