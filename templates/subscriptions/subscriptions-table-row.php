@@ -23,22 +23,26 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 			case 'subscription':
 				$subscription_id = (int) $subscription->get_id();
 				$url             = esc_url( $subscription->get_view_url() );
-				echo $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>#$subscription_id</a>", $subscription );
+				$id_label        = sprintf(
+					esc_attr_x( '#%s', 'subscription id', 'invoicing' ),
+					$subscription->get_id()
+				);
+				echo $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>", $subscription );
 				break;
 
 			case 'status':
-				echo $subscription->get_status_label();
+				echo sanitize_text_field( $subscription->get_status_label() );
 				break;
 
 			case 'renewal-date':
 				$renewal = getpaid_format_date_value( $subscription->get_next_renewal_date() );
-				echo $subscription->is_active() ? $renewal : "&mdash;";
+				echo $subscription->is_active() ? sanitize_text_field( $renewal ) : "&mdash;";
 				break;
 
 			case 'amount':
 				$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 				$amount    = wpinv_price( wpinv_format_amount( wpinv_sanitize_amount( $subscription->get_recurring_amount() ) ), $subscription->get_parent_payment()->get_currency() );
-				echo "<span>$amount</span> / $frequency";
+				echo wp_kses_post( "<span>$amount</span> / $frequency" );
 				break;
 
 		endswitch;
