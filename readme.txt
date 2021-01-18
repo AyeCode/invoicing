@@ -1,30 +1,30 @@
 === WordPress Payments Plugin | GetPaid ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
-Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy nbow button, checkout form, payments form builder, 
+Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.6
 Stable tag: 2.0.2-beta
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-WordPress Payments & Invoicing plugin to quickly and easily sell online. Create buy now buttons or inline check out forms in seconds to accept online payments on your website.
+WordPress Payments & Invoicing plugin to quickly and easily sell online. Create buy now buttons or inline checkout forms in seconds to accept online payments on your website.
 
 == Description ==
 
-= Lightweight, extensible and very easy to use Onine Paynments and Invoicing plugin. =
+= Lightweight, extensible and very easy to use Online Payments and Invoicing plugin. =
 
-It can be used as payment system for 3rd party plugins too.
+GetPaid can be used as a payment system for 3rd party plugins too.
 
 = Features =
 
-* Create items with a one time fee or recurring payments (subscriptions).  
+* Create items with a one-time fee or recurring payments (subscriptions).
 * Add a free trial and/or allow buyers to name their price.
 * Add items to your website via Buy Now Buttons. Customers will be able to buy on your website via several Payment Gateways.
-* Create inline check out forms to sell your items through optimized landing page.
+* Create inline checkout forms to sell your items through an optimized landing page.
 * Create Invoices that you can send to your customers and they can pay online.
 * Create quotes and estimates to send to your clients [requires GetPaid quotes add-on](https://wordpress.org/plugins/invoicing-quotes/)
-* Quotes can be turned into invoices and client can pay online.
+* Quotes can be turned into invoices and clients can pay online.
 * Create and send invoices directly to receive single or recurring payments.
 * Accept payments via Stripe, Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
 * Export payments and any other data through the reporting system.
@@ -34,7 +34,7 @@ It can be used as payment system for 3rd party plugins too.
 
 = A payment system for other plugins and themes =
 
-GetPaid can be used as payment system with check out page by any plugin.
+GetPaid can be used as a payment system with a checkout page by any plugin.
 
 [Here you find instructions on how to integrate any plugin with GetPaid.](https://wpgetpaid.com/docs/adding-a-custom-item-type/)
 
@@ -44,10 +44,10 @@ GetPaid can be used as payment system with check out page by any plugin.
 
 = Payment Gateways =
 
-* PayPal Standard (built in) - Accept Paypal and credit card payments (single or recurring) via paypal.
-* Authorize.Net (built in) - Accept credit card payments (single or recurring) via Authorize.Net.
-* Worldpay (built in) - Accept credit card payments via Worldpay.
-* Pre Bank Transfer (built in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
+* PayPal Standard (built-in) - Accept Paypal and credit card payments (single or recurring) via paypal.
+* Authorize.Net (built-in) - Accept credit card payments (single or recurring) via Authorize.Net.
+* Worldpay (built-in) - Accept credit card payments via Worldpay.
+* Pre Bank Transfer (built-in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
 * [Stripe](https://wpgetpaid.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
 * [PayPal Pro](https://wpgetpaid.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
 * [PayFast](https://wpgetpaid.com/downloads/payfast-payment-gateway/) - Accept payments via PayFast.
@@ -72,12 +72,12 @@ GetPaid can be used as payment system with check out page by any plugin.
 * [Quotes](https://wordpress.org/plugins/invoicing-quotes/) - Create quotes, send them to clients and convert them to Invoices when accepted by the customer
 * [PDF Invoices](https://wpgetpaid.com/downloads/pdf-invoices/) - Send PDF invoices via email or let users download them
 * [AffiliateWP Integration](https://wpgetpaid.com/downloads/affiliatewp-integration/) - Integrate with the [AffiliateWP plugin](https://affiliatewp.com/)
-* [Contact form 7](https://wpgetpaid.com/downloads/contact-form-7/) - Send a invoice/quote when a user fills out a form
-* [Gravity Forms](https://wpgetpaid.com/downloads/gravity-forms/) - Send a invoice/quote when a user fills out a form
-* [Ninja Forms](https://wordpress.org/plugins/ninja-forms/) - Send a invoice/quote when a user fills out a form
+* [Contact form 7](https://wpgetpaid.com/downloads/contact-form-7/) - Send an invoice/quote when a user fills out a form
+* [Gravity Forms](https://wpgetpaid.com/downloads/gravity-forms/) - Send an invoice/quote when a user fills out a form
+* [Ninja Forms](https://wordpress.org/plugins/ninja-forms/) - Send an invoice/quote when a user fills out a form
 
 
-New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpgetpaid.com/contact-form/). we will consider it.
+New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpgetpaid.com/contact-form/) and we will consider it.
 
 = Support =
 
@@ -87,7 +87,7 @@ Get timely and friendly support for both Core Plugin and add-ons at our official
 
 Work on GetPaid started in April 2016.
 We are proud the original base of the plugin was a fork of [EDD](https://wordpress.org/plugins/easy-digital-downloads/) with permission from Pippin.
-Additionally we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
+Additionally, we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
 We worked on the plugin for over a year before it got its first public release, we stripped down the code to make it a simple lightweight payment and invoicing plugin with many additional features to fit the needs of our customers.
 
 This product includes GeoLite2 data created by MaxMind, available from
@@ -109,7 +109,7 @@ In the search field type WP GetPaid and click Search Plugins. Once you've found 
 
 = Manual installation =
 
-The manual installation method involves downloading our Directory plugin and uploading it to your webserver via your favourite FTP application. The WordPress codex will tell you more [here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation). [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
+The manual installation method involves downloading our Directory plugin and uploading it to your webserver via your favorite FTP application. The WordPress codex will tell you more [here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation). [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
 
 = Updating =
 
