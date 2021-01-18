@@ -1,3 +1,11 @@
+= 2.0.2-beta =
+* Fix "minimum value" error with number settings fields - FIXED
+* Add the settings REST API endpoint - ADDED
+* Add sales REST API endpoint - ADDED
+* Add top-sellers REST API endpoint - ADDED
+* Add top-earners REST API endpoint - ADDED
+* Add invoice counts REST API endpoint - ADDED
+
 # 2.0.1-beta
 * Add the raw_html settings field type - ADDED
 

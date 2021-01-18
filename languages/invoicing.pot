@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-18 06:12+0000\n"
+"POT-Creation-Date: 2021-01-18 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -3802,7 +3802,7 @@ msgstr ""
 msgid "Download XML"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:116
+#: includes/wpinv-helper-functions.php:121
 msgid "Draft"
 msgstr ""
 
@@ -4893,6 +4893,14 @@ msgstr ""
 msgid "General Settings"
 msgstr ""
 
+#. %s: $key Key to check
+#: includes/data-stores/class-getpaid-data.php:341
+#, php-format
+msgid ""
+"Generic add/update/get meta methods should not be used for internal meta "
+"data, including \"%s\". Use getters and setters."
+msgstr ""
+
 #: includes/data/states.php:238
 msgid "Geneva"
 msgstr ""
@@ -4929,6 +4937,7 @@ msgstr ""
 msgid "Get the invoice type (e.g invoice, quote etc)."
 msgstr ""
 
+#. Name of the plugin
 #: widgets/getpaid.php:25 includes/admin/class-wpinv-admin-menus.php:29
 #: includes/admin/class-wpinv-admin-menus.php:30
 msgid "GetPaid"
@@ -4952,10 +4961,6 @@ msgstr ""
 
 #: widgets/subscriptions.php:30
 msgid "GetPaid > Subscriptions"
-msgstr ""
-
-#. Name of the plugin
-msgid "GetPaid Beta"
 msgstr ""
 
 #: includes/data/countries.php:102
@@ -5973,13 +5978,13 @@ msgid "Invoice Status"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:272
-#: includes/wpinv-helper-functions.php:109
+#: includes/wpinv-helper-functions.php:114
 msgctxt "Invoice status"
 msgid "Cancelled"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:292
-#: includes/wpinv-helper-functions.php:111
+#: includes/wpinv-helper-functions.php:116
 msgctxt "Invoice status"
 msgid "Failed"
 msgstr ""
@@ -5989,12 +5994,12 @@ msgctxt "Invoice status"
 msgid "On Hold"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:108
+#: includes/wpinv-helper-functions.php:113
 msgctxt "Invoice status"
 msgid "On hold"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:106
+#: includes/wpinv-helper-functions.php:111
 msgctxt "Invoice status"
 msgid "Paid"
 msgstr ""
@@ -6004,19 +6009,19 @@ msgctxt "Invoice status"
 msgid "Pending Payment"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:105
+#: includes/wpinv-helper-functions.php:110
 msgctxt "Invoice status"
 msgid "Pending payment"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:252
-#: includes/wpinv-helper-functions.php:107
+#: includes/wpinv-helper-functions.php:112
 msgctxt "Invoice status"
 msgid "Processing"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:282
-#: includes/wpinv-helper-functions.php:110
+#: includes/wpinv-helper-functions.php:115
 msgctxt "Invoice status"
 msgid "Refunded"
 msgstr ""
@@ -6026,7 +6031,7 @@ msgctxt "Invoice status"
 msgid "Renewal"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:112
+#: includes/wpinv-helper-functions.php:117
 msgctxt "Invoice status"
 msgid "Renewal Payment"
 msgstr ""
@@ -6093,7 +6098,7 @@ msgstr ""
 msgid "Invoices navigation"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:17 includes/wpinv-helper-functions.php:688
+#: includes/class-wpinv-privacy.php:17 includes/wpinv-helper-functions.php:693
 #: includes/admin/class-wpinv-users.php:38
 msgid "Invoicing"
 msgstr ""
@@ -9009,6 +9014,15 @@ msgstr ""
 msgid "Oaxaca"
 msgstr ""
 
+#. %s: $key Key to set
+#: includes/data-stores/class-getpaid-data.php:364
+#: includes/data-stores/class-getpaid-data.php:383
+#, php-format
+msgid ""
+"Object data such as \"%s\" should not be accessed directly. Use getters and "
+"setters."
+msgstr ""
+
 #: includes/data/states.php:245
 msgid "Obwalden"
 msgstr ""
@@ -10933,7 +10947,7 @@ msgstr ""
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/gateways/class-getpaid-payment-gateway.php:684
+#: includes/gateways/class-getpaid-payment-gateway.php:687
 msgid "Save payment method"
 msgstr ""
 
@@ -11786,6 +11800,12 @@ msgstr ""
 
 #: includes/data/email-settings.php:777 includes/data/email-settings.php:813
 msgid "Subscription Expired"
+msgstr ""
+
+#: templates/subscriptions/subscriptions-table-row.php:27
+#, php-format
+msgctxt "subscription id"
+msgid "#%s"
 msgstr ""
 
 #: templates/subscriptions/subscription-details.php:113
@@ -13273,7 +13293,7 @@ msgstr ""
 msgid "Trapani"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:120
+#: includes/wpinv-helper-functions.php:125
 msgid "Trash"
 msgstr ""
 
@@ -13567,7 +13587,7 @@ msgstr ""
 msgid "Usage / Limit"
 msgstr ""
 
-#: includes/gateways/class-getpaid-payment-gateway.php:654
+#: includes/gateways/class-getpaid-payment-gateway.php:657
 msgid "Use a new payment method"
 msgstr ""
 
