@@ -32,7 +32,7 @@ Welcome to the GetPaid repository on GitHub. Here, you can [report bugs](https:/
 
 If you want to install this plugin on a live website, please use the [GetPaid plugin page on WordPress.org](https://wordpress.org/plugins/invoicing/).
 
-## [View Demos](https://demos.ayecode.io/getpaid/)
+You can [view demos](https://demos.ayecode.io/getpaid/) or [contribute](https://github.com/AyeCode/invoicing/blob/master/.github/CONTRIBUTING.md)
 
 ## Contributing
 
