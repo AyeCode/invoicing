@@ -13,19 +13,26 @@
     <img src="https://img.shields.io/github/languages/count/AyeCode/invoicing" alt="languages">
     <img src="https://img.shields.io/github/languages/code-size/AyeCode/invoicing" alt="code size">
     <img src="https://img.shields.io/github/repo-size/AyeCode/invoicing" alt="repo size">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/AyeCode/invoicing?style=social">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/AyeCode/invoicing?style=social">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/AyeCode/invoicing">
+    <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/AyeCode/invoicing">
     <img src="https://img.shields.io/wordpress/plugin/dm/invoicing" alt="Monthly Downloads">
     <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">
         <img src="https://img.shields.io/github/license/AyeCode/invoicing" alt="License"></a>
     <a href="https://wordpress.org/support/plugin/invoicing/reviews/">
         <img src="https://img.shields.io/wordpress/plugin/stars/invoicing" alt="Rating"></a>
     <img src="https://img.shields.io/wordpress/plugin/v/invoicing?label=version" alt="Version">
+    <img alt="WordPress Plugin: Tested WP Version" src="https://img.shields.io/wordpress/plugin/tested/invoicing">
     <a href="https://wpgetpaid.com">
-        <img src="https://img.shields.io/website?url=https%3A%2F%wpgetpaid.com" alt="Website"></a>
+        <img src="https://img.shields.io/website?url=https%3A%2F%2Fwpgetpaid.com" alt="Website"></a>
 </p>
 
 Welcome to the GetPaid repository on GitHub. Here, you can [report bugs](https://github.com/AyeCode/invoicing/issues/new?assignees=&labels=&template=bug_report.md&title=), [request for new features and enhancements](https://github.com/AyeCode/invoicing/issues/new?assignees=&labels=&template=feature_request.md&title=) and follow the development of the plugin.
 
 If you want to install this plugin on a live website, please use the [GetPaid plugin page on WordPress.org](https://wordpress.org/plugins/invoicing/).
+
+## [View Demos](https://demos.ayecode.io/getpaid/)
 
 ## Contributing
 
