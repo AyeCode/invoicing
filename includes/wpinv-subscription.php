@@ -823,7 +823,7 @@ class WPInv_Subscription extends GetPaid_Data {
             	'numberposts'    => -1,
             	'post_status'    => $statuses,
             	'orderby'        => 'ID',
-            	'order'          => 'DESC',
+            	'order'          => 'ASC',
             	'post_type'      => 'wpi_invoice'
 			)
 		);

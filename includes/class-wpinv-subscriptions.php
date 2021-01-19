@@ -190,6 +190,13 @@ class WPInv_Subscriptions {
             return;
         }
 
+        // Delete existing subscription if available and the invoice is not recurring.
+        if ( ! $invoice->is_recurring() ) {
+            $subscription = new WPInv_Subscription( $invoice->get_subscription_id() );
+            $subscription->delete( true );
+            return;
+        }
+
         // (Maybe) create a new subscription.
         $subscription = $this->get_invoice_subscription( $invoice );
         if ( empty( $subscription ) ) {
@@ -262,7 +269,9 @@ class WPInv_Subscriptions {
         $expiration = date( 'Y-m-d H:i:s', strtotime( "+$interval $period", strtotime( $subscription->get_date_created() ) ) );
 
         $subscription->set_next_renewal_date( $expiration );
-        return $subscription->save();
+        $subscription->save();
+        $invoice->set_subscription_id( $subscription->get_id() );
+        return $subscription->get_id();
 
     }
 

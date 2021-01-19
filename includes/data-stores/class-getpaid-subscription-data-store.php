@@ -170,6 +170,7 @@ class GetPaid_Subscription_Data_Store {
 		$subscription->clear_cache();
 
 		update_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscr_profile_id', $subscription->get_profile_id() );
+		update_post_meta( $subscription->get_parent_invoice_id(), '_wpinv_subscription_id', $subscription->get_id() );
 
 		// Fire a hook.
 		do_action( 'getpaid_update_subscription', $subscription );
@@ -186,7 +187,7 @@ class GetPaid_Subscription_Data_Store {
 
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}getpaid_subscriptions
+				"DELETE FROM {$wpdb->prefix}wpinv_subscriptions
 				WHERE id = %d",
 				$subscription->get_id()
 			)
