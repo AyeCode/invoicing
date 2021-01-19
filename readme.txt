@@ -135,8 +135,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.0.1 =
 * New invoices not visible unless a status is manually set - FIXED
+* Deleting an invoice item updates the total but does not remove the item from the HTML markup - FIXED
 
-= 2.0.2-beta =
+= 2.0.0-beta3 =
 * Fix "minimum value" error with number settings fields - FIXED
 * Add the settings REST API endpoint - ADDED
 * Add sales REST API endpoint - ADDED
@@ -144,10 +145,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add top-earners REST API endpoint - ADDED
 * Add invoice counts REST API endpoint - ADDED
 
-= 2.0.1-beta =
+= 2.0.0-beta2 =
 * Add the raw_html settings field type - ADDED
 
-= 2.0.0-beta =
+= 2.0.0-beta1 =
 * Exclude invoicing pages from Yoast XML page sitemap - CHANGED
 * Bump tested upto WP version - CHANGED
 * Send BCC email to admin for Payment Reminder - ADDED

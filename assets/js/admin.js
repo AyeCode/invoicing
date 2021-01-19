@@ -538,6 +538,7 @@ jQuery(function ($) {
 
 		// Item details.
 		var inputs = $(this).closest('.getpaid-invoice-item').data('inputs')
+		var that = this
 
 		// Remove the item from the invoice.
 		var data = {
@@ -553,7 +554,7 @@ jQuery(function ($) {
 
 				if (response.success) {
 
-					$(this).closest('.getpaid-invoice-item').remove()
+					$(that).closest('.getpaid-invoice-item').remove()
 
 					$('.getpaid-invoice-items-inner').removeClass('no-items has-items')
 
