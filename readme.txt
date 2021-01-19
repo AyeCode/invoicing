@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * New invoices not visible unless a status is manually set - FIXED
 * Deleting an invoice item updates the total but does not remove the item from the HTML markup - FIXED
 * Subscription not deleted when the recurring item is removed from an invoice - FIXED
+* Prices multiplied by 100 when using a comma as a decimal separator - FIXED
 
 = 2.0.0-beta3 =
 * Fix "minimum value" error with number settings fields - FIXED

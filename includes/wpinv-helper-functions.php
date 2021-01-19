@@ -58,16 +58,18 @@ function wpinv_get_user_agent() {
  */
 function wpinv_sanitize_amount( $amount ) {
 
-    // Abort early to avoid multiplying decimals by 100;
-    if ( '.' !== wpinv_decimal_separator() ) {
+    if ( is_numeric( $amount ) ) {
         return floatval( $amount );
     }
 
-    // Format decimals.
-    $amount = str_replace( wpinv_decimal_separator(), '.', $amount );
+    // Separate the decimals and thousands.
+    $amount    = explode( wpinv_decimal_separator(), $amount );
 
     // Remove thousands.
-    $amount = str_replace( wpinv_thousands_separator(), '', $amount );
+    $amount[0] = str_replace( wpinv_thousands_separator(), '', $amount[0] );
+
+    // Convert back to string.
+    $amount = count( $amount ) > 1 ? "{$amount[0]}.{$amount[1]}" : $amount[0];
 
     // Cast the remaining to a float.
     return (float) preg_replace( '/[^0-9\.\-]/', '', $amount );
@@ -278,7 +280,7 @@ function getpaid_get_price_format() {
 function wpinv_price( $amount = 0, $currency = '' ) {
 
     // Backwards compatibility.
-    $amount             = floatval( wpinv_sanitize_amount( $amount ) );
+    $amount             = wpinv_sanitize_amount( $amount );
 
     // Prepare variables.
     $currency           = wpinv_get_currency( $currency );
@@ -308,15 +310,7 @@ function wpinv_format_amount( $amount, $decimals = null, $calculate = false ) {
     $thousands_sep = wpinv_thousands_separator();
     $decimal_sep   = wpinv_decimal_separator();
     $decimals      = wpinv_decimals( $decimals );
-
-    // Format decimals.
-    $amount = str_replace( $decimal_sep, '.', $amount );
-
-    // Remove thousands.
-    $amount = str_replace( $thousands_sep, '', $amount );
-
-    // Cast the remaining to a float.
-    $amount = floatval( $amount );
+    $amount        = wpinv_sanitize_amount( $amount );
 
     if ( $calculate ) {
         return $amount;
