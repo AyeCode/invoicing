@@ -17,9 +17,15 @@ if ( empty( $fields ) ) {
 $uniqid = uniqid( '_' );
 
 // Prepare the user's country.
-$country = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_wpinv_country', true ) : '';
-$country = empty( $country ) ? getpaid_get_ip_country() : $country;
-$country = empty( $country ) ? wpinv_get_default_country() : $country;
+if ( ! empty( $form->invoice ) ) {
+	$country = $form->invoice->get_country();
+}
+
+if ( empty( $country ) ) {
+	$country = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_wpinv_country', true ) : '';
+	$country = empty( $country ) ? getpaid_get_ip_country() : $country;
+	$country = empty( $country ) ? wpinv_get_default_country() : $country;
+}
 
 // A prefix for all ids (so that a form can be included in the same page multiple times).
 $uniqid = uniqid( '_' );

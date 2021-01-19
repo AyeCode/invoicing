@@ -28,13 +28,21 @@ foreach ( $fields as $address_field ) {
     do_action( 'getpaid_payment_form_address_field_before_' . $address_field['name'], $field_type, $address_field );
 
     // Prepare variables.
+    if ( ! empty( $form->invoice ) ) {
+        $user_id = $form->invoice->get_user_id();
+    }
+
+    if ( empty( $user_id ) && is_user_logged_in() ) {
+        $user_id = $form->invoice->get_user_id();
+    }
+
     $field_name  = $address_field['name'];
     $field_name  = "{$field_type}[$field_name]";
     $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
     $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
     $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
     $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
-    $value       = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_' . $address_field['name'], true ) : '';
+    $value       = ! empty( $user_id ) ? get_user_meta( $user_id, '_' . $address_field['name'], true ) : '';
     $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( $address_field['label'] );
 
     if ( ! empty( $address_field['required'] ) ) {
