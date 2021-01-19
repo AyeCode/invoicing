@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.0.1 =
+* New invoices not visible unless a status is manually set - FIXED
+
 = 2.0.2-beta =
 * Fix "minimum value" error with number settings fields - FIXED
 * Add the settings REST API endpoint - ADDED

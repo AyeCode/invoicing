@@ -113,6 +113,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                             ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
+                        $status = $invoice->get_status( 'edit' );
                         echo aui()->select(
                             array(
                                 'id'               => 'wpinv_status',
@@ -120,7 +121,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 'label'            => $label,
                                 'label_type'       => 'vertical',
                                 'placeholder'      => __( 'Select Status', 'invoicing' ),
-                                'value'            => $invoice->get_status( 'edit' ),
+                                'value'            => array_key_exists( $status, $invoice->get_all_statuses() ) ? $status : $invoice->get_default_status(),
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_invoice_statuses( true, false, $invoice )
