@@ -129,7 +129,7 @@ class WPInv_Plugin {
 			add_action( 'bp_include', array( &$this, 'bp_invoicing_init' ) );
 		}
 
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
 		add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
@@ -355,7 +355,7 @@ class WPInv_Plugin {
 	}
 
 	public function enqueue_scripts() {
-		$suffix       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
 		wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
@@ -363,7 +363,7 @@ class WPInv_Plugin {
 
 		// Register scripts
 		wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-		wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  filemtime( WPINV_PLUGIN_DIR . 'assets/js/invoice-front.js' ) );
+		wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  filemtime( WPINV_PLUGIN_DIR . 'assets/js/invoice-front.js' ), true );
 
 		$localize                         = array();
 		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
