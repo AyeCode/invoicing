@@ -134,6 +134,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.0.2 =
+* Authorize.NET using the last name as the customer's address - FIXED
+
+= 2.0.2 =
 * Default pages not created for new installs - FIXED
 * Default payment form only created during the first checkout - FIXED
 * Remove PHP notices shown when a logged out users uses a "buy now" button - FIXED
