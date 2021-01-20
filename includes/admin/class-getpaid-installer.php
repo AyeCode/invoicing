@@ -42,6 +42,9 @@ class GetPaid_Installer {
 		// Maybe re(add) admin capabilities.
 		$this->add_capabilities();
 
+		// Maybe create the default payment form.
+		wpinv_get_default_payment_form();
+
 		// Create any missing database tables.
 		$method = "upgrade_from_$upgrade_from";
 
