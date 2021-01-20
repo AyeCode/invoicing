@@ -180,7 +180,12 @@ function wpinv_convert_old_invoices() {
         )
     );
 
-    $invoices_table = $wpdb->prefix . 'getpaid_invoices';
+    // Abort if we do not have any invoices.
+    if ( empty( $invoices ) ) {
+        return;
+    }
+
+    $invoices_table      = $wpdb->prefix . 'getpaid_invoices';
     $invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
 
     if ( ! class_exists( 'WPInv_Legacy_Invoice' ) ) {
@@ -191,6 +196,11 @@ function wpinv_convert_old_invoices() {
     foreach ( $invoices as $invoice ) {
 
         $invoice = new WPInv_Legacy_Invoice( $invoice );
+
+        if ( empty( $invoice->ID ) ) {
+            return;
+        }
+
         $fields = array (
             'post_id'        => $invoice->ID,
             'number'         => $invoice->get_number(),
