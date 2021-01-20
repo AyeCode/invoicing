@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.6
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -137,6 +137,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Default pages not created for new installs - FIXED
 * Default payment form only created during the first checkout - FIXED
 * Remove PHP notices shown when a logged out users uses a "buy now" button - FIXED
+* Add a tool to generate missing GetPaid pages - ADDED
+* Show notice if some GetPaid pages are not set - ADDED
 
 = 2.0.1 =
 * New invoices not visible unless a status is manually set - FIXED
