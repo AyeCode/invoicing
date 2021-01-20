@@ -313,6 +313,8 @@ jQuery(function($) {
             process_gateways( enabled_gateways, state ) {
 
                 // Prepare the submit btn.
+                this.form.data( 'initial_amt', state.initial_amt )
+                this.form.data( 'currency', state.currency )
                 var submit_btn = this.form.find( '.getpaid-payment-form-submit' )
                 var free_label = submit_btn.data( 'free' ).replace( /%price%/gi, state.totals.raw_total );
                 var btn_label  = submit_btn.data( 'pay' ).replace( /%price%/gi, state.totals.raw_total );

@@ -69,6 +69,9 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					'total'     => $submission->format_amount( $submission->get_recurring_total() ),
 				),
 
+				'initial_amt'   => wpinv_round_amount( $submission->get_total(), null, true ),
+				'currency'      => $submission->get_currency(),
+
 			)
 		);
 
