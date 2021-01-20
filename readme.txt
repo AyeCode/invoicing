@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.0.2 =
 * Default pages not created for new installs - FIXED
 * Default payment form only created during the first checkout - FIXED
+* Remove PHP notices shown when a logged out users uses a "buy now" button - FIXED
 
 = 2.0.1 =
 * New invoices not visible unless a status is manually set - FIXED

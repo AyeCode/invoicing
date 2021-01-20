@@ -33,7 +33,7 @@ foreach ( $fields as $address_field ) {
     }
 
     if ( empty( $user_id ) && is_user_logged_in() ) {
-        $user_id = $form->invoice->get_user_id();
+        $user_id = get_current_user_id();
     }
 
     $field_name  = $address_field['name'];

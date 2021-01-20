@@ -470,7 +470,7 @@ class WPInv_Plugin {
 		$installer = new GetPaid_Installer();
 
 		if ( empty( $wpi_version ) ) {
-			$installer->upgrade_db( 0 );
+			return $installer->upgrade_db( 0 );
 		}
 
 		$upgrades  = array(

@@ -261,12 +261,14 @@ class GetPaid_Geolocation {
 
 		if ( $geolocation_service === 'ipinfo.io' ) {
 			$data = json_decode( $geolocation_response['body'] );
-			return empty( $data ) ? '' : $data->country;
+			wpinv_error_log( $data );
+			return empty( $data ) || empty( $data->country ) ? '' : $data->country;
 		}
 
 		if ( $geolocation_service === 'ip-api.com' ) {
 			$data = json_decode( $geolocation_response['body'] );
-			return empty( $data ) ? '' : $data->countryCode;
+			wpinv_error_log( $data );
+			return empty( $data ) || empty( $data->countryCode ) ? '' : $data->countryCode;
 		}
 
 		return apply_filters( 'getpaid_geolocation_geoip_response_' . $geolocation_service, '', $geolocation_response['body'] );
