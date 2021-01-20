@@ -3,7 +3,7 @@
 if ( !defined('ABSPATH') )
     die('-1');
 
-$email_footer = apply_filters( 'wpinv_email_footer_text', wpinv_get_option( 'email_footer_text' ) );
+$email_footer = apply_filters( 'wpinv_email_footer_text', wpinv_get_option( 'email_footer_text', get_bloginfo( 'name', 'display' ) . ' - ' . __( 'Powered by GetPaid', 'invoicing' ) ) );
 $email_footer = $email_footer ? wpautop( wp_kses_post( wptexturize( $email_footer ) ) ) : '';
 ?>
                                                             </div>

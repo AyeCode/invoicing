@@ -199,7 +199,7 @@ function wpinv_get_business_logo() {
 }
 
 function wpinv_get_business_name() {
-    $business_name = wpinv_get_option('store_name');
+    $business_name = wpinv_get_option('store_name', wpinv_get_blogname() );
     return apply_filters( 'wpinv_get_business_name', $business_name );
 }
 

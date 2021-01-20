@@ -195,7 +195,7 @@ function wpinv_currency_position() {
 function wpinv_thousands_separator( $current = null ) {
 
     if ( null == $current ) {
-        $current = wpinv_get_option( 'thousands_separator', '.' );
+        $current = wpinv_get_option( 'thousands_separator', ',' );
     }
 
     return trim( $current );

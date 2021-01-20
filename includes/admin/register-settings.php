@@ -621,14 +621,14 @@ function getpaid_settings_description_callback( $args ) {
 }
 
 function wpinv_gateways_callback( $args ) {
-	global $wpinv_options;
-    
+
+	$gateways    = wpinv_get_option( 'gateways', array( 'manual' => 1 ) );
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
 
 	foreach ( $args['options'] as $key => $option ) :
 		$sanitize_key = wpinv_sanitize_key( $key );
         
-        if ( isset( $wpinv_options['gateways'][ $key ] ) )
+        if ( is_array( $gateways ) && isset( $gateways[ $key ] ) )
 			$enabled = '1';
 		else
 			$enabled = null;

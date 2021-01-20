@@ -235,7 +235,6 @@ class WPInv_Plugin {
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			GetPaid_Post_Types_Admin::init();
 
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-upgrade-functions.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
@@ -256,7 +255,6 @@ class WPInv_Plugin {
 			WP_CLI::add_command( 'invoicing', 'WPInv_CLI' );
 		}
 
-		require_once( WPINV_PLUGIN_DIR . 'includes/admin/install.php' );
 	}
 
 	/**
@@ -314,6 +312,9 @@ class WPInv_Plugin {
 
 		// Fires before getpaid inits.
 		do_action( 'before_getpaid_init', $this );
+
+		// Maybe upgrade.
+		$this->maybe_upgrade_database();
 
 		// Load default gateways.
 		$gateways = apply_filters(
@@ -451,6 +452,41 @@ class WPInv_Plugin {
 			register_widget( $widget );
 		}
 		
+	}
+
+	/**
+	 * Upgrades the database.
+	 *
+	 * @since 2.0.2
+	 */
+	public function maybe_upgrade_database() {
+
+		$wpi_version = get_option( 'wpinv_version', 0 );
+
+		if ( $wpi_version == WPINV_VERSION ) {
+			return;
+		}
+
+		$installer = new GetPaid_Installer();
+
+		if ( empty( $wpi_version ) ) {
+			$installer->upgrade_db( 0 );
+		}
+
+		$upgrades  = array(
+			'0.0.5' => '004',
+			'1.0.3' => '102',
+			'2.0.0' => '118',
+		);
+
+		foreach ( $upgrades as $key => $method ) {
+
+			if ( version_compare( $wpi_version, $key, '<' ) ) {
+				return $installer->upgrade_db( $method );
+			}
+
+		}
+
 	}
 
 	/**

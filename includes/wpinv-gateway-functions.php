@@ -38,7 +38,7 @@ add_filter( 'wpinv_payment_gateways', 'wpinv_payment_gateway_titles', 1000, 1 );
 
 function wpinv_get_enabled_payment_gateways( $sort = false ) {
     $gateways = wpinv_get_payment_gateways();
-    $enabled  = wpinv_get_option( 'gateways', false );
+    $enabled  = wpinv_get_option( 'gateways', array( 'manual' => 1 ) );
 
     $gateway_list = array();
 
@@ -302,7 +302,7 @@ function wpinv_settings_update_gateways( $input ) {
     global $wpinv_options;
     
     if ( !empty( $input['save_gateway'] ) ) {
-        $gateways = wpinv_get_option( 'gateways', false );
+        $gateways = wpinv_get_option( 'gateways', array( 'manual' => 1 ) );
         $gateways = !empty($gateways) ? $gateways : array();
         $gateway = $input['save_gateway'];
         

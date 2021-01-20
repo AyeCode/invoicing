@@ -22,7 +22,7 @@ if ( !isset( $email_heading ) ) {
                     <td align="center" valign="top">
                         <div id="template_header_image">
                         <?php
-                            if ( $img = wpinv_get_option( 'email_header_image' ) ) {
+                            if ( $img = wpinv_get_option( 'email_header_image', '' ) ) {
                                 echo '<p style="margin-top:0;"><img style="max-width:100%" src="' . esc_url( $img ) . '" alt="' . esc_attr( wpinv_get_blogname() ) . '" /></p>';
                             }
                         ?>

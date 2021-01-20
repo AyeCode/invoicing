@@ -712,7 +712,7 @@ function wpinv_format_invoice_number( $number, $type = '' ) {
     }
 
     // Format the number.
-    $padd             = absint( (int) wpinv_get_option( 'invoice_number_padd' ) );
+    $padd             = absint( (int) wpinv_get_option( 'invoice_number_padd', 5 ) );
     $prefix           = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_prefix', 'INV-' ) );
     $prefix           = sanitize_text_field( apply_filters( 'getpaid_invoice_type_prefix', $prefix, $type ) );
     $postfix          = sanitize_text_field( (string) wpinv_get_option( 'invoice_number_postfix' ) );

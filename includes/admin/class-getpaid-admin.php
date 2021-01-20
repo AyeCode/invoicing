@@ -338,27 +338,30 @@ class GetPaid_Admin {
 
     }
 
-    /**
-     * Maybe redirect users to our admin settings page.
-     */
-    public function activation_redirect() {
+	/**
+	 * Redirect users to settings on activation.
+	 *
+	 * @return void
+	 */
+	public function activation_redirect() {
 
-		// Bail if no activation redirect.
-		if ( ! get_transient( '_wpinv_activation_redirect' ) || wp_doing_ajax() ) {
+		$redirected = get_option( 'wpinv_redirected_to_settings' );
+
+		if ( ! empty( $redirected ) || wp_doing_ajax() || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-
-		// Delete the redirect transient.
-		delete_transient( '_wpinv_activation_redirect' );
 
 		// Bail if activating from network, or bulk
 		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=general' ) );
-		exit;
-    }
+	    update_option( 'wpinv_redirected_to_settings', 1 );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=general' ) );
+        exit;
+
+	}
 
     /**
      * Fires an admin action after verifying that a user can fire them.

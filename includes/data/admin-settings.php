@@ -214,14 +214,6 @@ return array(
                     'desc' => '',
                     'type' => 'header',
                 ),
-                'vat_name' => array(
-                    'id' => 'vat_name',
-                    'name' => __( 'VAT Name', 'invoicing' ),
-                    'desc' => __( 'Enter the VAT name', 'invoicing' ),
-                    'type' => 'text',
-                    'size' => 'regular',
-                    'std' => __( 'VAT', 'invoicing' ),
-                ),
                 'vat_invoice_notice_label' => array(
                     'id' => 'vat_invoice_notice_label',
                     'name' => __( 'Invoice Notice Label', 'invoicing' ),
@@ -464,7 +456,7 @@ return array(
                     'id'   => 'email_footer_text',
                     'name' => __( 'Footer Text', 'invoicing' ),
                     'desc' => __( 'The text to appear in the footer of all invoice emails.', 'invoicing' ),
-                    'std' => get_bloginfo( 'name', 'display' ) . ' - ' . __( 'Powered by GeoDirectory', 'invoicing' ),
+                    'std' => get_bloginfo( 'name', 'display' ) . ' - ' . __( 'Powered by GetPaid', 'invoicing' ),
                     'type' => 'textarea',
                     'class' => 'regular-text',
                     'rows' => 2,

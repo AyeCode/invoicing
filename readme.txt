@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.0.2 =
+* Default pages not created for new installs - FIXED
+
 = 2.0.1 =
 * New invoices not visible unless a status is manually set - FIXED
 * Deleting an invoice item updates the total but does not remove the item from the HTML markup - FIXED

@@ -403,7 +403,7 @@ final class WPInv_Legacy_Invoice {
         $due_date = $this->get_meta( '_wpinv_due_date' );
         
         if ( empty( $due_date ) ) {
-            $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days' ) ) );
+            $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days', 0 ) ) );
             $due_date = date_i18n( 'Y-m-d', $overdue_time );
         } else if ( $due_date == 'none' ) {
             $due_date = '';

@@ -250,7 +250,7 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
     }
 
     if ( $option ) {
-        wpinv_update_option( $option, (int)$page_id );
+        wpinv_update_option( $option, (int) $page_id );
     }
 
     return $page_id;

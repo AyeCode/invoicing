@@ -134,7 +134,7 @@ function wpinv_display_individual_tax_rates() {
  * @return float
  */
 function wpinv_get_default_tax_rate() {
-    $rate = wpinv_get_option( 'tax_rate', false );
+    $rate = wpinv_get_option( 'tax_rate', 20 );
     return (float) apply_filters( 'wpinv_get_default_tax_rate', floatval( $rate ) );
 }
 
@@ -144,7 +144,7 @@ function wpinv_get_default_tax_rate() {
  * @return bool
  */
 function wpinv_same_country_exempt_vat() {
-    return 'no' == wpinv_get_option( 'vat_same_country_rule' );
+    return 'no' == wpinv_get_option( 'vat_same_country_rule', 'always' );
 }
 
 /**

@@ -141,12 +141,12 @@ function wpinv_send_transactional_email() {
 }
 
 function wpinv_mail_get_from_address() {
-    $from_address = apply_filters( 'wpinv_mail_from_address', wpinv_get_option( 'email_from' ) );
+    $from_address = apply_filters( 'wpinv_mail_from_address', wpinv_get_option( 'email_from', get_option( 'admin_email' ) ) );
     return sanitize_email( $from_address );
 }
 
 function wpinv_mail_get_from_name() {
-    $from_name = apply_filters( 'wpinv_mail_from_name', wpinv_get_option( 'email_from_name' ) );
+    $from_name = apply_filters( 'wpinv_mail_from_name', wpinv_get_option( 'email_from_name', get_bloginfo( 'name', 'display' ) ) );
     return wp_specialchars_decode( esc_html( $from_name ), ENT_QUOTES );
 }
 
