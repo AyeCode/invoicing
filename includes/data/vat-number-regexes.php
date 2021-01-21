@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-array(
+return array(
 
     'AT' => 'U[A-Z\d]{8}',
     'BE' => '[0|1]{1}\d{9}',

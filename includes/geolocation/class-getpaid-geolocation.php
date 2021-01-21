@@ -261,13 +261,11 @@ class GetPaid_Geolocation {
 
 		if ( $geolocation_service === 'ipinfo.io' ) {
 			$data = json_decode( $geolocation_response['body'] );
-			wpinv_error_log( $data );
 			return empty( $data ) || empty( $data->country ) ? '' : $data->country;
 		}
 
 		if ( $geolocation_service === 'ip-api.com' ) {
 			$data = json_decode( $geolocation_response['body'] );
-			wpinv_error_log( $data );
 			return empty( $data ) || empty( $data->countryCode ) ? '' : $data->countryCode;
 		}
 
