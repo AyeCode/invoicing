@@ -117,7 +117,7 @@ return array(
                 'label'        => __( 'Company', 'invoicing' ),
                 'description'  => '',
                 'required'     => false,
-                'visible'      => false,
+                'visible'      => true,
                 'name'         => 'wpinv_company',
             ),
 
@@ -127,7 +127,7 @@ return array(
                 'label'        => __( 'VAT Number', 'invoicing' ),
                 'description'  => '',
                 'required'     => false,
-                'visible'      => false,
+                'visible'      => true,
                 'name'         => 'wpinv_vat_number',
             )
         )
