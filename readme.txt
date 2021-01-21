@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Resend invoice button not working - FIXED
 * Send invoice reminder button not working - FIXED
 * Manual gateway renamed to "Test Gateway" - CHANGED
+* VAT validation not working - FIXED
 
 = 2.0.2 =
 * Default pages not created for new installs - FIXED

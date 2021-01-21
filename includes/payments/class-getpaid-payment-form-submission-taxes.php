@@ -18,6 +18,12 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 */
 	public $taxes = array();
 
+	/**
+	 * Whether or not we should skip the taxes.
+	 * @var bool
+	 */
+	protected $skip_taxes = false;
+
     /**
 	 * Class constructor
 	 *
@@ -27,6 +33,10 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		// Validate VAT number.
 		$this->validate_vat( $submission );
+
+		if ( $this->skip_taxes ) {
+			return;
+		}
 
 		foreach ( $submission->get_items() as $item ) {
 			$this->process_item_tax( $item, $submission );
@@ -187,7 +197,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		$in_eu = $this->is_eu_transaction( $submission->country );
 
 		// Abort if we are not validating vat numbers.
-		if ( ! $in_eu ) {
+		if ( ! $in_eu || ! wpinv_should_validate_vat_number() ) {
             return;
 		}
 
@@ -207,13 +217,16 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		}
 
-		// Abort if we are not validating vat (vat number should exist, user should be in eu and business too).
-		if ( ! $in_eu ) {
-            return;
+		if ( empty( $vat_number ) ) {
+			return;
 		}
 
 		if ( ! wpinv_validate_vat_number( $vat_number, $submission->country ) ) {
 			throw new Exception( __( 'Your VAT number is invalid', 'invoicing' ) );
+		}
+
+		if ( 'vat_too' != wpinv_get_option( 'vat_same_country_rule' ) ) {
+			$this->skip_taxes = true;
 		}
 
 	}

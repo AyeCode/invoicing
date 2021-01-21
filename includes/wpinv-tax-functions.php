@@ -330,11 +330,6 @@ function wpinv_vies_validate_vat_number( $vat_number ) {
  */
 function wpinv_validate_vat_number( $vat_number, $country ) {
 
-    // Abort if we are not validating this.
-    if ( ! wpinv_should_validate_vat_number() || empty( $vat_number ) ) {
-        return true;
-    }
-
     // In case the vat number does not have a country code...
     $vat_number = wpinv_sanitize_vat_number( $vat_number );
     $_country   = substr( $vat_number, 0, 2 );

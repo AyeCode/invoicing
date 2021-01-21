@@ -161,6 +161,9 @@ class GetPaid_Checkout {
 		$invoice->set_discounts( $submission->get_discounts() );
 		$invoice->set_gateway( $data['wpi-gateway'] );
 
+		$address_confirmed = $submission->get_field( 'confirm-address' );
+		$invoice->set_address_confirmed( ! empty( $address_confirmed ) );
+
 		if ( $submission->has_discount_code() ) {
             $invoice->set_discount_code( $submission->get_discount_code() );
 		}

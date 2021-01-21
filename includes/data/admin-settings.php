@@ -380,6 +380,7 @@ return array(
                     'options'     => array(
                         'no'        => __( 'Do not charge Tax', 'invoicing' ),
                         'always'    => __( 'Charge Tax', 'invoicing' ),
+                        'vat_too'   => __( 'Charge tax even if vat number is validated', 'invoicing' )
                     ),
                     'placeholder' => __( 'Select an option', 'invoicing' ),
                     'std'         => 'always',

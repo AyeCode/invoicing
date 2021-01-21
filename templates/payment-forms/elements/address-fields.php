@@ -52,6 +52,8 @@ foreach ( $fields as $address_field ) {
     // Display the country.
     if ( 'wpinv_country' == $address_field['name'] ) {
 
+        echo "<div class='form-group $wrap_class getpaid-address-field-wrapper__country'";
+
         echo aui()->select(
             array(
                 'options'     => wpinv_get_country_list(),
@@ -64,13 +66,33 @@ foreach ( $fields as $address_field ) {
                 'label_type'  => 'vertical',
                 'help_text'   => $description,
                 'class'       => 'getpaid-address-field wpinv_country',
-                'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__country",
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__country',
                 'extra_attributes' => array(
-                    'autocomplete' => "$field_type country",
+                    'autocomplete'    => "$field_type country",
+                    'data-ip-country' => getpaid_get_ip_country()
                 ),
+                'no_wrap'     => true,
             )
         );
+
+        if ( wpinv_should_validate_vat_number() ) {
+
+            echo aui()->input(
+                array(
+                    'type'       => 'checkbox',
+                    'name'       => 'confirm-address',
+                    'id'         => "shipping-toggle$uniqid",
+                    'wrap_class' => "getpaid-address-field-wrapper__address-confirm mt-1 d-none",
+                    'required'   => false,
+                    'label'      => __( 'I certify that I live in the country selected above', 'invoicing' ) . "<span class='text-danger'> *</span>",
+                    'value'      => 1,
+                    'checked'    => true,
+                )
+            );
+
+        }
+
+        echo "</div>";
 
     }
 
@@ -99,8 +121,8 @@ foreach ( $fields as $address_field ) {
         $autocomplete = '';
         $replacements = array(
             'zip'        => 'postal-code',
-            'first_name' => 'given-name',
-            'last_name'  => 'family-name',
+            'first-name' => 'given-name',
+            'last-name'  => 'family-name',
             'company'    => 'organization',
             'address'    => 'street-address',
             'phone'      => 'tel',
@@ -112,6 +134,15 @@ foreach ( $fields as $address_field ) {
             $autocomplete = array(
                 'autocomplete' => "$field_type {$replacements[ $key ]}",
             );
+        }
+
+        $append = '';
+
+        if ( 'billing' === $field_type && wpinv_should_validate_vat_number() && 'vat-number' === $key ) {
+            $valid    = esc_attr__( 'Valid', 'invoicing' );
+            $invalid  = esc_attr__( 'Invalid', 'invoicing' );
+            $validate = esc_attr__( 'Validate', 'invoicing' );
+            $append   = "<span class='btn btn-secondary getpaid-vat-number-validate' data-valid='$valid' data-invalid='$invalid' data-validate='$validate'>$validate</span>";
         }
 
         echo aui()->input(
@@ -128,7 +159,8 @@ foreach ( $fields as $address_field ) {
                 'class'       => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
                 'wrap_class'  => "$wrap_class getpaid-address-field-wrapper__$key",
                 'label_class' => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
-                'extra_attributes' => $autocomplete,
+                'extra_attributes'  => $autocomplete,
+                'input_group_right' => $append,
             )
         );
 

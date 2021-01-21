@@ -268,12 +268,29 @@ jQuery(function($) {
                 // Refresh when country changes.
                 this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_country', () => {
                     this.update_state_field( '.getpaid-billing-address-wrapper' )
+
+                    if ( this.form.find( '.getpaid-billing-address-wrapper .wpinv_country' ).val() != this.form.find( '.getpaid-billing-address-wrapper .wpinv_country' ).data( 'ipCountry' ) ) {
+                        this.form.find( '.getpaid-address-field-wrapper__address-confirm' ).removeClass( 'd-none' )
+                    } else {
+                        this.form.find( '.getpaid-address-field-wrapper__address-confirm' ).addClass( 'd-none' )
+                    }
+
                     on_field_change()
                 } );
 
                 // Refresh when state changes.
                 this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state', () => {
                     on_field_change()
+                } );
+
+                // VAT.
+                this.form.on ( 'click', '.getpaid-vat-number-validate, [name="confirm-address"]', () => {
+                    on_field_change()
+                } );
+
+                this.form.on ( 'change', '.getpaid-billing-address-wrapper .wpinv_vat_number', function () {
+                    var validator = $( this ).parent().find( '.getpaid-vat-number-validate' )
+                    validator.text( validator.data( 'validate' ) )
                 } );
 
                 // Discounts.

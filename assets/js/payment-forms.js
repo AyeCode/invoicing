@@ -204,11 +204,25 @@ jQuery(function ($) {
 				this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_country', function () {
 					_this2.update_state_field('.getpaid-billing-address-wrapper');
 
+					if (_this2.form.find('.getpaid-billing-address-wrapper .wpinv_country').val() != _this2.form.find('.getpaid-billing-address-wrapper .wpinv_country').data('ipCountry')) {
+						_this2.form.find('.getpaid-address-field-wrapper__address-confirm').removeClass('d-none');
+					} else {
+						_this2.form.find('.getpaid-address-field-wrapper__address-confirm').addClass('d-none');
+					}
+
 					on_field_change();
 				}); // Refresh when state changes.
 
 				this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_state', function () {
 					on_field_change();
+				}); // VAT.
+
+				this.form.on('click', '.getpaid-vat-number-validate, [name="confirm-address"]', function () {
+					on_field_change();
+				});
+				this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_vat_number', function () {
+					var validator = $(this).parent().find('.getpaid-vat-number-validate');
+					validator.text(validator.data('validate'));
 				}); // Discounts.
 
 				if (this.form.find('.getpaid-discount-field').length) {
@@ -243,8 +257,8 @@ jQuery(function ($) {
 				var _this3 = this;
 
 				// Prepare the submit btn.
-				this.form.data( 'initial_amt', state.initial_amt )
-                this.form.data( 'currency', state.currency )
+				this.form.data('initial_amt', state.initial_amt);
+				this.form.data('currency', state.currency);
 				var submit_btn = this.form.find('.getpaid-payment-form-submit');
 				var free_label = submit_btn.data('free').replace(/%price%/gi, state.totals.raw_total);
 				var btn_label = submit_btn.data('pay').replace(/%price%/gi, state.totals.raw_total);
@@ -351,8 +365,10 @@ jQuery(function ($) {
 				this.setup_saved_payment_tokens();
 				this.attach_events();
 				this.refresh_state(); // Hide billing email.
-				this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Handle shipping address.
-				this.form.find( '.getpaid-gateway-description:not(:has(*))' ).remove()
+
+				this.form.find('.getpaid-payment-form-element-billing_email span.d-none').closest('.col-12').addClass('d-none'); // Hide empty gateway descriptions.
+
+				this.form.find('.getpaid-gateway-description:not(:has(*))').remove(); // Handle shipping address.
 
 				var address_toggle = this.form.find('[name ="same-shipping-address"]');
 

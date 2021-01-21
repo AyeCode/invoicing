@@ -22,7 +22,6 @@ if ( ! empty( $form->invoice ) ) {
 }
 
 if ( empty( $country ) ) {
-	$country = is_user_logged_in() ? get_user_meta( get_current_user_id(), '_wpinv_country', true ) : '';
 	$country = empty( $country ) ? getpaid_get_ip_country() : $country;
 	$country = empty( $country ) ? wpinv_get_default_country() : $country;
 }
