@@ -26,34 +26,56 @@ class GetPaid_Meta_Box_Resend_Invoice {
 
         do_action( 'wpinv_metabox_resend_invoice_before', $invoice );
 
-        $email_url = esc_url(
-            add_query_arg(
-                array(
-                    'wpi_action'    => 'send_invoice',
-                    'invoice_id'    => $invoice->get_id(),
-                    'wpinv-message' => false,
-                )
-            )
-        );
-
-        $reminder_url = esc_url(
-            wp_nonce_url(
-                add_query_arg(
-                    array(
-                        'getpaid-admin-action' => 'send_invoice_reminder',
-                        'invoice_id'           => $invoice->get_id()
-                    )
+        $invoice_actions = array(
+            'resend-email' => array(
+                'url' => wp_nonce_url(
+                    add_query_arg(
+                        array(
+                            'getpaid-admin-action' => 'send_invoice',
+                            'invoice_id'           => $invoice->get_id()
+                        )
+                    ),
+                    'getpaid-nonce',
+                    'getpaid-nonce'
                 ),
-                'getpaid-nonce',
-                'getpaid-nonce'
+                'label' => __( 'Resend Invoice', 'invoicing' ),
             )
         );
 
-        ?>
-            <p class="wpi-meta-row wpi-resend-info"><?php _e( "This will send a copy of the invoice to the customer's email address.", 'invoicing' ); ?></p>
-            <p class="wpi-meta-row wpi-resend-email"><a href="<?php echo $email_url; ?>" class="button button-secondary"><?php _e( 'Resend Invoice', 'invoicing' ); ?></a></p>
-            <p class="wpi-meta-row wpi-send-reminder"><a title="<?php esc_attr_e( 'Send overdue reminder notification to customer', 'invoicing' ); ?>" href="<?php echo $reminder_url; ?>" class="button button-secondary"><?php esc_attr_e( 'Send Reminder', 'invoicing' ); ?></a></p>
-        <?php
+        if ( $invoice->needs_payment() ) {
+
+            $invoice_actions['send-reminder'] = array(
+                'url' => wp_nonce_url(
+                    add_query_arg(
+                        array(
+                            'getpaid-admin-action' => 'send_invoice_reminder',
+                            'invoice_id'           => $invoice->get_id()
+                        )
+                    ),
+                    'getpaid-nonce',
+                    'getpaid-nonce'
+                ),
+                'label' => __( 'Send Reminder', 'invoicing' ),
+            );
+
+        }
+
+        $invoice_actions = apply_filters( 'getpaid_edit_invoice_actions', $invoice_actions, $invoice );
+
+        foreach ( $invoice_actions as $key => $action ) {
+
+            if ( 'resend-email' === $key ) {
+                echo wpautop( __( "This will send a copy of the invoice to the customer's email address.", 'invoicing' ) );
+            }
+
+            printf(
+                '<p class="wpi-meta-row wpi-%s"><a href="%s" class="button button-secondary">%s</a>',
+                esc_attr( $key ),
+                esc_url( $action['url'] ),
+                sanitize_text_field( $action['label'] )
+            );
+
+        }
 
         do_action( 'wpinv_metabox_resend_invoice_after', $invoice );
 

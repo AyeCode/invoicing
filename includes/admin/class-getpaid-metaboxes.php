@@ -108,7 +108,7 @@ class GetPaid_Metaboxes {
 			$invoice = new WPInv_Invoice( $post );
 
 			// Resend invoice.
-			if ( ! $invoice->is_draft() && ! $invoice->is_paid() ) {
+			if ( ! $invoice->is_draft() ) {
 
 				add_meta_box(
 					'wpinv-mb-resend-invoice',
