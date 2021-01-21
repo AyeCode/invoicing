@@ -204,7 +204,7 @@ function getpaid_filter_userswp_account_tabs( $tabs ) {
 
     }
 
-    return array_merge( $new_tabs, $tabs );
+    return array_merge( $tabs, $new_tabs );
 }
 add_filter( 'uwp_account_available_tabs', 'getpaid_filter_userswp_account_tabs' );
 
