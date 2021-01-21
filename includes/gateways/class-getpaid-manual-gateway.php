@@ -32,15 +32,15 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	 * @var int
 	 */
 	public $order = 11;
-    
+
     /**
 	 * Class constructor.
 	 */
 	public function __construct() {
         parent::__construct();
 
-        $this->title        = __( 'Manual Payment', 'invoicing' );
-        $this->method_title = __( 'Manual Payment', 'invoicing' );
+        $this->title        = __( 'Test Gateway', 'invoicing' );
+        $this->method_title = __( 'Test Gateway', 'invoicing' );
 
         add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
     }

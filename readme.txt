@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Authorize.NET using the last name as the customer's address - FIXED
 * Resend invoice button not working - FIXED
 * Send invoice reminder button not working - FIXED
+* Manual gateway renamed to "Test Gateway" - CHANGED
 
 = 2.0.2 =
 * Default pages not created for new installs - FIXED
