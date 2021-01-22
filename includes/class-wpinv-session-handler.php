@@ -267,7 +267,13 @@ class WPInv_Session_Handler extends WPInv_Session {
 	 * @return string
 	 */
 	public function nonce_user_logged_out( $uid ) {
-		return $this->has_session() && $this->_customer_id ? $this->_customer_id : $uid;
+
+		// Check if one of our nonces.
+		if ( substr( $uid, 0, 5 ) === 'wpinv' || substr( $uid, 0, 7 ) === 'getpaid' ) {
+			return $this->has_session() && $this->_customer_id ? $this->_customer_id : $uid;
+		}
+
+		return $uid;
 	}
 
 	/**

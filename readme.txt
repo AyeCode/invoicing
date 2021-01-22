@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.0.4 =
 * Tool to create missing database tables - ADDED
 * Tool to re-copy missing invoices - ADDED
+* Conflict with youzer plugin - FIXED
 
 = 2.0.3 =
 * Authorize.NET using the last name as the customer's address - FIXED
