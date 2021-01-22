@@ -3449,22 +3449,68 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float The recalculated tax
 	 */
 	public function recalculate_total_tax() {
-        $taxes     = $this->get_taxes();
+
+		// Maybe disable taxes.
+		if ( $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->country )  ) {
+
+			$this->totals['tax'] = array(
+				'initial'   => 0,
+				'recurring' => 0,
+			);
+
+			$this->set_taxes( array() );
+			$current = 0;
+		} else {
+
+			$item_taxes = array();
+
+			foreach ( $this->get_items() as $item ) {
+				$rates    = getpaid_get_item_tax_rates( $item, $this->get_country(), $this->get_state() );
+				$rates    = getpaid_filter_item_tax_rates( $item, $rates );
+				$taxes    = getpaid_calculate_item_taxes( $item->get_sub_total(), $rates );
+				$r_taxes  = getpaid_calculate_item_taxes( $item->get_recurring_sub_total(), $rates );
+
+				foreach ( $taxes as $name => $amount ) {
+					$recurring = isset( $r_taxes[ $name ] ) ? $r_taxes[ $name ] : 0;
+					$tax       = getpaid_prepare_item_tax( $item, $name, $amount, $recurring );
+		
+					if ( ! isset( $item_taxes[ $name ] ) ) {
+						$item_taxes[ $name ] = $tax;
+						continue;
+					}
+
+					$item_taxes[ $name ]['initial_tax']   += $tax['initial_tax'];
+					$item_taxes[ $name ]['recurring_tax'] += $tax['recurring_tax'];
+
+				}
+
+			}
+
+			$item_taxes = array_replace( $this->get_taxes(), $item_taxes );
+			$this->set_taxes( $item_taxes );
+
+			$initial_tax   = array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) );
+			$recurring_tax = array_sum( wp_list_pluck( $item_taxes, 'recurring_tax' ) );
+
+			$current = $this->is_renewal() ? $initial_tax : $recurring_tax;
+
+			$this->totals['tax'] = array(
+				'initial'   => $initial_tax,
+				'recurring' => $recurring_tax,
+			);
+
+		}
+
+        /*$taxes     = $this->get_taxes();
 		$tax       = 0;
 		$recurring = 0;
 
         foreach ( $taxes as $data ) {
 			$tax       += wpinv_sanitize_amount( $data['initial_tax'] );
 			$recurring += wpinv_sanitize_amount( $data['recurring_tax'] );
-		}
+		}*/
 
-		$current = $this->is_renewal() ? $recurring : $tax;
 		$this->set_total_tax( $current );
-
-		$this->totals['tax'] = array(
-			'initial'   => $tax,
-			'recurring' => $recurring,
-		);
 
 		return $current;
 

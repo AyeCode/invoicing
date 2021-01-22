@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Tool to re-copy missing invoices - ADDED
 * Conflict with youzer plugin - FIXED
 * Make it possible to translate the default payment form using WPML - ADDED
+* Invoices edited via admin do not show taxes in the admin unless paid for - ADDED
 
 = 2.0.3 =
 * Authorize.NET using the last name as the customer's address - FIXED
