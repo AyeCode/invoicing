@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.0.4 =
+* Tool to create missing database tables - ADDED
+
 = 2.0.3 =
 * Authorize.NET using the last name as the customer's address - FIXED
 * Resend invoice button not working - FIXED

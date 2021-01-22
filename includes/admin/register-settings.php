@@ -987,6 +987,23 @@ function wpinv_tools_callback($args) {
 					?>" class="button button-primary"><?php _e('Run', 'geodirectory');?></a>
                 </td>
             </tr>
+			<tr>
+                <td><?php _e( 'Create Database Tables', 'invoicing' );?></td>
+                <td>
+                    <small><?php _e( 'Run this tool to create any missing database tables.', 'invoicing' ); ?></small>
+                </td>
+                <td>
+					<a href="<?php
+						echo esc_url(
+							wp_nonce_url(
+								add_query_arg( 'getpaid-admin-action', 'create_missing_tables' ),
+								'getpaid-nonce',
+								'getpaid-nonce'
+							)
+						);
+					?>" class="button button-primary"><?php _e('Run', 'geodirectory');?></a>
+                </td>
+            </tr>
 			<?php do_action( 'wpinv_tools_row' ); ?>
         </tbody>
     </table>

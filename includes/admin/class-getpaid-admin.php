@@ -65,6 +65,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_pages', array( $this, 'admin_create_missing_pages' ) );
+		add_action( 'getpaid_authenticated_admin_action_create_missing_tables', array( $this, 'admin_create_missing_tables' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
@@ -436,6 +437,46 @@ class GetPaid_Admin {
 		exit;
 	}
 
+	/**
+     * Creates an missing admin tables.
+	 * 
+     */
+    public function admin_create_missing_tables() {
+		global $wpdb;
+		$installer = new GetPaid_Installer();
+
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}wpinv_subscriptions'" ) != $wpdb->prefix . 'wpinv_subscriptions' ) {
+			$installer->create_subscriptions_table();
+
+			if ( $wpdb->last_error !== '' ) {
+				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
+			}
+		}
+
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoices'" ) != $wpdb->prefix . 'getpaid_invoices' ) {
+			$installer->create_invoices_table();
+
+			if ( $wpdb->last_error !== '' ) {
+				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
+			}
+		}
+
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoice_items'" ) != $wpdb->prefix . 'getpaid_invoice_items' ) {
+			$installer->create_invoice_items_table();
+
+			if ( $wpdb->last_error !== '' ) {
+				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
+			}
+		}
+
+		if ( ! $this->has_notices() ) {
+			$this->show_success( __( 'Your GetPaid tables have been updated.', 'invoicing' ) );
+		}
+
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+		exit;
+	}
+
     /**
 	 * Returns an array of admin notices.
 	 *
@@ -445,6 +486,16 @@ class GetPaid_Admin {
 	public function get_notices() {
 		$notices = get_option( 'wpinv_admin_notices' );
         return is_array( $notices ) ? $notices : array();
+	}
+
+	/**
+	 * Checks if we have any admin notices.
+	 *
+	 * @since       2.0.4
+     * @return array
+	 */
+	public function has_notices() {
+		return count( $this->get_notices() ) > 0;
 	}
 
 	/**
