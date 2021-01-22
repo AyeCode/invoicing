@@ -350,6 +350,8 @@ function wpinv_get_default_payment_form() {
         update_option( 'wpinv_default_payment_form', $form );
     }
 
+    // WPML support.
+    $form = apply_filters( 'wpml_object_id', $form, 'wpi_payment_form', TRUE  );
     return $form;
 }
 
