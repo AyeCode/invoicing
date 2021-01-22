@@ -62,6 +62,9 @@ class GetPaid_Installer {
 		$this->create_subscriptions_table();
 		$this->create_invoices_table();
 		$this->create_invoice_items_table();
+
+		// Save default tax rates.
+		update_option( 'wpinv_tax_rates', wpinv_get_data( 'tax-rates' ) );
 	}
 
 	/**
