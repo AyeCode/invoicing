@@ -984,7 +984,7 @@ function wpinv_tools_callback($args) {
 								'getpaid-nonce'
 							)
 						);
-					?>" class="button button-primary"><?php _e('Run', 'geodirectory');?></a>
+					?>" class="button button-primary"><?php _e('Run', 'invoicing');?></a>
                 </td>
             </tr>
 			<tr>
@@ -1001,7 +1001,24 @@ function wpinv_tools_callback($args) {
 								'getpaid-nonce'
 							)
 						);
-					?>" class="button button-primary"><?php _e('Run', 'geodirectory');?></a>
+					?>" class="button button-primary"><?php _e('Run', 'invoicing');?></a>
+                </td>
+            </tr>
+			<tr>
+                <td><?php _e( 'Migrate old invoices', 'invoicing' );?></td>
+                <td>
+                    <small><?php _e( 'If your old invoices were not migrated after updating from Invoicing to GetPaid, you can use this tool to migrate them.', 'invoicing' ); ?></small>
+                </td>
+                <td>
+					<a href="<?php
+						echo esc_url(
+							wp_nonce_url(
+								add_query_arg( 'getpaid-admin-action', 'migrate_old_invoices' ),
+								'getpaid-nonce',
+								'getpaid-nonce'
+							)
+						);
+					?>" class="button button-primary"><?php _e('Run', 'invoicing');?></a>
                 </td>
             </tr>
 			<?php do_action( 'wpinv_tools_row' ); ?>

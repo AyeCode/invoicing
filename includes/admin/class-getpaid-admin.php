@@ -66,6 +66,7 @@ class GetPaid_Admin {
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_pages', array( $this, 'admin_create_missing_pages' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_tables', array( $this, 'admin_create_missing_tables' ) );
+		add_action( 'getpaid_authenticated_admin_action_migrate_old_invoices', array( $this, 'admin_migrate_old_invoices' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
@@ -475,6 +476,25 @@ class GetPaid_Admin {
 
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
 		exit;
+	}
+
+	/**
+     * Migrates old invoices to the new database tables.
+	 * 
+     */
+    public function admin_migrate_old_invoices() {
+
+		// Migrate the invoices.
+		$installer = new GetPaid_Installer();
+		$installer->migrate_old_invoices();
+
+		// Show an admin message.
+		$this->show_success( __( 'Your invoices have been migrated.', 'invoicing' ) );
+
+		// Redirect the admin.
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+		exit;
+
 	}
 
     /**
