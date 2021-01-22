@@ -3492,7 +3492,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$initial_tax   = array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) );
 			$recurring_tax = array_sum( wp_list_pluck( $item_taxes, 'recurring_tax' ) );
 
-			$current = $this->is_renewal() ? $initial_tax : $recurring_tax;
+			$current = $this->is_renewal() ? $recurring_tax : $initial_tax;
 
 			$this->totals['tax'] = array(
 				'initial'   => $initial_tax,
@@ -3500,15 +3500,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			);
 
 		}
-
-        /*$taxes     = $this->get_taxes();
-		$tax       = 0;
-		$recurring = 0;
-
-        foreach ( $taxes as $data ) {
-			$tax       += wpinv_sanitize_amount( $data['initial_tax'] );
-			$recurring += wpinv_sanitize_amount( $data['recurring_tax'] );
-		}*/
 
 		$this->set_total_tax( $current );
 
