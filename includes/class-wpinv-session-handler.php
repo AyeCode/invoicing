@@ -69,7 +69,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 		$this->init_session_cookie();
 
 		if ( ! is_user_logged_in() ) {
-			add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
+			add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ), 10, 2 );
 		}
 	}
 
