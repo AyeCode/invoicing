@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-21 14:56+0000\n"
+"POT-Creation-Date: 2021-01-22 17:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -99,7 +99,7 @@ msgstr ""
 msgid "%s day"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:186
+#: includes/admin/class-getpaid-admin.php:188
 #, php-format
 msgid "%s Description"
 msgstr ""
@@ -616,7 +616,7 @@ msgid ""
 "{name} for {invoice_total} {invoice_currency}.</p>"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:331
+#: includes/admin/class-getpaid-admin.php:333
 #, php-format
 msgid ""
 "<strong>Have a license?</strong> Forget about entering license keys or "
@@ -1442,7 +1442,7 @@ msgstr ""
 msgid "Are you sure you want to delete this discount?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:168
+#: includes/admin/class-getpaid-admin.php:170
 msgid "Are you sure you want to delete this subscription?"
 msgstr ""
 
@@ -1452,11 +1452,11 @@ msgid ""
 "that will be automatically marked as paid?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:162
+#: includes/admin/class-getpaid-admin.php:164
 msgid "Are you sure you wish to delete this tax rate?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:166
+#: includes/admin/class-getpaid-admin.php:168
 msgid "Are you sure?"
 msgstr ""
 
@@ -2544,7 +2544,7 @@ msgid "Canadian Dollar"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:703
-#: includes/admin/class-getpaid-admin.php:170
+#: includes/admin/class-getpaid-admin.php:172
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:89
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:259
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:299
@@ -3081,7 +3081,7 @@ msgstr ""
 msgid "Congolese Franc"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:332
+#: includes/admin/class-getpaid-admin.php:334
 msgid "Connect Site"
 msgstr ""
 
@@ -3089,7 +3089,7 @@ msgstr ""
 msgid "Connecticut"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:333
+#: includes/admin/class-getpaid-admin.php:335
 msgid "Connecting..."
 msgstr ""
 
@@ -3150,11 +3150,11 @@ msgstr ""
 msgid "Could not establish a connection to the server."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:408
+#: includes/admin/class-getpaid-admin.php:410
 msgid "Could not sent payment reminder to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:390
+#: includes/admin/class-getpaid-admin.php:392
 msgid "Could not sent the invoice to the customer"
 msgstr ""
 
@@ -3189,6 +3189,10 @@ msgstr ""
 msgid ""
 "Create a new webhook using this URL as the endpoint URL and set it to "
 "receive all payment events."
+msgstr ""
+
+#: includes/admin/register-settings.php:991
+msgid "Create Database Tables"
 msgstr ""
 
 #: includes/admin/html-admin-page-addons.php:121
@@ -3618,7 +3622,7 @@ msgstr ""
 msgid "Discount Codes"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:173
+#: includes/admin/class-getpaid-admin.php:175
 msgid "Discount Description"
 msgstr ""
 
@@ -3916,7 +3920,7 @@ msgstr ""
 
 #: includes/class-getpaid-post-types.php:130
 #: includes/class-getpaid-post-types.php:186 includes/admin/admin-pages.php:46
-#: includes/admin/class-getpaid-admin.php:169
+#: includes/admin/class-getpaid-admin.php:171
 #: includes/admin/class-getpaid-post-types-admin.php:128
 msgid "Edit"
 msgstr ""
@@ -4331,7 +4335,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3640
+#: includes/class-wpinv-invoice.php:3677
 msgid "Error during status transition."
 msgstr ""
 
@@ -4644,7 +4648,7 @@ msgstr ""
 msgid "Fijian Dollar"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:164
+#: includes/admin/class-getpaid-admin.php:166
 msgid ""
 "Fill the user's billing information? This will remove any currently entered "
 "billing information"
@@ -4901,7 +4905,7 @@ msgstr ""
 msgid "General Settings"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:558
+#: includes/admin/class-getpaid-admin.php:629
 msgid "Generate Pages"
 msgstr ""
 
@@ -4975,7 +4979,7 @@ msgstr ""
 msgid "GetPaid > Subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:434
+#: includes/admin/class-getpaid-admin.php:436
 msgid "GetPaid pages updated."
 msgstr ""
 
@@ -5595,11 +5599,17 @@ msgid ""
 msgstr ""
 
 #. %s: five stars
-#: includes/admin/class-getpaid-admin.php:226
+#: includes/admin/class-getpaid-admin.php:228
 #, php-format
 msgid ""
 "If you like <strong>GetPaid</strong>, please leave us a %s rating. A huge "
 "thanks in advance!"
+msgstr ""
+
+#: includes/admin/register-settings.php:1010
+msgid ""
+"If your old invoices were not migrated after updating from Invoicing to "
+"GetPaid, you can use this tool to migrate them."
 msgstr ""
 
 #: includes/gateways/class-getpaid-bank-transfer-gateway.php:214
@@ -5889,7 +5899,7 @@ msgstr ""
 msgid "Invoice Date"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:172
+#: includes/admin/class-getpaid-admin.php:174
 msgid "Invoice Description"
 msgstr ""
 
@@ -6094,7 +6104,7 @@ msgstr ""
 msgid "Invoice totals."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:388
+#: includes/admin/class-getpaid-admin.php:390
 msgid "Invoice was successfully sent to the customer"
 msgstr ""
 
@@ -6285,7 +6295,7 @@ msgstr ""
 msgid "Item #%s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:171
+#: includes/admin/class-getpaid-admin.php:173
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:293
 msgid "Item Description"
 msgstr ""
@@ -8044,6 +8054,10 @@ msgstr ""
 msgid "Migori"
 msgstr ""
 
+#: includes/admin/register-settings.php:1008
+msgid "Migrate old invoices"
+msgstr ""
+
 #: includes/data/states.php:588
 msgid "Milano"
 msgstr ""
@@ -9282,52 +9296,52 @@ msgstr ""
 msgid "Page Settings"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:143
+#: includes/admin/class-getpaid-installer.php:146
 msgctxt "Page slug"
 msgid "gp-checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:155
+#: includes/admin/class-getpaid-installer.php:158
 msgctxt "Page slug"
 msgid "gp-invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:167
+#: includes/admin/class-getpaid-installer.php:170
 msgctxt "Page slug"
 msgid "gp-receipt"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:187
+#: includes/admin/class-getpaid-installer.php:190
 msgctxt "Page slug"
 msgid "gp-subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:179
+#: includes/admin/class-getpaid-installer.php:182
 msgctxt "Page slug"
 msgid "gp-transaction-failed"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:144
+#: includes/admin/class-getpaid-installer.php:147
 msgctxt "Page title"
 msgid "Checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:156
+#: includes/admin/class-getpaid-installer.php:159
 msgctxt "Page title"
 msgid "My Invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:188
+#: includes/admin/class-getpaid-installer.php:191
 msgctxt "Page title"
 msgid "My Subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:168
+#: includes/admin/class-getpaid-installer.php:171
 msgctxt "Page title"
 msgid "Payment Confirmation"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:180
+#: includes/admin/class-getpaid-installer.php:183
 msgctxt "Page title"
 msgid "Transaction Failed"
 msgstr ""
@@ -9348,7 +9362,7 @@ msgstr ""
 msgid "Paid On"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3747
+#: includes/class-wpinv-invoice.php:3784
 #: includes/admin/class-getpaid-post-types-admin.php:229
 #, php-format
 msgid "Paid via %s"
@@ -9681,7 +9695,7 @@ msgstr ""
 msgid "Payment reminder for your invoice"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:406
+#: includes/admin/class-getpaid-admin.php:408
 msgid "Payment reminder was successfully sent to the customer"
 msgstr ""
 
@@ -9935,7 +9949,7 @@ msgstr ""
 msgid "Plateau"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:330
+#: includes/admin/class-getpaid-admin.php:332
 msgid "Please confirm you wish to connect your site?"
 msgstr ""
 
@@ -10373,7 +10387,7 @@ msgstr ""
 msgid "Recalculate Totals"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:165
+#: includes/admin/class-getpaid-admin.php:167
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
@@ -10509,7 +10523,7 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3736
+#: includes/class-wpinv-invoice.php:3773
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -10684,6 +10698,16 @@ msgstr ""
 
 #: includes/data/states.php:1314
 msgid "Rukwa"
+msgstr ""
+
+#: includes/admin/register-settings.php:987
+#: includes/admin/register-settings.php:1004
+#: includes/admin/register-settings.php:1021
+msgid "Run"
+msgstr ""
+
+#: includes/admin/register-settings.php:993
+msgid "Run this tool to create any missing database tables."
 msgstr ""
 
 #: includes/data/states.php:158
@@ -10958,12 +10982,12 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:181
+#: includes/admin/class-getpaid-admin.php:183
 #, php-format
 msgid "Save %s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:159
+#: includes/admin/class-getpaid-admin.php:161
 msgid "Save Invoice"
 msgstr ""
 
@@ -11008,7 +11032,7 @@ msgstr ""
 msgid "Search Payment Forms"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:174
+#: includes/admin/class-getpaid-admin.php:176
 msgid "Searching"
 msgstr ""
 
@@ -11494,7 +11518,7 @@ msgstr ""
 msgid "Somalia"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:557
+#: includes/admin/class-getpaid-admin.php:628
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
 "button below to generate the missing pages."
@@ -11504,7 +11528,7 @@ msgstr ""
 msgid "Something went wrong!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:335
+#: includes/admin/class-getpaid-admin.php:337
 msgid "Something went wrong, please refresh and try again."
 msgstr ""
 
@@ -11735,13 +11759,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3604
+#: includes/class-wpinv-invoice.php:3641
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3633
+#: includes/class-wpinv-invoice.php:3670
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -12262,7 +12286,7 @@ msgid "Thakurgaon"
 msgstr ""
 
 #. %s: GetPaid
-#: includes/admin/class-getpaid-admin.php:234
+#: includes/admin/class-getpaid-admin.php:236
 #, php-format
 msgid "Thank you for using %s!"
 msgstr ""
@@ -12478,7 +12502,7 @@ msgstr ""
 msgid "The first renewal date in case the item was to be bought today."
 msgstr ""
 
-#: includes/admin/register-settings.php:1053
+#: includes/admin/register-settings.php:1087
 msgid ""
 "The following wildcards can be used in email subjects, heading and content:"
 "<br>\n"
@@ -12987,7 +13011,7 @@ msgstr ""
 msgid "This is where you can add new invoice items."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:167
+#: includes/admin/class-getpaid-admin.php:169
 msgid ""
 "This item is in use! Before delete this item, you need to delete all the "
 "invoice(s) using this item."
@@ -13032,7 +13056,7 @@ msgid ""
 "input field to the form."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:334
+#: includes/admin/class-getpaid-admin.php:336
 msgid "This service will only work with a live domain, not a localhost."
 msgstr ""
 
@@ -14295,7 +14319,7 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
-#: includes/admin/register-settings.php:1050
+#: includes/admin/register-settings.php:1084
 msgid "Wildcards For Emails"
 msgstr ""
 
@@ -14311,7 +14335,7 @@ msgstr ""
 msgid "Worldpay - Credit Card / Debit Card"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:329
+#: includes/admin/class-getpaid-admin.php:331
 msgid "WP Invoicing - an AyeCode product!"
 msgstr ""
 
@@ -14470,6 +14494,16 @@ msgstr ""
 msgid "Your changes have been saved"
 msgstr ""
 
+#: includes/admin/class-getpaid-admin.php:474
+msgid "Your GetPaid tables have been updated."
+msgstr ""
+
+#: includes/admin/class-getpaid-admin.php:453
+#: includes/admin/class-getpaid-admin.php:461
+#: includes/admin/class-getpaid-admin.php:469
+msgid "Your GetPaid tables have been updated:"
+msgstr ""
+
 #: includes/gateways/class-getpaid-worldpay-gateway.php:326
 msgid "Your installation id. Ex: 211616"
 msgstr ""
@@ -14484,6 +14518,10 @@ msgstr ""
 
 #: includes/data/email-settings.php:455
 msgid "Your invoice {invoice_number} details"
+msgstr ""
+
+#: includes/admin/class-getpaid-admin.php:492
+msgid "Your invoices have been migrated."
 msgstr ""
 
 #: includes/data/payment-form-elements.php:391
@@ -14505,7 +14543,7 @@ msgid ""
 "other purposes described in our %s."
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:181
+#: includes/admin/class-getpaid-installer.php:184
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
