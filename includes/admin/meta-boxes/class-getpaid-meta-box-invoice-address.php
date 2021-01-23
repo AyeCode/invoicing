@@ -229,7 +229,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'name'        => 'wpinv_state',
                                             'label'       => __( 'State', 'invoicing' ),
                                             'label_type'  => 'vertical',
-                                            'placeholder' => 'Liège',
+                                            'placeholder' => __( 'Select a state', 'invoicing' ),
                                             'class'       => 'form-control-sm',
                                             'value'       => $invoice->get_state( 'edit' ),
                                         )
