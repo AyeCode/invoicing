@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: GetPaid 2.0.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-15 07:25+0000\n"
-"PO-Revision-Date: 2021-01-22 17:22+0000\n"
+"PO-Revision-Date: 2021-01-24 09:58+0000\n"
 "Last-Translator: Brian Mutende <mutendebrian@gmail.com>\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -31,6 +31,11 @@ msgstr ""
 #: includes/class-getpaid-invoice-notification-emails.php:180
 #: includes/class-getpaid-subscription-notification-emails.php:181
 msgid " - ADMIN BCC COPY"
+msgstr ""
+
+#: includes/payments/class-getpaid-payment-form-submission-refresh-prices.php:98
+#, php-format
+msgid "%1$s (renews at %2$s / %3$s)"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:1117

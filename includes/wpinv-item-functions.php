@@ -424,9 +424,9 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
 
                 // translators: $1: is the trial period, $2: is the recurring price, $3: is the susbcription period
                 _x( 'Free for %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year)', 'invoicing' ),
-                $trial_period,
+                "<span class='getpaid-item-trial-period'>$trial_period</span>",
                 "<span class='$recurring_class'>$recurring_price</span>",
-                $period
+                "<span class='getpaid-item-recurring-period'>$period</span>"
 
             );
 
@@ -437,9 +437,9 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
             // translators: $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period
             _x( '%1$s for %2$s then %3$s / %4$s', 'Item subscription amount. (e.g.: $7 for 1 month then $120 / year)', 'invoicing' ),
             "<span class='$initial_class'>$initial_price</span>",
-            $trial_period,
+            "<span class='getpaid-item-trial-period'>$trial_period</span>",
             "<span class='$recurring_class'>$recurring_price</span>",
-            $period
+            "<span class='getpaid-item-recurring-period'>$period</span>"
 
         );
 
@@ -452,7 +452,7 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
             // translators: $1: is the recurring price, $2: is the susbcription period
             _x( '%1$s / %2$s', 'Item subscription amount. (e.g.: $120 / year)', 'invoicing' ),
             "<span class='$recurring_class'>$recurring_price</span>",
-            $period
+            "<span class='getpaid-item-recurring-period'>$period</span>"
 
         );
 
@@ -464,7 +464,7 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
         _x( 'Initial payment of %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)', 'invoicing' ),
         "<span class='$initial_class'>$initial_price</span>",
         "<span class='$recurring_class'>$recurring_price</span>",
-        $period
+        "<span class='getpaid-item-recurring-period'>$period</span>"
 
     );
 

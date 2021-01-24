@@ -95,7 +95,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 				$payable = "$payable / $period";
 			} else {
 				$payable = sprintf(
-					__( '%1$s (renews at %2$s / %3$s)'),
+					__( '%1$s (renews at %2$s / %3$s)', 'invoicing' ),
 					$submission->format_amount( $submission->get_total() ),
 					$submission->format_amount( $submission->get_recurring_total() ),
 					$period

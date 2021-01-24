@@ -76,7 +76,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 							case 'recurring_amount':
 								$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 								$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
-								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / $frequency" );
+								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / <span class='getpaid-item-recurring-period'>$frequency</span>" );
 								break;
 
 							case 'item':

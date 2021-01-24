@@ -42,7 +42,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 			case 'amount':
 				$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 				$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
-				echo wp_kses_post( "<span>$amount</span> / $frequency" );
+				echo wp_kses_post( "<span>$amount</span> / <span class='getpaid-item-recurring-period'>$frequency</span>" );
 				break;
 
 		endswitch;
