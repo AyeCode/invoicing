@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.0.7 =
+* Incompatibility issues with UX Builder from Flatsome - FIXED
+
 = 2.0.6 =
 * Tool to create missing database tables - ADDED
 * Tool to re-copy missing invoices - ADDED

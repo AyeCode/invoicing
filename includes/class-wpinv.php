@@ -435,6 +435,13 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function register_widgets() {
+
+		// Currently, UX Builder does not work particulaly well with SuperDuper.
+		// So we disable our widgets when editing a page with UX Builder.
+		if ( function_exists( 'ux_builder_is_active' ) && ux_builder_is_active() ) {
+			return;
+		}
+
 		$widgets = apply_filters(
 			'getpaid_widget_classes',
 			array(
