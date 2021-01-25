@@ -2,7 +2,7 @@
 /**
  * Displays left side of the invoice title.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/invoice/title-left.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/invoice/invoice-logo.php.
  *
  * @version 1.0.19
  */

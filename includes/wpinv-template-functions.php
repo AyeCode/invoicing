@@ -126,7 +126,7 @@ function wpinv_get_templates_url() {
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
  */
 function wpinv_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
-    return getpaid_template()->display_template( $template_name, $args, $template_path, $default_path );
+    getpaid_template()->display_template( $template_name, $args, $template_path, $default_path );
 }
 
 /**

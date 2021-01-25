@@ -133,8 +133,7 @@ class GetPaid_Template {
 
         // Is it overidden?
         $template = locate_template(
-            array( trailingslashit( $template_path ) . $template_name ),
-            array( 'wpinv-' . $template_name )
+            array( trailingslashit( $template_path ) . $template_name, 'wpinv-' . $template_name )
         );
 
         // If not, load the default template.
@@ -181,7 +180,7 @@ class GetPaid_Template {
 	public function display_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
 
         // Locate the template.
-        $located = wpinv_locate_template( $template_name, $template_path, $default_path );
+        $located = $this->locate_template( $template_name, $template_path, $default_path );
 
         // Abort if the file does not exist.
         if ( ! file_exists( $located ) ) {
