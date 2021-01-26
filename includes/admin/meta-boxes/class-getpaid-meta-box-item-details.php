@@ -259,7 +259,7 @@ class GetPaid_Meta_Box_Item_Details {
                                             'name'             => 'wpinv_trial_period',
                                             'label'            => __( 'Trial Period', 'invoicing' ),
                                             'placeholder'      => __( 'Trial Period', 'invoicing' ),
-                                            'value'            => $item->get_recurring_period( 'edit' ),
+                                            'value'            => $item->get_trial_period( 'edit' ),
                                             'select2'          => true,
                                             'data-allow-clear' => 'false',
                                             'no_wrap'          => true,
