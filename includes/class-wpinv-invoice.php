@@ -3451,7 +3451,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function recalculate_total_tax() {
 
 		// Maybe disable taxes.
-		if ( $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() )  ) {
+		if ( ! wpinv_use_taxes() || $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() )  ) {
 
 			$this->totals['tax'] = array(
 				'initial'   => 0,

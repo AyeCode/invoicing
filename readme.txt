@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.0.7 =
 * Incompatibility issues with UX Builder from Flatsome - FIXED
 * Template overides loaded twice - FIXED
+* Taxes some times applied even if disabled - FIXED
 
 = 2.0.6 =
 * Tool to create missing database tables - ADDED

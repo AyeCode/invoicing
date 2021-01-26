@@ -631,7 +631,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// we want to modify the query for our items.
-		if ( 'wpi_item' != $query->query['post_type'] ){
+		if ( empty( $query->query['post_type'] ) || 'wpi_item' != $query->query['post_type'] ){
 			return $query;
 		}
 
