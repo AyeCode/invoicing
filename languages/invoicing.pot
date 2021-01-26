@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 09:57+0000\n"
+"POT-Creation-Date: 2021-01-26 08:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -2989,7 +2989,7 @@ msgstr ""
 msgid "Click on any element to edit or delete it."
 msgstr ""
 
-#: includes/class-wpinv.php:537
+#: includes/class-wpinv.php:544
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:231
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:272
 msgid "Close"
