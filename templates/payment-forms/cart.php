@@ -27,15 +27,18 @@ do_action( 'getpaid_before_payment_form_cart', $form );
 
 ?>
     <div class="getpaid-payment-form-items-cart border form-group">
-        <div class="getpaid-payment-form-items-cart-header border-bottom py-2 px-3 font-weight-bold bg-light">
+
+
+        <div class="getpaid-payment-form-items-cart-header font-weight-bold bg-light border-bottom py-2 px-3">
             <div class="form-row">
-            <?php foreach ( $columns as $key => $label ) : ?>
-                <div class="<?php echo 'name' == $key ? 'col-12 col-sm-5' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>">
-                    <?php echo sanitize_text_field( $label ); ?>
-                </div>
-            <?php endforeach; ?>
+                <?php foreach ( $columns as $key => $label ) : ?>
+                    <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>">
+                        <?php echo sanitize_text_field( $label ); ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
+
         <?php
 
             // Display the item totals.

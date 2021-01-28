@@ -25,13 +25,13 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                 <div class="getpaid-invoice-line-totals-col <?php echo sanitize_html_class( $key ); ?>">
 
-                    <div class="row">
+                    <div class="form-row">
 
                         <div class="col-8 getpaid-invoice-line-totals-label">
                             <?php echo sanitize_text_field( $label ); ?>
                         </div>
 
-                        <div class="col-2 getpaid-invoice-line-totals-value">
+                        <div class="col-4 getpaid-invoice-line-totals-value pl-0">
 
                             <?php
 

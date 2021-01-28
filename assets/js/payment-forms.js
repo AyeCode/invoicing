@@ -96,6 +96,19 @@ jQuery(function ($) {
 							this.form.find('.getpaid-form-cart-totals-total-' + total).html(state.totals[total]);
 						}
 					}
+				} // Hide/Display fees discount.
+
+
+				if (!Array.isArray(state.fees)) {
+					this.form.find('.getpaid-form-cart-totals-fees').removeClass('d-none');
+				} else {
+					this.form.find('.getpaid-form-cart-totals-fees').addClass('d-none');
+				}
+
+				if (!Array.isArray(state.discounts)) {
+					this.form.find('.getpaid-form-cart-totals-discount').removeClass('d-none');
+				} else {
+					this.form.find('.getpaid-form-cart-totals-discount').addClass('d-none');
 				} // Process item sub-totals.
 
 

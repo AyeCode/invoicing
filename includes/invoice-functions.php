@@ -990,6 +990,14 @@ function getpaid_invoice_totals_rows( $invoice ) {
         unset( $totals['tax'] );
     }
 
+    if ( 0 == $invoice->get_total_fees() && isset( $totals['fee'] ) ) {
+        unset( $totals['fee'] );
+    }
+
+    if ( 0 == $invoice->get_total_discount() && isset( $totals['discount'] ) ) {
+        unset( $totals['discount'] );
+    }
+
     return $totals;
 }
 

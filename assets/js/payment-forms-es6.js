@@ -130,6 +130,19 @@ jQuery(function($) {
 
                 }
 
+                // Hide/Display fees discount.
+                if ( ! Array.isArray( state.fees ) ) {
+                    this.form.find( '.getpaid-form-cart-totals-fees' ).removeClass( 'd-none' )
+                } else {
+                    this.form.find( '.getpaid-form-cart-totals-fees' ).addClass( 'd-none' )
+                }
+
+                if ( ! Array.isArray( state.discounts ) ) {
+                    this.form.find( '.getpaid-form-cart-totals-discount' ).removeClass( 'd-none' )
+                } else {
+                    this.form.find( '.getpaid-form-cart-totals-discount' ).addClass( 'd-none' )
+                }
+
                 // Process item sub-totals.
                 if ( state.items ) {
 
