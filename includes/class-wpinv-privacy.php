@@ -11,13 +11,19 @@ defined( 'ABSPATH' ) || exit;
 class WPInv_Privacy extends WPInv_Abstract_Privacy {
 
     /**
+     * This is the name of this object type.
+     *
+     * @var string
+     */
+    public $name = 'GetPaid';
+
+    /**
      * Init - hook into events.
      */
     public function __construct() {
-        parent::__construct( __( 'Invoicing', 'invoicing' ) );
 
-        // Include supporting classes.
-        include_once 'class-wpinv-privacy-exporters.php';
+        // Init hooks.
+        $this->init();
 
         // This hook registers Invoicing data exporters.
         $this->add_exporter( 'wpinv-customer-invoices', __( 'Customer Invoices', 'invoicing' ), array( 'WPInv_Privacy_Exporters', 'customer_invoice_data_exporter' ) );
@@ -26,7 +32,7 @@ class WPInv_Privacy extends WPInv_Abstract_Privacy {
     /**
      * Add privacy policy content for the privacy policy page.
      *
-     * @since 3.4.0
+     * @since 1.4.0
      */
     public function get_privacy_message() {
 
@@ -36,7 +42,7 @@ class WPInv_Privacy extends WPInv_Abstract_Privacy {
                    '<p>' . __( 'We collect information about you during the checkout process on our site. This information may include, but is not limited to, your name, email address, phone number, address, IP and any other details that might be requested from you for the purpose of processing your payment and retaining your invoice details for legal reasons.', 'invoicing' ) . '</p>' .
                    '<p>' . __( 'Handling this data also allows us to:', 'invoicing' ) . '</p>' .
                    '<ul>' .
-                   '<li>' . __( '- Send you important account/order/service information.', 'invoicing' ) . '</li>' .
+                   '<li>' . __( '- Send you important account/invoice/service information.', 'invoicing' ) . '</li>' .
                    '<li>' . __( '- Estimate taxes based on your location.', 'invoicing' ) . '</li>' .
                    '<li>' . __( '- Respond to your queries or complaints.', 'invoicing' ) . '</li>' .
                    '<li>' . __( '- Process payments and to prevent fraudulent transactions. We do this on the basis of our legitimate business interests.', 'invoicing' ) . '</li>' .
