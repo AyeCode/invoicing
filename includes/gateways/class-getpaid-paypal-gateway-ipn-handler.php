@@ -43,7 +43,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 */
 	public function verify_ipn() {
 
-		wpinv_error_log( 'GetPaid PayPal IPN Handler' );
+		wpinv_error_log( 'GetPaid PayPal IPN Handler', false );
 
 		// Validate the IPN.
 		if ( empty( $_POST ) || ! $this->validate_ipn() ) {
@@ -56,23 +56,23 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		// Abort if it was not paid by our gateway.
 		if ( $this->id != $invoice->get_gateway() ) {
-			wpinv_error_log( 'Aborting, Invoice was not paid via PayPal' );
+			wpinv_error_log( 'Aborting, Invoice was not paid via PayPal', false );
 			wp_die( 'Invoice not paid via PayPal', 500 );
 		}
 
 		$posted['payment_status'] = isset( $posted['payment_status'] ) ? sanitize_key( strtolower( $posted['payment_status'] ) ) : '';
 		$posted['txn_type']       = sanitize_key( strtolower( $posted['txn_type'] ) );
 
-		wpinv_error_log( 'Payment status:' . $posted['payment_status'] );
-		wpinv_error_log( 'IPN Type:' . $posted['txn_type'] );
+		wpinv_error_log( 'Payment status:' . $posted['payment_status'], false );
+		wpinv_error_log( 'IPN Type:' . $posted['txn_type'], false );
 
 		if ( method_exists( $this, 'ipn_txn_' . $posted['txn_type'] ) ) {
 			call_user_func( array( $this, 'ipn_txn_' . $posted['txn_type'] ), $invoice, $posted );
-			wpinv_error_log( 'Done processing IPN' );
+			wpinv_error_log( 'Done processing IPN', false );
 			wp_die( 'Processed', 200 );
 		}
 
-		wpinv_error_log( 'Aborting, Unsupported IPN type:' . $posted['txn_type'] );
+		wpinv_error_log( 'Aborting, Unsupported IPN type:' . $posted['txn_type'], false );
 		wp_die( 'Unsupported IPN type', 200 );
 
 	}
@@ -85,19 +85,19 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 */
 	protected function get_ipn_invoice( $posted ) {
 
-		wpinv_error_log( 'Retrieving PayPal IPN Response Invoice' );
+		wpinv_error_log( 'Retrieving PayPal IPN Response Invoice', false );
 
 		if ( ! empty( $posted['custom'] ) ) {
 			$invoice = new WPInv_Invoice( $posted['custom'] );
 
 			if ( $invoice->exists() ) {
-				wpinv_error_log( 'Found invoice #' . $invoice->get_number() );
+				wpinv_error_log( 'Found invoice #' . $invoice->get_number(), false );
 				return $invoice;
 			}
 
 		}
 
-		wpinv_error_log( 'Could not retrieve the associated invoice.' );
+		wpinv_error_log( 'Could not retrieve the associated invoice.', false );
 		wp_die( 'Could not retrieve the associated invoice.', 500 );
 	}
 
@@ -106,7 +106,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 */
 	protected function validate_ipn() {
 
-		wpinv_error_log( 'Validating PayPal IPN response' );
+		wpinv_error_log( 'Validating PayPal IPN response', false );
 
 		// Retrieve the associated invoice.
 		$posted  = wp_unslash( $_POST );
@@ -203,7 +203,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			return wpinv_error_log( "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}", 'IPN Error', __FILE__, __LINE__, true );
 		}
 
-		wpinv_error_log( 'Validated PayPal Email' );
+		wpinv_error_log( 'Validated PayPal Email', false );
 	}
 
 	/**
@@ -236,14 +236,14 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 				$invoice->update_status( 'wpi-refunded', $posted['reason_code'] );
 			}
 
-			return wpinv_error_log( $posted['reason_code'] );
+			return wpinv_error_log( $posted['reason_code'], false );
 		}
 
 		// Process payments.
 		if ( $payment_status == 'completed' ) {
 
 			if ( $invoice->is_paid() && 'wpi_processing' != $invoice->get_status() ) {
-				return wpinv_error_log( 'Aborting, Invoice #' . $invoice->get_number() . ' is already paid.' );
+				return wpinv_error_log( 'Aborting, Invoice #' . $invoice->get_number() . ' is already paid.', false );
 			}
 
 			$this->validate_ipn_amount( $invoice, $posted['mc_gross'] );
@@ -259,7 +259,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			}
 
 			$invoice->mark_paid( ( ! empty( $posted['txn_id'] ) ? sanitize_text_field( $posted['txn_id'] ) : '' ), trim( $note ) );
-			return wpinv_error_log( 'Invoice marked as paid.' );
+			return wpinv_error_log( 'Invoice marked as paid.', false );
 
 		}
 
@@ -269,7 +269,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			/* translators: %s: pending reason. */
 			$invoice->update_status( 'wpi-onhold', sprintf( __( 'Payment pending (%s).', 'invoicing' ), $posted['pending_reason'] ) );
 
-			return wpinv_error_log( 'Invoice marked as "payment held".' );
+			return wpinv_error_log( 'Invoice marked as "payment held".', false );
 		}
 
 		/* translators: %s: payment status. */
@@ -295,13 +295,13 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 */
 	protected function ipn_txn_subscr_signup( $invoice, $posted ) {
 
-		wpinv_error_log( 'Processing subscription signup' );
+		wpinv_error_log( 'Processing subscription signup', false );
 
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
-			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found' );
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
 		}
 
 		// Validate the IPN.
@@ -326,7 +326,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		$invoice->add_note( sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $posted['subscr_id'] ), false, false, true );
 
-		wpinv_error_log( 'Subscription started.' );
+		wpinv_error_log( 'Subscription started.', false );
 	}
 
 	/**
@@ -341,21 +341,26 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$subscription = wpinv_get_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
-			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found' );
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
 		}
 
 		// Abort if this is the first payment.
-		if ( date( 'Ynd', $subscription->get_time_created() ) == date( 'Ynd', strtotime( $posted['payment_date'] ) ) ) {
-			$invoice->set_transaction_id( sanitize_text_field( $posted['txn_id'] ) );
-			$invoice->save();
+		if ( ( $invoice->is_paid() && date( 'Ynd', strtotime( $invoice->get_date_completed() ) ) == date( 'Ynd', strtotime( $posted['payment_date'] ) ) ) || date( 'Ynd', $subscription->get_time_created() ) == date( 'Ynd', strtotime( $posted['payment_date'] ) ) ) {
+
+			if ( ! empty( $posted['txn_id'] ) ) {
+				$invoice->set_transaction_id( sanitize_text_field( $posted['txn_id'] ) );
+				$invoice->mark_paid();
+				$invoice->save();
+			}
+
 			return;
 		}
 
-		wpinv_error_log( 'Processing subscription renewal payment for the invoice ' . $invoice->get_id() );
+		wpinv_error_log( 'Processing subscription renewal payment for the invoice ' . $invoice->get_id(), false );
 
 		// Abort if the payment is already recorded.
 		if ( wpinv_get_id_by_transaction_id( $posted['txn_id'] ) ) {
-			return wpinv_error_log( 'Aborting, Transaction ' . $posted['txn_id'] .' has already been processed' );
+			return wpinv_error_log( 'Aborting, Transaction ' . $posted['txn_id'] .' has already been processed', false );
 		}
 
 		$args = array(
@@ -373,7 +378,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$invoice->add_note( wp_sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ) , $posted['subscr_id'] ), false, false, true );
 
 		$subscription->renew();
-		wpinv_error_log( 'Subscription renewed.' );
+		wpinv_error_log( 'Subscription renewed.', false );
 
 	}
 
@@ -388,12 +393,12 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$subscription = wpinv_get_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
-			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found' );
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false);
 		}
 
-		wpinv_error_log( 'Processing subscription cancellation for the invoice ' . $invoice->get_id() );
+		wpinv_error_log( 'Processing subscription cancellation for the invoice ' . $invoice->get_id(), false );
 		$subscription->cancel();
-		wpinv_error_log( 'Subscription cancelled.' );
+		wpinv_error_log( 'Subscription cancelled.', false );
 
 	}
 
@@ -409,12 +414,12 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$subscription = wpinv_get_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
-			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found' );
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
 		}
 
-		wpinv_error_log( 'Processing subscription end of life for the invoice ' . $invoice->get_id() );
+		wpinv_error_log( 'Processing subscription end of life for the invoice ' . $invoice->get_id(), false );
 		$subscription->complete();
-		wpinv_error_log( 'Subscription completed.' );
+		wpinv_error_log( 'Subscription completed.', false );
 
 	}
 
@@ -430,12 +435,12 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$subscription = wpinv_get_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
-			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found' );
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
 		}
 
-		wpinv_error_log( 'Processing subscription payment failure for the invoice ' . $invoice->get_id() );
+		wpinv_error_log( 'Processing subscription payment failure for the invoice ' . $invoice->get_id(), false );
 		$subscription->failing();
-		wpinv_error_log( 'Subscription marked as failing.' );
+		wpinv_error_log( 'Subscription marked as failing.', false );
 
 	}
 

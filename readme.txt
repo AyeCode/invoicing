@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.0.8 =
+* Sometimes PayPal subscriptions generate a renewal invoice instantly - FIXED
+
 = 2.0.7 =
 * Incompatibility issues with UX Builder from Flatsome - FIXED
 * Template overides loaded twice - FIXED
