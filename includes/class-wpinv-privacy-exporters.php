@@ -34,6 +34,7 @@ class WPInv_Privacy_Exporters {
             'limit'    => 30,
             'page'     => $page,
             'user'     => $user->ID,
+            'paginate' => false,
         );
 
         $invoices = wpinv_get_invoices( $args );
