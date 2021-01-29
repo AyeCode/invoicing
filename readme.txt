@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Sometimes PayPal subscriptions generate a renewal invoice instantly - FIXED
 * Only display the discount/fee on a payment form / invoice if we actually have a discount/fee - CHANGED
 * Privacy exporter only exports a maximum of 10 invoices - CHANGED
+* Show login link on invoice page if required - ADDED
 
 = 2.0.7 =
 * Incompatibility issues with UX Builder from Flatsome - FIXED
