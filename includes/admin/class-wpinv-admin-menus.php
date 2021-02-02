@@ -225,7 +225,11 @@ class WPInv_Admin_Menus {
         remove_submenu_page( 'edit.php?post_type=wpi_invoice', 'post-new.php?post_type=wpi_invoice' );
     }
 
-    public function add_nav_menu_meta_boxes(){
+    /**
+     * Register our own endpoints section.
+     */
+    public function add_nav_menu_meta_boxes() {
+
         add_meta_box(
             'wpinv_endpoints_nav_link',
             __( 'GetPaid endpoints', 'invoicing' ),
@@ -234,125 +238,82 @@ class WPInv_Admin_Menus {
             'side',
             'low'
         );
+
     }
 
-    public function nav_menu_links(){
+    /**
+     * Displays GetPaid nav menu links.
+     */
+    public function nav_menu_links() {
         $endpoints = $this->get_menu_items();
         ?>
         <div id="invoicing-endpoints" class="posttypediv">
-        <?php if(!empty($endpoints['pages'])){ ?>
-            <div id="tabs-panel-invoicing-endpoints" class="tabs-panel tabs-panel-active">
-                <ul id="invoicing-endpoints-checklist" class="categorychecklist form-no-clear">
-                    <?php
-                    $walker = new Walker_Nav_Menu_Checklist(array());
-                    echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $endpoints['pages']), 0, (object) array('walker' => $walker));
-                    ?>
-                </ul>
-            </div>
-        <?php } ?>
-        <p class="button-controls">
-        <span class="list-controls">
-            <a href="<?php echo admin_url( 'nav-menus.php?page-tab=all&selectall=1#invoicing-endpoints' ); ?>" class="select-all"><?php _e( 'Select all', 'invoicing' ); ?></a>
-        </span>
-            <span class="add-to-menu">
-            <input type="submit" class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'invoicing' ); ?>" name="add-post-type-menu-item" id="submit-invoicing-endpoints">
-            <span class="spinner"></span>
-        </span>
-        </p>
+            <?php if ( ! empty( $endpoints['pages'] ) ) : ?>
+                <div id="tabs-panel-invoicing-endpoints" class="tabs-panel tabs-panel-active">
+                    <ul id="invoicing-endpoints-checklist" class="categorychecklist form-no-clear">
+                        <?php
+                            $walker = new Walker_Nav_Menu_Checklist( array() );
+                            echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $endpoints['pages'] ), 0, (object) array( 'walker' => $walker ) );
+                        ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <p class="button-controls wp-clearfix" data-items-type="invoicing-endpoints">
+                <span class="list-controls hide-if-no-js">
+                    <input type="checkbox" id="invoicing-endpoints-tab" class="select-all">
+                    <label for="invoicing-endpoints-tab"><?php _e( 'Select all', 'invoicing' ); ?></label>
+                </span>
+
+                <span class="add-to-menu">
+                    <input type="submit" class="button submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'invoicing' ); ?>" name="add-invoicing-endpoints-item" id="submit-invoicing-endpoints">
+                    <span class="spinner"></span>
+                </span>
+            </p>
+        </div>
         <?php
     }
 
+    /**
+     * Returns the menu entry pages.
+     *
+     * @return array.
+     */
     public function get_menu_items(){
         $items = array();
 
-        $wpinv_history_page_id = (int)wpinv_get_option( 'invoice_history_page' );
-        if($wpinv_history_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_history_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Invoice History Page','invoicing');
-            $item->url = get_permalink( $wpinv_history_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
+        $pages = array(
+            array(
+                'id'    => wpinv_get_option( 'invoice_history_page' ),
+                'label' => __( 'My Invoices', 'invoicing' ),
+            ),
+            array(
+                'id'    => wpinv_get_option( 'invoice_subscription_page' ),
+                'label' => __( 'My Subscriptions', 'invoicing' ),
+            )
+        );
 
-            $items['pages'][] = $item;
-        }
+        foreach ( apply_filters( 'getpaid_menu_pages', $pages ) as $page ) {
 
-        $wpinv_sub_history_page_id = (int)wpinv_get_option( 'invoice_subscription_page' );
-        if($wpinv_sub_history_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_sub_history_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Invoice Subscriptions Page','invoicing');
-            $item->url = get_permalink( $wpinv_sub_history_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
+            if ( (int) $page['id'] > 0 ) {
 
-            $items['pages'][] = $item;
-        }
+                $item                   = new stdClass();
+                $item->object_id        = (int) $page['id'];
+                $item->db_id            = 0;
+                $item->object           =  'page';
+                $item->menu_item_parent = 0;
+                $item->type             = 'post_type';
+                $item->title            = sanitize_text_field( $page['label'] );
+                $item->url              = get_permalink( (int) $page['id'] );
+                $item->target           = '';
+                $item->attr_title       = '';
+                $item->classes          = array( 'wpinv-menu-item' );
+                $item->xfn              = '';
 
-        $wpinv_checkout_page_id = (int)wpinv_get_option( 'checkout_page' );
-        if($wpinv_checkout_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_checkout_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Checkout Page','invoicing');
-            $item->url = get_permalink( $wpinv_checkout_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
+                $items['pages'][]       = $item;
 
-            $items['pages'][] = $item;
-        }
+            }
 
-        $wpinv_success_page_id = (int)wpinv_get_option( 'success_page' );
-        if($wpinv_success_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_success_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Success Page','invoicing');
-            $item->url = get_permalink( $wpinv_success_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
-
-            $items['pages'][] = $item;
-        }
-
-        $wpinv_failure_page_id = (int)wpinv_get_option( 'failure_page' );
-        if($wpinv_failure_page_id > 0){
-            $item = new stdClass();
-            $item->object_id = $wpinv_failure_page_id;
-            $item->db_id = 0;
-            $item->object =  'page';
-            $item->menu_item_parent = 0;
-            $item->type = 'post_type';
-            $item->title = __('Failed Transaction Page','invoicing');
-            $item->url = get_permalink( $wpinv_failure_page_id );
-            $item->target = '';
-            $item->attr_title = '';
-            $item->classes = array('wpinv-menu-item');
-            $item->xfn = '';
-
-            $items['pages'][] = $item;
         }
 
         return apply_filters( 'wpinv_menu_items', $items );
