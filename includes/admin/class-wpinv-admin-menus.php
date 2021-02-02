@@ -226,7 +226,14 @@ class WPInv_Admin_Menus {
     }
 
     public function add_nav_menu_meta_boxes(){
-        add_meta_box( 'wpinv_endpoints_nav_link', __( 'Invoicing Pages', 'invoicing' ), array( $this, 'nav_menu_links' ), 'nav-menus', 'side', 'low' );
+        add_meta_box(
+            'wpinv_endpoints_nav_link',
+            __( 'GetPaid endpoints', 'invoicing' ),
+            array( $this, 'nav_menu_links' ),
+            'nav-menus',
+            'side',
+            'low'
+        );
     }
 
     public function nav_menu_links(){
