@@ -47,6 +47,16 @@ function getpaid() {
 }
 
 /**
+ * Deactivation hook.
+ *
+ * @since  2.0.8
+ */
+function getpaid_deactivation_hook() {
+    update_option( 'wpinv_flush_permalinks', 1 );
+}
+register_deactivation_hook( __FILE__, 'getpaid_deactivation_hook' );
+
+/**
  * @deprecated
  */
 function wpinv_run() {

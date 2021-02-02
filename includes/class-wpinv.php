@@ -497,6 +497,22 @@ class WPInv_Plugin {
 	}
 
 	/**
+	 * Flushes the permalinks if needed.
+	 *
+	 * @since 2.0.8
+	 */
+	public function maybe_flush_permalinks() {
+
+		$flush = get_option( 'wpinv_flush_permalinks', 0 );
+
+		if ( ! empty( $flush ) ) {
+			flush_rewrite_rules();
+			delete_option( 'wpinv_flush_permalinks' );
+		}
+
+	}
+
+	/**
 	 * Remove our pages from yoast sitemaps.
 	 *
 	 * @since 1.0.19
