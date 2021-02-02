@@ -231,6 +231,7 @@ class WPInv_Plugin {
 		require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
 		require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
+		require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			GetPaid_Post_Types_Admin::init();
@@ -238,7 +239,6 @@ class WPInv_Plugin {
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );
 			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-getpaid-admin-profile.php' );

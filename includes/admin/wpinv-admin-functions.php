@@ -87,28 +87,16 @@ function wpinv_test_payment_gateway_messages(){
     }
 }
 
-function wpinv_send_invoice_after_save( $invoice ) {
-    if ( empty( $_POST['wpi_save_send'] ) ) {
-        return;
-    }
-    
-    if ( !empty( $invoice->ID ) && !empty( $invoice->post_type ) && 'wpi_invoice' == $invoice->post_type ) {
-        wpinv_user_invoice_notification( $invoice->ID );
-    }
-}
-add_action( 'wpinv_invoice_metabox_saved', 'wpinv_send_invoice_after_save', 100, 1 );
-
-
-add_action('admin_init', 'admin_init_example_type');
+add_action('admin_init', 'wpinv_admin_search_by_invoice');
 
 /**
  * hook the posts search if we're on the admin page for our type
  */
-function admin_init_example_type() {
+function wpinv_admin_search_by_invoice() {
     global $typenow;
 
     if ($typenow === 'wpi_invoice' || $typenow === 'wpi_quote' ) {
-        add_filter('posts_search', 'posts_search_example_type', 10, 2);
+        add_filter('posts_search', 'wpinv_posts_search_example_type', 10, 2);
     }
 }
 
@@ -118,7 +106,7 @@ function admin_init_example_type() {
  * @param WP_Query $query
  * @return string
  */
-function posts_search_example_type($search, $query) {
+function wpinv_posts_search_example_type($search, $query) {
     global $wpdb;
 
     if ($query->is_main_query() && !empty($query->query['s'])) {
@@ -134,26 +122,17 @@ function posts_search_example_type($search, $query) {
     return $search;
 }
 
-add_action( 'admin_init', 'wpinv_reset_invoice_count' );
+/**
+ * Resets invoice counts.
+ */
 function wpinv_reset_invoice_count(){
-    if(isset($_GET['reset_invoice_count']) && 1 == $_GET['reset_invoice_count'] && isset($_GET['_nonce']) && wp_verify_nonce($_GET['_nonce'], 'reset_invoice_count')) {
+    if ( ! empty( $_GET['reset_invoice_count'] ) && isset( $_GET['_nonce'] ) && wp_verify_nonce( $_GET['_nonce'], 'reset_invoice_count' ) ) {
         wpinv_update_option('invoice_sequence_start', 1);
         delete_option('wpinv_last_invoice_number');
-        $url = add_query_arg(array('reset_invoice_done' => 1));
-        $url = remove_query_arg(array('reset_invoice_count', '_nonce'), $url);
+        getpaid_admin()->show_success( __( 'Invoice number sequence reset successfully.', 'invoicing' ) );
+        $url = remove_query_arg( array('reset_invoice_count', '_nonce') );
         wp_redirect($url);
         exit();
     }
 }
-
-add_action('admin_notices', 'wpinv_invoice_count_reset_message');
-function wpinv_invoice_count_reset_message(){
-    if(isset($_GET['reset_invoice_done']) && 1 == $_GET['reset_invoice_done']) {
-        $notice = __('Invoice number sequence reset successfully.', 'invoicing');
-        ?>
-        <div class="notice notice-success is-dismissible">
-            <p><?php echo $notice; ?></p>
-        </div>
-        <?php
-    }
-}
+add_action( 'admin_init', 'wpinv_reset_invoice_count' );
