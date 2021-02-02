@@ -611,7 +611,7 @@ class WPInv_Ajax {
 
             $item = new GetPaid_Form_Item( $data[ 'id' ] );
 
-            if ( is_numeric( $data[ 'qty' ] ) && (int) $data[ 'qty' ] > 0 ) {
+            if ( is_numeric( $data[ 'qty' ] ) && (float) $data[ 'qty' ] > 0 ) {
                 $item->set_quantity( $data[ 'qty' ] );
             }
 

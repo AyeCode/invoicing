@@ -299,7 +299,7 @@ return array(
 				),
 				'quantity'        => array(
 					'description' => __( 'Item Quantity.', 'invoicing' ),
-					'type'        => 'integer',
+					'type'        => 'number',
 					'context'     => array( 'view', 'edit', 'embed' ),
 				),
 				'subtotal'        => array(

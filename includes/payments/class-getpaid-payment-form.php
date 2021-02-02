@@ -286,7 +286,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 				if ( $item->can_purchase() ) {
 
-					$value = (int) $value;
+					$value = (float) $value;
 					$item->set_quantity( $value );
 					if ( 0 == $value ) {
 						$item->set_quantity( 1 );

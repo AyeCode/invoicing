@@ -124,6 +124,15 @@ class GetPaid_Installer {
 	}
 
 	/**
+	 * Upgrade to version 2.0.8.
+	 *
+	 */
+	public function upgrade_from_207() {
+		global $wpdb;
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoice_items MODIFY COLUMN quantity FLOAT(20);" );
+	}
+
+	/**
 	 * Give administrators the capability to manage GetPaid.
 	 *
 	 */
@@ -318,7 +327,7 @@ class GetPaid_Installer {
             tax FLOAT NOT NULL DEFAULT 0,
             item_price FLOAT NOT NULL DEFAULT 0,
             custom_price FLOAT NOT NULL DEFAULT 0,
-            quantity INT(20) NOT NULL DEFAULT 1,
+            quantity FLOAT NOT NULL DEFAULT 1,
             discount FLOAT NOT NULL DEFAULT 0,
             subtotal FLOAT NOT NULL DEFAULT 0,
             price FLOAT NOT NULL DEFAULT 0,

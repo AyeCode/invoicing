@@ -140,6 +140,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Show login link on invoice page if required - ADDED
 * Display currency in the "minimum amount" error message - ADDED
 * Use a responsive invoice table - ADDED
+* Ability to use decimal item quantities - ADDED
 
 = 2.0.7 =
 * Incompatibility issues with UX Builder from Flatsome - FIXED

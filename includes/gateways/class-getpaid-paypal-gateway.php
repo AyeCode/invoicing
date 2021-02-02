@@ -305,7 +305,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			'getpaid_paypal_line_item',
 			array(
 				'item_name'   => html_entity_decode( getpaid_limit_length( $item_name ? wp_strip_all_tags( $item_name ) : __( 'Item', 'invoicing' ), 127 ), ENT_NOQUOTES, 'UTF-8' ),
-				'quantity'    => (int) $quantity,
+				'quantity'    => (float) $quantity,
 				'amount'      => wpinv_sanitize_amount( (float) $amount, 2 ),
 				'item_number' => $item_number,
 			),

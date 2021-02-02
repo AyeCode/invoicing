@@ -43,7 +43,7 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 
 			$item_obj  = new WPInv_Item( $item );
 			$item_name = $item->invoice_item_name;
-			$item_qty  = absint( $item->invoice_item_qty );
+			$item_qty  = floatval( $item->invoice_item_qty );
 			$item_id   = absint( $item->invoice_item_id );
 			$price     = sanitize_text_field( wpinv_price( $item->invoice_item_price ) );
 
@@ -172,13 +172,13 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 				),
 				'quantity' => array(
 					'description' => __( 'Total number of purchases.', 'invoicing' ),
-					'type'        => 'integer',
+					'type'        => 'number',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
 				'earnings' => array(
 					'description' => __( 'Total earnings for the item.', 'invoicing' ),
-					'type'        => 'double',
+					'type'        => 'number',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),

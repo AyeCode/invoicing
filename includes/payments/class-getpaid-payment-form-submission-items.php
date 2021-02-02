@@ -65,7 +65,7 @@ class GetPaid_Payment_Form_Submission_Items {
 
 			// Maybe change the quantities.
 			if ( $item->allows_quantities() ) {
-				$item->set_quantity( (int) $selected_items[ $item->get_id() ]['quantity'] );
+				$item->set_quantity( (float) $selected_items[ $item->get_id() ]['quantity'] );
 			}
 
 			// Maybe change the price.

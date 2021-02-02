@@ -287,7 +287,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                         </label>
                                         <label class="form-group w-100 hide-if-amount">
                                             <span><?php _e( 'Quantity', 'invoicing' ); ?></span>
-                                            <input type="number" name="quantity" placeholder="1" class="form-control form-control-sm item-quantity">
+                                            <input type="text" name="quantity" placeholder="1" class="form-control form-control-sm item-quantity">
                                         </label>
                                         <label class="form-group w-100">
                                             <span><?php _e( 'Item Description', 'invoicing' ); ?></span>

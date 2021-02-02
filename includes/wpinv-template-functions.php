@@ -1290,7 +1290,7 @@ function getpaid_convert_items_to_array( $items ) {
 
         $quantity = 1;
         if ( isset( $data[1] ) && is_numeric( $data[1] ) ) {
-            $quantity = (int) $data[1];
+            $quantity = (float) $data[1];
         }
 
         $prepared[ $data[0] ] = $quantity;

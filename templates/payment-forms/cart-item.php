@@ -94,13 +94,13 @@ $currency = $form->get_currency();
 
 						if ( $item->allows_quantities() ) {
 							?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='number' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (int) $item->get_qantity(); ?>' min='1' required>
+								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity(); ?>' min='1' required>
 							<?php
 						} else {
-							echo (int) $item->get_qantity();
+							echo (float) $item->get_quantity();
 							echo '&nbsp;&nbsp;&nbsp;';
 							?>
-								<input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (int) $item->get_qantity(); ?>'>
+								<input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (float) $item->get_quantity(); ?>'>
 							<?php
 						}
 					}

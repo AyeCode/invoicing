@@ -60,7 +60,7 @@ defined( 'ABSPATH' ) || exit;
 
                 // Item quantity.
                 if ( 'quantity' == $column ) {
-                    echo (int) $item->get_quantity();
+                    echo (float) $item->get_quantity();
                 }
 
                 // Item sub total.

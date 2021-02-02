@@ -484,6 +484,7 @@ class WPInv_Plugin {
 			'0.0.5' => '004',
 			'1.0.3' => '102',
 			'2.0.0' => '118',
+			'2.0.8' => '207',
 		);
 
 		foreach ( $upgrades as $key => $method ) {

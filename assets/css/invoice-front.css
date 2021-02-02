@@ -19,6 +19,7 @@
 	}
 }
 
+input[type="text"].getpaid-item-quantity-input,
 input[type="number"].getpaid-item-quantity-input,
 input[type="text"].getpaid-item-price-input {
 	width: 64px;

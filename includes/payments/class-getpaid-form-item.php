@@ -19,7 +19,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	/**
 	 * Stores the item quantity.
 	 *
-	 * @var int
+	 * @var float
 	 */
 	protected $quantity = 1;
 
@@ -158,10 +158,10 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return int
+	 * @return float
 	 */
 	public function get_quantity( $context = 'view' ) {
-		$quantity = (int) $this->quantity;
+		$quantity = (float) $this->quantity;
 
 		if ( empty( $quantity ) || 1 > $quantity ) {
 			$quantity = 1;
@@ -269,7 +269,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'texts'  => array(
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ) . $description,
-				'item-quantity'    => absint( $this->get_quantity() ),
+				'item-quantity'    => floatval( $this->get_quantity() ),
 				'item-price'       => wpinv_price( $this->get_price(), $currency ),
 				'item-total'       => wpinv_price( $this->get_sub_total(), $currency ),
 			),
@@ -277,7 +277,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 				'item-id'          => $this->get_id(),
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ),
-				'item-quantity'    => absint( $this->get_quantity() ),
+				'item-quantity'    => floatval( $this->get_quantity() ),
 				'item-price'       => $this->get_price(),
 			)
 		);
@@ -299,7 +299,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'item_description'  => $this->get_description(),
 			'tax'               => $this->item_tax,
 			'item_price'        => $this->get_price(),
-			'quantity'          => (int) $this->get_quantity(),
+			'quantity'          => (float) $this->get_quantity(),
 			'discount'          => $this->item_discount,
 			'subtotal'          => $this->get_sub_total(),
 			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount,
@@ -322,7 +322,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * Set the item qantity.
 	 *
 	 * @since 1.0.19
-	 * @param  int $quantity The item quantity.
+	 * @param  float $quantity The item quantity.
 	 */
 	public function set_quantity( $quantity ) {
 
@@ -330,7 +330,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			$quantity = 1;
 		}
 
-		$this->quantity = (int) $quantity;
+		$this->quantity = (float) $quantity;
 
 	}
 

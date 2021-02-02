@@ -82,7 +82,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
                     // Item quantity.
                     if ( 'quantity' == $column ) {
-                        echo (int) $item->get_quantity();
+                        echo (float) $item->get_quantity();
                     }
 
                     // Item sub total.
