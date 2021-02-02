@@ -43,7 +43,7 @@ class GetPaid_Payment_Form_Submission_Fees {
 		foreach ( $payment_form->get_elements() as $element ) {
 
 			if ( 'price_input' == $element['type'] ) {
-				$this->process_price_input( $element, $data );
+				$this->process_price_input( $element, $data, $submission );
 			}
 
 			if ( 'price_select' == $element['type'] ) {
@@ -59,8 +59,9 @@ class GetPaid_Payment_Form_Submission_Fees {
 	 *
 	 * @param array $element
 	 * @param array $data
+	 * @param GetPaid_Payment_Form_Submission $submission
 	 */
-	public function process_price_input( $element, $data ) {
+	public function process_price_input( $element, $data, $submission ) {
 
 		// Abort if not passed.
 		if ( empty( $data[ $element['id'] ] ) ) {
@@ -71,7 +72,7 @@ class GetPaid_Payment_Form_Submission_Fees {
 		$minimum = empty( $element['minimum'] ) ? 0 : (float) wpinv_sanitize_amount( $element['minimum'] );
 
 		if ( $amount < $minimum ) {
-			throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), $minimum ) );
+			throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), wpinv_price( $minimum, $submission->get_currency() ) ) );
 		}
 
 		$this->fees[ $element['label'] ] = array(
