@@ -174,7 +174,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$changes = $item->get_changes();
 
 		// Only update the post when the post data changes.
-		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'parent_id', 'post_excerpt', 'name', 'author' ), array_keys( $changes ) ) ) {
+		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'parent_id', 'description', 'name', 'author' ), array_keys( $changes ) ) ) {
 			$post_data = array(
 				'post_date'         => $item->get_date_created( 'edit' ),
 				'post_status'       => $item->get_status( 'edit' ),

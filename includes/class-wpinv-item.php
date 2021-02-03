@@ -828,7 +828,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  string $value New description.
 	 */
 	public function set_description( $value ) {
-        $description = wp_kses_post( $value );
+		$description = wp_kses_post( $value );
 		return $this->set_prop( 'description', $description );
     }
 
