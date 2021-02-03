@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 08:19+0000\n"
+"POT-Creation-Date: 2021-02-03 13:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -84,12 +84,12 @@ msgstr ""
 msgid "%s / %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1010
+#: includes/invoice-functions.php:1018
 #, php-format
 msgid "%s created with the status \"%s\"."
 msgstr ""
 
-#: includes/invoice-functions.php:1135
+#: includes/invoice-functions.php:1143
 #, php-format
 msgid "%s Date"
 msgstr ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "%s Notes"
 msgstr ""
 
-#: includes/invoice-functions.php:1119
+#: includes/invoice-functions.php:1127
 #, php-format
 msgid "%s Number"
 msgstr ""
@@ -280,7 +280,7 @@ msgstr ""
 msgid "%s Settings"
 msgstr ""
 
-#: includes/invoice-functions.php:1127
+#: includes/invoice-functions.php:1135
 #, php-format
 msgid "%s Status"
 msgstr ""
@@ -383,31 +383,31 @@ msgstr ""
 msgid "(r)"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:40
+#: includes/class-wpinv-privacy.php:46
 msgid "- Estimate taxes based on your location."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:42
+#: includes/class-wpinv-privacy.php:48
 msgid ""
 "- Process payments and to prevent fraudulent transactions. We do this on the "
 "basis of our legitimate business interests."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:41
+#: includes/class-wpinv-privacy.php:47
 msgid "- Respond to your queries or complaints."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:43
+#: includes/class-wpinv-privacy.php:49
 msgid ""
 "- Retain historical payment and invoice history. We do this on the basis of "
 "legal obligations."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:39
-msgid "- Send you important account/order/service information."
+#: includes/class-wpinv-privacy.php:45
+msgid "- Send you important account/invoice/service information."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:44
+#: includes/class-wpinv-privacy.php:50
 msgid ""
 "- Set up and administer your account, provide technical and/or customer "
 "support, and to verify your identity. We do this on the basis of our "
@@ -785,7 +785,7 @@ msgstr ""
 msgid "Abuja"
 msgstr ""
 
-#: templates/wpinv-invalid-access.php:59
+#: templates/wpinv-invalid-access.php:64
 msgid "Access Denied"
 msgstr ""
 
@@ -941,7 +941,7 @@ msgstr ""
 msgid "Add Tax Rate"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:251
+#: includes/admin/class-wpinv-admin-menus.php:269
 msgid "Add to menu"
 msgstr ""
 
@@ -949,7 +949,7 @@ msgstr ""
 msgid "Addons"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:83
+#: includes/class-wpinv-privacy-exporters.php:123
 #: includes/wpinv-address-functions.php:139
 #: includes/admin/class-getpaid-admin-profile.php:55
 #: includes/admin/class-wpinv-customers-table.php:181
@@ -2026,7 +2026,7 @@ msgstr ""
 msgid "Billing Address"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:100
+#: includes/class-wpinv-privacy-exporters.php:204
 msgid "Billing Cycle"
 msgstr ""
 
@@ -2819,7 +2819,6 @@ msgstr ""
 msgid "Checkout Description"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:305
 #: includes/data/admin-settings.php:105
 msgid "Checkout Page"
 msgstr ""
@@ -2959,7 +2958,7 @@ msgstr ""
 msgid "Circles"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:84
+#: includes/class-wpinv-privacy-exporters.php:127
 #: includes/wpinv-address-functions.php:137
 #: includes/admin/class-getpaid-admin-profile.php:59
 #: includes/admin/class-wpinv-customers-table.php:179
@@ -2989,7 +2988,7 @@ msgstr ""
 msgid "Click on any element to edit or delete it."
 msgstr ""
 
-#: includes/class-wpinv.php:544
+#: includes/class-wpinv.php:561
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:231
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:272
 msgid "Close"
@@ -3047,7 +3046,7 @@ msgstr ""
 msgid "Comoros"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:81
+#: includes/class-wpinv-privacy-exporters.php:115
 #: includes/wpinv-address-functions.php:141
 #: includes/admin/class-getpaid-admin-profile.php:51
 #: includes/admin/class-wpinv-customers-table.php:183
@@ -3064,6 +3063,10 @@ msgstr ""
 
 #: includes/subscription-functions.php:59
 msgid "Complete"
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:152
+msgid "Completed Date"
 msgstr ""
 
 #: includes/data/states.php:993
@@ -3163,7 +3166,6 @@ msgstr ""
 msgid "Could not sent the invoice to the customer"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:85
 #: includes/wpinv-address-functions.php:135
 #: includes/admin/class-wpinv-customers-table.php:177
 #: includes/data/default-payment-form.php:77
@@ -3218,6 +3220,7 @@ msgstr ""
 msgid "Created Authorize.NET customer profile: %s"
 msgstr ""
 
+#: includes/class-wpinv-privacy-exporters.php:79
 #: includes/invoice-functions.php:571
 msgid "Created Date"
 msgstr ""
@@ -3369,12 +3372,12 @@ msgstr ""
 msgid "Customer Invoice"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:23
+#: includes/class-wpinv-privacy.php:29
 msgid "Customer Invoices"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:46
-msgid "Customer invoicing data."
+#: includes/class-wpinv-privacy-exporters.php:47
+msgid "Customer invoices."
 msgstr ""
 
 #: includes/data/email-settings.php:474
@@ -3560,6 +3563,7 @@ msgstr ""
 msgid "Denmark"
 msgstr ""
 
+#: includes/class-wpinv-privacy-exporters.php:143
 #: includes/admin/register-settings.php:967
 msgid "Description"
 msgstr ""
@@ -3607,7 +3611,7 @@ msgstr ""
 
 #: includes/class-getpaid-post-types.php:181 includes/invoice-functions.php:983
 #: includes/reports/class-getpaid-reports-report-earnings.php:24
-#: templates/payment-forms/cart-totals.php:18
+#: templates/payment-forms/cart-totals.php:19
 msgid "Discount"
 msgstr ""
 
@@ -3853,7 +3857,8 @@ msgstr ""
 msgid "Due %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1157
+#: includes/class-wpinv-privacy-exporters.php:83
+#: includes/invoice-functions.php:1165
 msgid "Due Date"
 msgstr ""
 
@@ -4006,7 +4011,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:80
+#: includes/class-wpinv-privacy-exporters.php:111
 #: includes/data/payment-form-elements.php:169
 msgid "Email Address"
 msgstr ""
@@ -4462,7 +4467,7 @@ msgstr ""
 msgid "every 9th"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:35
+#: includes/class-wpinv-privacy.php:41
 msgid "Example privacy texts."
 msgstr ""
 
@@ -4491,6 +4496,10 @@ msgstr ""
 #: includes/subscription-functions.php:58
 #: includes/wpinv-discount-functions.php:119
 msgid "Expired"
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:224
+msgid "Expires"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:412
@@ -4549,7 +4558,6 @@ msgstr ""
 msgid "Failed to download the MaxMind database."
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:341
 #: includes/data/admin-settings.php:125
 msgid "Failed Transaction Page"
 msgstr ""
@@ -4593,6 +4601,7 @@ msgstr ""
 
 #: includes/invoice-functions.php:982 includes/wpinv-item-functions.php:207
 #: templates/emails/fee-item.php:37 templates/invoice/fee-item.php:38
+#: templates/payment-forms/cart-totals.php:18
 msgid "Fee"
 msgstr ""
 
@@ -4679,7 +4688,7 @@ msgstr ""
 msgid "Firenze"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:78
+#: includes/class-wpinv-privacy-exporters.php:103
 #: includes/wpinv-address-functions.php:133
 #: includes/data/default-payment-form.php:37
 #: includes/data/payment-form-elements.php:188
@@ -4984,8 +4993,16 @@ msgstr ""
 msgid "GetPaid > Subscriptions"
 msgstr ""
 
+#: includes/admin/class-wpinv-admin-menus.php:235
+msgid "GetPaid endpoints"
+msgstr ""
+
 #: includes/admin/class-getpaid-admin.php:436
 msgid "GetPaid pages updated."
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:46
+msgid "GetPaid: Invoices"
 msgstr ""
 
 #: includes/data/countries.php:102
@@ -5295,7 +5312,7 @@ msgstr ""
 msgid "Hamadan (همدان)"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:37
+#: includes/class-wpinv-privacy.php:43
 msgid "Handling this data also allows us to:"
 msgstr ""
 
@@ -5669,7 +5686,7 @@ msgstr ""
 msgid "Imperia"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:46
+#: includes/class-wpinv-privacy.php:52
 msgid ""
 "In addition to collecting information at checkout we may also use and store "
 "your contact details when manually creating invoices for require payments "
@@ -5684,7 +5701,7 @@ msgid ""
 "Total Cache settings</a>."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:49
+#: includes/class-wpinv-privacy.php:55
 msgid ""
 "In this subsection you should list which third party payment processors "
 "you’re using to take payments since these may handle customer data. We’ve "
@@ -5726,7 +5743,7 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:101
+#: includes/class-wpinv-privacy-exporters.php:210
 msgid "Initial Amount"
 msgstr ""
 
@@ -5900,16 +5917,16 @@ msgstr ""
 msgid "Invoice data not provided"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:74
-msgid "Invoice Date"
-msgstr ""
-
 #: includes/admin/class-getpaid-admin.php:174
 msgid "Invoice Description"
 msgstr ""
 
 #: templates/invoice-receipt.php:146
 msgid "Invoice Details"
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:91
+msgid "Invoice Discount"
 msgstr ""
 
 #: includes/data/invoice-schema.php:229
@@ -5928,7 +5945,6 @@ msgstr ""
 msgid "Invoice History"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:269
 #: includes/data/admin-settings.php:135
 msgid "Invoice History Page"
 msgstr ""
@@ -5937,7 +5953,7 @@ msgstr ""
 msgid "Invoice image"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:77
+#: includes/class-wpinv-privacy-exporters.php:87
 msgid "Invoice Items"
 msgstr ""
 
@@ -5947,10 +5963,6 @@ msgstr ""
 
 #: includes/data/admin-settings.php:213
 msgid "Invoice Labels"
-msgstr ""
-
-#: includes/class-wpinv-privacy-exporters.php:107
-msgid "Invoice Link"
 msgstr ""
 
 #: includes/data/invoice-schema.php:592
@@ -5977,7 +5989,7 @@ msgstr ""
 msgid "Invoice Notice Label"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:73
+#: includes/class-wpinv-privacy-exporters.php:75
 #: includes/data/admin-settings.php:534
 msgid "Invoice Number"
 msgstr ""
@@ -5990,7 +6002,7 @@ msgstr ""
 msgid "Invoice Number Prefix"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:152
+#: includes/admin/wpinv-admin-functions.php:132
 msgid "Invoice number sequence reset successfully."
 msgstr ""
 
@@ -6012,7 +6024,7 @@ msgstr ""
 msgid "Invoice Settings"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:75
+#: includes/class-wpinv-privacy-exporters.php:99
 msgid "Invoice Status"
 msgstr ""
 
@@ -6083,7 +6095,6 @@ msgstr ""
 msgid "Invoice status."
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:287
 #: includes/data/admin-settings.php:145
 msgid "Invoice Subscriptions Page"
 msgstr ""
@@ -6100,13 +6111,17 @@ msgstr ""
 msgid "Invoice Template CSS"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:76
+#: includes/class-wpinv-privacy-exporters.php:95
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:61
 msgid "Invoice Total"
 msgstr ""
 
 #: includes/data/invoice-schema.php:200
 msgid "Invoice totals."
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:174
+msgid "Invoice URL"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:390
@@ -6125,7 +6140,7 @@ msgstr ""
 msgid "Invoices ( %d )"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:34
+#: includes/class-wpinv-privacy.php:40
 msgid "Invoices and checkout"
 msgstr ""
 
@@ -6137,13 +6152,9 @@ msgstr ""
 msgid "Invoices navigation"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:17 includes/wpinv-helper-functions.php:687
+#: includes/wpinv-helper-functions.php:687
 #: includes/admin/class-wpinv-users.php:38
 msgid "Invoicing"
-msgstr ""
-
-#: includes/class-wpinv-privacy-exporters.php:45
-msgid "Invoicing Data"
 msgstr ""
 
 #: includes/data/admin-settings.php:636
@@ -6154,15 +6165,11 @@ msgstr ""
 msgid "Invoicing extensions"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:229
-msgid "Invoicing Pages"
-msgstr ""
-
 #: includes/data/states.php:1485
 msgid "Iowa"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:106
+#: includes/class-wpinv-privacy-exporters.php:168
 #: includes/data/payment-form-elements.php:389
 msgid "IP Address"
 msgstr ""
@@ -7239,7 +7246,7 @@ msgstr ""
 msgid "Last month"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:79
+#: includes/class-wpinv-privacy-exporters.php:107
 #: includes/wpinv-address-functions.php:134
 #: includes/data/default-payment-form.php:47
 #: includes/data/payment-form-elements.php:199
@@ -7502,6 +7509,10 @@ msgid ""
 "Login to your Worldpay Merchant Interface then enable Payment Response & "
 "Shopper Response. Next, go to the Payment Response URL field and enter the "
 "above URL."
+msgstr ""
+
+#: templates/wpinv-invalid-access.php:52
+msgid "Login."
 msgstr ""
 
 #: includes/data/admin-settings.php:87
@@ -8317,9 +8328,17 @@ msgstr ""
 msgid "Mwanza"
 msgstr ""
 
+#: includes/admin/class-wpinv-admin-menus.php:288
+msgid "My Invoices"
+msgstr ""
+
 #: includes/class-wpinv-bp-core.php:43
 #, php-format
 msgid "My Invoices %s"
+msgstr ""
+
+#: includes/admin/class-wpinv-admin-menus.php:292
+msgid "My Subscriptions"
 msgstr ""
 
 #: includes/wpinv-gateway-functions.php:363
@@ -8332,10 +8351,6 @@ msgstr ""
 
 #: includes/data/states.php:115
 msgid "Mymensingh"
-msgstr ""
-
-#: includes/class-wpinv-privacy-exporters.php:98
-msgid "N/A"
 msgstr ""
 
 #: includes/data/states.php:1424
@@ -9301,52 +9316,52 @@ msgstr ""
 msgid "Page Settings"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:146
+#: includes/admin/class-getpaid-installer.php:155
 msgctxt "Page slug"
 msgid "gp-checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:158
+#: includes/admin/class-getpaid-installer.php:167
 msgctxt "Page slug"
 msgid "gp-invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:170
+#: includes/admin/class-getpaid-installer.php:179
 msgctxt "Page slug"
 msgid "gp-receipt"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:190
+#: includes/admin/class-getpaid-installer.php:199
 msgctxt "Page slug"
 msgid "gp-subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:182
+#: includes/admin/class-getpaid-installer.php:191
 msgctxt "Page slug"
 msgid "gp-transaction-failed"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:147
+#: includes/admin/class-getpaid-installer.php:156
 msgctxt "Page title"
 msgid "Checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:159
+#: includes/admin/class-getpaid-installer.php:168
 msgctxt "Page title"
 msgid "My Invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:191
+#: includes/admin/class-getpaid-installer.php:200
 msgctxt "Page title"
 msgid "My Subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:171
+#: includes/admin/class-getpaid-installer.php:180
 msgctxt "Page title"
 msgid "Payment Confirmation"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:183
+#: includes/admin/class-getpaid-installer.php:192
 msgctxt "Page title"
 msgid "Transaction Failed"
 msgstr ""
@@ -9363,8 +9378,12 @@ msgstr ""
 msgid "Paid Invoices"
 msgstr ""
 
-#: includes/invoice-functions.php:1142
+#: includes/invoice-functions.php:1150
 msgid "Paid On"
+msgstr ""
+
+#: includes/class-wpinv-privacy-exporters.php:157
+msgid "Paid Via"
 msgstr ""
 
 #: includes/class-wpinv-invoice.php:3784
@@ -9485,7 +9504,7 @@ msgstr ""
 msgid "Paran&aacute;"
 msgstr ""
 
-#: includes/invoice-functions.php:1196
+#: includes/invoice-functions.php:1204
 #, php-format
 msgid "Parent %s"
 msgstr ""
@@ -9548,7 +9567,7 @@ msgstr ""
 msgid "Pay For Invoice"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:129 templates/invoice-history.php:85
+#: includes/class-wpinv-bp-core.php:129 templates/invoice-history.php:87
 msgid "Pay Now"
 msgstr ""
 
@@ -9668,7 +9687,7 @@ msgstr ""
 msgid "Payment Meta"
 msgstr ""
 
-#: includes/invoice-functions.php:1147 includes/admin/subscriptions.php:154
+#: includes/invoice-functions.php:1155 includes/admin/subscriptions.php:154
 msgid "Payment Method"
 msgstr ""
 
@@ -9744,7 +9763,7 @@ msgid "PayPal Standard"
 msgstr ""
 
 #: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:327
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:373
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:378
 #, php-format
 msgid "PayPal Subscription ID: %s"
 msgstr ""
@@ -9753,7 +9772,7 @@ msgstr ""
 msgid "PayPal Transaction Fee %."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:372
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:377
 #, php-format
 msgid "PayPal Transaction ID: %s"
 msgstr ""
@@ -9883,7 +9902,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:82
+#: includes/class-wpinv-privacy-exporters.php:119
 #: includes/wpinv-address-functions.php:140
 msgid "Phone Number"
 msgstr ""
@@ -9992,7 +10011,7 @@ msgstr ""
 msgid "Please provide at least one item or amount."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:51
+#: includes/class-wpinv-privacy.php:57
 msgid ""
 "Please see the <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-"
 "full\">PayPal Privacy Policy</a> for more details."
@@ -10412,7 +10431,7 @@ msgstr ""
 msgid "Recurring"
 msgstr ""
 
-#: includes/invoice-functions.php:1227
+#: includes/invoice-functions.php:1235
 msgid "Recurring Amount"
 msgstr ""
 
@@ -10516,10 +10535,6 @@ msgid_plural "Renewal <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wpinv-privacy-exporters.php:103
-msgid "Renewal Date"
-msgstr ""
-
 #: includes/admin/subscriptions.php:475
 msgid "Renewal Invoice"
 msgstr ""
@@ -10533,7 +10548,7 @@ msgstr ""
 msgid "Renewed via %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1215
+#: includes/invoice-functions.php:1223
 msgid "Renews On"
 msgstr ""
 
@@ -11086,7 +11101,7 @@ msgstr ""
 msgid "Select a value"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:248
+#: includes/admin/class-wpinv-admin-menus.php:265
 msgid "Select all"
 msgstr ""
 
@@ -11728,7 +11743,7 @@ msgid "Start date"
 msgstr ""
 
 #: includes/class-wpinv-ajax.php:719 includes/class-wpinv-ajax.php:733
-#: includes/class-wpinv-privacy-exporters.php:86
+#: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:136
 #: includes/admin/class-wpinv-customers-table.php:178
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:230
@@ -11918,7 +11933,6 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:323
 #: includes/data/admin-settings.php:115
 msgid "Success Page"
 msgstr ""
@@ -12680,7 +12694,7 @@ msgid ""
 "you may need to wait for it to become active."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-fees.php:74
+#: includes/payments/class-getpaid-payment-form-submission-fees.php:75
 #: includes/payments/class-getpaid-payment-form-submission-items.php:76
 #, php-format
 msgid "The minimum allowed amount is %s"
@@ -12952,7 +12966,7 @@ msgstr ""
 msgid "This invoice is no longer editable"
 msgstr ""
 
-#: templates/wpinv-invalid-access.php:50
+#: templates/wpinv-invalid-access.php:55
 msgid ""
 "This invoice is only viewable by clicking on the invoice link that was sent "
 "to you via email."
@@ -13138,7 +13152,7 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:102
+#: includes/class-wpinv-privacy-exporters.php:216
 msgid "Times Billed"
 msgstr ""
 
@@ -13237,12 +13251,12 @@ msgstr ""
 
 #: includes/invoice-functions.php:586 includes/invoice-functions.php:984
 #: includes/admin/subscriptions.php:403
-#: templates/payment-forms/cart-totals.php:19
+#: templates/payment-forms/cart-totals.php:20
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:153
 msgid "Total"
 msgstr ""
 
-#: includes/invoice-functions.php:1240
+#: includes/invoice-functions.php:1248
 msgid "Total Amount"
 msgstr ""
 
@@ -13336,7 +13350,7 @@ msgstr ""
 msgid "Trans-Nzoia"
 msgstr ""
 
-#: includes/invoice-functions.php:1152
+#: includes/invoice-functions.php:1160
 msgid "Transaction ID"
 msgstr ""
 
@@ -13575,7 +13589,7 @@ msgstr ""
 msgid "Unsupported server"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:97
+#: includes/class-wpinv-privacy-exporters.php:199
 msgid "Until Cancelled"
 msgstr ""
 
@@ -13823,7 +13837,8 @@ msgstr ""
 msgid "VAT class for the item."
 msgstr ""
 
-#: includes/invoice-functions.php:1162 includes/wpinv-address-functions.php:142
+#: includes/class-wpinv-privacy-exporters.php:139
+#: includes/invoice-functions.php:1170 includes/wpinv-address-functions.php:142
 #: includes/admin/class-getpaid-admin-profile.php:83
 #: includes/data/admin-settings.php:355
 #: includes/data/default-payment-form.php:127
@@ -13924,7 +13939,7 @@ msgstr ""
 msgid "Vietnamese Dong"
 msgstr ""
 
-#: templates/invoice-history.php:91
+#: templates/invoice-history.php:93
 msgid "View"
 msgstr ""
 
@@ -14075,7 +14090,7 @@ msgstr ""
 msgid "Waterford"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:50
+#: includes/class-wpinv-privacy.php:56
 msgid ""
 "We accept payments through PayPal. When processing payments, some of your "
 "data will be passed to PayPal, including information required to process or "
@@ -14092,7 +14107,7 @@ msgid ""
 "exist."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:36
+#: includes/class-wpinv-privacy.php:42
 msgid ""
 "We collect information about you during the checkout process on our site. "
 "This information may include, but is not limited to, your name, email "
@@ -14105,7 +14120,7 @@ msgstr ""
 msgid "We could not find your invoice"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:48
+#: includes/class-wpinv-privacy.php:54
 msgid ""
 "We share information with third parties who help us provide our payment and "
 "invoicing services to you; for example --"
@@ -14193,7 +14208,7 @@ msgstr ""
 msgid "What state / province does your store operate from?"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:47
+#: includes/class-wpinv-privacy.php:53
 msgid "What we share with others"
 msgstr ""
 
@@ -14463,7 +14478,7 @@ msgid ""
 "item."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-fees.php:105
+#: includes/payments/class-getpaid-payment-form-submission-fees.php:106
 msgid "You have selected an invalid amount"
 msgstr ""
 
@@ -14548,7 +14563,7 @@ msgid ""
 "other purposes described in our %s."
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:184
+#: includes/admin/class-getpaid-installer.php:193
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
@@ -14660,6 +14675,10 @@ msgstr ""
 msgid "ZIP"
 msgstr ""
 
+#: includes/class-wpinv-privacy-exporters.php:135
+msgid "Zip"
+msgstr ""
+
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:269
 msgid "Zip / Postal Code"
 msgstr ""
@@ -14667,10 +14686,6 @@ msgstr ""
 #: includes/data/default-payment-form.php:97
 #: includes/data/payment-form-elements.php:254
 msgid "ZIP / Postcode"
-msgstr ""
-
-#: includes/class-wpinv-privacy-exporters.php:87
-msgid "Zip Code"
 msgstr ""
 
 #: includes/wpinv-address-functions.php:138
