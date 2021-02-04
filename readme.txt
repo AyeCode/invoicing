@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.0 =
 * Taxes calculated on original amount even if discounts have been added - FIXED
+* Invoice totals calculated on the fly instead of displaying the saved total - CHANGED
 
 = 2.0.8 =
 * Sometimes PayPal subscriptions generate a renewal invoice instantly - FIXED

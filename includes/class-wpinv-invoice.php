@@ -67,7 +67,8 @@ class WPInv_Invoice extends GetPaid_Data {
         'subtotal'             => 0,
         'total_discount'       => 0,
         'total_tax'            => 0,
-        'total_fees'           => 0,
+		'total_fees'           => 0,
+		'total'                => 0,
         'fees'                 => array(),
         'discounts'            => array(),
         'taxes'                => array(),
@@ -1426,11 +1427,10 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @since 1.0.19
      * @return float
 	 */
-	public function get_total() {
-		$total = $this->is_renewal() ? $this->get_recurring_total() : $this->get_initial_total();
-		return apply_filters( 'getpaid_get_invoice_total_amount', $total, $this  );
+	public function get_total( $context = 'view' ) {
+		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total', $context ) ) );
 	}
-	
+
 	/**
 	 * Get the invoice totals.
 	 *
@@ -2734,7 +2734,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  float $value sub total.
 	 */
 	public function set_subtotal( $value ) {
-		$this->set_prop( 'subtotal', $value );
+		$this->set_prop( 'subtotal', max( 0, $value ) );
+	}
+
+	/**
+	 * Set the invoice total.
+	 *
+	 * @since 1.0.19
+	 * @param  float $value sub total.
+	 */
+	public function set_total( $value ) {
+		$this->set_prop( 'total', max( 0, $value ) );
     }
 
     /**
@@ -2744,7 +2754,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  float $value discount total.
 	 */
 	public function set_total_discount( $value ) {
-		$this->set_prop( 'total_discount', $value );
+		$this->set_prop( 'total_discount', max( 0, $value ) );
     }
 
     /**
@@ -2764,7 +2774,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  float $value tax total.
 	 */
 	public function set_total_tax( $value ) {
-		$this->set_prop( 'total_tax', $value );
+		$this->set_prop( 'total_tax', max( 0, $value ) );
     }
 
     /**
@@ -2784,7 +2794,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  float $value fees total.
 	 */
 	public function set_total_fees( $value ) {
-		$this->set_prop( 'total_fees', $value );
+		$this->set_prop( 'total_fees', max( 0, $value ) );
     }
 
     /**
@@ -3545,7 +3555,8 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->recalculate_subtotal();
         $this->recalculate_total_fees();
         $this->recalculate_total_discount();
-        $this->recalculate_total_tax();
+		$this->recalculate_total_tax();
+		$this->set_total( $this->get_total_tax() + $this->get_total_fees() + $this->get_subtotal() - $this->get_total_discount() );
 		return $this->get_total();
 	}
 
