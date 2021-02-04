@@ -677,14 +677,13 @@ abstract class GetPaid_Payment_Gateway {
 	public function save_payment_method_checkbox() {
 
 		return sprintf(
-			'<p class="form-group getpaid-save-payment-method">
-				<label>
-					<input name="getpaid-%1$s-new-payment-method" type="checkbox" value="true" style="width:auto;" />
-					<span>%2$s</span>
-				</label>
+			'<p class="pt-1 pb-1 getpaid-save-payment-method form-check">
+				<input name="getpaid-%1$s-new-payment-method" class="form-check-input" type="checkbox" value="true" id="%3$s" style="width:auto;" />
+				<label class="form-check-label" for="%3$s">%2$s</label>
 			</p>',
 			esc_attr( $this->id ),
-			esc_html__( 'Save payment method', 'invoicing' )
+			esc_html__( 'Save payment method', 'invoicing' ),
+			esc_attr( uniqid( $this->id ) )
 		);
 
 	}
