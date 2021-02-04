@@ -416,7 +416,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return array
+	 * @return float
 	 */
 	public function get_earned( $context = 'view' ) {
 		return $this->get_prop( 'earned', $context );
@@ -427,7 +427,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return array
+	 * @return float
 	 */
 	public function get_refunded( $context = 'view' ) {
 		return $this->get_prop( 'refunded', $context );
@@ -438,7 +438,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return array
+	 * @return float
 	 */
 	public function get_cancelled( $context = 'view' ) {
 		return $this->get_prop( 'cancelled', $context );
@@ -449,7 +449,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
-	 * @return array
+	 * @return float
 	 */
 	public function get_failed( $context = 'view' ) {
 		return $this->get_prop( 'failed', $context );

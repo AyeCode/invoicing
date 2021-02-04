@@ -171,8 +171,8 @@ class GetPaid_Payment_Form_Submission {
 					array( $this, 'process_invoice' ),
 					array( $this, 'process_fees' ),
 					array( $this, 'process_items' ),
-					array( $this, 'process_taxes' ),
 					array( $this, 'process_discount' ),
+					array( $this, 'process_taxes' ),
 				),
 				$this		
 			);

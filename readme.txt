@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.0 =
+* Taxes calculated on original amount even if discounts have been added - FIXED
+
 = 2.0.8 =
 * Sometimes PayPal subscriptions generate a renewal invoice instantly - FIXED
 * Only display the discount/fee on a payment form / invoice if we actually have a discount/fee - CHANGED

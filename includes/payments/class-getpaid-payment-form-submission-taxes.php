@@ -60,8 +60,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		$rates    = getpaid_get_item_tax_rates( $item, $submission->country, $submission->state );
 		$rates    = getpaid_filter_item_tax_rates( $item, $rates );
-		$taxes    = getpaid_calculate_item_taxes( $item->get_sub_total(), $rates );
-		$r_taxes  = getpaid_calculate_item_taxes( $item->get_recurring_sub_total(), $rates );
+		$taxes    = getpaid_calculate_item_taxes( getpaid_get_taxable_amount( $item->get_id(), $item->get_sub_total(), $submission->get_discount_code(), false ), $rates );
+		$r_taxes  = getpaid_calculate_item_taxes( getpaid_get_taxable_amount( $item->get_id(), $item->get_recurring_sub_total(), $submission->get_discount_code(), true ), $rates );
 
 		foreach ( $taxes as $name => $amount ) {
 			$recurring = isset( $r_taxes[ $name ] ) ? $r_taxes[ $name ] : 0;
