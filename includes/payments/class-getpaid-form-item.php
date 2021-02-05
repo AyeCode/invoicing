@@ -256,7 +256,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * @since 1.0.19
 	 * @return array
 	 */
-	public function prepare_data_for_invoice_edit_ajax( $currency = '' ) {
+	public function prepare_data_for_invoice_edit_ajax( $currency = '', $is_renewal = false ) {
 
 		$description = getpaid_item_recurring_price_help_text( $this, $currency );
 
@@ -264,21 +264,23 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			$description = "<div class='getpaid-subscription-help-text'>$description</div>";
 		}
 
+		$price    = ! $is_renewal ? $this->get_price() : $this->get_recurring_price();
+		$subtotal = ! $is_renewal ? $this->get_sub_total() : $this->get_recurring_sub_total();
 		return array(
 			'id'     => $this->get_id(),
 			'texts'  => array(
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ) . $description,
 				'item-quantity'    => floatval( $this->get_quantity() ),
-				'item-price'       => wpinv_price( $this->get_price(), $currency ),
-				'item-total'       => wpinv_price( $this->get_sub_total(), $currency ),
+				'item-price'       => wpinv_price( $price, $currency ),
+				'item-total'       => wpinv_price( $subtotal, $currency ),
 			),
 			'inputs' => array(
 				'item-id'          => $this->get_id(),
 				'item-name'        => sanitize_text_field( $this->get_name() ),
 				'item-description' => wp_kses_post( $this->get_description() ),
 				'item-quantity'    => floatval( $this->get_quantity() ),
-				'item-price'       => $this->get_price(),
+				'item-price'       => $price,
 			)
 		);
 

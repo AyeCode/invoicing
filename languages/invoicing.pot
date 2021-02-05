@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-03 13:54+0000\n"
+"POT-Creation-Date: 2021-02-05 04:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -1288,7 +1288,7 @@ msgstr ""
 msgid "An invalid setting value was passed."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3185
+#: includes/class-wpinv-invoice.php:3195
 msgid "An invoice can only contain one recurring item"
 msgstr ""
 
@@ -4345,7 +4345,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3677
+#: includes/class-wpinv-invoice.php:3688
 msgid "Error during status transition."
 msgstr ""
 
@@ -9386,7 +9386,7 @@ msgstr ""
 msgid "Paid Via"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3784
+#: includes/class-wpinv-invoice.php:3795
 #: includes/admin/class-getpaid-post-types-admin.php:229
 #, php-format
 msgid "Paid via %s"
@@ -10543,7 +10543,7 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3773
+#: includes/class-wpinv-invoice.php:3784
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -11011,7 +11011,7 @@ msgstr ""
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/gateways/class-getpaid-payment-gateway.php:687
+#: includes/gateways/class-getpaid-payment-gateway.php:685
 msgid "Save payment method"
 msgstr ""
 
@@ -11779,13 +11779,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3641
+#: includes/class-wpinv-invoice.php:3652
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3670
+#: includes/class-wpinv-invoice.php:3681
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -13036,7 +13036,7 @@ msgid ""
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3177
+#: includes/class-wpinv-invoice.php:3187
 msgid "This item is not available for purchase"
 msgstr ""
 

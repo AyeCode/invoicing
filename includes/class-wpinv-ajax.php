@@ -455,7 +455,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency(), $invoice->is_renewal()  );
         }
 
         wp_send_json_success( compact( 'items' ) );
