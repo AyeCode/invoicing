@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.1 = 
 * Fabulous Fluid theme floats payment form paragraphs - FIXED
+* Only migrate an invoice is it's yet to be migrated - FIXED
 
 = 2.1.0 =
 * Taxes calculated on original amount even if discounts have been added - FIXED

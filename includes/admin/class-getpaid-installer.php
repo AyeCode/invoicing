@@ -349,13 +349,17 @@ class GetPaid_Installer {
 	public function migrate_old_invoices() {
 		global $wpdb;
 
-		$invoices = array_unique(
+		$invoices_table      = $wpdb->prefix . 'getpaid_invoices';
+		$invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
+		$migrated            = $wpdb->get_col( "SELECT post_id FROM $invoices_table" );
+		$invoices            = array_unique(
 			get_posts(
 				array(
 					'post_type'      => array( 'wpi_invoice', 'wpi_quote' ),
 					'posts_per_page' => -1,
 					'fields'         => 'ids',
 					'post_status'    => array_keys( get_post_stati() ),
+					'exclude'        => (array) $migrated,
 				)
 			)
 		);
@@ -364,9 +368,6 @@ class GetPaid_Installer {
 		if ( empty( $invoices ) ) {
 			return;
 		}
-
-		$invoices_table      = $wpdb->prefix . 'getpaid_invoices';
-		$invoice_items_table = $wpdb->prefix . 'getpaid_invoice_items';
 
 		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-legacy-invoice.php' );
 
