@@ -292,7 +292,7 @@ jQuery(function($) {
                 } );
 
                 // Refresh when state changes.
-                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state', () => {
+                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state, .getpaid-billing-address-wrapper .wpinv_vat_number"', () => {
                     on_field_change()
                 } );
 

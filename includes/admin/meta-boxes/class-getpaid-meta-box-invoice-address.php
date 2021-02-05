@@ -101,7 +101,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_first_name',
                                         'label'       => __( 'First Name', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => 'Jane',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_first_name( 'edit' ),
                                     )
@@ -117,7 +117,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_last_name',
                                         'label'       => __( 'Last Name', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => 'Doe',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_last_name( 'edit' ),
                                     )
@@ -136,7 +136,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_company',
                                         'label'       => __( 'Company', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => 'Acme Corporation',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_company( 'edit' ),
                                     )
@@ -152,7 +152,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_vat_number',
                                         'label'       => __( 'Vat Number', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => '1234567890',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_vat_number( 'edit' ),
                                     )
@@ -171,7 +171,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_address',
                                         'label'       => __( 'Address', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => 'Blekersdijk 295',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_address( 'edit' ),
                                     )
@@ -187,7 +187,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_city',
                                         'label'       => __( 'City', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => 'Dolembreux',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_vat_number( 'edit' ),
                                     )
@@ -229,7 +229,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'name'        => 'wpinv_state',
                                             'label'       => __( 'State', 'invoicing' ),
                                             'label_type'  => 'vertical',
-                                            'placeholder' => 'Liège',
+                                            'placeholder' => '',
                                             'class'       => 'form-control-sm',
                                             'value'       => $invoice->get_state( 'edit' ),
                                         )
@@ -268,7 +268,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_zip',
                                         'label'       => __( 'Zip / Postal Code', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => '4140',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_zip( 'edit' ),
                                     )
@@ -284,7 +284,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'name'        => 'wpinv_phone',
                                         'label'       => __( 'Phone', 'invoicing' ),
                                         'label_type'  => 'vertical',
-                                        'placeholder' => '0493 18 45822',
+                                        'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_phone( 'edit' ),
                                     )

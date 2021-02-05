@@ -226,7 +226,7 @@ jQuery(function ($) {
 					on_field_change();
 				}); // Refresh when state changes.
 
-				this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_state', function () {
+				this.form.on('change', '.getpaid-billing-address-wrapper .wpinv_state, .getpaid-billing-address-wrapper .wpinv_vat_number', function () {
 					on_field_change();
 				}); // VAT.
 

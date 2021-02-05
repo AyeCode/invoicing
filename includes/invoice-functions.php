@@ -881,7 +881,8 @@ function getpaid_process_invoice_payment( $invoice_id ) {
     // Record reverse vat.
     if ( 'invoice' == $invoice->get_type() && wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
 
-        if ( wpinv_same_country_exempt_vat() && wpinv_is_base_country( $invoice->get_country() ) ) {
+        $taxes = $invoice->get_total_tax();
+        if ( empty( $taxes ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
             $invoice->add_note( __( 'VAT was reverse charged', 'invoicing' ), false, false, true );
         }
 

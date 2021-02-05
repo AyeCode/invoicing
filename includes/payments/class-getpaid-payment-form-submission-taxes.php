@@ -105,8 +105,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @since 1.0.19
 	 * @return bool
 	 */
-	public function is_eu_store() {
-		return $this->is_eu_country( wpinv_get_default_country() );
+	public static function is_eu_store() {
+		return self::is_eu_country( wpinv_get_default_country() );
 	}
 
 	/**
@@ -116,7 +116,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @since 1.0.19
 	 * @return bool
 	 */
-	public function is_eu_country( $country ) {
+	public static function is_eu_country( $country ) {
 		return getpaid_is_eu_state( $country ) || getpaid_is_gst_country( $country );
 	}
 
@@ -127,8 +127,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @since 1.0.19
 	 * @return bool
 	 */
-	public function is_eu_transaction( $customer_country ) {
-		return $this->is_eu_country( $customer_country ) && $this->is_eu_store();
+	public static function is_eu_transaction( $customer_country ) {
+		return self::is_eu_country( $customer_country ) && self::is_eu_store();
 	}
 
 	/**
@@ -197,7 +197,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		$in_eu = $this->is_eu_transaction( $submission->country );
 
 		// Abort if we are not validating vat numbers.
-		if ( ! $in_eu || ! wpinv_should_validate_vat_number() ) {
+		if ( ! $in_eu ) {
             return;
 		}
 
@@ -221,7 +221,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 			return;
 		}
 
-		if ( ! wpinv_validate_vat_number( $vat_number, $submission->country ) ) {
+		if ( wpinv_should_validate_vat_number() && ! wpinv_validate_vat_number( $vat_number, $submission->country ) ) {
 			throw new Exception( __( 'Your VAT number is invalid', 'invoicing' ) );
 		}
 
