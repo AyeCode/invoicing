@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.1 = 
+* Fabulous Fluid theme floats payment form paragraphs - FIXED
+
 = 2.1.0 =
 * Taxes calculated on original amount even if discounts have been added - FIXED
 * Invoice totals calculated on the fly instead of displaying the saved total - CHANGED
