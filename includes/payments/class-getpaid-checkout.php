@@ -335,7 +335,8 @@ class GetPaid_Checkout {
             wp_send_json_error( __( 'An error occured while saving your invoice. Please try again.', 'invoicing' ) );
         }
 
-        // Save payment form data.
+		// Save payment form data.
+		$prepared_payment_form_data = apply_filters( 'getpaid_prepared_payment_form_data', $prepared_payment_form_data, $invoice );
         if ( ! empty( $prepared_payment_form_data ) ) {
             update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared_payment_form_data );
 		}
