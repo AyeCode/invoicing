@@ -28,6 +28,12 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public $per_page = 10;
 
 	/**
+	 * @var int Number of items
+	 * @since 1.0.19
+	 */
+	public $total = 0;
+
+	/**
 	 * Get things started
 	 *
 	 * @since 1.0.19
@@ -212,18 +218,25 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public function prepare_query() {
 		global $wpdb;
 
+		$post_types = 'WHERE ';
+
+		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
+			$post_types .= $wpdb->prepare( "post_type=%s OR ", $post_type );
+		}
+
+		$post_types = rtrim( $post_types, ' OR' );
+
 		// Users with invoices.
     	$customers = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE post_type=%s LIMIT %d,%d",
-				'wpi_invoice',
+				"SELECT DISTINCT( post_author ) FROM $wpdb->posts $post_types LIMIT %d,%d",
 				$this->get_paged() * 10 - 10,
 				$this->per_page
 			)
 		);
 
 		$this->items = $customers;
-		$this->total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( DISTINCT( post_author ) ) FROM $wpdb->posts WHERE post_type=%s", 'wpi_invoice' ) );
+		$this->total = (int) $wpdb->get_var( "SELECT COUNT( DISTINCT( post_author ) ) FROM $wpdb->posts $post_types" );
 
 	}
 
@@ -239,5 +252,14 @@ class WPInv_Customers_Table extends WP_List_Table {
 		$sortable              = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 		$this->prepare_query();
+
+		$this->set_pagination_args(
+			array(
+			'total_items' => $this->total,
+			'per_page'    => $this->per_page,
+			'total_pages' => ceil( $this->total / $this->per_page )
+			)
+		);
+
 	}
 }
