@@ -167,7 +167,7 @@ jQuery(function ($) {
 						_this.show_error(WPInv.connectionError);
 					}) // Unblock the form.
 					.always(function () {
-						_this.form.unblock();
+						wpinvUnblock(_this.form);
 					});
 			},
 			// Updates the state field.
