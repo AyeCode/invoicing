@@ -96,11 +96,10 @@ class GetPaid_Admin {
             wp_enqueue_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui.min.css', array(), '1.8.16' );
 
             // Scripts.
-            wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '4.0.13', true );
             wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full.min.js', array( 'jquery' ), WPINV_VERSION );
 
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
-            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-blockui','jquery-ui-tooltip', 'wp-color-picker', 'jquery-ui-datepicker' ),  $version );
+            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-tooltip', 'wp-color-picker', 'jquery-ui-datepicker' ),  $version );
             wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', apply_filters( 'wpinv_admin_js_localize', $this->get_admin_i18() ) );
 
         }
@@ -173,7 +172,8 @@ class GetPaid_Admin {
             'item_description'          => __( 'Item Description', 'invoicing' ),
             'invoice_description'       => __( 'Invoice Description', 'invoicing' ),
             'discount_description'      => __( 'Discount Description', 'invoicing' ),
-            'searching'                 => __( 'Searching', 'invoicing' ),
+			'searching'                 => __( 'Searching', 'invoicing' ),
+			'loading'                   => __( 'Loading...', 'invoicing' ),
         );
 
 		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {

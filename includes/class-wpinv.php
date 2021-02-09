@@ -356,15 +356,10 @@ class WPInv_Plugin {
 	}
 
 	public function enqueue_scripts() {
-		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
 		wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
 		wp_enqueue_style( 'wpinv_front_style' );
-
-		// Register scripts
-		wp_register_script( 'jquery-blockui', WPINV_PLUGIN_URL . 'assets/js/jquery.blockUI.min.js', array( 'jquery' ), '2.70', true );
-		wp_register_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/invoice-front.js', array( 'jquery' ),  filemtime( WPINV_PLUGIN_DIR . 'assets/js/invoice-front.js' ), true );
 
 		$localize                         = array();
 		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
@@ -373,20 +368,14 @@ class WPInv_Plugin {
 		$localize['UseTaxes']             = wpinv_use_taxes();
 		$localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
 		$localize['formNonce']            = wp_create_nonce( 'getpaid_form_nonce' );
+		$localize['loading']              = __( 'Loading...', 'invoicing' );
 		$localize['connectionError']      = __( 'Could not establish a connection to the server.', 'invoicing' );
 
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
 
-		wp_enqueue_script( 'jquery-blockui' );
-
-		wp_enqueue_style( "select2", WPINV_PLUGIN_URL . 'assets/css/select2/select2.min.css', array(), WPINV_VERSION, 'all' );
-		wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION );
-
-		wp_enqueue_script( 'wpinv-front-script' );
-		wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
-
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );
-		wp_enqueue_script( 'wpinv-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'wpinv-front-script' ),  $version, true );
+		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'jquery' ),  $version, true );
+		wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
 	}
 
 	public function wpinv_actions() {

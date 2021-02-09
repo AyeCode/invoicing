@@ -1699,7 +1699,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
         if ( empty( $subscription_id ) && $this->is_renewal() ) {
             $parent = $this->get_parent();
-            return $parent->get_subscription_id( $context );
+            return $parent->get_remote_subscription_id( $context );
         }
 
         return $subscription_id;

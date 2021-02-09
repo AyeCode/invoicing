@@ -213,7 +213,7 @@ jQuery(function($) {
 
                 // Unblock the form.
                 .always( () => {
-                    this.form.unblock();
+                    wpinvUnblock( this.form );
                 })
 
             },
@@ -247,7 +247,7 @@ jQuery(function($) {
                     })
 
                     .always( () => {
-                        wrapper.find( '.getpaid-address-field-wrapper__state' ).unblock()
+                        wpinvUnblock( wrapper.find( '.getpaid-address-field-wrapper__state' ) )
                     });
 
                 }
@@ -292,7 +292,7 @@ jQuery(function($) {
                 } );
 
                 // Refresh when state changes.
-                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state, .getpaid-billing-address-wrapper .wpinv_vat_number"', () => {
+                this.form.on( 'change', '.getpaid-billing-address-wrapper .wpinv_state, .getpaid-billing-address-wrapper .wpinv_vat_number', () => {
                     on_field_change()
                 } );
 
@@ -653,7 +653,7 @@ jQuery(function($) {
             $( 'body' ).trigger( 'getpaid_payment_form_before_submit', [data] );
 
             if ( ! data.submit ) {
-                form.unblock();
+                wpinvUnblock( form );
                 return;
             }
 
@@ -693,7 +693,7 @@ jQuery(function($) {
                     } )
 
                     .always(() => {
-                        form.unblock();
+                        wpinvUnblock( form );
                     })
 
             }
@@ -704,7 +704,7 @@ jQuery(function($) {
                 var local_submit = function() {
 
                     if ( ! data.submit ) {
-                        form.unblock();
+                        wpinvUnblock( form );
                     } else {
                         submit();
                     }
@@ -815,3 +815,33 @@ jQuery(function($) {
     } )
 
 });
+
+function wpinvBlock(el, message) {
+    message = typeof message != 'undefined' && message !== '' ? message : WPInv.loading;
+    var $el = jQuery( el )
+
+    // Do not block twice.
+    if ( 1 != $el.data( 'GetPaidIsBlocked' ) ) {
+        $el.data( 'GetPaidIsBlocked', 1 )
+        $el.data( 'GetPaidWasRelative', $el.hasClass( 'position-relative' ) )
+        $el.addClass( 'position-relative' )
+        $el.append( '<div class="w-100 h-100 position-absolute bg-light d-flex justify-content-center align-items-center getpaid-block-ui" style="top: 0; left: 0; opacity: 0.7; cursor: progress;"><div class="spinner-border" role="status"><span class="sr-only">' + message +'</span></div></div>' )
+    }
+
+}
+
+function wpinvUnblock(el) {
+    var $el = jQuery( el )
+
+    if ( 1 == $el.data( 'GetPaidIsBlocked' ) ) {
+        $el.data( 'GetPaidIsBlocked', 0 )
+
+        if ( ! $el.data( 'GetPaidWasRelative') ) {
+            $el.removeClass( 'position-relative' )
+        }
+
+        $el.children( '.getpaid-block-ui' ).remove()
+
+    }
+
+}
