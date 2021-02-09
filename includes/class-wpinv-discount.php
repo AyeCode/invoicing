@@ -1183,7 +1183,7 @@ class WPInv_Discount extends GetPaid_Data  {
 		if ( ! $this->has_limit() || ! $this->has_uses() ) {
 			$exceeded = false ;
 		} else {
-			$exceeded = ! ( (int) $this->get_max_uses() < $this->get_uses() );
+			$exceeded = (int) $this->get_max_uses() <= $this->get_uses();
 		}
 
 		return apply_filters( 'wpinv_is_discount_maxed_out', $exceeded, $this->get_id(), $this, $this->get_code() );
