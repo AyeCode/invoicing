@@ -968,10 +968,11 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$this->set_expiration( date( 'Y-m-d H:i:s',$new_expiration ) );
 		$this->set_status( 'active' );
-		return $this->save();
+		$this->save();
 
 		do_action( 'getpaid_subscription_renewed', $this );
 
+		return $this->get_id();
 	}
 
 	/**

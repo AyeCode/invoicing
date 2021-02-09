@@ -134,7 +134,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.1.2 =
-* Customers list does not display all available customers - FIXED 
+* Customers list does not display all available customers - FIXED
 
 = 2.1.1 = 
 * Fabulous Fluid theme floats payment form paragraphs - FIXED
