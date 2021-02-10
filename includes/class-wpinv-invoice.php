@@ -2691,9 +2691,20 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Set the invoice source.
 	 *
 	 * @since 1.0.19
-	 * @param  string $value email recipients.
+	 * @param  string $value source.
+	 * @deprecated
 	 */
 	public function created_via( $value ) {
+		$this->set_created_via( sanitize_text_field( $value ) );
+	}
+
+	/**
+	 * Set the invoice source.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value source.
+	 */
+	public function set_created_via( $value ) {
 		$this->set_prop( 'created_via', sanitize_text_field( $value ) );
 	}
 
