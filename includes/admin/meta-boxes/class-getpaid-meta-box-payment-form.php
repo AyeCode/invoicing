@@ -38,7 +38,7 @@ class GetPaid_Meta_Box_Payment_Form {
                                 <small class='form-text text-muted'><?php _e( 'Add an element by dragging it to the payment form.', 'invoicing' ); ?></small>
                                 <draggable class="section mt-2" style="display: flex; flex-flow: wrap; justify-content: space-between;" v-model="elements" :group="{ name: 'fields', pull: 'clone', put: false }" :sort="false" :clone="addDraggedField" tag="ul" filter=".wpinv-undraggable">
                                     <li v-for="element in elements" class= "wpinv-payment-form-left-fields-field" @click.prevent="addField(element)" :class="{ 'd-none': element.defaults.premade }">
-                                        <button class="button btn">
+                                        <button class="button btn text-dark">
                                             <span v-if="element.icon" class="dashicons dashicon-" :class="'dashicon-' + element.icon"></span>
                                             {{element.name}}
                                         </button>
