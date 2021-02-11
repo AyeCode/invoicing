@@ -189,7 +189,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'label_type'  => 'vertical',
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
-                                        'value'       => $invoice->get_vat_number( 'edit' ),
+                                        'value'       => $invoice->get_city( 'edit' ),
                                     )
                                 );
                             ?>
