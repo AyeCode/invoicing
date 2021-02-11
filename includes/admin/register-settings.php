@@ -620,22 +620,19 @@ function getpaid_settings_description_callback( $args ) {
 
 }
 
-function wpinv_gateways_callback( $args ) {
+/**
+ * Displays a list of available gateways.
+ */
+function wpinv_gateways_callback() {
 
-	$gateways    = wpinv_get_option( 'gateways', array( 'manual' => 1 ) );
-    $sanitize_id = wpinv_sanitize_key( $args['id'] );
+	?>
+		</td>
+	</tr>
+	<tr class="bsui">
+    	<td colspan="2" class="p-0">
+			<?php include plugin_dir_path( __FILE__ ) . 'views/html-gateways-edit.php'; ?>
 
-	foreach ( $args['options'] as $key => $option ) :
-		$sanitize_key = wpinv_sanitize_key( $key );
-        
-        if ( is_array( $gateways ) && isset( $gateways[ $key ] ) )
-			$enabled = '1';
-		else
-			$enabled = null;
-
-		echo '<input name="wpinv_settings[' . esc_attr( $args['id'] ) . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="1" ' . checked('1', $enabled, false) . '/>&nbsp;';
-		echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . esc_html( $option['admin_label'] ) . '</label><br/>';
-	endforeach;
+	<?php
 }
 
 function wpinv_gateway_select_callback($args) {
@@ -954,6 +951,7 @@ function wpinv_tax_rate_callback( $tax_rate, $key, $echo = true ) {
 
 }
 
+
 function wpinv_tools_callback($args) {
     ob_start(); ?>
     </td><tr>
@@ -1028,6 +1026,7 @@ function wpinv_tools_callback($args) {
     <?php
     echo ob_get_clean();
 }
+
 
 function wpinv_descriptive_text_callback( $args ) {
 	echo wp_kses_post( $args['desc'] );

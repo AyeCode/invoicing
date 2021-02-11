@@ -139,6 +139,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Remove jQuery block ui dependancy - CHANGED
 * City not showing on invoice edit metabox - FIXED
 * Price inclusive of tax does not update the subtotal on the invoice - FIXED
+* Display subscriptions info on the Gateways overview page - CHANGED
 
 = 2.1.1 = 
 * Fabulous Fluid theme floats payment form paragraphs - FIXED

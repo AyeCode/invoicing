@@ -245,7 +245,7 @@ return array(
                     'name'    => __( 'Payment Gateways', 'invoicing' ),
                     'desc'    => __( 'Choose the payment gateways you want to enable.', 'invoicing' ),
                     'type'    => 'gateways',
-                    'std'     => array('manual'=>1),
+                    'std'     => array( 'manual'=>1 ),
                     'options' => wpinv_get_payment_gateways(),
                 ),
                 'default_gateway' => array(
