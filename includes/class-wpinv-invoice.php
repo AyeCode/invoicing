@@ -3423,6 +3423,11 @@ class WPInv_Invoice extends GetPaid_Data {
 			$recurring += $item->get_recurring_sub_total();
         }
 
+		if ( wpinv_prices_include_tax() ) {
+			$subtotal  = max( 0, $subtotal - $this->totals['tax']['initial'] );
+			$recurring = max( 0, $subtotal - $this->totals['tax']['recurring'] );
+		}
+
 		$current = $this->is_renewal() ? $recurring : $subtotal;
 		$this->set_subtotal( $current );
 
@@ -3563,10 +3568,10 @@ class WPInv_Invoice extends GetPaid_Data {
      * @return float The invoice total
 	 */
 	public function recalculate_total() {
-        $this->recalculate_subtotal();
         $this->recalculate_total_fees();
         $this->recalculate_total_discount();
 		$this->recalculate_total_tax();
+		$this->recalculate_subtotal();
 		$this->set_total( $this->get_total_tax() + $this->get_total_fees() + $this->get_subtotal() - $this->get_total_discount() );
 		return $this->get_total();
 	}

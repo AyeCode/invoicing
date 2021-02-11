@@ -167,11 +167,6 @@ jQuery(function ($) {
 			return;
 		}
 
-		// Let the user know that the billing details will be replaced.
-		if (!window.confirm(WPInv_Admin.FillBillingDetails)) {
-			return;
-		}
-
 		// Block the metabox.
 		wpinvBlock(metabox)
 
@@ -207,6 +202,10 @@ jQuery(function ($) {
 			})
 
 	})
+
+	$( '#getpaid-invoice-user-id-wrapper #post_author_override' ).on( 'change', function() {
+		$('#getpaid-invoice-fill-user-details').trigger( 'click' )
+	} )
 
 	// When clicking the create a new user button...
 	$('#getpaid-invoice-create-new-user-button').on('click', function (e) {
@@ -685,6 +684,11 @@ jQuery(function ($) {
 
 	}
 	$('#wpinv-items .recalculate-totals-button').on('click', function (e) {
+		e.preventDefault()
+		recalculateTotals()
+	})
+
+	$('.getpaid-is-invoice-cpt #wpinv_vat_number, .getpaid-is-invoice-cpt #wpinv_taxable').on('change', function (e) {
 		e.preventDefault()
 		recalculateTotals()
 	})
