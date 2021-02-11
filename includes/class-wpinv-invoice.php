@@ -3425,7 +3425,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		if ( wpinv_prices_include_tax() ) {
 			$subtotal  = max( 0, $subtotal - $this->totals['tax']['initial'] );
-			$recurring = max( 0, $subtotal - $this->totals['tax']['recurring'] );
+			$recurring = max( 0, $recurring - $this->totals['tax']['recurring'] );
 		}
 
 		$current = $this->is_renewal() ? $recurring : $subtotal;
