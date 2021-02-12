@@ -261,13 +261,18 @@ function getpaid_get_integration_settings() {
  */
 function wpinv_settings_sanitize( $input = array() ) {
 
-    $wpinv_options = wpinv_get_options();
+	$wpinv_options = wpinv_get_options();
+	$raw_referrer  = wp_get_raw_referer();
 
-    if ( empty( wp_get_raw_referer() ) ) {
+    if ( empty( $raw_referrer ) ) {
         return $input;
     }
 
-    wp_parse_str( wp_get_raw_referer(), $referrer );
+    wp_parse_str( $raw_referrer, $referrer );
+
+	if ( empty( $referrer['tab'] ) ) {
+        return $input;
+	}
 
     $settings = wpinv_get_registered_settings();
     $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : 'general';
@@ -296,10 +301,10 @@ function wpinv_settings_sanitize( $input = array() ) {
     }
 
     // Loop through the whitelist and unset any that are empty for the tab being saved
-    $main_settings    = $section == 'main' ? $settings[ $tab ] : array(); // Check for extensions that aren't using new sections
+    $main_settings    = isset( $settings[ $tab ] ) ? $settings[ $tab ] : array(); // Check for extensions that aren't using new sections
     $section_settings = ! empty( $settings[ $tab ][ $section ] ) ? $settings[ $tab ][ $section ] : array();
 
-    $found_settings = array_merge( $main_settings, $section_settings );
+    $found_settings   = array_merge( $main_settings, $section_settings );
 
     if ( ! empty( $found_settings ) ) {
         foreach ( $found_settings as $key => $value ) {
