@@ -357,6 +357,9 @@ class WPInv_Plugin {
 
 	public function enqueue_scripts() {
 
+		// Fires before adding scripts.
+		do_action( 'getpaid_enqueue_scripts' );
+
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
 		wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
 		wp_enqueue_style( 'wpinv_front_style' );

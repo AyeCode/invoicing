@@ -914,7 +914,7 @@ function getpaid_invoice_item_columns( $invoice ) {
             'name'     => __( 'Item', 'invoicing' ),
             'price'    => __( 'Price', 'invoicing' ),
             'quantity' => __( 'Quantity', 'invoicing' ),
-            'subtotal' => __( 'Subtotal', 'invoicing' ),
+            'subtotal' => __( 'Item Subtotal', 'invoicing' ),
         ),
         $invoice
     );
