@@ -354,8 +354,11 @@ jQuery(function($) {
                 if ( state.is_free ) {
                     submit_btn.val( free_label )
                     this.form.find( '.getpaid-gateways' ).slideUp();
+                    this.form.data( 'isFree', 'yes' )
                     return
                 }
+
+                this.form.data( 'isFree', 'no' )
 
                 // ... else show, the gateways and the pay text.
                 this.form.find( '.getpaid-gateways' ).slideDown();
@@ -650,7 +653,9 @@ jQuery(function($) {
             }
 
             // Trigger submit event.
-            $( 'body' ).trigger( 'getpaid_payment_form_before_submit', [data] );
+            if ( 'no' == form.data( 'isFree' ) ) {
+                $( 'body' ).trigger( 'getpaid_payment_form_before_submit', [data] );
+            }
 
             if ( ! data.submit ) {
                 wpinvUnblock( form );

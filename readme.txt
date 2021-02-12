@@ -140,6 +140,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * City not showing on invoice edit metabox - FIXED
 * Price inclusive of tax does not update the subtotal on the invoice - FIXED
 * Display subscriptions info on the Gateways overview page - CHANGED
+* Card details validated even if 100% discount is used - FIXED
 
 = 2.1.1 = 
 * Fabulous Fluid theme floats payment form paragraphs - FIXED
