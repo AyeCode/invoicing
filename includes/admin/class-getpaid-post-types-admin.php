@@ -172,7 +172,8 @@ class GetPaid_Post_Types_Admin {
 			'cb'                => $columns['cb'],
 			'number'            => __( 'Invoice', 'invoicing' ),
 			'customer'          => __( 'Customer', 'invoicing' ),
-			'invoice_date'      => __( 'Date', 'invoicing' ),
+			'invoice_date'      => __( 'Created', 'invoicing' ),
+			'payment_date'      => __( 'Completed', 'invoicing' ),
 			'amount'            => __( 'Amount', 'invoicing' ),
 			'recurring'         => __( 'Recurring', 'invoicing' ),
 			'status'            => __( 'Status', 'invoicing' ),
@@ -192,8 +193,20 @@ class GetPaid_Post_Types_Admin {
 
 			case 'invoice_date' :
 				$date_time = esc_attr( $invoice->get_created_date() );
-				$date      = getpaid_format_date_value( $date_time );
+				$date      = getpaid_format_date_value( $date_time, "&mdash;", true );
 				echo "<span title='$date_time'>$date</span>";
+				break;
+
+			case 'payment_date' :
+
+				if ( $invoice->is_paid() ) {
+					$date_time = esc_attr( $invoice->get_completed_date() );
+					$date      = getpaid_format_date_value( $date_time, "&mdash;", true );
+					echo "<span title='$date_time'>$date</span>";
+				} else {
+					echo "&mdash;";
+				}
+				
 				break;
 
 			case 'amount' :

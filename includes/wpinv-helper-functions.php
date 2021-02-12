@@ -849,13 +849,18 @@ function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
 /**
  * Formats a date
  */
-function getpaid_format_date( $date ) {
+function getpaid_format_date( $date, $with_time = false ) {
 
     if ( empty( $date ) || $date == '0000-00-00 00:00:00' ) {
         return '';
     }
 
-    return date_i18n( getpaid_date_format(), strtotime( $date ) );
+    $format = getpaid_date_format();
+
+    if ( $with_time ) {
+        $format .= ' ' . getpaid_time_format();
+    }
+    return date_i18n( $format, strtotime( $date ) );
 
 }
 
@@ -864,8 +869,8 @@ function getpaid_format_date( $date ) {
  *
  * @return string
  */
-function getpaid_format_date_value( $date, $default = "&mdash;" ) {
-    $date = getpaid_format_date( $date );
+function getpaid_format_date_value( $date, $default = "&mdash;", $with_time = false ) {
+    $date = getpaid_format_date( $date, $with_time );
     return empty( $date ) ? $default : $date;
 }
 

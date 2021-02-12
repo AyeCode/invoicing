@@ -86,6 +86,28 @@ class GetPaid_Meta_Box_Invoice_Details {
                             )
                         );
 
+                        // Date paid.
+                        $date_paid = $invoice->get_date_completed( 'edit' );
+                        if ( ! empty( $date_paid ) && $invoice->is_paid() ) {
+
+                            echo aui()->input(
+                                array(
+                                    'type'        => 'text',
+                                    'id'          => 'wpinv_date_completed',
+                                    'name'        => 'wpinv_date_completed',
+                                    'label'       => __( 'Date Completed:', 'invoicing' ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'form-control-sm',
+                                    'value'       => $date_paid,
+                                    'extra_attributes' => array(
+                                        'onclick'  => 'this.select();',
+                                        'readonly' => 'true',
+                                    ),
+                                )
+                            );
+
+                        }
+
                         // Due date.
                         if ( $invoice->is_type( 'invoice' ) && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->is_draft() ) ) {
 

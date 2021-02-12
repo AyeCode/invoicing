@@ -15,8 +15,8 @@
     display: none !important;
 }
 
-.getpaid-is-invoice-cpt .wp-list-table.widefat th#invoice_date {
-    width: 120px;
+.getpaid-is-invoice-cpt.post-type-wpi_quote .wp-list-table.widefat th#invoice_date {
+    width: 160px;
 }
 
 .getpaid-is-invoice-cpt .wp-list-table.widefat th#status {
