@@ -372,10 +372,10 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
         if ( isset( $data['valid_until'] ) ) {
             update_post_meta( $invoice->get_id(), 'wpinv_quote_valid_until', $data['valid_until'] );
         }
-        return $invoice;
 
     }
 
+    return $invoice;
 }
 
 /**

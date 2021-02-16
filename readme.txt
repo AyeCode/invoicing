@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.3 =
+* `wpinv_insert_invoice()` function does not return created invoice on success - FIXED
+
 = 2.1.2 =
 * Customers list does not display all available customers - FIXED
 * Discounts only usable once if a maximum use count is set - FIXED
