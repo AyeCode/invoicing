@@ -20,7 +20,6 @@ return array(
 	'FI',
 	'FR',
 	'DE',
-	'GB',
 	'GR',
 	'HU',
 	'IE',
