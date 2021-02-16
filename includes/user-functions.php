@@ -108,7 +108,12 @@ function getpaid_get_user_content_tabs() {
 
     $tabs = array(
 
-        // Slug - invoices.
+        'gp-edit-address'  => array(
+            'label'        => __( 'Billing Address', 'invoicing' ),
+            'callback'     => 'getpaid_display_address_edit_tab',
+            'icon'         => 'fas fa-credit-card',
+        ),
+
         'gp-invoices'   => array(
             'label'     => __( 'Invoices', 'invoicing' ), // Name of the tab.
             'content'   => '[wpinv_history]', // Content of the tab. Or specify "callback" to provide a callback instead.
@@ -119,7 +124,8 @@ function getpaid_get_user_content_tabs() {
             'label'        => __( 'Subscriptions', 'invoicing' ),
             'content'      => '[wpinv_subscriptions]',
             'icon'         => 'fas fa-redo',
-        )
+        ),
+
     );
 
     return apply_filters( 'getpaid_user_content_tabs', $tabs );
@@ -170,6 +176,122 @@ function getpaid_get_tab_url( $tab, $default ) {
     return sprintf( $getpaid_tab_url, $tab );
 
 }
+
+/**
+ * Generates the address edit tab.
+ *
+ * @since 2.1.4
+ * @return string
+ */
+function getpaid_display_address_edit_tab() {
+
+    ob_start();
+    ?>
+        <div class="bsui">
+            <?php wpinv_print_errors(); ?>
+            <form method="post" class="getpaid-address-edit-form">
+
+                <?php
+
+                    foreach ( getpaid_user_address_fields() as $key => $label ) {
+
+                        // Display the country.
+                        if ( 'country' == $key ) {
+
+                            echo aui()->select(
+                                array(
+                                    'options'     => wpinv_get_country_list(),
+                                    'name'        => esc_attr( $key ),
+                                    'id'          => 'wpinv-' . sanitize_html_class( $key ),
+                                    'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
+                                    'placeholder' => $label,
+                                    'label'       => wp_kses_post( $label ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'getpaid-address-field',
+                                )
+                            );
+
+                        }
+
+                        // Display the state.
+                        else if ( 'state' == $key ) {
+
+                            echo getpaid_get_states_select_markup (
+                                getpaid_get_user_address_field( get_current_user_id(), 'country' ),
+                                getpaid_get_user_address_field( get_current_user_id(), 'state' ),
+                                $label,
+                                $label,
+                                '',
+                                false,
+                                '',
+                                $key
+                            );
+
+                        } else {
+
+                            echo aui()->input(
+                                array(
+                                    'name'        => esc_attr( $key ),
+                                    'id'          => 'wpinv-' . sanitize_html_class( $key ),
+                                    'placeholder' => $label,
+                                    'label'       => wp_kses_post( $label ),
+                                    'label_type'  => 'vertical',
+                                    'type'        => 'text',
+                                    'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
+                                    'class'       => 'getpaid-address-field',
+                                )
+                            );
+
+                        }
+
+                    }
+
+                    do_action( 'getpaid_display_address_edit_tab' );
+
+                    echo aui()->input(
+                        array(
+                            'name'             => 'getpaid_profile_edit_submit_button',
+                            'id'               => 'getpaid_profile_edit_submit_button',
+                            'value'            => __( 'Save Address', 'invoicing' ),
+                            'help_text'        => __( 'New invoices will use this address as the billing address.', 'invoicing' ),
+                            'type'             => 'submit',
+                            'class'            => 'btn btn-primary btn-block submit-button',
+                        )
+                    );
+
+                    wp_nonce_field( 'getpaid-nonce', 'getpaid-nonce' );
+                    getpaid_hidden_field( 'getpaid-action', 'edit_billing_details' );
+                ?>
+
+            </form>
+
+        </div>
+    <?php
+
+    return ob_get_clean();
+}
+
+/**
+ * Saves the billing address edit tab.
+ *
+ * @since 2.1.4
+ * @param array $data
+ */
+function getpaid_save_address_edit_tab( $data ) {
+
+    foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
+
+        if ( isset( $data[ $field ] ) ) {
+            $value = sanitize_text_field( $data[ $field ] );
+            update_user_meta( get_current_user_id(), '_wpinv_' . $field, $value );
+        }
+
+        wpinv_set_error( 'address_updated', __( 'You billing address has been updated', 'invoicing' ), 'success');
+    }
+
+}
+add_action( 'getpaid_authenticated_action_edit_billing_details', 'getpaid_save_address_edit_tab' );
+
 
 /*
  |--------------------------------------------------------------------------

@@ -369,7 +369,6 @@ class WPInv_Plugin {
 		$localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
 		$localize['txtComplete']          = __( 'Continue', 'invoicing' );
 		$localize['UseTaxes']             = wpinv_use_taxes();
-		$localize['checkoutNonce']        = wp_create_nonce( 'wpinv_checkout_nonce' );
 		$localize['formNonce']            = wp_create_nonce( 'getpaid_form_nonce' );
 		$localize['loading']              = __( 'Loading...', 'invoicing' );
 		$localize['connectionError']      = __( 'Could not establish a connection to the server.', 'invoicing' );

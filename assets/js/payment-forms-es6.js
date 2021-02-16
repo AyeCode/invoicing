@@ -819,6 +819,41 @@ jQuery(function($) {
 
     } )
 
+    // Profile edit forms.
+    $( document ).on( 'change', '.getpaid-address-edit-form #wpinv-country', function( e ) {
+
+        var state = $( this ).closest( '.getpaid-address-edit-form' ).find( '.wpinv_state' )
+
+        // Ensure that we have a state field.
+        if ( state.length ) {
+
+            wpinvBlock( state.parent() );
+
+            var data = {
+                action: 'wpinv_get_aui_states_field',
+                country: $( this ).val(),
+                state: state.val(),
+                class: 'wpinv_state',
+                name : 'state',
+			    _ajax_nonce: WPInv.nonce
+            };
+
+            $.get( WPInv.ajax_url, data, ( res ) => {
+
+                if ( 'object' == typeof res ) {
+                    state.parent().replaceWith( res.data.html )
+                }
+
+            })
+
+            .always( () => {
+                wpinvUnblock( state.parent() )
+            });
+
+        }
+
+    } )
+
 });
 
 function wpinvBlock(el, message) {

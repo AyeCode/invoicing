@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.1.3 =
 * `wpinv_insert_invoice()` function does not return created invoice on success - FIXED
 * UK nolonger treated as an EU state and nolonger applies reverse VAT - CHANGED
+* Ability to for customers to edit their billing addresses - ADDED
 
 = 2.1.2 =
 * Customers list does not display all available customers - FIXED

@@ -706,8 +706,10 @@ class WPInv_Ajax {
             exit;
         }
 
-        $states = wpinv_get_country_states( trim( $_GET['country'] ) );
-        $state  = isset( $_GET['state'] ) ? trim( $_GET['state'] ) : wpinv_get_default_state();
+        $states = wpinv_get_country_states( sanitize_text_field( $_GET['country'] ) );
+        $state  = isset( $_GET['state'] ) ? sanitize_text_field( $_GET['state'] ) : wpinv_get_default_state();
+        $name   = isset( $_GET['name'] ) ? sanitize_text_field( $_GET['name'] ) : 'wpinv_state';
+        $class  = isset( $_GET['class'] ) ? sanitize_text_field( $_GET['class'] ) : 'form-control-sm';
 
         if ( empty( $states ) ) {
 
@@ -715,11 +717,11 @@ class WPInv_Ajax {
                 array(
                     'type'        => 'text',
                     'id'          => 'wpinv_state',
-                    'name'        => 'wpinv_state',
+                    'name'        => $name,
                     'label'       => __( 'State', 'invoicing' ),
                     'label_type'  => 'vertical',
-                    'placeholder' => 'Liège',
-                    'class'       => 'form-control-sm',
+                    'placeholder' => __( 'State', 'invoicing' ),
+                    'class'       => $class,
                     'value'       => $state,
                 )
             );
@@ -729,11 +731,11 @@ class WPInv_Ajax {
             $html = aui()->select(
                 array(
                     'id'          => 'wpinv_state',
-                    'name'        => 'wpinv_state',
+                    'name'        => $name,
                     'label'       => __( 'State', 'invoicing' ),
                     'label_type'  => 'vertical',
                     'placeholder' => __( 'Select a state', 'invoicing' ),
-                    'class'       => 'form-control-sm',
+                    'class'       => $class,
                     'value'       => $state,
                     'options'     => $states,
                     'data-allow-clear' => 'false',
