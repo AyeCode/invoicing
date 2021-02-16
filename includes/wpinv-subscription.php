@@ -883,6 +883,14 @@ class WPInv_Subscription extends GetPaid_Data {
         if ( ! empty( $args['transaction_id'] ) && $this->payment_exists( $args['transaction_id'] ) ) {
             return false;
         }
+		
+		// Check is it one time payment
+		$item = new WPInv_Item( $this->get_product_id() );
+		$is_one_time_payment = $item->is_one_time_recurring();
+        if ( $is_one_time_payment == 1 ) {
+            $this->complete();
+			return true;
+        } 
 
 		// Are we creating a new invoice?
 		if ( empty( $invoice ) ) {

@@ -218,6 +218,34 @@ class GetPaid_Meta_Box_Item_Details {
                 <?php do_action( 'wpinv_item_details_metabox_minimum_price', $item ); ?>
             <?php endif; ?>
 
+            <?php
+            // one time Subscriptions.
+            do_action( 'wpinv_item_details_metabox_before_one_time_subscription_checkbox', $item );
+            ?>
+            <div class="wpinv_show_if_recurring wpinv_one_time_recurring">
+                <div class="form-group row">
+                    <label for="wpinv_is_one_time_recurring" class="col-sm-3 col-form-label">
+                        <?php _e( 'One time only (non-recurring)?', 'invoicing' );?>
+                    </label> 
+                    
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" value="1" <?php echo ($item->is_one_time_recurring()) ? 'checked' : ''; ?> class="form-control  custom-control-input"  name="wpinv_is_one_time_recurring" id="wpinv_is_one_time_recurring" /><label for="wpinv_is_one_time_recurring" class=" custom-control-label">Change customers a recurring amount for one time only.</label>
+                                </div>
+                                <div class="wpinv_show_if_recurring">
+                                    <em><span class="form-text text-muted"><?php echo apply_filters( 'wpinv_is_one_time_recurring_toggle_help_text', __( 'It will appear as a recurring payment, at the next renewal date it will complete the subscription without any deductions.', 'invoicing' ) ) ?></span></em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php
+            do_action( 'wpinv_item_details_metabox_one_time_subscription_checkbox', $item );
+            ?>
+
             <?php do_action( 'wpinv_item_details_metabox_before_maximum_renewals', $item ); ?>
             <div class="wpinv_show_if_recurring wpinv_maximum_renewals">
 
@@ -301,7 +329,7 @@ class GetPaid_Meta_Box_Item_Details {
 
         // Prepare the item.
         $item = new WPInv_Item( $post_id );
-
+        
         // Load new data.
         $item->set_props(
 			array(
@@ -312,12 +340,16 @@ class GetPaid_Meta_Box_Item_Details {
 				'is_dynamic_pricing'   => isset( $_POST['wpinv_name_your_price'] ),
                 'minimum_price'        => isset( $_POST['wpinv_minimum_price'] ) ? (float) $_POST['wpinv_minimum_price'] : null,
 				'is_recurring'         => isset( $_POST['wpinv_is_recurring'] ),
+                'is_one_time_recurring' => isset( $_POST['wpinv_is_one_time_recurring'] ) ? (int) $_POST['wpinv_is_one_time_recurring']  : 0,
 				'recurring_period'     => isset( $_POST['wpinv_recurring_period'] ) ? wpinv_clean( $_POST['wpinv_recurring_period'] ) : null,
 				'recurring_interval'   => isset( $_POST['wpinv_recurring_interval'] ) ? (int) $_POST['wpinv_recurring_interval'] : null,
-				'recurring_limit'      => isset( $_POST['wpinv_recurring_limit'] ) ? (int) $_POST['wpinv_recurring_limit'] : null,
-				'is_free_trial'        => isset( $_POST['wpinv_trial_interval'] ) ? ( 0 != (int) $_POST['wpinv_trial_interval'] ) : null,
+
+				'recurring_limit'      => isset( $_POST['wpinv_recurring_limit'] ) ? ((isset( $_POST['wpinv_is_one_time_recurring'] )) ? 1 : (int) $_POST['wpinv_recurring_limit'] ) : null,
+
+				'is_free_trial'        => isset( $_POST['wpinv_trial_interval'] ) ? ((isset( $_POST['wpinv_is_one_time_recurring'] )) ? 0 : ( 0 != (int) $_POST['wpinv_trial_interval'] ) )  : null,
+
 				'trial_period'         => isset( $_POST['wpinv_trial_period'] ) ? wpinv_clean( $_POST['wpinv_trial_period'] ) : null,
-				'trial_interval'       => isset( $_POST['wpinv_trial_interval'] ) ? (int) $_POST['wpinv_trial_interval'] : null,
+				'trial_interval'       => isset( $_POST['wpinv_trial_interval'] )  ? ((isset( $_POST['wpinv_is_one_time_recurring'] )) ? 0 : (int) $_POST['wpinv_trial_interval'] ) : null,
 			)
         );
 

@@ -155,6 +155,13 @@ return array(
 		'context'     => array( 'view', 'edit', 'embed' ),
 	),
 
+	'is_one_time_recurring'        => array(
+		'description' => __( 'Whether or not this is a one time subscription item.', 'invoicing' ),
+		'type'        => 'integer',
+		'enum'        => array( 0, 1 ),
+		'context'     => array( 'view', 'edit', 'embed' ),
+	), 
+
 	'is_recurring'        => array(
 		'description' => __( 'Whether or not this is a subscription item.', 'invoicing' ),
 		'type'        => 'integer',

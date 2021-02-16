@@ -49,6 +49,7 @@ class WPInv_Item  extends GetPaid_Data {
         'is_dynamic_pricing'   => null,
         'minimum_price'        => null,
         'is_recurring'         => null,
+		'is_one_time_recurring'=> null,
         'recurring_period'     => null,
         'recurring_interval'   => null,
         'recurring_limit'      => null,
@@ -455,6 +456,17 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_is_recurring( $context = 'view' ) {
         return (int) $this->get_prop( 'is_recurring', $context );
+	}
+
+	/**
+	 * Checks if this is a one time recurring item.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_is_one_time_recurring( $context = 'view' ) {
+        return (int) $this->get_prop( 'is_one_time_recurring', $context );
 	}
 	
 	/**
@@ -988,6 +1000,16 @@ class WPInv_Item  extends GetPaid_Data {
         $this->set_prop( 'is_recurring', (int) $value );
     }
 
+	/**
+	 * Sets if this is a recurring item.
+	 *
+	 * @since 1.0.19
+	 * @param  int|bool $value whether or not dynamic pricing is allowed.
+	 */
+	public function set_is_one_time_recurring( $value ) {
+        $this->set_prop( 'is_one_time_recurring', (int) $value );
+    }
+
     /**
 	 * Set the recurring period.
 	 *
@@ -1096,6 +1118,16 @@ class WPInv_Item  extends GetPaid_Data {
 	}
 	
 	/**
+	 * Checks whether the item is one time recurring.
+	 *
+	 * @since 1.0.19
+	 * @return bool
+	 */
+	public function is_one_time_recurring() {
+        return (bool) $this->get_is_one_time_recurring();
+    }
+
+	/**
 	 * Checks whether the item is recurring.
 	 *
 	 * @since 1.0.19
@@ -1103,7 +1135,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function is_recurring() {
         return (bool) $this->get_is_recurring();
-    }
+    } 
 
     /**
 	 * Checks whether the item has a free trial.

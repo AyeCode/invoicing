@@ -372,10 +372,10 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
         if ( isset( $data['valid_until'] ) ) {
             update_post_meta( $invoice->get_id(), 'wpinv_quote_valid_until', $data['valid_until'] );
         }
+        return $invoice;
 
     }
 
-    return $invoice;
 }
 
 /**
@@ -914,7 +914,7 @@ function getpaid_invoice_item_columns( $invoice ) {
             'name'     => __( 'Item', 'invoicing' ),
             'price'    => __( 'Price', 'invoicing' ),
             'quantity' => __( 'Quantity', 'invoicing' ),
-            'subtotal' => __( 'Item Subtotal', 'invoicing' ),
+            'subtotal' => __( 'Subtotal', 'invoicing' ),
         ),
         $invoice
     );
@@ -1214,21 +1214,25 @@ function getpaid_get_invoice_meta( $invoice ) {
 
         $subscription = wpinv_get_subscription( $invoice );
 
+        // Check is it one time payment
+		$item = new WPInv_Item( $subscription->get_product_id() );
+		$is_one_time_payment = $item->is_one_time_recurring();
+        
         if ( ! empty ( $subscription ) ) {
 
             // Display the renewal date.
-            if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
+            if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() && $is_one_time_payment != 1 ) {
 
                 $meta[ 'renewal_date' ] = array(
 
                     'label' => __( 'Renews On', 'invoicing' ),
                     'value' => getpaid_format_date( $subscription->get_expiration() ),
         
-                );
+                ); 
 
             }
 
-            if ( $invoice->is_parent() ) {
+            if ( $invoice->is_parent() && $is_one_time_payment != 1) {
 
                 // Display the recurring amount.
                 $meta[ 'recurring_total' ] = array(

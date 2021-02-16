@@ -15,8 +15,8 @@
     display: none !important;
 }
 
-.getpaid-is-invoice-cpt.post-type-wpi_quote .wp-list-table.widefat th#invoice_date {
-    width: 160px;
+.getpaid-is-invoice-cpt .wp-list-table.widefat th#invoice_date {
+    width: 120px;
 }
 
 .getpaid-is-invoice-cpt .wp-list-table.widefat th#status {
@@ -1585,6 +1585,21 @@ textarea.wpi-email_overdue_content {
 
 #wpinv_discount_amount_wrap.percent .wpinv-if-flat {
     display: none !important;
+}
+
+/* One Time Subscription items */
+/* We use classes to toggle so that the initial "display value e.g flex|blog" is maintained*/
+.getpaid_is_one_time_subscription_item .wpinv_maximum_renewals {
+    display: none !important;
+} 
+.getpaid_is_one_time_subscription_item .wpinv_free_trial {
+    display: none !important;
+}
+.bsui label.col-sm-7.col-form-label {
+    font-weight: 600;
+}
+input#wpinv_is_one_time_recurring {
+    margin-top: 10px;
 }
 
 /* Subscription items */

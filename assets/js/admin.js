@@ -105,6 +105,22 @@ jQuery(function ($) {
 		return (Date.now().toString(36) + Math.random().toString(36).substr(2))
 	}
 
+	// One time Subscription items.
+	if ($('#wpinv_is_one_time_recurring').length) {
+
+		// Toggles the 'getpaid_is_one_time_subscription_item' class on the body.
+		var watch_one_time_subscription_change = function () {
+			$('body').toggleClass('getpaid_is_one_time_subscription_item', $('#wpinv_is_one_time_recurring').is(':checked'));
+		}   
+
+		// Toggle the class when the document is loaded...
+		watch_one_time_subscription_change();
+
+		// ... and whenever the checkbox changes.
+		$(document).on('change', '#wpinv_is_one_time_recurring', watch_one_time_subscription_change);
+
+	}
+
 	// Subscription items.
 	if ($('#wpinv_is_recurring').length) {
 
@@ -112,7 +128,7 @@ jQuery(function ($) {
 		var watch_subscription_change = function () {
 			$('body').toggleClass('getpaid_is_subscription_item', $('#wpinv_is_recurring').is(':checked'))
 			$('body').toggleClass('getpaid_is_not_subscription_item', !$('#wpinv_is_recurring').is(':checked'))
-
+			
 			$('.getpaid-price-input').toggleClass('col-sm-4', $('#wpinv_is_recurring').is(':checked'))
 			$('.getpaid-price-input').toggleClass('col-sm-12', !$('#wpinv_is_recurring').is(':checked'))
 
