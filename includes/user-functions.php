@@ -83,6 +83,7 @@ function wpinv_generate_user_name( $prefix = '' ) {
 
     // If prefix is an email, retrieve the part before the email.
 	$prefix = strtok( $prefix, '@' );
+    $prefix = trim( $prefix, '.' );
 
 	// Sanitize the username.
 	$prefix = sanitize_user( $prefix, true );
