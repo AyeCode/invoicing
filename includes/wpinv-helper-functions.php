@@ -692,14 +692,17 @@ function wpinv_get_screen_ids() {
         'wpi_item',
         'wpi_quote',
         'wpi_discount',
+        'wpi_payment_form',
         'edit-wpi_invoice',
         'edit-wpi_item',
         'edit-wpi_discount',
         'edit-wpi_quote',
-        'invoicing_page_wpinv-settings',
-        'invoicing_page_wpinv-subscriptions',
-        'invoicing_page_wpinv-reports',
-        'invoicing_page_wpi-addons',
+        'edit-wpi_payment_form',
+        'getpaid_page_wpinv-settings',
+        'getpaid_page_wpinv-subscriptions',
+        'getpaid_page_wpinv-reports',
+        'getpaid_page_wpi-addons',
+        'getpaid_page_wpinv-customers',
     );
 
     return apply_filters( 'wpinv_screen_ids', $screen_ids );

@@ -255,3 +255,19 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
 
     return $page_id;
 }
+
+/**
+ * Tell AyeCode UI to load on certain admin pages.
+ *
+ * @param $screen_ids
+ *
+ * @return array
+ */
+function wpinv_add_aui_screens($screen_ids){
+
+    // load on these pages if set
+    $screen_ids = array_merge( $screen_ids, wpinv_get_screen_ids() );
+
+    return $screen_ids;
+}
+add_filter('aui_screen_ids','wpinv_add_aui_screens');
