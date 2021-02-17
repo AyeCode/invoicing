@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 <div class="table-responsive">
-    <table id="wpinv_gateways_select" class="table bg-white form-table">
+    <table id="wpinv_gateways_select" class="table border bg-white form-table">
         <caption><?php echo esc_html_e( 'This table displays installed payment methods.', 'invoicing' ); ?></caption>
 
         <thead>
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
             <?php foreach ( wpinv_get_payment_gateways() as $id => $gateway ) : ?>
                 <tr>
                     <td class="getpaid-payment-method text-left">
-                        <a style="color: #0073aa;" href="<?php esc_url( add_query_arg( 'section', $id ) ); ?>" class="font-weight-bold"><?php echo sanitize_text_field( $gateway['admin_label'] ); ?></a>
+                        <a style="color: #0073aa;" href="<?php echo esc_url( add_query_arg( 'section', $id ) ); ?>" class="font-weight-bold"><?php echo sanitize_text_field( $gateway['admin_label'] ); ?></a>
                     </td>
                     <td class="getpaid-payment-method-enabled text-center">
                         <?php
@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit;
                     </td>
 
                     <td class="getpaid-payment-method-action text-right">
-                        <a class="button button-secondary" href="<?php esc_url( add_query_arg( 'section', $id ) ); ?>"><?php _e( 'Manage', 'invoicing' ); ?></a>
+                        <a class="button button-secondary" href="<?php echo esc_url( add_query_arg( 'section', $id ) ); ?>"><?php _e( 'Manage', 'invoicing' ); ?></a>
                     </td>
 
                 </tr>
