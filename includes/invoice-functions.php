@@ -81,6 +81,11 @@ function getpaid_get_invoice_post_types() {
         'wpi_invoice' => __( 'Invoice', 'invoicing' ),
     );
 
+    // Ensure the quotes addon is installed.
+    if ( ! defined( 'WPINV_QUOTES_VERSION' ) ) {
+        unset( $post_types['wpi_quote'] );
+    }
+
     return apply_filters( 'getpaid_invoice_post_types', $post_types );
 }
 
