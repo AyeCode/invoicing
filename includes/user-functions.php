@@ -57,11 +57,13 @@ function wpinv_current_user_can_manage_invoicing() {
  * @since 1.0.19
  * @return int|WP_Error
  */
-function wpinv_create_user( $email ) {
+function wpinv_create_user( $email, $prefix = '' ) {
 
     // Prepare user values.
-	$args = array(
-		'user_login' => wpinv_generate_user_name( $email ),
+    $prefix = preg_replace( '/\s+/', '', $prefix );
+    $prefix = empty( $prefix ) ? $email : $prefix;
+	$args   = array(
+		'user_login' => wpinv_generate_user_name( $prefix ),
 		'user_pass'  => wp_generate_password(),
 		'user_email' => $email,
         'role'       => 'subscriber',
@@ -82,18 +84,21 @@ function wpinv_generate_user_name( $prefix = '' ) {
     // If prefix is an email, retrieve the part before the email.
 	$prefix = strtok( $prefix, '@' );
 
-	// Trim to 4 characters max.
-	$prefix = sanitize_user( $prefix );
+	// Sanitize the username.
+	$prefix = sanitize_user( $prefix, true );
 
 	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
 	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {
-		$prefix = 'gtp';
+		$prefix = 'gtp_' . zeroise( wp_rand( 0, 9999 ), 4 );
 	}
 
-	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
-	if ( username_exists( $username ) ) {
-		return wpinv_generate_user_name( $username );
-	}
+    $username = $prefix;
+    $postfix  = 2;
+
+    while ( username_exists( $username ) ) {
+        $username = $prefix + $postfix;
+        $postfix ++;
+    }
 
     return $username;
 }
