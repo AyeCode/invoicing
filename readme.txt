@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * UK nolonger treated as an EU state and nolonger applies reverse VAT - CHANGED
 * Ability to for customers to edit their billing addresses - ADDED
 * Show total spent on the customers list table - ADDED
+* Show invoice count on the customers list table - ADDED
 
 = 2.1.2 =
 * Customers list does not display all available customers - FIXED
