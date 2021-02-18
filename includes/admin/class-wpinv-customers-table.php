@@ -114,6 +114,45 @@ class WPInv_Customers_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Displays the total spent column.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @param WP_User $user
+	 *
+	 * @return string Column Name
+	 */
+	public function column_total( $user ) {
+
+		$args = array(
+			'data'             => array(
+
+				'total'        => array(
+					'type'     => 'invoice_data',
+					'function' => 'SUM',
+					'name'     => 'total_sales',
+				)
+
+			),
+			'where'            => array(
+
+				'author'       => array(
+					'type'     => 'post_data',
+					'value'    => absint( $user->ID ),
+					'key'      => 'posts.post_author',
+					'operator' => '=',
+				),
+
+			),
+			'query_type'     => 'get_var',
+			'invoice_status' => array( 'wpi-renewal', 'wpi-processing', 'publish' ),
+		);
+
+		return wpinv_price( (float) GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
+
+	}
+
+	/**
 	 * Generates content for a single row of the table
 	 * @since 1.0.19
 	 *
@@ -187,6 +226,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 			'address'  => __( 'Address', 'invoicing' ),
 			'phone'    => __( 'Phone', 'invoicing' ),
 			'company'  => __( 'Company', 'invoicing' ),
+			'total'    => __( 'Total Spend', 'invoicing' ),
 		);
 		return apply_filters( 'wpinv_customers_table_columns', $columns );
 
