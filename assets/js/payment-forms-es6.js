@@ -70,6 +70,9 @@ jQuery(function($) {
         return {
 
             // Cache states to reduce server requests.
+            fetched_initial_state: 0,
+
+            // Cache states to reduce server requests.
             cached_states: {},
 
             // The current form.
@@ -192,12 +195,13 @@ jQuery(function($) {
 
                 // Return a promise.
                 var key = this.current_state_key()
-                return $.post( WPInv.ajax_url, key + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce )
+                return $.post( WPInv.ajax_url, key + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce + '&initial_state=' + this.fetched_initial_state )
 
                 .done( ( res ) => {
 
                     // If successful, cache the prices.
                     if ( res.success ) {
+                        this.fetched_initial_state = 1
                         this.cache_state( key, res.data )
                         return this.switch_state()
                     }

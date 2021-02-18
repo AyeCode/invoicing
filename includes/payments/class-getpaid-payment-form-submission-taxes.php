@@ -207,6 +207,11 @@ class GetPaid_Payment_Form_Submission_Taxes {
         $is_eu       = $this->is_eu_country( $submission->country );
         $is_ip_eu    = $this->is_eu_country( $ip_country );
 
+		// Maybe abort early for initial fetches.
+		if ( $submission->is_initial_fetch() && empty( $vat_number ) ) {
+			return;
+		}
+
 		// If we're preventing business to consumer purchases,
 		if ( $this->requires_vat( $is_ip_eu, $is_eu ) && empty( $vat_number ) ) {
 

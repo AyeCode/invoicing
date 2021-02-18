@@ -743,6 +743,16 @@ class GetPaid_Payment_Form_Submission {
     */
 
 	/**
+	 * Checks if this is the initial fetch.
+	 *
+	 * @return bool
+	 * @since 1.0.19
+	 */
+	public function is_initial_fetch() {
+		return empty( $this->data['initial_state'] );
+	}
+
+	/**
 	 * Returns the total amount to collect for this submission.
 	 *
 	 * @since 1.0.19
