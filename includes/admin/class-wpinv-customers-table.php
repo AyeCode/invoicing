@@ -114,6 +114,19 @@ class WPInv_Customers_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Displays the signup column.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @param WP_User $user
+	 *
+	 * @return string Column Name
+	 */
+	public function column_signup( $user ) {
+		return getpaid_format_date_value( $user->user_registered );
+	}
+
+	/**
 	 * Displays the total spent column.
 	 *
 	 * @since 1.0.19
@@ -268,6 +281,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 			'company'  => __( 'Company', 'invoicing' ),
 			'invoices' => __( 'Invoices', 'invoicing' ),
 			'total'    => __( 'Total Spend', 'invoicing' ),
+			'signup'   => __( 'Date created', 'invoicing' ),
 		);
 		return apply_filters( 'wpinv_customers_table_columns', $columns );
 
