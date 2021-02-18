@@ -313,7 +313,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public function prepare_query() {
 		global $wpdb;
 
-		$post_types = 'WHERE ';
+		$post_types = '';
 
 		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
 			$post_types .= $wpdb->prepare( "post_type=%s OR ", $post_type );
@@ -321,17 +321,31 @@ class WPInv_Customers_Table extends WP_List_Table {
 
 		$post_types = rtrim( $post_types, ' OR' );
 
+		// Maybe search.
+		if ( ! empty( $_POST['s'] ) ) {
+			$users = get_users(
+				array(
+					'search'         => sanitize_text_field( urldecode( $_POST['s'] ) ),
+					'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
+					'fields'         => 'ID',
+				)
+			);
+
+			$users      = implode( ', ', $users );
+			$post_types = "($post_types) AND ( post_author IN ( $users ) )";
+		}
+
 		// Users with invoices.
     	$customers = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT DISTINCT( post_author ) FROM $wpdb->posts $post_types LIMIT %d,%d",
+				"SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE $post_types LIMIT %d,%d",
 				$this->get_paged() * 10 - 10,
 				$this->per_page
 			)
 		);
 
 		$this->items = $customers;
-		$this->total = (int) $wpdb->get_var( "SELECT COUNT( DISTINCT( post_author ) ) FROM $wpdb->posts $post_types" );
+		$this->total = (int) $wpdb->get_var( "SELECT COUNT( DISTINCT( post_author ) ) FROM $wpdb->posts WHERE $post_types" );
 
 	}
 

@@ -140,6 +140,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Show total spent on the customers list table - ADDED
 * Show invoice count on the customers list table - ADDED
 * Show registration date on the customers list table - ADDED
+* Ability to search through customers - ADDED
 
 = 2.1.2 =
 * Customers list does not display all available customers - FIXED

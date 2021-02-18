@@ -78,11 +78,14 @@ class WPInv_Admin_Menus {
                 }
             </style>
             <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?></h1>
+            <form method="post">
             <?php
                 $table = new WPInv_Customers_Table();
                 $table->prepare_items();
+                $table->search_box( __( 'Search Customers', 'invoicing' ), 'search-customers' );
                 $table->display();
             ?>
+            </form>
         </div>
         <?php
     }
