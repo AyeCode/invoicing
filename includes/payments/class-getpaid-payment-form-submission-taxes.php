@@ -225,7 +225,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 			throw new Exception( __( 'Your VAT number is invalid', 'invoicing' ) );
 		}
 
-		if ( 'vat_too' != wpinv_get_option( 'vat_same_country_rule' ) ) {
+		if (  wpinv_default_billing_country() != $submission->country && 'vat_too' != wpinv_get_option( 'vat_same_country_rule' ) ) {
 			$this->skip_taxes = true;
 		}
 

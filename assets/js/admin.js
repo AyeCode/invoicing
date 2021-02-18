@@ -718,13 +718,9 @@ jQuery(function ($) {
 			if (!$('textarea#add_invoice_note').val()) {
 				return;
 			}
-			$('#wpinv-notes').block({
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6
-				}
-			});
+
+			wpinvBlock('#wpinv-notes');
+
 			var data = {
 				action: 'wpinv_add_note',
 				post_id: WPInv_Admin.post_ID,
