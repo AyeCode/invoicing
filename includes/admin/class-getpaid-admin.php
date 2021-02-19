@@ -99,7 +99,7 @@ class GetPaid_Admin {
             wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full.min.js', array( 'jquery' ), WPINV_VERSION );
 
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
-            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-tooltip', 'wp-color-picker', 'jquery-ui-datepicker' ),  $version );
+            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-tooltip', 'wp-color-picker' ),  $version );
             wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', apply_filters( 'wpinv_admin_js_localize', $this->get_admin_i18() ) );
 
         }

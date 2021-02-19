@@ -764,13 +764,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     font-size: 13px;
     width: 200px;
 }
-.wpinv .blockUI.blockMsg  {
-    background-color: transparent !important;
-    border: none !important;
-}
-.wpinv .blockUI.blockMsg .fa-refresh {
-    margin-right: 5px;
-}
+
 #wpinv_items_wrap table.wpinv-items tr .qty {
     text-align: left;
     width: 25px;
