@@ -526,7 +526,7 @@ jQuery(function($) {
     var setup_form = function( form ) {
 
         // Add the row class to gateway credit cards.
-        form.find('.getpaid-gateway-description-div .form-horizontal .form-group').addClass('row')
+        form.find('.getpaid-gateway-descriptions-div .form-horizontal .form-group').addClass('row')
 
         // Hides items that are not in an array.
         /**

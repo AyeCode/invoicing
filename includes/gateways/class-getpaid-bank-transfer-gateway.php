@@ -179,7 +179,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			$label = wp_kses_post( $data['label'] );
 			$value = wp_kses_post( wptexturize( $data['value'] ) );
 
-			echo "<tr class='getpaid-bank-transfer-$key'><th>$label</th><td>$value</td></tr>" . PHP_EOL;
+			echo "<tr class='getpaid-bank-transfer-$key'><th class='font-weight-bold'>$label</th><td class='w-75'>$value</td></tr>" . PHP_EOL;
 		}
 
 		echo '</table>';

@@ -130,7 +130,8 @@ class WPInv_Plugin {
 		}
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
-		add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
+		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
@@ -360,10 +361,6 @@ class WPInv_Plugin {
 		// Fires before adding scripts.
 		do_action( 'getpaid_enqueue_scripts' );
 
-		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice-front.css' );
-		wp_register_style( 'wpinv_front_style', WPINV_PLUGIN_URL . 'assets/css/invoice-front.css', array(), $version );
-		wp_enqueue_style( 'wpinv_front_style' );
-
 		$localize                         = array();
 		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
 		$localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
@@ -542,23 +539,22 @@ class WPInv_Plugin {
 
 	}
 
+	/**
+	 * Displays additional footer code.
+	 * 
+	 * @since 2.0.0
+	 */
 	public function wp_footer() {
-		echo '
-			<div class="bsui">
-				<div  id="getpaid-payment-modal" class="modal" tabindex="-1" role="dialog">
-					<div class="modal-dialog modal-dialog-centered modal-lg" role="checkout" style="max-width: 650px;">
-						<div class="modal-content">
-							<div class="modal-body">
-								<button type="button" class="close p-2 getpaid-payment-modal-close d-sm-none" data-dismiss="modal" aria-label="' . esc_attr__( 'Close', 'invoicing' ) . '">
-									<i class="fa fa-times" aria-hidden="true"></i>
-								</button>
-								<div class="modal-body-wrapper"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		';
+		wpinv_get_template( 'frontend-footer.php' );
+	}
+
+	/**
+	 * Displays additional header code.
+	 * 
+	 * @since 2.0.0
+	 */
+	public function wp_head() {
+		wpinv_get_template( 'frontend-head.php' );
 	}
 
 }

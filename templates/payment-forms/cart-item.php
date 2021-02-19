@@ -89,7 +89,7 @@ $currency = $form->get_currency();
 										</div>
 									<?php endif; ?>
 
-									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>">
+									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>" style="width: 64px; line-height: 1; min-height: 35px;">
 
 									<?php if ( ! empty( $validate_minimum ) ) : ?>
 										<div class="invalid-tooltip">
@@ -118,7 +118,7 @@ $currency = $form->get_currency();
 
 						if ( $item->allows_quantities() ) {
 							?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity(); ?>' min='1' required>
+								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity(); ?>' min='1' required>
 							<?php
 						} else {
 							echo (float) $item->get_quantity();

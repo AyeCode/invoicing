@@ -2,7 +2,7 @@
 /**
  * Displays a radio in payment form
  *
- * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/elements/radio.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/elements/price_select.php.
  *
  * @version 1.0.19
  */
