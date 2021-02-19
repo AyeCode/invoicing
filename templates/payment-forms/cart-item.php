@@ -16,11 +16,11 @@ $currency = $form->get_currency();
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?> border-bottom py-2 px-3'>
 
-	<div class="form-row">
+	<div class="form-row needs-validation">
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 
-			<div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo $item->get_id(); ?>">
+			<div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo $item->get_id(); ?>">
 
 				<?php
 
@@ -64,7 +64,23 @@ $currency = $form->get_currency();
 						}
 
 						if ( $item->user_can_set_their_price() ) {
-							$price = max( (float) $item->get_price(), (float) $item->get_minimum_price() );
+							$price            = max( (float) $item->get_price(), (float) $item->get_minimum_price() );
+							$minimum          = (float) $item->get_minimum_price();
+							$validate_minimum = '';
+							$class            = '';
+							$data_minimum     = '';
+
+							if ( $minimum > 0 ) {
+								$validate_minimum = sprintf(
+									esc_attr__( 'The minimum allowed amount is %s', 'invoicing' ),
+									sanitize_text_field( wpinv_price( $minimum, $currency ) )
+								);
+
+								$class = 'getpaid-validate-minimum-amount';
+
+								$data_minimum     = "data-minimum-amount='$minimum'";
+							}
+
 							?>
 								<div class="input-group input-group-sm">
 									<?php if( 'left' == $position ) : ?>
@@ -72,7 +88,14 @@ $currency = $form->get_currency();
 											<span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
 										</div>
 									<?php endif; ?>
-									<input type="text" name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border border">
+
+									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>">
+
+									<?php if ( ! empty( $validate_minimum ) ) : ?>
+										<div class="invalid-tooltip">
+											<?php echo $validate_minimum; ?>
+										</div>
+									<?php endif; ?>
 
 									<?php if( 'left' != $position ) : ?>
 										<div class="input-group-append">
@@ -80,6 +103,7 @@ $currency = $form->get_currency();
 										</div>
 									<?php endif; ?>
 								</div>
+
 							<?php
 						} else {
 							echo wpinv_price( $item->get_price(), $currency );

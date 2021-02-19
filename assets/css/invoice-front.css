@@ -144,3 +144,11 @@ input[type="text"].getpaid-item-price-input {
 #primary .getpaid-payment-form p {
 	float: none !important;
 }
+
+.bsui .is-invalid ~ .invalid-feedback, .bsui .is-invalid ~ .invalid-tooltip {
+    display: block
+}
+
+.bsui .is-invalid {
+    border-color: #dc3545 !important;
+}

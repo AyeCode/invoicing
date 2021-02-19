@@ -273,9 +273,15 @@ jQuery(function($) {
                 // Refresh prices.
                 this.form.on( 'change', '.getpaid-refresh-on-change', on_field_change );
                 this.form.on( 'input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change );
-                this.form.on( 'input', '.getpaid-item-price-input', on_field_change );
                 this.form.on( 'change', '.getpaid-item-quantity-input', on_field_change );
                 this.form.on( 'change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
+
+                // Refresh when price changes.
+                this.form.on( 'change', '.getpaid-item-price-input', function() {
+                    if ( ! $( this ).hasClass('is-invalid' ) ) {
+                        on_field_change()
+                    }
+                } );
 
                 // Update states when country changes.
                 this.form.on( 'change', '.getpaid-shipping-address-wrapper .wpinv_country', () => {
@@ -854,6 +860,27 @@ jQuery(function($) {
                 wpinvUnblock( state.parent() )
             });
 
+        }
+
+    } )
+
+    // Minimum amounts.
+    $( document ).on( 'input', '.getpaid-validate-minimum-amount', function( e ) {
+
+        if ( isNaN( parseFloat(  $( this ).val() ) ) ) {
+            if ( $( this ).data( 'minimum-amount' ) ) {
+                $( this ).val( $( this ).data( 'minimum-amount' ) )
+            } else {
+                $( this ).val( 0 )
+            }
+        } else {
+            $( this ).val( parseFloat(  $( this ).val() ) )
+        }
+
+        if ( $( this ).data( 'minimum-amount' ) && $( this ).val() < $( this ).data( 'minimum-amount' ) ) {
+            $( this ).addClass( 'is-invalid' )
+        } else {
+            $( this ).removeClass( 'is-invalid' )
         }
 
     } )
