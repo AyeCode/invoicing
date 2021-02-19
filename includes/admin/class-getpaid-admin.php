@@ -93,13 +93,12 @@ class GetPaid_Admin {
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
             wp_enqueue_style( 'wpinv_admin_style', WPINV_PLUGIN_URL . 'assets/css/admin.css', array( 'wp-color-picker' ), $version );
             wp_enqueue_style( 'select2', WPINV_PLUGIN_URL . 'assets/css/select2/select2.min.css', array(), '4.0.13', 'all' );
-            wp_enqueue_style( 'jquery-ui-css', WPINV_PLUGIN_URL . 'assets/css/jquery-ui.min.css', array(), '1.8.16' );
 
             // Scripts.
             wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full.min.js', array( 'jquery' ), WPINV_VERSION );
 
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
-            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-tooltip', 'wp-color-picker' ),  $version );
+            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'wp-color-picker' ),  $version );
             wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', apply_filters( 'wpinv_admin_js_localize', $this->get_admin_i18() ) );
 
         }

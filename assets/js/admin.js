@@ -64,7 +64,7 @@ getpaid.currency = new Intl.NumberFormat(undefined, {
 jQuery(function ($) {
 	//'use strict';
 
-	// Tooltips
+	// Tooltips.
 	$('.wpi-help-tip').tooltip({
 		content: function () {
 			return $(this).prop('title');
