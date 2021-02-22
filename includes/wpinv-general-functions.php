@@ -199,8 +199,13 @@ function wpinv_get_business_logo() {
 }
 
 function wpinv_get_business_name() {
-    $business_name = wpinv_get_option('store_name', wpinv_get_blogname() );
-    return apply_filters( 'wpinv_get_business_name', $business_name );
+    $name = wpinv_get_option( 'store_name', wpinv_get_blogname() );
+
+    if ( empty( $name ) ) {
+        $name = wpinv_get_blogname();
+    }
+
+    return apply_filters( 'wpinv_get_business_name', $name );
 }
 
 function wpinv_get_blogname() {

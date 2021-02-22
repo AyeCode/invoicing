@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 // Prepare the company name.
 $company_name = wpinv_get_option( 'vat_company_name' );
-
+echo $company_name;
 if ( empty( $company_name ) ) {
     $company_name = wpinv_get_business_name();
 }
@@ -31,7 +31,7 @@ if ( empty( $company_name ) ) {
 
                 <div class="name">
                     <a target="_blank" class="text-dark" href="<?php echo esc_url( wpinv_get_business_website() ); ?>">
-                        <?php echo esc_html( wpinv_get_business_name() ); ?>
+                        <?php echo esc_html( $company_name ); ?>
                     </a>
                 </div>
 
