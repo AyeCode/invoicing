@@ -244,7 +244,7 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         'first_name' => $user_info->first_name,
         'last_name'  => $user_info->last_name,
         'state'      => wpinv_get_default_state(),
-        'state'      => wpinv_get_default_country(),
+        'country'    => wpinv_get_default_country(),
     );
 
     return getpaid_array_merge_if_empty( $address, $defaults );
