@@ -38,6 +38,18 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                                 // Total tax.
                                 if ( 'tax' == $key ) {
                                     echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );
+
+                                    if ( wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
+
+                                        $taxes = $invoice->get_total_tax();
+                                        if ( empty( $taxes ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
+                                            echo ' <em class="text-muted small">';
+                                            _e( '(Reverse charged)', 'invoicing' );
+                                            echo '</em>';
+                                        }
+
+                                    }
+
                                 }
 
                                 // Total Fee.
