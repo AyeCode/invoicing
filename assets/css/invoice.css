@@ -131,3 +131,7 @@
 .getpaid-invoice-item:hover .getpaid-line-item-actions {
     position: static;
 }
+
+.getpaid-invoice-vat_number {
+    display: none;
+}

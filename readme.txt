@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Missing state defaults to country when editing an invoice - FIXED
 * Change website name on invoice templates to business name - CHANGED
 * Add the sellers vat number at the bottom of the "from" section and remove from the info section - CHANGED
+* Move the buyers vat number from invoice meta to "To" section - CHANGED
 
 = 2.1.3 =
 * `wpinv_insert_invoice()` function does not return created invoice on success - FIXED

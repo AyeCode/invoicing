@@ -13,7 +13,7 @@ $invoice     = new WPInv_Invoice( $invoice );
 $address_row = wpinv_get_invoice_address_markup( $invoice->get_user_info() );
 $phone       = $invoice->get_phone();
 $email       = $invoice->get_email();
-
+$vat_number  = $invoice->get_vat_number();
 ?>
     <div class="getpaid-billing-address form-group text-break">
 
@@ -49,6 +49,11 @@ $email       = $invoice->get_email();
                     </div>
                 <?php endif; ?>
 
+                <?php if ( ! empty( $vat_number ) ) : ?>
+                    <div class="vat-number">
+                        <?php echo wp_sprintf( __( 'Vat Number: %s', 'invoicing' ), sanitize_text_field( $vat_number ) ); ?>
+                    </div>
+                <?php endif; ?>
 
                 <?php do_action( 'getpaid_billing_address_bottom' ); ?>
 
