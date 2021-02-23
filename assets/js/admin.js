@@ -656,6 +656,10 @@ jQuery(function ($) {
 			_ajax_nonce: WPInv_Admin.wpinv_nonce,
 		}
 
+		if ( $('#wpinv_vat_number').length ) {
+			data.vat_number = $('#wpinv_vat_number').val()
+		}
+
 		// Block the metabox.
 		wpinvBlock('.getpaid-invoice-items-inner')
 

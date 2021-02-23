@@ -394,7 +394,7 @@ class WPInv_Ajax {
         }
 
         // Maybe set the country, state, currency.
-        foreach ( array( 'country', 'state', 'currency' ) as $key ) {
+        foreach ( array( 'country', 'state', 'currency', 'vat_number' ) as $key ) {
             if ( isset( $_POST[ $key ] ) ) {
                 $method = "set_$key";
                 $invoice->$method( sanitize_text_field( $_POST[ $key ] ) );
