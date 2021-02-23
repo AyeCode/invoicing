@@ -85,7 +85,7 @@ Get timely and friendly support for both Core Plugin and add-ons at our official
 
 = Origin =
 
-Work on GetPaid started in April 2016.
+Work on GetPaid ( AKA, Get Paid or wpGetPaid ) started in April 2016.
 We are proud the original base of the plugin was a fork of [EDD](https://wordpress.org/plugins/easy-digital-downloads/) with permission from Pippin.
 Additionally, we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
 We worked on the plugin for over a year before it got its first public release, we stripped down the code to make it a simple lightweight payment and invoicing plugin with many additional features to fit the needs of our customers.
