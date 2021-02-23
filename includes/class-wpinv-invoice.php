@@ -3478,7 +3478,13 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Maybe disable taxes.
 		$vat_number = $this->get_vat_number();
-		if ( ! wpinv_use_taxes() || $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() ) || ( wpinv_default_billing_country() != $this->get_country() && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $this->get_country() ) && ! empty( $vat_number ) &&  'vat_too' != wpinv_get_option( 'vat_same_country_rule' )  )  ) {
+		$skip_tax   = GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $this->get_country() ) && ! empty( $vat_number );
+
+		if ( wpinv_default_billing_country() == $this->get_country() && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
+			$skip_tax = false;
+		}
+
+		if ( ! wpinv_use_taxes() || $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() ) || $skip_tax   ) {
 
 			$this->totals['tax'] = array(
 				'initial'   => 0,

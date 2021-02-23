@@ -140,6 +140,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add the sellers vat number at the bottom of the "from" section and remove from the info section - CHANGED
 * Move the buyers vat number from invoice meta to "To" section - CHANGED
 * If VAT is reverse charged, indicate next to the tax field - ADDED
+* "Same country rule" defaults to charging tax even if VAT number is validated - CHANGED
 
 = 2.1.3 =
 * `wpinv_insert_invoice()` function does not return created invoice on success - FIXED

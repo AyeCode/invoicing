@@ -378,12 +378,12 @@ return array(
                     'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
                     'type'        => 'select',
                     'options'     => array(
-                        'no'        => __( 'Do not charge Tax', 'invoicing' ),
-                        'always'    => __( 'Charge Tax', 'invoicing' ),
+                        'no'        => __( 'Do not charge tax', 'invoicing' ),
+                        'always'    => __( 'Charge tax unless vat number is validated', 'invoicing' ),
                         'vat_too'   => __( 'Charge tax even if vat number is validated', 'invoicing' )
                     ),
                     'placeholder' => __( 'Select an option', 'invoicing' ),
-                    'std'         => 'always',
+                    'std'         => 'vat_too',
                 ),
 
             ),

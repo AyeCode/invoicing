@@ -144,7 +144,7 @@ function wpinv_get_default_tax_rate() {
  * @return bool
  */
 function wpinv_same_country_exempt_vat() {
-    return 'no' == wpinv_get_option( 'vat_same_country_rule', 'always' );
+    return 'no' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' );
 }
 
 /**
