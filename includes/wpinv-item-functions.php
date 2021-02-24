@@ -393,32 +393,36 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
 
 /**
  * Retrieves recurring price description.
- * 
+ *
  * @param WPInv_Item|GetPaid_Form_Item $item
  */
-function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
+function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initial_price = false, $_recurring_price = false ) {
 
     // Abort if it is not recurring.
     if ( ! $item->is_recurring() ) {
         return '';
     }
 
-    $initial_price   = wpinv_price( $item->get_initial_price(), $currency );
-    $recurring_price = wpinv_price( $item->get_recurring_price(), $currency );
+    $initial_price   = false === $_initial_price ? wpinv_price( $item->get_initial_price(), $currency ) : $_initial_price;
+    $recurring_price = false === $_recurring_price ? wpinv_price( $item->get_recurring_price(), $currency ) : $_recurring_price;
     $period          = getpaid_get_subscription_period_label( $item->get_recurring_period(), $item->get_recurring_interval(), '' );
     $initial_class   = 'getpaid-item-initial-price';
     $recurring_class = 'getpaid-item-recurring-price';
 
-    if ( $item instanceof GetPaid_Form_Item ) {
+    if ( $item instanceof GetPaid_Form_Item && false === $_initial_price ) {
         $initial_price   = wpinv_price( $item->get_sub_total(), $currency );
         $recurring_price = wpinv_price( $item->get_recurring_sub_total(), $currency );
+    }
+
+    if ( wpinv_price( 0, $currency ) == $initial_price && wpinv_price( 0, $currency ) == $recurring_price ) {
+        return __( 'Free forever', 'invoicing' );
     }
 
     // For free trial items.
     if ( $item->has_free_trial() ) {
         $trial_period = getpaid_get_subscription_period_label( $item->get_trial_period(), $item->get_trial_interval() );
 
-        if ( 0 == $item->get_initial_price() ) {
+        if ( wpinv_price( 0, $currency ) == $initial_price ) {
 
             return sprintf(
 
@@ -453,6 +457,19 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '' ) {
             _x( '%1$s / %2$s', 'Item subscription amount. (e.g.: $120 / year)', 'invoicing' ),
             "<span class='$recurring_class'>$recurring_price</span>",
             "<span class='getpaid-item-recurring-period'>$period</span>"
+
+        );
+
+    }
+
+    if ( $initial_price == wpinv_price( 0, $currency ) ) {
+
+        return sprintf(
+
+            // translators: $1: is the recurring period, $2: is the recurring price
+            _x( 'Free for %1$s then %2$s / %1$s', 'Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months)', 'invoicing' ),
+            "<span class='getpaid-item-recurring-period'>$period</span>",
+            "<span class='$recurring_class'>$recurring_price</span>"
 
         );
 

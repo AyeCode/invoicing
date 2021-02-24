@@ -44,7 +44,7 @@ $currency = $form->get_currency();
 						// Price help text.
                         $description = getpaid_item_recurring_price_help_text( $item, $currency );
                         if ( $description ) {
-                            echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
+                            echo "<small class='getpaid-form-item-price-desc form-text text-muted pr-2 m-0'>$description</small>";
 						}
 
 					}
