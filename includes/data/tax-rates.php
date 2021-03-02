@@ -130,15 +130,6 @@ return array(
     ),
 
     array(
-        'country'      => 'HR',
-        'state'        => '',
-        'global'       => true,
-        'rate'         => 25,
-        'reduced_rate' => 13,
-        'name'         => __( 'VAT', 'invoicing' ),
-    ),
-
-    array(
         'country'      => 'IT',
         'state'        => '',
         'global'       => true,

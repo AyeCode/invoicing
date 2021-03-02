@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.5 =
 * Show admin notice on our settings page if a GetPaid database table is missing - ADDED
+* Better BuddyPress integration - ADDED
 
 = 2.1.4 =
 * Validate minimum amounts without sending the value to the servers - CHANGED

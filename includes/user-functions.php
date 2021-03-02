@@ -114,12 +114,6 @@ function getpaid_get_user_content_tabs() {
 
     $tabs = array(
 
-        'gp-edit-address'  => array(
-            'label'        => __( 'Billing Address', 'invoicing' ),
-            'callback'     => 'getpaid_display_address_edit_tab',
-            'icon'         => 'fas fa-credit-card',
-        ),
-
         'gp-invoices'   => array(
             'label'     => __( 'Invoices', 'invoicing' ), // Name of the tab.
             'content'   => '[wpinv_history]', // Content of the tab. Or specify "callback" to provide a callback instead.
@@ -132,9 +126,24 @@ function getpaid_get_user_content_tabs() {
             'icon'         => 'fas fa-redo',
         ),
 
+        'gp-edit-address'  => array(
+            'label'        => __( 'Billing Address', 'invoicing' ),
+            'callback'     => 'getpaid_display_address_edit_tab',
+            'icon'         => 'fas fa-credit-card',
+        ),
+
     );
 
-    return apply_filters( 'getpaid_user_content_tabs', $tabs );
+    $tabs = apply_filters( 'getpaid_user_content_tabs', $tabs );
+
+    // Make sure address editing is last on the list.
+    if ( isset( $tabs['gp-edit-address'] ) ) {
+        $address = $tabs['gp-edit-address'];
+        unset( $tabs['gp-edit-address'] );
+        $tabs['gp-edit-address'] = $address;
+    }
+
+    return $tabs;
 }
 
 /**
@@ -428,3 +437,79 @@ function getpaid_is_userswp_integration_active() {
     $enabled = wpinv_get_option( 'enable_userswp', 1 );
     return defined( 'USERSWP_PLUGIN_FILE' ) && ! empty( $enabled );
 }
+
+/*
+ |--------------------------------------------------------------------------
+ | BuddyPress
+ |--------------------------------------------------------------------------
+ |
+ | Functions that integrate GetPaid and BuddyPress.
+*/
+
+/**
+ * Registers the BuddyPress integration settings.
+ *
+ * @since  2.1.5
+ * @param  array $settings An array of integration settings.
+ * @return array
+ */
+function getpaid_register_buddypress_settings( $settings ) {
+
+    if ( class_exists( 'BuddyPress' ) ) {
+
+        $settings[] = array(
+
+            'id'       => 'buddypress',
+            'label'    => __( 'BuddyPress', 'invoicing' ),
+            'settings' => array(
+
+                'buddypress_settings' => array(
+                    'id'   => 'buddypress_settings',
+                    'name' => '<h3>' . __( 'BuddyPress', 'invoicing' ) . '</h3>',
+                    'type' => 'header',
+                ),
+
+                'enable_buddypress' => array(
+                    'id'         => 'enable_buddypress',
+                    'name'       => __( 'Enable Integration', 'invoicing' ),
+                    'desc'       => __( 'Display GetPaid items on BuddyPress account pages.', 'invoicing' ),
+                    'type'       => 'checkbox',
+                    'std'        => 1,
+                )
+
+            )
+
+        );
+
+    }
+
+    return $settings;
+}
+add_filter( 'getpaid_integration_settings', 'getpaid_register_buddypress_settings' );
+
+/**
+ * Checks if the integration is enabled.
+ *
+ * @since  2.1.5
+ * @return bool
+ */
+function getpaid_is_buddypress_integration_active() {
+    $enabled = wpinv_get_option( 'enable_buddypress', 1 );
+    return class_exists( 'BuddyPress' ) && ! empty( $enabled );
+}
+
+/**
+ * Loads the BuddyPress component.
+ *
+ * @since  2.1.5
+ * @return bool
+ */
+function getpaid_setup_buddypress_integration() {
+
+    if ( getpaid_is_buddypress_integration_active() ) {
+        require_once( WPINV_PLUGIN_DIR . 'includes/class-bp-getpaid-component.php' );
+        buddypress()->getpaid = new BP_GetPaid_Component();
+    }
+
+}
+add_action( 'bp_setup_components', 'getpaid_setup_buddypress_integration' );
