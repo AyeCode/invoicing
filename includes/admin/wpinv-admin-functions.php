@@ -87,6 +87,46 @@ function wpinv_test_payment_gateway_messages(){
     }
 }
 
+/**
+ * Checks if all tables are available,
+ * and alerts the user for any missing tables.
+ */
+function wpinv_check_for_missing_tables() {
+    global $wpdb;
+
+    // Only do this on our settings page.
+    if ( empty( $_GET[ 'page' ] ) || 'wpinv-settings' !== $_GET[ 'page' ] ) {
+        return;
+    }
+
+    // Check tables.
+    $tables             = array(
+        "{$wpdb->prefix}wpinv_subscriptions",
+        "{$wpdb->prefix}getpaid_invoices",
+        "{$wpdb->prefix}getpaid_invoice_items",
+    );
+
+    foreach ( $tables as $table ) {
+        if ( $table != $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) ) {
+
+            $url     = esc_url(
+                wp_nonce_url(
+                    add_query_arg( 'getpaid-admin-action', 'create_missing_tables' ),
+                    'getpaid-nonce',
+                    'getpaid-nonce'
+                )
+            );
+            $message  = __( 'Some GetPaid database tables are missing. To use GetPaid without any issues, click on the button below to create the missing tables.', 'invoicing' );
+            $message2 = __( 'Create Tables', 'invoicing' );
+            echo "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>";
+            break;
+
+        }
+    }
+
+}
+add_action( 'admin_notices', 'wpinv_check_for_missing_tables' );
+
 add_action('admin_init', 'wpinv_admin_search_by_invoice');
 
 /**

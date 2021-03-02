@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.5 =
+* Show admin notice on our settings page if a GetPaid database table is missing - ADDED
+
 = 2.1.4 =
 * Validate minimum amounts without sending the value to the servers - CHANGED
 * Missing state defaults to country when editing an invoice - FIXED
