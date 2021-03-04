@@ -127,7 +127,7 @@ function getpaid_maybe_add_default_address( &$invoice ) {
  */
 function getpaid_user_address_fields() {
 
-    return apply_filters(
+    $address_fields = apply_filters(
         'getpaid_user_address_fields',
         array(
             'first_name' => __( 'First Name', 'invoicing' ),
@@ -143,6 +143,11 @@ function getpaid_user_address_fields() {
         )
     );
 
+    if ( ! wpinv_use_taxes() && isset( $address_fields['vat_number'] ) ) {
+        unset( $address_fields['vat_number'] );
+    }
+
+    return $address_fields;
 }
 
 /**

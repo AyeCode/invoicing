@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Show admin notice on our settings page if a GetPaid database table is missing - ADDED
 * Better BuddyPress integration - ADDED
 * Ability to manually delete a subscription - ADDED
+* Do not display VAT number input on the address edit form if taxes are disabled - CHANGED
 
 = 2.1.4 =
 * Validate minimum amounts without sending the value to the servers - CHANGED
