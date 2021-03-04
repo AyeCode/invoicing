@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: GetPaid 2.0.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-15 07:25+0000\n"
-"PO-Revision-Date: 2021-02-24 11:11+0000\n"
+"PO-Revision-Date: 2021-03-04 05:18+0000\n"
 "Last-Translator: Brian Mutende <mutendebrian@gmail.com>\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -2033,7 +2033,7 @@ msgstr ""
 msgid "Billing / Shipping Address"
 msgstr ""
 
-#: includes/user-functions.php:118 includes/data/payment-form-elements.php:181
+#: includes/user-functions.php:130 includes/data/payment-form-elements.php:181
 #: templates/payment-forms/elements/address.php:46
 msgid "Billing Address"
 msgstr ""
@@ -2250,8 +2250,18 @@ msgstr ""
 msgid "Budapest"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:245 includes/class-wpinv-bp-core.php:253
-msgid "BuddyPress Integration"
+#: includes/user-functions.php:463 includes/user-functions.php:468
+msgid "BuddyPress"
+msgstr ""
+
+#: includes/class-bp-getpaid-component.php:154
+msgctxt "BuddyPress my account payments sub nav"
+msgid "Billing"
+msgstr ""
+
+#: includes/class-bp-getpaid-component.php:98
+msgctxt "BuddyPress profile payments screen nav"
+msgid "Billing"
 msgstr ""
 
 #: includes/data/states.php:1340
@@ -3121,7 +3131,7 @@ msgstr ""
 msgid "Constan&#539;a"
 msgstr ""
 
-#: includes/class-wpinv.php:367
+#: includes/class-wpinv.php:362
 msgid "Continue"
 msgstr ""
 
@@ -3170,7 +3180,7 @@ msgstr ""
 msgid "Cote d'Ivoire"
 msgstr ""
 
-#: includes/class-wpinv.php:371
+#: includes/class-wpinv.php:366
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -3229,6 +3239,10 @@ msgstr ""
 
 #: templates/payment-forms-admin/edit/items.php:80
 msgid "Create New Item."
+msgstr ""
+
+#: includes/admin/wpinv-admin-functions.php:120
+msgid "Create Tables"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:175
@@ -3574,6 +3588,10 @@ msgstr ""
 msgid "Delete note"
 msgstr ""
 
+#: includes/admin/class-wpinv-subscriptions-list-table.php:242
+msgid "Delete Subscription"
+msgstr ""
+
 #: includes/data/states.php:494
 msgid "Delhi"
 msgstr ""
@@ -3733,7 +3751,11 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: includes/user-functions.php:406
+#: includes/user-functions.php:475
+msgid "Display GetPaid items on BuddyPress account pages."
+msgstr ""
+
+#: includes/user-functions.php:415
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
@@ -4129,7 +4151,7 @@ msgstr ""
 msgid "Enable Due Date"
 msgstr ""
 
-#: includes/user-functions.php:405
+#: includes/user-functions.php:414 includes/user-functions.php:474
 msgid "Enable Integration"
 msgstr ""
 
@@ -4203,10 +4225,6 @@ msgstr ""
 
 #: widgets/getpaid.php:43
 msgid "Enter a form id in case you want to display a specific payment form"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:277
-msgid "Enter a number to lists the invoices for each page."
 msgstr ""
 
 #: includes/data/admin-settings.php:325
@@ -5359,11 +5377,6 @@ msgstr ""
 msgid "Haryana"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:109
-msgctxt "hash before invoice number"
-msgid "#"
-msgstr ""
-
 #: includes/data/states.php:148
 msgid "Haskovo"
 msgstr ""
@@ -5453,14 +5466,6 @@ msgstr ""
 
 #: templates/payment-forms-admin/edit/billing_email.php:42
 msgid "Hide if the user is logged in"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:259
-msgid "Hide Invoices link"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:260
-msgid "Hide Invoices link from BP Profile menu."
 msgstr ""
 
 #: includes/data/states.php:469
@@ -6037,18 +6042,8 @@ msgstr ""
 msgid "Invoice Number Prefix"
 msgstr ""
 
-#: includes/admin/wpinv-admin-functions.php:132
+#: includes/admin/wpinv-admin-functions.php:172
 msgid "Invoice number sequence reset successfully."
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:362
-msgctxt "Invoice pagination next text"
-msgid "&rarr;"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:361
-msgctxt "Invoice pagination previous text"
-msgid "&larr;"
 msgstr ""
 
 #: includes/data/email-settings.php:66
@@ -6163,9 +6158,10 @@ msgstr ""
 msgid "Invoice was successfully sent to the customer"
 msgstr ""
 
+#: includes/class-bp-getpaid-component.php:185
 #: includes/class-getpaid-post-types.php:124
 #: includes/class-getpaid-post-types.php:126 includes/invoice-functions.php:654
-#: includes/user-functions.php:124
+#: includes/user-functions.php:118
 #: includes/admin/class-wpinv-customers-table.php:282
 #: includes/admin/subscriptions.php:100
 #: includes/reports/class-getpaid-reports-report.php:218
@@ -6323,7 +6319,7 @@ msgid "Itap&uacute;a"
 msgstr ""
 
 #: includes/invoice-functions.php:919 widgets/subscriptions.php:363
-#: includes/admin/class-wpinv-subscriptions-list-table.php:344
+#: includes/admin/class-wpinv-subscriptions-list-table.php:358
 #: includes/admin/subscriptions.php:153
 #: includes/gateways/class-getpaid-paypal-gateway.php:307
 #: templates/payment-forms/cart.php:14
@@ -6337,7 +6333,7 @@ msgctxt "Item"
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:297
+#: includes/admin/class-wpinv-subscriptions-list-table.php:311
 #: includes/admin/subscriptions.php:294
 #: templates/subscriptions/subscription-details.php:88
 #, php-format
@@ -7541,7 +7537,7 @@ msgstr ""
 msgid "Lleida"
 msgstr ""
 
-#: includes/class-wpinv.php:370 includes/admin/class-getpaid-admin.php:175
+#: includes/class-wpinv.php:365 includes/admin/class-getpaid-admin.php:175
 #: templates/payment-forms/form.php:94
 msgid "Loading..."
 msgstr ""
@@ -7967,10 +7963,6 @@ msgstr ""
 msgid "Mauritius"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:276
-msgid "Max invoices per page"
-msgstr ""
-
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:324
 msgid "Maximum Amount"
 msgstr ""
@@ -8062,14 +8054,6 @@ msgstr ""
 
 #: includes/data/states.php:51
 msgid "Mendoza"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:265
-msgid "Menu position"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:266
-msgid "Menu position for the Invoices link in BP Profile menu."
 msgstr ""
 
 #: includes/data/states.php:711
@@ -8390,11 +8374,6 @@ msgstr ""
 msgid "My Invoices"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:43
-#, php-format
-msgid "My Invoices %s"
-msgstr ""
-
 #: includes/admin/class-wpinv-admin-menus.php:295
 msgid "My Subscriptions"
 msgstr ""
@@ -8690,7 +8669,7 @@ msgstr ""
 msgid "New invoice"
 msgstr ""
 
-#: includes/user-functions.php:262
+#: includes/user-functions.php:271
 msgid "New invoices will use this address as the billing address."
 msgstr ""
 
@@ -8738,7 +8717,7 @@ msgstr ""
 msgid "Newfoundland and Labrador"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:342
+#: includes/admin/class-wpinv-subscriptions-list-table.php:356
 #: includes/admin/subscriptions.php:151
 msgid "Next Payment"
 msgstr ""
@@ -8839,10 +8818,6 @@ msgstr ""
 
 #: includes/wpinv-gateway-functions.php:101
 msgid "No Gateway"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:179
-msgid "No invoice has been made yet."
 msgstr ""
 
 #: includes/admin/class-wpinv-users.php:84
@@ -9629,7 +9604,7 @@ msgstr ""
 msgid "Pay For Invoice"
 msgstr ""
 
-#: includes/class-wpinv-bp-core.php:129 templates/invoice-history.php:87
+#: templates/invoice-history.php:87
 msgid "Pay Now"
 msgstr ""
 
@@ -9803,7 +9778,7 @@ msgid "Payment URL:"
 msgstr ""
 
 #: widgets/subscriptions.php:362
-#: includes/admin/class-wpinv-subscriptions-list-table.php:343
+#: includes/admin/class-wpinv-subscriptions-list-table.php:357
 #: includes/admin/subscriptions.php:152
 msgid "Payments"
 msgstr ""
@@ -10241,10 +10216,6 @@ msgstr ""
 
 #: includes/data/states.php:225
 msgid "Prince Edward Island"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:134
-msgid "Print"
 msgstr ""
 
 #: templates/invoice/header-right-actions.php:24
@@ -11070,7 +11041,7 @@ msgstr ""
 msgid "Save %s"
 msgstr ""
 
-#: includes/user-functions.php:261
+#: includes/user-functions.php:270
 msgid "Save Address"
 msgstr ""
 
@@ -11609,6 +11580,12 @@ msgstr ""
 msgid "Somalia"
 msgstr ""
 
+#: includes/admin/wpinv-admin-functions.php:119
+msgid ""
+"Some GetPaid database tables are missing. To use GetPaid without any issues, "
+"click on the button below to create the missing tables."
+msgstr ""
+
 #: includes/admin/class-getpaid-admin.php:627
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
@@ -11802,7 +11779,7 @@ msgid "Stara Zagora"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:424
-#: includes/admin/class-wpinv-subscriptions-list-table.php:341
+#: includes/admin/class-wpinv-subscriptions-list-table.php:355
 #: includes/admin/subscriptions.php:150
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:232
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:241
@@ -11844,7 +11821,7 @@ msgstr ""
 #: includes/invoice-functions.php:586 widgets/subscriptions.php:142
 #: widgets/subscriptions.php:357
 #: includes/admin/class-getpaid-post-types-admin.php:179
-#: includes/admin/class-wpinv-subscriptions-list-table.php:345
+#: includes/admin/class-wpinv-subscriptions-list-table.php:359
 #: includes/admin/subscriptions.php:156 includes/admin/subscriptions.php:402
 #: includes/reports/class-getpaid-reports-export.php:144
 msgid "Status"
@@ -11894,7 +11871,7 @@ msgid "Subject"
 msgstr ""
 
 #: widgets/subscriptions.php:139
-#: includes/admin/class-wpinv-subscriptions-list-table.php:340
+#: includes/admin/class-wpinv-subscriptions-list-table.php:354
 #: includes/admin/subscriptions.php:147
 msgid "Subscription"
 msgstr ""
@@ -11988,7 +11965,7 @@ msgctxt "Subscription trial period. (e.g.: 1 month trial)"
 msgid "( %1$s trial )"
 msgstr ""
 
-#: includes/user-functions.php:130
+#: includes/user-functions.php:124
 #: includes/admin/class-wpinv-admin-menus.php:60
 #: includes/admin/class-wpinv-admin-menus.php:61
 msgid "Subscriptions"
@@ -13180,7 +13157,7 @@ msgstr ""
 msgid "This subscription has no invoices."
 msgstr ""
 
-#: includes/user-functions.php:159
+#: includes/user-functions.php:168
 msgid "This tab has no content or content callback."
 msgstr ""
 
@@ -13776,7 +13753,7 @@ msgstr ""
 msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
-#: includes/user-functions.php:394 includes/user-functions.php:399
+#: includes/user-functions.php:403 includes/user-functions.php:408
 msgid "UsersWP"
 msgstr ""
 
@@ -13909,7 +13886,6 @@ msgstr ""
 #: includes/data/tax-rates.php:219 includes/data/tax-rates.php:228
 #: includes/data/tax-rates.php:237 includes/data/tax-rates.php:246
 #: includes/data/tax-rates.php:255 includes/data/tax-rates.php:264
-#: includes/data/tax-rates.php:273
 #: includes/admin/views/html-tax-rates-edit.php:16
 msgid "VAT"
 msgstr ""
@@ -14098,17 +14074,6 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:52
 msgid "Viewed by Customer:"
-msgstr ""
-
-#: includes/class-wpinv-bp-core.php:232
-#, php-format
-msgid "Viewing %1$s - %2$s of %3$s invoice"
-msgid_plural "Viewing %1$s - %2$s of %3$s invoices"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-wpinv-bp-core.php:230
-msgid "Viewing 1 invoice"
 msgstr ""
 
 #: includes/data/states.php:737
@@ -14544,7 +14509,7 @@ msgstr ""
 msgid "You are not permitted to view this page."
 msgstr ""
 
-#: includes/user-functions.php:295
+#: includes/user-functions.php:304
 msgid "You billing address has been updated"
 msgstr ""
 
