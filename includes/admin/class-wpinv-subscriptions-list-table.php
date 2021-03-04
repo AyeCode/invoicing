@@ -223,9 +223,23 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$invoice = get_post( $item->get_parent_invoice_id() );
 
 		if ( ! empty( $invoice ) ) {
-			$view_url    = get_edit_post_link( $invoice );
-			$row_actions['invoice'] = '<a href="' . $view_url . '">' . __( 'View Invoice', 'invoicing' ) . '</a>';
+			$invoice_url            = get_edit_post_link( $invoice );
+			$row_actions['invoice'] = '<a href="' . $invoice_url . '">' . __( 'View Invoice', 'invoicing' ) . '</a>';
 		}
+
+		$delete_url            = esc_url(
+			wp_nonce_url(
+				add_query_arg(
+					array(
+						'getpaid-admin-action' => 'subscription_manual_delete',
+						'id'                   => $item->get_id(),
+					)
+				),
+				'getpaid-nonce',
+				'getpaid-nonce'
+			)
+		);
+		$row_actions['delete'] = '<a class="text-danger" href="' . $delete_url . '">' . __( 'Delete Subscription', 'invoicing' ) . '</a>';
 
 		$row_actions = $this->row_actions( apply_filters( 'getpaid_subscription_table_row_actions', $row_actions, $item ) );
 
