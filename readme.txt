@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.6 =
+* Subscription emails not editable - FIXED
+
 = 2.1.5 =
 * Show admin notice on our settings page if a GetPaid database table is missing - ADDED
 * Better BuddyPress integration - ADDED

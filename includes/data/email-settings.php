@@ -675,7 +675,7 @@ return array(
             'std'      => 0
         ),
 
-        'email_subscription_trial_bcc' => array(
+        'email_subscription_trial_admin_bcc' => array(
             'id'       => 'email_subscription_trial_admin_bcc',
             'name'     => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'     => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
@@ -704,7 +704,7 @@ return array(
         ),
 
         'email_subscription_trial_body' => array(
-            'id'       => 'email_trial_body',
+            'id'       => 'email_subscription_trial_body',
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => __( 'The content of the email.', 'invoicing' ),
             'type'     => 'rich_editor',
@@ -731,7 +731,7 @@ return array(
             'std'      => 1
         ),
 
-        'email_subscription_cancelled_bcc' => array(
+        'email_subscription_cancelled_admin_bcc' => array(
             'id'       => 'email_subscription_cancelled_admin_bcc',
             'name'     => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'     => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
@@ -750,7 +750,7 @@ return array(
         ),
 
         'email_subscription_cancelled_heading' => array(
-            'id'       => 'email_subscription_complete_heading',
+            'id'       => 'email_subscription_cancelled_heading',
             'name'     => __( 'Email Heading', 'invoicing' ),
             'desc'     => __( 'Enter the main heading of this email.', 'invoicing' ),
             'help-tip' => true,
@@ -760,7 +760,7 @@ return array(
         ),
 
         'email_subscription_cancelled_body' => array(
-            'id'       => 'email_cancelled_body',
+            'id'       => 'email_subscription_cancelled_body',
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => __( 'The content of the email.', 'invoicing' ),
             'type'     => 'rich_editor',
@@ -787,7 +787,7 @@ return array(
             'std'      => 1
         ),
 
-        'email_subscription_expired_bcc' => array(
+        'email_subscription_expired_admin_bcc' => array(
             'id'       => 'email_subscription_expired_admin_bcc',
             'name'     => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'     => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
@@ -816,7 +816,7 @@ return array(
         ),
 
         'email_subscription_expired_body' => array(
-            'id'       => 'email_expired_body',
+            'id'       => 'email_subscription_expired_body',
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => __( 'The content of the email.', 'invoicing' ),
             'type'     => 'rich_editor',
@@ -843,7 +843,7 @@ return array(
             'std'     => 1
         ),
 
-        'email_subscription_complete_bcc' => array(
+        'email_subscription_complete_admin_bcc' => array(
             'id'      => 'email_subscription_complete_admin_bcc',
             'name'    => __( 'Enable Admin BCC', 'invoicing' ),
             'desc'    => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
@@ -872,7 +872,7 @@ return array(
         ),
 
         'email_subscription_complete_body' => array(
-            'id'       => 'email_complete_body',
+            'id'       => 'email_subscription_complete_body',
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => __( 'The content of the email.', 'invoicing' ),
             'type'     => 'rich_editor',

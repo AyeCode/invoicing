@@ -136,7 +136,7 @@ class WPInv_Subscriptions {
         // Can it be cancelled.
         } else if ( ! $subscription->can_cancel() ) {
             wpinv_set_error( 'cannot_cancel', __( 'This subscription cannot be cancelled as it is not active.', 'invoicing' ) );
-            
+
 
         // Cancel it.
         } else {
@@ -145,14 +145,9 @@ class WPInv_Subscriptions {
             wpinv_set_error( 'cancelled', __( 'This subscription has been cancelled.', 'invoicing' ), 'info' );
         }
 
-        $redirect = add_query_arg(
-            array(
-                'getpaid-action' => false,
-                'getpaid-nonce'  => false,
-            )
-        );
+        $redirect = remove_query_arg( array( 'getpaid-action', 'getpaid-nonce' ) );
 
-        wp_safe_redirect( esc_url( $redirect ) );
+        wp_safe_redirect( $redirect );
         exit;
 
     }
