@@ -1024,6 +1024,25 @@ function wpinv_tools_callback($args) {
 					?>" class="button button-primary"><?php _e('Run', 'invoicing');?></a>
                 </td>
             </tr>
+
+			<tr>
+                <td><?php _e( 'Recalculate Discounts', 'invoicing' );?></td>
+                <td>
+                    <small><?php _e( 'Recalculate discounts for existing invoices that have discount codes but are not discounted.', 'invoicing' ); ?></small>
+                </td>
+                <td>
+					<a href="<?php
+						echo esc_url(
+							wp_nonce_url(
+								add_query_arg( 'getpaid-admin-action', 'recalculate_discounts' ),
+								'getpaid-nonce',
+								'getpaid-nonce'
+							)
+						);
+					?>" class="button button-primary"><?php _e( 'Run', 'invoicing' );?></a>
+                </td>
+            </tr>
+
 			<?php do_action( 'wpinv_tools_row' ); ?>
         </tbody>
     </table>

@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.1.6 =
 * Subscription emails not editable - FIXED
 * Pre-GetPaid invoices containing discounts do not apply the discount on renewals - FIXED
+* Tool to recalculate discounts for existing invoices that have discount codes but are not discounted - ADDED.
 
 = 2.1.5 =
 * Show admin notice on our settings page if a GetPaid database table is missing - ADDED

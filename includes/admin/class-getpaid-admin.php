@@ -67,6 +67,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_create_missing_pages', array( $this, 'admin_create_missing_pages' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_tables', array( $this, 'admin_create_missing_tables' ) );
 		add_action( 'getpaid_authenticated_admin_action_migrate_old_invoices', array( $this, 'admin_migrate_old_invoices' ) );
+		add_action( 'getpaid_authenticated_admin_action_recalculate_discounts', array( $this, 'admin_recalculate_discounts' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
@@ -489,6 +490,49 @@ class GetPaid_Admin {
 
 		// Show an admin message.
 		$this->show_success( __( 'Your invoices have been migrated.', 'invoicing' ) );
+
+		// Redirect the admin.
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+		exit;
+
+	}
+
+	/**
+     * Recalculates discounts.
+	 * 
+     */
+    public function admin_recalculate_discounts() {
+		global $wpdb;
+
+		// Fetch all invoices that have discount codes.
+		$table    = $wpdb->prefix . 'getpaid_invoices';
+		$invoices = $wpdb->get_col( "SELECT `post_id` FROM `$table` WHERE `discount` = 0 && `discount_code` <> ''" );
+
+		foreach ( $invoices as $invoice ) {
+
+			$invoice = new WPInv_Invoice( $invoice );
+
+			if ( ! $invoice->exists() ) {
+				continue;
+			}
+
+			// Abort if the discount does not exist or does not apply here.
+			$discount = new WPInv_Discount( $invoice->get_discount_code() );
+			if ( ! $discount->exists() ) {
+				continue;
+			}
+
+			$invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+			$invoice->recalculate_total();
+
+			if ( $invoice->get_total_discount() > 0 ) {
+				$invoice->save();
+			}
+
+		}
+
+		// Show an admin message.
+		$this->show_success( __( 'Discounts have been recalculated.', 'invoicing' ) );
 
 		// Redirect the admin.
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
