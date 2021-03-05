@@ -394,7 +394,7 @@ class WPInv_Ajax {
         }
 
         // Maybe set the country, state, currency.
-        foreach ( array( 'country', 'state', 'currency', 'vat_number' ) as $key ) {
+        foreach ( array( 'country', 'state', 'currency', 'vat_number', 'discount_code' ) as $key ) {
             if ( isset( $_POST[ $key ] ) ) {
                 $method = "set_$key";
                 $invoice->$method( sanitize_text_field( $_POST[ $key ] ) );
@@ -403,6 +403,16 @@ class WPInv_Ajax {
 
         // Maybe disable taxes.
         $invoice->set_disable_taxes( ! empty( $_POST['taxes'] ) );
+
+        // Discount code.
+        if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+            $discount = new WPInv_Discount( $invoice->get_discount_code() );
+            if ( $discount->exists() ) {
+                $invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+            } else {
+                $invoice->remove_discount( 'discount_code' );
+            }
+        }
 
         // Recalculate totals.
         $invoice->recalculate_total();

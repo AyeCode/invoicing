@@ -333,8 +333,24 @@ class GetPaid_Meta_Box_Invoice_Address {
 			)
         );
 
-        // Recalculate totals.
-        $invoice->recalculate_total();
+        // Discount code.
+        if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+
+            if ( isset( $_POST['wpinv_discount_code'] ) ) {
+                $invoice->set_discount_code( $_POST['wpinv_discount_code'] );
+            }
+
+            $discount = new WPInv_Discount( $invoice->get_discount_code() );
+            if ( $discount->exists() ) {
+                $invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+            } else {
+                $invoice->remove_discount( 'discount_code' );
+            }
+
+            // Recalculate totals.
+            $invoice->recalculate_total();
+
+        }
 
         // If we're creating a new user...
         if ( ! empty( $_POST['wpinv_new_user'] ) && is_email( $_POST['wpinv_email'] ) ) {

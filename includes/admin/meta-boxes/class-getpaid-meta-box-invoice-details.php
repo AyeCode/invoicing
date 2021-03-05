@@ -207,7 +207,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         }
 
                         // Apply a discount.
-                        if ( $invoice->get_discount_code( 'edit' ) ) {
+                        if ( ( $invoice->is_paid() || $invoice->is_refunded() ) && $invoice->get_discount_code( 'edit' ) ) {
 
                             echo aui()->input(
                                 array(

@@ -653,6 +653,7 @@ jQuery(function ($) {
 			taxes: $('#wpinv_taxable:checked').length,
 			action: 'wpinv_recalculate_invoice_totals',
 			post_id: $('#post_ID').val(),
+			discount_code: $('#wpinv_discount_code').val(),
 			_ajax_nonce: WPInv_Admin.wpinv_nonce,
 		}
 
@@ -692,7 +693,7 @@ jQuery(function ($) {
 		recalculateTotals()
 	})
 
-	$('.getpaid-is-invoice-cpt #wpinv_vat_number, .getpaid-is-invoice-cpt #wpinv_taxable').on('change', function (e) {
+	$('.getpaid-is-invoice-cpt #wpinv_vat_number, .getpaid-is-invoice-cpt #wpinv_discount_code, .getpaid-is-invoice-cpt #wpinv_taxable').on('change', function (e) {
 		e.preventDefault()
 		recalculateTotals()
 	})

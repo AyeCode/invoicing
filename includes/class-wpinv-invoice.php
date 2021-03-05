@@ -2914,7 +2914,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @param  string $value discount code.
 	 */
 	public function set_discount_code( $value ) {
-		$this->set_prop( 'discount_code', $value );
+		$this->set_prop( 'discount_code', sanitize_text_field( $value ) );
     }
 
     /**
