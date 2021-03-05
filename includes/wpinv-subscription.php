@@ -941,6 +941,13 @@ class WPInv_Subscription extends GetPaid_Data {
 		// Duplicate the parent invoice.
 		$invoice = getpaid_duplicate_invoice( $parent_invoice );
 		$invoice->set_parent_id( $parent_invoice->get_id() );
+
+		// Maybe recalculate discount (Pre-GetPaid Fix).
+		$discount = new WPInv_Discount( $invoice->get_discount_code() );
+		if ( $discount->exists() && $discount->is_recurring() && 0 == $invoice->get_total_discount() ) {
+			$invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+		}
+
 		$invoice->recalculate_total();
 		$invoice->set_status( 'wpi-pending' );
 		$invoice->save();

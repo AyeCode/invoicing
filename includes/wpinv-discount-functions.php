@@ -148,3 +148,41 @@ function wpinv_discount_is_recurring( $discount = 0, $code = 0 ) {
 
     return $discount->get_is_recurring();
 }
+
+/**
+ * Calculates an invoice's discount.
+ *
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice Invoice object.
+ * @param WPInv_Discount $discount Discount object.
+ * @return array
+ */
+function getpaid_calculate_invoice_discount( $invoice, $discount ) {
+
+    $initial_discount   = 0;
+	$recurring_discount = 0;
+
+    foreach ( $invoice->get_items() as $item ) {
+
+        // Abort if it is not valid for this item.
+        if ( ! $discount->is_valid_for_items( array( $item->get_id() ) ) ) {
+            continue;
+        }
+
+        // Calculate the initial amount...
+        $initial_discount += $discount->get_discounted_amount( $item->get_sub_total() );
+
+        // ... and maybe the recurring amount.
+        if ( $item->is_recurring() && $discount->is_recurring() ) {
+            $recurring_discount += $discount->get_discounted_amount( $item->get_recurring_sub_total() );
+        }
+
+    }
+
+    return array(
+        'name'               => 'discount_code',
+        'discount_code'      => $discount->get_code(),
+        'initial_discount'   => $initial_discount,
+        'recurring_discount' => $recurring_discount,
+    );
+
+}
