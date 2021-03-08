@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Pre-GetPaid invoices containing discounts do not apply the discount on renewals - FIXED
 * Tool to recalculate discounts for existing invoices that have discount codes but are not discounted - ADDED.
 * Ability to manually add a discount code when editing an invoice - ADDED
+* Item description escapes quotes - FIXED
 
 = 2.1.5 =
 * Show admin notice on our settings page if a GetPaid database table is missing - ADDED
