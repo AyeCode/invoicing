@@ -24,8 +24,10 @@ class GetPaid_Meta_Box_Invoice_Address {
     public static function output( $post ) {
 
         // Prepare the invoice.
-        $invoice = new WPInv_Invoice( $post );
-
+        $invoice  = new WPInv_Invoice( $post );
+        $customer = $invoice->exists() ? $invoice->get_user_id( 'edit' ) : get_current_user_id();
+        $customer = new WP_User( $customer );
+        $display  = sprintf( _x( '%1$s (%2$s)', 'user dropdown', 'invoicing' ), $customer->display_name, $customer->user_email );
         wp_nonce_field( 'getpaid_meta_nonce', 'getpaid_meta_nonce' );
 
         ?>
@@ -43,18 +45,11 @@ class GetPaid_Meta_Box_Invoice_Address {
                                 <div>
                                     <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
                                 </div>
-                                <?php 
-                                    wpinv_dropdown_users(
-                                        array(
-                                            'name'             => 'post_author_override',
-                                            'selected'         => $invoice->get_id() ? $invoice->get_user_id( 'edit' ) : get_current_user_id(),
-                                            'include_selected' => true,
-                                            'show'             => 'display_name_with_login',
-                                            'orderby'          => 'user_email',
-                                            'class'            => 'wpi_select2 form-control'
-                                        )
-                                    );
-                                ?>
+                                <div>
+                                    <select name="post_author_override" id="wpinv_post_author_override" class="getpaid-customer-search form-control regular-text" data-placeholder="<?php esc_attr_e( 'Search for a customer by email or name', 'invoicing' ); ?>">
+                                        <option selected="selected" value="<?php echo (int) $customer->ID; ?>"><?php echo sanitize_text_field( $display ); ?> </option>)
+                                    </select>
+                                </div>
                             </div>
 
                             <div id="getpaid-invoice-email-wrapper" class="d-none">

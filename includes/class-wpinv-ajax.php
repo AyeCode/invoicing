@@ -90,6 +90,7 @@ class WPInv_Ajax {
             'get_payment_form'            => true,
             'get_payment_form_states_field' => true,
             'get_invoicing_items'         => false,
+            'get_customers'               => false,
             'get_invoice_items'           => false,
             'add_invoice_items'           => false,
             'edit_invoice_item'           => false,
@@ -696,6 +697,45 @@ class WPInv_Ajax {
                 'id'        => (int) $item->get_id(),
                 'text'      => strip_tags( $item->get_name() ),
                 'form_data' => $is_payment_form ? $item->prepare_data_for_use( false ) : '',
+            );
+        }
+
+        wp_send_json_success( $data );
+
+    }
+
+    /**
+     * Retrieves items that should be added to an invoice.
+     */
+    public static function get_customers() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need a search term.
+        if ( empty( $_GET['search'] ) ) {
+            wp_send_json_success( array() );
+        }
+
+        // Retrieve customers.
+    
+        $customer_args = array(
+            'fields'         => array( 'ID', 'user_email', 'display_name' ),
+            'orderby'        => 'display_name',
+            'search'         => sanitize_text_field( $_GET['search'] ),
+        );
+
+        $customers = get_users( apply_filters( 'getpaid_ajax_invoice_customers_query_args', $customer_args ) );
+        $data      = array();
+
+        foreach ( $customers as $customer ) {
+            $data[] = array(
+                'id'        => (int) $customer->ID,
+                'text'      => strip_tags( sprintf( _x( '%1$s (%2$s)', 'user dropdown', 'invoicing' ), $customer->display_name, $customer->user_email ) ),
             );
         }
 

@@ -1,6 +1,6 @@
 window.getpaid = window.getpaid || {}
 
-// Init the select2 container.
+// Init the select2 items container.
 getpaid.init_select2_item_search = function (select, parent) {
 
 	if (!parent) {
@@ -18,6 +18,61 @@ getpaid.init_select2_item_search = function (select, parent) {
 
 				var data = {
 					action: 'wpinv_get_invoicing_items',
+					search: params.term,
+					_ajax_nonce: WPInv_Admin.wpinv_nonce,
+					post_id: WPInv_Admin.post_ID
+				}
+
+				// Query parameters will be ?search=[term]&type=public
+				return data;
+			},
+			processResults: function (res) {
+
+				if (res.success) {
+					return {
+						results: res.data
+					};
+				}
+
+				return {
+					results: []
+				};
+			}
+		},
+		templateResult: function (item) {
+
+			if (item.loading) {
+				return WPInv_Admin.searching;
+			}
+
+			if (!item.id) {
+				return item.text;
+			}
+
+			return jQuery('<span>' + item.text + '</span>')
+		}
+	});
+
+}
+
+// Init the select2 customer container.
+getpaid.init_select2_customer_search = function (select, parent) {
+
+	if ( ! parent ) {
+		parent = jQuery(select).parent()
+	}
+
+	jQuery(select).select2({
+		minimumInputLength: 3,
+		allowClear: false,
+		dropdownParent: parent,
+		ajax: {
+			url: WPInv_Admin.ajax_url,
+			delay: 250,
+			data: function (params) {
+
+				var data = {
+					action: 'wpinv_get_customers',
 					search: params.term,
 					_ajax_nonce: WPInv_Admin.wpinv_nonce,
 					post_id: WPInv_Admin.post_ID
@@ -100,6 +155,12 @@ jQuery(function ($) {
 		getpaid.init_select2_item_search(el, $(el).parent())
 	});
 
+	// Init customer selector.
+	$('.getpaid-customer-search').each(function () {
+		var el = $(this);
+		getpaid.init_select2_customer_search(el, $(el).parent())
+	});
+
 	// returns a random string
 	function random_string() {
 		return (Date.now().toString(36) + Math.random().toString(36).substr(2))
@@ -160,7 +221,7 @@ jQuery(function ($) {
 		e.preventDefault()
 
 		var metabox = $(this).closest('.bsui');
-		var user_id = metabox.find('#post_author_override').val()
+		var user_id = metabox.find('#wpinv_post_author_override').val()
 
 		// Ensure that we have a user id and that we are not adding a new user.
 		if (!user_id || $(this).attr('disabled')) {
@@ -203,7 +264,7 @@ jQuery(function ($) {
 
 	})
 
-	$( '#getpaid-invoice-user-id-wrapper #post_author_override' ).on( 'change', function() {
+	$( '#wpinv_post_author_override' ).on( 'change', function() {
 		$('#getpaid-invoice-fill-user-details').trigger( 'click' )
 	} )
 
@@ -771,7 +832,7 @@ jQuery(function ($) {
 	}
 	var invBilling = jQuery('#wpinv-address.postbox').html();
 	if (invBilling) {
-		jQuery('#post_author_override', '#authordiv').remove();
+		jQuery('#wpinv_post_author_override', '#authordiv').remove();
 		jQuery('#authordiv', jQuery('.wpinv')).hide();
 	}
 	var wpinvNumber;

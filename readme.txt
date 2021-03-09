@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.7 =
+* Lots of customers causes the invoices screen to hang - FIXED
+
 = 2.1.6 =
 * Subscription emails not editable - FIXED
 * Pre-GetPaid invoices containing discounts do not apply the discount on renewals - FIXED
