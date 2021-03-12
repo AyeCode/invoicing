@@ -759,14 +759,8 @@ jQuery(function ($) {
 		recalculateTotals()
 	})
 
-	var $postForm = $('.getpaid-is-invoice-cpt form#post');
-
-	if ($('[name="wpinv_status"]', $postForm).length) {
-		var origStatus = $('[name="wpinv_status"]', $postForm).val();
-		$('[name="original_post_status"]', $postForm).val(origStatus);
-		$('[name="hidden_post_status"]', $postForm).val(origStatus);
-		$('[name="post_status"]', $postForm).replaceWith('<input type="hidden" value="' + origStatus + '" id="post_status" name="post_status">');
-	}
+	// Hide status entry.
+	$('.getpaid-is-invoice-cpt form#post [name="post_status"]').attr( 'type', 'hidden' );
 
 	/**
 	 * Invoice Notes Panel
