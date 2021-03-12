@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Lots of customers causes the invoices screen to hang - FIXED
 * New invoice emails not sent for invoices created via admin - FIXED
 * Philippines misspelled - UPDATED
+* Invoice items ordered by ID instead of order added - CHANGED
 
 = 2.1.6 =
 * Subscription emails not editable - FIXED

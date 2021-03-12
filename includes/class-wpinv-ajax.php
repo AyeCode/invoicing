@@ -465,8 +465,8 @@ class WPInv_Ajax {
         // Return an array of invoice items.
         $items = array();
 
-        foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency(), $invoice->is_renewal()  );
+        foreach ( $invoice->get_items() as $item ) {
+            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency(), $invoice->is_renewal()  );
         }
 
         wp_send_json_success( compact( 'items' ) );
@@ -534,8 +534,8 @@ class WPInv_Ajax {
         // Return an array of invoice items.
         $items = array();
 
-        foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+        foreach ( $invoice->get_items() as $item ) {
+            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
         }
 
         wp_send_json_success( compact( 'items', 'alert' ) );
@@ -584,8 +584,8 @@ class WPInv_Ajax {
         // Return an array of invoice items.
         $items = array();
 
-        foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+        foreach ( $invoice->get_items() as $item ) {
+            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
         }
 
         wp_send_json_success( compact( 'items' ) );
@@ -644,8 +644,8 @@ class WPInv_Ajax {
         // Return an array of invoice items.
         $items = array();
 
-        foreach ( $invoice->get_items() as $item_id => $item ) {
-            $items[ $item_id ] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency() );
+        foreach ( $invoice->get_items() as $item ) {
+            $items[] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency() );
         }
 
         wp_send_json_success( compact( 'items', 'alert' ) );

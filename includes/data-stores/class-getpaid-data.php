@@ -821,7 +821,7 @@ abstract class GetPaid_Data {
 	 * @since 1.0.19
 	 */
 	public function apply_changes() {
-		$this->data    = array_replace_recursive( $this->data, $this->changes );
+		$this->data    = array_replace( $this->data, $this->changes );
 		$this->changes = array();
 	}
 

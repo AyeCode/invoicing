@@ -566,13 +566,13 @@ jQuery(function ($) {
 		$('tr.getpaid-invoice-item').remove()
 		var _class = "no-items"
 
-		$.each(items, function (item_id, item) {
+		$.each(items, function (index, item) {
 
 			_class = 'has-items'
 			var row = $('tr.getpaid-invoice-item-template').clone()
 			row
 				.removeClass('getpaid-invoice-item-template d-none')
-				.addClass('getpaid-invoice-item item-' + item_id)
+				.addClass('getpaid-invoice-item item-' + item.id)
 
 			$.each(item.texts, function (key, value) {
 				row.find('.' + key).html(value)

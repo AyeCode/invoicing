@@ -1576,7 +1576,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function get_items( $context = 'view' ) {
         return $this->get_prop( 'items', $context );
 	}
-	
+
 	/**
 	 * Get the invoice item ids.
 	 *
@@ -3212,11 +3212,17 @@ class WPInv_Invoice extends GetPaid_Data {
         // Invoice id.
         $item->invoice_id = (int) $this->get_id();
 
-        // Retrieve all items.
-        $items = $this->get_items();
-        $items[ (int) $item->get_id() ] = $item;
+		// Remove duplicates.
+		$this->remove_item( $item->get_id() );
+
+		// Retrieve all items.
+        $items   = $this->get_items();
+
+		// Add new item.
+        $items[] = $item;
 
         $this->set_prop( 'items', $items );
+
 		return true;
 	}
 
@@ -3256,11 +3262,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * Retrieves a specific item.
 	 *
 	 * @since 1.0.19
+	 * @return GetPaid_Form_Item|null
 	 */
 	public function get_item( $item_id ) {
-		$items   = $this->get_items();
-		$item_id = (int) $item_id;
-		return ( ! empty( $item_id ) && isset( $items[ $item_id ] ) ) ? $items[ $item_id ] : null;
+
+		foreach ( $this->get_items() as $item ) {
+			if ( (int) $item_id == $item->get_id() ) {
+				return $item;
+			}
+		}
+
+		return null;
     }
 
     /**
@@ -3276,10 +3288,13 @@ class WPInv_Invoice extends GetPaid_Data {
             $this->recurring_item = null;
         }
 
-        if ( isset( $items[ $item_id ] ) ) {
-            unset( $items[ $item_id ] );
-            $this->set_prop( 'items', $items );
-        }
+		foreach ( $items as $index => $item ) {
+			if ( (int) $item_id == $item->get_id() ) {
+				unset( $items[ $index ] );
+				$this->set_prop( 'items', $items );
+			}
+		}
+
     }
 
     /**
@@ -3732,7 +3747,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @deprecated
 	 */
 	public function refresh_item_ids() {
-        $item_ids = implode( ',', array_unique( array_keys( $this->get_items() ) ) );
+        $item_ids = implode( ',', array_unique( wp_list_pluck( $this->get_cart_details(), 'item_id' ) ) );
         update_post_meta( $this->get_id(), '_wpinv_item_ids', $item_ids );
 	}
 

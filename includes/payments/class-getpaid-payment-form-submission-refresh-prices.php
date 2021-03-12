@@ -108,7 +108,8 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			'.getpaid-checkout-total-payable' => $payable,
 		);
 
-		foreach ( $submission->get_items() as $item_id => $item ) {
+		foreach ( $submission->get_items() as $item ) {
+			$item_id                                               = $item->get_id();
 			$initial_price                                         = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_sub_total(), $submission->get_discount_code(), false ) );
 			$recurring_price                                       = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_recurring_sub_total(), $submission->get_discount_code(), true ) );
 			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
@@ -128,7 +129,8 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		// Add items.
 		$items = array();
 
-        foreach ( $submission->get_items() as $item_id => $item ) {
+        foreach ( $submission->get_items() as $item ) {
+			$item_id           = $item->get_id();
 			$items["$item_id"] = $submission->format_amount( $item->get_sub_total() );
 		}
 
