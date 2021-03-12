@@ -79,6 +79,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 			    'label'      => wp_kses_post( $shipping_address_toggle ),
 			    'value'      => 1,
 			    'checked'    => true,
+				'class'      => 'w-auto',
 		    )
 		);
 

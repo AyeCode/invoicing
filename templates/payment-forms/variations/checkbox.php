@@ -33,6 +33,7 @@ foreach ( $selectable as $item_id => $item_name ) {
             'label'      => $item_name,
             'value'      => $item_id,
             'no_wrap'    => true,
+            'class'      => 'w-auto',
         )
     );
 

@@ -24,5 +24,6 @@ echo aui()->input(
         'label'      => $label,
         'value'      => esc_attr__( 'Yes', 'invoicing' ),
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
+        'class'      => 'w-auto',
     )
 );

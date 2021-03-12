@@ -31,6 +31,7 @@ echo aui()->radio(
         'required'   => true,
         'label'      => __( 'Select Item', 'invoicing' ),
         'label_type' => 'vertical',
+        'class'      => 'w-auto',
         'inline'     => false,
         'options'    => $selectable,
     )

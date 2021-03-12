@@ -87,6 +87,7 @@ foreach ( $fields as $address_field ) {
                     'label'      => __( 'I certify that I live in the country selected above', 'invoicing' ) . "<span class='text-danger'> *</span>",
                     'value'      => 1,
                     'checked'    => true,
+                    'class'      => 'w-auto',
                 )
             );
 

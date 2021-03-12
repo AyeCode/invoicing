@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * New invoice emails not sent for invoices created via admin - FIXED
 * Philippines misspelled - UPDATED
 * Invoice items ordered by ID instead of order added - CHANGED
+* Summer Pro theme sets checkboxes/radio buttons to 100% width - FIXED
 
 = 2.1.6 =
 * Subscription emails not editable - FIXED

@@ -22,6 +22,7 @@ echo aui()->radio(
         'required'   => ! empty( $required ),
         'label'      => $label,
         'label_type' => 'vertical',
+        'class'      => 'w-auto',
         'inline'     => false,
         'options'    => empty( $options ) ? array() : array_combine( $options, $options ),
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),

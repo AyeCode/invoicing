@@ -50,7 +50,7 @@ if ( $select_type == 'radios' ) {
             'id'         => esc_attr( $id ) . uniqid( '_' ),
             'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
             'label_type' => 'vertical',
-            'class'      => 'getpaid-price-select-radio getpaid-refresh-on-change',
+            'class'      => 'getpaid-price-select-radio getpaid-refresh-on-change w-100',
             'value'      => $value,
             'inline'     => false,
             'options'    => $options,
@@ -90,7 +90,7 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
         }
         echo "
             <span>
-                <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change' id='$_id' value='$price' name='$id' $checked />
+                <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change w-auto' id='$_id' value='$price' name='$id' $checked />
                 <label for='$_id' class='$class'><span>$label</span></label>
             </span>
             ";
@@ -110,7 +110,7 @@ if ( $select_type == 'checkboxes' ) {
         $checked = checked( $price, $value, false );
         echo "
             <label class='d-block'>
-                <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change' name='{$id}[]' value='$price' $checked />
+                <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change w-auto' name='{$id}[]' value='$price' $checked />
                 <span>$label</span>
             </label>
             ";
