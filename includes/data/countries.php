@@ -189,7 +189,7 @@ return array(
 	'PG' => __('Papua New Guinea', 'invoicing'),
 	'PY' => __('Paraguay', 'invoicing'),
 	'PE' => __('Peru', 'invoicing'),
-	'PH' => __('Phillipines', 'invoicing'),
+	'PH' => __('Philippines', 'invoicing'),
 	'PN' => __('Pitcairn Island', 'invoicing'),
 	'PL' => __('Poland', 'invoicing'),
 	'PT' => __('Portugal', 'invoicing'),
