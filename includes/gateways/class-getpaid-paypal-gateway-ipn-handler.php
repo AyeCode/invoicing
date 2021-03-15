@@ -444,4 +444,24 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 	}
 
+	/**
+	 * Handles subscription suspensions.
+	 *
+	 * @param WPInv_Invoice $invoice  Invoice object.
+	 * @param array    $posted Posted data.
+	 */
+	protected function ipn_txn_recurring_payment_suspended_due_to_max_failed_payment( $invoice ) {
+
+		// Make sure the invoice has a subscription.
+		$subscription = wpinv_get_subscription( $invoice );
+
+		if ( empty( $subscription ) ) {
+			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
+		}
+
+		wpinv_error_log( 'Processing subscription cancellation due to max failed payment for the invoice ' . $invoice->get_id(), false );
+		$subscription->cancel();
+		wpinv_error_log( 'Subscription cancelled.', false );
+	}
+
 }
