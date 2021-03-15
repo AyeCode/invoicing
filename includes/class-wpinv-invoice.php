@@ -2875,6 +2875,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Remove existing items.
         $this->set_prop( 'items', array() );
+		$this->recurring_item = null;
 
         // Ensure that we have an array.
         if ( ! is_array( $value ) ) {
@@ -3202,7 +3203,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		if ( $item->is_recurring() ) {
 
 			// An invoice can only contain one recurring item.
-			if ( ! empty( $this->recurring_item  && $this->recurring_item != (int) $item->get_id() ) ) {
+			if ( ! empty( $this->recurring_item )  && $this->recurring_item != (int) $item->get_id() ) {
 				return new WP_Error( 'recurring_item', __( 'An invoice can only contain one recurring item', 'invoicing' ) );
 			}
 
@@ -3284,14 +3285,15 @@ class WPInv_Invoice extends GetPaid_Data {
 		$items   = $this->get_items();
 		$item_id = (int) $item_id;
 
-        if ( $item_id == $this->recurring_item ) {
-            $this->recurring_item = null;
-        }
-
 		foreach ( $items as $index => $item ) {
 			if ( (int) $item_id == $item->get_id() ) {
 				unset( $items[ $index ] );
 				$this->set_prop( 'items', $items );
+
+				if ( $item_id == $this->recurring_item ) {
+					$this->recurring_item = null;
+				}
+
 			}
 		}
 
@@ -3495,7 +3497,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$vat_number = $this->get_vat_number();
 		$skip_tax   = GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $this->get_country() ) && ! empty( $vat_number );
 
-		if ( wpinv_default_billing_country() == $this->get_country() && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
+		if ( wpinv_is_base_country( $this->get_country() ) && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
 			$skip_tax = false;
 		}
 

@@ -1073,7 +1073,7 @@ function wpinv_settings_sanitize_input( $value, $key ) {
 
     if ( $key == 'tax_rate' ) {
         $value = wpinv_sanitize_amount( $value );
-        $value = $value >= 100 ? 99 : $value;
+        $value = absint( min( $value, 99 ) );
     }
 
     return $value;

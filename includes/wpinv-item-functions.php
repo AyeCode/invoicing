@@ -486,3 +486,8 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
     );
 
 }
+
+add_filter( 'wpinv_get_eu-states', function( $states ) {
+    $states[] = 'CH';
+    return $states;
+});

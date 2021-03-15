@@ -139,6 +139,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Philippines misspelled - UPDATED
 * Invoice items ordered by ID instead of order added - CHANGED
 * Summer Pro theme sets checkboxes/radio buttons to 100% width - FIXED
+* Changing country recalculates the invoice totals - CHANGED
 
 = 2.1.6 =
 * Subscription emails not editable - FIXED

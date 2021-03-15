@@ -473,6 +473,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
             return;
 		}
 
+		$_items = array();
 		foreach ( $items as $item_data ) {
 			$item = new GetPaid_Form_Item( $item_data->item_id );
 
@@ -484,10 +485,10 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$item->set_price( $item_data->item_price );
 			$item->set_quantity( $item_data->quantity );
 			$item->set_item_meta( $item_data->meta );
-
-			$invoice->add_item( $item );
+			$_items[] = $item;
 		}
 
+		$invoice->set_items( $_items );
 	}
 
 	/**

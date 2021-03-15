@@ -328,7 +328,7 @@ return array(
                     'min'  => '0',
                     'max'  => '99',
                     'step' => 'any',
-                    'std'  => '20'
+                    'std'  => '0'
                 ),
             ),
             'rates' => array(

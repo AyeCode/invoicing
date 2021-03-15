@@ -72,7 +72,7 @@ function wpinv_is_invoice_taxable( $invoice ) {
  */
 function wpinv_is_country_taxable( $country ) {
     $is_eu     = getpaid_is_eu_state( $country );
-    $is_exempt = $is_eu && $country == wpinv_is_base_country( $country ) && wpinv_same_country_exempt_vat();
+    $is_exempt = ! $is_eu && wpinv_is_base_country( $country ) && wpinv_same_country_exempt_vat();
 
     return (bool) apply_filters( 'wpinv_is_country_taxable', ! $is_exempt, $country ); 
 
@@ -134,7 +134,7 @@ function wpinv_display_individual_tax_rates() {
  * @return float
  */
 function wpinv_get_default_tax_rate() {
-    $rate = wpinv_get_option( 'tax_rate', 20 );
+    $rate = wpinv_get_option( 'tax_rate', 0 );
     return (float) apply_filters( 'wpinv_get_default_tax_rate', floatval( $rate ) );
 }
 

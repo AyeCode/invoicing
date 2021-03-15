@@ -759,6 +759,10 @@ jQuery(function ($) {
 		recalculateTotals()
 	})
 
+	$('.getpaid-is-invoice-cpt').on('change', '#wpinv_country, #wpinv_state', function (e) {
+		recalculateTotals()
+	})
+
 	// Hide status entry.
 	$('.getpaid-is-invoice-cpt form#post [name="post_status"]').attr( 'type', 'hidden' );
 
