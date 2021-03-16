@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08 12:03+0000\n"
+"POT-Creation-Date: 2021-03-16 06:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -761,7 +761,7 @@ msgstr ""
 msgid "A uniques ID of the submission details used to pay for this invoice."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:227
+#: includes/class-wpinv-ajax.php:228
 msgid "A user with this email address already exists"
 msgstr ""
 
@@ -903,7 +903,7 @@ msgstr ""
 msgid "Add new payment forms."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:85
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:80
 msgid "Add New User"
 msgstr ""
 
@@ -965,7 +965,7 @@ msgstr ""
 #: includes/data/payment-form-elements.php:177
 #: includes/data/payment-form-elements.php:210
 #: templates/emails/wpinv-email-billing-details.php:28
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:172
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:167
 msgid "Address"
 msgstr ""
 
@@ -1296,7 +1296,7 @@ msgstr ""
 msgid "An invalid setting value was passed."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3206
+#: includes/class-wpinv-invoice.php:3207
 msgid "An invoice can only contain one recurring item"
 msgstr ""
 
@@ -2572,7 +2572,7 @@ msgstr ""
 
 #: includes/wpinv-template-functions.php:703
 #: includes/admin/class-getpaid-admin.php:171
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:89
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:84
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:259
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:299
 msgid "Cancel"
@@ -2921,7 +2921,7 @@ msgstr ""
 msgid "Chongqing / &#37325;&#24198;"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:208
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:203
 msgid "Choose a country"
 msgstr ""
 
@@ -2986,7 +2986,7 @@ msgstr ""
 #: includes/admin/class-wpinv-customers-table.php:277
 #: includes/data/default-payment-form.php:67
 #: includes/data/payment-form-elements.php:221
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:188
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:183
 msgid "City"
 msgstr ""
 
@@ -3075,7 +3075,7 @@ msgstr ""
 #: includes/data/default-payment-form.php:117
 #: includes/data/payment-form-elements.php:276
 #: templates/emails/wpinv-email-billing-details.php:23
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:137
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:132
 msgid "Company"
 msgstr ""
 
@@ -3196,7 +3196,7 @@ msgstr ""
 #: includes/admin/class-wpinv-customers-table.php:275
 #: includes/data/default-payment-form.php:77
 #: includes/data/payment-form-elements.php:232
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:206
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:201
 #: includes/admin/views/html-tax-rate-edit.php:27
 #: includes/admin/views/html-tax-rates-edit.php:36
 msgid "Country"
@@ -3394,7 +3394,7 @@ msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:174
 #: includes/admin/subscriptions.php:148
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:44
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:46
 msgid "Customer"
 msgstr ""
 
@@ -4061,7 +4061,7 @@ msgstr ""
 
 #: includes/data/payment-form-elements.php:165
 #: templates/emails/wpinv-email-billing-details.php:18
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:68
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:63
 msgid "Email"
 msgstr ""
 
@@ -4399,7 +4399,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3710
+#: includes/class-wpinv-invoice.php:3727
 msgid "Error during status transition."
 msgstr ""
 
@@ -4421,7 +4421,7 @@ msgstr ""
 msgid "Error renewing subscription : ( %s )."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:294 includes/class-wpinv-ajax.php:779
+#: includes/class-wpinv-ajax.php:295 includes/class-wpinv-ajax.php:819
 msgid "Error: Reload the page and try again."
 msgstr ""
 
@@ -4722,7 +4722,7 @@ msgid ""
 "billing information"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:81
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:76
 msgid "Fill User Details"
 msgstr ""
 
@@ -4746,7 +4746,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:133
 #: includes/data/default-payment-form.php:37
 #: includes/data/payment-form-elements.php:188
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:102
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:97
 msgid "First Name"
 msgstr ""
 
@@ -5853,7 +5853,7 @@ msgstr ""
 msgid "Interval"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:143
+#: templates/payment-forms/elements/address-fields.php:144
 msgid "Invalid"
 msgstr ""
 
@@ -5869,7 +5869,7 @@ msgstr ""
 msgid "Invalid discount."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:221
+#: includes/class-wpinv-ajax.php:222
 msgid "Invalid email address"
 msgstr ""
 
@@ -5950,7 +5950,7 @@ msgstr ""
 msgid "Invoice %s created"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:366
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:361
 msgid "Invoice add new user"
 msgstr ""
 
@@ -7300,7 +7300,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:134
 #: includes/data/default-payment-form.php:47
 #: includes/data/payment-form-elements.php:199
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:118
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:113
 msgid "Last Name"
 msgstr ""
 
@@ -8857,7 +8857,7 @@ msgstr ""
 msgid "No minimum"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:262
+#: includes/class-wpinv-ajax.php:263
 msgid "No payment form or item provided"
 msgstr ""
 
@@ -9428,7 +9428,7 @@ msgstr ""
 msgid "Paid Via"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3817
+#: includes/class-wpinv-invoice.php:3834
 #: includes/admin/class-getpaid-post-types-admin.php:242
 #, php-format
 msgid "Paid via %s"
@@ -9929,7 +9929,7 @@ msgid "Philippine Peso"
 msgstr ""
 
 #: includes/data/countries.php:192
-msgid "Phillipines"
+msgid "Philippines"
 msgstr ""
 
 #: includes/data/states.php:1178
@@ -9941,7 +9941,7 @@ msgstr ""
 #: includes/data/default-payment-form.php:107
 #: includes/data/payment-form-elements.php:265
 #: templates/emails/wpinv-email-billing-details.php:33
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:285
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:280
 msgid "Phone"
 msgstr ""
 
@@ -10288,7 +10288,7 @@ msgstr ""
 msgid "Provide a valid billing email."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:214
+#: includes/class-wpinv-ajax.php:215
 msgid "Provide the new user's email address"
 msgstr ""
 
@@ -10488,7 +10488,7 @@ msgstr ""
 msgid "Recurring amount"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:424
+#: includes/class-wpinv-ajax.php:425
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:40
 #, php-format
 msgid "Recurring Price: %s"
@@ -10592,7 +10592,7 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3806
+#: includes/class-wpinv-invoice.php:3823
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -11094,6 +11094,10 @@ msgstr ""
 msgid "Search discounts"
 msgstr ""
 
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:49
+msgid "Search for a customer by email or name"
+msgstr ""
+
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:249
 msgid "Search for an item…"
 msgstr ""
@@ -11150,8 +11154,8 @@ msgstr ""
 msgid "Select a single item from the list"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:747 includes/data/admin-settings.php:76
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:246
+#: includes/class-wpinv-ajax.php:787 includes/data/admin-settings.php:76
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:241
 msgid "Select a state"
 msgstr ""
 
@@ -11403,7 +11407,7 @@ msgstr ""
 
 #: includes/admin/class-getpaid-metaboxes.php:182
 #: includes/data/payment-form-elements.php:182
-#: templates/payment-forms/elements/address.php:90
+#: templates/payment-forms/elements/address.php:91
 msgid "Shipping Address"
 msgstr ""
 
@@ -11806,13 +11810,13 @@ msgstr ""
 msgid "Start date"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:731 includes/class-wpinv-ajax.php:733
-#: includes/class-wpinv-ajax.php:745
+#: includes/class-wpinv-ajax.php:771 includes/class-wpinv-ajax.php:773
+#: includes/class-wpinv-ajax.php:785
 #: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:136
 #: includes/admin/class-wpinv-customers-table.php:276
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:230
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:244
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:225
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:239
 #: includes/admin/views/html-tax-rates-edit.php:41
 msgid "State"
 msgstr ""
@@ -11844,13 +11848,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3674
+#: includes/class-wpinv-invoice.php:3691
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3703
+#: includes/class-wpinv-invoice.php:3720
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -13106,7 +13110,7 @@ msgid ""
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3198
+#: includes/class-wpinv-invoice.php:3199
 msgid "This item is not available for purchase"
 msgstr ""
 
@@ -13769,6 +13773,13 @@ msgstr ""
 msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
+#: includes/class-wpinv-ajax.php:738
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:30
+#, php-format
+msgctxt "user dropdown"
+msgid "%1$s (%2$s)"
+msgstr ""
+
 #: includes/user-functions.php:403 includes/user-functions.php:408
 msgid "UsersWP"
 msgstr ""
@@ -13821,11 +13832,11 @@ msgstr ""
 msgid "Valencia"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:142
+#: templates/payment-forms/elements/address-fields.php:143
 msgid "Valid"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:144
+#: templates/payment-forms/elements/address-fields.php:145
 msgid "Validate"
 msgstr ""
 
@@ -13923,7 +13934,7 @@ msgstr ""
 msgid "VAT Number"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:153
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:148
 msgid "Vat Number"
 msgstr ""
 
@@ -14759,7 +14770,7 @@ msgstr ""
 msgid "Zip"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:269
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:264
 msgid "Zip / Postal Code"
 msgstr ""
 
