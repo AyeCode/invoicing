@@ -44,7 +44,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                                         $taxes = $invoice->get_total_tax();
                                         if ( empty( $taxes ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
                                             echo ' <em class="text-muted small">';
-                                            _e( '(Reverse charged)', 'invoicing' );
+                                            _x( '(Reverse charged)','This is a legal term for reverse charging tax in the EU', 'invoicing' );
                                             echo '</em>';
                                         }
 
