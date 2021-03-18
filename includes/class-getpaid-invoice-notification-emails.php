@@ -326,11 +326,16 @@ class GetPaid_Invoice_Notification_Emails {
 	 * Notifies a user about new invoices
 	 *
 	 * @param WPInv_Invoice $invoice
+	 * @param bool $force
 	 */
-	public function user_invoice( $invoice ) {
+	public function user_invoice( $invoice, $force = false ) {
+
+		if ( ! empty( $GLOBALS['wpinv_skip_invoice_notification'] ) ) {
+			return;
+		}
 
 		// Only send this email for invoices created via the admin page.
-		if ( ! $invoice->is_type( 'invoice' ) || $this->is_payment_form_invoice( $invoice->get_id() ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || ( empty( $force ) && $this->is_payment_form_invoice( $invoice->get_id() ) ) ) {
 			return;
 		}
 

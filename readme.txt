@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Improve invoice creation customer searches
 * Improve invoice creation item searches
 * Wildcard information not shown when editing some email templates - FIXED
+* Ability to manually add a discount to a quote - ADDED
 
 = 2.1.7 =
 * Lots of customers causes the invoices screen to hang - FIXED

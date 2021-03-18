@@ -53,7 +53,7 @@ return array(
             'desc'     => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( '[{site_title}] We sent your invoice ({invoice_number}) for {invoice_total} {invoice_currency}', 'invoicing' ),
+            'std'      => __( '[{site_title}] New invoice ({invoice_number}) for {invoice_total} {invoice_currency}', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -63,7 +63,7 @@ return array(
             'desc'     => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( 'Invoice sent', 'invoicing' ),
+            'std'      => __( 'New invoice', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -72,7 +72,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>We sent your invoice <a href="{invoice_link}">({invoice_number})</a> to {name} for {invoice_total} {invoice_currency}.</p>', 'invoicing' ),
+            'std'      => __( '<p>A new invoice <a href="{invoice_link}">({invoice_number})</a> to {name} for {invoice_total} {invoice_currency} has been created on your site.</p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),

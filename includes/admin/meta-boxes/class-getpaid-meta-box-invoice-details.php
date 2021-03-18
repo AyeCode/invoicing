@@ -188,6 +188,42 @@ class GetPaid_Meta_Box_Invoice_Details {
                             )
                         );
 
+                        if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+
+                            // Apply a discount.
+                            echo aui()->input(
+                                array(
+                                    'type'        => 'text',
+                                    'id'          => 'wpinv_discount_code',
+                                    'name'        => 'wpinv_discount_code',
+                                    'label'       => __( 'Discount Code:', 'invoicing' ),
+                                    'placeholder' => __( 'Apply Discount', 'invoicing' ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'form-control-sm',
+                                    'value'       => $invoice->get_discount_code( 'edit' ),
+                                )
+                            );
+
+                        } else if ( $invoice->get_discount_code( 'edit' ) ) {
+
+                            echo aui()->input(
+                                array(
+                                    'type'        => 'text',
+                                    'id'          => 'wpinv_discount_code',
+                                    'name'        => 'wpinv_discount_code',
+                                    'label'       => __( 'Discount Code:', 'invoicing' ),
+                                    'label_type'  => 'vertical',
+                                    'class'       => 'form-control-sm',
+                                    'value'       => $invoice->get_discount_code( 'edit' ),
+                                    'extra_attributes' => array(
+                                        'onclick'  => 'this.select();',
+                                        'readonly' => 'true',
+                                    ),
+                                )
+                            );
+
+                        }
+
                         do_action( 'wpinv_meta_box_details_inner', $invoice->get_id() );
 
                         // Disable taxes.
@@ -206,22 +242,17 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                         }
 
-                        // Apply a discount.
-                        if ( ( $invoice->is_paid() || $invoice->is_refunded() ) && $invoice->get_discount_code( 'edit' ) ) {
+                        if ( $invoice->is_type( 'invoice' ) ) {
 
+                            // Send to customer.
                             echo aui()->input(
                                 array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_discount_code',
-                                    'name'        => 'wpinv_discount_code',
-                                    'label'       => __( 'Discount Code:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_discount_code( 'edit' ),
-                                    'extra_attributes' => array(
-                                        'onclick'  => 'this.select();',
-                                        'readonly' => 'true',
-                                    ),
+                                    'id'          => 'wpinv_send_to_customer',
+                                    'name'        => 'send_to_customer',
+                                    'type'        => 'checkbox',
+                                    'label'       => __( 'Send invoice to customer after saving', 'invoicing' ),
+                                    'value'       => '1',
+                                    'checked'     => $invoice->is_draft() && (bool) wpinv_get_option( 'email_user_invoice_active', true ),
                                 )
                             );
 

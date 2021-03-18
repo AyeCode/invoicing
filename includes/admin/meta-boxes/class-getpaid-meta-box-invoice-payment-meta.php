@@ -156,20 +156,6 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 
                         } else {
 
-                            // Apply a discount.
-                            echo aui()->input(
-                                array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_discount_code',
-                                    'name'        => 'wpinv_discount_code',
-                                    'label'       => __( 'Discount Code:', 'invoicing' ),
-                                    'placeholder' => __( 'Apply Discount', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_discount_code( 'edit' ),
-                                )
-                            );
-
                             if ( 'wpi_invoice' == $invoice->get_post_type() ) {
 
                                 // Payment URL.

@@ -362,12 +362,30 @@ class GetPaid_Meta_Box_Invoice_Address {
             }
         }
 
+        // Do not send new invoice notifications.
+        $GLOBALS['wpinv_skip_invoice_notification'] = true;
+
         // Save the invoice.
         $invoice->save();
+
+        // Undo do not send new invoice notifications.
+        $GLOBALS['wpinv_skip_invoice_notification'] = false;
 
         // (Maybe) send new user notification.
         if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', true ) ) {
             wp_send_new_user_notifications( $user, 'user' );
+        }
+
+        if ( ! empty( $_POST['send_to_customer'] ) && ! $invoice->is_draft() ) {
+
+            $sent = getpaid()->get( 'invoice_emails' )->user_invoice( $invoice, true );
+
+            if ( $sent ) {
+                getpaid_admin()->show_success( __( 'Invoice was successfully sent to the customer', 'invoicing' ) );
+            } else {
+                getpaid_admin()->show_error( __( 'Could not send the invoice to the customer', 'invoicing' ) );
+            }
+
         }
 
         // Fires after an invoice is saved.
