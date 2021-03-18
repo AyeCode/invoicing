@@ -50,6 +50,11 @@ getpaid.init_select2_item_search = function (select, parent) {
 			}
 
 			return jQuery('<span>' + item.text + '</span>')
+		},
+		language: {
+			inputTooShort: function() {
+				return WPInv_Admin.search_items;
+			}
 		}
 	});
 
