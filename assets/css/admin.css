@@ -206,10 +206,6 @@ ul.invoice_notes li.system-note .note_content:after {
   width: 100%;
   height: 45px;
 }
-.wpinv .pre_defined_products {
-  float: left;
-  margin: 5px 20px 0 0;
-}
 
 .wpinv .wpinv_totals {
   border: 1px solid #e5e5e5;
@@ -381,18 +377,8 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
   padding: 0 3px 0 10px;
 }
 
-.wpinv-email-wc-row {
-    padding: 10px;
-    background: #fff;
-    border-radius: 10px;
-}
-
 @media only screen and (min-width : 300px) and (max-width : 489px) {
 
-  .wpinv .pre_defined_products {
-    margin: 10px 0;
-    width: 100%;
-  }
   .wpinv .wpinv_totals {
     min-width: 100%;
   }

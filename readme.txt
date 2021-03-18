@@ -133,10 +133,11 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.1.7 =
+= 2.1.8 =
 * Sometimes invoice user not changeable for manual invoices - FIXED
 * Improve invoice creation customer searches
 * Improve invoice creation item searches
+* Wildcard information not shown when editing some email templates - FIXED
 
 = 2.1.7 =
 * Lots of customers causes the invoices screen to hang - FIXED
