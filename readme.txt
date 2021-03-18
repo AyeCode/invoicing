@@ -134,6 +134,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.1.7 =
+* Sometimes invoice user not changeable for manual invoices - FIXED
+
+= 2.1.7 =
 * Lots of customers causes the invoices screen to hang - FIXED
 * New invoice emails not sent for invoices created via admin - FIXED
 * Philippines misspelled - UPDATED
