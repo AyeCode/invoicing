@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.7 =
 * Sometimes invoice user not changeable for manual invoices - FIXED
+* Improve invoice creation customer searches
 
 = 2.1.7 =
 * Lots of customers causes the invoices screen to hang - FIXED

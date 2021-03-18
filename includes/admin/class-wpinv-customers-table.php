@@ -325,7 +325,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 		if ( ! empty( $_POST['s'] ) ) {
 			$users = get_users(
 				array(
-					'search'         => sanitize_text_field( urldecode( $_POST['s'] ) ),
+					'search'         => '*' . sanitize_text_field( urldecode( $_POST['s'] ) ) . '*',
 					'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
 					'fields'         => 'ID',
 				)

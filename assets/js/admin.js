@@ -105,6 +105,11 @@ getpaid.init_select2_customer_search = function (select, parent) {
 			}
 
 			return jQuery('<span>' + item.text + '</span>')
+		},
+		language: {
+			inputTooShort: function() {
+				return WPInv_Admin.search_customers;
+			}
 		}
 	});
 

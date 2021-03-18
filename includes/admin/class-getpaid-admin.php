@@ -174,6 +174,7 @@ class GetPaid_Admin {
             'discount_description'      => __( 'Discount Description', 'invoicing' ),
 			'searching'                 => __( 'Searching', 'invoicing' ),
 			'loading'                   => __( 'Loading...', 'invoicing' ),
+			'search_customers'          => __( 'Enter customer name or email', 'invoicing' ),
         );
 
 		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {

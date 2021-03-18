@@ -726,7 +726,8 @@ class WPInv_Ajax {
         $customer_args = array(
             'fields'         => array( 'ID', 'user_email', 'display_name' ),
             'orderby'        => 'display_name',
-            'search'         => sanitize_text_field( $_GET['search'] ),
+            'search'         => '*' . sanitize_text_field( $_GET['search'] ) . '*',
+            'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
         );
 
         $customers = get_users( apply_filters( 'getpaid_ajax_invoice_customers_query_args', $customer_args ) );
