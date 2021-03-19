@@ -215,7 +215,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                     'billTo'           => array(
                         'firstName'    => getpaid_limit_length( $invoice->get_first_name(), 50 ),
                         'lastName'     => getpaid_limit_length( $invoice->get_last_name(), 50 ),
-                        'address'      => getpaid_limit_length( $invoice->get_last_name(), 60 ),
+                        'address'      => getpaid_limit_length( $invoice->get_address(), 60 ),
                         'city'         => getpaid_limit_length( $invoice->get_city(), 40 ),
                         'state'        => getpaid_limit_length( $invoice->get_state(), 40 ),
                         'zip'          => getpaid_limit_length( $invoice->get_zip(), 20 ),

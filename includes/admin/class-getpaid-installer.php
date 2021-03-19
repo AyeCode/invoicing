@@ -473,4 +473,24 @@ class GetPaid_Installer {
 
 	}
 
+	/**
+	 * Migrates old invoices to new invoices.
+	 *
+	 */
+	public static function rename_gateways_label() {
+		global $wpdb;
+
+		foreach ( array_keys( wpinv_get_payment_gateways() ) as $gateway ) {
+
+			$wpdb->update(
+				$wpdb->prefix . 'getpaid_invoices',
+				array( 'gateway' => $gateway ),
+				array( 'gateway' => wpinv_get_gateway_admin_label( $gateway ) ),
+				'%s',
+				'%s'
+			);
+
+		}
+	}
+
 }

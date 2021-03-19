@@ -309,7 +309,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                 'email_cc'             => isset( $_POST['wpinv_cc'] ) ? wpinv_clean( $_POST['wpinv_cc'] ) : null,
                 'disable_taxes'        => isset( $_POST['disable_taxes'] ),
                 'currency'             => isset( $_POST['wpinv_currency'] ) ? wpinv_clean( $_POST['wpinv_currency'] ) : null,
-                'gateway'              => isset( $_POST['wpinv_gateway'] ) ? wpinv_clean( $_POST['wpinv_gateway'] ) : null,
+                'gateway'              => ( $invoice->needs_payment() && isset( $_POST['wpinv_gateway'] ) ) ? wpinv_clean( $_POST['wpinv_gateway'] ) : null,
                 'address'              => isset( $_POST['wpinv_address'] ) ? wpinv_clean( $_POST['wpinv_address'] ) : null,
                 'vat_number'           => isset( $_POST['wpinv_vat_number'] ) ? wpinv_clean( $_POST['wpinv_vat_number'] ) : null,
                 'company'              => isset( $_POST['wpinv_company'] ) ? wpinv_clean( $_POST['wpinv_company'] ) : null,

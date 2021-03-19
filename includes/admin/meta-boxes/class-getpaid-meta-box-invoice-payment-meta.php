@@ -107,7 +107,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 array(
                                     'type'        => 'text',
                                     'id'          => 'wpinv_gateway',
-                                    'name'        => 'wpinv_gateway',
+                                    'name'        => '',
                                     'label'       => __( 'Gateway:', 'invoicing' ),
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm',

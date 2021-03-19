@@ -328,6 +328,11 @@ class WPInv_Plugin {
 			$this->gateways[ $id ] = new $class();
 		}
 
+		if ( 'yes' != get_option( 'wpinv_renamed_gateways' ) ) {
+			GetPaid_Installer::rename_gateways_label();
+			update_option( 'wpinv_renamed_gateways', 'yes' );
+		}
+
 		// Fires after getpaid inits.
 		do_action( 'getpaid_init', $this );
 
