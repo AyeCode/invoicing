@@ -142,11 +142,10 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		// Retrieve from the posted number.
 		$vat_number = $submission->get_field( 'wpinv_vat_number', 'billing' );
-		if ( ! empty( $vat_number ) ) {
+		if ( ! is_null( $vat_number ) ) {
 			return wpinv_clean( $vat_number );
 		}
 
-		// Retrieve from the invoice.
 		return $submission->has_invoice() ? $submission->get_invoice()->get_vat_number() : '';
 	}
 
