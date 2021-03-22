@@ -28,6 +28,12 @@ class GetPaid_Template {
 
         $this->templates_dir = apply_filters( 'getpaid_default_templates_dir', WPINV_PLUGIN_DIR . 'templates' );
         $this->templates_url = apply_filters( 'getpaid_default_templates_url', WPINV_PLUGIN_URL . 'templates' );
+
+        // Oxygen plugin
+		if ( defined( 'CT_VERSION' ) ) {
+			add_filter( 'wpinv_locate_template', array( $this, 'oxygen_override_template' ), 11, 4 );
+		}
+
     }
 
     /**
@@ -207,5 +213,69 @@ class GetPaid_Template {
         $this->display_template( $template_name, $args, $template_path, $default_path );
         return ob_get_clean();
     }
+
+    /**
+	 * Get the geodirectory templates theme path.
+	 *
+	 *
+	 * @return string Template path.
+	 */
+	public static function get_theme_template_path() {
+		$template   = get_template();
+		$theme_root = get_theme_root( $template );
+
+		return $theme_root . '/' . $template . '/' . untrailingslashit( wpinv_get_theme_template_dir_name() );
+
+	}
+
+	/**
+	 * Oxygen locate theme template.
+	 *
+	 * @param string $template The template.
+	 * @return string The theme template.
+	 */
+	public static function oxygen_locate_template( $template ) {
+
+		if ( empty( $template ) ) {
+			return '';
+		}
+
+		$has_filter = has_filter( 'template', 'ct_oxygen_template_name' );
+
+		// Remove template filter
+		if ( $has_filter ) {
+			remove_filter( 'template', 'ct_oxygen_template_name' );
+		}
+
+		$template = self::get_theme_template_path() . '/' . $template;
+
+		if ( file_exists( $template ) ) {
+			$template = '';
+		}
+
+		// Add template filter
+		if ( $has_filter ) {
+			add_filter( 'template', 'ct_oxygen_template_name' );
+		}
+
+		return $template;
+	}
+
+	/**
+	 * Oxygen override theme template.
+	 *
+	 * @param string $located Located template.
+	 * @param string $template_name Template name.
+	 * @return string Located template.
+	 */
+	public function oxygen_override_template( $located, $template_name ) {
+
+        $oxygen_overide = self::oxygen_locate_template( $template_name );
+		if ( ! empty( $oxygen_overide ) ) {
+			return $oxygen_overide;
+		}
+
+		return $located;
+	}
 
 }

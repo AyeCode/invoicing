@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.9 =
 * Rename improperly named gateways in invoices table - FIXED
+* Oxygen pagebuilder custom templates not working - FIXED
 
 = 2.1.8 =
 * Sometimes invoice user not changeable for manual invoices - FIXED
