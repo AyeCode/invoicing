@@ -18,13 +18,7 @@ $currency_code_options = array();
 foreach ( $currencies as $code => $name ) {
     $currency_code_options[ $code ] = $code . ' - ' . $name . ' (' . wpinv_currency_symbol( $code ) . ')';
 }
-    
-$due_payment_options       = array();
-$due_payment_options[0]    = __( 'Now', 'invoicing' );
-for ( $i = 1; $i <= 30; $i++ ) {
-    $due_payment_options[$i] = $i;
-}
-    
+
 $invoice_number_padd_options = array();
 for ( $i = 0; $i <= 20; $i++ ) {
     $invoice_number_padd_options[$i] = $i;
@@ -431,15 +425,6 @@ return array(
                     'desc' => __( 'Check this to enable due date option for invoices.', 'invoicing' ),
                     'type' => 'checkbox',
                     'std'  => false,
-                ),
-                'overdue_days' => array(
-                    'id'          => 'overdue_days',
-                    'name'        => __( 'Default Due Date', 'invoicing' ),
-                    'desc'        => __( 'Number of days each Invoice is due after the created date. This will automatically set the date in the "Due Date" field. Can be overridden on individual Invoices.', 'invoicing' ),
-                    'type'        => 'select',
-                    'options'     => $due_payment_options,
-                    'std'         => 0,
-                    'placeholder' => __( 'Select a page', 'invoicing' ),
                 ),
                 'email_template_header' => array(
                     'id'   => 'email_template_header',

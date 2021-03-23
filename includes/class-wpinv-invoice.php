@@ -159,7 +159,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_id( $invoice_id );
 		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'transaction_id' ) ) {
 			$this->set_id( $invoice_id );
-		}else {
+		} else {
 			$this->set_object_read( true );
 		}
 

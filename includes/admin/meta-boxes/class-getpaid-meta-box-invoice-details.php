@@ -109,11 +109,11 @@ class GetPaid_Meta_Box_Invoice_Details {
                         }
 
                         // Due date.
-                        if ( $invoice->is_type( 'invoice' ) && wpinv_get_option( 'overdue_active' ) && ( $invoice->needs_payment() || $invoice->is_draft() ) ) {
+                        if ( $invoice->is_type( 'invoice' ) && wpinv_get_option( 'overdue_active' ) && ( ! $invoice->is_paid() || $invoice->is_draft() ) ) {
 
                             echo aui()->input(
                                 array(
-                                    'type'        => 'text',
+                                    'type'        => 'datepicker',
                                     'id'          => 'wpinv_due_date',
                                     'name'        => 'wpinv_due_date',
                                     'label'       => __( 'Due Date:', 'invoicing' ) . getpaid_get_help_tip( __( 'Leave blank to disable automated reminder emails for this invoice.', 'invoicing' ) ),
@@ -121,6 +121,12 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'placeholder' => __( 'No due date', 'invoicing' ),
                                     'class'       => 'form-control-sm',
                                     'value'       => $invoice->get_due_date( 'edit' ),
+                                    'extra_attributes' => array(
+                                        'data-enable-time' => 'true',
+                                        'data-time_24hr'   => 'true',
+                                        'data-allow-input' => 'true',
+                                        'data-min-date'    => 'today',
+                                    ),
                                 )
                             );
 
