@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '78277f1999221a9d2aa36ed867119bc4dd9b9ba5',
+    'reference' => '30e6738f2073aa51f1c360079453e76cfcfb9854',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -27,16 +27,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '78277f1999221a9d2aa36ed867119bc4dd9b9ba5',
+      'reference' => '30e6738f2073aa51f1c360079453e76cfcfb9854',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
-      'pretty_version' => '0.1.43',
-      'version' => '0.1.43.0',
+      'pretty_version' => '0.1.45',
+      'version' => '0.1.45.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3606edd468c8a502df34237d0ac9e3470f2ad08d',
+      'reference' => 'a8f19cac8310de825ae5fec71d57184ebb2d78d0',
     ),
     'ayecode/wp-font-awesome-settings' => 
     array (
