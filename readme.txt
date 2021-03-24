@@ -139,6 +139,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Existing invoices with wrong VAT numbers not payable unless a valid VAT number is provided - FIXED
 * Use a datepicker to set the due date - CHANGED
 * PayPal sometimes shows incorrect totals - FIXED
+* Invoices with discount codes do not automatically add the discount code to the payment form - FIXED
 
 = 2.1.8 =
 * Sometimes invoice user not changeable for manual invoices - FIXED
