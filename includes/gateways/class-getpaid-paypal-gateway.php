@@ -278,7 +278,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		// Items.
 		foreach ( $invoice->get_items() as $item ) {
-			$amount   = $invoice->get_template() == 'amount' ? $item->get_price() : $item->get_sub_total();
+			$amount   = $item->get_price();
 			$quantity = $invoice->get_template() == 'amount' ? 1 : $item->get_quantity();
 			$this->add_line_item( $item->get_raw_name(), $quantity, $amount, $item->get_id() );
         }
@@ -317,7 +317,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		$this->line_items[ 'item_name_' . $index ]   = getpaid_limit_length( $item['item_name'], 127 );
         $this->line_items[ 'quantity_' . $index ]    = $item['quantity'];
-        
+
         // The price or amount of the product, service, or contribution, not including shipping, handling, or tax.
 		$this->line_items[ 'amount_' . $index ]      = $item['amount'];
 		$this->line_items[ 'item_number_' . $index ] = getpaid_limit_length( $item['item_number'], 127 );

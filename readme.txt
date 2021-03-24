@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Oxygen pagebuilder custom templates not working - FIXED
 * Existing invoices with wrong VAT numbers not payable unless a valid VAT number is provided - FIXED
 * Use a datepicker to set the due date - CHANGED
+* PayPal sometimes shows incorrect totals - FIXED
 
 = 2.1.8 =
 * Sometimes invoice user not changeable for manual invoices - FIXED
