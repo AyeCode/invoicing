@@ -158,7 +158,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         if ( 'net.authorize.payment.fraud.declined' == $posted->eventType ) {
             $invoice = new WPInv_Invoice( $posted->payload->id );
             $this->validate_ipn_invoice( $invoice, $posted->payload );
-            $invoice->set_status( 'wpi-failed', __( 'Payment desclined', 'invoicing' ) );
+            $invoice->set_status( 'wpi-failed', __( 'Payment declined', 'invoicing' ) );
             $invoice->save();
         }
 

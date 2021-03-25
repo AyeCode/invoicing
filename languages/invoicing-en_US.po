@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-16 06:02+0000\n"
-"PO-Revision-Date: 2021-03-18 09:10+0000\n"
+"PO-Revision-Date: 2021-03-25 05:11+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -269,7 +269,7 @@ msgstr ""
 msgid "%s Number"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:155
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:161
 #, php-format
 msgid "%s Number:"
 msgstr ""
@@ -284,7 +284,7 @@ msgstr ""
 msgid "%s Status"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:134
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:140
 #, php-format
 msgid "%s Status:"
 msgstr ""
@@ -362,7 +362,7 @@ msgstr ""
 msgid "&Ntilde;eembuc&uacute;"
 msgstr ""
 
-#: includes/data/admin-settings.php:40
+#: includes/data/admin-settings.php:34
 #, php-format
 msgid "( Last Invoice's sequential number: <b>%s</b> )"
 msgstr ""
@@ -847,7 +847,7 @@ msgstr ""
 msgid "Add an element by dragging it to the payment form."
 msgstr ""
 
-#: includes/data/admin-settings.php:621
+#: includes/data/admin-settings.php:606
 msgid "Add CSS to modify appearance of the print invoice page."
 msgstr ""
 
@@ -972,7 +972,7 @@ msgstr ""
 msgid "Adjumani"
 msgstr ""
 
-#: includes/data/admin-settings.php:418
+#: includes/data/admin-settings.php:412
 msgid "Admin Email"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 msgid "Apply Coupon"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:200
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:206
 msgid "Apply Discount"
 msgstr ""
 
@@ -1550,11 +1550,11 @@ msgstr ""
 msgid "Arusha"
 msgstr ""
 
-#: includes/data/admin-settings.php:315
+#: includes/data/admin-settings.php:309
 msgid "As a single total"
 msgstr ""
 
-#: includes/data/admin-settings.php:316
+#: includes/data/admin-settings.php:310
 msgid "As individual tax rates"
 msgstr ""
 
@@ -1620,7 +1620,7 @@ msgstr ""
 msgid "Authorize.Net"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:171
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:177
 msgid "Autogenerate"
 msgstr ""
 
@@ -1693,7 +1693,7 @@ msgstr ""
 msgid "Bac&#259;u"
 msgstr ""
 
-#: includes/data/admin-settings.php:475
+#: includes/data/admin-settings.php:460
 msgid "Background Color"
 msgstr ""
 
@@ -1847,7 +1847,7 @@ msgstr ""
 msgid "Basarabeasca"
 msgstr ""
 
-#: includes/data/admin-settings.php:468
+#: includes/data/admin-settings.php:453
 msgid "Base Color"
 msgstr ""
 
@@ -2081,11 +2081,11 @@ msgstr ""
 msgid "Blagoevgrad"
 msgstr ""
 
-#: includes/data/admin-settings.php:482
+#: includes/data/admin-settings.php:467
 msgid "Body Background Color"
 msgstr ""
 
-#: includes/data/admin-settings.php:489
+#: includes/data/admin-settings.php:474
 msgid "Body Text Color"
 msgstr ""
 
@@ -2513,7 +2513,7 @@ msgstr ""
 msgid "Cajamarca"
 msgstr ""
 
-#: includes/data/admin-settings.php:302
+#: includes/data/admin-settings.php:296
 msgid "Calculate tax based on"
 msgstr ""
 
@@ -2758,11 +2758,11 @@ msgstr ""
 msgid "Charge customers a recurring amount for this item"
 msgstr ""
 
-#: includes/data/admin-settings.php:383
+#: includes/data/admin-settings.php:377
 msgid "Charge tax even if vat number is validated"
 msgstr ""
 
-#: includes/data/admin-settings.php:382
+#: includes/data/admin-settings.php:376
 msgid "Charge tax unless vat number is validated"
 msgstr ""
 
@@ -2794,17 +2794,17 @@ msgstr ""
 msgid "Check Pages"
 msgstr ""
 
-#: includes/data/admin-settings.php:606
+#: includes/data/admin-settings.php:591
 msgid ""
 "Check this box if you would like Invoicing plugin to completely remove all "
 "of its data when the plugin is deleted/uninstalled."
 msgstr ""
 
-#: includes/data/admin-settings.php:540
+#: includes/data/admin-settings.php:525
 msgid "Check this box to enable sequential invoice numbers."
 msgstr ""
 
-#: includes/data/admin-settings.php:431
+#: includes/data/admin-settings.php:425
 msgid "Check this to enable due date option for invoices."
 msgstr ""
 
@@ -2836,11 +2836,11 @@ msgstr ""
 msgid "Checkout Description"
 msgstr ""
 
-#: includes/data/admin-settings.php:105
+#: includes/data/admin-settings.php:99
 msgid "Checkout Page"
 msgstr ""
 
-#: includes/data/admin-settings.php:580
+#: includes/data/admin-settings.php:565
 msgid "Checkout Settings"
 msgstr ""
 
@@ -2933,15 +2933,15 @@ msgstr ""
 msgid "Choose a template"
 msgstr ""
 
-#: includes/data/admin-settings.php:172
+#: includes/data/admin-settings.php:166
 msgid "Choose the location of the currency sign."
 msgstr ""
 
-#: includes/data/admin-settings.php:246
+#: includes/data/admin-settings.php:240
 msgid "Choose the payment gateways you want to enable."
 msgstr ""
 
-#: includes/data/admin-settings.php:164
+#: includes/data/admin-settings.php:158
 msgid ""
 "Choose your currency. Note that some payment gateways have currency "
 "restrictions."
@@ -3074,7 +3074,7 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: includes/data/admin-settings.php:347
+#: includes/data/admin-settings.php:341
 msgid "Company Name"
 msgstr ""
 
@@ -3126,7 +3126,7 @@ msgstr ""
 msgid "Constan&#539;a"
 msgstr ""
 
-#: includes/class-wpinv.php:362
+#: includes/class-wpinv.php:367
 msgid "Continue"
 msgstr ""
 
@@ -3175,7 +3175,7 @@ msgstr ""
 msgid "Cote d'Ivoire"
 msgstr ""
 
-#: includes/class-wpinv.php:366
+#: includes/class-wpinv.php:371
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -3331,17 +3331,17 @@ msgstr ""
 msgid "Cura&Ccedil;ao"
 msgstr ""
 
-#: includes/data/admin-settings.php:163
+#: includes/data/admin-settings.php:157
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:120
 msgid "Currency"
 msgstr ""
 
-#: includes/data/admin-settings.php:171
+#: includes/data/admin-settings.php:165
 msgid "Currency Position"
 msgstr ""
 
 #: includes/admin/register-settings.php:415
-#: includes/data/admin-settings.php:157
+#: includes/data/admin-settings.php:151
 msgid "Currency Settings"
 msgstr ""
 
@@ -3354,7 +3354,7 @@ msgid "Cusco"
 msgstr ""
 
 #: includes/admin/register-settings.php:437
-#: includes/data/admin-settings.php:615
+#: includes/data/admin-settings.php:600
 msgid "Custom CSS"
 msgstr ""
 
@@ -3394,7 +3394,7 @@ msgstr ""
 msgid "Customer"
 msgstr ""
 
-#: includes/data/admin-settings.php:304
+#: includes/data/admin-settings.php:298
 msgid "Customer billing address"
 msgstr ""
 
@@ -3526,7 +3526,7 @@ msgstr ""
 msgid "December"
 msgstr ""
 
-#: includes/data/admin-settings.php:192
+#: includes/data/admin-settings.php:186
 msgid "Decimal Separator"
 msgstr ""
 
@@ -3534,19 +3534,15 @@ msgstr ""
 msgid "Default Amount"
 msgstr ""
 
-#: includes/data/admin-settings.php:62
+#: includes/data/admin-settings.php:56
 msgid "Default Country"
 msgstr ""
 
-#: includes/data/admin-settings.php:437
-msgid "Default Due Date"
-msgstr ""
-
-#: includes/data/admin-settings.php:253
+#: includes/data/admin-settings.php:247
 msgid "Default Gateway"
 msgstr ""
 
-#: includes/data/admin-settings.php:56
+#: includes/data/admin-settings.php:50
 msgid "Default Location"
 msgstr ""
 
@@ -3554,7 +3550,7 @@ msgstr ""
 msgid "Default Payment Form"
 msgstr ""
 
-#: includes/data/admin-settings.php:72
+#: includes/data/admin-settings.php:66
 msgid "Default State / Province"
 msgstr ""
 
@@ -3622,7 +3618,7 @@ msgid "Dhaulagiri"
 msgstr ""
 
 #: includes/admin/register-settings.php:440
-#: includes/data/admin-settings.php:635
+#: includes/data/admin-settings.php:620
 msgid "Diagnostic Tools"
 msgstr ""
 
@@ -3646,7 +3642,7 @@ msgstr ""
 msgid "Direct bank transfer"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:237
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:243
 msgid "Disable taxes"
 msgstr ""
 
@@ -3664,8 +3660,8 @@ msgstr ""
 msgid "Discount Code"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:199
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:214
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:205
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:220
 msgid "Discount Code:"
 msgstr ""
 
@@ -3760,7 +3756,7 @@ msgstr ""
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
-#: includes/data/admin-settings.php:313
+#: includes/data/admin-settings.php:307
 msgid "Display tax totals"
 msgstr ""
 
@@ -3818,7 +3814,7 @@ msgstr ""
 msgid "DKI Jakarta"
 msgstr ""
 
-#: includes/data/admin-settings.php:381
+#: includes/data/admin-settings.php:375
 msgid "Do not charge tax"
 msgstr ""
 
@@ -3912,7 +3908,7 @@ msgstr ""
 msgid "Due Date"
 msgstr ""
 
-#: includes/data/admin-settings.php:425
+#: includes/data/admin-settings.php:419
 msgid "Due Date Settings"
 msgstr ""
 
@@ -3924,7 +3920,7 @@ msgstr ""
 msgid "Durango"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:160
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:166
 #, php-format
 msgid "Each %s number must be unique."
 msgstr ""
@@ -4066,7 +4062,7 @@ msgstr ""
 msgid "Email Address"
 msgstr ""
 
-#: includes/data/admin-settings.php:412
+#: includes/data/admin-settings.php:406
 #, php-format
 msgid ""
 "Email address to send invoice emails from. This will act as the \"from\" and "
@@ -4074,7 +4070,7 @@ msgid ""
 "hosting prevents emails being sent if the email domains do not match.%s"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:183
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:189
 msgid "Email CC:"
 msgstr ""
 
@@ -4104,7 +4100,7 @@ msgstr ""
 msgid "Email Heading"
 msgstr ""
 
-#: includes/data/admin-settings.php:399
+#: includes/data/admin-settings.php:393
 msgid "Email Sender Options"
 msgstr ""
 
@@ -4112,7 +4108,7 @@ msgstr ""
 msgid "Email Settings"
 msgstr ""
 
-#: includes/data/admin-settings.php:446
+#: includes/data/admin-settings.php:431
 msgid "Email Template"
 msgstr ""
 
@@ -4148,7 +4144,7 @@ msgstr ""
 msgid "Enable bank transfer"
 msgstr ""
 
-#: includes/data/admin-settings.php:430
+#: includes/data/admin-settings.php:424
 msgid "Enable Due Date"
 msgstr ""
 
@@ -4164,11 +4160,11 @@ msgstr ""
 msgid "Enable sandbox to test payments"
 msgstr ""
 
-#: includes/data/admin-settings.php:276
+#: includes/data/admin-settings.php:270
 msgid "Enable tax rates and calculations."
 msgstr ""
 
-#: includes/data/admin-settings.php:275
+#: includes/data/admin-settings.php:269
 msgid "Enable Taxes"
 msgstr ""
 
@@ -4210,7 +4206,7 @@ msgstr ""
 msgid "Ensure result set excludes specific IDs."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:183
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:189
 msgid ""
 "Enter a comma separated list of other emails that should be notified about "
 "the invoice."
@@ -4228,7 +4224,7 @@ msgstr ""
 msgid "Enter a form id in case you want to display a specific payment form"
 msgstr ""
 
-#: includes/data/admin-settings.php:325
+#: includes/data/admin-settings.php:319
 msgid ""
 "Enter a percentage, such as 6.5. Customers not in a specific rate will be "
 "charged this rate."
@@ -4277,7 +4273,7 @@ msgstr ""
 msgid "Enter some text"
 msgstr ""
 
-#: includes/data/admin-settings.php:338
+#: includes/data/admin-settings.php:332
 #: includes/admin/views/html-tax-rates-edit.php:30
 msgid "Enter tax rates for specific regions."
 msgstr ""
@@ -4309,13 +4305,13 @@ msgstr ""
 msgid "Enter the minimum amount that users are allowed to set"
 msgstr ""
 
-#: includes/data/admin-settings.php:405
+#: includes/data/admin-settings.php:399
 msgid ""
 "Enter the sender's name appears in outgoing invoice emails. This should be "
 "your site name."
 msgstr ""
 
-#: includes/data/admin-settings.php:94
+#: includes/data/admin-settings.php:88
 msgid "Enter the store address to display on invoice"
 msgstr ""
 
@@ -4357,7 +4353,7 @@ msgstr ""
 msgid "Enter widget title."
 msgstr ""
 
-#: includes/data/admin-settings.php:595
+#: includes/data/admin-settings.php:580
 msgid ""
 "Enter you license key if you would like to use MaxMind to automatically "
 "detect a customer's country."
@@ -4375,7 +4371,7 @@ msgstr ""
 msgid "Enter your text hear"
 msgstr ""
 
-#: includes/data/admin-settings.php:356
+#: includes/data/admin-settings.php:350
 msgid "Enter your VAT number including the country identifier, eg: GB123456789"
 msgstr ""
 
@@ -4529,7 +4525,7 @@ msgstr ""
 msgid "Example privacy texts."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:185
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:191
 msgid "example@gmail.com, example@yahoo.com"
 msgstr ""
 
@@ -4616,7 +4612,7 @@ msgstr ""
 msgid "Failed to download the MaxMind database."
 msgstr ""
 
-#: includes/data/admin-settings.php:125
+#: includes/data/admin-settings.php:119
 msgid "Failed Transaction Page"
 msgstr ""
 
@@ -4632,7 +4628,7 @@ msgstr ""
 msgid "Falkland Islands Pound"
 msgstr ""
 
-#: includes/data/admin-settings.php:324
+#: includes/data/admin-settings.php:318
 msgid "Fallback Tax Rate"
 msgstr ""
 
@@ -4774,7 +4770,7 @@ msgstr ""
 msgid "Foggia"
 msgstr ""
 
-#: includes/data/admin-settings.php:458
+#: includes/data/admin-settings.php:443
 msgid "Footer Text"
 msgstr ""
 
@@ -4788,7 +4784,7 @@ msgid ""
 "after or on this date."
 msgstr ""
 
-#: includes/data/admin-settings.php:44
+#: includes/data/admin-settings.php:38
 msgid "Force Reset Sequence"
 msgstr ""
 
@@ -4853,11 +4849,11 @@ msgstr ""
 msgid "From Date"
 msgstr ""
 
-#: includes/data/admin-settings.php:411
+#: includes/data/admin-settings.php:405
 msgid "From Email"
 msgstr ""
 
-#: includes/data/admin-settings.php:404
+#: includes/data/admin-settings.php:398
 msgid "From Name"
 msgstr ""
 
@@ -4944,7 +4940,7 @@ msgid "Gateway Select"
 msgstr ""
 
 #: includes/admin/register-settings.php:419
-#: includes/data/admin-settings.php:239
+#: includes/data/admin-settings.php:233
 msgid "Gateway Settings"
 msgstr ""
 
@@ -5410,7 +5406,7 @@ msgstr ""
 msgid "Hawke&rsquo;s Bay"
 msgstr ""
 
-#: includes/data/admin-settings.php:451
+#: includes/data/admin-settings.php:436
 msgid "Header Image"
 msgstr ""
 
@@ -5536,7 +5532,7 @@ msgstr ""
 msgid "How do I obtain my API Login ID and Transaction Key?"
 msgstr ""
 
-#: includes/data/admin-settings.php:595
+#: includes/data/admin-settings.php:580
 msgid "How to generate a free license key."
 msgstr ""
 
@@ -5649,20 +5645,20 @@ msgstr ""
 msgid "Idaho"
 msgstr ""
 
-#: includes/data/admin-settings.php:519
+#: includes/data/admin-settings.php:504
 msgid ""
 "If no privacy policy page set in Settings->Privacy default settings, this "
 "page will be used on checkout page."
 msgstr ""
 
-#: includes/data/admin-settings.php:555
+#: includes/data/admin-settings.php:540
 msgid ""
 "If the invoice number has less digits than this number, it is left padded "
 "with 0s. Ex: invoice number 108 will padded to 00108 if digits set to 5. The "
 "default 0 means no padding."
 msgstr ""
 
-#: includes/data/admin-settings.php:586
+#: includes/data/admin-settings.php:571
 msgid ""
 "If ticked then user needs to be logged in to view or pay invoice, can only "
 "view or pay their own invoice. If unticked then anyone can view or pay the "
@@ -5994,7 +5990,7 @@ msgstr ""
 msgid "Invoice History"
 msgstr ""
 
-#: includes/data/admin-settings.php:135
+#: includes/data/admin-settings.php:129
 msgid "Invoice History Page"
 msgstr ""
 
@@ -6010,7 +6006,7 @@ msgstr ""
 msgid "Invoice items."
 msgstr ""
 
-#: includes/data/admin-settings.php:213
+#: includes/data/admin-settings.php:207
 msgid "Invoice Labels"
 msgstr ""
 
@@ -6030,24 +6026,24 @@ msgstr ""
 msgid "Invoice Notes"
 msgstr ""
 
-#: includes/data/admin-settings.php:226
+#: includes/data/admin-settings.php:220
 msgid "Invoice notice"
 msgstr ""
 
-#: includes/data/admin-settings.php:219
+#: includes/data/admin-settings.php:213
 msgid "Invoice Notice Label"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:75
-#: includes/data/admin-settings.php:534
+#: includes/data/admin-settings.php:519
 msgid "Invoice Number"
 msgstr ""
 
-#: includes/data/admin-settings.php:572
+#: includes/data/admin-settings.php:557
 msgid "Invoice Number Postfix"
 msgstr ""
 
-#: includes/data/admin-settings.php:563
+#: includes/data/admin-settings.php:548
 msgid "Invoice Number Prefix"
 msgstr ""
 
@@ -6130,7 +6126,7 @@ msgstr ""
 msgid "Invoice status."
 msgstr ""
 
-#: includes/data/admin-settings.php:145
+#: includes/data/admin-settings.php:139
 msgid "Invoice Subscriptions Page"
 msgstr ""
 
@@ -6142,7 +6138,7 @@ msgstr ""
 msgid "Invoice taxes (Name => properties)."
 msgstr ""
 
-#: includes/data/admin-settings.php:620
+#: includes/data/admin-settings.php:605
 msgid "Invoice Template CSS"
 msgstr ""
 
@@ -6196,7 +6192,7 @@ msgstr ""
 msgid "Invoicing"
 msgstr ""
 
-#: includes/data/admin-settings.php:636
+#: includes/data/admin-settings.php:621
 msgid "Invoicing diagnostic tools"
 msgstr ""
 
@@ -7363,11 +7359,11 @@ msgstr ""
 msgid "Lecco"
 msgstr ""
 
-#: includes/data/admin-settings.php:176
+#: includes/data/admin-settings.php:170
 msgid "Left"
 msgstr ""
 
-#: includes/data/admin-settings.php:178
+#: includes/data/admin-settings.php:172
 msgid "Left with space"
 msgstr ""
 
@@ -7543,7 +7539,7 @@ msgstr ""
 msgid "Lleida"
 msgstr ""
 
-#: includes/class-wpinv.php:365 includes/admin/class-getpaid-admin.php:176
+#: includes/class-wpinv.php:370 includes/admin/class-getpaid-admin.php:176
 #: templates/payment-forms/form.php:94
 msgid "Loading..."
 msgstr ""
@@ -7571,7 +7567,7 @@ msgstr ""
 msgid "Login."
 msgstr ""
 
-#: includes/data/admin-settings.php:87
+#: includes/data/admin-settings.php:81
 msgid "Logo URL"
 msgstr ""
 
@@ -7981,7 +7977,7 @@ msgstr ""
 msgid "Maximum Uses"
 msgstr ""
 
-#: includes/data/admin-settings.php:592
+#: includes/data/admin-settings.php:577
 msgid "MaxMind License Key"
 msgstr ""
 
@@ -8135,7 +8131,7 @@ msgstr ""
 msgid "Minimum Amount"
 msgstr ""
 
-#: includes/data/admin-settings.php:554
+#: includes/data/admin-settings.php:539
 msgid "Minimum Digits"
 msgstr ""
 
@@ -8883,7 +8879,7 @@ msgstr ""
 msgid "No subscriptions found."
 msgstr ""
 
-#: includes/data/admin-settings.php:294
+#: includes/data/admin-settings.php:288
 msgid "No, I will enter prices exclusive of tax"
 msgstr ""
 
@@ -9008,10 +9004,6 @@ msgstr ""
 msgid "November"
 msgstr ""
 
-#: includes/data/admin-settings.php:23
-msgid "Now"
-msgstr ""
-
 #: includes/data/states.php:1434
 msgid "Ntoroko"
 msgstr ""
@@ -9037,14 +9029,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: includes/data/admin-settings.php:438
-msgid ""
-"Number of days each Invoice is due after the created date. This will "
-"automatically set the date in the \"Due Date\" field. Can be overridden on "
-"individual Invoices."
-msgstr ""
-
-#: includes/data/admin-settings.php:200
+#: includes/data/admin-settings.php:194
 msgid "Number of Decimals"
 msgstr ""
 
@@ -9356,7 +9341,7 @@ msgstr ""
 msgid "Padova"
 msgstr ""
 
-#: includes/data/admin-settings.php:99
+#: includes/data/admin-settings.php:93
 msgid "Page Settings"
 msgstr ""
 
@@ -9659,7 +9644,7 @@ msgid "Payment Date:"
 msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:161
-msgid "Payment desclined"
+msgid "Payment declined"
 msgstr ""
 
 #: includes/gateways/class-getpaid-worldpay-gateway.php:167
@@ -9723,7 +9708,7 @@ msgid "Payment Forms"
 msgstr ""
 
 #: includes/class-wpinv-addons.php:26 includes/admin/register-settings.php:379
-#: includes/data/admin-settings.php:245
+#: includes/data/admin-settings.php:239
 msgid "Payment Gateways"
 msgstr ""
 
@@ -10043,7 +10028,7 @@ msgid ""
 "Please enter your PayPal account's email address. Ex: myaccount@paypal.com"
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-taxes.php:220
+#: includes/payments/class-getpaid-payment-form-submission-taxes.php:219
 msgid ""
 "Please enter your VAT number to verify your purchase is by an EU business."
 msgstr ""
@@ -10143,7 +10128,7 @@ msgstr ""
 msgid "Postcode / ZIP"
 msgstr ""
 
-#: includes/data/admin-settings.php:573
+#: includes/data/admin-settings.php:558
 msgid "Postfix for all invoice numbers."
 msgstr ""
 
@@ -10159,7 +10144,7 @@ msgstr ""
 msgid "Pound Sterling"
 msgstr ""
 
-#: includes/data/admin-settings.php:460
+#: includes/data/admin-settings.php:445
 #: templates/emails/wpinv-email-footer.php:6
 msgid "Powered by GetPaid"
 msgstr ""
@@ -10180,7 +10165,7 @@ msgstr ""
 msgid "Prato"
 msgstr ""
 
-#: includes/data/admin-settings.php:564
+#: includes/data/admin-settings.php:549
 msgid "Prefix for all invoice numbers. Ex: INV-"
 msgstr ""
 
@@ -10188,7 +10173,7 @@ msgstr ""
 msgid "Presidente Hayes"
 msgstr ""
 
-#: includes/data/admin-settings.php:363
+#: includes/data/admin-settings.php:357
 msgid "Prevent B2C Sales"
 msgstr ""
 
@@ -10212,7 +10197,7 @@ msgstr ""
 msgid "Price Select"
 msgstr ""
 
-#: includes/data/admin-settings.php:291
+#: includes/data/admin-settings.php:285
 msgid "Prices entered with tax"
 msgstr ""
 
@@ -10238,11 +10223,11 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
-#: includes/data/admin-settings.php:518
+#: includes/data/admin-settings.php:503
 msgid "Privacy Page"
 msgstr ""
 
-#: includes/data/admin-settings.php:513
+#: includes/data/admin-settings.php:498
 msgid "Privacy Policy"
 msgstr ""
 
@@ -10562,7 +10547,7 @@ msgstr ""
 msgid "Relationship"
 msgstr ""
 
-#: includes/data/admin-settings.php:605
+#: includes/data/admin-settings.php:590
 msgid "Remove Data on Uninstall?"
 msgstr ""
 
@@ -10613,11 +10598,11 @@ msgstr ""
 msgid "Republic of Kosovo"
 msgstr ""
 
-#: includes/data/admin-settings.php:364
+#: includes/data/admin-settings.php:358
 msgid "Require everyone in the EU to provide a VAT number."
 msgstr ""
 
-#: includes/data/admin-settings.php:585
+#: includes/data/admin-settings.php:570
 msgid "Require Login To Checkout"
 msgstr ""
 
@@ -10659,11 +10644,11 @@ msgstr ""
 msgid "Rieti"
 msgstr ""
 
-#: includes/data/admin-settings.php:177
+#: includes/data/admin-settings.php:171
 msgid "Right"
 msgstr ""
 
-#: includes/data/admin-settings.php:179
+#: includes/data/admin-settings.php:173
 msgid "Right with space"
 msgstr ""
 
@@ -10735,11 +10720,11 @@ msgstr ""
 msgid "Roscommon"
 msgstr ""
 
-#: includes/data/admin-settings.php:284
+#: includes/data/admin-settings.php:278
 msgid "Round tax at subtotal level, instead of rounding per tax rate"
 msgstr ""
 
-#: includes/data/admin-settings.php:283
+#: includes/data/admin-settings.php:277
 msgid "Rounding"
 msgstr ""
 
@@ -10910,7 +10895,7 @@ msgstr ""
 msgid "Same billing & shipping address."
 msgstr ""
 
-#: includes/data/admin-settings.php:377
+#: includes/data/admin-settings.php:371
 msgid "Same Country Rule"
 msgstr ""
 
@@ -11133,7 +11118,7 @@ msgstr ""
 msgid "Selangor"
 msgstr ""
 
-#: includes/data/admin-settings.php:68
+#: includes/data/admin-settings.php:62
 msgid "Select a country"
 msgstr ""
 
@@ -11141,10 +11126,10 @@ msgstr ""
 msgid "Select a country / region&hellip;"
 msgstr ""
 
-#: includes/data/admin-settings.php:110 includes/data/admin-settings.php:120
-#: includes/data/admin-settings.php:130 includes/data/admin-settings.php:140
-#: includes/data/admin-settings.php:150 includes/data/admin-settings.php:442
-#: includes/data/admin-settings.php:521 includes/data/admin-settings.php:523
+#: includes/data/admin-settings.php:104 includes/data/admin-settings.php:114
+#: includes/data/admin-settings.php:124 includes/data/admin-settings.php:134
+#: includes/data/admin-settings.php:144 includes/data/admin-settings.php:506
+#: includes/data/admin-settings.php:508
 msgid "Select a page"
 msgstr ""
 
@@ -11156,7 +11141,7 @@ msgstr ""
 msgid "Select a single item from the list"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:788 includes/data/admin-settings.php:76
+#: includes/class-wpinv-ajax.php:788 includes/data/admin-settings.php:70
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:241
 msgid "Select a state"
 msgstr ""
@@ -11181,7 +11166,7 @@ msgstr ""
 msgid "Select an item to add..."
 msgstr ""
 
-#: includes/data/admin-settings.php:385
+#: includes/data/admin-settings.php:379
 msgid "Select an option"
 msgstr ""
 
@@ -11243,7 +11228,7 @@ msgstr ""
 msgid "Select Period"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:145
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:151
 msgid "Select Status"
 msgstr ""
 
@@ -11273,7 +11258,7 @@ msgstr ""
 msgid "Semnan (سمنان)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:253
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:259
 msgid "Send invoice to customer after saving"
 msgstr ""
 
@@ -11303,11 +11288,11 @@ msgstr ""
 msgid "September"
 msgstr ""
 
-#: includes/data/admin-settings.php:539
+#: includes/data/admin-settings.php:524
 msgid "Sequential Invoice Numbers"
 msgstr ""
 
-#: includes/data/admin-settings.php:545
+#: includes/data/admin-settings.php:530
 msgid "Sequential Starting Number"
 msgstr ""
 
@@ -11425,7 +11410,7 @@ msgstr ""
 msgid "Shizuoka"
 msgstr ""
 
-#: includes/data/admin-settings.php:305
+#: includes/data/admin-settings.php:299
 msgid "Shop base address"
 msgstr ""
 
@@ -11865,19 +11850,19 @@ msgstr ""
 msgid "Status set to %s."
 msgstr ""
 
-#: includes/data/admin-settings.php:93
+#: includes/data/admin-settings.php:87
 msgid "Store Address"
 msgstr ""
 
-#: includes/data/admin-settings.php:88
+#: includes/data/admin-settings.php:82
 msgid "Store logo to print on invoices."
 msgstr ""
 
-#: includes/data/admin-settings.php:80
+#: includes/data/admin-settings.php:74
 msgid "Store Name"
 msgstr ""
 
-#: includes/data/admin-settings.php:81
+#: includes/data/admin-settings.php:75
 msgid "Store name to print on invoices."
 msgstr ""
 
@@ -12008,7 +11993,7 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
-#: includes/data/admin-settings.php:115
+#: includes/data/admin-settings.php:109
 msgid "Success Page"
 msgstr ""
 
@@ -12288,7 +12273,7 @@ msgid "Tax Name"
 msgstr ""
 
 #: includes/admin/register-settings.php:423
-#: includes/data/admin-settings.php:337
+#: includes/data/admin-settings.php:331
 msgid "Tax Rates"
 msgstr ""
 
@@ -12297,7 +12282,7 @@ msgid "Tax Rule"
 msgstr ""
 
 #: includes/admin/register-settings.php:422
-#: includes/data/admin-settings.php:269
+#: includes/data/admin-settings.php:263
 msgid "Tax Settings"
 msgstr ""
 
@@ -12412,11 +12397,11 @@ msgid ""
 "for this form"
 msgstr ""
 
-#: includes/data/admin-settings.php:476
+#: includes/data/admin-settings.php:461
 msgid "The background color of email template. Default <code>#f5f5f5</code>."
 msgstr ""
 
-#: includes/data/admin-settings.php:469
+#: includes/data/admin-settings.php:454
 msgid ""
 "The base color for invoice email template. Default <code>#557da2</code>."
 msgstr ""
@@ -12702,13 +12687,13 @@ msgstr ""
 msgid "The item's name."
 msgstr ""
 
-#: includes/data/admin-settings.php:483
+#: includes/data/admin-settings.php:468
 msgid ""
 "The main body background color of email template. Default <code>"
 "#fdfdfd</code>."
 msgstr ""
 
-#: includes/data/admin-settings.php:490
+#: includes/data/admin-settings.php:475
 msgid "The main body text color. Default <code>#505050</code>."
 msgstr ""
 
@@ -12759,7 +12744,7 @@ msgstr ""
 msgid "The name of this tax, e.g VAT."
 msgstr ""
 
-#: includes/data/admin-settings.php:546
+#: includes/data/admin-settings.php:531
 msgid "The number at which the invoice number sequence should begin."
 msgstr ""
 
@@ -12835,11 +12820,11 @@ msgid ""
 "provided, the discount can only be used after or on this date."
 msgstr ""
 
-#: includes/data/admin-settings.php:193
+#: includes/data/admin-settings.php:187
 msgid "The symbol (usually , or .) to separate decimal points"
 msgstr ""
 
-#: includes/data/admin-settings.php:185
+#: includes/data/admin-settings.php:179
 msgid "The symbol (usually , or .) to separate thousands"
 msgstr ""
 
@@ -12855,7 +12840,7 @@ msgid ""
 "tax class."
 msgstr ""
 
-#: includes/data/admin-settings.php:459
+#: includes/data/admin-settings.php:444
 msgid "The text to appear in the footer of all invoice emails."
 msgstr ""
 
@@ -12988,7 +12973,7 @@ msgstr ""
 msgid "This form is empty. Add new elements by dragging them from the right."
 msgstr ""
 
-#: includes/data/admin-settings.php:254
+#: includes/data/admin-settings.php:248
 msgid "This gateway will be loaded automatically with the checkout page."
 msgstr ""
 
@@ -13047,19 +13032,19 @@ msgstr ""
 msgid "This is only visible to website administators."
 msgstr ""
 
-#: includes/data/admin-settings.php:106
+#: includes/data/admin-settings.php:100
 msgid ""
 "This is the checkout page where buyers will complete their payments. The <b>"
 "[wpinv_checkout]</b> short code must be on this page."
 msgstr ""
 
-#: includes/data/admin-settings.php:116
+#: includes/data/admin-settings.php:110
 msgid ""
 "This is the page buyers are sent to after completing their payments. The <b>"
 "[wpinv_receipt]</b> short code should be on this page."
 msgstr ""
 
-#: includes/data/admin-settings.php:126
+#: includes/data/admin-settings.php:120
 msgid ""
 "This is the page buyers are sent to if their transaction is cancelled or "
 "fails."
@@ -13095,13 +13080,13 @@ msgstr ""
 msgid "This month"
 msgstr ""
 
-#: includes/data/admin-settings.php:136
+#: includes/data/admin-settings.php:130
 msgid ""
 "This page shows an invoice history for the current user. The <b>"
 "[wpinv_history]</b> short code should be on this page."
 msgstr ""
 
-#: includes/data/admin-settings.php:146
+#: includes/data/admin-settings.php:140
 msgid ""
 "This page shows subscriptions history for the current user. The <b>"
 "[wpinv_subscriptions]</b> short code should be on this page."
@@ -13126,7 +13111,7 @@ msgstr ""
 msgid "This service will only work with a live domain, not a localhost."
 msgstr ""
 
-#: includes/data/admin-settings.php:201
+#: includes/data/admin-settings.php:195
 msgid "This sets the number of decimal points shown in displayed prices."
 msgstr ""
 
@@ -13174,7 +13159,7 @@ msgstr ""
 msgid "This year"
 msgstr ""
 
-#: includes/data/admin-settings.php:184
+#: includes/data/admin-settings.php:178
 msgid "Thousands Separator"
 msgstr ""
 
@@ -13592,7 +13577,7 @@ msgstr ""
 msgid "Ungheni"
 msgstr ""
 
-#: includes/data/admin-settings.php:600
+#: includes/data/admin-settings.php:585
 msgid "Uninstall Settings"
 msgstr ""
 
@@ -13676,7 +13661,7 @@ msgstr ""
 msgid "Uri"
 msgstr ""
 
-#: includes/data/admin-settings.php:452
+#: includes/data/admin-settings.php:437
 msgid ""
 "URL to an image you want to show in the email header. Upload images using "
 "the media uploader (Admin > Media)."
@@ -13737,12 +13722,12 @@ msgid ""
 "Do not include a currency symbol in the price."
 msgstr ""
 
-#: includes/data/admin-settings.php:227
+#: includes/data/admin-settings.php:221
 msgid ""
 "Use this to add an invoice notice section (description) to your invoices"
 msgstr ""
 
-#: includes/data/admin-settings.php:220
+#: includes/data/admin-settings.php:214
 msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
@@ -13813,11 +13798,11 @@ msgstr ""
 msgid "Validate"
 msgstr ""
 
-#: includes/data/admin-settings.php:370
+#: includes/data/admin-settings.php:364
 msgid "Validate VAT Number"
 msgstr ""
 
-#: includes/data/admin-settings.php:371
+#: includes/data/admin-settings.php:365
 msgid "Validate VAT numbers with VIES."
 msgstr ""
 
@@ -13901,7 +13886,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:139
 #: includes/invoice-functions.php:1176 includes/wpinv-address-functions.php:142
 #: includes/admin/class-getpaid-admin-profile.php:83
-#: includes/data/admin-settings.php:355
+#: includes/data/admin-settings.php:349
 #: includes/data/default-payment-form.php:127
 #: includes/data/payment-form-elements.php:287
 msgid "VAT Number"
@@ -13965,7 +13950,7 @@ msgstr ""
 msgid "Vercelli"
 msgstr ""
 
-#: includes/data/admin-settings.php:348
+#: includes/data/admin-settings.php:342
 #, php-format
 msgid "Verify your company name and  VAT number on the %sEU VIES System.%s"
 msgstr ""
@@ -14259,12 +14244,12 @@ msgstr ""
 msgid "Wexford"
 msgstr ""
 
-#: includes/data/admin-settings.php:378
+#: includes/data/admin-settings.php:372
 msgid ""
 "What should happen if a customer is from the same country as your business?"
 msgstr ""
 
-#: includes/data/admin-settings.php:73
+#: includes/data/admin-settings.php:67
 msgid "What state / province does your store operate from?"
 msgstr ""
 
@@ -14276,11 +14261,11 @@ msgstr ""
 msgid "When to Send"
 msgstr ""
 
-#: includes/data/admin-settings.php:63
+#: includes/data/admin-settings.php:57
 msgid "Where does your store operate from?"
 msgstr ""
 
-#: includes/data/admin-settings.php:419
+#: includes/data/admin-settings.php:413
 msgid "Where should we send admin notifications?"
 msgstr ""
 
@@ -14480,7 +14465,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: includes/data/admin-settings.php:293
+#: includes/data/admin-settings.php:287
 msgid "Yes, I will enter prices inclusive of tax"
 msgstr ""
 
@@ -14627,7 +14612,7 @@ msgstr ""
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-taxes.php:230
+#: includes/payments/class-getpaid-payment-form-submission-taxes.php:229
 msgid "Your VAT number is invalid"
 msgstr ""
 
