@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.1.10 =
+* Non-overidden GetPaid templates not working on Oxygen pagebuilder - FIXED
+
 = 2.1.9 =
 * Rename improperly named gateways in invoices table - FIXED
 * Oxygen pagebuilder custom templates not working - FIXED

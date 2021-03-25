@@ -190,7 +190,7 @@ class GetPaid_Template {
 
         // Abort if the file does not exist.
         if ( ! file_exists( $located ) ) {
-            getpaid_doing_it_wrong( __CLASS__ . '::' .__METHOD__, sprintf( '<code>%s</code> does not exist.', $located ), '1.0.19' );
+            getpaid_doing_it_wrong( __METHOD__, sprintf( '<code>%s</code> does not exist.', $located ), '2.0.0' );
             return;
         }
 
@@ -249,7 +249,7 @@ class GetPaid_Template {
 
 		$template = self::get_theme_template_path() . '/' . $template;
 
-		if ( file_exists( $template ) ) {
+		if ( ! file_exists( $template ) ) {
 			$template = '';
 		}
 
