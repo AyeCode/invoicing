@@ -793,7 +793,7 @@ function wpinv_select_callback( $args ) {
 		<label style="width: 100%;">
 			<select <?php echo $attr; ?>>
 				<?php foreach ( $args['options'] as $option => $name ) : ?>
-					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( is_array( $value ) ? in_array( "$option", $value, true ) : "$option" === $value ); ?>><?php echo wpinv_clean( $name ); ?></option>
+					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( $option, $value ); ?>><?php echo wpinv_clean( $name ); ?></option>
 				<?php endforeach;?>
 			</select>
 			<?php echo $desc; ?>
