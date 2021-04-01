@@ -1012,10 +1012,11 @@ function wpinv_checkout_form() {
     // Set the global invoice id.
     $wpi_checkout_id = $invoice_id;
 
-    // We'll display this invoice via the default form.
-    $form = new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+    // Retrieve appropriate payment form.
+    $payment_form = new GetPaid_Payment_Form( $invoice->get_meta( 'force_payment_form' ) );
+    $payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
 
-    if ( 0 == $form->get_id() ) {
+    if ( ! $payment_form->exists() ) {
 
         return aui()->alert(
             array(
@@ -1027,11 +1028,35 @@ function wpinv_checkout_form() {
     }
 
     // Set the invoice.
-    $form->invoice = $invoice;
-    $form->set_items( $invoice->get_items() );
+    $payment_form->invoice = $invoice;
+
+    if ( ! $payment_form->is_default() ) {
+
+        $items    = array();
+        $item_ids = array();
+
+        foreach ( $invoice->get_items() as $item ) {
+            if ( ! in_array( $item->get_id(), $item_ids ) ) {
+                $item_ids[] = $item->get_id();
+                $items[]    = $item;
+            }
+        }
+
+        foreach ( $payment_form->get_items() as $item ) {
+            if ( ! in_array( $item->get_id(), $item_ids ) ) {
+                $item_ids[] = $item->get_id();
+                $items[]    = $item;
+            }
+        }
+
+        $payment_form->set_items( $items );
+
+    } else {
+        $payment_form->set_items( $invoice->get_items() );
+    }
 
     // Generate the html.
-    return $form->get_html();
+    return $payment_form->get_html();
 
 }
 

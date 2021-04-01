@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.1.10
+Stable tag: 2.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -133,9 +133,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.1.11 =
+= 2.2.0 =
 * Ability to set logo width and height - ADDED
 * Flat amount discount code applies to each item instead of the total - FIXED
+* Ability to programmatically link a payment form and an invoice - ADDED
 
 = 2.1.10 =
 * Non-overidden GetPaid templates not working on Oxygen pagebuilder - FIXED

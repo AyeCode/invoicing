@@ -409,7 +409,7 @@ abstract class GetPaid_Data {
 		// Check if this is an internal meta key.
 		$_key = str_replace( '_wpinv', '', $key );
 		$_key = str_replace( 'wpinv', '', $_key );
-		if ( $this->is_internal_meta_key( $_key ) ) {
+		if ( $this->is_internal_meta_key( $key ) ) {
 			$function = 'get_' . $_key;
 
 			if ( is_callable( array( $this, $function ) ) ) {
@@ -504,6 +504,8 @@ abstract class GetPaid_Data {
 				'value' => $value,
 			)
 		);
+
+		$this->save();
 	}
 
 	/**

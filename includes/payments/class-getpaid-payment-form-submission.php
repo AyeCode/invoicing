@@ -264,8 +264,31 @@ class GetPaid_Payment_Form_Submission {
 			throw new Exception( __( 'This invoice is already paid for.', 'invoicing' ) );
 		}
 
-		$this->payment_form->set_items( $invoice->get_items() );
 		$this->payment_form->invoice = $invoice;
+		if ( ! $this->payment_form->is_default() ) {
+
+			$items    = array();
+			$item_ids = array();
+	
+			foreach ( $invoice->get_items() as $item ) {
+				if ( ! in_array( $item->get_id(), $item_ids ) ) {
+					$item_ids[] = $item->get_id();
+					$items[]    = $item;
+				}
+			}
+	
+			foreach ( $this->payment_form->get_items() as $item ) {
+				if ( ! in_array( $item->get_id(), $item_ids ) ) {
+					$item_ids[] = $item->get_id();
+					$items[]    = $item;
+				}
+			}
+	
+			$this->payment_form->set_items( $items );
+	
+		} else {
+			$this->payment_form->set_items( $invoice->get_items() );
+		}
 
 		$this->country = $invoice->get_country();
 		$this->state   = $invoice->get_state();
