@@ -59,6 +59,13 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public $item_discount = 0;
 
 	/**
+	 * Recurring item discount.
+	 *
+	 * @var float
+	 */
+	public $recurring_item_discount = 0;
+
+	/**
 	 * Item tax.
 	 *
 	 * @var float
@@ -304,7 +311,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'quantity'          => (float) $this->get_quantity(),
 			'discount'          => $this->item_discount,
 			'subtotal'          => $this->get_sub_total(),
-			'price'             => $this->get_sub_total() + $this->item_tax + $this->item_discount,
+			'price'             => $this->get_sub_total() + $this->item_tax - $this->item_discount,
 			'meta'              => $this->get_item_meta(),
 		);
 

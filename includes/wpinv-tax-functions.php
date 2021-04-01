@@ -533,27 +533,15 @@ function getpaid_get_tax_rule_label( $tax_rule ) {
 /**
  * Returns the taxable amount
  *
- * @param int $item_id
- * @param float $item_total
- * @param string $discount_code
+ * @param GetPaid_Form_Item $item
  * @param string $recurring
  * @return string
  */
-function getpaid_get_taxable_amount( $item_id, $item_total, $discount_code, $recurring = false ) {
+function getpaid_get_taxable_amount( $item, $recurring = false ) {
 
-    $taxable_amount = $item_total;
+    $taxable_amount  = $recurring ? $item->get_recurring_sub_total() : $item->get_sub_total();
+    $taxable_amount -= $recurring ? $item->recurring_item_discount : $item->item_discount;
+    $taxable_amount  = max( 0, $taxable_amount );
+    return apply_filters( 'getpaid_taxable_amount', $taxable_amount, $item, $recurring );
 
-    // Do we have a $discount_code?
-    if ( ! empty( $discount_code ) ) {
-
-        $discount = new WPInv_Discount( $discount_code );
-
-        if ( $discount->exists() && $discount->is_valid_for_items( $item_id ) && ( ! $recurring || $discount->is_recurring() ) ) {
-            $taxable_amount = $item_total - $discount->get_discounted_amount( $item_total );
-        }
-
-    }
-
-    $taxable_amount = max( 0, $taxable_amount );
-    return apply_filters( 'getpaid_taxable_amount', $taxable_amount, $item_id, $item_total, $discount_code, $recurring );
 }

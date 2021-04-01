@@ -477,7 +477,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return float
 	 */
 	public function get_amount( $context = 'view' ) {
-		return $this->get_prop( 'amount', $context );
+		return $context == 'view' ? floatval( $this->get_prop( 'amount', $context ) ) : $this->get_prop( 'amount', $context );
 	}
 
 	/**

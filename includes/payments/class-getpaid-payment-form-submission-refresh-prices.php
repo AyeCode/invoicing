@@ -197,7 +197,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$markup       .= "<small class='form-text'>$name : $amount</small>";
 		}
 
-		if ( wpinv_display_individual_tax_rates() ) {
+		if ( wpinv_display_individual_tax_rates() && ! empty( $taxes ) ) {
 			$this->response['texts']['.getpaid-form-cart-totals-total-tax'] = $markup;
 		}
 

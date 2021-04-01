@@ -135,7 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.11 =
 * Ability to set logo width and height - ADDED
-* UWP Account page assigned to all GetPaid pages - FIXED
+* Flat amount discount code applies to each item instead of the total - FIXED
 
 = 2.1.10 =
 * Non-overidden GetPaid templates not working on Oxygen pagebuilder - FIXED

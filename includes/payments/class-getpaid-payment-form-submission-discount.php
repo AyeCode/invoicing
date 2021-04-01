@@ -167,34 +167,7 @@ class GetPaid_Payment_Form_Submission_Discount {
 	 * @return array
 	 */
 	public function calculate_discount( $submission, $discount ) {
-
-		$initial_discount   = 0;
-		$recurring_discount = 0;
-
-		foreach ( $submission->get_items() as $item ) {
-
-			// Abort if it is not valid for this item.
-			if ( ! $discount->is_valid_for_items( array( $item->get_id() ) ) ) {
-				continue;
-			}
-
-			// Calculate the initial amount...
-			$initial_discount += $discount->get_discounted_amount( $item->get_sub_total() );
-
-			// ... and maybe the recurring amount.
-			if ( $item->is_recurring() && $discount->is_recurring() ) {
-				$recurring_discount += $discount->get_discounted_amount( $item->get_recurring_sub_total() );
-			}
-
-		}
-
-		return array(
-			'name'               => 'discount_code',
-			'discount_code'      => $discount->get_code(),
-			'initial_discount'   => $initial_discount,
-			'recurring_discount' => $recurring_discount,
-		);
-
+		return getpaid_calculate_invoice_discount( $submission, $discount );
 	}
 
 }

@@ -150,39 +150,60 @@ function wpinv_discount_is_recurring( $discount = 0, $code = 0 ) {
 }
 
 /**
- * Calculates an invoice's discount.
+ * Calculates a discount code's amount.
  *
- * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice Invoice object.
- * @param WPInv_Discount $discount Discount object.
+ * Ensure that the discount exists and has been validated before calling this method.
+ *
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice
+ * @param WPInv_Discount $discount
  * @return array
  */
 function getpaid_calculate_invoice_discount( $invoice, $discount ) {
 
-    $initial_discount   = 0;
+	$initial_discount   = 0;
 	$recurring_discount = 0;
 
-    foreach ( $invoice->get_items() as $item ) {
+	foreach ( $invoice->get_items() as $item ) {
 
-        // Abort if it is not valid for this item.
-        if ( ! $discount->is_valid_for_items( array( $item->get_id() ) ) ) {
-            continue;
-        }
+		// Abort if it is not valid for this item.
+		if ( ! $discount->is_valid_for_items( array( $item->get_id() ) ) ) {
+			continue;
+		}
 
-        // Calculate the initial amount...
-        $initial_discount += $discount->get_discounted_amount( $item->get_sub_total() );
+		// Calculate the initial amount...
+		$item_discount           = $discount->get_discounted_amount( $item->get_sub_total() );
+		$recurring_item_discount = 0;
 
-        // ... and maybe the recurring amount.
-        if ( $item->is_recurring() && $discount->is_recurring() ) {
-            $recurring_discount += $discount->get_discounted_amount( $item->get_recurring_sub_total() );
-        }
+		// ... and maybe the recurring amount.
+		if ( $item->is_recurring() && $discount->is_recurring() ) {
+			$recurring_item_discount = $discount->get_discounted_amount( $item->get_recurring_sub_total() );
+		}
 
-    }
+		// Discount should not exceed discounted amount.
+		if ( ! $discount->is_type( 'percent' ) ) {
 
-    return array(
-        'name'               => 'discount_code',
-        'discount_code'      => $discount->get_code(),
-        'initial_discount'   => $initial_discount,
-        'recurring_discount' => $recurring_discount,
-    );
+			if ( ( $initial_discount + $item_discount ) > $discount->get_amount() ) {
+				$item_discount = $discount->get_amount() - $initial_discount;
+			}
+
+			if ( ( $recurring_discount + $recurring_item_discount ) > $discount->get_amount() ) {
+				$recurring_item_discount = $discount->get_amount() - $recurring_discount;
+			}
+
+		}
+
+		$initial_discount             += $item_discount;
+		$recurring_discount           += $recurring_discount;
+		$item->item_discount           = $item_discount;
+		$item->recurring_item_discount = $recurring_item_discount;
+
+	}
+
+	return array(
+		'name'               => 'discount_code',
+		'discount_code'      => $discount->get_code(),
+		'initial_discount'   => $initial_discount,
+		'recurring_discount' => $recurring_discount,
+	);
 
 }
