@@ -133,7 +133,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.2.0 =
+= 2.1.11 =
+* Ability to set logo width and height - ADDED
 * UWP Account page assigned to all GetPaid pages - FIXED
 
 = 2.1.10 =

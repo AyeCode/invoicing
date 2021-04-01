@@ -82,6 +82,20 @@ return array(
                     'desc' => __( 'Store logo to print on invoices.', 'invoicing' ),
                     'type' => 'text',
                 ),
+                'logo_width'      => array(
+                    'id'          => 'logo_width',
+                    'name'        => __( 'Logo width', 'invoicing' ),
+                    'desc'        => __( 'Logo width to use in invoice image.', 'invoicing' ),
+                    'type'        => 'number',
+                    'placeholder' => __( 'Auto', 'invoicing' ),
+                ),
+                'logo_height'     => array(
+                    'id'          => 'logo_height',
+                    'name'        => __( 'Logo height', 'invoicing' ),
+                    'desc'        => __( 'Logo height to use in invoice image.', 'invoicing' ),
+                    'type'        => 'number',
+                    'placeholder' => __( 'Auto', 'invoicing' ),
+                ),
                 'store_address' => array(
                     'id'   => 'store_address',
                     'name' => __( 'Store Address', 'invoicing' ),
