@@ -279,7 +279,7 @@ class WPInv_Subscriptions {
     public function admin_update_single_subscription( $args ) {
 
         // Ensure the subscription exists and that a status has been given.
-        if ( empty( $args['subscription_id'] ) || empty( $args['subscription_status'] ) ) {
+        if ( empty( $args['subscription_id'] ) ) {
             return;
         }
 
@@ -288,9 +288,15 @@ class WPInv_Subscriptions {
 
         if ( $subscription->get_id() ) {
 
-            $subscription->set_status( $args['subscription_status'] );
+            $subscription->set_props(
+                array(
+                    'status'     => isset( $args['subscription_status'] ) ? $args['subscription_status'] : null,
+                    'profile_id' => isset( $args['wpinv_subscription_profile_id'] ) ? $args['wpinv_subscription_profile_id'] : null,
+                )
+            );
+
             $subscription->save();
-            getpaid_admin()->show_info( __( 'Your changes have been saved', 'invoicing' ) );
+            getpaid_admin()->show_info( __( 'Subscription updated', 'invoicing' ) );
 
         }
 
