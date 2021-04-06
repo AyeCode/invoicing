@@ -334,11 +334,26 @@ function getpaid_admin_subscription_metabox_display_profile_id( $subscription ) 
 
 	$profile_id = $subscription->get_profile_id();
 
-	if ( ! empty( $profile_id ) ) {
-		$profile_id = sanitize_text_field( $profile_id );
-		echo apply_filters( 'getpaid_subscription_profile_id_display', $profile_id, $subscription );
-	} else {
-		echo "&mdash;";
+	$input = aui()->input(
+		array(
+			'type'        => 'text',
+			'id'          => 'wpinv_subscription_profile_id',
+			'name'        => 'wpinv_subscription_profile_id',
+			'label'       => __( 'Profile Id', 'invoicing' ),
+			'label_type'  => 'hidden',
+			'placeholder' => __( 'Profile Id', 'invoicing' ),
+			'value'       => sanitize_text_field( $profile_id ),
+			'input_group_right' => '',
+			'no_wrap'     => true,
+		)
+	);
+
+	echo str_ireplace( 'form-control', 'regular-text', $input );
+
+	$url = apply_filters( 'getpaid_remote_subscription_profile_url', '', $subscription );
+	if ( ! empty( $url ) ) {
+		$url = esc_url_raw( $url );
+		echo '&nbsp;<a href="' . $url . '" title="' . __( 'View in Gateway', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-xs fa-fw align-top"></i></a>';
 	}
 
 }

@@ -57,7 +57,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// Abort if it was not paid by our gateway.
 		if ( $this->id != $invoice->get_gateway() ) {
 			wpinv_error_log( 'Aborting, Invoice was not paid via PayPal', false );
-			wp_die( 'Invoice not paid via PayPal', 500 );
+			wp_die( 'Invoice not paid via PayPal', 200 );
 		}
 
 		$posted['payment_status'] = isset( $posted['payment_status'] ) ? sanitize_key( strtolower( $posted['payment_status'] ) ) : '';

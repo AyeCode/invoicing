@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.2.1 =
 * Add note for successful notification emails - ADDED
+* Link to remote subscription from the subscriptions page - ADDED
 
 = 2.2.0 =
 * Ability to set logo width and height - ADDED

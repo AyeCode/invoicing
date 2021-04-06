@@ -181,7 +181,7 @@ abstract class GetPaid_Payment_Gateway {
 		add_filter( "getpaid_gateway_{$this->id}_transaction_url", array( $this, 'filter_transaction_url' ), 10, 2 );
 
 		// Generate the subscription url.
-		add_filter( "getpaid_gateway_{$this->id}_subscription_url", array( $this, 'filter_subscription_url' ), 10, 2 );
+		add_filter( 'getpaid_remote_subscription_profile_url', array( $this, 'generate_subscription_url' ), 10, 2 );
 
 		// Confirm payments.
 		add_filter( "wpinv_payment_confirm_{$this->id}", array( $this, 'confirm_payment' ), 10, 2 );
@@ -350,17 +350,17 @@ abstract class GetPaid_Payment_Gateway {
 	 * Get a link to the subscription on the 3rd party gateway site (if applicable).
 	 *
 	 * @param string $subscription_url transaction url.
-	 * @param WPInv_Invoice $invoice Invoice object.
+	 * @param WPInv_Subscription $subscription Subscription objectt.
 	 * @return string subscription URL, or empty string.
 	 */
-	public function filter_subscription_url( $subscription_url, $invoice ) {
+	public function generate_subscription_url( $subscription_url, $subscription ) {
 
-		$profile_id      = $invoice->get_subscription_id();
+		$profile_id      = $subscription->get_profile_id();
 
-		if ( ! empty( $this->view_subscription_url ) && ! empty( $profile_id ) ) {
+		if ( $this->id == $subscription->get_gateway() && ! empty( $this->view_subscription_url ) && ! empty( $profile_id ) ) {
 
 			$subscription_url = sprintf( $this->view_subscription_url, $profile_id );
-			$replace          = $this->is_sandbox( $invoice ) ? 'sandbox' : '';
+			$replace          = $this->is_sandbox( $subscription->get_parent_invoice() ) ? 'sandbox' : '';
 			$subscription_url = str_replace( '{sandbox}', $replace, $subscription_url );
 
 		}
