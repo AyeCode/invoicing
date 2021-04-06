@@ -98,7 +98,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		wpinv_error_log( 'Could not retrieve the associated invoice.', false );
-		wp_die( 'Could not retrieve the associated invoice.', 500 );
+		wp_die( 'Could not retrieve the associated invoice.', 200 );
 	}
 
 	/**

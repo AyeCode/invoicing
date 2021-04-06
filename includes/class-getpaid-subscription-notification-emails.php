@@ -158,6 +158,10 @@ class GetPaid_Subscription_Notification_Emails {
 			return;
 		}
 
+		if ( apply_filters( 'getpaid_skip_subscription_email', false, $type, $subscription ) ) {
+			return;
+		}
+
 		do_action( 'getpaid_before_send_subscription_notification', $type, $subscription, $email );
 
 		$recipients  = $this->get_recipients( $invoice );
@@ -184,7 +188,9 @@ class GetPaid_Subscription_Notification_Emails {
 			);
 		}
 
-		if ( ! $result ) {
+		if ( $result ) {
+			$subscription->get_parent_invoice()->add_note( sprintf( __( 'Successfully sent %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
+		} else {
 			$subscription->get_parent_invoice()->add_note( sprintf( __( 'Failed sending %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
 		}
 

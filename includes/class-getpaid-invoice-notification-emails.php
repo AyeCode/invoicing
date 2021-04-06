@@ -163,6 +163,10 @@ class GetPaid_Invoice_Notification_Emails {
 
 		do_action( 'getpaid_before_send_invoice_notification', $type, $invoice, $email );
 
+		if ( apply_filters( 'getpaid_skip_invoice_email', false, $type, $invoice ) ) {
+			return;
+		}
+
 		$mailer     = new GetPaid_Notification_Email_Sender();
 		$merge_tags = $email->get_merge_tags();
 
@@ -183,8 +187,10 @@ class GetPaid_Invoice_Notification_Emails {
 			);
 		}
 
-		if ( ! $result ) {
-			$invoice->add_note( sprintf( __( 'Failed sending %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
+		if ( $result ) {
+			$invoice->add_note( sprintf( __( 'Successfully sent %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
+		} else {
+			$invoice->add_note( sprintf( __( 'Failed sending %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );	
 		}
 
 		do_action( 'getpaid_after_send_invoice_notification', $type, $invoice, $email );
