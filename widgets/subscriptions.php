@@ -400,7 +400,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		}
 
 		// Ensure that the user owns this subscription key.
-		if ( get_current_user_id() != $subscription->get_customer_id() ) {
+		if ( get_current_user_id() != $subscription->get_customer_id() && current_user_can( 'edit_options' ) ) {
 
 			return aui()->alert(
 				array(

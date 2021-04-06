@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add note for successful notification emails - ADDED
 * Link to remote subscription from the subscriptions page - ADDED
 * Ability to manually update a subscription's profile id - ADDED
+* Site admins can now view other user's suscriptions on the frontend - ADDED
 
 = 2.2.0 =
 * Ability to set logo width and height - ADDED
