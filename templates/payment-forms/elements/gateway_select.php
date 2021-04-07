@@ -44,7 +44,7 @@ if ( ! empty( $form->invoice ) ) {
                 <div class="pt-1 pb-1 getpaid-gateway getpaid-gateway-<?php echo sanitize_html_class( $gateway ) ;?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_{$gateway}_checkout_button_label", '' ) ); ?>'>
 
                     <label class="d-block w-100 getpaid-gateway-radio">
-                        <input type="radio" class="w-auto" value="<?php echo esc_attr( $gateway ) ;?>" <?php checked( $gateway, $chosen_gateway ) ;?> name="wpi-gateway">
+                        <input type="radio" value="<?php echo esc_attr( $gateway ) ;?>" <?php checked( $gateway, $chosen_gateway ) ;?> name="wpi-gateway">
                         <span><?php echo sanitize_text_field( wpinv_get_gateway_checkout_label( $gateway ) ); ?></span>
                     </label>
 

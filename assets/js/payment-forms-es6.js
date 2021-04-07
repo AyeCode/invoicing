@@ -173,6 +173,13 @@ jQuery(function($) {
                     this.process_gateways( state.gateways, state )
                 }
 
+                // Misc data.
+                if ( state.js_data ) {
+                    this.form.data( 'getpaid_js_data', state.js_data )
+                }
+
+                this.form.trigger( 'getpaid_payment_form_changed_state', [state] );
+
             },
 
             // Refreshes the state either from cache or from the server.
