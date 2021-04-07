@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-01 09:07+0000\n"
+"POT-Creation-Date: 2021-04-07 07:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -24,8 +24,8 @@ msgid ""
 "Subject: %s\n"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:180
-#: includes/class-getpaid-subscription-notification-emails.php:181
+#: includes/class-getpaid-invoice-notification-emails.php:184
+#: includes/class-getpaid-subscription-notification-emails.php:185
 msgid " - ADMIN BCC COPY"
 msgstr ""
 
@@ -1459,7 +1459,7 @@ msgstr ""
 msgid "Are you sure you want to delete this subscription?"
 msgstr ""
 
-#: includes/admin/subscriptions.php:380
+#: includes/admin/subscriptions.php:395
 msgid ""
 "Are you sure you want to extend the subscription and generate a new invoice "
 "that will be automatically marked as paid?"
@@ -3484,7 +3484,7 @@ msgid "Data store class does not exist."
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:327
-#: includes/admin/subscriptions.php:401
+#: includes/admin/subscriptions.php:416
 #: includes/data/payment-form-elements.php:119
 #: includes/data/payment-form-elements.php:122
 msgid "Date"
@@ -4607,8 +4607,8 @@ msgid ""
 "Failed invoice emails are sent to the site admin when invoice payments fail."
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:187
-#: includes/class-getpaid-subscription-notification-emails.php:188
+#: includes/class-getpaid-invoice-notification-emails.php:193
+#: includes/class-getpaid-subscription-notification-emails.php:194
 #, php-format
 msgid "Failed sending %s notification email."
 msgstr ""
@@ -4822,7 +4822,7 @@ msgstr ""
 msgid "Free Checkout Text"
 msgstr ""
 
-#: includes/wpinv-item-functions.php:418
+#: includes/wpinv-item-functions.php:424
 msgid "Free forever"
 msgstr ""
 
@@ -5801,7 +5801,7 @@ msgstr ""
 msgid "Initial amount"
 msgstr ""
 
-#: includes/admin/subscriptions.php:475
+#: includes/admin/subscriptions.php:490
 msgid "Initial Invoice"
 msgstr ""
 
@@ -5940,7 +5940,7 @@ msgstr ""
 #: includes/class-getpaid-post-types.php:125 includes/invoice-functions.php:81
 #: includes/invoice-functions.php:567
 #: includes/admin/class-getpaid-post-types-admin.php:173
-#: includes/admin/subscriptions.php:399
+#: includes/admin/subscriptions.php:414
 msgid "Invoice"
 msgstr ""
 
@@ -6397,37 +6397,79 @@ msgstr ""
 msgid "Item Quantity."
 msgstr ""
 
+#. $1: is the recurring price, $2: is the susbcription period, $3: is the susbcription bill times
+#: includes/wpinv-item-functions.php:507
+#, php-format
+msgctxt "Item subscription amount. (e.g.: $120 / year for 5 years)"
+msgid "%1$s / %2$s for %3$s"
+msgstr ""
+
 #. $1: is the recurring price, $2: is the susbcription period
-#: includes/wpinv-item-functions.php:457
+#: includes/wpinv-item-functions.php:496
 #, php-format
 msgctxt "Item subscription amount. (e.g.: $120 / year)"
 msgid "%1$s / %2$s"
 msgstr ""
 
+#. $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period, $4: is the susbcription bill times
+#: includes/wpinv-item-functions.php:478
+#, php-format
+msgctxt ""
+"Item subscription amount. (e.g.: $7 for 1 month then $120 / year for 5 years)"
+msgid "%1$s for %2$s then %3$s / %4$s for %5$s"
+msgstr ""
+
 #. $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period
-#: includes/wpinv-item-functions.php:442
+#: includes/wpinv-item-functions.php:465
 #, php-format
 msgctxt "Item subscription amount. (e.g.: $7 for 1 month then $120 / year)"
 msgid "%1$s for %2$s then %3$s / %4$s"
 msgstr ""
 
+#. $1: is the trial period, $2: is the recurring price, $3: is the susbcription period, $4: is the bill times
+#: includes/wpinv-item-functions.php:450
+#, php-format
+msgctxt ""
+"Item subscription amount. (e.g.: Free for 1 month then $120 / year for 4 "
+"years)"
+msgid "Free for %1$s then %2$s / %3$s for %4$s"
+msgstr ""
+
 #. $1: is the trial period, $2: is the recurring price, $3: is the susbcription period
-#: includes/wpinv-item-functions.php:430
+#: includes/wpinv-item-functions.php:438
 #, php-format
 msgctxt "Item subscription amount. (e.g.: Free for 1 month then $120 / year)"
 msgid "Free for %1$s then %2$s / %3$s"
 msgstr ""
 
+#. $1: is the recurring period, $2: is the recurring price, $3: is the bill times
+#: includes/wpinv-item-functions.php:534
+#, php-format
+msgctxt ""
+"Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months for 12 "
+"months)"
+msgid "Free for %1$s then %2$s / %1$s for %3$s"
+msgstr ""
+
 #. $1: is the recurring period, $2: is the recurring price
-#: includes/wpinv-item-functions.php:470
+#: includes/wpinv-item-functions.php:523
 #, php-format
 msgctxt ""
 "Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months)"
 msgid "Free for %1$s then %2$s / %1$s"
 msgstr ""
 
+#. $1: is the initial price, $2: is the recurring price, $3: is the susbcription period, $4: is the susbcription bill times
+#: includes/wpinv-item-functions.php:560
+#, php-format
+msgctxt ""
+"Item subscription amount. (e.g.: Initial payment of $7 then $120 / year for "
+"4 years)"
+msgid "Initial payment of %1$s then %2$s / %3$s for %4$s"
+msgstr ""
+
 #. $1: is the initial price, $2: is the recurring price, $3: is the susbcription period
-#: includes/wpinv-item-functions.php:481
+#: includes/wpinv-item-functions.php:548
 #, php-format
 msgctxt ""
 "Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)"
@@ -7837,7 +7879,7 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:404 widgets/subscriptions.php:259
+#: includes/class-wpinv-subscriptions.php:410 widgets/subscriptions.php:259
 msgid "Manage Subscription"
 msgstr ""
 
@@ -10292,6 +10334,10 @@ msgstr ""
 msgid "Profile ID"
 msgstr ""
 
+#: includes/admin/subscriptions.php:342 includes/admin/subscriptions.php:344
+msgid "Profile Id"
+msgstr ""
+
 #: includes/payments/class-getpaid-checkout.php:75
 msgid "Provide a valid billing email."
 msgstr ""
@@ -10564,7 +10610,7 @@ msgstr ""
 msgid "Related Payments"
 msgstr ""
 
-#: includes/admin/subscriptions.php:400
+#: includes/admin/subscriptions.php:415
 msgid "Relationship"
 msgstr ""
 
@@ -10580,7 +10626,7 @@ msgstr ""
 msgid "Remove invoice image"
 msgstr ""
 
-#: includes/admin/subscriptions.php:379
+#: includes/admin/subscriptions.php:394
 msgid "Renew Subscription"
 msgstr ""
 
@@ -10592,7 +10638,7 @@ msgid_plural "Renewal <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/subscriptions.php:475
+#: includes/admin/subscriptions.php:490
 msgid "Renewal Invoice"
 msgstr ""
 
@@ -11854,7 +11900,7 @@ msgstr ""
 #: widgets/subscriptions.php:357
 #: includes/admin/class-getpaid-post-types-admin.php:179
 #: includes/admin/class-wpinv-subscriptions-list-table.php:359
-#: includes/admin/subscriptions.php:156 includes/admin/subscriptions.php:402
+#: includes/admin/subscriptions.php:156 includes/admin/subscriptions.php:417
 #: includes/reports/class-getpaid-reports-export.php:144
 msgid "Status"
 msgstr ""
@@ -11908,22 +11954,47 @@ msgstr ""
 msgid "Subscription"
 msgstr ""
 
+#. $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period, $5: is the bill times
+#: includes/subscription-functions.php:280
+#, php-format
+msgctxt ""
+"Subscription amount. (e.g.: $10 trial for 1 month then $120 / year for 4 "
+"years)"
+msgid "%1$s trial for %2$s then %3$s / %4$s for %5$s"
+msgstr ""
+
 #. $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
-#: includes/subscription-functions.php:258
+#: includes/subscription-functions.php:267
 #, php-format
 msgctxt "Subscription amount. (e.g.: $10 trial for 1 month then $120 / year)"
 msgid "%1$s trial for %2$s then %3$s / %4$s"
 msgstr ""
 
+#. $1: is the bill times, $2: is the recurring amount, $3: is the recurring period
+#: includes/subscription-functions.php:335
+#, php-format
+msgctxt "Subscription amount. (e.g.: $120 / year for 5 years)"
+msgid "%2$s / %3$s for %1$s"
+msgstr ""
+
 #. $1: is the recurring amount, $2: is the recurring period
-#: includes/subscription-functions.php:285
+#: includes/subscription-functions.php:324
 #, php-format
 msgctxt "Subscription amount. (e.g.: $120 / year)"
 msgid "%1$s / %2$s"
 msgstr ""
 
+#. $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period, $4: is the bill times
+#: includes/subscription-functions.php:309
+#, php-format
+msgctxt ""
+"Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / "
+"year for 5 years)"
+msgid "Initial payment of %1$s which renews at %2$s / %3$s for %4$s"
+msgstr ""
+
 #. $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period
-#: includes/subscription-functions.php:273
+#: includes/subscription-functions.php:297
 #, php-format
 msgctxt ""
 "Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / "
@@ -11968,7 +12039,7 @@ msgstr ""
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
-#: includes/admin/subscriptions.php:365
+#: includes/admin/subscriptions.php:380
 msgid "Subscription Status"
 msgstr ""
 
@@ -11997,6 +12068,10 @@ msgctxt "Subscription trial period. (e.g.: 1 month trial)"
 msgid "( %1$s trial )"
 msgstr ""
 
+#: includes/class-wpinv-subscriptions.php:299
+msgid "Subscription updated"
+msgstr ""
+
 #: includes/user-functions.php:124
 #: includes/admin/class-wpinv-admin-menus.php:60
 #: includes/admin/class-wpinv-admin-menus.php:61
@@ -12016,6 +12091,12 @@ msgstr ""
 
 #: includes/data/admin-settings.php:123
 msgid "Success Page"
+msgstr ""
+
+#: includes/class-getpaid-invoice-notification-emails.php:191
+#: includes/class-getpaid-subscription-notification-emails.php:192
+#, php-format
+msgid "Successfully sent %s notification email."
 msgstr ""
 
 #: includes/data/states.php:1120
@@ -13144,15 +13225,15 @@ msgstr ""
 msgid "This subscription has been cancelled."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:359
+#: includes/class-wpinv-subscriptions.php:365
 msgid "This subscription has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:325
+#: includes/class-wpinv-subscriptions.php:331
 msgid "This subscription has been renewed and extended."
 msgstr ""
 
-#: includes/admin/subscriptions.php:445
+#: includes/admin/subscriptions.php:460
 msgid "This subscription has no invoices."
 msgstr ""
 
@@ -13307,7 +13388,7 @@ msgid "Tororo"
 msgstr ""
 
 #: includes/invoice-functions.php:591 includes/invoice-functions.php:990
-#: includes/admin/subscriptions.php:403
+#: includes/admin/subscriptions.php:418
 #: templates/payment-forms/cart-totals.php:20
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:153
 msgid "Total"
@@ -13658,11 +13739,11 @@ msgstr ""
 msgid "Upcoming renewal reminder"
 msgstr ""
 
-#: includes/admin/subscriptions.php:376
+#: includes/admin/subscriptions.php:391
 msgid "Update"
 msgstr ""
 
-#: includes/admin/subscriptions.php:366
+#: includes/admin/subscriptions.php:381
 msgid "Updating the status will trigger related actions and hooks"
 msgstr ""
 
@@ -14037,6 +14118,10 @@ msgstr ""
 msgid "View Discounts"
 msgstr ""
 
+#: includes/admin/subscriptions.php:356
+msgid "View in Gateway"
+msgstr ""
+
 #: templates/invoice-receipt.php:89
 #: includes/admin/class-wpinv-subscriptions-list-table.php:227
 msgid "View Invoice"
@@ -14163,11 +14248,11 @@ msgid ""
 "support the payment, such as the purchase total and billing information."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:361
+#: includes/class-wpinv-subscriptions.php:367
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:322
+#: includes/class-wpinv-subscriptions.php:328
 msgid ""
 "We are unable to renew this subscription as the parent invoice does not "
 "exist."
@@ -14574,10 +14659,6 @@ msgstr ""
 
 #: includes/wpinv-template-functions.php:1064
 msgid "Your cart is empty."
-msgstr ""
-
-#: includes/class-wpinv-subscriptions.php:293
-msgid "Your changes have been saved"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:476
