@@ -707,11 +707,13 @@ jQuery(function($) {
                         }
 
                         form.find('.getpaid-payment-form-errors').html(res.data).removeClass('d-none')
+                        form.find('.getpaid-payment-form-remove-on-error').remove()
         
                     } )
 
                     .fail( function( res ) {
                         form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
+                        form.find('.getpaid-payment-form-remove-on-error').remove()
                     } )
 
                     .always(() => {
