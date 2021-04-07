@@ -243,46 +243,97 @@ function getpaid_get_plural_subscription_period_label( $period, $interval ) {
  */
 function getpaid_get_formatted_subscription_amount( $subscription ) {
 
-	$initial   = wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
-	$recurring = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
-	$period    = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
+	$initial    = wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
+	$recurring  = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
+	$period     = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
+	$bill_times = $subscription->get_bill_times();
+
+	if ( ! empty( $bill_times ) ) {
+		$bill_times = $subscription->get_frequency() * $bill_times;
+		$bill_times = getpaid_get_subscription_period_label( $subscription->get_period(), $bill_times );
+	}
 
 	// Trial periods.
 	if ( $subscription->has_trial_period() ) {
 
 		$trial_period   = getpaid_get_subscription_trial_period_period( $subscription->get_trial_period() );
 		$trial_interval = getpaid_get_subscription_trial_period_interval( $subscription->get_trial_period() );
+
+		if ( empty( $bill_times ) ) {
+
+			return sprintf(
+
+				// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
+				_x( '%1$s trial for %2$s then %3$s / %4$s', 'Subscription amount. (e.g.: $10 trial for 1 month then $120 / year)', 'invoicing' ),
+				$initial,
+				getpaid_get_subscription_period_label( $trial_period, $trial_interval ),
+				$recurring,
+				$period
+	
+			);
+
+		}
+
 		return sprintf(
 
-			// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
-			_x( '%1$s trial for %2$s then %3$s / %4$s', 'Subscription amount. (e.g.: $10 trial for 1 month then $120 / year)', 'invoicing' ),
+			// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period, $5: is the bill times
+			_x( '%1$s trial for %2$s then %3$s / %4$s for %5$s', 'Subscription amount. (e.g.: $10 trial for 1 month then $120 / year for 4 years)', 'invoicing' ),
 			$initial,
 			getpaid_get_subscription_period_label( $trial_period, $trial_interval ),
 			$recurring,
-			$period
-
+			$period,
+			$bill_times
 		);
 
 	}
 
 	if ( $initial != $recurring ) {
 
+		if ( empty( $bill_times ) ) {
+
+			return sprintf(
+
+				// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period
+				_x( 'Initial payment of %1$s which renews at %2$s / %3$s', 'Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / year)', 'invoicing' ),
+				$initial,
+				$recurring,
+				$period
+	
+			);
+
+		}
+
 		return sprintf(
 
-			// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period
-			_x( 'Initial payment of %1$s which renews at %2$s / %3$s', 'Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / year)', 'invoicing' ),
+			// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period, $4: is the bill times
+			_x( 'Initial payment of %1$s which renews at %2$s / %3$s for %4$s', 'Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / year for 5 years)', 'invoicing' ),
 			$initial,
 			$recurring,
-			$period
+			$period,
+			$bill_times
 
+		);
+
+	}
+
+	if ( empty( $bill_times ) ) {
+
+		return sprintf(
+
+			// translators: $1: is the recurring amount, $2: is the recurring period
+			_x( '%1$s / %2$s', 'Subscription amount. (e.g.: $120 / year)', 'invoicing' ),
+			$initial,
+			$period
+	
 		);
 
 	}
 
 	return sprintf(
 
-		// translators: $1: is the recurring amount, $2: is the recurring period
-		_x( '%1$s / %2$s', 'Subscription amount. (e.g.: $120 / year)', 'invoicing' ),
+		// translators: $1: is the bill times, $2: is the recurring amount, $3: is the recurring period
+		_x( '%2$s / %3$s for %1$s', 'Subscription amount. (e.g.: $120 / year for 5 years)', 'invoicing' ),
+		$bill_times,
 		$initial,
 		$period
 
