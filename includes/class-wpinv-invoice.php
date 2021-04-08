@@ -1941,7 +1941,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		}
 
-		if ( true === $this->object_read && $old_status !== $new_status ) {
+		if ( true === $this->obect_read && $old_status !== $new_status ) {
 			$this->status_transition = array(
 				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
 				'to'     => $new_status,

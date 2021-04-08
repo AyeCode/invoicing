@@ -140,6 +140,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Site admins can now view other user's suscriptions on the frontend - ADDED
 * Show subscription bill times on invoices and subscriptions - ADDED
 * Trigger js event when form state changes - ADDED
+* Reload page until payment is processed - ADDED
 
 = 2.2.0 =
 * Ability to set logo width and height - ADDED
