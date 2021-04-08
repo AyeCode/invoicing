@@ -14,7 +14,7 @@
     <script type="text/javascript">
         setTimeout(
             function(){
-                window.location.url = window.location.href;
+                window.location.href = window.location.href;
             },
             10000
         );
