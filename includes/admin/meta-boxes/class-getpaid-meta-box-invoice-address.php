@@ -288,6 +288,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                     </div>
 
+                    <?php do_action( 'getpaid_after_metabox_invoice_address', $invoice ); ?>
             </div>
         <?php
     }
