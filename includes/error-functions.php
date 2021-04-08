@@ -175,7 +175,7 @@ function wpinv_error_log( $log, $title = '', $file = '', $line = '', $exit = fal
         error_log( trim ( $log ) );
 
         // ... and a backtrace.
-        if ( false !== $title ) {
+        if ( false !== $title && false !== $file ) {
             error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
         }
 
