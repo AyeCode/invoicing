@@ -69,7 +69,7 @@ class GetPaid_Payment_Form_Submission_Discount {
 
 		// Exceeded limit.
 		if ( $discount->has_exceeded_limit() ) {
-			throw new Exception( __( 'This discount code has been used up', 'invoicing' ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'This discount code has been used up', 'invoicing' ) );
 		}
 
 		// Validate usages.
@@ -124,12 +124,12 @@ class GetPaid_Payment_Form_Submission_Discount {
 		$user = $this->get_user_id_or_email( $submission->get_billing_email() );
 
 		if ( empty( $user ) ) {
-			throw new Exception( __( 'You need to either log in or enter your billing email before applying this discount', 'invoicing' ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'You need to either log in or enter your billing email before applying this discount', 'invoicing' ) );
 		}
 
 		// Has the user used this discount code before?
 		if ( ! $discount->is_valid_for_user( $user ) ) {
-			throw new Exception( __( 'You have already used this discount', 'invoicing' ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'You have already used this discount', 'invoicing' ) );
 		}
 
 	}
@@ -146,13 +146,13 @@ class GetPaid_Payment_Form_Submission_Discount {
 		// Validate minimum amount.
 		if ( ! $discount->is_minimum_amount_met( $amount ) ) {
 			$min = wpinv_price( $discount->get_minimum_total(), $submission->get_currency() );
-			throw new Exception( sprintf( __( 'The minimum total for using this discount is %s', 'invoicing' ), $min ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', sprintf( __( 'The minimum total for using this discount is %s', 'invoicing' ), $min ) );
 		}
 
 		// Validate the maximum amount.
 		if ( ! $discount->is_maximum_amount_met( $amount ) ) {
 			$max = wpinv_price( $discount->get_maximum_total(), $submission->get_currency() );
-			throw new Exception( sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', sprintf( __( 'The maximum total for using this discount is %s', 'invoicing' ), $max ) );
 		}
 
 	}
