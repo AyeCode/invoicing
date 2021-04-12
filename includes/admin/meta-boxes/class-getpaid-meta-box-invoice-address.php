@@ -323,6 +323,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                 'last_name'            => isset( $_POST['wpinv_last_name'] ) ? wpinv_clean( $_POST['wpinv_last_name'] ) : null,
                 'author'               => isset( $_POST['post_author_override'] ) ? wpinv_clean( $_POST['post_author_override'] ) : null,
                 'date_created'         => isset( $_POST['date_created'] ) ? wpinv_clean( $_POST['date_created'] ) : null,
+                'date_completed'       => isset( $_POST['wpinv_date_completed'] ) ? wpinv_clean( $_POST['wpinv_date_completed'] ) : null,
                 'due_date'             => isset( $_POST['wpinv_due_date'] ) ? wpinv_clean( $_POST['wpinv_due_date'] ) : null,
                 'number'               => isset( $_POST['wpinv_number'] ) ? wpinv_clean( $_POST['wpinv_number'] ) : null,
                 'status'               => isset( $_POST['wpinv_status'] ) ? wpinv_clean( $_POST['wpinv_status'] ) : null,

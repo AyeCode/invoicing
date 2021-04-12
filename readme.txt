@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.2.2 =
+* Ability to manually set an invoice's payment date - ADDED
+
 = 2.2.1 =
 * Add note for successful notification emails - ADDED
 * Link to remote subscription from the subscriptions page - ADDED

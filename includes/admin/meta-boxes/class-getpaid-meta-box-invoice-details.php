@@ -99,10 +99,6 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm',
                                     'value'       => $date_paid,
-                                    'extra_attributes' => array(
-                                        'onclick'  => 'this.select();',
-                                        'readonly' => 'true',
-                                    ),
                                 )
                             );
 
