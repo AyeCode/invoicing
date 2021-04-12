@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.2.2 =
 * Ability to manually set an invoice's payment date - ADDED
+* Do not update customer names when their billing details change - CHANGED
 
 = 2.2.1 =
 * Add note for successful notification emails - ADDED

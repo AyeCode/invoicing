@@ -92,10 +92,7 @@ function getpaid_get_email_css() {
     return apply_filters( 'wpinv_email_styles', $css );
 
 }
-add_action( 'init', function() {
-    echo getpaid_get_email_css();
-    exit;
-});
+
 /**
  * Inline styles to email content.
  * 

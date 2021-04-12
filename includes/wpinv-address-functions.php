@@ -190,25 +190,6 @@ function getpaid_save_invoice_user_address( $invoice ) {
 
     }
 
-    $first_name = $invoice->get_first_name();
-    $last_name  = $invoice->get_last_name();
-    $update     = array();
-
-    if ( ! empty( $first_name ) ) {
-        $update['first_name'] = $first_name;
-    }
-
-    if ( ! empty( $last_name ) ) {
-        $update['last_name'] = $last_name;
-    }
-
-    if ( 2 == count( $update ) ) {
-        $update['display_name'] = $first_name . ' ' .$last_name;
-    }
-
-    $update['ID'] = $invoice->get_user_id();
-    wp_update_user( $update );
-
 }
 add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
 add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
