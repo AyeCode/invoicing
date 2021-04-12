@@ -2,7 +2,7 @@
 /**
  * Template that generated the processing invoice email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-processing_invoice.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-processing_invoice.php.
  *
  * @version 1.0.19
  */

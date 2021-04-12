@@ -2,7 +2,7 @@
 /**
  * Template that generates the user note invoice email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-user_note.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-user_note.php.
  *
  * @version 1.0.19
  */

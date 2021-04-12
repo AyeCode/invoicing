@@ -2,7 +2,7 @@
 /**
  * Template that generates the overdue emails.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-overdue.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-overdue.php.
  *
  * @version 1.0.19
  */

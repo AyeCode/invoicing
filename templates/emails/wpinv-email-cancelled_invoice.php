@@ -2,7 +2,7 @@
 /**
  * Template that generated the cancelled invoice email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-cancelled_invoice.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-cancelled_invoice.php.
  *
  * @version 1.0.19
  */

@@ -2,7 +2,7 @@
 /**
  * Template that generates the upcoming renewal subscription email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-renewal_reminder.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-renewal_reminder.php.
  *
  * @version 1.0.19
  * @var WPInv_Subscription $object

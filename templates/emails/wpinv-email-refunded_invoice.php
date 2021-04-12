@@ -2,7 +2,7 @@
 /**
  * Template that generates the refunded invoice email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-refunded_invoice.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-refunded_invoice.php.
  *
  * @version 1.0.19
  */

@@ -2,7 +2,7 @@
 /**
  * Template that generated the onhold invoice email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-onhold_invoice.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-onhold_invoice.php.
  *
  * @version 1.0.19
  */

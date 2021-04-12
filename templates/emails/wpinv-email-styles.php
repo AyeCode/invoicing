@@ -2,7 +2,7 @@
 /**
  * Template that generates the email styles.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-styles.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-styles.php.
  *
  * @version 1.0.19
  */

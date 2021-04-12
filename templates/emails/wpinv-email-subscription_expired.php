@@ -2,7 +2,7 @@
 /**
  * Template that generates the expired subscription email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-subscription_expired.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-subscription_expired.php.
  *
  * @version 1.0.19
  * @var WPInv_Subscription $object

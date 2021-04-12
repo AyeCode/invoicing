@@ -2,7 +2,7 @@
 /**
  * Template that generates the cancelled subscription email.
  *
- * This template can be overridden by copying it to yourtheme/invoicing/email/wpinv-email-failed_cancelled.php.
+ * This template can be overridden by copying it to yourtheme/invoicing/emails/wpinv-email-failed_cancelled.php.
  *
  * @version 1.0.19
  * @var WPInv_Subscription $object
