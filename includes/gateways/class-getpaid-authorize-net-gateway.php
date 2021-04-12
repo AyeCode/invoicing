@@ -68,7 +68,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         $this->title                = __( 'Credit Card / Debit Card', 'invoicing' );
         $this->method_title         = __( 'Authorize.Net', 'invoicing' );
-        $this->notify_url           = wpinv_get_ipn_url( $this->id );
+        $this->notify_url           = getpaid_get_non_query_string_ipn_url( $this->id );
 
         add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
         add_filter( 'getpaid_authorizenet_sandbox_notice', array( $this, 'sandbox_notice' ) );

@@ -131,6 +131,10 @@ class WPInv_Plugin {
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 
+		add_filter( 'query_vars', array( $this, 'custom_query_vars' ) );
+        add_action( 'init', array( $this, 'add_rewrite_rule' ), 10, 0 );
+		add_action( 'pre_get_posts', array( $this, 'maybe_process_new_ipn' ), 1 );
+
 		// Fires after registering actions.
 		do_action( 'wpinv_actions', $this );
 		do_action( 'getpaid_actions', $this );
@@ -551,6 +555,49 @@ class WPInv_Plugin {
 	 */
 	public function wp_head() {
 		wpinv_get_template( 'frontend-head.php' );
+	}
+
+	/**
+	 * Custom query vars.
+	 *
+	 */
+	public function custom_query_vars( $vars ) {
+        $vars[] = 'getpaid-ipn';
+        return $vars;
+	}
+
+	/**
+	 * Add rewrite tags and rules.
+	 *
+	 */
+	public function add_rewrite_rule() {
+        $tag = 'getpaid-ipn';
+        add_rewrite_tag( "%$tag%", '([^&]+)' );
+        add_rewrite_rule( "^$tag/([^/]*)/?", "index.php?$tag=\$matches[1]",'top' );
+	}
+
+	/**
+	 * Processes non-query string ipns.
+	 *
+	 */
+	public function maybe_process_new_ipn( $query ) {
+
+        if ( is_admin() || ! $query->is_main_query() ) {
+            return;
+        }
+
+		$gateway = get_query_var( 'getpaid-ipn' );
+
+        if ( ! empty( $gateway ) ){
+
+			$gateway = sanitize_text_field( $gateway );
+			nocache_headers();
+			do_action( 'wpinv_verify_payment_ipn', $gateway );
+			do_action( "wpinv_verify_{$gateway}_ipn" );
+			exit;
+
+        }
+
 	}
 
 }

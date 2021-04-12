@@ -425,6 +425,19 @@ function wpinv_get_ipn_url( $gateway = false, $args = array() ) {
 }
 
 /**
+ * Retrieves the non-query string ipn url.
+ * 
+ * @param string $gateway The gateway whose IPN url we should retrieve.
+ * 
+ * @return string
+ */
+function getpaid_get_non_query_string_ipn_url( $gateway ) {
+    $gateway = wpinv_sanitize_key( $gateway );
+    return home_url( "getpaid-ipn/$gateway" );
+}
+
+
+/**
  * Retrieves request data with slashes removed slashes.
  */
 function wpinv_get_post_data( $method = 'request' ) {
