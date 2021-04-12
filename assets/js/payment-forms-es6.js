@@ -79,10 +79,16 @@ jQuery(function($) {
             form,
 
             // Alerts the user whenever an error occurs.
-            show_error( error ) {
+            show_error( error, container ) {
 
-                // Display the error
-                form.find( '.getpaid-payment-form-errors' ).html( error ).removeClass( 'd-none' )
+                form.find( '.getpaid-payment-form-errors, .getpaid-custom-payment-form-errors' ).html( '' ).addClass( 'd-none' )
+
+                // Display the error.
+                if ( container && form.find( container ).length ) {
+                    form.find( container ).html( error ).removeClass( 'd-none' )
+                } else {
+                    form.find( '.getpaid-payment-form-errors' ).html( error ).removeClass( 'd-none' )
+                }
 
             },
 
@@ -90,7 +96,7 @@ jQuery(function($) {
             hide_error() {
 
                 // Hide the error
-                form.find( '.getpaid-payment-form-errors' ).html('').addClass('d-none')
+                form.find( '.getpaid-payment-form-errors, .getpaid-custom-payment-form-errors' ).html('').addClass('d-none')
 
             },
 
@@ -211,6 +217,11 @@ jQuery(function($) {
                         this.fetched_initial_state = 1
                         this.cache_state( key, res.data )
                         return this.switch_state()
+                    }
+
+                    if ( res.success === false ) {
+                        this.show_error( res.data.error, res.data.code );
+                        return;
                     }
 
                     // Else, display an error.
@@ -655,7 +666,7 @@ jQuery(function($) {
             wpinvBlock(form);
 
             // Hide any errors.
-            form.find('.getpaid-payment-form-errors').html('').addClass('d-none')
+            form.find('.getpaid-payment-form-errors, .getpaid-custom-payment-form-errors').html('').addClass('d-none')
 
             // Fetch the unique identifier for this form.
             var unique_key = form.data('key')

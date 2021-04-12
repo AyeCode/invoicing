@@ -64,7 +64,7 @@ class GetPaid_Payment_Form_Submission_Discount {
 
 		// Ensure it is active.
         if ( ! $this->is_discount_active( $discount ) ) {
-			throw new Exception( __( 'Invalid or expired discount code', 'invoicing' ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'Invalid or expired discount code', 'invoicing' ) );
 		}
 
 		// Exceeded limit.

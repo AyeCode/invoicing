@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to manually set an invoice's payment date - ADDED
 * Do not update customer names when their billing details change - CHANGED
 * Support for non-query string webhook URLs - Authorize.NET no longer accepts query strings in webhook URLs - ADDED
+* Display discount code errors below the discount field - ADDED
 
 = 2.2.1 =
 * Add note for successful notification emails - ADDED

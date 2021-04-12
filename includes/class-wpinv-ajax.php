@@ -826,13 +826,17 @@ class WPInv_Ajax {
 
         // Do we have an error?
         if ( ! empty( $submission->last_error ) ) {
-            echo $submission->last_error;
-            exit;
+            wp_send_json_error(
+                array(
+                    'code'  => $submission->last_error_code,
+                    'error' => $submission->last_error
+                )
+            );
         }
 
         // Prepare the response.
         $response = new GetPaid_Payment_Form_Submission_Refresh_Prices( $submission );
-        
+
         // Filter the response.
         $response = apply_filters( 'getpaid_payment_form_ajax_refresh_prices', $response->response, $submission );
 

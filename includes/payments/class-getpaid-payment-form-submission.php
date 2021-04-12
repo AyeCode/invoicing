@@ -123,6 +123,13 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public $last_error = null;
 
+	/**
+	 * The last error code.
+	 *
+	 * @var string
+	 */
+	public $last_error_code = null;
+
     /**
 	 * Class constructor.
 	 *
@@ -181,8 +188,12 @@ class GetPaid_Payment_Form_Submission {
 				call_user_func_array( $processor, array( &$this ) );
 			}
 
+		} catch( GetPaid_Payment_Exception $e ) {
+			$this->last_error      = $e->getMessage();
+			$this->last_error_code = $e->getErrorCode();
 		} catch ( Exception $e ) {
-			$this->last_error = $e->getMessage();
+			$this->last_error      = $e->getMessage();
+			$this->last_error_code = $e->getCode();
 		}
 
 		// Fired when we are done processing a submission.
