@@ -1939,21 +1939,21 @@ class WPInv_Invoice extends GetPaid_Data {
 				$old_status = 'wpi-pending';
 			}
 
-		}
+			if ( $old_status !== $new_status ) {
+				$this->status_transition = array(
+					'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
+					'to'     => $new_status,
+					'note'   => $note,
+					'manual' => (bool) $manual_update,
+				);
 
-		if ( true === $this->obect_read && $old_status !== $new_status ) {
-			$this->status_transition = array(
-				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
-				'to'     => $new_status,
-				'note'   => $note,
-				'manual' => (bool) $manual_update,
-			);
+				if ( $manual_update ) {
+					do_action( 'getpaid_' . $this->object_type .'_edit_status', $this->get_id(), $new_status );
+				}
 
-			if ( $manual_update ) {
-				do_action( 'getpaid_' . $this->object_type .'_edit_status', $this->get_id(), $new_status );
+				$this->maybe_set_date_paid();
+
 			}
-
-			$this->maybe_set_date_paid();
 
 		}
 

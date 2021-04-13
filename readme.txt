@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.2.3 =
+* Invoice paid emails not sending - FIXED
+
 = 2.2.2 =
 * Ability to manually set an invoice's payment date - ADDED
 * Do not update customer names when their billing details change - CHANGED
