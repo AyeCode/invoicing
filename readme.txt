@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.2.4 =
+* Authorize.NET improvements - ADDED
+
 = 2.2.3 =
 * Invoice paid hooks not fired - FIXED
 

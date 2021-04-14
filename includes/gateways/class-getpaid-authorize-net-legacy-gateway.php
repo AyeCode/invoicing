@@ -68,6 +68,10 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 
         if ( $response->messages->resultCode == 'Error' ) {
 
+            if ( $this->is_sandbox( $invoice ) ) {
+                wpinv_error_log( $response );
+            }
+
             if ( ! empty( $response->transactionResponse ) && ! empty( $response->transactionResponse->errors ) ) {
                 $error = $response->transactionResponse->errors[0];
                 return new WP_Error( $error->errorCode, $error->errorText );

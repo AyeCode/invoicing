@@ -204,6 +204,16 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         // Remove non-digits from the number
         $submission_data['authorizenet']['cc_number'] = preg_replace('/\D/', '', $submission_data['authorizenet']['cc_number'] );
 
+        // Prepare card details.
+        $payment_information                          = $this->get_payment_information( $submission_data['authorizenet'] );
+
+        // Authorize.NET does not support saving the same card twice.
+        $cached_information                           = $this->retrieve_payment_profile_from_cache( $payment_information, $customer_profile, $invoice );
+
+        if ( $cached_information ) {
+            return $cached_information;
+        }
+
         // Generate args.
         $args = array(
             'createCustomerPaymentProfileRequest' => array(
@@ -223,7 +233,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                     ),
 
                     // Payment information.
-                    'payment'          => $this->get_payment_information( $submission_data['authorizenet'] )
+                    'payment'          => $payment_information
                 ),
                 'validationMode'       => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
             )
@@ -246,6 +256,9 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             );
         }
 
+        // Cache payment profile id.
+        $this->add_payment_profile_to_cache( $payment_information, $response->customerPaymentProfileId );
+
         // Add a note about the validation response.
         $invoice->add_note(
             sprintf( __( 'Saved Authorize.NET payment profile: %s', 'invoicing' ), $response->validationDirectResponse ),
@@ -256,6 +269,55 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
 
         return $response->customerPaymentProfileId;
+    }
+
+    /**
+	 * Retrieves payment details from cache.
+	 *
+	 *
+     * @param array $payment_details.
+	 * @return array|false Profile id.
+	 */
+	public function retrieve_payment_profile_from_cache( $payment_details, $customer_profile, $invoice ) {
+
+        $cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
+        $payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
+
+        if ( ! is_array( $cached_information ) || ! array_key_exists( $payment_details, $cached_information ) ) {
+            return false;
+        }
+
+        // Generate args.
+        $args = array(
+            'getCustomerPaymentProfileRequest' => array(
+                'merchantAuthentication'   => $this->get_auth_params(),
+                'customerProfileId'        => $customer_profile,
+                'customerPaymentProfileId' => $cached_information[ $payment_details ],
+            )
+        );
+
+        $response = $this->post( $args, $invoice );
+
+        return is_wp_error( $response ) ? false : $cached_information[ $payment_details ];
+
+    }
+
+    /**
+	 * Securely adds payment details to cache.
+	 *
+	 *
+     * @param array $payment_details.
+     * @param string $payment_profile_id.
+	 */
+	public function add_payment_profile_to_cache( $payment_details, $payment_profile_id ) {
+
+        $cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
+        $cached_information = is_array( $cached_information ) ? $cached_information : array();
+        $payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
+
+        $cached_information[ $payment_details ] = $payment_profile_id;
+        update_option( 'getpaid_authorize_net_cached_profiles', $cached_information );
+
     }
 
     /**
