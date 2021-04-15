@@ -27,6 +27,18 @@ return array(
 
     array(
 
+        'value'        => '',
+        'input_label'  => __( 'Coupon Code', 'invoicing' ),
+        'button_label' => __( 'Apply Coupon', 'invoicing' ),
+        'description'  => __( 'Have a discount code? Enter it above.', 'invoicing' ),
+        'id'           => 'kcicdiscount',
+        'name'         => 'kcicdiscount',
+        'type'         => 'discount',
+
+    ),
+
+    array(
+
         'value'       => '',
         'items_type'  => 'total',
         'description' => '',
