@@ -4,6 +4,8 @@
  *
  */
 
+use Automattic\Jetpack\ConnectionUI\Admin;
+
 defined( 'ABSPATH' ) || exit;
 
 ?>
@@ -74,7 +76,7 @@ defined( 'ABSPATH' ) || exit;
         <tfoot>
             <tr class="table-light">
                 <td colspan="4" class="border-top">
-                    <a class="button button-secondary getpaid-install-gateways" href="https://wpgetpaid.com/downloads/category/gateways/">
+                    <a class="button button-secondary getpaid-install-gateways" href="<?php echo esc_url( admin_url( 'admin.php?page=wpi-addons&tab=gateways' ) ); ?>">
                         <span><?php _e( 'Add Payment Methods', 'invoicing' ); ?></span>
                     </a>
                 </td>
