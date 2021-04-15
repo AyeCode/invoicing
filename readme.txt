@@ -48,7 +48,7 @@ GetPaid can be used as a payment system with a checkout page by any plugin.
 * Authorize.Net (built-in) - Accept credit card payments (single or recurring) via Authorize.Net.
 * Worldpay (built-in) - Accept credit card payments via Worldpay.
 * Pre Bank Transfer (built-in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
-* [Stripe](https://wpgetpaid.com/downloads/stripe-payment-gateway/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
+* [Stripe](https://wordpress.org/plugins/getpaid-stripe-payments/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
 * [PayPal Pro](https://wpgetpaid.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
 * [PayFast](https://wpgetpaid.com/downloads/payfast-payment-gateway/) - Accept payments via PayFast.
 * [Cheque Payment](https://wpgetpaid.com/downloads/cheque-payment-gateway/)  - Accept payments via Cheques
