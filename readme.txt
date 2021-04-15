@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.2.4 =
 * Authorize.NET improvements - ADDED
+* Payment gateways can now only be activated in their respective settings sections - CHANGED
 
 = 2.2.3 =
 * Invoice paid hooks not fired - FIXED

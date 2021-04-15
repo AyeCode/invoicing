@@ -40,19 +40,11 @@ defined( 'ABSPATH' ) || exit;
                     <td class="getpaid-payment-method-enabled text-center">
                         <?php
 
-                            $id = esc_attr( $id );
-                            echo aui()->input(
-                                array(
-                                    'type'    => 'checkbox',
-                                    'name'    => "wpinv_settings[gateways][$id]",
-                                    'id'      => "wpinv-settings-gateways-$id",
-                                    'value'   => 1,
-                                    'switch'  => true,
-                                    'label'   => '&nbsp;',
-                                    'checked' => wpinv_is_gateway_active( $id ),
-                                    'no_wrap' => true,
-                                )
-                            );
+                            if ( wpinv_is_gateway_active( $id ) ) {
+                                echo "<i class='text-success fa fa-check'></i>";
+                            } else {
+                                echo "<i class='text-dark fa fa-times'></i>";
+                            }
 
                         ?>
                     </td>
