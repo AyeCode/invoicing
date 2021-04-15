@@ -117,7 +117,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @return bool
 	 */
 	public static function is_eu_country( $country ) {
-		return getpaid_is_eu_state( $country ) || getpaid_is_gst_country( $country );
+		return getpaid_is_eu_state( $country );
 	}
 
 	/**
