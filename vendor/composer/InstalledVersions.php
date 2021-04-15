@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'fb4f29a148b1524852836f00b2884f287f708067',
+    'reference' => '9c927243c25ee910689e3996f51ee54ad348da50',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -40,7 +40,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'fb4f29a148b1524852836f00b2884f287f708067',
+      'reference' => '9c927243c25ee910689e3996f51ee54ad348da50',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (

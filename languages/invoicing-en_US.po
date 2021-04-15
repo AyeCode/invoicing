@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-16 06:02+0000\n"
-"PO-Revision-Date: 2021-04-07 07:21+0000\n"
+"PO-Revision-Date: 2021-04-15 08:55+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid " - ADMIN BCC COPY"
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-refresh-prices.php:98
+#: includes/payments/class-getpaid-payment-form-submission-refresh-prices.php:99
 #, php-format
 msgid "%1$s (renews at %2$s / %3$s)"
 msgstr ""
@@ -269,7 +269,7 @@ msgstr ""
 msgid "%s Number"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:161
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:157
 #, php-format
 msgid "%s Number:"
 msgstr ""
@@ -284,7 +284,7 @@ msgstr ""
 msgid "%s Status"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:140
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:136
 #, php-format
 msgid "%s Status:"
 msgstr ""
@@ -529,34 +529,36 @@ msgstr ""
 #: includes/data/email-settings.php:75
 msgid ""
 "<p>A new invoice <a href=\"{invoice_link}\">({invoice_number})</a> to {name} "
-"for {invoice_total} {invoice_currency} has been created on your site.</p>"
+"for {invoice_total} {invoice_currency} has been created on your site. <a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
+"</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:767
+#: includes/data/email-settings.php:766
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has been "
 "cancelled and will no longer renew.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:823
+#: includes/data/email-settings.php:822
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has "
 "expired.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:879
+#: includes/data/email-settings.php:878
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} is now "
 "complete.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:711
+#: includes/data/email-settings.php:710
 msgid ""
 "<p>Hi {first_name},</p><p>Your trial for {subscription_name} is now active "
 "and will renew on {subscription_renewal_date}.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:587
+#: includes/data/email-settings.php:586
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
 "<a href=\"{invoice_link}\">#{invoice_number}</a> {is_was} due on "
@@ -565,7 +567,7 @@ msgid ""
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
-#: includes/data/email-settings.php:654
+#: includes/data/email-settings.php:653
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your "
 "subscription for invoice <a href=\"{invoice_link}\">#{invoice_number}</a> "
@@ -582,42 +584,54 @@ msgstr ""
 
 #: includes/data/email-settings.php:520
 msgid ""
-"<p>Hi {name},</p><p>Following note has been added to your {invoice_label}:"
-"</p><blockquote class=\"wpinv-note\">{customer_note}</blockquote>"
+"<p>Hi {name},</p><p>Following note has been added to your {invoice_label} <a "
+"href=\"{invoice_link}\">#{invoice_number}</a>:</p><blockquote class=\"wpinv-"
+"note\">{customer_note}</blockquote><a class=\"btn btn-success\" "
+"href=\"{invoice_link}\">View / Print Invoice</a>"
 msgstr ""
 
 #: includes/data/email-settings.php:285
 msgid ""
 "<p>Hi {name},</p><p>I would like to let you know that we have received and "
 "are currently processing your payment for the invoice <a "
-"href=\"{invoice_link}\">#{invoice_number}</a> on {site_title}.</p>"
+"href=\"{invoice_link}\">#{invoice_number}</a> on {site_title}. <a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
+"</p>"
 msgstr ""
 
 #: includes/data/email-settings.php:228
 msgid ""
 "<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we "
-"receive your payment.</p>"
+"receive your payment. <a class=\"btn btn-success\" href=\"{invoice_link}\">"
+"View / Print Invoice</a></p>"
 msgstr ""
 
 #: includes/data/email-settings.php:407
-msgid "<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>"
+msgid ""
+"<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded. <a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
+"</p>"
 msgstr ""
 
 #: includes/data/email-settings.php:350
 msgid ""
-"<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid.</p>"
+"<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid. <a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
+"</p>"
 msgstr ""
 
 #: includes/data/email-settings.php:172
 msgid ""
 "<p>Payment for the invoice <a href=\"{invoice_link}\">#{invoice_number}</a> "
-"on {site_title} has failed to go through.</p>"
+"on {site_title} has failed to go through. <a class=\"btn btn-success\" "
+"href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
 #: includes/data/email-settings.php:123
 msgid ""
 "<p>The invoice <a href=\"{invoice_link}\">#{invoice_number}</a> created for "
-"{name} on {site_title} has been cancelled.</p>"
+"{name} on {site_title} has been cancelled. <a class=\"btn btn-success\" "
+"href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:335
@@ -654,27 +668,27 @@ msgid ""
 "{invoice_date}"
 msgstr ""
 
-#: includes/data/email-settings.php:568
+#: includes/data/email-settings.php:567
 msgid "[{site_title}] Payment Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:635
+#: includes/data/email-settings.php:634
 msgid "[{site_title}] Renewal Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:748
+#: includes/data/email-settings.php:747
 msgid "[{site_title}] Subscription Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:860
+#: includes/data/email-settings.php:859
 msgid "[{site_title}] Subscription Complete"
 msgstr ""
 
-#: includes/data/email-settings.php:804
+#: includes/data/email-settings.php:803
 msgid "[{site_title}] Subscription Expired"
 msgstr ""
 
-#: includes/data/email-settings.php:692
+#: includes/data/email-settings.php:691
 msgid "[{site_title}] Trial Started"
 msgstr ""
 
@@ -911,7 +925,7 @@ msgstr ""
 msgid "Add Option"
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:86
+#: includes/admin/views/html-gateways-edit.php:80
 msgid "Add Payment Methods"
 msgstr ""
 
@@ -1385,7 +1399,7 @@ msgstr ""
 msgid "Apayao"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:774
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:836
 msgid "API Login ID"
 msgstr ""
 
@@ -1397,11 +1411,13 @@ msgstr ""
 msgid "Appenzell Innerrhoden"
 msgstr ""
 
+#: includes/data/default-payment-form.php:140
 #: includes/data/payment-form-elements.php:316
+#: includes/data/sample-payment-form.php:32
 msgid "Apply Coupon"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:206
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:202
 msgid "Apply Discount"
 msgstr ""
 
@@ -1611,7 +1627,7 @@ msgstr ""
 msgid "Austria"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:358
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:420
 #, php-format
 msgid "Authentication code: %s (%s)."
 msgstr ""
@@ -1624,7 +1640,7 @@ msgstr ""
 msgid "Auto"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:177
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:173
 msgid "Autogenerate"
 msgstr ""
 
@@ -2454,8 +2470,8 @@ msgid ""
 "terms of service."
 msgstr ""
 
-#: includes/data/default-payment-form.php:162
-#: includes/data/sample-payment-form.php:54
+#: includes/data/default-payment-form.php:174
+#: includes/data/sample-payment-form.php:66
 msgid ""
 "By continuing with your payment, you are agreeing to our privacy policy and "
 "terms of service."
@@ -2776,9 +2792,9 @@ msgstr ""
 
 #: includes/data/email-settings.php:255 includes/data/email-settings.php:320
 #: includes/data/email-settings.php:377 includes/data/email-settings.php:490
-#: includes/data/email-settings.php:547 includes/data/email-settings.php:614
-#: includes/data/email-settings.php:681 includes/data/email-settings.php:737
-#: includes/data/email-settings.php:793 includes/data/email-settings.php:849
+#: includes/data/email-settings.php:546 includes/data/email-settings.php:613
+#: includes/data/email-settings.php:680 includes/data/email-settings.php:736
+#: includes/data/email-settings.php:792 includes/data/email-settings.php:848
 msgid ""
 "Check if you want to send a copy of this notification email to the site "
 "admin."
@@ -2812,11 +2828,11 @@ msgstr ""
 msgid "Check this to enable due date option for invoices."
 msgstr ""
 
-#: includes/data/email-settings.php:555
+#: includes/data/email-settings.php:554
 msgid "Check when you would like payment reminders sent out."
 msgstr ""
 
-#: includes/data/email-settings.php:622
+#: includes/data/email-settings.php:621
 msgid "Check when you would like renewal reminders sent out."
 msgstr ""
 
@@ -3130,7 +3146,7 @@ msgstr ""
 msgid "Constan&#539;a"
 msgstr ""
 
-#: includes/class-wpinv.php:367
+#: includes/class-wpinv.php:371
 msgid "Continue"
 msgstr ""
 
@@ -3179,12 +3195,12 @@ msgstr ""
 msgid "Cote d'Ivoire"
 msgstr ""
 
-#: includes/class-wpinv.php:371
+#: includes/class-wpinv.php:375
 msgid "Could not establish a connection to the server."
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:394
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:386
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:388
 msgid "Could not send the invoice to the customer"
 msgstr ""
 
@@ -3206,7 +3222,9 @@ msgstr ""
 msgid "Country / Region"
 msgstr ""
 
+#: includes/data/default-payment-form.php:139
 #: includes/data/payment-form-elements.php:315
+#: includes/data/sample-payment-form.php:31
 msgid "Coupon Code"
 msgstr ""
 
@@ -3218,7 +3236,7 @@ msgstr ""
 msgid "Cox's Bazar"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:796
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:858
 msgid ""
 "Create a new webhook using this URL as the endpoint URL and set it to "
 "receive all payment events."
@@ -3267,7 +3285,7 @@ msgstr ""
 msgid "Credit Card / Debit Card"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:376
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:438
 msgid "Credit card declined."
 msgstr ""
 
@@ -3349,7 +3367,7 @@ msgstr ""
 msgid "Currency Settings"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:146
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:127
 msgid "Currency:"
 msgstr ""
 
@@ -3646,7 +3664,7 @@ msgstr ""
 msgid "Direct bank transfer"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:243
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:239
 msgid "Disable taxes"
 msgstr ""
 
@@ -3664,8 +3682,8 @@ msgstr ""
 msgid "Discount Code"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:205
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:220
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:201
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:216
 msgid "Discount Code:"
 msgstr ""
 
@@ -3916,7 +3934,7 @@ msgstr ""
 msgid "Due Date Settings"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:119
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:115
 msgid "Due Date:"
 msgstr ""
 
@@ -3924,7 +3942,7 @@ msgstr ""
 msgid "Durango"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:166
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:162
 #, php-format
 msgid "Each %s number must be unique."
 msgstr ""
@@ -4074,7 +4092,7 @@ msgid ""
 "hosting prevents emails being sent if the email domains do not match.%s"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:189
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:185
 msgid "Email CC:"
 msgstr ""
 
@@ -4082,10 +4100,10 @@ msgstr ""
 #: includes/data/email-settings.php:169 includes/data/email-settings.php:225
 #: includes/data/email-settings.php:282 includes/data/email-settings.php:347
 #: includes/data/email-settings.php:404 includes/data/email-settings.php:461
-#: includes/data/email-settings.php:517 includes/data/email-settings.php:584
-#: includes/data/email-settings.php:651 includes/data/email-settings.php:708
-#: includes/data/email-settings.php:764 includes/data/email-settings.php:820
-#: includes/data/email-settings.php:876
+#: includes/data/email-settings.php:517 includes/data/email-settings.php:583
+#: includes/data/email-settings.php:650 includes/data/email-settings.php:707
+#: includes/data/email-settings.php:763 includes/data/email-settings.php:819
+#: includes/data/email-settings.php:875
 msgid "Email Content"
 msgstr ""
 
@@ -4097,10 +4115,10 @@ msgstr ""
 #: includes/data/email-settings.php:159 includes/data/email-settings.php:215
 #: includes/data/email-settings.php:272 includes/data/email-settings.php:337
 #: includes/data/email-settings.php:394 includes/data/email-settings.php:451
-#: includes/data/email-settings.php:507 includes/data/email-settings.php:574
-#: includes/data/email-settings.php:641 includes/data/email-settings.php:698
-#: includes/data/email-settings.php:754 includes/data/email-settings.php:810
-#: includes/data/email-settings.php:866
+#: includes/data/email-settings.php:507 includes/data/email-settings.php:573
+#: includes/data/email-settings.php:640 includes/data/email-settings.php:697
+#: includes/data/email-settings.php:753 includes/data/email-settings.php:809
+#: includes/data/email-settings.php:865
 msgid "Email Heading"
 msgstr ""
 
@@ -4138,9 +4156,9 @@ msgstr ""
 #: includes/data/email-settings.php:197 includes/data/email-settings.php:254
 #: includes/data/email-settings.php:319 includes/data/email-settings.php:376
 #: includes/data/email-settings.php:433 includes/data/email-settings.php:489
-#: includes/data/email-settings.php:546 includes/data/email-settings.php:613
-#: includes/data/email-settings.php:680 includes/data/email-settings.php:736
-#: includes/data/email-settings.php:792 includes/data/email-settings.php:848
+#: includes/data/email-settings.php:545 includes/data/email-settings.php:612
+#: includes/data/email-settings.php:679 includes/data/email-settings.php:735
+#: includes/data/email-settings.php:791 includes/data/email-settings.php:847
 msgid "Enable Admin BCC"
 msgstr ""
 
@@ -4176,10 +4194,10 @@ msgstr ""
 #: includes/data/email-settings.php:142 includes/data/email-settings.php:190
 #: includes/data/email-settings.php:247 includes/data/email-settings.php:304
 #: includes/data/email-settings.php:369 includes/data/email-settings.php:426
-#: includes/data/email-settings.php:482 includes/data/email-settings.php:539
-#: includes/data/email-settings.php:606 includes/data/email-settings.php:673
-#: includes/data/email-settings.php:729 includes/data/email-settings.php:785
-#: includes/data/email-settings.php:841
+#: includes/data/email-settings.php:482 includes/data/email-settings.php:538
+#: includes/data/email-settings.php:605 includes/data/email-settings.php:672
+#: includes/data/email-settings.php:728 includes/data/email-settings.php:784
+#: includes/data/email-settings.php:840
 msgid "Enable this email notification"
 msgstr ""
 
@@ -4187,14 +4205,14 @@ msgstr ""
 #: includes/data/email-settings.php:141 includes/data/email-settings.php:189
 #: includes/data/email-settings.php:246 includes/data/email-settings.php:303
 #: includes/data/email-settings.php:368 includes/data/email-settings.php:425
-#: includes/data/email-settings.php:481 includes/data/email-settings.php:538
-#: includes/data/email-settings.php:605 includes/data/email-settings.php:672
-#: includes/data/email-settings.php:728 includes/data/email-settings.php:784
-#: includes/data/email-settings.php:840
+#: includes/data/email-settings.php:481 includes/data/email-settings.php:537
+#: includes/data/email-settings.php:604 includes/data/email-settings.php:671
+#: includes/data/email-settings.php:727 includes/data/email-settings.php:783
+#: includes/data/email-settings.php:839
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:22
+#: includes/admin/views/html-gateways-edit.php:24
 msgid "Enabled"
 msgstr ""
 
@@ -4210,7 +4228,7 @@ msgstr ""
 msgid "Ensure result set excludes specific IDs."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:189
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:185
 msgid ""
 "Enter a comma separated list of other emails that should be notified about "
 "the invoice."
@@ -4295,13 +4313,13 @@ msgstr ""
 
 #: includes/data/email-settings.php:111 includes/data/email-settings.php:160
 #: includes/data/email-settings.php:216 includes/data/email-settings.php:395
-#: includes/data/email-settings.php:508 includes/data/email-settings.php:575
-#: includes/data/email-settings.php:642
+#: includes/data/email-settings.php:508 includes/data/email-settings.php:574
+#: includes/data/email-settings.php:641
 msgid "Enter the main heading contained within the email notification."
 msgstr ""
 
-#: includes/data/email-settings.php:699 includes/data/email-settings.php:755
-#: includes/data/email-settings.php:811 includes/data/email-settings.php:867
+#: includes/data/email-settings.php:698 includes/data/email-settings.php:754
+#: includes/data/email-settings.php:810 includes/data/email-settings.php:866
 msgid "Enter the main heading of this email."
 msgstr ""
 
@@ -4319,7 +4337,7 @@ msgstr ""
 msgid "Enter the store address to display on invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:632
+#: includes/data/email-settings.php:631
 msgid "Enter the subject line for the email."
 msgstr ""
 
@@ -4327,23 +4345,23 @@ msgstr ""
 #: includes/data/email-settings.php:150 includes/data/email-settings.php:206
 #: includes/data/email-settings.php:263 includes/data/email-settings.php:328
 #: includes/data/email-settings.php:385 includes/data/email-settings.php:442
-#: includes/data/email-settings.php:498 includes/data/email-settings.php:565
+#: includes/data/email-settings.php:498 includes/data/email-settings.php:564
 msgid "Enter the subject line for the invoice receipt email."
 msgstr ""
 
-#: includes/data/email-settings.php:745
+#: includes/data/email-settings.php:744
 msgid "Enter the subject line for the subscription cancelled email."
 msgstr ""
 
-#: includes/data/email-settings.php:857
+#: includes/data/email-settings.php:856
 msgid "Enter the subject line for the subscription complete email."
 msgstr ""
 
-#: includes/data/email-settings.php:801
+#: includes/data/email-settings.php:800
 msgid "Enter the subject line for the subscription expired email."
 msgstr ""
 
-#: includes/data/email-settings.php:689
+#: includes/data/email-settings.php:688
 msgid "Enter the subject line for the subscription trial email."
 msgstr ""
 
@@ -4411,7 +4429,7 @@ msgstr ""
 msgid "Error during subscription status transition."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:633
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:695
 msgid "Error generating a renewal invoice."
 msgstr ""
 
@@ -4419,8 +4437,8 @@ msgstr ""
 msgid "Error loading the payment form"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:647
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:663
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:709
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:725
 #, php-format
 msgid "Error renewing subscription : ( %s )."
 msgstr ""
@@ -4529,7 +4547,7 @@ msgstr ""
 msgid "Example privacy texts."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:191
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:187
 msgid "example@gmail.com, example@yahoo.com"
 msgstr ""
 
@@ -4948,8 +4966,8 @@ msgstr ""
 msgid "Gateway Settings"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:111
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:183
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:92
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:164
 msgid "Gateway:"
 msgstr ""
 
@@ -5394,7 +5412,9 @@ msgstr ""
 msgid "Hatay"
 msgstr ""
 
+#: includes/data/default-payment-form.php:141
 #: includes/data/payment-form-elements.php:317
+#: includes/data/sample-payment-form.php:33
 msgid "Have a discount code? Enter it above."
 msgstr ""
 
@@ -5432,7 +5452,7 @@ msgstr ""
 msgid "Heilongjiang / &#40657;&#40857;&#27743;"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:367
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:429
 #, php-format
 msgid "Held for review: %s"
 msgstr ""
@@ -5532,7 +5552,7 @@ msgstr ""
 msgid "Hours"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:775
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:837
 msgid "How do I obtain my API Login ID and Transaction Key?"
 msgstr ""
 
@@ -5894,7 +5914,7 @@ msgid "Invalid ID."
 msgstr ""
 
 #: includes/wpinv-template-functions.php:977
-#: includes/payments/class-getpaid-payment-form-submission.php:260
+#: includes/payments/class-getpaid-payment-form-submission.php:271
 msgid "Invalid invoice"
 msgstr ""
 
@@ -5954,7 +5974,7 @@ msgstr ""
 msgid "Invoice %s created"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:361
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:363
 msgid "Invoice add new user"
 msgstr ""
 
@@ -6160,7 +6180,7 @@ msgid "Invoice URL"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:392
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:384
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:386
 msgid "Invoice was successfully sent to the customer"
 msgstr ""
 
@@ -7375,12 +7395,12 @@ msgstr ""
 msgid "Le&oacute;n"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:788
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:796
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:850
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:858
 msgid "Learn more."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:119
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:115
 msgid "Leave blank to disable automated reminder emails for this invoice."
 msgstr ""
 
@@ -7585,7 +7605,7 @@ msgstr ""
 msgid "Lleida"
 msgstr ""
 
-#: includes/class-wpinv.php:370 includes/admin/class-getpaid-admin.php:176
+#: includes/class-wpinv.php:374 includes/admin/class-getpaid-admin.php:176
 #: templates/payment-forms/form.php:94
 msgid "Loading..."
 msgstr ""
@@ -7874,7 +7894,7 @@ msgstr ""
 msgid "Manafwa"
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:75
+#: includes/admin/views/html-gateways-edit.php:69
 msgid "Manage"
 msgstr ""
 
@@ -8225,7 +8245,7 @@ msgstr ""
 msgid "Misiones"
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission.php:211
+#: includes/payments/class-getpaid-payment-form-submission.php:222
 msgid "Missing payment form"
 msgstr ""
 
@@ -8877,7 +8897,7 @@ msgctxt "no dropdown items"
 msgid "None"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:121
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:117
 msgid "No due date"
 msgstr ""
 
@@ -9662,12 +9682,12 @@ msgstr ""
 msgid "Pay Now"
 msgstr ""
 
-#: includes/data/default-payment-form.php:161
-#: includes/data/sample-payment-form.php:53
+#: includes/data/default-payment-form.php:173
+#: includes/data/sample-payment-form.php:65
 msgid "Pay Now »"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:769
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:831
 msgid "Pay securely using your credit or debit card."
 msgstr ""
 
@@ -9701,11 +9721,7 @@ msgstr ""
 msgid "Payment Date"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:92
-msgid "Payment Date:"
-msgstr ""
-
-#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:161
+#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:165
 msgid "Payment declined"
 msgstr ""
 
@@ -9732,7 +9748,7 @@ msgstr ""
 msgid "Payment Form draft updated."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission.php:218
+#: includes/payments/class-getpaid-payment-form-submission.php:229
 msgid "Payment form not active"
 msgstr ""
 
@@ -9779,7 +9795,7 @@ msgid "Payment Meta"
 msgstr ""
 
 #: includes/invoice-functions.php:1161 includes/admin/subscriptions.php:154
-#: includes/admin/views/html-gateways-edit.php:18
+#: includes/admin/views/html-gateways-edit.php:20
 msgid "Payment Method"
 msgstr ""
 
@@ -9793,21 +9809,21 @@ msgstr ""
 msgid "Payment pending (%s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:154
+#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:158
 msgid "Payment released"
 msgstr ""
 
-#: includes/data/email-settings.php:531
+#: includes/data/email-settings.php:530
 msgid "Payment Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:532
+#: includes/data/email-settings.php:531
 msgid ""
 "Payment reminder emails are sent to customers whenever their invoices are "
 "due."
 msgstr ""
 
-#: includes/data/email-settings.php:578
+#: includes/data/email-settings.php:577
 msgid "Payment reminder for your invoice"
 msgstr ""
 
@@ -9827,7 +9843,7 @@ msgstr ""
 msgid "Payment transaction failed while processing Worldpay payment."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:167
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:148
 msgid "Payment URL:"
 msgstr ""
 
@@ -9854,8 +9870,8 @@ msgstr ""
 msgid "PayPal Standard"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:327
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:378
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:329
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:383
 #, php-format
 msgid "PayPal Subscription ID: %s"
 msgstr ""
@@ -9864,7 +9880,7 @@ msgstr ""
 msgid "PayPal Transaction Fee %."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:377
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:382
 #, php-format
 msgid "PayPal Transaction ID: %s"
 msgstr ""
@@ -10109,7 +10125,7 @@ msgid ""
 "full\">PayPal Privacy Policy</a> for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:434
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:496
 msgid "Please select a different payment method or add a new card."
 msgstr ""
 
@@ -10117,7 +10133,7 @@ msgstr ""
 msgid "Please select your billing country"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:429
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:491
 msgid ""
 "Please set-up your login id and transaction key before using this gateway."
 msgstr ""
@@ -10641,7 +10657,7 @@ msgstr[1] ""
 msgid "Renewal Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:598
+#: includes/data/email-settings.php:597
 msgid "Renewal Reminder"
 msgstr ""
 
@@ -11026,7 +11042,7 @@ msgid ""
 "Sandbox Testing Guide%s for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:749
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:811
 #, php-format
 msgid ""
 "SANDBOX ENABLED. You can use sandbox testing details only. See the "
@@ -11122,7 +11138,7 @@ msgstr ""
 msgid "Save payment method"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:251
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:264
 #, php-format
 msgid "Saved Authorize.NET payment profile: %s"
 msgstr ""
@@ -11244,7 +11260,7 @@ msgstr ""
 msgid "Select File Type"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:185
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:166
 msgid "Select Gateway"
 msgstr ""
 
@@ -11282,9 +11298,9 @@ msgstr ""
 msgid "Select one or more items on the list"
 msgstr ""
 
-#: includes/data/default-payment-form.php:149
+#: includes/data/default-payment-form.php:161
 #: includes/data/payment-form-elements.php:374
-#: includes/data/sample-payment-form.php:41
+#: includes/data/sample-payment-form.php:53
 #: includes/payments/class-getpaid-payment-form.php:235
 #: templates/payment-forms/elements/gateway_select.php:14
 msgid "Select Payment Method"
@@ -11294,7 +11310,7 @@ msgstr ""
 msgid "Select Period"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:151
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:147
 msgid "Select Status"
 msgstr ""
 
@@ -11324,7 +11340,7 @@ msgstr ""
 msgid "Semnan (سمنان)"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:259
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:255
 msgid "Send invoice to customer after saving"
 msgstr ""
 
@@ -11525,7 +11541,7 @@ msgstr ""
 msgid "Sierra Leonean Leone"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:787
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:849
 msgid "Signature Key"
 msgstr ""
 
@@ -11940,10 +11956,10 @@ msgstr ""
 #: includes/data/email-settings.php:149 includes/data/email-settings.php:205
 #: includes/data/email-settings.php:262 includes/data/email-settings.php:327
 #: includes/data/email-settings.php:384 includes/data/email-settings.php:441
-#: includes/data/email-settings.php:497 includes/data/email-settings.php:564
-#: includes/data/email-settings.php:631 includes/data/email-settings.php:688
-#: includes/data/email-settings.php:744 includes/data/email-settings.php:800
-#: includes/data/email-settings.php:856
+#: includes/data/email-settings.php:497 includes/data/email-settings.php:563
+#: includes/data/email-settings.php:630 includes/data/email-settings.php:687
+#: includes/data/email-settings.php:743 includes/data/email-settings.php:799
+#: includes/data/email-settings.php:855
 msgid "Subject"
 msgstr ""
 
@@ -12001,11 +12017,11 @@ msgctxt ""
 msgid "Initial payment of %1$s which renews at %2$s / %3$s"
 msgstr ""
 
-#: includes/data/email-settings.php:721 includes/data/email-settings.php:758
+#: includes/data/email-settings.php:720 includes/data/email-settings.php:757
 msgid "Subscription Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:833 includes/data/email-settings.php:870
+#: includes/data/email-settings.php:832 includes/data/email-settings.php:869
 msgid "Subscription Complete"
 msgstr ""
 
@@ -12015,7 +12031,7 @@ msgstr ""
 msgid "Subscription Details"
 msgstr ""
 
-#: includes/data/email-settings.php:777 includes/data/email-settings.php:813
+#: includes/data/email-settings.php:776 includes/data/email-settings.php:812
 msgid "Subscription Expired"
 msgstr ""
 
@@ -12166,13 +12182,13 @@ msgstr ""
 msgid "Suphan Buri"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:764
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:826
 #: includes/gateways/class-getpaid-worldpay-gateway.php:315
 #, php-format
 msgid "Supported Currencies: %s"
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:26
+#: includes/admin/views/html-gateways-edit.php:28
 msgid "Supports Subscriptions"
 msgstr ""
 
@@ -12348,7 +12364,7 @@ msgstr ""
 msgid "Tawi-Tawi"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:319
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:381
 msgid "TAX"
 msgstr ""
 
@@ -12520,7 +12536,7 @@ msgstr ""
 msgid "The content of the email (Merge Tags and HTML are allowed)."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission.php:472
+#: includes/payments/class-getpaid-payment-form-submission.php:483
 msgid ""
 "The country of your current location must be the same as the country of your "
 "billing location or you must confirm the billing address is your home "
@@ -13013,7 +13029,7 @@ msgstr ""
 msgid "These emails are sent to customers whenever their invoices are held."
 msgstr ""
 
-#: includes/data/email-settings.php:599
+#: includes/data/email-settings.php:598
 msgid ""
 "These emails are sent to customers whenever their subscription is about to "
 "expire."
@@ -13040,19 +13056,19 @@ msgid ""
 "processing."
 msgstr ""
 
-#: includes/data/email-settings.php:722
+#: includes/data/email-settings.php:721
 msgid "These emails are sent when a customer cancels their subscription."
 msgstr ""
 
-#: includes/data/email-settings.php:834
+#: includes/data/email-settings.php:833
 msgid "These emails are sent when a customer completes their subscription."
 msgstr ""
 
-#: includes/data/email-settings.php:666
+#: includes/data/email-settings.php:665
 msgid "These emails are sent when a customer starts a subscription trial."
 msgstr ""
 
-#: includes/data/email-settings.php:778
+#: includes/data/email-settings.php:777
 msgid ""
 "These emails are sent when a customer's subscription expires and automatic "
 "renewal fails."
@@ -13086,7 +13102,7 @@ msgstr ""
 msgid "This invoice has already been paid."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission.php:264
+#: includes/payments/class-getpaid-payment-form-submission.php:275
 msgid "This invoice is already paid for."
 msgstr ""
 
@@ -13240,7 +13256,7 @@ msgstr ""
 msgid "This tab has no content or content callback."
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:12
+#: includes/admin/views/html-gateways-edit.php:14
 msgid "This table displays installed payment methods."
 msgstr ""
 
@@ -13495,11 +13511,11 @@ msgstr ""
 msgid "Transaction ID"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:128
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:109
 msgid "Transaction ID:"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:781
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:843
 msgid "Transaction Key"
 msgstr ""
 
@@ -13532,7 +13548,7 @@ msgstr ""
 msgid "Trial Period"
 msgstr ""
 
-#: includes/data/email-settings.php:665 includes/data/email-settings.php:702
+#: includes/data/email-settings.php:664 includes/data/email-settings.php:701
 msgid "Trial Started"
 msgstr ""
 
@@ -13734,7 +13750,7 @@ msgstr ""
 msgid "Until Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:645
+#: includes/data/email-settings.php:644
 msgid "Upcoming renewal reminder"
 msgstr ""
 
@@ -14276,7 +14292,7 @@ msgid ""
 "invoicing services to you; for example --"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:794
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:856
 msgid "Webhook URL"
 msgstr ""
 
@@ -14362,7 +14378,7 @@ msgstr ""
 msgid "What we share with others"
 msgstr ""
 
-#: includes/data/email-settings.php:554 includes/data/email-settings.php:621
+#: includes/data/email-settings.php:553 includes/data/email-settings.php:620
 msgid "When to Send"
 msgstr ""
 
@@ -14604,7 +14620,7 @@ msgid ""
 "You can not update cart items for invoices that have already been paid for."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission.php:362
+#: includes/payments/class-getpaid-payment-form-submission.php:373
 msgid "You can only buy one recurring item at a time."
 msgstr ""
 
@@ -14695,7 +14711,7 @@ msgstr ""
 msgid "Your IP address is:"
 msgstr ""
 
-#: templates/wpinv-payment-processing.php:20
+#: templates/wpinv-payment-processing.php:7
 #, php-format
 msgid ""
 "Your payment is processing. This page will reload automatically in 10 "
