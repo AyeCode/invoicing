@@ -207,3 +207,22 @@ function getpaid_calculate_invoice_discount( $invoice, $discount ) {
 	);
 
 }
+
+/**
+ * Checks if we have an active discount.
+ *
+ * @return bool
+ */
+function getpaid_has_published_discount() {
+
+    $discounts = get_posts(
+        array(
+            'post_type'   => 'wpi_discount',
+            'numberposts' => 1,
+            'fields'      => array( 'ids' ),
+        )
+    );
+
+    return ! empty( $discounts );
+
+}

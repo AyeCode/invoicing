@@ -10,6 +10,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! getpaid_has_published_discount() ) {
+    return;
+}
+
 $placeholder = esc_attr( $input_label );
 $label       = sanitize_text_field( $button_label );
 

@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Authorize.NET improvements - ADDED
 * Payment gateways can now only be activated in their respective settings sections - CHANGED
 * Add discount field to default (and new payment) forms by default - CHANGED
+* Hide discount field if there is no published discount code - CHANGED
 
 = 2.2.3 =
 * Invoice paid hooks not fired - FIXED
