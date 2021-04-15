@@ -72,7 +72,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>A new invoice <a href="{invoice_link}">({invoice_number})</a> to {name} for {invoice_total} {invoice_currency} has been created on your site.</p>', 'invoicing' ),
+            'std'      => __( '<p>A new invoice <a href="{invoice_link}">({invoice_number})</a> to {name} for {invoice_total} {invoice_currency} has been created on your site. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -120,7 +120,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>The invoice <a href="{invoice_link}">#{invoice_number}</a> created for {name} on {site_title} has been cancelled.</p>', 'invoicing' ),
+            'std'      => __( '<p>The invoice <a href="{invoice_link}">#{invoice_number}</a> created for {name} on {site_title} has been cancelled. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -169,7 +169,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title} has failed to go through.</p>', 'invoicing' ),
+            'std'      => __( '<p>Payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title} has failed to go through. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -225,7 +225,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we receive your payment.</p>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we receive your payment. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -282,7 +282,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>I would like to let you know that we have received and are currently processing your payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title}.</p>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>I would like to let you know that we have received and are currently processing your payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title}. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -347,7 +347,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid.</p>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -404,7 +404,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded.</p>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
@@ -517,13 +517,12 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>Following note has been added to your {invoice_label}:</p><blockquote class="wpinv-note">{customer_note}</blockquote>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>Following note has been added to your {invoice_label} <a href="{invoice_link}">#{invoice_number}</a>:</p><blockquote class="wpinv-note">{customer_note}</blockquote><a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
 
     ),
-
     'overdue' => array(
 
         'email_overdue_header' => array(
