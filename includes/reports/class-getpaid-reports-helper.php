@@ -297,7 +297,7 @@ class GetPaid_Reports_Helper {
 			$query_hash,
 			$data,
 			strtolower( __CLASS__ ),
-			5 * MINUTE_IN_SECONDS
+			MINUTE_IN_SECONDS
 		);
 
 	}
