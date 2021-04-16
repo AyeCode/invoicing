@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.2.5 =
+* Change the address format for userswp account page - CHANGED
+
 = 2.2.4 =
 * Authorize.NET improvements - ADDED
 * Payment gateways can now only be activated in their respective settings sections - CHANGED
