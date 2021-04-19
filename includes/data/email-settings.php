@@ -101,7 +101,7 @@ return array(
             'desc'     => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( '[{site_title}] Cancelled invoice ({invoice_number})', 'invoicing' ),
+            'std'      => __( '[{site_title}] Invoice ({invoice_number}) Cancelled', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -111,7 +111,7 @@ return array(
             'desc'     => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( 'Cancelled Invoice', 'invoicing' ),
+            'std'      => __( 'Invoice Cancelled', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -150,7 +150,7 @@ return array(
             'desc'     => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( '[{site_title}] Failed invoice ({invoice_number})', 'invoicing' ),
+            'std'      => __( '[{site_title}] Invoice ({invoice_number}) Payment Failed', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -160,7 +160,7 @@ return array(
             'desc'     => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( 'Failed invoice', 'invoicing' ),
+            'std'      => __( 'Invoice Payment Failed', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -206,7 +206,7 @@ return array(
             'desc'     => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( '[{site_title}] Your invoice receipt from {invoice_date}', 'invoicing' ),
+            'std'      => __( '[{site_title}] Your invoice is on hold', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -216,7 +216,7 @@ return array(
             'desc'     => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( 'Thank you for your invoice', 'invoicing' ),
+            'std'      => __( 'Your invoice is on hold', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -263,7 +263,7 @@ return array(
             'desc'     => __( 'Enter the subject line for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( '[{site_title}] Your invoice receipt from {invoice_date}', 'invoicing' ),
+            'std'      => __( '[{site_title}] Your payment is being processed', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -273,7 +273,7 @@ return array(
             'desc'     => __( 'Enter the main heading contained within the email notification for the invoice receipt email.', 'invoicing' ),
             'help-tip' => true,
             'type'     => 'text',
-            'std'      => __( 'Thank you for your invoice', 'invoicing' ),
+            'std'      => __( 'Your payment is being processed', 'invoicing' ),
             'size'     => 'large'
         ),
 
@@ -517,7 +517,7 @@ return array(
             'name'     => __( 'Email Content', 'invoicing' ),
             'desc'     => wpinv_get_merge_tags_help_text(),
             'type'     => 'rich_editor',
-            'std'      => __( '<p>Hi {name},</p><p>Following note has been added to your {invoice_label} <a href="{invoice_link}">#{invoice_number}</a>:</p><blockquote class="wpinv-note">{customer_note}</blockquote><a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a>', 'invoicing' ),
+            'std'      => __( '<p>Hi {name},</p><p>The following note has been added to your {invoice_label} <a href="{invoice_link}">#{invoice_number}</a>:</p><blockquote class="wpinv-note">{customer_note}</blockquote><a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a>', 'invoicing' ),
             'class'    => 'large',
             'size'     => '10'
         ),
