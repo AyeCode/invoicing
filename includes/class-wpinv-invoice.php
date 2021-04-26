@@ -124,6 +124,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	protected $totals = array();
 
 	/**
+     * Tax rate.
+	 *
+     * @var float
+     */
+	protected $tax_rate = 0;
+
+	/**
 	 * Stores the status transition information.
 	 *
 	 * @since 1.0.19
@@ -3515,6 +3522,8 @@ class WPInv_Invoice extends GetPaid_Data {
 				'initial'   => 0,
 				'recurring' => 0,
 			);
+
+			$this->tax_rate = 0;
 
 			$this->set_taxes( array() );
 			$current = 0;

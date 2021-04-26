@@ -63,6 +63,11 @@ defined( 'ABSPATH' ) || exit;
                     echo (float) $item->get_quantity();
                 }
 
+                // Tax rate.
+                if ( 'tax_rate' == $column ) {
+                    echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+                }
+
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
                     $subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();

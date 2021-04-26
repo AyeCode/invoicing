@@ -57,6 +57,11 @@ do_action( 'getpaid_before_invoice_fee_item', $invoice, $fee );
                         echo "&mdash;";
                     }
 
+                    // Item tax.
+                    if ( 'tax_rate' == $column ) {
+                        echo "&mdash;";
+                    }
+
                     // Item sub total.
                     if ( 'subtotal' == $column ) {
 

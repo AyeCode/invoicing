@@ -918,6 +918,7 @@ function getpaid_invoice_item_columns( $invoice ) {
         array(
             'name'     => __( 'Item', 'invoicing' ),
             'price'    => __( 'Price', 'invoicing' ),
+            'tax_rate' => __( 'Tax Rate', 'invoicing' ),
             'quantity' => __( 'Quantity', 'invoicing' ),
             'subtotal' => __( 'Item Subtotal', 'invoicing' ),
         ),
@@ -957,6 +958,15 @@ function getpaid_invoice_item_columns( $invoice ) {
 
         if ( 'amount' == $invoice->get_template() ) {
             unset( $columns[ 'subtotal' ] );
+        }
+
+    }
+
+    // Tax rates.
+    if ( isset( $columns[ 'tax_rate' ] ) ) {
+
+        if ( 0 == $invoice->get_tax() ) {
+            unset( $columns[ 'tax_rate' ] );
         }
 
     }
@@ -1286,5 +1296,22 @@ function getpaid_get_invoice_status_classes() {
             'wpi-refunded'       => 'badge-secondary',
 		)
 	);
+
+}
+
+/**
+ * Returns an invoice's tax rate percentage.
+ *
+ * @param WPInv_Invoice $invoice
+ * @param GetPaid_Form_Item $item
+ * @return float
+ */
+function getpaid_get_invoice_tax_rate( $invoice, $item ) {
+
+    $rates   = getpaid_get_item_tax_rates( $item, $invoice->get_country(), $invoice->get_state() );
+	$rates   = getpaid_filter_item_tax_rates( $item, $rates );
+    $rates   = wp_list_pluck( $rates, 'rate' );
+	
+    return array_sum( $rates );
 
 }

@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.2.5 =
 * Exclude invoice notes from comment counts - CHANGED
+* Display item tax rates on invoices - ADDED
 
 = 2.2.4 =
 * Authorize.NET improvements - ADDED
