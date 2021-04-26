@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-15 08:54+0000\n"
+"POT-Creation-Date: 2021-04-26 11:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -84,12 +84,12 @@ msgstr ""
 msgid "%s / %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1024
+#: includes/invoice-functions.php:1034
 #, php-format
 msgid "%s created with the status \"%s\"."
 msgstr ""
 
-#: includes/invoice-functions.php:1149
+#: includes/invoice-functions.php:1159
 #, php-format
 msgid "%s Date"
 msgstr ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "%s Notes"
 msgstr ""
 
-#: includes/invoice-functions.php:1133
+#: includes/invoice-functions.php:1143
 #, php-format
 msgid "%s Number"
 msgstr ""
@@ -280,7 +280,7 @@ msgstr ""
 msgid "%s Settings"
 msgstr ""
 
-#: includes/invoice-functions.php:1141
+#: includes/invoice-functions.php:1151
 #, php-format
 msgid "%s Status"
 msgstr ""
@@ -583,14 +583,6 @@ msgid ""
 "if you have any questions about the invoice."
 msgstr ""
 
-#: includes/data/email-settings.php:520
-msgid ""
-"<p>Hi {name},</p><p>Following note has been added to your {invoice_label} <a "
-"href=\"{invoice_link}\">#{invoice_number}</a>:</p><blockquote class=\"wpinv-"
-"note\">{customer_note}</blockquote><a class=\"btn btn-success\" "
-"href=\"{invoice_link}\">View / Print Invoice</a>"
-msgstr ""
-
 #: includes/data/email-settings.php:285
 msgid ""
 "<p>Hi {name},</p><p>I would like to let you know that we have received and "
@@ -598,6 +590,14 @@ msgid ""
 "href=\"{invoice_link}\">#{invoice_number}</a> on {site_title}. <a "
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
 "</p>"
+msgstr ""
+
+#: includes/data/email-settings.php:520
+msgid ""
+"<p>Hi {name},</p><p>The following note has been added to your {invoice_label}"
+" <a href=\"{invoice_link}\">#{invoice_number}</a>:</p><blockquote "
+"class=\"wpinv-note\">{customer_note}</blockquote><a class=\"btn btn-"
+"success\" href=\"{invoice_link}\">View / Print Invoice</a>"
 msgstr ""
 
 #: includes/data/email-settings.php:228
@@ -650,11 +650,11 @@ msgid ""
 msgstr ""
 
 #: includes/data/email-settings.php:104
-msgid "[{site_title}] Cancelled invoice ({invoice_number})"
+msgid "[{site_title}] Invoice ({invoice_number}) Cancelled"
 msgstr ""
 
 #: includes/data/email-settings.php:153
-msgid "[{site_title}] Failed invoice ({invoice_number})"
+msgid "[{site_title}] Invoice ({invoice_number}) Payment Failed"
 msgstr ""
 
 #: includes/data/email-settings.php:56
@@ -705,8 +705,12 @@ msgstr ""
 msgid "[{site_title}] Your invoice from {invoice_date} has been refunded"
 msgstr ""
 
-#: includes/data/email-settings.php:209 includes/data/email-settings.php:266
-msgid "[{site_title}] Your invoice receipt from {invoice_date}"
+#: includes/data/email-settings.php:209
+msgid "[{site_title}] Your invoice is on hold"
+msgstr ""
+
+#: includes/data/email-settings.php:266
+msgid "[{site_title}] Your payment is being processed"
 msgstr ""
 
 #: includes/data/invoice-schema.php:367
@@ -1247,7 +1251,7 @@ msgstr ""
 msgid "Amolatar"
 msgstr ""
 
-#: includes/invoice-functions.php:945 widgets/subscriptions.php:140
+#: includes/invoice-functions.php:946 widgets/subscriptions.php:140
 #: includes/admin/class-getpaid-post-types-admin.php:177
 #: includes/admin/class-getpaid-post-types-admin.php:422
 #: includes/admin/subscriptions.php:149
@@ -1306,7 +1310,7 @@ msgstr ""
 msgid "An invalid setting value was passed."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3207
+#: includes/class-wpinv-invoice.php:3214
 msgid "An invoice can only contain one recurring item"
 msgstr ""
 
@@ -2610,7 +2614,7 @@ msgid_plural "Cancelled <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/data/email-settings.php:85 includes/data/email-settings.php:114
+#: includes/data/email-settings.php:85
 msgid "Cancelled Invoice"
 msgstr ""
 
@@ -3669,7 +3673,7 @@ msgstr ""
 msgid "Disable taxes"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:181 includes/invoice-functions.php:989
+#: includes/class-getpaid-post-types.php:181 includes/invoice-functions.php:999
 #: includes/reports/class-getpaid-reports-report-earnings.php:24
 #: templates/payment-forms/cart-totals.php:19
 msgid "Discount"
@@ -3927,7 +3931,7 @@ msgid "Due %s"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:83
-#: includes/invoice-functions.php:1171
+#: includes/invoice-functions.php:1181
 msgid "Due Date"
 msgstr ""
 
@@ -4422,7 +4426,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3735
+#: includes/class-wpinv-invoice.php:3744
 msgid "Error during status transition."
 msgstr ""
 
@@ -4616,10 +4620,6 @@ msgstr[1] ""
 msgid "Failed Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:163
-msgid "Failed invoice"
-msgstr ""
-
 #: includes/data/email-settings.php:135
 msgid ""
 "Failed invoice emails are sent to the site admin when invoice payments fail."
@@ -4676,7 +4676,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: includes/invoice-functions.php:988 includes/wpinv-item-functions.php:207
+#: includes/invoice-functions.php:998 includes/wpinv-item-functions.php:207
 #: templates/emails/fee-item.php:37 templates/invoice/fee-item.php:38
 #: templates/payment-forms/cart-totals.php:18
 msgid "Fee"
@@ -5546,7 +5546,7 @@ msgstr ""
 msgid "Hormozgan (هرمزگان)"
 msgstr ""
 
-#: includes/invoice-functions.php:931
+#: includes/invoice-functions.php:932
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:103
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:145
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:242
@@ -5979,6 +5979,10 @@ msgstr ""
 msgid "Invoice add new user"
 msgstr ""
 
+#: includes/data/email-settings.php:114
+msgid "Invoice Cancelled"
+msgstr ""
+
 #: includes/api/class-getpaid-rest-reports-controller.php:93
 msgid "Invoice counts."
 msgstr ""
@@ -6074,6 +6078,10 @@ msgstr ""
 
 #: includes/admin/wpinv-admin-functions.php:172
 msgid "Invoice number sequence reset successfully."
+msgstr ""
+
+#: includes/data/email-settings.php:163
+msgid "Invoice Payment Failed"
 msgstr ""
 
 #: includes/admin/class-wpinv-admin-menus.php:99
@@ -6496,7 +6504,7 @@ msgctxt ""
 msgid "Initial payment of %1$s then %2$s / %3$s"
 msgstr ""
 
-#: includes/invoice-functions.php:922
+#: includes/invoice-functions.php:923
 msgid "Item Subtotal"
 msgstr ""
 
@@ -9490,7 +9498,7 @@ msgstr ""
 msgid "Paid Invoices"
 msgstr ""
 
-#: includes/invoice-functions.php:1156
+#: includes/invoice-functions.php:1166
 msgid "Paid On"
 msgstr ""
 
@@ -9498,7 +9506,7 @@ msgstr ""
 msgid "Paid Via"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3842
+#: includes/class-wpinv-invoice.php:3851
 #: includes/admin/class-getpaid-post-types-admin.php:242
 #, php-format
 msgid "Paid via %s"
@@ -9616,7 +9624,7 @@ msgstr ""
 msgid "Paran&aacute;"
 msgstr ""
 
-#: includes/invoice-functions.php:1210
+#: includes/invoice-functions.php:1220
 #, php-format
 msgid "Parent %s"
 msgstr ""
@@ -9795,7 +9803,7 @@ msgstr ""
 msgid "Payment Meta"
 msgstr ""
 
-#: includes/invoice-functions.php:1161 includes/admin/subscriptions.php:154
+#: includes/invoice-functions.php:1171 includes/admin/subscriptions.php:154
 #: includes/admin/views/html-gateways-edit.php:20
 msgid "Payment Method"
 msgstr ""
@@ -10403,7 +10411,7 @@ msgstr ""
 msgid "Qom (قم)"
 msgstr ""
 
-#: includes/invoice-functions.php:921 templates/payment-forms/cart.php:16
+#: includes/invoice-functions.php:922 templates/payment-forms/cart.php:16
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:102
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:144
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:241
@@ -10495,7 +10503,7 @@ msgstr ""
 msgid "Ratchaburi"
 msgstr ""
 
-#: includes/invoice-functions.php:949
+#: includes/invoice-functions.php:950
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:149
 msgid "Rate"
 msgstr ""
@@ -10550,7 +10558,7 @@ msgstr ""
 msgid "Recurring"
 msgstr ""
 
-#: includes/invoice-functions.php:1241
+#: includes/invoice-functions.php:1251
 msgid "Recurring Amount"
 msgstr ""
 
@@ -10662,12 +10670,12 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3831
+#: includes/class-wpinv-invoice.php:3840
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1229
+#: includes/invoice-functions.php:1239
 msgid "Renews On"
 msgstr ""
 
@@ -11922,13 +11930,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3699
+#: includes/class-wpinv-invoice.php:3708
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3728
+#: includes/class-wpinv-invoice.php:3737
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -12094,7 +12102,7 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
-#: includes/invoice-functions.php:986
+#: includes/invoice-functions.php:996
 #: templates/payment-forms/cart-totals.php:16
 #: templates/payment-forms/cart.php:17
 msgid "Subtotal"
@@ -12369,7 +12377,7 @@ msgstr ""
 msgid "TAX"
 msgstr ""
 
-#: includes/invoice-functions.php:987
+#: includes/invoice-functions.php:997
 #: includes/admin/class-getpaid-metaboxes.php:91
 #: includes/reports/class-getpaid-reports-report-earnings.php:26
 #: includes/reports/class-getpaid-reports-report.php:349
@@ -12388,6 +12396,10 @@ msgstr ""
 #: includes/admin/views/html-tax-rate-edit.php:62
 #: includes/admin/views/html-tax-rates-edit.php:56
 msgid "Tax Name"
+msgstr ""
+
+#: includes/invoice-functions.php:921
+msgid "Tax Rate"
 msgstr ""
 
 #: includes/admin/register-settings.php:423
@@ -12490,10 +12502,6 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:238
 #, php-format
 msgid "Thank you for using %s!"
-msgstr ""
-
-#: includes/data/email-settings.php:219 includes/data/email-settings.php:276
-msgid "Thank you for your invoice"
 msgstr ""
 
 #: templates/invoice-receipt.php:27
@@ -13186,7 +13194,7 @@ msgid ""
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3199
+#: includes/class-wpinv-invoice.php:3206
 msgid "This item is not available for purchase"
 msgstr ""
 
@@ -13403,14 +13411,14 @@ msgstr ""
 msgid "Tororo"
 msgstr ""
 
-#: includes/invoice-functions.php:591 includes/invoice-functions.php:990
+#: includes/invoice-functions.php:591 includes/invoice-functions.php:1000
 #: includes/admin/subscriptions.php:418
 #: templates/payment-forms/cart-totals.php:20
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:153
 msgid "Total"
 msgstr ""
 
-#: includes/invoice-functions.php:1254
+#: includes/invoice-functions.php:1264
 msgid "Total Amount"
 msgstr ""
 
@@ -13508,7 +13516,7 @@ msgstr ""
 msgid "Trans-Nzoia"
 msgstr ""
 
-#: includes/invoice-functions.php:1166
+#: includes/invoice-functions.php:1176
 msgid "Transaction ID"
 msgstr ""
 
@@ -14002,7 +14010,7 @@ msgid "VAT class for the item."
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:139
-#: includes/invoice-functions.php:1176 includes/wpinv-address-functions.php:142
+#: includes/invoice-functions.php:1186 includes/wpinv-address-functions.php:142
 #: includes/admin/class-getpaid-admin-profile.php:83
 #: includes/data/admin-settings.php:363
 #: includes/data/default-payment-form.php:127
@@ -14699,6 +14707,10 @@ msgstr ""
 msgid "Your invoice has been refunded"
 msgstr ""
 
+#: includes/data/email-settings.php:219
+msgid "Your invoice is on hold"
+msgstr ""
+
 #: includes/data/email-settings.php:455
 msgid "Your invoice {invoice_number} details"
 msgstr ""
@@ -14710,6 +14722,10 @@ msgstr ""
 #: includes/data/payment-form-elements.php:391
 #: templates/payment-forms/elements/ip_address.php:13
 msgid "Your IP address is:"
+msgstr ""
+
+#: includes/data/email-settings.php:276
+msgid "Your payment is being processed"
 msgstr ""
 
 #: templates/wpinv-payment-processing.php:7
