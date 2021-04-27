@@ -29,3 +29,15 @@ defined( 'ABSPATH' ) || exit;
     <input :id="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
 </div>
+
+<hr class='featurette-divider mt-4'>
+
+<div class='form-group'>
+    <label class="d-block">
+        <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
+        <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
+        <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>
+    </label>
+</div>
+
+<hr class='featurette-divider mt-4'>

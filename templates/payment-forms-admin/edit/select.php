@@ -39,6 +39,16 @@ defined( 'ABSPATH' ) || exit;
 
 <hr class='featurette-divider mt-4'>
 
+<div class='form-group'>
+    <label class="d-block">
+        <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
+        <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
+        <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>
+    </label>
+</div>
+
+<hr class='featurette-divider mt-4'>
+
 <h5><?php esc_html_e( 'Available Options', 'invoicing' ); ?></h5>
 
 <div class='form-group input-group' v-for='(option, index) in active_form_element.options'>

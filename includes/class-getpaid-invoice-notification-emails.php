@@ -147,6 +147,23 @@ class GetPaid_Invoice_Notification_Emails {
 			'{is_was}'              => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
+		$payment_form_data = $invoice->get_meta( 'payment_form_data', true );
+
+		if ( is_array( $payment_form_data ) ) {
+
+			foreach ( $payment_form_data as $label => $value ) {
+
+				$label = preg_replace( '/[^a-z0-9]+/', '_', strtolower( $label ) );
+				$value = is_array( $value ) ? implode( ', ', $value ) : $value;
+
+				if ( is_scalar ( $value ) ) {
+					$merge_tags[ "{{$label}}" ] = wp_kses_post( $value );
+				}
+
+			}
+
+		}
+wpinv_error_log( $merge_tags );
 		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}
 

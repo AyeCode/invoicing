@@ -125,7 +125,7 @@ class GetPaid_Checkout {
 
 		if ( ! $submission->has_invoice() ) {
 			$invoice = new WPInv_Invoice();
-			$invoice->created_via( 'payment_form' );
+			$invoice->set_created_via( 'payment_form' );
 			return $invoice;
         }
 

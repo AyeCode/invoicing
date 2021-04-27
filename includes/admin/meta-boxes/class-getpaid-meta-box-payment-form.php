@@ -22,6 +22,12 @@ class GetPaid_Meta_Box_Payment_Form {
 	 */
     public static function output( $post ) {
         ?>
+        <style>
+            .wpinv-form-builder-edit-field-wrapper label.d-block > span:first-child{
+                display: inline-block;
+                margin-bottom: .5rem;
+            }
+        </style>
         <div id="wpinv-form-builder" class="bsui">
             <div class="row">
                 <div class="col-sm-4">
