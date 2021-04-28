@@ -163,7 +163,7 @@ class GetPaid_Invoice_Notification_Emails {
 			}
 
 		}
-wpinv_error_log( $merge_tags );
+
 		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}
 

@@ -398,3 +398,142 @@ function wpinv_get_subscription( $invoice ) {
 	return empty( $subscription ) ? false : $subscription[0];
 
 }
+
+/**
+ * Construct a cart key based on the billing schedule of a subscription product.
+ *
+ * Subscriptions groups products by billing schedule when calculating cart totals, so that gateway fees and other "per invoice" amounts
+ * can be calculated for each group of items for each renewal. This method constructs a cart key based on the billing schedule
+ * to allow products on the same billing schedule to be grouped together - free trials are accounted for by
+ * the trial interval and period of the subscription.
+ *
+ * @param GetPaid_Form_Item|WPInv_Item $cart_item
+ * @return string
+ */
+function getpaid_get_recurring_item_key( $cart_item ) {
+
+	$cart_key     = 'renews_';
+	$interval     = $cart_item->get_recurring_interval();
+	$period       = $cart_item->get_recurring_period( true );
+	$length       = $cart_item->get_recurring_limit() * $interval;
+	$trial_period = $cart_item->get_trial_period( true );
+	$trial_length = $cart_item->get_trial_interval();
+
+	// First start with the billing interval and period
+	switch ( $interval ) {
+		case 1 :
+			if ( 'day' == $period ) {
+				$cart_key .= 'daily';
+			} else {
+				$cart_key .= sprintf( '%sly', $period );
+			}
+			break;
+		case 2 :
+			$cart_key .= sprintf( 'every_2nd_%s', $period );
+			break;
+		case 3 :
+			$cart_key .= sprintf( 'every_3rd_%s', $period );
+		break;
+		default:
+			$cart_key .= sprintf( 'every_%dth_%s', $interval, $period );
+			break;
+	}
+
+	// Maybe add the optional maximum billing periods...
+	if ( $length > 0 ) {
+		$cart_key .= '_for_';
+		$cart_key .= sprintf( '%d_%s', $length, $period );
+		if ( $length > 1 ) {
+			$cart_key .= 's';
+		}
+	}
+
+	// And an optional free trial.
+	if ( $cart_item->has_free_trial() ) {
+		$cart_key .= sprintf( '_after_a_%d_%s_trial', $trial_length, $trial_period );
+	}
+
+	return apply_filters( 'getpaid_get_recurring_item_key', $cart_key, $cart_item );
+}
+
+/**
+ * Retrieves subscription groups for all items in an invoice/payment form submission.
+ *
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice
+ * @return array
+ */
+function getpaid_get_subscription_groups( $invoice ) {
+
+	// Generate subscription groups.
+	$subscription_groups = array();
+	foreach ( $invoice->get_items() as $item ) {
+
+		if ( $item->is_recurring() ) {
+			$subscription_groups[ getpaid_get_recurring_item_key( $item ) ][] = $item;
+		}
+
+	}
+
+	return $subscription_groups;
+}
+
+/**
+ * Calculate the initial and recurring totals for all subscription products in an invoice/payment form submission.
+ *
+ * We group subscriptions by billing schedule to make the display and creation of recurring totals sane,
+ * when there are multiple subscriptions in the cart.
+ *
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice
+ * @return array
+ */
+function getpaid_calculate_subscription_totals( $invoice ) {
+
+	// Generate subscription groups.
+	$subscription_groups = getpaid_get_subscription_groups( $invoice );
+
+	// Now let's calculate the totals for each group of subscriptions
+	$subscription_totals = array();
+
+	foreach ( $subscription_groups as $subscription_key => $items ) {
+
+		if ( empty( $subscription_totals[ $subscription_key ] ) ) {
+
+			$subscription_totals[ $subscription_key ] = array(
+				'initial_total'   => 0,
+				'recurring_total' => 0,
+				'items'           => array(),
+				'trialling'       => false,
+				'first'       => false,
+			);
+
+		}
+
+		// Get the totals of the group.
+		foreach ( $items as $item ) {
+
+			$subscription_totals[ $subscription_key ]['items'][]          = $item;
+			$subscription_totals[ $subscription_key ]['item_id']          = $item->get_id();
+			$subscription_totals[ $subscription_key ]['period']           = $item->get_recurring_period( true );
+			$subscription_totals[ $subscription_key ]['interval']         = $item->get_recurring_interval();
+			$subscription_totals[ $subscription_key ]['initial_total']   += $item->get_sub_total();
+			$subscription_totals[ $subscription_key ]['recurring_total'] += $item->get_recurring_sub_total();
+
+			// Calculate the next renewal date.
+			$period       = $item->get_recurring_period( true );
+			$interval     = $item->get_recurring_interval();
+
+			// If the subscription item has a trial period...
+			if ( $item->has_free_trial() ) {
+				$period   = $item->get_trial_period( true );
+				$interval = $item->get_trial_interval();
+				$subscription_totals[ $subscription_key ]['trialling'] = $interval . ' ' . $period;
+			}
+
+			$subscription_totals[ $subscription_key ]['renews_on'] = date( 'Y-m-d H:i:s', strtotime( "+$interval $period", current_time( 'timestamp' ) ) );
+
+		}
+
+	}
+
+	return apply_filters( 'getpaid_calculate_subscription_totals', $subscription_totals, $invoice );
+}
