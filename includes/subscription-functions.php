@@ -459,7 +459,7 @@ function getpaid_get_recurring_item_key( $cart_item ) {
 /**
  * Retrieves subscription groups for all items in an invoice/payment form submission.
  *
- * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission|GetPaid_Payment_Form $invoice
  * @return array
  */
 function getpaid_get_subscription_groups( $invoice ) {
@@ -483,7 +483,7 @@ function getpaid_get_subscription_groups( $invoice ) {
  * We group subscriptions by billing schedule to make the display and creation of recurring totals sane,
  * when there are multiple subscriptions in the cart.
  *
- * @param WPInv_Invoice|GetPaid_Payment_Form_Submission $invoice
+ * @param WPInv_Invoice|GetPaid_Payment_Form_Submission|GetPaid_Payment_Form $invoice
  * @return array
  */
 function getpaid_calculate_subscription_totals( $invoice ) {
@@ -503,7 +503,6 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 				'recurring_total' => 0,
 				'items'           => array(),
 				'trialling'       => false,
-				'first'       => false,
 			);
 
 		}
@@ -511,7 +510,7 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 		// Get the totals of the group.
 		foreach ( $items as $item ) {
 
-			$subscription_totals[ $subscription_key ]['items'][]          = $item;
+			$subscription_totals[ $subscription_key ]['items'][]          = $item->get_id();
 			$subscription_totals[ $subscription_key ]['item_id']          = $item->get_id();
 			$subscription_totals[ $subscription_key ]['period']           = $item->get_recurring_period( true );
 			$subscription_totals[ $subscription_key ]['interval']         = $item->get_recurring_interval();
