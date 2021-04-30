@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.2.6 =
 * Ability to use payment form fields as email merge tags - ADDED
 * Recurring discounts display payment form fields - FIXED
+* Tax rates per state are now filtered case-insensitively - CHANGED
 
 = 2.2.5 =
 * Exclude invoice notes from comment counts - CHANGED
