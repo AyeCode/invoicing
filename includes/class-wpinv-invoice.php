@@ -3208,6 +3208,12 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Do we have a recurring item?
 		if ( $item->is_recurring() ) {
+
+			// An invoice can only contain one recurring item.
+			if ( ! empty( $this->recurring_item )  && $this->recurring_item != (int) $item->get_id() ) {
+				return new WP_Error( 'recurring_item', __( 'An invoice can only contain one recurring item', 'invoicing' ) );
+			}
+
 			$this->recurring_item = $item->get_id();
         }
 
