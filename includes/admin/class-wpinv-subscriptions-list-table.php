@@ -300,15 +300,34 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_item( $item ) {
-		$_item = get_post( $item->get_product_id() );
+		$subscription_group = getpaid_get_invoice_subscription_group( $item->get_parent_invoice_id(), $item->get_id() );
 
-		if ( ! empty( $_item ) ) {
-			$link = get_edit_post_link( $_item );
+		if ( empty( $subscription_group ) ) {
+			return $this->generate_item_markup( $item->get_product_id() );
+		}
+
+		$markup = array_map( array( $this, 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
+		return implode( ' | ', $markup );
+
+	}
+
+	/**
+	 * Generates the items markup.
+	 *
+	 * @param int $item_id
+	 * @since       1.0.0
+	 * @return      string
+	 */
+	public function generate_item_markup( $item_id ) {
+		$item = get_post( $item_id );
+
+		if ( ! empty( $item ) ) {
+			$link = get_edit_post_link( $item );
 			$link = esc_url( $link );
-			$name = esc_html( get_the_title( $_item ) );
+			$name = esc_html( get_the_title( $item ) );
 			return "<a href='$link'>$name</a>";
 		} else {
-			return sprintf( __( 'Item #%s', 'invoicing' ), $item->get_product_id() );
+			return sprintf( __( 'Item #%s', 'invoicing' ), $item_id );
 		}
 
 	}
@@ -355,7 +374,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			'start_date'        => __( 'Start Date', 'invoicing' ),
 			'renewal_date'      => __( 'Next Payment', 'invoicing' ),
 			'renewals'          => __( 'Payments', 'invoicing' ),
-			'item'              => __( 'Item', 'invoicing' ),
+			'item'              => __( 'Items', 'invoicing' ),
 			'status'            => __( 'Status', 'invoicing' ),
 		);
 

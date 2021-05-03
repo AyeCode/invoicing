@@ -16,7 +16,7 @@
 function getpaid_get_invoice_subscriptions( $invoice ) {
 
     // Retrieve subscription groups.
-    $subscription_ids = wp_list_pluck( getpaid_get_invoice_subscription_groups( $invoice ), 'subscription_id' );
+    $subscription_ids = wp_list_pluck( getpaid_get_invoice_subscription_groups( $invoice->get_id() ), 'subscription_id' );
 
     // No subscription groups, normal subscription.
     if ( empty( $subscription_ids ) ) {
@@ -31,13 +31,27 @@ function getpaid_get_invoice_subscriptions( $invoice ) {
 /**
  * Retrieves an invoice's subscription groups.
  *
- * @param       WPInv_Invoice $invoice
+ * @param       int $invoice_id
  * @return      array
  * @since       2.3.0
  */
-function getpaid_get_invoice_subscription_groups( $invoice ) {
-    $subscription_groups = get_post_meta( $invoice->get_id(), 'getpaid_subscription_groups', true );
+function getpaid_get_invoice_subscription_groups( $invoice_id ) {
+    $subscription_groups = get_post_meta( $invoice_id, 'getpaid_subscription_groups', true );
     return empty( $subscription_groups ) ? array() : $subscription_groups;
+}
+
+/**
+ * Retrieves an invoice's subscription's subscription groups.
+ *
+ * @param       int $invoice_id
+ * @param       int $subscription_id
+ * @return      array|false
+ * @since       2.3.0
+ */
+function getpaid_get_invoice_subscription_group( $invoice_id, $subscription_id ) {
+    $subscription_groups = getpaid_get_invoice_subscription_groups( $invoice_id );
+	$matching_group      = wp_list_filter( $subscription_groups, compact( 'subscription_id' ) );
+    return reset( $matching_group );
 }
 
 /**
@@ -554,16 +568,19 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 
 		}
 
-		// Get the totals of the group.
+		/**
+		 * Get the totals of the group.
+		 * @var GetPaid_Form_Item $item
+		 */
 		foreach ( $items as $item ) {
 
-			$subscription_totals[ $subscription_key ]['items'][]          = $item->get_id();
-			$subscription_totals[ $subscription_key ]['item_id']          = $item->get_id();
-			$subscription_totals[ $subscription_key ]['period']           = $item->get_recurring_period( true );
-			$subscription_totals[ $subscription_key ]['interval']         = $item->get_recurring_interval();
-			$subscription_totals[ $subscription_key ]['initial_total']   += $item->get_sub_total();
-			$subscription_totals[ $subscription_key ]['recurring_total'] += $item->get_recurring_sub_total();
-			$subscription_totals[ $subscription_key ]['recurring_limit']  = $item->get_recurring_limit();
+			$subscription_totals[ $subscription_key ]['items'][$item->get_id()]  = $item->prepare_data_for_saving();
+			$subscription_totals[ $subscription_key ]['item_id']                 = $item->get_id();
+			$subscription_totals[ $subscription_key ]['period']                  = $item->get_recurring_period( true );
+			$subscription_totals[ $subscription_key ]['interval']                = $item->get_recurring_interval();
+			$subscription_totals[ $subscription_key ]['initial_total']          += $item->get_sub_total();
+			$subscription_totals[ $subscription_key ]['recurring_total']        += $item->get_recurring_sub_total();
+			$subscription_totals[ $subscription_key ]['recurring_limit']         = $item->get_recurring_limit();
 
 			// Calculate the next renewal date.
 			$period       = $item->get_recurring_period( true );

@@ -126,7 +126,7 @@ class GetPaid_Metaboxes {
 
 			// Subscriptions.
 			$subscription = getpaid_get_invoice_subscription( $invoice );
-			if ( ! empty( $subscription ) ) {
+			if ( ! empty( $subscription ) && $subscription->exists() ) {
 				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', $post_type, 'advanced' );
 				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
 			}

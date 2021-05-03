@@ -313,7 +313,7 @@ class WPInv_Subscriptions {
         }
 
         // Process subscription groups.
-        $current_groups      = getpaid_get_invoice_subscription_groups( $invoice );
+        $current_groups      = getpaid_get_invoice_subscription_groups( $invoice->get_id() );
         $subscription_groups = array();
         $is_first            = true;
 
