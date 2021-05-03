@@ -76,10 +76,10 @@ class WPInv_Subscription extends GetPaid_Data {
 			$this->set_id( $subscription );
 		} elseif ( $subscription instanceof self ) {
 			$this->set_id( $subscription->get_id() );
-		} elseif ( ! empty( $subscription->id ) ) {
-			$this->set_id( $subscription->id );
 		} elseif ( $deprecated && $subscription_id = self::get_subscription_id_by_field( $subscription, 'profile_id' ) ) {
 			$this->set_id( $subscription_id );
+		} elseif ( ! empty( $subscription->id ) ) {
+			$this->set_id( $subscription->id );
 		} else {
 			$this->set_object_read( true );
 		}
