@@ -84,7 +84,18 @@ if ( ! empty( $form->invoice ) ) {
             <?php
                 echo aui()->alert(
                     array(
-                        'content'     => __( 'None of the available payment gateways support subscriptions.', 'invoicing' ),
+                        'content'     => __( 'None of the available payment gateways support purchasing recurring items.', 'invoicing' ),
+                        'type'        => 'danger',
+                    )
+                );
+            ?>
+        </div>
+
+        <div class="getpaid-no-multiple-recurring-gateways d-none">
+            <?php
+                echo aui()->alert(
+                    array(
+                        'content'     => __( 'None of the available payment gateways support purchasing multiple subscriptions in a single order.', 'invoicing' ),
                         'type'        => 'danger',
                     )
                 );

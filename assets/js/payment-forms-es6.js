@@ -393,7 +393,7 @@ jQuery(function($) {
                 submit_btn.val( btn_label );
 
                 // Next, hide the no gateways errors and display the gateways div.
-                this.form.find( '.getpaid-no-recurring-gateways, .getpaid-no-active-gateways' ).addClass( 'd-none' );
+                this.form.find( '.getpaid-no-recurring-gateways, .getpaid-no-multiple-recurring-gateways, .getpaid-no-active-gateways' ).addClass( 'd-none' );
                 this.form.find( '.getpaid-select-gateway-title-div, .getpaid-available-gateways-div, .getpaid-gateway-descriptions-div' ).removeClass( 'd-none' );
 
                 // If there are no gateways?
@@ -401,6 +401,11 @@ jQuery(function($) {
 
                     this.form.find( '.getpaid-select-gateway-title-div, .getpaid-available-gateways-div, .getpaid-gateway-descriptions-div' ).addClass( 'd-none' );
                     submit_btn.prop( 'disabled', true ).css('cursor', 'not-allowed');
+
+                    if ( state.has_multiple_subscriptions ) {
+                        this.form.find( '.getpaid-no-multiple-recurring-gateways' ).removeClass( 'd-none' );
+                        return
+                    }
 
                     if ( state.has_recurring ) {
                         this.form.find( '.getpaid-no-recurring-gateways' ).removeClass( 'd-none' );

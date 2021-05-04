@@ -143,19 +143,13 @@ abstract class GetPaid_Payment_Gateway {
 
 		$this->enabled = wpinv_is_gateway_active( $this->id );
 
-		// Enable Subscriptions.
-		if ( $this->supports( 'subscription' ) ) {
-			add_filter( "wpinv_{$this->id}_support_subscription", '__return_true' );
-		}
-
-		// Enable sandbox.
-		if ( $this->supports( 'sandbox' ) ) {
-			add_filter( "wpinv_{$this->id}_supports_sandbox", '__return_true' );
+		// Add support for various features.
+		foreach ( $this->supports as $feature ) {
+			add_filter( "getpaid_{$this->id}_supports_{$feature}", '__return_true' );
 		}
 
 		// Invoice addons.
 		if ( $this->supports( 'addons' ) ) {
-			add_filter( "getpaid_{$this->id}_supports_addons", '__return_true' );
 			add_action( "getpaid_process_{$this->id}_invoice_addons", array( $this, 'process_addons' ), 10, 2 );
 		}
 
@@ -463,7 +457,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function supports( $feature ) {
-		return apply_filters( 'getpaid_payment_gateway_supports', in_array( $feature, $this->supports ), $feature, $this );
+		return getpaid_payment_gateway_supports( $this->id, $feature );
 	}
 
 	/**

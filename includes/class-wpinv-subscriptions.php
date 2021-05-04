@@ -36,7 +36,7 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_authenticated_admin_action_update_single_subscription', array( $this, 'admin_update_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_renew', array( $this, 'admin_renew_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_delete', array( $this, 'admin_delete_single_subscription' ) );
-    
+
         // Filter invoice item row actions.
         add_action( 'getpaid-invoice-page-line-item-actions', array( $this, 'filter_invoice_line_item_actions' ), 10, 3 );
     }
@@ -64,7 +64,7 @@ class WPInv_Subscriptions {
 
     /**
      * Deactivates the invoice subscription(s) whenever an invoice status changes.
-     * 
+     *
      * @param WPInv_Invoice $invoice
      */
     public function maybe_deactivate_invoice_subscription( $invoice ) {
@@ -90,7 +90,7 @@ class WPInv_Subscriptions {
 
     /**
 	 * Processes subscription status changes.
-     * 
+     *
      * @param WPInv_Subscription $subscription
      * @param string $from
      * @param string $to
@@ -502,7 +502,7 @@ class WPInv_Subscriptions {
             } else {
                 $subscription->renew();
                 getpaid_admin()->show_info( __( 'This subscription has been renewed and extended.', 'invoicing' ) );
-            } 
+            }
 
             wp_safe_redirect(
                 add_query_arg(
@@ -539,7 +539,7 @@ class WPInv_Subscriptions {
         } else {
             getpaid_admin()->show_error( __( 'We are unable to delete this subscription. Please try again.', 'invoicing' ) );
         }
-    
+
         $redirected = wp_safe_redirect(
             add_query_arg(
                 array(

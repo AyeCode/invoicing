@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns an array of payment gateways.
- * 
+ *
  * @return array
  */
 function wpinv_get_payment_gateways() {
@@ -50,7 +50,7 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
 
     if ( true === $sort ) {
         uasort( $gateway_list, 'wpinv_sort_gateway_order' );
-        
+
         // Reorder our gateways so the default is first
         $default_gateway_id = wpinv_get_default_gateway();
 
@@ -110,7 +110,7 @@ function wpinv_get_gateway_admin_label( $gateway ) {
 
 /**
  * Retrieves the gateway description.
- * 
+ *
  * @param string $gateway
  */
 function wpinv_get_gateway_description( $gateway ) {
@@ -138,14 +138,14 @@ function wpinv_get_gateway_checkout_label( $gateway ) {
 
 function wpinv_settings_sections_gateways( $settings ) {
     $gateways = wpinv_get_payment_gateways();
-    
+
     if (!empty($gateways)) {
         foreach  ($gateways as $key => $gateway) {
             $settings[$key] = $gateway['admin_label'];
         }
     }
-    
-    return $settings;    
+
+    return $settings;
 }
 add_filter( 'wpinv_settings_sections_gateways', 'wpinv_settings_sections_gateways', 10, 1 );
 
@@ -217,13 +217,13 @@ function wpinv_settings_gateways( $settings ) {
         );
 
         // Maybe remove the sandbox.
-        if ( ! apply_filters( "wpinv_{$key}_supports_sandbox", false ) ) {
+        if ( ! getpaid_payment_gateway_supports( $key, 'sandbox' ) ) {
             unset( $gateway_settings["{$key}_sandbox"] );
         }
-  
+
         $gateway_settings = apply_filters( 'wpinv_gateway_settings', $gateway_settings, $key, $gateway );
         $gateway_settings = apply_filters( 'wpinv_gateway_settings_' . $key, $gateway_settings, $gateway );
-        
+
         $settings[$key] = $gateway_settings;
     }
 
@@ -236,10 +236,31 @@ function wpinv_gateway_header_callback( $args ) {
     echo '<input type="hidden" id="wpinv_settings[save_gateway]" name="wpinv_settings[save_gateway]" value="' . esc_attr( $args['custom'] ) . '" />';
 }
 
-function wpinv_get_gateway_supports( $gateway ) {
-    $gateways = wpinv_get_enabled_payment_gateways();
-    $supports = isset( $gateways[ $gateway ]['supports'] ) ? $gateways[ $gateway ]['supports'] : array();
-    return apply_filters( 'wpinv_gateway_supports', $supports, $gateway );
+/**
+ * Checks if a given gateway supports a given feature.
+ *
+ * @param string $gateway
+ * @param string $feature
+ * @return bool
+ * @since 2.3.0
+ */
+function getpaid_payment_gateway_supports( $gateway, $feature ) {
+
+    $supports = false;
+
+    if ( wpinv_is_gateway_active( $gateway ) ) {
+
+        $supports = apply_filters( "getpaid_{$gateway}_supports_{$feature}", false );
+
+        // Backwards compatibility.
+        $supports = apply_filters( "wpinv_{$gateway}_supports_{$feature}", $supports );
+        $supports = apply_filters( "wpinv_{$gateway}_support_{$feature}", $supports );
+
+        $supports = apply_filters( "getpaid_gateway_supports_{$feature}", $supports, $gateway );
+        $supports = apply_filters( 'getpaid_payment_gateway_supports', $supports, $feature, $gateway );
+    }
+
+    return $supports;
 }
 
 function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
@@ -263,7 +284,7 @@ function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 	} else {
 		$enabled_gateway = wpinv_get_default_gateway();
 	}
-    
+
     if ( !wpinv_is_gateway_active( $enabled_gateway ) && !empty( $gateways ) ) {
         if(wpinv_is_gateway_active( wpinv_get_default_gateway()) ){
             $enabled_gateway = wpinv_get_default_gateway();
@@ -300,12 +321,12 @@ function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publis
 
 function wpinv_settings_update_gateways( $input ) {
     global $wpinv_options;
-    
+
     if ( !empty( $input['save_gateway'] ) ) {
         $gateways = wpinv_get_option( 'gateways', array( 'manual' => 1 ) );
         $gateways = !empty($gateways) ? $gateways : array();
         $gateway = $input['save_gateway'];
-        
+
         if ( !empty( $input[$gateway . '_active'] ) ) {
             $gateways[$gateway] = 1;
         } else {
@@ -313,40 +334,40 @@ function wpinv_settings_update_gateways( $input ) {
                 unset( $gateways[$gateway] );
             }
         }
-        
+
         $input['gateways'] = $gateways;
     }
-    
+
     if ( !empty( $input['default_gateway'] ) ) {
         $gateways = wpinv_get_payment_gateways();
-        
+
         foreach ( $gateways as $key => $gateway ) {
             $active   = 0;
             if ( !empty( $input['gateways'] ) && !empty( $input['gateways'][$key] ) ) {
                 $active = 1;
             }
-            
+
             $input[$key . '_active'] = $active;
-            
+
             if ( empty( $wpinv_options[$key . '_title'] ) ) {
                 $input[$key . '_title'] = $gateway['checkout_label'];
             }
-            
+
             if ( !isset( $wpinv_options[$key . '_ordering'] ) && isset( $gateway['ordering'] ) ) {
                 $input[$key . '_ordering'] = $gateway['ordering'];
             }
         }
     }
-    
+
     return $input;
 }
 add_filter( 'wpinv_settings_tab_gateways_sanitize', 'wpinv_settings_update_gateways', 10, 1 );
 
 // PayPal Standard settings
-function wpinv_gateway_settings_paypal( $setting ) {    
+function wpinv_gateway_settings_paypal( $setting ) {
     $setting['paypal_active']['desc'] = $setting['paypal_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, BRL, CAD, CZK, DKK, EUR, HKD, HUF, ILS, JPY, MYR, MXN, NOK, NZD, PHP, PLN, GBP, SGD, SEK, CHF, TWD, THB, USD )', 'invoicing' );
     $setting['paypal_desc']['std'] = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
-    
+
     $setting['paypal_sandbox'] = array(
             'type' => 'checkbox',
             'id'   => 'paypal_sandbox',
@@ -354,7 +375,7 @@ function wpinv_gateway_settings_paypal( $setting ) {
             'desc' => __( 'PayPal sandbox can be used to test payments.', 'invoicing' ),
             'std'  => 1
         );
-        
+
     $setting['paypal_email'] = array(
             'type' => 'text',
             'id'   => 'paypal_email',
@@ -371,7 +392,7 @@ function wpinv_gateway_settings_paypal( $setting ) {
             'size' => 'large'
         );
     */
-        
+
     return $setting;
 }
 add_filter( 'wpinv_gateway_settings_paypal', 'wpinv_gateway_settings_paypal', 10, 1 );
@@ -381,7 +402,7 @@ add_filter( 'wpinv_gateway_settings_paypal', 'wpinv_gateway_settings_paypal', 10
  */
 function wpinv_ipn_url_callback( $args ) {
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
-    
+
     $attrs = $args['readonly'] ? ' readonly' : '';
 
     $html = '<input class="regular-text" type="text" ' . $attrs . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
@@ -399,16 +420,16 @@ function wpinv_ipn_url_callback( $args ) {
  */
 function wpinv_is_test_mode( $gateway = '' ) {
     $sandbox  = empty( $gateway ) ? false : wpinv_get_option( "{$gateway}_sandbox", true );
-    $supports = apply_filters( "wpinv_{$gateway}_supports_sandbox", false );
+    $supports = getpaid_payment_gateway_supports( $gateway, 'sandbox' );
     return apply_filters( 'wpinv_is_test_mode', $sandbox && $supports, $gateway );
 }
 
 /**
  * Retrieves the ipn url.
- * 
+ *
  * @param string $gateway The gateway whose IPN url we should retrieve.
  * @param array $args extra args to add to the url.
- * 
+ *
  * @return string
  */
 function wpinv_get_ipn_url( $gateway = false, $args = array() ) {
@@ -426,9 +447,9 @@ function wpinv_get_ipn_url( $gateway = false, $args = array() ) {
 
 /**
  * Retrieves the non-query string ipn url.
- * 
+ *
  * @param string $gateway The gateway whose IPN url we should retrieve.
- * 
+ *
  * @return string
  */
 function getpaid_get_non_query_string_ipn_url( $gateway ) {
@@ -451,27 +472,19 @@ function wpinv_get_post_data( $method = 'request' ) {
     }
 
     return wp_unslash( $_REQUEST );
-  
+
 }
 
 /**
  * Checks if a given gateway supports subscription payments.
  */
 function wpinv_gateway_support_subscription( $gateway ) {
-    $supports = false;
-
-    if ( wpinv_is_gateway_active( $gateway ) ) {
-        $supports = apply_filters( 'wpinv_' . $gateway . '_support_subscription', $supports );
-
-        $supports = apply_filters( 'getapid_gateway_supports_subscription', $supports, $gateway );
-    }
-
-    return $supports;
+    return getpaid_payment_gateway_supports( $gateway, 'subscription' );
 }
 
 /**
  * Filters payment form gateways.
- * 
+ *
  * @param array $gateways an array of gateways.
  * @param GetPaid_Payment_Form $form payment form.
  */

@@ -26,9 +26,10 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function __construct( $submission ) {
 
 		$this->response = array(
-			'submission_id' => $submission->id,
-            'has_recurring' => $submission->has_recurring,
-            'is_free'       => ! $submission->should_collect_payment_details(),
+			'submission_id'              => $submission->id,
+            'has_recurring'              => $submission->has_recurring,
+			'has_multiple_subscriptions' => $submission->has_recurring && 1 < count( getpaid_get_subscription_groups( $submission ) ),
+            'is_free'                    => ! $submission->should_collect_payment_details(),
 		);
 
 		$this->add_totals( $submission );
@@ -86,8 +87,9 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function add_texts( $submission ) {
 
 		$payable = $submission->format_amount( $submission->get_total() );
+		$groups  = getpaid_get_subscription_groups( $submission );
 
-		if ( $submission->has_recurring != 0 && ! getpaid_should_group_subscriptions( $submission ) ) {
+		if ( $submission->has_recurring != 0 && 2 > $groups ) {
 
 			$recurring = new WPInv_Item( $submission->has_recurring );
 			$period    = getpaid_get_subscription_period_label( $recurring->get_recurring_period( true ), $recurring->get_recurring_interval(), '' );
@@ -222,14 +224,13 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 			foreach ( $gateways as $i => $gateway ) {
 
-				if ( ! wpinv_gateway_support_subscription( $gateway ) ) {
+				if ( ! getpaid_payment_gateway_supports( $gateway, 'subscription' ) || ( $this->response['has_multiple_subscriptions'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscriptions' ) ) ) {
 					unset( $gateways[ $i ] );
 				}
 
 			}
 
 		}
-
 
 		$gateways = apply_filters( 'getpaid_submission_gateways', $gateways, $submission );
 		$this->response = array_merge(
