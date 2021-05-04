@@ -135,3 +135,8 @@
 .getpaid-invoice-meta-vat_number {
     display: none;
 }
+
+.wpinv-print .bsui .table-bordered thead th,
+.wpinv-print .bsui .table-bordered thead td {
+    border-bottom-width: 1px;
+}

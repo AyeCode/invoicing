@@ -874,6 +874,34 @@ function wpinv_display_line_items( $invoice_id = 0 ) {
 add_action( 'getpaid_invoice_line_items', 'wpinv_display_line_items', 10 );
 
 /**
+ * Displays invoice subscriptions.
+ * 
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_display_invoice_subscriptions( $invoice ) {
+
+    // Subscriptions.
+	$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+    if ( empty( $subscriptions ) || ! $invoice->is_recurring() ) {
+        return;
+    }
+
+    $main_subscription = getpaid_get_invoice_subscription( $invoice );
+
+    // Display related subscriptions.
+    if ( is_array( $subscriptions ) ) {
+        printf( '<h2 class="mt-5 mb-1 h4">%s</h2>', esc_html__( 'Related Subscriptions', 'invoicing' ) );
+        getpaid_admin_subscription_related_subscriptions_metabox( $main_subscription, false );
+    }
+
+    printf( '<h2 class="mt-5 mb-1 h4">%s</h2>', esc_html__( 'Related Invoices', 'invoicing' ) );
+    getpaid_admin_subscription_invoice_details_metabox( $main_subscription, false );
+
+}
+add_action( 'getpaid_invoice_line_items', 'getpaid_display_invoice_subscriptions', 15 );
+
+/**
  * Displays invoice notices on invoices.
  */
 function wpinv_display_invoice_notice() {

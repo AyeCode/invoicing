@@ -448,7 +448,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 	$table_class = 'w-100 bg-white';
 
 	if ( ! is_admin() ) {
-		$table_class = 'table table-bordered table-striped';
+		$table_class = 'table table-bordered';
 	}
 
 	?>
@@ -598,7 +598,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 	$table_class = 'w-100 bg-white';
 
 	if ( ! is_admin() ) {
-		$table_class = 'table table-bordered table-striped';
+		$table_class = 'table table-bordered';
 	}
 
 	?>
@@ -767,7 +767,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 	$table_class = 'w-100 bg-white';
 
 	if ( ! is_admin() ) {
-		$table_class = 'table table-bordered table-striped';
+		$table_class = 'table table-bordered';
 	}
 
 	?>

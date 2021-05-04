@@ -565,6 +565,12 @@ class WPInv_Subscriptions {
      */
     public function filter_invoice_line_item_actions( $actions, $item, $invoice ) {
 
+        // Abort if this invoice uses subscription groups.
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+        if ( ! $invoice->is_recurring() || ! is_object( $subscriptions ) ) {
+            return $actions;
+        }
+
         // Fetch item subscription.
         $args  = array(
             'invoice_in'  => $invoice->is_parent() ? $invoice->get_id() : $invoice->get_parent_id(),

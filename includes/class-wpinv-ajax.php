@@ -418,9 +418,9 @@ class WPInv_Ajax {
         // Recalculate totals.
         $invoice->recalculate_total();
 
-        $total = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
-
-        if ( $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
+        $total        = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+        $suscriptions = getpaid_get_invoice_subscriptions( $invoice );
+        if ( is_a( $suscriptions, 'WPInv_Subscription' ) && $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
             $recurring_total = wpinv_price( $invoice->get_recurring_total(), $invoice->get_currency() );
             $total          .= '<small class="form-text text-muted">' . sprintf( __( 'Recurring Price: %s', 'invoicing' ), $recurring_total ) . '</small>';
         }
