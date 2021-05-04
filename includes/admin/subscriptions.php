@@ -421,8 +421,9 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
  * Displays the subscriptions invoices metabox.
  *
  * @param WPInv_Subscription $subscription
+ * @param bool $strict Whether or not to skip invoices of sibling subscriptions
  */
-function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
+function getpaid_admin_subscription_invoice_details_metabox( $subscription, $strict = true ) {
 
 	$columns = apply_filters(
 		'getpaid_subscription_related_invoices_columns',
@@ -492,7 +493,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 							}
 
 							// ... or belongs to a different subscription.
-							if ( $payment->is_renewal() && $payment->get_subscription_id() && $payment->get_subscription_id() != $subscription->get_id() ) {
+							if ( $strict && $payment->is_renewal() && $payment->get_subscription_id() && $payment->get_subscription_id() != $subscription->get_id() ) {
 								continue;
 							}
 
@@ -738,8 +739,9 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
  * Displays the related subscriptions metabox.
  *
  * @param WPInv_Subscription $subscription
+ * @param bool $skip_current
  */
-function getpaid_admin_subscription_related_subscriptions_metabox( $subscription ) {
+function getpaid_admin_subscription_related_subscriptions_metabox( $subscription, $skip_current = true ) {
 
 	// Fetch the subscription groups.
 	$subscription_groups = getpaid_get_invoice_subscription_groups( $subscription->get_parent_payment_id() );
@@ -795,7 +797,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 						foreach( $subscription_groups as $subscription_group ) :
 
 							// Do not list current subscription.
-							if ( (int) $subscription_group['subscription_id'] === $subscription->get_id() ) {
+							if ( $skip_current && (int) $subscription_group['subscription_id'] === $subscription->get_id() ) {
 								continue;
 							}
 
