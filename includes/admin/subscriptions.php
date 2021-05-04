@@ -764,6 +764,10 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 		$subscription
 	);
 
+	if ( $subscription->get_status() == 'pending' ) {
+		unset( $columns['start_date'], $columns['renewal_date'] );
+	}
+
 	$table_class = 'w-100 bg-white';
 
 	if ( ! is_admin() ) {
@@ -837,7 +841,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 												break;
 
 											case 'start_date':
-												echo getpaid_format_date_value( $_suscription->get_date_created() );
+												echo 'pending' == $_suscription->get_status() ? "&mdash;" : getpaid_format_date_value( $_suscription->get_date_created() );
 												break;
 
 											case 'subscription':
