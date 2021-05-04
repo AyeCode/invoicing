@@ -59,8 +59,19 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         // Mark it as paid.
         $invoice->mark_paid();
 
-        // (Maybe) activate subscription.
-        getpaid_activate_invoice_subscription( $invoice );
+        // (Maybe) activate subscriptions.
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+        if ( ! empty( $subscriptions ) ) {
+            $subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
+
+            foreach ( $subscriptions as $subscription ) {
+                if ( $subscription->exists() ) {
+                    $subscription->activate();
+                }
+            }
+
+        }
 
         // Send to the success page.
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
