@@ -376,13 +376,7 @@ class GetPaid_Payment_Form_Submission {
 
 		// Each submission can only contain one recurring item.
 		if ( $item->is_recurring() ) {
-
-			if ( $this->has_recurring != 0 ) {
-				throw new Exception( __( 'You can only buy one recurring item at a time.', 'invoicing' ) );
-			}
-
 			$this->has_recurring = $item->get_id();
-
 		}
 
 		// Update the items and totals.

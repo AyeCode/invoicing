@@ -85,7 +85,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 							case 'item':
 
 								if ( empty( $subscription_group ) ) {
-									echo WPInv_Subscriptions_List_Table::generate_item_markup( $item->get_product_id() );
+									echo WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() );
 								} else {
 									$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
 									echo implode( ' | ', $markup );

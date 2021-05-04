@@ -87,7 +87,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 		$payable = $submission->format_amount( $submission->get_total() );
 
-		if ( $submission->has_recurring != 0 ) {
+		if ( $submission->has_recurring != 0 && ! getpaid_should_group_subscriptions( $submission ) ) {
 
 			$recurring = new WPInv_Item( $submission->has_recurring );
 			$period    = getpaid_get_subscription_period_label( $recurring->get_recurring_period( true ), $recurring->get_recurring_interval(), '' );
