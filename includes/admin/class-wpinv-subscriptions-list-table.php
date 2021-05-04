@@ -275,7 +275,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @since       1.0.19
 	 * @return      string
 	 */
-	public function column_amount( $item ) {
+	public static function column_amount( $item ) {
 		$amount = getpaid_get_formatted_subscription_amount( $item );
 		return "<span class='text-muted form-text mt-2 mb-2'>$amount</span>";
 	}
