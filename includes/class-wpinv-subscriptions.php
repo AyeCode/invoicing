@@ -224,11 +224,11 @@ class WPInv_Subscriptions {
         // Maybe add recurring fees.
         if ( $is_first ) {
 
-            foreach ( $invoice->get_fees() as $fee ) {
+            foreach ( $invoice->get_fees() as $i => $fee ) {
                 if ( ! empty( $fee['recurring_fee'] ) ) {
                     $initial_amt   += wpinv_sanitize_amount( $fee['initial_fee'] );
                     $recurring_amt += wpinv_sanitize_amount( $fee['recurring_fee'] );
-                    $fees[]         = $fee;
+                    $fees[$i]       = $fee;
                 }
             }
 

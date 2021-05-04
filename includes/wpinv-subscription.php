@@ -942,6 +942,23 @@ class WPInv_Subscription extends GetPaid_Data {
 		$invoice = getpaid_duplicate_invoice( $parent_invoice );
 		$invoice->set_parent_id( $parent_invoice->get_id() );
 
+		// Set invoice items.
+		$subscription_group = getpaid_get_invoice_subscription_group( $parent_invoice->get_id(), $this->get_id() );
+		$allowed_items      = empty( $subscription_group ) ? array( $this->get_product_id() ) : array_keys( $subscription_group['items'] );
+		$invoice_items      = array();
+
+		foreach ( $invoice->get_items() as $item ) {
+			if ( in_array( $item->get_id(), $allowed_items ) ) {
+				$invoice_items[] = $item;
+			}
+		}
+
+		$invoice->set_items( $invoice_items );
+
+		if ( ! empty( $subscription_group['fees'] ) ) {
+			$invoice->set_fees( $subscription_group['fees'] );
+		}
+
 		// Maybe recalculate discount (Pre-GetPaid Fix).
 		$discount = new WPInv_Discount( $invoice->get_discount_code() );
 		if ( $discount->exists() && $discount->is_recurring() && 0 == $invoice->get_total_discount() ) {
