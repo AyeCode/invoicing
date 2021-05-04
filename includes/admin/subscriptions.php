@@ -440,7 +440,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 	$payments = $subscription->get_child_payments( ! is_admin() );
 	$parent   = $subscription->get_parent_invoice();
 
-	if ( $parent->get_id() ) {
+	if ( $parent->exists() ) {
 		$payments = array_merge( array( $parent ), $payments );
 	}
 
@@ -486,8 +486,13 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription ) {
 							// Ensure that we have an invoice.
 							$payment = new WPInv_Invoice( $payment );
 
-							// Abort if the invoice is invalid.
-							if ( ! $payment->get_id() ) {
+							// Abort if the invoice is invalid...
+							if ( ! $payment->exists() ) {
+								continue;
+							}
+
+							// ... or belongs to a different subscription.
+							if ( $payment->is_renewal() && $payment->get_subscription_id() && $payment->get_subscription_id() != $subscription->get_id() ) {
 								continue;
 							}
 
@@ -661,6 +666,52 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 
 											case 'recurring':
 												echo '<strong>' . wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() ) . '</strong>';
+												break;
+
+										}
+
+									echo '</td>';
+
+								}
+
+							echo '</tr>';
+
+						endforeach;
+
+						foreach( $subscription_group['fees'] as $subscription_group_fee ) :
+
+							echo '<tr>';
+
+								foreach ( array_keys( $columns ) as $key ) {
+
+									$class = 'text-left';
+
+									echo "<td class='p-2 $class'>";
+
+										switch( $key ) {
+
+											case 'item_name':
+												echo sanitize_text_field( $subscription_group_fee['name'] );
+												break;
+
+											case 'price':
+												echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+												break;
+
+											case 'tax':
+												echo "&mdash;";
+												break;
+
+											case 'discount':
+												echo "&mdash;";
+												break;
+
+											case 'initial':
+												echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+												break;
+
+											case 'recurring':
+												echo '<strong>' . wpinv_price( $subscription_group_fee['recurring_fee'], $invoice->get_currency() ) . '</strong>';
 												break;
 
 										}

@@ -1439,6 +1439,32 @@ class WPInv_Invoice extends GetPaid_Data {
 	}
 
 	/**
+	 * Retrieves the non-recurring total of items.
+	 *
+	 * @since 2.3.0
+	 * @return float
+	 */
+	public function get_non_recurring_total() {
+
+		$subtotal = 0;
+		foreach ( $this->get_items() as $item ) {
+			if ( ! $item->is_recurring() ) {
+				$subtotal += $item->get_sub_total();
+			}
+		}
+
+		foreach ( $this->get_fees() as $fee ) {
+			if ( empty( $fee['recurring_fee'] ) ) {
+				$subtotal += wpinv_sanitize_amount( $fee['initial_fee'] );
+			}
+		}
+
+		$subtotal = wpinv_round_amount( wpinv_sanitize_amount( $subtotal ) );
+        return apply_filters( 'wpinv_get_non_recurring_invoice_total', $subtotal, $this );
+
+    }
+
+	/**
 	 * Get the invoice totals.
 	 *
 	 * @since 1.0.19
