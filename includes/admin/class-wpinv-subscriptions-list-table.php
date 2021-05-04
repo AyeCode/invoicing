@@ -318,7 +318,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @since       1.0.0
 	 * @return      string
 	 */
-	public function generate_item_markup( $item_id ) {
+	public static function generate_item_markup( $item_id ) {
 		$item = get_post( $item_id );
 
 		if ( ! empty( $item ) ) {
