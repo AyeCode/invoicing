@@ -150,6 +150,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
 
         </div>
 
+        <?php echo getpaid_display_invoice_subscriptions( $invoice ); ?>
 
         <?php do_action( 'wpinv_receipt_end', $invoice ); ?>
 
