@@ -67,6 +67,12 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 
             foreach ( $subscriptions as $subscription ) {
                 if ( $subscription->exists() ) {
+                    $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
+                    $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+
+                    $subscription->set_next_renewal_date( $expiry );
+                    $subscription->set_date_created( current_time( 'mysql' ) );
+                    $subscription->set_profile_id( $invoice->generate_key( 'manual_sub_' . $invoice->get_id() . '_' . $subscription->get_id() ) );
                     $subscription->activate();
                 }
             }
@@ -88,7 +94,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	public function maybe_renew_subscription( $should_expire, $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( 'manual' != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
+        if ( $this->id != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
             return $should_expire;
         }
 
