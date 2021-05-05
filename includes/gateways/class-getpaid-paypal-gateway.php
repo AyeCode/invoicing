@@ -53,7 +53,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 * @var string
 	 */
     protected $endpoint;
-    
+
     /**
 	 * Currencies this gateway is allowed for.
 	 *
@@ -350,7 +350,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		);
 
     }
-    
+
     /**
 	 * Processes recurring invoices.
 	 *
@@ -421,7 +421,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			$paypal_args['t3'] = $period;
 
         }
-        
+
         // Recurring payments
 		if ( 1 == $bill_times || ( $initial_amount != $recurring_amount && ! $subscription_item->has_free_trial() && 2 == $bill_times ) ) {
 
@@ -444,10 +444,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 			}
         }
-        
+
         // Force return URL so that order description & instructions display
         $paypal_args['rm'] = 2;
-        
+
         // Get rid of redudant items.
         foreach ( array( 'item_name_1', 'quantity_1', 'amount_1', 'item_number_1' ) as $arg ) {
 
@@ -456,7 +456,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             }
 
         }
-
+wpinv_error_log( $paypal_args );
         return apply_filters(
 			'getpaid_paypal_subscription_args',
 			$paypal_args,
