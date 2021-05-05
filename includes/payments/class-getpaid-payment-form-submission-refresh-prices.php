@@ -90,13 +90,43 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$payable = $submission->format_amount( $submission->get_total() );
 		$groups  = getpaid_get_subscription_groups( $submission );
 
-		if ( $submission->has_recurring != 0 && 2 > $groups ) {
+		if ( $submission->has_recurring && 2 > count( $groups ) ) {
 
 			$recurring = new WPInv_Item( $submission->has_recurring );
 			$period    = getpaid_get_subscription_period_label( $recurring->get_recurring_period( true ), $recurring->get_recurring_interval(), '' );
+			$main_item = reset( $groups );
 
 			if ( $submission->get_total() == $submission->get_recurring_total() ) {
 				$payable = "$payable / $period";
+			} else if ( $main_item ) {
+
+				$main_item = reset( $main_item );
+
+				// Calculate the next renewal date.
+				$_period      = $main_item->get_recurring_period( true );
+				$_interval    = $main_item->get_recurring_interval();
+
+				// If the subscription item has a trial period...
+				if ( $main_item->has_free_trial() ) {
+					$_period   = $main_item->get_trial_period( true );
+					$_interval = $main_item->get_trial_interval();
+				}
+
+				$payable = sprintf(
+					__( '%1$s (renews at %2$s / %3$s)', 'invoicing' ),
+					$submission->format_amount( $submission->get_total() ),
+					$submission->format_amount( $submission->get_recurring_total() ),
+					$period
+				);
+
+				$payable .= sprintf(
+					'<small class="text-muted form-text">%s</small>',
+					sprintf(
+						__( 'First renewal on %s', 'invoicing' ),
+						date_i18n( 'Y-m-d', strtotime( "+$_interval $_period", current_time( 'timestamp' ) ) )
+					)
+				);
+
 			} else {
 				$payable = sprintf(
 					__( '%1$s (renews at %2$s / %3$s)', 'invoicing' ),

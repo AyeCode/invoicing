@@ -133,6 +133,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.0 =
+* Indicate first renewal date if possible - ADDED
+* Add multiple subscriptions support for compatible payment gateways - ADDED
+
 = 2.2.6 =
 * Ability to use payment form fields as email merge tags - ADDED
 * Recurring discounts display payment form fields - FIXED

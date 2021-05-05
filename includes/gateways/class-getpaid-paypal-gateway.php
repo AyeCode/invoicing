@@ -24,7 +24,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'sandbox' );
+    protected $supports = array( 'subscription', 'sandbox', 'single_subscription_group' );
 
     /**
 	 * Payment method order.
@@ -249,7 +249,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		$this->delete_line_items();
 
         $item_name = sprintf( __( 'Invoice #%s', 'invoicing' ), $invoice->get_number() );
-		$this->add_line_item( $item_name, 1, wpinv_sanitize_amount( (float) $invoice->get_total(), 2 ), $invoice->get_id() );
+		$this->add_line_item( $item_name, 1, wpinv_round_amount( (float) $invoice->get_total(), 2, true ), $invoice->get_id() );
 
 		return $this->get_line_items();
     }
@@ -360,7 +360,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	public function process_subscription( $paypal_args, $invoice ) {
 
         // Make sure this is a subscription.
-        if ( ! $invoice->is_recurring() || ! $subscription = wpinv_get_subscription( $invoice ) ) {
+        if ( ! $invoice->is_recurring() || ! $subscription = getpaid_get_invoice_subscription( $invoice ) ) {
             return $paypal_args;
         }
 
