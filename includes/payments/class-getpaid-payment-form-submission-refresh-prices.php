@@ -26,10 +26,11 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function __construct( $submission ) {
 
 		$this->response = array(
-			'submission_id'              => $submission->id,
-            'has_recurring'              => $submission->has_recurring,
-			'has_multiple_subscriptions' => $submission->has_recurring && 1 < count( getpaid_get_subscription_groups( $submission ) ),
-            'is_free'                    => ! $submission->should_collect_payment_details(),
+			'submission_id'                    => $submission->id,
+            'has_recurring'                    => $submission->has_recurring,
+			'has_subscription_group'           => $submission->has_subscription_group(),
+			'has_multiple_subscription_groups' => $submission->has_multiple_subscription_groups(),
+            'is_free'                          => ! $submission->should_collect_payment_details(),
 		);
 
 		$this->add_totals( $submission );
@@ -224,7 +225,10 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 			foreach ( $gateways as $i => $gateway ) {
 
-				if ( ! getpaid_payment_gateway_supports( $gateway, 'subscription' ) || ( $this->response['has_multiple_subscriptions'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscriptions' ) ) ) {
+				if (
+					! getpaid_payment_gateway_supports( $gateway, 'subscription' )
+					|| ( $this->response['has_subscription_group'] && ! getpaid_payment_gateway_supports( $gateway, 'single_subscription_group' ) )
+					|| ( $this->response['has_multiple_subscription_groups'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscription_groups' ) ) ) {
 					unset( $gateways[ $i ] );
 				}
 

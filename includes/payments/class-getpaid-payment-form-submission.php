@@ -89,14 +89,6 @@ class GetPaid_Payment_Form_Submission {
 	public $has_recurring = 0;
 
 	/**
-	 * The subscription groups. If more than 2, ensure the gateway
-	 * supports multiple subscriptions.
-	 *
-	 * @var array
-	 */
-	public $subscription_groups = array();
-
-	/**
 	 * An array of fees for the submission.
 	 *
 	 * @var array
@@ -384,7 +376,6 @@ class GetPaid_Payment_Form_Submission {
 		$this->totals['subtotal']['initial']   += $item->get_sub_total();
 		$this->totals['subtotal']['recurring'] += $item->get_recurring_sub_total();
 
-		$this->subscription_groups = getpaid_calculate_subscription_totals( $this );
 	}
 
 	/**
@@ -446,6 +437,26 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function get_items() {
 		return $this->items;
+	}
+
+	/**
+	 * Checks if there's a single subscription group in the submission.
+	 *
+	 * @since 2.3.0
+	 * @return bool
+	 */
+	public function has_subscription_group() {
+		return $this->has_recurring && getpaid_should_group_subscriptions( $this ) && 1 == count( getpaid_get_subscription_groups( $this ) );
+	}
+
+	/**
+	 * Checks if there are multipe subscription groups in the submission.
+	 *
+	 * @since 2.3.0
+	 * @return bool
+	 */
+	public function has_multiple_subscription_groups() {
+		return $this->has_recurring && 1 < count( getpaid_get_subscription_groups( $this ) );
 	}
 
 	/*

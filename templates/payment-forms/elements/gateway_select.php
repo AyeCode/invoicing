@@ -91,11 +91,22 @@ if ( ! empty( $form->invoice ) ) {
             ?>
         </div>
 
-        <div class="getpaid-no-multiple-recurring-gateways d-none">
+        <div class="getpaid-no-subscription-group-gateways d-none">
             <?php
                 echo aui()->alert(
                     array(
                         'content'     => __( 'None of the available payment gateways support purchasing multiple subscriptions in a single order.', 'invoicing' ),
+                        'type'        => 'danger',
+                    )
+                );
+            ?>
+        </div>
+
+        <div class="getpaid-no-multiple-subscription-group-gateways d-none">
+            <?php
+                echo aui()->alert(
+                    array(
+                        'content'     => __( 'None of the available payment gateways support purchasing multiple subscriptions with different billing schedules in a single order.', 'invoicing' ),
                         'type'        => 'danger',
                     )
                 );
