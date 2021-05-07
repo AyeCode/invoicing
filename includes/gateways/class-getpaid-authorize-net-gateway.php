@@ -251,7 +251,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 array(
                     'id'      => $response->customerPaymentProfileId,
                     'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
-                    'default' => true
+                    'default' => true,
+                    'type'    => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
                 )
             );
         }

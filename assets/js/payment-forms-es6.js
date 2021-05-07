@@ -184,6 +184,8 @@ jQuery(function($) {
                     this.form.data( 'getpaid_js_data', state.js_data )
                 }
 
+                this.setup_saved_payment_tokens()
+
                 this.form.trigger( 'getpaid_payment_form_changed_state', [state] );
 
             },
@@ -454,35 +456,54 @@ jQuery(function($) {
             setup_saved_payment_tokens() {
 
                 // For each saved payment tokens list
+                var currency = this.form.data('currency')
                 this.form.find( '.getpaid-saved-payment-methods' ).each( function() {
 
-                var list = $( this )
+                    var list = $( this )
 
-                // When the payment method changes...
-                $( 'input', list ).on( 'change', function() {
+                    list.show()
+
+                    // When the payment method changes...
+                    $( 'input', list ).on( 'change', function() {
+        
+                        if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
+                            list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideDown();
+                        } else {
+                            list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideUp();
+                        }
+
+                    })
+
+                    // Hide unsupported methods.
+                    list.find( 'input' ).each( function() {
     
-                    if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
-                        list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideDown();
-                    } else {
-                        list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideUp();
+                        if ( 'none' != $( this ).data('currency') && currency != $( this ).data('currency')  ) {
+                            $( this ).closest( 'li' ).addClass( 'd-none' )
+                            $( this ).prop( 'checked', false );
+                        } else {
+                            $( this ).closest( 'li' ).removeClass( 'd-none' )
+                        }
+
+                    })
+
+                    // If non is selected, select first.
+                    if ( 0 === $( 'li:not(.d-none) input', list ).filter(':checked').length ) {
+                        $( 'li:not(.d-none) input', list ).eq(0).prop( 'checked', true );
                     }
 
+                    if ( 0 === $( 'li:not(.d-none) input', list ).filter(':checked').length ) {
+                        $( 'input', list ).last().prop( 'checked', true );
+                    }
+
+                    // Hide the list if there are no saved payment methods.
+                    if ( 2 > $( 'li:not(.d-none) input', list ).length ) {
+                        list.hide()
+                    }
+
+                    // Trigger change event for selected method.
+                    $( 'input', list ).filter( ':checked' ).trigger( 'change' );
+
                 })
-
-                // Hide the list if there are no saved payment methods.
-                if ( list.data( 'count' ) == '0' ) {
-                    list.hide()
-                }
-
-                // If non is selected, select first.
-                if ( 0 === $( 'input', list ).filter(':checked').length ) {
-                    $( 'input', list ).eq(0).prop( 'checked', true );
-                }
-
-                // Trigger change event for selected method.
-                $( 'input', list ).filter( ':checked' ).trigger( 'change' );
-
-            })
 
             },
 
