@@ -836,7 +836,7 @@ class WPInv_Subscription extends GetPaid_Data {
      * @return int
      */
     public function get_total_payments() {
-		return getpaid_count_subscription_invoices( $this->get_parent_invoice_id() );
+		return getpaid_count_subscription_invoices( $this->get_parent_invoice_id(), $this->get_id() );
     }
 
     /**

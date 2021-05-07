@@ -631,17 +631,44 @@ function getpaid_should_group_subscriptions( $invoice ) {
  * Counts the invoices belonging to a subscription.
  *
  * @param int $parent_invoice_id
+ * @param int|false $subscription_id
  * @return int
  */
-function getpaid_count_subscription_invoices( $parent_invoice_id ) {
+function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_id = false ) {
 	global $wpdb;
 
-	return (int) $wpdb->get_var(
+	$parent_invoice_id = (int) $parent_invoice_id;
+
+	if ( false === $subscription_id || ! (bool) get_post_meta( $parent_invoice_id, '_wpinv_subscription_id', true ) ) {
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+				$parent_invoice_id,
+				$parent_invoice_id
+			)
+		);
+
+	}
+	
+	$invoice_ids = $wpdb->get_col(
 		$wpdb->prepare(
-			"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+			"SELECT ID FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
 			$parent_invoice_id,
 			$parent_invoice_id
 		)
 	);
 
+	$count = 0;
+
+	foreach ( wp_parse_id_list( $invoice_ids ) as $invoice_id ) {
+
+		if ( $invoice_id == $parent_invoice_id || $subscription_id == (int) get_post_meta( $invoice_id, '_wpinv_subscription_id', true ) ) {
+			$count ++;
+			continue;
+		}
+
+	}
+
+	return $count;
 }
