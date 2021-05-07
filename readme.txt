@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.3.0 =
 * Indicate first renewal date if possible - ADDED
 * Add multiple subscriptions support for compatible payment gateways - ADDED
+* Unable to set decimal quantities when editing an invoice item - FIXED
 
 = 2.2.6 =
 * Ability to use payment form fields as email merge tags - ADDED

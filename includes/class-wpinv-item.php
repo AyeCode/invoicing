@@ -606,7 +606,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_edit_url() {
-        return get_edit_post_link( $this->get_id() );
+        return get_edit_post_link( $this->get_id(), 'edit' );
 	}
 
 	/**

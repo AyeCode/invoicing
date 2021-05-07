@@ -530,7 +530,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
                 'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
                 'description' => getpaid_limit_length( $item->get_description(), 255 ),
-                'quantity'    => (string) $invoice->get_template() == 'amount' ? 1 : $item->get_quantity(),
+                'quantity'    => (string) ( $invoice->get_template() == 'amount' ? 1 : $item->get_quantity() ),
                 'unitPrice'   => (float) $amount,
                 'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
             );

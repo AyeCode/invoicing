@@ -641,10 +641,10 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 												$item_name = get_the_title( $subscription_group_item['item_id'] );
 												$item_name = empty( $item_name ) ? $subscription_group_item['item_name'] : $item_name;
 
-												if ( $invoice->get_template() == 'amount' || 1 === (int) $subscription_group_item['quantity'] ) {
+												if ( $invoice->get_template() == 'amount' || 1 == (float) $subscription_group_item['quantity'] ) {
 													echo sanitize_text_field( $item_name );
 												} else {
-													printf( '%1$s x %2$d', sanitize_text_field( $item_name ), (int) $subscription_group_item['quantity'] );
+													printf( '%1$s x %2$d', sanitize_text_field( $item_name ), (float) $subscription_group_item['quantity'] );
 												}
 
 												break;

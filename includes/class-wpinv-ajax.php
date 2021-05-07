@@ -516,7 +516,7 @@ class WPInv_Ajax {
         $item->set_price( floatval( $data['price'] ) );
         $item->set_name( sanitize_text_field( $data['name'] ) );
         $item->set_description( wp_kses_post( $data['description'] ) );
-        $item->set_quantity( intval( $data['quantity'] ) );
+        $item->set_quantity( floatval( $data['quantity'] ) );
 
         // Add it to the invoice.
         $error = $invoice->add_item( $item );

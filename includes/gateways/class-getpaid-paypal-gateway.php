@@ -155,7 +155,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	protected function get_paypal_args( $invoice ) {
 
         // Whether or not to send the line items as one item.
-		$force_one_line_item = apply_filters( 'getpaid_paypal_force_one_line_item', false, $invoice );
+		$force_one_line_item = apply_filters( 'getpaid_paypal_force_one_line_item', true, $invoice );
 
 		if ( $invoice->is_recurring() || ( wpinv_use_taxes() && wpinv_prices_include_tax() ) ) {
 			$force_one_line_item = true;
@@ -294,7 +294,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 * Add PayPal Line Item.
 	 *
 	 * @param  string $item_name Item name.
-	 * @param  int    $quantity Item quantity.
+	 * @param  float    $quantity Item quantity.
 	 * @param  float  $amount Amount.
 	 * @param  string $item_number Item number.
 	 */
@@ -319,7 +319,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $this->line_items[ 'quantity_' . $index ]    = $item['quantity'];
 
         // The price or amount of the product, service, or contribution, not including shipping, handling, or tax.
-		$this->line_items[ 'amount_' . $index ]      = $item['amount'];
+		$this->line_items[ 'amount_' . $index ]      = $item['amount'] * $item['quantity'];
 		$this->line_items[ 'item_number_' . $index ] = getpaid_limit_length( $item['item_number'], 127 );
     }
 
@@ -456,7 +456,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             }
 
         }
-wpinv_error_log( $paypal_args );
+
         return apply_filters(
 			'getpaid_paypal_subscription_args',
 			$paypal_args,

@@ -405,7 +405,7 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
  * Returns an invoice subscription.
  *
  * @param WPInv_Invoice $invoice
- * @return WPInv_Subscription|bool
+ * @return WPInv_Subscription|false
  */
 function getpaid_get_invoice_subscription( $invoice ) {
 	return getpaid_subscriptions()->get_invoice_subscription( $invoice );

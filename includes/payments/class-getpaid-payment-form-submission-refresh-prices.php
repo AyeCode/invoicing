@@ -123,7 +123,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					'<small class="text-muted form-text">%s</small>',
 					sprintf(
 						__( 'First renewal on %s', 'invoicing' ),
-						date_i18n( 'Y-m-d', strtotime( "+$_interval $_period", current_time( 'timestamp' ) ) )
+						getpaid_format_date( date( 'Y-m-d H:i:s', strtotime( "+$_interval $_period", current_time( 'timestamp' ) ) ) )
 					)
 				);
 

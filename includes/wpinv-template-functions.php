@@ -1113,6 +1113,11 @@ add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
  */
 function wpinv_filter_success_page_content( $content ) {
 
+    // Maybe abort early.
+    if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_preview() ) {
+        return $content;
+    }
+
     // Ensure this is our page.
     if ( isset( $_GET['payment-confirm'] ) && wpinv_is_success_page() ) {
 
