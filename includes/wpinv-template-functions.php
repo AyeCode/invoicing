@@ -895,8 +895,10 @@ function getpaid_display_invoice_subscriptions( $invoice ) {
         getpaid_admin_subscription_related_subscriptions_metabox( $main_subscription, false );
     }
 
-    printf( '<h2 class="mt-5 mb-1 h4">%s</h2>', esc_html__( 'Related Invoices', 'invoicing' ) );
-    getpaid_admin_subscription_invoice_details_metabox( $main_subscription, false );
+    if ( $main_subscription->get_total_payments() > 1 ) {
+        printf( '<h2 class="mt-5 mb-1 h4">%s</h2>', esc_html__( 'Related Invoices', 'invoicing' ) );
+        getpaid_admin_subscription_invoice_details_metabox( $main_subscription, false );
+    }
 
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_display_invoice_subscriptions', 15 );

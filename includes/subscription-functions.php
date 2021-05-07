@@ -622,3 +622,22 @@ function getpaid_should_group_subscriptions( $invoice ) {
 
 	return apply_filters( 'getpaid_should_group_subscriptions', $recurring_items > 1, $invoice );
 }
+
+/**
+ * Counts the invoices belonging to a subscription.
+ *
+ * @param int $parent_invoice_id
+ * @return int
+ */
+function getpaid_count_subscription_invoices( $parent_invoice_id ) {
+	global $wpdb;
+
+	return (int) $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+			$parent_invoice_id,
+			$parent_invoice_id
+		)
+	);
+
+}

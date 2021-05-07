@@ -836,21 +836,7 @@ class WPInv_Subscription extends GetPaid_Data {
      * @return int
      */
     public function get_total_payments() {
-		global $wpdb;
-
-		$count = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(ID) FROM $wpdb->posts WHERE post_parent=%d AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
-				$this->get_parent_invoice_id()
-			)
-		);
-
-		// Maybe include parent invoice.
-        if ( $this->get_parent_payment()->is_paid() ) {
-            $count++;
-        }
-
-        return $count;
+		return getpaid_count_subscription_invoices( $this->get_parent_invoice_id() );
     }
 
     /**
@@ -941,6 +927,8 @@ class WPInv_Subscription extends GetPaid_Data {
 		// Duplicate the parent invoice.
 		$invoice = getpaid_duplicate_invoice( $parent_invoice );
 		$invoice->set_parent_id( $parent_invoice->get_id() );
+		$invoice->set_subscription_id( $this->get_id() );
+		$invoice->set_remote_subscription_id( $this->get_profile_id() );
 
 		// Set invoice items.
 		$subscription_group = getpaid_get_invoice_subscription_group( $parent_invoice->get_id(), $this->get_id() );

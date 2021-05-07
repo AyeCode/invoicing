@@ -48,7 +48,7 @@ if ( $invoice->is_paid() ) {
 
 } else if ( $invoice->needs_payment() ) {
 
-    if ( $invoice->is_due() ) {
+    if ( ! empty( $_GET['token'] ) ) {
 
         $alert = aui()->alert(
             array(

@@ -134,7 +134,10 @@ class GetPaid_Metaboxes {
 					add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', $post_type, 'advanced' );
 				}
 
-				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
+				if ( getpaid_count_subscription_invoices( $invoice->is_renewal() ? $invoice->get_parent_id() : $invoice->get_id() ) > 1 ) {
+					add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
+				}
+
 			}
 
 			// Invoice details.
