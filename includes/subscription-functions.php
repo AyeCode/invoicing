@@ -62,7 +62,11 @@ function getpaid_get_invoice_subscription_group( $invoice_id, $subscription_id )
  * @return WPInv_Subscription|false
  */
 function getpaid_get_subscription( $subscription ) {
-	$subscription = new WPInv_Subscription( $subscription );
+
+	if ( ! is_a( $subscription, 'WPInv_Subscription' ) ) {
+		$subscription = new WPInv_Subscription( $subscription );
+	}
+
 	return $subscription->exists() ? $subscription : false;
 }
 
