@@ -301,7 +301,7 @@ function getpaid_save_address_edit_tab( $data ) {
             update_user_meta( get_current_user_id(), '_wpinv_' . $field, $value );
         }
 
-        wpinv_set_error( 'address_updated', __( 'You billing address has been updated', 'invoicing' ), 'success');
+        wpinv_set_error( 'address_updated', __( 'Your billing address has been updated', 'invoicing' ), 'success');
     }
 
 }

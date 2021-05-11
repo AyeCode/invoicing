@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '9c927243c25ee910689e3996f51ee54ad348da50',
+    'reference' => '18efaac45c9478c4666486cdad54cd55d374607a',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -27,16 +27,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '9c927243c25ee910689e3996f51ee54ad348da50',
+      'reference' => '18efaac45c9478c4666486cdad54cd55d374607a',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
-      'pretty_version' => '0.1.46',
-      'version' => '0.1.46.0',
+      'pretty_version' => '0.1.47',
+      'version' => '0.1.47.0',
       'aliases' => 
       array (
       ),
-      'reference' => '8b9825d9fe52f6da57302358df1a920eec3bace3',
+      'reference' => '4bb5b0c46c494155ba402c379dc7a50cfb7b707e',
     ),
     'ayecode/wp-font-awesome-settings' => 
     array (
@@ -49,21 +49,21 @@
     ),
     'ayecode/wp-super-duper' => 
     array (
-      'pretty_version' => '1.0.24',
-      'version' => '1.0.24.0',
+      'pretty_version' => '1.0.25',
+      'version' => '1.0.25.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4eaa2f6f6e1a29ff71f7fdbd694892d7479ef754',
+      'reference' => '046b2b3ee8f765322bf74725554aa777b6e4979b',
     ),
     'composer/installers' => 
     array (
-      'pretty_version' => 'v1.10.0',
-      'version' => '1.10.0.0',
+      'pretty_version' => 'v1.11.0',
+      'version' => '1.11.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '1a0357fccad9d1cc1ea0c9a05b8847fbccccb78d',
+      'reference' => 'ae03311f45dfe194412081526be2e003960df74b',
     ),
     'maxmind-db/reader' => 
     array (

@@ -41,7 +41,7 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
         <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 
     </head>
-    
+
 
     <body class="body wpinv wpinv-print" style="font-weight: 400;">
 
