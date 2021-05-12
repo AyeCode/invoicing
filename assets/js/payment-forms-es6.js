@@ -465,7 +465,7 @@ jQuery(function($) {
 
                     // When the payment method changes...
                     $( 'input', list ).on( 'change', function() {
-        
+
                         if ( $( this ).closest( 'li' ).hasClass( 'getpaid-new-payment-method' ) ) {
                             list.closest( '.getpaid-gateway-description' ).find( '.getpaid-new-payment-method-form' ).slideDown();
                         } else {
@@ -476,7 +476,7 @@ jQuery(function($) {
 
                     // Hide unsupported methods.
                     list.find( 'input' ).each( function() {
-    
+
                         if ( 'none' != $( this ).data('currency') && currency != $( this ).data('currency')  ) {
                             $( this ).closest( 'li' ).addClass( 'd-none' )
                             $( this ).prop( 'checked', false );
@@ -569,7 +569,7 @@ jQuery(function($) {
     /**
      * Set's up a payment form for use.
      *
-     * @param {string} form 
+     * @param {string} form
      * @TODO Move this into the above class.
      */
     var setup_form = function( form ) {
@@ -597,7 +597,7 @@ jQuery(function($) {
 
             // Display selected items.
             $( selected_items ).each( function( index, item_id ) {
-        
+
                 if ( item_id ) {
                     var item = form.find('.getpaid-payment-form-items-cart-item.item-' + item_id )
                     item.find('.getpaid-item-price-input').attr( 'name', 'getpaid-items[' + item_id + '][price]' )
@@ -750,7 +750,13 @@ jQuery(function($) {
 
                         form.find('.getpaid-payment-form-errors').html(res.data).removeClass('d-none')
                         form.find('.getpaid-payment-form-remove-on-error').remove()
-        
+
+                        // Maybe set invoice.
+                        if ( res.invoice && form.find( 'input[name="invoice_id"]' ).length == 0 ) {
+                            form.append('<input type="hidden" name="invoice_id" />')
+                            form.find( 'input[name="invoice_id"]' ).val(res.invoice)
+                        }
+
                     } )
 
                     .fail( function( res ) {

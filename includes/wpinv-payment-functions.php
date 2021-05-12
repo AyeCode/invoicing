@@ -230,15 +230,21 @@ function getpaid_get_card_name( $card_number ) {
  * @param WPInv_Invoice|int|null $invoice
  */
 function wpinv_send_back_to_checkout( $invoice = null ) {
+    $response = array( 'success' => false );
+    $invoice  = wpinv_get_invoice( $invoice );
 
+    // Was an invoice created?
     if ( ! empty( $invoice ) ) {
+        $response['invoice'] = $invoice->get_id();
         do_action( 'getpaid_checkout_invoice_exception', $invoice );
     }
 
 	// Do we have any errors?
     if ( wpinv_get_errors() ) {
-        wp_send_json_error( getpaid_get_errors_html( true, false ) );
+        $response['data'] = getpaid_get_errors_html( true, false );
+    } else {
+        $response['data'] = __( 'An error occured while processing your payment. Please try again.', 'invoicing' );
     }
 
-    wp_send_json_error( __( 'An error occured while processing your payment. Please try again.', 'invoicing' ) );
+    wp_send_json( $response );
 }

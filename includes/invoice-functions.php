@@ -398,10 +398,12 @@ function wpinv_get_invoice( $invoice = 0, $deprecated = false ) {
     }
 
     // Retrieve the invoice.
-    $invoice = new WPInv_Invoice( $invoice );
+    if ( ! is_a( $invoice, 'WPInv_Invoice' ) ) {
+        $invoice = new WPInv_Invoice( $invoice );
+    }
 
     // Check if it exists.
-    if ( $invoice->get_id() != 0 ) {
+    if ( $invoice->exists() ) {
         return $invoice;
     }
 
