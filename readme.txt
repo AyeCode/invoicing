@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.2.5 =
 * Exclude invoice notes from comment counts - CHANGED
 * Display item tax rates on invoices - ADDED
+* Change the address format for userswp account page - CHANGED
 
 = 2.2.4 =
 * Authorize.NET improvements - ADDED

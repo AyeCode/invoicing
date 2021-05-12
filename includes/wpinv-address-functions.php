@@ -132,11 +132,11 @@ function getpaid_user_address_fields() {
         array(
             'first_name' => __( 'First Name', 'invoicing' ),
             'last_name'  => __( 'Last Name', 'invoicing' ),
+            'address'    => __( 'Address', 'invoicing' ),
+            'city'       => __( 'City', 'invoicing' ),
             'country'    => __( 'Country', 'invoicing' ),
             'state'      => __( 'State', 'invoicing' ),
-            'city'       => __( 'City', 'invoicing' ),
             'zip'        => __( 'Zip/Postal Code', 'invoicing' ),
-            'address'    => __( 'Address', 'invoicing' ),
             'phone'      => __( 'Phone Number', 'invoicing' ),
             'company'    => __( 'Company', 'invoicing' ),
             'vat_number' => __( 'VAT Number', 'invoicing' ),
