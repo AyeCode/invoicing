@@ -99,7 +99,7 @@ class GetPaid_Daily_Maintenance {
 	 *
 	 */
 	public function log_cron_run() {
-		wpinv_error_log( 'GetPaid Daily Cron' );
+		wpinv_error_log( 'GetPaid Daily Cron', false );
 	}
 
 	/**

@@ -56,6 +56,11 @@ defined( 'ABSPATH' ) || exit;
                     echo "&mdash;";
                 }
 
+                // Item tax.
+                if ( 'tax_rate' == $column ) {
+                    echo "&mdash;";
+                }
+
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
                     if ( $invoice->is_recurring() && $invoice->is_renewal() ) {

@@ -172,7 +172,7 @@ function getpaid_save_invoice_user_address( $invoice ) {
     $invoice = wpinv_get_invoice( $invoice );
 
     // Abort if it does not exist.
-    if ( empty( $invoice ) ) {
+    if ( empty( $invoice ) || $invoice->is_renewal() ) {
         return;
     }
 
@@ -191,8 +191,7 @@ function getpaid_save_invoice_user_address( $invoice ) {
     }
 
 }
-add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
-add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
+add_action( 'getpaid_checkout_invoice_updated', 'getpaid_save_invoice_user_address' );
 
 /**
  * Retrieves a saved user address.

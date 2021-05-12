@@ -535,12 +535,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_recurring_interval( $context = 'view' ) {
 		$interval = absint( $this->get_prop( 'recurring_interval', $context ) );
-
-		if ( $interval < 1 ) {
-			$interval = 1;
-		}
-
-        return $interval;
+		return max( 1, $interval );
     }
 
     /**
@@ -611,7 +606,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_edit_url() {
-        return get_edit_post_link( $this->get_id() );
+        return get_edit_post_link( $this->get_id(), 'edit' );
 	}
 
 	/**

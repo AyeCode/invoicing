@@ -351,7 +351,9 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	public function get_single_subscription_columns( $subscription ) {
 
 		// Prepare subscription detail columns.
-		$fields = apply_filters(
+		$subscription_group = getpaid_get_invoice_subscription_group( $subscription->get_parent_invoice_id(), $subscription->get_id() );
+		$items_count        = empty( $subscription_group ) ? 1 : count( $subscription_group['items'] );
+		$fields             = apply_filters(
 			'getpaid_single_subscription_details_fields',
 			array(
 				'status'           => __( 'Status', 'invoicing' ),
@@ -360,13 +362,25 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				'start_date'       => __( 'Start date', 'invoicing' ),
 				'expiry_date'      => __( 'Next payment', 'invoicing' ),
 				'payments'         => __( 'Payments', 'invoicing' ),
-				'item'             => __( 'Item', 'invoicing' ),
+				'item'             => _n( 'Item', 'Items', $items_count, 'invoicing' ),
 			),
 			$subscription
 		);
 
-		if ( ! $subscription->is_active() || $subscription->is_last_renewal() ) {
-			$fields['expiry_date'] = __( 'End date', 'invoicing' );
+		if ( isset( $fields['expiry_date'] ) ) {
+
+			if ( ! $subscription->is_active() || $subscription->is_last_renewal() ) {
+				$fields['expiry_date'] = __( 'End date', 'invoicing' );
+			}
+
+			if ( 'pending' == $subscription->get_status() ) {
+				unset( $fields['expiry_date'] );
+			}
+
+		}
+
+		if ( isset( $fields['start_date'] ) && 'pending' == $subscription->get_status() ) {
+			unset( $fields['start_date'] );
 		}
 
 		if ( $subscription->get_initial_amount() == $subscription->get_recurring_amount() ) {
@@ -388,7 +402,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		// Fetch the subscription.
 		$subscription = new WPInv_Subscription( (int) $subscription );
 
-		if ( ! $subscription->get_id() ) {
+		if ( ! $subscription->exists() ) {
 
 			return aui()->alert(
 				array(
@@ -400,7 +414,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		}
 
 		// Ensure that the user owns this subscription key.
-		if ( get_current_user_id() != $subscription->get_customer_id() && current_user_can( 'edit_options' ) ) {
+		if ( get_current_user_id() != $subscription->get_customer_id() && ! wpinv_current_user_can_manage_invoicing() ) {
 
 			return aui()->alert(
 				array(

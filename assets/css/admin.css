@@ -1064,19 +1064,20 @@ textarea.wpi-email_overdue_content {
 }
 
 #poststuff #getpaid_admin_subscription_invoice_details_metabox .inside,
+#poststuff #getpaid_admin_subscription_item_details_metabox .inside,
+#poststuff #getpaid_admin_subscription_related_subscriptions_metabox .inside,
 #poststuff #wpinv-mb-subscription-invoices .inside {
     margin: 0;
     padding: 0;
 }
 
 #getpaid_admin_subscription_invoice_details_metabox table thead th:first-child,
-#getpaid_admin_subscription_invoice_details_metabox table tbody td:first-child {
+#getpaid_admin_subscription_invoice_details_metabox table tbody td:first-child,
+#getpaid_admin_subscription_item_details_metabox table thead th:first-child,
+#getpaid_admin_subscription_item_details_metabox table tbody td:first-child,
+#getpaid_admin_subscription_item_details_metabox table thead th:first-child,
+#getpaid_admin_subscription_item_details_metabox table tbody td:first-child {
     padding-left: .75rem !important;
-}
-
-#getpaid_admin_subscription_invoice_details_metabox table thead th:last-child,
-#getpaid_admin_subscription_invoice_details_metabox table tbody td:last-child {
-    text-align: right;
 }
 
 .wpi-mcheck-rows .wpi-mcheck-row {

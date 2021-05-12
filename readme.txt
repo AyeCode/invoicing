@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.2.4
+Stable tag: 2.3.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -133,7 +133,19 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.0 =
+* Indicate first renewal date if possible - ADDED
+* Add multiple subscriptions support for compatible payment gateways - ADDED
+* Unable to set decimal quantities when editing an invoice item - FIXED
+
+= 2.2.6 =
+* Ability to use payment form fields as email merge tags - ADDED
+* Recurring discounts display payment form fields - FIXED
+* Tax rates per state are now filtered case-insensitively - CHANGED
+
 = 2.2.5 =
+* Exclude invoice notes from comment counts - CHANGED
+* Display item tax rates on invoices - ADDED
 * Change the address format for userswp account page - CHANGED
 
 = 2.2.4 =

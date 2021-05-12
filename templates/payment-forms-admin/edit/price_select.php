@@ -56,3 +56,15 @@ defined( 'ABSPATH' ) || exit;
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
     </label>
 </div>
+
+<hr class='featurette-divider mt-4'>
+
+<div class='form-group'>
+    <label class="d-block">
+        <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
+        <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
+        <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>
+    </label>
+</div>
+
+<hr class='featurette-divider mt-4'>

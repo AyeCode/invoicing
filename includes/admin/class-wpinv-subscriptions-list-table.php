@@ -275,7 +275,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @since       1.0.19
 	 * @return      string
 	 */
-	public function column_amount( $item ) {
+	public static function column_amount( $item ) {
 		$amount = getpaid_get_formatted_subscription_amount( $item );
 		return "<span class='text-muted form-text mt-2 mb-2'>$amount</span>";
 	}
@@ -300,15 +300,34 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_item( $item ) {
-		$_item = get_post( $item->get_product_id() );
+		$subscription_group = getpaid_get_invoice_subscription_group( $item->get_parent_invoice_id(), $item->get_id() );
 
-		if ( ! empty( $_item ) ) {
-			$link = get_edit_post_link( $_item );
+		if ( empty( $subscription_group ) ) {
+			return $this->generate_item_markup( $item->get_product_id() );
+		}
+
+		$markup = array_map( array( $this, 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
+		return implode( ' | ', $markup );
+
+	}
+
+	/**
+	 * Generates the items markup.
+	 *
+	 * @param int $item_id
+	 * @since       1.0.0
+	 * @return      string
+	 */
+	public static function generate_item_markup( $item_id ) {
+		$item = get_post( $item_id );
+
+		if ( ! empty( $item ) ) {
+			$link = get_edit_post_link( $item );
 			$link = esc_url( $link );
-			$name = esc_html( get_the_title( $_item ) );
-			return "<a href='$link'>$name</a>";
+			$name = esc_html( get_the_title( $item ) );
+			return wpinv_current_user_can_manage_invoicing() ? "<a href='$link'>$name</a>" : $name;
 		} else {
-			return sprintf( __( 'Item #%s', 'invoicing' ), $item->get_product_id() );
+			return sprintf( __( 'Item #%s', 'invoicing' ), $item_id );
 		}
 
 	}
@@ -355,7 +374,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			'start_date'        => __( 'Start Date', 'invoicing' ),
 			'renewal_date'      => __( 'Next Payment', 'invoicing' ),
 			'renewals'          => __( 'Payments', 'invoicing' ),
-			'item'              => __( 'Item', 'invoicing' ),
+			'item'              => __( 'Items', 'invoicing' ),
 			'status'            => __( 'Status', 'invoicing' ),
 		);
 

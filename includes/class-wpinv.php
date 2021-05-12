@@ -36,7 +36,7 @@ class WPInv_Plugin {
 	public $form_elements;
 
 	/**
-	 * @param array An array of payment gateways.
+	 * @var array An array of payment gateways.
 	 */
 	public $gateways;
 

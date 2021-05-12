@@ -193,7 +193,7 @@ function getpaid_calculate_invoice_discount( $invoice, $discount ) {
 		}
 
 		$initial_discount             += $item_discount;
-		$recurring_discount           += $recurring_discount;
+		$recurring_discount           += $recurring_item_discount;
 		$item->item_discount           = $item_discount;
 		$item->recurring_item_discount = $recurring_item_discount;
 

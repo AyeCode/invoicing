@@ -125,10 +125,19 @@ class GetPaid_Metaboxes {
 			}
 
 			// Subscriptions.
-			$subscription = getpaid_get_invoice_subscription( $invoice );
-			if ( ! empty( $subscription ) ) {
-				add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', $post_type, 'advanced' );
-				add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
+			$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+			if ( ! empty( $subscriptions ) ) {
+
+				if ( is_array( $subscriptions ) ) {
+					add_meta_box( 'wpinv-mb-subscriptions', __( 'Related Subscriptions', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_related', $post_type, 'advanced' );
+				} else {
+					add_meta_box( 'wpinv-mb-subscriptions', __( 'Subscription Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output', $post_type, 'advanced' );
+				}
+
+				if ( getpaid_count_subscription_invoices( $invoice->is_renewal() ? $invoice->get_parent_id() : $invoice->get_id() ) > 1 ) {
+					add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
+				}
+
 			}
 
 			// Invoice details.

@@ -139,8 +139,8 @@ class GetPaid_Tax {
 
 		foreach ( $matching_rates as $i => $rate ) {
 
-			$states = array_filter( wpinv_clean( explode( ',', $rate['state'] ) ) );
-			if ( empty( $rate['global'] ) && ! in_array( $state, $states ) ) {
+			$states = array_filter( wpinv_clean( explode( ',', strtolower( $rate['state'] ) ) ) );
+			if ( empty( $rate['global'] ) && ! in_array( strtolower( $state ), $states ) ) {
 				unset( $matching_rates[ $i ] );
 			}
 

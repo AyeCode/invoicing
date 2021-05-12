@@ -21,6 +21,13 @@ class WPInv_Notes {
 		add_action( 'pre_get_comments', array( $this, 'set_invoice_note_type' ), 11, 1 );
 		add_action( 'comment_feed_where', array( $this, 'wpinv_comment_feed_where' ), 10, 1 );
 
+		// Delete comments count cache whenever there is a new comment or a comment status changes.
+		add_action( 'wp_insert_comment', array( $this, 'delete_comments_count_cache' ) );
+		add_action( 'wp_set_comment_status', array( $this, 'delete_comments_count_cache' ) );
+
+		// Count comments.
+		add_filter( 'wp_count_comments', array( $this, 'wp_count_comments' ), 100, 2 );
+
 		// Fires after notes are loaded.
 		do_action( 'wpinv_notes_init', $this );
 	}
@@ -53,6 +60,82 @@ class WPInv_Notes {
 	 */
 	function wpinv_comment_feed_where( $where ){
 		return $where . ( $where ? ' AND ' : '' ) . " comment_type != 'wpinv_note' ";
+	}
+
+	/**
+	 * Delete comments count cache whenever there is
+	 * new comment or the status of a comment changes. Cache
+	 * will be regenerated next time WPInv_Notes::wp_count_comments()
+	 * is called.
+	 */
+	public function delete_comments_count_cache() {
+		delete_transient( 'getpaid_count_comments' );
+	}
+
+	/**
+	 * Remove invoice notes from wp_count_comments().
+	 *
+	 * @since  2.2
+	 * @param  object $stats   Comment stats.
+	 * @param  int    $post_id Post ID.
+	 * @return object
+	 */
+	public function wp_count_comments( $stats, $post_id ) {
+		global $wpdb;
+
+		if ( empty( $post_id ) ) {
+			$stats = get_transient( 'getpaid_count_comments' );
+
+			if ( ! $stats ) {
+				$stats = array(
+					'total_comments' => 0,
+					'all'            => 0,
+				);
+
+				$count = $wpdb->get_results(
+					"
+					SELECT comment_approved, COUNT(*) AS num_comments
+					FROM {$wpdb->comments}
+					WHERE comment_type NOT IN ('action_log', 'order_note', 'webhook_delivery', 'wpinv_note')
+					GROUP BY comment_approved
+					",
+					ARRAY_A
+				);
+
+				$approved = array(
+					'0'            => 'moderated',
+					'1'            => 'approved',
+					'spam'         => 'spam',
+					'trash'        => 'trash',
+					'post-trashed' => 'post-trashed',
+				);
+
+				foreach ( (array) $count as $row ) {
+					// Don't count post-trashed toward totals.
+					if ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash', 'spam' ), true ) ) {
+						$stats['all']            += $row['num_comments'];
+						$stats['total_comments'] += $row['num_comments'];
+					} elseif ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash' ), true ) ) {
+						$stats['total_comments'] += $row['num_comments'];
+					}
+					if ( isset( $approved[ $row['comment_approved'] ] ) ) {
+						$stats[ $approved[ $row['comment_approved'] ] ] = $row['num_comments'];
+					}
+				}
+
+				foreach ( $approved as $key ) {
+					if ( empty( $stats[ $key ] ) ) {
+						$stats[ $key ] = 0;
+					}
+				}
+
+				$stats = (object) $stats;
+				set_transient( 'getpaid_count_comments', $stats );
+			}
+
+		}
+
+		return $stats;
 	}
 
 	/**

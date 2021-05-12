@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -72,7 +72,7 @@ function wpinv_can_view_receipt( $invoice ) {
 
 /**
  * Returns an array of all invoice post types.
- * 
+ *
  * @return array
  */
 function getpaid_get_invoice_post_types() {
@@ -91,8 +91,8 @@ function getpaid_get_invoice_post_types() {
 
 /**
  * Checks if this is an invocing post type.
- * 
- * 
+ *
+ *
  * @param string $post_type The post type to check for.
  */
 function getpaid_is_invoice_post_type( $post_type ) {
@@ -101,7 +101,7 @@ function getpaid_is_invoice_post_type( $post_type ) {
 
 /**
  * Creates a new invoice.
- * 
+ *
  * @param  array $data   An array of invoice properties.
  * @param  bool  $wp_error       Whether to return false or WP_Error on failure.
  * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
@@ -113,7 +113,7 @@ function wpinv_create_invoice( $data = array(), $deprecated = null, $wp_error = 
 
 /**
  * Updates an existing invoice.
- * 
+ *
  * @param  array $data   An array of invoice properties.
  * @param  bool  $wp_error       Whether to return false or WP_Error on failure.
  * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
@@ -153,7 +153,7 @@ function wpinv_update_invoice( $data = array(), $wp_error = false ) {
 
 /**
  * Create/Update an invoice
- * 
+ *
  * @param  array $data   An array of invoice properties.
  * @param  bool  $wp_error       Whether to return false or WP_Error on failure.
  * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
@@ -254,7 +254,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
             'fees'                 => isset( $data['fees'] ) ? wpinv_clean( $data['fees'] ) : null,
             'discounts'            => isset( $data['discounts'] ) ? wpinv_clean( $data['discounts'] ) : null,
             'taxes'                => isset( $data['taxes'] ) ? wpinv_clean( $data['taxes'] ) : null,
-            
+
 
             // Billing details.
             'user_id'              => $data['user_id'],
@@ -385,7 +385,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
 
 /**
  * Retrieves an invoice.
- * 
+ *
  * @param int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object.
  * @param $bool $deprecated
  * @return WPInv_Invoice|null
@@ -410,7 +410,7 @@ function wpinv_get_invoice( $invoice = 0, $deprecated = false ) {
 
 /**
  * Retrieves several invoices.
- * 
+ *
  * @param array $args Args to search for.
  * @return WPInv_Invoice[]|int[]|object
  */
@@ -506,7 +506,7 @@ function wpinv_get_invoices( $args ) {
 
 /**
  * Retrieves an invoice's id from a transaction id.
- * 
+ *
  * @param string $transaction_id The transaction id to check.
  * @return int Invoice id on success or 0 on failure
  */
@@ -516,7 +516,7 @@ function wpinv_get_id_by_transaction_id( $transaction_id ) {
 
 /**
  * Retrieves an invoice's id from the invoice number.
- * 
+ *
  * @param string $invoice_number The invoice number to check.
  * @return int Invoice id on success or 0 on failure
  */
@@ -526,7 +526,7 @@ function wpinv_get_id_by_invoice_number( $invoice_number ) {
 
 /**
  * Retrieves an invoice's id from the invoice key.
- * 
+ *
  * @param string $invoice_key The invoice key to check.
  * @return int Invoice id on success or 0 on failure
  */
@@ -536,7 +536,7 @@ function wpinv_get_invoice_id_by_key( $invoice_key ) {
 
 /**
  * Retrieves an invoice's notes.
- * 
+ *
  * @param int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object.
  * @param string $type Optionally filter by type i.e customer|system
  * @return array|null
@@ -558,7 +558,7 @@ function wpinv_get_invoice_notes( $invoice = 0, $type = '' ) {
 
 /**
  * Returns an array of columns to display on the invoices page.
- * 
+ *
  * @param string $post_type
  */
 function wpinv_get_user_invoices_columns( $post_type = 'wpi_invoice' ) {
@@ -732,7 +732,7 @@ function wpinv_format_invoice_number( $number, $type = '' ) {
 
 /**
  * Returns the next invoice number.
- * 
+ *
  * @param string $type.
  * @return int|null|bool
  */
@@ -792,7 +792,7 @@ function wpinv_generate_post_name( $post_ID ) {
 
 /**
  * Checks if an invoice was viewed by the customer.
- * 
+ *
  * @param int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object.
  */
 function wpinv_is_invoice_viewed( $invoice ) {
@@ -802,7 +802,7 @@ function wpinv_is_invoice_viewed( $invoice ) {
 
 /**
  * Marks an invoice as viewed.
- * 
+ *
  * @param int|string|object|WPInv_Invoice|WPInv_Legacy_Invoice|WP_Post $invoice Invoice id, key, transaction id, number or object.
  */
 function getpaid_maybe_mark_invoice_as_viewed( $invoice ) {
@@ -819,7 +819,7 @@ add_action( 'wpinv_before_receipt', 'getpaid_maybe_mark_invoice_as_viewed' );
 
 /**
  * Processes an invoice refund.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @param array $status_transition
  * @todo: descrease customer/store earnings
@@ -898,7 +898,7 @@ add_action( 'getpaid_invoice_payment_status_changed', 'getpaid_process_invoice_p
 
 /**
  * Returns an array of invoice item columns
- * 
+ *
  * @param int|WPInv_Invoice $invoice
  * @return array
  */
@@ -918,6 +918,7 @@ function getpaid_invoice_item_columns( $invoice ) {
         array(
             'name'     => __( 'Item', 'invoicing' ),
             'price'    => __( 'Price', 'invoicing' ),
+            'tax_rate' => __( 'Tax Rate', 'invoicing' ),
             'quantity' => __( 'Quantity', 'invoicing' ),
             'subtotal' => __( 'Item Subtotal', 'invoicing' ),
         ),
@@ -961,12 +962,21 @@ function getpaid_invoice_item_columns( $invoice ) {
 
     }
 
+    // Tax rates.
+    if ( isset( $columns[ 'tax_rate' ] ) ) {
+
+        if ( 0 == $invoice->get_tax() ) {
+            unset( $columns[ 'tax_rate' ] );
+        }
+
+    }
+
     return $columns;
 }
 
 /**
  * Returns an array of invoice totals rows
- * 
+ *
  * @param int|WPInv_Invoice $invoice
  * @return array
  */
@@ -1009,7 +1019,7 @@ function getpaid_invoice_totals_rows( $invoice ) {
 
 /**
  * This function is called whenever an invoice is created.
- * 
+ *
  * @param WPInv_Invoice $invoice
  */
 function getpaid_new_invoice( $invoice ) {
@@ -1032,7 +1042,7 @@ add_action( 'getpaid_new_invoice', 'getpaid_new_invoice' );
 
 /**
  * This function updates invoice caches.
- * 
+ *
  * @param WPInv_Invoice $invoice
  */
 function getpaid_update_invoice_caches( $invoice ) {
@@ -1056,9 +1066,9 @@ add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
 
 /**
  * Duplicates an invoice.
- * 
+ *
  * Please note that this function does not save the duplicated invoice.
- * 
+ *
  * @param  WPInv_Invoice $old_invoice The invoice to duplicate
  * @return WPInv_Invoice The new invoice.
  */
@@ -1180,7 +1190,7 @@ function getpaid_get_invoice_meta( $invoice ) {
     );
 
     // If it is not paid, remove the date of payment.
-    if ( ! $invoice->is_paid() ) {
+    if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
         unset( $meta[ 'date_paid' ] );
         unset( $meta[ 'transaction_id' ] );
     }
@@ -1199,36 +1209,34 @@ function getpaid_get_invoice_meta( $invoice ) {
         unset( $meta[ 'vat_number' ] );
     }
 
+    // Link to the parent invoice.
+    if ( $invoice->get_parent_id() > 0 ) {
+
+        $meta[ 'parent' ] = array(
+
+            'label' => sprintf(
+                __( 'Parent %s', 'invoicing' ),
+                ucfirst( $invoice->get_invoice_quote_type() )
+            ),
+
+            'value' => wpinv_invoice_link( $invoice->get_parent_id() ),
+
+        );
+
+    }
+
+    
     if ( $invoice->is_recurring() ) {
 
-        // Link to the parent invoice.
-        if ( $invoice->is_renewal() ) {
-
-            $meta[ 'parent' ] = array(
-
-                'label' => sprintf(
-                    __( 'Parent %s', 'invoicing' ),
-                    ucfirst( $invoice->get_invoice_quote_type() )
-                ),
-
-                'value' => wpinv_invoice_link( $invoice->get_parent_id() ),
-
-            );
-
-        }
-
-        $subscription = wpinv_get_subscription( $invoice );
-
-        if ( ! empty ( $subscription ) ) {
+        $subscription = getpaid_get_invoice_subscriptions( $invoice );
+        if ( ! empty ( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
 
             // Display the renewal date.
             if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
 
                 $meta[ 'renewal_date' ] = array(
-
                     'label' => __( 'Renews On', 'invoicing' ),
                     'value' => getpaid_format_date( $subscription->get_expiration() ),
-        
                 );
 
             }
@@ -1240,11 +1248,11 @@ function getpaid_get_invoice_meta( $invoice ) {
 
                     'label' => __( 'Recurring Amount', 'invoicing' ),
                     'value' => wpinv_price( $subscription->get_recurring_amount(), $invoice->get_currency() ),
-        
+
                 );
 
             }
-            
+
         }
     }
 
@@ -1286,5 +1294,22 @@ function getpaid_get_invoice_status_classes() {
             'wpi-refunded'       => 'badge-secondary',
 		)
 	);
+
+}
+
+/**
+ * Returns an invoice's tax rate percentage.
+ *
+ * @param WPInv_Invoice $invoice
+ * @param GetPaid_Form_Item $item
+ * @return float
+ */
+function getpaid_get_invoice_tax_rate( $invoice, $item ) {
+
+    $rates   = getpaid_get_item_tax_rates( $item, $invoice->get_country(), $invoice->get_state() );
+	$rates   = getpaid_filter_item_tax_rates( $item, $rates );
+    $rates   = wp_list_pluck( $rates, 'rate' );
+
+    return array_sum( $rates );
 
 }

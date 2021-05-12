@@ -24,7 +24,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'sandbox' );
+    protected $supports = array( 'subscription', 'sandbox', 'single_subscription_group' );
 
     /**
 	 * Payment method order.
@@ -53,7 +53,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 * @var string
 	 */
     protected $endpoint;
-    
+
     /**
 	 * Currencies this gateway is allowed for.
 	 *
@@ -155,7 +155,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	protected function get_paypal_args( $invoice ) {
 
         // Whether or not to send the line items as one item.
-		$force_one_line_item = apply_filters( 'getpaid_paypal_force_one_line_item', false, $invoice );
+		$force_one_line_item = apply_filters( 'getpaid_paypal_force_one_line_item', true, $invoice );
 
 		if ( $invoice->is_recurring() || ( wpinv_use_taxes() && wpinv_prices_include_tax() ) ) {
 			$force_one_line_item = true;
@@ -249,7 +249,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		$this->delete_line_items();
 
         $item_name = sprintf( __( 'Invoice #%s', 'invoicing' ), $invoice->get_number() );
-		$this->add_line_item( $item_name, 1, wpinv_sanitize_amount( (float) $invoice->get_total(), 2 ), $invoice->get_id() );
+		$this->add_line_item( $item_name, 1, wpinv_round_amount( (float) $invoice->get_total(), 2, true ), $invoice->get_id() );
 
 		return $this->get_line_items();
     }
@@ -294,7 +294,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 * Add PayPal Line Item.
 	 *
 	 * @param  string $item_name Item name.
-	 * @param  int    $quantity Item quantity.
+	 * @param  float    $quantity Item quantity.
 	 * @param  float  $amount Amount.
 	 * @param  string $item_number Item number.
 	 */
@@ -319,7 +319,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $this->line_items[ 'quantity_' . $index ]    = $item['quantity'];
 
         // The price or amount of the product, service, or contribution, not including shipping, handling, or tax.
-		$this->line_items[ 'amount_' . $index ]      = $item['amount'];
+		$this->line_items[ 'amount_' . $index ]      = $item['amount'] * $item['quantity'];
 		$this->line_items[ 'item_number_' . $index ] = getpaid_limit_length( $item['item_number'], 127 );
     }
 
@@ -350,7 +350,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		);
 
     }
-    
+
     /**
 	 * Processes recurring invoices.
 	 *
@@ -360,7 +360,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	public function process_subscription( $paypal_args, $invoice ) {
 
         // Make sure this is a subscription.
-        if ( ! $invoice->is_recurring() || ! $subscription = wpinv_get_subscription( $invoice ) ) {
+        if ( ! $invoice->is_recurring() || ! $subscription = getpaid_get_invoice_subscription( $invoice ) ) {
             return $paypal_args;
         }
 
@@ -421,7 +421,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			$paypal_args['t3'] = $period;
 
         }
-        
+
         // Recurring payments
 		if ( 1 == $bill_times || ( $initial_amount != $recurring_amount && ! $subscription_item->has_free_trial() && 2 == $bill_times ) ) {
 
@@ -444,10 +444,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 			}
         }
-        
+
         // Force return URL so that order description & instructions display
         $paypal_args['rm'] = 2;
-        
+
         // Get rid of redudant items.
         foreach ( array( 'item_name_1', 'quantity_1', 'amount_1', 'item_number_1' ) as $arg ) {
 

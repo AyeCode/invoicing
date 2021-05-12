@@ -1265,3 +1265,13 @@ function wpinv_login_user() {}
 function wpinv_get_users_invoices() {
     return array();
 }
+
+/**
+ * Fetchs an invoice subscription from the database.
+ *
+ * @return WPInv_Subscription|bool
+ * @deprecated
+ */
+function wpinv_get_subscription( $invoice ) {
+	return wpinv_get_invoice_subscription( $invoice );
+}

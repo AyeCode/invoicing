@@ -24,7 +24,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'sandbox', 'tokens', 'addons' );
+    protected $supports = array( 'subscription', 'sandbox', 'tokens', 'addons', 'single_subscription_group', 'multiple_subscription_groups' );
 
     /**
 	 * Payment method order.
@@ -251,7 +251,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 array(
                     'id'      => $response->customerPaymentProfileId,
                     'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
-                    'default' => true
+                    'default' => true,
+                    'type'    => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
                 )
             );
         }
@@ -530,7 +531,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
                 'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
                 'description' => getpaid_limit_length( $item->get_description(), 255 ),
-                'quantity'    => (string) $invoice->get_template() == 'amount' ? 1 : $item->get_quantity(),
+                'quantity'    => (string) ( $invoice->get_template() == 'amount' ? 1 : $item->get_quantity() ),
                 'unitPrice'   => (float) $amount,
                 'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
             );
@@ -581,9 +582,9 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         update_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', $payment_profile_id );
 
         // Check if this is a subscription or not.
-        $subscription = getpaid_get_invoice_subscription( $invoice );
-        if ( ! empty( $subscription ) ) {
-            $this->process_subscription( $invoice, $subscription );
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+        if ( ! empty( $subscriptions ) ) {
+            $this->process_subscription( $invoice, $subscriptions );
         }
 
         // If it is free, send to the success page.
@@ -631,23 +632,29 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * Processes recurring payments.
 	 *
      * @param WPInv_Invoice $invoice Invoice.
-     * @param WPInv_Subscription $subscription Subscription.
+     * @param WPInv_Subscription[]|WPInv_Subscription $subscriptions Subscriptions.
 	 */
-	public function process_subscription( $invoice, $subscription ) {
+	public function process_subscription( $invoice, $subscriptions ) {
 
         // Check if there is an initial amount to charge.
         if ( (float) $invoice->get_total() > 0 ) {
 			$this->process_initial_payment( $invoice );
         }
 
-        // Activate the subscription.
-        $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
-        $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+        // Activate the subscriptions.
+        $subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
 
-		$subscription->set_next_renewal_date( $expiry );
-		$subscription->set_date_created( current_time( 'mysql' ) );
-		$subscription->set_profile_id( $invoice->generate_key() );
-		$subscription->activate();
+        foreach ( $subscriptions as $subscription ) {
+            if ( $subscription->exists() ) {
+                $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
+                $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+
+                $subscription->set_next_renewal_date( $expiry );
+                $subscription->set_date_created( current_time( 'mysql' ) );
+                $subscription->set_profile_id( $invoice->generate_key( 'authnet_sub_' . $invoice->get_id() . '_' . $subscription->get_id() ) );
+                $subscription->activate();
+            }
+        }
 
 		// Redirect to the success page.
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );

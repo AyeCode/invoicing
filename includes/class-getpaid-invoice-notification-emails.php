@@ -147,6 +147,23 @@ class GetPaid_Invoice_Notification_Emails {
 			'{is_was}'              => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
+		$payment_form_data = $invoice->get_meta( 'payment_form_data', true );
+
+		if ( is_array( $payment_form_data ) ) {
+
+			foreach ( $payment_form_data as $label => $value ) {
+
+				$label = preg_replace( '/[^a-z0-9]+/', '_', strtolower( $label ) );
+				$value = is_array( $value ) ? implode( ', ', $value ) : $value;
+
+				if ( is_scalar ( $value ) ) {
+					$merge_tags[ "{{$label}}" ] = wp_kses_post( $value );
+				}
+
+			}
+
+		}
+
 		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}
 
@@ -359,7 +376,8 @@ class GetPaid_Invoice_Notification_Emails {
 	 * @return bool
 	 */
 	public function is_payment_form_invoice( $invoice ) {
-		return empty( $_GET['getpaid-admin-action'] ) && ( 'payment_form' == get_post_meta( $invoice, 'wpinv_created_via', true ) || 'geodirectory' == get_post_meta( $invoice, 'wpinv_created_via', true ) );
+		$is_payment_form_invoice = empty( $_GET['getpaid-admin-action'] ) && ( 'payment_form' == get_post_meta( $invoice, 'wpinv_created_via', true ) || 'geodirectory' == get_post_meta( $invoice, 'wpinv_created_via', true ) );
+		return apply_filters( 'getpaid_invoice_notifications_is_payment_form_invoice', $is_payment_form_invoice, $invoice );
 	}
 
 	/**

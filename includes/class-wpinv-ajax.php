@@ -418,9 +418,9 @@ class WPInv_Ajax {
         // Recalculate totals.
         $invoice->recalculate_total();
 
-        $total = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
-
-        if ( $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
+        $total        = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+        $suscriptions = getpaid_get_invoice_subscriptions( $invoice );
+        if ( is_a( $suscriptions, 'WPInv_Subscription' ) && $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
             $recurring_total = wpinv_price( $invoice->get_recurring_total(), $invoice->get_currency() );
             $total          .= '<small class="form-text text-muted">' . sprintf( __( 'Recurring Price: %s', 'invoicing' ), $recurring_total ) . '</small>';
         }
@@ -516,7 +516,7 @@ class WPInv_Ajax {
         $item->set_price( floatval( $data['price'] ) );
         $item->set_name( sanitize_text_field( $data['name'] ) );
         $item->set_description( wp_kses_post( $data['description'] ) );
-        $item->set_quantity( intval( $data['quantity'] ) );
+        $item->set_quantity( floatval( $data['quantity'] ) );
 
         // Add it to the invoice.
         $error = $invoice->add_item( $item );

@@ -124,6 +124,13 @@ class WPInv_Invoice extends GetPaid_Data {
 	protected $totals = array();
 
 	/**
+     * Tax rate.
+	 *
+     * @var float
+     */
+	protected $tax_rate = 0;
+
+	/**
 	 * Stores the status transition information.
 	 *
 	 * @since 1.0.19
@@ -1430,6 +1437,32 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function get_total( $context = 'view' ) {
 		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total', $context ) ) );
 	}
+
+	/**
+	 * Retrieves the non-recurring total of items.
+	 *
+	 * @since 2.3.0
+	 * @return float
+	 */
+	public function get_non_recurring_total() {
+
+		$subtotal = 0;
+		foreach ( $this->get_items() as $item ) {
+			if ( ! $item->is_recurring() ) {
+				$subtotal += $item->get_sub_total();
+			}
+		}
+
+		foreach ( $this->get_fees() as $fee ) {
+			if ( empty( $fee['recurring_fee'] ) ) {
+				$subtotal += wpinv_sanitize_amount( $fee['initial_fee'] );
+			}
+		}
+
+		$subtotal = wpinv_round_amount( wpinv_sanitize_amount( $subtotal ) );
+        return apply_filters( 'wpinv_get_non_recurring_invoice_total', $subtotal, $this );
+
+    }
 
 	/**
 	 * Get the invoice totals.
@@ -3201,12 +3234,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Do we have a recurring item?
 		if ( $item->is_recurring() ) {
-
-			// An invoice can only contain one recurring item.
-			if ( ! empty( $this->recurring_item )  && $this->recurring_item != (int) $item->get_id() ) {
-				return new WP_Error( 'recurring_item', __( 'An invoice can only contain one recurring item', 'invoicing' ) );
-			}
-
 			$this->recurring_item = $item->get_id();
         }
 
@@ -3515,6 +3542,8 @@ class WPInv_Invoice extends GetPaid_Data {
 				'initial'   => 0,
 				'recurring' => 0,
 			);
+
+			$this->tax_rate = 0;
 
 			$this->set_taxes( array() );
 			$current = 0;

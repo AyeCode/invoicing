@@ -216,7 +216,7 @@ function getpaid_display_address_edit_tab() {
                             echo aui()->select(
                                 array(
                                     'options'     => wpinv_get_country_list(),
-                                    'name'        => esc_attr( $key ),
+                                    'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
                                     'id'          => 'wpinv-' . sanitize_html_class( $key ),
                                     'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
                                     'placeholder' => $label,
@@ -239,14 +239,14 @@ function getpaid_display_address_edit_tab() {
                                 '',
                                 false,
                                 '',
-                                $key
+                                'getpaid_address[' . esc_attr( $key ) . ']'
                             );
 
                         } else {
 
                             echo aui()->input(
                                 array(
-                                    'name'        => esc_attr( $key ),
+                                    'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
                                     'id'          => 'wpinv-' . sanitize_html_class( $key ),
                                     'placeholder' => $label,
                                     'label'       => wp_kses_post( $label ),
@@ -294,14 +294,21 @@ function getpaid_display_address_edit_tab() {
  */
 function getpaid_save_address_edit_tab( $data ) {
 
+    if ( empty( $data['getpaid_address'] ) || ! is_array( $data['getpaid_address'] ) ) {
+        return;
+    }
+
+    $data    = $data['getpaid_address'];
+    $user_id = get_current_user_id();
+
     foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
 
         if ( isset( $data[ $field ] ) ) {
             $value = sanitize_text_field( $data[ $field ] );
-            update_user_meta( get_current_user_id(), '_wpinv_' . $field, $value );
+            update_user_meta( $user_id, '_wpinv_' . $field, $value );
         }
 
-        wpinv_set_error( 'address_updated', __( 'You billing address has been updated', 'invoicing' ), 'success');
+        wpinv_set_error( 'address_updated', __( 'Your billing address has been updated', 'invoicing' ), 'success');
     }
 
 }

@@ -115,6 +115,7 @@ class GetPaid_Subscription_Data_Store {
 		}
 
 		if ( ! $raw_subscription ) {
+			$subscription->set_id( 0 );
 			$subscription->last_error = __( 'Invalid subscription ID.', 'invoicing' );
 			return false;
 		}

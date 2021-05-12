@@ -26,9 +26,11 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function __construct( $submission ) {
 
 		$this->response = array(
-			'submission_id' => $submission->id,
-            'has_recurring' => $submission->has_recurring,
-            'is_free'       => ! $submission->should_collect_payment_details(),
+			'submission_id'                    => $submission->id,
+            'has_recurring'                    => $submission->has_recurring,
+			'has_subscription_group'           => $submission->has_subscription_group(),
+			'has_multiple_subscription_groups' => $submission->has_multiple_subscription_groups(),
+            'is_free'                          => ! $submission->should_collect_payment_details(),
 		);
 
 		$this->add_totals( $submission );
@@ -86,14 +88,45 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function add_texts( $submission ) {
 
 		$payable = $submission->format_amount( $submission->get_total() );
+		$groups  = getpaid_get_subscription_groups( $submission );
 
-		if ( $submission->has_recurring != 0 ) {
+		if ( $submission->has_recurring && 2 > count( $groups ) ) {
 
 			$recurring = new WPInv_Item( $submission->has_recurring );
 			$period    = getpaid_get_subscription_period_label( $recurring->get_recurring_period( true ), $recurring->get_recurring_interval(), '' );
+			$main_item = reset( $groups );
 
 			if ( $submission->get_total() == $submission->get_recurring_total() ) {
 				$payable = "$payable / $period";
+			} else if ( $main_item ) {
+
+				$main_item = reset( $main_item );
+
+				// Calculate the next renewal date.
+				$_period      = $main_item->get_recurring_period( true );
+				$_interval    = $main_item->get_recurring_interval();
+
+				// If the subscription item has a trial period...
+				if ( $main_item->has_free_trial() ) {
+					$_period   = $main_item->get_trial_period( true );
+					$_interval = $main_item->get_trial_interval();
+				}
+
+				$payable = sprintf(
+					__( '%1$s (renews at %2$s / %3$s)', 'invoicing' ),
+					$submission->format_amount( $submission->get_total() ),
+					$submission->format_amount( $submission->get_recurring_total() ),
+					$period
+				);
+
+				$payable .= sprintf(
+					'<small class="text-muted form-text">%s</small>',
+					sprintf(
+						__( 'First renewal on %s', 'invoicing' ),
+						getpaid_format_date( date( 'Y-m-d H:i:s', strtotime( "+$_interval $_period", current_time( 'timestamp' ) ) ) )
+					)
+				);
+
 			} else {
 				$payable = sprintf(
 					__( '%1$s (renews at %2$s / %3$s)', 'invoicing' ),
@@ -111,8 +144,8 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 		foreach ( $submission->get_items() as $item ) {
 			$item_id                                               = $item->get_id();
-			$initial_price                                         = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_sub_total(), $submission->get_discount_code(), false ) );
-			$recurring_price                                       = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_recurring_sub_total(), $submission->get_discount_code(), true ) );
+			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
+			$recurring_price                                       = $submission->format_amount( $item->get_sub_total() - $item->recurring_item_discount );
 			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
 		}
 
@@ -222,7 +255,10 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 			foreach ( $gateways as $i => $gateway ) {
 
-				if ( ! wpinv_gateway_support_subscription( $gateway ) ) {
+				if (
+					! getpaid_payment_gateway_supports( $gateway, 'subscription' )
+					|| ( $this->response['has_subscription_group'] && ! getpaid_payment_gateway_supports( $gateway, 'single_subscription_group' ) )
+					|| ( $this->response['has_multiple_subscription_groups'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscription_groups' ) ) ) {
 					unset( $gateways[ $i ] );
 				}
 
@@ -230,39 +266,11 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 		}
 
-
 		$gateways = apply_filters( 'getpaid_submission_gateways', $gateways, $submission );
 		$this->response = array_merge(
 			$this->response,
 			array( 'gateways' => $gateways )
 		);
-
-	}
-
-	/**
-	 * Standardizes prices.
-	 *
-	 * @param int $item_id
-	 * @param float $item_total
-	 * @param string $discount_code
-	 * @param bool $recurring
-	 */
-	public function standardize_price( $item_id, $item_total, $discount_code, $recurring = false ) {
-
-		$standardadized_price = $item_total;
-
-		// Do we have a $discount_code?
-		if ( ! empty( $discount_code ) ) {
-
-			$discount = new WPInv_Discount( $discount_code );
-
-			if ( $discount->exists() && $discount->is_valid_for_items( $item_id ) && ( ! $recurring || $discount->is_recurring() ) ) {
-				$standardadized_price = $item_total - $discount->get_discounted_amount( $item_total );
-			}
-
-		}
-
-    	return max( 0, $standardadized_price );
 
 	}
 

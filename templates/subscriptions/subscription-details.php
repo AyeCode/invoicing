@@ -16,7 +16,10 @@ do_action( 'getpaid_single_subscription_before_notices', $subscription );
 // Display errors and notices.
 wpinv_print_errors();
 
-do_action( 'getpaid_before_single_subscription', $subscription );
+$subscription_groups = getpaid_get_invoice_subscription_groups( $subscription->get_parent_invoice_id() );
+$subscription_group  = getpaid_get_invoice_subscription_group( $subscription->get_parent_invoice_id(), $subscription->get_id() );
+
+do_action( 'getpaid_before_single_subscription', $subscription, $subscription_groups );
 
 ?>
 
@@ -36,11 +39,11 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 
 			<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
 
-				<th class="w-25 font-weight-bold">
+				<th class="font-weight-bold" style="width: 35%">
 					<?php echo sanitize_text_field( $label ); ?>
 				</th>
 
-				<td class="w-75">
+				<td style="width: 65%">
 					<?php
 
 						switch ( $key ) {
@@ -70,7 +73,7 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 									echo '</small>';
 
 								}
-								
+
 								break;
 
 							case 'recurring_amount':
@@ -80,12 +83,12 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 								break;
 
 							case 'item':
-								$item = get_post( $subscription->get_product_id() );
 
-								if ( ! empty( $item ) ) {
-									echo esc_html( get_the_title( $item ) );
+								if ( empty( $subscription_group ) ) {
+									echo WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() );
 								} else {
-									echo sprintf( __( 'Item #%s', 'invoicing' ), $subscription->get_product_id() );
+									$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
+									echo implode( ' | ', $markup );
 								}
 
 								break;
@@ -110,9 +113,19 @@ do_action( 'getpaid_before_single_subscription', $subscription );
 	</tbody>
 </table>
 
-<h2 class='mt-5 mb-1 h4'><?php _e( 'Subscription Invoices', 'invoicing' ); ?></h2>
+<?php if ( ! empty( $subscription_group ) ) : ?>
+	<h2 class='mt-5 mb-1 h4'><?php _e( 'Subscription Items', 'invoicing' ); ?></h2>
+	<?php getpaid_admin_subscription_item_details_metabox( $subscription ); ?>
+<?php endif; ?>
+
+<h2 class='mt-5 mb-1 h4'><?php _e( 'Related Invoices', 'invoicing' ); ?></h2>
 
 <?php echo getpaid_admin_subscription_invoice_details_metabox( $subscription ); ?>
+
+<?php if ( 1 < count( $subscription_groups ) ) : ?>
+	<h2 class='mt-5 mb-1 h4'><?php _e( 'Related Subscriptions', 'invoicing' ); ?></h2>
+	<?php getpaid_admin_subscription_related_subscriptions_metabox( $subscription ); ?>
+<?php endif; ?>
 
 <span class="form-text">
 

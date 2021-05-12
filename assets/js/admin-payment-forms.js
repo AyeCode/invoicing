@@ -228,6 +228,11 @@ jQuery(function ($) {
 
 			  value = value.toString().split('|').splice(0,1).join('')
 			  return value.toString().trim()
+			},
+			formatMergeTag: function (value) {
+				if (!value) return ''
+  
+				return '{' + value.toString().trim().toLowerCase().replace( /[^a-z0-9]+/g,'_' ) + '}'
 			}
 		},
 

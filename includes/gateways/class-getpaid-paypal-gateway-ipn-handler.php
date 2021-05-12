@@ -320,6 +320,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		// Set the transaction id.
 		if ( ! empty( $posted['txn_id'] ) ) {
+			$invoice->add_note( sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , $posted['txn_id'] ), false, false, true );
 			$invoice->set_transaction_id( $posted['txn_id'] );
 		}
 
@@ -340,7 +341,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function ipn_txn_subscr_payment( $invoice, $posted ) {
 
 		// Make sure the invoice has a subscription.
-		$subscription = wpinv_get_subscription( $invoice );
+		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
 			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
@@ -348,17 +349,27 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		wpinv_error_log( 'Found subscription #' . $subscription->get_id(), false );
 
-		// Abort if this is the first payment.
-		$invoice_completed = date( 'Ynd', strtotime( $invoice->get_date_completed() ) );
-		$payment_date      = date( 'Ynd', strtotime( $posted['payment_date'] ) );
-		$subscription_date = date( 'Ynd', $subscription->get_time_created() );
-		if ( $invoice_completed == $payment_date || $subscription_date == $payment_date ) {
+		// PayPal sends a subscr_payment for the first payment too.
+		$date_completed = getpaid_format_date( $invoice->get_date_completed() );
+		$date_created   = getpaid_format_date( $invoice->get_date_created() );
+		$today_date     = getpaid_format_date( current_time( 'mysql' ) );
+		$payment_date   = getpaid_format_date( $posted['payment_date'] );
+		$subscribe_date = getpaid_format_date( $subscription->get_date_created() );
+		$dates          = array_filter( compact( 'date_completed', 'date_created', 'subscribe_date' ) );
+
+		foreach( $dates as $date ) {
+
+			if ( $date !== $today_date && $date !== $payment_date ) {
+				continue;
+			}
 
 			if ( ! empty( $posted['txn_id'] ) ) {
 				$invoice->set_transaction_id( sanitize_text_field( $posted['txn_id'] ) );	
+				$invoice->add_note( wp_sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ) , sanitize_text_field( $posted['txn_id'] ) ), false, false, true );
 			}
 
 			return $invoice->mark_paid();
+
 		}
 
 		wpinv_error_log( 'Processing subscription renewal payment for the invoice ' . $invoice->get_id(), false );
@@ -395,7 +406,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function ipn_txn_subscr_cancel( $invoice ) {
 
 		// Make sure the invoice has a subscription.
-		$subscription = wpinv_get_subscription( $invoice );
+		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
 			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false);
@@ -416,7 +427,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function ipn_txn_subscr_eot( $invoice ) {
 
 		// Make sure the invoice has a subscription.
-		$subscription = wpinv_get_subscription( $invoice );
+		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
 			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
@@ -437,7 +448,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function ipn_txn_subscr_failed( $invoice ) {
 
 		// Make sure the invoice has a subscription.
-		$subscription = wpinv_get_subscription( $invoice );
+		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
 			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );
@@ -458,7 +469,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function ipn_txn_recurring_payment_suspended_due_to_max_failed_payment( $invoice ) {
 
 		// Make sure the invoice has a subscription.
-		$subscription = wpinv_get_subscription( $invoice );
+		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
 		if ( empty( $subscription ) ) {
 			return wpinv_error_log( 'Aborting, Subscription for the invoice ' . $invoice->get_id() . ' not found', false );

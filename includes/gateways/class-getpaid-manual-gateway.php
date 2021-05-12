@@ -24,7 +24,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'addons' );
+    protected $supports = array( 'subscription', 'addons', 'single_subscription_group', 'multiple_subscription_groups' );
 
     /**
 	 * Payment method order.
@@ -59,8 +59,25 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         // Mark it as paid.
         $invoice->mark_paid();
 
-        // (Maybe) activate subscription.
-        getpaid_activate_invoice_subscription( $invoice );
+        // (Maybe) activate subscriptions.
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+        if ( ! empty( $subscriptions ) ) {
+            $subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
+
+            foreach ( $subscriptions as $subscription ) {
+                if ( $subscription->exists() ) {
+                    $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
+                    $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+
+                    $subscription->set_next_renewal_date( $expiry );
+                    $subscription->set_date_created( current_time( 'mysql' ) );
+                    $subscription->set_profile_id( $invoice->generate_key( 'manual_sub_' . $invoice->get_id() . '_' . $subscription->get_id() ) );
+                    $subscription->activate();
+                }
+            }
+
+        }
 
         // Send to the success page.
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
@@ -77,7 +94,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	public function maybe_renew_subscription( $should_expire, $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( 'manual' != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
+        if ( $this->id != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
             return $should_expire;
         }
 

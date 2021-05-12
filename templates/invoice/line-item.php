@@ -80,6 +80,11 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
                     }
 
+                    // Tax rate.
+                    if ( 'tax_rate' == $column ) {
+                        echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+                    }
+
                     // Item quantity.
                     if ( 'quantity' == $column ) {
                         echo (float) $item->get_quantity();

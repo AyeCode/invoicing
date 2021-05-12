@@ -32,14 +32,6 @@ class GetPaid_Meta_Box_Invoice_Items {
         // New item url.
         $new_item = admin_url( 'post-new.php?post_type=wpi_item' );
 
-        // Totals.
-        $total = wpinv_price( $invoice->get_total(), $invoice->get_currency() );
-
-        if ( $invoice->is_recurring() && $invoice->is_parent() && $invoice->get_total() != $invoice->get_recurring_total() ) {
-            $recurring_total = wpinv_price( $invoice->get_recurring_total(), $invoice->get_currency() );
-            $total          .= '<small class="form-text text-muted">' . sprintf( __( 'Recurring Price: %s', 'invoicing' ), $recurring_total ) . '</small>';
-        }
-
         $totals = array(
 
             'subtotal'  => array(
@@ -59,10 +51,9 @@ class GetPaid_Meta_Box_Invoice_Items {
 
             'total'     => array(
                 'label' => __( 'Invoice Total', 'invoicing' ),
-                'value' => $total,
+                'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
             )
         );
-
 
         if ( ! wpinv_use_taxes() ) {
             unset( $totals['tax'] );

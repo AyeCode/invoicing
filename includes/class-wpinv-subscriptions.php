@@ -29,14 +29,14 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_authenticated_action_subscription_cancel', array( $this, 'user_cancel_single_subscription' ) );
 
         // Create a subscription whenever an invoice is created, (and update it when it is updated).
-        add_action( 'getpaid_new_invoice', array( $this, 'maybe_create_invoice_subscription' ) );
-        add_action( 'getpaid_update_invoice', array( $this, 'maybe_update_invoice_subscription' ) );
+        add_action( 'getpaid_new_invoice', array( $this, 'maybe_create_invoice_subscription' ), 5 );
+        add_action( 'getpaid_update_invoice', array( $this, 'maybe_update_invoice_subscription' ), 5 );
 
         // Handles admin subscription update actions.
         add_action( 'getpaid_authenticated_admin_action_update_single_subscription', array( $this, 'admin_update_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_renew', array( $this, 'admin_renew_single_subscription' ) );
         add_action( 'getpaid_authenticated_admin_action_subscription_manual_delete', array( $this, 'admin_delete_single_subscription' ) );
-    
+
         // Filter invoice item row actions.
         add_action( 'getpaid-invoice-page-line-item-actions', array( $this, 'filter_invoice_line_item_actions' ), 10, 3 );
     }
@@ -51,7 +51,7 @@ class WPInv_Subscriptions {
         $subscription_id = $invoice->get_subscription_id();
 
         // Fallback to the parent invoice if the child invoice has no subscription id.
-        if ( empty( $subscription_id && $invoice->is_renewal() ) ) {
+        if ( empty( $subscription_id ) && $invoice->is_renewal() ) {
             $subscription_id = $invoice->get_parent_payment()->get_subscription_id();
         }
 
@@ -59,31 +59,38 @@ class WPInv_Subscriptions {
         $subscription = new WPInv_Subscription( $subscription_id );
 
         // Return subscription or use a fallback for backwards compatibility.
-        return $subscription->get_id() ? $subscription : wpinv_get_subscription( $invoice );
+        return $subscription->exists() ? $subscription : wpinv_get_invoice_subscription( $invoice );
     }
 
     /**
-     * Deactivates the invoice subscription whenever an invoice status changes.
-     * 
+     * Deactivates the invoice subscription(s) whenever an invoice status changes.
+     *
      * @param WPInv_Invoice $invoice
      */
     public function maybe_deactivate_invoice_subscription( $invoice ) {
 
-        $subscription = $this->get_invoice_subscription( $invoice );
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
 
-        // Abort if the subscription is missing or not active.
-        if ( empty( $subscription ) || ! $subscription->is_active() ) {
+        if ( empty( $subscriptions ) ) {
             return;
         }
 
-        $subscription->set_status( 'pending' );
-        $subscription->save();
+        if ( ! is_array( $subscriptions ) ) {
+            $subscriptions = array( $subscriptions );
+        }
+
+        foreach ( $subscriptions as $subscription ) {
+            if ( $subscription->is_active() ) {
+                $subscription->set_status( 'pending' );
+                $subscription->save();
+            }
+        }
 
     }
 
     /**
 	 * Processes subscription status changes.
-     * 
+     *
      * @param WPInv_Subscription $subscription
      * @param string $from
      * @param string $to
@@ -130,13 +137,12 @@ class WPInv_Subscriptions {
         $subscription = new WPInv_Subscription( (int) $data['subscription'] );
 
         // Ensure that it exists and that it belongs to the current user.
-        if ( ! $subscription->get_id() || $subscription->get_customer_id() != get_current_user_id() ) {
+        if ( ! $subscription->exists() || $subscription->get_customer_id() != get_current_user_id() ) {
             wpinv_set_error( 'invalid_subscription', __( 'You do not have permission to cancel this subscription', 'invoicing' ) );
 
         // Can it be cancelled.
         } else if ( ! $subscription->can_cancel() ) {
             wpinv_set_error( 'cannot_cancel', __( 'This subscription cannot be cancelled as it is not active.', 'invoicing' ) );
-
 
         // Cancel it.
         } else {
@@ -153,22 +159,110 @@ class WPInv_Subscriptions {
     }
 
     /**
-     * Creates a subscription for an invoice.
+     * Creates a subscription(s) for an invoice.
      *
      * @access      public
      * @param       WPInv_Invoice $invoice
      * @since       1.0.0
      */
     public function maybe_create_invoice_subscription( $invoice ) {
+        global $getpaid_subscriptions_skip_invoice_update;
 
         // Abort if it is not recurring.
-        if ( $invoice->is_free() || ! $invoice->is_recurring() || $invoice->is_renewal() ) {
+        if ( ! $invoice->is_type( 'invoice' ) || $invoice->is_free() || ! $invoice->is_recurring() || $invoice->is_renewal() ) {
             return;
+        }
+
+        // Either group the subscriptions or only process a single suscription.
+        if ( getpaid_should_group_subscriptions( $invoice ) ) {
+
+            $subscription_groups = array();
+            $is_first            = true;
+
+            foreach ( getpaid_calculate_subscription_totals( $invoice ) as $group_key => $totals ) {
+                $subscription_groups[ $group_key ] = $this->create_invoice_subscription_group( $totals, $invoice, 0, $is_first );
+
+                if ( $is_first ) {
+                    $getpaid_subscriptions_skip_invoice_update = true;
+                    $invoice->set_subscription_id( $subscription_groups[ $group_key ]['subscription_id'] );
+                    $invoice->save();
+                    $getpaid_subscriptions_skip_invoice_update = false;
+                }
+
+                $is_first                          = false;
+            }
+
+            // Cache subscription groups.
+            update_post_meta( $invoice->get_id(), 'getpaid_subscription_groups', $subscription_groups );
+            return true;
+
         }
 
         $subscription = new WPInv_Subscription();
         return $this->update_invoice_subscription( $subscription, $invoice );
 
+    }
+
+    /**
+     * Saves a new invoice subscription group.
+     *
+     * @access      public
+     * @param       array $totals
+     * @param       WPInv_Invoice $invoice
+     * @param       int $subscription_id Current subscription id of the group.
+     * @param       bool $is_first Whether or not this is the first subscription group for the invoice. In which case we'll add totals of non-recurring items.
+     *
+     * @since       2.3.0
+     */
+    public function create_invoice_subscription_group( $totals, $invoice, $subscription_id = 0, $is_first = false ) {
+
+        $subscription  = new WPInv_Subscription( (int) $subscription_id );
+        $initial_amt   = $totals['initial_total'];
+        $recurring_amt = $totals['recurring_total'];
+        $fees          = array();
+
+        // Maybe add recurring fees.
+        if ( $is_first ) {
+
+            foreach ( $invoice->get_fees() as $i => $fee ) {
+                if ( ! empty( $fee['recurring_fee'] ) ) {
+                    $initial_amt   += wpinv_sanitize_amount( $fee['initial_fee'] );
+                    $recurring_amt += wpinv_sanitize_amount( $fee['recurring_fee'] );
+                    $fees[$i]       = $fee;
+                }
+            }
+
+        }
+
+        $subscription->set_customer_id( $invoice->get_customer_id() );
+        $subscription->set_parent_invoice_id( $invoice->get_id() );
+        $subscription->set_initial_amount( $initial_amt );
+        $subscription->set_recurring_amount( $recurring_amt );
+        $subscription->set_date_created( current_time( 'mysql' ) );
+        $subscription->set_status( $invoice->is_paid() ? 'active' : 'pending' );
+        $subscription->set_product_id( $totals['item_id'] );
+        $subscription->set_period( $totals['period'] );
+        $subscription->set_frequency( $totals['interval'] );
+        $subscription->set_bill_times( $totals['recurring_limit'] );
+        $subscription->set_next_renewal_date( $totals['renews_on'] );
+
+        // Trial periods.
+        if ( ! empty( $totals['trialling'] ) ) {
+            $subscription->set_trial_period( $totals['trialling'] );
+            $subscription->set_status( 'trialling' );
+
+        // If initial amount is free, treat it as a free trial even if the subscription item does not have a free trial.
+        } else if ( empty( $initial_amt ) ) {
+            $subscription->set_trial_period( $totals['interval'] . ' ' . $totals['period'] );
+            $subscription->set_status( 'trialling' );
+        }
+
+        $subscription->save();
+
+        $totals['subscription_id'] = $subscription->get_id();
+        $totals['fees']            = $fees;
+
+        return $totals;
     }
 
     /**
@@ -179,22 +273,29 @@ class WPInv_Subscriptions {
      * @since       1.0.19
      */
     public function maybe_update_invoice_subscription( $invoice ) {
+        global $getpaid_subscriptions_skip_invoice_update;
+
+        // Avoid infinite loops.
+        if ( ! empty( $getpaid_subscriptions_skip_invoice_update ) ) {
+            return;
+        }
 
         // Do not process renewals.
         if ( $invoice->is_renewal() ) {
             return;
         }
 
-        // Delete existing subscription if available and the invoice is not recurring.
+        // Delete existing subscriptions if available and the invoice is not recurring.
         if ( ! $invoice->is_recurring() ) {
-            $subscription = new WPInv_Subscription( $invoice->get_subscription_id() );
-            $subscription->delete( true );
+            $this->delete_invoice_subscriptions( $invoice );
             return;
         }
 
-        // (Maybe) create a new subscription.
-        $subscription = $this->get_invoice_subscription( $invoice );
-        if ( empty( $subscription ) ) {
+        // Fetch existing subscriptions.
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+        // Create new ones if no existing subscriptions.
+        if ( empty( $subscriptions ) ) {
             return $this->maybe_create_invoice_subscription( $invoice );
         }
 
@@ -203,7 +304,79 @@ class WPInv_Subscriptions {
             return;
         }
 
-        return $this->update_invoice_subscription( $subscription, $invoice );
+        $is_grouped   = is_array( $subscriptions );
+        $should_group = getpaid_should_group_subscriptions( $invoice );
+
+        // Ensure that the subscriptions are only grouped if there are more than 1 recurring items.
+        if ( $is_grouped != $should_group ) {
+            $this->delete_invoice_subscriptions( $invoice );
+            delete_post_meta( $invoice->get_id(), 'getpaid_subscription_groups' );
+            return $this->maybe_create_invoice_subscription( $invoice );
+        }
+
+        // If there is only one recurring item...
+        if ( ! $is_grouped ) {
+            return $this->update_invoice_subscription( $subscriptions, $invoice );
+        }
+
+        // Process subscription groups.
+        $current_groups      = getpaid_get_invoice_subscription_groups( $invoice->get_id() );
+        $subscription_groups = array();
+        $is_first            = true;
+
+        // Create new subscription groups.
+        foreach ( getpaid_calculate_subscription_totals( $invoice ) as $group_key => $totals ) {
+            $subscription_id                   = isset( $current_groups[ $group_key ] ) ? $current_groups[ $group_key ]['subscription_id'] : 0;
+            $subscription_groups[ $group_key ] = $this->create_invoice_subscription_group( $totals, $invoice, $subscription_id, $is_first );
+
+            if ( $is_first && $invoice->get_subscription_id() !== $subscription_groups[ $group_key ]['subscription_id'] ) {
+                $getpaid_subscriptions_skip_invoice_update = true;
+                $invoice->set_subscription_id( $subscription_groups[ $group_key ]['subscription_id'] );
+                $invoice->save();
+                $getpaid_subscriptions_skip_invoice_update = false;
+            }
+
+            $is_first                          = false;
+        }
+
+        // Delete non-existent subscription groups.
+        foreach ( $current_groups as $group_key => $data ) {
+            if ( ! isset( $subscription_groups[ $group_key ] ) ) {
+                $subscription = new WPInv_Subscription( (int) $data['subscription_id'] );
+
+                if ( $subscription->exists() ) {
+                    $subscription->delete( true );
+                }
+
+            }
+        }
+
+        // Cache subscription groups.
+        update_post_meta( $invoice->get_id(), 'getpaid_subscription_groups', $subscription_groups );
+        return true;
+
+    }
+
+    /**
+     * Deletes invoice subscription(s).
+     *
+     * @param WPInv_Invoice $invoice
+     */
+    public function delete_invoice_subscriptions( $invoice ) {
+
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+        if ( empty( $subscriptions ) ) {
+            return;
+        }
+
+        if ( ! is_array( $subscriptions ) ) {
+            $subscriptions = array( $subscriptions );
+        }
+
+        foreach ( $subscriptions as $subscription ) {
+            $subscription->delete( true );
+        }
 
     }
 
@@ -329,7 +502,7 @@ class WPInv_Subscriptions {
             } else {
                 $subscription->renew();
                 getpaid_admin()->show_info( __( 'This subscription has been renewed and extended.', 'invoicing' ) );
-            } 
+            }
 
             wp_safe_redirect(
                 add_query_arg(
@@ -366,7 +539,7 @@ class WPInv_Subscriptions {
         } else {
             getpaid_admin()->show_error( __( 'We are unable to delete this subscription. Please try again.', 'invoicing' ) );
         }
-    
+
         $redirected = wp_safe_redirect(
             add_query_arg(
                 array(
@@ -391,6 +564,12 @@ class WPInv_Subscriptions {
      * @param WPInv_Invoice $invoice
      */
     public function filter_invoice_line_item_actions( $actions, $item, $invoice ) {
+
+        // Abort if this invoice uses subscription groups.
+        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+        if ( ! $invoice->is_recurring() || ! is_object( $subscriptions ) ) {
+            return $actions;
+        }
 
         // Fetch item subscription.
         $args  = array(

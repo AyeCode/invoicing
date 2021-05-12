@@ -368,13 +368,7 @@ class GetPaid_Payment_Form_Submission {
 
 		// Each submission can only contain one recurring item.
 		if ( $item->is_recurring() ) {
-
-			if ( $this->has_recurring != 0 ) {
-				throw new Exception( __( 'You can only buy one recurring item at a time.', 'invoicing' ) );
-			}
-
 			$this->has_recurring = $item->get_id();
-
 		}
 
 		// Update the items and totals.
@@ -443,6 +437,26 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function get_items() {
 		return $this->items;
+	}
+
+	/**
+	 * Checks if there's a single subscription group in the submission.
+	 *
+	 * @since 2.3.0
+	 * @return bool
+	 */
+	public function has_subscription_group() {
+		return $this->has_recurring && getpaid_should_group_subscriptions( $this ) && 1 == count( getpaid_get_subscription_groups( $this ) );
+	}
+
+	/**
+	 * Checks if there are multipe subscription groups in the submission.
+	 *
+	 * @since 2.3.0
+	 * @return bool
+	 */
+	public function has_multiple_subscription_groups() {
+		return $this->has_recurring && 1 < count( getpaid_get_subscription_groups( $this ) );
 	}
 
 	/*
