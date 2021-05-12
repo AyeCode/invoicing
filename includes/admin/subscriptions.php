@@ -581,8 +581,8 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 			'price'        => __( 'Price', 'invoicing' ),
 			'tax'          => __( 'Tax', 'invoicing' ),
 			'discount'     => __( 'Discount', 'invoicing' ),
-			'initial'      => __( 'Initial Amount', 'invoicing' ),
-			'recurring'    => __( 'Recurring Amount', 'invoicing' ),
+			//'initial'      => __( 'Initial Amount', 'invoicing' ),
+			'recurring'    => __( 'Subtotal', 'invoicing' ),
 		),
 		$subscription
 	);
@@ -650,7 +650,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 												break;
 
 											case 'price':
-												echo wpinv_price( $subscription_group_item['price'], $invoice->get_currency() );
+												echo wpinv_price( $subscription_group_item['item_price'], $invoice->get_currency() );
 												break;
 
 											case 'tax':
@@ -662,7 +662,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 												break;
 
 											case 'initial':
-												echo wpinv_price( $subscription_group_item['subtotal'], $invoice->get_currency() );
+												echo wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() );
 												break;
 
 											case 'recurring':

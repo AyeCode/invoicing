@@ -144,8 +144,8 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 		foreach ( $submission->get_items() as $item ) {
 			$item_id                                               = $item->get_id();
-			$initial_price                                         = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_sub_total(), $submission->get_discount_code(), false ) );
-			$recurring_price                                       = $submission->format_amount( $this->standardize_price( $item->get_id(), $item->get_recurring_sub_total(), $submission->get_discount_code(), true ) );
+			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
+			$recurring_price                                       = $submission->format_amount( $item->get_sub_total() - $item->recurring_item_discount );
 			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
 		}
 
@@ -271,33 +271,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$this->response,
 			array( 'gateways' => $gateways )
 		);
-
-	}
-
-	/**
-	 * Standardizes prices.
-	 *
-	 * @param int $item_id
-	 * @param float $item_total
-	 * @param string $discount_code
-	 * @param bool $recurring
-	 */
-	public function standardize_price( $item_id, $item_total, $discount_code, $recurring = false ) {
-
-		$standardadized_price = $item_total;
-
-		// Do we have a $discount_code?
-		if ( ! empty( $discount_code ) ) {
-
-			$discount = new WPInv_Discount( $discount_code );
-
-			if ( $discount->exists() && $discount->is_valid_for_items( $item_id ) && ( ! $recurring || $discount->is_recurring() ) ) {
-				$standardadized_price = $item_total - $discount->get_discounted_amount( $item_total );
-			}
-
-		}
-
-    	return max( 0, $standardadized_price );
 
 	}
 

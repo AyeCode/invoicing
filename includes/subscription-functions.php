@@ -582,8 +582,8 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 			$subscription_totals[ $subscription_key ]['item_id']                 = $item->get_id();
 			$subscription_totals[ $subscription_key ]['period']                  = $item->get_recurring_period( true );
 			$subscription_totals[ $subscription_key ]['interval']                = $item->get_recurring_interval();
-			$subscription_totals[ $subscription_key ]['initial_total']          += $item->get_sub_total();
-			$subscription_totals[ $subscription_key ]['recurring_total']        += $item->get_recurring_sub_total();
+			$subscription_totals[ $subscription_key ]['initial_total']          += $item->get_sub_total() + $item->item_tax - $item->item_discount;
+			$subscription_totals[ $subscription_key ]['recurring_total']        += $item->get_recurring_sub_total() + $item->item_tax - $item->recurring_item_discount;
 			$subscription_totals[ $subscription_key ]['recurring_limit']         = $item->get_recurring_limit();
 
 			// Calculate the next renewal date.

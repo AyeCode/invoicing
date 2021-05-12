@@ -895,7 +895,7 @@ jQuery(function($) {
                 country: $( this ).val(),
                 state: state.val(),
                 class: 'wpinv_state',
-                name : 'state',
+                name : state.attr('name'),
 			    _ajax_nonce: WPInv.nonce
             };
 
