@@ -194,6 +194,13 @@ class GetPaid_Checkout {
 
         if ( empty( $user ) ) {
             $user = wpinv_create_user( $submission->get_billing_email() );
+
+			// (Maybe) send new user notification.
+			$should_send_notification = wpinv_get_option( 'disable_new_user_emails' );
+			if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ) ) ) {
+				wp_send_new_user_notifications( $user, 'user' );
+			}
+
         }
 
         if ( is_wp_error( $user ) ) {

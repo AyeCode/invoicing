@@ -374,7 +374,8 @@ class GetPaid_Meta_Box_Invoice_Address {
         $GLOBALS['wpinv_skip_invoice_notification'] = false;
 
         // (Maybe) send new user notification.
-        if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', true ) ) {
+        $should_send_notification = wpinv_get_option( 'disable_new_user_emails' );
+        if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ) ) ) {
             wp_send_new_user_notifications( $user, 'user' );
         }
 

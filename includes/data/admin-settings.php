@@ -579,13 +579,18 @@ return array(
                     'name' => '<h3>' . __( 'Checkout Settings', 'invoicing' ) . '</h3>',
                     'type' => 'header',
                 ),
+                'disable_new_user_emails' => array(
+                    'id'   => 'disable_new_user_emails',
+                    'name' => __( 'Disable new user emails', 'invoicing' ),
+                    'desc' => __( 'Do not send an email to customers when a new user account is created for them.', 'invoicing' ),
+                    'type' => 'checkbox',
+                ),
                 'login_to_checkout' => array(
                     'id'   => 'login_to_checkout',
                     'name' => __( 'Require Login To Checkout', 'invoicing' ),
                     'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
                     'type' => 'checkbox',
                 ),
-
                 'maxmind_license_key' => array(
                     'id'   => 'maxmind_license_key',
                     'name' => __( 'MaxMind License Key', 'invoicing' ),

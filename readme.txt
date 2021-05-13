@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.1 =
+* New user notification emails can now be enabled/disabled via GetPaid > Settings > Misc > Disable new user emails
+
 = 2.3.0 =
 * Indicate first renewal date if possible - ADDED
 * Add multiple subscriptions support for compatible payment gateways - ADDED
