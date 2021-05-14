@@ -417,14 +417,14 @@ return array(
                 'email_from' => array(
                     'id'   => 'email_from',
                     'name' => __( 'From Email', 'invoicing' ),
-                    'desc' => sprintf (__( 'Email address to send invoice emails from. This will act as the "from" and "reply-to" address. %s If emails are not being sent it may be that your hosting prevents emails being sent if the email domains do not match.%s', 'invoicing' ), $alert_wrapper_start, $alert_wrapper_close),
+                    'desc' => sprintf (__( 'Email address to send invoice emails from. This will act as the "from" address. %s If emails are not being sent it may be that your hosting prevents emails being sent if the email domains do not match.%s', 'invoicing' ), $alert_wrapper_start, $alert_wrapper_close),
                     'std' => get_option( 'admin_email' ),
                     'type' => 'text',
                 ),
                 'admin_email' => array(
                     'id'   => 'admin_email',
                     'name' => __( 'Admin Email', 'invoicing' ),
-                    'desc' => __( 'Where should we send admin notifications?', 'invoicing' ),
+                    'desc' => __( 'Where should we send admin notifications? This will is also act as the "reply-to" address for invoice emails', 'invoicing' ),
                     'std' => get_option( 'admin_email' ),
                     'type' => 'text',
                 ),
