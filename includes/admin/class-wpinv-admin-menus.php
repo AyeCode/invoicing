@@ -13,6 +13,7 @@ class WPInv_Admin_Menus {
      * Hook in tabs.
      */
     public function __construct() {
+        add_action( 'admin_head', array( $this, 'set_admin_menu_class' ) );
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
         add_action( 'admin_menu', array( $this, 'add_customers_menu' ), 18 );
         add_action( 'admin_menu', array( $this, 'add_subscriptions_menu' ), 40 );
@@ -20,6 +21,19 @@ class WPInv_Admin_Menus {
         add_action( 'admin_menu', array( $this, 'add_settings_menu' ), 60 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
         add_action( 'admin_head-nav-menus.php', array( $this, 'add_nav_menu_meta_boxes' ) );
+    }
+
+    /**
+	 * Highlights sub menus.
+	 */
+	public function set_admin_menu_class() {
+		global $current_screen, $parent_file, $submenu_file;
+
+        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id , array( 'wpi_discount', 'wpi_payment_form', 'wpi_invoice' ) ) ) {
+			$parent_file = 'wpinv';
+			$submenu_file = 'edit.php?post_type=' . $current_screen->id;
+        }
+
     }
 
     public function admin_menu() {

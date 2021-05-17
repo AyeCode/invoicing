@@ -105,7 +105,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                 ?>
 
             </div>
-    
+
         <?php endforeach; ?>
 
     </div>

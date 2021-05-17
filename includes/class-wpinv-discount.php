@@ -435,7 +435,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_author( $context = 'view' ) {
 		return (int) $this->get_prop( 'author', $context );
 	}
-	
+
 	/**
 	 * Get the discount code.
 	 *
@@ -446,7 +446,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_code( $context = 'view' ) {
 		return $this->get_prop( 'code', $context );
 	}
-	
+
 	/**
 	 * Alias for self::get_code().
 	 *
@@ -457,7 +457,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_coupon_code( $context = 'view' ) {
 		return $this->get_code( $context );
 	}
-	
+
 	/**
 	 * Alias for self::get_code().
 	 *
@@ -468,7 +468,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_discount_code( $context = 'view' ) {
 		return $this->get_code( $context );
 	}
-	
+
 	/**
 	 * Get the discount's amount.
 	 *
@@ -496,7 +496,7 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		return apply_filters( 'wpinv_format_discount_rate', $rate, $this->get_type(), $this->get_amount() );
 	}
-	
+
 	/**
 	 * Get the discount's start date.
 	 *
@@ -507,7 +507,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_start( $context = 'view' ) {
 		return $this->get_prop( 'start', $context );
 	}
-	
+
 	/**
 	 * Alias for self::get_start().
 	 *
@@ -518,7 +518,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_start_date( $context = 'view' ) {
 		return $this->get_start( $context );
 	}
-	
+
 	/**
 	 * Get the discount's expiration date.
 	 *
@@ -529,7 +529,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_expiration( $context = 'view' ) {
 		return $this->get_prop( 'expiration', $context );
 	}
-	
+
 	/**
 	 * Alias for self::get_expiration().
 	 *
@@ -551,7 +551,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function get_end_date( $context = 'view' ) {
 		return $this->get_expiration( $context );
 	}
-	
+
 	/**
 	 * Get the discount's type.
 	 *
@@ -726,7 +726,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	| database itself and should only change what is stored in the class
 	| object.
 	*/
-	
+
 	/**
 	 * Sets discount status.
 	 *
@@ -853,7 +853,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function set_author( $value ) {
 		$this->set_prop( 'author', (int) $value );
 	}
-	
+
 	/**
 	 * Sets the discount code.
 	 *
@@ -864,7 +864,7 @@ class WPInv_Discount extends GetPaid_Data  {
 		$code = sanitize_text_field( $value );
 		$this->set_prop( 'code', $code );
 	}
-	
+
 	/**
 	 * Alias of self::set_code().
 	 *
@@ -874,7 +874,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function set_coupon_code( $value ) {
 		$this->set_code( $value );
 	}
-	
+
 	/**
 	 * Alias of self::set_code().
 	 *
@@ -884,7 +884,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function set_discount_code( $value ) {
 		$this->set_code( $value );
 	}
-	
+
 	/**
 	 * Sets the discount amount.
 	 *
@@ -909,7 +909,7 @@ class WPInv_Discount extends GetPaid_Data  {
             $this->set_prop( 'start', date( 'Y-m-d H:i', $date ) );
             return true;
 		}
-		
+
 		$this->set_prop( 'start', '' );
 
         return false;
@@ -1478,7 +1478,7 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		// Format the amount.
 		$discount_amount = floatval( wpinv_sanitize_amount( $discount_amount ) );
-		
+
 		// If this is a percentage discount.
 		if ( $this->is_type( 'percent' ) ) {
             $discount_amount = $amount * ( $discount_amount / 100 );
