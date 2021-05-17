@@ -435,6 +435,25 @@ function getpaid_register_userswp_settings( $settings ) {
 add_filter( 'getpaid_integration_settings', 'getpaid_register_userswp_settings' );
 
 /**
+ * Ovewrites the invoices history page to UsersWP.
+ *
+ * @since  2.3.1
+ * @return bool
+ */
+function getpaid_userswp_overwrite_invoice_history_page( $url, $post_type ) {
+
+    $our_tabs = getpaid_get_user_content_tabs();
+    $tab      = "gp-{$post_type}s";
+    if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
+        return add_query_arg( 'type', $tab, uwp_get_account_page_url() );
+    }
+
+    return $url;
+
+}
+add_filter( 'wpinv_get_history_page_uri', 'getpaid_userswp_overwrite_invoice_history_page', 10, 2 );
+
+/**
  * Checks if the integration is enabled.
  *
  * @since  1.0.19

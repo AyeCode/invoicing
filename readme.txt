@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.3.1 =
 * New user notification emails can now be enabled/disabled via GetPaid > Settings > Misc > Disable new user emails
+* UsersWP integration now overwrites invoice history page - ADDED
 
 = 2.3.0 =
 * Indicate first renewal date if possible - ADDED
