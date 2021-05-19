@@ -308,3 +308,6 @@ img {
   background-color: #5cb85c;
   border-color: #5cb85c;
 }
+.p-2 {
+    padding: 10px !important;
+}

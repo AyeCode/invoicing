@@ -1413,6 +1413,7 @@ function getpaid_the_invoice_description( $invoice ) {
     echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>$description</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
+add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
 
 /**
  * Render element on a form.
