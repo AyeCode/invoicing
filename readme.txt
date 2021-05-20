@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.2 =
+* Replace subscription interval select with a number input box - CHANGED
+
 = 2.3.1 =
 * New user notification emails can now be enabled/disabled via GetPaid > Settings > Misc > Disable new user emails
 * UsersWP integration now overwrites invoice history page - ADDED

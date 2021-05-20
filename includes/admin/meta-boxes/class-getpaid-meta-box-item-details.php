@@ -79,33 +79,10 @@ class GetPaid_Meta_Box_Item_Details {
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
-                                echo aui()->select(
-                                    array(
-                                        'id'               => 'wpinv_recurring_interval',
-                                        'name'             => 'wpinv_recurring_interval',
-                                        'label'            => __( 'Interval', 'invoicing' ),
-                                        'placeholder'      => __( 'Select Interval', 'invoicing' ),
-                                        'value'            => $item->get_recurring_interval( 'edit' ),
-                                        'select2'          => true,
-                                        'data-allow-clear' => 'false',
-                                        'options'          => array(
-                                            '1'  => __( 'every', 'invoicing' ),
-                                            '2'  => __( 'every 2nd', 'invoicing' ),
-                                            '3'  => __( 'every 3rd', 'invoicing' ),
-                                            '4'  => __( 'every 4th', 'invoicing' ),
-                                            '5'  => __( 'every 5th', 'invoicing' ),
-                                            '6'  => __( 'every 6th', 'invoicing' ),
-                                            '8'  => __( 'every 8th', 'invoicing' ),
-                                            '9'  => __( 'every 9th', 'invoicing' ),
-                                            '10' => __( 'every 10th', 'invoicing' ),
-                                            '11' => __( 'every 11th', 'invoicing' ),
-                                            '12' => __( 'every 12th', 'invoicing' ),
-                                            '13' => __( 'every 13th', 'invoicing' ),
-                                            '14' => __( 'every 14th', 'invoicing' ),
-                                        )
-                                    )
-                                );
+                                _e( 'every' );
+                                echo "&nbsp;";
                             ?>
+                            <input type="number" style="max-width: 60px;" value="<?php echo esc_attr( $item->get_recurring_interval( 'edit' ) ); ?>" placeholder="1" name="wpinv_recurring_interval" id="wpinv_recurring_interval" />
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
@@ -119,10 +96,10 @@ class GetPaid_Meta_Box_Item_Details {
                                         'select2'          => true,
                                         'data-allow-clear' => 'false',
                                         'options'     => array(
-                                            'D'  => __( 'day', 'invoicing' ),
-                                            'W'  => __( 'week', 'invoicing' ),
-                                            'M'  => __( 'month', 'invoicing' ),
-                                            'Y'  => __( 'year', 'invoicing' ),
+                                            'D'  => __( 'day(s)', 'invoicing' ),
+                                            'W'  => __( 'week(s)', 'invoicing' ),
+                                            'M'  => __( 'month(s)', 'invoicing' ),
+                                            'Y'  => __( 'year(s)', 'invoicing' ),
                                         )
                                     )
                                 );
@@ -313,7 +290,7 @@ class GetPaid_Meta_Box_Item_Details {
                 'minimum_price'        => isset( $_POST['wpinv_minimum_price'] ) ? (float) $_POST['wpinv_minimum_price'] : null,
 				'is_recurring'         => isset( $_POST['wpinv_is_recurring'] ),
 				'recurring_period'     => isset( $_POST['wpinv_recurring_period'] ) ? wpinv_clean( $_POST['wpinv_recurring_period'] ) : null,
-				'recurring_interval'   => isset( $_POST['wpinv_recurring_interval'] ) ? (int) $_POST['wpinv_recurring_interval'] : null,
+				'recurring_interval'   => isset( $_POST['wpinv_recurring_interval'] ) ? (int) $_POST['wpinv_recurring_interval'] : 1,
 				'recurring_limit'      => isset( $_POST['wpinv_recurring_limit'] ) ? (int) $_POST['wpinv_recurring_limit'] : null,
 				'is_free_trial'        => isset( $_POST['wpinv_trial_interval'] ) ? ( 0 != (int) $_POST['wpinv_trial_interval'] ) : null,
 				'trial_period'         => isset( $_POST['wpinv_trial_period'] ) ? wpinv_clean( $_POST['wpinv_trial_period'] ) : null,
