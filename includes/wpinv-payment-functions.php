@@ -235,6 +235,7 @@ function wpinv_send_back_to_checkout( $invoice = null ) {
 
     // Was an invoice created?
     if ( ! empty( $invoice ) ) {
+        $invoice             = is_scalar( $invoice ) ? new WPInv_Invoice( $invoice ) : $invoice;
         $response['invoice'] = $invoice->get_id();
         do_action( 'getpaid_checkout_invoice_exception', $invoice );
     }
