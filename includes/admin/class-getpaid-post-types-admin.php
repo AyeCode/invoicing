@@ -51,6 +51,8 @@ class GetPaid_Post_Types_Admin {
 		// Deleting posts.
 		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
 		add_filter( 'display_post_states', array( __CLASS__, 'filter_discount_state' ), 10, 2 );
+
+		add_filter( 'display_post_states', array( __CLASS__, 'add_display_post_states' ), 10, 2 );
 	}
 
 	/**
@@ -766,5 +768,41 @@ class GetPaid_Post_Types_Admin {
 				break;
 		}
 	}
+
+	/**
+     * Add a post display state for special GetPaid pages in the page list table.
+     *
+     * @param array   $post_states An array of post display states.
+     * @param WP_Post $post        The current post object.
+     *
+     * @return mixed
+     */
+    public static function add_display_post_states( $post_states, $post ) {
+
+        if ( wpinv_get_option( 'success_page', 0 ) == $post->ID ) {
+            $post_states['getpaid_success_page'] = __( 'GetPaid Receipt Page', 'invoicing' );
+        }
+
+		foreach ( getpaid_get_invoice_post_types() as $post_type => $label ) {
+
+			if ( wpinv_get_option( "{$post_type}_history_page", 0 ) == $post->ID ) {
+				$post_states["getpaid_{$post_type}_history_page"] = sprintf(
+					__( 'GetPaid %s History Page', 'invoicing' ),
+					$label
+				);
+			}
+
+		}
+		
+		if ( wpinv_get_option( 'invoice_subscription_page', 0 ) == $post->ID ) {
+            $post_states['getpaid_invoice_subscription_page'] = __( 'GetPaid Subscription Page', 'invoicing' );
+        }
+
+		if ( wpinv_get_option( 'checkout_page', 0 ) == $post->ID ) {
+            $post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
+        }
+
+        return $post_states;
+    }
 
 }
