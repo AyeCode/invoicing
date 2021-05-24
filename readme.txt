@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Replace subscription interval select with a number input box - CHANGED
 * Display post states on invoice pages - ADDED
 * Free trials show "Free Forever" on the payment page - FIXED
+* Do not submit the form when pressing enter in quantity/price/vat input boxes - CHANGED
 
 = 2.3.1 =
 * New user notification emails can now be enabled/disabled via GetPaid > Settings > Misc > Disable new user emails

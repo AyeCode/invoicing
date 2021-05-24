@@ -303,6 +303,18 @@ jQuery(function($) {
                     }
                 } );
 
+                // Refresh prices when hitting enter key.
+                this.form.on(
+                    'keypress',
+                    '.getpaid-refresh-on-change, .getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change), .getpaid-item-quantity-input, .getpaid-item-price-input',
+                    function( e ) {
+                        if ( e.keyCode == '13' ) {
+                            e.preventDefault();
+                            on_field_change()
+                        }
+                    }
+                );
+
                 // Update states when country changes.
                 this.form.on( 'change', '.getpaid-shipping-address-wrapper .wpinv_country', () => {
                     this.update_state_field( '.getpaid-shipping-address-wrapper' )
