@@ -145,7 +145,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		foreach ( $submission->get_items() as $item ) {
 			$item_id                                               = $item->get_id();
 			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
-			$recurring_price                                       = $submission->format_amount( $item->get_sub_total() - $item->recurring_item_discount );
+			$recurring_price                                       = $submission->format_amount( $item->get_recurring_sub_total() - $item->recurring_item_discount );
 			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
 		}
 
