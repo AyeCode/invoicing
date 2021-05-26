@@ -58,6 +58,7 @@ defined( 'ABSPATH' ) || exit;
                     <label class="d-block">
                         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
                         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='field.description' class='form-control' rows='3'></textarea>
+                        <small class="form-text text-muted"><?php _e( 'HTML is allowed', 'invoicing' ); ?></small>
                     </label>
                 </div>
 
