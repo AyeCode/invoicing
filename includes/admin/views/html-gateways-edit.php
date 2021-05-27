@@ -4,8 +4,6 @@
  *
  */
 
-use Automattic\Jetpack\ConnectionUI\Admin;
-
 defined( 'ABSPATH' ) || exit;
 
 ?>
