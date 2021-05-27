@@ -10,7 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$pages = wpinv_get_pages( true );
+$getpaid_pages = GetPaid_Installer::get_pages();
+$pages         = wpinv_get_pages( true );
     
 $currencies = wpinv_get_currencies();
     
@@ -116,6 +117,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['checkout_page'] ) ? '' : $getpaid_pages['checkout_page']['content'],
                     'help-tip'    => true,
                 ),
                 'success_page' => array(
@@ -126,6 +128,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['success_page'] ) ? '' : $getpaid_pages['success_page']['content'],
                     'help-tip'    => true,
                 ),
                 'failure_page' => array(
@@ -136,6 +139,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['failure_page'] ) ? '' : $getpaid_pages['failure_page']['content'],
                     'help-tip'    => true,
                 ),
                 'invoice_history_page' => array(
@@ -146,6 +150,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['invoice_history_page'] ) ? '' : $getpaid_pages['invoice_history_page']['content'],
                     'help-tip'    => true,
                 ),
                 'invoice_subscription_page' => array(
@@ -156,6 +161,7 @@ return array(
                     'options'     => $pages,
                     'class'       => 'wpi_select2',
                     'placeholder' => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['invoice_subscription_page'] ) ? '' : $getpaid_pages['invoice_subscription_page']['content'],
                     'help-tip'    => true,
                 ),
             ),

@@ -227,6 +227,7 @@ function wpinv_register_settings_option( $tab, $section, $option ) {
             'faux'        => isset( $option['faux'] )        ? $option['faux']        : false,
             'onchange'    => isset( $option['onchange'] )   ? $option['onchange']     : '',
             'custom'      => isset( $option['custom'] )     ? $option['custom']       : '',
+			'default_content' => isset( $option['default_content'] )     ? $option['default_content']       : '',
 			'class'       => isset( $option['class'] )     ? $option['class']         : '',
 			'style'       => isset( $option['style'] )     ? $option['style']         : '',
             'cols'        => isset( $option['cols'] ) && (int) $option['cols'] > 0 ? (int) $option['cols'] : 50,
@@ -788,6 +789,7 @@ function wpinv_select_callback( $args ) {
 	$attr   = wpinv_settings_attrs_helper( $args );
 	$value  = isset( $args['std'] ) ? $args['std'] : '';
 	$value  = wpinv_get_option( $args['id'], $value );
+	$rand   = uniqid( 'random_id' );
 
 	?>
 		<label style="width: 100%;">
@@ -796,6 +798,23 @@ function wpinv_select_callback( $args ) {
 					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( $option, $value ); ?>><?php echo wpinv_clean( $name ); ?></option>
 				<?php endforeach;?>
 			</select>
+
+			<?php if ( substr( $args['id'], -5 ) === '_page' && is_numeric( $value ) ) : ?>
+				<a href="<?php echo get_edit_post_link( $value ); ?>" target="_blank" class="button getpaid-page-setting-edit"><?php _e( 'Edit Page', 'invoicing' ) ?></a>
+			<?php endif; ?>
+
+			<?php if ( substr( $args['id'], -5 ) === '_page' && ! empty( $args['default_content'] ) ) : ?>
+				&nbsp;<a href="#TB_inline?&width=400&height=550&inlineId=<?php echo $rand; ?>" class="button thickbox getpaid-page-setting-view-default"><?php _e( 'View Default Content', 'invoicing' ) ?></a>
+				<div id='<?php echo $rand; ?>' style='display:none;'>
+					<div>
+						<h3><?php _e( 'Original Content', 'invoicing' ) ?></h3>
+						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php echo gepaid_trim_lines( wp_kses_post( $args['default_content'] ) ); ?></textarea>
+						<h3><?php _e( 'Current Content', 'invoicing' ) ?></h3>
+						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php $_post = get_post( $value ); echo empty( $_post ) ? '' : gepaid_trim_lines( wp_kses_post( $_post->post_content ) ); ?></textarea>
+					</div>
+				</div>
+			<?php endif; ?>
+
 			<?php echo $desc; ?>
 		</label>
 	<?php

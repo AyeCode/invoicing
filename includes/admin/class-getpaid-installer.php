@@ -141,12 +141,12 @@ class GetPaid_Installer {
 	}
 
 	/**
-	 * Re-create GetPaid pages.
+	 * Retreives GetPaid pages.
 	 *
 	 */
-	public function create_pages() {
+	public static function get_pages() {
 
-		$pages = apply_filters(
+		return apply_filters(
 			'wpinv_create_pages',
 			array(
 
@@ -209,7 +209,15 @@ class GetPaid_Installer {
 			)
 		);
 
-		foreach ( $pages as $key => $page ) {
+	}
+
+	/**
+	 * Re-create GetPaid pages.
+	 *
+	 */
+	public function create_pages() {
+
+		foreach ( self::get_pages() as $key => $page ) {
 			wpinv_create_page( esc_sql( $page['name'] ), $key, $page['title'], $page['content'], $page['parent'] );
 		}
 

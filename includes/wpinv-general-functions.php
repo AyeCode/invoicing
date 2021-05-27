@@ -396,3 +396,11 @@ function gepaid_get_form_items( $id ) {
 
     return $form->get_items( 'view', 'arrays' );
 }
+
+/**
+ * Trims each line in a paragraph.
+ * 
+ */
+function gepaid_trim_lines( $content ) {
+    return implode( "\n", array_map( 'trim', explode( "\n", $content ) ) );
+}

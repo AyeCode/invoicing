@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.3 = 
+* Edit buttons in settings on GetPaid Pages - ADDED
+
 = 2.3.2 =
 * Replace subscription interval select with a number input box - CHANGED
 * Display post states on invoice pages - ADDED

@@ -155,6 +155,8 @@ class WPInv_Admin_Menus {
             $key = key( $sections );
         }
 
+        add_thickbox();
+
         $registered_sections = wpinv_get_settings_tab_sections( $active_tab );
         $section             = isset( $_GET['section'] ) && ! empty( $registered_sections ) && array_key_exists( $_GET['section'], $registered_sections ) ? $_GET['section'] : $key;
         ob_start();
