@@ -150,11 +150,10 @@ function wpinv_get_gateway_checkout_label( $gateway ) {
 
 function wpinv_settings_sections_gateways( $settings ) {
     $gateways = wpinv_get_payment_gateways();
+    ksort( $gateways );
 
-    if (!empty($gateways)) {
-        foreach  ($gateways as $key => $gateway) {
-            $settings[$key] = $gateway['admin_label'];
-        }
+    foreach  ( $gateways as $key => $gateway ) {
+        $settings[ $key ] = $gateway['admin_label'];
     }
 
     return $settings;
