@@ -331,40 +331,6 @@ function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publis
 	return $ret;
 }
 
-// PayPal Standard settings
-function wpinv_gateway_settings_paypal( $setting ) {
-    $setting['paypal_active']['desc'] = $setting['paypal_active']['desc'] . ' ' . __( '( Supported Currencies: AUD, BRL, CAD, CZK, DKK, EUR, HKD, HUF, ILS, JPY, MYR, MXN, NOK, NZD, PHP, PLN, GBP, SGD, SEK, CHF, TWD, THB, USD )', 'invoicing' );
-    $setting['paypal_desc']['std'] = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
-
-    $setting['paypal_sandbox'] = array(
-            'type' => 'checkbox',
-            'id'   => 'paypal_sandbox',
-            'name' => __( 'PayPal Sandbox', 'invoicing' ),
-            'desc' => __( 'PayPal sandbox can be used to test payments.', 'invoicing' ),
-            'std'  => 1
-        );
-
-    $setting['paypal_email'] = array(
-            'type' => 'text',
-            'id'   => 'paypal_email',
-            'name' => __( 'PayPal Email', 'invoicing' ),
-            'desc' => __( 'Please enter your PayPal account\'s email address. Ex: myaccount@paypal.com', 'invoicing' ),
-            'std' => __( 'myaccount@paypal.com', 'invoicing' ),
-        );
-    /*
-    $setting['paypal_ipn_url'] = array(
-            'type' => 'text',
-            'id'   => 'paypal_ipn_url',
-            'name' => __( 'PayPal IPN Url', 'invoicing' ),
-            'desc' => __( 'Configure Instant Payment Notifications(IPN) url at PayPal. Ex: http://yoursite.com/?wpi-ipn=paypal', 'invoicing' ),
-            'size' => 'large'
-        );
-    */
-
-    return $setting;
-}
-add_filter( 'wpinv_gateway_settings_paypal', 'wpinv_gateway_settings_paypal', 10, 1 );
-
 /**
  * Displays the ipn url field.
  */

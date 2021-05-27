@@ -487,4 +487,38 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
     }
 
+	/**
+	 * Filters the gateway settings.
+	 *
+	 * @param array $admin_settings
+	 */
+	public function admin_settings( $admin_settings ) {
+
+        $currencies = sprintf(
+            __( 'Supported Currencies: %s', 'invoicing' ),
+            implode( ', ', $this->currencies )
+        );
+
+        $admin_settings['paypal_active']['desc'] .= " ($currencies)";
+        $admin_settings['paypal_desc']['std']     = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
+
+        $admin_settings['paypal_email'] = array(
+            'type' => 'text',
+            'id'   => 'paypal_email',
+            'name' => __( 'PayPal Email', 'invoicing' ),
+            'desc' => __( "Please enter your PayPal account's email address. Use your sandbox email address in case you've enabled sandbox above.", 'invoicing' ),
+        );
+
+        $admin_settings['paypal_ipn_url'] = array(
+            'type'     => 'ipn_url',
+            'id'       => 'paypal_ipn_url',
+            'name'     => __( 'IPN Url', 'invoicing' ),
+            'std'      => $this->notify_url,
+            'desc'     => __( "If you've not enabled IPNs in your paypal account, use the above URL to enable them.", 'invoicing' ) . ' <a href="https://developer.paypal.com/docs/api-basics/notifications/ipn/"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
+            'readonly' => true,
+        );
+
+		return $admin_settings;
+	}
+
 }
