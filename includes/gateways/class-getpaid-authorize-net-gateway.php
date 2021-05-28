@@ -138,6 +138,14 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         $response = $this->post( apply_filters( 'getpaid_authorizenet_customer_profile_args', $args, $invoice ), $invoice );
 
         if ( is_wp_error( $response ) ) {
+
+            // In case the customer profile already exists remotely.
+            if ( 'E00039' == $response->get_error_code() ) {
+                $customer_profile_id = str_replace( 'A duplicate record with ID ', '', $response->get_error_message() );
+                $customer_profile_id = str_replace( ' already exists.', '', $customer_profile_id );
+                return $this->create_customer_payment_profile( trim( $customer_profile_id ), $invoice, $submission_data, $save );
+            }
+
             return $response;
         }
 

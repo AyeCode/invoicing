@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Edit buttons in settings on GetPaid Pages - ADDED
 * Manual gateway shows as activated if there's no active gateway - FIXED
 * Gateways overview settings page incorrectly shows "subscription support" information - FIXED
+* Authorize.NET shows error if a customer tries to checkout again after previously failing - FIXED
 
 = 2.3.2 =
 * Replace subscription interval select with a number input box - CHANGED
