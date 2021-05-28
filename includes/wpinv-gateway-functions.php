@@ -15,15 +15,15 @@ function wpinv_get_payment_gateways() {
 }
 
 function wpinv_payment_gateway_titles( $all_gateways ) {
-    global $wpinv_options;
 
+    $options  = wpinv_get_options();
     $gateways = array();
     foreach ( $all_gateways as $key => $gateway ) {
-        if ( !empty( $wpinv_options[$key . '_title'] ) ) {
-            $all_gateways[$key]['checkout_label'] = __( $wpinv_options[$key . '_title'], 'invoicing' );
+        if ( !empty( $options[$key . '_title'] ) ) {
+            $all_gateways[$key]['checkout_label'] = __( $options[$key . '_title'], 'invoicing' );
         }
 
-        $gateways[$key] = isset( $wpinv_options[$key . '_ordering'] ) ? $wpinv_options[$key . '_ordering'] : ( isset( $gateway['ordering'] ) ? $gateway['ordering'] : '' );
+        $gateways[$key] = isset( $options[$key . '_ordering'] ) ? $options[$key . '_ordering'] : ( isset( $gateway['ordering'] ) ? $gateway['ordering'] : '' );
     }
 
     asort( $gateways );
@@ -126,9 +126,9 @@ function wpinv_get_gateway_admin_label( $gateway ) {
  * @param string $gateway
  */
 function wpinv_get_gateway_description( $gateway ) {
-    global $wpinv_options;
 
-    $description = ! empty( $wpinv_options[$gateway . '_desc'] ) ? $wpinv_options[$gateway . '_desc'] : '';
+    $options     = wpinv_get_options();
+    $description = ! empty( $options[$gateway . '_desc'] ) ? $options[$gateway . '_desc'] : '';
 
     return apply_filters( 'wpinv_gateway_description', $description, $gateway );
 }
