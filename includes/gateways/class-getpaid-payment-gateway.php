@@ -145,6 +145,8 @@ abstract class GetPaid_Payment_Gateway {
 
 		// Add support for various features.
 		foreach ( $this->supports as $feature ) {
+			add_filter( "wpinv_{$this->id}_support_{$feature}", '__return_true' );
+			add_filter( "getpaid_{$this->id}_support_{$feature}", '__return_true' );
 			add_filter( "getpaid_{$this->id}_supports_{$feature}", '__return_true' );
 		}
 

@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.3.3 = 
 * Edit buttons in settings on GetPaid Pages - ADDED
 * Manual gateway shows as activated if there's no active gateway - FIXED
+* Gateways overview settings page incorrectly shows "subscription support" information - FIXED
 
 = 2.3.2 =
 * Replace subscription interval select with a number input box - CHANGED
