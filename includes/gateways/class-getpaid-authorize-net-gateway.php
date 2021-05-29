@@ -276,6 +276,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             true
         );
 
+        update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile );
 
         return $response->customerPaymentProfileId;
     }
