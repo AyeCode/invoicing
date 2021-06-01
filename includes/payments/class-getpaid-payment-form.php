@@ -558,10 +558,23 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * Set the form elements.
 	 *
 	 * @since 1.0.19
+	 * @sinve 2.3.4 Array values sanitized.
 	 * @param  array $value Form elements.
 	 */
 	public function set_elements( $value ) {
 		if ( is_array( $value ) ) {
+
+			// sanitize
+			if(!empty($value )){
+
+				foreach($value as $key => $val_arr){
+					$help_text = !empty($val_arr['description']) ? wp_kses_post($val_arr['description']) : '';
+					$value[$key] = array_map( 'sanitize_text_field', $val_arr );
+					$value[$key]['description'] = $help_text;
+				}
+				
+			}
+
 			$this->set_prop( 'elements', $value );
 		}
 	}
