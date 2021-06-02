@@ -565,18 +565,56 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		if ( is_array( $value ) ) {
 
 			// sanitize
-			if(!empty($value )){
-
-				foreach($value as $key => $val_arr){
-					$help_text = !empty($val_arr['description']) ? wp_kses_post($val_arr['description']) : '';
-					$value[$key] = array_map( 'sanitize_text_field', $val_arr );
-					$value[$key]['description'] = $help_text;
-				}
-				
-			}
+			$value = $this->sanitize_array_values( $value );
 
 			$this->set_prop( 'elements', $value );
 		}
+	}
+
+	/**
+	 * Sanitize array values.
+	 *
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	public function sanitize_array_values($value){
+
+		// sanitize
+		if(!empty($value )){
+
+			foreach($value as $key => $val_arr){
+
+				if(is_array($val_arr)){
+					// check if we have sub array items.
+					$sub_arr = array();
+					foreach($val_arr as $key2 => $val2){
+						if(is_array($val2)){
+							$sub_arr[$key2] = $this->sanitize_array_values($val2);
+							unset($val_arr[$key][$key2]);
+						}
+					}
+
+					// we allow some html in description so we sanitize it separately.
+					$help_text = !empty($val_arr['description']) ? wp_kses_post($val_arr['description']) : '';
+
+					// sanitize array elements
+					$value[$key] = array_map( 'sanitize_text_field', $val_arr );
+
+					// add back the description if set
+					if(isset($val_arr['description'])){ $value[$key]['description'] = $help_text;}
+
+					// add back sub array items after its been sanitized.
+					if ( ! empty( $sub_arr ) ) {
+						$value[$key] = array_merge($value[$key],$sub_arr);
+					}
+				}
+
+			}
+
+		}
+
+		return $value;
 	}
 
 	/**
