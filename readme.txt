@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.3.6 =
 * Unable to use equal prices in price select field - FIXED
 * Display selected price label in invoice and emails - ADDED
+* Cannot toggle sandbox mode before enabling gateway - FIXED
 
 = 2.3.5 =
 * Payment form, some custom fields not showing due to array sanitization - FIXED

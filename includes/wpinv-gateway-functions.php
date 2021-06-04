@@ -260,17 +260,14 @@ function getpaid_payment_gateway_supports( $gateway, $feature ) {
 
     $supports = false;
 
-    if ( wpinv_is_gateway_active( $gateway ) ) {
+    $supports = apply_filters( "getpaid_{$gateway}_supports_{$feature}", false );
 
-        $supports = apply_filters( "getpaid_{$gateway}_supports_{$feature}", false );
+    // Backwards compatibility.
+    $supports = apply_filters( "wpinv_{$gateway}_supports_{$feature}", $supports );
+    $supports = apply_filters( "wpinv_{$gateway}_support_{$feature}", $supports );
 
-        // Backwards compatibility.
-        $supports = apply_filters( "wpinv_{$gateway}_supports_{$feature}", $supports );
-        $supports = apply_filters( "wpinv_{$gateway}_support_{$feature}", $supports );
-
-        $supports = apply_filters( "getpaid_gateway_supports_{$feature}", $supports, $gateway );
-        $supports = apply_filters( 'getpaid_payment_gateway_supports', $supports, $feature, $gateway );
-    }
+    $supports = apply_filters( "getpaid_gateway_supports_{$feature}", $supports, $gateway );
+    $supports = apply_filters( 'getpaid_payment_gateway_supports', $supports, $feature, $gateway );
 
     return $supports;
 }
