@@ -96,9 +96,10 @@ class GetPaid_Payment_Form_Submission_Fees {
 			return;
 		}
 
-		$options  = getpaid_convert_price_string_to_options( $element['options'] );
-		$selected = wpinv_parse_list( $data[ $element['id'] ] );
-		$total    = 0;
+		$options    = getpaid_convert_price_string_to_options( $element['options'] );
+		$selected   = array_filter( array_map( 'trim', explode( ',', $data[ $element['id'] ] ) ) );
+		$total      = 0;
+		$sub_labels = array();
 
 		foreach ( $selected as $price ) {
 
@@ -106,13 +107,17 @@ class GetPaid_Payment_Form_Submission_Fees {
 				throw new Exception( __( 'You have selected an invalid amount', 'invoicing' ) );
 			}
 
-			$total += (float) wpinv_sanitize_amount( $price );
+			$price = explode( '|', $price );
+
+			$sub_labels[] = $price[0];
+			$total += (float) wpinv_sanitize_amount( $price[1] );
 		}
 
 		$this->fees[ $element['label'] ] = array(
 			'name'          => $element['label'],
 			'initial_fee'   => $total,
 			'recurring_fee' => 0,
+			'description'   => implode( ', ', $sub_labels ),
 		);
 
 	}

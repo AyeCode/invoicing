@@ -834,7 +834,7 @@ function getpaid_convert_price_string_to_options( $str ) {
             $label = $price;
         }
 
-        $options[ $price ] = $label;
+        $options[ "$label|$price" ] = $label;
     }
 
     return $options;

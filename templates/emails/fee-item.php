@@ -34,7 +34,7 @@ defined( 'ABSPATH' ) || exit;
                     echo '<div class="wpinv_email_cart_item_title">' . sanitize_text_field( $fee['name'] ) . '</div>';
 
                     // And an optional description.
-                    $description = esc_html__( 'Fee', 'invoicing' );
+                    $description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );
                     echo "<p class='small'>$description</p>";
 
                 }

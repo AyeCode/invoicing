@@ -35,7 +35,7 @@ do_action( 'getpaid_before_invoice_fee_item', $invoice, $fee );
                         echo '<div class="mb-1">' . sanitize_text_field( $fee['name'] ) . '</div>';
 
                         // And an optional description.
-                        $description = esc_html__( 'Fee', 'invoicing' );
+                        $description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );
                         echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
 
                     }
