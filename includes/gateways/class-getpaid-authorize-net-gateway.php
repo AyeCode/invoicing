@@ -70,7 +70,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         $this->method_title         = __( 'Authorize.Net', 'invoicing' );
         $this->notify_url           = getpaid_get_non_query_string_ipn_url( $this->id );
 
-        add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
+        add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
         add_filter( 'getpaid_authorizenet_sandbox_notice', array( $this, 'sandbox_notice' ) );
         parent::__construct();
     }
@@ -674,25 +674,14 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * (Maybe) renews an authorize.net subscription profile.
 	 *
 	 *
-	 * @param bool $should_expire
      * @param WPInv_Subscription $subscription
 	 */
-	public function maybe_renew_subscription( $should_expire, $subscription ) {
+	public function maybe_renew_subscription( $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( $this->id != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
-            return $should_expire;
+        if ( $this->id == $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+            $this->renew_subscription( $subscription );
         }
-
-        // If this is the last renewal, complete the subscription.
-        if ( $subscription->is_last_renewal() ) {
-            $subscription->complete();
-            return false;
-        }
-
-        $this->renew_subscription( $subscription );
-
-        return false;
 
 	}
 

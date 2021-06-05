@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.7 =
+* Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED
+
 = 2.3.6 =
 * Unable to use equal prices in price select field - FIXED
 * Display selected price label in invoice and emails - ADDED
