@@ -434,6 +434,13 @@ return array(
                     'std' => get_option( 'admin_email' ),
                     'type' => 'text',
                 ),
+                'skip_email_free_invoice' => array(
+                    'id'   => 'skip_email_free_invoice',
+                    'name' => __( 'Skip Free Invoices', 'invoicing' ),
+                    'desc' => __( 'Check this to disable sending emails for free invoices.', 'invoicing' ),
+                    'type' => 'checkbox',
+                    'std'  => false,
+                ),
                 'overdue_settings_header' => array(
                     'id'   => 'overdue_settings_header',
                     'name' => '<h3>' . __( 'Due Date Settings', 'invoicing' ) . '</h3>',

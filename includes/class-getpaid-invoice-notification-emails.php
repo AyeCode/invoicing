@@ -180,7 +180,8 @@ class GetPaid_Invoice_Notification_Emails {
 
 		do_action( 'getpaid_before_send_invoice_notification', $type, $invoice, $email );
 
-		if ( apply_filters( 'getpaid_skip_invoice_email', false, $type, $invoice ) ) {
+		$skip = $invoice->is_free() && wpinv_get_option( 'skip_email_free_invoice' );
+		if ( apply_filters( 'getpaid_skip_invoice_email', $skip, $type, $invoice ) ) {
 			return;
 		}
 

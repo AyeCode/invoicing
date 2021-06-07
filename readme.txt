@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.3.7 =
 * Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED
+* Option to stop GetPaid from sending emails for free invoices - ADDED
 
 = 2.3.6 =
 * Unable to use equal prices in price select field - FIXED
