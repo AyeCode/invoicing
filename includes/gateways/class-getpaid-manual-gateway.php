@@ -42,7 +42,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         $this->title        = __( 'Test Gateway', 'invoicing' );
         $this->method_title = __( 'Test Gateway', 'invoicing' );
 
-        add_filter( 'getpaid_daily_maintenance_should_expire_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
+        add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
     }
 
     /**
@@ -88,33 +88,24 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	 * (Maybe) renews a manual subscription profile.
 	 *
 	 *
-	 * @param bool $should_expire
      * @param WPInv_Subscription $subscription
 	 */
-	public function maybe_renew_subscription( $should_expire, $subscription ) {
+	public function maybe_renew_subscription( $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( $this->id != $subscription->get_gateway() || ! $subscription->has_status( 'active trialling' ) ) {
-            return $should_expire;
+        if ( $this->id == $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+
+            // Renew the subscription.
+            $subscription->add_payment(
+                array(
+                    'transaction_id' => $subscription->get_parent_payment()->generate_key(),
+                    'gateway'        => $this->id
+                )
+            );
+
+            $subscription->renew();
+
         }
-
-        // If this is the last renewal, complete the subscription.
-        if ( $subscription->is_last_renewal() ) {
-            $subscription->complete();
-            return false;
-        }
-
-        // Renew the subscription.
-        $subscription->add_payment(
-            array(
-                'transaction_id' => $subscription->get_parent_payment()->generate_key(),
-                'gateway'        => $this->id
-            )
-        );
-
-        $subscription->renew();
-
-        return false;
 
     }
 
