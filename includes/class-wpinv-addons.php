@@ -114,7 +114,12 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			'update_url' => '',
 		);
 
-		if( ($current_tab == 'addons' || $current_tab =='gateways') && isset($addon->info->id) && $addon->info->id){
+		if( 'getpaid-stripe-payments' == $addon->info->slug || ( $current_tab == 'recommended_plugins' && isset($addon->info->slug) && $addon->info->slug )){
+			include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
+			$status = install_plugin_install_status(array("slug"=>$button_args['slug'],"version"=>""));
+			$button_args['install_status'] = isset($status['status']) ? $status['status'] : 'install';
+			$button_args['file'] = isset($status['file']) ? $status['file'] : '';
+		}elseif( ($current_tab == 'addons' || $current_tab =='gateways') && isset($addon->info->id) && $addon->info->id){
 			include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
 			if(!empty($addon->licensing->edd_slug)){$button_args['slug'] = $addon->licensing->edd_slug;}
 			$status = self::install_plugin_install_status($addon);
@@ -127,11 +132,6 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			if(!in_array($button_args['slug'],$wp_org_themes)){
 				$button_args['update_url'] = "https://wpinvoicing.com";
 			}
-		}elseif($current_tab == 'recommended_plugins' && isset($addon->info->slug) && $addon->info->slug){
-			include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
-			$status = install_plugin_install_status(array("slug"=>$button_args['slug'],"version"=>""));
-			$button_args['install_status'] = isset($status['status']) ? $status['status'] : 'install';
-			$button_args['file'] = isset($status['file']) ? $status['file'] : '';
 		}
 
 		// set price
