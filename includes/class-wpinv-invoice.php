@@ -3652,6 +3652,17 @@ class WPInv_Invoice extends GetPaid_Data {
         return $this->get_data();
     }
 
+	/**
+     * Adds a system note to an invoice.
+     *
+     * @param string $note The note being added.
+	 * @return int|false The new note's ID on success, false on failure.
+     *
+     */
+    public function add_system_note( $note ) {
+		return $this->add_note( $note, false, false, true );
+	}
+
     /**
      * Adds a note to an invoice.
      *

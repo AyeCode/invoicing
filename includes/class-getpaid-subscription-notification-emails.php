@@ -189,9 +189,21 @@ class GetPaid_Subscription_Notification_Emails {
 		}
 
 		if ( $result ) {
-			$subscription->get_parent_invoice()->add_note( sprintf( __( 'Successfully sent %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
+			$invoice->add_system_note(
+				sprintf(
+					__( 'Successfully sent %s notification email to %s.', 'invoicing' ),
+					sanitize_key( $type ),
+					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
+				)
+			);
 		} else {
-			$subscription->get_parent_invoice()->add_note( sprintf( __( 'Failed sending %s notification email.', 'invoicing' ), sanitize_key( $type ) ), false, false, true );
+			$invoice->add_system_note(
+				sprintf(
+					__( 'Failed sending %s notification email to %s.', 'invoicing' ),
+					sanitize_key( $type ),
+					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
+				)
+			);	
 		}
 
 		do_action( 'getpaid_after_send_subscription_notification', $type, $subscription, $email );
