@@ -139,6 +139,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * MaxMind database API key not saving - FIXED
 * [Authorize.NET] Unable to pay with the same card twice when logged out - FIXED
 * Stripe addon cannot be installed from the GetPaid extensions page - FIXED
+* Create new user button fills existing user data if email exists - CHANGED
 
 = 2.3.6 =
 * Unable to use equal prices in price select field - FIXED

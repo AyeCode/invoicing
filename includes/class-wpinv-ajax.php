@@ -224,9 +224,9 @@ class WPInv_Ajax {
         }
 
         // And it does not exist.
-        if ( email_exists( $email ) ) {
-            _e( 'A user with this email address already exists', 'invoicing' );
-            exit;
+        $id = email_exists( $email );
+        if ( $id ) {
+            wp_send_json_success( compact( 'id' ) );
         }
 
         wp_send_json_success( true );

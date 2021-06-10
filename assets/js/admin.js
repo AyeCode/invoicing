@@ -318,7 +318,7 @@ jQuery(function ($) {
 
 		// We are no longer creating a new user.
 		$('#getpaid-invoice-create-new-user').val(0);
-		$('#getpaid-invoice-new-user-email').prop('required', false);
+		$('#getpaid-invoice-new-user-email').val('').prop('required', false);
 
 	});
 
@@ -355,6 +355,18 @@ jQuery(function ($) {
 						.addClass('is-invalid')
 						.parent()
 						.append('<div class="invalid-feedback">' + response + '</div>')
+				} else if ( response.data.id ) {
+
+					var val  = response.data.id;
+
+					// Set the value, creating a new option if necessary
+					if ( $('#wpinv_post_author_override').find( 'option[value=' + val + ']').length ) {
+						$('#wpinv_post_author_override').val(val).trigger( 'change' )
+					} else {
+						$('#wpinv_post_author_override').append( new Option( email, val, true, true ) ).trigger( 'change' )
+					}
+
+					$('#getpaid-invoice-cancel-create-new-user').trigger( 'click' )
 				}
 			})
 
