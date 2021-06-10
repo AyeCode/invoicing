@@ -301,6 +301,8 @@ jQuery(function ($) {
 		// The email field is now required.
 		$('#getpaid-invoice-new-user-email').prop('required', 'required');
 
+		// Delete existing values.
+		$('#wpinv_first_name, #wpinv_last_name, #wpinv_company, #wpinv_vat_number, #wpinv_address, #wpinv_city, #wpinv_zip, #wpinv_phone').val('')
 	});
 
 	// When clicking the "cancel new user" button...
