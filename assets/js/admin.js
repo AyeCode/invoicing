@@ -360,14 +360,15 @@ jQuery(function ($) {
 					var val  = response.data.id;
 
 					// Set the value, creating a new option if necessary
+					$('#getpaid-invoice-cancel-create-new-user').trigger( 'click' )
 					if ( $('#wpinv_post_author_override').find( 'option[value=' + val + ']').length ) {
 						$('#wpinv_post_author_override').val(val).trigger( 'change' )
 					} else {
 						$('#wpinv_post_author_override').append( new Option( email, val, true, true ) ).trigger( 'change' )
 					}
 
-					$('#getpaid-invoice-cancel-create-new-user').trigger( 'click' )
 				}
+
 			})
 
 			.always(function (response) {
@@ -1297,19 +1298,27 @@ function wpinvBlock(el, message) {
     var $el = jQuery( el )
 
     // Do not block twice.
-    if ( 1 != $el.data( 'GetPaidIsBlocked' ) ) {
+    if ( ! $el.data( 'GetPaidIsBlocked' ) ) {
         $el.data( 'GetPaidIsBlocked', 1 )
         $el.data( 'GetPaidWasRelative', $el.hasClass( 'position-relative' ) )
         $el.addClass( 'position-relative' )
         $el.append( '<div class="w-100 h-100 position-absolute bg-light d-flex justify-content-center align-items-center getpaid-block-ui" style="top: 0; left: 0; opacity: 0.7; cursor: progress;"><div class="spinner-border" role="status"><span class="sr-only">' + message +'</span></div></div>' )
-    }
+    } else {
+		$el.data( 'GetPaidIsBlocked', $el.data( 'GetPaidIsBlocked' ) + 1 )
+	}
 
 }
 
 function wpinvUnblock(el) {
     var $el = jQuery( el )
 
-    if ( 1 == $el.data( 'GetPaidIsBlocked' ) ) {
+    if ( $el.data( 'GetPaidIsBlocked' ) ) {
+
+		if ( $el.data( 'GetPaidIsBlocked' ) - 1 > 0 ) {
+			$el.data( 'GetPaidIsBlocked', $el.data( 'GetPaidIsBlocked' ) - 1 )
+			return
+		}
+
         $el.data( 'GetPaidIsBlocked', 0 )
 
         if ( ! $el.data( 'GetPaidWasRelative') ) {
