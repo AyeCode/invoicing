@@ -788,8 +788,8 @@ function wpinv_clean( $var ) {
         }
         return $var;
 	}
-    
-    return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+
+    return is_string( $var ) ? sanitize_text_field( stripslashes( $var ) ) : $var;
 }
 
 /**

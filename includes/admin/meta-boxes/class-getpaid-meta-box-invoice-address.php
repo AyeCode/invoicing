@@ -334,7 +334,7 @@ class GetPaid_Meta_Box_Invoice_Address {
         if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
 
             if ( isset( $_POST['wpinv_discount_code'] ) ) {
-                $invoice->set_discount_code( $_POST['wpinv_discount_code'] );
+                $invoice->set_discount_code( wpinv_clean( $_POST['wpinv_discount_code'] ) );
             }
 
             $discount = new WPInv_Discount( $invoice->get_discount_code() );
@@ -350,10 +350,10 @@ class GetPaid_Meta_Box_Invoice_Address {
         }
 
         // If we're creating a new user...
-        if ( ! empty( $_POST['wpinv_new_user'] ) && is_email( $_POST['wpinv_email'] ) ) {
+        if ( ! empty( $_POST['wpinv_new_user'] ) && is_email( stripslashes( $_POST['wpinv_email'] ) ) ) {
 
             // Attempt to create the user.
-            $user = wpinv_create_user( sanitize_email( $_POST['wpinv_email'] ) );
+            $user = wpinv_create_user( sanitize_email( stripslashes( $_POST['wpinv_email'] ) ) );
 
 
             // If successful, update the invoice author.
