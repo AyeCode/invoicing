@@ -830,6 +830,7 @@ jQuery(function($) {
         var data         = $( this ).data()
         data.action      = 'wpinv_get_payment_form'
         data._ajax_nonce = WPInv.formNonce
+        data.current_url = window.location.href
 
         $.get( WPInv.ajax_url, data, function (res) {
             $('#getpaid-payment-modal .modal-body-wrapper').html( res )

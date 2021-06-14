@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.8 =
+* Ability to set the default Website form element value to the current page's URL - ADDED
+
 = 2.3.7 =
 * Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED
 * Option to stop GetPaid from sending emails for free invoices - ADDED
