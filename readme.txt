@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.3.8 =
 * Ability to set the default Website form element value to the current page's URL - ADDED
+* Settings reset when General settings tab is saved - FIXED
 
 = 2.3.7 =
 * Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED

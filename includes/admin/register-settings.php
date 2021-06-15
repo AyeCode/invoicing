@@ -266,14 +266,10 @@ function wpinv_settings_sanitize( $input = array() ) {
 	$raw_referrer  = wp_get_raw_referer();
 
     if ( empty( $raw_referrer ) ) {
-        return $input;
+		return array_merge( $wpinv_options, $input );
     }
 
     wp_parse_str( $raw_referrer, $referrer );
-
-	if ( empty( $referrer['tab'] ) ) {
-        return $input;
-	}
 
     $settings = wpinv_get_registered_settings();
     $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : 'general';
@@ -291,7 +287,7 @@ function wpinv_settings_sanitize( $input = array() ) {
 
         if ( $type ) {
             // Field type specific filter
-            $input[$key] = apply_filters( 'wpinv_settings_sanitize_' . $type, $value, $key );
+            $input[$key] = apply_filters( "wpinv_settings_sanitize_$type", $value, $key );
         }
 
         // General filter
@@ -328,21 +324,8 @@ function wpinv_settings_sanitize( $input = array() ) {
 
     return $output;
 }
-
-function wpinv_settings_sanitize_misc_accounting( $input ) {
-
-    if ( ! wpinv_current_user_can_manage_invoicing() ) {
-        return $input;
-    }
-
-    if( ! empty( $input['enable_sequential'] ) && !wpinv_get_option( 'enable_sequential' ) ) {
-        // Shows an admin notice about upgrading previous order numbers
-        getpaid_session()->set( 'upgrade_sequential', '1' );
-    }
-
-    return $input;
-}
-add_filter( 'wpinv_settings_misc-accounting_sanitize', 'wpinv_settings_sanitize_misc_accounting' );
+add_filter( 'wpinv_settings_sanitize_text', 'trim', 10, 1 );
+add_filter( 'wpinv_settings_sanitize_tax_rate', 'wpinv_sanitize_amount' );
 
 function wpinv_settings_sanitize_tax_rates( $input ) {
     if( ! wpinv_current_user_can_manage_invoicing() ) {
@@ -368,11 +351,6 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
     return $input;
 }
 add_filter( 'wpinv_settings_taxes-rates_sanitize', 'wpinv_settings_sanitize_tax_rates' );
-
-function wpinv_sanitize_text_field( $input ) {
-    return trim( $input );
-}
-add_filter( 'wpinv_settings_sanitize_text', 'wpinv_sanitize_text_field' );
 
 function wpinv_get_settings_tabs() {
     $tabs             = array();
@@ -1057,16 +1035,6 @@ function wpinv_set_settings_cap() {
 }
 add_filter( 'option_page_capability_wpinv_settings', 'wpinv_set_settings_cap' );
 
-function wpinv_settings_sanitize_input( $value, $key ) {
-
-    if ( $key == 'tax_rate' ) {
-        $value = wpinv_sanitize_amount( $value );
-        $value = absint( min( $value, 99 ) );
-    }
-
-    return $value;
-}
-add_filter( 'wpinv_settings_sanitize', 'wpinv_settings_sanitize_input', 10, 2 );
 
 function wpinv_on_update_settings( $old_value, $value, $option ) {
     $old = !empty( $old_value['remove_data_on_unistall'] ) ? 1 : '';
