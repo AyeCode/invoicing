@@ -115,7 +115,7 @@ class GetPaid_Daily_Maintenance {
 			'count_total'        => false,
 			'status'             => 'trialling active failing cancelled',
 			'date_expires_query' => array(
-				'before'    => 'today',
+				'before'    => 'yesterday',
 				'inclusive' => false,
 			),
 		);

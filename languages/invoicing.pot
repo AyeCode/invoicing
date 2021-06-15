@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:38+0000\n"
+"POT-Creation-Date: 2021-06-15 14:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -812,7 +812,7 @@ msgstr ""
 msgid "Acre"
 msgstr ""
 
-#: includes/admin/register-settings.php:959
+#: includes/admin/register-settings.php:937
 msgid "Action"
 msgstr ""
 
@@ -2802,7 +2802,7 @@ msgstr ""
 msgid "Check if you want to send this notification email to site Admin."
 msgstr ""
 
-#: includes/admin/register-settings.php:965
+#: includes/admin/register-settings.php:943
 msgid "Check Pages"
 msgstr ""
 
@@ -3238,7 +3238,7 @@ msgid ""
 "receive all payment events."
 msgstr ""
 
-#: includes/admin/register-settings.php:982
+#: includes/admin/register-settings.php:960
 msgid "Create Database Tables"
 msgstr ""
 
@@ -3273,7 +3273,7 @@ msgstr ""
 msgid "Created Date"
 msgstr ""
 
-#: includes/admin/register-settings.php:967
+#: includes/admin/register-settings.php:945
 msgid "Creates any missing GetPaid pages."
 msgstr ""
 
@@ -3358,7 +3358,7 @@ msgstr ""
 msgid "Currency Position"
 msgstr ""
 
-#: includes/admin/register-settings.php:416
+#: includes/admin/register-settings.php:394
 #: includes/data/admin-settings.php:171
 msgid "Currency Settings"
 msgstr ""
@@ -3367,7 +3367,7 @@ msgstr ""
 msgid "Currency:"
 msgstr ""
 
-#: includes/admin/register-settings.php:798
+#: includes/admin/register-settings.php:776
 msgid "Current Content"
 msgstr ""
 
@@ -3375,7 +3375,7 @@ msgstr ""
 msgid "Cusco"
 msgstr ""
 
-#: includes/admin/register-settings.php:438
+#: includes/admin/register-settings.php:416
 #: includes/data/admin-settings.php:632
 msgid "Custom CSS"
 msgstr ""
@@ -3573,6 +3573,10 @@ msgstr ""
 msgid "Default State / Province"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/website.php:43
+msgid "Default to the current page's URL?"
+msgstr ""
+
 #: includes/api/class-getpaid-rest-settings-controller.php:616
 msgid "Default value for the setting."
 msgstr ""
@@ -3620,7 +3624,7 @@ msgid "Denmark"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:143
-#: includes/admin/register-settings.php:958
+#: includes/admin/register-settings.php:936
 msgid "Description"
 msgstr ""
 
@@ -3636,7 +3640,7 @@ msgstr ""
 msgid "Dhaulagiri"
 msgstr ""
 
-#: includes/admin/register-settings.php:441
+#: includes/admin/register-settings.php:419
 #: includes/data/admin-settings.php:652
 msgid "Diagnostic Tools"
 msgstr ""
@@ -4033,7 +4037,7 @@ msgstr ""
 msgid "Edit Item"
 msgstr ""
 
-#: includes/admin/register-settings.php:789
+#: includes/admin/register-settings.php:767
 msgid "Edit Page"
 msgstr ""
 
@@ -4144,7 +4148,7 @@ msgstr ""
 #: templates/payment-forms-admin/edit/text.php:45
 #: templates/payment-forms-admin/edit/textarea.php:45
 #: templates/payment-forms-admin/edit/time.php:38
-#: templates/payment-forms-admin/edit/website.php:45
+#: templates/payment-forms-admin/edit/website.php:50
 msgid "Email Merge Tag"
 msgstr ""
 
@@ -4152,7 +4156,7 @@ msgstr ""
 msgid "Email Sender Options"
 msgstr ""
 
-#: includes/admin/register-settings.php:428
+#: includes/admin/register-settings.php:406
 msgid "Email Settings"
 msgstr ""
 
@@ -4166,7 +4170,7 @@ msgstr ""
 msgid "Email: %s"
 msgstr ""
 
-#: includes/admin/register-settings.php:382
+#: includes/admin/register-settings.php:360
 msgid "Emails"
 msgstr ""
 
@@ -4505,7 +4509,7 @@ msgstr ""
 msgid "Ethiopian Irr"
 msgstr ""
 
-#: includes/admin/register-settings.php:425
+#: includes/admin/register-settings.php:403
 msgid "EU VAT Settings"
 msgstr ""
 
@@ -4936,7 +4940,7 @@ msgstr ""
 msgid "Gateway Select"
 msgstr ""
 
-#: includes/admin/register-settings.php:420
+#: includes/admin/register-settings.php:398
 #: includes/data/admin-settings.php:253
 msgid "Gateway Settings"
 msgstr ""
@@ -4966,11 +4970,11 @@ msgstr ""
 msgid "Geita"
 msgstr ""
 
-#: includes/admin/register-settings.php:379
+#: includes/admin/register-settings.php:357
 msgid "General"
 msgstr ""
 
-#: includes/admin/register-settings.php:415
+#: includes/admin/register-settings.php:393
 msgid "General Settings"
 msgstr ""
 
@@ -5716,7 +5720,7 @@ msgid ""
 "enable them."
 msgstr ""
 
-#: includes/admin/register-settings.php:1001
+#: includes/admin/register-settings.php:979
 msgid ""
 "If your old invoices were not migrated after updating from Invoicing to "
 "GetPaid, you can use this tool to migrate them."
@@ -5888,7 +5892,7 @@ msgstr ""
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
 
-#: includes/admin/register-settings.php:385
+#: includes/admin/register-settings.php:363
 msgid "Integrations"
 msgstr ""
 
@@ -7274,7 +7278,7 @@ msgstr ""
 msgid "La Union"
 msgstr ""
 
-#: includes/admin/register-settings.php:417
+#: includes/admin/register-settings.php:395
 msgid "Label Texts"
 msgstr ""
 
@@ -8222,7 +8226,7 @@ msgstr ""
 msgid "Migori"
 msgstr ""
 
-#: includes/admin/register-settings.php:999
+#: includes/admin/register-settings.php:977
 msgid "Migrate old invoices"
 msgstr ""
 
@@ -8259,11 +8263,11 @@ msgstr ""
 msgid "Misamis Oriental"
 msgstr ""
 
-#: includes/admin/register-settings.php:389
+#: includes/admin/register-settings.php:367
 msgid "Misc"
 msgstr ""
 
-#: includes/admin/register-settings.php:437
+#: includes/admin/register-settings.php:415
 msgid "Miscellaneous"
 msgstr ""
 
@@ -9393,7 +9397,7 @@ msgstr ""
 msgid "Oriental Mindoro"
 msgstr ""
 
-#: includes/admin/register-settings.php:796
+#: includes/admin/register-settings.php:774
 msgid "Original Content"
 msgstr ""
 
@@ -9821,7 +9825,7 @@ msgstr ""
 msgid "Payment Forms"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:26 includes/admin/register-settings.php:380
+#: includes/class-wpinv-addons.php:26 includes/admin/register-settings.php:358
 #: includes/data/admin-settings.php:259
 msgid "Payment Gateways"
 msgstr ""
@@ -10328,7 +10332,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: includes/admin/register-settings.php:388
+#: includes/admin/register-settings.php:366
 msgid "Privacy"
 msgstr ""
 
@@ -10340,7 +10344,7 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: includes/admin/register-settings.php:434
+#: includes/admin/register-settings.php:412
 msgid "Privacy policy"
 msgstr ""
 
@@ -10546,11 +10550,11 @@ msgstr ""
 msgid "Razgrad"
 msgstr ""
 
-#: includes/admin/register-settings.php:1017
+#: includes/admin/register-settings.php:995
 msgid "Recalculate Discounts"
 msgstr ""
 
-#: includes/admin/register-settings.php:1019
+#: includes/admin/register-settings.php:997
 msgid ""
 "Recalculate discounts for existing invoices that have discount codes but are "
 "not discounted."
@@ -10881,14 +10885,14 @@ msgstr ""
 msgid "Rukwa"
 msgstr ""
 
-#: includes/admin/register-settings.php:978
-#: includes/admin/register-settings.php:995
-#: includes/admin/register-settings.php:1012
-#: includes/admin/register-settings.php:1030
+#: includes/admin/register-settings.php:956
+#: includes/admin/register-settings.php:973
+#: includes/admin/register-settings.php:990
+#: includes/admin/register-settings.php:1008
 msgid "Run"
 msgstr ""
 
-#: includes/admin/register-settings.php:984
+#: includes/admin/register-settings.php:962
 msgid "Run this tool to create any missing database tables."
 msgstr ""
 
@@ -11457,7 +11461,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/register-settings.php:327
+#: includes/admin/register-settings.php:323
 msgid "Settings updated."
 msgstr ""
 
@@ -12446,7 +12450,7 @@ msgstr ""
 msgid "Tax Rate"
 msgstr ""
 
-#: includes/admin/register-settings.php:424
+#: includes/admin/register-settings.php:402
 #: includes/data/admin-settings.php:351
 msgid "Tax Rates"
 msgstr ""
@@ -12455,12 +12459,12 @@ msgstr ""
 msgid "Tax Rule"
 msgstr ""
 
-#: includes/admin/register-settings.php:423
+#: includes/admin/register-settings.php:401
 #: includes/data/admin-settings.php:283
 msgid "Tax Settings"
 msgstr ""
 
-#: includes/admin/register-settings.php:381
+#: includes/admin/register-settings.php:359
 #: includes/reports/class-getpaid-reports-report.php:215
 msgid "Taxes"
 msgstr ""
@@ -12576,7 +12580,7 @@ msgid ""
 "The base color for invoice email template. Default <code>#557da2</code>."
 msgstr ""
 
-#: includes/admin/register-settings.php:763
+#: includes/admin/register-settings.php:741
 #, php-format
 msgid "The callback function used for the %s setting is missing."
 msgstr ""
@@ -12585,7 +12589,7 @@ msgstr ""
 msgid "The chosen payment gateway does not support this currency"
 msgstr ""
 
-#: includes/admin/register-settings.php:1097
+#: includes/admin/register-settings.php:1065
 msgid "The content of the email (Merge Tags and HTML are allowed)."
 msgstr ""
 
@@ -13439,11 +13443,11 @@ msgstr ""
 msgid "Tongan Pa&#x2bb;anga"
 msgstr ""
 
-#: includes/admin/register-settings.php:957
+#: includes/admin/register-settings.php:935
 msgid "Tool"
 msgstr ""
 
-#: includes/admin/register-settings.php:390
+#: includes/admin/register-settings.php:368
 msgid "Tools"
 msgstr ""
 
@@ -13815,7 +13819,7 @@ msgstr ""
 msgid "Updating the status will trigger related actions and hooks"
 msgstr ""
 
-#: includes/admin/register-settings.php:866
+#: includes/admin/register-settings.php:844
 msgid "Upload File"
 msgstr ""
 
@@ -14178,7 +14182,7 @@ msgstr ""
 msgid "View Customer Details"
 msgstr ""
 
-#: includes/admin/register-settings.php:793
+#: includes/admin/register-settings.php:771
 msgid "View Default Content"
 msgstr ""
 
@@ -14680,7 +14684,7 @@ msgstr ""
 #: templates/payment-forms-admin/edit/text.php:47
 #: templates/payment-forms-admin/edit/textarea.php:47
 #: templates/payment-forms-admin/edit/time.php:40
-#: templates/payment-forms-admin/edit/website.php:47
+#: templates/payment-forms-admin/edit/website.php:52
 msgid "You can use this merge tag in notification emails"
 msgstr ""
 
