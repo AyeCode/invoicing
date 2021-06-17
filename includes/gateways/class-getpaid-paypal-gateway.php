@@ -87,6 +87,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
         add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
+		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
 
         parent::__construct();
     }
@@ -502,11 +503,91 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $admin_settings['paypal_active']['desc'] .= " ($currencies)";
         $admin_settings['paypal_desc']['std']     = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
 
+		// Access tokens.
+        $live_account    = wpinv_get_option( 'paypal_live_access_token' );
+        $sandbox_account = wpinv_get_option( 'paypal_test_access_token' );
+
+		$admin_settings['paypal_connect'] = array(
+			'type'       => 'raw_html',
+			'id'         => 'paypal_connect',
+			'name'       => __( 'Connect to PayPal', 'invoicing' ),
+			'desc'       => sprintf(
+				'<div class="wpinv-paypal-connect-live"><a class="button button-primary" href="%s">%s</a><br><strong style="color: green">%s</strong></div><div class="wpinv-paypal-connect-sandbox"><a class="button button-primary" href="%s">%s</a><br><strong style="color: green">%s</strong></div>%s',
+				esc_url( self::get_connect_url( false ) ),
+				__( 'Connect to PayPal', 'invoicing' ),
+				__( 'Connected', 'invoicing' ),
+				esc_url( self::get_connect_url( true ) ),
+				__( 'Connect to PayPal Sandox', 'invoicing' ),
+				__( 'Connected', 'invoicing' ),
+				$this->get_js()
+			),
+		);
+
+		$admin_settings['disable_paypal_connect'] = array(
+			'type'       => 'checkbox',
+			'id'         => 'disable_paypal_connect',
+			'name'       => __( 'Manual Mode', 'invoicing' ),
+			'desc'       => __( 'Manually enter your credentials', 'invoicing' ),
+			'std'        => false,
+		);
+
         $admin_settings['paypal_email'] = array(
-            'type' => 'text',
-            'id'   => 'paypal_email',
-            'name' => __( 'PayPal Email', 'invoicing' ),
-            'desc' => __( "Please enter your PayPal account's email address. Use your sandbox email address in case you've enabled sandbox above.", 'invoicing' ),
+            'type'  => 'text',
+			'class' => 'live-auth-data',
+            'id'    => 'paypal_email',
+            'name'  => __( 'Live Email Address', 'invoicing' ),
+            'desc'  => __( 'The email address of your PayPal account.', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_merchant_id'] = array(
+            'type'  => 'text',
+			'class' => 'live-auth-data',
+            'id'    => 'paypal_merchant_id',
+            'name'  => __( 'Live Merchant ID', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_client_id'] = array(
+            'type'  => 'text',
+			'class' => 'live-auth-data',
+            'id'    => 'paypal_client_id',
+            'name'  => __( 'Live Client ID', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_client_secret'] = array(
+            'type'  => 'text',
+			'class' => 'live-auth-data',
+            'id'    => 'paypal_client_secret',
+            'name'  => __( 'Live Client Secret', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_sandbox_email'] = array(
+            'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+            'id'    => 'paypal_sandbox_email',
+            'name'  => __( 'Sandbox Email Address', 'invoicing' ),
+            'desc'  => __( 'The email address of your sandbox PayPal account.', 'invoicing' ),
+			'std'   => wpinv_get_option( 'paypal_email', '' ),
+        );
+
+		$admin_settings['paypal_sandbox_merchant_id'] = array(
+            'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+            'id'    => 'paypal_sandbox_merchant_id',
+            'name'  => __( 'Sandbox Merchant ID', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_sandbox_client_id'] = array(
+            'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+            'id'    => 'paypal_sandbox_client_id',
+            'name'  => __( 'Sandbox Client ID', 'invoicing' ),
+        );
+
+		$admin_settings['paypal_sandbox_client_secret'] = array(
+            'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+            'id'    => 'paypal_sandbox_client_secret',
+            'name'  => __( 'Sandbox Client Secret', 'invoicing' ),
         );
 
         $admin_settings['paypal_ipn_url'] = array(
@@ -519,6 +600,187 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         );
 
 		return $admin_settings;
+	}
+
+	/**
+	 * Retrieves the PayPal connect URL.
+	 *
+	 *
+     * @param bool $is_sandbox
+     * @return string
+	 */
+	public static function get_connect_url( $is_sandbox ) {
+
+        $redirect_url = add_query_arg(
+            array(
+                'getpaid-admin-action' => 'connect_paypal',
+                'page'                 => 'wpinv-settings',
+                'live_mode'            => (int) empty( $is_sandbox ),
+                'tab'                  => 'gateways',
+                'section'              => 'paypal',
+                'getpaid-nonce'        => wp_create_nonce( 'getpaid-nonce' ),
+            ),
+            admin_url( 'admin.php' )
+        );
+
+        return add_query_arg(
+            array(
+                'live_mode'    => (int) empty( $is_sandbox ),
+                'redirect_url' => urlencode( str_replace( '&amp;', '&', $redirect_url ) )
+            ),
+            'https://ayecode.io/oauth/paypal'
+        );
+
+    }
+
+	/**
+	 * Generates settings page js.
+	 *
+     * @return void
+	 */
+	public static function get_js() {
+        ob_start();
+        ?>
+            <script>
+                jQuery(document).ready(function() {
+
+					var areAllInputsFilled = function ( el ) {
+						return jQuery(el).filter(function() {
+							return jQuery.trim( jQuery(this).val() ).length == 0
+						}).length == 0;
+					}
+
+                    jQuery( '#wpinv-settings-paypal_sandbox' ).on ( 'change', function( e ) {
+
+						var showing_manual = jQuery( '#wpinv-settings-disable_paypal_connect' ).is(':checked');
+
+						if ( showing_manual ) {
+							jQuery ( '.wpinv-paypal-connect-live' ).closest( 'tr' ).hide()
+							jQuery ( 'tr.sandbox-auth-data' ).toggle( this.checked )
+							jQuery ( 'tr.live-auth-data' ).toggle( ! this.checked )
+						} else {
+							jQuery ( '.wpinv-paypal-connect-live' ).closest( 'tr' ).show()
+							jQuery ( 'tr.sandbox-auth-data, tr.live-auth-data' ).hide()
+						}
+
+						jQuery( '.wpinv-paypal-connect-live' ).toggle( ! this.checked )
+						jQuery( '.wpinv-paypal-connect-sandbox' ).toggle( this.checked )
+
+						jQuery( '.wpinv-paypal-connect-live strong' ).toggle( areAllInputsFilled( 'input.live-auth-data' ) )
+						jQuery( '.wpinv-paypal-connect-sandbox strong' ).toggle( areAllInputsFilled( 'input.sandbox-auth-data' ) )
+
+                    })
+
+                    jQuery( '#wpinv-settings-disable_paypal_connect' ).on ( 'change', function( e ) {
+                        jQuery( '#wpinv-settings-paypal_sandbox' ).trigger( 'change' )
+                    });
+
+                    // Set initial state.
+                    jQuery( '#wpinv-settings-disable_paypal_connect' ).trigger( 'change' )
+
+                });
+            </script>
+        <?php
+        return ob_get_clean();
+    }
+
+	/**
+	 * Connects to PayPal.
+	 *
+	 * @param array $data Connection data.
+	 * @return void
+	 */
+	public function connect_paypal( $data ) {
+
+		$sandbox      = $this->is_sandbox();
+		$data         = wp_unslash( $data );
+		$access_token = empty( $data['access_token'] ) ? '' : sanitize_text_field( $data['access_token'] );
+
+		if ( isset( $data['live_mode'] ) ) {
+			$sandbox = empty( $data['live_mode'] );
+		}
+
+		wpinv_update_option( 'stripe_sandbox', (int) $sandbox );
+		wpinv_update_option( 'stripe_active', 1 );
+
+		if ( ! empty( $data['error_description'] ) ) {
+			getpaid_admin()->show_error( wp_kses_post( urldecode( $data['error_description'] ) ) );
+		} else {
+
+			// Retrieve the user info.
+			$user_info = wp_remote_get(
+				! $sandbox ? 'https://api-m.paypal.com/v1/identity/oauth2/userinfo?schema=paypalv1.1' : 'https://api-m.sandbox.paypal.com/v1/identity/oauth2/userinfo?schema=paypalv1.1',
+				array(
+
+					'headers' => array(
+						'Authorization' => 'Bearer ' . $access_token,
+						'Content-type'  => 'application/json',
+					)
+
+				)
+			);
+
+			if ( is_wp_error( $user_info ) ) {
+				getpaid_admin()->show_error( wp_kses_post( $user_info->get_error_message() ) );
+			} else {
+
+				// Create application.
+				$user_info = json_decode( wp_remote_retrieve_body( $user_info ) );
+				$app       = wp_remote_post(
+					! $sandbox ? 'https://api-m.paypal.com/v1/identity/applications' : 'https://api-m.sandbox.paypal.com/v1/identity/applications',
+					array(
+
+						'body'    => array(
+							'application_type' => 'web',
+							'redirect_uris'    => array(
+								add_query_arg( 'getpaid_oauth', 'paypal', home_url() ),
+							),
+							'client_name'      => 'GetPaid',
+							'contacts'         => array( $user_info->emails[0]->value ),
+							'payer_id'         => $user_info->payer_id,
+							'migrated_app'     => '',
+						),
+						'headers' => array(
+							'Authorization' => 'Bearer ' . $access_token,
+							'Content-type'  => 'application/json',
+						)
+
+					)
+				);
+
+				if ( is_wp_error( $app ) ) {
+					getpaid_admin()->show_error( wp_kses_post( $app->get_error_message() ) );
+				} else {
+
+					$app = json_decode( $app );
+					if ( $sandbox ) {
+						wpinv_update_option( 'paypal_sandbox_email', sanitize_email( $user_info->emails[0]->value ) );
+						wpinv_update_option( 'paypal_sandbox_merchant_id', '' );
+						wpinv_update_option( 'paypal_sandbox_client_id', sanitize_text_field( $app->client_id ) );
+						wpinv_update_option( 'paypal_sandbox_client_secret', sanitize_text_field( $app->client_secret ) );
+						wpinv_update_option( 'paypal_sandbox_client_secret_expires_at', sanitize_text_field( $app->client_secret_expires_at ) );
+						wpinv_update_option( 'paypal_sandbox_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
+						set_transient( 'getpaid_paypal_sandbox_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
+						getpaid_admin()->show_success( __( 'Successfully connected your PayPal sandbox account', 'wpinv-stripe' ) );
+					} else {
+						wpinv_update_option( 'paypal_email', sanitize_email( $user_info->emails[0]->value ) );
+						wpinv_update_option( 'paypal_merchant_id', '' );
+						wpinv_update_option( 'paypal_client_id', sanitize_text_field( $app->client_id ) );
+						wpinv_update_option( 'paypal_client_secret', sanitize_text_field( $app->client_secret ) );
+						wpinv_update_option( 'paypal_client_secret_expires_at', sanitize_text_field( $app->client_secret_expires_at ) );
+						wpinv_update_option( 'paypal_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
+						set_transient( 'getpaid_paypal_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
+						getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'wpinv-stripe' ) );
+					}
+
+				}
+
+			}
+
+		}
+
+		wp_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) );
+		exit;
 	}
 
 }
