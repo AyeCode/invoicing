@@ -42,7 +42,7 @@ class GetPaid_Payment_Form_Submission_Items {
 
 		// Process each individual item.
 		foreach ( $payment_form->get_items() as $item ) {
-			$this->process_item( $item, $selected_items );
+			$this->process_item( $item, $selected_items, $submission );
 		}
 
 	}
@@ -52,8 +52,9 @@ class GetPaid_Payment_Form_Submission_Items {
 	 *
 	 * @param GetPaid_Form_Item $item
 	 * @param array $selected_items
+	 * @param GetPaid_Payment_Form_Submission $submission
 	 */
-	public function process_item( $item, $selected_items ) {
+	public function process_item( $item, $selected_items, $submission ) {
 
 		// Abort if this is an optional item and it has not been selected.
 		if ( ! $item->is_required() && ! isset( $selected_items[ $item->get_id() ] ) ) {
@@ -83,7 +84,7 @@ class GetPaid_Payment_Form_Submission_Items {
 		}
 
 		// Save the item.
-		$this->items[] = $item;
+		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item' , $item, $submission );
 
 	}
 

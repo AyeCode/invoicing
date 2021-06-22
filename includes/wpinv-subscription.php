@@ -693,12 +693,12 @@ class WPInv_Subscription extends GetPaid_Data {
 			return;
 		}
 
-		$old_status = $this->get_status();
 		$this->set_prop( 'status', $new_status );
 
+		$old_status = ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $this->get_status();
 		if ( true === $this->object_read && $old_status !== $new_status ) {
 			$this->status_transition = array(
-				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
+				'from'   => $old_status,
 				'to'     => $new_status,
 			);
 		}

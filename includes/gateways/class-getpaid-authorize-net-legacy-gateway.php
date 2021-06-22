@@ -72,6 +72,10 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
                 wpinv_error_log( $response );
             }
 
+            if ( $response->messages->message[0]->code == 'E00039' && ! empty( $response->customerProfileId )  && ! empty( $response->customerPaymentProfileId ) ) {
+                return new WP_Error( 'dup_payment_profile', $response->customerProfileId . '.' . $response->customerPaymentProfileId );
+            }
+
             if ( ! empty( $response->transactionResponse ) && ! empty( $response->transactionResponse->errors ) ) {
                 $error = $response->transactionResponse->errors[0];
                 return new WP_Error( $error->errorCode, $error->errorText );

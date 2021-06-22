@@ -15,6 +15,7 @@ if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
 }
 
+$current_url = ! empty( $_GET['current_url'] ) ? esc_url_raw( urldecode( $_GET['current_url'] ) ) : get_permalink();
 echo aui()->input(
     array(
         'name'       => esc_attr( $id ),
@@ -25,5 +26,6 @@ echo aui()->input(
         'label_type' => 'vertical',
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'       => 'url',
+        'value'      => ! empty( $default_current_post ) ? $current_url : '',
     )
 );

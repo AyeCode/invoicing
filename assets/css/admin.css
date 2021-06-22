@@ -1000,6 +1000,10 @@ body.wpi-wpinv-settings .wp-picker-holder,
     position: absolute;
     top: -5px;
 }
+.post-type-wpi_item .wp-list-table.widefat .column-stock {
+    width: 80px;
+}
+
 /* Discounts */
 .post-type-wpi_discount #postexcerpt .inside p {
     display: none;

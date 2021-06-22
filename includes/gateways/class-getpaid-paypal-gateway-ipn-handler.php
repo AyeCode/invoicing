@@ -227,6 +227,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			$invoice->save();
 		}
 
+		$invoice->add_system_note( __( 'Processing invoice IPN', 'invoicing' ) );
+
 		// Process a refund.
 		if ( $payment_status == 'refunded' || $payment_status == 'reversed' ) {
 

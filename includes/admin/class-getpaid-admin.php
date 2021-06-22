@@ -67,6 +67,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_create_missing_pages', array( $this, 'admin_create_missing_pages' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_tables', array( $this, 'admin_create_missing_tables' ) );
 		add_action( 'getpaid_authenticated_admin_action_migrate_old_invoices', array( $this, 'admin_migrate_old_invoices' ) );
+		add_action( 'getpaid_authenticated_admin_action_download_customers', array( $this, 'admin_download_customers' ) );
 		add_action( 'getpaid_authenticated_admin_action_recalculate_discounts', array( $this, 'admin_recalculate_discounts' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
@@ -509,6 +510,88 @@ class GetPaid_Admin {
 	}
 
 	/**
+     * Download customers.
+	 * 
+     */
+    public function admin_download_customers() {
+		global $wpdb;
+
+		$output = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'invoicing' ) );
+
+		header( "Content-Type:text/csv" );
+		header( "Content-Disposition:attachment;filename=customers.csv" );
+
+		$post_types = '';
+
+		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
+			$post_types .= $wpdb->prepare( "post_type=%s OR ", $post_type );
+		}
+
+		$post_types = rtrim( $post_types, ' OR' );
+
+		$customers = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE $post_types"
+			)
+		);
+
+		$columns = array(
+			'name'     => __( 'Name', 'invoicing' ),
+			'email'    => __( 'Email', 'invoicing' ),
+			'country'  => __( 'Country', 'invoicing' ),
+			'state'    => __( 'State', 'invoicing' ),
+			'city'     => __( 'City', 'invoicing' ),
+			'zip'      => __( 'ZIP', 'invoicing' ),
+			'address'  => __( 'Address', 'invoicing' ),
+			'phone'    => __( 'Phone', 'invoicing' ),
+			'company'  => __( 'Company', 'invoicing' ),
+			'invoices' => __( 'Invoices', 'invoicing' ),
+			'total'    => __( 'Total Spend', 'invoicing' ),
+			'signup'   => __( 'Date created', 'invoicing' ),
+		);
+
+		// Output the csv column headers.
+		fputcsv( $output, array_values( $columns ) );
+
+		// Loop through
+		$table = new WPInv_Customers_Table();
+		foreach ( $customers as $customer_id ) {
+
+			$user = get_user_by( 'id', $customer_id );
+			$row  = array();
+			if ( empty( $user ) ) {
+				continue;
+			}
+
+			foreach ( array_keys( $columns ) as $column ) {
+
+				$method = 'column_' . $column;
+
+				if ( 'name' == $column ) {
+					$value = sanitize_text_field( $user->display_name );
+				} else if( 'email' == $column ) {
+					$value = sanitize_email( $user->user_email );
+				} else if ( is_callable( array( $table, $method ) ) ) {
+					$value = strip_tags( $table->$method( $user ) );
+				}
+
+				if ( empty( $value ) ) {
+					$value = sanitize_text_field( get_user_meta( $user->ID, '_wpinv_' . $column, true ) );
+				}
+
+				$row[] = $value;
+
+			}
+
+			fputcsv( $output, $row );
+		}
+
+		fclose( $output );
+		exit;
+
+	}
+
+	/**
      * Recalculates discounts.
 	 * 
      */
@@ -672,12 +755,10 @@ class GetPaid_Admin {
 		foreach ( array( 'checkout_page', 'invoice_history_page', 'success_page', 'failure_page', 'invoice_subscription_page' ) as $page ) {
 
 			if ( ! is_numeric( wpinv_get_option( $page, false ) ) ) {
-				$url     = esc_url(
-					wp_nonce_url(
-						add_query_arg( 'getpaid-admin-action', 'create_missing_pages' ),
-						'getpaid-nonce',
-						'getpaid-nonce'
-					)
+				$url     = wp_nonce_url(
+					add_query_arg( 'getpaid-admin-action', 'create_missing_pages' ),
+					'getpaid-nonce',
+					'getpaid-nonce'
 				);
 				$message  = __( 'Some GetPaid pages are missing. To use GetPaid without any issues, click the button below to generate the missing pages.', 'invoicing' );
 				$message2 = __( 'Generate Pages', 'invoicing' );

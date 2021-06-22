@@ -139,6 +139,13 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         if ( is_wp_error( $response ) ) {
 
+            // In case the payment profile already exists remotely.
+            if ( 'dup_payment_profile' == $response->get_error_code() ) {
+                $customer_profile_id = strtok( $response->get_error_message(), '.' );
+                update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
+                return strtok( '.' );
+            }
+
             // In case the customer profile already exists remotely.
             if ( 'E00039' == $response->get_error_code() ) {
                 $customer_profile_id = str_replace( 'A duplicate record with ID ', '', $response->get_error_message() );
@@ -250,6 +257,19 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         $response = $this->post( apply_filters( 'getpaid_authorizenet_create_customer_payment_profile_args', $args, $invoice ), $invoice );
 
         if ( is_wp_error( $response ) ) {
+
+            // In case the payment profile already exists remotely.
+            if ( 'dup_payment_profile' == $response->get_error_code() ) {
+                $customer_profile_id = strtok( $response->get_error_message(), '.' );
+                $payment_profile_id  = strtok( '.' );
+                update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
+
+                // Cache payment profile id.
+                $this->add_payment_profile_to_cache( $payment_information, $payment_profile_id );
+
+                return $payment_profile_id;
+            }
+
             return $response;
         }
 

@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.3.6
+Stable tag: 2.3.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -133,10 +133,21 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.3.8 =
+* Ability to export all customers - ADDED
+
+= 2.3.8 =
+* Ability to set the default Website form element value to the current page's URL - ADDED
+* Settings reset when General settings tab is saved - FIXED
+
 = 2.3.7 =
 * Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED
 * Option to stop GetPaid from sending emails for free invoices - ADDED
 * MaxMind database API key not saving - FIXED
+* [Authorize.NET] Unable to pay with the same card twice when logged out - FIXED
+* Stripe addon cannot be installed from the GetPaid extensions page - FIXED
+* Create new user button fills existing user data if email exists - CHANGED
+* Slashes show up on apostrophes - FIXED
 
 = 2.3.6 =
 * Unable to use equal prices in price select field - FIXED

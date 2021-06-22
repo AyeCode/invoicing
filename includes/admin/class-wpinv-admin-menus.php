@@ -91,7 +91,7 @@ class WPInv_Admin_Menus {
                     width: 30%;
                 }
             </style>
-            <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?></h1>
+            <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?>&nbsp;<a href="<?php echo wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'download_customers' ), 'getpaid-nonce', 'getpaid-nonce' ); ?>" class="page-title-action"><?php _e( 'Export', 'invoicing' ); ?></a></h1>
             <form method="post">
             <?php
                 $table = new WPInv_Customers_Table();

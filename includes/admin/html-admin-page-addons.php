@@ -148,6 +148,11 @@ Great job so far guys, can’t wait to see where this goes!
 										<img src="<?php echo esc_attr( $addon->info->thumbnail ); ?>"/>
 									<?php endif;
 
+									if ( 'stripe-payment-gateway' == $addon->info->slug ) {
+										$addon->info->slug = 'getpaid-stripe-payments';
+										$addon->info->link = 'https://wordpress.org/plugins/getpaid-stripe-payments/';
+									}
+
 									if(isset($addon->info->link) && substr( $addon->info->link, 0, 21 ) === "https://wordpress.org"){
 										echo '<a href="'.admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug).'&width=770&height=660&TB_iframe=true" class="thickbox" >';
 										echo '<span class="wpi-product-info">'.__('More info','invoicing').'</span>';

@@ -760,6 +760,7 @@ abstract class GetPaid_Data {
 	public function set_props( $props, $context = 'set' ) {
 		$errors = false;
 
+		$props = wp_unslash( $props );
 		foreach ( $props as $prop => $value ) {
 			try {
 				/**
