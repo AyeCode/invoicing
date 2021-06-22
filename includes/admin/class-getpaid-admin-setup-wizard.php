@@ -186,12 +186,16 @@ public function setup_wizard_header() {
 			$current = '';
 			foreach ( $ouput_steps as $step_key => $step ) : ?>
 				<li class="list-group-item flex-fill rounded-0 <?php
+				$maybe_hide = 'd-none';
 				if ( $step_key === $this->step ) {
 					$current = $this->step;
 					echo 'active';
+					$maybe_hide = '';
 				} elseif ( array_search( $this->step, array_keys( $this->steps ) ) > array_search( $step_key, array_keys( $this->steps ) ) ) {
-					echo 'done';
+					echo 'done ';
 				}
+
+				echo ' '.$maybe_hide. ' d-md-block ';
 				$done = !$current ? 'text-success' : '';
 				?>"><i class="far fa-check-circle <?php echo $done ;?>"></i> <?php echo esc_html( $step['name'] ); ?></li>
 			<?php endforeach; ?>
@@ -206,7 +210,7 @@ public function setup_wizard_header() {
 	 */
 	public function setup_wizard_content() {
 		echo '<div class="gp-setup-content rowx mw-100 text-center mb-3">';
-		echo '<div class="col-5 m-auto">';
+		echo '<div class="col-12 col-md-5 m-auto">';
 		echo '<div class="card shadow-sm">';
 		call_user_func( $this->steps[ $this->step ]['view'], $this );
 		echo '</div>';
