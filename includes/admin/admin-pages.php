@@ -47,18 +47,16 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 
     if ( in_array( strtolower( $discount->post_status ),  array(  'publish' ) ) ) {
 
-        $url    = esc_url(
-                    wp_nonce_url(
-                        add_query_arg(
-                            array(
-                                'getpaid-admin-action' => 'deactivate_discount',
-                                'discount'             => $discount->ID,
-                            )
-                        ),
-                        'getpaid-nonce',
-                        'getpaid-nonce'
-                    )
-                );
+        $url = wp_nonce_url(
+            add_query_arg(
+                array(
+                    'getpaid-admin-action' => 'deactivate_discount',
+                    'discount'             => $discount->ID,
+                )
+            ),
+            'getpaid-nonce',
+            'getpaid-nonce'
+        );
 		$anchor = __( 'Deactivate', 'invoicing' );
 		$title  = esc_attr__( 'Are you sure you want to deactivate this discount?', 'invoicing' );
         $row_actions['deactivate'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
