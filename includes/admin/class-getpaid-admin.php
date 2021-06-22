@@ -98,7 +98,7 @@ class GetPaid_Admin {
         }
 
         // General styles.
-        if ( false !== stripos( $page, 'wpi' ) ) {
+        if ( false !== stripos( $page, 'wpi' ) || 'gp-setup' == $page ) {
 
             // Styles.
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );

@@ -608,11 +608,14 @@ function wpinv_get_states_field() {
 
 	if( !empty( $states ) ) {
 		$sanitized_field_name = sanitize_text_field( $_POST['field_name'] );
-        
-        $args = array(
+
+        $class  = isset( $_POST['class'] ) ? esc_attr( $_POST['class'] ) : '';
+        $class .= " $sanitized_field_name getpaid_js_field-state custom-select wpinv-select wpi_select2";
+
+        $args  = array(
 			'name'    => $sanitized_field_name,
 			'id'      => $sanitized_field_name,
-			'class'   => $sanitized_field_name . 'custom-select wpinv-select wpi_select2',
+			'class'   => implode( ' ', array_unique( explode( ' ', $class ) ) ),
 			'options' => array_merge( array( '' => '' ), $states ),
 			'show_option_all'  => false,
 			'show_option_none' => false

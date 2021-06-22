@@ -97,7 +97,7 @@ class GetPaid_Admin_Setup_Wizard {
 		$aui_settings = AyeCode_UI_Settings::instance();
 		$aui_settings->enqueue_scripts();
 		$aui_settings->enqueue_style();
-
+		getpaid_admin()->enqeue_scripts();
 
 
 //		if ( ! empty( $_POST['save_step'] ) && isset( $this->steps[ $this->step ]['handler'] ) ) {
@@ -133,7 +133,11 @@ public function setup_wizard_header() {
 
 		wp_register_style( 'font-awesome', 'https://use.fontawesome.com/releases/v5.13.0/css/all.css', array(  ), WPINV_VERSION );
 		wp_enqueue_style( 'font-awesome' );
-		do_action( 'admin_print_styles' ); ?>
+		do_action( 'admin_print_styles' );
+		wp_print_styles( 'select2' );
+		wp_print_scripts( 'wpinv-admin-script' );
+		wp_print_scripts( 'select2' );
+		?>
 		<?php do_action( 'admin_head' ); ?>
 		<style>
 			body,p{
@@ -480,8 +484,10 @@ public function setup_wizard_header() {
 if($field['id']=='wpinv_settings[default_state]'){
 			$country_value  = wpinv_get_option( 'wpinv_settings[default_country]', 'US');
 $options = wpinv_get_country_states($country_value);//echo $value .'###'.$country_value;
+$class = 'getpaid_js_field-state';
 }else{
 $options = isset($field['args']['options']) ? $field['args']['options'] : array();
+$class = 'getpaid_js_field-country';
 }
 
 //print_r($options );echo '###';
@@ -497,7 +503,8 @@ $options = isset($field['args']['options']) ? $field['args']['options'] : array(
 					'label'           => isset($field['args']['name']) ? esc_attr($field['args']['name']) : '',
 					'options'         => $options,
 					'select2'         => true,
-					'label_type'    => 'floating'
+					'label_type'    => 'floating',
+					'class'           => $class,
 //					'wrap_class'      => isset( $field->css_class ) ? $field->css_class : '',
 				) );
 			}elseif($field['callback'] == 'wpinv_textarea_callback'){

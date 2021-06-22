@@ -130,23 +130,27 @@ jQuery(function ($) {
 	//'use strict';
 
 	// Tooltips.
-	$('.wpi-help-tip').tooltip({
-		content: function () {
-			return $(this).prop('title');
-		},
-		tooltipClass: 'wpi-ui-tooltip',
-		position: {
-			my: 'center top',
-			at: 'center bottom+10',
-			collision: 'flipfit'
-		},
-		hide: {
-			duration: 200
-		},
-		show: {
-			duration: 200
-		}
-	});
+	if( jQuery().tooltip ) {
+
+		$('.wpi-help-tip').tooltip({
+			content: function () {
+				return $(this).prop('title');
+			},
+			tooltipClass: 'wpi-ui-tooltip',
+			position: {
+				my: 'center top',
+				at: 'center bottom+10',
+				collision: 'flipfit'
+			},
+			hide: {
+				duration: 200
+			},
+			show: {
+				duration: 200
+			}
+		});
+
+	}
 
 	// Init select 2.
 	wpi_select2();
@@ -885,11 +889,15 @@ jQuery(function ($) {
 		// fade the state field.
 		$('.getpaid_js_field-state').fadeTo(1000, 0.4);
 
+		var is_aui = $('.getpaid_js_field-state').is( '.custom-select, .form-control' )
+		var _class = $('.getpaid_js_field-state').attr('class')
+
 		// Prepare data.
-		data = {
+		var data = {
 			action: 'wpinv_get_states_field',
 			country: $('.getpaid_js_field-country').val(),
-			field_name: $('.getpaid_js_field-country').attr('name').replace('country', 'state')
+			field_name: $('.getpaid_js_field-country').attr('name').replace('country', 'state'),
+			class: $('.getpaid_js_field-state').attr('class'),
 		};
 
 		// Fetch new states field.
@@ -900,13 +908,18 @@ jQuery(function ($) {
 				var value = $('.getpaid_js_field-state').val()
 
 				if ('nostates' == response) {
-					var text_field = '<input type="text" name="' + data.field_name + '" value="" class="getpaid_js_field-state regular-text"/>';
+					if ( is_aui ) {
+						var text_field = '<input type="text" name="' + data.field_name + '" value="" class="getpaid_js_field-state form-control"/>';
+					} else {
+						var text_field = '<input type="text" name="' + data.field_name + '" value="" class="getpaid_js_field-state regular-text"/>';
+					}
+					$('.getpaid_js_field-state').removeClass('custom-select').addClass(_class)
 					$('.getpaid_js_field-state').replaceWith(text_field);
 				} else {
 					var response = $(response)
-					response.addClass('getpaid_js_field-state regular-text')
 					response.attr('id', data.field_name)
 					$('.getpaid_js_field-state').replaceWith(response)
+					$('.getpaid_js_field-state').removeClass('form-control').addClass(_class).addClass('custom-select')
 				}
 
 				$('.getpaid_js_field-state').val(value)
@@ -996,7 +1009,7 @@ jQuery(function ($) {
 				no_states.closest('tr').hide();
 			}
 			// Update base state field based on selected base country
-			$('select[name="wpinv_settings[default_country]"]').change(function () {
+			$('select[name="wpinv_settings[default_country]"]:not(.getpaid_js_field-country)').change(function () {
 				var $this = $(this),
 					$tr = $this.closest('tr');
 				data = {
