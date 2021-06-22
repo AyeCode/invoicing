@@ -703,6 +703,7 @@ function wpinv_get_screen_ids() {
         'getpaid_page_wpinv-reports',
         'getpaid_page_wpi-addons',
         'getpaid_page_wpinv-customers',
+        'gp-setup',// setup wizard
     );
 
     return apply_filters( 'wpinv_screen_ids', $screen_ids );

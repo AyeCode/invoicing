@@ -413,6 +413,7 @@ function wpinv_get_registered_settings_sections() {
     $sections = array(
         'general' => apply_filters( 'wpinv_settings_sections_general', array(
             'main' => __( 'General Settings', 'invoicing' ),
+            'page_section' => __( 'Page Settings', 'invoicing' ),
             'currency_section' => __( 'Currency Settings', 'invoicing' ),
             'labels' => __( 'Label Texts', 'invoicing' ),
         ) ),

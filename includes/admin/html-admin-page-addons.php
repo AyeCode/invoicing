@@ -130,6 +130,7 @@ Great job so far guys, can’t wait to see where this goes!
 			$installed_plugins = get_plugins();
             $addon_obj = new WPInv_Admin_Addons();
 			if ($addons = $addon_obj->get_section_data( $current_tab ) ) :
+				//print_r($addons);
 				?>
 				<ul class="wpi-products"><?php foreach ( $addons as $addon ) :
                         if(965==$addon->info->id){continue;}// don't show quote add on
@@ -151,9 +152,9 @@ Great job so far guys, can’t wait to see where this goes!
 										echo '<a href="'.admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug).'&width=770&height=660&TB_iframe=true" class="thickbox" >';
 										echo '<span class="wpi-product-info">'.__('More info','invoicing').'</span>';
 										echo '</a>';
-									}elseif(isset($addon->info->link) && substr( $addon->info->link, 0, 23 ) === "https://wpinvoicing.com"){
+									}elseif(isset($addon->info->link) && ( substr( $addon->info->link, 0, 23 ) === "https://wpinvoicing.com" || substr( $addon->info->link, 0, 21 ) === "https://wpgetpaid.com" ) ){
 										if(defined('WP_EASY_UPDATES_ACTIVE')){
-											$url = admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug.'&width=770&height=660&item_id='.$addon->info->id.'&update_url=https://wpinvoicing.com&TB_iframe=true');
+											$url = admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug.'&width=770&height=660&item_id='.$addon->info->id.'&update_url=https://wpgetpaid.com&TB_iframe=true');
 										}else{
 											// if installed show activation link
 											if(isset($installed_plugins['wp-easy-updates/external-updates.php'])){

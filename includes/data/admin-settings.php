@@ -103,6 +103,9 @@ return array(
                     'desc' => __( 'Enter the store address to display on invoice', 'invoicing' ),
                     'type' => 'textarea',
                 ),
+
+            ),
+            'page_section' => array(
                 'page_settings' => array(
                     'id'   => 'page_settings',
                     'name' => '<h3>' . __( 'Page Settings', 'invoicing' ) . '</h3>',
