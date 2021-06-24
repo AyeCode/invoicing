@@ -451,13 +451,13 @@ jQuery(function ($) {
 				$('#getpaid-add-items-to-invoice tbody').html()
 			)
 
-		getpaid.init_select2_item_search('.getpaid-item-search')
+		$('.getpaid-add-invoice-item-select').select2()
 
 		// Add a unique id.
-		$('.getpaid-item-search').data('key', random_string())
+		$('.getpaid-add-invoice-item-select').data('key', random_string())
 
 		// (Maybe) add another select box.
-		$('#getpaid-add-items-to-invoice').on('change', '.getpaid-item-search', function (e) {
+		$('#getpaid-add-items-to-invoice').on('change', '.getpaid-add-invoice-item-select', function (e) {
 
 			var el = $(this)
 			var key = el.data('key')
@@ -484,9 +484,8 @@ jQuery(function ($) {
 			var key = random_string()
 			var row = $('#getpaid-add-items-to-invoice tbody').data('row')
 			row = $(row).appendTo('#getpaid-add-items-to-invoice tbody')
-			var select = row.find('.getpaid-item-search')
-			select.data('key', key)
-			getpaid.init_select2_item_search(select)
+			var select = row.find('.getpaid-add-invoice-item-select')
+			select.data('key', key).select2()
 			empty_select.push(key)
 
 			$('#getpaid-add-items-to-invoice').modal('handleUpdate')
@@ -502,10 +501,10 @@ jQuery(function ($) {
 					$('#getpaid-add-items-to-invoice tbody').data('row')
 				)
 
-			getpaid.init_select2_item_search('.getpaid-item-search')
+				$('.getpaid-add-invoice-item-select').select2()
 
 			// Add a unique id.
-			$('.getpaid-item-search').data('key', random_string())
+			$('.getpaid-add-invoice-item-select').data('key', random_string())
 		}
 
 		// Cancel addition.

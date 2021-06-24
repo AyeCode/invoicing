@@ -688,7 +688,6 @@ class WPInv_Ajax {
         $items = get_posts( apply_filters( 'getpaid_ajax_invoice_items_query_args', $item_args ) );
         $data  = array();
 
-
         $is_payment_form = ( ! empty( $_GET['post_id'] ) && 'wpi_payment_form' == get_post_type( $_GET['post_id'] ) );
 
         foreach ( $items as $item ) {

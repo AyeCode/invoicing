@@ -58,6 +58,22 @@ class GetPaid_Meta_Box_Invoice_Items {
         if ( ! wpinv_use_taxes() ) {
             unset( $totals['tax'] );
         }
+
+        $item_args = array(
+            'post_type'      => 'wpi_item',
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+            'posts_per_page' => -1,
+            'post_status'    => array( 'publish' ),
+            'meta_query'     => array(
+                array(
+                    'key'       => '_wpinv_type',
+                    'compare'   => '!=',
+                    'value'     => 'package'
+                )
+            )
+        );
+
         ?>
 
         <style>
@@ -237,7 +253,12 @@ class GetPaid_Meta_Box_Invoice_Items {
 										<tbody>
 								            <tr>
 									            <td class="pl-0 text-left">
-                                                    <select class="getpaid-item-search regular-text" data-placeholder="<?php esc_attr_e( 'Search for an item…', 'invoicing' ); ?>"></select>
+                                                    <select class="regular-text getpaid-add-invoice-item-select">
+                                                        <option value="" selected="selected" disabled><?php esc_html_e( 'Select an item…', 'invoicing' ); ?></option>
+                                                        <?php foreach ( get_posts( $item_args ) as $item ) : ?>
+                                                        <option value="<?php echo (int) $item->ID; ?>"><?php echo strip_tags( $item->post_title ); ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
                                                 </td>
 									            <td class="pr-0 text-right hide-if-amount">
                                                     <input type="number" class="w100" step="1" min="1" autocomplete="off" value="1" placeholder="1">
