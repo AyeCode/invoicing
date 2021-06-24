@@ -197,7 +197,7 @@ class GetPaid_Checkout {
 
 			// (Maybe) send new user notification.
 			$should_send_notification = wpinv_get_option( 'disable_new_user_emails' );
-			if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ) ) ) {
+			if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ), $user ) ) {
 				wp_send_new_user_notifications( $user, 'user' );
 			}
 

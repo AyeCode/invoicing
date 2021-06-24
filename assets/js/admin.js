@@ -175,6 +175,14 @@ jQuery(function ($) {
 		getpaid.init_select2_customer_search(el, $(el).parent())
 	});
 
+	$('.getpaid-install-plugin-siwtch-div').on('click', function (e) {
+		e.preventDefault()
+
+		var _input = $( this ).find('input')
+		_input.prop( 'checked', ! _input.prop( 'checked' ) );
+
+	})
+
 	// returns a random string
 	function random_string() {
 		return (Date.now().toString(36) + Math.random().toString(36).substr(2))

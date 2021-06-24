@@ -63,17 +63,15 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 
     } else if( in_array( strtolower( $discount->post_status ),  array( 'pending', 'draft' ) ) ) {
 
-        $url    = esc_url(
-            wp_nonce_url(
-                add_query_arg(
-                    array(
-                        'getpaid-admin-action' => 'activate_discount',
-                        'discount'             => $discount->ID,
-                    )
-                ),
-                'getpaid-nonce',
-                'getpaid-nonce'
-            )
+        $url    = wp_nonce_url(
+            add_query_arg(
+                array(
+                    'getpaid-admin-action' => 'activate_discount',
+                    'discount'             => $discount->ID,
+                )
+            ),
+            'getpaid-nonce',
+            'getpaid-nonce'
         );
 		$anchor = __( 'Activate', 'invoicing' );
 		$title  = esc_attr__( 'Are you sure you want to activate this discount?', 'invoicing' );

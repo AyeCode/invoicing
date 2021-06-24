@@ -192,11 +192,12 @@ add_action( 'admin_init', 'wpinv_register_settings' );
  */
 function wpinv_register_settings_option( $tab, $section, $option ) {
 
-    $name    = isset( $option['name'] ) ? $option['name'] : '';
-    $cb      = "wpinv_{$option['type']}_callback";
-    $section = "wpinv_settings_{$tab}_$section";
+    $name       = isset( $option['name'] ) ? $option['name'] : '';
+    $cb         = "wpinv_{$option['type']}_callback";
+    $section    = "wpinv_settings_{$tab}_$section";
+	$is_wizzard = is_admin() && isset( $_GET['page'] ) && 'gp-setup' == $_GET['page'];
 
-	if ( isset( $option['desc'] ) && ! empty( $option['help-tip'] ) ) {
+	if ( isset( $option['desc'] ) && ( ! $is_wizzard && ! empty( $option['help-tip'] ) ) ) {
 		$tip   = wpinv_clean( $option['desc'] );
 		$name .= "<span class='dashicons dashicons-editor-help wpi-help-tip' title='$tip'></span>";
 		unset( $option['desc'] );
