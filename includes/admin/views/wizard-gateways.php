@@ -25,10 +25,11 @@ defined( 'ABSPATH' ) || exit;
 				    <a href="<?php echo wp_nonce_url(
                             add_query_arg(
                                 array(
-                                    'getpaid-admin-action' => 'connect_plugin',
+                                    'getpaid-admin-action' => 'connect_gateway',
                                     'plugin'               => 'stripe',
                                     'redirect'             => urlencode( $next_url ),
-                                )
+                                ),
+                                admin_url()
                             ),
                             'getpaid-nonce',
                             'getpaid-nonce'
@@ -41,22 +42,23 @@ defined( 'ABSPATH' ) || exit;
 				    <a href="<?php echo wp_nonce_url(
                             add_query_arg(
                                 array(
-                                    'getpaid-admin-action' => 'connect_plugin',
+                                    'getpaid-admin-action' => 'connect_gateway',
                                     'plugin'               => 'paypal',
                                     'redirect'             => urlencode( $next_url ),
-                                )
+                                ),
+                                admin_url()
                             ),
                             'getpaid-nonce',
                             'getpaid-nonce'
                         ); ?>"
-                        class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
+                        class="btn btn-sm btn-outline-primary"></a>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto">Test Gateway</span>
+				    <span class="mr-auto"><?php _e( 'Test Getway', 'invoicing' ); ?></span>
 					<div class="custom-control custom-switch">
-						<input type="checkbox" class="custom-control-input" id="ac-setting-updates" checked="" onclick="if(jQuery(this).is(':checked')){}else{}">
-						<label class="custom-control-label" for="ac-setting-updates"></label>
+						<input type="checkbox" name="enable-manual-gateway" class="custom-control-input" id="enable-manual-gateway" <?php checked( wpinv_is_gateway_active( 'manual' ) ); ?>>
+						<label class="custom-control-label" for="enable-manual-gateway"></label>
 					</div>
 				</li>
 
@@ -67,6 +69,7 @@ defined( 'ABSPATH' ) || exit;
 			<a href="<?php echo esc_url( $next_url ); ?>" class="btn btn-primary"><?php esc_attr_e( 'Continue', 'invoicing' ); ?></a>
 		</p>
 
+        <?php wp_nonce_field( 'getpaid-setup-wizard', 'getpaid-setup-wizard' ); ?>
     </form>
     <p class="gd-return-to-dashboard-wrap">
 		<a href="<?php echo esc_url( $next_url ); ?>" class="gd-return-to-dashboard btn btn-link d-block text-muted"><?php _e( 'Skip this step', 'invoicing' ); ?></a>

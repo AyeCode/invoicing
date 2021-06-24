@@ -118,13 +118,13 @@ class GetPaid_Admin_Setup_Wizard {
 			'business_details'             => array(
 				'name'    => __( "Business Details", 'invoicing' ),
 				'view'    => array( $this, 'setup_business' ),
-				'handler' => array( $this, 'setup_business_save' ),
+				'handler' => '',
 			),
 
 			'currency' => array(
 				'name'    => __( 'Currency', 'invoicing' ),
 				'view'    => array( $this, 'setup_currency' ),
-				'handler' => array( $this, 'setup_currency_save' ),
+				'handler' => '',
 			),
 
 			'payments'        => array(
@@ -136,7 +136,7 @@ class GetPaid_Admin_Setup_Wizard {
 			'recommend'          => array(
 				'name'    => __( 'Recommend', 'invoicing' ),
 				'view'    => array( $this, 'setup_recommend' ),
-				'handler' => array( $this, 'setup_recommend_save' ),
+				'handler' => '',
 			),
 
 			'next_steps'       => array(
@@ -362,19 +362,6 @@ class GetPaid_Admin_Setup_Wizard {
 	}
 
 	/**
-	 * Dummy data save.
-	 *
-	 * This is done via ajax so we just pass onto the next step.
-	 *
-	 * @since 2.0.0
-	 */
-	public function setup_recommend_save() {
-		check_admin_referer( 'gp-setup' );
-		wp_redirect( esc_url_raw( $this->get_next_step_link() ) );
-		exit;
-	}
-
-	/**
 	 * Dummy Data setup.
 	 *
 	 * @since 2.4.0
@@ -392,7 +379,8 @@ class GetPaid_Admin_Setup_Wizard {
 	 * @since 2.0.0
 	 */
 	public function setup_payments_save() {
-		check_admin_referer( 'gp-setup' );
+		check_admin_referer( 'getpaid-setup-wizard', 'getpaid-setup-wizard' );
+		wpinv_update_option( 'manual_active', ! empty( $_POST['enable-manual-gateway'] ) );
 		wp_redirect( esc_url_raw( $this->get_next_step_link() ) );
 		exit;
 	}

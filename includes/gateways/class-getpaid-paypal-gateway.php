@@ -87,6 +87,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
         add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
+		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
 		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
 
         parent::__construct();
@@ -603,13 +604,25 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	}
 
 	/**
+	 * Retrieves the PayPal connect URL when using the setup wizzard.
+	 *
+	 *
+     * @param array $data
+     * @return string
+	 */
+	public static function maybe_get_connect_url( $data ) {
+		return self::get_connect_url( false, urldecode( $data['redirect'] ) );
+	}
+
+	/**
 	 * Retrieves the PayPal connect URL.
 	 *
 	 *
      * @param bool $is_sandbox
+	 * @param string $redirect
      * @return string
 	 */
-	public static function get_connect_url( $is_sandbox ) {
+	public static function get_connect_url( $is_sandbox, $redirect = '' ) {
 
         $redirect_url = add_query_arg(
             array(
@@ -619,6 +632,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
                 'tab'                  => 'gateways',
                 'section'              => 'paypal',
                 'getpaid-nonce'        => wp_create_nonce( 'getpaid-nonce' ),
+				'redirect'             => urlencode( $redirect ),
             ),
             admin_url( 'admin.php' )
         );
@@ -756,18 +770,18 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 					if ( $sandbox ) {
 						wpinv_update_option( 'paypal_sandbox_email', sanitize_email( $user_info->emails[0]->value ) );
 						wpinv_update_option( 'paypal_sandbox_merchant_id', '' );
-						wpinv_update_option( 'paypal_sandbox_client_id', sanitize_text_field( $app->client_id ) );
-						wpinv_update_option( 'paypal_sandbox_client_secret', sanitize_text_field( $app->client_secret ) );
-						wpinv_update_option( 'paypal_sandbox_client_secret_expires_at', sanitize_text_field( $app->client_secret_expires_at ) );
+						wpinv_update_option( 'paypal_sandbox_client_id', sanitize_text_field( '' ) );
+						wpinv_update_option( 'paypal_sandbox_client_secret', sanitize_text_field( '' ) );
+						wpinv_update_option( 'paypal_sandbox_client_secret_expires_at', sanitize_text_field( '' ) );
 						wpinv_update_option( 'paypal_sandbox_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
 						set_transient( 'getpaid_paypal_sandbox_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
 						getpaid_admin()->show_success( __( 'Successfully connected your PayPal sandbox account', 'wpinv-stripe' ) );
 					} else {
 						wpinv_update_option( 'paypal_email', sanitize_email( $user_info->emails[0]->value ) );
 						wpinv_update_option( 'paypal_merchant_id', '' );
-						wpinv_update_option( 'paypal_client_id', sanitize_text_field( $app->client_id ) );
-						wpinv_update_option( 'paypal_client_secret', sanitize_text_field( $app->client_secret ) );
-						wpinv_update_option( 'paypal_client_secret_expires_at', sanitize_text_field( $app->client_secret_expires_at ) );
+						wpinv_update_option( 'paypal_client_id', sanitize_text_field( '' ) );
+						wpinv_update_option( 'paypal_client_secret', sanitize_text_field( '' ) );
+						wpinv_update_option( 'paypal_client_secret_expires_at', sanitize_text_field( '' ) );
 						wpinv_update_option( 'paypal_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
 						set_transient( 'getpaid_paypal_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
 						getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'wpinv-stripe' ) );
@@ -779,7 +793,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) );
+		$redirect = empty( $data['redirect'] ) ? admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) : urldecode( $data['redirect'] );
+		wp_redirect( $redirect );
 		exit;
 	}
 

@@ -70,6 +70,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_download_customers', array( $this, 'admin_download_customers' ) );
 		add_action( 'getpaid_authenticated_admin_action_recalculate_discounts', array( $this, 'admin_recalculate_discounts' ) );
 		add_action( 'getpaid_authenticated_admin_action_install_plugin', array( $this, 'admin_install_plugin' ) );
+		add_action( 'getpaid_authenticated_admin_action_connect_gateway', array( $this, 'admin_connect_gateway' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 		do_action( 'getpaid_init_admin_hooks', $this );
 
@@ -618,7 +619,49 @@ class GetPaid_Admin {
 
 		}
 
-		$redirect = isset( $data['redirect'] ) ? esc_url_raw( $data['redirect'] ) : admin_url( 'wp-admin/plugins.php' );
+		$redirect = isset( $data['redirect'] ) ? esc_url_raw( $data['redirect'] ) : admin_url( 'plugins.php' );
+		wp_safe_redirect( $redirect );
+		exit;
+
+	}
+
+	/**
+     * Connects a gateway.
+	 *
+	 * @param array $data
+     */
+    public function admin_connect_gateway( $data ) {
+
+		if ( ! empty( $data['plugin'] ) ) {
+
+			$gateway     = sanitize_key( $data['plugin'] );
+			$connect_url = apply_filters( "getpaid_get_{$gateway}_connect_url", false, $data );
+
+			if ( ! empty( $connect_url ) ) {
+				wp_redirect( $connect_url );
+				exit;
+			}
+
+			if ( 'stripe' == $data['plugin'] ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+				if ( ! array_key_exists( 'getpaid-stripe-payments/getpaid-stripe-payments.php', get_plugins() ) ) {
+					$plugin_zip = esc_url( 'https://downloads.wordpress.org/plugin/getpaid-stripe-payments.latest-stable.zip' );
+					$upgrader   = new Plugin_Upgrader( new Automatic_Upgrader_Skin() );
+					$upgrader->install( $plugin_zip );
+				}
+
+				activate_plugin( 'getpaid-stripe-payments/getpaid-stripe-payments.php', '', false, true );
+			}
+
+			if ( ! empty( $connect_url ) ) {
+				wp_redirect( $connect_url );
+				exit;
+			}
+
+		}
+
+		$redirect = isset( $data['redirect'] ) ? esc_url_raw( urldecode( $data['redirect'] ) ) : admin_url( 'admin.php?page=wpinv-settings&tab=gateways' );
 		wp_safe_redirect( $redirect );
 		exit;
 
