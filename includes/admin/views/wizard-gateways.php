@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
                             'getpaid-nonce',
                             'getpaid-nonce'
                         ); ?>"
-                        class="btn btn-sm btn-outline-primary"></a>
+                        class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
@@ -71,7 +71,4 @@ defined( 'ABSPATH' ) || exit;
 
         <?php wp_nonce_field( 'getpaid-setup-wizard', 'getpaid-setup-wizard' ); ?>
     </form>
-    <p class="gd-return-to-dashboard-wrap">
-		<a href="<?php echo esc_url( $next_url ); ?>" class="gd-return-to-dashboard btn btn-link d-block text-muted"><?php _e( 'Skip this step', 'invoicing' ); ?></a>
-	</p>
 </div>

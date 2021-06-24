@@ -42,7 +42,5 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
     </form>
-	<p class="gd-return-to-dashboard-wrap">
-		<a href="<?php echo esc_url( $next_url ); ?>" class="gd-return-to-dashboard btn btn-link d-block text-muted"><?php _e( 'Skip this step', 'invoicing' ); ?></a>
-	</p>
+
 </div>

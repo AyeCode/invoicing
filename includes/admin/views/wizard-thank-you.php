@@ -55,8 +55,5 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		</div>
 
-		<p class="gd-return-to-dashboard-wrap">
-			<a href="<?php echo esc_url( admin_url() ); ?>" class="gd-return-to-dashboard btn btn-link d-block text-muted"><?php _e( 'Return to the WordPress Dashboard', 'invoicing' ); ?></a>
-		</p>
 	</div>
 </div>

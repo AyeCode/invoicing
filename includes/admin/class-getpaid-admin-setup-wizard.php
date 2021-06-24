@@ -33,7 +33,7 @@ class GetPaid_Admin_Setup_Wizard {
 	protected $next_step = '';
 
 	/**
-	 * @var array All available steps for the setup wizard 
+	 * @var array All available steps for the setup wizard
 	 */
 	protected $steps = array();
 
@@ -253,6 +253,14 @@ class GetPaid_Admin_Setup_Wizard {
 	 * @since 2.4.0
 	 */
 	public function display_footer() {
+
+		if ( isset( $_GET['step'] ) ) {
+			$next_url = esc_url( $this->get_next_step_link() );
+			$label    = $this->step == 'next_steps' ? __( 'Return to the WordPress Dashboard', 'invoicing' ) : __( 'Skip this step', 'invoicing' );
+
+			echo '<p class="gd-return-to-dashboard-wrap"> <a href="' . $next_url . '" class="gd-return-to-dashboard btn btn-link d-block text-muted">' . $label . '</a></p>';
+		}
+
 		echo '</body></html>';
 	}
 
