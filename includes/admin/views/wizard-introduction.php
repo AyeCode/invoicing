@@ -9,13 +9,6 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class="card shadow-sm my-5">
-    <div class="text-center pb-3 mt-5">
-        <a class=" text-decoration-none" href="https://wpgetpaid.com/">
-            <span class="text-black-50">
-                <img class="ml-n3x" src="<?php echo WPINV_PLUGIN_URL . 'assets/images/getpaid-logo.png';?>" />
-            </span>
-        </a>
-	</div>
 
     <h1 class="h4 card-header bg-white border-bottom-0 pt-4 pb-1">
         <?php esc_html_e( 'Welcome to GetPaid!', 'invoicing' ); ?>

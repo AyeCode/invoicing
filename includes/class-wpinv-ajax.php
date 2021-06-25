@@ -94,6 +94,7 @@ class WPInv_Ajax {
             'get_invoice_items'           => false,
             'add_invoice_items'           => false,
             'edit_invoice_item'           => false,
+            'create_invoice_item'         => false,
             'remove_invoice_item'         => false,
             'get_billing_details'         => false,
             'recalculate_invoice_totals'  => false,
@@ -530,6 +531,72 @@ class WPInv_Ajax {
 
         // Save the invoice.
         $invoice->save();
+
+        // Return an array of invoice items.
+        $items = array();
+
+        foreach ( $invoice->get_items() as $item ) {
+            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+        }
+
+        wp_send_json_success( compact( 'items', 'alert' ) );
+    }
+
+    /**
+     * Creates an invoice item.
+     */
+    public static function create_invoice_item() {
+
+        // Verify nonce.
+        check_ajax_referer( 'wpinv-nonce' );
+
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            exit;
+        }
+
+        // We need an invoice and item details.
+        if ( empty( $_POST['post_id'] ) || empty( $_POST['data'] ) ) {
+            exit;
+        }
+
+        // Fetch the invoice.
+        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+
+        // Ensure it exists and its not been paid for.
+        if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
+            exit;
+        }
+
+        // Format the data.
+        $data = wp_unslash( wp_list_pluck( $_POST['data'], 'value', 'field' ) );
+
+        $item = new WPInv_Item();
+        $item->set_price( floatval( $data['price'] ) );
+        $item->set_name( sanitize_text_field( $data['name'] ) );
+        $item->set_description( wp_kses_post( $data['description'] ) );
+        $item->set_status( 'publish' );
+        $item->save();
+
+        if ( ! $item->exists() ) {
+            $alert = __( 'Could not create invoice item. Please try again.', 'invoicing' );
+        } else {
+            $item = new GetPaid_Form_Item( $item->get_id() );
+            $item->set_quantity( floatval( $data['quantity'] ) );
+
+            // Add it to the invoice.
+            $error = $invoice->add_item( $item );
+            $alert = false;
+            if ( is_wp_error( $error ) ) {
+                $alert = $error->get_error_message();
+            }
+
+            // Update totals.
+            $invoice->recalculate_total();
+
+            // Save the invoice.
+            $invoice->save();
+
+        }
 
         // Return an array of invoice items.
         $items = array();

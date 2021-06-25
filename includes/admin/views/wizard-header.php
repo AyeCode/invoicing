@@ -58,3 +58,11 @@ $aui_settings->enqueue_style();
             <?php else: ?>
                 <div class='mb-3'>&nbsp;</div>
             <?php endif; ?>
+
+            <div class="text-center pb-3 mt-5">
+                <a class=" text-decoration-none" href="https://wpgetpaid.com/">
+                    <span class="text-black-50">
+                        <img class="ml-n3x" src="<?php echo WPINV_PLUGIN_URL . 'assets/images/getpaid-logo.png';?>" />
+                    </span>
+                </a>
+            </div>
