@@ -22,12 +22,13 @@ defined( 'ABSPATH' ) || exit;
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
 				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' );?>" class="ml-n2" alt="Stripe"></span>
-				    <a href="<?php echo wp_nonce_url(
+				    <?php if ( false === wpinv_get_option( 'stripe_live_connect_account_id' ) ) : ?>
+                        <a href="<?php echo wp_nonce_url(
                             add_query_arg(
                                 array(
                                     'getpaid-admin-action' => 'connect_gateway',
                                     'plugin'               => 'stripe',
-                                    'redirect'             => urlencode( $next_url ),
+                                    'redirect'             => urlencode( add_query_arg( 'step', 'payments' ) ),
                                 ),
                                 admin_url()
                             ),
@@ -35,16 +36,20 @@ defined( 'ABSPATH' ) || exit;
                             'getpaid-nonce'
                         ); ?>"
                         class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
+                    <?php else: ?>
+                        <span class="btn btn-sm btn-success"><?php _e( 'Connected', 'invoicing' ); ?></span>
+                    <?php endif; ?>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
 				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/pp-logo-150px.webp' );?>" class="" alt="PayPal" height="25"></span>
-				    <a href="<?php echo wp_nonce_url(
+				    <?php if ( false === get_transient( 'getpaid_paypal_access_token' ) ) : ?>
+                    <a href="<?php echo wp_nonce_url(
                             add_query_arg(
                                 array(
                                     'getpaid-admin-action' => 'connect_gateway',
                                     'plugin'               => 'paypal',
-                                    'redirect'             => urlencode( $next_url ),
+                                    'redirect'             => urlencode( add_query_arg( 'step', 'payments' ) ),
                                 ),
                                 admin_url()
                             ),
@@ -52,6 +57,9 @@ defined( 'ABSPATH' ) || exit;
                             'getpaid-nonce'
                         ); ?>"
                         class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
+                    <?php else: ?>
+                        <span class="btn btn-sm btn-success"><?php _e( 'Connected', 'invoicing' ); ?></span>
+                    <?php endif; ?>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
@@ -66,9 +74,10 @@ defined( 'ABSPATH' ) || exit;
         </div>
 
         <p class="gp-setup-actions step text-center mt-4">
-			<a href="<?php echo esc_url( $next_url ); ?>" class="btn btn-primary"><?php esc_attr_e( 'Continue', 'invoicing' ); ?></a>
+			<input type="submit" class="btn btn-primary" value="<?php esc_attr_e( 'Continue', 'invoicing' ); ?>" />
 		</p>
-
+        
+        <?php getpaid_hidden_field( 'save_step', 1 ); ?>
         <?php wp_nonce_field( 'getpaid-setup-wizard', 'getpaid-setup-wizard' ); ?>
     </form>
 </div>

@@ -610,7 +610,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
      * @param array $data
      * @return string
 	 */
-	public static function maybe_get_connect_url( $data ) {
+	public static function maybe_get_connect_url( $url = '', $data ) {
 		return self::get_connect_url( false, urldecode( $data['redirect'] ) );
 	}
 
@@ -714,8 +714,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			$sandbox = empty( $data['live_mode'] );
 		}
 
-		wpinv_update_option( 'stripe_sandbox', (int) $sandbox );
-		wpinv_update_option( 'stripe_active', 1 );
+		wpinv_update_option( 'paypal_sandbox', (int) $sandbox );
+		wpinv_update_option( 'paypal_active', 1 );
 
 		if ( ! empty( $data['error_description'] ) ) {
 			getpaid_admin()->show_error( wp_kses_post( urldecode( $data['error_description'] ) ) );
@@ -766,7 +766,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 					getpaid_admin()->show_error( wp_kses_post( $app->get_error_message() ) );
 				} else {
 
-					$app = json_decode( $app );
+					$app = json_decode( wp_remote_retrieve_body( $app ) );
+					wpinv_error_log( $app );
 					if ( $sandbox ) {
 						wpinv_update_option( 'paypal_sandbox_email', sanitize_email( $user_info->emails[0]->value ) );
 						wpinv_update_option( 'paypal_sandbox_merchant_id', '' );
@@ -775,7 +776,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 						wpinv_update_option( 'paypal_sandbox_client_secret_expires_at', sanitize_text_field( '' ) );
 						wpinv_update_option( 'paypal_sandbox_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
 						set_transient( 'getpaid_paypal_sandbox_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
-						getpaid_admin()->show_success( __( 'Successfully connected your PayPal sandbox account', 'wpinv-stripe' ) );
+						getpaid_admin()->show_success( __( 'Successfully connected your PayPal sandbox account', 'invoicing' ) );
 					} else {
 						wpinv_update_option( 'paypal_email', sanitize_email( $user_info->emails[0]->value ) );
 						wpinv_update_option( 'paypal_merchant_id', '' );
@@ -784,7 +785,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 						wpinv_update_option( 'paypal_client_secret_expires_at', sanitize_text_field( '' ) );
 						wpinv_update_option( 'paypal_refresh_token', sanitize_text_field( urldecode( $data['refresh_token'] ) ) );
 						set_transient( 'getpaid_paypal_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
-						getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'wpinv-stripe' ) );
+						getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'invoicing' ) );
 					}
 
 				}
@@ -794,6 +795,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		}
 
 		$redirect = empty( $data['redirect'] ) ? admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) : urldecode( $data['redirect'] );
+
+		if ( isset( $data['step'] ) ) {
+			$redirect = add_query_arg( 'step', $data['step'], $redirect );
+		}
 		wp_redirect( $redirect );
 		exit;
 	}
