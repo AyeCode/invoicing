@@ -433,10 +433,11 @@ jQuery(function ($) {
 	// Update template when it changes.
 	$('#wpinv_template').on('change', function (e) {
 		$(this)
-			.closest('.getpaid-invoice-items-inner')
+			.closest('#poststuff')
 			.removeClass('amount quantity hours')
 			.addClass($(this).val())
 	})
+	$('#wpinv_template').trigger('change')
 
 	// Adding items to an invoice.
 	function getpaid_add_invoice_item_modal() {

@@ -21,8 +21,19 @@ class GetPaid_Meta_Box_Invoice_Items {
         $columns            = array(
             'id'     => __( 'ID', 'invoicing' ),
             'title'  => __( 'Item', 'invoicing' ),
-            'price'  => __( 'Price', 'invoicing' ),
-            'qty'    => __( 'Qty', 'invoicing' ),
+            'price'  => sprintf(
+                '<span class="getpaid-hide-if-hours getpaid-hide-if-quantity">%s</span>
+                <span class="getpaid-hide-if-hours hide-if-amount">%s</span>
+                <span class="getpaid-hide-if-quantity hide-if-amount">%s</span>',
+                __( 'Amount', 'invoicing' ),
+                __( 'Price', 'invoicing' ),
+                __( 'Rate', 'invoicing' )
+            ),
+            'qty'    => sprintf(
+                '<span class="getpaid-hide-if-hours">%s</span><span class="getpaid-hide-if-quantity">%s</span>',
+                __( 'Quantity', 'invoicing' ),
+                __( 'Hours', 'invoicing' )
+            ),
             'total'  => __( 'Total', 'invoicing' ),
             'tax'    => __( 'Tax (%)', 'invoicing' ),
             'action' => '',
@@ -68,7 +79,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                 <thead>
                     <tr>
                         <?php foreach ( $columns as $key => $label ) : ?>
-                            <th class="<?php echo esc_attr( $key ); ?>"><?php echo sanitize_text_field( $label ); ?></th>
+                            <th class="<?php echo esc_attr( $key ); echo 'total' == $key || 'qty' == $key ? ' hide-if-amount' : '' ?>"><?php echo wp_kses_post( $label ); ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
@@ -246,7 +257,7 @@ class GetPaid_Meta_Box_Invoice_Items {
     ?>
         <tr class="item item-<?php echo esc_attr( $class ); ?>" data-item-id="<?php echo esc_attr( $item->get_id() ); ?>">
             <?php foreach ( array_keys( $columns ) as $column ) : ?>
-                <td class="<?php echo esc_attr( $column ); ?>">
+                <td class="<?php echo esc_attr( $column ); echo 'total' == $column || 'qty' == $column ? ' hide-if-amount' : '' ?>">
                     <?php
                         switch ( $column ) {
                             case 'id':

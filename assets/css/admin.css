@@ -1690,13 +1690,13 @@ textarea.wpi-email_overdue_content {
     padding: 1em;
 }
 
-#wpinv-items .has-items .hide-if-has-items,
-#wpinv-items .no-items .hide-if-no-items,
-#wpinv-items .amount .hide-if-amount,
-#wpinv-items .quantity .getpaid-hide-if-quantity,
-#wpinv-items .hours .getpaid-hide-if-hours,
-#wpinv-items .not-editable .hide-if-not-editable,
-#wpinv-items .editable .hide-if-editable {
+.getpaid-is-invoice-cpt .has-items .hide-if-has-items,
+.getpaid-is-invoice-cpt .no-items .hide-if-no-items,
+.getpaid-is-invoice-cpt .amount .hide-if-amount,
+.getpaid-is-invoice-cpt .quantity .getpaid-hide-if-quantity,
+.getpaid-is-invoice-cpt .hours .getpaid-hide-if-hours,
+.getpaid-is-invoice-cpt .not-editable .hide-if-not-editable,
+.getpaid-is-invoice-cpt .editable .hide-if-editable {
     display: none !important;
 }
 

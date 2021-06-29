@@ -711,7 +711,7 @@ class WPInv_Ajax {
         $invoice->set_disable_taxes( ! empty( $_POST['disable_taxes'] ) );
 
         // Maybe set the country, state, currency.
-        foreach ( array( 'country', 'state', 'currency', 'vat_number', 'wpinv_discount_code' ) as $key ) {
+        foreach ( array( 'wpinv_country', 'wpinv_state', 'wpinv_currency', 'wpinv_vat_number', 'wpinv_discount_code' ) as $key ) {
             if ( isset( $_POST[ $key ] ) ) {
                 $_key   = str_replace( 'wpinv_', '', $key );
                 $method = "set_$_key";

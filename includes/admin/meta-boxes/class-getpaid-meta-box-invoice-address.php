@@ -288,6 +288,59 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                     </div>
 
+                    <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
+                        <?php do_action( 'wpinv_meta_box_before_invoice_template_row', $invoice->get_id() ); ?>
+
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <?php
+                                    echo aui()->select(
+                                        array(
+                                            'id'          => 'wpinv_template',
+                                            'name'        => 'wpinv_template',
+                                            'label'       => __( 'Template', 'invoicing' ),
+                                            'label_type'  => 'vertical',
+                                            'placeholder' => __( 'Choose a template', 'invoicing' ),
+                                            'class'       => 'form-control-sm',
+                                            'value'       => $invoice->get_template( 'edit' ),
+                                            'options'     => array(
+                                                'quantity' => __( 'Quantity', 'invoicing' ),
+                                                'hours'    => __( 'Hours', 'invoicing' ),
+                                                //'amount'   => __( 'Amount Only', 'invoicing' ),
+                                            ),
+                                            'data-allow-clear' => 'false',
+                                            'select2'          => true,
+                                        )
+                                    );
+                                ?>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <?php
+
+                                    // Set currency.
+                                    echo aui()->select(
+                                        array(
+                                            'id'          => 'wpinv_currency',
+                                            'name'        => 'wpinv_currency',
+                                            'label'       => __( 'Currency', 'invoicing' ),
+                                            'label_type'  => 'vertical',
+                                            'placeholder' => __( 'Select Invoice Currency', 'invoicing' ),
+                                            'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
+                                            'value'       => $invoice->get_currency( 'edit' ),
+                                            'required'    => false,
+                                            'data-allow-clear' => 'false',
+                                            'select2'          => true,
+                                            'options'     => wpinv_get_currencies(),
+                                        )
+                                    );
+
+                                ?>
+                            </div>
+                        </div>
+
+                        <?php do_action( 'wpinv_meta_box_invoice_template_row', $invoice->get_id() ); ?>
+                    <?php endif; ?>
+
                     <?php do_action( 'getpaid_after_metabox_invoice_address', $invoice ); ?>
             </div>
         <?php
