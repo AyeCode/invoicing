@@ -148,7 +148,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'label'       => __( 'Vat Number', 'invoicing' ),
                                         'label_type'  => 'vertical',
                                         'placeholder' => '',
-                                        'class'       => 'form-control-sm',
+                                        'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
                                         'value'       => $invoice->get_vat_number( 'edit' ),
                                     )
                                 );
@@ -201,7 +201,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'label'       => __( 'Country', 'invoicing' ),
                                         'label_type'  => 'vertical',
                                         'placeholder' => __( 'Choose a country', 'invoicing' ),
-                                        'class'       => 'form-control-sm',
+                                        'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
                                         'value'       => $invoice->get_country( 'edit' ),
                                         'options'     => wpinv_get_country_list(),
                                         'data-allow-clear' => 'false',

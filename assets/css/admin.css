@@ -2,6 +2,12 @@
     width: 100px!important;
 }
 
+#wpinv-items .inside {
+    background: #fefefe;
+    margin: 0;
+    padding: 0;
+}
+
 /* invoice notes */
 .getpaid-is-invoice-cpt .wp-list-table.widefat th#ID {
     width: 70px;
@@ -571,8 +577,11 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     margin-bottom: .5em !important;
 }
 .wpi-field-price {
-    width: 90px!important;
+    width: 80px!important;
     text-align: right;
+}
+.wpi-field-qty {
+    width: 50px;
 }
 .inline-edit-row.inline-edit-wpi_item .wpi-inline-item-col {
     margin-top: 0 !important;
@@ -646,6 +655,29 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 #wpinv_items_wrap {
     margin: 0;
     overflow: auto;
+    position: relative;
+}
+#wpinv_items_wrap .bg-light {
+    background-color: #f8f9fa !important;
+}
+#wpinv_items_wrap .h-100 {
+    height: 100% !important;
+}
+#wpinv_items_wrap .w-100 {
+    width: 100% !important;
+}
+#wpinv_items_wrap .position-absolute {
+    position: absolute !important;
+}
+#wpinv_items_wrap .align-items-center {
+    align-items: center !important;
+}
+
+#wpinv_items_wrap .justify-content-center {
+    justify-content: center !important;
+}
+#wpinv_items_wrap .d-flex {
+    display: flex !important;
 }
 #wpinv_items_wrap table.wpinv-items {
     background: #fff;
@@ -653,6 +685,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 }
 #wpinv_items_wrap table.wpinv-items thead th {
     -moz-user-select: none;
+    user-select: none;
     background: #f8f8f8;
     color: #555;
     padding: 8px;
@@ -694,15 +727,12 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     width: 30px;
 }
 #wpinv_items_wrap table.wpinv-items .price,
+#wpinv_items_wrap table.wpinv-items .qty,
+#wpinv_items_wrap table.wpinv-items .tax,
 #wpinv_items_wrap table.wpinv-items tr .total {
-    text-align: right;
     width: 100px;
 }
-#wpinv_items_wrap table.wpinv-items th.tax,
-#wpinv_items_wrap table.wpinv-items td.tax {
-    text-align: right;
-    width: 95px;
-}
+
 #wpinv_items_wrap table.wpinv-items td.tax .tax-rate {
     font-size: 90%;
     color: #72777c;
@@ -730,9 +760,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     background: #e5e5e5;
     font-weight: bold;
 }
-#wpinv_items tfoot.wpinv-totals tr.subtotal td {
-    border-top: 1px dotted #dfdfdf;
-}
+
 #wpinv-quick-add {
     display: none;
 }
@@ -838,6 +866,11 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
     width: 100%;
     font-size: 13px;
 }
+
+table#wpinv_items .title {
+    width: 500px;
+}
+
 #wpinv-quick-add .wpi-item-actions .button {
     margin-right: 15px;
 }
@@ -1043,12 +1076,6 @@ textarea.wpi-email_overdue_content {
 }
 .wpi-inlineb {
     display: inline-block!important
-}
-.wpinv-items-wrap.wpi-recurring .wpinv-actions {
-    text-align: right
-}
-.wpinv-items-wrap.wpi-recurring #wpinv-recalc-totals {
-    float: none;
 }
 
 .getpaid-is-invoice-cpt form#post #edit-slug-buttons {

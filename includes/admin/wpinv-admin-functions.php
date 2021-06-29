@@ -176,3 +176,61 @@ function wpinv_reset_invoice_count(){
     }
 }
 add_action( 'admin_init', 'wpinv_reset_invoice_count' );
+
+/**
+ * Displays line items on the invoice edit page.
+ *
+ * @param WPInv_Invoice $invoice
+ * @param array $columns
+ * @return string
+ */
+function wpinv_admin_get_line_items( $invoice, $columns ) {
+
+    ob_start();
+
+    do_action( 'getpaid_admin_before_line_items', $invoice );
+
+    $count = 0;
+    foreach ( $invoice->get_items() as $item ) {
+
+        $item_price     = wpinv_price( $item->get_price(), $invoice->get_currency() );
+        $quantity       = (int) $item->get_quantity();
+        $item_subtotal  = wpinv_price( $item->get_sub_total(), $invoice->get_currency() );
+        $summary        = apply_filters( 'getpaid_admin_invoice_line_item_summary', $item->get_description(), $item, $invoice );
+        $item_tax       = $item->item_tax;
+        $tax_rate       = wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2, true ) . '%';;
+        $tax_rate       = empty( $tax_rate ) ? ' <span class="tax-rate">(' . $tax_rate . '%)</span>' : '';
+        $line_item_tax  = $item_tax . $tax_rate;
+        $line_item      = '<tr class="item item-' . ( ($count % 2 == 0) ? 'even' : 'odd' ) . '" data-item-id="' . esc_attr( $item->get_id() ) . '">';
+        $line_item     .= '<td class="id">' . (int) $item->get_id() . '</td>';
+        $line_item     .= '<td class="title"><a href="' . get_edit_post_link( $item->get_id() ) . '" target="_blank">' . $item->get_name() . '</a>';
+
+        if ( $summary !== '' ) {
+            $line_item .= '<span class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</span>';
+        }
+
+        $line_item .= '</td>';
+        $line_item .= '<td class="price">' . $item_price . '</td>';
+        $line_item .= '<td class="qty" data-quantity="' . $quantity . '">&nbsp;&times;&nbsp;' . $quantity . '</td>';
+        $line_item .= '<td class="total">' . $item_subtotal . '</td>';
+
+        if ( wpinv_use_taxes() && $invoice->is_taxable() ) {
+            $line_item .= '<td class="tax">' . $line_item_tax . '</td>';
+        }
+
+        $line_item .= '<td class="action">';
+        if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+            $line_item .= '<i class="fa fa-remove wpinv-item-remove"></i>';
+        }
+        $line_item .= '</td>';
+        $line_item .= '</tr>';
+
+        echo apply_filters( 'getpaid_admin_line_item', $line_item, $item, $invoice );
+
+        $count++;
+    }
+
+    do_action( 'getpaid_admin_after_line_items', $invoice );
+
+    return ob_get_clean();
+}

@@ -201,7 +201,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label'       => __( 'Discount Code:', 'invoicing' ),
                                     'placeholder' => __( 'Apply Discount', 'invoicing' ),
                                     'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
+                                    'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
                                     'value'       => $invoice->get_discount_code( 'edit' ),
                                 )
                             );
@@ -239,6 +239,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label'       => __( 'Disable taxes', 'invoicing' ),
                                     'value'       => '1',
                                     'checked'     => (bool) $invoice->get_disable_taxes(),
+                                    'class'       => 'getpaid-recalculate-prices-on-change',
                                 )
                             );
 

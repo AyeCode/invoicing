@@ -567,6 +567,141 @@ jQuery(function ($) {
 	}
 	getpaid_add_invoice_item_modal()
 
+	function recalculate_full_prices( e ) {
+		if ( e ) {
+			e.preventDefault()
+		}
+
+		var data = $('.getpaid-recalculate-prices-on-change').serialize()
+		data += '&action=wpinv_recalculate_full_prices' + '&post_id=' + $('#post_ID').val() + '&_ajax_nonce=' + WPInv_Admin.wpinv_nonce
+		
+		// Block the metabox.
+		wpinvBlock('#wpinv_items_wrap')
+
+		$.post(WPInv_Admin.ajax_url, data)
+
+			.done(function (response) {
+
+				if (response.success) {
+					if (response.data.alert) {
+						alert(response.data.alert)
+					}else{
+						$('#wpinv_items_wrap').replaceWith(response.data.table)
+					}
+				}
+
+			})
+
+			.always(function (response) {
+				wpinvUnblock('#wpinv_items_wrap');
+			})
+	}
+
+	$('.getpaid-is-invoice-cpt').on('change', '.getpaid-recalculate-prices-on-change', recalculate_full_prices )
+	$('.getpaid-is-invoice-cpt #wpinv-items').on('click', '.wpinv-item-remove', function() {
+		$(this).closest('tr').remove()
+		recalculate_full_prices()
+	} )
+	$('.getpaid-is-invoice-cpt').on('click', '#wpinv-recalc-totals', recalculate_full_prices )
+	$('.getpaid-is-invoice-cpt').on('click', '#wpinv-add-item', function( e ) {
+		e.preventDefault()
+
+		var data = {
+			action: 'wpinv_admin_add_invoice_item',
+			post_id: $('#post_ID').val(),
+			item_id: $('#wpinv_invoice_item').val(),
+			_ajax_nonce: WPInv_Admin.wpinv_nonce
+		}
+
+		// Block the metabox.
+		wpinvBlock('#wpinv_items_wrap')
+
+		$.post(WPInv_Admin.ajax_url, data)
+
+			.done(function (response) {
+
+				if (response.success) {
+					if (response.data.alert) {
+						alert(response.data.alert)
+					}else{
+						$('.wpinv-line-items').append(response.data.row)
+						recalculate_full_prices()
+					}
+				}
+
+			})
+
+			.always(function (response) {
+				wpinvUnblock('#wpinv_items_wrap');
+			})
+
+	})
+
+	$('.getpaid-is-invoice-cpt').on('click', '#wpinv-new-item', function(e) {
+		e.preventDefault();
+		$('#wpinv-quick-add').slideToggle('fast');
+	});
+
+	$('.getpaid-is-invoice-cpt').on('click', '#wpinv-cancel-item', function(e) {
+		e.preventDefault();
+		$('#wpinv-quick-add').slideToggle('fast');
+		$('#_wpinv_quick_vat_rule, #_wpinv_quick_vat_class, #_wpinv_quick_type').prop('selectedIndex',0);
+		$('.wpinv-quick-item-name, .wpinv-quick-item-price, .wpinv-quick-item-qty, .wpinv-quick-item-price, .wpinv-quick-item-description').val('');
+		return false;
+	});
+
+	$('.getpaid-is-invoice-cpt #wpinv-save-item').on('click', function(e) {
+		e.preventDefault()
+
+		var data = {
+			action: 'wpinv_create_invoice_item',
+			invoice_id: $('#post_ID').val(),
+			_ajax_nonce: WPInv_Admin.wpinv_nonce,
+			_wpinv_quick: {
+				'name': $('.wpinv-quick-item-name').val(),
+				'price': $('.wpinv-quick-item-price').val(),
+				'qty': $('.wpinv-quick-item-qty').val(),
+				'description': $('.wpinv-quick-item-description').val(),
+				'type': $('.wpinv-quick-type').val(),
+				'vat_rule': $('.wpinv-quick-vat-rule').val(),
+				'vat_class': $('.wpinv-quick-vat-class').val(),
+			}
+		}
+
+		if ( ! data._wpinv_quick.name ) {
+			$('.wpinv-quick-item-name').focus();
+			return;
+		}
+
+		if ( ! data._wpinv_quick.price ) {
+			$('.wpinv-quick-item-price').focus();
+			return;
+		}
+
+		// Block the metabox.
+		wpinvBlock('#wpinv_items_wrap')
+
+		$.post(WPInv_Admin.ajax_url, data)
+
+			.done(function (response) {
+
+				if (response.success) {
+					if (response.data.alert) {
+						alert(response.data.alert)
+					}else{
+						$('.wpinv-line-items').append(response.data.row)
+						recalculate_full_prices()
+					}
+				}
+
+			})
+
+			.always(function (response) {
+				wpinvUnblock('#wpinv_items_wrap');
+			})
+
+	});
+
 	// Refresh invoice items.
 	if ($('#wpinv-items .getpaid-invoice-items-inner').hasClass('has-items')) {
 
@@ -848,7 +983,7 @@ jQuery(function ($) {
 
 	$('.getpaid-is-invoice-cpt #wpinv_vat_number, .getpaid-is-invoice-cpt #wpinv_discount_code, .getpaid-is-invoice-cpt #wpinv_taxable').on('change', function (e) {
 		e.preventDefault()
-		recalculateTotals()
+		//recalculateTotals()
 	})
 
 	$('.getpaid-is-invoice-cpt').on('change', '#wpinv_country, #wpinv_state', function (e) {
@@ -1038,19 +1173,6 @@ jQuery(function ($) {
 		$(this).closest('tr').remove();
 		wpinv_reindex_tax_table();
 
-	});
-
-	var elB = $('#wpinv-address');
-
-	$('#wpinv_state', elB).on('change', function (e) {
-		window.wpiConfirmed = true;
-		$('#wpinv-recalc-totals').click();
-		window.wpiConfirmed = false;
-	});
-	$('#wpinv_taxable').on('change', function (e) {
-		window.wpiConfirmed = true;
-		$('#wpinv-recalc-totals').click();
-		window.wpiConfirmed = false;
 	});
 
 	var WPInv = {

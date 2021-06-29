@@ -16,12 +16,314 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class GetPaid_Meta_Box_Invoice_Items {
 
+    public static function get_columns( $invoice ) {
+        $use_taxes          = $invoice->is_taxable() && wpinv_use_taxes();
+        $columns            = array(
+            'id'     => __( 'ID', 'invoicing' ),
+            'title'  => __( 'Item', 'invoicing' ),
+            'price'  => __( 'Price', 'invoicing' ),
+            'qty'    => __( 'Qty', 'invoicing' ),
+            'total'  => __( 'Total', 'invoicing' ),
+            'tax'    => __( 'Tax (%)', 'invoicing' ),
+            'action' => '',
+        );
+
+        if ( ! $use_taxes ) {
+            unset( $columns['tax'] );
+        }
+
+        return $columns;
+    }
+
+    public static function output( $post, $invoice = false ) {
+
+        $post_id            = !empty( $post->ID ) ? $post->ID : 0;
+        $invoice            = $invoice instanceof WPInv_Invoice ? $invoice : new WPInv_Invoice( $post_id );
+        $use_taxes          = $invoice->is_taxable() && wpinv_use_taxes();
+        $item_types         = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
+        $columns            = self::get_columns( $invoice );
+        $cols               = count( $columns );
+        $class              = '';
+
+        unset( $item_types['adv'] );
+        unset( $item_types['package'] );
+
+        if ( $invoice->is_paid() ) {
+            $class .= ' wpinv-paid';
+        }
+
+        if ( $invoice->is_refunded() ) {
+            $class .= ' wpinv-refunded';
+        }
+
+        if ( $invoice->is_recurring() ) {
+            $class .= ' wpi-recurring';
+        }
+
+    ?>
+
+        <div class="wpinv-items-wrap<?php echo $class; ?>" id="wpinv_items_wrap" data-status="<?php echo esc_attr( $invoice->get_status() ); ?>">
+            <table id="wpinv_items" class="wpinv-items" cellspacing="0" cellpadding="0">
+
+                <thead>
+                    <tr>
+                        <?php foreach ( $columns as $key => $label ) : ?>
+                            <th class="<?php echo esc_attr( $key ); ?>"><?php echo sanitize_text_field( $label ); ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+
+                <tbody class="wpinv-line-items">
+                    <?php
+                        foreach ( $invoice->get_items() as $int => $item ) {
+                            self::output_row( $columns, $item, $invoice, $int % 2 == 0 ? 'even' : 'odd' );
+                        }
+                    ?>
+                </tbody>
+
+                <tfoot class="wpinv-totals">
+                    <tr>
+                        <td colspan="<?php echo $cols; ?>" style="padding:0;border:0">
+                            <div id="wpinv-quick-add">
+                                <table cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td class="id">&nbsp;</td>
+                                        <td class="title">
+
+                                            <div class="wp-clearfix">
+                                                <label class="wpi-item-name">
+                                                    <span class="input-text-wrap">
+                                                        <input type="text" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' );?>" class="wpinv-quick-item-name" name="_wpinv_quick[name]">
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                            <div class="wp-clearfix">
+                                                <label class="wpi-item-price">
+                                                    <span class="input-text-wrap">
+                                                    <input type="text" style="width: 200px" placeholder="<?php esc_attr_e( 'Item Price', 'invoicing' );?>" class="wpinv-quick-item-price" name="_wpinv_quick[price]">
+                                                        &times; <input type="text" style="width: 140px" placeholder="<?php esc_attr_e( 'Item Quantity', 'invoicing' );?>" class="wpinv-quick-item-qty" name="_wpinv_quick[qty]">
+                                                    </span>
+                                                </label>
+                                            </div>
+                            
+                                            <div class="wp-clearfix">
+                                                <label class="wpi-item-name">
+                                                    <span class="input-text-wrap">
+                                                        <textarea rows="4" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Description', 'invoicing' );?>" class="wpinv-quick-item-description" name="_wpinv_quick[description]"></textarea>
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                            <div class="wp-clearfix">
+                                                <label class="wpi-item-type">
+                                                    <span class="input-text-wrap">
+                                                        <?php echo wpinv_html_select( array(
+                                                            'options'          => $item_types,
+                                                            'name'             => '_wpinv_quick[type]',
+                                                            'id'               => '_wpinv_quick_type',
+                                                            'selected'         => 'custom',
+                                                            'show_option_all'  => false,
+                                                            'show_option_none' => false,
+                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-type',
+                                                        ) ); ?>
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                            <?php if ( $use_taxes ) : ?>
+                                                <div class="wp-clearfix">
+                                                    <label class="wpi-vat-rule">
+                                                        <span class="input-text-wrap">
+                                                            <?php
+                                                                echo wpinv_html_select( array(
+                                                                    'options'          => array_merge(
+                                                                        array( '' => __( 'Select VAT Rule', 'invoicing' ) ),
+                                                                        getpaid_get_tax_rules()
+                                                                    ),
+                                                                    'name'             => '_wpinv_quick[vat_rule]',
+                                                                    'id'               => '_wpinv_quick_vat_rule',
+                                                                    'show_option_all'  => false,
+                                                                    'show_option_none' => false,
+                                                                    'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule',
+                                                                ) );
+                                                            ?>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="wp-clearfix">
+                                                    <label class="wpi-vat-class">
+                                                        <span class="input-text-wrap">
+                                                            <?php
+                                                                echo wpinv_html_select( array(
+                                                                    'options'          => array_merge(
+                                                                        array( '' => __( 'Select VAT Class', 'invoicing' ) ),
+                                                                        getpaid_get_tax_classes()
+                                                                    ),
+                                                                    'name'             => '_wpinv_quick[vat_class]',
+                                                                    'id'               => '_wpinv_quick_vat_class',
+                                                                    'show_option_all'  => false,
+                                                                    'show_option_none' => false,
+                                                                    'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class',
+                                                                ) );
+                                                            ?>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <div class="wp-clearfix">
+                                                <label class="wpi-item-actions">
+                                                    <span class="input-text-wrap">
+                                                        <input type="button" value="Save" class="button button-primary" id="wpinv-save-item"><input type="button" value="Cancel" class="button button-secondary" id="wpinv-cancel-item">
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="totals">
+                        <td colspan="<?php echo ( $cols - 4 ); ?>"></td>
+                        <td colspan="4">
+                            <table cellspacing="0" cellpadding="0">
+                                <tr class="subtotal">
+                                    <td class="name"><?php _e( 'Sub Total:', 'invoicing' );?></td>
+                                    <td class="total"><?php echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );?></td>
+                                    <td class="action"></td>
+                                </tr>
+                                <tr class="discount">
+                                    <td class="name"><?php _e( 'Discount:', 'invoicing' ) ; ?></td>
+                                    <td class="total"><?php echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );?></td>
+                                    <td class="action"></td>
+                                </tr>
+                                <?php if ( $use_taxes ) : ?>
+                                <tr class="tax">
+                                    <td class="name"><?php _e( 'Tax:', 'invoicing' );?></td>
+                                    <td class="total"><?php echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );?></td>
+                                    <td class="action"></td>
+                                </tr>
+                                <?php endif; ?>
+                                <tr class="total">
+                                    <td class="name"><?php _e( 'Total:', 'invoicing' );?></td>
+                                    <td class="total"><?php echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );?></td>
+                                    <td class="action"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tfoot>
+
+            </table>
+            <div class="wpinv-actions">
+                <?php
+                    if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+                        echo wpinv_item_dropdown(
+                            array(
+                                'name'             => 'wpinv_invoice_item',
+                                'id'               => 'wpinv_invoice_item',
+                                'show_recurring'   => true,
+                                'class'            => 'wpi_select2',
+                            )
+                        );
+
+                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-add-item">' . sprintf( esc_html__( 'Add item to %s', 'invoicing' ), $invoice->get_label() ) . '</button>';
+                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-new-item">' . esc_html__( 'Create new item', 'invoicing' ) . '</button>';
+                        echo "&nbsp;" . '<button class="button button-primary wpinv-flr" id="wpinv-recalc-totals">' . esc_html__( 'Recalculate Totals', 'invoicing' ) . '</button>';
+
+                    }
+                ?>
+                <?php do_action( 'wpinv_invoice_items_actions', $invoice ); ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    public static function output_row( $columns, $item, $invoice, $class='even' ) {
+
+    ?>
+        <tr class="item item-<?php echo esc_attr( $class ); ?>" data-item-id="<?php echo esc_attr( $item->get_id() ); ?>">
+            <?php foreach ( array_keys( $columns ) as $column ) : ?>
+                <td class="<?php echo esc_attr( $column ); ?>">
+                    <?php
+                        switch ( $column ) {
+                            case 'id':
+                                echo (int) $item->get_id();
+                                break;
+                            case 'title':
+                                printf(
+                                    '<a href="%s" target="_blank">%s</a>',
+                                    get_edit_post_link( $item->get_id() ),
+                                    esc_html( $item->get_raw_name() )
+                                );
+
+                                $summary = apply_filters( 'getpaid_admin_invoice_line_item_summary', $item->get_description(), $item, $invoice );
+                                if ( $summary !== '' ) {
+                                    printf(
+                                        '<span class="meta">%s</span>',
+                                        wpautop( wp_kses_post( $summary ) )
+                                    );
+                                }
+
+                                printf(
+                                    '<input type="hidden" value="%s" name="getpaid_items[%s][name]" class="getpaid-recalculate-prices-on-change" />',
+                                    esc_attr( $item->get_raw_name() ),
+                                    (int) $item->get_id()
+                                );
+
+                                printf(
+                                    '<textarea style="display: none;" name="getpaid_items[%s][description]" class="getpaid-recalculate-prices-on-change">%s</textarea>',
+                                    (int) $item->get_id(),
+                                    esc_attr( $item->get_description() )
+                                );
+
+                                break;
+                            case 'price':
+                                printf(
+                                    '<input type="text" value="%s" name="getpaid_items[%s][price]" style="width: 100px;" class="getpaid-admin-invoice-item-price getpaid-recalculate-prices-on-change" />',
+                                    esc_attr( $item->get_price() ),
+                                    (int) $item->get_id()
+                                );
+
+                                break;
+                            case 'qty':
+                                printf(
+                                    '<input type="text" style="width: 100px;" value="%s" name="getpaid_items[%s][quantity]" class="getpaid-admin-invoice-item-quantity getpaid-recalculate-prices-on-change" />',
+                                    floatval( $item->get_quantity() ),
+                                    (int) $item->get_id()
+                                );
+
+                                break;
+                            case 'total':
+                                echo wpinv_price( $item->get_sub_total(), $invoice->get_currency() );
+
+                                break;
+                            case 'tax':
+                                echo wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+
+                                break;
+                            case 'action':
+                                if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+                                    echo '<i class="fa fa-trash wpinv-item-remove"></i>';
+                                }
+                                break;
+                        }
+                        do_action( 'getpaid_admin_edit_invoice_item_' . $column, $item, $invoice );
+                    ?>
+                </td>
+            <?php endforeach; ?>
+        </tr>
+        <?php
+    }
+
     /**
 	 * Output the metabox.
 	 *
 	 * @param WP_Post $post
 	 */
-    public static function output( $post ) {
+    public static function output2( $post ) {
 
         // Prepare the invoice.
         $invoice = new WPInv_Invoice( $post );
