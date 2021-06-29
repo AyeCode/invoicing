@@ -340,6 +340,15 @@ class GetPaid_Admin {
 	 */
 	public function init_ayecode_connect_helper(){
 
+		// Register with the deactivation survey class.
+		AyeCode_Deactivation_Survey::instance(array(
+			'slug'		        => 'invoicing',
+			'version'	        => WPINV_VERSION,
+			'support_url'       => 'https://wpgetpaid.com/support/',
+			'documentation_url' => 'https://docs.wpgetpaid.com/',
+			'activated'         => (int) get_option( 'gepaid_installed_on' ),
+		));
+
         new AyeCode_Connect_Helper(
             array(
 				'connect_title' => __("WP Invoicing - an AyeCode product!","invoicing"),

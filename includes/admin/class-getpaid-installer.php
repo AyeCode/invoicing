@@ -48,6 +48,12 @@ class GetPaid_Installer {
 		// Create any missing database tables.
 		$method = "upgrade_from_$upgrade_from";
 
+		$installed = get_option( 'gepaid_installed_on' );
+
+		if ( empty( $installed ) ) {
+			update_option( 'gepaid_installed_on', time() );
+		}
+
 		if ( method_exists( $this, $method ) ) {
 			$this->$method();
 		}
