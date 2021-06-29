@@ -651,7 +651,7 @@ jQuery(function ($) {
 		return false;
 	});
 
-	$('.getpaid-is-invoice-cpt #wpinv-save-item').on('click', function(e) {
+	$('.getpaid-is-invoice-cpt').on('click', '#wpinv-save-item', function(e) {
 		e.preventDefault()
 
 		var data = {

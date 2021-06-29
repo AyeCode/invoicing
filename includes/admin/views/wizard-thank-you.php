@@ -35,13 +35,13 @@ defined( 'ABSPATH' ) || exit;
 					</a>
 					<a
 						class="btn btn-outline-primary btn-sm"
-						href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>">
+						href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_payment_form' ) ); ?>">
 						<span class="h1 d-block"><i class="fas fa-align-justify"></i></span>
 						<?php esc_html_e( 'Create Payment Form', 'invoicing' ); ?>
 					</a>
 					<a
 						class="btn btn-outline-primary btn-sm"
-						href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>">
+						href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_invoice' ) ); ?>">
 						<span class="h1 d-block"><i class="fas fa-file-alt"></i></span>
 						<?php esc_html_e( 'Create Invoice', 'invoicing' ); ?>
 					</a>
