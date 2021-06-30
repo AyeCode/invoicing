@@ -9,7 +9,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$label = empty( $label ) ? '' : wp_kses_post( $label );
+$label       = empty( $label ) ? '' : wp_kses_post( $label );
+$label_class = sanitize_key( preg_replace( '/[^A-Za-z0-9_-]/', '-', $label ) );
 
 if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
@@ -24,6 +25,6 @@ echo aui()->input(
         'label'      => $label,
         'value'      => esc_attr__( 'Yes', 'invoicing' ),
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'class'      => 'w-auto',
+        'class'      => 'w-auto ' . $label_class,
     )
 );
