@@ -237,11 +237,17 @@ class GetPaid_Invoice_Notification_Emails {
 	public function filter_email_recipients( $recipients, $email ) {
 
 		if ( ! $email->is_admin_email() ) {
-			$cc = $email->object->get_email_cc();
+			$cc   = $email->object->get_email_cc();
+			$cc_2 = get_user_meta( $email->object->get_user_id(), '_wpinv_email_cc', true );
 
 			if ( ! empty( $cc ) ) {
 				$cc = array_map( 'sanitize_email', wpinv_parse_list( $cc ) );
 				$recipients = array_filter( array_unique( array_merge( $recipients, $cc ) ) );
+			}
+
+			if ( ! empty( $cc_2 ) ) {
+				$cc_2 = array_map( 'sanitize_email', wpinv_parse_list( $cc_2 ) );
+				$recipients = array_filter( array_unique( array_merge( $recipients, $cc_2 ) ) );
 			}
 
 		}

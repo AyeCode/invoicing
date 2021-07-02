@@ -261,6 +261,20 @@ function getpaid_display_address_edit_tab() {
 
                     }
 
+                    echo aui()->input(
+                        array(
+                            'name'        => 'getpaid_address[email_cc]',
+                            'id'          => 'wpinv-email_cc',
+                            'placeholder' => 'email1@example.com, email2@example.com',
+                            'label'       => __( 'Other email addresses', 'invoicing' ),
+                            'label_type'  => 'vertical',
+                            'type'        => 'text',
+                            'value'       => sanitize_text_field( get_user_meta( get_current_user_id(), '_wpinv_email_cc', true ) ),
+                            'class'       => 'getpaid-address-field',
+                            'help_text'   => __( 'Optionally provide other email addresses where we should send payment notifications', 'invoicing' ),
+                        )
+                    );
+
                     do_action( 'getpaid_display_address_edit_tab' );
 
                     echo aui()->input(
@@ -308,9 +322,13 @@ function getpaid_save_address_edit_tab( $data ) {
             update_user_meta( $user_id, '_wpinv_' . $field, $value );
         }
 
-        wpinv_set_error( 'address_updated', __( 'Your billing address has been updated', 'invoicing' ), 'success');
     }
 
+    if ( isset( $data['email_cc'] ) ) {
+        update_user_meta( $user_id, '_wpinv_email_cc', sanitize_text_field( $data['email_cc'] ) );
+    }
+
+    wpinv_set_error( 'address_updated', __( 'Your billing address has been updated', 'invoicing' ), 'success');
 }
 add_action( 'getpaid_authenticated_action_edit_billing_details', 'getpaid_save_address_edit_tab' );
 

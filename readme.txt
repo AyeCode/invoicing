@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add invoice items now lists all items instead of using ajax - CHANGED
 * Ability to create a new invoice item when creating an invoice - ADDED
 * Ability to display custom form elements on invoices and receipts - ADDED
+* Customers can now set additional CC email addresses - ADDED
 
 = 2.3.8 =
 * Ability to export all customers - ADDED
