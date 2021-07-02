@@ -225,7 +225,10 @@ class GetPaid_Checkout {
 		$submission = $this->payment_form_submission;
 
 		// Prepared submission details.
-        $prepared = array();
+        $prepared = array(
+			'all'  => array(),
+			'meta' => array(),
+		);
 
         // Raw submission details.
 		$data     = $submission->get_data();
@@ -245,13 +248,23 @@ class GetPaid_Checkout {
 
             // Handle misc fields.
             if ( isset( $data[ $field['id'] ] ) ) {
+
+				if ( $field['type'] == 'checkbox' ) {
+					$value = isset( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
+				} else {
+					$value = wp_kses_post( $data[ $field['id'] ] );
+				}
+
                 $label = $field['id'];
 
                 if ( isset( $field['label'] ) ) {
                     $label = $field['label'];
                 }
 
-				$prepared[ wpinv_clean( $label ) ] = wp_kses_post( $data[ $field['id'] ] );
+				if ( ! empty( $field['add_meta'] ) ) {
+					$prepared['meta'][ wpinv_clean( $label ) ] = $value;
+				}
+				$prepared['all'][ wpinv_clean( $label ) ] = $value;
 
             }
 
@@ -344,8 +357,18 @@ class GetPaid_Checkout {
 
 		// Save payment form data.
 		$prepared_payment_form_data = apply_filters( 'getpaid_prepared_payment_form_data', $prepared_payment_form_data, $invoice );
-        if ( ! empty( $prepared_payment_form_data ) ) {
-            update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared_payment_form_data );
+        delete_post_meta( $invoice->get_id(), 'payment_form_data' );
+		delete_post_meta( $invoice->get_id(), 'additional_meta_data' );
+		if ( ! empty( $prepared_payment_form_data ) ) {
+
+			if ( ! empty( $prepared_payment_form_data['all'] ) ) {
+				update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared_payment_form_data['all'] );
+			}
+
+			if ( ! empty( $prepared_payment_form_data['meta'] ) ) {
+				update_post_meta( $invoice->get_id(), 'additional_meta_data', $prepared_payment_form_data['meta'] );
+			}
+
 		}
 
 		// Save payment form data.

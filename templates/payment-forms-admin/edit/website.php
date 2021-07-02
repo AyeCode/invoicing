@@ -39,6 +39,11 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group form-check'>
+    <input :id="active_form_element.id + '_add_meta'" v-model='active_form_element.add_meta' type='checkbox' class='form-check-input' />
+    <label class='form-check-label' :for="active_form_element.id + '_add_meta'"><?php esc_html_e( 'Show this field in receipts and emails?', 'invoicing' ); ?></label>
+</div>
+
+<div class='form-group form-check'>
     <input :id="active_form_element.id + '_edit_default_current'" v-model='active_form_element.default_current_post' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit_default_current'"><?php esc_html_e( 'Default to the current page\'s URL?', 'invoicing' ); ?></label>
 </div>

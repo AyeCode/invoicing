@@ -1191,6 +1191,18 @@ function getpaid_get_invoice_meta( $invoice ) {
 
     );
 
+    $additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
+
+    if ( ! empty( $additional_meta ) ) {
+
+        foreach ( $additional_meta as $label => $value ) {
+            $meta[ sanitize_key( $label ) ] = array(
+                'label' => esc_html( $label ),
+                'value' => esc_html( $value ),
+            );
+        }
+
+    }
     // If it is not paid, remove the date of payment.
     if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
         unset( $meta[ 'date_paid' ] );

@@ -31,6 +31,11 @@ defined( 'ABSPATH' ) || exit;
     <label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
 </div>
 
+<div class='form-group form-check'>
+    <input :id="active_form_element.id + '_add_meta'" v-model='active_form_element.add_meta' type='checkbox' class='form-check-input' />
+    <label class='form-check-label' :for="active_form_element.id + '_add_meta'"><?php esc_html_e( 'Show this field in receipts and emails?', 'invoicing' ); ?></label>
+</div>
+
 <hr class='featurette-divider mt-4'>
 
 <div class='form-group'>

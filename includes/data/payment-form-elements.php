@@ -65,7 +65,7 @@ return array(
         'type' => 'textarea',
         'name' => __( 'Textarea', 'invoicing' ),
         'defaults'         => array(
-            'placeholder'  => __( 'Enter your text hear', 'invoicing' ),
+            'placeholder'  => __( 'Enter your text here', 'invoicing' ),
             'value'        => '',
             'label'        => __( 'Textarea Label', 'invoicing' ),
             'description'  => '',
