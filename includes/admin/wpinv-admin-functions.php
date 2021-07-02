@@ -76,7 +76,7 @@ function wpinv_test_payment_gateway_messages(){
         }
         $test_gateways = implode(', ', $name);
     }
-    if(isset($test_gateways) && !empty($test_gateways)){
+    if(isset($test_gateways) && !empty($test_gateways) && wpinv_current_user_can_manage_invoicing()){
         $link = admin_url('admin.php?page=wpinv-settings&tab=gateways');
         $notice = wp_sprintf( __('<strong>Important:</strong> Payment Gateway(s) %s are in testing mode and will not receive real payments. Go to <a href="%s"> Gateway Settings</a>.', 'invoicing'), $test_gateways, $link );
         ?>
