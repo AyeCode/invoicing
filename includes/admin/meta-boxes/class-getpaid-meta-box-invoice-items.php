@@ -294,7 +294,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                             case 'price':
                                 printf(
                                     '<input type="text" value="%s" name="getpaid_items[%s][price]" style="width: 100px;" class="getpaid-admin-invoice-item-price getpaid-recalculate-prices-on-change" />',
-                                    esc_attr( $item->get_price() ),
+                                    esc_attr( getpaid_unstandardize_amount( $item->get_price() ) ),
                                     (int) $item->get_id()
                                 );
 

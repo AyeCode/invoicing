@@ -934,23 +934,26 @@ jQuery(function($) {
 
     } )
 
+    RegExp.getpaidquote = function(str) {
+        console.log(str)
+        return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+    };
+
     // Minimum amounts.
     $( document ).on( 'input', '.getpaid-validate-minimum-amount', function( e ) {
 
-        if ( isNaN( parseFloat(  $( this ).val() ) ) ) {
+        var thousands = new RegExp( RegExp.getpaidquote(WPInv.thousands), "g" );
+        var decimals  = new RegExp( RegExp.getpaidquote(WPInv.decimals), "g" );
+        var val       = $( this ).val();
+        val = val.replace( thousands, '' )
+        val = val.replace( decimals, '.' )
+
+        if ( isNaN( parseFloat(val) ) ) {
             if ( $( this ).data( 'minimum-amount' ) ) {
                 $( this ).val( $( this ).data( 'minimum-amount' ) )
             } else {
                 $( this ).val( 0 )
             }
-        } else {
-            $( this ).val( parseFloat(  $( this ).val() ) )
-        }
-
-        if ( $( this ).data( 'minimum-amount' ) && $( this ).val() < $( this ).data( 'minimum-amount' ) ) {
-            $( this ).addClass( 'is-invalid' )
-        } else {
-            $( this ).removeClass( 'is-invalid' )
         }
 
     } )

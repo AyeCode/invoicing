@@ -367,6 +367,8 @@ class WPInv_Plugin {
 
 		$localize                         = array();
 		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
+		$localize['thousands']            = wpinv_thousands_separator();
+		$localize['decimals']             = wpinv_decimal_separator();
 		$localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
 		$localize['txtComplete']          = __( 'Continue', 'invoicing' );
 		$localize['UseTaxes']             = wpinv_use_taxes();

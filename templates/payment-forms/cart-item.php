@@ -78,7 +78,7 @@ $currency = $form->get_currency();
 
 								$class = 'getpaid-validate-minimum-amount';
 
-								$data_minimum     = "data-minimum-amount='$minimum'";
+								$data_minimum     = "data-minimum-amount='" . esc_attr( getpaid_unstandardize_amount( $minimum ) ) . "'";
 							}
 
 							?>
@@ -89,7 +89,7 @@ $currency = $form->get_currency();
 										</div>
 									<?php endif; ?>
 
-									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo $price; ?>" placeholder="<?php echo esc_attr( $item->get_minimum_price() ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>" style="width: 64px; line-height: 1; min-height: 35px;">
+									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>" style="width: 64px; line-height: 1; min-height: 35px;">
 
 									<?php if ( ! empty( $validate_minimum ) ) : ?>
 										<div class="invalid-tooltip">

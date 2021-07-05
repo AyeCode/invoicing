@@ -516,7 +516,7 @@ class WPInv_Ajax {
         }
 
         // Update the item.
-        $item->set_price( floatval( $data['price'] ) );
+        $item->set_price( getpaid_standardize_amount( $data['price'] ) );
         $item->set_name( sanitize_text_field( $data['name'] ) );
         $item->set_description( wp_kses_post( $data['description'] ) );
         $item->set_quantity( floatval( $data['quantity'] ) );
@@ -573,7 +573,7 @@ class WPInv_Ajax {
         $data = wp_unslash( $_POST['_wpinv_quick'] );
 
         $item = new WPInv_Item();
-        $item->set_price( floatval( $data['price'] ) );
+        $item->set_price( getpaid_standardize_amount( $data['price'] ) );
         $item->set_name( sanitize_text_field( $data['name'] ) );
         $item->set_description( wp_kses_post( $data['description'] ) );
         $item->set_type( sanitize_text_field( $data['type'] ) );
@@ -698,7 +698,7 @@ class WPInv_Ajax {
                 $item = new GetPaid_Form_Item( $item_id );
 
                 if ( $item->exists() ) {
-                    $item->set_price( floatval( $args['price'] ) );
+                    $item->set_price( getpaid_standardize_amount( $args['price'] ) );
                     $item->set_quantity( floatval( $args['quantity'] ) );
                     $item->set_name( sanitize_text_field( $args['name'] ) );
                     $item->set_description( wp_kses_post( $args['description'] ) );

@@ -67,7 +67,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
                                 </div>
                                 <?php endif; ?>
-                                <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( $item->get_price( 'edit' ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
+                                <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
 
                                 <?php if( 'left' != $position ) : ?>
                                 <div class="input-group-append">
@@ -176,7 +176,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     </div>
                                 <?php endif; ?>
 
-                                <input type="text" name="wpinv_minimum_price" id="wpinv_minimum_price" value="<?php echo esc_attr( $item->get_minimum_price( 'edit' ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
+                                <input type="text" name="wpinv_minimum_price" id="wpinv_minimum_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
 
                                 <?php if( 'left' != $position ) : ?>
                                     <div class="input-group-append">
@@ -282,12 +282,12 @@ class GetPaid_Meta_Box_Item_Details {
         // Load new data.
         $item->set_props(
 			array(
-				'price'                => isset( $_POST['wpinv_item_price'] ) ? (float) $_POST['wpinv_item_price'] : null,
+				'price'                => isset( $_POST['wpinv_item_price'] ) ? getpaid_standardize_amount( $_POST['wpinv_item_price'] ) : null,
 				'vat_rule'             => isset( $_POST['wpinv_vat_rules'] ) ? wpinv_clean( $_POST['wpinv_vat_rules'] ) : null,
 				'vat_class'            => isset( $_POST['wpinv_vat_class'] ) ? wpinv_clean( $_POST['wpinv_vat_class'] ) : null,
 				'type'                 => isset( $_POST['wpinv_item_type'] ) ? wpinv_clean( $_POST['wpinv_item_type'] ) : null,
 				'is_dynamic_pricing'   => isset( $_POST['wpinv_name_your_price'] ),
-                'minimum_price'        => isset( $_POST['wpinv_minimum_price'] ) ? (float) $_POST['wpinv_minimum_price'] : null,
+                'minimum_price'        => isset( $_POST['wpinv_minimum_price'] ) ? getpaid_standardize_amount( $_POST['wpinv_minimum_price'] ) : null,
 				'is_recurring'         => isset( $_POST['wpinv_is_recurring'] ),
 				'recurring_period'     => isset( $_POST['wpinv_recurring_period'] ) ? wpinv_clean( $_POST['wpinv_recurring_period'] ) : null,
 				'recurring_interval'   => isset( $_POST['wpinv_recurring_interval'] ) ? (int) $_POST['wpinv_recurring_interval'] : 1,

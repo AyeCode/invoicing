@@ -74,7 +74,7 @@ class GetPaid_Payment_Form_Submission_Items {
 				$price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
 
 				if ( $item->get_minimum_price() > $price ) {
-					throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), wpinv_sanitize_amount( $item->get_minimum_price() ) ) );
+					throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), getpaid_unstandardize_amount( $item->get_minimum_price() ) ) );
 				}
 
 				$item->set_price( $price );

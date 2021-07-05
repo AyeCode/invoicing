@@ -72,7 +72,7 @@ class GetPaid_Payment_Form_Submission_Fees {
 		$minimum = empty( $element['minimum'] ) ? 0 : (float) wpinv_sanitize_amount( $element['minimum'] );
 
 		if ( $amount < $minimum ) {
-			throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), wpinv_price( $minimum, $submission->get_currency() ) ) );
+			throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), getpaid_unstandardize_amount( $minimum, $submission->get_currency() ) ) );
 		}
 
 		$this->fees[ $element['label'] ] = array(
