@@ -52,6 +52,34 @@ function wpinv_get_user_agent() {
 }
 
 /**
+ * Standardizes an amount for insterting into the database.
+ *
+ * @param string $amount The amount to sanitize.
+ * @return float
+ */
+function getpaid_standardize_amount( $amount ) {
+
+    $amount = str_replace( wpinv_thousands_separator(), '', $amount );
+    $amount = str_replace( wpinv_decimal_separator(), '.', $amount );
+    if ( is_numeric( $amount ) ) {
+        return floatval( $amount );
+    }
+
+    // Cast the remaining to a float.
+    return wpinv_round_amount( preg_replace( '/[^0-9\.\-]/', '', $amount ) );
+
+}
+
+/**
+ * Standardizes an amount that has been retrieved from the database.
+ *
+ * @param string $amount The amount to sanitize.
+ */
+function getpaid_unstandardize_amount( $amount ) {
+    return str_replace( '.', wpinv_decimal_separator(), $amount );
+}
+
+/**
  * Sanitizes an amount.
  * 
  * @param string $amount The amount to sanitize.
