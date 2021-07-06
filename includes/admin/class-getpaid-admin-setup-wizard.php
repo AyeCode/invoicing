@@ -389,6 +389,13 @@ class GetPaid_Admin_Setup_Wizard {
 	public function setup_payments_save() {
 		check_admin_referer( 'getpaid-setup-wizard', 'getpaid-setup-wizard' );
 		wpinv_update_option( 'manual_active', ! empty( $_POST['enable-manual-gateway'] ) );
+
+		if ( ! empty( $_POST['paypal-email'] ) ) {
+			wpinv_update_option( 'paypal_email', sanitize_email( $_POST['paypal-email'] ) );
+			wpinv_update_option( 'paypal_active', 1 );
+			wpinv_update_option( 'paypal_sandbox', 0 );
+		}
+
 		wp_redirect( esc_url_raw( $this->get_next_step_link() ) );
 		exit;
 	}

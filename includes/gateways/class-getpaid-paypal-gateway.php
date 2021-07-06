@@ -503,7 +503,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
         $admin_settings['paypal_active']['desc'] .= " ($currencies)";
         $admin_settings['paypal_desc']['std']     = __( 'Pay via PayPal: you can pay with your credit card if you don\'t have a PayPal account.', 'invoicing' );
-
+		/*
 		// Access tokens.
         $live_account    = wpinv_get_option( 'paypal_live_access_token' );
         $sandbox_account = wpinv_get_option( 'paypal_test_access_token' );
@@ -523,7 +523,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 				$this->get_js()
 			),
 		);
-
+		
 		$admin_settings['disable_paypal_connect'] = array(
 			'type'       => 'checkbox',
 			'id'         => 'disable_paypal_connect',
@@ -531,7 +531,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			'desc'       => __( 'Manually enter your credentials', 'invoicing' ),
 			'std'        => false,
 		);
-
+		*/
         $admin_settings['paypal_email'] = array(
             'type'  => 'text',
 			'class' => 'live-auth-data',
@@ -539,7 +539,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             'name'  => __( 'Live Email Address', 'invoicing' ),
             'desc'  => __( 'The email address of your PayPal account.', 'invoicing' ),
         );
-
+		/*
 		$admin_settings['paypal_merchant_id'] = array(
             'type'  => 'text',
 			'class' => 'live-auth-data',
@@ -569,7 +569,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             'desc'  => __( 'The email address of your sandbox PayPal account.', 'invoicing' ),
 			'std'   => wpinv_get_option( 'paypal_email', '' ),
         );
-
+		
 		$admin_settings['paypal_sandbox_merchant_id'] = array(
             'type'  => 'text',
 			'class' => 'sandbox-auth-data',
@@ -590,7 +590,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             'id'    => 'paypal_sandbox_client_secret',
             'name'  => __( 'Sandbox Client Secret', 'invoicing' ),
         );
-
+		*/
         $admin_settings['paypal_ipn_url'] = array(
             'type'     => 'ipn_url',
             'id'       => 'paypal_ipn_url',
@@ -652,7 +652,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
      * @return void
 	 */
-	public static function get_js() {
+	public static function get_js() { return '';
         ob_start();
         ?>
             <script>
