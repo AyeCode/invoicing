@@ -384,7 +384,7 @@ class GetPaid_Admin {
 
 	    update_option( 'wpinv_redirected_to_settings', 1 );
 
-        wp_safe_redirect( admin_url( 'admin.php?page=wpinv-settings&tab=general' ) );
+        wp_safe_redirect( admin_url( 'index.php?page=gp-setup' ) );
         exit;
 
 	}
