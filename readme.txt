@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.3.8
+Stable tag: 2.4.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to create a new invoice item when creating an invoice - ADDED
 * Ability to display custom form elements on invoices and receipts - ADDED
 * Customers can now set additional CC email addresses - ADDED
+* New setup wizzard - ADDED
 
 = 2.3.8 =
 * Ability to export all customers - ADDED
