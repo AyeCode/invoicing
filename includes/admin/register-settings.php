@@ -1015,6 +1015,18 @@ function wpinv_tools_callback($args) {
                 </td>
             </tr>
 
+			<tr>
+                <td><?php _e( 'Set-up Wizard', 'invoicing' );?></td>
+                <td>
+                    <small><?php _e( 'Launch the quick set-up wizard.', 'invoicing' ); ?></small>
+                </td>
+                <td>
+					<a href="<?php
+						echo esc_url( admin_url( 'index.php?page=gp-setup' ) );
+					?>" class="button button-primary"><?php _e( 'Launch', 'invoicing' );?></a>
+                </td>
+            </tr>
+
 			<?php do_action( 'wpinv_tools_row' ); ?>
         </tbody>
     </table>
