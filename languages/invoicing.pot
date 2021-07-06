@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-06 10:21+0000\n"
+"POT-Creation-Date: 2021-07-06 11:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -7591,6 +7591,14 @@ msgstr ""
 msgid "Latvia"
 msgstr ""
 
+#: includes/admin/register-settings.php:1026
+msgid "Launch"
+msgstr ""
+
+#: includes/admin/register-settings.php:1021
+msgid "Launch the quick set-up wizard."
+msgstr ""
+
 #: includes/admin/views/wizard-introduction.php:128
 msgid "Launch the Setup Wizard!"
 msgstr ""
@@ -11721,6 +11729,10 @@ msgstr ""
 msgid "Set-up"
 msgstr ""
 
+#: includes/admin/register-settings.php:1019
+msgid "Set-up Wizard"
+msgstr ""
+
 #: includes/data/states.php:915
 msgid "Seti"
 msgstr ""
@@ -12918,7 +12930,7 @@ msgstr ""
 msgid "The chosen payment gateway does not support this currency"
 msgstr ""
 
-#: includes/admin/register-settings.php:1071
+#: includes/admin/register-settings.php:1083
 msgid "The content of the email (Merge Tags and HTML are allowed)."
 msgstr ""
 
