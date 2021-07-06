@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 <div class="card shadow-sm my-5">
 
     <h1 class="h4 card-header bg-white border-bottom-0 pt-4 pb-1">
-        <?php esc_html_e( 'Welcome to GetPaid!', 'invoicing' ); ?>
+        <?php esc_html_e( 'Welcome to the GetPaid Setup Wizard!', 'invoicing' ); ?>
     </h1>
 
     <div class="card-body text-muted ">
@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
     </div>
 </div>
 
-<div class="card shadow-sm my-5">
+<div class="card shadow-sm my-5 overflow-hidden">
     <h1 class="h4 card-header bg-white border-bottom-0  pt-4 pb-1">
         <?php esc_html_e( 'GetPaid Features & Addons!', 'invoicing' ); ?>
     </h1>
