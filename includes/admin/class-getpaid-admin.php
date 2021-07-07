@@ -557,7 +557,7 @@ class GetPaid_Admin {
 			'phone'    => __( 'Phone', 'invoicing' ),
 			'company'  => __( 'Company', 'invoicing' ),
 			'invoices' => __( 'Invoices', 'invoicing' ),
-			'total'    => __( 'Total Spend', 'invoicing' ),
+			'total_raw' => __( 'Total Spend', 'invoicing' ),
 			'signup'   => __( 'Date created', 'invoicing' ),
 		);
 

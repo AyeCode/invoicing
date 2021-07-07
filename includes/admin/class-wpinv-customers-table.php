@@ -136,6 +136,19 @@ class WPInv_Customers_Table extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_total( $user ) {
+		return wpinv_price( $this->column_total_raw( $user ) );
+	}
+
+	/**
+	 * Displays the total spent column.
+	 *
+	 * @since 1.0.19
+	 *
+	 * @param WP_User $user
+	 *
+	 * @return float
+	 */
+	public function column_total_raw( $user ) {
 
 		$args = array(
 			'data'             => array(
@@ -161,7 +174,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 			'invoice_status' => array( 'wpi-renewal', 'wpi-processing', 'publish' ),
 		);
 
-		return wpinv_price( (float) GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
+		return wpinv_round_amount( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
 
 	}
 
