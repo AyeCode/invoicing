@@ -117,7 +117,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     </span>
                                                 </label>
                                             </div>
-                            
+
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-name">
                                                     <span class="input-text-wrap">
@@ -182,7 +182,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     </label>
                                                 </div>
                                             <?php endif; ?>
-                                            
+
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-actions">
                                                     <span class="input-text-wrap">

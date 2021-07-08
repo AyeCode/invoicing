@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.4.1 =
+* Add new item dropdown only displays 100 items - FIXED
+
 = 2.4.0 =
 * Add invoice items now lists all items instead of using ajax - CHANGED
 * Ability to create a new invoice item when creating an invoice - ADDED

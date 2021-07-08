@@ -449,7 +449,7 @@ function wpinv_item_dropdown( $args = array() ) {
         'class'             => '',
         'multiple'          => false,
         'selected'          => 0,
-        'number'            => 100,
+        'number'            => -1,
         'placeholder'       => __( 'Choose a item', 'invoicing' ),
         'data'              => array( 'search-type' => 'item' ),
         'show_option_all'   => false,
