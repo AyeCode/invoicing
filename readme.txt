@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.4.1 =
 * Add new item dropdown only displays 100 items - FIXED
+* Add getpaid_use_new_invoice_items_metabox to revert back to old invocie items metabox - ADDED
 
 = 2.4.0 =
 * Add invoice items now lists all items instead of using ajax - CHANGED

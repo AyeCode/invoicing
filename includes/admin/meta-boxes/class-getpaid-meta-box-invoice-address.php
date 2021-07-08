@@ -288,7 +288,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                     </div>
 
-                    <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
+                    <?php if ( ! apply_filters( 'getpaid_use_new_invoice_items_metabox', false ) && ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
                         <?php do_action( 'wpinv_meta_box_before_invoice_template_row', $invoice->get_id() ); ?>
 
                         <div class="row">
