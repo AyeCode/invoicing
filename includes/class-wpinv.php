@@ -154,25 +154,24 @@ class WPInv_Plugin {
 	}
 
 	/**
-	 * Load the translation of the plugin.
+	 * Load Localisation files.
 	 *
-	 * @since 1.0
+	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
+	 *
+	 * Locales found in:
+	 *      - WP_LANG_DIR/plugins/invoicing-LOCALE.mo
+	 *      - WP_PLUGIN_DIR/invoicing/languages/invoicing-LOCALE.mo
+	 * 
+	 * @since 1.0.0
 	 */
-	public function load_textdomain( $locale = NULL ) {
-		if ( empty( $locale ) ) {
-			$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
-		}
+	public function load_textdomain() {
 
-		$locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
+		load_plugin_textdomain(
+			'invoicing',
+			false,
+			plugin_basename( dirname( WPINV_PLUGIN_FILE ) ) . '/languages/'
+		);
 
-		unload_textdomain( 'invoicing' );
-		load_textdomain( 'invoicing', WP_LANG_DIR . '/invoicing/invoicing-' . $locale . '.mo' );
-		load_plugin_textdomain( 'invoicing', false, WPINV_PLUGIN_DIR . 'languages' );
-
-		/**
-		 * Define language constants.
-		 */
-		require_once( WPINV_PLUGIN_DIR . 'language.php' );
 	}
 
 	/**

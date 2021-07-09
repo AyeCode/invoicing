@@ -102,7 +102,7 @@ class GetPaid_Post_Types {
 					'description'        => __( 'Add new payment forms.', 'invoicing' ),
 					'public'             => false,
 					'show_ui'            => true,
-					'show_in_menu'       => $capabilities ? 'wpinv' : true,
+					'show_in_menu'       => $capabilities ? 'wpinv' : false,
 					'show_in_nav_menus'  => false,
 					'query_var'          => false,
 					'rewrite'            => true,
