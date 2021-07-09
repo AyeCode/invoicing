@@ -123,7 +123,7 @@ class GetPaid_Daily_Maintenance {
 		$subscriptions = new GetPaid_Subscriptions_Query( $args );
 
 		foreach ( $subscriptions->get_results() as $subscription ) {
-			if ( apply_filters( 'getpaid_daily_maintenance_should_expire_subscription', true, $subscription ) ) {
+			if ( apply_filters( 'getpaid_daily_maintenance_should_expire_subscription', false, $subscription ) ) {
 				$subscription->set_status( 'expired' );
 				$subscription->save();
 			}
