@@ -63,10 +63,24 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 					}
 				}
 			}
+
 		}
 
-		$products = isset($section_data->products) ? $section_data->products : '';
+		$products = isset($section_data->products) ? $section_data->products : array();
+		if ( 'addons' == $section_id ) {
 
+			$quotes = new stdClass();
+			$quotes->info = new stdClass();
+			$quotes->info->id = '';
+			$quotes->info->slug = 'invoicing-quotes';
+			$quotes->info->title = __( 'Quotes', 'invoicing' );
+			$quotes->info->excerpt = __( 'Create quotes and estimates', 'invoicing' );
+			$quotes->info->link = 'https://wordpress.org/plugins/invoicing-quotes/';
+			$quotes->info->thumbnail = 'https://wpgetpaid.com/wp-content/uploads/sites/13/edd/2019/11/Quotes-1-768x384.png';
+
+			$products[] = $quotes;
+		}
+		
 		return apply_filters( 'wpi_addons_section_data', $products, $section_id );
 	}
 
@@ -114,7 +128,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			'update_url' => '',
 		);
 
-		if( 'getpaid-stripe-payments' == $addon->info->slug || ( $current_tab == 'recommended_plugins' && isset($addon->info->slug) && $addon->info->slug )){
+		if( 'invoicing-quotes' == $addon->info->slug || 'getpaid-stripe-payments' == $addon->info->slug || ( $current_tab == 'recommended_plugins' && isset($addon->info->slug) && $addon->info->slug )){
 			include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
 			$status = install_plugin_install_status(array("slug"=>$button_args['slug'],"version"=>""));
 			$button_args['install_status'] = isset($status['status']) ? $status['status'] : 'install';
@@ -272,7 +286,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
                 'url'   => 'https://wordpress.org/plugins/invoicing-quotes/',
                 'slug'   => 'invoicing-quotes',
 				'name'   => 'Quotes',
-				'thumbnail'  => 'https://ps.w.org/invoicing-quotes/assets/banner-772x250.jpg',
+				'thumbnail'  => 'https://ps.w.org/invoicing-quotes/assets/banner-772x250.png',
                 'desc'   => __('Allows you to create quotes, send them to clients and convert them to Invoices when accepted by the customer.','invoicing'),
             ),
             'geodirectory' => array(
