@@ -183,9 +183,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	protected function get_transaction_args( $invoice ) {
 
+		$email = $this->is_sandbox( $invoice ) ? wpinv_get_option( 'paypal_sandbox_email', wpinv_get_option( 'paypal_email', '' ) ) : wpinv_get_option( 'paypal_email', '' );
 		return array(
             'cmd'           => '_cart',
-            'business'      => wpinv_get_option( 'paypal_email', false ),
+            'business'      => $email,
             'no_shipping'   => '1',
             'shipping'      => '0',
             'no_note'       => '1',
