@@ -3034,14 +3034,14 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if this is a renewal invoice.
      */
     public function is_renewal() {
-        return ! $this->is_parent();
+        return $this->is_recurring() && ! $this->is_parent();
     }
 
     /**
      * Checks if this is a recurring invoice.
      */
     public function is_recurring() {
-        return $this->is_renewal() || ! empty( $this->recurring_item );
+        return ! empty( $this->recurring_item );
     }
 
     /**
@@ -3866,7 +3866,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Set the new status.
 		$gateway = sanitize_text_field( $this->get_gateway_title() );
-		if ( $this->is_renewal() ) {
+		if ( $this->is_renewal() || ! $this->is_parent() ) {
 
 			$_note = wp_sprintf( __( 'Renewed via %s', 'invoicing' ), $gateway );
 			$_note = $_note . empty( $note ) ? '' : " ($note)";
