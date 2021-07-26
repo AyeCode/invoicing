@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-16 06:02+0000\n"
-"PO-Revision-Date: 2021-07-06 11:51+0000\n"
+"PO-Revision-Date: 2021-07-26 08:28+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -819,16 +819,16 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:173 includes/class-wpinv-addons.php:233
+#: includes/class-wpinv-addons.php:187 includes/class-wpinv-addons.php:247
 #: includes/wpinv-gateway-functions.php:186 includes/admin/admin-pages.php:76
 msgid "Activate"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:234
+#: includes/class-wpinv-addons.php:248
 msgid "Activating"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:170 includes/subscription-functions.php:120
+#: includes/class-wpinv-addons.php:184 includes/subscription-functions.php:120
 #: includes/wpinv-discount-functions.php:120
 msgid "Active"
 msgstr ""
@@ -845,7 +845,7 @@ msgstr ""
 msgid "Adana"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:582
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:586
 #: includes/admin/meta-boxes/class-mb-invoice-notes.php:36
 msgid "Add"
 msgstr ""
@@ -864,20 +864,20 @@ msgstr ""
 msgid "Add CSS to modify appearance of the print invoice page."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:528
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:532
 msgid "Add Existing Item"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:478
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:482
 msgid "Add Existing Items"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:243
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:247
 #, php-format
 msgid "Add item to %s"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:547
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:551
 msgid "Add Item(s)"
 msgstr ""
 
@@ -974,7 +974,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:135
 #: includes/admin/class-getpaid-admin-profile.php:55
 #: includes/admin/class-getpaid-admin.php:556
-#: includes/admin/class-wpinv-customers-table.php:279
+#: includes/admin/class-wpinv-customers-table.php:292
 #: includes/data/default-payment-form.php:57
 #: includes/data/payment-form-elements.php:177
 #: includes/data/payment-form-elements.php:210
@@ -1199,7 +1199,7 @@ msgstr ""
 msgid "All VAT rules"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:288
+#: includes/class-wpinv-addons.php:302
 msgid ""
 "Allow frontend user login and registration as well as have slick profile "
 "pages."
@@ -1209,7 +1209,7 @@ msgstr ""
 msgid "Allow users to buy several quantities"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:276
+#: includes/class-wpinv-addons.php:290
 msgid ""
 "Allows you to create quotes, send them to clients and convert them to "
 "Invoices when accepted by the customer."
@@ -1264,13 +1264,13 @@ msgstr ""
 #: includes/admin/class-getpaid-post-types-admin.php:424
 #: includes/admin/subscriptions.php:167
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:28
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:469
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:606
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:646
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:473
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:610
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:650
 msgid "Amount"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:421
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:425
 msgid "Amount Only"
 msgstr ""
 
@@ -2619,9 +2619,9 @@ msgstr ""
 #: includes/wpinv-template-functions.php:703
 #: includes/admin/class-getpaid-admin.php:183
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:84
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:581
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:621
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:661
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:585
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:625
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:665
 msgid "Cancel"
 msgstr ""
 
@@ -2986,7 +2986,7 @@ msgid "Choose a state"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:303
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:415
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:419
 msgid "Choose a template"
 msgstr ""
 
@@ -3036,7 +3036,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:136
 #: includes/admin/class-getpaid-admin-profile.php:59
 #: includes/admin/class-getpaid-admin.php:554
-#: includes/admin/class-wpinv-customers-table.php:277
+#: includes/admin/class-wpinv-customers-table.php:290
 #: includes/data/default-payment-form.php:67
 #: includes/data/payment-form-elements.php:221
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:183
@@ -3064,9 +3064,9 @@ msgid "Click on any element to edit or delete it."
 msgstr ""
 
 #: templates/frontend-footer.php:19
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:548
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:594
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:634
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:552
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:598
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:638
 msgid "Close"
 msgstr ""
 
@@ -3132,7 +3132,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:141
 #: includes/admin/class-getpaid-admin-profile.php:51
 #: includes/admin/class-getpaid-admin.php:558
-#: includes/admin/class-wpinv-customers-table.php:281
+#: includes/admin/class-wpinv-customers-table.php:294
 #: includes/data/default-payment-form.php:117
 #: includes/data/payment-form-elements.php:276
 #: templates/emails/wpinv-email-billing-details.php:23
@@ -3184,6 +3184,15 @@ msgstr ""
 msgid "Connect Site"
 msgstr ""
 
+#: includes/gateways/class-getpaid-paypal-gateway.php:515
+#: includes/gateways/class-getpaid-paypal-gateway.php:519
+msgid "Connect to PayPal"
+msgstr ""
+
+#: includes/gateways/class-getpaid-paypal-gateway.php:521
+msgid "Connect to PayPal Sandox"
+msgstr ""
+
 #: includes/admin/views/wizard-gateways.php:40
 msgid "Connected"
 msgstr ""
@@ -3204,7 +3213,7 @@ msgstr ""
 msgid "Contact form 7"
 msgstr ""
 
-#: includes/class-wpinv.php:373 includes/admin/views/wizard-gateways.php:71
+#: includes/class-wpinv.php:372 includes/admin/views/wizard-gateways.php:71
 #: includes/admin/views/wizard-plugins.php:39
 #: includes/admin/views/wizard-settings.php:131
 msgid "Continue"
@@ -3259,7 +3268,7 @@ msgstr ""
 msgid "Could not create invoice item. Please try again."
 msgstr ""
 
-#: includes/class-wpinv.php:377
+#: includes/class-wpinv.php:376
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -3274,7 +3283,7 @@ msgstr ""
 
 #: includes/wpinv-address-functions.php:137
 #: includes/admin/class-getpaid-admin.php:552
-#: includes/admin/class-wpinv-customers-table.php:275
+#: includes/admin/class-wpinv-customers-table.php:288
 #: includes/data/default-payment-form.php:77
 #: includes/data/payment-form-elements.php:232
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:201
@@ -3301,7 +3310,7 @@ msgstr ""
 msgid "Cox's Bazar"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:622
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:626
 msgid "Create"
 msgstr ""
 
@@ -3325,17 +3334,17 @@ msgstr ""
 msgid "Create Invoice"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:593
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:597
 #: includes/admin/views/wizard-thank-you.php:34
 msgid "Create Item"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:479
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:529
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:483
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:533
 msgid "Create New Item"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:244
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:248
 msgid "Create new item"
 msgstr ""
 
@@ -3345,6 +3354,10 @@ msgstr ""
 
 #: includes/admin/views/wizard-thank-you.php:40
 msgid "Create Payment Form"
+msgstr ""
+
+#: includes/class-wpinv-addons.php:77
+msgid "Create quotes and estimates"
 msgstr ""
 
 #: includes/admin/wpinv-admin-functions.php:120
@@ -3444,7 +3457,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin-setup-wizard.php:125
 #: includes/data/admin-settings.php:180
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:325
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:437
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:441
 msgid "Currency"
 msgstr ""
 
@@ -3606,7 +3619,7 @@ msgid "Date Completed:"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:561
-#: includes/admin/class-wpinv-customers-table.php:284
+#: includes/admin/class-wpinv-customers-table.php:297
 msgid "Date created"
 msgstr ""
 
@@ -3631,7 +3644,7 @@ msgstr ""
 msgid "day(s)"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:235 includes/admin/admin-pages.php:60
+#: includes/class-wpinv-addons.php:249 includes/admin/admin-pages.php:60
 msgid "Deactivate"
 msgstr ""
 
@@ -3857,7 +3870,7 @@ msgstr ""
 msgid "Discount updated."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:209
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:213
 msgid "Discount:"
 msgstr ""
 
@@ -4132,7 +4145,7 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: includes/admin/class-wpinv-customers-table.php:238
+#: includes/admin/class-wpinv-customers-table.php:251
 msgid "Edit Details"
 msgstr ""
 
@@ -4145,7 +4158,7 @@ msgid "Edit invoice"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:55
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:633
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:637
 msgid "Edit Item"
 msgstr ""
 
@@ -4377,8 +4390,8 @@ msgid ""
 "the invoice."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:616
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:656
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:620
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:660
 msgid "Enter a description for this item"
 msgstr ""
 
@@ -4561,7 +4574,7 @@ msgstr ""
 msgid "Eritrean Nakfa"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:239
+#: includes/class-wpinv-addons.php:253
 msgid "Error"
 msgstr ""
 
@@ -4924,7 +4937,7 @@ msgstr ""
 msgid "France"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:100 includes/class-wpinv-addons.php:101
+#: includes/class-wpinv-addons.php:114 includes/class-wpinv-addons.php:115
 #: includes/wpinv-payment-functions.php:42
 msgid "Free"
 msgstr ""
@@ -4977,7 +4990,7 @@ msgstr ""
 msgid "From:"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:149
+#: includes/class-wpinv-addons.php:163
 #, php-format
 msgid "From: $%d"
 msgstr ""
@@ -5129,7 +5142,7 @@ msgstr ""
 msgid "Germany"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:193
+#: includes/class-wpinv-addons.php:207
 msgid "Get it"
 msgstr ""
 
@@ -5695,9 +5708,9 @@ msgstr ""
 #: includes/invoice-functions.php:934
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:308
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:35
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:420
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:462
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:559
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:424
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:466
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:563
 msgid "Hours"
 msgstr ""
 
@@ -5871,7 +5884,7 @@ msgid ""
 "thanks in advance!"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:599
+#: includes/gateways/class-getpaid-paypal-gateway.php:548
 msgid ""
 "If you've not enabled IPNs in your paypal account, use the above URL to "
 "enable them."
@@ -6024,7 +6037,7 @@ msgstr ""
 msgid "Insert into invoice"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:191 includes/class-wpinv-addons.php:237
+#: includes/class-wpinv-addons.php:205 includes/class-wpinv-addons.php:251
 #: includes/admin/html-admin-page-addons.php:208
 msgid "Install"
 msgstr ""
@@ -6033,11 +6046,11 @@ msgstr ""
 msgid "Installation Id"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:236
+#: includes/class-wpinv-addons.php:250
 msgid "Installed"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:238
+#: includes/class-wpinv-addons.php:252
 msgid "Installing"
 msgstr ""
 
@@ -6143,8 +6156,8 @@ msgstr ""
 msgid "Invoice"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:253
-#: includes/gateways/class-getpaid-paypal-gateway.php:373
+#: includes/gateways/class-getpaid-paypal-gateway.php:254
+#: includes/gateways/class-getpaid-paypal-gateway.php:374
 #, php-format
 msgid "Invoice #%s"
 msgstr ""
@@ -6355,7 +6368,7 @@ msgid "Invoice Template CSS"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:95
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:363
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:367
 msgid "Invoice Total"
 msgstr ""
 
@@ -6376,7 +6389,7 @@ msgstr ""
 #: includes/class-getpaid-post-types.php:136
 #: includes/class-getpaid-post-types.php:138 includes/invoice-functions.php:656
 #: includes/user-functions.php:118 includes/admin/class-getpaid-admin.php:559
-#: includes/admin/class-wpinv-customers-table.php:282
+#: includes/admin/class-wpinv-customers-table.php:295
 #: includes/reports/class-getpaid-reports-report.php:218
 msgid "Invoices"
 msgstr ""
@@ -6420,7 +6433,7 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:597
+#: includes/gateways/class-getpaid-paypal-gateway.php:546
 msgid "IPN Url"
 msgstr ""
 
@@ -6536,11 +6549,11 @@ msgstr ""
 
 #: includes/invoice-functions.php:921 widgets/subscriptions.php:365
 #: includes/admin/subscriptions.php:171 includes/admin/subscriptions.php:580
-#: includes/gateways/class-getpaid-paypal-gateway.php:309
+#: includes/gateways/class-getpaid-paypal-gateway.php:310
 #: templates/payment-forms/cart.php:14
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:23
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:459
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:556
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:463
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:560
 msgid "Item"
 msgstr ""
 
@@ -6555,9 +6568,9 @@ msgid "Item #%s"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:184
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:124
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:615
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:655
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:128
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:619
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:659
 msgid "Item Description"
 msgstr ""
 
@@ -6582,9 +6595,9 @@ msgstr ""
 msgid "Item Meta."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:107
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:603
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:643
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:111
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:607
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:647
 msgid "Item Name"
 msgstr ""
 
@@ -6596,7 +6609,7 @@ msgstr ""
 msgid "Item name."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:115
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:119
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:60
 msgid "Item Price"
 msgstr ""
@@ -6605,7 +6618,7 @@ msgstr ""
 msgid "Item Price."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:116
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:120
 msgid "Item Quantity"
 msgstr ""
 
@@ -6723,7 +6736,7 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:348
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:352
 msgid "Items Subtotal"
 msgstr ""
 
@@ -7612,7 +7625,7 @@ msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:875
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:883
-#: includes/gateways/class-getpaid-paypal-gateway.php:599
+#: includes/gateways/class-getpaid-paypal-gateway.php:548
 msgid "Learn more."
 msgstr ""
 
@@ -7817,7 +7830,7 @@ msgstr ""
 msgid "Lithuania"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:539
+#: includes/gateways/class-getpaid-paypal-gateway.php:530
 msgid "Live Email Address"
 msgstr ""
 
@@ -7829,7 +7842,7 @@ msgstr ""
 msgid "Lleida"
 msgstr ""
 
-#: includes/class-wpinv.php:376 includes/admin/class-getpaid-admin.php:188
+#: includes/class-wpinv.php:375 includes/admin/class-getpaid-admin.php:188
 #: templates/payment-forms/form.php:94
 msgid "Loading..."
 msgstr ""
@@ -8767,10 +8780,10 @@ msgstr ""
 #: includes/admin/class-getpaid-post-types-admin.php:324
 #: includes/admin/class-getpaid-post-types-admin.php:422
 #: includes/admin/class-getpaid-post-types-admin.php:465
-#: includes/admin/class-wpinv-customers-table.php:274
+#: includes/admin/class-wpinv-customers-table.php:287
 #: templates/emails/wpinv-email-billing-details.php:14
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:602
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:642
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:606
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:646
 msgid "Name"
 msgstr ""
 
@@ -9970,7 +9983,7 @@ msgid ""
 "Pay securely via Worldpay using your PayPal account, credit or debit card."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:505
+#: includes/gateways/class-getpaid-paypal-gateway.php:506
 msgid ""
 "Pay via PayPal: you can pay with your credit card if you don't have a PayPal "
 "account."
@@ -10281,7 +10294,7 @@ msgstr ""
 
 #: includes/admin/class-getpaid-admin-profile.php:79
 #: includes/admin/class-getpaid-admin.php:557
-#: includes/admin/class-wpinv-customers-table.php:280
+#: includes/admin/class-wpinv-customers-table.php:293
 #: includes/data/default-payment-form.php:107
 #: includes/data/payment-form-elements.php:265
 #: templates/emails/wpinv-email-billing-details.php:33
@@ -10537,9 +10550,9 @@ msgstr ""
 #: includes/admin/class-getpaid-post-types-admin.php:466
 #: includes/admin/subscriptions.php:581 templates/payment-forms/cart.php:15
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:29
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:465
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:607
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:647
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:469
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:611
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:651
 msgid "Price"
 msgstr ""
 
@@ -10685,11 +10698,11 @@ msgstr ""
 #: includes/invoice-functions.php:924 templates/payment-forms/cart.php:16
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:307
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:34
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:419
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:461
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:558
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:611
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:651
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:423
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:465
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:562
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:615
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:655
 msgid "Quantity"
 msgstr ""
 
@@ -10719,6 +10732,10 @@ msgstr ""
 
 #: includes/invoice-functions.php:80
 msgid "Quote"
+msgstr ""
+
+#: includes/class-wpinv-addons.php:76
+msgid "Quotes"
 msgstr ""
 
 #: includes/data/states.php:54
@@ -10779,7 +10796,7 @@ msgstr ""
 
 #: includes/invoice-functions.php:952
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:30
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:466
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:470
 msgid "Rate"
 msgstr ""
 
@@ -10809,8 +10826,8 @@ msgid ""
 "not discounted."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:245
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:533
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:249
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:537
 msgid "Recalculate Totals"
 msgstr ""
 
@@ -11338,13 +11355,17 @@ msgstr ""
 msgid "Sandbox"
 msgstr ""
 
+#: includes/gateways/class-getpaid-paypal-gateway.php:538
+msgid "Sandbox Email Address"
+msgstr ""
+
 #: includes/gateways/class-getpaid-worldpay-gateway.php:298
 #, php-format
 msgid ""
 "SANDBOX ENABLED. See the %sWorldpay Sandbox Testing Guide%s for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:485
+#: includes/gateways/class-getpaid-paypal-gateway.php:486
 #, php-format
 msgid ""
 "SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal "
@@ -11426,7 +11447,7 @@ msgstr ""
 msgid "Saudi Riyal"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:662
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:666
 msgid "Save"
 msgstr ""
 
@@ -11553,7 +11574,7 @@ msgstr ""
 msgid "Select an item to add..."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:567
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:571
 msgid "Select an item…"
 msgstr ""
 
@@ -11578,7 +11599,7 @@ msgid "Select Heading Level"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:327
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:439
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:443
 msgid "Select Invoice Currency"
 msgstr ""
 
@@ -11638,11 +11659,11 @@ msgstr ""
 msgid "Select Type"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:171
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:175
 msgid "Select VAT Class"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:152
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:156
 msgid "Select VAT Rule"
 msgstr ""
 
@@ -12032,7 +12053,7 @@ msgid ""
 "button below to generate the missing pages."
 msgstr ""
 
-#: includes/class-wpinv-addons.php:232
+#: includes/class-wpinv-addons.php:246
 msgid "Something went wrong!"
 msgstr ""
 
@@ -12241,7 +12262,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:138
 #: includes/admin/class-getpaid-admin.php:553
-#: includes/admin/class-wpinv-customers-table.php:276
+#: includes/admin/class-wpinv-customers-table.php:289
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:225
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:239
 #: includes/admin/views/html-tax-rates-edit.php:41
@@ -12307,7 +12328,7 @@ msgstr ""
 msgid "Str&#259;&#537;eni"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:204
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:208
 msgid "Sub Total:"
 msgstr ""
 
@@ -12468,11 +12489,11 @@ msgstr ""
 msgid "Success Page"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:788
+#: includes/gateways/class-getpaid-paypal-gateway.php:692
 msgid "Successfully connected your PayPal account"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:779
+#: includes/gateways/class-getpaid-paypal-gateway.php:687
 msgid "Successfully connected your PayPal sandbox account"
 msgstr ""
 
@@ -12555,7 +12576,7 @@ msgid "Support"
 msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:851
-#: includes/gateways/class-getpaid-paypal-gateway.php:500
+#: includes/gateways/class-getpaid-paypal-gateway.php:501
 #: includes/gateways/class-getpaid-worldpay-gateway.php:315
 #, php-format
 msgid "Supported Currencies: %s"
@@ -12785,7 +12806,7 @@ msgstr ""
 msgid "Tax Settings"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:215
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:219
 msgid "Tax:"
 msgstr ""
 
@@ -12815,7 +12836,7 @@ msgid "Teleorman"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:301
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:413
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:417
 msgid "Template"
 msgstr ""
 
@@ -13081,8 +13102,12 @@ msgstr ""
 msgid "The discount's usage, i.e uses / max uses."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:540
+#: includes/gateways/class-getpaid-paypal-gateway.php:531
 msgid "The email address of your PayPal account."
+msgstr ""
+
+#: includes/gateways/class-getpaid-paypal-gateway.php:539
+msgid "The email address of your sandbox PayPal account."
 msgstr ""
 
 #: includes/data/discount-schema.php:145
@@ -13507,7 +13532,7 @@ msgstr ""
 msgid "This invoice is already paid for."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:539
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:543
 msgid "This invoice is no longer editable"
 msgstr ""
 
@@ -13814,7 +13839,7 @@ msgstr ""
 #: includes/admin/subscriptions.php:435
 #: templates/payment-forms/cart-totals.php:20
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:37
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:470
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:474
 msgid "Total"
 msgstr ""
 
@@ -13827,7 +13852,7 @@ msgstr ""
 msgid "Total charged for taxes."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:353
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:357
 msgid "Total Discount"
 msgstr ""
 
@@ -13876,11 +13901,11 @@ msgid "Total refunded for taxes."
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:560
-#: includes/admin/class-wpinv-customers-table.php:283
+#: includes/admin/class-wpinv-customers-table.php:296
 msgid "Total Spend"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:358
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:362
 msgid "Total Tax"
 msgstr ""
 
@@ -13893,7 +13918,7 @@ msgstr ""
 msgid "Total to pay:"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:221
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:225
 msgid "Total:"
 msgstr ""
 
@@ -14034,7 +14059,7 @@ msgstr ""
 msgid "Turks and Caicos Islands"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:282
+#: includes/class-wpinv-addons.php:296
 msgid "Turn any WordPress theme into a global business directory portal."
 msgstr ""
 
@@ -14743,7 +14768,7 @@ msgid "week(s)"
 msgstr ""
 
 #: includes/admin/views/wizard-introduction.php:14
-msgid "Welcome to GetPaid!"
+msgid "Welcome to the GetPaid Setup Wizard!"
 msgstr ""
 
 #: includes/data/states.php:926
@@ -15289,7 +15314,7 @@ msgid "Zimbabwe"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:555
-#: includes/admin/class-wpinv-customers-table.php:278
+#: includes/admin/class-wpinv-customers-table.php:291
 msgid "ZIP"
 msgstr ""
 
