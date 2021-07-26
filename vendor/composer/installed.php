@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '814197564eac9f56529a338bffe30302ad649543',
+    'reference' => 'c42686883352123d56c3034f9206a28f6a652c34',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -27,7 +27,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '814197564eac9f56529a338bffe30302ad649543',
+      'reference' => 'c42686883352123d56c3034f9206a28f6a652c34',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
