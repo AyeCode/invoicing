@@ -452,7 +452,11 @@ jQuery(function ($) {
 				$('#getpaid-add-items-to-invoice tbody').html()
 			)
 
-		$('.getpaid-add-invoice-item-select').select2()
+		$('.getpaid-add-invoice-item-select').select2(
+			{
+				dropdownParent: $('#getpaid-add-items-to-invoice .modal-body')
+			}
+		)
 
 		// Add a unique id.
 		$('.getpaid-add-invoice-item-select').data('key', random_string())
@@ -486,7 +490,11 @@ jQuery(function ($) {
 			var row = $('#getpaid-add-items-to-invoice tbody').data('row')
 			row = $(row).appendTo('#getpaid-add-items-to-invoice tbody')
 			var select = row.find('.getpaid-add-invoice-item-select')
-			select.data('key', key).select2()
+			select.data('key', key).select2(
+				{
+					dropdownParent: $('#getpaid-add-items-to-invoice .modal-body')
+				}
+			)
 			empty_select.push(key)
 
 			$('#getpaid-add-items-to-invoice').modal('handleUpdate')
@@ -502,7 +510,11 @@ jQuery(function ($) {
 					$('#getpaid-add-items-to-invoice tbody').data('row')
 				)
 
-				$('.getpaid-add-invoice-item-select').select2()
+				$('.getpaid-add-invoice-item-select').select2(
+					{
+						dropdownParent: $('#getpaid-add-items-to-invoice .modal-body')
+					}
+				)
 
 			// Add a unique id.
 			$('.getpaid-add-invoice-item-select').data('key', random_string())
