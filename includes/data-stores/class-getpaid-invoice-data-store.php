@@ -31,6 +31,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_payment_form',
 		'_wpinv_is_viewed',
 		'_wpinv_phone',
+		'_wpinv_company_id',
 		'wpinv_email_cc',
 		'wpinv_template',
 		'wpinv_created_via'
@@ -56,6 +57,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'wpinv_template'           => 'template',
 		'wpinv_created_via'        => 'created_via',
 		'_wpinv_phone'             => 'phone',
+		'_wpinv_company_id'        => 'company_id',
 	);
 
 	/**

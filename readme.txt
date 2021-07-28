@@ -134,6 +134,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.4.4 = 
+* Ability to collect company ID on the checkout page - ADDED
+
+= 2.4.4 = 
 * WordPress 5.8 compatibility check.
 
 = 2.4.3 =

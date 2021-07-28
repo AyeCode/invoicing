@@ -60,6 +60,7 @@ class WPInv_Invoice extends GetPaid_Data {
         'state'                => null,
         'zip'                  => null,
         'company'              => null,
+		'company_id'           => null,
         'vat_number'           => null,
         'vat_rate'             => null,
         'address'              => null,
@@ -749,6 +750,7 @@ class WPInv_Invoice extends GetPaid_Data {
             'state'      => $this->get_state( $context ),
             'zip'        => $this->get_zip( $context ),
             'company'    => $this->get_company( $context ),
+			'company_id' => $this->get_company_id( $context ),
             'vat_number' => $this->get_vat_number( $context ),
             'discount'   => $this->get_discount_code( $context ),
 		);
@@ -1175,6 +1177,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_customer_company( $context = 'view' ) {
 		return $this->get_company( $context );
+    }
+
+	/**
+	 * Get the customer's company id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_company_id( $context = 'view' ) {
+		return $this->get_prop( 'company_id', $context );
     }
 
     /**
@@ -2596,6 +2609,16 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_customer_company( $value ) {
 		$this->set_company( $value );
+    }
+
+	/**
+	 * Set the customer's company id.
+	 *
+	 * @since 1.0.19
+	 * @param  string $value company id.
+	 */
+	public function set_company_id( $value ) {
+		$this->set_prop( 'company_id', $value );
     }
 
     /**

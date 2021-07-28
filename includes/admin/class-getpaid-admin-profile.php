@@ -51,6 +51,10 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 								'label'       => __( 'Company', 'invoicing' ),
 								'description' => '',
 							),
+							'_wpinv_company_id'    => array(
+								'label'       => __( 'Company ID', 'invoicing' ),
+								'description' => '',
+							),
 							'_wpinv_address'  => array(
 								'label'       => __( 'Address', 'invoicing' ),
 								'description' => '',

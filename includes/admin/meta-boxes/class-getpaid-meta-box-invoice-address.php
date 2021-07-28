@@ -288,7 +288,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         </div>
                     </div>
 
-                    <?php if ( ! apply_filters( 'getpaid_use_new_invoice_items_metabox', false ) && ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
+                    <?php if ( ! apply_filters( 'getpaid_use_new_invoice_items_metabox', false ) ) : ?>
                         <?php do_action( 'wpinv_meta_box_before_invoice_template_row', $invoice->get_id() ); ?>
 
                         <div class="row">
@@ -341,6 +341,25 @@ class GetPaid_Meta_Box_Invoice_Address {
                         <?php do_action( 'wpinv_meta_box_invoice_template_row', $invoice->get_id() ); ?>
                     <?php endif; ?>
 
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <?php
+                                echo aui()->input(
+                                    array(
+                                        'type'        => 'text',
+                                        'id'          => 'wpinv_company_id',
+                                        'name'        => 'wpinv_company_id',
+                                        'label'       => __( 'Company ID', 'invoicing' ),
+                                        'label_type'  => 'vertical',
+                                        'placeholder' => '',
+                                        'class'       => 'form-control-sm',
+                                        'value'       => $invoice->get_company_id( 'edit' ),
+                                    )
+                                );
+                            ?>
+                        </div>
+                    </div>
+
                     <?php do_action( 'getpaid_after_metabox_invoice_address', $invoice ); ?>
             </div>
         <?php
@@ -367,6 +386,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                 'address'              => isset( $_POST['wpinv_address'] ) ? wpinv_clean( $_POST['wpinv_address'] ) : null,
                 'vat_number'           => isset( $_POST['wpinv_vat_number'] ) ? wpinv_clean( $_POST['wpinv_vat_number'] ) : null,
                 'company'              => isset( $_POST['wpinv_company'] ) ? wpinv_clean( $_POST['wpinv_company'] ) : null,
+                'company_id'           => isset( $_POST['wpinv_company_id'] ) ? wpinv_clean( $_POST['wpinv_company_id'] ) : null,
                 'zip'                  => isset( $_POST['wpinv_zip'] ) ? wpinv_clean( $_POST['wpinv_zip'] ) : null,
                 'state'                => isset( $_POST['wpinv_state'] ) ? wpinv_clean( $_POST['wpinv_state'] ) : null,
                 'city'                 => isset( $_POST['wpinv_city'] ) ? wpinv_clean( $_POST['wpinv_city'] ) : null,

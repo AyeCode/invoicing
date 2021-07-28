@@ -284,6 +284,17 @@ return array(
                 array(
                     'placeholder'  => '',
                     'value'        => '',
+                    'label'        => __( 'Company ID', 'invoicing' ),
+                    'description'  => '',
+                    'required'     => false,
+                    'visible'      => false,
+                    'name'         => 'wpinv_company_id',
+                    'grid_width'   => 'full',
+                ),
+
+                array(
+                    'placeholder'  => '',
+                    'value'        => '',
                     'label'        => __( 'VAT Number', 'invoicing' ),
                     'description'  => '',
                     'required'     => false,

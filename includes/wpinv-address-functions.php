@@ -139,6 +139,7 @@ function getpaid_user_address_fields() {
             'zip'        => __( 'Zip/Postal Code', 'invoicing' ),
             'phone'      => __( 'Phone Number', 'invoicing' ),
             'company'    => __( 'Company', 'invoicing' ),
+            'company_id'    => __( 'Company ID', 'invoicing' ),
             'vat_number' => __( 'VAT Number', 'invoicing' ),
         )
     );
