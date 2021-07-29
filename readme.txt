@@ -26,7 +26,7 @@ GetPaid can be used as a payment system for 3rd party plugins too.
 * Create quotes and estimates to send to your clients [requires GetPaid quotes add-on](https://wordpress.org/plugins/invoicing-quotes/)
 * Quotes can be turned into invoices and clients can pay online.
 * Create and send invoices directly to receive single or recurring payments.
-* Accept payments via Stripe, Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
+* Accept payments via [Stripe](https://wordpress.org/plugins/getpaid-stripe-payments/) - (requires GetPaid Stripe add-on), Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
 * Export payments and any other data through the reporting system.
 * Manage taxes.
 * VAT MOSS complaint (European Union VAT management system).
