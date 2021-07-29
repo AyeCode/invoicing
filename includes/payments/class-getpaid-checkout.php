@@ -149,7 +149,6 @@ class GetPaid_Checkout {
 	protected function process_submission_invoice( $invoice, $items ) {
 
 		$submission = $this->payment_form_submission;
-		$data       = $submission->get_data();
 
 		// Set-up the invoice details.
 		$invoice->set_email( sanitize_email( $submission->get_billing_email() ) );
@@ -159,7 +158,7 @@ class GetPaid_Checkout {
         $invoice->set_fees( $submission->get_fees() );
         $invoice->set_taxes( $submission->get_taxes() );
 		$invoice->set_discounts( $submission->get_discounts() );
-		$invoice->set_gateway( $data['wpi-gateway'] );
+		$invoice->set_gateway( $submission->get_field('wpi-gateway') );
 
 		$address_confirmed = $submission->get_field( 'confirm-address' );
 		$invoice->set_address_confirmed( ! empty( $address_confirmed ) );
