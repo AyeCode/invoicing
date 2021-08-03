@@ -61,6 +61,7 @@ class GetPaid_Admin {
         add_action( 'admin_init', array( $this, 'maybe_do_admin_action') );
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 		add_action( 'getpaid_authenticated_admin_action_rate_plugin', array( $this, 'redirect_to_wordpress_rating_page' ) );
+		add_action( 'getpaid_authenticated_admin_action_duplicate_form', array( $this, 'duplicate_payment_form' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
@@ -276,7 +277,7 @@ class GetPaid_Admin {
 	protected function load_payment_form_scripts() {
         global $post;
 
-        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.js', array(), WPINV_VERSION );
+        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
@@ -400,6 +401,42 @@ class GetPaid_Admin {
         }
 
     }
+
+	/**
+     * Sends a payment reminder to a customer.
+	 * 
+	 * @param array $args
+     */
+    public function duplicate_payment_form( $args ) {
+
+		if ( empty( $args['form_id'] ) ) {
+			return;
+		}
+
+		$form = new GetPaid_Payment_Form( $args['form_id'] );
+
+		if ( ! $form->exists() ) {
+			return;
+		}
+
+		$new_form = new GetPaid_Payment_Form();
+		$new_form->set_author( $form->get_author( 'edit' ) );
+		$new_form->set_name( $form->get_name( 'edit' ) . __( '(copy)', 'invoicing' ) );
+		$new_form->set_elements( $form->get_elements( 'edit' ) );
+		$new_form->set_items( $form->get_items( 'edit' ) );
+		$new_form->save();
+
+		if ( $new_form->exists() ) {
+			$this->show_success( __( 'Form duplicated successfully', 'invoicing' ) );
+			$url = get_edit_post_link( $new_form->get_id(), 'edit' );
+		} else {
+			$this->show_error( __( 'Unable to duplicate form', 'invoicing' ) );
+			$url = remove_query_arg( array( 'getpaid-admin-action', 'form_id', 'getpaid-nonce' ) );
+		}
+
+		wp_redirect( $url );
+		exit;
+	}
 
 	/**
      * Sends a payment reminder to a customer.

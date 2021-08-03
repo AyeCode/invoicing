@@ -101,9 +101,30 @@ class GetPaid_Post_Types_Admin {
 		$post = get_post( $post );
 
 		// We do not want to edit the default payment form.
-		if ( 'wpi_payment_form' == $post->post_type && $post->ID == wpinv_get_default_payment_form() ) {
-			unset( $actions['trash'] );
-			unset( $actions['inline hide-if-no-js'] );
+		if ( 'wpi_payment_form' == $post->post_type ) {
+
+			if ( $post->ID == wpinv_get_default_payment_form() ) {
+				unset( $actions['trash'] );
+				unset( $actions['inline hide-if-no-js'] );
+			}
+
+			$actions['duplicate'] =  sprintf(
+				'<a href="%1$s">%2$s</a>',
+				esc_url(
+					wp_nonce_url(
+						add_query_arg(
+							array(
+								'getpaid-admin-action' => 'duplicate_form',
+								'form_id'              => $post->ID
+							)
+						),
+						'getpaid-nonce',
+						'getpaid-nonce'
+					)
+				),
+				esc_html( __( 'Duplicate', 'invoicing' ) )
+			);
+
 		}
 
 		return $actions;

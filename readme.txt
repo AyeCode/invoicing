@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.4.4 = 
 * Ability to collect company ID on the checkout page - ADDED
+* Ability to duplicate payment forms - ADDED
 
 = 2.4.4 = 
 * WordPress 5.8 compatibility check.
