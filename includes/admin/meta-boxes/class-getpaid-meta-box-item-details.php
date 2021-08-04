@@ -217,7 +217,7 @@ class GetPaid_Meta_Box_Item_Details {
             <div class="wpinv_show_if_recurring wpinv_free_trial">
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php _e( 'Free Trial', 'invoicing' )?></label>
+                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? _e( 'Free/Paid Trial', 'invoicing' ) : _e( 'Free Trial', 'invoicing' )?></label>
 
                     <div class="col-sm-8">
                         <div class="row">
