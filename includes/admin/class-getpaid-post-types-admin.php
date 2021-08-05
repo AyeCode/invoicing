@@ -30,6 +30,8 @@ class GetPaid_Post_Types_Admin {
 		// Invoice table columns.
 		add_filter( 'manage_wpi_invoice_posts_columns', array( __CLASS__, 'invoice_columns' ), 100 );
 		add_action( 'manage_wpi_invoice_posts_custom_column', array( __CLASS__, 'display_invoice_columns' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-wpi_invoice', array( __CLASS__, 'invoice_bulk_actions' ) );
+		add_filter( 'handle_bulk_actions-edit-wpi_invoice', array( __CLASS__, 'handle_invoice_bulk_actions' ), 10, 3 );
 
 		// Items table columns.
 		add_filter( 'manage_wpi_item_posts_columns', array( __CLASS__, 'item_columns' ), 100 );
@@ -332,6 +334,38 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 		}
+
+	}
+
+	/**
+	 * Displays invoice bulk actions.
+	 */
+	public static function invoice_bulk_actions( $actions ) {
+		$actions['resend-invoice'] = __( 'Send to Customer', 'invoicing' );
+		return $actions;
+	}
+
+	/**
+	 * Processes invoice bulk actions.
+	 */
+	public static function handle_invoice_bulk_actions( $redirect_url, $action, $post_ids ) {
+
+		if ( $action == 'resend-invoice' ) {
+
+			$success = false;
+			foreach ( $post_ids as $post_id ) {
+				$success = getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $post_id ), true );
+			}
+
+			if ( $success ) {
+				getpaid_admin()->show_success( __( 'Invoices were successfully sent', 'invoicing' ) );
+			} else {
+				getpaid_admin()->show_error( __( 'Could not send some invoices', 'invoicing' ) );
+			}
+
+		}
+
+		return $redirect_url;
 
 	}
 
