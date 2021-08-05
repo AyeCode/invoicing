@@ -143,7 +143,11 @@ foreach ( $fields as $address_field ) {
             $valid    = esc_attr__( 'Valid', 'invoicing' );
             $invalid  = esc_attr__( 'Invalid', 'invoicing' );
             $validate = esc_attr__( 'Validate', 'invoicing' );
-            $append   = "<span class='btn btn-secondary getpaid-vat-number-validate' data-valid='$valid' data-invalid='$invalid' data-validate='$validate'>$validate</span>";
+            $append   = "<span class='btn btn-primary getpaid-vat-number-validate' data-valid='$valid' data-invalid='$invalid' data-validate='$validate'>$validate</span>";
+        }
+
+        if ( 'billing' === $field_type ) {
+            $description .= '<div class="getpaid-error-' . sanitize_html_class( $field_name ) . ' getpaid-custom-payment-form-errors alert alert-danger d-none"></div>';
         }
 
         echo aui()->input(

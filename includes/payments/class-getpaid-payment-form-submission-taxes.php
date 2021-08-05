@@ -217,9 +217,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		if ( $this->requires_vat( $is_ip_eu, $is_eu ) && empty( $vat_number ) ) {
 
 			// Ensure that a vat number has been specified.
-			throw new Exception(
-				__( 'Please enter your VAT number to verify your purchase is by an EU business.', 'invoicing' )
-			);
+			throw new GetPaid_Payment_Exception( '.getpaid-error-billingwpinv_vat_number.getpaid-custom-payment-form-errors', __( 'Please enter your VAT number to verify your purchase is by an EU business.', 'invoicing' ) );
 
 		}
 
@@ -228,7 +226,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		}
 
 		if ( wpinv_should_validate_vat_number() && ! wpinv_validate_vat_number( $vat_number, $submission->country ) ) {
-			throw new Exception( __( 'Your VAT number is invalid', 'invoicing' ) );
+			throw new GetPaid_Payment_Exception( '.getpaid-error-billingwpinv_vat_number.getpaid-custom-payment-form-errors', __( 'Your VAT number is invalid', 'invoicing' ) );
 		}
 
 		if (  wpinv_default_billing_country() == $submission->country && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
