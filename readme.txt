@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to collect company ID on the checkout page - ADDED
 * Ability to duplicate payment forms - ADDED
 * Ability to bulk re-send invoices - ADDED
+* Stripe connect button doesn't work the first time it's clicked on the set-up wizzard - FIXED
 
 = 2.4.4 = 
 * WordPress 5.8 compatibility check.

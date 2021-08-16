@@ -691,6 +691,8 @@ class GetPaid_Admin {
 
 			if ( 'stripe' == $data['plugin'] ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+				include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+				wp_cache_flush();
 
 				if ( ! array_key_exists( 'getpaid-stripe-payments/getpaid-stripe-payments.php', get_plugins() ) ) {
 					$plugin_zip = esc_url( 'https://downloads.wordpress.org/plugin/getpaid-stripe-payments.latest-stable.zip' );
@@ -701,6 +703,7 @@ class GetPaid_Admin {
 				activate_plugin( 'getpaid-stripe-payments/getpaid-stripe-payments.php', '', false, true );
 			}
 
+			$connect_url = apply_filters( "getpaid_get_{$gateway}_connect_url", false, $data );
 			if ( ! empty( $connect_url ) ) {
 				wp_redirect( $connect_url );
 				exit;

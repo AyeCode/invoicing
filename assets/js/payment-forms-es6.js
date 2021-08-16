@@ -86,8 +86,19 @@ jQuery(function($) {
                 // Display the error.
                 if ( container && form.find( container ).length ) {
                     form.find( container ).html( error ).removeClass( 'd-none' )
+                    form.find( container ).closest('.getpaid-address-field-wrapper').find('form-control').addClass('is-invalid')
                 } else {
                     form.find( '.getpaid-payment-form-errors' ).html( error ).removeClass( 'd-none' )
+
+                    form.find( '.getpaid-custom-payment-form-errors' ).each(
+                        function() {
+                            var form_control = $(this).closest('.getpaid-address-field-wrapper').find('form-control')
+
+                            if ( form_control.val() != '' ) {
+                                form_control.addClass('is-valid')
+                            }
+                        }
+                    )
                 }
 
             },
@@ -97,7 +108,7 @@ jQuery(function($) {
 
                 // Hide the error
                 form.find( '.getpaid-payment-form-errors, .getpaid-custom-payment-form-errors' ).html('').addClass('d-none')
-
+                form.find('.is-invalid, .is-valid').removeClass('is-invalid is-valid')
             },
 
             // Caches a state.
@@ -710,6 +721,7 @@ jQuery(function($) {
 
             // Hide any errors.
             form.find('.getpaid-payment-form-errors, .getpaid-custom-payment-form-errors').html('').addClass('d-none')
+            form.find('.is-invalid,.is-valid').removeClass('is-invalid is-valid')
 
             // Fetch the unique identifier for this form.
             var unique_key = form.data('key')
