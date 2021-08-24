@@ -170,10 +170,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function get_quantity( $context = 'view' ) {
 		$quantity = (float) $this->quantity;
 
-		if ( empty( $quantity ) || 1 > $quantity ) {
-			$quantity = 1;
-		}
-
 		if ( 'view' == $context ) {
 			return apply_filters( 'getpaid_payment_form_item_quantity', $quantity, $this );
 		}
@@ -335,7 +331,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	public function set_quantity( $quantity ) {
 
-		if ( empty( $quantity ) || ! is_numeric( $quantity ) ) {
+		if ( ! is_numeric( $quantity ) ) {
 			$quantity = 1;
 		}
 

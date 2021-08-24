@@ -3266,6 +3266,10 @@ class WPInv_Invoice extends GetPaid_Data {
 		// Remove duplicates.
 		$this->remove_item( $item->get_id() );
 
+		if ( 0 == $item->get_quantity() ) {
+			return;
+		}
+
 		// Retrieve all items.
         $items   = $this->get_items();
 

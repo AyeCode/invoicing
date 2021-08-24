@@ -83,6 +83,10 @@ class GetPaid_Payment_Form_Submission_Items {
 
 		}
 
+		if ( 0 == $item->get_quantity() ) {
+			return;
+		}
+
 		// Save the item.
 		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item' , $item, $submission );
 
