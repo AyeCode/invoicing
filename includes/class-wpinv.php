@@ -52,7 +52,7 @@ class WPInv_Plugin {
 
 	/**
 	 * Sets a custom data property.
-	 * 
+	 *
 	 * @param string $prop The prop to set.
 	 * @param mixed $value The value to retrieve.
 	 */
@@ -127,7 +127,7 @@ class WPInv_Plugin {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
 		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
 		add_action( 'wp_head', array( $this, 'wp_head' ) );
-		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 
@@ -161,7 +161,7 @@ class WPInv_Plugin {
 	 * Locales found in:
 	 *      - WP_LANG_DIR/plugins/invoicing-LOCALE.mo
 	 *      - WP_PLUGIN_DIR/invoicing/languages/invoicing-LOCALE.mo
-	 * 
+	 *
 	 * @since 1.0.0
 	 */
 	public function load_textdomain() {
@@ -424,6 +424,7 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function register_widgets() {
+		global $pagenow;
 
 		// Currently, UX Builder does not work particulaly well with SuperDuper.
 		// So we disable our widgets when editing a page with UX Builder.
@@ -431,23 +432,36 @@ class WPInv_Plugin {
 			return;
 		}
 
-		$widgets = apply_filters(
-			'getpaid_widget_classes',
-			array(
-				'WPInv_Checkout_Widget',
-				'WPInv_History_Widget',
-				'WPInv_Receipt_Widget',
-				'WPInv_Subscriptions_Widget',
-				'WPInv_Buy_Item_Widget',
-				'WPInv_Messages_Widget',
-				'WPInv_GetPaid_Widget'
-			)
-		);
+		$block_widget_init_screens = function_exists('sd_pagenow_exclude') ? sd_pagenow_exclude() : array();
 
-		foreach ( $widgets as $widget ) {
-			register_widget( $widget );
+		if ( is_admin() && $pagenow && in_array($pagenow, $block_widget_init_screens)) {
+			// don't initiate in these conditions.
+		}else{
+
+			$exclude = function_exists('sd_widget_exclude') ? sd_widget_exclude() : array();
+			$widgets = apply_filters(
+				'getpaid_widget_classes',
+				array(
+					'WPInv_Checkout_Widget',
+					'WPInv_History_Widget',
+					'WPInv_Receipt_Widget',
+					'WPInv_Subscriptions_Widget',
+					'WPInv_Buy_Item_Widget',
+					'WPInv_Messages_Widget',
+					'WPInv_GetPaid_Widget'
+				)
+			);
+
+			if( !empty($widgets) ){
+				foreach ( $widgets as $widget ) {
+					if(!in_array($widget,$exclude)){
+						register_widget( $widget );
+					}
+				}
+			}
+
 		}
-		
+
 	}
 
 	/**
@@ -542,7 +556,7 @@ class WPInv_Plugin {
 
 	/**
 	 * Displays additional footer code.
-	 * 
+	 *
 	 * @since 2.0.0
 	 */
 	public function wp_footer() {
@@ -551,7 +565,7 @@ class WPInv_Plugin {
 
 	/**
 	 * Displays additional header code.
-	 * 
+	 *
 	 * @since 2.0.0
 	 */
 	public function wp_head() {
