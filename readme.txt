@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.4.5 =
 * Manually created invoice billing details do not appear on payment form - ADDED
+* [getpaid_edit_address] shortcode - ADDED
 
 = 2.4.5 = 
 * Ability to collect company ID on the checkout page - ADDED

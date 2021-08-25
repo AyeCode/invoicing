@@ -200,6 +200,16 @@ function getpaid_get_tab_url( $tab, $default ) {
  */
 function getpaid_display_address_edit_tab() {
 
+    if ( 0 === get_current_user_id() ) {
+        return '<div class="bsui">' . aui()->alert(
+            array(
+                'type'       => 'error',
+                'content'    => __( 'Your must be logged in to view this section', 'invoicing' ),
+                'dismissible'=> false,
+            )
+        ) . '</div>';
+    }
+
     ob_start();
     ?>
         <div class="bsui">
@@ -299,6 +309,7 @@ function getpaid_display_address_edit_tab() {
 
     return ob_get_clean();
 }
+add_shortcode( 'getpaid_edit_address', 'getpaid_display_address_edit_tab' );
 
 /**
  * Saves the billing address edit tab.
