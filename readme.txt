@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.4.5 =
+* Manually created invoice billing details do not appear on payment form - ADDED
+
 = 2.4.5 = 
 * Ability to collect company ID on the checkout page - ADDED
 * Ability to duplicate payment forms - ADDED

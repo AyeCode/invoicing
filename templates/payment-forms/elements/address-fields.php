@@ -9,10 +9,10 @@
  * @var string $field_type Either billing or shipping
  * @var string $uniqid A unique prefix for all ids
  * @var string $country The current user's country
+ * @var GetPaid_Payment_Form $form
  */
 
 defined( 'ABSPATH' ) || exit;
-
 
 $field_type = sanitize_key( $field_type );
 
@@ -44,6 +44,11 @@ foreach ( $fields as $address_field ) {
     $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
     $value       = ! empty( $user_id ) ? get_user_meta( $user_id, '_' . $address_field['name'], true ) : '';
     $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( $address_field['label'] );
+
+    $method_name = 'get_' . str_replace( 'wpinv_', '', $address_field['name'] );
+    if ( ! empty( $form->invoice ) && is_callable( array( $form->invoice, $method_name ) ) ) {
+        $value = call_user_func( array( $form->invoice, $method_name ) );
+    }
 
     if ( ! empty( $address_field['required'] ) ) {
         $label .= "<span class='text-danger'> *</span>";

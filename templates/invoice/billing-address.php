@@ -14,6 +14,7 @@ $address_row = wpinv_get_invoice_address_markup( $invoice->get_user_info() );
 $phone       = $invoice->get_phone();
 $email       = $invoice->get_email();
 $vat_number  = $invoice->get_vat_number();
+$company_id  = $invoice->get_company_id();
 ?>
     <div class="getpaid-billing-address form-group text-break">
 
@@ -52,6 +53,12 @@ $vat_number  = $invoice->get_vat_number();
                 <?php if ( ! empty( $vat_number ) ) : ?>
                     <div class="vat-number">
                         <?php echo wp_sprintf( __( 'Vat Number: %s', 'invoicing' ), sanitize_text_field( $vat_number ) ); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $company_id ) ) : ?>
+                    <div class="company-id">
+                        <?php echo wp_sprintf( __( 'Company ID: %s', 'invoicing' ), sanitize_text_field( $company_id ) ); ?>
                     </div>
                 <?php endif; ?>
 
