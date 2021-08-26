@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-16 13:30+0000\n"
+"POT-Creation-Date: 2021-08-26 05:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -2293,7 +2293,7 @@ msgstr ""
 msgid "Budapest"
 msgstr ""
 
-#: includes/user-functions.php:507 includes/user-functions.php:512
+#: includes/user-functions.php:518 includes/user-functions.php:523
 msgid "BuddyPress"
 msgstr ""
 
@@ -3153,6 +3153,11 @@ msgstr ""
 msgid "Company ID"
 msgstr ""
 
+#: templates/invoice/billing-address.php:61
+#, php-format
+msgid "Company ID: %s"
+msgstr ""
+
 #: includes/data/admin-settings.php:364
 msgid "Company Name"
 msgstr ""
@@ -3913,11 +3918,11 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: includes/user-functions.php:519
+#: includes/user-functions.php:530
 msgid "Display GetPaid items on BuddyPress account pages."
 msgstr ""
 
-#: includes/user-functions.php:440
+#: includes/user-functions.php:451
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
@@ -4311,7 +4316,7 @@ msgstr ""
 msgid "Email Template"
 msgstr ""
 
-#: templates/invoice/billing-address.php:48
+#: templates/invoice/billing-address.php:49
 #: templates/invoice/company-address.php:47
 #, php-format
 msgid "Email: %s"
@@ -4347,7 +4352,7 @@ msgstr ""
 msgid "Enable Due Date"
 msgstr ""
 
-#: includes/user-functions.php:439 includes/user-functions.php:518
+#: includes/user-functions.php:450 includes/user-functions.php:529
 msgid "Enable Integration"
 msgstr ""
 
@@ -4599,7 +4604,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3798
+#: includes/class-wpinv-invoice.php:3802
 msgid "Error during status transition."
 msgstr ""
 
@@ -5832,7 +5837,7 @@ msgstr ""
 msgid "Hyogo"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:87
+#: templates/payment-forms/elements/address-fields.php:92
 msgid "I certify that I live in the country selected above"
 msgstr ""
 
@@ -6099,7 +6104,7 @@ msgstr ""
 msgid "Introduction"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:144
+#: templates/payment-forms/elements/address-fields.php:149
 msgid "Invalid"
 msgstr ""
 
@@ -9027,7 +9032,7 @@ msgstr ""
 msgid "New invoice"
 msgstr ""
 
-#: includes/user-functions.php:285
+#: includes/user-functions.php:295
 msgid "New invoices will use this address as the billing address."
 msgstr ""
 
@@ -9615,7 +9620,7 @@ msgstr ""
 msgid "Optionally limit this tax rate to a specific country."
 msgstr ""
 
-#: includes/user-functions.php:274
+#: includes/user-functions.php:284
 msgid ""
 "Optionally provide other email addresses where we should send payment "
 "notifications"
@@ -9704,7 +9709,7 @@ msgstr ""
 msgid "Otago"
 msgstr ""
 
-#: includes/user-functions.php:269
+#: includes/user-functions.php:279
 msgid "Other email addresses"
 msgstr ""
 
@@ -9817,7 +9822,7 @@ msgstr ""
 msgid "Paid Via"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3905
+#: includes/class-wpinv-invoice.php:3909
 #: includes/admin/class-getpaid-post-types-admin.php:267
 #, php-format
 msgid "Paid via %s"
@@ -10340,7 +10345,7 @@ msgstr ""
 msgid "Phone Number"
 msgstr ""
 
-#: templates/invoice/billing-address.php:41
+#: templates/invoice/billing-address.php:42
 #, php-format
 msgid "Phone: %s"
 msgstr ""
@@ -10728,7 +10733,11 @@ msgstr ""
 msgid "Qom (قم)"
 msgstr ""
 
-#: includes/invoice-functions.php:924 templates/payment-forms/cart.php:16
+#: templates/payment-forms/cart.php:16
+msgid "Qty"
+msgstr ""
+
+#: includes/invoice-functions.php:924
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:307
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:34
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:423
@@ -11016,7 +11025,7 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3894
+#: includes/class-wpinv-invoice.php:3898
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -11489,7 +11498,7 @@ msgstr ""
 msgid "Save %s"
 msgstr ""
 
-#: includes/user-functions.php:284
+#: includes/user-functions.php:294
 msgid "Save Address"
 msgstr ""
 
@@ -12331,13 +12340,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3762
+#: includes/class-wpinv-invoice.php:3766
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3791
+#: includes/class-wpinv-invoice.php:3795
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -13800,7 +13809,7 @@ msgstr ""
 msgid "To Date"
 msgstr ""
 
-#: templates/invoice/billing-address.php:24
+#: templates/invoice/billing-address.php:25
 msgid "To:"
 msgstr ""
 
@@ -14333,7 +14342,7 @@ msgctxt "user dropdown"
 msgid "%1$s (%2$s)"
 msgstr ""
 
-#: includes/user-functions.php:428 includes/user-functions.php:433
+#: includes/user-functions.php:439 includes/user-functions.php:444
 msgid "UsersWP"
 msgstr ""
 
@@ -14385,11 +14394,11 @@ msgstr ""
 msgid "Valencia"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:143
+#: templates/payment-forms/elements/address-fields.php:148
 msgid "Valid"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:145
+#: templates/payment-forms/elements/address-fields.php:150
 msgid "Validate"
 msgstr ""
 
@@ -14496,7 +14505,7 @@ msgstr ""
 msgid "VAT Number: %s"
 msgstr ""
 
-#: templates/invoice/billing-address.php:54
+#: templates/invoice/billing-address.php:55
 #, php-format
 msgid "Vat Number: %s"
 msgstr ""
@@ -15178,7 +15187,7 @@ msgstr ""
 msgid "You need to specify a CRUD class for this controller"
 msgstr ""
 
-#: includes/user-functions.php:331
+#: includes/user-functions.php:342
 msgid "Your billing address has been updated"
 msgstr ""
 
@@ -15223,6 +15232,10 @@ msgstr ""
 #: includes/data/payment-form-elements.php:402
 #: templates/payment-forms/elements/ip_address.php:13
 msgid "Your IP address is:"
+msgstr ""
+
+#: includes/user-functions.php:207
+msgid "Your must be logged in to view this section"
 msgstr ""
 
 #: includes/data/email-settings.php:276
