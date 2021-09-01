@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.4.7 =
+* Preserve newlines in invoice / quote descriptions - ADDED
+
 = 2.4.6 =
 * Manually created invoice billing details do not appear on payment form - ADDED
 * [getpaid_edit_address] shortcode - ADDED

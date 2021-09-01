@@ -1409,7 +1409,7 @@ function getpaid_the_invoice_description( $invoice ) {
         return;
     }
 
-    $description = wp_kses_post( $description );
+    $description = wp_kses_post( wpautop( $description ) );
     echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>$description</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
