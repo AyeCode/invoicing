@@ -254,12 +254,13 @@ class WPInv_Ajax {
      * Retrieves the markup for a payment form.
      */
     public static function get_payment_form() {
+        global $getpaid_force_checkbox;
 
         // Check nonce.
         check_ajax_referer( 'getpaid_form_nonce' );
 
         // Is the request set up correctly?
-		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) ) {
+		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice'] ) ) {
 			echo aui()->alert(
 				array(
 					'type'    => 'warning',
@@ -293,6 +294,7 @@ class WPInv_Ajax {
                         if ( 0 == $qty ) {
                             $item->set_allow_quantities( true );
                             $item->set_is_required( false );
+                            $getpaid_force_checkbox = true;
                         }
 
                         $item_ids[] = $item->get_id();
@@ -317,7 +319,7 @@ class WPInv_Ajax {
                 $extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
                 $extra_items    .= "<input type='hidden' name='getpaid-form-items-key' value='$extra_items_key' />";
                 $payment_form->display( $extra_items );
-                remove_filter( 'wpinv_force_default_payment_form', '__return_true' );
+                $getpaid_force_checkbox = false;
 
             } else {
                 getpaid_display_payment_form( $form );

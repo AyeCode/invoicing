@@ -13,6 +13,10 @@ if ( empty( $form->get_items() ) ) {
     return;
 }
 
+if ( ! empty( $GLOBALS['getpaid_force_checkbox'] ) ) {
+    $items_type = 'checkbox';
+}
+
 if ( empty( $items_type ) ) {
     $items_type = 'total';
 }
