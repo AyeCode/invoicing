@@ -120,7 +120,7 @@ class GetPaid_Meta_Box_Payment_Form {
         }
 
         // Add it to the form.
-        $form->set_items( self::item_to_objects( $form_items ) );
+        $form->set_items( self::item_to_objects( wp_kses_post_deep( $form_items ) ) );
 
         // Save form elements.
         $form_elements = json_decode( wp_unslash( $_POST['wpinv_form_elements'] ), true );
@@ -128,7 +128,7 @@ class GetPaid_Meta_Box_Payment_Form {
             $form_elements = array();
         }
 
-        $form->set_elements( $form_elements );
+        $form->set_elements( wp_kses_post_deep( $form_elements ) );
 
         // Persist data to the datastore.
         $form->save();

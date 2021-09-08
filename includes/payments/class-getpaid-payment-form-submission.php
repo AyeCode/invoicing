@@ -155,7 +155,7 @@ class GetPaid_Payment_Form_Submission {
 	public function load_data( $data ) {
 
 		// Remove slashes from the submitted data...
-		$data       = wp_unslash( $data );
+		$data       = wp_kses_post_deep( wp_unslash( $data ) );
 
 		// Allow plugins to filter the data.
 		$data       = apply_filters( 'getpaid_submission_data', $data, $this );

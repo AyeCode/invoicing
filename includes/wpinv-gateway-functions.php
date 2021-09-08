@@ -395,14 +395,14 @@ function getpaid_get_non_query_string_ipn_url( $gateway ) {
 function wpinv_get_post_data( $method = 'request' ) {
 
     if ( $method == 'post' ) {
-        return wp_unslash( $_POST );
+        return wp_kses_post_deep( wp_unslash( $_POST ) );
     }
 
     if ( $method == 'get' ) {
-        return wp_unslash( $_GET );
+        return wp_kses_post_deep( wp_unslash( $_GET ) );
     }
 
-    return wp_unslash( $_REQUEST );
+    return wp_kses_post_deep( wp_unslash( $_REQUEST ) );
 
 }
 

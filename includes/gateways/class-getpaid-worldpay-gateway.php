@@ -216,7 +216,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 		}
 
         // Process the IPN.
-        $posted  = wp_unslash( $_POST );
+        $posted  = wp_kses_post_deep( wp_unslash( $_POST ) );
         $invoice = wpinv_get_invoice( $posted['MC_invoice_id'] );
 
         if ( $invoice && $this->id == $invoice->get_gateway() ) {
@@ -263,7 +263,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 
         wpinv_error_log( 'Validating Worldpay IPN response' );
 
-        $data = wp_unslash( $_POST );
+        $data = wp_kses_post_deep( wp_unslash( $_POST ) );
 
         // Verify installation.
         if ( empty( $data['instId'] ) || $data['instId'] != wpinv_clean( $this->get_option( 'instId', '' ) ) ) {

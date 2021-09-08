@@ -51,7 +51,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		// Process the IPN.
-		$posted  = wp_unslash( $_POST );
+		$posted  = wp_kses_post_deep( wp_unslash( $_POST ) );
 		$invoice = $this->get_ipn_invoice( $posted );
 
 		// Abort if it was not paid by our gateway.
@@ -109,7 +109,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		wpinv_error_log( 'Validating PayPal IPN response', false );
 
 		// Retrieve the associated invoice.
-		$posted  = wp_unslash( $_POST );
+		$posted  = wp_kses_post_deep( wp_unslash( $_POST ) );
 		$invoice = $this->get_ipn_invoice( $posted );
 
 		if ( $this->gateway->is_sandbox( $invoice ) ) {

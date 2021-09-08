@@ -222,7 +222,7 @@ class GetPaid_Metaboxes {
 	 */
 	public static function save_meta_boxes( $post_id, $post ) {
 		$post_id = absint( $post_id );
-		$data    = wp_unslash( $_POST );
+		$data    = wp_kses_post_deep( wp_unslash( $_POST ) );
 
 		// Do not save for ajax requests.
 		if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {

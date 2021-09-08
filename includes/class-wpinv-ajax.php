@@ -441,7 +441,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
 
         // Ensure it exists.
         if ( ! $invoice->get_id() ) {
@@ -509,7 +509,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
 
         // Ensure it exists.
         if ( ! $invoice->get_id() ) {
@@ -544,7 +544,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -552,7 +552,7 @@ class WPInv_Ajax {
         }
 
         // Format the data.
-        $data = wp_unslash( wp_list_pluck( $_POST['data'], 'value', 'field' ) );
+        $data = wp_kses_post_deep( wp_unslash( wp_list_pluck( $_POST['data'], 'value', 'field' ) ) );
 
         // Ensure that we have an item id.
         if ( empty( $data['id'] ) ) {
@@ -613,7 +613,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['invoice_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['invoice_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -683,7 +683,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -733,7 +733,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -804,7 +804,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -848,7 +848,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( trim( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -859,10 +859,10 @@ class WPInv_Ajax {
         // Add the items.
         foreach ( $_POST['items'] as $data ) {
 
-            $item = new GetPaid_Form_Item( $data[ 'id' ] );
+            $item = new GetPaid_Form_Item( (int) $data[ 'id' ] );
 
             if ( is_numeric( $data[ 'qty' ] ) && (float) $data[ 'qty' ] > 0 ) {
-                $item->set_quantity( $data[ 'qty' ] );
+                $item->set_quantity( floatval( $data[ 'qty' ] ) );
             }
 
             if ( $item->get_id() > 0 ) {

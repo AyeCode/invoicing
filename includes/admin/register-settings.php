@@ -337,7 +337,7 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
         return $input;
     }
 
-    $new_rates = ! empty( $_POST['tax_rates'] ) ? array_values( $_POST['tax_rates'] ) : array();
+    $new_rates = ! empty( $_POST['tax_rates'] ) ? wp_kses_post_deep( array_values( $_POST['tax_rates'] ) ) : array();
     $tax_rates = array();
 
     foreach ( $new_rates as $rate ) {

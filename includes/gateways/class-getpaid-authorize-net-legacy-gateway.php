@@ -194,10 +194,10 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 	 */
 	public function maybe_process_old_ipn() {
 
-        $data = wp_unslash( $_POST );
+        $data = wp_kses_post_deep( wp_unslash( $_POST ) );
 
         // Only process subscriptions subscriptions.
-        if ( empty( $_POST['x_subscription_id'] ) ) {
+        if ( empty( $data['x_subscription_id'] ) ) {
             return;
         }
 
@@ -205,7 +205,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         $this->validate_old_ipn_signature( $data );
 
         // Fetch the associated subscription.
-        $subscription_id = WPInv_Subscription::get_subscription_id_by_field( $_POST['x_subscription_id'] );
+        $subscription_id = WPInv_Subscription::get_subscription_id_by_field( $data['x_subscription_id'] );
         $subscription    = new WPInv_Subscription( $subscription_id );
 
         // Abort if it is missing or completed.
@@ -214,7 +214,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         }
 
         // Payment status.
-        if ( 1 == $_POST['x_response_code'] ) {
+        if ( 1 == $data['x_response_code'] ) {
 
             // Renew the subscription.
             $subscription->add_payment(
@@ -243,8 +243,8 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         $signature = $this->get_option( 'signature_key' );
         if ( ! empty( $signature ) ) {
             $login_id  = $this->get_option( 'login_id' );
-            $trans_id  = $_POST['x_trans_id'];
-            $amount    = $_POST['x_amount'];
+            $trans_id  = wpinv_clean( $_POST['x_trans_id'] );
+            $amount    = wpinv_clean( $_POST['x_amount'] );
             $hash      = hash_hmac ( 'sha512', "^$login_id^$trans_id^$amount^", hex2bin( $signature ) );
 
             if ( ! hash_equals( $hash, $posted['x_SHA2_Hash'] ) ) {
