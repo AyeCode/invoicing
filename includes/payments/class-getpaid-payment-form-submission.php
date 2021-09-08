@@ -493,7 +493,7 @@ class GetPaid_Payment_Form_Submission {
 
 		// Confirm if the provided country and the ip country are similar.
 		$address_confirmed = $this->get_field( 'confirm-address' );
-		if ( wpinv_should_validate_vat_number() && getpaid_get_ip_country() != $this->country && empty( $address_confirmed ) ) {
+		if ( isset( $_POST['billing']['country'] ) && wpinv_should_validate_vat_number() && getpaid_get_ip_country() != $this->country && empty( $address_confirmed ) ) {
 			throw new Exception( __( 'The country of your current location must be the same as the country of your billing location or you must confirm the billing address is your home country.', 'invoicing' ) );
 		}
 

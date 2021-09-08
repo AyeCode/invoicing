@@ -271,7 +271,55 @@ class WPInv_Ajax {
 
         // Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
-            getpaid_display_payment_form( urldecode( $_GET['form'] ) );
+            $form = urldecode( $_GET['form'] );
+
+            if ( false !== strpos( $form, '|' ) ) {
+                $form_pos = strpos( $form, '|' );
+                $_items   = getpaid_convert_items_to_array( substr( $form, $form_pos + 1 ) );
+                $form     = substr( $form, 0, $form_pos );
+
+                // Retrieve appropriate payment form.
+                $payment_form = new GetPaid_Payment_Form( $form );
+                $payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+
+                $items    = array();
+                $item_ids = array();
+
+                foreach ( $_items as $item_id => $qty ) {
+                    if ( ! in_array( $item_id, $item_ids ) ) {
+                        $item = new GetPaid_Form_Item( $item_id );
+                        $item->set_quantity( $qty );
+
+                        if ( 0 == $qty ) {
+                            $item->set_allow_quantities( true );
+                            $item->set_is_required( false );
+                        }
+
+                        $item_ids[] = $item->get_id();
+                        $items[]    = $item;
+                    }
+                }
+
+                if ( ! $payment_form->is_default() ) {
+
+                    foreach ( $payment_form->get_items() as $item ) {
+                        if ( ! in_array( $item->get_id(), $item_ids ) ) {
+                            $item_ids[] = $item->get_id();
+                            $items[]    = $item;
+                        }
+                    }
+
+                }
+
+                $payment_form->set_items( $items );
+                add_filter( 'wpinv_force_default_payment_form', '__return_true' );
+                $payment_form->display();
+                remove_filter( 'wpinv_force_default_payment_form', '__return_true' );
+
+            } else {
+                getpaid_display_payment_form( $form );
+            }
+
 		} else if( ! empty( $_GET['invoice'] ) ) {
 		    getpaid_display_invoice_payment_form( urldecode( $_GET['invoice'] ) );
         } else {

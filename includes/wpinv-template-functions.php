@@ -1618,15 +1618,16 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
  */
 function getpaid_get_form_element_grid_class( $element ) {
 
-    $class = "col-12";
+    $type  = sanitize_html_class( $element['type'] ); 
+    $class = "getpaid-$type-wrapper col-12";
     $width = empty( $element['grid_width'] ) ? 'full' : $element['grid_width'];
 
     if ( $width == 'half' ) {
-        $class = "col-12 col-md-6";
+        $class .= " col-md-6";
     }
 
     if ( $width == 'third' ) {
-        $class = "col-12 col-md-4";
+        $class .= " col-md-4";
     }
 
     return $class;
