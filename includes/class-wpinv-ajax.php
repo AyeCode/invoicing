@@ -312,8 +312,11 @@ class WPInv_Ajax {
                 }
 
                 $payment_form->set_items( $items );
-                add_filter( 'wpinv_force_default_payment_form', '__return_true' );
-                $payment_form->display();
+                $extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
+                $extra_items_key = md5( NONCE_KEY . AUTH_KEY . $extra_items );
+                $extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
+                $extra_items    .= "<input type='hidden' name='getpaid-form-items-key' value='$extra_items_key' />";
+                $payment_form->display( $extra_items );
                 remove_filter( 'wpinv_force_default_payment_form', '__return_true' );
 
             } else {

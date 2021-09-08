@@ -34,10 +34,46 @@ class GetPaid_Payment_Form_Submission_Items {
 			$selected_items = wpinv_clean( $data['getpaid-items'] );
 		}
 
-		// For default forms, ensure that an item has been set.
-		if ( $payment_form->is_default() && ( ! $submission->has_invoice() || 'payment_form' == $submission->get_invoice()->get_created_via() ) && isset( $data['getpaid-form-items'] ) ) {
+		// (Maybe) set form items.
+		if ( isset( $data['getpaid-form-items'] ) ) {
+
+			// Confirm items key.
 			$form_items = wpinv_clean( $data['getpaid-form-items'] );
-			$payment_form->set_items( getpaid_convert_items_to_array( $form_items ) );
+			if ( ! isset( $data['getpaid-form-items-key'] ) || $data['getpaid-form-items-key'] !== md5( NONCE_KEY . AUTH_KEY . $form_items ) ) {
+				throw new Exception( __( 'We could not validate the form items. Please reload the page and try again.', 'invoicing' ) );
+			}
+
+			$items    = array();
+            $item_ids = array();
+
+            foreach ( getpaid_convert_items_to_array( $form_items ) as $item_id => $qty ) {
+                if ( ! in_array( $item_id, $item_ids ) ) {
+                    $item = new GetPaid_Form_Item( $item_id );
+                    $item->set_quantity( $qty );
+
+                    if ( 0 == $qty ) {
+                        $item->set_allow_quantities( true );
+                        $item->set_is_required( false );
+                    }
+
+                    $item_ids[] = $item->get_id();
+                    $items[]    = $item;
+                }
+            }
+
+            if ( ! $payment_form->is_default() ) {
+
+                foreach ( $payment_form->get_items() as $item ) {
+                    if ( ! in_array( $item->get_id(), $item_ids ) ) {
+                        $item_ids[] = $item->get_id();
+                        $items[]    = $item;
+                    }
+                }
+
+            }
+
+            $payment_form->set_items( $items );
+
 		}
 
 		// Process each individual item.

@@ -118,7 +118,7 @@ $currency = $form->get_currency();
 
 						if ( $item->allows_quantities() ) {
 							?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity(); ?>' min='1' required>
+								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' required>
 							<?php
 						} else {
 							echo (float) $item->get_quantity();
@@ -127,6 +127,7 @@ $currency = $form->get_currency();
 								<input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (float) $item->get_quantity(); ?>'>
 							<?php
 						}
+
 					}
 
 					// Item sub total.

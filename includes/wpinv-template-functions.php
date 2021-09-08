@@ -1296,9 +1296,12 @@ function getpaid_display_item_payment_form( $items ) {
         return;
     }
 
-    $form_items = esc_attr( getpaid_convert_items_to_string( $items ) );
-    $form_items = "<input type='hidden' name='getpaid-form-items' value='$form_items' />";
-    $form->display( $form_items );
+    $extra_items     = esc_attr( getpaid_convert_items_to_string( $items ) );
+    $extra_items_key = md5( NONCE_KEY . AUTH_KEY . $extra_items );
+    $extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
+    $extra_items    .= "<input type='hidden' name='getpaid-form-items-key' value='$extra_items_key' />";
+
+    $form->display( $extra_items );
 }
 
 /**
@@ -1618,8 +1621,7 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
  */
 function getpaid_get_form_element_grid_class( $element ) {
 
-    $type  = sanitize_html_class( $element['type'] ); 
-    $class = "getpaid-$type-wrapper col-12";
+    $class = "col-12";
     $width = empty( $element['grid_width'] ) ? 'full' : $element['grid_width'];
 
     if ( $width == 'half' ) {
