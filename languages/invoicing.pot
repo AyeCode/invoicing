@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 05:54+0000\n"
+"POT-Creation-Date: 2021-09-08 13:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -3282,7 +3282,7 @@ msgstr ""
 msgid "Cote d'Ivoire"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:586
+#: includes/class-wpinv-ajax.php:639
 msgid "Could not create invoice item. Please try again."
 msgstr ""
 
@@ -4626,7 +4626,7 @@ msgstr ""
 msgid "Error renewing subscription : ( %s )."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:298 includes/class-wpinv-ajax.php:1007
+#: includes/class-wpinv-ajax.php:351 includes/class-wpinv-ajax.php:1060
 msgid "Error: Reload the page and try again."
 msgstr ""
 
@@ -6237,7 +6237,7 @@ msgstr ""
 msgid "Invoice fees (Name => properties)."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1325
+#: includes/wpinv-template-functions.php:1328
 msgid "Invoice has already been paid"
 msgstr ""
 
@@ -6269,7 +6269,7 @@ msgstr ""
 msgid "Invoice meta data."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1315
+#: includes/wpinv-template-functions.php:1318
 msgid "Invoice not found"
 msgstr ""
 
@@ -9167,7 +9167,7 @@ msgstr ""
 msgid "No %s found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1532
+#: includes/wpinv-template-functions.php:1535
 msgid "No active gateways support subscription payments."
 msgstr ""
 
@@ -9224,7 +9224,7 @@ msgstr ""
 msgid "No minimum"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:266
+#: includes/class-wpinv-ajax.php:267
 msgid "No payment form or item provided"
 msgstr ""
 
@@ -10909,7 +10909,7 @@ msgstr ""
 msgid "Recurring amount"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:428
+#: includes/class-wpinv-ajax.php:481
 #, php-format
 msgid "Recurring Price: %s"
 msgstr ""
@@ -11591,7 +11591,7 @@ msgstr ""
 msgid "Select a single item from the list"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:975 includes/data/admin-settings.php:71
+#: includes/class-wpinv-ajax.php:1028 includes/data/admin-settings.php:71
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:241
 msgid "Select a state"
 msgstr ""
@@ -12300,8 +12300,8 @@ msgstr ""
 msgid "Start date"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:959 includes/class-wpinv-ajax.php:961
-#: includes/class-wpinv-ajax.php:973
+#: includes/class-wpinv-ajax.php:1012 includes/class-wpinv-ajax.php:1014
+#: includes/class-wpinv-ajax.php:1026
 #: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:138
 #: includes/admin/class-getpaid-admin.php:590
@@ -12473,7 +12473,7 @@ msgstr ""
 msgid "Subscription not found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1535
+#: includes/wpinv-template-functions.php:1538
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
@@ -13307,7 +13307,7 @@ msgid ""
 msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission-fees.php:75
-#: includes/payments/class-getpaid-payment-form-submission-items.php:77
+#: includes/payments/class-getpaid-payment-form-submission-items.php:113
 #: templates/payment-forms/cart-item.php:75
 #, php-format
 msgid "The minimum allowed amount is %s"
@@ -14335,7 +14335,7 @@ msgstr ""
 msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:926
+#: includes/class-wpinv-ajax.php:979
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:30
 #, php-format
 msgctxt "user dropdown"
@@ -14788,6 +14788,11 @@ msgstr ""
 
 #: includes/invoice-functions.php:622
 msgid "We could not find your invoice"
+msgstr ""
+
+#: includes/payments/class-getpaid-payment-form-submission-items.php:43
+msgid ""
+"We could not validate the form items. Please reload the page and try again."
 msgstr ""
 
 #: includes/admin/views/wizard-gateways.php:18
