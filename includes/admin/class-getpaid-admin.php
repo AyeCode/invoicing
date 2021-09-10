@@ -617,7 +617,7 @@ class GetPaid_Admin {
 				$method = 'column_' . $column;
 
 				if ( 'name' == $column ) {
-					$value = sanitize_text_field( $user->display_name );
+					$value = esc_html( $user->display_name );
 				} else if( 'email' == $column ) {
 					$value = sanitize_email( $user->user_email );
 				} else if ( is_callable( array( $table, $method ) ) ) {
@@ -625,7 +625,7 @@ class GetPaid_Admin {
 				}
 
 				if ( empty( $value ) ) {
-					$value = sanitize_text_field( get_user_meta( $user->ID, '_wpinv_' . $column, true ) );
+					$value = esc_html( get_user_meta( $user->ID, '_wpinv_' . $column, true ) );
 				}
 
 				$row[] = $value;

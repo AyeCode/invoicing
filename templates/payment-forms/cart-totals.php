@@ -54,7 +54,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 					<div class="form-row">
 
 						<div class="col-8 pl-sm-0 getpaid-payment-form-line-totals-label">
-							<?php echo sanitize_text_field( $label ); ?>
+							<?php echo esc_html( $label ); ?>
 						</div>
 
 						<div class="col-4 getpaid-payment-form-line-totals-value getpaid-form-cart-totals-total-<?php echo esc_attr( $key ); ?>">

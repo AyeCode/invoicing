@@ -40,7 +40,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 			<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
 
 				<th class="font-weight-bold" style="width: 35%">
-					<?php echo sanitize_text_field( $label ); ?>
+					<?php echo esc_html( $label ); ?>
 				</th>
 
 				<td style="width: 65%">
@@ -49,15 +49,15 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 						switch ( $key ) {
 
 							case 'status':
-								echo sanitize_text_field( $subscription->get_status_label() );
+								echo esc_html( $subscription->get_status_label() );
 								break;
 
 							case 'start_date':
-								echo sanitize_text_field( getpaid_format_date_value( $subscription->get_date_created() ) );
+								echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
 								break;
 
 							case 'expiry_date':
-								echo sanitize_text_field( getpaid_format_date_value( $subscription->get_next_renewal_date() ) );
+								echo esc_html( getpaid_format_date_value( $subscription->get_next_renewal_date() ) );
 								break;
 
 							case 'initial_amount':
@@ -68,7 +68,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 									echo "<small class='text-muted'>&nbsp;";
 									printf(
 										_x( '( %1$s trial )', 'Subscription trial period. (e.g.: 1 month trial)', 'invoicing' ),
-										sanitize_text_field( $subscription->get_trial_period() )
+										esc_html( $subscription->get_trial_period() )
 									);
 									echo '</small>';
 

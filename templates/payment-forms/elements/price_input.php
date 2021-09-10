@@ -19,7 +19,7 @@ if ( $position == 'left_space' ) {
 if ( $position == 'right_space' ) {
     $position = 'right';
 }
-$label       = empty( $label ) ? '' : sanitize_text_field( $label );
+$label       = empty( $label ) ? '' : esc_html( $label );
 $label_class = sanitize_key( preg_replace( '/[^A-Za-z0-9_-]/', '-', $label ) );
 
 echo aui()->input(

@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
             <div class="form-row">
                 <?php foreach ( $columns as $key => $label ) : ?>
                     <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-invoice-line-item-col-<?php echo esc_attr( $key ); ?>">
-                        <?php echo sanitize_text_field( $label ); ?>
+                        <?php echo esc_html( $label ); ?>
                     </div>
                 <?php endforeach; ?>
             </div>

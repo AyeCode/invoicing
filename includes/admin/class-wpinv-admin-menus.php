@@ -147,7 +147,7 @@ class WPInv_Admin_Menus {
 
         $settings_tabs = wpinv_get_settings_tabs();
         $settings_tabs = empty($settings_tabs) ? array() : $settings_tabs;
-        $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
+        $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? esc_html( $_GET['tab'] ) : 'general';
         $sections      = wpinv_get_settings_tab_sections( $active_tab );
         $key           = 'main';
 
@@ -322,7 +322,7 @@ class WPInv_Admin_Menus {
                 $item->object           =  'page';
                 $item->menu_item_parent = 0;
                 $item->type             = 'post_type';
-                $item->title            = sanitize_text_field( $page['label'] );
+                $item->title            = esc_html( $page['label'] );
                 $item->url              = get_permalink( (int) $page['id'] );
                 $item->target           = '';
                 $item->attr_title       = '';

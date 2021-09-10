@@ -136,7 +136,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
                     $class  = empty( $action['class'] ) ? 'btn-dark' : sanitize_html_class( $action['class'] );
                     $url    = empty( $action['url'] ) ? '#' : esc_url( $action['url'] );
                     $attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
-                    $anchor = sanitize_text_field( $action['name'] );
+                    $anchor = esc_html( $action['name'] );
 
                     echo "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>";
                 }

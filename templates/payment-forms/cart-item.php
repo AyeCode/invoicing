@@ -31,7 +31,7 @@ $currency = $form->get_currency();
 					if ( 'name' == $key ) {
 
 						// Display the name.
-						echo '<div class="mb-1">' . sanitize_text_field( $item->get_name() ) . '</div>';
+						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . '</div>';
 
 						// And an optional description.
                         $description = $item->get_description();
@@ -73,7 +73,7 @@ $currency = $form->get_currency();
 							if ( $minimum > 0 ) {
 								$validate_minimum = sprintf(
 									esc_attr__( 'The minimum allowed amount is %s', 'invoicing' ),
-									sanitize_text_field( wpinv_price( $minimum, $currency ) )
+									strip_tags( wpinv_price( $minimum, $currency ) )
 								);
 
 								$class = 'getpaid-validate-minimum-amount';

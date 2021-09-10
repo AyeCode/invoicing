@@ -36,7 +36,7 @@ do_action( 'getpaid_before_email_line_totals', $invoice, $totals );
     <tr class="wpinv_cart_footer_row wpinv_cart_<?php echo sanitize_html_class( $key ); ?>_row">
 
         <td colspan="<?php echo ( $column_count - 1 ); ?>" class="wpinv_cart_<?php echo sanitize_html_class( $key ); ?>_label text-right">
-            <strong><?php echo sanitize_text_field( $label ); ?>:</strong>
+            <strong><?php echo esc_html( $label ); ?>:</strong>
         </td>
 
         <td class="wpinv_cart_<?php echo sanitize_html_class( $key ); ?> text-right">

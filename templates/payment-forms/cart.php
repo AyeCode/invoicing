@@ -36,7 +36,7 @@ do_action( 'getpaid_before_payment_form_cart', $form );
             <div class="form-row">
                 <?php foreach ( $columns as $key => $label ) : ?>
                     <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>">
-                        <span><?php echo sanitize_text_field( $label ); ?></span>
+                        <span><?php echo esc_html( $label ); ?></span>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -13,7 +13,7 @@ if ( empty( $text ) ) {
     $text = __( 'Your IP address is:', 'invoicing' );
 }
 
-$ip_address = sanitize_text_field( wpinv_get_ip() );
+$ip_address = esc_html( wpinv_get_ip() );
 
 ?>
 <div class="form-group getpaid-ip-info">

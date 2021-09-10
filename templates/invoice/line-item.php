@@ -33,7 +33,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                     if ( 'name' == $column ) {
 
                         // Display the name.
-                        echo '<div class="mb-1">' . sanitize_text_field( $item->get_name() ) . '</div>';
+                        echo '<div class="mb-1">' . esc_html( $item->get_name() ) . '</div>';
 
                         // And an optional description.
                         $description = $item->get_description();

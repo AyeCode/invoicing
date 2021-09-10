@@ -47,7 +47,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                 </div>
                                 <div>
                                     <select name="post_author_override" id="wpinv_post_author_override" class="getpaid-customer-search form-control regular-text" data-placeholder="<?php esc_attr_e( 'Search for a customer by email or name', 'invoicing' ); ?>">
-                                        <option selected="selected" value="<?php echo (int) $customer->ID; ?>"><?php echo sanitize_text_field( $display ); ?> </option>)
+                                        <option selected="selected" value="<?php echo (int) $customer->ID; ?>"><?php echo esc_html( $display ); ?> </option>)
                                     </select>
                                 </div>
                             </div>

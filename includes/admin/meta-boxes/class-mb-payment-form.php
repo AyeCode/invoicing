@@ -21,7 +21,7 @@ class WPInv_Meta_Box_Payment_Form {
         echo '<div class="bsui"> <div class="form-row">';
 
         foreach ( $details as $key => $value ) {
-            $key = sanitize_text_field( $key );
+            $key = esc_html( $key );
 
             if ( is_array( $value ) ) {
                 $value = implode( ',', $value );

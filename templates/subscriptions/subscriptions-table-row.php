@@ -31,12 +31,12 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 				break;
 
 			case 'status':
-				echo sanitize_text_field( $subscription->get_status_label() );
+				echo esc_html( $subscription->get_status_label() );
 				break;
 
 			case 'renewal-date':
 				$renewal = getpaid_format_date_value( $subscription->get_next_renewal_date() );
-				echo $subscription->is_active() ? sanitize_text_field( $renewal ) : "&mdash;";
+				echo $subscription->is_active() ? esc_html( $renewal ) : "&mdash;";
 				break;
 
 			case 'amount':

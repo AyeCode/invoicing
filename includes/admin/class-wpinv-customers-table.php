@@ -73,7 +73,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
-		$value = sanitize_text_field( get_user_meta( $item->ID, '_wpinv_' . $column_name, true ) );
+		$value = esc_html( get_user_meta( $item->ID, '_wpinv_' . $column_name, true ) );
 		return apply_filters( 'wpinv_customers_table_column' . $column_name, $value, $item );
 	}
 
@@ -91,7 +91,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 		if ( $country ) {
 			$country = wpinv_country_name( $country );
 		}
-		return sanitize_text_field( $country );
+		return esc_html( $country );
 	}
 
 	/**
@@ -110,7 +110,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 			$state = wpinv_state_name( $state, $country );
 		}
 
-		return sanitize_text_field( $state );
+		return esc_html( $state );
 	}
 
 	/**
@@ -263,7 +263,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 		$avatar = "<img src='$avatar' height='32' width='32'/>";
 
 		// Customer's name.
-		$name   = sanitize_text_field( "{$address['first_name']} {$address['last_name']}" );
+		$name   = esc_html( "{$address['first_name']} {$address['last_name']}" );
 
 		if ( ! empty( $name ) ) {
 			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";

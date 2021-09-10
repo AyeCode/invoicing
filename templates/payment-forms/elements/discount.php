@@ -15,7 +15,7 @@ if ( ! getpaid_has_published_discount() ) {
 }
 
 $placeholder = esc_attr( $input_label );
-$label       = sanitize_text_field( $button_label );
+$label       = esc_html( $button_label );
 
 if ( ! empty( $description ) ) {
     $description = "<small class='form-text text-muted'>$description</small>";

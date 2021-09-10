@@ -32,7 +32,7 @@ if ( $select_type == 'select' ) {
             'id'         => $id . uniqid( '_' ),
             'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
             'value'      => $value,
-            'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
+            'label'      => empty( $label ) ? '' : esc_html( $label ),
             'label_type' => 'vertical',
             'class'      => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
             'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
@@ -48,7 +48,7 @@ if ( $select_type == 'radios' ) {
         array(
             'name'       => esc_attr( $id ),
             'id'         => esc_attr( $id ) . uniqid( '_' ),
-            'label'      => empty( $label ) ? '' : sanitize_text_field( $label ),
+            'label'      => empty( $label ) ? '' : esc_html( $label ),
             'label_type' => 'vertical',
             'class'      => 'getpaid-price-select-radio getpaid-refresh-on-change w-100',
             'value'      => $value,
@@ -63,7 +63,7 @@ if ( $select_type == 'radios' ) {
 
 // Display the label.
 if ( ! empty( $label ) ) {
-    $label = sanitize_text_field( $label );
+    $label = esc_html( $label );
     echo "<label>$label</label>";
 }
 
@@ -78,7 +78,7 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
     echo "<div class='$class'>";
 
     foreach ( $options as $price => $label ) {
-        $label   = sanitize_text_field( $label );
+        $label   = esc_html( $label );
         $price   = esc_attr( $price );
         $_id     = $id . uniqid( '_' );
         $checked = checked( $price, $value, false );
@@ -105,7 +105,7 @@ if ( $select_type == 'checkboxes' ) {
     echo '<div class="form-group">';
 
     foreach ( $options as $price => $label ) {
-        $label   = sanitize_text_field( $label );
+        $label   = esc_html( $label );
         $price   = esc_attr( $price );
         $checked = checked( $price, $value, false );
         echo "

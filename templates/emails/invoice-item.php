@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
                 if ( 'name' == $column ) {
 
                     // Display the name.
-                    echo '<div class="wpinv_email_cart_item_title">' . sanitize_text_field( $item->get_name() ) . '</div>';
+                    echo '<div class="wpinv_email_cart_item_title">' . esc_html( $item->get_name() ) . '</div>';
 
                     // And an optional description.
                     $description = $item->get_description();

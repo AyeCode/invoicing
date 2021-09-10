@@ -52,13 +52,13 @@ $company_id  = $invoice->get_company_id();
 
                 <?php if ( ! empty( $vat_number ) ) : ?>
                     <div class="vat-number">
-                        <?php echo wp_sprintf( __( 'Vat Number: %s', 'invoicing' ), sanitize_text_field( $vat_number ) ); ?>
+                        <?php echo wp_sprintf( __( 'Vat Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if ( ! empty( $company_id ) ) : ?>
                     <div class="company-id">
-                        <?php echo wp_sprintf( __( 'Company ID: %s', 'invoicing' ), sanitize_text_field( $company_id ) ); ?>
+                        <?php echo wp_sprintf( __( 'Company ID: %s', 'invoicing' ), esc_html( $company_id ) ); ?>
                     </div>
                 <?php endif; ?>
 

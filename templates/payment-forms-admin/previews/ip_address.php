@@ -12,5 +12,5 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <span>{{form_element.text}}</span>
 <a target='_blank' href="#">
-    <?php echo sanitize_text_field( wpinv_get_ip() ); ?>&nbsp;&nbsp;<i class='fa fa-external-link-square' aria-hidden='true'></i>
+    <?php echo esc_html( wpinv_get_ip() ); ?>&nbsp;&nbsp;<i class='fa fa-external-link-square' aria-hidden='true'></i>
 </a>

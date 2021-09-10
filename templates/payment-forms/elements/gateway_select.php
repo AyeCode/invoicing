@@ -34,7 +34,7 @@ if ( ! empty( $form->invoice ) ) {
         <?php do_action( 'wpinv_payment_mode_top', $invoice_id, $chosen_gateway, $gateways, $form ); ?>
 
         <div class="getpaid-select-gateway-title-div">
-            <h6><?php echo sanitize_text_field( $text ); ?></h6>
+            <h6><?php echo esc_html( $text ); ?></h6>
         </div>
 
         <div class="getpaid-available-gateways-div">
@@ -45,7 +45,7 @@ if ( ! empty( $form->invoice ) ) {
 
                     <label class="d-block w-100 getpaid-gateway-radio">
                         <input type="radio" value="<?php echo esc_attr( $gateway ) ;?>" <?php checked( $gateway, $chosen_gateway ) ;?> name="wpi-gateway">
-                        <span><?php echo sanitize_text_field( wpinv_get_gateway_checkout_label( $gateway ) ); ?></span>
+                        <span><?php echo esc_html( wpinv_get_gateway_checkout_label( $gateway ) ); ?></span>
                     </label>
 
                 </div>

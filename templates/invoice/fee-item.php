@@ -32,7 +32,7 @@ do_action( 'getpaid_before_invoice_fee_item', $invoice, $fee );
                     if ( 'name' == $column ) {
 
                         // Display the name.
-                        echo '<div class="mb-1">' . sanitize_text_field( $fee['name'] ) . '</div>';
+                        echo '<div class="mb-1">' . esc_html( $fee['name'] ) . '</div>';
 
                         // And an optional description.
                         $description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );

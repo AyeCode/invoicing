@@ -152,7 +152,7 @@ function wpinv_request( $vars ) {
         if ( isset( $_GET['discount_type'] ) && $_GET['discount_type'] !== '' ) {
             $meta_query[] = array(
                     'key'   => '_wpi_discount_type',
-                    'value' => sanitize_text_field( $_GET['discount_type'] ),
+                    'value' => sanitize_key( urldecode( $_GET['discount_type'] ) ),
                     'compare' => '='
                 );
         }

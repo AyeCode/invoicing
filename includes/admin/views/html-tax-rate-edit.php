@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
                     ),
                     'name'        => "tax_rates[$key][country]",
                     'id'          => uniqid( 'tax_rate_country' ),
-                    'value'       => sanitize_text_field( $tax_rate['country'] ),
+                    'value'       => esc_html( $tax_rate['country'] ),
                     'label'       => __( 'Country', 'invoicing' ),
                     'class'       => 'wpinv_country',
                     'no_wrap'     => true,
@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
 
         <label class="w-100">
             <span class="screen-reader-text"><?php _e( 'States', 'invoicing' ); ?></span>
-            <input type="text" placeholder="<?php esc_attr_e( 'Apply to whole country', 'invoicing' ); ?>" name="tax_rates[<?php echo $key ?>][state]" value="<?php echo empty( $tax_rate['global'] ) ? sanitize_text_field( $tax_rate['state'] ) : ''; ?>"/>
+            <input type="text" placeholder="<?php esc_attr_e( 'Apply to whole country', 'invoicing' ); ?>" name="tax_rates[<?php echo esc_attr( $key ) ?>][state]" value="<?php echo empty( $tax_rate['global'] ) ? esc_attr( $tax_rate['state'] ) : ''; ?>"/>
         </label>
 
     </td>
@@ -46,21 +46,21 @@ defined( 'ABSPATH' ) || exit;
     <td class="wpinv_standard_rate">
         <label class="w-100">
             <span class="screen-reader-text"><?php _e( 'Standard Rate', 'invoicing' ); ?></span>
-            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo $key ?>][rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['rate'] ); ?>"/>
+            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ) ?>][rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['rate'] ); ?>"/>
         </label>
     </td>
 
     <td class="wpinv_reduced_rate">
         <label class="w-100">
             <span class="screen-reader-text"><?php _e( 'Reduced Rate', 'invoicing' ); ?></span>
-            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo $key ?>][reduced_rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['reduced_rate'] ); ?>"/>
+            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ) ?>][reduced_rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['reduced_rate'] ); ?>"/>
         </label>
     </td>
 
     <td class="wpinv_tax_name">
         <label class="w-100">
             <span class="screen-reader-text"><?php _e( 'Tax Name', 'invoicing' ); ?></span>
-            <input type="text" name="tax_rates[<?php echo $key ?>][name]" value="<?php echo sanitize_text_field( $tax_rate['name'] ); ?>"/>
+            <input type="text" name="tax_rates[<?php echo esc_attr( $key ) ?>][name]" value="<?php echo esc_attr( $tax_rate['name'] ); ?>"/>
         </label>
     </td>
 

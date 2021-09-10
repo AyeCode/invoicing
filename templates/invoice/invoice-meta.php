@@ -29,7 +29,7 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
                             <tr class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>">
 
                                 <th class="<?php echo $class; ?> font-weight-bold" style="width: 40%">
-                                    <?php echo sanitize_text_field( $data['label'] ); ?>
+                                    <?php echo esc_html( $data['label'] ); ?>
                                 </th>
 
                                 <td class="<?php echo $class; ?> <?php echo $key == 'invoice_total' ? 'font-weight-bold' : 'font-weight-normal'; ?> text-break" style="width: 60%">

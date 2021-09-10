@@ -84,13 +84,13 @@ class GetPaid_Meta_Box_Item_Info {
             </div>
 
             <div class="wpinv_item_custom_id form-group">
-                <?php _e( 'Custom ID', 'invoicing' );?> &mdash; <?php echo sanitize_text_field( $item->get_custom_id() ) ?>
+                <?php _e( 'Custom ID', 'invoicing' );?> &mdash; <?php echo esc_html( $item->get_custom_id() ) ?>
             </div>
 
             <?php do_action( 'wpinv_meta_values_metabox_before', $post ); ?>
             <?php foreach ( apply_filters( 'wpinv_show_meta_values_for_keys', array() ) as $meta_key ) : ?>
                 <div class="wpinv_item_custom_id form-group">
-                    <?php sanitize_text_field( $meta_key );?> &mdash; <?php echo sanitize_text_field( get_post_meta( $item->get_id(), '_wpinv_' . $meta_key, true ) ); ?>
+                    <?php echo esc_html( $meta_key );?> &mdash; <?php echo esc_html( get_post_meta( $item->get_id(), '_wpinv_' . $meta_key, true ) ); ?>
                 </div>
             <?php endforeach; ?>
             <?php do_action( 'wpinv_meta_values_metabox_after', $post ); ?>

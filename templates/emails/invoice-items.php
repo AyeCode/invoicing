@@ -30,7 +30,7 @@ $column_count = count( $columns );
 
                 <?php foreach ( $columns as $key => $label ) : ?>
                     <th class="<?php echo 'name' == $key ? 'text-left' : 'text-right' ?> wpinv_cart_item_<?php echo sanitize_html_class( $key ); ?>">
-                        <?php echo sanitize_text_field( $label ); ?>
+                        <?php echo esc_html( $label ); ?>
                     </th>
                 <?php endforeach; ?>
 

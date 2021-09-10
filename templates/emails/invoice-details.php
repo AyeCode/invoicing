@@ -37,7 +37,7 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin );
                 <tr class="getpaid-email-details-<?php echo sanitize_html_class( $key ); ?>">
 
                     <td class="getpaid-lable-td">
-                        <?php echo sanitize_text_field( $data['label'] ); ?>
+                        <?php echo esc_html( $data['label'] ); ?>
                     </td>
 
                     <td class="getpaid-value-td">

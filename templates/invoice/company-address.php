@@ -50,7 +50,7 @@ $vat_number = wpinv_get_option( 'vat_number' );
 
                 <?php if ( ! empty( $vat_number ) ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'VAT Number: %s', 'invoicing' ), sanitize_text_field( $vat_number ) );?>
+                        <?php echo wp_sprintf( __( 'VAT Number: %s', 'invoicing' ), esc_html( $vat_number ) );?>
                     </div>
                 <?php } ?>
 

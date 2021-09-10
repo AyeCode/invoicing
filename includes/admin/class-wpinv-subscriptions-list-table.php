@@ -141,7 +141,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 				'<a href="%s" %s>%s&nbsp;<span class="count">(%d)</span></a>',
 				esc_url( add_query_arg( 'status', urlencode( $status ), $this->base_url ) ),
 				$current === $status ? ' class="current"' : '',
-				sanitize_text_field( getpaid_get_subscription_status_label( $status ) ),
+				esc_html( getpaid_get_subscription_status_label( $status ) ),
 				$count
 			);
 
@@ -200,7 +200,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			$username = sprintf(
 				'<a href="user-edit.php?user_id=%s">%s</a>',
 				absint( $user->ID ),
-				! empty( $user->display_name ) ? sanitize_text_field( $user->display_name ) : sanitize_email( $user->user_email )
+				! empty( $user->display_name ) ? esc_html( $user->display_name ) : sanitize_email( $user->user_email )
 			);
 
 		}

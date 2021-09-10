@@ -258,12 +258,12 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'status' :
-				$status       = sanitize_text_field( $invoice->get_status() );
-				$status_label = sanitize_text_field( $invoice->get_status_nicename() );
+				$status       = esc_html( $invoice->get_status() );
+				$status_label = esc_html( $invoice->get_status_nicename() );
 
 				// If it is paid, show the gateway title.
 				if ( $invoice->is_paid() ) {
-					$gateway = sanitize_text_field( $invoice->get_gateway_title() );
+					$gateway = esc_html( $invoice->get_gateway_title() );
 					$gateway = wp_sprintf( esc_attr__( 'Paid via %s', 'invoicing' ), $gateway );
 
 					echo "<mark class='wpi-help-tip getpaid-invoice-status $status' title='$gateway'><span>$status_label</span></mark>";
@@ -308,7 +308,7 @@ class GetPaid_Post_Types_Admin {
 			case 'number' :
 
 				$edit_link       = esc_url( get_edit_post_link( $invoice->get_id() ) );
-				$invoice_number  = sanitize_text_field( $invoice->get_number() );
+				$invoice_number  = esc_html( $invoice->get_number() );
 				$invoice_details = esc_attr__( 'View Invoice Details', 'invoicing' );
 
 				echo "<a href='$edit_link' title='$invoice_details'><strong>$invoice_number</strong></a>";
@@ -435,12 +435,12 @@ class GetPaid_Post_Types_Admin {
 					$url = $item->get_edit_url();
 
 					if ( empty( $url ) ) {
-						$_items[] = sanitize_text_field( $item->get_name() );
+						$_items[] = esc_html( $item->get_name() );
 					} else {
 						$_items[] = sprintf(
 							'<a href="%s">%s</a>',
 							esc_url( $url ),
-							sanitize_text_field( $item->get_name() )
+							esc_html( $item->get_name() )
 						);
 					}
 

@@ -202,11 +202,11 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 					<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
 
 						<th class="w-25" style="font-weight: 500;">
-							<?php echo sanitize_text_field( $label ); ?>
+							<?php echo esc_html( $label ); ?>
 						</th>
 
 						<td class="w-75 text-muted">
-							<?php do_action( 'getpaid_subscription_admin_display_' . sanitize_text_field( $key ), $sub, $subscription_group ); ?>
+							<?php do_action( 'getpaid_subscription_admin_display_' . sanitize_key( $key ), $sub, $subscription_group ); ?>
 						</td>
 
 					</tr>
@@ -234,7 +234,7 @@ function getpaid_admin_subscription_metabox_display_customer( $subscription ) {
 		$username = sprintf(
 			'<a href="user-edit.php?user_id=%s">%s</a>',
 			absint( $user->ID ),
-			! empty( $user->display_name ) ? sanitize_text_field( $user->display_name ) : sanitize_email( $user->user_email )
+			! empty( $user->display_name ) ? esc_html( $user->display_name ) : sanitize_email( $user->user_email )
 		);
 
 	}
@@ -249,7 +249,7 @@ add_action( 'getpaid_subscription_admin_display_customer', 'getpaid_admin_subscr
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_amount( $subscription ) {
-	$amount    = sanitize_text_field( getpaid_get_formatted_subscription_amount( $subscription ) );
+	$amount    = esc_html( getpaid_get_formatted_subscription_amount( $subscription ) );
 	echo "<span>$amount</span>";
 }
 add_action( 'getpaid_subscription_admin_display_amount', 'getpaid_admin_subscription_metabox_display_amount' );
@@ -323,7 +323,7 @@ function getpaid_admin_subscription_metabox_display_gateway( $subscription ) {
 	$gateway = $subscription->get_gateway();
 
 	if ( ! empty( $gateway ) ) {
-		echo sanitize_text_field( wpinv_get_gateway_admin_label( $gateway ) );
+		echo esc_html( wpinv_get_gateway_admin_label( $gateway ) );
 	} else {
 		echo "&mdash;";
 	}
@@ -358,7 +358,7 @@ function getpaid_admin_subscription_metabox_display_profile_id( $subscription ) 
 			'label'       => __( 'Profile Id', 'invoicing' ),
 			'label_type'  => 'hidden',
 			'placeholder' => __( 'Profile Id', 'invoicing' ),
-			'value'       => sanitize_text_field( $profile_id ),
+			'value'       => esc_attr( $profile_id ),
 			'input_group_right' => '',
 			'no_wrap'     => true,
 		)
@@ -461,7 +461,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 						<?php
 							foreach ( $columns as $key => $label ) {
 								$key   = esc_attr( $key );
-								$label = sanitize_text_field( $label );
+								$label = esc_html( $label );
 								$class = 'text-left';
 
 								echo "<th class='subscription-invoice-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
@@ -536,7 +536,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 													$link = esc_url( $payment->get_view_url() );
 												}
 
-												$invoice = sanitize_text_field( $payment->get_number() );
+												$invoice = esc_html( $payment->get_number() );
 												echo "<a href='$link'>$invoice</a>";
 												break;
 										}
@@ -612,7 +612,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 
 							foreach ( $columns as $key => $label ) {
 								$key   = esc_attr( $key );
-								$label = sanitize_text_field( $label );
+								$label = esc_html( $label );
 								$class = 'text-left';
 
 								echo "<th class='subscription-item-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
@@ -642,9 +642,9 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 												$item_name = empty( $item_name ) ? $subscription_group_item['item_name'] : $item_name;
 
 												if ( $invoice->get_template() == 'amount' || 1 == (float) $subscription_group_item['quantity'] ) {
-													echo sanitize_text_field( $item_name );
+													echo esc_html( $item_name );
 												} else {
-													printf( '%1$s x %2$d', sanitize_text_field( $item_name ), (float) $subscription_group_item['quantity'] );
+													printf( '%1$s x %2$d', esc_html( $item_name ), (float) $subscription_group_item['quantity'] );
 												}
 
 												break;
@@ -692,7 +692,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 										switch( $key ) {
 
 											case 'item_name':
-												echo sanitize_text_field( $subscription_group_fee['name'] );
+												echo esc_html( $subscription_group_fee['name'] );
 												break;
 
 											case 'price':
@@ -785,7 +785,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 
 							foreach ( $columns as $key => $label ) {
 								$key   = esc_attr( $key );
-								$label = sanitize_text_field( $label );
+								$label = esc_html( $label );
 								$class = 'text-left';
 
 								echo "<th class='related-subscription-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";

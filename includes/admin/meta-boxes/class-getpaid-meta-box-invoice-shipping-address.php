@@ -40,7 +40,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 
 						<div class="form-group form-row">
 							<div class="col">
-								<span style="font-weight: 600"><?php echo sanitize_text_field( $label ); ?>:</span>
+								<span style="font-weight: 600"><?php echo esc_html( $label ); ?>:</span>
 							</div>
 							<div class="col">
 								<?php echo self::prepare_for_display( $shipping_address, $key ); ?>
@@ -78,7 +78,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 			$value = wpinv_state_name( $value, $country );
 		}
 
-		return sanitize_text_field( $value );
+		return esc_html( $value );
 
 	}
 

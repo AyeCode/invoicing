@@ -14,6 +14,6 @@ if ( empty( $text ) ) {
 }
 ?>
 <div class="form-group mt-4">
-    <strong><?php echo sanitize_text_field( $text ); ?></strong>
+    <strong><?php echo esc_html( $text ); ?></strong>
     <span class="getpaid-checkout-total-payable"></span>
 </div>

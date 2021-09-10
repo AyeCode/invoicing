@@ -72,7 +72,7 @@ class GetPaid_Meta_Box_Resend_Invoice {
                 '<p class="wpi-meta-row wpi-%s"><a href="%s" class="button button-secondary">%s</a>',
                 esc_attr( $key ),
                 esc_url( $action['url'] ),
-                sanitize_text_field( $action['label'] )
+                esc_html( $action['label'] )
             );
 
         }

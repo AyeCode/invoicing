@@ -36,7 +36,7 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <title>#<?php echo sanitize_text_field( $invoice->get_number() ); ?></title>
+        <title>#<?php echo esc_html( $invoice->get_number() ); ?></title>
 
         <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 
