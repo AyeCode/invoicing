@@ -264,7 +264,7 @@ function wpinv_get_random_items( $num = 3, $post_ids = true ) {
 function wpinv_get_item_suffix( $item, $html = true ) {
 
     $item   = new WPInv_Item( $item );
-    $suffix = $item->is_recurring() ? ' <span class="wpi-suffix">' . __( '(r)', 'invoicing' ) . '</span>' : '';
+    $suffix = $item->is_recurring() ? ' ' . __( '(r)', 'invoicing' ) : '';
     $suffix = $html ? $suffix : strip_tags( $suffix );
 
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
