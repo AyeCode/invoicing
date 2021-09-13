@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.4.8 =
+* Ability to set payment gateway when creating an invoice - ADDED
+
 = 2.4.7 =
 * Preserve newlines in invoice / quote descriptions - ADDED
 * Ability to add dynamic items to any payment forms - ADDED

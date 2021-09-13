@@ -153,9 +153,7 @@ class GetPaid_Metaboxes {
 			);
 
 			// Payment details.
-			if ( ! $invoice->is_draft() ) {
-				add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', $post_type, 'side', 'default' );
-			}
+			add_meta_box( 'wpinv-payment-meta', __( 'Payment Meta', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Payment_Meta::output', $post_type, 'side', 'default' );
 
 			// Billing details.
 			add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', $post_type, 'normal', 'high' );
