@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.4.8 =
 * Ability to set payment gateway when creating an invoice - ADDED
 * Ability to clear selected pages - ADDED
+* Cancelling a subscription does not cancel it in Stripe - FIXED
 
 = 2.4.7 =
 * Preserve newlines in invoice / quote descriptions - ADDED
