@@ -1192,7 +1192,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	protected function status_transition() {
 		$status_transition = $this->status_transition;
-wpinv_error_log( $status_transition );
+
 		// Reset status transition variable.
 		$this->status_transition = false;
 

@@ -249,7 +249,7 @@ add_action( 'getpaid_subscription_admin_display_customer', 'getpaid_admin_subscr
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_amount( $subscription ) {
-	$amount    = esc_html( getpaid_get_formatted_subscription_amount( $subscription ) );
+	$amount    = wp_kses_post( getpaid_get_formatted_subscription_amount( $subscription ) );
 	echo "<span>$amount</span>";
 }
 add_action( 'getpaid_subscription_admin_display_amount', 'getpaid_admin_subscription_metabox_display_amount' );
