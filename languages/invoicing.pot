@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 13:58+0000\n"
+"POT-Creation-Date: 2021-09-21 13:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -249,13 +249,13 @@ msgstr[1] ""
 msgid "%s History"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:167
+#: includes/admin/class-getpaid-metaboxes.php:165
 #: templates/emails/invoice-items.php:22 templates/invoice/line-items.php:17
 #, php-format
 msgid "%s Items"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:50
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:68
 #, php-format
 msgid "%s Key:"
 msgstr ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "%s month"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:180
+#: includes/admin/class-getpaid-metaboxes.php:178
 #, php-format
 msgid "%s Notes"
 msgstr ""
@@ -300,7 +300,7 @@ msgstr ""
 msgid "%s Then %s"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:70
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:88
 #, php-format
 msgid "%s URL:"
 msgstr ""
@@ -886,16 +886,16 @@ msgstr ""
 msgid "Add Item(s)"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:140
-#: includes/class-getpaid-post-types.php:196
+#: includes/class-getpaid-post-types.php:130
+#: includes/class-getpaid-post-types.php:186
 msgid "Add New"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:197
+#: includes/class-getpaid-post-types.php:187
 msgid "Add new discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:141
+#: includes/class-getpaid-post-types.php:131
 msgid "Add new invoice"
 msgstr ""
 
@@ -1010,12 +1010,12 @@ msgctxt "admin menu"
 msgid "Payment Forms"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:195
+#: includes/class-getpaid-post-types.php:185
 msgctxt "Admin menu name"
 msgid "Discounts"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:139
+#: includes/class-getpaid-post-types.php:129
 msgctxt "Admin menu name"
 msgid "Invoices"
 msgstr ""
@@ -2085,7 +2085,7 @@ msgstr ""
 msgid "Billing Cycle"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:161
+#: includes/admin/class-getpaid-metaboxes.php:159
 #: templates/emails/wpinv-email-billing-details.php:8
 msgid "Billing Details"
 msgstr ""
@@ -2639,7 +2639,7 @@ msgid "Cancelled"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:287
+#: includes/class-getpaid-post-types.php:277
 #, php-format
 msgid "Cancelled <span class=\"count\">(%s)</span>"
 msgid_plural "Cancelled <span class=\"count\">(%s)</span>"
@@ -3492,7 +3492,7 @@ msgstr ""
 msgid "Currency Settings"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:127
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:145
 msgid "Currency:"
 msgstr ""
 
@@ -3811,7 +3811,7 @@ msgstr ""
 msgid "Disable taxes"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:193
+#: includes/class-getpaid-post-types.php:183
 #: includes/invoice-functions.php:1001 includes/admin/subscriptions.php:583
 #: includes/reports/class-getpaid-reports-report-earnings.php:24
 #: templates/payment-forms/cart-totals.php:19
@@ -3847,7 +3847,7 @@ msgstr ""
 msgid "Discount draft updated."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:207
+#: includes/class-getpaid-post-types.php:197
 msgid "Discount image"
 msgstr ""
 
@@ -3855,7 +3855,7 @@ msgstr ""
 msgid "Discount Input"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:214
+#: includes/class-getpaid-post-types.php:204
 msgid "Discount navigation"
 msgstr ""
 
@@ -3900,8 +3900,8 @@ msgstr ""
 msgid "Discounted"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:192
-#: includes/class-getpaid-post-types.php:194
+#: includes/class-getpaid-post-types.php:182
+#: includes/class-getpaid-post-types.php:184
 #: includes/reports/class-getpaid-reports-report.php:217
 msgid "Discounts"
 msgstr ""
@@ -3910,7 +3910,7 @@ msgstr ""
 msgid "Discounts have been recalculated."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:215
+#: includes/class-getpaid-post-types.php:205
 msgid "Discounts list"
 msgstr ""
 
@@ -4159,8 +4159,8 @@ msgstr ""
 msgid "Edirne"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:142
-#: includes/class-getpaid-post-types.php:198 includes/admin/admin-pages.php:46
+#: includes/class-getpaid-post-types.php:132
+#: includes/class-getpaid-post-types.php:188 includes/admin/admin-pages.php:46
 #: includes/admin/class-getpaid-admin.php:183
 #: includes/admin/class-getpaid-post-types-admin.php:153
 msgid "Edit"
@@ -4175,11 +4175,11 @@ msgstr ""
 msgid "Edit Details"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:199
+#: includes/class-getpaid-post-types.php:189
 msgid "Edit discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:143
+#: includes/class-getpaid-post-types.php:133
 msgid "Edit invoice"
 msgstr ""
 
@@ -4736,7 +4736,7 @@ msgid "F&#259;le&#537;ti"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:307
+#: includes/class-getpaid-post-types.php:297
 #, php-format
 msgid "Failed <span class=\"count\">(%s)</span>"
 msgid_plural "Failed <span class=\"count\">(%s)</span>"
@@ -4876,11 +4876,11 @@ msgstr ""
 msgid "Fill User Details"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:213
+#: includes/class-getpaid-post-types.php:203
 msgid "Filter discounts"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:157
+#: includes/class-getpaid-post-types.php:147
 msgid "Filter invoices"
 msgstr ""
 
@@ -5111,8 +5111,9 @@ msgstr ""
 msgid "Gateway Setup"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:92
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:164
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:50
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:110
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:182
 msgid "Gateway:"
 msgstr ""
 
@@ -6063,11 +6064,11 @@ msgstr ""
 msgid "Input Label"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:211
+#: includes/class-getpaid-post-types.php:201
 msgid "Insert into discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:155
+#: includes/class-getpaid-post-types.php:145
 msgid "Insert into invoice"
 msgstr ""
 
@@ -6183,7 +6184,7 @@ msgstr ""
 msgid "Invalid tab."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:137 includes/invoice-functions.php:81
+#: includes/class-getpaid-post-types.php:127 includes/invoice-functions.php:81
 #: includes/invoice-functions.php:569
 #: includes/admin/class-getpaid-post-types-admin.php:198
 #: includes/admin/subscriptions.php:431
@@ -6221,7 +6222,7 @@ msgstr ""
 msgid "Invoice Description"
 msgstr ""
 
-#: templates/invoice-receipt.php:155
+#: templates/invoice-receipt.php:157
 msgid "Invoice Details"
 msgstr ""
 
@@ -6249,7 +6250,7 @@ msgstr ""
 msgid "Invoice History Page"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:151
+#: includes/class-getpaid-post-types.php:141
 msgid "Invoice image"
 msgstr ""
 
@@ -6318,19 +6319,19 @@ msgstr ""
 msgid "Invoice Status"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:281
+#: includes/class-getpaid-post-types.php:271
 #: includes/wpinv-helper-functions.php:144
 msgctxt "Invoice status"
 msgid "Cancelled"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:301
+#: includes/class-getpaid-post-types.php:291
 #: includes/wpinv-helper-functions.php:146
 msgctxt "Invoice status"
 msgid "Failed"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:271
+#: includes/class-getpaid-post-types.php:261
 msgctxt "Invoice status"
 msgid "On Hold"
 msgstr ""
@@ -6345,7 +6346,7 @@ msgctxt "Invoice status"
 msgid "Paid"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:251
+#: includes/class-getpaid-post-types.php:241
 msgctxt "Invoice status"
 msgid "Pending Payment"
 msgstr ""
@@ -6355,19 +6356,19 @@ msgctxt "Invoice status"
 msgid "Pending payment"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:261
+#: includes/class-getpaid-post-types.php:251
 #: includes/wpinv-helper-functions.php:142
 msgctxt "Invoice status"
 msgid "Processing"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:291
+#: includes/class-getpaid-post-types.php:281
 #: includes/wpinv-helper-functions.php:145
 msgctxt "Invoice status"
 msgid "Refunded"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:311
+#: includes/class-getpaid-post-types.php:301
 msgctxt "Invoice status"
 msgid "Renewal"
 msgstr ""
@@ -6420,8 +6421,8 @@ msgid "Invoice was successfully sent to the customer"
 msgstr ""
 
 #: includes/class-bp-getpaid-component.php:185
-#: includes/class-getpaid-post-types.php:136
-#: includes/class-getpaid-post-types.php:138 includes/invoice-functions.php:656
+#: includes/class-getpaid-post-types.php:126
+#: includes/class-getpaid-post-types.php:128 includes/invoice-functions.php:656
 #: includes/user-functions.php:118 includes/admin/class-getpaid-admin.php:597
 #: includes/admin/class-wpinv-customers-table.php:295
 #: includes/reports/class-getpaid-reports-report.php:218
@@ -6437,11 +6438,11 @@ msgstr ""
 msgid "Invoices and checkout"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:159
+#: includes/class-getpaid-post-types.php:149
 msgid "Invoices list"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:158
+#: includes/class-getpaid-post-types.php:148
 msgid "Invoices navigation"
 msgstr ""
 
@@ -9015,7 +9016,7 @@ msgstr ""
 msgid "New Caledonia"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:200
+#: includes/class-getpaid-post-types.php:190
 msgid "New discount"
 msgstr ""
 
@@ -9027,7 +9028,7 @@ msgstr ""
 msgid "New Invoice"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:144
+#: includes/class-getpaid-post-types.php:134
 #: includes/data/email-settings.php:66
 msgid "New invoice"
 msgstr ""
@@ -9171,11 +9172,11 @@ msgstr ""
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:204
+#: includes/class-getpaid-post-types.php:194
 msgid "No discounts found"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:205
+#: includes/class-getpaid-post-types.php:195
 msgid "No discounts found in trash"
 msgstr ""
 
@@ -9196,11 +9197,11 @@ msgstr ""
 msgid "No Invoice(s)"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:148
+#: includes/class-getpaid-post-types.php:138
 msgid "No invoices found"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:149
+#: includes/class-getpaid-post-types.php:139
 msgid "No invoices found in trash"
 msgstr ""
 
@@ -9567,7 +9568,7 @@ msgid "On average our gateways are over 66% cheaper than our competition"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:277
+#: includes/class-getpaid-post-types.php:267
 #, php-format
 msgid "On Hold <span class=\"count\">(%s)</span>"
 msgid_plural "On Hold <span class=\"count\">(%s)</span>"
@@ -9945,11 +9946,11 @@ msgstr ""
 msgid "Parent %s"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:206
+#: includes/class-getpaid-post-types.php:196
 msgid "Parent discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:150
+#: includes/class-getpaid-post-types.php:140
 msgid "Parent invoice"
 msgstr ""
 
@@ -10065,7 +10066,7 @@ msgctxt "Payment Form"
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:196
+#: includes/admin/class-getpaid-metaboxes.php:194
 msgid "Payment Form Details"
 msgstr ""
 
@@ -10121,7 +10122,7 @@ msgstr ""
 msgid "Payment Gateways"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:157
+#: includes/admin/class-getpaid-metaboxes.php:156
 msgid "Payment Meta"
 msgstr ""
 
@@ -10174,7 +10175,7 @@ msgstr ""
 msgid "Payment transaction failed while processing Worldpay payment."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:148
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:166
 msgid "Payment URL:"
 msgstr ""
 
@@ -10235,7 +10236,7 @@ msgid "Pending"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:257
+#: includes/class-getpaid-post-types.php:247
 #, php-format
 msgid "Pending Payment <span class=\"count\">(%s)</span>"
 msgid_plural "Pending Payment <span class=\"count\">(%s)</span>"
@@ -10661,7 +10662,7 @@ msgid "Proceed to Worldpay"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:267
+#: includes/class-getpaid-post-types.php:257
 #, php-format
 msgid "Processing <span class=\"count\">(%s)</span>"
 msgid_plural "Processing <span class=\"count\">(%s)</span>"
@@ -10941,7 +10942,7 @@ msgid "Refunded"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:297
+#: includes/class-getpaid-post-types.php:287
 #, php-format
 msgid "Refunded <span class=\"count\">(%s)</span>"
 msgid_plural "Refunded <span class=\"count\">(%s)</span>"
@@ -10997,11 +10998,11 @@ msgstr ""
 msgid "Remove Data on Uninstall?"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:209
+#: includes/class-getpaid-post-types.php:199
 msgid "Remove discount image"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:153
+#: includes/class-getpaid-post-types.php:143
 msgid "Remove invoice image"
 msgstr ""
 
@@ -11010,7 +11011,7 @@ msgid "Renew Subscription"
 msgstr ""
 
 #. %s: number of invoices
-#: includes/class-getpaid-post-types.php:317
+#: includes/class-getpaid-post-types.php:307
 #, php-format
 msgid "Renewal <span class=\"count\">(%s)</span>"
 msgid_plural "Renewal <span class=\"count\">(%s)</span>"
@@ -11531,7 +11532,7 @@ msgstr ""
 msgid "Search Customers"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:203
+#: includes/class-getpaid-post-types.php:193
 msgid "Search discounts"
 msgstr ""
 
@@ -11539,7 +11540,7 @@ msgstr ""
 msgid "Search for a customer by email or name"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:147
+#: includes/class-getpaid-post-types.php:137
 msgid "Search invoices"
 msgstr ""
 
@@ -11632,7 +11633,8 @@ msgstr ""
 msgid "Select File Type"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:166
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:52
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:184
 msgid "Select Gateway"
 msgstr ""
 
@@ -11776,11 +11778,11 @@ msgstr ""
 msgid "Sergipe"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:208
+#: includes/class-getpaid-post-types.php:198
 msgid "Set discount image"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:152
+#: includes/class-getpaid-post-types.php:142
 msgid "Set invoice image"
 msgstr ""
 
@@ -11868,7 +11870,7 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:191
+#: includes/admin/class-getpaid-metaboxes.php:189
 #: includes/data/payment-form-elements.php:182
 #: templates/payment-forms/elements/address.php:91
 msgid "Shipping Address"
@@ -13501,7 +13503,7 @@ msgstr ""
 #: includes/data/email-settings.php:598
 msgid ""
 "These emails are sent to customers whenever their subscription is about to "
-"expire."
+"renew."
 msgstr ""
 
 #: includes/data/email-settings.php:86
@@ -13636,11 +13638,11 @@ msgid ""
 "fails."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:161
+#: includes/class-getpaid-post-types.php:151
 msgid "This is where invoices are stored."
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:217
+#: includes/class-getpaid-post-types.php:207
 msgid "This is where you can add new discounts that users can use in invoices."
 msgstr ""
 
@@ -13993,7 +13995,7 @@ msgstr ""
 msgid "Transaction ID"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:109
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:127
 msgid "Transaction ID:"
 msgstr ""
 
@@ -14253,11 +14255,11 @@ msgstr ""
 msgid "Upload File"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:212
+#: includes/class-getpaid-post-types.php:202
 msgid "Uploaded to this discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:156
+#: includes/class-getpaid-post-types.php:146
 msgid "Uploaded to this invoice"
 msgstr ""
 
@@ -14312,11 +14314,11 @@ msgstr ""
 msgid "Use a new payment method"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:210
+#: includes/class-getpaid-post-types.php:200
 msgid "Use as discount image"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:154
+#: includes/class-getpaid-post-types.php:144
 msgid "Use as invoice image"
 msgstr ""
 
@@ -14620,11 +14622,11 @@ msgstr ""
 msgid "View Default Content"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:201
+#: includes/class-getpaid-post-types.php:191
 msgid "View discount"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:202
+#: includes/class-getpaid-post-types.php:192
 msgid "View Discounts"
 msgstr ""
 
@@ -14637,8 +14639,8 @@ msgstr ""
 msgid "View Invoice"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:145
-#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:72
+#: includes/class-getpaid-post-types.php:135
+#: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-payment-meta.php:90
 msgid "View invoice"
 msgstr ""
 
@@ -14646,7 +14648,7 @@ msgstr ""
 msgid "View Invoice Details"
 msgstr ""
 
-#: includes/class-getpaid-post-types.php:146
+#: includes/class-getpaid-post-types.php:136
 msgid "View Invoices"
 msgstr ""
 
