@@ -102,7 +102,7 @@ class GetPaid_Post_Types {
 					'description'        => __( 'Add new payment forms.', 'invoicing' ),
 					'public'             => false,
 					'show_ui'            => true,
-					'show_in_menu'       => $capabilities ? 'wpinv' : false,
+					'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
 					'show_in_nav_menus'  => false,
 					'query_var'          => false,
 					'rewrite'            => true,
@@ -112,16 +112,6 @@ class GetPaid_Post_Types {
 					'menu_position'      => null,
 					'supports'           => array( 'title' ),
 					'menu_icon'          => 'dashicons-media-form',
-					'capabilities' => array(
-						'edit_post'          => $capabilities,
-						'read_post'          => $capabilities,
-						'delete_post'        => $capabilities,
-						'edit_posts'         => 'update_core',
-						'edit_others_posts'  => 'update_core',
-						'delete_posts'       => 'update_core',
-						'publish_posts'      => 'update_core',
-						'read_private_posts' => 'update_core'
-					),
 				)
 			)
 		);

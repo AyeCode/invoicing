@@ -145,8 +145,10 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
 
             }
 
-            echo $alert;
-        
+            if ( ! empty( $alert ) ) {
+                echo $alert;
+            }
+
         ?>
 
         <div class="wpinv-receipt-details">

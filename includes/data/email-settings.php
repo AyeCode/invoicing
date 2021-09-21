@@ -595,7 +595,7 @@ return array(
         'email_renewal_reminder_header' => array(
             'id'       => 'email_renewal_reminder_header',
             'name'     => '<h3>' . __( 'Renewal Reminder', 'invoicing' ) . '</h3>',
-            'desc'     => __( 'These emails are sent to customers whenever their subscription is about to expire.', 'invoicing' ),
+            'desc'     => __( 'These emails are sent to customers whenever their subscription is about to renew.', 'invoicing' ),
             'type'     => 'header',
         ),
 
