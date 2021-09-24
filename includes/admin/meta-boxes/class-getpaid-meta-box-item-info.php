@@ -83,6 +83,16 @@ class GetPaid_Meta_Box_Item_Info {
                 </div>
             </div>
 
+            <div class="wpinv_item_buy_url form-group row">
+                <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
+                    <?php _e( 'Direct Payment URL', 'invoicing' );?>
+                </label>
+
+                <div class="col-sm-12">
+                    <input onClick="this.select()" type="text" id="wpinv_item_buy_url" value="<?php echo esc_url( getpaid_embed_url( false, $item->get_id() . '|0' ) ); ?>" style="width: 100%;" readonly/>
+                </div>
+            </div>
+
             <div class="wpinv_item_custom_id form-group">
                 <?php _e( 'Custom ID', 'invoicing' );?> &mdash; <?php echo esc_html( $item->get_custom_id() ) ?>
             </div>

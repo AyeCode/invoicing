@@ -1634,3 +1634,75 @@ function getpaid_get_form_element_grid_class( $element ) {
 
     return $class;
 }
+
+/**
+ * Retrieves the payment form embed URL.
+ *
+ * @param int $payment_form payment form.
+ * @param string $items form items.
+ *
+ * @return string
+ */
+function getpaid_embed_url( $payment_form = false, $items = false ) {
+
+    return add_query_arg(
+        array(
+            'getpaid_embed' => 1,
+            'form'          => $payment_form ? absint( $payment_form ) : false,
+            'item'          => $items ? urlencode( $items ) : false
+        ),
+        home_url( 'index.php' )
+    );
+
+}
+
+/**
+ * Embeds a payment form.
+ *
+ * @return string
+ */
+function getpaid_filter_embed_template( $template ) {
+
+    if ( isset( $_GET['getpaid_embed'] ) ) {
+        wpinv_get_template( 'payment-forms/embed.php' );
+        exit;
+    }
+
+    return $template;
+}
+add_filter( 'template_include', 'getpaid_filter_embed_template' );
+
+/**
+ * Prints embed styles.
+ */
+function getpaid_print_embed_styles() {
+
+    // Make sure that all scripts have been loaded.
+    if ( ! did_action( 'wp_enqueue_scripts' ) ) {
+        do_action( 'wp_enqueue_scripts' );
+    }
+
+    wp_print_styles( 'ayecode-ui' );
+
+}
+add_action( 'getpaid_payment_form_embed_head', 'getpaid_print_embed_styles' );
+
+/**
+ * Prints embed scripts.
+ */
+function getpaid_print_embed_scripts() {
+
+    // Make sure that all scripts have been loaded.
+    if ( ! did_action( 'wp_enqueue_scripts' ) ) {
+        do_action( 'wp_enqueue_scripts' );
+    }
+
+    wp_print_styles( 'ayecode-ui' );
+    wp_print_scripts(
+        array(
+            'wpinv-front-script'
+        )
+    );
+
+}
+add_action( 'getpaid_payment_form_embed_bottom', 'getpaid_print_embed_scripts' );
