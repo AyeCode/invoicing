@@ -86,6 +86,7 @@ class GetPaid_Meta_Box_Item_Info {
             <div class="wpinv_item_buy_url form-group row">
                 <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
                     <?php _e( 'Direct Payment URL', 'invoicing' );?>
+                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>
                 </label>
 
                 <div class="col-sm-12">
