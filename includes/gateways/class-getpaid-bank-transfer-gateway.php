@@ -24,7 +24,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-	protected $supports = array( 'addons' );
+	protected $supports = array( 'subscription', 'addons', 'single_subscription_group', 'multiple_subscription_groups' );
 
     /**
 	 * Payment method order.
@@ -48,12 +48,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		add_action( 'getpaid_invoice_line_items', array( $this, 'thankyou_page' ), 40 );
 		add_action( 'wpinv_pdf_content_billing', array( $this, 'thankyou_page' ), 11 );
 		add_action( 'wpinv_email_invoice_details', array( $this, 'email_instructions' ), 10, 3 );
+		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
+		add_action( 'getpaid_invoice_status_publish', array( $this, 'invoice_paid' ), 20 );
 
     }
 
     /**
 	 * Process Payment.
-	 *
 	 *
 	 * @param WPInv_Invoice $invoice Invoice.
 	 * @param array $submission_data Posted checkout fields.
@@ -63,7 +64,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	public function process_payment( $invoice, $submission_data, $submission ) {
 
         // Add a transaction id.
-        $invoice->set_transaction_id( $invoice->generate_key('trans_') );
+        $invoice->set_transaction_id( $invoice->generate_key('bt_') );
 
         // Set it as pending payment.
         if ( ! $invoice->needs_payment() ) {
@@ -121,13 +122,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             }
 
 			$this->bank_details( $invoice );
-			
+
 			echo '</div>';
 
 		}
 
     }
-    
+
     /**
 	 * Get bank details and place into a list format.
 	 *
@@ -185,7 +186,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		echo '</table>';
 
     }
-    
+
     /**
 	 * Get country locale if localized.
 	 *
@@ -250,7 +251,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 
 	/**
 	 * Filters the gateway settings.
-	 * 
+	 *
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
@@ -269,13 +270,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             'id'   => 'bank_transfer_ac_name',
             'name' => __( 'Account Name', 'invoicing' ),
 		);
-		
+
 		$admin_settings['bank_transfer_ac_no'] = array(
             'type' => 'text',
             'id'   => 'bank_transfer_ac_no',
             'name' => __( 'Account Number', 'invoicing' ),
 		);
-		
+
 		$admin_settings['bank_transfer_bank_name'] = array(
             'type' => 'text',
             'id'   => 'bank_transfer_bank_name',
@@ -299,7 +300,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             'id'   => 'bank_transfer_bic',
             'name' => __( 'BIC/Swift Code', 'invoicing' ),
 		);
-		
+
 		$admin_settings['bank_transfer_sort_code'] = array(
 			'type' => 'text',
 			'id'   => 'bank_transfer_sort_code',
@@ -335,5 +336,70 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
         $invoice->recalculate_total();
         $invoice->save();
 	}
+
+	/**
+	 * (Maybe) renews a bank transfer subscription profile.
+	 *
+	 *
+     * @param WPInv_Subscription $subscription
+	 */
+	public function maybe_renew_subscription( $subscription ) {
+
+        // Ensure its our subscription && it's active.
+        if ( $this->id == $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+			$subscription->create_payment();
+        }
+
+    }
+
+	/**
+	 * Process a bank transfer payment.
+	 *
+	 *
+     * @param WPInv_Invoice $invoice
+	 */
+	public function invoice_paid( $invoice ) {
+
+		// Abort if not paid by bank transfer.
+		if ( $this->id !== $invoice->get_gateway() || ! $invoice->is_recurring() ) {
+			return;
+		}
+
+		// Is it a parent payment?
+		if ( 0 == $invoice->get_parent_id() ) {
+
+			// (Maybe) activate subscriptions.
+			$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+			if ( ! empty( $subscriptions ) ) {
+				$subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
+
+				foreach ( $subscriptions as $subscription ) {
+					if ( $subscription->exists() ) {
+						$duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
+						$expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+
+						$subscription->set_next_renewal_date( $expiry );
+						$subscription->set_date_created( current_time( 'mysql' ) );
+						$subscription->set_profile_id( 'bt_sub_' . $invoice->get_id() . '_' . $subscription->get_id() );
+						$subscription->activate();
+					}
+				}
+
+			}
+
+		} else {
+
+			$subscription = getpaid_get_subscription( $invoice->get_subscription_id() );
+
+			// Renew the subscription.
+			if ( $subscription && $subscription->exists() ) {
+				$subscription->add_payment( array(), $invoice );
+				$subscription->renew();
+			}
+
+		}
+
+    }
 
 }

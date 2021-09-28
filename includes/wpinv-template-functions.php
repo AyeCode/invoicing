@@ -901,7 +901,8 @@ function getpaid_display_invoice_subscriptions( $invoice ) {
     }
 
 }
-add_action( 'getpaid_invoice_line_items', 'getpaid_display_invoice_subscriptions', 15 );
+add_action( 'getpaid_invoice_line_items', 'getpaid_display_invoice_subscriptions', 55 );
+add_action( 'wpinv_receipt_end', 'getpaid_display_invoice_subscriptions', 11 );
 
 /**
  * Displays invoice notices on invoices.

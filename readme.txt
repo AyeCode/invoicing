@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.0 =
+* Bank transfer gateway now supports subscriptions - ADDED
+
 = 2.4.9 =
 * Add direct payment links to payment forms - ADDED
 
