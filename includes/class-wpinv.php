@@ -438,7 +438,8 @@ class WPInv_Plugin {
 			// don't initiate in these conditions.
 		}else{
 
-			$exclude = function_exists('sd_widget_exclude') ? sd_widget_exclude() : array();
+			// Only load allowed widgets.
+			$exclude = function_exists( 'sd_widget_exclude' ) ? sd_widget_exclude() : array();
 			$widgets = apply_filters(
 				'getpaid_widget_classes',
 				array(
@@ -452,12 +453,21 @@ class WPInv_Plugin {
 				)
 			);
 
-			if( !empty($widgets) ){
-				foreach ( $widgets as $widget ) {
-					if(!in_array($widget,$exclude)){
-						register_widget( $widget );
-					}
+			// For each widget...
+			foreach ( $widgets as $widget ) {
+
+				// Abort early if it is excluded for this page.
+				if ( in_array( $widget, $exclude ) ) {
+					continue;
 				}
+
+				// SD V1 used to extend the widget class. V2 does not, so we cannot call register widget on it.
+				if ( is_subclass_of( $widget, 'WP_Widget' ) ) {
+					register_widget( $widget );
+				} else {
+					new $widget();
+				}
+
 			}
 
 		}
