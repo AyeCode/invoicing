@@ -5,7 +5,7 @@
  * @wordpress-plugin
  * Plugin Name: Super Duper - Examples
  * Description: This is a Hello World test plugin for WP Super Duper Class.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: AyeCode
  * Author URI: https://ayecode.io
  * Text Domain: super-duper

@@ -621,7 +621,7 @@ function wpinv_gateways_callback() {
 }
 
 function wpinv_gateway_select_callback($args) {
-    
+
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
     $class = !empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
 	$std     = isset( $args['std'] ) ? $args['std'] : '';

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-21 13:43+0000\n"
+"POT-Creation-Date: 2021-10-07 13:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -39,8 +39,8 @@ msgstr ""
 msgid "%1$s (renews at %2$s / %3$s)"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1177
-#: includes/wpinv-template-functions.php:1194
+#: includes/wpinv-template-functions.php:1178
+#: includes/wpinv-template-functions.php:1195
 #, php-format
 msgid "%1$s - %2$s at %3$s"
 msgstr ""
@@ -806,13 +806,13 @@ msgstr ""
 msgid "Access Denied"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:146
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:270
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:147
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:271
 msgid "Account Name"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:147
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:276
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:148
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:277
 msgid "Account Number"
 msgstr ""
 
@@ -1817,17 +1817,17 @@ msgstr ""
 msgid "Bangladeshi Taka"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:224
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:229
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:225
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:230
 msgid "Bank code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:172
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:173
 msgid "Bank Details"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:148
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:282
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:149
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:283
 msgid "Bank Name"
 msgstr ""
 
@@ -1835,7 +1835,7 @@ msgstr ""
 msgid "Bank transfer"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:209
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:210
 msgid "Bank transit number"
 msgstr ""
 
@@ -2039,11 +2039,11 @@ msgstr ""
 msgid "Bhutanese Ngultrum"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:300
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:301
 msgid "BIC/Swift Code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:151
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:152
 msgid "BIC/Swift code"
 msgstr ""
 
@@ -2233,11 +2233,11 @@ msgstr ""
 msgid "Brahmanbaria"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:239
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:240
 msgid "Branch code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:219
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:220
 msgid "Branch sort"
 msgstr ""
 
@@ -2277,7 +2277,7 @@ msgstr ""
 msgid "Brunei Dollar"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:204
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:205
 msgid "BSB"
 msgstr ""
 
@@ -3523,7 +3523,7 @@ msgstr ""
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:87
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:98
 msgid "Custom ID"
 msgstr ""
 
@@ -3729,7 +3729,7 @@ msgstr ""
 msgid "Delete Item"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1202
+#: includes/wpinv-template-functions.php:1203
 msgid "Delete note"
 msgstr ""
 
@@ -3801,6 +3801,11 @@ msgstr ""
 
 #: includes/gateways/class-getpaid-bank-transfer-gateway.php:42
 msgid "Direct bank transfer"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:88
+#: includes/admin/meta-boxes/class-getpaid-meta-box-payment-form-info.php:62
+msgid "Direct Payment URL"
 msgstr ""
 
 #: includes/data/admin-settings.php:600
@@ -4344,7 +4349,7 @@ msgstr ""
 msgid "Enable Admin BCC"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:259
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:260
 msgid "Enable bank transfer"
 msgstr ""
 
@@ -4616,7 +4621,7 @@ msgstr ""
 msgid "Error generating a renewal invoice."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1054
+#: includes/wpinv-template-functions.php:1055
 msgid "Error loading the payment form"
 msgstr ""
 
@@ -4814,7 +4819,7 @@ msgstr ""
 msgid "Fee amount."
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:113
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:124
 msgid "Fee: Like Registration Fee, Sign up Fee etc"
 msgstr ""
 
@@ -5858,8 +5863,8 @@ msgstr ""
 msgid "Ialoveni"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:150
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:294
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:151
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:295
 msgid "IBAN"
 msgstr ""
 
@@ -5931,15 +5936,15 @@ msgid ""
 "GetPaid, you can use this tool to migrate them."
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:214
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:215
 msgid "IFSC"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:288
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:289
 msgid "IFSC Code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:149
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:150
 msgid "IFSC code"
 msgstr ""
 
@@ -6089,11 +6094,11 @@ msgstr ""
 msgid "Installing"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:311
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:312
 msgid "Instructions"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:312
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:313
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
 
@@ -6141,7 +6146,7 @@ msgstr ""
 msgid "Invalid ID."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1007
+#: includes/wpinv-template-functions.php:1008
 #: includes/payments/class-getpaid-payment-form-submission.php:271
 msgid "Invalid invoice"
 msgstr ""
@@ -6238,7 +6243,7 @@ msgstr ""
 msgid "Invoice fees (Name => properties)."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1328
+#: includes/wpinv-template-functions.php:1329
 msgid "Invoice has already been paid"
 msgstr ""
 
@@ -6270,7 +6275,7 @@ msgstr ""
 msgid "Invoice meta data."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1318
+#: includes/wpinv-template-functions.php:1319
 msgid "Invoice not found"
 msgstr ""
 
@@ -8098,8 +8103,8 @@ msgstr ""
 msgid "Maine"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:258
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:314
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:259
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:315
 msgid ""
 "Make your payment directly into our bank account. Please use your Invoice "
 "Number as the payment reference. Your invoice won't be processed until the "
@@ -9168,7 +9173,7 @@ msgstr ""
 msgid "No %s found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1535
+#: includes/wpinv-template-functions.php:1536
 msgid "No active gateways support subscription payments."
 msgstr ""
 
@@ -9229,7 +9234,8 @@ msgstr ""
 msgid "No payment form or item provided"
 msgstr ""
 
-#: widgets/getpaid.php:94
+#: widgets/getpaid.php:94 templates/payment-forms/embed.php:8
+#: templates/payment-forms/embed.php:11
 msgid "No payment form or item selected"
 msgstr ""
 
@@ -9241,7 +9247,7 @@ msgstr ""
 msgid "No payment forms found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1293
+#: includes/wpinv-template-functions.php:1294
 msgid "No published items found"
 msgstr ""
 
@@ -9375,7 +9381,7 @@ msgstr ""
 msgid "Note to customer"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:948
+#: includes/wpinv-template-functions.php:949
 msgid "Notes"
 msgstr ""
 
@@ -10641,7 +10647,7 @@ msgstr ""
 msgid "Privacy policy"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1235
+#: includes/wpinv-template-functions.php:1236
 msgid "privacy policy"
 msgstr ""
 
@@ -11179,7 +11185,7 @@ msgstr ""
 msgid "Rounding"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:234
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:235
 msgid "Routing number"
 msgstr ""
 
@@ -12177,8 +12183,8 @@ msgstr ""
 msgid "Sorsogon"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:143
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:265
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:144
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:266
 msgid "Sort code"
 msgstr ""
 
@@ -12282,7 +12288,7 @@ msgstr ""
 msgid "Standard Tax Rate"
 msgstr ""
 
-#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:112
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:123
 msgid "Standard: Standard item type"
 msgstr ""
 
@@ -12475,7 +12481,7 @@ msgstr ""
 msgid "Subscription not found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1538
+#: includes/wpinv-template-functions.php:1539
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
@@ -13569,7 +13575,7 @@ msgstr ""
 msgid "This invoice has already been paid for."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1036
+#: includes/wpinv-template-functions.php:1037
 msgid "This invoice has already been paid."
 msgstr ""
 
@@ -15115,7 +15121,7 @@ msgstr ""
 msgid "Yobe"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1019
+#: includes/wpinv-template-functions.php:1020
 msgid "You are not allowed to view this invoice"
 msgstr ""
 
@@ -15130,6 +15136,12 @@ msgstr ""
 #: includes/invoice-functions.php:145
 msgid ""
 "You can not update cart items for invoices that have already been paid for."
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:89
+#: includes/admin/meta-boxes/class-getpaid-meta-box-payment-form-info.php:63
+msgid ""
+"You can use this in an iFrame to embed the payment form on another website"
 msgstr ""
 
 #: templates/payment-forms-admin/edit/date.php:45
@@ -15198,7 +15210,7 @@ msgstr ""
 msgid "Your billing address has been updated"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1094
+#: includes/wpinv-template-functions.php:1095
 msgid "Your cart is empty."
 msgstr ""
 
@@ -15256,7 +15268,7 @@ msgid ""
 "seconds. If it does not, click <a href=\"%s\">here</a>."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1229
+#: includes/wpinv-template-functions.php:1230
 #, php-format
 msgid ""
 "Your personal data will be used to process your invoice, payment and for "

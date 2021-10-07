@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 	 */
 	abstract class WP_Super_Duper {
 	
-		public $version = "2.0.0";
+		public $version = "2.0.1";
 		public $font_awesome_icon_version = "5.11.2";
 		public $block_code;
 		public $options;
@@ -2127,6 +2127,30 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 			}
 	
 			return $output;
+		}
+
+		/**
+		 * Backwards compatibility for SDv1
+		 * 
+		 * @param string $editor_id
+		 * @param string $insert_shortcode_function
+		 * 
+		 * @return string|void
+		 */
+		public static function shortcode_insert_button( $editor_id = '', $insert_shortcode_function = '' ) {
+			return class_exists('WP_Super_Duper_Shortcode') ? WP_Super_Duper_Shortcode::shortcode_insert_button( $editor_id, $insert_shortcode_function ) : '';
+		}
+
+		/**
+		 * Backwards compatibility for SDv1
+		 * 
+		 * @param string $id
+		 * @param string $search_for_id
+		 * 
+		 * @return mixed|string
+		 */
+		public static function shortcode_button( $id = '', $search_for_id = '') {
+			return class_exists('WP_Super_Duper_Shortcode') ? WP_Super_Duper_Shortcode::shortcode_button( $id, $search_for_id ) : '';
 		}
 	
 	}

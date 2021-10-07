@@ -1,3 +1,6 @@
+= 2.0.1 =
+* Added missing static functions to main class for backwards comparability - FIXED
+
 = 2.0.0 =
 * WARNING v2 is a breaking change, please see our migration guide in our github repo https://github.com/AyeCode/wp-super-duper/ -  BREAKING CHANGE
 * Widget, blocks and shortcodes classes separated our for better readability and memory usage - CHANGED
