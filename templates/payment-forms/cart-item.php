@@ -5,6 +5,8 @@
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/cart-item.php.
  *
  * @version 1.0.19
+ * @var GetPaid_Payment_Form $form
+ * @var GetPaid_Form_Item $item
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -45,6 +47,18 @@ $currency = $form->get_currency();
                         $description = getpaid_item_recurring_price_help_text( $item, $currency );
                         if ( $description ) {
                             echo "<small class='getpaid-form-item-price-desc form-text text-muted pr-2 m-0'>$description</small>";
+						}
+
+						if ( wpinv_current_user_can_manage_invoicing() ) {
+
+							edit_post_link(
+								__( 'Edit this item.', 'invoicing' ),
+								'<small class="form-text text-muted">',
+								'</small>',
+								$item->get_id(),
+								'text-danger'
+							);
+
 						}
 
 					}
