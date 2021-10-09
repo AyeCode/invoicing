@@ -282,7 +282,7 @@ class GetPaid_Admin {
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
-		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable' ),  $version );
+		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable', 'wp-hooks' ),  $version );
 
 		wp_localize_script(
             'wpinv-admin-payment-form-script',
