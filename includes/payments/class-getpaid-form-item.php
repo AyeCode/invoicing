@@ -300,15 +300,15 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		return array(
 			'post_id'           => $this->invoice_id,
 			'item_id'           => $this->get_id(),
-			'item_name'         => sanitize_text_field( $this->get_raw_name() ),
-			'item_description'  => $this->get_description(),
+			'item_name'         => sanitize_text_field( $this->get_raw_name( 'edit' ) ),
+			'item_description'  => $this->get_description( 'edit' ),
 			'tax'               => $this->item_tax,
-			'item_price'        => $this->get_price(),
-			'quantity'          => (float) $this->get_quantity(),
+			'item_price'        => $this->get_price( 'edit' ),
+			'quantity'          => (float) $this->get_quantity( 'edit' ),
 			'discount'          => $this->item_discount,
-			'subtotal'          => $this->get_sub_total(),
-			'price'             => $this->get_sub_total() + $this->item_tax - $this->item_discount,
-			'meta'              => $this->get_item_meta(),
+			'subtotal'          => $this->get_sub_total( 'edit' ),
+			'price'             => $this->get_sub_total( 'edit' ) + $this->item_tax - $this->item_discount,
+			'meta'              => $this->get_item_meta( 'edit' ),
 		);
 
 	}
