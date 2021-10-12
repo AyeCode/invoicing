@@ -236,8 +236,22 @@ class GetPaid_Checkout {
         foreach ( $submission->get_payment_form()->get_elements() as $field ) {
 
 			// Skip premade fields.
-            if ( ! empty( $field['premade'] ) || $field['type'] == 'address' ) {
+            if ( ! empty( $field['premade'] ) ) {
                 continue;
+            }
+
+			// Ensure address is provided.
+			if ( $field['type'] == 'address' ) {
+                $address_type = 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
+
+				foreach ( $field['fields'] as $address_field ) {
+
+					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) {
+						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
+					}
+
+				}
+
             }
 
             // If it is required and not set, abort.
