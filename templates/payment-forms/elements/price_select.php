@@ -89,7 +89,7 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
             $class = '';
         }
         echo "
-            <span>
+            <span class='d-inline-block'>
                 <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change w-auto' id='$_id' value='$price' name='$id' $checked />
                 <label for='$_id' class='$class'><span>$label</span></label>
             </span>

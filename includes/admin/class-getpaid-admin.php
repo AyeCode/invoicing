@@ -54,7 +54,7 @@ class GetPaid_Admin {
 	 *
 	 */
 	private function init_admin_hooks() {
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 9 );
         add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
         add_action( 'admin_init', array( $this, 'init_ayecode_connect_helper' ) );
         add_action( 'admin_init', array( $this, 'activation_redirect') );

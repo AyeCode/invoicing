@@ -139,9 +139,8 @@ class WPInv_Admin_Menus {
     }
 
     function options_page() {
-        $page       = isset( $_GET['page'] )                ? strtolower( $_GET['page'] )               : false;
 
-        if ( $page !== 'wpinv-settings' ) {
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
             return;
         }
 
@@ -159,7 +158,6 @@ class WPInv_Admin_Menus {
 
         $registered_sections = wpinv_get_settings_tab_sections( $active_tab );
         $section             = isset( $_GET['section'] ) && ! empty( $registered_sections ) && array_key_exists( $_GET['section'], $registered_sections ) ? $_GET['section'] : $key;
-        ob_start();
         ?>
         <div class="wrap">
             <h1 class="nav-tab-wrapper">
@@ -236,8 +234,6 @@ class WPInv_Admin_Menus {
             </div><!-- #tab_container-->
         </div><!-- .wrap -->
         <?php
-        $content = ob_get_clean();
-        echo $content;
     }
 
     public function remove_admin_submenus() {

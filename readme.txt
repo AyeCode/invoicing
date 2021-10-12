@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.3 =
+* "All 404 Redirect to Homepage" causes settings page to disappear - FIXED
+
 = 2.5.2 =
 * Super Duper v2 causing some issues with builders that use widgets, rolled back to SDv1 to resolve - FIXED
 

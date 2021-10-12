@@ -3498,8 +3498,8 @@ class WPInv_Invoice extends GetPaid_Data {
 		$recurring = 0;
 
         foreach ( $items as $item ) {
-			$subtotal  += $item->get_sub_total();
-			$recurring += $item->get_recurring_sub_total();
+			$subtotal  += $item->get_sub_total( 'edit' );
+			$recurring += $item->get_recurring_sub_total( 'edit' );
         }
 
 		if ( wpinv_prices_include_tax() ) {
@@ -3659,7 +3659,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->recalculate_total_discount();
 		$this->recalculate_total_tax();
 		$this->recalculate_subtotal();
-		$this->set_total( $this->get_total_tax() + $this->get_total_fees() + $this->get_subtotal() - $this->get_total_discount() );
+		$this->set_total( $this->get_total_tax( 'edit' ) + $this->get_total_fees( 'edit' ) + $this->get_subtotal( 'edit' ) - $this->get_total_discount( 'edit' ) );
 		return $this->get_total();
 	}
 

@@ -295,7 +295,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_price( $context = 'view' ) {
         return wpinv_sanitize_amount( $this->get_prop( 'price', $context ) );
 	}
-	
+
 	/**
 	 * Get the inital price of the item.
 	 *

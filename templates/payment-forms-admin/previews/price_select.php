@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 <!-- Buttons -->
 <div v-if='form_element.select_type=="buttons"' class="getpaid-price-buttons">
-    <span v-for="(option, index) in form_element.options.split(',')" :key="index">
+    <span v-for="(option, index) in form_element.options.split(',')" :key="index"  class='d-inline-block'>
         <input type="radio" :id="form_element.id + index" :checked="index==0" />
         <label :for="form_element.id + index" class="rounded">{{option | optionize}}</label>
     </span>
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 
 <!-- Circles -->
 <div v-if='form_element.select_type=="circles"' class="getpaid-price-buttons getpaid-price-circles">
-    <span v-for="(option, index) in form_element.options.split(',')" :key="index">
+    <span v-for="(option, index) in form_element.options.split(',')" :key="index" class='d-inline-block'>
         <input type="radio" :id="form_element.id + index" :checked="index==0" />
         <label :for="form_element.id + index"><span>{{option | optionize}}</span></label>
     </span>

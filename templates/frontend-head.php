@@ -40,7 +40,7 @@ defined( 'ABSPATH' ) || exit;
 	.getpaid-price-buttons input[type="radio"]{
 		visibility: hidden;
 		height: 0;
-		width: 0;
+		width: 0 !important;
 	}
 
 	.getpaid-price-buttons input[type="radio"]:checked + label,
