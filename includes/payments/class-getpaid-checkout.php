@@ -158,7 +158,8 @@ class GetPaid_Checkout {
         $invoice->set_fees( $submission->get_fees() );
         $invoice->set_taxes( $submission->get_taxes() );
 		$invoice->set_discounts( $submission->get_discounts() );
-		$invoice->set_gateway( $submission->get_field('wpi-gateway') );
+		$invoice->set_gateway( $submission->get_field( 'wpi-gateway' ) );
+		$invoice->set_currency( $submission->get_currency() );
 
 		$address_confirmed = $submission->get_field( 'confirm-address' );
 		$invoice->set_address_confirmed( ! empty( $address_confirmed ) );
