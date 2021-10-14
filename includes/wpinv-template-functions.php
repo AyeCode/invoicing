@@ -1684,6 +1684,7 @@ function getpaid_print_embed_styles() {
     }
 
     wp_print_styles( 'ayecode-ui' );
+    wp_print_styles( 'font-awesome' );
 
 }
 add_action( 'getpaid_payment_form_embed_head', 'getpaid_print_embed_styles' );

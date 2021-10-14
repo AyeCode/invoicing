@@ -2,6 +2,35 @@
 
 jQuery(function ($) {
 
+	// Select 2.
+	Vue.component('gpselect2', {
+		props: ['value'],
+		template: '#gpselect2-template',
+		mounted: function () {
+			var vm = this
+			$(this.$el)
+				// init select2
+				.select2()
+				.val(this.value)
+				.trigger('change.select2')
+				// emit event on change.
+				.on('change', function ( e ) {
+					vm.$emit('input',jQuery(e.currentTarget).val() )
+				})
+		},
+
+		watch: {
+			value : function (value)  {
+				// update value
+				jQuery(this.$el).val(value).trigger('change.select2')
+			},
+		},
+	
+		destroyed: function () {
+			$(this.$el).off().select2('destroy')
+		}
+	})
+
 	// Init our vue app
 	window.getpaid_form_builder = new Vue({
 
@@ -36,15 +65,15 @@ jQuery(function ($) {
 
 					get: function get() {
 
-						if ( this.active_form_element.grid_width ) {
-						return this.active_form_element.grid_width;
+						if (this.active_form_element.grid_width) {
+							return this.active_form_element.grid_width;
 						}
 
 						return 'full';
 					},
 
-					set: function set( grid_width ) {
-						this.$set( this.active_form_element, 'grid_width', grid_width )
+					set: function set(grid_width) {
+						this.$set(this.active_form_element, 'grid_width', grid_width)
 					}
 
 				},
@@ -57,15 +86,15 @@ jQuery(function ($) {
 			{
 
 				// Returns the grid width class
-				grid_class: function grid_class( field ) {
+				grid_class: function grid_class(field) {
 
 					var grid_class = 'col-12'
 
-					if ( 'half' == field.grid_width ) {
+					if ('half' == field.grid_width) {
 						grid_class = 'col-12 col-md-6';
 					}
 
-					if ( 'third' == field.grid_width ) {
+					if ('third' == field.grid_width) {
 						grid_class = 'col-12 col-md-4';
 					}
 
@@ -73,8 +102,8 @@ jQuery(function ($) {
 				},
 
 				// Returns an array of visible fields.
-				visible_fields: function visible_fields( fields ) {
-					return fields.filter( function ( field ) {
+				visible_fields: function visible_fields(fields) {
+					return fields.filter(function (field) {
 						return field.visible
 					});
 				},
@@ -172,30 +201,30 @@ jQuery(function ($) {
 				},
 
 				// Adds a currency to a price.
-				addSelectedItem: function addSelectedItem( event ) {
+				addSelectedItem: function addSelectedItem(event) {
 
 					var select = $(event.target).parent().find('select')
-					var selected_item = $( select ).select2( 'data' )[0]
+					var selected_item = $(select).select2('data')[0]
 
 					// Abort if no item was selected.
-					if ( ! selected_item.form_data ) {
+					if (!selected_item.form_data) {
 						return
 					}
-		
+
 					// Only add the item if it was not previously added.
 					var exists = false
 					selected_item = selected_item.form_data
 
-					$( this.form_items ).each( function( index, item ) {
+					$(this.form_items).each(function (index, item) {
 
-						if ( item.id && item.id == selected_item.id ) {
+						if (item.id && item.id == selected_item.id) {
 							exists = true
 						}
 
-					} )
+					})
 
-					if ( ! exists ) {
-						this.form_items.push( selected_item );
+					if (!exists) {
+						this.form_items.push(selected_item);
 					}
 
 					$(select)
@@ -221,11 +250,11 @@ jQuery(function ($) {
 				},
 
 				// Toggles an address panel.
-				toggleAddressPanel: function togglePanel( event ) {
+				toggleAddressPanel: function togglePanel(event) {
 
-					var parent = $(event.target).closest( '.wpinv-form-address-field-editor' )
+					var parent = $(event.target).closest('.wpinv-form-address-field-editor')
 
-					parent.find('.wpinv-form-address-field-editor-editor-body').slideToggle(400 ); // Toggle the active class
+					parent.find('.wpinv-form-address-field-editor-editor-body').slideToggle(400); // Toggle the active class
 					parent.toggleClass('active'); // Toggle dashicons
 
 					parent.find('.wpinv-available-items-editor-header > .toggle-icon .dashicons-arrow-down').toggle();
@@ -239,15 +268,15 @@ jQuery(function ($) {
 			'getpaid_form_builder_filters',
 			{
 				optionize: function (value) {
-				if (!value) return ''
+					if (!value) return ''
 
-				value = value.toString().split('|').splice(0,1).join('')
-				return value.toString().trim()
+					value = value.toString().split('|').splice(0, 1).join('')
+					return value.toString().trim()
 				},
 				formatMergeTag: function (value) {
 					if (!value) return ''
-	
-					return '{' + value.toString().trim().toLowerCase().replace( /[^a-z0-9]+/g,'_' ) + '}'
+
+					return '{' + value.toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') + '}'
 				}
 			}
 		),
@@ -259,11 +288,11 @@ jQuery(function ($) {
 
 					// directive definition
 					inserted: function (el) {
-						getpaid.init_select2_item_search( el, $(el).parent() )
+						getpaid.init_select2_item_search(el, $(el).parent())
 
 						// emit event on change.
-						$(el).on( 'change', function() {
-							$(el).trigger( 'itemselected' )
+						$(el).on('change', function () {
+							$(el).trigger('itemselected')
 						});
 					}
 
@@ -274,9 +303,9 @@ jQuery(function ($) {
 	});
 
 	// Remove the delete button on default forms.
-	$( document ).ready( function() {
+	$(document).ready(function () {
 
-		if ( wpinvPaymentFormAdmin && wpinvPaymentFormAdmin.is_default ) {
+		if (wpinvPaymentFormAdmin && wpinvPaymentFormAdmin.is_default) {
 			$('#minor-publishing').hide()
 			$('#delete-action').hide()
 			$('#wpinv-payment-form-shortcode').hide()
@@ -284,6 +313,6 @@ jQuery(function ($) {
 
 		$('.post-type-wpi_payment_form #visibility').hide()
 		$('.post-type-wpi_payment_form .misc-pub-curtime').hide()
-	} )
+	})
 
 });

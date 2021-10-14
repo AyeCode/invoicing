@@ -103,6 +103,7 @@ class WPInv_Ajax {
             'check_new_user_email'        => false,
             'run_tool'                    => false,
             'payment_form_refresh_prices' => true,
+            'file_upload'                 => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -1082,6 +1083,75 @@ class WPInv_Ajax {
 
         wp_send_json_success( $response );
     }
+
+    /**
+	 * Handles file uploads.
+	 *
+	 * @since       1.0.0
+	 * @return      void
+	 */
+	public static function file_upload() {
+
+        // Check nonce.
+        check_ajax_referer( 'getpaid_form_nonce' );
+
+        if ( empty( $_POST['form_id'] ) || empty( $_POST['field_name'] ) || empty( $_FILES['file'] ) ) {
+            wp_die( __( 'Bad Request', 'invoicing' ), 400 );
+        }
+
+        // Fetch form.
+        $form = new GetPaid_Payment_Form( intval( $_POST['form_id'] ) );
+
+        if ( ! $form->is_active() ) {
+            wp_send_json_error( __( 'Payment form not active', 'invoicing' ) );
+        }
+
+        // Fetch appropriate field.
+        $upload_field = current( wp_list_filter( $form->get_elements(), array( 'id' => sanitize_text_field( $_POST['field_name'] ) ) ) );
+        if ( empty( $upload_field ) ) {
+            wp_send_json_error( __( 'Invalid upload field.', 'invoicing' ) );
+        }
+
+        // Prepare allowed file types.
+        $file_types = isset( $upload_field['file_types'] ) ? $upload_field['file_types'] : array( 'jpg|jpeg|jpe', 'gif', 'png' );
+        $all_types  = getpaid_get_allowed_mime_types();
+        $mime_types = array();
+
+        foreach ( $file_types as $file_type ) {
+            if ( isset( $all_types[ $file_type ] ) ) {
+                $mime_types[] = $all_types[ $file_type ];
+            }
+        }
+
+        if ( ! in_array( $_FILES['file']['type'], $mime_types ) ) {
+            wp_send_json_error( __( 'Unsupported file type.', 'invoicing' ) );
+        }
+
+        // Upload file.
+        $file_name = explode( '.', strtolower( $_FILES['file']['name'] ) );
+        $file_name = uniqid( 'getpaid-' ) . '.' . array_pop( $file_name );
+
+        $uploaded = wp_upload_bits(
+            $file_name,
+            null,
+            file_get_contents( $_FILES["file"]["tmp_name"] )
+        );
+
+        if ( ! empty( $uploaded['error'] ) ) {
+            wp_send_json_error( $uploaded['error'] );
+        }
+
+        // Retrieve response.
+        $response = sprintf(
+            '<input type="hidden" name="%s[%s]" value="%s" />',
+            esc_attr( $_POST['field_name'] ),
+            esc_attr( $uploaded['url'] ),
+            esc_attr( strtolower( $_FILES['file']['name'] ) )
+        );
+
+        wp_send_json_success( $response );
+
+	}
 
 }
 

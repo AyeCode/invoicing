@@ -127,4 +127,18 @@ defined( 'ABSPATH' ) || exit;
 		border-color: #dc3545 !important;
 	}
 
+	.getpaid-file-upload-element{
+		height: 200px;
+		border: 3px dashed #dee2e6;
+		cursor: pointer;
+	}
+
+	.getpaid-file-upload-element:hover{
+		border: 3px dashed #424242;
+	}
+
+	.getpaid-file-upload-element.getpaid-trying-to-drop {
+	    border: 3px dashed #8bc34a;
+		background: #f1f8e9;
+	}
 </style>

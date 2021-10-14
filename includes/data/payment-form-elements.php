@@ -172,6 +172,19 @@ return array(
         )
     ),
 
+    array(
+        'type' => 'file_upload',
+        'name' => __( 'File Upload', 'invoicing' ),
+        'defaults'  => array(
+            'value'         => '',
+            'label'         => __( 'Upload File', 'invoicing' ),
+            'description'   => '',
+            'required'      => false,
+            'max_file_num'  => 1,
+            'file_types'    => array( 'jpg|jpeg|jpe', 'gif', 'png' ),
+        )
+    ),
+
     array( 
         'type' => 'address',
         'name' => __( 'Address', 'invoicing' ),

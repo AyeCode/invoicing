@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.4 =
+* New file upload field - ADDED
+
 = 2.5.3 =
 * "All 404 Redirect to Homepage" causes settings page to disappear - FIXED
 

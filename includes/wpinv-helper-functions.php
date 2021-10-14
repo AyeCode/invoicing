@@ -1062,3 +1062,24 @@ function getpaid_array_merge_if_empty( $args, $defaults ) {
     return $args;
 
 }
+
+/**
+ * Returns allowed file types.
+ *
+ * @return array
+ */
+function getpaid_get_allowed_mime_types() {
+
+    $types = get_allowed_mime_types();
+
+    if ( isset( $types['htm|html'] ) ) {
+		unset( $types['htm|html'] );
+	}
+
+    if ( isset( $types['js'] ) ) {
+		unset( $types['js'] );
+	}
+
+    return $types;
+
+}

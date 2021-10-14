@@ -263,7 +263,27 @@ class GetPaid_Checkout {
             // Handle misc fields.
             if ( isset( $data[ $field['id'] ] ) ) {
 
-				if ( $field['type'] == 'checkbox' ) {
+				// Uploads.
+				if ( $field['type'] == 'file_upload' ) {
+					$max_file_num = empty( $field['max_file_num'] ) ? 1 : absint( $field['max_file_num'] );
+
+					if ( count( $data[ $field['id'] ] ) > $max_file_num ) {
+						wp_send_json_error( __( 'Maximum number of allowed files exceeded.', 'invoicing' ) );
+					}
+
+					$value = array();
+
+					foreach ( $data[ $field['id'] ] as $url => $name ) {
+						$value[] = sprintf(
+							'<a href="%s" target="_blank">%s</a>',
+							esc_url_raw( $url ),
+							esc_html( $name )
+						);
+					}
+
+					$value = implode( ' | ', $value );
+
+				} else if ( $field['type'] == 'checkbox' ) {
 					$value = isset( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
 				} else {
 					$value = wp_kses_post( $data[ $field['id'] ] );
@@ -276,9 +296,9 @@ class GetPaid_Checkout {
                 }
 
 				if ( ! empty( $field['add_meta'] ) ) {
-					$prepared['meta'][ wpinv_clean( $label ) ] = $value;
+					$prepared['meta'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
 				}
-				$prepared['all'][ wpinv_clean( $label ) ] = $value;
+				$prepared['all'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
 
             }
 

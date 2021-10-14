@@ -46,6 +46,8 @@
 
         <?php do_action( 'getpaid_payment_form_embed_head' ); ?>
 
+		<?php wpinv_get_template( 'frontend-head.php' ); ?>
+
     </head>
 
 	<body class="body" style="font-weight: 400;">
@@ -54,6 +56,7 @@
 				do_action( 'getpaid_payment_form_embed_top' );
 				echo do_shortcode( $shortcode );
 				do_action( 'getpaid_payment_form_embed_bottom' );
+				wpinv_get_template( 'frontend-footer.php' );
 			?>
 		</div>
 	</body>

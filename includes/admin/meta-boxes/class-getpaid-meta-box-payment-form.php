@@ -96,6 +96,11 @@ class GetPaid_Meta_Box_Payment_Form {
 
             </div>
         </div>
+        <script type="text/x-template" id="gpselect2-template">
+            <select>
+                <slot></slot>
+            </select>
+        </script>
         <?php
 
         wp_nonce_field( 'getpaid_meta_nonce', 'getpaid_meta_nonce' );
