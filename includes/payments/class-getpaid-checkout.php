@@ -243,7 +243,7 @@ class GetPaid_Checkout {
 
 			// Ensure address is provided.
 			if ( $field['type'] == 'address' ) {
-                $address_type = 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
+                $address_type = isset( $field['address_type'] ) && 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
 
 				foreach ( $field['fields'] as $address_field ) {
 
