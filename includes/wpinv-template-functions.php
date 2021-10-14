@@ -1672,39 +1672,3 @@ function getpaid_filter_embed_template( $template ) {
     return $template;
 }
 add_filter( 'template_include', 'getpaid_filter_embed_template' );
-
-/**
- * Prints embed styles.
- */
-function getpaid_print_embed_styles() {
-
-    // Make sure that all scripts have been loaded.
-    if ( ! did_action( 'wp_enqueue_scripts' ) ) {
-        do_action( 'wp_enqueue_scripts' );
-    }
-
-    wp_print_styles( 'ayecode-ui' );
-    wp_print_styles( 'font-awesome' );
-
-}
-add_action( 'getpaid_payment_form_embed_head', 'getpaid_print_embed_styles' );
-
-/**
- * Prints embed scripts.
- */
-function getpaid_print_embed_scripts() {
-
-    // Make sure that all scripts have been loaded.
-    if ( ! did_action( 'wp_enqueue_scripts' ) ) {
-        do_action( 'wp_enqueue_scripts' );
-    }
-
-    wp_print_styles( 'ayecode-ui' );
-    wp_print_scripts(
-        array(
-            'wpinv-front-script'
-        )
-    );
-
-}
-add_action( 'getpaid_payment_form_embed_bottom', 'getpaid_print_embed_scripts' );

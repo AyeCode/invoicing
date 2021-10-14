@@ -43,15 +43,45 @@
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
         <title>GetPaid</title>
+		<?php
+			wp_enqueue_scripts();
+			wp_print_styles();
+			wp_print_head_scripts();
+			wp_custom_css_cb();
+			wpinv_get_template( 'frontend-head.php' );
+		?>
 
-        <?php do_action( 'getpaid_payment_form_embed_head' ); ?>
+		<style type="text/css">
+			.body{ 
+				background: white;
+				width: 100%;
+				max-width: 100%;
+				text-align: left;
+				font-weight: 400;
+			}
 
-		<?php wpinv_get_template( 'frontend-head.php' ); ?>
+			/* hide all other elements */
+			body::before,
+			body::after,
+			body > *:not(#getpaid-form-embed) { 
+				display:none !important; 
+			}
+
+			#getpaid-form-embed {
+				display: block !important;
+				width: 100%;
+				height: 100%;
+				padding: 20px;
+				border: 0;
+				margin: 0 auto;
+				max-width: 820px;
+			}
+		</style>
 
     </head>
 
-	<body class="body" style="font-weight: 400;">
-	<div class="container my-5" style="max-width: 820px;">
+	<body class="body page-template-default page">
+		<div id="getpaid-form-embed" class="container my-5 page type-page status-publish hentry post post-content">
 			<?php
 				do_action( 'getpaid_payment_form_embed_top' );
 				echo do_shortcode( $shortcode );
@@ -59,5 +89,7 @@
 				wpinv_get_template( 'frontend-footer.php' );
 			?>
 		</div>
+		<?php wp_footer(); ?>
 	</body>
+
 </html>
