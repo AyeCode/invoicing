@@ -472,7 +472,7 @@ jQuery(function ($) {
 						}
 
 						// Have we reached max files count?
-						if ( ! loadedFiles.length < max_files ) {
+						if ( ! ( loadedFiles.length < max_files ) ) {
 							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">You have exceeded the number of files you can upload.</div>' );
 							return;
 						}
