@@ -1,0 +1,4 @@
+- name: PHP Syntax Checker (Lint)
+  uses: StephaneBour/actions-php-lint@5.6
+  with:
+    dir: '.'

@@ -10,7 +10,7 @@
  * Domain Path: /languages
  * License: GPLv3
  * Requires at least: 4.9
- * Requires PHP: 5.3
+ * Requires PHP: 5.6
  *
  * @package GetPaid
  */
