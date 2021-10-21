@@ -304,6 +304,7 @@ jQuery(function ($) {
 				// Refresh prices.
 				this.form.on('change', '.getpaid-refresh-on-change', on_field_change);
 				this.form.on('input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change);
+				this.form.on('change', '.getpaid-payment-form-element-currency_select :input:not(.getpaid-refresh-on-change)', on_field_change);
 				this.form.on('change', '.getpaid-item-quantity-input', on_field_change);
 				this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
 
