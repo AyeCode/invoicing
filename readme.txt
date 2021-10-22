@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.5 =
+* Javascript breaks when optimized by autoptimize - FIXED
+
 = 2.5.4 =
 * New file upload field - ADDED
 
