@@ -3,14 +3,14 @@
  * Plugin Name: GetPaid
  * Plugin URI: https://wpinvoicing.com/
  * Description: A lightweight and VAT compliant payments and invoicing plugin.
- * Version: 2.5.4
+ * Version: 2.5.5
  * Author: AyeCode Ltd
  * Author URI: https://wpinvoicing.com
  * Text Domain: invoicing
  * Domain Path: /languages
  * License: GPLv3
  * Requires at least: 4.9
- * Requires PHP: 5.3
+ * Requires PHP: 5.6
  *
  * @package GetPaid
  */
@@ -23,7 +23,7 @@ if ( ! defined( 'WPINV_PLUGIN_FILE' ) ) {
 }
 
 if ( ! defined( 'WPINV_VERSION' ) ) {
-	define( 'WPINV_VERSION', '2.5.4' );
+	define( 'WPINV_VERSION', '2.5.5' );
 }
 
 // Include the main Invoicing class.

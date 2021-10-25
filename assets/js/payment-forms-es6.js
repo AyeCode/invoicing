@@ -85,17 +85,17 @@ jQuery(function ($) {
 
 				// Display the error.
 				if (container && form.find(container).length) {
-					form.find(container).html(error).removeClass('d-none')
-					form.find(container).closest('.getpaid-address-field-wrapper').find('form-control').addClass('is-invalid')
+					form.find(container).html(error).removeClass('d-none');
+					form.find(container).closest('.getpaid-address-field-wrapper').find('form-control').addClass('is-invalid');
 				} else {
-					form.find('.getpaid-payment-form-errors').html(error).removeClass('d-none')
+					form.find('.getpaid-payment-form-errors').html(error).removeClass('d-none');
 
 					form.find('.getpaid-custom-payment-form-errors').each(
 						function () {
-							var form_control = $(this).closest('.getpaid-address-field-wrapper').find('form-control')
+							var form_control = $(this).closest('.getpaid-address-field-wrapper').find('form-control');
 
 							if (form_control.val() != '') {
-								form_control.addClass('is-valid')
+								form_control.addClass('is-valid');
 							}
 						}
 					)
@@ -304,6 +304,7 @@ jQuery(function ($) {
 				// Refresh prices.
 				this.form.on('change', '.getpaid-refresh-on-change', on_field_change);
 				this.form.on('input', '.getpaid-payment-form-element-price_select :input:not(.getpaid-refresh-on-change)', on_field_change);
+				this.form.on('change', '.getpaid-payment-form-element-currency_select :input:not(.getpaid-refresh-on-change)', on_field_change);
 				this.form.on('change', '.getpaid-item-quantity-input', on_field_change);
 				this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
 
@@ -472,7 +473,7 @@ jQuery(function ($) {
 						}
 
 						// Have we reached max files count?
-						if ( ! loadedFiles.length < max_files ) {
+						if ( ! ( loadedFiles.length < max_files ) ) {
 							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">You have exceeded the number of files you can upload.</div>' );
 							return;
 						}
@@ -1177,25 +1178,25 @@ function wpinvBlock(el, message) {
 
 	// Do not block twice.
 	if (1 != $el.data('GetPaidIsBlocked')) {
-		$el.data('GetPaidIsBlocked', 1)
-		$el.data('GetPaidWasRelative', $el.hasClass('position-relative'))
-		$el.addClass('position-relative')
-		$el.append('<div class="w-100 h-100 position-absolute bg-light d-flex justify-content-center align-items-center getpaid-block-ui" style="top: 0; left: 0; opacity: 0.7; cursor: progress;"><div class="spinner-border" role="status"><span class="sr-only">' + message + '</span></div></div>')
+		$el.data('GetPaidIsBlocked', 1);
+		$el.data('GetPaidWasRelative', $el.hasClass('position-relative'));
+		$el.addClass('position-relative');
+		$el.append('<div class="w-100 h-100 position-absolute bg-light d-flex justify-content-center align-items-center getpaid-block-ui" style="top: 0; left: 0; opacity: 0.7; cursor: progress;"><div class="spinner-border" role="status"><span class="sr-only">' + message + '</span></div></div>');
 	}
 
 }
 
 function wpinvUnblock(el) {
-	var $el = jQuery(el)
+	var $el = jQuery(el);
 
 	if (1 == $el.data('GetPaidIsBlocked')) {
-		$el.data('GetPaidIsBlocked', 0)
+		$el.data('GetPaidIsBlocked', 0);
 
 		if (!$el.data('GetPaidWasRelative')) {
-			$el.removeClass('position-relative')
+			$el.removeClass('position-relative');
 		}
 
-		$el.children('.getpaid-block-ui').remove()
+		$el.children('.getpaid-block-ui').remove();
 
 	}
 
