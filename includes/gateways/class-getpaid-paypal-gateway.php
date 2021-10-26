@@ -381,6 +381,12 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $recurring_amount       = (float) wpinv_sanitize_amount( $invoice->get_recurring_total(), 2 );
         $subscription_item      = $invoice->get_recurring( true );
 
+		// Convert 365 days to 1 year.
+		if ( 'D' == $period && 365 == $interval ) {
+			$period = 'Y';
+			$interval = 1;
+		}
+
         if ( $subscription_item->has_free_trial() ) {
 
             $paypal_args['a1'] = 0 == $initial_amount ? 0 : $initial_amount;
