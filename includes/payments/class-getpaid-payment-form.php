@@ -563,11 +563,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 */
 	public function set_elements( $value ) {
 		if ( is_array( $value ) ) {
-
-			// sanitize
-			$value = $this->sanitize_array_values( $value );
-
-			$this->set_prop( 'elements', $value );
+			$this->set_prop( 'elements', wp_kses_post_deep( $value ) );
 		}
 	}
 

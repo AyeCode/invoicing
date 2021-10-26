@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $tag  = isset( $element['level'] ) ? trim( $element['level'] ) : 'h3';
-$text = isset( $element['text'] ) ? trim( $element['text'] ) : '';
+$text = isset( $element['text'] ) ? wp_kses_post( trim( $element['text'] ) ) : '';
 
 if ( ! empty( $text ) ) {
     echo "<$tag>$text</$tag>";

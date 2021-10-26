@@ -36,7 +36,7 @@ if ( ! empty( $form->invoice ) ) {
             <input name="discount" placeholder="<?php echo $placeholder; ?>" value="<?php echo $discount_code; ?>" class="form-control mr-2 mb-2 getpaid-discount-field-input" style="flex: 1;" type="text">
             <a href="#" class="btn btn-secondary submit-button mb-2 getpaid-discount-button"><?php echo $label; ?></a>
         </div>
-        <?php echo $description ?>
+        <?php echo wp_kses_post( $description ); ?>
         <div class="getpaid-custom-payment-form-errors alert alert-danger d-none"></div>
     </div>
 </div>
