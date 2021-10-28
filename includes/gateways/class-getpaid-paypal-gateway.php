@@ -90,7 +90,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
 		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
 
-        parent::__construct();
+		parent::__construct();
     }
 
     /**

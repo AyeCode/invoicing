@@ -386,6 +386,10 @@ class WPInv_Plugin {
 		if ( isset( $_REQUEST['wpi_action'] ) ) {
 			do_action( 'wpinv_' . wpinv_sanitize_key( $_REQUEST['wpi_action'] ), $_REQUEST );
 		}
+
+		if ( defined( 'WP_ALL_IMPORT_ROOT_DIR' ) ) {
+			include plugin_dir_path( __FILE__ ) . 'libraries/wp-all-import/class-getpaid-wp-all-import.php';
+		}
 	}
 
 	/**
