@@ -15,76 +15,121 @@ include plugin_dir_path( __FILE__ ) . 'rapid-addon.php';
 class GetPaid_WP_All_Import {
 
 	/**
-	 * @var RapidAddon
+	 * @var RapidAddon[]
 	 */
-	protected $add_on;
+	protected $add_ons;
+
+	/**
+	 * @var array
+	 */
+	protected $datastores = array(
+		'item'     =>'WPInv_Item',
+		'invoice'  =>'WPInv_Invoice',
+		'discount' =>'WPInv_Discount',
+	);
 
     /**
 	 * Class constructor.
 	 */
     public function __construct() {
 
-		// Register the add-on.
-		$this->add_on = new RapidAddon( 'GetPaid', 'GetPaid_WP_All_Import_Addon' );
-		$this->add_on->set_import_function( array( $this, 'import_items' ) );
-		$this->add_item_fields();
-		$this->add_on->run( array( 'post_types' => array( 'wpi_item' ) ) );
+		// Init each store separately.
+		foreach ( array_keys( $this->datastores ) as $key ) {
+			$this->init_store( $key );
+		}
 
 	}
 
 	/**
-	 * Retrieves item fields.
+	 * Inits a store.
 	 */
-    public function get_item_fields() {
+    public function init_store( $key ) {
 
-		return array(
-			'description'          => __( 'Item Description', 'invoicing' ),
-			'price'                => __( 'Price', 'invoicing' ),
-			'vat_rule'             => __( 'VAT Rule', 'invoicing' ),
-			'vat_class'            => __( 'VAT Class', 'invoicing' ),
-			'type'                 => __( 'Trial Interval', 'invoicing' ),
-			'custom_id'            => __( 'Custom ID', 'invoicing' ),
-			'custom_name'          => __( 'Custom Name', 'invoicing' ),
-			'custom_singular_name' => __( 'Custom Singular Name', 'invoicing' ),
-			'is_dynamic_pricing'   => __( 'Users can name their own price', 'invoicing' ),
-			'minimum_price'        => __( 'Minimum price', 'invoicing' ),
-			'is_recurring'         => __( 'Is Recurring', 'invoicing' ),
-			'recurring_period'     => __( 'Recurring Period', 'invoicing' ),
-			'recurring_interval'   => __( 'Recurring Interval', 'invoicing' ),
-			'recurring_limit'      => __( 'Recurring Limit', 'invoicing' ),
-			'is_free_trial'        => __( 'Is free trial', 'invoicing' ),
-			'trial_period'         => __( 'Trial Period', 'invoicing' ),
-			'trial_interval'       => __( 'Trial Interval', 'invoicing' ),
-		);
+		// Register the add-on.
+		$this->add_ons[ $key ] = new RapidAddon( 'GetPaid', 'getpaid_wp_al_import_' . $key );
 
-    }
+		// Create import function.
+		$import_function = function ( $post_id, $data, $import_options, $_post ) use ( $key ) {
+			$this->import_store( $key, $post_id, $data, $import_options, $_post );
+        };
+
+		$this->add_ons[ $key ]->set_import_function( $import_function );
+
+		// Register store fields.
+		$this->add_store_fields( $key );
+
+		// Only load on the correct post type.
+		$this->add_ons[ $key ]->run( array( 'post_types' => array( 'wpi_' . $key ) ) );
+
+		// Disable images.
+		$this->add_ons[ $key ]->disable_default_images();
+
+	}
 
 	/**
-	 * Registers item fields.
+	 * Retrieves store fields.
 	 */
-    public function add_item_fields() {
+    public function get_store_fields( $key ) {
 
-		foreach ( $this->get_item_fields() as $key => $label ) {
-			$this->add_on->add_field( $key, $label, 'text' );
+		// Fetch from data/invoice-schema.php, from data/discount-schema.php, from data/item-schema.php
+		$fields = wpinv_get_data( $key . '-schema' );
+
+		if ( empty( $fields ) ) {
+			return array();
+		}
+
+		// Clean the fields.
+		$prepared = array();
+		foreach ( $fields as $id => $field ) {
+
+			// Skip read only fields.
+			if ( ! empty( $field['readonly'] ) ) {
+				continue;
+			}
+
+			$prepared[ $id ] = $field;
+
+		}
+
+		return $prepared;
+
+	}
+
+	/**
+	 * Registers store fields.
+	 */
+    public function add_store_fields( $key ) {
+
+		foreach ( $this->get_store_fields( $key ) as $field_id => $data ) {
+			$this->add_ons[ $key ]->add_field( $field_id, $data['description'], 'text' );
 		}
 
     }
 
 	/**
-	 * Handles item imports.
+	 * Handles store imports.
 	 */
-    public function import_items( $post_id, $data, $import_options, $_post ) {
+    public function import_store( $key, $post_id, $data, $import_options, $_post ) {
 
-		$item     = wpinv_get_item( $post_id );
-		$prepared = array();
-
-		if ( empty( $item ) ) {
+		// Is the store class set?
+		if ( ! isset( $this->datastores[ $key ] ) ) {
 			return;
 		}
 
-		foreach ( array_keys( $this->get_item_fields() ) as $field ) { 
+		/**@var GetPaid_Data */
+		$data_store = new $this->datastores[ $key ]( $post_id );
+
+		// Abort if the invoice/item/discount does not exist.
+		if ( ! $data_store->exists() ) {
+			return;
+		}
+
+		// Prepare data props.
+		$prepared = array();
+
+		foreach ( array_keys( $this->get_store_fields( $key ) ) as $field ) { 
 			// Make sure the user has allowed this field to be updated.
-			if ( empty( $_post['ID'] ) || $this->add_on->can_update_meta( $field, $import_options ) ) { 
+			if ( empty( $_post['ID'] ) || $this->add_ons[ $key ]->can_update_meta( $field, $import_options ) ) { 
 	
 				// Update the custom field with the imported data.
 				$prepared[ $field ] = $data[ $field ];
@@ -93,8 +138,8 @@ class GetPaid_WP_All_Import {
 
 		// Only update if we have something to update.
 		if ( ! empty( $prepared ) ) {
-			$item->set_props( $prepared );
-			$item->save();
+			$data_store->set_props( $prepared );
+			$data_store->save();
 		}
 
     }

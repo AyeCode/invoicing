@@ -135,7 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.5.6 =
 * HTML is stripped from paragraph and heading elements - FIXED
-* Ability to import items via WP All import - ADDED
+* Ability to import items/discounts/invoices via WP All import - ADDED
 
 = 2.5.5 =
 * Javascript breaks when optimized by autoptimize - FIXED
