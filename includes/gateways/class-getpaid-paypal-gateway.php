@@ -90,7 +90,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
 		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
 
-        parent::__construct();
+		parent::__construct();
     }
 
     /**
@@ -380,6 +380,12 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $initial_amount         = (float) wpinv_sanitize_amount( $invoice->get_initial_total(), 2 );
         $recurring_amount       = (float) wpinv_sanitize_amount( $invoice->get_recurring_total(), 2 );
         $subscription_item      = $invoice->get_recurring( true );
+
+		// Convert 365 days to 1 year.
+		if ( 'D' == $period && 365 == $interval ) {
+			$period = 'Y';
+			$interval = 1;
+		}
 
         if ( $subscription_item->has_free_trial() ) {
 
