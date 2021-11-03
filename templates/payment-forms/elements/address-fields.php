@@ -18,6 +18,19 @@ $field_type = sanitize_key( $field_type );
 
 echo "<div class='row $field_type'>";
 
+// Prepare current user.
+if ( ! empty( $form->invoice ) ) {
+    $user_id = $form->invoice->get_user_id();
+}
+
+if ( empty( $user_id ) && is_user_logged_in() ) {
+    $user_id = get_current_user_id();
+}
+
+if ( ! empty( $user_id ) ) {
+    $user  = wp_get_current_user();
+}
+
 foreach ( $fields as $address_field ) {
 
     // Skip if it is hidden.
@@ -28,14 +41,6 @@ foreach ( $fields as $address_field ) {
     do_action( 'getpaid_payment_form_address_field_before_' . $address_field['name'], $field_type, $address_field );
 
     // Prepare variables.
-    if ( ! empty( $form->invoice ) ) {
-        $user_id = $form->invoice->get_user_id();
-    }
-
-    if ( empty( $user_id ) && is_user_logged_in() ) {
-        $user_id = get_current_user_id();
-    }
-
     $field_name  = $address_field['name'];
     $field_name  = "{$field_type}[$field_name]";
     $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
@@ -48,6 +53,14 @@ foreach ( $fields as $address_field ) {
     $method_name = 'get_' . str_replace( 'wpinv_', '', $address_field['name'] );
     if ( ! empty( $form->invoice ) && is_callable( array( $form->invoice, $method_name ) ) ) {
         $value = call_user_func( array( $form->invoice, $method_name ) );
+    }
+
+    if ( empty( $value ) && 'wpinv_first_name' == $address_field['name'] && ! empty( $user ) ) {
+        $value = $user->first_name;
+    }
+
+    if ( empty( $value ) && 'wpinv_last_name' == $address_field['name'] && ! empty( $user ) ) {
+        $value = $user->last_name;
     }
 
     if ( ! empty( $address_field['required'] ) ) {
