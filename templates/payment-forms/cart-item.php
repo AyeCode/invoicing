@@ -22,7 +22,7 @@ $currency = $form->get_currency();
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 
-			<div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm' ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo $item->get_id(); ?>">
+			<div class="<?php echo 'name' == $key ? 'col-8 col-sm-6' : 'col' ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : '' ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo $item->get_id(); ?>">
 
 				<?php
 
@@ -32,9 +32,7 @@ $currency = $form->get_currency();
 					// Item name.
 					if ( 'name' == $key ) {
 
-						// Display the name.
-						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . '</div>';
-
+						ob_start();
 						// And an optional description.
                         $description = $item->get_description();
 
@@ -59,6 +57,42 @@ $currency = $form->get_currency();
 								'text-danger'
 							);
 
+						}
+
+						$description = ob_get_clean();
+
+						// Display the name.
+						$tootip = empty( $description ) ? '' : "&nbsp;" . '<i class="fas fa-xs fa-info gp-tooltip d-sm-none text-muted"></i>';
+						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . $tootip . '</div>';
+
+						if ( ! empty( $description ) ) {
+							printf( '<span class="d-none d-sm-block getpaid-item-desc">%s</span>', $description );
+						}
+
+						if ( $item->allows_quantities() ) {
+							printf(
+								'<small class="d-sm-none text-muted form-text">%s</small>',
+								sprintf(
+									__( 'Qty %s', 'invoicing' ),
+									sprintf(
+										'<input
+											type="text"
+											style="width: 48px;"
+											class="getpaid-item-mobile-quantity-input p-1 m-0 text-center"
+											value="%s"
+											min="1">',
+											(float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity()
+									)
+								)
+							);
+						} else {
+							printf(
+								'<small class="d-sm-none text-muted form-text">%s</small>',
+								sprintf(
+									__( 'Qty %s', 'invoicing' ),
+									(float) $item->get_quantity()
+								)
+							);
 						}
 
 					}
@@ -119,12 +153,19 @@ $currency = $form->get_currency();
 								</div>
 
 							<?php
+
 						} else {
 							echo wpinv_price( $item->get_price(), $currency );
+
 							?>
 								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
 							<?php
 						}
+
+						printf(
+							'<small class="d-sm-none text-muted form-text getpaid-mobile-item-subtotal">%s</small>',
+							sprintf( __( 'Subtotal: %s', 'invoicing' ), wpinv_price( $item->get_sub_total(), $currency ) )
+						);
 					}
 
 					// Item quantity.

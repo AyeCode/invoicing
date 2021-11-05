@@ -147,6 +147,12 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
 			$recurring_price                                       = $submission->format_amount( $item->get_recurring_sub_total() - $item->recurring_item_discount );
 			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
+			$texts[".item-$item_id .getpaid-mobile-item-subtotal"] = sprintf( __( 'Subtotal: %s', 'invoicing' ), $submission->format_amount( $item->get_sub_total() ) );
+
+			if ( $item->get_quantity() == 1 ) {
+				$texts[".item-$item_id .getpaid-mobile-item-subtotal"] = '';
+			}
+
 		}
 
 		$this->response = array_merge( $this->response, array( 'texts' => $texts ) );

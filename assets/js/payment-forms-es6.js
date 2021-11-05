@@ -308,6 +308,23 @@ jQuery(function ($) {
 				this.form.on('change', '.getpaid-item-quantity-input', on_field_change);
 				this.form.on('change', '[name="getpaid-payment-form-selected-item"]', on_field_change);
 
+				this.form.on('change', '.getpaid-item-mobile-quantity-input', function() {
+					let input = $( this );
+					input
+						.closest( '.getpaid-payment-form-items-cart-item' )
+						.find('.getpaid-item-quantity-input')
+						.val( input.val() )
+						.trigger( 'change' );
+				});
+
+				this.form.on('change', '.getpaid-item-quantity-input', function() {
+					let input = $( this );
+					input
+						.closest( '.getpaid-payment-form-items-cart-item' )
+						.find('.getpaid-item-mobile-quantity-input')
+						.val( input.val() );
+				});
+
 				// Refresh when price changes.
 				this.form.on('change', '.getpaid-item-price-input', function () {
 					if (!$(this).hasClass('is-invalid')) {
@@ -590,6 +607,16 @@ jQuery(function ($) {
 					});
 				})
 
+				// Tooltips.
+
+				if ( jQuery.fn.popover && this.form.find( '.gp-tooltip' ).length ) {
+					this.form.find( '.gp-tooltip' ).popover({
+						container: this.form[0],
+						html: true,
+						trigger: 'hover focus',
+						content: function() { return $(this).closest( '.getpaid-form-cart-item-name' ).find('.getpaid-item-desc').html() }
+					});
+				}
 			},
 
 			// Processes gateways
