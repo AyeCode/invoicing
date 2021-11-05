@@ -47,6 +47,8 @@ $currency = $form->get_currency();
                             echo "<small class='getpaid-form-item-price-desc form-text text-muted pr-2 m-0'>$description</small>";
 						}
 
+						do_action( 'getpaid_payment_form_cart_item_description', $item, $form );
+
 						if ( wpinv_current_user_can_manage_invoicing() ) {
 
 							edit_post_link(
@@ -58,8 +60,6 @@ $currency = $form->get_currency();
 							);
 
 						}
-
-						do_action( 'getpaid_payment_form_cart_item_description', $item, $form );
 
 						$description = ob_get_clean();
 
