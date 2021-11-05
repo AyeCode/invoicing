@@ -613,7 +613,6 @@ jQuery(function ($) {
 					this.form.find( '.gp-tooltip' ).popover({
 						container: this.form[0],
 						html: true,
-						trigger: 'hover focus',
 						content: function() { return $(this).closest( '.getpaid-form-cart-item-name' ).find('.getpaid-item-desc').html() }
 					});
 				}

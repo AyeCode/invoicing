@@ -59,6 +59,8 @@ $currency = $form->get_currency();
 
 						}
 
+						do_action( 'getpaid_payment_form_cart_item_description', $item, $form );
+
 						$description = ob_get_clean();
 
 						// Display the name.
