@@ -565,7 +565,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
      * @param array $data
      * @return string
 	 */
-	public static function maybe_get_connect_url( $url = '', $data ) {
+	public static function maybe_get_connect_url( $url = '', $data = array() ) {
 		return self::get_connect_url( false, urldecode( $data['redirect'] ) );
 	}
 

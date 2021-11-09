@@ -174,7 +174,7 @@ function wpinv_tax( $invoice = 0, $currency = false ) {
 /**
  * @deprecated
  */
-function wpinv_discount( $invoice = 0, $currency = false, $deprecated ) {
+function wpinv_discount( $invoice = 0, $currency = false ) {
     $invoice  = new WPInv_Invoice( $invoice );
     $discount = $invoice->get_total_discount();
 
