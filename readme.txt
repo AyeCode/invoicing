@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.7 =
+* Make checkout items mobile friendly - CHANGED
+
 = 2.5.6 =
 * HTML is stripped from paragraph and heading elements - FIXED
 * Ability to import items/discounts/invoices via WP All import - ADDED

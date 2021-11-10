@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '5d7aff0386ccd7f07945582811c9666af7b9e11a',
+    'reference' => 'c77c76d2bb821dfd39f6e97602e1fc972f810df8',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -27,16 +27,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '5d7aff0386ccd7f07945582811c9666af7b9e11a',
+      'reference' => 'c77c76d2bb821dfd39f6e97602e1fc972f810df8',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
-      'pretty_version' => '0.1.61',
-      'version' => '0.1.61.0',
+      'pretty_version' => '0.1.62',
+      'version' => '0.1.62.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'e97d1e520d6722df2cb323c04a6e818b1e901ab5',
+      'reference' => 'f0625aa6f695cef39fe75bc1707026824e9841d9',
     ),
     'ayecode/wp-deactivation-survey' => 
     array (
