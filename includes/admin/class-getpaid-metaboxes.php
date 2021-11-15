@@ -46,7 +46,7 @@ class GetPaid_Metaboxes {
 		self::add_invoice_meta_boxes( $post_type, $post );
 
 		// For payment forms.
-		self::add_payment_form_meta_boxes( $post_type );
+		self::add_payment_form_meta_boxes( $post_type, $post );
 
 		// For invoice items.
 		self::add_item_meta_boxes( $post_type );
@@ -61,7 +61,7 @@ class GetPaid_Metaboxes {
 	/**
 	 * Register core metaboxes.
 	 */
-	protected static function add_payment_form_meta_boxes( $post_type ) {
+	protected static function add_payment_form_meta_boxes( $post_type, $post ) {
 
 		// For payment forms.
 		if ( $post_type == 'wpi_payment_form' ) {
@@ -70,7 +70,9 @@ class GetPaid_Metaboxes {
 			add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
 
 			// Payment form information.
-			add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
+			if ( $post->ID == wpinv_get_default_payment_form() ) {
+				add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
+			}
 
 		}
 

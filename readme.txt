@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.5.7 =
 * Make checkout items mobile friendly - CHANGED
+* New discounts only work if for selected items - FIXED
 
 = 2.5.6 =
 * HTML is stripped from paragraph and heading elements - FIXED
