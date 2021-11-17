@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-19 06:03+0000\n"
+"POT-Creation-Date: 2021-11-15 09:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "%s Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:147
+#: includes/admin/class-getpaid-metaboxes.php:149
 #: templates/emails/invoice-details.php:26
 #, php-format
 msgid "%s Details"
@@ -249,7 +249,7 @@ msgstr[1] ""
 msgid "%s History"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:165
+#: includes/admin/class-getpaid-metaboxes.php:167
 #: templates/emails/invoice-items.php:22 templates/invoice/line-items.php:17
 #, php-format
 msgid "%s Items"
@@ -265,7 +265,7 @@ msgstr ""
 msgid "%s month"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:178
+#: includes/admin/class-getpaid-metaboxes.php:180
 #, php-format
 msgid "%s Notes"
 msgstr ""
@@ -2094,7 +2094,7 @@ msgstr ""
 msgid "Billing Cycle"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:159
+#: includes/admin/class-getpaid-metaboxes.php:161
 #: templates/emails/wpinv-email-billing-details.php:8
 msgid "Billing Details"
 msgstr ""
@@ -3212,12 +3212,12 @@ msgstr ""
 msgid "Connect Site"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:515
-#: includes/gateways/class-getpaid-paypal-gateway.php:519
+#: includes/gateways/class-getpaid-paypal-gateway.php:521
+#: includes/gateways/class-getpaid-paypal-gateway.php:525
 msgid "Connect to PayPal"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:521
+#: includes/gateways/class-getpaid-paypal-gateway.php:527
 msgid "Connect to PayPal Sandox"
 msgstr ""
 
@@ -3772,7 +3772,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:73
+#: includes/admin/class-getpaid-metaboxes.php:74
 msgid "Details"
 msgstr ""
 
@@ -5880,7 +5880,7 @@ msgstr ""
 msgid "Hyogo"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:92
+#: templates/payment-forms/elements/address-fields.php:105
 msgid "I certify that I live in the country selected above"
 msgstr ""
 
@@ -5961,7 +5961,7 @@ msgid ""
 "thanks in advance!"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:548
+#: includes/gateways/class-getpaid-paypal-gateway.php:554
 msgid ""
 "If you've not enabled IPNs in your paypal account, use the above URL to "
 "enable them."
@@ -6147,7 +6147,7 @@ msgstr ""
 msgid "Introduction"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:149
+#: templates/payment-forms/elements/address-fields.php:162
 msgid "Invalid"
 msgstr ""
 
@@ -6518,7 +6518,7 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:546
+#: includes/gateways/class-getpaid-paypal-gateway.php:552
 msgid "IPN Url"
 msgstr ""
 
@@ -6664,7 +6664,7 @@ msgstr ""
 msgid "Item Description."
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:87
+#: includes/admin/class-getpaid-metaboxes.php:89
 msgid "Item Details"
 msgstr ""
 
@@ -6673,7 +6673,7 @@ msgstr ""
 msgid "Item ID."
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:95
+#: includes/admin/class-getpaid-metaboxes.php:97
 msgid "Item info"
 msgstr ""
 
@@ -7711,7 +7711,7 @@ msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:875
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:883
-#: includes/gateways/class-getpaid-paypal-gateway.php:548
+#: includes/gateways/class-getpaid-paypal-gateway.php:554
 msgid "Learn more."
 msgstr ""
 
@@ -7916,7 +7916,7 @@ msgstr ""
 msgid "Lithuania"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:530
+#: includes/gateways/class-getpaid-paypal-gateway.php:536
 msgid "Live Email Address"
 msgstr ""
 
@@ -10078,7 +10078,7 @@ msgid ""
 "Pay securely via Worldpay using your PayPal account, credit or debit card."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:506
+#: includes/gateways/class-getpaid-paypal-gateway.php:512
 msgid ""
 "Pay via PayPal: you can pay with your credit card if you don't have a PayPal "
 "account."
@@ -10122,7 +10122,7 @@ msgctxt "Payment Form"
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:194
+#: includes/admin/class-getpaid-metaboxes.php:196
 msgid "Payment Form Details"
 msgstr ""
 
@@ -10179,7 +10179,7 @@ msgstr ""
 msgid "Payment Gateways"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:156
+#: includes/admin/class-getpaid-metaboxes.php:158
 msgid "Payment Meta"
 msgstr ""
 
@@ -10796,6 +10796,12 @@ msgstr ""
 msgid "Qty"
 msgstr ""
 
+#: templates/payment-forms/cart-item.php:78
+#: templates/payment-forms/cart-item.php:94
+#, php-format
+msgid "Qty %s"
+msgstr ""
+
 #: includes/invoice-functions.php:924
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:307
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:34
@@ -11037,12 +11043,12 @@ msgstr ""
 msgid "Related Invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:138
+#: includes/admin/class-getpaid-metaboxes.php:140
 msgid "Related Payments"
 msgstr ""
 
 #: includes/wpinv-template-functions.php:894
-#: includes/admin/class-getpaid-metaboxes.php:132
+#: includes/admin/class-getpaid-metaboxes.php:134
 #: includes/admin/subscriptions.php:106
 #: templates/subscriptions/subscription-details.php:126
 msgid "Related Subscriptions"
@@ -11115,7 +11121,7 @@ msgstr ""
 msgid "Require Login To Checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:116
+#: includes/admin/class-getpaid-metaboxes.php:118
 #, php-format
 msgid "Resend %s"
 msgstr ""
@@ -11460,7 +11466,7 @@ msgstr ""
 msgid "Sandbox"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:538
+#: includes/gateways/class-getpaid-paypal-gateway.php:544
 msgid "Sandbox Email Address"
 msgstr ""
 
@@ -11470,7 +11476,7 @@ msgid ""
 "SANDBOX ENABLED. See the %sWorldpay Sandbox Testing Guide%s for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:486
+#: includes/gateways/class-getpaid-paypal-gateway.php:492
 #, php-format
 msgid ""
 "SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal "
@@ -11932,7 +11938,7 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:189
+#: includes/admin/class-getpaid-metaboxes.php:191
 #: includes/data/payment-form-elements.php:195
 #: templates/payment-forms/elements/address.php:91
 msgid "Shipping Address"
@@ -12513,7 +12519,7 @@ msgstr ""
 msgid "Subscription Complete"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:134
+#: includes/admin/class-getpaid-metaboxes.php:136
 #: includes/admin/subscriptions.php:98
 #: templates/subscriptions/subscription-details.php:34
 msgid "Subscription Details"
@@ -12588,6 +12594,12 @@ msgstr ""
 msgid "Subtotal"
 msgstr ""
 
+#: includes/payments/class-getpaid-payment-form-submission-refresh-prices.php:150
+#: templates/payment-forms/cart-item.php:169
+#, php-format
+msgid "Subtotal: %s"
+msgstr ""
+
 #: templates/payment-forms-admin/edit/alert.php:31
 #: templates/payment-forms-admin/edit/pay_button.php:43
 msgid "Success"
@@ -12597,11 +12609,11 @@ msgstr ""
 msgid "Success Page"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:692
+#: includes/gateways/class-getpaid-paypal-gateway.php:698
 msgid "Successfully connected your PayPal account"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:687
+#: includes/gateways/class-getpaid-paypal-gateway.php:693
 msgid "Successfully connected your PayPal sandbox account"
 msgstr ""
 
@@ -12684,7 +12696,7 @@ msgid "Support"
 msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:851
-#: includes/gateways/class-getpaid-paypal-gateway.php:501
+#: includes/gateways/class-getpaid-paypal-gateway.php:507
 #: includes/gateways/class-getpaid-worldpay-gateway.php:315
 #, php-format
 msgid "Supported Currencies: %s"
@@ -12871,7 +12883,7 @@ msgid "TAX"
 msgstr ""
 
 #: includes/invoice-functions.php:999
-#: includes/admin/class-getpaid-metaboxes.php:91
+#: includes/admin/class-getpaid-metaboxes.php:93
 #: includes/admin/subscriptions.php:582
 #: includes/reports/class-getpaid-reports-report-earnings.php:26
 #: includes/reports/class-getpaid-reports-report.php:349
@@ -13210,11 +13222,11 @@ msgstr ""
 msgid "The discount's usage, i.e uses / max uses."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:531
+#: includes/gateways/class-getpaid-paypal-gateway.php:537
 msgid "The email address of your PayPal account."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway.php:539
+#: includes/gateways/class-getpaid-paypal-gateway.php:545
 msgid "The email address of your sandbox PayPal account."
 msgstr ""
 
@@ -13373,7 +13385,7 @@ msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission-fees.php:75
 #: includes/payments/class-getpaid-payment-form-submission-items.php:113
-#: templates/payment-forms/cart-item.php:89
+#: templates/payment-forms/cart-item.php:125
 #, php-format
 msgid "The minimum allowed amount is %s"
 msgstr ""
@@ -14464,11 +14476,11 @@ msgstr ""
 msgid "Valencia"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:148
+#: templates/payment-forms/elements/address-fields.php:161
 msgid "Valid"
 msgstr ""
 
-#: templates/payment-forms/elements/address-fields.php:150
+#: templates/payment-forms/elements/address-fields.php:163
 msgid "Validate"
 msgstr ""
 

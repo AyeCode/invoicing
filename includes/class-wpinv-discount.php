@@ -621,7 +621,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return array
 	 */
 	public function get_items( $context = 'view' ) {
-		return wpinv_parse_list( $this->get_prop( 'items', $context ) );
+		return array_filter( wp_parse_id_list( $this->get_prop( 'items', $context ) ) );
 	}
 
 	/**
@@ -643,7 +643,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @return array
 	 */
 	public function get_excluded_items( $context = 'view' ) {
-		return wpinv_parse_list( $this->get_prop( 'excluded_items', $context ) );
+		return array_filter( wp_parse_id_list( $this->get_prop( 'excluded_items', $context ) ) );
 	}
 
 	/**
@@ -1019,7 +1019,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @param array $value items.
 	 */
 	public function set_items( $value ) {
-		$this->set_prop( 'items', wpinv_parse_list( $value ) );
+		$this->set_prop( 'items', array_filter( wp_parse_id_list( $value ) ) );
 	}
 
 	/**
@@ -1039,7 +1039,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @param array $value items.
 	 */
 	public function set_excluded_items( $value ) {
-		$this->set_prop( 'excluded_items', wpinv_parse_list( $value ) );
+		$this->set_prop( 'excluded_items', array_filter( wp_parse_id_list( $value ) ) );
 	}
 
 	/**
@@ -1264,7 +1264,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function is_valid_for_items( $item_ids ) {
 
-		$item_ids = wp_parse_id_list( $item_ids );
+		$item_ids = array_filter( wp_parse_id_list( $item_ids ) );
 		$included = array_intersect( $item_ids, $this->get_allowed_items() );
 		$excluded = array_intersect( $item_ids, $this->get_excluded_items() );
 

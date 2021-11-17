@@ -513,7 +513,7 @@ abstract class GetPaid_Payment_Gateway {
 											<i class="fa fa-credit-card"></i>
 										</span>
 									</div>
-									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>authorizenet[cc_number]" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm" autocomplete="cc-number">
+									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm" autocomplete="cc-number">
 								</div>
 							</div>
 

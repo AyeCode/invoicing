@@ -136,13 +136,13 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 
         // Validate the IPN.
         if ( empty( $_POST ) || ! $this->validate_ipn() ) {
-		    wp_die( 'Authorize.NET IPN Request Failure', 'Authorize.NET IPN', array( 'response' => 500 ) );
+		    wp_die( 'Authorize.NET IPN Request Failure', 'Authorize.NET IPN', array( 'response' => 200 ) );
         }
 
         // Event type.
         $posted = json_decode( file_get_contents( 'php://input' ) );
         if ( empty( $posted ) ) {
-            wp_die( 'Invalid JSON', 'Authorize.NET IPN', array( 'response' => 500 ) );
+            wp_die( 'Invalid JSON', 'Authorize.NET IPN', array( 'response' => 200 ) );
         }
 
         // Process the IPN.
