@@ -25,6 +25,8 @@ echo '<div class="getpaid-payment-form-items-checkbox form-group">';
 
 foreach ( $selectable as $item_id => $item_name ) {
 
+    $is_checked = get_post_meta( $item_id, 'selected_by_default', true );
+
     echo aui()->input(
         array(
             'type'       => 'checkbox',
@@ -34,6 +36,7 @@ foreach ( $selectable as $item_id => $item_name ) {
             'value'      => $item_id,
             'no_wrap'    => true,
             'class'      => 'w-auto',
+            'checked'    => '1' == $is_checked,
         )
     );
 
