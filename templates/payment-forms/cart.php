@@ -35,7 +35,7 @@ do_action( 'getpaid_before_payment_form_cart', $form );
         <div class="getpaid-payment-form-items-cart-header font-weight-bold bg-light border-bottom py-2 px-3">
             <div class="form-row">
                 <?php foreach ( $columns as $key => $label ) : ?>
-                    <div class="<?php echo 'name' == $key ? 'col-8 col-sm-6' : 'col' ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : '' ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>">
+                    <div class="<?php echo 'name' == $key ? 'col-6' : 'col' ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : '' ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>">
                         <span><?php echo esc_html( $label ); ?></span>
                     </div>
                 <?php endforeach; ?>
