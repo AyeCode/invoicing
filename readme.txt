@@ -133,6 +133,12 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.9 =
+* "Require login to checkout" only affects invoices - FIXED
+
+= 2.5.8 =
+* Super Duper changes - ADDED
+
 = 2.5.7 =
 * Make checkout items mobile friendly - CHANGED
 * New discounts only work if for selected items - FIXED
