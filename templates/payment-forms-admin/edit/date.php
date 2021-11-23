@@ -20,10 +20,41 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
     <label class="d-block">
+        <span><?php esc_html_e( 'Default Date', 'invoicing' ); ?></span>
+        <?php echo wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true ); ?>
+        <input v-model='active_form_element.default_date' placeholder="<?php esc_attr_e( 'None', 'invoicing' ); ?>" class='form-control' type="text"/>
+    </label>
+</div>
+
+<div class='form-group'>
+    <label class="d-block">
+        <span><?php esc_html_e( 'Minimum Date', 'invoicing' ); ?></span>
+        <?php echo wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true ); ?>
+        <input v-model='active_form_element.min_date' placeholder="<?php esc_attr_e( 'None', 'invoicing' ); ?>" class='form-control' type="text"/>
+        <small class="form-text text-muted"><?php _e( 'Specify the minimum/earliest date (inclusively) allowed for selection.', 'invoicing' ); ?></small>
+    </label>
+</div>
+
+<div class='form-group'>
+    <label class="d-block">
+        <span><?php esc_html_e( 'Maximum Date', 'invoicing' ); ?></span>
+        <?php echo wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true ); ?>
+        <input v-model='active_form_element.max_date' placeholder="<?php esc_attr_e( 'None', 'invoicing' ); ?>" class='form-control' type="text"/>
+        <small class="form-text text-muted"><?php _e( 'Specify the maximum/latest date (inclusively) allowed for selection.', 'invoicing' ); ?></small>
+    </label>
+</div>
+
+<div class='form-group'>
+    <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
         <small class="form-text text-muted"><?php _e( 'HTML is allowed', 'invoicing' ); ?></small>
     </label>
+</div>
+
+<div class='form-group form-check'>
+    <input :id="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
+    <label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
 </div>
 
 <div class='form-group form-check'>
