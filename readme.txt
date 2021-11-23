@@ -137,6 +137,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * "Require login to checkout" only affects invoices - FIXED
 * Date field - ability to set default, minimum and maximum dates - ADDED
 * Ability to select multiple dates and date ranges from the range field - ADDED
+* Ability to disable certain days of the week, certain dates and date ranges - ADDED
 
 = 2.5.8 =
 * Super Duper changes - ADDED

@@ -46,6 +46,31 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
 	<label class="d-block">
+		<span><?php esc_html_e( 'Disabled Dates', 'invoicing' ); ?></span>
+		<?php echo wpi_help_tip( sprintf( __( 'You can use the shortcut "today" or enter dates matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true ); ?>
+		<input v-model='active_form_element.disabled_dates' placeholder="<?php echo esc_attr( sprintf( __( 'For example, %s', 'invoicing' ), 'today,2025-04-01|2025-05-01,2025-09-01|2025-12-01' ) ); ?>" class='form-control' type="text"/>
+		<small class="form-text text-muted"><?php _e( 'Specify the dates to ignore. Use commas to separate dates and "|" to separate date ranges.', 'invoicing' ); ?></small>
+	</label>
+</div>
+
+<div class='form-group'>
+	<label class="d-block">
+		<span><?php esc_html_e( 'Disable Days', 'invoicing' ) ?></span>
+		<gpselect2 class='form-control custom-select' v-model='active_form_element.disable_days' multiple>
+			<option value='0'><?php esc_html_e( 'Sundays', 'invoicing' ); ?></option>
+			<option value='1'><?php esc_html_e( 'Mondays', 'invoicing' ); ?></option>
+			<option value='2'><?php esc_html_e( 'Tuesdays', 'invoicing' ); ?></option>
+			<option value='3'><?php esc_html_e( 'Wednesdays', 'invoicing' ); ?></option>
+			<option value='4'><?php esc_html_e( 'Thursdays', 'invoicing' ); ?></option>
+			<option value='5'><?php esc_html_e( 'Fridays', 'invoicing' ); ?></option>
+			<option value='6'><?php esc_html_e( 'Saturdays', 'invoicing' ); ?></option>
+		</gpselect2>
+		<small class="form-text text-muted"><?php _e( 'Optionally specify the days of the week to disable.', 'invoicing' ); ?></small>
+	</label>
+</div>
+
+<div class='form-group'>
+	<label class="d-block">
 		<span><?php esc_html_e( 'Mode', 'invoicing' ) ?></span>
 		<select class='form-control custom-select' v-model='active_form_element.mode'>
 			<option value='single'><?php esc_html_e( 'Users can only select a single date', 'invoicing' ); ?></option>
