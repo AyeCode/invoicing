@@ -121,6 +121,7 @@ return array(
             'value'        => '',
             'label'        => __( 'Date', 'invoicing' ),
             'description'  => '',
+            'single'       => 'single',
             'required'     => false,
         )
     ),

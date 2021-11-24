@@ -70,7 +70,7 @@ class GetPaid_Metaboxes {
 			add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
 
 			// Payment form information.
-			if ( $post->ID == wpinv_get_default_payment_form() ) {
+			if ( $post->ID != wpinv_get_default_payment_form() ) {
 				add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
 			}
 

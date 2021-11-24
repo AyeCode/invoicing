@@ -616,6 +616,35 @@ jQuery(function ($) {
 						content: function() { return $(this).closest( '.getpaid-form-cart-item-name' ).find('.getpaid-item-desc').html() }
 					});
 				}
+
+				// Flatpickr
+				if ( jQuery.fn.flatpickr && this.form.find( '.getpaid-init-flatpickr' ).length ) {
+					this.form.find( '.getpaid-init-flatpickr' ).each( function() {
+
+						let options = {},
+						$el = jQuery( this );
+
+						if ( $el.data('disable_alt') && $el.data('disable_alt').length > 0 ) {
+							options.disable = $el.data('disable_alt');
+						}
+
+						if ( $el.data('disable_days_alt') && $el.data('disable_days_alt').length > 0 ) {
+							options.disable = options.disable || [];
+							let disabled_days = $el.data('disable_days_alt');
+
+							options.disable.push( function( date ) {
+								// return true to disable
+								return disabled_days.indexOf( date.getDay() ) >= 0;
+							})
+
+						}
+
+						jQuery( this )
+							.removeClass( 'flatpickr-input' )
+							.flatpickr( options );
+					});
+				}
+
 			},
 
 			// Processes gateways

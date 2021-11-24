@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-15 09:06+0000\n"
+"POT-Creation-Date: 2021-11-24 06:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -945,7 +945,7 @@ msgstr ""
 #: templates/payment-forms-admin/edit/address.php:60
 #: templates/payment-forms-admin/edit/billing_email.php:31
 #: templates/payment-forms-admin/edit/checkbox.php:24
-#: templates/payment-forms-admin/edit/date.php:24
+#: templates/payment-forms-admin/edit/date.php:86
 #: templates/payment-forms-admin/edit/discount.php:31
 #: templates/payment-forms-admin/edit/email.php:31
 #: templates/payment-forms-admin/edit/file_upload.php:43
@@ -982,8 +982,8 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:593
 #: includes/admin/class-wpinv-customers-table.php:292
 #: includes/data/default-payment-form.php:57
-#: includes/data/payment-form-elements.php:190
-#: includes/data/payment-form-elements.php:223
+#: includes/data/payment-form-elements.php:191
+#: includes/data/payment-form-elements.php:224
 #: templates/emails/wpinv-email-billing-details.php:28
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:167
 msgid "Address"
@@ -1433,7 +1433,7 @@ msgid "Appenzell Innerrhoden"
 msgstr ""
 
 #: includes/data/default-payment-form.php:140
-#: includes/data/payment-form-elements.php:340
+#: includes/data/payment-form-elements.php:341
 #: includes/data/sample-payment-form.php:32
 msgid "Apply Coupon"
 msgstr ""
@@ -2085,7 +2085,7 @@ msgstr ""
 msgid "Billing / Shipping Address"
 msgstr ""
 
-#: includes/user-functions.php:130 includes/data/payment-form-elements.php:194
+#: includes/user-functions.php:130 includes/data/payment-form-elements.php:195
 #: templates/payment-forms/elements/address.php:46
 msgid "Billing Address"
 msgstr ""
@@ -2104,8 +2104,8 @@ msgid "Billing Details (GetPaid)"
 msgstr ""
 
 #: includes/data/default-payment-form.php:19
-#: includes/data/payment-form-elements.php:324
-#: includes/data/payment-form-elements.php:328
+#: includes/data/payment-form-elements.php:325
+#: includes/data/payment-form-elements.php:329
 #: includes/data/sample-payment-form.php:19
 msgid "Billing Email"
 msgstr ""
@@ -2509,7 +2509,7 @@ msgstr ""
 msgid "Buz&#259;u"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:389
+#: includes/data/payment-form-elements.php:390
 msgid ""
 "By continuing with our payment, you are agreeing to our privacy policy and "
 "terms of service."
@@ -2995,7 +2995,7 @@ msgid "Choose a item"
 msgstr ""
 
 #: includes/data/default-payment-form.php:85
-#: includes/data/payment-form-elements.php:254
+#: includes/data/payment-form-elements.php:255
 msgid "Choose a state"
 msgstr ""
 
@@ -3052,7 +3052,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:591
 #: includes/admin/class-wpinv-customers-table.php:290
 #: includes/data/default-payment-form.php:67
-#: includes/data/payment-form-elements.php:234
+#: includes/data/payment-form-elements.php:235
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:183
 msgid "City"
 msgstr ""
@@ -3149,7 +3149,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:595
 #: includes/admin/class-wpinv-customers-table.php:294
 #: includes/data/default-payment-form.php:117
-#: includes/data/payment-form-elements.php:289
+#: includes/data/payment-form-elements.php:290
 #: templates/emails/wpinv-email-billing-details.php:23
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:132
 msgid "Company"
@@ -3158,7 +3158,7 @@ msgstr ""
 #: includes/wpinv-address-functions.php:142
 #: includes/admin/class-getpaid-admin-profile.php:55
 #: includes/admin/class-getpaid-admin.php:596
-#: includes/data/payment-form-elements.php:300
+#: includes/data/payment-form-elements.php:301
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:352
 msgid "Company ID"
 msgstr ""
@@ -3247,7 +3247,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:388
+#: includes/data/payment-form-elements.php:389
 #: templates/payment-forms/elements/pay_button.php:14
 msgid "Continue »"
 msgstr ""
@@ -3317,7 +3317,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:589
 #: includes/admin/class-wpinv-customers-table.php:288
 #: includes/data/default-payment-form.php:77
-#: includes/data/payment-form-elements.php:245
+#: includes/data/payment-form-elements.php:246
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:201
 #: includes/admin/views/html-tax-rate-edit.php:27
 #: includes/admin/views/html-tax-rates-edit.php:36
@@ -3329,7 +3329,7 @@ msgid "Country / Region"
 msgstr ""
 
 #: includes/data/default-payment-form.php:139
-#: includes/data/payment-form-elements.php:339
+#: includes/data/payment-form-elements.php:340
 #: includes/data/sample-payment-form.php:31
 msgid "Coupon Code"
 msgstr ""
@@ -3697,6 +3697,10 @@ msgstr ""
 msgid "Default Country"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:23
+msgid "Default Date"
+msgstr ""
+
 #: includes/data/admin-settings.php:270
 msgid "Default Gateway"
 msgstr ""
@@ -3818,12 +3822,20 @@ msgstr ""
 msgid "Direct Payment URL"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:58
+msgid "Disable Days"
+msgstr ""
+
 #: includes/data/admin-settings.php:600
 msgid "Disable new user emails"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-details.php:239
 msgid "Disable taxes"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:49
+msgid "Disabled Dates"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:183
@@ -3866,7 +3878,7 @@ msgstr ""
 msgid "Discount image"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:336
+#: includes/data/payment-form-elements.php:337
 msgid "Discount Input"
 msgstr ""
 
@@ -4226,7 +4238,7 @@ msgstr ""
 msgid "Edit the item name, price and other details"
 msgstr ""
 
-#: templates/payment-forms/form.php:79
+#: templates/payment-forms/form.php:92
 msgid "Edit this form."
 msgstr ""
 
@@ -4271,14 +4283,14 @@ msgid "Elgeyo-Marakwet"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:588
-#: includes/data/payment-form-elements.php:165
+#: includes/data/payment-form-elements.php:166
 #: templates/emails/wpinv-email-billing-details.php:18
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:63
 msgid "Email"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:111
-#: includes/data/payment-form-elements.php:169
+#: includes/data/payment-form-elements.php:170
 msgid "Email Address"
 msgstr ""
 
@@ -4320,7 +4332,7 @@ msgstr ""
 msgid "Email Heading"
 msgstr ""
 
-#: templates/payment-forms-admin/edit/date.php:43
+#: templates/payment-forms-admin/edit/date.php:105
 #: templates/payment-forms-admin/edit/email.php:50
 #: templates/payment-forms-admin/edit/file_upload.php:64
 #: templates/payment-forms-admin/edit/number.php:50
@@ -4466,7 +4478,7 @@ msgid ""
 "charged this rate."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:364
+#: includes/data/payment-form-elements.php:365
 msgid "Enter Amount"
 msgstr ""
 
@@ -4898,7 +4910,7 @@ msgstr ""
 msgid "Fijian Dollar"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:177
+#: includes/data/payment-form-elements.php:178
 msgid "File Upload"
 msgstr ""
 
@@ -4931,7 +4943,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:103
 #: includes/wpinv-address-functions.php:133
 #: includes/data/default-payment-form.php:37
-#: includes/data/payment-form-elements.php:201
+#: includes/data/payment-form-elements.php:202
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:97
 msgid "First Name"
 msgstr ""
@@ -4967,6 +4979,11 @@ msgstr ""
 
 #: includes/data/item-schema.php:153
 msgid "For dynamic prices, this is the minimum price that a user can set."
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:51
+#, php-format
+msgid "For example, %s"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:255
@@ -5042,6 +5059,10 @@ msgstr ""
 
 #: includes/data/states.php:237
 msgid "Fribourg"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:65
+msgid "Fridays"
 msgstr ""
 
 #: includes/reports/class-getpaid-reports-export.php:104
@@ -5134,7 +5155,7 @@ msgstr ""
 msgid "Garissa"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:396
+#: includes/data/payment-form-elements.php:397
 msgid "Gateway Select"
 msgstr ""
 
@@ -5644,7 +5665,7 @@ msgid "Hatay"
 msgstr ""
 
 #: includes/data/default-payment-form.php:141
-#: includes/data/payment-form-elements.php:341
+#: includes/data/payment-form-elements.php:342
 #: includes/data/sample-payment-form.php:33
 msgid "Have a discount code? Enter it above."
 msgstr ""
@@ -5691,7 +5712,7 @@ msgstr ""
 #: templates/payment-forms-admin/edit/address.php:59
 #: templates/payment-forms-admin/edit/billing_email.php:30
 #: templates/payment-forms-admin/edit/checkbox.php:23
-#: templates/payment-forms-admin/edit/date.php:23
+#: templates/payment-forms-admin/edit/date.php:85
 #: templates/payment-forms-admin/edit/discount.php:30
 #: templates/payment-forms-admin/edit/email.php:30
 #: templates/payment-forms-admin/edit/file_upload.php:42
@@ -5805,7 +5826,7 @@ msgstr ""
 #: templates/payment-forms-admin/edit/address.php:61
 #: templates/payment-forms-admin/edit/billing_email.php:32
 #: templates/payment-forms-admin/edit/checkbox.php:25
-#: templates/payment-forms-admin/edit/date.php:25
+#: templates/payment-forms-admin/edit/date.php:87
 #: templates/payment-forms-admin/edit/discount.php:32
 #: templates/payment-forms-admin/edit/email.php:32
 #: templates/payment-forms-admin/edit/file_upload.php:44
@@ -6496,7 +6517,7 @@ msgstr ""
 msgid "Invoices were successfully sent"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:715
+#: includes/wpinv-helper-functions.php:719
 #: includes/admin/class-wpinv-users.php:38
 msgid "Invoicing"
 msgstr ""
@@ -6514,7 +6535,7 @@ msgid "Iowa"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:168
-#: includes/data/payment-form-elements.php:413
+#: includes/data/payment-form-elements.php:414
 msgid "IP Address"
 msgstr ""
 
@@ -6564,7 +6585,7 @@ msgid "Is required"
 msgstr ""
 
 #: templates/payment-forms-admin/edit/checkbox.php:31
-#: templates/payment-forms-admin/edit/date.php:31
+#: templates/payment-forms-admin/edit/date.php:93
 #: templates/payment-forms-admin/edit/email.php:38
 #: templates/payment-forms-admin/edit/file_upload.php:52
 #: templates/payment-forms-admin/edit/number.php:38
@@ -6815,7 +6836,7 @@ msgstr ""
 #: includes/admin/class-getpaid-post-types-admin.php:383
 #: includes/admin/class-wpinv-subscriptions-list-table.php:377
 #: includes/admin/subscriptions.php:761
-#: includes/data/payment-form-elements.php:347
+#: includes/data/payment-form-elements.php:348
 #: includes/reports/class-getpaid-reports-report.php:29
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:176
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:184
@@ -7660,7 +7681,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:107
 #: includes/wpinv-address-functions.php:134
 #: includes/data/default-payment-form.php:47
-#: includes/data/payment-form-elements.php:212
+#: includes/data/payment-form-elements.php:213
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:113
 msgid "Last Name"
 msgstr ""
@@ -7929,7 +7950,7 @@ msgid "Lleida"
 msgstr ""
 
 #: includes/class-wpinv.php:375 includes/admin/class-getpaid-admin.php:189
-#: templates/payment-forms/form.php:93
+#: templates/payment-forms/form.php:106
 msgid "Loading..."
 msgstr ""
 
@@ -8378,6 +8399,10 @@ msgstr ""
 msgid "Maximum Amount"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:40
+msgid "Maximum Date"
+msgstr ""
+
 #: includes/payments/class-getpaid-checkout.php:271
 msgid "Maximum number of allowed files exceeded."
 msgstr ""
@@ -8548,6 +8573,10 @@ msgstr ""
 msgid "Minimum Amount"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:31
+msgid "Minimum Date"
+msgstr ""
+
 #: includes/data/admin-settings.php:569
 msgid "Minimum Digits"
 msgstr ""
@@ -8616,6 +8645,10 @@ msgstr ""
 msgid "MM"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:74
+msgid "Mode"
+msgstr ""
+
 #: includes/data/states.php:589
 msgid "Modena"
 msgstr ""
@@ -8638,6 +8671,10 @@ msgstr ""
 
 #: includes/data/states.php:450
 msgid "Monaghan"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:61
+msgid "Mondays"
 msgstr ""
 
 #: includes/data/countries.php:163
@@ -9314,6 +9351,9 @@ msgid "Noakhali"
 msgstr ""
 
 #: includes/wpinv-gateway-functions.php:145
+#: templates/payment-forms-admin/edit/date.php:25
+#: templates/payment-forms-admin/edit/date.php:33
+#: templates/payment-forms-admin/edit/date.php:42
 msgid "None"
 msgstr ""
 
@@ -9468,8 +9508,8 @@ msgstr ""
 msgid "Nuevo Le&oacute;n"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:141
-#: includes/data/payment-form-elements.php:145
+#: includes/data/payment-form-elements.php:142
+#: includes/data/payment-form-elements.php:146
 msgid "Number"
 msgstr ""
 
@@ -9703,6 +9743,10 @@ msgstr ""
 msgid ""
 "Optionally set the minimum amount (including taxes) required to use this "
 "discount."
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:68
+msgid "Optionally specify the days of the week to disable."
 msgstr ""
 
 #: templates/payment-forms-admin/edit/price_select.php:47
@@ -10050,7 +10094,7 @@ msgstr ""
 msgid "Pavia"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:387
+#: includes/data/payment-form-elements.php:388
 #: templates/payment-forms/elements/pay_button.php:13
 msgid "Pay %price% »"
 msgstr ""
@@ -10090,7 +10134,7 @@ msgstr ""
 msgid "Payment %s via IPN."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:383
+#: includes/data/payment-form-elements.php:384
 msgid "Payment Button"
 msgstr ""
 
@@ -10392,7 +10436,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin.php:594
 #: includes/admin/class-wpinv-customers-table.php:293
 #: includes/data/default-payment-form.php:107
-#: includes/data/payment-form-elements.php:278
+#: includes/data/payment-form-elements.php:279
 #: templates/emails/wpinv-email-billing-details.php:33
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:280
 msgid "Phone"
@@ -10653,11 +10697,11 @@ msgstr ""
 msgid "Price"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:359
+#: includes/data/payment-form-elements.php:360
 msgid "Price Input"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:371
+#: includes/data/payment-form-elements.php:372
 msgid "Price Select"
 msgstr ""
 
@@ -11410,7 +11454,7 @@ msgstr ""
 msgid "Samburu"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:196
+#: includes/data/payment-form-elements.php:197
 msgid "Same billing & shipping address."
 msgstr ""
 
@@ -11550,6 +11594,10 @@ msgstr ""
 msgid "Satun"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:66
+msgid "Saturdays"
+msgstr ""
+
 #: includes/data/countries.php:213
 msgid "Saudi Arabia"
 msgstr ""
@@ -11677,7 +11725,7 @@ msgstr ""
 msgid "Select all the items that are not allowed to use this discount."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:374
+#: includes/data/payment-form-elements.php:375
 msgid "Select Amount"
 msgstr ""
 
@@ -11738,7 +11786,7 @@ msgid "Select one or more items on the list"
 msgstr ""
 
 #: includes/data/default-payment-form.php:161
-#: includes/data/payment-form-elements.php:398
+#: includes/data/payment-form-elements.php:399
 #: includes/data/sample-payment-form.php:53
 #: includes/payments/class-getpaid-payment-form.php:235
 #: templates/payment-forms/elements/gateway_select.php:14
@@ -11939,7 +11987,7 @@ msgid "Shipping"
 msgstr ""
 
 #: includes/admin/class-getpaid-metaboxes.php:191
-#: includes/data/payment-form-elements.php:195
+#: includes/data/payment-form-elements.php:196
 #: templates/payment-forms/elements/address.php:91
 msgid "Shipping Address"
 msgstr ""
@@ -11974,7 +12022,7 @@ msgid "Show payment forms or buttons."
 msgstr ""
 
 #: templates/payment-forms-admin/edit/checkbox.php:36
-#: templates/payment-forms-admin/edit/date.php:36
+#: templates/payment-forms-admin/edit/date.php:98
 #: templates/payment-forms-admin/edit/email.php:43
 #: templates/payment-forms-admin/edit/file_upload.php:57
 #: templates/payment-forms-admin/edit/number.php:43
@@ -12323,6 +12371,20 @@ msgstr ""
 msgid "Spain"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:52
+msgid ""
+"Specify the dates to ignore. Use commas to separate dates and \"|\" to "
+"separate date ranges."
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:43
+msgid "Specify the maximum/latest date (inclusively) allowed for selection."
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:34
+msgid "Specify the minimum/earliest date (inclusively) allowed for selection."
+msgstr ""
+
 #: includes/data/countries.php:228
 msgid "Sri Lanka"
 msgstr ""
@@ -12392,7 +12454,7 @@ msgid "State / County or state code"
 msgstr ""
 
 #: includes/data/default-payment-form.php:87
-#: includes/data/payment-form-elements.php:256
+#: includes/data/payment-form-elements.php:257
 msgid "State / Province"
 msgstr ""
 
@@ -12685,6 +12747,10 @@ msgstr ""
 
 #: includes/data/states.php:137
 msgid "Sunamganj"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:60
+msgid "Sundays"
 msgstr ""
 
 #: includes/data/states.php:1198
@@ -13691,7 +13757,7 @@ msgctxt "This is a legal term for reverse charging tax in the EU"
 msgid "(Reverse charged)"
 msgstr ""
 
-#: templates/payment-forms/form.php:81
+#: templates/payment-forms/form.php:94
 msgid "This is only visible to website administators."
 msgstr ""
 
@@ -13837,6 +13903,10 @@ msgstr ""
 msgid "Thurgau"
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:64
+msgid "Thursdays"
+msgstr ""
+
 #: includes/data/states.php:261
 msgid "Tianjin / &#22825;&#27941;"
 msgstr ""
@@ -13853,8 +13923,8 @@ msgstr ""
 msgid "Tierra del Fuego"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:130
-#: includes/data/payment-form-elements.php:133
+#: includes/data/payment-form-elements.php:131
+#: includes/data/payment-form-elements.php:134
 msgid "Time"
 msgstr ""
 
@@ -14011,7 +14081,7 @@ msgstr ""
 msgid "Total of refunded invoices."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:405
+#: includes/data/payment-form-elements.php:406
 msgid "Total Payable"
 msgstr ""
 
@@ -14033,7 +14103,7 @@ msgstr ""
 msgid "Total tax amount for the invoice."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:407
+#: includes/data/payment-form-elements.php:408
 #: templates/payment-forms/elements/total_payable.php:13
 msgid "Total to pay:"
 msgstr ""
@@ -14133,6 +14203,10 @@ msgstr ""
 
 #: includes/data/states.php:62
 msgid "Tucum&aacute;n"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:62
+msgid "Tuesdays"
 msgstr ""
 
 #: includes/data/states.php:1123
@@ -14331,7 +14405,7 @@ msgid "Updating the status will trigger related actions and hooks"
 msgstr ""
 
 #: includes/admin/register-settings.php:850
-#: includes/data/payment-form-elements.php:180
+#: includes/data/payment-form-elements.php:181
 msgid "Upload File"
 msgstr ""
 
@@ -14422,6 +14496,18 @@ msgstr ""
 #, php-format
 msgctxt "user dropdown"
 msgid "%1$s (%2$s)"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:76
+msgid "Users can only select a single date"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:77
+msgid "Users can select a date range"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:78
+msgid "Users can select multiple dates"
 msgstr ""
 
 #: includes/user-functions.php:439 includes/user-functions.php:444
@@ -14574,7 +14660,7 @@ msgstr ""
 #: includes/admin/class-getpaid-admin-profile.php:87
 #: includes/data/admin-settings.php:372
 #: includes/data/default-payment-form.php:127
-#: includes/data/payment-form-elements.php:311
+#: includes/data/payment-form-elements.php:312
 msgid "VAT Number"
 msgstr ""
 
@@ -14891,9 +14977,13 @@ msgstr ""
 msgid "Webhook URL"
 msgstr ""
 
-#: includes/data/payment-form-elements.php:153
-#: includes/data/payment-form-elements.php:157
+#: includes/data/payment-form-elements.php:154
+#: includes/data/payment-form-elements.php:158
 msgid "Website"
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:63
+msgid "Wednesdays"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:100
@@ -15207,9 +15297,25 @@ msgstr ""
 msgid "You are not permitted to view this page."
 msgstr ""
 
+#: templates/payment-forms-admin/edit/date.php:24
+#: templates/payment-forms-admin/edit/date.php:32
+#: templates/payment-forms-admin/edit/date.php:41
+#, php-format
+msgid ""
+"You can enter the shortcut \"today\" or enter a date matching the format Y-m-"
+"d, e.g %s"
+msgstr ""
+
 #: includes/invoice-functions.php:145
 msgid ""
 "You can not update cart items for invoices that have already been paid for."
+msgstr ""
+
+#: templates/payment-forms-admin/edit/date.php:50
+#, php-format
+msgid ""
+"You can use the shortcut \"today\" or enter dates matching the format Y-m-d, "
+"e.g %s"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:89
@@ -15218,7 +15324,7 @@ msgid ""
 "You can use this in an iFrame to embed the payment form on another website"
 msgstr ""
 
-#: templates/payment-forms-admin/edit/date.php:45
+#: templates/payment-forms-admin/edit/date.php:107
 #: templates/payment-forms-admin/edit/email.php:52
 #: templates/payment-forms-admin/edit/file_upload.php:66
 #: templates/payment-forms-admin/edit/number.php:52
@@ -15255,6 +15361,10 @@ msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission-fees.php:107
 msgid "You have selected an invalid amount"
+msgstr ""
+
+#: templates/payment-forms/form.php:29
+msgid "You must be logged in to checkout."
 msgstr ""
 
 #: templates/wpinv-invalid-access.php:48
@@ -15323,7 +15433,7 @@ msgstr ""
 msgid "Your invoices have been migrated."
 msgstr ""
 
-#: includes/data/payment-form-elements.php:415
+#: includes/data/payment-form-elements.php:416
 #: templates/payment-forms/elements/ip_address.php:13
 msgid "Your IP address is:"
 msgstr ""
@@ -15472,7 +15582,7 @@ msgid "Zip / Postal Code"
 msgstr ""
 
 #: includes/data/default-payment-form.php:97
-#: includes/data/payment-form-elements.php:267
+#: includes/data/payment-form-elements.php:268
 msgid "ZIP / Postcode"
 msgstr ""
 

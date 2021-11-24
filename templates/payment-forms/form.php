@@ -20,6 +20,19 @@ if ( ! $form->is_active() ) {
     return;
 }
 
+// Require login to checkout.
+if ( wpinv_require_login_to_checkout() && ! get_current_user_id() ) {
+
+    echo aui()->alert(
+        array(
+            'type'    => 'danger',
+            'content' => __( 'You must be logged in to checkout.', 'invoicing' ),
+        )
+    );
+    return;
+
+}
+
 // Fires before displaying a payment form.
 do_action( 'getpaid_before_payment_form', $form );
 ?>

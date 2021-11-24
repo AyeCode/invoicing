@@ -63,7 +63,7 @@
 			/* hide all other elements */
 			body::before,
 			body::after,
-			body > *:not(#getpaid-form-embed) { 
+			body > *:not(#getpaid-form-embed):not(.flatpickr-calendar) { 
 				display:none !important; 
 			}
 

@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.8
-Stable tag: 2.5.8
+Stable tag: 2.5.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,6 +132,15 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.5.9 =
+* "Require login to checkout" only affects invoices - FIXED
+* Date field - ability to set default, minimum and maximum dates - ADDED
+* Ability to select multiple dates and date ranges from the range field - ADDED
+* Ability to disable certain days of the week, certain dates and date ranges - ADDED
+
+= 2.5.8 =
+* Super Duper changes - ADDED
 
 = 2.5.7 =
 * Make checkout items mobile friendly - CHANGED
