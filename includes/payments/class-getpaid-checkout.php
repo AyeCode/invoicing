@@ -161,6 +161,10 @@ class GetPaid_Checkout {
 		$invoice->set_gateway( $submission->get_field( 'wpi-gateway' ) );
 		$invoice->set_currency( $submission->get_currency() );
 
+		if ( $submission->has_shipping() ) {
+			$invoice->set_shipping( $submission->get_shipping() );
+		}
+
 		$address_confirmed = $submission->get_field( 'confirm-address' );
 		$invoice->set_address_confirmed( ! empty( $address_confirmed ) );
 
@@ -406,6 +410,7 @@ class GetPaid_Checkout {
 		}
 
 		// Save payment form data.
+		$shipping = apply_filters( 'getpaid_checkout_shipping_details', $shipping, $this->payment_form_submission );
         if ( ! empty( $shipping ) ) {
             update_post_meta( $invoice->get_id(), 'shipping_address', $shipping );
 		}

@@ -34,6 +34,19 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 
 		<div class="bsui">
 
+			<?php if ( ! empty( $shipping_address['method'] ) ) : ?>
+
+				<div class="form-group form-row" style="color: green;">
+					<div class="col">
+						<span style="font-weight: 600"><?php esc_html_e( 'Shipping Method', 'invoicing' ); ?>:</span>
+					</div>
+					<div class="col">
+						<?php echo wp_kses_post( $shipping_address['method'] ); ?>
+					</div>
+				</div>
+
+			<?php endif; ?>
+
 			<?php foreach ( getpaid_user_address_fields() as $key => $label ) : ?>
 
 					<?php if ( ! empty( $shipping_address[ $key ] ) ) : ?>
