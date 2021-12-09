@@ -1531,6 +1531,9 @@ textarea.wpi-email_overdue_content {
     width: 100%;
     cursor: move;
     font-size: 14px;
+    overflow: hidden;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .wpinv-payment-form-left-fields-field.sortable-ghost {
