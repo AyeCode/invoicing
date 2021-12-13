@@ -996,6 +996,7 @@ function getpaid_invoice_totals_rows( $invoice ) {
         'getpaid_invoice_totals_rows',
         array(
             'subtotal' => __( 'Subtotal', 'invoicing' ),
+            'shipping' => __( 'Shipping', 'invoicing' ),
             'tax'      => __( 'Tax', 'invoicing' ),
             'fee'      => __( 'Fee', 'invoicing' ),
             'discount' => __( 'Discount', 'invoicing' ),
@@ -1003,6 +1004,10 @@ function getpaid_invoice_totals_rows( $invoice ) {
         ),
         $invoice
     );
+
+    if ( ! $invoice->has_shipping() ) {
+        unset( $totals['shipping'] );
+    }
 
     if ( ( $invoice->get_disable_taxes() || ! wpinv_use_taxes() ) && isset( $totals['tax'] ) ) {
         unset( $totals['tax'] );

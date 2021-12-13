@@ -62,6 +62,11 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                                     echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );
                                 }
 
+                                // Shipping.
+                                if ( 'shipping' == $key ) {
+                                    echo wpinv_price( $invoice->get_shipping(), $invoice->get_currency() );
+                                }
+
                                 // Sub total.
                                 if ( 'subtotal' == $key ) {
                                     echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );

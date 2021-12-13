@@ -50,6 +50,11 @@ class GetPaid_Payment_Form_Submission {
 			'recurring' => 0,
 		),
 
+		'shipping'         => array(
+			'initial'   => 0,
+			'recurring' => 0,
+		),
+
 	);
 
 	/**
@@ -724,6 +729,12 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function add_fee( $fee ) {
 
+		if ( $fee['name'] == 'shipping' ) {
+			$this->totals['shipping']['initial']   += wpinv_sanitize_amount( $fee['initial_fee'] );
+			$this->totals['shipping']['recurring'] += wpinv_sanitize_amount( $fee['recurring_fee'] );
+			return;
+		}
+
 		$this->fees[ $fee['name'] ]         = $fee;
 		$this->totals['fees']['initial']   += wpinv_sanitize_amount( $fee['initial_fee'] );
 		$this->totals['fees']['recurring'] += wpinv_sanitize_amount( $fee['recurring_fee'] );
@@ -741,6 +752,11 @@ class GetPaid_Payment_Form_Submission {
 			$this->totals['fees']['initial']   -= $this->fees[ $name ]['initial_fee'];
 			$this->totals['fees']['recurring'] -= $this->fees[ $name ]['recurring_fee'];
 			unset( $this->fees[ $name ] );
+		}
+
+		if ( 'shipping' == $name ) {
+			$this->totals['shipping']['initial']   = 0;
+			$this->totals['shipping']['recurring'] = 0;
 		}
 
 	}
@@ -791,6 +807,34 @@ class GetPaid_Payment_Form_Submission {
     */
 
 	/**
+	 * Returns the shipping amount.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_shipping() {
+		return $this->totals['shipping']['initial'];
+	}
+
+	/**
+	 * Returns the recurring shipping.
+	 *
+	 * @since 1.0.19
+	 */
+	public function get_recurring_shipping() {
+		return $this->totals['shipping']['recurring'];
+	}
+
+	/**
+	 * Checks if there are any shipping fees for the form.
+	 *
+	 * @return bool
+	 * @since 1.0.19
+	 */
+	public function has_shipping() {
+		return apply_filters( 'getpaid_payment_form_has_shipping', false, $this );
+	}
+
+	/**
 	 * Checks if this is the initial fetch.
 	 *
 	 * @return bool
@@ -806,7 +850,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_total() {
-		$total = $this->get_subtotal() + $this->get_fee() + $this->get_tax() - $this->get_discount();
+		$total = $this->get_subtotal() + $this->get_fee() + $this->get_tax() + $this->get_shipping() - $this->get_discount();
 		return max( $total, 0 );
 	}
 
@@ -816,7 +860,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_recurring_total() {
-		$total = $this->get_recurring_subtotal() + $this->get_recurring_fee() + $this->get_recurring_tax() - $this->get_recurring_discount();
+		$total = $this->get_recurring_subtotal() + $this->get_recurring_fee() + $this->get_recurring_tax() + $this->get_recurring_shipping() - $this->get_recurring_discount();
 		return max( $total, 0 );
 	}
 

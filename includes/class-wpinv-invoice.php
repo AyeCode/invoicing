@@ -65,7 +65,8 @@ class WPInv_Invoice extends GetPaid_Data {
         'vat_rate'             => null,
         'address'              => null,
         'address_confirmed'    => false,
-        'subtotal'             => 0,
+        'shipping'             => null,
+		'subtotal'             => 0,
         'total_discount'       => 0,
         'total_tax'            => 0,
 		'total_fees'           => 0,
@@ -1366,6 +1367,26 @@ class WPInv_Invoice extends GetPaid_Data {
 		return $this->get_address_confirmed( $context );
     }
 
+	/**
+	 * Get the shipping amount.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return float
+	 */
+	public function get_shipping( $context = 'view' ) {
+
+		if ( $context = 'view' ) {
+			return floatval( $this->get_prop( 'shipping', $context ) );
+		}
+ 
+		return $this->get_prop( 'shipping', $context );
+    }
+
+	public function has_shipping() {
+		return null !== $this->get_prop( 'shipping', 'edit' );
+    }
+
     /**
 	 * Get the invoice subtotal.
 	 *
@@ -1448,7 +1469,13 @@ class WPInv_Invoice extends GetPaid_Data {
      * @return float
 	 */
 	public function get_total( $context = 'view' ) {
-		return wpinv_round_amount( wpinv_sanitize_amount( $this->get_prop( 'total', $context ) ) );
+		$total = $this->get_prop( 'total', $context );
+
+		if ( $this->has_shipping() && $context == 'view' ) {
+			$total = $this->get_prop( 'total', $context ) + $this->get_shipping( $context );
+		}
+
+		return wpinv_round_amount( wpinv_sanitize_amount( $total ) );
 	}
 
 	/**
@@ -2795,6 +2822,21 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
+	 * Set the shipping fee
+	 *
+	 * @since 1.0.19
+	 * @param  float $value shipping amount.
+	 */
+	public function set_shipping( $value ) {
+
+		if ( ! is_numeric( $value ) ) {
+			return $this->set_prop( 'shipping', null );
+		}
+
+		$this->set_prop( 'shipping', max( 0, floatval( $value ) ) );
+	}
+
+	/**
 	 * Set the invoice sub total.
 	 *
 	 * @since 1.0.19
