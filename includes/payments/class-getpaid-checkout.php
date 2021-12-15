@@ -82,7 +82,7 @@ class GetPaid_Checkout {
 
 		// Ensure the gateway is active.
 		if ( $submission->should_collect_payment_details() && ! wpinv_is_gateway_active( $data['wpi-gateway'] ) ) {
-			wpinv_set_error( 'invalid_gateway', __( 'The selected payment gateway is not active', 'invoicing' ) );
+			wp_send_json_error( __( 'The selected payment gateway is not active', 'invoicing' ) );
 		}
 
 		// Clear any existing errors.
