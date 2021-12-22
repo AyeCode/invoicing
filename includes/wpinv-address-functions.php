@@ -222,6 +222,8 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
         $address[$field] = getpaid_get_user_address_field( $user_id, $field );
     }
 
+    $address = array_filter( $address );
+
     if ( ! $with_default ) {
         return $address;
     }
