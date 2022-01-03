@@ -57,7 +57,7 @@ defined( 'ABSPATH' ) || exit;
                 </li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto"><?php _e( 'Test Getway', 'invoicing' ); ?></span>
+				    <span class="mr-auto"><?php _e( 'Test Gateway', 'invoicing' ); ?></span>
 					<div class="custom-control custom-switch">
 						<input type="checkbox" name="enable-manual-gateway" class="custom-control-input" id="enable-manual-gateway" <?php checked( wpinv_is_gateway_active( 'manual' ) ); ?>>
 						<label class="custom-control-label" for="enable-manual-gateway"></label>
