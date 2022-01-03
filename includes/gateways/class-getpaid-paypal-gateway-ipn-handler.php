@@ -253,11 +253,11 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			$note = '';
 
 			if ( ! empty( $posted['mc_fee'] ) ) {
-				$note = sprintf( __( 'PayPal Transaction Fee %.', 'invoicing' ), sanitize_text_field( $posted['mc_fee'] ) );
+				$note = sprintf( __( 'PayPal Transaction Fee %s.', 'invoicing' ), sanitize_text_field( $posted['mc_fee'] ) );
 			}
 
 			if ( ! empty( $posted['payer_status'] ) ) {
-				$note = ' ' . sprintf( __( 'Buyer status %.', 'invoicing' ), sanitize_text_field( $posted['payer_status'] ) );
+				$note = ' ' . sprintf( __( 'Buyer status %s.', 'invoicing' ), sanitize_text_field( $posted['payer_status'] ) );
 			}
 
 			$invoice->mark_paid( ( ! empty( $posted['txn_id'] ) ? sanitize_text_field( $posted['txn_id'] ) : '' ), trim( $note ) );
