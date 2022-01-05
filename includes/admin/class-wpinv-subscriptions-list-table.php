@@ -94,7 +94,16 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			'status'  => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? $_GET['status'] : 'all',
 			'orderby' => ( isset( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'id',
 			'order'   => ( isset( $_GET['order'] ) ) ? $_GET['order'] : 'DESC',
+			'customer_in' => $this->get_user_in(),
 		);
+
+		if ( is_array( $query['customer_in'] ) && empty( $query['customer_in'] ) ) {
+			$this->total_count         = 0;
+			$this->current_total_count = 0;
+			$this->items               = array();
+			$this->status_counts       = array();
+			return;
+		}
 
 		// Prepare class properties.
 		$this->query               = new GetPaid_Subscriptions_Query( $query );
@@ -108,6 +117,37 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			$this->total_count   = getpaid_get_subscriptions( $query, 'count' );
 		}
 
+	}
+
+	/**
+	 * Get user in.
+	 *
+	 */
+	public function get_user_in() {
+
+		// Abort if no user.
+		if ( empty( $_GET['s'] ) ) {
+			return null;
+		}
+
+		// Or invalid user.
+		$user = wp_unslash( sanitize_text_field( $_REQUEST['s'] ) );
+
+		if ( empty( $user ) ) {
+			return null;
+		}
+
+		// Search matching users.
+		$user  = '*' . $user . '*';
+		$users = new WP_User_Query(
+			array(
+				'fields'      => 'ID',
+				'search'      => $user,
+				'count_total' => false,
+			)
+		);
+
+		return $users->get_results();
 	}
 
 	/**
