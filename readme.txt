@@ -133,6 +133,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.5.11 =
+* Ability to export subscriptions - ADDED
+* Ability to search subscriptions - ADDED
+
 = 2.5.10 =
 * PayPal IPN throws errors on some requests - FIXED
 
