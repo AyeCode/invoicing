@@ -153,7 +153,13 @@ class GetPaid_Reports {
 	public function export_invoices( $args ) {
 
 		if ( ! empty( $args['post_type'] ) ) {
-			$downloader = new GetPaid_Invoice_Exporter();
+
+			if ( 'subscriptions' === $args['post_type'] ) {
+				$downloader = new GetPaid_Subscription_Exporter();
+			} else {
+				$downloader = new GetPaid_Invoice_Exporter();
+			}
+
 			$downloader->export( $args['post_type'], $args );
 		}
 

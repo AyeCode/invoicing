@@ -63,9 +63,10 @@ function getpaid_print_subscriptions_list() {
 	$subscribers_table->prepare_items();
 
 	?>
+	<?php $subscribers_table->views(); ?>
 	<form id="subscribers-filter" class="bsui" method="get">
 		<input type="hidden" name="page" value="wpinv-subscriptions" />
-		<?php $subscribers_table->views(); ?>
+		<?php $subscribers_table->search_box( __( 'Search Subscriptions', 'invoicing' ), 'getpaid-search-subscriptions' ); ?>
 		<?php $subscribers_table->display(); ?>
 	</form>
 	<?php

@@ -22,6 +22,7 @@ class GetPaid_Reports_Export {
 		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
 			$this->display_post_type_export( $post_type );
 		}
+		$this->display_subscription_export();
 		echo "</div>";
 
 	}
@@ -136,6 +137,12 @@ class GetPaid_Reports_Export {
 	 */
 	public function generate_post_status_select( $post_type ) {
 
+		if ( 'subscriptions' === $post_type ) {
+			$options = getpaid_get_subscription_statuses();
+		} else {
+			$options = wpinv_get_invoice_statuses( true, false, $post_type );
+		}
+
 		return aui()->select(
 			array(
 				'name'        => 'status',
@@ -144,7 +151,7 @@ class GetPaid_Reports_Export {
 				'label'       => __( 'Status', 'invoicing' ),
 				'label_type'  => 'vertical',
 				'label_class' => 'd-block',
-				'options'     => wpinv_get_invoice_statuses( true, false, $post_type ),
+				'options'     => $options,
 			)
 		);
 
@@ -188,6 +195,46 @@ class GetPaid_Reports_Export {
 			'regular-text',
 			$markup
 		);
+
+	}
+
+	/**
+	 * Displays a subscription export card.
+	 *
+	 */
+	public function display_subscription_export() {
+
+		?>
+
+		<div class="col-12 col-md-6">
+			<div class="card m-0 p-0" style="max-width:100%">
+
+				<div class="card-header">
+					<strong>
+						<?php _e( 'Export Subscriptions', 'invoicing' ); ?>
+					</strong>
+				</div>
+
+				<div class="card-body">
+
+					<form method="post" action="<?php echo esc_url( $this->get_download_url( 'subscriptions' ) ); ?>">
+
+						<?php
+							$this->display_markup( $this->generate_from_date( 'subscriptions' ) );
+							$this->display_markup( $this->generate_to_date( 'subscriptions' ) );
+							$this->display_markup( $this->generate_post_status_select( 'subscriptions' ) );
+							$this->display_markup( $this->generate_file_type_select( 'subscriptions' ) );
+							submit_button( __( 'Download', 'invoicing' ) );
+						?>
+
+					</form>
+
+				</div>
+
+			</div>
+		</div>
+
+		<?php
 
 	}
 
