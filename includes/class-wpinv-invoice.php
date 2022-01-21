@@ -1368,6 +1368,25 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
 	/**
+	 * Get the shipping address.
+	 *
+	 * @since 1.0.19
+	 * @return array|false
+	 */
+	public function get_shipping_address() {
+
+		$shipping_address = get_post_meta( $this->get_id(), 'shipping_address', true );
+		return is_array( $shipping_address ) ? $shipping_address : false;
+    }
+
+	/**
+	 * Check if the invoice has a shipping address.
+	 */
+	public function has_shipping_address() {
+		return false !== $this->get_shipping_address();
+    }
+
+	/**
 	 * Get the shipping amount.
 	 *
 	 * @since 1.0.19
