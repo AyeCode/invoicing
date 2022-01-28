@@ -261,7 +261,13 @@ add_action( 'getpaid_subscription_admin_display_amount', 'getpaid_admin_subscrip
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_id( $subscription ) {
-	echo  '#' . absint( $subscription->get_id() );
+
+	printf(
+		'<a href="%s">#%s</a>',
+		esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $subscription->get_id() ) ) ),
+		absint( $subscription->get_id() )
+	);
+
 }
 add_action( 'getpaid_subscription_admin_display_subscription', 'getpaid_admin_subscription_metabox_display_id' );
 
