@@ -99,7 +99,7 @@ class BP_GetPaid_Component extends BP_Component {
 			'slug'                => $slug,
 			'position'            => apply_filters( 'wpinv_bp_nav_position', wpinv_get_option( 'wpinv_menu_position', 91 ), $slug ),
 			'screen_function'     => array( $this, 'display_current_tab' ),
-			'default_subnav_slug' => 'gp-edit-address',
+			'default_subnav_slug' => apply_filters( 'getpaid_default_tab', 'gp-edit-address' ),
             'show_for_displayed_user' => false,
 			'item_css_id'         => $this->id,
 			'parent_url'          => $user_domain,
@@ -152,7 +152,7 @@ class BP_GetPaid_Component extends BP_Component {
                 'parent' => buddypress()->my_account_menu_id,
                 'id'     => 'my-account-getpaid',
                 'title'  => _x( 'Billing', 'BuddyPress my account payments sub nav', 'invoicing' ),
-                'href'   => $payments_link . 'gp-edit-address'
+                'href'   => $payments_link . apply_filters( 'getpaid_default_tab', 'gp-edit-address' ),
             );
 
             foreach ( getpaid_get_user_content_tabs() as $slug => $tab ) {

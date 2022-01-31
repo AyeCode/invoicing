@@ -135,6 +135,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.5.12 =
 * Apostrophes slashed when used in invoice item description - FIXED
+* Link to the subscription from individual invoices - ADDED
+* Filter to change the default BuddyPress GetPaid tab - ADDED
 
 = 2.5.11 =
 * Ability to export subscriptions - ADDED
