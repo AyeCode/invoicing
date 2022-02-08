@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
-Tested up to: 5.8
-Stable tag: 2.5.11
+Tested up to: 5.9
+Stable tag: 2.5.12
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,6 +132,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.5.13 =
+* Requires a specific item to be on the cart to apply a specific discount - ADDED
 
 = 2.5.12 =
 * Apostrophes slashed when used in invoice item description - FIXED

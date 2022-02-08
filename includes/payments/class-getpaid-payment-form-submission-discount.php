@@ -67,6 +67,11 @@ class GetPaid_Payment_Form_Submission_Discount {
 			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'Invalid or expired discount code', 'invoicing' ) );
 		}
 
+		// Required items.
+		if ( ! $discount->is_required_items_met( array_keys( $submission->get_items() ) ) ) {
+			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'You are not allowed to use this discount code.', 'invoicing' ) );
+		}
+
 		// Exceeded limit.
 		if ( $discount->has_exceeded_limit() ) {
 			throw new GetPaid_Payment_Exception( '.getpaid-discount-field .getpaid-custom-payment-form-errors', __( 'This discount code has been used up', 'invoicing' ) );

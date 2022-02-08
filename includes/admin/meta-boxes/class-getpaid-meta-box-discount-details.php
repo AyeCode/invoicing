@@ -226,6 +226,34 @@ class GetPaid_Meta_Box_Discount_Details {
             </div>
             <?php do_action( 'wpinv_discount_form_excluded_items', $discount ); ?>
 
+            <?php do_action( 'wpinv_discount_form_before_required_items', $discount ); ?>
+            <div class="form-group row">
+                <label for="wpinv_discount_required_items" class="col-sm-3 col-form-label">
+                    <?php _e( 'Required Items', 'invoicing' );?>
+                </label>
+                <div class="col-sm-8">
+                    <?php
+                        echo aui()->select(
+                            array(
+                                'id'               => 'wpinv_discount_required_items',
+                                'name'             => 'wpinv_discount_required_items[]',
+                                'label'            => __( 'Required Items', 'invoicing' ),
+                                'placeholder'      => __( 'Select Items', 'invoicing' ),
+                                'value'            => $discount->get_required_items( 'edit' ),
+                                'select2'          => true,
+                                'multiple'         => true,
+                                'data-allow-clear' => 'false',
+                                'options'          => wpinv_get_published_items_for_dropdown()
+                            )
+                        );
+                    ?>
+                </div>
+                <div class="col-sm-1 pt-2 pl-0">
+                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Select all the items that are required to be in the cart before using this discount.', 'invoicing' ); ?>"></span>
+                </div>
+            </div>
+            <?php do_action( 'wpinv_discount_form_required_items', $discount ); ?>
+
             <?php do_action( 'wpinv_discount_form_before_start', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_start" class="col-sm-3 col-form-label">
@@ -389,6 +417,7 @@ class GetPaid_Meta_Box_Discount_Details {
 				'is_recurring'         => isset( $_POST['wpinv_discount_recurring'] ),
 				'items'                => isset( $_POST['wpinv_discount_items'] ) ? wpinv_clean( $_POST['wpinv_discount_items'] ) : array(),
 				'excluded_items'       => isset( $_POST['wpinv_discount_excluded_items'] ) ? wpinv_clean( $_POST['wpinv_discount_excluded_items'] ) : array(),
+                'required_items'       => isset( $_POST['wpinv_discount_required_items'] ) ? wpinv_clean( $_POST['wpinv_discount_required_items'] ) : array(),
 				'max_uses'             => isset( $_POST['wpinv_discount_max_uses'] ) ? intval( $_POST['wpinv_discount_max_uses'] ) : null,
 				'min_total'            => isset( $_POST['wpinv_discount_min_total'] ) ? floatval( $_POST['wpinv_discount_min_total'] ) : null,
 				'max_total'            => isset( $_POST['wpinv_discount_max_total'] ) ? floatval( $_POST['wpinv_discount_max_total'] ) : null,
