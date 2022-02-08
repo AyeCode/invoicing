@@ -49,6 +49,7 @@ class WPInv_Discount extends GetPaid_Data  {
         'start'                => null,
         'items'                => array(),
         'excluded_items'       => array(),
+		'required_items'       => array(),
         'uses' 				   => 0,
         'max_uses'             => null,
         'is_recurring'         => null,
@@ -203,6 +204,7 @@ class WPInv_Discount extends GetPaid_Data  {
             'is_single_use'               => get_post_meta( $discount->ID, '_wpi_discount_is_single_use', true ),
             'items'              	      => get_post_meta( $discount->ID, '_wpi_discount_items', true ),
             'excluded_items'              => get_post_meta( $discount->ID, '_wpi_discount_excluded_items', true ),
+			'required_items'              => get_post_meta( $discount->ID, '_wpi_discount_required_items', true ),
             'max_uses'                    => get_post_meta( $discount->ID, '_wpi_discount_max_uses', true ),
             'is_recurring'                => get_post_meta( $discount->ID, '_wpi_discount_is_recurring', true ),
             'min_total'                   => get_post_meta( $discount->ID, '_wpi_discount_min_total', true ),
@@ -647,6 +649,17 @@ class WPInv_Discount extends GetPaid_Data  {
 	}
 
 	/**
+	 * Get the items that are required to be in the cart before using this discount.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return array
+	 */
+	public function get_required_items( $context = 'view' ) {
+		return array_filter( wp_parse_id_list( $this->get_prop( 'required_items', $context ) ) );
+	}
+
+	/**
 	 * Checks if this is a recurring discount or not.
 	 *
 	 * @since 1.0.19
@@ -1043,6 +1056,16 @@ class WPInv_Discount extends GetPaid_Data  {
 	}
 
 	/**
+	 * Sets the items that are required to be in the cart before using this discount.
+	 *
+	 * @since 1.0.19
+	 * @param array $value items.
+	 */
+	public function set_required_items( $value ) {
+		$this->set_prop( 'required_items', array_filter( wp_parse_id_list( $value ) ) );
+	}
+
+	/**
 	 * Sets if this is a recurring discounts or not.
 	 *
 	 * @since 1.0.19
@@ -1277,6 +1300,33 @@ class WPInv_Discount extends GetPaid_Data  {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Checks the discount has required items or not.
+	 *
+	 * @since 1.0.15
+	 * @return bool
+	 */
+	public function has_required_items() {
+		$required_items = $this->get_required_items();
+		return ! empty( $required_items );
+	}
+
+	/**
+	 * Checks if the required items are met
+	 *
+	 * @param  int|int[]  $item_ids
+	 * @since 1.0.15
+	 * @return boolean
+	 */
+	public function is_required_items_met( $item_ids ) {
+
+		if ( ! $this->has_required_items() ) {
+			return true;
+		}
+
+		return ! array_diff( $this->get_required_items(), array_filter( wp_parse_id_list( $item_ids ) ) );
 	}
 
 	/**

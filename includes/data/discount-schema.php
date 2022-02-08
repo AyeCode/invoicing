@@ -164,7 +164,16 @@ return array(
 			'type'    => 'integer'
 		)
 	),
-	
+
+	'required_items'  => array(
+		'description' => __( 'Items which are required to be in the cart before using this discount.', 'invoicing' ),
+		'type'        => 'array',
+		'context'     => array( 'view', 'edit' ),
+		'items'       => array(
+			'type'    => 'integer'
+		)
+	),
+
 	'minimum_total'   => array(
 		'description' => __( 'The minimum total needed to use this invoice.', 'invoicing' ),
 		'type'        => 'number',
