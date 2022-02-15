@@ -183,6 +183,23 @@ class GetPaid_Post_Types_Admin {
 
 			}
 
+			$actions['duplicate'] =  sprintf(
+				'<a href="%1$s">%2$s</a>',
+				esc_url(
+					wp_nonce_url(
+						add_query_arg(
+							array(
+								'getpaid-admin-action' => 'duplicate_invoice',
+								'invoice_id'           => $post->ID
+							)
+						),
+						'getpaid-nonce',
+						'getpaid-nonce'
+					)
+				),
+				esc_html( __( 'Duplicate', 'invoicing' ) )
+			);
+
         }
 
         return $actions;

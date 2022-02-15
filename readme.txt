@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.5.13 =
 * Requires a specific item to be on the cart to apply a specific discount - ADDED
+* Ability to duplicate quotes and invoices - ADDED
 
 = 2.5.12 =
 * Apostrophes slashed when used in invoice item description - FIXED

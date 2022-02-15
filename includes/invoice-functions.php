@@ -1096,6 +1096,7 @@ function getpaid_duplicate_invoice( $old_invoice ) {
             'mode'                 => $old_invoice->get_mode(),
             'description'          => $old_invoice->get_description(),
             'created_via'          => $old_invoice->get_created_via(),
+            'status'               => $old_invoice->get_default_status(),
 
             // Payment info.
             'disable_taxes'        => $old_invoice->get_disable_taxes(),
