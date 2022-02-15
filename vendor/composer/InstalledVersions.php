@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '6acdeda97fbd759d4e263c86581ddd1f32888954',
+    'reference' => '6f34c79e3ece7e41afb9a24d2c0632e8eb770a84',
     'name' => 'ayecode/invoicing',
   ),
   'versions' => 
@@ -40,16 +40,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '6acdeda97fbd759d4e263c86581ddd1f32888954',
+      'reference' => '6f34c79e3ece7e41afb9a24d2c0632e8eb770a84',
     ),
     'ayecode/wp-ayecode-ui' => 
     array (
-      'pretty_version' => '0.1.62',
-      'version' => '0.1.62.0',
+      'pretty_version' => '0.1.63',
+      'version' => '0.1.63.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f0625aa6f695cef39fe75bc1707026824e9841d9',
+      'reference' => 'a7ec8b7719feb7d4b2cacb02c8d0e19aadb6c037',
     ),
     'ayecode/wp-deactivation-survey' => 
     array (
@@ -71,12 +71,12 @@ private static $installed = array (
     ),
     'ayecode/wp-super-duper' => 
     array (
-      'pretty_version' => '1.0.27',
-      'version' => '1.0.27.0',
+      'pretty_version' => '1.0.28',
+      'version' => '1.0.28.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'ce187bc9afc5cd7f5d790d84eb6fd9b98e56992d',
+      'reference' => 'c3d8a73d9760352719da271ee13cfe676f5af075',
     ),
     'composer/installers' => 
     array (
