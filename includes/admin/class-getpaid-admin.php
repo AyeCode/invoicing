@@ -62,6 +62,7 @@ class GetPaid_Admin {
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 		add_action( 'getpaid_authenticated_admin_action_rate_plugin', array( $this, 'redirect_to_wordpress_rating_page' ) );
 		add_action( 'getpaid_authenticated_admin_action_duplicate_form', array( $this, 'duplicate_payment_form' ) );
+		add_action( 'getpaid_authenticated_admin_action_duplicate_invoice', array( $this, 'duplicate_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
@@ -403,6 +404,47 @@ class GetPaid_Admin {
     }
 
 	/**
+     * Duplicate invoice.
+	 * 
+	 * @param array $args
+     */
+    public function duplicate_invoice( $args ) {
+
+		if ( empty( $args['invoice_id'] ) ) {
+			return;
+		}
+
+		$invoice = new WPInv_Invoice( (int) $args['invoice_id'] );
+
+		if ( ! $invoice->exists() ) {
+			return;
+		}
+
+		$new_invoice = getpaid_duplicate_invoice( $invoice );
+		$new_invoice->save();
+
+		if ( $new_invoice->exists() ) {
+
+			getpaid_admin()->show_success( __( 'Invoice duplicated successfully.', 'newsletter-optin-box' ) );
+
+			wp_safe_redirect(
+				add_query_arg(
+					array(
+						'action' => 'edit',
+						'post' => $new_invoice->get_id(),
+					),
+					admin_url( 'post.php' )
+				)
+			);
+			exit;
+
+		}
+
+		getpaid_admin()->show_error( __( 'There was an error duplicating this invoice. Please try again.', 'newsletter-optin-box' ) );
+
+	}
+
+	/**
      * Sends a payment reminder to a customer.
 	 * 
 	 * @param array $args
@@ -413,7 +455,7 @@ class GetPaid_Admin {
 			return;
 		}
 
-		$form = new GetPaid_Payment_Form( $args['form_id'] );
+		$form = new GetPaid_Payment_Form( (int) $args['form_id'] );
 
 		if ( ! $form->exists() ) {
 			return;
