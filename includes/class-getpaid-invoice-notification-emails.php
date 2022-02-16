@@ -264,7 +264,7 @@ class GetPaid_Invoice_Notification_Emails {
 	public function new_invoice( $invoice ) {
 
 		// Only send this email for invoices created via the admin page.
-		if ( ! $invoice->is_type( 'invoice' ) || $this->is_payment_form_invoice( $invoice->get_id() ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || $invoice->is_paid() || $this->is_payment_form_invoice( $invoice->get_id() ) ) {
 			return;
 		}
 
@@ -377,7 +377,7 @@ class GetPaid_Invoice_Notification_Emails {
 		}
 
 		// Only send this email for invoices created via the admin page.
-		if ( ! $invoice->is_type( 'invoice' ) || ( empty( $force ) && $this->is_payment_form_invoice( $invoice->get_id() ) ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || $invoice->is_paid() || ( empty( $force ) && $this->is_payment_form_invoice( $invoice->get_id() ) ) ) {
 			return;
 		}
 
