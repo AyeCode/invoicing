@@ -7,6 +7,8 @@ getpaid.init_select2_item_search = function (select, parent) {
 		parent = jQuery('#getpaid-add-items-to-invoice')
 	}
 
+	var ignore = jQuery(select).data( 'ignore' );
+
 	jQuery(select).select2({
 		minimumInputLength: 3,
 		allowClear: false,
@@ -20,6 +22,7 @@ getpaid.init_select2_item_search = function (select, parent) {
 					action: 'wpinv_get_invoicing_items',
 					search: params.term,
 					_ajax_nonce: WPInv_Admin.wpinv_nonce,
+					ignore: ignore,
 					post_id: WPInv_Admin.post_ID
 				}
 

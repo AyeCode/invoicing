@@ -927,6 +927,10 @@ class WPInv_Ajax {
             )
         );
 
+        if ( ! empty( $_GET['ignore'] ) ) {
+            $item_args['exclude'] = wp_parse_id_list( $_GET['ignore'] );
+        }
+
         $items = get_posts( apply_filters( 'getpaid_ajax_invoice_items_query_args', $item_args ) );
         $data  = array();
 
