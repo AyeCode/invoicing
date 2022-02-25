@@ -134,6 +134,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.5.13 =
+* Can't uncheck the disable taxes checkbox when editing invoices - FIXED
+
+= 2.5.13 =
 * Requires a specific item to be on the cart to apply a specific discount - ADDED
 * Ability to duplicate quotes and invoices - ADDED
 * Do not send new invoice emails for paid invoices - CHANGED
