@@ -305,7 +305,28 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_start_date( $item ) {
-		return getpaid_format_date_value( $item->get_date_created() );
+
+		$gateway = $item->get_parent_invoice()->get_gateway_title();
+
+		if ( empty( $gateway ) ) {
+			return getpaid_format_date_value( $item->get_date_created() );
+		}
+
+		$url = apply_filters( 'getpaid_remote_subscription_profile_url', '', $item );
+		if ( ! empty( $url ) ) {
+
+			return getpaid_format_date_value( $item->get_date_created() ) . '<br>' . sprintf(
+				__( 'Via %s', 'invoicing' ),
+				'<strong><a href="' . esc_url( $url ) . '" target="_blank">' . esc_html( $item->get_parent_invoice()->get_gateway_title() ) . '</a></strong>'
+			);
+
+		}
+
+		return getpaid_format_date_value( $item->get_date_created() ) . '<br>' . sprintf(
+			__( 'Via %s', 'invoicing' ),
+			'<strong>' . esc_html( $item->get_parent_invoice()->get_gateway_title() ) . '</strong>'
+		);
+
 	}
 
 	/**
