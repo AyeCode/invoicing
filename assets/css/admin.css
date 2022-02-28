@@ -606,7 +606,7 @@ td.taxonomy-invoice_status a[href*="cancelled"], .wpinv .subsubsub .cancelled a 
 
 .post-type-wpi_item .fixed .column-shortcode {
     width: 280px;
-    text-align: right;
+    text-align: center;
 }
 
 .post-type-wpi_item .fixed .column-recurring {

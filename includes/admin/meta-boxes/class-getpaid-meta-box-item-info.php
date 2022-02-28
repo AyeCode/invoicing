@@ -57,42 +57,46 @@ class GetPaid_Meta_Box_Item_Info {
                 </div>
             </div>
 
-            <div class="wpinv_item_shortcode form-group row">
-                <label for="wpinv_item_shortcode" class="col-sm-12 col-form-label">
-                    <?php _e( 'Payment Form Shortcode', 'invoicing' );?>
-                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a payment form', 'invoicing' ); ?>"></span>
-                </label>
+            <?php if ( 'fee' === $item->get_type( 'edit' ) || 'custom' === $item->get_type( 'edit' ) ) : ?>
 
-                <div class="col-sm-12">
-                    <input  onClick="this.select()" type="text" id="wpinv_item_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?>]" style="width: 100%;" readonly/>
+                <div class="wpinv_item_shortcode form-group row">
+                    <label for="wpinv_item_shortcode" class="col-sm-12 col-form-label">
+                        <?php _e( 'Payment Form Shortcode', 'invoicing' );?>
+                        <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a payment form', 'invoicing' ); ?>"></span>
+                    </label>
+
+                    <div class="col-sm-12">
+                        <input  onClick="this.select()" type="text" id="wpinv_item_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?>]" style="width: 100%;" readonly/>
+                    </div>
                 </div>
-            </div>
 
-            <div class="wpinv_item_buy_shortcode form-group row">
-                <label for="wpinv_item_button_shortcode" class="col-sm-12 col-form-label">
-                    <?php _e( 'Payment Button Shortcode', 'invoicing' );?>
-                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a buy now button', 'invoicing' ); ?>"></span>
-                </label>
+                <div class="wpinv_item_buy_shortcode form-group row">
+                    <label for="wpinv_item_button_shortcode" class="col-sm-12 col-form-label">
+                        <?php _e( 'Payment Button Shortcode', 'invoicing' );?>
+                        <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a buy now button', 'invoicing' ); ?>"></span>
+                    </label>
 
-                <div class="col-sm-12">
-                    <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" readonly/>
-                    <small class="form-text text-muted">
-                        <?php _e( 'Or use the following URL in a link:', 'invoicing' );?>
-                        <code>#getpaid-item-<?php echo intval( $item->get_id() ); ?>|0</code>
-                    </small>
+                    <div class="col-sm-12">
+                        <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" readonly/>
+                        <small class="form-text text-muted">
+                            <?php _e( 'Or use the following URL in a link:', 'invoicing' );?>
+                            <code>#getpaid-item-<?php echo intval( $item->get_id() ); ?>|0</code>
+                        </small>
+                    </div>
                 </div>
-            </div>
 
-            <div class="wpinv_item_buy_url form-group row">
-                <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
-                    <?php _e( 'Direct Payment URL', 'invoicing' );?>
-                    <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>
-                </label>
+                <div class="wpinv_item_buy_url form-group row">
+                    <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
+                        <?php _e( 'Direct Payment URL', 'invoicing' );?>
+                        <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>
+                    </label>
 
-                <div class="col-sm-12">
-                    <input onClick="this.select()" type="text" id="wpinv_item_buy_url" value="<?php echo esc_url( getpaid_embed_url( false, $item->get_id() . '|0' ) ); ?>" style="width: 100%;" readonly/>
+                    <div class="col-sm-12">
+                        <input onClick="this.select()" type="text" id="wpinv_item_buy_url" value="<?php echo esc_url( getpaid_embed_url( false, $item->get_id() . '|0' ) ); ?>" style="width: 100%;" readonly/>
+                    </div>
                 </div>
-            </div>
+
+            <?php endif; ?>
 
             <div class="wpinv_item_custom_id form-group">
                 <?php _e( 'Custom ID', 'invoicing' );?> &mdash; <?php echo esc_html( $item->get_custom_id() ) ?>

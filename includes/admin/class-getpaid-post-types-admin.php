@@ -130,13 +130,17 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// Link to item payment form.
-		if ( 'wpi_item' == $post->post_type && get_post_meta( $post->ID, '_wpinv_type', true ) == 'custom' ) {
+		if ( 'wpi_item' == $post->post_type ) {
 
-			$actions['buy'] =  sprintf(
-				'<a href="%1$s">%2$s</a>',
-				esc_url( getpaid_embed_url( false, $post->ID . '|0' ) ),
-				esc_html( __( 'Buy', 'invoicing' ) )
-			);
+			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ) ) ) {
+
+				$actions['buy'] =  sprintf(
+					'<a href="%1$s">%2$s</a>',
+					esc_url( getpaid_embed_url( false, $post->ID . '|0' ) ),
+					esc_html( __( 'Buy', 'invoicing' ) )
+				);
+
+			}
 
 		}
 
@@ -619,7 +623,13 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'shortcode' :
-				echo '<input onClick="this.select()" type="text" value="[getpaid item=' . esc_attr( $item->get_id() ) . ' button=\'Buy Now\']" style="width: 100%;" readonly/>';
+
+				if ( $item->is_type( array( '', 'fee', 'custom' ) ) ) {
+					echo '<input onClick="this.select()" type="text" value="[getpaid item=' . esc_attr( $item->get_id() ) . ' button=\'Buy Now\']" style="width: 100%;" readonly/>';
+				} else {
+					echo "&mdash;";
+				}
+				
 				break;
 
 			case 'type' :
