@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.0 =
+* Link to the embed page from the items overview page - ADDED
+
 = 2.5.14 =
 * Can't uncheck the disable taxes checkbox when editing invoices - FIXED
 
