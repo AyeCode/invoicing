@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.6.0 =
 * Link to the embed page from the items overview page - ADDED
 * Hide shortcode and direct payment details for packages, ads and other non-standard item types - CHANGED
+* Link to related remote transaction from Invoice page - ADDED
 
 = 2.5.14 =
 * Can't uncheck the disable taxes checkbox when editing invoices - FIXED

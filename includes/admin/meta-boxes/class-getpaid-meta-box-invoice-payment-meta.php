@@ -119,12 +119,13 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                                 );
 
                                 // Transaction ID.
+                                $transaction_url = $invoice->get_transaction_url();
                                 echo aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_transaction_id',
                                         'name'        => 'wpinv_transaction_id',
-                                        'label'       => __( 'Transaction ID:', 'invoicing' ),
+                                        'label'       => __( 'Transaction ID:', 'invoicing' ) . ( $transaction_url ? '&nbsp;<a href="' . esc_url( $transaction_url ) . '" title="' . __( 'View details', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-fw"></i></a>' : '' ),
                                         'label_type'  => 'vertical',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_transaction_id( 'edit' ),
