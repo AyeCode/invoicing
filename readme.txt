@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Hide shortcode and direct payment details for packages, ads and other non-standard item types - CHANGED
 * Link to related remote transaction from Invoice page - ADDED
 * Display gateway details on the subscription overview list table - ADDED
+* Confusing email failure message when creating invoices via admin backend - FIXED
 
 = 2.5.14 =
 * Can't uncheck the disable taxes checkbox when editing invoices - FIXED

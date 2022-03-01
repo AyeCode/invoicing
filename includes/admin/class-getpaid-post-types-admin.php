@@ -383,18 +383,9 @@ class GetPaid_Post_Types_Admin {
 	public static function handle_invoice_bulk_actions( $redirect_url, $action, $post_ids ) {
 
 		if ( $action == 'resend-invoice' ) {
-
-			$success = false;
 			foreach ( $post_ids as $post_id ) {
-				$success = getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $post_id ), true );
+				getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $post_id ), true );
 			}
-
-			if ( $success ) {
-				getpaid_admin()->show_success( __( 'Invoices were successfully sent', 'invoicing' ) );
-			} else {
-				getpaid_admin()->show_error( __( 'Could not send some invoices', 'invoicing' ) );
-			}
-
 		}
 
 		return $redirect_url;

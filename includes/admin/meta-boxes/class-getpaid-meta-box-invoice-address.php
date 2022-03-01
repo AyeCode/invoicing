@@ -453,15 +453,7 @@ class GetPaid_Meta_Box_Invoice_Address {
         }
 
         if ( ! empty( $_POST['send_to_customer'] ) && ! $invoice->is_draft() ) {
-
-            $sent = getpaid()->get( 'invoice_emails' )->user_invoice( $invoice, true );
-
-            if ( $sent ) {
-                getpaid_admin()->show_success( __( 'Invoice was successfully sent to the customer', 'invoicing' ) );
-            } else {
-                getpaid_admin()->show_error( __( 'Could not send the invoice to the customer', 'invoicing' ) );
-            }
-
+            getpaid()->get( 'invoice_emails' )->user_invoice( $invoice, true );
         }
 
         // Fires after an invoice is saved.
