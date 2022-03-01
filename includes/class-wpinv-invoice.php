@@ -1935,7 +1935,17 @@ class WPInv_Invoice extends GetPaid_Data {
 
         return apply_filters( 'getpaid_get_invoice_receipt_url', $receipt_url, $this );
 	}
-	
+
+	/**
+	 * Retrieves the remote transaction url.
+	 *
+	 * @since 1.6.0
+	 * @return string
+	 */
+	public function get_transaction_url() {
+		return apply_filters( 'getpaid_gateway_' . $this->get_gateway() . '_transaction_url', '', $this );
+	}
+
 	/**
 	 * Retrieves the default status.
 	 *

@@ -157,7 +157,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 				foreach ( $fieldset['fields'] as $key => $field ) {
 
 					if ( isset( $field['type'] ) && 'checkbox' === $field['type'] ) {
-						update_user_meta( $user_id, $key, isset( $_POST[ $key ] ) );
+						update_user_meta( $user_id, $key, ! empty( $_POST[ $key ] ) );
 					} elseif ( isset( $_POST[ $key ] ) ) {
 						update_user_meta( $user_id, $key, wpinv_clean( $_POST[ $key ] ) );
 					}

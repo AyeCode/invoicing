@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.63';
+		public $version = '0.1.64';
 
 		/**
 		 * Class textdomain.
@@ -241,6 +241,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 					'appearance_page_gutenberg-widgets',
 					'widgets',
 					'ayecode-ui-settings',
+					'site-editor'
 				);
 				$screen_ids = apply_filters( 'aui_screen_ids', $aui_screens );
 

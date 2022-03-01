@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.9
-Stable tag: 2.5.12
+Stable tag: 2.5.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -133,10 +133,20 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.0 =
+* Link to the embed page from the items overview page - ADDED
+* Hide shortcode and direct payment details for packages, ads and other non-standard item types - CHANGED
+* Link to related remote transaction from Invoice page - ADDED
+* Display gateway details on the subscription overview list table - ADDED
+
+= 2.5.14 =
+* Can't uncheck the disable taxes checkbox when editing invoices - FIXED
+
 = 2.5.13 =
 * Requires a specific item to be on the cart to apply a specific discount - ADDED
 * Ability to duplicate quotes and invoices - ADDED
 * Do not send new invoice emails for paid invoices - CHANGED
+* Latest AUI changes compatibility - ADDED
 
 = 2.5.12 =
 * Apostrophes slashed when used in invoice item description - FIXED
