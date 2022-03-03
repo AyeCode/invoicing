@@ -102,7 +102,7 @@ class GetPaid_Admin {
         }
 
         // General styles.
-        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page ) {
+        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page || 'geodir-tickets' == $page ) {
 
             // Styles.
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
