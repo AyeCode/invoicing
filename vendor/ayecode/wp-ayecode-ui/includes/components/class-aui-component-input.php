@@ -865,6 +865,8 @@ else{$eli.attr(\'type\',\'password\');}"
 								$selected = in_array( $option_value, stripslashes_deep( $args['value'] ) ) ? "selected" : "";
 							} elseif ( ! empty( $args['value'] ) ) {
 								$selected = selected( $option_value, stripslashes_deep( $args['value'] ), false );
+							} elseif ( empty( $args['value'] ) && $args['value'] === $option_value ) {
+								$selected = selected( $option_value, $args['value'], false );
 							}
 
 							$output .= '<option value="' . esc_attr( $option_value ) . '" ' . $selected . ' '.$extra_attributes .'>' . $option_label . '</option>';
@@ -876,6 +878,8 @@ else{$eli.attr(\'type\',\'password\');}"
 							} elseif ( ! empty( $args['value'] ) ) {
 								$selected = selected( $args['value'], $val, false );
 							}
+						} elseif ( $args['value'] === $val ) {
+							$selected = selected( $args['value'], $val, false );
 						}
 						$output .= '<option value="' . esc_attr( $val ) . '" ' . $selected . '>' . esc_attr( $name ) . '</option>';
 					}
