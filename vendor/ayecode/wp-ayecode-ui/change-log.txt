@@ -1,3 +1,9 @@
+= 0.1.65 =
+* Changes for Avada builder backend settings display - FIXED
+* Change all script/style versions to AUI version to invalidate cache on each change - CHANGED
+* Toast sometimes hidden by support widgets - FIXED
+* Select field option don't show option selected when value is empty - FIXED
+
 = 0.1.64 =
 * minimised version of iconpicker JS missing from release - FIXED
 

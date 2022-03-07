@@ -102,7 +102,7 @@ class GetPaid_Admin {
         }
 
         // General styles.
-        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page ) {
+        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page || 'geodir-tickets' == $page ) {
 
             // Styles.
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
@@ -486,14 +486,7 @@ class GetPaid_Admin {
 	 * @param array $args
      */
     public function send_customer_invoice( $args ) {
-		$sent = getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $args['invoice_id'] ), true );
-
-		if ( $sent ) {
-			$this->show_success( __( 'Invoice was successfully sent to the customer', 'invoicing' ) );
-		} else {
-			$this->show_error( __( 'Could not send the invoice to the customer', 'invoicing' ) );
-		}
-
+		getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $args['invoice_id'] ), true );
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
 		exit;
 	}
