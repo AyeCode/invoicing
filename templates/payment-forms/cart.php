@@ -27,8 +27,6 @@ if ( isset( $columns['tax_rate'] ) ) {
 
 $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $form );
 
-do_action( 'getpaid_before_payment_form_cart', $form );
-
 ?>
     <div class="getpaid-payment-form-items-cart border form-group">
 

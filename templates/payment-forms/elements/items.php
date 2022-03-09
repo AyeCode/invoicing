@@ -33,6 +33,8 @@ switch( $items_type ) {
         break;
 }
 
+do_action( 'getpaid_before_payment_form_cart', $form );
+
 // Display the cart totals.
 if ( ! empty( $hide_cart ) ) {
     echo '<div class="d-none">';
