@@ -300,7 +300,7 @@ class GetPaid_Subscription_Notification_Emails {
         foreach ( $subscriptions as $subscription ) {
 
 			// Skip packages.
-			if ( get_post_meta( $subscription->get_product_id(), '_wpinv_type', true ) != 'package' ) {
+			if ( apply_filters( 'getpaid_send_subscription_renewal_reminder_email', true ) ) {
 				$email->object = $subscription;
             	$this->send_email( $subscription, $email, __FUNCTION__ );
 			}
