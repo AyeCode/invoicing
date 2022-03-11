@@ -115,7 +115,7 @@ class GetPaid_Notification_Email {
      * @return bool
 	 */
 	public function is_admin_email() {
-        $is_admin_email = in_array( $this->id, array( 'new_invoice', 'cancelled_invoice', 'failed_invoice' ) );
+        $is_admin_email = in_array( $this->id, array( 'new_invoice', 'failed_invoice' ) );
         return apply_filters( 'getpaid_email_type_is_admin_email', $is_admin_email, $this->id, $this->object );
     }
 

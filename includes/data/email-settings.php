@@ -83,7 +83,7 @@ return array(
         'email_cancelled_invoice_header' => array(
             'id'       => 'email_cancelled_invoice_header',
             'name'     => '<h3>' . __( 'Cancelled Invoice', 'invoicing' ) . '</h3>',
-            'desc'     => __( 'These emails are sent to the site admin whenever invoices are cancelled.', 'invoicing' ),
+            'desc'     => __( 'These emails are sent to customers whenever invoices are cancelled.', 'invoicing' ),
             'type'     => 'header',
         ),
 
@@ -91,6 +91,14 @@ return array(
             'id'       => 'email_cancelled_invoice_active',
             'name'     => __( 'Enable/Disable', 'invoicing' ),
             'desc'     => __( 'Enable this email notification', 'invoicing' ),
+            'type'     => 'checkbox',
+            'std'      => 1
+        ),
+
+        'email_cancelled_invoice_admin_bcc' => array(
+            'id'       => 'email_cancelled_invoice_admin_bcc',
+            'name'     => __( 'Enable Admin BCC', 'invoicing' ),
+            'desc'     => __( 'Check if you want to send this notification email to site Admin.', 'invoicing' ),
             'type'     => 'checkbox',
             'std'      => 1
         ),

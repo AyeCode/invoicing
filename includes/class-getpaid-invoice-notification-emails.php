@@ -283,10 +283,9 @@ class GetPaid_Invoice_Notification_Emails {
 	public function cancelled_invoice( $invoice ) {
 
 		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
-		$recipient = wpinv_get_admin_email();
+		$recipient = $invoice->get_email();
 
 		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
-
 	}
 
 	/**
