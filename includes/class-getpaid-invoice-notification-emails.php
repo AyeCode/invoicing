@@ -283,10 +283,9 @@ class GetPaid_Invoice_Notification_Emails {
 	public function cancelled_invoice( $invoice ) {
 
 		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
-		$recipient = wpinv_get_admin_email();
+		$recipient = $invoice->get_email();
 
 		return $this->send_email( $invoice, $email, __FUNCTION__, $recipient );
-
 	}
 
 	/**
@@ -372,12 +371,12 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function user_invoice( $invoice, $force = false ) {
 
-		if ( ! empty( $GLOBALS['wpinv_skip_invoice_notification'] ) ) {
+		if ( ! $force && ! empty( $GLOBALS['wpinv_skip_invoice_notification'] ) ) {
 			return;
 		}
 
 		// Only send this email for invoices created via the admin page.
-		if ( ! $invoice->is_type( 'invoice' ) || $invoice->is_paid() || ( empty( $force ) && $this->is_payment_form_invoice( $invoice->get_id() ) ) ) {
+		if ( ! $invoice->is_type( 'invoice' ) || ( empty( $force ) && $invoice->is_paid() ) || ( empty( $force ) && $this->is_payment_form_invoice( $invoice->get_id() ) ) ) {
 			return;
 		}
 

@@ -100,6 +100,14 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 											unset( $actions['pay'] );
 										}
 
+										if ( $invoice->needs_payment() ) {
+											$actions['delete'] = array(
+												'url'   => getpaid_get_authenticated_action_url( 'delete_invoice', add_query_arg( 'invoice_id', $invoice->get_id() ) ),
+												'name'  => __( 'Delete', 'invoicing' ),
+												'class' => 'btn-danger'
+											);
+										}
+
 										$actions = apply_filters( 'wpinv_user_invoices_actions', $actions, $invoice, $post_type );
 
 										foreach ( $actions as $key => $action ) {

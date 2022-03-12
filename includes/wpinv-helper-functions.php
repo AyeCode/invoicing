@@ -1087,3 +1087,36 @@ function getpaid_get_allowed_mime_types() {
     return $types;
 
 }
+
+
+function getpaid_user_delete_invoice( $data ) {
+
+    // Ensure there is an invoice to delete.
+    if ( empty( $data['invoice_id'] ) ) {
+        return;
+    }
+
+    $invoice = new WPInv_Invoice( (int) $data['invoice_id'] );
+
+    // Ensure that it exists and that it belongs to the current user.
+    if ( ! $invoice->exists() || $invoice->get_customer_id() != get_current_user_id() ) {
+        wpinv_set_error( 'invalid_invoice', __( 'You do not have permission to delete this invoice', 'invoicing' ) );
+
+    // Can it be deleted?
+    } else if ( ! $invoice->needs_payment() ) {
+        wpinv_set_error( 'cannot_delete', __( 'This invoice cannot be deleted as it has already been paid.', 'invoicing' ) );
+
+    // Delete it.
+    } else {
+
+        $invoice->delete();
+        wpinv_set_error( 'delete', __( 'The invoice has been deleted.', 'invoicing' ), 'info' );
+    }
+
+    $redirect = remove_query_arg( array( 'getpaid-action', 'getpaid-nonce', 'invoice_id' ) );
+
+    wp_safe_redirect( $redirect );
+    exit;
+
+}
+add_action( 'getpaid_authenticated_action_delete_invoice', 'getpaid_user_delete_invoice' );
