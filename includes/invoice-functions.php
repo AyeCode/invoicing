@@ -1248,7 +1248,7 @@ function getpaid_get_invoice_meta( $invoice ) {
     
     if ( $invoice->is_recurring() ) {
 
-        $subscription = getpaid_get_invoice_subscriptions( $invoice );
+        $subscription = getpaid_get_invoice_subscriptions( $invoice );var_dump( $subscription->get_status() );
         if ( ! empty ( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
 
             // Display the renewal date.
@@ -1256,7 +1256,12 @@ function getpaid_get_invoice_meta( $invoice ) {
 
                 $meta[ 'renewal_date' ] = array(
                     'label' => __( 'Renews On', 'invoicing' ),
-                    'value' => getpaid_format_date( $subscription->get_expiration() ),
+                    'value' => getpaid_format_date( $subscription->get_expiration() ) . 
+                    sprintf(
+                       ' <a class="small" href="%s">%s<a>',
+                       $subscription->get_view_url(),
+                       __( '(View Subscription)', 'invoicing' )
+                    ),
                 );
 
             }
