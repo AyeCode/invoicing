@@ -86,13 +86,14 @@ jQuery(function ($) {
 				// Display the error.
 				if (container && form.find(container).length) {
 					form.find(container).html(error).removeClass('d-none');
-					form.find(container).closest('.getpaid-address-field-wrapper').find('form-control').addClass('is-invalid');
+					form.find(container).closest('.form-group').find('.form-control').addClass('is-invalid');
+					form.find(container).closest('.form-group').find('.getpaid-custom-payment-form-success').addClass('d-none');
 				} else {
 					form.find('.getpaid-payment-form-errors').html(error).removeClass('d-none');
 
 					form.find('.getpaid-custom-payment-form-errors').each(
 						function () {
-							var form_control = $(this).closest('.getpaid-address-field-wrapper').find('form-control');
+							var form_control = $(this).closest('.form-group').find('.form-control');
 
 							if (form_control.val() != '') {
 								form_control.addClass('is-valid');
@@ -194,6 +195,18 @@ jQuery(function ($) {
 				if (state.js_data) {
 					this.form.data('getpaid_js_data', state.js_data)
 				}
+
+                form.find('.getpaid-custom-payment-form-errors.d-none').each( function() {
+                    var form_control = $(this).closest('.form-group').find('.form-control');
+
+                    if (form_control.val() != '') {
+                        form_control
+                            .addClass('is-valid')
+                            .closest('.form-group')
+                            .find('.getpaid-custom-payment-form-success')
+                            .removeClass('d-none');
+                    }
+                })
 
 				this.setup_saved_payment_tokens()
 
