@@ -404,3 +404,31 @@ function gepaid_get_form_items( $id ) {
 function gepaid_trim_lines( $content ) {
     return implode( "\n", array_map( 'trim', explode( "\n", $content ) ) );
 }
+
+
+function wpinv_add_elementor_widget_categories( $elements_manager ) {
+    $elements_manager->add_category(
+        'getpaid',
+        [
+            'title' => esc_html__( 'GetPaid', 'invoicing' ),
+            'icon' => 'fa fa-plug',
+        ]
+    );
+}
+add_filter( 'elementor/elements/categories_registered', 'wpinv_add_elementor_widget_categories'  );
+
+function wpinv_alter_elementor_widget_config( $config ){
+
+    if ( ! empty( $config['initial_document']['widgets'] ) ) {
+        foreach( $config['initial_document']['widgets'] as $key => $widget){
+            if(substr( $key, 0, 16 ) === "wp-widget-wpinv_" || $key === "wp-widget-getpaid"){
+                $config['initial_document']['widgets'][$key]['categories'][] = 'getpaid';
+                $config['initial_document']['widgets'][$key]['hide_on_search'] = false;
+                $config['initial_document']['widgets'][$key]['icon'] = 'eicon-globe'; //@todo if no icons use on page then font-awesome is not loaded, wif we can fifure out how to force load we can use icons. <i class="fas fa-globe-americas"></i><i class="fa-solid fa-earth-americas"></i>
+            }
+        }
+    }
+
+    return $config;
+}
+add_filter( 'elementor/editor/localize_settings', 'wpinv_alter_elementor_widget_config'  );

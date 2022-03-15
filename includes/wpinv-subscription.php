@@ -759,7 +759,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return bool
 	 */
 	public function is_expired() {
-		return $this->has_status( 'expired' ) || ( $this->has_status( 'active cancelled trialling' ) && $this->get_expiration_time() < current_time( 'mysql' ) );
+		return $this->has_status( 'expired' ) || ( $this->has_status( 'active cancelled trialling' ) && $this->get_expiration_time() < current_time( 'timestamp' ) );
 	}
 
 	/**

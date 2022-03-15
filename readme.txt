@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.1 =
+* GetPaid Elementor widgets not showing in searches - FIXED
+
 = 2.6.0 =
 * Link to the embed page from the items overview page - ADDED
 * Hide shortcode and direct payment details for packages, ads and other non-standard item types - CHANGED
