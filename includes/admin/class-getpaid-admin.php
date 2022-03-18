@@ -190,6 +190,7 @@ class GetPaid_Admin {
 			'loading'                   => __( 'Loading...', 'invoicing' ),
 			'search_customers'          => __( 'Enter customer name or email', 'invoicing' ),
 			'search_items'              => __( 'Enter item name', 'invoicing' ),
+			'graphs' => array_merge( ['refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax'], array_keys( wpinv_get_report_graphs() ) ),
         );
 
 		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {

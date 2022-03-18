@@ -209,15 +209,7 @@ class GetPaid_Reports_Report {
 	 *
 	 */
 	public function display_left() {
-		$graphs = array(
-			'sales'    => __( 'Earnings', 'invoicing' ),
-			'refunds'  => __( 'Refunds', 'invoicing' ),
-			'tax'      => __( 'Taxes', 'invoicing' ),
-			'fees'     => __( 'Fees', 'invoicing' ),
-			'discount' => __( 'Discounts', 'invoicing' ),
-			'invoices' => __( 'Invoices', 'invoicing' ),
-			'items'    => __( 'Purchased Items', 'invoicing' ),
-		);
+		$graphs = wpinv_get_report_graphs();
 
 		?>
 

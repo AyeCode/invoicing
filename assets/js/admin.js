@@ -1268,7 +1268,7 @@ jQuery(function ($) {
 		}
 
 		// Fill in card revenue.
-		if (!window.Intl || ['total_invoices', 'total_items', 'refunded_items'].indexOf(stat) > -1) {
+		if (!window.Intl || ['total_invoices', 'total_items', 'refunded_items', 'period_ticket_sales'].indexOf(stat) > -1) {
 			$el.find('.getpaid-report-card-value').text(current)
 			$el.find('.getpaid-report-card-previous-value').text(previous)
 		} else {
@@ -1375,7 +1375,7 @@ jQuery(function ($) {
 									label += ': ';
 								}
 
-								if (window.Intl && ['invoices', 'items'].indexOf(stat) == -1) {
+								if (window.Intl && ['invoices', 'items', 'tickets_sold'].indexOf(stat) == -1) {
 									value = getpaid.currency.format(value);
 								}
 
@@ -1390,7 +1390,7 @@ jQuery(function ($) {
 								beginAtZero: true,
 								callback: function (value, index, values) {
 
-									if (!window.Intl || ['invoices', 'items'].indexOf(stat) > -1) {
+									if (!window.Intl || ['invoices', 'items', 'tickets_sold'].indexOf(stat) > -1) {
 										return value
 									} else {
 										return getpaid.currency.format(value)
@@ -1421,7 +1421,7 @@ jQuery(function ($) {
 									var style = meta.controller.getStyle(usePointStyle ? 0 : undefined);
 									var total = datasets[meta.index].data.reduce(function (total, num) { return total + num }, 0);
 
-									if (window.Intl && ['invoices', 'items'].indexOf(stat) == -1) {
+									if (window.Intl && ['invoices', 'items', 'tickets_sold'].indexOf(stat) == -1) {
 										total = getpaid.currency.format(total)
 									}
 
@@ -1493,7 +1493,7 @@ jQuery(function ($) {
 						}
 
 						// Draw graphs.
-						var graphs = ['discount', 'refunds', 'sales', 'tax', 'fees', 'invoices', 'items', 'refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax']
+						var graphs = WPInv_Admin.graphs;
 						for (var i = 0; i < graphs.length; i++) {
 							drawGraph(graphs[i], response, second_response)
 						}
