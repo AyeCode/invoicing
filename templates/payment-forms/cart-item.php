@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
 $currency = $form->get_currency();
-
+$max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?> border-bottom py-2 px-3'>
 
@@ -78,12 +78,15 @@ $currency = $form->get_currency();
 									__( 'Qty %s', 'invoicing' ),
 									sprintf(
 										'<input
-											type="text"
+											type="number"
+											step="0.01"
 											style="width: 48px;"
 											class="getpaid-item-mobile-quantity-input p-1 m-0 text-center"
 											value="%s"
-											min="1">',
-											(float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity()
+											min="1"
+											%s>',
+											(float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(),
+											null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''
 									)
 								)
 							);
@@ -175,7 +178,7 @@ $currency = $form->get_currency();
 
 						if ( $item->allows_quantities() ) {
 							?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type='text' style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' required>
+								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type="number" step="0.01" style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' <?php echo null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''  ?> required>
 							<?php
 						} else {
 							echo (float) $item->get_quantity();
