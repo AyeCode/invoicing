@@ -124,7 +124,7 @@ class GetPaid_Reports_Report {
 	public function display() {
 		?>
 
-		<div class="mt-4" style="max-width: 1200px;">
+		<div class="mt-4">
 
 			<section class="mb-4">
 
@@ -266,10 +266,10 @@ class GetPaid_Reports_Report {
 						<div class="card m-0 p-0" style="max-width:100%">
 							<div class="card-header">
 								<div class="row">
-									<div class="col-9">
+									<div class="<?php echo empty( $view['disable-downloads'] ) ? 'col-9' : 'col-12'; ?>">
 										<strong><?php echo $view['label']; ?></strong>
 									</div>
-									<div class="col-3">
+									<div class="<?php echo empty( $view['disable-downloads'] ) ? 'col-3' : 'd-none'; ?>">
 										<a title="<?php esc_attr_e( 'Download JSON', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'json' ) ); ?>">
 											<i class="fa fa-download text-dark" style="font-size: 16px" aria-hidden="true"></i>
 											<span class="screen-reader-text"><?php _e( 'Download JSON', 'invoicing' ); ?></span>
@@ -299,6 +299,7 @@ class GetPaid_Reports_Report {
 
 		<?php
 
+		do_action( 'getpaid_reports_display_right', $this );
 	}
 
 	/**
