@@ -64,10 +64,7 @@ abstract class GetPaid_Reports_Abstract_Report {
 	 * Retrieves the current range's sql.
 	 *
 	 */
-	public function get_range_sql( $range ) {
-
-		$date     = 'CAST(meta.completed_date AS DATE)';
-        $datetime = 'meta.completed_date';
+	public function get_range_sql( $range, $date = 'CAST(meta.completed_date AS DATE)', $datetime = 'meta.comlpeted_date' ) {
 
         // Prepare durations.
         $today                = current_time( 'Y-m-d' );

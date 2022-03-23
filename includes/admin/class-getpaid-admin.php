@@ -102,7 +102,7 @@ class GetPaid_Admin {
         }
 
         // General styles.
-        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page || 'geodir-tickets' == $page ) {
+        if ( false !== stripos( $page, 'wpi' ) || false !== stripos( $page, 'getpaid' ) || 'gp-setup' == $page || false !== stripos( $page, 'geodir-tickets' ) ) {
 
             // Styles.
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/css/admin.css' );
@@ -190,6 +190,7 @@ class GetPaid_Admin {
 			'loading'                   => __( 'Loading...', 'invoicing' ),
 			'search_customers'          => __( 'Enter customer name or email', 'invoicing' ),
 			'search_items'              => __( 'Enter item name', 'invoicing' ),
+			'graphs' => array_merge( ['refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax'], array_keys( wpinv_get_report_graphs() ) ),
         );
 
 		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {

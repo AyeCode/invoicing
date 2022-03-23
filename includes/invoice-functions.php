@@ -1248,7 +1248,7 @@ function getpaid_get_invoice_meta( $invoice ) {
     
     if ( $invoice->is_recurring() ) {
 
-        $subscription = getpaid_get_invoice_subscriptions( $invoice );var_dump( $subscription->get_status() );
+        $subscription = getpaid_get_invoice_subscriptions( $invoice );
         if ( ! empty ( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
 
             // Display the renewal date.

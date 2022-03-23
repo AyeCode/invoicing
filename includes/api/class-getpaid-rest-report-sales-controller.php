@@ -30,14 +30,14 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 	 *
 	 * @var stdClass
 	 */
-	protected $report_data;
+	public $report_data;
 
 	/**
 	 * The report range.
 	 *
 	 * @var array
 	 */
-	protected $report_range;
+	public $report_range;
 
 	/**
 	 * Registers the routes for the objects of the controller.
@@ -130,19 +130,21 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 			// Set the defaults for each period.
 			$period_totals[ $time ] = array(
-				'sales'             => wpinv_round_amount( 0.00 ),
 				'invoices'          => 0,
-				'refunds'           => wpinv_round_amount( 0.00 ),
 				'items'             => 0,
 				'refunded_items'    => 0,
-				'tax'               => wpinv_round_amount( 0.00 ),
 				'refunded_tax'      => wpinv_round_amount( 0.00 ),
 				'subtotal'          => wpinv_round_amount( 0.00 ),
 				'refunded_subtotal' => wpinv_round_amount( 0.00 ),
-				'fees'              => wpinv_round_amount( 0.00 ),
 				'refunded_fees'     => wpinv_round_amount( 0.00 ),
 				'discount'          => wpinv_round_amount( 0.00 ),
 			);
+
+			foreach( array_keys( wpinv_get_report_graphs() ) as $key ) {
+				if ( ! isset( $period_totals[ $time ][ $key ] ) ) {
+					$period_totals[ $time ][ $key ] = wpinv_round_amount( 0.00 );
+				}
+			}
 
 		}
 
@@ -203,6 +205,31 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				$period_totals[ $time ]['discount'] = wpinv_round_amount( $discount->discount_amount );
 			}
 
+		}
+
+		// Extra fields.
+		foreach( array_keys( wpinv_get_report_graphs() ) as $key ) {
+
+			// Abort unprepared.
+			if ( ! isset( $report_data->$key ) ) {
+				continue;
+			}
+
+			// Abort defaults.
+			if ( in_array( $key, array( 'sales', 'refunds', 'tax', 'fees', 'discount', 'invoices', 'items' ) ) ) {
+				continue;
+			}
+
+			// Set values.
+			foreach ( $report_data->$key as $item ) {
+				$time = ( 'day' === $this->groupby ) ? date( 'Y-m-d', strtotime( $item->date ) ) : date( 'Y-m', strtotime( $item->date ) );
+
+				if ( isset( $period_totals[ $time ] ) ) {
+					$period_totals[ $time ][ $key ] = wpinv_round_amount( $item->val );
+				}
+			}
+
+			unset( $report_data->$key );
 		}
 
 		$report_data->totals            = $period_totals;
@@ -291,7 +318,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$this->report_data->total_items = absint( array_sum( wp_list_pluck( $this->report_data->invoice_items, 'invoice_item_count' ) ) );
 
 		// 3rd party filtering of report data
-		$this->report_data = apply_filters( 'getpaid_rest_api_filter_report_data', $this->report_data );
+		$this->report_data = apply_filters( 'getpaid_rest_api_filter_report_data', $this->report_data, $this );
 	}
 
 	/**

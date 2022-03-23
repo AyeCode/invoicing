@@ -432,3 +432,20 @@ function wpinv_alter_elementor_widget_config( $config ){
     return $config;
 }
 add_filter( 'elementor/editor/localize_settings', 'wpinv_alter_elementor_widget_config'  );
+
+function wpinv_get_report_graphs() {
+
+    return apply_filters(
+        'getpaid_report_graphs',
+        array(
+            'sales'    => __( 'Earnings', 'invoicing' ),
+            'refunds'  => __( 'Refunds', 'invoicing' ),
+            'tax'      => __( 'Taxes', 'invoicing' ),
+            'fees'     => __( 'Fees', 'invoicing' ),
+            'discount' => __( 'Discounts', 'invoicing' ),
+            'invoices' => __( 'Invoices', 'invoicing' ),
+            'items'    => __( 'Purchased Items', 'invoicing' ),
+        )
+    );
+
+}

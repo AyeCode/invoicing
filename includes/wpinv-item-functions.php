@@ -391,6 +391,10 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
 
 }
 
+function wpinv_item_max_buyable_quantity( $item_id ) {
+    return apply_filters( 'wpinv_item_max_buyable_quantity', 5, $item_id );
+}
+
 /**
  * Retrieves recurring price description.
  *

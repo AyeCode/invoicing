@@ -76,7 +76,7 @@ class GetPaid_Reports_Helper {
 
 		if ( ! empty( $filter_range['before'] ) ) {
 			$query['where'] .= "
-				AND 	posts.post_date < '" . date( 'Y-m-d H:i:s', strtotime( $filter_range['before'] ) ) . "'
+				AND 	posts.post_date < '" . date( 'Y-m-d 23:59:59', strtotime( $filter_range['before'] ) ) . "'
 			";
 		}
 

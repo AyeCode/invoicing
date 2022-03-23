@@ -900,7 +900,21 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_full_name( $context = 'view' ) {
-		return trim( $this->get_first_name( $context ) . ' ' . $this->get_last_name( $context ) );
+		$name = trim( $this->get_first_name( $context ) . ' ' . $this->get_last_name( $context ) );
+
+		if ( ! $name ) {
+			$user = get_userdata( $this->get_author( $context ) );
+
+			if ( $user ) {
+				$name = $user->display_name;
+			}
+		}
+
+		if ( ! $name ) {
+			$name = $this->get_email( $context );
+		}
+
+		return apply_filters( 'wpinv_invoice_user_full_name', $name, $this );
     }
 
     /**
