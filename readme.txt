@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.2 =
+* New "Single Invoice" widget - ADDED
+
 = 2.6.1 =
 * GetPaid Elementor widgets not showing in searches - FIXED
 * New report hooks - ADDED
