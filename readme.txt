@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.2 =
 * New "Single Invoice" widget - ADDED
+* Favicon not inherited on invoice pages - FIXED
 
 = 2.6.1 =
 * GetPaid Elementor widgets not showing in searches - FIXED

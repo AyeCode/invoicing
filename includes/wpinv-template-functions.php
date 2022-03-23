@@ -986,6 +986,7 @@ function wpinv_display_style() {
         echo '</style>';
     }
 
+    wp_site_icon();
 }
 add_action( 'wpinv_invoice_print_head', 'wpinv_display_style' );
 add_action( 'wpinv_invalid_invoice_head', 'wpinv_display_style' );
