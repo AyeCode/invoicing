@@ -1,10 +1,10 @@
-=== GetPaid - #1 Payments Plugin For WordPress ===
+=== Payment forms, Buy now buttons and Invoicing System | GetPaid ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.9
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,7 +132,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 9. Single invoice view page.
 
 == Changelog ==
-= 2.6.3 =
+
+= 2.6.4 =
 * New "Single Invoice" widget - ADDED
 * Favicon not inherited on invoice pages - FIXED
 * Some composer files did not push with last release - FIXED
