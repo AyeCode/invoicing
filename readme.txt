@@ -1,14 +1,14 @@
-=== WordPress Payments Plugin | GetPaid ===
+=== GetPaid - #1 Payments Plugin For WordPress ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.9
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-WordPress Payments & Invoicing plugin to quickly and easily sell online. Create buy now buttons or inline checkout forms in seconds to accept online payments on your website.
+Payments & Invoicing plugin for WordPress to quickly and easily sell online. Create buy now buttons or inline checkout forms in seconds to accept online payments on your website.
 
 == Description ==
 
