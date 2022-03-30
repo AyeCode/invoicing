@@ -40,14 +40,39 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 
         <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 
+        <style type="text/css">
+			.body{ 
+				background: white;
+				width: 100%;
+				max-width: 100%;
+			}
+
+			/* hide all other elements */
+			body::before,
+			body::after,
+			body > *:not(#wpinv-print-inner) { 
+				display:none !important; 
+			}
+
+			#wpinv-print-inner {
+				display: block !important;
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				border: 0;
+				margin: 0;
+			}
+		</style>
+
     </head>
 
 
     <body class="body wpinv wpinv-print" style="font-weight: 400;">
 
-        <?php do_action( 'getpaid_invoice', $invoice ); ?>
-        <?php do_action( 'wpinv_invoice_print_body_end', $invoice ); ?>
-
+        <div id="wpinv-print-inner">
+            <?php do_action( 'getpaid_invoice', $invoice ); ?>
+            <?php do_action( 'wpinv_invoice_print_body_end', $invoice ); ?>
+        </div>
     </body>
 
 
