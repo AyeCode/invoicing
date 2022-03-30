@@ -22,5 +22,10 @@
     "maxmind-db/reader": "~v1.6.0",
     "ayecode/wp-deactivation-survey": "^1.0"
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "stable",
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  }
 }
