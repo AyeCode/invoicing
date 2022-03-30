@@ -13,10 +13,8 @@ if ( empty( $text ) ) {
     $text = __( 'Your IP address is:', 'invoicing' );
 }
 
-$ip_address = esc_html( wpinv_get_ip() );
-
 ?>
 <div class="form-group getpaid-ip-info">
     <span><?php echo wp_kses_post( $text ); ?></span>
-    <strong><?php echo $ip_address; ?></strong>
+    <strong><?php echo esc_html( wpinv_get_ip() ); ?></strong>
 </div>

@@ -15,7 +15,7 @@ add_ThickBox();
 		<nav class="nav-tab-wrapper wpi-nav-tab-wrapper">
 			<?php
 			foreach ( $tabs as $name => $label ) {
-				echo '<a href="' . admin_url( 'admin.php?page=wpi-addons&tab=' . $name ) . '" class="nav-tab ' . ( $current_tab == $name ? 'nav-tab-active' : '' ) . '">' . $label . '</a>';
+				echo '<a href="' . esc_url( admin_url( 'admin.php?page=wpi-addons&tab=' . $name ) ) . '" class="nav-tab ' . ( $current_tab == $name ? 'nav-tab-active' : '' ) . '">' . esc_html( $label ) . '</a>';
 			}
 			do_action( 'wpi_addons_tabs' );
 			?>
@@ -154,7 +154,7 @@ Great job so far guys, can’t wait to see where this goes!
 									}
 
 									if(isset($addon->info->link) && substr( $addon->info->link, 0, 21 ) === "https://wordpress.org"){
-										echo '<a href="'.admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug).'&width=770&height=660&TB_iframe=true" class="thickbox" >';
+										echo '<a href="'.esc_url(admin_url('/plugin-install.php?tab=plugin-information&plugin='.$addon->info->slug)).'&width=770&height=660&TB_iframe=true" class="thickbox" >';
 										echo '<span class="wpi-product-info">'.__('More info','invoicing').'</span>';
 										echo '</a>';
 									}elseif(isset($addon->info->link) && ( substr( $addon->info->link, 0, 23 ) === "https://wpinvoicing.com" || substr( $addon->info->link, 0, 21 ) === "https://wpgetpaid.com" ) ){
@@ -168,7 +168,7 @@ Great job so far guys, can’t wait to see where this goes!
 												$url = '#TB_inline?width=600&height=50&inlineId=wpi-wpeu-required-for-external';
 											}
 										}
-										echo '<a href="'.$url.'" class="thickbox">';
+										echo '<a href="'.esc_url($url).'" class="thickbox">';
 										echo '<span class="wpi-product-info">'.__('More info','invoicing').'</span>';
 										echo '</a>';
 									}

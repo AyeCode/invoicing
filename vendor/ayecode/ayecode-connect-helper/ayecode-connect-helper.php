@@ -301,10 +301,10 @@ if ( ! class_exists( "AyeCode_Connect_Helper" ) ) {
 					</svg>
 					</span>
 					<span class="acch-float-left acch-text">
-						<h3 class="acch-title"><?php echo esc_attr( $connect_title_string ); ?></h3>
+						<h3 class="acch-title"><?php echo esc_html( $connect_title_string ); ?></h3>
 					<p>
 						<?php
-						echo $connect_string;
+						echo wp_kses_post( $connect_string );
 						?>
 					</p>
 					</span>
@@ -434,7 +434,7 @@ if ( ! class_exists( "AyeCode_Connect_Helper" ) ) {
 						url: ajaxurl,
 						data: {
 							action: 'ayecode_connect_helper',
-							security: '<?php echo wp_create_nonce( 'ayecode-connect-helper' );?>',
+							security: '<?php echo esc_js( wp_create_nonce( 'ayecode-connect-helper' ) );?>',
 							redirect_to: $current_url
 						},
 						beforeSend: function () {

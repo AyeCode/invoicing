@@ -16,13 +16,13 @@ do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 $currency = $form->get_currency();
 $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 ?>
-<div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo $item->get_id(); ?> border-bottom py-2 px-3'>
+<div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required'  : 'selectable'; ?> item-<?php echo (int) $item->get_id(); ?> border-bottom py-2 px-3'>
 
 	<div class="form-row needs-validation">
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 
-			<div class="<?php echo 'name' == $key ? 'col-6' : 'col' ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : '' ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo $item->get_id(); ?>">
+			<div class="<?php echo 'name' == $key ? 'col-6' : 'col' ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : '' ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
 
 				<?php
 
@@ -65,7 +65,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 						// Display the name.
 						$tootip = empty( $description ) ? '' : "&nbsp;" . '<i class="fas fa-xs fa-info gp-tooltip d-sm-none text-muted"></i>';
-						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . $tootip . '</div>';
+						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . wp_kses_post( $tootip ) . '</div>';
 
 						if ( ! empty( $description ) ) {
 							printf( '<span class="d-none d-sm-block getpaid-item-desc">%s</span>', $description );

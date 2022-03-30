@@ -62,7 +62,7 @@ if ( empty( $invoice ) ) {
         <div class="container">
             <div class="alert alert-danger m-5" role="alert">
                 <h4 class="alert-heading"><?php _e( 'Access Denied', 'invoicing' ); ?></h4>
-                <p><?php echo $error; ?></p>
+                <p><?php echo wp_kses_post( $error ); ?></p>
             </div>
         </div>
 

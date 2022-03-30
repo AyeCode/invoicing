@@ -1404,7 +1404,10 @@ jQuery(function ($) {
 								maxTicksLimit: 12,
 
 							}
-						}]
+						}],
+						y: {
+							beginAtZero: true
+						},
 					},
 					legend: {
 						display: true,

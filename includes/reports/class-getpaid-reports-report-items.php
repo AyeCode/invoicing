@@ -140,8 +140,8 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 						{
 							type: 'doughnut',
 							data: {
-								'labels': <?php echo wp_json_encode( $this->get_labels() ); ?>,
-								'datasets': [ <?php echo wp_json_encode( $this->get_data() ); ?> ]
+								'labels': <?php echo wp_json_encode( wp_kses_post_deep( $this->get_labels() ) ); ?>,
+								'datasets': [ <?php echo wp_json_encode( wp_kses_post_deep( $this->get_data() ) ); ?> ]
 							},
 							options: {
 								legend: {

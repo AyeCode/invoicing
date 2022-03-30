@@ -329,7 +329,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 				}
 			</style>
 			<div class="wrap">
-				<h1><?php echo $this->name; ?></h1>
+				<h1><?php echo esc_html( $this->name ); ?></h1>
 				<form method="post" action="options.php">
 					<?php
 					settings_fields( 'wp-font-awesome-settings' );
@@ -376,7 +376,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 							<td>
 								<select name="wp-font-awesome-settings[version]" id="wpfas-version">
 									<option
-										value="" <?php selected( $this->settings['version'], '' ); ?>><?php echo sprintf( __( 'Latest - %s (default)', 'font-awesome-settings' ), $this->get_latest_version() ); ?>
+										value="" <?php selected( $this->settings['version'], '' ); ?>><?php echo sprintf( __( 'Latest - %s (default)', 'font-awesome-settings' ), esc_html( $this->get_latest_version() ) ); ?>
 									</option>
 									<option value="5.6.0" <?php selected( $this->settings['version'], '5.6.0' ); ?>>
 										5.6.0
@@ -480,7 +480,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 					?>
 				</form>
 
-				<div id="wpfas-version"><?php echo $this->version; ?></div>
+				<div id="wpfas-version"><?php echo esc_html( $this->version ); ?></div>
 			</div>
 
 			<?php

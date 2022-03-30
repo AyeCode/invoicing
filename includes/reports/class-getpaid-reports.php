@@ -58,15 +58,15 @@ class GetPaid_Reports {
 
         <div class="wrap">
 
-			<h1><?php echo sanitize_text_field( $tabs[ $current_tab ] ); ?></h1>
+			<h1><?php echo esc_html( $tabs[ $current_tab ] ); ?></h1>
 
 			<nav class="nav-tab-wrapper">
 
 				<?php
 					foreach( $tabs as $key => $label ) {
 
-						$key   = sanitize_text_field( $key );
-						$label = sanitize_text_field( $label );
+						$key   = sanitize_key( $key );
+						$label = esc_html( $label );
 						$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab';
 						$url   = esc_url(
 							add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )

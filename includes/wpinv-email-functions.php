@@ -376,7 +376,7 @@ function wpinv_email_wrap_message( $message ) {
 
     do_action( 'wpinv_email_header' );
 
-    echo wpautop( wptexturize( $message ) );
+    echo wp_kses_post( wpautop( wptexturize( $message ) ) );
 
     do_action( 'wpinv_email_footer' );
 
@@ -400,7 +400,7 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type ) {
             ?>
             <li class="comment wpinv-note">
             <p class="wpinv-note-date meta"><?php printf( __( '%2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( $date_format, $note_time ), date_i18n( $time_format, $note_time ), $note_time ); ?></p>
-            <div class="wpinv-note-desc description"><?php echo wpautop( wptexturize( $note->comment_content ) ); ?></div>
+            <div class="wpinv-note-desc description"><?php echo wp_kses_post( wpautop( wptexturize( $note->comment_content ) ) ); ?></div>
             </li>
             <?php
         }

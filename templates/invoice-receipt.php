@@ -138,7 +138,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
                     $attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
                     $anchor = esc_html( $action['name'] );
 
-                    echo "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>";
+                    echo wp_kses_post( "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>" );
                 }
 
                 echo '</div>';
@@ -146,7 +146,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
             }
 
             if ( ! empty( $alert ) ) {
-                echo $alert;
+                echo wp_kses_post( $alert );
             }
 
         ?>

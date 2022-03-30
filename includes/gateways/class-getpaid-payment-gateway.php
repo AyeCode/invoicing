@@ -531,7 +531,7 @@ abstract class GetPaid_Payment_Gateway {
                                             <?php
                                                 foreach ( $months as $key => $month ) {
                                                     $key   = esc_attr( $key );
-                                                    $month = wpinv_clean( $month );
+                                                    $month = esc_html( $month );
                                                     echo "<option value='$key'>$month</option>" . PHP_EOL;
                                                 }
                                             ?>
@@ -546,7 +546,7 @@ abstract class GetPaid_Payment_Gateway {
                                             <?php
                                                 foreach ( $years as $key => $year ) {
                                                     $key   = esc_attr( $key );
-                                                    $year  = wpinv_clean( $year );
+                                                    $year  = esc_html( $year );
                                                     echo "<option value='$key'>$year</option>" . PHP_EOL;
                                                 }
                                             ?>

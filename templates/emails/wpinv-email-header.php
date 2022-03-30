@@ -13,7 +13,7 @@ if ( !isset( $email_heading ) ) {
         <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noindex,nofollow">
-        <title><?php echo wpinv_get_blogname(); ?></title>
+        <title><?php echo esc_html( wpinv_get_blogname() ); ?></title>
     </head>
     <body <?php echo is_rtl() ? 'rightmargin' : 'leftmargin'; ?>="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
         <div id="wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'?>">
@@ -35,7 +35,7 @@ if ( !isset( $email_heading ) ) {
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header">
                                         <tr>
                                             <td id="header_wrapper">
-                                                <h1><?php echo $email_heading; ?></h1>
+                                                <h1><?php echo esc_html( $email_heading ); ?></h1>
                                             </td>
                                         </tr>
                                     </table>

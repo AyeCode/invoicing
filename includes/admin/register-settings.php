@@ -451,7 +451,7 @@ function wpinv_get_pages( $with_slug = false, $default_label = NULL ) {
 
 function wpinv_header_callback( $args ) {
 	if ( !empty( $args['desc'] ) ) {
-        echo $args['desc'];
+        echo wp_kses_post( $args['desc'] );
     }
 }
 
@@ -508,7 +508,7 @@ function wpinv_multicheck_callback( $args ) {
 
 		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . $sanitize_id . $class . '">';
         foreach( $args['options'] as $key => $option ):
-			$sanitize_key = wpinv_sanitize_key( $key );
+			$sanitize_key = esc_attr( wpinv_sanitize_key( $key ) );
 			if ( in_array( $sanitize_key, $value ) ) { 
 				$enabled = $sanitize_key;
 			} else { 
@@ -518,7 +518,7 @@ function wpinv_multicheck_callback( $args ) {
 			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label></div>';
 		endforeach;
 		echo '</div>';
-		echo '<p class="description">' . $args['desc'] . '</p>';
+		echo '<p class="description">' . wp_kses_post( $args['desc'] ) . '</p>';
 	}
 }
 

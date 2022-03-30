@@ -79,16 +79,16 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 							case 'recurring_amount':
 								$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 								$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
-								echo strtolower( "<strong style='font-weight: 500;'>$amount</strong> / <span class='getpaid-item-recurring-period'>$frequency</span>" );
+								echo wp_kses_post( strtolower( "<strong style='font-weight: 500;'>$amount</strong> / <span class='getpaid-item-recurring-period'>$frequency</span>" ) );
 								break;
 
 							case 'item':
 
 								if ( empty( $subscription_group ) ) {
-									echo WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() );
+									echo wp_kses_post( WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() ) );
 								} else {
 									$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
-									echo implode( ' | ', $markup );
+									echo wp_kses_post( implode( ' | ', $markup ) );
 								}
 
 								break;
@@ -96,7 +96,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 							case 'payments':
 
 								$max_activations = (int) $subscription->get_bill_times();
-								echo (int) $subscription->get_times_billed() . ' / ' . ( empty( $max_activations ) ? "&infin;" : $max_activations );
+								echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_activations ) ? "&infin;" : (int) $max_activations );
 
 								break;
 

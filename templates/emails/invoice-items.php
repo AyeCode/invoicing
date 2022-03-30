@@ -19,7 +19,7 @@ $column_count = count( $columns );
 <div id="wpinv-email-items">
 
     <h3 class="invoice-items-title">
-        <?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), ucfirst( $invoice->get_invoice_quote_type() )); ?>
+        <?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), esc_html( ucfirst( $invoice->get_invoice_quote_type() ) ) ); ?>
     </h3>
 
     <table class="table table-bordered table-hover">

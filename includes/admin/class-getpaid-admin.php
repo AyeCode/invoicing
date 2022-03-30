@@ -906,7 +906,7 @@ class GetPaid_Admin {
 				continue;
 			}
 
-            $type  = sanitize_key( $type );
+            $type  = esc_attr( $type );
 			foreach ( $messages as $message ) {
                 $message = wp_kses_post( $message );
 				echo "<div class='notice notice-$type is-dismissible'><p>$message</p></div>";

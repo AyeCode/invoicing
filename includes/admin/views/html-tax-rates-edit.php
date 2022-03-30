@@ -16,12 +16,10 @@ $dummy_rate = array(
     'name'         => __( 'VAT', 'invoicing' ),
 );
 
-$reset_url = esc_url(
-    wp_nonce_url(
-        add_query_arg( 'getpaid-admin-action', 'reset_tax_rates' ),
-        'getpaid-nonce',
-        'getpaid-nonce'
-    )
+$reset_url = wp_nonce_url(
+    add_query_arg( 'getpaid-admin-action', 'reset_tax_rates' ),
+    'getpaid-nonce',
+    'getpaid-nonce'
 );
 
 ?>
@@ -74,7 +72,7 @@ $reset_url = esc_url(
                         <span><?php _e( 'Add Tax Rate', 'invoicing' ); ?></span>
                     </button>
 
-                    <a href="<?php echo $reset_url; ?>" class="button button-secondary wpinv_reset_tax_rates" aria-label="<?php esc_attr_e( 'Reset Tax Rates', 'invoicing' ); ?>">
+                    <a href="<?php echo esc_url( $reset_url ); ?>" class="button button-secondary wpinv_reset_tax_rates" aria-label="<?php esc_attr_e( 'Reset Tax Rates', 'invoicing' ); ?>">
                         <span><?php _e( 'Reset Tax Rates', 'invoicing' ); ?></span>
                     </a>
                 </td>

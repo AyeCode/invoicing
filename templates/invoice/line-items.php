@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 
 <?php do_action( 'getpaid_invoice_before_line_items', $invoice ); ?>
 
-    <h2 class="mt-5 mb-1 h4"><?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), ucfirst( $invoice->get_invoice_quote_type() )); ?></h2>
+    <h2 class="mt-5 mb-1 h4"><?php echo sprintf( esc_html__( '%s Items', 'invoicing' ), esc_html( ucfirst( $invoice->get_invoice_quote_type() ) ) ); ?></h2>
     <div class="getpaid-invoice-items mb-4 border">
 
 

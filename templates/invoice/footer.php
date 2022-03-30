@@ -16,12 +16,12 @@ defined( 'ABSPATH' ) || exit;
 
             <?php if ( $term_text = wpinv_get_terms_text() ) : ?>
                 <div class="terms-text">
-                    <?php echo wpautop( $term_text ); ?>
+                    <?php echo wp_kses_post( wpautop( $term_text ) ); ?>
                 </div>
             <?php endif; ?>
 
             <div class="footer-text d-print-none">
-                <?php echo wpinv_get_business_footer(); ?>
+                <?php echo wp_kses_post( wpinv_get_business_footer() ); ?>
             </div>
 
         </div>

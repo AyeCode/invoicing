@@ -573,7 +573,7 @@ function wpinv_html_checkbox( $args = array() ) {
  * Displays a hidden field.
  */
 function getpaid_hidden_field( $name, $value ) {
-    $name  = sanitize_text_field( $name );
+    $name  = esc_attr( $name );
     $value = esc_attr( $value );
 
     echo "<input type='hidden' name='$name' value='$value' />";
@@ -583,7 +583,7 @@ function getpaid_hidden_field( $name, $value ) {
  * Displays a submit field.
  */
 function getpaid_submit_field( $value, $name = 'submit', $class = 'btn-primary' ) {
-    $name  = sanitize_text_field( $name );
+    $name  = esc_attr( $name );
     $value = esc_attr( $value );
     $class = esc_attr( $class );
 
@@ -919,12 +919,12 @@ function wpinv_display_invoice_notice() {
     echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
 
     if ( ! empty( $label ) ) {
-        $label = sanitize_text_field( $label );
+        $label = esc_html( $label );
         echo "<h5>$label</h5>";
     }
 
     if ( ! empty( $notice ) ) {
-        echo '<small class="form-text text-muted">' . wpautop( wptexturize( $notice ) ) . '</small>';
+        echo '<small class="form-text text-muted">' . wp_kses_post( wpautop( wptexturize( $notice ) ) ) . '</small>';
     }
 
     echo '</div>';
@@ -1213,7 +1213,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     $note_content = apply_filters( 'wpinv_get_invoice_note_line_item', $note_content, $note, $echo );
 
     if ( $echo ) {
-        echo $note_content;
+        echo wp_kses_post( $note_content );
     } else {
         return $note_content;
     }
@@ -1475,7 +1475,7 @@ function getpaid_payment_form_edit_element_template( $post ) {
     foreach ( $all_elements as $element ) {
 
         // Try to locate the appropriate template.
-        $element = sanitize_key( $element );
+        $element = esc_attr( sanitize_key( $element ) );
         $located = wpinv_locate_template( "payment-forms-admin/edit/$element.php" );
 
         // Continue if this is not our element.

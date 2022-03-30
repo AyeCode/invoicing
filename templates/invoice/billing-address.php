@@ -32,7 +32,7 @@ $company_id  = $invoice->get_company_id();
 
                 <?php if ( ! empty( $address_row ) ) : ?>
                     <div class="billing-address">
-                        <?php echo $address_row; ?>
+                        <?php echo wp_kses_post( $address_row ); ?>
                     </div>
                 <?php endif; ?>
 

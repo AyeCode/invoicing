@@ -152,7 +152,7 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 					<div class="col-12">
 						<div class="card m-0 p-0" style="max-width:100%">
 							<div class="card-header d-flex align-items-center">
-								<strong class="flex-grow-1"><?php echo $dataset['label']; ?></strong>
+								<strong class="flex-grow-1"><?php echo esc_html( $dataset['label'] ); ?></strong>
 								<?php $this->display_range_selector(); ?>
 							</div>
 							<div class="card-body">
@@ -175,22 +175,22 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 
 		?>
 
-		<canvas id="getpaid-chartjs-earnings-<?php echo sanitize_key( $key ); ?>"></canvas>
+		<canvas id="getpaid-chartjs-earnings-<?php echo esc_attr( $key ); ?>"></canvas>
 
 		<script>
 			window.addEventListener( 'DOMContentLoaded', function() {
 
-				var ctx = document.getElementById( 'getpaid-chartjs-earnings-<?php echo sanitize_key( $key ); ?>' ).getContext('2d');
+				var ctx = document.getElementById( 'getpaid-chartjs-earnings-<?php echo esc_attr( $key ); ?>' ).getContext('2d');
 				new Chart(
 					ctx,
 					{
 						type: 'line',
 						data: {
-							'labels': <?php echo wp_json_encode( $labels ); ?>,
+							'labels': <?php echo wp_json_encode( wpinv_clean( $labels ) ); ?>,
 							'datasets': [
 								{
 									label: '<?php echo esc_attr( $dataset['label'] ); ?>',
-									data: <?php echo wp_json_encode( $dataset['data'] ); ?>,
+									data: <?php echo wp_json_encode( wpinv_clean( $dataset['data'] ) ); ?>,
 									backgroundColor: 'rgba(54, 162, 235, 0.1)',
 									borderColor: 'rgb(54, 162, 235)',
 									borderWidth: 4,
