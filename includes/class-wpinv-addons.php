@@ -76,7 +76,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			$quotes->info->title = __( 'Quotes', 'invoicing' );
 			$quotes->info->excerpt = __( 'Create quotes and estimates', 'invoicing' );
 			$quotes->info->link = 'https://wordpress.org/plugins/invoicing-quotes/';
-			$quotes->info->thumbnail = 'https://wpgetpaid.com/wp-content/uploads/sites/13/edd/2019/11/Quotes-1-768x384.png';
+			$quotes->info->thumbnail = WPINV_PLUGIN_URL . 'assets/images/Quotes-1-768x384.png';
 
 			$products[] = $quotes;
 		}
