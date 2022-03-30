@@ -557,14 +557,14 @@ function wpinv_html_checkbox( $args = array() ) {
     $args = wp_parse_args( $args, $defaults );
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
-    $options = '';
+    $attr  = '';
     if ( ! empty( $args['options']['disabled'] ) ) {
-        $options .= ' disabled="disabled"';
+        $attr .= ' disabled="disabled"';
     } elseif ( ! empty( $args['options']['readonly'] ) ) {
-        $options .= ' readonly';
+        $attr .= ' readonly';
     }
 
-    $output = '<input type="checkbox"' . $options . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . $class . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
+    $output = '<input type="checkbox"' . $attr . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . esc_attr( $class ) . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
 
     return $output;
 }
@@ -573,21 +573,14 @@ function wpinv_html_checkbox( $args = array() ) {
  * Displays a hidden field.
  */
 function getpaid_hidden_field( $name, $value ) {
-    $name  = esc_attr( $name );
-    $value = esc_attr( $value );
-
-    echo "<input type='hidden' name='$name' value='$value' />";
+    echo "<input type='hidden' name='" . esc_attr( $name ) . "' value=' " . esc_attr( $value ) . "' />";
 }
 
 /**
  * Displays a submit field.
  */
 function getpaid_submit_field( $value, $name = 'submit', $class = 'btn-primary' ) {
-    $name  = esc_attr( $name );
-    $value = esc_attr( $value );
-    $class = esc_attr( $class );
-
-    echo "<input type='submit' name='$name' value='$value' class='btn $class' />";
+    echo "<input type='submit' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' class='btn " . esc_attr( $class ) . "' />";
 }
 
 function wpinv_html_text( $args = array() ) {
@@ -982,7 +975,7 @@ function wpinv_display_style() {
         $custom_css     = wp_kses( $custom_css, array( '\'', '\"' ) );
         $custom_css     = str_replace( '&gt;', '>', $custom_css );
         echo '<style type="text/css">';
-        echo $custom_css;
+        echo wp_kses_post( $custom_css );
         echo '</style>';
     }
 

@@ -282,7 +282,7 @@ class GetPaid_Post_Types_Admin {
 						$new_amount = wp_kses_post( wpinv_price( $amount + $discount, $invoice->get_currency() ) );
 						echo "<del>$new_amount</del>&nbsp;<ins>$formated_amount</ins>";
 					} else {
-						echo $formated_amount;
+						echo wp_kses_post( $formated_amount );
 					}
 
 				}
@@ -585,7 +585,7 @@ class GetPaid_Post_Types_Admin {
 			case 'price' :
 
 				if ( ! $item->is_recurring() ) {
-					echo $item->get_the_price();
+					echo wp_kses_post( $item->get_the_price() );
 					break;
 				}
 
@@ -596,13 +596,13 @@ class GetPaid_Post_Types_Admin {
 				);
 
 				if ( $item->get_the_price() == $item->get_the_initial_price() ) {
-					echo $price;
+					echo wp_kses_post( $price );
 					break;
 				}
 
-				echo $item->get_the_initial_price();
+				echo wp_kses_post( $item->get_the_initial_price() );
 
-				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), $price )  .'</span>';
+				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), wp_kses_post( $price ) )  .'</span>';
 				break;
 
 			case 'vat_rule' :
