@@ -96,7 +96,7 @@ class GetPaid_Reports_Report {
 		?>
 
 			<form method="get" class="getpaid-filter-earnings float-right">
-				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? wpinv_clean( $_GET['page'] ) : 'wpinv-reports' );  ?>
+				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : 'wpinv-reports' );  ?>
 				<?php getpaid_hidden_field( 'tab', 'reports' );  ?>
 				<select name='date_range'>
 					<?php foreach( $this->get_periods() as $key => $label ) :?>

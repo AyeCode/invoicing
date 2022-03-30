@@ -352,7 +352,7 @@ class WPInv_Plugin {
 			return;
 		}
 
-		$gateway = wpinv_clean( $_GET['wpi-gateway'] );
+		$gateway = sanitize_text_field( $_GET['wpi-gateway'] );
 
 		do_action( 'wpinv_verify_payment_ipn', $gateway );
 		do_action( "wpinv_verify_{$gateway}_ipn" );

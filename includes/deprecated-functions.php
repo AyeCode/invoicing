@@ -499,7 +499,7 @@ function wpinv_send_to_gateway( $gateway, $invoice ) {
         'user_email'        => $invoice->get_email(),
         'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
         'user_info'         => $invoice->get_user_info(),
-        'post_data'         => stripslashes_deep( $_POST ),
+        'post_data'         => wp_kses_post( wp_unslash( $_POST ) ),
         'cart_details'      => $invoice->get_cart_details(),
         'gateway'           => $gateway,
         'card_info'         => array(),
@@ -855,7 +855,7 @@ function wpinv_get_cart_item_price_id() {
 function wpinv_item_show_price( $item_id = 0, $echo = true ) {
 
     if ( $echo ) {
-        echo wpinv_item_price( $item_id );
+        echo wp_kses_post( wpinv_item_price( $item_id ) );
     } else {
         return wpinv_item_price( $item_id );
     }

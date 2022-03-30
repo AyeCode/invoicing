@@ -109,7 +109,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 
 			foreach ( $show_fields as $fieldset_key => $fieldset ) :
 				?>
-				<h2><?php echo $fieldset['title']; ?></h2>
+				<h2><?php echo esc_html( $fieldset['title'] ); ?></h2>
 				<table class="form-table" id="<?php echo esc_attr( 'getpaid-fieldset-' . $fieldset_key ); ?>">
 					<?php foreach ( $fieldset['fields'] as $key => $field ) : ?>
 						<tr>

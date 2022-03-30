@@ -178,7 +178,7 @@ class WPInv_Ajax {
         }
 
         // Do we have a user id?
-        $user_id = $_GET['user_id'];
+        $user_id = (int) $_GET['user_id'];
 
         if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
             die(-1);
@@ -221,7 +221,7 @@ class WPInv_Ajax {
         }
 
         // Ensure the email is valid.
-        $email = sanitize_text_field( $_GET['email'] );
+        $email = sanitize_email( $_GET['email'] );
         if ( ! is_email( $email ) ) {
             _e( 'Invalid email address', 'invoicing' );
             exit;
@@ -273,7 +273,7 @@ class WPInv_Ajax {
 
         // Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
-            $form = urldecode( $_GET['form'] );
+            $form = sanitize_text_field( urldecode( $_GET['form'] ) );
 
             if ( false !== strpos( $form, '|' ) ) {
                 $form_pos = strpos( $form, '|' );
@@ -327,9 +327,9 @@ class WPInv_Ajax {
             }
 
 		} else if( ! empty( $_GET['invoice'] ) ) {
-		    getpaid_display_invoice_payment_form( urldecode( $_GET['invoice'] ) );
+		    getpaid_display_invoice_payment_form( (int) urldecode( $_GET['invoice'] ) );
         } else {
-			$items = getpaid_convert_items_to_array( urldecode( $_GET['item'] ) );
+			$items = getpaid_convert_items_to_array( sanitize_text_field( urldecode( $_GET['item'] ) ) );
 		    getpaid_display_item_payment_form( $items );
         }
 
@@ -372,7 +372,7 @@ class WPInv_Ajax {
             exit;
         }
 
-        $elements = getpaid_get_payment_form_elements( $_GET['form'] );
+        $elements = getpaid_get_payment_form_elements( (int) $_GET['form'] );
 
         if ( empty( $elements ) ) {
             exit;
@@ -413,7 +413,7 @@ class WPInv_Ajax {
                     $description,
                     ! empty( $address_field['required'] ),
                     $wrap_class,
-                    wpinv_clean( $_GET['name'] )
+                    sanitize_text_field( $_GET['name'] )
                 );
 
                 wp_send_json_success( $html );
@@ -444,7 +444,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
 
         // Ensure it exists.
         if ( ! $invoice->get_id() ) {
@@ -512,7 +512,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
 
         // Ensure it exists.
         if ( ! $invoice->get_id() ) {
@@ -547,7 +547,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -616,7 +616,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['invoice_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['invoice_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -624,7 +624,7 @@ class WPInv_Ajax {
         }
 
         // Format the data.
-        $data = wp_unslash( $_POST['_wpinv_quick'] );
+        $data = wp_kses_post_deep( wp_unslash( $_POST['_wpinv_quick'] ) );
 
         $item = new WPInv_Item();
         $item->set_price( getpaid_standardize_amount( $data['price'] ) );
@@ -686,7 +686,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
 
         // Ensure it exists and its not been paid for.
         if ( ! $invoice->get_id() || $invoice->is_paid() || $invoice->is_refunded() ) {
@@ -736,7 +736,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -748,7 +748,7 @@ class WPInv_Ajax {
 
         if ( ! empty( $_POST['getpaid_items'] ) ) {
 
-            foreach ( $_POST['getpaid_items'] as $item_id => $args ) {
+            foreach ( wp_kses_post_deep( $_POST['getpaid_items'] ) as $item_id => $args ) {
                 $item = new GetPaid_Form_Item( $item_id );
 
                 if ( $item->exists() ) {
@@ -807,7 +807,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -851,7 +851,7 @@ class WPInv_Ajax {
         }
 
         // Fetch the invoice.
-        $invoice = new WPInv_Invoice( wpinv_clean( $_POST['post_id'] ) );
+        $invoice = new WPInv_Invoice( intval( $_POST['post_id'] ) );
         $alert   = false;
 
         // Ensure it exists and its not been paid for.
@@ -860,7 +860,7 @@ class WPInv_Ajax {
         }
 
         // Add the items.
-        foreach ( $_POST['items'] as $data ) {
+        foreach ( wp_kses_post_deep( wp_unslash( $_POST['items'] ) ) as $data ) {
 
             $item = new GetPaid_Form_Item( (int) $data[ 'id' ] );
 
@@ -917,7 +917,7 @@ class WPInv_Ajax {
             'order'          => 'ASC',
             'posts_per_page' => -1,
             'post_status'    => array( 'publish' ),
-            's'              => trim( $_GET['search'] ),
+            's'              => sanitize_text_field( urldecode( $_GET['search'] ) ),
             'meta_query'     => array(
                 array(
                     'key'       => '_wpinv_type',
@@ -928,13 +928,13 @@ class WPInv_Ajax {
         );
 
         if ( ! empty( $_GET['ignore'] ) ) {
-            $item_args['exclude'] = wp_parse_id_list( $_GET['ignore'] );
+            $item_args['exclude'] = wp_parse_id_list( sanitize_text_field( $_GET['ignore'] ) );
         }
 
         $items = get_posts( apply_filters( 'getpaid_ajax_invoice_items_query_args', $item_args ) );
         $data  = array();
 
-        $is_payment_form = ( ! empty( $_GET['post_id'] ) && 'wpi_payment_form' == get_post_type( $_GET['post_id'] ) );
+        $is_payment_form = ( ! empty( $_GET['post_id'] ) && 'wpi_payment_form' == get_post_type( (int) $_GET['post_id'] ) );
 
         foreach ( $items as $item ) {
             $item      = new GetPaid_Form_Item( $item );
@@ -1148,9 +1148,9 @@ class WPInv_Ajax {
         // Retrieve response.
         $response = sprintf(
             '<input type="hidden" name="%s[%s]" value="%s" />',
-            esc_attr( $_POST['field_name'] ),
-            esc_attr( $uploaded['url'] ),
-            esc_attr( strtolower( $_FILES['file']['name'] ) )
+            esc_attr( sanitize_text_field( $_POST['field_name'] ) ),
+            esc_url( $uploaded['url'] ),
+            esc_attr( sanitize_text_field( strtolower( $_FILES['file']['name'] ) ) )
         );
 
         wp_send_json_success( $response );

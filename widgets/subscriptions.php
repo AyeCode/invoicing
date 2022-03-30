@@ -91,7 +91,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 
 		// Are we displaying a single subscription?
 		if ( isset( $_GET['subscription'] ) ) {
-			return $this->display_single_subscription( trim( $_GET['subscription'] ) );
+			return $this->display_single_subscription( intval( $_GET['subscription'] ) );
 		}
 
 		// Retrieve the user's subscriptions.

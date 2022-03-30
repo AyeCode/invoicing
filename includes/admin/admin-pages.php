@@ -12,19 +12,19 @@ function wpinv_discount_custom_column( $column ) {
 
     switch ( $column ) {
         case 'code' :
-            echo $discount->get_code();
+            echo esc_html( $discount->get_code() );
         break;
         case 'amount' :
-            echo $discount->get_formatted_amount();
+            echo wp_kses_post( $discount->get_formatted_amount() );
         break;
         case 'usage' :
-            echo $discount->get_usage();
+            echo wp_kses_post( $discount->get_usage() );
         break;
         case 'start_date' :
-            echo getpaid_format_date_value( $discount->get_start_date() );
+            echo wp_kses_post( getpaid_format_date_value( $discount->get_start_date() ) );
         break;
         case 'expiry_date' :
-            echo getpaid_format_date_value( $discount->get_expiration_date(), __( 'Never', 'invoicing' ) );
+            echo wp_kses_post( getpaid_format_date_value( $discount->get_expiration_date(), __( 'Never', 'invoicing' ) ) );
         break;
     }
 }
@@ -121,7 +121,7 @@ function wpinv_discount_filters() {
                 echo '<option value="' . esc_attr( $name ) . '"';
 
                 if ( isset( $_GET['discount_type'] ) )
-                    selected( $name, $_GET['discount_type'] );
+                    selected( $name, sanitize_text_field( $_GET['discount_type'] ) );
 
                 echo '>' . esc_html__( $type, 'invoicing' ) . '</option>';
             }

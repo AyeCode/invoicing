@@ -91,9 +91,9 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$query = array(
 			'number'  => $this->per_page,
 			'paged'   => $this->get_paged(),
-			'status'  => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? $_GET['status'] : 'all',
-			'orderby' => ( isset( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'id',
-			'order'   => ( isset( $_GET['order'] ) ) ? $_GET['order'] : 'DESC',
+			'status'  => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? sanitize_text_field( $_GET['status'] ) : 'all',
+			'orderby' => ( isset( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'id',
+			'order'   => ( isset( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'DESC',
 			'customer_in' => $this->get_user_in(),
 		);
 
@@ -162,7 +162,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 */
 	public function get_views() {
 
-		$current  = isset( $_GET['status'] ) ? $_GET['status'] : 'all';
+		$current  = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : 'all';
 		$views    = array(
 
 			'all' => sprintf(

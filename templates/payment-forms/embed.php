@@ -16,7 +16,7 @@
 
 		$shortcode = sprintf(
 			'[getpaid form=%s]',
-			(int) urldecode( $_GET['form'] )
+			(int) $_GET['form']
 		);
 
 	} else {
