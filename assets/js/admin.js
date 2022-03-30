@@ -1385,10 +1385,12 @@ jQuery(function ($) {
 						}
 					},
 					scales: {
-						yAxes: [{
+						y: {
+							beginAtZero: true,
+
 							ticks: {
-								beginAtZero: true,
-								callback: function (value, index, values) {
+								// Include a dollar sign in the ticks
+								callback: function(value, index, ticks) {
 
 									if (!window.Intl || ['invoices', 'items', 'tickets_sold'].indexOf(stat) > -1) {
 										return value
@@ -1398,13 +1400,13 @@ jQuery(function ($) {
 
 								}
 							}
-						}],
-						xAxes: [{
+						},
+						x: {
 							ticks: {
 								maxTicksLimit: 12,
 
 							}
-						}]
+						}
 					},
 					legend: {
 						display: true,

@@ -16,7 +16,7 @@ $invoice = $object->get_parent_payment();
 do_action( 'wpinv_email_header', $email_heading, $invoice, $email_type, $sent_to_admin );
 
 // Generate the custom message body.
-echo $message_body;
+echo wp_kses_post( $message_body );
 
 // Print invoice details.
 do_action( 'wpinv_email_invoice_details', $invoice, $email_type, $sent_to_admin );

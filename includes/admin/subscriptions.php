@@ -240,7 +240,7 @@ function getpaid_admin_subscription_metabox_display_customer( $subscription ) {
 
 	}
 
-	echo  $username;
+	echo wp_kses_post( $username );
 }
 add_action( 'getpaid_subscription_admin_display_customer', 'getpaid_admin_subscription_metabox_display_customer' );
 
@@ -298,7 +298,7 @@ add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subsc
  */
 function getpaid_admin_subscription_metabox_display_renewals( $subscription ) {
 	$max_bills = $subscription->get_bill_times();
-	echo $subscription->get_times_billed() . ' / ' . ( empty( $max_bills ) ? "&infin;" : $max_bills );
+	echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? "&infin;" : (int) $max_bills );
 }
 add_action( 'getpaid_subscription_admin_display_renewals', 'getpaid_admin_subscription_metabox_display_renewals' );
 /**
@@ -315,7 +315,7 @@ function getpaid_admin_subscription_metabox_display_item( $subscription, $subscr
 	}
 
 	$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
-	echo implode( ' | ', $markup );
+	echo wp_kses_post( implode( ' | ', $markup ) );
 
 }
 add_action( 'getpaid_subscription_admin_display_item', 'getpaid_admin_subscription_metabox_display_item', 10, 2 );
@@ -344,7 +344,7 @@ add_action( 'getpaid_subscription_admin_display_gateway', 'getpaid_admin_subscri
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_status( $subscription ) {
-	echo $subscription->get_status_label_html();
+	echo wp_kses_post( $subscription->get_status_label_html() );
 }
 add_action( 'getpaid_subscription_admin_display_status', 'getpaid_admin_subscription_metabox_display_status' );
 
@@ -375,8 +375,7 @@ function getpaid_admin_subscription_metabox_display_profile_id( $subscription ) 
 
 	$url = apply_filters( 'getpaid_remote_subscription_profile_url', '', $subscription );
 	if ( ! empty( $url ) ) {
-		$url = esc_url_raw( $url );
-		echo '&nbsp;<a href="' . $url . '" title="' . __( 'View in Gateway', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-xs fa-fw align-top"></i></a>';
+		echo '&nbsp;<a href="' . esc_url_raw( $url ) . '" title="' . __( 'View in Gateway', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-xs fa-fw align-top"></i></a>';
 	}
 
 }
@@ -413,7 +412,7 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 		<?php
 			submit_button( __( 'Update', 'invoicing' ), 'primary', 'submit', false );
 
-			$url    = esc_url( wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'subscription_manual_renew' ), 'getpaid-nonce', 'getpaid-nonce' ) );
+			$url    = wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'subscription_manual_renew' ), 'getpaid-nonce', 'getpaid-nonce' );
 			$anchor = __( 'Renew Subscription', 'invoicing' );
 			$title  = esc_attr__( 'Are you sure you want to extend the subscription and generate a new invoice that will be automatically marked as paid?', 'invoicing' );
 
@@ -461,7 +460,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 	?>
 		<div class="m-0" style="overflow: auto;">
 
-			<table class="<?php echo $table_class; ?>">
+			<table class="<?php echo esc_attr( $table_class ); ?>">
 
 				<thead>
 					<tr>
@@ -510,7 +509,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 
 									$class = 'text-left';
 
-									echo "<td class='p-2 $class'>";
+									echo "<td class='p-2 text-left'>";
 
 										switch( $key ) {
 
@@ -533,7 +532,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 													$status = $payment->get_status_label_html();
 												}
 
-												echo $status;
+												echo wp_kses_post( $status );
 												break;
 
 											case 'invoice':
@@ -611,7 +610,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 	?>
 		<div class="m-0" style="overflow: auto;">
 
-			<table class="<?php echo $table_class; ?>">
+			<table class="<?php echo esc_attr( $table_class ); ?>">
 
 				<thead>
 					<tr>
@@ -622,7 +621,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 								$label = esc_html( $label );
 								$class = 'text-left';
 
-								echo "<th class='subscription-item-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
+								echo "<th class='subscription-item-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>
@@ -640,7 +639,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 
 									$class = 'text-left';
 
-									echo "<td class='p-2 $class'>";
+									echo "<td class='p-2 text-left'>";
 
 										switch( $key ) {
 
@@ -694,7 +693,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 
 									$class = 'text-left';
 
-									echo "<td class='p-2 $class'>";
+									echo "<td class='p-2 text-left'>";
 
 										switch( $key ) {
 
@@ -784,7 +783,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 	?>
 		<div class="m-0" style="overflow: auto;">
 
-			<table class="<?php echo $table_class; ?>">
+			<table class="<?php echo esc_attr( $table_class ); ?>">
 
 				<thead>
 					<tr>
@@ -795,7 +794,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 								$label = esc_html( $label );
 								$class = 'text-left';
 
-								echo "<th class='related-subscription-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
+								echo "<th class='related-subscription-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>
@@ -825,12 +824,12 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 
 									$class = 'text-left';
 
-									echo "<td class='p-2 $class'>";
+									echo "<td class='p-2 text-left'>";
 
 										switch( $key ) {
 
 											case 'status':
-												echo $_suscription->get_status_label_html();
+												echo wp_kses_post( $_suscription->get_status_label_html() );
 												break;
 
 											case 'item':
@@ -840,7 +839,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 
 											case 'renewals':
 												$max_bills = $_suscription->get_bill_times();
-												echo $_suscription->get_times_billed() . ' / ' . ( empty( $max_bills ) ? "&infin;" : $max_bills );
+												echo ( (int) $_suscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? "&infin;" : (int) $max_bills );
 												break;
 
 											case 'renewal_date':

@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="row row-cols-2 text-left">
 			<div class="col mt-3">
 				<div class="media">
-                    <img src="<?php echo WPINV_PLUGIN_URL . 'assets/images/buy.svg';?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/buy.svg' );?>" class="mr-3" alt="...">
                     <div class="media-body">
                         <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via Buy Now Buttons', 'invoicing' );?></h6>
                         <small><?php _e( 'Sell via buy now buttons anywhere on your site', 'invoicing' );?></small>
@@ -52,7 +52,7 @@ defined( 'ABSPATH' ) || exit;
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo WPINV_PLUGIN_URL . 'assets/images/report.svg';?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/report.svg' );?>" class="mr-3" alt="...">
                         <div class="media-body">
                         <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via payment form', 'invoicing' );?></h6>
                         <small><?php _e( 'Payment forms are conversion-optimized checkout forms', 'invoicing' );?></small>
@@ -62,7 +62,7 @@ defined( 'ABSPATH' ) || exit;
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo WPINV_PLUGIN_URL . 'assets/images/invoices.svg';?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/invoices.svg' );?>" class="mr-3" alt="...">
                     <div class="media-body">
                         <h6 class="mt-0 font-weight-bold"><?php _e('GetPaid via Invoice','invoicing');?></h6>
                         <small><?php _e('Create and send invoices for just about anything from the WordPress dashboard','invoicing');?></small>
@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit;
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo WPINV_PLUGIN_URL . 'assets/images/payment.svg';?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/payment.svg' );?>" class="mr-3" alt="...">
                     <div class="media-body">
                         <h6 class="mt-0 font-weight-bold"><?php _e('Affordable payment gateways','invoicing');?></h6>
                         <small><?php _e('On average our gateways are over 66% cheaper than our competition','invoicing');?></small>

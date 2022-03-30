@@ -98,7 +98,7 @@ do_action( 'getpaid_before_payment_form', $form );
 
         }
 
-        echo $extra_markup;
+        echo wp_kses_post( $extra_markup );
     ?>
 
     <div class="loading_div overlay overlay-black position-absolute row m-0 rounded overflow-hidden" style="height: 100%;width: 100%;top: 0px;z-index: 2;display:none;">

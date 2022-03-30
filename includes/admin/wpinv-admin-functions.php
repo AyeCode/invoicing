@@ -49,7 +49,7 @@ function wpinv_admin_post_type( $id = 0 ) {
     $type = get_post_type( $id );
     
     if ( !$type ) {
-        $type = isset( $_GET['post_type'] ) && !empty( $_GET['post_type'] ) ? $_GET['post_type'] : null;
+        $type = isset( $_GET['post_type'] ) && !empty( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : null;
     }
     
     return apply_filters( 'wpinv_admin_post_type', $type, $id );
@@ -81,7 +81,7 @@ function wpinv_test_payment_gateway_messages(){
         $notice = wp_sprintf( __('<strong>Important:</strong> Payment Gateway(s) %s are in testing mode and will not receive real payments. Go to <a href="%s"> Gateway Settings</a>.', 'invoicing'), $test_gateways, $link );
         ?>
         <div class="notice notice-warning is-dismissible">
-            <p><?php echo $notice; ?></p>
+            <p><?php echo wp_kses_post( $notice ); ?></p>
         </div>
         <?php
     }
@@ -166,7 +166,7 @@ function wpinv_posts_search_example_type($search, $query) {
  * Resets invoice counts.
  */
 function wpinv_reset_invoice_count(){
-    if ( ! empty( $_GET['reset_invoice_count'] ) && isset( $_GET['_nonce'] ) && wp_verify_nonce( $_GET['_nonce'], 'reset_invoice_count' ) ) {
+    if ( ! empty( $_GET['reset_invoice_count'] ) && isset( $_GET['_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_GET['_nonce'] ), 'reset_invoice_count' ) ) {
         wpinv_update_option('invoice_sequence_start', 1);
         delete_option('wpinv_last_invoice_number');
         getpaid_admin()->show_success( __( 'Invoice number sequence reset successfully.', 'invoicing' ) );

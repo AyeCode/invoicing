@@ -77,7 +77,7 @@ class GetPaid_Meta_Box_Invoice_Items {
 
     ?>
 
-        <div class="wpinv-items-wrap<?php echo $class; ?>" id="wpinv_items_wrap" data-status="<?php echo esc_attr( $invoice->get_status() ); ?>">
+        <div class="wpinv-items-wrap<?php echo esc_attr( $class ); ?>" id="wpinv_items_wrap" data-status="<?php echo esc_attr( $invoice->get_status() ); ?>">
             <table id="wpinv_items" class="wpinv-items" cellspacing="0" cellpadding="0">
 
                 <thead>
@@ -98,7 +98,7 @@ class GetPaid_Meta_Box_Invoice_Items {
 
                 <tfoot class="wpinv-totals">
                     <tr>
-                        <td colspan="<?php echo $cols; ?>" style="padding:0;border:0">
+                        <td colspan="<?php echo (int) $cols; ?>" style="padding:0;border:0">
                             <div id="wpinv-quick-add">
                                 <table cellspacing="0" cellpadding="0">
                                     <tr>
@@ -201,7 +201,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                         </td>
                     </tr>
                     <tr class="totals">
-                        <td colspan="<?php echo ( $cols - 4 ); ?>"></td>
+                        <td colspan="<?php echo ( (int) $cols - 4 ); ?>"></td>
                         <td colspan="4">
                             <table cellspacing="0" cellpadding="0">
                                 <tr class="subtotal">
@@ -570,7 +570,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     <select class="regular-text getpaid-add-invoice-item-select">
                                                         <option value="" selected="selected" disabled><?php esc_html_e( 'Select an item…', 'invoicing' ); ?></option>
                                                         <?php foreach ( get_posts( $item_args ) as $item ) : ?>
-                                                        <option value="<?php echo (int) $item->ID; ?>"><?php echo strip_tags( $item->post_title ); ?></option>
+                                                        <option value="<?php echo (int) $item->ID; ?>"><?php echo esc_html( $item->post_title ); ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </td>
@@ -609,7 +609,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                         <label class="form-group w-100">
                                             <span class="getpaid-hide-if-hours getpaid-hide-if-quantity item-price"><?php _e( 'Amount', 'invoicing' ); ?></span>
                                             <span class="hide-if-amount"><?php _e( 'Price', 'invoicing' ); ?></span>
-                                            <input type="text" name="price" placeholder="<?php echo wpinv_sanitize_amount( 0 ); ?>" class="form-control form-control-sm item-price">
+                                            <input type="text" name="price" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control form-control-sm item-price">
                                         </label>
                                         <label class="form-group w-100 hide-if-amount">
                                             <span><?php _e( 'Quantity', 'invoicing' ); ?></span>

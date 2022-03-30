@@ -25,7 +25,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 				$url             = esc_url( $subscription->get_view_url() );
 				$id_label        = sprintf(
 					esc_attr_x( '#%s', 'subscription id', 'invoicing' ),
-					$subscription->get_id()
+					(int) $subscription->get_id()
 				);
 				echo $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>", $subscription );
 				break;

@@ -557,14 +557,14 @@ function wpinv_html_checkbox( $args = array() ) {
     $args = wp_parse_args( $args, $defaults );
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
-    $options = '';
+    $attr  = '';
     if ( ! empty( $args['options']['disabled'] ) ) {
-        $options .= ' disabled="disabled"';
+        $attr .= ' disabled="disabled"';
     } elseif ( ! empty( $args['options']['readonly'] ) ) {
-        $options .= ' readonly';
+        $attr .= ' readonly';
     }
 
-    $output = '<input type="checkbox"' . $options . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . $class . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
+    $output = '<input type="checkbox"' . $attr . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . esc_attr( $class ) . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
 
     return $output;
 }
@@ -573,21 +573,14 @@ function wpinv_html_checkbox( $args = array() ) {
  * Displays a hidden field.
  */
 function getpaid_hidden_field( $name, $value ) {
-    $name  = sanitize_text_field( $name );
-    $value = esc_attr( $value );
-
-    echo "<input type='hidden' name='$name' value='$value' />";
+    echo "<input type='hidden' name='" . esc_attr( $name ) . "' value=' " . esc_attr( $value ) . "' />";
 }
 
 /**
  * Displays a submit field.
  */
 function getpaid_submit_field( $value, $name = 'submit', $class = 'btn-primary' ) {
-    $name  = sanitize_text_field( $name );
-    $value = esc_attr( $value );
-    $class = esc_attr( $class );
-
-    echo "<input type='submit' name='$name' value='$value' class='btn $class' />";
+    echo "<input type='submit' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' class='btn " . esc_attr( $class ) . "' />";
 }
 
 function wpinv_html_text( $args = array() ) {
@@ -919,12 +912,12 @@ function wpinv_display_invoice_notice() {
     echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
 
     if ( ! empty( $label ) ) {
-        $label = sanitize_text_field( $label );
+        $label = esc_html( $label );
         echo "<h5>$label</h5>";
     }
 
     if ( ! empty( $notice ) ) {
-        echo '<small class="form-text text-muted">' . wpautop( wptexturize( $notice ) ) . '</small>';
+        echo '<small class="form-text text-muted">' . wp_kses_post( wpautop( wptexturize( $notice ) ) ) . '</small>';
     }
 
     echo '</div>';
@@ -982,7 +975,7 @@ function wpinv_display_style() {
         $custom_css     = wp_kses( $custom_css, array( '\'', '\"' ) );
         $custom_css     = str_replace( '&gt;', '>', $custom_css );
         echo '<style type="text/css">';
-        echo $custom_css;
+        echo wp_kses_post( $custom_css );
         echo '</style>';
     }
 
@@ -1213,7 +1206,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     $note_content = apply_filters( 'wpinv_get_invoice_note_line_item', $note_content, $note, $echo );
 
     if ( $echo ) {
-        echo $note_content;
+        echo wp_kses_post( $note_content );
     } else {
         return $note_content;
     }
@@ -1475,7 +1468,7 @@ function getpaid_payment_form_edit_element_template( $post ) {
     foreach ( $all_elements as $element ) {
 
         // Try to locate the appropriate template.
-        $element = sanitize_key( $element );
+        $element = esc_attr( sanitize_key( $element ) );
         $located = wpinv_locate_template( "payment-forms-admin/edit/$element.php" );
 
         // Continue if this is not our element.

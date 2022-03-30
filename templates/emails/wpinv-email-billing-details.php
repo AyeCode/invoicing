@@ -16,7 +16,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
             </tr>
             <tr class="wpi-receipt-email">
                 <th class="text-left"><?php _e( 'Email', 'invoicing' ); ?></th>
-                <td><?php echo $invoice->get_email() ;?></td>
+                <td><?php echo sanitize_email( $invoice->get_email() ) ;?></td>
             </tr>
             <?php if ( $invoice->get_company() ) { ?>
             <tr class="wpi-receipt-company">
@@ -26,7 +26,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
             <?php } ?>
             <tr class="wpi-receipt-address">
                 <th class="text-left"><?php _e( 'Address', 'invoicing' ); ?></th>
-                <td><?php echo wpinv_get_invoice_address_markup( $invoice->get_user_info() ) ;?></td>
+                <td><?php echo wp_kses_post( wpinv_get_invoice_address_markup( $invoice->get_user_info() ) ) ;?></td>
             </tr>
             <?php if ( $invoice->get_phone() ) { ?>
             <tr class="wpi-receipt-phone">

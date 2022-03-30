@@ -451,7 +451,7 @@ function wpinv_get_pages( $with_slug = false, $default_label = NULL ) {
 
 function wpinv_header_callback( $args ) {
 	if ( !empty( $args['desc'] ) ) {
-        echo $args['desc'];
+        echo wp_kses_post( $args['desc'] );
     }
 }
 
@@ -471,9 +471,8 @@ function wpinv_hidden_callback( $args ) {
 		$name = 'name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"';
 	}
 
-	$html = '<input type="hidden" id="wpinv_settings[' . wpinv_sanitize_key( $args['id'] ) . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '" />';
-    
-	echo $html;
+	echo '<input type="hidden" id="wpinv_settings[' . esc_attr( $args['id'] ) . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '" />';
+
 }
 
 /**
@@ -489,7 +488,7 @@ function wpinv_checkbox_callback( $args ) {
 	?>
 		<fieldset>
 			<label>
-				<input id="wpinv-settings-<?php echo $id; ?>" name="wpinv_settings[<?php echo $id; ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox">
+				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox">
 				<?php echo wp_kses_post( $args['desc'] ); ?>
 			</label>
 		</fieldset>
@@ -508,7 +507,7 @@ function wpinv_multicheck_callback( $args ) {
 
 		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . $sanitize_id . $class . '">';
         foreach( $args['options'] as $key => $option ):
-			$sanitize_key = wpinv_sanitize_key( $key );
+			$sanitize_key = esc_attr( wpinv_sanitize_key( $key ) );
 			if ( in_array( $sanitize_key, $value ) ) { 
 				$enabled = $sanitize_key;
 			} else { 
@@ -518,7 +517,7 @@ function wpinv_multicheck_callback( $args ) {
 			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label></div>';
 		endforeach;
 		echo '</div>';
-		echo '<p class="description">' . $args['desc'] . '</p>';
+		echo '<p class="description">' . wp_kses_post( $args['desc'] ) . '</p>';
 	}
 }
 
@@ -680,14 +679,12 @@ function wpinv_settings_attrs_helper( $args ) {
  */
 function wpinv_text_callback( $args ) {
 
-	$desc = wp_kses_post( $args['desc'] );
 	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
-	$attr = wpinv_settings_attrs_helper( $args );
 
 	?>
 		<label style="width: 100%;">
-			<input type="text" <?php echo $attr; ?>>
-			<?php echo $desc; ?>
+			<input type="text" <?php echo wpinv_settings_attrs_helper( $args ); ?>>
+			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
 
@@ -698,17 +695,13 @@ function wpinv_text_callback( $args ) {
  */
 function wpinv_number_callback( $args ) {
 
-	$desc = wp_kses_post( $args['desc'] );
 	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
 	$attr = wpinv_settings_attrs_helper( $args );
-	$max  = intval( $args['max'] );
-	$min  = intval( $args['min'] );
-	$step = floatval( $args['step'] );
 
 	?>
 		<label style="width: 100%;">
-			<input type="number" step="<?php echo $step; ?>" max="<?php echo $max; ?>" min="<?php echo $min; ?>" <?php echo $attr; ?>>
-			<?php echo $desc; ?>
+			<input type="number" step="<?php echo floatval( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php echo $attr; ?>>
+			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
 
@@ -723,10 +716,9 @@ function wpinv_textarea_callback( $args ) {
     $size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
     $class = ( isset( $args['class'] ) && ! is_null( $args['class'] ) ) ? $args['class'] : 'large-text';
 
-	$html = '<textarea class="' . sanitize_html_class( $class ) . ' txtarea-' . sanitize_html_class( $size ) . ' wpi-' . esc_attr( sanitize_html_class( $sanitize_id ) ) . ' " cols="' . $args['cols'] . '" rows="' . $args['rows'] . '" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
-	$html .= '<br /><label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<textarea class="' . sanitize_html_class( $class ) . ' txtarea-' . sanitize_html_class( $size ) . ' wpi-' . esc_attr( sanitize_html_class( $sanitize_id ) ) . ' " cols="' . $args['cols'] . '" rows="' . $args['rows'] . '" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+	echo '<br /><label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_password_callback( $args ) {
@@ -736,10 +728,9 @@ function wpinv_password_callback( $args ) {
 	$value   = wpinv_get_option( $args['id'], $std );
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	$html = '<input type="password" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '"/>';
-	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="password" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '"/>';
+	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_missing_callback($args) {
@@ -797,17 +788,15 @@ function wpinv_color_select_callback( $args ) {
 	$std     = isset( $args['std'] ) ? $args['std'] : '';
 	$value   = wpinv_get_option( $args['id'], $std );
 
-	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"/>';
+	echo '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"/>';
 
 	foreach ( $args['options'] as $option => $color ) {
-		$selected = selected( $option, $value, false );
-		$html .= '<option value="' . esc_attr( $option ) . '" ' . $selected . '>' . esc_html( $color['label'] ) . '</option>';
+		echo '<option value="' . esc_attr( $option ) . '" ' . selected( $option, $value ) . '>' . esc_html( $color['label'] ) . '</option>';
 	}
 
-	$html .= '</select>';
-	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '</select>';
+	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_rich_editor_callback( $args ) {
@@ -824,18 +813,15 @@ function wpinv_rich_editor_callback( $args ) {
 
 	$rows = isset( $args['size'] ) ? $args['size'] : 20;
 
-	$html = '<div class="getpaid-settings-editor-input">';
+	echo '<div class="getpaid-settings-editor-input">';
 	if ( $wp_version >= 3.3 && function_exists( 'wp_editor' ) ) {
-		ob_start();
 		wp_editor( stripslashes( $value ), 'wpinv_settings_' . esc_attr( $args['id'] ), array( 'textarea_name' => 'wpinv_settings[' . esc_attr( $args['id'] ) . ']', 'textarea_rows' => absint( $rows ), 'media_buttons' => false ) );
-		$html .= ob_get_clean();
 	} else {
-		$html .= '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+		echo '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
 	}
 
-	$html .= '</div><br/><label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '</div><br/><label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_upload_callback( $args ) {
@@ -846,11 +832,10 @@ function wpinv_upload_callback( $args ) {
 	$value   = wpinv_get_option( $args['id'], $std );
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	$html = '<input type="text" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( stripslashes( $value ) ) . '"/>';
-	$html .= '<span>&nbsp;<input type="button" class="wpinv_settings_upload_button button-secondary" value="' . __( 'Upload File', 'invoicing' ) . '"/></span>';
-	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="text" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( stripslashes( $value ) ) . '"/>';
+	echo '<span>&nbsp;<input type="button" class="wpinv_settings_upload_button button-secondary" value="' . __( 'Upload File', 'invoicing' ) . '"/></span>';
+	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_color_callback( $args ) {
@@ -859,10 +844,9 @@ function wpinv_color_callback( $args ) {
 	$value       = wpinv_get_option( $args['id'], $std );
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
 
-	$html = '<input type="text" class="wpinv-color-picker" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '" data-default-color="' . esc_attr( $std ) . '" />';
-	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="text" class="wpinv-color-picker" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '" data-default-color="' . esc_attr( $std ) . '" />';
+	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 function wpinv_country_states_callback($args) {
@@ -881,17 +865,15 @@ function wpinv_country_states_callback($args) {
 	$states = wpinv_get_country_states();
 
 	$class = empty( $states ) ? ' class="wpinv-no-states"' : ' class="wpi_select2"';
-	$html = '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
+	echo '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
 
 	foreach ( $states as $option => $name ) {
-		$selected = selected( $option, $value, false );
-		$html .= '<option value="' . esc_attr( $option ) . '" ' . $selected . '>' . esc_html( $name ) . '</option>';
+		echo '<option value="' . esc_attr( $option ) . '" ' . selected( $option, $value ) . '>' . esc_html( $name ) . '</option>';
 	}
 
-	$html .= '</select>';
-	$html .= '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '</select>';
+	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> '  . wp_kses_post( $args['desc'] ) . '</label>';
 
-	echo $html;
 }
 
 /**

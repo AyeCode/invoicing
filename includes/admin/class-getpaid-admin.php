@@ -78,7 +78,7 @@ class GetPaid_Admin {
 
 		// Setup/welcome
 		if ( ! empty( $_GET['page'] ) ) {
-			switch ( $_GET['page'] ) {
+			switch ( sanitize_text_field( $_GET['page'] ) ) {
 				case 'gp-setup' :
 					include_once( dirname( __FILE__ ) . '/class-getpaid-admin-setup-wizard.php' );
 					break;
@@ -94,7 +94,7 @@ class GetPaid_Admin {
 	public function enqeue_scripts() {
         global $current_screen, $pagenow;
 
-		$page    = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 		$editing = $pagenow == 'post.php' || $pagenow == 'post-new.php';
 
         if ( ! empty( $current_screen->post_type ) ) {
@@ -220,7 +220,7 @@ class GetPaid_Admin {
 	public function admin_footer_text( $footer_text ) {
 		global $current_screen;
 
-		$page    = isset( $_GET['page'] ) ? $_GET['page'] : '';
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 
         if ( ! empty( $current_screen->post_type ) ) {
 			$page = $current_screen->post_type;
@@ -317,7 +317,7 @@ class GetPaid_Admin {
 		global $pagenow, $post, $current_screen;
 
 
-        $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+        $page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 
         if ( ! empty( $current_screen->post_type ) ) {
 			$page = $current_screen->post_type;
@@ -906,7 +906,7 @@ class GetPaid_Admin {
 				continue;
 			}
 
-            $type  = sanitize_key( $type );
+            $type  = esc_attr( $type );
 			foreach ( $messages as $message ) {
                 $message = wp_kses_post( $message );
 				echo "<div class='notice notice-$type is-dismissible'><p>$message</p></div>";

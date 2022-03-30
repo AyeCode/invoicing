@@ -210,7 +210,7 @@ class BP_GetPaid_Component extends BP_Component {
 	 * @since 2.1.5
 	 */
 	public function handle_display_current_tab() {
-		echo getpaid_prepare_user_content_tab( $this->get_current_tab() );
+		 getpaid_prepare_user_content_tab( $this->get_current_tab() );
 	}
 
 }

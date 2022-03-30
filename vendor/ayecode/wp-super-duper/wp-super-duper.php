@@ -241,7 +241,7 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 
 			ob_start();
 			if ( isset( $_POST['editor_id'] ) ) {
-				$editor_id = esc_attr( $_POST['editor_id'] );
+				$editor_id = sanitize_text_field( $_POST['editor_id'] );
 			} elseif ( isset( $_REQUEST['et_fb'] ) ) {
 				$editor_id = 'main_content_content_vb_tiny_mce';
 			}

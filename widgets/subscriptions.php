@@ -91,7 +91,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 
 		// Are we displaying a single subscription?
 		if ( isset( $_GET['subscription'] ) ) {
-			return $this->display_single_subscription( trim( $_GET['subscription'] ) );
+			return $this->display_single_subscription( intval( $_GET['subscription'] ) );
 		}
 
 		// Retrieve the user's subscriptions.
@@ -159,7 +159,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
 							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo sanitize_html_class( $key ); ?>">
-								<?php echo sanitize_text_field( $label ); ?>
+								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>
 					</tr>
@@ -287,7 +287,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
 							<th class="font-weight-bold getpaid-subscriptions-<?php echo sanitize_html_class( $key ); ?>">
-								<?php echo sanitize_text_field( $label ); ?>
+								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>
 					</tr>

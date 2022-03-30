@@ -56,7 +56,7 @@ function getpaid_get_errors_html( $clear = true, $wrap = true ) {
  * Prints (then clears) all available errors.
  */
 function wpinv_print_errors() {
-    echo getpaid_get_errors_html();
+    echo wp_kses_post( getpaid_get_errors_html() );
 }
 
 /**

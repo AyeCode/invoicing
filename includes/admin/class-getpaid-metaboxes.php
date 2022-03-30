@@ -280,7 +280,7 @@ class GetPaid_Metaboxes {
 		
 		// Save the post.
 		$class = $post_types_map[ $post->post_type ];
-		$class::save( $post_id, $_POST, $post );
+		$class::save( $post_id, wp_kses_post_deep( $_POST ), $post );
 
 	}
 

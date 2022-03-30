@@ -19,10 +19,10 @@ function getpaid_get_current_invoice_id() {
     }
 
     // Retrieve an invoice using the key.
-    $invoice = new WPInv_Invoice( $_GET['invoice_key'] );
+    $invoice = new WPInv_Invoice( sanitize_text_field( $_GET['invoice_key'] ) );
 
     // Compare the invoice key and the parsed key.
-    if ( $invoice->get_id() != 0 && $invoice->get_key() == $_GET['invoice_key'] ) {
+    if ( $invoice->get_id() != 0 && $invoice->get_key() == sanitize_text_field( $_GET['invoice_key'] ) ) {
         return $invoice->get_id();
     }
 
@@ -46,7 +46,7 @@ function wpinv_user_can_view_invoice( $invoice ) {
     }
 
     // If users are not required to login to check out, compare the invoice keys.
-    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && trim( $_GET['invoice_key'] ) == $invoice->get_key() ) {
+    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && sanitize_text_field( $_GET['invoice_key'] ) == $invoice->get_key() ) {
         return true;
     }
 

@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$tag  = isset( $element['level'] ) ? trim( $element['level'] ) : 'h3';
+$tag  = isset( $element['level'] ) ? trim( sanitize_key( $element['level'] ) ) : 'h3';
 $text = isset( $element['text'] ) ? wp_kses_post( trim( $element['text'] ) ) : '';
 
 if ( ! empty( $text ) ) {

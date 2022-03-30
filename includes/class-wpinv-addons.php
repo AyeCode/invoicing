@@ -76,7 +76,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			$quotes->info->title = __( 'Quotes', 'invoicing' );
 			$quotes->info->excerpt = __( 'Create quotes and estimates', 'invoicing' );
 			$quotes->info->link = 'https://wordpress.org/plugins/invoicing-quotes/';
-			$quotes->info->thumbnail = 'https://wpgetpaid.com/wp-content/uploads/sites/13/edd/2019/11/Quotes-1-768x384.png';
+			$quotes->info->thumbnail = WPINV_PLUGIN_URL . 'assets/images/Quotes-1-768x384.png';
 
 			$products[] = $quotes;
 		}
@@ -231,12 +231,6 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			<?php
 		}
 
-
-		$target = '';
-		if ( ! empty( $button_args['url'] ) ) {
-			$target = strpos($button_args['url'], get_site_url()) !== false ? '' : ' target="_blank" ';
-		}
-
 		?>
 		<a
 			data-licence="<?php echo esc_attr($button_args['license']);?>"
@@ -251,8 +245,7 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 			data-text-install="<?php _e('Install','invoicing');?>"
 			data-text-installing="<?php _e('Installing','invoicing');?>"
 			data-text-error="<?php _e('Error','invoicing');?>"
-			<?php if(!empty($button_args['onclick'])){echo " onclick='".$button_args['onclick']."' ";}?>
-			<?php echo $target;?>
+			<?php if(!empty($button_args['onclick'])){echo " onclick='".esc_attr( $button_args['onclick'] )."' ";}?>
 			class="addons-button  <?php echo esc_attr( $button_args['class'] ); ?>"
 			href="<?php echo esc_url( $button_args['url'] ); ?>">
 			<?php echo esc_html( $button_args['button_text'] ); ?>

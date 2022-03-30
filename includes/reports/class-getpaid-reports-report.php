@@ -96,11 +96,11 @@ class GetPaid_Reports_Report {
 		?>
 
 			<form method="get" class="getpaid-filter-earnings float-right">
-				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? wpinv_clean( $_GET['page'] ) : 'wpinv-reports' );  ?>
+				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : 'wpinv-reports' );  ?>
 				<?php getpaid_hidden_field( 'tab', 'reports' );  ?>
 				<select name='date_range'>
 					<?php foreach( $this->get_periods() as $key => $label ) :?>
-						<option value="<?php echo sanitize_key( $key ); ?>" <?php selected( $key, $range ); ?>><?php echo sanitize_text_field( $label ); ?></option>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $range ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach;?>
 				</select>
 				<span class="getpaid-date-range-picker <?php echo 'custom' == $range ? '' : 'd-none'; ?>">
@@ -162,13 +162,13 @@ class GetPaid_Reports_Report {
 						<?php foreach( $this->get_cards() as $key => $card ) : ?>
 							<div class="col-12 mb-4">
 
-								<!-- <?php echo sanitize_text_field(  $card['label']  ); ?> Card -->
+								<!-- <?php echo esc_html(  $card['label']  ); ?> Card -->
 								<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
 
 									<div class="card-body">
 
 										<p class="getpaid-current text-uppercase small mb-2">
-											<strong><?php echo sanitize_text_field( $card['label']  ); ?></strong>
+											<strong><?php echo esc_html( $card['label']  ); ?></strong>
 											<span title="<?php echo esc_attr( $card['description'] ); ?>" class="wpi-help-tip dashicons dashicons-editor-help text-muted" style="margin-top: -2px;"></span>
 										</p>
 										<h5 class="font-weight-bold mb-0">
@@ -188,7 +188,7 @@ class GetPaid_Reports_Report {
 									</div>
 
 								</div>
-								<!-- <?php echo sanitize_text_field( $card['label'] ); ?> Card -->
+								<!-- <?php echo esc_html( $card['label'] ); ?> Card -->
 
 							</div>
 						<?php endforeach; ?>
@@ -218,10 +218,10 @@ class GetPaid_Reports_Report {
 					<div class="col-12">
 						<div class="card m-0 p-0 single-report-card" style="max-width:100%">
 							<div class="card-header">
-								<strong><?php echo wpinv_clean( $graph ); ?></strong>
+								<strong><?php echo esc_html( $graph ); ?></strong>
 							</div>
 							<div class="card-body">
-								<canvas id="getpaid-chartjs-<?php echo sanitize_key( $key ); ?>"></canvas>
+								<canvas id="getpaid-chartjs-<?php echo esc_attr( $key ); ?>"></canvas>
 							</div>
 						</div>
 					</div>
@@ -267,7 +267,7 @@ class GetPaid_Reports_Report {
 							<div class="card-header">
 								<div class="row">
 									<div class="<?php echo empty( $view['disable-downloads'] ) ? 'col-9' : 'col-12'; ?>">
-										<strong><?php echo $view['label']; ?></strong>
+										<strong><?php echo esc_html( $view['label'] ); ?></strong>
 									</div>
 									<div class="<?php echo empty( $view['disable-downloads'] ) ? 'col-3' : 'd-none'; ?>">
 										<a title="<?php esc_attr_e( 'Download JSON', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'json' ) ); ?>">

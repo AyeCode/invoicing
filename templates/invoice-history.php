@@ -39,7 +39,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 			<tbody>
 				<?php foreach ( $invoices->invoices as $invoice ) : ?>
 
-					<tr class="wpinv-item wpinv-item-<?php echo $invoice_status = $invoice->get_status(); ?>">
+					<tr class="wpinv-item wpinv-item-<?php echo sanitize_html_class( $invoice->get_status() ); ?>">
 						<?php
 
 							foreach ( wpinv_get_user_invoices_columns( $post_type ) as $column_id => $column_name ) :
@@ -51,7 +51,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 								switch ( $column_id ) {
 
 									case 'invoice-number':
-										echo wpinv_invoice_link( $invoice );
+										echo wp_kses_post( wpinv_invoice_link( $invoice ) );
 										break;
 
 									case 'created-date':
@@ -69,7 +69,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 										break;
 
 									case 'invoice-status':
-										echo $invoice->get_status_label_html();
+										echo wp_kses_post( $invoice->get_status_label_html() );
 
 										break;
 

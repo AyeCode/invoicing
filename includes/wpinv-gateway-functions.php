@@ -332,14 +332,11 @@ function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publis
  * Displays the ipn url field.
  */
 function wpinv_ipn_url_callback( $args ) {
-    $sanitize_id = wpinv_sanitize_key( $args['id'] );
+    $sanitize_id = esc_attr( wpinv_sanitize_key( $args['id'] ) );
 
-    $attrs = $args['readonly'] ? ' readonly' : '';
+    echo '<input class="regular-text" type="text" ' . ( $args['readonly'] ? ' readonly' : '' ) . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
+    echo '<label for="wpinv_settings[' . $sanitize_id . ']">'  . wp_kses_post( $args['desc'] ) . '</label>';
 
-    $html = '<input class="regular-text" type="text" ' . $attrs . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
-    $html .= '<label for="wpinv_settings[' . $sanitize_id . ']">'  . $args['desc'] . '</label>';
-
-    echo $html;
 }
 
 /**

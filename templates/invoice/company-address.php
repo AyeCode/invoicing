@@ -39,12 +39,12 @@ $vat_number = wpinv_get_option( 'vat_number' );
                 </div>
 
                 <?php if ( $address = wpinv_get_business_address() ) { ?>
-                    <?php echo $address;?>
+                    <?php echo wp_kses_post( $address );?>
                 <?php } ?>
 
                 <?php if ( $email_from = wpinv_mail_get_from_address() ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), $email_from );?>
+                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), sanitize_email( $email_from ) );?>
                     </div>
                 <?php } ?>
 

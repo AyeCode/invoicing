@@ -26,7 +26,7 @@ $email_footer = $email_footer ? wpautop( wp_kses_post( wptexturize( $email_foote
                                                 <table border="0" cellpadding="10" cellspacing="0" width="100%">
                                                     <tr>
                                                         <td colspan="2" valign="middle" id="credit">
-                                                            <?php echo $email_footer; ?>
+                                                            <?php echo wp_kses_post( $email_footer ); ?>
                                                         </td>
                                                     </tr>
                                                 </table>
