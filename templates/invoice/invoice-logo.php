@@ -19,11 +19,11 @@ $logo_height = wpinv_get_option( 'logo_height' );
 
         <?php if ( ! empty( $logo_width ) && ! empty( $logo_height ) ) : ?>
             <img class="logo" style="max-width:100%; width:<?php echo absint( $logo_width ); ?>px; height:<?php echo absint( $logo_height ); ?>px;" src="<?php echo esc_url( $logo ); ?>">
-        <?php else: ?>
+        <?php else : ?>
             <img class="logo" style="max-width:100%;" src="<?php echo esc_url( $logo ); ?>">
         <?php endif; ?>
 
-    <?php else: ?>
+    <?php else : ?>
         <h1 class="h3"><?php echo esc_html( wpinv_get_business_name() ); ?></h1>
     <?php endif; ?>
 

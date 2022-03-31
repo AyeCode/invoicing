@@ -1,6 +1,6 @@
 <?php
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
@@ -13,11 +13,10 @@ class WPInv_Meta_Box_Notes {
         echo '<ul class="invoice_notes">';
 
         if ( $notes ) {
-            foreach( $notes as $note ) {
+            foreach ( $notes as $note ) {
                 wpinv_get_invoice_note_line_item( $note );
             }
-
-        } else {
+} else {
             echo '<li>' . __( 'There are no notes yet.', 'invoicing' ) . '</li>';
         }
 

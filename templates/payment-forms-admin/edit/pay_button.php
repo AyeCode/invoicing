@@ -36,7 +36,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group'>
-    <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Button Type', 'invoicing' ) ?></label>
+    <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Button Type', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
         <option value='btn-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>
         <option value='btn-secondary'><?php esc_html_e( 'Secondary', 'invoicing' ); ?></option>

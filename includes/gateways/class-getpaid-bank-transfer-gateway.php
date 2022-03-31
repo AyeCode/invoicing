@@ -64,12 +64,12 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	public function process_payment( $invoice, $submission_data, $submission ) {
 
         // Add a transaction id.
-        $invoice->set_transaction_id( $invoice->generate_key('bt_') );
+        $invoice->set_transaction_id( $invoice->generate_key( 'bt_' ) );
 
         // Set it as pending payment.
         if ( ! $invoice->needs_payment() ) {
             $invoice->mark_paid();
-        } else if ( ! $invoice->is_paid() ) {
+        } elseif ( ! $invoice->is_paid() ) {
             $invoice->set_status( 'wpi-onhold' );
         }
 
@@ -144,13 +144,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		$sortcode = isset( $locale[ $country ]['sortcode']['label'] ) ? $locale[ $country ]['sortcode']['label'] : __( 'Sort code', 'invoicing' );
 
         $bank_fields = array(
-            'ac_name'     => __( 'Account Name', 'invoicing' ),
-            'ac_no'       => __( 'Account Number', 'invoicing' ),
-            'bank_name'   => __( 'Bank Name', 'invoicing' ),
-            'ifsc'        => __( 'IFSC code', 'invoicing' ),
-            'iban'        => __( 'IBAN', 'invoicing' ),
-            'bic'         => __( 'BIC/Swift code', 'invoicing' ),
-            'sort_code'   => $sortcode,
+            'ac_name'   => __( 'Account Name', 'invoicing' ),
+            'ac_no'     => __( 'Account Number', 'invoicing' ),
+            'bank_name' => __( 'Bank Name', 'invoicing' ),
+            'ifsc'      => __( 'IFSC code', 'invoicing' ),
+            'iban'      => __( 'IBAN', 'invoicing' ),
+            'bic'       => __( 'BIC/Swift code', 'invoicing' ),
+            'sort_code' => $sortcode,
         );
 
         $bank_info = array();
@@ -159,10 +159,12 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             $value = $this->get_option( $field );
 
             if ( ! empty( $value ) ) {
-                $bank_info[$field] = array( 'label' => $label, 'value' => $value );
+                $bank_info[ $field ] = array(
+					'label' => $label,
+					'value' => $value,
+				);
             }
-
-        }
+}
 
         $bank_info = apply_filters( 'wpinv_bank_info', $bank_info );
 
@@ -314,7 +316,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             'type' => 'textarea',
             'std'  => __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' ),
             'cols' => 50,
-            'rows' => 5
+            'rows' => 5,
         );
 
 		return $admin_settings;
@@ -385,10 +387,8 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 						$subscription->activate();
 					}
 				}
-
-			}
-
-		} else {
+}
+} else {
 
 			$subscription = getpaid_get_subscription( $invoice->get_subscription_id() );
 
@@ -396,9 +396,8 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			if ( $subscription && $subscription->exists() ) {
 				$subscription->add_payment( array(), $invoice );
 				$subscription->renew();
-			}
-
-		}
+					}
+}
 
     }
 

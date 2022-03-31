@@ -21,9 +21,11 @@ defined( 'ABSPATH' ) || exit;
             <ul class="list-group">
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' );?>" class="ml-n2" alt="Stripe"></span>
+				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' ); ?>" class="ml-n2" alt="Stripe"></span>
 				    <?php if ( false === wpinv_get_option( 'stripe_live_connect_account_id' ) ) : ?>
-                        <a href="<?php echo wp_nonce_url(
+                        <a href="
+                        <?php
+                        echo wp_nonce_url(
                             add_query_arg(
                                 array(
                                     'getpaid-admin-action' => 'connect_gateway',
@@ -34,9 +36,11 @@ defined( 'ABSPATH' ) || exit;
                             ),
                             'getpaid-nonce',
                             'getpaid-nonce'
-                        ); ?>"
+                        );
+                        ?>
+                        "
                         class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
-                    <?php else: ?>
+                    <?php else : ?>
                         <span class="btn btn-sm btn-success"><?php _e( 'Connected', 'invoicing' ); ?></span>
                     <?php endif; ?>
 				</li>
@@ -44,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 				<li class="list-group-item">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="mr-auto">
-                            <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/pp-logo-150px.webp' );?>" class="" alt="PayPal" height="25">
+                            <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/pp-logo-150px.webp' ); ?>" class="" alt="PayPal" height="25">
                         </span>
                         <a
                             href="#"

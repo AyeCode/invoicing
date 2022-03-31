@@ -55,7 +55,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
 	<label class="d-block">
-		<span><?php esc_html_e( 'Disable Days', 'invoicing' ) ?></span>
+		<span><?php esc_html_e( 'Disable Days', 'invoicing' ); ?></span>
 		<gpselect2 class='form-control custom-select' v-model='active_form_element.disable_days' multiple>
 			<option value='0'><?php esc_html_e( 'Sundays', 'invoicing' ); ?></option>
 			<option value='1'><?php esc_html_e( 'Mondays', 'invoicing' ); ?></option>
@@ -71,7 +71,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
 	<label class="d-block">
-		<span><?php esc_html_e( 'Mode', 'invoicing' ) ?></span>
+		<span><?php esc_html_e( 'Mode', 'invoicing' ); ?></span>
 		<select class='form-control custom-select' v-model='active_form_element.mode'>
 			<option value='single'><?php esc_html_e( 'Users can only select a single date', 'invoicing' ); ?></option>
 			<option value='range'><?php esc_html_e( 'Users can select a date range', 'invoicing' ); ?></option>

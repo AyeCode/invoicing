@@ -34,12 +34,12 @@ add_action( 'wpinv_email_footer', 'wpinv_email_footer' );
 
 /**
  * Display invoice details in emails.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @param string $email_type
  * @param bool $sent_to_admin
  */
-function wpinv_email_invoice_details( $invoice,  $email_type, $sent_to_admin ) {
+function wpinv_email_invoice_details( $invoice, $email_type, $sent_to_admin ) {
 
     $args = compact( 'invoice', 'email_type', 'sent_to_admin' );
     wpinv_get_template( 'emails/invoice-details.php', $args );
@@ -49,7 +49,7 @@ add_action( 'wpinv_email_invoice_details', 'wpinv_email_invoice_details', 10, 3 
 
 /**
  * Display line items in emails.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @param string $email_type
  * @param bool $sent_to_admin
@@ -69,7 +69,7 @@ add_action( 'wpinv_email_invoice_items', 'wpinv_email_invoice_items', 10, 3 );
 
 /**
  * Display billing details in emails.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @param string $email_type
  * @param bool $sent_to_admin
@@ -84,7 +84,7 @@ add_action( 'wpinv_email_billing_details', 'wpinv_email_billing_details', 10, 3 
 
 /**
  * Returns email css.
- * 
+ *
  */
 function getpaid_get_email_css() {
 
@@ -95,10 +95,10 @@ function getpaid_get_email_css() {
 
 /**
  * Inline styles to email content.
- * 
+ *
  * @param string $content
  * @return string
- * 
+ *
  */
 function wpinv_email_style_body( $content ) {
 
@@ -110,7 +110,7 @@ function wpinv_email_style_body( $content ) {
 
     // include css inliner
 	if ( ! class_exists( 'Emogrifier' ) ) {
-		include_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-emogrifier.php' );
+		include_once WPINV_PLUGIN_DIR . 'includes/libraries/class-emogrifier.php';
     }
 
     // Inline the css.
@@ -154,18 +154,18 @@ function wpinv_mail_admin_bcc_active( $mail_type = '' ) {
     $active = apply_filters( 'wpinv_mail_admin_bcc_active', wpinv_get_option( 'email_' . $mail_type . '_admin_bcc' ) );
     return ( $active ? true : false );
 }
-    
-function wpinv_mail_get_content_type(  $content_type = 'text/html', $email_type = 'html' ) {
+
+function wpinv_mail_get_content_type( $content_type = 'text/html', $email_type = 'html' ) {
     $email_type = apply_filters( 'wpinv_mail_content_type', $email_type );
 
     switch ( $email_type ) {
-        case 'html' :
+        case 'html':
             $content_type = 'text/html';
             break;
-        case 'multipart' :
+        case 'multipart':
             $content_type = 'multipart/alternative';
             break;
-        default :
+        default:
             $content_type = 'text/plain';
             break;
     }
@@ -175,7 +175,7 @@ function wpinv_mail_get_content_type(  $content_type = 'text/html', $email_type 
 
 /**
  * Sends a single email.
- * 
+ *
  * @param string|array $to The recipient's email or an array of recipient emails.
  * @param string       $subject The email subject.
  * @param string       $message The email content.
@@ -200,7 +200,7 @@ function wpinv_mail_send( $to, $subject, $message, $deprecated, $attachments = a
 
 /**
  * Returns an array of email settings.
- * 
+ *
  * @return array
  */
 function wpinv_get_emails() {
@@ -209,7 +209,7 @@ function wpinv_get_emails() {
 
 /**
  * Filter email settings.
- * 
+ *
  * @param array $settings
  * @return array
  */
@@ -221,20 +221,20 @@ add_filter( 'wpinv_settings_emails', 'wpinv_settings_emails', 10, 1 );
 
 /**
  * Filter email section names.
- * 
+ *
  */
 function wpinv_settings_sections_emails( $settings ) {
-    foreach  ( wpinv_get_emails() as $key => $email) {
-        $settings[$key] = ! empty( $email['email_' . $key . '_header']['name'] ) ? strip_tags( $email['email_' . $key . '_header']['name'] ) : strip_tags( $key );
+    foreach ( wpinv_get_emails() as $key => $email ) {
+        $settings[ $key ] = ! empty( $email[ 'email_' . $key . '_header' ]['name'] ) ? strip_tags( $email[ 'email_' . $key . '_header' ]['name'] ) : strip_tags( $key );
     }
 
-    return $settings;    
+    return $settings;
 }
 add_filter( 'wpinv_settings_sections_emails', 'wpinv_settings_sections_emails', 10, 1 );
 
 function wpinv_email_is_enabled( $email_type ) {
     $emails = wpinv_get_emails();
-    $enabled = isset( $emails[$email_type] ) && wpinv_get_option( 'email_'. $email_type . '_active', 0 ) ? true : false;
+    $enabled = isset( $emails[ $email_type ] ) && wpinv_get_option( 'email_' . $email_type . '_active', 0 ) ? true : false;
 
     return apply_filters( 'wpinv_email_is_enabled', $enabled, $email_type );
 }
@@ -245,11 +245,11 @@ function wpinv_email_get_recipient( $email_type = '', $invoice_id = 0, $invoice 
         case 'cancelled_invoice':
         case 'failed_invoice':
             $recipient  = wpinv_get_admin_email();
-        break;
+            break;
         default:
-            $invoice    = !empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : NULL );
-            $recipient  = !empty( $invoice ) ? $invoice->get_email() : '';
-        break;
+            $invoice    = ! empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : null );
+            $recipient  = ! empty( $invoice ) ? $invoice->get_email() : '';
+            break;
     }
 
     return apply_filters( 'wpinv_email_recipient', $recipient, $email_type, $invoice_id, $invoice );
@@ -266,12 +266,12 @@ function wpinv_email_get_cc_recipients( $email_type = '', $invoice_id = 0, $invo
             return array();
         break;
         default:
-            $invoice    = !empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : NULL );
+            $invoice    = ! empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : null );
             $recipient  = empty( $invoice ) ? '' : get_post_meta( $invoice->ID, 'wpinv_email_cc', true );
             if ( empty( $recipient ) ) {
                 return array();
             }
-            return  array_filter( array_map( 'trim', explode( ',', $recipient ) ) );
+            return array_filter( array_map( 'trim', explode( ',', $recipient ) ) );
         break;
     }
 
@@ -307,19 +307,19 @@ function wpinv_email_get_content( $email_type = '', $invoice_id = 0, $invoice = 
 function wpinv_email_get_headers( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $from_name = wpinv_mail_get_from_address();
     $from_email = wpinv_mail_get_from_address();
-    
-    $invoice    = !empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : NULL );
-    
-    $headers    = "From: " . stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) . " <$from_email>\r\n";
-    $headers    .= "Reply-To: ". $from_email . "\r\n";
-    $headers    .= "Content-Type: " . wpinv_mail_get_content_type() . "\r\n";
-    
+
+    $invoice    = ! empty( $invoice ) && is_object( $invoice ) ? $invoice : ( $invoice_id > 0 ? wpinv_get_invoice( $invoice_id ) : null );
+
+    $headers    = 'From: ' . stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) . " <$from_email>\r\n";
+    $headers    .= 'Reply-To: ' . $from_email . "\r\n";
+    $headers    .= 'Content-Type: ' . wpinv_mail_get_content_type() . "\r\n";
+
     return apply_filters( 'wpinv_email_headers', $headers, $email_type, $invoice_id, $invoice );
 }
 
 function wpinv_email_get_attachments( $email_type = '', $invoice_id = 0, $invoice = array() ) {
     $attachments = array();
-    
+
     return apply_filters( 'wpinv_email_attachments', $attachments, $email_type, $invoice_id, $invoice );
 }
 
@@ -329,8 +329,8 @@ function wpinv_email_get_attachments( $email_type = '', $invoice_id = 0, $invoic
 function wpinv_email_format_text( $content, $invoice ) {
 
     $replace_array = array(
-        '{site_title}'      => wpinv_get_blogname(),
-        '{date}'            => getpaid_format_date( current_time( 'mysql' ) ),
+        '{site_title}' => wpinv_get_blogname(),
+        '{date}'       => getpaid_format_date( current_time( 'mysql' ) ),
     );
 
     $invoice = new WPInv_Invoice( $invoice );
@@ -338,22 +338,22 @@ function wpinv_email_format_text( $content, $invoice ) {
     if ( $invoice->get_id() ) {
 
         $replace_array = array_merge(
-            $replace_array, 
+            $replace_array,
             array(
-                '{name}'            => sanitize_text_field( $invoice->get_user_full_name() ),
-                '{full_name}'       => sanitize_text_field( $invoice->get_user_full_name() ),
-                '{first_name}'      => sanitize_text_field( $invoice->get_first_name() ),
-                '{last_name}'       => sanitize_text_field( $invoice->get_last_name() ),
-                '{email}'           => sanitize_email( $invoice->get_email() ),
-                '{invoice_number}'  => sanitize_text_field( $invoice->get_number() ),
-                '{invoice_total}'   => sanitize_text_field( wpinv_price( $invoice->get_total( true ), $invoice->get_currency() ) ),
-                '{invoice_link}'    => esc_url( $invoice->get_view_url() ),
-                '{invoice_pay_link}'=> esc_url( $invoice->get_checkout_payment_url() ),
-                '{invoice_date}'    => date( get_option( 'date_format' ), strtotime( $invoice->get_date_created(), current_time( 'timestamp' ) ) ),
-                '{invoice_due_date}'=> date( get_option( 'date_format' ), strtotime( $invoice->get_due_date(), current_time( 'timestamp' ) ) ),
-                '{invoice_quote}'   => sanitize_text_field( $invoice->get_invoice_quote_type() ),
-                '{invoice_label}'   => sanitize_text_field( ucfirst( $invoice->get_invoice_quote_type() ) ),
-                '{is_was}'          => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
+                '{name}'             => sanitize_text_field( $invoice->get_user_full_name() ),
+                '{full_name}'        => sanitize_text_field( $invoice->get_user_full_name() ),
+                '{first_name}'       => sanitize_text_field( $invoice->get_first_name() ),
+                '{last_name}'        => sanitize_text_field( $invoice->get_last_name() ),
+                '{email}'            => sanitize_email( $invoice->get_email() ),
+                '{invoice_number}'   => sanitize_text_field( $invoice->get_number() ),
+                '{invoice_total}'    => sanitize_text_field( wpinv_price( $invoice->get_total( true ), $invoice->get_currency() ) ),
+                '{invoice_link}'     => esc_url( $invoice->get_view_url() ),
+                '{invoice_pay_link}' => esc_url( $invoice->get_checkout_payment_url() ),
+                '{invoice_date}'     => date( get_option( 'date_format' ), strtotime( $invoice->get_date_created(), current_time( 'timestamp' ) ) ),
+                '{invoice_due_date}' => date( get_option( 'date_format' ), strtotime( $invoice->get_due_date(), current_time( 'timestamp' ) ) ),
+                '{invoice_quote}'    => sanitize_text_field( $invoice->get_invoice_quote_type() ),
+                '{invoice_label}'    => sanitize_text_field( ucfirst( $invoice->get_invoice_quote_type() ) ),
+                '{is_was}'           => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
             )
         );
 
@@ -387,7 +387,7 @@ function wpinv_email_wrap_message( $message ) {
 }
 
 function wpinv_add_notes_to_invoice_email( $invoice, $email_type ) {
-    if ( !empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_invoice_notes( $invoice->get_id(), true ) ) {
+    if ( ! empty( $invoice ) && $email_type == 'user_invoice' && $invoice_notes = wpinv_get_invoice_notes( $invoice->get_id(), true ) ) {
         $date_format = get_option( 'date_format' );
         $time_format = get_option( 'time_format' );
         ?>
@@ -404,7 +404,8 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type ) {
             </li>
             <?php
         }
-        ?>  </ol>
+        ?>
+          </ol>
         </div>
         <?php
     }

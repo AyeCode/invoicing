@@ -255,10 +255,10 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 
 		$links = array(
 			'self'       => array(
-				'href'   => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $object->get_id() ) ),
+				'href' => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $object->get_id() ) ),
 			),
 			'collection' => array(
-				'href'   => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 			),
 		);
 
@@ -334,8 +334,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 						break;
 				}
 			}
-
-		}
+}
 
 		// Filters an object before it is inserted via the REST API..
 		return apply_filters( "getpaid_rest_pre_insert_{$this->rest_base}_object", $object, $request );
@@ -351,7 +350,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 	protected function prepare_object_meta_data( $meta_data ) {
 		$meta = array();
 
-		foreach( $meta_data as $object ) {
+		foreach ( $meta_data as $object ) {
 			$meta[] = $object->get_data();
 		}
 
@@ -369,7 +368,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 	protected function prepare_invoice_items( $invoice ) {
 		$items = array();
 
-		foreach( $invoice->get_items() as $item ) {
+		foreach ( $invoice->get_items() as $item ) {
 
 			$item_data = $item->prepare_data_for_saving();
 
@@ -416,7 +415,7 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 			}
 
 			// Handle items.
-			if ( $key == 'items' && is_a( $object, 'WPInv_Invoice' )  ) {
+			if ( $key == 'items' && is_a( $object, 'WPInv_Invoice' ) ) {
 				$data['items'] = $this->prepare_invoice_items( $object );
 				continue;
 			}
@@ -437,11 +436,10 @@ class GetPaid_REST_CRUD_Controller extends GetPaid_REST_Controller {
 				}
 
 				// For objects, retrieves it's properties.
-				$data[ $key ] = is_object( $value ) ? get_object_vars( $value ) :  $value ;
+				$data[ $key ] = is_object( $value ) ? get_object_vars( $value ) : $value;
 				continue;
 			}
-
-		}
+}
 
 		return $data;
 	}

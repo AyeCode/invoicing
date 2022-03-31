@@ -13,7 +13,7 @@ class WPInv_EUVat {
 
     /**
      * Retrieves an instance of this class.
-     * 
+     *
      * @deprecated
      * @return WPInv_EUVat
      */

@@ -42,40 +42,40 @@ defined( 'ABSPATH' ) || exit;
 		<div class="row row-cols-2 text-left">
 			<div class="col mt-3">
 				<div class="media">
-                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/buy.svg' );?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/buy.svg' ); ?>" class="mr-3" alt="...">
                     <div class="media-body">
-                        <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via Buy Now Buttons', 'invoicing' );?></h6>
-                        <small><?php _e( 'Sell via buy now buttons anywhere on your site', 'invoicing' );?></small>
+                        <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via Buy Now Buttons', 'invoicing' ); ?></h6>
+                        <small><?php _e( 'Sell via buy now buttons anywhere on your site', 'invoicing' ); ?></small>
                     </div>
                 </div>
 			</div>
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/report.svg' );?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/report.svg' ); ?>" class="mr-3" alt="...">
                         <div class="media-body">
-                        <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via payment form', 'invoicing' );?></h6>
-                        <small><?php _e( 'Payment forms are conversion-optimized checkout forms', 'invoicing' );?></small>
+                        <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via payment form', 'invoicing' ); ?></h6>
+                        <small><?php _e( 'Payment forms are conversion-optimized checkout forms', 'invoicing' ); ?></small>
                     </div>
                 </div>
 		    </div>
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/invoices.svg' );?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/invoices.svg' ); ?>" class="mr-3" alt="...">
                     <div class="media-body">
-                        <h6 class="mt-0 font-weight-bold"><?php _e('GetPaid via Invoice','invoicing');?></h6>
-                        <small><?php _e('Create and send invoices for just about anything from the WordPress dashboard','invoicing');?></small>
+                        <h6 class="mt-0 font-weight-bold"><?php _e( 'GetPaid via Invoice', 'invoicing' ); ?></h6>
+                        <small><?php _e( 'Create and send invoices for just about anything from the WordPress dashboard', 'invoicing' ); ?></small>
                     </div>
                 </div>
 		    </div>
 
             <div class="col mt-3">
                 <div class="media">
-                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/payment.svg' );?>" class="mr-3" alt="...">
+                    <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/payment.svg' ); ?>" class="mr-3" alt="...">
                     <div class="media-body">
-                        <h6 class="mt-0 font-weight-bold"><?php _e('Affordable payment gateways','invoicing');?></h6>
-                        <small><?php _e('On average our gateways are over 66% cheaper than our competition','invoicing');?></small>
+                        <h6 class="mt-0 font-weight-bold"><?php _e( 'Affordable payment gateways', 'invoicing' ); ?></h6>
+                        <small><?php _e( 'On average our gateways are over 66% cheaper than our competition', 'invoicing' ); ?></small>
                     </div>
                 </div>
 		    </div>
@@ -90,28 +90,28 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	<div class="mt-5 mx-n4 py-4" style="background:#eafaf6;">
-		<h4 class="mt-0 font-weight-bold text-dark mb-4"><?php _e( 'More with Membership!' , 'invoicing' );?></h4>
+		<h4 class="mt-0 font-weight-bold text-dark mb-4"><?php _e( 'More with Membership!', 'invoicing' ); ?></h4>
 		<div class="row row-cols-2 text-left px-5">
 
 			<div class="col">
 				<ul class="list-unstyled">
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'PDF Invoices' , 'invoicing' );?></li>
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Gravity Forms' , 'invoicing' );?></li>
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Contact form 7' , 'invoicing' );?></li>
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'AffiliateWP Integration' , 'invoicing' );?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'PDF Invoices', 'invoicing' ); ?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Gravity Forms', 'invoicing' ); ?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Contact form 7', 'invoicing' ); ?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'AffiliateWP Integration', 'invoicing' ); ?></li>
 				</ul>
 			</div>
 
 			<div class="col">
 				<ul class="list-unstyled">
-			    	<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Ninja forms' , 'invoicing' );?></li>
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Digital Downloads' , 'invoicing' );?></li>
-					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Wallet' , 'invoicing' );?></li>
+			    	<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Ninja forms', 'invoicing' ); ?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Digital Downloads', 'invoicing' ); ?></li>
+					<li class="my-2"><i class="far fa-check-circle text-success"></i> <?php _e( 'Wallet', 'invoicing' ); ?></li>
 				</ul>
 			</div>
 		</div>
 
-		<h5 class="mt-4 font-weight-bold text-dark mb-3"><?php _e('Membership Starts From','invoicing');?></h5>
+		<h5 class="mt-4 font-weight-bold text-dark mb-3"><?php _e( 'Membership Starts From', 'invoicing' ); ?></h5>
 		<h1 class="mt-0 font-weight-bold text-dark mb-4 display-3"><?php esc_html_e( '$49', 'invoicing' ); ?></h1>
 
 		<div class="mt-2">

@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 $selectable = array();
 foreach ( $form->get_items() as $item ) {
     if ( ! $item->is_required ) {
-        $selectable[$item->get_id()] = strip_tags( $item->get_name() . ' &mdash; ' . wpinv_price( $item->get_initial_price() ) );
+        $selectable[ $item->get_id() ] = strip_tags( $item->get_name() . ' &mdash; ' . wpinv_price( $item->get_initial_price() ) );
     }
 }
 

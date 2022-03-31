@@ -16,11 +16,11 @@ defined( 'ABSPATH' ) || exit;
             <div class="row">
 
                 <div class="col-12 col-sm-6 text-sm-left pl-sm-0">
-                    <?php do_action( 'getpaid_invoice_header_left', $invoice );?>
+                    <?php do_action( 'getpaid_invoice_header_left', $invoice ); ?>
                 </div>
 
                 <div class="col-12 col-sm-6 text-sm-right pr-sm-0">
-                    <?php do_action( 'getpaid_invoice_header_right', $invoice );?>
+                    <?php do_action( 'getpaid_invoice_header_right', $invoice ); ?>
                 </div>
 
             </div>

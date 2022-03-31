@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -81,7 +81,7 @@ function getpaid_unstandardize_amount( $amount ) {
 
 /**
  * Sanitizes an amount.
- * 
+ *
  * @param string $amount The amount to sanitize.
  */
 function wpinv_sanitize_amount( $amount ) {
@@ -106,7 +106,7 @@ function wpinv_sanitize_amount( $amount ) {
 
 /**
  * Rounds an amount.
- * 
+ *
  * @param float $amount
  * @param float|string|int|null $decimals
  */
@@ -164,20 +164,20 @@ function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice 
 
 /**
  * Returns the formated invoice status.
- * 
+ *
  * @param string $status The raw status
  * @param string|WPInv_Invoice $invoice The invoice object|post type|type
  */
 function wpinv_status_nicename( $status, $invoice = false ) {
     $statuses = wpinv_get_invoice_statuses( true, true, $invoice );
-    $status   = isset( $statuses[$status] ) ? $statuses[$status] : $status;
+    $status   = isset( $statuses[ $status ] ) ? $statuses[ $status ] : $status;
 
     return sanitize_text_field( $status );
 }
 
 /**
  * Retrieves the default currency code.
- * 
+ *
  * @param string $current
  */
 function wpinv_get_currency( $current = '' ) {
@@ -191,7 +191,7 @@ function wpinv_get_currency( $current = '' ) {
 
 /**
  * Given a currency, it returns a currency symbol.
- * 
+ *
  * @param string|null $currency The currency code. Defaults to the default currency.
  */
 function wpinv_currency_symbol( $currency = null ) {
@@ -203,7 +203,7 @@ function wpinv_currency_symbol( $currency = null ) {
     $symbols = wpinv_get_currency_symbols();
 
     // Fetch this currencies symbol.
-    $currency_symbol = isset( $symbols[$currency] ) ? $symbols[$currency] : $currency;
+    $currency_symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : $currency;
 
     // Filter the symbol.
     return apply_filters( 'wpinv_currency_symbol', $currency_symbol, $currency );
@@ -211,13 +211,13 @@ function wpinv_currency_symbol( $currency = null ) {
 
 function wpinv_currency_position() {
     $position = wpinv_get_option( 'currency_position', 'left' );
-    
+
     return apply_filters( 'wpinv_currency_position', $position );
 }
 
 /**
  * Returns the thousands separator for a currency.
- * 
+ *
  * @param $string|null $current
  */
 function wpinv_thousands_separator( $current = null ) {
@@ -231,7 +231,7 @@ function wpinv_thousands_separator( $current = null ) {
 
 /**
  * Returns the decimal separator for a currency.
- * 
+ *
  * @param $string|null $current
  */
 function wpinv_decimal_separator( $current = null ) {
@@ -239,13 +239,13 @@ function wpinv_decimal_separator( $current = null ) {
     if ( null == $current ) {
         $current = wpinv_get_option( 'decimal_separator', '.' );
     }
-    
+
     return trim( $current );
 }
 
 /**
  * Returns the number of decimals to use.
- * 
+ *
  * @param $string|null $current
  */
 function wpinv_decimals( $current = null ) {
@@ -253,7 +253,7 @@ function wpinv_decimals( $current = null ) {
     if ( null == $current ) {
         $current = wpinv_get_option( 'decimals', 2 );
     }
-    
+
     return absint( $current );
 }
 
@@ -357,7 +357,7 @@ function wpinv_sanitize_key( $key ) {
 
 /**
  * Returns a file extesion.
- * 
+ *
  * @param $str the file whose extension should be retrieved.
  */
 function wpinv_get_file_extension( $str ) {
@@ -367,7 +367,7 @@ function wpinv_get_file_extension( $str ) {
 
 /**
  * Checks if a given string is an image URL.
- * 
+ *
  * @param string $string
  */
 function wpinv_string_is_image_url( $string ) {
@@ -405,7 +405,7 @@ function wpinv_rgb_from_hex( $color ) {
     // Convert shorthand colors to full format, e.g. "FFF" -> "FFFFFF"
     $color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
     if ( empty( $color ) ) {
-        return NULL;
+        return null;
     }
 
     $color = str_split( $color );
@@ -429,7 +429,7 @@ function wpinv_hex_darker( $color, $factor = 30 ) {
 
         $new_hex_component = dechex( $new_decimal );
         if ( strlen( $new_hex_component ) < 2 ) {
-            $new_hex_component = "0" . $new_hex_component;
+            $new_hex_component = '0' . $new_hex_component;
         }
         $color .= $new_hex_component;
     }
@@ -449,7 +449,7 @@ function wpinv_hex_lighter( $color, $factor = 30 ) {
 
         $new_hex_component = dechex( $new_decimal );
         if ( strlen( $new_hex_component ) < 2 ) {
-            $new_hex_component = "0" . $new_hex_component;
+            $new_hex_component = '0' . $new_hex_component;
         }
         $color .= $new_hex_component;
     }
@@ -496,7 +496,7 @@ function wpinv_utf8_strimwidth( $str, $start, $width, $trimmaker = '', $encoding
     if ( function_exists( 'mb_strimwidth' ) ) {
         return mb_strimwidth( $str, $start, $width, $trimmaker, $encoding );
     }
-    
+
     return wpinv_utf8_substr( $str, $start, $width, $encoding ) . $trimmaker;
 }
 
@@ -505,7 +505,7 @@ function wpinv_utf8_strimwidth( $str, $start, $width, $trimmaker = '', $encoding
  *
  * @since 1.0.0
  *
- * @param string $str The string being checked for length. 
+ * @param string $str The string being checked for length.
  * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
  * @return int Returns the number of characters in string.
  */
@@ -513,7 +513,7 @@ function wpinv_utf8_strlen( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strlen' ) ) {
         return mb_strlen( $str, $encoding );
     }
-        
+
     return strlen( $str );
 }
 
@@ -521,7 +521,7 @@ function wpinv_utf8_strtolower( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strtolower' ) ) {
         return mb_strtolower( $str, $encoding );
     }
-    
+
     return strtolower( $str );
 }
 
@@ -529,7 +529,7 @@ function wpinv_utf8_strtoupper( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strtoupper' ) ) {
         return mb_strtoupper( $str, $encoding );
     }
-    
+
     return strtoupper( $str );
 }
 
@@ -548,7 +548,7 @@ function wpinv_utf8_strpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strpos' ) ) {
         return mb_strpos( $str, $find, $offset, $encoding );
     }
-        
+
     return strpos( $str, $find, $offset );
 }
 
@@ -567,7 +567,7 @@ function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strrpos' ) ) {
         return mb_strrpos( $str, $find, $offset, $encoding );
     }
-        
+
     return strrpos( $str, $find, $offset );
 }
 
@@ -578,7 +578,7 @@ function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
  *
  * @param string $str The string to extract the substring from.
  * @param int $start If start is non-negative, the returned string will start at the entered position in string, counting from zero.
- *                      If start is negative, the returned string will start at the entered position from the end of string. 
+ *                      If start is negative, the returned string will start at the entered position from the end of string.
  * @param int|null $length Maximum number of characters to use from string.
  * @param string $encoding The encoding parameter is the character encoding. Default "UTF-8".
  * @return string
@@ -591,7 +591,7 @@ function wpinv_utf8_substr( $str, $start, $length = null, $encoding = 'UTF-8' ) 
             return mb_substr( $str, $start, $length, $encoding );
         }
     }
-        
+
     return substr( $str, $start, $length );
 }
 
@@ -608,15 +608,15 @@ function wpinv_utf8_strwidth( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strwidth' ) ) {
         return mb_strwidth( $str, $encoding );
     }
-    
+
     return wpinv_utf8_strlen( $str, $encoding );
 }
 
 function wpinv_utf8_ucfirst( $str, $lower_str_end = false, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_strlen' ) ) {
         $first_letter = wpinv_utf8_strtoupper( wpinv_utf8_substr( $str, 0, 1, $encoding ), $encoding );
-        $str_end = "";
-        
+        $str_end = '';
+
         if ( $lower_str_end ) {
             $str_end = wpinv_utf8_strtolower( wpinv_utf8_substr( $str, 1, wpinv_utf8_strlen( $str, $encoding ), $encoding ), $encoding );
         } else {
@@ -625,7 +625,7 @@ function wpinv_utf8_ucfirst( $str, $lower_str_end = false, $encoding = 'UTF-8' )
 
         return $first_letter . $str_end;
     }
-    
+
     return ucfirst( $str );
 }
 
@@ -633,23 +633,23 @@ function wpinv_utf8_ucwords( $str, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_convert_case' ) ) {
         return mb_convert_case( $str, MB_CASE_TITLE, $encoding );
     }
-    
+
     return ucwords( $str );
 }
 
 function wpinv_period_in_days( $period, $unit ) {
     $period = absint( $period );
-    
+
     if ( $period > 0 ) {
         if ( in_array( strtolower( $unit ), array( 'w', 'week', 'weeks' ) ) ) {
             $period = $period * 7;
-        } else if ( in_array( strtolower( $unit ), array( 'm', 'month', 'months' ) ) ) {
+        } elseif ( in_array( strtolower( $unit ), array( 'm', 'month', 'months' ) ) ) {
             $period = $period * 30;
-        } else if ( in_array( strtolower( $unit ), array( 'y', 'year', 'years' ) ) ) {
+        } elseif ( in_array( strtolower( $unit ), array( 'y', 'year', 'years' ) ) ) {
             $period = $period * 365;
         }
     }
-    
+
     return $period;
 }
 
@@ -695,18 +695,21 @@ function wpi_help_tip( $tip, $allow_html = false, $is_vue = false ) {
  * @return string
  */
 function wpi_sanitize_tooltip( $var ) {
-    return wp_kses( html_entity_decode( $var ), array(
-        'br'     => array(),
-        'em'     => array(),
-        'strong' => array(),
-        'b'      => array(),
-        'small'  => array(),
-        'span'   => array(),
-        'ul'     => array(),
-        'li'     => array(),
-        'ol'     => array(),
-        'p'      => array(),
-    ) );
+    return wp_kses(
+        html_entity_decode( $var ),
+        array(
+			'br'     => array(),
+			'em'     => array(),
+			'strong' => array(),
+			'b'      => array(),
+			'small'  => array(),
+			'span'   => array(),
+			'ul'     => array(),
+			'li'     => array(),
+			'ol'     => array(),
+			'p'      => array(),
+        )
+    );
 }
 
 /**
@@ -735,7 +738,7 @@ function wpinv_get_screen_ids() {
         'getpaid_page_wpinv-reports',
         'getpaid_page_wpi-addons',
         'getpaid_page_wpinv-customers',
-        'gp-setup',// setup wizard
+        'gp-setup', // setup wizard
     );
 
     return apply_filters( 'wpinv_screen_ids', $screen_ids );
@@ -774,7 +777,7 @@ function wpinv_get_data( $key ) {
 
     // Try fetching it from the cache.
     $data = wp_cache_get( "wpinv-data-$key", 'wpinv' );
-    if( $data ) {
+    if ( $data ) {
         return $data;
     }
 
@@ -847,11 +850,11 @@ function getpaid_convert_price_string_to_options( $str ) {
         $price = null;
         $label = null;
 
-        if ( isset( $option[0] ) && '' !=  $option[0] ) {
+        if ( isset( $option[0] ) && '' != $option[0] ) {
             $label  = $option[0];
         }
 
-        if ( isset( $option[1] ) && '' !=  $option[1] ) {
+        if ( isset( $option[1] ) && '' != $option[1] ) {
             $price = $option[1];
         }
 
@@ -905,7 +908,7 @@ function getpaid_format_date( $date, $with_time = false ) {
  *
  * @return string
  */
-function getpaid_format_date_value( $date, $default = "&mdash;", $with_time = false ) {
+function getpaid_format_date_value( $date, $default = '&mdash;', $with_time = false ) {
     $date = getpaid_format_date( $date, $with_time );
     return empty( $date ) ? $default : $date;
 }
@@ -953,7 +956,7 @@ function getpaid_limit_length( $string, $limit ) {
 
 /**
  * Returns the REST API handler.
- * 
+ *
  * @return WPInv_API
  * @since 1.0.19
  */
@@ -963,7 +966,7 @@ function getpaid_api() {
 
 /**
  * Returns the post types object.
- * 
+ *
  * @return GetPaid_Post_Types
  * @since 1.0.19
  */
@@ -973,7 +976,7 @@ function getpaid_post_types() {
 
 /**
  * Returns the session handler.
- * 
+ *
  * @return WPInv_Session_Handler
  * @since 1.0.19
  */
@@ -983,7 +986,7 @@ function getpaid_session() {
 
 /**
  * Returns the notes handler.
- * 
+ *
  * @return WPInv_Notes
  * @since 1.0.19
  */
@@ -993,7 +996,7 @@ function getpaid_notes() {
 
 /**
  * Returns the main admin class.
- * 
+ *
  * @return GetPaid_Admin
  */
 function getpaid_admin() {
@@ -1060,8 +1063,7 @@ function getpaid_array_merge_if_empty( $args, $defaults ) {
         if ( array_key_exists( $key, $args ) && empty( $args[ $key ] ) ) {
             $args[ $key ] = $value;
         }
-
-    }
+}
 
     return $args;
 
@@ -1103,7 +1105,7 @@ function getpaid_user_delete_invoice( $data ) {
         wpinv_set_error( 'invalid_invoice', __( 'You do not have permission to delete this invoice', 'invoicing' ) );
 
     // Can it be deleted?
-    } else if ( ! $invoice->needs_payment() ) {
+    } elseif ( ! $invoice->needs_payment() ) {
         wpinv_set_error( 'cannot_delete', __( 'This invoice cannot be deleted as it has already been paid.', 'invoicing' ) );
 
     // Delete it.

@@ -52,11 +52,11 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 			if ( $item_obj->exists() ) {
 				$item_name = $item_obj->get_name();
 			} else {
-				$item_id   = 0; 
+				$item_id   = 0;
 			}
 
 			$top_sellers[] = array(
-				'name'               =>sanitize_text_field( $item_name ),
+				'name'               => sanitize_text_field( $item_name ),
 				'item_id'            => $item_id,
 				'quantity'           => $item_qty,
 				'earnings'           => wpinv_round_amount( $item->invoice_item_price ),
@@ -115,33 +115,33 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 
 		$this->report_data = GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'              => array(
-					'quantity'      => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_qty',
+				'data'         => array(
+					'quantity'  => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_qty',
 					),
-					'item_id'             => array(
-						'type'            => 'invoice_item',
-						'function'        => '',
-						'name'            => 'invoice_item_id',
+					'item_id'   => array(
+						'type'     => 'invoice_item',
+						'function' => '',
+						'name'     => 'invoice_item_id',
 					),
-					'item_name'           => array(
-						'type'            => 'invoice_item',
-						'function'        => '',
-						'name'            => 'invoice_item_name',
+					'item_name' => array(
+						'type'     => 'invoice_item',
+						'function' => '',
+						'name'     => 'invoice_item_name',
 					),
-					'price'               => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_price',
+					'price'     => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_price',
 					),
 				),
-				'group_by'       => 'invoice_item_id',
-				'order_by'       => 'invoice_item_qty DESC',
-				'query_type'     => 'get_results',
-				'limit'          => 10,
-				'filter_range'   => $this->report_range,
+				'group_by'     => 'invoice_item_id',
+				'order_by'     => 'invoice_item_qty DESC',
+				'query_type'   => 'get_results',
+				'limit'        => 10,
+				'filter_range' => $this->report_range,
 			)
 		);
 
@@ -158,25 +158,25 @@ class GetPaid_REST_Report_Top_Sellers_Controller extends GetPaid_REST_Report_Sal
 			'title'      => $this->rest_base,
 			'type'       => 'object',
 			'properties' => array(
-				'name' => array(
+				'name'                => array(
 					'description' => __( 'Item name.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'item_id'         => array(
+				'item_id'             => array(
 					'description' => __( 'Item ID.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'quantity' => array(
+				'quantity'            => array(
 					'description' => __( 'Total number of purchases.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'earnings' => array(
+				'earnings'            => array(
 					'description' => __( 'Total earnings for the item.', 'invoicing' ),
 					'type'        => 'number',
 					'context'     => array( 'view' ),

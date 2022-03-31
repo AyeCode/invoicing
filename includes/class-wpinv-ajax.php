@@ -5,7 +5,7 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -37,7 +37,7 @@ class WPInv_Ajax {
 		}
 
     }
-    
+
     /**
 	 * Send headers for GetPaid Ajax Requests.
 	 *
@@ -53,7 +53,7 @@ class WPInv_Ajax {
 			status_header( 200 );
 		}
     }
-    
+
     /**
 	 * Check for GetPaid Ajax request and fire action.
 	 */
@@ -82,28 +82,28 @@ class WPInv_Ajax {
 
         // array( 'event' => is_frontend )
         $ajax_events = array(
-            'add_note'                    => false,
-            'delete_note'                 => false,
-            'get_states_field'            => true,
-            'get_aui_states_field'        => true,
-            'payment_form'                => true,
-            'get_payment_form'            => true,
+            'add_note'                      => false,
+            'delete_note'                   => false,
+            'get_states_field'              => true,
+            'get_aui_states_field'          => true,
+            'payment_form'                  => true,
+            'get_payment_form'              => true,
             'get_payment_form_states_field' => true,
-            'get_invoicing_items'         => false,
-            'get_customers'               => false,
-            'get_invoice_items'           => false,
-            'add_invoice_items'           => false,
-            'admin_add_invoice_item'      => false,
-            'recalculate_full_prices'     => false,
-            'edit_invoice_item'           => false,
-            'create_invoice_item'         => false,
-            'remove_invoice_item'         => false,
-            'get_billing_details'         => false,
-            'recalculate_invoice_totals'  => false,
-            'check_new_user_email'        => false,
-            'run_tool'                    => false,
-            'payment_form_refresh_prices' => true,
-            'file_upload'                 => true,
+            'get_invoicing_items'           => false,
+            'get_customers'                 => false,
+            'get_invoice_items'             => false,
+            'add_invoice_items'             => false,
+            'admin_add_invoice_item'        => false,
+            'recalculate_full_prices'       => false,
+            'edit_invoice_item'             => false,
+            'create_invoice_item'           => false,
+            'remove_invoice_item'           => false,
+            'get_billing_details'           => false,
+            'recalculate_invoice_totals'    => false,
+            'check_new_user_email'          => false,
+            'run_tool'                      => false,
+            'payment_form_refresh_prices'   => true,
+            'file_upload'                   => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -117,12 +117,12 @@ class WPInv_Ajax {
             }
         }
     }
-    
+
     public static function add_note() {
         check_ajax_referer( 'add-invoice-note', '_nonce' );
 
         if ( ! wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
+            die( -1 );
         }
 
         $post_id   = absint( $_POST['post_id'] );
@@ -134,7 +134,7 @@ class WPInv_Ajax {
         if ( $post_id > 0 ) {
             $note_id = wpinv_insert_payment_note( $post_id, $note, $is_customer_note );
 
-            if ( $note_id > 0 && !is_wp_error( $note_id ) ) {
+            if ( $note_id > 0 && ! is_wp_error( $note_id ) ) {
                 wpinv_get_invoice_note_line_item( $note_id );
             }
         }
@@ -145,8 +145,8 @@ class WPInv_Ajax {
     public static function delete_note() {
         check_ajax_referer( 'delete-invoice-note', '_nonce' );
 
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            die( -1 );
         }
 
         $note_id = (int)$_POST['note_id'];
@@ -157,10 +157,10 @@ class WPInv_Ajax {
 
         die();
     }
-    
+
     public static function get_states_field() {
         echo wpinv_get_states_field();
-        
+
         die();
     }
 
@@ -174,14 +174,14 @@ class WPInv_Ajax {
 
         // Can the user manage the plugin?
         if ( ! wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
+            die( -1 );
         }
 
         // Do we have a user id?
         $user_id = (int) $_GET['user_id'];
 
         if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
-            die(-1);
+            die( -1 );
         }
 
         // Fetch the billing details.
@@ -211,7 +211,7 @@ class WPInv_Ajax {
 
         // Can the user manage the plugin?
         if ( ! wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
+            die( -1 );
         }
 
         // We need an email address.
@@ -235,18 +235,18 @@ class WPInv_Ajax {
 
         wp_send_json_success( true );
     }
-    
+
     public static function run_tool() {
         check_ajax_referer( 'wpinv-nonce', '_nonce' );
-        if ( !wpinv_current_user_can_manage_invoicing() ) {
-            die(-1);
+        if ( ! wpinv_current_user_can_manage_invoicing() ) {
+            die( -1 );
         }
-        
+
         $tool = sanitize_text_field( $_POST['tool'] );
-        
+
         do_action( 'wpinv_run_tool' );
-        
-        if ( !empty( $tool ) ) {
+
+        if ( ! empty( $tool ) ) {
             do_action( 'wpinv_tool_' . $tool );
         }
     }
@@ -311,8 +311,7 @@ class WPInv_Ajax {
                             $items[]    = $item;
                         }
                     }
-
-                }
+}
 
                 $payment_form->set_items( $items );
                 $extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
@@ -325,8 +324,7 @@ class WPInv_Ajax {
             } else {
                 getpaid_display_payment_form( $form );
             }
-
-		} else if( ! empty( $_GET['invoice'] ) ) {
+} elseif ( ! empty( $_GET['invoice'] ) ) {
 		    getpaid_display_invoice_payment_form( (int) urldecode( $_GET['invoice'] ) );
         } else {
 			$items = getpaid_convert_items_to_array( sanitize_text_field( urldecode( $_GET['item'] ) ) );
@@ -405,7 +403,7 @@ class WPInv_Ajax {
                     $label .= "<span class='text-danger'> *</span>";
                 }
 
-                $html = getpaid_get_states_select_markup (
+                $html = getpaid_get_states_select_markup(
                     sanitize_text_field( $_GET['country'] ),
                     $value,
                     $placeholder,
@@ -420,9 +418,8 @@ class WPInv_Ajax {
                 exit;
 
             }
+}
 
-        }
-    
         exit;
     }
 
@@ -523,7 +520,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item ) {
-            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency(), $invoice->is_renewal()  );
+            $items[] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency(), $invoice->is_renewal() );
         }
 
         wp_send_json_success( compact( 'items' ) );
@@ -592,7 +589,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item ) {
-            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+            $items[] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency() );
         }
 
         wp_send_json_success( compact( 'items', 'alert' ) );
@@ -712,7 +709,7 @@ class WPInv_Ajax {
         $items = array();
 
         foreach ( $invoice->get_items() as $item ) {
-            $items[] = $item->prepare_data_for_invoice_edit_ajax(  $invoice->get_currency()  );
+            $items[] = $item->prepare_data_for_invoice_edit_ajax( $invoice->get_currency() );
         }
 
         wp_send_json_success( compact( 'items' ) );
@@ -759,8 +756,7 @@ class WPInv_Ajax {
                     $invoice->add_item( $item );
                 }
             }
-
-        }
+}
 
         $invoice->set_disable_taxes( ! empty( $_POST['disable_taxes'] ) );
 
@@ -862,10 +858,10 @@ class WPInv_Ajax {
         // Add the items.
         foreach ( wp_kses_post_deep( wp_unslash( $_POST['items'] ) ) as $data ) {
 
-            $item = new GetPaid_Form_Item( (int) $data[ 'id' ] );
+            $item = new GetPaid_Form_Item( (int) $data['id'] );
 
-            if ( is_numeric( $data[ 'qty' ] ) && (float) $data[ 'qty' ] > 0 ) {
-                $item->set_quantity( floatval( $data[ 'qty' ] ) );
+            if ( is_numeric( $data['qty'] ) && (float) $data['qty'] > 0 ) {
+                $item->set_quantity( floatval( $data['qty'] ) );
             }
 
             if ( $item->get_id() > 0 ) {
@@ -874,10 +870,8 @@ class WPInv_Ajax {
                 if ( is_wp_error( $error ) ) {
                     $alert = $error->get_error_message();
                 }
-
-            }
-
-        }
+}
+}
 
         // Save the invoice.
         $invoice->recalculate_total();
@@ -920,11 +914,11 @@ class WPInv_Ajax {
             's'              => sanitize_text_field( urldecode( $_GET['search'] ) ),
             'meta_query'     => array(
                 array(
-                    'key'       => '_wpinv_type',
-                    'compare'   => '!=',
-                    'value'     => 'package'
-                )
-            )
+                    'key'     => '_wpinv_type',
+                    'compare' => '!=',
+                    'value'   => 'package',
+                ),
+            ),
         );
 
         if ( ! empty( $_GET['ignore'] ) ) {
@@ -967,7 +961,7 @@ class WPInv_Ajax {
         }
 
         // Retrieve customers.
-    
+
         $customer_args = array(
             'fields'         => array( 'ID', 'user_email', 'display_name' ),
             'orderby'        => 'display_name',
@@ -980,8 +974,8 @@ class WPInv_Ajax {
 
         foreach ( $customers as $customer ) {
             $data[] = array(
-                'id'        => (int) $customer->ID,
-                'text'      => strip_tags( sprintf( _x( '%1$s (%2$s)', 'user dropdown', 'invoicing' ), $customer->display_name, $customer->user_email ) ),
+                'id'   => (int) $customer->ID,
+                'text' => strip_tags( sprintf( _x( '%1$s (%2$s)', 'user dropdown', 'invoicing' ), $customer->display_name, $customer->user_email ) ),
             );
         }
 
@@ -1026,14 +1020,14 @@ class WPInv_Ajax {
 
             $html = aui()->select(
                 array(
-                    'id'          => 'wpinv_state',
-                    'name'        => $name,
-                    'label'       => __( 'State', 'invoicing' ),
-                    'label_type'  => 'vertical',
-                    'placeholder' => __( 'Select a state', 'invoicing' ),
-                    'class'       => $class,
-                    'value'       => $state,
-                    'options'     => $states,
+                    'id'               => 'wpinv_state',
+                    'name'             => $name,
+                    'label'            => __( 'State', 'invoicing' ),
+                    'label_type'       => 'vertical',
+                    'placeholder'      => __( 'Select a state', 'invoicing' ),
+                    'class'            => $class,
+                    'value'            => $state,
+                    'options'          => $states,
                     'data-allow-clear' => 'false',
                     'select2'          => true,
                 )
@@ -1044,7 +1038,7 @@ class WPInv_Ajax {
         wp_send_json_success(
             array(
                 'html'   => $html,
-                'select' => ! empty ( $states )
+                'select' => ! empty( $states ),
             )
         );
 
@@ -1074,7 +1068,7 @@ class WPInv_Ajax {
             wp_send_json_error(
                 array(
                     'code'  => $submission->last_error_code,
-                    'error' => $submission->last_error
+                    'error' => $submission->last_error,
                 )
             );
         }
@@ -1138,7 +1132,7 @@ class WPInv_Ajax {
         $uploaded = wp_upload_bits(
             $file_name,
             null,
-            file_get_contents( $_FILES["file"]["tmp_name"] )
+            file_get_contents( $_FILES['file']['tmp_name'] )
         );
 
         if ( ! empty( $uploaded['error'] ) ) {

@@ -36,7 +36,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 			$show_fields = apply_filters(
 				'getpaid_customer_meta_fields',
 				array(
-					'billing'  => array(
+					'billing' => array(
 						'title'  => __( 'Billing Details (GetPaid)', 'invoicing' ),
 						'fields' => array(
 							'_wpinv_first_name' => array(
@@ -51,11 +51,11 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 								'label'       => __( 'Company', 'invoicing' ),
 								'description' => '',
 							),
-							'_wpinv_company_id'    => array(
+							'_wpinv_company_id' => array(
 								'label'       => __( 'Company ID', 'invoicing' ),
 								'description' => '',
 							),
-							'_wpinv_address'  => array(
+							'_wpinv_address'    => array(
 								'label'       => __( 'Address', 'invoicing' ),
 								'description' => '',
 							),
@@ -63,7 +63,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 								'label'       => __( 'City', 'invoicing' ),
 								'description' => '',
 							),
-							'_wpinv_zip'   => array(
+							'_wpinv_zip'        => array(
 								'label'       => __( 'Postcode / ZIP', 'invoicing' ),
 								'description' => '',
 							),
@@ -83,7 +83,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 								'label'       => __( 'Phone', 'invoicing' ),
 								'description' => '',
 							),
-							'_wpinv_vat_number'      => array(
+							'_wpinv_vat_number' => array(
 								'label'       => __( 'VAT Number', 'invoicing' ),
 								'description' => '',
 							),

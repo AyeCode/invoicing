@@ -180,28 +180,28 @@ class WPInv_Plugin {
 	public function includes() {
 
 		// Start with the settings.
-		require_once( WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php' );
+		require_once WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php';
 
 		// Packages/libraries.
-		require_once( WPINV_PLUGIN_DIR . 'vendor/autoload.php' );
-		require_once( WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php' );
+		require_once WPINV_PLUGIN_DIR . 'vendor/autoload.php';
+		require_once WPINV_PLUGIN_DIR . 'vendor/ayecode/wp-ayecode-ui/ayecode-ui-loader.php';
 
 		// Load functions.
-		require_once( WPINV_PLUGIN_DIR . 'includes/deprecated-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-tax-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-template-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-address-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/invoice-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/subscription-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-item-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-discount-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/user-functions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/error-functions.php' );
+		require_once WPINV_PLUGIN_DIR . 'includes/deprecated-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-email-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-tax-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-template-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-address-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/invoice-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/subscription-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-item-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-discount-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-gateway-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-payment-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/user-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/error-functions.php';
 
 		// Register autoloader.
 		try {
@@ -210,48 +210,48 @@ class WPInv_Plugin {
 			wpinv_error_log( $e->getMessage(), '', __FILE__, 149, true );
 		}
 
-		require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-session-handler.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/checkout.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-history.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-receipt.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/subscriptions.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/buy-item.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/getpaid.php' );
-		require_once( WPINV_PLUGIN_DIR . 'widgets/invoice.php' );
-		require_once( WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php' );
+		require_once WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-session.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-session-handler.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-ajax.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-api.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-cache-helper.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-db.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/admin/subscriptions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-subscriptions-db.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-subscription.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/abstracts/abstract-wpinv-privacy.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-privacy.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/libraries/class-ayecode-addons.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-addons.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/checkout.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/invoice-history.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/invoice-receipt.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/invoice-messages.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/subscriptions.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/buy-item.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/getpaid.php';
+		require_once WPINV_PLUGIN_DIR . 'widgets/invoice.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php';
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			GetPaid_Post_Types_Admin::init();
 
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php' );
-			require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-getpaid-admin-profile.php' );
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/wpinv-admin-functions.php';
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-payment-form.php';
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/meta-boxes/class-mb-invoice-notes.php';
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-admin-menus.php';
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-users.php';
+			require_once WPINV_PLUGIN_DIR . 'includes/admin/class-getpaid-admin-profile.php';
 			// load the user class only on the users.php page
 			global $pagenow;
-			if($pagenow=='users.php'){
+			if ( $pagenow == 'users.php' ) {
 				new WPInv_Admin_Users();
 			}
 		}
 
 		// Register cli commands
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-cli.php' );
+			require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-cli.php';
 			WP_CLI::add_command( 'invoicing', 'WPInv_CLI' );
 		}
 
@@ -300,8 +300,7 @@ class WPInv_Plugin {
 				include trailingslashit( $location ) . $file_name;
 				break;
 			}
-
-		}
+}
 
 	}
 
@@ -379,7 +378,7 @@ class WPInv_Plugin {
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );
-		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'jquery' ),  $version, true );
+		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'jquery' ), $version, true );
 		wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
 	}
 
@@ -437,11 +436,11 @@ class WPInv_Plugin {
 			return;
 		}
 
-		$block_widget_init_screens = function_exists('sd_pagenow_exclude') ? sd_pagenow_exclude() : array();
+		$block_widget_init_screens = function_exists( 'sd_pagenow_exclude' ) ? sd_pagenow_exclude() : array();
 
-		if ( is_admin() && $pagenow && in_array($pagenow, $block_widget_init_screens)) {
+		if ( is_admin() && $pagenow && in_array( $pagenow, $block_widget_init_screens ) ) {
 			// don't initiate in these conditions.
-		}else{
+		} else {
 
 			// Only load allowed widgets.
 			$exclude = function_exists( 'sd_widget_exclude' ) ? sd_widget_exclude() : array();
@@ -455,7 +454,7 @@ class WPInv_Plugin {
 					'WPInv_Buy_Item_Widget',
 					'WPInv_Messages_Widget',
 					'WPInv_GetPaid_Widget',
-					'WPInv_Invoice_Widget'
+					'WPInv_Invoice_Widget',
 				)
 			);
 
@@ -473,10 +472,8 @@ class WPInv_Plugin {
 				} else {
 					new $widget();
 				}
-
-			}
-
-		}
+}
+}
 
 	}
 
@@ -511,8 +508,7 @@ class WPInv_Plugin {
 			if ( version_compare( $wpi_version, $key, '<' ) ) {
 				return $installer->upgrade_db( $method );
 			}
-
-		}
+}
 
 	}
 
@@ -538,7 +534,7 @@ class WPInv_Plugin {
 	 * @since 1.0.19
 	 * @param int[] $excluded_posts_ids
 	 */
-	public function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ){
+	public function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ) {
 
 		// Ensure that we have an array.
 		if ( ! is_array( $excluded_posts_ids ) ) {
@@ -604,7 +600,7 @@ class WPInv_Plugin {
 	public function add_rewrite_rule() {
         $tag = 'getpaid-ipn';
         add_rewrite_tag( "%$tag%", '([^&]+)' );
-        add_rewrite_rule( "^$tag/([^/]*)/?", "index.php?$tag=\$matches[1]",'top' );
+        add_rewrite_rule( "^$tag/([^/]*)/?", "index.php?$tag=\$matches[1]", 'top' );
 	}
 
 	/**
@@ -619,7 +615,7 @@ class WPInv_Plugin {
 
 		$gateway = get_query_var( 'getpaid-ipn' );
 
-        if ( ! empty( $gateway ) ){
+        if ( ! empty( $gateway ) ) {
 
 			$gateway = sanitize_text_field( $gateway );
 			nocache_headers();

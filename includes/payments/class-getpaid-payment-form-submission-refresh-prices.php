@@ -55,7 +55,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$this->response,
 			array(
 
-				'totals'        => array(
+				'totals'      => array(
 					'subtotal'  => $submission->format_amount( $submission->get_subtotal() ),
 					'discount'  => $submission->format_amount( $submission->get_discount() ),
 					'fees'      => $submission->format_amount( $submission->get_fee() ),
@@ -64,16 +64,16 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					'raw_total' => html_entity_decode( sanitize_text_field( $submission->format_amount( $submission->get_total() ) ), ENT_QUOTES ),
 				),
 
-				'recurring'     => array(
-					'subtotal'  => $submission->format_amount( $submission->get_recurring_subtotal() ),
-					'discount'  => $submission->format_amount( $submission->get_recurring_discount() ),
-					'fees'      => $submission->format_amount( $submission->get_recurring_fee() ),
-					'tax'       => $submission->format_amount( $submission->get_recurring_tax() ),
-					'total'     => $submission->format_amount( $submission->get_recurring_total() ),
+				'recurring'   => array(
+					'subtotal' => $submission->format_amount( $submission->get_recurring_subtotal() ),
+					'discount' => $submission->format_amount( $submission->get_recurring_discount() ),
+					'fees'     => $submission->format_amount( $submission->get_recurring_fee() ),
+					'tax'      => $submission->format_amount( $submission->get_recurring_tax() ),
+					'total'    => $submission->format_amount( $submission->get_recurring_total() ),
 				),
 
-				'initial_amt'   => wpinv_round_amount( $submission->get_total(), null, true ),
-				'currency'      => $submission->get_currency(),
+				'initial_amt' => wpinv_round_amount( $submission->get_total(), null, true ),
+				'currency'    => $submission->get_currency(),
 
 			)
 		);
@@ -98,7 +98,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 			if ( $submission->get_total() == $submission->get_recurring_total() ) {
 				$payable = "$payable / $period";
-			} else if ( $main_item ) {
+			} elseif ( $main_item ) {
 
 				$main_item = reset( $main_item );
 
@@ -135,8 +135,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					$period
 				);
 			}
-
-		}
+}
 
 		$texts = array(
 			'.getpaid-checkout-total-payable' => $payable,
@@ -146,14 +145,13 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$item_id                                               = $item->get_id();
 			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
 			$recurring_price                                       = $submission->format_amount( $item->get_recurring_sub_total() - $item->recurring_item_discount );
-			$texts[".item-$item_id .getpaid-form-item-price-desc"] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
-			$texts[".item-$item_id .getpaid-mobile-item-subtotal"] = sprintf( __( 'Subtotal: %s', 'invoicing' ), $submission->format_amount( $item->get_sub_total() ) );
+			$texts[ ".item-$item_id .getpaid-form-item-price-desc" ] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
+			$texts[ ".item-$item_id .getpaid-mobile-item-subtotal" ] = sprintf( __( 'Subtotal: %s', 'invoicing' ), $submission->format_amount( $item->get_sub_total() ) );
 
 			if ( $item->get_quantity() == 1 ) {
-				$texts[".item-$item_id .getpaid-mobile-item-subtotal"] = '';
+				$texts[ ".item-$item_id .getpaid-mobile-item-subtotal" ] = '';
 			}
-
-		}
+}
 
 		$this->response = array_merge( $this->response, array( 'texts' => $texts ) );
 
@@ -171,7 +169,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
         foreach ( $submission->get_items() as $item ) {
 			$item_id           = $item->get_id();
-			$items["$item_id"] = $submission->format_amount( $item->get_sub_total() );
+			$items[ "$item_id" ] = $submission->format_amount( $item->get_sub_total() );
 		}
 
 		$this->response = array_merge(
@@ -191,7 +189,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$fees = array();
 
         foreach ( $submission->get_fees() as $name => $data ) {
-			$fees[$name] = $submission->format_amount( $data['initial_fee'] );
+			$fees[ $name ] = $submission->format_amount( $data['initial_fee'] );
 		}
 
 		$this->response = array_merge(
@@ -211,7 +209,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$discounts = array();
 
         foreach ( $submission->get_discounts() as $name => $data ) {
-			$discounts[$name] = $submission->format_amount( $data['initial_discount'] );
+			$discounts[ $name ] = $submission->format_amount( $data['initial_discount'] );
 		}
 
 		$this->response = array_merge(
@@ -233,7 +231,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
         foreach ( $submission->get_taxes() as $name => $data ) {
 			$name          = sanitize_text_field( $name );
 			$amount        = $submission->format_amount( $data['initial_tax'] );
-			$taxes[$name]  = $amount;
+			$taxes[ $name ]  = $amount;
 			$markup       .= "<small class='form-text'>$name : $amount</small>";
 		}
 
@@ -267,10 +265,8 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					|| ( $this->response['has_multiple_subscription_groups'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscription_groups' ) ) ) {
 					unset( $gateways[ $i ] );
 				}
-
-			}
-
-		}
+}
+}
 
 		$gateways = apply_filters( 'getpaid_submission_gateways', $gateways, $submission );
 		$this->response = array_merge(
@@ -296,7 +292,7 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 						'is_recurring' => $this->response['has_recurring'],
 					),
 					$submission
-				)
+				),
 			)
 		);
 

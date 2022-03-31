@@ -114,20 +114,20 @@ class GetPaid_Subscriptions_Query {
 	 */
 	public static function fill_query_vars( $args ) {
 		$defaults = array(
-			'status'            => 'all',
-			'customer_in'       => array(),
-			'customer_not_in'   => array(),
-			'product_in'        => array(),
-			'product_not_in'    => array(),
-			'include'           => array(),
-			'exclude'           => array(),
-			'orderby'           => 'id',
-			'order'             => 'DESC',
-			'offset'            => '',
-			'number'            => 10,
-			'paged'             => 1,
-			'count_total'       => true,
-			'fields'            => 'all',
+			'status'          => 'all',
+			'customer_in'     => array(),
+			'customer_not_in' => array(),
+			'product_in'      => array(),
+			'product_not_in'  => array(),
+			'include'         => array(),
+			'exclude'         => array(),
+			'orderby'         => 'id',
+			'order'           => 'DESC',
+			'offset'          => '',
+			'number'          => 10,
+			'paged'           => 1,
+			'count_total'     => true,
+			'fields'          => 'all',
 		);
 
 		return wp_parse_args( $args, $defaults );
@@ -337,7 +337,7 @@ class GetPaid_Subscriptions_Query {
 		}
 
 		// 'orderby' values may be an array, comma- or space-separated list.
-		$ordersby      = array_filter( wpinv_parse_list(  $qv['orderby'] ) );
+		$ordersby      = array_filter( wpinv_parse_list( $qv['orderby'] ) );
 
 		$orderby_array = array();
 		foreach ( $ordersby as $_key => $_value ) {
@@ -357,8 +357,7 @@ class GetPaid_Subscriptions_Query {
 			if ( $parsed ) {
 				$orderby_array[] = $parsed . ' ' . $this->parse_order( $_order );
 			}
-
-		}
+}
 
 		// If no valid clauses were found, order by id.
 		if ( empty( $orderby_array ) ) {

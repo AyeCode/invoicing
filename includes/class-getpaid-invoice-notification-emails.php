@@ -60,7 +60,7 @@ class GetPaid_Invoice_Notification_Emails {
 
 	/**
 	 * Registers an email hook for an invoice action.
-	 * 
+	 *
 	 * @param string $hook
 	 * @param string|array $email_type
 	 */
@@ -127,24 +127,24 @@ class GetPaid_Invoice_Notification_Emails {
 		}
 
 		$merge_tags = array(
-			'{name}'                => sanitize_text_field( $invoice->get_user_full_name() ),
-			'{full_name}'           => sanitize_text_field( $invoice->get_user_full_name() ),
-			'{first_name}'          => sanitize_text_field( $invoice->get_first_name() ),
-			'{last_name}'           => sanitize_text_field( $invoice->get_last_name() ),
-			'{email}'               => sanitize_email( $invoice->get_email() ),
-			'{invoice_number}'      => sanitize_text_field( $invoice->get_number() ),
-			'{invoice_currency}'    => sanitize_text_field( $invoice->get_currency() ),
-			'{invoice_total}'       => sanitize_text_field( wpinv_price( $invoice->get_total(), $invoice->get_currency() ) ),
-			'{invoice_link}'        => esc_url( $invoice->get_view_url() ),
-			'{invoice_pay_link}'    => esc_url( $invoice->get_checkout_payment_url() ),
-			'{invoice_receipt_link}'=> esc_url( $invoice->get_receipt_url() ),
-			'{invoice_date}'        => getpaid_format_date_value( $invoice->get_date_created() ),
-			'{invoice_due_date}'    => getpaid_format_date_value( $invoice->get_due_date(), __( 'on receipt', 'invoicing' ) ),
-			'{invoice_quote}'       => sanitize_text_field( strtolower( $invoice->get_label() ) ),
-			'{invoice_label}'       => sanitize_text_field( ucfirst( $invoice->get_label() ) ),
-			'{invoice_description}' => wp_kses_post( $invoice->get_description() ),
-			'{subscription_name}'   => wp_kses_post( $invoice->get_subscription_name() ),
-			'{is_was}'              => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
+			'{name}'                 => sanitize_text_field( $invoice->get_user_full_name() ),
+			'{full_name}'            => sanitize_text_field( $invoice->get_user_full_name() ),
+			'{first_name}'           => sanitize_text_field( $invoice->get_first_name() ),
+			'{last_name}'            => sanitize_text_field( $invoice->get_last_name() ),
+			'{email}'                => sanitize_email( $invoice->get_email() ),
+			'{invoice_number}'       => sanitize_text_field( $invoice->get_number() ),
+			'{invoice_currency}'     => sanitize_text_field( $invoice->get_currency() ),
+			'{invoice_total}'        => sanitize_text_field( wpinv_price( $invoice->get_total(), $invoice->get_currency() ) ),
+			'{invoice_link}'         => esc_url( $invoice->get_view_url() ),
+			'{invoice_pay_link}'     => esc_url( $invoice->get_checkout_payment_url() ),
+			'{invoice_receipt_link}' => esc_url( $invoice->get_receipt_url() ),
+			'{invoice_date}'         => getpaid_format_date_value( $invoice->get_date_created() ),
+			'{invoice_due_date}'     => getpaid_format_date_value( $invoice->get_due_date(), __( 'on receipt', 'invoicing' ) ),
+			'{invoice_quote}'        => sanitize_text_field( strtolower( $invoice->get_label() ) ),
+			'{invoice_label}'        => sanitize_text_field( ucfirst( $invoice->get_label() ) ),
+			'{invoice_description}'  => wp_kses_post( $invoice->get_description() ),
+			'{subscription_name}'    => wp_kses_post( $invoice->get_subscription_name() ),
+			'{is_was}'               => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
 		$payment_form_data = $invoice->get_meta( 'payment_form_data', true );
@@ -156,13 +156,11 @@ class GetPaid_Invoice_Notification_Emails {
 				$label = preg_replace( '/[^a-z0-9]+/', '_', strtolower( $label ) );
 				$value = is_array( $value ) ? implode( ', ', $value ) : $value;
 
-				if ( is_scalar ( $value ) ) {
+				if ( is_scalar( $value ) ) {
 					$merge_tags[ "{{$label}}" ] = wp_kses_post( $value );
 				}
-
-			}
-
-		}
+}
+}
 
 		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}
@@ -208,7 +206,7 @@ class GetPaid_Invoice_Notification_Emails {
 		if ( $result ) {
 			$invoice->add_system_note(
 				sprintf(
-					__( 'Successfully sent %s notification email to %s.', 'invoicing' ),
+					__( 'Successfully sent %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
 					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
 				)
@@ -216,11 +214,11 @@ class GetPaid_Invoice_Notification_Emails {
 		} else {
 			$invoice->add_system_note(
 				sprintf(
-					__( 'Failed sending %s notification email to %s.', 'invoicing' ),
+					__( 'Failed sending %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
 					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
 				)
-			);	
+			);
 		}
 
 		do_action( 'getpaid_after_send_invoice_notification', $type, $invoice, $email );
@@ -249,8 +247,7 @@ class GetPaid_Invoice_Notification_Emails {
 				$cc_2 = array_map( 'sanitize_email', wpinv_parse_list( $cc_2 ) );
 				$recipients = array_filter( array_unique( array_merge( $recipients, $cc_2 ) ) );
 			}
-
-		}
+}
 
 		return $recipients;
 
@@ -451,7 +448,8 @@ class GetPaid_Invoice_Notification_Emails {
 		$invoices  = $wpdb->get_col(
 			"SELECT posts.ID FROM $wpdb->posts as posts
 			LEFT JOIN $table as invoices ON invoices.post_id = posts.ID
-			WHERE posts.post_type = 'wpi_invoice' AND posts.post_status = 'wpi-pending' $date_query");
+			WHERE posts.post_type = 'wpi_invoice' AND posts.post_status = 'wpi-pending' $date_query"
+        );
 
 		foreach ( $invoices as $invoice ) {
 
@@ -463,10 +461,8 @@ class GetPaid_Invoice_Notification_Emails {
 				if ( $invoice->needs_payment() ) {
 					$this->send_email( $invoice, $email, __FUNCTION__, $invoice->get_email() );
 				}
-
-			}
-
-		}
+}
+}
 
 	}
 
@@ -479,7 +475,7 @@ class GetPaid_Invoice_Notification_Emails {
 	public function get_date_query( $reminder_days ) {
 
 		$date_query = array(
-			'relation'  => 'OR'
+			'relation' => 'OR',
 		);
 
 		foreach ( $reminder_days as $days ) {

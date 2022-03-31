@@ -30,27 +30,27 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	protected $totals = array(
 
-		'subtotal'      => array(
+		'subtotal' => array(
 			'initial'   => 0,
 			'recurring' => 0,
 		),
 
-		'discount'      => array(
+		'discount' => array(
 			'initial'   => 0,
 			'recurring' => 0,
 		),
 
-		'fees'          => array(
+		'fees'     => array(
 			'initial'   => 0,
 			'recurring' => 0,
 		),
 
-		'taxes'         => array(
+		'taxes'    => array(
 			'initial'   => 0,
 			'recurring' => 0,
 		),
 
-		'shipping'         => array(
+		'shipping' => array(
 			'initial'   => 0,
 			'recurring' => 0,
 		),
@@ -183,14 +183,13 @@ class GetPaid_Payment_Form_Submission {
 					array( $this, 'process_discount' ),
 					array( $this, 'process_taxes' ),
 				),
-				$this		
+				$this
 			);
 
 			foreach ( $processors as $processor ) {
 				call_user_func_array( $processor, array( &$this ) );
 			}
-
-		} catch( GetPaid_Payment_Exception $e ) {
+} catch ( GetPaid_Payment_Exception $e ) {
 			$this->last_error      = $e->getMessage();
 			$this->last_error_code = $e->getErrorCode();
 		} catch ( Exception $e ) {
@@ -282,23 +281,23 @@ class GetPaid_Payment_Form_Submission {
 
 			$items    = array();
 			$item_ids = array();
-	
+
 			foreach ( $invoice->get_items() as $item ) {
 				if ( ! in_array( $item->get_id(), $item_ids ) ) {
 					$item_ids[] = $item->get_id();
 					$items[]    = $item;
 				}
 			}
-	
+
 			foreach ( $this->payment_form->get_items() as $item ) {
 				if ( ! in_array( $item->get_id(), $item_ids ) ) {
 					$item_ids[] = $item->get_id();
 					$items[]    = $item;
 				}
 			}
-	
+
 			$this->payment_form->set_items( $items );
-	
+
 		} else {
 			$this->payment_form->set_items( $invoice->get_items() );
 		}
@@ -382,7 +381,7 @@ class GetPaid_Payment_Form_Submission {
 
 	/**
 	 * Removes a specific item.
-	 * 
+	 *
 	 * You should not call this method after the discounts and taxes
 	 * have been calculated.
 	 *
@@ -698,7 +697,7 @@ class GetPaid_Payment_Form_Submission {
 	|--------------------------------------------------------------------------
 	|
 	| Functions for dealing with submission fees. Fees can be recurring
-	| or only one-time. Price input and Price select elements are treated as 
+    | or only one-time. Price input and Price select elements are treated as
 	| fees.
     */
 
@@ -875,7 +874,7 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		$collect = $initial > 0 || $recurring > 0;
-		return apply_filters( 'getpaid_submission_should_collect_payment_details', $collect, $this  );
+		return apply_filters( 'getpaid_submission_should_collect_payment_details', $collect, $this );
 	}
 
 	/**
@@ -884,7 +883,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_billing_email() {
-		return apply_filters( 'getpaid_get_submission_billing_email', $this->get_field( 'billing_email' ), $this  );
+		return apply_filters( 'getpaid_get_submission_billing_email', $this->get_field( 'billing_email' ), $this );
 	}
 
 	/**

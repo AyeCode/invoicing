@@ -29,7 +29,7 @@ class WPInv_Admin_Menus {
 	public function set_admin_menu_class() {
 		global $current_screen, $parent_file, $submenu_file;
 
-        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id , array( 'wpi_discount', 'wpi_payment_form', 'wpi_invoice' ) ) ) {
+        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id, array( 'wpi_discount', 'wpi_payment_form', 'wpi_invoice' ) ) ) {
 			$parent_file = 'wpinv';
 			$submenu_file = 'edit.php?post_type=' . $current_screen->id;
         }
@@ -83,7 +83,7 @@ class WPInv_Admin_Menus {
      * Displays the customers page.
      */
     public function customers_page() {
-        require_once( WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-customers-table.php' );
+        require_once WPINV_PLUGIN_DIR . 'includes/admin/class-wpinv-customers-table.php';
         ?>
         <div class="wrap wpi-customers-wrap">
             <style>
@@ -118,22 +118,22 @@ class WPInv_Admin_Menus {
         );
     }
 
-    public function add_addons_menu(){
-        if ( !apply_filters( 'wpi_show_addons_page', true ) ) {
+    public function add_addons_menu() {
+        if ( ! apply_filters( 'wpi_show_addons_page', true ) ) {
             return;
         }
 
         add_submenu_page(
-            "wpinv",
-            __('Invoicing extensions', 'invoicing'),
-            __('Extensions', 'invoicing'),
+            'wpinv',
+            __( 'Invoicing extensions', 'invoicing' ),
+            __( 'Extensions', 'invoicing' ),
             'manage_options',
             'wpi-addons',
             array( $this, 'addons_page' )
         );
     }
 
-    public function addons_page(){
+    public function addons_page() {
         $addon_obj = new WPInv_Admin_Addons();
         $addon_obj->output();
     }
@@ -145,7 +145,7 @@ class WPInv_Admin_Menus {
         }
 
         $settings_tabs = wpinv_get_settings_tabs();
-        $settings_tabs = empty($settings_tabs) ? array() : $settings_tabs;
+        $settings_tabs = empty( $settings_tabs ) ? array() : $settings_tabs;
         $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
         $sections      = wpinv_get_settings_tab_sections( $active_tab );
         $key           = 'main';
@@ -162,11 +162,14 @@ class WPInv_Admin_Menus {
         <div class="wrap">
             <h1 class="nav-tab-wrapper">
                 <?php
-                foreach( wpinv_get_settings_tabs() as $tab_id => $tab_name ) {
-                    $tab_url = add_query_arg( array(
-                        'settings-updated' => false,
-                        'tab' => $tab_id,
-                    ), 'admin.php?page=wpinv-settings' );
+                foreach ( wpinv_get_settings_tabs() as $tab_id => $tab_name ) {
+                    $tab_url = add_query_arg(
+                        array(
+							'settings-updated' => false,
+							'tab'              => $tab_id,
+                        ),
+                        'admin.php?page=wpinv-settings'
+                    );
 
                     // Remove the section from the tabs so we always end up at the main section
                     $tab_url = remove_query_arg( 'section', $tab_url );
@@ -185,14 +188,17 @@ class WPInv_Admin_Menus {
             $number = 0;
             if ( $number_of_sections > 1 ) {
                 echo '<div><ul class="subsubsub">';
-                foreach( $sections as $section_id => $section_name ) {
+                foreach ( $sections as $section_id => $section_name ) {
                     echo '<li>';
                     $number++;
-                    $tab_url = add_query_arg( array(
-                        'settings-updated' => false,
-                        'tab' => $active_tab,
-                        'section' => $section_id
-                    ), admin_url( 'admin.php?page=wpinv-settings' ) );
+                    $tab_url = add_query_arg(
+                        array(
+							'settings-updated' => false,
+							'tab'              => $active_tab,
+							'section'          => $section_id,
+                        ),
+                        admin_url( 'admin.php?page=wpinv-settings' )
+                    );
                     $tab_url = remove_query_arg( 'wpi_sub', $tab_url );
                     $class = '';
                     if ( $section == $section_id ) {
@@ -294,7 +300,7 @@ class WPInv_Admin_Menus {
      *
      * @return array.
      */
-    public function get_menu_items(){
+    public function get_menu_items() {
         $items = array();
 
         $pages = array(
@@ -305,7 +311,7 @@ class WPInv_Admin_Menus {
             array(
                 'id'    => wpinv_get_option( 'invoice_subscription_page' ),
                 'label' => __( 'My Subscriptions', 'invoicing' ),
-            )
+            ),
         );
 
         foreach ( apply_filters( 'getpaid_menu_pages', $pages ) as $page ) {
@@ -315,7 +321,7 @@ class WPInv_Admin_Menus {
                 $item                   = new stdClass();
                 $item->object_id        = (int) $page['id'];
                 $item->db_id            = 0;
-                $item->object           =  'page';
+                $item->object           = 'page';
                 $item->menu_item_parent = 0;
                 $item->type             = 'post_type';
                 $item->title            = esc_html( $page['label'] );
@@ -328,8 +334,7 @@ class WPInv_Admin_Menus {
                 $items['pages'][]       = $item;
 
             }
-
-        }
+}
 
         return apply_filters( 'wpinv_menu_items', $items );
     }

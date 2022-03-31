@@ -48,57 +48,55 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 						switch ( $key ) {
 
-							case 'status':
-								echo esc_html( $subscription->get_status_label() );
-								break;
+						case 'status':
+							echo esc_html( $subscription->get_status_label() );
+							break;
 
-							case 'start_date':
-								echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
-								break;
+						case 'start_date':
+							echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
+							break;
 
-							case 'expiry_date':
-								echo esc_html( getpaid_format_date_value( $subscription->get_next_renewal_date() ) );
-								break;
+						case 'expiry_date':
+							echo esc_html( getpaid_format_date_value( $subscription->get_next_renewal_date() ) );
+							break;
 
-							case 'initial_amount':
-								echo wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
+						case 'initial_amount':
+							echo wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
 
-								if ( $subscription->has_trial_period() ) {
+							if ( $subscription->has_trial_period() ) {
 
-									echo "<small class='text-muted'>&nbsp;";
-									printf(
-										_x( '( %1$s trial )', 'Subscription trial period. (e.g.: 1 month trial)', 'invoicing' ),
-										esc_html( $subscription->get_trial_period() )
-									);
-									echo '</small>';
+								echo "<small class='text-muted'>&nbsp;";
+								printf(
+									_x( '( %1$s trial )', 'Subscription trial period. (e.g.: 1 month trial)', 'invoicing' ),
+									esc_html( $subscription->get_trial_period() )
+								);
+								echo '</small>';
 
-								}
+							}
 
-								break;
+							break;
 
-							case 'recurring_amount':
-								$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
-								$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
-								echo wp_kses_post( strtolower( "<strong style='font-weight: 500;'>$amount</strong> / <span class='getpaid-item-recurring-period'>$frequency</span>" ) );
-								break;
+						case 'recurring_amount':
+							$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
+							$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
+							echo wp_kses_post( strtolower( "<strong style='font-weight: 500;'>$amount</strong> / <span class='getpaid-item-recurring-period'>$frequency</span>" ) );
+							break;
 
-							case 'item':
-
-								if ( empty( $subscription_group ) ) {
-									echo wp_kses_post( WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() ) );
+						case 'item':
+							if ( empty( $subscription_group ) ) {
+								echo wp_kses_post( WPInv_Subscriptions_List_Table::generate_item_markup( $subscription->get_product_id() ) );
 								} else {
-									$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
-									echo wp_kses_post( implode( ' | ', $markup ) );
+								$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
+								echo wp_kses_post( implode( ' | ', $markup ) );
 								}
 
-								break;
+							break;
 
-							case 'payments':
+						case 'payments':
+							$max_activations = (int) $subscription->get_bill_times();
+							echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_activations ) ? '&infin;' : (int) $max_activations );
 
-								$max_activations = (int) $subscription->get_bill_times();
-								echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_activations ) ? "&infin;" : (int) $max_activations );
-
-								break;
+							break;
 
 						}
 						do_action( "getpaid_render_single_subscription_column_$key", $subscription );
@@ -131,12 +129,12 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 	<?php
 		if ( $subscription->can_cancel() ) {
-			printf(
-				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
-				esc_url( $subscription->get_cancel_url() ),
-				esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
-				__( 'Cancel Subscription', 'invoicing' )
-			);
+		printf(
+		'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
+		esc_url( $subscription->get_cancel_url() ),
+		esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
+		__( 'Cancel Subscription', 'invoicing' )
+	);
 		}
 
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );

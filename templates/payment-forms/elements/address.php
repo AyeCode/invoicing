@@ -72,14 +72,14 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 		echo aui()->input(
 		    array(
-			    'type'       => 'checkbox',
-			    'name'       => 'same-shipping-address',
-			    'id'         => "shipping-toggle$uniqid",
-			    'required'   => false,
-			    'label'      => wp_kses_post( $shipping_address_toggle ),
-			    'value'      => 1,
-			    'checked'    => true,
-				'class'      => 'w-auto',
+			    'type'     => 'checkbox',
+			    'name'     => 'same-shipping-address',
+			    'id'       => "shipping-toggle$uniqid",
+			    'required' => false,
+			    'label'    => wp_kses_post( $shipping_address_toggle ),
+			    'value'    => 1,
+			    'checked'  => true,
+				'class'    => 'w-auto',
 		    )
 		);
 

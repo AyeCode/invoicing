@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_rules" class="col-sm-3 col-form-label">
-                        <?php _e( 'Tax Rule', 'invoicing' );?>
+                        <?php _e( 'Tax Rule', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <?php
@@ -95,7 +95,7 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_class" class="col-sm-3 col-form-label">
-                        <?php _e( 'Tax Class', 'invoicing' );?>
+                        <?php _e( 'Tax Class', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <?php

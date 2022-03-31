@@ -10,6 +10,4 @@
 
 defined( 'ABSPATH' ) || exit;
 
-return array(
-
-);
+return array();

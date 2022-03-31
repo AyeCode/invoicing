@@ -30,18 +30,18 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 * @var array
 	 */
 	protected $data = array(
-		'status'               => 'draft',
-		'version'              => '',
-		'date_created'         => null,
-        'date_modified'        => null,
-        'name'                 => '',
-        'author'               => 1,
-        'elements'             => null,
-		'items'                => null,
-		'earned'               => 0,
-		'refunded'             => 0,
-		'cancelled'            => 0,
-		'failed'               => 0,
+		'status'        => 'draft',
+		'version'       => '',
+		'date_created'  => null,
+        'date_modified' => null,
+        'name'          => '',
+        'author'        => 1,
+        'elements'      => null,
+		'items'         => null,
+		'earned'        => 0,
+		'refunded'      => 0,
+		'cancelled'     => 0,
+		'failed'        => 0,
 	);
 
     /**
@@ -232,12 +232,12 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			if ( $element['type'] == 'pay_button' && ! $this->has_element_type( 'gateway_select' ) ) {
 
 				$_elements[] = array(
-					'text'        => __( 'Select Payment Method', 'invoicing' ),
-					'id'          => 'gtscicd',
-					'name'        => 'gtscicd',
-					'type'        => 'gateway_select',
-					'premade'     => true
-			
+					'text'    => __( 'Select Payment Method', 'invoicing' ),
+					'id'      => 'gtscicd',
+					'name'    => 'gtscicd',
+					'type'    => 'gateway_select',
+					'premade' => true,
+
 				);
 
 			}
@@ -348,8 +348,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 				continue;
 			}
-
-		}
+}
 
 		if ( 'objects' == $return && 'view' == $context ) {
 			return $prepared;
@@ -376,7 +375,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			return false;
 		}
 
-		foreach( $this->get_items() as $item ) {
+		foreach ( $this->get_items() as $item ) {
 			if ( $item->get_id() == (int) $item_id ) {
 				return $item;
 			}
@@ -404,8 +403,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			if ( $element['type'] == $element_type ) {
 				return $element;
 			}
-
-		}
+}
 
 		return false;
 
@@ -574,41 +572,40 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 	 *
 	 * @return mixed
 	 */
-	public function sanitize_array_values($value){
+	public function sanitize_array_values( $value ) {
 
 		// sanitize
-		if(!empty($value )){
+		if ( ! empty( $value ) ) {
 
-			foreach($value as $key => $val_arr){
+			foreach ( $value as $key => $val_arr ) {
 
-				if(is_array($val_arr)){
+				if ( is_array( $val_arr ) ) {
 					// check if we have sub array items.
 					$sub_arr = array();
-					foreach($val_arr as $key2 => $val2){
-						if(is_array($val2)){
-							$sub_arr[$key2] = $this->sanitize_array_values($val2);
-							unset($val_arr[$key][$key2]);
+					foreach ( $val_arr as $key2 => $val2 ) {
+						if ( is_array( $val2 ) ) {
+							$sub_arr[ $key2 ] = $this->sanitize_array_values( $val2 );
+							unset( $val_arr[ $key ][ $key2 ] );
 						}
 					}
 
 					// we allow some html in description so we sanitize it separately.
-					$help_text = !empty($val_arr['description']) ? wp_kses_post($val_arr['description']) : '';
+					$help_text = ! empty( $val_arr['description'] ) ? wp_kses_post( $val_arr['description'] ) : '';
 
 					// sanitize array elements
-					$value[$key] = array_map( 'sanitize_text_field', $val_arr );
+					$value[ $key ] = array_map( 'sanitize_text_field', $val_arr );
 
 					// add back the description if set
-					if(isset($val_arr['description'])){ $value[$key]['description'] = $help_text;}
+					if ( isset( $val_arr['description'] ) ) {
+$value[ $key ]['description'] = $help_text;}
 
 					// add back sub array items after its been sanitized.
 					if ( ! empty( $sub_arr ) ) {
-						$value[$key] = array_merge($value[$key],$sub_arr);
+						$value[ $key ] = array_merge( $value[ $key ], $sub_arr );
 					}
 				}
-
-			}
-
-		}
+}
+}
 
 		return $value;
 	}
@@ -770,8 +767,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 			if ( $item->is_recurring() ) {
 				return true;
 			}
-
-		}
+}
 
         return false;
 	}

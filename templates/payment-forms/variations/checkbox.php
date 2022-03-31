@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 $selectable = array();
 foreach ( $form->get_items() as $item ) {
     if ( ! $item->is_required ) {
-        $selectable[$item->get_id()] = $item->get_name() . ' &mdash; ' . wpinv_price( $item->get_initial_price() );
+        $selectable[ $item->get_id() ] = $item->get_name() . ' &mdash; ' . wpinv_price( $item->get_initial_price() );
     }
 }
 
@@ -29,14 +29,14 @@ foreach ( $selectable as $item_id => $item_name ) {
 
     echo aui()->input(
         array(
-            'type'       => 'checkbox',
-            'name'       => 'getpaid-payment-form-selected-item',
-            'id'         => 'getpaid-payment-form-selected-item' . uniqid( '_' ) . $item_id,
-            'label'      => $item_name,
-            'value'      => $item_id,
-            'no_wrap'    => true,
-            'class'      => 'w-auto',
-            'checked'    => '1' == $is_checked,
+            'type'    => 'checkbox',
+            'name'    => 'getpaid-payment-form-selected-item',
+            'id'      => 'getpaid-payment-form-selected-item' . uniqid( '_' ) . $item_id,
+            'label'   => $item_name,
+            'value'   => $item_id,
+            'no_wrap' => true,
+            'class'   => 'w-auto',
+            'checked' => '1' == $is_checked,
         )
     );
 

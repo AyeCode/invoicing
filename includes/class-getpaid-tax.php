@@ -111,12 +111,12 @@ class GetPaid_Tax {
 			'getpaid_get_default_tax_rates',
 			array(
 				array(
-					'country'   => wpinv_get_default_country(),
-					'state'     => wpinv_get_default_state(),
-					'global'    => true,
-					'rate'      => wpinv_get_default_tax_rate(),
-					'name'      => __( 'Base Tax', 'invoicing' ),
-				)
+					'country' => wpinv_get_default_country(),
+					'state'   => wpinv_get_default_state(),
+					'global'  => true,
+					'rate'    => wpinv_get_default_tax_rate(),
+					'name'    => __( 'Base Tax', 'invoicing' ),
+				),
 			)
 		);
 
@@ -143,8 +143,7 @@ class GetPaid_Tax {
 			if ( empty( $rate['global'] ) && ! in_array( strtolower( $state ), $states ) ) {
 				unset( $matching_rates[ $i ] );
 			}
-
-		}
+}
 
 		return apply_filters( 'getpaid_get_address_tax_rates', $matching_rates, $country, $state );
 

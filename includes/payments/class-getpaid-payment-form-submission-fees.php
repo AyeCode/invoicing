@@ -49,8 +49,7 @@ class GetPaid_Payment_Form_Submission_Fees {
 			if ( 'price_select' == $element['type'] ) {
 				$this->process_price_select( $element, $data );
 			}
-
-		}
+}
 
 	}
 

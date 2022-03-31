@@ -27,6 +27,6 @@ echo aui()->radio(
         'inline'     => false,
         'options'    => empty( $options ) ? array() : array_combine( $options, $options ),
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'class' => $label_class,
+        'class'      => $label_class,
     )
 );

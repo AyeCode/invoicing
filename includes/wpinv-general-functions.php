@@ -5,9 +5,9 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
@@ -19,11 +19,11 @@ function wpinv_is_checkout() {
     $checkout_page    = wpinv_get_option( 'checkout_page' );
     $is_checkout      = ! empty( $checkout_page ) && is_page( $checkout_page );
 
-    if ( !$is_object_set ) {
+    if ( ! $is_object_set ) {
         unset( $wp_query->queried_object );
     }
 
-    if ( !$is_object_id_set ) {
+    if ( ! $is_object_id_set ) {
         unset( $wp_query->queried_object_id );
     }
 
@@ -45,7 +45,7 @@ function wpinv_get_success_page_uri() {
 
 /**
  * Retrieves the invoice/quote history page URL.
- * 
+ *
  * @param string $post_type The post type or invoice type.
  * @return string The history page URL.
  */
@@ -93,11 +93,12 @@ function wpinv_send_to_success_page( $args = array() ) {
 
 function wpinv_send_to_failed_page( $args = null ) {
 	$redirect = wpinv_get_failed_transaction_uri();
-    
-    if ( !empty( $args ) ) {
+
+    if ( ! empty( $args ) ) {
         // Check for backward compatibility
-        if ( is_string( $args ) )
+        if ( is_string( $args ) ) {
             $args = str_replace( '?', '', $args );
+        }
 
         $args = wp_parse_args( $args );
 
@@ -105,7 +106,7 @@ function wpinv_send_to_failed_page( $args = null ) {
     }
 
     $gateway = isset( $_REQUEST['wpi-gateway'] ) ? $_REQUEST['wpi-gateway'] : '';
-    
+
     $redirect = apply_filters( 'wpinv_failed_page_redirect', $redirect, $gateway, $args );
     wp_redirect( $redirect );
     exit;
@@ -113,12 +114,13 @@ function wpinv_send_to_failed_page( $args = null ) {
 
 function wpinv_get_checkout_uri( $args = array() ) {
 	$uri = wpinv_get_option( 'checkout_page', false );
-	$uri = isset( $uri ) ? get_permalink( $uri ) : NULL;
+	$uri = isset( $uri ) ? get_permalink( $uri ) : null;
 
-	if ( !empty( $args ) ) {
+	if ( ! empty( $args ) ) {
 		// Check for backward compatibility
-		if ( is_string( $args ) )
+		if ( is_string( $args ) ) {
 			$args = str_replace( '?', '', $args );
+        }
 
 		$args = wp_parse_args( $args );
 
@@ -140,8 +142,9 @@ function wpinv_get_success_page_url( $query_string = null ) {
 	$success_page = wpinv_get_option( 'success_page', 0 );
 	$success_page = get_permalink( $success_page );
 
-	if ( $query_string )
+	if ( $query_string ) {
 		$success_page .= $query_string;
+    }
 
 	return apply_filters( 'wpinv_success_page_url', $success_page );
 }
@@ -150,8 +153,9 @@ function wpinv_get_failed_transaction_uri( $extras = false ) {
 	$uri = wpinv_get_option( 'failure_page', '' );
 	$uri = ! empty( $uri ) ? trailingslashit( get_permalink( $uri ) ) : home_url();
 
-	if ( $extras )
+	if ( $extras ) {
 		$uri .= $extras;
+    }
 
 	return apply_filters( 'wpinv_get_failed_transaction_uri', $uri );
 }
@@ -174,22 +178,22 @@ function wpinv_transaction_query( $type = 'start' ) {
 
     if ( WPINV_USE_TRANSACTIONS ) {
         switch ( $type ) {
-            case 'commit' :
+            case 'commit':
                 $wpdb->query( 'COMMIT' );
                 break;
-            case 'rollback' :
+            case 'rollback':
                 $wpdb->query( 'ROLLBACK' );
                 break;
-            default :
+            default:
                 $wpdb->query( 'START TRANSACTION' );
-            break;
+                break;
         }
     }
 }
 
 function wpinv_get_prefix() {
     $invoice_prefix = 'INV-';
-    
+
     return apply_filters( 'wpinv_get_prefix', $invoice_prefix );
 }
 
@@ -235,39 +239,39 @@ function wpinv_get_business_footer() {
 
 function wpinv_checkout_required_fields() {
     $required_fields = array();
-    
+
     // Let payment gateways and other extensions determine if address fields should be required
     $require_billing_details = apply_filters( 'wpinv_checkout_required_billing_details', wpinv_use_taxes() );
-    
+
     if ( $require_billing_details ) {
 		if ( (bool)wpinv_get_option( 'fname_mandatory' ) ) {
 			$required_fields['first_name'] = array(
-				'error_id' => 'invalid_first_name',
-				'error_message' => __( 'Please enter your first name', 'invoicing' )
+				'error_id'      => 'invalid_first_name',
+				'error_message' => __( 'Please enter your first name', 'invoicing' ),
 			);
 		}
 		if ( (bool)wpinv_get_option( 'address_mandatory' ) ) {
 			$required_fields['address'] = array(
-				'error_id' => 'invalid_address',
-				'error_message' => __( 'Please enter your address', 'invoicing' )
+				'error_id'      => 'invalid_address',
+				'error_message' => __( 'Please enter your address', 'invoicing' ),
 			);
 		}
 		if ( (bool)wpinv_get_option( 'city_mandatory' ) ) {
 			$required_fields['city'] = array(
-				'error_id' => 'invalid_city',
-				'error_message' => __( 'Please enter your billing city', 'invoicing' )
+				'error_id'      => 'invalid_city',
+				'error_message' => __( 'Please enter your billing city', 'invoicing' ),
 			);
 		}
 		if ( (bool)wpinv_get_option( 'state_mandatory' ) ) {
 			$required_fields['state'] = array(
-				'error_id' => 'invalid_state',
-				'error_message' => __( 'Please enter billing state / province', 'invoicing' )
+				'error_id'      => 'invalid_state',
+				'error_message' => __( 'Please enter billing state / province', 'invoicing' ),
 			);
 		}
 		if ( (bool)wpinv_get_option( 'country_mandatory' ) ) {
 			$required_fields['country'] = array(
-				'error_id' => 'invalid_country',
-				'error_message' => __( 'Please select your billing country', 'invoicing' )
+				'error_id'      => 'invalid_country',
+				'error_message' => __( 'Please select your billing country', 'invoicing' ),
 			);
 		}
     }
@@ -295,11 +299,11 @@ function wpinv_sequential_number_active( $type = '' ) {
     if ( null !== $check ) {
         return $check;
     }
-    
+
     return wpinv_get_option( 'sequential_invoice_number' );
 }
 
-function wpinv_switch_to_locale( $locale = NULL ) {
+function wpinv_switch_to_locale( $locale = null ) {
     global $invoicing, $wpi_switch_locale;
 
     if ( ! empty( $invoicing ) && function_exists( 'switch_to_locale' ) ) {
@@ -319,11 +323,11 @@ function wpinv_switch_to_locale( $locale = NULL ) {
 
 function wpinv_restore_locale() {
     global $invoicing, $wpi_switch_locale;
-    
+
     if ( ! empty( $invoicing ) && function_exists( 'restore_previous_locale' ) && $wpi_switch_locale ) {
         restore_previous_locale();
 
-        $wpi_switch_locale = NULL;
+        $wpi_switch_locale = null;
 
         remove_filter( 'plugin_locale', 'get_locale' );
 
@@ -348,7 +352,7 @@ function wpinv_get_default_payment_form() {
                 'meta_input'  => array(
                     'wpinv_form_elements' => wpinv_get_data( 'default-payment-form' ),
                     'wpinv_form_items'    => array(),
-                )
+                ),
             )
         );
 
@@ -356,13 +360,13 @@ function wpinv_get_default_payment_form() {
     }
 
     // WPML support.
-    $form = apply_filters( 'wpml_object_id', $form, 'wpi_payment_form', TRUE  );
+    $form = apply_filters( 'wpml_object_id', $form, 'wpi_payment_form', true );
     return $form;
 }
 
 /**
  * Retrieves a given payment form's elements.
- * 
+ *
  * @param int $payment_form
  */
 function getpaid_get_payment_form_elements( $payment_form ) {
@@ -383,7 +387,7 @@ function getpaid_get_payment_form_elements( $payment_form ) {
 
 /**
  * Returns an array of items for the given form.
- * 
+ *
  * @param int $payment_form
  */
 function gepaid_get_form_items( $id ) {
@@ -399,7 +403,7 @@ function gepaid_get_form_items( $id ) {
 
 /**
  * Trims each line in a paragraph.
- * 
+ *
  */
 function gepaid_trim_lines( $content ) {
     return implode( "\n", array_map( 'trim', explode( "\n", $content ) ) );
@@ -409,29 +413,29 @@ function gepaid_trim_lines( $content ) {
 function wpinv_add_elementor_widget_categories( $elements_manager ) {
     $elements_manager->add_category(
         'getpaid',
-        [
+        array(
             'title' => esc_html__( 'GetPaid', 'invoicing' ),
-            'icon' => 'fa fa-plug',
-        ]
+            'icon'  => 'fa fa-plug',
+        )
     );
 }
-add_filter( 'elementor/elements/categories_registered', 'wpinv_add_elementor_widget_categories'  );
+add_filter( 'elementor/elements/categories_registered', 'wpinv_add_elementor_widget_categories' );
 
-function wpinv_alter_elementor_widget_config( $config ){
+function wpinv_alter_elementor_widget_config( $config ) {
 
     if ( ! empty( $config['initial_document']['widgets'] ) ) {
-        foreach( $config['initial_document']['widgets'] as $key => $widget){
-            if(substr( $key, 0, 16 ) === "wp-widget-wpinv_" || $key === "wp-widget-getpaid"){
-                $config['initial_document']['widgets'][$key]['categories'][] = 'getpaid';
-                $config['initial_document']['widgets'][$key]['hide_on_search'] = false;
-                $config['initial_document']['widgets'][$key]['icon'] = 'eicon-globe'; //@todo if no icons use on page then font-awesome is not loaded, wif we can fifure out how to force load we can use icons. <i class="fas fa-globe-americas"></i><i class="fa-solid fa-earth-americas"></i>
+        foreach ( $config['initial_document']['widgets'] as $key => $widget ) {
+            if ( substr( $key, 0, 16 ) === 'wp-widget-wpinv_' || $key === 'wp-widget-getpaid' ) {
+                $config['initial_document']['widgets'][ $key ]['categories'][] = 'getpaid';
+                $config['initial_document']['widgets'][ $key ]['hide_on_search'] = false;
+                $config['initial_document']['widgets'][ $key ]['icon'] = 'eicon-globe'; //@todo if no icons use on page then font-awesome is not loaded, wif we can fifure out how to force load we can use icons. <i class="fas fa-globe-americas"></i><i class="fa-solid fa-earth-americas"></i>
             }
         }
     }
 
     return $config;
 }
-add_filter( 'elementor/editor/localize_settings', 'wpinv_alter_elementor_widget_config'  );
+add_filter( 'elementor/editor/localize_settings', 'wpinv_alter_elementor_widget_config' );
 
 function wpinv_get_report_graphs() {
 

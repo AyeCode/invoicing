@@ -58,7 +58,7 @@ class WPInv_Notes {
 	/**
 	 * Exclude notes from the comments feed.
 	 */
-	function wpinv_comment_feed_where( $where ){
+	function wpinv_comment_feed_where( $where ) {
 		return $where . ( $where ? ' AND ' : '' ) . " comment_type != 'wpinv_note' ";
 	}
 
@@ -132,8 +132,7 @@ class WPInv_Notes {
 				$stats = (object) $stats;
 				set_transient( 'getpaid_count_comments', $stats );
 			}
-
-		}
+}
 
 		return $stats;
 	}
@@ -149,9 +148,9 @@ class WPInv_Notes {
 
 		// Default comment args.
 		$args = array(
-			'post_id'   => $invoice_id,
-			'orderby'   => 'comment_ID',
-			'order'     => 'ASC',
+			'post_id' => $invoice_id,
+			'orderby' => 'comment_ID',
+			'order'   => 'ASC',
 		);
 
 		// Maybe only show customer comments.
@@ -167,14 +166,14 @@ class WPInv_Notes {
 
 	/**
 	 * Saves an invoice comment.
-	 * 
+	 *
 	 * @param WPInv_Invoice $invoice The invoice to add the comment to.
 	 * @param string $note The note content.
 	 * @param string $note_author The name of the author of the note.
 	 * @param bool $for_customer Whether or not this comment is meant to be sent to the customer.
 	 * @return int|false The new note's ID on success, false on failure.
 	 */
-	function add_invoice_note( $invoice, $note, $note_author, $author_email, $for_customer = false ){
+	function add_invoice_note( $invoice, $note, $note_author, $author_email, $for_customer = false ) {
 
 		do_action( 'wpinv_pre_insert_invoice_note', $invoice->get_id(), $note, $for_customer );
 
@@ -205,7 +204,13 @@ class WPInv_Notes {
 		}
 
 		add_comment_meta( $note_id, '_wpi_customer_note', 1 );
-		do_action( 'wpinv_new_customer_note', array( 'invoice_id' => $invoice->get_id(), 'user_note' => $note ) );
+		do_action(
+            'wpinv_new_customer_note',
+            array(
+				'invoice_id' => $invoice->get_id(),
+				'user_note'  => $note,
+            )
+        );
 		do_action( 'getpaid_new_customer_note', $invoice, $note );
 		return $note_id;
 	}

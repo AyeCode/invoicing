@@ -358,7 +358,7 @@ abstract class GetPaid_Data {
 			return $this->set_id( $value );
 		}
 
-		if ( method_exists( $this, "set_$key") ) {
+		if ( method_exists( $this, "set_$key" ) ) {
 
 			/* translators: %s: $key Key to set */
 			getpaid_doing_it_wrong( __FUNCTION__, sprintf( __( 'Object data such as "%s" should not be accessed directly. Use getters and setters.', 'invoicing' ), $key ), '1.0.19' );
@@ -636,8 +636,7 @@ abstract class GetPaid_Data {
 			if ( ! empty( $cache_key ) ) {
 				wp_cache_set( $cache_key, $raw_meta_data, $this->cache_group );
 			}
-
-		}
+}
 
 		// Set meta data.
 		if ( is_array( $raw_meta_data ) ) {
@@ -651,8 +650,7 @@ abstract class GetPaid_Data {
 					)
 				);
 			}
-
-		}
+}
 
 	}
 

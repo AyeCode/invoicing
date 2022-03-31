@@ -82,21 +82,19 @@ class WPInv_REST_Discounts_Controller extends GetPaid_REST_Posts_Controller {
 	public function get_collection_params() {
 
 		$params = array_merge(
-
 			parent::get_collection_params(),
-
         	array(
 
 				// Discount types
-				'type'                  => array(
+				'type' => array(
 					'description'       => __( 'Type of discounts to fetch.', 'invoicing' ),
 					'type'              => array( 'array', 'string' ),
 					'default'           => 'any',
 					'validate_callback' => 'rest_validate_request_arg',
 					'sanitize_callback' => 'wpinv_parse_list',
 					'items'             => array(
-						'enum'          => array_merge( array( 'any' ), array_keys( wpinv_get_discount_types() ) ),
-						'type'          => 'string',
+						'enum' => array_merge( array( 'any' ), array_keys( wpinv_get_discount_types() ) ),
+						'type' => 'string',
 					),
 				),
 

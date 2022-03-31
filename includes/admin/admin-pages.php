@@ -1,6 +1,6 @@
 <?php
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
@@ -11,27 +11,27 @@ function wpinv_discount_custom_column( $column ) {
     $discount = new WPInv_Discount( $post );
 
     switch ( $column ) {
-        case 'code' :
+        case 'code':
             echo esc_html( $discount->get_code() );
-        break;
-        case 'amount' :
+            break;
+        case 'amount':
             echo wp_kses_post( $discount->get_formatted_amount() );
-        break;
-        case 'usage' :
+            break;
+        case 'usage':
             echo wp_kses_post( $discount->get_usage() );
-        break;
-        case 'start_date' :
+            break;
+        case 'start_date':
             echo wp_kses_post( getpaid_format_date_value( $discount->get_start_date() ) );
-        break;
-        case 'expiry_date' :
+            break;
+        case 'expiry_date':
             echo wp_kses_post( getpaid_format_date_value( $discount->get_expiration_date(), __( 'Never', 'invoicing' ) ) );
-        break;
+            break;
     }
 }
 
 add_filter( 'post_row_actions', 'wpinv_post_row_actions', 90, 2 );
 function wpinv_post_row_actions( $actions, $post ) {
-    $post_type = !empty( $post->post_type ) ? $post->post_type : '';
+    $post_type = ! empty( $post->post_type ) ? $post->post_type : '';
 
     if ( $post_type == 'wpi_discount' ) {
         $actions = wpinv_discount_row_actions( $post, $actions );
@@ -45,7 +45,7 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
     $edit_link = get_edit_post_link( $discount->ID );
     $row_actions['edit'] = '<a href="' . esc_url( $edit_link ) . '">' . __( 'Edit', 'invoicing' ) . '</a>';
 
-    if ( in_array( strtolower( $discount->post_status ),  array(  'publish' ) ) ) {
+    if ( in_array( strtolower( $discount->post_status ), array( 'publish' ) ) ) {
 
         $url = wp_nonce_url(
             add_query_arg(
@@ -61,7 +61,7 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 		$title  = esc_attr__( 'Are you sure you want to deactivate this discount?', 'invoicing' );
         $row_actions['deactivate'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
 
-    } else if( in_array( strtolower( $discount->post_status ),  array( 'pending', 'draft' ) ) ) {
+    } elseif ( in_array( strtolower( $discount->post_status ), array( 'pending', 'draft' ) ) ) {
 
         $url    = wp_nonce_url(
             add_query_arg(
@@ -103,7 +103,7 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 function wpinv_restrict_manage_posts() {
     global $typenow;
 
-    if( 'wpi_discount' == $typenow ) {
+    if ( 'wpi_discount' == $typenow ) {
         wpinv_discount_filters();
     }
 }
@@ -118,12 +118,13 @@ function wpinv_discount_filters() {
             $types = wpinv_get_discount_types();
 
             foreach ( $types as $name => $type ) {
-                echo '<option value="' . esc_attr( $name ) . '"';
+			echo '<option value="' . esc_attr( $name ) . '"';
 
-                if ( isset( $_GET['discount_type'] ) )
-                    selected( $name, sanitize_text_field( $_GET['discount_type'] ) );
+			if ( isset( $_GET['discount_type'] ) ) {
+				selected( $name, sanitize_text_field( $_GET['discount_type'] ) );
+                }
 
-                echo '>' . esc_html__( $type, 'invoicing' ) . '</option>';
+			echo '>' . esc_html__( $type, 'invoicing' ) . '</option>';
             }
         ?>
     </select>
@@ -145,21 +146,20 @@ function wpinv_request( $vars ) {
 
             $vars['post_status'] = array_keys( $post_statuses );
         }
-
-    } else if ( 'wpi_discount' == $typenow ) {
-        $meta_query = !empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();
+} elseif ( 'wpi_discount' == $typenow ) {
+        $meta_query = ! empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();
         // Filter vat rule type
         if ( isset( $_GET['discount_type'] ) && $_GET['discount_type'] !== '' ) {
             $meta_query[] = array(
-                    'key'   => '_wpi_discount_type',
-                    'value' => sanitize_key( urldecode( $_GET['discount_type'] ) ),
-                    'compare' => '='
-                );
-        }
+				'key'     => '_wpi_discount_type',
+				'value'   => sanitize_key( urldecode( $_GET['discount_type'] ) ),
+				'compare' => '=',
+			);
+			}
 
-        if ( !empty( $meta_query ) ) {
+        if ( ! empty( $meta_query ) ) {
             $vars['meta_query'] = $meta_query;
-        }
+			}
     }
 
     return $vars;
@@ -188,9 +188,9 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
         }
     }
 
-    if(!empty($post_parent)){
-        $page = get_page_by_path($post_parent);
-        if ($page) {
+    if ( ! empty( $post_parent ) ) {
+        $page = get_page_by_path( $post_parent );
+        if ( $page ) {
             $post_parent = $page->ID;
         } else {
             $post_parent = '';
@@ -226,9 +226,9 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
     if ( $trashed_page_found ) {
         $page_id   = $trashed_page_found;
         $page_data = array(
-            'ID'             => $page_id,
-            'post_status'    => 'publish',
-            'post_parent'    => $post_parent,
+            'ID'          => $page_id,
+            'post_status' => 'publish',
+            'post_parent' => $post_parent,
         );
         wp_update_post( $page_data );
     } else {
@@ -259,11 +259,11 @@ function wpinv_create_page( $slug, $option = '', $page_title = '', $page_content
  *
  * @return array
  */
-function wpinv_add_aui_screens($screen_ids){
+function wpinv_add_aui_screens( $screen_ids ) {
 
     // load on these pages if set
     $screen_ids = array_merge( $screen_ids, wpinv_get_screen_ids() );
 
     return $screen_ids;
 }
-add_filter('aui_screen_ids','wpinv_add_aui_screens');
+add_filter( 'aui_screen_ids', 'wpinv_add_aui_screens' );

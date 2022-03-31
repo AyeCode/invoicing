@@ -26,7 +26,7 @@ echo aui()->input(
         'extra_attributes' => array(
             'data-free' => $free,
             'data-pay'  => $label,
-        )
+        ),
     )
 );
 

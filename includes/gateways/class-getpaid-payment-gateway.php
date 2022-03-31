@@ -157,7 +157,6 @@ abstract class GetPaid_Payment_Gateway {
 
 		// Gateway settings.
 		add_filter( "wpinv_gateway_settings_{$this->id}", array( $this, 'admin_settings' ) );
-		
 
 		// Gateway checkout fiellds.
 		add_action( "wpinv_{$this->id}_cc_form", array( $this, 'payment_fields' ), 10, 2 );
@@ -211,8 +210,7 @@ abstract class GetPaid_Payment_Gateway {
 			if ( is_array( $tokens ) ) {
 				$this->tokens = $tokens;
 			}
-
-		}
+}
 
 		if ( ! is_bool( $sandbox ) ) {
 			return $this->tokens;
@@ -271,7 +269,7 @@ abstract class GetPaid_Payment_Gateway {
 			array(
 				'payment-confirm' => $this->id,
 				'invoice_key'     => $invoice->get_key(),
-				'utm_nooverride'  => 1
+				'utm_nooverride'  => 1,
 			),
 			wpinv_get_success_page_uri()
 		);
@@ -423,7 +421,7 @@ abstract class GetPaid_Payment_Gateway {
 
 	/**
 	 * Displays the payment fields, credit cards etc.
-	 * 
+	 *
 	 * @param int $invoice_id 0 or invoice id.
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
@@ -433,7 +431,7 @@ abstract class GetPaid_Payment_Gateway {
 
 	/**
 	 * Filters the gateway settings.
-	 * 
+	 *
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
@@ -442,7 +440,7 @@ abstract class GetPaid_Payment_Gateway {
 
 	/**
 	 * Retrieves the value of a gateway setting.
-	 * 
+	 *
 	 * @param string $option
 	 */
 	public function get_option( $option, $default = false ) {
@@ -465,7 +463,7 @@ abstract class GetPaid_Payment_Gateway {
 
 	/**
 	 * Returns the credit card form html.
-	 * 
+	 *
 	 * @param bool $save whether or not to display the save button.
 	 */
     public function get_cc_form( $save = false ) {
@@ -497,7 +495,7 @@ abstract class GetPaid_Payment_Gateway {
         }
 
         ?>
-            <div class="<?php echo esc_attr( $this->id );?>-cc-form getpaid-cc-form mt-1">
+            <div class="<?php echo esc_attr( $this->id ); ?>-cc-form getpaid-cc-form mt-1">
 
 
                 <div class="getpaid-cc-card-inner">
@@ -506,14 +504,14 @@ abstract class GetPaid_Payment_Gateway {
                         <div class="col-12">
 
 							<div class="form-group">
-								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>"><?php _e( 'Card number', 'invoicing' ); ?></label>
+								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php _e( 'Card number', 'invoicing' ); ?></label>
 								<div class="input-group input-group-sm">
 									<div class="input-group-prepend ">
 										<span class="input-group-text">
 											<i class="fa fa-credit-card"></i>
 										</span>
 									</div>
-									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ) ?>" id="<?php echo esc_attr( "$id_prefix-cc-number" ) ?>" class="form-control form-control-sm" autocomplete="cc-number">
+									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ); ?>" id="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>" class="form-control form-control-sm" autocomplete="cc-number">
 								</div>
 							</div>
 
@@ -525,14 +523,14 @@ abstract class GetPaid_Payment_Gateway {
                                 <div class="form-row">
 
                                     <div class="col">
-                                        <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id );?>[cc_expire_month]">
+                                        <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_month]">
                                             <option disabled selected="selected"><?php _e( 'MM', 'invoicing' ); ?></option>
 
                                             <?php
                                                 foreach ( $months as $key => $month ) {
-                                                    $key   = esc_attr( $key );
-                                                    $month = esc_html( $month );
-                                                    echo "<option value='$key'>$month</option>" . PHP_EOL;
+												$key   = esc_attr( $key );
+												$month = esc_html( $month );
+												echo "<option value='$key'>$month</option>" . PHP_EOL;
                                                 }
                                             ?>
 
@@ -540,14 +538,14 @@ abstract class GetPaid_Payment_Gateway {
                                     </div>
 
                                     <div class="col">
-                                        <select class="form-control form-control-sm" autocomplete="cc-exp-year" name="<?php echo esc_attr( $this->id );?>[cc_expire_year]">
+                                        <select class="form-control form-control-sm" autocomplete="cc-exp-year" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_year]">
                                             <option disabled selected="selected"><?php _e( 'YY', 'invoicing' ); ?></option>
 
                                             <?php
                                                 foreach ( $years as $key => $year ) {
-                                                    $key   = esc_attr( $key );
-                                                    $year  = esc_html( $year );
-                                                    echo "<option value='$key'>$year</option>" . PHP_EOL;
+												$key   = esc_attr( $key );
+												$year  = esc_html( $year );
+												echo "<option value='$key'>$year</option>" . PHP_EOL;
                                                 }
                                             ?>
 
@@ -562,13 +560,13 @@ abstract class GetPaid_Payment_Gateway {
                             <?php
                                 echo aui()->input(
                                     array(
-                                        'name'              => $this->id . '[cc_cvv2]',
-                                        'id'                => "$id_prefix-cc-cvv2",
-                                        'label'             => __( 'CCV', 'invoicing' ),
-										'label_type'        => 'vertical',
-										'class'             => 'form-control-sm',
-										'extra_attributes'  => array(
-											'autocomplete'  => "cc-csc",
+                                        'name'             => $this->id . '[cc_cvv2]',
+                                        'id'               => "$id_prefix-cc-cvv2",
+                                        'label'            => __( 'CCV', 'invoicing' ),
+										'label_type'       => 'vertical',
+										'class'            => 'form-control-sm',
+										'extra_attributes' => array(
+											'autocomplete' => 'cc-csc',
 										),
                                     )
                                 );
@@ -580,7 +578,7 @@ abstract class GetPaid_Payment_Gateway {
 					<?php
 
 						if ( $save ) {
-							echo $this->save_payment_method_checkbox();
+						echo $this->save_payment_method_checkbox();
 						}
 
 					?>
@@ -588,7 +586,7 @@ abstract class GetPaid_Payment_Gateway {
 
             </div>
 		<?php
-		
+
 		return ob_get_clean();
 
     }

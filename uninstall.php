@@ -66,5 +66,4 @@ if ( get_option( 'wpinv_remove_data_on_invoice_unistall' ) ) {
     foreach ( $tables as $table ) {
         $wpdb->query( "DROP TABLE IF EXISTS {$table}" );
     }
-
 }
