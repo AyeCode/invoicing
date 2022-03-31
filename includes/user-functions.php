@@ -255,16 +255,16 @@ function getpaid_display_address_edit_tab() {
                         } else {
 
 						echo aui()->input(
-						array(
-                            'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
-                            'id'          => 'wpinv-' . sanitize_html_class( $key ),
-                            'placeholder' => $label,
-                            'label'       => wp_kses_post( $label ),
-                            'label_type'  => 'vertical',
-                            'type'        => 'text',
-                            'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
-                            'class'       => 'getpaid-address-field',
-						)
+                            array(
+						'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
+						'id'          => 'wpinv-' . sanitize_html_class( $key ),
+						'placeholder' => $label,
+						'label'       => wp_kses_post( $label ),
+						'label_type'  => 'vertical',
+						'type'        => 'text',
+						'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
+						'class'       => 'getpaid-address-field',
+                            )
 						);
 
                         }

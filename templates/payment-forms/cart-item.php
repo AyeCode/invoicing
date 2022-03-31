@@ -167,9 +167,9 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 						}
 
 					printf(
-					'<small class="d-sm-none text-muted form-text getpaid-mobile-item-subtotal">%s</small>',
-					sprintf( __( 'Subtotal: %s', 'invoicing' ), wpinv_price( $item->get_sub_total(), $currency ) )
-				);
+                        '<small class="d-sm-none text-muted form-text getpaid-mobile-item-subtotal">%s</small>',
+                        sprintf( __( 'Subtotal: %s', 'invoicing' ), wpinv_price( $item->get_sub_total(), $currency ) )
+                    );
 					}
 
 					// Item quantity.

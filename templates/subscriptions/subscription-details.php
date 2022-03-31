@@ -130,11 +130,11 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 	<?php
 		if ( $subscription->can_cancel() ) {
 		printf(
-		'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
-		esc_url( $subscription->get_cancel_url() ),
-		esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
-		__( 'Cancel Subscription', 'invoicing' )
-	);
+            '<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
+            esc_url( $subscription->get_cancel_url() ),
+            esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
+            __( 'Cancel Subscription', 'invoicing' )
+        );
 		}
 
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
