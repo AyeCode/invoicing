@@ -14,32 +14,30 @@ class WPInv_Messages_Widget extends WP_Super_Duper {
      */
     public function __construct() {
 
-
         $options = array(
-            'textdomain'    => 'invoicing',
-            'block-icon'    => 'admin-site',
-            'block-category'=> 'widgets',
-            'block-keywords'=> "['invoicing','history']",
+            'textdomain'     => 'invoicing',
+            'block-icon'     => 'admin-site',
+            'block-category' => 'widgets',
+            'block-keywords' => "['invoicing','history']",
             'class_name'     => __CLASS__,
-            'base_id'       => 'wpinv_messages',
-            'name'          => __('GetPaid > Invoice Messages','invoicing'),
-            'widget_ops'    => array(
+            'base_id'        => 'wpinv_messages',
+            'name'           => __( 'GetPaid > Invoice Messages', 'invoicing' ),
+            'widget_ops'     => array(
                 'classname'   => 'wpinv-messages-class  wpi-g',
-                'description' => esc_html__('Displays invoice error and warning messages on checkout page.','invoicing'),
+                'description' => esc_html__( 'Displays invoice error and warning messages on checkout page.', 'invoicing' ),
             ),
-            'arguments'     => array(
-                'title'  => array(
-                    'title'       => __( 'Widget title', 'invoicing' ),
-                    'desc'        => __( 'Enter widget title.', 'invoicing' ),
-                    'type'        => 'text',
-                    'desc_tip'    => true,
-                    'default'     => '',
-                    'advanced'    => false
+            'arguments'      => array(
+                'title' => array(
+                    'title'    => __( 'Widget title', 'invoicing' ),
+                    'desc'     => __( 'Enter widget title.', 'invoicing' ),
+                    'type'     => 'text',
+                    'desc_tip' => true,
+                    'default'  => '',
+                    'advanced' => false,
                 ),
-            )
+            ),
 
         );
-
 
         parent::__construct( $options );
     }

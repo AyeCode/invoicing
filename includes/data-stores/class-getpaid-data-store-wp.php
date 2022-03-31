@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * GetPaid_Data_Store_WP class.
- * 
+ *
  * Datastores that extend this class use CPTs to store data.
  */
 class GetPaid_Data_Store_WP {

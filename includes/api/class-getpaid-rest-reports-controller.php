@@ -137,14 +137,16 @@ class GetPaid_REST_Reports_Controller extends GetPaid_REST_Controller {
 
 		// Wrap the data in a response object.
 		$response = rest_ensure_response( $data );
-		$response->add_links( array(
-			'self' => array(
-				'href' => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $report->slug ) ),
-			),
-			'collection' => array(
-				'href' => rest_url( sprintf( '%s/%s', $this->namespace, $this->rest_base ) ),
-			),
-		) );
+		$response->add_links(
+            array(
+				'self'       => array(
+					'href' => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $report->slug ) ),
+				),
+				'collection' => array(
+					'href' => rest_url( sprintf( '%s/%s', $this->namespace, $this->rest_base ) ),
+				),
+            )
+        );
 
 		return apply_filters( 'getpaid_rest_prepare_report', $response, $report, $request );
 	}
@@ -161,7 +163,7 @@ class GetPaid_REST_Reports_Controller extends GetPaid_REST_Controller {
 			'title'      => 'report',
 			'type'       => 'object',
 			'properties' => array(
-				'slug' => array(
+				'slug'        => array(
 					'description' => __( 'An alphanumeric identifier for the resource.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),

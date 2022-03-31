@@ -59,7 +59,7 @@ function wpinv_get_user_id( $invoice ) {
  */
 function wpinv_get_invoice_status( $invoice, $return_label = false ) {
     $invoice = new WPInv_Invoice( $invoice );
-    
+
     if ( $return_label ) {
         return $invoice->get_status_nicename();
     }
@@ -401,7 +401,7 @@ function wpinv_get_cart_details() {
 /**
  * @deprecated
  */
-function wpinv_update_payment_status( $invoice, $new_status = 'publish' ) {    
+function wpinv_update_payment_status( $invoice, $new_status = 'publish' ) {
     $invoice = new WPInv_Invoice( $invoice );
     return $invoice->update_status( $new_status );
 }
@@ -461,7 +461,7 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
     // Fetch the invoice.
     $invoice = new WPInv_Invoice( $invoice_id );
 
-    if ( 0 ==  $invoice->get_id() ) {
+    if ( 0 == $invoice->get_id() ) {
         return false;
     }
 
@@ -479,7 +479,7 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
 
 /**
  * @deprecated
- * 
+ *
  * @param string $gateway
  * @param WPInv_Invoice $invoice
  * @param string $gateway
@@ -487,23 +487,23 @@ function wpinv_set_payment_transaction_id( $invoice_id = 0, $transaction_id = ''
 function wpinv_send_to_gateway( $gateway, $invoice ) {
 
     $payment_data = array(
-        'invoice_id'        => $invoice->get_id(),
-        'items'             => $invoice->get_cart_details(),
-        'cart_discounts'    => array( $invoice->get_discount_code() ),
-        'fees'              => $invoice->get_total_fees(),
-        'subtotal'          => $invoice->get_subtotal(),
-        'discount'          => $invoice->get_total_discount(),
-        'tax'               => $invoice->get_total_tax(),
-        'price'             => $invoice->get_total(),
-        'invoice_key'       => $invoice->get_key(),
-        'user_email'        => $invoice->get_email(),
-        'date'              => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
-        'user_info'         => $invoice->get_user_info(),
-        'post_data'         => wp_kses_post( wp_unslash( $_POST ) ),
-        'cart_details'      => $invoice->get_cart_details(),
-        'gateway'           => $gateway,
-        'card_info'         => array(),
-        'gateway_nonce'     => wp_create_nonce('wpi-gateway'),
+        'invoice_id'     => $invoice->get_id(),
+        'items'          => $invoice->get_cart_details(),
+        'cart_discounts' => array( $invoice->get_discount_code() ),
+        'fees'           => $invoice->get_total_fees(),
+        'subtotal'       => $invoice->get_subtotal(),
+        'discount'       => $invoice->get_total_discount(),
+        'tax'            => $invoice->get_total_tax(),
+        'price'          => $invoice->get_total(),
+        'invoice_key'    => $invoice->get_key(),
+        'user_email'     => $invoice->get_email(),
+        'date'           => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+        'user_info'      => $invoice->get_user_info(),
+        'post_data'      => wp_kses_post( wp_unslash( $_POST ) ),
+        'cart_details'   => $invoice->get_cart_details(),
+        'gateway'        => $gateway,
+        'card_info'      => array(),
+        'gateway_nonce'  => wp_create_nonce( 'wpi-gateway' ),
     );
 
     do_action( 'wpinv_gateway_' . $gateway, $payment_data );
@@ -522,7 +522,7 @@ function wpinv_die_handler() {
 function wpinv_die( $message = '', $title = '', $status = 400 ) {
     add_filter( 'wp_die_ajax_handler', 'wpinv_die_handler', 10, 3 );
     add_filter( 'wp_die_handler', 'wpinv_die_handler', 10, 3 );
-    wp_die( $message, $title, array( 'response' => $status ));
+    wp_die( $message, $title, array( 'response' => $status ) );
 }
 
 /**

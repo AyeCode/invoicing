@@ -19,15 +19,15 @@ if ( ! empty( $required ) ) {
 $current_url = ! empty( $_GET['current_url'] ) ? esc_url_raw( urldecode( $_GET['current_url'] ) ) : get_permalink();
 echo aui()->input(
     array(
-        'name'       => esc_attr( $id ),
-        'id'         => esc_attr( $id ) . uniqid( '_' ),
-        'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
-        'required'   => ! empty( $required ),
-        'label'      => $label,
-        'label_type' => 'vertical',
-        'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'type'       => 'url',
-        'value'      => ! empty( $default_current_post ) ? $current_url : '',
-        'class'      => $label_class,
+        'name'        => esc_attr( $id ),
+        'id'          => esc_attr( $id ) . uniqid( '_' ),
+        'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
+        'required'    => ! empty( $required ),
+        'label'       => $label,
+        'label_type'  => 'vertical',
+        'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
+        'type'        => 'url',
+        'value'       => ! empty( $default_current_post ) ? $current_url : '',
+        'class'       => $label_class,
     )
 );

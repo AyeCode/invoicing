@@ -1,10 +1,10 @@
 <?php
 /**
  * GetPaid REST controller class.
- * 
+ *
  * Extends the WP_REST_Controller class to provide batch support for our REST
  * APIs and also to provide backwards support for our old namespaces.
- * 
+ *
  * @version 1.0.19
  */
 
@@ -59,7 +59,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 			array(
 				'getpaid/v1',
 				'invoicing/v1',
-				'wpi/v1'
+				'wpi/v1',
 			)
 		);
 
@@ -92,7 +92,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 	public function register_namespace_routes( /** @scrutinizer ignore-unused */ $namespace ) {
 
 		getpaid_doing_it_wrong(
-			__CLASS__ . '::' .__METHOD__,
+			__CLASS__ . '::' . __METHOD__,
 			/* translators: %s: register_namespace_routes() */
 			sprintf( __( "Method '%s' must be overridden." ), __METHOD__ ),
 			'1.0.19'
@@ -360,7 +360,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'object',
+						'type' => 'object',
 					),
 				),
 				'update' => array(
@@ -368,7 +368,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'object',
+						'type' => 'object',
 					),
 				),
 				'delete' => array(
@@ -376,7 +376,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'integer',
+						'type' => 'integer',
 					),
 				),
 			),
@@ -386,7 +386,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 
 	/**
 	 * Returns the value of schema['properties']
-	 * 
+	 *
 	 * i.e Schema fields.
 	 *
 	 * @since 1.0.19
@@ -546,8 +546,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 			if ( $key != 'meta_data' && is_array( $value ) ) {
 				$data[ $key ] = $this->limit_object_to_requested_fields( $value, $fields, $new_prefix );
 			}
-
-		}
+}
 
 		return $data;
 	}

@@ -19,17 +19,17 @@ function wpinv_payment_gateway_titles( $all_gateways ) {
     $options  = wpinv_get_options();
     $gateways = array();
     foreach ( $all_gateways as $key => $gateway ) {
-        if ( !empty( $options[$key . '_title'] ) ) {
-            $all_gateways[$key]['checkout_label'] = __( $options[$key . '_title'], 'invoicing' );
+        if ( ! empty( $options[ $key . '_title' ] ) ) {
+            $all_gateways[ $key ]['checkout_label'] = __( $options[ $key . '_title' ], 'invoicing' );
         }
 
-        $gateways[$key] = isset( $options[$key . '_ordering'] ) ? $options[$key . '_ordering'] : ( isset( $gateway['ordering'] ) ? $gateway['ordering'] : '' );
+        $gateways[ $key ] = isset( $options[ $key . '_ordering' ] ) ? $options[ $key . '_ordering' ] : ( isset( $gateway['ordering'] ) ? $gateway['ordering'] : '' );
     }
 
     asort( $gateways );
 
     foreach ( $gateways as $gateway => $key ) {
-        $gateways[$gateway] = $all_gateways[$gateway];
+        $gateways[ $gateway ] = $all_gateways[ $gateway ];
     }
 
     return $gateways;
@@ -51,8 +51,7 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
         if ( (int) wpinv_get_option( "{$gateway}_active", $gateway === 'manual' ) === 1 ) {
             $enabled[ $gateway ] = $data;
         }
-
-    }
+}
 
     if ( true === $sort ) {
         uasort( $enabled, 'wpinv_sort_gateway_order' );
@@ -61,14 +60,13 @@ function wpinv_get_enabled_payment_gateways( $sort = false ) {
         $default_gateway_id = wpinv_get_default_gateway();
         if ( isset( $enabled[ $default_gateway_id ] ) ) {
             $default_gateway = array(
-                $default_gateway_id => $enabled[ $default_gateway_id ]
+                $default_gateway_id => $enabled[ $default_gateway_id ],
             );
 
             unset( $enabled[ $default_gateway_id ] );
             $enabled = array_merge( $default_gateway, $enabled );
         }
-
-    }
+}
 
     return apply_filters( 'wpinv_enabled_payment_gateways', $enabled );
 }
@@ -84,7 +82,7 @@ function wpinv_sort_gateway_order( $a, $b ) {
  * @return bool
  */
 function wpinv_is_gateway_active( $gateway ) {
-    $is_active = (int) wpinv_get_option( "{$gateway}_active", $gateway === 'manual' ) === 1 ;
+    $is_active = (int) wpinv_get_option( "{$gateway}_active", $gateway === 'manual' ) === 1;
     return apply_filters( 'wpinv_is_gateway_active', $is_active, $gateway );
 }
 
@@ -128,7 +126,7 @@ function wpinv_get_gateway_admin_label( $gateway ) {
 function wpinv_get_gateway_description( $gateway ) {
 
     $options     = wpinv_get_options();
-    $description = ! empty( $options[$gateway . '_desc'] ) ? $options[$gateway . '_desc'] : '';
+    $description = ! empty( $options[ $gateway . '_desc' ] ) ? $options[ $gateway . '_desc' ] : '';
 
     return apply_filters( 'wpinv_gateway_description', $description, $gateway );
 }
@@ -152,7 +150,7 @@ function wpinv_settings_sections_gateways( $settings ) {
     $gateways = wpinv_get_payment_gateways();
     ksort( $gateways );
 
-    foreach  ( $gateways as $key => $gateway ) {
+    foreach ( $gateways as $key => $gateway ) {
         $settings[ $key ] = $gateway['admin_label'];
     }
 
@@ -166,12 +164,12 @@ add_filter( 'wpinv_settings_sections_gateways', 'wpinv_settings_sections_gateway
 function wpinv_settings_gateways( $settings ) {
 
     // Loop through each gateway.
-    foreach  ( wpinv_get_payment_gateways() as $key => $gateway ) {
+    foreach ( wpinv_get_payment_gateways() as $key => $gateway ) {
 
         $gateway_settings = array(
 
             // Header.
-            "{$key}_header" => array(
+            "{$key}_header"   => array(
 
                 'id'     => "{$key}_gateway_header",
                 'name'   => '<h3>' . wp_sprintf( __( '%s Settings', 'invoicing' ), $gateway['admin_label'] ) . '</h3>',
@@ -181,7 +179,7 @@ function wpinv_settings_gateways( $settings ) {
             ),
 
             // Activate/Deactivate a gateway.
-            "{$key}_active" => array(
+            "{$key}_active"   => array(
                 'id'   => $key . '_active',
                 'name' => __( 'Activate', 'invoicing' ),
                 'desc' => wp_sprintf( __( 'Enable %s', 'invoicing' ), $gateway['admin_label'] ),
@@ -190,7 +188,7 @@ function wpinv_settings_gateways( $settings ) {
             ),
 
             // Activate/Deactivate sandbox.
-            "{$key}_sandbox" => array(
+            "{$key}_sandbox"  => array(
                 'id'   => $key . '_sandbox',
                 'name' => __( 'Sandbox', 'invoicing' ),
                 'desc' => __( 'Enable sandbox to test payments', 'invoicing' ),
@@ -199,7 +197,7 @@ function wpinv_settings_gateways( $settings ) {
             ),
 
             // Checkout title.
-            "{$key}_title" => array(
+            "{$key}_title"    => array(
                 'id'   => $key . '_title',
                 'name' => __( 'Checkout Title', 'invoicing' ),
                 'std'  => isset( $gateway['checkout_label'] ) ? $gateway['checkout_label'] : '',
@@ -207,7 +205,7 @@ function wpinv_settings_gateways( $settings ) {
             ),
 
             // Checkout description.
-            "{$key}_desc" => array(
+            "{$key}_desc"     => array(
                 'id'   => $key . '_desc',
                 'name' => __( 'Checkout Description', 'invoicing' ),
                 'std'  => apply_filters( "getpaid_default_{$key}_checkout_description", '' ),
@@ -230,13 +228,13 @@ function wpinv_settings_gateways( $settings ) {
 
         // Maybe remove the sandbox.
         if ( ! getpaid_payment_gateway_supports( $key, 'sandbox' ) ) {
-            unset( $gateway_settings["{$key}_sandbox"] );
+            unset( $gateway_settings[ "{$key}_sandbox" ] );
         }
 
         $gateway_settings = apply_filters( 'wpinv_gateway_settings', $gateway_settings, $key, $gateway );
         $gateway_settings = apply_filters( 'wpinv_gateway_settings_' . $key, $gateway_settings, $gateway );
 
-        $settings[$key] = $gateway_settings;
+        $settings[ $key ] = $gateway_settings;
     }
 
     return $settings;
@@ -283,25 +281,24 @@ function wpinv_get_chosen_gateway( $invoice_id = 0 ) {
 	$chosen   = isset( $_REQUEST['payment-mode'] ) ? sanitize_text_field( $_REQUEST['payment-mode'] ) : $chosen;
 
 	if ( false !== $chosen ) {
-		$chosen = preg_replace('/[^a-zA-Z0-9-_]+/', '', $chosen );
+		$chosen = preg_replace( '/[^a-zA-Z0-9-_]+/', '', $chosen );
 	}
 
-	if ( ! empty ( $chosen ) ) {
+	if ( ! empty( $chosen ) ) {
 		$enabled_gateway = urldecode( $chosen );
-	} else if (  !empty( $invoice ) && (float)$invoice->get_subtotal() <= 0 ) {
+	} elseif ( ! empty( $invoice ) && (float)$invoice->get_subtotal() <= 0 ) {
 		$enabled_gateway = 'manual';
 	} else {
 		$enabled_gateway = wpinv_get_default_gateway();
 	}
 
-    if ( !wpinv_is_gateway_active( $enabled_gateway ) && !empty( $gateways ) ) {
-        if(wpinv_is_gateway_active( wpinv_get_default_gateway()) ){
+    if ( ! wpinv_is_gateway_active( $enabled_gateway ) && ! empty( $gateways ) ) {
+        if ( wpinv_is_gateway_active( wpinv_get_default_gateway() ) ) {
             $enabled_gateway = wpinv_get_default_gateway();
-        }else{
+        } else {
             $enabled_gateway = $gateways[0];
         }
-
-    }
+}
 
 	return apply_filters( 'wpinv_chosen_gateway', $enabled_gateway );
 }
@@ -318,13 +315,14 @@ function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publis
 		'nopaging'    => true,
 		'post_type'   => 'wpi_invoice',
 		'post_status' => $status,
-		'fields'      => 'ids'
+		'fields'      => 'ids',
 	);
 
 	$payments = new WP_Query( $args );
 
-	if( $payments )
+	if ( $payments ) {
 		$ret = $payments->post_count;
+    }
 	return $ret;
 }
 
@@ -335,7 +333,7 @@ function wpinv_ipn_url_callback( $args ) {
     $sanitize_id = esc_attr( wpinv_sanitize_key( $args['id'] ) );
 
     echo '<input class="regular-text" type="text" ' . ( $args['readonly'] ? ' readonly' : '' ) . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
-    echo '<label for="wpinv_settings[' . $sanitize_id . ']">'  . wp_kses_post( $args['desc'] ) . '</label>';
+    echo '<label for="wpinv_settings[' . $sanitize_id . ']">' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -364,12 +362,12 @@ function wpinv_get_ipn_url( $gateway = false, $args = array() ) {
     $args = wp_parse_args(
         array(
             'wpi-listener' => 'IPN',
-            'wpi-gateway'  => $gateway
+            'wpi-gateway'  => $gateway,
         ),
         $args
     );
 
-    return apply_filters( 'wpinv_ipn_url', add_query_arg( $args,  home_url( 'index.php' ) ), $gateway, $args );
+    return apply_filters( 'wpinv_ipn_url', add_query_arg( $args, home_url( 'index.php' ) ), $gateway, $args );
 
 }
 
@@ -423,12 +421,10 @@ function wpinv_payment_gateways_on_cart( $gateways, $form ) {
         foreach ( array_keys( $gateways ) as $gateway ) {
 
             if ( ! wpinv_gateway_support_subscription( $gateway ) ) {
-                unset( $gateways[$gateway] );
+                unset( $gateways[ $gateway ] );
             }
-
-        }
-
-    }
+}
+}
 
     return $gateways;
 }

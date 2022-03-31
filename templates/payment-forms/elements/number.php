@@ -18,14 +18,14 @@ if ( ! empty( $required ) ) {
 
 echo aui()->input(
     array(
-        'name'       => esc_attr( $id ),
-        'id'         => esc_attr( $id ) . uniqid( '_' ),
-        'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
-        'required'   => ! empty( $required ),
-        'label'      => $label,
-        'label_type' => 'vertical',
-        'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'type'       => 'number',
-        'class'      => $label_class,
+        'name'        => esc_attr( $id ),
+        'id'          => esc_attr( $id ) . uniqid( '_' ),
+        'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
+        'required'    => ! empty( $required ),
+        'label'       => $label,
+        'label_type'  => 'vertical',
+        'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
+        'type'        => 'number',
+        'class'       => $label_class,
     )
 );

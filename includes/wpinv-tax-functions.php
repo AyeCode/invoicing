@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns an array of eu states.
- * 
+ *
  * @return array
  */
 function getpaid_get_eu_states() {
@@ -17,7 +17,7 @@ function getpaid_get_eu_states() {
 
 /**
  * Checks if a given country is an EU state.
- * 
+ *
  * @return bool
  */
 function getpaid_is_eu_state( $country ) {
@@ -26,7 +26,7 @@ function getpaid_is_eu_state( $country ) {
 
 /**
  * Returns an array of gst states.
- * 
+ *
  * @return array
  */
 function getpaid_get_gst_states() {
@@ -35,7 +35,7 @@ function getpaid_get_gst_states() {
 
 /**
  * Checks if a given country is GST country.
- * 
+ *
  * @return bool
  */
 function getpaid_is_gst_country( $country ) {
@@ -74,7 +74,7 @@ function wpinv_is_country_taxable( $country ) {
     $is_eu     = getpaid_is_eu_state( $country );
     $is_exempt = ! $is_eu && wpinv_is_base_country( $country ) && wpinv_same_country_exempt_vat();
 
-    return (bool) apply_filters( 'wpinv_is_country_taxable', ! $is_exempt, $country ); 
+    return (bool) apply_filters( 'wpinv_is_country_taxable', ! $is_exempt, $country );
 
 }
 
@@ -208,8 +208,7 @@ function getpaid_filter_item_tax_rates( $item, $rates ) {
         if ( $tax_class == '_exempt' ) {
             $rates[ $i ]['rate'] = 0;
         }
-
-    }
+}
 
     return apply_filters( 'getpaid_filter_item_tax_rates', $rates, $item );
 }
@@ -262,7 +261,7 @@ function getpaid_prepare_item_tax( $item, $tax_name, $tax_amount, $recurring_tax
  * @return string
  */
 function wpinv_sanitize_vat_number( $vat_number ) {
-    return str_replace( array(' ', '.', '-', '_', ',' ), '', strtoupper( trim( $vat_number ) ) );
+    return str_replace( array( ' ', '.', '-', '_', ',' ), '', strtoupper( trim( $vat_number ) ) );
 }
 
 /**
@@ -368,7 +367,7 @@ function wpinv_get_sales_tax_for_year( $year = null ) {
             'post_status'    => array( 'publish' ),
             'posts_per_page' => -1,
             'year'           => $year,
-            'fields'         => 'ids'
+            'fields'         => 'ids',
         );
 
         $payments    = get_posts( $args );
@@ -378,8 +377,7 @@ function wpinv_get_sales_tax_for_year( $year = null ) {
             $sql = "SELECT SUM( meta_value ) FROM $wpdb->postmeta WHERE meta_key = '_wpinv_tax' AND post_id IN( $payment_ids )";
             $tax = $wpdb->get_var( $sql );
         }
-
-    }
+}
 
     return apply_filters( 'wpinv_get_sales_tax_for_year', $tax, $year );
 }
@@ -402,8 +400,9 @@ function wpinv_display_tax_rate() {
 }
 
 function wpinv_cart_needs_tax_address_fields() {
-    if( !wpinv_is_cart_taxed() )
+    if ( ! wpinv_is_cart_taxed() ) {
         return false;
+    }
 
     return ! did_action( 'wpinv_after_cc_fields', 'wpinv_default_cc_address_fields' );
 }
@@ -417,10 +416,10 @@ function wpinv_currency_decimal_filter( $decimals = 2 ) {
     $currency = wpinv_get_currency();
 
     switch ( $currency ) {
-        case 'RIAL' :
-        case 'JPY' :
-        case 'TWD' :
-        case 'HUF' :
+        case 'RIAL':
+        case 'JPY':
+        case 'TWD':
+        case 'HUF':
             $decimals = 0;
             break;
     }
@@ -430,18 +429,18 @@ function wpinv_currency_decimal_filter( $decimals = 2 ) {
 
 function wpinv_tax_amount() {
     $output = 0.00;
-    
+
     return apply_filters( 'wpinv_tax_amount', $output );
 }
 
 /**
  * Filters the VAT rules to ensure that each item has a VAT rule.
- * 
+ *
  * @param string|bool|null $vat_rule
  */
 function getpaid_filter_vat_rule( $vat_rule ) {
 
-    if ( empty( $vat_rule ) ) {        
+    if ( empty( $vat_rule ) ) {
         return 'digital';
     }
 
@@ -451,7 +450,7 @@ add_filter( 'wpinv_get_item_vat_rule', 'getpaid_filter_vat_rule' );
 
 /**
  * Filters the VAT class to ensure that each item has a VAT class.
- * 
+ *
  * @param string|bool|null $vat_rule
  */
 function getpaid_filter_vat_class( $vat_class ) {
@@ -461,7 +460,7 @@ add_filter( 'wpinv_get_item_vat_class', 'getpaid_filter_vat_class' );
 
 /**
  * Returns a list of all tax classes.
- * 
+ *
  * @return array
  */
 function getpaid_get_tax_classes() {
@@ -479,7 +478,7 @@ function getpaid_get_tax_classes() {
 
 /**
  * Returns a list of all tax rules.
- * 
+ *
  * @return array
  */
 function getpaid_get_tax_rules() {
@@ -496,7 +495,7 @@ function getpaid_get_tax_rules() {
 
 /**
  * Returns the label of a tax class.
- * 
+ *
  * @param string $tax_class
  * @return string
  */
@@ -514,7 +513,7 @@ function getpaid_get_tax_class_label( $tax_class ) {
 
 /**
  * Returns the label of a tax rule.
- * 
+ *
  * @param string $tax_rule
  * @return string
  */

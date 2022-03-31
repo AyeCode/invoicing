@@ -35,7 +35,7 @@ class GetPaid_Reports_Report {
 				'class' => 'GetPaid_Reports_Report_Gateways',
 			),
 
-			'discounts'  => array(
+			'discounts' => array(
 				'label' => __( 'Discount Codes', 'invoicing' ),
 				'class' => 'GetPaid_Reports_Report_Discounts',
 			),
@@ -96,12 +96,12 @@ class GetPaid_Reports_Report {
 		?>
 
 			<form method="get" class="getpaid-filter-earnings float-right">
-				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : 'wpinv-reports' );  ?>
-				<?php getpaid_hidden_field( 'tab', 'reports' );  ?>
+				<?php getpaid_hidden_field( 'page', isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : 'wpinv-reports' ); ?>
+				<?php getpaid_hidden_field( 'tab', 'reports' ); ?>
 				<select name='date_range'>
-					<?php foreach( $this->get_periods() as $key => $label ) :?>
+					<?php foreach ( $this->get_periods() as $key => $label ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $range ); ?>><?php echo esc_html( $label ); ?></option>
-					<?php endforeach;?>
+					<?php endforeach; ?>
 				</select>
 				<span class="getpaid-date-range-picker <?php echo 'custom' == $range ? '' : 'd-none'; ?>">
 					<input type="text" name="from" class="getpaid-from align-middle" />
@@ -159,16 +159,16 @@ class GetPaid_Reports_Report {
 
 				<div class="col-12 col-md-4">
 					<div class="row getpaid-report-cards">
-						<?php foreach( $this->get_cards() as $key => $card ) : ?>
+						<?php foreach ( $this->get_cards() as $key => $card ) : ?>
 							<div class="col-12 mb-4">
 
-								<!-- <?php echo esc_html(  $card['label']  ); ?> Card -->
+								<!-- <?php echo esc_html( $card['label'] ); ?> Card -->
 								<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
 
 									<div class="card-body">
 
 										<p class="getpaid-current text-uppercase small mb-2">
-											<strong><?php echo esc_html( $card['label']  ); ?></strong>
+											<strong><?php echo esc_html( $card['label'] ); ?></strong>
 											<span title="<?php echo esc_attr( $card['description'] ); ?>" class="wpi-help-tip dashicons dashicons-editor-help text-muted" style="margin-top: -2px;"></span>
 										</p>
 										<h5 class="font-weight-bold mb-0">
@@ -309,15 +309,15 @@ class GetPaid_Reports_Report {
 	public function get_cards() {
 
 		$cards = array(
-			'total_sales' => array(
+			'total_sales'         => array(
 				'description' => __( 'Gross sales in the period.', 'invoicing' ),
 				'label'       => __( 'Gross Revenue', 'invoicing' ),
 			),
-			'net_sales' => array(
+			'net_sales'           => array(
 				'description' => __( 'Net sales in the period.', 'invoicing' ),
 				'label'       => __( 'Net Revenue', 'invoicing' ),
 			),
-			'average_sales' => array(
+			'average_sales'       => array(
 				'description' => __( 'Average net daily/monthly sales.', 'invoicing' ),
 				'label'       => __( 'Avg. Net Sales', 'invoicing' ),
 			),
@@ -325,35 +325,35 @@ class GetPaid_Reports_Report {
 				'description' => __( 'Average gross daily/monthly sales.', 'invoicing' ),
 				'label'       => __( 'Avg. Gross Sales', 'invoicing' ),
 			),
-			'total_invoices'  => array(
+			'total_invoices'      => array(
 				'description' => __( 'Number of paid invoices.', 'invoicing' ),
 				'label'       => __( 'Paid Invoices', 'invoicing' ),
 			),
-			'total_items' => array(
+			'total_items'         => array(
 				'description' => __( 'Number of items purchased.', 'invoicing' ),
 				'label'       => __( 'Purchased Items', 'invoicing' ),
 			),
-			'refunded_items' => array(
+			'refunded_items'      => array(
 				'description' => __( 'Number of items refunded.', 'invoicing' ),
 				'label'       => __( 'Refunded Items', 'invoicing' ),
 			),
-			'total_tax' => array(
+			'total_tax'           => array(
 				'description' => __( 'Total charged for taxes.', 'invoicing' ),
 				'label'       => __( 'Tax', 'invoicing' ),
 			),
-			'total_refunded_tax' => array(
+			'total_refunded_tax'  => array(
 				'description' => __( 'Total refunded for taxes.', 'invoicing' ),
 				'label'       => __( 'Refunded Tax', 'invoicing' ),
 			),
-			'total_fees' => array(
+			'total_fees'          => array(
 				'description' => __( 'Total fees charged.', 'invoicing' ),
 				'label'       => __( 'Fees', 'invoicing' ),
 			),
-			'total_refunds' => array(
+			'total_refunds'       => array(
 				'description' => __( 'Total of refunded invoices.', 'invoicing' ),
 				'label'       => __( 'Refunded', 'invoicing' ),
 			),
-			'total_discount'  => array(
+			'total_discount'      => array(
 				'description' => __( 'Total of discounts used.', 'invoicing' ),
 				'label'       => __( 'Discounted', 'invoicing' ),
 			),
@@ -362,6 +362,6 @@ class GetPaid_Reports_Report {
 		return apply_filters( 'wpinv_report_cards', $cards );
 	}
 
-	
+
 
 }

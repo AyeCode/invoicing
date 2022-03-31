@@ -18,9 +18,9 @@ defined( 'ABSPATH' ) || exit;
 
 <tr class="wpinv_cart_item item-fee">
 
-    <?php foreach ( array_keys( $columns ) as $column ): ?>
+    <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right' ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
+        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
             
             <?php
 
@@ -30,43 +30,42 @@ defined( 'ABSPATH' ) || exit;
                 // Item name.
                 if ( 'name' == $column ) {
 
-                    // Display the name.
-                    echo '<div class="wpinv_email_cart_item_title">' . esc_html( $fee['name'] ) . '</div>';
+				// Display the name.
+				echo '<div class="wpinv_email_cart_item_title">' . esc_html( $fee['name'] ) . '</div>';
 
-                    // And an optional description.
-                    $description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );
-                    echo "<p class='small'>$description</p>";
+				// And an optional description.
+				$description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );
+				echo "<p class='small'>$description</p>";
 
                 }
 
                 // Item price.
                 if ( 'price' == $column ) {
 
-                    // Display the item price (or recurring price if this is a renewal invoice)
-                    if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
-                        echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
+				// Display the item price (or recurring price if this is a renewal invoice)
+				if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
+					echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
                     } else {
-                        echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
+					echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
                     }
-
-                }
+}
 
                 // Item quantity.
                 if ( 'quantity' == $column ) {
-                    echo "&mdash;";
+				echo '&mdash;';
                 }
 
                 // Item tax.
                 if ( 'tax_rate' == $column ) {
-                    echo "&mdash;";
+				echo '&mdash;';
                 }
 
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
-                    if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
-                        echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
+				if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
+					echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
                     } else {
-                        echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
+					echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
                     }
                 }
 

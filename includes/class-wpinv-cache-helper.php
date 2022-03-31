@@ -65,7 +65,7 @@ class WPInv_Cache_Helper {
         }
 
         if ( is_array( $page_uris ) ) {
-            foreach( $page_uris as $uri ) {
+            foreach ( $page_uris as $uri ) {
                 if ( strstr( $_SERVER['REQUEST_URI'], $uri ) ) {
                     self::nocache();
                     break;
@@ -80,17 +80,17 @@ class WPInv_Cache_Helper {
      */
     private static function nocache() {
         if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-            define( "DONOTCACHEPAGE", true );
+            define( 'DONOTCACHEPAGE', true );
         }
         if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
-            define( "DONOTCACHEOBJECT", true );
+            define( 'DONOTCACHEOBJECT', true );
         }
         if ( ! defined( 'DONOTCACHEDB' ) ) {
-            define( "DONOTCACHEDB", true );
+            define( 'DONOTCACHEDB', true );
         }
         nocache_headers();
     }
-    
+
     /**
      * notices function.
      */

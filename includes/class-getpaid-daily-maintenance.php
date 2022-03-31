@@ -15,7 +15,7 @@ class GetPaid_Daily_Maintenance {
 	/**
 	 * Class constructor.
 	 */
-	public function __construct(){
+	public function __construct() {
 
 		// Clear deprecated events.
 		add_action( 'wp', array( $this, 'maybe_clear_deprecated_events' ) );
@@ -80,10 +80,10 @@ class GetPaid_Daily_Maintenance {
 			'status'             => 'trialling active',
 			'date_expires_query' => array(
 				array(
-					'year'          => date( 'Y', current_time( 'timestamp' ) ),
-					'month'         => date( 'n', current_time( 'timestamp' ) ),
-					'day'           => date( 'j', current_time( 'timestamp' ) ),
-					'compare'       => '=',
+					'year'    => date( 'Y', current_time( 'timestamp' ) ),
+					'month'   => date( 'n', current_time( 'timestamp' ) ),
+					'day'     => date( 'j', current_time( 'timestamp' ) ),
+					'compare' => '=',
 				),
 			),
 		);
@@ -98,8 +98,7 @@ class GetPaid_Daily_Maintenance {
 			} else {
 				do_action( 'getpaid_should_renew_subscription', $subscription );
 			}
-
-		}
+}
 
 	}
 

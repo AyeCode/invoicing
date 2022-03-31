@@ -32,33 +32,33 @@ class GetPaid_REST_Report_Top_Earners_Controller extends GetPaid_REST_Report_Top
 
 		$this->report_data = GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'              => array(
-					'quantity'      => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_qty',
+				'data'         => array(
+					'quantity'  => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_qty',
 					),
-					'item_id'             => array(
-						'type'            => 'invoice_item',
-						'function'        => '',
-						'name'            => 'invoice_item_id',
+					'item_id'   => array(
+						'type'     => 'invoice_item',
+						'function' => '',
+						'name'     => 'invoice_item_id',
 					),
-					'item_name'           => array(
-						'type'            => 'invoice_item',
-						'function'        => '',
-						'name'            => 'invoice_item_name',
+					'item_name' => array(
+						'type'     => 'invoice_item',
+						'function' => '',
+						'name'     => 'invoice_item_name',
 					),
-					'price'               => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_price',
+					'price'     => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_price',
 					),
 				),
-				'group_by'       => 'invoice_item_id',
-				'order_by'       => 'invoice_item_price DESC',
-				'query_type'     => 'get_results',
-				'limit'          => 10,
-				'filter_range'   => $this->report_range,
+				'group_by'     => 'invoice_item_id',
+				'order_by'     => 'invoice_item_price DESC',
+				'query_type'   => 'get_results',
+				'limit'        => 10,
+				'filter_range' => $this->report_range,
 			)
 		);
 

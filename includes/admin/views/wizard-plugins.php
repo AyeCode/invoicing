@@ -24,10 +24,15 @@ defined( 'ABSPATH' ) || exit;
 				<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap text-left">
 					<span class="mr-auto"><?php echo esc_html( $plugin['name'] ); ?></span>
 					<div class="custom-control custom-switch getpaid-install-plugin-siwtch-div mr-n2">
-						<input type="checkbox" name="plugins[<?php echo esc_attr( $plugin['slug'] ); ?>]" value="<?php echo esc_attr( $plugin['file'] ); ?>" class="custom-control-input"  <?php if( is_plugin_active( $plugin['slug'] ) ){echo "checked";} ?>>
+						<input type="checkbox" name="plugins[<?php echo esc_attr( $plugin['slug'] ); ?>]" value="<?php echo esc_attr( $plugin['file'] ); ?>" class="custom-control-input"  
+                                                                        <?php
+                        if ( is_plugin_active( $plugin['slug'] ) ) {
+																								echo 'checked';}
+?>
+>
 						<label class="custom-control-label" for="ac-setting-updates"></label>
 					</div>
-					<small class="w-100"><?php echo esc_attr( $plugin['desc'] );?></small>
+					<small class="w-100"><?php echo esc_attr( $plugin['desc'] ); ?></small>
 				</li>
 				<?php endforeach; ?>
 			</ul>

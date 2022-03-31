@@ -37,16 +37,16 @@ if ( wpinv_require_login_to_checkout() && ! get_current_user_id() ) {
 do_action( 'getpaid_before_payment_form', $form );
 ?>
 
-<form class='getpaid-payment-form getpaid-payment-form-<?php echo absint( $form->get_id() ); ?> bsui position-relative' method='POST' data-key='<?php echo uniqid('gpf'); ?>' data-currency='<?php echo esc_attr( empty( $form->invoice ) ? wpinv_get_currency() : $form->invoice->get_currency() ); ?>' novalidate>
+<form class='getpaid-payment-form getpaid-payment-form-<?php echo absint( $form->get_id() ); ?> bsui position-relative' method='POST' data-key='<?php echo uniqid( 'gpf' ); ?>' data-currency='<?php echo esc_attr( empty( $form->invoice ) ? wpinv_get_currency() : $form->invoice->get_currency() ); ?>' novalidate>
 
     <?php
-    
+
         // Fires when printing the top of a payment form.
         do_action( 'getpaid_payment_form_top', $form );
 
         // And the optional invoice id.
         if ( ! empty( $form->invoice ) ) {
-            echo getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
+		echo getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
         }
 
         // We also want to include the form id.
@@ -66,15 +66,14 @@ do_action( 'getpaid_before_payment_form', $form );
 
                     foreach ( $form->get_elements() as $element ) {
 
-                        if ( isset( $element['type'] ) ) {
-                            $grid_class = esc_attr( getpaid_get_form_element_grid_class( $element ) );
-                            echo "<div class='$grid_class'>";
-                            do_action( 'getpaid_payment_form_element', $element, $form );
-                            do_action( "getpaid_payment_form_element_{$element['type']}_template", $element, $form );
-                            echo "</div>";
+					if ( isset( $element['type'] ) ) {
+						$grid_class = esc_attr( getpaid_get_form_element_grid_class( $element ) );
+						echo "<div class='$grid_class'>";
+						do_action( 'getpaid_payment_form_element', $element, $form );
+						do_action( "getpaid_payment_form_element_{$element['type']}_template", $element, $form );
+						echo '</div>';
                         }
-
-                    }
+}
 
                 ?>
             </div>
@@ -103,7 +102,7 @@ do_action( 'getpaid_before_payment_form', $form );
 
     <div class="loading_div overlay overlay-black position-absolute row m-0 rounded overflow-hidden" style="height: 100%;width: 100%;top: 0px;z-index: 2;display:none;">
         <div class="spinner-border mx-auto align-self-center text-white" role="status">
-            <span class="sr-only"><?php _e( 'Loading...', 'invoicing' );?></span>
+            <span class="sr-only"><?php _e( 'Loading...', 'invoicing' ); ?></span>
         </div>
     </div>
 

@@ -20,7 +20,7 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 	 * @var string
 	 */
 	protected $post_type = 'wpi_item';
-	
+
 	/**
 	 * The base of this controller's route.
 	 *
@@ -64,8 +64,8 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 	 * Handles rest requests for item types.
 	 *
 	 * @since 1.0.13
-	 * 
-	 * 
+	 *
+	 *
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_item_types() {
@@ -82,21 +82,19 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 	public function get_collection_params() {
 
 		$params = array_merge(
-
 			parent::get_collection_params(),
-
         	array(
 
 				// Item types
-				'type'                  => array(
+				'type' => array(
 					'description'       => __( 'Type of items to fetch.', 'invoicing' ),
 					'type'              => array( 'array', 'string' ),
 					'default'           => 'any',
 					'validate_callback' => 'rest_validate_request_arg',
 					'sanitize_callback' => 'wpinv_parse_list',
 					'items'             => array(
-						'enum'          => array_merge( array( 'any' ), wpinv_item_types() ),
-						'type'          => 'string',
+						'enum' => array_merge( array( 'any' ), wpinv_item_types() ),
+						'type' => 'string',
 					),
 				),
 
@@ -164,21 +162,19 @@ class WPInv_REST_Items_Controller extends GetPaid_REST_Posts_Controller {
 			return false;
 		}
 
-		foreach( wpinv_parse_list( 'initial_price the_initial_price recurring_price the_recurring_price recurring_period recurring_interval recurring_limit is_free_trial trial_period trial_interval first_renewal_date' ) as $key ) {
+		foreach ( wpinv_parse_list( 'initial_price the_initial_price recurring_price the_recurring_price recurring_period recurring_interval recurring_limit is_free_trial trial_period trial_interval first_renewal_date' ) as $key ) {
 
 			if ( $key == $field_key && ! $item->is_recurring() ) {
 				return false;
 			}
+}
 
-		}
-
-		foreach( wpinv_parse_list( 'trial_period trial_interval' ) as $key ) {
+		foreach ( wpinv_parse_list( 'trial_period trial_interval' ) as $key ) {
 
 			if ( $key == $field_key && ! $item->has_free_trial() ) {
 				return false;
 			}
-
-		}
+}
 
 		return parent::object_supports_field( $item, $field_key );
 	}

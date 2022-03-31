@@ -54,18 +54,21 @@ function wpinv_get_item( $item = 0 ) {
 
 function wpinv_get_all_items( $args = array() ) {
 
-    $args = wp_parse_args( $args, array(
-        'status'         => array( 'publish' ),
-        'limit'          => get_option( 'posts_per_page' ),
-        'page'           => 1,
-        'exclude'        => array(),
-        'orderby'        => 'date',
-        'order'          => 'DESC',
-        'type'           => wpinv_item_types(),
-        'meta_query'     => array(),
-        'return'         => 'objects',
-        'paginate'       => false,
-    ) );
+    $args = wp_parse_args(
+        $args,
+        array(
+			'status'     => array( 'publish' ),
+			'limit'      => get_option( 'posts_per_page' ),
+			'page'       => 1,
+			'exclude'    => array(),
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+			'type'       => wpinv_item_types(),
+			'meta_query' => array(),
+			'return'     => 'objects',
+			'paginate'   => false,
+        )
+    );
 
     $wp_query_args = array(
         'post_type'      => 'wpi_item',
@@ -82,7 +85,7 @@ function wpinv_get_all_items( $args = array() ) {
         $wp_query_args['post__not_in'] = array_map( 'absint', $args['exclude'] );
     }
 
-    if ( ! $args['paginate' ] ) {
+    if ( ! $args['paginate'] ) {
         $wp_query_args['no_found_rows'] = true;
     }
 
@@ -99,7 +102,7 @@ function wpinv_get_all_items( $args = array() ) {
         );
     }
 
-    $wp_query_args = apply_filters('wpinv_get_items_args', $wp_query_args, $args);
+    $wp_query_args = apply_filters( 'wpinv_get_items_args', $wp_query_args, $args );
 
     // Get results.
     $items = new WP_Query( $wp_query_args );
@@ -112,9 +115,9 @@ function wpinv_get_all_items( $args = array() ) {
         $return = $items->posts;
     }
 
-    if ( $args['paginate' ] ) {
+    if ( $args['paginate'] ) {
         return (object) array(
-            'items'      => $return,
+            'items'         => $return,
             'total'         => $items->found_posts,
             'max_num_pages' => $items->max_num_pages,
         );
@@ -125,7 +128,7 @@ function wpinv_get_all_items( $args = array() ) {
 }
 
 function wpinv_is_free_item( $item_id = 0 ) {
-    if( empty( $item_id ) ) {
+    if ( empty( $item_id ) ) {
         return false;
     }
 
@@ -149,7 +152,7 @@ function wpinv_item_is_editable( $item = 0 ) {
 }
 
 function wpinv_get_item_price( $item_id = 0 ) {
-    if( empty( $item_id ) ) {
+    if ( empty( $item_id ) ) {
         return false;
     }
 
@@ -169,7 +172,7 @@ function wpinv_is_recurring_item( $item = 0 ) {
 }
 
 function wpinv_item_price( $item_id = 0 ) {
-    if( empty( $item_id ) ) {
+    if ( empty( $item_id ) ) {
         return false;
     }
 
@@ -192,7 +195,7 @@ function wpinv_get_item_final_price( $item_id = 0, $amount_override = null ) {
 }
 
 function wpinv_item_custom_singular_name( $item_id ) {
-    if( empty( $item_id ) ) {
+    if ( empty( $item_id ) ) {
         return false;
     }
 
@@ -203,20 +206,20 @@ function wpinv_item_custom_singular_name( $item_id ) {
 
 function wpinv_get_item_types() {
     $item_types = array(
-            'custom'    => __( 'Standard', 'invoicing' ),
-            'fee'       => __( 'Fee', 'invoicing' ),
-        );
+		'custom' => __( 'Standard', 'invoicing' ),
+		'fee'    => __( 'Fee', 'invoicing' ),
+	);
     return apply_filters( 'wpinv_get_item_types', $item_types );
 }
 
 function wpinv_item_types() {
     $item_types = wpinv_get_item_types();
 
-    return ( !empty( $item_types ) ? array_keys( $item_types ) : array() );
+    return ( ! empty( $item_types ) ? array_keys( $item_types ) : array() );
 }
 
 function wpinv_get_item_type( $item_id ) {
-    if( empty( $item_id ) ) {
+    if ( empty( $item_id ) ) {
         return false;
     }
 
@@ -234,7 +237,7 @@ function wpinv_item_type( $item_id ) {
         $item_type = '-';
     }
 
-    $item_type = isset( $item_types[$item_type] ) ? $item_types[$item_type] : __( $item_type, 'invoicing' );
+    $item_type = isset( $item_types[ $item_type ] ) ? $item_types[ $item_type ] : __( $item_type, 'invoicing' );
 
     return apply_filters( 'wpinv_item_type', $item_type, $item_id );
 }
@@ -245,9 +248,18 @@ function wpinv_get_random_item( $post_ids = true ) {
 
 function wpinv_get_random_items( $num = 3, $post_ids = true ) {
     if ( $post_ids ) {
-        $args = array( 'post_type' => 'wpi_item', 'orderby' => 'rand', 'post_count' => $num, 'fields' => 'ids' );
+        $args = array(
+			'post_type'  => 'wpi_item',
+			'orderby'    => 'rand',
+			'post_count' => $num,
+			'fields'     => 'ids',
+		);
     } else {
-        $args = array( 'post_type' => 'wpi_item', 'orderby' => 'rand', 'post_count' => $num );
+        $args = array(
+			'post_type'  => 'wpi_item',
+			'orderby'    => 'rand',
+			'post_count' => $num,
+		);
     }
 
     $args  = apply_filters( 'wpinv_get_random_items', $args );
@@ -288,10 +300,10 @@ function wpinv_remove_item( $item = 0, $force_delete = false ) {
  *
  *    Here are all the args (with defaults) that you can set/modify.
  *    array(
- *		  'ID'                   => 0,           - If specified, the item with that ID will be updated.
+ *        'ID'                   => 0,           - If specified, the item with that ID will be updated.
  *        'parent_id'            => 0,           - Int. Parent item ID.
- *		  'status'               => 'draft',     - String. Item status - either draft, pending or publish.
- *		  'date_created'         => null,        - String. strtotime() compatible string.
+ *        'status'               => 'draft',     - String. Item status - either draft, pending or publish.
+ *        'date_created'         => null,        - String. strtotime() compatible string.
  *        'date_modified'        => null,        - String. strtotime() compatible string.
  *        'name'                 => '',          - String. Required. Item name.
  *        'description'          => '',          - String. Item description.
@@ -327,8 +339,7 @@ function wpinv_create_item( $args = array(), $wp_error = false ) {
         if ( ! empty( $item ) ) {
             $args['ID'] = $item->get_id();
         }
-
-    }
+}
 
     // Do we have an item?
     if ( ! empty( $args['ID'] ) ) {
@@ -437,26 +448,22 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
             if ( empty( $bill_times ) ) {
 
                 return sprintf(
-
                     // translators: $1: is the trial period, $2: is the recurring price, $3: is the susbcription period
                     _x( 'Free for %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year)', 'invoicing' ),
                     "<span class='getpaid-item-trial-period'>$trial_period</span>",
                     "<span class='$recurring_class'>$recurring_price</span>",
                     "<span class='getpaid-item-recurring-period'>$period</span>"
-
                 );
 
             }
 
             return sprintf(
-
                 // translators: $1: is the trial period, $2: is the recurring price, $3: is the susbcription period, $4: is the bill times
                 _x( 'Free for %1$s then %2$s / %3$s for %4$s', 'Item subscription amount. (e.g.: Free for 1 month then $120 / year for 4 years)', 'invoicing' ),
                 "<span class='getpaid-item-trial-period'>$trial_period</span>",
                 "<span class='$recurring_class'>$recurring_price</span>",
                 "<span class='getpaid-item-recurring-period'>$period</span>",
                 "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
-
             );
 
         }
@@ -464,20 +471,17 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
         if ( empty( $bill_times ) ) {
 
             return sprintf(
-
                 // translators: $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period
                 _x( '%1$s for %2$s then %3$s / %4$s', 'Item subscription amount. (e.g.: $7 for 1 month then $120 / year)', 'invoicing' ),
                 "<span class='$initial_class'>$initial_price</span>",
                 "<span class='getpaid-item-trial-period'>$trial_period</span>",
                 "<span class='$recurring_class'>$recurring_price</span>",
                 "<span class='getpaid-item-recurring-period'>$period</span>"
-
             );
 
         }
 
         return sprintf(
-
             // translators: $1: is the initial price, $2: is the trial period, $3: is the recurring price, $4: is the susbcription period, $4: is the susbcription bill times
             _x( '%1$s for %2$s then %3$s / %4$s for %5$s', 'Item subscription amount. (e.g.: $7 for 1 month then $120 / year for 5 years)', 'invoicing' ),
             "<span class='$initial_class'>$initial_price</span>",
@@ -485,7 +489,6 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
             "<span class='$recurring_class'>$recurring_price</span>",
             "<span class='getpaid-item-recurring-period'>$period</span>",
             "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
-
         );
 
     }
@@ -495,24 +498,20 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
         if ( empty( $bill_times ) ) {
 
             return sprintf(
-
                 // translators: $1: is the recurring price, $2: is the susbcription period
                 _x( '%1$s / %2$s', 'Item subscription amount. (e.g.: $120 / year)', 'invoicing' ),
                 "<span class='$recurring_class'>$recurring_price</span>",
                 "<span class='getpaid-item-recurring-period'>$period</span>"
-
             );
 
         }
 
         return sprintf(
-
             // translators: $1: is the recurring price, $2: is the susbcription period, $3: is the susbcription bill times
             _x( '%1$s / %2$s for %3$s', 'Item subscription amount. (e.g.: $120 / year for 5 years)', 'invoicing' ),
             "<span class='$recurring_class'>$recurring_price</span>",
             "<span class='getpaid-item-recurring-period'>$period</span>",
             "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
-
         );
 
     }
@@ -522,24 +521,20 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
         if ( empty( $bill_times ) ) {
 
             return sprintf(
-
                 // translators: $1: is the recurring period, $2: is the recurring price
                 _x( 'Free for %1$s then %2$s / %1$s', 'Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months)', 'invoicing' ),
                 "<span class='getpaid-item-recurring-period'>$period</span>",
                 "<span class='$recurring_class'>$recurring_price</span>"
-
             );
 
         }
 
         return sprintf(
-
             // translators: $1: is the recurring period, $2: is the recurring price, $3: is the bill times
             _x( 'Free for %1$s then %2$s / %1$s for %3$s', 'Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months for 12 months)', 'invoicing' ),
             "<span class='getpaid-item-recurring-period'>$period</span>",
             "<span class='$recurring_class'>$recurring_price</span>",
             "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
-
         );
 
     }
@@ -547,26 +542,22 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
     if ( empty( $bill_times ) ) {
 
         return sprintf(
-
             // translators: $1: is the initial price, $2: is the recurring price, $3: is the susbcription period
             _x( 'Initial payment of %1$s then %2$s / %3$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year)', 'invoicing' ),
             "<span class='$initial_class'>$initial_price</span>",
             "<span class='$recurring_class'>$recurring_price</span>",
             "<span class='getpaid-item-recurring-period'>$period</span>"
-
         );
 
     }
 
     return sprintf(
-
         // translators: $1: is the initial price, $2: is the recurring price, $3: is the susbcription period, $4: is the susbcription bill times
         _x( 'Initial payment of %1$s then %2$s / %3$s for %4$s', 'Item subscription amount. (e.g.: Initial payment of $7 then $120 / year for 4 years)', 'invoicing' ),
         "<span class='$initial_class'>$initial_price</span>",
         "<span class='$recurring_class'>$recurring_price</span>",
         "<span class='getpaid-item-recurring-period'>$period</span>",
         "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
-
     );
 
 }

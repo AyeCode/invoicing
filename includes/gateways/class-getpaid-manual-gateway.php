@@ -76,8 +76,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
                     $subscription->activate();
                 }
             }
-
-        }
+}
 
         // Send to the success page.
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
@@ -99,7 +98,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
             $subscription->add_payment(
                 array(
                     'transaction_id' => $subscription->get_parent_payment()->generate_key(),
-                    'gateway'        => $this->id
+                    'gateway'        => $this->id,
                 )
             );
 

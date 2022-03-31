@@ -61,7 +61,7 @@ class BP_GetPaid_Component extends BP_Component {
                 'id'            => 'getpaid',
                 'slug'          => 'getpaid',
                 'root_slug'     => 'getpaid',
-                'has_directory' => false
+                'has_directory' => false,
             )
         );
 	}
@@ -82,7 +82,7 @@ class BP_GetPaid_Component extends BP_Component {
         if ( ! getpaid_is_buddypress_integration_active() || ! is_user_logged_in() ) {
             return;
         }
-    
+
         // Or a user is not viewing their profile.
         if ( bp_displayed_user_id() != bp_loggedin_user_id() ) {
             return;
@@ -95,27 +95,27 @@ class BP_GetPaid_Component extends BP_Component {
 
 		// Add 'Payments' to the main navigation.
 		$main_nav = array(
-			'name'                => _x( 'Billing', 'BuddyPress profile payments screen nav', 'invoicing' ),
-			'slug'                => $slug,
-			'position'            => apply_filters( 'wpinv_bp_nav_position', wpinv_get_option( 'wpinv_menu_position', 91 ), $slug ),
-			'screen_function'     => array( $this, 'display_current_tab' ),
-			'default_subnav_slug' => apply_filters( 'getpaid_default_tab', 'gp-edit-address' ),
+			'name'                    => _x( 'Billing', 'BuddyPress profile payments screen nav', 'invoicing' ),
+			'slug'                    => $slug,
+			'position'                => apply_filters( 'wpinv_bp_nav_position', wpinv_get_option( 'wpinv_menu_position', 91 ), $slug ),
+			'screen_function'         => array( $this, 'display_current_tab' ),
+			'default_subnav_slug'     => apply_filters( 'getpaid_default_tab', 'gp-edit-address' ),
             'show_for_displayed_user' => false,
-			'item_css_id'         => $this->id,
-			'parent_url'          => $user_domain,
-			'parent_slug'         => buddypress()->slug,
+			'item_css_id'             => $this->id,
+			'parent_url'              => $user_domain,
+			'parent_slug'             => buddypress()->slug,
 		);
 
 		// Add the subnav items to the payments nav item if we are using a theme that supports this.
         foreach ( getpaid_get_user_content_tabs() as $_slug => $tab ) {
 
             $sub_nav[] = array(
-                'name'            => $tab[ 'label'],
-                'slug'            => $_slug,
-                'parent_url'      => $payments_link,
-                'parent_slug'     => $slug,
-                'position' => 10,
-                'screen_function'        => function() use ( $tab ) {
+                'name'                    => $tab['label'],
+                'slug'                    => $_slug,
+                'parent_url'              => $payments_link,
+                'parent_slug'             => $slug,
+                'position'                => 10,
+                'screen_function'         => function() use ( $tab ) {
 					$GLOBALS['getpaid_bp_current_tab'] = $tab;
 					$this->display_current_tab();
                 },
@@ -160,14 +160,13 @@ class BP_GetPaid_Component extends BP_Component {
                 $wp_admin_nav[] = array(
                     'parent'   => 'my-account-getpaid',
                     'id'       => 'my-account-getpaid' . $slug,
-                    'title'    => $tab[ 'label'],
+                    'title'    => $tab['label'],
                     'href'     => trailingslashit( $payments_link . $slug ),
-                    'position' => 20
+                    'position' => 20,
                 );
 
             }
-
-		}
+}
 
 		parent::setup_admin_bar( $wp_admin_nav );
 	}
@@ -182,9 +181,9 @@ class BP_GetPaid_Component extends BP_Component {
 
 		if ( empty( $getpaid_bp_current_tab ) ) {
 			return array(
-				'label'     => __( 'Invoices', 'invoicing' ),
-				'content'   => '[wpinv_history]',
-				'icon'      => 'fas fa-file-invoice',
+				'label'   => __( 'Invoices', 'invoicing' ),
+				'content' => '[wpinv_history]',
+				'icon'    => 'fas fa-file-invoice',
 			);
 		}
 

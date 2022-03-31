@@ -19,7 +19,7 @@ class GetPaid_Checkout {
 
 	/**
 	 * Class constructor.
-	 * 
+	 *
 	 * @param GetPaid_Payment_Form_Submission $submission
 	 */
 	public function __construct( $submission ) {
@@ -204,8 +204,7 @@ class GetPaid_Checkout {
 			if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ), $user ) ) {
 				wp_send_new_user_notifications( $user, 'user' );
 			}
-
-        }
+}
 
         if ( is_wp_error( $user ) ) {
             wp_send_json_error( $user->get_error_message() );
@@ -254,10 +253,8 @@ class GetPaid_Checkout {
 					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) {
 						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
 					}
-
-				}
-
-            }
+}
+}
 
             // If it is required and not set, abort.
             if ( ! $submission->is_required_field_set( $field ) ) {
@@ -287,7 +284,7 @@ class GetPaid_Checkout {
 
 					$value = implode( ' | ', $value );
 
-				} else if ( $field['type'] == 'checkbox' ) {
+				} elseif ( $field['type'] == 'checkbox' ) {
 					$value = isset( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
 				} else {
 					$value = wp_kses_post( $data[ $field['id'] ] );
@@ -305,8 +302,7 @@ class GetPaid_Checkout {
 				$prepared['all'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
 
             }
-
-		}
+}
 
 		return $prepared;
 
@@ -335,7 +331,7 @@ class GetPaid_Checkout {
 			$key             = sanitize_key( $key );
 			$key             = str_replace( 'wpinv_', '', $key );
 			$value           = wpinv_clean( $value );
-			$prepared[ $key] = apply_filters( "getpaid_checkout_{$type}_address_$key", $value, $this->payment_form_submission, $invoice );
+			$prepared[ $key ] = apply_filters( "getpaid_checkout_{$type}_address_$key", $value, $this->payment_form_submission, $invoice );
 		}
 
 		// Filter address details.
@@ -406,8 +402,7 @@ class GetPaid_Checkout {
 			if ( ! empty( $prepared_payment_form_data['meta'] ) ) {
 				update_post_meta( $invoice->get_id(), 'additional_meta_data', $prepared_payment_form_data['meta'] );
 			}
-
-		}
+}
 
 		// Save payment form data.
 		$shipping = apply_filters( 'getpaid_checkout_shipping_details', $shipping, $this->payment_form_submission );

@@ -73,8 +73,7 @@ class GetPaid_Metaboxes {
 			if ( $post->ID != wpinv_get_default_payment_form() ) {
 				add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
 			}
-
-		}
+}
 
 	}
 
@@ -139,8 +138,7 @@ class GetPaid_Metaboxes {
 				if ( getpaid_count_subscription_invoices( $invoice->is_renewal() ? $invoice->get_parent_id() : $invoice->get_id() ) > 1 ) {
 					add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
 				}
-
-			}
+}
 
 			// Invoice details.
 			add_meta_box(
@@ -159,7 +157,7 @@ class GetPaid_Metaboxes {
 
 			// Billing details.
 			add_meta_box( 'wpinv-address', __( 'Billing Details', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Address::output', $post_type, 'normal', 'high' );
-			
+
 			// Invoice items.
 			add_meta_box(
 				'wpinv-items',
@@ -172,7 +170,7 @@ class GetPaid_Metaboxes {
 				'normal',
 				'high'
 			);
-			
+
 			// Invoice notes.
 			add_meta_box(
 				'wpinv-notes',
@@ -195,8 +193,7 @@ class GetPaid_Metaboxes {
 			if ( get_post_meta( $invoice->get_id(), 'payment_form_data', true ) ) {
 				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', $post_type, 'side', 'high' );
 			}
-
-		}
+}
 
 	}
 
@@ -211,7 +208,7 @@ class GetPaid_Metaboxes {
 	 * Rename other metaboxes.
 	 */
 	public static function rename_meta_boxes() {
-		
+
 	}
 
 	/**
@@ -225,7 +222,7 @@ class GetPaid_Metaboxes {
 		$data    = wp_kses_post_deep( wp_unslash( $_POST ) );
 
 		// Do not save for ajax requests.
-		if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
 			return;
 		}
 
@@ -277,7 +274,7 @@ class GetPaid_Metaboxes {
 
 		// We need this save event to run once to avoid potential endless loops.
 		self::$saved_meta_boxes = true;
-		
+
 		// Save the post.
 		$class = $post_types_map[ $post->post_type ];
 		$class::save( $post_id, wp_kses_post_deep( $_POST ), $post );

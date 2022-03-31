@@ -33,11 +33,11 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Select Type', 'invoicing' ); ?></span>
         <select class='form-control custom-select' v-model='active_form_element.select_type'>
-            <option value='select'><?php esc_html_e( 'Dropdown', 'invoicing' ) ?></option>
-            <option value='checkboxes'><?php esc_html_e( 'Checkboxes', 'invoicing' ) ?></option>
-            <option value='radios'><?php esc_html_e( 'Radio Buttons', 'invoicing' ) ?></option>
-            <option value='buttons'><?php esc_html_e( 'Buttons', 'invoicing' ) ?></option>
-            <option value='circles'><?php esc_html_e( 'Circles', 'invoicing' ) ?></option>
+            <option value='select'><?php esc_html_e( 'Dropdown', 'invoicing' ); ?></option>
+            <option value='checkboxes'><?php esc_html_e( 'Checkboxes', 'invoicing' ); ?></option>
+            <option value='radios'><?php esc_html_e( 'Radio Buttons', 'invoicing' ); ?></option>
+            <option value='buttons'><?php esc_html_e( 'Buttons', 'invoicing' ); ?></option>
+            <option value='circles'><?php esc_html_e( 'Circles', 'invoicing' ); ?></option>
         </select>
     </label>
 </div>

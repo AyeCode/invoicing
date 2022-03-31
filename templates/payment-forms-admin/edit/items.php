@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
                 <div class='p-3'>
 
                     <span class='form-text'>
-                        <a target="_blank" :href="'<?php echo esc_url( admin_url( '/post.php?action=edit&post' ) ) ?>=' + item.id">
+                        <a target="_blank" :href="'<?php echo esc_url( admin_url( '/post.php?action=edit&post' ) ); ?>=' + item.id">
                             <?php _e( 'Edit the item name, price and other details', 'invoicing' ); ?>
                         </a>
                     </span>
@@ -71,13 +71,13 @@ defined( 'ABSPATH' ) || exit;
 
         <div class="mb-2">
             <select class='w-100' v-init-item-search>
-                <option value="" selected="selected"><?php _e( 'Select an item to add...', 'invoicing' ) ?></option>
+                <option value="" selected="selected"><?php _e( 'Select an item to add...', 'invoicing' ); ?></option>
             </select>
 
         </div>
 
-        <button type="button" @click.prevent='addSelectedItem' class="button button-primary"><?php _e( 'Add Selected Item', 'invoicing' ) ?></button>
-        <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>" target="_blank" class="button button-secondary"><?php _e( 'Create New Item.', 'invoicing' ) ?></a>
+        <button type="button" @click.prevent='addSelectedItem' class="button button-primary"><?php _e( 'Add Selected Item', 'invoicing' ); ?></button>
+        <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>" target="_blank" class="button button-secondary"><?php _e( 'Create New Item.', 'invoicing' ); ?></a>
 
     </div>
 </div>
@@ -86,12 +86,12 @@ defined( 'ABSPATH' ) || exit;
 
     <label class="w-100 d-block">
 
-        <span><?php esc_html_e( 'Let customers...', 'invoicing' ) ?></span>
+        <span><?php esc_html_e( 'Let customers...', 'invoicing' ); ?></span>
 
         <select class='w-100' style="padding: 6px 24px 6px 8px; border-color: #e0e0e0;" v-model='active_form_element.items_type'>
             <option value='total'><?php _e( 'Buy all items on the list', 'invoicing' ); ?></option>
             <option value='radio'><?php _e( 'Select a single item from the list', 'invoicing' ); ?></option>
-            <option value='checkbox'><?php _e( 'Select one or more items on the list', 'invoicing' ) ;?></option>
+            <option value='checkbox'><?php _e( 'Select one or more items on the list', 'invoicing' ); ?></option>
             <option value='select'><?php _e( 'Select a single item from a dropdown', 'invoicing' ); ?></option>
         </select>
 

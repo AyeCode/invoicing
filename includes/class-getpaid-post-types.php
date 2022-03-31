@@ -44,7 +44,7 @@ class GetPaid_Post_Types {
 			apply_filters(
 				'wpinv_register_post_type_invoice_item',
 				array(
-					'labels'             => array(
+					'labels'            => array(
 						'name'               => _x( 'Items', 'post type general name', 'invoicing' ),
 						'singular_name'      => _x( 'Item', 'post type singular name', 'invoicing' ),
 						'menu_name'          => _x( 'Items', 'admin menu', 'invoicing' ),
@@ -58,21 +58,21 @@ class GetPaid_Post_Types {
 						'search_items'       => __( 'Search items', 'invoicing' ),
 						'parent_item_colon'  => __( 'Parent item:', 'invoicing' ),
 						'not_found'          => __( 'No items found.', 'invoicing' ),
-						'not_found_in_trash' => __( 'No items found in trash.', 'invoicing' )
+						'not_found_in_trash' => __( 'No items found in trash.', 'invoicing' ),
 					),
-					'description'           => __( 'This is where you can add new invoice items.', 'invoicing' ),
-					'public'                => false,
-					'has_archive'           => false,
-					'_builtin'              => false,
-					'show_ui'               => true,
-					'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
-					'show_in_nav_menus'     => false,
-					'supports'              => array( 'title', 'excerpt', 'thumbnail' ),
-					'rewrite'               => false,
-					'query_var'             => false,
-					'map_meta_cap'          => true,
-					'show_in_admin_bar'     => true,
-					'can_export'            => true,
+					'description'       => __( 'This is where you can add new invoice items.', 'invoicing' ),
+					'public'            => false,
+					'has_archive'       => false,
+					'_builtin'          => false,
+					'show_ui'           => true,
+					'show_in_menu'      => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
+					'show_in_nav_menus' => false,
+					'supports'          => array( 'title', 'excerpt', 'thumbnail' ),
+					'rewrite'           => false,
+					'query_var'         => false,
+					'map_meta_cap'      => true,
+					'show_in_admin_bar' => true,
+					'can_export'        => true,
 				)
 			)
 		);
@@ -83,7 +83,7 @@ class GetPaid_Post_Types {
 			apply_filters(
 				'wpinv_register_post_type_payment_form',
 				array(
-					'labels'             => array(
+					'labels'            => array(
 						'name'               => _x( 'Payment Forms', 'post type general name', 'invoicing' ),
 						'singular_name'      => _x( 'Payment Form', 'post type singular name', 'invoicing' ),
 						'menu_name'          => _x( 'Payment Forms', 'admin menu', 'invoicing' ),
@@ -97,21 +97,21 @@ class GetPaid_Post_Types {
 						'search_items'       => __( 'Search Payment Forms', 'invoicing' ),
 						'parent_item_colon'  => __( 'Parent Payment Forms:', 'invoicing' ),
 						'not_found'          => __( 'No payment forms found.', 'invoicing' ),
-						'not_found_in_trash' => __( 'No payment forms found in trash.', 'invoicing' )
+						'not_found_in_trash' => __( 'No payment forms found in trash.', 'invoicing' ),
 					),
-					'description'        => __( 'Add new payment forms.', 'invoicing' ),
-					'public'             => false,
-					'show_ui'            => true,
-					'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
-					'show_in_nav_menus'  => false,
-					'query_var'          => false,
-					'rewrite'            => true,
-					'map_meta_cap'       => true,
-					'has_archive'        => false,
-					'hierarchical'       => false,
-					'menu_position'      => null,
-					'supports'           => array( 'title' ),
-					'menu_icon'          => 'dashicons-media-form',
+					'description'       => __( 'Add new payment forms.', 'invoicing' ),
+					'public'            => false,
+					'show_ui'           => true,
+					'show_in_menu'      => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
+					'show_in_nav_menus' => false,
+					'query_var'         => false,
+					'rewrite'           => true,
+					'map_meta_cap'      => true,
+					'has_archive'       => false,
+					'hierarchical'      => false,
+					'menu_position'     => null,
+					'supports'          => array( 'title' ),
+					'menu_icon'         => 'dashicons-media-form',
 				)
 			)
 		);
@@ -122,7 +122,7 @@ class GetPaid_Post_Types {
 			apply_filters(
 				'wpinv_register_post_type_invoice',
 				array(
-					'labels'                 => array(
+					'labels'              => array(
 						'name'                  => __( 'Invoices', 'invoicing' ),
 						'singular_name'         => __( 'Invoice', 'invoicing' ),
 						'all_items'             => __( 'Invoices', 'invoicing' ),
@@ -148,26 +148,26 @@ class GetPaid_Post_Types {
 						'items_list_navigation' => __( 'Invoices navigation', 'invoicing' ),
 						'items_list'            => __( 'Invoices list', 'invoicing' ),
 					),
-					'description'           => __( 'This is where invoices are stored.', 'invoicing' ),
-					'public'                => true,
-					'has_archive'           => false,
-					'publicly_queryable'    => true,
-        			'exclude_from_search'   => true,
-        			'show_ui'               => true,
-					'show_in_menu'          => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
-					'show_in_nav_menus'     => false,
-					'supports'              => array( 'title', 'author', 'excerpt'  ),
-					'rewrite'               => array(
-						'slug'              => 'invoice',
-						'with_front'        => false,
+					'description'         => __( 'This is where invoices are stored.', 'invoicing' ),
+					'public'              => true,
+					'has_archive'         => false,
+					'publicly_queryable'  => true,
+        			'exclude_from_search' => true,
+        			'show_ui'             => true,
+					'show_in_menu'        => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
+					'show_in_nav_menus'   => false,
+					'supports'            => array( 'title', 'author', 'excerpt' ),
+					'rewrite'             => array(
+						'slug'       => 'invoice',
+						'with_front' => false,
 					),
-					'query_var'             => false,
-					'map_meta_cap'          => true,
-					'show_in_admin_bar'     => true,
-					'can_export'            => true,
-					'hierarchical'          => false,
-					'menu_position'         => null,
-					'menu_icon'             => 'dashicons-media-spreadsheet',
+					'query_var'           => false,
+					'map_meta_cap'        => true,
+					'show_in_admin_bar'   => true,
+					'can_export'          => true,
+					'hierarchical'        => false,
+					'menu_position'       => null,
+					'menu_icon'           => 'dashicons-media-spreadsheet',
 				)
 			)
 		);
@@ -178,7 +178,7 @@ class GetPaid_Post_Types {
 			apply_filters(
 				'wpinv_register_post_type_discount',
 				array(
-					'labels'                 => array(
+					'labels'              => array(
 						'name'                  => __( 'Discounts', 'invoicing' ),
 						'singular_name'         => __( 'Discount', 'invoicing' ),
 						'all_items'             => __( 'Discounts', 'invoicing' ),
@@ -204,23 +204,23 @@ class GetPaid_Post_Types {
 						'items_list_navigation' => __( 'Discount navigation', 'invoicing' ),
 						'items_list'            => __( 'Discounts list', 'invoicing' ),
 					),
-					'description'        => __( 'This is where you can add new discounts that users can use in invoices.', 'invoicing' ),
-					'public'             => false,
-					'can_export'         => true,
-					'_builtin'           => false,
-					'publicly_queryable' => false,
-					'exclude_from_search'=> true,
-					'show_ui'            => true,
-					'show_in_menu'       => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
-					'query_var'          => false,
-					'rewrite'            => false,
-					'map_meta_cap'       => true,
-					'has_archive'        => false,
-					'hierarchical'       => false,
-					'supports'           => array( 'title', 'excerpt' ),
-					'show_in_nav_menus'  => false,
-					'show_in_admin_bar'  => true,
-					'menu_position'      => null,
+					'description'         => __( 'This is where you can add new discounts that users can use in invoices.', 'invoicing' ),
+					'public'              => false,
+					'can_export'          => true,
+					'_builtin'            => false,
+					'publicly_queryable'  => false,
+					'exclude_from_search' => true,
+					'show_ui'             => true,
+					'show_in_menu'        => wpinv_current_user_can_manage_invoicing() ? 'wpinv' : false,
+					'query_var'           => false,
+					'rewrite'             => false,
+					'map_meta_cap'        => true,
+					'has_archive'         => false,
+					'hierarchical'        => false,
+					'supports'            => array( 'title', 'excerpt' ),
+					'show_in_nav_menus'   => false,
+					'show_in_admin_bar'   => true,
+					'menu_position'       => null,
 				)
 			)
 		);
@@ -237,14 +237,14 @@ class GetPaid_Post_Types {
 			'getpaid_register_invoice_post_statuses',
 			array(
 
-				'wpi-pending' => array(
+				'wpi-pending'    => array(
 					'label'                     => _x( 'Pending Payment', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
 				'wpi-processing' => array(
@@ -254,58 +254,58 @@ class GetPaid_Post_Types {
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Processing <span class="count">(%s)</span>', 'Processing <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'Processing <span class="count">(%s)</span>', 'Processing <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
-				'wpi-onhold' => array(
+				'wpi-onhold'     => array(
 					'label'                     => _x( 'On Hold', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
-				'wpi-cancelled' => array(
+				'wpi-cancelled'  => array(
 					'label'                     => _x( 'Cancelled', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
-				'wpi-refunded' => array(
+				'wpi-refunded'   => array(
 					'label'                     => _x( 'Refunded', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Refunded <span class="count">(%s)</span>', 'Refunded <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'Refunded <span class="count">(%s)</span>', 'Refunded <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
-				'wpi-failed' => array(
+				'wpi-failed'     => array(
 					'label'                     => _x( 'Failed', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Failed <span class="count">(%s)</span>', 'Failed <span class="count">(%s)</span>', 'invoicing' )
+        			'label_count'               => _n_noop( 'Failed <span class="count">(%s)</span>', 'Failed <span class="count">(%s)</span>', 'invoicing' ),
 				),
 
-				'wpi-renewal' => array(
+				'wpi-renewal'    => array(
 					'label'                     => _x( 'Renewal', 'Invoice status', 'invoicing' ),
         			'public'                    => true,
         			'exclude_from_search'       => true,
         			'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: number of invoices */
-        			'label_count'               => _n_noop( 'Renewal <span class="count">(%s)</span>', 'Renewal <span class="count">(%s)</span>', 'invoicing' )
-				)
+        			'label_count'               => _n_noop( 'Renewal <span class="count">(%s)</span>', 'Renewal <span class="count">(%s)</span>', 'invoicing' ),
+				),
 			)
 		);
 

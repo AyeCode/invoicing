@@ -101,7 +101,7 @@ class GetPaid_Reports_Report_Discounts extends GetPaid_Reports_Abstract_Report {
 	public function get_data() {
 
 		$data     = wp_list_pluck( $this->stats, 'total' );
-		$colors   = array( '#009688','#4caf50','#8bc34a','#00bcd4','#03a9f4','#2196f3' );
+		$colors   = array( '#009688', '#4caf50', '#8bc34a', '#00bcd4', '#03a9f4', '#2196f3' );
 
 		shuffle( $colors );
 

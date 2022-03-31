@@ -25,7 +25,7 @@ $vat_number = wpinv_get_option( 'vat_number' );
         <div class="row">
 
             <div class="invoice-company-address-label col-2">
-                <strong><?php _e( 'From:', 'invoicing' ) ?></strong>
+                <strong><?php _e( 'From:', 'invoicing' ); ?></strong>
             </div>
 
             <div class="invoice-company-address-value col-10">
@@ -39,18 +39,18 @@ $vat_number = wpinv_get_option( 'vat_number' );
                 </div>
 
                 <?php if ( $address = wpinv_get_business_address() ) { ?>
-                    <?php echo wp_kses_post( $address );?>
+                    <?php echo wp_kses_post( $address ); ?>
                 <?php } ?>
 
                 <?php if ( $email_from = wpinv_mail_get_from_address() ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), sanitize_email( $email_from ) );?>
+                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), sanitize_email( $email_from ) ); ?>
                     </div>
                 <?php } ?>
 
                 <?php if ( ! empty( $vat_number ) ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'VAT Number: %s', 'invoicing' ), esc_html( $vat_number ) );?>
+                        <?php echo wp_sprintf( __( 'VAT Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
                     </div>
                 <?php } ?>
 

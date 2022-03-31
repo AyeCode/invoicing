@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
 
                 <div class='form-group'>
                     <label class="d-block">
-                        <span><?php esc_html_e( 'Width', 'invoicing' ) ?></span>
+                        <span><?php esc_html_e( 'Width', 'invoicing' ); ?></span>
                         <select class='form-control custom-select' v-model='field.grid_width'>
                             <option value='full'><?php esc_html_e( 'Full Width', 'invoicing' ); ?></option>
                             <option value='half'><?php esc_html_e( 'Half Width', 'invoicing' ); ?></option>
@@ -82,7 +82,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group'>
     <label class="d-block">
-        <span><?php esc_html_e( 'Address Type', 'invoicing' ) ?><span>
+        <span><?php esc_html_e( 'Address Type', 'invoicing' ); ?><span>
         <select class='form-control custom-select' v-model='active_form_element.address_type'>
             <option value='billing'><?php esc_html_e( 'Billing', 'invoicing' ); ?></option>
             <option value='shipping'><?php esc_html_e( 'Shipping', 'invoicing' ); ?></option>
@@ -93,7 +93,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group' v-if="active_form_element.address_type == 'both'">
     <label class="d-block">
-        <span><?php esc_html_e( 'Shipping Address Toggle', 'invoicing' ) ?><span>
+        <span><?php esc_html_e( 'Shipping Address Toggle', 'invoicing' ); ?><span>
         <input type="text" class='form-control custom-select' v-model='active_form_element.shipping_address_toggle' >
     </label>
 </div>

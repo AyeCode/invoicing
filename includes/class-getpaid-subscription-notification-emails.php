@@ -191,7 +191,7 @@ class GetPaid_Subscription_Notification_Emails {
 		if ( $result ) {
 			$invoice->add_system_note(
 				sprintf(
-					__( 'Successfully sent %s notification email to %s.', 'invoicing' ),
+					__( 'Successfully sent %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
 					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
 				)
@@ -199,11 +199,11 @@ class GetPaid_Subscription_Notification_Emails {
 		} else {
 			$invoice->add_system_note(
 				sprintf(
-					__( 'Failed sending %s notification email to %s.', 'invoicing' ),
+					__( 'Failed sending %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
 					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
 				)
-			);	
+			);
 		}
 
 		do_action( 'getpaid_after_send_subscription_notification', $type, $subscription, $email );
@@ -280,7 +280,7 @@ class GetPaid_Subscription_Notification_Emails {
 			'count_total'        => false,
 			'status'             => 'trialling active',
             'date_expires_query' => array(
-				'relation'  => 'OR'
+				'relation' => 'OR',
             ),
 		);
 
@@ -304,8 +304,7 @@ class GetPaid_Subscription_Notification_Emails {
 				$email->object = $subscription;
             	$this->send_email( $subscription, $email, __FUNCTION__ );
 			}
-
-		}
+}
 
 	}
 

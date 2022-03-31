@@ -93,7 +93,7 @@ class GetPaid_Payment_Form_Submission_Discount {
 	 * @param WPInv_Discount                  $discount
 	 * @return bool
 	 */
-	public function is_discount_active(  $discount ) {
+	public function is_discount_active( $discount ) {
 		return $discount->exists() && $discount->is_active() && $discount->has_started() && ! $discount->is_expired();
 	}
 

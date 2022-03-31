@@ -24,12 +24,12 @@ class GetPaid_Notification_Email_Sender {
 
     /**
 	 * Sends a new email.
-     * 
+     *
      * @param string|array $to The recipients email or an array of recipient emails.
      * @param string $subject The email's subject.
      * @param string $email The email body.
      * @param array $attachments The email attachments.
-     * 
+     *
      * @return bool
 	 */
 	public function send( $to, $subject, $email, $attachments = array() ) {
@@ -65,7 +65,7 @@ class GetPaid_Notification_Email_Sender {
         }
 
 		// Remove our hooks.
-		$this->after_sending();		
+		$this->after_sending();
 
 		$this->wp_mail_data = null;
 
@@ -74,12 +74,12 @@ class GetPaid_Notification_Email_Sender {
 
 	/**
 	 * Does the actual sending.
-     * 
+     *
      * @param string $to The recipient's email.
      * @param array $data The email's data.
      * @param string $email The email body.
      * @param array $attachments The email attachments.
-     * 
+     *
      * @return bool
 	 */
 	protected function _send( $to, $data ) {
@@ -98,13 +98,13 @@ class GetPaid_Notification_Email_Sender {
 		);
 
 		if ( ! $result ) {
-			$log_message = wp_sprintf( __( "\nTime: %s\nTo: %s\nSubject: %s\n", 'invoicing' ), date_i18n( 'F j Y H:i:s', current_time( 'timestamp' ) ), $to, $data['subject'] );
+			$log_message = wp_sprintf( __( "\nTime: %1\$s\nTo: %2\$s\nSubject: %3\$s\n", 'invoicing' ), date_i18n( 'F j Y H:i:s', current_time( 'timestamp' ) ), $to, $data['subject'] );
 			wpinv_error_log( $log_message, __( 'Email from Invoicing plugin failed to send', 'invoicing' ), __FILE__, __LINE__ );
 		}
 
 		return $result;
 	}
-    
+
     /**
 	 * Retrieves email headers.
 	 */
@@ -114,7 +114,7 @@ class GetPaid_Notification_Email_Sender {
 		$reply_to   = $this->get_reply_to();
 		$headers    = array( "Reply-To:$name <$reply_to>" );
 
-		return apply_filters( 'getpaid_email_headers',  $headers, $this );
+		return apply_filters( 'getpaid_email_headers', $headers, $this );
 
 	}
 
@@ -141,7 +141,7 @@ class GetPaid_Notification_Email_Sender {
         $from_name = wpinv_get_option( 'email_from_name', get_bloginfo( 'name' ) );
 
 		if ( empty( $from_name ) ) {
-			$from_name =  get_bloginfo( 'name' );
+			$from_name = get_bloginfo( 'name' );
         }
 
 		return wp_specialchars_decode( $from_name, ENT_QUOTES );
@@ -155,7 +155,7 @@ class GetPaid_Notification_Email_Sender {
         $from_address = wpinv_get_option( 'email_from', $this->default_from_address() );
 
 		if ( ! is_email( $from_address ) ) {
-			$from_address =  $this->default_from_address();
+			$from_address = $this->default_from_address();
         }
 
         return $from_address;
@@ -164,7 +164,7 @@ class GetPaid_Notification_Email_Sender {
 
     /**
 	 * The default emails from address.
-	 * 
+	 *
 	 * Defaults to wordpress@$sitename
 	 * Some hosts will block outgoing mail from this address if it doesn't exist,
 	 * but there's no easy alternative. Defaulting to admin_email might appear to be
@@ -196,7 +196,7 @@ class GetPaid_Notification_Email_Sender {
 		$reply_to = wpinv_get_admin_email();
 
 		if ( ! is_email( $reply_to ) ) {
-			$reply_to =  get_option( 'admin_email' );
+			$reply_to = get_option( 'admin_email' );
 		}
 
 		return $reply_to;
@@ -209,7 +209,7 @@ class GetPaid_Notification_Email_Sender {
 	public function get_content_type() {
 		return apply_filters( 'getpaid_email_content_type', 'text/html', $this );
     }
-    
+
     /**
 	 * Ensures that our email messages are not messed up by template plugins.
 	 *
@@ -219,7 +219,7 @@ class GetPaid_Notification_Email_Sender {
 		$args['message'] = $this->wp_mail_data['email'];
 		return $args;
     }
-    
+
     /**
 	 * A little house keeping after an email is sent.
 	 *

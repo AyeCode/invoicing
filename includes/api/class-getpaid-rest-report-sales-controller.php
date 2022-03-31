@@ -120,10 +120,10 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		for ( $i = 0; $i < $this->interval; $i++ ) {
 
 			switch ( $this->groupby ) {
-				case 'day' :
+				case 'day':
 					$time = date( 'Y-m-d', strtotime( "+{$i} DAY", $start_date ) );
 					break;
-				default :
+				default:
 					$time = date( 'Y-m', strtotime( "+{$i} MONTH", $start_date ) );
 					break;
 			}
@@ -140,13 +140,12 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 				'discount'          => wpinv_round_amount( 0.00 ),
 			);
 
-			foreach( array_keys( wpinv_get_report_graphs() ) as $key ) {
+			foreach ( array_keys( wpinv_get_report_graphs() ) as $key ) {
 				if ( ! isset( $period_totals[ $time ][ $key ] ) ) {
 					$period_totals[ $time ][ $key ] = wpinv_round_amount( 0.00 );
 				}
 			}
-
-		}
+}
 
 		// add total sales, total invoice count, total tax for each period
 		$date_format = ( 'day' === $this->groupby ) ? 'Y-m-d' : 'Y-m';
@@ -184,8 +183,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['invoices']   = (int) $invoice->count;
 			}
-
-		}
+}
 
 		// Add total invoice items for each period.
 		foreach ( $report_data->invoice_items as $invoice_item ) {
@@ -194,8 +192,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['items'] = (int) $invoice_item->invoice_item_count;
 			}
-
-		}
+}
 
 		// Add total discount for each period.
 		foreach ( $report_data->coupons as $discount ) {
@@ -204,11 +201,10 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['discount'] = wpinv_round_amount( $discount->discount_amount );
 			}
-
-		}
+}
 
 		// Extra fields.
-		foreach( array_keys( wpinv_get_report_graphs() ) as $key ) {
+		foreach ( array_keys( wpinv_get_report_graphs() ) as $key ) {
 
 			// Abort unprepared.
 			if ( ! isset( $report_data->$key ) ) {
@@ -255,11 +251,13 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		// Wrap the data in a response object.
 		$response = rest_ensure_response( $data );
-		$response->add_links( array(
-			'about' => array(
-				'href' => rest_url( sprintf( '%s/reports', $this->namespace ) ),
-			),
-		) );
+		$response->add_links(
+            array(
+				'about' => array(
+					'href' => rest_url( sprintf( '%s/reports', $this->namespace ) ),
+				),
+            )
+        );
 
 		return apply_filters( 'getpaid_rest_prepare_report_sales', $response, $report_data, $request );
 	}
@@ -283,7 +281,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		// Prepare reports.
 		$this->report_data = (object) array(
-			'invoice_counts' => $this->query_invoice_counts(),//count, post_date
+			'invoice_counts' => $this->query_invoice_counts(), //count, post_date
 			'coupons'        => $this->query_coupon_counts(), // discount_amount, post_date
 			'invoice_items'  => $this->query_item_counts(), // invoice_item_count, post_date
 			'refunded_items' => $this->count_refunded_items(), // invoice_item_count, post_date
@@ -305,7 +303,6 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$this->report_data->refunded_fees      = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'total_fees' ) ) );
 		$this->report_data->refunded_subtotal  = wpinv_round_amount( array_sum( wp_list_pluck( $this->report_data->refunds, 'subtotal' ) ) );
 		$this->report_data->net_refunds        = wpinv_round_amount( $this->report_data->total_refunds + max( 0, $this->report_data->total_refunded_tax ) );
-
 
 		// Calculate average based on net.
 		$this->report_data->average_sales       = wpinv_round_amount( $this->report_data->net_sales / max( $this->interval, 1 ), 2 );
@@ -330,7 +327,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (array) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
+				'data'           => array(
 					'ID'        => array(
 						'type'     => 'post_data',
 						'function' => 'COUNT',
@@ -362,13 +359,13 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (array) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
-					'discount' => array(
+				'data'           => array(
+					'discount'  => array(
 						'type'     => 'invoice_data',
 						'function' => 'SUM',
 						'name'     => 'discount_amount',
 					),
-					'post_date'       => array(
+					'post_date' => array(
 						'type'     => 'post_data',
 						'function' => '',
 						'name'     => 'post_date',
@@ -393,11 +390,11 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (array) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
-					'quantity'      => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_count',
+				'data'           => array(
+					'quantity'  => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_count',
 					),
 					'post_date' => array(
 						'type'     => 'post_data',
@@ -424,11 +421,11 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (int) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
-					'quantity'      => array(
-						'type'            => 'invoice_item',
-						'function'        => 'SUM',
-						'name'            => 'invoice_item_count',
+				'data'           => array(
+					'quantity' => array(
+						'type'     => 'invoice_item',
+						'function' => 'SUM',
+						'name'     => 'invoice_item_count',
 					),
 				),
 				'query_type'     => 'get_var',
@@ -448,33 +445,33 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (array) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
+				'data'           => array(
 					'total'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_sales',
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_sales',
 					),
-					'tax'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_tax',
+					'tax'        => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_tax',
 					),
-					'discount'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_discount',
+					'discount'   => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_discount',
 					),
-					'fees_total'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_fees',
+					'fees_total' => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_fees',
 					),
-					'subtotal'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'subtotal',
+					'subtotal'   => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'subtotal',
 					),
-					'post_date' => array(
+					'post_date'  => array(
 						'type'     => 'post_data',
 						'function' => '',
 						'name'     => 'post_date',
@@ -499,33 +496,33 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 		return (array) GetPaid_Reports_Helper::get_invoice_report_data(
 			array(
-				'data'         => array(
+				'data'           => array(
 					'total'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_sales',
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_sales',
 					),
-					'tax'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_tax',
+					'tax'        => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_tax',
 					),
-					'discount'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_discount',
+					'discount'   => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_discount',
 					),
-					'fees_total'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'total_fees',
+					'fees_total' => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'total_fees',
 					),
-					'subtotal'      => array(
-						'type'            => 'invoice_data',
-						'function'        => 'SUM',
-						'name'            => 'subtotal',
+					'subtotal'   => array(
+						'type'     => 'invoice_data',
+						'function' => 'SUM',
+						'name'     => 'subtotal',
 					),
-					'post_date' => array(
+					'post_date'  => array(
 						'type'     => 'post_data',
 						'function' => '',
 						'name'     => 'post_date',
@@ -553,19 +550,19 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			'title'      => 'sales_report',
 			'type'       => 'object',
 			'properties' => array(
-				'total_sales' => array(
+				'total_sales'         => array(
 					'description' => __( 'Gross sales in the period.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'net_sales' => array(
+				'net_sales'           => array(
 					'description' => __( 'Net sales in the period.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'average_sales' => array(
+				'average_sales'       => array(
 					'description' => __( 'Average net daily sales.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
@@ -577,122 +574,122 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_invoices'  => array(
+				'total_invoices'      => array(
 					'description' => __( 'Number of paid invoices.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_items' => array(
+				'total_items'         => array(
 					'description' => __( 'Number of items purchased.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'refunded_items' => array(
+				'refunded_items'      => array(
 					'description' => __( 'Number of items refunded.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_tax' => array(
+				'total_tax'           => array(
 					'description' => __( 'Total charged for taxes.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_refunded_tax' => array(
+				'total_refunded_tax'  => array(
 					'description' => __( 'Total refunded for taxes.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_fees' => array(
+				'total_fees'          => array(
 					'description' => __( 'Total fees charged.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_refunds' => array(
+				'total_refunds'       => array(
 					'description' => __( 'Total of refunded invoices.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'net_refunds' => array(
+				'net_refunds'         => array(
 					'description' => __( 'Net of refunded invoices.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'total_discount' => array(
+				'total_discount'      => array(
 					'description' => __( 'Total of discounts used.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'totals' => array(
+				'totals'              => array(
 					'description' => __( 'Totals.', 'invoicing' ),
 					'type'        => 'array',
 					'items'       => array(
-						'type'    => 'array',
+						'type' => 'array',
 					),
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'interval' => array(
+				'interval'            => array(
 					'description' => __( 'Number of months/days in the report period.', 'invoicing' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'previous_range'  => array(
+				'previous_range'      => array(
 					'description' => __( 'The previous report period.', 'invoicing' ),
 					'type'        => 'array',
 					'items'       => array(
-						'type'    => 'string',
+						'type' => 'string',
 					),
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'grouped_by' => array(
+				'grouped_by'          => array(
 					'description' => __( 'The period used to group the totals.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'enum'        => array( 'day', 'month' ),
 					'readonly'    => true,
 				),
-				'currency' => array(
+				'currency'            => array(
 					'description' => __( 'The default store currency.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'currency_symbol' => array(
+				'currency_symbol'     => array(
 					'description' => __( 'The default store currency symbol.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'currency_position' => array(
+				'currency_position'   => array(
 					'description' => __( 'The default store currency position.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'decimal_places' => array(
+				'decimal_places'      => array(
 					'description' => __( 'The default store decimal places.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'thousands_sep' => array(
+				'thousands_sep'       => array(
 					'description' => __( 'The default store thousands separator.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'decimals_sep' => array(
+				'decimals_sep'        => array(
 					'description' => __( 'The default store decimals separator.', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),

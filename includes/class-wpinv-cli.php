@@ -5,9 +5,9 @@
  * @since 1.0.13
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit;
 }
 
@@ -19,7 +19,7 @@ class WPInv_CLI {
 
     /**
      * Creates a new invoice
-     * 
+     *
      *  @param Array $args Arguments in array format.
      *  @param Array $assoc_args Key value arguments stored in associated array format.
      *  @since 1.0.13
@@ -30,22 +30,22 @@ class WPInv_CLI {
         $invoice_data = wp_unslash( $assoc_args );
 
         // Abort if no invoice data is provided
-        if( empty( $invoice_data ) ) {
+        if ( empty( $invoice_data ) ) {
             return WP_CLI::error( __( 'Invoice data not provided', 'invoicing' ) );
         }
 
         //Cart details
-        if( !empty( $invoice_data['cart_details'] ) ) {
+        if ( ! empty( $invoice_data['cart_details'] ) ) {
             $invoice_data['cart_details'] = json_decode( $invoice_data['cart_details'], true );
         }
 
         //User details
-        if( !empty( $invoice_data['user_info'] ) ) {
+        if ( ! empty( $invoice_data['user_info'] ) ) {
             $invoice_data['user_info'] = json_decode( $invoice_data['user_info'], true );
         }
 
         //Payment info
-        if( !empty( $invoice_data['payment_details'] ) ) {
+        if ( ! empty( $invoice_data['payment_details'] ) ) {
             $invoice_data['payment_details'] = json_decode( $invoice_data['payment_details'], true );
         }
 
@@ -59,6 +59,6 @@ class WPInv_CLI {
         $message = sprintf( __( 'Invoice %s created', 'invoicing' ), $invoice->get_id() );
         WP_CLI::success( $message );
     }
-    
-    
+
+
 }

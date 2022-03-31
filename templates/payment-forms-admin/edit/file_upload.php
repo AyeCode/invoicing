@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
         <span><?php esc_html_e( 'Allowed File types', 'invoicing' ); ?></span>
         <gpselect2 class='form-control custom-select' v-model='active_form_element.file_types' multiple>
             <?php foreach ( getpaid_get_allowed_mime_types() as $ext_regex => $mime_type ) : ?>
-                <option value="<?php echo esc_attr( $ext_regex ); ?>"><?php echo esc_html( "$mime_type" ) ?></option>
+                <option value="<?php echo esc_attr( $ext_regex ); ?>"><?php echo esc_html( "$mime_type" ); ?></option>
             <?php endforeach; ?>
         </gpselect2>
     </label>

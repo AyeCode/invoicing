@@ -18,9 +18,9 @@ defined( 'ABSPATH' ) || exit;
 
 <tr class="wpinv_cart_item item-type-<?php echo sanitize_html_class( $item->get_type() ); ?>">
 
-    <?php foreach ( array_keys( $columns ) as $column ): ?>
+    <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right' ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
+        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
             
             <?php
 
@@ -30,42 +30,41 @@ defined( 'ABSPATH' ) || exit;
                 // Item name.
                 if ( 'name' == $column ) {
 
-                    // Display the name.
-                    echo '<div class="wpinv_email_cart_item_title">' . esc_html( $item->get_name() ) . '</div>';
+				// Display the name.
+				echo '<div class="wpinv_email_cart_item_title">' . esc_html( $item->get_name() ) . '</div>';
 
-                    // And an optional description.
-                    $description = $item->get_description();
+				// And an optional description.
+				$description = $item->get_description();
 
-                    if ( ! empty( $description ) ) {
-                        $description = wp_kses_post( $description );
-                        echo "<p class='small'>$description</p>";
+				if ( ! empty( $description ) ) {
+					$description = wp_kses_post( $description );
+					echo "<p class='small'>$description</p>";
                     }
-
-                }
+}
 
                 // Item price.
                 if ( 'price' == $column ) {
 
-                    // Display the item price (or recurring price if this is a renewal invoice)
-                    $price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
-                    echo wpinv_price( $price, $invoice->get_currency() );
+				// Display the item price (or recurring price if this is a renewal invoice)
+				$price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
+				echo wpinv_price( $price, $invoice->get_currency() );
 
                 }
 
                 // Item quantity.
                 if ( 'quantity' == $column ) {
-                    echo (float) $item->get_quantity();
+				echo (float) $item->get_quantity();
                 }
 
                 // Tax rate.
                 if ( 'tax_rate' == $column ) {
-                    echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+				echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
                 }
 
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
-                    $subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
-                    echo wpinv_price( $subtotal, $invoice->get_currency() );
+				$subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
+				echo wpinv_price( $subtotal, $invoice->get_currency() );
                 }
 
                 // Fires when printing a line item column.

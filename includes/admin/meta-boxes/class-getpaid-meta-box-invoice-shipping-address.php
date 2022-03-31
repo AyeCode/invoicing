@@ -87,7 +87,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 		}
 
 		if ( $key == 'state' ) {
-			$country = isset( $address[ 'country' ] ) ? $address[ 'country' ] : wpinv_get_default_country();
+			$country = isset( $address['country'] ) ? $address['country'] : wpinv_get_default_country();
 			$value = wpinv_state_name( $value, $country );
 		}
 

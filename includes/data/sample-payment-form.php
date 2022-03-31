@@ -22,7 +22,7 @@ return array(
         'id'          => 'mmdwqzpox',
         'name'        => 'mmdwqzpox',
         'type'        => 'billing_email',
-        'premade'     => true
+        'premade'     => true,
     ),
 
     array(
@@ -45,22 +45,22 @@ return array(
         'id'          => 'kcicd',
         'name'        => 'kcicd',
         'type'        => 'items',
-        'premade'     => true
+        'premade'     => true,
 
     ),
 
     array(
         'text'    => __( 'Select Payment Method', 'invoicing' ),
-        'id'          => 'gtscicd',
-        'name'        => 'gtscicd',
-        'type'        => 'gateway_select',
-        'premade'     => true
+        'id'      => 'gtscicd',
+        'name'    => 'gtscicd',
+        'type'    => 'gateway_select',
+        'premade' => true,
 
     ),
 
     array(
 
-        'value'       =>'',
+        'value'       => '',
         'class'       => 'btn-primary',
         'label'       => __( 'Pay Now »', 'invoicing' ),
         'description' => __( 'By continuing with your payment, you are agreeing to our privacy policy and terms of service.', 'invoicing' ),
@@ -68,5 +68,5 @@ return array(
         'name'        => 'rtqljyy',
         'type'        => 'pay_button',
         'premade'     => true,
-    )
+    ),
 );

@@ -14,7 +14,7 @@ $class = '';
 
 if ( ! empty( $form->invoice ) ) {
     $value   = sanitize_email( $form->invoice->get_email() );
-} else if ( is_user_logged_in() ) {
+} elseif ( is_user_logged_in() ) {
     $user  = wp_get_current_user();
     $value = sanitize_email( $user->user_email );
 }
@@ -29,16 +29,16 @@ echo "<span class='$class'>";
 
 echo aui()->input(
     array(
-        'name'       => 'billing_email',
-        'id'         => esc_attr( $id ) . uniqid( '_' ),
-        'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
-        'required'   => ! empty( $required ),
-        'label'      => empty( $label ) ? '' : wp_kses_post( $label ) . '<span class="text-danger"> *</span>',
-        'label_type' => 'vertical',
-        'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'type'       => 'email',
-        'value'      => $value,
-        'class'      => 'wpinv_billing_email',
+        'name'             => 'billing_email',
+        'id'               => esc_attr( $id ) . uniqid( '_' ),
+        'placeholder'      => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
+        'required'         => ! empty( $required ),
+        'label'            => empty( $label ) ? '' : wp_kses_post( $label ) . '<span class="text-danger"> *</span>',
+        'label_type'       => 'vertical',
+        'help_text'        => empty( $description ) ? '' : wp_kses_post( $description ),
+        'type'             => 'email',
+        'value'            => $value,
+        'class'            => 'wpinv_billing_email',
         'extra_attributes' => array(
             'autocomplete' => 'billing email',
         ),

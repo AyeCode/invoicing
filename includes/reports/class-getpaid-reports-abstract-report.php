@@ -78,49 +78,49 @@ abstract class GetPaid_Reports_Abstract_Report {
 
         $ranges = array(
 
-            'today'        => array(
+            'today'     => array(
                 "DATE_FORMAT($datetime, '%l%p')",
-                "$date='$today'"
+                "$date='$today'",
             ),
 
-            'yesterday'    => array(
+            'yesterday' => array(
                 "DATE_FORMAT($datetime, '%l%p')",
-                "$date='$yesterday'"
+                "$date='$yesterday'",
             ),
 
-            '7_days'       => array(
+            '7_days'    => array(
                 "DATE($datetime)",
-                "$date BETWEEN '$seven_days_ago' AND '$today'"
+                "$date BETWEEN '$seven_days_ago' AND '$today'",
 			),
 
-			'30_days'       => array(
+			'30_days'   => array(
                 "DATE($datetime)",
-                "$date BETWEEN '$thirty_days_ago' AND '$today'"
+                "$date BETWEEN '$thirty_days_ago' AND '$today'",
 			),
 
-			'60_days'       => array(
+			'60_days'   => array(
                 "DATE($datetime)",
-                "$date BETWEEN '$sixty_days_ago' AND '$today'"
+                "$date BETWEEN '$sixty_days_ago' AND '$today'",
 			),
 
-			'90_days'       => array(
+			'90_days'   => array(
                 "WEEK($datetime)",
-                "$date BETWEEN '$ninety_days_ago' AND '$today'"
+                "$date BETWEEN '$ninety_days_ago' AND '$today'",
 			),
 
-			'180_days'       => array(
+			'180_days'  => array(
                 "WEEK($datetime)",
-                "$date BETWEEN '$one_eighty_days_ago' AND '$today'"
+                "$date BETWEEN '$one_eighty_days_ago' AND '$today'",
 			),
 
-			'360_days'       => array(
+			'360_days'  => array(
                 "WEEK($datetime)",
-                "$date BETWEEN '$three_sixty_days_ago' AND '$today'"
+                "$date BETWEEN '$three_sixty_days_ago' AND '$today'",
             ),
 
         );
 
-		$sql = isset( $ranges[ $range ] ) ? $ranges[ $range ] : $ranges[ '7_days' ];
+		$sql = isset( $ranges[ $range ] ) ? $ranges[ $range ] : $ranges['7_days'];
 		return apply_filters( 'getpaid_earning_graphs_get_range_sql', $sql, $range );
 
 	}
@@ -132,30 +132,30 @@ abstract class GetPaid_Reports_Abstract_Report {
 	public function get_hours_in_a_day() {
 
 		return array(
-			'12AM' => __( '12 AM', 'invoicing'),
-			'1AM'  => __( '1 AM', 'invoicing'),
-			'2AM'  => __( '2 AM', 'invoicing'),
-			'3AM'  => __( '3 AM', 'invoicing'),
-			'4AM'  => __( '4 AM', 'invoicing'),
-			'5AM'  => __( '5 AM', 'invoicing'),
-			'6AM'  => __( '6 AM', 'invoicing'),
-			'7AM'  => __( '7 AM', 'invoicing'),
-			'8AM'  => __( '8 AM', 'invoicing'),
-			'9AM'  => __( '9 AM', 'invoicing'),
-			'10AM' => __( '10 AM', 'invoicing'),
-			'11AM' => __( '11 AM', 'invoicing'),
-			'12pm' => __( '12 PM', 'invoicing'),
-			'1PM'  => __( '1 PM', 'invoicing'),
-			'2PM'  => __( '2 PM', 'invoicing'),
-			'3PM'  => __( '3 PM', 'invoicing'),
-			'4PM'  => __( '4 PM', 'invoicing'),
-			'5PM'  => __( '5 PM', 'invoicing'),
-			'6PM'  => __( '6 PM', 'invoicing'),
-			'7PM'  => __( '7 PM', 'invoicing'),
-			'8PM'  => __( '8 PM', 'invoicing'),
-			'9PM'  => __( '9 PM', 'invoicing'),
-			'10PM' => __( '10 PM', 'invoicing'),
-			'11PM' => __( '11 PM', 'invoicing'),
+			'12AM' => __( '12 AM', 'invoicing' ),
+			'1AM'  => __( '1 AM', 'invoicing' ),
+			'2AM'  => __( '2 AM', 'invoicing' ),
+			'3AM'  => __( '3 AM', 'invoicing' ),
+			'4AM'  => __( '4 AM', 'invoicing' ),
+			'5AM'  => __( '5 AM', 'invoicing' ),
+			'6AM'  => __( '6 AM', 'invoicing' ),
+			'7AM'  => __( '7 AM', 'invoicing' ),
+			'8AM'  => __( '8 AM', 'invoicing' ),
+			'9AM'  => __( '9 AM', 'invoicing' ),
+			'10AM' => __( '10 AM', 'invoicing' ),
+			'11AM' => __( '11 AM', 'invoicing' ),
+			'12pm' => __( '12 PM', 'invoicing' ),
+			'1PM'  => __( '1 PM', 'invoicing' ),
+			'2PM'  => __( '2 PM', 'invoicing' ),
+			'3PM'  => __( '3 PM', 'invoicing' ),
+			'4PM'  => __( '4 PM', 'invoicing' ),
+			'5PM'  => __( '5 PM', 'invoicing' ),
+			'6PM'  => __( '6 PM', 'invoicing' ),
+			'7PM'  => __( '7 PM', 'invoicing' ),
+			'8PM'  => __( '8 PM', 'invoicing' ),
+			'9PM'  => __( '9 PM', 'invoicing' ),
+			'10PM' => __( '10 PM', 'invoicing' ),
+			'11PM' => __( '11 PM', 'invoicing' ),
 		);
 
 	}

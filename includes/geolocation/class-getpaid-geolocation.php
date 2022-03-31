@@ -85,8 +85,7 @@ class GetPaid_Geolocation {
 					$external_ip_address = apply_filters( 'getpaid_geolocation_ip_lookup_api_response', wpinv_clean( $response['body'] ), $service_name );
 					break;
 				}
-
-			}
+}
 
 			set_transient( $transient_name, $external_ip_address, WEEK_IN_SECONDS );
 		}
@@ -159,8 +158,7 @@ class GetPaid_Geolocation {
 			if ( '0.0.0.0' !== $external_ip_address && $external_ip_address !== $ip_address ) {
 				return self::geolocate_ip( $external_ip_address, false, $api_fallback );
 			}
-
-		}
+}
 
 		return array(
 			'country'  => $geolocation['country'],
@@ -237,8 +235,7 @@ class GetPaid_Geolocation {
 				if ( ! empty( $country_code ) ) {
 					break;
 				}
-
-			}
+}
 
 			set_transient( 'geoip_' . $ip_address, $country_code, WEEK_IN_SECONDS );
 		}

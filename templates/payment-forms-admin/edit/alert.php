@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group'>
-    <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Alert Type', 'invoicing' ) ?></label>
+    <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Alert Type', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
         <option value='alert-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>
         <option value='alert-secondary'><?php esc_html_e( 'Secondary', 'invoicing' ); ?></option>

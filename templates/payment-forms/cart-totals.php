@@ -49,7 +49,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 
 			<?php foreach ( $totals as $key => $label ) : ?>
 
-				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' == $key ? 'bg-light' : 'border-bottom' ?>">
+				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' == $key ? 'bg-light' : 'border-bottom'; ?>">
 
 					<div class="form-row">
 
@@ -63,7 +63,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 
 								// Total tax.
 								if ( in_array( $key, array( 'tax', 'discount', 'subtotal', 'total', 'fees' ) ) ) {
-									echo wpinv_price( 0, $currency );
+								echo wpinv_price( 0, $currency );
 								}
 
 								do_action( "getpaid_payment_form_cart_totals_$key", $form );
@@ -82,4 +82,4 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 </div>
 
 <?php
-do_action(  'getpaid_payment_form_cart_totals', $form, $totals );
+do_action( 'getpaid_payment_form_cart_totals', $form, $totals );

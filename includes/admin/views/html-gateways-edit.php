@@ -44,9 +44,9 @@ ksort( $gateways );
                         <?php
 
                             if ( wpinv_is_gateway_active( $id ) ) {
-                                echo "<i class='text-success fa fa-check'></i>";
+							echo "<i class='text-success fa fa-check'></i>";
                             } else {
-                                echo "<i class='text-dark fa fa-times'></i>";
+							echo "<i class='text-dark fa fa-times'></i>";
                             }
 
                         ?>
@@ -58,9 +58,9 @@ ksort( $gateways );
                             $supports = apply_filters( 'getapid_gateway_supports_subscription', $supports, $id );
 
                             if ( $supports ) {
-                                echo "<i class='text-success fa fa-check'></i>";
+							echo "<i class='text-success fa fa-check'></i>";
                             } else {
-                                echo "<i class='text-dark fa fa-times'></i>";
+							echo "<i class='text-dark fa fa-times'></i>";
                             }
 
                         ?>

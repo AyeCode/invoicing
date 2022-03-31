@@ -271,6 +271,6 @@ return array(
 		'rate'         => 20,
 		'reduced_rate' => 5,
 		'name'         => __( 'VAT', 'invoicing' ),
-	)
+	),
 
 );

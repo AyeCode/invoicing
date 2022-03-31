@@ -34,60 +34,60 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @var array
 	 */
 	protected $data = array(
-		'parent_id'            => 0,
-		'status'               => 'wpi-pending',
-		'version'              => '',
-		'date_created'         => null,
-        'date_modified'        => null,
-        'due_date'             => null,
-        'completed_date'       => null,
-        'number'               => '',
-        'title'                => '',
-        'path'                 => '',
-        'key'                  => '',
-        'description'          => '',
-        'author'               => 1,
-        'type'                 => 'invoice',
-        'post_type'            => 'wpi_invoice',
-        'mode'                 => 'live',
-        'user_ip'              => null,
-        'first_name'           => null,
-        'last_name'            => null,
-        'phone'                => null,
-        'email'                => null,
-        'country'              => null,
-        'city'                 => null,
-        'state'                => null,
-        'zip'                  => null,
-        'company'              => null,
-		'company_id'           => null,
-        'vat_number'           => null,
-        'vat_rate'             => null,
-        'address'              => null,
-        'address_confirmed'    => false,
-        'shipping'             => null,
-		'subtotal'             => 0,
-        'total_discount'       => 0,
-        'total_tax'            => 0,
-		'total_fees'           => 0,
-		'total'                => 0,
-        'fees'                 => array(),
-        'discounts'            => array(),
-        'taxes'                => array(),
-        'items'                => array(),
-        'payment_form'         => 1,
-        'submission_id'        => null,
-        'discount_code'        => null,
-        'gateway'              => 'none',
-        'transaction_id'       => '',
-        'currency'             => '',
-        'disable_taxes'        => false,
-		'subscription_id'      => null,
+		'parent_id'              => 0,
+		'status'                 => 'wpi-pending',
+		'version'                => '',
+		'date_created'           => null,
+        'date_modified'          => null,
+        'due_date'               => null,
+        'completed_date'         => null,
+        'number'                 => '',
+        'title'                  => '',
+        'path'                   => '',
+        'key'                    => '',
+        'description'            => '',
+        'author'                 => 1,
+        'type'                   => 'invoice',
+        'post_type'              => 'wpi_invoice',
+        'mode'                   => 'live',
+        'user_ip'                => null,
+        'first_name'             => null,
+        'last_name'              => null,
+        'phone'                  => null,
+        'email'                  => null,
+        'country'                => null,
+        'city'                   => null,
+        'state'                  => null,
+        'zip'                    => null,
+        'company'                => null,
+		'company_id'             => null,
+        'vat_number'             => null,
+        'vat_rate'               => null,
+        'address'                => null,
+        'address_confirmed'      => false,
+        'shipping'               => null,
+		'subtotal'               => 0,
+        'total_discount'         => 0,
+        'total_tax'              => 0,
+		'total_fees'             => 0,
+		'total'                  => 0,
+        'fees'                   => array(),
+        'discounts'              => array(),
+        'taxes'                  => array(),
+        'items'                  => array(),
+        'payment_form'           => 1,
+        'submission_id'          => null,
+        'discount_code'          => null,
+        'gateway'                => 'none',
+        'transaction_id'         => '',
+        'currency'               => '',
+        'disable_taxes'          => false,
+		'subscription_id'        => null,
 		'remote_subscription_id' => null,
-		'is_viewed'            => false,
-		'email_cc'             => '',
-		'template'             => 'quantity', // hours, amount only
-		'created_via'          => null,
+		'is_viewed'              => false,
+		'email_cc'               => '',
+		'template'               => 'quantity', // hours, amount only
+		'created_via'            => null,
     );
 
     /**
@@ -117,8 +117,8 @@ class WPInv_Invoice extends GetPaid_Data {
      * Stores an array of item totals.
 	 *
 	 * e.g $totals['discount'] = array(
-	 * 		'initial'   => 10,
-	 * 		'recurring' => 10,
+	 *      'initial'   => 10,
+	 *      'recurring' => 10,
 	 * )
      *
      * @var array
@@ -161,8 +161,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			if ( isset( $invoice['ID'] ) ) {
 				$this->set_id( $invoice['ID'] );
 			}
-
-		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
+} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
 			$this->set_id( $invoice_id );
 		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
 			$this->set_id( $invoice_id );
@@ -233,7 +232,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if an invoice key is set.
      */
     public function _isset( $key ) {
-        return isset( $this->data[$key] ) || method_exists( $this, "get_$key" );
+        return isset( $this->data[ $key ] ) || method_exists( $this, "get_$key" );
     }
 
     /*
@@ -292,7 +291,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function get_status( $context = 'view' ) {
 		return $this->get_prop( 'status', $context );
 	}
-	
+
 	/**
 	 * Retrieves an array of possible invoice statuses.
 	 *
@@ -380,7 +379,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function get_date_created( $context = 'view' ) {
 		return $this->get_prop( 'date_created', $context );
 	}
-	
+
 	/**
 	 * Alias for self::get_date_created().
 	 *
@@ -668,7 +667,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$prefix = $this->get_type();
 
 		if ( 0 !== strpos( $path, $prefix ) ) {
-			$path = sanitize_title(  $prefix . '-' . $this->get_id()  );
+			$path = sanitize_title( $prefix . '-' . $this->get_id() );
 			$this->set_path( $path );
 		}
 
@@ -1412,7 +1411,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		if ( $context = 'view' ) {
 			return floatval( $this->get_prop( 'shipping', $context ) );
 		}
- 
+
 		return $this->get_prop( 'shipping', $context );
     }
 
@@ -1632,8 +1631,8 @@ class WPInv_Invoice extends GetPaid_Data {
 			$currency
 		);
 
-        if ( isset( $data[$field] ) ) {
-            return ( $currency ? wpinv_price( $data[$field], $this->get_currency() ) : $data[$field] );
+        if ( isset( $data[ $field ] ) ) {
+            return ( $currency ? wpinv_price( $data[ $field ], $this->get_currency() ) : $data[ $field ] );
         }
 
         return $data;
@@ -1744,7 +1743,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return string
 	 */
     public function get_gateway_title() {
-        $title =  wpinv_get_gateway_checkout_label( $this->get_gateway() );
+        $title = wpinv_get_gateway_checkout_label( $this->get_gateway() );
         return apply_filters( 'wpinv_gateway_title', $title, $this->get_id(), $this );
     }
 
@@ -1927,7 +1926,7 @@ class WPInv_Invoice extends GetPaid_Data {
 
         return apply_filters( 'wpinv_get_checkout_payment_url', $pay_url, $this, $deprecated, $secret );
 	}
-	
+
 	/**
 	 * Retrieves the receipt url.
 	 *
@@ -2031,8 +2030,8 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$statuses = $this->get_all_statuses();
 
-		if ( isset( $statuses[ 'draft' ] ) ) {
-			unset( $statuses[ 'draft' ] );
+		if ( isset( $statuses['draft'] ) ) {
+			unset( $statuses['draft'] );
 		}
 
 		$this->set_prop( 'status', $new_status );
@@ -2064,14 +2063,13 @@ class WPInv_Invoice extends GetPaid_Data {
 				);
 
 				if ( $manual_update ) {
-					do_action( 'getpaid_' . $this->object_type .'_edit_status', $this->get_id(), $new_status );
+					do_action( 'getpaid_' . $this->object_type . '_edit_status', $this->get_id(), $new_status );
 				}
 
 				$this->maybe_set_date_paid();
 
 			}
-
-		}
+}
 
 		return array(
 			'from' => $old_status,
@@ -2175,7 +2173,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_completed_date( $value ) {
         $date = strtotime( $value );
 
-        if ( $date && $value !== '0000-00-00 00:00:00'  ) {
+        if ( $date && $value !== '0000-00-00 00:00:00' ) {
             $this->set_prop( 'completed_date', date( 'Y-m-d H:i:s', $date ) );
             return true;
         }
@@ -3110,7 +3108,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function set_subscription_id( $value ) {
 		$this->set_prop( 'subscription_id', $value );
 	}
-	
+
 	/**
 	 * Set the remote subscription id.
 	 *
@@ -3194,7 +3192,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_free();
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
     }
-  
+
 	/**
      * Checks if the invoice is refunded.
      */
@@ -3274,7 +3272,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $is_initial_free = ! ( (float) wpinv_round_amount( $this->get_initial_total() ) > 0 );
         return apply_filters( 'wpinv_invoice_is_initial_free', $is_initial_free, $this->get_cart_details(), $this );
     }
-	
+
 	/**
      * Check if the recurring item has a free trial.
      *
@@ -3296,7 +3294,7 @@ class WPInv_Invoice extends GetPaid_Data {
     public function is_free_trial_from_discount() {
 		return $this->has_free_trial() && ! $this->item_has_free_trial();
 	}
-	
+
 	/**
      * @deprecated
      */
@@ -3432,8 +3430,7 @@ class WPInv_Invoice extends GetPaid_Data {
 				if ( $item_id == $this->recurring_item ) {
 					$this->recurring_item = null;
 				}
-
-			}
+}
 		}
 
     }
@@ -3648,7 +3645,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$skip_tax = false;
 		}
 
-		if ( ! wpinv_use_taxes() || $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() ) || $skip_tax   ) {
+		if ( ! wpinv_use_taxes() || $this->get_disable_taxes() || ! wpinv_is_country_taxable( $this->get_country() ) || $skip_tax ) {
 
 			$this->totals['tax'] = array(
 				'initial'   => 0,
@@ -3681,8 +3678,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					$item_taxes[ $name ]['recurring_tax'] += $tax['recurring_tax'];
 
 				}
-
-			}
+}
 
 			$item_taxes = array_replace( $this->get_taxes(), $item_taxes );
 			$this->set_taxes( $item_taxes );
@@ -3848,7 +3844,7 @@ class WPInv_Invoice extends GetPaid_Data {
 				if ( ! empty( $status_transition['from'] ) ) {
 
 					/* translators: 1: old invoice status 2: new invoice status */
-					$transition_note = sprintf( __( 'Status changed from %1$s to %2$s.', 'invoicing' ), wpinv_status_nicename( $status_transition['from'], $this ), wpinv_status_nicename( $status_transition['to'], $this  ) );
+					$transition_note = sprintf( __( 'Status changed from %1$s to %2$s.', 'invoicing' ), wpinv_status_nicename( $status_transition['from'], $this ), wpinv_status_nicename( $status_transition['to'], $this ) );
 
 					// Fire another hook.
 					do_action( 'getpaid_invoice_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this );
@@ -3877,7 +3873,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					}
 				} else {
 					/* translators: %s: new invoice status */
-					$transition_note = sprintf( __( 'Status set to %s.', 'invoicing' ), wpinv_status_nicename( $status_transition['to'], $this  ) );
+					$transition_note = sprintf( __( 'Status set to %s.', 'invoicing' ), wpinv_status_nicename( $status_transition['to'], $this ) );
 
 					// Note the transition occurred.
 					$this->add_note( trim( $status_transition['note'] . ' ' . $transition_note ), 0, $status_transition['manual'] );
@@ -3955,14 +3951,14 @@ class WPInv_Invoice extends GetPaid_Data {
 
 	/**
 	 * Marks an invoice as paid.
-	 * 
+	 *
 	 * @param string $transaction_id
 	 */
     public function mark_paid( $transaction_id = null, $note = '' ) {
 
 		// Set the transaction id.
 		if ( empty( $transaction_id ) ) {
-			$transaction_id = $this->generate_key('trans_');
+			$transaction_id = $this->generate_key( 'trans_' );
 		}
 
 		if ( ! $this->get_transaction_id() ) {

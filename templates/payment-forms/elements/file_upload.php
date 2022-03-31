@@ -30,9 +30,7 @@ foreach ( $file_types as $file_type ) {
 			$types[]  = ".$type";
 			$_types[] = $type;
 		}
-
-	}
-
+}
 }
 
 if ( ! empty( $required ) ) {

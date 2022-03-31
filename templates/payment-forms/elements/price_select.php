@@ -28,15 +28,15 @@ $select_type = empty( $select_type ) ? 'select' : $select_type;
 if ( $select_type == 'select' ) {
     echo aui()->select(
         array(
-            'name'       => $id,
-            'id'         => $id . uniqid( '_' ),
-            'placeholder'=> empty( $placeholder ) ? '' : esc_attr( $placeholder ),
-            'value'      => $value,
-            'label'      => empty( $label ) ? '' : esc_html( $label ),
-            'label_type' => 'vertical',
-            'class'      => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
-            'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-            'options'    => $options,
+            'name'        => $id,
+            'id'          => $id . uniqid( '_' ),
+            'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
+            'value'       => $value,
+            'label'       => empty( $label ) ? '' : esc_html( $label ),
+            'label_type'  => 'vertical',
+            'class'       => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
+            'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
+            'options'     => $options,
         )
     );
     return;

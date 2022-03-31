@@ -25,21 +25,21 @@ function wpinv_subscriptions_page() {
 				// Verify user permissions.
 				if ( ! wpinv_current_user_can_manage_invoicing() ) {
 
-					echo aui()->alert(
-						array(
-							'type'    => 'danger',
-							'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
-						)
-					);
+				echo aui()->alert(
+				array(
+                    'type'    => 'danger',
+                    'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
+				)
+			);
 
-				} else if ( ! empty( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
+				} elseif ( ! empty( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
 
-					// Display a single subscription.
-					wpinv_recurring_subscription_details();
+				// Display a single subscription.
+				wpinv_recurring_subscription_details();
 				} else {
 
-					// Display a list of available subscriptions.
-					getpaid_print_subscriptions_list();
+				// Display a list of available subscriptions.
+				getpaid_print_subscriptions_list();
 				}
 
 			?>
@@ -123,7 +123,7 @@ function wpinv_recurring_subscription_details() {
 			<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 			<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 			<input type="hidden" name="getpaid-admin-action" value="update_single_subscription" />
-			<input type="hidden" name="subscription_id" value="<?php echo (int) $sub->get_id() ;?>" />
+			<input type="hidden" name="subscription_id" value="<?php echo (int) $sub->get_id(); ?>" />
 
 			<div id="poststuff">
 				<div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
@@ -163,16 +163,16 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 	$fields = apply_filters(
 		'getpaid_subscription_admin_page_fields',
 		array(
-			'subscription'   => __( 'Subscription', 'invoicing' ),
-			'customer'       => __( 'Customer', 'invoicing' ),
-			'amount'         => __( 'Amount', 'invoicing' ),
-			'start_date'     => __( 'Start Date', 'invoicing' ),
-			'renews_on'      => __( 'Next Payment', 'invoicing' ),
-			'renewals'       => __( 'Payments', 'invoicing' ),
-			'item'           => _n( 'Item', 'Items', $items_count,  'invoicing' ),
-			'gateway'        => __( 'Payment Method', 'invoicing' ),
-			'profile_id'     => __( 'Profile ID', 'invoicing' ),
-			'status'         => __( 'Status', 'invoicing' ),
+			'subscription' => __( 'Subscription', 'invoicing' ),
+			'customer'     => __( 'Customer', 'invoicing' ),
+			'amount'       => __( 'Amount', 'invoicing' ),
+			'start_date'   => __( 'Start Date', 'invoicing' ),
+			'renews_on'    => __( 'Next Payment', 'invoicing' ),
+			'renewals'     => __( 'Payments', 'invoicing' ),
+			'item'         => _n( 'Item', 'Items', $items_count, 'invoicing' ),
+			'gateway'      => __( 'Payment Method', 'invoicing' ),
+			'profile_id'   => __( 'Profile ID', 'invoicing' ),
+			'status'       => __( 'Status', 'invoicing' ),
 		)
 	);
 
@@ -185,8 +185,7 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 		if ( isset( $fields['gateway'] ) ) {
 			unset( $fields['gateway'] );
 		}
-
-	}
+}
 
 	$profile_id = $sub->get_profile_id();
 	if ( empty( $profile_id ) && isset( $fields['profile_id'] ) ) {
@@ -298,7 +297,7 @@ add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subsc
  */
 function getpaid_admin_subscription_metabox_display_renewals( $subscription ) {
 	$max_bills = $subscription->get_bill_times();
-	echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? "&infin;" : (int) $max_bills );
+	echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? '&infin;' : (int) $max_bills );
 }
 add_action( 'getpaid_subscription_admin_display_renewals', 'getpaid_admin_subscription_metabox_display_renewals' );
 /**
@@ -332,7 +331,7 @@ function getpaid_admin_subscription_metabox_display_gateway( $subscription ) {
 	if ( ! empty( $gateway ) ) {
 		echo esc_html( wpinv_get_gateway_admin_label( $gateway ) );
 	} else {
-		echo "&mdash;";
+		echo '&mdash;';
 	}
 
 }
@@ -359,15 +358,15 @@ function getpaid_admin_subscription_metabox_display_profile_id( $subscription ) 
 
 	$input = aui()->input(
 		array(
-			'type'        => 'text',
-			'id'          => 'wpinv_subscription_profile_id',
-			'name'        => 'wpinv_subscription_profile_id',
-			'label'       => __( 'Profile Id', 'invoicing' ),
-			'label_type'  => 'hidden',
-			'placeholder' => __( 'Profile Id', 'invoicing' ),
-			'value'       => esc_attr( $profile_id ),
+			'type'              => 'text',
+			'id'                => 'wpinv_subscription_profile_id',
+			'name'              => 'wpinv_subscription_profile_id',
+			'label'             => __( 'Profile Id', 'invoicing' ),
+			'label_type'        => 'hidden',
+			'placeholder'       => __( 'Profile Id', 'invoicing' ),
+			'value'             => esc_attr( $profile_id ),
 			'input_group_right' => '',
-			'no_wrap'     => true,
+			'no_wrap'           => true,
 		)
 	);
 
@@ -394,15 +393,15 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 		<?php
 			echo aui()->select(
 				array(
-					'options'          => getpaid_get_subscription_statuses(),
-					'name'             => 'subscription_status',
-					'id'               => 'subscription_status_update_select',
-					'required'         => true,
-					'no_wrap'          => false,
-					'label'            => __( 'Subscription Status', 'invoicing' ),
-					'help_text'        => __( 'Updating the status will trigger related actions and hooks', 'invoicing' ),
-					'select2'          => true,
-					'value'            => $subscription->get_status( 'edit' ),
+					'options'   => getpaid_get_subscription_statuses(),
+					'name'      => 'subscription_status',
+					'id'        => 'subscription_status_update_select',
+					'required'  => true,
+					'no_wrap'   => false,
+					'label'     => __( 'Subscription Status', 'invoicing' ),
+					'help_text' => __( 'Updating the status will trigger related actions and hooks', 'invoicing' ),
+					'select2'   => true,
+					'value'     => $subscription->get_status( 'edit' ),
 				)
 			);
 		?>
@@ -417,7 +416,7 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 			$title  = esc_attr__( 'Are you sure you want to extend the subscription and generate a new invoice that will be automatically marked as paid?', 'invoicing' );
 
 			if ( $subscription->is_active() ) {
-				echo "<a href='$url' class='float-right text-muted' onclick='return confirm(\"$title\")'>$anchor</a>";
+			echo "<a href='$url' class='float-right text-muted' onclick='return confirm(\"$title\")'>$anchor</a>";
 			}
 
 	echo '</div></div>';
@@ -466,11 +465,11 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 					<tr>
 						<?php
 							foreach ( $columns as $key => $label ) {
-								$key   = esc_attr( $key );
-								$label = esc_html( $label );
-								$class = 'text-left';
+							$key   = esc_attr( $key );
+							$label = esc_html( $label );
+							$class = 'text-left';
 
-								echo "<th class='subscription-invoice-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
+							echo "<th class='subscription-invoice-field-$key bg-light p-2 $class color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>
@@ -480,7 +479,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 
 					<?php if ( empty( $payments ) ) : ?>
 						<tr>
-							<td colspan="<?php echo count($columns); ?>" class="p-2 text-left text-muted">
+							<td colspan="<?php echo count( $columns ); ?>" class="p-2 text-left text-muted">
 								<?php _e( 'This subscription has no invoices.', 'invoicing' ); ?>
 							</td>
 						</tr>
@@ -488,70 +487,69 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 
 					<?php
 
-						foreach( $payments as $payment ) :
+						foreach ( $payments as $payment ) :
 
-							// Ensure that we have an invoice.
-							$payment = new WPInv_Invoice( $payment );
+						// Ensure that we have an invoice.
+						$payment = new WPInv_Invoice( $payment );
 
-							// Abort if the invoice is invalid...
-							if ( ! $payment->exists() ) {
-								continue;
+						// Abort if the invoice is invalid...
+						if ( ! $payment->exists() ) {
+							continue;
 							}
 
-							// ... or belongs to a different subscription.
-							if ( $strict && $payment->is_renewal() && $payment->get_subscription_id() && $payment->get_subscription_id() != $subscription->get_id() ) {
-								continue;
+						// ... or belongs to a different subscription.
+						if ( $strict && $payment->is_renewal() && $payment->get_subscription_id() && $payment->get_subscription_id() != $subscription->get_id() ) {
+							continue;
 							}
 
-							echo '<tr>';
+						echo '<tr>';
 
-								foreach ( array_keys( $columns ) as $key ) {
+						foreach ( array_keys( $columns ) as $key ) {
 
-									$class = 'text-left';
+							$class = 'text-left';
 
-									echo "<td class='p-2 text-left'>";
+							echo "<td class='p-2 text-left'>";
 
-										switch( $key ) {
+								switch ( $key ) {
 
-											case 'total':
-												echo '<strong>' . wpinv_price( $payment->get_total(), $payment->get_currency() ) . '</strong>';
-												break;
+								case 'total':
+										echo '<strong>' . wpinv_price( $payment->get_total(), $payment->get_currency() ) . '</strong>';
+									break;
 
-											case 'relationship':
-												echo $payment->is_renewal() ? __( 'Renewal Invoice', 'invoicing' ) : __( 'Initial Invoice', 'invoicing' );
-												break;
+								case 'relationship':
+											echo $payment->is_renewal() ? __( 'Renewal Invoice', 'invoicing' ) : __( 'Initial Invoice', 'invoicing' );
+									break;
 
-											case 'date':
-												echo getpaid_format_date_value( $payment->get_date_created() );
-												break;
+								case 'date':
+									echo getpaid_format_date_value( $payment->get_date_created() );
+									break;
 
-											case 'status':
-
-												$status = $payment->get_status_nicename();
-												if ( is_admin() ) {
-													$status = $payment->get_status_label_html();
-												}
-
-												echo wp_kses_post( $status );
-												break;
-
-											case 'invoice':
-												$link    = esc_url( get_edit_post_link( $payment->get_id() ) );
-
-												if ( ! is_admin() ) {
-													$link = esc_url( $payment->get_view_url() );
-												}
-
-												$invoice = esc_html( $payment->get_number() );
-												echo "<a href='$link'>$invoice</a>";
-												break;
+								case 'status':
+										$status = $payment->get_status_nicename();
+										if ( is_admin() ) {
+										$status = $payment->get_status_label_html();
 										}
 
-									echo '</td>';
+										echo wp_kses_post( $status );
+									break;
 
-								}
+								case 'invoice':
+										$link    = esc_url( get_edit_post_link( $payment->get_id() ) );
 
-							echo '</tr>';
+										if ( ! is_admin() ) {
+										$link = esc_url( $payment->get_view_url() );
+										}
+
+										$invoice = esc_html( $payment->get_number() );
+										echo "<a href='$link'>$invoice</a>";
+									break;
+										}
+
+								echo '</td>';
+
+							}
+
+						echo '</tr>';
 
 						endforeach;
 					?>
@@ -583,12 +581,12 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 	$columns = apply_filters(
 		'getpaid_subscription_item_details_columns',
 		array(
-			'item_name'    => __( 'Item', 'invoicing' ),
-			'price'        => __( 'Price', 'invoicing' ),
-			'tax'          => __( 'Tax', 'invoicing' ),
-			'discount'     => __( 'Discount', 'invoicing' ),
+			'item_name' => __( 'Item', 'invoicing' ),
+			'price'     => __( 'Price', 'invoicing' ),
+			'tax'       => __( 'Tax', 'invoicing' ),
+			'discount'  => __( 'Discount', 'invoicing' ),
 			//'initial'      => __( 'Initial Amount', 'invoicing' ),
-			'recurring'    => __( 'Subtotal', 'invoicing' ),
+			'recurring' => __( 'Subtotal', 'invoicing' ),
 		),
 		$subscription
 	);
@@ -617,11 +615,11 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 						<?php
 
 							foreach ( $columns as $key => $label ) {
-								$key   = esc_attr( $key );
-								$label = esc_html( $label );
-								$class = 'text-left';
+							$key   = esc_attr( $key );
+							$label = esc_html( $label );
+							$class = 'text-left';
 
-								echo "<th class='subscription-item-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
+							echo "<th class='subscription-item-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>
@@ -631,103 +629,103 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 
 					<?php
 
-						foreach( $subscription_group['items'] as $subscription_group_item ) :
+						foreach ( $subscription_group['items'] as $subscription_group_item ) :
 
-							echo '<tr>';
+						echo '<tr>';
 
-								foreach ( array_keys( $columns ) as $key ) {
+						foreach ( array_keys( $columns ) as $key ) {
 
-									$class = 'text-left';
+							$class = 'text-left';
 
-									echo "<td class='p-2 text-left'>";
+							echo "<td class='p-2 text-left'>";
 
-										switch( $key ) {
+								switch ( $key ) {
 
-											case 'item_name':
-												$item_name = get_the_title( $subscription_group_item['item_id'] );
-												$item_name = empty( $item_name ) ? $subscription_group_item['item_name'] : $item_name;
+								case 'item_name':
+										$item_name = get_the_title( $subscription_group_item['item_id'] );
+										$item_name = empty( $item_name ) ? $subscription_group_item['item_name'] : $item_name;
 
-												if ( $invoice->get_template() == 'amount' || 1 == (float) $subscription_group_item['quantity'] ) {
-													echo esc_html( $item_name );
-												} else {
-													printf( '%1$s x %2$d', esc_html( $item_name ), (float) $subscription_group_item['quantity'] );
-												}
+										if ( $invoice->get_template() == 'amount' || 1 == (float) $subscription_group_item['quantity'] ) {
+										echo esc_html( $item_name );
+										} else {
+										printf( '%1$s x %2$d', esc_html( $item_name ), (float) $subscription_group_item['quantity'] );
+											}
 
-												break;
+									break;
 
-											case 'price':
-												echo wpinv_price( $subscription_group_item['item_price'], $invoice->get_currency() );
-												break;
+								case 'price':
+											echo wpinv_price( $subscription_group_item['item_price'], $invoice->get_currency() );
+									break;
 
-											case 'tax':
-												echo wpinv_price( $subscription_group_item['tax'], $invoice->get_currency() );
-												break;
+								case 'tax':
+									echo wpinv_price( $subscription_group_item['tax'], $invoice->get_currency() );
+									break;
 
-											case 'discount':
-												echo wpinv_price( $subscription_group_item['discount'], $invoice->get_currency() );
-												break;
+								case 'discount':
+										echo wpinv_price( $subscription_group_item['discount'], $invoice->get_currency() );
+									break;
 
-											case 'initial':
-												echo wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() );
-												break;
+								case 'initial':
+										echo wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() );
+									break;
 
-											case 'recurring':
-												echo '<strong>' . wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() ) . '</strong>';
-												break;
+								case 'recurring':
+										echo '<strong>' . wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() ) . '</strong>';
+									break;
 
 										}
 
-									echo '</td>';
+								echo '</td>';
 
-								}
+							}
 
-							echo '</tr>';
+						echo '</tr>';
 
 						endforeach;
 
-						foreach( $subscription_group['fees'] as $subscription_group_fee ) :
+						foreach ( $subscription_group['fees'] as $subscription_group_fee ) :
 
-							echo '<tr>';
+						echo '<tr>';
 
-								foreach ( array_keys( $columns ) as $key ) {
+						foreach ( array_keys( $columns ) as $key ) {
 
-									$class = 'text-left';
+							$class = 'text-left';
 
-									echo "<td class='p-2 text-left'>";
+							echo "<td class='p-2 text-left'>";
 
-										switch( $key ) {
+								switch ( $key ) {
 
-											case 'item_name':
-												echo esc_html( $subscription_group_fee['name'] );
-												break;
+								case 'item_name':
+										echo esc_html( $subscription_group_fee['name'] );
+									break;
 
-											case 'price':
-												echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
-												break;
+								case 'price':
+											echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+									break;
 
-											case 'tax':
-												echo "&mdash;";
-												break;
+								case 'tax':
+									echo '&mdash;';
+									break;
 
-											case 'discount':
-												echo "&mdash;";
-												break;
+								case 'discount':
+										echo '&mdash;';
+									break;
 
-											case 'initial':
-												echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
-												break;
+								case 'initial':
+										echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+									break;
 
-											case 'recurring':
-												echo '<strong>' . wpinv_price( $subscription_group_fee['recurring_fee'], $invoice->get_currency() ) . '</strong>';
-												break;
+								case 'recurring':
+										echo '<strong>' . wpinv_price( $subscription_group_fee['recurring_fee'], $invoice->get_currency() ) . '</strong>';
+									break;
 
 										}
 
-									echo '</td>';
+								echo '</td>';
 
-								}
+							}
 
-							echo '</tr>';
+						echo '</tr>';
 
 						endforeach;
 					?>
@@ -760,12 +758,12 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 	$columns = apply_filters(
 		'getpaid_subscription_related_subscriptions_columns',
 		array(
-			'subscription'      => __( 'Subscription', 'invoicing' ),
-			'start_date'        => __( 'Start Date', 'invoicing' ),
-			'renewal_date'      => __( 'Next Payment', 'invoicing' ),
-			'renewals'          => __( 'Payments', 'invoicing' ),
-			'item'              => __( 'Items', 'invoicing' ),
-			'status'            => __( 'Status', 'invoicing' ),
+			'subscription' => __( 'Subscription', 'invoicing' ),
+			'start_date'   => __( 'Start Date', 'invoicing' ),
+			'renewal_date' => __( 'Next Payment', 'invoicing' ),
+			'renewals'     => __( 'Payments', 'invoicing' ),
+			'item'         => __( 'Items', 'invoicing' ),
+			'status'       => __( 'Status', 'invoicing' ),
 		),
 		$subscription
 	);
@@ -790,11 +788,11 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 						<?php
 
 							foreach ( $columns as $key => $label ) {
-								$key   = esc_attr( $key );
-								$label = esc_html( $label );
-								$class = 'text-left';
+							$key   = esc_attr( $key );
+							$label = esc_html( $label );
+							$class = 'text-left';
 
-								echo "<th class='related-subscription-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
+							echo "<th class='related-subscription-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
 							}
 						?>
 					</tr>
@@ -804,71 +802,71 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 
 					<?php
 
-						foreach( $subscription_groups as $subscription_group ) :
+						foreach ( $subscription_groups as $subscription_group ) :
 
-							// Do not list current subscription.
-							if ( $skip_current && (int) $subscription_group['subscription_id'] === $subscription->get_id() ) {
-								continue;
+						// Do not list current subscription.
+						if ( $skip_current && (int) $subscription_group['subscription_id'] === $subscription->get_id() ) {
+							continue;
 							}
 
-							// Ensure the subscription exists.
-							$_suscription = new WPInv_Subscription( $subscription_group['subscription_id'] );
+						// Ensure the subscription exists.
+						$_suscription = new WPInv_Subscription( $subscription_group['subscription_id'] );
 
-							if ( ! $_suscription->exists() ) {
-								continue;
+						if ( ! $_suscription->exists() ) {
+							continue;
 							}
 
-							echo '<tr>';
+						echo '<tr>';
 
-								foreach ( array_keys( $columns ) as $key ) {
+						foreach ( array_keys( $columns ) as $key ) {
 
-									$class = 'text-left';
+							$class = 'text-left';
 
-									echo "<td class='p-2 text-left'>";
+							echo "<td class='p-2 text-left'>";
 
-										switch( $key ) {
+								switch ( $key ) {
 
-											case 'status':
-												echo wp_kses_post( $_suscription->get_status_label_html() );
-												break;
+								case 'status':
+										echo wp_kses_post( $_suscription->get_status_label_html() );
+									break;
 
-											case 'item':
-												$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
-												echo implode( ' | ', $markup );
-												break;
+								case 'item':
+											$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
+											echo implode( ' | ', $markup );
+									break;
 
-											case 'renewals':
-												$max_bills = $_suscription->get_bill_times();
-												echo ( (int) $_suscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? "&infin;" : (int) $max_bills );
-												break;
+								case 'renewals':
+									$max_bills = $_suscription->get_bill_times();
+									echo ( (int) $_suscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? '&infin;' : (int) $max_bills );
+									break;
 
-											case 'renewal_date':
-												echo $_suscription->is_active() ? getpaid_format_date_value( $_suscription->get_expiration() ) : "&mdash;";
-												break;
+								case 'renewal_date':
+										echo $_suscription->is_active() ? getpaid_format_date_value( $_suscription->get_expiration() ) : '&mdash;';
+									break;
 
-											case 'start_date':
-												echo 'pending' == $_suscription->get_status() ? "&mdash;" : getpaid_format_date_value( $_suscription->get_date_created() );
-												break;
+								case 'start_date':
+										echo 'pending' == $_suscription->get_status() ? '&mdash;' : getpaid_format_date_value( $_suscription->get_date_created() );
+									break;
 
-											case 'subscription':
-												$url = is_admin() ? admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $_suscription->get_id() ) ) : $_suscription->get_view_url();
-												printf(
-													'%1$s#%2$s%3$s',
-													'<a href="' . esc_url( $url ) . '">',
-													'<strong>' . intval( $_suscription->get_id() ) . '</strong>',
-													'</a>'
-												);
+								case 'subscription':
+										$url = is_admin() ? admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $_suscription->get_id() ) ) : $_suscription->get_view_url();
+										printf(
+                                            '%1$s#%2$s%3$s',
+                                            '<a href="' . esc_url( $url ) . '">',
+                                            '<strong>' . intval( $_suscription->get_id() ) . '</strong>',
+											'</a>'
+                                        );
 
-												echo WPInv_Subscriptions_List_Table::column_amount( $_suscription );
-												break;
+											echo WPInv_Subscriptions_List_Table::column_amount( $_suscription );
+									break;
 
 										}
 
-									echo '</td>';
+								echo '</td>';
 
-								}
+							}
 
-							echo '</tr>';
+						echo '</tr>';
 
 						endforeach;
 					?>

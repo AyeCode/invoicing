@@ -5,7 +5,9 @@
  */
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+exit;
+}
 
 // Load WP_List_Table if not loaded
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -42,11 +44,13 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public function __construct() {
 
 		// Set parent defaults
-		parent::__construct( array(
-			'singular' => 'id',
-			'plural'   => 'ids',
-			'ajax'     => false,
-		) );
+		parent::__construct(
+            array(
+				'singular' => 'id',
+				'plural'   => 'ids',
+				'ajax'     => false,
+            )
+        );
 
 	}
 
@@ -151,18 +155,18 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public function column_total_raw( $user ) {
 
 		$args = array(
-			'data'             => array(
+			'data'           => array(
 
-				'total'        => array(
+				'total' => array(
 					'type'     => 'invoice_data',
 					'function' => 'SUM',
 					'name'     => 'total_sales',
-				)
+				),
 
 			),
-			'where'            => array(
+			'where'          => array(
 
-				'author'       => array(
+				'author' => array(
 					'type'     => 'post_data',
 					'value'    => absint( $user->ID ),
 					'key'      => 'posts.post_author',
@@ -190,9 +194,9 @@ class WPInv_Customers_Table extends WP_List_Table {
 	public function column_invoices( $user ) {
 
 		$args = array(
-			'data'             => array(
+			'data'           => array(
 
-				'ID'           => array(
+				'ID' => array(
 					'type'     => 'post_data',
 					'function' => 'COUNT',
 					'name'     => 'count',
@@ -200,9 +204,9 @@ class WPInv_Customers_Table extends WP_List_Table {
 				),
 
 			),
-			'where'            => array(
+			'where'          => array(
 
-				'author'       => array(
+				'author' => array(
 					'type'     => 'post_data',
 					'value'    => absint( $user->ID ),
 					'key'      => 'posts.post_author',
@@ -329,7 +333,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 		$post_types = '';
 
 		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
-			$post_types .= $wpdb->prepare( "post_type=%s OR ", $post_type );
+			$post_types .= $wpdb->prepare( 'post_type=%s OR ', $post_type );
 		}
 
 		$post_types = rtrim( $post_types, ' OR' );
@@ -377,9 +381,9 @@ class WPInv_Customers_Table extends WP_List_Table {
 
 		$this->set_pagination_args(
 			array(
-			'total_items' => $this->total,
-			'per_page'    => $this->per_page,
-			'total_pages' => ceil( $this->total / $this->per_page )
+				'total_items' => $this->total,
+				'per_page'    => $this->per_page,
+				'total_pages' => ceil( $this->total / $this->per_page ),
 			)
 		);
 

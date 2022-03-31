@@ -71,90 +71,90 @@ class WPInv_Privacy_Exporters {
 
         // Prepare basic properties.
         $props_to_export = array(
-            'number'               => array(
-                'name' => __( 'Invoice Number', 'invoicing' ),
+            'number'       => array(
+                'name'  => __( 'Invoice Number', 'invoicing' ),
                 'value' => $invoice->get_number(),
             ),
-            'created_date'         => array(
-                'name' => __( 'Created Date', 'invoicing' ),
+            'created_date' => array(
+                'name'  => __( 'Created Date', 'invoicing' ),
                 'value' => $invoice->get_date_created(),
             ),
-            'due_date'         => array(
-                'name' => __( 'Due Date', 'invoicing' ),
+            'due_date'     => array(
+                'name'  => __( 'Due Date', 'invoicing' ),
                 'value' => $invoice->get_due_date(),
             ),
-            'items'                => array(
-                'name' => __( 'Invoice Items', 'invoicing' ),
+            'items'        => array(
+                'name'  => __( 'Invoice Items', 'invoicing' ),
                 'value' => self::process_invoice_items( $invoice ),
             ),
-            'discount'                => array(
-                'name' => __( 'Invoice Discount', 'invoicing' ),
+            'discount'     => array(
+                'name'  => __( 'Invoice Discount', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() ),
             ),
-            'total'                => array(
-                'name' => __( 'Invoice Total', 'invoicing' ),
+            'total'        => array(
+                'name'  => __( 'Invoice Total', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
             ),
-            'status'               => array(
-                'name' => __( 'Invoice Status', 'invoicing' ),
+            'status'       => array(
+                'name'  => __( 'Invoice Status', 'invoicing' ),
                 'value' => $invoice->get_status_nicename(),
             ),
-            'first_name'           => array(
-                'name' => __( 'First Name', 'invoicing' ),
+            'first_name'   => array(
+                'name'  => __( 'First Name', 'invoicing' ),
                 'value' => $invoice->get_first_name(),
             ),
-            'last_name'           => array(
-                'name' => __( 'Last Name', 'invoicing' ),
+            'last_name'    => array(
+                'name'  => __( 'Last Name', 'invoicing' ),
                 'value' => $invoice->get_last_name(),
             ),
-            'email'           => array(
-                'name' => __( 'Email Address', 'invoicing' ),
+            'email'        => array(
+                'name'  => __( 'Email Address', 'invoicing' ),
                 'value' => $invoice->get_email(),
             ),
-            'company'           => array(
-                'name' => __( 'Company', 'invoicing' ),
+            'company'      => array(
+                'name'  => __( 'Company', 'invoicing' ),
                 'value' => $invoice->get_company(),
             ),
-            'phone'           => array(
-                'name' => __( 'Phone Number', 'invoicing' ),
+            'phone'        => array(
+                'name'  => __( 'Phone Number', 'invoicing' ),
                 'value' => $invoice->get_phone(),
             ),
-            'address'           => array(
-                'name' => __( 'Address', 'invoicing' ),
+            'address'      => array(
+                'name'  => __( 'Address', 'invoicing' ),
                 'value' => $invoice->get_address(),
             ),
-            'city'           => array(
-                'name' => __( 'City', 'invoicing' ),
+            'city'         => array(
+                'name'  => __( 'City', 'invoicing' ),
                 'value' => $invoice->get_city(),
             ),
-            'state'           => array(
-                'name' => __( 'State', 'invoicing' ),
+            'state'        => array(
+                'name'  => __( 'State', 'invoicing' ),
                 'value' => $invoice->get_state(),
             ),
-            'zip'           => array(
-                'name' => __( 'Zip', 'invoicing' ),
+            'zip'          => array(
+                'name'  => __( 'Zip', 'invoicing' ),
                 'value' => $invoice->get_zip(),
             ),
-            'vat_number'    => array(
-                'name' => __( 'VAT Number', 'invoicing' ),
+            'vat_number'   => array(
+                'name'  => __( 'VAT Number', 'invoicing' ),
                 'value' => $invoice->get_vat_number(),
             ),
-            'description'   => array(
-                'name' => __( 'Description', 'invoicing' ),
+            'description'  => array(
+                'name'  => __( 'Description', 'invoicing' ),
                 'value' => $invoice->get_description(),
-            ), 
+            ),
         );
 
         // In case the invoice is paid, add the payment date and gateway.
         if ( $invoice->is_paid() ) {
 
             $props_to_export['completed_date'] = array(
-                'name' => __( 'Completed Date', 'invoicing' ),
+                'name'  => __( 'Completed Date', 'invoicing' ),
                 'value' => $invoice->get_completed_date(),
             );
 
             $props_to_export['gateway'] = array(
-                'name' => __( 'Paid Via', 'invoicing' ),
+                'name'  => __( 'Paid Via', 'invoicing' ),
                 'value' => $invoice->get_gateway(),
             );
 
@@ -165,13 +165,13 @@ class WPInv_Privacy_Exporters {
 
         // Add the ip address.
         $props_to_export['ip'] = array(
-            'name' => __( 'IP Address', 'invoicing' ),
+            'name'  => __( 'IP Address', 'invoicing' ),
             'value' => $invoice->get_ip(),
         );
 
         // Add the invoice url.
         $props_to_export['view_url'] = array(
-            'name' => __( 'Invoice URL', 'invoicing' ),
+            'name'  => __( 'Invoice URL', 'invoicing' ),
             'value' => $invoice->get_view_url(),
         );
 
@@ -193,7 +193,7 @@ class WPInv_Privacy_Exporters {
         $subscription = wpinv_get_subscription( $invoice );
         if ( ! empty( $subscription ) ) {
 
-            $frequency    = getpaid_get_subscription_period_label( $subscription->get_period(),$subscription->get_frequency() );
+            $frequency    = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency() );
             $period       = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() ) . ' / ' . $frequency;
             $initial_amt  = wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
             $bill_times   = $subscription->get_times_billed() . ' / ' . ( ( $subscription->get_bill_times() == 0 ) ? __( 'Until Cancelled', 'invoicing' ) : $subscription->get_bill_times() );
@@ -201,19 +201,19 @@ class WPInv_Privacy_Exporters {
 
             // Billing cycle.
             $props['period'] = array(
-                'name' => __( 'Billing Cycle', 'invoicing' ),
+                'name'  => __( 'Billing Cycle', 'invoicing' ),
                 'value' => $period,
             );
 
             // Initial amount.
             $props['initial_amount'] = array(
-                'name' => __( 'Initial Amount', 'invoicing' ),
+                'name'  => __( 'Initial Amount', 'invoicing' ),
                 'value' => $initial_amt,
             );
 
             // Bill times.
             $props['bill_times'] = array(
-                'name' => __( 'Times Billed', 'invoicing' ),
+                'name'  => __( 'Times Billed', 'invoicing' ),
                 'value' => $bill_times,
             );
 
@@ -221,13 +221,12 @@ class WPInv_Privacy_Exporters {
             if ( $subscription->is_active() ) {
 
                 $props['renewal_date'] = array(
-                    'name' => __( 'Expires', 'invoicing' ),
+                    'name'  => __( 'Expires', 'invoicing' ),
                     'value' => $renewal_date,
                 );
 
             }
-
-        }
+}
 
         return $props;
 

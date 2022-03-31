@@ -3,7 +3,9 @@
  * Displays a list of all subscriptions rules
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+exit;
+}
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -89,11 +91,11 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 
 		// Prepare query args.
 		$query = array(
-			'number'  => $this->per_page,
-			'paged'   => $this->get_paged(),
-			'status'  => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? sanitize_text_field( $_GET['status'] ) : 'all',
-			'orderby' => ( isset( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'id',
-			'order'   => ( isset( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'DESC',
+			'number'      => $this->per_page,
+			'paged'       => $this->get_paged(),
+			'status'      => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? sanitize_text_field( $_GET['status'] ) : 'all',
+			'orderby'     => ( isset( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'id',
+			'order'       => ( isset( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'DESC',
 			'customer_in' => $this->get_user_in(),
 		);
 
@@ -169,9 +171,9 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 				'<a href="%s" %s>%s&nbsp;<span class="count">(%d)</span></a>',
 				esc_url( add_query_arg( 'status', false, $this->base_url ) ),
 				$current === 'all' ? ' class="current"' : '',
-				__('All','invoicing' ),
+				__( 'All', 'invoicing' ),
 				$this->total_count
-			)
+			),
 
 		);
 
@@ -249,14 +251,15 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$column_content = sprintf(
 			_x( '%1$s#%2$s%3$s for %4$s', 'Subscription title on admin table. (e.g.: #211 for John Doe)', 'invoicing' ),
 			'<a href="' . esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $item->get_id() ) ) ) . '">',
-			'<strong>' . esc_attr( $item->get_id() ) . '</strong>', '</a>',
+			'<strong>' . esc_attr( $item->get_id() ) . '</strong>',
+            '</a>',
 			$username
 		);
 
 		$row_actions = array();
 
 		// View subscription.
-		$view_url    = esc_url( add_query_arg( 'id', $item->get_id(), admin_url( 'admin.php?page=wpinv-subscriptions' ) ));
+		$view_url    = esc_url( add_query_arg( 'id', $item->get_id(), admin_url( 'admin.php?page=wpinv-subscriptions' ) ) );
 		$row_actions['view'] = '<a href="' . $view_url . '">' . __( 'View Subscription', 'invoicing' ) . '</a>';
 
 		// View invoice.
@@ -350,7 +353,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 */
 	public function column_renewals( $item ) {
 		$max_bills = $item->get_bill_times();
-		return $item->get_times_billed() . ' / ' . ( empty( $max_bills ) ? "&infin;" : $max_bills );
+		return $item->get_times_billed() . ' / ' . ( empty( $max_bills ) ? '&infin;' : $max_bills );
 	}
 
 	/**
@@ -416,9 +419,9 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 
 		$this->set_pagination_args(
 			array(
-			'total_items' => $this->current_total_count,
-			'per_page'    => $this->per_page,
-			'total_pages' => ceil( $this->current_total_count / $this->per_page )
+				'total_items' => $this->current_total_count,
+				'per_page'    => $this->per_page,
+				'total_pages' => ceil( $this->current_total_count / $this->per_page ),
 			)
 		);
 	}
@@ -428,15 +431,15 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns(){
+	public function get_columns() {
 		$columns = array(
-			'cb'                => '<input type="checkbox" />',
-			'subscription'      => __( 'Subscription', 'invoicing' ),
-			'start_date'        => __( 'Start Date', 'invoicing' ),
-			'renewal_date'      => __( 'Next Payment', 'invoicing' ),
-			'renewals'          => __( 'Payments', 'invoicing' ),
-			'item'              => __( 'Items', 'invoicing' ),
-			'status'            => __( 'Status', 'invoicing' ),
+			'cb'           => '<input type="checkbox" />',
+			'subscription' => __( 'Subscription', 'invoicing' ),
+			'start_date'   => __( 'Start Date', 'invoicing' ),
+			'renewal_date' => __( 'Next Payment', 'invoicing' ),
+			'renewals'     => __( 'Payments', 'invoicing' ),
+			'item'         => __( 'Items', 'invoicing' ),
+			'status'       => __( 'Status', 'invoicing' ),
 		);
 
 		return apply_filters( 'manage_getpaid_subscriptions_table_columns', $columns );

@@ -57,7 +57,7 @@ defined( 'ABSPATH' ) || exit;
 
         ?>
 
-        <?php do_action('wpinv_invoice_display_right_actions', $invoice ); ?>
+        <?php do_action( 'wpinv_invoice_display_right_actions', $invoice ); ?>
     </div>
 
 <?php

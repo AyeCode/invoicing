@@ -28,28 +28,28 @@ class GetPaid_Meta_Box_Resend_Invoice {
 
         $invoice_actions = array(
             'resend-email' => array(
-                'url' => wp_nonce_url(
+                'url'   => wp_nonce_url(
                     add_query_arg(
                         array(
                             'getpaid-admin-action' => 'send_invoice',
-                            'invoice_id'           => $invoice->get_id()
+                            'invoice_id'           => $invoice->get_id(),
                         )
                     ),
                     'getpaid-nonce',
                     'getpaid-nonce'
                 ),
                 'label' => __( 'Resend Invoice', 'invoicing' ),
-            )
+            ),
         );
 
         if ( $invoice->needs_payment() ) {
 
             $invoice_actions['send-reminder'] = array(
-                'url' => wp_nonce_url(
+                'url'   => wp_nonce_url(
                     add_query_arg(
                         array(
                             'getpaid-admin-action' => 'send_invoice_reminder',
-                            'invoice_id'           => $invoice->get_id()
+                            'invoice_id'           => $invoice->get_id(),
                         )
                     ),
                     'getpaid-nonce',

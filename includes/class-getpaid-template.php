@@ -43,8 +43,7 @@ class GetPaid_Template {
 	 * @return bool
 	 */
 	public function is_preview() {
-        return 
-            $this->is_divi_preview() ||
+        return $this->is_divi_preview() ||
             $this->is_elementor_preview() ||
             $this->is_beaver_preview() ||
             $this->is_siteorigin_preview() ||
@@ -120,12 +119,12 @@ class GetPaid_Template {
 	 * @return bool
 	 */
 	public function is_oxygen_preview() {
-		return ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === "oxy_render_" || substr( $_REQUEST['action'], 0, 10 ) === "ct_render_" ) );
+		return ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === 'oxy_render_' || substr( $_REQUEST['action'], 0, 10 ) === 'ct_render_' ) );
     }
 
     /**
      * Locates a template path.
-     * 
+     *
      * @param string $template_name e.g payment-forms/cart.php The template to locate.
      * @param string $template_path The template path relative to the theme's root dir. Defaults to 'invoicing'.
      * @param string $default_path The root path to the default template. Defaults to invoicing/templates
@@ -149,7 +148,7 @@ class GetPaid_Template {
 
         return apply_filters( 'wpinv_locate_template', $template, $template_name, $template_path, $default_path );
     }
-    
+
     /**
 	 * Loads a template
 	 *
@@ -158,7 +157,7 @@ class GetPaid_Template {
 	 */
 	protected function load_template( $template_name, $template_path, $args ) {
 
-        if ( is_array( $args ) ){
+        if ( is_array( $args ) ) {
             extract( $args );
         }
 
@@ -166,7 +165,7 @@ class GetPaid_Template {
 	    do_action( 'wpinv_before_template_part', $template_name, $template_path, $args );
 
         // Load the template.
-	    include( $template_path );
+	    include $template_path;
 
         // Fires after loading a template.
         do_action( 'wpinv_after_template_part', $template_name, $template_path, $args );
@@ -175,9 +174,9 @@ class GetPaid_Template {
 
     /**
      * Displays a template.
-     * 
+     *
      * First checks if there is a template overide, if not it loads the default template.
-     * 
+     *
      * @param string $template_name e.g payment-forms/cart.php The template to locate.
      * @param array $args An array of args to pass to the template.
      * @param string $template_path The templates directory relative to the theme's root dir. Defaults to 'invoicing'.
@@ -197,12 +196,12 @@ class GetPaid_Template {
         $this->load_template( $template_name, $located, $args );
 
     }
-    
+
     /**
      * Retrieves a template.
-     * 
+     *
      * First checks if there is a template overide, if not it loads the default template.
-     * 
+     *
      * @param string $template_name e.g payment-forms/cart.php The template to locate.
      * @param array $args An array of args to pass to the template.
      * @param string $template_path The templates directory relative to the theme's root dir. Defaults to 'invoicing'.

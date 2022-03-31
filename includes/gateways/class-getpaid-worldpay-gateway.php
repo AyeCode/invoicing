@@ -46,7 +46,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 	 * @var array
 	 */
     protected $supports = array( 'sandbox' );
-    
+
     /**
 	 * Currencies this gateway is allowed for.
 	 *
@@ -119,7 +119,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
         wp_send_json_success(
             array(
                 'action' => 'auto_submit_form',
-                'form'   => $form
+                'form'   => $form,
             )
         );
 
@@ -272,11 +272,11 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
         }
 
         // Verify invoice.
-        if ( empty( $data['cartId'] ) || !  wpinv_get_id_by_invoice_number( $data['cartId'] ) ) {
+        if ( empty( $data['cartId'] ) || ! wpinv_get_id_by_invoice_number( $data['cartId'] ) ) {
             wpinv_error_log( 'Received invalid invoice number from Worldpay IPN' );
             return false;
         }
-        
+
         // (maybe) verify password.
         $password = $this->get_option( 'callback_password' );
 
@@ -295,7 +295,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
     public function sandbox_notice( $description, $gateway ) {
         if ( 'worldpay' == $gateway && wpinv_is_test_mode( 'worldpay' ) ) {
             $description .= '<br>' . sprintf(
-                __( 'SANDBOX ENABLED. See the %sWorldpay Sandbox Testing Guide%s for more details.', 'invoicing' ),
+                __( 'SANDBOX ENABLED. See the %1$sWorldpay Sandbox Testing Guide%2$s for more details.', 'invoicing' ),
                 '<a href="https://developer.worldpay.com/docs/wpg/directintegration/abouttesting">',
                 '</a>'
             );
@@ -306,7 +306,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 
     /**
 	 * Filters the gateway settings.
-	 * 
+	 *
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
@@ -347,7 +347,7 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
             'std'      => $this->notify_url,
             'desc'     => __( 'Login to your Worldpay Merchant Interface then enable Payment Response & Shopper Response. Next, go to the Payment Response URL field and enter the above URL.', 'invoicing' ),
             'custom'   => 'worldpay',
-            'readonly' => true
+            'readonly' => true,
         );
 
 		return $admin_settings;

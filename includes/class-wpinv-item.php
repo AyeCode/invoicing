@@ -68,7 +68,7 @@ class WPInv_Item  extends GetPaid_Data {
 
     /**
      * Stores a reference to the original WP_Post object
-     * 
+     *
      * @var WP_Post
      */
     protected $post = null;
@@ -273,7 +273,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_author( $context = 'view' ) {
 		return (int) $this->get_prop( 'author', $context );
 	}
-	
+
 	/**
 	 * Alias of self::get_author().
 	 *
@@ -456,7 +456,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_is_recurring( $context = 'view' ) {
         return (int) $this->get_prop( 'is_recurring', $context );
 	}
-	
+
 	/**
 	 * Get the recurring price of the item.
 	 *
@@ -598,7 +598,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function get_trial_interval( $context = 'view' ) {
         return (int) $this->get_prop( 'trial_interval', $context );
 	}
-	
+
 	/**
 	 * Get the item's edit url.
 	 *
@@ -659,7 +659,7 @@ class WPInv_Item  extends GetPaid_Data {
 			);
 		}
 
-		if ( $field =='custom_id' ) {
+		if ( $field == 'custom_id' ) {
 			$items = get_posts(
 				array(
 					'post_type'      => 'wpi_item',
@@ -673,8 +673,8 @@ class WPInv_Item  extends GetPaid_Data {
 						array(
 							'key'   => '_wpinv_custom_id',
                 			'value' => $value,
-						)
-					)
+						),
+					),
 				)
 			);
 		}
@@ -856,7 +856,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function set_author( $value ) {
 		$this->set_prop( 'author', (int) $value );
 	}
-	
+
 	/**
 	 * Alias of self::set_author().
 	 *
@@ -970,7 +970,7 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  float $value minimum price.
 	 */
 	public function set_minimum_price( $value ) {
-        $this->set_prop( 'minimum_price',  (float) wpinv_sanitize_amount( $value ) );
+        $this->set_prop( 'minimum_price', (float) wpinv_sanitize_amount( $value ) );
     }
 
     /**
@@ -1045,7 +1045,7 @@ class WPInv_Item  extends GetPaid_Data {
 
     /**
      * Create an item. For backwards compatibilty.
-     * 
+     *
      * @deprecated
 	 * @return int item id
      */
@@ -1063,7 +1063,7 @@ class WPInv_Item  extends GetPaid_Data {
 
     /**
      * Updates an item. For backwards compatibilty.
-     * 
+     *
      * @deprecated
 	 * @return int item id
      */
@@ -1089,7 +1089,7 @@ class WPInv_Item  extends GetPaid_Data {
 	public function user_can_set_their_price() {
         return (bool) $this->get_is_dynamic_pricing();
 	}
-	
+
 	/**
 	 * Checks whether the item is recurring.
 	 *
