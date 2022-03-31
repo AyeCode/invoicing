@@ -504,7 +504,7 @@ abstract class GetPaid_Payment_Gateway {
                         <div class="col-12">
 
 							<div class="form-group">
-								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php _e( 'Card number', 'invoicing' ); ?></label>
+								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php esc_html_e( 'Card number', 'invoicing' ); ?></label>
 								<div class="input-group input-group-sm">
 									<div class="input-group-prepend ">
 										<span class="input-group-text">
@@ -519,12 +519,12 @@ abstract class GetPaid_Payment_Gateway {
 
                         <div class="col-12">
                             <div class="form-group">
-                                <label><?php _e( 'Expiration', 'invoicing' ); ?></label>
+                                <label><?php esc_html_e( 'Expiration', 'invoicing' ); ?></label>
                                 <div class="form-row">
 
                                     <div class="col">
                                         <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_month]">
-                                            <option disabled selected="selected"><?php _e( 'MM', 'invoicing' ); ?></option>
+                                            <option disabled selected="selected"><?php esc_html_e( 'MM', 'invoicing' ); ?></option>
 
                                             <?php
                                                 foreach ( $months as $key => $month ) {
@@ -539,7 +539,7 @@ abstract class GetPaid_Payment_Gateway {
 
                                     <div class="col">
                                         <select class="form-control form-control-sm" autocomplete="cc-exp-year" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_year]">
-                                            <option disabled selected="selected"><?php _e( 'YY', 'invoicing' ); ?></option>
+                                            <option disabled selected="selected"><?php esc_html_e( 'YY', 'invoicing' ); ?></option>
 
                                             <?php
                                                 foreach ( $years as $key => $year ) {

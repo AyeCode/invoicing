@@ -35,7 +35,7 @@ if ( ! empty( $form->invoice ) ) {
         </div>
         <?php echo wp_kses_post( $description ); ?>
         <div class="getpaid-custom-payment-form-errors alert alert-danger d-none"></div>
-        <div class="getpaid-custom-payment-form-success alert alert-success d-none"><?php _e( 'Discount code applied!', 'invoicing' ); ?></div>
+        <div class="getpaid-custom-payment-form-success alert alert-success d-none"><?php esc_html_e( 'Discount code applied!', 'invoicing' ); ?></div>
     </div>
 </div>
 

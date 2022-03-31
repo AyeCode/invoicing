@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) :
 
 	$class = sanitize_html_class( $column );
-	echo "<td class='getpaid-subscriptions-table-column-$class'>";
+	echo "<td class='getpaid-subscriptions-table-column-" . esc_attr( $class ) . "'>";
 
 		do_action( "getpaid_subscriptions_before_frontend_subscription_table_$column", $subscription );
 
@@ -27,7 +27,7 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 				esc_attr_x( '#%s', 'subscription id', 'invoicing' ),
 				(int) $subscription->get_id()
 			);
-			echo $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>", $subscription );
+			echo wp_kses_post( $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>", $subscription ) );
 			break;
 
 		case 'status':

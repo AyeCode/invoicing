@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Item_Details {
 
             <?php do_action( 'wpinv_item_details_metabox_before_price', $item ); ?>
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php _e( 'Item Price', 'invoicing' ); ?></span></label>
+                <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php esc_html_e( 'Item Price', 'invoicing' ); ?></span></label>
                 <div class="col-sm-8">
                     <div class="row">
                         <div class="col-sm-4 getpaid-price-input">
@@ -166,7 +166,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                     <div class="form-group row">
                         <label for="wpinv_minimum_price" class="col-sm-3 col-form-label">
-                            <?php _e( 'Minimum Price', 'invoicing' ); ?>
+                            <?php esc_html_e( 'Minimum Price', 'invoicing' ); ?>
                         </label>
                         <div class="col-sm-8">
                             <div class="input-group input-group-sm">
@@ -200,7 +200,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                 <div class="form-group row">
                     <label for="wpinv_recurring_limit" class="col-sm-3 col-form-label">
-                        <?php _e( 'Maximum Renewals', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Maximum Renewals', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <input type="number" value="<?php echo esc_attr( $item->get_recurring_limit( 'edit' ) ); ?>" placeholder="0" name="wpinv_recurring_limit" id="wpinv_recurring_limit" style="width: 100%;" />

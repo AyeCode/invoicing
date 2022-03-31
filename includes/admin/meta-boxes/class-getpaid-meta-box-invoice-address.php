@@ -43,7 +43,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         <div class="col-12 col-sm-6">
                             <div id="getpaid-invoice-user-id-wrapper" class="form-group">
                                 <div>
-                                    <label for="post_author_override"><?php _e( 'Customer', 'invoicing' );?></label>
+                                    <label for="post_author_override"><?php esc_html_e( 'Customer', 'invoicing' );?></label>
                                 </div>
                                 <div>
                                     <select name="post_author_override" id="wpinv_post_author_override" class="getpaid-customer-search form-control regular-text" data-placeholder="<?php esc_attr_e( 'Search for a customer by email or name', 'invoicing' ); ?>">
@@ -73,15 +73,15 @@ class GetPaid_Meta_Box_Invoice_Address {
                             <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
                                 <a id="getpaid-invoice-fill-user-details" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-refresh"></i>
-                                    <?php _e( 'Fill User Details', 'invoicing' );?>
+                                    <?php esc_html_e( 'Fill User Details', 'invoicing' );?>
                                 </a>
                                 <a id="getpaid-invoice-create-new-user-button" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-plus"></i>
-                                    <?php _e( 'Add New User', 'invoicing' );?>
+                                    <?php esc_html_e( 'Add New User', 'invoicing' );?>
                                 </a>
                                 <a id="getpaid-invoice-cancel-create-new-user" class="button button-small button-secondary d-none" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-close"></i>
-                                    <?php _e( 'Cancel', 'invoicing' );?>
+                                    <?php esc_html_e( 'Cancel', 'invoicing' );?>
                                 </a>
                             <?php endif; ?>
                         </div>

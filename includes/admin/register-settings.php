@@ -486,10 +486,10 @@ function wpinv_hidden_callback( $args ) {
 		$args['readonly'] = true;
 		$name  = '';
 	} else {
-		$name = 'name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"';
+		$name = 'wpinv_settings[' . esc_attr( $args['id'] ) . ']';
 	}
 
-	echo '<input type="hidden" id="wpinv_settings[' . esc_attr( $args['id'] ) . ']" ' . $name . ' value="' . esc_attr( stripslashes( $value ) ) . '" />';
+	echo '<input type="hidden" id="wpinv_settings[' . esc_attr( $args['id'] ) . ']" name="' . esc_attr( $name ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" />';
 
 }
 
@@ -523,7 +523,7 @@ function wpinv_multicheck_callback( $args ) {
 		$std     = isset( $args['std'] ) ? $args['std'] : array();
 		$value   = wpinv_get_option( $args['id'], $std );
 
-		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . $sanitize_id . $class . '">';
+		echo '<div class="wpi-mcheck-rows wpi-mcheck-' . esc_attr( $sanitize_id . $class ) . '">';
         foreach ( $args['options'] as $key => $option ) :
 			$sanitize_key = esc_attr( wpinv_sanitize_key( $key ) );
 			if ( in_array( $sanitize_key, $value ) ) {
@@ -531,8 +531,8 @@ function wpinv_multicheck_callback( $args ) {
 			} else {
 				$enabled = null;
 			}
-			echo '<div class="wpi-mcheck-row"><input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
-			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']">' . wp_kses_post( $option ) . '</label></div>';
+			echo '<div class="wpi-mcheck-row"><input name="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']" id="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']" type="checkbox" value="' . esc_attr( $sanitize_key ) . '" ' . checked( $sanitize_key, $enabled, false ) . '/>&nbsp;';
+			echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']">' . wp_kses_post( $option ) . '</label></div>';
 		endforeach;
 		echo '</div>';
 		echo '<p class="description">' . wp_kses_post( $args['desc'] ) . '</p>';
@@ -554,9 +554,9 @@ function wpinv_payment_icons_callback( $args ) {
 				$enabled = null;
 			}
 
-			echo '<label for="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" style="margin-right:10px;line-height:16px;height:16px;display:inline-block;">';
+			echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']" style="margin-right:10px;line-height:16px;height:16px;display:inline-block;">';
 
-				echo '<input name="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" id="wpinv_settings[' . $sanitize_id . '][' . $sanitize_key . ']" type="checkbox" value="' . esc_attr( $option ) . '" ' . checked( $option, $enabled, false ) . '/>&nbsp;';
+				echo '<input name="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']" id="wpinv_settings[' . esc_attr( $sanitize_id ) . '][' . esc_attr( $sanitize_key ) . ']" type="checkbox" value="' . esc_attr( $option ) . '" ' . checked( $option, $enabled, false ) . '/>&nbsp;';
 
 				if ( wpinv_string_is_image_url( $key ) ) {
 				echo '<img class="payment-icon" src="' . esc_url( $key ) . '" style="width:32px;height:24px;position:relative;top:6px;margin-right:5px;"/>';
@@ -580,7 +580,7 @@ function wpinv_payment_icons_callback( $args ) {
 
 				echo '<img class="payment-icon" src="' . esc_url( $image ) . '" style="width:32px;height:24px;position:relative;top:6px;margin-right:5px;"/>';
 				}
-			echo $option . '</label>';
+			echo wp_kses_post( $option ) . '</label>';
 		}
 		echo '<p class="description" style="margin-top:16px;">' . wp_kses_post( $args['desc'] ) . '</p>';
 	}
@@ -616,8 +616,8 @@ function wpinv_radio_callback( $args ) {
 function getpaid_settings_description_callback( $args ) {
 
 	if ( ! empty( $args['desc'] ) ) {
-		$description = wp_kses_post( $args['desc'] );
-		echo "<p class='description'>$description</p>";
+		$description = $args['desc'];
+		echo wp_kses_post( "<p class='description'>$description</p>" );
 	}
 
 }
@@ -644,19 +644,23 @@ function wpinv_gateway_select_callback( $args ) {
 	$std     = isset( $args['std'] ) ? $args['std'] : '';
 	$value   = wpinv_get_option( $args['id'], $std );
 
-	echo '<select name="wpinv_settings[' . $sanitize_id . ']"" id="wpinv_settings[' . $sanitize_id . ']" class="' . $class . '" >';
+	echo '<select name="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" class="' . esc_attr( $class ) . '" >';
 
 	foreach ( $args['options'] as $key => $option ) :
+
+		echo '<option value="' . esc_attr( $key ) . '" ';
+
 		if ( isset( $args['selected'] ) && $args['selected'] !== null && $args['selected'] !== false ) {
-            $selected = selected( $key, $args['selected'], false );
+            selected( $key, $args['selected'] );
         } else {
-            $selected = selected( $key, $value, false );
+            selected( $key, $value );
         }
-		echo '<option value="' . wpinv_sanitize_key( $key ) . '"' . $selected . '>' . esc_html( $option['admin_label'] ) . '</option>';
+
+		echo '>' . esc_html( $option['admin_label'] ) . '</option>';
 	endforeach;
 
 	echo '</select>';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 }
 
 /**
@@ -779,16 +783,16 @@ function wpinv_select_callback( $args ) {
 			</select>
 
 			<?php if ( substr( $args['id'], -5 ) === '_page' && is_numeric( $value ) ) : ?>
-				<a href="<?php echo get_edit_post_link( $value ); ?>" target="_blank" class="button getpaid-page-setting-edit"><?php _e( 'Edit Page', 'invoicing' ); ?></a>
+				<a href="<?php echo get_edit_post_link( $value ); ?>" target="_blank" class="button getpaid-page-setting-edit"><?php esc_html_e( 'Edit Page', 'invoicing' ); ?></a>
 			<?php endif; ?>
 
 			<?php if ( substr( $args['id'], -5 ) === '_page' && ! empty( $args['default_content'] ) ) : ?>
-				&nbsp;<a href="#TB_inline?&width=400&height=550&inlineId=<?php echo $rand; ?>" class="button thickbox getpaid-page-setting-view-default"><?php _e( 'View Default Content', 'invoicing' ); ?></a>
+				&nbsp;<a href="#TB_inline?&width=400&height=550&inlineId=<?php echo $rand; ?>" class="button thickbox getpaid-page-setting-view-default"><?php esc_html_e( 'View Default Content', 'invoicing' ); ?></a>
 				<div id='<?php echo $rand; ?>' style='display:none;'>
 					<div>
-						<h3><?php _e( 'Original Content', 'invoicing' ); ?></h3>
+						<h3><?php esc_html_e( 'Original Content', 'invoicing' ); ?></h3>
 						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php echo gepaid_trim_lines( wp_kses_post( $args['default_content'] ) ); ?></textarea>
-						<h3><?php _e( 'Current Content', 'invoicing' ); ?></h3>
+						<h3><?php esc_html_e( 'Current Content', 'invoicing' ); ?></h3>
 						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php $_post = get_post( $value ); echo empty( $_post ) ? '' : gepaid_trim_lines( wp_kses_post( $_post->post_content ) ); ?></textarea>
 					</div>
 				</div>
@@ -938,7 +942,6 @@ function wpinv_tax_rate_callback( $tax_rate, $key, $echo = true ) {
 
 
 function wpinv_tools_callback( $args ) {
-    ob_start();
     ?>
     </td><tr>
     <td colspan="2" class="wpinv_tools_tdbox">
@@ -950,17 +953,17 @@ function wpinv_tools_callback( $args ) {
     <table id="wpinv_tools_table" class="wp-list-table widefat fixed posts">
         <thead>
             <tr>
-                <th scope="col" class="wpinv-th-tool"><?php _e( 'Tool', 'invoicing' ); ?></th>
-                <th scope="col" class="wpinv-th-desc"><?php _e( 'Description', 'invoicing' ); ?></th>
-                <th scope="col" class="wpinv-th-action"><?php _e( 'Action', 'invoicing' ); ?></th>
+                <th scope="col" class="wpinv-th-tool"><?php esc_html_e( 'Tool', 'invoicing' ); ?></th>
+                <th scope="col" class="wpinv-th-desc"><?php esc_html_e( 'Description', 'invoicing' ); ?></th>
+                <th scope="col" class="wpinv-th-action"><?php esc_html_e( 'Action', 'invoicing' ); ?></th>
             </tr>
         </thead>
 
         <tbody>
 			<tr>
-                <td><?php _e( 'Check Pages', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Check Pages', 'invoicing' ); ?></td>
                 <td>
-                    <small><?php _e( 'Creates any missing GetPaid pages.', 'invoicing' ); ?></small>
+                    <small><?php esc_html_e( 'Creates any missing GetPaid pages.', 'invoicing' ); ?></small>
                 </td>
                 <td>
 					<a href="
@@ -973,13 +976,13 @@ function wpinv_tools_callback( $args ) {
 							)
 						);
 					?>
-                    " class="button button-primary"><?php _e( 'Run', 'invoicing' ); ?></a>
+                    " class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
                 </td>
             </tr>
 			<tr>
-                <td><?php _e( 'Create Database Tables', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Create Database Tables', 'invoicing' ); ?></td>
                 <td>
-                    <small><?php _e( 'Run this tool to create any missing database tables.', 'invoicing' ); ?></small>
+                    <small><?php esc_html_e( 'Run this tool to create any missing database tables.', 'invoicing' ); ?></small>
                 </td>
                 <td>
 					<a href="
@@ -992,13 +995,13 @@ function wpinv_tools_callback( $args ) {
 							)
 						);
 					?>
-                    " class="button button-primary"><?php _e( 'Run', 'invoicing' ); ?></a>
+                    " class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
                 </td>
             </tr>
 			<tr>
-                <td><?php _e( 'Migrate old invoices', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Migrate old invoices', 'invoicing' ); ?></td>
                 <td>
-                    <small><?php _e( 'If your old invoices were not migrated after updating from Invoicing to GetPaid, you can use this tool to migrate them.', 'invoicing' ); ?></small>
+                    <small><?php esc_html_e( 'If your old invoices were not migrated after updating from Invoicing to GetPaid, you can use this tool to migrate them.', 'invoicing' ); ?></small>
                 </td>
                 <td>
 					<a href="
@@ -1011,14 +1014,14 @@ function wpinv_tools_callback( $args ) {
 							)
 						);
 					?>
-                    " class="button button-primary"><?php _e( 'Run', 'invoicing' ); ?></a>
+                    " class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
                 </td>
             </tr>
 
 			<tr>
-                <td><?php _e( 'Recalculate Discounts', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Recalculate Discounts', 'invoicing' ); ?></td>
                 <td>
-                    <small><?php _e( 'Recalculate discounts for existing invoices that have discount codes but are not discounted.', 'invoicing' ); ?></small>
+                    <small><?php esc_html_e( 'Recalculate discounts for existing invoices that have discount codes but are not discounted.', 'invoicing' ); ?></small>
                 </td>
                 <td>
 					<a href="
@@ -1031,21 +1034,21 @@ function wpinv_tools_callback( $args ) {
 							)
 						);
 					?>
-                    " class="button button-primary"><?php _e( 'Run', 'invoicing' ); ?></a>
+                    " class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
                 </td>
             </tr>
 
 			<tr>
-                <td><?php _e( 'Set-up Wizard', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Set-up Wizard', 'invoicing' ); ?></td>
                 <td>
-                    <small><?php _e( 'Launch the quick set-up wizard.', 'invoicing' ); ?></small>
+                    <small><?php esc_html_e( 'Launch the quick set-up wizard.', 'invoicing' ); ?></small>
                 </td>
                 <td>
 					<a href="
                     <?php
 						echo esc_url( admin_url( 'index.php?page=gp-setup' ) );
 					?>
-                    " class="button button-primary"><?php _e( 'Launch', 'invoicing' ); ?></a>
+                    " class="button button-primary"><?php esc_html_e( 'Launch', 'invoicing' ); ?></a>
                 </td>
             </tr>
 
@@ -1054,7 +1057,6 @@ function wpinv_tools_callback( $args ) {
     </table>
     <?php do_action( 'wpinv_tools_after' ); ?>
     <?php
-    echo ob_get_clean();
 }
 
 
@@ -1063,7 +1065,7 @@ function wpinv_descriptive_text_callback( $args ) {
 }
 
 function wpinv_raw_html_callback( $args ) {
-	echo $args['desc'];
+	echo wp_kses_post( $args['desc'] );
 }
 
 function wpinv_hook_callback( $args ) {

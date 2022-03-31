@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_code', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_code" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Code', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Code', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="row">
@@ -111,7 +111,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_type', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_type" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Type', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Type', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -138,7 +138,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_amount', $discount ); ?>
             <div class="form-group row <?php echo esc_attr( $discount->get_type( 'edit' ) ); ?>" id="wpinv_discount_amount_wrap">
                 <label for="wpinv_discount_amount" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
@@ -173,7 +173,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -201,7 +201,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_excluded_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_excluded_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Excluded Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Excluded Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -229,7 +229,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_required_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_required_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Required Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Required Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -257,7 +257,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_start', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_start" class="col-sm-3 col-form-label">
-                    <?php _e( 'Start Date', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Start Date', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -288,7 +288,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_expiration', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_expiration" class="col-sm-3 col-form-label">
-                    <?php _e( 'Expiration Date', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Expiration Date', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
@@ -321,7 +321,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_min_total', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_min_total" class="col-sm-3 col-form-label">
-                    <?php _e( 'Minimum Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Minimum Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
@@ -349,7 +349,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_max_total', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_max_total" class="col-sm-3 col-form-label">
-                    <?php _e( 'Maximum Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Maximum Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
@@ -377,7 +377,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_max_uses', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_max_uses" class="col-sm-3 col-form-label">
-                    <?php _e( 'Maximum Uses', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Maximum Uses', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <input type="text" value="<?php echo esc_attr( $discount->get_max_uses( 'edit' ) ); ?>" placeholder="<?php esc_attr_e( 'Unlimited', 'invoicing' ); ?>" name="wpinv_discount_max_uses" id="wpinv_discount_max_uses" style="width: 100%;" />

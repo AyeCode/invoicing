@@ -211,7 +211,7 @@ class GetPaid_Reports_Export {
 
 				<div class="card-header">
 					<strong>
-						<?php _e( 'Export Subscriptions', 'invoicing' ); ?>
+						<?php esc_html_e( 'Export Subscriptions', 'invoicing' ); ?>
 					</strong>
 				</div>
 

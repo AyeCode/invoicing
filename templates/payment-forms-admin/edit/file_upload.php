@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Max File Number', 'invoicing' ); ?></span>
         <input v-model="active_form_element.max_file_num" class="form-control" min="1" type="number" />
-        <small class="form-text text-muted"><?php _e( 'How many files can be uploaded?', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( 'How many files can be uploaded?', 'invoicing' ); ?></small>
     </label>
 </div>
 
@@ -41,7 +41,7 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
-        <small class="form-text text-muted"><?php _e( 'HTML is allowed', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
     </label>
 </div>
 

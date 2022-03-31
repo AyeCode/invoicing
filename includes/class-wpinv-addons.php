@@ -249,14 +249,14 @@ $button_args['slug'] = $addon->licensing->edd_slug;}
 			data-licensing="<?php echo $button_args['licensing'] ? 1 : 0; ?>"
 			data-title="<?php echo esc_attr( $button_args['title'] ); ?>"
 			data-type="<?php echo esc_attr( $button_args['type'] ); ?>"
-			data-text-error-message="<?php _e( 'Something went wrong!', 'invoicing' ); ?>"
-			data-text-activate="<?php _e( 'Activate', 'invoicing' ); ?>"
-			data-text-activating="<?php _e( 'Activating', 'invoicing' ); ?>"
-			data-text-deactivate="<?php _e( 'Deactivate', 'invoicing' ); ?>"
-			data-text-installed="<?php _e( 'Installed', 'invoicing' ); ?>"
-			data-text-install="<?php _e( 'Install', 'invoicing' ); ?>"
-			data-text-installing="<?php _e( 'Installing', 'invoicing' ); ?>"
-			data-text-error="<?php _e( 'Error', 'invoicing' ); ?>"
+			data-text-error-message="<?php esc_attr_e( 'Something went wrong!', 'invoicing' ); ?>"
+			data-text-activate="<?php esc_attr_e( 'Activate', 'invoicing' ); ?>"
+			data-text-activating="<?php esc_attr_e( 'Activating', 'invoicing' ); ?>"
+			data-text-deactivate="<?php esc_attr_e( 'Deactivate', 'invoicing' ); ?>"
+			data-text-installed="<?php esc_attr_e( 'Installed', 'invoicing' ); ?>"
+			data-text-install="<?php esc_attr_e( 'Install', 'invoicing' ); ?>"
+			data-text-installing="<?php esc_attr_e( 'Installing', 'invoicing' ); ?>"
+			data-text-error="<?php esc_attr_e( 'Error', 'invoicing' ); ?>"
 			<?php
             if ( ! empty( $button_args['onclick'] ) ) {
 echo " onclick='" . esc_attr( $button_args['onclick'] ) . "' ";}

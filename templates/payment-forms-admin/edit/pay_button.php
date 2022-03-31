@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Button Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.label' class='form-control' type="text"/>
-        <small class="form-text text-muted"><?php _e( '%price% will be replaced by the total payable amount', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( '%price% will be replaced by the total payable amount', 'invoicing' ); ?></small>
     </label>
 </div>
 
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Free Checkout Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.free' class='form-control' type="text"/>
-        <small class="form-text text-muted"><?php _e( 'The text to display if the total payable amount is zero', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( 'The text to display if the total payable amount is zero', 'invoicing' ); ?></small>
     </label>
 </div>
 
@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
-        <small class="form-text text-muted"><?php _e( 'HTML is allowed', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
     </label>
 </div>
 

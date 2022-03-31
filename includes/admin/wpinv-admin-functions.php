@@ -8,7 +8,7 @@
 
 // MUST have WordPress.
 if ( ! defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
 function wpinv_bulk_actions( $actions ) {
@@ -109,16 +109,14 @@ function wpinv_check_for_missing_tables() {
     foreach ( $tables as $table ) {
         if ( $table != $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) ) {
 
-            $url     = esc_url(
-                wp_nonce_url(
-                    add_query_arg( 'getpaid-admin-action', 'create_missing_tables' ),
-                    'getpaid-nonce',
-                    'getpaid-nonce'
-                )
+            $url     = wp_nonce_url(
+                add_query_arg( 'getpaid-admin-action', 'create_missing_tables' ),
+                'getpaid-nonce',
+                'getpaid-nonce'
             );
             $message  = __( 'Some GetPaid database tables are missing. To use GetPaid without any issues, click on the button below to create the missing tables.', 'invoicing' );
             $message2 = __( 'Create Tables', 'invoicing' );
-            echo "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>";
+            echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>" );
             break;
 
         }
@@ -225,7 +223,7 @@ function wpinv_admin_get_line_items( $invoice, $columns ) {
         $line_item .= '</td>';
         $line_item .= '</tr>';
 
-        echo apply_filters( 'getpaid_admin_line_item', $line_item, $item, $invoice );
+        echo wp_kses_post( apply_filters( 'getpaid_admin_line_item', $line_item, $item, $invoice ) );
 
         $count++;
     }

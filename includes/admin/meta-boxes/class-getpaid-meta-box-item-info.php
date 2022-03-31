@@ -33,7 +33,7 @@ class GetPaid_Meta_Box_Item_Info {
 
             <div class="wpinv_item_type form-group row">
                 <label for="wpinv_item_type" class="col-sm-12 col-form-label">
-                    <?php _e( 'Item Type', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Item Type', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php echo esc_attr( self::get_tooltip( $post ) ); ?>"></span>
                 </label>
 
@@ -61,7 +61,7 @@ class GetPaid_Meta_Box_Item_Info {
 
                 <div class="wpinv_item_shortcode form-group row">
                     <label for="wpinv_item_shortcode" class="col-sm-12 col-form-label">
-                        <?php _e( 'Payment Form Shortcode', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Payment Form Shortcode', 'invoicing' ); ?>
                         <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a payment form', 'invoicing' ); ?>"></span>
                     </label>
 
@@ -72,14 +72,14 @@ class GetPaid_Meta_Box_Item_Info {
 
                 <div class="wpinv_item_buy_shortcode form-group row">
                     <label for="wpinv_item_button_shortcode" class="col-sm-12 col-form-label">
-                        <?php _e( 'Payment Button Shortcode', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Payment Button Shortcode', 'invoicing' ); ?>
                         <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a buy now button', 'invoicing' ); ?>"></span>
                     </label>
 
                     <div class="col-sm-12">
                         <input onClick="this.select()" type="text" id="wpinv_item_button_shortcode" value="[getpaid item=<?php echo esc_attr( $item->get_id() ); ?> button='Buy Now']" style="width: 100%;" readonly/>
                         <small class="form-text text-muted">
-                            <?php _e( 'Or use the following URL in a link:', 'invoicing' ); ?>
+                            <?php esc_html_e( 'Or use the following URL in a link:', 'invoicing' ); ?>
                             <code>#getpaid-item-<?php echo intval( $item->get_id() ); ?>|0</code>
                         </small>
                     </div>
@@ -87,7 +87,7 @@ class GetPaid_Meta_Box_Item_Info {
 
                 <div class="wpinv_item_buy_url form-group row">
                     <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
-                        <?php _e( 'Direct Payment URL', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Direct Payment URL', 'invoicing' ); ?>
                         <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>
                     </label>
 
@@ -99,7 +99,7 @@ class GetPaid_Meta_Box_Item_Info {
             <?php endif; ?>
 
             <div class="wpinv_item_custom_id form-group">
-                <?php _e( 'Custom ID', 'invoicing' ); ?> &mdash; <?php echo esc_html( $item->get_custom_id() ); ?>
+                <?php esc_html_e( 'Custom ID', 'invoicing' ); ?> &mdash; <?php echo esc_html( $item->get_custom_id() ); ?>
             </div>
 
             <?php do_action( 'wpinv_meta_values_metabox_before', $post ); ?>
@@ -124,8 +124,8 @@ class GetPaid_Meta_Box_Item_Info {
         ob_start();
         ?>
 
-        <?php _e( 'Standard: Standard item type', 'invoicing' ); ?>
-        <?php _e( 'Fee: Like Registration Fee, Sign up Fee etc', 'invoicing' ); ?>
+        <?php esc_html_e( 'Standard: Standard item type', 'invoicing' ); ?>
+        <?php esc_html_e( 'Fee: Like Registration Fee, Sign up Fee etc', 'invoicing' ); ?>
 
         <?php
         do_action( 'wpinv_item_info_metabox_after', $post );

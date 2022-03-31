@@ -65,7 +65,7 @@ class GetPaid_Meta_Box_Resend_Invoice {
         foreach ( $invoice_actions as $key => $action ) {
 
             if ( 'resend-email' === $key ) {
-                echo wpautop( __( "This will send a copy of the invoice to the customer's email address.", 'invoicing' ) );
+                echo wp_kses_post( wpautop( __( "This will send a copy of the invoice to the customer's email address.", 'invoicing' ) ) );
             }
 
             printf(

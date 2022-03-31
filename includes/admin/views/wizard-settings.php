@@ -57,10 +57,10 @@ defined( 'ABSPATH' ) || exit;
 						switch ( $type ) {
 
 							case 'hidden':
-								echo "<input type='hidden' id='$id' name='$name' value='$value' />";
+								echo "<input type='hidden' id='" . esc_attr( $id ) . "' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' />";
 								break;
 							case 'text':
-                                case 'number':
+                            case 'number':
 								echo aui()->input(
                                     array(
 								'type'        => $type,

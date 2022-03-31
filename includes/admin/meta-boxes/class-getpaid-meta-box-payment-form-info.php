@@ -33,7 +33,7 @@ class GetPaid_Meta_Box_Payment_Form_Info {
 
             <div class="wpinv_payment_form_shortcode form-group row">
                 <label for="wpinv_payment_form_shortcode" class="col-sm-12 col-form-label">
-                    <?php _e( 'Payment Form Shortcode', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Payment Form Shortcode', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a payment form', 'invoicing' ); ?>"></span>
                 </label>
 
@@ -44,14 +44,14 @@ class GetPaid_Meta_Box_Payment_Form_Info {
 
             <div class="wpinv_payment_form_buy_shortcode form-group row">
                 <label for="wpinv_payment_form_buy_shortcode" class="col-sm-12 col-form-label">
-                    <?php _e( 'Payment Button Shortcode', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Payment Button Shortcode', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a buy now button', 'invoicing' ); ?>"></span>
                 </label>
 
                 <div class="col-sm-12">
                     <input onClick="this.select()" type="text" id="wpinv_payment_form_buy_shortcode" value="[getpaid form=<?php echo esc_attr( $form->get_id() ); ?> button='Buy Now']" style="width: 100%;" />
                     <small class="form-text text-muted">
-                        <?php _e( 'Or use the following URL in a link:', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Or use the following URL in a link:', 'invoicing' ); ?>
                         <code>#getpaid-form-<?php echo intval( $form->get_id() ); ?></code>
                     </small>
                 </div>
@@ -59,7 +59,7 @@ class GetPaid_Meta_Box_Payment_Form_Info {
 
             <div class="wpinv_item_buy_url form-group row">
                 <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
-                    <?php _e( 'Direct Payment URL', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Direct Payment URL', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>
                 </label>
 

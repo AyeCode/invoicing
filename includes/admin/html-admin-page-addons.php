@@ -33,7 +33,7 @@ add_ThickBox();
 				<h2>With our WPInvoicing Membership you get access to all our products!</h2>
 				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>-->
 				<?php if ( defined( 'WP_EASY_UPDATES_ACTIVE' ) ) { ?>
-					<h2><?php _e( 'Have a membership key?', 'invoicing' ); ?></h2>
+					<h2><?php esc_html_e( 'Have a membership key?', 'invoicing' ); ?></h2>
 					<p>
 						<?php
 						$wpeu_admin = new External_Updates_Admin( 'wpinvoicing.com', '1' );
@@ -44,7 +44,7 @@ add_ThickBox();
 
 				<div class="membership-cta-contet">
 					<div class="main-cta">
-							<h2><?php _e( 'Membership benefits Include:', 'invoicing' ); ?></h2>
+							<h2><?php esc_html_e( 'Membership benefits Include:', 'invoicing' ); ?></h2>
 							<div class="feature-list">
 								<ul>
 									<?php
@@ -58,11 +58,11 @@ add_ThickBox();
 									</ul>
 
 									<div class="feature-cta">
-										<h3><?php _e( 'Membership Starts from', 'invoicing' ); ?></h3>
+										<h3><?php esc_html_e( 'Membership Starts from', 'invoicing' ); ?></h3>
 										<h4>$99</h4>
-										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e( 'Buy Membership', 'invoicing' ); ?></a>
+										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_attr_e( 'Buy Membership', 'invoicing' ); ?></a>
 									</div>
-									<h3><?php _e( 'Included Gateways:', 'invoicing' ); ?></h3>
+									<h3><?php esc_html_e( 'Included Gateways:', 'invoicing' ); ?></h3>
 									<ul>
 										<?php
 										if ( $addons = $addon_obj->get_section_data( 'gateways' ) ) {
@@ -117,8 +117,8 @@ Great job so far guys, can’t wait to see where this goes!
 						</div>
 					</div>
 					<div class="member-footer">
-						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e( 'Buy Membership', 'invoicing' ); ?></a>
-						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php _e( 'Create Invoice', 'invoicing' ); ?></a>
+						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_html_e( 'Buy Membership', 'invoicing' ); ?></a>
+						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php esc_html_e( 'Create Invoice', 'invoicing' ); ?></a>
 					</div>
 				</div>
 
@@ -212,8 +212,8 @@ continue;}// don't show quote add on
 	<div id="wpi-wpeu-required-for-external" style="display:none;"><span class="wpi-notification "><?php printf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now.", 'invoicing' ), admin_url( 'plugin-install.php?tab=upload&wpeu-install=true' ) ); ?></span></div>
 	<div id="wpeu-licence-popup" style="display:none;">
 		<span class="wpi-notification noti-white">
-			<h3 class="wpeu-licence-title"><?php _e( 'Licence key', 'invoicing' ); ?></h3>
-			<input class="wpeu-licence-key" type="text" placeholder="<?php _e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php _e( 'Install', 'invoicing' ); ?></button>
+			<h3 class="wpeu-licence-title"><?php esc_html_e( 'Licence key', 'invoicing' ); ?></h3>
+			<input class="wpeu-licence-key" type="text" placeholder="<?php esc_attr_e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php esc_html_e( 'Install', 'invoicing' ); ?></button>
 			<br>
 			<?php
 			echo sprintf( __( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );

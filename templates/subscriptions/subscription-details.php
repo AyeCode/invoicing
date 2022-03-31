@@ -31,7 +31,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 </style>
 
-<h2 class="mb-1 h4"><?php _e( 'Subscription Details', 'invoicing' ); ?></h2>
+<h2 class="mb-1 h4"><?php esc_html_e( 'Subscription Details', 'invoicing' ); ?></h2>
 <table class="table table-bordered">
 	<tbody>
 
@@ -61,13 +61,13 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 							break;
 
 						case 'initial_amount':
-							echo wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() );
+							echo wp_kses_post( wpinv_price( $subscription->get_initial_amount(), $subscription->get_parent_payment()->get_currency() ) );
 
 							if ( $subscription->has_trial_period() ) {
 
 								echo "<small class='text-muted'>&nbsp;";
 								printf(
-									_x( '( %1$s trial )', 'Subscription trial period. (e.g.: 1 month trial)', 'invoicing' ),
+									esc_html_x( '( %1$s trial )', 'Subscription trial period. (e.g.: 1 month trial)', 'invoicing' ),
 									esc_html( $subscription->get_trial_period() )
 								);
 								echo '</small>';
@@ -112,16 +112,16 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 </table>
 
 <?php if ( ! empty( $subscription_group ) ) : ?>
-	<h2 class='mt-5 mb-1 h4'><?php _e( 'Subscription Items', 'invoicing' ); ?></h2>
+	<h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Subscription Items', 'invoicing' ); ?></h2>
 	<?php getpaid_admin_subscription_item_details_metabox( $subscription ); ?>
 <?php endif; ?>
 
-<h2 class='mt-5 mb-1 h4'><?php _e( 'Related Invoices', 'invoicing' ); ?></h2>
+<h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Related Invoices', 'invoicing' ); ?></h2>
 
-<?php echo getpaid_admin_subscription_invoice_details_metabox( $subscription ); ?>
+<?php echo wp_kses_post( getpaid_admin_subscription_invoice_details_metabox( $subscription ) ); ?>
 
 <?php if ( 1 < count( $subscription_groups ) ) : ?>
-	<h2 class='mt-5 mb-1 h4'><?php _e( 'Related Subscriptions', 'invoicing' ); ?></h2>
+	<h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Related Subscriptions', 'invoicing' ); ?></h2>
 	<?php getpaid_admin_subscription_related_subscriptions_metabox( $subscription ); ?>
 <?php endif; ?>
 
@@ -133,12 +133,12 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
             '<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
             esc_url( $subscription->get_cancel_url() ),
             esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
-            __( 'Cancel Subscription', 'invoicing' )
+            esc_html__( 'Cancel Subscription', 'invoicing' )
         );
 		}
 
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
 
-	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Go Back', 'invoicing' ); ?></a>
+	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php esc_html_e( 'Go Back', 'invoicing' ); ?></a>
 </span>

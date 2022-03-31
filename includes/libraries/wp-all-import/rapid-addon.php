@@ -567,7 +567,7 @@ if (!class_exists('RapidAddon')) {
 				}
 			} else if($field_params['type'] == 'title'){
 				?>
-				<h4 class="wpallimport-add-on-options-title"><?php _e($field_params['name'], 'wp_all_import_plugin'); ?><?php if ( ! empty($field_params['tooltip'])): ?><a href="#help" class="wpallimport-help" title="<?php echo $field_params['tooltip']; ?>" style="position:relative; top: -1px;">?</a><?php endif; ?></h4>				
+				<h4 class="wpallimport-add-on-options-title"><?php esc_html_e($field_params['name'], 'wp_all_import_plugin'); ?><?php if ( ! empty($field_params['tooltip'])): ?><a href="#help" class="wpallimport-help" title="<?php echo $field_params['tooltip']; ?>" style="position:relative; top: -1px;">?</a><?php endif; ?></h4>				
 				<?php
 
 			} else if($field_params['type'] == 'plain_text'){
@@ -1102,13 +1102,13 @@ if (!class_exists('RapidAddon')) {
 				?>
 
 	    		<div class="error notice is-dismissible wpallimport-dismissible" style="margin-top: 10px;" rel="<?php echo sanitize_key($this->slug); ?>">
-	    		    <p><?php _e(
+	    		    <p><?php echo wp_kses_post(__(
 		    		    	sprintf(
 	    			    		$notice_text,
 	    			    		'?'.$this->slug.'_ignore=0'
 	    			    	), 
 	    		    		'rapid_addon_'.$this->slug
-	    		    	); ?></p>
+	    		    	)); ?></p>
 			    </div>
 
 				<?php

@@ -480,7 +480,7 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 					<?php if ( empty( $payments ) ) : ?>
 						<tr>
 							<td colspan="<?php echo count( $columns ); ?>" class="p-2 text-left text-muted">
-								<?php _e( 'This subscription has no invoices.', 'invoicing' ); ?>
+								<?php esc_html_e( 'This subscription has no invoices.', 'invoicing' ); ?>
 							</td>
 						</tr>
 					<?php endif; ?>

@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
     <td class="wpinv_tax_state">
 
         <label class="w-100">
-            <span class="screen-reader-text"><?php _e( 'States', 'invoicing' ); ?></span>
+            <span class="screen-reader-text"><?php esc_html_e( 'States', 'invoicing' ); ?></span>
             <input type="text" placeholder="<?php esc_attr_e( 'Apply to whole country', 'invoicing' ); ?>" name="tax_rates[<?php echo esc_attr( $key ); ?>][state]" value="<?php echo empty( $tax_rate['global'] ) ? esc_attr( $tax_rate['state'] ) : ''; ?>"/>
         </label>
 
@@ -45,21 +45,21 @@ defined( 'ABSPATH' ) || exit;
 
     <td class="wpinv_standard_rate">
         <label class="w-100">
-            <span class="screen-reader-text"><?php _e( 'Standard Rate', 'invoicing' ); ?></span>
+            <span class="screen-reader-text"><?php esc_html_e( 'Standard Rate', 'invoicing' ); ?></span>
             <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['rate'] ); ?>"/>
         </label>
     </td>
 
     <td class="wpinv_reduced_rate">
         <label class="w-100">
-            <span class="screen-reader-text"><?php _e( 'Reduced Rate', 'invoicing' ); ?></span>
+            <span class="screen-reader-text"><?php esc_html_e( 'Reduced Rate', 'invoicing' ); ?></span>
             <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][reduced_rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['reduced_rate'] ); ?>"/>
         </label>
     </td>
 
     <td class="wpinv_tax_name">
         <label class="w-100">
-            <span class="screen-reader-text"><?php _e( 'Tax Name', 'invoicing' ); ?></span>
+            <span class="screen-reader-text"><?php esc_html_e( 'Tax Name', 'invoicing' ); ?></span>
             <input type="text" name="tax_rates[<?php echo esc_attr( $key ); ?>][name]" value="<?php echo esc_attr( $tax_rate['name'] ); ?>"/>
         </label>
     </td>

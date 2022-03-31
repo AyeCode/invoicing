@@ -59,7 +59,7 @@ if ( ! empty( $required ) ) {
 	<div class="form-row mb-3 d-none getpaid-progress-template">
 
 		<div class="overflow-hidden text-nowrap col-7 col-sm-4">
-			<a href="" class="close float-none" title="<?php esc_attr_e( 'Remove File', 'invoicing' ); ?>">&times;<span class="sr-only"><?php _e( 'Close', 'invoicing' ); ?></span></a>&nbsp;
+			<a href="" class="close float-none" title="<?php esc_attr_e( 'Remove File', 'invoicing' ); ?>">&times;<span class="sr-only"><?php esc_html_e( 'Close', 'invoicing' ); ?></span></a>&nbsp;
 			<i class="fa fa-file" aria-hidden="true"></i>&nbsp; <span class="getpaid-progress-file-name"></span>&nbsp;
 		</div>
 

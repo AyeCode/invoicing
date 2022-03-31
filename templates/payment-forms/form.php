@@ -102,7 +102,7 @@ do_action( 'getpaid_before_payment_form', $form );
 
     <div class="loading_div overlay overlay-black position-absolute row m-0 rounded overflow-hidden" style="height: 100%;width: 100%;top: 0px;z-index: 2;display:none;">
         <div class="spinner-border mx-auto align-self-center text-white" role="status">
-            <span class="sr-only"><?php _e( 'Loading...', 'invoicing' ); ?></span>
+            <span class="sr-only"><?php esc_html_e( 'Loading...', 'invoicing' ); ?></span>
         </div>
     </div>
 

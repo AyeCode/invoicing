@@ -671,19 +671,29 @@ function wpinv_cal_days_in_month( $calendar, $month, $year ) {
  *
  * @return string
  */
-function wpi_help_tip( $tip, $allow_html = false, $is_vue = false ) {
+function wpi_help_tip( $tip, $allow_html = false, $is_vue = false, $echo = false ) {
 
     if ( $allow_html ) {
         $tip = wpi_sanitize_tooltip( $tip );
     } else {
-        $tip = esc_attr( $tip );
+        $tip = strip_tags( $tip );
     }
 
     if ( $is_vue ) {
-        return '<span class="dashicons dashicons-editor-help" title="' . $tip . '"></span>';
+
+        if ( $echo ) {
+            echo '<span class="dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+        } else {
+            return '<span class="dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+        }
+
     }
 
-    return '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . $tip . '"></span>';
+    if ( $echo ) {
+        echo '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+    } else {
+        return '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+    }
 }
 
 /**

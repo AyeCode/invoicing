@@ -28,7 +28,7 @@ if ( empty( $invoice ) ) {
 
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <title><?php _e( 'Invalid Access', 'invoicing' ); ?></title>
+        <title><?php esc_html_e( 'Invalid Access', 'invoicing' ); ?></title>
 
         <?php do_action( 'wpinv_invoice_print_head', $invoice ); ?>
 
@@ -60,7 +60,7 @@ if ( empty( $invoice ) ) {
 
         <div class="container">
             <div class="alert alert-danger m-5" role="alert">
-                <h4 class="alert-heading"><?php _e( 'Access Denied', 'invoicing' ); ?></h4>
+                <h4 class="alert-heading"><?php esc_html_e( 'Access Denied', 'invoicing' ); ?></h4>
                 <p><?php echo wp_kses_post( $error ); ?></p>
             </div>
         </div>

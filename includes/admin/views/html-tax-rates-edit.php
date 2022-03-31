@@ -31,27 +31,27 @@ $reset_url = wp_nonce_url(
             <tr class="table-light">
 
                 <th scope="col" class="border-bottom border-top">
-                    <?php _e( 'Country', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Country', 'invoicing' ); ?>
                     <?php echo getpaid_get_help_tip( __( 'Optionally limit this tax rate to a specific country.', 'invoicing' ), 'position-static' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
-                    <?php _e( 'State', 'invoicing' ); ?>
+                    <?php esc_html_e( 'State', 'invoicing' ); ?>
                     <?php echo getpaid_get_help_tip( __( 'Separate state codes using a comma or leave blank to apply country wide.', 'invoicing' ), 'position-static' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
-                    <?php _e( 'Standard Rate %', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Standard Rate %', 'invoicing' ); ?>
                     <?php echo getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Standard rate" tax class.', 'invoicing' ), 'position-static' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
-                    <?php _e( 'Reduced Rate %', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Reduced Rate %', 'invoicing' ); ?>
                     <?php echo getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Reduced rate" tax class.', 'invoicing' ), 'position-static' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
-                    <?php _e( 'Tax Name', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Tax Name', 'invoicing' ); ?>
                     <?php echo getpaid_get_help_tip( __( 'The name of this tax, e.g VAT.', 'invoicing' ), 'position-static' ); ?>
                 </th>
 
@@ -69,11 +69,11 @@ $reset_url = wp_nonce_url(
                 <td colspan="6" class="border-top">
 
                     <button type="button" class="button button-secondary wpinv_add_tax_rate" aria-label="<?php esc_attr_e( 'Add Tax Rate', 'invoicing' ); ?>">
-                        <span><?php _e( 'Add Tax Rate', 'invoicing' ); ?></span>
+                        <span><?php esc_html_e( 'Add Tax Rate', 'invoicing' ); ?></span>
                     </button>
 
                     <a href="<?php echo esc_url( $reset_url ); ?>" class="button button-secondary wpinv_reset_tax_rates" aria-label="<?php esc_attr_e( 'Reset Tax Rates', 'invoicing' ); ?>">
-                        <span><?php _e( 'Reset Tax Rates', 'invoicing' ); ?></span>
+                        <span><?php esc_html_e( 'Reset Tax Rates', 'invoicing' ); ?></span>
                     </a>
                 </td>
             </tr>

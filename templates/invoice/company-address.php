@@ -25,7 +25,7 @@ $vat_number = wpinv_get_option( 'vat_number' );
         <div class="row">
 
             <div class="invoice-company-address-label col-2">
-                <strong><?php _e( 'From:', 'invoicing' ); ?></strong>
+                <strong><?php esc_html_e( 'From:', 'invoicing' ); ?></strong>
             </div>
 
             <div class="invoice-company-address-value col-10">

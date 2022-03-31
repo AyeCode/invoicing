@@ -12,7 +12,7 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
         <tbody>
             <?php do_action( 'wpinv_email_billing_fields_first', $invoice ); ?>
             <tr class="wpi-receipt-name">
-                <th class="text-left"><?php _e( 'Name', 'invoicing' ); ?></th>
+                <th class="text-left"><?php esc_html_e( 'Name', 'invoicing' ); ?></th>
                 <td>
                 <?php
                 if ( $sent_to_admin && $invoice->get_user_id() ) {
@@ -25,22 +25,22 @@ do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
 </td>
             </tr>
             <tr class="wpi-receipt-email">
-                <th class="text-left"><?php _e( 'Email', 'invoicing' ); ?></th>
-                <td><?php echo sanitize_email( $invoice->get_email() ); ?></td>
+                <th class="text-left"><?php esc_html_e( 'Email', 'invoicing' ); ?></th>
+                <td><?php echo esc_html( sanitize_email( $invoice->get_email() ) ); ?></td>
             </tr>
             <?php if ( $invoice->get_company() ) { ?>
             <tr class="wpi-receipt-company">
-                <th class="text-left"><?php _e( 'Company', 'invoicing' ); ?></th>
+                <th class="text-left"><?php esc_html_e( 'Company', 'invoicing' ); ?></th>
                 <td><?php echo esc_html( $invoice->get_company() ); ?></td>
             </tr>
             <?php } ?>
             <tr class="wpi-receipt-address">
-                <th class="text-left"><?php _e( 'Address', 'invoicing' ); ?></th>
+                <th class="text-left"><?php esc_html_e( 'Address', 'invoicing' ); ?></th>
                 <td><?php echo wp_kses_post( wpinv_get_invoice_address_markup( $invoice->get_user_info() ) ); ?></td>
             </tr>
             <?php if ( $invoice->get_phone() ) { ?>
             <tr class="wpi-receipt-phone">
-                <th class="text-left"><?php _e( 'Phone', 'invoicing' ); ?></th>
+                <th class="text-left"><?php esc_html_e( 'Phone', 'invoicing' ); ?></th>
                 <td><?php echo esc_html( $invoice->get_phone() ); ?></td>
             </tr>
             <?php } ?>

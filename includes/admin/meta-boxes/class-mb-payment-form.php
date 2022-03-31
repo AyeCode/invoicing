@@ -1,7 +1,7 @@
 <?php
 // MUST have WordPress.
 if ( ! defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
 class WPInv_Meta_Box_Payment_Form {
@@ -27,8 +27,7 @@ class WPInv_Meta_Box_Payment_Form {
                 $value = implode( ',', $value );
             }
 
-            $value = wp_kses_post( $value );
-            echo "<div class='col-12'><strong>$key:</strong></div><div class='col-12 form-group'>$value</div>";
+            echo wp_kses_post( "<div class='col-12'><strong>$key:</strong></div><div class='col-12 form-group'>$value</div>" );
         }
 
         echo '</div></div>';
@@ -51,8 +50,7 @@ class WPInv_Meta_Box_Payment_Form {
             return;
         }
 
-        $post = (int) $post;
-        echo "<input type='text' style='min-width: 220px;' value='[getpaid form=$post]' disabled>";
+        echo "<input type='text' style='min-width: 220px;' value='[getpaid form=" . absint( $post ) . "]' disabled>";
 
     }
 

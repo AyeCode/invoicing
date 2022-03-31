@@ -12,10 +12,10 @@ defined( 'ABSPATH' ) || exit;
 
     <form method="post" class="text-center card-body">
         <div class="gp-wizard-payments">
-            <h2 class="gd-settings-title h3 "><?php _e( 'Gateway Setup', 'invoicing' ); ?></h2>
-            <p><?php _e( 'Below are a few gateways that can be setup in a few seconds.', 'invoicing' ); ?>
+            <h2 class="gd-settings-title h3 "><?php esc_html_e( 'Gateway Setup', 'invoicing' ); ?></h2>
+            <p><?php esc_html_e( 'Below are a few gateways that can be setup in a few seconds.', 'invoicing' ); ?>
                 <br>
-                <?php _e( 'We have 20+ Gateways that can be setup later.', 'invoicing' ); ?>
+                <?php esc_html_e( 'We have 20+ Gateways that can be setup later.', 'invoicing' ); ?>
             </p>
 
             <ul class="list-group">
@@ -39,9 +39,9 @@ defined( 'ABSPATH' ) || exit;
                         );
                         ?>
                         "
-                        class="btn btn-sm btn-outline-primary"><?php _e( 'Connect', 'invoicing' ); ?></a>
+                        class="btn btn-sm btn-outline-primary"><?php esc_html_e( 'Connect', 'invoicing' ); ?></a>
                     <?php else : ?>
-                        <span class="btn btn-sm btn-success"><?php _e( 'Connected', 'invoicing' ); ?></span>
+                        <span class="btn btn-sm btn-success"><?php esc_html_e( 'Connected', 'invoicing' ); ?></span>
                     <?php endif; ?>
 				</li>
 
@@ -53,7 +53,7 @@ defined( 'ABSPATH' ) || exit;
                         <a
                             href="#"
                             onclick="jQuery('.getpaid-setup-paypal-input').toggleClass('d-none'); return false;"
-                            class="getpaid-setup-paypal btn btn-sm btn-outline-primary"><?php _e( 'Set-up', 'invoicing' ); ?></a>
+                            class="getpaid-setup-paypal btn btn-sm btn-outline-primary"><?php esc_html_e( 'Set-up', 'invoicing' ); ?></a>
                     </div>
                     <div class="mt-4 getpaid-setup-paypal-input d-none">
                         <input type="text" placeholder="<?php esc_attr_e( 'PayPal Email', 'invoicing' ); ?>" name="paypal-email" class="form-control" value="<?php echo esc_attr( wpinv_get_option( 'paypal_email' ) ); ?>">
@@ -61,7 +61,7 @@ defined( 'ABSPATH' ) || exit;
                 </li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto"><?php _e( 'Test Gateway', 'invoicing' ); ?></span>
+				    <span class="mr-auto"><?php esc_html_e( 'Test Gateway', 'invoicing' ); ?></span>
 					<div class="custom-control custom-switch">
 						<input type="checkbox" name="enable-manual-gateway" class="custom-control-input" id="enable-manual-gateway" <?php checked( wpinv_is_gateway_active( 'manual' ) ); ?>>
 						<label class="custom-control-label" for="enable-manual-gateway"></label>
