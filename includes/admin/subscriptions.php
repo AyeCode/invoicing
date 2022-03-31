@@ -119,7 +119,7 @@ function wpinv_recurring_subscription_details() {
 
 	?>
 
-		<form method="post" action="<?php echo admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $sub->get_id() ) ); ?>">
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $sub->get_id() ) ) ); ?>">
 
 			<?php wp_nonce_field( 'getpaid-nonce', 'getpaid-nonce' ); ?>
 			<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
@@ -251,8 +251,8 @@ add_action( 'getpaid_subscription_admin_display_customer', 'getpaid_admin_subscr
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_amount( $subscription ) {
-	$amount    = wp_kses_post( getpaid_get_formatted_subscription_amount( $subscription ) );
-	echo "<span>$amount</span>";
+	$amount    = getpaid_get_formatted_subscription_amount( $subscription );
+	echo wp_kses_post( "<span>$amount</span>" );
 }
 add_action( 'getpaid_subscription_admin_display_amount', 'getpaid_admin_subscription_metabox_display_amount' );
 
@@ -278,7 +278,7 @@ add_action( 'getpaid_subscription_admin_display_subscription', 'getpaid_admin_su
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_start_date( $subscription ) {
-	echo getpaid_format_date_value( $subscription->get_date_created() );
+	echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
 }
 add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subscription_metabox_display_start_date' );
 
@@ -288,7 +288,7 @@ add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subs
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_renews_on( $subscription ) {
-	echo getpaid_format_date_value( $subscription->get_expiration() );
+	echo esc_html( getpaid_format_date_value( $subscription->get_expiration() ) );
 }
 add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subscription_metabox_display_renews_on' );
 
@@ -520,11 +520,11 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 									break;
 
 								case 'relationship':
-											echo $payment->is_renewal() ? __( 'Renewal Invoice', 'invoicing' ) : __( 'Initial Invoice', 'invoicing' );
+										echo $payment->is_renewal() ? esc_html__( 'Renewal Invoice', 'invoicing' ) : esc_html__( 'Initial Invoice', 'invoicing' );
 									break;
 
 								case 'date':
-									echo getpaid_format_date_value( $payment->get_date_created() );
+									echo esc_html( getpaid_format_date_value( $payment->get_date_created() ) );
 									break;
 
 								case 'status':
@@ -657,19 +657,19 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 									break;
 
 								case 'price':
-											echo wpinv_price( $subscription_group_item['item_price'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_item['item_price'], $invoice->get_currency() );
 									break;
 
 								case 'tax':
-									echo wpinv_price( $subscription_group_item['tax'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_item['tax'], $invoice->get_currency() );
 									break;
 
 								case 'discount':
-										echo wpinv_price( $subscription_group_item['discount'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_item['discount'], $invoice->get_currency() );
 									break;
 
 								case 'initial':
-										echo wpinv_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_item['price'] * $subscription_group_item['quantity'], $invoice->get_currency() );
 									break;
 
 								case 'recurring':
@@ -703,7 +703,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 									break;
 
 								case 'price':
-											echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
 									break;
 
 								case 'tax':
@@ -715,7 +715,7 @@ function getpaid_admin_subscription_item_details_metabox( $subscription ) {
 									break;
 
 								case 'initial':
-										echo wpinv_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
+									wpinv_the_price( $subscription_group_fee['initial_fee'], $invoice->get_currency() );
 									break;
 
 								case 'recurring':

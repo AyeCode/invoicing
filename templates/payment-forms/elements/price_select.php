@@ -65,8 +65,7 @@ if ( $select_type == 'radios' ) {
 
 // Display the label.
 if ( ! empty( $label ) ) {
-    $label = esc_html( $label );
-    echo "<label>$label</label>";
+    echo '<label>' . esc_html( $label ) . '</label>';
 }
 
 // Item buttons;
@@ -77,13 +76,10 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
     if ( $select_type == 'circles' ) {
         $class .= ' getpaid-price-circles';
     }
-    echo "<div class='$class'>";
+    echo "<div class='" . esc_attr( $class ) . "'>";
 
     foreach ( $options as $price => $label ) {
-        $label   = esc_html( $label );
-        $price   = esc_attr( $price );
-        $_id     = $id . uniqid( '_' );
-        $checked = checked( $price, $value, false );
+        $_id = $id . uniqid( '_' );
 
         $class = 'rounded';
 
@@ -92,10 +88,10 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
         }
         echo "
             <span class='d-inline-block'>
-                <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change w-auto' id='$_id' value='$price' name='$id' $checked />
-                <label for='$_id' class='$class'><span>$label</span></label>
+                <input type='radio' class='getpaid-price-select-button getpaid-refresh-on-change w-auto' id='" . esc_attr( $_id ) . "' value='" . esc_attr( $price ) . "' name='" . esc_attr( $id ) . "' " . checked( $price, $value, false ) . " />
+                <label for='" . esc_attr( $_id ) . "' class='" . esc_attr( $class ) . "'><span>" . esc_html( $label ) . '</span></label>
             </span>
-            ";
+            ';
     }
 
     echo '</div>';
@@ -107,15 +103,12 @@ if ( $select_type == 'checkboxes' ) {
     echo '<div class="form-group">';
 
     foreach ( $options as $price => $label ) {
-        $label   = esc_html( $label );
-        $price   = esc_attr( $price );
-        $checked = checked( $price, $value, false );
         echo "
             <label class='d-block'>
-                <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change w-auto' name='{$id}[]' value='$price' $checked />
-                <span>$label</span>
+                <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change w-auto' name='" . esc_attr( $id ) . "[]' value='" . esc_attr( $price ) . "' " . checked( $price, $value, false ) . ' />
+                <span>' . esc_html( $label ) . '</span>
             </label>
-            ";
+            ';
     }
 
     echo '</div>';
@@ -123,5 +116,5 @@ if ( $select_type == 'checkboxes' ) {
 }
 
 if ( ! empty( $description ) ) {
-    echo "<small class='form-text text-muted'>$description</small>";
+    echo "<small class='form-text text-muted'>" . wp_kses_post( $description ) . '</small>';
 }

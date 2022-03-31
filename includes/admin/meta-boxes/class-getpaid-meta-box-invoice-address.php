@@ -43,7 +43,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         <div class="col-12 col-sm-6">
                             <div id="getpaid-invoice-user-id-wrapper" class="form-group">
                                 <div>
-                                    <label for="post_author_override"><?php esc_html_e( 'Customer', 'invoicing' );?></label>
+                                    <label for="post_author_override"><?php esc_html_e( 'Customer', 'invoicing' ); ?></label>
                                 </div>
                                 <div>
                                     <select name="post_author_override" id="wpinv_post_author_override" class="getpaid-customer-search form-control regular-text" data-placeholder="<?php esc_attr_e( 'Search for a customer by email or name', 'invoicing' ); ?>">
@@ -74,15 +74,15 @@ class GetPaid_Meta_Box_Invoice_Address {
                             <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
                                 <a id="getpaid-invoice-fill-user-details" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-refresh"></i>
-                                    <?php esc_html_e( 'Fill User Details', 'invoicing' );?>
+                                    <?php esc_html_e( 'Fill User Details', 'invoicing' ); ?>
                                 </a>
                                 <a id="getpaid-invoice-create-new-user-button" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-plus"></i>
-                                    <?php esc_html_e( 'Add New User', 'invoicing' );?>
+                                    <?php esc_html_e( 'Add New User', 'invoicing' ); ?>
                                 </a>
                                 <a id="getpaid-invoice-cancel-create-new-user" class="button button-small button-secondary d-none" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-close"></i>
-                                    <?php esc_html_e( 'Cancel', 'invoicing' );?>
+                                    <?php esc_html_e( 'Cancel', 'invoicing' ); ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -203,14 +203,14 @@ class GetPaid_Meta_Box_Invoice_Address {
                             <?php
                                 aui()->select(
                                     array(
-                                        'id'          => 'wpinv_country',
-                                        'name'        => 'wpinv_country',
-                                        'label'       => __( 'Country', 'invoicing' ),
-                                        'label_type'  => 'vertical',
-                                        'placeholder' => __( 'Choose a country', 'invoicing' ),
-                                        'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
-                                        'value'       => $invoice->get_country( 'edit' ),
-                                        'options'     => wpinv_get_country_list(),
+                                        'id'               => 'wpinv_country',
+                                        'name'             => 'wpinv_country',
+                                        'label'            => __( 'Country', 'invoicing' ),
+                                        'label_type'       => 'vertical',
+                                        'placeholder'      => __( 'Choose a country', 'invoicing' ),
+                                        'class'            => 'form-control-sm getpaid-recalculate-prices-on-change',
+                                        'value'            => $invoice->get_country( 'edit' ),
+                                        'options'          => wpinv_get_country_list(),
                                         'data-allow-clear' => 'false',
                                         'select2'          => true,
                                     ),
@@ -225,40 +225,40 @@ class GetPaid_Meta_Box_Invoice_Address {
 
                                 if ( empty( $states ) ) {
 
-                                    aui()->input(
-                                        array(
-                                            'type'        => 'text',
-                                            'id'          => 'wpinv_state',
-                                            'name'        => 'wpinv_state',
-                                            'label'       => __( 'State', 'invoicing' ),
-                                            'label_type'  => 'vertical',
-                                            'placeholder' => '',
-                                            'class'       => 'form-control-sm',
-                                            'value'       => $invoice->get_state( 'edit' ),
-                                        ),
-                                        true
-                                    );
+								aui()->input(
+								array(
+								'type'        => 'text',
+								'id'          => 'wpinv_state',
+								'name'        => 'wpinv_state',
+								'label'       => __( 'State', 'invoicing' ),
+								'label_type'  => 'vertical',
+								'placeholder' => '',
+								'class'       => 'form-control-sm',
+								'value'       => $invoice->get_state( 'edit' ),
+								),
+								true
+							);
 
                                 } else {
 
-                                    aui()->select(
-                                        array(
-                                            'id'          => 'wpinv_state',
-                                            'name'        => 'wpinv_state',
-                                            'label'       => __( 'State', 'invoicing' ),
-                                            'label_type'  => 'vertical',
-                                            'placeholder' => __( 'Select a state', 'invoicing' ),
-                                            'class'       => 'form-control-sm',
-                                            'value'       => $invoice->get_state( 'edit' ),
-                                            'options'     => $states,
-                                            'data-allow-clear' => 'false',
-                                            'select2'          => true,
-                                        ),
-                                        true
-                                    );
+								aui()->select(
+								array(
+								'id'               => 'wpinv_state',
+								'name'             => 'wpinv_state',
+								'label'            => __( 'State', 'invoicing' ),
+								'label_type'       => 'vertical',
+								'placeholder'      => __( 'Select a state', 'invoicing' ),
+								'class'            => 'form-control-sm',
+								'value'            => $invoice->get_state( 'edit' ),
+								'options'          => $states,
+								'data-allow-clear' => 'false',
+								'select2'          => true,
+								),
+								true
+								);
 
                                 }
-                                
+
                             ?>
                         </div>
                     </div>
@@ -321,7 +321,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                                 //'amount'   => __( 'Amount Only', 'invoicing' ),
                                             ),
                                             'data-allow-clear' => 'false',
-                                            'select2'          => true,
+                                            'select2'     => true,
                                         ),
                                         true
                                     );
@@ -342,7 +342,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'value'       => $invoice->get_currency( 'edit' ),
                                             'required'    => false,
                                             'data-allow-clear' => 'false',
-                                            'select2'          => true,
+                                            'select2'     => true,
                                             'options'     => wpinv_get_currencies(),
                                         ),
                                         true
@@ -393,28 +393,28 @@ class GetPaid_Meta_Box_Invoice_Address {
         // Load new data.
         $invoice->set_props(
 			array(
-                'template'             => isset( $_POST['wpinv_template'] ) ? wpinv_clean( $_POST['wpinv_template'] ) : null,
-                'email_cc'             => isset( $_POST['wpinv_cc'] ) ? wpinv_clean( $_POST['wpinv_cc'] ) : null,
-                'disable_taxes'        => ! empty( $_POST['disable_taxes'] ),
-                'currency'             => isset( $_POST['wpinv_currency'] ) ? wpinv_clean( $_POST['wpinv_currency'] ) : null,
-                'gateway'              => ( $invoice->needs_payment() && isset( $_POST['wpinv_gateway'] ) ) ? wpinv_clean( $_POST['wpinv_gateway'] ) : null,
-                'address'              => isset( $_POST['wpinv_address'] ) ? wpinv_clean( $_POST['wpinv_address'] ) : null,
-                'vat_number'           => isset( $_POST['wpinv_vat_number'] ) ? wpinv_clean( $_POST['wpinv_vat_number'] ) : null,
-                'company'              => isset( $_POST['wpinv_company'] ) ? wpinv_clean( $_POST['wpinv_company'] ) : null,
-                'company_id'           => isset( $_POST['wpinv_company_id'] ) ? wpinv_clean( $_POST['wpinv_company_id'] ) : null,
-                'zip'                  => isset( $_POST['wpinv_zip'] ) ? wpinv_clean( $_POST['wpinv_zip'] ) : null,
-                'state'                => isset( $_POST['wpinv_state'] ) ? wpinv_clean( $_POST['wpinv_state'] ) : null,
-                'city'                 => isset( $_POST['wpinv_city'] ) ? wpinv_clean( $_POST['wpinv_city'] ) : null,
-                'country'              => isset( $_POST['wpinv_country'] ) ? wpinv_clean( $_POST['wpinv_country'] ) : null,
-                'phone'                => isset( $_POST['wpinv_phone'] ) ? wpinv_clean( $_POST['wpinv_phone'] ) : null,
-                'first_name'           => isset( $_POST['wpinv_first_name'] ) ? wpinv_clean( $_POST['wpinv_first_name'] ) : null,
-                'last_name'            => isset( $_POST['wpinv_last_name'] ) ? wpinv_clean( $_POST['wpinv_last_name'] ) : null,
-                'author'               => isset( $_POST['post_author_override'] ) ? wpinv_clean( $_POST['post_author_override'] ) : null,
-                'date_created'         => isset( $_POST['date_created'] ) ? wpinv_clean( $_POST['date_created'] ) : null,
-                'date_completed'       => isset( $_POST['wpinv_date_completed'] ) ? wpinv_clean( $_POST['wpinv_date_completed'] ) : null,
-                'due_date'             => isset( $_POST['wpinv_due_date'] ) ? wpinv_clean( $_POST['wpinv_due_date'] ) : null,
-                'number'               => isset( $_POST['wpinv_number'] ) ? wpinv_clean( $_POST['wpinv_number'] ) : null,
-                'status'               => isset( $_POST['wpinv_status'] ) ? wpinv_clean( $_POST['wpinv_status'] ) : null,
+                'template'       => isset( $_POST['wpinv_template'] ) ? wpinv_clean( $_POST['wpinv_template'] ) : null,
+                'email_cc'       => isset( $_POST['wpinv_cc'] ) ? wpinv_clean( $_POST['wpinv_cc'] ) : null,
+                'disable_taxes'  => ! empty( $_POST['disable_taxes'] ),
+                'currency'       => isset( $_POST['wpinv_currency'] ) ? wpinv_clean( $_POST['wpinv_currency'] ) : null,
+                'gateway'        => ( $invoice->needs_payment() && isset( $_POST['wpinv_gateway'] ) ) ? wpinv_clean( $_POST['wpinv_gateway'] ) : null,
+                'address'        => isset( $_POST['wpinv_address'] ) ? wpinv_clean( $_POST['wpinv_address'] ) : null,
+                'vat_number'     => isset( $_POST['wpinv_vat_number'] ) ? wpinv_clean( $_POST['wpinv_vat_number'] ) : null,
+                'company'        => isset( $_POST['wpinv_company'] ) ? wpinv_clean( $_POST['wpinv_company'] ) : null,
+                'company_id'     => isset( $_POST['wpinv_company_id'] ) ? wpinv_clean( $_POST['wpinv_company_id'] ) : null,
+                'zip'            => isset( $_POST['wpinv_zip'] ) ? wpinv_clean( $_POST['wpinv_zip'] ) : null,
+                'state'          => isset( $_POST['wpinv_state'] ) ? wpinv_clean( $_POST['wpinv_state'] ) : null,
+                'city'           => isset( $_POST['wpinv_city'] ) ? wpinv_clean( $_POST['wpinv_city'] ) : null,
+                'country'        => isset( $_POST['wpinv_country'] ) ? wpinv_clean( $_POST['wpinv_country'] ) : null,
+                'phone'          => isset( $_POST['wpinv_phone'] ) ? wpinv_clean( $_POST['wpinv_phone'] ) : null,
+                'first_name'     => isset( $_POST['wpinv_first_name'] ) ? wpinv_clean( $_POST['wpinv_first_name'] ) : null,
+                'last_name'      => isset( $_POST['wpinv_last_name'] ) ? wpinv_clean( $_POST['wpinv_last_name'] ) : null,
+                'author'         => isset( $_POST['post_author_override'] ) ? wpinv_clean( $_POST['post_author_override'] ) : null,
+                'date_created'   => isset( $_POST['date_created'] ) ? wpinv_clean( $_POST['date_created'] ) : null,
+                'date_completed' => isset( $_POST['wpinv_date_completed'] ) ? wpinv_clean( $_POST['wpinv_date_completed'] ) : null,
+                'due_date'       => isset( $_POST['wpinv_due_date'] ) ? wpinv_clean( $_POST['wpinv_due_date'] ) : null,
+                'number'         => isset( $_POST['wpinv_number'] ) ? wpinv_clean( $_POST['wpinv_number'] ) : null,
+                'status'         => isset( $_POST['wpinv_status'] ) ? wpinv_clean( $_POST['wpinv_status'] ) : null,
 			)
         );
 
@@ -442,7 +442,6 @@ class GetPaid_Meta_Box_Invoice_Address {
 
             // Attempt to create the user.
             $user = wpinv_create_user( sanitize_email( stripslashes( $_POST['wpinv_email'] ) ) );
-
 
             // If successful, update the invoice author.
             if ( is_numeric( $user ) ) {

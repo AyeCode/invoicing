@@ -8,7 +8,7 @@
 	'content' => __( 'No payment form or item selected', 'invoicing' ),
         )
 );
-wp_die( __( 'No payment form or item selected', 'invoicing' ), 400 );
+wp_die( esc_html__( 'No payment form or item selected', 'invoicing' ), 400 );
 	}
 
 	// Payment form or button?

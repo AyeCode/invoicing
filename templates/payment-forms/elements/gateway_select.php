@@ -68,7 +68,7 @@ if ( ! empty( $form->invoice ) ) {
 						$description = "$description $sandbox_notice";
                         }
 
-                        echo wpautop( wp_kses_post( $description ) );
+                        echo wp_kses_post( wpautop( $description ) );
 
                         do_action( 'wpinv_' . $gateway . '_checkout_fields', $invoice_id );
                         do_action( 'wpinv_' . $gateway . '_cc_form', $invoice_id, $form );

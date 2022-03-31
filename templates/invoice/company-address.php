@@ -44,13 +44,13 @@ $vat_number = wpinv_get_option( 'vat_number' );
 
                 <?php if ( $email_from = wpinv_mail_get_from_address() ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), sanitize_email( $email_from ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'Email: %s', 'invoicing' ), esc_html( $email_from ) ); ?>
                     </div>
                 <?php } ?>
 
                 <?php if ( ! empty( $vat_number ) ) { ?>
                     <div class="email_from">
-                        <?php echo wp_sprintf( __( 'VAT Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'VAT Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
                     </div>
                 <?php } ?>
 

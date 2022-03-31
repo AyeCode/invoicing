@@ -204,7 +204,7 @@ function wpinv_admin_get_line_items( $invoice, $columns ) {
         $line_item     .= '<td class="title"><a href="' . get_edit_post_link( $item->get_id() ) . '" target="_blank">' . $item->get_name() . '</a>';
 
         if ( $summary !== '' ) {
-            $line_item .= '<span class="meta">' . wpautop( wp_kses_post( $summary ) ) . '</span>';
+            $line_item .= '<span class="meta">' . wp_kses_post( wpautop( $summary ) ) . '</span>';
         }
 
         $line_item .= '</td>';

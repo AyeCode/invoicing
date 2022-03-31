@@ -25,7 +25,7 @@ if ( ! empty( $value ) && ! empty( $hide_billing_email ) ) {
 
 do_action( 'getpaid_before_payment_form_billing_email', $form );
 
-echo "<span class='$class'>";
+echo "<span class='" . esc_attr( $class ) . "'>";
 
 aui()->input(
     array(

@@ -9,8 +9,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$text = isset( $element['text'] ) ? wp_kses_post( trim( $element['text'] ) ) : '';
-
-if ( ! empty( $text ) ) {
-    echo "<p>$text</p>";
+if ( ! empty( $element['text'] ) ) {
+    echo '<p>' . wp_kses_post( trim( $element['text'] ) ) . '</p>';
 }

@@ -671,29 +671,39 @@ function wpinv_gateway_select_callback( $args ) {
  */
 function wpinv_settings_attrs_helper( $args ) {
 
-	$value        = isset( $args['std'] ) ? $args['std'] : '';
-	$id           = esc_attr( $args['id'] );
-	$placeholder  = esc_attr( $args['placeholder'] );
+	$value = isset( $args['std'] ) ? $args['std'] : '';
+	$id    = esc_attr( $args['id'] );
+	$value = is_scalar( $value ) ? $value : '';
 
-	if ( ! empty( $args['faux'] ) ) {
-		$args['readonly'] = true;
-		$name             = '';
-	} else {
-		$value  = wpinv_get_option( $args['id'], $value );
-		$name   = "wpinv_settings[$id]";
+	$attrs = array(
+		'name'     => ! empty( $args['faux'] ) ? false : "wpinv_settings[$id]",
+		'readonly' => ! empty( $args['faux'] ),
+		'value'    => ! empty( $args['faux'] ) ? $value : wpinv_get_option( $args['id'], $value ),
+		'id'       => 'wpinv-settings-' . $args['id'],
+		'style'    => $args['style'],
+		'class'    => $args['class'],
+		'placeholder' => $args['placeholder'],
+		'data-placeholder' => $args['placeholder'],
+	);
+
+	if ( ! empty( $args['onchange'] ) ) {
+		$attrs['onchange'] = $args['onchange'];
 	}
 
-	$value    = is_scalar( $value ) ? esc_attr( $value ) : '';
-	$class    = esc_attr( $args['class'] );
-	$style    = esc_attr( $args['style'] );
-	$readonly = empty( $args['readonly'] ) ? '' : 'readonly onclick="this.select()"';
+	foreach ( $attrs as $key => $value ) {
 
-	$onchange = '';
-    if ( ! empty( $args['onchange'] ) ) {
-        $onchange = ' onchange="' . esc_attr( $args['onchange'] ) . '"';
+		if ( false === $value ) {
+			continue;
+		}
+
+		if ( true === $value ) {
+			echo ' ' . esc_attr( $key );
+		} else {
+			echo ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+		}
+
 	}
 
-	return "name='$name' id='wpinv-settings-$id' style='$style' value='$value' class='$class' placeholder='$placeholder' data-placeholder='$placeholder' $onchange $readonly";
 }
 
 /**
@@ -705,7 +715,7 @@ function wpinv_text_callback( $args ) {
 
 	?>
 		<label style="width: 100%;">
-			<input type="text" <?php echo wpinv_settings_attrs_helper( $args ); ?>>
+			<input type="text" <?php wpinv_settings_attrs_helper( $args ); ?>>
 			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
@@ -718,11 +728,10 @@ function wpinv_text_callback( $args ) {
 function wpinv_number_callback( $args ) {
 
 	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
-	$attr = wpinv_settings_attrs_helper( $args );
 
 	?>
 		<label style="width: 100%;">
-			<input type="number" step="<?php echo floatval( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php echo $attr; ?>>
+			<input type="number" step="<?php echo floatval( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php wpinv_settings_attrs_helper( $args ); ?>>
 			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
@@ -769,14 +778,13 @@ function wpinv_select_callback( $args ) {
 
 	$desc   = wp_kses_post( $args['desc'] );
 	$desc   = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
-	$attr   = wpinv_settings_attrs_helper( $args );
 	$value  = isset( $args['std'] ) ? $args['std'] : '';
 	$value  = wpinv_get_option( $args['id'], $value );
 	$rand   = uniqid( 'random_id' );
 
 	?>
 		<label style="width: 100%;">
-			<select <?php echo $attr; ?> data-allow-clear="true">
+			<select <?php wpinv_settings_attrs_helper( $args ); ?> data-allow-clear="true">
 				<?php foreach ( $args['options'] as $option => $name ) : ?>
 					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( $option, $value ); ?>><?php echo wpinv_clean( $name ); ?></option>
 				<?php endforeach; ?>

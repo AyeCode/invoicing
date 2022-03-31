@@ -39,7 +39,7 @@ if ( wpinv_require_login_to_checkout() && ! get_current_user_id() ) {
 do_action( 'getpaid_before_payment_form', $form );
 ?>
 
-<form class='getpaid-payment-form getpaid-payment-form-<?php echo absint( $form->get_id() ); ?> bsui position-relative' method='POST' data-key='<?php echo uniqid( 'gpf' ); ?>' data-currency='<?php echo esc_attr( empty( $form->invoice ) ? wpinv_get_currency() : $form->invoice->get_currency() ); ?>' novalidate>
+<form class='getpaid-payment-form getpaid-payment-form-<?php echo absint( $form->get_id() ); ?> bsui position-relative' method='POST' data-key='<?php echo esc_attr( uniqid( 'gpf' ) ); ?>' data-currency='<?php echo esc_attr( empty( $form->invoice ) ? wpinv_get_currency() : $form->invoice->get_currency() ); ?>' novalidate>
 
     <?php
 
@@ -48,14 +48,14 @@ do_action( 'getpaid_before_payment_form', $form );
 
         // And the optional invoice id.
         if ( ! empty( $form->invoice ) ) {
-		echo getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
+		    getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
         }
 
         // We also want to include the form id.
-        echo getpaid_hidden_field( 'form_id', $form->get_id() );
+        getpaid_hidden_field( 'form_id', $form->get_id() );
 
         // And an indication that this is a payment form submission.
-        echo getpaid_hidden_field( 'getpaid_payment_form_submission', '1' );
+        getpaid_hidden_field( 'getpaid_payment_form_submission', '1' );
 
         // Fires before displaying payment form elements.
         do_action( 'getpaid_payment_form_before_elements', $form );
@@ -69,8 +69,8 @@ do_action( 'getpaid_before_payment_form', $form );
                     foreach ( $form->get_elements() as $element ) {
 
 					if ( isset( $element['type'] ) ) {
-						$grid_class = esc_attr( getpaid_get_form_element_grid_class( $element ) );
-						echo "<div class='$grid_class'>";
+						$grid_class = getpaid_get_form_element_grid_class( $element );
+						echo "<div class='" . esc_attr( $grid_class ) . "'>";
 						do_action( 'getpaid_payment_form_element', $element, $form );
 						do_action( "getpaid_payment_form_element_{$element['type']}_template", $element, $form );
 						echo '</div>';

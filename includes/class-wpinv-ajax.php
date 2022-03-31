@@ -159,7 +159,7 @@ class WPInv_Ajax {
     }
 
     public static function get_states_field() {
-        echo wpinv_get_states_field();
+        wpinv_get_states_field();
 
         die();
     }

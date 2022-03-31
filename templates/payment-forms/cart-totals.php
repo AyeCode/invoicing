@@ -63,7 +63,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 
 								// Total tax.
 								if ( in_array( $key, array( 'tax', 'discount', 'subtotal', 'total', 'fees' ) ) ) {
-								echo wpinv_price( 0, $currency );
+								wpinv_the_price( 0, $currency );
 								}
 
 								do_action( "getpaid_payment_form_cart_totals_$key", $form );

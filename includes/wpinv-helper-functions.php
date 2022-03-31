@@ -299,6 +299,17 @@ function getpaid_get_price_format() {
 }
 
 /**
+ * Prints an amount with the correct format.
+ *
+ * @param  float  $amount Raw price.
+ * @param  string $currency Currency.
+ * @return string
+ */
+function wpinv_the_price( $amount = 0, $currency = '' ) {
+    echo wp_kses_post( wpinv_price( $amount, $currency ) );
+}
+
+/**
  * Format the amount with a currency symbol.
  *
  * @param  float  $amount Raw price.
@@ -686,8 +697,7 @@ function wpi_help_tip( $tip, $allow_html = false, $is_vue = false, $echo = false
         } else {
             return '<span class="dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
         }
-
-    }
+}
 
     if ( $echo ) {
         echo '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';

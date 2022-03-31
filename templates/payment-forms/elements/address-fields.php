@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 
 $field_type = sanitize_key( $field_type );
 
-echo "<div class='row $field_type'>";
+echo "<div class='row " . esc_attr( $field_type ) . "'>";
 
 // Prepare current user.
 if ( ! empty( $form->invoice ) ) {
@@ -70,7 +70,7 @@ foreach ( $fields as $address_field ) {
     // Display the country.
     if ( 'wpinv_country' == $address_field['name'] ) {
 
-        echo "<div class='form-group $wrap_class getpaid-address-field-wrapper__country'";
+        echo "<div class='form-group " . esc_attr( $wrap_class ) . " getpaid-address-field-wrapper__country'";
 
         aui()->select(
             array(
@@ -124,7 +124,7 @@ foreach ( $fields as $address_field ) {
             $value = wpinv_get_default_state();
         }
 
-        echo getpaid_get_states_select_markup(
+        getpaid_get_states_select_markup(
             $country,
             $value,
             $placeholder,
@@ -132,7 +132,8 @@ foreach ( $fields as $address_field ) {
             $description,
             ! empty( $address_field['required'] ),
             $wrap_class,
-            $field_name
+            $field_name,
+            true
         );
 
     } else {
@@ -167,7 +168,7 @@ foreach ( $fields as $address_field ) {
         }
 
         if ( 'billing' === $field_type ) {
-            $description .= '<div class="getpaid-error-' . sanitize_html_class( $field_name ) . ' getpaid-custom-payment-form-errors alert alert-danger d-none"></div>';
+            $description .= '<div class="getpaid-error-' . esc_attr( $field_name ) . ' getpaid-custom-payment-form-errors alert alert-danger d-none"></div>';
         }
 
         aui()->input(

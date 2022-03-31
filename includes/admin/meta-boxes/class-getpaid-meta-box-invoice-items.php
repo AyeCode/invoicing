@@ -133,7 +133,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-type">
                                                     <span class="input-text-wrap">
-                                                        <?php echo wpinv_html_select( array(
+                                                        <?php wpinv_html_select( array(
                                                             'options'          => $item_types,
                                                             'name'             => '_wpinv_quick[type]',
                                                             'id'               => '_wpinv_quick_type',
@@ -151,7 +151,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     <label class="wpi-vat-rule">
                                                         <span class="input-text-wrap">
                                                             <?php
-                                                                echo wpinv_html_select( array(
+                                                                wpinv_html_select( array(
                                                                     'options'          => array_merge(
                                                                         array( '' => __( 'Select VAT Rule', 'invoicing' ) ),
                                                                         getpaid_get_tax_rules()
@@ -170,7 +170,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     <label class="wpi-vat-class">
                                                         <span class="input-text-wrap">
                                                             <?php
-                                                                echo wpinv_html_select( array(
+                                                                wpinv_html_select( array(
                                                                     'options'          => array_merge(
                                                                         array( '' => __( 'Select VAT Class', 'invoicing' ) ),
                                                                         getpaid_get_tax_classes()
@@ -206,24 +206,24 @@ class GetPaid_Meta_Box_Invoice_Items {
                             <table cellspacing="0" cellpadding="0">
                                 <tr class="subtotal">
                                     <td class="name"><?php esc_html_e( 'Sub Total:', 'invoicing' );?></td>
-                                    <td class="total"><?php echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_subtotal(), $invoice->get_currency() );?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <tr class="discount">
                                     <td class="name"><?php esc_html_e( 'Discount:', 'invoicing' ) ; ?></td>
-                                    <td class="total"><?php echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_discount(), $invoice->get_currency() );?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <?php if ( $use_taxes ) : ?>
                                 <tr class="tax">
                                     <td class="name"><?php esc_html_e( 'Tax:', 'invoicing' );?></td>
-                                    <td class="total"><?php echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() );?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <?php endif; ?>
                                 <tr class="total">
                                     <td class="name"><?php esc_html_e( 'Total:', 'invoicing' );?></td>
-                                    <td class="total"><?php echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total(), $invoice->get_currency() );?></td>
                                     <td class="action"></td>
                                 </tr>
                             </table>
@@ -235,7 +235,7 @@ class GetPaid_Meta_Box_Invoice_Items {
             <div class="wpinv-actions">
                 <?php
                     if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
-                        echo wpinv_item_dropdown(
+                        wpinv_item_dropdown(
                             array(
                                 'name'             => 'wpinv_invoice_item',
                                 'id'               => 'wpinv_invoice_item',
@@ -278,7 +278,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 if ( $summary !== '' ) {
                                     printf(
                                         '<span class="meta">%s</span>',
-                                        wpautop( wp_kses_post( $summary ) )
+                                        wp_kses_post( wpautop( $summary ) )
                                     );
                                 }
 
@@ -312,7 +312,7 @@ class GetPaid_Meta_Box_Invoice_Items {
 
                                 break;
                             case 'total':
-                                echo wpinv_price( $item->get_sub_total(), $invoice->get_currency() );
+                                wpinv_the_price( $item->get_sub_total(), $invoice->get_currency() );
 
                                 break;
                             case 'tax':

@@ -47,7 +47,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 							$column_id = sanitize_html_class( $column_id );
 							$class     = empty( $column_name['class'] ) ? '' : sanitize_html_class( $column_name['class'] );
 
-							echo "<td class='$column_id $class'>";
+							echo "<td class='" . esc_attr( $column_id . $class ) . "'>";
 							switch ( $column_id ) {
 
 								case 'invoice-number':
@@ -55,14 +55,14 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									break;
 
 								case 'created-date':
-									echo getpaid_format_date_value( $invoice->get_date_created() );
+									echo esc_html( getpaid_format_date_value( $invoice->get_date_created() ) );
 									break;
 
 								case 'payment-date':
 									if ( $invoice->needs_payment() ) {
 										echo '&mdash;';
 										} else {
-										echo getpaid_format_date_value( $invoice->get_date_completed() );
+										echo esc_html( getpaid_format_date_value( $invoice->get_date_completed() ) );
 										}
 
 									break;
@@ -73,7 +73,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 									break;
 
 								case 'invoice-total':
-									echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+									wpinv_the_price( $invoice->get_total(), $invoice->get_currency() );
 
 									break;
 
@@ -110,7 +110,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 
 									foreach ( $actions as $key => $action ) {
 										$class = ! empty( $action['class'] ) ? sanitize_html_class( $action['class'] ) : '';
-										echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm btn-block ' . $class . ' ' . sanitize_html_class( $key ) . '" ' . ( ! empty( $action['attrs'] ) ? $action['attrs'] : '' ) . '>' . $action['name'] . '</a>';
+										echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm btn-block ' . esc_attr( $class . ' ' . sanitize_html_class( $key ) ) . '" ' . ( ! empty( $action['attrs'] ) ? esc_html( $action['attrs'] ) : '' ) . '>' . esc_attr( $action['name'] ) . '</a>';
 										}
 
 									break;
@@ -143,12 +143,14 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 			<?php
 			$big = 999999;
 
-			echo paginate_links(
-                array(
-					'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-					'format' => '?paged=%#%',
-					'total'  => $invoices->max_num_pages,
-                )
+			echo wp_kses_post(
+				paginate_links(
+					array(
+						'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+						'format' => '?paged=%#%',
+						'total'  => $invoices->max_num_pages,
+					)
+				)
             );
 			?>
 		</div>

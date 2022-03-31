@@ -46,19 +46,19 @@ $company_id  = $invoice->get_company_id();
 
                 <?php if ( ! empty( $email ) ) : ?>
                     <div class="billing-email">
-                        <?php echo wp_sprintf( __( 'Email: %s', 'invoicing' ), sanitize_email( $email ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'Email: %s', 'invoicing' ), esc_html( $email ) ); ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if ( ! empty( $vat_number ) ) : ?>
                     <div class="vat-number">
-                        <?php echo wp_sprintf( __( 'Vat Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'Vat Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if ( ! empty( $company_id ) ) : ?>
                     <div class="company-id">
-                        <?php echo wp_sprintf( __( 'Company ID: %s', 'invoicing' ), esc_html( $company_id ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'Company ID: %s', 'invoicing' ), esc_html( $company_id ) ); ?>
                     </div>
                 <?php endif; ?>
 

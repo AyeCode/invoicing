@@ -619,13 +619,12 @@ function wpinv_get_states_field() {
 			'show_option_none' => false,
 		);
 
-		$response = wpinv_html_select( $args );
+		wpinv_html_select( $args );
 
 	} else {
-		$response = 'nostates';
+		echo 'nostates';
 	}
 
-	return $response;
 }
 
 function wpinv_default_billing_country( $country = '', $user_id = 0 ) {

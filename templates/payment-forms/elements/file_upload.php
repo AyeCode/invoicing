@@ -47,7 +47,7 @@ if ( ! empty( $required ) ) {
 
 	<label for="<?php echo esc_attr( $id ); ?>" class="getpaid-file-upload-element d-flex w-100 flex-column align-items-center justify-content-center p-2 mb-2">
 		<div class="h5 text-dark">
-			<?php echo _n( 'Drag your file to this area or click to upload', 'Drag files to this area or click to upload', $max_file_num, 'invoicing' ); ?>
+			<?php echo esc_html( _n( 'Drag your file to this area or click to upload', 'Drag files to this area or click to upload', $max_file_num, 'invoicing' ) ); ?>
 		</div>
 		<?php if ( ! empty( $description ) ) : ?>
 			<small class="form-text text-muted"><?php echo wp_kses_post( $description ); ?></small>

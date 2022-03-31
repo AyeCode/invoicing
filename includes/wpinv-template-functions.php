@@ -297,64 +297,6 @@ function wpinv_add_body_classes( $class ) {
 }
 add_filter( 'body_class', 'wpinv_add_body_classes' );
 
-function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before = 5, $years_after = 0 ) {
-    $current     = date( 'Y' );
-    $start_year  = $current - absint( $years_before );
-    $end_year    = $current + absint( $years_after );
-    $selected    = empty( $selected ) ? date( 'Y' ) : $selected;
-    $options     = array();
-
-    while ( $start_year <= $end_year ) {
-        $options[ absint( $start_year ) ] = $start_year;
-        $start_year++;
-    }
-
-    $output = wpinv_html_select(
-        array(
-			'name'             => $name,
-			'selected'         => $selected,
-			'options'          => $options,
-			'show_option_all'  => false,
-			'show_option_none' => false,
-        )
-    );
-
-    return $output;
-}
-
-function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
-
-    $options = array(
-        '1'  => __( 'January', 'invoicing' ),
-        '2'  => __( 'February', 'invoicing' ),
-        '3'  => __( 'March', 'invoicing' ),
-        '4'  => __( 'April', 'invoicing' ),
-        '5'  => __( 'May', 'invoicing' ),
-        '6'  => __( 'June', 'invoicing' ),
-        '7'  => __( 'July', 'invoicing' ),
-        '8'  => __( 'August', 'invoicing' ),
-        '9'  => __( 'September', 'invoicing' ),
-        '10' => __( 'October', 'invoicing' ),
-        '11' => __( 'November', 'invoicing' ),
-        '12' => __( 'December', 'invoicing' ),
-    );
-
-    // If no month is selected, default to the current month
-    $selected = empty( $selected ) ? date( 'n' ) : $selected;
-
-    $output = wpinv_html_select(
-        array(
-			'name'             => $name,
-			'selected'         => $selected,
-			'options'          => $options,
-			'show_option_all'  => false,
-			'show_option_none' => false,
-        )
-    );
-
-    return $output;
-}
-
 function wpinv_html_select( $args = array() ) {
     $defaults = array(
         'options'          => array(),
@@ -375,78 +317,82 @@ function wpinv_html_select( $args = array() ) {
 
     $args = wp_parse_args( $args, $defaults );
 
-    $data_elements = '';
-    foreach ( $args['data'] as $key => $value ) {
-        $data_elements .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-    }
-
-    if ( $args['multiple'] ) {
-        $multiple = ' MULTIPLE';
-    } else {
-        $multiple = '';
-    }
+    $attrs = array(
+        'name'     => $args['name'],
+        'id'       => $args['id'],
+        'class'    => 'wpinv-select ' . implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) ),
+        'multiple' => ! empty( $args['multiple'] ),
+        'readonly' => ! empty( $args['readonly'] ),
+        'disabled' => ! empty( $args['disabled'] ),
+        'required' => ! empty( $args['required'] ),
+        'onchange' => ! empty( $args['onchange'] ),
+    );
 
     if ( $args['placeholder'] ) {
-        $placeholder = $args['placeholder'];
-    } else {
-        $placeholder = '';
+        $attrs['data-placeholder'] = $args['placeholder'];
     }
 
-    $options = '';
-    if ( ! empty( $args['onchange'] ) ) {
-        $options .= ' onchange="' . esc_attr( $args['onchange'] ) . '"';
+    if ( $args['onchange'] ) {
+        $attrs['onchange'] = $args['onchange'];
     }
 
-    if ( ! empty( $args['required'] ) ) {
-        $options .= ' required="required"';
+    foreach ( $args['data'] as $key => $value ) {
+        $attrs["data-$key"] = $value;
     }
 
-    if ( ! empty( $args['disabled'] ) ) {
-        $options .= ' disabled';
+    echo '<select ';
+
+    foreach ( $attrs as $attr => $value ) {
+        
+        if ( false === $value ) {
+            continue;
+        }
+
+        if ( true === $value ) {
+            echo ' ' . esc_attr( $attr );
+        } else {
+            echo ' ' . esc_attr( $attr ) . '="' . esc_attr( $value ) . '"';
+        }
+
     }
 
-    if ( ! empty( $args['readonly'] ) ) {
-        $options .= ' readonly';
-    }
-
-    $class  = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
-    $output = '<select name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['id'] ) . '" class="wpinv-select ' . $class . '"' . $multiple . ' data-placeholder="' . $placeholder . '" ' . trim( $options ) . $data_elements . '>';
+    echo '>';
 
     if ( $args['show_option_all'] ) {
         if ( $args['multiple'] ) {
-            $selected = selected( true, in_array( 0, $args['selected'] ), false );
+            $selected = in_array( 0, $args['selected'] );
         } else {
-            $selected = selected( $args['selected'], 0, false );
+            $selected = empty( $args['selected'] );
         }
-        $output .= '<option value="all"' . $selected . '>' . esc_html( $args['show_option_all'] ) . '</option>';
+        echo '<option value="all"' . selected( $selected, true, false ) . '>' . esc_html( $args['show_option_all'] ) . '</option>';
     }
 
     if ( ! empty( $args['options'] ) ) {
 
         if ( $args['show_option_none'] ) {
             if ( $args['multiple'] ) {
-                $selected = selected( true, in_array( '', $args['selected'] ), false );
+                $selected = in_array( '', $args['selected'] );
             } else {
-                $selected = selected( $args['selected'] === '', true, false );
+                $selected = $args['selected'] === '';
             }
-            $output .= '<option value=""' . $selected . '>' . esc_html( $args['show_option_none'] ) . '</option>';
+
+            echo '<option value=""' . selected( $selected, true, false ) . '>' . esc_html( $args['show_option_none'] ) . '</option>';
         }
 
         foreach ( $args['options'] as $key => $option ) {
 
             if ( $args['multiple'] && is_array( $args['selected'] ) ) {
-                $selected = selected( true, (bool)in_array( $key, $args['selected'] ), false );
+                $selected = in_array( $key, $args['selected'] );
             } else {
-                $selected = selected( $args['selected'], $key, false );
+                $selected = $args['selected'] == $key;
             }
 
-            $output .= '<option value="' . esc_attr( $key ) . '"' . $selected . '>' . esc_html( $option ) . '</option>';
+            echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected, true, false ) . '>' . esc_html( $option ) . '</option>';
         }
     }
 
-    $output .= '</select>';
+    echo '</select>';
 
-    return $output;
 }
 
 function wpinv_item_dropdown( $args = array() ) {
@@ -510,7 +456,7 @@ function wpinv_item_dropdown( $args = array() ) {
         }
     }
 
-    $output = wpinv_html_select(
+    wpinv_html_select(
         array(
 			'name'             => $args['name'],
 			'selected'         => $args['selected'],
@@ -525,7 +471,6 @@ function wpinv_item_dropdown( $args = array() ) {
         )
     );
 
-    return $output;
 }
 
 /**
@@ -737,7 +682,7 @@ add_filter( 'template_include', 'wpinv_template', 10, 1 );
 
 function wpinv_get_business_address() {
     $business_address   = wpinv_store_address();
-    $business_address   = ! empty( $business_address ) ? wpautop( wp_kses_post( $business_address ) ) : '';
+    $business_address   = ! empty( $business_address ) ? wp_kses_post( wpautop( $business_address ) ) : '';
 
     $business_address = $business_address ? '<div class="address">' . $business_address . '</div>' : '';
 
@@ -1172,7 +1117,7 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     <li rel="<?php echo absint( $note->comment_ID ); ?>" class="<?php echo esc_attr( $note_classes ); ?> mb-2">
         <div class="note_content">
 
-            <?php echo wptexturize( wp_kses_post( $note->comment_content ) ); ?>
+            <?php echo wp_kses_post( wptexturize( $note->comment_content ) ); ?>
 
             <?php if ( ! is_admin() ) : ?>
                 <em class="small form-text text-muted mt-0">
@@ -1572,7 +1517,7 @@ function getpaid_paginate_links( $args ) {
  * @param string state
  * @return string
  */
-function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12', $field_name = 'wpinv_state' ) {
+function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12', $field_name = 'wpinv_state', $echo = false ) {
 
     $states = wpinv_get_country_states( $country );
     $uniqid = uniqid( '_' );
@@ -1596,7 +1541,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 				'extra_attributes' => array(
 					'autocomplete' => 'address-level1',
 				),
-            )
+            ),
+            $echo
         );
 
     }
@@ -1617,7 +1563,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'extra_attributes' => array(
                 'autocomplete' => 'address-level1',
             ),
-        )
+        ),
+        $echo
     );
 
 }

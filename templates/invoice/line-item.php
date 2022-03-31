@@ -39,8 +39,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 					$description = $item->get_description();
 
 					if ( ! empty( $description ) ) {
-						$description = wp_kses_post( $description );
-						echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
+						echo "<small class='form-text text-muted pr-2 m-0'>" . wp_kses_post( $description ) . "</small>";
                         }
 
 					// Fires before printing the line item actions.
@@ -58,7 +57,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                             }
 
 						echo "<small class='form-text getpaid-line-item-actions'>";
-						echo implode( ' | ', $sanitized );
+						echo wp_kses_post( implode( ' | ', $sanitized ) );
 						echo '</small>';
 
                         }
@@ -69,13 +68,13 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 					// Display the item price (or recurring price if this is a renewal invoice)
 					$price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
-					echo wpinv_price( $price, $invoice->get_currency() );
+					wpinv_the_price( $price, $invoice->get_currency() );
 
                     }
 
                     // Tax rate.
                     if ( 'tax_rate' == $column ) {
-					echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+					echo floatval( round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) ) . '%';
                     }
 
                     // Item quantity.
@@ -86,7 +85,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
                     // Item sub total.
                     if ( 'subtotal' == $column ) {
 					$subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
-					echo wpinv_price( $subtotal, $invoice->get_currency() );
+					wpinv_the_price( $subtotal, $invoice->get_currency() );
                     }
 
                     // Fires when printing a line item column.

@@ -242,7 +242,7 @@ function getpaid_display_address_edit_tab() {
 					// Display the state.
 					elseif ( 'state' == $key ) {
 
-						echo getpaid_get_states_select_markup(
+						getpaid_get_states_select_markup(
 							getpaid_get_user_address_field( get_current_user_id(), 'country' ),
 							getpaid_get_user_address_field( get_current_user_id(), 'state' ),
 							$label,
@@ -250,7 +250,8 @@ function getpaid_display_address_edit_tab() {
 							'',
 							false,
 							'',
-							'getpaid_address[' . esc_attr( $key ) . ']'
+							'getpaid_address[' . esc_attr( $key ) . ']',
+                            true
 						);
 
                         } else {

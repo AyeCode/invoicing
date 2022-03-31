@@ -37,8 +37,7 @@ defined( 'ABSPATH' ) || exit;
 				$description = $item->get_description();
 
 				if ( ! empty( $description ) ) {
-					$description = wp_kses_post( $description );
-					echo "<p class='small'>$description</p>";
+					echo "<p class='small'>" . wp_kses_post( $description ) . "</p>";
                     }
 }
 
@@ -47,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
 
 				// Display the item price (or recurring price if this is a renewal invoice)
 				$price = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
-				echo wpinv_price( $price, $invoice->get_currency() );
+				wpinv_the_price( $price, $invoice->get_currency() );
 
                 }
 
@@ -58,13 +57,13 @@ defined( 'ABSPATH' ) || exit;
 
                 // Tax rate.
                 if ( 'tax_rate' == $column ) {
-				echo round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+				echo floatval( round( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) ) . '%';
                 }
 
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
 				$subtotal = $invoice->is_renewal() ? $item->get_recurring_sub_total() : $item->get_sub_total();
-				echo wpinv_price( $subtotal, $invoice->get_currency() );
+				wpinv_the_price( $subtotal, $invoice->get_currency() );
                 }
 
                 // Fires when printing a line item column.

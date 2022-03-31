@@ -639,7 +639,7 @@ class GetPaid_Post_Types_Admin {
 			}
 
 			// Filter by VAT rule.
-			echo wpinv_html_select(
+			wpinv_html_select(
 				array(
 					'options'          => array_merge(
 						array(
@@ -664,7 +664,7 @@ class GetPaid_Post_Types_Admin {
 				$vat_class   = sanitize_text_field( $_GET['vat_class'] );
 			}
 
-			echo wpinv_html_select(
+			wpinv_html_select(
 				array(
 					'options'          => array_merge(
 						array(
@@ -688,7 +688,7 @@ class GetPaid_Post_Types_Admin {
 			$type   = sanitize_text_field( $_GET['type'] );
 		}
 
-		echo wpinv_html_select(
+		wpinv_html_select(
 			array(
 				'options'          => array_merge(
 					array(
