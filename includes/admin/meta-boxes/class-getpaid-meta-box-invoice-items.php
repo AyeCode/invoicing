@@ -244,7 +244,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                             )
                         );
 
-                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-add-item">' . sprintf( esc_html__( 'Add item to %s', 'invoicing' ), $invoice->get_label() ) . '</button>';
+                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-add-item">' . sprintf( esc_html__( 'Add item to %s', 'invoicing' ), esc_html( $invoice->get_label() ) ) . '</button>';
                         echo "&nbsp;" . '<button class="button button-primary" id="wpinv-new-item">' . esc_html__( 'Create new item', 'invoicing' ) . '</button>';
                         echo "&nbsp;" . '<button class="button button-primary wpinv-flr" id="wpinv-recalc-totals">' . esc_html__( 'Recalculate Totals', 'invoicing' ) . '</button>';
 
@@ -270,7 +270,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                             case 'title':
                                 printf(
                                     '<a href="%s" target="_blank">%s</a>',
-                                    get_edit_post_link( $item->get_id() ),
+                                    esc_url( get_edit_post_link( $item->get_id() ) ),
                                     esc_html( $item->get_raw_name() )
                                 );
 

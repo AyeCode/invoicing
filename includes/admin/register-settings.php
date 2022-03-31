@@ -747,8 +747,8 @@ function wpinv_textarea_callback( $args ) {
     $size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
     $class = ( isset( $args['class'] ) && ! is_null( $args['class'] ) ) ? $args['class'] : 'large-text';
 
-	echo '<textarea class="' . sanitize_html_class( $class ) . ' txtarea-' . sanitize_html_class( $size ) . ' wpi-' . esc_attr( sanitize_html_class( $sanitize_id ) ) . ' " cols="' . $args['cols'] . '" rows="' . $args['rows'] . '" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
-	echo '<br /><label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<textarea class="' . esc_attr( $class ) . ' txtarea-' . esc_attr( $size ) . ' wpi-' . esc_attr( sanitize_html_class( $sanitize_id ) ) . ' " cols="' . esc_attr( $args['cols'] ) . '" rows="' . esc_attr( $args['rows'] ) . '" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+	echo '<br /><label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -759,15 +759,15 @@ function wpinv_password_callback( $args ) {
 	$value   = wpinv_get_option( $args['id'], $std );
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	echo '<input type="password" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '"/>';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="password" class="' . esc_attr( $size ) . '-text" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '"/>';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
 function wpinv_missing_callback( $args ) {
 	printf(
-		__( 'The callback function used for the %s setting is missing.', 'invoicing' ),
-		'<strong>' . $args['id'] . '</strong>'
+		esc_html__( 'The callback function used for the %s setting is missing.', 'invoicing' ),
+		'<strong>' . esc_html( $args['id'] ) . '</strong>'
 	);
 }
 
@@ -791,22 +791,22 @@ function wpinv_select_callback( $args ) {
 			</select>
 
 			<?php if ( substr( $args['id'], -5 ) === '_page' && is_numeric( $value ) ) : ?>
-				<a href="<?php echo get_edit_post_link( $value ); ?>" target="_blank" class="button getpaid-page-setting-edit"><?php esc_html_e( 'Edit Page', 'invoicing' ); ?></a>
+				<a href="<?php echo esc_url( get_edit_post_link( $value ) ); ?>" target="_blank" class="button getpaid-page-setting-edit"><?php esc_html_e( 'Edit Page', 'invoicing' ); ?></a>
 			<?php endif; ?>
 
 			<?php if ( substr( $args['id'], -5 ) === '_page' && ! empty( $args['default_content'] ) ) : ?>
-				&nbsp;<a href="#TB_inline?&width=400&height=550&inlineId=<?php echo $rand; ?>" class="button thickbox getpaid-page-setting-view-default"><?php esc_html_e( 'View Default Content', 'invoicing' ); ?></a>
-				<div id='<?php echo $rand; ?>' style='display:none;'>
+				&nbsp;<a href="#TB_inline?&width=400&height=550&inlineId=<?php echo esc_attr( $rand ); ?>" class="button thickbox getpaid-page-setting-view-default"><?php esc_html_e( 'View Default Content', 'invoicing' ); ?></a>
+				<div id='<?php echo esc_attr( $rand ); ?>' style='display:none;'>
 					<div>
 						<h3><?php esc_html_e( 'Original Content', 'invoicing' ); ?></h3>
-						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php echo gepaid_trim_lines( wp_kses_post( $args['default_content'] ) ); ?></textarea>
+						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php echo wp_kses_post( gepaid_trim_lines( $args['default_content'] ) ); ?></textarea>
 						<h3><?php esc_html_e( 'Current Content', 'invoicing' ); ?></h3>
-						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php $_post = get_post( $value ); echo empty( $_post ) ? '' : gepaid_trim_lines( wp_kses_post( $_post->post_content ) ); ?></textarea>
+						<textarea readonly onclick="this.select()" rows="8" style="width: 100%;"><?php $_post = get_post( $value ); echo empty( $_post ) ? '' : wp_kses_post( gepaid_trim_lines( $_post->post_content ) ); ?></textarea>
 					</div>
 				</div>
 			<?php endif; ?>
 
-			<?php echo $desc; ?>
+			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
 
@@ -818,14 +818,14 @@ function wpinv_color_select_callback( $args ) {
 	$std     = isset( $args['std'] ) ? $args['std'] : '';
 	$value   = wpinv_get_option( $args['id'], $std );
 
-	echo '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"/>';
+	echo '<select id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"/>';
 
 	foreach ( $args['options'] as $option => $color ) {
 		echo '<option value="' . esc_attr( $option ) . '" ' . selected( $option, $value ) . '>' . esc_html( $color['label'] ) . '</option>';
 	}
 
 	echo '</select>';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -855,10 +855,10 @@ function wpinv_rich_editor_callback( $args ) {
             )
         );
 	} else {
-		echo '<textarea class="large-text" rows="10" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
+		echo '<textarea class="large-text" rows="10" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="wpi-' . esc_attr( sanitize_html_class( $args['id'] ) ) . '">' . esc_textarea( stripslashes( $value ) ) . '</textarea>';
 	}
 
-	echo '</div><br/><label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '</div><br/><label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -870,9 +870,9 @@ function wpinv_upload_callback( $args ) {
 	$value   = wpinv_get_option( $args['id'], $std );
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	echo '<input type="text" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( stripslashes( $value ) ) . '"/>';
-	echo '<span>&nbsp;<input type="button" class="wpinv_settings_upload_button button-secondary" value="' . __( 'Upload File', 'invoicing' ) . '"/></span>';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="text" class="' . sanitize_html_class( $size ) . '-text" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( stripslashes( $value ) ) . '"/>';
+	echo '<span>&nbsp;<input type="button" class="wpinv_settings_upload_button button-secondary" value="' . esc_attr__( 'Upload File', 'invoicing' ) . '"/></span>';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -882,8 +882,8 @@ function wpinv_color_callback( $args ) {
 	$value       = wpinv_get_option( $args['id'], $std );
     $sanitize_id = wpinv_sanitize_key( $args['id'] );
 
-	echo '<input type="text" class="wpinv-color-picker" id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '" data-default-color="' . esc_attr( $std ) . '" />';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<input type="text" class="wpinv-color-picker" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" value="' . esc_attr( $value ) . '" data-default-color="' . esc_attr( $std ) . '" />';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -902,15 +902,15 @@ function wpinv_country_states_callback( $args ) {
 
 	$states = wpinv_get_country_states();
 
-	$class = empty( $states ) ? ' class="wpinv-no-states"' : ' class="wpi_select2"';
-	echo '<select id="wpinv_settings[' . $sanitize_id . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']"' . $class . 'data-placeholder="' . esc_html( $placeholder ) . '"/>';
+	$class = empty( $states ) ? 'wpinv-no-states' : 'wpi_select2';
+	echo '<select id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" name="wpinv_settings[' . esc_attr( $args['id'] ) . ']" class="' . esc_attr( $class ) . '" data-placeholder="' . esc_html( $placeholder ) . '"/>';
 
 	foreach ( $states as $option => $name ) {
 		echo '<option value="' . esc_attr( $option ) . '" ' . selected( $option, $value ) . '>' . esc_html( $name ) . '</option>';
 	}
 
 	echo '</select>';
-	echo '<label for="wpinv_settings[' . $sanitize_id . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
+	echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 
@@ -933,18 +933,11 @@ function wpinv_tax_rates_callback() {
 /**
  * Displays a tax rate' edit row.
  */
-function wpinv_tax_rate_callback( $tax_rate, $key, $echo = true ) {
-	ob_start();
+function wpinv_tax_rate_callback( $tax_rate, $key ) {
 
 	$key                      = sanitize_key( $key );
 	$tax_rate['reduced_rate'] = empty( $tax_rate['reduced_rate'] ) ? 0 : $tax_rate['reduced_rate'];
 	include plugin_dir_path( __FILE__ ) . 'views/html-tax-rate-edit.php';
-
-	if ( $echo ) {
-		echo ob_get_clean();
-	} else {
-		return ob_get_clean();
-	}
 
 }
 
@@ -956,7 +949,7 @@ function wpinv_tools_callback( $args ) {
     <?php
     if ( $args['desc'] ) {
 ?>
-<p><?php echo $args['desc']; ?></p><?php } ?>
+<p><?php echo wp_kses_post( $args['desc'] ); ?></p><?php } ?>
     <?php do_action( 'wpinv_tools_before' ); ?>
     <table id="wpinv_tools_table" class="wp-list-table widefat fixed posts">
         <thead>

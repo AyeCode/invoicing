@@ -522,7 +522,7 @@ function wpinv_die_handler() {
 function wpinv_die( $message = '', $title = '', $status = 400 ) {
     add_filter( 'wp_die_ajax_handler', 'wpinv_die_handler', 10, 3 );
     add_filter( 'wp_die_handler', 'wpinv_die_handler', 10, 3 );
-    wp_die( $message, $title, array( 'response' => $status ) );
+    wp_die( esc_html( $message ), esc_html( $title ), array( 'response' => (int) $status ) );
 }
 
 /**

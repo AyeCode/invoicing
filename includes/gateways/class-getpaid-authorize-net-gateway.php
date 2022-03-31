@@ -84,10 +84,10 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     public function payment_fields( $invoice_id, $form ) {
 
         // Let the user select a payment method.
-        echo $this->saved_payment_methods();
+        $this->saved_payment_methods();
 
         // Show the credit card entry form.
-        echo $this->new_payment_method_entry( $this->get_cc_form( true ) );
+        $this->new_payment_method_entry( $this->get_cc_form( true ) );
     }
 
     /**

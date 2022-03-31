@@ -172,17 +172,12 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             return;
         }
 
-		echo '<h3 class="getpaid-bank-transfer-title"> ' . apply_filters( 'wpinv_receipt_bank_details_title', __( 'Bank Details', 'invoicing' ) ) . '</h3>' . PHP_EOL;
+		echo '<h3 class="getpaid-bank-transfer-title"> ' . esc_html( apply_filters( 'wpinv_receipt_bank_details_title', __( 'Bank Details', 'invoicing' ) ) ) . '</h3>' . PHP_EOL;
 
 		echo '<table class="table table-bordered getpaid-bank-transfer-details">' . PHP_EOL;
 
 		foreach ( $bank_info as $key => $data ) {
-
-			$key   = sanitize_html_class( $key );
-			$label = wp_kses_post( $data['label'] );
-			$value = wp_kses_post( wptexturize( $data['value'] ) );
-
-			echo "<tr class='getpaid-bank-transfer-$key'><th class='font-weight-bold'>$label</th><td class='w-75'>$value</td></tr>" . PHP_EOL;
+			echo "<tr class='getpaid-bank-transfer-" . esc_attr( $key ) . "'><th class='font-weight-bold'>" . wp_kses_post( $data['label'] ) . "</th><td class='w-75'>" . wp_kses_post( wptexturize( $data['value'] ) ) . "</td></tr>" . PHP_EOL;
 		}
 
 		echo '</table>';

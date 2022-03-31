@@ -782,11 +782,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 						<?php
 
 							foreach ( $columns as $key => $label ) {
-							$key   = esc_attr( $key );
-							$label = esc_html( $label );
-							$class = 'text-left';
-
-							echo "<th class='related-subscription-field-$key bg-light p-2 text-left color-dark font-weight-bold'>$label</th>";
+							echo "<th class='related-subscription-field-" . esc_attr( $key ) . " bg-light p-2 text-left color-dark font-weight-bold'>" . esc_html( $label ) . "</th>";
 							}
 						?>
 					</tr>
@@ -826,7 +822,7 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 
 								case 'item':
 											$markup = array_map( array( 'WPInv_Subscriptions_List_Table', 'generate_item_markup' ), array_keys( $subscription_group['items'] ) );
-											echo implode( ' | ', $markup );
+											echo wp_kses_post( implode( ' | ', $markup ) );
 									break;
 
 								case 'renewals':
@@ -835,11 +831,11 @@ function getpaid_admin_subscription_related_subscriptions_metabox( $subscription
 									break;
 
 								case 'renewal_date':
-										echo $_suscription->is_active() ? getpaid_format_date_value( $_suscription->get_expiration() ) : '&mdash;';
+										echo $_suscription->is_active() ? esc_html( getpaid_format_date_value( $_suscription->get_expiration() ) ) : '&mdash;';
 									break;
 
 								case 'start_date':
-										echo 'pending' == $_suscription->get_status() ? '&mdash;' : getpaid_format_date_value( $_suscription->get_date_created() );
+										echo 'pending' == $_suscription->get_status() ? '&mdash;' : esc_html( getpaid_format_date_value( $_suscription->get_date_created() ) );
 									break;
 
 								case 'subscription':

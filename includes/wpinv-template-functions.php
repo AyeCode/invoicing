@@ -865,8 +865,7 @@ function wpinv_display_invoice_notice() {
     echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
 
     if ( ! empty( $label ) ) {
-        $label = esc_html( $label );
-        echo "<h5>$label</h5>";
+        echo "<h5>" . esc_html( $label ) . "</h5>";
     }
 
     if ( ! empty( $notice ) ) {
@@ -892,7 +891,7 @@ function wpinv_display_invoice_notes( $invoice ) {
 
     // Echo the note.
     echo '<div class="getpaid-invoice-notes-wrapper position-relative my-4">';
-    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . __( 'Notes', 'invoicing' ) . '</h2>';
+    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . esc_html__( 'Notes', 'invoicing' ) . '</h2>';
     echo '<ul class="getpaid-invoice-notes text-break overflow-auto list-unstyled p-0 m-0">';
 
     foreach ( $notes as $note ) {
@@ -1123,10 +1122,10 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
                 <em class="small form-text text-muted mt-0">
                     <?php
                         printf(
-                            __( '%1$s - %2$s at %3$s', 'invoicing' ),
-                            $note->comment_author,
-                            getpaid_format_date_value( $note->comment_date ),
-                            date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
+                            esc_html__( '%1$s - %2$s at %3$s', 'invoicing' ),
+                            esc_html( $note->comment_author ),
+                            esc_html( getpaid_format_date_value( $note->comment_date ) ),
+                            esc_html( date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) )
                         );
                     ?>
                 </em>
@@ -1140,10 +1139,10 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
                 <abbr class="exact-date" title="<?php echo esc_attr( $note->comment_date ); ?>">
                     <?php
                         printf(
-                            __( '%1$s - %2$s at %3$s', 'invoicing' ),
-                            $note->comment_author,
-                            getpaid_format_date_value( $note->comment_date ),
-                            date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
+                            esc_html__( '%1$s - %2$s at %3$s', 'invoicing' ),
+                            esc_html( $note->comment_author ),
+                            esc_html( getpaid_format_date_value( $note->comment_date ) ),
+                            esc_html( date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) )
                         );
                     ?>
                 </abbr>&nbsp;&nbsp;
@@ -1364,8 +1363,7 @@ function getpaid_the_invoice_description( $invoice ) {
         return;
     }
 
-    $description = wp_kses_post( wpautop( $description ) );
-    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>$description</em></small>";
+    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
 add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
@@ -1396,7 +1394,7 @@ function getpaid_payment_form_element( $element, $form ) {
     $id            = isset( $id ) ? $id : uniqid( 'gp' );
 
     // Echo the opening wrapper.
-    echo "<div class='getpaid-payment-form-element $wrapper_class'>";
+    echo "<div class='getpaid-payment-form-element " . esc_attr( $wrapper_class ) . "'>";
 
     // Fires before displaying a given element type's content.
     do_action( "getpaid_before_payment_form_{$element_type}_element", $element, $form );
@@ -1434,7 +1432,7 @@ function getpaid_payment_form_edit_element_template( $post ) {
         }
 
         // Include the template for the element.
-        echo "<div v-if=\"active_form_element.type=='$element'\">";
+        echo "<div v-if=\"active_form_element.type=='" . esc_attr( $element ) . "'\">";
         include $located;
         echo '</div>';
     }
@@ -1463,7 +1461,7 @@ function getpaid_payment_form_render_element_preview_template() {
         }
 
         // Include the template for the element.
-        echo "<div v-if=\"form_element.type=='$element'\">";
+        echo "<div v-if=\"form_element.type=='" . esc_html( $element ) . "'\">";
         include $located;
         echo '</div>';
     }

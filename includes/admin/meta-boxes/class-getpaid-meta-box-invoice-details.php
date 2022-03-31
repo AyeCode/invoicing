@@ -50,7 +50,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                     <?php if ( ! $invoice->is_draft() ) : ?>
                         <div class="form-group">
                             <strong><?php esc_html_e( 'Viewed by Customer:', 'invoicing' );?></strong>
-                            <?php ( $invoice->get_is_viewed() ) ? _e( 'Yes', 'invoicing' ) : _e( 'No', 'invoicing' ); ?>
+                            <?php ( $invoice->get_is_viewed() ) ? esc_html_e( 'Yes', 'invoicing' ) : esc_html_e( 'No', 'invoicing' ); ?>
                         </div>
                     <?php endif; ?>
 

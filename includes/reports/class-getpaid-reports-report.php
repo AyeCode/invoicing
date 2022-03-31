@@ -154,7 +154,7 @@ class GetPaid_Reports_Report {
 
 			<div class="row">
 				<div class="col-12 col-md-8">
-					<?php echo $this->display_left(); ?>
+					<?php $this->display_left(); ?>
 				</div>
 
 				<div class="col-12 col-md-4">
@@ -194,7 +194,7 @@ class GetPaid_Reports_Report {
 						<?php endforeach; ?>
 					</div>
 
-					<?php echo $this->display_right(); ?>
+					<?php $this->display_right(); ?>
 				</div>
 			</div>
 

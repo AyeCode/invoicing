@@ -79,7 +79,7 @@ class GetPaid_Meta_Box_Item_Details {
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
-                                _e( 'every' );
+                                esc_html_e( 'every' );
                                 echo '&nbsp;';
                             ?>
                             <input type="number" style="max-width: 60px;" value="<?php echo esc_attr( $item->get_recurring_interval( 'edit' ) ); ?>" placeholder="1" name="wpinv_recurring_interval" id="wpinv_recurring_interval" />
@@ -220,7 +220,7 @@ class GetPaid_Meta_Box_Item_Details {
             <div class="wpinv_show_if_recurring wpinv_free_trial">
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? _e( 'Free/Paid Trial', 'invoicing' ) : _e( 'Free Trial', 'invoicing' ); ?></label>
+                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? esc_html_e( 'Free/Paid Trial', 'invoicing' ) : esc_html_e( 'Free Trial', 'invoicing' ); ?></label>
 
                     <div class="col-sm-8">
                         <div class="row">

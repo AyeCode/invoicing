@@ -17,7 +17,7 @@ class WPInv_Meta_Box_Notes {
                 wpinv_get_invoice_note_line_item( $note );
             }
 } else {
-            echo '<li>' . __( 'There are no notes yet.', 'invoicing' ) . '</li>';
+            echo '<li>' . esc_html__( 'There are no notes yet.', 'invoicing' ) . '</li>';
         }
 
         echo '</ul>';

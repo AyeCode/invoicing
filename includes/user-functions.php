@@ -427,6 +427,14 @@ function getpaid_allowed_html() {
 		'type'  => array(),
 	);
 
+    // - input
+	$allowed_html['textarea'] = array(
+		'class' => array(),
+		'id'    => array(),
+		'name'  => array(),
+		'value' => array(),
+	);
+
 	// select
 	$allowed_html['select'] = array(
 		'class'  => array(),

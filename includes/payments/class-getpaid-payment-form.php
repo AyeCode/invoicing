@@ -796,7 +796,13 @@ $value[ $key ]['description'] = $help_text;}
 	 * @since 1.0.19
 	 */
     public function display( $extra_markup = '' ) {
-		echo $this->get_html( $extra_markup );
+		return wpinv_get_template(
+			'payment-forms/form.php',
+			array(
+				'form'         => $this,
+				'extra_markup' => $extra_markup,
+			)
+		);
     }
 
 }

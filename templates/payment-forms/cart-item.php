@@ -84,7 +84,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 											value="%s"
 											min="1"
 											max="%s"
-											%s>',
+											>',
                                     (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(),
                                     floatval( null !== $max_qty ? $max_qty : 1000000000000 )
 								)

@@ -528,9 +528,7 @@ abstract class GetPaid_Payment_Gateway {
 
                                             <?php
                                                 foreach ( $months as $key => $month ) {
-												$key   = esc_attr( $key );
-												$month = esc_html( $month );
-												echo "<option value='$key'>$month</option>" . PHP_EOL;
+												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $month ) . "</option>" . PHP_EOL;
                                                 }
                                             ?>
 
@@ -543,9 +541,7 @@ abstract class GetPaid_Payment_Gateway {
 
                                             <?php
                                                 foreach ( $years as $key => $year ) {
-												$key   = esc_attr( $key );
-												$year  = esc_html( $year );
-												echo "<option value='$key'>$year</option>" . PHP_EOL;
+												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $year ) . "</option>" . PHP_EOL;
                                                 }
                                             ?>
 
@@ -579,7 +575,7 @@ abstract class GetPaid_Payment_Gateway {
 					<?php
 
 						if ( $save ) {
-						echo $this->save_payment_method_checkbox();
+							$this->save_payment_method_checkbox();
 						}
 
 					?>
@@ -598,7 +594,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function new_payment_method_entry( $form ) {
-		echo "<div class='getpaid-new-payment-method-form' style='display:none;'>$form</div>";
+		echo "<div class='getpaid-new-payment-method-form' style='display:none;'> " . wp_kses( $form, getpaid_allowed_html() ) . " . </div>";
 	}
 
 	/**
@@ -607,16 +603,15 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function saved_payment_methods() {
-		$html = '<ul class="getpaid-saved-payment-methods list-unstyled m-0 mt-2" data-count="' . esc_attr( count( $this->get_tokens( $this->is_sandbox() ) ) ) . '">';
+		echo '<ul class="getpaid-saved-payment-methods list-unstyled m-0 mt-2" data-count="' . esc_attr( count( $this->get_tokens( $this->is_sandbox() ) ) ) . '">';
 
 		foreach ( $this->get_tokens( $this->is_sandbox() ) as $token ) {
-			$html .= $this->get_saved_payment_method_option_html( $token );
+			$this->get_saved_payment_method_option_html( $token );
 		}
 
-		$html .= $this->get_new_payment_method_option_html();
-		$html .= '</ul>';
+		$this->get_new_payment_method_option_html();
+		echo '</ul>';
 
-		echo apply_filters( 'getpaid_payment_gateway_form_saved_payment_methods_html', $html, $this );
 	}
 
 	/**
@@ -628,7 +623,7 @@ abstract class GetPaid_Payment_Gateway {
 	 */
 	public function get_saved_payment_method_option_html( $token ) {
 
-		return sprintf(
+		printf(
 			'<li class="getpaid-payment-method form-group">
 				<label>
 					<input name="getpaid-%1$s-payment-method" type="radio" value="%2$s" data-currency="%5$s" style="width:auto;" class="getpaid-saved-payment-method-token-input" %4$s />
@@ -653,7 +648,7 @@ abstract class GetPaid_Payment_Gateway {
 
 		$label = apply_filters( 'getpaid_new_payment_method_label', $this->new_method_label ? $this->new_method_label : __( 'Use a new payment method', 'invoicing' ), $this );
 
-		return sprintf(
+		printf(
 			'<li class="getpaid-new-payment-method">
 				<label>
 					<input name="getpaid-%1$s-payment-method" type="radio" data-currency="none" value="new" style="width:auto;" />
@@ -673,7 +668,7 @@ abstract class GetPaid_Payment_Gateway {
 	 */
 	public function save_payment_method_checkbox() {
 
-		return aui()->input(
+		aui()->input(
 			array(
 				'type'       => 'checkbox',
 				'name'       => esc_attr( "getpaid-$this->id-new-payment-method" ),
@@ -683,7 +678,8 @@ abstract class GetPaid_Payment_Gateway {
 				'value'      => 'true',
 				'checked'    => true,
 				'wrap_class' => 'getpaid-save-payment-method pt-1 pb-1',
-			)
+			),
+			true
 		);
 
 	}

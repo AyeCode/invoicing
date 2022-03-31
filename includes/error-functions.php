@@ -132,7 +132,7 @@ function getpaid_doing_it_wrong( $function, $message, $version ) {
 		do_action( 'doing_it_wrong_run', $function, $message, $version );
 		error_log( "{$function} was called incorrectly. {$message}. This message was added in version {$version}." );
 	} else {
-		_doing_it_wrong( $function, $message, $version );
+		_doing_it_wrong( esc_html( $function ), wp_kses_post( $message ), esc_html( $version ) );
 	}
 
 }

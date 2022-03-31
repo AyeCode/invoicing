@@ -72,7 +72,7 @@ class GetPaid_Reports {
                         add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
                     );
 
-				echo "\n\t\t\t<a href='$url' class='" . $class . "'>$label</a>";
+				echo wp_kses_post( "\n\t\t\t<a href='$url' class='" . $class . "'>$label</a>" );
 
 					}
 				?>
