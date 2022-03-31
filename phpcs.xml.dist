@@ -2,8 +2,7 @@
 <ruleset name="WordPress Coding Standards for Plugins">
 	<description>Generally-applicable sniffs for WordPress plugins</description>
 
-	<rule ref="WordPress-Core" />
-	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Extra" />
 
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
@@ -14,15 +13,11 @@
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/index.php</exclude-pattern>
 	<exclude-pattern>*/includes/libraries/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
-	<exclude-pattern>*/index.php</exclude-pattern>
 
-	<config name="minimum_supported_wp_version" value="4.7" />
-
-	<rule ref="Internal.NoCodeFound">
-		<exclude-pattern>*</exclude-pattern>
-	</rule>
+	<config name="minimum_supported_wp_version" value="4.9" />
 
 	<rule ref="WordPress.WP.I18n">
 		<properties>
