@@ -327,11 +327,13 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			<?php
 				$big = 999999;
 
-				echo getpaid_paginate_links(
-					array(
-						'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-						'format' => '?paged=%#%',
-						'total'  => (int) ceil( $total / 10 ),
+				echo wp_kses_post(
+					getpaid_paginate_links(
+						array(
+							'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+							'format' => '?paged=%#%',
+							'total'  => (int) ceil( $total / 10 ),
+						)
 					)
 				);
 			?>
