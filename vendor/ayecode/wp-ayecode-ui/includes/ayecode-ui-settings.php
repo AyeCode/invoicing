@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.68';
+		public $version = '0.1.69';
 
 		/**
 		 * Class textdomain.
@@ -1438,18 +1438,18 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			?>
 			<div class="wrap">
 				<h1><?php echo $this->name; ?></h1>
-				<p><?php esc_html_e("Here you can adjust settings if you are having compatibility issues.",'aui');?></p>
+				<p><?php _e("Here you can adjust settings if you are having compatibility issues.",'aui');?></p>
 				<form method="post" action="options.php">
 					<?php
 					settings_fields( 'ayecode-ui-settings' );
 					do_settings_sections( 'ayecode-ui-settings' );
 					?>
 
-					<h2><?php esc_html_e( 'Frontend', 'aui' ); ?></h2>
+					<h2><?php _e( 'Frontend', 'aui' ); ?></h2>
 					<table class="form-table wpbs-table-settings">
 						<tr valign="top">
 							<th scope="row"><label
-									for="wpbs-css"><?php esc_html_e( 'Load CSS', 'aui' ); ?></label></th>
+									for="wpbs-css"><?php _e( 'Load CSS', 'aui' ); ?></label></th>
 							<td>
 								<select name="ayecode-ui-settings[css]" id="wpbs-css">
 									<option	value="compatibility" <?php selected( $this->settings['css'], 'compatibility' ); ?>><?php _e( 'Compatibility Mode (default)', 'aui' ); ?></option>
