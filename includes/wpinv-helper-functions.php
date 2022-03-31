@@ -899,10 +899,16 @@ function getpaid_convert_price_string_to_options( $str ) {
 /**
  * Returns the help tip.
  */
-function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
-    $additional_classes = sanitize_html_class( $additional_classes );
-    $tip                = esc_attr__( $tip );
-    return "<span class='wpi-help-tip dashicons dashicons-editor-help $additional_classes' title='$tip'></span>";
+function getpaid_get_help_tip( $tip, $additional_classes = '', $echo = false ) {
+    $classes = 'wpi-help-tip dashicons dashicons-editor-help ' . $additional_classes;
+    $tip     = esc_attr( $tip );
+
+    if ( $echo ) {
+        echo '<span class="' . esc_attr( $classes ) . '" data-tip="' . esc_attr( $tip ) . '"></span>';
+    } else {
+        return '<span class="' . esc_attr( $classes ) . '" data-tip="' . esc_attr( $tip ) . '"></span>';
+    }
+
 }
 
 /**

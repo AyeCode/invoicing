@@ -786,7 +786,7 @@ function wpinv_select_callback( $args ) {
 		<label style="width: 100%;">
 			<select <?php wpinv_settings_attrs_helper( $args ); ?> data-allow-clear="true">
 				<?php foreach ( $args['options'] as $option => $name ) : ?>
-					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( $option, $value ); ?>><?php echo wpinv_clean( $name ); ?></option>
+					<option value="<?php echo esc_attr( $option ); ?>" <?php echo selected( $option, $value ); ?>><?php echo esc_html( $name ); ?></option>
 				<?php endforeach; ?>
 			</select>
 

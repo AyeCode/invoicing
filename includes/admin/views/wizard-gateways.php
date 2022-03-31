@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
 				    <?php if ( false === wpinv_get_option( 'stripe_live_connect_account_id' ) ) : ?>
                         <a href="
                         <?php
-                        echo wp_nonce_url(
+                        echo esc_url( wp_nonce_url(
                             add_query_arg(
                                 array(
                                     'getpaid-admin-action' => 'connect_gateway',
@@ -36,7 +36,7 @@ defined( 'ABSPATH' ) || exit;
                             ),
                             'getpaid-nonce',
                             'getpaid-nonce'
-                        );
+                        ));
                         ?>
                         "
                         class="btn btn-sm btn-outline-primary"><?php esc_html_e( 'Connect', 'invoicing' ); ?></a>

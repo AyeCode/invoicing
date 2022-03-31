@@ -332,8 +332,8 @@ function wpinv_count_sales_by_gateway( $gateway_id = 'paypal', $status = 'publis
 function wpinv_ipn_url_callback( $args ) {
     $sanitize_id = esc_attr( wpinv_sanitize_key( $args['id'] ) );
 
-    echo '<input class="regular-text" type="text" ' . ( $args['readonly'] ? ' readonly' : '' ) . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . $sanitize_id . ']" id="wpinv_settings[' . $sanitize_id . ']" onClick="this.select()">';
-    echo '<label for="wpinv_settings[' . $sanitize_id . ']">' . wp_kses_post( $args['desc'] ) . '</label>';
+    echo '<input class="regular-text" type="text" ' . ( $args['readonly'] ? ' readonly' : '' ) . ' value="' . esc_attr( $args['std'] ) . '" name="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" id="wpinv_settings[' . esc_attr( $sanitize_id ) . ']" onClick="this.select()">';
+    echo '<label for="wpinv_settings[' . esc_attr( $sanitize_id ) . ']">' . wp_kses_post( $args['desc'] ) . '</label>';
 
 }
 

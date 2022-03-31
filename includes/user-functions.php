@@ -398,12 +398,52 @@ function getpaid_display_userswp_account_tabs( $tab ) {
 
     if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
         $getpaid_tab_url = add_query_arg( 'type', '%s', uwp_get_account_page_url() );
-        echo getpaid_prepare_user_content_tab( $our_tabs[ $tab ] );
+        echo wp_kses( getpaid_prepare_user_content_tab( $our_tabs[ $tab ] ), getpaid_allowed_html() );
     }
 
 }
 add_action( 'uwp_account_form_display', 'getpaid_display_userswp_account_tabs' );
 
+function getpaid_allowed_html() {
+    $allowed_html = wp_kses_allowed_html( 'post' );
+
+	// form fields
+    $allowed_html['form'] = array(
+        'action'         => true,
+        'accept'         => true,
+        'accept-charset' => true,
+        'enctype'        => true,
+        'method'         => true,
+        'name'           => true,
+        'target'         => true,
+    );
+    
+    // - input
+	$allowed_html['input'] = array(
+		'class' => array(),
+		'id'    => array(),
+		'name'  => array(),
+		'value' => array(),
+		'type'  => array(),
+	);
+
+	// select
+	$allowed_html['select'] = array(
+		'class'  => array(),
+		'id'     => array(),
+		'name'   => array(),
+		'value'  => array(),
+		'type'   => array(),
+	);
+
+	// select options
+	$allowed_html['option'] = array(
+		'selected' => array(),
+	);
+
+	return $allowed_html;
+
+}
 
 /**
  * Filters the account page title.

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
     <td class="wpinv_tax_country">
         <?php
 
-            $country = aui()->select(
+            aui()->select(
                 array(
                     'options' => array_merge(
                         array( '' => __( 'All Countries', 'invoicing' ) ),
@@ -27,10 +27,10 @@ defined( 'ABSPATH' ) || exit;
                     'label'   => __( 'Country', 'invoicing' ),
                     'class'   => 'wpinv_country',
                     'no_wrap' => true,
-                )
+                ),
+                true
             );
 
-            echo str_replace( 'custom-select', '', $country );
         ?>
     </td>
 
@@ -46,14 +46,14 @@ defined( 'ABSPATH' ) || exit;
     <td class="wpinv_standard_rate">
         <label class="w-100">
             <span class="screen-reader-text"><?php esc_html_e( 'Standard Rate', 'invoicing' ); ?></span>
-            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['rate'] ); ?>"/>
+            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][rate]" value="<?php echo esc_attr( $tax_rate['rate'] ); ?>"/>
         </label>
     </td>
 
     <td class="wpinv_reduced_rate">
         <label class="w-100">
             <span class="screen-reader-text"><?php esc_html_e( 'Reduced Rate', 'invoicing' ); ?></span>
-            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][reduced_rate]" value="<?php echo wpinv_sanitize_amount( $tax_rate['reduced_rate'] ); ?>"/>
+            <input type="number" step="any" min="0" max="99" name="tax_rates[<?php echo esc_attr( $key ); ?>][reduced_rate]" value="<?php echo esc_attr( $tax_rate['reduced_rate'] ); ?>"/>
         </label>
     </td>
 

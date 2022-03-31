@@ -106,7 +106,7 @@ class WPInv_Cache_Helper {
         if ( $enabled && ! in_array( '_wp_session_', $settings ) ) {
             ?>
             <div class="error">
-                <p><?php printf( __( 'In order for <strong>database caching</strong> to work with Invoicing you must add %1$s to the "Ignored Query Strings" option in <a href="%2$s">W3 Total Cache settings</a>.', 'invoicing' ), '<code>_wp_session_</code>', admin_url( 'admin.php?page=w3tc_dbcache' ) ); ?></p>
+                <p><?php printf( wp_kses_post( __( 'In order for <strong>database caching</strong> to work with Invoicing you must add %1$s to the "Ignored Query Strings" option in <a href="%2$s">W3 Total Cache settings</a>.', 'invoicing' ) ), '<code>_wp_session_</code>', esc_url( admin_url( 'admin.php?page=w3tc_dbcache' ) ) ); ?></p>
             </div>
             <?php
         }

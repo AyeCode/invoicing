@@ -316,7 +316,7 @@ class GetPaid_Meta_Box_Invoice_Items {
 
                                 break;
                             case 'tax':
-                                echo wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) . '%';
+                                echo floatval( wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) ) . '%';
 
                                 break;
                             case 'action':

@@ -148,7 +148,7 @@ class GetPaid_Meta_Box_Discount_Details {
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend left wpinv-if-flat">
                                 <span class="input-group-text">
-                                    <?php echo wpinv_currency_symbol(); ?>
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
                             </div>
                         <?php endif; ?>
@@ -158,7 +158,7 @@ class GetPaid_Meta_Box_Discount_Details {
                         <?php if ( 'right' == $position ) : ?>
                             <div class="input-group-prepend left wpinv-if-flat">
                                 <span class="input-group-text">
-                                    <?php echo wpinv_currency_symbol(); ?>
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
                             </div>
                         <?php endif; ?>
@@ -335,7 +335,7 @@ class GetPaid_Meta_Box_Discount_Details {
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
 
@@ -343,7 +343,7 @@ class GetPaid_Meta_Box_Discount_Details {
 
                         <?php if ( 'left' != $position ) : ?>
                             <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -363,7 +363,7 @@ class GetPaid_Meta_Box_Discount_Details {
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
 
@@ -371,7 +371,7 @@ class GetPaid_Meta_Box_Discount_Details {
 
                         <?php if ( 'left' != $position ) : ?>
                             <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
                     </div>

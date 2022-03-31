@@ -216,14 +216,14 @@ class WPInv_Ajax {
 
         // We need an email address.
         if ( empty( $_GET['email'] ) ) {
-            _e( "Provide the new user's email address", 'invoicing' );
+            esc_html_e( "Provide the new user's email address", 'invoicing' );
             exit;
         }
 
         // Ensure the email is valid.
         $email = sanitize_email( $_GET['email'] );
         if ( ! is_email( $email ) ) {
-            _e( 'Invalid email address', 'invoicing' );
+            esc_html_e( 'Invalid email address', 'invoicing' );
             exit;
         }
 
@@ -348,7 +348,7 @@ class WPInv_Ajax {
 
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
-            _e( 'Error: Reload the page and try again.', 'invoicing' );
+            esc_html_e( 'Error: Reload the page and try again.', 'invoicing' );
             exit;
         }
 
@@ -1057,7 +1057,7 @@ class WPInv_Ajax {
 
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
-            _e( 'Error: Reload the page and try again.', 'invoicing' );
+            esc_html_e( 'Error: Reload the page and try again.', 'invoicing' );
             exit;
         }
 
@@ -1095,7 +1095,7 @@ class WPInv_Ajax {
         check_ajax_referer( 'getpaid_form_nonce' );
 
         if ( empty( $_POST['form_id'] ) || empty( $_POST['field_name'] ) || empty( $_FILES['file'] ) ) {
-            wp_die( __( 'Bad Request', 'invoicing' ), 400 );
+            wp_die( esc_html_e( 'Bad Request', 'invoicing' ), 400 );
         }
 
         // Fetch form.

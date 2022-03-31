@@ -64,14 +64,14 @@ class GetPaid_Meta_Box_Item_Details {
                             <div class="input-group input-group-sm">
                                 <?php if ( 'left' == $position ) : ?>
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                 </div>
                                 <?php endif; ?>
                                 <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
 
                                 <?php if ( 'left' != $position ) : ?>
                                 <div class="input-group-append">
-                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -152,7 +152,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                             ?>
                             <div class="wpinv_show_if_recurring">
-                                <em><?php echo wpinv_get_recurring_gateways_text(); ?></em>
+                                <em><?php echo wp_kses_post( wpinv_get_recurring_gateways_text() ); ?></em>
                             </div>
                         </div>
                     </div>
@@ -175,7 +175,7 @@ class GetPaid_Meta_Box_Item_Details {
                             <div class="input-group input-group-sm">
                                 <?php if ( 'left' == $position ) : ?>
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                     </div>
                                 <?php endif; ?>
 
@@ -183,7 +183,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                                 <?php if ( 'left' != $position ) : ?>
                                     <div class="input-group-append">
-                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                     </div>
                                 <?php endif; ?>
                             </div>

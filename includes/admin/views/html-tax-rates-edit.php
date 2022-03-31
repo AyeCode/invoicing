@@ -32,27 +32,27 @@ $reset_url = wp_nonce_url(
 
                 <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'Country', 'invoicing' ); ?>
-                    <?php echo getpaid_get_help_tip( __( 'Optionally limit this tax rate to a specific country.', 'invoicing' ), 'position-static' ); ?>
+                    <?php getpaid_get_help_tip( __( 'Optionally limit this tax rate to a specific country.', 'invoicing' ), 'position-static', true ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'State', 'invoicing' ); ?>
-                    <?php echo getpaid_get_help_tip( __( 'Separate state codes using a comma or leave blank to apply country wide.', 'invoicing' ), 'position-static' ); ?>
+                    <?php getpaid_get_help_tip( __( 'Separate state codes using a comma or leave blank to apply country wide.', 'invoicing' ), 'position-static', true ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'Standard Rate %', 'invoicing' ); ?>
-                    <?php echo getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Standard rate" tax class.', 'invoicing' ), 'position-static' ); ?>
+                    <?php getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Standard rate" tax class.', 'invoicing' ), 'position-static', true ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'Reduced Rate %', 'invoicing' ); ?>
-                    <?php echo getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Reduced rate" tax class.', 'invoicing' ), 'position-static' ); ?>
+                    <?php getpaid_get_help_tip( __( 'The tax rate (percentage) to charge on items that use the "Reduced rate" tax class.', 'invoicing' ), 'position-static', true ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'Tax Name', 'invoicing' ); ?>
-                    <?php echo getpaid_get_help_tip( __( 'The name of this tax, e.g VAT.', 'invoicing' ), 'position-static' ); ?>
+                    <?php getpaid_get_help_tip( __( 'The name of this tax, e.g VAT.', 'invoicing' ), 'position-static', true ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top" style="width:32px">&nbsp;</th>
@@ -82,6 +82,6 @@ $reset_url = wp_nonce_url(
 </div>
 
 <script type="text/html" id="tmpl-wpinv-tax-rate-row">
-    <?php echo wpinv_tax_rate_callback( $dummy_rate, 0, false ); ?>
+    <?php wpinv_tax_rate_callback( $dummy_rate, 0, true ); ?>
 </script>
 
