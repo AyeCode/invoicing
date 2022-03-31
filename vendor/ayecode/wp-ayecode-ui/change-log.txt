@@ -1,3 +1,6 @@
+= 0.1.70 =
+* select2 can sometimes double initiate - FIXED
+
 = 0.1.69 =
 * Parameter added to be able to directly echo functions - ADDED
 
