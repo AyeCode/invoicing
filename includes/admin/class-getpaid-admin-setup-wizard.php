@@ -115,25 +115,25 @@ class GetPaid_Admin_Setup_Wizard {
 				'handler' => '',
 			),
 
-			'business_details'             => array(
-				'name'    => __( "Business Details", 'invoicing' ),
+			'business_details' => array(
+				'name'    => __( 'Business Details', 'invoicing' ),
 				'view'    => array( $this, 'setup_business' ),
 				'handler' => '',
 			),
 
-			'currency' => array(
+			'currency'         => array(
 				'name'    => __( 'Currency', 'invoicing' ),
 				'view'    => array( $this, 'setup_currency' ),
 				'handler' => '',
 			),
 
-			'payments'        => array(
+			'payments'         => array(
 				'name'    => __( 'Payment Gateways', 'invoicing' ),
 				'view'    => array( $this, 'setup_payments' ),
 				'handler' => array( $this, 'setup_payments_save' ),
 			),
 
-			'recommend'          => array(
+			'recommend'        => array(
 				'name'    => __( 'Recommend', 'invoicing' ),
 				'view'    => array( $this, 'setup_recommend' ),
 				'handler' => '',
@@ -202,8 +202,7 @@ class GetPaid_Admin_Setup_Wizard {
 			if ( $current === $step ) {
 				return $on_current = true;
 			}
-
-		}
+}
 
 		return false;
 	}
@@ -299,7 +298,7 @@ class GetPaid_Admin_Setup_Wizard {
 			return '';
 		}
 
-		return remove_query_arg('settings-updated', add_query_arg( 'step', $keys[ $step_index + 1 ] ));
+		return remove_query_arg( 'settings-updated', add_query_arg( 'step', $keys[ $step_index + 1 ] ) );
 	}
 
 	/**
@@ -343,28 +342,28 @@ class GetPaid_Admin_Setup_Wizard {
 	 * A list of recommended wp.org plugins.
 	 * @return array
 	 */
-	public static function get_recommend_wp_plugins(){
+	public static function get_recommend_wp_plugins() {
 		return array(
-			'ayecode-connect' => array(
-				'file'   => 'ayecode-connect/ayecode-connect.php',
-				'url'    => 'https://wordpress.org/plugins/ayecode-connect/',
-				'slug'   => 'ayecode-connect',
-				'name'   => 'AyeCode Connect',
-				'desc'   => __( 'Documentation and Support from within your WordPress admin.', 'geodirectory' ),
+			'ayecode-connect'  => array(
+				'file' => 'ayecode-connect/ayecode-connect.php',
+				'url'  => 'https://wordpress.org/plugins/ayecode-connect/',
+				'slug' => 'ayecode-connect',
+				'name' => 'AyeCode Connect',
+				'desc' => __( 'Documentation and Support from within your WordPress admin.', 'geodirectory' ),
 			),
 			'invoicing-quotes' => array(
-				'file'   => 'invoicing-quotes/wpinv-quote.php',
-				'url'    => 'https://wordpress.org/plugins/invoicing-quotes/',
-				'slug'   => 'invoicing-quotes',
-				'name'   => 'Customer Quotes',
-				'desc'   => __('Create & Send Quotes to Customers and have them accept and pay.','geodirectory'),
+				'file' => 'invoicing-quotes/wpinv-quote.php',
+				'url'  => 'https://wordpress.org/plugins/invoicing-quotes/',
+				'slug' => 'invoicing-quotes',
+				'name' => 'Customer Quotes',
+				'desc' => __( 'Create & Send Quotes to Customers and have them accept and pay.', 'geodirectory' ),
 			),
-			'userswp'    => array(
-				'file'   => 'userswp/userswp.php',
-				'url'    => 'https://wordpress.org/plugins/userswp/',
-				'slug'   => 'userswp',
-				'name'   => 'UsersWP',
-				'desc'   => __('Frontend user login and registration as well as slick profile pages.','geodirectory'),
+			'userswp'          => array(
+				'file' => 'userswp/userswp.php',
+				'url'  => 'https://wordpress.org/plugins/userswp/',
+				'slug' => 'userswp',
+				'name' => 'UsersWP',
+				'desc' => __( 'Frontend user login and registration as well as slick profile pages.', 'geodirectory' ),
 			),
 		);
 	}

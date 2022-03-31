@@ -14,7 +14,7 @@ class WPInv_Subscriptions {
     /**
 	 * Class constructor.
 	 */
-    public function __construct(){
+    public function __construct() {
 
         // Fire gateway specific hooks when a subscription changes.
         add_action( 'getpaid_subscription_status_changed', array( $this, 'process_subscription_status_change' ), 10, 3 );
@@ -141,7 +141,7 @@ class WPInv_Subscriptions {
             wpinv_set_error( 'invalid_subscription', __( 'You do not have permission to cancel this subscription', 'invoicing' ) );
 
         // Can it be cancelled.
-        } else if ( ! $subscription->can_cancel() ) {
+        } elseif ( ! $subscription->can_cancel() ) {
             wpinv_set_error( 'cannot_cancel', __( 'This subscription cannot be cancelled as it is not active.', 'invoicing' ) );
 
         // Cancel it.
@@ -228,11 +228,10 @@ class WPInv_Subscriptions {
                 if ( ! empty( $fee['recurring_fee'] ) ) {
                     $initial_amt   += wpinv_sanitize_amount( $fee['initial_fee'] );
                     $recurring_amt += wpinv_sanitize_amount( $fee['recurring_fee'] );
-                    $fees[$i]       = $fee;
+                    $fees[ $i ]       = $fee;
                 }
             }
-
-        }
+}
 
         $subscription->set_customer_id( $invoice->get_customer_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );
@@ -252,7 +251,7 @@ class WPInv_Subscriptions {
             $subscription->set_status( 'trialling' );
 
         // If initial amount is free, treat it as a free trial even if the subscription item does not have a free trial.
-        } else if ( empty( $initial_amt ) ) {
+        } elseif ( empty( $initial_amt ) ) {
             $subscription->set_trial_period( $totals['interval'] . ' ' . $totals['period'] );
             $subscription->set_status( 'trialling' );
         }
@@ -347,8 +346,7 @@ class WPInv_Subscriptions {
                 if ( $subscription->exists() ) {
                     $subscription->delete( true );
                 }
-
-            }
+}
         }
 
         // Cache subscription groups.
@@ -405,7 +403,7 @@ class WPInv_Subscriptions {
         // Get the recurring item and abort if it does not exist.
         $subscription_item = $invoice->get_recurring( true );
         if ( ! $subscription_item->get_id() ) {
-            $invoice->set_subscription_id(0);
+            $invoice->set_subscription_id( 0 );
             $invoice->save();
             return $subscription->delete();
         }

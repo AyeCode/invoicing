@@ -64,31 +64,31 @@ class GetPaid_Post_Types_Admin {
 		global $post;
 
 		$messages['wpi_discount'] = array(
-			0   => '',
-			1   => __( 'Discount updated.', 'invoicing' ),
-			2   => __( 'Custom field updated.', 'invoicing' ),
-			3   => __( 'Custom field deleted.', 'invoicing' ),
-			4   => __( 'Discount updated.', 'invoicing' ),
-			5   => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Discount restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6   => __( 'Discount updated.', 'invoicing' ),
-			7   => __( 'Discount saved.', 'invoicing' ),
-			8   => __( 'Discount submitted.', 'invoicing' ),
-			9   => wp_sprintf( __( 'Discount scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
-			10  => __( 'Discount draft updated.', 'invoicing' ),
+			0  => '',
+			1  => __( 'Discount updated.', 'invoicing' ),
+			2  => __( 'Custom field updated.', 'invoicing' ),
+			3  => __( 'Custom field deleted.', 'invoicing' ),
+			4  => __( 'Discount updated.', 'invoicing' ),
+			5  => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Discount restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => __( 'Discount updated.', 'invoicing' ),
+			7  => __( 'Discount saved.', 'invoicing' ),
+			8  => __( 'Discount submitted.', 'invoicing' ),
+			9  => wp_sprintf( __( 'Discount scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
+			10 => __( 'Discount draft updated.', 'invoicing' ),
 		);
 
 		$messages['wpi_payment_form'] = array(
-			0   => '',
-			1   => __( 'Payment Form updated.', 'invoicing' ),
-			2   => __( 'Custom field updated.', 'invoicing' ),
-			3   => __( 'Custom field deleted.', 'invoicing' ),
-			4   => __( 'Payment Form updated.', 'invoicing' ),
-			5   => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Payment Form restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6   => __( 'Payment Form updated.', 'invoicing' ),
-			7   => __( 'Payment Form saved.', 'invoicing' ),
-			8   => __( 'Payment Form submitted.', 'invoicing' ),
-			9   => wp_sprintf( __( 'Payment Form scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
-			10  => __( 'Payment Form draft updated.', 'invoicing' ),
+			0  => '',
+			1  => __( 'Payment Form updated.', 'invoicing' ),
+			2  => __( 'Custom field updated.', 'invoicing' ),
+			3  => __( 'Custom field deleted.', 'invoicing' ),
+			4  => __( 'Payment Form updated.', 'invoicing' ),
+			5  => isset( $_GET['revision'] ) ? wp_sprintf( __( 'Payment Form restored to revision from %s', 'invoicing' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => __( 'Payment Form updated.', 'invoicing' ),
+			7  => __( 'Payment Form saved.', 'invoicing' ),
+			8  => __( 'Payment Form submitted.', 'invoicing' ),
+			9  => wp_sprintf( __( 'Payment Form scheduled for: <strong>%1$s</strong>.', 'invoicing' ), date_i18n( __( 'M j, Y @ G:i', 'invoicing' ), strtotime( $post->post_date ) ) ),
+			10 => __( 'Payment Form draft updated.', 'invoicing' ),
 		);
 
 		return $messages;
@@ -110,14 +110,14 @@ class GetPaid_Post_Types_Admin {
 				unset( $actions['inline hide-if-no-js'] );
 			}
 
-			$actions['duplicate'] =  sprintf(
+			$actions['duplicate'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				esc_url(
 					wp_nonce_url(
 						add_query_arg(
 							array(
 								'getpaid-admin-action' => 'duplicate_form',
-								'form_id'              => $post->ID
+								'form_id'              => $post->ID,
 							)
 						),
 						'getpaid-nonce',
@@ -134,15 +134,14 @@ class GetPaid_Post_Types_Admin {
 
 			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ) ) ) {
 
-				$actions['buy'] =  sprintf(
+				$actions['buy'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
 					esc_url( getpaid_embed_url( false, $post->ID . '|0' ) ),
 					esc_html( __( 'Buy', 'invoicing' ) )
 				);
 
 			}
-
-		}
+}
 
 		return $actions;
 	}
@@ -162,7 +161,7 @@ class GetPaid_Post_Types_Admin {
 			$actions = array();
 			$invoice = new WPInv_Invoice( $post );
 
-			$actions['edit'] =  sprintf(
+			$actions['edit'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				esc_url( get_edit_post_link( $invoice->get_id() ) ),
 				esc_html( __( 'Edit', 'invoicing' ) )
@@ -170,7 +169,7 @@ class GetPaid_Post_Types_Admin {
 
 			if ( ! $invoice->is_draft() ) {
 
-				$actions['view'] =  sprintf(
+				$actions['view'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
 					esc_url( $invoice->get_view_url() ),
 					sprintf(
@@ -179,14 +178,14 @@ class GetPaid_Post_Types_Admin {
 					)
 				);
 
-				$actions['send'] =  sprintf(
+				$actions['send'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
 					esc_url(
 						wp_nonce_url(
 							add_query_arg(
 								array(
 									'getpaid-admin-action' => 'send_invoice',
-									'invoice_id'           => $invoice->get_id()
+									'invoice_id'           => $invoice->get_id(),
 								)
 							),
 							'getpaid-nonce',
@@ -198,14 +197,14 @@ class GetPaid_Post_Types_Admin {
 
 			}
 
-			$actions['duplicate'] =  sprintf(
+			$actions['duplicate'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				esc_url(
 					wp_nonce_url(
 						add_query_arg(
 							array(
 								'getpaid-admin-action' => 'duplicate_invoice',
-								'invoice_id'           => $post->ID
+								'invoice_id'           => $post->ID,
 							)
 						),
 						'getpaid-nonce',
@@ -226,14 +225,14 @@ class GetPaid_Post_Types_Admin {
 	public static function invoice_columns( $columns ) {
 
 		$columns = array(
-			'cb'                => $columns['cb'],
-			'number'            => __( 'Invoice', 'invoicing' ),
-			'customer'          => __( 'Customer', 'invoicing' ),
-			'invoice_date'      => __( 'Created', 'invoicing' ),
-			'payment_date'      => __( 'Completed', 'invoicing' ),
-			'amount'            => __( 'Amount', 'invoicing' ),
-			'recurring'         => __( 'Recurring', 'invoicing' ),
-			'status'            => __( 'Status', 'invoicing' ),
+			'cb'           => $columns['cb'],
+			'number'       => __( 'Invoice', 'invoicing' ),
+			'customer'     => __( 'Customer', 'invoicing' ),
+			'invoice_date' => __( 'Created', 'invoicing' ),
+			'payment_date' => __( 'Completed', 'invoicing' ),
+			'amount'       => __( 'Amount', 'invoicing' ),
+			'recurring'    => __( 'Recurring', 'invoicing' ),
+			'status'       => __( 'Status', 'invoicing' ),
 		);
 
 		return apply_filters( 'wpi_invoice_table_columns', $columns );
@@ -248,26 +247,24 @@ class GetPaid_Post_Types_Admin {
 
 		switch ( $column_name ) {
 
-			case 'invoice_date' :
+			case 'invoice_date':
 				$date_time = esc_attr( $invoice->get_created_date() );
-				$date      = esc_html( getpaid_format_date_value( $date_time, "&mdash;", true ) );
+				$date      = esc_html( getpaid_format_date_value( $date_time, '&mdash;', true ) );
 				echo "<span title='$date_time'>$date</span>";
 				break;
 
-			case 'payment_date' :
-
+			case 'payment_date':
 				if ( $invoice->is_paid() ) {
 					$date_time = esc_attr( $invoice->get_completed_date() );
-					$date      = esc_html( getpaid_format_date_value( $date_time, "&mdash;", true ) );
+					$date      = esc_html( getpaid_format_date_value( $date_time, '&mdash;', true ) );
 					echo "<span title='$date_time'>$date</span>";
 				} else {
-					echo "&mdash;";
+					echo '&mdash;';
 				}
-				
+
 				break;
 
-			case 'amount' :
-
+			case 'amount':
 				$amount = $invoice->get_total();
 				$formated_amount = wp_kses_post( wpinv_price( $amount, $invoice->get_currency() ) );
 
@@ -282,14 +279,13 @@ class GetPaid_Post_Types_Admin {
 						$new_amount = wp_kses_post( wpinv_price( $amount + $discount, $invoice->get_currency() ) );
 						echo "<del>$new_amount</del>&nbsp;<ins>$formated_amount</ins>";
 					} else {
-						echo $formated_amount;
+						echo wp_kses_post( $formated_amount );
 					}
-
-				}
+}
 
 				break;
 
-			case 'status' :
+			case 'status':
 				$status       = esc_html( $invoice->get_status() );
 				$status_label = esc_html( $invoice->get_status_nicename() );
 
@@ -308,9 +304,9 @@ class GetPaid_Post_Types_Admin {
 
 					// Invoice view status.
 					if ( wpinv_is_invoice_viewed( $invoice->get_id() ) ) {
-						echo '&nbsp;&nbsp;<i class="fa fa-eye wpi-help-tip" title="'. esc_attr__( 'Viewed by Customer', 'invoicing' ).'"></i>';
+						echo '&nbsp;&nbsp;<i class="fa fa-eye wpi-help-tip" title="' . esc_attr__( 'Viewed by Customer', 'invoicing' ) . '"></i>';
 					} else {
-						echo '&nbsp;&nbsp;<i class="fa fa-eye-slash wpi-help-tip" title="'. esc_attr__( 'Not Viewed by Customer', 'invoicing' ).'"></i>';
+						echo '&nbsp;&nbsp;<i class="fa fa-eye-slash wpi-help-tip" title="' . esc_attr__( 'Not Viewed by Customer', 'invoicing' ) . '"></i>';
 					}
 
 					// Display the overview status.
@@ -323,13 +319,11 @@ class GetPaid_Post_Types_Admin {
 							echo "<p class='description' style='color: #888;' title='$due_date'>$fomatted</p>";
 						}
 					}
-
-				}
+}
 
 				break;
 
 			case 'recurring':
-
 				if ( $invoice->is_recurring() ) {
 					echo '<i class="fa fa-check" style="color:#43850a;"></i>';
 				} else {
@@ -337,8 +331,7 @@ class GetPaid_Post_Types_Admin {
 				}
 				break;
 
-			case 'number' :
-
+			case 'number':
 				$edit_link       = esc_url( get_edit_post_link( $invoice->get_id() ) );
 				$invoice_number  = esc_html( $invoice->get_number() );
 				$invoice_details = esc_attr__( 'View Invoice Details', 'invoicing' );
@@ -347,14 +340,13 @@ class GetPaid_Post_Types_Admin {
 
 				break;
 
-			case 'customer' :
-	
+			case 'customer':
 				$customer_name = $invoice->get_user_full_name();
-	
+
 				if ( empty( $customer_name ) ) {
 					$customer_name = $invoice->get_email();
 				}
-	
+
 				if ( ! empty( $customer_name ) ) {
 					$customer_details = esc_attr__( 'View Customer Details', 'invoicing' );
 					$view_link        = esc_url( add_query_arg( 'user_id', $invoice->get_user_id(), admin_url( 'user-edit.php' ) ) );
@@ -398,13 +390,13 @@ class GetPaid_Post_Types_Admin {
 	public static function payment_form_columns( $columns ) {
 
 		$columns = array(
-			'cb'                => $columns['cb'],
-			'title'             => __( 'Name', 'invoicing' ),
-			'shortcode'         => __( 'Shortcode', 'invoicing' ),
-			'earnings'          => __( 'Revenue', 'invoicing' ),
-			'refunds'           => __( 'Refunded', 'invoicing' ),
-			'items'             => __( 'Items', 'invoicing' ),
-			'date'              => __( 'Date', 'invoicing' ),
+			'cb'        => $columns['cb'],
+			'title'     => __( 'Name', 'invoicing' ),
+			'shortcode' => __( 'Shortcode', 'invoicing' ),
+			'earnings'  => __( 'Revenue', 'invoicing' ),
+			'refunds'   => __( 'Refunded', 'invoicing' ),
+			'items'     => __( 'Items', 'invoicing' ),
+			'date'      => __( 'Date', 'invoicing' ),
 		);
 
 		return apply_filters( 'wpi_payment_form_table_columns', $columns );
@@ -421,20 +413,19 @@ class GetPaid_Post_Types_Admin {
 
 		switch ( $column_name ) {
 
-			case 'earnings' :
+			case 'earnings':
 				echo wpinv_price( $form->get_earned() );
 				break;
 
-			case 'refunds' :
+			case 'refunds':
 				echo wpinv_price( $form->get_refunded() );
 				break;
 
-			case 'refunds' :
+			case 'refunds':
 				echo wpinv_price( $form->get_refunded() );
 				break;
 
-			case 'shortcode' :
-
+			case 'shortcode':
 				if ( $form->is_default() ) {
 					echo '&mdash;';
 				} else {
@@ -443,8 +434,7 @@ class GetPaid_Post_Types_Admin {
 
 				break;
 
-			case 'items' :
-
+			case 'items':
 				$items = $form->get_items();
 
 				if ( $form->is_default() || empty( $items ) ) {
@@ -466,8 +456,7 @@ class GetPaid_Post_Types_Admin {
 							esc_html( $item->get_name() )
 						);
 					}
-
-				}
+}
 
 				echo implode( '<br>', $_items );
 
@@ -483,9 +472,9 @@ class GetPaid_Post_Types_Admin {
 	public static function filter_payment_form_state( $post_states, $post ) {
 
 		if ( 'wpi_payment_form' == $post->post_type && wpinv_get_default_payment_form() == $post->ID ) {
-			$post_states[ 'default_form' ] = __( 'Default Payment Form', 'invoicing' );
+			$post_states['default_form'] = __( 'Default Payment Form', 'invoicing' );
 		}
-	
+
 		return $post_states;
 
 	}
@@ -496,13 +485,13 @@ class GetPaid_Post_Types_Admin {
 	public static function discount_columns( $columns ) {
 
 		$columns = array(
-			'cb'                => $columns['cb'],
-			'title'             => __( 'Name', 'invoicing' ),
-			'code'              => __( 'Code', 'invoicing' ),
-			'amount'            => __( 'Amount', 'invoicing' ),
-			'usage'             => __( 'Usage / Limit', 'invoicing' ),
-			'start_date'        => __( 'Start Date', 'invoicing' ),
-			'expiry_date'       => __( 'Expiry Date', 'invoicing' ),
+			'cb'          => $columns['cb'],
+			'title'       => __( 'Name', 'invoicing' ),
+			'code'        => __( 'Code', 'invoicing' ),
+			'amount'      => __( 'Amount', 'invoicing' ),
+			'usage'       => __( 'Usage / Limit', 'invoicing' ),
+			'start_date'  => __( 'Start Date', 'invoicing' ),
+			'expiry_date' => __( 'Expiry Date', 'invoicing' ),
 		);
 
 		return apply_filters( 'wpi_discount_table_columns', $columns );
@@ -539,13 +528,13 @@ class GetPaid_Post_Types_Admin {
 	public static function item_columns( $columns ) {
 
 		$columns = array(
-			'cb'                => $columns['cb'],
-			'title'             => __( 'Name', 'invoicing' ),
-			'price'             => __( 'Price', 'invoicing' ),
-			'vat_rule'          => __( 'VAT rule', 'invoicing' ),
-			'vat_class'         => __( 'VAT class', 'invoicing' ),
-			'type'              => __( 'Type', 'invoicing' ),
-			'shortcode'         => __( 'Shortcode', 'invoicing' ),
+			'cb'        => $columns['cb'],
+			'title'     => __( 'Name', 'invoicing' ),
+			'price'     => __( 'Price', 'invoicing' ),
+			'vat_rule'  => __( 'VAT rule', 'invoicing' ),
+			'vat_class' => __( 'VAT class', 'invoicing' ),
+			'type'      => __( 'Type', 'invoicing' ),
+			'shortcode' => __( 'Shortcode', 'invoicing' ),
 		);
 
 		if ( ! wpinv_use_taxes() ) {
@@ -577,53 +566,51 @@ class GetPaid_Post_Types_Admin {
 	 * Displays items table columns.
 	 */
 	public static function display_item_columns( $column_name, $post_id ) {
- 
+
 		$item = new WPInv_Item( $post_id );
 
 		switch ( $column_name ) {
 
-			case 'price' :
-
+			case 'price':
 				if ( ! $item->is_recurring() ) {
-					echo $item->get_the_price();
+					echo wp_kses_post( $item->get_the_price() );
 					break;
 				}
 
 				$price = wp_sprintf(
-					__( '%s / %s', 'invoicing' ),
+					__( '%1$s / %2$s', 'invoicing' ),
 					$item->get_the_price(),
 					getpaid_get_subscription_period_label( $item->get_recurring_period(), $item->get_recurring_interval(), '' )
 				);
 
 				if ( $item->get_the_price() == $item->get_the_initial_price() ) {
-					echo $price;
+					echo wp_kses_post( $price );
 					break;
 				}
 
-				echo $item->get_the_initial_price();
+				echo wp_kses_post( $item->get_the_initial_price() );
 
-				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), $price )  .'</span>';
+				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), wp_kses_post( $price ) ) . '</span>';
 				break;
 
-			case 'vat_rule' :
+			case 'vat_rule':
 				echo getpaid_get_tax_rule_label( $item->get_vat_rule() );
 				break;
 
-			case 'vat_class' :
+			case 'vat_class':
 				echo getpaid_get_tax_class_label( $item->get_vat_class() );
 				break;
 
-			case 'shortcode' :
-
+			case 'shortcode':
 				if ( $item->is_type( array( '', 'fee', 'custom' ) ) ) {
 					echo '<input onClick="this.select()" type="text" value="[getpaid item=' . esc_attr( $item->get_id() ) . ' button=\'Buy Now\']" style="width: 100%;" readonly/>';
 				} else {
-					echo "&mdash;";
+					echo '&mdash;';
 				}
-				
+
 				break;
 
-			case 'type' :
+			case 'type':
 				echo wpinv_item_type( $item->get_id() ) . '<span class="meta">' . $item->get_custom_singular_name() . '</span>';
 				break;
 
@@ -643,12 +630,12 @@ class GetPaid_Post_Types_Admin {
 
 		// Filter by vat rules.
 		if ( wpinv_use_taxes() ) {
-	
+
 			// Sanitize selected vat rule.
 			$vat_rule   = '';
 			$vat_rules  = getpaid_get_tax_rules();
 			if ( isset( $_GET['vat_rule'] ) ) {
-				$vat_rule   =  sanitize_text_field( $_GET['vat_rule'] );
+				$vat_rule   = sanitize_text_field( $_GET['vat_rule'] );
 			}
 
 			// Filter by VAT rule.
@@ -656,7 +643,7 @@ class GetPaid_Post_Types_Admin {
 				array(
 					'options'          => array_merge(
 						array(
-							'' => __( 'All VAT rules', 'invoicing' )
+							'' => __( 'All VAT rules', 'invoicing' ),
 						),
 						$vat_rules
 					),
@@ -669,7 +656,7 @@ class GetPaid_Post_Types_Admin {
 			);
 
 			// Filter by VAT class.
-	
+
 			// Sanitize selected vat rule.
 			$vat_class   = '';
 			$vat_classes = getpaid_get_tax_classes();
@@ -681,7 +668,7 @@ class GetPaid_Post_Types_Admin {
 				array(
 					'options'          => array_merge(
 						array(
-							'' => __( 'All VAT classes', 'invoicing' )
+							'' => __( 'All VAT classes', 'invoicing' ),
 						),
 						$vat_classes
 					),
@@ -705,7 +692,7 @@ class GetPaid_Post_Types_Admin {
 			array(
 				'options'          => array_merge(
 					array(
-						'' => __( 'All item types', 'invoicing' )
+						'' => __( 'All item types', 'invoicing' ),
 					),
 					wpinv_get_item_types()
 				),
@@ -725,12 +712,12 @@ class GetPaid_Post_Types_Admin {
 	public static function filter_item_query( $query ) {
 
 		// modify the query only if it admin and main query.
-		if ( ! ( is_admin() && $query->is_main_query() ) ){ 
+		if ( ! ( is_admin() && $query->is_main_query() ) ) {
 			return $query;
 		}
 
 		// we want to modify the query for our items.
-		if ( empty( $query->query['post_type'] ) || 'wpi_item' != $query->query['post_type'] ){
+		if ( empty( $query->query['post_type'] ) || 'wpi_item' != $query->query['post_type'] ) {
 			return $query;
 		}
 
@@ -743,7 +730,7 @@ class GetPaid_Post_Types_Admin {
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_vat_rule',
                 'value'   => sanitize_text_field( $_GET['vat_rule'] ),
-                'compare' => '='
+                'compare' => '=',
             );
         }
 
@@ -752,7 +739,7 @@ class GetPaid_Post_Types_Admin {
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_vat_class',
                 'value'   => sanitize_text_field( $_GET['vat_class'] ),
-                'compare' => '='
+                'compare' => '=',
             );
         }
 
@@ -761,7 +748,7 @@ class GetPaid_Post_Types_Admin {
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_type',
                 'value'   => sanitize_text_field( $_GET['type'] ),
-                'compare' => '='
+                'compare' => '=',
             );
 		}
 
@@ -783,7 +770,7 @@ class GetPaid_Post_Types_Admin {
 				$vars,
 				array(
 					'meta_key' => '_wpinv_type',
-					'orderby'  => 'meta_value'
+					'orderby'  => 'meta_value',
 				)
 			);
 		}
@@ -794,7 +781,7 @@ class GetPaid_Post_Types_Admin {
 				$vars,
 				array(
 					'meta_key' => '_wpinv_vat_class',
-					'orderby'  => 'meta_value'
+					'orderby'  => 'meta_value',
 				)
 			);
 		}
@@ -805,7 +792,7 @@ class GetPaid_Post_Types_Admin {
 				$vars,
 				array(
 					'meta_key' => '_wpinv_vat_rule',
-					'orderby'  => 'meta_value'
+					'orderby'  => 'meta_value',
 				)
 			);
 		}
@@ -816,7 +803,7 @@ class GetPaid_Post_Types_Admin {
 				$vars,
 				array(
 					'meta_key' => '_wpinv_price',
-					'orderby'  => 'meta_value_num'
+					'orderby'  => 'meta_value_num',
 				)
 			);
 		}
@@ -832,21 +819,21 @@ class GetPaid_Post_Types_Admin {
 
 		switch ( get_post_type( $post_id ) ) {
 
-			case 'wpi_item' :
-				do_action( "getpaid_before_delete_item", new WPInv_Item( $post_id ) );
+			case 'wpi_item':
+				do_action( 'getpaid_before_delete_item', new WPInv_Item( $post_id ) );
 				break;
 
-			case 'wpi_payment_form' :
-				do_action( "getpaid_before_delete_payment_form", new GetPaid_Payment_Form( $post_id ) );
+			case 'wpi_payment_form':
+				do_action( 'getpaid_before_delete_payment_form', new GetPaid_Payment_Form( $post_id ) );
 				break;
 
-			case 'wpi_discount' :
-				do_action( "getpaid_before_delete_discount", new WPInv_Discount( $post_id ) );
+			case 'wpi_discount':
+				do_action( 'getpaid_before_delete_discount', new WPInv_Discount( $post_id ) );
 				break;
 
-			case 'wpi_invoice' :
+			case 'wpi_invoice':
 				$invoice = new WPInv_Invoice( $post_id );
-				do_action( "getpaid_before_delete_invoice", $invoice );
+				do_action( 'getpaid_before_delete_invoice', $invoice );
 				$invoice->get_data_store()->delete_items( $invoice );
 				$invoice->get_data_store()->delete_special_fields( $invoice );
 				break;
@@ -870,14 +857,13 @@ class GetPaid_Post_Types_Admin {
 		foreach ( getpaid_get_invoice_post_types() as $post_type => $label ) {
 
 			if ( wpinv_get_option( "{$post_type}_history_page", 0 ) == $post->ID ) {
-				$post_states["getpaid_{$post_type}_history_page"] = sprintf(
+				$post_states[ "getpaid_{$post_type}_history_page" ] = sprintf(
 					__( 'GetPaid %s History Page', 'invoicing' ),
 					$label
 				);
 			}
+}
 
-		}
-		
 		if ( wpinv_get_option( 'invoice_subscription_page', 0 ) == $post->ID ) {
             $post_states['getpaid_invoice_subscription_page'] = __( 'GetPaid Subscription Page', 'invoicing' );
         }

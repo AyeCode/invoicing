@@ -23,7 +23,7 @@ if ( empty( $items_type ) ) {
 
 do_action( 'getpaid_before_payment_form_items', $form );
 
-switch( $items_type ) {
+switch ( $items_type ) {
     case 'radio':
         wpinv_get_template( 'payment-forms/variations/radio.php', compact( 'form', 'items_type' ) );
         break;

@@ -115,13 +115,13 @@ function getpaid_get_subscription_statuses() {
 	return apply_filters(
 		'getpaid_get_subscription_statuses',
 		array(
-			'pending'    => __( 'Pending', 'invoicing' ),
-			'trialling'  => __( 'Trialing', 'invoicing' ),
-			'active'     => __( 'Active', 'invoicing' ),
-			'failing'    => __( 'Failing', 'invoicing' ),
-			'expired'    => __( 'Expired', 'invoicing' ),
-			'completed'  => __( 'Complete', 'invoicing' ),
-			'cancelled'  => __( 'Cancelled', 'invoicing' ),
+			'pending'   => __( 'Pending', 'invoicing' ),
+			'trialling' => __( 'Trialing', 'invoicing' ),
+			'active'    => __( 'Active', 'invoicing' ),
+			'failing'   => __( 'Failing', 'invoicing' ),
+			'expired'   => __( 'Expired', 'invoicing' ),
+			'completed' => __( 'Complete', 'invoicing' ),
+			'cancelled' => __( 'Cancelled', 'invoicing' ),
 		)
 	);
 
@@ -147,13 +147,13 @@ function getpaid_get_subscription_status_classes() {
 	return apply_filters(
 		'getpaid_get_subscription_status_classes',
 		array(
-			'pending'    => 'badge-dark',
-			'trialling'  => 'badge-info',
-			'active'     => 'badge-success',
-			'failing'    => 'badge-warning',
-			'expired'    => 'badge-danger',
-			'completed'  => 'badge-primary',
-			'cancelled'  => 'badge-secondary',
+			'pending'   => 'badge-dark',
+			'trialling' => 'badge-info',
+			'active'    => 'badge-success',
+			'failing'   => 'badge-warning',
+			'expired'   => 'badge-danger',
+			'completed' => 'badge-primary',
+			'cancelled' => 'badge-secondary',
 		)
 	);
 
@@ -194,17 +194,17 @@ function getpaid_get_subscription_periods() {
 				'plural'   => __( '%d days', 'invoicing' ),
 			),
 
-			'week'   => array(
+			'week'  => array(
 				'singular' => __( '%s week', 'invoicing' ),
 				'plural'   => __( '%d weeks', 'invoicing' ),
 			),
 
-			'month'   => array(
+			'month' => array(
 				'singular' => __( '%s month', 'invoicing' ),
 				'plural'   => __( '%d months', 'invoicing' ),
 			),
 
-			'year'   => array(
+			'year'  => array(
 				'singular' => __( '%s year', 'invoicing' ),
 				'plural'   => __( '%d years', 'invoicing' ),
 			),
@@ -242,7 +242,7 @@ function getpaid_get_subscription_trial_period_period( $trial_period ) {
  * @return string
  */
 function getpaid_get_subscription_period_label( $period, $interval = 1, $singular_prefix = '1' ) {
-	$label = (int) $interval > 1 ? getpaid_get_plural_subscription_period_label(  $period, $interval ) : getpaid_get_singular_subscription_period_label( $period, $singular_prefix );
+	$label = (int) $interval > 1 ? getpaid_get_plural_subscription_period_label( $period, $interval ) : getpaid_get_singular_subscription_period_label( $period, $singular_prefix );
 	return strtolower( sanitize_text_field( $label ) );
 }
 
@@ -326,20 +326,17 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
 		if ( empty( $bill_times ) ) {
 
 			return sprintf(
-
 				// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period
 				_x( '%1$s trial for %2$s then %3$s / %4$s', 'Subscription amount. (e.g.: $10 trial for 1 month then $120 / year)', 'invoicing' ),
 				$initial,
 				getpaid_get_subscription_period_label( $trial_period, $trial_interval ),
 				$recurring,
 				$period
-	
 			);
 
 		}
 
 		return sprintf(
-
 			// translators: $1: is the initial amount, $2: is the trial period, $3: is the recurring amount, $4: is the recurring period, $5: is the bill times
 			_x( '%1$s trial for %2$s then %3$s / %4$s for %5$s', 'Subscription amount. (e.g.: $10 trial for 1 month then $120 / year for 4 years)', 'invoicing' ),
 			$initial,
@@ -356,26 +353,22 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
 		if ( empty( $bill_times ) ) {
 
 			return sprintf(
-
 				// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period
 				_x( 'Initial payment of %1$s which renews at %2$s / %3$s', 'Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / year)', 'invoicing' ),
 				$initial,
 				$recurring,
 				$period
-	
 			);
 
 		}
 
 		return sprintf(
-
 			// translators: $1: is the initial amount, $2: is the recurring amount, $3: is the recurring period, $4: is the bill times
 			_x( 'Initial payment of %1$s which renews at %2$s / %3$s for %4$s', 'Subscription amount. (e.g.:Initial payment of $100 which renews at $120 / year for 5 years)', 'invoicing' ),
 			$initial,
 			$recurring,
 			$period,
 			$bill_times
-
 		);
 
 	}
@@ -383,24 +376,20 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
 	if ( empty( $bill_times ) ) {
 
 		return sprintf(
-
 			// translators: $1: is the recurring amount, $2: is the recurring period
 			_x( '%1$s / %2$s', 'Subscription amount. (e.g.: $120 / year)', 'invoicing' ),
 			$initial,
 			$period
-	
 		);
 
 	}
 
 	return sprintf(
-
 		// translators: $1: is the bill times, $2: is the recurring amount, $3: is the recurring period
 		_x( '%2$s / %3$s for %1$s', 'Subscription amount. (e.g.: $120 / year for 5 years)', 'invoicing' ),
 		$bill_times,
 		$initial,
 		$period
-
 	);
 
 }
@@ -486,19 +475,19 @@ function getpaid_get_recurring_item_key( $cart_item ) {
 
 	// First start with the billing interval and period
 	switch ( $interval ) {
-		case 1 :
+		case 1:
 			if ( 'day' == $period ) {
 				$cart_key .= 'daily';
 			} else {
 				$cart_key .= sprintf( '%sly', $period );
 			}
 			break;
-		case 2 :
+		case 2:
 			$cart_key .= sprintf( 'every_2nd_%s', $period );
 			break;
-		case 3 :
+		case 3:
 			$cart_key .= sprintf( 'every_3rd_%s', $period );
-		break;
+		    break;
 		default:
 			$cart_key .= sprintf( 'every_%dth_%s', $interval, $period );
 			break;
@@ -536,8 +525,7 @@ function getpaid_get_subscription_groups( $invoice ) {
 		if ( $item->is_recurring() ) {
 			$subscription_groups[ getpaid_get_recurring_item_key( $item ) ][] = $item;
 		}
-
-	}
+}
 
 	return $subscription_groups;
 }
@@ -578,7 +566,7 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 		 */
 		foreach ( $items as $item ) {
 
-			$subscription_totals[ $subscription_key ]['items'][$item->get_id()]  = $item->prepare_data_for_saving();
+			$subscription_totals[ $subscription_key ]['items'][ $item->get_id() ]  = $item->prepare_data_for_saving();
 			$subscription_totals[ $subscription_key ]['item_id']                 = $item->get_id();
 			$subscription_totals[ $subscription_key ]['period']                  = $item->get_recurring_period( true );
 			$subscription_totals[ $subscription_key ]['interval']                = $item->get_recurring_interval();
@@ -600,8 +588,7 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 			$subscription_totals[ $subscription_key ]['renews_on'] = date( 'Y-m-d H:i:s', strtotime( "+$interval $period", current_time( 'timestamp' ) ) );
 
 		}
-
-	}
+}
 
 	return apply_filters( 'getpaid_calculate_subscription_totals', $subscription_totals, $invoice );
 }
@@ -621,8 +608,7 @@ function getpaid_should_group_subscriptions( $invoice ) {
 		if ( $item->is_recurring() ) {
 			$recurring_items ++;
 		}
-
-	}
+}
 
 	return apply_filters( 'getpaid_should_group_subscriptions', $recurring_items > 1, $invoice );
 }
@@ -650,7 +636,7 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 		);
 
 	}
-	
+
 	$invoice_ids = $wpdb->get_col(
 		$wpdb->prepare(
 			"SELECT ID FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
@@ -667,8 +653,7 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 			$count ++;
 			continue;
 		}
-
-	}
+}
 
 	return $count;
 }

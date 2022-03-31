@@ -69,8 +69,7 @@ class GetPaid_Payment_Form_Submission_Items {
                         $items[]    = $item;
                     }
                 }
-
-            }
+}
 
             $payment_form->set_items( $items );
 
@@ -116,15 +115,14 @@ class GetPaid_Payment_Form_Submission_Items {
 				$item->set_price( $price );
 
 			}
-
-		}
+}
 
 		if ( 0 == $item->get_quantity() ) {
 			return;
 		}
 
 		// Save the item.
-		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item' , $item, $submission );
+		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item', $item, $submission );
 
 	}
 

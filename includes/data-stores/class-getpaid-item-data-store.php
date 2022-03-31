@@ -37,7 +37,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_recurring_limit',
 		'_wpinv_free_trial',
 		'_wpinv_trial_period',
-		'_wpinv_trial_interval'
+		'_wpinv_trial_interval',
 	);
 
 	/**
@@ -82,21 +82,21 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 	 */
 	public function create( &$item ) {
 		$item->set_version( WPINV_VERSION );
-		$item->set_date_created( current_time('mysql') );
+		$item->set_date_created( current_time( 'mysql' ) );
 
 		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
 				'getpaid_new_item_data',
 				array(
-					'post_date'     => $item->get_date_created( 'edit' ),
-					'post_type'     => 'wpi_item',
-					'post_status'   => $this->get_post_status( $item ),
-					'ping_status'   => 'closed',
-					'post_author'   => $item->get_author( 'edit' ),
-					'post_title'    => $item->get_name( 'edit' ),
-					'post_parent'   => 0,
-					'post_excerpt'  => $item->get_description( 'edit' ),
+					'post_date'    => $item->get_date_created( 'edit' ),
+					'post_type'    => 'wpi_item',
+					'post_status'  => $this->get_post_status( $item ),
+					'ping_status'  => 'closed',
+					'post_author'  => $item->get_author( 'edit' ),
+					'post_title'   => $item->get_name( 'edit' ),
+					'post_parent'  => 0,
+					'post_excerpt' => $item->get_description( 'edit' ),
 				)
 			),
 			true
@@ -115,7 +115,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		if ( is_wp_error( $id ) ) {
 			$item->last_error = $id->get_error_message();
 		}
-		
+
 		return false;
 	}
 
@@ -165,7 +165,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$item->set_version( WPINV_VERSION );
 
 		if ( null === $item->get_date_created( 'edit' ) ) {
-			$item->set_date_created(  current_time('mysql') );
+			$item->set_date_created( current_time( 'mysql' ) );
 		}
 
 		// Grab the current status so we can compare.
@@ -176,13 +176,13 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		// Only update the post when the post data changes.
 		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'parent_id', 'description', 'name', 'author' ), array_keys( $changes ) ) ) {
 			$post_data = array(
-				'post_date'         => $item->get_date_created( 'edit' ),
-				'post_status'       => $item->get_status( 'edit' ),
-				'post_parent'       => $item->get_parent_id( 'edit' ),
-				'post_excerpt'      => $item->get_description( 'edit' ),
-				'post_modified'     => $item->get_date_modified( 'edit' ),
-				'post_title'        => $item->get_name( 'edit' ),
-				'post_author'       => $item->get_author( 'edit' ),
+				'post_date'     => $item->get_date_created( 'edit' ),
+				'post_status'   => $item->get_status( 'edit' ),
+				'post_parent'   => $item->get_parent_id( 'edit' ),
+				'post_excerpt'  => $item->get_description( 'edit' ),
+				'post_modified' => $item->get_date_modified( 'edit' ),
+				'post_title'    => $item->get_name( 'edit' ),
+				'post_author'   => $item->get_author( 'edit' ),
 			);
 
 			/**

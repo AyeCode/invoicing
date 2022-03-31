@@ -14,41 +14,39 @@ class WPInv_Invoice_Widget extends WP_Super_Duper {
      */
     public function __construct() {
 
-
         $options = array(
-            'textdomain'    => 'invoicing',
-            'block-icon'    => 'admin-site',
-            'block-category'=> 'widgets',
-            'block-keywords'=> "['invoicing','invoice']",
+            'textdomain'     => 'invoicing',
+            'block-icon'     => 'admin-site',
+            'block-category' => 'widgets',
+            'block-keywords' => "['invoicing','invoice']",
             'class_name'     => __CLASS__,
-            'base_id'       => 'getpaid_invoice',
-            'name'          => __( 'GetPaid > Single Invoice','invoicing' ),
-            'widget_ops'    => array(
+            'base_id'        => 'getpaid_invoice',
+            'name'           => __( 'GetPaid > Single Invoice', 'invoicing' ),
+            'widget_ops'     => array(
                 'classname'   => 'wpinv-invoice-class bsui',
-                'description' => esc_html__('Displays a single invoice.','invoicing'),
+                'description' => esc_html__( 'Displays a single invoice.', 'invoicing' ),
             ),
-            'arguments'     => array(
-                'title'  => array(
-                    'title'       => __( 'Widget title', 'invoicing' ),
-                    'desc'        => __( 'Enter widget title.', 'invoicing' ),
-                    'type'        => 'text',
-                    'desc_tip'    => true,
-                    'default'     => '',
-                    'advanced'    => false
+            'arguments'      => array(
+                'title' => array(
+                    'title'    => __( 'Widget title', 'invoicing' ),
+                    'desc'     => __( 'Enter widget title.', 'invoicing' ),
+                    'type'     => 'text',
+                    'desc_tip' => true,
+                    'default'  => '',
+                    'advanced' => false,
                 ),
-                'id'  => array(
+                'id'    => array(
 	                'title'       => __( 'Invoice', 'invoicing' ),
 	                'desc'        => __( 'Enter the invoice ID', 'invoicing' ),
 	                'type'        => 'text',
 	                'desc_tip'    => true,
 	                'default'     => '',
-	                'placeholder' => __('1','invoicing'),
-	                'advanced'    => false
+	                'placeholder' => __( '1', 'invoicing' ),
+	                'advanced'    => false,
 				),
-            )
+            ),
 
         );
-
 
         parent::__construct( $options );
     }
@@ -63,7 +61,7 @@ class WPInv_Invoice_Widget extends WP_Super_Duper {
 	 * @return mixed|string|bool
 	 */
     public function output( $args = array(), $widget_args = array(), $content = '' ) {
-    
+
         // Is the shortcode set up correctly?
 		if ( empty( $args['id'] ) ) {
 			return aui()->alert(

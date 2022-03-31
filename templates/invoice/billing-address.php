@@ -22,7 +22,7 @@ $company_id  = $invoice->get_company_id();
 
 
             <div class="invoice-billing-address-label col-2">
-                <strong><?php _e( 'To:', 'invoicing' ) ?></strong>
+                <strong><?php _e( 'To:', 'invoicing' ); ?></strong>
             </div>
 
 

@@ -203,7 +203,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             'last_name'     => getpaid_limit_length( $invoice->get_last_name(), 64 ),
             'country'       => getpaid_limit_length( $invoice->get_country(), 2 ),
             'email'         => getpaid_limit_length( $invoice->get_email(), 127 ),
-            'cbt'           => get_bloginfo( 'name' )
+            'cbt'           => get_bloginfo( 'name' ),
         );
 
     }
@@ -374,7 +374,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $paypal_args['item_name'] = sprintf( __( 'Invoice #%s', 'invoicing' ), $invoice->get_number() );
 
         // Get subscription args.
-        $period                 = strtoupper( substr( $subscription->get_period(), 0, 1) );
+        $period                 = strtoupper( substr( $subscription->get_period(), 0, 1 ) );
         $interval               = (int) $subscription->get_frequency();
         $bill_times             = (int) $subscription->get_bill_times();
         $initial_amount         = (float) wpinv_sanitize_amount( $invoice->get_initial_total(), 2 );
@@ -397,7 +397,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			// Trial period.
 			$paypal_args['t1'] = $subscription_item->get_trial_period();
 
-        } else if ( $initial_amount != $recurring_amount ) {
+        } elseif ( $initial_amount != $recurring_amount ) {
 
             // No trial period, but initial amount includes a sign-up fee and/or other items, so charge it as a separate period.
 
@@ -463,8 +463,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             if ( isset( $paypal_args[ $arg ] ) ) {
                 unset( $paypal_args[ $arg ] );
             }
-
-        }
+}
 
         return apply_filters(
 			'getpaid_paypal_subscription_args',
@@ -489,7 +488,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
     public function sandbox_notice() {
 
         return sprintf(
-			__( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %sPayPal Sandbox Testing Guide%s for more details.', 'invoicing' ),
+			__( 'SANDBOX ENABLED. You can use sandbox testing accounts only. See the %1$sPayPal Sandbox Testing Guide%2$s for more details.', 'invoicing' ),
 			'<a href="https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/">',
 			'</a>'
 		);
@@ -516,10 +515,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		$sandbox_email   = wpinv_get_option( 'paypal_sandbox_email' );
 
 		$admin_settings['paypal_connect'] = array(
-			'type'       => 'raw_html',
-			'id'         => 'paypal_connect',
-			'name'       => __( 'Connect to PayPal', 'invoicing' ),
-			'desc'       => sprintf(
+			'type' => 'raw_html',
+			'id'   => 'paypal_connect',
+			'name' => __( 'Connect to PayPal', 'invoicing' ),
+			'desc' => sprintf(
 				'<div class="wpinv-paypal-connect-live"><a class="button button-primary" href="%s">%s</a></div><div class="wpinv-paypal-connect-sandbox"><a class="button button-primary" href="%s">%s</a></div>%s',
 				esc_url( self::get_connect_url( false ) ),
 				__( 'Connect to PayPal', 'invoicing' ),
@@ -595,7 +594,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         return add_query_arg(
             array(
                 'live_mode'    => (int) empty( $is_sandbox ),
-                'redirect_url' => urlencode( str_replace( '&amp;', '&', $redirect_url ) )
+                'redirect_url' => urlencode( str_replace( '&amp;', '&', $redirect_url ) ),
             ),
             'https://ayecode.io/oauth/paypal'
         );
@@ -674,7 +673,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 					'headers' => array(
 						'Authorization' => 'Bearer ' . $access_token,
 						'Content-type'  => 'application/json',
-					)
+					),
 
 				)
 			);
@@ -697,10 +696,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 					set_transient( 'getpaid_paypal_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
 					getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'invoicing' ) );
 				}
-
-			}
-
-		}
+}
+}
 
 		$redirect = empty( $data['redirect'] ) ? admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) : urldecode( $data['redirect'] );
 

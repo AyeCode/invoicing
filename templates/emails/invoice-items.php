@@ -29,7 +29,7 @@ $column_count = count( $columns );
             <tr class="wpinv_cart_header_row">
 
                 <?php foreach ( $columns as $key => $label ) : ?>
-                    <th class="<?php echo 'name' == $key ? 'text-left' : 'text-right' ?> wpinv_cart_item_<?php echo sanitize_html_class( $key ); ?>">
+                    <th class="<?php echo 'name' == $key ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $key ); ?>">
                         <?php echo esc_html( $label ); ?>
                     </th>
                 <?php endforeach; ?>
@@ -44,12 +44,12 @@ $column_count = count( $columns );
 
                 // Display the item totals.
                 foreach ( $invoice->get_items() as $item ) {
-                    wpinv_get_template( 'emails/invoice-item.php', compact( 'invoice', 'item', 'columns' ) );
+				wpinv_get_template( 'emails/invoice-item.php', compact( 'invoice', 'item', 'columns' ) );
                 }
 
                 // Display the fee totals.
                 foreach ( $invoice->get_fees() as $fee ) {
-                    wpinv_get_template( 'emails/fee-item.php', compact( 'invoice', 'fee', 'columns' ) );
+				wpinv_get_template( 'emails/fee-item.php', compact( 'invoice', 'fee', 'columns' ) );
                 }
 
             ?>

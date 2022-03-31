@@ -88,7 +88,7 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 			'360_days'  => $this->get_weeks_in_period( 360 ),
 		);
 
-		$label = isset( $labels[ $range ] ) ? $labels[ $range ] : $labels[ '7_days' ];
+		$label = isset( $labels[ $range ] ) ? $labels[ $range ] : $labels['7_days'];
 		return apply_filters( 'getpaid_earning_graphs_get_labels', $label, $range );
 	}
 
@@ -103,7 +103,7 @@ class GetPaid_Reports_Report_Earnings extends GetPaid_Reports_Abstract_Report {
 		foreach ( $this->get_graphs() as $key => $label ) {
 			$datasets[ $key ] = array(
 				'label' => $label,
-				'data'  => $this->get_data( $key, $labels )
+				'data'  => $this->get_data( $key, $labels ),
 			);
 		}
 

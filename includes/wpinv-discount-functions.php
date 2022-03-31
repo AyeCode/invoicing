@@ -5,27 +5,27 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns an array of discount type.
- * 
+ *
  * @return array
  */
 function wpinv_get_discount_types() {
     return apply_filters(
         'wpinv_discount_types',
         array(
-            'percent'   => __( 'Percentage', 'invoicing' ),
-            'flat'     => __( 'Flat Amount', 'invoicing' ),
+            'percent' => __( 'Percentage', 'invoicing' ),
+            'flat'    => __( 'Flat Amount', 'invoicing' ),
         )
     );
 }
 
 /**
  * Returns the name of a discount type.
- * 
+ *
  * @return string
  */
 function wpinv_get_discount_type_name( $type = '' ) {
@@ -35,7 +35,7 @@ function wpinv_get_discount_type_name( $type = '' ) {
 
 /**
  * Deletes a discount via the admin page.
- * 
+ *
  */
 function wpinv_delete_discount( $data ) {
 
@@ -105,12 +105,12 @@ function wpinv_get_discount_by( $deprecated = null, $value = '' ) {
         return $discount;
     }
 
-    return  false;
+    return false;
 }
 
 /**
  * Returns an array discount statuses.
- * 
+ *
  * @return array
  */
 function wpinv_get_discount_statuses() {
@@ -140,7 +140,7 @@ function wpinv_discount_status( $status ) {
  */
 function wpinv_discount_is_recurring( $discount = 0, $code = 0 ) {
 
-    if( ! empty( $discount ) ) {
+    if ( ! empty( $discount ) ) {
         $discount    = wpinv_get_discount_obj( $discount );
     } else {
         $discount    = wpinv_get_discount_obj( $code );
@@ -189,8 +189,7 @@ function getpaid_calculate_invoice_discount( $invoice, $discount ) {
 			if ( ( $recurring_discount + $recurring_item_discount ) > $discount->get_amount() ) {
 				$recurring_item_discount = $discount->get_amount() - $recurring_discount;
 			}
-
-		}
+}
 
 		$initial_discount             += $item_discount;
 		$recurring_discount           += $recurring_item_discount;

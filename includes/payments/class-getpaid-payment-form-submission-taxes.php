@@ -95,8 +95,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 			if ( 'digital' == $item->get_vat_rule() ) {
 				return true;
 			}
-
-		}
+}
 
 		return false;
 	}
@@ -229,7 +228,7 @@ class GetPaid_Payment_Form_Submission_Taxes {
 			throw new GetPaid_Payment_Exception( '.getpaid-error-billingwpinv_vat_number.getpaid-custom-payment-form-errors', __( 'Your VAT number is invalid', 'invoicing' ) );
 		}
 
-		if (  wpinv_default_billing_country() == $submission->country && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
+		if ( wpinv_default_billing_country() == $submission->country && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
 			return;
 		}
 

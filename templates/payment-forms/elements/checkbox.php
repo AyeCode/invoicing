@@ -18,13 +18,13 @@ if ( ! empty( $required ) ) {
 
 echo aui()->input(
     array(
-        'type'       => 'checkbox',
-        'name'       => esc_attr( $id ),
-        'id'         => esc_attr( $id ) . uniqid( '_' ),
-        'required'   => ! empty( $required ),
-        'label'      => $label,
-        'value'      => esc_attr__( 'Yes', 'invoicing' ),
-        'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        'class'      => 'w-auto ' . $label_class,
+        'type'      => 'checkbox',
+        'name'      => esc_attr( $id ),
+        'id'        => esc_attr( $id ) . uniqid( '_' ),
+        'required'  => ! empty( $required ),
+        'label'     => $label,
+        'value'     => esc_attr__( 'Yes', 'invoicing' ),
+        'help_text' => empty( $description ) ? '' : wp_kses_post( $description ),
+        'class'     => 'w-auto ' . $label_class,
     )
 );

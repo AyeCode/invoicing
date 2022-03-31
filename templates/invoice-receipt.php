@@ -28,7 +28,7 @@ if ( $invoice->is_paid() ) {
         )
     );
 
-} else if ( $invoice->is_refunded() ) {
+} elseif ( $invoice->is_refunded() ) {
 
     $alert = aui()->alert(
         array(
@@ -37,7 +37,7 @@ if ( $invoice->is_paid() ) {
         )
     );
 
-} else if ( $invoice->is_held() ) {
+} elseif ( $invoice->is_held() ) {
 
     $alert = aui()->alert(
         array(
@@ -46,7 +46,7 @@ if ( $invoice->is_paid() ) {
         )
     );
 
-} else if ( $invoice->needs_payment() ) {
+} elseif ( $invoice->needs_payment() ) {
 
     if ( ! empty( $_GET['token'] ) ) {
 
@@ -57,7 +57,7 @@ if ( $invoice->is_paid() ) {
             )
         );
 
-    } else if ( $invoice->is_due() ) {
+    } elseif ( $invoice->is_due() ) {
 
         $alert = aui()->alert(
             array(
@@ -79,7 +79,6 @@ if ( $invoice->is_paid() ) {
         );
 
     }
-
 }
 
 // Invoice actions.
@@ -87,13 +86,13 @@ $actions = apply_filters(
     'wpinv_invoice_receipt_actions',
     array(
 
-        'pay' => array(
+        'pay'     => array(
             'url'   => $invoice->get_checkout_payment_url(),
             'name'  => __( 'Pay For Invoice', 'invoicing' ),
             'class' => 'btn-success',
         ),
 
-        'view' => array(
+        'view'    => array(
             'url'   => $invoice->get_view_url(),
             'name'  => __( 'View Invoice', 'invoicing' ),
             'class' => 'btn-primary',
@@ -107,7 +106,6 @@ $actions = apply_filters(
 
     ),
     $invoice
-
 );
 
 if ( ( ! $invoice->needs_payment() || $invoice->is_held() ) && isset( $actions['pay'] ) ) {
@@ -123,30 +121,30 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
     <div class="wpinv-receipt">
 
         <?php
-        
+
             do_action( 'wpinv_receipt_start', $invoice );
 
             if ( ! empty( $actions ) ) {
 
-                echo '<div class="wpinv-receipt-actions text-right mt-1 mb-4">';
+			echo '<div class="wpinv-receipt-actions text-right mt-1 mb-4">';
 
-                foreach ( $actions as $key => $action ) {
+			foreach ( $actions as $key => $action ) {
 
-                    $key    = sanitize_html_class( $key );
-                    $class  = empty( $action['class'] ) ? 'btn-dark' : sanitize_html_class( $action['class'] );
-                    $url    = empty( $action['url'] ) ? '#' : esc_url( $action['url'] );
-                    $attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
-                    $anchor = esc_html( $action['name'] );
+				$key    = sanitize_html_class( $key );
+				$class  = empty( $action['class'] ) ? 'btn-dark' : sanitize_html_class( $action['class'] );
+				$url    = empty( $action['url'] ) ? '#' : esc_url( $action['url'] );
+				$attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
+				$anchor = esc_html( $action['name'] );
 
-                    echo wp_kses_post( "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>" );
+				echo wp_kses_post( "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>" );
                 }
 
-                echo '</div>';
+			echo '</div>';
 
             }
 
             if ( ! empty( $alert ) ) {
-                echo wp_kses_post( $alert );
+			echo wp_kses_post( $alert );
             }
 
         ?>

@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Displays an invoice.
- * 
+ *
  * @param WPInv_Invoice $invoice.
  */
 function getpaid_invoice( $invoice ) {
@@ -100,7 +100,7 @@ add_action( 'getpaid_invoice_details', 'getpaid_invoice_details_main', 50 );
 
 /**
  * Returns a path to the templates directory.
- * 
+ *
  * @return string
  */
 function wpinv_get_templates_dir() {
@@ -109,7 +109,7 @@ function wpinv_get_templates_dir() {
 
 /**
  * Returns a url to the templates directory.
- * 
+ *
  * @return string
  */
 function wpinv_get_templates_url() {
@@ -118,9 +118,9 @@ function wpinv_get_templates_url() {
 
 /**
  * Displays a template.
- * 
+ *
  * First checks if there is a template overide, if not it loads the default template.
- * 
+ *
  * @param string $template_name e.g payment-forms/cart.php The template to locate.
  * @param string $template_path The templates directory relative to the theme's root dir. Defaults to 'invoicing'.
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
@@ -131,9 +131,9 @@ function wpinv_get_template( $template_name, $args = array(), $template_path = '
 
 /**
  * Retrieves a given template's html code.
- * 
+ *
  * First checks if there is a template overide, if not it loads the default template.
- * 
+ *
  * @param string $template_name e.g payment-forms/cart.php The template to locate.
  * @param array $args An array of args to pass to the template.
  * @param string $template_path The templates directory relative to the theme's root dir. Defaults to 'invoicing'.
@@ -145,7 +145,7 @@ function wpinv_get_template_html( $template_name, $args = array(), $template_pat
 
 /**
  * Returns the default path from where to look for template overides.
- * 
+ *
  * @return string
  */
 function wpinv_template_path() {
@@ -154,7 +154,7 @@ function wpinv_template_path() {
 
 /**
  * Returns the directory containing the template overides.
- * 
+ *
  * @return string
  */
 function wpinv_get_theme_template_dir_name() {
@@ -163,9 +163,9 @@ function wpinv_get_theme_template_dir_name() {
 
 /**
  * Locates a template path.
- * 
+ *
  * First checks if there is a template overide, if not it loads the default template.
- * 
+ *
  * @param string $template_name e.g payment-forms/cart.php The template to locate.
  * @param string $template_path The template path relative to the theme's root dir. Defaults to 'invoicing'.
  * @param string $default_path The root path to the default template. Defaults to invoicing/templates
@@ -179,8 +179,9 @@ function wpinv_get_template_part( $slug, $name = null, $load = true ) {
 
 	// Setup possible parts
 	$templates = array();
-	if ( isset( $name ) )
+	if ( isset( $name ) ) {
 		$templates[] = $slug . '-' . $name . '.php';
+    }
 	$templates[] = $slug . '.php';
 
 	// Allow template parts to be filtered
@@ -198,28 +199,30 @@ function wpinv_locate_tmpl( $template_names, $load = false, $require_once = true
 	foreach ( (array)$template_names as $template_name ) {
 
 		// Continue if template is empty
-		if ( empty( $template_name ) )
+		if ( empty( $template_name ) ) {
 			continue;
+        }
 
 		// Trim off any slashes from the template name
 		$template_name = ltrim( $template_name, '/' );
 
 		// try locating this template file by looping through the template paths
-		foreach( wpinv_get_theme_template_paths() as $template_path ) {
+		foreach ( wpinv_get_theme_template_paths() as $template_path ) {
 
-			if( file_exists( $template_path . $template_name ) ) {
+			if ( file_exists( $template_path . $template_name ) ) {
 				$located = $template_path . $template_name;
 				break;
 			}
 		}
 
-		if( !empty( $located ) ) {
+		if ( ! empty( $located ) ) {
 			break;
 		}
 	}
 
-	if ( ( true == $load ) && ! empty( $located ) )
+	if ( ( true == $load ) && ! empty( $located ) ) {
 		load_template( $located, $require_once );
+    }
 
 	return $located;
 }
@@ -228,9 +231,9 @@ function wpinv_get_theme_template_paths() {
 	$template_dir = wpinv_get_theme_template_dir_name();
 
 	$file_paths = array(
-		1 => trailingslashit( get_stylesheet_directory() ) . $template_dir,
-		10 => trailingslashit( get_template_directory() ) . $template_dir,
-		100 => wpinv_get_templates_dir()
+		1   => trailingslashit( get_stylesheet_directory() ) . $template_dir,
+		10  => trailingslashit( get_template_directory() ) . $template_dir,
+		100 => wpinv_get_templates_dir(),
 	);
 
 	$file_paths = apply_filters( 'wpinv_template_paths', $file_paths );
@@ -249,7 +252,7 @@ function wpinv_checkout_meta_tags() {
 	$pages[] = wpinv_get_option( 'invoice_history_page' );
 	$pages[] = wpinv_get_option( 'invoice_subscription_page' );
 
-	if( !wpinv_is_checkout() && !is_page( $pages ) ) {
+	if ( ! wpinv_is_checkout() && ! is_page( $pages ) ) {
 		return;
 	}
 
@@ -260,32 +263,32 @@ add_action( 'wp_head', 'wpinv_checkout_meta_tags' );
 function wpinv_add_body_classes( $class ) {
 	$classes = (array)$class;
 
-	if( wpinv_is_checkout() ) {
+	if ( wpinv_is_checkout() ) {
 		$classes[] = 'wpinv-checkout';
 		$classes[] = 'wpinv-page';
 	}
 
-	if( wpinv_is_success_page() ) {
+	if ( wpinv_is_success_page() ) {
 		$classes[] = 'wpinv-success';
 		$classes[] = 'wpinv-page';
 	}
 
-	if( wpinv_is_failed_transaction_page() ) {
+	if ( wpinv_is_failed_transaction_page() ) {
 		$classes[] = 'wpinv-failed-transaction';
 		$classes[] = 'wpinv-page';
 	}
 
-	if( wpinv_is_invoice_history_page() ) {
+	if ( wpinv_is_invoice_history_page() ) {
 		$classes[] = 'wpinv-history';
 		$classes[] = 'wpinv-page';
 	}
 
-	if( wpinv_is_subscriptions_history_page() ) {
+	if ( wpinv_is_subscriptions_history_page() ) {
 		$classes[] = 'wpinv-subscription';
 		$classes[] = 'wpinv-page';
 	}
 
-	if( wpinv_is_test_mode() ) {
+	if ( wpinv_is_test_mode() ) {
 		$classes[] = 'wpinv-test-mode';
 		$classes[] = 'wpinv-page';
 	}
@@ -306,13 +309,15 @@ function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before 
         $start_year++;
     }
 
-    $output = wpinv_html_select( array(
-        'name'             => $name,
-        'selected'         => $selected,
-        'options'          => $options,
-        'show_option_all'  => false,
-        'show_option_none' => false
-    ) );
+    $output = wpinv_html_select(
+        array(
+			'name'             => $name,
+			'selected'         => $selected,
+			'options'          => $options,
+			'show_option_all'  => false,
+			'show_option_none' => false,
+        )
+    );
 
     return $output;
 }
@@ -337,13 +342,15 @@ function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
     // If no month is selected, default to the current month
     $selected = empty( $selected ) ? date( 'n' ) : $selected;
 
-    $output = wpinv_html_select( array(
-        'name'             => $name,
-        'selected'         => $selected,
-        'options'          => $options,
-        'show_option_all'  => false,
-        'show_option_none' => false
-    ) );
+    $output = wpinv_html_select(
+        array(
+			'name'             => $name,
+			'selected'         => $selected,
+			'options'          => $options,
+			'show_option_all'  => false,
+			'show_option_none' => false,
+        )
+    );
 
     return $output;
 }
@@ -373,32 +380,32 @@ function wpinv_html_select( $args = array() ) {
         $data_elements .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
     }
 
-    if( $args['multiple'] ) {
+    if ( $args['multiple'] ) {
         $multiple = ' MULTIPLE';
     } else {
         $multiple = '';
     }
 
-    if( $args['placeholder'] ) {
+    if ( $args['placeholder'] ) {
         $placeholder = $args['placeholder'];
     } else {
         $placeholder = '';
     }
-    
+
     $options = '';
-    if( !empty( $args['onchange'] ) ) {
+    if ( ! empty( $args['onchange'] ) ) {
         $options .= ' onchange="' . esc_attr( $args['onchange'] ) . '"';
     }
-    
-    if( !empty( $args['required'] ) ) {
+
+    if ( ! empty( $args['required'] ) ) {
         $options .= ' required="required"';
     }
-    
-    if( !empty( $args['disabled'] ) ) {
+
+    if ( ! empty( $args['disabled'] ) ) {
         $options .= ' disabled';
     }
-    
-    if( !empty( $args['readonly'] ) ) {
+
+    if ( ! empty( $args['readonly'] ) ) {
         $options .= ' readonly';
     }
 
@@ -406,7 +413,7 @@ function wpinv_html_select( $args = array() ) {
     $output = '<select name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['id'] ) . '" class="wpinv-select ' . $class . '"' . $multiple . ' data-placeholder="' . $placeholder . '" ' . trim( $options ) . $data_elements . '>';
 
     if ( $args['show_option_all'] ) {
-        if( $args['multiple'] ) {
+        if ( $args['multiple'] ) {
             $selected = selected( true, in_array( 0, $args['selected'] ), false );
         } else {
             $selected = selected( $args['selected'], 0, false );
@@ -414,20 +421,20 @@ function wpinv_html_select( $args = array() ) {
         $output .= '<option value="all"' . $selected . '>' . esc_html( $args['show_option_all'] ) . '</option>';
     }
 
-    if ( !empty( $args['options'] ) ) {
+    if ( ! empty( $args['options'] ) ) {
 
         if ( $args['show_option_none'] ) {
-            if( $args['multiple'] ) {
-                $selected = selected( true, in_array( "", $args['selected'] ), false );
+            if ( $args['multiple'] ) {
+                $selected = selected( true, in_array( '', $args['selected'] ), false );
             } else {
-                $selected = selected( $args['selected'] === "", true, false );
+                $selected = selected( $args['selected'] === '', true, false );
             }
             $output .= '<option value=""' . $selected . '>' . esc_html( $args['show_option_none'] ) . '</option>';
         }
 
-        foreach( $args['options'] as $key => $option ) {
+        foreach ( $args['options'] as $key => $option ) {
 
-            if( $args['multiple'] && is_array( $args['selected'] ) ) {
+            if ( $args['multiple'] && is_array( $args['selected'] ) ) {
                 $selected = selected( true, (bool)in_array( $key, $args['selected'] ), false );
             } else {
                 $selected = selected( $args['selected'], $key, false );
@@ -444,17 +451,17 @@ function wpinv_html_select( $args = array() ) {
 
 function wpinv_item_dropdown( $args = array() ) {
     $defaults = array(
-        'name'              => 'wpi_item',
-        'id'                => 'wpi_item',
-        'class'             => '',
-        'multiple'          => false,
-        'selected'          => 0,
-        'number'            => -1,
-        'placeholder'       => __( 'Choose a item', 'invoicing' ),
-        'data'              => array( 'search-type' => 'item' ),
-        'show_option_all'   => false,
-        'show_option_none'  => false,
-        'show_recurring'    => false,
+        'name'             => 'wpi_item',
+        'id'               => 'wpi_item',
+        'class'            => '',
+        'multiple'         => false,
+        'selected'         => 0,
+        'number'           => -1,
+        'placeholder'      => __( 'Choose a item', 'invoicing' ),
+        'data'             => array( 'search-type' => 'item' ),
+        'show_option_all'  => false,
+        'show_option_none' => false,
+        'show_recurring'   => false,
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -463,7 +470,7 @@ function wpinv_item_dropdown( $args = array() ) {
         'post_type'      => 'wpi_item',
         'orderby'        => 'title',
         'order'          => 'ASC',
-        'posts_per_page' => $args['number']
+        'posts_per_page' => $args['number'],
     );
 
     $item_args  = apply_filters( 'wpinv_item_dropdown_query_args', $item_args, $args, $defaults );
@@ -473,48 +480,50 @@ function wpinv_item_dropdown( $args = array() ) {
     if ( $items ) {
         foreach ( $items as $item ) {
             $title = esc_html( $item->post_title );
-            
-            if ( !empty( $args['show_recurring'] ) ) {
+
+            if ( ! empty( $args['show_recurring'] ) ) {
                 $title .= wpinv_get_item_suffix( $item->ID, false );
             }
-            
+
             $options[ absint( $item->ID ) ] = $title;
         }
     }
 
     // This ensures that any selected items are included in the drop down
-    if( is_array( $args['selected'] ) ) {
-        foreach( $args['selected'] as $item ) {
-            if( ! in_array( $item, $options ) ) {
+    if ( is_array( $args['selected'] ) ) {
+        foreach ( $args['selected'] as $item ) {
+            if ( ! in_array( $item, $options ) ) {
                 $title = get_the_title( $item );
-                if ( !empty( $args['show_recurring'] ) ) {
+                if ( ! empty( $args['show_recurring'] ) ) {
                     $title .= wpinv_get_item_suffix( $item, false );
                 }
-                $options[$item] = $title;
+                $options[ $item ] = $title;
             }
         }
     } elseif ( is_numeric( $args['selected'] ) && $args['selected'] !== 0 ) {
         if ( ! in_array( $args['selected'], $options ) ) {
             $title = get_the_title( $args['selected'] );
-            if ( !empty( $args['show_recurring'] ) ) {
+            if ( ! empty( $args['show_recurring'] ) ) {
                 $title .= wpinv_get_item_suffix( $args['selected'], false );
             }
-            $options[$args['selected']] = get_the_title( $args['selected'] );
+            $options[ $args['selected'] ] = get_the_title( $args['selected'] );
         }
     }
 
-    $output = wpinv_html_select( array(
-        'name'             => $args['name'],
-        'selected'         => $args['selected'],
-        'id'               => $args['id'],
-        'class'            => $args['class'],
-        'options'          => $options,
-        'multiple'         => $args['multiple'],
-        'placeholder'      => $args['placeholder'],
-        'show_option_all'  => $args['show_option_all'],
-        'show_option_none' => $args['show_option_none'],
-        'data'             => $args['data'],
-    ) );
+    $output = wpinv_html_select(
+        array(
+			'name'             => $args['name'],
+			'selected'         => $args['selected'],
+			'id'               => $args['id'],
+			'class'            => $args['class'],
+			'options'          => $options,
+			'multiple'         => $args['multiple'],
+			'placeholder'      => $args['placeholder'],
+			'show_option_all'  => $args['show_option_all'],
+			'show_option_none' => $args['show_option_none'],
+			'data'             => $args['data'],
+        )
+    );
 
     return $output;
 }
@@ -529,7 +538,7 @@ function wpinv_get_published_items_for_dropdown() {
             'post_type'      => 'wpi_item',
             'orderby'        => 'title',
             'order'          => 'ASC',
-            'posts_per_page' => '-1'
+            'posts_per_page' => '-1',
         )
     );
 
@@ -545,26 +554,26 @@ function wpinv_get_published_items_for_dropdown() {
 
 function wpinv_html_checkbox( $args = array() ) {
     $defaults = array(
-        'name'     => null,
-        'current'  => null,
-        'class'    => 'wpinv-checkbox',
-        'options'  => array(
+        'name'    => null,
+        'current' => null,
+        'class'   => 'wpinv-checkbox',
+        'options' => array(
             'disabled' => false,
-            'readonly' => false
-        )
+            'readonly' => false,
+        ),
     );
 
     $args = wp_parse_args( $args, $defaults );
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
-    $options = '';
+    $attr  = '';
     if ( ! empty( $args['options']['disabled'] ) ) {
-        $options .= ' disabled="disabled"';
+        $attr .= ' disabled="disabled"';
     } elseif ( ! empty( $args['options']['readonly'] ) ) {
-        $options .= ' readonly';
+        $attr .= ' readonly';
     }
 
-    $output = '<input type="checkbox"' . $options . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . $class . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
+    $output = '<input type="checkbox"' . $attr . ' name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['name'] ) . '" class="' . esc_attr( $class ) . ' ' . esc_attr( $args['name'] ) . '" ' . checked( 1, $args['current'], false ) . ' />';
 
     return $output;
 }
@@ -573,21 +582,14 @@ function wpinv_html_checkbox( $args = array() ) {
  * Displays a hidden field.
  */
 function getpaid_hidden_field( $name, $value ) {
-    $name  = esc_attr( $name );
-    $value = esc_attr( $value );
-
-    echo "<input type='hidden' name='$name' value='$value' />";
+    echo "<input type='hidden' name='" . esc_attr( $name ) . "' value=' " . esc_attr( $value ) . "' />";
 }
 
 /**
  * Displays a submit field.
  */
 function getpaid_submit_field( $value, $name = 'submit', $class = 'btn-primary' ) {
-    $name  = esc_attr( $name );
-    $value = esc_attr( $value );
-    $class = esc_attr( $class );
-
-    echo "<input type='submit' name='$name' value='$value' class='btn $class' />";
+    echo "<input type='submit' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' class='btn " . esc_attr( $class ) . "' />";
 }
 
 function wpinv_html_text( $args = array() ) {
@@ -603,35 +605,35 @@ function wpinv_html_text( $args = array() ) {
 
     $defaults = array(
         'id'           => '',
-        'name'         => isset( $name )  ? $name  : 'text',
+        'name'         => isset( $name ) ? $name : 'text',
         'value'        => isset( $value ) ? $value : null,
         'label'        => isset( $label ) ? $label : null,
-        'desc'         => isset( $desc )  ? $desc  : null,
+        'desc'         => isset( $desc ) ? $desc : null,
         'placeholder'  => '',
         'class'        => 'regular-text',
         'disabled'     => false,
         'readonly'     => false,
         'required'     => false,
         'autocomplete' => '',
-        'data'         => false
+        'data'         => false,
     );
 
     $args = wp_parse_args( $args, $defaults );
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
     $options = '';
-    if( $args['required'] ) {
+    if ( $args['required'] ) {
         $options .= ' required="required"';
     }
-    if( $args['readonly'] ) {
+    if ( $args['readonly'] ) {
         $options .= ' readonly';
     }
-    if( $args['readonly'] ) {
+    if ( $args['readonly'] ) {
         $options .= ' readonly';
     }
 
     $data = '';
-    if ( !empty( $args['data'] ) ) {
+    if ( ! empty( $args['data'] ) ) {
         foreach ( $args['data'] as $key => $value ) {
             $data .= 'data-' . wpinv_sanitize_key( $key ) . '="' . esc_attr( $value ) . '" ';
         }
@@ -643,7 +645,7 @@ function wpinv_html_text( $args = array() ) {
         $output .= '<span class="wpinv-description">' . esc_html( $args['desc'] ) . '</span>';
     }
 
-    $output .= '<input type="text" name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['id'] )  . '" autocomplete="' . esc_attr( $args['autocomplete'] )  . '" value="' . esc_attr( $args['value'] ) . '" placeholder="' . esc_attr( $args['placeholder'] ) . '" class="' . $class . '" ' . $data . ' ' . trim( $options ) . '/>';
+    $output .= '<input type="text" name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['id'] ) . '" autocomplete="' . esc_attr( $args['autocomplete'] ) . '" value="' . esc_attr( $args['value'] ) . '" placeholder="' . esc_attr( $args['placeholder'] ) . '" class="' . $class . '" ' . $data . ' ' . trim( $options ) . '/>';
 
     $output .= '</span>';
 
@@ -665,7 +667,7 @@ function wpinv_html_textarea( $args = array() ) {
 
     $class = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
     $disabled = '';
-    if( $args['disabled'] ) {
+    if ( $args['disabled'] ) {
         $disabled = ' disabled="disabled"';
     }
 
@@ -683,15 +685,15 @@ function wpinv_html_textarea( $args = array() ) {
 
 function wpinv_html_ajax_user_search( $args = array() ) {
     $defaults = array(
-        'name'        => 'user_id',
-        'value'       => null,
-        'placeholder' => __( 'Enter username', 'invoicing' ),
-        'label'       => null,
-        'desc'        => null,
-        'class'       => '',
-        'disabled'    => false,
-        'autocomplete'=> 'off',
-        'data'        => false
+        'name'         => 'user_id',
+        'value'        => null,
+        'placeholder'  => __( 'Enter username', 'invoicing' ),
+        'label'        => null,
+        'desc'         => null,
+        'class'        => '',
+        'disabled'     => false,
+        'autocomplete' => 'off',
+        'data'         => false,
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -708,7 +710,7 @@ function wpinv_html_ajax_user_search( $args = array() ) {
 
 /**
  * Use our template to display invoices.
- * 
+ *
  * @param string $template the template that is currently being used.
  */
 function wpinv_template( $template ) {
@@ -727,8 +729,7 @@ function wpinv_template( $template ) {
             return wpinv_get_template_part( 'wpinv-invalid-access', false, false );
 
         }
-
-    }
+}
 
     return $template;
 }
@@ -736,10 +737,10 @@ add_filter( 'template_include', 'wpinv_template', 10, 1 );
 
 function wpinv_get_business_address() {
     $business_address   = wpinv_store_address();
-    $business_address   = !empty( $business_address ) ? wpautop( wp_kses_post( $business_address ) ) : '';
-    
+    $business_address   = ! empty( $business_address ) ? wpautop( wp_kses_post( $business_address ) ) : '';
+
     $business_address = $business_address ? '<div class="address">' . $business_address . '</div>' : '';
-    
+
     return apply_filters( 'wpinv_get_business_address', $business_address );
 }
 
@@ -753,7 +754,7 @@ add_action( 'getpaid_invoice_details_left', 'wpinv_display_from_address', 10 );
 
 /**
  * Generates a watermark text for an invoice.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @return string
  */
@@ -764,7 +765,7 @@ function wpinv_watermark( $invoice ) {
 
 /**
  * Generates a watermark text for an invoice.
- * 
+ *
  * @param WPInv_Invoice $invoice
  * @return string
  */
@@ -802,7 +803,7 @@ add_action( 'getpaid_invoice_details_right', 'getpaid_invoice_meta', 10 );
 
 /**
  * Retrieves the address markup to use on Invoices.
- * 
+ *
  * @since 1.0.13
  * @see `wpinv_get_full_address_format`
  * @see `wpinv_get_invoice_address_replacements`
@@ -813,21 +814,21 @@ add_action( 'getpaid_invoice_details_right', 'getpaid_invoice_meta', 10 );
 function wpinv_get_invoice_address_markup( $billing_details, $separator = '<br/>' ) {
 
     // Retrieve the address markup...
-    $country= empty( $billing_details['country'] ) ? '' : $billing_details['country'];
+    $country = empty( $billing_details['country'] ) ? '' : $billing_details['country'];
     $format = wpinv_get_full_address_format( $country );
 
     // ... and the replacements.
     $replacements = wpinv_get_invoice_address_replacements( $billing_details );
 
     $formatted_address = str_ireplace( array_keys( $replacements ), $replacements, $format );
-    
+
 	// Remove unavailable tags.
-    $formatted_address = preg_replace( "/\{\{\w+\}\}/", '', $formatted_address );
+    $formatted_address = preg_replace( '/\{\{\w+\}\}/', '', $formatted_address );
 
     // Clean up white space.
 	$formatted_address = preg_replace( '/  +/', ' ', trim( $formatted_address ) );
     $formatted_address = preg_replace( '/\n\n+/', "\n", $formatted_address );
-    
+
     // Break newlines apart and remove empty lines/trim commas and white space.
 	$formatted_address = array_filter( array_map( 'wpinv_trim_formatted_address_line', explode( "\n", $formatted_address ) ) );
 
@@ -836,12 +837,12 @@ function wpinv_get_invoice_address_markup( $billing_details, $separator = '<br/>
 
 	// We're done!
 	return $formatted_address;
-    
+
 }
 
 /**
  * Displays the billing address.
- * 
+ *
  * @param WPInv_Invoice $invoice
  */
 function wpinv_display_to_address( $invoice = 0 ) {
@@ -875,7 +876,7 @@ add_action( 'getpaid_invoice_line_items', 'wpinv_display_line_items', 10 );
 
 /**
  * Displays invoice subscriptions.
- * 
+ *
  * @param WPInv_Invoice $invoice
  */
 function getpaid_display_invoice_subscriptions( $invoice ) {
@@ -946,10 +947,10 @@ function wpinv_display_invoice_notes( $invoice ) {
 
     // Echo the note.
     echo '<div class="getpaid-invoice-notes-wrapper position-relative my-4">';
-    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . __( 'Notes', 'invoicing' ) .'</h2>';
+    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . __( 'Notes', 'invoicing' ) . '</h2>';
     echo '<ul class="getpaid-invoice-notes text-break overflow-auto list-unstyled p-0 m-0">';
 
-    foreach( $notes as $note ) {
+    foreach ( $notes as $note ) {
         wpinv_get_invoice_note_line_item( $note );
     }
 
@@ -982,7 +983,7 @@ function wpinv_display_style() {
         $custom_css     = wp_kses( $custom_css, array( '\'', '\"' ) );
         $custom_css     = str_replace( '&gt;', '>', $custom_css );
         echo '<style type="text/css">';
-        echo $custom_css;
+        echo wp_kses_post( $custom_css );
         echo '</style>';
     }
 
@@ -1138,7 +1139,7 @@ function wpinv_invoice_link( $invoice_id ) {
     $invoice = wpinv_get_invoice( $invoice_id );
 
     if ( empty( $invoice ) ) {
-        return NULL;
+        return null;
     }
 
     $invoice_link = '<a href="' . esc_url( $invoice->get_view_url() ) . '">' . $invoice->get_number() . '</a>';
@@ -1148,26 +1149,26 @@ function wpinv_invoice_link( $invoice_id ) {
 
 function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     if ( empty( $note ) ) {
-        return NULL;
+        return null;
     }
 
     if ( is_int( $note ) ) {
         $note = get_comment( $note );
     }
 
-    if ( !( is_object( $note ) && is_a( $note, 'WP_Comment' ) ) ) {
-        return NULL;
+    if ( ! ( is_object( $note ) && is_a( $note, 'WP_Comment' ) ) ) {
+        return null;
     }
 
     $note_classes   = array( 'note' );
     $note_classes[] = get_comment_meta( $note->comment_ID, '_wpi_customer_note', true ) ? 'customer-note' : '';
     $note_classes[] = $note->comment_author === 'System' ? 'system-note' : '';
     $note_classes   = apply_filters( 'wpinv_invoice_note_class', array_filter( $note_classes ), $note );
-    $note_classes   = !empty( $note_classes ) ? implode( ' ', $note_classes ) : '';
+    $note_classes   = ! empty( $note_classes ) ? implode( ' ', $note_classes ) : '';
 
     ob_start();
     ?>
-    <li rel="<?php echo absint( $note->comment_ID ) ; ?>" class="<?php echo esc_attr( $note_classes ); ?> mb-2">
+    <li rel="<?php echo absint( $note->comment_ID ); ?>" class="<?php echo esc_attr( $note_classes ); ?> mb-2">
         <div class="note_content">
 
             <?php echo wptexturize( wp_kses_post( $note->comment_content ) ); ?>
@@ -1228,9 +1229,9 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
 function wpinv_get_policy_text() {
     $privacy_page_id = get_option( 'wp_page_for_privacy_policy', 0 );
 
-    $text = wpinv_get_option('invoicing_privacy_checkout_message', sprintf( __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our %s.', 'invoicing' ), '[wpinv_privacy_policy]' ));
+    $text = wpinv_get_option( 'invoicing_privacy_checkout_message', sprintf( __( 'Your personal data will be used to process your invoice, payment and for other purposes described in our %s.', 'invoicing' ), '[wpinv_privacy_policy]' ) );
 
-    if(!$privacy_page_id){
+    if ( ! $privacy_page_id ) {
         $privacy_page_id = wpinv_get_option( 'privacy_page', 0 );
     }
 
@@ -1242,7 +1243,7 @@ function wpinv_get_policy_text() {
 
     $privacy_text = str_replace( array_keys( $find_replace ), array_values( $find_replace ), $text );
 
-    return wp_kses_post(wpautop($privacy_text));
+    return wp_kses_post( wpautop( $privacy_text ) );
 }
 
 function wpinv_oxygen_fix_conflict() {
@@ -1267,7 +1268,7 @@ function wpinv_oxygen_fix_conflict() {
 
 /**
  * Helper function to display a payment form on the frontend.
- * 
+ *
  * @param GetPaid_Payment_Form $form
  */
 function getpaid_display_payment_form( $form ) {
@@ -1379,7 +1380,7 @@ function getpaid_convert_items_to_string( $items ) {
 
 /**
  * Helper function to display a payment item.
- * 
+ *
  * Provide a label and one of $form, $items or $invoice.
  */
 function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null ) {
@@ -1387,17 +1388,17 @@ function getpaid_get_payment_button( $label, $form = null, $items = null, $invoi
 
     if ( ! empty( $form ) ) {
         $form  = esc_attr( $form );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-form='$form'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-form='$form'>$label</button>";
     }
-	
+
 	if ( ! empty( $items ) ) {
         $items  = esc_attr( $items );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-item='$items'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-item='$items'>$label</button>";
     }
-    
+
     if ( ! empty( $invoice ) ) {
         $invoice  = esc_attr( $invoice );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-invoice='$invoice'>$label</button>"; 
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-invoice='$invoice'>$label</button>";
     }
 
 }
@@ -1435,7 +1436,7 @@ function getpaid_payment_form_element( $element, $form ) {
 
     // Try to locate the appropriate template.
     $located = wpinv_locate_template( "payment-forms/elements/$element_type.php" );
-    
+
     // Abort if this is not our element.
     if ( empty( $located ) || ! file_exists( $located ) ) {
         return;
@@ -1534,16 +1535,16 @@ function wpinv_get_recurring_gateways_text() {
     }
 
     if ( empty( $gateways ) ) {
-        return "<span class='form-text text-danger'>" . __( 'No active gateways support subscription payments.', 'invoicing' ) ."</span>";
+        return "<span class='form-text text-danger'>" . __( 'No active gateways support subscription payments.', 'invoicing' ) . '</span>';
     }
 
-    return "<span class='form-text text-muted'>" . wp_sprintf( __( 'Subscription payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ) ."</span>";
+    return "<span class='form-text text-muted'>" . wp_sprintf( __( 'Subscription payments only supported by: %s', 'invoicing' ), implode( ', ', $gateways ) ) . '</span>';
 
 }
 
 /**
  * Returns the template.
- * 
+ *
  * @return GetPaid_Template
  */
 function getpaid_template() {
@@ -1552,7 +1553,7 @@ function getpaid_template() {
 
 /**
  * Displays pagination links.
- * 
+ *
  * @param array args
  * @return string
  */
@@ -1562,7 +1563,7 @@ function getpaid_paginate_links( $args ) {
 
 /**
  * Displays the states select markup.
- * 
+ *
  * @param string country
  * @param string state
  * @return string
@@ -1574,41 +1575,43 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 
     if ( ! empty( $states ) ) {
 
-        return aui()->select( array(
-            'options'          => $states,
-            'name'             => esc_attr( $field_name ),
-            'id'               => sanitize_html_class( $field_name ) . $uniqid,
-            'value'            => sanitize_text_field( $state ),
-            'placeholder'      => $placeholder,
-            'required'         => $required,
-            'label'            => wp_kses_post( $label ),
-            'label_type'       => 'vertical',
-            'help_text'        => $help_text,
-            'class'            => 'getpaid-address-field wpinv_state',
-            'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
-            'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
-            'extra_attributes' => array(
-                'autocomplete' => "address-level1",
-            ),
-        ));
+        return aui()->select(
+            array(
+				'options'          => $states,
+				'name'             => esc_attr( $field_name ),
+				'id'               => sanitize_html_class( $field_name ) . $uniqid,
+				'value'            => sanitize_text_field( $state ),
+				'placeholder'      => $placeholder,
+				'required'         => $required,
+				'label'            => wp_kses_post( $label ),
+				'label_type'       => 'vertical',
+				'help_text'        => $help_text,
+				'class'            => 'getpaid-address-field wpinv_state',
+				'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
+				'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
+				'extra_attributes' => array(
+					'autocomplete' => 'address-level1',
+				),
+            )
+        );
 
     }
 
     return aui()->input(
         array(
-            'name'        => esc_attr( $field_name ),
-            'id'          => sanitize_html_class( $field_name ) . $uniqid,
-            'placeholder' => $placeholder,
-            'required'    => $required,
-            'label'       => wp_kses_post( $label ),
-            'label_type'  => 'vertical',
-            'help_text'   => $help_text,
-            'value'       => sanitize_text_field( $state ),
-            'class'       => 'getpaid-address-field wpinv_state',
-            'wrap_class'  => "$wrapper_class getpaid-address-field-wrapper__state",
-            'label_class' => 'getpaid-address-field-label getpaid-address-field-label__state',
+            'name'             => esc_attr( $field_name ),
+            'id'               => sanitize_html_class( $field_name ) . $uniqid,
+            'placeholder'      => $placeholder,
+            'required'         => $required,
+            'label'            => wp_kses_post( $label ),
+            'label_type'       => 'vertical',
+            'help_text'        => $help_text,
+            'value'            => sanitize_text_field( $state ),
+            'class'            => 'getpaid-address-field wpinv_state',
+            'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
+            'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__state',
             'extra_attributes' => array(
-                'autocomplete' => "address-level1",
+                'autocomplete' => 'address-level1',
             ),
         )
     );
@@ -1617,21 +1620,21 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 
 /**
  * Retrieves an element's grid width.
- * 
+ *
  * @param array $element
  * @return string
  */
 function getpaid_get_form_element_grid_class( $element ) {
 
-    $class = "col-12";
+    $class = 'col-12';
     $width = empty( $element['grid_width'] ) ? 'full' : $element['grid_width'];
 
     if ( $width == 'half' ) {
-        $class .= " col-md-6";
+        $class .= ' col-md-6';
     }
 
     if ( $width == 'third' ) {
-        $class .= " col-md-4";
+        $class .= ' col-md-4';
     }
 
     return $class;
@@ -1651,7 +1654,7 @@ function getpaid_embed_url( $payment_form = false, $items = false ) {
         array(
             'getpaid_embed' => 1,
             'form'          => $payment_form ? absint( $payment_form ) : false,
-            'item'          => $items ? urlencode( $items ) : false
+            'item'          => $items ? urlencode( $items ) : false,
         ),
         home_url( 'index.php' )
     );

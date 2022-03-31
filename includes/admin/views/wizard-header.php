@@ -46,23 +46,25 @@ $aui_settings->enqueue_style();
             <?php if ( isset( $_REQUEST['step'] ) ) : ?>
                 <ol class="gp-setup-steps mb-0 pb-4 mw-100 list-group list-group-horizontal text-center">
                     <?php foreach ( $steps as $step => $data ) : ?>
-                        <li class="list-group-item flex-fill rounded-0 <?php
+                        <li class="list-group-item flex-fill rounded-0 
+                        <?php
                             echo $step == $current ? 'active' : 'd-none d-md-block';
                             echo array_search( $current, array_keys( $steps ) ) > array_search( $step, array_keys( $steps ) ) ? ' done' : '';
-                        ?>">
-                            <i class="far fa-check-circle <?php echo array_search( $current, array_keys( $steps ) ) > array_search( $step, array_keys( $steps ) ) ? 'text-success' : '' ;?>"></i>
+                        ?>
+                        ">
+                            <i class="far fa-check-circle <?php echo array_search( $current, array_keys( $steps ) ) > array_search( $step, array_keys( $steps ) ) ? 'text-success' : ''; ?>"></i>
                             <?php echo esc_html( $data['name'] ); ?>
                         </li>
                     <?php endforeach; ?>
                 </ol>
-            <?php else: ?>
+            <?php else : ?>
                 <div class='mb-3'>&nbsp;</div>
             <?php endif; ?>
 
             <div class="text-center pb-3 mt-5">
                 <a class=" text-decoration-none" href="https://wpgetpaid.com/">
                     <span class="text-black-50">
-                        <img class="ml-n3x" src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/getpaid-logo.png' );?>" />
+                        <img class="ml-n3x" src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/getpaid-logo.png' ); ?>" />
                     </span>
                 </a>
             </div>

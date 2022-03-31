@@ -5,9 +5,9 @@
  * @since 1.0.0
  * @package Invoicing
  */
- 
+
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
@@ -63,7 +63,7 @@ final class WPInv_Legacy_Invoice {
 
     /**
      * Whether an actual payment occurred (live) or the transaction
-     * happened in a sandbox environment (test). 
+     * happened in a sandbox environment (test).
      */
     public $mode = 'live';
 
@@ -251,7 +251,7 @@ final class WPInv_Legacy_Invoice {
      * Whether or not the client confirmed the address
      */
     public $adddress_confirmed = '';
-    
+
     /**
      * The full name of the client.
      */
@@ -261,9 +261,9 @@ final class WPInv_Legacy_Invoice {
      * The parent invoice id of this invoice.
      */
     public $parent_invoice = 0;
-    
+
     public function __construct( $invoice_id = false ) {
-        if( empty( $invoice_id ) ) {
+        if ( empty( $invoice_id ) ) {
             return false;
         }
 
@@ -291,13 +291,13 @@ final class WPInv_Legacy_Invoice {
             $this->pending[ $key ] = $value;
         }
 
-        if( '_ID' !== $key ) {
+        if ( '_ID' !== $key ) {
             $this->$key = $value;
         }
     }
 
     public function _isset( $name ) {
-        if ( property_exists( $this, $name) ) {
+        if ( property_exists( $this, $name ) ) {
             return false === empty( $this->$name );
         } else {
             return null;
@@ -348,15 +348,15 @@ final class WPInv_Legacy_Invoice {
         $this->fees_total      = $this->get_fees_total();
         $this->subtotal        = $this->setup_subtotal();
         $this->currency        = $this->setup_currency();
-        
+
         // Gateway based
         $this->gateway         = $this->setup_gateway();
         $this->gateway_title   = $this->setup_gateway_title();
         $this->transaction_id  = $this->setup_transaction_id();
-        
+
         // User based
         $this->ip              = $this->setup_ip();
-        $this->user_id         = !empty( $invoice->post_author ) ? $invoice->post_author : get_current_user_id();///$this->setup_user_id();
+        $this->user_id         = ! empty( $invoice->post_author ) ? $invoice->post_author : get_current_user_id();///$this->setup_user_id();
         $this->email           = get_the_author_meta( 'email', $this->user_id );
 
         $this->user_info       = $this->setup_user_info();
@@ -373,7 +373,7 @@ final class WPInv_Legacy_Invoice {
         $this->state           = $this->user_info['state'];
         $this->zip             = $this->user_info['zip'];
         $this->phone           = $this->user_info['phone'];
-        
+
         $this->discounts       = $this->user_info['discount'];
             $this->discount        = $this->setup_discount();
             $this->discount_code   = $this->setup_discount_code();
@@ -381,10 +381,10 @@ final class WPInv_Legacy_Invoice {
         // Other Identifiers
         $this->key             = $this->setup_invoice_key();
         $this->number          = $this->setup_invoice_number();
-        $this->title           = !empty( $invoice->post_title ) ? $invoice->post_title : $this->number;
-        
-        $this->full_name       = trim( $this->first_name . ' '. $this->last_name );
-        
+        $this->title           = ! empty( $invoice->post_title ) ? $invoice->post_title : $this->number;
+
+        $this->full_name       = trim( $this->first_name . ' ' . $this->last_name );
+
         // Allow extensions to add items to this object via hook
         do_action( 'wpinv_setup_invoice', $this, $invoice_id );
 
@@ -398,20 +398,20 @@ final class WPInv_Legacy_Invoice {
     private function setup_post_name( $post ) {
         $this->post_name = $post->post_name;
     }
-    
+
     private function setup_due_date() {
         $due_date = $this->get_meta( '_wpinv_due_date' );
-        
+
         if ( empty( $due_date ) ) {
             $overdue_time = strtotime( $this->date ) + ( DAY_IN_SECONDS * absint( wpinv_get_option( 'overdue_days', 0 ) ) );
             $due_date = date_i18n( 'Y-m-d', $overdue_time );
-        } else if ( $due_date == 'none' ) {
+        } elseif ( $due_date == 'none' ) {
             $due_date = '';
         }
-        
+
         return $due_date;
     }
-    
+
     private function setup_completed_date() {
         $invoice = get_post( $this->ID );
 
@@ -423,31 +423,31 @@ final class WPInv_Legacy_Invoice {
 
         return $date;
     }
-    
+
     private function setup_cart_details() {
         $cart_details = isset( $this->payment_meta['cart_details'] ) ? maybe_unserialize( $this->payment_meta['cart_details'] ) : array();
         return $cart_details;
     }
-    
+
     public function array_convert() {
         return get_object_vars( $this );
     }
-    
+
     private function setup_items() {
         $items = isset( $this->payment_meta['items'] ) ? maybe_unserialize( $this->payment_meta['items'] ) : array();
         return $items;
     }
-    
+
     private function setup_fees() {
         $payment_fees = isset( $this->payment_meta['fees'] ) ? $this->payment_meta['fees'] : array();
         return $payment_fees;
     }
-        
+
     private function setup_currency() {
         $currency = isset( $this->payment_meta['currency'] ) ? $this->payment_meta['currency'] : apply_filters( 'wpinv_currency_default', wpinv_get_currency(), $this );
         return $currency;
     }
-    
+
     private function setup_discount() {
         //$discount = $this->get_meta( '_wpinv_discount', true );
         $discount = (float)$this->subtotal - ( (float)$this->total - (float)$this->tax - (float)$this->fees_total );
@@ -455,24 +455,24 @@ final class WPInv_Legacy_Invoice {
             $discount = 0;
         }
         $discount = wpinv_round_amount( $discount );
-        
+
         return $discount;
     }
-    
+
     private function setup_discount_code() {
-        $discount_code = !empty( $this->discounts ) ? $this->discounts : $this->get_meta( '_wpinv_discount_code', true );
+        $discount_code = ! empty( $this->discounts ) ? $this->discounts : $this->get_meta( '_wpinv_discount_code', true );
         return $discount_code;
     }
-    
+
     private function setup_tax() {
 
         $tax = $this->get_meta( '_wpinv_tax', true );
 
         // We don't have tax as it's own meta and no meta was passed
-        if ( '' === $tax ) {            
+        if ( '' === $tax ) {
             $tax = isset( $this->payment_meta['tax'] ) ? $this->payment_meta['tax'] : 0;
         }
-        
+
         if ( $tax < 0 || ! $this->is_taxable() ) {
             $tax = 0;
         }
@@ -510,7 +510,7 @@ final class WPInv_Legacy_Invoice {
         $discounts = ! empty( $this->payment_meta['user_info']['discount'] ) ? $this->payment_meta['user_info']['discount'] : array();
         return $discounts;
     }
-    
+
     private function setup_total() {
         $amount = $this->get_meta( '_wpinv_total', true );
 
@@ -523,24 +523,24 @@ final class WPInv_Legacy_Invoice {
             }
         }
 
-        if($amount < 0){
+        if ( $amount < 0 ) {
             $amount = 0;
         }
 
         return $amount;
     }
-    
+
     private function setup_mode() {
         return $this->get_meta( '_wpinv_mode' );
     }
 
     private function setup_gateway() {
         $gateway = $this->get_meta( '_wpinv_gateway' );
-        
+
         if ( empty( $gateway ) && 'publish' === $this->status ) {
             $gateway = 'manual';
         }
-        
+
         return $gateway;
     }
 
@@ -569,62 +569,62 @@ final class WPInv_Legacy_Invoice {
         ///$user_id = $this->get_meta( '_wpinv_user_id' );
         ///return $user_id;
     ///}
-        
+
     private function setup_first_name() {
         $first_name = $this->get_meta( '_wpinv_first_name' );
         return $first_name;
     }
-    
+
     private function setup_last_name() {
         $last_name = $this->get_meta( '_wpinv_last_name' );
         return $last_name;
     }
-    
+
     private function setup_company() {
         $company = $this->get_meta( '_wpinv_company' );
         return $company;
     }
-    
+
     private function setup_vat_number() {
         $vat_number = $this->get_meta( '_wpinv_vat_number' );
         return $vat_number;
     }
-    
+
     private function setup_vat_rate() {
         $vat_rate = $this->get_meta( '_wpinv_vat_rate' );
         return $vat_rate;
     }
-    
+
     private function setup_adddress_confirmed() {
         $adddress_confirmed = $this->get_meta( '_wpinv_adddress_confirmed' );
         return $adddress_confirmed;
     }
-    
+
     private function setup_phone() {
         $phone = $this->get_meta( '_wpinv_phone' );
         return $phone;
     }
-    
+
     private function setup_address() {
         $address = $this->get_meta( '_wpinv_address', true );
         return $address;
     }
-    
+
     private function setup_city() {
         $city = $this->get_meta( '_wpinv_city', true );
         return $city;
     }
-    
+
     private function setup_country() {
         $country = $this->get_meta( '_wpinv_country', true );
         return $country;
     }
-    
+
     private function setup_state() {
         $state = $this->get_meta( '_wpinv_state', true );
         return $state;
     }
-    
+
     private function setup_zip() {
         $zip = $this->get_meta( '_wpinv_zip', true );
         return $zip;
@@ -632,44 +632,44 @@ final class WPInv_Legacy_Invoice {
 
     private function setup_user_info() {
         $defaults = array(
-            'user_id'        => $this->user_id,
-            'first_name'     => $this->first_name,
-            'last_name'      => $this->last_name,
-            'email'          => get_the_author_meta( 'email', $this->user_id ),
-            'phone'          => $this->phone,
-            'address'        => $this->address,
-            'city'           => $this->city,
-            'country'        => $this->country,
-            'state'          => $this->state,
-            'zip'            => $this->zip,
-            'company'        => $this->company,
-            'vat_number'     => $this->vat_number,
-            'vat_rate'       => $this->vat_rate,
+            'user_id'            => $this->user_id,
+            'first_name'         => $this->first_name,
+            'last_name'          => $this->last_name,
+            'email'              => get_the_author_meta( 'email', $this->user_id ),
+            'phone'              => $this->phone,
+            'address'            => $this->address,
+            'city'               => $this->city,
+            'country'            => $this->country,
+            'state'              => $this->state,
+            'zip'                => $this->zip,
+            'company'            => $this->company,
+            'vat_number'         => $this->vat_number,
+            'vat_rate'           => $this->vat_rate,
             'adddress_confirmed' => $this->adddress_confirmed,
-            'discount'       => $this->discounts,
+            'discount'           => $this->discounts,
         );
-        
+
         $user_info = array();
         if ( isset( $this->payment_meta['user_info'] ) ) {
             $user_info = maybe_unserialize( $this->payment_meta['user_info'] );
-            
-            if ( !empty( $user_info ) && isset( $user_info['user_id'] ) && $post = get_post( $this->ID ) ) {
+
+            if ( ! empty( $user_info ) && isset( $user_info['user_id'] ) && $post = get_post( $this->ID ) ) {
                 $this->user_id = $post->post_author;
                 $this->email = get_the_author_meta( 'email', $this->user_id );
-                
+
                 $user_info['user_id'] = $this->user_id;
                 $user_info['email'] = $this->email;
                 $this->payment_meta['user_id'] = $this->user_id;
                 $this->payment_meta['email'] = $this->email;
             }
         }
-        
+
         $user_info    = wp_parse_args( $user_info, $defaults );
-        
+
         // Get the user, but only if it's been created
         $user = get_userdata( $this->user_id );
-        
-        if ( !empty( $user ) && $user->ID > 0 ) {
+
+        if ( ! empty( $user ) && $user->ID > 0 ) {
             if ( empty( $user_info ) ) {
                 $user_info = array(
                     'user_id'    => $user->ID,
@@ -684,7 +684,7 @@ final class WPInv_Legacy_Invoice {
                         continue;
                     }
 
-                    switch( $key ) {
+                    switch ( $key ) {
                         case 'user_id':
                             $user_info[ $key ] = $user->ID;
                             break;
@@ -707,14 +707,14 @@ final class WPInv_Legacy_Invoice {
 
     private function setup_invoice_key() {
         $key = $this->get_meta( '_wpinv_key', true );
-        
+
         return $key;
     }
 
     private function setup_invoice_number() {
         $number = $this->get_meta( '_wpinv_number', true );
 
-        if ( !$number ) {
+        if ( ! $number ) {
             $number = $this->ID;
 
             if ( $this->status == 'auto-draft' ) {
@@ -723,7 +723,7 @@ final class WPInv_Legacy_Invoice {
                     $number      = $next_number;
                 }
             }
-            
+
             $number = wpinv_format_invoice_number( $number, $this->post_type );
         }
 
@@ -731,27 +731,27 @@ final class WPInv_Legacy_Invoice {
     }
 
     public function save() {}
-    
+
     public function add_fee( $args ) {
         $default_args = array(
-            'label'       => '',
-            'amount'      => 0,
-            'type'        => 'fee',
-            'id'          => '',
-            'no_tax'      => false,
-            'item_id'     => 0,
+            'label'   => '',
+            'amount'  => 0,
+            'type'    => 'fee',
+            'id'      => '',
+            'no_tax'  => false,
+            'item_id' => 0,
         );
 
         $fee = wp_parse_args( $args, $default_args );
-        
+
         if ( empty( $fee['label'] ) ) {
             return false;
         }
-        
+
         $fee['id']  = sanitize_title( $fee['label'] );
-        
+
         $this->fees[]               = $fee;
-        
+
         $added_fee               = $fee;
         $added_fee['action']     = 'add';
         $this->pending['fees'][] = $added_fee;
@@ -772,9 +772,15 @@ final class WPInv_Legacy_Invoice {
     }
 
     public function remove_fee_by( $key, $value, $global = false ) {
-        $allowed_fee_keys = apply_filters( 'wpinv_fee_keys', array(
-            'index', 'label', 'amount', 'type',
-        ) );
+        $allowed_fee_keys = apply_filters(
+            'wpinv_fee_keys',
+            array(
+				'index',
+				'label',
+				'amount',
+				'type',
+            )
+        );
 
         if ( ! in_array( $key, $allowed_fee_keys ) ) {
             return false;
@@ -790,7 +796,7 @@ final class WPInv_Legacy_Invoice {
 
             unset( $this->fees[ $value ] );
             $removed = true;
-        } else if ( 'index' !== $key ) {
+        } elseif ( 'index' !== $key ) {
             foreach ( $this->fees as $index => $fee ) {
                 if ( isset( $fee[ $key ] ) && $fee[ $key ] == $value ) {
                     $removed_fee             = $fee;
@@ -816,18 +822,19 @@ final class WPInv_Legacy_Invoice {
         return $removed;
     }
 
-    
+
 
     public function add_note( $note = '', $customer_type = false, $added_by_user = false, $system = false ) {
         // Bail if no note specified
-        if( !$note ) {
+        if ( ! $note ) {
             return false;
         }
 
-        if ( empty( $this->ID ) )
+        if ( empty( $this->ID ) ) {
             return false;
-        
-        if ( ( ( is_user_logged_in() && wpinv_current_user_can_manage_invoicing() ) || $added_by_user ) && !$system ) {
+        }
+
+        if ( ( ( is_user_logged_in() && wpinv_current_user_can_manage_invoicing() ) || $added_by_user ) && ! $system ) {
             $user                 = get_user_by( 'id', get_current_user_id() );
             $comment_author       = $user->display_name;
             $comment_author_email = $user->user_email;
@@ -840,28 +847,38 @@ final class WPInv_Legacy_Invoice {
 
         do_action( 'wpinv_pre_insert_invoice_note', $this->ID, $note, $customer_type );
 
-        $note_id = wp_insert_comment( wp_filter_comment( array(
-            'comment_post_ID'      => $this->ID,
-            'comment_content'      => $note,
-            'comment_agent'        => 'WPInvoicing',
-            'user_id'              => is_admin() ? get_current_user_id() : 0,
-            'comment_date'         => current_time( 'mysql' ),
-            'comment_date_gmt'     => current_time( 'mysql', 1 ),
-            'comment_approved'     => 1,
-            'comment_parent'       => 0,
-            'comment_author'       => $comment_author,
-            'comment_author_IP'    => wpinv_get_ip(),
-            'comment_author_url'   => '',
-            'comment_author_email' => $comment_author_email,
-            'comment_type'         => 'wpinv_note'
-        ) ) );
+        $note_id = wp_insert_comment(
+            wp_filter_comment(
+                array(
+					'comment_post_ID'      => $this->ID,
+					'comment_content'      => $note,
+					'comment_agent'        => 'WPInvoicing',
+					'user_id'              => is_admin() ? get_current_user_id() : 0,
+					'comment_date'         => current_time( 'mysql' ),
+					'comment_date_gmt'     => current_time( 'mysql', 1 ),
+					'comment_approved'     => 1,
+					'comment_parent'       => 0,
+					'comment_author'       => $comment_author,
+					'comment_author_IP'    => wpinv_get_ip(),
+					'comment_author_url'   => '',
+					'comment_author_email' => $comment_author_email,
+					'comment_type'         => 'wpinv_note',
+                )
+            )
+        );
 
         do_action( 'wpinv_insert_payment_note', $note_id, $this->ID, $note );
-        
+
         if ( $customer_type ) {
             add_comment_meta( $note_id, '_wpi_customer_note', 1 );
 
-            do_action( 'wpinv_new_customer_note', array( 'invoice_id' => $this->ID, 'user_note' => $note ) );
+            do_action(
+                'wpinv_new_customer_note',
+                array(
+					'invoice_id' => $this->ID,
+					'user_note'  => $note,
+                )
+            );
         }
 
         return $note_id;
@@ -909,13 +926,13 @@ final class WPInv_Legacy_Invoice {
 
     public function recalculate_total() {
         global $wpi_nosave;
-        
+
         $this->total = $this->subtotal + $this->tax + $this->fees_total;
         $this->total = wpinv_round_amount( $this->total );
-        
+
         do_action( 'wpinv_invoice_recalculate_total', $this, $wpi_nosave );
     }
-    
+
     public function increase_tax( $amount = 0.00 ) {
         $amount       = (float) $amount;
         $this->tax   += $amount;
@@ -952,11 +969,11 @@ final class WPInv_Legacy_Invoice {
             $update_post_data['post_status']    = $new_status;
             $update_post_data['edit_date']      = current_time( 'mysql', 0 );
             $update_post_data['edit_date_gmt']  = current_time( 'mysql', 1 );
-            
+
             $update_post_data = apply_filters( 'wpinv_update_invoice_status_fields', $update_post_data, $this->ID );
 
             $updated = wp_update_post( $update_post_data );
-            
+
             // Status was changed.
             do_action( 'wpinv_status_' . $new_status, $this->ID, $old_status );
             do_action( 'wpinv_status_' . $old_status . '_to_' . $new_status, $this->ID, $old_status );
@@ -982,7 +999,8 @@ final class WPInv_Legacy_Invoice {
 
         if ( $meta_key === '_wpinv_payment_meta' ) {
 
-            if(!is_array($meta)){$meta = array();} // we need this to be an array so make sure it is.
+            if ( ! is_array( $meta ) ) {
+$meta = array();} // we need this to be an array so make sure it is.
 
             if ( empty( $meta['key'] ) ) {
                 $meta['key'] = $this->setup_invoice_key();
@@ -997,46 +1015,46 @@ final class WPInv_Legacy_Invoice {
 
         return apply_filters( 'wpinv_get_invoice_meta', $meta, $this->ID, $meta_key );
     }
-    
+
     public function get_description() {
         $post = get_post( $this->ID );
-        
-        $description = !empty( $post ) ? $post->post_content : '';
+
+        $description = ! empty( $post ) ? $post->post_content : '';
         return apply_filters( 'wpinv_get_description', $description, $this->ID, $this );
     }
-    
+
     public function get_status( $nicename = false ) {
-        if ( !$nicename ) {
+        if ( ! $nicename ) {
             $status = $this->status;
         } else {
             $status = $this->status_nicename;
         }
-        
+
         return apply_filters( 'wpinv_get_status', $status, $nicename, $this->ID, $this );
     }
-    
+
     public function get_cart_details() {
         return apply_filters( 'wpinv_cart_details', $this->cart_details, $this->ID, $this );
     }
-    
+
     public function get_subtotal( $currency = false ) {
         $subtotal = wpinv_round_amount( $this->subtotal );
-        
+
         if ( $currency ) {
-            $subtotal = wpinv_price( wpinv_format_amount( $subtotal, NULL, !$currency ), $this->get_currency() );
+            $subtotal = wpinv_price( wpinv_format_amount( $subtotal, null, ! $currency ), $this->get_currency() );
         }
-        
+
         return apply_filters( 'wpinv_get_invoice_subtotal', $subtotal, $this->ID, $this, $currency );
     }
-    
-    public function get_total( $currency = false ) {        
+
+    public function get_total( $currency = false ) {
         if ( $this->is_free_trial() ) {
             $total = wpinv_round_amount( 0 );
         } else {
             $total = wpinv_round_amount( $this->total );
         }
         if ( $currency ) {
-            $total = wpinv_price( wpinv_format_amount( $total, NULL, !$currency ), $this->get_currency() );
+            $total = wpinv_price( wpinv_format_amount( $total, null, ! $currency ), $this->get_currency() );
         }
 
         return apply_filters( 'wpinv_get_invoice_total', $total, $this->ID, $this, $currency );
@@ -1044,15 +1062,15 @@ final class WPInv_Legacy_Invoice {
 
     public function get_recurring_details() {}
 
-    public function get_final_tax( $currency = false ) {        
+    public function get_final_tax( $currency = false ) {
         $final_total = wpinv_round_amount( $this->tax );
         if ( $currency ) {
-            $final_total = wpinv_price( wpinv_format_amount( $final_total, NULL, !$currency ), $this->get_currency() );
+            $final_total = wpinv_price( wpinv_format_amount( $final_total, null, ! $currency ), $this->get_currency() );
         }
-        
+
         return apply_filters( 'wpinv_get_invoice_final_total', $final_total, $this, $currency );
     }
-    
+
     public function get_discounts( $array = false ) {
         $discounts = $this->discounts;
         if ( $array && $discounts ) {
@@ -1060,32 +1078,32 @@ final class WPInv_Legacy_Invoice {
         }
         return apply_filters( 'wpinv_payment_discounts', $discounts, $this->ID, $this, $array );
     }
-    
+
     public function get_discount( $currency = false, $dash = false ) {
-        if ( !empty( $this->discounts ) ) {
+        if ( ! empty( $this->discounts ) ) {
             global $ajax_cart_details;
             $ajax_cart_details = $this->get_cart_details();
-            
-            if ( !empty( $ajax_cart_details ) && count( $ajax_cart_details ) == count( $this->items ) ) {
+
+            if ( ! empty( $ajax_cart_details ) && count( $ajax_cart_details ) == count( $this->items ) ) {
                 $cart_items = $ajax_cart_details;
             } else {
                 $cart_items = $this->items;
             }
 
-            $this->discount = wpinv_get_cart_items_discount_amount( $cart_items , $this->discounts );
+            $this->discount = wpinv_get_cart_items_discount_amount( $cart_items, $this->discounts );
         }
         $discount   = wpinv_round_amount( $this->discount );
         $dash       = $dash && $discount > 0 ? '&ndash;' : '';
-        
+
         if ( $currency ) {
-            $discount = wpinv_price( wpinv_format_amount( $discount, NULL, !$currency ), $this->get_currency() );
+            $discount = wpinv_price( wpinv_format_amount( $discount, null, ! $currency ), $this->get_currency() );
         }
-        
+
         $discount   = $dash . $discount;
-        
+
         return apply_filters( 'wpinv_get_invoice_discount', $discount, $this->ID, $this, $currency, $dash );
     }
-    
+
     public function get_discount_code() {
         return $this->discount_code;
     }
@@ -1099,7 +1117,7 @@ final class WPInv_Legacy_Invoice {
         $tax = wpinv_round_amount( $this->tax );
 
         if ( $currency ) {
-            $tax = wpinv_price( wpinv_format_amount( $tax, NULL, !$currency ), $this->get_currency() );
+            $tax = wpinv_price( wpinv_format_amount( $tax, null, ! $currency ), $this->get_currency() );
         }
 
         if ( ! $this->is_taxable() ) {
@@ -1108,13 +1126,13 @@ final class WPInv_Legacy_Invoice {
 
         return apply_filters( 'wpinv_get_invoice_tax', $tax, $this->ID, $this, $currency );
     }
-    
+
     public function get_fees( $type = 'all' ) {
         $fees    = array();
 
         if ( ! empty( $this->fees ) && is_array( $this->fees ) ) {
             foreach ( $this->fees as $fee ) {
-                if( 'all' != $type && ! empty( $fee['type'] ) && $type != $fee['type'] ) {
+                if ( 'all' != $type && ! empty( $fee['type'] ) && $type != $fee['type'] ) {
                     continue;
                 }
 
@@ -1126,7 +1144,7 @@ final class WPInv_Legacy_Invoice {
 
         return apply_filters( 'wpinv_get_invoice_fees', $fees, $this->ID, $this );
     }
-    
+
     public function get_fees_total() {
         $fees_total = (float) 0.00;
 
@@ -1144,99 +1162,99 @@ final class WPInv_Legacy_Invoice {
     public function get_user_id() {
         return apply_filters( 'wpinv_user_id', $this->user_id, $this->ID, $this );
     }
-    
+
     public function get_first_name() {
         return apply_filters( 'wpinv_first_name', $this->first_name, $this->ID, $this );
     }
-    
+
     public function get_last_name() {
         return apply_filters( 'wpinv_last_name', $this->last_name, $this->ID, $this );
     }
-    
+
     public function get_user_full_name() {
         return apply_filters( 'wpinv_user_full_name', $this->full_name, $this->ID, $this );
     }
-    
+
     public function get_user_info() {
         return apply_filters( 'wpinv_user_info', $this->user_info, $this->ID, $this );
     }
-    
+
     public function get_email() {
         return apply_filters( 'wpinv_user_email', $this->email, $this->ID, $this );
     }
-    
+
     public function get_address() {
         return apply_filters( 'wpinv_address', $this->address, $this->ID, $this );
     }
-    
+
     public function get_phone() {
         return apply_filters( 'wpinv_phone', $this->phone, $this->ID, $this );
     }
-    
+
     public function get_number() {
         return apply_filters( 'wpinv_number', $this->number, $this->ID, $this );
     }
-    
+
     public function get_items() {
         return apply_filters( 'wpinv_payment_meta_items', $this->items, $this->ID, $this );
     }
-    
+
     public function get_key() {
         return apply_filters( 'wpinv_key', $this->key, $this->ID, $this );
     }
-    
+
     public function get_transaction_id() {
         return apply_filters( 'wpinv_get_invoice_transaction_id', $this->transaction_id, $this->ID, $this );
     }
-    
+
     public function get_gateway() {
         return apply_filters( 'wpinv_gateway', $this->gateway, $this->ID, $this );
     }
-    
+
     public function get_gateway_title() {}
-    
+
     public function get_currency() {
         return apply_filters( 'wpinv_currency_code', $this->currency, $this->ID, $this );
     }
-    
+
     public function get_created_date() {
         return apply_filters( 'wpinv_created_date', $this->date, $this->ID, $this );
     }
-    
+
     public function get_due_date( $display = false ) {
         $due_date = apply_filters( 'wpinv_due_date', $this->due_date, $this->ID, $this );
 
         if ( ! $display ) {
             return $due_date;
         }
-        
+
         return getpaid_format_date( $this->due_date );
     }
-    
+
     public function get_completed_date() {
         return apply_filters( 'wpinv_completed_date', $this->completed_date, $this->ID, $this );
     }
-    
+
     public function get_invoice_date( $formatted = true ) {
         $date_completed = $this->completed_date;
         $invoice_date   = $date_completed != '' && $date_completed != '0000-00-00 00:00:00' ? $date_completed : '';
-        
+
         if ( $invoice_date == '' ) {
             $date_created   = $this->date;
             $invoice_date   = $date_created != '' && $date_created != '0000-00-00 00:00:00' ? $date_created : '';
         }
-        
+
         if ( $formatted && $invoice_date ) {
             $invoice_date   = getpaid_format_date( $invoice_date );
         }
 
         return apply_filters( 'wpinv_get_invoice_date', $invoice_date, $formatted, $this->ID, $this );
     }
-    
+
     public function get_ip() {
         return apply_filters( 'wpinv_user_ip', $this->ip, $this->ID, $this );
     }
-        
+
     public function has_status( $status ) {
         return apply_filters( 'wpinv_has_status', ( is_array( $status ) && in_array( $this->get_status(), $status ) ) || $this->get_status() === $status ? true : false, $this, $status );
     }
@@ -1244,7 +1262,7 @@ final class WPInv_Legacy_Invoice {
     public function add_item() {}
 
     public function remove_item() {}
-    
+
     public function update_items() {}
 
     public function recalculate_totals() {}
@@ -1259,20 +1277,20 @@ final class WPInv_Legacy_Invoice {
         $auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
         return strtolower( md5( $string . date( 'Y-m-d H:i:s' ) . $auth_key . uniqid( 'wpinv', true ) ) );  // Unique key
     }
-    
+
     public function is_recurring() {
         if ( empty( $this->cart_details ) ) {
             return false;
         }
-        
+
         $has_subscription = false;
-        foreach( $this->cart_details as $cart_item ) {
-            if ( !empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] )  ) {
+        foreach ( $this->cart_details as $cart_item ) {
+            if ( ! empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] ) ) {
                 $has_subscription = true;
                 break;
             }
         }
-        
+
         if ( count( $this->cart_details ) > 1 ) {
             $has_subscription = false;
         }
@@ -1282,9 +1300,9 @@ final class WPInv_Legacy_Invoice {
 
     public function is_free_trial() {
         $is_free_trial = false;
-        
+
         if ( $this->is_parent() && $item = $this->get_recurring( true ) ) {
-            if ( !empty( $item ) && $item->has_free_trial() ) {
+            if ( ! empty( $item ) && $item->has_free_trial() ) {
                 $is_free_trial = true;
             }
         }
@@ -1295,22 +1313,22 @@ final class WPInv_Legacy_Invoice {
     public function is_initial_free() {}
 
     public function get_recurring( $object = false ) {
-        $item = NULL;
-        
+        $item = null;
+
         if ( empty( $this->cart_details ) ) {
             return $item;
         }
-        
-        foreach( $this->cart_details as $cart_item ) {
-            if ( !empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] )  ) {
+
+        foreach ( $this->cart_details as $cart_item ) {
+            if ( ! empty( $cart_item['id'] ) && wpinv_is_recurring_item( $cart_item['id'] ) ) {
                 $item = $cart_item['id'];
                 break;
             }
         }
-        
+
         if ( $object ) {
-            $item = $item ? new WPInv_Item( $item ) : NULL;
-            
+            $item = $item ? new WPInv_Item( $item ) : null;
+
             apply_filters( 'wpinv_invoice_get_recurring_item', $item, $this );
         }
 

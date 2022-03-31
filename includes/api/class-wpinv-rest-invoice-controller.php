@@ -45,54 +45,50 @@ class WPInv_REST_Invoice_Controller extends GetPaid_REST_Posts_Controller {
 	public function get_collection_params() {
 
 		$params = array_merge(
-
 			parent::get_collection_params(),
-
 			array(
 
-
-				'customers' => array(
+				'customers'         => array(
 					'description'       => __( 'Limit result set to invoices for specific user ids.', 'invoicing' ),
 					'type'              => 'array',
 					'items'             => array(
-						'type'          => 'integer',
+						'type' => 'integer',
 					),
 					'default'           => array(),
 					'sanitize_callback' => 'wp_parse_id_list',
 				),
 
-				'exclude_customers'  	=> array(
-					'description' 		=> __( 'Exclude invoices to specific users.', 'invoicing' ),
-					'type'        		=> 'array',
-					'items'       		=> array(
-						'type'          => 'integer',
+				'exclude_customers' => array(
+					'description'       => __( 'Exclude invoices to specific users.', 'invoicing' ),
+					'type'              => 'array',
+					'items'             => array(
+						'type' => 'integer',
 					),
-					'default'     		=> array(),
+					'default'           => array(),
 					'sanitize_callback' => 'wp_parse_id_list',
 				),
 
-				'parent'  	            => array(
+				'parent'            => array(
 					'description'       => __( 'Limit result set to those of particular parent IDs.', 'invoicing' ),
 					'type'              => 'array',
 					'items'             => array(
-						'type'          => 'integer',
+						'type' => 'integer',
 					),
 					'sanitize_callback' => 'wp_parse_id_list',
 					'default'           => array(),
 				),
 
-				'parent_exclude'  	    => array(
+				'parent_exclude'    => array(
 					'description'       => __( 'Limit result set to all items except those of a particular parent ID.', 'invoicing' ),
 					'type'              => 'array',
 					'items'             => array(
-						'type'          => 'integer',
+						'type' => 'integer',
 					),
 					'sanitize_callback' => 'wp_parse_id_list',
 					'default'           => array(),
 				),
 
 			)
-
 		);
 
 		// Filter collection parameters for the invoices controller.

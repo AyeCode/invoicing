@@ -103,36 +103,36 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	public function create_customer_profile( $invoice, $submission_data, $save = true ) {
 
         // Remove non-digits from the number
-        $submission_data['authorizenet']['cc_number'] = preg_replace('/\D/', '', $submission_data['authorizenet']['cc_number'] );
+        $submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
 
         // Generate args.
         $args = array(
             'createCustomerProfileRequest' => array(
-                'merchantAuthentication'   => $this->get_auth_params(),
-                'profile'                  => array(
-                    'merchantCustomerId'   => getpaid_limit_length( $invoice->get_user_id(), 20 ),
-                    'description'          => getpaid_limit_length( $invoice->get_full_name(), 255 ),
-                    'email'                => getpaid_limit_length( $invoice->get_email(), 255 ),
-                    'paymentProfiles'      => array(
-                        'customerType'     => 'individual',
+                'merchantAuthentication' => $this->get_auth_params(),
+                'profile'                => array(
+                    'merchantCustomerId' => getpaid_limit_length( $invoice->get_user_id(), 20 ),
+                    'description'        => getpaid_limit_length( $invoice->get_full_name(), 255 ),
+                    'email'              => getpaid_limit_length( $invoice->get_email(), 255 ),
+                    'paymentProfiles'    => array(
+                        'customerType' => 'individual',
 
                         // Billing information.
-                        'billTo'           => array(
-                            'firstName'    => getpaid_limit_length( $invoice->get_first_name(), 50 ),
-                            'lastName'     => getpaid_limit_length( $invoice->get_last_name(), 50 ),
-                            'address'      => getpaid_limit_length( $invoice->get_address(), 60 ),
-                            'city'         => getpaid_limit_length( $invoice->get_city(), 40 ),
-                            'state'        => getpaid_limit_length( $invoice->get_state(), 40 ),
-                            'zip'          => getpaid_limit_length( $invoice->get_zip(), 20 ),
-                            'country'      => getpaid_limit_length( $invoice->get_country(), 60 ),
+                        'billTo'       => array(
+                            'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
+                            'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
+                            'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
+                            'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
+                            'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
+                            'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
+                            'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
                         ),
 
                         // Payment information.
-                        'payment'          => $this->get_payment_information( $submission_data['authorizenet'] ),
-                    )
+                        'payment'      => $this->get_payment_information( $submission_data['authorizenet'] ),
+                    ),
                 ),
-                'validationMode'           => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
-            )
+                'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
+            ),
         );
 
         $response = $this->post( apply_filters( 'getpaid_authorizenet_customer_profile_args', $args, $invoice ), $invoice );
@@ -193,10 +193,10 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         // Generate args.
         $args = array(
-            'getCustomerProfileRequest'  => array(
+            'getCustomerProfileRequest' => array(
                 'merchantAuthentication' => $this->get_auth_params(),
                 'customerProfileId'      => $profile_id,
-            )
+            ),
         );
 
         return $this->post( $args, false );
@@ -217,7 +217,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	public function create_customer_payment_profile( $customer_profile, $invoice, $submission_data, $save ) {
 
         // Remove non-digits from the number
-        $submission_data['authorizenet']['cc_number'] = preg_replace('/\D/', '', $submission_data['authorizenet']['cc_number'] );
+        $submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
 
         // Prepare card details.
         $payment_information                          = $this->get_payment_information( $submission_data['authorizenet'] );
@@ -232,26 +232,26 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         // Generate args.
         $args = array(
             'createCustomerPaymentProfileRequest' => array(
-                'merchantAuthentication'   => $this->get_auth_params(),
-                'customerProfileId'        => $customer_profile,
-                'paymentProfile'           => array(
+                'merchantAuthentication' => $this->get_auth_params(),
+                'customerProfileId'      => $customer_profile,
+                'paymentProfile'         => array(
 
                     // Billing information.
-                    'billTo'           => array(
-                        'firstName'    => getpaid_limit_length( $invoice->get_first_name(), 50 ),
-                        'lastName'     => getpaid_limit_length( $invoice->get_last_name(), 50 ),
-                        'address'      => getpaid_limit_length( $invoice->get_address(), 60 ),
-                        'city'         => getpaid_limit_length( $invoice->get_city(), 40 ),
-                        'state'        => getpaid_limit_length( $invoice->get_state(), 40 ),
-                        'zip'          => getpaid_limit_length( $invoice->get_zip(), 20 ),
-                        'country'      => getpaid_limit_length( $invoice->get_country(), 60 ),
+                    'billTo'  => array(
+                        'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
+                        'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
+                        'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
+                        'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
+                        'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
+                        'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
+                        'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
                     ),
 
                     // Payment information.
-                    'payment'          => $payment_information
+                    'payment' => $payment_information,
                 ),
-                'validationMode'       => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
-            )
+                'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
+            ),
         );
 
         $response = $this->post( apply_filters( 'getpaid_authorizenet_create_customer_payment_profile_args', $args, $invoice ), $invoice );
@@ -323,7 +323,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                 'merchantAuthentication'   => $this->get_auth_params(),
                 'customerProfileId'        => $customer_profile,
                 'customerPaymentProfileId' => $cached_information[ $payment_details ],
-            )
+            ),
         );
 
         $response = $this->post( $args, $invoice );
@@ -364,10 +364,10 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         // Generate args.
         $args = array(
             'getCustomerPaymentProfileRequest' => array(
-                'merchantAuthentication'       => $this->get_auth_params(),
-                'customerProfileId'            => $customer_profile_id,
-                'customerPaymentProfileId'     => $payment_profile_id,
-            )
+                'merchantAuthentication'   => $this->get_auth_params(),
+                'customerProfileId'        => $customer_profile_id,
+                'customerPaymentProfileId' => $payment_profile_id,
+            ),
         );
 
         return $this->post( $args, false );
@@ -388,36 +388,36 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         // Generate args.
         $args = array(
 
-            'createTransactionRequest'         => array(
+            'createTransactionRequest' => array(
 
-                'merchantAuthentication'       => $this->get_auth_params(),
-                'refId'                        => $invoice->get_id(),
-                'transactionRequest'           => array(
-                    'transactionType'          => 'authCaptureTransaction',
-                    'amount'                   => $invoice->get_total(),
-                    'currencyCode'             => $invoice->get_currency(),
-                    'profile'                  => array(
-                        'customerProfileId'    => $customer_profile_id,
-                        'paymentProfile'       => array(
+                'merchantAuthentication' => $this->get_auth_params(),
+                'refId'                  => $invoice->get_id(),
+                'transactionRequest'     => array(
+                    'transactionType' => 'authCaptureTransaction',
+                    'amount'          => $invoice->get_total(),
+                    'currencyCode'    => $invoice->get_currency(),
+                    'profile'         => array(
+                        'customerProfileId' => $customer_profile_id,
+                        'paymentProfile'    => array(
                             'paymentProfileId' => $payment_profile_id,
-                        )
+                        ),
                     ),
-                    'order'                    => array(
-                        'invoiceNumber'        => getpaid_limit_length( $invoice->get_number(), 20 ),
+                    'order'           => array(
+                        'invoiceNumber' => getpaid_limit_length( $invoice->get_number(), 20 ),
                     ),
-                    'lineItems'                => array( 'lineItem' => $this->get_line_items( $invoice ) ),
-                    'tax'                      => array(
-                        'amount'               => $invoice->get_total_tax(),
-                        'name'                 => __( 'TAX', 'invoicing' ),
+                    'lineItems'       => array( 'lineItem' => $this->get_line_items( $invoice ) ),
+                    'tax'             => array(
+                        'amount' => $invoice->get_total_tax(),
+                        'name'   => __( 'TAX', 'invoicing' ),
                     ),
-                    'poNumber'                 => getpaid_limit_length( $invoice->get_number(), 25 ),
-                    'customer'                 => array(
-                        'id'                   => getpaid_limit_length( $invoice->get_user_id(), 25 ),
-                        'email'                => getpaid_limit_length( $invoice->get_email(), 25 ),
+                    'poNumber'        => getpaid_limit_length( $invoice->get_number(), 25 ),
+                    'customer'        => array(
+                        'id'    => getpaid_limit_length( $invoice->get_user_id(), 25 ),
+                        'email' => getpaid_limit_length( $invoice->get_email(), 25 ),
                     ),
-                    'customerIP'               => $invoice->get_ip(),
-                )
-            )
+                    'customerIP'      => $invoice->get_ip(),
+                ),
+            ),
         );
 
         if ( 0 == $invoice->get_total_tax() ) {
@@ -447,7 +447,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 				$invoice->set_transaction_id( $result->transactionResponse->transId );
 			}
 
-			$invoice->add_note( sprintf( __( 'Authentication code: %s (%s).', 'invoicing' ), $result->transactionResponse->authCode, $result->transactionResponse->accountNumber ), false, false, true );
+			$invoice->add_note( sprintf( __( 'Authentication code: %1$s (%2$s).', 'invoicing' ), $result->transactionResponse->authCode, $result->transactionResponse->accountNumber ), false, false, true );
 
 			if ( 1 == $response_code ) {
 				return $invoice->mark_paid();
@@ -484,11 +484,11 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	public function get_payment_information( $card ) {
         return array(
 
-            'creditCard'         => array (
+            'creditCard' => array(
                 'cardNumber'     => $card['cc_number'],
                 'expirationDate' => $card['cc_expire_year'] . '-' . $card['cc_expire_month'],
                 'cardCode'       => $card['cc_cvv2'],
-            )
+            ),
 
         );
     }
@@ -518,12 +518,12 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         $auth = $this->get_auth_params();
 
         if ( empty( $auth['name'] ) || empty( $auth['transactionKey'] ) ) {
-            return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing') );
+            return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing' ) );
         }
 
         // Validate the payment method.
         if ( empty( $submission_data['getpaid-authorizenet-payment-method'] ) ) {
-            return new WP_Error( 'invalid_payment_method', __( 'Please select a different payment method or add a new card.', 'invoicing') );
+            return new WP_Error( 'invalid_payment_method', __( 'Please select a different payment method or add a new card.', 'invoicing' ) );
         }
 
         // Are we adding a new payment method?
@@ -581,8 +581,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
                     'taxable'     => false,
                 );
             }
-
-        }
+}
 
         return $items;
     }
@@ -630,7 +629,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         exit;
 
 	}
-	
+
 	/**
 	 * Processes the initial payment.
 	 *
@@ -778,8 +777,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             if ( is_null( $invoice->get_item( $item->get_id() ) ) && ! is_wp_error( $invoice->add_item( $item ) ) ) {
                 $getpaid_authorize_addons[] = $item;
             }
-
-        }
+}
 
         if ( empty( $getpaid_authorize_addons ) ) {
             return;
@@ -833,7 +831,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     public function sandbox_notice() {
 
         return sprintf(
-            __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %sAuthorize.NET Sandbox Testing Guide%s for more details.', 'invoicing' ),
+            __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %1$sAuthorize.NET Sandbox Testing Guide%2$s for more details.', 'invoicing' ),
             '<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
             '</a>'
         );

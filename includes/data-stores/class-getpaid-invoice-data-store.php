@@ -35,7 +35,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'wpinv_shipping',
 		'wpinv_email_cc',
 		'wpinv_template',
-		'wpinv_created_via'
+		'wpinv_created_via',
 	);
 
 	/**
@@ -116,21 +116,21 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 */
 	public function create( &$invoice ) {
 		$invoice->set_version( WPINV_VERSION );
-		$invoice->set_date_created( current_time('mysql') );
+		$invoice->set_date_created( current_time( 'mysql' ) );
 
 		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
 				'getpaid_new_invoice_data',
 				array(
-					'post_date'     => $invoice->get_date_created( 'edit' ),
-					'post_type'     => $invoice->get_post_type( 'edit' ),
-					'post_status'   => $this->get_post_status( $invoice ),
-					'ping_status'   => 'closed',
-					'post_author'   => $invoice->get_user_id( 'edit' ),
-					'post_title'    => $invoice->get_title( 'edit' ),
-					'post_excerpt'  => $invoice->get_description( 'edit' ),
-					'post_parent'   => $invoice->get_parent_id( 'edit' ),
+					'post_date'    => $invoice->get_date_created( 'edit' ),
+					'post_type'    => $invoice->get_post_type( 'edit' ),
+					'post_status'  => $this->get_post_status( $invoice ),
+					'ping_status'  => 'closed',
+					'post_author'  => $invoice->get_user_id( 'edit' ),
+					'post_title'   => $invoice->get_title( 'edit' ),
+					'post_excerpt' => $invoice->get_description( 'edit' ),
+					'post_parent'  => $invoice->get_parent_id( 'edit' ),
 				)
 			),
 			true
@@ -147,7 +147,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 				array(
 					'ID'         => $invoice->get_id(),
 					'post_title' => $invoice->get_number( 'edit' ),
-					'post_name'  => $invoice->get_path( 'edit' )
+					'post_name'  => $invoice->get_path( 'edit' ),
 				)
 			);
 
@@ -227,7 +227,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$invoice->set_version( WPINV_VERSION );
 
 		if ( null === $invoice->get_date_created( 'edit' ) ) {
-			$invoice->set_date_created(  current_time('mysql') );
+			$invoice->set_date_created( current_time( 'mysql' ) );
 		}
 
 		// Ensure both the key and number are set.
@@ -241,16 +241,16 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		// Only update the post when the post data changes.
 		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'description', 'parent_id', 'post_excerpt', 'path' ), array_keys( $changes ) ) ) {
 			$post_data = array(
-				'post_date'         => $invoice->get_date_created( 'edit' ),
-				'post_date_gmt'     => $invoice->get_date_created_gmt( 'edit' ),
-				'post_status'       => $invoice->get_status( 'edit' ),
-				'post_title'        => $invoice->get_name( 'edit' ),
-				'post_author'       => $invoice->get_user_id( 'edit' ),
-				'post_modified'     => $invoice->get_date_modified( 'edit' ),
-				'post_excerpt'      => $invoice->get_description( 'edit' ),
-				'post_parent'       => $invoice->get_parent_id( 'edit' ),
-				'post_name'         => $invoice->get_path( 'edit' ),
-				'post_type'         => $invoice->get_post_type( 'edit' ),
+				'post_date'     => $invoice->get_date_created( 'edit' ),
+				'post_date_gmt' => $invoice->get_date_created_gmt( 'edit' ),
+				'post_status'   => $invoice->get_status( 'edit' ),
+				'post_title'    => $invoice->get_name( 'edit' ),
+				'post_author'   => $invoice->get_user_id( 'edit' ),
+				'post_modified' => $invoice->get_date_modified( 'edit' ),
+				'post_excerpt'  => $invoice->get_description( 'edit' ),
+				'post_parent'   => $invoice->get_parent_id( 'edit' ),
+				'post_name'     => $invoice->get_path( 'edit' ),
+				'post_type'     => $invoice->get_post_type( 'edit' ),
 			);
 
 			/**
@@ -313,7 +313,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		// If not found, retrieve from the db.
 		if ( false === $data ) {
-			$table =  $wpdb->prefix . 'getpaid_invoices';
+			$table = $wpdb->prefix . 'getpaid_invoices';
 
 			$data  = $wpdb->get_row(
 				$wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d LIMIT 1", $invoice->get_id() ),
@@ -335,7 +335,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$props = array();
 
 		foreach ( $this->database_fields_to_props as $db_field => $prop ) {
-			
+
 			if ( $db_field == 'post_id' ) {
 				continue;
 			}
@@ -383,7 +383,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		foreach ( $fields_to_update as $database_field => $prop ) {
 			$value = $invoice->{"get_$prop"}( 'edit' );
 			$value = is_string( $value ) ? wp_slash( $value ) : $value;
-			$value = is_bool( $value ) ? ( int ) $value : $value;
+			$value = is_bool( $value ) ? (int) $value : $value;
 			$updated_props[ $database_field ] = maybe_serialize( $value );
 		}
 
@@ -392,7 +392,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$table = $wpdb->prefix . 'getpaid_invoices';
 			$wpdb->update( $table, $updated_props, array( 'post_id' => $invoice->get_id() ) );
 			wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_special_fields' );
-			do_action( "getpaid_invoice_update_database_fields", $invoice, $updated_props );
+			do_action( 'getpaid_invoice_update_database_fields', $invoice, $updated_props );
 
 		}
 
@@ -412,14 +412,14 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		foreach ( $this->database_fields_to_props as $database_field => $prop ) {
 			$value = $invoice->{"get_$prop"}( 'edit' );
 			$value = is_string( $value ) ? wp_slash( $value ) : $value;
-			$value = is_bool( $value ) ? ( int ) $value : $value;
+			$value = is_bool( $value ) ? (int) $value : $value;
 			$updated_props[ $database_field ] = maybe_serialize( $value );
 		}
 
 		$table = $wpdb->prefix . 'getpaid_invoices';
 		$wpdb->insert( $table, $updated_props );
 		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_special_fields' );
-		do_action( "getpaid_invoice_insert_database_fields", $invoice, $updated_props );
+		do_action( 'getpaid_invoice_insert_database_fields', $invoice, $updated_props );
 
 	}
 
@@ -428,7 +428,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 *
 	 * @param WPInv_Invoice $invoice Invoice object.
      */
-    public function save_special_fields( & $invoice ) {
+    public function save_special_fields( &$invoice ) {
 		global $wpdb;
 
 		// The invoices table.
@@ -461,7 +461,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		// If not found, retrieve from the db.
 		if ( false === $items ) {
-			$table =  $wpdb->prefix . 'getpaid_invoice_items';
+			$table = $wpdb->prefix . 'getpaid_invoice_items';
 
 			$items = $wpdb->get_results(
 				$wpdb->prepare( "SELECT * FROM $table WHERE `post_id`=%d", $invoice->get_id() )
@@ -505,7 +505,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		// Delete previously existing items.
 		$this->delete_items( $invoice );
 
-		$table   =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
+		$table   = $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
 
 		foreach ( $invoice->get_cart_details() as $item_data ) {
 			$item_data = array_map( 'maybe_serialize', $item_data );
@@ -513,7 +513,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		}
 
 		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_cart_details' );
-		do_action( "getpaid_invoice_save_items", $invoice );
+		do_action( 'getpaid_invoice_save_items', $invoice );
 
 	}
 
@@ -523,7 +523,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * @param WPInv_Invoice $invoice Invoice object.
      */
     public function delete_items( $invoice ) {
-		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
+		$table = $GLOBALS['wpdb']->prefix . 'getpaid_invoice_items';
 		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
 	}
 
@@ -533,10 +533,10 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 	 * @param WPInv_Invoice $invoice Invoice object.
      */
     public function delete_special_fields( $invoice ) {
-		$table =  $GLOBALS['wpdb']->prefix . 'getpaid_invoices';
+		$table = $GLOBALS['wpdb']->prefix . 'getpaid_invoices';
 		return $GLOBALS['wpdb']->delete( $table, array( 'post_id' => $invoice->get_id() ) );
 	}
-	
+
 	/**
 	 * Get the status to save to the post object.
 	 *

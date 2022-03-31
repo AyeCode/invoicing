@@ -130,7 +130,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 		}
 	}
 
-	public function setcookie($name, $value, $expire = 0, $secure = false, $httponly = false){
+	public function setcookie( $name, $value, $expire = 0, $secure = false, $httponly = false ) {
         if ( ! headers_sent() ) {
             setcookie( $name, $value, $expire, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, $secure, apply_filters( 'wpinv_cookie_httponly', $httponly, $name, $value, $expire, $secure ) );
         } elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -218,12 +218,12 @@ class WPInv_Session_Handler extends WPInv_Session {
 		return $this->has_session() ? (array) $this->get_session( $this->_customer_id ) : array();
 	}
 
-	public function generate_key($customer_id){
-        if(!$customer_id){
+	public function generate_key( $customer_id ) {
+        if ( ! $customer_id ) {
             return;
         }
 
-        return 'wpi_trans_'.$customer_id;
+        return 'wpi_trans_' . $customer_id;
     }
 
 	/**
@@ -233,7 +233,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 		// Dirty if something changed - prevents saving nothing new.
 		if ( $this->_dirty && $this->has_session() ) {
 
-            set_transient( $this->generate_key($this->_customer_id), $this->_data, $this->_session_expiration);
+            set_transient( $this->generate_key( $this->_customer_id ), $this->_data, $this->_session_expiration );
 
 			$this->_dirty = false;
 		}
@@ -289,10 +289,10 @@ class WPInv_Session_Handler extends WPInv_Session {
 			return array();
 		}
 
-        $key = $this->generate_key($customer_id);
-        $value = get_transient($key);
+        $key = $this->generate_key( $customer_id );
+        $value = get_transient( $key );
 
-        if ( !$value ) {
+        if ( ! $value ) {
             $value = $default;
         }
 
@@ -306,9 +306,9 @@ class WPInv_Session_Handler extends WPInv_Session {
 	 */
 	public function delete_session( $customer_id ) {
 
-        $key = $this->generate_key($customer_id);
+        $key = $this->generate_key( $customer_id );
 
-		delete_transient($key);
+		delete_transient( $key );
 	}
 
 	/**
@@ -319,7 +319,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 	 */
 	public function update_session_timestamp( $customer_id, $timestamp ) {
 
-        set_transient( $this->generate_key($customer_id), maybe_serialize( $this->_data ), $timestamp);
+        set_transient( $this->generate_key( $customer_id ), maybe_serialize( $this->_data ), $timestamp );
 
 	}
 }

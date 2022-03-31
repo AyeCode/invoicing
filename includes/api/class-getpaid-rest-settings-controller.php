@@ -61,7 +61,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			$this->rest_base . '/setting/(?P<id>[\w-]+)',
 			array(
 				'args'   => array(
-					'id'    => array(
+					'id' => array(
 						'description' => __( 'Unique identifier for the setting.', 'invoicing' ),
 						'type'        => 'string',
 						'required'    => true,
@@ -88,7 +88,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			$this->rest_base . '/(?P<tab>[\w-]+)',
 			array(
 				'args'   => array(
-					'tab'    => array(
+					'tab' => array(
 						'description' => __( 'Unique identifier for the tab whose sections should be retrieved.', 'invoicing' ),
 						'type'        => 'string',
 						'required'    => true,
@@ -110,13 +110,13 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			$this->rest_base . '/(?P<tab>[\w-]+)/(?P<section>[\w-]+)',
 			array(
 				'args'   => array(
-					'tab'    => array(
+					'tab'     => array(
 						'description' => __( 'Unique identifier for the tab whose settings should be retrieved.', 'invoicing' ),
 						'type'        => 'string',
 						'required'    => true,
 						'enum'        => array_keys( wpinv_get_settings_tabs() ),
 					),
-					'section'    => array(
+					'section' => array(
 						'description' => __( 'The section in the tab whose settings should be retrieved.', 'invoicing' ),
 						'type'        => 'string',
 						'required'    => true,
@@ -136,7 +136,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			'/' . $this->rest_base . '/batch',
 			array(
 				'args'   => array(
-					'id'              => array(
+					'id' => array(
 						'description' => __( 'Setting ID.', 'invoicing' ),
 						'type'        => 'string',
 					),
@@ -152,7 +152,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 		);
 
 	}
-	
+
 	/**
 	 * Return all settings.
 	 *
@@ -184,8 +184,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			if ( $this->is_setting_type_valid( $setting['type'] ) ) {
 				$prepared[]   = $setting_data;
 			}
-
-		}
+}
 
 		return rest_ensure_response( $prepared );
 	}
@@ -292,10 +291,10 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 
 		$links = array(
 			'self'       => array(
-				'href'   => rest_url( sprintf( '/%s/%s/setting/%s', $this->namespace, $this->rest_base, $setting_id ) ),
+				'href' => rest_url( sprintf( '/%s/%s/setting/%s', $this->namespace, $this->rest_base, $setting_id ) ),
 			),
 			'collection' => array(
-				'href'   => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 			),
 		);
 
@@ -377,7 +376,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 	 * @return array
 	 */
 	public function sanitize_setting( $setting ) {
-		
+
 		$setting          = wp_parse_args( $setting, $this->setting_defaults() );
 		$setting['value'] = wpinv_get_option( $setting['id'], $setting['std'] );
 		return $this->filter_setting( $setting );
@@ -410,10 +409,8 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 
 					return $sections[ $setting_id ];
 				}
-
-			}
-
-		}
+}
+}
 
 		return new WP_Error( 'rest_setting_setting_invalid', __( 'Invalid setting.', 'invoicing' ), array( 'status' => 404 ) );
 	}
@@ -444,10 +441,10 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			if ( ! is_wp_error( $response ) ) {
 				$links = array(
 					'sections'   => array(
-						'href'   => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $id ) ),
+						'href' => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $id ) ),
 					),
 					'collection' => array(
-						'href'   => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+						'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 					),
 				);
 				$response->add_links( $links );
@@ -476,8 +473,8 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 		foreach ( $sections as $id => $section ) {
 
 			$data            = array(
-				'id'       => sanitize_title( $id ),
-				'label'    => sanitize_text_field( $section ),
+				'id'    => sanitize_title( $id ),
+				'label' => sanitize_text_field( $section ),
 			);
 
 			$data     = $this->add_additional_fields_to_object( $data, $request );
@@ -486,13 +483,13 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 			if ( ! is_wp_error( $response ) ) {
 				$links = array(
 					'settings'   => array(
-						'href'   => rest_url( sprintf( '/%s/%s/%s/%s', $this->namespace, $this->rest_base, $tab, $id ) ),
+						'href' => rest_url( sprintf( '/%s/%s/%s/%s', $this->namespace, $this->rest_base, $tab, $id ) ),
 					),
 					'collection' => array(
-						'href'   => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $tab ) ),
+						'href' => rest_url( sprintf( '/%s/%s/%s', $this->namespace, $this->rest_base, $tab ) ),
 					),
 					'tabs'       => array(
-						'href'   => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+						'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 					),
 				);
 				$response->add_links( $links );
@@ -531,7 +528,8 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 	public function is_setting_type_valid( $type ) {
 
 		return in_array(
-			$type, array(
+			$type,
+            array(
 				'text',         // Validates with validate_setting_text_field.
 				'email',        // Validates with validate_setting_text_field.
 				'number',       // Validates with validate_setting_text_field.
@@ -592,7 +590,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'name'       => array(
+				'name'        => array(
 					'description' => __( 'A human readable label for the setting used in interfaces.', 'invoicing' ),
 					'type'        => 'string',
 					'arg_options' => array(
@@ -643,13 +641,13 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'readonly'        => array(
+				'readonly'    => array(
 					'description' => __( 'Whether or not this setting is readonly', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
-				'faux'            => array(
+				'faux'        => array(
 					'description' => __( 'Whether or not this setting is readonly/faux', 'invoicing' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),

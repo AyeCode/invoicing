@@ -26,7 +26,7 @@ class GetPaid_Admin {
 	 * @var         string
 	 */
 	public $admin_url;
-	
+
 	/**
 	 * Reports components.
 	 *
@@ -37,7 +37,7 @@ class GetPaid_Admin {
     /**
 	 * Class constructor.
 	 */
-	public function __construct(){
+	public function __construct() {
 
         $this->admin_path  = plugin_dir_path( __FILE__ );
 		$this->admin_url   = plugins_url( '/', __FILE__ );
@@ -57,8 +57,8 @@ class GetPaid_Admin {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 9 );
         add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
         add_action( 'admin_init', array( $this, 'init_ayecode_connect_helper' ) );
-        add_action( 'admin_init', array( $this, 'activation_redirect') );
-        add_action( 'admin_init', array( $this, 'maybe_do_admin_action') );
+        add_action( 'admin_init', array( $this, 'activation_redirect' ) );
+        add_action( 'admin_init', array( $this, 'maybe_do_admin_action' ) );
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 		add_action( 'getpaid_authenticated_admin_action_rate_plugin', array( $this, 'redirect_to_wordpress_rating_page' ) );
 		add_action( 'getpaid_authenticated_admin_action_duplicate_form', array( $this, 'duplicate_payment_form' ) );
@@ -79,8 +79,8 @@ class GetPaid_Admin {
 		// Setup/welcome
 		if ( ! empty( $_GET['page'] ) ) {
 			switch ( sanitize_text_field( $_GET['page'] ) ) {
-				case 'gp-setup' :
-					include_once( dirname( __FILE__ ) . '/class-getpaid-admin-setup-wizard.php' );
+				case 'gp-setup':
+					include_once dirname( __FILE__ ) . '/class-getpaid-admin-setup-wizard.php';
 					break;
 			}
 		}
@@ -110,10 +110,10 @@ class GetPaid_Admin {
             wp_enqueue_style( 'select2', WPINV_PLUGIN_URL . 'assets/css/select2/select2.min.css', array(), '4.0.13', 'all' );
 
             // Scripts.
-            wp_enqueue_script('select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full.min.js', array( 'jquery' ), WPINV_VERSION );
+            wp_enqueue_script( 'select2', WPINV_PLUGIN_URL . 'assets/js/select2/select2.full.min.js', array( 'jquery' ), WPINV_VERSION );
 
             $version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin.js' );
-            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'wp-color-picker', 'jquery-ui-tooltip' ),  $version );
+            wp_enqueue_script( 'wpinv-admin-script', WPINV_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'wp-color-picker', 'jquery-ui-tooltip' ), $version );
             wp_localize_script( 'wpinv-admin-script', 'WPInv_Admin', apply_filters( 'wpinv_admin_js_localize', $this->get_admin_i18() ) );
 
         }
@@ -137,20 +137,19 @@ class GetPaid_Admin {
         global $post;
 
 		$date_range = array(
-			'period' => isset( $_GET['date_range'] ) ? sanitize_text_field( $_GET['date_range'] ) : '7_days'
+			'period' => isset( $_GET['date_range'] ) ? sanitize_text_field( $_GET['date_range'] ) : '7_days',
 		);
 
 		if ( $date_range['period'] == 'custom' ) {
-			
+
 			if ( isset( $_GET['from'] ) ) {
-				$date_range[ 'after' ] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['from'] ), current_time( 'timestamp' ) ) - DAY_IN_SECONDS );
+				$date_range['after'] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['from'] ), current_time( 'timestamp' ) ) - DAY_IN_SECONDS );
 			}
 
 			if ( isset( $_GET['to'] ) ) {
-				$date_range[ 'before' ] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['to'] ), current_time( 'timestamp' ) ) + DAY_IN_SECONDS );
+				$date_range['before'] = date( 'Y-m-d', strtotime( sanitize_text_field( $_GET['to'] ), current_time( 'timestamp' ) ) + DAY_IN_SECONDS );
 			}
-
-		}
+}
 
         $i18n = array(
             'ajax_url'                  => admin_url( 'admin-ajax.php' ),
@@ -190,7 +189,7 @@ class GetPaid_Admin {
 			'loading'                   => __( 'Loading...', 'invoicing' ),
 			'search_customers'          => __( 'Enter customer name or email', 'invoicing' ),
 			'search_items'              => __( 'Enter item name', 'invoicing' ),
-			'graphs' => array_merge( ['refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax'], array_keys( wpinv_get_report_graphs() ) ),
+			'graphs'                    => array_merge( array( 'refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax' ), array_keys( wpinv_get_report_graphs() ) ),
         );
 
 		if ( ! empty( $post ) && getpaid_is_invoice_post_type( $post->post_type ) ) {
@@ -237,7 +236,7 @@ class GetPaid_Admin {
 						admin_url( 'admin.php?page=wpinv-reports&getpaid-admin-action=rate_plugin' ),
 						'getpaid-nonce',
 						'getpaid-nonce'
-						)
+                    )
 				);
 
 				$footer_text = sprintf(
@@ -255,8 +254,7 @@ class GetPaid_Admin {
 				);
 
 			}
-
-		}
+}
 
 		return $footer_text;
 	}
@@ -284,7 +282,7 @@ class GetPaid_Admin {
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/admin-payment-forms.js' );
-		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable', 'wp-hooks' ),  $version );
+		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.js', array( 'wpinv-admin-script', 'vue_draggable', 'wp-hooks' ), $version );
 
 		wp_localize_script(
             'wpinv-admin-payment-form-script',
@@ -316,7 +314,6 @@ class GetPaid_Admin {
     public function admin_body_class( $classes ) {
 		global $pagenow, $post, $current_screen;
 
-
         $page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 
         if ( ! empty( $current_screen->post_type ) ) {
@@ -330,7 +327,7 @@ class GetPaid_Admin {
         if ( in_array( $page, wpinv_parse_list( 'wpi_invoice wpi_payment_form wpi_quote' ) ) ) {
             $classes .= ' wpinv-cpt wpinv';
 		}
-		
+
 		if ( getpaid_is_invoice_post_type( $page ) ) {
             $classes .= ' getpaid-is-invoice-cpt';
         }
@@ -341,26 +338,28 @@ class GetPaid_Admin {
     /**
 	 * Maybe show the AyeCode Connect Notice.
 	 */
-	public function init_ayecode_connect_helper(){
+	public function init_ayecode_connect_helper() {
 
 		// Register with the deactivation survey class.
-		AyeCode_Deactivation_Survey::instance(array(
-			'slug'		        => 'invoicing',
-			'version'	        => WPINV_VERSION,
-			'support_url'       => 'https://wpgetpaid.com/support/',
-			'documentation_url' => 'https://docs.wpgetpaid.com/',
-			'activated'         => (int) get_option( 'gepaid_installed_on' ),
-		));
+		AyeCode_Deactivation_Survey::instance(
+            array(
+				'slug'              => 'invoicing',
+				'version'           => WPINV_VERSION,
+				'support_url'       => 'https://wpgetpaid.com/support/',
+				'documentation_url' => 'https://docs.wpgetpaid.com/',
+				'activated'         => (int) get_option( 'gepaid_installed_on' ),
+            )
+        );
 
         new AyeCode_Connect_Helper(
             array(
-				'connect_title' => __("WP Invoicing - an AyeCode product!","invoicing"),
-				'connect_external'  => __( "Please confirm you wish to connect your site?","invoicing" ),
-				'connect'           => sprintf( __( "<strong>Have a license?</strong> Forget about entering license keys or downloading zip files, connect your site for instant access. %slearn more%s","invoicing" ),"<a href='https://ayecode.io/introducing-ayecode-connect/' target='_blank'>","</a>" ),
-				'connect_button'    => __("Connect Site","invoicing"),
-				'connecting_button'    => __("Connecting...","invoicing"),
-				'error_localhost'   => __( "This service will only work with a live domain, not a localhost.","invoicing" ),
-				'error'             => __( "Something went wrong, please refresh and try again.","invoicing" ),
+				'connect_title'     => __( 'WP Invoicing - an AyeCode product!', 'invoicing' ),
+				'connect_external'  => __( 'Please confirm you wish to connect your site?', 'invoicing' ),
+				'connect'           => sprintf( __( '<strong>Have a license?</strong> Forget about entering license keys or downloading zip files, connect your site for instant access. %1$slearn more%2$s', 'invoicing' ), "<a href='https://ayecode.io/introducing-ayecode-connect/' target='_blank'>", '</a>' ),
+				'connect_button'    => __( 'Connect Site', 'invoicing' ),
+				'connecting_button' => __( 'Connecting...', 'invoicing' ),
+				'error_localhost'   => __( 'This service will only work with a live domain, not a localhost.', 'invoicing' ),
+				'error'             => __( 'Something went wrong, please refresh and try again.', 'invoicing' ),
             ),
             array( 'wpi-addons' )
         );
@@ -406,7 +405,7 @@ class GetPaid_Admin {
 
 	/**
      * Duplicate invoice.
-	 * 
+	 *
 	 * @param array $args
      */
     public function duplicate_invoice( $args ) {
@@ -432,7 +431,7 @@ class GetPaid_Admin {
 				add_query_arg(
 					array(
 						'action' => 'edit',
-						'post' => $new_invoice->get_id(),
+						'post'   => $new_invoice->get_id(),
 					),
 					admin_url( 'post.php' )
 				)
@@ -447,7 +446,7 @@ class GetPaid_Admin {
 
 	/**
      * Sends a payment reminder to a customer.
-	 * 
+	 *
 	 * @param array $args
      */
     public function duplicate_payment_form( $args ) {
@@ -483,7 +482,7 @@ class GetPaid_Admin {
 
 	/**
      * Sends a payment reminder to a customer.
-	 * 
+	 *
 	 * @param array $args
      */
     public function send_customer_invoice( $args ) {
@@ -494,7 +493,7 @@ class GetPaid_Admin {
 
 	/**
      * Sends a payment reminder to a customer.
-	 * 
+	 *
 	 * @param array $args
      */
     public function send_customer_payment_reminder( $args ) {
@@ -512,7 +511,7 @@ class GetPaid_Admin {
 
 	/**
      * Resets tax rates.
-	 * 
+	 *
      */
     public function admin_reset_tax_rates() {
 
@@ -524,7 +523,7 @@ class GetPaid_Admin {
 
 	/**
      * Resets admin pages.
-	 * 
+	 *
      */
     public function admin_create_missing_pages() {
 		$installer = new GetPaid_Installer();
@@ -536,7 +535,7 @@ class GetPaid_Admin {
 
 	/**
      * Creates an missing admin tables.
-	 * 
+	 *
      */
     public function admin_create_missing_tables() {
 		global $wpdb;
@@ -576,7 +575,7 @@ class GetPaid_Admin {
 
 	/**
      * Migrates old invoices to the new database tables.
-	 * 
+	 *
      */
     public function admin_migrate_old_invoices() {
 
@@ -595,20 +594,20 @@ class GetPaid_Admin {
 
 	/**
      * Download customers.
-	 * 
+	 *
      */
     public function admin_download_customers() {
 		global $wpdb;
 
 		$output = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'invoicing' ) );
 
-		header( "Content-Type:text/csv" );
-		header( "Content-Disposition:attachment;filename=customers.csv" );
+		header( 'Content-Type:text/csv' );
+		header( 'Content-Disposition:attachment;filename=customers.csv' );
 
 		$post_types = '';
 
 		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
-			$post_types .= $wpdb->prepare( "post_type=%s OR ", $post_type );
+			$post_types .= $wpdb->prepare( 'post_type=%s OR ', $post_type );
 		}
 
 		$post_types = rtrim( $post_types, ' OR' );
@@ -620,19 +619,19 @@ class GetPaid_Admin {
 		);
 
 		$columns = array(
-			'name'     => __( 'Name', 'invoicing' ),
-			'email'    => __( 'Email', 'invoicing' ),
-			'country'  => __( 'Country', 'invoicing' ),
-			'state'    => __( 'State', 'invoicing' ),
-			'city'     => __( 'City', 'invoicing' ),
-			'zip'      => __( 'ZIP', 'invoicing' ),
-			'address'  => __( 'Address', 'invoicing' ),
-			'phone'    => __( 'Phone', 'invoicing' ),
-			'company'  => __( 'Company', 'invoicing' ),
-			'company_id'  => __( 'Company ID', 'invoicing' ),
-			'invoices' => __( 'Invoices', 'invoicing' ),
-			'total_raw' => __( 'Total Spend', 'invoicing' ),
-			'signup'   => __( 'Date created', 'invoicing' ),
+			'name'       => __( 'Name', 'invoicing' ),
+			'email'      => __( 'Email', 'invoicing' ),
+			'country'    => __( 'Country', 'invoicing' ),
+			'state'      => __( 'State', 'invoicing' ),
+			'city'       => __( 'City', 'invoicing' ),
+			'zip'        => __( 'ZIP', 'invoicing' ),
+			'address'    => __( 'Address', 'invoicing' ),
+			'phone'      => __( 'Phone', 'invoicing' ),
+			'company'    => __( 'Company', 'invoicing' ),
+			'company_id' => __( 'Company ID', 'invoicing' ),
+			'invoices'   => __( 'Invoices', 'invoicing' ),
+			'total_raw'  => __( 'Total Spend', 'invoicing' ),
+			'signup'     => __( 'Date created', 'invoicing' ),
 		);
 
 		// Output the csv column headers.
@@ -654,9 +653,9 @@ class GetPaid_Admin {
 
 				if ( 'name' == $column ) {
 					$value = esc_html( $user->display_name );
-				} else if( 'email' == $column ) {
+				} elseif ( 'email' == $column ) {
 					$value = sanitize_email( $user->user_email );
-				} else if ( is_callable( array( $table, $method ) ) ) {
+				} elseif ( is_callable( array( $table, $method ) ) ) {
 					$value = strip_tags( $table->$method( $user ) );
 				}
 
@@ -697,10 +696,8 @@ class GetPaid_Admin {
 				} else {
 					wpinv_error_log( $upgrader->skin->get_upgrade_messages(), false );
 				}
-
-			}
-
-		}
+}
+}
 
 		$redirect = isset( $data['redirect'] ) ? esc_url_raw( $data['redirect'] ) : admin_url( 'plugins.php' );
 		wp_safe_redirect( $redirect );
@@ -744,8 +741,7 @@ class GetPaid_Admin {
 				wp_redirect( $connect_url );
 				exit;
 			}
-
-		}
+}
 
 		$redirect = isset( $data['redirect'] ) ? esc_url_raw( urldecode( $data['redirect'] ) ) : admin_url( 'admin.php?page=wpinv-settings&tab=gateways' );
 		wp_safe_redirect( $redirect );
@@ -755,7 +751,7 @@ class GetPaid_Admin {
 
 	/**
      * Recalculates discounts.
-	 * 
+	 *
      */
     public function admin_recalculate_discounts() {
 		global $wpdb;
@@ -784,8 +780,7 @@ class GetPaid_Admin {
 			if ( $invoice->get_total_discount() > 0 ) {
 				$invoice->save();
 			}
-
-		}
+}
 
 		// Show an admin message.
 		$this->show_success( __( 'Discounts have been recalculated.', 'invoicing' ) );
@@ -836,7 +831,7 @@ class GetPaid_Admin {
 	public function save_notice( $type, $message ) {
 		$notices = $this->get_notices();
 
-		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ]) ) {
+		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ] ) ) {
 			$notices[ $type ] = array();
 		}
 
@@ -911,8 +906,7 @@ class GetPaid_Admin {
                 $message = wp_kses_post( $message );
 				echo "<div class='notice notice-$type is-dismissible'><p>$message</p></div>";
             }
-
-        }
+}
 
 		foreach ( array( 'checkout_page', 'invoice_history_page', 'success_page', 'failure_page', 'invoice_subscription_page' ) as $page ) {
 
@@ -927,8 +921,7 @@ class GetPaid_Admin {
 				echo "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>";
 				break;
 			}
-
-		}
+}
 
 	}
 

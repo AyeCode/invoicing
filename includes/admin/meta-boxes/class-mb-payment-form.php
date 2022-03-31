@@ -1,6 +1,6 @@
 <?php
 // MUST have WordPress.
-if ( !defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
     exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
 }
 
@@ -31,7 +31,7 @@ class WPInv_Meta_Box_Payment_Form {
             echo "<div class='col-12'><strong>$key:</strong></div><div class='col-12 form-group'>$value</div>";
         }
 
-        echo "</div></div>";
+        echo '</div></div>';
 
     }
 

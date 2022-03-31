@@ -35,5 +35,5 @@ return array(
 	'SK',
 	'SI',
 	'ES',
-	'SE'
+	'SE',
 );

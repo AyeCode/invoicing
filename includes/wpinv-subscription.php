@@ -121,7 +121,7 @@ class WPInv_Subscription extends GetPaid_Data {
         $fields = array(
 			'parent_payment_id',
 			'transaction_id',
-			'profile_id'
+			'profile_id',
 		);
 
 		// Ensure a field has been passed.
@@ -165,7 +165,7 @@ class WPInv_Subscription extends GetPaid_Data {
      * Checks if a subscription key is set.
      */
     public function _isset( $key ) {
-        return isset( $this->data[$key] ) || method_exists( $this, "get_$key" );
+        return isset( $this->data[ $key ] ) || method_exists( $this, "get_$key" );
 	}
 
 	/*
@@ -693,12 +693,11 @@ class WPInv_Subscription extends GetPaid_Data {
 			return;
 		}
 
-
 		$old_status = ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $this->get_status();
 		if ( true === $this->object_read && $old_status !== $new_status ) {
 			$this->status_transition = array(
-				'from'   => $old_status,
-				'to'     => $new_status,
+				'from' => $old_status,
+				'to'   => $new_status,
 			);
 		}
 
@@ -819,12 +818,12 @@ class WPInv_Subscription extends GetPaid_Data {
 
         return get_posts(
 			array(
-            	'post_parent'    => $this->get_parent_payment_id(),
-            	'numberposts'    => -1,
-            	'post_status'    => $statuses,
-            	'orderby'        => 'ID',
-            	'order'          => 'ASC',
-            	'post_type'      => 'wpi_invoice'
+            	'post_parent' => $this->get_parent_payment_id(),
+            	'numberposts' => -1,
+            	'post_status' => $statuses,
+            	'orderby'     => 'ID',
+            	'order'       => 'ASC',
+            	'post_type'   => 'wpi_invoice',
 			)
 		);
     }
@@ -877,8 +876,7 @@ class WPInv_Subscription extends GetPaid_Data {
 			if ( empty( $invoice ) ) {
 				return false;
 			}
-
-		}
+}
 
 		$invoice->set_status( 'wpi-renewal' );
 
@@ -978,7 +976,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		$period         = $this->get_period();
 		$new_expiration = strtotime( "+ $frequency $period", $this->get_expiration_time() );
 
-		$this->set_expiration( date( 'Y-m-d H:i:s',$new_expiration ) );
+		$this->set_expiration( date( 'Y-m-d H:i:s', $new_expiration ) );
 		$this->set_status( 'active' );
 		$this->save();
 
@@ -1114,7 +1112,15 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_renew_url() {
-		$url = wp_nonce_url( add_query_arg( array( 'getpaid-action' => 'renew_subscription', 'sub_id' => $this->get_id ) ), 'getpaid-nonce' );
+		$url = wp_nonce_url(
+            add_query_arg(
+                array(
+					'getpaid-action' => 'renew_subscription',
+					'sub_id'         => $this->get_id,
+                )
+            ),
+            'getpaid-nonce'
+        );
 		return apply_filters( 'wpinv_subscription_renew_url', $url, $this );
 	}
 
@@ -1135,7 +1141,12 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return string
 	 */
 	public function get_update_url() {
-		$url = add_query_arg( array( 'action' => 'update', 'subscription_id' => $this->get_id() ) );
+		$url = add_query_arg(
+            array(
+				'action'          => 'update',
+				'subscription_id' => $this->get_id(),
+            )
+        );
 		return apply_filters( 'wpinv_subscription_update_url', $url, $this );
 	}
 

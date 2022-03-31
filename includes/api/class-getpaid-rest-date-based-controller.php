@@ -116,7 +116,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		// Generate the report.
 		return array(
 			'before' => date( 'Y-m-d', $before ),
-			'after' => date( 'Y-m-d', $after ),
+			'after'  => date( 'Y-m-d', $after ),
 		);
 
 	}
@@ -177,8 +177,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' )  ) + 8 * DAY_IN_SECONDS ),
-			'after'  => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' )  ) ),
+			'before' => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) + 8 * DAY_IN_SECONDS ),
+			'after'  => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) ),
 		);
 
 	}
@@ -193,14 +193,14 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		// Set the previous date range.
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) - 8 * DAY_IN_SECONDS ),
+			'before' => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) ),
+			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) - 8 * DAY_IN_SECONDS ),
 		);
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' )  ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' )  ) - DAY_IN_SECONDS ),
+			'before' => date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' ) ) ),
+			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) - DAY_IN_SECONDS ),
 		);
 
 	}
@@ -350,13 +350,13 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		$this->previous_range = array(
 			'period' => 'custom',
 			'before' => date( 'Y-m-1', strtotime( 'last month', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-t', strtotime( "-3 months", current_time( 'timestamp' ) ) ),
+			'after'  => date( 'Y-m-t', strtotime( '-3 months', current_time( 'timestamp' ) ) ),
 		);
 
 		// Generate the report.
 		return array(
 			'before' => date( 'Y-m-1', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-t', strtotime( "-2 months", current_time( 'timestamp' ) ) ),
+			'after'  => date( 'Y-m-t', strtotime( '-2 months', current_time( 'timestamp' ) ) ),
 		);
 
 	}
@@ -368,9 +368,9 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_quarters() {
 
-		$last_year = (int) date('Y') - 1;
-		$next_year = (int) date('Y') + 1;
-		$year      = (int) date('Y');
+		$last_year = (int) date( 'Y' ) - 1;
+		$next_year = (int) date( 'Y' ) + 1;
+		$year      = (int) date( 'Y' );
 		return array(
 
 			array(
@@ -401,7 +401,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 			array(
 				'before' => "$next_year-01-01",
 				'after'  => "$year-09-30",
-			)
+			),
 
 		);
 
@@ -491,7 +491,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		$this->groupby = 'month';
 
 		// Set the previous date range.
-		$year          = (int) date('Y') - 3;
+		$year          = (int) date( 'Y' ) - 3;
 		$this->previous_range = array(
 			'period' => 'custom',
 			'before' => date( 'Y-m-d', strtotime( 'first day of january last year', current_time( 'timestamp' ) ) ),
@@ -499,7 +499,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		);
 
 		// Generate the report.
-		$year          = (int) date('Y') - 2;
+		$year          = (int) date( 'Y' ) - 2;
 		return array(
 			'after'  => "$year-12-31",
 			'before' => date( 'Y-m-d', strtotime( 'first day of january this year', current_time( 'timestamp' ) ) ),
@@ -521,14 +521,14 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		$range = $this->get_date_range( $request );
 
 		if ( ! empty( $range['after'] ) ) {
-			$sql .= ' AND ' .  $wpdb->prepare(
+			$sql .= ' AND ' . $wpdb->prepare(
 				"$date_field > %s",
 				$range['after']
 			);
 		}
 
 		if ( ! empty( $range['before'] ) ) {
-			$sql .= ' AND ' .  $wpdb->prepare(
+			$sql .= ' AND ' . $wpdb->prepare(
 				"$date_field < %s",
 				$range['before']
 			);
@@ -561,15 +561,15 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	public function get_collection_params() {
 		return array(
 			'context' => $this->get_context_param( array( 'default' => 'view' ) ),
-			'period' => array(
+			'period'  => array(
 				'description'       => __( 'Limit to results of a specific period.', 'invoicing' ),
 				'type'              => 'string',
-				'enum'              => array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days' , '90_days', '180_days', 'month', 'last_month', 'quarter', 'last_quarter', 'year', 'last_year', 'quarter', 'last_quarter' ),
+				'enum'              => array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'quarter', 'last_quarter', 'year', 'last_year', 'quarter', 'last_quarter' ),
 				'validate_callback' => 'rest_validate_request_arg',
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => '7_days',
 			),
-			'after' => array(
+			'after'   => array(
 				/* translators: %s: date format */
 				'description'       => sprintf( __( 'Limit to results after a specific date, the date needs to be in the %s format.', 'invoicing' ), 'YYYY-MM-DD' ),
 				'type'              => 'string',
@@ -578,7 +578,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => date( 'Y-m-d', strtotime( '-8 days', current_time( 'timestamp' ) ) ),
 			),
-			'before' => array(
+			'before'  => array(
 				/* translators: %s: date format */
 				'description'       => sprintf( __( 'Limit to results before a specific date, the date needs to be in the %s format.', 'invoicing' ), 'YYYY-MM-DD' ),
 				'type'              => 'string',

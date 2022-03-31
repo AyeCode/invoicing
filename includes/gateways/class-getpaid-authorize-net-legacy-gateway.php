@@ -40,17 +40,17 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
      * @param WPInv_Invoice $invoice Invoice.
 	 * @return stdClass|WP_Error
 	 */
-    public function post( $post, $invoice ){
+    public function post( $post, $invoice ) {
 
         $url      = $this->get_api_url( $invoice );
         $response = wp_remote_post(
             $url,
             array(
-                'headers'          => array(
-                    'Content-Type' => 'application/json; charset=utf-8'
+                'headers' => array(
+                    'Content-Type' => 'application/json; charset=utf-8',
                 ),
-                'body'             => json_encode( $post ),
-                'method'           => 'POST'
+                'body'    => json_encode( $post ),
+                'method'  => 'POST',
             )
         );
 
@@ -59,7 +59,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         }
 
         $response = wp_unslash( wp_remote_retrieve_body( $response ) );
-        $response = preg_replace('/\xEF\xBB\xBF/', '', $response); // https://community.developer.authorize.net/t5/Integration-and-Testing/JSON-issues/td-p/48851
+        $response = preg_replace( '/\xEF\xBB\xBF/', '', $response ); // https://community.developer.authorize.net/t5/Integration-and-Testing/JSON-issues/td-p/48851
         $response = json_decode( $response );
 
         if ( empty( $response ) ) {
@@ -72,7 +72,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
                 wpinv_error_log( $response );
             }
 
-            if ( $response->messages->message[0]->code == 'E00039' && ! empty( $response->customerProfileId )  && ! empty( $response->customerPaymentProfileId ) ) {
+            if ( $response->messages->message[0]->code == 'E00039' && ! empty( $response->customerProfileId ) && ! empty( $response->customerPaymentProfileId ) ) {
                 return new WP_Error( 'dup_payment_profile', $response->customerProfileId . '.' . $response->customerPaymentProfileId );
             }
 
@@ -116,9 +116,9 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         $this->post(
             array(
                 'ARBCancelSubscriptionRequest' => array(
-                    'merchantAuthentication'   => $this->get_auth_params(),
-                    'subscriptionId'           => $subscription->profile_id,
-                )
+                    'merchantAuthentication' => $this->get_auth_params(),
+                    'subscriptionId'         => $subscription->profile_id,
+                ),
             ),
             $invoice
         );
@@ -220,7 +220,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
             $subscription->add_payment(
                 array(
                     'transaction_id' => sanitize_text_field( $data['x_trans_id'] ),
-                    'gateway'        => $this->id
+                    'gateway'        => $this->id,
                 )
             );
             $subscription->renew();
@@ -245,14 +245,13 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
             $login_id  = $this->get_option( 'login_id' );
             $trans_id  = wpinv_clean( $_POST['x_trans_id'] );
             $amount    = wpinv_clean( $_POST['x_amount'] );
-            $hash      = hash_hmac ( 'sha512', "^$login_id^$trans_id^$amount^", hex2bin( $signature ) );
+            $hash      = hash_hmac( 'sha512', "^$login_id^$trans_id^$amount^", hex2bin( $signature ) );
 
             if ( ! hash_equals( $hash, $posted['x_SHA2_Hash'] ) ) {
                 wpinv_error_log( $posted['x_SHA2_Hash'], "Invalid signature. Expected $hash" );
                 exit;
             }
-
-        }
+}
 
     }
 
@@ -274,7 +273,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
             return false;
         }
 
-        $hash  = hash_hmac ( 'sha512', file_get_contents( 'php://input' ), hex2bin( $signature ) );
+        $hash  = hash_hmac( 'sha512', file_get_contents( 'php://input' ), hex2bin( $signature ) );
 
         if ( hash_equals( $hash, $_SERVER['HTTP_X_ANET_SIGNATURE'] ) ) {
             wpinv_error_log( 'Successfully validated the IPN' );
@@ -282,7 +281,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
         }
 
         wpinv_error_log( 'IPN hash is not valid' );
-        wpinv_error_log(  $_SERVER['HTTP_X_ANET_SIGNATURE']  );
+        wpinv_error_log( $_SERVER['HTTP_X_ANET_SIGNATURE'] );
         return false;
 
     }

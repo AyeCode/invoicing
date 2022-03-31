@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'cb951bb87e5076389faf873c81c900abdf8e00f8',
+        'reference' => 'a98fa32e69c51bb98f7d88646004e680ca54c3ef',
         'name' => 'ayecode/invoicing',
         'dev' => true,
     ),
@@ -25,7 +25,11 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
+<<<<<<< HEAD
             'reference' => 'cb951bb87e5076389faf873c81c900abdf8e00f8',
+=======
+            'reference' => 'a98fa32e69c51bb98f7d88646004e680ca54c3ef',
+>>>>>>> ecfc04d7ac0822306fa830a2ee2cb1a1368aa75c
             'dev_requirement' => false,
         ),
         'ayecode/wp-ayecode-ui' => array(

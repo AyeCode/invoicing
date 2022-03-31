@@ -72,8 +72,8 @@ class GetPaid_Reports_Report_Gateways extends GetPaid_Reports_Abstract_Report {
 			} else {
 
 				$normalized[] = array(
-					'total'     => wpinv_round_amount( wpinv_sanitize_amount( $stat->total ) ),
-					'gateway'   => strip_tags( wpinv_get_gateway_admin_label( $stat->gateway ) ),
+					'total'   => wpinv_round_amount( wpinv_sanitize_amount( $stat->total ) ),
+					'gateway' => strip_tags( wpinv_get_gateway_admin_label( $stat->gateway ) ),
 				);
 
 			}
@@ -84,8 +84,8 @@ class GetPaid_Reports_Report_Gateways extends GetPaid_Reports_Abstract_Report {
 		if ( $others > 0 ) {
 
 			$normalized[] = array(
-				'total'     => wpinv_round_amount( wpinv_sanitize_amount( $others ) ),
-				'gateway'   => esc_html__( 'Others', 'invoicing' ),
+				'total'   => wpinv_round_amount( wpinv_sanitize_amount( $others ) ),
+				'gateway' => esc_html__( 'Others', 'invoicing' ),
 			);
 
 		}
@@ -100,7 +100,7 @@ class GetPaid_Reports_Report_Gateways extends GetPaid_Reports_Abstract_Report {
 	public function get_data() {
 
 		$data     = wp_list_pluck( $this->stats, 'total' );
-		$colors   = array( '#009688','#4caf50','#8bc34a','#00bcd4','#03a9f4','#2196f3' );
+		$colors   = array( '#009688', '#4caf50', '#8bc34a', '#00bcd4', '#03a9f4', '#2196f3' );
 
 		shuffle( $colors );
 

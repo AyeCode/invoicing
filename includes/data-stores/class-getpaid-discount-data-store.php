@@ -75,20 +75,20 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 	 */
 	public function create( &$discount ) {
 		$discount->set_version( WPINV_VERSION );
-		$discount->set_date_created( current_time('mysql') );
+		$discount->set_date_created( current_time( 'mysql' ) );
 
 		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
 				'getpaid_new_discount_data',
 				array(
-					'post_date'     => $discount->get_date_created( 'edit' ),
-					'post_type'     => 'wpi_discount',
-					'post_status'   => $this->get_post_status( $discount ),
-					'ping_status'   => 'closed',
-					'post_author'   => $discount->get_author( 'edit' ),
-					'post_title'    => $discount->get_name( 'edit' ),
-					'post_excerpt'  => $discount->get_description( 'edit' ),
+					'post_date'    => $discount->get_date_created( 'edit' ),
+					'post_type'    => 'wpi_discount',
+					'post_status'  => $this->get_post_status( $discount ),
+					'ping_status'  => 'closed',
+					'post_author'  => $discount->get_author( 'edit' ),
+					'post_title'   => $discount->get_name( 'edit' ),
+					'post_excerpt' => $discount->get_description( 'edit' ),
 				)
 			),
 			true
@@ -156,7 +156,7 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 		$discount->set_version( WPINV_VERSION );
 
 		if ( null === $discount->get_date_created( 'edit' ) ) {
-			$discount->set_date_created(  current_time('mysql') );
+			$discount->set_date_created( current_time( 'mysql' ) );
 		}
 
 		// Grab the current status so we can compare.
@@ -167,12 +167,12 @@ class GetPaid_Discount_Data_Store extends GetPaid_Data_Store_WP {
 		// Only update the post when the post data changes.
 		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'post_excerpt' ), array_keys( $changes ) ) ) {
 			$post_data = array(
-				'post_date'         => $discount->get_date_created( 'edit' ),
-				'post_status'       => $discount->get_status( 'edit' ),
-				'post_title'        => $discount->get_name( 'edit' ),
-				'post_author'       => $discount->get_author( 'edit' ),
-				'post_modified'     => $discount->get_date_modified( 'edit' ),
-				'post_excerpt'      => $discount->get_description( 'edit' ),
+				'post_date'     => $discount->get_date_created( 'edit' ),
+				'post_status'   => $discount->get_status( 'edit' ),
+				'post_title'    => $discount->get_name( 'edit' ),
+				'post_author'   => $discount->get_author( 'edit' ),
+				'post_modified' => $discount->get_date_modified( 'edit' ),
+				'post_excerpt'  => $discount->get_description( 'edit' ),
 			);
 
 			/**

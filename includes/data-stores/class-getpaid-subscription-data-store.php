@@ -61,7 +61,7 @@ class GetPaid_Subscription_Data_Store {
 
 		foreach ( $fields as $key => $format ) {
 			$method       = "get_$key";
-			$values[$key] = $subscription->$method( 'edit' );
+			$values[ $key ] = $subscription->$method( 'edit' );
 			$formats[]    = $format;
 		}
 
@@ -145,7 +145,7 @@ class GetPaid_Subscription_Data_Store {
 		foreach ( $this->database_fields_to_data_type as $key => $format ) {
 			if ( array_key_exists( $key, $changes ) ) {
 				$method       = "get_$key";
-				$values[$key] = $subscription->$method( 'edit' );
+				$values[ $key ] = $subscription->$method( 'edit' );
 				$formats[]    = $format;
 			}
 		}

@@ -77,8 +77,8 @@ class WPInv_API {
     public $invoice_counts;
 
     /**
-     * Class constructor. 
-     * 
+     * Class constructor.
+     *
      * @since 1.0.13
      * Sets the API namespace and inits hooks
      */

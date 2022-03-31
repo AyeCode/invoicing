@@ -45,26 +45,26 @@ do_action( 'getpaid_before_email_line_totals', $invoice, $totals );
 
                 // Total tax.
                 if ( 'tax' == $key ) {
-                    echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );
+				echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );
                 }
 
                 if ( 'fee' == $key ) {
-                    echo wpinv_price( $invoice->get_total_fees(), $invoice->get_currency() );
+				echo wpinv_price( $invoice->get_total_fees(), $invoice->get_currency() );
                 }
 
                 // Total discount.
                 if ( 'discount' == $key ) {
-                    echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );
+				echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );
                 }
 
                 // Sub total.
                 if ( 'subtotal' == $key ) {
-                    echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );
+				echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );
                 }
 
                 // Total.
                 if ( 'total' == $key ) {
-                    echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+				echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
                 }
 
                 // Fires when printing a cart total in an email.

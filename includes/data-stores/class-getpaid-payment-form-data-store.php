@@ -26,7 +26,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		'wpinv_form_earned',
 		'wpinv_form_refunded',
 		'wpinv_form_cancelled',
-		'wpinv_form_failed'
+		'wpinv_form_failed',
 	);
 
 	/**
@@ -58,19 +58,19 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 	 */
 	public function create( &$form ) {
 		$form->set_version( WPINV_VERSION );
-		$form->set_date_created( current_time('mysql') );
+		$form->set_date_created( current_time( 'mysql' ) );
 
 		// Create a new post.
 		$id = wp_insert_post(
 			apply_filters(
 				'getpaid_new_payment_form_data',
 				array(
-					'post_date'     => $form->get_date_created( 'edit' ),
-					'post_type'     => 'wpi_payment_form',
-					'post_status'   => $this->get_post_status( $form ),
-					'ping_status'   => 'closed',
-					'post_author'   => $form->get_author( 'edit' ),
-					'post_title'    => $form->get_name( 'edit' ),
+					'post_date'   => $form->get_date_created( 'edit' ),
+					'post_type'   => 'wpi_payment_form',
+					'post_status' => $this->get_post_status( $form ),
+					'ping_status' => 'closed',
+					'post_author' => $form->get_author( 'edit' ),
+					'post_title'  => $form->get_name( 'edit' ),
 				)
 			),
 			true
@@ -137,7 +137,7 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		$form->set_version( WPINV_VERSION );
 
 		if ( null === $form->get_date_created( 'edit' ) ) {
-			$form->set_date_created(  current_time('mysql') );
+			$form->set_date_created( current_time( 'mysql' ) );
 		}
 
 		// Grab the current status so we can compare.
@@ -148,11 +148,11 @@ class GetPaid_Payment_Form_Data_Store extends GetPaid_Data_Store_WP {
 		// Only update the post when the post data changes.
 		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author' ), array_keys( $changes ) ) ) {
 			$post_data = array(
-				'post_date'         => $form->get_date_created( 'edit' ),
-				'post_status'       => $form->get_status( 'edit' ),
-				'post_title'        => $form->get_name( 'edit' ),
-				'post_author'       => $form->get_author( 'edit' ),
-				'post_modified'     => $form->get_date_modified( 'edit' ),
+				'post_date'     => $form->get_date_created( 'edit' ),
+				'post_status'   => $form->get_status( 'edit' ),
+				'post_title'    => $form->get_name( 'edit' ),
+				'post_author'   => $form->get_author( 'edit' ),
+				'post_modified' => $form->get_date_modified( 'edit' ),
 			);
 
 			/**

@@ -14,7 +14,7 @@ class GetPaid_Subscription_Exporter extends GetPaid_Graph_Downloader {
 
 	/**
 	 * Retrieves subscription query args.
-	 * 
+	 *
 	 * @param array $args Args to search for.
 	 * @return array
 	 */
@@ -50,7 +50,7 @@ class GetPaid_Subscription_Exporter extends GetPaid_Graph_Downloader {
 
 	/**
 	 * Retrieves subscriptions.
-	 * 
+	 *
 	 * @param array $query_args GetPaid_Subscriptions_Query args.
 	 * @return WPInv_Subscription[]
 	 */
@@ -77,7 +77,7 @@ class GetPaid_Subscription_Exporter extends GetPaid_Graph_Downloader {
 
 		if ( 'csv' == $file_type ) {
 			$this->download_csv( $subscriptions, $stream, $headers );
-		} else if( 'xml' == $file_type ) {
+		} elseif ( 'xml' == $file_type ) {
 			$this->download_xml( $subscriptions, $stream, $headers );
 		} else {
 			$this->download_json( $subscriptions, $stream, $headers );
@@ -111,8 +111,7 @@ class GetPaid_Subscription_Exporter extends GetPaid_Graph_Downloader {
 				if ( method_exists( $invoice, $method ) ) {
 					$value  = $invoice->$method();
 				}
-
-			} else if ( method_exists( $subscription, $method ) ) {
+} elseif ( method_exists( $subscription, $method ) ) {
 				$value  = $subscription->$method();
 			}
 
@@ -179,7 +178,7 @@ class GetPaid_Subscription_Exporter extends GetPaid_Graph_Downloader {
 
 		$fields = array(
 			'initial_amount',
-			'recurring_amount'
+			'recurring_amount',
     	);
 
 		return apply_filters( 'getpaid_subscription_exporter_get_amount_fields', $fields );

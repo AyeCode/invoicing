@@ -21,30 +21,29 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	public function __construct() {
 
 		$options = array(
-			'textdomain'    => 'invoicing',
-			'block-icon'    => 'controls-repeat',
-			'block-category'=> 'widgets',
-			'block-keywords'=> "['invoicing','subscriptions', 'getpaid']",
+			'textdomain'     => 'invoicing',
+			'block-icon'     => 'controls-repeat',
+			'block-category' => 'widgets',
+			'block-keywords' => "['invoicing','subscriptions', 'getpaid']",
 			'class_name'     => __CLASS__,
-			'base_id'       => 'wpinv_subscriptions',
-			'name'          => __( 'GetPaid > Subscriptions', 'invoicing' ),
-			'widget_ops'    => array(
+			'base_id'        => 'wpinv_subscriptions',
+			'name'           => __( 'GetPaid > Subscriptions', 'invoicing' ),
+			'widget_ops'     => array(
 				'classname'   => 'getpaid-subscriptions bsui',
 				'description' => esc_html__( "Displays the current user's subscriptions.", 'invoicing' ),
 			),
-			'arguments'     => array(
-				'title'  => array(
-					'title'       => __( 'Widget title', 'invoicing' ),
-					'desc'        => __( 'Enter widget title.', 'invoicing' ),
-					'type'        => 'text',
-					'desc_tip'    => true,
-					'default'     => '',
-					'advanced'    => false
+			'arguments'      => array(
+				'title' => array(
+					'title'    => __( 'Widget title', 'invoicing' ),
+					'desc'     => __( 'Enter widget title.', 'invoicing' ),
+					'type'     => 'text',
+					'desc_tip' => true,
+					'default'  => '',
+					'advanced' => false,
 				),
-			)
+			),
 
 		);
-
 
 		parent::__construct( $options );
 	}
@@ -136,10 +135,10 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	public function get_subscriptions_table_columns() {
 
 		$columns = array(
-			'subscription'   => __( 'Subscription', 'invoicing' ),
-			'amount'         => __( 'Amount', 'invoicing' ),
-			'renewal-date'   => __( 'Next payment', 'invoicing' ),
-			'status'         => __( 'Status', 'invoicing' ),
+			'subscription' => __( 'Subscription', 'invoicing' ),
+			'amount'       => __( 'Amount', 'invoicing' ),
+			'renewal-date' => __( 'Next payment', 'invoicing' ),
+			'status'       => __( 'Status', 'invoicing' ),
 		);
 
 		return apply_filters( 'getpaid_frontend_subscriptions_table_columns', $columns );
@@ -229,7 +228,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 							'subscriptions/subscriptions-table-row.php',
 							array(
 								'subscription' => $subscription,
-								'widget'       => $this
+								'widget'       => $this,
 							)
 						);
 					?>
@@ -328,11 +327,13 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			<?php
 				$big = 999999;
 
-				echo getpaid_paginate_links(
-					array(
-						'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-						'format'  => '?paged=%#%',
-						'total'   => (int) ceil( $total / 10 ),
+				echo wp_kses_post(
+					getpaid_paginate_links(
+						array(
+							'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+							'format' => '?paged=%#%',
+							'total'  => (int) ceil( $total / 10 ),
+						)
 					)
 				);
 			?>
@@ -376,8 +377,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			if ( 'pending' == $subscription->get_status() ) {
 				unset( $fields['expiry_date'] );
 			}
-
-		}
+}
 
 		if ( isset( $fields['start_date'] ) && 'pending' == $subscription->get_status() ) {
 			unset( $fields['start_date'] );
@@ -429,7 +429,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			'subscriptions/subscription-details.php',
 			array(
 				'subscription' => $subscription,
-				'widget'       => $this
+				'widget'       => $this,
 			)
 		);
 

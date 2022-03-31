@@ -356,7 +356,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 		$force          = $supports_trash && (bool) $request['force'];
 
 		if ( ! $this->check_post_permissions( 'delete', $item->ID ) ) {
-			return new WP_Error( "cannot_delete", __( 'Sorry, you are not allowed to delete this resource.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'cannot_delete', __( 'Sorry, you are not allowed to delete this resource.', 'invoicing' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		$request->set_param( 'context', 'edit' );
@@ -381,21 +381,21 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 
 		if ( is_callable( array( $object, 'get_user_id' ) ) ) {
 			$links['user'] = array(
-				'href'       => rest_url( 'wp/v2/users/' . call_user_func(  array( $object, 'get_user_id' )  ) ),
+				'href'       => rest_url( 'wp/v2/users/' . call_user_func( array( $object, 'get_user_id' ) ) ),
 				'embeddable' => true,
 			);
 		}
 
 		if ( is_callable( array( $object, 'get_owner' ) ) ) {
 			$links['owner']  = array(
-				'href'       => rest_url( 'wp/v2/users/' . call_user_func(  array( $object, 'get_owner' )  ) ),
+				'href'       => rest_url( 'wp/v2/users/' . call_user_func( array( $object, 'get_owner' ) ) ),
 				'embeddable' => true,
 			);
 		}
 
-		if ( is_callable( array( $object, 'get_parent_id' ) ) && call_user_func(  array( $object, 'get_parent_id' )  ) ) {
+		if ( is_callable( array( $object, 'get_parent_id' ) ) && call_user_func( array( $object, 'get_parent_id' ) ) ) {
 			$links['parent']  = array(
-				'href'       => rest_url( "$this->namespace/$this->rest_base/" . call_user_func(  array( $object, 'get_parent_id' )  ) ),
+				'href'       => rest_url( "$this->namespace/$this->rest_base/" . call_user_func( array( $object, 'get_parent_id' ) ) ),
 				'embeddable' => true,
 			);
 		}
@@ -493,40 +493,38 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 	public function get_collection_params() {
 
 		return array_merge(
-
 			parent::get_collection_params(),
-
 			array(
-				'status' => array(
+				'status'  => array(
 					'default'           => $this->get_post_statuses(),
 					'description'       => __( 'Limit result set to resources assigned one or more statuses.', 'invoicing' ),
 					'type'              => array( 'array', 'string' ),
 					'items'             => array(
-						'enum'          => $this->get_post_statuses(),
-						'type'          => 'string',
+						'enum' => $this->get_post_statuses(),
+						'type' => 'string',
 					),
 					'validate_callback' => 'rest_validate_request_arg',
 					'sanitize_callback' => array( $this, 'sanitize_post_statuses' ),
 				),
-				'after' => array(
-					'description'        => __( 'Limit response to resources created after a given ISO8601 compliant date.', 'invoicing' ),
-					'type'               => 'string',
-					'format'             => 'string',
-					'validate_callback'  => 'rest_validate_request_arg',
-					'sanitize_callback'  => 'sanitize_text_field',
+				'after'   => array(
+					'description'       => __( 'Limit response to resources created after a given ISO8601 compliant date.', 'invoicing' ),
+					'type'              => 'string',
+					'format'            => 'string',
+					'validate_callback' => 'rest_validate_request_arg',
+					'sanitize_callback' => 'sanitize_text_field',
 				),
-				'before' => array(
-					'description'        => __( 'Limit response to resources created before a given ISO8601 compliant date.', 'invoicing' ),
-					'type'               => 'string',
-					'format'             => 'string',
-					'validate_callback'  => 'rest_validate_request_arg',
-					'sanitize_callback'  => 'sanitize_text_field',
+				'before'  => array(
+					'description'       => __( 'Limit response to resources created before a given ISO8601 compliant date.', 'invoicing' ),
+					'type'              => 'string',
+					'format'            => 'string',
+					'validate_callback' => 'rest_validate_request_arg',
+					'sanitize_callback' => 'sanitize_text_field',
 				),
 				'exclude' => array(
 					'description'       => __( 'Ensure result set excludes specific IDs.', 'invoicing' ),
 					'type'              => 'array',
 					'items'             => array(
-						'type'          => 'integer',
+						'type' => 'integer',
 					),
 					'default'           => array(),
 					'sanitize_callback' => 'wp_parse_id_list',
@@ -536,30 +534,30 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 					'description'       => __( 'Limit result set to specific ids.', 'invoicing' ),
 					'type'              => 'array',
 					'items'             => array(
-						'type'          => 'integer',
+						'type' => 'integer',
 					),
 					'default'           => array(),
 					'sanitize_callback' => 'wp_parse_id_list',
 					'validate_callback' => 'rest_validate_request_arg',
 				),
-				'offset' => array(
-					'description'        => __( 'Offset the result set by a specific number of items.', 'invoicing' ),
-					'type'               => 'integer',
-					'sanitize_callback'  => 'absint',
-					'validate_callback'  => 'rest_validate_request_arg',
+				'offset'  => array(
+					'description'       => __( 'Offset the result set by a specific number of items.', 'invoicing' ),
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+					'validate_callback' => 'rest_validate_request_arg',
 				),
-				'order' => array(
-					'description'        => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
-					'type'               => 'string',
-					'default'            => 'desc',
-					'enum'               => array( 'asc', 'desc' ),
-					'validate_callback'  => 'rest_validate_request_arg',
+				'order'   => array(
+					'description'       => __( 'Order sort attribute ascending or descending.', 'invoicing' ),
+					'type'              => 'string',
+					'default'           => 'desc',
+					'enum'              => array( 'asc', 'desc' ),
+					'validate_callback' => 'rest_validate_request_arg',
 				),
 				'orderby' => array(
-					'description'        => __( 'Sort collection by object attribute.', 'invoicing' ),
-					'type'               => 'string',
-					'default'            => 'date',
-					'enum'               => array(
+					'description'       => __( 'Sort collection by object attribute.', 'invoicing' ),
+					'type'              => 'string',
+					'default'           => 'date',
+					'enum'              => array(
 						'date',
 						'id',
 						'include',
@@ -567,7 +565,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 						'slug',
 						'modified',
 					),
-					'validate_callback'  => 'rest_validate_request_arg',
+					'validate_callback' => 'rest_validate_request_arg',
 				),
 			)
 		);

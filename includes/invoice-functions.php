@@ -107,7 +107,7 @@ function getpaid_is_invoice_post_type( $post_type ) {
  * @return int|WP_Error|WPInv_Invoice The value 0 or WP_Error on failure. The WPInv_Invoice object on success.
  */
 function wpinv_create_invoice( $data = array(), $deprecated = null, $wp_error = false ) {
-    $data[ 'invoice_id' ] = 0;
+    $data['invoice_id'] = 0;
     return wpinv_insert_invoice( $data, $wp_error );
 }
 
@@ -144,8 +144,7 @@ function wpinv_update_invoice( $data = array(), $wp_error = false ) {
         if ( ! empty( $data['items'] ) || ! empty( $data['cart_details'] ) ) {
             return $wp_error ? new WP_Error( 'paid_invoice', __( 'You can not update cart items for invoices that have already been paid for.', 'invoicing' ) ) : 0;
         }
-
-    }
+}
 
     return wpinv_insert_invoice( $data, $wp_error );
 
@@ -183,14 +182,12 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
 
             if ( $key == 'discounts' ) {
                 $value = (array) $value;
-                $data[ 'discount_code' ] = empty( $value ) ? null : $value[0];
+                $data['discount_code'] = empty( $value ) ? null : $value[0];
             } else {
                 $data[ $key ] = $value;
             }
-
-        }
-
-    }
+}
+}
 
     // Backwards compatibility.
     if ( ! empty( $data['payment_details'] ) ) {
@@ -198,8 +195,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
         foreach ( $data['payment_details'] as $key => $value ) {
             $data[ $key ] = $value;
         }
-
-    }
+}
 
     // Set up the owner of the invoice.
     $user_id = ! empty( $data['user_id'] ) ? wpinv_clean( $data['user_id'] ) : get_current_user_id();
@@ -218,75 +214,71 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
         } else {
             $address[ $key ] = wpinv_clean( $value );
         }
-
-    }
+}
 
     // Load new data.
     $invoice->set_props(
-
         array(
 
             // Basic info.
-            'template'             => isset( $data['template'] ) ? wpinv_clean( $data['template'] ) : null,
-            'email_cc'             => isset( $data['email_cc'] ) ? wpinv_clean( $data['email_cc'] ) : null,
-            'date_created'         => isset( $data['created_date'] ) ? wpinv_clean( $data['created_date'] ) : null,
-            'due_date'             => isset( $data['due_date'] ) ? wpinv_clean( $data['due_date'] ) : null,
-            'date_completed'       => isset( $data['date_completed'] ) ? wpinv_clean( $data['date_completed'] ) : null,
-            'number'               => isset( $data['number'] ) ? wpinv_clean( $data['number'] ) : null,
-            'key'                  => isset( $data['key'] ) ? wpinv_clean( $data['key'] ) : null,
-            'status'               => isset( $data['status'] ) ? wpinv_clean( $data['status'] ) : null,
-            'post_type'            => isset( $data['post_type'] ) ? wpinv_clean( $data['post_type'] ) : null,
-            'user_ip'              => isset( $data['ip'] ) ? wpinv_clean( $data['ip'] ) : wpinv_get_ip(),
-            'parent_id'            => isset( $data['parent'] ) ? intval( $data['parent'] ) : null,
-            'mode'                 => isset( $data['mode'] ) ? wpinv_clean( $data['mode'] ) : null,
-            'description'          => isset( $data['description'] ) ? wp_kses_post( $data['description'] ) : null,
+            'template'          => isset( $data['template'] ) ? wpinv_clean( $data['template'] ) : null,
+            'email_cc'          => isset( $data['email_cc'] ) ? wpinv_clean( $data['email_cc'] ) : null,
+            'date_created'      => isset( $data['created_date'] ) ? wpinv_clean( $data['created_date'] ) : null,
+            'due_date'          => isset( $data['due_date'] ) ? wpinv_clean( $data['due_date'] ) : null,
+            'date_completed'    => isset( $data['date_completed'] ) ? wpinv_clean( $data['date_completed'] ) : null,
+            'number'            => isset( $data['number'] ) ? wpinv_clean( $data['number'] ) : null,
+            'key'               => isset( $data['key'] ) ? wpinv_clean( $data['key'] ) : null,
+            'status'            => isset( $data['status'] ) ? wpinv_clean( $data['status'] ) : null,
+            'post_type'         => isset( $data['post_type'] ) ? wpinv_clean( $data['post_type'] ) : null,
+            'user_ip'           => isset( $data['ip'] ) ? wpinv_clean( $data['ip'] ) : wpinv_get_ip(),
+            'parent_id'         => isset( $data['parent'] ) ? intval( $data['parent'] ) : null,
+            'mode'              => isset( $data['mode'] ) ? wpinv_clean( $data['mode'] ) : null,
+            'description'       => isset( $data['description'] ) ? wp_kses_post( $data['description'] ) : null,
 
             // Payment info.
-            'disable_taxes'        => ! empty( $data['disable_taxes'] ),
-            'currency'             => isset( $data['currency'] ) ? wpinv_clean( $data['currency'] ) : wpinv_get_currency(),
-            'gateway'              => isset( $data['gateway'] ) ? wpinv_clean( $data['gateway'] ) : null,
-            'transaction_id'       => isset( $data['transaction_id'] ) ? wpinv_clean( $data['transaction_id'] ) : null,
-            'discount_code'        => isset( $data['discount_code'] ) ? wpinv_clean( $data['discount_code'] ) : null,
-            'payment_form'         => isset( $data['payment_form'] ) ? intval( $data['payment_form'] ) : null,
-            'submission_id'        => isset( $data['submission_id'] ) ? wpinv_clean( $data['submission_id'] ) : null,
-            'subscription_id'      => isset( $data['subscription_id'] ) ? wpinv_clean( $data['subscription_id'] ) : null,
-            'is_viewed'            => isset( $data['is_viewed'] ) ? wpinv_clean( $data['is_viewed'] ) : null,
-            'fees'                 => isset( $data['fees'] ) ? wpinv_clean( $data['fees'] ) : null,
-            'discounts'            => isset( $data['discounts'] ) ? wpinv_clean( $data['discounts'] ) : null,
-            'taxes'                => isset( $data['taxes'] ) ? wpinv_clean( $data['taxes'] ) : null,
-
+            'disable_taxes'     => ! empty( $data['disable_taxes'] ),
+            'currency'          => isset( $data['currency'] ) ? wpinv_clean( $data['currency'] ) : wpinv_get_currency(),
+            'gateway'           => isset( $data['gateway'] ) ? wpinv_clean( $data['gateway'] ) : null,
+            'transaction_id'    => isset( $data['transaction_id'] ) ? wpinv_clean( $data['transaction_id'] ) : null,
+            'discount_code'     => isset( $data['discount_code'] ) ? wpinv_clean( $data['discount_code'] ) : null,
+            'payment_form'      => isset( $data['payment_form'] ) ? intval( $data['payment_form'] ) : null,
+            'submission_id'     => isset( $data['submission_id'] ) ? wpinv_clean( $data['submission_id'] ) : null,
+            'subscription_id'   => isset( $data['subscription_id'] ) ? wpinv_clean( $data['subscription_id'] ) : null,
+            'is_viewed'         => isset( $data['is_viewed'] ) ? wpinv_clean( $data['is_viewed'] ) : null,
+            'fees'              => isset( $data['fees'] ) ? wpinv_clean( $data['fees'] ) : null,
+            'discounts'         => isset( $data['discounts'] ) ? wpinv_clean( $data['discounts'] ) : null,
+            'taxes'             => isset( $data['taxes'] ) ? wpinv_clean( $data['taxes'] ) : null,
 
             // Billing details.
-            'user_id'              => $data['user_id'],
-            'first_name'           => isset( $data['first_name'] ) ? wpinv_clean( $data['first_name'] ) : $address['first_name'],
-            'last_name'            => isset( $data['last_name'] ) ? wpinv_clean( $data['last_name'] ) : $address['last_name'],
-            'address'              => isset( $data['address'] ) ? wpinv_clean( $data['address'] ) : $address['address'] ,
-            'vat_number'           => isset( $data['vat_number'] ) ? wpinv_clean( $data['vat_number'] ) : $address['vat_number'],
-            'company'              => isset( $data['company'] ) ? wpinv_clean( $data['company'] ) : $address['company'],
-            'zip'                  => isset( $data['zip'] ) ? wpinv_clean( $data['zip'] ) : $address['zip'],
-            'state'                => isset( $data['state'] ) ? wpinv_clean( $data['state'] ) : $address['state'],
-            'city'                 => isset( $data['city'] ) ? wpinv_clean( $data['city'] ) : $address['city'],
-            'country'              => isset( $data['country'] ) ? wpinv_clean( $data['country'] ) : $address['country'],
-            'phone'                => isset( $data['phone'] ) ? wpinv_clean( $data['phone'] ) : $address['phone'],
-            'address_confirmed'    => ! empty( $data['address_confirmed'] ),
+            'user_id'           => $data['user_id'],
+            'first_name'        => isset( $data['first_name'] ) ? wpinv_clean( $data['first_name'] ) : $address['first_name'],
+            'last_name'         => isset( $data['last_name'] ) ? wpinv_clean( $data['last_name'] ) : $address['last_name'],
+            'address'           => isset( $data['address'] ) ? wpinv_clean( $data['address'] ) : $address['address'],
+            'vat_number'        => isset( $data['vat_number'] ) ? wpinv_clean( $data['vat_number'] ) : $address['vat_number'],
+            'company'           => isset( $data['company'] ) ? wpinv_clean( $data['company'] ) : $address['company'],
+            'zip'               => isset( $data['zip'] ) ? wpinv_clean( $data['zip'] ) : $address['zip'],
+            'state'             => isset( $data['state'] ) ? wpinv_clean( $data['state'] ) : $address['state'],
+            'city'              => isset( $data['city'] ) ? wpinv_clean( $data['city'] ) : $address['city'],
+            'country'           => isset( $data['country'] ) ? wpinv_clean( $data['country'] ) : $address['country'],
+            'phone'             => isset( $data['phone'] ) ? wpinv_clean( $data['phone'] ) : $address['phone'],
+            'address_confirmed' => ! empty( $data['address_confirmed'] ),
 
         )
-
     );
 
     // Backwards compatibililty.
     if ( ! empty( $data['cart_details'] ) && is_array( $data['cart_details'] ) ) {
         $data['items'] = array();
 
-        foreach( $data['cart_details'] as $_item ) {
+        foreach ( $data['cart_details'] as $_item ) {
 
             // Ensure that we have an item id.
-            if ( empty(  $_item['id']  ) ) {
+            if ( empty( $_item['id'] ) ) {
                 continue;
             }
 
             // Retrieve the item.
-            $item = new GetPaid_Form_Item(  $_item['id']  );
+            $item = new GetPaid_Form_Item( $_item['id'] );
 
             // Ensure that it is purchasable.
             if ( ! $item->can_purchase() ) {
@@ -325,8 +317,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
                 if ( isset( $_item['meta']['description'] ) ) {
                     $item->set_custom_description( $_item['meta']['description'] );
                 }
-
-            }
+}
 
             $data['items'][] = $item;
 
@@ -343,10 +334,8 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
             if ( is_object( $item ) && is_a( $item, 'GetPaid_Form_Item' ) && $item->can_purchase() ) {
                 $invoice->add_item( $item );
             }
-
-        }
-
-    }
+}
+}
 
     // Save the invoice.
     $invoice->recalculate_total();
@@ -362,7 +351,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
     }
 
     // User notes.
-    if ( !empty( $data['user_note'] ) ) {
+    if ( ! empty( $data['user_note'] ) ) {
         $invoice->add_note( $data['user_note'], true );
     }
 
@@ -377,8 +366,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
         if ( isset( $data['valid_until'] ) ) {
             update_post_meta( $invoice->get_id(), 'wpinv_quote_valid_until', $data['valid_until'] );
         }
-
-    }
+}
 
     return $invoice;
 }
@@ -422,10 +410,10 @@ function wpinv_get_invoices( $args ) {
     $args = wp_parse_args(
         $args,
         array(
-            'status'   => array_keys( wpinv_get_invoice_statuses() ),
-            'type'     => 'wpi_invoice',
-            'limit'    => get_option( 'posts_per_page' ),
-            'return'   => 'objects',
+            'status' => array_keys( wpinv_get_invoice_statuses() ),
+            'type'   => 'wpi_invoice',
+            'limit'  => get_option( 'posts_per_page' ),
+            'return' => 'objects',
         )
     );
 
@@ -462,8 +450,7 @@ function wpinv_get_invoices( $args ) {
         if ( $user ) {
             $args['author'] = $user->user_email;
         }
-
-    }
+}
 
     // We only want invoice ids.
     $args['fields'] = 'ids';
@@ -548,7 +535,7 @@ function wpinv_get_invoice_notes( $invoice = 0, $type = '' ) {
     // Prepare the invoice.
     $invoice = wpinv_get_invoice( $invoice );
     if ( empty( $invoice ) ) {
-        return NULL;
+        return null;
     }
 
     // Fetch notes.
@@ -569,37 +556,37 @@ function wpinv_get_user_invoices_columns( $post_type = 'wpi_invoice' ) {
     $label   = empty( $label ) ? __( 'Invoice', 'invoicing' ) : sanitize_text_field( $label );
     $columns = array(
 
-            'invoice-number'  => array(
-                'title' => $label,
-                'class' => 'text-left'
-            ),
+		'invoice-number'  => array(
+			'title' => $label,
+			'class' => 'text-left',
+		),
 
-            'created-date'    => array(
-                'title' => __( 'Created Date', 'invoicing' ),
-                'class' => 'text-left'
-            ),
+		'created-date'    => array(
+			'title' => __( 'Created Date', 'invoicing' ),
+			'class' => 'text-left',
+		),
 
-            'payment-date'    => array(
-                'title' => __( 'Payment Date', 'invoicing' ),
-                'class' => 'text-left'
-            ),
+		'payment-date'    => array(
+			'title' => __( 'Payment Date', 'invoicing' ),
+			'class' => 'text-left',
+		),
 
-            'invoice-status'  => array(
-                'title' => __( 'Status', 'invoicing' ),
-                'class' => 'text-center'
-            ),
+		'invoice-status'  => array(
+			'title' => __( 'Status', 'invoicing' ),
+			'class' => 'text-center',
+		),
 
-            'invoice-total'   => array(
-                'title' => __( 'Total', 'invoicing' ),
-                'class' => 'text-right'
-            ),
+		'invoice-total'   => array(
+			'title' => __( 'Total', 'invoicing' ),
+			'class' => 'text-right',
+		),
 
-            'invoice-actions' => array(
-                'title' => '&nbsp;',
-                'class' => 'text-center'
-            ),
+		'invoice-actions' => array(
+			'title' => '&nbsp;',
+			'class' => 'text-center',
+		),
 
-        );
+	);
 
     return apply_filters( 'wpinv_user_invoices_columns', $columns, $post_type );
 }
@@ -664,7 +651,7 @@ function getpaid_invoice_history( $user_id = 0, $post_type = 'wpi_invoice' ) {
                 'content' => sprintf(
                     __( 'You must be logged in to view your %s.', 'invoicing' ),
                     strtolower( $label )
-                )
+                ),
             )
         );
 
@@ -672,15 +659,13 @@ function getpaid_invoice_history( $user_id = 0, $post_type = 'wpi_invoice' ) {
 
     // Fetch invoices.
     $invoices = wpinv_get_invoices(
-
         array(
-            'page'      => ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1,
-            'user'      => $user_id,
-            'paginate'  => true,
-            'type'      => $post_type,
-            'status'    => array_keys( wpinv_get_invoice_statuses( false, false, $post_type ) ),
+            'page'     => ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1,
+            'user'     => $user_id,
+            'paginate' => true,
+            'type'     => $post_type,
+            'status'   => array_keys( wpinv_get_invoice_statuses( false, false, $post_type ) ),
         )
-
     );
 
     if ( empty( $invoices->total ) ) {
@@ -691,7 +676,7 @@ function getpaid_invoice_history( $user_id = 0, $post_type = 'wpi_invoice' ) {
                 'content' => sprintf(
                     __( 'No %s found.', 'invoicing' ),
                     strtolower( $label )
-                )
+                ),
             )
         );
 
@@ -839,8 +824,7 @@ function getpaid_maybe_process_refund( $invoice, $status_transition ) {
         if ( $discount->exists() ) {
             $discount->increase_usage( -1 );
         }
-
-    }
+}
 
     do_action( 'wpinv_pre_refund_invoice', $invoice, $invoice->get_id() );
     do_action( 'wpinv_refund_invoice', $invoice, $invoice->get_id() );
@@ -860,7 +844,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
     $invoice = new WPInv_Invoice( $invoice_id );
 
     // We only want to do this once.
-    if ( 1 ==  get_post_meta( $invoice->get_id(), 'wpinv_processed_payment', true ) ) {
+    if ( 1 == get_post_meta( $invoice->get_id(), 'wpinv_processed_payment', true ) ) {
         return;
     }
 
@@ -870,7 +854,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
     do_action( 'getpaid_process_payment', $invoice );
 
     // Fire an action for each invoice item.
-    foreach( $invoice->get_items() as $item ) {
+    foreach ( $invoice->get_items() as $item ) {
         do_action( 'getpaid_process_item_payment', $item, $invoice );
     }
 
@@ -882,8 +866,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
         if ( $discount->exists() ) {
             $discount->increase_usage();
         }
-
-    }
+}
 
     // Record reverse vat.
     if ( 'invoice' == $invoice->get_type() && wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
@@ -892,8 +875,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
         if ( empty( $taxes ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
             $invoice->add_note( __( 'VAT was reverse charged', 'invoicing' ), false, false, true );
         }
-
-    }
+}
 
 }
 add_action( 'getpaid_invoice_payment_status_changed', 'getpaid_process_invoice_payment' );
@@ -928,50 +910,44 @@ function getpaid_invoice_item_columns( $invoice ) {
     );
 
     // Quantities.
-    if ( isset( $columns[ 'quantity' ] ) ) {
+    if ( isset( $columns['quantity'] ) ) {
 
         if ( 'hours' == $invoice->get_template() ) {
-            $columns[ 'quantity' ] = __( 'Hours', 'invoicing' );
+            $columns['quantity'] = __( 'Hours', 'invoicing' );
         }
 
         if ( ! wpinv_item_quantities_enabled() || 'amount' == $invoice->get_template() ) {
-            unset( $columns[ 'quantity' ] );
+            unset( $columns['quantity'] );
         }
-
-    }
-
+}
 
     // Price.
-    if ( isset( $columns[ 'price' ] ) ) {
+    if ( isset( $columns['price'] ) ) {
 
         if ( 'amount' == $invoice->get_template() ) {
-            $columns[ 'price' ] = __( 'Amount', 'invoicing' );
+            $columns['price'] = __( 'Amount', 'invoicing' );
         }
 
         if ( 'hours' == $invoice->get_template() ) {
-            $columns[ 'price' ] = __( 'Rate', 'invoicing' );
+            $columns['price'] = __( 'Rate', 'invoicing' );
         }
-
-    }
-
+}
 
     // Sub total.
-    if ( isset( $columns[ 'subtotal' ] ) ) {
+    if ( isset( $columns['subtotal'] ) ) {
 
         if ( 'amount' == $invoice->get_template() ) {
-            unset( $columns[ 'subtotal' ] );
+            unset( $columns['subtotal'] );
         }
-
-    }
+}
 
     // Tax rates.
-    if ( isset( $columns[ 'tax_rate' ] ) ) {
+    if ( isset( $columns['tax_rate'] ) ) {
 
         if ( 0 == $invoice->get_tax() ) {
-            unset( $columns[ 'tax_rate' ] );
+            unset( $columns['tax_rate'] );
         }
-
-    }
+}
 
     return $columns;
 }
@@ -1038,9 +1014,9 @@ function getpaid_new_invoice( $invoice ) {
     // Add an invoice created note.
     $invoice->add_note(
         sprintf(
-            __( '%s created with the status "%s".', 'invoicing' ),
+            __( '%1$s created with the status "%2$s".', 'invoicing' ),
             ucfirst( $invoice->get_invoice_quote_type() ),
-            wpinv_status_nicename( $invoice->get_status(), $invoice  )
+            wpinv_status_nicename( $invoice->get_status(), $invoice )
         )
     );
 
@@ -1055,16 +1031,16 @@ add_action( 'getpaid_new_invoice', 'getpaid_new_invoice' );
 function getpaid_update_invoice_caches( $invoice ) {
 
     // Cache invoice number.
-    wp_cache_set( $invoice->get_number(), $invoice->get_id(), "getpaid_invoice_numbers_to_invoice_ids" );
+    wp_cache_set( $invoice->get_number(), $invoice->get_id(), 'getpaid_invoice_numbers_to_invoice_ids' );
 
     // Cache invoice key.
-    wp_cache_set( $invoice->get_key(), $invoice->get_id(), "getpaid_invoice_keys_to_invoice_ids" );
+    wp_cache_set( $invoice->get_key(), $invoice->get_id(), 'getpaid_invoice_keys_to_invoice_ids' );
 
     // (Maybe) cache transaction id.
     $transaction_id = $invoice->get_transaction_id();
 
     if ( ! empty( $transaction_id ) ) {
-        wp_cache_set( $transaction_id, $invoice->get_id(), "getpaid_invoice_transaction_ids_to_invoice_ids" );
+        wp_cache_set( $transaction_id, $invoice->get_id(), 'getpaid_invoice_transaction_ids_to_invoice_ids' );
     }
 
 }
@@ -1084,49 +1060,47 @@ function getpaid_duplicate_invoice( $old_invoice ) {
     // Create the new invoice.
     $invoice = new WPInv_Invoice();
     $invoice->set_props(
-
         array(
 
             // Basic info.
-            'template'             => $old_invoice->get_template(),
-            'email_cc'             => $old_invoice->get_email_cc(),
-            'post_type'            => $old_invoice->get_post_type(),
-            'user_ip'              => $old_invoice->get_user_ip(),
-            'parent_id'            => $old_invoice->get_parent_id(),
-            'mode'                 => $old_invoice->get_mode(),
-            'description'          => $old_invoice->get_description(),
-            'created_via'          => $old_invoice->get_created_via(),
-            'status'               => $old_invoice->get_default_status(),
+            'template'          => $old_invoice->get_template(),
+            'email_cc'          => $old_invoice->get_email_cc(),
+            'post_type'         => $old_invoice->get_post_type(),
+            'user_ip'           => $old_invoice->get_user_ip(),
+            'parent_id'         => $old_invoice->get_parent_id(),
+            'mode'              => $old_invoice->get_mode(),
+            'description'       => $old_invoice->get_description(),
+            'created_via'       => $old_invoice->get_created_via(),
+            'status'            => $old_invoice->get_default_status(),
 
             // Payment info.
-            'disable_taxes'        => $old_invoice->get_disable_taxes(),
-            'currency'             => $old_invoice->get_currency(),
-            'gateway'              => $old_invoice->get_gateway(),
-            'discount_code'        => $old_invoice->get_discount_code(),
-            'payment_form'         => $old_invoice->get_payment_form(),
-            'submission_id'        => $old_invoice->get_submission_id(),
-            'subscription_id'      => $old_invoice->get_subscription_id(),
-            'fees'                 => $old_invoice->get_fees(),
-            'discounts'            => $old_invoice->get_discounts(),
-            'taxes'                => $old_invoice->get_taxes(),
-            'items'                => $old_invoice->get_items(),
+            'disable_taxes'     => $old_invoice->get_disable_taxes(),
+            'currency'          => $old_invoice->get_currency(),
+            'gateway'           => $old_invoice->get_gateway(),
+            'discount_code'     => $old_invoice->get_discount_code(),
+            'payment_form'      => $old_invoice->get_payment_form(),
+            'submission_id'     => $old_invoice->get_submission_id(),
+            'subscription_id'   => $old_invoice->get_subscription_id(),
+            'fees'              => $old_invoice->get_fees(),
+            'discounts'         => $old_invoice->get_discounts(),
+            'taxes'             => $old_invoice->get_taxes(),
+            'items'             => $old_invoice->get_items(),
 
             // Billing details.
-            'user_id'              => $old_invoice->get_user_id(),
-            'first_name'           => $old_invoice->get_first_name(),
-            'last_name'            => $old_invoice->get_last_name(),
-            'address'              => $old_invoice->get_address(),
-            'vat_number'           => $old_invoice->get_vat_number(),
-            'company'              => $old_invoice->get_company(),
-            'zip'                  => $old_invoice->get_zip(),
-            'state'                => $old_invoice->get_state(),
-            'city'                 => $old_invoice->get_city(),
-            'country'              => $old_invoice->get_country(),
-            'phone'                => $old_invoice->get_phone(),
-            'address_confirmed'    => $old_invoice->get_address_confirmed(),
+            'user_id'           => $old_invoice->get_user_id(),
+            'first_name'        => $old_invoice->get_first_name(),
+            'last_name'         => $old_invoice->get_last_name(),
+            'address'           => $old_invoice->get_address(),
+            'vat_number'        => $old_invoice->get_vat_number(),
+            'company'           => $old_invoice->get_company(),
+            'zip'               => $old_invoice->get_zip(),
+            'state'             => $old_invoice->get_state(),
+            'city'              => $old_invoice->get_city(),
+            'country'           => $old_invoice->get_country(),
+            'phone'             => $old_invoice->get_phone(),
+            'address_confirmed' => $old_invoice->get_address_confirmed(),
 
         )
-
     );
 
     // Recalculate totals.
@@ -1146,7 +1120,7 @@ function getpaid_get_invoice_meta( $invoice ) {
     // Load the invoice meta.
     $meta = array(
 
-        'number' => array(
+        'number'         => array(
             'label' => sprintf(
                 __( '%s Number', 'invoicing' ),
                 ucfirst( $invoice->get_invoice_quote_type() )
@@ -1154,7 +1128,7 @@ function getpaid_get_invoice_meta( $invoice ) {
             'value' => sanitize_text_field( $invoice->get_number() ),
         ),
 
-        'status' => array(
+        'status'         => array(
             'label' => sprintf(
                 __( '%s Status', 'invoicing' ),
                 ucfirst( $invoice->get_invoice_quote_type() )
@@ -1162,7 +1136,7 @@ function getpaid_get_invoice_meta( $invoice ) {
             'value' => $invoice->get_status_label_html(),
         ),
 
-        'date' => array(
+        'date'           => array(
             'label' => sprintf(
                 __( '%s Date', 'invoicing' ),
                 ucfirst( $invoice->get_invoice_quote_type() )
@@ -1170,12 +1144,12 @@ function getpaid_get_invoice_meta( $invoice ) {
             'value' => getpaid_format_date( $invoice->get_created_date() ),
         ),
 
-        'date_paid' => array(
+        'date_paid'      => array(
             'label' => __( 'Paid On', 'invoicing' ),
             'value' => getpaid_format_date( $invoice->get_completed_date() ),
         ),
 
-        'gateway'   => array(
+        'gateway'        => array(
             'label' => __( 'Payment Method', 'invoicing' ),
             'value' => sanitize_text_field( $invoice->get_gateway_title() ),
         ),
@@ -1185,12 +1159,12 @@ function getpaid_get_invoice_meta( $invoice ) {
             'value' => sanitize_text_field( $invoice->get_transaction_id() ),
         ),
 
-        'due_date'  => array(
+        'due_date'       => array(
             'label' => __( 'Due Date', 'invoicing' ),
             'value' => getpaid_format_date( $invoice->get_due_date() ),
         ),
 
-        'vat_number' => array(
+        'vat_number'     => array(
             'label' => __( 'VAT Number', 'invoicing' ),
             'value' => sanitize_text_field( $invoice->get_vat_number() ),
         ),
@@ -1207,32 +1181,31 @@ function getpaid_get_invoice_meta( $invoice ) {
                 'value' => esc_html( $value ),
             );
         }
-
-    }
+}
     // If it is not paid, remove the date of payment.
     if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
-        unset( $meta[ 'date_paid' ] );
-        unset( $meta[ 'transaction_id' ] );
+        unset( $meta['date_paid'] );
+        unset( $meta['transaction_id'] );
     }
 
     if ( ! $invoice->is_paid() || 'none' == $invoice->get_gateway() ) {
-        unset( $meta[ 'gateway' ] );
+        unset( $meta['gateway'] );
     }
 
     // Only display the due date if due dates are enabled.
     if ( ! $invoice->needs_payment() || ! wpinv_get_option( 'overdue_active' ) ) {
-        unset( $meta[ 'due_date' ] );
+        unset( $meta['due_date'] );
     }
 
     // Only display the vat number if taxes are enabled.
     if ( ! wpinv_use_taxes() ) {
-        unset( $meta[ 'vat_number' ] );
+        unset( $meta['vat_number'] );
     }
 
     // Link to the parent invoice.
     if ( $invoice->get_parent_id() > 0 ) {
 
-        $meta[ 'parent' ] = array(
+        $meta['parent'] = array(
 
             'label' => sprintf(
                 __( 'Parent %s', 'invoicing' ),
@@ -1245,22 +1218,21 @@ function getpaid_get_invoice_meta( $invoice ) {
 
     }
 
-    
     if ( $invoice->is_recurring() ) {
 
         $subscription = getpaid_get_invoice_subscriptions( $invoice );
-        if ( ! empty ( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
+        if ( ! empty( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
 
             // Display the renewal date.
             if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
 
-                $meta[ 'renewal_date' ] = array(
+                $meta['renewal_date'] = array(
                     'label' => __( 'Renews On', 'invoicing' ),
-                    'value' => getpaid_format_date( $subscription->get_expiration() ) . 
+                    'value' => getpaid_format_date( $subscription->get_expiration() ) .
                     sprintf(
-                       ' <a class="small" href="%s">%s<a>',
-                       $subscription->get_view_url(),
-                       __( '(View Subscription)', 'invoicing' )
+                        ' <a class="small" href="%s">%s<a>',
+                        $subscription->get_view_url(),
+                        __( '(View Subscription)', 'invoicing' )
                     ),
                 );
 
@@ -1269,7 +1241,7 @@ function getpaid_get_invoice_meta( $invoice ) {
             if ( $invoice->is_parent() ) {
 
                 // Display the recurring amount.
-                $meta[ 'recurring_total' ] = array(
+                $meta['recurring_total'] = array(
 
                     'label' => __( 'Recurring Amount', 'invoicing' ),
                     'value' => wpinv_price( $subscription->get_recurring_amount(), $invoice->get_currency() ),
@@ -1277,12 +1249,11 @@ function getpaid_get_invoice_meta( $invoice ) {
                 );
 
             }
-
-        }
+}
     }
 
     // Add the invoice total to the meta.
-    $meta[ 'invoice_total' ] = array(
+    $meta['invoice_total'] = array(
 
         'label' => __( 'Total Amount', 'invoicing' ),
         'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),

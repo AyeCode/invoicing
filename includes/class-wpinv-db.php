@@ -1,7 +1,9 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+exit;
+}
 
 abstract class Wpinv_DB {
 
@@ -161,11 +163,11 @@ abstract class Wpinv_DB {
 		// Row ID must be positive integer
 		$row_id = absint( $row_id );
 
-		if( empty( $row_id ) ) {
+		if ( empty( $row_id ) ) {
 			return false;
 		}
 
-		if( empty( $where ) ) {
+		if ( empty( $where ) ) {
 			$where = $this->primary_key;
 		}
 
@@ -203,7 +205,7 @@ abstract class Wpinv_DB {
 		// Row ID must be positive integer
 		$row_id = absint( $row_id );
 
-		if( empty( $row_id ) ) {
+		if ( empty( $row_id ) ) {
 			return false;
 		}
 

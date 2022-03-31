@@ -87,7 +87,7 @@ class GetPaid_Graph_Downloader {
 
 		if ( 'csv' == $file_type ) {
 			$this->download_csv( $stats, $stream, $headers );
-		} else if( 'xml' == $file_type ) {
+		} elseif ( 'xml' == $file_type ) {
 			$this->download_xml( $stats, $stream, $headers );
 		} else {
 			$this->download_json( $stats, $stream, $headers );
@@ -110,7 +110,7 @@ class GetPaid_Graph_Downloader {
 		// Output the csv column headers.
 		fputcsv( $stream, $headers );
 
-		// Loop through 
+		// Loop through
 		foreach ( $stats as $stat ) {
 			$row  = array_values( $this->prepare_row( $stat, $headers ) );
 			$row  = array_map( 'maybe_serialize', $row );
@@ -131,7 +131,7 @@ class GetPaid_Graph_Downloader {
 
 		$prepared = array();
 
-		// Loop through 
+		// Loop through
 		foreach ( $stats as $stat ) {
 			$prepared[] = $this->prepare_row( $stat, $headers );
 		}
@@ -152,12 +152,12 @@ class GetPaid_Graph_Downloader {
 
 		$prepared = array();
 
-		// Loop through 
+		// Loop through
 		foreach ( $stats as $stat ) {
 			$prepared[] = $this->prepare_row( $stat, $headers );
 		}
 
-		$xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+		$xml = new SimpleXMLElement( '<?xml version="1.0"?><data></data>' );
 		$this->convert_array_xml( $prepared, $xml );
 
 		fwrite( $stream, $xml->asXML() );
@@ -172,15 +172,15 @@ class GetPaid_Graph_Downloader {
 	 */
 	public function convert_array_xml( $data, $xml ) {
 
-		// Loop through 
+		// Loop through
 		foreach ( $data as $key => $value ) {
 
-			$key = preg_replace( "/[^A-Za-z0-9_\-]/", '', $key );
+			$key = preg_replace( '/[^A-Za-z0-9_\-]/', '', $key );
 
 			if ( is_array( $value ) ) {
 
-				if ( is_numeric( $key ) ){
-					$key = 'item'.$key; //dealing with <0/>..<n/> issues
+				if ( is_numeric( $key ) ) {
+					$key = 'item' . $key; //dealing with <0/>..<n/> issues
 				}
 
 				$subnode = $xml->addChild( $key );
@@ -189,8 +189,7 @@ class GetPaid_Graph_Downloader {
 			} else {
 				$xml->addChild( $key, htmlspecialchars( $value ) );
 			}
-
-		}
+}
 
 	}
 

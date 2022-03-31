@@ -23,7 +23,7 @@ class GetPaid_Reports_Export {
 			$this->display_post_type_export( $post_type );
 		}
 		$this->display_subscription_export();
-		echo "</div>";
+		echo '</div>';
 
 	}
 
@@ -99,13 +99,13 @@ class GetPaid_Reports_Export {
 
 		return aui()->input(
 			array(
-				'name'       => 'from_date',
-				'id'         => esc_attr( "$post_type-from_date" ),
-				'placeholder'=> 'yy-mm-dd',
-				'label'      => __( 'From Date', 'invoicing' ),
-				'label_type' => 'vertical',
+				'name'        => 'from_date',
+				'id'          => esc_attr( "$post_type-from_date" ),
+				'placeholder' => 'yy-mm-dd',
+				'label'       => __( 'From Date', 'invoicing' ),
+				'label_type'  => 'vertical',
 				'label_class' => 'd-block',
-				'type'       => 'datepicker',
+				'type'        => 'datepicker',
 			)
 		);
 
@@ -119,13 +119,13 @@ class GetPaid_Reports_Export {
 
 		return aui()->input(
 			array(
-				'name'       => 'to_date',
-				'id'         => esc_attr( "$post_type-to_date" ),
-				'placeholder'=> 'yy-mm-dd',
-				'label'      => __( 'To Date', 'invoicing' ),
-				'label_type' => 'vertical',
+				'name'        => 'to_date',
+				'id'          => esc_attr( "$post_type-to_date" ),
+				'placeholder' => 'yy-mm-dd',
+				'label'       => __( 'To Date', 'invoicing' ),
+				'label_type'  => 'vertical',
 				'label_class' => 'd-block',
-				'type'       => 'datepicker',
+				'type'        => 'datepicker',
 			)
 		);
 
@@ -190,7 +190,7 @@ class GetPaid_Reports_Export {
 		echo str_replace(
 			array(
 				'form-control',
-				'custom-select'
+				'custom-select',
 			),
 			'regular-text',
 			$markup

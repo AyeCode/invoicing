@@ -108,9 +108,9 @@ class WPInv_Subscriptions_DB extends Wpinv_DB {
      */
     public function create_table() {
 
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-        $sql = "CREATE TABLE " . $this->table_name . " (
+        $sql = 'CREATE TABLE ' . $this->table_name . " (
         id bigint(20) NOT NULL AUTO_INCREMENT,
         customer_id bigint(20) NOT NULL,
         frequency int(11) NOT NULL DEFAULT '1',

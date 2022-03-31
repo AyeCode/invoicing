@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.0.15
  *
  */
-class WPInv_Discount extends GetPaid_Data  {
+class WPInv_Discount extends GetPaid_Data {
 
 	/**
 	 * Which data store to load.
@@ -36,27 +36,27 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @var array
 	 */
 	protected $data = array(
-		'status'               => 'draft',
-		'version'              => '',
-		'date_created'         => null,
-        'date_modified'        => null,
-        'name'                 => 'no-name',
-        'description'          => '',
-        'author'               => 1,
-        'code'                 => null,
-        'type'                 => 'percent',
-        'expiration'           => null,
-        'start'                => null,
-        'items'                => array(),
-        'excluded_items'       => array(),
-		'required_items'       => array(),
-        'uses' 				   => 0,
-        'max_uses'             => null,
-        'is_recurring'         => null,
-        'is_single_use'        => null,
-        'min_total'            => null,
-        'max_total'            => null,
-        'amount'               => null,
+		'status'         => 'draft',
+		'version'        => '',
+		'date_created'   => null,
+        'date_modified'  => null,
+        'name'           => 'no-name',
+        'description'    => '',
+        'author'         => 1,
+        'code'           => null,
+        'type'           => 'percent',
+        'expiration'     => null,
+        'start'          => null,
+        'items'          => array(),
+        'excluded_items' => array(),
+		'required_items' => array(),
+        'uses'           => 0,
+        'max_uses'       => null,
+        'is_recurring'   => null,
+        'is_single_use'  => null,
+        'min_total'      => null,
+        'max_total'      => null,
+        'amount'         => null,
     );
 
 	/**
@@ -95,8 +95,7 @@ class WPInv_Discount extends GetPaid_Data  {
 			if ( isset( $discount['ID'] ) ) {
 				$this->set_id( $discount['ID'] );
 			}
-
-		} elseif ( is_scalar( $discount ) && $discount = self::get_discount_id_by_code( $discount ) ) {
+} elseif ( is_scalar( $discount ) && $discount = self::get_discount_id_by_code( $discount ) ) {
 			$this->set_id( $discount );
 		} else {
 			$this->set_object_read( true );
@@ -129,11 +128,13 @@ class WPInv_Discount extends GetPaid_Data  {
 		if ( 'id' == strtolower( $field ) ) {
 			// Make sure the value is numeric to avoid casting objects, for example,
 			// to int 1.
-			if ( ! is_numeric( $value ) )
+			if ( ! is_numeric( $value ) ) {
 				return false;
+            }
 			$value = intval( $value );
-			if ( $value < 1 )
+			if ( $value < 1 ) {
 				return false;
+            }
 		}
 
 		if ( ! $value || ! is_string( $field ) ) {
@@ -146,25 +147,27 @@ class WPInv_Discount extends GetPaid_Data  {
 		switch ( strtolower( $field ) ) {
 			case 'id':
 				$discount_id = $value;
-				$args		 = array( 'include' => array( $value ) );
+				$args        = array( 'include' => array( $value ) );
 				break;
 			case 'discount_code':
 			case 'code':
 				$value       = trim( $value );
 				$discount_id = wp_cache_get( $value, 'WPInv_Discount_Codes' );
-				$args		 = array( 'meta_key' => '_wpi_discount_code', 'meta_value' => $value );
+				$args        = array(
+					'meta_key'   => '_wpi_discount_code',
+					'meta_value' => $value,
+				);
 				break;
 			case 'name':
 				$discount_id = 0;
-				$args		 = array( 'name' => trim( $value ) );
+				$args        = array( 'name' => trim( $value ) );
 				break;
 			default:
-				$args		 = apply_filters( "wpinv_discount_get_data_by_{$field}_args", null, $value );
+				$args        = apply_filters( "wpinv_discount_get_data_by_{$field}_args", null, $value );
 				if ( ! is_array( $args ) ) {
 					return apply_filters( "wpinv_discount_get_data_by_$field", false, $value );
 				}
-
-		}
+}
 
 		// Check if there is a cached value.
 		if ( ! empty( $discount_id ) && $discount = wp_cache_get( (int) $discount_id, 'WPInv_Discounts' ) ) {
@@ -176,13 +179,13 @@ class WPInv_Discount extends GetPaid_Data  {
 			array(
 				'post_type'      => 'wpi_discount',
 				'posts_per_page' => 1,
-				'post_status'    => array( 'publish', 'pending', 'draft', 'expired' )
+				'post_status'    => array( 'publish', 'pending', 'draft', 'expired' ),
 			)
 		);
 
 		$discount = get_posts( $args );
 
-		if( empty( $discount ) ) {
+		if ( empty( $discount ) ) {
 			return false;
 		}
 
@@ -190,25 +193,25 @@ class WPInv_Discount extends GetPaid_Data  {
 
 		// Prepare the return data.
 		$return = array(
-            'ID'                          => $discount->ID,
-            'code'                        => get_post_meta( $discount->ID, '_wpi_discount_code', true ),
-            'amount'                      => get_post_meta( $discount->ID, '_wpi_discount_amount', true ),
-            'date_created'                => $discount->post_date,
-			'date_modified'               => $discount->post_modified,
-			'status'               		  => $discount->post_status,
-			'start'                  	  => get_post_meta( $discount->ID, '_wpi_discount_start', true ),
-            'expiration'                  => get_post_meta( $discount->ID, '_wpi_discount_expiration', true ),
-            'type'               		  => get_post_meta( $discount->ID, '_wpi_discount_type', true ),
-            'description'                 => $discount->post_excerpt,
-            'uses'                 		  => get_post_meta( $discount->ID, '_wpi_discount_uses', true ),
-            'is_single_use'               => get_post_meta( $discount->ID, '_wpi_discount_is_single_use', true ),
-            'items'              	      => get_post_meta( $discount->ID, '_wpi_discount_items', true ),
-            'excluded_items'              => get_post_meta( $discount->ID, '_wpi_discount_excluded_items', true ),
-			'required_items'              => get_post_meta( $discount->ID, '_wpi_discount_required_items', true ),
-            'max_uses'                    => get_post_meta( $discount->ID, '_wpi_discount_max_uses', true ),
-            'is_recurring'                => get_post_meta( $discount->ID, '_wpi_discount_is_recurring', true ),
-            'min_total'                   => get_post_meta( $discount->ID, '_wpi_discount_min_total', true ),
-            'max_total'                   => get_post_meta( $discount->ID, '_wpi_discount_max_total', true ),
+            'ID'             => $discount->ID,
+            'code'           => get_post_meta( $discount->ID, '_wpi_discount_code', true ),
+            'amount'         => get_post_meta( $discount->ID, '_wpi_discount_amount', true ),
+            'date_created'   => $discount->post_date,
+			'date_modified'  => $discount->post_modified,
+			'status'         => $discount->post_status,
+			'start'          => get_post_meta( $discount->ID, '_wpi_discount_start', true ),
+            'expiration'     => get_post_meta( $discount->ID, '_wpi_discount_expiration', true ),
+            'type'           => get_post_meta( $discount->ID, '_wpi_discount_type', true ),
+            'description'    => $discount->post_excerpt,
+            'uses'           => get_post_meta( $discount->ID, '_wpi_discount_uses', true ),
+            'is_single_use'  => get_post_meta( $discount->ID, '_wpi_discount_is_single_use', true ),
+            'items'          => get_post_meta( $discount->ID, '_wpi_discount_items', true ),
+            'excluded_items' => get_post_meta( $discount->ID, '_wpi_discount_excluded_items', true ),
+			'required_items' => get_post_meta( $discount->ID, '_wpi_discount_required_items', true ),
+            'max_uses'       => get_post_meta( $discount->ID, '_wpi_discount_max_uses', true ),
+            'is_recurring'   => get_post_meta( $discount->ID, '_wpi_discount_is_recurring', true ),
+            'min_total'      => get_post_meta( $discount->ID, '_wpi_discount_min_total', true ),
+            'max_total'      => get_post_meta( $discount->ID, '_wpi_discount_max_total', true ),
         );
 
 		$return = apply_filters( 'wpinv_discount_properties', $return );
@@ -277,8 +280,8 @@ class WPInv_Discount extends GetPaid_Data  {
 	 *
 	 * @return bool Whether the given discount field is set.
 	 */
-	public function __isset( $key ){
-		return isset( $this->data[$key] ) || method_exists( $this, "get_$key");
+	public function __isset( $key ) {
+		return isset( $this->data[ $key ] ) || method_exists( $this, "get_$key" );
 	}
 
 	/*
@@ -1124,7 +1127,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 * @deprecated
 	 *
 	 */
-	public function update_status( $status = 'publish' ){
+	public function update_status( $status = 'publish' ) {
 
 		if ( $this->exists() && $this->get_status() != $status ) {
 			$this->set_status( $status );
@@ -1147,7 +1150,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 *
 	 * @since 1.0.15
 	 */
-	public function exists(){
+	public function exists() {
 		$id = $this->get_id();
 		return ! empty( $id );
 	}
@@ -1204,7 +1207,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	public function has_exceeded_limit() {
 
 		if ( ! $this->has_limit() || ! $this->has_uses() ) {
-			$exceeded = false ;
+			$exceeded = false;
 		} else {
 			$exceeded = (int) $this->get_max_uses() <= $this->get_uses();
 		}
@@ -1360,7 +1363,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function is_minimum_amount_met( $amount ) {
 		$amount = floatval( wpinv_sanitize_amount( $amount ) );
-		$min_met= ! ( $this->has_minimum_amount() && $amount < floatval( wpinv_sanitize_amount( $this->get_minimum_total() ) ) );
+		$min_met = ! ( $this->has_minimum_amount() && $amount < floatval( wpinv_sanitize_amount( $this->get_minimum_total() ) ) );
 		return apply_filters( 'wpinv_is_discount_min_met', $min_met, $this->get_id(), $this, $this->get_code(), $amount );
 	}
 
@@ -1384,7 +1387,7 @@ class WPInv_Discount extends GetPaid_Data  {
 	 */
 	public function is_maximum_amount_met( $amount ) {
 		$amount = floatval( wpinv_sanitize_amount( $amount ) );
-		$max_met= ! ( $this->has_maximum_amount() && $amount > floatval( wpinv_sanitize_amount( $this->get_maximum_total() ) ) );
+		$max_met = ! ( $this->has_maximum_amount() && $amount > floatval( wpinv_sanitize_amount( $this->get_maximum_total() ) ) );
 		return apply_filters( 'wpinv_is_discount_max_met', $max_met, $this->get_id(), $this, $this->get_code(), $amount );
 	}
 
@@ -1428,9 +1431,9 @@ class WPInv_Discount extends GetPaid_Data  {
 		$user_id = 0;
         if ( is_numeric( $user ) ) {
             $user_id = absint( $user );
-        } else if ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
+        } elseif ( is_email( $user ) && $user_data = get_user_by( 'email', $user ) ) {
             $user_id = $user_data->ID;
-        } else if ( $user_data = get_user_by( 'login', $user ) ) {
+        } elseif ( $user_data = get_user_by( 'login', $user ) ) {
             $user_id = $user_data->ID;
         }
 
@@ -1440,7 +1443,13 @@ class WPInv_Discount extends GetPaid_Data  {
 		}
 
 		// Get all payments with matching user id.
-        $payments = wpinv_get_invoices( array( 'user' => $user_id, 'limit' => false, 'paginate' => false ) );
+        $payments = wpinv_get_invoices(
+            array(
+				'user'     => $user_id,
+				'limit'    => false,
+				'paginate' => false,
+            )
+        );
 		$code     = strtolower( $this->get_code() );
 
 		// For each payment...
@@ -1450,8 +1459,7 @@ class WPInv_Discount extends GetPaid_Data  {
 			if ( $payment->is_paid() && strtolower( $payment->get_discount_code() ) == $code ) {
 				return false;
 			}
-
-		}
+}
 
 		return true;
 	}
@@ -1487,8 +1495,8 @@ class WPInv_Discount extends GetPaid_Data  {
 		$this->save();
 
 		// Fire relevant hooks.
-		if( (int) $by > 0 ) {
-			do_action( 'wpinv_discount_increase_use_count', $this->get_uses(), $this->get_id(), $this->get_code(),  absint( $by ) );
+		if ( (int) $by > 0 ) {
+			do_action( 'wpinv_discount_increase_use_count', $this->get_uses(), $this->get_id(), $this->get_code(), absint( $by ) );
 		} else {
 			do_action( 'wpinv_discount_decrease_use_count', $this->get_uses(), $this->get_id(), $this->get_code(), absint( $by ) );
 		}

@@ -89,23 +89,21 @@ class GetPaid_Installer {
 			foreach ( $results as $row ) {
 				clean_post_cache( $row->ID );
 			}
-
-		}
+}
 
 		// Item meta key changes
-		$query = "SELECT DISTINCT post_id FROM " . $wpdb->postmeta . " WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id', '_wpinv_cpt_name', '_wpinv_cpt_singular_name' )";
+		$query = 'SELECT DISTINCT post_id FROM ' . $wpdb->postmeta . " WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id', '_wpinv_cpt_name', '_wpinv_cpt_singular_name' )";
 		$results = $wpdb->get_results( $query );
 
 		if ( ! empty( $results ) ) {
-			$wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_id' WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id' )" );
-			$wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_name' WHERE meta_key = '_wpinv_cpt_name'" );
-			$wpdb->query( "UPDATE " . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_singular_name' WHERE meta_key = '_wpinv_cpt_singular_name'" );
+			$wpdb->query( 'UPDATE ' . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_id' WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id' )" );
+			$wpdb->query( 'UPDATE ' . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_name' WHERE meta_key = '_wpinv_cpt_name'" );
+			$wpdb->query( 'UPDATE ' . $wpdb->postmeta . " SET meta_key = '_wpinv_custom_singular_name' WHERE meta_key = '_wpinv_cpt_singular_name'" );
 
 			foreach ( $results as $row ) {
 				clean_post_cache( $row->post_id );
 			}
-
-		}
+}
 
 		$this->upgrade_from_102();
 	}
@@ -157,19 +155,19 @@ class GetPaid_Installer {
 			array(
 
 				// Checkout page.
-				'checkout_page' => array(
-					'name'      => _x( 'gp-checkout', 'Page slug', 'invoicing' ),
-					'title'     => _x( 'Checkout', 'Page title', 'invoicing' ),
-					'content'   => '
+				'checkout_page'             => array(
+					'name'    => _x( 'gp-checkout', 'Page slug', 'invoicing' ),
+					'title'   => _x( 'Checkout', 'Page title', 'invoicing' ),
+					'content' => '
 						<!-- wp:shortcode -->
 						[wpinv_checkout]
 						<!-- /wp:shortcode -->
 					',
-					'parent'    => '',
+					'parent'  => '',
 				),
 
 				// Invoice history page.
-				'invoice_history_page' => array(
+				'invoice_history_page'      => array(
 					'name'    => _x( 'gp-invoices', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'My Invoices', 'Page title', 'invoicing' ),
 					'content' => '
@@ -181,19 +179,19 @@ class GetPaid_Installer {
 				),
 
 				// Success page content.
-				'success_page' => array(
-					'name'     => _x( 'gp-receipt', 'Page slug', 'invoicing' ),
-					'title'    => _x( 'Payment Confirmation', 'Page title', 'invoicing' ),
-					'content'  => '
+				'success_page'              => array(
+					'name'    => _x( 'gp-receipt', 'Page slug', 'invoicing' ),
+					'title'   => _x( 'Payment Confirmation', 'Page title', 'invoicing' ),
+					'content' => '
 					<!-- wp:shortcode -->
 					[wpinv_receipt]
 					<!-- /wp:shortcode -->
 				',
-					'parent'   => 'gp-checkout',
+					'parent'  => 'gp-checkout',
 				),
 
 				// Failure page content.
-				'failure_page' => array(
+				'failure_page'              => array(
 					'name'    => _x( 'gp-transaction-failed', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'Transaction Failed', 'Page title', 'invoicing' ),
 					'content' => __( 'Your transaction failed, please try again or contact site support.', 'invoicing' ),
@@ -209,7 +207,7 @@ class GetPaid_Installer {
 					[wpinv_subscriptions]
 					<!-- /wp:shortcode -->
 				',
-					'parent' => '',
+					'parent'  => '',
 				),
 
 			)
@@ -237,7 +235,7 @@ class GetPaid_Installer {
 
 		global $wpdb;
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Create tables.
 		$charset_collate = $wpdb->get_charset_collate();
@@ -275,7 +273,7 @@ class GetPaid_Installer {
 	public function create_invoices_table() {
 		global $wpdb;
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Create tables.
 		$charset_collate = $wpdb->get_charset_collate();
@@ -326,7 +324,7 @@ class GetPaid_Installer {
 	public function create_invoice_items_table() {
 		global $wpdb;
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Create tables.
 		$charset_collate = $wpdb->get_charset_collate();
@@ -383,7 +381,7 @@ class GetPaid_Installer {
 			return;
 		}
 
-		require_once( WPINV_PLUGIN_DIR . 'includes/class-wpinv-legacy-invoice.php' );
+		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-legacy-invoice.php';
 
 		$invoice_rows = array();
 		foreach ( $invoices as $invoice ) {
@@ -394,37 +392,37 @@ class GetPaid_Installer {
 				return;
 			}
 
-			$fields = array (
-				'post_id'        => $invoice->ID,
-				'number'         => $invoice->get_number(),
-				'key'            => $invoice->get_key(),
-				'type'           => str_replace( 'wpi_', '', $invoice->post_type ),
-				'mode'           => $invoice->mode,
-				'user_ip'        => $invoice->get_ip(),
-				'first_name'     => $invoice->get_first_name(),
-				'last_name'      => $invoice->get_last_name(),
-				'address'        => $invoice->get_address(),
-				'city'           => $invoice->city,
-				'state'          => $invoice->state,
-				'country'        => $invoice->country,
-				'zip'            => $invoice->zip,
+			$fields = array(
+				'post_id'            => $invoice->ID,
+				'number'             => $invoice->get_number(),
+				'key'                => $invoice->get_key(),
+				'type'               => str_replace( 'wpi_', '', $invoice->post_type ),
+				'mode'               => $invoice->mode,
+				'user_ip'            => $invoice->get_ip(),
+				'first_name'         => $invoice->get_first_name(),
+				'last_name'          => $invoice->get_last_name(),
+				'address'            => $invoice->get_address(),
+				'city'               => $invoice->city,
+				'state'              => $invoice->state,
+				'country'            => $invoice->country,
+				'zip'                => $invoice->zip,
 				'adddress_confirmed' => (int) $invoice->adddress_confirmed,
-				'gateway'        => $invoice->get_gateway(),
-				'transaction_id' => $invoice->get_transaction_id(),
-				'currency'       => $invoice->get_currency(),
-				'subtotal'       => $invoice->get_subtotal(),
-				'tax'            => $invoice->get_tax(),
-				'fees_total'     => $invoice->get_fees_total(),
-				'total'          => $invoice->get_total(),
-				'discount'       => $invoice->get_discount(),
-				'discount_code'  => $invoice->get_discount_code(),
-				'disable_taxes'  => $invoice->disable_taxes,
-				'due_date'       => $invoice->get_due_date(),
-				'completed_date' => $invoice->get_completed_date(),
-				'company'        => $invoice->company,
-				'vat_number'     => $invoice->vat_number,
-				'vat_rate'       => $invoice->vat_rate,
-				'custom_meta'    => $invoice->payment_meta
+				'gateway'            => $invoice->get_gateway(),
+				'transaction_id'     => $invoice->get_transaction_id(),
+				'currency'           => $invoice->get_currency(),
+				'subtotal'           => $invoice->get_subtotal(),
+				'tax'                => $invoice->get_tax(),
+				'fees_total'         => $invoice->get_fees_total(),
+				'total'              => $invoice->get_total(),
+				'discount'           => $invoice->get_discount(),
+				'discount_code'      => $invoice->get_discount_code(),
+				'disable_taxes'      => $invoice->disable_taxes,
+				'due_date'           => $invoice->get_due_date(),
+				'completed_date'     => $invoice->get_completed_date(),
+				'company'            => $invoice->company,
+				'vat_number'         => $invoice->vat_number,
+				'vat_rate'           => $invoice->vat_rate,
+				'custom_meta'        => $invoice->payment_meta,
 			);
 
 			foreach ( $fields as $key => $val ) {
@@ -459,7 +457,7 @@ class GetPaid_Installer {
 					'fees'             => $details['fees'],
 				);
 
-				$item_columns = array_keys ( $fields );
+				$item_columns = array_keys( $fields );
 
 				foreach ( $fields as $key => $val ) {
 					if ( is_null( $val ) ) {

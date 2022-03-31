@@ -19,7 +19,7 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
             <table class="table table-bordered">
                 <tbody>
 
-                    <?php do_action( "getpaid_before_invoice_meta_rows", $invoice ); ?>
+                    <?php do_action( 'getpaid_before_invoice_meta_rows', $invoice ); ?>
                     <?php foreach ( $meta as $key => $data ) : ?>
 
                         <?php if ( ! empty( $data['value'] ) ) : ?>
@@ -43,7 +43,7 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
                         <?php endif; ?>
                     
                     <?php endforeach; ?>
-                    <?php do_action( "getpaid_after_invoice_meta_rows", $invoice ); ?>
+                    <?php do_action( 'getpaid_after_invoice_meta_rows', $invoice ); ?>
 
                 </tbody>
             </table>

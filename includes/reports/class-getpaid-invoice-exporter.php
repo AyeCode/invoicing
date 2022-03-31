@@ -14,7 +14,7 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 
 	/**
 	 * Retrieves invoices query args.
-	 * 
+	 *
 	 * @param string $post_type post type to retrieve.
 	 * @param array $args Args to search for.
 	 * @return array
@@ -53,7 +53,7 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 
 	/**
 	 * Retrieves invoices.
-	 * 
+	 *
 	 * @param array $query_args WP_Query args.
 	 * @return WPInv_Invoice[]
 	 */
@@ -80,7 +80,7 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 
 		if ( 'csv' == $file_type ) {
 			$this->download_csv( $invoices, $stream, $headers );
-		} else if( 'xml' == $file_type ) {
+		} elseif ( 'xml' == $file_type ) {
 			$this->download_xml( $invoices, $stream, $headers );
 		} else {
 			$this->download_json( $invoices, $stream, $headers );
@@ -177,7 +177,7 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 			'is_viewed',
 			'email_cc',
 			'template',
-			'created_via'
+			'created_via',
     	);
 
 		return apply_filters( 'getpaid_invoice_exporter_get_fields', $fields, $post_type );
@@ -196,7 +196,7 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 			'subtotal',
 			'total_discount',
 			'total_tax',
-			'total_fees'
+			'total_fees',
     	);
 
 		return apply_filters( 'getpaid_invoice_exporter_get_amount_fields', $fields, $post_type );
