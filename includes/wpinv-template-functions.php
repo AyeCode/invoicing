@@ -1104,11 +1104,12 @@ function wpinv_empty_cart_message() {
  * @return void
  */
 function wpinv_empty_checkout_cart() {
-    echo aui()->alert(
+    aui()->alert(
         array(
             'type'    => 'warning',
             'content' => wpinv_empty_cart_message(),
-        )
+        ),
+        true
     );
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
@@ -1290,11 +1291,12 @@ function getpaid_display_item_payment_form( $items ) {
     $form->set_items( $items );
 
     if ( 0 == count( $form->get_items() ) ) {
-        echo aui()->alert(
+        aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'No published items found', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }
@@ -1315,21 +1317,23 @@ function getpaid_display_invoice_payment_form( $invoice_id ) {
     $invoice = wpinv_get_invoice( $invoice_id );
 
     if ( empty( $invoice ) ) {
-		echo aui()->alert(
+		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice not found', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }
 
     if ( $invoice->is_paid() ) {
-		echo aui()->alert(
+		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice has already been paid', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }

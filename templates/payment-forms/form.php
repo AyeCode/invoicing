@@ -11,11 +11,12 @@ defined( 'ABSPATH' ) || exit;
 
 // Make sure that the form is active.
 if ( ! $form->is_active() ) {
-    echo aui()->alert(
+    aui()->alert(
         array(
             'type'    => 'warning',
             'content' => __( 'This payment form is no longer active', 'invoicing' ),
-        )
+        ),
+        true
     );
     return;
 }
@@ -23,11 +24,12 @@ if ( ! $form->is_active() ) {
 // Require login to checkout.
 if ( wpinv_require_login_to_checkout() && ! get_current_user_id() ) {
 
-    echo aui()->alert(
+    aui()->alert(
         array(
             'type'    => 'danger',
             'content' => __( 'You must be logged in to checkout.', 'invoicing' ),
-        )
+        ),
+        true
     );
     return;
 

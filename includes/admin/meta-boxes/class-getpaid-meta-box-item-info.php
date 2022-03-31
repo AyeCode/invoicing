@@ -40,7 +40,7 @@ class GetPaid_Meta_Box_Item_Info {
                 <div class="col-sm-12">
 
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_item_type',
                                 'name'             => 'wpinv_item_type',
@@ -50,7 +50,8 @@ class GetPaid_Meta_Box_Item_Info {
                                 'data-allow-clear' => 'false',
                                 'no_wrap'          => true,
                                 'options'          => wpinv_get_item_types(),
-                            )
+                            ),
+                            true
                         );
                     ?>
 

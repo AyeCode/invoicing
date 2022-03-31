@@ -68,7 +68,7 @@ class GetPaid_Meta_Box_Discount_Details {
                             <?php
                                 do_action( 'wpinv_discount_form_before_single_use', $discount );
 
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_discount_single_use',
                                         'name'    => 'wpinv_discount_single_use',
@@ -76,7 +76,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                         'label'   => __( 'Each customer can only use this discount once', 'invoicing' ),
                                         'value'   => '1',
                                         'checked' => $discount->is_single_use(),
-                                    )
+                                    ),
+                                    true
                                 );
 
                                 do_action( 'wpinv_discount_form_single_use', $discount );
@@ -86,7 +87,7 @@ class GetPaid_Meta_Box_Discount_Details {
                             <?php
                                 do_action( 'wpinv_discount_form_before_recurring', $discount );
 
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_discount_recurring',
                                         'name'    => 'wpinv_discount_recurring',
@@ -94,7 +95,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                         'label'   => __( 'Apply this discount to all recurring payments for subscriptions', 'invoicing' ),
                                         'value'   => '1',
                                         'checked' => $discount->is_recurring(),
-                                    )
+                                    ),
+                                    true
                                 );
 
                                 do_action( 'wpinv_discount_form_recurring', $discount );
@@ -115,7 +117,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_type',
                                 'name'             => 'wpinv_discount_type',
@@ -125,7 +127,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_discount_types(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -177,7 +180,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_items',
                                 'name'             => 'wpinv_discount_items[]',
@@ -188,7 +191,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -205,7 +209,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_excluded_items',
                                 'name'             => 'wpinv_discount_excluded_items[]',
@@ -216,7 +220,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -233,7 +238,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_required_items',
                                 'name'             => 'wpinv_discount_required_items[]',
@@ -244,7 +249,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -261,7 +267,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'             => 'datepicker',
                                 'id'               => 'wpinv_discount_start',
@@ -275,7 +281,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                     'data-time_24hr'   => 'true',
                                     'data-allow-input' => 'true',
                                 ),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -292,7 +299,7 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'             => 'datepicker',
                                 'id'               => 'wpinv_discount_expiration',
@@ -308,7 +315,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                     'data-allow-input' => 'true',
                                     'data-input'       => 'true',
                                 ),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>

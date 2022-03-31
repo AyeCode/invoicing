@@ -262,11 +262,12 @@ class WPInv_Ajax {
 
         // Is the request set up correctly?
 		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice'] ) ) {
-			echo aui()->alert(
+			aui()->alert(
 				array(
 					'type'    => 'warning',
 					'content' => __( 'No payment form or item provided', 'invoicing' ),
-				)
+                ),
+                true
             );
             exit;
         }

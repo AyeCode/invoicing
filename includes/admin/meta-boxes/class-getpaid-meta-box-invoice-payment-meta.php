@@ -43,7 +43,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                         if ( $invoice->is_draft() ) {
 
 						// Set gateway.
-						echo aui()->select(
+						aui()->select(
                             array(
 						'id'               => 'wpinv_gateway',
 						'name'             => 'wpinv_gateway',
@@ -54,12 +54,13 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 						'select2'          => true,
 						'data-allow-clear' => 'false',
 						'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
-                            )
+                            ),
+                            true
                         );
 
                         } else {
 						// Invoice key.
-						echo aui()->input(
+						aui()->input(
                             array(
 						'type'             => 'text',
 						'id'               => 'wpinv_key',
@@ -75,11 +76,12 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                             'onclick'  => 'this.select();',
                             'readonly' => 'true',
 						),
-                            )
+                            ),
+                            true
 						);
 
 						// View URL.
-						echo aui()->input(
+						aui()->input(
                             array(
 						'type'             => 'text',
 						'id'               => 'wpinv_view_url',
@@ -95,14 +97,15 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
                             'onclick'  => 'this.select();',
                             'readonly' => 'true',
 						),
-                            )
+                            ),
+                            true
 						);
 
 						// If the invoice is paid...
 						if ( $invoice->is_paid() || $invoice->is_refunded() ) {
 
 							// Gateway.
-							echo aui()->input(
+							aui()->input(
 								array(
 									'type'             => 'text',
 									'id'               => 'wpinv_gateway',
@@ -115,12 +118,13 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 										'onclick'  => 'this.select();',
 										'readonly' => 'true',
 									),
-								)
+								),
+								true
 							);
 
 							// Transaction ID.
 							$transaction_url = $invoice->get_transaction_url();
-							echo aui()->input(
+							aui()->input(
 								array(
 									'type'             => 'text',
 									'id'               => 'wpinv_transaction_id',
@@ -134,11 +138,12 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 										'onclick'  => 'this.select();',
 										'readonly' => 'true',
 									),
-								)
+								),
+								true
 							);
 
 							// Currency.
-							echo aui()->input(
+							aui()->input(
 								array(
 									'type'             => 'text',
 									'id'               => 'wpinv_currency',
@@ -151,7 +156,8 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 										'onclick'  => 'this.select();',
 										'readonly' => 'true',
 									),
-								)
+								),
+								true
 							);
 
 						} else {
@@ -159,7 +165,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 							if ( 'wpi_invoice' == $invoice->get_post_type() ) {
 
 								// Payment URL.
-								echo aui()->input(
+								aui()->input(
 									array(
 										'type'             => 'text',
 										'id'               => 'wpinv_payment_url',
@@ -172,11 +178,12 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 											'onclick'  => 'this.select();',
 											'readonly' => 'true',
 										),
-									)
+									),
+									true
 								);
 
 								// Set gateway.
-								echo aui()->select(
+								aui()->select(
 									array(
 										'id'               => 'wpinv_gateway',
 										'name'             => 'wpinv_gateway',
@@ -187,7 +194,8 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 										'select2'          => true,
 										'data-allow-clear' => 'false',
 										'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
-									)
+									),
+									true
 								);
 
 							}

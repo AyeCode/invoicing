@@ -24,7 +24,7 @@ if ( empty( $selectable ) ) {
 echo '<div class="getpaid-payment-form-items-radio form-group">';
 
 // Display the selectable items.
-echo aui()->radio(
+aui()->radio(
     array(
         'name'       => 'getpaid-payment-form-selected-item',
         'id'         => 'getpaid-payment-form-selected-item' . uniqid( '_' ),
@@ -34,7 +34,8 @@ echo aui()->radio(
         'class'      => 'w-auto',
         'inline'     => false,
         'options'    => $selectable,
-    )
+    ),
+    true
 );
 
 echo '</div>';

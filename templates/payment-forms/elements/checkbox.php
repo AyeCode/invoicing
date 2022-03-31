@@ -16,7 +16,7 @@ if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
 }
 
-echo aui()->input(
+aui()->input(
     array(
         'type'      => 'checkbox',
         'name'      => esc_attr( $id ),
@@ -26,5 +26,6 @@ echo aui()->input(
         'value'     => esc_attr__( 'Yes', 'invoicing' ),
         'help_text' => empty( $description ) ? '' : wp_kses_post( $description ),
         'class'     => 'w-auto ' . $label_class,
-    )
+    ),
+    true
 );

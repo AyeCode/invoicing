@@ -16,7 +16,7 @@ if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
 }
 
-echo aui()->textarea(
+aui()->textarea(
     array(
         'name'        => esc_attr( $id ),
         'id'          => esc_attr( $id ) . uniqid( '_' ),
@@ -26,5 +26,6 @@ echo aui()->textarea(
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'class'       => $label_class,
-    )
+    ),
+    true
 );

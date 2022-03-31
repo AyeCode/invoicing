@@ -410,7 +410,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <div class="row">
                             <div class="col-12 col-sm-6">
                                 <?php
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_template',
                                             'name'        => 'wpinv_template',
@@ -426,7 +426,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             ),
                                             'data-allow-clear' => 'false',
                                             'select2'          => true,
-                                        )
+                                        ),
+                                        true
                                     );
                                 ?>
                             </div>
@@ -434,7 +435,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 <?php
 
                                     // Set currency.
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_currency',
                                             'name'        => 'wpinv_currency',
@@ -447,7 +448,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             'data-allow-clear' => 'false',
                                             'select2'          => true,
                                             'options'     => wpinv_get_currencies(),
-                                        )
+                                        ),
+                                        true
                                     );
 
                                 ?>

@@ -82,44 +82,48 @@ if ( ! empty( $form->invoice ) ) {
 
         <div class="getpaid-no-recurring-gateways d-none">
             <?php
-                echo aui()->alert(
+                aui()->alert(
                     array(
                         'content' => __( 'None of the available payment gateways support purchasing recurring items.', 'invoicing' ),
                         'type'    => 'danger',
-                    )
+                    ),
+                    true
                 );
             ?>
         </div>
 
         <div class="getpaid-no-subscription-group-gateways d-none">
             <?php
-                echo aui()->alert(
+                aui()->alert(
                     array(
                         'content' => __( 'None of the available payment gateways support purchasing multiple subscriptions in a single order.', 'invoicing' ),
                         'type'    => 'danger',
-                    )
+                    ),
+                    true
                 );
             ?>
         </div>
 
         <div class="getpaid-no-multiple-subscription-group-gateways d-none">
             <?php
-                echo aui()->alert(
+                aui()->alert(
                     array(
                         'content' => __( 'None of the available payment gateways support purchasing multiple subscriptions with different billing schedules in a single order.', 'invoicing' ),
                         'type'    => 'danger',
-                    )
+                    ),
+                    true
                 );
             ?>
         </div>
 
         <div class="getpaid-no-active-gateways d-none">
             <?php
-                echo aui()->alert(
+                aui()->alert(
                     array(
                         'content' => __( 'There is no active payment gateway available to process your request.', 'invoicing' ),
                         'type'    => 'danger',
-                    )
+                    ),
+                    true
                 );
             ?>
         </div>

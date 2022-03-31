@@ -250,14 +250,14 @@ class GetPaid_Post_Types_Admin {
 			case 'invoice_date':
 				$date_time = esc_attr( $invoice->get_created_date() );
 				$date      = esc_html( getpaid_format_date_value( $date_time, '&mdash;', true ) );
-				echo "<span title='$date_time'>$date</span>";
+				echo wp_kses_post( "<span title='$date_time'>$date</span>" );
 				break;
 
 			case 'payment_date':
 				if ( $invoice->is_paid() ) {
 					$date_time = esc_attr( $invoice->get_completed_date() );
 					$date      = esc_html( getpaid_format_date_value( $date_time, '&mdash;', true ) );
-					echo "<span title='$date_time'>$date</span>";
+					echo wp_kses_post( "<span title='$date_time'>$date</span>" );
 				} else {
 					echo '&mdash;';
 				}
@@ -269,15 +269,15 @@ class GetPaid_Post_Types_Admin {
 				$formated_amount = wp_kses_post( wpinv_price( $amount, $invoice->get_currency() ) );
 
 				if ( $invoice->is_refunded() ) {
-					$refunded_amount = wp_kses_post( wpinv_price( 0, $invoice->get_currency() ) );
-					echo "<del>$formated_amount</del>&nbsp;<ins>$refunded_amount</ins>";
+					$refunded_amount = wpinv_price( 0, $invoice->get_currency() );
+					echo wp_kses_post( "<del>$formated_amount</del>&nbsp;<ins>$refunded_amount</ins>" );
 				} else {
 
 					$discount = $invoice->get_total_discount();
 
 					if ( ! empty( $discount ) ) {
-						$new_amount = wp_kses_post( wpinv_price( $amount + $discount, $invoice->get_currency() ) );
-						echo "<del>$new_amount</del>&nbsp;<ins>$formated_amount</ins>";
+						$new_amount = wpinv_price( $amount + $discount, $invoice->get_currency() );
+						echo wp_kses_post( "<del>$new_amount</del>&nbsp;<ins>$formated_amount</ins>" );
 					} else {
 						echo wp_kses_post( $formated_amount );
 					}
@@ -294,9 +294,9 @@ class GetPaid_Post_Types_Admin {
 					$gateway = esc_html( $invoice->get_gateway_title() );
 					$gateway = wp_sprintf( esc_attr__( 'Paid via %s', 'invoicing' ), esc_html( $gateway ) );
 
-					echo "<mark class='wpi-help-tip getpaid-invoice-status $status' title='$gateway'><span>$status_label</span></mark>";
+					echo wp_kses_post( "<mark class='wpi-help-tip getpaid-invoice-status $status' title='$gateway'><span>$status_label</span></mark>" );
 				} else {
-					echo "<mark class='getpaid-invoice-status $status'><span>$status_label</span></mark>";
+					echo wp_kses_post( "<mark class='getpaid-invoice-status $status'><span>$status_label</span></mark>" );
 				}
 
 				// If it is not paid, display the overdue and view status.
@@ -316,7 +316,7 @@ class GetPaid_Post_Types_Admin {
 
 						if ( ! empty( $fomatted ) ) {
 							$date = wp_sprintf( __( 'Due %s', 'invoicing' ), $fomatted );
-							echo "<p class='description' style='color: #888;' title='$due_date'>$fomatted</p>";
+							echo wp_kses_post( "<p class='description' style='color: #888;' title='$due_date'>$fomatted</p>" );
 						}
 					}
 }
@@ -336,7 +336,7 @@ class GetPaid_Post_Types_Admin {
 				$invoice_number  = esc_html( $invoice->get_number() );
 				$invoice_details = esc_attr__( 'View Invoice Details', 'invoicing' );
 
-				echo "<a href='$edit_link' title='$invoice_details'><strong>$invoice_number</strong></a>";
+				echo wp_kses_post( "<a href='$edit_link' title='$invoice_details'><strong>$invoice_number</strong></a>" );
 
 				break;
 
@@ -350,7 +350,7 @@ class GetPaid_Post_Types_Admin {
 				if ( ! empty( $customer_name ) ) {
 					$customer_details = esc_attr__( 'View Customer Details', 'invoicing' );
 					$view_link        = esc_url( add_query_arg( 'user_id', $invoice->get_user_id(), admin_url( 'user-edit.php' ) ) );
-					echo "<a href='$view_link' title='$customer_details'><span>$customer_name</span></a>";
+					echo wp_kses_post( "<a href='$view_link' title='$customer_details'><span>$customer_name</span></a>" );
 				} else {
 					echo '<div>&mdash;</div>';
 				}
@@ -414,15 +414,15 @@ class GetPaid_Post_Types_Admin {
 		switch ( $column_name ) {
 
 			case 'earnings':
-				echo wpinv_price( $form->get_earned() );
+				echo wp_kses_post( wpinv_price( $form->get_earned() ) );
 				break;
 
 			case 'refunds':
-				echo wpinv_price( $form->get_refunded() );
+				echo wp_kses_post( wpinv_price( $form->get_refunded() ) );
 				break;
 
 			case 'refunds':
-				echo wpinv_price( $form->get_refunded() );
+				echo wp_kses_post( wpinv_price( $form->get_refunded() ) );
 				break;
 
 			case 'shortcode':
@@ -458,7 +458,7 @@ class GetPaid_Post_Types_Admin {
 					}
 }
 
-				echo implode( '<br>', $_items );
+				echo wp_kses_post( implode( '<br>', $_items ) );
 
 				break;
 
@@ -590,15 +590,15 @@ class GetPaid_Post_Types_Admin {
 
 				echo wp_kses_post( $item->get_the_initial_price() );
 
-				echo '<span class="meta">' . wp_sprintf( __( 'then %s', 'invoicing' ), wp_kses_post( $price ) ) . '</span>';
+				echo '<span class="meta">' . wp_sprintf( esc_html__( 'then %s', 'invoicing' ), wp_kses_post( $price ) ) . '</span>';
 				break;
 
 			case 'vat_rule':
-				echo getpaid_get_tax_rule_label( $item->get_vat_rule() );
+				echo wp_kses_post( getpaid_get_tax_rule_label( $item->get_vat_rule() ) );
 				break;
 
 			case 'vat_class':
-				echo getpaid_get_tax_class_label( $item->get_vat_class() );
+				echo wp_kses_post( getpaid_get_tax_class_label( $item->get_vat_class() ) );
 				break;
 
 			case 'shortcode':
@@ -611,7 +611,7 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'type':
-				echo wpinv_item_type( $item->get_id() ) . '<span class="meta">' . $item->get_custom_singular_name() . '</span>';
+				echo wp_kses_post( wpinv_item_type( $item->get_id() ) . '<span class="meta">' . $item->get_custom_singular_name() . '</span>' );
 				break;
 
 		}

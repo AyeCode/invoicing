@@ -55,7 +55,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                             <div id="getpaid-invoice-email-wrapper" class="d-none">
                                 <input type="hidden" id="getpaid-invoice-create-new-user" name="wpinv_new_user" value="" />
                                 <?php
-                                    echo aui()->input(
+                                    aui()->input(
                                         array(
                                             'type'        => 'text',
                                             'id'          => 'getpaid-invoice-new-user-email',
@@ -64,7 +64,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'label_type'  => 'vertical',
                                             'placeholder' => 'john@doe.com',
                                             'class'       => 'form-control-sm',
-                                        )
+                                        ),
+                                        true
                                     );
                                 ?>
                             </div>
@@ -89,7 +90,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_first_name',
@@ -99,13 +100,14 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_first_name( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_last_name',
@@ -115,7 +117,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_last_name( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -124,7 +127,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_company',
@@ -134,13 +137,14 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_company( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_vat_number',
@@ -150,7 +154,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
                                         'value'       => $invoice->get_vat_number( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -159,7 +164,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_address',
@@ -169,13 +174,14 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_address( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_city',
@@ -185,7 +191,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_city( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -194,7 +201,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->select(
+                                aui()->select(
                                     array(
                                         'id'          => 'wpinv_country',
                                         'name'        => 'wpinv_country',
@@ -206,7 +213,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'options'     => wpinv_get_country_list(),
                                         'data-allow-clear' => 'false',
                                         'select2'          => true,
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -217,7 +225,7 @@ class GetPaid_Meta_Box_Invoice_Address {
 
                                 if ( empty( $states ) ) {
 
-                                    echo aui()->input(
+                                    aui()->input(
                                         array(
                                             'type'        => 'text',
                                             'id'          => 'wpinv_state',
@@ -227,12 +235,13 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'placeholder' => '',
                                             'class'       => 'form-control-sm',
                                             'value'       => $invoice->get_state( 'edit' ),
-                                        )
+                                        ),
+                                        true
                                     );
 
                                 } else {
 
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_state',
                                             'name'        => 'wpinv_state',
@@ -244,7 +253,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'options'     => $states,
                                             'data-allow-clear' => 'false',
                                             'select2'          => true,
-                                        )
+                                        ),
+                                        true
                                     );
 
                                 }
@@ -256,7 +266,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_zip',
@@ -266,13 +276,14 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_zip( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_phone',
@@ -282,7 +293,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_phone( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -294,7 +306,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                         <div class="row">
                             <div class="col-12 col-sm-6">
                                 <?php
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_template',
                                             'name'        => 'wpinv_template',
@@ -310,7 +322,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             ),
                                             'data-allow-clear' => 'false',
                                             'select2'          => true,
-                                        )
+                                        ),
+                                        true
                                     );
                                 ?>
                             </div>
@@ -318,7 +331,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                 <?php
 
                                     // Set currency.
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_currency',
                                             'name'        => 'wpinv_currency',
@@ -331,7 +344,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                             'data-allow-clear' => 'false',
                                             'select2'          => true,
                                             'options'     => wpinv_get_currencies(),
-                                        )
+                                        ),
+                                        true
                                     );
 
                                 ?>
@@ -344,7 +358,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'type'        => 'text',
                                         'id'          => 'wpinv_company_id',
@@ -354,7 +368,8 @@ class GetPaid_Meta_Box_Invoice_Address {
                                         'placeholder' => '',
                                         'class'       => 'form-control-sm',
                                         'value'       => $invoice->get_company_id( 'edit' ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>

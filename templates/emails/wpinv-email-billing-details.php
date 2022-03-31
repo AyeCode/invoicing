@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 do_action( 'wpinv_email_before_billing_details', $invoice ); ?>
 <div id="wpinv-email-billing">
-    <h3 class="wpinv-address-t"><?php echo apply_filters( 'wpinv_email_billing_title', __( 'Billing Details', 'invoicing' ) ); ?></h3>
+    <h3 class="wpinv-address-t"><?php echo esc_html( apply_filters( 'wpinv_email_billing_title', __( 'Billing Details', 'invoicing' ) ) ); ?></h3>
 
     <table class="table table-bordered table-sm wpi-billing-details">
         <tbody>

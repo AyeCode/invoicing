@@ -558,7 +558,7 @@ abstract class GetPaid_Payment_Gateway {
 
                         <div class="col-12">
                             <?php
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'name'             => $this->id . '[cc_cvv2]',
                                         'id'               => "$id_prefix-cc-cvv2",
@@ -568,7 +568,8 @@ abstract class GetPaid_Payment_Gateway {
 										'extra_attributes' => array(
 											'autocomplete' => 'cc-csc',
 										),
-                                    )
+                                    ),
+									true
                                 );
                             ?>
                         </div>

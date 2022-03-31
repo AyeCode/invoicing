@@ -39,7 +39,7 @@ $company_id  = $invoice->get_company_id();
 
                 <?php if ( ! empty( $phone ) ) : ?>
                     <div class="billing-phone">
-                        <?php echo wp_sprintf( __( 'Phone: %s', 'invoicing' ), esc_html( $phone ) ); ?>
+                        <?php echo wp_sprintf( esc_html__( 'Phone: %s', 'invoicing' ), esc_html( $phone ) ); ?>
                     </div>
                 <?php endif; ?>
 

@@ -27,7 +27,7 @@ do_action( 'getpaid_before_payment_form_billing_email', $form );
 
 echo "<span class='$class'>";
 
-echo aui()->input(
+aui()->input(
     array(
         'name'             => 'billing_email',
         'id'               => esc_attr( $id ) . uniqid( '_' ),
@@ -42,7 +42,8 @@ echo aui()->input(
         'extra_attributes' => array(
             'autocomplete' => 'billing email',
         ),
-    )
+    ),
+    true
 );
 
 echo '</span>';

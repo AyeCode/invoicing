@@ -25,11 +25,12 @@ function wpinv_subscriptions_page() {
 				// Verify user permissions.
 				if ( ! wpinv_current_user_can_manage_invoicing() ) {
 
-				echo aui()->alert(
+				aui()->alert(
                     array(
-				'type'    => 'danger',
-				'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
-                    )
+						'type'    => 'danger',
+						'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
+					),
+					true
                 );
 
 				} elseif ( ! empty( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
@@ -85,11 +86,12 @@ function wpinv_recurring_subscription_details() {
 	$sub = new WPInv_Subscription( (int) $_GET['id'] );
 	if ( ! $sub->exists() ) {
 
-		echo aui()->alert(
+		aui()->alert(
 			array(
 				'type'    => 'danger',
 				'content' => __( 'Subscription not found.', 'invoicing' ),
-			)
+			),
+			true
 		);
 
 		return;
@@ -391,7 +393,7 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 	<div class="mt-3">
 
 		<?php
-			echo aui()->select(
+			aui()->select(
 				array(
 					'options'   => getpaid_get_subscription_statuses(),
 					'name'      => 'subscription_status',
@@ -402,7 +404,8 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 					'help_text' => __( 'Updating the status will trigger related actions and hooks', 'invoicing' ),
 					'select2'   => true,
 					'value'     => $subscription->get_status( 'edit' ),
-				)
+				),
+				true
 			);
 		?>
 

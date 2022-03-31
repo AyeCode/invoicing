@@ -26,7 +26,7 @@ $select_type = empty( $select_type ) ? 'select' : $select_type;
 
 // Item select;
 if ( $select_type == 'select' ) {
-    echo aui()->select(
+    aui()->select(
         array(
             'name'        => $id,
             'id'          => $id . uniqid( '_' ),
@@ -37,14 +37,15 @@ if ( $select_type == 'select' ) {
             'class'       => 'getpaid-price-select-dropdown getpaid-refresh-on-change',
             'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
             'options'     => $options,
-        )
+        ),
+        true
     );
     return;
 }
 
 // Item radios;
 if ( $select_type == 'radios' ) {
-    echo aui()->radio(
+    aui()->radio(
         array(
             'name'       => esc_attr( $id ),
             'id'         => esc_attr( $id ) . uniqid( '_' ),
@@ -55,7 +56,8 @@ if ( $select_type == 'radios' ) {
             'inline'     => false,
             'options'    => $options,
             'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
-        )
+        ),
+        true
     );
     return;
 }

@@ -16,7 +16,7 @@ if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
 }
 
-echo aui()->input(
+aui()->input(
     array(
         'name'        => esc_attr( $id ),
         'id'          => esc_attr( $id . uniqid( '_' ) ),
@@ -26,5 +26,6 @@ echo aui()->input(
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'class'       => esc_attr( $label_class ),
-    )
+    ),
+    true
 );

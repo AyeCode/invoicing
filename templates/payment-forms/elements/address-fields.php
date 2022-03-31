@@ -72,7 +72,7 @@ foreach ( $fields as $address_field ) {
 
         echo "<div class='form-group $wrap_class getpaid-address-field-wrapper__country'";
 
-        echo aui()->select(
+        aui()->select(
             array(
                 'options'          => wpinv_get_country_list(),
                 'name'             => esc_attr( $field_name ),
@@ -90,12 +90,13 @@ foreach ( $fields as $address_field ) {
                     'data-ip-country' => getpaid_get_ip_country(),
                 ),
                 'no_wrap'          => true,
-            )
+            ),
+            true
         );
 
         if ( wpinv_should_validate_vat_number() ) {
 
-            echo aui()->input(
+            aui()->input(
                 array(
                     'type'       => 'checkbox',
                     'name'       => 'confirm-address',
@@ -106,7 +107,8 @@ foreach ( $fields as $address_field ) {
                     'value'      => 1,
                     'checked'    => true,
                     'class'      => 'w-auto',
-                )
+                ),
+                true
             );
 
         }
@@ -168,7 +170,7 @@ foreach ( $fields as $address_field ) {
             $description .= '<div class="getpaid-error-' . sanitize_html_class( $field_name ) . ' getpaid-custom-payment-form-errors alert alert-danger d-none"></div>';
         }
 
-        echo aui()->input(
+        aui()->input(
             array(
                 'name'              => esc_attr( $field_name ),
                 'id'                => sanitize_html_class( $field_name ) . $uniqid,
@@ -184,7 +186,8 @@ foreach ( $fields as $address_field ) {
                 'label_class'       => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
                 'extra_attributes'  => $autocomplete,
                 'input_group_right' => $append,
-            )
+            ),
+            true
         );
 
     }

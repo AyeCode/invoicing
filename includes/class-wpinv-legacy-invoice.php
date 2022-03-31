@@ -8,7 +8,7 @@
 
 // MUST have WordPress.
 if ( ! defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
 /**

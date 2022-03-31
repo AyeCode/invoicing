@@ -52,7 +52,7 @@ $options = array(
 	'data-disable_days_alt' => empty( $disable_days ) ? false : wp_json_encode( wp_parse_id_list( $disable_days ) ),
 );
 
-echo aui()->input(
+aui()->input(
 	array(
 		'name'             => esc_attr( $id ),
 		'id'               => esc_attr( $id ) . uniqid( '_' ),
@@ -64,5 +64,6 @@ echo aui()->input(
 		'type'             => 'datepicker',
 		'class'            => $label_class . ' getpaid-init-flatpickr flatpickr-input',
 		'extra_attributes' => array_filter( apply_filters( 'getpaid_date_field_attributes', $options ) ),
-	)
+	),
+	true
 );

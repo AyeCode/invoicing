@@ -196,11 +196,12 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<td colspan="<?php echo count( $this->get_subscriptions_table_columns() ); ?>">
 
 					<?php
-						echo aui()->alert(
+						aui()->alert(
 							array(
 								'content' => wp_kses_post( __( 'No subscriptions found.', 'invoicing' ) ),
 								'type'    => 'warning',
-							)
+							),
+                            true
 						);
 					?>
 

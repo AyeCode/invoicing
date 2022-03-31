@@ -61,7 +61,7 @@ class GetPaid_Meta_Box_Item_VAT {
                     </label>
                     <div class="col-sm-8">
                         <?php
-                            echo aui()->select(
+                            aui()->select(
                                 array(
                                     'id'               => 'wpinv_vat_rules',
                                     'name'             => 'wpinv_vat_rules',
@@ -71,7 +71,8 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
                                     'options'          => getpaid_get_tax_rules(),
-                                )
+                                ),
+                                true
                             );
                         ?>
                     </div>
@@ -99,7 +100,7 @@ class GetPaid_Meta_Box_Item_VAT {
                     </label>
                     <div class="col-sm-8">
                         <?php
-                            echo aui()->select(
+                            aui()->select(
                                 array(
                                     'id'               => 'wpinv_vat_class',
                                     'name'             => 'wpinv_vat_class',
@@ -109,7 +110,8 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
                                     'options'          => getpaid_get_tax_classes(),
-                                )
+                                ),
+                                true
                             );
                         ?>
                     </div>

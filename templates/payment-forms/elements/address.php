@@ -70,7 +70,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 	<?php
 
-		echo aui()->input(
+		aui()->input(
 		    array(
 			    'type'     => 'checkbox',
 			    'name'     => 'same-shipping-address',
@@ -80,7 +80,8 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 			    'value'    => 1,
 			    'checked'  => true,
 				'class'    => 'w-auto',
-		    )
+		    ),
+			true
 		);
 
 	?>

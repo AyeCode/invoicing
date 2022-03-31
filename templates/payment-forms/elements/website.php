@@ -17,7 +17,7 @@ if ( ! empty( $required ) ) {
 }
 
 $current_url = ! empty( $_GET['current_url'] ) ? esc_url_raw( urldecode( $_GET['current_url'] ) ) : get_permalink();
-echo aui()->input(
+aui()->input(
     array(
         'name'        => esc_attr( $id ),
         'id'          => esc_attr( $id ) . uniqid( '_' ),
@@ -29,5 +29,6 @@ echo aui()->input(
         'type'        => 'url',
         'value'       => ! empty( $default_current_post ) ? $current_url : '',
         'class'       => $label_class,
-    )
+    ),
+    true
 );

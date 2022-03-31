@@ -86,7 +86,7 @@ class GetPaid_Meta_Box_Item_Details {
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
-                                echo aui()->select(
+                                aui()->select(
                                     array(
                                         'id'               => 'wpinv_recurring_period',
                                         'name'             => 'wpinv_recurring_period',
@@ -101,7 +101,8 @@ class GetPaid_Meta_Box_Item_Details {
                                             'M' => __( 'month(s)', 'invoicing' ),
                                             'Y' => __( 'year(s)', 'invoicing' ),
                                         ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -116,7 +117,7 @@ class GetPaid_Meta_Box_Item_Details {
 								do_action( 'wpinv_item_details_metabox_before_dynamic_pricing_checkbox', $item );
 
 								// NYP toggle.
-								echo aui()->input(
+								aui()->input(
                                     array(
 								'id'      => 'wpinv_name_your_price',
 								'name'    => 'wpinv_name_your_price',
@@ -125,7 +126,8 @@ class GetPaid_Meta_Box_Item_Details {
 								'value'   => '1',
 								'checked' => $item->user_can_set_their_price(),
 								'no_wrap' => true,
-                                    )
+                                    ),
+                                    true
                                 );
 
 							do_action( 'wpinv_item_details_metabox_dynamic_pricing_checkbox', $item );
@@ -134,7 +136,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                                 // Subscriptions.
                                 do_action( 'wpinv_item_details_metabox_before_subscription_checkbox', $item );
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_is_recurring',
                                         'name'    => 'wpinv_is_recurring',
@@ -143,7 +145,8 @@ class GetPaid_Meta_Box_Item_Details {
                                         'value'   => '1',
                                         'checked' => $item->is_recurring(),
                                         'no_wrap' => true,
-                                    )
+                                    ),
+                                    true
                                 );
                                 do_action( 'wpinv_item_details_metabox_subscription_checkbox', $item );
 
@@ -230,7 +233,7 @@ class GetPaid_Meta_Box_Item_Details {
                             </div>
                             <div class="col-sm-6">
                                 <?php
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_trial_period',
                                             'name'        => 'wpinv_trial_period',
@@ -246,7 +249,8 @@ class GetPaid_Meta_Box_Item_Details {
                                                 'M' => __( 'month(s)', 'invoicing' ),
                                                 'Y' => __( 'year(s)', 'invoicing' ),
                                             ),
-                                        )
+                                        ),
+                                        true
                                     );
                                 ?>
 

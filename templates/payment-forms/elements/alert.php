@@ -13,10 +13,11 @@ if ( empty( $text ) ) {
     return;
 }
 
-echo aui()->alert(
+aui()->alert(
     array(
         'content'     => wp_kses_post( $text ),
         'dismissible' => ! empty( $dismissible ),
         'type'        => empty( $class ) ? 'info' : str_replace( 'alert-', '', $class ),
-    )
+    ),
+    true
 );
