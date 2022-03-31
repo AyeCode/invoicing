@@ -133,7 +133,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.6.5 =
+= 2.6.6 =
 * New "Single Invoice" widget - ADDED
 * Favicon not inherited on invoice pages - FIXED
 * Some composer files did not push with last release - FIXED

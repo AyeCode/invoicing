@@ -203,20 +203,20 @@ continue;}// don't show quote add on
 	<div class="clearfix" ></div>
 
 	<?php if ( $current_tab == 'addons' ) { ?>
-	<p><?php printf( wp_kses_post( __( 'All of our Invoicing Addons can be found on WPInvoicing.com here: <a href="%s">Invoicing Addons</a>', 'invoicing' ), 'https://wpinvoicing.com/downloads/category/addons/' ) ); ?></p>
+	<p><?php printf(  esc_attr__( 'All of our Addons can be found on wpGetPaid.com here: %sInvoicing Addons%s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/addons/">','</a>' ); ?></p>
 	<?php } if ( $current_tab == 'gateways' ) { ?>
-    <p><?php printf( wp_kses_post( __( 'All of our Invoicing Payment Gateways can be found on WPInvoicing.com here: <a href="%s">Invoicing Payment Gateways</a>', 'invoicing' ), 'https://wpinvoicing.com/downloads/category/gateways/' ) ); ?></p>
+    <p><?php printf( esc_attr__( 'All of our Payment Gateways can be found on wpGetPaid.com here: %sGetPaid Payment Gateways %s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/gateways/">','</a>'  ); ?></p>
     <?php } ?>
 
-	<div id="wpi-wpeu-required-activation" style="display:none;"><span class="wpi-notification "><?php printf( wp_kses_post( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s'>activate</a> it now.", 'invoicing' ), wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=wp-easy-updates/external-updates.php' ), 'activate-plugin_wp-easy-updates/external-updates.php' ) ) ); ?></span></div>
-	<div id="wpi-wpeu-required-for-external" style="display:none;"><span class="wpi-notification "><?php printf( wp_kses_post( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now.", 'invoicing' ), admin_url( 'plugin-install.php?tab=upload&wpeu-install=true' ) ) ); ?></span></div>
+	<div id="wpi-wpeu-required-activation" style="display:none;"><span class="wpi-notification "><?php echo wp_kses_post(  sprintf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s'>activate</a> it now.", 'invoicing' ), wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=wp-easy-updates/external-updates.php' ), 'activate-plugin_wp-easy-updates/external-updates.php' ) ) ); ?></span></div>
+	<div id="wpi-wpeu-required-for-external" style="display:none;"><span class="wpi-notification "><?php echo wp_kses_post( sprintf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now.", 'invoicing' ), admin_url( 'plugin-install.php?tab=upload&wpeu-install=true' ) ) ); ?></span></div>
 	<div id="wpeu-licence-popup" style="display:none;">
 		<span class="wpi-notification noti-white">
 			<h3 class="wpeu-licence-title"><?php esc_html_e( 'Licence key', 'invoicing' ); ?></h3>
 			<input class="wpeu-licence-key" type="text" placeholder="<?php esc_attr_e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php esc_html_e( 'Install', 'invoicing' ); ?></button>
 			<br>
 			<?php
-			echo sprintf( esc_html__( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );
+			printf( esc_html__( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );
 			?>
 		</span>
 	</div>
