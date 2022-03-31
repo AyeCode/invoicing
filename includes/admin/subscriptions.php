@@ -26,11 +26,11 @@ function wpinv_subscriptions_page() {
 				if ( ! wpinv_current_user_can_manage_invoicing() ) {
 
 				echo aui()->alert(
-				array(
-                    'type'    => 'danger',
-                    'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
-				)
-			);
+                    array(
+				'type'    => 'danger',
+				'content' => __( 'You are not permitted to view this page.', 'invoicing' ),
+                    )
+                );
 
 				} elseif ( ! empty( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
 

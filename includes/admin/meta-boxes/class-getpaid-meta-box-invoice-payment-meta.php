@@ -44,58 +44,58 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 
 						// Set gateway.
 						echo aui()->select(
-						array(
-                            'id'               => 'wpinv_gateway',
-                            'name'             => 'wpinv_gateway',
-                            'label'            => __( 'Gateway:', 'invoicing' ),
-                            'label_type'       => 'vertical',
-                            'placeholder'      => __( 'Select Gateway', 'invoicing' ),
-                            'value'            => wpinv_get_default_gateway(),
-                            'select2'          => true,
-                            'data-allow-clear' => 'false',
-                            'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
-						)
-					);
+                            array(
+						'id'               => 'wpinv_gateway',
+						'name'             => 'wpinv_gateway',
+						'label'            => __( 'Gateway:', 'invoicing' ),
+						'label_type'       => 'vertical',
+						'placeholder'      => __( 'Select Gateway', 'invoicing' ),
+						'value'            => wpinv_get_default_gateway(),
+						'select2'          => true,
+						'data-allow-clear' => 'false',
+						'options'          => wp_list_pluck( wpinv_get_enabled_payment_gateways( true ), 'admin_label' ),
+                            )
+                        );
 
                         } else {
 						// Invoice key.
 						echo aui()->input(
-						array(
-                            'type'             => 'text',
-                            'id'               => 'wpinv_key',
-                            'name'             => 'wpinv_key',
-                            'label'            => sprintf(
-						__( '%s Key:', 'invoicing' ),
-						ucfirst( $invoice->get_invoice_quote_type() )
-                            ),
-                            'label_type'       => 'vertical',
-                            'class'            => 'form-control-sm',
-                            'value'            => $invoice->get_key( 'edit' ),
-                            'extra_attributes' => array(
-						'onclick'  => 'this.select();',
-						'readonly' => 'true',
-                            ),
-						)
+                            array(
+						'type'             => 'text',
+						'id'               => 'wpinv_key',
+						'name'             => 'wpinv_key',
+						'label'            => sprintf(
+                            __( '%s Key:', 'invoicing' ),
+                            ucfirst( $invoice->get_invoice_quote_type() )
+						),
+						'label_type'       => 'vertical',
+						'class'            => 'form-control-sm',
+						'value'            => $invoice->get_key( 'edit' ),
+						'extra_attributes' => array(
+                            'onclick'  => 'this.select();',
+                            'readonly' => 'true',
+						),
+                            )
 						);
 
 						// View URL.
 						echo aui()->input(
-						array(
-                            'type'             => 'text',
-                            'id'               => 'wpinv_view_url',
-                            'name'             => 'wpinv_view_url',
-                            'label'            => sprintf(
-						__( '%s URL:', 'invoicing' ),
-						ucfirst( $invoice->get_invoice_quote_type() )
-                            ) . '&nbsp;<a href="' . esc_url_raw( $invoice->get_view_url() ) . '" title="' . __( 'View invoice', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-fw"></i></a>',
-                            'label_type'       => 'vertical',
-                            'class'            => 'form-control-sm',
-                            'value'            => $invoice->get_view_url(),
-                            'extra_attributes' => array(
-						'onclick'  => 'this.select();',
-						'readonly' => 'true',
-                            ),
-						)
+                            array(
+						'type'             => 'text',
+						'id'               => 'wpinv_view_url',
+						'name'             => 'wpinv_view_url',
+						'label'            => sprintf(
+                            __( '%s URL:', 'invoicing' ),
+                            ucfirst( $invoice->get_invoice_quote_type() )
+						) . '&nbsp;<a href="' . esc_url_raw( $invoice->get_view_url() ) . '" title="' . __( 'View invoice', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-fw"></i></a>',
+						'label_type'       => 'vertical',
+						'class'            => 'form-control-sm',
+						'value'            => $invoice->get_view_url(),
+						'extra_attributes' => array(
+                            'onclick'  => 'this.select();',
+                            'readonly' => 'true',
+						),
+                            )
 						);
 
 						// If the invoice is paid...

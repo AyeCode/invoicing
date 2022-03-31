@@ -69,8 +69,8 @@ class GetPaid_Reports {
 					$label = esc_html( $label );
 					$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab';
 					$url   = esc_url(
-					add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
-				);
+                        add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
+                    );
 
 				echo "\n\t\t\t<a href='$url' class='$class'>$label</a>";
 

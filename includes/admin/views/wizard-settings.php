@@ -62,19 +62,19 @@ defined( 'ABSPATH' ) || exit;
 							case 'text':
                                 case 'number':
 								echo aui()->input(
-								array(
-                                    'type'        => $type,
-                                    'id'          => $id,
-                                    'name'        => $name,
-                                    'value'       => is_scalar( $value ) ? esc_attr( $value ) : '',
-                                    'required'    => false,
-                                    'help_text'   => $help_text,
-                                    'label'       => $label,
-                                    'class'       => $class,
-                                    'label_type'  => 'floating',
-                                    'label_class' => 'settings-label',
-								)
-							);
+                                    array(
+								'type'        => $type,
+								'id'          => $id,
+								'name'        => $name,
+								'value'       => is_scalar( $value ) ? esc_attr( $value ) : '',
+								'required'    => false,
+								'help_text'   => $help_text,
+								'label'       => $label,
+								'class'       => $class,
+								'label_type'  => 'floating',
+								'label_class' => 'settings-label',
+                                    )
+                                );
 								break;
 							case 'textarea':
 								$textarea = aui()->textarea(

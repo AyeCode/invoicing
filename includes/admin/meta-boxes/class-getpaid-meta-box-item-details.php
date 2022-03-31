@@ -117,16 +117,16 @@ class GetPaid_Meta_Box_Item_Details {
 
 								// NYP toggle.
 								echo aui()->input(
-								array(
-                                    'id'      => 'wpinv_name_your_price',
-                                    'name'    => 'wpinv_name_your_price',
-                                    'type'    => 'checkbox',
-                                    'label'   => apply_filters( 'wpinv_name_your_price_toggle_text', __( 'Let customers name their price', 'invoicing' ) ),
-                                    'value'   => '1',
-                                    'checked' => $item->user_can_set_their_price(),
-                                    'no_wrap' => true,
-								)
-							);
+                                    array(
+								'id'      => 'wpinv_name_your_price',
+								'name'    => 'wpinv_name_your_price',
+								'type'    => 'checkbox',
+								'label'   => apply_filters( 'wpinv_name_your_price_toggle_text', __( 'Let customers name their price', 'invoicing' ) ),
+								'value'   => '1',
+								'checked' => $item->user_can_set_their_price(),
+								'no_wrap' => true,
+                                    )
+                                );
 
 							do_action( 'wpinv_item_details_metabox_dynamic_pricing_checkbox', $item );
 
