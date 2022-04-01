@@ -1086,10 +1086,10 @@ function getpaid_array_merge_if_empty( $args, $defaults ) {
 
     foreach ( $defaults as $key => $value ) {
 
-        if ( array_key_exists( $key, $args ) && empty( $args[ $key ] ) ) {
+        if ( empty( $args[ $key ] ) ) {
             $args[ $key ] = $value;
         }
-}
+    }
 
     return $args;
 

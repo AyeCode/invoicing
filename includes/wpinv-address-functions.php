@@ -194,10 +194,9 @@ add_action( 'getpaid_checkout_invoice_updated', 'getpaid_save_invoice_user_addre
  * Retrieves a saved user address.
  *
  * @param int $user_id The user id whose address we should get. Defaults to the current user id.
- * @param bool $with_default Whether or not we should use the default country and state.
  * @return array
  */
-function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
+function wpinv_get_user_address( $user_id = 0 ) {
 
     // Prepare the user id.
     $user_id   = empty( $user_id ) ? get_current_user_id() : $user_id;
@@ -210,8 +209,9 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
 
     // Prepare the address.
     $address = array(
-        'user_id' => $user_id,
-        'email'   => $user_info->user_email,
+        'user_id'      => $user_id,
+        'email'        => $user_info->user_email,
+        'display_name' => $user_info->display_name,
     );
 
     foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
@@ -219,10 +219,6 @@ function wpinv_get_user_address( $user_id = 0, $with_default = true ) {
     }
 
     $address = array_filter( $address );
-
-    if ( ! $with_default ) {
-        return $address;
-    }
 
     $defaults = array(
         'first_name' => $user_info->first_name,
