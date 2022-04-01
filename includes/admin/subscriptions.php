@@ -201,7 +201,7 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 
 				<?php foreach ( $fields as $key => $label ) : ?>
 
-					<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
+					<tr class="getpaid-subscription-meta-<?php echo esc_attr( $key ); ?>">
 
 						<th class="w-25" style="font-weight: 500;">
 							<?php echo esc_html( $label ); ?>

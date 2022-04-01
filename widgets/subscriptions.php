@@ -157,7 +157,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<thead>
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo sanitize_html_class( $key ); ?>">
+							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo esc_attr( $key ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>
@@ -286,7 +286,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<tfoot>
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th class="font-weight-bold getpaid-subscriptions-<?php echo sanitize_html_class( $key ); ?>">
+							<th class="font-weight-bold getpaid-subscriptions-<?php echo esc_attr( $key ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>

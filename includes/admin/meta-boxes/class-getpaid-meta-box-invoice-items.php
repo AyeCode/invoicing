@@ -515,7 +515,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 <table class="getpaid-invoice-totals text-right w-100">
                                     <tbody>
                                         <?php foreach ( apply_filters( 'getpaid_invoice_subtotal_rows', $totals, $invoice ) as $key => $data ) : ?>
-                                            <tr class="getpaid-totals-<?php echo sanitize_html_class( $key ); ?>">
+                                            <tr class="getpaid-totals-<?php echo esc_attr( $key ); ?>">
                                                 <td class="label"><?php echo esc_html( $data['label'] ) ?>:</td>
                                                 <td width="1%"></td>
                                                 <td class="value"><?php echo wp_kses_post( $data['value'] ) ?></td>

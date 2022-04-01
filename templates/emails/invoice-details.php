@@ -34,14 +34,14 @@ do_action( 'wpinv_email_before_invoice_details', $invoice, $sent_to_admin );
 
                 <?php do_action( "getpaid_before_email_details_$key", $invoice, $data ); ?>
 
-                <tr class="getpaid-email-details-<?php echo sanitize_html_class( $key ); ?>">
+                <tr class="getpaid-email-details-<?php echo esc_attr( $key ); ?>">
 
                     <td class="getpaid-lable-td">
                         <?php echo esc_html( $data['label'] ); ?>
                     </td>
 
                     <td class="getpaid-value-td">
-                        <span class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
+                        <span class="getpaid-invoice-meta-<?php echo esc_attr( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
                     </td>
 
                 </tr>

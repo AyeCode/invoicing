@@ -29,7 +29,7 @@ $column_count = count( $columns );
             <tr class="wpinv_cart_header_row">
 
                 <?php foreach ( $columns as $key => $label ) : ?>
-                    <th class="<?php echo 'name' == $key ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $key ); ?>">
+                    <th class="<?php echo 'name' == $key ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo esc_attr( $key ); ?>">
                         <?php echo esc_html( $label ); ?>
                     </th>
                 <?php endforeach; ?>

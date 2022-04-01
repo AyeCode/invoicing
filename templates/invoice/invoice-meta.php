@@ -26,14 +26,14 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
 
                             <?php do_action( "getpaid_before_invoice_meta_$key", $invoice, $data ); ?>
 
-                            <tr class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>">
+                            <tr class="getpaid-invoice-meta-<?php echo esc_attr( $key ); ?>">
 
                                 <th class="<?php echo esc_attr( $class ); ?> font-weight-bold" style="width: 40%">
                                     <?php echo esc_html( $data['label'] ); ?>
                                 </th>
 
                                 <td class="<?php echo esc_attr( $class ); ?> <?php echo $key == 'invoice_total' ? 'font-weight-bold' : 'font-weight-normal'; ?> text-break" style="width: 60%">
-                                    <span class="getpaid-invoice-meta-<?php echo sanitize_html_class( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
+                                    <span class="getpaid-invoice-meta-<?php echo esc_attr( $key ); ?>-value"><?php echo wp_kses_post( $data['value'] ); ?></span>
                                 </td>
 
                             </tr>

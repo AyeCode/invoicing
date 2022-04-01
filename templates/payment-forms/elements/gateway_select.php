@@ -41,7 +41,7 @@ if ( ! empty( $form->invoice ) ) {
 
             <?php foreach ( array_keys( $gateways ) as $gateway ) : ?>
 
-                <div class="pt-1 pb-1 getpaid-gateway getpaid-gateway-<?php echo sanitize_html_class( $gateway ); ?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_{$gateway}_checkout_button_label", '' ) ); ?>'>
+                <div class="pt-1 pb-1 getpaid-gateway getpaid-gateway-<?php echo esc_attr( $gateway ); ?>" data-checkout-label='<?php echo esc_attr( apply_filters( "getpaid_gateway_{$gateway}_checkout_button_label", '' ) ); ?>'>
 
                     <label class="d-block w-100 getpaid-gateway-radio">
                         <input type="radio" value="<?php echo esc_attr( $gateway ); ?>" <?php checked( $gateway, $chosen_gateway ); ?> name="wpi-gateway">
@@ -58,7 +58,7 @@ if ( ! empty( $form->invoice ) ) {
 
             <?php foreach ( array_keys( $gateways ) as $gateway ) : ?>
 
-                <div class="my-2 p-3 bg-light border getpaid-gateway-description getpaid-description-<?php echo sanitize_html_class( $gateway ); ?>" style="display: none;">
+                <div class="my-2 p-3 bg-light border getpaid-gateway-description getpaid-description-<?php echo esc_attr( $gateway ); ?>" style="display: none;">
                     <?php
 
                         $description = wpinv_get_gateway_description( $gateway );

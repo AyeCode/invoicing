@@ -23,7 +23,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
             <?php foreach ( $totals as $key => $label ) : ?>
 
-                <div class="getpaid-invoice-line-totals-col <?php echo sanitize_html_class( $key ); ?>">
+                <div class="getpaid-invoice-line-totals-col <?php echo esc_attr( $key ); ?>">
 
                     <div class="form-row">
 

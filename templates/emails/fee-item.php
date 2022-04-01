@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 
     <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
+        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo esc_attr( $column ); ?>">
             
             <?php
 

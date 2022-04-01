@@ -163,7 +163,7 @@ class GetPaid_Reports_Report {
 							<div class="col-12 mb-4">
 
 								<!-- <?php echo esc_html( $card['label'] ); ?> Card -->
-								<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
+								<div class="card p-0 m-0 shadow-none <?php echo esc_attr( $key ); ?>">
 
 									<div class="card-body">
 

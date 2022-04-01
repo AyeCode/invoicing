@@ -19,14 +19,14 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 
 
 	<div class="table-responsive">
-		<table class="table table-bordered table-hover getpaid-user-invoices <?php echo sanitize_html_class( $post_type ); ?>">
+		<table class="table table-bordered table-hover getpaid-user-invoices <?php echo esc_attr( $post_type ); ?>">
 
 
 			<thead>
 				<tr>
 
 					<?php foreach ( wpinv_get_user_invoices_columns( $post_type ) as $column_id => $column_name ) : ?>
-						<th class="<?php echo sanitize_html_class( $column_id ); ?> <?php echo ( ! empty( $column_name['class'] ) ? sanitize_html_class( $column_name['class'] ) : ''); ?> border-bottom-0">
+						<th class="<?php echo esc_attr( $column_id ); ?> <?php echo ( ! empty( $column_name['class'] ) ? sanitize_html_class( $column_name['class'] ) : ''); ?> border-bottom-0">
 							<span class="nobr"><?php echo esc_html( $column_name['title'] ); ?></span>
 						</th>
 					<?php endforeach; ?>
@@ -39,7 +39,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 			<tbody>
 				<?php foreach ( $invoices->invoices as $invoice ) : ?>
 
-					<tr class="wpinv-item wpinv-item-<?php echo sanitize_html_class( $invoice->get_status() ); ?>">
+					<tr class="wpinv-item wpinv-item-<?php echo esc_attr( $invoice->get_status() ); ?>">
 						<?php
 
 							foreach ( wpinv_get_user_invoices_columns( $post_type ) as $column_id => $column_name ) :
@@ -47,7 +47,7 @@ do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, 
 							$column_id = sanitize_html_class( $column_id );
 							$class     = empty( $column_name['class'] ) ? '' : sanitize_html_class( $column_name['class'] );
 
-							echo "<td class='" . esc_attr( $column_id . $class ) . "'>";
+							echo "<td class='" . esc_attr( $column_id . ' ' . $class ) . "'>";
 							switch ( $column_id ) {
 
 								case 'invoice-number':

@@ -16,11 +16,11 @@ defined( 'ABSPATH' ) || exit;
 
 <?php do_action( 'getpaid_before_email_line_item', $invoice, $item ); ?>
 
-<tr class="wpinv_cart_item item-type-<?php echo sanitize_html_class( $item->get_type() ); ?>">
+<tr class="wpinv_cart_item item-type-<?php echo esc_attr( $item->get_type() ); ?>">
 
     <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
+        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo esc_attr( $column ); ?>">
             
             <?php
 

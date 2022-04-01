@@ -16,13 +16,13 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 ?>
 
-<div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo sanitize_html_class( $item->get_type() ); ?> border-bottom'>
+<div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo esc_attr( $item->get_type() ); ?> border-bottom'>
 
     <div class="form-row">
 
         <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-            <div class="<?php echo 'name' == $column ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-item-<?php echo sanitize_html_class( $column ); ?>">
+            <div class="<?php echo 'name' == $column ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-item-<?php echo esc_attr( $column ); ?>">
 
                 <?php
 

@@ -22,7 +22,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 
-			<div class="<?php echo 'name' == $key ? 'col-6' : 'col'; ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : ''; ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
+			<div class="<?php echo 'name' == $key ? 'col-6' : 'col'; ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : ''; ?> position-relative getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
 
 				<?php
 

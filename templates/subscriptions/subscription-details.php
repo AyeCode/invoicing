@@ -37,7 +37,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 		<?php foreach ( $widget->get_single_subscription_columns( $subscription ) as $key => $label ) : ?>
 
-			<tr class="getpaid-subscription-meta-<?php echo sanitize_html_class( $key ); ?>">
+			<tr class="getpaid-subscription-meta-<?php echo esc_attr( $key ); ?>">
 
 				<th class="font-weight-bold" style="width: 35%">
 					<?php echo esc_html( $label ); ?>

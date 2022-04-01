@@ -21,7 +21,7 @@ do_action( 'getpaid_before_invoice_fee_item', $invoice, $fee );
 
         <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-            <div class="<?php echo 'name' == $column ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-item-<?php echo sanitize_html_class( $column ); ?>">
+            <div class="<?php echo 'name' == $column ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-item-<?php echo esc_attr( $column ); ?>">
 
                 <?php
 
