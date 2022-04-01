@@ -1066,7 +1066,7 @@ function wpinv_descriptive_text_callback( $args ) {
 }
 
 function wpinv_raw_html_callback( $args ) {
-	echo wp_kses_post( $args['desc'] );
+	echo wp_kses( $args['desc'], getpaid_allowed_html() );
 }
 
 function wpinv_hook_callback( $args ) {

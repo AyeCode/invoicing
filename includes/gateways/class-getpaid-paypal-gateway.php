@@ -89,7 +89,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
 		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
 		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
-
+		add_action( 'wpinv_paypal_connect', array( $this, 'display_connect_buttons' ) );
 		parent::__construct();
     }
 
@@ -515,17 +515,9 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		$sandbox_email   = wpinv_get_option( 'paypal_sandbox_email' );
 
 		$admin_settings['paypal_connect'] = array(
-			'type' => 'raw_html',
+			'type' => 'hook',
 			'id'   => 'paypal_connect',
 			'name' => __( 'Connect to PayPal', 'invoicing' ),
-			'desc' => sprintf(
-				'<div class="wpinv-paypal-connect-live"><a class="button button-primary" href="%s">%s</a></div><div class="wpinv-paypal-connect-sandbox"><a class="button button-primary" href="%s">%s</a></div>%s',
-				esc_url( self::get_connect_url( false ) ),
-				__( 'Connect to PayPal', 'invoicing' ),
-				esc_url( self::get_connect_url( true ) ),
-				__( 'Connect to PayPal Sandox', 'invoicing' ),
-				$this->get_js()
-			),
 		);
 
         $admin_settings['paypal_email'] = array(
@@ -606,9 +598,16 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
      * @return void
 	 */
-	public static function get_js() {
-        ob_start();
+	public static function display_connect_buttons() {
+
         ?>
+			<div class="wpinv-paypal-connect-live">
+				<a class="button button-primary" href="<?php echo esc_url( self::get_connect_url( false ) ); ?>"><?php esc_html_e( 'Connect to PayPal', 'invoicing' ); ?></a>
+			</div>
+			<div class="wpinv-paypal-connect-sandbox">
+				<a class="button button-primary" href="<?php echo esc_url( self::get_connect_url( true ) ); ?>"><?php esc_html_e( 'Connect to PayPal Sandbox', 'invoicing' ); ?></a>
+			</div>
+
             <script>
                 jQuery(document).ready(function() {
 
@@ -639,7 +638,6 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
                 });
             </script>
         <?php
-        return ob_get_clean();
     }
 
 	/**
