@@ -312,7 +312,7 @@ class WPInv_Ajax {
                             $items[]    = $item;
                         }
                     }
-}
+                }
 
                 $payment_form->set_items( $items );
                 $extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
