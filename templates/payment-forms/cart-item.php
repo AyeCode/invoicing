@@ -22,7 +22,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 
-			<div class="<?php echo 'name' == $key ? 'col-6' : 'col'; ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : ''; ?> position-relative getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?> getpaid-form-cart-item-<?php echo sanitize_html_class( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
+			<div class="<?php echo 'name' == $key ? 'col-6' : 'col'; ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ) ) ) ? 'd-none d-sm-block' : ''; ?> position-relative getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
 
 				<?php
 
@@ -37,15 +37,14 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 					$description = $item->get_description();
 
 					if ( ! empty( $description ) ) {
-						$description = wp_kses_post( $description );
-						echo "<small class='form-text text-muted pr-2 m-0'>$description</small>";
-						}
+						echo "<small class='form-text text-muted pr-2 m-0'>" . wp_kses_post( $description ) . "</small>";
+					}
 
 					// Price help text.
 					$description = getpaid_item_recurring_price_help_text( $item, $currency );
 					if ( $description ) {
-						echo "<small class='getpaid-form-item-price-desc form-text text-muted pr-2 m-0'>$description</small>";
-						}
+						echo "<small class='getpaid-form-item-price-desc form-text text-muted pr-2 m-0'>" . wp_kses_post( $description ) . "</small>";
+					}
 
 					do_action( 'getpaid_payment_form_cart_item_description', $item, $form );
 
@@ -68,14 +67,14 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 					echo '<div class="mb-1">' . esc_html( $item->get_name() ) . wp_kses_post( $tootip ) . '</div>';
 
 					if ( ! empty( $description ) ) {
-						printf( '<span class="d-none d-sm-block getpaid-item-desc">%s</span>', $description );
+						printf( '<span class="d-none d-sm-block getpaid-item-desc">%s</span>', wp_kses_post( $description ) );
 						}
 
 					if ( $item->allows_quantities() ) {
 						printf(
 							'<small class="d-sm-none text-muted form-text">%s</small>',
 							sprintf(
-								__( 'Qty %s', 'invoicing' ),
+								esc_html__( 'Qty %s', 'invoicing' ),
 								sprintf(
 									'<input
 											type="number"
@@ -84,9 +83,10 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 											class="getpaid-item-mobile-quantity-input p-1 m-0 text-center"
 											value="%s"
 											min="1"
-											%s>',
+											max="%s"
+											>',
                                     (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(),
-                                    null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''
+                                    floatval( null !== $max_qty ? $max_qty : 1000000000000 )
 								)
 							)
 						);
@@ -94,7 +94,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 						printf(
 							'<small class="d-sm-none text-muted form-text">%s</small>',
 							sprintf(
-								__( 'Qty %s', 'invoicing' ),
+								esc_html__( 'Qty %s', 'invoicing' ),
 								(float) $item->get_quantity()
 							)
 						);
@@ -137,21 +137,21 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 								<div class="input-group input-group-sm">
 								<?php if ( 'left' == $position ) : ?>
 										<div class="input-group-prepend">
-											<span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
+											<span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
 										</div>
 									<?php endif; ?>
 
-									<input type="text" <?php echo $data_minimum; ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo $class; ?>" style="width: 64px; line-height: 1; min-height: 35px;">
+									<input type="text" <?php echo wp_kses_post( $data_minimum ); ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo esc_attr( $class ); ?>" style="width: 64px; line-height: 1; min-height: 35px;">
 
 								<?php if ( ! empty( $validate_minimum ) ) : ?>
 										<div class="invalid-tooltip">
-											<?php echo $validate_minimum; ?>
+											<?php echo wp_kses_post( $validate_minimum ); ?>
 										</div>
 									<?php endif; ?>
 
 								<?php if ( 'left' != $position ) : ?>
 										<div class="input-group-append">
-											<span class="input-group-text"><?php echo wpinv_currency_symbol( $currency ); ?></span>
+											<span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
 										</div>
 									<?php endif; ?>
 								</div>
@@ -159,7 +159,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 							<?php
 
 						} else {
-						echo wpinv_price( $item->get_price(), $currency );
+						echo wp_kses_post( wpinv_price( $item->get_price(), $currency ) );
 
 						?>
 								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
@@ -167,9 +167,9 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 						}
 
 					printf(
-					'<small class="d-sm-none text-muted form-text getpaid-mobile-item-subtotal">%s</small>',
-					sprintf( __( 'Subtotal: %s', 'invoicing' ), wpinv_price( $item->get_sub_total(), $currency ) )
-				);
+                        '<small class="d-sm-none text-muted form-text getpaid-mobile-item-subtotal">%s</small>',
+                        sprintf( esc_html__( 'Subtotal: %s', 'invoicing' ), wp_kses_post( wpinv_price( $item->get_sub_total(), $currency ) ) )
+                    );
 					}
 
 					// Item quantity.
@@ -190,7 +190,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 					// Item sub total.
 					if ( 'subtotal' == $key ) {
-					echo wpinv_price( $item->get_sub_total(), $currency );
+					echo wp_kses_post( wpinv_price( $item->get_sub_total(), $currency ) );
 					}
 
 					do_action( "getpaid_payment_form_cart_item_$key", $item, $form );

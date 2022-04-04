@@ -33,7 +33,7 @@ class GetPaid_Graph_Downloader {
 	public function prepare_handler( $graph ) {
 
 		if ( empty( $this->handler->views[ $graph ] ) ) {
-			wp_die( __( 'Invalid Graph', 'invoicing' ), 400 );
+			wp_die( esc_html__( 'Invalid Graph', 'invoicing' ), 400 );
 		}
 
 		return new $this->handler->views[ $graph ]['class']();
@@ -50,7 +50,7 @@ class GetPaid_Graph_Downloader {
 		$output  = fopen( 'php://output', 'w' );
 
 		if ( false === $output ) {
-			wp_die( __( 'Unsupported server', 'invoicing' ), 500 );
+			wp_die( esc_html__( 'Unsupported server', 'invoicing' ), 500 );
 		}
 
 		return $output;

@@ -223,7 +223,7 @@ function getpaid_display_address_edit_tab() {
 					// Display the country.
 					if ( 'country' == $key ) {
 
-						echo aui()->select(
+						aui()->select(
 							array(
 								'options'     => wpinv_get_country_list(),
 								'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
@@ -233,7 +233,8 @@ function getpaid_display_address_edit_tab() {
 								'label'       => wp_kses_post( $label ),
 								'label_type'  => 'vertical',
 								'class'       => 'getpaid-address-field',
-							)
+                            ),
+                            true
 						);
 
 					}
@@ -241,7 +242,7 @@ function getpaid_display_address_edit_tab() {
 					// Display the state.
 					elseif ( 'state' == $key ) {
 
-						echo getpaid_get_states_select_markup(
+						getpaid_get_states_select_markup(
 							getpaid_get_user_address_field( get_current_user_id(), 'country' ),
 							getpaid_get_user_address_field( get_current_user_id(), 'state' ),
 							$label,
@@ -249,28 +250,30 @@ function getpaid_display_address_edit_tab() {
 							'',
 							false,
 							'',
-							'getpaid_address[' . esc_attr( $key ) . ']'
+							'getpaid_address[' . esc_attr( $key ) . ']',
+                            true
 						);
 
                         } else {
 
-						echo aui()->input(
-						array(
-                            'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
-                            'id'          => 'wpinv-' . sanitize_html_class( $key ),
-                            'placeholder' => $label,
-                            'label'       => wp_kses_post( $label ),
-                            'label_type'  => 'vertical',
-                            'type'        => 'text',
-                            'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
-                            'class'       => 'getpaid-address-field',
-						)
+						aui()->input(
+                            array(
+                                'name'        => 'getpaid_address[' . esc_attr( $key ) . ']',
+                                'id'          => 'wpinv-' . sanitize_html_class( $key ),
+                                'placeholder' => $label,
+                                'label'       => wp_kses_post( $label ),
+                                'label_type'  => 'vertical',
+                                'type'        => 'text',
+                                'value'       => sanitize_text_field( getpaid_get_user_address_field( get_current_user_id(), $key ) ),
+                                'class'       => 'getpaid-address-field',
+                            ),
+                            true
 						);
 
                         }
-}
+                    }
 
-                    echo aui()->input(
+                    aui()->input(
                         array(
                             'name'        => 'getpaid_address[email_cc]',
                             'id'          => 'wpinv-email_cc',
@@ -281,12 +284,13 @@ function getpaid_display_address_edit_tab() {
                             'value'       => sanitize_text_field( get_user_meta( get_current_user_id(), '_wpinv_email_cc', true ) ),
                             'class'       => 'getpaid-address-field',
                             'help_text'   => __( 'Optionally provide other email addresses where we should send payment notifications', 'invoicing' ),
-                        )
+                        ),
+                        true
                     );
 
                     do_action( 'getpaid_display_address_edit_tab' );
 
-                    echo aui()->input(
+                    aui()->input(
                         array(
                             'name'      => 'getpaid_profile_edit_submit_button',
                             'id'        => 'getpaid_profile_edit_submit_button',
@@ -294,7 +298,8 @@ function getpaid_display_address_edit_tab() {
                             'help_text' => __( 'New invoices will use this address as the billing address.', 'invoicing' ),
                             'type'      => 'submit',
                             'class'     => 'btn btn-primary btn-block submit-button',
-                        )
+                        ),
+                        true
                     );
 
                     wp_nonce_field( 'getpaid-nonce', 'getpaid-nonce' );
@@ -393,12 +398,60 @@ function getpaid_display_userswp_account_tabs( $tab ) {
 
     if ( getpaid_is_userswp_integration_active() && isset( $our_tabs[ $tab ] ) ) {
         $getpaid_tab_url = add_query_arg( 'type', '%s', uwp_get_account_page_url() );
-        echo getpaid_prepare_user_content_tab( $our_tabs[ $tab ] );
+        echo wp_kses( getpaid_prepare_user_content_tab( $our_tabs[ $tab ] ), getpaid_allowed_html() );
     }
 
 }
 add_action( 'uwp_account_form_display', 'getpaid_display_userswp_account_tabs' );
 
+function getpaid_allowed_html() {
+    $allowed_html = wp_kses_allowed_html( 'post' );
+
+	// form fields
+    $allowed_html['form'] = array(
+        'action'         => true,
+        'accept'         => true,
+        'accept-charset' => true,
+        'enctype'        => true,
+        'method'         => true,
+        'name'           => true,
+        'target'         => true,
+    );
+    
+    // - input
+	$allowed_html['input'] = array(
+		'class' => array(),
+		'id'    => array(),
+		'name'  => array(),
+		'value' => array(),
+		'type'  => array(),
+	);
+
+    // - input
+	$allowed_html['textarea'] = array(
+		'class' => array(),
+		'id'    => array(),
+		'name'  => array(),
+		'value' => array(),
+	);
+
+	// select
+	$allowed_html['select'] = array(
+		'class'  => array(),
+		'id'     => array(),
+		'name'   => array(),
+		'value'  => array(),
+		'type'   => array(),
+	);
+
+	// select options
+	$allowed_html['option'] = array(
+		'selected' => array(),
+	);
+
+	return $allowed_html;
+
+}
 
 /**
  * Filters the account page title.

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_ThickBox();
 ?>
 <div class="wrap wpi_addons_wrap">
-	<h1><?php echo get_admin_page_title(); ?></h1>
+	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 	<?php if ( $tabs ) { ?>
 		<nav class="nav-tab-wrapper wpi-nav-tab-wrapper">
@@ -33,18 +33,18 @@ add_ThickBox();
 				<h2>With our WPInvoicing Membership you get access to all our products!</h2>
 				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>-->
 				<?php if ( defined( 'WP_EASY_UPDATES_ACTIVE' ) ) { ?>
-					<h2><?php _e( 'Have a membership key?', 'invoicing' ); ?></h2>
+					<h2><?php esc_html_e( 'Have a membership key?', 'invoicing' ); ?></h2>
 					<p>
 						<?php
 						$wpeu_admin = new External_Updates_Admin( 'wpinvoicing.com', '1' );
-						echo $wpeu_admin->render_licence_actions( 'wpinvoicing.com', 'membership', array( 95, 106, 108, 12351 ) );
+						echo wp_kses_post( $wpeu_admin->render_licence_actions( 'wpinvoicing.com', 'membership', array( 95, 106, 108, 12351 ) ) );
 						?>
 					</p>
 				<?php } ?>
 
 				<div class="membership-cta-contet">
 					<div class="main-cta">
-							<h2><?php _e( 'Membership benefits Include:', 'invoicing' ); ?></h2>
+							<h2><?php esc_html_e( 'Membership benefits Include:', 'invoicing' ); ?></h2>
 							<div class="feature-list">
 								<ul>
 									<?php
@@ -58,11 +58,11 @@ add_ThickBox();
 									</ul>
 
 									<div class="feature-cta">
-										<h3><?php _e( 'Membership Starts from', 'invoicing' ); ?></h3>
+										<h3><?php esc_html_e( 'Membership Starts from', 'invoicing' ); ?></h3>
 										<h4>$99</h4>
-										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e( 'Buy Membership', 'invoicing' ); ?></a>
+										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_attr_e( 'Buy Membership', 'invoicing' ); ?></a>
 									</div>
-									<h3><?php _e( 'Included Gateways:', 'invoicing' ); ?></h3>
+									<h3><?php esc_html_e( 'Included Gateways:', 'invoicing' ); ?></h3>
 									<ul>
 										<?php
 										if ( $addons = $addon_obj->get_section_data( 'gateways' ) ) {
@@ -81,7 +81,7 @@ add_ThickBox();
 						<div class="testimonial-content">
 							<div class="t-image">
 								<?php
-									echo '<img src="' . plugins_url( 'images/t-image2.png', dirname( __FILE__ ) ) . '" > ';
+									echo '<img src="' . esc_url( plugins_url( 'images/t-image2.png', dirname( __FILE__ ) ) ) . '" > ';
 								?>
 							</div>
 							<div class="t-content">
@@ -101,7 +101,7 @@ Many commercial plugins and theme companies from the WordPress scene should lear
 						<div class="testimonial-content">
 							<div class="t-image">
 								<?php
-									echo '<img src="' . plugins_url( 'images/t-image1.png', dirname( __FILE__ ) ) . '" > ';
+									echo '<img src="' . esc_url( plugins_url( 'images/t-image1.png', dirname( __FILE__ ) ) ) . '" > ';
 								?>
 							</div>
 							<div class="t-content">
@@ -117,8 +117,8 @@ Great job so far guys, can’t wait to see where this goes!
 						</div>
 					</div>
 					<div class="member-footer">
-						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php _e( 'Buy Membership', 'invoicing' ); ?></a>
-						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php _e( 'Create Invoice', 'invoicing' ); ?></a>
+						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_html_e( 'Buy Membership', 'invoicing' ); ?></a>
+						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php esc_html_e( 'Create Invoice', 'invoicing' ); ?></a>
 					</div>
 				</div>
 
@@ -143,7 +143,7 @@ continue;}// don't show quote add on
 									<h3>
                                     <?php
 										if ( ! empty( $addon->info->excerpt ) ) {
-										echo wpi_help_tip( $addon->info->excerpt );
+										wpi_help_tip( $addon->info->excerpt, false, false, true );
 										}
 										echo esc_html( $addon->info->title );
                                         ?>
@@ -163,7 +163,7 @@ continue;}// don't show quote add on
 
 									if ( isset( $addon->info->link ) && substr( $addon->info->link, 0, 21 ) === 'https://wordpress.org' ) {
 										echo '<a href="' . esc_url( admin_url( '/plugin-install.php?tab=plugin-information&plugin=' . $addon->info->slug ) ) . '&width=770&height=660&TB_iframe=true" class="thickbox" >';
-										echo '<span class="wpi-product-info">' . __( 'More info', 'invoicing' ) . '</span>';
+										echo '<span class="wpi-product-info">' . esc_html__( 'More info', 'invoicing' ) . '</span>';
 										echo '</a>';
 									} elseif ( isset( $addon->info->link ) && ( substr( $addon->info->link, 0, 23 ) === 'https://wpinvoicing.com' || substr( $addon->info->link, 0, 21 ) === 'https://wpgetpaid.com' ) ) {
 										if ( defined( 'WP_EASY_UPDATES_ACTIVE' ) ) {
@@ -177,7 +177,7 @@ continue;}// don't show quote add on
 											}
 										}
 										echo '<a href="' . esc_url( $url ) . '" class="thickbox">';
-										echo '<span class="wpi-product-info">' . __( 'More info', 'invoicing' ) . '</span>';
+										echo '<span class="wpi-product-info">' . esc_html__( 'More info', 'invoicing' ) . '</span>';
 										echo '</a>';
 									}
 
@@ -203,20 +203,20 @@ continue;}// don't show quote add on
 	<div class="clearfix" ></div>
 
 	<?php if ( $current_tab == 'addons' ) { ?>
-	<p><?php printf( __( 'All of our Invoicing Addons can be found on WPInvoicing.com here: <a href="%s">Invoicing Addons</a>', 'invoicing' ), 'https://wpinvoicing.com/downloads/category/addons/' ); ?></p>
+	<p><?php printf(  esc_attr__( 'All of our Addons can be found on wpGetPaid.com here: %sInvoicing Addons%s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/addons/">','</a>' ); ?></p>
 	<?php } if ( $current_tab == 'gateways' ) { ?>
-    <p><?php printf( __( 'All of our Invoicing Payment Gateways can be found on WPInvoicing.com here: <a href="%s">Invoicing Payment Gateways</a>', 'invoicing' ), 'https://wpinvoicing.com/downloads/category/gateways/' ); ?></p>
+    <p><?php printf( esc_attr__( 'All of our Payment Gateways can be found on wpGetPaid.com here: %sGetPaid Payment Gateways %s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/gateways/">','</a>'  ); ?></p>
     <?php } ?>
 
-	<div id="wpi-wpeu-required-activation" style="display:none;"><span class="wpi-notification "><?php printf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s'>activate</a> it now.", 'invoicing' ), wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=wp-easy-updates/external-updates.php' ), 'activate-plugin_wp-easy-updates/external-updates.php' ) ); ?></span></div>
-	<div id="wpi-wpeu-required-for-external" style="display:none;"><span class="wpi-notification "><?php printf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now.", 'invoicing' ), admin_url( 'plugin-install.php?tab=upload&wpeu-install=true' ) ); ?></span></div>
+	<div id="wpi-wpeu-required-activation" style="display:none;"><span class="wpi-notification "><?php echo wp_kses_post(  sprintf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s'>activate</a> it now.", 'invoicing' ), wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=wp-easy-updates/external-updates.php' ), 'activate-plugin_wp-easy-updates/external-updates.php' ) ) ); ?></span></div>
+	<div id="wpi-wpeu-required-for-external" style="display:none;"><span class="wpi-notification "><?php echo wp_kses_post( sprintf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now.", 'invoicing' ), admin_url( 'plugin-install.php?tab=upload&wpeu-install=true' ) ) ); ?></span></div>
 	<div id="wpeu-licence-popup" style="display:none;">
 		<span class="wpi-notification noti-white">
-			<h3 class="wpeu-licence-title"><?php _e( 'Licence key', 'invoicing' ); ?></h3>
-			<input class="wpeu-licence-key" type="text" placeholder="<?php _e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php _e( 'Install', 'invoicing' ); ?></button>
+			<h3 class="wpeu-licence-title"><?php esc_html_e( 'Licence key', 'invoicing' ); ?></h3>
+			<input class="wpeu-licence-key" type="text" placeholder="<?php esc_attr_e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php esc_html_e( 'Install', 'invoicing' ); ?></button>
 			<br>
 			<?php
-			echo sprintf( __( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );
+			printf( esc_html__( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );
 			?>
 		</span>
 	</div>

@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
             echo sprintf(
                 '<a href="javascript:void(0)" class="btn btn-sm m-1 d-inline-block btn-secondary invoice-action-print d-none d-lg-inline-block" onclick="window.print();">%s</a>',
                 sprintf(
-                    __( 'Print %s', 'invoicing' ),
+                    esc_html__( 'Print %s', 'invoicing' ),
                     esc_html( ucfirst( $invoice->get_invoice_quote_type() ) )
                 )
             );

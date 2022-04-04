@@ -24,7 +24,7 @@ if ( empty( $selectable ) ) {
 echo '<div class="getpaid-payment-form-items-select form-group">';
 
 // Display the selectable items.
-echo aui()->select(
+aui()->select(
     array(
         'name'       => 'getpaid-payment-form-selected-item',
         'id'         => 'getpaid-payment-form-selected-item' . uniqid( '_' ),
@@ -33,7 +33,8 @@ echo aui()->select(
         'label_type' => 'vertical',
         'inline'     => false,
         'options'    => $selectable,
-    )
+    ),
+    true
 );
 
 echo '</div>';

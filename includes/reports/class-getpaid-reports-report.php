@@ -105,12 +105,12 @@ class GetPaid_Reports_Report {
 				</select>
 				<span class="getpaid-date-range-picker <?php echo 'custom' == $range ? '' : 'd-none'; ?>">
 					<input type="text" name="from" class="getpaid-from align-middle" />
-						<?php _e( 'to', 'invoicing' ); ?>
+						<?php esc_html_e( 'to', 'invoicing' ); ?>
 					<input type="text" name="to" class="getpaid-to align-middle" />
 				</span>
 				<button type="submit" class="button button-primary">
 					<i class="fa fa-chevron-right fa-lg"></i>
-					<span class="screen-reader-text"><?php _e( 'View Reports', 'invoicing' ); ?></span>
+					<span class="screen-reader-text"><?php esc_html_e( 'View Reports', 'invoicing' ); ?></span>
 				</button>
 			</form>
 
@@ -154,7 +154,7 @@ class GetPaid_Reports_Report {
 
 			<div class="row">
 				<div class="col-12 col-md-8">
-					<?php echo $this->display_left(); ?>
+					<?php $this->display_left(); ?>
 				</div>
 
 				<div class="col-12 col-md-4">
@@ -163,7 +163,7 @@ class GetPaid_Reports_Report {
 							<div class="col-12 mb-4">
 
 								<!-- <?php echo esc_html( $card['label'] ); ?> Card -->
-								<div class="card p-0 m-0 shadow-none <?php echo sanitize_html_class( $key ); ?>">
+								<div class="card p-0 m-0 shadow-none <?php echo esc_attr( $key ); ?>">
 
 									<div class="card-body">
 
@@ -180,7 +180,7 @@ class GetPaid_Reports_Report {
 
 										<hr>
 
-										<p class="getpaid-previous text-uppercase text-muted small mb-2"><strong><?php _e( 'Previous Period', 'invoicing' ); ?></strong></p>
+										<p class="getpaid-previous text-uppercase text-muted small mb-2"><strong><?php esc_html_e( 'Previous Period', 'invoicing' ); ?></strong></p>
 										<h5 class="getpaid-report-card-previous-value font-weight-bold text-muted mb-0">
 											<span class="spinner is-active float-none"></span>
 										</h5>
@@ -194,7 +194,7 @@ class GetPaid_Reports_Report {
 						<?php endforeach; ?>
 					</div>
 
-					<?php echo $this->display_right(); ?>
+					<?php $this->display_right(); ?>
 				</div>
 			</div>
 
@@ -272,15 +272,15 @@ class GetPaid_Reports_Report {
 									<div class="<?php echo empty( $view['disable-downloads'] ) ? 'col-3' : 'd-none'; ?>">
 										<a title="<?php esc_attr_e( 'Download JSON', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'json' ) ); ?>">
 											<i class="fa fa-download text-dark" style="font-size: 16px" aria-hidden="true"></i>
-											<span class="screen-reader-text"><?php _e( 'Download JSON', 'invoicing' ); ?></span>
+											<span class="screen-reader-text"><?php esc_html_e( 'Download JSON', 'invoicing' ); ?></span>
 										</a>
 										<a title="<?php esc_attr_e( 'Download CSV', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'csv' ) ); ?>">
 											<i class="fa fa-file-csv text-dark" style="font-size: 16px" aria-hidden="true"></i>
-											<span class="screen-reader-text"><?php _e( 'Download CSV', 'invoicing' ); ?></span>
+											<span class="screen-reader-text"><?php esc_html_e( 'Download CSV', 'invoicing' ); ?></span>
 										</a>
 										<a title="<?php esc_attr_e( 'Download XML', 'invoicing' ); ?>" href="<?php echo esc_url( $this->get_download_url( $key, 'xml' ) ); ?>">
 											<i class="fa fa-file-code text-dark" style="font-size: 16px" aria-hidden="true"></i>
-											<span class="screen-reader-text"><?php _e( 'Download XML', 'invoicing' ); ?></span>
+											<span class="screen-reader-text"><?php esc_html_e( 'Download XML', 'invoicing' ); ?></span>
 										</a>
 									</div>
 								</div>

@@ -3,27 +3,27 @@
 	// Is the request set up correctly?
 	if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) ) {
 	return aui()->alert(
-	array(
-        'type'    => 'warning',
-        'content' => __( 'No payment form or item selected', 'invoicing' ),
-	)
+        array(
+	'type'    => 'warning',
+	'content' => __( 'No payment form or item selected', 'invoicing' ),
+        )
 );
-wp_die( __( 'No payment form or item selected', 'invoicing' ), 400 );
+wp_die( esc_html__( 'No payment form or item selected', 'invoicing' ), 400 );
 	}
 
 	// Payment form or button?
 	if ( ! empty( $_GET['form'] ) ) {
 
 	$shortcode = sprintf(
-	'[getpaid form=%s]',
-	(int) $_GET['form']
+        '[getpaid form=%s]',
+        (int) $_GET['form']
 );
 
 	} else {
 
 	$shortcode = sprintf(
-	'[getpaid item=%s]',
-	esc_attr( urldecode( $_GET['item'] ) )
+        '[getpaid item=%s]',
+        esc_attr( urldecode( $_GET['item'] ) )
 	);
 
 	}

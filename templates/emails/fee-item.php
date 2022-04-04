@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 
     <?php foreach ( array_keys( $columns ) as $column ) : ?>
 
-        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo sanitize_html_class( $column ); ?>">
+        <td class="<?php echo 'name' == $column ? 'text-left' : 'text-right'; ?> wpinv_cart_item_<?php echo esc_attr( $column ); ?>">
             
             <?php
 
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 
 				// And an optional description.
 				$description = empty( $fee['description'] ) ? esc_html__( 'Fee', 'invoicing' ) : esc_html( $fee['description'] );
-				echo "<p class='small'>$description</p>";
+				echo wp_kses_post( "<p class='small'>$description</p>" );
 
                 }
 
@@ -44,9 +44,9 @@ defined( 'ABSPATH' ) || exit;
 
 				// Display the item price (or recurring price if this is a renewal invoice)
 				if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
-					echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
+					wpinv_the_price( $fee['recurring_fee'], $invoice->get_currency() );
                     } else {
-					echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
+                        wpinv_the_price( $fee['initial_fee'], $invoice->get_currency() );
                     }
 }
 
@@ -63,10 +63,10 @@ defined( 'ABSPATH' ) || exit;
                 // Item sub total.
                 if ( 'subtotal' == $column ) {
 				if ( $invoice->is_recurring() && $invoice->is_renewal() ) {
-					echo wpinv_price( $fee['recurring_fee'], $invoice->get_currency() );
-                    } else {
-					echo wpinv_price( $fee['initial_fee'], $invoice->get_currency() );
-                    }
+					wpinv_the_price( $fee['recurring_fee'], $invoice->get_currency() );
+                } else {
+                    wpinv_the_price( $fee['initial_fee'], $invoice->get_currency() );
+                }
                 }
 
                 // Fires when printing a line item column.

@@ -16,8 +16,8 @@ defined( 'ABSPATH' ) || exit;
 		<?php getpaid_hidden_field( 'redirect', $next_url ); ?>
 		<div class="gd-wizard-recommend">
 
-			<h2 class="gd-settings-title h3"><?php _e( 'Recommended Plugins', 'invoicing' ); ?></h2>
-			<p><?php _e( 'Below are a few of our own plugins that may help you.', 'invoicing' ); ?></p>
+			<h2 class="gd-settings-title h3"><?php esc_html_e( 'Recommended Plugins', 'invoicing' ); ?></h2>
+			<p><?php esc_html_e( 'Below are a few of our own plugins that may help you.', 'invoicing' ); ?></p>
 
 			<ul class="list-group">
 				<?php foreach ( $recommended_plugins as $plugin ) : ?>

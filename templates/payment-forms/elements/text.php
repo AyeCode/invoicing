@@ -16,15 +16,16 @@ if ( ! empty( $required ) ) {
     $label .= "<span class='text-danger'> *</span>";
 }
 
-echo aui()->input(
+aui()->input(
     array(
         'name'        => esc_attr( $id ),
-        'id'          => esc_attr( $id ) . uniqid( '_' ),
+        'id'          => esc_attr( $id . uniqid( '_' ) ),
         'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'    => ! empty( $required ),
         'label'       => $label,
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
-        'class'       => $label_class,
-    )
+        'class'       => esc_attr( $label_class ),
+    ),
+    true
 );

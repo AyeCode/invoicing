@@ -61,8 +61,8 @@ class GetPaid_Reports_Export {
 					<strong>
 						<?php
 							printf(
-								__( 'Export %s', 'invoicing' ),
-								sanitize_text_field( getpaid_get_post_type_label( $post_type ) )
+								esc_html__( 'Export %s', 'invoicing' ),
+								esc_html( getpaid_get_post_type_label( $post_type ) )
 							);
 						?>
 					</strong>
@@ -187,13 +187,16 @@ class GetPaid_Reports_Export {
 	 */
 	public function display_markup( $markup ) {
 
-		echo str_replace(
-			array(
-				'form-control',
-				'custom-select',
+		echo wp_kses(
+			str_replace(
+				array(
+					'form-control',
+					'custom-select',
+				),
+				'regular-text',
+				$markup
 			),
-			'regular-text',
-			$markup
+			getpaid_allowed_html()
 		);
 
 	}
@@ -211,7 +214,7 @@ class GetPaid_Reports_Export {
 
 				<div class="card-header">
 					<strong>
-						<?php _e( 'Export Subscriptions', 'invoicing' ); ?>
+						<?php esc_html_e( 'Export Subscriptions', 'invoicing' ); ?>
 					</strong>
 				</div>
 

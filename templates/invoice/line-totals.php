@@ -23,7 +23,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
             <?php foreach ( $totals as $key => $label ) : ?>
 
-                <div class="getpaid-invoice-line-totals-col <?php echo sanitize_html_class( $key ); ?>">
+                <div class="getpaid-invoice-line-totals-col <?php echo esc_attr( $key ); ?>">
 
                     <div class="form-row">
 
@@ -37,7 +37,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                                 // Total tax.
                                 if ( 'tax' == $key ) {
-								echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );
+                                    wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() );
 
 								if ( wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
 
@@ -52,27 +52,27 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                                 // Total Fee.
                                 if ( 'fee' == $key ) {
-								echo wpinv_price( $invoice->get_total_fees(), $invoice->get_currency() );
+								wpinv_the_price( $invoice->get_total_fees(), $invoice->get_currency() );
                                 }
 
                                 // Total discount.
                                 if ( 'discount' == $key ) {
-								echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );
+								wpinv_the_price( $invoice->get_total_discount(), $invoice->get_currency() );
                                 }
 
                                 // Shipping.
                                 if ( 'shipping' == $key ) {
-								echo wpinv_price( $invoice->get_shipping(), $invoice->get_currency() );
+								wpinv_the_price( $invoice->get_shipping(), $invoice->get_currency() );
                                 }
 
                                 // Sub total.
                                 if ( 'subtotal' == $key ) {
-								echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );
+								wpinv_the_price( $invoice->get_subtotal(), $invoice->get_currency() );
                                 }
 
                                 // Total.
                                 if ( 'total' == $key ) {
-								echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+								wpinv_the_price( $invoice->get_total(), $invoice->get_currency() );
                                 }
 
                                 // Fires when printing a cart total.

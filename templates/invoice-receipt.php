@@ -82,7 +82,7 @@ if ( $invoice->is_paid() ) {
 }
 
 // Invoice actions.
-$actions = apply_filters(
+$invoice_actions = apply_filters(
     'wpinv_invoice_receipt_actions',
     array(
 
@@ -108,12 +108,12 @@ $actions = apply_filters(
     $invoice
 );
 
-if ( ( ! $invoice->needs_payment() || $invoice->is_held() ) && isset( $actions['pay'] ) ) {
-    unset( $actions['pay'] );
+if ( ( ! $invoice->needs_payment() || $invoice->is_held() ) && isset( $invoice_actions['pay'] ) ) {
+    unset( $invoice_actions['pay'] );
 }
 
-if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
-    unset( $actions['history'] );
+if ( ! is_user_logged_in() && isset( $invoice_actions['history'] ) ) {
+    unset( $invoice_actions['history'] );
 }
 
 ?>
@@ -124,17 +124,17 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
 
             do_action( 'wpinv_receipt_start', $invoice );
 
-            if ( ! empty( $actions ) ) {
+            if ( ! empty( $invoice_actions ) ) {
 
 			echo '<div class="wpinv-receipt-actions text-right mt-1 mb-4">';
 
-			foreach ( $actions as $key => $action ) {
+			foreach ( $invoice_actions as $key => $invoice_action ) {
 
 				$key    = sanitize_html_class( $key );
-				$class  = empty( $action['class'] ) ? 'btn-dark' : sanitize_html_class( $action['class'] );
-				$url    = empty( $action['url'] ) ? '#' : esc_url( $action['url'] );
-				$attrs  = empty( $action['attrs'] ) ? '' : $action['attrs'];
-				$anchor = esc_html( $action['name'] );
+				$class  = empty( $invoice_action['class'] ) ? 'btn-dark' : sanitize_html_class( $invoice_action['class'] );
+				$url    = empty( $invoice_action['url'] ) ? '#' : esc_url( $invoice_action['url'] );
+				$attrs  = empty( $invoice_action['attrs'] ) ? '' : $invoice_action['attrs'];
+				$anchor = esc_html( $invoice_action['name'] );
 
 				echo wp_kses_post( "<a href='$url' class='btn btn-sm ml-1 $class $key' $attrs>$anchor</a>" );
                 }
@@ -152,7 +152,7 @@ if ( ! is_user_logged_in() && isset( $actions['history'] ) ) {
         <div class="wpinv-receipt-details">
 
             <h4 class="wpinv-details-t mb-3 mt-3">
-                <?php echo apply_filters( 'wpinv_receipt_details_title', __( 'Invoice Details', 'invoicing' ), $invoice ); ?>
+                <?php echo esc_html( apply_filters( 'wpinv_receipt_details_title', __( 'Invoice Details', 'invoicing' ), $invoice ) ); ?>
             </h4>
 
             <?php getpaid_invoice_meta( $invoice ); ?>

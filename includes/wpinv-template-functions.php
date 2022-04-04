@@ -297,64 +297,6 @@ function wpinv_add_body_classes( $class ) {
 }
 add_filter( 'body_class', 'wpinv_add_body_classes' );
 
-function wpinv_html_year_dropdown( $name = 'year', $selected = 0, $years_before = 5, $years_after = 0 ) {
-    $current     = date( 'Y' );
-    $start_year  = $current - absint( $years_before );
-    $end_year    = $current + absint( $years_after );
-    $selected    = empty( $selected ) ? date( 'Y' ) : $selected;
-    $options     = array();
-
-    while ( $start_year <= $end_year ) {
-        $options[ absint( $start_year ) ] = $start_year;
-        $start_year++;
-    }
-
-    $output = wpinv_html_select(
-        array(
-			'name'             => $name,
-			'selected'         => $selected,
-			'options'          => $options,
-			'show_option_all'  => false,
-			'show_option_none' => false,
-        )
-    );
-
-    return $output;
-}
-
-function wpinv_html_month_dropdown( $name = 'month', $selected = 0 ) {
-
-    $options = array(
-        '1'  => __( 'January', 'invoicing' ),
-        '2'  => __( 'February', 'invoicing' ),
-        '3'  => __( 'March', 'invoicing' ),
-        '4'  => __( 'April', 'invoicing' ),
-        '5'  => __( 'May', 'invoicing' ),
-        '6'  => __( 'June', 'invoicing' ),
-        '7'  => __( 'July', 'invoicing' ),
-        '8'  => __( 'August', 'invoicing' ),
-        '9'  => __( 'September', 'invoicing' ),
-        '10' => __( 'October', 'invoicing' ),
-        '11' => __( 'November', 'invoicing' ),
-        '12' => __( 'December', 'invoicing' ),
-    );
-
-    // If no month is selected, default to the current month
-    $selected = empty( $selected ) ? date( 'n' ) : $selected;
-
-    $output = wpinv_html_select(
-        array(
-			'name'             => $name,
-			'selected'         => $selected,
-			'options'          => $options,
-			'show_option_all'  => false,
-			'show_option_none' => false,
-        )
-    );
-
-    return $output;
-}
-
 function wpinv_html_select( $args = array() ) {
     $defaults = array(
         'options'          => array(),
@@ -375,78 +317,82 @@ function wpinv_html_select( $args = array() ) {
 
     $args = wp_parse_args( $args, $defaults );
 
-    $data_elements = '';
-    foreach ( $args['data'] as $key => $value ) {
-        $data_elements .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-    }
-
-    if ( $args['multiple'] ) {
-        $multiple = ' MULTIPLE';
-    } else {
-        $multiple = '';
-    }
+    $attrs = array(
+        'name'     => $args['name'],
+        'id'       => $args['id'],
+        'class'    => 'wpinv-select ' . implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) ),
+        'multiple' => ! empty( $args['multiple'] ),
+        'readonly' => ! empty( $args['readonly'] ),
+        'disabled' => ! empty( $args['disabled'] ),
+        'required' => ! empty( $args['required'] ),
+        'onchange' => ! empty( $args['onchange'] ),
+    );
 
     if ( $args['placeholder'] ) {
-        $placeholder = $args['placeholder'];
-    } else {
-        $placeholder = '';
+        $attrs['data-placeholder'] = $args['placeholder'];
     }
 
-    $options = '';
-    if ( ! empty( $args['onchange'] ) ) {
-        $options .= ' onchange="' . esc_attr( $args['onchange'] ) . '"';
+    if ( $args['onchange'] ) {
+        $attrs['onchange'] = $args['onchange'];
     }
 
-    if ( ! empty( $args['required'] ) ) {
-        $options .= ' required="required"';
+    foreach ( $args['data'] as $key => $value ) {
+        $attrs["data-$key"] = $value;
     }
 
-    if ( ! empty( $args['disabled'] ) ) {
-        $options .= ' disabled';
+    echo '<select ';
+
+    foreach ( $attrs as $attr => $value ) {
+        
+        if ( false === $value ) {
+            continue;
+        }
+
+        if ( true === $value ) {
+            echo ' ' . esc_attr( $attr );
+        } else {
+            echo ' ' . esc_attr( $attr ) . '="' . esc_attr( $value ) . '"';
+        }
+
     }
 
-    if ( ! empty( $args['readonly'] ) ) {
-        $options .= ' readonly';
-    }
-
-    $class  = implode( ' ', array_map( 'sanitize_html_class', explode( ' ', $args['class'] ) ) );
-    $output = '<select name="' . esc_attr( $args['name'] ) . '" id="' . esc_attr( $args['id'] ) . '" class="wpinv-select ' . $class . '"' . $multiple . ' data-placeholder="' . $placeholder . '" ' . trim( $options ) . $data_elements . '>';
+    echo '>';
 
     if ( $args['show_option_all'] ) {
         if ( $args['multiple'] ) {
-            $selected = selected( true, in_array( 0, $args['selected'] ), false );
+            $selected = in_array( 0, $args['selected'] );
         } else {
-            $selected = selected( $args['selected'], 0, false );
+            $selected = empty( $args['selected'] );
         }
-        $output .= '<option value="all"' . $selected . '>' . esc_html( $args['show_option_all'] ) . '</option>';
+        echo '<option value="all"' . selected( $selected, true, false ) . '>' . esc_html( $args['show_option_all'] ) . '</option>';
     }
 
     if ( ! empty( $args['options'] ) ) {
 
         if ( $args['show_option_none'] ) {
             if ( $args['multiple'] ) {
-                $selected = selected( true, in_array( '', $args['selected'] ), false );
+                $selected = in_array( '', $args['selected'] );
             } else {
-                $selected = selected( $args['selected'] === '', true, false );
+                $selected = $args['selected'] === '';
             }
-            $output .= '<option value=""' . $selected . '>' . esc_html( $args['show_option_none'] ) . '</option>';
+
+            echo '<option value=""' . selected( $selected, true, false ) . '>' . esc_html( $args['show_option_none'] ) . '</option>';
         }
 
         foreach ( $args['options'] as $key => $option ) {
 
             if ( $args['multiple'] && is_array( $args['selected'] ) ) {
-                $selected = selected( true, (bool)in_array( $key, $args['selected'] ), false );
+                $selected = in_array( $key, $args['selected'] );
             } else {
-                $selected = selected( $args['selected'], $key, false );
+                $selected = $args['selected'] == $key;
             }
 
-            $output .= '<option value="' . esc_attr( $key ) . '"' . $selected . '>' . esc_html( $option ) . '</option>';
+            echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected, true, false ) . '>' . esc_html( $option ) . '</option>';
         }
     }
 
-    $output .= '</select>';
+    echo '</select>';
 
-    return $output;
 }
 
 function wpinv_item_dropdown( $args = array() ) {
@@ -510,7 +456,7 @@ function wpinv_item_dropdown( $args = array() ) {
         }
     }
 
-    $output = wpinv_html_select(
+    wpinv_html_select(
         array(
 			'name'             => $args['name'],
 			'selected'         => $args['selected'],
@@ -525,7 +471,6 @@ function wpinv_item_dropdown( $args = array() ) {
         )
     );
 
-    return $output;
 }
 
 /**
@@ -737,7 +682,7 @@ add_filter( 'template_include', 'wpinv_template', 10, 1 );
 
 function wpinv_get_business_address() {
     $business_address   = wpinv_store_address();
-    $business_address   = ! empty( $business_address ) ? wpautop( wp_kses_post( $business_address ) ) : '';
+    $business_address   = ! empty( $business_address ) ? wp_kses_post( wpautop( $business_address ) ) : '';
 
     $business_address = $business_address ? '<div class="address">' . $business_address . '</div>' : '';
 
@@ -920,8 +865,7 @@ function wpinv_display_invoice_notice() {
     echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
 
     if ( ! empty( $label ) ) {
-        $label = esc_html( $label );
-        echo "<h5>$label</h5>";
+        echo "<h5>" . esc_html( $label ) . "</h5>";
     }
 
     if ( ! empty( $notice ) ) {
@@ -947,7 +891,7 @@ function wpinv_display_invoice_notes( $invoice ) {
 
     // Echo the note.
     echo '<div class="getpaid-invoice-notes-wrapper position-relative my-4">';
-    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . __( 'Notes', 'invoicing' ) . '</h2>';
+    echo '<h2 class="getpaid-invoice-notes-title mb-1 p-0 h4">' . esc_html__( 'Notes', 'invoicing' ) . '</h2>';
     echo '<ul class="getpaid-invoice-notes text-break overflow-auto list-unstyled p-0 m-0">';
 
     foreach ( $notes as $note ) {
@@ -1104,11 +1048,12 @@ function wpinv_empty_cart_message() {
  * @return void
  */
 function wpinv_empty_checkout_cart() {
-    echo aui()->alert(
+    aui()->alert(
         array(
             'type'    => 'warning',
             'content' => wpinv_empty_cart_message(),
-        )
+        ),
+        true
     );
 }
 add_action( 'wpinv_cart_empty', 'wpinv_empty_checkout_cart' );
@@ -1171,16 +1116,16 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
     <li rel="<?php echo absint( $note->comment_ID ); ?>" class="<?php echo esc_attr( $note_classes ); ?> mb-2">
         <div class="note_content">
 
-            <?php echo wptexturize( wp_kses_post( $note->comment_content ) ); ?>
+            <?php echo wp_kses_post( wptexturize( $note->comment_content ) ); ?>
 
             <?php if ( ! is_admin() ) : ?>
                 <em class="small form-text text-muted mt-0">
                     <?php
                         printf(
-                            __( '%1$s - %2$s at %3$s', 'invoicing' ),
-                            $note->comment_author,
-                            getpaid_format_date_value( $note->comment_date ),
-                            date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
+                            esc_html__( '%1$s - %2$s at %3$s', 'invoicing' ),
+                            esc_html( $note->comment_author ),
+                            esc_html( getpaid_format_date_value( $note->comment_date ) ),
+                            esc_html( date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) )
                         );
                     ?>
                 </em>
@@ -1194,15 +1139,15 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
                 <abbr class="exact-date" title="<?php echo esc_attr( $note->comment_date ); ?>">
                     <?php
                         printf(
-                            __( '%1$s - %2$s at %3$s', 'invoicing' ),
-                            $note->comment_author,
-                            getpaid_format_date_value( $note->comment_date ),
-                            date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) )
+                            esc_html__( '%1$s - %2$s at %3$s', 'invoicing' ),
+                            esc_html( $note->comment_author ),
+                            esc_html( getpaid_format_date_value( $note->comment_date ) ),
+                            esc_html( date_i18n( get_option( 'time_format' ), strtotime( $note->comment_date ) ) )
                         );
                     ?>
                 </abbr>&nbsp;&nbsp;
                 <?php if ( $note->comment_author !== 'System' && wpinv_current_user_can_manage_invoicing() ) { ?>
-                    <a href="#" class="delete_note"><?php _e( 'Delete note', 'invoicing' ); ?></a>
+                    <a href="#" class="delete_note"><?php esc_html_e( 'Delete note', 'invoicing' ); ?></a>
                 <?php } ?>
             </p>
 
@@ -1290,11 +1235,12 @@ function getpaid_display_item_payment_form( $items ) {
     $form->set_items( $items );
 
     if ( 0 == count( $form->get_items() ) ) {
-        echo aui()->alert(
+        aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'No published items found', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }
@@ -1315,21 +1261,23 @@ function getpaid_display_invoice_payment_form( $invoice_id ) {
     $invoice = wpinv_get_invoice( $invoice_id );
 
     if ( empty( $invoice ) ) {
-		echo aui()->alert(
+		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice not found', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }
 
     if ( $invoice->is_paid() ) {
-		echo aui()->alert(
+		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice has already been paid', 'invoicing' ),
-			)
+            ),
+            true
         );
         return;
     }
@@ -1415,8 +1363,7 @@ function getpaid_the_invoice_description( $invoice ) {
         return;
     }
 
-    $description = wp_kses_post( wpautop( $description ) );
-    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>$description</em></small>";
+    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
 add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
@@ -1447,7 +1394,7 @@ function getpaid_payment_form_element( $element, $form ) {
     $id            = isset( $id ) ? $id : uniqid( 'gp' );
 
     // Echo the opening wrapper.
-    echo "<div class='getpaid-payment-form-element $wrapper_class'>";
+    echo "<div class='getpaid-payment-form-element " . esc_attr( $wrapper_class ) . "'>";
 
     // Fires before displaying a given element type's content.
     do_action( "getpaid_before_payment_form_{$element_type}_element", $element, $form );
@@ -1485,7 +1432,7 @@ function getpaid_payment_form_edit_element_template( $post ) {
         }
 
         // Include the template for the element.
-        echo "<div v-if=\"active_form_element.type=='$element'\">";
+        echo "<div v-if=\"active_form_element.type=='" . esc_attr( $element ) . "'\">";
         include $located;
         echo '</div>';
     }
@@ -1514,7 +1461,7 @@ function getpaid_payment_form_render_element_preview_template() {
         }
 
         // Include the template for the element.
-        echo "<div v-if=\"form_element.type=='$element'\">";
+        echo "<div v-if=\"form_element.type=='" . esc_html( $element ) . "'\">";
         include $located;
         echo '</div>';
     }
@@ -1568,7 +1515,7 @@ function getpaid_paginate_links( $args ) {
  * @param string state
  * @return string
  */
-function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12', $field_name = 'wpinv_state' ) {
+function getpaid_get_states_select_markup( $country, $state, $placeholder, $label, $help_text, $required = false, $wrapper_class = 'col-12', $field_name = 'wpinv_state', $echo = false ) {
 
     $states = wpinv_get_country_states( $country );
     $uniqid = uniqid( '_' );
@@ -1592,7 +1539,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 				'extra_attributes' => array(
 					'autocomplete' => 'address-level1',
 				),
-            )
+            ),
+            $echo
         );
 
     }
@@ -1613,7 +1561,8 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
             'extra_attributes' => array(
                 'autocomplete' => 'address-level1',
             ),
-        )
+        ),
+        $echo
     );
 
 }

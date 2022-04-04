@@ -22,7 +22,7 @@ if ( $position == 'right_space' ) {
 $label       = empty( $label ) ? '' : esc_html( $label );
 $label_class = sanitize_key( preg_replace( '/[^A-Za-z0-9_-]/', '-', $label ) );
 
-echo aui()->input(
+aui()->input(
     array(
         'name'              => esc_attr( $id ),
         'id'                => esc_attr( $id ) . uniqid( '_' ),
@@ -34,5 +34,6 @@ echo aui()->input(
         'input_group_right' => $position == 'right' ? wpinv_currency_symbol( $form->get_currency() ) : '',
         'input_group_left'  => $position == 'left' ? wpinv_currency_symbol( $form->get_currency() ) : '',
         'class'             => 'getpaid-refresh-on-change ' . $label_class,
-    )
+    ),
+    true
 );

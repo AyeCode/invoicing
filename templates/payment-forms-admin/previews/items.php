@@ -12,9 +12,9 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div v-if='!is_default'>
-    <div class='alert alert-info' role='alert'><?php _e( 'Item totals will appear here. Click to set items.', 'invoicing' ); ?></div>
+    <div class='alert alert-info' role='alert'><?php esc_html_e( 'Item totals will appear here. Click to set items.', 'invoicing' ); ?></div>
 </div>
 
 <div v-if='is_default'>
-    <div class='alert alert-info' role='alert'><?php _e( 'Item totals will appear here.', 'invoicing' ); ?></div>
+    <div class='alert alert-info' role='alert'><?php esc_html_e( 'Item totals will appear here.', 'invoicing' ); ?></div>
 </div>

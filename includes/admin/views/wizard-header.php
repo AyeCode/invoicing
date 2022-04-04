@@ -37,7 +37,7 @@ $aui_settings->enqueue_style();
                     font-weight: 500;
                     margin-bottom: .1rem;
                 }
-				<?php echo $aui_settings::css_primary( '#009874', true ); ?>
+				<?php echo esc_html( $aui_settings::css_primary( '#009874', true ) ); ?>
 			</style>
 		</head>
 

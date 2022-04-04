@@ -56,7 +56,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 								<span style="font-weight: 600"><?php echo esc_html( $label ); ?>:</span>
 							</div>
 							<div class="col">
-								<?php echo self::prepare_for_display( $shipping_address, $key ); ?>
+								<?php echo esc_html( self::prepare_for_display( $shipping_address, $key ) ); ?>
 							</div>
 						</div>
 

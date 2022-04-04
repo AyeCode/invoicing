@@ -57,21 +57,21 @@ class GetPaid_Meta_Box_Item_Details {
 
             <?php do_action( 'wpinv_item_details_metabox_before_price', $item ); ?>
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php _e( 'Item Price', 'invoicing' ); ?></span></label>
+                <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php esc_html_e( 'Item Price', 'invoicing' ); ?></span></label>
                 <div class="col-sm-8">
                     <div class="row">
                         <div class="col-sm-4 getpaid-price-input">
                             <div class="input-group input-group-sm">
                                 <?php if ( 'left' == $position ) : ?>
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                 </div>
                                 <?php endif; ?>
                                 <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
 
                                 <?php if ( 'left' != $position ) : ?>
                                 <div class="input-group-append">
-                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                    <span class="input-group-text" id="wpinv_item_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -79,14 +79,14 @@ class GetPaid_Meta_Box_Item_Details {
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
-                                _e( 'every' );
+                                esc_html_e( 'every' );
                                 echo '&nbsp;';
                             ?>
                             <input type="number" style="max-width: 60px;" value="<?php echo esc_attr( $item->get_recurring_interval( 'edit' ) ); ?>" placeholder="1" name="wpinv_recurring_interval" id="wpinv_recurring_interval" />
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
-                                echo aui()->select(
+                                aui()->select(
                                     array(
                                         'id'               => 'wpinv_recurring_period',
                                         'name'             => 'wpinv_recurring_period',
@@ -101,7 +101,8 @@ class GetPaid_Meta_Box_Item_Details {
                                             'M' => __( 'month(s)', 'invoicing' ),
                                             'Y' => __( 'year(s)', 'invoicing' ),
                                         ),
-                                    )
+                                    ),
+                                    true
                                 );
                             ?>
                         </div>
@@ -116,17 +117,18 @@ class GetPaid_Meta_Box_Item_Details {
 								do_action( 'wpinv_item_details_metabox_before_dynamic_pricing_checkbox', $item );
 
 								// NYP toggle.
-								echo aui()->input(
-								array(
-                                    'id'      => 'wpinv_name_your_price',
-                                    'name'    => 'wpinv_name_your_price',
-                                    'type'    => 'checkbox',
-                                    'label'   => apply_filters( 'wpinv_name_your_price_toggle_text', __( 'Let customers name their price', 'invoicing' ) ),
-                                    'value'   => '1',
-                                    'checked' => $item->user_can_set_their_price(),
-                                    'no_wrap' => true,
-								)
-							);
+								aui()->input(
+                                    array(
+								'id'      => 'wpinv_name_your_price',
+								'name'    => 'wpinv_name_your_price',
+								'type'    => 'checkbox',
+								'label'   => apply_filters( 'wpinv_name_your_price_toggle_text', __( 'Let customers name their price', 'invoicing' ) ),
+								'value'   => '1',
+								'checked' => $item->user_can_set_their_price(),
+								'no_wrap' => true,
+                                    ),
+                                    true
+                                );
 
 							do_action( 'wpinv_item_details_metabox_dynamic_pricing_checkbox', $item );
 
@@ -134,7 +136,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                                 // Subscriptions.
                                 do_action( 'wpinv_item_details_metabox_before_subscription_checkbox', $item );
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_is_recurring',
                                         'name'    => 'wpinv_is_recurring',
@@ -143,13 +145,14 @@ class GetPaid_Meta_Box_Item_Details {
                                         'value'   => '1',
                                         'checked' => $item->is_recurring(),
                                         'no_wrap' => true,
-                                    )
+                                    ),
+                                    true
                                 );
                                 do_action( 'wpinv_item_details_metabox_subscription_checkbox', $item );
 
                             ?>
                             <div class="wpinv_show_if_recurring">
-                                <em><?php echo wpinv_get_recurring_gateways_text(); ?></em>
+                                <em><?php echo wp_kses_post( wpinv_get_recurring_gateways_text() ); ?></em>
                             </div>
                         </div>
                     </div>
@@ -166,13 +169,13 @@ class GetPaid_Meta_Box_Item_Details {
 
                     <div class="form-group row">
                         <label for="wpinv_minimum_price" class="col-sm-3 col-form-label">
-                            <?php _e( 'Minimum Price', 'invoicing' ); ?>
+                            <?php esc_html_e( 'Minimum Price', 'invoicing' ); ?>
                         </label>
                         <div class="col-sm-8">
                             <div class="input-group input-group-sm">
                                 <?php if ( 'left' == $position ) : ?>
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                     </div>
                                 <?php endif; ?>
 
@@ -180,7 +183,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                                 <?php if ( 'left' != $position ) : ?>
                                     <div class="input-group-append">
-                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wpinv_currency_symbol(); ?></span>
+                                        <span class="input-group-text" id="wpinv_item_minimum_price_symbol"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -200,7 +203,7 @@ class GetPaid_Meta_Box_Item_Details {
 
                 <div class="form-group row">
                     <label for="wpinv_recurring_limit" class="col-sm-3 col-form-label">
-                        <?php _e( 'Maximum Renewals', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Maximum Renewals', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <input type="number" value="<?php echo esc_attr( $item->get_recurring_limit( 'edit' ) ); ?>" placeholder="0" name="wpinv_recurring_limit" id="wpinv_recurring_limit" style="width: 100%;" />
@@ -217,7 +220,7 @@ class GetPaid_Meta_Box_Item_Details {
             <div class="wpinv_show_if_recurring wpinv_free_trial">
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? _e( 'Free/Paid Trial', 'invoicing' ) : _e( 'Free Trial', 'invoicing' ); ?></label>
+                    <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? esc_html_e( 'Free/Paid Trial', 'invoicing' ) : esc_html_e( 'Free Trial', 'invoicing' ); ?></label>
 
                     <div class="col-sm-8">
                         <div class="row">
@@ -230,7 +233,7 @@ class GetPaid_Meta_Box_Item_Details {
                             </div>
                             <div class="col-sm-6">
                                 <?php
-                                    echo aui()->select(
+                                    aui()->select(
                                         array(
                                             'id'          => 'wpinv_trial_period',
                                             'name'        => 'wpinv_trial_period',
@@ -246,7 +249,8 @@ class GetPaid_Meta_Box_Item_Details {
                                                 'M' => __( 'month(s)', 'invoicing' ),
                                                 'Y' => __( 'year(s)', 'invoicing' ),
                                             ),
-                                        )
+                                        ),
+                                        true
                                     );
                                 ?>
 

@@ -33,38 +33,38 @@ do_action( 'getpaid_before_email_line_totals', $invoice, $totals );
 
 <?php foreach ( $totals as $key => $label ) : ?>
 
-    <tr class="wpinv_cart_footer_row wpinv_cart_<?php echo sanitize_html_class( $key ); ?>_row">
+    <tr class="wpinv_cart_footer_row wpinv_cart_<?php echo esc_html( $key ); ?>_row">
 
-        <td colspan="<?php echo ( $column_count - 1 ); ?>" class="wpinv_cart_<?php echo sanitize_html_class( $key ); ?>_label text-right">
+        <td colspan="<?php echo absint( ( $column_count - 1 ) ); ?>" class="wpinv_cart_<?php echo esc_html( $key ); ?>_label text-right">
             <strong><?php echo esc_html( $label ); ?>:</strong>
         </td>
 
-        <td class="wpinv_cart_<?php echo sanitize_html_class( $key ); ?> text-right">
+        <td class="wpinv_cart_<?php echo esc_html( $key ); ?> text-right">
 
             <?php
 
                 // Total tax.
                 if ( 'tax' == $key ) {
-				echo wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() );
+                    wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() );
                 }
 
                 if ( 'fee' == $key ) {
-				echo wpinv_price( $invoice->get_total_fees(), $invoice->get_currency() );
+                    wpinv_the_price( $invoice->get_total_fees(), $invoice->get_currency() );
                 }
 
                 // Total discount.
                 if ( 'discount' == $key ) {
-				echo wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() );
+                    wpinv_the_price( $invoice->get_total_discount(), $invoice->get_currency() );
                 }
 
                 // Sub total.
                 if ( 'subtotal' == $key ) {
-				echo wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() );
+                    wpinv_the_price( $invoice->get_subtotal(), $invoice->get_currency() );
                 }
 
                 // Total.
                 if ( 'total' == $key ) {
-				echo wpinv_price( $invoice->get_total(), $invoice->get_currency() );
+                    wpinv_the_price( $invoice->get_total(), $invoice->get_currency() );
                 }
 
                 // Fires when printing a cart total in an email.

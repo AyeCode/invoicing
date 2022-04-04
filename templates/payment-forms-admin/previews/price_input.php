@@ -28,7 +28,7 @@ if ( $position == 'right_space' ) {
 
     <?php if ( $position == 'left' ) : ?>
         <div class="input-group-prepend">
-            <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+            <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
         </div>
     <?php endif; ?>
 
@@ -36,7 +36,7 @@ if ( $position == 'right_space' ) {
 
     <?php if ( $position == 'right' ) : ?>
         <div class="input-group-append">
-            <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+            <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
         </div>
     <?php endif; ?>
 </div>

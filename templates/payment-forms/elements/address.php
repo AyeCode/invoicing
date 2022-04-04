@@ -37,13 +37,13 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 	<!-- Start Billing/Shipping Address Title -->
 	<h4 class="mb-3 getpaid-shipping-billing-address-title">
-		<?php _e( 'Billing / Shipping Address', 'invoicing' ); ?>
+		<?php esc_html_e( 'Billing / Shipping Address', 'invoicing' ); ?>
 	</h4>
 	<!-- End Billing Address Title -->
 
 	<!-- Start Billing Address Title -->
 	<h4 class="mb-3 getpaid-billing-address-title">
-		<?php _e( 'Billing Address', 'invoicing' ); ?>
+		<?php esc_html_e( 'Billing Address', 'invoicing' ); ?>
 	</h4>
 	<!-- End Billing Address Title -->
 
@@ -70,7 +70,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 	<?php
 
-		echo aui()->input(
+		aui()->input(
 		    array(
 			    'type'     => 'checkbox',
 			    'name'     => 'same-shipping-address',
@@ -80,7 +80,8 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 			    'value'    => 1,
 			    'checked'  => true,
 				'class'    => 'w-auto',
-		    )
+		    ),
+			true
 		);
 
 	?>
@@ -88,7 +89,7 @@ $address_type = empty( $address_type ) ? 'billing' : $address_type;
 
 	<!-- Start Shipping Address Title -->
 	<h4 class="mb-3 getpaid-shipping-address-title">
-		<?php _e( 'Shipping Address', 'invoicing' ); ?>
+		<?php esc_html_e( 'Shipping Address', 'invoicing' ); ?>
 	</h4>
 	<!-- End Shipping Address Title -->
 

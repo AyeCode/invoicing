@@ -269,6 +269,10 @@ class WPInv_Customers_Table extends WP_List_Table {
 		// Customer's name.
 		$name   = esc_html( "{$address['first_name']} {$address['last_name']}" );
 
+		if ( empty( trim( $name ) ) ) {
+			$name = esc_html( $address['display_name'] );
+		}
+
 		if ( ! empty( $name ) ) {
 			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";
 		}

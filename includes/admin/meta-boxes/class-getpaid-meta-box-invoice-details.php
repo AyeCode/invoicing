@@ -49,8 +49,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                     <?php do_action( 'getpaid_invoice_edit_before_viewed_by_customer', $invoice ); ?>
                     <?php if ( ! $invoice->is_draft() ) : ?>
                         <div class="form-group">
-                            <strong><?php _e( 'Viewed by Customer:', 'invoicing' );?></strong>
-                            <?php ( $invoice->get_is_viewed() ) ? _e( 'Yes', 'invoicing' ) : _e( 'No', 'invoicing' ); ?>
+                            <strong><?php esc_html_e( 'Viewed by Customer:', 'invoicing' );?></strong>
+                            <?php ( $invoice->get_is_viewed() ) ? esc_html_e( 'Yes', 'invoicing' ) : esc_html_e( 'No', 'invoicing' ); ?>
                         </div>
                     <?php endif; ?>
 
@@ -67,7 +67,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                             strtolower( $invoice->get_invoice_quote_type() )
                         );
 
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'        => 'datepicker',
                                 'id'          => 'wpinv_date_created',
@@ -83,14 +83,15 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'data-allow-input' => 'true',
                                     'data-max-date'    => 'today',
                                 ),
-                            )
+                            ),
+                            true
                         );
 
                         // Date paid.
                         $date_paid = $invoice->get_date_completed( 'edit' );
                         if ( ! empty( $date_paid ) && $invoice->is_paid() ) {
 
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'type'        => 'text',
                                     'id'          => 'wpinv_date_completed',
@@ -99,7 +100,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm',
                                     'value'       => $date_paid,
-                                )
+                                ),
+                                true
                             );
 
                         }
@@ -107,7 +109,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Due date.
                         if ( $invoice->is_type( 'invoice' ) && wpinv_get_option( 'overdue_active' ) && ( ! $invoice->is_paid() || $invoice->is_draft() ) ) {
 
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'type'        => 'datepicker',
                                     'id'          => 'wpinv_due_date',
@@ -123,7 +125,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                         'data-allow-input' => 'true',
                                         'data-min-date'    => 'today',
                                     ),
-                                )
+                                ),
+                                true
                             );
 
                         }
@@ -138,7 +141,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         );
 
                         $status = $invoice->get_status( 'edit' );
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_status',
                                 'name'             => 'wpinv_status',
@@ -149,7 +152,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_invoice_statuses( true, false, $invoice )
-                            )
+                            ),
+                            true
                         );
 
                         // Invoice number.
@@ -163,7 +167,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                             strtolower( $invoice->get_invoice_quote_type() )
                         );
 
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'        => 'text',
                                 'id'          => 'wpinv_number',
@@ -173,11 +177,12 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 'placeholder' => __( 'Autogenerate', 'invoicing' ),
                                 'class'       => 'form-control-sm',
                                 'value'       => $invoice->get_number( 'edit' ),
-                            )
+                            ),
+                            true
                         );
 
                         // Invoice cc.
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'        => 'text',
                                 'id'          => 'wpinv_cc',
@@ -187,13 +192,14 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 'placeholder' => __( 'example@gmail.com, example@yahoo.com', 'invoicing' ),
                                 'class'       => 'form-control-sm',
                                 'value'       => $invoice->get_email_cc( 'edit' ),
-                            )
+                            ),
+                            true
                         );
 
                         if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
 
                             // Apply a discount.
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'type'        => 'text',
                                     'id'          => 'wpinv_discount_code',
@@ -203,12 +209,13 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label_type'  => 'vertical',
                                     'class'       => 'form-control-sm getpaid-recalculate-prices-on-change',
                                     'value'       => $invoice->get_discount_code( 'edit' ),
-                                )
+                                ),
+                                true
                             );
 
                         } else if ( $invoice->get_discount_code( 'edit' ) ) {
 
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'type'        => 'text',
                                     'id'          => 'wpinv_discount_code',
@@ -221,7 +228,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                         'onclick'  => 'this.select();',
                                         'readonly' => 'true',
                                     ),
-                                )
+                                ),
+                                true
                             );
 
                         }
@@ -231,7 +239,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Disable taxes.
                         if ( wpinv_use_taxes() && ! ( $invoice->is_paid() || $invoice->is_refunded() ) ) {
 
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'id'          => 'wpinv_taxable',
                                     'name'        => 'disable_taxes',
@@ -240,7 +248,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'value'       => '1',
                                     'checked'     => (bool) $invoice->get_disable_taxes(),
                                     'class'       => 'getpaid-recalculate-prices-on-change',
-                                )
+                                ),
+                                true
                             );
 
                         }
@@ -248,7 +257,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                         if ( $invoice->is_type( 'invoice' ) ) {
 
                             // Send to customer.
-                            echo aui()->input(
+                            aui()->input(
                                 array(
                                     'id'          => 'wpinv_send_to_customer',
                                     'name'        => 'send_to_customer',
@@ -256,7 +265,8 @@ class GetPaid_Meta_Box_Invoice_Details {
                                     'label'       => __( 'Send invoice to customer after saving', 'invoicing' ),
                                     'value'       => '1',
                                     'checked'     => $invoice->is_draft() && (bool) wpinv_get_option( 'email_user_invoice_active', true ),
-                                )
+                                ),
+                                true
                             );
 
                         }

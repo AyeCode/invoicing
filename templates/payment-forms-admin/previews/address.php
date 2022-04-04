@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='wpinv-address-wrapper row'>
 
-    <h4 v-if="form_element.address_type == 'both'" class="col-12 mb-3"><?php _e( 'Billing / Shipping Address', 'invoicing' ); ?></h4>
+    <h4 v-if="form_element.address_type == 'both'" class="col-12 mb-3"><?php esc_html_e( 'Billing / Shipping Address', 'invoicing' ); ?></h4>
 
     <div class='form-group address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in visible_fields( form_element.fields )' :class='grid_class( field )' :key='field.name'>
         <label class="d-block w-100">

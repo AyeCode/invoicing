@@ -9,9 +9,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-echo aui()->alert(
+aui()->alert(
     array(
         'content' => esc_html__( 'The total payable amount will appear here', 'invoicing' ),
         'type'    => 'info',
-    )
+    ),
+    true
 );

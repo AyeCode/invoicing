@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 		<h1 class="h3"><?php esc_html_e( 'Awesome, you are ready to Get Paid', 'invoicing' ); ?></h1>
 
 		<div class="geodirectory-message geodirectory-tracker">
-			<p><?php _e( 'Thank you for choosing GetPaid!', 'invoicing' ); ?> <i class="far fa-smile-beam"></i></p>
+			<p><?php esc_html_e( 'Thank you for choosing GetPaid!', 'invoicing' ); ?> <i class="far fa-smile-beam"></i></p>
 		</div>
 
 		<div class="gp-setup-next-steps">
@@ -49,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
 
 
 
-						<h2 class="h3 mt-4"><?php _e( 'Learn more', 'invoicing' ); ?></h2>
+						<h2 class="h3 mt-4"><?php esc_html_e( 'Learn more', 'invoicing' ); ?></h2>
 				<div class="gp-setup-next-steps-last mt-2 d-flex justify-content-between">
 						<a
 							class="btn btn-outline-primary btn-sm" href="https://docs.wpgetpaid.com/collection/114-getting-started?utm_source=setupwizard&utm_medium=product&utm_content=getting-started&utm_campaign=invoicingplugin"

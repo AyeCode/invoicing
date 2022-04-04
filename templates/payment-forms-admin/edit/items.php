@@ -43,21 +43,21 @@ defined( 'ABSPATH' ) || exit;
 
                     <span class='form-text'>
                         <a target="_blank" :href="'<?php echo esc_url( admin_url( '/post.php?action=edit&post' ) ); ?>=' + item.id">
-                            <?php _e( 'Edit the item name, price and other details', 'invoicing' ); ?>
+                            <?php esc_html_e( 'Edit the item name, price and other details', 'invoicing' ); ?>
                         </a>
                     </span>
 
                     <label class='form-group d-block'>
                         <input v-model='item.allow_quantities' type='checkbox' />
-                        <span><?php _e( 'Allow users to buy several quantities', 'invoicing' ); ?></span>
+                        <span><?php esc_html_e( 'Allow users to buy several quantities', 'invoicing' ); ?></span>
                     </label>
 
                     <label class='form-group d-block'>
                         <input v-model='item.required' type='checkbox' />
-                        <span><?php _e( 'This item is required', 'invoicing' ); ?></span>
+                        <span><?php esc_html_e( 'This item is required', 'invoicing' ); ?></span>
                     </label>
 
-                    <button type='button' class='button button-link button-link-delete' @click.prevent='removeItem(item)'><?php _e( 'Delete Item', 'invoicing' ); ?></button>
+                    <button type='button' class='button button-link button-link-delete' @click.prevent='removeItem(item)'><?php esc_html_e( 'Delete Item', 'invoicing' ); ?></button>
 
                 </div>
             </div>
@@ -65,19 +65,19 @@ defined( 'ABSPATH' ) || exit;
         </div>
     </draggable>
 
-    <small v-if='! form_items.length' class='form-text text-danger'><?php _e( 'You have not set up any items. Please select an item below or create a new item.', 'invoicing' ); ?></small>
+    <small v-if='! form_items.length' class='form-text text-danger'><?php esc_html_e( 'You have not set up any items. Please select an item below or create a new item.', 'invoicing' ); ?></small>
 
     <div class="mt-4 mb-4">
 
         <div class="mb-2">
             <select class='w-100' v-init-item-search>
-                <option value="" selected="selected"><?php _e( 'Select an item to add...', 'invoicing' ); ?></option>
+                <option value="" selected="selected"><?php esc_html_e( 'Select an item to add...', 'invoicing' ); ?></option>
             </select>
 
         </div>
 
-        <button type="button" @click.prevent='addSelectedItem' class="button button-primary"><?php _e( 'Add Selected Item', 'invoicing' ); ?></button>
-        <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>" target="_blank" class="button button-secondary"><?php _e( 'Create New Item.', 'invoicing' ); ?></a>
+        <button type="button" @click.prevent='addSelectedItem' class="button button-primary"><?php esc_html_e( 'Add Selected Item', 'invoicing' ); ?></button>
+        <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpi_item' ) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'Create New Item.', 'invoicing' ); ?></a>
 
     </div>
 </div>
@@ -89,10 +89,10 @@ defined( 'ABSPATH' ) || exit;
         <span><?php esc_html_e( 'Let customers...', 'invoicing' ); ?></span>
 
         <select class='w-100' style="padding: 6px 24px 6px 8px; border-color: #e0e0e0;" v-model='active_form_element.items_type'>
-            <option value='total'><?php _e( 'Buy all items on the list', 'invoicing' ); ?></option>
-            <option value='radio'><?php _e( 'Select a single item from the list', 'invoicing' ); ?></option>
-            <option value='checkbox'><?php _e( 'Select one or more items on the list', 'invoicing' ); ?></option>
-            <option value='select'><?php _e( 'Select a single item from a dropdown', 'invoicing' ); ?></option>
+            <option value='total'><?php esc_html_e( 'Buy all items on the list', 'invoicing' ); ?></option>
+            <option value='radio'><?php esc_html_e( 'Select a single item from the list', 'invoicing' ); ?></option>
+            <option value='checkbox'><?php esc_html_e( 'Select one or more items on the list', 'invoicing' ); ?></option>
+            <option value='select'><?php esc_html_e( 'Select a single item from a dropdown', 'invoicing' ); ?></option>
         </select>
 
     </label>
@@ -103,6 +103,6 @@ defined( 'ABSPATH' ) || exit;
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
-        <small class="form-text text-muted"><?php _e( 'HTML is allowed', 'invoicing' ); ?></small>
+        <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
     </label>
 </div>

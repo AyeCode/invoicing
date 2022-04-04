@@ -254,10 +254,9 @@ class GetPaid_Admin_Setup_Wizard {
 	public function display_footer() {
 
 		if ( isset( $_GET['step'] ) ) {
-			$next_url = esc_url( $this->get_next_step_link() );
 			$label    = $this->step == 'next_steps' ? __( 'Return to the WordPress Dashboard', 'invoicing' ) : __( 'Skip this step', 'invoicing' );
 
-			echo '<p class="gd-return-to-dashboard-wrap"> <a href="' . $next_url . '" class="gd-return-to-dashboard btn btn-link d-block text-muted">' . $label . '</a></p>';
+			echo '<p class="gd-return-to-dashboard-wrap"> <a href="' . esc_url( $this->get_next_step_link() ) . '" class="gd-return-to-dashboard btn btn-link d-block text-muted">' . esc_html( $label ) . '</a></p>';
 		}
 
 		echo '</body></html>';
@@ -349,21 +348,21 @@ class GetPaid_Admin_Setup_Wizard {
 				'url'  => 'https://wordpress.org/plugins/ayecode-connect/',
 				'slug' => 'ayecode-connect',
 				'name' => 'AyeCode Connect',
-				'desc' => __( 'Documentation and Support from within your WordPress admin.', 'geodirectory' ),
+				'desc' => __( 'Documentation and Support from within your WordPress admin.', 'invoicing' ),
 			),
 			'invoicing-quotes' => array(
 				'file' => 'invoicing-quotes/wpinv-quote.php',
 				'url'  => 'https://wordpress.org/plugins/invoicing-quotes/',
 				'slug' => 'invoicing-quotes',
 				'name' => 'Customer Quotes',
-				'desc' => __( 'Create & Send Quotes to Customers and have them accept and pay.', 'geodirectory' ),
+				'desc' => __( 'Create & Send Quotes to Customers and have them accept and pay.', 'invoicing' ),
 			),
 			'userswp'          => array(
 				'file' => 'userswp/userswp.php',
 				'url'  => 'https://wordpress.org/plugins/userswp/',
 				'slug' => 'userswp',
 				'name' => 'UsersWP',
-				'desc' => __( 'Frontend user login and registration as well as slick profile pages.', 'geodirectory' ),
+				'desc' => __( 'Frontend user login and registration as well as slick profile pages.', 'invoicing' ),
 			),
 		);
 	}

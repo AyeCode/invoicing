@@ -69,7 +69,7 @@ class GetPaid_Payment_Form_Submission_Items {
                         $items[]    = $item;
                     }
                 }
-}
+			}
 
             $payment_form->set_items( $items );
 
@@ -115,7 +115,7 @@ class GetPaid_Payment_Form_Submission_Items {
 				$item->set_price( $price );
 
 			}
-}
+		}
 
 		if ( 0 == $item->get_quantity() ) {
 			return;

@@ -57,11 +57,11 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_rules" class="col-sm-3 col-form-label">
-                        <?php _e( 'Tax Rule', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Tax Rule', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <?php
-                            echo aui()->select(
+                            aui()->select(
                                 array(
                                     'id'               => 'wpinv_vat_rules',
                                     'name'             => 'wpinv_vat_rules',
@@ -71,7 +71,8 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
                                     'options'          => getpaid_get_tax_rules(),
-                                )
+                                ),
+                                true
                             );
                         ?>
                     </div>
@@ -95,11 +96,11 @@ class GetPaid_Meta_Box_Item_VAT {
 
                 <div class="form-group row">
                     <label for="wpinv_vat_class" class="col-sm-3 col-form-label">
-                        <?php _e( 'Tax Class', 'invoicing' ); ?>
+                        <?php esc_html_e( 'Tax Class', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
                         <?php
-                            echo aui()->select(
+                            aui()->select(
                                 array(
                                     'id'               => 'wpinv_vat_class',
                                     'name'             => 'wpinv_vat_class',
@@ -109,7 +110,8 @@ class GetPaid_Meta_Box_Item_VAT {
                                     'data-allow-clear' => 'false',
                                     'no_wrap'          => true,
                                     'options'          => getpaid_get_tax_classes(),
-                                )
+                                ),
+                                true
                             );
                         ?>
                     </div>

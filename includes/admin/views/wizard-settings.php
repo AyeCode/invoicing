@@ -57,27 +57,28 @@ defined( 'ABSPATH' ) || exit;
 						switch ( $type ) {
 
 							case 'hidden':
-								echo "<input type='hidden' id='$id' name='$name' value='$value' />";
+								echo "<input type='hidden' id='" . esc_attr( $id ) . "' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' />";
 								break;
 							case 'text':
-                                case 'number':
-								echo aui()->input(
-								array(
-                                    'type'        => $type,
-                                    'id'          => $id,
-                                    'name'        => $name,
-                                    'value'       => is_scalar( $value ) ? esc_attr( $value ) : '',
-                                    'required'    => false,
-                                    'help_text'   => $help_text,
-                                    'label'       => $label,
-                                    'class'       => $class,
-                                    'label_type'  => 'floating',
-                                    'label_class' => 'settings-label',
-								)
-							);
+                            case 'number':
+								aui()->input(
+                                    array(
+								'type'        => $type,
+								'id'          => $id,
+								'name'        => $name,
+								'value'       => is_scalar( $value ) ? esc_attr( $value ) : '',
+								'required'    => false,
+								'help_text'   => $help_text,
+								'label'       => $label,
+								'class'       => $class,
+								'label_type'  => 'floating',
+								'label_class' => 'settings-label',
+                                    ),
+									true
+                                );
 								break;
 							case 'textarea':
-								$textarea = aui()->textarea(
+								aui()->textarea(
 									array(
 										'id'          => $id,
 										'name'        => $name,
@@ -89,15 +90,13 @@ defined( 'ABSPATH' ) || exit;
 										'class'       => $class,
 										'label_type'  => 'floating',
 										'label_class' => 'settings-label',
-									)
+									),
+									true
 								);
-
-								// Bug fixed in AUI 0.1.51 for name stripping []
-								echo str_replace( sanitize_html_class( $name ), esc_attr( $name ), $textarea );
 
 								break;
 							case 'select':
-								echo aui()->select(
+								aui()->select(
 									array(
 										'id'          => $id,
 										'name'        => $name,
@@ -110,7 +109,8 @@ defined( 'ABSPATH' ) || exit;
 										'label_type'  => 'floating',
 										'label_class' => 'settings-label',
 										'class'       => $class,
-									)
+									),
+									true
 								);
 								break;
 							default:

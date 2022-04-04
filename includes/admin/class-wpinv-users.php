@@ -8,7 +8,7 @@
 
 // MUST have WordPress.
 if ( ! defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
 class WPInv_Admin_Users {
@@ -48,7 +48,7 @@ class WPInv_Admin_Users {
      *
      * @return string
      */
-    function wpinv_user_column_content( $val, $column_name, $user_id ) {
+    public function wpinv_user_column_content( $val, $column_name, $user_id ) {
         switch ( $column_name ) {
             case 'wpinvoicing':
                 return $this->get_user_invoices( $user_id );

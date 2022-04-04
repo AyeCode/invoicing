@@ -1,7 +1,7 @@
 <?php
 // MUST have WordPress.
 if ( ! defined( 'WPINC' ) ) {
-    exit( 'Do NOT access this file directly: ' . basename( __FILE__ ) );
+    exit;
 }
 
 add_action( 'manage_wpi_discount_posts_custom_column', 'wpinv_discount_custom_column' );
@@ -113,7 +113,7 @@ function wpinv_discount_filters() {
 
     ?>
     <select name="discount_type" id="dropdown_wpinv_discount_type">
-        <option value=""><?php _e( 'Show all types', 'invoicing' ); ?></option>
+        <option value=""><?php esc_html_e( 'Show all types', 'invoicing' ); ?></option>
         <?php
             $types = wpinv_get_discount_types();
 

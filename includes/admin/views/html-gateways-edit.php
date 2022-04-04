@@ -18,15 +18,15 @@ ksort( $gateways );
             <tr class="table-light">
 
                 <th scope="col" class="border-bottom border-top text-left">
-                    <?php _e( 'Payment Method', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Payment Method', 'invoicing' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top text-center">
-                    <?php _e( 'Enabled', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Enabled', 'invoicing' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top text-center">
-                    <?php _e( 'Supports Subscriptions', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Supports Subscriptions', 'invoicing' ); ?>
                 </th>
 
                 <th scope="col" class="border-bottom border-top text-right" style="width:32px">&nbsp;</th>
@@ -67,7 +67,7 @@ ksort( $gateways );
                     </td>
 
                     <td class="getpaid-payment-method-action text-right">
-                        <a class="button button-secondary" href="<?php echo esc_url( add_query_arg( 'section', $id ) ); ?>"><?php _e( 'Manage', 'invoicing' ); ?></a>
+                        <a class="button button-secondary" href="<?php echo esc_url( add_query_arg( 'section', $id ) ); ?>"><?php esc_html_e( 'Manage', 'invoicing' ); ?></a>
                     </td>
 
                 </tr>
@@ -78,7 +78,7 @@ ksort( $gateways );
             <tr class="table-light">
                 <td colspan="4" class="border-top">
                     <a class="button button-secondary getpaid-install-gateways" href="<?php echo esc_url( admin_url( 'admin.php?page=wpi-addons&tab=gateways' ) ); ?>">
-                        <span><?php _e( 'Add Payment Methods', 'invoicing' ); ?></span>
+                        <span><?php esc_html_e( 'Add Payment Methods', 'invoicing' ); ?></span>
                     </a>
                 </td>
             </tr>

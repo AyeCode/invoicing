@@ -15,7 +15,7 @@ $free  = empty( $free ) ? esc_attr__( 'Continue »', 'invoicing' ) : esc_attr( $
 
 do_action( 'getpaid_before_payment_form_pay_button', $form );
 
-echo aui()->input(
+aui()->input(
     array(
         'name'             => esc_attr( $id ),
         'id'               => esc_attr( $id ) . uniqid( '_' ),
@@ -27,7 +27,8 @@ echo aui()->input(
             'data-free' => $free,
             'data-pay'  => $label,
         ),
-    )
+    ),
+    true
 );
 
 do_action( 'getpaid_after_payment_form_pay_button', $form );

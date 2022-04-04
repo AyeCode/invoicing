@@ -392,14 +392,14 @@ function wpinv_add_notes_to_invoice_email( $invoice, $email_type ) {
         $time_format = get_option( 'time_format' );
         ?>
         <div id="wpinv-email-notes">
-            <h3 class="wpinv-notes-t"><?php echo apply_filters( 'wpinv_email_invoice_notes_title', __( 'Invoice Notes', 'invoicing' ) ); ?></h3>
+            <h3 class="wpinv-notes-t"><?php echo esc_html( apply_filters( 'wpinv_email_invoice_notes_title', __( 'Invoice Notes', 'invoicing' ) ) ); ?></h3>
             <ol class="wpinv-notes-lists">
         <?php
         foreach ( $invoice_notes as $note ) {
             $note_time = strtotime( $note->comment_date );
             ?>
             <li class="comment wpinv-note">
-            <p class="wpinv-note-date meta"><?php printf( __( '%2$s at %3$s', 'invoicing' ), $note->comment_author, date_i18n( $date_format, $note_time ), date_i18n( $time_format, $note_time ), $note_time ); ?></p>
+            <p class="wpinv-note-date meta"><?php printf( esc_html__( '%2$s at %3$s', 'invoicing' ), esc_html( $note->comment_author ), esc_html( date_i18n( $date_format, $note_time ) ), esc_html( date_i18n( $time_format, $note_time ) ), esc_html( $note_time ) ); ?></p>
             <div class="wpinv-note-desc description"><?php echo wp_kses_post( wpautop( wptexturize( $note->comment_content ) ) ); ?></div>
             </li>
             <?php

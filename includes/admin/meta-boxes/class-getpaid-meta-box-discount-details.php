@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_code', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_code" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Code', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Code', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="row">
@@ -68,7 +68,7 @@ class GetPaid_Meta_Box_Discount_Details {
                             <?php
                                 do_action( 'wpinv_discount_form_before_single_use', $discount );
 
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_discount_single_use',
                                         'name'    => 'wpinv_discount_single_use',
@@ -76,7 +76,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                         'label'   => __( 'Each customer can only use this discount once', 'invoicing' ),
                                         'value'   => '1',
                                         'checked' => $discount->is_single_use(),
-                                    )
+                                    ),
+                                    true
                                 );
 
                                 do_action( 'wpinv_discount_form_single_use', $discount );
@@ -86,7 +87,7 @@ class GetPaid_Meta_Box_Discount_Details {
                             <?php
                                 do_action( 'wpinv_discount_form_before_recurring', $discount );
 
-                                echo aui()->input(
+                                aui()->input(
                                     array(
                                         'id'      => 'wpinv_discount_recurring',
                                         'name'    => 'wpinv_discount_recurring',
@@ -94,7 +95,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                         'label'   => __( 'Apply this discount to all recurring payments for subscriptions', 'invoicing' ),
                                         'value'   => '1',
                                         'checked' => $discount->is_recurring(),
-                                    )
+                                    ),
+                                    true
                                 );
 
                                 do_action( 'wpinv_discount_form_recurring', $discount );
@@ -111,11 +113,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_type', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_type" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Type', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Type', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_type',
                                 'name'             => 'wpinv_discount_type',
@@ -125,7 +127,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_discount_types(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -138,14 +141,14 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_amount', $discount ); ?>
             <div class="form-group row <?php echo esc_attr( $discount->get_type( 'edit' ) ); ?>" id="wpinv_discount_amount_wrap">
                 <label for="wpinv_discount_amount" class="col-sm-3 col-form-label">
-                    <?php _e( 'Discount Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Discount Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend left wpinv-if-flat">
                                 <span class="input-group-text">
-                                    <?php echo wpinv_currency_symbol(); ?>
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
                             </div>
                         <?php endif; ?>
@@ -155,7 +158,7 @@ class GetPaid_Meta_Box_Discount_Details {
                         <?php if ( 'right' == $position ) : ?>
                             <div class="input-group-prepend left wpinv-if-flat">
                                 <span class="input-group-text">
-                                    <?php echo wpinv_currency_symbol(); ?>
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
                             </div>
                         <?php endif; ?>
@@ -173,11 +176,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_items',
                                 'name'             => 'wpinv_discount_items[]',
@@ -188,7 +191,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -201,11 +205,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_excluded_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_excluded_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Excluded Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Excluded Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_excluded_items',
                                 'name'             => 'wpinv_discount_excluded_items[]',
@@ -216,7 +220,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -229,11 +234,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_required_items', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_required_items" class="col-sm-3 col-form-label">
-                    <?php _e( 'Required Items', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Required Items', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->select(
+                        aui()->select(
                             array(
                                 'id'               => 'wpinv_discount_required_items',
                                 'name'             => 'wpinv_discount_required_items[]',
@@ -244,7 +249,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                 'multiple'         => true,
                                 'data-allow-clear' => 'false',
                                 'options'          => wpinv_get_published_items_for_dropdown(),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -257,11 +263,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_start', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_start" class="col-sm-3 col-form-label">
-                    <?php _e( 'Start Date', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Start Date', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'             => 'datepicker',
                                 'id'               => 'wpinv_discount_start',
@@ -275,7 +281,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                     'data-time_24hr'   => 'true',
                                     'data-allow-input' => 'true',
                                 ),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -288,11 +295,11 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_expiration', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_expiration" class="col-sm-3 col-form-label">
-                    <?php _e( 'Expiration Date', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Expiration Date', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <?php
-                        echo aui()->input(
+                        aui()->input(
                             array(
                                 'type'             => 'datepicker',
                                 'id'               => 'wpinv_discount_expiration',
@@ -308,7 +315,8 @@ class GetPaid_Meta_Box_Discount_Details {
                                     'data-allow-input' => 'true',
                                     'data-input'       => 'true',
                                 ),
-                            )
+                            ),
+                            true
                         );
                     ?>
                 </div>
@@ -321,13 +329,13 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_min_total', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_min_total" class="col-sm-3 col-form-label">
-                    <?php _e( 'Minimum Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Minimum Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
 
@@ -335,7 +343,7 @@ class GetPaid_Meta_Box_Discount_Details {
 
                         <?php if ( 'left' != $position ) : ?>
                             <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -349,13 +357,13 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_max_total', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_max_total" class="col-sm-3 col-form-label">
-                    <?php _e( 'Maximum Amount', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Maximum Amount', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
 
@@ -363,7 +371,7 @@ class GetPaid_Meta_Box_Discount_Details {
 
                         <?php if ( 'left' != $position ) : ?>
                             <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wpinv_currency_symbol(); ?></span>
+                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -377,7 +385,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_before_max_uses', $discount ); ?>
             <div class="form-group row">
                 <label for="wpinv_discount_max_uses" class="col-sm-3 col-form-label">
-                    <?php _e( 'Maximum Uses', 'invoicing' ); ?>
+                    <?php esc_html_e( 'Maximum Uses', 'invoicing' ); ?>
                 </label>
                 <div class="col-sm-8">
                     <input type="text" value="<?php echo esc_attr( $discount->get_max_uses( 'edit' ) ); ?>" placeholder="<?php esc_attr_e( 'Unlimited', 'invoicing' ); ?>" name="wpinv_discount_max_uses" id="wpinv_discount_max_uses" style="width: 100%;" />

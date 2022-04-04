@@ -299,6 +299,17 @@ function getpaid_get_price_format() {
 }
 
 /**
+ * Prints an amount with the correct format.
+ *
+ * @param  float  $amount Raw price.
+ * @param  string $currency Currency.
+ * @return string
+ */
+function wpinv_the_price( $amount = 0, $currency = '' ) {
+    echo wp_kses_post( wpinv_price( $amount, $currency ) );
+}
+
+/**
  * Format the amount with a currency symbol.
  *
  * @param  float  $amount Raw price.
@@ -671,19 +682,28 @@ function wpinv_cal_days_in_month( $calendar, $month, $year ) {
  *
  * @return string
  */
-function wpi_help_tip( $tip, $allow_html = false, $is_vue = false ) {
+function wpi_help_tip( $tip, $allow_html = false, $is_vue = false, $echo = false ) {
 
     if ( $allow_html ) {
         $tip = wpi_sanitize_tooltip( $tip );
     } else {
-        $tip = esc_attr( $tip );
+        $tip = strip_tags( $tip );
     }
 
     if ( $is_vue ) {
-        return '<span class="dashicons dashicons-editor-help" title="' . $tip . '"></span>';
-    }
 
-    return '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . $tip . '"></span>';
+        if ( $echo ) {
+            echo '<span class="dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+        } else {
+            return '<span class="dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+        }
+}
+
+    if ( $echo ) {
+        echo '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+    } else {
+        return '<span class="wpi-help-tip dashicons dashicons-editor-help" title="' . esc_attr( $tip ) . '"></span>';
+    }
 }
 
 /**
@@ -879,10 +899,16 @@ function getpaid_convert_price_string_to_options( $str ) {
 /**
  * Returns the help tip.
  */
-function getpaid_get_help_tip( $tip, $additional_classes = '' ) {
-    $additional_classes = sanitize_html_class( $additional_classes );
-    $tip                = esc_attr__( $tip );
-    return "<span class='wpi-help-tip dashicons dashicons-editor-help $additional_classes' title='$tip'></span>";
+function getpaid_get_help_tip( $tip, $additional_classes = '', $echo = false ) {
+    $classes = 'wpi-help-tip dashicons dashicons-editor-help ' . $additional_classes;
+    $tip     = esc_attr( $tip );
+
+    if ( $echo ) {
+        echo '<span class="' . esc_attr( $classes ) . '" data-tip="' . esc_attr( $tip ) . '"></span>';
+    } else {
+        return '<span class="' . esc_attr( $classes ) . '" data-tip="' . esc_attr( $tip ) . '"></span>';
+    }
+
 }
 
 /**
@@ -1060,10 +1086,10 @@ function getpaid_array_merge_if_empty( $args, $defaults ) {
 
     foreach ( $defaults as $key => $value ) {
 
-        if ( array_key_exists( $key, $args ) && empty( $args[ $key ] ) ) {
+        if ( empty( $args[ $key ] ) ) {
             $args[ $key ] = $value;
         }
-}
+    }
 
     return $args;
 

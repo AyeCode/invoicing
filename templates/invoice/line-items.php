@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
     <div class="getpaid-invoice-items mb-4 border">
 
 
-        <div class="getpaid-invoice-items-header <?php echo sanitize_html_class( $invoice->get_template() ); ?>">
+        <div class="getpaid-invoice-items-header <?php echo esc_attr( $invoice->get_template() ); ?>">
             <div class="form-row">
                 <?php foreach ( $columns as $key => $label ) : ?>
                     <div class="<?php echo 'name' == $key ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-line-item-col-<?php echo esc_attr( $key ); ?>">

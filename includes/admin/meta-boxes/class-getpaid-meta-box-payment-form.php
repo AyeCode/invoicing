@@ -33,7 +33,7 @@ class GetPaid_Meta_Box_Payment_Form {
                 <div class="col-sm-4">
 
                     <!-- Builder tabs -->
-                    <button class="button button-primary" v-if="active_tab!='new_item'" @click.prevent="active_tab='new_item'"><?php _e( 'Go Back', 'invoicing' ); ?></button>
+                    <button class="button button-primary" v-if="active_tab!='new_item'" @click.prevent="active_tab='new_item'"><?php esc_html_e( 'Go Back', 'invoicing' ); ?></button>
 
                     <!-- Builder tab content -->
                     <div class="mt-4">
@@ -41,7 +41,7 @@ class GetPaid_Meta_Box_Payment_Form {
                         <!-- Available builder elements -->
                         <div class="wpinv-form-builder-tab-pane" v-if="active_tab=='new_item'">
                             <div class="wpinv-form-builder-add-field-types">
-                                <small class='form-text text-muted'><?php _e( 'Add an element by dragging it to the payment form.', 'invoicing' ); ?></small>
+                                <small class='form-text text-muted'><?php esc_html_e( 'Add an element by dragging it to the payment form.', 'invoicing' ); ?></small>
                                 <draggable class="section mt-2" style="display: flex; flex-flow: wrap; justify-content: space-between;" v-model="elements" :group="{ name: 'fields', pull: 'clone', put: false }" :sort="false" :clone="addDraggedField" tag="ul" filter=".wpinv-undraggable">
                                     <li v-for="element in elements" class= "wpinv-payment-form-left-fields-field" @click.prevent="addField(element)" :class="{ 'd-none': element.defaults.premade }">
                                         <button class="button btn text-dark">
@@ -67,7 +67,7 @@ class GetPaid_Meta_Box_Payment_Form {
                                     </select>
                                 </div>
                                 <div>
-                                    <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)" v-show="! active_form_element.premade"><?php _e( 'Delete Element', 'invoicing' ); ?></button>
+                                    <button type="button" class="button button-link button-link-delete" @click.prevent="removeField(active_form_element)" v-show="! active_form_element.premade"><?php esc_html_e( 'Delete Element', 'invoicing' ); ?></button>
                                 </div>
                             </div>
                         </div>
@@ -76,8 +76,8 @@ class GetPaid_Meta_Box_Payment_Form {
 
                 </div>
                 <div class="col-sm-8 border-left">
-                    <small class='form-text text-muted' v-if='form_elements.length'><?php _e( 'Click on any element to edit or delete it.', 'invoicing' ); ?></small>
-                    <p class='form-text text-muted' v-if='! form_elements.length'><?php _e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
+                    <small class='form-text text-muted' v-if='form_elements.length'><?php esc_html_e( 'Click on any element to edit or delete it.', 'invoicing' ); ?></small>
+                    <p class='form-text text-muted' v-if='! form_elements.length'><?php esc_html_e( 'This form is empty. Add new elements by dragging them from the right.', 'invoicing' ); ?></p>
 
                     <div class="container-fluid">
                         <draggable class="section row" v-model="form_elements" @add="highlightLastDroppedField" group="fields" tag="div" style="min-height: 100%; font-size: 14px;">

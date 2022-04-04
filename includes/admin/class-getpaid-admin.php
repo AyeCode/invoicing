@@ -599,7 +599,7 @@ class GetPaid_Admin {
     public function admin_download_customers() {
 		global $wpdb;
 
-		$output = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'invoicing' ) );
+		$output = fopen( 'php://output', 'w' ) || die( esc_html__( 'Unsupported server', 'invoicing' ) );
 
 		header( 'Content-Type:text/csv' );
 		header( 'Content-Disposition:attachment;filename=customers.csv' );
@@ -903,8 +903,7 @@ class GetPaid_Admin {
 
             $type  = esc_attr( $type );
 			foreach ( $messages as $message ) {
-                $message = wp_kses_post( $message );
-				echo "<div class='notice notice-$type is-dismissible'><p>$message</p></div>";
+				echo wp_kses_post( "<div class='notice notice-$type is-dismissible'><p>$message</p></div>" );
             }
 }
 
@@ -918,7 +917,7 @@ class GetPaid_Admin {
 				);
 				$message  = __( 'Some GetPaid pages are missing. To use GetPaid without any issues, click the button below to generate the missing pages.', 'invoicing' );
 				$message2 = __( 'Generate Pages', 'invoicing' );
-				echo "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>";
+				echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>" );
 				break;
 			}
 }

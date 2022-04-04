@@ -157,7 +157,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<thead>
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo sanitize_html_class( $key ); ?>">
+							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo esc_attr( $key ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>
@@ -196,11 +196,12 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<td colspan="<?php echo count( $this->get_subscriptions_table_columns() ); ?>">
 
 					<?php
-						echo aui()->alert(
+						aui()->alert(
 							array(
 								'content' => wp_kses_post( __( 'No subscriptions found.', 'invoicing' ) ),
 								'type'    => 'warning',
-							)
+							),
+                            true
 						);
 					?>
 
@@ -285,7 +286,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				<tfoot>
 					<tr>
 						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th class="font-weight-bold getpaid-subscriptions-<?php echo sanitize_html_class( $key ); ?>">
+							<th class="font-weight-bold getpaid-subscriptions-<?php echo esc_attr( $key ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</th>
 						<?php endforeach; ?>
@@ -327,11 +328,13 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			<?php
 				$big = 999999;
 
-				echo getpaid_paginate_links(
-					array(
-						'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-						'format' => '?paged=%#%',
-						'total'  => (int) ceil( $total / 10 ),
+				echo wp_kses_post(
+					getpaid_paginate_links(
+						array(
+							'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+							'format' => '?paged=%#%',
+							'total'  => (int) ceil( $total / 10 ),
+						)
 					)
 				);
 			?>

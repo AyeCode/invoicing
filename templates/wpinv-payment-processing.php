@@ -3,7 +3,7 @@
     <p>
         <?php
             echo wp_sprintf(
-                __( 'Your payment is processing. This page will reload automatically in 10 seconds. If it does not, click <a href="%s">here</a>.', 'invoicing' ),
+                wp_kses_post( __( 'Your payment is processing. This page will reload automatically in 10 seconds. If it does not, click <a href="%s">here</a>.', 'invoicing' ) ),
                 esc_url_raw( remove_query_arg( 'payment-confirm' ) )
             );
         ?>
