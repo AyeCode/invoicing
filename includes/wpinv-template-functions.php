@@ -527,7 +527,7 @@ function wpinv_html_checkbox( $args = array() ) {
  * Displays a hidden field.
  */
 function getpaid_hidden_field( $name, $value ) {
-    echo "<input type='hidden' name='" . esc_attr( $name ) . "' value=' " . esc_attr( $value ) . "' />";
+    echo "<input type='hidden' name='" . esc_attr( $name ) . "' value='" . esc_attr( $value ) . "' />";
 }
 
 /**

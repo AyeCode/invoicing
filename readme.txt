@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.8 =
+* Cannot uncheck checkbox - FIXED
+
 = 2.6.7 =
 * New "Single Invoice" widget - ADDED
 * Favicon not inherited on invoice pages - FIXED

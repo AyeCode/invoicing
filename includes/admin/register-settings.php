@@ -506,7 +506,7 @@ function wpinv_checkbox_callback( $args ) {
 	?>
 		<fieldset>
 			<label>
-				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox">
+				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox" />
 				<?php echo wp_kses_post( $args['desc'] ); ?>
 			</label>
 		</fieldset>
