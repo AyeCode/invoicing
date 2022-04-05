@@ -623,7 +623,7 @@ return array(
                     'name' => __( 'MaxMind License Key', 'invoicing' ),
                     'type' => 'text',
                     'size' => 'regular',
-                    'desc' => __( "Enter you license key if you would like to use MaxMind to automatically detect a customer's country.", 'invoicing' ) . ' <a href="https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/">' . __( 'How to generate a free license key.', 'invoicing' ) . '</a>',
+                    'desc' => __( "Enter you license key if you would like to use MaxMind to automatically detect a customer's country.", 'invoicing' ) . ' <a href="https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key">' . __( 'How to generate a free license key.', 'invoicing' ) . '</a>',
                 ),
 
                 'uninstall_settings'             => array(
