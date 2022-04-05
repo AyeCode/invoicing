@@ -390,7 +390,7 @@ function wpinv_string_is_image_url( $string ) {
  * Returns the current URL.
  */
 function wpinv_get_current_page_url() {
-    return ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    return esc_url( add_query_arg( array() ) );
 }
 
 /**
