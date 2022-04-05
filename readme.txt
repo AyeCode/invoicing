@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.6.8 =
 * Cannot uncheck checkbox - FIXED
 * Invalid maxmind License link - FIXED
+* Display featured images on invoices and payment forms - ADDED
 
 = 2.6.7 =
 * New "Single Invoice" widget - ADDED
