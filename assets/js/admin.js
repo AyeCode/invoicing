@@ -1182,12 +1182,28 @@ jQuery(function ($) {
 
 	});
 
+	$('.wpinv_add_tax_rule').on('click', function (e) {
+
+		e.preventDefault();
+		var html = $('#tmpl-wpinv-tax-rule-row').html();
+		html = html.replace(/TAX_RULE_KEY/g, random_string() );
+		$('#wpinv-tax-rules tbody').append(html)
+
+	});
+
 	// Remove tax row.
 	$(document).on('click', '#wpinv_tax_rates .wpinv_remove_tax_rate', function (e) {
 
 		e.preventDefault()
 		$(this).closest('tr').remove();
 		wpinv_reindex_tax_table();
+
+	});
+
+	$(document).on('click', '#wpinv-tax-rules .wpinv_remove_tax_rule', function (e) {
+
+		e.preventDefault();
+		$(this).closest('tr').remove();
 
 	});
 

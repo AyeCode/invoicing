@@ -356,6 +356,15 @@ return array(
                     'std'  => '0',
                 ),
             ),
+            'rules' => array(
+                'tax_rules' => array(
+                    'id'   => 'tax_rules',
+                    'name' => '<h3>' . __( 'Tax Rules', 'invoicing' ) . '</h3>',
+                    'desc' => __( 'Create/Update tax rules', 'invoicing' ),
+                    'type' => 'tax_rules',
+                ),
+            ),
+
             'rates' => array(
                 'tax_rates' => array(
                     'id'   => 'tax_rates',

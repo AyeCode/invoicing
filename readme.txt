@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.9 =
+* Ability to create custom tax rules - ADDED
+
 = 2.6.8 =
 * Cannot uncheck checkbox - FIXED
 * Invalid maxmind License link - FIXED
