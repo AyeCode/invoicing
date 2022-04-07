@@ -35,10 +35,10 @@ wp_nonce_field( 'wpinv_tax_rules', 'wpinv_tax_rules_nonce' );
                     <?php esc_html_e( 'Calculate tax based on', 'invoicing' ); ?>
                 </th>
 
-                <th scope="col" class="border-bottom border-top">
+                <!-- <th scope="col" class="border-bottom border-top">
                     <?php esc_html_e( 'Same country rule', 'invoicing' ); ?>
                     <?php getpaid_get_help_tip( __( 'What should happen if a customer is from the same country as your business?.', 'invoicing' ), 'position-static', true ); ?>
-                </th>
+                </th> -->
 
                 <th scope="col" class="border-bottom border-top" style="width:32px">&nbsp;</th>
 
