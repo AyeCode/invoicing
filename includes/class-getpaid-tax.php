@@ -133,14 +133,16 @@ class GetPaid_Tax {
 			'wpinv_tax_rules',
 			array(
 				array(
-					'key'      => 'physical',
-					'label'    => __( 'Physical Item', 'invoicing' ),
-					'tax_base' => wpinv_get_option( 'tax_base', 'billing' ),
+					'key'               => 'physical',
+					'label'             => __( 'Physical Item', 'invoicing' ),
+					'tax_base'          => wpinv_get_option( 'tax_base', 'billing' ),
+					'same_country_rule' => wpinv_get_option( 'vat_same_country_rule', 'vat_too' ),
 				),
 				array(
-					'key'      => 'digital',
-					'label'    => __( 'Digital Item', 'invoicing' ),
-					'tax_base' => wpinv_get_option( 'tax_base', 'billing' ),
+					'key'               => 'digital',
+					'label'             => __( 'Digital Item', 'invoicing' ),
+					'tax_base'          => wpinv_get_option( 'tax_base', 'billing' ),
+					'same_country_rule' => wpinv_get_option( 'vat_same_country_rule', 'vat_too' ),
 				),
         	)
 		);

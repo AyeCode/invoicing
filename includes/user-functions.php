@@ -417,14 +417,27 @@ function getpaid_allowed_html() {
         'name'           => true,
         'target'         => true,
     );
-    
+
     // - input
 	$allowed_html['input'] = array(
-		'class' => array(),
-		'id'    => array(),
-		'name'  => array(),
-		'value' => array(),
-		'type'  => array(),
+		'class'        => array(),
+		'id'           => array(),
+		'name'         => array(),
+		'value'        => array(),
+		'type'         => array(),
+        'placeholder'  => array(),
+        'autocomplete' => array(),
+        'autofocus'    => array(),
+        'required'     => array(),
+        'disabled'     => array(),
+        'readonly'     => array(),
+        'checked'      => array(),
+        'maxlength'    => array(),
+        'pattern'      => array(),
+        'min'          => array(),
+        'max'          => array(),
+        'step'         => array(),
+        'size'         => array(),
 	);
 
     // - input
@@ -437,16 +450,18 @@ function getpaid_allowed_html() {
 
 	// select
 	$allowed_html['select'] = array(
-		'class'  => array(),
-		'id'     => array(),
-		'name'   => array(),
-		'value'  => array(),
-		'type'   => array(),
+		'class'        => array(),
+		'id'           => array(),
+		'name'         => array(),
+        'autocomplete' => array(),
+        'multiple'     => array(),
 	);
 
 	// select options
 	$allowed_html['option'] = array(
 		'selected' => array(),
+        'disabled' => array(),
+        'value'    => array(),
 	);
 
 	return $allowed_html;

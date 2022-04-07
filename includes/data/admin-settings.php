@@ -335,7 +335,7 @@ return array(
 
                 'vat_same_country_rule'    => array(
                     'id'          => 'vat_same_country_rule',
-                    'name'        => __( 'Same Country Rule', 'invoicing' ),
+                    'name'        => __( 'Same country rule', 'invoicing' ),
                     'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
                     'type'        => 'select',
                     'options'     => array(

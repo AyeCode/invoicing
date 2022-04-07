@@ -101,7 +101,23 @@ function wpinv_use_store_address_as_tax_base( $tax_rule = false ) {
         $use_base = isset( $rules[ $tax_rule ] ) ? 'base' === $rules[ $tax_rule ] : $use_base;
     }
 
-    return (bool) apply_filters( 'wpinv_use_store_address_as_tax_base', $use_base );
+    return (bool) apply_filters( 'wpinv_use_store_address_as_tax_base', $use_base, $tax_rule );
+}
+
+/**
+ * Retrieves the same country rule.
+ *
+ * @return bool
+ */
+function wpinv_get_vat_same_country_rule( $tax_rule = false ) {
+    $rule = wpinv_get_option( 'vat_same_country_rule', 'vat_too' );
+
+    if ( $tax_rule ) {
+        $rules = getpaid_get_tax_rules( 'same_country_rule' );
+        $rule  = isset( $rules[ $tax_rule ] ) ? $rules[ $tax_rule ] : $rule;
+    }
+
+    return (bool) apply_filters( 'wpinv_get_vat_same_country_rule', $rule, $tax_rule );
 }
 
 /**

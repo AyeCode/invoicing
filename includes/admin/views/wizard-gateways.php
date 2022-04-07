@@ -23,8 +23,7 @@ defined( 'ABSPATH' ) || exit;
 				<li class="list-group-item d-flex justify-content-between align-items-center">
 				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' ); ?>" class="ml-n2" alt="Stripe"></span>
 				    <?php if ( false === wpinv_get_option( 'stripe_live_connect_account_id' ) ) : ?>
-                        <a href="
-                        <?php
+                        <a href="<?php
                         echo esc_url( wp_nonce_url(
                             add_query_arg(
                                 array(
@@ -37,8 +36,7 @@ defined( 'ABSPATH' ) || exit;
                             'getpaid-nonce',
                             'getpaid-nonce'
                         ));
-                        ?>
-                        "
+                        ?>"
                         class="btn btn-sm btn-outline-primary"><?php esc_html_e( 'Connect', 'invoicing' ); ?></a>
                     <?php else : ?>
                         <span class="btn btn-sm btn-success"><?php esc_html_e( 'Connected', 'invoicing' ); ?></span>
