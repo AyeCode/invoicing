@@ -333,6 +333,20 @@ return array(
                     'std'     => 'billing',
                 ),
 
+                'vat_same_country_rule'    => array(
+                    'id'          => 'vat_same_country_rule',
+                    'name'        => __( 'Same Country Rule', 'invoicing' ),
+                    'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
+                    'type'        => 'select',
+                    'options'     => array(
+                        'no'      => __( 'Do not charge tax', 'invoicing' ),
+                        'always'  => __( 'Charge tax unless vat number is validated', 'invoicing' ),
+                        'vat_too' => __( 'Charge tax even if vat number is validated', 'invoicing' ),
+                    ),
+                    'placeholder' => __( 'Select an option', 'invoicing' ),
+                    'std'         => 'vat_too',
+                ),
+
                 'tax_display_totals'    => array(
                     'id'      => 'tax_display_totals',
                     'name'    => __( 'Display tax totals', 'invoicing' ),
@@ -404,20 +418,6 @@ return array(
                     'name' => __( 'Validate VAT Number', 'invoicing' ),
                     'desc' => __( 'Validate VAT numbers with VIES.', 'invoicing' ),
                     'type' => 'checkbox',
-                ),
-
-                'vat_same_country_rule'    => array(
-                    'id'          => 'vat_same_country_rule',
-                    'name'        => __( 'Same Country Rule', 'invoicing' ),
-                    'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
-                    'type'        => 'select',
-                    'options'     => array(
-                        'no'      => __( 'Do not charge tax', 'invoicing' ),
-                        'always'  => __( 'Charge tax unless vat number is validated', 'invoicing' ),
-                        'vat_too' => __( 'Charge tax even if vat number is validated', 'invoicing' ),
-                    ),
-                    'placeholder' => __( 'Select an option', 'invoicing' ),
-                    'std'         => 'vat_too',
                 ),
 
             ),
