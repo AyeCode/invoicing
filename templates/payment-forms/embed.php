@@ -42,13 +42,14 @@
 
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <title>GetPaid</title>
+        <title><?php echo esc_html( get_bloginfo( 'name' ) ); ?></title>
 		<?php
 			wp_enqueue_scripts();
 			wp_print_styles();
 			wp_print_head_scripts();
 			wp_custom_css_cb();
 			wpinv_get_template( 'frontend-head.php' );
+			wp_site_icon();
 		?>
 
 		<style type="text/css">

@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.6.9 =
 * Ability to create custom tax rules - ADDED
 * "Same country rule" setting relocated to the main tax settings - CHANGED
+* Use site title and icon on direct payment URLs - CHANGED
 
 = 2.6.8 =
 * Cannot uncheck checkbox - FIXED
