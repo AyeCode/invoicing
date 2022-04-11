@@ -354,6 +354,33 @@ function wpinv_settings_sanitize_tax_rates( $input ) {
 }
 add_filter( 'wpinv_settings_taxes-rates_sanitize', 'wpinv_settings_sanitize_tax_rates' );
 
+function wpinv_settings_sanitize_tax_rules( $input ) {
+    if ( ! wpinv_current_user_can_manage_invoicing() ) {
+        return $input;
+    }
+
+	if ( empty( $_POST['wpinv_tax_rules_nonce'] ) || ! wp_verify_nonce( $_POST['wpinv_tax_rules_nonce'], 'wpinv_tax_rules' ) ) {
+		return $input;
+	}
+
+    $new_rules = ! empty( $_POST['tax_rules'] ) ? wp_kses_post_deep( array_values( $_POST['tax_rules'] ) ) : array();
+    $tax_rules = array();
+
+    foreach ( $new_rules as $rule ) {
+
+		$rule['key']      = sanitize_title_with_dashes( $rule['key'] );
+		$rule['label']    = sanitize_text_field( $rule['label'] );
+		$rule['tax_base'] = sanitize_text_field( $rule['tax_base'] );
+		$tax_rules[]      = $rule;
+
+	}
+
+    update_option( 'wpinv_tax_rules', $tax_rules );
+
+    return $input;
+}
+add_filter( 'wpinv_settings_taxes-rules_sanitize', 'wpinv_settings_sanitize_tax_rules' );
+
 function wpinv_get_settings_tabs() {
     $tabs             = array();
     $tabs['general']  = __( 'General', 'invoicing' );
@@ -410,6 +437,7 @@ function wpinv_get_registered_settings_sections() {
             'wpinv_settings_sections_taxes',
             array(
 				'main'  => __( 'Tax Settings', 'invoicing' ),
+				'rules' => __( 'Tax Rules', 'invoicing' ),
 				'rates' => __( 'Tax Rates', 'invoicing' ),
 				'vat'   => __( 'EU VAT Settings', 'invoicing' ),
             )
@@ -506,7 +534,7 @@ function wpinv_checkbox_callback( $args ) {
 	?>
 		<fieldset>
 			<label>
-				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox">
+				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox" />
 				<?php echo wp_kses_post( $args['desc'] ); ?>
 			</label>
 		</fieldset>
@@ -941,6 +969,21 @@ function wpinv_tax_rate_callback( $tax_rate, $key ) {
 
 }
 
+/**
+ * Displays the tax rules edit table.
+ */
+function wpinv_tax_rules_callback() {
+
+	?>
+		</td>
+	</tr>
+	<tr class="bsui">
+    	<td colspan="2" class="p-0">
+			<?php include plugin_dir_path( __FILE__ ) . 'views/html-tax-rules-edit.php'; ?>
+
+	<?php
+
+}
 
 function wpinv_tools_callback( $args ) {
     ?>

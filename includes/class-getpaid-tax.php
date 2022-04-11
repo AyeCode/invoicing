@@ -123,6 +123,38 @@ class GetPaid_Tax {
 	}
 
 	/**
+	 * Get's an array of all tax rules.
+	 *
+	 * @return array
+	 */
+	public static function get_all_tax_rules() {
+
+		$rules = get_option(
+			'wpinv_tax_rules',
+			array(
+				array(
+					'key'               => 'physical',
+					'label'             => __( 'Physical Item', 'invoicing' ),
+					'tax_base'          => wpinv_get_option( 'tax_base', 'billing' ),
+					'same_country_rule' => wpinv_get_option( 'vat_same_country_rule', 'vat_too' ),
+				),
+				array(
+					'key'               => 'digital',
+					'label'             => __( 'Digital Item', 'invoicing' ),
+					'tax_base'          => wpinv_get_option( 'tax_base', 'billing' ),
+					'same_country_rule' => wpinv_get_option( 'vat_same_country_rule', 'vat_too' ),
+				),
+        	)
+		);
+
+		return apply_filters(
+			'getpaid_tax_rules',
+			array_filter( array_values( wpinv_parse_list( $rules ) ) )
+		);
+
+	}
+
+	/**
 	 * Get's an array of tax rates for a given address.
 	 *
 	 * @param string $country

@@ -3641,7 +3641,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		$vat_number = $this->get_vat_number();
 		$skip_tax   = GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $this->get_country() ) && ! empty( $vat_number );
 
-		if ( wpinv_is_base_country( $this->get_country() ) && 'vat_too' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
+		if ( wpinv_is_base_country( $this->get_country() ) && 'vat_too' === wpinv_get_option( 'vat_same_country_rule', 'vat_too' ) ) {
 			$skip_tax = false;
 		}
 
@@ -3678,7 +3678,7 @@ class WPInv_Invoice extends GetPaid_Data {
 					$item_taxes[ $name ]['recurring_tax'] += $tax['recurring_tax'];
 
 				}
-}
+			}
 
 			$item_taxes = array_replace( $this->get_taxes(), $item_taxes );
 			$this->set_taxes( $item_taxes );

@@ -2,29 +2,29 @@
 
 	// Is the request set up correctly?
 	if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) ) {
-	return aui()->alert(
-        array(
-	'type'    => 'warning',
-	'content' => __( 'No payment form or item selected', 'invoicing' ),
-        )
-);
-wp_die( esc_html__( 'No payment form or item selected', 'invoicing' ), 400 );
+		return aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'No payment form or item selected', 'invoicing' ),
+			)
+		);
+		wp_die( esc_html__( 'No payment form or item selected', 'invoicing' ), 400 );
 	}
 
 	// Payment form or button?
 	if ( ! empty( $_GET['form'] ) ) {
 
-	$shortcode = sprintf(
-        '[getpaid form=%s]',
-        (int) $_GET['form']
-);
+		$shortcode = sprintf(
+			'[getpaid form=%s]',
+			(int) $_GET['form']
+		);
 
 	} else {
 
-	$shortcode = sprintf(
-        '[getpaid item=%s]',
-        esc_attr( urldecode( $_GET['item'] ) )
-	);
+		$shortcode = sprintf(
+			'[getpaid item=%s]',
+			esc_attr( urldecode( $_GET['item'] ) )
+		);
 
 	}
 
@@ -42,13 +42,14 @@ wp_die( esc_html__( 'No payment form or item selected', 'invoicing' ), 400 );
 
 		<link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <title>GetPaid</title>
+        <title><?php echo esc_html( get_bloginfo( 'name' ) ); ?></title>
 		<?php
 			wp_enqueue_scripts();
 			wp_print_styles();
 			wp_print_head_scripts();
 			wp_custom_css_cb();
 			wpinv_get_template( 'frontend-head.php' );
+			wp_site_icon();
 		?>
 
 		<style type="text/css">

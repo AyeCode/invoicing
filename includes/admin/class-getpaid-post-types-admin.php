@@ -531,8 +531,8 @@ class GetPaid_Post_Types_Admin {
 			'cb'        => $columns['cb'],
 			'title'     => __( 'Name', 'invoicing' ),
 			'price'     => __( 'Price', 'invoicing' ),
-			'vat_rule'  => __( 'VAT rule', 'invoicing' ),
-			'vat_class' => __( 'VAT class', 'invoicing' ),
+			'vat_rule'  => __( 'Tax Rule', 'invoicing' ),
+			'vat_class' => __( 'Tax Class', 'invoicing' ),
 			'type'      => __( 'Type', 'invoicing' ),
 			'shortcode' => __( 'Shortcode', 'invoicing' ),
 		);
@@ -643,7 +643,7 @@ class GetPaid_Post_Types_Admin {
 				array(
 					'options'          => array_merge(
 						array(
-							'' => __( 'All VAT rules', 'invoicing' ),
+							'' => __( 'All Tax Rules', 'invoicing' ),
 						),
 						$vat_rules
 					),
@@ -668,7 +668,7 @@ class GetPaid_Post_Types_Admin {
 				array(
 					'options'          => array_merge(
 						array(
-							'' => __( 'All VAT classes', 'invoicing' ),
+							'' => __( 'All Tax Classes', 'invoicing' ),
 						),
 						$vat_classes
 					),

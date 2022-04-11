@@ -93,9 +93,31 @@ function wpinv_is_item_taxable( $item ) {
  *
  * @return bool
  */
-function wpinv_use_store_address_as_tax_base() {
-    $use_base = wpinv_get_option( 'tax_base', 'billing' ) == 'base';
-    return (bool) apply_filters( 'wpinv_use_store_address_as_tax_base', $use_base );
+function wpinv_use_store_address_as_tax_base( $tax_rule = false ) {
+    $use_base = wpinv_get_option( 'tax_base', 'billing' ) === 'base';
+
+    if ( $tax_rule ) {
+        $rules    = getpaid_get_tax_rules( 'tax_base' );
+        $use_base = isset( $rules[ $tax_rule ] ) ? 'base' === $rules[ $tax_rule ] : $use_base;
+    }
+
+    return (bool) apply_filters( 'wpinv_use_store_address_as_tax_base', $use_base, $tax_rule );
+}
+
+/**
+ * Retrieves the same country rule.
+ *
+ * @return bool
+ */
+function wpinv_get_vat_same_country_rule( $tax_rule = false ) {
+    $rule = wpinv_get_option( 'vat_same_country_rule', 'vat_too' );
+
+    if ( $tax_rule ) {
+        $rules = getpaid_get_tax_rules( 'same_country_rule' );
+        $rule  = isset( $rules[ $tax_rule ] ) ? $rules[ $tax_rule ] : $rule;
+    }
+
+    return (bool) apply_filters( 'wpinv_get_vat_same_country_rule', $rule, $tax_rule );
 }
 
 /**
@@ -172,7 +194,7 @@ function getpaid_get_item_tax_rates( $item, $country = '', $state = '' ) {
     }
 
     // Maybe use the store address.
-    if ( wpinv_use_store_address_as_tax_base() ) {
+    if ( wpinv_use_store_address_as_tax_base( $item->get_vat_rule() ) ) {
         $country = wpinv_get_default_country();
         $state   = wpinv_get_default_state();
     }
@@ -481,16 +503,8 @@ function getpaid_get_tax_classes() {
  *
  * @return array
  */
-function getpaid_get_tax_rules() {
-
-    return apply_filters(
-        'getpaid_tax_rules',
-        array(
-            'physical' => __( 'Physical Item', 'invoicing' ),
-            'digital'  => __( 'Digital Item', 'invoicing' ),
-        )
-    );
-
+function getpaid_get_tax_rules( $return = 'label' ) {
+    return wp_list_pluck( GetPaid_Tax::get_all_tax_rules(), $return, 'key' );
 }
 
 /**

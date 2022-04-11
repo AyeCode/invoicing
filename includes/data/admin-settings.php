@@ -333,6 +333,20 @@ return array(
                     'std'     => 'billing',
                 ),
 
+                'vat_same_country_rule'    => array(
+                    'id'          => 'vat_same_country_rule',
+                    'name'        => __( 'Same country rule', 'invoicing' ),
+                    'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
+                    'type'        => 'select',
+                    'options'     => array(
+                        'no'      => __( 'Do not charge tax', 'invoicing' ),
+                        'always'  => __( 'Charge tax unless vat number is validated', 'invoicing' ),
+                        'vat_too' => __( 'Charge tax even if vat number is validated', 'invoicing' ),
+                    ),
+                    'placeholder' => __( 'Select an option', 'invoicing' ),
+                    'std'         => 'vat_too',
+                ),
+
                 'tax_display_totals'    => array(
                     'id'      => 'tax_display_totals',
                     'name'    => __( 'Display tax totals', 'invoicing' ),
@@ -356,6 +370,15 @@ return array(
                     'std'  => '0',
                 ),
             ),
+            'rules' => array(
+                'tax_rules' => array(
+                    'id'   => 'tax_rules',
+                    'name' => '<h3>' . __( 'Tax Rules', 'invoicing' ) . '</h3>',
+                    'desc' => __( 'Create/Update tax rules', 'invoicing' ),
+                    'type' => 'tax_rules',
+                ),
+            ),
+
             'rates' => array(
                 'tax_rates' => array(
                     'id'   => 'tax_rates',
@@ -395,20 +418,6 @@ return array(
                     'name' => __( 'Validate VAT Number', 'invoicing' ),
                     'desc' => __( 'Validate VAT numbers with VIES.', 'invoicing' ),
                     'type' => 'checkbox',
-                ),
-
-                'vat_same_country_rule'    => array(
-                    'id'          => 'vat_same_country_rule',
-                    'name'        => __( 'Same Country Rule', 'invoicing' ),
-                    'desc'        => __( 'What should happen if a customer is from the same country as your business?', 'invoicing' ),
-                    'type'        => 'select',
-                    'options'     => array(
-                        'no'      => __( 'Do not charge tax', 'invoicing' ),
-                        'always'  => __( 'Charge tax unless vat number is validated', 'invoicing' ),
-                        'vat_too' => __( 'Charge tax even if vat number is validated', 'invoicing' ),
-                    ),
-                    'placeholder' => __( 'Select an option', 'invoicing' ),
-                    'std'         => 'vat_too',
                 ),
 
             ),
@@ -623,7 +632,7 @@ return array(
                     'name' => __( 'MaxMind License Key', 'invoicing' ),
                     'type' => 'text',
                     'size' => 'regular',
-                    'desc' => __( "Enter you license key if you would like to use MaxMind to automatically detect a customer's country.", 'invoicing' ) . ' <a href="https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/">' . __( 'How to generate a free license key.', 'invoicing' ) . '</a>',
+                    'desc' => __( "Enter you license key if you would like to use MaxMind to automatically detect a customer's country.", 'invoicing' ) . ' <a href="https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key">' . __( 'How to generate a free license key.', 'invoicing' ) . '</a>',
                 ),
 
                 'uninstall_settings'             => array(
