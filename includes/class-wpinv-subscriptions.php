@@ -231,7 +231,7 @@ class WPInv_Subscriptions {
                     $fees[ $i ]       = $fee;
                 }
             }
-}
+        }
 
         $subscription->set_customer_id( $invoice->get_customer_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );

@@ -698,7 +698,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	public function maybe_renew_subscription( $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( $this->id == $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+        if ( $this->id === $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
             $this->renew_subscription( $subscription );
         }
 

@@ -133,6 +133,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.10 =
+* CSS string shows up on the subscription overview page - FIXED
+
 = 2.6.9 =
 * Ability to create custom tax rules - ADDED
 * "Same country rule" setting relocated to the main tax settings - CHANGED
