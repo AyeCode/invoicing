@@ -135,6 +135,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.10 =
 * CSS string shows up on the subscription overview page - FIXED
+* Renewal reminder emails throw an error on some instances - FIXED
 
 = 2.6.9 =
 * Ability to create custom tax rules - ADDED

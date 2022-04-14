@@ -152,6 +152,18 @@ class GetPaid_Subscription_Notification_Emails {
 	 */
 	public function send_email( $subscription, $email, $type, $extra_args = array() ) {
 
+		if ( empty( $subscription ) ) {
+			return;
+		}
+
+		if ( is_array( $subscription ) ) {
+			$subscription = current( $subscription );
+		}
+
+		if ( ! $subscription instanceof WPInv_Subscription ) {
+			return;
+		}
+
 		// Abort in case the parent invoice does not exist.
 		$invoice = $subscription->get_parent_invoice();
 		if ( ! $this->should_send_notification( $invoice ) ) {
@@ -297,14 +309,14 @@ class GetPaid_Subscription_Notification_Emails {
 
 		$subscriptions = new GetPaid_Subscriptions_Query( $args );
 
-        foreach ( $subscriptions as $subscription ) {
+        foreach ( $subscriptions->get_results() as $subscription ) {
 
 			// Skip packages.
 			if ( apply_filters( 'getpaid_send_subscription_renewal_reminder_email', true ) ) {
 				$email->object = $subscription;
             	$this->send_email( $subscription, $email, __FUNCTION__ );
 			}
-}
+		}
 
 	}
 
