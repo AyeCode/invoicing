@@ -1260,7 +1260,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return int subscription ID
 	 */
 	public function activate() {
-		$status = 'trialling' == $this->get_status() ? 'trialling' : 'active';
+		$status = 'trialling' === $this->get_status() ? 'trialling' : 'active';
 		$this->set_status( $status );
 		return $this->save();
 	}

@@ -92,7 +92,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	public function maybe_renew_subscription( $subscription ) {
 
         // Ensure its our subscription && it's active.
-        if ( $this->id == $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+        if ( $this->id === $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
 
             // Renew the subscription.
             $subscription->add_payment(

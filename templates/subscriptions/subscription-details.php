@@ -23,14 +23,6 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 ?>
 
-<style>
-	.entry-header,
-	.entry-title {
-		display: none !important;
-	}
-
-</style>
-
 <h2 class="mb-1 h4"><?php esc_html_e( 'Subscription Details', 'invoicing' ); ?></h2>
 <table class="table table-bordered">
 	<tbody>
