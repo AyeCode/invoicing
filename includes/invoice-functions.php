@@ -1249,7 +1249,7 @@ function getpaid_get_invoice_meta( $invoice ) {
                 );
 
             }
-}
+        }
     }
 
     // Add the invoice total to the meta.
