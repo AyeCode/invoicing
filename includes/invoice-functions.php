@@ -869,7 +869,7 @@ function getpaid_process_invoice_payment( $invoice_id ) {
 }
 
     // Record reverse vat.
-    if ( 'invoice' == $invoice->get_type() && wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
+    if ( 'invoice' === $invoice->get_type() && wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
 
         $taxes = $invoice->get_total_tax();
         if ( empty( $taxes ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
