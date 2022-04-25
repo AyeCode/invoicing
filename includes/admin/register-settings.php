@@ -759,7 +759,7 @@ function wpinv_number_callback( $args ) {
 
 	?>
 		<label style="width: 100%;">
-			<input type="number" step="<?php echo floatval( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php wpinv_settings_attrs_helper( $args ); ?>>
+			<input type="number" step="<?php echo esc_attr( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php wpinv_settings_attrs_helper( $args ); ?>>
 			<?php echo wp_kses_post( $desc ); ?>
 		</label>
 	<?php
