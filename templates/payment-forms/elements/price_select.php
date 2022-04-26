@@ -29,7 +29,7 @@ if ( $select_type == 'select' ) {
     aui()->select(
         array(
             'name'        => $id,
-            'id'          => $id . uniqid( '_' ),
+            'id'          => esc_attr( $element_id ),
             'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
             'value'       => $value,
             'label'       => empty( $label ) ? '' : esc_html( $label ),

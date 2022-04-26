@@ -1393,6 +1393,14 @@ function getpaid_payment_form_element( $element, $form ) {
     $wrapper_class = 'getpaid-payment-form-element-' . trim( esc_attr( $element_type ) );
     $id            = isset( $id ) ? $id : uniqid( 'gp' );
 
+    $element_id    = ! empty( $element['label'] ) ?  sanitize_title( $element['label'] ) : $id;
+    $query_value   = isset( $_GET[ $element_id ] ) ? wpinv_clean( urldecode( $_GET[ $element_id ] ) ) : '';
+
+    $element_id    = 'getpaid-' . '-' . $element_id;
+    if ( ! empty( $GLOBALS['rendered_getpaid_forms'][ $form->get_id() ] ) ) {
+        $element_id = $element_id . '-' . $GLOBALS['rendered_getpaid_forms'][ $form->get_id() ];
+    }
+
     // Echo the opening wrapper.
     echo "<div class='getpaid-payment-form-element " . esc_attr( $wrapper_class ) . "'>";
 

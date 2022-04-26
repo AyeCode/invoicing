@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$value = '';
+$value = $query_value;
 $class = '';
 
 if ( ! empty( $form->invoice ) ) {
@@ -30,7 +30,7 @@ echo "<span class='" . esc_attr( $class ) . "'>";
 aui()->input(
     array(
         'name'             => 'billing_email',
-        'id'               => esc_attr( $id ) . uniqid( '_' ),
+        'id'               => esc_attr( $element_id ),
         'placeholder'      => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'         => ! empty( $required ),
         'label'            => empty( $label ) ? '' : wp_kses_post( $label ) . '<span class="text-danger"> *</span>',

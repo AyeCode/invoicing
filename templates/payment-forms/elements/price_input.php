@@ -25,7 +25,7 @@ $label_class = sanitize_key( preg_replace( '/[^A-Za-z0-9_-]/', '-', $label ) );
 aui()->input(
     array(
         'name'              => esc_attr( $id ),
-        'id'                => esc_attr( $id ) . uniqid( '_' ),
+        'id'                => esc_attr( $element_id ),
         'placeholder'       => empty( $placeholder ) ? wpinv_format_amount( 0 ) : wpinv_format_amount( $placeholder ),
         'value'             => empty( $value ) ? wpinv_format_amount( 0 ) : wpinv_format_amount( $value ),
         'label'             => empty( $label ) ? '' : wp_kses_post( $label ),

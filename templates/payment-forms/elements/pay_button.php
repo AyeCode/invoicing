@@ -18,7 +18,7 @@ do_action( 'getpaid_before_payment_form_pay_button', $form );
 aui()->input(
     array(
         'name'             => esc_attr( $id ),
-        'id'               => esc_attr( $id ) . uniqid( '_' ),
+        'id'               => esc_attr( $element_id ),
         'value'            => $label,
         'help_text'        => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'             => 'submit',

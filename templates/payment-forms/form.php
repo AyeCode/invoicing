@@ -9,6 +9,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Standardize IDs.
+global $rendered_getpaid_forms;
+
 // Make sure that the form is active.
 if ( ! $form->is_active() ) {
     aui()->alert(
@@ -34,6 +37,12 @@ if ( wpinv_require_login_to_checkout() && ! get_current_user_id() ) {
     return;
 
 }
+
+if ( ! is_array( $rendered_getpaid_forms ) ) {
+    $rendered_getpaid_forms = array();
+}
+
+$rendered_getpaid_forms[ $form->get_id() ] = isset( $rendered_getpaid_forms[ $form->get_id() ] ) ? $rendered_getpaid_forms[ $form->get_id() ] + 1 : 0;
 
 // Fires before displaying a payment form.
 do_action( 'getpaid_before_payment_form', $form );
@@ -68,14 +77,14 @@ do_action( 'getpaid_before_payment_form', $form );
 
                     foreach ( $form->get_elements() as $element ) {
 
-					if ( isset( $element['type'] ) ) {
-						$grid_class = getpaid_get_form_element_grid_class( $element );
-						echo "<div class='" . esc_attr( $grid_class ) . "'>";
-						do_action( 'getpaid_payment_form_element', $element, $form );
-						do_action( "getpaid_payment_form_element_{$element['type']}_template", $element, $form );
-						echo '</div>';
+					    if ( isset( $element['type'] ) ) {
+                            $grid_class = getpaid_get_form_element_grid_class( $element );
+                            echo "<div class='" . esc_attr( $grid_class ) . "'>";
+                            do_action( 'getpaid_payment_form_element', $element, $form );
+                            do_action( "getpaid_payment_form_element_{$element['type']}_template", $element, $form );
+                            echo '</div>';
                         }
-}
+                    }
 
                 ?>
             </div>
