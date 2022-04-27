@@ -317,7 +317,7 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
                 if ( isset( $_item['meta']['description'] ) ) {
                     $item->set_custom_description( $_item['meta']['description'] );
                 }
-}
+            }
 
             $data['items'][] = $item;
 

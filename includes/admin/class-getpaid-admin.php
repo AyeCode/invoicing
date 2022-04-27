@@ -599,7 +599,11 @@ class GetPaid_Admin {
     public function admin_download_customers() {
 		global $wpdb;
 
-		$output = fopen( 'php://output', 'w' ) || die( esc_html__( 'Unsupported server', 'invoicing' ) );
+		$output = fopen( 'php://output', 'w' );
+
+		if ( false === $output ) {
+			wp_die( esc_html__( 'Unsupported server', 'invoicing' ), 500 );
+		}
 
 		header( 'Content-Type:text/csv' );
 		header( 'Content-Disposition:attachment;filename=customers.csv' );
@@ -612,11 +616,7 @@ class GetPaid_Admin {
 
 		$post_types = rtrim( $post_types, ' OR' );
 
-		$customers = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE $post_types"
-			)
-		);
+		$customers = $wpdb->get_col( "SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE $post_types" );
 
 		$columns = array(
 			'name'       => __( 'Name', 'invoicing' ),
