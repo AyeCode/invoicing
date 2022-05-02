@@ -105,7 +105,7 @@ class GetPaid_Post_Types_Admin {
 		// We do not want to edit the default payment form.
 		if ( 'wpi_payment_form' == $post->post_type ) {
 
-			if ( $post->ID == wpinv_get_default_payment_form() ) {
+			if ( wpinv_get_default_payment_form() === $post->ID ) {
 				unset( $actions['trash'] );
 				unset( $actions['inline hide-if-no-js'] );
 			}
@@ -132,7 +132,7 @@ class GetPaid_Post_Types_Admin {
 		// Link to item payment form.
 		if ( 'wpi_item' == $post->post_type ) {
 
-			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ) ) ) {
+			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ), true ) ) {
 
 				$actions['buy'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
@@ -173,7 +173,8 @@ class GetPaid_Post_Types_Admin {
 					'<a href="%1$s">%2$s</a>',
 					esc_url( $invoice->get_view_url() ),
 					sprintf(
-						esc_html( __( 'View %s', 'invoicing' ) ),
+						// translators: %s is the invoice type
+						esc_html__( 'View %s', 'invoicing' ),
 						getpaid_get_post_type_label( $invoice->get_post_type(), false )
 					)
 				);
