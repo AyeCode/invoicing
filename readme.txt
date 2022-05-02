@@ -136,6 +136,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.6.11 =
 * Fallback tax rate does not allow dicimals - FIXED
 * Clicking on the number of invoices in the customers table shows their invoices - ADDED
+* Allow HTML in item descriptions - CHANGED
 
 = 2.6.10 =
 * CSS string shows up on the subscription overview page - FIXED
