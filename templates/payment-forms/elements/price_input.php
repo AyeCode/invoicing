@@ -27,7 +27,7 @@ aui()->input(
         'name'              => esc_attr( $id ),
         'id'                => esc_attr( $element_id ),
         'placeholder'       => empty( $placeholder ) ? wpinv_format_amount( 0 ) : wpinv_format_amount( $placeholder ),
-        'value'             => empty( $value ) ? wpinv_format_amount( 0 ) : wpinv_format_amount( $value ),
+        'value'             => empty( $value ) ? wpinv_format_amount( $query_value ) : wpinv_format_amount( $value ),
         'label'             => empty( $label ) ? '' : wp_kses_post( $label ),
         'label_type'        => 'vertical',
         'help_text'         => empty( $description ) ? '' : wp_kses_post( $description ),

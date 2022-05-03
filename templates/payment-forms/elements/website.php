@@ -27,7 +27,7 @@ aui()->input(
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'        => 'url',
-        'value'       => ! empty( $default_current_post ) ? $current_url : '',
+        'value'       => ! empty( $default_current_post ) ? $current_url : $query_value,
         'class'       => $label_class,
     ),
     true

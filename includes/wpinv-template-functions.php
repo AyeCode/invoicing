@@ -1379,7 +1379,7 @@ function getpaid_payment_form_element( $element, $form ) {
     // Set up the args.
     $element_type    = trim( $element['type'] );
     $element['form'] = $form;
-    extract( $element );
+    extract( $element ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 
     // Try to locate the appropriate template.
     $located = wpinv_locate_template( "payment-forms/elements/$element_type.php" );
@@ -1393,10 +1393,10 @@ function getpaid_payment_form_element( $element, $form ) {
     $wrapper_class = 'getpaid-payment-form-element-' . trim( esc_attr( $element_type ) );
     $id            = isset( $id ) ? $id : uniqid( 'gp' );
 
-    $element_id    = ! empty( $element['label'] ) ?  sanitize_title( $element['label'] ) : $id;
-    $query_value   = isset( $_GET[ $element_id ] ) ? wpinv_clean( urldecode( $_GET[ $element_id ] ) ) : '';
+    $element_id    = ! empty( $element['label'] ) ? sanitize_title( $element['label'] ) : $id;
+    $query_value   = isset( $_GET[ $element_id ] ) ? wpinv_clean( urldecode_deep( $_GET[ $element_id ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-    $element_id    = 'getpaid-' . '-' . $element_id;
+    $element_id    = 'getpaid-' . $element_id;
     if ( ! empty( $GLOBALS['rendered_getpaid_forms'][ $form->get_id() ] ) ) {
         $element_id = $element_id . '-' . $GLOBALS['rendered_getpaid_forms'][ $form->get_id() ];
     }
