@@ -138,6 +138,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Clicking on the number of invoices in the customers table shows their invoices - ADDED
 * Allow HTML in item descriptions - CHANGED
 * Ability to prefill form values via URL query variables - ADDED
+* Ability to set the payment date without first having to mark the invoice as paid then saving it - ADDED
 
 = 2.6.10 =
 * CSS string shows up on the subscription overview page - FIXED
