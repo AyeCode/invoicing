@@ -552,7 +552,7 @@ class GetPaid_Admin {
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoices'" ) != $wpdb->prefix . 'getpaid_invoices' ) {
 			$installer->create_invoices_table();
 
-			if ( $wpdb->last_error !== '' ) {
+			if ( '' !== $wpdb->last_error ) {
 				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
 			}
 		}
@@ -560,7 +560,7 @@ class GetPaid_Admin {
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoice_items'" ) != $wpdb->prefix . 'getpaid_invoice_items' ) {
 			$installer->create_invoice_items_table();
 
-			if ( $wpdb->last_error !== '' ) {
+			if ( '' !== $wpdb->last_error ) {
 				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
 			}
 		}
@@ -656,7 +656,7 @@ class GetPaid_Admin {
 				} elseif ( 'email' == $column ) {
 					$value = sanitize_email( $user->user_email );
 				} elseif ( is_callable( array( $table, $method ) ) ) {
-					$value = strip_tags( $table->$method( $user ) );
+					$value = wp_strip_all_tags( $table->$method( $user ) );
 				}
 
 				if ( empty( $value ) ) {
