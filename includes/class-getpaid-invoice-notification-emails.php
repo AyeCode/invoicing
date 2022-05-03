@@ -159,8 +159,8 @@ class GetPaid_Invoice_Notification_Emails {
 				if ( is_scalar( $value ) ) {
 					$merge_tags[ "{{$label}}" ] = wp_kses_post( $value );
 				}
-}
-}
+			}
+		}
 
 		return apply_filters( 'getpaid_invoice_email_merge_tags', $merge_tags, $invoice );
 	}

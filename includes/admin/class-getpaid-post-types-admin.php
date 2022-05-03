@@ -105,7 +105,7 @@ class GetPaid_Post_Types_Admin {
 		// We do not want to edit the default payment form.
 		if ( 'wpi_payment_form' == $post->post_type ) {
 
-			if ( $post->ID == wpinv_get_default_payment_form() ) {
+			if ( wpinv_get_default_payment_form() === $post->ID ) {
 				unset( $actions['trash'] );
 				unset( $actions['inline hide-if-no-js'] );
 			}
@@ -132,7 +132,7 @@ class GetPaid_Post_Types_Admin {
 		// Link to item payment form.
 		if ( 'wpi_item' == $post->post_type ) {
 
-			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ) ) ) {
+			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ), true ) ) {
 
 				$actions['buy'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
@@ -173,7 +173,8 @@ class GetPaid_Post_Types_Admin {
 					'<a href="%1$s">%2$s</a>',
 					esc_url( $invoice->get_view_url() ),
 					sprintf(
-						esc_html( __( 'View %s', 'invoicing' ) ),
+						// translators: %s is the invoice type
+						esc_html__( 'View %s', 'invoicing' ),
 						getpaid_get_post_type_label( $invoice->get_post_type(), false )
 					)
 				);
@@ -281,7 +282,7 @@ class GetPaid_Post_Types_Admin {
 					} else {
 						echo wp_kses_post( $formated_amount );
 					}
-}
+				}
 
 				break;
 
@@ -315,11 +316,15 @@ class GetPaid_Post_Types_Admin {
 						$fomatted = getpaid_format_date( $due_date );
 
 						if ( ! empty( $fomatted ) ) {
-							$date = wp_sprintf( __( 'Due %s', 'invoicing' ), $fomatted );
+							$date = wp_sprintf(
+								// translators: %s is the due date.
+								__( 'Due %s', 'invoicing' ),
+								$fomatted
+							);
 							echo wp_kses_post( "<p class='description' style='color: #888;' title='$due_date'>$fomatted</p>" );
 						}
 					}
-}
+				}
 
 				break;
 
@@ -338,6 +343,7 @@ class GetPaid_Post_Types_Admin {
 
 				echo wp_kses_post( "<a href='$edit_link' title='$invoice_details'><strong>$invoice_number</strong></a>" );
 
+				do_action( 'getpaid_admin_table_invoice_number_column', $invoice );
 				break;
 
 			case 'customer':
@@ -374,7 +380,7 @@ class GetPaid_Post_Types_Admin {
 	 */
 	public static function handle_invoice_bulk_actions( $redirect_url, $action, $post_ids ) {
 
-		if ( $action == 'resend-invoice' ) {
+		if ( 'resend-invoice' === $action ) {
 			foreach ( $post_ids as $post_id ) {
 				getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $post_id ), true );
 			}
@@ -471,7 +477,7 @@ class GetPaid_Post_Types_Admin {
 	 */
 	public static function filter_payment_form_state( $post_states, $post ) {
 
-		if ( 'wpi_payment_form' == $post->post_type && wpinv_get_default_payment_form() == $post->ID ) {
+		if ( 'wpi_payment_form' === $post->post_type && wpinv_get_default_payment_form() === $post->ID ) {
 			$post_states['default_form'] = __( 'Default Payment Form', 'invoicing' );
 		}
 
@@ -502,13 +508,13 @@ class GetPaid_Post_Types_Admin {
 	 */
 	public static function filter_discount_state( $post_states, $post ) {
 
-		if ( 'wpi_discount' == $post->post_type ) {
+		if ( 'wpi_discount' === $post->post_type ) {
 
 			$discount = new WPInv_Discount( $post );
 
 			$status = $discount->is_expired() ? 'expired' : $discount->get_status();
 
-			if ( $status != 'publish' ) {
+			if ( 'publish' !== $status ) {
 				return array(
 					'discount_status' => wpinv_discount_status( $status ),
 				);
@@ -624,7 +630,7 @@ class GetPaid_Post_Types_Admin {
 	public static function add_item_filters( $post_type ) {
 
 		// Abort if we're not dealing with items.
-		if ( $post_type != 'wpi_item' ) {
+		if ( 'wpi_item' !== $post_type ) {
 			return;
 		}
 
@@ -634,8 +640,8 @@ class GetPaid_Post_Types_Admin {
 			// Sanitize selected vat rule.
 			$vat_rule   = '';
 			$vat_rules  = getpaid_get_tax_rules();
-			if ( isset( $_GET['vat_rule'] ) ) {
-				$vat_rule   = sanitize_text_field( $_GET['vat_rule'] );
+			if ( isset( $_GET['vat_rule'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$vat_rule   = sanitize_text_field( $_GET['vat_rule'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			}
 
 			// Filter by VAT rule.
@@ -649,7 +655,7 @@ class GetPaid_Post_Types_Admin {
 					),
 					'name'             => 'vat_rule',
 					'id'               => 'vat_rule',
-					'selected'         => in_array( $vat_rule, array_keys( $vat_rules ) ) ? $vat_rule : '',
+					'selected'         => in_array( $vat_rule, array_keys( $vat_rules ), true ) ? $vat_rule : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
 				)
@@ -660,8 +666,8 @@ class GetPaid_Post_Types_Admin {
 			// Sanitize selected vat rule.
 			$vat_class   = '';
 			$vat_classes = getpaid_get_tax_classes();
-			if ( isset( $_GET['vat_class'] ) ) {
-				$vat_class   = sanitize_text_field( $_GET['vat_class'] );
+			if ( isset( $_GET['vat_class'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$vat_class   = sanitize_text_field( $_GET['vat_class'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			}
 
 			wpinv_html_select(
@@ -674,7 +680,7 @@ class GetPaid_Post_Types_Admin {
 					),
 					'name'             => 'vat_class',
 					'id'               => 'vat_class',
-					'selected'         => in_array( $vat_class, array_keys( $vat_classes ) ) ? $vat_class : '',
+					'selected'         => in_array( $vat_class, array_keys( $vat_classes ), true ) ? $vat_class : '',
 					'show_option_all'  => false,
 					'show_option_none' => false,
 				)
@@ -684,8 +690,8 @@ class GetPaid_Post_Types_Admin {
 
 		// Filter by item type.
 		$type   = '';
-		if ( isset( $_GET['type'] ) ) {
-			$type   = sanitize_text_field( $_GET['type'] );
+		if ( isset( $_GET['type'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$type   = sanitize_text_field( $_GET['type'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		wpinv_html_select(
@@ -698,7 +704,7 @@ class GetPaid_Post_Types_Admin {
 				),
 				'name'             => 'type',
 				'id'               => 'type',
-				'selected'         => in_array( $type, wpinv_item_types() ) ? $type : '',
+				'selected'         => in_array( $type, wpinv_item_types(), true ) ? $type : '',
 				'show_option_all'  => false,
 				'show_option_none' => false,
 			)
@@ -717,7 +723,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// we want to modify the query for our items.
-		if ( empty( $query->query['post_type'] ) || 'wpi_item' != $query->query['post_type'] ) {
+		if ( empty( $query->query['post_type'] ) || 'wpi_item' !== $query->query['post_type'] ) {
 			return $query;
 		}
 
@@ -726,28 +732,28 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// Filter vat rule type
-        if ( ! empty( $_GET['vat_rule'] ) ) {
+        if ( ! empty( $_GET['vat_rule'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_vat_rule',
-                'value'   => sanitize_text_field( $_GET['vat_rule'] ),
+                'value'   => sanitize_text_field( $_GET['vat_rule'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 'compare' => '=',
             );
         }
 
         // Filter vat class
-        if ( ! empty( $_GET['vat_class'] ) ) {
+        if ( ! empty( $_GET['vat_class'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_vat_class',
-                'value'   => sanitize_text_field( $_GET['vat_class'] ),
+                'value'   => sanitize_text_field( $_GET['vat_class'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 'compare' => '=',
             );
         }
 
         // Filter item type
-        if ( ! empty( $_GET['type'] ) ) {
+        if ( ! empty( $_GET['type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $query->query_vars['meta_query'][] = array(
                 'key'     => '_wpinv_type',
-                'value'   => sanitize_text_field( $_GET['type'] ),
+                'value'   => sanitize_text_field( $_GET['type'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 'compare' => '=',
             );
 		}
@@ -765,7 +771,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// By item type.
-		if ( 'type' == $vars['orderby'] ) {
+		if ( 'type' === $vars['orderby'] ) {
 			return array_merge(
 				$vars,
 				array(
@@ -776,7 +782,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// By vat class.
-		if ( 'vat_class' == $vars['orderby'] ) {
+		if ( 'vat_class' === $vars['orderby'] ) {
 			return array_merge(
 				$vars,
 				array(
@@ -787,7 +793,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// By vat rule.
-		if ( 'vat_rule' == $vars['orderby'] ) {
+		if ( 'vat_rule' === $vars['orderby'] ) {
 			return array_merge(
 				$vars,
 				array(
@@ -798,7 +804,7 @@ class GetPaid_Post_Types_Admin {
 		}
 
 		// By price.
-		if ( 'price' == $vars['orderby'] ) {
+		if ( 'price' === $vars['orderby'] ) {
 			return array_merge(
 				$vars,
 				array(

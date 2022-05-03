@@ -1,0 +1,30 @@
+<wpml-config>
+
+	<custom-fields>
+		<custom-field action="translate">wpinv_form_elements</custom-field>
+		<custom-field action="copy-once">wpinv_form_items</custom-field>
+		<custom-field action="ignore">wpinv_form_refunded</custom-field>
+		<custom-field action="ignore">wpinv_form_cancelled</custom-field>
+		<custom-field action="ignore">wpinv_form_failed</custom-field>
+
+		<custom-field action="translate">wpinv_form_elements</custom-field>
+		<custom-field action="translate">_wpinv_custom_id</custom-field>
+		<custom-field action="translate">_wpinv_custom_name</custom-field>
+		<custom-field action="translate">_wpinv_custom_singular_name</custom-field>
+		<custom-field action="copy-once">_wpinv_vat_rule</custom-field>
+		<custom-field action="copy-once">_wpinv_vat_class</custom-field>
+		<custom-field action="copy-once">_wpinv_type</custom-field>
+		<custom-field action="copy-once">_wpinv_editable</custom-field>
+		<custom-field action="copy-once">_wpinv_dynamic_pricing</custom-field>
+		<custom-field action="copy-once">_wpinv_price</custom-field>
+		<custom-field action="copy-once">_minimum_price</custom-field>
+		<custom-field action="copy-once">_wpinv_is_recurring</custom-field>
+		<custom-field action="copy-once">_wpinv_recurring_period</custom-field>
+		<custom-field action="copy-once">_wpinv_recurring_interval</custom-field>
+		<custom-field action="copy-once">_wpinv_recurring_limit</custom-field>
+		<custom-field action="copy-once">_wpinv_free_trial</custom-field>
+		<custom-field action="copy-once">_wpinv_trial_period</custom-field>
+		<custom-field action="copy-once">_wpinv_trial_interval</custom-field>
+	</custom-fields>
+
+</wpml-config>

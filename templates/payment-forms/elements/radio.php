@@ -19,7 +19,7 @@ if ( ! empty( $required ) ) {
 aui()->radio(
     array(
         'name'       => esc_attr( $id ),
-        'id'         => esc_attr( $id ) . uniqid( '_' ),
+        'id'         => esc_attr( $element_id ),
         'required'   => ! empty( $required ),
         'label'      => $label,
         'label_type' => 'vertical',

@@ -20,7 +20,7 @@ $current_url = ! empty( $_GET['current_url'] ) ? esc_url_raw( urldecode( $_GET['
 aui()->input(
     array(
         'name'        => esc_attr( $id ),
-        'id'          => esc_attr( $id ) . uniqid( '_' ),
+        'id'          => esc_attr( $element_id ),
         'placeholder' => empty( $placeholder ) ? '' : esc_attr( $placeholder ),
         'required'    => ! empty( $required ),
         'label'       => $label,

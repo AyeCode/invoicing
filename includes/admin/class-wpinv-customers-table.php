@@ -218,7 +218,9 @@ class WPInv_Customers_Table extends WP_List_Table {
 			'invoice_status' => array_keys( wpinv_get_invoice_statuses() ),
 		);
 
-		return absint( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
+		$value = absint( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
+		$url   = add_query_arg( array( 'post_type' => 'wpi_invoice', 'author' => $user->ID ), admin_url( 'edit.php' ) );
+		return empty( $value ) ? '0' : '<a href="' . esc_url( $url ) . '">' . absint( $value ) . '</a>';
 
 	}
 
