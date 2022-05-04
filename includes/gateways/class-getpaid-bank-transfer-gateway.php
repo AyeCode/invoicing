@@ -166,13 +166,13 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
             }
 		}
 
-        $bank_info = apply_filters( 'wpinv_bank_info', $bank_info );
+        $bank_info = apply_filters( 'wpinv_bank_info', $bank_info, $invoice );
 
         if ( empty( $bank_info ) ) {
             return;
         }
 
-		echo '<h3 class="getpaid-bank-transfer-title"> ' . esc_html( apply_filters( 'wpinv_receipt_bank_details_title', __( 'Bank Details', 'invoicing' ) ) ) . '</h3>' . PHP_EOL;
+		echo '<h3 class="getpaid-bank-transfer-title"> ' . esc_html( apply_filters( 'wpinv_receipt_bank_details_title', __( 'Bank Details', 'invoicing' ), $invoice ) ) . '</h3>' . PHP_EOL;
 
 		echo '<table class="table table-bordered getpaid-bank-transfer-details">' . PHP_EOL;
 
