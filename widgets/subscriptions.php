@@ -366,7 +366,8 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				'payments'         => __( 'Payments', 'invoicing' ),
 				'item'             => _n( 'Item', 'Items', $items_count, 'invoicing' ),
 			),
-			$subscription
+			$subscription,
+			$items_count
 		);
 
 		if ( isset( $fields['expiry_date'] ) ) {
@@ -375,16 +376,16 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				$fields['expiry_date'] = __( 'End date', 'invoicing' );
 			}
 
-			if ( 'pending' == $subscription->get_status() ) {
+			if ( 'pending' === $subscription->get_status() ) {
 				unset( $fields['expiry_date'] );
 			}
-}
+		}
 
-		if ( isset( $fields['start_date'] ) && 'pending' == $subscription->get_status() ) {
+		if ( isset( $fields['start_date'] ) && 'pending' === $subscription->get_status() ) {
 			unset( $fields['start_date'] );
 		}
 
-		if ( $subscription->get_initial_amount() == $subscription->get_recurring_amount() ) {
+		if ( $subscription->get_initial_amount() === $subscription->get_recurring_amount() ) {
 			unset( $fields['initial_amount'] );
 		}
 
