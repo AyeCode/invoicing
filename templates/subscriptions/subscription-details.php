@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template that prints a single subscription's details
  *
