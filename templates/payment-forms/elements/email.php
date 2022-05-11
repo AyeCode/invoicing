@@ -27,6 +27,7 @@ aui()->input(
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'        => 'email',
         'class'       => $label_class,
+        'value'       => $query_value,
     ),
     true
 );

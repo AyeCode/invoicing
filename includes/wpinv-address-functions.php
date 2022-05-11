@@ -142,7 +142,7 @@ function getpaid_user_address_fields() {
         )
     );
 
-    if ( ! wpinv_use_taxes() && isset( $address_fields['vat_number'] ) ) {
+    if ( ! wpinv_use_taxes() && isset( $address_fields['vat_number'] ) && ! wp_doing_ajax() ) {
         unset( $address_fields['vat_number'] );
     }
 

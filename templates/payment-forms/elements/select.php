@@ -27,6 +27,7 @@ aui()->select(
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'options'     => empty( $options ) ? array() : array_combine( $options, $options ),
         'class'       => $label_class,
+        'value'       => $query_value,
     ),
     true
 );

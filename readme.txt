@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 5.9
-Stable tag: 2.6.10
+Stable tag: 2.6.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -137,6 +137,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Fallback tax rate does not allow dicimals - FIXED
 * Clicking on the number of invoices in the customers table shows their invoices - ADDED
 * Allow HTML in item descriptions - CHANGED
+* Ability to prefill form values via URL query variables - ADDED
+* Ability to set the payment date without first having to mark the invoice as paid then saving it - ADDED
 
 = 2.6.10 =
 * CSS string shows up on the subscription overview page - FIXED

@@ -27,8 +27,7 @@ class GetPaid_Meta_Box_Invoice_Details {
         $invoice = new WPInv_Invoice( $post );
 
         // Nonce field.
-        wp_nonce_field( 'wpinv_details', 'wpinv_details_nonce' ) ;
-
+        wp_nonce_field( 'wpinv_details', 'wpinv_details_nonce' );
 
         ?>
 
@@ -49,7 +48,7 @@ class GetPaid_Meta_Box_Invoice_Details {
                     <?php do_action( 'getpaid_invoice_edit_before_viewed_by_customer', $invoice ); ?>
                     <?php if ( ! $invoice->is_draft() ) : ?>
                         <div class="form-group">
-                            <strong><?php esc_html_e( 'Viewed by Customer:', 'invoicing' );?></strong>
+                            <strong><?php esc_html_e( 'Viewed by Customer:', 'invoicing' ); ?></strong>
                             <?php ( $invoice->get_is_viewed() ) ? esc_html_e( 'Yes', 'invoicing' ) : esc_html_e( 'No', 'invoicing' ); ?>
                         </div>
                     <?php endif; ?>
@@ -58,25 +57,27 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                         // Date created.
                         $label = sprintf(
+                            // translators: %s is the invoice type.
                             __( '%s Date:', 'invoicing' ),
                             ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
                         $info  = sprintf(
+                            // translators: %s is the invoice type.
                             __( 'The date this %s was created.', 'invoicing' ),
                             strtolower( $invoice->get_invoice_quote_type() )
                         );
 
                         aui()->input(
                             array(
-                                'type'        => 'datepicker',
-                                'id'          => 'wpinv_date_created',
-                                'name'        => 'date_created',
-                                'label'       => $label . getpaid_get_help_tip( $info ),
-                                'label_type'  => 'vertical',
-                                'placeholder' => 'YYYY-MM-DD 00:00',
-                                'class'       => 'form-control-sm',
-                                'value'       => $invoice->get_date_created( 'edit' ),
+                                'type'             => 'datepicker',
+                                'id'               => 'wpinv_date_created',
+                                'name'             => 'date_created',
+                                'label'            => $label . getpaid_get_help_tip( $info ),
+                                'label_type'       => 'vertical',
+                                'placeholder'      => 'YYYY-MM-DD 00:00',
+                                'class'            => 'form-control-sm',
+                                'value'            => $invoice->get_date_created( 'edit' ),
                                 'extra_attributes' => array(
                                     'data-enable-time' => 'true',
                                     'data-time_24hr'   => 'true',
@@ -88,37 +89,33 @@ class GetPaid_Meta_Box_Invoice_Details {
                         );
 
                         // Date paid.
-                        $date_paid = $invoice->get_date_completed( 'edit' );
-                        if ( ! empty( $date_paid ) && $invoice->is_paid() ) {
-
-                            aui()->input(
-                                array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_date_completed',
-                                    'name'        => 'wpinv_date_completed',
-                                    'label'       => __( 'Date Completed:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $date_paid,
-                                ),
-                                true
-                            );
-
-                        }
+                        aui()->input(
+                            array(
+                                'type'        => 'text',
+                                'id'          => 'wpinv_date_completed',
+                                'name'        => 'wpinv_date_completed',
+                                'label'       => __( 'Date Completed:', 'invoicing' ),
+                                'label_type'  => 'vertical',
+                                'class'       => 'form-control-sm',
+                                'value'       => $invoice->get_date_completed( 'edit' ),
+                                'placeholder' => 'YYYY-MM-DD 00:00',
+                            ),
+                            true
+                        );
 
                         // Due date.
                         if ( $invoice->is_type( 'invoice' ) && wpinv_get_option( 'overdue_active' ) && ( ! $invoice->is_paid() || $invoice->is_draft() ) ) {
 
                             aui()->input(
                                 array(
-                                    'type'        => 'datepicker',
-                                    'id'          => 'wpinv_due_date',
-                                    'name'        => 'wpinv_due_date',
-                                    'label'       => __( 'Due Date:', 'invoicing' ) . getpaid_get_help_tip( __( 'Leave blank to disable automated reminder emails for this invoice.', 'invoicing' ) ),
-                                    'label_type'  => 'vertical',
-                                    'placeholder' => __( 'No due date', 'invoicing' ),
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_due_date( 'edit' ),
+                                    'type'             => 'datepicker',
+                                    'id'               => 'wpinv_due_date',
+                                    'name'             => 'wpinv_due_date',
+                                    'label'            => __( 'Due Date:', 'invoicing' ) . getpaid_get_help_tip( __( 'Leave blank to disable automated reminder emails for this invoice.', 'invoicing' ) ),
+                                    'label_type'       => 'vertical',
+                                    'placeholder'      => __( 'No due date', 'invoicing' ),
+                                    'class'            => 'form-control-sm',
+                                    'value'            => $invoice->get_due_date( 'edit' ),
                                     'extra_attributes' => array(
                                         'data-enable-time' => 'true',
                                         'data-time_24hr'   => 'true',
@@ -136,6 +133,7 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                         // Status.
                         $label = sprintf(
+                            // translators: %s: Invoice type.
                             __( '%s Status:', 'invoicing' ),
                             ucfirst( $invoice->get_invoice_quote_type() )
                         );
@@ -151,18 +149,20 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 'value'            => array_key_exists( $status, $invoice->get_all_statuses() ) ? $status : $invoice->get_default_status(),
                                 'select2'          => true,
                                 'data-allow-clear' => 'false',
-                                'options'          => wpinv_get_invoice_statuses( true, false, $invoice )
+                                'options'          => wpinv_get_invoice_statuses( true, false, $invoice ),
                             ),
                             true
                         );
 
                         // Invoice number.
                         $label = sprintf(
+                            // translators: %s: Invoice type.
                             __( '%s Number:', 'invoicing' ),
                             ucfirst( $invoice->get_invoice_quote_type() )
                         );
 
                         $info  = sprintf(
+                            // translators: %s: Invoice type.
                             __( 'Each %s number must be unique.', 'invoicing' ),
                             strtolower( $invoice->get_invoice_quote_type() )
                         );
@@ -213,17 +213,17 @@ class GetPaid_Meta_Box_Invoice_Details {
                                 true
                             );
 
-                        } else if ( $invoice->get_discount_code( 'edit' ) ) {
+                        } elseif ( $invoice->get_discount_code( 'edit' ) ) {
 
                             aui()->input(
                                 array(
-                                    'type'        => 'text',
-                                    'id'          => 'wpinv_discount_code',
-                                    'name'        => 'wpinv_discount_code',
-                                    'label'       => __( 'Discount Code:', 'invoicing' ),
-                                    'label_type'  => 'vertical',
-                                    'class'       => 'form-control-sm',
-                                    'value'       => $invoice->get_discount_code( 'edit' ),
+                                    'type'             => 'text',
+                                    'id'               => 'wpinv_discount_code',
+                                    'name'             => 'wpinv_discount_code',
+                                    'label'            => __( 'Discount Code:', 'invoicing' ),
+                                    'label_type'       => 'vertical',
+                                    'class'            => 'form-control-sm',
+                                    'value'            => $invoice->get_discount_code( 'edit' ),
                                     'extra_attributes' => array(
                                         'onclick'  => 'this.select();',
                                         'readonly' => 'true',
@@ -241,13 +241,13 @@ class GetPaid_Meta_Box_Invoice_Details {
 
                             aui()->input(
                                 array(
-                                    'id'          => 'wpinv_taxable',
-                                    'name'        => 'disable_taxes',
-                                    'type'        => 'checkbox',
-                                    'label'       => __( 'Disable taxes', 'invoicing' ),
-                                    'value'       => '1',
-                                    'checked'     => (bool) $invoice->get_disable_taxes(),
-                                    'class'       => 'getpaid-recalculate-prices-on-change',
+                                    'id'      => 'wpinv_taxable',
+                                    'name'    => 'disable_taxes',
+                                    'type'    => 'checkbox',
+                                    'label'   => __( 'Disable taxes', 'invoicing' ),
+                                    'value'   => '1',
+                                    'checked' => (bool) $invoice->get_disable_taxes(),
+                                    'class'   => 'getpaid-recalculate-prices-on-change',
                                 ),
                                 true
                             );
@@ -259,12 +259,12 @@ class GetPaid_Meta_Box_Invoice_Details {
                             // Send to customer.
                             aui()->input(
                                 array(
-                                    'id'          => 'wpinv_send_to_customer',
-                                    'name'        => 'send_to_customer',
-                                    'type'        => 'checkbox',
-                                    'label'       => __( 'Send invoice to customer after saving', 'invoicing' ),
-                                    'value'       => '1',
-                                    'checked'     => $invoice->is_draft() && (bool) wpinv_get_option( 'email_user_invoice_active', true ),
+                                    'id'      => 'wpinv_send_to_customer',
+                                    'name'    => 'send_to_customer',
+                                    'type'    => 'checkbox',
+                                    'label'   => __( 'Send invoice to customer after saving', 'invoicing' ),
+                                    'value'   => '1',
+                                    'checked' => $invoice->is_draft() && (bool) wpinv_get_option( 'email_user_invoice_active', true ),
                                 ),
                                 true
                             );

@@ -64,6 +64,7 @@ aui()->input(
 		'type'             => 'datepicker',
 		'class'            => $label_class . ' getpaid-init-flatpickr flatpickr-input',
 		'extra_attributes' => array_filter( apply_filters( 'getpaid_date_field_attributes', $options ) ),
+		'value'            => $query_value,
 	),
 	true
 );

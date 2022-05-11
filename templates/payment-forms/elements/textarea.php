@@ -26,6 +26,7 @@ aui()->textarea(
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
         'class'       => $label_class,
+        'value'       => $query_value,
     ),
     true
 );

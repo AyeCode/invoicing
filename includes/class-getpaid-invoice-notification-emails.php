@@ -206,17 +206,19 @@ class GetPaid_Invoice_Notification_Emails {
 		if ( $result ) {
 			$invoice->add_system_note(
 				sprintf(
+					// translators: %1 is the email type, %2 is the invoice recipient.
 					__( 'Successfully sent %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
-					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
+					$email->is_admin_email() ? __( 'admin', 'invoicing' ) : __( 'the customer', 'invoicing' )
 				)
 			);
 		} else {
 			$invoice->add_system_note(
 				sprintf(
+					// translators: %1 is the email type, %2 is the invoice recipient.
 					__( 'Failed sending %1$s notification email to %2$s.', 'invoicing' ),
 					sanitize_key( $type ),
-					$email->is_admin_email() ? __( 'admin' ) : __( 'the customer' )
+					$email->is_admin_email() ? __( 'admin', 'invoicing' ) : __( 'the customer', 'invoicing' )
 				)
 			);
 		}
@@ -247,7 +249,7 @@ class GetPaid_Invoice_Notification_Emails {
 				$cc_2 = array_map( 'sanitize_email', wpinv_parse_list( $cc_2 ) );
 				$recipients = array_filter( array_unique( array_merge( $recipients, $cc_2 ) ) );
 			}
-}
+		}
 
 		return $recipients;
 

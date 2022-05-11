@@ -19,8 +19,9 @@ $options = getpaid_convert_price_string_to_options( $options );
 $keys    = array_keys( $options );
 $value   = empty( $options ) ? '' : $keys[0];
 
-// Prepare id.
-$id = esc_attr( $id );
+if ( ! empty( $query_value ) ) {
+    $value = $query_value;
+}
 
 $select_type = empty( $select_type ) ? 'select' : $select_type;
 
