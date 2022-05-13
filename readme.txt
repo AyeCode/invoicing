@@ -16,6 +16,8 @@ Payments & Invoicing plugin for WordPress to quickly and easily sell online. Cre
 
 GetPaid can be used as a payment system for 3rd party plugins too.
 
+[youtube https://www.youtube.com/watch?v=gGtehIjDG3E]
+
 = Features =
 
 * Create items with a one-time fee or recurring payments (subscriptions).
@@ -70,11 +72,20 @@ GetPaid can be used as a payment system with a checkout page by any plugin.
 = Add-ons =
 
 * [Quotes](https://wordpress.org/plugins/invoicing-quotes/) - Create quotes, send them to clients and convert them to Invoices when accepted by the customer
+* [Wallet](https://wordpress.org/plugins/getpaid-wallet/) - Topup and withdraw money from your wallet while also being able to use the balance at checkout
+* [Item Inventory](https://wordpress.org/plugins/getpaid-item-inventory/) - Set stock levels for individual items
 * [PDF Invoices](https://wpgetpaid.com/downloads/pdf-invoices/) - Send PDF invoices via email or let users download them
 * [AffiliateWP Integration](https://wpgetpaid.com/downloads/affiliatewp-integration/) - Integrate with the [AffiliateWP plugin](https://affiliatewp.com/)
 * [Contact form 7](https://wpgetpaid.com/downloads/contact-form-7/) - Send an invoice/quote when a user fills out a form
 * [Gravity Forms](https://wpgetpaid.com/downloads/gravity-forms/) - Send an invoice/quote when a user fills out a form
-* [Ninja Forms](https://wordpress.org/plugins/ninja-forms/) - Send an invoice/quote when a user fills out a form
+* [Ninja Forms](https://wpgetpaid.com/downloads/ninja-forms/) - Send an invoice/quote when a user fills out a form
+* [Digital Downloads](https://wpgetpaid.com/downloads/digital-downloads/) - Sell digital files such as eBooks, Music, Videos, or Software
+* [Custom Item Success Page](https://wpgetpaid.com/downloads/custom-item-success-page/) - Redirect buyers to different success pages according to the item purchased
+* [Advertising](https://wpgetpaid.com/downloads/advertising/) - Sell Ads on your WordPress website (Fully integrated with GeoDirectory)
+* [Sales Funnels](https://wpgetpaid.com/downloads/sales-funnels/) - Easily create simple Sales Funnels with Order Bumps, Upsell and Downsell Offers
+* [Simple Quantity Discounts](https://wpgetpaid.com/downloads/simple-quantity-discounts/) - Set discounts for Bulk orders
+* [Paid Trials](https://wpgetpaid.com/downloads/paid-trials/) - Offer Paid Trials.
+
 
 
 New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpgetpaid.com/contact-form/) and we will consider it.
