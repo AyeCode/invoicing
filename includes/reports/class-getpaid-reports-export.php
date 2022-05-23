@@ -99,14 +99,17 @@ class GetPaid_Reports_Export {
 
 		return aui()->input(
 			array(
-				'name'        => 'from_date',
-				'id'          => esc_attr( "$post_type-from_date" ),
-				'placeholder' => 'yy-mm-dd',
-				'label'       => __( 'From Date', 'invoicing' ),
-				'label_type'  => 'vertical',
-				'label_class' => 'd-block',
-				'type'        => 'datepicker',
-			)
+				'type'             => 'datepicker',
+				'id'               => esc_attr( "$post_type-from_date" ),
+				'name'             => 'from_date',
+				'label'            => __( 'From Date', 'invoicing' ),
+				'placeholder'      => 'YYYY-MM-DD',
+				'extra_attributes' => array(
+					'data-enable-time' => 'false',
+					'data-allow-input' => 'true',
+				),
+			),
+			false
 		);
 
 	}

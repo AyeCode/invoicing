@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.12 =
+* Fatal error when checking out with an existing username on PHP 8 - FIXED
+
 = 2.6.11 =
 * Fallback tax rate does not allow dicimals - FIXED
 * Clicking on the number of invoices in the customers table shows their invoices - ADDED
