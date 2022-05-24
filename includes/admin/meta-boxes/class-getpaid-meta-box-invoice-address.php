@@ -441,7 +441,7 @@ class GetPaid_Meta_Box_Invoice_Address {
         if ( ! empty( $_POST['wpinv_new_user'] ) && is_email( stripslashes( $_POST['wpinv_email'] ) ) ) {
 
             // Attempt to create the user.
-            $user = wpinv_create_user( sanitize_email( stripslashes( $_POST['wpinv_email'] ) ) );
+            $user = wpinv_create_user( sanitize_email( stripslashes( $_POST['wpinv_email'] ) ), $invoice->get_first_name() . $invoice->get_last_name() );
 
             // If successful, update the invoice author.
             if ( is_numeric( $user ) ) {
