@@ -1,4 +1,6 @@
-name: Plugin asset/readme update
+name: Update readme/assets only
+on:
+  workflow_dispatch:
 jobs:
   trunk:
     name: Push to trunk
