@@ -97,7 +97,7 @@ function wpinv_generate_user_name( $prefix = '' ) {
     $postfix  = 2;
 
     while ( username_exists( $username ) ) {
-        $username = $prefix + $postfix;
+        $username = "{$prefix}{$postfix}";
         $postfix ++;
     }
 

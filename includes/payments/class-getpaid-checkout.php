@@ -197,14 +197,16 @@ class GetPaid_Checkout {
         }
 
         if ( empty( $user ) ) {
-            $user = wpinv_create_user( $submission->get_billing_email() );
+			$name = array( $submission->get_field( 'wpinv_first_name', 'billing' ), $submission->get_field( 'wpinv_last_name', 'billing' ) );
+			$name = implode( '', array_filter( $name ) );
+            $user = wpinv_create_user( $submission->get_billing_email(), $name );
 
 			// (Maybe) send new user notification.
 			$should_send_notification = wpinv_get_option( 'disable_new_user_emails' );
 			if ( ! empty( $user ) && is_numeric( $user ) && apply_filters( 'getpaid_send_new_user_notification', empty( $should_send_notification ), $user ) ) {
 				wp_send_new_user_notifications( $user, 'user' );
 			}
-}
+		}
 
         if ( is_wp_error( $user ) ) {
             wp_send_json_error( $user->get_error_message() );

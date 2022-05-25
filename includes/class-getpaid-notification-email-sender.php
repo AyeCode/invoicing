@@ -41,7 +41,7 @@ class GetPaid_Notification_Email_Sender {
 			'getpaid_email_data',
 			array(
 				'to'          => array_filter( array_unique( wpinv_parse_list( $to ) ) ),
-				'subject'     => htmlspecialchars_decode( strip_tags( $subject ), ENT_QUOTES ),
+				'subject'     => htmlspecialchars_decode( wp_strip_all_tags( $subject ), ENT_QUOTES ),
 				'email'       => apply_filters( 'wpinv_mail_content', $email ),
 				'headers'     => $this->get_headers(),
 				'attachments' => $attachments,
@@ -193,7 +193,7 @@ class GetPaid_Notification_Email_Sender {
 	 */
 	public function get_reply_to() {
 
-		$reply_to = wpinv_get_admin_email();
+		$reply_to = current( wpinv_parse_list( wpinv_get_admin_email() ) );
 
 		if ( ! is_email( $reply_to ) ) {
 			$reply_to = get_option( 'admin_email' );
