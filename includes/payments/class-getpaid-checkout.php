@@ -255,8 +255,8 @@ class GetPaid_Checkout {
 					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) {
 						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
 					}
-}
-}
+			}
+		}
 
             // If it is required and not set, abort.
             if ( ! $submission->is_required_field_set( $field ) ) {

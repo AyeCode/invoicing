@@ -678,7 +678,7 @@ function wpinv_template( $template ) {
 
     return $template;
 }
-add_filter( 'template_include', 'wpinv_template', 10, 1 );
+add_filter( 'template_include', 'wpinv_template', 1000, 1 );
 
 function wpinv_get_business_address() {
     $business_address   = wpinv_store_address();
