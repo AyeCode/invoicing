@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.13 =
+* Fix BuddyPress integration not working correctly.
+
 = 2.6.12 =
 * Fatal error when checking out with an existing username on PHP 8 - FIXED
 
