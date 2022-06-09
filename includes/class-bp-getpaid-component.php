@@ -84,7 +84,7 @@ class BP_GetPaid_Component extends BP_Component {
         }
 
         // Or a user is not viewing their profile.
-        if ( bp_displayed_user_id() != bp_loggedin_user_id() ) {
+        if ( bp_displayed_user_id() !== bp_loggedin_user_id() ) {
             return;
         }
 
@@ -209,7 +209,7 @@ class BP_GetPaid_Component extends BP_Component {
 	 * @since 2.1.5
 	 */
 	public function handle_display_current_tab() {
-		 getpaid_prepare_user_content_tab( $this->get_current_tab() );
+		echo getpaid_prepare_user_content_tab( $this->get_current_tab() );
 	}
 
 }

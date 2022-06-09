@@ -2069,7 +2069,7 @@ class WPInv_Invoice extends GetPaid_Data {
 				$this->maybe_set_date_paid();
 
 			}
-}
+		}
 
 		return array(
 			'from' => $old_status,
