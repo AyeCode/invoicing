@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.14 =
+* Quantity Selector adds 0.01 instead of 1
+
 = 2.6.13 =
 * Fix BuddyPress integration not working correctly.
 

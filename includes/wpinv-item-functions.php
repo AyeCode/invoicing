@@ -277,7 +277,7 @@ function wpinv_get_item_suffix( $item, $html = true ) {
 
     $item   = new WPInv_Item( $item );
     $suffix = $item->is_recurring() ? ' ' . __( '(r)', 'invoicing' ) : '';
-    $suffix = $html ? $suffix : strip_tags( $suffix );
+    $suffix = $html ? $suffix : wp_strip_all_tags( $suffix );
 
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
 }
