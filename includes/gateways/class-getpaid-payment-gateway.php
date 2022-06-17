@@ -486,13 +486,16 @@ abstract class GetPaid_Payment_Gateway {
             '11' => __( 'November', 'invoicing' ),
             '12' => __( 'December', 'invoicing' ),
         );
+		$months = apply_filters( 'getpaid_cc_months', $months, $this );
 
-        $year  = (int) date( 'Y', current_time( 'timestamp' ) );
+        $year  = (int) current_time( 'Y' );
         $years = array();
 
         for ( $i = 0; $i <= 10; $i++ ) {
             $years[ $year + $i ] = $year + $i;
         }
+
+		$years = apply_filters( 'getpaid_cc_years', $years, $this );
 
         ?>
             <div class="<?php echo esc_attr( $this->id ); ?>-cc-form getpaid-cc-form mt-1">
@@ -528,7 +531,7 @@ abstract class GetPaid_Payment_Gateway {
 
                                             <?php
                                                 foreach ( $months as $key => $month ) {
-												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $month ) . "</option>" . PHP_EOL;
+												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $month ) . '</option>';
                                                 }
                                             ?>
 
@@ -541,13 +544,13 @@ abstract class GetPaid_Payment_Gateway {
 
                                             <?php
                                                 foreach ( $years as $key => $year ) {
-												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $year ) . "</option>" . PHP_EOL;
+												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $year ) . '</option>';
                                                 }
                                             ?>
 
                                         </select>
                                     </div>
-            
+
                                 </div>
                             </div>
                         </div>
@@ -571,7 +574,7 @@ abstract class GetPaid_Payment_Gateway {
                         </div>
 
 					</div>
-					
+
 					<?php
 
 						if ( $save ) {
@@ -594,7 +597,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * @since 1.0.19
 	 */
 	public function new_payment_method_entry( $form ) {
-		echo "<div class='getpaid-new-payment-method-form' style='display:none;'> " . wp_kses( $form, getpaid_allowed_html() ) . " . </div>";
+		echo "<div class='getpaid-new-payment-method-form' style='display:none;'> " . wp_kses( $form, getpaid_allowed_html() ) . '</div>';
 	}
 
 	/**
