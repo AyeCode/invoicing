@@ -145,7 +145,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.6.14 =
-* Quantity Selector adds 0.01 instead of 1
+* Quantity Selector adds 0.01 instead of 1 - FIXED
+* Auto-format card numbers using a space - ADDED
 
 = 2.6.13 =
 * Fix BuddyPress integration not working correctly.
