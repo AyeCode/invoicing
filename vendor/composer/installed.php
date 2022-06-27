@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '3cd0b19c0b859bff552ad2f0bf3407cc233fe61c',
+        'reference' => '69e6d2c97b85788f229d6319b60148b28ac4ab7c',
         'name' => 'ayecode/invoicing',
         'dev' => true,
     ),
@@ -25,7 +25,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '3cd0b19c0b859bff552ad2f0bf3407cc233fe61c',
+            'reference' => '69e6d2c97b85788f229d6319b60148b28ac4ab7c',
             'dev_requirement' => false,
         ),
         'ayecode/wp-ayecode-ui' => array(
@@ -47,12 +47,12 @@
             'dev_requirement' => false,
         ),
         'ayecode/wp-font-awesome-settings' => array(
-            'pretty_version' => '1.0.13',
-            'version' => '1.0.13.0',
+            'pretty_version' => '1.0.14',
+            'version' => '1.0.14.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ayecode/wp-font-awesome-settings',
             'aliases' => array(),
-            'reference' => 'a7a11ee4290674ec214d1fe694139af275350402',
+            'reference' => 'd9281ebe75fb3219f8e65a9aa43686ce29c45124',
             'dev_requirement' => false,
         ),
         'ayecode/wp-super-duper' => array(
