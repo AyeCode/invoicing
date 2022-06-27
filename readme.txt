@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.15 =
+* Remove invoicing post types from the seo framework - ADDED
+
 = 2.6.14 =
 * Quantity Selector adds 0.01 instead of 1 - FIXED
 * Auto-format card numbers using a space - ADDED
