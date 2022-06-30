@@ -37,6 +37,7 @@ class ComposerStaticInit8b6d4385c391849a80038f0b0e87c8b5
     public static $classMap = array (
         'AyeCode_Connect_Helper' => __DIR__ . '/..' . '/ayecode/ayecode-connect-helper/ayecode-connect-helper.php',
         'AyeCode_Deactivation_Survey' => __DIR__ . '/..' . '/ayecode/wp-deactivation-survey/wp-deactivation-survey.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WP_Super_Duper' => __DIR__ . '/..' . '/ayecode/wp-super-duper/wp-super-duper.php',
     );
 

@@ -390,6 +390,17 @@ jQuery(function ($) {
 					validator.text(validator.data('validate'))
 				});
 
+				// Format credit card number on input.
+				this.form.on('input', '.getpaid-format-card-number', function () {
+					var input = $(this);
+					var value = input.val();
+					var formatted = value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ');
+
+					if (value != formatted) {
+						input.val(formatted)
+					}
+				});
+
 				// Discounts.
 				if (this.form.find('.getpaid-discount-field').length) {
 

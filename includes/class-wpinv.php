@@ -129,6 +129,7 @@ class WPInv_Plugin {
 		add_action( 'wp_head', array( $this, 'wp_head' ) );
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'wpseo_exclude_from_sitemap_by_post_ids' ) );
+		add_filter( 'the_seo_framework_sitemap_supported_post_types', array( $this, 'exclude_invoicing_post_types' ) );
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 
 		add_filter( 'query_vars', array( $this, 'custom_query_vars' ) );
@@ -564,6 +565,23 @@ class WPInv_Plugin {
 		$excluded_posts_ids = $excluded_posts_ids + $our_pages;
 		return array_unique( $excluded_posts_ids );
 
+	}
+
+	/**
+	 * Remove our pages from yoast sitemaps.
+	 *
+	 * @since 1.0.19
+	 * @param string[] $post_types
+	 */
+	public function exclude_invoicing_post_types( $post_types ) {
+
+		// Ensure that we have an array.
+		if ( ! is_array( $post_types ) ) {
+			$post_types = array();
+		}
+
+		// Remove our post types.
+		return array_diff( $post_types, array_keys( getpaid_get_invoice_post_types() ) );
 	}
 
 	/**

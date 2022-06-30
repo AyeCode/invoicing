@@ -199,7 +199,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 					if ( $item->allows_quantities() ) {
 						?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type="number" step="0.01" style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' <?php echo null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''; ?> required>
+								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type="number" step="any" style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' <?php echo null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''; ?> required>
 							<?php
 						} else {
 						echo (float) $item->get_quantity();
