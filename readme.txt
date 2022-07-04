@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.15 =
 * Remove invoicing post types from the seo framework - ADDED
+* Invoice / Quote note deletion not working - FIXED
 
 = 2.6.14 =
 * Quantity Selector adds 0.01 instead of 1 - FIXED

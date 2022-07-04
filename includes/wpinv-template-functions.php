@@ -1147,12 +1147,12 @@ function wpinv_get_invoice_note_line_item( $note, $echo = true ) {
                     ?>
                 </abbr>&nbsp;&nbsp;
                 <?php if ( $note->comment_author !== 'System' && wpinv_current_user_can_manage_invoicing() ) { ?>
-                    <a href="#" class="delete_note"><?php esc_html_e( 'Delete note', 'invoicing' ); ?></a>
+                    <a href="#" class="delete_note" data-id="<?php echo esc_attr( $note->comment_ID ); ?>"><?php esc_html_e( 'Delete note', 'invoicing' ); ?></a>
                 <?php } ?>
             </p>
 
         <?php endif; ?>
-        
+
     </li>
     <?php
     $note_content = ob_get_clean();
