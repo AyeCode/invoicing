@@ -1043,24 +1043,21 @@ jQuery(function ($) {
 			});
 			return false;
 		},
-		delete_invoice_note: function () {
-			var note = $(this).closest('li.note');
-			$(note).block({
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6
-				}
-			});
-			var data = {
+		delete_invoice_note: function ( e ) {
+			e.preventDefault();
+
+			// Fetch the note id.
+			var note_id = $(this).data('id');
+
+			// Remove the note from the DOM.
+			$(this).closest('li.note').remove();
+
+			// Delete remotely.
+			$.post( WPInv_Admin.ajax_url, {
 				action: 'wpinv_delete_note',
-				note_id: $(note).attr('rel'),
+				note_id: note_id,
 				_nonce: WPInv_Admin.delete_invoice_note_nonce
-			};
-			$.post(WPInv_Admin.ajax_url, data, function () {
-				$(note).remove();
 			});
-			return false;
 		}
 	};
 	wpinv_meta_boxes_notes.init();
