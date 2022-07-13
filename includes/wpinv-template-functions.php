@@ -1307,7 +1307,9 @@ function getpaid_convert_items_to_array( $items ) {
             $quantity = (float) $data[1];
         }
 
-        $prepared[ $data[0] ] = $quantity;
+        // WPML support.
+        $item_id              = apply_filters( 'wpml_object_id', $data[0], 'wpi_item', true );
+        $prepared[ $item_id ] = $quantity;
 
     }
 
