@@ -1025,7 +1025,8 @@ jQuery(function ($) {
 			}
 
 			// Handles the actual submission.
-			var submit = function () {
+			var unblock = true;
+			var submit  = function () {
 				return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce)
 					.done(function (res) {
 
@@ -1039,13 +1040,19 @@ jQuery(function ($) {
 						if (res.success) {
 
 							// Asume that the action is a redirect.
-							if (!res.data.action) {
+							if (!res.data.action || 'redirect' == res.data.action) {
 								window.location.href = decodeURIComponent(res.data)
 							}
 
 							if ('auto_submit_form' == res.data.action) {
 								form.parent().append('<div class="getpaid-checkout-autosubmit-form">' + res.data.form + '</div>')
 								$('.getpaid-checkout-autosubmit-form form').submit()
+							}
+
+							// Trigger event.
+							if ( 'event' == res.data.action ) {
+								$('body').trigger(res.data.event, [res.data.data, form])
+								unblock = false;
 							}
 
 							return
@@ -1068,7 +1075,9 @@ jQuery(function ($) {
 					})
 
 					.always(() => {
-						wpinvUnblock(form);
+						if ( unblock ) {
+							wpinvUnblock(form);
+						}
 					})
 
 			}
