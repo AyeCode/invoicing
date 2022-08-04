@@ -38,7 +38,7 @@ aui()->input(
         'help_text'        => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'             => 'email',
         'value'            => $value,
-        'class'            => 'wpinv_billing_email',
+        'class'            => 'wpinv_billing_email getpaid-refresh-on-change',
         'extra_attributes' => array(
             'autocomplete' => 'billing email',
         ),
