@@ -424,9 +424,11 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
     $initial_class   = 'getpaid-item-initial-price';
     $recurring_class = 'getpaid-item-recurring-price';
     $bill_times      = $item->get_recurring_limit();
+    $bill_times_less = $bill_times - 1;
 
     if ( ! empty( $bill_times ) ) {
 		$bill_times = $item->get_recurring_interval() * $bill_times;
+        $bill_times_less = getpaid_get_subscription_period_label( $item->get_recurring_period(), $bill_times - $item->get_recurring_interval() );
 		$bill_times = getpaid_get_subscription_period_label( $item->get_recurring_period(), $bill_times );
 	}
 
@@ -534,7 +536,7 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
             _x( 'Free for %1$s then %2$s / %1$s for %3$s', 'Item subscription amount. (e.g.: Free for 3 months then $7 / 3 months for 12 months)', 'invoicing' ),
             "<span class='getpaid-item-recurring-period'>$period</span>",
             "<span class='$recurring_class'>$recurring_price</span>",
-            "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
+            "<span class='getpaid-item-recurring-bill-times'>$bill_times_less</span>"
         );
 
     }
@@ -557,7 +559,7 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
         "<span class='$initial_class'>$initial_price</span>",
         "<span class='$recurring_class'>$recurring_price</span>",
         "<span class='getpaid-item-recurring-period'>$period</span>",
-        "<span class='getpaid-item-recurring-bill-times'>$bill_times</span>"
+        "<span class='getpaid-item-recurring-bill-times'>$bill_times_less</span>"
     );
 
 }

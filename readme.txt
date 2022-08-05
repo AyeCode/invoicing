@@ -148,6 +148,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Remove invoicing post types from the seo framework - ADDED
 * Invoice / Quote note deletion not working - FIXED
 * Update Namibian currency symbol - CHANGED
+* Improve messaging for limited subscriptions - CHANGED
 
 = 2.6.14 =
 * Quantity Selector adds 0.01 instead of 1 - FIXED
