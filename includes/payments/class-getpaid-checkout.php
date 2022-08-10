@@ -267,7 +267,7 @@ class GetPaid_Checkout {
             if ( isset( $data[ $field['id'] ] ) ) {
 
 				// Uploads.
-				if ( $field['type'] == 'file_upload' ) {
+				if ( $field['type'] === 'file_upload' ) {
 					$max_file_num = empty( $field['max_file_num'] ) ? 1 : absint( $field['max_file_num'] );
 
 					if ( count( $data[ $field['id'] ] ) > $max_file_num ) {
@@ -286,7 +286,7 @@ class GetPaid_Checkout {
 
 					$value = implode( ' | ', $value );
 
-				} elseif ( $field['type'] == 'checkbox' ) {
+				} elseif ( $field['type'] === 'checkbox' ) {
 					$value = isset( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
 				} else {
 					$value = wp_kses_post( $data[ $field['id'] ] );
@@ -304,7 +304,7 @@ class GetPaid_Checkout {
 				$prepared['all'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
 
             }
-}
+		}
 
 		return $prepared;
 
