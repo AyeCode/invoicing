@@ -61,13 +61,6 @@
 				font-weight: 400;
 			}
 
-			/* hide all other elements */
-			body::before,
-			body::after,
-			body > *:not(#getpaid-form-embed):not(.flatpickr-calendar) { 
-				display:none !important; 
-			}
-
 			#getpaid-form-embed {
 				display: block !important;
 				width: 100%;
