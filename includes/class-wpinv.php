@@ -498,10 +498,11 @@ class WPInv_Plugin {
 		}
 
 		$upgrades  = array(
-			'0.0.5' => '004',
-			'1.0.3' => '102',
-			'2.0.0' => '118',
-			'2.0.8' => '207',
+			'0.0.5'  => '004',
+			'1.0.3'  => '102',
+			'2.0.0'  => '118',
+			'2.0.8'  => '207',
+			'2.6.16' => '2615',
 		);
 
 		foreach ( $upgrades as $key => $method ) {
@@ -509,7 +510,7 @@ class WPInv_Plugin {
 			if ( version_compare( $wpi_version, $key, '<' ) ) {
 				return $installer->upgrade_db( $method );
 			}
-}
+		}
 
 	}
 

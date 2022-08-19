@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.16 =
+* Fix prices more than 10,000 USD rounded up.
+
 = 2.6.15 =
 * Remove invoicing post types from the seo framework - ADDED
 * Invoice / Quote note deletion not working - FIXED
