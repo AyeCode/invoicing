@@ -89,7 +89,7 @@ class GetPaid_Installer {
 			foreach ( $results as $row ) {
 				clean_post_cache( $row->ID );
 			}
-}
+		}
 
 		// Item meta key changes
 		$query = 'SELECT DISTINCT post_id FROM ' . $wpdb->postmeta . " WHERE meta_key IN( '_wpinv_item_id', '_wpinv_package_id', '_wpinv_post_id', '_wpinv_cpt_name', '_wpinv_cpt_singular_name' )";
@@ -103,7 +103,7 @@ class GetPaid_Installer {
 			foreach ( $results as $row ) {
 				clean_post_cache( $row->post_id );
 			}
-}
+		}
 
 		$this->upgrade_from_102();
 	}
@@ -134,6 +134,17 @@ class GetPaid_Installer {
 	public function upgrade_from_207() {
 		global $wpdb;
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoice_items MODIFY COLUMN quantity FLOAT(20);" );
+		$this->upgrade_from_2615();
+	}
+
+	/**
+	 * Upgrade to version 2.6.16.
+	 *
+	 */
+	public function upgrade_from_2615() {
+		global $wpdb;
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoice_items MODIFY COLUMN item_price DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY custom_price DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY discount DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY subtotal DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY price DECIMAL(16,4) NOT NULL DEFAULT '0';" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}_getpaid_invoices MODIFY COLUMN subtotal DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY tax DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY fees_total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY discount DECIMAL(16,4) NOT NULL DEFAULT '0';" );
 	}
 
 	/**
@@ -244,8 +255,8 @@ class GetPaid_Installer {
 			customer_id bigint(20) NOT NULL,
 			frequency int(11) NOT NULL DEFAULT '1',
 			period varchar(20) NOT NULL,
-			initial_amount mediumtext NOT NULL,
-			recurring_amount mediumtext NOT NULL,
+			initial_amount DECIMAL(16,4) NOT NULL,
+			recurring_amount DECIMAL(16,4) NOT NULL,
 			bill_times bigint(20) NOT NULL,
 			transaction_id varchar(60) NOT NULL,
 			parent_payment_id bigint(20) NOT NULL,
@@ -295,11 +306,11 @@ class GetPaid_Installer {
             gateway VARCHAR(100),
             transaction_id VARCHAR(100),
             currency VARCHAR(10),
-            subtotal FLOAT NOT NULL DEFAULT 0,
-            tax FLOAT NOT NULL DEFAULT 0,
-            fees_total FLOAT NOT NULL DEFAULT 0,
-            total FLOAT NOT NULL DEFAULT 0,
-            discount FLOAT NOT NULL DEFAULT 0,
+            subtotal DECIMAL(16,4) NOT NULL DEFAULT 0,
+            tax DECIMAL(16,4) NOT NULL DEFAULT 0,
+            fees_total DECIMAL(16,4) NOT NULL DEFAULT 0,
+            total DECIMAL(16,4) NOT NULL DEFAULT 0,
+            discount DECIMAL(16,4) NOT NULL DEFAULT 0,
             discount_code VARCHAR(100),
             disable_taxes INT(2) NOT NULL DEFAULT 0,
             due_date DATETIME,
@@ -336,13 +347,13 @@ class GetPaid_Installer {
             item_description TEXT NOT NULL,
             vat_rate FLOAT NOT NULL DEFAULT 0,
             vat_class VARCHAR(100),
-            tax FLOAT NOT NULL DEFAULT 0,
-            item_price FLOAT NOT NULL DEFAULT 0,
-            custom_price FLOAT NOT NULL DEFAULT 0,
+            tax DECIMAL(16,4) NOT NULL DEFAULT 0,
+            item_price DECIMAL(16,4) NOT NULL DEFAULT 0,
+            custom_price DECIMAL(16,4) NOT NULL DEFAULT 0,
             quantity FLOAT NOT NULL DEFAULT 1,
-            discount FLOAT NOT NULL DEFAULT 0,
-            subtotal FLOAT NOT NULL DEFAULT 0,
-            price FLOAT NOT NULL DEFAULT 0,
+            discount DECIMAL(16,4) NOT NULL DEFAULT 0,
+            subtotal DECIMAL(16,4) NOT NULL DEFAULT 0,
+            price DECIMAL(16,4) NOT NULL DEFAULT 0,
             meta TEXT,
             fees TEXT,
 			PRIMARY KEY  (ID),

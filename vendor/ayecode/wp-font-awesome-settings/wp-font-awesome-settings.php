@@ -30,7 +30,8 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 	 * @since 1.0.11 Font Awesome Kits now supported.
 	 * @since 1.0.13 RTL language support added.
 	 * @since 1.0.14 Warning added for v6 pro requires kit and will now not work if official FA plugin installed.
-	 * @ver 1.0.14
+	 * @since 1.0.15 Font Awesome will now load in the FSE if enable din teh backend.
+	 * @ver 1.0.15
 	 * @todo decide how to implement textdomain
 	 */
 	class WP_Font_Awesome_Settings {
@@ -40,7 +41,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '1.0.14';
+		public $version = '1.0.15';
 
 		/**
 		 * Class textdomain.
@@ -125,6 +126,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 
 					if ( $this->settings['enqueue'] == '' || $this->settings['enqueue'] == 'backend' ) {
 						add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_style' ), 5000 );
+						add_filter( 'block_editor_settings_all', array( $this, 'enqueue_editor_styles' ), 10, 2 );
 					}
 
 				} else {
@@ -135,6 +137,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 
 					if ( $this->settings['enqueue'] == '' || $this->settings['enqueue'] == 'backend' ) {
 						add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 5000 );
+						add_filter( 'block_editor_settings_all', array( $this, 'enqueue_editor_scripts' ), 10, 2 );
 					}
 				}
 
@@ -144,6 +147,40 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 				}
 			}
 
+		}
+
+		/**
+		 * Add FA to the FSE.
+		 *
+		 * @param $editor_settings
+		 * @param $block_editor_context
+		 *
+		 * @return array
+		 */
+		public function enqueue_editor_styles( $editor_settings, $block_editor_context ){
+
+			if ( ! empty( $editor_settings['__unstableResolvedAssets']['styles'] ) ) {
+				$url = $this->get_url();
+				$editor_settings['__unstableResolvedAssets']['styles'] .= "<link rel='stylesheet' id='font-awesome-css'  href='$url' media='all' />";
+			}
+
+			return $editor_settings;
+		}
+
+		/**
+		 * Add FA to the FSE.
+		 *
+		 * @param $editor_settings
+		 * @param $block_editor_context
+		 *
+		 * @return array
+		 */
+		public function enqueue_editor_scripts( $editor_settings, $block_editor_context ){
+
+			$url = $this->get_url();
+			$editor_settings['__unstableResolvedAssets']['scripts'] .= "<script src='$url' id='font-awesome-js'></script>";
+
+			return $editor_settings;
 		}
 
 		/**
