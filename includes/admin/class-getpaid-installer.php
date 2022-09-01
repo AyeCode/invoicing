@@ -144,7 +144,7 @@ class GetPaid_Installer {
 	public function upgrade_from_2615() {
 		global $wpdb;
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoice_items MODIFY COLUMN item_price DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY custom_price DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY discount DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY subtotal DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY price DECIMAL(16,4) NOT NULL DEFAULT '0';" );
-		$wpdb->query( "ALTER TABLE {$wpdb->prefix}_getpaid_invoices MODIFY COLUMN subtotal DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY tax DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY fees_total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY discount DECIMAL(16,4) NOT NULL DEFAULT '0';" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoices MODIFY COLUMN subtotal DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY tax DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY fees_total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY total DECIMAL(16,4) NOT NULL DEFAULT '0', MODIFY discount DECIMAL(16,4) NOT NULL DEFAULT '0';" );
 	}
 
 	/**
