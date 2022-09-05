@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.17 =
+* Add an admin tool to fix permalinks.
+
 = 2.6.16 =
 * Fix prices more than 10,000 USD rounded up.
 

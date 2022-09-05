@@ -67,6 +67,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_pages', array( $this, 'admin_create_missing_pages' ) );
+		add_action( 'getpaid_authenticated_admin_action_refresh_permalinks', array( $this, 'admin_refresh_permalinks' ) );
 		add_action( 'getpaid_authenticated_admin_action_create_missing_tables', array( $this, 'admin_create_missing_tables' ) );
 		add_action( 'getpaid_authenticated_admin_action_migrate_old_invoices', array( $this, 'admin_migrate_old_invoices' ) );
 		add_action( 'getpaid_authenticated_admin_action_download_customers', array( $this, 'admin_download_customers' ) );
@@ -529,6 +530,16 @@ class GetPaid_Admin {
 		$installer = new GetPaid_Installer();
 		$installer->create_pages();
 		$this->show_success( __( 'GetPaid pages updated.', 'invoicing' ) );
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+		exit;
+	}
+
+	/**
+	 * Refreshes the permalinks.
+	 */
+	public function admin_refresh_permalinks() {
+		flush_rewrite_rules();
+		$this->show_success( __( 'Permalinks refreshed.', 'invoicing' ) );
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
 		exit;
 	}
