@@ -634,3 +634,30 @@ function getpaid_setup_buddypress_integration() {
 
 }
 add_action( 'bp_setup_components', 'getpaid_setup_buddypress_integration' );
+
+/**
+ * Checks if a given user has purchased a given item.
+ *
+ * @since 2.6.17
+ * @param int $user_id The user id.
+ */
+function getpaid_has_user_purchased_item( $user_id, $item_id ) {
+    global $wpdb;
+
+    if ( empty( $user_id ) ) {
+        return false;
+    }
+
+    $count = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}getpaid_invoice_items AS items
+            INNER JOIN {$wpdb->posts} AS invoices ON invoices.ID = items.post_id
+            WHERE items.item_id = %d AND invoices.post_author = %d AND invoices.post_status = 'publish'
+            LIMIT 1",
+            $item_id,
+            $user_id
+        )
+    );
+
+    return ! empty( $count );
+}

@@ -1024,6 +1024,25 @@ function wpinv_tools_callback( $args ) {
                 </td>
             </tr>
 			<tr>
+                <td><?php esc_html_e( 'Refresh Permalinks', 'invoicing' ); ?></td>
+                <td>
+                    <small><?php esc_html_e( 'Might fix the page not found error when viewing an invoice.', 'invoicing' ); ?></small>
+                </td>
+                <td>
+					<a href="
+                    <?php
+						echo esc_url(
+							wp_nonce_url(
+								add_query_arg( 'getpaid-admin-action', 'refresh_permalinks' ),
+								'getpaid-nonce',
+								'getpaid-nonce'
+							)
+						);
+					?>
+                    " class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
+                </td>
+            </tr>
+			<tr>
                 <td><?php esc_html_e( 'Create Database Tables', 'invoicing' ); ?></td>
                 <td>
                     <small><?php esc_html_e( 'Run this tool to create any missing database tables.', 'invoicing' ); ?></small>
