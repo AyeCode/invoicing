@@ -739,12 +739,10 @@ function wpinv_settings_attrs_helper( $args ) {
  */
 function wpinv_text_callback( $args ) {
 
-	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
-
 	?>
 		<label style="width: 100%;">
 			<input type="text" <?php wpinv_settings_attrs_helper( $args ); ?>>
-			<?php echo wp_kses_post( $desc ); ?>
+			<?php getpaid_settings_description_callback( $args ); ?>
 		</label>
 	<?php
 
@@ -755,12 +753,10 @@ function wpinv_text_callback( $args ) {
  */
 function wpinv_number_callback( $args ) {
 
-	$desc = empty( $desc ) ? '' : "<p class='description'>$desc</p>";
-
 	?>
 		<label style="width: 100%;">
 			<input type="number" step="<?php echo esc_attr( $args['step'] ); ?>" max="<?php echo intval( $args['max'] ); ?>" min="<?php echo intval( $args['min'] ); ?>" <?php wpinv_settings_attrs_helper( $args ); ?>>
-			<?php echo wp_kses_post( $desc ); ?>
+			<?php getpaid_settings_description_callback( $args ); ?>
 		</label>
 	<?php
 
