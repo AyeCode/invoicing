@@ -393,8 +393,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 * @return bool
 	 */
 	public function is_payment_form_invoice( $invoice ) {
-		$is_payment_form_invoice = empty( $_GET['getpaid-admin-action'] ) && ( 'payment_form' === get_post_meta( $invoice, 'wpinv_created_via', true ) || 'geodirectory' === get_post_meta( $invoice, 'wpinv_created_via', true ) );
-		return apply_filters( 'getpaid_invoice_notifications_is_payment_form_invoice', $is_payment_form_invoice, $invoice );
+		$created_via             = get_post_meta( $invoice, 'wpinv_created_via', true );
+		$is_payment_form_invoice = 'payment_form' === $created_via || 'geodirectory' === $created_via;
+		$is_payment_form_invoice = apply_filters( 'getpaid_invoice_notifications_is_payment_form_invoice', $is_payment_form_invoice, $invoice );
+		return empty( $_GET['getpaid-admin-action'] ) && $is_payment_form_invoice;
 	}
 
 	/**

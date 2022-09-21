@@ -339,7 +339,7 @@ function wpinv_create_item( $args = array(), $wp_error = false ) {
         if ( ! empty( $item ) ) {
             $args['ID'] = $item->get_id();
         }
-}
+    }
 
     // Do we have an item?
     if ( ! empty( $args['ID'] ) ) {
