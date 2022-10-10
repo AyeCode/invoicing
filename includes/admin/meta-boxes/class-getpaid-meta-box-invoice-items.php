@@ -161,6 +161,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                                     'show_option_all'  => false,
                                                                     'show_option_none' => false,
                                                                     'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule',
+                                                                    'selected'         => 'digital',
                                                                 ) );
                                                             ?>
                                                         </span>
@@ -180,6 +181,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                                     'show_option_all'  => false,
                                                                     'show_option_none' => false,
                                                                     'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class',
+                                                                    'selected'         => '_standard',
                                                                 ) );
                                                             ?>
                                                         </span>

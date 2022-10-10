@@ -343,7 +343,7 @@ function wpinv_html_select( $args = array() ) {
     echo '<select ';
 
     foreach ( $attrs as $attr => $value ) {
-        
+
         if ( false === $value ) {
             continue;
         }
@@ -371,7 +371,7 @@ function wpinv_html_select( $args = array() ) {
 
         if ( $args['show_option_none'] ) {
             if ( $args['multiple'] ) {
-                $selected = in_array( '', $args['selected'] );
+                $selected = in_array( '', $args['selected'], true );
             } else {
                 $selected = $args['selected'] === '';
             }
@@ -382,9 +382,9 @@ function wpinv_html_select( $args = array() ) {
         foreach ( $args['options'] as $key => $option ) {
 
             if ( $args['multiple'] && is_array( $args['selected'] ) ) {
-                $selected = in_array( $key, $args['selected'] );
+                $selected = in_array( $key, $args['selected'], true );
             } else {
-                $selected = $args['selected'] == $key;
+                $selected = $args['selected'] === $key;
             }
 
             echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected, true, false ) . '>' . esc_html( $option ) . '</option>';
