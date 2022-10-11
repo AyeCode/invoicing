@@ -80,12 +80,23 @@ function wpinv_is_subscriptions_history_page() {
  */
 function wpinv_send_to_success_page( $args = array() ) {
 
-    $redirect = add_query_arg(
-        wp_parse_args( $args ),
-        wpinv_get_success_page_uri()
-    );
+    $args = wp_parse_args( $args );
 
-    $redirect = apply_filters( 'wpinv_send_to_success_page_url', $redirect, $args );
+    if ( ! empty( $args['invoice_key'] ) ) {
+        $invoice = wpinv_get_invoice( $args['invoice_key'] );
+
+        if ( $invoice && $invoice->exists() ) {
+            $success_page = $invoice->get_receipt_url();
+        }
+    }
+
+    if ( empty( $success_page ) ) {
+        $success_page = wpinv_get_success_page_uri();
+    }
+
+    $redirect = add_query_arg( $args, $success_page );
+
+    $redirect = apply_filters( 'wpinv_send_to_success_page_url', $redirect, $args, $success_page );
 
     wp_redirect( $redirect );
     exit;
