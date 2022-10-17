@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.17 =
 * Creating items on the invoice page defaults to "Tax Excempt".
+* Fixed: Date picker not showing on the report export page.
 
 = 2.6.16 =
 * Add an admin tool to fix permalinks.
