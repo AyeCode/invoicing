@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.0
-Stable tag: 2.6.16
+Stable tag: 2.6.17
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,10 +144,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.6.18 =
-* Fix issues where 2 subscriptions are created for manually generated invoices.
-
 = 2.6.17 =
+* Fix issues where 2 subscriptions are created for manually generated invoices.
 * Creating items on the invoice page defaults to "Tax Excempt".
 * Fixed: Date picker not showing on the report export page.
 
