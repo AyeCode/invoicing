@@ -29,8 +29,8 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_authenticated_action_subscription_cancel', array( $this, 'user_cancel_single_subscription' ) );
 
         // Create a subscription whenever an invoice is created, (and update it when it is updated).
-        add_action( 'getpaid_new_invoice', array( $this, 'maybe_create_invoice_subscription' ), 5 );
-        add_action( 'getpaid_update_invoice', array( $this, 'maybe_update_invoice_subscription' ), 5 );
+        add_action( 'wpinv_invoice_metabox_saved', array( $this, 'maybe_update_invoice_subscription' ), 5 );
+        add_action( 'getpaid_checkout_invoice_updated', array( $this, 'maybe_update_invoice_subscription' ), 5 );
 
         // Handles admin subscription update actions.
         add_action( 'getpaid_authenticated_admin_action_update_single_subscription', array( $this, 'admin_update_single_subscription' ) );
