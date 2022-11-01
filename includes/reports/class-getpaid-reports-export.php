@@ -73,10 +73,10 @@ class GetPaid_Reports_Export {
 					<form method="post" action="<?php echo esc_url( $this->get_download_url( $post_type ) ); ?>">
 
 						<?php
-							$this->display_markup( $this->generate_from_date( $post_type ) );
-							$this->display_markup( $this->generate_to_date( $post_type ) );
-							$this->display_markup( $this->generate_post_status_select( $post_type ) );
-							$this->display_markup( $this->generate_file_type_select( $post_type ) );
+							$this->generate_from_date( $post_type );
+							$this->generate_to_date( $post_type );
+							$this->generate_post_status_select( $post_type );
+							$this->generate_file_type_select( $post_type );
 							submit_button( __( 'Download', 'invoicing' ) );
 						?>
 
@@ -97,19 +97,20 @@ class GetPaid_Reports_Export {
 	 */
 	public function generate_from_date( $post_type ) {
 
-		return aui()->input(
+		aui()->input(
 			array(
 				'type'             => 'datepicker',
 				'id'               => esc_attr( "$post_type-from_date" ),
 				'name'             => 'from_date',
 				'label'            => __( 'From Date', 'invoicing' ),
+				'label_type'       => 'vertical',
 				'placeholder'      => 'YYYY-MM-DD',
 				'extra_attributes' => array(
 					'data-enable-time' => 'false',
 					'data-allow-input' => 'true',
 				),
 			),
-			false
+			true
 		);
 
 	}
@@ -120,18 +121,21 @@ class GetPaid_Reports_Export {
 	 */
 	public function generate_to_date( $post_type ) {
 
-		return aui()->input(
+		aui()->input(
 			array(
-				'name'        => 'to_date',
-				'id'          => esc_attr( "$post_type-to_date" ),
-				'placeholder' => 'yy-mm-dd',
-				'label'       => __( 'To Date', 'invoicing' ),
-				'label_type'  => 'vertical',
-				'label_class' => 'd-block',
-				'type'        => 'datepicker',
-			)
+				'type'             => 'datepicker',
+				'id'               => esc_attr( "$post_type-to_date" ),
+				'name'             => 'to_date',
+				'label'            => __( 'To Date', 'invoicing' ),
+				'label_type'       => 'vertical',
+				'placeholder'      => 'YYYY-MM-DD',
+				'extra_attributes' => array(
+					'data-enable-time' => 'false',
+					'data-allow-input' => 'true',
+				),
+			),
+			true
 		);
-
 	}
 
 	/**
@@ -146,7 +150,7 @@ class GetPaid_Reports_Export {
 			$options = wpinv_get_invoice_statuses( true, false, $post_type );
 		}
 
-		return aui()->select(
+		aui()->select(
 			array(
 				'name'        => 'status',
 				'id'          => esc_attr( "$post_type-status" ),
@@ -155,7 +159,8 @@ class GetPaid_Reports_Export {
 				'label_type'  => 'vertical',
 				'label_class' => 'd-block',
 				'options'     => $options,
-			)
+			),
+			true
 		);
 
 	}
@@ -166,7 +171,7 @@ class GetPaid_Reports_Export {
 	 */
 	public function generate_file_type_select( $post_type ) {
 
-		return aui()->select(
+		aui()->select(
 			array(
 				'name'        => 'file_type',
 				'id'          => esc_attr( "$post_type-file_type" ),
@@ -174,12 +179,14 @@ class GetPaid_Reports_Export {
 				'label'       => __( 'Export File', 'invoicing' ),
 				'label_type'  => 'vertical',
 				'label_class' => 'd-block',
+				'value'       => 'csv',
 				'options'     => array(
 					'csv'  => __( 'CSV', 'invoicing' ),
 					'xml'  => __( 'XML', 'invoicing' ),
 					'json' => __( 'JSON', 'invoicing' ),
 				),
-			)
+			),
+			true
 		);
 
 	}
@@ -226,10 +233,10 @@ class GetPaid_Reports_Export {
 					<form method="post" action="<?php echo esc_url( $this->get_download_url( 'subscriptions' ) ); ?>">
 
 						<?php
-							$this->display_markup( $this->generate_from_date( 'subscriptions' ) );
-							$this->display_markup( $this->generate_to_date( 'subscriptions' ) );
-							$this->display_markup( $this->generate_post_status_select( 'subscriptions' ) );
-							$this->display_markup( $this->generate_file_type_select( 'subscriptions' ) );
+							$this->generate_from_date( 'subscriptions' );
+							$this->generate_to_date( 'subscriptions' );
+							$this->generate_post_status_select( 'subscriptions' );
+							$this->generate_file_type_select( 'subscriptions' );
 							submit_button( __( 'Download', 'invoicing' ) );
 						?>
 
