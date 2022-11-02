@@ -45,7 +45,7 @@ html[data-scroll='0'],html:not([data-scroll]){
   }
 }
 
-//blockeditor
+// FSE editor
 html[data-scroll='0'],html:not([data-scroll]){
   body.block-editor-iframe__body{
     .wp-block-template-part:not(.has-child-selected){
@@ -55,6 +55,14 @@ html[data-scroll='0'],html:not([data-scroll]){
       }
     }
   }
+}
+
+// fix for fully transparent nav menu open on mobile
+.navbar.bg-transparent.nav-menu-open.navbar-dark{
+  background: #343a40 !important;
+}
+.navbar.bg-transparent.nav-menu-open.navbar-light{
+  background: #f8f9fa !important;
 }
 
 

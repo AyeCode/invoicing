@@ -1,3 +1,8 @@
+= 1.1.9 =
+* Device type switcher not working on multiline items - FIXED
+* Spacing option increased from 5 to 12 - ADDED
+* MultiSelect inputs now show a clear button - ADDED
+
 = 1.1.8 =
 * prevent JS error that breaks the GD block - FIXED
 * bug with justify content between helper function - FIXED
