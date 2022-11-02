@@ -59,6 +59,13 @@ function sd_get_margin_input( $type = 'mt', $overwrite = array(), $include_negat
 		'3'    => '3',
 		'4'    => '4',
 		'5'    => '5',
+		'6'    => '6',
+		'7'    => '7',
+		'8'    => '8',
+		'9'    => '9',
+		'10'    => '10',
+		'11'    => '11',
+		'12'    => '12',
 	);
 
 	if ( $include_negatives ) {
@@ -67,6 +74,13 @@ function sd_get_margin_input( $type = 'mt', $overwrite = array(), $include_negat
 		$options['n3'] = '-3';
 		$options['n4'] = '-4';
 		$options['n5'] = '-5';
+		$options['n6'] = '-6';
+		$options['n7'] = '-7';
+		$options['n8'] = '-8';
+		$options['n9'] = '-9';
+		$options['n10'] = '-10';
+		$options['n11'] = '-11';
+		$options['n12'] = '-12';
 	}
 
 	$defaults = array(
@@ -131,6 +145,13 @@ function sd_get_padding_input( $type = 'pt', $overwrite = array() ) {
 		'3' => '3',
 		'4' => '4',
 		'5' => '5',
+		'6'    => '6',
+		'7'    => '7',
+		'8'    => '8',
+		'9'    => '9',
+		'10'    => '10',
+		'11'    => '11',
+		'12'    => '12',
 	);
 
 	$defaults = array(
@@ -1392,6 +1413,7 @@ function sd_get_class_input( $type = 'css_class', $overwrite = array() ) {
 function sd_get_hover_animations_input( $type = 'hover_animations', $overwrite = array() ) {
 
 	$options = array(
+		''       => __( 'none', 'super-duper' ),
 		'hover-zoom'       => __( 'Zoom', 'super-duper' ),
 		'hover-shadow'     => __( 'Shadow', 'super-duper' ),
 		'hover-move-up'    => __( 'Move up', 'super-duper' ),
