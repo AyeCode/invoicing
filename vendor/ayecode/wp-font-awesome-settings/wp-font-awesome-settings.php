@@ -32,6 +32,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 	 * @since 1.0.14 Warning added for v6 pro requires kit and will now not work if official FA plugin installed.
 	 * @since 1.0.15 Font Awesome will now load in the FSE if enable din the backend.
 	 * @since 1.1.0 Option added to load FontAwesome locally.
+	 * @since 1.1.1 Requires to re-save settings to load locally when option does not exists - FIXED.
 	 * @ver 1.0.15
 	 * @todo decide how to implement textdomain
 	 */
@@ -42,7 +43,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '1.0.15';
+		public $version = '1.1.1';
 
 		/**
 		 * Class textdomain.
@@ -115,6 +116,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 		 */
 		public function init() {
 			// Download fontawesome locally.
+			add_action( 'add_option_wp-font-awesome-settings', array( $this, 'add_option_wp_font_awesome_settings' ), 10, 2 );
 			add_action( 'update_option_wp-font-awesome-settings', array( $this, 'update_option_wp_font_awesome_settings' ), 10, 2 );
 
 			$this->settings = $this->get_settings();
@@ -671,7 +673,34 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 		}
 
 		/**
-		 * Handle fontawesome save settings to download fontawesome to store locally.
+		 * Handle fontawesome add settings to download fontawesome to store locally.
+		 *
+		 * @since 1.1.1
+		 *
+		 * @param string $option The option name.
+		 * @param mixed  $value  The option value.
+		 */
+		public function add_option_wp_font_awesome_settings( $option, $value ) {
+			// Do nothing if WordPress is being installed.
+			if ( wp_installing() ) {
+				return;
+			}
+
+			if ( ! empty( $value['local'] ) && empty( $value['pro'] ) && ! ( ! empty( $value['type'] ) && $value['type'] == 'KIT' ) ) {
+				$version = isset( $value['version'] ) && $value['version'] ? $value['version'] : $this->get_latest_version();
+
+				if ( ! empty( $version ) ) {
+					$response = $this->download_package( $version, $value );
+
+					if ( is_wp_error( $response ) ) {
+						add_settings_error( 'general', 'fontawesome_download', __( 'ERROR:', 'font-awesome-settings' ) . ' ' . $response->get_error_message(), 'error' );
+					}
+				}
+			}
+		}
+
+		/**
+		 * Handle fontawesome update settings to download fontawesome to store locally.
 		 *
 		 * @since 1.1.0
 		 *
@@ -684,7 +713,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 				return;
 			}
 
-			if ( ! empty( $new_value['local'] ) && empty( $new_value['pro'] ) ) {
+			if ( ! empty( $new_value['local'] ) && empty( $new_value['pro'] ) && ! ( ! empty( $new_value['type'] ) && $new_value['type'] == 'KIT' ) ) {
 				// Old values
 				$old_version = isset( $old_value['version'] ) && $old_value['version'] ? $old_value['version'] : ( isset( $old_value['local_version'] ) ? $old_value['local_version'] : '' );
 				$old_local = isset( $old_value['local'] ) ? (int) $old_value['local'] : 0;
@@ -692,7 +721,7 @@ if ( ! class_exists( 'WP_Font_Awesome_Settings' ) ) {
 				// New values
 				$new_version = isset( $new_value['version'] ) && $new_value['version'] ? $new_value['version'] : $this->get_latest_version();
 
-				if ( empty( $old_local ) || $old_version !== $new_version ) {
+				if ( empty( $old_local ) || $old_version !== $new_version || ! file_exists( $this->get_fonts_dir() . 'css' . DIRECTORY_SEPARATOR . 'all.css' ) ) {
 					$response = $this->download_package( $new_version, $new_value );
 
 					if ( is_wp_error( $response ) ) {

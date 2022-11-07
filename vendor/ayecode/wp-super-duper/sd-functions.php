@@ -2143,6 +2143,7 @@ function sd_get_class_build_keys() {
 		'flex_justify_content-MTD',
 		'flex_align_self-MTD',
 		'flex_order-MTD',
+		'styleid',
 	);
 
 	return apply_filters( 'sd_class_build_keys', $keys );

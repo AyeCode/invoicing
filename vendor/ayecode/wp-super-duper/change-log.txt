@@ -1,3 +1,6 @@
+= 1.1.10 =
+* styleid argument now auto added to class list - ADDED
+
 = 1.1.9 =
 * Device type switcher not working on multiline items - FIXED
 * Spacing option increased from 5 to 12 - ADDED

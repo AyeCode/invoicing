@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.83';
+		public $version = '0.1.85';
 
 		/**
 		 * Class textdomain.
@@ -315,7 +315,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
 			// Maybe show backend style error
 			if( $this->settings['css_backend'] != 'compatibility' || $this->settings['js_backend'] != 'core-popper' ){
-				//add_action( 'admin_notices', array( $this, 'show_admin_style_notice' ) );
+				add_action( 'admin_notices', array( $this, 'show_admin_style_notice' ) );
 			}
 
 		}
@@ -434,9 +434,10 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 					wp_register_style( 'ayecode-ui', $url, array(), $this->version );
 					wp_enqueue_style( 'ayecode-ui' );
 
+					$current_screen = function_exists('get_current_screen' ) ? get_current_screen() : '';
 
 //					if ( is_admin() && !empty($_REQUEST['postType']) ) {
-					if ( is_admin() && !empty($_REQUEST['postType']) && ( defined( 'BLOCKSTRAP_VERSION' ) || defined( 'AUI_FSE' ) )  ) {
+					if ( is_admin() && ( !empty($_REQUEST['postType']) || $current_screen->is_block_editor() ) && ( defined( 'BLOCKSTRAP_VERSION' ) || defined( 'AUI_FSE' ) )  ) {
 						$url = $this->url.'assets/css/ayecode-ui-fse.css';
 						wp_register_style( 'ayecode-ui-fse', $url, array(), $this->version );
 						wp_enqueue_style( 'ayecode-ui-fse' );
@@ -1812,7 +1813,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                             <td>
                                 <select name="ayecode-ui-settings[css_backend]" id="wpbs-css-admin">
                                     <option	value="compatibility" <?php selected( $this->settings['css_backend'], 'compatibility' ); ?>><?php _e( 'Compatibility Mode (default)', 'aui' ); ?></option>
-                                    <option value="core" <?php selected( $this->settings['css_backend'], 'core' ); ?>><?php _e( 'Full Mode', 'aui' ); ?></option>
+                                    <option value="core" <?php selected( $this->settings['css_backend'], 'core' ); ?>><?php _e( 'Full Mode (will cause style issues)', 'aui' ); ?></option>
                                     <option	value="" <?php selected( $this->settings['css_backend'], '' ); ?>><?php _e( 'Disabled', 'aui' ); ?></option>
                                 </select>
                             </td>
