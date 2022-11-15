@@ -4025,9 +4025,17 @@ class WPInv_Invoice extends GetPaid_Data {
      * Clears the subscription's cache.
      */
     public function clear_cache() {
-		wp_cache_delete( $this->get_key(), 'getpaid_invoice_keys_to_invoice_ids' );
-		wp_cache_delete( $this->get_number(), 'getpaid_invoice_numbers_to_invoice_ids' );
-		wp_cache_delete( $this->get_transaction_id(), 'getpaid_invoice_transaction_ids_to_invoice_ids' );
+		if ( $this->get_key() ) {
+			wp_cache_delete( $this->get_key(), 'getpaid_invoice_keys_to_invoice_ids' );
+		}
+
+		if ( $this->get_number() ) {
+			wp_cache_delete( $this->get_number(), 'getpaid_invoice_numbers_to_invoice_ids' );
+		}
+
+		if ( $this->get_transaction_id() ) {
+			wp_cache_delete( $this->get_transaction_id(), 'getpaid_invoice_transaction_ids_to_invoice_ids' );
+		}
 	}
 
 }

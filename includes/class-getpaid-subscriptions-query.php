@@ -401,14 +401,32 @@ class GetPaid_Subscriptions_Query {
 
 		if ( 'all' == $qv['fields'] ) {
 			foreach ( $this->results as $key => $subscription ) {
-				wp_cache_set( $subscription->id, $subscription, 'getpaid_subscriptions' );
-				wp_cache_set( $subscription->profile_id, $subscription->id, 'getpaid_subscription_profile_ids_to_subscription_ids' );
-				wp_cache_set( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
-				wp_cache_set( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
+				$this->set_cache( $subscription->id, $subscription, 'getpaid_subscriptions' );
+				$this->set_cache( $subscription->profile_id, $subscription->id, 'getpaid_subscription_profile_ids_to_subscription_ids' );
+				$this->set_cache( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
+				$this->set_cache( $subscription->transaction_id, $subscription->id, 'getpaid_subscription_transaction_ids_to_subscription_ids' );
 				$this->results[ $key ] = new WPInv_Subscription( $subscription );
 			}
 		}
 
+	}
+
+	/**
+	 * Set cache
+	 *
+	 * @param string  $id
+	 * @param mixed   $data
+	 * @param string  $group
+	 * @param integer $expire
+	 * @return boolean
+	 */
+	public function set_cache( $key, $data, $group = '', $expire = 0 ) {
+
+		if ( empty( $key ) ) {
+			return false;
+		}
+
+		wp_cache_set( $key, $data, $group, $expire );
 	}
 
 	/**
