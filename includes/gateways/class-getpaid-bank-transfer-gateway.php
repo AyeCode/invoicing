@@ -390,7 +390,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			// Renew the subscription.
 			if ( $subscription && $subscription->exists() ) {
 				$subscription->add_payment( array(), $invoice );
-				$subscription->renew();
+				$subscription->renew( strtotime( $invoice->get_date_created() ) );
 					}
 }
 
