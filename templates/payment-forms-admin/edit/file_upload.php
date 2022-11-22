@@ -12,14 +12,14 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Field Label', 'invoicing' ); ?></span>
         <input v-model="active_form_element.label" class="form-control" type="text"/>
     </label>
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Max File Number', 'invoicing' ); ?></span>
         <input v-model="active_form_element.max_file_num" class="form-control" min="1" type="number" />
         <small class="form-text text-muted"><?php esc_html_e( 'How many files can be uploaded?', 'invoicing' ); ?></small>
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Allowed File types', 'invoicing' ); ?></span>
         <gpselect2 class='form-control custom-select' v-model='active_form_element.file_types' multiple>
             <?php foreach ( getpaid_get_allowed_mime_types() as $ext_regex => $mime_type ) : ?>
@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
         <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
@@ -60,7 +60,7 @@ defined( 'ABSPATH' ) || exit;
 <hr class='featurette-divider mt-4'>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
         <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
         <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>

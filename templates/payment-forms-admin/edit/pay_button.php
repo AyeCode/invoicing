@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Button Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.label' class='form-control' type="text"/>
         <small class="form-text text-muted"><?php esc_html_e( '%price% will be replaced by the total payable amount', 'invoicing' ); ?></small>
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Free Checkout Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.free' class='form-control' type="text"/>
         <small class="form-text text-muted"><?php esc_html_e( 'The text to display if the total payable amount is zero', 'invoicing' ); ?></small>
@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
         <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
@@ -36,7 +36,7 @@ defined( 'ABSPATH' ) || exit;
 </div>
 
 <div class='form-group mb-3'>
-    <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Button Type', 'invoicing' ); ?></label>
+    <label class="form-label" :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Button Type', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
         <option value='btn-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>
         <option value='btn-secondary'><?php esc_html_e( 'Secondary', 'invoicing' ); ?></option>

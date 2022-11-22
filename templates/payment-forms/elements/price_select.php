@@ -66,7 +66,7 @@ if ( $select_type == 'radios' ) {
 
 // Display the label.
 if ( ! empty( $label ) ) {
-    echo '<label>' . esc_html( $label ) . '</label>';
+    echo '<label class="form-label">' . esc_html( $label ) . '</label>';
 }
 
 // Item buttons;
@@ -105,7 +105,7 @@ if ( $select_type == 'checkboxes' ) {
 
     foreach ( $options as $price => $label ) {
         echo "
-            <label class='d-block'>
+            <label class='form-label d-block'>
                 <input type='checkbox' class='getpaid-price-select-checkbox getpaid-refresh-on-change w-auto' name='" . esc_attr( $id ) . "[]' value='" . esc_attr( $price ) . "' " . checked( $price, $value, false ) . ' />
                 <span>' . esc_html( $label ) . '</span>
             </label>

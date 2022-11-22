@@ -13,12 +13,12 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class='form-group mb-3'>
-    <label :for="active_form_element.id + '_edit_heading'"><?php esc_html_e( 'Heading', 'invoicing' ); ?></label>
+    <label class="form-label" :for="active_form_element.id + '_edit_heading'"><?php esc_html_e( 'Heading', 'invoicing' ); ?></label>
     <input :id="active_form_element.id + '_edit_heading'" v-model='active_form_element.text' class='form-control' type='text' />
 </div>
 
 <div class='form-group mb-3'>
-    <label :for="active_form_element.id + '_edit_level'"><?php esc_html_e( 'Select Heading Level', 'invoicing' ); ?></label>
+    <label class="form-label" :for="active_form_element.id + '_edit_level'"><?php esc_html_e( 'Select Heading Level', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_level'" v-model='active_form_element.level'>
         <option value='h1'><?php esc_html_e( 'H1', 'invoicing' ); ?></option>
         <option value='h2'><?php esc_html_e( 'H2', 'invoicing' ); ?></option>

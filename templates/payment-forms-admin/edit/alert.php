@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Alert Text', 'invoicing' ); ?></span>
         <textarea v-model='active_form_element.text' class='form-control' rows='3'></textarea>
     </label>

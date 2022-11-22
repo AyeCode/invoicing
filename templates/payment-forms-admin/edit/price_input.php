@@ -16,35 +16,35 @@ defined( 'ABSPATH' ) || exit;
 </small>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Field Label', 'invoicing' ); ?></span>
         <input v-model='active_form_element.label' class='form-control' type="text"/>
     </label>
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Default Amount', 'invoicing' ); ?></span>
         <input v-model='active_form_element.value' class='form-control' type="text"/>
     </label>
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Minimum Amount', 'invoicing' ); ?></span>
         <input v-model='active_form_element.minimum' class='form-control' type="text"/>
     </label>
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Placeholder text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.placeholder' class='form-control' type="text"/>
     </label>
 </div>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
         <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
@@ -54,7 +54,7 @@ defined( 'ABSPATH' ) || exit;
 <hr class='featurette-divider mt-4'>
 
 <div class='form-group mb-3'>
-    <label class="d-block">
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
         <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
         <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>
