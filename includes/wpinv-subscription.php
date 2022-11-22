@@ -964,7 +964,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @since  1.0.0
 	 * @return int The subscription's id
 	 */
-	public function renew() {
+	public function renew( $calculate_from = null ) {
 
 		// Complete subscription if applicable
 		if ( $this->is_last_renewal() ) {
@@ -974,7 +974,8 @@ class WPInv_Subscription extends GetPaid_Data {
 		// Calculate new expiration
 		$frequency      = $this->get_frequency();
 		$period         = $this->get_period();
-		$new_expiration = strtotime( "+ $frequency $period", $this->get_expiration_time() );
+		$calculate_from = empty( $calculate_from ) ? $this->get_expiration_time() : $calculate_from;
+		$new_expiration = strtotime( "+ $frequency $period", $calculate_from );
 
 		$this->set_expiration( date( 'Y-m-d H:i:s', $new_expiration ) );
 		$this->set_status( 'active' );
