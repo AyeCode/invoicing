@@ -52,9 +52,13 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='form-group mb-3 input-group' v-for='(option, index) in active_form_element.options'>
     <input type='text' class='form-control' v-model='active_form_element.options[index]'>
-    <div class='input-group-append'>
-        <button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
-    </div>
+    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+		<div class="input-group-append ">
+            <button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+		</div>
+	<?php else : ?>
+		<button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+	<?php endif; ?>
 </div>
 
 <div class='form-group mb-3'>
