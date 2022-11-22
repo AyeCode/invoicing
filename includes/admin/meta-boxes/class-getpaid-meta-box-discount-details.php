@@ -55,6 +55,7 @@ class GetPaid_Meta_Box_Discount_Details {
             <?php do_action( 'wpinv_discount_form_first', $discount ); ?>
 
             <?php do_action( 'wpinv_discount_form_before_code', $discount ); ?>
+
             <div class="form-group mb-3 row">
                 <label for="wpinv_discount_code" class="col-sm-3 col-form-label">
                     <?php esc_html_e( 'Discount Code', 'invoicing' ); ?>
@@ -145,26 +146,43 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
+
                         <?php if ( 'left' == $position ) : ?>
-                            <div class="input-group-prepend left wpinv-if-flat">
-                                <span class="input-group-text">
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-prepend left wpinv-if-flat">
+                                    <span class="input-group-text">
+                                        <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                    </span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text left wpinv-if-flat">
                                     <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
-                            </div>
+                            <?php endif; ?>
                         <?php endif; ?>
 
                         <input type="text" name="wpinv_discount_amount" id="wpinv_discount_amount" value="<?php echo esc_attr( $discount->get_amount( 'edit' ) ); ?>" placeholder="0" class="form-control">
 
                         <?php if ( 'right' == $position ) : ?>
-                            <div class="input-group-prepend left wpinv-if-flat">
-                                <span class="input-group-text">
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-append right wpinv-if-flat">
+                                    <span class="input-group-text">
+                                        <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                    </span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text left wpinv-if-flat">
                                     <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
                                 </span>
-                            </div>
+                            <?php endif; ?>
                         <?php endif; ?>
-                        <div class="input-group-append right wpinv-if-percent">
-                            <span class="input-group-text">%</span>
-                        </div>
+                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                            <div class="input-group-append right wpinv-if-percent">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        <?php else : ?>
+                            <span class="input-group-text right wpinv-if-percent">%</span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="col-sm-1 pt-2 pl-0">
@@ -333,18 +351,31 @@ class GetPaid_Meta_Box_Discount_Details {
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
+
                         <?php if ( 'left' == $position ) : ?>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-                            </div>
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text">
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                </span>
+                            <?php endif; ?>
                         <?php endif; ?>
 
                         <input type="text" name="wpinv_discount_min_total" id="wpinv_discount_min_total" value="<?php echo esc_attr( $discount->get_minimum_total( 'edit' ) ); ?>" placeholder="<?php esc_attr_e( 'No minimum', 'invoicing' ); ?>" class="form-control">
 
                         <?php if ( 'left' != $position ) : ?>
-                            <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-                            </div>
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text">
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                </span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -362,17 +393,29 @@ class GetPaid_Meta_Box_Discount_Details {
                 <div class="col-sm-8">
                     <div class="input-group input-group-sm">
                         <?php if ( 'left' == $position ) : ?>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-                            </div>
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text">
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                </span>
+                            <?php endif; ?>
                         <?php endif; ?>
 
                         <input type="text" name="wpinv_discount_max_total" id="wpinv_discount_max_total" value="<?php echo esc_attr( $discount->get_maximum_total( 'edit' ) ); ?>" placeholder="<?php esc_attr_e( 'No maximum', 'invoicing' ); ?>" class="form-control">
 
                         <?php if ( 'left' != $position ) : ?>
-                            <div class="input-group-append">
-                                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-                            </div>
+                            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+                                </div>
+                            <?php else : ?>
+                                <span class="input-group-text">
+                                    <?php echo wp_kses_post( wpinv_currency_symbol() ); ?>
+                                </span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
