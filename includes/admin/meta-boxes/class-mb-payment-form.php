@@ -27,7 +27,7 @@ class WPInv_Meta_Box_Payment_Form {
                 $value = implode( ',', $value );
             }
 
-            echo wp_kses_post( "<div class='col-12'><strong>$key:</strong></div><div class='col-12 form-group'>$value</div>" );
+            echo wp_kses_post( "<div class='col-12'><strong>$key:</strong></div><div class='col-12 form-group mb-3'>$value</div>" );
         }
 
         echo '</div></div>';

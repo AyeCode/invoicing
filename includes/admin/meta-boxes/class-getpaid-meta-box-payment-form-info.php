@@ -31,7 +31,7 @@ class GetPaid_Meta_Box_Payment_Form_Info {
         <div class='bsui' style='padding-top: 10px;'>
             <?php do_action( 'wpinv_payment_form_before_info_metabox', $form ); ?>
 
-            <div class="wpinv_payment_form_shortcode form-group row">
+            <div class="wpinv_payment_form_shortcode form-group mb-3 row">
                 <label for="wpinv_payment_form_shortcode" class="col-sm-12 col-form-label">
                     <?php esc_html_e( 'Payment Form Shortcode', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a payment form', 'invoicing' ); ?>"></span>
@@ -42,7 +42,7 @@ class GetPaid_Meta_Box_Payment_Form_Info {
                 </div>
             </div>
 
-            <div class="wpinv_payment_form_buy_shortcode form-group row">
+            <div class="wpinv_payment_form_buy_shortcode form-group mb-3 row">
                 <label for="wpinv_payment_form_buy_shortcode" class="col-sm-12 col-form-label">
                     <?php esc_html_e( 'Payment Button Shortcode', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Displays a buy now button', 'invoicing' ); ?>"></span>
@@ -57,7 +57,7 @@ class GetPaid_Meta_Box_Payment_Form_Info {
                 </div>
             </div>
 
-            <div class="wpinv_item_buy_url form-group row">
+            <div class="wpinv_item_buy_url form-group row mb-3">
                 <label for="wpinv_item_buy_url" class="col-sm-12 col-form-label">
                     <?php esc_html_e( 'Direct Payment URL', 'invoicing' ); ?>
                     <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'You can use this in an iFrame to embed the payment form on another website', 'invoicing' ); ?>"></span>

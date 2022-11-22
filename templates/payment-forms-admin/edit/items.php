@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
         <?php esc_html_e( 'This section allows you to add an existing item to the form that users can then buy. If you do not add an item, ensure that you add a price select or input field to the form.', 'invoicing' ); ?>
     </small>
 
-    <label class='form-group'>
+    <label class='form-group mb-3'>
         <input v-model='active_form_element.hide_cart' type='checkbox' />
         <span class='form-check-label'><?php esc_html_e( 'Hide cart details', 'invoicing' ); ?></span>
     </label>
@@ -47,12 +47,12 @@ defined( 'ABSPATH' ) || exit;
                         </a>
                     </span>
 
-                    <label class='form-group d-block'>
+                    <label class='form-group mb-3 d-block'>
                         <input v-model='item.allow_quantities' type='checkbox' />
                         <span><?php esc_html_e( 'Allow users to buy several quantities', 'invoicing' ); ?></span>
                     </label>
 
-                    <label class='form-group d-block'>
+                    <label class='form-group mb-3 d-block'>
                         <input v-model='item.required' type='checkbox' />
                         <span><?php esc_html_e( 'This item is required', 'invoicing' ); ?></span>
                     </label>
@@ -82,7 +82,7 @@ defined( 'ABSPATH' ) || exit;
     </div>
 </div>
 
-<div class='form-group mt-5' v-if="!is_default">
+<div class='form-group mb-3 mt-5' v-if="!is_default">
 
     <label class="w-100 d-block">
 
@@ -99,7 +99,7 @@ defined( 'ABSPATH' ) || exit;
 
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>

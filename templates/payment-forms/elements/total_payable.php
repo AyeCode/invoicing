@@ -13,7 +13,7 @@ if ( empty( $text ) ) {
     $text = __( 'Total to pay:', 'invoicing' );
 }
 ?>
-<div class="form-group mt-4">
+<div class="form-group mb-3 mt-4">
     <strong><?php echo esc_html( $text ); ?></strong>
     <span class="getpaid-checkout-total-payable"></span>
 </div>

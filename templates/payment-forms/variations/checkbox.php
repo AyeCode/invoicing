@@ -21,7 +21,7 @@ if ( empty( $selectable ) ) {
     return;
 }
 
-echo '<div class="getpaid-payment-form-items-checkbox form-group">';
+echo '<div class="getpaid-payment-form-items-checkbox form-group mb-3">';
 
 foreach ( $selectable as $item_id => $item_name ) {
 

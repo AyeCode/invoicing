@@ -56,7 +56,7 @@ class GetPaid_Meta_Box_Item_Details {
         <div class='bsui' style='max-width: 600px;padding-top: 10px;'>
 
             <?php do_action( 'wpinv_item_details_metabox_before_price', $item ); ?>
-            <div class="form-group row">
+            <div class="form-group mb-3 row">
                 <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php esc_html_e( 'Item Price', 'invoicing' ); ?></span></label>
                 <div class="col-sm-8">
                     <div class="row">
@@ -167,7 +167,7 @@ class GetPaid_Meta_Box_Item_Details {
                 <?php do_action( 'wpinv_item_details_metabox_before_minimum_price', $item ); ?>
                 <div class="wpinv_show_if_dynamic wpinv_minimum_price">
 
-                    <div class="form-group row">
+                    <div class="form-group mb-3 row">
                         <label for="wpinv_minimum_price" class="col-sm-3 col-form-label">
                             <?php esc_html_e( 'Minimum Price', 'invoicing' ); ?>
                         </label>
@@ -201,7 +201,7 @@ class GetPaid_Meta_Box_Item_Details {
             <?php do_action( 'wpinv_item_details_metabox_before_maximum_renewals', $item ); ?>
             <div class="wpinv_show_if_recurring wpinv_maximum_renewals">
 
-                <div class="form-group row">
+                <div class="form-group mb-3 row">
                     <label for="wpinv_recurring_limit" class="col-sm-3 col-form-label">
                         <?php esc_html_e( 'Maximum Renewals', 'invoicing' ); ?>
                     </label>
@@ -219,7 +219,7 @@ class GetPaid_Meta_Box_Item_Details {
             <?php do_action( 'wpinv_item_details_metabox_before_free_trial', $item ); ?>
             <div class="wpinv_show_if_recurring wpinv_free_trial">
 
-                <div class="form-group row">
+                <div class="form-group mb-3 row">
                     <label class="col-sm-3 col-form-label" for="wpinv_trial_interval"><?php defined( 'GETPAID_PAID_TRIALS_VERSION' ) ? esc_html_e( 'Free/Paid Trial', 'invoicing' ) : esc_html_e( 'Free Trial', 'invoicing' ); ?></label>
 
                     <div class="col-sm-8">

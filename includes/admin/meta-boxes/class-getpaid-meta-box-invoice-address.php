@@ -41,7 +41,7 @@ class GetPaid_Meta_Box_Invoice_Address {
             <div class="bsui" style="margin-top: 1.5rem; max-width: 820px;">
                     <div class="row">
                         <div class="col-12 col-sm-6">
-                            <div id="getpaid-invoice-user-id-wrapper" class="form-group">
+                            <div id="getpaid-invoice-user-id-wrapper" class="form-group mb-3">
                                 <div>
                                     <label for="post_author_override"><?php esc_html_e( 'Customer', 'invoicing' ); ?></label>
                                 </div>
@@ -70,7 +70,7 @@ class GetPaid_Meta_Box_Invoice_Address {
                                 ?>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 form-group mt-sm-4">
+                        <div class="col-12 col-sm-6 form-group mb-3 mt-sm-4">
                             <?php if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) : ?>
                                 <a id="getpaid-invoice-fill-user-details" class="button button-small button-secondary" href="javascript:void(0)">
                                     <i aria-hidden="true" class="fa fa-refresh"></i>

@@ -101,7 +101,7 @@ if ( $select_type == 'buttons' || $select_type == 'circles' ) {
 
 // Item checkboxes;
 if ( $select_type == 'checkboxes' ) {
-    echo '<div class="form-group">';
+    echo '<div class="form-group mb-3">';
 
     foreach ( $options as $price => $label ) {
         echo "

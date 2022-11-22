@@ -70,7 +70,7 @@ foreach ( $fields as $address_field ) {
     // Display the country.
     if ( 'wpinv_country' == $address_field['name'] ) {
 
-        echo "<div class='form-group " . esc_attr( $wrap_class ) . " getpaid-address-field-wrapper__country'";
+        echo "<div class='form-group mb-3 " . esc_attr( $wrap_class ) . " getpaid-address-field-wrapper__country'";
 
         aui()->select(
             array(

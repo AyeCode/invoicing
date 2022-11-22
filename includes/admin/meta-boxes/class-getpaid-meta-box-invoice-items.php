@@ -606,20 +606,20 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 <div class="modal-body">
                                     <div class="getpaid-create-item-div">
                                         <input type="hidden" name="id" value="new" class="form-control form-control-sm item-id">
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span><?php esc_html_e( 'Name', 'invoicing' ); ?></span>
                                             <input type="text" name="name" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' ); ?>" class="form-control form-control-sm item-name">
                                         </label>
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span class="getpaid-hide-if-hours getpaid-hide-if-quantity item-price"><?php esc_html_e( 'Amount', 'invoicing' ); ?></span>
                                             <span class="hide-if-amount"><?php esc_html_e( 'Price', 'invoicing' ); ?></span>
                                             <input type="text" name="price" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control form-control-sm item-price">
                                         </label>
-                                        <label class="form-group w-100 hide-if-amount">
+                                        <label class="form-group mb-3 w-100 hide-if-amount">
                                             <span><?php esc_html_e( 'Quantity', 'invoicing' ); ?></span>
                                             <input type="text" name="quantity" placeholder="1" class="form-control form-control-sm item-quantity">
                                         </label>
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span><?php esc_html_e( 'Item Description', 'invoicing' ); ?></span>
                                             <textarea name="description" placeholder="<?php esc_attr_e( 'Enter a description for this item', 'invoicing' ); ?>" class="form-control item-description"></textarea>
                                         </label>
@@ -646,20 +646,20 @@ class GetPaid_Meta_Box_Invoice_Items {
                                 <div class="modal-body">
                                     <div class="getpaid-edit-item-div">
                                         <input type="hidden" name="id" class="form-control form-control-sm item-id">
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span><?php esc_html_e( 'Name', 'invoicing' ); ?></span>
                                             <input type="text" name="name" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' ); ?>" class="form-control form-control-sm item-name">
                                         </label>
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span class="getpaid-hide-if-hours getpaid-hide-if-quantity item-price"><?php esc_html_e( 'Amount', 'invoicing' ); ?></span>
                                             <span class="hide-if-amount"><?php esc_html_e( 'Price', 'invoicing' ); ?></span>
                                             <input type="text" name="price" placeholder="<?php wpinv_sanitize_amount( 0 ); ?>" class="form-control form-control-sm item-price">
                                         </label>
-                                        <label class="form-group w-100 hide-if-amount">
+                                        <label class="form-group mb-3 w-100 hide-if-amount">
                                             <span><?php esc_html_e( 'Quantity', 'invoicing' ); ?></span>
                                             <input type="text" name="quantity" placeholder="1" class="form-control form-control-sm item-quantity">
                                         </label>
-                                        <label class="form-group w-100">
+                                        <label class="form-group mb-3 w-100">
                                             <span><?php esc_html_e( 'Item Description', 'invoicing' ); ?></span>
                                             <textarea name="description" placeholder="<?php esc_attr_e( 'Enter a description for this item', 'invoicing' ); ?>" class="form-control item-description"></textarea>
                                         </label>

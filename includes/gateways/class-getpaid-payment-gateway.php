@@ -506,7 +506,7 @@ abstract class GetPaid_Payment_Gateway {
 
                         <div class="col-12">
 
-							<div class="form-group">
+							<div class="form-group mb-3">
 								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php esc_html_e( 'Card number', 'invoicing' ); ?></label>
 								<div class="input-group input-group-sm">
 									<div class="input-group-prepend ">
@@ -521,7 +521,7 @@ abstract class GetPaid_Payment_Gateway {
                         </div>
 
                         <div class="col-12">
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label><?php esc_html_e( 'Expiration', 'invoicing' ); ?></label>
                                 <div class="form-row">
 
@@ -627,7 +627,7 @@ abstract class GetPaid_Payment_Gateway {
 	public function get_saved_payment_method_option_html( $token ) {
 
 		printf(
-			'<li class="getpaid-payment-method form-group">
+			'<li class="getpaid-payment-method form-group mb-3">
 				<label>
 					<input name="getpaid-%1$s-payment-method" type="radio" value="%2$s" data-currency="%5$s" style="width:auto;" class="getpaid-saved-payment-method-token-input" %4$s />
 					<span>%3$s</span>

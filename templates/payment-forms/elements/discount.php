@@ -27,7 +27,7 @@ if ( ! empty( $form->invoice ) ) {
 
 ?>
 
-<div class="form-group">
+<div class="form-group mb-3">
     <div class="getpaid-discount-field  border rounded p-3">
         <div class="getpaid-discount-field-inner d-flex flex-column flex-md-row">
             <input name="discount" placeholder="<?php echo esc_attr( $input_label ); ?>" value="<?php echo esc_attr( $discount_code ); ?>" class="form-control mr-2 mb-2 getpaid-discount-field-input" style="flex: 1;" type="text">

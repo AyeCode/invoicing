@@ -41,7 +41,7 @@ if ( ! empty( $required ) ) {
 
 <label><span v-html="form_element.label"></span></label>
 
-<div class="form-group <?php echo esc_attr( $label_class ); ?>" data-name="<?php echo esc_attr( $id ); ?>" data-max="<?php echo esc_attr( $max_file_num ); ?>">
+<div class="form-group mb-3 <?php echo esc_attr( $label_class ); ?>" data-name="<?php echo esc_attr( $id ); ?>" data-max="<?php echo esc_attr( $max_file_num ); ?>">
 	<label for="<?php echo esc_attr( $id ); ?>"><?php echo wp_kses_post( $label ); ?></label>
 	<input type="file" class="sr-only getpaid-files-input" id="<?php echo esc_attr( $id ); ?>" accept="<?php echo esc_attr( implode( ', ', $types ) ); ?>" data-extensions="<?php echo esc_attr( wp_json_encode( $_types ) ); ?>" <?php echo $max_file_num == 1 ? '' : 'multiple="multiple"'; ?>>
 

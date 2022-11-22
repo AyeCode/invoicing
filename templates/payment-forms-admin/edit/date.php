@@ -11,14 +11,14 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Field Label', 'invoicing' ); ?></span>
 		<input v-model='active_form_element.label' class='form-control' type="text"/>
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Default Date', 'invoicing' ); ?></span>
 		<?php wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true, true ); ?>
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Minimum Date', 'invoicing' ); ?></span>
 		<?php wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true, true ); ?>
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Maximum Date', 'invoicing' ); ?></span>
 		<?php wpi_help_tip( sprintf( __( 'You can enter the shortcut "today" or enter a date matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true, true ); ?>
@@ -44,7 +44,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Disabled Dates', 'invoicing' ); ?></span>
 		<?php wpi_help_tip( sprintf( __( 'You can use the shortcut "today" or enter dates matching the format Y-m-d, e.g %s', 'invoicing' ), current_time( 'Y-m-d' ) ), false, true, true ); ?>
@@ -53,7 +53,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Disable Days', 'invoicing' ); ?></span>
 		<gpselect2 class='form-control custom-select' v-model='active_form_element.disable_days' multiple>
@@ -69,7 +69,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Mode', 'invoicing' ); ?></span>
 		<select class='form-control custom-select' v-model='active_form_element.mode'>
@@ -80,7 +80,7 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
 		<textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
@@ -88,19 +88,19 @@ defined( 'ABSPATH' ) || exit;
 	</label>
 </div>
 
-<div class='form-group form-check'>
+<div class='form-group mb-3 form-check'>
 	<input :id="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
 	<label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
 </div>
 
-<div class='form-group form-check'>
+<div class='form-group mb-3 form-check'>
 	<input :id="active_form_element.id + '_add_meta'" v-model='active_form_element.add_meta' type='checkbox' class='form-check-input' />
 	<label class='form-check-label' :for="active_form_element.id + '_add_meta'"><?php esc_html_e( 'Show this field in receipts and emails?', 'invoicing' ); ?></label>
 </div>
 
 <hr class='featurette-divider mt-4'>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
 	<label class="d-block">
 		<span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
 		<input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />

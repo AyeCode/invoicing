@@ -11,21 +11,21 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Input Label', 'invoicing' ); ?></span>
         <input v-model='active_form_element.input_label' class='form-control' type="text"/>
     </label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Button Label', 'invoicing' ); ?></span>
         <input v-model='active_form_element.button_label' class='form-control' type="text"/>
     </label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>

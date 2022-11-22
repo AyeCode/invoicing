@@ -11,19 +11,19 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Alert Text', 'invoicing' ); ?></span>
         <textarea v-model='active_form_element.text' class='form-control' rows='3'></textarea>
     </label>
 </div>
 
-<div class='form-group form-check'>
+<div class='form-group mb-3 form-check'>
     <input :id="active_form_element.id + '_edit_dismissible'" v-model='active_form_element.dismissible' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit_dismissible'"><?php esc_html_e( 'Is Dismissible?', 'invoicing' ); ?></label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Alert Type', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
         <option value='alert-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>

@@ -20,7 +20,7 @@ if ( empty( $company_name ) ) {
 $vat_number = wpinv_get_option( 'vat_number' );
 
 ?>
-    <div class="getpaid-company-address form-group">
+    <div class="getpaid-company-address form-group mb-3">
 
         <div class="row">
 

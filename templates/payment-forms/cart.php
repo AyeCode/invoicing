@@ -28,7 +28,7 @@ if ( isset( $columns['tax_rate'] ) ) {
 $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $form );
 
 ?>
-    <div class="getpaid-payment-form-items-cart border form-group">
+    <div class="getpaid-payment-form-items-cart border form-group mb-3">
 
         <div class="getpaid-payment-form-items-cart-header font-weight-bold bg-light border-bottom py-2 px-3">
             <div class="form-row row">

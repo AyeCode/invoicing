@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Button Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.label' class='form-control' type="text"/>
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
     </label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Free Checkout Text', 'invoicing' ); ?></span>
         <input v-model='active_form_element.free' class='form-control' type="text"/>
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
     </label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label class="d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
     </label>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <label :for="active_form_element.id + '_edit_type'"><?php esc_html_e( 'Button Type', 'invoicing' ); ?></label>
     <select class='form-control custom-select' :id="active_form_element.id + '_edit_type'" v-model='active_form_element.class'>
         <option value='btn-primary'><?php esc_html_e( 'Primary', 'invoicing' ); ?></option>

@@ -16,7 +16,7 @@ $email       = $invoice->get_email();
 $vat_number  = $invoice->get_vat_number();
 $company_id  = $invoice->get_company_id();
 ?>
-    <div class="getpaid-billing-address form-group text-break">
+    <div class="getpaid-billing-address form-group mb-3 text-break">
 
         <div class="row">
 
