@@ -18,7 +18,7 @@ class WPInv_Meta_Box_Payment_Form {
             return;
         }
 
-        echo '<div class="bsui"> <div class="form-row">';
+        echo '<div class="bsui"> <div class="form-row row">';
 
         foreach ( $details as $key => $value ) {
             $key = esc_html( $key );

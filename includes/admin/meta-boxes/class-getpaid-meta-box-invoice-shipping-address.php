@@ -36,7 +36,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 
 			<?php if ( ! empty( $shipping_address['method'] ) ) : ?>
 
-				<div class="form-group form-row" style="color: green;">
+				<div class="form-group form-row row" style="color: green;">
 					<div class="col">
 						<span style="font-weight: 600"><?php esc_html_e( 'Shipping Method', 'invoicing' ); ?>:</span>
 					</div>
@@ -51,7 +51,7 @@ class GetPaid_Meta_Box_Invoice_Shipping_Address {
 
 					<?php if ( ! empty( $shipping_address[ $key ] ) ) : ?>
 
-						<div class="form-group form-row">
+						<div class="form-group form-row row">
 							<div class="col">
 								<span style="font-weight: 600"><?php echo esc_html( $label ); ?>:</span>
 							</div>

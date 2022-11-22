@@ -18,7 +18,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 <div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo esc_attr( $item->get_type() ); ?> border-bottom'>
 
-	<div class="form-row align-items-center">
+	<div class="form-row row align-items-center">
 
 		<?php foreach ( array_keys( $columns ) as $column ) : ?>
 

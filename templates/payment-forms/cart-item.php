@@ -18,7 +18,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required' : 'selectable'; ?> item-<?php echo (int) $item->get_id(); ?> border-bottom py-2 px-3'>
 
-	<div class="form-row align-items-center needs-validation">
+	<div class="form-row row align-items-center needs-validation">
 
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
 

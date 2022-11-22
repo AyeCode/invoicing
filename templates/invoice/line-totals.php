@@ -25,7 +25,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
 
                 <div class="getpaid-invoice-line-totals-col <?php echo esc_attr( $key ); ?>">
 
-                    <div class="form-row">
+                    <div class="form-row row">
 
                         <div class="col-8 getpaid-invoice-line-totals-label">
                             <?php echo esc_html( $label ); ?>

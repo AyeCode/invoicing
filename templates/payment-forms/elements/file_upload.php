@@ -56,7 +56,7 @@ if ( ! empty( $required ) ) {
 
 	<div class="getpaid-uploaded-files"></div>
 
-	<div class="form-row mb-3 d-none getpaid-progress-template">
+	<div class="form-row row mb-3 d-none getpaid-progress-template">
 
 		<div class="overflow-hidden text-nowrap col-7 col-sm-4">
 			<a href="" class="close float-none" title="<?php esc_attr_e( 'Remove File', 'invoicing' ); ?>">&times;<span class="sr-only"><?php esc_html_e( 'Close', 'invoicing' ); ?></span></a>&nbsp;
