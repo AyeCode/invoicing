@@ -509,11 +509,17 @@ abstract class GetPaid_Payment_Gateway {
 							<div class="form-group mb-3">
 								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php esc_html_e( 'Card number', 'invoicing' ); ?></label>
 								<div class="input-group input-group-sm">
-									<div class="input-group-prepend ">
-										<span class="input-group-text">
+									<?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                        <div class="input-group-prepend ">
+											<span class="input-group-text">
+												<i class="fa fa-credit-card"></i>
+											</span>
+										</div>
+                                    <?php else : ?>
+                                        <span class="input-group-text">
 											<i class="fa fa-credit-card"></i>
 										</span>
-									</div>
+                                    <?php endif; ?>
 									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ); ?>" id="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>" class="form-control form-control-sm getpaid-format-card-number" autocomplete="cc-number">
 								</div>
 							</div>
