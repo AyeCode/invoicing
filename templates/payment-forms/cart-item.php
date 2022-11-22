@@ -156,10 +156,18 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 						?>
 								<div class="input-group input-group-sm">
-								<?php if ( 'left' === $position ) : ?>
-										<div class="input-group-prepend">
-											<span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
-										</div>
+									<?php if ( 'left' === $position ) : ?>
+										<?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+											<div class="input-group-prepend ">
+												<span class="input-group-text">
+													<?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
+												</span>
+											</div>
+										<?php else : ?>
+											<span class="input-group-text">
+												<?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
+											</span>
+										<?php endif; ?>
 									<?php endif; ?>
 
 									<input type="text" <?php echo wp_kses_post( $data_minimum ); ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo esc_attr( $class ); ?>" style="width: 64px; line-height: 1; min-height: 35px;">
@@ -171,9 +179,17 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 									<?php endif; ?>
 
 								<?php if ( 'left' !== $position ) : ?>
-										<div class="input-group-append">
-											<span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
-										</div>
+									<?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+											<div class="input-group-append ">
+												<span class="input-group-text">
+													<?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
+												</span>
+											</div>
+										<?php else : ?>
+											<span class="input-group-text">
+												<?php echo wp_kses_post( wpinv_currency_symbol( $currency ) ); ?></span>
+											</span>
+										<?php endif; ?>
 									<?php endif; ?>
 								</div>
 
