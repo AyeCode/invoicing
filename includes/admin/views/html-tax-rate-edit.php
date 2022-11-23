@@ -65,8 +65,10 @@ defined( 'ABSPATH' ) || exit;
     </td>
 
     <td class="wpinv_tax_remove">
-        <button type="button" class="close wpinv_remove_tax_rate" aria-label="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>" title="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="close btn-close wpinv_remove_tax_rate" aria-label="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>" title="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>">
+            <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                <span aria-hidden="true">×</span>
+            <?php endif; ?>
         </button>
     </td>
 

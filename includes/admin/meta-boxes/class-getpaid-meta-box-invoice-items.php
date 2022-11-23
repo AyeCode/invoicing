@@ -553,8 +553,10 @@ class GetPaid_Meta_Box_Invoice_Items {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="getpaid-add-item-to-invoice-label"><?php esc_html_e( "Add Item(s)", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
-                                        <span aria-hidden="true">&times;</span>
+                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                            <span aria-hidden="true">×</span>
+                                        <?php endif; ?>
                                     </button>
                                 </div>
                                 <div class="modal-body">
@@ -599,8 +601,10 @@ class GetPaid_Meta_Box_Invoice_Items {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="getpaid-create-invoice-item-label"><?php esc_html_e( "Create Item", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
-                                        <span aria-hidden="true">&times;</span>
+                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                            <span aria-hidden="true">×</span>
+                                        <?php endif; ?>
                                     </button>
                                 </div>
                                 <div class="modal-body">
@@ -639,8 +643,10 @@ class GetPaid_Meta_Box_Invoice_Items {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="getpaid-edit-invoice-item-label"><?php esc_html_e( "Edit Item", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
-                                        <span aria-hidden="true">&times;</span>
+                                    <button type="button" class="close close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                            <span aria-hidden="true">×</span>
+                                        <?php endif; ?>
                                     </button>
                                 </div>
                                 <div class="modal-body">
