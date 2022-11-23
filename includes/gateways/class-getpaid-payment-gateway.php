@@ -529,7 +529,7 @@ abstract class GetPaid_Payment_Gateway {
                         <div class="col-12">
                             <div class="form-group mb-3">
                                 <label><?php esc_html_e( 'Expiration', 'invoicing' ); ?></label>
-                                <div class="form-row">
+                                <div class="form-row row">
 
                                     <div class="col">
                                         <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_month]">
