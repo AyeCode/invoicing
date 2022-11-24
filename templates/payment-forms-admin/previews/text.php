@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<label class="d-block w-100">
+<label class="form-label d-block w-100">
     <span v-html="form_element.label"></span>
     <span class='text-danger' v-if='form_element.required'> *</span>
     <input  :placeholder='form_element.placeholder' class='form-control' type='text'>

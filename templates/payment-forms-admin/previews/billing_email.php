@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<label class="d-block w-100">
+<label class="form-label d-block w-100">
     <span v-html="form_element.label"></span>
     <input :placeholder='form_element.placeholder' class='form-control' type='email'>
     <small v-if='form_element.description' class='form-text text-muted' v-html='form_element.description'></small>

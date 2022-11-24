@@ -14,7 +14,7 @@ if ( empty( $text ) ) {
 }
 
 ?>
-<div class="form-group getpaid-ip-info">
+<div class="form-group mb-3 getpaid-ip-info">
     <span><?php echo wp_kses_post( $text ); ?></span>
     <strong><?php echo esc_html( wpinv_get_ip() ); ?></strong>
 </div>

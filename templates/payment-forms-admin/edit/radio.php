@@ -11,35 +11,35 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
-    <label class="d-block">
+<div class='form-group mb-3'>
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Field Label', 'invoicing' ); ?></span>
         <input v-model='active_form_element.label' class='form-control' type="text"/>
     </label>
 </div>
 
-<div class='form-group'>
-    <label class="d-block">
+<div class='form-group mb-3'>
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Help Text', 'invoicing' ); ?></span>
         <textarea placeholder='<?php esc_attr_e( 'Add some help text for this field', 'invoicing' ); ?>' v-model='active_form_element.description' class='form-control' rows='3'></textarea>
         <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
     </label>
 </div>
 
-<div class='form-group form-check'>
+<div class='form-group mb-3 form-check'>
     <input :id="active_form_element.id + '_edit'" v-model='active_form_element.required' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Is this field required?', 'invoicing' ); ?></label>
 </div>
 
-<div class='form-group form-check'>
+<div class='form-group mb-3 form-check'>
     <input :id="active_form_element.id + '_add_meta'" v-model='active_form_element.add_meta' type='checkbox' class='form-check-input' />
     <label class='form-check-label' :for="active_form_element.id + '_add_meta'"><?php esc_html_e( 'Show this field in receipts and emails?', 'invoicing' ); ?></label>
 </div>
 
 <hr class='featurette-divider mt-4'>
 
-<div class='form-group'>
-    <label class="d-block">
+<div class='form-group mb-3'>
+    <label class="form-label d-block">
         <span><?php esc_html_e( 'Email Merge Tag', 'invoicing' ); ?></span>
         <input :value='active_form_element.label | formatMergeTag' class='form-control bg-white' type="text" readonly onclick="this.select()" />
         <span class="form-text text-muted"><?php esc_html_e( 'You can use this merge tag in notification emails', 'invoicing' ); ?></span>
@@ -50,13 +50,17 @@ defined( 'ABSPATH' ) || exit;
 
 <h5><?php esc_html_e( 'Available Options', 'invoicing' ); ?></h5>
 
-<div class='form-group input-group' v-for='(option, index) in active_form_element.options'>
+<div class='form-group mb-3 input-group' v-for='(option, index) in active_form_element.options'>
     <input type='text' class='form-control' v-model='active_form_element.options[index]'>
-    <div class='input-group-append'>
-        <button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
-    </div>
+    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+		<div class="input-group-append ">
+            <button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+		</div>
+	<?php else : ?>
+		<button class='button button-secondary border' type='button' @click.prevent='active_form_element.options.splice(index, 1)'><span class='dashicons dashicons-trash'></span></button>
+	<?php endif; ?>
 </div>
 
-<div class='form-group'>
+<div class='form-group mb-3'>
     <button class='button button-secondary' type='button' @click.prevent='active_form_element.options.push("")'><?php esc_html_e( 'Add Option', 'invoicing' ); ?></button>
 </div>

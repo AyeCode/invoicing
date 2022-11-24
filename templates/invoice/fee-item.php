@@ -17,7 +17,7 @@ do_action( 'getpaid_before_invoice_fee_item', $invoice, $fee );
 
 <div class='getpaid-invoice-item item-fee border-bottom'>
 
-    <div class="form-row">
+    <div class="form-row row">
 
         <?php foreach ( array_keys( $columns ) as $column ) : ?>
 

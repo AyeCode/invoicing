@@ -27,17 +27,25 @@ if ( $position == 'right_space' ) {
 <div class="input-group">
 
     <?php if ( $position == 'left' ) : ?>
-        <div class="input-group-prepend">
+        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+            <div class="input-group-prepend ">
+                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+            </div>
+        <?php else : ?>
             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-        </div>
+        <?php endif; ?>
     <?php endif; ?>
 
     <input :placeholder='form_element.placeholder' class='form-control' type='text'>
 
     <?php if ( $position == 'right' ) : ?>
-        <div class="input-group-append">
+        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+            <div class="input-group-append ">
+                <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
+            </div>
+        <?php else : ?>
             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
-        </div>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
 

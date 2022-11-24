@@ -21,7 +21,7 @@ if ( empty( $selectable ) ) {
     return;
 }
 
-echo '<div class="getpaid-payment-form-items-radio form-group">';
+echo '<div class="getpaid-payment-form-items-radio form-group mb-3">';
 
 // Display the selectable items.
 aui()->radio(

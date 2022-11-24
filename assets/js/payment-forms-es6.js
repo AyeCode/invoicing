@@ -1124,7 +1124,12 @@ jQuery(function ($) {
 			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>')
 
 		// Display the modal.
-		$('#getpaid-payment-modal').modal()
+        if ( window.bootstrap && window.bootstrap.Modal ) {
+            var paymentModal = new window.bootstrap.Modal(document.getElementById('getpaid-payment-modal') );
+            paymentModal.show();
+        } else {
+            $('#getpaid-payment-modal').modal()
+        }
 
 		// Load the form via ajax.
 		var data = $(this).data()
@@ -1134,7 +1139,12 @@ jQuery(function ($) {
 
 		$.get(WPInv.ajax_url, data, function (res) {
 			$('#getpaid-payment-modal .modal-body-wrapper').html(res)
-			$('#getpaid-payment-modal').modal('handleUpdate')
+            if ( paymentModal ) {
+                paymentModal.handleUpdate();
+            } else {
+                $('#getpaid-payment-modal').modal('handleUpdate')
+            }
+
 			$('#getpaid-payment-modal .getpaid-payment-form').each(function () {
 				setup_form($(this));
 			})
@@ -1142,7 +1152,11 @@ jQuery(function ($) {
 
 			.fail(function (res) {
 				$('#getpaid-payment-modal .modal-body-wrapper').html(WPInv.connectionError)
-				$('#getpaid-payment-modal').modal('handleUpdate')
+				if ( paymentModal ) {
+                    paymentModal.handleUpdate();
+                } else {
+                    $('#getpaid-payment-modal').modal('handleUpdate')
+                }
 			})
 
 	})
@@ -1178,7 +1192,12 @@ jQuery(function ($) {
 			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>')
 
 		// Display the modal.
-		$('#getpaid-payment-modal').modal()
+        if ( window.bootstrap && window.bootstrap.Modal ) {
+            var paymentModal = new window.bootstrap.Modal(document.getElementById('getpaid-payment-modal') );
+            paymentModal.show();
+        } else {
+            $('#getpaid-payment-modal').modal()
+        }
 
 		// Load the form via ajax.
 		data.action = 'wpinv_get_payment_form'
@@ -1186,7 +1205,11 @@ jQuery(function ($) {
 
 		$.get(WPInv.ajax_url, data, function (res) {
 			$('#getpaid-payment-modal .modal-body-wrapper').html(res)
-			$('#getpaid-payment-modal').modal('handleUpdate')
+			if ( paymentModal ) {
+                paymentModal.handleUpdate();
+            } else {
+                $('#getpaid-payment-modal').modal('handleUpdate')
+            }
 			$('#getpaid-payment-modal .getpaid-payment-form').each(function () {
 				setup_form($(this));
 			})
@@ -1194,7 +1217,11 @@ jQuery(function ($) {
 
 			.fail(function (res) {
 				$('#getpaid-payment-modal .modal-body-wrapper').html(WPInv.connectionError)
-				$('#getpaid-payment-modal').modal('handleUpdate')
+				if ( paymentModal ) {
+                    paymentModal.handleUpdate();
+                } else {
+                    $('#getpaid-payment-modal').modal('handleUpdate')
+                }
 			})
 
 	})

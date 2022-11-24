@@ -15,8 +15,8 @@ defined( 'ABSPATH' ) || exit;
 
     <h4 v-if="form_element.address_type == 'both'" class="col-12 mb-3"><?php esc_html_e( 'Billing / Shipping Address', 'invoicing' ); ?></h4>
 
-    <div class='form-group address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in visible_fields( form_element.fields )' :class='grid_class( field )' :key='field.name'>
-        <label class="d-block w-100">
+    <div class='form-group mb-3 address-field-preview wpinv-payment-form-field-preview' v-for='(field, index) in visible_fields( form_element.fields )' :class='grid_class( field )' :key='field.name'>
+        <label class="form-label d-block w-100">
             <span>{{field.label}}<span class='text-danger' v-if='field.required'> *</span><span>
             <input v-if='field.name !== "wpinv_country" && field.name !== "wpinv_state"' class='form-control' type='text' :placeholder='field.placeholder'>
             <select v-else class='form-control'>

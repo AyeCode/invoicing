@@ -58,7 +58,7 @@ class GetPaid_Meta_Box_Payment_Form {
                             <div class="wpinv-form-builder-edit-field-wrapper">
                                 <?php do_action( 'wpinv_payment_form_edit_element_template', 'active_form_element', $post ); ?>
                                 <?php do_action( 'getpaid_payment_form_edit_element_template', $post ); ?>
-                                <div class='form-group'>
+                                <div class='form-group mb-3'>
                                     <label :for="active_form_element.id + '_grid_width'"><?php esc_html_e( 'Width', 'invoicing' ); ?></label>
                                     <select class='form-control custom-select' :id="active_form_element.id + '_grid_width'" v-model='gridWidth'>
                                         <option value='full'><?php esc_html_e( 'Full Width', 'invoicing' ); ?></option>

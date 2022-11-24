@@ -51,7 +51,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 
 				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' == $key ? 'bg-light' : 'border-bottom'; ?>">
 
-					<div class="form-row">
+					<div class="form-row row">
 
 						<div class="col-8 pl-sm-0 getpaid-payment-form-line-totals-label">
 							<?php echo esc_html( $label ); ?>

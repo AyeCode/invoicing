@@ -13,7 +13,9 @@ defined( 'ABSPATH' ) || exit;
 
 <div class='alert mb-0' :class='form_element.class' role='alert'>
     <span v-html='form_element.text'></span>
-    <button v-if='form_element.dismissible' type='button' class='close' @click.prevent='' style="margin-top: -4px;">
-        <span aria-hidden='true'>&times;</span>
+    <button v-if='form_element.dismissible' type='button' class='close btn-close' @click.prevent='' style="margin-top: -4px;">
+        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+            <span aria-hidden="true">×</span>
+        <?php endif; ?>
     </button>
 </div>

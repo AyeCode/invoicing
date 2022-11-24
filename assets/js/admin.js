@@ -838,7 +838,12 @@ jQuery(function ($) {
 		})
 
 		// Display the modal.
-		$('#getpaid-edit-invoice-item').modal()
+		if ( window.bootstrap && window.bootstrap.Modal ) {
+            var invoiceModal = new window.bootstrap.Modal(document.getElementById('getpaid-edit-invoice-item') );
+            invoiceModal.show();
+        } else {
+            $('#getpaid-edit-invoice-item').modal()
+        }
 
 	})
 

@@ -97,6 +97,8 @@ defined( 'ABSPATH' ) || exit;
 
 	.wpinv-page .bsui a.btn {
 		text-decoration: none;
+		margin-right: 2px;
+    	margin-bottom: 2px;
 	}
 
 	.getpaid-cc-card-inner {

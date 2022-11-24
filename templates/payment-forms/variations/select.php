@@ -21,7 +21,7 @@ if ( empty( $selectable ) ) {
     return;
 }
 
-echo '<div class="getpaid-payment-form-items-select form-group">';
+echo '<div class="getpaid-payment-form-items-select form-group mb-3">';
 
 // Display the selectable items.
 aui()->select(

@@ -11,8 +11,8 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<div class='form-group'>
-    <label :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Enter your text', 'invoicing' ); ?></label>
+<div class='form-group mb-3'>
+    <label class="form-label " :for="active_form_element.id + '_edit'"><?php esc_html_e( 'Enter your text', 'invoicing' ); ?></label>
     <textarea :id="active_form_element.id + '_edit'" v-model='active_form_element.text' class='form-control' rows='3'></textarea>
     <small class="form-text text-muted"><?php esc_html_e( 'HTML is allowed', 'invoicing' ); ?></small>
 </div>
