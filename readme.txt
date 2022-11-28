@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.19 =
 * Bank Transfer: Calculate subscription renewal date from the last invoice date instead of the last payment date.
+* Fix: Object cache hides Stripe settings.
 
 = 2.6.18 =
 * Test on WordPress 6.1
