@@ -144,6 +144,7 @@ function wpinv_delete_option( $key = '' ) {
  *
  */
 function wpinv_register_settings() {
+	do_action( 'getpaid_before_register_settings' );
 
     // Loop through all tabs.
     foreach ( wpinv_get_registered_settings() as $tab => $sections ) {
@@ -157,6 +158,8 @@ function wpinv_register_settings() {
                 $section = 'main';
                 $settings = $sections;
             }
+
+			do_action( "getpaid_register_{$tab}_{$section}" );
 
             // Register the setting section.
             add_settings_section(
@@ -176,6 +179,8 @@ function wpinv_register_settings() {
 
     // Creates our settings in the options table.
     register_setting( 'wpinv_settings', 'wpinv_settings', 'wpinv_settings_sanitize' );
+
+	do_action( 'getpaid_after_register_settings' );
 }
 add_action( 'admin_init', 'wpinv_register_settings' );
 

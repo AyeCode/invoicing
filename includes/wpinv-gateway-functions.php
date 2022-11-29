@@ -237,6 +237,7 @@ function wpinv_settings_gateways( $settings ) {
         $settings[ $key ] = $gateway_settings;
     }
 
+    do_action( 'getpaid_after_gateway_settings', $settings );
     return $settings;
 
 }

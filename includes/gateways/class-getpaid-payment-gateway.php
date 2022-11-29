@@ -138,6 +138,8 @@ abstract class GetPaid_Payment_Gateway {
 	 */
 	public function __construct() {
 
+		do_action( 'getpaid_before_init_payment_gateway_' . $this->id, $this );
+
 		// Register gateway.
 		add_filter( 'wpinv_payment_gateways', array( $this, 'register_gateway' ) );
 
