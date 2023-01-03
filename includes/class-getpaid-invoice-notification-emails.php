@@ -462,11 +462,11 @@ class GetPaid_Invoice_Notification_Emails {
 				$invoice       = new WPInv_Invoice( $invoice );
 				$email->object = $invoice;
 
-				if ( $invoice->needs_payment() ) {
+				if ( $invoice->needs_payment() && ! $invoice->is_renewal() ) {
 					$this->send_email( $invoice, $email, __FUNCTION__, $invoice->get_email() );
 				}
-}
-}
+			}
+		}
 
 	}
 
