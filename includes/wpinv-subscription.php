@@ -871,14 +871,12 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		// Are we creating a new invoice?
 		if ( empty( $invoice ) ) {
-			$invoice = $this->create_payment();
+			$invoice = $this->create_payment( false );
 
 			if ( empty( $invoice ) ) {
 				return false;
 			}
-}
-
-		$invoice->set_status( 'wpi-renewal' );
+		}
 
 		// Maybe set a transaction id.
 		if ( ! empty( $args['transaction_id'] ) ) {
@@ -912,9 +910,10 @@ class WPInv_Subscription extends GetPaid_Data {
      * Creates a new invoice and returns it.
      *
      * @since  1.0.19
+	 * @param bool $save Whether we should save the invoice.
      * @return WPInv_Invoice|bool
      */
-    public function create_payment() {
+    public function create_payment( $save = true ) {
 
 		$parent_invoice = $this->get_parent_payment();
 
@@ -953,6 +952,11 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$invoice->recalculate_total();
 		$invoice->set_status( 'wpi-pending' );
+
+		if ( ! $save ) {
+			return $invoice;
+		}
+
 		$invoice->save();
 
 		return $invoice->exists() ? $invoice : false;

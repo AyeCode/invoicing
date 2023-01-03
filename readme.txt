@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.20 =
+* Fix: PayPal gateway sends invoice pending payment emails on subscription renewals.
+
 = 2.6.19 =
 * Bank Transfer: Calculate subscription renewal date from the last invoice date instead of the last payment date.
 * Fix: Object cache hides Stripe settings.
