@@ -257,9 +257,6 @@ class WPInv_Ajax {
     public static function get_payment_form() {
         global $getpaid_force_checkbox;
 
-        // Check nonce.
-        check_ajax_referer( 'getpaid_form_nonce' );
-
         // Is the request set up correctly?
 		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice'] ) ) {
 			aui()->alert(
@@ -342,9 +339,6 @@ class WPInv_Ajax {
      * @since 1.0.18
      */
     public static function payment_form() {
-
-        // Check nonce.
-        check_ajax_referer( 'getpaid_form_nonce' );
 
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
@@ -989,9 +983,6 @@ class WPInv_Ajax {
      */
     public static function get_aui_states_field() {
 
-        // Verify nonce.
-        check_ajax_referer( 'wpinv-nonce' );
-
         // We need a country.
         if ( empty( $_GET['country'] ) ) {
             exit;
@@ -1051,9 +1042,6 @@ class WPInv_Ajax {
      * @since 1.0.19
      */
     public static function payment_form_refresh_prices() {
-
-        // Check nonce.
-        check_ajax_referer( 'getpaid_form_nonce' );
 
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
