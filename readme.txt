@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.20 =
 * Fix: PayPal gateway sends invoice pending payment emails on subscription renewals.
+* Change: Stop checking nonces when no data is saved to prevent issues with page caching.
 
 = 2.6.19 =
 * Bank Transfer: Calculate subscription renewal date from the last invoice date instead of the last payment date.
