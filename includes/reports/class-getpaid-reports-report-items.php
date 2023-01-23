@@ -34,7 +34,7 @@ class GetPaid_Reports_Report_Items extends GetPaid_Reports_Abstract_Report {
 				SUM(price) as total
             FROM $wpdb->posts
             LEFT JOIN $table as meta ON meta.post_id = $wpdb->posts.ID
-				INNER JOIN $table2 as item ON item.post_id = wp_posts.ID
+				INNER JOIN $table2 as item ON item.post_id = $wpdb->posts.ID
             WHERE meta.post_id IS NOT NULL
                 AND $wpdb->posts.post_type = 'wpi_invoice'
                 AND ( $wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'wpi-renewal' )
