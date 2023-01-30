@@ -86,7 +86,6 @@ class WPInv_Plugin {
 		$GLOBALS['wpinv_euvat'] = new WPInv_EUVat(); // Backwards compatibility.
 
 		// Init other objects.
-		$this->set( 'session', new WPInv_Session_Handler() );
 		$this->set( 'notes', new WPInv_Notes() );
 		$this->set( 'api', new WPInv_API() );
 		$this->set( 'post_types', new GetPaid_Post_Types() );
