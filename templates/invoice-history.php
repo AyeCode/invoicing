@@ -15,6 +15,8 @@ $current_page   = empty( $_GET['page'] ) ? 1 : absint( $_GET['page'] );
 // Fires before displaying user invoices.
 do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, $invoices->max_num_pages, $post_type );
 
+wpinv_print_errors();
+
 ?>
 
 

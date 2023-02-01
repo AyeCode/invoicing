@@ -336,13 +336,13 @@ function getpaid_save_address_edit_tab( $data ) {
             $value = sanitize_text_field( $data[ $field ] );
             update_user_meta( $user_id, '_wpinv_' . $field, $value );
         }
-}
+    }
 
     if ( isset( $data['email_cc'] ) ) {
         update_user_meta( $user_id, '_wpinv_email_cc', sanitize_text_field( $data['email_cc'] ) );
     }
 
-    wpinv_set_error( 'address_updated', __( 'Your billing address has been updated', 'invoicing' ), 'success' );
+    wpinv_set_error( 'address_updated' );
 }
 add_action( 'getpaid_authenticated_action_edit_billing_details', 'getpaid_save_address_edit_tab' );
 

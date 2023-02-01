@@ -94,6 +94,8 @@ function wpinv_send_to_success_page( $args = array() ) {
         $success_page = wpinv_get_success_page_uri();
     }
 
+    $args['wpinv-notice'] = current( array_keys( wpinv_get_errors() ) );
+
     $redirect = add_query_arg( $args, $success_page );
 
     $redirect = apply_filters( 'wpinv_send_to_success_page_url', $redirect, $args, $success_page );

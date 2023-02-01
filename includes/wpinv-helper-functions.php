@@ -596,7 +596,7 @@ function wpinv_utf8_strrpos( $str, $find, $offset = 0, $encoding = 'UTF-8' ) {
  */
 function wpinv_utf8_substr( $str, $start, $length = null, $encoding = 'UTF-8' ) {
     if ( function_exists( 'mb_substr' ) ) {
-        if ( $length === null ) {
+        if ( null === $length ) {
             return mb_substr( $str, $start, wpinv_utf8_strlen( $str, $encoding ), $encoding );
         } else {
             return mb_substr( $str, $start, $length, $encoding );
@@ -671,7 +671,7 @@ function wpinv_cal_days_in_month( $calendar, $month, $year ) {
 
     // Fallback in case the calendar extension is not loaded in PHP
     // Only supports Gregorian calendar
-    return date( 't', mktime( 0, 0, 0, $month, 1, $year ) );
+    return gmdate( 't', mktime( 0, 0, 0, $month, 1, $year ) );
 }
 
 /**
@@ -1118,20 +1118,27 @@ function getpaid_user_delete_invoice( $data ) {
 
     // Ensure that it exists and that it belongs to the current user.
     if ( ! $invoice->exists() || $invoice->get_customer_id() != get_current_user_id() ) {
-        wpinv_set_error( 'invalid_invoice', __( 'You do not have permission to delete this invoice', 'invoicing' ) );
+        $notice = 'perm_delete_invoice';
 
     // Can it be deleted?
     } elseif ( ! $invoice->needs_payment() ) {
-        wpinv_set_error( 'cannot_delete', __( 'This invoice cannot be deleted as it has already been paid.', 'invoicing' ) );
+        $notice = 'cannot_delete_invoice';
 
     // Delete it.
     } else {
 
         $invoice->delete();
-        wpinv_set_error( 'delete', __( 'The invoice has been deleted.', 'invoicing' ), 'info' );
+        $notice = 'deleted_invoice';
     }
 
-    $redirect = remove_query_arg( array( 'getpaid-action', 'getpaid-nonce', 'invoice_id' ) );
+    $redirect = add_query_arg(
+        array(
+            'wpinv-notice'   => $notice,
+            'getpaid-action' => false,
+            'getpaid-nonce'  => false,
+            'invoice_id'     => false,
+        )
+    );
 
     wp_safe_redirect( $redirect );
     exit;

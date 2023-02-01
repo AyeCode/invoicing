@@ -138,22 +138,26 @@ class WPInv_Subscriptions {
 
         // Ensure that it exists and that it belongs to the current user.
         if ( ! $subscription->exists() || $subscription->get_customer_id() != get_current_user_id() ) {
-            wpinv_set_error( 'invalid_subscription', __( 'You do not have permission to cancel this subscription', 'invoicing' ) );
+            $notice = 'perm_cancel_subscription';
 
         // Can it be cancelled.
         } elseif ( ! $subscription->can_cancel() ) {
-            wpinv_set_error( 'cannot_cancel', __( 'This subscription cannot be cancelled as it is not active.', 'invoicing' ) );
+            $notice = 'cannot_cancel_subscription';
 
         // Cancel it.
         } else {
 
             $subscription->cancel();
-            wpinv_set_error( 'cancelled', __( 'This subscription has been cancelled.', 'invoicing' ), 'info' );
+            $notice = 'cancelled_subscription';
         }
 
-        $redirect = remove_query_arg( array( 'getpaid-action', 'getpaid-nonce' ) );
+        $redirect = array(
+            'getpaid-action' => false,
+            'getpaid-nonce'  => false,
+            'wpinv-notice'   => $notice,
+        );
 
-        wp_safe_redirect( $redirect );
+        wp_safe_redirect( add_query_arg( $redirect ) );
         exit;
 
     }

@@ -41,7 +41,7 @@ function getpaid_get_errors_html( $clear = true, $wrap = true ) {
             $error   = wp_kses_post( $error );
             $errors .= "<div data-code='$id'>$error</div>";
         }
-}
+    }
 
     if ( $clear ) {
         wpinv_clear_errors();
@@ -64,26 +64,82 @@ function wpinv_print_errors() {
  * @return array
  */
 function wpinv_get_errors() {
-    $errors = getpaid_session()->get( 'wpinv_errors' );
-    return is_array( $errors ) ? $errors : array();
+
+    // Contains known errors.
+    $all_errors = array(
+        'perm_cancel_subscription'   => array(
+            'type' => 'error',
+            'text' => __( 'You do not have permission to cancel this subscription', 'invoicing' ),
+        ),
+        'cannot_cancel_subscription' => array(
+            'type' => 'error',
+            'text' => __( 'This subscription cannot be cancelled as it is not active.', 'invoicing' ),
+        ),
+        'cancelled_subscription'     => array(
+            'type' => 'success',
+            'text' => __( 'Subscription cancelled successfully.', 'invoicing' ),
+        ),
+        'address_updated'            => array(
+            'type' => 'success',
+            'text' => __( 'Address updated successfully.', 'invoicing' ),
+        ),
+        'perm_delete_invoice'        => array(
+            'type' => 'error',
+            'text' => __( 'You do not have permission to delete this invoice', 'invoicing' ),
+        ),
+        'cannot_delete_invoice'      => array(
+            'type' => 'error',
+            'text' => __( 'This invoice cannot be deleted as it has already been paid.', 'invoicing' ),
+        ),
+        'deleted_invoice'            => array(
+            'type' => 'success',
+            'text' => __( 'Invoice deleted successfully.', 'invoicing' ),
+        ),
+        'card_declined'              => array(
+            'type' => 'error',
+            'text' => __( 'Your card was declined.', 'invoicing' ),
+        ),
+        'invalid_currency'           => array(
+            'type' => 'error',
+            'text' => __( 'The chosen payment gateway does not support this currency.', 'invoicing' ),
+        ),
+    );
+
+    $errors = apply_filters( 'wpinv_errors', array() );
+
+    if ( isset( $_GET['wpinv-notice'] ) && isset( $all_errors[ $_GET['wpinv-notice'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $errors[ $_GET['wpinv-notice'] ] = $all_errors[ $_GET['wpinv-notice'] ]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    }
+
+    if ( isset( $GLOBALS['wpinv_notice'] ) && isset( $all_errors[ $GLOBALS['wpinv_notice'] ] ) ) {
+        $errors[ $GLOBALS['wpinv_notice'] ] = $all_errors[ $GLOBALS['wpinv_notice'] ];
+    }
+
+    if ( isset( $GLOBALS['wpinv_custom_notice'] ) ) {
+        $errors[ $GLOBALS['wpinv_notice']['code'] ] = $GLOBALS['wpinv_custom_notice'];
+    }
+
+    return $errors;
 }
 
 /**
  * Adds an error to the list of errors.
  *
  * @param string $error_id The error id.
- * @param string $error_message The error message.
- * @param string $type Either error, info, warning, primary, dark, light or success.
+ * @param string $error The error message.
+ * @param string $type The error type.
  */
-function wpinv_set_error( $error_id, $error_message, $type = 'error' ) {
+function wpinv_set_error( $error_id, $message = '', $type = 'error' ) {
 
-    $errors              = wpinv_get_errors();
-    $errors[ $error_id ] = array(
-        'type' => $type,
-        'text' => $error_message,
-    );
-
-    getpaid_session()->set( 'wpinv_errors', $errors );
+    if ( ! empty( $message ) ) {
+        $GLOBALS['wpinv_custom_notice'] = array(
+            'code' => $error_id,
+            'type' => $type,
+            'text' => $message,
+        );
+    } else {
+        $GLOBALS['wpinv_notice'] = $error_id;
+    }
 }
 
 /**
@@ -99,21 +155,15 @@ function wpinv_has_errors() {
  *
  */
 function wpinv_clear_errors() {
-    getpaid_session()->set( 'wpinv_errors', null );
+    unset( $GLOBALS['wpinv_notice'] );
 }
 
 /**
  * Clears a single error.
  *
  */
-function wpinv_unset_error( $error_id ) {
-    $errors = wpinv_get_errors();
-
-    if ( isset( $errors[ $error_id ] ) ) {
-        unset( $errors[ $error_id ] );
-    }
-
-    getpaid_session()->set( 'wpinv_errors', $errors );
+function wpinv_unset_error() {
+    unset( $GLOBALS['wpinv_notice'] );
 }
 
 /**
