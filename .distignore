@@ -26,7 +26,6 @@ phpcs.ruleset.xml
 README.md
 wp-cli.local.yml
 tests
-vendor
 .github
 node_modules
 *.sql
