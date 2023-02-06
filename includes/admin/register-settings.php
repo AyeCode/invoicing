@@ -1165,7 +1165,7 @@ function wpinv_get_merge_tags_help_text( $subscription = false ) {
 	$link = sprintf(
 		'<strong><a href="%s" target="_blank">%s</a></strong>',
 		$url,
-		esc_html__( 'View available merge tags.', 'wpinv-quotes' )
+		esc_html__( 'View available merge tags.', 'invoicing' )
 	);
 
 	$description = esc_html__( 'The content of the email (Merge Tags and HTML are allowed).', 'invoicing' );

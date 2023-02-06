@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
-Tested up to: 6.0
-Stable tag: 2.6.19
+Tested up to: 6.1
+Stable tag: 2.6.20
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
