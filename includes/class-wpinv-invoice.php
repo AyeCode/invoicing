@@ -1984,6 +1984,12 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return mixed Value of the given invoice property (if set).
 	 */
 	public function get( $key, $context = 'view' ) {
+		$method = "get_$key";
+
+		if ( is_callable( array( $this, $method ) ) ) {
+			return $this->$method( $context );
+		}
+
         return $this->get_prop( $key, $context );
 	}
 
