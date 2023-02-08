@@ -87,6 +87,11 @@ class GetPaid_Meta_Box_Invoice_Address {
 			$address_fields['state']['placeholder'] = __( 'Choose a state', 'invoicing' );
 		}
 
+		// Maybe remove the VAT field.
+		if ( ! wpinv_use_taxes() ) {
+			unset( $address_fields['vat_number'] );
+		}
+
 		$address_fields = apply_filters( 'getpaid_admin_edit_invoice_address_fields', $address_fields, $invoice );
 		?>
 
