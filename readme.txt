@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.24 =
+* Change: Subscription cancel button now links to the PayPal cancel page.
+
 = 2.6.23 =
 * .distignore ignores vendor folder.
 
