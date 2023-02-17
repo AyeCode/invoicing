@@ -465,7 +465,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
 		}
 
-        wpinv_set_error( 'card_declined', __( 'Credit card declined.', 'invoicing' ) );
+        wpinv_set_error( 'card_declined' );
 
         if ( ! empty( $result->transactionResponse->errors ) ) {
             $errors = (object) $result->transactionResponse->errors;

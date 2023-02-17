@@ -85,6 +85,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $this->checkout_button_text = __( 'Proceed to PayPal', 'invoicing' );
         $this->notify_url           = wpinv_get_ipn_url( $this->id );
 
+		add_filter( 'wpinv_subscription_cancel_url', array( $this, 'filter_cancel_subscription_url' ), 10, 2 );
 		add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
         add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
 		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
@@ -547,6 +548,34 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         );
 
 		return $admin_settings;
+	}
+
+	/**
+	 * Retrieves the URL to cancel a subscription.
+	 *
+	 * @param string $url
+	 * @param WPInv_Subscription $subscription
+	 */
+	public function filter_cancel_subscription_url( $url, $subscription ) {
+
+		if ( $this->id !== $subscription->get_gateway() ) {
+			return $url;
+		}
+
+		// Get the PayPal profile ID.
+		$profile_id = $subscription->get_profile_id();
+
+		// Bail if no profile ID.
+		if ( empty( $profile_id ) ) {
+			return $url;
+		}
+
+		$cancel_url = 'https://www.paypal.com/myaccount/autopay/connect/%s/cancel';
+		if ( $this->is_sandbox( $subscription->get_parent_payment() ) ) {
+			$cancel_url = 'https://www.sandbox.paypal.com/myaccount/autopay/connect/%s/cancel';
+		}
+
+		return sprintf( $cancel_url, $profile_id );
 	}
 
 	/**

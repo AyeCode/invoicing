@@ -426,7 +426,7 @@ class GetPaid_Admin {
 
 		if ( $new_invoice->exists() ) {
 
-			getpaid_admin()->show_success( __( 'Invoice duplicated successfully.', 'newsletter-optin-box' ) );
+			getpaid_admin()->show_success( __( 'Invoice duplicated successfully.', 'invoicing' ) );
 
 			wp_safe_redirect(
 				add_query_arg(
@@ -441,7 +441,7 @@ class GetPaid_Admin {
 
 		}
 
-		getpaid_admin()->show_error( __( 'There was an error duplicating this invoice. Please try again.', 'newsletter-optin-box' ) );
+		getpaid_admin()->show_error( __( 'There was an error duplicating this invoice. Please try again.', 'invoicing' ) );
 
 	}
 

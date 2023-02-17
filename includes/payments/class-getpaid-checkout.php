@@ -449,7 +449,7 @@ class GetPaid_Checkout {
 
 		// Validate the currency.
 		if ( ! apply_filters( "getpaid_gateway_{$submission_gateway}_is_valid_for_currency", true, $invoice->get_currency() ) ) {
-			wpinv_set_error( 'invalid_currency', __( 'The chosen payment gateway does not support this currency', 'invoicing' ) );
+			wpinv_set_error( 'invalid_currency' );
 		}
 
 		// Check to see if we have any errors.

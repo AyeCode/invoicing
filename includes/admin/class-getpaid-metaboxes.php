@@ -263,7 +263,7 @@ class GetPaid_Metaboxes {
 			// We need this save event to run once to avoid potential endless loops.
 			self::$saved_meta_boxes = true;
 
-			return GetPaid_Meta_Box_Invoice_Address::save( $post_id );
+			return GetPaid_Meta_Box_Invoice_Address::save( $post_id, wp_kses_post_deep( $_POST ) );
 
 		}
 

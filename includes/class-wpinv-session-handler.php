@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Session handler class.
+ *
+ * @deprecated
  */
 class WPInv_Session_Handler extends WPInv_Session {
 
@@ -50,7 +52,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 	/**
 	 * Constructor for the session class.
 	 */
-	public function __construct() {
+	public function old__construct() {
 
 	    $this->_cookie = apply_filters( 'wpinv_cookie', 'wpinv_session_' . COOKIEHASH );
         add_action( 'init', array( $this, 'init' ), -1 );
