@@ -891,6 +891,7 @@ class WPInv_Subscription extends GetPaid_Data {
 			$invoice->set_gateway( $args['gateway'] );
 		}
 
+		$invoice->set_status( 'wpi-renewal' );
 		$invoice->save();
 
 		if ( ! $invoice->exists() ) {
