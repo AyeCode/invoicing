@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.89';
+		public $version = '0.1.90';
 
 		/**
 		 * Class textdomain.
@@ -576,6 +576,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			}else{
 				include_once( dirname( __FILE__ ) . '/inc/bs4-js.php' );
             }
+
 			$output = ob_get_clean();
 
 			/*
@@ -819,7 +820,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				'css_backend'    => 'compatibility', // core, compatibility
 				'js_backend'     => $js_default_backend, // js to load, core-popper, popper
 				'disable_admin'  => '', // URL snippets to disable loading on admin
-                'bs_ver'         => '5', // The default bootstrap version to sue by default
+                'bs_ver'         => '4', // The default bootstrap version to sue by default
 			), $db_settings );
 
 			$settings = wp_parse_args( $db_settings, $defaults );
@@ -1099,7 +1100,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 							if((empty( $d_colors[$key]) ||  $d_colors[$key] != $color) || $is_fse ) {
 								$var = $is_fse ? "var(--wp--preset--color--$key)" : $color;
 								$compat = $is_fse ? '.editor-styles-wrapper' : $compatibility;
-								echo self::css_overwrite($key,$var,$compat);
+								echo $aui_bs5 ? self::css_overwrite_bs5($key,$var,$compat,$color) : self::css_overwrite($key,$var,$compat,$color);
 							}
 						}
 					   // exit;
@@ -1155,6 +1156,24 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			return defined('AYECODE_UI_BS3_COMPAT') || defined('SVQ_THEME_VERSION') || defined('FUSION_BUILDER_VERSION');
 		}
 
+		public static function hex_to_rgb($hex) {
+			// Remove '#' if present
+			$hex = str_replace('#', '', $hex);
+
+			// Convert 3-digit hex to 6-digit hex
+			if(strlen($hex) == 3) {
+				$hex = str_repeat(substr($hex, 0, 1), 2) . str_repeat(substr($hex, 1, 1), 2) . str_repeat(substr($hex, 2, 1), 2);
+			}
+
+			// Convert hex to RGB
+			$r = hexdec(substr($hex, 0, 2));
+			$g = hexdec(substr($hex, 2, 2));
+			$b = hexdec(substr($hex, 4, 2));
+
+			// Return RGB values as an array
+			return $r . ',' . $g . ',' . $b;
+		}
+
 		/**
 		 * Build the CSS to overwrite a bootstrap color variable.
 		 *
@@ -1164,19 +1183,24 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @return string
 		 */
-		public static function css_overwrite($type,$color_code,$compatibility){
-            global $aui_bs5;
+		public static function css_overwrite_bs5($type,$color_code,$compatibility, $hex = '' ){
+			global $aui_bs5;
 
 			$is_var = false;
 			if(!$color_code){return '';}
-			if(!sanitize_hex_color($color_code)){
+			if(strpos($color_code, 'var') !== false){
+				//if(!sanitize_hex_color($color_code)){
 				$color_code = esc_attr($color_code);
 				$is_var = true;
 //				$color_code = "rgba($color_code, 0.5)";
 //                echo '###1'.$color_code.'###';//exit;
 			}
 
+//            echo '@@@'.$color_code.'==='.self::hex_to_rgb($color_code);exit;
+
 			if(!$color_code){return '';}
+
+			$rgb = self::hex_to_rgb($hex);
 
 			if($compatibility===true || $compatibility===1){
 				$compatibility = '.bsui';
@@ -1185,6 +1209,278 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			}else{
 				$compatibility = esc_attr($compatibility);
 			}
+
+			$prefix = $compatibility ? $compatibility . " " : "";
+
+
+            $output = '';
+
+//            echo '####'.$color_code;exit;
+
+			$type = sanitize_html_class($type);
+
+			/**
+			 * c = color, b = background color, o = border-color, f = fill
+			 */
+			$selectors = array(
+				".btn-{$type}"                                              => array( 'b', 'o' ),
+				".btn-{$type}.disabled"                                     => array( 'b', 'o' ),
+				".btn-{$type}:disabled"                                     => array( 'b', 'o' ),
+				".btn-outline-{$type}"                                      => array( 'c', 'o' ),
+				".btn-outline-{$type}:hover"                                => array( 'b', 'o' ),
+				".btn-outline-{$type}:not(:disabled):not(.disabled).active" => array( 'b', 'o' ),
+				".btn-outline-{$type}:not(:disabled):not(.disabled):active" => array( 'b', 'o' ),
+				".show>.btn-outline-{$type}.dropdown-toggle"                => array( 'b', 'o' ),
+				".badge-{$type}"                                            => array( 'b' ),
+				".alert-{$type}"                                            => array( 'b', 'o' ),
+				".bg-{$type}"                                               => array( 'b', 'f' ),
+				".btn-link.btn-{$type}"                                     => array( 'c' ),
+			);
+
+			if ( $aui_bs5 ) {
+				unset($selectors[".alert-{$type}" ]);
+			}
+
+			if ( $type == 'primary' ) {
+				$selectors = $selectors + array(
+						'a'                                                                                                    => array( 'c' ),
+						'.btn-link'                                                                                            => array( 'c' ),
+						'.dropdown-item.active'                                                                                => array( 'b' ),
+						'.custom-control-input:checked~.custom-control-label::before'                                          => array(
+							'b',
+							'o'
+						),
+						'.custom-checkbox .custom-control-input:indeterminate~.custom-control-label::before'                   => array(
+							'b',
+							'o'
+						),
+						'.nav-pills .nav-link.active'                                                                          => array( 'b' ),
+						'.nav-pills .show>.nav-link'                                                                           => array( 'b' ),
+						'.page-link'                                                                                           => array( 'c' ),
+						'.page-item.active .page-link'                                                                         => array(
+							'b',
+							'o'
+						),
+						'.progress-bar'                                                                                        => array( 'b' ),
+						'.list-group-item.active'                                                                              => array(
+							'b',
+							'o'
+						),
+						'.select2-container .select2-results__option--highlighted.select2-results__option[aria-selected=true]' => array( 'b' ),
+					);
+			}
+
+			$important_selectors = array(
+				".bg-{$type}" => array('b','f'),
+				".border-{$type}" => array('o'),
+				".text-{$type}" => array('c'),
+			);
+
+			$color = array();
+			$color_i = array();
+			$background = array();
+			$background_i = array();
+			$border = array();
+			$border_i = array();
+			$fill = array();
+			$fill_i = array();
+
+
+            // link
+			if ( $type === 'primary' ) {
+				$output .= 'html body {--bs-link-hover-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .75); --bs-link-color: var(--bs-'.esc_attr($type).'); }';
+				$output .= $prefix . ' .breadcrumb{--bs-breadcrumb-item-active-color: '.esc_attr($color_code).';  }';
+				$output .= $prefix . ' .navbar { --bs-nav-link-hover-color: '.esc_attr($color_code).'; --bs-navbar-hover-color: '.esc_attr($color_code).'; --bs-navbar-active-color: '.esc_attr($color_code).'; }';
+//				$output .= '.navbar a:hover{ filter: brightness(1);}';
+
+				$output .= $prefix . ' a{color: var(--bs-'.esc_attr($type).');}';
+				$output .= $prefix . ' .text-primary{color: var(--bs-'.esc_attr($type).') !important;}';
+
+                // dropdown
+				$output .= $prefix . ' .dropdown-menu{--bs-dropdown-link-hover-color: var(--bs-'.esc_attr($type).'); --bs-dropdown-link-active-color: var(--bs-'.esc_attr($type).');}';
+
+                // pagination
+				$output .= $prefix . ' .pagination{--bs-pagination-hover-color: var(--bs-'.esc_attr($type).'); --bs-pagination-active-bg: var(--bs-'.esc_attr($type).');}';
+
+//				$output .= 'a:hover{';
+//				$output .= 'filter: brightness(.8);';
+//				$output .= 'transition: filter 0.2s ease-in-out;';
+//				$output .= '}';
+			}
+
+			$output .= $prefix . ' .link-'.esc_attr($type).':hover {color: rgba(var(--bs-'.esc_attr($type).'-rgb), .8) !important;}';
+
+
+			//  buttons
+			$output .= $prefix . ' .btn-'.esc_attr($type).'{';
+			$output .= ' 
+			--bs-btn-color: #fff;
+            --bs-btn-bg: '.esc_attr($color_code).';
+            --bs-btn-border-color: '.esc_attr($color_code).';
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-hover-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-focus-shadow-rgb: --bs-'.esc_attr($type).'-rgb;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-active-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-active-shadow: unset;
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .5);
+            --bs-btn-disabled-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .1);
+            
+            ';
+			$output .= '}';
+
+            // button hover
+			$output .= $prefix . ' .btn-'.esc_attr($type).':hover{';
+			$output .= ' 
+            box-shadow: 0 0.25rem 0.25rem 0.125rem rgb(var(--bs-'.esc_attr($type).'-rgb), .1), 0 0.375rem 0.75rem -0.125rem rgb(var(--bs-'.esc_attr($type).'-rgb) , .4);
+            }
+            ';
+
+
+			if ( $aui_bs5 ) {
+//				$output .= $is_var ? 'html body {--bs-'.esc_attr($type).'-rgb: '.$color_code.'; }' : 'html body {--bs-'.esc_attr($type).'-rgb: '.self::hex_to_rgb($color_code).'; }';
+				$output .= 'html body {--bs-'.esc_attr($type).': '.esc_attr($color_code).'; }';
+				$output .= 'html body {--bs-'.esc_attr($type).'-rgb: '.$rgb.'; }';
+			}
+
+//			// build rules into each type
+//			foreach($selectors as $selector => $types){
+//				$selector = $compatibility ? $compatibility . " ".$selector : $selector;
+//				$types = array_combine($types,$types);
+//				if(isset($types['c'])){$color[] = $selector;}
+//				if(isset($types['b'])){$background[] = $selector;}
+//				if(isset($types['o'])){$border[] = $selector;}
+//				if(isset($types['f'])){$fill[] = $selector;}
+//			}
+//
+//			// build rules into each type
+//			foreach($important_selectors as $selector => $types){
+//				$selector = $compatibility ? $compatibility . " ".$selector : $selector;
+//				$types = array_combine($types,$types);
+//				if(isset($types['c'])){$color_i[] = $selector;}
+//				if(isset($types['b'])){$background_i[] = $selector;}
+//				if(isset($types['o'])){$border_i[] = $selector;}
+//				if(isset($types['f'])){$fill_i[] = $selector;}
+//			}
+
+			// add any color rules
+			if(!empty($color)){
+				$output .= implode(",",$color) . "{color: $color_code;} ";
+			}
+			if(!empty($color_i)){
+				$output .= implode(",",$color_i) . "{color: $color_code !important;} ";
+			}
+
+			// add any background color rules
+			if(!empty($background)){
+				$output .= implode(",",$background) . "{background-color: $color_code;} ";
+			}
+			if(!empty($background_i)){
+				$output .= $aui_bs5 ? '' : implode(",",$background_i) . "{background-color: $color_code !important;} ";
+//				$output .= implode(",",$background_i) . "{background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;} ";
+			}
+
+			// add any border color rules
+			if(!empty($border)){
+				$output .= implode(",",$border) . "{border-color: $color_code;} ";
+			}
+			if(!empty($border_i)){
+				$output .= implode(",",$border_i) . "{border-color: $color_code !important;} ";
+			}
+
+			// add any fill color rules
+			if(!empty($fill)){
+				$output .= implode(",",$fill) . "{fill: $color_code;} ";
+			}
+			if(!empty($fill_i)){
+				$output .= implode(",",$fill_i) . "{fill: $color_code !important;} ";
+			}
+
+
+
+
+			$transition = $is_var ? 'transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out,filter 0.15s ease-in-out;' : '';
+			// darken
+			$darker_075 = $is_var ? $color_code.';filter:brightness(0.925)' : self::css_hex_lighten_darken($color_code,"-0.075");
+			$darker_10 = $is_var ? $color_code.';filter:brightness(0.9)' : self::css_hex_lighten_darken($color_code,"-0.10");
+			$darker_125 = $is_var ? $color_code.';filter:brightness(0.875)' : self::css_hex_lighten_darken($color_code,"-0.125");
+			$darker_40 = $is_var ? $color_code.';filter:brightness(0.6)' : self::css_hex_lighten_darken($color_code,"-0.4");
+
+			// lighten
+			$lighten_25 = $is_var ? $color_code.';filter:brightness(1.25)' :self::css_hex_lighten_darken($color_code,"0.25");
+
+			// opacity see https://css-tricks.com/8-digit-hex-codes/
+			$op_25 = $color_code."40"; // 25% opacity
+
+
+			// button states
+			$output .= $is_var ? $prefix ." .btn-{$type}{{$transition }} " : '';
+			$output .= $prefix ." .btn-{$type}:hover, $prefix .btn-{$type}:focus, $prefix .btn-{$type}.focus{background-color: ".$darker_075.";    border-color: ".$darker_10.";} ";
+//			$output .= $prefix ." .btn-{$type}:hover, $prefix .btn-{$type}:focus, $prefix .btn-{$type}.focus{background-color: #000;    border-color: #000;} ";
+			$output .= $prefix ." .btn-outline-{$type}:not(:disabled):not(.disabled):active:focus, $prefix .btn-outline-{$type}:not(:disabled):not(.disabled).active:focus, .show>$prefix .btn-outline-{$type}.dropdown-toggle:focus{box-shadow: 0 0 0 0.2rem $op_25;} ";
+			$output .= $prefix ." .btn-{$type}:not(:disabled):not(.disabled):active, $prefix .btn-{$type}:not(:disabled):not(.disabled).active, .show>$prefix .btn-{$type}.dropdown-toggle{background-color: ".$darker_10.";    border-color: ".$darker_125.";} ";
+			$output .= $prefix ." .btn-{$type}:not(:disabled):not(.disabled):active:focus, $prefix .btn-{$type}:not(:disabled):not(.disabled).active:focus, .show>$prefix .btn-{$type}.dropdown-toggle:focus {box-shadow: 0 0 0 0.2rem $op_25;} ";
+
+//			if ( $type == 'primary' ) {
+//				// dropdown's
+//				$output .= $prefix . " .dropdown-item.active, $prefix .dropdown-item:active{background-color: $color_code;} ";
+//
+//				// input states
+//				$output .= $prefix . " .form-control:focus{border-color: " . $lighten_25 . ";box-shadow: 0 0 0 0.2rem $op_25;} ";
+//
+//				// page link
+//				$output .= $prefix . " .page-link:focus{box-shadow: 0 0 0 0.2rem $op_25;} ";
+//			}
+
+			// alerts
+			if ( $aui_bs5 ) {
+//				$output .= $is_var ? '' : $prefix ." .alert-{$type} {background-color: ".$color_code."20;    border-color: ".$color_code."30;color:$darker_40} ";
+				$output .= $prefix ." .alert-{$type} {--bs-alert-bg: rgba(var(--bs-{$type}-rgb), .1 ) !important;--bs-alert-border-color: rgba(var(--bs-{$type}-rgb), .25 ) !important;--bs-alert-color: rgba(var(--bs-{$type}-rgb), 1 ) !important;} ";
+			}
+
+			return $output;
+		}
+
+		/**
+		 * Build the CSS to overwrite a bootstrap color variable.
+		 *
+		 * @param $type
+		 * @param $color_code
+		 * @param $compatibility
+		 *
+		 * @return string
+		 */
+		public static function css_overwrite($type,$color_code,$compatibility, $hex = '' ){
+            global $aui_bs5;
+
+			$is_var = false;
+			if(!$color_code){return '';}
+			if(strpos($color_code, 'var') !== false){
+				//if(!sanitize_hex_color($color_code)){
+				$color_code = esc_attr($color_code);
+				$is_var = true;
+//				$color_code = "rgba($color_code, 0.5)";
+//                echo '###1'.$color_code.'###';//exit;
+			}
+
+//            echo '@@@'.$color_code.'==='.self::hex_to_rgb($color_code);exit;
+
+			if(!$color_code){return '';}
+
+            $rgb = self::hex_to_rgb($hex);
+
+			if($compatibility===true || $compatibility===1){
+				$compatibility = '.bsui';
+			}elseif(!$compatibility){
+				$compatibility = '';
+			}else{
+				$compatibility = esc_attr($compatibility);
+			}
+
+
 
 //            echo '####'.$color_code;exit;
 
@@ -1261,6 +1557,11 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
 			$output = '';
 
+			if ( $aui_bs5 ) {
+//				$output .= $is_var ? 'html body {--bs-'.esc_attr($type).'-rgb: '.$color_code.'; }' : 'html body {--bs-'.esc_attr($type).'-rgb: '.self::hex_to_rgb($color_code).'; }';
+				$output .= 'html body {--bs-'.esc_attr($type).'-rgb: '.$rgb.'; }';
+			}
+
 			// build rules into each type
 			foreach($selectors as $selector => $types){
 				$selector = $compatibility ? $compatibility . " ".$selector : $selector;
@@ -1294,7 +1595,8 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				$output .= implode(",",$background) . "{background-color: $color_code;} ";
 			}
 			if(!empty($background_i)){
-				$output .= implode(",",$background_i) . "{background-color: $color_code !important;} ";
+				$output .= $aui_bs5 ? '' : implode(",",$background_i) . "{background-color: $color_code !important;} ";
+//				$output .= implode(",",$background_i) . "{background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;} ";
 			}
 
 			// add any border color rules
@@ -1351,7 +1653,8 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 
             // alerts
 			if ( $aui_bs5 ) {
-				$output .= $is_var ? '' : $prefix ." .alert-{$type} {background-color: ".$color_code."20;    border-color: ".$color_code."30;color:$darker_40} ";
+//				$output .= $is_var ? '' : $prefix ." .alert-{$type} {background-color: ".$color_code."20;    border-color: ".$color_code."30;color:$darker_40} ";
+				$output .= $prefix ." .alert-{$type} {--bs-alert-bg: rgba(var(--bs-{$type}-rgb), .1 ) !important;--bs-alert-border-color: rgba(var(--bs-{$type}-rgb), .25 ) !important;--bs-alert-color: rgba(var(--bs-{$type}-rgb), 1 ) !important;} ";
 			}
 
 			return $output;

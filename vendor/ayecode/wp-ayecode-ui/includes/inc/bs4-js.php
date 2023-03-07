@@ -923,7 +923,6 @@
      */
     function aui_flip_color_scheme_on_scroll($value, $iframe){
         if(!$value) $value = window.scrollY;
-        console.log($value);
         var navbar = $iframe ?  $iframe.querySelector('.color-scheme-flip-on-scroll') : document.querySelector('.color-scheme-flip-on-scroll');
         if (navbar == null) return;
 

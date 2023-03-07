@@ -548,8 +548,8 @@ border-color .25s ease-in-out !default;
 
 $nav-link-font-weight:                bold !default;
 $nav-link-color:                      $gray-800 !default;
-$nav-link-hover-color:                $primary !default;
-$nav-link-active-color:               $primary !default;
+$nav-link-hover-color:                var(--bs-link-color) !default;
+$nav-link-active-color:               var(--bs-link-color) !default;
 $nav-link-disabled-color:             $gray-600 !default;
 
 $nav-link-light-color:                rgba($white, .7) !default;
@@ -643,7 +643,7 @@ $navbar-toggler-font-size:            $font-size-base !default;
 $navbar-toggler-border-radius:        0 !default;
 
 $navbar-light-color:                  $nav-link-color !default;
-$navbar-light-hover-color:            $nav-link-hover-color !default;
+$navbar-light-hover-color:            var(--bs-nav-link-hover-color) !default;
 $navbar-light-active-color:           $nav-link-active-color !default;
 $navbar-light-disabled-color:         $gray-600 !default;
 $navbar-light-toggler-border-color:   transparent !default;

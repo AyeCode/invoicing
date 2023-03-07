@@ -21,17 +21,17 @@
 // Color system
 //
 
-$white:    #fff !default;
-$gray-100: #f8f9fa !default;
-$gray-200: #e9ecef !default;
-$gray-300: #dee2e6 !default;
-$gray-400: #ced4da !default;
-$gray-500: #adb5bd !default;
-$gray-600: #6c757d !default;
-$gray-700: #495057 !default;
-$gray-800: #343a40 !default;
-$gray-900: #212529 !default;
-$black:    #000 !default;
+$white:                 #fff !default;
+$gray-100:              #f9f8fa !default;
+$gray-200:              #f5f4f8 !default;
+$gray-300:              #efecf3 !default;
+$gray-400:              #d5d2dc !default;
+$gray-500:              #bbb7c5 !default;
+$gray-600:              #9691a4 !default;
+$gray-700:            	#666276 !default;
+$gray-800:              #454056 !default;
+$gray-900:              #1f1b2d !default;
+$black:                 #000 !default;
 
 
 $grays: () !default;
@@ -98,7 +98,7 @@ $colors: map-merge(
 //$dark:          $gray-800 !default;
 //$white:         $white !default;
 
-$primary:       #1e73be !default;
+$primary:       #3993d5 !default;
 $secondary:     #6c757d !default;
 $success:       $green !default;
 $info:          #17a2b8 !default;
@@ -338,8 +338,8 @@ $font-weight-light:           300 !default;
 $font-weight-normal:          400 !default;
 // $font-weight-bold:            700 !default;
 //
-$font-weight-base:            $font-weight-light !default;
-$line-height-base:            1.6 !default;
+$font-weight-base:            $font-weight-normal !default;
+$line-height-base:            1.5 !default;
 //
 // $h1-font-size:                $font-size-base * 2.5 !default;
 // $h2-font-size:                $font-size-base * 2 !default;

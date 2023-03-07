@@ -287,7 +287,7 @@ class AUI_Component_Input {
 				}
 				if ( ! empty( $args['label_force_left'] ) ) {
 					$wrap_class .= $aui_bs5 ? '' : ' d-flex align-content-center';
-					$label = str_replace("form-check-label","", self::label( $label_args, 'cb' ) );
+					$label = str_replace(array("form-check-label","custom-control-label"),"", self::label( $label_args, 'cb' ) );
 				}
 				$output     = self::wrap( array(
 					'content' => $output,
@@ -403,7 +403,7 @@ else{$eli.attr(\'type\',\'password\');}"
 
 			// maybe horizontal
 			if ( $args['label_type'] == 'horizontal' && $type != 'checkbox' ) {
-				$class .= ' ' . AUI_Component_Helper::get_column_class( $args['label_col'], 'label' ) . ' col-form-label';
+				$class .= ' ' . AUI_Component_Helper::get_column_class( $args['label_col'], 'label' ) . ' col-form-label '.$type;
 			}
 
 			if( $aui_bs5 ){ $class .= ' form-label'; }

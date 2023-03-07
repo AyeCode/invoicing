@@ -23,7 +23,7 @@ if ( ! defined( 'WPINV_PLUGIN_FILE' ) ) {
 }
 
 if ( ! defined( 'WPINV_VERSION' ) ) {
-	define( 'WPINV_VERSION', '2.6.24' );
+	define( 'WPINV_VERSION', '2.6.25' );
 }
 
 // Include the main Invoicing class.

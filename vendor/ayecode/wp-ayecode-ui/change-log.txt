@@ -1,3 +1,7 @@
+= 0.1.90 =
+* Improvements for FSE color pallet changes - CHANGED
+* Default value as BS v5 should not have been set yet - FIXED
+
 = 0.1.89 =
 * Prevent conditional fields execution twice on select2 - FIXED
 * Changes to BS5 CSS - CHANGED

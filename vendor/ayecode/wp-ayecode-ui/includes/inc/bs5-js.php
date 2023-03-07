@@ -231,7 +231,8 @@
         jQuery('[data-bs-toggle="tooltip"]').tooltip();
         jQuery('[data-bs-toggle="popover"]').popover();
         jQuery('[data-bs-toggle="popover-html"]').popover({
-            html: true
+            html: true,
+            sanitize: false
         });
 
         // fix popover container compatibility
@@ -1023,6 +1024,55 @@
             }, 2000);
         }
     }).observe(document, {subtree: true, childList: true});
+
+
+    /**
+     * Convert hex color to rgb values.
+     *
+     * @param hex
+     * @returns {string|null}
+     */
+    function aui_fse_hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim().substring(0, 7));
+        return result ? parseInt(result[1], 16) +','+parseInt(result[2], 16)+','+parseInt(result[3], 16) : null;
+    }
+
+    /**
+     * update colors as the style colour pallet is changed
+     * @param $color
+     */
+    function aui_fse_sync_site_colors($color){
+        const getColorHex = () => {
+            const element = jQuery(".edit-site-visual-editor__editor-canvas").contents().find(".editor-styles-wrapper").get(0);
+            const style = window.getComputedStyle(element).getPropertyValue('--wp--preset--color--'+$color);
+            return style;
+        };
+
+        // set the initial ColorHex
+        let colorHex = getColorHex();
+
+        wp.data.subscribe(() => {
+
+            // get the current ColorHex
+            const newColorHex = getColorHex();
+
+            // only do something if ColorHex has changed.
+            if( colorHex !== newColorHex ) {
+                jQuery(".edit-site-visual-editor__editor-canvas").contents().find("html body").get(0).style.setProperty('--bs-'+$color+'-rgb',aui_fse_hexToRgb(newColorHex));
+            }
+
+            // update the newColorHex variable.
+            colorHex = newColorHex;
+        });
+    }
+
+    setTimeout(function(){
+        aui_fse_sync_site_colors('primary');
+        aui_fse_sync_site_colors('danger');
+        aui_fse_sync_site_colors('warning');
+        aui_fse_sync_site_colors('info');
+    }, 10000);
+
 	<?php } ?>
 
 
