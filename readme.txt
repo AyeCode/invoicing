@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.26 =
+* Checkbox value always shows as checked in submitted form data - FIXED
+
 = 2.6.25 =
 * AyeCode UI update defaulted to BS v5 instead of v4 - FIXED
 
