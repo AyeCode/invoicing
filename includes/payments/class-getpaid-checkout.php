@@ -287,7 +287,7 @@ class GetPaid_Checkout {
 					$value = implode( ' | ', $value );
 
 				} elseif ( $field['type'] === 'checkbox' ) {
-					$value = isset( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
+					$value = ! empty( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
 				} else {
 					$value = wp_kses_post( $data[ $field['id'] ] );
 				}
