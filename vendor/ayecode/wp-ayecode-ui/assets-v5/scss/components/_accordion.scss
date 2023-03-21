@@ -7,9 +7,6 @@
 
 .accordion-button {
   font-weight: $accordion-button-font-weight;
-  &:not(.collapsed) {
-    box-shadow: none;
-  }
 }
 .accordion-body {
   padding-top: $accordion-body-padding-y * .1667;

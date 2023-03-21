@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.90';
+		public $version = '0.1.91';
 
 		/**
 		 * Class textdomain.
@@ -1120,7 +1120,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                         // font face
                         if( !empty( $theme_settings['typography']['fontFamily'] ) ){
                             $t_fontface = str_replace( array('var:preset|','font-family|'), array('--wp--preset--','font-family--'), $theme_settings['typography']['fontFamily']  ); //var(--wp--preset--font-family--poppins)
-                            $css .= '--bs-body-font-family: var(' . esc_attr($t_fontface) . ');';
+                            $css .= '--bs-body-font-family: ' . esc_attr($t_fontface) . ';';
                         }
 
                         // font size
@@ -1270,20 +1270,6 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 					);
 			}
 
-			$important_selectors = array(
-				".bg-{$type}" => array('b','f'),
-				".border-{$type}" => array('o'),
-				".text-{$type}" => array('c'),
-			);
-
-			$color = array();
-			$color_i = array();
-			$background = array();
-			$background_i = array();
-			$border = array();
-			$border_i = array();
-			$fill = array();
-			$fill_i = array();
 
 
             // link
@@ -1291,7 +1277,6 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				$output .= 'html body {--bs-link-hover-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .75); --bs-link-color: var(--bs-'.esc_attr($type).'); }';
 				$output .= $prefix . ' .breadcrumb{--bs-breadcrumb-item-active-color: '.esc_attr($color_code).';  }';
 				$output .= $prefix . ' .navbar { --bs-nav-link-hover-color: '.esc_attr($color_code).'; --bs-navbar-hover-color: '.esc_attr($color_code).'; --bs-navbar-active-color: '.esc_attr($color_code).'; }';
-//				$output .= '.navbar a:hover{ filter: brightness(1);}';
 
 				$output .= $prefix . ' a{color: var(--bs-'.esc_attr($type).');}';
 				$output .= $prefix . ' .text-primary{color: var(--bs-'.esc_attr($type).') !important;}';
@@ -1302,10 +1287,6 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                 // pagination
 				$output .= $prefix . ' .pagination{--bs-pagination-hover-color: var(--bs-'.esc_attr($type).'); --bs-pagination-active-bg: var(--bs-'.esc_attr($type).');}';
 
-//				$output .= 'a:hover{';
-//				$output .= 'filter: brightness(.8);';
-//				$output .= 'transition: filter 0.2s ease-in-out;';
-//				$output .= '}';
 			}
 
 			$output .= $prefix . ' .link-'.esc_attr($type).':hover {color: rgba(var(--bs-'.esc_attr($type).'-rgb), .8) !important;}';
@@ -1314,23 +1295,46 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			//  buttons
 			$output .= $prefix . ' .btn-'.esc_attr($type).'{';
 			$output .= ' 
-			--bs-btn-color: #fff;
             --bs-btn-bg: '.esc_attr($color_code).';
             --bs-btn-border-color: '.esc_attr($color_code).';
-            --bs-btn-hover-color: #fff;
             --bs-btn-hover-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
             --bs-btn-hover-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
             --bs-btn-focus-shadow-rgb: --bs-'.esc_attr($type).'-rgb;
-            --bs-btn-active-color: #fff;
             --bs-btn-active-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
             --bs-btn-active-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
             --bs-btn-active-shadow: unset;
-            --bs-btn-disabled-color: #fff;
             --bs-btn-disabled-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .5);
             --bs-btn-disabled-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .1);
-            
             ';
+//			$output .= '
+//		    --bs-btn-color: #fff;
+//			--bs-btn-hover-color: #fff;
+//			--bs-btn-active-color: #fff;
+//			--bs-btn-disabled-color: #fff;
+//            ';
 			$output .= '}';
+
+			//  buttons outline
+			$output .= $prefix . ' .btn-outline-'.esc_attr($type).'{';
+			$output .= ' 
+            --bs-btn-border-color: '.esc_attr($color_code).';
+            --bs-btn-hover-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-hover-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-focus-shadow-rgb: --bs-'.esc_attr($type).'-rgb;
+            --bs-btn-active-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-active-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .9);
+            --bs-btn-active-shadow: unset;
+            --bs-btn-disabled-bg: rgba(var(--bs-'.esc_attr($type).'-rgb), .5);
+            --bs-btn-disabled-border-color: rgba(var(--bs-'.esc_attr($type).'-rgb), .1);
+            ';
+//			$output .= '
+//		    --bs-btn-color: #fff;
+//			--bs-btn-hover-color: #fff;
+//			--bs-btn-active-color: #fff;
+//			--bs-btn-disabled-color: #fff;
+//            ';
+			$output .= '}';
+
 
             // button hover
 			$output .= $prefix . ' .btn-'.esc_attr($type).':hover{';
@@ -1346,58 +1350,6 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				$output .= 'html body {--bs-'.esc_attr($type).'-rgb: '.$rgb.'; }';
 			}
 
-//			// build rules into each type
-//			foreach($selectors as $selector => $types){
-//				$selector = $compatibility ? $compatibility . " ".$selector : $selector;
-//				$types = array_combine($types,$types);
-//				if(isset($types['c'])){$color[] = $selector;}
-//				if(isset($types['b'])){$background[] = $selector;}
-//				if(isset($types['o'])){$border[] = $selector;}
-//				if(isset($types['f'])){$fill[] = $selector;}
-//			}
-//
-//			// build rules into each type
-//			foreach($important_selectors as $selector => $types){
-//				$selector = $compatibility ? $compatibility . " ".$selector : $selector;
-//				$types = array_combine($types,$types);
-//				if(isset($types['c'])){$color_i[] = $selector;}
-//				if(isset($types['b'])){$background_i[] = $selector;}
-//				if(isset($types['o'])){$border_i[] = $selector;}
-//				if(isset($types['f'])){$fill_i[] = $selector;}
-//			}
-
-			// add any color rules
-			if(!empty($color)){
-				$output .= implode(",",$color) . "{color: $color_code;} ";
-			}
-			if(!empty($color_i)){
-				$output .= implode(",",$color_i) . "{color: $color_code !important;} ";
-			}
-
-			// add any background color rules
-			if(!empty($background)){
-				$output .= implode(",",$background) . "{background-color: $color_code;} ";
-			}
-			if(!empty($background_i)){
-				$output .= $aui_bs5 ? '' : implode(",",$background_i) . "{background-color: $color_code !important;} ";
-//				$output .= implode(",",$background_i) . "{background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;} ";
-			}
-
-			// add any border color rules
-			if(!empty($border)){
-				$output .= implode(",",$border) . "{border-color: $color_code;} ";
-			}
-			if(!empty($border_i)){
-				$output .= implode(",",$border_i) . "{border-color: $color_code !important;} ";
-			}
-
-			// add any fill color rules
-			if(!empty($fill)){
-				$output .= implode(",",$fill) . "{fill: $color_code;} ";
-			}
-			if(!empty($fill_i)){
-				$output .= implode(",",$fill_i) . "{fill: $color_code !important;} ";
-			}
 
 
 
