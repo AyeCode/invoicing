@@ -1955,6 +1955,12 @@ function sd_get_max_height_input( $type = 'max_height', $overwrite = array() ) {
 	return $input;
 }
 
+/**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
 function sd_get_scrollbars_input( $type = 'scrollbars', $overwrite = array() ) {
 
 	$options = array(
@@ -1969,6 +1975,29 @@ function sd_get_scrollbars_input( $type = 'scrollbars', $overwrite = array() ) {
 		'default'  => '',
 		'desc_tip' => true,
 		'group'    => __( 'Wrapper Styles', 'super-duper' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * This is a placeholder function for the visibility conditions input.
+ *
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_visibility_conditions_input( $type = 'visibility_conditions', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'hidden',
+		'title'    => __( '', 'super-duper' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( '', 'super-duper' ),
 	);
 
 	$input = wp_parse_args( $overwrite, $defaults );

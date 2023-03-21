@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
-Tested up to: 6.1
-Stable tag: 2.6.25
+Tested up to: 6.2
+Stable tag: 2.6.26
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.26 =
 * Checkbox value always shows as checked in submitted form data - FIXED
+* SD & AUI packaged updated - UPDATED
 
 = 2.6.25 =
 * AyeCode UI update defaulted to BS v5 instead of v4 - FIXED

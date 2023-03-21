@@ -1044,7 +1044,7 @@
     function aui_fse_sync_site_colors($color){
         const getColorHex = () => {
             const element = jQuery(".edit-site-visual-editor__editor-canvas").contents().find(".editor-styles-wrapper").get(0);
-            const style = window.getComputedStyle(element).getPropertyValue('--wp--preset--color--'+$color);
+            const style = element == null ? '' : window.getComputedStyle(element).getPropertyValue('--wp--preset--color--'+$color);
             return style;
         };
 
@@ -1057,7 +1057,7 @@
             const newColorHex = getColorHex();
 
             // only do something if ColorHex has changed.
-            if( colorHex !== newColorHex ) {
+            if( newColorHex && colorHex !== newColorHex ) {
                 jQuery(".edit-site-visual-editor__editor-canvas").contents().find("html body").get(0).style.setProperty('--bs-'+$color+'-rgb',aui_fse_hexToRgb(newColorHex));
             }
 

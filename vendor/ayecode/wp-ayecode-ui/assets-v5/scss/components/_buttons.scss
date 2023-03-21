@@ -7,7 +7,7 @@
 // 
 // Solid variant
 
-@each $color, $value in map-remove($theme-colors, 'secondary', 'light') {
+@each $color, $value in map-remove($theme-colors, 'secondary', 'light', 'white') {
   .btn-#{$color} {
     color: $btn-color;
 
@@ -27,6 +27,18 @@
     &.disabled {
       color: $btn-color;
     }
+  }
+}
+
+.btn:not(.btn-link){
+  &:hover{
+    a:not([class*="btn-"]):not([class*="text-"]){
+      color: inherit;
+    }
+  }
+
+  a:hover:not([class*="btn-"]):not([class*="text-"]){
+    color: inherit;
   }
 }
 
