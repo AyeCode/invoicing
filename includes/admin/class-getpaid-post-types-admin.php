@@ -127,6 +127,22 @@ class GetPaid_Post_Types_Admin {
 				esc_html( __( 'Duplicate', 'invoicing' ) )
 			);
 
+			$actions['reset'] = sprintf(
+				'<a href="%1$s" style="color: #800">%2$s</a>',
+				esc_url(
+					wp_nonce_url(
+						add_query_arg(
+							array(
+								'getpaid-admin-action' => 'reset_form_stats',
+								'form_id'              => $post->ID,
+							)
+						),
+						'getpaid-nonce',
+						'getpaid-nonce'
+					)
+				),
+				esc_html( __( 'Reset Stats', 'invoicing' ) )
+			);
 		}
 
 		// Link to item payment form.
