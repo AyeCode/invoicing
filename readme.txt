@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.6.27 =
+* Action to reset form stats - ADDED
+
 = 2.6.26 =
 * Checkbox value always shows as checked in submitted form data - FIXED
 * SD & AUI packaged updated - UPDATED

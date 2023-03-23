@@ -62,6 +62,7 @@ class GetPaid_Admin {
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 		add_action( 'getpaid_authenticated_admin_action_rate_plugin', array( $this, 'redirect_to_wordpress_rating_page' ) );
 		add_action( 'getpaid_authenticated_admin_action_duplicate_form', array( $this, 'duplicate_payment_form' ) );
+		add_action( 'getpaid_authenticated_admin_action_reset_form_stats', array( $this, 'reset_form_stats' ) );
 		add_action( 'getpaid_authenticated_admin_action_duplicate_invoice', array( $this, 'duplicate_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
@@ -478,6 +479,35 @@ class GetPaid_Admin {
 		}
 
 		wp_redirect( $url );
+		exit;
+	}
+
+	/**
+     * Resets form stats.
+	 *
+	 * @param array $args
+     */
+    public function reset_form_stats( $args ) {
+
+		if ( empty( $args['form_id'] ) ) {
+			return;
+		}
+
+		$form = new GetPaid_Payment_Form( (int) $args['form_id'] );
+
+		if ( ! $form->exists() ) {
+			return;
+		}
+
+		$form->set_earned( 0 );
+		$form->set_refunded( 0 );
+		$form->set_cancelled( 0 );
+		$form->set_failed( 0 );
+		$form->save();
+
+		$this->show_success( __( 'Form stats reset successfully', 'invoicing' ) );
+
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'form_id', 'getpaid-nonce' ) ) );
 		exit;
 	}
 
