@@ -189,7 +189,7 @@ class GetPaid_Payment_Form_Submission {
 			foreach ( $processors as $processor ) {
 				call_user_func_array( $processor, array( &$this ) );
 			}
-} catch ( GetPaid_Payment_Exception $e ) {
+		} catch ( GetPaid_Payment_Exception $e ) {
 			$this->last_error      = $e->getMessage();
 			$this->last_error_code = $e->getErrorCode();
 		} catch ( Exception $e ) {

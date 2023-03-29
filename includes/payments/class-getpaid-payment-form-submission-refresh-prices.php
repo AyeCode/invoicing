@@ -170,16 +170,25 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function add_items( $submission ) {
 
 		// Add items.
-		$items = array();
+		$items          = array();
+		$selected_items = array();
 
         foreach ( $submission->get_items() as $item ) {
 			$item_id           = $item->get_id();
 			$items[ "$item_id" ] = $submission->format_amount( $item->get_sub_total() );
+
+			$selected_items[ "$item_id" ] = array(
+				'quantity' => $item->get_quantity(),
+				'price'    => $submission->format_amount( $item->get_sub_total() ),
+			);
 		}
 
 		$this->response = array_merge(
 			$this->response,
-			array( 'items' => $items )
+			array(
+				'items'          => $items,
+				'selected_items' => $selected_items,
+			)
 		);
 
 	}

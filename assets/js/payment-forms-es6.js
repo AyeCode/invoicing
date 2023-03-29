@@ -175,6 +175,17 @@ jQuery(function ($) {
 
 				}
 
+				if (state.selected_items) {
+
+					for (var item in state.selected_items) {
+						if (state.selected_items.hasOwnProperty(item)) {
+							this.form.find('input[name="getpaid-items[' + item + '][price]"]').val( state.selected_items[item].price )
+							this.form.find('input[name="getpaid-items[' + item + '][quantity]"]').val( state.selected_items[item].quantity )
+						}
+					}
+
+				}
+
 				// Process text updates.
 				if (state.texts) {
 
