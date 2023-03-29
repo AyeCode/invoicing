@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.2
-Stable tag: 2.6.26
+Stable tag: 2.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.6.27 =
+= 2.7.0 =
 * Action to reset form stats - ADDED
+* Test on WordPress 6.2
+* Change: Re-use existing invoice when an abandoned checkout session is resumed.
 
 = 2.6.26 =
 * Checkbox value always shows as checked in submitted form data - FIXED
