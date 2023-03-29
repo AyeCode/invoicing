@@ -307,9 +307,12 @@
         if(!$class){$class = '';}
         if(!$dialog_class){$dialog_class = '';}
         if(!$body){$body = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';}
-        // remove it first
+
+       // remove it first
        jQuery('.aui-modal').remove();
        jQuery('.modal-backdrop').remove();
+       jQuery('body').css({'overflow': '','padding-right':''});
+
 
         // var modal = document.getElementById('aui-modal');
 
@@ -625,6 +628,7 @@
             $carousel  += '<div class="carousel-inner">';
             $container.find('.aui-lightbox-image').each(function() {
                 var a = this;
+                var href = jQuery(a).attr('href');
 
                 $active = $clicked_href == jQuery(this).attr('href') ? 'active' : '';
                 $carousel  += '<div class="carousel-item '+ $active+'"><div>';
@@ -632,7 +636,7 @@
 
                 // image
                 var css_height = window.innerWidth > window.innerHeight ? '90vh' : 'auto';
-                var img = jQuery(a).find('img').clone().removeClass().addClass('mx-auto d-block w-auto mw-100 rounded').css('max-height',css_height).get(0).outerHTML;
+                var img = href ? jQuery(a).find('img').clone().attr('src', href ).attr('sizes', '' ).removeClass().addClass('mx-auto d-block w-auto mw-100 rounded').css('max-height',css_height).get(0).outerHTML :  jQuery(a).find('img').clone().removeClass().addClass('mx-auto d-block w-auto mw-100 rounded').css('max-height',css_height).get(0).outerHTML;;
                 $carousel  += img;
                 // captions
                 if(jQuery(a).parent().find('.carousel-caption').length ){
