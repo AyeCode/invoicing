@@ -170,7 +170,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function get_quantity( $context = 'view' ) {
 		$quantity = (float) $this->quantity;
 
-		if ( 'view' == $context ) {
+		if ( 'view' === $context ) {
 			return apply_filters( 'getpaid_payment_form_item_quantity', $quantity, $this );
 		}
 
@@ -188,7 +188,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function get_item_meta( $context = 'view' ) {
 		$meta = $this->meta;
 
-		if ( 'view' == $context ) {
+		if ( 'view' === $context ) {
 			return apply_filters( 'getpaid_payment_form_item_meta', $meta, $this );
 		}
 
@@ -206,7 +206,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function get_allow_quantities( $context = 'view' ) {
 		$allow_quantities = (bool) $this->allow_quantities;
 
-		if ( 'view' == $context ) {
+		if ( 'view' === $context ) {
 			return apply_filters( 'getpaid_payment_form_item_allow_quantities', $allow_quantities, $this );
 		}
 
@@ -224,7 +224,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function get_is_required( $context = 'view' ) {
 		$is_required = (bool) $this->is_required;
 
-		if ( 'view' == $context ) {
+		if ( 'view' === $context ) {
 			return apply_filters( 'getpaid_payment_form_item_is_required', $is_required, $this );
 		}
 
@@ -242,7 +242,7 @@ class GetPaid_Form_Item  extends WPInv_Item {
 
 		$required = is_null( $required ) ? $this->is_required() : $required;
 		return array(
-			'title'            => strip_tags( $this->get_name() ),
+			'title'            => wp_strip_all_tags( $this->get_name() ),
 			'id'               => $this->get_id(),
 			'price'            => $this->get_price(),
 			'recurring'        => $this->is_recurring(),

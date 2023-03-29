@@ -91,14 +91,14 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 									esc_html__( 'Qty %s', 'invoicing' ),
 									sprintf(
 										'<input
-												type="number"
-												step="0.01"
-												style="width: 48px;"
-												class="getpaid-item-mobile-quantity-input p-1 m-0 text-center"
-												value="%s"
-												min="1"
-												max="%s"
-												>',
+											type="number"
+											step="0.01"
+											style="width: 48px;"
+											class="getpaid-item-mobile-quantity-input p-1 m-0 text-center"
+											value="%s"
+											min="1"
+											max="%s"
+										>',
 										(float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(),
 										floatval( null !== $max_qty ? $max_qty : 1000000000000 )
 									)
@@ -196,10 +196,11 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 							<?php
 
 						} else {
-						echo wp_kses_post( wpinv_price( $item->get_price(), $currency ) );
-
 						?>
-								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
+							<span class="getpaid-items-<?php echo (int) $item->get_id(); ?>-view-price">
+								<?php echo wp_kses_post( wpinv_price( $item->get_price(), $currency ) ); ?>
+							</span>
+							<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][price]' type='hidden' class='getpaid-item-price-input' value='<?php echo esc_attr( $item->get_price() ); ?>'>
 						<?php
 						}
 
@@ -216,12 +217,13 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 					if ( $item->allows_quantities() ) {
 						?>
 								<input name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' type="number" step="any" style='width: 64px; line-height: 1; min-height: 35px;' class='getpaid-item-quantity-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border' value='<?php echo (float) $item->get_quantity() == 0 ? 1 : (float) $item->get_quantity(); ?>' min='1' <?php echo null !== $max_qty ? 'max="' . (float) $max_qty . '"' : ''; ?> required>
-							<?php
-						} else {
-						echo (float) $item->get_quantity();
-						echo '&nbsp;&nbsp;&nbsp;';
+						<?php
+							} else {
 						?>
-								<input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (float) $item->get_quantity(); ?>'>
+							<span class="getpaid-items-<?php echo (int) $item->get_id(); ?>-view-quantity">
+								<?php echo (float) $item->get_quantity(); ?>
+							</span>&nbsp;&nbsp;&nbsp;
+							<input type='hidden' name='getpaid-items[<?php echo (int) $item->get_id(); ?>][quantity]' class='getpaid-item-quantity-input' value='<?php echo (float) $item->get_quantity(); ?>'>
 						<?php
 						}
 }

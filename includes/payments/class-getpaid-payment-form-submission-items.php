@@ -28,6 +28,7 @@ class GetPaid_Payment_Form_Submission_Items {
 		$data         = $submission->get_data();
 		$payment_form = $submission->get_payment_form();
 		$invoice      = $submission->get_invoice();
+		$force_prices = array();
 
 		// Prepare the selected items.
 		$selected_items = array();
@@ -39,6 +40,8 @@ class GetPaid_Payment_Form_Submission_Items {
 					if ( isset( $selected_items[ $invoice_item->get_id() ] ) ) {
 						$selected_items[ $invoice_item->get_id() ]['quantity'] = $invoice_item->get_quantity();
 						$selected_items[ $invoice_item->get_id() ]['price']    = $invoice_item->get_price();
+
+						$force_prices[ $invoice_item->get_id() ] = $invoice_item->get_price();
 					}
 				}
 			}
@@ -65,6 +68,11 @@ class GetPaid_Payment_Form_Submission_Items {
                         $item->set_allow_quantities( true );
                         $item->set_is_required( false );
                     }
+
+					if ( ! $item->user_can_set_their_price() && isset( $force_prices[ $item_id ] ) ) {
+						$item->set_is_dynamic_pricing( true );
+						$item->set_minimum_price( 0 );
+					}
 
                     $item_ids[] = $item->get_id();
                     $items[]    = $item;

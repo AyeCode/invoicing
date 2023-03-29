@@ -174,12 +174,13 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$selected_items = array();
 
         foreach ( $submission->get_items() as $item ) {
-			$item_id           = $item->get_id();
+			$item_id             = $item->get_id();
 			$items[ "$item_id" ] = $submission->format_amount( $item->get_sub_total() );
 
 			$selected_items[ "$item_id" ] = array(
-				'quantity' => $item->get_quantity(),
-				'price'    => $submission->format_amount( $item->get_sub_total() ),
+				'quantity'  => $item->get_quantity(),
+				'price'     => $item->get_price(),
+				'price_fmt' => $submission->format_amount( $item->get_price() ),
 			);
 		}
 

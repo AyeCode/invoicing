@@ -179,8 +179,10 @@ jQuery(function ($) {
 
 					for (var item in state.selected_items) {
 						if (state.selected_items.hasOwnProperty(item)) {
-							this.form.find('input[name="getpaid-items[' + item + '][price]"]').val( state.selected_items[item].price )
-							this.form.find('input[name="getpaid-items[' + item + '][quantity]"]').val( state.selected_items[item].quantity )
+							this.form.find('input[name="getpaid-items[' + item + '][price]"]').val( state.selected_items[item].price );
+							this.form.find('input[name="getpaid-items[' + item + '][quantity]"]').val( state.selected_items[item].quantity );
+							this.form.find('.getpaid-items-' + item + '-view-price').html( state.selected_items[item].price_fmt );
+							this.form.find('.getpaid-items-' + item + '-view-quantity').text( state.selected_items[item].quantity );
 						}
 					}
 

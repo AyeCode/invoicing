@@ -253,6 +253,9 @@ jQuery(function ($) {
 			return;
 		}
 
+		// Clear existing data.
+		$('#wpinv_first_name, #wpinv_last_name, #wpinv_address, #wpinv_city, #wpinv_zip, #wpinv_company, #wpinv_company_id, #wpinv_phone, #wpinv_vat_number').val('');
+
 		// Block the metabox.
 		wpinvBlock(metabox)
 
@@ -276,10 +279,12 @@ jQuery(function ($) {
 
 						// If it exists...
 						if (el.length) {
-							el.val(value).change()
+							el.val(value);
 						}
 
 					});
+
+					recalculateTotals();
 				}
 			})
 
