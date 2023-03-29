@@ -261,12 +261,23 @@ class GetPaid_Payment_Form_Submission {
 
 		// Abort if there is no invoice.
 		if ( empty( $this->data['invoice_id'] ) ) {
-			return;
+
+			// Check if we are resuming a payment.
+			if ( empty( $this->data['maybe_use_invoice'] ) ) {
+				return;
+			}
+
+			$invoice = wpinv_get_invoice( $this->data['maybe_use_invoice'] );
+			if ( empty( $invoice ) || ! $invoice->has_status( 'draft, auto-draft, wpi-pending' ) ) {
+				return;
+			}
 		}
 
 		// If the submission is for an existing invoice, ensure that it exists
 		// and that it is not paid for.
-		$invoice = wpinv_get_invoice( $this->data['invoice_id'] );
+		if ( empty( $invoice ) ) {
+			$invoice = wpinv_get_invoice( $this->data['invoice_id'] );
+		}
 
         if ( empty( $invoice ) ) {
 			throw new Exception( __( 'Invalid invoice', 'invoicing' ) );

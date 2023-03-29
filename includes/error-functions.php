@@ -116,7 +116,7 @@ function wpinv_get_errors() {
     }
 
     if ( isset( $GLOBALS['wpinv_custom_notice'] ) ) {
-        $errors[ $GLOBALS['wpinv_notice']['code'] ] = $GLOBALS['wpinv_custom_notice'];
+        $errors[ $GLOBALS['wpinv_custom_notice']['code'] ] = $GLOBALS['wpinv_custom_notice'];
     }
 
     return $errors;

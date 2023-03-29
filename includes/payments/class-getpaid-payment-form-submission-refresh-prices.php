@@ -33,6 +33,11 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
             'is_free'                          => ! $submission->should_collect_payment_details(),
 		);
 
+		$payment_form = $submission->get_payment_form();
+		if ( ! empty( $payment_form->invoice ) ) {
+			$this->response['invoice'] = $payment_form->invoice->get_id();
+		}
+
 		$this->add_totals( $submission );
 		$this->add_texts( $submission );
 		$this->add_items( $submission );

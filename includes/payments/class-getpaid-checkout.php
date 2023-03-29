@@ -404,7 +404,7 @@ class GetPaid_Checkout {
 			if ( ! empty( $prepared_payment_form_data['meta'] ) ) {
 				update_post_meta( $invoice->get_id(), 'additional_meta_data', $prepared_payment_form_data['meta'] );
 			}
-}
+		}
 
 		// Save payment form data.
 		$shipping = apply_filters( 'getpaid_checkout_shipping_details', $shipping, $this->payment_form_submission );
@@ -484,7 +484,7 @@ class GetPaid_Checkout {
      *
      */
     public function send_redirect_response( $url ) {
-        $url = urlencode( $url );
+        $url = rawurlencode( $url );
         wp_send_json_success( $url );
     }
 
