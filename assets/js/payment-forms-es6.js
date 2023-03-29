@@ -175,6 +175,19 @@ jQuery(function ($) {
 
 				}
 
+				if (state.selected_items) {
+
+					for (var item in state.selected_items) {
+						if (state.selected_items.hasOwnProperty(item)) {
+							this.form.find('input[name="getpaid-items[' + item + '][price]"]').val( state.selected_items[item].price );
+							this.form.find('input[name="getpaid-items[' + item + '][quantity]"]').val( state.selected_items[item].quantity );
+							this.form.find('.getpaid-items-' + item + '-view-price').html( state.selected_items[item].price_fmt );
+							this.form.find('.getpaid-items-' + item + '-view-quantity').text( state.selected_items[item].quantity );
+						}
+					}
+
+				}
+
 				// Process text updates.
 				if (state.texts) {
 
@@ -189,6 +202,15 @@ jQuery(function ($) {
 				// Hide/Display Gateways.
 				if (state.gateways) {
 					this.process_gateways(state.gateways, state)
+				}
+
+				// Maybe set invoice.
+				if ( state.invoice ) {
+					if (this.form.find('input[name="invoice_id"]').length == 0) {
+						this.form.append('<input type="hidden" name="invoice_id" />');
+					}
+
+					this.form.find('input[name="invoice_id"]').val(state.invoice);
 				}
 
 				// Misc data.
@@ -233,8 +255,10 @@ jQuery(function ($) {
 				wpinvBlock(this.form);
 
 				// Return a promise.
-				var key = this.current_state_key()
-				return $.post(WPInv.ajax_url, key + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce + '&initial_state=' + this.fetched_initial_state)
+				var key               = this.current_state_key();
+				var maybe_use_invoice = this.fetched_initial_state ? '0' : localStorage.getItem( 'getpaid_last_invoice_' + this.form.find('input[name="form_id"]').val() );
+
+				return $.post(WPInv.ajax_url, key + '&action=wpinv_payment_form_refresh_prices&_ajax_nonce=' + WPInv.formNonce + '&initial_state=' + this.fetched_initial_state + '&maybe_use_invoice=' + maybe_use_invoice)
 
 					.done((res) => {
 
@@ -1062,9 +1086,14 @@ jQuery(function ($) {
 						form.find('.getpaid-payment-form-remove-on-error').remove()
 
 						// Maybe set invoice.
-						if (res.invoice && form.find('input[name="invoice_id"]').length == 0) {
-							form.append('<input type="hidden" name="invoice_id" />')
-							form.find('input[name="invoice_id"]').val(res.invoice)
+						if ( res.invoice ) {
+							localStorage.setItem( 'getpaid_last_invoice_' + form.find('input[name="form_id"]').val(), res.invoice );
+
+							if (form.find('input[name="invoice_id"]').length == 0) {
+								form.append('<input type="hidden" name="invoice_id" />');
+							}
+
+							form.find('input[name="invoice_id"]').val(res.invoice);
 						}
 
 					})

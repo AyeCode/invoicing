@@ -33,6 +33,11 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
             'is_free'                          => ! $submission->should_collect_payment_details(),
 		);
 
+		$payment_form = $submission->get_payment_form();
+		if ( ! empty( $payment_form->invoice ) ) {
+			$this->response['invoice'] = $payment_form->invoice->get_id();
+		}
+
 		$this->add_totals( $submission );
 		$this->add_texts( $submission );
 		$this->add_items( $submission );
@@ -165,16 +170,26 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 	public function add_items( $submission ) {
 
 		// Add items.
-		$items = array();
+		$items          = array();
+		$selected_items = array();
 
         foreach ( $submission->get_items() as $item ) {
-			$item_id           = $item->get_id();
+			$item_id             = $item->get_id();
 			$items[ "$item_id" ] = $submission->format_amount( $item->get_sub_total() );
+
+			$selected_items[ "$item_id" ] = array(
+				'quantity'  => $item->get_quantity(),
+				'price'     => $item->get_price(),
+				'price_fmt' => $submission->format_amount( $item->get_price() ),
+			);
 		}
 
 		$this->response = array_merge(
 			$this->response,
-			array( 'items' => $items )
+			array(
+				'items'          => $items,
+				'selected_items' => $selected_items,
+			)
 		);
 
 	}

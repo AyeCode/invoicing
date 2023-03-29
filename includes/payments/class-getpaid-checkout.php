@@ -247,12 +247,12 @@ class GetPaid_Checkout {
             }
 
 			// Ensure address is provided.
-			if ( $field['type'] == 'address' ) {
+			if ( 'address' === $field['type'] ) {
                 $address_type = isset( $field['address_type'] ) && 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
 
 				foreach ( $field['fields'] as $address_field ) {
 
-					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) {
+					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
 					}
 			}
@@ -267,7 +267,7 @@ class GetPaid_Checkout {
             if ( isset( $data[ $field['id'] ] ) ) {
 
 				// Uploads.
-				if ( $field['type'] === 'file_upload' ) {
+				if ( 'file_upload' === $field['type'] ) {
 					$max_file_num = empty( $field['max_file_num'] ) ? 1 : absint( $field['max_file_num'] );
 
 					if ( count( $data[ $field['id'] ] ) > $max_file_num ) {
@@ -286,7 +286,7 @@ class GetPaid_Checkout {
 
 					$value = implode( ' | ', $value );
 
-				} elseif ( $field['type'] === 'checkbox' ) {
+				} elseif ( 'checkbox' === $field['type'] ) {
 					$value = ! empty( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
 				} else {
 					$value = wp_kses_post( $data[ $field['id'] ] );
@@ -404,7 +404,7 @@ class GetPaid_Checkout {
 			if ( ! empty( $prepared_payment_form_data['meta'] ) ) {
 				update_post_meta( $invoice->get_id(), 'additional_meta_data', $prepared_payment_form_data['meta'] );
 			}
-}
+		}
 
 		// Save payment form data.
 		$shipping = apply_filters( 'getpaid_checkout_shipping_details', $shipping, $this->payment_form_submission );
@@ -415,7 +415,11 @@ class GetPaid_Checkout {
 		// Backwards compatibility.
         add_filter( 'wp_redirect', array( $this, 'send_redirect_response' ) );
 
-		$this->process_payment( $invoice );
+		try {
+			$this->process_payment( $invoice );
+		} catch ( Exception $e ) {
+			wpinv_set_error( 'payment_error', $e->getMessage() );
+		}
 
         // If we are here, there was an error.
 		wpinv_send_back_to_checkout( $invoice );
@@ -484,7 +488,7 @@ class GetPaid_Checkout {
      *
      */
     public function send_redirect_response( $url ) {
-        $url = urlencode( $url );
+        $url = rawurlencode( $url );
         wp_send_json_success( $url );
     }
 

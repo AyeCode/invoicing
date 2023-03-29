@@ -184,8 +184,8 @@ function getpaid_save_invoice_user_address( $invoice ) {
             if ( ! empty( $value ) ) {
                 update_user_meta( $invoice->get_user_id(), '_wpinv_' . $field, $value );
             }
-}
-}
+        }
+    }
 
 }
 add_action( 'getpaid_checkout_invoice_updated', 'getpaid_save_invoice_user_address' );

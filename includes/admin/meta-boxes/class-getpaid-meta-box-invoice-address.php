@@ -209,7 +209,6 @@ class GetPaid_Meta_Box_Invoice_Address {
 											'options'     => array(
 												'quantity' => __( 'Quantity', 'invoicing' ),
 												'hours'    => __( 'Hours', 'invoicing' ),
-												//'amount'   => __( 'Amount Only', 'invoicing' ),
 											),
 											'data-allow-clear' => 'false',
 											'select2'     => true,
@@ -275,8 +274,9 @@ class GetPaid_Meta_Box_Invoice_Address {
 	 * Save meta box data.
 	 *
 	 * @param int $post_id
+	 * @param array $posted the posted data.
 	 */
-	public static function save( $post_id ) {
+	public static function save( $post_id, $posted ) {
 
 		// Prepare the invoice.
 		$invoice = new WPInv_Invoice( $post_id );
@@ -284,36 +284,36 @@ class GetPaid_Meta_Box_Invoice_Address {
 		// Load new data.
 		$invoice->set_props(
 			array(
-				'template'       => isset( $_POST['wpinv_template'] ) ? wpinv_clean( $_POST['wpinv_template'] ) : null,
-				'email_cc'       => isset( $_POST['wpinv_cc'] ) ? wpinv_clean( $_POST['wpinv_cc'] ) : null,
-				'disable_taxes'  => ! empty( $_POST['disable_taxes'] ),
-				'currency'       => isset( $_POST['wpinv_currency'] ) ? wpinv_clean( $_POST['wpinv_currency'] ) : null,
-				'gateway'        => ( $invoice->needs_payment() && isset( $_POST['wpinv_gateway'] ) ) ? wpinv_clean( $_POST['wpinv_gateway'] ) : null,
-				'address'        => isset( $_POST['wpinv_address'] ) ? wpinv_clean( $_POST['wpinv_address'] ) : null,
-				'vat_number'     => isset( $_POST['wpinv_vat_number'] ) ? wpinv_clean( $_POST['wpinv_vat_number'] ) : null,
-				'company'        => isset( $_POST['wpinv_company'] ) ? wpinv_clean( $_POST['wpinv_company'] ) : null,
-				'company_id'     => isset( $_POST['wpinv_company_id'] ) ? wpinv_clean( $_POST['wpinv_company_id'] ) : null,
-				'zip'            => isset( $_POST['wpinv_zip'] ) ? wpinv_clean( $_POST['wpinv_zip'] ) : null,
-				'state'          => isset( $_POST['wpinv_state'] ) ? wpinv_clean( $_POST['wpinv_state'] ) : null,
-				'city'           => isset( $_POST['wpinv_city'] ) ? wpinv_clean( $_POST['wpinv_city'] ) : null,
-				'country'        => isset( $_POST['wpinv_country'] ) ? wpinv_clean( $_POST['wpinv_country'] ) : null,
-				'phone'          => isset( $_POST['wpinv_phone'] ) ? wpinv_clean( $_POST['wpinv_phone'] ) : null,
-				'first_name'     => isset( $_POST['wpinv_first_name'] ) ? wpinv_clean( $_POST['wpinv_first_name'] ) : null,
-				'last_name'      => isset( $_POST['wpinv_last_name'] ) ? wpinv_clean( $_POST['wpinv_last_name'] ) : null,
-				'author'         => isset( $_POST['post_author_override'] ) ? wpinv_clean( $_POST['post_author_override'] ) : null,
-				'date_created'   => isset( $_POST['date_created'] ) ? wpinv_clean( $_POST['date_created'] ) : null,
-				'date_completed' => isset( $_POST['wpinv_date_completed'] ) ? wpinv_clean( $_POST['wpinv_date_completed'] ) : null,
-				'due_date'       => isset( $_POST['wpinv_due_date'] ) ? wpinv_clean( $_POST['wpinv_due_date'] ) : null,
-				'number'         => isset( $_POST['wpinv_number'] ) ? wpinv_clean( $_POST['wpinv_number'] ) : null,
-				'status'         => isset( $_POST['wpinv_status'] ) ? wpinv_clean( $_POST['wpinv_status'] ) : null,
+				'template'       => isset( $posted['wpinv_template'] ) ? wpinv_clean( $posted['wpinv_template'] ) : null,
+				'email_cc'       => isset( $posted['wpinv_cc'] ) ? wpinv_clean( $posted['wpinv_cc'] ) : null,
+				'disable_taxes'  => ! empty( $posted['disable_taxes'] ),
+				'currency'       => isset( $posted['wpinv_currency'] ) ? wpinv_clean( $posted['wpinv_currency'] ) : null,
+				'gateway'        => ( $invoice->needs_payment() && isset( $posted['wpinv_gateway'] ) ) ? wpinv_clean( $posted['wpinv_gateway'] ) : null,
+				'address'        => isset( $posted['wpinv_address'] ) ? wpinv_clean( $posted['wpinv_address'] ) : null,
+				'vat_number'     => isset( $posted['wpinv_vat_number'] ) ? wpinv_clean( $posted['wpinv_vat_number'] ) : null,
+				'company'        => isset( $posted['wpinv_company'] ) ? wpinv_clean( $posted['wpinv_company'] ) : null,
+				'company_id'     => isset( $posted['wpinv_company_id'] ) ? wpinv_clean( $posted['wpinv_company_id'] ) : null,
+				'zip'            => isset( $posted['wpinv_zip'] ) ? wpinv_clean( $posted['wpinv_zip'] ) : null,
+				'state'          => isset( $posted['wpinv_state'] ) ? wpinv_clean( $posted['wpinv_state'] ) : null,
+				'city'           => isset( $posted['wpinv_city'] ) ? wpinv_clean( $posted['wpinv_city'] ) : null,
+				'country'        => isset( $posted['wpinv_country'] ) ? wpinv_clean( $posted['wpinv_country'] ) : null,
+				'phone'          => isset( $posted['wpinv_phone'] ) ? wpinv_clean( $posted['wpinv_phone'] ) : null,
+				'first_name'     => isset( $posted['wpinv_first_name'] ) ? wpinv_clean( $posted['wpinv_first_name'] ) : null,
+				'last_name'      => isset( $posted['wpinv_last_name'] ) ? wpinv_clean( $posted['wpinv_last_name'] ) : null,
+				'author'         => isset( $posted['post_author_override'] ) ? wpinv_clean( $posted['post_author_override'] ) : null,
+				'date_created'   => isset( $posted['date_created'] ) ? wpinv_clean( $posted['date_created'] ) : null,
+				'date_completed' => isset( $posted['wpinv_date_completed'] ) ? wpinv_clean( $posted['wpinv_date_completed'] ) : null,
+				'due_date'       => isset( $posted['wpinv_due_date'] ) ? wpinv_clean( $posted['wpinv_due_date'] ) : null,
+				'number'         => isset( $posted['wpinv_number'] ) ? wpinv_clean( $posted['wpinv_number'] ) : null,
+				'status'         => isset( $posted['wpinv_status'] ) ? wpinv_clean( $posted['wpinv_status'] ) : null,
 			)
 		);
 
 		// Discount code.
 		if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
 
-			if ( isset( $_POST['wpinv_discount_code'] ) ) {
-				$invoice->set_discount_code( wpinv_clean( $_POST['wpinv_discount_code'] ) );
+			if ( isset( $posted['wpinv_discount_code'] ) ) {
+				$invoice->set_discount_code( wpinv_clean( $posted['wpinv_discount_code'] ) );
 			}
 
 			$discount = new WPInv_Discount( $invoice->get_discount_code() );
@@ -329,10 +329,10 @@ class GetPaid_Meta_Box_Invoice_Address {
 		}
 
 		// If we're creating a new user...
-		if ( ! empty( $_POST['wpinv_new_user'] ) && is_email( stripslashes( $_POST['wpinv_email'] ) ) ) {
+		if ( ! empty( $posted['wpinv_new_user'] ) && is_email( stripslashes( $posted['wpinv_email'] ) ) ) {
 
 			// Attempt to create the user.
-			$user = wpinv_create_user( sanitize_email( stripslashes( $_POST['wpinv_email'] ) ), $invoice->get_first_name() . $invoice->get_last_name() );
+			$user = wpinv_create_user( sanitize_email( stripslashes( $posted['wpinv_email'] ) ), $invoice->get_first_name() . $invoice->get_last_name() );
 
 			// If successful, update the invoice author.
 			if ( is_numeric( $user ) ) {
@@ -348,6 +348,9 @@ class GetPaid_Meta_Box_Invoice_Address {
 		// Save the invoice.
 		$invoice->save();
 
+		// Save the user address.
+		getpaid_save_invoice_user_address( $invoice );
+
 		// Undo do not send new invoice notifications.
 		$GLOBALS['wpinv_skip_invoice_notification'] = false;
 
@@ -357,7 +360,7 @@ class GetPaid_Meta_Box_Invoice_Address {
 			wp_send_new_user_notifications( $user, 'user' );
 		}
 
-		if ( ! empty( $_POST['send_to_customer'] ) && ! $invoice->is_draft() ) {
+		if ( ! empty( $posted['send_to_customer'] ) && ! $invoice->is_draft() ) {
 			getpaid()->get( 'invoice_emails' )->user_invoice( $invoice, true );
 		}
 
