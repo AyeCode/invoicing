@@ -193,7 +193,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function validate_ipn_receiver_email( $invoice, $receiver_email ) {
 		$paypal_email = wpinv_get_option( 'paypal_email' );
 
-		if ( strcasecmp( trim( $receiver_email ), trim( $paypal_email ) ) !== 0 ) {
+		if ( $receiver_email && strcasecmp( trim( $receiver_email ), trim( $paypal_email ) ) !== 0 ) {
 			wpinv_record_gateway_error( 'IPN Error', "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}" );
 
 			/* translators: %s: email address . */
@@ -229,7 +229,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$invoice->add_system_note( __( 'Processing invoice IPN', 'invoicing' ) );
 
 		// Process a refund.
-		if ( $payment_status == 'refunded' || $payment_status == 'reversed' ) {
+		if ( 'refunded' === $payment_status || 'reversed' === $payment_status ) {
 
 			update_post_meta( $invoice->get_id(), 'refunded_remotely', 1 );
 
@@ -241,7 +241,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		// Process payments.
-		if ( $payment_status == 'completed' ) {
+		if ( 'completed' === $payment_status ) {
 
 			if ( $invoice->is_paid() && 'wpi_processing' != $invoice->get_status() ) {
 				return wpinv_error_log( 'Aborting, Invoice #' . $invoice->get_number() . ' is already paid.', false );
@@ -265,7 +265,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		// Pending payments.
-		if ( $payment_status == 'pending' ) {
+		if ( 'pending' === $payment_status ) {
 
 			/* translators: %s: pending reason. */
 			$invoice->update_status( 'wpi-onhold', sprintf( __( 'Payment pending (%s).', 'invoicing' ), $posted['pending_reason'] ) );
