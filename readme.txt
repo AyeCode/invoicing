@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.1 =
+* Fix: PayPal sandbox not validating when main paypal email setting is empty.
+
 = 2.7.0 =
 * Action to reset form stats - ADDED
 * Test on WordPress 6.2
