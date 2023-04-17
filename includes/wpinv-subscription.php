@@ -155,10 +155,18 @@ class WPInv_Subscription extends GetPaid_Data {
      * Clears the subscription's cache.
      */
     public function clear_cache() {
-		wp_cache_delete( $this->get_parent_payment_id(), 'getpaid_subscription_parent_payment_ids_to_subscription_ids' );
-		wp_cache_delete( $this->get_transaction_id(), 'getpaid_subscription_transaction_ids_to_subscription_ids' );
-		wp_cache_delete( $this->get_profile_id(), 'getpaid_subscription_profile_ids_to_subscription_ids' );
-		wp_cache_delete( $this->get_id(), 'getpaid_subscriptions' );
+		$caches = array(
+			'getpaid_subscription_parent_payment_ids_to_subscription_ids' => $this->get_parent_payment_id(),
+			'getpaid_subscription_transaction_ids_to_subscription_ids'    => $this->get_transaction_id(),
+			'getpaid_subscription_profile_ids_to_subscription_ids'        => $this->get_profile_id(),
+			'getpaid_subscriptions'                                       => $this->get_id(),
+		);
+
+		foreach ( $caches as $cache => $value ) {
+			if ( '' !== $value && false !== $value ) {
+				wp_cache_delete( $value, $cache );
+			}
+		}
 	}
 
 	/**

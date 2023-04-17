@@ -722,8 +722,8 @@ abstract class GetPaid_Payment_Gateway {
 	 */
 	public function is_sandbox( $invoice = null ) {
 
-		if ( ! empty( $invoice ) && ! $invoice->needs_payment() ) {
-			return $invoice->get_mode() == 'test';
+		if ( is_a( $invoice, 'WPInv_Invoice' ) && ! $invoice->needs_payment() ) {
+			return $invoice->get_mode() === 'test';
 		}
 
 		return wpinv_is_test_mode( $this->id );
