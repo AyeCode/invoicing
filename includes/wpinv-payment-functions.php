@@ -325,8 +325,56 @@ function getpaid_display_recaptcha_before_payment_button() {
 	}
 
 	printf(
-		'<div class="getpaid-recaptcha-wrapper"><div class="g-recaptcha" id="getpaid-recaptcha-%s"></div></div>',
+		'<div class="getpaid-recaptcha-wrapper"><div class="g-recaptcha mw-100 overflow-hidden my-2" id="getpaid-recaptcha-%s"></div></div>',
 		esc_attr( wp_unique_id() )
 	);
 }
 add_action( 'getpaid_before_payment_form_pay_button', 'getpaid_display_recaptcha_before_payment_button' );
+
+/**
+ * Validates the reCAPTCHA response.
+ *
+ * @param GetPaid_Payment_Form_Submission $submission
+ */
+function getpaid_validate_recaptcha_response( $submission ) {
+
+	// Check if reCAPTCHA is enabled.
+	if ( ! getpaid_is_recaptcha_enabled() ) {
+		return;
+	}
+
+	$token = $submission->get_field( 'g-recaptcha-response' );
+
+	// Abort if no token was provided.
+	if ( empty( $token ) ) {
+		wp_send_json_error( 'v2' === getpaid_get_recaptcha_version() ? __( 'Please confirm that you are not a robot.', 'invoicing' ) : __( "Unable to verify that you're not a robot. Please try again.", 'invoicing' ) );
+	}
+
+	$result = wp_remote_post(
+		'https://www.google.com/recaptcha/api/siteverify',
+		array(
+			'body' => array(
+				'secret'   => getpaid_get_recaptcha_secret_key(),
+				'response' => $token,
+			),
+		)
+	);
+
+	// Site not reachable, give benefit of doubt.
+	if ( is_wp_error( $result ) ) {
+		return;
+	}
+
+	$result = json_decode( wp_remote_retrieve_body( $result ), true );
+
+	if ( empty( $result['success'] ) && ! in_array( 'missing-input-secret', $result['error-codes'], true ) && ! in_array( 'invalid-input-secret', $result['error-codes'], true ) ) {
+		wp_send_json_error( __( "Unable to verify that you're not a robot. Please try again.", 'invoicing' ) );
+	}
+
+	// For v3, check the score.
+	$minimum_score = apply_filters( 'getpaid_recaptcha_minimum_score', 0.4 );
+	if ( 'v3' === getpaid_get_recaptcha_version() && ( empty( $result['score'] ) || $result['score'] < $minimum_score ) ) {
+		wp_send_json_error( __( "Unable to verify that you're not a robot. Please try again.", 'invoicing' ) );
+	}
+}
+add_action( 'getpaid_checkout_error_checks', 'getpaid_validate_recaptcha_response' );

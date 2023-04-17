@@ -1125,8 +1125,8 @@ jQuery(function ($) {
 				if ( grecaptcha && WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v3' ) {
 
 					return grecaptcha.ready(function() {
-						grecaptcha.execute(WPInv.recaptchaSettings.sitekey, {action: 'checkout'}).then(function(token) {
-							return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce + 'grecaptcha_token=' + token ).done( done ).fail( fail ).always(always)
+						grecaptcha.execute(WPInv.recaptchaSettings.sitekey, {action: 'purchase'}).then(function(token) {
+							return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce + '&g-recaptcha-response=' + token ).done( done ).fail( fail ).always(always)
 						});
 					});
 				} else {
