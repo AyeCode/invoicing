@@ -374,8 +374,23 @@ class WPInv_Plugin {
 		$localize['formNonce']            = wp_create_nonce( 'getpaid_form_nonce' );
 		$localize['loading']              = __( 'Loading...', 'invoicing' );
 		$localize['connectionError']      = __( 'Could not establish a connection to the server.', 'invoicing' );
+		$localize['recaptchaSettings']    = getpaid_get_recaptcha_settings();
 
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
+
+		// reCaptcha.
+		if ( getpaid_is_recaptcha_enabled() ) {
+			$url = apply_filters(
+				'getpaid_recaptcha_api_url',
+				add_query_arg(
+					array(
+						'render' => 'v2' === getpaid_get_recaptcha_version() ? 'explicit' : getpaid_get_recaptcha_site_key(),
+					),
+					'https://www.google.com/recaptcha/api.js'
+				)
+			);
+			wp_enqueue_script( 'recaptcha', $url, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		}
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );
 		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'jquery' ), $version, true );
