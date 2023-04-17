@@ -3267,7 +3267,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * @deprecated
      */
     public function is_free_trial() {
-        $this->has_free_trial();
+        return $this->has_free_trial();
     }
 
 	/**
