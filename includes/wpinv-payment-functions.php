@@ -249,3 +249,39 @@ function wpinv_send_back_to_checkout( $invoice = null ) {
 
     wp_send_json( $response );
 }
+
+/**
+ * Returns the reCAPTCHA site key.
+ *
+ * @return string
+ */
+function getpaid_get_recaptcha_site_key() {
+    return apply_filters( 'getpaid_recaptcha_site_key', wpinv_get_option( 'recaptcha_site_key', '' ) );
+}
+
+/**
+ * Returns the reCAPTCHA secret key.
+ *
+ * @return string
+ */
+function getpaid_get_recaptcha_secret_key() {
+    return apply_filters( 'getpaid_recaptcha_secret_key', wpinv_get_option( 'recaptcha_secret_key', '' ) );
+}
+
+/**
+ * Checks if reCAPTCHA is enabled.
+ *
+ * @return bool
+ */
+function getpaid_is_recaptcha_enabled() {
+    return wpinv_get_option( 'enable_recaptcha', false ) && getpaid_get_recaptcha_site_key() && getpaid_get_recaptcha_secret_key();
+}
+
+/**
+ * Returns the reCAPTCHA version.
+ *
+ * @return string
+ */
+function getpaid_get_recaptcha_version() {
+    return apply_filters( 'getpaid_recaptcha_version', wpinv_get_option( 'recaptcha_version', 'v2' ) );
+}
