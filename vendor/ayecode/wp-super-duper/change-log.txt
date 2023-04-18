@@ -1,3 +1,6 @@
+= 1.1.19 =
+* Block Visibility feature added - ADDED
+
 = 1.1.18 =
 * Added helper function for float inputs - ADDED
 

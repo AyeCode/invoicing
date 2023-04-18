@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.93';
+		public $version = '0.1.94';
 
 		/**
 		 * Class textdomain.
@@ -409,6 +409,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				// Only enable on set pages
 				$aui_screens = array(
 					'page',
+                    //'docs',
 					'post',
 					'settings_page_ayecode-ui-settings',
 					'appearance_page_gutenberg-widgets',
@@ -2753,9 +2754,13 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                             if ((typeof field.value === 'object' || typeof field.value === 'array') && !field.value.length && $el.find('select option:first').text() == '') {
                                 $el.find('select option:first').remove(); // Clear first option to show placeholder.
                             }
-                            jQuery.each(field.value, function(i, v) {
-                                $el.find('select').find('option[value="' + v + '"]').attr('selected', true);
-                            });
+                            if (typeof field.value === 'string') {
+                                $el.find('select').val(field.value);
+                            } else {
+                                jQuery.each(field.value, function(i, v) {
+                                    $el.find('select').find('option[value="' + v + '"]').attr('selected', true);
+                                });
+                            }
                             $el.find('select').trigger('change');
                             break;
                         case 'checkbox':
