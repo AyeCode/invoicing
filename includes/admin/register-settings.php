@@ -25,8 +25,8 @@ function wpinv_get_settings() {
                     $defaults[ $key ] = $setting['std'];
                 }
             }
-}
-}
+		}
+	}
 
     return $defaults;
 
@@ -537,12 +537,10 @@ function wpinv_checkbox_callback( $args ) {
 
 	getpaid_hidden_field( "wpinv_settings[$id]", '0' );
 	?>
-		<fieldset>
-			<label>
-				<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox" />
-				<?php echo wp_kses_post( $args['desc'] ); ?>
-			</label>
-		</fieldset>
+		<label>
+			<input id="wpinv-settings-<?php echo esc_attr( $id ); ?>" name="wpinv_settings[<?php echo esc_attr( $id ); ?>]" <?php checked( empty( $std ), false ); ?> value="1" type="checkbox" />
+			<?php echo wp_kses_post( $args['desc'] ); ?>
+		</label>
 	<?php
 }
 

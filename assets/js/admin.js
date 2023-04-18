@@ -1248,6 +1248,18 @@ jQuery(function ($) {
 				return false;
 			});
 
+			// Toggle recaptcha settings.
+			function toggleRecaptchaSettings() {
+
+				var show = $( '#wpinv-settings-enable_recaptcha' ).is ( ':checked' );
+
+				$( '#wpinv-settings-recaptcha_version' ).closest( 'tr' ).toggle( show );
+				$( '#wpinv-settings-recaptcha_site_key' ).closest( 'tr' ).toggle( show );
+				$( '#wpinv-settings-recaptcha_secret_key' ).closest( 'tr' ).toggle( show );
+			}
+
+			$( '#wpinv-settings-enable_recaptcha' ).on( 'change', toggleRecaptchaSettings );
+			toggleRecaptchaSettings();
 		},
 
 	};

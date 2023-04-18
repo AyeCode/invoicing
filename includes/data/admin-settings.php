@@ -627,6 +627,37 @@ return array(
                     'desc' => __( 'If ticked then user needs to be logged in to view or pay invoice, can only view or pay their own invoice. If unticked then anyone can view or pay the invoice.', 'invoicing' ),
                     'type' => 'checkbox',
                 ),
+                'enable_recaptcha'               => array(
+                    'id'   => 'enable_recaptcha',
+                    'name' => __( 'Enable reCAPTCHA', 'invoicing' ),
+                    'desc' => __( 'If ticked then reCAPTCHA will be enabled on the checkout page.', 'invoicing' ),
+                    'type' => 'checkbox',
+                ),
+                'recaptcha_version'              => array(
+                    'id'      => 'recaptcha_version',
+                    'name'    => __( 'reCAPTCHA Version', 'invoicing' ),
+                    'desc'    => __( 'Select the version of reCAPTCHA you would like to use.', 'invoicing' ),
+                    'type'    => 'select',
+                    'options' => array(
+                        'v2' => __( 'reCAPTCHA v2', 'invoicing' ),
+                        'v3' => __( 'reCAPTCHA v3', 'invoicing' ),
+                    ),
+                    'std'     => 'v2',
+                ),
+                'recaptcha_site_key'             => array(
+                    'id'   => 'recaptcha_site_key',
+                    'name' => __( 'reCAPTCHA Site Key', 'invoicing' ),
+                    'desc' => __( 'Enter your reCAPTCHA site key.', 'invoicing' ) . ' <a href="https://www.google.com/recaptcha/admin/create" target="_blank">' . __( 'Generate a site key.', 'invoicing' ) . '</a>',
+                    'type' => 'text',
+                    'size' => 'regular',
+                ),
+                'recaptcha_secret_key'           => array(
+                    'id'   => 'recaptcha_secret_key',
+                    'name' => __( 'reCAPTCHA Secret Key', 'invoicing' ),
+                    'desc' => __( 'Enter your reCAPTCHA secret key.', 'invoicing' ),
+                    'type' => 'text',
+                    'size' => 'regular',
+                ),
                 'maxmind_license_key'            => array(
                     'id'   => 'maxmind_license_key',
                     'name' => __( 'MaxMind License Key', 'invoicing' ),

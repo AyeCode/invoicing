@@ -693,6 +693,15 @@ jQuery(function ($) {
 					});
 				}
 
+				// reCaptcha
+				if ( grecaptcha && WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v2' ) {
+
+					var id = this.form.find( '.getpaid-recaptcha-wrapper .g-recaptcha' ).attr( 'id' );
+
+					if ( id ) {
+						grecaptcha.render( id, WPInv.recaptchaSettings.render_params);
+					}
+				}
 			},
 
 			// Processes gateways
@@ -1051,64 +1060,78 @@ jQuery(function ($) {
 			// Handles the actual submission.
 			var unblock = true;
 			var submit  = function () {
-				return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce)
-					.done(function (res) {
 
-						// An error occured.
-						if ('string' == typeof res) {
-							form.find('.getpaid-payment-form-errors').html(res).removeClass('d-none')
-							return
+				// Done callback.
+				var done = function (res) {
+
+					// An error occured.
+					if ('string' == typeof res) {
+						form.find('.getpaid-payment-form-errors').html(res).removeClass('d-none')
+						return
+					}
+
+					// Redirect to the thank you page.
+					if (res.success) {
+
+						// Asume that the action is a redirect.
+						if (!res.data.action || 'redirect' == res.data.action) {
+							window.location.href = decodeURIComponent(res.data)
 						}
 
-						// Redirect to the thank you page.
-						if (res.success) {
-
-							// Asume that the action is a redirect.
-							if (!res.data.action || 'redirect' == res.data.action) {
-								window.location.href = decodeURIComponent(res.data)
-							}
-
-							if ('auto_submit_form' == res.data.action) {
-								form.parent().append('<div class="getpaid-checkout-autosubmit-form">' + res.data.form + '</div>')
-								$('.getpaid-checkout-autosubmit-form form').submit()
-							}
-
-							// Trigger event.
-							if ( 'event' == res.data.action ) {
-								$('body').trigger(res.data.event, [res.data.data, form])
-								unblock = false;
-							}
-
-							return
+						if ('auto_submit_form' == res.data.action) {
+							form.parent().append('<div class="getpaid-checkout-autosubmit-form">' + res.data.form + '</div>')
+							$('.getpaid-checkout-autosubmit-form form').submit()
 						}
 
-						form.find('.getpaid-payment-form-errors').html(res.data).removeClass('d-none')
-						form.find('.getpaid-payment-form-remove-on-error').remove()
-
-						// Maybe set invoice.
-						if ( res.invoice ) {
-							localStorage.setItem( 'getpaid_last_invoice_' + form.find('input[name="form_id"]').val(), res.invoice );
-
-							if (form.find('input[name="invoice_id"]').length == 0) {
-								form.append('<input type="hidden" name="invoice_id" />');
-							}
-
-							form.find('input[name="invoice_id"]').val(res.invoice);
+						// Trigger event.
+						if ( 'event' == res.data.action ) {
+							$('body').trigger(res.data.event, [res.data.data, form])
+							unblock = false;
 						}
 
-					})
+						return
+					}
 
-					.fail(function (res) {
-						form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
-						form.find('.getpaid-payment-form-remove-on-error').remove()
-					})
+					form.find('.getpaid-payment-form-errors').html(res.data).removeClass('d-none')
+					form.find('.getpaid-payment-form-remove-on-error').remove()
 
-					.always(() => {
-						if ( unblock ) {
-							wpinvUnblock(form);
+					// Maybe set invoice.
+					if ( res.invoice ) {
+						localStorage.setItem( 'getpaid_last_invoice_' + form.find('input[name="form_id"]').val(), res.invoice );
+
+						if (form.find('input[name="invoice_id"]').length == 0) {
+							form.append('<input type="hidden" name="invoice_id" />');
 						}
-					})
 
+						form.find('input[name="invoice_id"]').val(res.invoice);
+					}
+
+				}
+
+				// Fail callback.
+				var fail = function (res) {
+					form.find('.getpaid-payment-form-errors').html(WPInv.connectionError).removeClass('d-none')
+					form.find('.getpaid-payment-form-remove-on-error').remove()
+				}
+
+				// Always callback.
+				var always = function () {
+					if ( unblock ) {
+						wpinvUnblock(form);
+					}
+				}
+
+				// reCaptcha
+				if ( grecaptcha && WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v3' ) {
+
+					return grecaptcha.ready(function() {
+						grecaptcha.execute(WPInv.recaptchaSettings.sitekey, {action: 'purchase'}).then(function(token) {
+							return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce + '&g-recaptcha-response=' + token ).done( done ).fail( fail ).always(always)
+						});
+					});
+				} else {
+					return $.post(WPInv.ajax_url, data.data + '&action=wpinv_payment_form&_ajax_nonce=' + WPInv.formNonce).done( done ).fail( fail ).always(always)
+				}
 			}
 
 			// Are we submitting after a delay?

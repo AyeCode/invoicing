@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.7.1 =
 * Fix: PayPal sandbox not validating when main paypal email setting is empty.
+* Add reCaptcha V2 and v3 support.
 
 = 2.7.0 =
 * Action to reset form stats - ADDED
