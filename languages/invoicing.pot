@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 09:18+0000\n"
+"POT-Creation-Date: 2023-04-18 08:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -833,7 +833,7 @@ msgstr ""
 msgid "Acre"
 msgstr ""
 
-#: includes/admin/register-settings.php:1003
+#: includes/admin/register-settings.php:1001
 msgid "Action"
 msgstr ""
 
@@ -878,7 +878,7 @@ msgstr ""
 msgid "Add an element by dragging it to the payment form."
 msgstr ""
 
-#: includes/data/admin-settings.php:661
+#: includes/data/admin-settings.php:692
 msgid "Add CSS to modify appearance of the print invoice page."
 msgstr ""
 
@@ -2888,11 +2888,11 @@ msgstr ""
 msgid "Check if you want to send this notification email to site Admin."
 msgstr ""
 
-#: includes/admin/register-settings.php:1009
+#: includes/admin/register-settings.php:1007
 msgid "Check Pages"
 msgstr ""
 
-#: includes/data/admin-settings.php:646
+#: includes/data/admin-settings.php:677
 msgid ""
 "Check this box if you would like Invoicing plugin to completely remove all "
 "of its data when the plugin is deleted/uninstalled."
@@ -3385,7 +3385,7 @@ msgid ""
 "Create and send invoices for just about anything from the WordPress dashboard"
 msgstr ""
 
-#: includes/admin/register-settings.php:1047
+#: includes/admin/register-settings.php:1045
 msgid "Create Database Tables"
 msgstr ""
 
@@ -3442,7 +3442,7 @@ msgstr ""
 msgid "Created Date"
 msgstr ""
 
-#: includes/admin/register-settings.php:1011
+#: includes/admin/register-settings.php:1009
 msgid "Creates any missing GetPaid pages."
 msgstr ""
 
@@ -3534,7 +3534,7 @@ msgstr ""
 msgid "Currency:"
 msgstr ""
 
-#: includes/admin/register-settings.php:832
+#: includes/admin/register-settings.php:830
 msgid "Current Content"
 msgstr ""
 
@@ -3543,7 +3543,7 @@ msgid "Cusco"
 msgstr ""
 
 #: includes/admin/register-settings.php:469
-#: includes/data/admin-settings.php:655
+#: includes/data/admin-settings.php:686
 msgid "Custom CSS"
 msgstr ""
 
@@ -3802,7 +3802,7 @@ msgid "Denmark"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:143
-#: includes/admin/register-settings.php:1002
+#: includes/admin/register-settings.php:1000
 msgid "Description"
 msgstr ""
 
@@ -3819,7 +3819,7 @@ msgid "Dhaulagiri"
 msgstr ""
 
 #: includes/admin/register-settings.php:475
-#: includes/data/admin-settings.php:676
+#: includes/data/admin-settings.php:707
 msgid "Diagnostic Tools"
 msgstr ""
 
@@ -4273,7 +4273,7 @@ msgstr ""
 msgid "Edit Item"
 msgstr ""
 
-#: includes/admin/register-settings.php:823
+#: includes/admin/register-settings.php:821
 msgid "Edit Page"
 msgstr ""
 
@@ -4445,6 +4445,10 @@ msgstr ""
 
 #: includes/user-functions.php:516 includes/user-functions.php:595
 msgid "Enable Integration"
+msgstr ""
+
+#: includes/data/admin-settings.php:632
+msgid "Enable reCAPTCHA"
 msgstr ""
 
 #: includes/data/email-settings.php:319
@@ -4654,7 +4658,7 @@ msgstr ""
 msgid "Enter widget title."
 msgstr ""
 
-#: includes/data/admin-settings.php:635
+#: includes/data/admin-settings.php:666
 msgid ""
 "Enter you license key if you would like to use MaxMind to automatically "
 "detect a customer's country."
@@ -4662,6 +4666,14 @@ msgstr ""
 
 #: includes/admin/html-admin-page-addons.php:216
 msgid "Enter your licence key"
+msgstr ""
+
+#: includes/data/admin-settings.php:657
+msgid "Enter your reCAPTCHA secret key."
+msgstr ""
+
+#: includes/data/admin-settings.php:650
+msgid "Enter your reCAPTCHA site key."
 msgstr ""
 
 #: templates/payment-forms-admin/edit/paragraph.php:15
@@ -4704,7 +4716,7 @@ msgstr ""
 msgid "Error during status transition."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1244
+#: includes/wpinv-subscription.php:1252
 msgid "Error during subscription status transition."
 msgstr ""
 
@@ -5265,6 +5277,10 @@ msgstr ""
 
 #: includes/admin/register-settings.php:429
 msgid "General Settings"
+msgstr ""
+
+#: includes/data/admin-settings.php:650
+msgid "Generate a site key."
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:960
@@ -5885,7 +5901,7 @@ msgstr ""
 msgid "How many files can be uploaded?"
 msgstr ""
 
-#: includes/data/admin-settings.php:635
+#: includes/data/admin-settings.php:666
 msgid "How to generate a free license key."
 msgstr ""
 
@@ -6037,6 +6053,10 @@ msgid ""
 "default 0 means no padding."
 msgstr ""
 
+#: includes/data/admin-settings.php:633
+msgid "If ticked then reCAPTCHA will be enabled on the checkout page."
+msgstr ""
+
 #: includes/data/admin-settings.php:627
 msgid ""
 "If ticked then user needs to be logged in to view or pay invoice, can only "
@@ -6058,7 +6078,7 @@ msgid ""
 "enable them."
 msgstr ""
 
-#: includes/admin/register-settings.php:1068
+#: includes/admin/register-settings.php:1066
 msgid ""
 "If your old invoices were not migrated after updating from Invoicing to "
 "GetPaid, you can use this tool to migrate them."
@@ -6543,7 +6563,7 @@ msgstr ""
 msgid "Invoice taxes (Name => properties)."
 msgstr ""
 
-#: includes/data/admin-settings.php:660
+#: includes/data/admin-settings.php:691
 msgid "Invoice Template CSS"
 msgstr ""
 
@@ -6591,7 +6611,7 @@ msgstr ""
 msgid "Invoicing"
 msgstr ""
 
-#: includes/data/admin-settings.php:677
+#: includes/data/admin-settings.php:708
 msgid "Invoicing diagnostic tools"
 msgstr ""
 
@@ -7785,11 +7805,11 @@ msgstr ""
 msgid "Latvia"
 msgstr ""
 
-#: includes/admin/register-settings.php:1115
+#: includes/admin/register-settings.php:1113
 msgid "Launch"
 msgstr ""
 
-#: includes/admin/register-settings.php:1108
+#: includes/admin/register-settings.php:1106
 msgid "Launch the quick set-up wizard."
 msgstr ""
 
@@ -8489,7 +8509,7 @@ msgstr ""
 msgid "Maximum Uses"
 msgstr ""
 
-#: includes/data/admin-settings.php:632
+#: includes/data/admin-settings.php:663
 msgid "MaxMind License Key"
 msgstr ""
 
@@ -8625,7 +8645,7 @@ msgstr ""
 msgid "Mie"
 msgstr ""
 
-#: includes/admin/register-settings.php:1030
+#: includes/admin/register-settings.php:1028
 msgid "Might fix the page not found error when viewing an invoice."
 msgstr ""
 
@@ -8633,7 +8653,7 @@ msgstr ""
 msgid "Migori"
 msgstr ""
 
-#: includes/admin/register-settings.php:1066
+#: includes/admin/register-settings.php:1064
 msgid "Migrate old invoices"
 msgstr ""
 
@@ -9861,7 +9881,7 @@ msgstr ""
 msgid "Oriental Mindoro"
 msgstr ""
 
-#: includes/admin/register-settings.php:830
+#: includes/admin/register-settings.php:828
 msgid "Original Content"
 msgstr ""
 
@@ -10601,6 +10621,10 @@ msgstr ""
 msgid "Plateau"
 msgstr ""
 
+#: includes/wpinv-payment-functions.php:350
+msgid "Please confirm that you are not a robot."
+msgstr ""
+
 #: includes/admin/class-getpaid-admin.php:359
 msgid "Please confirm you wish to connect your site?"
 msgstr ""
@@ -11056,11 +11080,11 @@ msgstr ""
 msgid "Razgrad"
 msgstr ""
 
-#: includes/admin/register-settings.php:1086
+#: includes/admin/register-settings.php:1084
 msgid "Recalculate Discounts"
 msgstr ""
 
-#: includes/admin/register-settings.php:1088
+#: includes/admin/register-settings.php:1086
 msgid ""
 "Recalculate discounts for existing invoices that have discount codes but are "
 "not discounted."
@@ -11075,6 +11099,26 @@ msgstr ""
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
+msgstr ""
+
+#: includes/data/admin-settings.php:656
+msgid "reCAPTCHA Secret Key"
+msgstr ""
+
+#: includes/data/admin-settings.php:649
+msgid "reCAPTCHA Site Key"
+msgstr ""
+
+#: includes/data/admin-settings.php:642
+msgid "reCAPTCHA v2"
+msgstr ""
+
+#: includes/data/admin-settings.php:643
+msgid "reCAPTCHA v3"
+msgstr ""
+
+#: includes/data/admin-settings.php:638
+msgid "reCAPTCHA Version"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin-setup-wizard.php:137
@@ -11133,7 +11177,7 @@ msgstr ""
 msgid "Reduced Tax Rate"
 msgstr ""
 
-#: includes/admin/register-settings.php:1028
+#: includes/admin/register-settings.php:1026
 msgid "Refresh Permalinks"
 msgstr ""
 
@@ -11195,7 +11239,7 @@ msgstr ""
 msgid "Relationship"
 msgstr ""
 
-#: includes/data/admin-settings.php:645
+#: includes/data/admin-settings.php:676
 msgid "Remove Data on Uninstall?"
 msgstr ""
 
@@ -11422,15 +11466,15 @@ msgstr ""
 msgid "Rukwa"
 msgstr ""
 
-#: includes/admin/register-settings.php:1024
-#: includes/admin/register-settings.php:1043
-#: includes/admin/register-settings.php:1062
-#: includes/admin/register-settings.php:1081
-#: includes/admin/register-settings.php:1101
+#: includes/admin/register-settings.php:1022
+#: includes/admin/register-settings.php:1041
+#: includes/admin/register-settings.php:1060
+#: includes/admin/register-settings.php:1079
+#: includes/admin/register-settings.php:1099
 msgid "Run"
 msgstr ""
 
-#: includes/admin/register-settings.php:1049
+#: includes/admin/register-settings.php:1047
 msgid "Run this tool to create any missing database tables."
 msgstr ""
 
@@ -11931,6 +11975,10 @@ msgid ""
 "this discount all items."
 msgstr ""
 
+#: includes/data/admin-settings.php:639
+msgid "Select the version of reCAPTCHA you would like to use."
+msgstr ""
+
 #: templates/payment-forms-admin/edit/price_select.php:34
 msgid "Select Type"
 msgstr ""
@@ -12025,7 +12073,7 @@ msgstr ""
 msgid "Set-up"
 msgstr ""
 
-#: includes/admin/register-settings.php:1106
+#: includes/admin/register-settings.php:1104
 msgid "Set-up Wizard"
 msgstr ""
 
@@ -12740,13 +12788,13 @@ msgid "Subscription Status"
 msgstr ""
 
 #. 1: old subscription status 2: new subscription status
-#: includes/wpinv-subscription.php:1226
+#: includes/wpinv-subscription.php:1234
 #, php-format
 msgid "Subscription status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/wpinv-subscription.php:1237
+#: includes/wpinv-subscription.php:1245
 #, php-format
 msgid "Subscription status set to %s."
 msgstr ""
@@ -13257,7 +13305,7 @@ msgid ""
 "The base color for invoice email template. Default <code>#557da2</code>."
 msgstr ""
 
-#: includes/admin/register-settings.php:798
+#: includes/admin/register-settings.php:796
 #, php-format
 msgid "The callback function used for the %s setting is missing."
 msgstr ""
@@ -13266,7 +13314,7 @@ msgstr ""
 msgid "The chosen payment gateway does not support this currency."
 msgstr ""
 
-#: includes/admin/register-settings.php:1171
+#: includes/admin/register-settings.php:1169
 msgid "The content of the email (Merge Tags and HTML are allowed)."
 msgstr ""
 
@@ -14149,7 +14197,7 @@ msgstr ""
 msgid "Tongan Pa&#x2bb;anga"
 msgstr ""
 
-#: includes/admin/register-settings.php:1001
+#: includes/admin/register-settings.php:999
 msgid "Tool"
 msgstr ""
 
@@ -14467,11 +14515,17 @@ msgstr ""
 msgid "Unable to duplicate form"
 msgstr ""
 
+#: includes/wpinv-payment-functions.php:350
+#: includes/wpinv-payment-functions.php:371
+#: includes/wpinv-payment-functions.php:377
+msgid "Unable to verify that you're not a robot. Please try again."
+msgstr ""
+
 #: includes/data/states.php:804
 msgid "Ungheni"
 msgstr ""
 
-#: includes/data/admin-settings.php:640
+#: includes/data/admin-settings.php:671
 msgid "Uninstall Settings"
 msgstr ""
 
@@ -14548,7 +14602,7 @@ msgstr ""
 msgid "Updating the status will trigger related actions and hooks"
 msgstr ""
 
-#: includes/admin/register-settings.php:903
+#: includes/admin/register-settings.php:901
 #: includes/data/payment-form-elements.php:181
 msgid "Upload File"
 msgstr ""
@@ -14921,7 +14975,7 @@ msgstr ""
 msgid "View All Features!"
 msgstr ""
 
-#: includes/admin/register-settings.php:1168
+#: includes/admin/register-settings.php:1166
 msgid "View available merge tags."
 msgstr ""
 
@@ -14929,7 +14983,7 @@ msgstr ""
 msgid "View Customer Details"
 msgstr ""
 
-#: includes/admin/register-settings.php:827
+#: includes/admin/register-settings.php:825
 msgid "View Default Content"
 msgstr ""
 
