@@ -694,7 +694,7 @@ jQuery(function ($) {
 				}
 
 				// reCaptcha
-				if ( grecaptcha && WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v2' ) {
+				if ( WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v2' && grecaptcha ) {
 
 					var id = this.form.find( '.getpaid-recaptcha-wrapper .g-recaptcha' ).attr( 'id' );
 
@@ -1122,7 +1122,7 @@ jQuery(function ($) {
 				}
 
 				// reCaptcha
-				if ( grecaptcha && WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v3' ) {
+				if ( WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v3' && grecaptcha ) {
 
 					return grecaptcha.ready(function() {
 						grecaptcha.execute(WPInv.recaptchaSettings.sitekey, {action: 'purchase'}).then(function(token) {
