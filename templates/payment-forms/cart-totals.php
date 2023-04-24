@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Totals rows.
-$totals = apply_filters(
+$cart_totals = apply_filters(
 	'getpaid_payment_form_cart_table_totals',
 	array(
 		'subtotal' => __( 'Subtotal', 'invoicing' ),
@@ -29,11 +29,11 @@ if ( ! empty( $form->invoice ) ) {
 	$country  = $form->invoice->get_country();
 }
 
-if ( ! wpinv_use_taxes() && isset( $totals['tax'] ) ) {
-	unset( $totals['tax'] );
+if ( ! wpinv_use_taxes() && isset( $cart_totals['tax'] ) ) {
+	unset( $cart_totals['tax'] );
 }
 
-do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
+do_action( 'getpaid_before_payment_form_cart_totals', $form, $cart_totals );
 
 ?>
 <style>
@@ -47,7 +47,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 	<div class="row">
 		<div class="col-12 offset-sm-6 col-sm-6 border-sm-left pl-sm-0">
 
-			<?php foreach ( $totals as $key => $label ) : ?>
+			<?php foreach ( $cart_totals as $key => $label ) : ?>
 
 				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' == $key ? 'bg-light' : 'border-bottom'; ?>">
 
@@ -62,8 +62,8 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 							<?php
 
 								// Total tax.
-								if ( in_array( $key, array( 'tax', 'discount', 'subtotal', 'total', 'fees' ) ) ) {
-								wpinv_the_price( 0, $currency );
+								if ( in_array( $key, array( 'tax', 'discount', 'subtotal', 'total', 'fees' ), true ) ) {
+									wpinv_the_price( 0, $currency );
 								}
 
 								do_action( "getpaid_payment_form_cart_totals_$key", $form );
@@ -82,4 +82,4 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $totals );
 </div>
 
 <?php
-do_action( 'getpaid_payment_form_cart_totals', $form, $totals );
+do_action( 'getpaid_payment_form_cart_totals', $form, $cart_totals );
