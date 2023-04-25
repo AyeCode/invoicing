@@ -400,10 +400,10 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 		foreach ( $this->get_prop( 'elements' ) as $element ) {
 
-			if ( $element['type'] == $element_type ) {
+			if ( $element['type'] === $element_type ) {
 				return $element;
 			}
-}
+		}
 
 		return false;
 

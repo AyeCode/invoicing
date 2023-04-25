@@ -21,7 +21,7 @@ function getpaid_get_eu_states() {
  * @return bool
  */
 function getpaid_is_eu_state( $country ) {
-    return ! empty( $country ) && in_array( strtoupper( $country ), getpaid_get_eu_states() ) ? true : false;
+    return ! empty( $country ) && in_array( strtoupper( $country ), getpaid_get_eu_states(), true ) ? true : false;
 }
 
 /**
@@ -39,7 +39,7 @@ function getpaid_get_gst_states() {
  * @return bool
  */
 function getpaid_is_gst_country( $country ) {
-    return ! empty( $country ) && in_array( strtoupper( $country ), getpaid_get_gst_states() ) ? true : false;
+    return ! empty( $country ) && in_array( strtoupper( $country ), getpaid_get_gst_states(), true ) ? true : false;
 }
 
 /**
@@ -85,7 +85,7 @@ function wpinv_is_country_taxable( $country ) {
  * @return bool
  */
 function wpinv_is_item_taxable( $item ) {
-    return '_exempt' != $item->get_vat_rule();
+    return '_exempt' !== $item->get_vat_rule();
 }
 
 /**
@@ -126,7 +126,7 @@ function wpinv_get_vat_same_country_rule( $tax_rule = false ) {
  * @return bool
  */
 function wpinv_prices_include_tax() {
-    $is_inclusive = wpinv_get_option( 'prices_include_tax', 'no' ) == 'yes';
+    $is_inclusive = wpinv_get_option( 'prices_include_tax', 'no' ) === 'yes';
     return (bool) apply_filters( 'wpinv_prices_include_tax', $is_inclusive );
 }
 
@@ -146,7 +146,7 @@ function wpinv_round_tax_per_tax_rate() {
  * @return bool
  */
 function wpinv_display_individual_tax_rates() {
-    $individual = wpinv_get_option( 'tax_display_totals', 'single' ) == 'individual';
+    $individual = wpinv_get_option( 'tax_display_totals', 'single' ) === 'individual';
     return (bool) apply_filters( 'wpinv_display_individual_tax_rates', $individual );
 }
 
@@ -166,7 +166,7 @@ function wpinv_get_default_tax_rate() {
  * @return bool
  */
 function wpinv_same_country_exempt_vat() {
-    return 'no' == wpinv_get_option( 'vat_same_country_rule', 'vat_too' );
+    return 'no' === wpinv_get_option( 'vat_same_country_rule', 'vat_too' );
 }
 
 /**
@@ -223,14 +223,14 @@ function getpaid_filter_item_tax_rates( $item, $rates ) {
 
     foreach ( $rates as $i => $rate ) {
 
-        if ( $tax_class == '_reduced' ) {
+        if ( '_reduced' === $tax_class ) {
             $rates[ $i ]['rate'] = empty( $rate['reduced_rate'] ) ? 0 : $rate['reduced_rate'];
         }
 
-        if ( $tax_class == '_exempt' ) {
+        if ( '_exempt' === $tax_class ) {
             $rates[ $i ]['rate'] = 0;
         }
-}
+    }
 
     return apply_filters( 'getpaid_filter_item_tax_rates', $rates, $item );
 }
@@ -323,9 +323,9 @@ function wpinv_vies_validate_vat_number( $vat_number ) {
 
     $url        = add_query_arg(
         array(
-            'ms'  => urlencode( $country ),
-            'iso' => urlencode( $country ),
-            'vat' => urlencode( $vatin ),
+            'ms'  => rawurlencode( $country ),
+            'iso' => rawurlencode( $country ),
+            'vat' => rawurlencode( $vatin ),
         ),
         'http://ec.europa.eu/taxation_customs/vies/viesquer.do'
     );
@@ -354,9 +354,8 @@ function wpinv_validate_vat_number( $vat_number, $country ) {
     // In case the vat number does not have a country code...
     $vat_number = wpinv_sanitize_vat_number( $vat_number );
     $_country   = substr( $vat_number, 0, 2 );
-    $_country   = $_country == wpinv_country_name( $_country );
 
-    if ( $_country ) {
+    if ( wpinv_country_name( $_country ) === $_country ) {
         $vat_number = strtoupper( $country ) . $vat_number;
     }
 
@@ -410,7 +409,7 @@ function wpinv_is_cart_taxed() {
 
 function wpinv_prices_show_tax_on_checkout() {
     return false; // TODO
-    $ret = ( wpinv_get_option( 'checkout_include_tax', false ) == 'yes' && wpinv_use_taxes() );
+    $ret = ( wpinv_get_option( 'checkout_include_tax', false ) === 'yes' && wpinv_use_taxes() );
 
     return apply_filters( 'wpinv_taxes_on_prices_on_checkout', $ret );
 }

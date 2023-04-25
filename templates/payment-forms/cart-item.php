@@ -170,7 +170,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 										<?php endif; ?>
 									<?php endif; ?>
 
-									<input type="text" <?php echo wp_kses_post( $data_minimum ); ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo esc_attr( $class ); ?>" style="width: 64px; line-height: 1; min-height: 35px;">
+									<input type="number" step="0.01" <?php echo wp_kses_post( $data_minimum ); ?> name="getpaid-items[<?php echo (int) $item->get_id(); ?>][price]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $price ) ); ?>" placeholder="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price() ) ); ?>" class="getpaid-item-price-input p-1 align-middle font-weight-normal shadow-none m-0 rounded-0 text-center border <?php echo esc_attr( $class ); ?>" style="width: 64px; line-height: 1; min-height: 35px;">
 
 								<?php if ( ! empty( $validate_minimum ) ) : ?>
 										<div class="invalid-tooltip">

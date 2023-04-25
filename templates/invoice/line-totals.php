@@ -85,7 +85,7 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                 </div>
 
             <?php endforeach; ?>
-    
+
         </div>
     </div>
 </div> <!-- end .getpaid-invoice-line-totals -->
