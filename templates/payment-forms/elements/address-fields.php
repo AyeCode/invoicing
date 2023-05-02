@@ -181,7 +181,7 @@ foreach ( $fields as $address_field ) {
                 'label_type'        => 'vertical',
                 'help_text'         => $description,
                 'type'              => 'text',
-                'value'             => esc_attr( $value ),
+                'value'             => apply_filters( 'getpaid_payment_form_value_' . $address_field['name'], esc_attr( $value ) ),
                 'class'             => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
                 'wrap_class'        => "$wrap_class getpaid-address-field-wrapper__$key",
                 'label_class'       => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
