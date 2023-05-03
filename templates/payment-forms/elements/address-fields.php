@@ -55,11 +55,11 @@ foreach ( $fields as $address_field ) {
         $value = call_user_func( array( $form->invoice, $method_name ) );
     }
 
-    if ( empty( $value ) && 'wpinv_first_name' == $address_field['name'] && ! empty( $user ) ) {
+    if ( empty( $value ) && 'wpinv_first_name' === $address_field['name'] && ! empty( $user ) ) {
         $value = $user->first_name;
     }
 
-    if ( empty( $value ) && 'wpinv_last_name' == $address_field['name'] && ! empty( $user ) ) {
+    if ( empty( $value ) && 'wpinv_last_name' === $address_field['name'] && ! empty( $user ) ) {
         $value = $user->last_name;
     }
 
@@ -68,7 +68,7 @@ foreach ( $fields as $address_field ) {
     }
 
     // Display the country.
-    if ( 'wpinv_country' == $address_field['name'] ) {
+    if ( 'wpinv_country' === $address_field['name'] ) {
 
         echo "<div class='form-group mb-3 " . esc_attr( $wrap_class ) . " getpaid-address-field-wrapper__country'";
 
@@ -181,7 +181,7 @@ foreach ( $fields as $address_field ) {
                 'label_type'        => 'vertical',
                 'help_text'         => $description,
                 'type'              => 'text',
-                'value'             => esc_attr( $value ),
+                'value'             => apply_filters( 'getpaid_payment_form_value_' . $address_field['name'], esc_attr( $value ) ),
                 'class'             => 'getpaid-address-field ' . esc_attr( $address_field['name'] ),
                 'wrap_class'        => "$wrap_class getpaid-address-field-wrapper__$key",
                 'label_class'       => 'getpaid-address-field-label getpaid-address-field-label__' . $key,
