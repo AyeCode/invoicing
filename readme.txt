@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.3 =
+* Add: Function to fetch user IDs who purchased an item.
+
 = 2.7.2 =
 * Fix: grecaptcha not defined error when recaptcha is not enabled.
 * Update packages.
