@@ -26,8 +26,8 @@ function wpinv_get_item_by_id( $id ) {
  */
 function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
 
-    if ( 'id' == strtolower( $field ) ) {
-        return wpinv_get_item_by_id( $field );
+    if ( 'id' === strtolower( $field ) ) {
+        return wpinv_get_item_by_id( $value );
     }
 
     $id = WPInv_Item::get_item_id_by_field( $value, strtolower( $field ), $type );

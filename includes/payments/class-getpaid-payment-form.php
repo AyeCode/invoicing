@@ -348,7 +348,7 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 				continue;
 			}
-}
+		}
 
 		if ( 'objects' == $return && 'view' == $context ) {
 			return $prepared;

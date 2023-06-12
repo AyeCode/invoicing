@@ -189,7 +189,7 @@ function getpaid_calculate_invoice_discount( $invoice, $discount ) {
 			if ( ( $recurring_discount + $recurring_item_discount ) > $discount->get_amount() ) {
 				$recurring_item_discount = $discount->get_amount() - $recurring_discount;
 			}
-}
+        }
 
 		$initial_discount             += $item_discount;
 		$recurring_discount           += $recurring_item_discount;
