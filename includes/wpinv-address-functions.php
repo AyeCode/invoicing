@@ -734,7 +734,7 @@ function wpinv_get_invoice_address_replacements( $billing_details ) {
 		'company'    => '',
     );
 
-    $args    = map_deep( wp_parse_args( $billing_details, $default_args ), 'trim' );
+    $args    = map_deep( wp_parse_args( array_filter( $billing_details ), $default_args ), 'trim' );
     $state   = $args['state'];
     $country = $args['country'];
 

@@ -126,6 +126,8 @@ class GetPaid_Invoice_Notification_Emails {
 			return array();
 		}
 
+		$due_date   = $invoice->get_due_date();
+		$due_date   = empty( $due_date ) ? time() + MINUTE_IN_SECONDS : strtotime( $due_date ) + ( (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		$merge_tags = array(
 			'{name}'                 => sanitize_text_field( $invoice->get_user_full_name() ),
 			'{full_name}'            => sanitize_text_field( $invoice->get_user_full_name() ),
@@ -144,7 +146,7 @@ class GetPaid_Invoice_Notification_Emails {
 			'{invoice_label}'        => sanitize_text_field( ucfirst( $invoice->get_label() ) ),
 			'{invoice_description}'  => wp_kses_post( $invoice->get_description() ),
 			'{subscription_name}'    => wp_kses_post( $invoice->get_subscription_name() ),
-			'{is_was}'               => strtotime( $invoice->get_due_date() ) < current_time( 'timestamp' ) ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
+			'{is_was}'               => $due_date < time() ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
 		$payment_form_data = $invoice->get_meta( 'payment_form_data', true );
