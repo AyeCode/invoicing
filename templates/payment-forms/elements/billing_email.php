@@ -37,7 +37,7 @@ aui()->input(
         'label_type'       => 'vertical',
         'help_text'        => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'             => 'email',
-        'value'            => $value,
+        'value'            => apply_filters ( 'getpaid_payment_form_billing_email_value', $value ),
         'class'            => 'wpinv_billing_email getpaid-refresh-on-change',
         'extra_attributes' => array(
             'autocomplete' => 'billing email',
