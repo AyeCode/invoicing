@@ -33,6 +33,16 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	public $order = 8;
 
+	/**
+	 * Bank transfer instructions.
+	 */
+	public $instructions;
+
+	/**
+	 * Locale array.
+	 */
+	public $locale;
+
     /**
 	 * Class constructor.
 	 */
@@ -374,7 +384,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 				foreach ( $subscriptions as $subscription ) {
 					if ( $subscription->exists() ) {
 						$duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
-						$expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+						$expiry   = gmdate( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
 
 						$subscription->set_next_renewal_date( $expiry );
 						$subscription->set_date_created( current_time( 'mysql' ) );

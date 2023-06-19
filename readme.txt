@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.2
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.7.3 =
 * Add: Function to fetch user IDs who purchased an item.
+* Fix PHP 8.2 deprecation warnings.
 
 = 2.7.2 =
 * Fix: grecaptcha not defined error when recaptcha is not enabled.
