@@ -95,7 +95,7 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 					'ping_status'  => 'closed',
 					'post_author'  => $item->get_author( 'edit' ),
 					'post_title'   => $item->get_name( 'edit' ),
-					'post_parent'  => 0,
+					'post_parent'  => $item->get_parent_id(),
 					'post_excerpt' => $item->get_description( 'edit' ),
 				)
 			),

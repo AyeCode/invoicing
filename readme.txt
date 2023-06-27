@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.4 =
+* Use set parent ID when creating a new item - FIXED
+
 = 2.7.3 =
 * Add: Function to fetch user IDs who purchased an item.
 * Fix PHP 8.2 deprecation warnings.
