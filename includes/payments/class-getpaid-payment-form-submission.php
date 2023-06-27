@@ -848,7 +848,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function is_initial_fetch() {
-		return empty( $this->data['initial_state'] );
+		return isset( $this->data['initial_state'] ) && empty( $this->data['initial_state'] );
 	}
 
 	/**
