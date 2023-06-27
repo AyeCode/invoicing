@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.7.4 =
 * Use set parent ID when creating a new item - FIXED
+* Unable to name custom prices when paying for an existing invoice - FIXED
 
 = 2.7.3 =
 * Add: Function to fetch user IDs who purchased an item.
