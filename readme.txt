@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.5 =
+* Fix: Reports showing incorrect summaries.
+
 = 2.7.4 =
 * Use set parent ID when creating a new item - FIXED
 * Unable to name custom prices when paying for an existing invoice - FIXED

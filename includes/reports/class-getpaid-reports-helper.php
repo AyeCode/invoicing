@@ -76,13 +76,13 @@ class GetPaid_Reports_Helper {
 
 		if ( ! empty( $filter_range['before'] ) ) {
 			$query['where'] .= "
-				AND 	posts.post_date < '" . date( 'Y-m-d 23:59:59', strtotime( $filter_range['before'] ) ) . "'
+				AND 	posts.post_date <= '" . gmdate( 'Y-m-d 23:59:59', strtotime( $filter_range['before'] ) ) . "'
 			";
 		}
 
 		if ( ! empty( $filter_range['after'] ) ) {
 			$query['where'] .= "
-				AND 	posts.post_date > '" . date( 'Y-m-d H:i:s', strtotime( $filter_range['after'] ) ) . "'
+				AND 	posts.post_date >= '" . gmdate( 'Y-m-d 00:00:00', strtotime( $filter_range['after'] ) ) . "'
 			";
 		}
 
@@ -90,7 +90,7 @@ class GetPaid_Reports_Helper {
 
 			foreach ( $where as $value ) {
 
-				if ( strtolower( $value['operator'] ) == 'in' || strtolower( $value['operator'] ) == 'not in' ) {
+				if ( strtolower( $value['operator'] ) === 'in' || strtolower( $value['operator'] ) === 'not in' ) {
 
 					if ( is_array( $value['value'] ) ) {
 						$value['value'] = implode( "','", $value['value'] );

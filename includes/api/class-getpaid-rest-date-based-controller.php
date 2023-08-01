@@ -45,12 +45,23 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_date_range( $request ) {
 
-		// If not supported, assume all time.
-		if ( ! in_array( $request['period'], array( 'custom', 'today', 'yesterday', 'week', 'last_week', '7_days', '30_days', '60_days', '90_days', '180_days', 'month', 'last_month', 'quarter', 'last_quarter', 'year', 'last_year' ) ) ) {
+		// Check if the period is x_days.
+		if ( preg_match( '/^(\d+)_days$/', $request['period'], $matches ) ) {
+			$date_range = $this->get_x_days_date_range( absint( $matches[1] ) );
+		} elseif ( is_callable( array( $this, 'get_' . $request['period'] . '_date_range' ) ) ) {
+			$date_range = call_user_func( array( $this, 'get_' . $request['period'] . '_date_range' ), $request );
+		} else {
 			$request['period'] = '7_days';
+			$date_range        = $this->get_x_days_date_range();
 		}
 
-		$date_range = call_user_func( array( $this, 'get_' . $request['period'] . '_date_range' ), $request );
+		// 3 months max for day view.
+		$before = strtotime( $date_range['before'] );
+		$after  = strtotime( $date_range['after'] );
+		if ( floor( ( $before - $after ) / MONTH_IN_SECONDS ) > 2 ) {
+			$this->groupby = 'month';
+		}
+
 		$this->prepare_interval( $date_range );
 
 		return $date_range;
@@ -65,8 +76,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function prepare_interval( $range ) {
 
-		$before = strtotime( $range['before'] ) - DAY_IN_SECONDS;
-		$after  = strtotime( $range['after'] ) + DAY_IN_SECONDS;
+		$before = strtotime( $range['before'] );
+		$after  = strtotime( $range['after'] );
 		if ( 'day' === $this->groupby ) {
 			$difference     = max( DAY_IN_SECONDS, ( DAY_IN_SECONDS + $before - $after ) ); // Prevent division by 0;
 			$this->interval = absint( ceil( max( 1, $difference / DAY_IN_SECONDS ) ) );
@@ -74,7 +85,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		}
 
 		$this->interval = 0;
-		$min_date       = strtotime( date( 'Y-m-01', $after ) );
+		$min_date       = strtotime( gmdate( 'Y-m-01', $after ) );
 
 		while ( $min_date <= $before ) {
 			$this->interval ++;
@@ -94,29 +105,24 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	public function get_custom_date_range( $request ) {
 
 		$after  = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( $request['after'] ) ) );
-		$before = strtotime( '+1 day', current_time( 'timestamp' ) );
+		$before = gmdate( 'Y-m-d' );
 
 		if ( ! empty( $request['before'] ) ) {
 			$before  = min( $before, strtotime( sanitize_text_field( $request['before'] ) ) );
-		}
-
-		// 3 months max for day view
-		if ( floor( ( $before - $after ) / MONTH_IN_SECONDS ) > 3 ) {
-			$this->groupby = 'month';
 		}
 
 		// Set the previous date range.
 		$difference           = $before - $after;
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', $before - $difference ),
-			'after'  => date( 'Y-m-d', $after - $difference ),
+			'before' => gmdate( 'Y-m-d', $before - $difference - DAY_IN_SECONDS ),
+			'after'  => gmdate( 'Y-m-d', $after - $difference - DAY_IN_SECONDS ),
 		);
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', $before ),
-			'after'  => date( 'Y-m-d', $after ),
+			'before' => gmdate( 'Y-m-d', $before ),
+			'after'  => gmdate( 'Y-m-d', $after ),
 		);
 
 	}
@@ -135,8 +141,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) ),
+			'before' => gmdate( 'Y-m-d' ),
+			'after'  => gmdate( 'Y-m-d' ),
 		);
 
 	}
@@ -151,14 +157,14 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		// Set the previous date range.
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-3 days', current_time( 'timestamp' ) ) ),
+			'before' => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+			'after'  => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
 		);
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-2 days', current_time( 'timestamp' ) ) ),
+			'before' => gmdate( 'Y-m-d', strtotime( '-1 day' ) ),
+			'after'  => gmdate( 'Y-m-d', strtotime( '-1 day' ) ),
 		);
 
 	}
@@ -176,11 +182,11 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		);
 
 		// Generate the report.
+		$week_starts = absint( get_option( 'start_of_week' ) );
 		return array(
-			'before' => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) + 8 * DAY_IN_SECONDS ),
-			'after'  => date( 'Y-m-d', strtotime( 'sunday last week', current_time( 'timestamp' ) ) ),
+			'before' => gmdate( 'Y-m-d' ),
+			'after'  => gmdate( 'Y-m-d', strtotime( 'next Sunday -' . ( 7 - $week_starts ) . ' days' ) ),
 		);
-
 	}
 
 	/**
@@ -190,133 +196,50 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_last_week_date_range() {
 
+		$week_starts = absint( get_option( 'start_of_week' ) );
+		$week_starts = strtotime( 'last Sunday -' . ( 7 - $week_starts ) . ' days' );
+		$date_range  = array(
+			'before' => gmdate( 'Y-m-d', $week_starts + 6 * DAY_IN_SECONDS ),
+			'after'  => gmdate( 'Y-m-d', $week_starts ),
+		);
+
 		// Set the previous date range.
+		$week_starts          = $week_starts - 7 * DAY_IN_SECONDS;
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) - 8 * DAY_IN_SECONDS ),
+			'before' => gmdate( 'Y-m-d', $week_starts + 6 * DAY_IN_SECONDS ),
+			'after'  => gmdate( 'Y-m-d', $week_starts ),
 		);
 
 		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', strtotime( 'monday this week', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'monday last week', current_time( 'timestamp' ) ) - DAY_IN_SECONDS ),
-		);
-
+		return $date_range;
 	}
 
 	/**
-	 * Retrieves last 7 days date range.
+	 * Retrieves last x days date range.
 	 *
 	 * @return array The appropriate date range.
 	 */
-	public function get_7_days_date_range() {
+	public function get_x_days_date_range( $days = 7 ) {
+
+		$days--;
+
+		$date_range  = array(
+			'before' => gmdate( 'Y-m-d' ),
+			'after'  => gmdate( 'Y-m-d', strtotime( "-$days days" ) ),
+		);
+
+		$days++;
 
 		// Set the previous date range.
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-7 days', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-15 days', current_time( 'timestamp' ) ) ),
+			'before' => gmdate( 'Y-m-d', strtotime( $date_range['before'] ) - $days * DAY_IN_SECONDS ),
+			'after'  => gmdate( 'Y-m-d', strtotime( $date_range['after'] ) - $days * DAY_IN_SECONDS ),
 		);
 
 		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-8 days', current_time( 'timestamp' ) ) ),
-		);
-
-	}
-
-	/**
-	 * Retrieves last 30 days date range.
-	 *
-	 * @return array The appropriate date range.
-	 */
-	public function get_30_days_date_range() {
-
-		// Set the previous date range.
-		$this->previous_range = array(
-			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-30 days', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-61 days', current_time( 'timestamp' ) ) ),
-		);
-
-		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-31 days', current_time( 'timestamp' ) ) ),
-		);
-
-	}
-
-	/**
-	 * Retrieves last 90 days date range.
-	 *
-	 * @return array The appropriate date range.
-	 */
-	public function get_90_days_date_range() {
-
-		$this->groupby = 'month';
-
-		// Set the previous date range.
-		$this->previous_range = array(
-			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-90 days', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-181 days', current_time( 'timestamp' ) ) ),
-		);
-
-		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-91 days', current_time( 'timestamp' ) ) ),
-		);
-
-	}
-
-	/**
-	 * Retrieves last 180 days date range.
-	 *
-	 * @return array The appropriate date range.
-	 */
-	public function get_180_days_date_range() {
-
-		$this->groupby = 'month';
-
-		// Set the previous date range.
-		$this->previous_range = array(
-			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-180 days', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-361 days', current_time( 'timestamp' ) ) ),
-		);
-
-		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-181 days', current_time( 'timestamp' ) ) ),
-		);
-
-	}
-
-	/**
-	 * Retrieves last 60 days date range.
-	 *
-	 * @return array The appropriate date range.
-	 */
-	public function get_60_days_date_range() {
-
-		// Set the previous date range.
-		$this->previous_range = array(
-			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( '-60 days', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-121 days', current_time( 'timestamp' ) ) ),
-		);
-
-		// Generate the report.
-		return array(
-			'before' => date( 'Y-m-d', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-d', strtotime( '-61 days', current_time( 'timestamp' ) ) ),
-		);
-
+		return $date_range;
 	}
 
 	/**
@@ -333,8 +256,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-01', strtotime( 'next month', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-t', strtotime( 'last month', current_time( 'timestamp' ) ) ),
+			'after'  => gmdate( 'Y-m-01' ),
+			'before' => gmdate( 'Y-m-t' ),
 		);
 
 	}
@@ -349,14 +272,14 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		// Set the previous date range.
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-1', strtotime( 'last month', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-t', strtotime( '-3 months', current_time( 'timestamp' ) ) ),
+			'after'  => gmdate( 'Y-m-01', strtotime( '-2 months' ) ),
+			'before' => gmdate( 'Y-m-t', strtotime( '-2 months' ) ),
 		);
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-1', current_time( 'timestamp' ) ),
-			'after'  => date( 'Y-m-t', strtotime( '-2 months', current_time( 'timestamp' ) ) ),
+			'after'  => gmdate( 'Y-m-01', strtotime( 'last month' ) ),
+			'before' => gmdate( 'Y-m-t', strtotime( 'last month' ) ),
 		);
 
 	}
@@ -368,43 +291,46 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_quarters() {
 
-		$last_year = (int) date( 'Y' ) - 1;
-		$next_year = (int) date( 'Y' ) + 1;
-		$year      = (int) date( 'Y' );
+		$year      = (int) gmdate( 'Y' );
+		$last_year = (int) $year - 1;
 		return array(
 
+			// Third quarter of previous year: July 1st to September 30th
 			array(
-				'after'  => "$last_year-06-30",
-				'before' => "$last_year-10-01",
+				'before' => "{$last_year}-09-30",
+				'after'  => "{$last_year}-07-01",
 			),
 
+			// Last quarter of previous year: October 1st to December 31st
 			array(
-				'before' => "$year-01-01",
-				'after'  => "$last_year-09-30",
+				'before' => "{$last_year}-12-31",
+        		'after'  => "{$last_year}-10-01",
 			),
 
+			// First quarter: January 1st to March 31st
 			array(
-				'before' => "$year-04-01",
-				'after'  => "$last_year-12-31",
+				'before' => "{$year}-03-31",
+				'after'  => "{$year}-01-01",
 			),
 
+			// Second quarter: April 1st to June 30th
 			array(
-				'before' => "$year-07-01",
-				'after'  => "$year-03-31",
+				'before' => "{$year}-06-30",
+				'after'  => "{$year}-04-01",
 			),
 
+			// Third quarter: July 1st to September 30th
 			array(
-				'after'  => "$year-06-30",
-				'before' => "$year-10-01",
+				'before' => "{$year}-09-30",
+				'after'  => "{$year}-07-01",
 			),
 
+			// Fourth quarter: October 1st to December 31st
 			array(
-				'before' => "$next_year-01-01",
-				'after'  => "$year-09-30",
+				'before' => "{$year}-12-31",
+				'after'  => "{$year}-10-01",
 			),
-
 		);
-
 	}
 
 	/**
@@ -414,7 +340,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_quarter() {
 
-		$month    = (int) date( 'n', current_time( 'timestamp' ) );
+		$month    = (int) gmdate( 'n' );
 		$quarters = array( 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 );
 		return $quarters[ $month - 1 ];
 
@@ -433,8 +359,9 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		);
 
 		// Generate the report.
+		$quarter  = $this->get_quarter();
 		$quarters = $this->get_quarters();
-		return $quarters[ $this->get_quarter() + 1 ];
+		return $quarters[ $quarter + 1 ];
 
 	}
 
@@ -466,8 +393,6 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_year_date_range() {
 
-		$this->groupby = 'month';
-
 		// Set the previous date range.
 		$this->previous_range = array(
 			'period' => 'last_year',
@@ -475,8 +400,8 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		// Generate the report.
 		return array(
-			'before' => date( 'Y-m-d', strtotime( 'next year January 1st', current_time( 'timestamp' ) ) ),
-			'after'  => date( 'Y-m-d', strtotime( 'last year December 31st', current_time( 'timestamp' ) ) ),
+			'after'  => gmdate( 'Y-01-01' ),
+			'before' => gmdate( 'Y-12-31' ),
 		);
 
 	}
@@ -488,21 +413,17 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 	 */
 	public function get_last_year_date_range() {
 
-		$this->groupby = 'month';
-
 		// Set the previous date range.
-		$year          = (int) date( 'Y' ) - 3;
 		$this->previous_range = array(
 			'period' => 'custom',
-			'before' => date( 'Y-m-d', strtotime( 'first day of january last year', current_time( 'timestamp' ) ) ),
-			'after'  => "$year-12-31",
+			'after'  => gmdate( 'Y-01-01', strtotime( '-2 years' ) ),
+			'before' => gmdate( 'Y-12-31', strtotime( '-2 years' ) ),
 		);
 
 		// Generate the report.
-		$year          = (int) date( 'Y' ) - 2;
 		return array(
-			'after'  => "$year-12-31",
-			'before' => date( 'Y-m-d', strtotime( 'first day of january this year', current_time( 'timestamp' ) ) ),
+			'after'  => gmdate( 'Y-01-01', strtotime( 'last year' ) ),
+			'before' => gmdate( 'Y-12-31', strtotime( 'last year' ) ),
 		);
 
 	}
@@ -522,14 +443,14 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		if ( ! empty( $range['after'] ) ) {
 			$sql .= ' AND ' . $wpdb->prepare(
-				"$date_field > %s",
+				"$date_field >= %s",
 				$range['after']
 			);
 		}
 
 		if ( ! empty( $range['before'] ) ) {
 			$sql .= ' AND ' . $wpdb->prepare(
-				"$date_field < %s",
+				"$date_field <= %s",
 				$range['before']
 			);
 		}
@@ -573,19 +494,17 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 				/* translators: %s: date format */
 				'description'       => sprintf( __( 'Limit to results after a specific date, the date needs to be in the %s format.', 'invoicing' ), 'YYYY-MM-DD' ),
 				'type'              => 'string',
-				'format'            => 'date',
 				'validate_callback' => 'rest_validate_request_arg',
 				'sanitize_callback' => 'sanitize_text_field',
-				'default'           => date( 'Y-m-d', strtotime( '-8 days', current_time( 'timestamp' ) ) ),
+				'default'           => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
 			),
 			'before'  => array(
 				/* translators: %s: date format */
 				'description'       => sprintf( __( 'Limit to results before a specific date, the date needs to be in the %s format.', 'invoicing' ), 'YYYY-MM-DD' ),
 				'type'              => 'string',
-				'format'            => 'date',
 				'validate_callback' => 'rest_validate_request_arg',
 				'sanitize_callback' => 'sanitize_text_field',
-				'default'           => date( 'Y-m-d', current_time( 'timestamp' ) ),
+				'default'           => gmdate( 'Y-m-d' ),
 			),
 		);
 	}

@@ -91,6 +91,7 @@ function wpinv_sanitize_amount( $amount ) {
     }
 
     // Separate the decimals and thousands.
+    $amount    = empty( $amount ) ? '0' : (string) $amount;
     $amount    = explode( wpinv_decimal_separator(), $amount );
 
     // Remove thousands.
