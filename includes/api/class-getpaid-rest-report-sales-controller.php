@@ -111,20 +111,20 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$period_totals   = array();
 
 		// Setup period totals by ensuring each period in the interval has data.
-		$start_date      = strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS;
+		$start_date      = strtotime( $this->report_range['after'] );
 
 		if ( 'month' === $this->groupby ) {
-			$start_date      = strtotime( date( 'Y-m-01', $start_date ) );
+			$start_date      = strtotime( gmdate( 'Y-m-01', $start_date ) );
 		}
 
 		for ( $i = 0; $i < $this->interval; $i++ ) {
 
 			switch ( $this->groupby ) {
 				case 'day':
-					$time = date( 'Y-m-d', strtotime( "+{$i} DAY", $start_date ) );
+					$time = gmdate( 'Y-m-d', strtotime( "+{$i} DAY", $start_date ) );
 					break;
 				default:
-					$time = date( 'Y-m', strtotime( "+{$i} MONTH", $start_date ) );
+					$time = gmdate( 'Y-m', strtotime( "+{$i} MONTH", $start_date ) );
 					break;
 			}
 
@@ -145,12 +145,12 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 					$period_totals[ $time ][ $key ] = wpinv_round_amount( 0.00 );
 				}
 			}
-}
+		}
 
 		// add total sales, total invoice count, total tax for each period
 		$date_format = ( 'day' === $this->groupby ) ? 'Y-m-d' : 'Y-m';
 		foreach ( $report_data->invoices as $invoice ) {
-			$time = date( $date_format, strtotime( $invoice->post_date ) );
+			$time = gmdate( $date_format, strtotime( $invoice->post_date ) );
 
 			if ( ! isset( $period_totals[ $time ] ) ) {
 				continue;
@@ -164,7 +164,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		}
 
 		foreach ( $report_data->refunds as $invoice ) {
-			$time = date( $date_format, strtotime( $invoice->post_date ) );
+			$time = gmdate( $date_format, strtotime( $invoice->post_date ) );
 
 			if ( ! isset( $period_totals[ $time ] ) ) {
 				continue;
@@ -178,30 +178,30 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		}
 
 		foreach ( $report_data->invoice_counts as $invoice ) {
-			$time = date( $date_format, strtotime( $invoice->post_date ) );
+			$time = gmdate( $date_format, strtotime( $invoice->post_date ) );
 
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['invoices']   = (int) $invoice->count;
 			}
-}
+		}
 
 		// Add total invoice items for each period.
 		foreach ( $report_data->invoice_items as $invoice_item ) {
-			$time = ( 'day' === $this->groupby ) ? date( 'Y-m-d', strtotime( $invoice_item->post_date ) ) : date( 'Y-m', strtotime( $invoice_item->post_date ) );
+			$time = ( 'day' === $this->groupby ) ? gmdate( 'Y-m-d', strtotime( $invoice_item->post_date ) ) : gmdate( 'Y-m', strtotime( $invoice_item->post_date ) );
 
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['items'] = (int) $invoice_item->invoice_item_count;
 			}
-}
+		}
 
 		// Add total discount for each period.
 		foreach ( $report_data->coupons as $discount ) {
-			$time = ( 'day' === $this->groupby ) ? date( 'Y-m-d', strtotime( $discount->post_date ) ) : date( 'Y-m', strtotime( $discount->post_date ) );
+			$time = ( 'day' === $this->groupby ) ? gmdate( 'Y-m-d', strtotime( $discount->post_date ) ) : gmdate( 'Y-m', strtotime( $discount->post_date ) );
 
 			if ( isset( $period_totals[ $time ] ) ) {
 				$period_totals[ $time ]['discount'] = wpinv_round_amount( $discount->discount_amount );
 			}
-}
+		}
 
 		// Extra fields.
 		foreach ( array_keys( wpinv_get_report_graphs() ) as $key ) {
@@ -218,7 +218,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 
 			// Set values.
 			foreach ( $report_data->$key as $item ) {
-				$time = ( 'day' === $this->groupby ) ? date( 'Y-m-d', strtotime( $item->date ) ) : date( 'Y-m', strtotime( $item->date ) );
+				$time = ( 'day' === $this->groupby ) ? gmdate( 'Y-m-d', strtotime( $item->date ) ) : gmdate( 'Y-m', strtotime( $item->date ) );
 
 				if ( isset( $period_totals[ $time ] ) ) {
 					$period_totals[ $time ][ $key ] = wpinv_round_amount( $item->val );
@@ -237,10 +237,10 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 		$report_data->decimal_places    = wpinv_decimals();
 		$report_data->thousands_sep     = wpinv_thousands_separator();
 		$report_data->decimals_sep      = wpinv_decimal_separator();
-		$report_data->start_date        = date( 'Y-m-d', strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS );
-		$report_data->end_date          = date( 'Y-m-d', strtotime( $this->report_range['before'] ) - DAY_IN_SECONDS );
-		$report_data->start_date_locale = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['after'] ) + DAY_IN_SECONDS ) );
-		$report_data->end_date_locale   = getpaid_format_date( date( 'Y-m-d', strtotime( $this->report_range['before'] ) - DAY_IN_SECONDS ) );
+		$report_data->start_date        = gmdate( 'Y-m-d', strtotime( $this->report_range['after'] ) );
+		$report_data->end_date          = gmdate( 'Y-m-d', strtotime( $this->report_range['before'] ) );
+		$report_data->start_date_locale = getpaid_format_date( gmdate( 'Y-m-d', strtotime( $this->report_range['after'] ) ) );
+		$report_data->end_date_locale   = getpaid_format_date( gmdate( 'Y-m-d', strtotime( $this->report_range['before'] ) ) );
 		$report_data->decimals_sep      = wpinv_decimal_separator();
 
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
@@ -336,7 +336,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 					),
 					'post_date' => array(
 						'type'     => 'post_data',
-						'function' => '',
+						'function' => 'MIN',
 						'name'     => 'post_date',
 					),
 				),
@@ -367,7 +367,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 					),
 					'post_date' => array(
 						'type'     => 'post_data',
-						'function' => '',
+						'function' => 'MIN',
 						'name'     => 'post_date',
 					),
 				),
@@ -398,7 +398,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 					),
 					'post_date' => array(
 						'type'     => 'post_data',
-						'function' => '',
+						'function' => 'MIN',
 						'name'     => 'post_date',
 					),
 				),
