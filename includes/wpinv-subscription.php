@@ -1182,7 +1182,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 */
 	public function get_status_class() {
 		$statuses = getpaid_get_subscription_status_classes();
-		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'badge-dark';
+		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'bg-dark';
 	}
 
     /**

@@ -1277,17 +1277,17 @@ function getpaid_get_invoice_status_classes() {
 	return apply_filters(
 		'getpaid_get_invoice_status_classes',
 		array(
-            'wpi-quote-declined' => 'badge-danger',
-            'wpi-failed'         => 'badge-danger',
-			'wpi-processing'     => 'badge-info',
-			'wpi-onhold'         => 'badge-warning',
-			'wpi-quote-accepted' => 'badge-success',
-			'publish'            => 'badge-success',
-			'wpi-renewal'        => 'badge-primary',
-            'wpi-cancelled'      => 'badge-secondary',
-            'wpi-pending'        => 'badge-dark',
-            'wpi-quote-pending'  => 'badge-dark',
-            'wpi-refunded'       => 'badge-secondary',
+            'wpi-quote-declined' => 'bg-danger',
+            'wpi-failed'         => 'bg-danger',
+			'wpi-processing'     => 'bg-info',
+			'wpi-onhold'         => 'bg-warning text-dark',
+			'wpi-quote-accepted' => 'bg-success',
+			'publish'            => 'bg-success',
+			'wpi-renewal'        => 'bg-primary',
+            'wpi-cancelled'      => 'bg-secondary',
+            'wpi-pending'        => 'bg-dark',
+            'wpi-quote-pending'  => 'bg-dark',
+            'wpi-refunded'       => 'bg-secondary',
 		)
 	);
 
