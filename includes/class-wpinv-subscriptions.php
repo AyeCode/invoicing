@@ -465,14 +465,17 @@ class WPInv_Subscriptions {
 
             $subscription->set_props(
                 array(
-                    'status'     => isset( $args['subscription_status'] ) ? $args['subscription_status'] : null,
-                    'profile_id' => isset( $args['wpinv_subscription_profile_id'] ) ? $args['wpinv_subscription_profile_id'] : null,
+                    'status'       => isset( $args['subscription_status'] ) ? $args['subscription_status'] : null,
+                    'profile_id'   => isset( $args['wpinv_subscription_profile_id'] ) ? $args['wpinv_subscription_profile_id'] : null,
+                    'date_created' => ! empty( $args['wpinv_subscription_date_created'] ) ? $args['wpinv_subscription_date_created'] : null,
+                    'expiration'   => ! empty( $args['wpinv_subscription_expiration'] ) ? $args['wpinv_subscription_expiration'] : null,
                 )
             );
 
             $subscription->save();
             getpaid_admin()->show_info( __( 'Subscription updated', 'invoicing' ) );
 
+            do_action( 'getpaid_admin_updated_subscription', $subscription, $args );
         }
 
     }

@@ -632,7 +632,7 @@ class WPInv_Subscription extends GetPaid_Data {
         $date = strtotime( $value );
 
         if ( $date && $value !== '0000-00-00 00:00:00' ) {
-            $this->set_prop( 'created', date( 'Y-m-d H:i:s', $date ) );
+            $this->set_prop( 'created', gmdate( 'Y-m-d H:i:s', $date ) );
             return;
         }
 
@@ -660,7 +660,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		$date = strtotime( $value );
 
         if ( $date && $value !== '0000-00-00 00:00:00' ) {
-            $this->set_prop( 'expiration', date( 'Y-m-d H:i:s', $date ) );
+            $this->set_prop( 'expiration', gmdate( 'Y-m-d H:i:s', $date ) );
             return;
 		}
 
