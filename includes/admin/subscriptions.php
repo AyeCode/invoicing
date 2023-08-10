@@ -278,7 +278,26 @@ add_action( 'getpaid_subscription_admin_display_subscription', 'getpaid_admin_su
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_start_date( $subscription ) {
-	echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
+
+	if ( $subscription->has_status( 'active trialling' ) && getpaid_payment_gateway_supports( $subscription->get_gateway(), 'subscription_date_change' ) ) {
+		aui()->input(
+			array(
+				'type'        => 'text',
+				'id'          => 'wpinv_subscription_date_created',
+				'name'        => 'wpinv_subscription_date_created',
+				'label'       => __( 'Start Date', 'invoicing' ),
+				'label_type'  => 'hidden',
+				'placeholder' => 'YYYY-MM-DD',
+				'value'       => esc_attr( $subscription->get_date_created( 'edit' ) ),
+				'no_wrap'     => true,
+				'size'        => 'sm',
+			),
+			true
+		);
+	} else {
+		echo esc_html( getpaid_format_date_value( $subscription->get_date_created() ) );
+	}
+
 }
 add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subscription_metabox_display_start_date' );
 
@@ -288,7 +307,25 @@ add_action( 'getpaid_subscription_admin_display_start_date', 'getpaid_admin_subs
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_renews_on( $subscription ) {
-	echo esc_html( getpaid_format_date_value( $subscription->get_expiration() ) );
+
+	if ( $subscription->has_status( 'active trialling' ) && getpaid_payment_gateway_supports( $subscription->get_gateway(), 'subscription_date_change' ) ) {
+		aui()->input(
+			array(
+				'type'        => 'text',
+				'id'          => 'wpinv_subscription_expiration',
+				'name'        => 'wpinv_subscription_expiration',
+				'label'       => __( 'Renews On', 'invoicing' ),
+				'label_type'  => 'hidden',
+				'placeholder' => 'YYYY-MM-DD',
+				'value'       => esc_attr( $subscription->get_expiration( 'edit' ) ),
+				'no_wrap'     => true,
+				'size'        => 'sm',
+			),
+			true
+		);
+	} else {
+		echo esc_html( getpaid_format_date_value( $subscription->get_expiration() ) );
+	}
 }
 add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subscription_metabox_display_renews_on' );
 
@@ -369,6 +406,7 @@ function getpaid_admin_subscription_metabox_display_profile_id( $subscription ) 
 			'value'             => esc_attr( $profile_id ),
 			'input_group_right' => '',
 			'no_wrap'           => true,
+			'size'              => 'sm',
 		),
 		true
 	);

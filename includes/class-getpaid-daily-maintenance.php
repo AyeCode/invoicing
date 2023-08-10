@@ -80,9 +80,9 @@ class GetPaid_Daily_Maintenance {
 			'status'             => 'trialling active',
 			'date_expires_query' => array(
 				array(
-					'year'    => date( 'Y', current_time( 'timestamp' ) ),
-					'month'   => date( 'n', current_time( 'timestamp' ) ),
-					'day'     => date( 'j', current_time( 'timestamp' ) ),
+					'year'    => gmdate( 'Y' ),
+					'month'   => gmdate( 'n' ),
+					'day'     => gmdate( 'j' ),
 					'compare' => '=',
 				),
 			),
@@ -98,7 +98,7 @@ class GetPaid_Daily_Maintenance {
 			} else {
 				do_action( 'getpaid_should_renew_subscription', $subscription );
 			}
-}
+		}
 
 	}
 

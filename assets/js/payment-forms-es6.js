@@ -1,5 +1,42 @@
 jQuery(function ($) {
 
+	var funcs = [];
+	var isRecaptchaLoaded = false;
+
+	/**
+	 * Use timeinterval to check if recaptcha is loaded.
+	 */
+	function excecute_after_recaptcha_load( func ) {
+
+		if ( isRecaptchaLoaded ) {
+			func();
+			return;
+		}
+
+		// Add function to queue.
+		funcs.push( func );
+
+		// Check if recaptcha is loaded.
+		var interval = setInterval( function () {
+
+			if ( typeof grecaptcha !== 'undefined' ) {
+
+				// Clear interval.
+				clearInterval( interval );
+
+				// Set recaptcha loaded.
+				isRecaptchaLoaded = true;
+
+				// Excecute queued functions.
+				funcs.forEach( function ( func ) {
+					func();
+				} );
+
+			}
+
+		}, 100 );
+	}
+
 	/**
 	 * Simple throttle function
 	 * @param function callback The callback function
@@ -694,13 +731,17 @@ jQuery(function ($) {
 				}
 
 				// reCaptcha
-				if ( WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v2' && grecaptcha ) {
+				if ( WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v2' ) {
 
-					var id = this.form.find( '.getpaid-recaptcha-wrapper .g-recaptcha' ).attr( 'id' );
+					excecute_after_recaptcha_load( () => {
+						var id = this.form.find( '.getpaid-recaptcha-wrapper .g-recaptcha' ).attr( 'id' );
 
-					if ( id ) {
-						grecaptcha.render( id, WPInv.recaptchaSettings.render_params);
-					}
+						if ( id ) {
+							grecaptcha.ready( () => {
+								grecaptcha.render( id, WPInv.recaptchaSettings.render_params);
+							});
+						}
+					});
 				}
 			},
 

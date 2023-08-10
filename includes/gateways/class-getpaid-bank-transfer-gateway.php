@@ -24,7 +24,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-	protected $supports = array( 'subscription', 'addons', 'single_subscription_group', 'multiple_subscription_groups' );
+	protected $supports = array( 'subscription', 'addons', 'single_subscription_group', 'multiple_subscription_groups', 'subscription_date_change' );
 
     /**
 	 * Payment method order.
@@ -392,8 +392,8 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 						$subscription->activate();
 					}
 				}
-}
-} else {
+			}
+		} else {
 
 			$subscription = getpaid_get_subscription( $invoice->get_subscription_id() );
 
@@ -401,8 +401,8 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			if ( $subscription && $subscription->exists() ) {
 				$subscription->add_payment( array(), $invoice );
 				$subscription->renew( strtotime( $invoice->get_date_created() ) );
-					}
-}
+			}
+		}
 
     }
 
