@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.7 =
+* Make it possible to set renewal reminders for up to 45 days.
+
 = 2.7.6 =
 * Add: Ability to change subscription dates for bank transfer payments.
 * Add: Ability to change subscription dates for manual payments.

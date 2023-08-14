@@ -15,7 +15,7 @@ $overdue_days_options       = array();
 $overdue_days_options['0']  = __( 'On the Due Date', 'invoicing' );
 $overdue_days_options['1']  = __( '1 day after Due Date', 'invoicing' );
 
-for ( $i = 2; $i <= 10; $i++ ) {
+for ( $i = 2; $i <= 45; $i++ ) {
     $overdue_days_options[ "$i" ] = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
 }
 
@@ -24,7 +24,7 @@ $renewal_days_options       = array();
 $renewal_days_options['0']  = __( 'On the renewal date', 'invoicing' );
 $renewal_days_options['1']  = __( '1 day before the renewal date', 'invoicing' );
 
-for ( $i = 2; $i <= 10; $i++ ) {
+for ( $i = 2; $i <= 45; $i++ ) {
     $renewal_days_options[ "$i" ]   = wp_sprintf( __( '%d days before the renewal date', 'invoicing' ), $i );
 }
 
