@@ -133,15 +133,20 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		// Check to see if the request was valid.
 		if ( ! is_wp_error( $response ) && $response['response']['code'] < 300 && strstr( $response['body'], 'VERIFIED' ) ) {
+			$invoice->add_note( 'Received valid response from PayPal IPN: ' . $response['body'], false, false, true );
 			wpinv_error_log( 'Received valid response from PayPal IPN: ' . $response['body'], false );
 			return true;
 		}
 
+		$invoice->add_note( 'IPN message:' . wp_json_encode( $posted ), false, false, true );
+
 		if ( is_wp_error( $response ) ) {
+			$invoice->add_note( 'Received invalid response from PayPal IPN: ' . $response->get_error_message(), false, false, true );
 			wpinv_error_log( $response->get_error_message(), 'Received invalid response from PayPal IPN' );
 			return false;
 		}
 
+		$invoice->add_note( 'Received invalid response from PayPal IPN: ' . $response['body'], false, false, true );
 		wpinv_error_log( $response['body'], 'Received invalid response from PayPal IPN' );
 		return false;
 
