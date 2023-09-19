@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'WP_Super_Duper' ) ) {
 
-	define( 'SUPER_DUPER_VER', '1.1.19' );
+	define( 'SUPER_DUPER_VER', '1.1.25' );
 
 	/**
 	 * A Class to be able to create a Widget, Shortcode or Block to be able to output content for WordPress.
@@ -211,7 +211,7 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 					}
 
 					// heading
-					$param['heading'] = $val['title'];
+					$param['heading'] = isset( $val['title'] ) ? $val['title'] : '';
 
 					// description
 					$param['description'] = isset( $val['desc'] ) ? $val['desc'] : '';
@@ -232,7 +232,7 @@ if ( ! class_exists( 'WP_Super_Duper' ) ) {
 						if ( isset( $val['default'] ) && $val['default'] == '0' ) {
 							unset( $param['default'] );
 						}
-						$param['value'] = array( '' => __( "No" ), '1' => __( "Yes" ) );
+						$param['value'] = array( '0' => __( "No" ), '1' => __( "Yes" ) );
 					} elseif ( $param['type'] == 'select' || $param['type'] == 'multiple_select' ) {
 						$param['value'] = isset( $val['options'] ) ? $val['options'] : array();
 					} else {
@@ -3522,6 +3522,42 @@ wp.data.select('core/edit-post').__experimentalGetPreviewDeviceType();
                     },";
 			}elseif ( $args['type'] == 'gradient' ) {
 				$type = 'GradientPicker';
+				$extra .= "gradients: [{
+			name: 'Vivid cyan blue to vivid purple',
+			gradient:
+				'linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%)',
+			slug: 'vivid-cyan-blue-to-vivid-purple',
+		},
+		{
+			name: 'Light green cyan to vivid green cyan',
+			gradient:
+				'linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%)',
+			slug: 'light-green-cyan-to-vivid-green-cyan',
+		},
+		{
+			name: 'Luminous vivid amber to luminous vivid orange',
+			gradient:
+				'linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%)',
+			slug: 'luminous-vivid-amber-to-luminous-vivid-orange',
+		},
+		{
+			name: 'Luminous vivid orange to vivid red',
+			gradient:
+				'linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%)',
+			slug: 'luminous-vivid-orange-to-vivid-red',
+		},
+		{
+			name: 'Very light gray to cyan bluish gray',
+			gradient:
+				'linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%)',
+			slug: 'very-light-gray-to-cyan-bluish-gray',
+		},
+		{
+			name: 'Cool to warm spectrum',
+			gradient:
+				'linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%)',
+			slug: 'cool-to-warm-spectrum',
+		}],";
 
 			}elseif ( $args['type'] == 'image' ) {
 //                print_r($args);
@@ -3585,88 +3621,78 @@ wp.data.select('core/edit-post').__experimentalGetPreviewDeviceType();
                 $onchange = "";
 
                 //$inside_elements = ",el('div',{},'file upload')";
-			}elseif ( $args['type'] == 'images' ) {
-				//                print_r($args);
-
-                $img_preview = "props.attributes.$key && (function() {
-
-                        let uploads = JSON.parse('['+props.attributes.$key+']');
-						let images = [];
-                      uploads.map((upload, index) => (
-
-							images.push( el('div',{className: 'col p-2',draggable: 'true','data-index': index}, el('img', { src: upload.sizes.thumbnail.url,style: {maxWidth:'100%',background: '#ccc',pointerEvents:'none'}}),el('i',{
-							className: 'fas fa-times-circle text-danger position-absolute  ml-n2 mt-n1 bg-white rounded-circle c-pointer',
-							onClick: function(){
-							    aui_confirm('".esc_attr__('Are you sure?')."', '".esc_attr__('Delete')."', '".esc_attr__('Cancel')."', true).then(function(confirmed) {
-if (confirmed) {
-											let new_uploads = JSON.parse('['+props.attributes.$key+']');
-											new_uploads.splice(index, 1); //remove
-                                              return props.setAttributes({
-                                                  {$key}: JSON.stringify( new_uploads ).replace('[','').replace(']',''),
-                                                });
-                                                }
-                                           });
-                                    }},'') ) )
-						));
-
-
-						return images;
+			} else if ( $args['type'] == 'images' ) {
+				$img_preview = "props.attributes.$key && (function() {
+	let uploads = JSON.parse('['+props.attributes.$key+']');
+	let images = [];
+	uploads.map((upload, index) => (
+		images.push( el('div',{ className: 'col p-2', draggable: 'true', 'data-index': index }, 
+			el('img', {
+				src: (upload.sizes && upload.sizes.thumbnail ? upload.sizes.thumbnail.url : upload.url),
+				style: { maxWidth:'100%', background: '#ccc', pointerEvents:'none' }
+			}),
+			el('i',{
+				className: 'fas fa-times-circle text-danger position-absolute  ml-n2 mt-n1 bg-white rounded-circle c-pointer',
+				onClick: function() {
+					aui_confirm('".esc_attr__('Are you sure?')."', '".esc_attr__('Delete')."', '".esc_attr__('Cancel')."', true).then(function(confirmed) {
+						if (confirmed) {
+							let new_uploads = JSON.parse('['+props.attributes.$key+']');
+							new_uploads.splice(index, 1);
+								return props.setAttributes({ {$key}: JSON.stringify( new_uploads ).replace('[','').replace(']','') });
+							}
+					});
+				}},
+			'')
+		))
+	));
+	return images;
 })(),";
 
 
-                $value = '""';
+				$value = '""';
 				$type = 'MediaUpload';
-                $extra .= "onSelect: function(media){
-
-                let slim_images = props.attributes.$key ? JSON.parse('['+props.attributes.$key+']') : [];
-				if(media.length){
-						for (var i=0; i < media.length; i++) {
-							slim_images.push({id: media[i].id, caption: media[i].caption, description: media[i].description,title: media[i].title,alt: media[i].alt,sizes: media[i].sizes});
-						}
+				$extra .= "onSelect: function(media){
+	let slim_images = props.attributes.$key ? JSON.parse('['+props.attributes.$key+']') : [];
+	if(media.length){
+		for (var i=0; i < media.length; i++) {
+			slim_images.push({id: media[i].id, caption: media[i].caption, description: media[i].description,title: media[i].title,alt: media[i].alt,sizes: media[i].sizes, url: media[i].url});
+		}
+	}
+	var slimImagesV = JSON.stringify(slim_images);
+	if (slimImagesV) {
+		slimImagesV = slimImagesV.replace('[','').replace(']','').replace(/'/g, '&#39;');
+	}
+	return props.setAttributes({ $key: slimImagesV});
+},";
+				$extra .= "type: 'image',";
+				$extra .= "multiple: true,";
+				$extra .= "render: function (obj) {
+	/* Init the sort */
+	enableDragSort('sd-sortable');
+	return el( 'div',{},
+		el( wp.components.Button, {
+				className: 'components-button components-circular-option-picker__clear is-primary is-smallx',
+				onClick: obj.open
+			},
+			'Upload Images'
+		),
+		el('div',{
+				className: 'row row-cols-3 px-2 sd-sortable',
+				'data-field':'$key'
+			},
+			$img_preview
+		),
+		props.attributes.$key && el( wp.components.Button, {
+				className: 'components-button components-circular-option-picker__clear is-secondary is-small',
+				style: {margin:'8px 0'},
+				onClick: function(){
+					return props.setAttributes({ $key: '' });
 				}
-
-                      return props.setAttributes({
-                          $key: JSON.stringify(slim_images).replace('[','').replace(']',''),
-                        });
-                      },";
-                   $extra .= "type: 'image',";
-                   $extra .= "multiple: true,";
-                   $extra .= "render: function (obj) {
-
-                   // init the sort
-				enableDragSort('sd-sortable');
-                        return el( 'div',{},
-                        el( wp.components.Button, {
-                          className: 'components-button components-circular-option-picker__clear is-primary is-smallx',
-                          onClick: obj.open
-                        },
-                        'Upload Images'
-                        ),
-
-
-						el('div',{className: 'row row-cols-3 px-2 sd-sortable','data-field':'$key'},
-
-                       $img_preview
-
-                       ),
-                        props.attributes.$key && el( wp.components.Button, {
-                                      className: 'components-button components-circular-option-picker__clear is-secondary is-small',
-                                      style: {margin:'8px 0'},
-                                      onClick: function(){
-                                              return props.setAttributes({
-                                                  $key: '',
-                                                });
-                                    }
-                                    },
-                                    props.attributes.$key? 'Clear All' : ''
-                            )
-                       )
-
-
-
-
-
-                      }";
+			},
+			props.attributes.$key ? 'Clear All' : ''
+		)
+	)
+}";
                 $onchange = "";
 
                 //$inside_elements = ",el('div',{},'file upload')";
@@ -3809,54 +3835,28 @@ if (confirmed) {
 			echo $icon;
 			?>
 			el( <?php echo $args['type'] == 'image' || $args['type'] == 'images' ? $type  : "wp.components.".$type; ?>, {
-			label: <?php
-			if(empty($args['title'])){
-                echo "''";
-			}elseif(empty($args['row']) && !empty($args['device_type'])){
-                ?>el('label', {
-									className: 'components-base-control__label',
-									style: {width:"100%"}
-								},
-								el('span',{dangerouslySetInnerHTML: {__html: '<?php echo addslashes( $args['title'] ) ?>'}}),
-								<?php if($device_type_icon){ ?>
-                                    deviceType == '<?php echo $device_type;?>' && el('span',{dangerouslySetInnerHTML: {__html: '<?php echo $device_type_icon; ?>'},title: deviceType + ": Set preview mode to change",style: {right:"0",position:"absolute",color:"var(--wp-admin-theme-color)"}})
-								<?php
-                                }
-                                ?>
-
-
-							)<?php
-
-			}else{
-                 ?>'<?php echo addslashes( $args['title'] ); ?>'<?php
-
-			}
-
-			?>,
-			help: <?php if ( isset( $args['desc'] ) ) {
-				echo "el('span',{dangerouslySetInnerHTML: {__html: '".wp_kses_post( addslashes($args['desc']) )."'}})";
-			}else{ echo "''"; } ?>,
+			label: <?php if ( empty( $args['title'] ) ) { echo "''"; } else if ( empty( $args['row'] ) && ! empty( $args['device_type'] ) ) { ?>el('label',{className:'components-base-control__label',style:{width:"100%"}},el('span',{dangerouslySetInnerHTML: {__html: '<?php echo addslashes( $args['title'] ) ?>'}}),<?php if ( $device_type_icon ) { ?>deviceType == '<?php echo $device_type;?>' && el('span',{dangerouslySetInnerHTML: {__html: '<?php echo $device_type_icon; ?>'},title: deviceType + ": Set preview mode to change",style: {right:"0",position:"absolute",color:"var(--wp-admin-theme-color)"}})<?php } ?>)<?php
+			} else { ?>'<?php echo addslashes( trim( esc_html( $args['title'] ) ) ); ?>'<?php } ?>,
+			help: <?php echo ( isset( $args['desc'] ) ? "el('span', {dangerouslySetInnerHTML: {__html: '" . trim( wp_kses_post( addslashes( $args['desc'] ) ) ) . "'}})" : "''" ); ?>,
 			value: <?php echo $value; ?>,
 			<?php if ( $type == 'TextControl' && $args['type'] != 'text' ) {
 				echo "type: '" . addslashes( $args['type'] ) . "',";
 			} ?>
 			<?php if ( ! empty( $args['placeholder'] ) ) {
-				echo "placeholder: '" . addslashes( $args['placeholder'] ) . "',";
+				echo "placeholder: '" . addslashes( trim( esc_html( $args['placeholder'] ) ) ) . "',";
 			} ?>
 			<?php echo $options; ?>
 			<?php echo $extra; ?>
 			<?php echo $custom_attributes; ?>
-			<?php echo $onchangecomplete;
-            if($onchange){
-            ?>
+			<?php echo $onchangecomplete; ?>
+			<?php if ( $onchange ) { ?>
 			onChange: function ( <?php echo $key; ?> ) {
-			<?php echo $onchange; ?>
+				<?php echo $onchange; ?>
 			}
-			<?php }?>
-			} <?php echo $inside_elements; ?> ),
+			<?php } ?>
+		} <?php echo $inside_elements; ?> ),
 			<?php
 			echo $after_elements;
-
 		}
 
 		/**
@@ -4060,8 +4060,11 @@ if (confirmed) {
 		 * @param array $instance
 		 */
 		public function widget( $args, $instance ) {
+			if ( ! is_array( $args ) ) {
+				$args = array();
+			}
 
-			// get the filtered values
+			// Get the filtered values
 			$argument_values = $this->argument_values( $instance );
 			$argument_values = $this->string_to_bool( $argument_values );
 			$output          = $this->output( $argument_values, $args );
@@ -4240,6 +4243,23 @@ if (confirmed) {
 		}
 
 		/**
+		 * Check for Kallyas theme Zion builder preview.
+		 *
+		 * @since 1.1.22
+		 *
+		 * @return bool True when preview page otherwise false.
+		 */
+		public function is_kallyas_zion_preview() {
+			$result = false;
+
+			if ( function_exists( 'znhg_kallyas_theme_config' ) && ! empty( $_REQUEST['zn_pb_edit'] ) ) {
+				$result = true;
+			}
+
+			return $result;
+		}
+
+		/**
 		 * General function to check if we are in a preview situation.
 		 *
 		 * @return bool
@@ -4260,6 +4280,8 @@ if (confirmed) {
 			} elseif ( $this->is_fusion_preview() ) {
 				$preview = true;
 			} elseif ( $this->is_oxygen_preview() ) {
+				$preview = true;
+			} elseif( $this->is_kallyas_zion_preview() ) {
 				$preview = true;
 			} elseif( $this->is_block_content_call() ) {
 				$preview = true;
