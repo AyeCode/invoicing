@@ -48,6 +48,7 @@ class GetPaid_Meta_Box_Invoice_Address {
 			'vat_number' => array(
 				'label' => __( 'VAT Number', 'invoicing' ),
 				'type'  => 'text',
+				'class' => 'getpaid-recalculate-prices-on-change',
 			),
 			'address'    => array(
 				'label' => __( 'Address', 'invoicing' ),

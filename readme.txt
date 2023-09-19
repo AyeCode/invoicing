@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.7.7 =
 * Make it possible to set renewal reminders for up to 45 days.
+* Fix taxes not recalculated when updating vat number for manually created invoices.
 
 = 2.7.6 =
 * Add: Ability to change subscription dates for bank transfer payments.
