@@ -170,7 +170,7 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 			'amount'       => __( 'Amount', 'invoicing' ),
 			'start_date'   => __( 'Start Date', 'invoicing' ),
 			'renews_on'    => __( 'Next Payment', 'invoicing' ),
-			'renewals'     => __( 'Payments', 'invoicing' ),
+			'renewals'     => __( 'Collected Payments', 'invoicing' ),
 			'item'         => _n( 'Item', 'Items', $items_count, 'invoicing' ),
 			'gateway'      => __( 'Payment Method', 'invoicing' ),
 			'profile_id'   => __( 'Profile ID', 'invoicing' ),
@@ -187,7 +187,12 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 		if ( isset( $fields['gateway'] ) ) {
 			unset( $fields['gateway'] );
 		}
-}
+	} elseif ( $sub->is_last_renewal() ) {
+
+		if ( isset( $fields['renews_on'] ) ) {
+			$fields['renews_on'] = __( 'End Date', 'invoicing' );
+		}
+	}
 
 	$profile_id = $sub->get_profile_id();
 	if ( empty( $profile_id ) && isset( $fields['profile_id'] ) ) {
@@ -335,10 +340,36 @@ add_action( 'getpaid_subscription_admin_display_renews_on', 'getpaid_admin_subsc
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_metabox_display_renewals( $subscription ) {
-	$max_bills = $subscription->get_bill_times();
-	echo ( (int) $subscription->get_times_billed() ) . ' / ' . ( empty( $max_bills ) ? '&infin;' : (int) $max_bills );
+
+	$max_bills    = $subscription->get_bill_times();
+	$times_billed = (int) $subscription->get_times_billed();
+
+	if ( $subscription->has_status( 'active trialling' ) && getpaid_payment_gateway_supports( $subscription->get_gateway(), 'subscription_bill_times_change' ) ) {
+		aui()->input(
+			array(
+				'type'             => 'number',
+				'id'               => 'wpinv_subscription_max_bill_times',
+				'name'             => 'wpinv_subscription_max_bill_times',
+				'label'            => __( 'Maximum bill times', 'invoicing' ),
+				'label_type'       => 'hidden',
+				'placeholder'      => __( 'Unlimited', 'invoicing' ),
+				'value'            => empty( $max_bills ) ? '' : (int) $max_bills,
+				'no_wrap'          => true,
+				'size'             => 'sm',
+				'input_group_left' => sprintf(
+					// translators: %d: Number of times billed
+					__( '%d of', 'invoicing' ),
+					$times_billed
+				),
+			),
+			true
+		);
+	} else {
+		echo esc_html( $times_billed ) . ' / ' . ( empty( $max_bills ) ? '&infin;' : (int) $max_bills );
+	}
 }
 add_action( 'getpaid_subscription_admin_display_renewals', 'getpaid_admin_subscription_metabox_display_renewals' );
+
 /**
  * Displays the subscription item.
  *

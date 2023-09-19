@@ -24,7 +24,16 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'sandbox', 'tokens', 'addons', 'single_subscription_group', 'multiple_subscription_groups', 'subscription_date_change' );
+    protected $supports = array(
+        'subscription',
+        'sandbox',
+        'tokens',
+        'addons',
+        'single_subscription_group',
+        'multiple_subscription_groups',
+        'subscription_date_change',
+        'subscription_bill_times_change',
+    );
 
     /**
 	 * Payment method order.

@@ -469,13 +469,16 @@ class WPInv_Subscriptions {
                     'profile_id'   => isset( $args['wpinv_subscription_profile_id'] ) ? $args['wpinv_subscription_profile_id'] : null,
                     'date_created' => ! empty( $args['wpinv_subscription_date_created'] ) ? $args['wpinv_subscription_date_created'] : null,
                     'expiration'   => ! empty( $args['wpinv_subscription_expiration'] ) ? $args['wpinv_subscription_expiration'] : null,
+                    'bill_times'   => ! empty( $args['wpinv_subscription_max_bill_times'] ) ? $args['wpinv_subscription_max_bill_times'] : null,
                 )
             );
+
+            $changes = $subscription->get_changes();
 
             $subscription->save();
             getpaid_admin()->show_info( __( 'Subscription updated', 'invoicing' ) );
 
-            do_action( 'getpaid_admin_updated_subscription', $subscription, $args );
+            do_action( 'getpaid_admin_updated_subscription', $subscription, $args, $changes );
         }
 
     }
