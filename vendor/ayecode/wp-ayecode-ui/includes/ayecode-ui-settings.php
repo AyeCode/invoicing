@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.1.94';
+		public $version = '0.1.98';
 
 		/**
 		 * Class textdomain.
@@ -1070,9 +1070,10 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			$colors = array();
 			if ( defined( 'BLOCKSTRAP_VERSION' ) ) {
 
+
 				$setting = wp_get_global_settings();
 
-//                print_r(wp_get_global_styles());exit;
+//                print_r(wp_get_global_styles());//exit;
 //                print_r(get_default_block_editor_settings());exit;
 
 //                print_r($setting);echo  '###';exit;
@@ -1207,6 +1208,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			global $aui_bs5;
 
 			$is_var = false;
+			$is_custom = strpos($type, 'custom-') !== false ? true : false;
 			if(!$color_code){return '';}
 			if(strpos($color_code, 'var') !== false){
 				//if(!sanitize_hex_color($color_code)){
@@ -1255,6 +1257,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 				".alert-{$type}"                                            => array( 'b', 'o' ),
 				".bg-{$type}"                                               => array( 'b', 'f' ),
 				".btn-link.btn-{$type}"                                     => array( 'c' ),
+				".text-{$type}"                                     => array( 'c' ),
 			);
 
 			if ( $aui_bs5 ) {
@@ -1310,7 +1313,6 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			}
 
 			$output .= $prefix . ' .link-'.esc_attr($type).':hover {color: rgba(var(--bs-'.esc_attr($type).'-rgb), .8) !important;}';
-
 
 			//  buttons
 			$output .= $prefix . ' .btn-'.esc_attr($type).'{';
@@ -1371,6 +1373,65 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			}
 
 
+			if ( $is_custom ) {
+
+//				echo '###'.$type;exit;
+
+				// build rules into each type
+				foreach($selectors as $selector => $types){
+					$selector = $compatibility ? $compatibility . " ".$selector : $selector;
+					$types = array_combine($types,$types);
+					if(isset($types['c'])){$color[] = $selector;}
+					if(isset($types['b'])){$background[] = $selector;}
+					if(isset($types['o'])){$border[] = $selector;}
+					if(isset($types['f'])){$fill[] = $selector;}
+				}
+
+//				// build rules into each type
+//				foreach($important_selectors as $selector => $types){
+//					$selector = $compatibility ? $compatibility . " ".$selector : $selector;
+//					$types = array_combine($types,$types);
+//					if(isset($types['c'])){$color_i[] = $selector;}
+//					if(isset($types['b'])){$background_i[] = $selector;}
+//					if(isset($types['o'])){$border_i[] = $selector;}
+//					if(isset($types['f'])){$fill_i[] = $selector;}
+//				}
+
+				// add any color rules
+				if(!empty($color)){
+					$output .= implode(",",$color) . "{color: $color_code;} ";
+				}
+				if(!empty($color_i)){
+					$output .= implode(",",$color_i) . "{color: $color_code !important;} ";
+				}
+
+				// add any background color rules
+				if(!empty($background)){
+					$output .= implode(",",$background) . "{background-color: $color_code;} ";
+				}
+				if(!empty($background_i)){
+					$output .= $aui_bs5 ? '' : implode(",",$background_i) . "{background-color: $color_code !important;} ";
+//				$output .= implode(",",$background_i) . "{background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;} ";
+				}
+
+				// add any border color rules
+				if(!empty($border)){
+					$output .= implode(",",$border) . "{border-color: $color_code;} ";
+				}
+				if(!empty($border_i)){
+					$output .= implode(",",$border_i) . "{border-color: $color_code !important;} ";
+				}
+
+				// add any fill color rules
+				if(!empty($fill)){
+					$output .= implode(",",$fill) . "{fill: $color_code;} ";
+				}
+				if(!empty($fill_i)){
+					$output .= implode(",",$fill_i) . "{fill: $color_code !important;} ";
+				}
+
+			}
+
 
 
 
@@ -1395,6 +1456,10 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 			$output .= $prefix ." .btn-outline-{$type}:not(:disabled):not(.disabled):active:focus, $prefix .btn-outline-{$type}:not(:disabled):not(.disabled).active:focus, .show>$prefix .btn-outline-{$type}.dropdown-toggle:focus{box-shadow: 0 0 0 0.2rem $op_25;} ";
 			$output .= $prefix ." .btn-{$type}:not(:disabled):not(.disabled):active, $prefix .btn-{$type}:not(:disabled):not(.disabled).active, .show>$prefix .btn-{$type}.dropdown-toggle{background-color: ".$darker_10.";    border-color: ".$darker_125.";} ";
 			$output .= $prefix ." .btn-{$type}:not(:disabled):not(.disabled):active:focus, $prefix .btn-{$type}:not(:disabled):not(.disabled).active:focus, .show>$prefix .btn-{$type}.dropdown-toggle:focus {box-shadow: 0 0 0 0.2rem $op_25;} ";
+
+			// text
+//			$output .= $prefix .".xxx, .text-{$type} {color: var(--bs-".esc_attr($type).");} ";
+
 
 //			if ( $type == 'primary' ) {
 //				// dropdown's

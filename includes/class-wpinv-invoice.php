@@ -3971,7 +3971,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_transaction_id( $transaction_id );
 		}
 
-		if ( $this->is_paid() && 'wpi-processing' != $this->get_status() ) {
+		if ( $this->is_paid() && 'wpi-processing' !== $this->get_status() ) {
 			return $this->save();
 		}
 
