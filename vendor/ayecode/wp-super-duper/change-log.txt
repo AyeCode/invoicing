@@ -1,3 +1,9 @@
+= 1.1.27 =
+* Tablet padding option values are not working properly - FIXED
+
+= 1.1.26 =
+* Attempt auto recovery block on non edit template mode - CHANGED
+
 = 1.1.25 =
 * Undefined array key "title" thrown for some blocks when using Avada - FIXED
 
