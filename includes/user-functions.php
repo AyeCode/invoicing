@@ -52,6 +52,21 @@ function wpinv_current_user_can_manage_invoicing() {
 }
 
 /**
+ * Returns whether the current user has the specified getpaid capability.
+ *
+ * @since 2.7.8
+ *
+ * @param string $capability Capability name.
+ * @param mixed  $args    Optional further parameters, typically starting with an object.
+ * @return bool Whether the current user has the given capability.
+ */
+function wpinv_current_user_can( $capability, $args = array() ) {
+	$can = wpinv_current_user_can_manage_invoicing();
+
+	return apply_filters( 'getpaid_current_user_can', $can, $capability, $args );
+}
+
+/**
  *  Given an email address, it creates a new user.
  *
  * @since 1.0.19
