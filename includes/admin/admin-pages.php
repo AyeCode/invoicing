@@ -45,7 +45,7 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
     $edit_link = get_edit_post_link( $discount->ID );
     $row_actions['edit'] = '<a href="' . esc_url( $edit_link ) . '">' . __( 'Edit', 'invoicing' ) . '</a>';
 
-    if ( in_array( strtolower( $discount->post_status ), array( 'publish' ) ) ) {
+    if ( in_array( strtolower( $discount->post_status ), array( 'publish' ) ) && wpinv_current_user_can( 'deactivate_discount', array( 'discount' => (int) $discount->ID ) ) ) {
 
         $url = wp_nonce_url(
             add_query_arg(
@@ -61,7 +61,7 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 		$title  = esc_attr__( 'Are you sure you want to deactivate this discount?', 'invoicing' );
         $row_actions['deactivate'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
 
-    } elseif ( in_array( strtolower( $discount->post_status ), array( 'pending', 'draft' ) ) ) {
+    } elseif ( in_array( strtolower( $discount->post_status ), array( 'pending', 'draft' ) ) && wpinv_current_user_can( 'activate_discount', array( 'discount' => (int) $discount->ID ) ) ) {
 
         $url    = wp_nonce_url(
             add_query_arg(
@@ -79,21 +79,24 @@ function wpinv_discount_row_actions( $discount, $row_actions ) {
 
     }
 
-    $url    = esc_url(
-        wp_nonce_url(
-            add_query_arg(
-                array(
-                    'getpaid-admin-action' => 'delete_discount',
-                    'discount'             => $discount->ID,
-                )
-            ),
-            'getpaid-nonce',
-            'getpaid-nonce'
-        )
+    if ( wpinv_current_user_can( 'delete_discount', array( 'discount' => (int) $discount->ID ) ) ) {
+        $url    = esc_url(
+            wp_nonce_url(
+                add_query_arg(
+                    array(
+                        'getpaid-admin-action' => 'delete_discount',
+                        'discount'             => $discount->ID,
+                    )
+                ),
+                'getpaid-nonce',
+                'getpaid-nonce'
+            )
     );
-	$anchor = __( 'Delete', 'invoicing' );
-	$title  = esc_attr__( 'Are you sure you want to delete this discount?', 'invoicing' );
-    $row_actions['delete'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
+
+        $anchor = __( 'Delete', 'invoicing' );
+        $title  = esc_attr__( 'Are you sure you want to delete this discount?', 'invoicing' );
+        $row_actions['delete'] = "<a href='$url' onclick='return confirm(\"$title\")'>$anchor</a>";
+    }
 
     $row_actions = apply_filters( 'wpinv_discount_row_actions', $row_actions, $discount );
 

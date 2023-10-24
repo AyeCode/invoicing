@@ -397,12 +397,11 @@ class GetPaid_Admin {
      * Fires an admin action after verifying that a user can fire them.
      */
     public function maybe_do_admin_action() {
-
-        if ( wpinv_current_user_can_manage_invoicing() && isset( $_REQUEST['getpaid-admin-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
+        if ( isset( $_REQUEST['getpaid-admin-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) && wpinv_current_user_can( sanitize_text_field( $_REQUEST['getpaid-admin-action'] ), $_REQUEST ) ) {
             $key = sanitize_key( $_REQUEST['getpaid-admin-action'] );
+
             do_action( "getpaid_authenticated_admin_action_$key", $_REQUEST );
         }
-
     }
 
 	/**
