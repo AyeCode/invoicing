@@ -51,7 +51,7 @@ function wpinv_user_can_view_invoice( $invoice ) {
     }
 
     // Always enable for admins..
-    if ( wpinv_current_user_can_manage_invoicing() || current_user_can( 'view_invoices', $invoice->get_id() ) ) { // Admin user
+    if ( wpinv_current_user_can( 'view_invoice', array( 'invoice' => $invoice ) ) || current_user_can( 'view_invoices', $invoice->get_id() ) ) { // Admin user
         return true;
     }
 
