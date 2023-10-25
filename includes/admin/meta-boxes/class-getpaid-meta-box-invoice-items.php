@@ -189,6 +189,23 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                 </div>
                                             <?php endif; ?>
 
+                                            <div class="wp-clearfix bsui">
+                                                <?php
+                                                    aui()->input(
+                                                        array(
+                                                            'type'    => 'checkbox',
+                                                            'name'    => '_wpinv_quick[one-time]',
+                                                            'id'      => '_wpinv_quick-one-time',
+                                                            'label'   => __( 'Item Name', 'invoicing' ),
+                                                            'value'   => 1,
+                                                            'no_wrap' => true,
+                                                            'checked' => false,
+                                                        ),
+                                                        true
+                                                    );
+                                                ?>
+                                            </div>
+
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-actions">
                                                     <span class="input-text-wrap">

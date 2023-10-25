@@ -633,6 +633,10 @@ class WPInv_Ajax {
             wp_send_json_success( compact( 'alert' ) );
         }
 
+        if ( ! empty( $data['one-time'] ) ) {
+            update_post_meta( $item->get_id(), '_wpinv_one_time', 'yes' );
+        }
+
         $item = new GetPaid_Form_Item( $item->get_id() );
         $item->set_quantity( floatval( $data['qty'] ) );
 
