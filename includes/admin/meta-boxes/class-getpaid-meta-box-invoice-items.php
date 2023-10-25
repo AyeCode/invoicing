@@ -403,8 +403,12 @@ class GetPaid_Meta_Box_Invoice_Items {
                     'key'       => '_wpinv_type',
                     'compare'   => '!=',
                     'value'     => 'package'
-                )
-            )
+                ),
+                array(
+                    'key'     => '_wpinv_one_time',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
         );
 
         ?>

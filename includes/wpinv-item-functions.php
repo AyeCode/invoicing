@@ -64,7 +64,12 @@ function wpinv_get_all_items( $args = array() ) {
 			'orderby'    => 'date',
 			'order'      => 'DESC',
 			'type'       => wpinv_item_types(),
-			'meta_query' => array(),
+			'meta_query' => array(
+                array(
+                    'key'     => '_wpinv_one_time',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
 			'return'     => 'objects',
 			'paginate'   => false,
         )
@@ -247,20 +252,27 @@ function wpinv_get_random_item( $post_ids = true ) {
 }
 
 function wpinv_get_random_items( $num = 3, $post_ids = true ) {
+    $args = array();
     if ( $post_ids ) {
         $args = array(
-			'post_type'  => 'wpi_item',
-			'orderby'    => 'rand',
-			'post_count' => $num,
-			'fields'     => 'ids',
-		);
-    } else {
-        $args = array(
-			'post_type'  => 'wpi_item',
-			'orderby'    => 'rand',
-			'post_count' => $num,
+			'fields' => 'ids',
 		);
     }
+
+    $args = array_merge(
+        $args,
+        array(
+            'post_type'  => 'wpi_item',
+			'orderby'    => 'rand',
+			'post_count' => $num,
+            'meta_query' => array(
+                array(
+                    'key'     => '_wpinv_one_time',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
+        )
+    );
 
     $args  = apply_filters( 'wpinv_get_random_items', $args );
 

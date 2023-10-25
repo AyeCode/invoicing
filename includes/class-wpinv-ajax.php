@@ -918,6 +918,10 @@ class WPInv_Ajax {
                     'compare' => '!=',
                     'value'   => 'package',
                 ),
+                array(
+                    'key'     => '_wpinv_one_time',
+                    'compare' => 'NOT EXISTS',
+                ),
             ),
         );
 

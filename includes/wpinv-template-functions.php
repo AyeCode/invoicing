@@ -417,6 +417,15 @@ function wpinv_item_dropdown( $args = array() ) {
         'orderby'        => 'title',
         'order'          => 'ASC',
         'posts_per_page' => $args['number'],
+
+        // Skip where _wpinv_one_time meta is yes.
+        'meta_query'     => array(
+            'relation' => 'OR',
+            array(
+                'key'     => '_wpinv_one_time',
+                'compare' => 'NOT EXISTS',
+            ),
+        ),
     );
 
     $item_args  = apply_filters( 'wpinv_item_dropdown_query_args', $item_args, $args, $defaults );
