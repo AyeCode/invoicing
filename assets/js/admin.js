@@ -246,7 +246,7 @@ jQuery(function ($) {
 		e.preventDefault()
 
 		var metabox = $(this).closest('.bsui');
-		var user_id = metabox.find('#wpinv_post_author_override').val()
+		var user_id = metabox.find('#wpinv_post_author_override').val();
 
 		// Ensure that we have a user id and that we are not adding a new user.
 		if (!user_id || $(this).attr('disabled')) {
@@ -263,6 +263,7 @@ jQuery(function ($) {
 		var data = {
 			action: 'wpinv_get_billing_details',
 			user_id: user_id,
+			post_id: WPInv_Admin.post_ID,
 			_ajax_nonce: WPInv_Admin.wpinv_nonce
 		}
 

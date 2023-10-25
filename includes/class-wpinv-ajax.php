@@ -168,19 +168,19 @@ class WPInv_Ajax {
      * Retrieves a given user's billing address.
      */
     public static function get_billing_details() {
-
         // Verify nonce.
         check_ajax_referer( 'wpinv-nonce' );
 
         // Do we have a user id?
         $user_id = (int) $_GET['user_id'];
+        $invoice_id = ! empty( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
 
         if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
             die( -1 );
         }
 
         // Can the user manage the plugin?
-        if ( ! wpinv_current_user_can( 'user_get_billing_details', array( 'user_id' => $user_id ) ) ) {
+        if ( ! wpinv_current_user_can( 'invoice_get_billing_details', array( 'user_id' => $user_id, 'invoice_id' => $invoice_id ) ) ) {
             die( -1 );
         }
 
@@ -951,12 +951,14 @@ class WPInv_Ajax {
      * Retrieves items that should be added to an invoice.
      */
     public static function get_customers() {
-
         // Verify nonce.
         check_ajax_referer( 'wpinv-nonce' );
 
-        if ( ! wpinv_current_user_can_manage_invoicing() ) {
-            exit;
+        $invoice_id = ! empty( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
+
+        // Can the user manage the plugin?
+        if ( ! wpinv_current_user_can( 'invoice_get_customers', array( 'invoice_id' => $invoice_id ) ) ) {
+            die( -1 );
         }
 
         // We need a search term.
