@@ -687,6 +687,7 @@ jQuery(function ($) {
 				'type': $('.wpinv-quick-type').val(),
 				'vat_rule': $('.wpinv-quick-vat-rule').val(),
 				'vat_class': $('.wpinv-quick-vat-class').val(),
+				'one-time': $('#_wpinv_quick-one-time').is(':checked') ? 1 : 0,
 			}
 		}
 

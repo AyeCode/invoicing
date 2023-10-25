@@ -774,6 +774,10 @@ class GetPaid_Post_Types_Admin {
             );
 		}
 
+		$query->query_vars['meta_query'][] = array(
+			'key'     => '_wpinv_one_time',
+			'compare' => 'NOT EXISTS',
+		);
 	}
 
 	/**
