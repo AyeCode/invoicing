@@ -196,7 +196,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                             'type'    => 'checkbox',
                                                             'name'    => '_wpinv_quick[one-time]',
                                                             'id'      => '_wpinv_quick-one-time',
-                                                            'label'   => __( 'Item Name', 'invoicing' ),
+                                                            'label'   => __( "One time item (won't be saved to regular items list)", 'invoicing' ),
                                                             'value'   => 1,
                                                             'no_wrap' => true,
                                                             'checked' => false,
