@@ -1228,6 +1228,7 @@ function wpinv_oxygen_fix_conflict() {
 function getpaid_display_payment_form( $form ) {
 
     if ( is_numeric( $form ) ) {
+        $form = apply_filters( 'wpml_object_id', $form, 'wpi_payment_form', true );
         $form = new GetPaid_Payment_Form( $form );
     }
 
