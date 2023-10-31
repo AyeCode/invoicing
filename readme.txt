@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.7.10 =
+* Add extra checks when processing Authorize.NET renewals.
+
 = 2.7.9 =
 * Fix one-time item label.
 
