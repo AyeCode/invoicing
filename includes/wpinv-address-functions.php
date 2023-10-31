@@ -175,6 +175,13 @@ function getpaid_save_invoice_user_address( $invoice ) {
         return;
     }
 
+    $customer = getpaid_get_customer_by_user_id( $invoice->get_user_id() );
+
+    if ( empty( $customer ) ) {
+        $customer = new GetPaid_Customer( 0 );
+        $customer->clone_user( $invoice->get_user_id() );
+    }
+
     foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
 
         if ( is_callable( array( $invoice, "get_$field" ) ) ) {
@@ -182,13 +189,15 @@ function getpaid_save_invoice_user_address( $invoice ) {
 
             // Only save if it is not empty.
             if ( ! empty( $value ) ) {
-                update_user_meta( $invoice->get_user_id(), '_wpinv_' . $field, $value );
+                $customer->set( $field, sanitize_text_field( $value ) );
             }
         }
     }
 
+    $customer->save();
 }
-add_action( 'getpaid_checkout_invoice_updated', 'getpaid_save_invoice_user_address' );
+add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
+add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
 
 /**
  * Retrieves a saved user address.
@@ -207,15 +216,22 @@ function wpinv_get_user_address( $user_id = 0 ) {
         return array();
     }
 
+    $customer = getpaid_get_customer_by_user_id( $user_id );
+
+    if ( empty( $customer ) ) {
+        $customer = new GetPaid_Customer( 0 );
+        $customer->clone_user( $user_id );
+    }
+
     // Prepare the address.
     $address = array(
         'user_id'      => $user_id,
-        'email'        => $user_info->user_email,
+        'email'        => $customer->get( 'email' ),
         'display_name' => $user_info->display_name,
     );
 
     foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
-        $address[ $field ] = getpaid_get_user_address_field( $user_id, $field );
+        $address[ $field ] = $customer->get( $field );
     }
 
     $address = array_filter( $address );
@@ -237,6 +253,7 @@ function wpinv_get_user_address( $user_id = 0 ) {
  * @param int $user_id The user id whose address field we should get.
  * @param string $field The field to use.
  * @return string|null
+ * @deprecated
  */
 function getpaid_get_user_address_field( $user_id, $field ) {
 

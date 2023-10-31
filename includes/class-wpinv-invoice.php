@@ -35,6 +35,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	protected $data = array(
 		'parent_id'              => 0,
+		'customer_id'            => 0,
 		'status'                 => 'wpi-pending',
 		'version'                => '',
 		'date_created'           => null,
@@ -760,7 +761,7 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
-	 * Get the customer id.
+	 * Get the user id.
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
@@ -782,14 +783,14 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
      /**
-	 * Alias of self::get_author().
+	 * Get customer ID.
 	 *
 	 * @since 1.0.19
 	 * @param  string $context View or edit context.
 	 * @return int
 	 */
 	public function get_customer_id( $context = 'view' ) {
-		return $this->get_author( $context );
+		return (int) $this->get_prop( 'customer_id', $context );
     }
 
     /**
@@ -2366,13 +2367,13 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
-	 * Alias of self::set_author().
+	 * Sets the customer ID.
 	 *
 	 * @since 1.0.19
 	 * @param  int $value New user id.
 	 */
 	public function set_customer_id( $value ) {
-		$this->set_author( $value );
+		$this->set_prop( 'customer_id', (int) $value );
     }
 
     /**

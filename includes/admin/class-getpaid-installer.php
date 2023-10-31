@@ -102,6 +102,7 @@ class GetPaid_Installer {
 			}
 		}
 
+		$this->upgrade_from_118();
 	}
 
 	/**
@@ -110,6 +111,15 @@ class GetPaid_Installer {
 	 */
 	public function upgrade_from_118() {
 		$this->migrate_old_invoices();
+		$this->upgrade_from_279();
+	}
+
+	/**
+	 * Upgrade to version 2.0.0.
+	 *
+	 */
+	public function upgrade_from_279() {
+		$this->migrate_old_customers();
 	}
 
 	/**
@@ -335,6 +345,45 @@ class GetPaid_Installer {
 	}
 
 	/**
+	 * Migrates old customers to new table.
+	 *
+	 */
+	public function migrate_old_customers() {
+		global $wpdb;
+
+		// Fetch post_id from $wpdb->prefix . 'getpaid_invoices' where customer_id = 0 or null.
+		$invoice_ids = $wpdb->get_col( "SELECT post_id FROM {$wpdb->prefix}getpaid_invoices WHERE customer_id = 0 OR customer_id IS NULL" );
+
+		foreach ( $invoice_ids as $invoice_id ) {
+			$invoice = wpinv_get_invoice( $invoice_id );
+
+			if ( empty( $invoice ) ) {
+				continue;
+			}
+
+			// Fetch customer from the user ID.
+			$user_id = $invoice->get_user_id();
+
+			if ( empty( $user_id ) ) {
+				continue;
+			}
+
+			$customer = getpaid_get_customer_by_user_id( $user_id );
+
+			// Create if not exists.
+			if ( empty( $customer ) ) {
+				$customer = new GetPaid_Customer( 0 );
+				$customer->clone_user( $user_id );
+				$customer->save();
+			}
+
+			$invoice->set_customer_id( $customer->get_id() );
+			$invoice->save();
+		}
+
+	}
+
+	/**
 	 * Migrates old invoices to new invoices.
 	 *
 	 */
@@ -392,6 +441,7 @@ class GetPaid_Installer {
 		// Invoices.
 		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_invoices (
 			post_id BIGINT(20) NOT NULL,
+			customer_id BIGINT(20) NOT NULL DEFAULT 0,
             `number` VARCHAR(100),
             `key` VARCHAR(100),
             `type` VARCHAR(100) NOT NULL DEFAULT 'invoice',
