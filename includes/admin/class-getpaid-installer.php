@@ -498,7 +498,7 @@ class GetPaid_Installer {
 			PRIMARY KEY  (id),
 			KEY user_id (user_id),
 			KEY email (email)
-		  ) $charset_collate";
+		  ) $charset_collate;";
 
 		// Customer meta.
 		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_customer_meta (
@@ -509,7 +509,7 @@ class GetPaid_Installer {
 			PRIMARY KEY  (meta_id),
 			KEY customer_id (customer_id),
 			KEY meta_key (meta_key(191))
-		  ) $charset_collate";
+		  ) $charset_collate;";
 
 		return $schema;
 	}
