@@ -366,6 +366,7 @@ jQuery(function ($) {
 		var data = {
 			action: 'wpinv_check_new_user_email',
 			email: email,
+			post_id: WPInv_Admin.post_ID,
 			_ajax_nonce: WPInv_Admin.wpinv_nonce
 		}
 
@@ -601,17 +602,16 @@ jQuery(function ($) {
 		wpinvBlock('#wpinv_items_wrap')
 
 		$.post(WPInv_Admin.ajax_url, data)
-
 			.done(function (response) {
-
 				if (response.success) {
 					if (response.data.alert) {
 						alert(response.data.alert)
 					}else{
-						$('#wpinv_items_wrap').replaceWith(response.data.table)
+						$('#wpinv_items_wrap').replaceWith(response.data.table);
+						// Trigger on recalculate full prices done.
+						$("body").trigger("getpaid_on_recalculate_full_prices", response.data);
 					}
 				}
-
 			})
 
 			.always(function (response) {
