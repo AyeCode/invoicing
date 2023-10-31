@@ -574,38 +574,17 @@ class GetPaid_Admin {
 	}
 
 	/**
-     * Creates an missing admin tables.
+     * Creates missing admin tables.
 	 *
      */
     public function admin_create_missing_tables() {
 		global $wpdb;
-		$installer = new GetPaid_Installer();
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}wpinv_subscriptions'" ) != $wpdb->prefix . 'wpinv_subscriptions' ) {
-			$installer->create_subscriptions_table();
+		GetPaid_Installer::create_db_tables();
 
-			if ( $wpdb->last_error !== '' ) {
-				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
-			}
-		}
-
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoices'" ) != $wpdb->prefix . 'getpaid_invoices' ) {
-			$installer->create_invoices_table();
-
-			if ( '' !== $wpdb->last_error ) {
-				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
-			}
-		}
-
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoice_items'" ) != $wpdb->prefix . 'getpaid_invoice_items' ) {
-			$installer->create_invoice_items_table();
-
-			if ( '' !== $wpdb->last_error ) {
-				$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
-			}
-		}
-
-		if ( ! $this->has_notices() ) {
+		if ( '' !== $wpdb->last_error ) {
+			$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
+		} else {
 			$this->show_success( __( 'Your GetPaid tables have been updated.', 'invoicing' ) );
 		}
 
