@@ -999,7 +999,7 @@ function wpinv_checkout_form() {
     $wpi_checkout_id = $invoice_id;
 
     // Retrieve appropriate payment form.
-    $payment_form = new GetPaid_Payment_Form( $invoice->get_meta( 'force_payment_form' ) );
+    $payment_form = new GetPaid_Payment_Form( wpinv_translate_post_id( $invoice->get_meta( 'force_payment_form' ) ) );
     $payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
 
     if ( ! $payment_form->exists() ) {
@@ -1228,8 +1228,7 @@ function wpinv_oxygen_fix_conflict() {
 function getpaid_display_payment_form( $form ) {
 
     if ( is_numeric( $form ) ) {
-        $form = apply_filters( 'wpml_object_id', $form, 'wpi_payment_form', true );
-        $form = new GetPaid_Payment_Form( $form );
+        $form = new GetPaid_Payment_Form( wpinv_translate_post_id( $form ) );
     }
 
     $form->display();
@@ -1318,8 +1317,7 @@ function getpaid_convert_items_to_array( $items ) {
         }
 
         // WPML support.
-        $item_id              = apply_filters( 'wpml_object_id', $data[0], 'wpi_item', true );
-        $prepared[ $item_id ] = $quantity;
+        $prepared[ wpinv_translate_post_id( $data[0] ) ] = $quantity;
 
     }
 
