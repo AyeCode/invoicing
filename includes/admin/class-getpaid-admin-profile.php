@@ -152,14 +152,21 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 
 			$save_fields = $this->get_customer_meta_fields();
 
+			$customer = getpaid_get_customer_by_user_id( get_current_user_id() );
+
+			if ( empty( $customer ) ) {
+				$customer = new GetPaid_Customer( 0 );
+				$customer->clone_user( get_current_user_id() );
+			}
+
 			foreach ( $save_fields as $fieldset ) {
 
 				foreach ( $fieldset['fields'] as $key => $field ) {
 
 					if ( isset( $field['type'] ) && 'checkbox' === $field['type'] ) {
-						update_user_meta( $user_id, $key, ! empty( $_POST[ $key ] ) );
+						$customer->set( $key, ! empty( $_POST[ $key ] ) );
 					} elseif ( isset( $_POST[ $key ] ) ) {
-						update_user_meta( $user_id, $key, wpinv_clean( $_POST[ $key ] ) );
+						$customer->set( $key, wpinv_clean( $_POST[ $key ] ) );
 					}
 				}
 			}

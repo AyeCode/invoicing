@@ -35,6 +35,7 @@ class GetPaid_Data_Store {
 		'discount'     => 'GetPaid_Discount_Data_Store',
 		'invoice'      => 'GetPaid_Invoice_Data_Store',
 		'subscription' => 'GetPaid_Subscription_Data_Store',
+		'customer'     => 'GetPaid_Customer_Data_Store',
 	);
 
 	/**

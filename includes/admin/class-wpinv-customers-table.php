@@ -153,33 +153,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 	 * @return float
 	 */
 	public function column_total_raw( $user ) {
-
-		$args = array(
-			'data'           => array(
-
-				'total' => array(
-					'type'     => 'invoice_data',
-					'function' => 'SUM',
-					'name'     => 'total_sales',
-				),
-
-			),
-			'where'          => array(
-
-				'author' => array(
-					'type'     => 'post_data',
-					'value'    => absint( $user->ID ),
-					'key'      => 'posts.post_author',
-					'operator' => '=',
-				),
-
-			),
-			'query_type'     => 'get_var',
-			'invoice_status' => array( 'wpi-renewal', 'wpi-processing', 'publish' ),
-		);
-
-		return wpinv_round_amount( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
-
+		return getpaid_get_user_total_spend( $user->ID );
 	}
 
 	/**
@@ -192,33 +166,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_invoices( $user ) {
-
-		$args = array(
-			'data'           => array(
-
-				'ID' => array(
-					'type'     => 'post_data',
-					'function' => 'COUNT',
-					'name'     => 'count',
-					'distinct' => true,
-				),
-
-			),
-			'where'          => array(
-
-				'author' => array(
-					'type'     => 'post_data',
-					'value'    => absint( $user->ID ),
-					'key'      => 'posts.post_author',
-					'operator' => '=',
-				),
-
-			),
-			'query_type'     => 'get_var',
-			'invoice_status' => array_keys( wpinv_get_invoice_statuses() ),
-		);
-
-		$value = absint( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
+		$value = getpaid_count_user_invoices( $user->ID );
 		$url   = add_query_arg( array( 'post_type' => 'wpi_invoice', 'author' => $user->ID ), admin_url( 'edit.php' ) );
 		return empty( $value ) ? '0' : '<a href="' . esc_url( $url ) . '">' . absint( $value ) . '</a>';
 

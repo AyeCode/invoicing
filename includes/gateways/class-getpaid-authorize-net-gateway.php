@@ -448,6 +448,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
         wpinv_clear_errors();
 		$response_code = (int) $result->transactionResponse->responseCode;
 
+        $invoice->add_note( 'Transaction Response: ' . print_r( $result->transactionResponse, true ), false, false, true );
+
 		// Succeeded.
 		if ( 1 == $response_code || 4 == $response_code ) {
 
@@ -765,8 +767,12 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         }
 
-        $subscription->add_payment( array(), $new_invoice );
-        $subscription->renew();
+        if ( ! $new_invoice->needs_payment() ) {
+            $subscription->renew();
+            $subscription->after_add_payment( $new_invoice );
+        } else {
+            $subscription->failing();
+        }
     }
 
     /**

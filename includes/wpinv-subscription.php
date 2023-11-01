@@ -906,6 +906,11 @@ class WPInv_Subscription extends GetPaid_Data {
 			return false;
 		}
 
+		return $this->after_add_payment( $invoice );
+	}
+
+    public function after_add_payment( $invoice ) {
+
 		do_action( 'getpaid_after_create_subscription_renewal_invoice', $invoice, $this );
 		do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
         do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->get_parent_invoice_id(), $invoice->get_recurring_total(), $invoice->get_transaction_id() );

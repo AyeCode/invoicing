@@ -499,6 +499,9 @@ class WPInv_Plugin {
 	 */
 	public function maybe_upgrade_database() {
 
+		// Ensure the database tables are up to date.
+		GetPaid_Installer::maybe_create_db_tables();
+
 		$wpi_version = get_option( 'wpinv_version', 0 );
 
 		if ( $wpi_version == WPINV_VERSION ) {
@@ -512,11 +515,10 @@ class WPInv_Plugin {
 		}
 
 		$upgrades  = array(
-			'0.0.5'  => '004',
-			'1.0.3'  => '102',
-			'2.0.0'  => '118',
-			'2.0.8'  => '207',
-			'2.6.16' => '2615',
+			'0.0.5' => '004',
+			'1.0.3' => '102',
+			'2.0.0' => '118',
+			'2.8.0' => '279',
 		);
 
 		foreach ( $upgrades as $key => $method ) {
