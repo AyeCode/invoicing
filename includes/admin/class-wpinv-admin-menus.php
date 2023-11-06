@@ -88,11 +88,14 @@ class WPInv_Admin_Menus {
         <div class="wrap wpi-customers-wrap">
             <style>
                 .column-primary {
-                    width: 30%;
+                    width: 240px;
+                }
+                .manage-column:not(.column-primary):not(.column-cb) {
+                    width: 120px;
                 }
             </style>
             <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?>&nbsp;<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'download_customers' ), 'getpaid-nonce', 'getpaid-nonce' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Export', 'invoicing' ); ?></a></h1>
-            <form method="post">
+            <form method="post" style="overflow: auto; width: 100%">
             <?php
                 $table = new WPInv_Customers_Table();
                 $table->prepare_items();

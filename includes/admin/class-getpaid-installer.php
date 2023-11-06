@@ -119,7 +119,7 @@ class GetPaid_Installer {
 	 *
 	 */
 	public function upgrade_from_279() {
-		$this->migrate_old_customers();
+		self::migrate_old_customers();
 	}
 
 	/**
@@ -348,7 +348,7 @@ class GetPaid_Installer {
 	 * Migrates old customers to new table.
 	 *
 	 */
-	public function migrate_old_customers() {
+	public static function migrate_old_customers() {
 		global $wpdb;
 
 		// Fetch post_id from $wpdb->prefix . 'getpaid_invoices' where customer_id = 0 or null.

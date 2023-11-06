@@ -9,6 +9,41 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Queries the customers database.
+ *
+ * @param array $args Query arguments.For a list of all supported args, refer to GetPaid_Customers_Query::prepare_query()
+ * @param string $return 'results' returns the found customers, $count returns the total count while 'query' returns GetPaid_Customers_Query
+ *
+ *
+ * @return int|array|GetPaid_Customer[]|GetPaid_Customers_Query
+ */
+function getpaid_get_customers( $args = array(), $return = 'results' ) {
+
+	// Do not retrieve all fields if we just want the count.
+	if ( 'count' === $return ) {
+		$args['fields'] = 'id';
+		$args['number'] = 1;
+	}
+
+	// Do not count all matches if we just want the results.
+	if ( 'results' === $return ) {
+		$args['count_total'] = false;
+	}
+
+	$query = new GetPaid_Customers_Query( $args );
+
+	if ( 'results' === $return ) {
+		return $query->get_results();
+	}
+
+	if ( 'count' === $return ) {
+		return $query->get_total();
+	}
+
+	return $query;
+}
+
+/**
  * Retrieves a customer.
  *
  * @param int|string|object|GetPaid_Customer $customer customer id, email or object.

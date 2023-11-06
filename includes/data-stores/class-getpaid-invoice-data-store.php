@@ -101,6 +101,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'company'            => 'company',
 		'vat_number'         => 'vat_number',
 		'vat_rate'           => 'vat_rate',
+		'customer_id'        => 'customer_id',
 	);
 
 	/*

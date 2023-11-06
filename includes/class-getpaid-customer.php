@@ -32,7 +32,7 @@ class GetPaid_Customer extends GetPaid_Data {
 	/**
 	 * Get the customer if ID is passed, otherwise the customer is new and empty.
 	 *
-	 * @param int|string|GetPaid_Customer $customer customer id, object, or email.
+	 * @param int|string|GetPaid_Customer|object $customer customer id, object, or email.
 	 */
 	public function __construct( $customer = 0 ) {
 
@@ -45,6 +45,8 @@ class GetPaid_Customer extends GetPaid_Data {
 			$this->set_id( $customer->get_id() );
 		} elseif ( is_string( $customer ) && $customer_id = self::get_customer_id_by( $customer, 'email' ) ) {
 			$this->set_id( $customer_id );
+		} elseif ( ! empty( $customer->id ) ) {
+			$this->set_id( $customer->id );
 		}
 
         // Load the datastore.

@@ -581,6 +581,7 @@ class GetPaid_Admin {
 		global $wpdb;
 
 		GetPaid_Installer::create_db_tables();
+		GetPaid_Installer::migrate_old_customers();
 
 		if ( '' !== $wpdb->last_error ) {
 			$this->show_error( __( 'Your GetPaid tables have been updated:', 'invoicing' ) . ' ' . $wpdb->last_error );
