@@ -1042,7 +1042,7 @@ function wpinv_tools_callback( $args ) {
                 </td>
             </tr>
 			<tr>
-                <td><?php esc_html_e( 'Create Database Tables', 'invoicing' ); ?></td>
+                <td><?php esc_html_e( 'Repair Database Tables', 'invoicing' ); ?></td>
                 <td>
                     <small><?php esc_html_e( 'Run this tool to create any missing database tables.', 'invoicing' ); ?></small>
                 </td>
