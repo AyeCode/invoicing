@@ -512,7 +512,6 @@ class GetPaid_Installer {
 
 		// Add address fields.
 		foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
-
 			// Skip id, user_id and email.
 			if ( in_array( $field, array( 'id', 'user_id', 'email', 'purchase_value', 'purchase_count', 'date_created', 'date_modified', 'uuid' ), true ) ) {
 				continue;
@@ -538,11 +537,11 @@ class GetPaid_Installer {
 				$length = 20;
 			}
 
-			$schema .= "`$field` VARCHAR($length) NOT NULL DEFAULT '$default',";
+			$schema .= "`$field` VARCHAR($length) NOT NULL DEFAULT '$default',
+			";
 		}
 
-		$schema .= "
-			date_created DATETIME NOT NULL,
+		$schema .= "date_created DATETIME NOT NULL,
 			date_modified DATETIME NOT NULL,
 			uuid VARCHAR(100) NOT NULL,
 			PRIMARY KEY  (id),
