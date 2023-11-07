@@ -617,7 +617,6 @@ class GetPaid_Admin {
 	 *
      */
     public function admin_download_customers() {
-		global $wpdb;
 
 		$output = fopen( 'php://output', 'w' );
 
@@ -628,63 +627,20 @@ class GetPaid_Admin {
 		header( 'Content-Type:text/csv' );
 		header( 'Content-Disposition:attachment;filename=customers.csv' );
 
-		$post_types = '';
-
-		foreach ( array_keys( getpaid_get_invoice_post_types() ) as $post_type ) {
-			$post_types .= $wpdb->prepare( 'post_type=%s OR ', $post_type );
-		}
-
-		$post_types = rtrim( $post_types, ' OR' );
-
-		$customers = $wpdb->get_col( "SELECT DISTINCT( post_author ) FROM $wpdb->posts WHERE $post_types" );
-
-		$columns = array(
-			'name'       => __( 'Name', 'invoicing' ),
-			'email'      => __( 'Email', 'invoicing' ),
-			'country'    => __( 'Country', 'invoicing' ),
-			'state'      => __( 'State', 'invoicing' ),
-			'city'       => __( 'City', 'invoicing' ),
-			'zip'        => __( 'ZIP', 'invoicing' ),
-			'address'    => __( 'Address', 'invoicing' ),
-			'phone'      => __( 'Phone', 'invoicing' ),
-			'company'    => __( 'Company', 'invoicing' ),
-			'company_id' => __( 'Company ID', 'invoicing' ),
-			'invoices'   => __( 'Invoices', 'invoicing' ),
-			'total_raw'  => __( 'Total Spend', 'invoicing' ),
-			'signup'     => __( 'Date created', 'invoicing' ),
-		);
+		/** @var GetPaid_Customer[] $customers */
+		$customers = getpaid_get_customers( array( 'number' => -1 ) );
+		$columns   = array_keys( GetPaid_Customer_Data_Store::get_database_fields() );
 
 		// Output the csv column headers.
-		fputcsv( $output, array_values( $columns ) );
+		fputcsv( $output, $columns );
 
 		// Loop through
-		$table = new WPInv_Customers_Table();
-		foreach ( $customers as $customer_id ) {
+		foreach ( $customers as $customer ) {
 
-			$user = get_user_by( 'id', $customer_id );
 			$row  = array();
-			if ( empty( $user ) ) {
-				continue;
-			}
 
-			foreach ( array_keys( $columns ) as $column ) {
-
-				$method = 'column_' . $column;
-
-				if ( 'name' == $column ) {
-					$value = esc_html( $user->display_name );
-				} elseif ( 'email' == $column ) {
-					$value = sanitize_email( $user->user_email );
-				} elseif ( is_callable( array( $table, $method ) ) ) {
-					$value = wp_strip_all_tags( $table->$method( $user ) );
-				}
-
-				if ( empty( $value ) ) {
-					$value = esc_html( get_user_meta( $user->ID, '_wpinv_' . $column, true ) );
-				}
-
-				$row[] = $value;
-
+			foreach ( $columns as $column ) {
+				$row[]  = (string) maybe_serialize( $customer->get( $column, 'edit' ) );
 			}
 
 			fputcsv( $output, $row );
