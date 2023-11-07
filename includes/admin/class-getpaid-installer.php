@@ -119,7 +119,7 @@ class GetPaid_Installer {
 	 *
 	 */
 	public function upgrade_from_279() {
-		$this->migrate_old_customers();
+		self::migrate_old_customers();
 	}
 
 	/**
@@ -348,7 +348,7 @@ class GetPaid_Installer {
 	 * Migrates old customers to new table.
 	 *
 	 */
-	public function migrate_old_customers() {
+	public static function migrate_old_customers() {
 		global $wpdb;
 
 		// Fetch post_id from $wpdb->prefix . 'getpaid_invoices' where customer_id = 0 or null.
@@ -443,7 +443,7 @@ class GetPaid_Installer {
 			post_id BIGINT(20) NOT NULL,
 			customer_id BIGINT(20) NOT NULL DEFAULT 0,
             `number` VARCHAR(100),
-            `key` VARCHAR(100),
+            invoice_key VARCHAR(100),
             `type` VARCHAR(100) NOT NULL DEFAULT 'invoice',
             mode VARCHAR(100) NOT NULL DEFAULT 'live',
             user_ip VARCHAR(100),
@@ -472,8 +472,8 @@ class GetPaid_Installer {
             vat_rate VARCHAR(100),
             custom_meta TEXT,
 			PRIMARY KEY  (post_id),
-			KEY number (number),
-			KEY `key` (`key`)
+			KEY `number` (`number`),
+			KEY invoice_key (invoice_key)
 		  ) $charset_collate;";
 
 		// Invoice items.
@@ -488,7 +488,7 @@ class GetPaid_Installer {
             tax DECIMAL(16,4) NOT NULL DEFAULT 0,
             item_price DECIMAL(16,4) NOT NULL DEFAULT 0,
             custom_price DECIMAL(16,4) NOT NULL DEFAULT 0,
-            quantity FLOAT(20) NOT NULL DEFAULT 1,
+            quantity DECIMAL(16,4) NOT NULL DEFAULT 1,
             discount DECIMAL(16,4) NOT NULL DEFAULT 0,
             subtotal DECIMAL(16,4) NOT NULL DEFAULT 0,
             price DECIMAL(16,4) NOT NULL DEFAULT 0,
@@ -584,8 +584,22 @@ class GetPaid_Installer {
 
 		$schema = self::get_db_schema();
 
-		dbDelta( $schema );
+		// If invoices table exists, rename key to invoice_key.
+		$invoices_table = "{$wpdb->prefix}getpaid_invoices";
 
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}getpaid_invoices'" ) === $invoices_table ) {
+			$fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}getpaid_invoices" );
+
+			foreach ( $fields as $field ) {
+				if ( 'key' === $field->Field ) {
+					$wpdb->query( "ALTER TABLE {$wpdb->prefix}getpaid_invoices CHANGE `key` `invoice_key` VARCHAR(100)" );
+					break;
+				}
+			}
+		}
+
+		dbDelta( $schema );
+		wp_cache_flush();
 		update_option( 'getpaid_db_schema', md5( self::get_db_schema() ) );
 	}
 

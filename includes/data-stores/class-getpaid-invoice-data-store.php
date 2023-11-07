@@ -73,7 +73,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'post_id'            => 'id',
 		'number'             => 'number',
 		'currency'           => 'currency',
-		'key'                => 'key',
+		'invoice_key'        => 'key',
 		'type'               => 'type',
 		'mode'               => 'mode',
 		'user_ip'            => 'user_ip',
@@ -101,6 +101,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		'company'            => 'company',
 		'vat_number'         => 'vat_number',
 		'vat_rate'           => 'vat_rate',
+		'customer_id'        => 'customer_id',
 	);
 
 	/*

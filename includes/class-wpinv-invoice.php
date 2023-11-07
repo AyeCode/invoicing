@@ -219,8 +219,9 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Fetch from the db.
         $table       = $wpdb->prefix . 'getpaid_invoices';
+		$db_field    = 'key' === $field ? 'invoice_key' : $field;
         $invoice_id  = (int) $wpdb->get_var(
-            $wpdb->prepare( "SELECT `post_id` FROM $table WHERE `$field`=%s LIMIT 1", $value )
+            $wpdb->prepare( "SELECT `post_id` FROM $table WHERE `$db_field`=%s LIMIT 1", $value )
         );
 
 		// Update the cache with our data
