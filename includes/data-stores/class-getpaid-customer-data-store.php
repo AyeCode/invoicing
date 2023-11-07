@@ -207,4 +207,5 @@ class GetPaid_Customer_Data_Store {
 
 		return $fields;
 	}
+
 }

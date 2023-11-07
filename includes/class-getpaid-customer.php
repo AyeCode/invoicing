@@ -376,6 +376,7 @@ class GetPaid_Customer extends GetPaid_Data {
         $this->set_purchase_count( getpaid_count_user_invoices( $user->ID ) );
         $this->set( 'first_name', $user->first_name );
         $this->set( 'last_name', $user->last_name );
+		$this->set_date_created( $user->user_registered );
 
         // Fetch extra data from WC or old GetPaid.
         $prefixes = array(
