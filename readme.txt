@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.4
-Stable tag: 2.7.9
+Stable tag: 2.8.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.7.10 =
+= 2.8.0 =
 * Add extra checks when processing Authorize.NET renewals.
+* Test on WordPress 6.4.
+* New customers' table.
 
 = 2.7.9 =
 * Fix one-time item label.

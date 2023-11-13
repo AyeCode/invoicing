@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-25 09:00+0000\n"
+"POT-Creation-Date: 2023-11-13 10:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -992,7 +992,7 @@ msgstr ""
 msgid "Add Tax Rule"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:290
+#: includes/admin/class-wpinv-admin-menus.php:293
 msgid "Add to menu"
 msgstr ""
 
@@ -1003,8 +1003,6 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:123
 #: includes/wpinv-address-functions.php:133
 #: includes/admin/class-getpaid-admin-profile.php:59
-#: includes/admin/class-getpaid-admin.php:668
-#: includes/admin/class-wpinv-customers-table.php:302
 #: includes/data/default-payment-form.php:57
 #: includes/data/payment-form-elements.php:191
 #: includes/data/payment-form-elements.php:224
@@ -1452,7 +1450,7 @@ msgstr ""
 msgid "Apayao"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:868
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:874
 msgid "API Login ID"
 msgstr ""
 
@@ -1678,7 +1676,7 @@ msgstr ""
 msgid "Austria"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:459
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:461
 #, php-format
 msgid "Authentication code: %1$s (%2$s)."
 msgstr ""
@@ -1772,7 +1770,7 @@ msgstr ""
 msgid "Background Color"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1097
+#: includes/class-wpinv-ajax.php:1124
 msgid "Bad Request"
 msgstr ""
 
@@ -2115,7 +2113,7 @@ msgstr ""
 msgid "Billing / Shipping Address"
 msgstr ""
 
-#: includes/user-functions.php:145 includes/data/payment-form-elements.php:195
+#: includes/user-functions.php:217 includes/data/payment-form-elements.php:195
 #: templates/payment-forms/elements/address.php:46
 msgid "Billing Address"
 msgstr ""
@@ -2332,7 +2330,7 @@ msgstr ""
 msgid "Budapest"
 msgstr ""
 
-#: includes/user-functions.php:599 includes/user-functions.php:604
+#: includes/user-functions.php:686 includes/user-functions.php:691
 msgid "BuddyPress"
 msgstr ""
 
@@ -3088,8 +3086,6 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:127
 #: includes/wpinv-address-functions.php:134
 #: includes/admin/class-getpaid-admin-profile.php:63
-#: includes/admin/class-getpaid-admin.php:666
-#: includes/admin/class-wpinv-customers-table.php:300
 #: includes/data/default-payment-form.php:67
 #: includes/data/payment-form-elements.php:235
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:58
@@ -3189,8 +3185,6 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:115
 #: includes/wpinv-address-functions.php:139
 #: includes/admin/class-getpaid-admin-profile.php:51
-#: includes/admin/class-getpaid-admin.php:670
-#: includes/admin/class-wpinv-customers-table.php:304
 #: includes/data/default-payment-form.php:117
 #: includes/data/payment-form-elements.php:290
 #: templates/emails/wpinv-email-billing-details.php:33
@@ -3200,7 +3194,6 @@ msgstr ""
 
 #: includes/wpinv-address-functions.php:140
 #: includes/admin/class-getpaid-admin-profile.php:55
-#: includes/admin/class-getpaid-admin.php:671
 #: includes/data/payment-form-elements.php:301
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:257
 msgid "Company ID"
@@ -3335,7 +3328,7 @@ msgstr ""
 msgid "Cote d'Ivoire"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:632
+#: includes/class-wpinv-ajax.php:651
 msgid "Could not create invoice item. Please try again."
 msgstr ""
 
@@ -3348,8 +3341,6 @@ msgid "Could not sent payment reminder to the customer"
 msgstr ""
 
 #: includes/wpinv-address-functions.php:135
-#: includes/admin/class-getpaid-admin.php:664
-#: includes/admin/class-wpinv-customers-table.php:298
 #: includes/data/default-payment-form.php:77
 #: includes/data/payment-form-elements.php:246
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:62
@@ -3384,7 +3375,7 @@ msgstr ""
 msgid "Create & Send Quotes to Customers and have them accept and pay."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:890
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:896
 msgid ""
 "Create a new webhook using this URL as the endpoint URL and set it to "
 "receive all payment events."
@@ -3393,10 +3384,6 @@ msgstr ""
 #: includes/admin/views/wizard-introduction.php:68
 msgid ""
 "Create and send invoices for just about anything from the WordPress dashboard"
-msgstr ""
-
-#: includes/admin/register-settings.php:1045
-msgid "Create Database Tables"
 msgstr ""
 
 #: includes/admin/html-admin-page-addons.php:121
@@ -3588,6 +3575,7 @@ msgid "Custom singular name for the item."
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:247
+#: includes/admin/class-wpinv-customers-table.php:308
 #: includes/admin/subscriptions.php:169
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:110
 msgid "Customer"
@@ -3616,7 +3604,7 @@ msgstr ""
 
 #: includes/admin/class-wpinv-admin-menus.php:60
 #: includes/admin/class-wpinv-admin-menus.php:61
-#: includes/admin/class-wpinv-admin-menus.php:94
+#: includes/admin/class-wpinv-admin-menus.php:97
 msgid "Customers"
 msgstr ""
 
@@ -3674,7 +3662,7 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: includes/data-stores/class-getpaid-data-store.php:78
+#: includes/data-stores/class-getpaid-data-store.php:79
 msgid "Data store class does not exist."
 msgstr ""
 
@@ -3689,8 +3677,7 @@ msgstr ""
 msgid "Date Completed:"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:674
-#: includes/admin/class-wpinv-customers-table.php:307
+#: includes/admin/class-wpinv-customers-table.php:322
 msgid "Date created"
 msgstr ""
 
@@ -3973,11 +3960,11 @@ msgstr ""
 
 #: includes/class-getpaid-post-types.php:182
 #: includes/class-getpaid-post-types.php:184
-#: includes/wpinv-general-functions.php:462
+#: includes/wpinv-general-functions.php:488
 msgid "Discounts"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:826
+#: includes/admin/class-getpaid-admin.php:762
 msgid "Discounts have been recalculated."
 msgstr ""
 
@@ -3989,11 +3976,11 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: includes/user-functions.php:611
+#: includes/user-functions.php:698
 msgid "Display GetPaid items on BuddyPress account pages."
 msgstr ""
 
-#: includes/user-functions.php:532
+#: includes/user-functions.php:619
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
@@ -4209,7 +4196,7 @@ msgstr ""
 msgid "Each customer can only use this discount once"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:458
+#: includes/wpinv-general-functions.php:484
 #: includes/reports/class-getpaid-reports-report-earnings.php:23
 msgid "Earnings"
 msgstr ""
@@ -4266,7 +4253,7 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: includes/admin/class-wpinv-customers-table.php:257
+#: includes/admin/class-wpinv-customers-table.php:182
 msgid "Edit Details"
 msgstr ""
 
@@ -4339,7 +4326,6 @@ msgstr ""
 msgid "Elgeyo-Marakwet"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:663
 #: includes/data/payment-form-elements.php:166
 #: templates/emails/wpinv-email-billing-details.php:28
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:127
@@ -4453,7 +4439,7 @@ msgstr ""
 msgid "Enable Due Date"
 msgstr ""
 
-#: includes/user-functions.php:531 includes/user-functions.php:610
+#: includes/user-functions.php:618 includes/user-functions.php:697
 msgid "Enable Integration"
 msgstr ""
 
@@ -4726,15 +4712,15 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3889
+#: includes/class-wpinv-invoice.php:3891
 msgid "Error during status transition."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1252
+#: includes/wpinv-subscription.php:1257
 msgid "Error during subscription status transition."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:728
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:730
 msgid "Error generating a renewal invoice."
 msgstr ""
 
@@ -4742,13 +4728,13 @@ msgstr ""
 msgid "Error loading the payment form"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:742
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:758
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:744
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:760
 #, php-format
 msgid "Error renewing subscription : ( %s )."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:345 includes/class-wpinv-ajax.php:1059
+#: includes/class-wpinv-ajax.php:351 includes/class-wpinv-ajax.php:1086
 msgid "Error: Reload the page and try again."
 msgstr ""
 
@@ -4835,7 +4821,7 @@ msgstr ""
 msgid "Expiry Date"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:94
+#: includes/admin/class-wpinv-admin-menus.php:97
 #: includes/reports/class-getpaid-reports.php:105
 msgid "Export"
 msgstr ""
@@ -4853,7 +4839,7 @@ msgstr ""
 msgid "Export Subscriptions"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:129
+#: includes/admin/class-wpinv-admin-menus.php:132
 msgid "Extensions"
 msgstr ""
 
@@ -4944,7 +4930,7 @@ msgstr ""
 msgid "Fee: Like Registration Fee, Sign up Fee etc"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:461
+#: includes/wpinv-general-functions.php:487
 #: includes/reports/class-getpaid-reports-report-earnings.php:25
 #: includes/reports/class-getpaid-reports-report.php:350
 msgid "Fees"
@@ -5297,7 +5283,7 @@ msgstr ""
 msgid "Generate a site key."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:959
+#: includes/admin/class-getpaid-admin.php:895
 msgid "Generate Pages"
 msgstr ""
 
@@ -5350,7 +5336,7 @@ msgid "Get the invoice type (e.g invoice, quote etc)."
 msgstr ""
 
 #. Name of the plugin
-#: includes/wpinv-general-functions.php:430 widgets/getpaid.php:25
+#: includes/wpinv-general-functions.php:456 widgets/getpaid.php:25
 #: includes/admin/class-wpinv-admin-menus.php:43
 #: includes/admin/class-wpinv-admin-menus.php:44
 msgid "GetPaid"
@@ -5393,7 +5379,7 @@ msgstr ""
 msgid "GetPaid Checkout Page"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:256
+#: includes/admin/class-wpinv-admin-menus.php:259
 msgid "GetPaid endpoints"
 msgstr ""
 
@@ -5804,7 +5790,7 @@ msgstr ""
 msgid "Heilongjiang / &#40657;&#40857;&#27743;"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:468
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:470
 #, php-format
 msgid "Held for review: %s"
 msgstr ""
@@ -5907,7 +5893,7 @@ msgstr ""
 msgid "Hours"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:869
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:875
 msgid "How do I obtain my API Login ID and Transaction Key?"
 msgstr ""
 
@@ -6280,7 +6266,7 @@ msgstr ""
 msgid "Invalid Access"
 msgstr ""
 
-#: includes/data-stores/class-getpaid-data-store.php:84
+#: includes/data-stores/class-getpaid-data-store.php:85
 msgid "Invalid data store."
 msgstr ""
 
@@ -6288,7 +6274,7 @@ msgstr ""
 msgid "Invalid discount."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:226
+#: includes/class-wpinv-ajax.php:231
 msgid "Invalid email address"
 msgstr ""
 
@@ -6317,7 +6303,7 @@ msgstr ""
 msgid "Invalid invoice ID."
 msgstr ""
 
-#: includes/data-stores/class-getpaid-invoice-data-store.php:190
+#: includes/data-stores/class-getpaid-invoice-data-store.php:191
 msgid "Invalid invoice."
 msgstr ""
 
@@ -6351,7 +6337,7 @@ msgstr ""
 msgid "Invalid tab."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1110
+#: includes/class-wpinv-ajax.php:1137
 msgid "Invalid upload field."
 msgstr ""
 
@@ -6490,7 +6476,7 @@ msgstr ""
 msgid "Invoice Payment Failed"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:113
+#: includes/admin/class-wpinv-admin-menus.php:116
 msgid "Invoice Settings"
 msgstr ""
 
@@ -6597,9 +6583,8 @@ msgstr ""
 #: includes/class-bp-getpaid-component.php:184
 #: includes/class-getpaid-post-types.php:126
 #: includes/class-getpaid-post-types.php:128 includes/invoice-functions.php:643
-#: includes/user-functions.php:133 includes/wpinv-general-functions.php:463
-#: includes/admin/class-getpaid-admin.php:672
-#: includes/admin/class-wpinv-customers-table.php:305
+#: includes/user-functions.php:205 includes/wpinv-general-functions.php:489
+#: includes/admin/class-wpinv-customers-table.php:321
 msgid "Invoices"
 msgstr ""
 
@@ -6629,7 +6614,7 @@ msgstr ""
 msgid "Invoicing diagnostic tools"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:128
+#: includes/admin/class-wpinv-admin-menus.php:131
 msgid "Invoicing extensions"
 msgstr ""
 
@@ -7839,8 +7824,8 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:882
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:890
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:888
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:896
 #: includes/gateways/class-getpaid-paypal-gateway.php:546
 msgid "Learn more."
 msgstr ""
@@ -8946,11 +8931,11 @@ msgstr ""
 msgid "Mwanza"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:309
+#: includes/admin/class-wpinv-admin-menus.php:312
 msgid "My Invoices"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:313
+#: includes/admin/class-wpinv-admin-menus.php:316
 msgid "My Subscriptions"
 msgstr ""
 
@@ -9026,11 +9011,9 @@ msgstr ""
 msgid "Namayingo"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:662
 #: includes/admin/class-getpaid-post-types-admin.php:416
 #: includes/admin/class-getpaid-post-types-admin.php:511
 #: includes/admin/class-getpaid-post-types-admin.php:554
-#: includes/admin/class-wpinv-customers-table.php:297
 #: templates/emails/wpinv-email-billing-details.php:15
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:635
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:677
@@ -9244,7 +9227,7 @@ msgstr ""
 msgid "New invoice"
 msgstr ""
 
-#: includes/user-functions.php:313
+#: includes/user-functions.php:395
 msgid "New invoices will use this address as the billing address."
 msgstr ""
 
@@ -9383,7 +9366,7 @@ msgstr ""
 msgid "No %s found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1504
+#: includes/wpinv-template-functions.php:1503
 msgid "No active gateways support subscription payments."
 msgstr ""
 
@@ -9440,7 +9423,7 @@ msgstr ""
 msgid "No minimum"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:265
+#: includes/class-wpinv-ajax.php:271
 msgid "No payment form or item provided"
 msgstr ""
 
@@ -9842,7 +9825,7 @@ msgstr ""
 msgid "Optionally limit this tax rate to a specific country."
 msgstr ""
 
-#: includes/user-functions.php:301
+#: includes/user-functions.php:383
 msgid ""
 "Optionally provide other email addresses where we should send payment "
 "notifications"
@@ -9935,7 +9918,7 @@ msgstr ""
 msgid "Otago"
 msgstr ""
 
-#: includes/user-functions.php:296
+#: includes/user-functions.php:378
 msgid "Other email addresses"
 msgstr ""
 
@@ -9978,52 +9961,52 @@ msgstr ""
 msgid "Page Settings"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:170
+#: includes/admin/class-getpaid-installer.php:145
 msgctxt "Page slug"
 msgid "gp-checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:182
+#: includes/admin/class-getpaid-installer.php:157
 msgctxt "Page slug"
 msgid "gp-invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:194
+#: includes/admin/class-getpaid-installer.php:169
 msgctxt "Page slug"
 msgid "gp-receipt"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:214
+#: includes/admin/class-getpaid-installer.php:189
 msgctxt "Page slug"
 msgid "gp-subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:206
+#: includes/admin/class-getpaid-installer.php:181
 msgctxt "Page slug"
 msgid "gp-transaction-failed"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:171
+#: includes/admin/class-getpaid-installer.php:146
 msgctxt "Page title"
 msgid "Checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:183
+#: includes/admin/class-getpaid-installer.php:158
 msgctxt "Page title"
 msgid "My Invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:215
+#: includes/admin/class-getpaid-installer.php:190
 msgctxt "Page title"
 msgid "My Subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:195
+#: includes/admin/class-getpaid-installer.php:170
 msgctxt "Page title"
 msgid "Payment Confirmation"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:207
+#: includes/admin/class-getpaid-installer.php:182
 msgctxt "Page title"
 msgid "Transaction Failed"
 msgstr ""
@@ -10048,7 +10031,7 @@ msgstr ""
 msgid "Paid Via"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3996
+#: includes/class-wpinv-invoice.php:3998
 #: includes/admin/class-getpaid-post-types-admin.php:312
 #, php-format
 msgid "Paid via %s"
@@ -10238,7 +10221,7 @@ msgstr ""
 msgid "Pay Now »"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:863
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:869
 msgid "Pay securely using your credit or debit card."
 msgstr ""
 
@@ -10299,7 +10282,7 @@ msgstr ""
 msgid "Payment Form draft updated."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1104
+#: includes/class-wpinv-ajax.php:1131
 #: includes/payments/class-getpaid-payment-form-submission.php:230
 msgid "Payment form not active"
 msgstr ""
@@ -10563,8 +10546,6 @@ msgid "Phitsanulok"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin-profile.php:83
-#: includes/admin/class-getpaid-admin.php:669
-#: includes/admin/class-wpinv-customers-table.php:303
 #: includes/data/default-payment-form.php:107
 #: includes/data/payment-form-elements.php:279
 #: templates/emails/wpinv-email-billing-details.php:43
@@ -10687,7 +10668,7 @@ msgid ""
 "full\">PayPal Privacy Policy</a> for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:535
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:537
 msgid "Please select a different payment method or add a new card."
 msgstr ""
 
@@ -10695,7 +10676,7 @@ msgstr ""
 msgid "Please select your billing country"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:530
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:532
 msgid ""
 "Please set-up your login id and transaction key before using this gateway."
 msgstr ""
@@ -10925,7 +10906,7 @@ msgstr ""
 msgid "Provide a valid billing email."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:219
+#: includes/class-wpinv-ajax.php:224
 msgid "Provide the new user's email address"
 msgstr ""
 
@@ -10945,7 +10926,7 @@ msgstr ""
 msgid "Puno"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:464
+#: includes/wpinv-general-functions.php:490
 #: includes/reports/class-getpaid-reports-report.php:334
 msgid "Purchased Items"
 msgstr ""
@@ -11173,7 +11154,7 @@ msgstr ""
 msgid "Recurring amount"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:474
+#: includes/class-wpinv-ajax.php:481
 #, php-format
 msgid "Recurring Price: %s"
 msgstr ""
@@ -11228,7 +11209,7 @@ msgstr ""
 msgid "Refunded Tax"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:459
+#: includes/wpinv-general-functions.php:485
 msgid "Refunds"
 msgstr ""
 
@@ -11297,13 +11278,17 @@ msgstr ""
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3985
+#: includes/class-wpinv-invoice.php:3987
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
 
 #: includes/invoice-functions.php:1230 includes/admin/subscriptions.php:322
 msgid "Renews On"
+msgstr ""
+
+#: includes/admin/register-settings.php:1045
+msgid "Repair Database Tables"
 msgstr ""
 
 #: includes/reports/class-getpaid-reports.php:36
@@ -11700,7 +11685,7 @@ msgid ""
 "%1$sPayPal Sandbox Testing Guide%2$s for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:843
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:849
 #, php-format
 msgid ""
 "SANDBOX ENABLED. You can use sandbox testing details only. See the "
@@ -11788,7 +11773,7 @@ msgstr ""
 msgid "Save %s"
 msgstr ""
 
-#: includes/user-functions.php:312
+#: includes/user-functions.php:394
 msgid "Save Address"
 msgstr ""
 
@@ -11817,7 +11802,7 @@ msgstr ""
 msgid "Schwyz"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:99
+#: includes/admin/class-wpinv-admin-menus.php:102
 msgid "Search Customers"
 msgstr ""
 
@@ -11885,7 +11870,7 @@ msgstr ""
 msgid "Select a single item from the list"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1030 includes/data/admin-settings.php:77
+#: includes/class-wpinv-ajax.php:1057 includes/data/admin-settings.php:77
 msgid "Select a state"
 msgstr ""
 
@@ -11893,7 +11878,7 @@ msgstr ""
 msgid "Select a value"
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:286
+#: includes/admin/class-wpinv-admin-menus.php:289
 msgid "Select all"
 msgstr ""
 
@@ -12108,7 +12093,7 @@ msgstr ""
 msgid "Setting ID."
 msgstr ""
 
-#: includes/admin/class-wpinv-admin-menus.php:114
+#: includes/admin/class-wpinv-admin-menus.php:117
 msgid "Settings"
 msgstr ""
 
@@ -12255,7 +12240,7 @@ msgstr ""
 msgid "Sierra Leonean Leone"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:881
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:887
 msgid "Signature Key"
 msgstr ""
 
@@ -12401,7 +12386,7 @@ msgid ""
 "click on the button below to create the missing tables."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:958
+#: includes/admin/class-getpaid-admin.php:894
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
 "button below to generate the missing pages."
@@ -12626,12 +12611,10 @@ msgstr ""
 msgid "Start date"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1014 includes/class-wpinv-ajax.php:1016
-#: includes/class-wpinv-ajax.php:1028
+#: includes/class-wpinv-ajax.php:1041 includes/class-wpinv-ajax.php:1043
+#: includes/class-wpinv-ajax.php:1055
 #: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:136
-#: includes/admin/class-getpaid-admin.php:665
-#: includes/admin/class-wpinv-customers-table.php:299
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:69
 #: includes/admin/views/html-tax-rates-edit.php:39
 msgid "State"
@@ -12665,13 +12648,13 @@ msgid "Status"
 msgstr ""
 
 #. 1: old invoice status 2: new invoice status
-#: includes/class-wpinv-invoice.php:3853
+#: includes/class-wpinv-invoice.php:3855
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/class-wpinv-invoice.php:3882
+#: includes/class-wpinv-invoice.php:3884
 #, php-format
 msgid "Status set to %s."
 msgstr ""
@@ -12802,7 +12785,7 @@ msgstr ""
 msgid "Subscription not found."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1507
+#: includes/wpinv-template-functions.php:1506
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
@@ -12812,13 +12795,13 @@ msgid "Subscription Status"
 msgstr ""
 
 #. 1: old subscription status 2: new subscription status
-#: includes/wpinv-subscription.php:1234
+#: includes/wpinv-subscription.php:1239
 #, php-format
 msgid "Subscription status changed from %1$s to %2$s."
 msgstr ""
 
 #. %s: new invoice status
-#: includes/wpinv-subscription.php:1245
+#: includes/wpinv-subscription.php:1250
 #, php-format
 msgid "Subscription status set to %s."
 msgstr ""
@@ -12840,7 +12823,7 @@ msgstr ""
 msgid "Subscription updated"
 msgstr ""
 
-#: includes/user-functions.php:139
+#: includes/user-functions.php:211
 #: includes/admin/class-wpinv-admin-menus.php:74
 #: includes/admin/class-wpinv-admin-menus.php:75
 msgid "Subscriptions"
@@ -12959,7 +12942,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:858
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:864
 #: includes/gateways/class-getpaid-paypal-gateway.php:507
 #: includes/gateways/class-getpaid-worldpay-gateway.php:315
 #, php-format
@@ -13201,7 +13184,7 @@ msgstr ""
 msgid "Tax:"
 msgstr ""
 
-#: includes/wpinv-general-functions.php:460
+#: includes/wpinv-general-functions.php:486
 #: includes/admin/register-settings.php:393
 msgid "Taxes"
 msgstr ""
@@ -14013,7 +13996,7 @@ msgid ""
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3344
+#: includes/class-wpinv-invoice.php:3346
 msgid "This item is not available for purchase"
 msgstr ""
 
@@ -14083,7 +14066,7 @@ msgstr ""
 msgid "This subscription has no invoices."
 msgstr ""
 
-#: includes/user-functions.php:183
+#: includes/user-functions.php:255
 msgid "This tab has no content or content callback."
 msgstr ""
 
@@ -14302,8 +14285,7 @@ msgstr ""
 msgid "Total refunded for taxes."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:673
-#: includes/admin/class-wpinv-customers-table.php:306
+#: includes/admin/class-wpinv-customers-table.php:320
 msgid "Total Spend"
 msgstr ""
 
@@ -14356,7 +14338,7 @@ msgstr ""
 msgid "Transaction ID:"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:875
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:881
 msgid "Transaction Key"
 msgstr ""
 
@@ -14602,11 +14584,11 @@ msgstr ""
 msgid "Unlimited"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1125
+#: includes/class-wpinv-ajax.php:1152
 msgid "Unsupported file type."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:645
+#: includes/admin/class-getpaid-admin.php:624
 #: includes/reports/class-getpaid-graph-downloader.php:53
 msgid "Unsupported server"
 msgstr ""
@@ -14714,7 +14696,7 @@ msgstr ""
 msgid "Use this to add an invoice notice section (label) to your invoices"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:984
+#: includes/class-wpinv-ajax.php:1011
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:30
 #, php-format
 msgctxt "user dropdown"
@@ -14733,7 +14715,7 @@ msgstr ""
 msgid "Users can select multiple dates"
 msgstr ""
 
-#: includes/user-functions.php:520 includes/user-functions.php:525
+#: includes/user-functions.php:607 includes/user-functions.php:612
 msgid "UsersWP"
 msgstr ""
 
@@ -15201,7 +15183,7 @@ msgid ""
 "invoicing services to you; for example --"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:888
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:894
 msgid "Webhook URL"
 msgstr ""
 
@@ -15645,13 +15627,11 @@ msgstr ""
 msgid "Your cart is empty."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:609
+#: includes/admin/class-getpaid-admin.php:589
 msgid "Your GetPaid tables have been updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:588
-#: includes/admin/class-getpaid-admin.php:596
-#: includes/admin/class-getpaid-admin.php:604
+#: includes/admin/class-getpaid-admin.php:587
 msgid "Your GetPaid tables have been updated:"
 msgstr ""
 
@@ -15675,7 +15655,7 @@ msgstr ""
 msgid "Your invoice {invoice_number} details"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:627
+#: includes/admin/class-getpaid-admin.php:607
 msgid "Your invoices have been migrated."
 msgstr ""
 
@@ -15684,7 +15664,7 @@ msgstr ""
 msgid "Your IP address is:"
 msgstr ""
 
-#: includes/user-functions.php:222
+#: includes/user-functions.php:294
 msgid "Your must be logged in to view this section"
 msgstr ""
 
@@ -15706,7 +15686,7 @@ msgid ""
 "other purposes described in our %s."
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:208
+#: includes/admin/class-getpaid-installer.php:183
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
@@ -15812,11 +15792,6 @@ msgstr ""
 
 #: includes/data/countries.php:266
 msgid "Zimbabwe"
-msgstr ""
-
-#: includes/admin/class-getpaid-admin.php:667
-#: includes/admin/class-wpinv-customers-table.php:301
-msgid "ZIP"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:135
