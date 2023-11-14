@@ -195,6 +195,11 @@ function getpaid_save_invoice_user_address( $invoice ) {
     }
 
     $customer->save();
+
+    if ( ! $invoice->get_customer_id() ) {
+        $invoice->set_customer_id( $customer->get_id() );
+        $invoice->save();
+    }
 }
 add_action( 'getpaid_new_invoice', 'getpaid_save_invoice_user_address' );
 add_action( 'getpaid_update_invoice', 'getpaid_save_invoice_user_address' );
