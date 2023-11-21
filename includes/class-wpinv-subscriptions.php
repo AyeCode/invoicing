@@ -237,7 +237,7 @@ class WPInv_Subscriptions {
             }
         }
 
-        $subscription->set_customer_id( $invoice->get_customer_id() );
+        $subscription->set_customer_id( $invoice->get_user_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );
         $subscription->set_initial_amount( $initial_amt );
         $subscription->set_recurring_amount( $recurring_amt );
@@ -397,7 +397,7 @@ class WPInv_Subscriptions {
             return $subscription->delete();
         }
 
-        $subscription->set_customer_id( $invoice->get_customer_id() );
+        $subscription->set_customer_id( $invoice->get_user_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );
         $subscription->set_initial_amount( $invoice->get_initial_total() );
         $subscription->set_recurring_amount( $invoice->get_recurring_total() );
