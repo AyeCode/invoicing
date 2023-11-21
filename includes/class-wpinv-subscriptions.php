@@ -20,7 +20,7 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_subscription_status_changed', array( $this, 'process_subscription_status_change' ), 10, 3 );
 
         // De-activate a subscription whenever the invoice changes payment statuses.
-        add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        // add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-cancelled', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-pending', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
