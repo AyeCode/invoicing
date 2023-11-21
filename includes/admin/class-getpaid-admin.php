@@ -64,6 +64,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_duplicate_form', array( $this, 'duplicate_payment_form' ) );
 		add_action( 'getpaid_authenticated_admin_action_reset_form_stats', array( $this, 'reset_form_stats' ) );
 		add_action( 'getpaid_authenticated_admin_action_duplicate_invoice', array( $this, 'duplicate_invoice' ) );
+		add_action( 'getpaid_authenticated_admin_action_refund_invoice', array( $this, 'refund_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice', array( $this, 'send_customer_invoice' ) );
 		add_action( 'getpaid_authenticated_admin_action_send_invoice_reminder', array( $this, 'send_customer_payment_reminder' ) );
         add_action( 'getpaid_authenticated_admin_action_reset_tax_rates', array( $this, 'admin_reset_tax_rates' ) );
@@ -443,6 +444,61 @@ class GetPaid_Admin {
 
 		getpaid_admin()->show_error( __( 'There was an error duplicating this invoice. Please try again.', 'invoicing' ) );
 
+	}
+
+	/**
+     * Refund an invoice.
+	 *
+	 * @param array $args
+     */
+    public function refund_invoice( $args ) {
+
+		if ( empty( $args['invoice_id'] ) ) {
+			return;
+		}
+
+		$invoice = new WPInv_Invoice( (int) $args['invoice_id'] );
+
+		if ( ! $invoice->exists() || $invoice->is_refunded() ) {
+			return;
+		}
+
+		$invoice->refund();
+
+		// Refund remotely.
+		if ( getpaid_payment_gateway_supports( $invoice->get_gateway(), 'refunds' ) && ! empty( $args['getpaid_refund_remote'] ) ) {
+			do_action( 'getpaid_refund_invoice_remotely', $invoice );
+		}
+
+		// Cancel subscriptions.
+		if ( ! empty( $args['getpaid_cancel_subscription'] ) ) {
+			$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+
+			if ( ! empty( $subscriptions ) ) {
+				if ( ! is_array( $subscriptions ) ) {
+					$subscriptions = array( $subscriptions );
+				}
+
+				foreach ( $subscriptions as $subscription ) {
+					$subscription->cancel();
+					$invoice->add_system_note(
+						sprintf(
+							// translators: %s: subscription ID.
+							__( 'Subscription #%s cancelled', 'invoicing' ),
+							$subscription->get_id()
+						)
+					);
+				}
+			}
+		}
+
+		// Add notice.
+		$this->show_success( __( 'Invoice refunded successfully.', 'invoicing' ) );
+
+		// Redirect.
+		wp_safe_redirect(
+			remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id', 'getpaid_cancel_subscription', 'getpaid_refund_remote' ) )
+		);
 	}
 
 	/**

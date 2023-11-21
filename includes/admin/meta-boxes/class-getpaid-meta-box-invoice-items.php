@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GetPaid_Meta_Box_Invoice_Items {
 
     public static function get_columns( $invoice ) {
-        $use_taxes          = $invoice->is_taxable() && wpinv_use_taxes();
-        $columns            = array(
+        $use_taxes = $invoice->is_taxable() && wpinv_use_taxes();
+        $columns   = array(
             'id'     => __( 'ID', 'invoicing' ),
             'title'  => __( 'Item', 'invoicing' ),
             'price'  => sprintf(
@@ -52,13 +52,13 @@ class GetPaid_Meta_Box_Invoice_Items {
             return self::output2( $post );
         }
 
-        $post_id            = !empty( $post->ID ) ? $post->ID : 0;
-        $invoice            = $invoice instanceof WPInv_Invoice ? $invoice : new WPInv_Invoice( $post_id );
-        $use_taxes          = $invoice->is_taxable() && wpinv_use_taxes();
-        $item_types         = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
-        $columns            = self::get_columns( $invoice );
-        $cols               = count( $columns );
-        $class              = '';
+        $post_id    = ! empty( $post->ID ) ? $post->ID : 0;
+        $invoice    = $invoice instanceof WPInv_Invoice ? $invoice : new WPInv_Invoice( $post_id );
+        $use_taxes  = $invoice->is_taxable() && wpinv_use_taxes();
+        $item_types = apply_filters( 'wpinv_item_types_for_quick_add_item', wpinv_get_item_types(), $post );
+        $columns    = self::get_columns( $invoice );
+        $cols       = count( $columns );
+        $class      = '';
 
         unset( $item_types['adv'] );
         unset( $item_types['package'] );
@@ -75,6 +75,16 @@ class GetPaid_Meta_Box_Invoice_Items {
             $class .= ' wpi-recurring';
         }
 
+		$refund_url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'getpaid-admin-action' => 'refund_invoice',
+					'invoice_id'           => $invoice->get_id(),
+				)
+			),
+			'getpaid-nonce',
+			'getpaid-nonce'
+		);
     ?>
 
         <div class="wpinv-items-wrap<?php echo esc_attr( $class ); ?>" id="wpinv_items_wrap" data-status="<?php echo esc_attr( $invoice->get_status() ); ?>">
@@ -83,7 +93,12 @@ class GetPaid_Meta_Box_Invoice_Items {
                 <thead>
                     <tr>
                         <?php foreach ( $columns as $key => $label ) : ?>
-                            <th class="<?php echo esc_attr( $key ); echo 'total' == $key || 'qty' == $key ? ' hide-if-amount' : '' ?>"><?php echo wp_kses_post( $label ); ?></th>
+                            <th class="
+                            <?php
+                            echo esc_attr( $key );
+							echo 'total' == $key || 'qty' == $key ? ' hide-if-amount' : '';
+							?>
+							"><?php echo wp_kses_post( $label ); ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
@@ -91,7 +106,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                 <tbody class="wpinv-line-items">
                     <?php
                         foreach ( $invoice->get_items() as $int => $item ) {
-                            self::output_row( $columns, $item, $invoice, $int % 2 == 0 ? 'even' : 'odd' );
+						self::output_row( $columns, $item, $invoice, $int % 2 == 0 ? 'even' : 'odd' );
                         }
                     ?>
                 </tbody>
@@ -108,7 +123,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-name">
                                                     <span class="input-text-wrap">
-                                                        <input type="text" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' );?>" class="wpinv-quick-item-name" name="_wpinv_quick[name]">
+                                                        <input type="text" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Name', 'invoicing' ); ?>" class="wpinv-quick-item-name" name="_wpinv_quick[name]">
                                                     </span>
                                                 </label>
                                             </div>
@@ -116,8 +131,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-price">
                                                     <span class="input-text-wrap">
-                                                    <input type="text" style="width: 200px" placeholder="<?php esc_attr_e( 'Item Price', 'invoicing' );?>" class="wpinv-quick-item-price" name="_wpinv_quick[price]">
-                                                        &times; <input type="text" style="width: 140px" placeholder="<?php esc_attr_e( 'Item Quantity', 'invoicing' );?>" class="wpinv-quick-item-qty" name="_wpinv_quick[qty]">
+                                                    <input type="text" style="width: 200px" placeholder="<?php esc_attr_e( 'Item Price', 'invoicing' ); ?>" class="wpinv-quick-item-price" name="_wpinv_quick[price]">
+                                                        &times; <input type="text" style="width: 140px" placeholder="<?php esc_attr_e( 'Item Quantity', 'invoicing' ); ?>" class="wpinv-quick-item-qty" name="_wpinv_quick[qty]">
                                                     </span>
                                                 </label>
                                             </div>
@@ -125,7 +140,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-name">
                                                     <span class="input-text-wrap">
-                                                        <textarea rows="4" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Description', 'invoicing' );?>" class="wpinv-quick-item-description" name="_wpinv_quick[description]"></textarea>
+                                                        <textarea rows="4" style="width: 100%" placeholder="<?php esc_attr_e( 'Item Description', 'invoicing' ); ?>" class="wpinv-quick-item-description" name="_wpinv_quick[description]"></textarea>
                                                     </span>
                                                 </label>
                                             </div>
@@ -133,15 +148,19 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             <div class="wp-clearfix">
                                                 <label class="wpi-item-type">
                                                     <span class="input-text-wrap">
-                                                        <?php wpinv_html_select( array(
-                                                            'options'          => $item_types,
-                                                            'name'             => '_wpinv_quick[type]',
-                                                            'id'               => '_wpinv_quick_type',
-                                                            'selected'         => 'custom',
-                                                            'show_option_all'  => false,
-                                                            'show_option_none' => false,
-                                                            'class'            => 'gdmbx2-text-medium wpinv-quick-type',
-                                                        ) ); ?>
+                                                        <?php
+                                                        wpinv_html_select(
+                                                            array(
+																'options'          => $item_types,
+																'name'             => '_wpinv_quick[type]',
+																'id'               => '_wpinv_quick_type',
+																'selected'         => 'custom',
+																'show_option_all'  => false,
+																'show_option_none' => false,
+																'class'            => 'gdmbx2-text-medium wpinv-quick-type',
+                                                            )
+                                                        );
+                                                            ?>
                                                     </span>
                                                 </label>
                                             </div>
@@ -151,18 +170,20 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     <label class="wpi-vat-rule">
                                                         <span class="input-text-wrap">
                                                             <?php
-                                                                wpinv_html_select( array(
-                                                                    'options'          => array_merge(
-                                                                        array( '' => __( 'Select VAT Rule', 'invoicing' ) ),
-                                                                        getpaid_get_tax_rules()
-                                                                    ),
-                                                                    'name'             => '_wpinv_quick[vat_rule]',
-                                                                    'id'               => '_wpinv_quick_vat_rule',
-                                                                    'show_option_all'  => false,
-                                                                    'show_option_none' => false,
-                                                                    'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule',
-                                                                    'selected'         => 'digital',
-                                                                ) );
+                                                                wpinv_html_select(
+                                                                    array(
+																		'options'          => array_merge(
+																			array( '' => __( 'Select VAT Rule', 'invoicing' ) ),
+																			getpaid_get_tax_rules()
+																		),
+																		'name'             => '_wpinv_quick[vat_rule]',
+																		'id'               => '_wpinv_quick_vat_rule',
+																		'show_option_all'  => false,
+																		'show_option_none' => false,
+																		'class'            => 'gdmbx2-text-medium wpinv-quick-vat-rule',
+																		'selected'         => 'digital',
+                                                                    )
+                                                                );
                                                             ?>
                                                         </span>
                                                     </label>
@@ -171,18 +192,20 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                     <label class="wpi-vat-class">
                                                         <span class="input-text-wrap">
                                                             <?php
-                                                                wpinv_html_select( array(
-                                                                    'options'          => array_merge(
-                                                                        array( '' => __( 'Select VAT Class', 'invoicing' ) ),
-                                                                        getpaid_get_tax_classes()
-                                                                    ),
-                                                                    'name'             => '_wpinv_quick[vat_class]',
-                                                                    'id'               => '_wpinv_quick_vat_class',
-                                                                    'show_option_all'  => false,
-                                                                    'show_option_none' => false,
-                                                                    'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class',
-                                                                    'selected'         => '_standard',
-                                                                ) );
+                                                                wpinv_html_select(
+                                                                    array(
+																		'options'          => array_merge(
+																			array( '' => __( 'Select VAT Class', 'invoicing' ) ),
+																			getpaid_get_tax_classes()
+																		),
+																		'name'             => '_wpinv_quick[vat_class]',
+																		'id'               => '_wpinv_quick_vat_class',
+																		'show_option_all'  => false,
+																		'show_option_none' => false,
+																		'class'            => 'gdmbx2-text-medium wpinv-quick-vat-class',
+																		'selected'         => '_standard',
+                                                                    )
+                                                                );
                                                             ?>
                                                         </span>
                                                     </label>
@@ -224,25 +247,25 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <td colspan="4">
                             <table cellspacing="0" cellpadding="0">
                                 <tr class="subtotal">
-                                    <td class="name"><?php esc_html_e( 'Sub Total:', 'invoicing' );?></td>
-                                    <td class="total"><?php wpinv_the_price( $invoice->get_subtotal(), $invoice->get_currency() );?></td>
+                                    <td class="name"><?php esc_html_e( 'Sub Total:', 'invoicing' ); ?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_subtotal(), $invoice->get_currency() ); ?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <tr class="discount">
-                                    <td class="name"><?php esc_html_e( 'Discount:', 'invoicing' ) ; ?></td>
-                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_discount(), $invoice->get_currency() );?></td>
+                                    <td class="name"><?php esc_html_e( 'Discount:', 'invoicing' ); ?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_discount(), $invoice->get_currency() ); ?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <?php if ( $use_taxes ) : ?>
                                 <tr class="tax">
-                                    <td class="name"><?php esc_html_e( 'Tax:', 'invoicing' );?></td>
-                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() );?></td>
+                                    <td class="name"><?php esc_html_e( 'Tax:', 'invoicing' ); ?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() ); ?></td>
                                     <td class="action"></td>
                                 </tr>
                                 <?php endif; ?>
                                 <tr class="total">
-                                    <td class="name"><?php esc_html_e( 'Total:', 'invoicing' );?></td>
-                                    <td class="total"><?php wpinv_the_price( $invoice->get_total(), $invoice->get_currency() );?></td>
+                                    <td class="name"><?php esc_html_e( 'Total:', 'invoicing' ); ?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_total(), $invoice->get_currency() ); ?></td>
                                     <td class="action"></td>
                                 </tr>
                             </table>
@@ -251,21 +274,111 @@ class GetPaid_Meta_Box_Invoice_Items {
                 </tfoot>
 
             </table>
+
+            <!-- Add items to an invoice -->
+            <div class="bsui">
+                <div class="modal fade" id="getpaid-refund-invoice-modal" tabindex="-1" role="dialog" aria-labelledby="getpaid-refund-invoice-modal-label" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="getpaid-refund-invoice-modal-label"><?php esc_html_e( 'Refund Payment', 'invoicing' ); ?></h5>
+                                <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
+                                    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                        <span aria-hidden="true">×</span>
+                                    <?php endif; ?>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+								<p>
+									<?php esc_html_e( 'Are you sure you want to refund this payment?', 'invoicing' ); ?>
+								</p>
+								<?php if ( getpaid_payment_gateway_supports( $invoice->get_gateway(), 'refunds' ) ) : ?>
+									<?php
+										aui()->input(
+											array(
+												'type'  => 'checkbox',
+												'name'  => 'getpaid_refund_remote',
+												'id'    => 'getpaid_refund_remote',
+												'label' => sprintf(
+													'Refund payment in %s',
+													wpinv_get_gateway_admin_label( $invoice->get_gateway() )
+												),
+												'value' => 1,
+												'class' => 'getpaid-refund-field',
+											),
+											true
+										);
+									?>
+								<?php endif; ?>
+
+								<?php if ( getpaid_get_invoice_subscriptions( $invoice ) ) : ?>
+									<?php
+										aui()->input(
+											array(
+												'type'  => 'checkbox',
+												'name'  => 'getpaid_cancel_subscription',
+												'id'    => 'getpaid_cancel_subscription',
+												'label' => __( 'Cancel subscription', 'invoicing' ),
+												'value' => 1,
+												'class' => 'getpaid-refund-field',
+											),
+											true
+										);
+									?>
+								<?php endif; ?>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary getpaid-cancel" data-dismiss="modal"><?php esc_html_e( 'Cancel', 'invoicing' ); ?></button>
+                                <a
+									href="<?php echo esc_url_raw( $refund_url ); ?>"
+									data-href="<?php echo esc_url_raw( $refund_url ); ?>"
+									class="btn btn-primary getpaid-refund-payment-button"
+									data-dismiss="modal"
+								><?php esc_html_e( 'Refund', 'invoicing' ); ?></a>
+								<script>
+									// Update the refund URL when the user changes the refund options.
+									jQuery( function( $ ) {
+										$( '.getpaid-refund-field' ).on( 'change', function() {
+											var $this = $( this ),
+												$modal = $this.closest( '.modal' ),
+												$button = $modal.find( '.getpaid-refund-payment-button' ),
+												href = $button.data( 'href' );
+
+                                            $( '.getpaid-refund-field:checked' ).each( function() {
+                                                href = href.replace( 'getpaid-admin-action=refund_invoice', 'getpaid-admin-action=refund_invoice&' + $( this ).attr( 'name' ) + '=1' );
+                                            } );
+
+											$button.attr( 'href', href );
+										} );
+									} );
+								</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="wpinv-actions">
                 <?php
-                    if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
-                        wpinv_item_dropdown(
-                            array(
-                                'name'             => 'wpinv_invoice_item',
-                                'id'               => 'wpinv_invoice_item',
-                                'show_recurring'   => true,
-                                'class'            => 'wpi_select2',
-                            )
-                        );
+                    if ( $invoice->is_paid() ) {
 
-                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-add-item">' . sprintf( esc_html__( 'Add item to %s', 'invoicing' ), esc_html( $invoice->get_label() ) ) . '</button>';
-                        echo "&nbsp;" . '<button class="button button-primary" id="wpinv-new-item">' . esc_html__( 'Create new item', 'invoicing' ) . '</button>';
-                        echo "&nbsp;" . '<button class="button button-primary wpinv-flr" id="wpinv-recalc-totals">' . esc_html__( 'Recalculate Totals', 'invoicing' ) . '</button>';
+						printf(
+							'<span class="bsui"><button type="button" class="button button-primary" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#getpaid-refund-invoice-modal" data-target="#getpaid-refund-invoice-modal">%s</button></span>',
+							esc_html__( 'Refund', 'invoicing' )
+						);
+                    } elseif ( ! $invoice->is_refunded() ) {
+						wpinv_item_dropdown(
+							array(
+								'name'           => 'wpinv_invoice_item',
+								'id'             => 'wpinv_invoice_item',
+								'show_recurring' => true,
+								'class'          => 'wpi_select2',
+							)
+						);
+
+						echo '&nbsp;' . '<button type="button" class="button button-primary" id="wpinv-add-item">' . sprintf( esc_html__( 'Add item to %s', 'invoicing' ), esc_html( $invoice->get_label() ) ) . '</button>';
+						echo '&nbsp;' . '<button type="button" class="button button-primary" id="wpinv-new-item">' . esc_html__( 'Create new item', 'invoicing' ) . '</button>';
+						echo '&nbsp;' . '<button type="button" class="button button-primary wpinv-flr" id="wpinv-recalc-totals">' . esc_html__( 'Recalculate Totals', 'invoicing' ) . '</button>';
 
                     }
                 ?>
@@ -275,74 +388,79 @@ class GetPaid_Meta_Box_Invoice_Items {
         <?php
     }
 
-    public static function output_row( $columns, $item, $invoice, $class='even' ) {
+    public static function output_row( $columns, $item, $invoice, $class = 'even' ) {
 
     ?>
         <tr class="item item-<?php echo esc_attr( $class ); ?>" data-item-id="<?php echo esc_attr( $item->get_id() ); ?>">
             <?php foreach ( array_keys( $columns ) as $column ) : ?>
-                <td class="<?php echo esc_attr( $column ); echo 'total' == $column || 'qty' == $column ? ' hide-if-amount' : '' ?>">
+                <td class="
+					<?php
+						echo esc_attr( $column );
+						echo 'total' == $column || 'qty' == $column ? ' hide-if-amount' : '';
+					?>
+				">
                     <?php
                         switch ( $column ) {
-                            case 'id':
-                                echo (int) $item->get_id();
-                                break;
-                            case 'title':
-                                printf(
-                                    '<a href="%s" target="_blank">%s</a>',
-                                    esc_url( get_edit_post_link( $item->get_id() ) ),
-                                    esc_html( $item->get_raw_name() )
-                                );
+						case 'id':
+							echo (int) $item->get_id();
+							break;
+						case 'title':
+							printf(
+								'<a href="%s" target="_blank">%s</a>',
+								esc_url( get_edit_post_link( $item->get_id() ) ),
+								esc_html( $item->get_raw_name() )
+							);
 
-                                $summary = apply_filters( 'getpaid_admin_invoice_line_item_summary', $item->get_description(), $item, $invoice );
-                                if ( $summary !== '' ) {
-                                    printf(
-                                        '<span class="meta">%s</span>',
-                                        wp_kses_post( wpautop( $summary ) )
-                                    );
+							$summary = apply_filters( 'getpaid_admin_invoice_line_item_summary', $item->get_description(), $item, $invoice );
+							if ( $summary !== '' ) {
+								printf(
+									'<span class="meta">%s</span>',
+									wp_kses_post( wpautop( $summary ) )
+								);
+							}
+
+							printf(
+								'<input type="hidden" value="%s" name="getpaid_items[%s][name]" class="getpaid-recalculate-prices-on-change" />',
+								esc_attr( $item->get_raw_name() ),
+								(int) $item->get_id()
+							);
+
+							printf(
+								'<textarea style="display: none;" name="getpaid_items[%s][description]" class="getpaid-recalculate-prices-on-change">%s</textarea>',
+								(int) $item->get_id(),
+								esc_attr( $item->get_description() )
+							);
+
+							break;
+						case 'price':
+							printf(
+								'<input type="text" value="%s" name="getpaid_items[%s][price]" style="width: 100px;" class="getpaid-admin-invoice-item-price getpaid-recalculate-prices-on-change" />',
+								esc_attr( getpaid_unstandardize_amount( $item->get_price() ) ),
+								(int) $item->get_id()
+							);
+
+							break;
+						case 'qty':
+							printf(
+								'<input type="text" style="width: 100px;" value="%s" name="getpaid_items[%s][quantity]" class="getpaid-admin-invoice-item-quantity getpaid-recalculate-prices-on-change" />',
+								floatval( $item->get_quantity() ),
+								(int) $item->get_id()
+							);
+
+							break;
+						case 'total':
+							wpinv_the_price( $item->get_sub_total(), $invoice->get_currency() );
+
+							break;
+						case 'tax':
+							echo floatval( wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) ) . '%';
+
+							break;
+						case 'action':
+							if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+								echo '<i class="fa fa-trash wpinv-item-remove"></i>';
                                 }
-
-                                printf(
-                                    '<input type="hidden" value="%s" name="getpaid_items[%s][name]" class="getpaid-recalculate-prices-on-change" />',
-                                    esc_attr( $item->get_raw_name() ),
-                                    (int) $item->get_id()
-                                );
-
-                                printf(
-                                    '<textarea style="display: none;" name="getpaid_items[%s][description]" class="getpaid-recalculate-prices-on-change">%s</textarea>',
-                                    (int) $item->get_id(),
-                                    esc_attr( $item->get_description() )
-                                );
-
-                                break;
-                            case 'price':
-                                printf(
-                                    '<input type="text" value="%s" name="getpaid_items[%s][price]" style="width: 100px;" class="getpaid-admin-invoice-item-price getpaid-recalculate-prices-on-change" />',
-                                    esc_attr( getpaid_unstandardize_amount( $item->get_price() ) ),
-                                    (int) $item->get_id()
-                                );
-
-                                break;
-                            case 'qty':
-                                printf(
-                                    '<input type="text" style="width: 100px;" value="%s" name="getpaid_items[%s][quantity]" class="getpaid-admin-invoice-item-quantity getpaid-recalculate-prices-on-change" />',
-                                    floatval( $item->get_quantity() ),
-                                    (int) $item->get_id()
-                                );
-
-                                break;
-                            case 'total':
-                                wpinv_the_price( $item->get_sub_total(), $invoice->get_currency() );
-
-                                break;
-                            case 'tax':
-                                echo floatval( wpinv_round_amount( getpaid_get_invoice_tax_rate( $invoice, $item ), 2 ) ) . '%';
-
-                                break;
-                            case 'action':
-                                if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
-                                    echo '<i class="fa fa-trash wpinv-item-remove"></i>';
-                                }
-                                break;
+							break;
                         }
                         do_action( 'getpaid_admin_edit_invoice_item_' . $column, $item, $invoice );
                     ?>
@@ -367,25 +485,25 @@ class GetPaid_Meta_Box_Invoice_Items {
 
         $totals = array(
 
-            'subtotal'  => array(
+            'subtotal' => array(
                 'label' => __( 'Items Subtotal', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_subtotal(), $invoice->get_currency() ),
             ),
 
-            'discount'  => array(
+            'discount' => array(
                 'label' => __( 'Total Discount', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_total_discount(), $invoice->get_currency() ),
             ),
 
-            'tax'       => array(
+            'tax'      => array(
                 'label' => __( 'Total Tax', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_total_tax(), $invoice->get_currency() ),
             ),
 
-            'total'     => array(
+            'total'    => array(
                 'label' => __( 'Invoice Total', 'invoicing' ),
                 'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
-            )
+            ),
         );
 
         if ( ! wpinv_use_taxes() ) {
@@ -400,9 +518,9 @@ class GetPaid_Meta_Box_Invoice_Items {
             'post_status'    => array( 'publish' ),
             'meta_query'     => array(
                 array(
-                    'key'       => '_wpinv_type',
-                    'compare'   => '!=',
-                    'value'     => 'package'
+                    'key'     => '_wpinv_type',
+                    'compare' => '!=',
+                    'value'   => 'package',
                 ),
                 array(
                     'key'     => '_wpinv_one_time',
@@ -448,7 +566,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                                 'amount'   => __( 'Amount Only', 'invoicing' ),
                                             ),
                                             'data-allow-clear' => 'false',
-                                            'select2'          => true,
+                                            'select2'     => true,
                                         ),
                                         true
                                     );
@@ -469,7 +587,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                                             'value'       => $invoice->get_currency( 'edit' ),
                                             'required'    => false,
                                             'data-allow-clear' => 'false',
-                                            'select2'          => true,
+                                            'select2'     => true,
                                             'options'     => wpinv_get_currencies(),
                                         ),
                                         true
@@ -485,18 +603,18 @@ class GetPaid_Meta_Box_Invoice_Items {
                     <table cellpadding="0" cellspacing="0" class="getpaid_invoice_items">
                         <thead>
                             <tr>
-                                <th class="getpaid-item" colspan="2"><?php esc_html_e( 'Item', 'invoicing' ) ?></th>
+                                <th class="getpaid-item" colspan="2"><?php esc_html_e( 'Item', 'invoicing' ); ?></th>
                                 <th class="getpaid-quantity hide-if-amount text-right">
-                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Quantity', 'invoicing' ) ?></span>
-                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Hours', 'invoicing' ) ?></span>
+                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Quantity', 'invoicing' ); ?></span>
+                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Hours', 'invoicing' ); ?></span>
                                 </th>
                                 <th class="getpaid-price hide-if-amount text-right">
-                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Price', 'invoicing' ) ?></span>
-                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Rate', 'invoicing' ) ?></span>
+                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Price', 'invoicing' ); ?></span>
+                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Rate', 'invoicing' ); ?></span>
                                 </th>
                                 <th class="getpaid-item-subtotal text-right">
-                                    <span class="getpaid-hide-if-hours getpaid-hide-if-quantity"><?php esc_html_e( 'Amount', 'invoicing' ) ?></span>
-                                    <span class="hide-if-amount"><?php esc_html_e( 'Total', 'invoicing' ) ?></span>
+                                    <span class="getpaid-hide-if-hours getpaid-hide-if-quantity"><?php esc_html_e( 'Amount', 'invoicing' ); ?></span>
+                                    <span class="hide-if-amount"><?php esc_html_e( 'Total', 'invoicing' ); ?></span>
                                 </th>
                                 <th class="getpaid-item-actions hide-if-not-editable" width="70px">&nbsp;</th>
                             </tr>
@@ -504,8 +622,8 @@ class GetPaid_Meta_Box_Invoice_Items {
 		                <tbody class="getpaid_invoice_line_items">
                             <tr class="hide-if-has-items hide-if-not-editable">
                                 <td colspan="2" class="pt-4 pb-4">
-                                    <button type="button" class="button button-primary add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php esc_html_e( 'Add Existing Items', 'invoicing' ) ?></button>
-                                    <button type="button" class="button button-secondary create-invoice-item" data-toggle="modal" data-target="#getpaid-create-invoice-item"><?php esc_html_e( 'Create New Item', 'invoicing' ) ?></button>
+                                    <button type="button" class="button button-primary add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php esc_html_e( 'Add Existing Items', 'invoicing' ); ?></button>
+                                    <button type="button" class="button button-secondary create-invoice-item" data-toggle="modal" data-target="#getpaid-create-invoice-item"><?php esc_html_e( 'Create New Item', 'invoicing' ); ?></button>
                                 </td>
                                 <td class="hide-if-amount">&nbsp;</th>
                                 <td class="hide-if-amount">&nbsp;</th>
@@ -539,9 +657,9 @@ class GetPaid_Meta_Box_Invoice_Items {
                                     <tbody>
                                         <?php foreach ( apply_filters( 'getpaid_invoice_subtotal_rows', $totals, $invoice ) as $key => $data ) : ?>
                                             <tr class="getpaid-totals-<?php echo esc_attr( $key ); ?>">
-                                                <td class="label"><?php echo esc_html( $data['label'] ) ?>:</td>
+                                                <td class="label"><?php echo esc_html( $data['label'] ); ?>:</td>
                                                 <td width="1%"></td>
-                                                <td class="value"><?php echo wp_kses_post( $data['value'] ) ?></td>
+                                                <td class="value"><?php echo wp_kses_post( $data['value'] ); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -554,12 +672,12 @@ class GetPaid_Meta_Box_Invoice_Items {
                     <div class="getpaid-invoice-item-actions hide-if-no-items hide-if-not-editable">
                         <div class="row">
                             <div class="text-left col-12 col-sm-8">
-                                <button type="button" class="button button-primary add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php esc_html_e( 'Add Existing Item', 'invoicing' ) ?></button>
-                                <button type="button" class="button button-secondary create-invoice-item" data-toggle="modal" data-target="#getpaid-create-invoice-item"><?php esc_html_e( 'Create New Item', 'invoicing' ) ?></button>
+                                <button type="button" class="button button-primary add-invoice-item" data-toggle="modal" data-target="#getpaid-add-items-to-invoice"><?php esc_html_e( 'Add Existing Item', 'invoicing' ); ?></button>
+                                <button type="button" class="button button-secondary create-invoice-item" data-toggle="modal" data-target="#getpaid-create-invoice-item"><?php esc_html_e( 'Create New Item', 'invoicing' ); ?></button>
                                 <?php do_action( 'getpaid-invoice-items-actions', $invoice ); ?>
                             </div>
                             <div class="text-right col-12 col-sm-4">
-                                <button type="button" class="button button-primary recalculate-totals-button"><?php esc_html_e( 'Recalculate Totals', 'invoicing' ) ?></button>
+                                <button type="button" class="button button-primary recalculate-totals-button"><?php esc_html_e( 'Recalculate Totals', 'invoicing' ); ?></button>
                             </div>
                         </div>
                     </div>
@@ -573,8 +691,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="getpaid-add-item-to-invoice-label"><?php esc_html_e( "Add Item(s)", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                    <h5 class="modal-title" id="getpaid-add-item-to-invoice-label"><?php esc_html_e( 'Add Item(s)', 'invoicing' ); ?></h5>
+                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
                                         <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
                                             <span aria-hidden="true">×</span>
                                         <?php endif; ?>
@@ -584,10 +702,10 @@ class GetPaid_Meta_Box_Invoice_Items {
                                     <table class="widefat">
                                         <thead>
                                             <tr>
-                                                <th class="pl-0 text-left"><?php esc_html_e( 'Item', 'invoicing' ) ?></th>
+                                                <th class="pl-0 text-left"><?php esc_html_e( 'Item', 'invoicing' ); ?></th>
                                                 <th class="pr-0 text-right hide-if-amount">
-                                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Quantity', 'invoicing' ) ?></span>
-                                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Hours', 'invoicing' ) ?></span>
+                                                    <span class="getpaid-hide-if-hours"><?php esc_html_e( 'Quantity', 'invoicing' ); ?></span>
+                                                    <span class="getpaid-hide-if-quantity"><?php esc_html_e( 'Hours', 'invoicing' ); ?></span>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -621,8 +739,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="getpaid-create-invoice-item-label"><?php esc_html_e( "Create Item", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                    <h5 class="modal-title" id="getpaid-create-invoice-item-label"><?php esc_html_e( 'Create Item', 'invoicing' ); ?></h5>
+                                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
                                         <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
                                             <span aria-hidden="true">×</span>
                                         <?php endif; ?>
@@ -663,8 +781,8 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="getpaid-edit-invoice-item-label"><?php esc_html_e( "Edit Item", 'invoicing' ); ?></h5>
-                                    <button type="button" class="close close" data-dismiss="modal" aria-label="<?php esc_html_e( "Close", 'invoicing' ); ?>">
+                                    <h5 class="modal-title" id="getpaid-edit-invoice-item-label"><?php esc_html_e( 'Edit Item', 'invoicing' ); ?></h5>
+                                    <button type="button" class="close close" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
                                         <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
                                             <span aria-hidden="true">×</span>
                                         <?php endif; ?>

@@ -123,9 +123,10 @@ class AUI_Component_Input {
 				$args['extra_attributes']['data-aui-init'] = 'flatpickr';
 
 				// Disable native datetime inputs.
-				if ( ( $orig_type == 'timepicker' || ! empty( $args['extra_attributes']['data-enable-time'] ) ) && ! isset( $args['extra_attributes']['data-disable-mobile'] ) ) {
-					$args['extra_attributes']['data-disable-mobile'] = 'true';
-				}
+				$disable_mobile_attr = isset( $args['extra_attributes']['data-disable-mobile'] ) ? $args['extra_attributes']['data-disable-mobile'] : 'true';
+				$disable_mobile_attr = apply_filters( 'aui_flatpickr_disable_disable_mobile_attr', $disable_mobile_attr, $args );
+
+				$args['extra_attributes']['data-disable-mobile'] = $disable_mobile_attr;
 
 				// set a way to clear field if empty
 				if ( $args['input_group_right'] === '' && $args['clear_icon'] !== false ) {

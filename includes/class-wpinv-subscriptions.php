@@ -20,7 +20,7 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_subscription_status_changed', array( $this, 'process_subscription_status_change' ), 10, 3 );
 
         // De-activate a subscription whenever the invoice changes payment statuses.
-        add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        // add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-cancelled', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
         add_action( 'getpaid_invoice_status_wpi-pending', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
@@ -237,7 +237,7 @@ class WPInv_Subscriptions {
             }
         }
 
-        $subscription->set_customer_id( $invoice->get_customer_id() );
+        $subscription->set_customer_id( $invoice->get_user_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );
         $subscription->set_initial_amount( $initial_amt );
         $subscription->set_recurring_amount( $recurring_amt );
@@ -397,7 +397,7 @@ class WPInv_Subscriptions {
             return $subscription->delete();
         }
 
-        $subscription->set_customer_id( $invoice->get_customer_id() );
+        $subscription->set_customer_id( $invoice->get_user_id() );
         $subscription->set_parent_invoice_id( $invoice->get_id() );
         $subscription->set_initial_amount( $invoice->get_initial_total() );
         $subscription->set_recurring_amount( $invoice->get_recurring_total() );

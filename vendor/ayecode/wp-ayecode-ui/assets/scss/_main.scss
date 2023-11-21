@@ -331,3 +331,8 @@ ul.list-unstyled li {margin-bottom:1rem;}
     }
 }
 
+
+// Uploader in safari button overflowing
+.moxie-shim {
+  position: relative !important;
+}
