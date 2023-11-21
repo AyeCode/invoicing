@@ -344,11 +344,9 @@ class GetPaid_Meta_Box_Invoice_Items {
 												$button = $modal.find( '.getpaid-refund-payment-button' ),
 												href = $button.data( 'href' );
 
-											if ( $this.is( ':checked' ) ) {
-												href = href.replace( 'getpaid-admin-action=refund_invoice', 'getpaid-admin-action=refund_invoice&' + $this.attr( 'name' ) + '=1' );
-											} else {
-												href = href.replace( '&' + $this.attr( 'name' ) + '=1', '' );
-											}
+                                            $( '.getpaid-refund-field:checked' ).each( function() {
+                                                href = href.replace( 'getpaid-admin-action=refund_invoice', 'getpaid-admin-action=refund_invoice&' + $( this ).attr( 'name' ) + '=1' );
+                                            } );
 
 											$button.attr( 'href', href );
 										} );
