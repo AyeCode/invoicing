@@ -538,6 +538,40 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			'std'   => wpinv_get_option( 'paypal_email', '' ),
         );
 
+		// Client ID and secret.
+		$admin_settings['paypal_client_id'] = array(
+			'type'  => 'text',
+			'class' => 'live-auth-data',
+			'id'    => 'paypal_client_id',
+			'name'  => __( 'Live Client ID', 'invoicing' ),
+			'desc'  => __( 'The client ID of your PayPal account. You can retrieve this from your PayPal developer account.', 'invoicing' ),
+		);
+
+		$admin_settings['paypal_sandbox_client_id'] = array(
+			'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+			'id'    => 'paypal_sandbox_client_id',
+			'name'  => __( 'Sandbox Client ID', 'invoicing' ),
+			'desc'  => __( 'The client ID of your sandbox PayPal account. You can retrieve this from your PayPal developer account.', 'invoicing' ),
+			'std'   => wpinv_get_option( 'paypal_client_id', '' ),
+		);
+
+		$admin_settings['paypal_secret'] = array(
+			'type'  => 'text',
+			'class' => 'live-auth-data',
+			'id'    => 'paypal_secret',
+			'name'  => __( 'Live Secret', 'invoicing' ),
+			'desc'  => __( 'The secret of your PayPal account. You can retrieve this from your PayPal developer account.', 'invoicing' ),
+		);
+
+		$admin_settings['paypal_sandbox_secret'] = array(
+			'type'  => 'text',
+			'class' => 'sandbox-auth-data',
+			'id'    => 'paypal_sandbox_secret',
+			'name'  => __( 'Sandbox Secret', 'invoicing' ),
+			'desc'  => __( 'The secret of your sandbox PayPal account. You can retrieve this from your PayPal developer account.', 'invoicing' ),
+		);
+
         $admin_settings['paypal_ipn_url'] = array(
             'type'     => 'ipn_url',
             'id'       => 'paypal_ipn_url',
