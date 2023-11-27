@@ -919,7 +919,7 @@ function getpaid_invoice_item_columns( $invoice ) {
         if ( ! wpinv_item_quantities_enabled() || 'amount' == $invoice->get_template() ) {
             unset( $columns['quantity'] );
         }
-}
+    }
 
     // Price.
     if ( isset( $columns['price'] ) ) {
@@ -944,10 +944,10 @@ function getpaid_invoice_item_columns( $invoice ) {
     // Tax rates.
     if ( isset( $columns['tax_rate'] ) ) {
 
-        if ( 0 == $invoice->get_tax() ) {
+        if ( 0 == $invoice->get_total_tax() ) {
             unset( $columns['tax_rate'] );
         }
-}
+    }
 
     return $columns;
 }

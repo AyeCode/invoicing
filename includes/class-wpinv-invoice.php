@@ -1418,7 +1418,7 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
 	public function has_shipping() {
-		return defined( 'GETPAID_SHIPPING_CALCULATOR_VERSION' ) && null !== $this->get_prop( 'shipping', 'edit' );
+		return defined( 'GETPAID_SHIPPING_CALCULATOR_VERSION' ) && $this->get_prop( 'shipping', 'edit' );
     }
 
     /**
