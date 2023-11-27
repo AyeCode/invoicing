@@ -50,6 +50,21 @@ do_action( 'getpaid_before_invoice_line_totals', $invoice, $totals );
                                     }
                                 }
 
+                                // Check if field starts with tax__.
+                                if ( 0 === strpos( $key, 'tax__' ) ) {
+                                    $tax_amount = $invoice->get_tax_total_by_name( str_replace( 'tax__', '', $key ) );
+                                    wpinv_the_price( $tax_amount, $invoice->get_currency() );
+
+                                    if ( wpinv_use_taxes() && ! $invoice->get_disable_taxes() ) {
+
+                                        if ( empty( $tax_amount ) && GetPaid_Payment_Form_Submission_Taxes::is_eu_transaction( $invoice->get_country() ) ) {
+                                            echo ' <em class="text-muted small">';
+                                            _x( '(Reverse charged)', 'This is a legal term for reverse charging tax in the EU', 'invoicing' );
+                                            echo '</em>';
+                                        }
+                                    }
+                                }
+
                                 // Total Fee.
                                 if ( 'fee' === $key ) {
 								wpinv_the_price( $invoice->get_total_fees(), $invoice->get_currency() );

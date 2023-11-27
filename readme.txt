@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.2 =
+* Display taxes on invoice as separate line items if enabled in settings.
+
 = 2.8.1 =
 * Add framework to refund payments in remote gateways.
 

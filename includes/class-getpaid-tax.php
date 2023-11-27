@@ -115,7 +115,7 @@ class GetPaid_Tax {
 					'state'   => wpinv_get_default_state(),
 					'global'  => true,
 					'rate'    => wpinv_get_default_tax_rate(),
-					'name'    => __( 'Base Tax', 'invoicing' ),
+					'name'    => __( 'Tax', 'invoicing' ),
 				),
 			)
 		);

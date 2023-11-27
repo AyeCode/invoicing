@@ -989,6 +989,29 @@ function getpaid_invoice_totals_rows( $invoice ) {
         unset( $totals['tax'] );
     }
 
+    // If we have taxes, display individual taxes.
+    if ( isset( $totals['tax'] ) && wpinv_display_individual_tax_rates() ) {
+
+        $new_totals = array();
+        foreach ( $totals as $key => $label ) {
+
+            if ( 'tax' !== $key ) {
+                $new_totals[ $key ] = $label;
+                continue;
+            }
+
+            $taxes = array_keys( $invoice->get_taxes() );
+            if ( ! empty( $taxes ) ) {
+
+                foreach ( $taxes as $tax ) {
+                    $new_totals[ 'tax__' . $tax ] = $tax;
+                }
+            }
+        }
+
+        $totals = $new_totals;
+    }
+
     if ( 0 == $invoice->get_total_fees() && isset( $totals['fee'] ) ) {
         unset( $totals['fee'] );
     }
