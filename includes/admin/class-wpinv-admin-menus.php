@@ -95,13 +95,14 @@ class WPInv_Admin_Menus {
                 }
             </style>
             <h1><?php echo esc_html( __( 'Customers', 'invoicing' ) ); ?>&nbsp;<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'download_customers' ), 'getpaid-nonce', 'getpaid-nonce' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Export', 'invoicing' ); ?></a></h1>
-            <form method="post" style="overflow: auto; width: 100%">
-            <?php
-                $table = new WPInv_Customers_Table();
-                $table->prepare_items();
-                $table->search_box( __( 'Search Customers', 'invoicing' ), 'search-customers' );
-                $table->display();
-            ?>
+            <form method="get" style="overflow: auto; width: 100%" action=<?php echo esc_url( add_query_arg( array() ) ); ?>>
+                <input type="hidden" name="page" value="wpinv-customers" />
+                <?php
+                    $table = new WPInv_Customers_Table();
+                    $table->prepare_items();
+                    $table->search_box( __( 'Search Customers', 'invoicing' ), 'search-customers' );
+                    $table->display();
+                ?>
             </form>
         </div>
         <?php

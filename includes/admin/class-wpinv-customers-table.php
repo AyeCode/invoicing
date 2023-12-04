@@ -304,7 +304,6 @@ class WPInv_Customers_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'       => '<input type="checkbox" />',
 			'customer' => __( 'Customer', 'invoicing' ),
 		);
 
