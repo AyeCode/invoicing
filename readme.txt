@@ -148,6 +148,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Display taxes on invoice as separate line items if enabled in settings.
 * Fix the invoice to fit on a single page when printing.
 * Fix: Customer search not working.
+* Make the refund modal work with both BS5 and BS4.
 
 = 2.8.1 =
 * Add framework to refund payments in remote gateways.
