@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.4
-Stable tag: 2.8.1
+Stable tag: 2.8.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,12 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.2 =
+* Display taxes on invoice as separate line items if enabled in settings.
+* Fix the invoice to fit on a single page when printing.
+* Fix: Customer search not working.
+* Make the refund modal work with both BS5 and BS4.
 
 = 2.8.1 =
 * Add framework to refund payments in remote gateways.

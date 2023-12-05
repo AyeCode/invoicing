@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
             do_action( 'getpaid_invoice_header', $invoice );
 
             // Print the opening wrapper.
-            echo '<div class="container bg-white border mt-4 mb-4 p-4 position-relative flex-grow-1">';
+            echo '<div class="container bg-white getpaid-print-no-border border mt-4 mb-4 p-4 position-relative flex-grow-1">';
 
             // Print notifications.
             wpinv_print_errors();

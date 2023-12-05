@@ -62,6 +62,16 @@ do_action( 'wpinv_invoice_print_before_display', $invoice );
 				border: 0;
 				margin: 0;
 			}
+
+			@media print {
+				.getpaid-print-no-border {
+					border: 0 !important;
+				}
+
+				.container {
+					max-width: 100% !important;
+				}
+			}
 		</style>
 
     </head>

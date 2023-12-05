@@ -282,7 +282,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="getpaid-refund-invoice-modal-label"><?php esc_html_e( 'Refund Payment', 'invoicing' ); ?></h5>
-                                <button type="button" class="close btn-close" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
+                                <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="<?php esc_html_e( 'Close', 'invoicing' ); ?>">
                                     <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
                                         <span aria-hidden="true">×</span>
                                     <?php endif; ?>
@@ -328,12 +328,11 @@ class GetPaid_Meta_Box_Invoice_Items {
 								<?php endif; ?>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary getpaid-cancel" data-dismiss="modal"><?php esc_html_e( 'Cancel', 'invoicing' ); ?></button>
+                                <button type="button" class="btn btn-secondary getpaid-cancel" data-bs-dismiss="modal" data-dismiss="modal"><?php esc_html_e( 'Cancel', 'invoicing' ); ?></button>
                                 <a
 									href="<?php echo esc_url_raw( $refund_url ); ?>"
 									data-href="<?php echo esc_url_raw( $refund_url ); ?>"
 									class="btn btn-primary getpaid-refund-payment-button"
-									data-dismiss="modal"
 								><?php esc_html_e( 'Refund', 'invoicing' ); ?></a>
 								<script>
 									// Update the refund URL when the user changes the refund options.

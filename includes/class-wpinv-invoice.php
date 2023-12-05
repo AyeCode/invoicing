@@ -1418,7 +1418,7 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
 	public function has_shipping() {
-		return defined( 'GETPAID_SHIPPING_CALCULATOR_VERSION' ) && null !== $this->get_prop( 'shipping', 'edit' );
+		return defined( 'GETPAID_SHIPPING_CALCULATOR_VERSION' ) && $this->get_prop( 'shipping', 'edit' );
     }
 
     /**
@@ -3561,6 +3561,21 @@ class WPInv_Invoice extends GetPaid_Data {
 
         $taxes = $this->get_taxes();
 		return isset( $taxes[ $tax ] ) ? $taxes[ $tax ] : null;
+    }
+
+	public function get_tax_total_by_name( $name ) {
+
+		if ( empty( $name ) ) {
+			return 0;
+		}
+
+		$tax = $this->get_tax( $name );
+
+		if ( empty( $tax ) ) {
+			return 0;
+		}
+
+        return $this->is_renewal() ? $tax['recurring_tax'] : $tax['initial_tax'];
     }
 
     /**

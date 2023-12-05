@@ -48,6 +48,11 @@ do_action( 'getpaid_before_email_line_totals', $invoice, $totals );
                     wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() );
                 }
 
+                // Individual taxes.
+                if ( 0 === strpos( $key, 'tax__' ) ) {
+                    wpinv_the_price( $invoice->get_tax_total_by_name( str_replace( 'tax__', '', $key ) ), $invoice->get_currency() );
+                }
+
                 if ( 'fee' == $key ) {
                     wpinv_the_price( $invoice->get_total_fees(), $invoice->get_currency() );
                 }

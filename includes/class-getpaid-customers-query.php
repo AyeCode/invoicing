@@ -123,6 +123,7 @@ class GetPaid_Customers_Query {
 			'paged'       => 1,
 			'count_total' => true,
 			'fields'      => 'all',
+			's'           => '',
 		);
 
 		foreach ( GetPaid_Customer_Data_Store::get_database_fields() as $field => $type ) {
@@ -273,6 +274,38 @@ class GetPaid_Customers_Query {
 			$this->query_where .= $date_created_query->get_sql();
 		}
 
+		// Search.
+		if ( ! empty( $qv['s'] ) ) {
+			$this->query_where .= $this->get_search_sql( $qv['s'] );
+		}
+	}
+
+	/**
+	 * Used internally to generate an SQL string for searching across multiple columns
+	 *
+	 * @since 1.2.7
+	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param string $string The string to search for.
+	 * @return string
+	 */
+	protected function get_search_sql( $string ) {
+		global $wpdb;
+
+		$searches = array();
+		$string   = trim( $string, '%' );
+		$like     = '%' . $wpdb->esc_like( $string ) . '%';
+
+		foreach ( array_keys( GetPaid_Customer_Data_Store::get_database_fields() ) as $col ) {
+			if ( 'id' === $col || 'user_id' === $col ) {
+				$searches[] = $wpdb->prepare( "$col = %s", $string );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			} else {
+				$searches[] = $wpdb->prepare( "$col LIKE %s", $like );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			}
+		}
+
+		return ' AND (' . implode( ' OR ', $searches ) . ')';
 	}
 
 	/**

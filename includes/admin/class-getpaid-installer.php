@@ -600,7 +600,7 @@ class GetPaid_Installer {
 
 		dbDelta( $schema );
 		wp_cache_flush();
-		update_option( 'getpaid_db_schema', md5( self::get_db_schema() ) );
+		update_option( 'getpaid_db_schema', md5( $schema ) );
 	}
 
 	/**

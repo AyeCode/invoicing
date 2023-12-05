@@ -177,7 +177,10 @@ jQuery(function ($) {
 					return this.fetch_state()
 				}
 
-				// Process totals.
+                // If we have a tax template, remove individual tax fields.
+                var template = this.form.find('.getpaid-tax-template');
+
+                // Process totals.
 				if (state.totals) {
 
 					for (var total in state.totals) {
@@ -187,6 +190,32 @@ jQuery(function ($) {
 					}
 
 				}
+
+                if ( template.length ) {
+
+                    // Remove existing taxes.
+                    this.form.find('.getpaid-form-cart-totals-tax:not(.getpaid-tax-template)').remove();
+
+                    // Add new taxes.
+                    if (!Array.isArray(state.taxes)) {
+                        var html = template.prop( 'outerHTML' );
+
+                        for (var tax in state.taxes) {
+                            if (state.taxes.hasOwnProperty(tax)) {
+                                var newTax = template
+                                    .before(html)
+                                    .prev()
+                                    .removeClass('getpaid-tax-template d-none')
+
+                                // Update label.
+                                newTax.find('.getpaid-payment-form-line-totals-label').html(tax);
+
+                                // Update value.
+                                newTax.find('.getpaid-payment-form-line-totals-value').html(state.taxes[tax]);
+                            }
+                        }
+                    }
+                }
 
 				// Hide/Display fees discount.
 				if (!Array.isArray(state.fees)) {

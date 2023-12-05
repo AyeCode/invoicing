@@ -49,7 +49,7 @@ do_action( 'getpaid_before_payment_form_cart_totals', $form, $cart_totals );
 
 			<?php foreach ( $cart_totals as $key => $label ) : ?>
 
-				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' == $key ? 'bg-light' : 'border-bottom'; ?>">
+				<div class="getpaid-form-cart-totals-col getpaid-form-cart-totals-<?php echo esc_attr( $key ); ?> font-weight-bold py-2 px-3 <?php echo 'total' === $key ? 'bg-light' : 'border-bottom'; ?> <?php echo 'tax' === $key && wpinv_display_individual_tax_rates() ? 'getpaid-tax-template d-none' : ''; ?>">
 
 					<div class="form-row row">
 
