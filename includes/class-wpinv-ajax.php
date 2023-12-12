@@ -766,7 +766,7 @@ class WPInv_Ajax {
 
         if ( ! empty( $_POST['getpaid_items'] ) ) {
 
-            foreach ( wp_kses_post_deep( $_POST['getpaid_items'] ) as $item_id => $args ) {
+            foreach ( wp_kses_post_deep( wp_unslash( $_POST['getpaid_items'] ) ) as $item_id => $args ) {
                 $item = new GetPaid_Form_Item( $item_id );
 
                 if ( $item->exists() ) {

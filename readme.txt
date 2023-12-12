@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.8.3 =
 * Add option to change the button type used to apply discounts.
+* Fix slashes added to invoice item names that have special chars.
 
 = 2.8.2 =
 * Display taxes on invoice as separate line items if enabled in settings.
