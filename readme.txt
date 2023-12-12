@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.3 =
+* Add option to change the button type used to apply discounts.
+
 = 2.8.2 =
 * Display taxes on invoice as separate line items if enabled in settings.
 * Fix the invoice to fit on a single page when printing.
