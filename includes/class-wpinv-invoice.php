@@ -3703,7 +3703,6 @@ class WPInv_Invoice extends GetPaid_Data {
 				}
 			}
 
-			$item_taxes = array_replace( $this->get_taxes(), $item_taxes );
 			$this->set_taxes( $item_taxes );
 
 			$initial_tax   = array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) );
