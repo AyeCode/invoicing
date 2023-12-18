@@ -20,6 +20,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class GetPaid_Installer {
 
+	private static $schema = null;
+	private static $schema_version = null;
+
 	/**
 	 * Upgrades the install.
 	 *
@@ -410,12 +413,18 @@ class GetPaid_Installer {
 	public static function get_db_schema() {
 		global $wpdb;
 
+		if ( ! empty( self::$schema ) ) {
+			return self::$schema;
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		$charset_collate = $wpdb->get_charset_collate();
 
+		$schema = array();
+
 		// Subscriptions.
-		$schema = "CREATE TABLE {$wpdb->prefix}wpinv_subscriptions (
+		$schema['subscriptions'] = "CREATE TABLE {$wpdb->prefix}wpinv_subscriptions (
 			id bigint(20) unsigned NOT NULL auto_increment,
 			customer_id bigint(20) NOT NULL,
 			frequency int(11) NOT NULL DEFAULT '1',
@@ -439,7 +448,7 @@ class GetPaid_Installer {
 		  ) $charset_collate;";
 
 		// Invoices.
-		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_invoices (
+		$schema['invoices'] = "CREATE TABLE {$wpdb->prefix}getpaid_invoices (
 			post_id BIGINT(20) NOT NULL,
 			customer_id BIGINT(20) NOT NULL DEFAULT 0,
             `number` VARCHAR(100),
@@ -477,7 +486,7 @@ class GetPaid_Installer {
 		  ) $charset_collate;";
 
 		// Invoice items.
-		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_invoice_items (
+		$schema['items'] = "CREATE TABLE {$wpdb->prefix}getpaid_invoice_items (
 			ID BIGINT(20) NOT NULL AUTO_INCREMENT,
             post_id BIGINT(20) NOT NULL,
             item_id BIGINT(20) NOT NULL,
@@ -500,7 +509,7 @@ class GetPaid_Installer {
 		  ) $charset_collate;";
 
 		// Customers.
-		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_customers (
+		$schema['customers'] = "CREATE TABLE {$wpdb->prefix}getpaid_customers (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT,
 			user_id BIGINT(20) NOT NULL,
 			email VARCHAR(100) NOT NULL,
@@ -511,7 +520,7 @@ class GetPaid_Installer {
 			";
 
 		// Add address fields.
-		foreach ( array_keys( getpaid_user_address_fields() ) as $field ) {
+		foreach ( array_keys( getpaid_user_address_fields( true ) ) as $field ) {
 			// Skip id, user_id and email.
 			if ( in_array( $field, array( 'id', 'user_id', 'email', 'purchase_value', 'purchase_count', 'date_created', 'date_modified', 'uuid' ), true ) ) {
 				continue;
@@ -537,11 +546,11 @@ class GetPaid_Installer {
 				$length = 20;
 			}
 
-			$schema .= "`$field` VARCHAR($length) NOT NULL DEFAULT '$default',
+			$schema['customers'] .= "`$field` VARCHAR($length) NOT NULL DEFAULT '$default',
 			";
 		}
 
-		$schema .= "date_created DATETIME NOT NULL,
+		$schema['customers'] .= "date_created DATETIME NOT NULL,
 			date_modified DATETIME NOT NULL,
 			uuid VARCHAR(100) NOT NULL,
 			PRIMARY KEY  (id),
@@ -550,7 +559,7 @@ class GetPaid_Installer {
 		  ) $charset_collate;";
 
 		// Customer meta.
-		$schema .= "CREATE TABLE {$wpdb->prefix}getpaid_customer_meta (
+		$schema['customer_meta'] = "CREATE TABLE {$wpdb->prefix}getpaid_customer_meta (
 			meta_id BIGINT(20) NOT NULL AUTO_INCREMENT,
 			customer_id BIGINT(20) NOT NULL,
 			meta_key VARCHAR(255) NOT NULL,
@@ -560,7 +569,27 @@ class GetPaid_Installer {
 			KEY meta_key (meta_key(191))
 		  ) $charset_collate;";
 
-		return $schema;
+		// Filter.
+		$schema = apply_filters( 'getpaid_db_schema', $schema );
+
+		self::$schema         = implode( "\n", array_values( $schema ) );
+		self::$schema_version = md5( sanitize_key( self::$schema ) );
+
+		return self::$schema;
+	}
+
+	/**
+	 * Returns the DB schema version.
+	 *
+	 */
+	public static function get_db_schema_version() {
+		if ( ! empty( self::$schema_version ) ) {
+			return self::$schema_version;
+		}
+
+		self::get_db_schema();
+
+		return self::$schema_version;
 	}
 
 	/**
@@ -569,7 +598,7 @@ class GetPaid_Installer {
 	 * @return bool
 	 */
 	public static function is_db_schema_up_to_date() {
-		return md5( self::get_db_schema() ) === get_option( 'getpaid_db_schema' );
+		return self::get_db_schema_version() === get_option( 'getpaid_db_schema' );
 	}
 
 	/**
@@ -600,7 +629,7 @@ class GetPaid_Installer {
 
 		dbDelta( $schema );
 		wp_cache_flush();
-		update_option( 'getpaid_db_schema', md5( $schema ) );
+		update_option( 'getpaid_db_schema', self::get_db_schema_version() );
 	}
 
 	/**

@@ -777,7 +777,7 @@ class WPInv_Ajax {
                     $invoice->add_item( $item );
                 }
             }
-}
+        }
 
         $invoice->set_disable_taxes( ! empty( $_POST['disable_taxes'] ) );
 
