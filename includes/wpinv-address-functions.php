@@ -123,7 +123,7 @@ function getpaid_maybe_add_default_address( &$invoice ) {
  *
  * @return array
  */
-function getpaid_user_address_fields() {
+function getpaid_user_address_fields( $force_vat = false ) {
 
     $address_fields = apply_filters(
         'getpaid_user_address_fields',
@@ -142,7 +142,7 @@ function getpaid_user_address_fields() {
         )
     );
 
-    if ( ! wpinv_use_taxes() && isset( $address_fields['vat_number'] ) && ! wp_doing_ajax() ) {
+    if ( ! wpinv_use_taxes() && isset( $address_fields['vat_number'] ) && ! wp_doing_ajax() && ! $force_vat ) {
         unset( $address_fields['vat_number'] );
     }
 

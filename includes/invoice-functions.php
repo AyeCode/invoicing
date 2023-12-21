@@ -1308,8 +1308,8 @@ function getpaid_get_invoice_status_classes() {
 			'publish'            => 'bg-success',
 			'wpi-renewal'        => 'bg-primary',
             'wpi-cancelled'      => 'bg-secondary',
-            'wpi-pending'        => 'bg-dark',
-            'wpi-quote-pending'  => 'bg-dark',
+            'wpi-pending'        => 'bg-dark text-white',
+            'wpi-quote-pending'  => 'bg-dark text-white',
             'wpi-refunded'       => 'bg-secondary',
 		)
 	);

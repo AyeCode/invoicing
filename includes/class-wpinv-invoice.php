@@ -326,7 +326,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function get_status_class() {
 		$statuses = getpaid_get_invoice_status_classes();
-		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'bg-dark';
+		return isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : 'bg-dark text-white';
 	}
 
 	/**
@@ -3703,7 +3703,6 @@ class WPInv_Invoice extends GetPaid_Data {
 				}
 			}
 
-			$item_taxes = array_replace( $this->get_taxes(), $item_taxes );
 			$this->set_taxes( $item_taxes );
 
 			$initial_tax   = array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) );
