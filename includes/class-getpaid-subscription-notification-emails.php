@@ -28,11 +28,12 @@ class GetPaid_Subscription_Notification_Emails {
 		$this->subscription_actions = apply_filters(
 			'getpaid_notification_email_subscription_triggers',
 			array(
+				'getpaid_subscription_active'    => 'subscription_active',
 				'getpaid_subscription_trialling' => 'subscription_trial',
 				'getpaid_subscription_cancelled' => 'subscription_cancelled',
 				'getpaid_subscription_expired'   => 'subscription_expired',
 				'getpaid_subscription_completed' => 'subscription_complete',
-				'getpaid_daily_maintenance'      => 'renewal_reminder',
+				'getpaid_daily_maintenance'      => 'renewal_reminder'
 			)
 		);
 
@@ -220,6 +221,19 @@ class GetPaid_Subscription_Notification_Emails {
 
 		do_action( 'getpaid_after_send_subscription_notification', $type, $subscription, $email );
 
+	}
+
+	/**
+	 * Sends a subscription active.
+	 *
+	 * @since 2.8.4
+	 *
+	 * @param WPInv_Subscription $subscription
+	 */
+	public function subscription_active( $subscription ) {
+		$email = new GetPaid_Notification_Email( __FUNCTION__, $subscription );
+
+		$this->send_email( $subscription, $email, __FUNCTION__ );
 	}
 
     /**
