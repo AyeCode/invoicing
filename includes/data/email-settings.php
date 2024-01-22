@@ -665,6 +665,62 @@ return array(
 
     ),
 
+    'subscription_active' => array(
+
+        'email_subscription_active_header'    => array(
+            'id'   => 'email_subscription_active_header',
+            'name' => '<h3>' . __( 'Subscription Active', 'invoicing' ) . '</h3>',
+            'desc' => __( 'This email is sent when a subscription is activated.', 'invoicing' ),
+            'type' => 'header',
+        ),
+
+        'email_subscription_active_active'    => array(
+            'id'   => 'email_subscription_active_active',
+            'name' => __( 'Enable/Disable', 'invoicing' ),
+            'desc' => __( 'Enable this email notification', 'invoicing' ),
+            'type' => 'checkbox',
+            'std'  => 1,
+        ),
+
+        'email_subscription_active_admin_bcc' => array(
+            'id'   => 'email_subscription_active_admin_bcc',
+            'name' => __( 'Enable Admin BCC', 'invoicing' ),
+            'desc' => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
+            'type' => 'checkbox',
+            'std'  => 1,
+        ),
+
+        'email_subscription_active_subject'   => array(
+            'id'       => 'email_subscription_active_subject',
+            'name'     => __( 'Subject', 'invoicing' ),
+            'desc'     => __( 'Enter the subject line for the subscription active email.', 'invoicing' ),
+            'help-tip' => true,
+            'type'     => 'text',
+            'std'      => __( '[{site_title}] Your subscription #{subscription_id} has been activated', 'invoicing' ),
+            'size'     => 'large',
+        ),
+
+        'email_subscription_active_heading'   => array(
+            'id'       => 'email_subscription_active_heading',
+            'name'     => __( 'Email Heading', 'invoicing' ),
+            'desc'     => __( 'Enter the main heading of this email.', 'invoicing' ),
+            'help-tip' => true,
+            'type'     => 'text',
+            'std'      => __( 'Subscription Activated', 'invoicing' ),
+            'size'     => 'large',
+        ),
+
+        'email_subscription_active_body'      => array(
+            'id'    => 'email_subscription_active_body',
+            'name'  => __( 'Email Content', 'invoicing' ),
+            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'type'  => 'rich_editor',
+            'std'   => __( '<p>Hi {first_name},</p><p>Your subscription #{subscription_id} for {subscription_name} has been activated.</p>', 'invoicing' ),
+            'class' => 'large',
+            'size'  => 10,
+        ),
+    ),
+
     'subscription_trial'     => array(
 
         'email_subscription_trial_header'    => array(

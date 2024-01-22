@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.4 =
+* Option added to send notification on subscription activated - ADDED
+
 = 2.8.3 =
 * Add option to change the button type used to apply discounts.
 * Fix slashes added to invoice item names that have special chars.
