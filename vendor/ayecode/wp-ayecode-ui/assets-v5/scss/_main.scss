@@ -336,6 +336,7 @@ a[class*='bg-'] {
 
 
 // Uploader in safari button overflowing
-.moxie-shim {
-  position: relative !important;
+.geodir-add-files .moxie-shim {
+  position: initial !important;
+  background: transparent; // this is for divi theme that does background position stuff and breaks it.
 }
