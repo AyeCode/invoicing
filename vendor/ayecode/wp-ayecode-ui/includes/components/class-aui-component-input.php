@@ -199,7 +199,7 @@ class AUI_Component_Input {
 
 			// validation text
 			if ( ! empty( $args['validation_text'] ) ) {
-				$output .= ' oninvalid="setCustomValidity(\'' . esc_attr( $args['validation_text'] ) . '\')" ';
+				$output .= ' oninvalid="setCustomValidity(\'' . esc_attr( addslashes( $args['validation_text'] ) ) . '\')" ';
 				$output .= ' onchange="try{setCustomValidity(\'\')}catch(e){}" ';
 			}
 
@@ -660,7 +660,7 @@ else{$eli.attr(\'type\',\'password\');}"
 
 			// validation text
 			if ( ! empty( $args['validation_text'] ) ) {
-				$output .= ' oninvalid="setCustomValidity(\'' . esc_attr( $args['validation_text'] ) . '\')" ';
+				$output .= ' oninvalid="setCustomValidity(\'' . esc_attr( addslashes( $args['validation_text'] ) ) . '\')" ';
 				$output .= ' onchange="try{setCustomValidity(\'\')}catch(e){}" ';
 			}
 

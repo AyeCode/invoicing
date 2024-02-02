@@ -3,16 +3,19 @@ msgstr ""
 "Project-Id-Version: Invoicing\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-16 06:02+0000\n"
-"PO-Revision-Date: 2023-12-04 07:27+0000\n"
+"PO-Revision-Date: 2024-01-29 14:48+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.4.6; wp-5.7"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Loco-Version: 2.4.6; wp-5.7\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
 
 #: includes/class-getpaid-notification-email-sender.php:101
 #, php-format
@@ -178,84 +181,84 @@ msgid "%s Details"
 msgstr ""
 
 #: includes/wpinv-payment-functions.php:89
-#, fuzzy, php-format
+#, php-format
 msgid "%s for each day."
 msgid_plural "%1$s for each %2$d days."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:121
-#, fuzzy, php-format
+#, php-format
 msgid "%s for each month."
 msgid_plural "%1$s for each %2$d months."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:105
-#, fuzzy, php-format
+#, php-format
 msgid "%s for each week."
 msgid_plural "%1$s for each %2$d weeks."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:137
-#, fuzzy, php-format
+#, php-format
 msgid "%s for each year."
 msgid_plural "%1$s for each %2$d years."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:86
-#, fuzzy, php-format
+#, php-format
 msgid "%s for one day."
 msgid_plural "%1$s for each day, for %2$d installments."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:118
-#, fuzzy, php-format
+#, php-format
 msgid "%s for one month."
 msgid_plural "%1$s for each month, for %2$d installments."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:102
-#, fuzzy, php-format
+#, php-format
 msgid "%s for one week."
 msgid_plural "%1$s for each week, for %2$d installments."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:134
-#, fuzzy, php-format
+#, php-format
 msgid "%s for one year."
 msgid_plural "%1$s for each year, for %2$d installments."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:51
-#, fuzzy, php-format
+#, php-format
 msgid "%s for the first day."
 msgid_plural "%1$s for the first %2$d days."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:59
-#, fuzzy, php-format
+#, php-format
 msgid "%s for the first month."
 msgid_plural "%1$s for the first %2$d months."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:55
-#, fuzzy, php-format
+#, php-format
 msgid "%s for the first week."
 msgid_plural "%1$s for the first %2$d weeks."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/wpinv-payment-functions.php:63
-#, fuzzy, php-format
+#, php-format
 msgid "%s for the first year."
 msgid_plural "%1$s for the first %2$d years."
 msgstr[0] ""
@@ -551,8 +554,8 @@ msgstr ""
 msgid ""
 "<p>A new invoice <a href=\"{invoice_link}\">({invoice_number})</a> to {name} "
 "for {invoice_total} {invoice_currency} has been created on your site. <a "
-"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
-"</p>"
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
+"p>"
 msgstr ""
 
 #: includes/data/email-settings.php:774
@@ -583,8 +586,8 @@ msgstr ""
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
 "<a href=\"{invoice_link}\">#{invoice_number}</a> {is_was} due on "
-"{invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>"
-"To view / pay now for this invoice please use the following link: <a "
+"{invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</"
+"p><p>To view / pay now for this invoice please use the following link: <a "
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
@@ -608,37 +611,37 @@ msgid ""
 "<p>Hi {name},</p><p>I would like to let you know that we have received and "
 "are currently processing your payment for the invoice <a "
 "href=\"{invoice_link}\">#{invoice_number}</a> on {site_title}. <a "
-"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
-"</p>"
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
+"p>"
 msgstr ""
 
 #: includes/data/email-settings.php:528
 msgid ""
-"<p>Hi {name},</p><p>The following note has been added to your {invoice_label}"
-" <a href=\"{invoice_link}\">#{invoice_number}</a>:</p><blockquote "
-"class=\"wpinv-note\">{customer_note}</blockquote><a class=\"btn btn-"
-"success\" href=\"{invoice_link}\">View / Print Invoice</a>"
+"<p>Hi {name},</p><p>The following note has been added to your "
+"{invoice_label} <a href=\"{invoice_link}\">#{invoice_number}</a>:</"
+"p><blockquote class=\"wpinv-note\">{customer_note}</blockquote><a "
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
 msgstr ""
 
 #: includes/data/email-settings.php:236
 msgid ""
 "<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we "
-"receive your payment. <a class=\"btn btn-success\" href=\"{invoice_link}\">"
-"View / Print Invoice</a></p>"
+"receive your payment. <a class=\"btn btn-success\" "
+"href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
 #: includes/data/email-settings.php:415
 msgid ""
 "<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded. <a "
-"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
-"</p>"
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
+"p>"
 msgstr ""
 
 #: includes/data/email-settings.php:358
 msgid ""
 "<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid. <a "
-"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
-"</p>"
+"class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
+"p>"
 msgstr ""
 
 #: includes/data/email-settings.php:180
@@ -3761,8 +3764,6 @@ msgstr ""
 
 #: templates/invoice-history.php:106 includes/admin/admin-pages.php:96
 #: includes/admin/views/html-tax-rate-edit.php:68
-#: includes/admin/views/html-tax-rate-edit.php:68
-#: includes/admin/views/html-tax-rule-edit.php:38
 #: includes/admin/views/html-tax-rule-edit.php:38
 msgid "Delete"
 msgstr ""
@@ -4550,15 +4551,15 @@ msgstr ""
 
 #: widgets/buy-item.php:41
 msgid ""
-"Enter comma separated list of invoicing item id and quantity "
-"(item_id|quantity). Ex. 101|2 "
+"Enter comma separated list of invoicing item id and quantity (item_id|"
+"quantity). Ex. 101|2 "
 msgstr ""
 
 #: widgets/getpaid.php:53
 msgid ""
-"Enter comma separated list of invoicing item id and quantity "
-"(item_id|quantity). Ex. 101|2. This will be ignored in case you specify a "
-"form above. Enter 0 as the quantity to let users select their own quantities"
+"Enter comma separated list of invoicing item id and quantity (item_id|"
+"quantity). Ex. 101|2. This will be ignored in case you specify a form above. "
+"Enter 0 as the quantity to let users select their own quantities"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:193
@@ -13661,8 +13662,8 @@ msgstr ""
 
 #: includes/data/admin-settings.php:516
 msgid ""
-"The main body background color of email template. Default <code>"
-"#fdfdfd</code>."
+"The main body background color of email template. Default <code>#fdfdfd</"
+"code>."
 msgstr ""
 
 #: includes/data/admin-settings.php:523
@@ -13737,18 +13738,17 @@ msgstr ""
 #, php-format
 msgid ""
 "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy "
-"Updates</a> is required to check for and update some installed "
-"plugins/themes, please <a href='%s' onclick='window.open(\"https:"
-"//wpeasyupdates.com/wp-easy-updates.zip\", \"_blank\");' >download</a> and "
-"install it now."
+"Updates</a> is required to check for and update some installed plugins/"
+"themes, please <a href='%s' onclick='window.open(\"https://wpeasyupdates.com/"
+"wp-easy-updates.zip\", \"_blank\");' >download</a> and install it now."
 msgstr ""
 
 #: includes/admin/html-admin-page-addons.php:211
 #, php-format
 msgid ""
 "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy "
-"Updates</a> is required to check for and update some installed "
-"plugins/themes, please <a href='%s'>activate</a> it now."
+"Updates</a> is required to check for and update some installed plugins/"
+"themes, please <a href='%s'>activate</a> it now."
 msgstr ""
 
 #: includes/api/class-getpaid-rest-report-sales-controller.php:647
@@ -14034,14 +14034,14 @@ msgstr ""
 
 #: includes/data/admin-settings.php:124
 msgid ""
-"This is the checkout page where buyers will complete their payments. The <b>"
-"[wpinv_checkout]</b> short code must be on this page."
+"This is the checkout page where buyers will complete their payments. The "
+"<b>[wpinv_checkout]</b> short code must be on this page."
 msgstr ""
 
 #: includes/data/admin-settings.php:135
 msgid ""
-"This is the page buyers are sent to after completing their payments. The <b>"
-"[wpinv_receipt]</b> short code should be on this page."
+"This is the page buyers are sent to after completing their payments. The "
+"<b>[wpinv_receipt]</b> short code should be on this page."
 msgstr ""
 
 #: includes/data/admin-settings.php:146
@@ -14082,14 +14082,14 @@ msgstr ""
 
 #: includes/data/admin-settings.php:157
 msgid ""
-"This page shows an invoice history for the current user. The <b>"
-"[wpinv_history]</b> short code should be on this page."
+"This page shows an invoice history for the current user. The "
+"<b>[wpinv_history]</b> short code should be on this page."
 msgstr ""
 
 #: includes/data/admin-settings.php:168
 msgid ""
-"This page shows subscriptions history for the current user. The <b>"
-"[wpinv_subscriptions]</b> short code should be on this page."
+"This page shows subscriptions history for the current user. The "
+"<b>[wpinv_subscriptions]</b> short code should be on this page."
 msgstr ""
 
 #: templates/payment-forms/form.php:20
