@@ -108,7 +108,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 		$before = gmdate( 'Y-m-d' );
 
 		if ( ! empty( $request['before'] ) ) {
-			$before  = min( $before, strtotime( sanitize_text_field( $request['before'] ) ) );
+			$before  = min( strtotime( $before ), strtotime( sanitize_text_field( $request['before'] ) ) );
 		}
 
 		// Set the previous date range.
