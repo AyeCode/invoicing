@@ -65,7 +65,7 @@ do_action( 'getpaid_before_payment_form', $form );
 
         // And an indication that this is a payment form submission.
         getpaid_hidden_field( 'getpaid_payment_form_submission', '1' );
-
+ 
         // Fires before displaying payment form elements.
         do_action( 'getpaid_payment_form_before_elements', $form );
 

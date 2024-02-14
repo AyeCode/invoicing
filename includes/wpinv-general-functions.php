@@ -470,7 +470,7 @@ function wpinv_alter_elementor_widget_config( $config ) {
                 $config['initial_document']['widgets'][ $key ]['icon'] = 'eicon-globe'; //@todo if no icons use on page then font-awesome is not loaded, wif we can fifure out how to force load we can use icons. <i class="fas fa-globe-americas"></i><i class="fa-solid fa-earth-americas"></i>
             }
         }
-    }
+    } 
 
     return $config;
 }

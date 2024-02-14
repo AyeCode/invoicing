@@ -1150,6 +1150,61 @@ function wpinv_on_update_settings( $old_value, $value, $option ) {
 }
 add_action( 'update_option_wpinv_settings', 'wpinv_on_update_settings', 10, 3 );
 
+
+/**
+ * Retrieve merge tags for email templates.
+ * 
+ * Returns an array of merge tags that can be used in email templates for invoices & subscriptions.
+ * 
+ * @since    2.1.8
+ *
+ * @return array
+ */
+function wpinv_get_email_merge_tags( $subscription = false ) {
+	$merge_tags = array(
+		'{site_title}'           => __( 'Site Title', 'invoicing' ),
+		'{name}'                 => __( "Customer's full name", 'invoicing' ),
+		'{first_name}'           => __( "Customer's first name", 'invoicing' ),
+		'{last_name}'            => __( "Customer's last name", 'invoicing' ),
+		'{email}'                => __( "Customer's email address", 'invoicing' ),
+		'{invoice_number}'       => __( 'The invoice number', 'invoicing' ),
+		'{invoice_currency}'     => __( 'The invoice currency', 'invoicing' ),
+		'{invoice_total}'        => __( 'The invoice total', 'invoicing' ),
+		'{invoice_link}'         => __( 'The invoice link', 'invoicing' ),
+		'{invoice_pay_link}'     => __( 'The payment link', 'invoicing' ),
+		'{invoice_receipt_link}' => __( 'The receipt link', 'invoicing' ),
+		'{invoice_date}'         => __( 'The date the invoice was created', 'invoicing' ),
+		'{invoice_due_date}'     => __( 'The date the invoice is due', 'invoicing' ),
+		'{date}'                 => __( "Today's date", 'invoicing' ),
+		'{is_was}'               => __( 'If due date of invoice is past, displays "was" otherwise displays "is"', 'invoicing' ),
+		'{invoice_label}'        => __( 'Invoices/quotes singular name. Ex: Invoice/Quote', 'invoicing' ),
+		'{invoice_quote}'        => __( 'Invoices/quotes singular name in small letters. Ex: invoice/quote', 'invoicing' ),
+		'{invoice_description}'  => __( 'The description of the invoice', 'invoicing' ),
+	);
+
+	if ( $subscription ) {
+		$merge_tags = array_merge(
+			$merge_tags,
+			array(
+				'{subscription_renewal_date}'     => __( 'The next renewal date of the subscription', 'invoicing' ),
+				'{subscription_created}'          => __( "The subscription's creation date", 'invoicing' ),
+				'{subscription_status}'           => __( "The subscription's status", 'invoicing' ),
+				'{subscription_profile_id}'       => __( "The subscription's remote profile id", 'invoicing' ),
+				'{subscription_id}'               => __( "The subscription's id", 'invoicing' ),
+				'{subscription_recurring_amount}' => __( 'The renewal amount of the subscription', 'invoicing' ),
+				'{subscription_initial_amount}'   => __( 'The initial amount of the subscription', 'invoicing' ),
+				'{subscription_recurring_period}' => __( 'The recurring period of the subscription (e.g 1 year)', 'invoicing' ),
+				'{subscription_bill_times}'       => __( 'The maximum number of times the subscription can be renewed', 'invoicing' ),
+				'{subscription_url}'              => __( 'The URL to manage a subscription', 'invoicing' ),
+				'{subscription_name}'             => __( 'The name of the recurring item', 'invoicing' ),
+			)
+		);
+	}
+
+	return $merge_tags;
+}
+
+
 /**
  * Returns the merge tags help text.
  *
@@ -1158,16 +1213,28 @@ add_action( 'update_option_wpinv_settings', 'wpinv_on_update_settings', 10, 3 );
  * @return string
  */
 function wpinv_get_merge_tags_help_text( $subscription = false ) {
+	$merge_tags = wpinv_get_email_merge_tags( $subscription );
 
-	$url  = $subscription ? 'https://gist.github.com/picocodes/3d213982d57c34edf7a46fd3f0e8583e' : 'https://gist.github.com/picocodes/43bdc4d4bbba844534b2722e2af0b58f';
+	$output = '<div class="bsui">';
+
 	$link = sprintf(
-		'<strong><a href="%s" target="_blank">%s</a></strong>',
-		$url,
+		'<strong class="getpaid-merge-tags text-primary" role="button">%s</strong>',
 		esc_html__( 'View available merge tags.', 'invoicing' )
 	);
 
 	$description = esc_html__( 'The content of the email (Merge Tags and HTML are allowed).', 'invoicing' );
+	
+	$output .= "$description $link";
 
-	return "$description $link";
+	$output .= '<div class="getpaid-merge-tags-content mt-2 p-1 d-none">';
+	$output .= '<p class="mb-2">' . esc_html__( 'The following wildcards can be used in email subjects, heading and content:', 'invoicing' ) . '</p>';
 
+	$output .= '<ul class="p-0 m-0">';
+	foreach($merge_tags as $tag => $tag_description) {
+		$output .= "<li class='mb-2'><strong class='text-dark'>$tag</strong> &mdash; $tag_description</li>";
+	}
+
+	$output .= '</ul></div></div>';
+
+	return $output;
 }
