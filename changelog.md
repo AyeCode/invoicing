@@ -1,4 +1,7 @@
-= 2.0.2-beta =
+= 2.0.3-beta =
+* Moved email merge tags from an external gist to display below the email body textarea - CHANGED
+
+# 2.0.2-beta
 * Fix "minimum value" error with number settings fields - FIXED
 * Add the settings REST API endpoint - ADDED
 * Add sales REST API endpoint - ADDED
