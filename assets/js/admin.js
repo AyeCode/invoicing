@@ -184,7 +184,16 @@ jQuery(function ($) {
 		var _input = $( this ).find('input')
 		_input.prop( 'checked', ! _input.prop( 'checked' ) );
 
-	})
+	});
+
+	$('.getpaid-merge-tags').click(function() {
+		const tags = $(this).parent().find('.getpaid-merge-tags-content');
+		// fix css d-none !important rule
+		if(tags.hasClass('d-none')) {
+			tags.css({ 'display' : 'none' }) && tags.removeClass('d-none');
+		}
+		tags.slideToggle('fast');
+	});
 
 	// returns a random string
 	function random_string() {

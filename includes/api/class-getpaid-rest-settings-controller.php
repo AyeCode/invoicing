@@ -129,7 +129,7 @@ class GetPaid_REST_Settings_Controller extends GetPaid_REST_Controller {
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
-		);
+		); 
 
 		register_rest_route(
 			$namespace,

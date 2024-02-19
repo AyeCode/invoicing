@@ -106,7 +106,7 @@ class GetPaid_REST_Date_Based_Controller extends GetPaid_REST_Controller {
 
 		$after  = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( $request['after'] ) ) );
 		$before = gmdate( 'Y-m-d' );
-
+		
 		if ( ! empty( $request['before'] ) ) {
 			$before  = min( strtotime( $before ), strtotime( sanitize_text_field( $request['before'] ) ) );
 		}
