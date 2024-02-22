@@ -209,7 +209,7 @@ class GetPaid_REST_Report_Sales_Controller extends GetPaid_REST_Date_Based_Contr
 			// Abort unprepared.
 			if ( ! isset( $report_data->$key ) ) {
 				continue;
-			}
+			} 
 
 			// Abort defaults.
 			if ( in_array( $key, array( 'sales', 'refunds', 'tax', 'fees', 'discount', 'invoices', 'items' ) ) ) {

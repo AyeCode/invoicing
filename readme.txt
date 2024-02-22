@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.5 =
+* Moved email merge tags from an external gist to display below the email body textarea - CHANGED
+
 = 2.8.4 =
 * Option added to send notification on subscription activated - ADDED
 
