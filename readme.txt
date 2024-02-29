@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.4
-Stable tag: 2.8.5
+Stable tag: 2.8.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.8.5 =
+= 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED
 * Modal payment form clos button not working if BS5 styles selected - FIXED
 
