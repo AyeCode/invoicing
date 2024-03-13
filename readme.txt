@@ -146,6 +146,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.8.7 =
 * PHP 8.2 compatibility changes in Emogrifier class - CHANGED
+* Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED
 
 = 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED

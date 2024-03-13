@@ -286,6 +286,26 @@ function getpaid_get_recaptcha_version() {
 	return apply_filters( 'getpaid_recaptcha_version', wpinv_get_option( 'recaptcha_version', 'v2' ) );
 }
 
+function getpaid_recaptcha_api_url() {
+	// Prevent conflicts with Ninja Forms recaptcha.
+	if ( ! empty( $_REQUEST['action'] ) && $_REQUEST['action'] == 'geodir_ninja_forms' ) {
+		$url = '';
+	} else {
+		$url = getpaid_recaptcha_get_api_url();
+	}
+
+	return apply_filters( 'getpaid_recaptcha_api_url', $url );
+}
+
+function getpaid_recaptcha_get_api_url() {
+	return add_query_arg(
+		array(
+			'render' => 'v2' === getpaid_get_recaptcha_version() ? 'explicit' : getpaid_get_recaptcha_site_key(),
+		),
+		'https://www.google.com/recaptcha/api.js'
+	);
+}
+
 /**
  * Returns recaptcha settings.
  *
