@@ -100,6 +100,8 @@ class WPInv_Admin_Addons extends Ayecode_Addons {
 	 * @param string $plugin
 	 */
 	public function output_button( $addon ) {
+
+//        print_r($addon);
 		$current_tab     = empty( $_GET['tab'] ) ? 'addons' : sanitize_title( $_GET['tab'] );
 //		$button_text = __('Free','invoicing');
 //		$licensing = false;
@@ -213,7 +215,7 @@ $button_args['slug'] = $addon->licensing->edd_slug;}
 					$button_args['url'] = '#';
 				}
 			}
-} else {
+        } else {
 			if ( $button_args['type'] == 'recommended_plugins' ) {
 				$button_args['button_text'] = __( 'Install', 'invoicing' );
 					} else {

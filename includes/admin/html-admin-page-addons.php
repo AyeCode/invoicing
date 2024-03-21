@@ -160,6 +160,14 @@ continue;}// don't show quote add on
 										$addon->info->slug = 'getpaid-stripe-payments';
 										$addon->info->link = 'https://wordpress.org/plugins/getpaid-stripe-payments/';
 									}
+                                    elseif( 'wallet' == $addon->info->slug ){
+										$addon->info->slug = 'getpaid-wallet';
+										$addon->info->link = 'https://wordpress.org/plugins/getpaid-wallet/';
+									}
+                                    elseif( 'item-inventory' == $addon->info->slug ){
+										$addon->info->slug = 'getpaid-item-inventory';
+										$addon->info->link = 'https://wordpress.org/plugins/getpaid-item-inventory/';
+									}
 
 									if ( isset( $addon->info->link ) && substr( $addon->info->link, 0, 21 ) === 'https://wordpress.org' ) {
 										echo '<a href="' . esc_url( admin_url( '/plugin-install.php?tab=plugin-information&plugin=' . $addon->info->slug ) ) . '&width=770&height=660&TB_iframe=true" class="thickbox" >';
