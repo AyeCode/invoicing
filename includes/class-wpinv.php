@@ -379,17 +379,8 @@ class WPInv_Plugin {
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
 
 		// reCaptcha.
-		if ( getpaid_is_recaptcha_enabled() ) {
-			$url = apply_filters(
-				'getpaid_recaptcha_api_url',
-				add_query_arg(
-					array(
-						'render' => 'v2' === getpaid_get_recaptcha_version() ? 'explicit' : getpaid_get_recaptcha_site_key(),
-					),
-					'https://www.google.com/recaptcha/api.js'
-				)
-			);
-			wp_enqueue_script( 'recaptcha', $url, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		if ( getpaid_is_recaptcha_enabled() && ( $recaptcha_js = getpaid_recaptcha_api_url() ) ) {
+			wp_enqueue_script( 'recaptcha', $recaptcha_js, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );

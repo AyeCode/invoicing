@@ -144,9 +144,16 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.8 =
+* IPN validation fails to validate receiver email with PayPal sandbox mode - FIXED
+
+= 2.8.7 =
+* PHP 8.2 compatibility changes in Emogrifier class - CHANGED
+* Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED
+
 = 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED
-* Modal payment form clos button not working if BS5 styles selected - FIXED
+* Modal payment form close button not working if BS5 styles selected - FIXED
 
 = 2.8.4 =
 * Option added to send notification on subscription activated - ADDED
@@ -243,7 +250,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.6.17 =
 * Fix issues where 2 subscriptions are created for manually generated invoices.
-* Creating items on the invoice page defaults to "Tax Excempt".
+* Creating items on the invoice page defaults to "Tax Exempt".
 * Fixed: Date picker not showing on the report export page.
 
 = 2.6.16 =
@@ -268,7 +275,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Fatal error when checking out with an existing username on PHP 8 - FIXED
 
 = 2.6.11 =
-* Fallback tax rate does not allow dicimals - FIXED
+* Fallback tax rate does not allow decimals - FIXED
 * Clicking on the number of invoices in the customers table shows their invoices - ADDED
 * Allow HTML in item descriptions - CHANGED
 * Ability to prefill form values via URL query variables - ADDED
@@ -395,7 +402,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.4.1 =
 * Add new item dropdown only displays 100 items - FIXED
-* Add getpaid_use_new_invoice_items_metabox to revert back to old invocie items metabox - ADDED
+* Add getpaid_use_new_invoice_items_metabox to revert back to old invoice items metabox - ADDED
 
 = 2.4.0 =
 * Add invoice items now lists all items instead of using ajax - CHANGED
@@ -410,7 +417,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Settings reset when General settings tab is saved - FIXED
 
 = 2.3.7 =
-* Renew Authorize.NET suscriptions on the expiry date instead of one day after expiry - CHANGED
+* Renew Authorize.NET subscriptions on the expiry date instead of one day after expiry - CHANGED
 * Option to stop GetPaid from sending emails for free invoices - ADDED
 * MaxMind database API key not saving - FIXED
 * [Authorize.NET] Unable to pay with the same card twice when logged out - FIXED
@@ -482,7 +489,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Add note for successful notification emails - ADDED
 * Link to remote subscription from the subscriptions page - ADDED
 * Ability to manually update a subscription's profile id - ADDED
-* Site admins can now view other user's suscriptions on the frontend - ADDED
+* Site admins can now view other user's subscriptions on the frontend - ADDED
 * Show subscription bill times on invoices and subscriptions - ADDED
 * Trigger js event when form state changes - ADDED
 * Reload page until payment is processed - ADDED
@@ -493,7 +500,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to programmatically link a payment form and an invoice - ADDED
 
 = 2.1.10 =
-* Non-overidden GetPaid templates not working on Oxygen pagebuilder - FIXED
+* Non-overridden GetPaid templates not working on Oxygen pagebuilder - FIXED
 
 = 2.1.9 =
 * Rename improperly named gateways in invoices table - FIXED
@@ -545,7 +552,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.1.3 =
 * `wpinv_insert_invoice()` function does not return created invoice on success - FIXED
-* UK nolonger treated as an EU state and nolonger applies reverse VAT - CHANGED
+* UK no longer treated as an EU state and no longer applies reverse VAT - CHANGED
 * Ability to for customers to edit their billing addresses - ADDED
 * Show total spent on the customers list table - ADDED
 * Show invoice count on the customers list table - ADDED
@@ -555,7 +562,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.1.2 =
 * Customers list does not display all available customers - FIXED
 * Discounts only usable once if a maximum use count is set - FIXED
-* Remove jQuery block ui dependancy - CHANGED
+* Remove jQuery block ui dependency - CHANGED
 * City not showing on invoice edit metabox - FIXED
 * Price inclusive of tax does not update the subtotal on the invoice - FIXED
 * Display subscriptions info on the Gateways overview page - CHANGED
@@ -583,7 +590,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 = 2.0.7 =
 * Incompatibility issues with UX Builder from Flatsome - FIXED
-* Template overides loaded twice - FIXED
+* Template overrides loaded twice - FIXED
 * Taxes sometimes applied even if disabled - FIXED
 * Wrong trial period shown on the item edit page - FIXED
 
@@ -636,12 +643,12 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Ability to create payment forms - ADDED
 * If VAT is enabled, you can now disable taxes on a per item basis - ADDED
 * If VAT is enabled, you can now disable taxes on a per invoice basis - ADDED
-* Inovice action buttons not working on the 2019 theme - FIXED
+* Invoice action buttons not working on the 2019 theme - FIXED
 * Ability to change the invoice date - ADDED
 * CTA for free checkouts changed from "Complete" to "Continue" - CHANGED
 * Unable to checkout when required fields are hidden via CSS - FIXED
 * Buy now buttons shortcode now visible - ADDED
-* Admin menus re-ordered to provide better hierachy - CHANGED
+* Admin menus re-ordered to provide better hierarchy - CHANGED
 * Revenue reports - ADDED
 * Yoast SEO 14.1 style conflicts - FIXED
 * Show subscription details on receipt - ADDED
@@ -813,7 +820,7 @@ Option added to remove data on uninstall - CHANGED
 Show last invoice's sequential number - ADDED
 Set PayPal landing page to Billing page - CHANGED
 GD Listing does not renewed on renewal payment - FIXED
-Changing currency should not reflected in existing invoices until invoices resaved - FIXED
+Changing currency should not reflected in existing invoices until invoices re-saved - FIXED
 Negative total if discount is greater than item price - FIXED
 Checkout/history/success pages should not be cached - FIXED
 

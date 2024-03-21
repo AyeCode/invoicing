@@ -163,7 +163,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		if ( strtolower( $invoice->get_currency() ) !== strtolower( $currency ) ) {
 
 			/* translators: %s: currency code. */
-			$invoice->update_status( 'wpi-processing', sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'invoicing' ), $currency ) );
+			$invoice->update_status( 'wpi-processing', wp_sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'invoicing' ), $currency ) );
+			$invoice->add_note( wp_sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'invoicing' ), $currency ), false, false, true );
 
 			wpinv_error_log( "Currencies do not match: {$currency} instead of {$invoice->get_currency()}", 'IPN Error', __FILE__, __LINE__, true );
 		}
@@ -181,7 +182,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		if ( number_format( $invoice->get_total(), 2, '.', '' ) !== number_format( $amount, 2, '.', '' ) ) {
 
 			/* translators: %s: Amount. */
-			$invoice->update_status( 'wpi-processing', sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ) );
+			$invoice->update_status( 'wpi-processing', wp_sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ) );
+			$invoice->add_note( wp_sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ), false, false, true );
 
 			wpinv_error_log( "Amounts do not match: {$amount} instead of {$invoice->get_total()}", 'IPN Error', __FILE__, __LINE__, true );
 		}
@@ -196,15 +198,16 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param string   $receiver_email Email to validate.
 	 */
 	protected function validate_ipn_receiver_email( $invoice, $receiver_email ) {
-		$paypal_email = wpinv_get_option( 'paypal_email' );
+		$paypal_email = $this->gateway->is_sandbox( $invoice ) ? wpinv_get_option( 'paypal_sandbox_email', wpinv_get_option( 'paypal_email', '' ) ) : wpinv_get_option( 'paypal_email', '' );
 
 		if ( $receiver_email && strcasecmp( trim( $receiver_email ), trim( $paypal_email ) ) !== 0 ) {
-			wpinv_record_gateway_error( 'IPN Error', "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}" );
+			wpinv_record_gateway_error( 'IPN Error', "IPN Response is for another account: {$receiver_email}. Your PayPal email is {$paypal_email}." );
 
 			/* translators: %s: email address . */
-			$invoice->update_status( 'wpi-processing', sprintf( __( 'Validation error: PayPal IPN response from a different email address (%s).', 'invoicing' ), $receiver_email ) );
+			$invoice->update_status( 'wpi-processing', wp_sprintf( __( 'Validation error: PayPal IPN response from a different email address (%s). Your PayPal email is %s.', 'invoicing' ), $receiver_email, $paypal_email ) );
+			$invoice->add_note( wp_sprintf( __( 'Validation error: PayPal IPN response from a different email address (%s). Your PayPal email is %s.', 'invoicing' ), $receiver_email, $paypal_email ), false, false, true );
 
-			return wpinv_error_log( "IPN Response is for another account: {$receiver_email}. Your email is {$paypal_email}", 'IPN Error', __FILE__, __LINE__, true );
+			return wpinv_error_log( "IPN Response is for another account: {$receiver_email}. Your email PayPal is {$paypal_email}.", 'IPN Error', __FILE__, __LINE__, true );
 		}
 
 		wpinv_error_log( 'Validated PayPal Email', false );
@@ -273,7 +276,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		if ( 'pending' === $payment_status ) {
 
 			/* translators: %s: pending reason. */
-			$invoice->update_status( 'wpi-onhold', sprintf( __( 'Payment pending (%s).', 'invoicing' ), $posted['pending_reason'] ) );
+			$invoice->update_status( 'wpi-onhold', wp_sprintf( __( 'Payment pending (%s).', 'invoicing' ), $posted['pending_reason'] ) );
+			$invoice->add_note( wp_sprintf( __( 'Payment pending (%s).', 'invoicing' ), $posted['pending_reason'] ), false, false, true );
 
 			return wpinv_error_log( 'Invoice marked as "payment held".', false );
 		}

@@ -214,7 +214,7 @@ class GetPaid_Template {
     }
 
     /**
-	 * Get the geodirectory templates theme path.
+	 * Get the GetPaid templates theme path.
 	 *
 	 *
 	 * @return string Template path.
