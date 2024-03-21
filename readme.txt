@@ -3,8 +3,8 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
-Tested up to: 6.4
-Stable tag: 2.8.6
+Tested up to: 6.5
+Stable tag: 2.8.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -149,6 +149,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED
 * IPN validation fails to validate receiver email with PayPal sandbox mode - FIXED
 * PayPal shows error "Things don't appear to be working at the moment." - FIXED
+* Wallet addon not correctly activating from addons page - FIXED
 
 = 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED
