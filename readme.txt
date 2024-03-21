@@ -144,12 +144,10 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.8.8 =
-* IPN validation fails to validate receiver email with PayPal sandbox mode - FIXED
-
 = 2.8.7 =
 * PHP 8.2 compatibility changes in Emogrifier class - CHANGED
 * Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED
+* IPN validation fails to validate receiver email with PayPal sandbox mode - FIXED
 
 = 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED
