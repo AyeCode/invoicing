@@ -252,7 +252,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	protected function get_line_item_args_single_item( $invoice ) {
 		$this->delete_line_items();
 
-        $item_name = sprintf( __( 'Invoice #%s', 'invoicing' ), $invoice->get_number() );
+        $item_name = wp_sprintf( __( 'Invoice %s', 'invoicing' ), $invoice->get_number() );
 		$this->add_line_item( $item_name, 1, wpinv_round_amount( (float) $invoice->get_total(), 2, true ), $invoice->get_id() );
 
 		return $this->get_line_items();
@@ -304,6 +304,11 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	protected function add_line_item( $item_name, $quantity = 1, $amount = 0.0, $item_number = '' ) {
 		$index = ( count( $this->line_items ) / 4 ) + 1;
+
+		/**
+		 * Prevent error "Things don't appear to be working at the moment. (https://www.sandbox.paypal.com/webapps/hermes/error)"
+		 */
+		$item_name = str_replace( "#", "", $item_name );
 
 		$item = apply_filters(
 			'getpaid_paypal_line_item',
@@ -372,7 +377,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         $paypal_args['cmd'] = '_xclick-subscriptions';
 
         // Subscription name.
-        $paypal_args['item_name'] = sprintf( __( 'Invoice #%s', 'invoicing' ), $invoice->get_number() );
+        $paypal_args['item_name'] = wp_sprintf( __( 'Invoice %s', 'invoicing' ), $invoice->get_number() );
 
         // Get subscription args.
         $period                 = strtoupper( substr( $subscription->get_period(), 0, 1 ) );

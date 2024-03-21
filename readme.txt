@@ -148,6 +148,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 * PHP 8.2 compatibility changes in Emogrifier class - CHANGED
 * Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED
 * IPN validation fails to validate receiver email with PayPal sandbox mode - FIXED
+* PayPal shows error "Things don't appear to be working at the moment." - FIXED
 
 = 2.8.6 =
 * Moved email merge tags from an external gist to display below the email body textarea - CHANGED
