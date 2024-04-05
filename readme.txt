@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.8 =
+* Failed to save customer billing address from backend edit profile - FIXED
+
 = 2.8.7 =
 * PHP 8.2 compatibility changes in Emogrifier class - CHANGED
 * Payment form reCAPTCHA conflicts with Ninja Forms reCAPTCHA - FIXED

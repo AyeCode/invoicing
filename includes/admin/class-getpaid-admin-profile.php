@@ -100,18 +100,31 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 		 * @param WP_User $user
 		 */
 		public function add_customer_meta_fields( $user ) {
-
 			if ( ! apply_filters( 'getpaid_current_user_can_edit_customer_meta_fields', current_user_can( 'manage_options' ), $user->ID ) ) {
 				return;
 			}
 
 			$show_fields = $this->get_customer_meta_fields();
 
+			$customer = getpaid_get_customer_by_user_id( (int) $user->ID );
+
 			foreach ( $show_fields as $fieldset_key => $fieldset ) :
 				?>
 				<h2><?php echo esc_html( $fieldset['title'] ); ?></h2>
 				<table class="form-table" id="<?php echo esc_attr( 'getpaid-fieldset-' . $fieldset_key ); ?>">
-					<?php foreach ( $fieldset['fields'] as $key => $field ) : ?>
+					<?php foreach ( $fieldset['fields'] as $key => $field ) :
+						if ( ! empty( $customer ) ) {
+							if ( strpos( $key, '_wpinv_' ) === 0 ) {
+								$save_key = substr( $key , 7 );
+							} else {
+								$save_key = $key;
+							}
+
+							$value = $customer->get( $save_key );
+						} else {
+							$value = $this->get_user_meta( $user->ID, $key );
+						}
+						?>
 						<tr>
 							<th>
 								<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
@@ -119,17 +132,14 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 							<td>
 								<?php if ( ! empty( $field['type'] ) && 'select' === $field['type'] ) : ?>
 									<select name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" class="<?php echo esc_attr( $field['class'] ); ?> wpi_select2" style="width: 25em;">
-										<?php
-											$selected = esc_attr( get_user_meta( $user->ID, $key, true ) );
-										foreach ( $field['options'] as $option_key => $option_value ) :
-											?>
-											<option value="<?php echo esc_attr( $option_key ); ?>" <?php selected( $selected, $option_key, true ); ?>><?php echo esc_html( $option_value ); ?></option>
+										<?php foreach ( $field['options'] as $option_key => $option_value ) : ?>
+											<option value="<?php echo esc_attr( $option_key ); ?>" <?php selected( $value, $option_key, true ); ?>><?php echo esc_html( $option_value ); ?></option>
 										<?php endforeach; ?>
 									</select>
 								<?php elseif ( ! empty( $field['type'] ) && 'checkbox' === $field['type'] ) : ?>
-									<input type="checkbox" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" value="1" class="<?php echo esc_attr( $field['class'] ); ?>" <?php checked( (int) get_user_meta( $user->ID, $key, true ), 1, true ); ?> />
+									<input type="checkbox" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" value="1" class="<?php echo esc_attr( $field['class'] ); ?>" <?php checked( (int) $value, 1, true ); ?> />
 								<?php else : ?>
-									<input type="text" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $this->get_user_meta( $user->ID, $key ) ); ?>" class="<?php echo ( ! empty( $field['class'] ) ? esc_attr( $field['class'] ) : 'regular-text' ); ?>" />
+									<input type="text" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" class="<?php echo ( ! empty( $field['class'] ) ? esc_attr( $field['class'] ) : 'regular-text' ); ?>" />
 								<?php endif; ?>
 								<p class="description"><?php echo wp_kses_post( $field['description'] ); ?></p>
 							</td>
@@ -151,25 +161,40 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 			}
 
 			$save_fields = $this->get_customer_meta_fields();
-
-			$customer = getpaid_get_customer_by_user_id( get_current_user_id() );
-
-			if ( empty( $customer ) ) {
-				$customer = new GetPaid_Customer( 0 );
-				$customer->clone_user( get_current_user_id() );
-			}
+			$save_data = array();
 
 			foreach ( $save_fields as $fieldset ) {
-
 				foreach ( $fieldset['fields'] as $key => $field ) {
+					if ( strpos( $key, '_wpinv_' ) === 0 ) {
+						$save_key = substr( $key , 7 );
+					} else {
+						$save_key = $key;
+					}
 
-					if ( isset( $field['type'] ) && 'checkbox' === $field['type'] ) {
-						$customer->set( $key, ! empty( $_POST[ $key ] ) );
-					} elseif ( isset( $_POST[ $key ] ) ) {
-						$customer->set( $key, wpinv_clean( $_POST[ $key ] ) );
+					if ( $save_key && isset( $field['type'] ) && 'checkbox' === $field['type'] ) {
+						$save_data[ $save_key ] = ! empty( $_POST[ $key ] ) ? true : false;
+					} else if ( $save_key && isset( $_POST[ $key ] ) ) {
+						$save_data[ $save_key ] = wpinv_clean( $_POST[ $key ] );
 					}
 				}
 			}
+
+			if ( empty( $save_data ) ) {
+				return;
+			}
+
+			$customer = getpaid_get_customer_by_user_id( (int) $user_id );
+
+			if ( empty( $customer ) ) {
+				$customer = new GetPaid_Customer( 0 );
+				$customer->clone_user( (int) $user_id );
+			}
+
+			foreach ( $save_data as $key => $value ) {
+				$customer->set( $key, $value );
+			}
+
+			$customer->save();
 		}
 
 		/**
@@ -183,6 +208,7 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 		protected function get_user_meta( $user_id, $key ) {
 			$value           = get_user_meta( $user_id, $key, true );
 			$existing_fields = array( '_wpinv_first_name', '_wpinv_last_name' );
+
 			if ( ! $value && in_array( $key, $existing_fields ) ) {
 				$value = get_user_meta( $user_id, str_replace( '_wpinv_', '', $key ), true );
 			}
