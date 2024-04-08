@@ -858,3 +858,26 @@ function getpaid_count_user_invoices( $user_id ) {
 
     return absint( GetPaid_Reports_Helper::get_invoice_report_data( $args ) );
 }
+
+/**
+ * When a user is deleted in WordPress, delete corresponding GetPaid data.
+ *
+ * @since 2.8.8
+ *
+ * @param int $user_id User ID being deleted.
+ * @param int|null $reassign ID of the user to reassign posts and links to.
+ *                           Default null, for no reassignment.
+ * @param WP_User  $user     WP_User object of the user to delete.
+ */
+function getpaid_delete_user_data( $user_id, $reassign, $user ) {
+	global $wpdb;
+
+	// Delete customer data.
+	$wpdb->delete(
+		$wpdb->prefix . 'getpaid_customers',
+		array(
+			'user_id' => (int) $user_id,
+		)
+	);
+}
+add_action( 'delete_user', 'getpaid_delete_user_data', 10, 3 );
