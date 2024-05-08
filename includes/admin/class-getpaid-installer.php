@@ -501,11 +501,13 @@ class GetPaid_Installer {
             discount DECIMAL(16,4) NOT NULL DEFAULT 0,
             subtotal DECIMAL(16,4) NOT NULL DEFAULT 0,
             price DECIMAL(16,4) NOT NULL DEFAULT 0,
+			price_id INT(11) NOT NULL DEFAULT 0,
             meta TEXT,
             fees TEXT,
 			PRIMARY KEY  (ID),
 			KEY item_id (item_id),
-			KEY post_id (post_id)
+			KEY post_id (post_id),
+			KEY price_id (price_id)
 		  ) $charset_collate;";
 
 		// Customers.

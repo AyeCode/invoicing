@@ -35,14 +35,25 @@ class GetPaid_Payment_Form_Submission_Items {
 		if ( ! empty( $data['getpaid-items'] ) ) {
 			$selected_items = wpinv_clean( $data['getpaid-items'] );
 
+            if ( is_array( $submission->get_field( 'getpaid-variable-items' ) ) ) {
+                $selected_prices = $submission->get_field( 'getpaid-variable-items' );
+
+                $selected_items = array_filter(
+                    $selected_items,
+                    function ( $item ) use ( $selected_prices ) {
+                        return isset( $item['price_id'] ) && in_array( (int) $item['price_id'], $selected_prices );
+                    }
+                );
+            }
+
 			if ( ! empty( $invoice ) && $submission->is_initial_fetch() ) {
 				foreach ( $invoice->get_items() as $invoice_item ) {
-					if ( isset( $selected_items[ $invoice_item->get_id() ] ) ) {
-						$selected_items[ $invoice_item->get_id() ]['quantity'] = $invoice_item->get_quantity();
-						$selected_items[ $invoice_item->get_id() ]['price']    = $invoice_item->get_price();
+                    if ( ! $invoice_item->has_variable_pricing() && isset( $selected_items[ $invoice_item->get_id() ] ) ) {
+                        $selected_items[ $invoice_item->get_id() ]['quantity'] = $invoice_item->get_quantity();
+                        $selected_items[ $invoice_item->get_id() ]['price']    = $invoice_item->get_price();
 
-						$force_prices[ $invoice_item->get_id() ] = $invoice_item->get_price();
-					}
+                        $force_prices[ $invoice_item->get_id() ] = $invoice_item->get_price();
+                    }
 				}
 			}
 		}
@@ -62,17 +73,20 @@ class GetPaid_Payment_Form_Submission_Items {
             foreach ( getpaid_convert_items_to_array( $form_items ) as $item_id => $qty ) {
                 if ( ! in_array( $item_id, $item_ids ) ) {
                     $item = new GetPaid_Form_Item( $item_id );
-                    $item->set_quantity( $qty );
 
-                    if ( empty( $qty ) ) {
-                        $item->set_allow_quantities( true );
-                        $item->set_is_required( false );
+                    if ( ! $item->has_variable_pricing() ) {
+                        $item->set_quantity( $qty );
+
+                        if ( empty( $qty ) ) {
+                            $item->set_allow_quantities( true );
+                            $item->set_is_required( false );
+                        }
+
+                        if ( ! $item->user_can_set_their_price() && isset( $force_prices[ $item_id ] ) ) {
+                            $item->set_is_dynamic_pricing( true );
+                            $item->set_minimum_price( 0 );
+                        }
                     }
-
-					if ( ! $item->user_can_set_their_price() && isset( $force_prices[ $item_id ] ) ) {
-						$item->set_is_dynamic_pricing( true );
-						$item->set_minimum_price( 0 );
-					}
 
                     $item_ids[] = $item->get_id();
                     $items[]    = $item;
@@ -90,14 +104,12 @@ class GetPaid_Payment_Form_Submission_Items {
 			}
 
             $payment_form->set_items( $items );
-
 		}
 
 		// Process each individual item.
 		foreach ( $payment_form->get_items() as $item ) {
 			$this->process_item( $item, $selected_items, $submission );
 		}
-
 	}
 
 	/**
@@ -109,31 +121,75 @@ class GetPaid_Payment_Form_Submission_Items {
 	 */
 	public function process_item( $item, $selected_items, $submission ) {
 
-		// Abort if this is an optional item and it has not been selected.
-		if ( ! $item->is_required() && ! isset( $selected_items[ $item->get_id() ] ) ) {
-			return;
-		}
+        if ( $item->has_variable_pricing() ) {
 
-		// (maybe) let customers change the quantities and prices.
-		if ( isset( $selected_items[ $item->get_id() ] ) ) {
+            $selected_items = array_filter(
+                $selected_items,
+                function ( $selected_item ) use ( $item ) {
+                    return (int) $selected_item['item_id'] === (int) $item->get_id();
+                }
+            );
 
-			// Maybe change the quantities.
-			if ( $item->allows_quantities() ) {
-				$item->set_quantity( (float) $selected_items[ $item->get_id() ]['quantity'] );
-			}
+            if ( ! $item->is_required() && ! count( $selected_items ) ) {
+                return;
+            }
 
-			// Maybe change the price.
-			if ( $item->user_can_set_their_price() ) {
-				$price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
+            $price_options = $item->get_variable_prices();
+            $price = current( $selected_items );
 
-				if ( $item->get_minimum_price() > $price ) {
-					throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), getpaid_unstandardize_amount( $item->get_minimum_price() ) ) );
-				}
+            $item->set_price_id( $price['price_id'] );
+            $item->set_quantity( $price['quantity'] );
 
-				$item->set_price( $price );
+            $price = isset( $price_options[ $price['price_id'] ] ) ? $price_options[ $price['price_id'] ] : $price;
+            $item->set_price( (float) $price['amount'] );
 
-			}
-		}
+            if ( isset( $price['is-recurring'] ) && 'yes' === $price['is-recurring'] ) {
+                if ( isset( $price['trial-interval'], $price['trial-period'] ) && $price['trial-interval'] > 0 ) {
+                    $trial_interval = (int) $price['trial-interval'];
+                    $trial_period = $price['trial-period'];
+
+                    $item->set_is_free_trial( 1 );
+                    $item->set_trial_interval( $trial_interval );
+                    $item->set_trial_period( $trial_period );
+                }
+
+                if ( isset( $price['recurring-interval'], $price['recurring-period'] ) && $price['recurring-interval'] > 0 ) {
+                    $recurring_interval = (int) $price['recurring-interval'];
+                    $recurring_period = $price['recurring-period'];
+                    $recurring_limit = isset( $price['recurring-limit'] ) ? (int) $price['recurring-limit'] : 0;
+
+                    $item->set_is_recurring( 1 );
+                    $item->set_recurring_interval( $recurring_interval );
+                    $item->set_recurring_period( $recurring_period );
+                    $item->set_recurring_limit( $recurring_limit );
+                }
+            }
+        } else {
+		    // Abort if this is an optional item and it has not been selected.
+            if ( ! $item->is_required() && ! isset( $selected_items[ $item->get_id() ] ) ) {
+                return;
+            }
+
+            // (maybe) let customers change the quantities and prices.
+            if ( isset( $selected_items[ $item->get_id() ] ) ) {
+
+                // Maybe change the quantities.
+                if ( $item->allows_quantities() ) {
+                    $item->set_quantity( (float) $selected_items[ $item->get_id() ]['quantity'] );
+                }
+
+                // Maybe change the price.
+                if ( $item->user_can_set_their_price() ) {
+                    $price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
+
+                    if ( $item->get_minimum_price() > $price ) {
+                        throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), getpaid_unstandardize_amount( $item->get_minimum_price() ) ) );
+                    }
+
+                    $item->set_price( $price );
+                }
+            }
+        }
 
 		if ( 0 == $item->get_quantity() ) {
 			return;
@@ -141,7 +197,5 @@ class GetPaid_Payment_Form_Submission_Items {
 
 		// Save the item.
 		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item', $item, $submission );
-
 	}
-
 }

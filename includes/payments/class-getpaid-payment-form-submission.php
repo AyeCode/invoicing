@@ -149,7 +149,6 @@ class GetPaid_Payment_Form_Submission {
 		if ( isset( $_POST['getpaid_payment_form_submission'] ) ) {
 			$this->load_data( wp_kses_post_deep( wp_unslash( $_POST ) ) );
 		}
-
 	}
 
 	/**
@@ -199,7 +198,6 @@ class GetPaid_Payment_Form_Submission {
 
 		// Fired when we are done processing a submission.
 		do_action_ref_array( 'getpaid_process_submission', array( &$this ) );
-
 	}
 
 	/*
@@ -387,7 +385,6 @@ class GetPaid_Payment_Form_Submission {
 		$this->items[ $item->get_id() ]         = $item;
 		$this->totals['subtotal']['initial']   += $item->get_sub_total();
 		$this->totals['subtotal']['recurring'] += $item->get_recurring_sub_total();
-
 	}
 
 	/**
@@ -410,7 +407,6 @@ class GetPaid_Payment_Form_Submission {
 
 			unset( $this->items[ $item_id ] );
 		}
-
 	}
 
 	/**
@@ -539,7 +535,6 @@ class GetPaid_Payment_Form_Submission {
 		$this->taxes[ $tax['name'] ]         = $tax;
 		$this->totals['taxes']['initial']   += wpinv_sanitize_amount( $tax['initial_tax'] );
 		$this->totals['taxes']['recurring'] += wpinv_sanitize_amount( $tax['recurring_tax'] );
-
 	}
 
 	/**
@@ -554,7 +549,6 @@ class GetPaid_Payment_Form_Submission {
 			$this->totals['taxes']['recurring'] -= $this->taxes[ $tax_name ]['recurring_tax'];
 			unset( $this->taxes[ $tax_name ] );
 		}
-
 	}
 
 	/**
@@ -571,7 +565,6 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		return apply_filters( 'getpaid_submission_use_taxes', $use_taxes, $this );
-
 	}
 
 	/**
@@ -652,7 +645,6 @@ class GetPaid_Payment_Form_Submission {
 			$this->totals['discount']['recurring'] -= $this->discounts[ $name ]['recurring_discount'];
 			unset( $this->discounts[ $name ] );
 		}
-
 	}
 
 	/**
@@ -745,7 +737,6 @@ class GetPaid_Payment_Form_Submission {
 		$this->fees[ $fee['name'] ]         = $fee;
 		$this->totals['fees']['initial']   += wpinv_sanitize_amount( $fee['initial_fee'] );
 		$this->totals['fees']['recurring'] += wpinv_sanitize_amount( $fee['recurring_fee'] );
-
 	}
 
 	/**
@@ -765,7 +756,6 @@ class GetPaid_Payment_Form_Submission {
 			$this->totals['shipping']['initial']   = 0;
 			$this->totals['shipping']['recurring'] = 0;
 		}
-
 	}
 
 	/**
@@ -955,5 +945,4 @@ class GetPaid_Payment_Form_Submission {
 	public function format_amount( $amount ) {
 		return wpinv_price( $amount, $this->get_currency() );
 	}
-
 }

@@ -32,7 +32,6 @@ function wpinv_get_item_by( $field = '', $value = '', $type = '' ) {
 
     $id = WPInv_Item::get_item_id_by_field( $value, strtolower( $field ), $type );
     return empty( $id ) ? false : wpinv_get_item( $id );
-
 }
 
 /**
@@ -49,7 +48,6 @@ function wpinv_get_item( $item = 0 ) {
 
     $item = new WPInv_Item( $item );
     return $item->exists() ? $item : false;
-
 }
 
 function wpinv_get_all_items( $args = array() ) {
@@ -129,7 +127,6 @@ function wpinv_get_all_items( $args = array() ) {
     } else {
         return $return;
     }
-
 }
 
 function wpinv_is_free_item( $item_id = 0 ) {
@@ -382,7 +379,6 @@ function wpinv_create_item( $args = array(), $wp_error = false ) {
     }
 
     return $item;
-
 }
 
 /**
@@ -411,7 +407,6 @@ function getpaid_sanitize_recurring_period( $period, $full = false ) {
     }
 
     return $full ? $periods[ $period ] : $period;
-
 }
 
 function wpinv_item_max_buyable_quantity( $item_id ) {
@@ -573,5 +568,4 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
         "<span class='getpaid-item-recurring-period'>$period</span>",
         "<span class='getpaid-item-recurring-bill-times'>$bill_times_less</span>"
     );
-
 }

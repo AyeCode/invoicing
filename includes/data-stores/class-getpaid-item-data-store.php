@@ -31,6 +31,10 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_editable',
 		'_wpinv_dynamic_pricing',
 		'_minimum_price',
+		'_wpinv_is_multi_price_mode',
+		'_wpinv_has_variable_pricing',
+        '_wpinv_default_price_id',
+        '_wpinv_variable_prices',
 		'_wpinv_is_recurring',
 		'_wpinv_recurring_period',
 		'_wpinv_recurring_interval',
@@ -58,7 +62,10 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		'_wpinv_editable'             => 'is_editable',
 		'_wpinv_dynamic_pricing'      => 'is_dynamic_pricing',
 		'_minimum_price'              => 'minimum_price',
-		'_wpinv_custom_name'          => 'custom_name',
+		'_wpinv_is_multi_price_mode'  => 'is_multi_price_mode',
+		'_wpinv_has_variable_pricing' => 'has_variable_pricing',
+        '_wpinv_default_price_id'     => 'default_price_id',
+        '_wpinv_variable_prices'      => 'variable_prices',
 		'_wpinv_is_recurring'         => 'is_recurring',
 		'_wpinv_recurring_period'     => 'recurring_period',
 		'_wpinv_recurring_interval'   => 'recurring_interval',
@@ -152,7 +159,6 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		$item->read_meta_data();
 		$item->set_object_read( true );
 		do_action( 'getpaid_read_item', $item );
-
 	}
 
 	/**
@@ -213,7 +219,6 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 		} else {
 			do_action( 'getpaid_update_item', $item );
 		}
-
 	}
 
 	/*
@@ -237,5 +242,4 @@ class GetPaid_Item_Data_Store extends GetPaid_Data_Store_WP {
 
 		parent::update_post_meta( $item );
 	}
-
 }

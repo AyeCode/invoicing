@@ -162,7 +162,7 @@ class WPInv_Invoice extends GetPaid_Data {
 			if ( isset( $invoice['ID'] ) ) {
 				$this->set_id( $invoice['ID'] );
 			}
-} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
+        } elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'key' ) ) {
 			$this->set_id( $invoice_id );
 		} elseif ( is_string( $invoice ) && $invoice_id = self::get_invoice_id_by_field( $invoice, 'number' ) ) {
 			$this->set_id( $invoice_id );
@@ -3032,7 +3032,6 @@ class WPInv_Invoice extends GetPaid_Data {
         foreach ( $value as $item ) {
             $this->add_item( $item );
         }
-
     }
 
     /**
@@ -3395,6 +3394,10 @@ class WPInv_Invoice extends GetPaid_Data {
 			$item->set_quantity( $array['quantity'] );
 		}
 
+        if ( isset( $array['price_id'] ) ) {
+			$item->set_price_id( $array['price_id'] );
+		}
+
 		// Set item meta.
 		if ( isset( $array['meta'] ) && is_array( $array['meta'] ) ) {
 			$item->set_item_meta( $array['meta'] );
@@ -3438,9 +3441,8 @@ class WPInv_Invoice extends GetPaid_Data {
 				if ( $item_id == $this->recurring_item ) {
 					$this->recurring_item = null;
 				}
-}
+            }
 		}
-
     }
 
     /**
@@ -3649,7 +3651,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		);
 
 		return $current;
-
     }
 
     /**
@@ -3720,7 +3721,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_total_tax( $current );
 
 		return $current;
-
     }
 
     /**
