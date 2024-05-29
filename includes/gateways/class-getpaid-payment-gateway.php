@@ -336,7 +336,7 @@ abstract class GetPaid_Payment_Gateway {
 
 		if ( ! empty( $this->view_transaction_url ) && ! empty( $transaction_id ) ) {
 			$transaction_url = sprintf( $this->view_transaction_url, $transaction_id );
-			$replace         = $this->is_sandbox( $invoice ) ? 'sandbox' : '';
+			$replace         = $this->is_sandbox( $invoice ) ? 'sandbox.' : '';
 			$transaction_url = str_replace( '{sandbox}', $replace, $transaction_url );
 		}
 
@@ -357,7 +357,7 @@ abstract class GetPaid_Payment_Gateway {
 		if ( $this->id == $subscription->get_gateway() && ! empty( $this->view_subscription_url ) && ! empty( $profile_id ) ) {
 
 			$subscription_url = sprintf( $this->view_subscription_url, $profile_id );
-			$replace          = $this->is_sandbox( $subscription->get_parent_invoice() ) ? 'sandbox' : '';
+			$replace          = $this->is_sandbox( $subscription->get_parent_invoice() ) ? 'sandbox.' : '';
 			$subscription_url = str_replace( '{sandbox}', $replace, $subscription_url );
 
 		}

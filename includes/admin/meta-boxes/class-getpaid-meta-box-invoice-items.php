@@ -35,7 +35,7 @@ class GetPaid_Meta_Box_Invoice_Items {
                 __( 'Hours', 'invoicing' )
             ),
             'total'  => __( 'Total', 'invoicing' ),
-            'tax'    => __( 'Tax (%)', 'invoicing' ),
+            'tax'    => $invoice->get_item_tax_name(),
             'action' => '',
         );
 
@@ -257,11 +257,21 @@ class GetPaid_Meta_Box_Invoice_Items {
                                     <td class="action"></td>
                                 </tr>
                                 <?php if ( $use_taxes ) : ?>
+                                <?php if ( is_array( $taxes = $invoice->get_taxes() ) && wpinv_display_individual_tax_rates() ) { ?>
+                                <?php foreach ( $taxes as $tax_key => $tax_item ) { ?>
+                                <tr class="tax">
+                                    <td class="name"><?php echo esc_html( $invoice->get_tax_item_name( $tax_key, $tax_item, ':' ) ); ?></td>
+                                    <td class="total"><?php wpinv_the_price( $invoice->get_tax_item_amount( $tax_key, $tax_item ), $invoice->get_currency() ); ?></td>
+                                    <td class="action"></td>
+                                </tr>
+                                <?php } ?>
+                                <?php } else { ?>
                                 <tr class="tax">
                                     <td class="name"><?php esc_html_e( 'Tax:', 'invoicing' ); ?></td>
                                     <td class="total"><?php wpinv_the_price( $invoice->get_total_tax(), $invoice->get_currency() ); ?></td>
                                     <td class="action"></td>
                                 </tr>
+                                <?php } ?>
                                 <?php endif; ?>
                                 <tr class="total">
                                     <td class="name"><?php esc_html_e( 'Total:', 'invoicing' ); ?></td>
