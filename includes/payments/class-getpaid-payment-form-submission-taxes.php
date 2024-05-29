@@ -30,7 +30,6 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @param GetPaid_Payment_Form_Submission $submission
 	 */
 	public function __construct( $submission ) {
-
 		// Validate VAT number.
 		$this->validate_vat( $submission );
 
@@ -44,9 +43,11 @@ class GetPaid_Payment_Form_Submission_Taxes {
 
 		// Process any existing invoice taxes.
 		if ( $submission->has_invoice() ) {
-			$this->taxes = array_replace( $submission->get_invoice()->get_taxes(), $this->taxes );
-		}
+			$invoice = $submission->get_invoice();
+			$invoice = $this->refresh_totals( $invoice, $submission );
 
+			$this->taxes = array_replace( $invoice->get_taxes(), $this->taxes );
+		}
 	}
 
 	/**
@@ -235,4 +236,33 @@ class GetPaid_Payment_Form_Submission_Taxes {
 		$this->skip_taxes = true;
 	}
 
+	 /**
+	 * Refresh totals if country or region changed in payment form.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @param object $invoice Invoice object.
+	 * @param GetPaid_Payment_Form_Submission $submission Payment form submission object.
+	 * @return object Invoice object.
+	 */
+	public function refresh_totals( $invoice, $submission ) {
+		if ( ! ( ! empty( $_POST['action'] ) && ( $_POST['action'] == 'wpinv_payment_form_refresh_prices' || $_POST['action'] == 'wpinv_payment_form' ) && isset( $_POST['billing']['wpinv_country'] ) ) ) {
+			return $invoice;
+		}
+
+		if ( ! ( ! $invoice->is_paid() && ! $invoice->is_refunded() && ! $invoice->is_held() ) ) {
+			return $invoice;
+		}
+
+		// Maybe check the country, state.
+		if ( $submission->country != $invoice->get_country() || $submission->state != $invoice->get_state() ) {
+			$invoice->set_country( sanitize_text_field( $submission->country ) );
+			$invoice->set_state( sanitize_text_field( $submission->state ) );
+
+			// Recalculate totals.
+			$invoice->recalculate_total();
+		}
+
+		return $invoice;
+	}
 }

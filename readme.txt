@@ -147,6 +147,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 = 2.8.8 =
 * Failed to save customer billing address from backend edit profile - FIXED
 * Customer data is not deleted when user is deleted - FIXED
+* Tax amount not refreshed on country change - FIXED
+* Allow to show tax name in invoice line items - CHANGED
+* Correct PayPal sandbox activity & subscription url - CHANGED
 
 = 2.8.7 =
 * PHP 8.2 compatibility changes in Emogrifier class - CHANGED
