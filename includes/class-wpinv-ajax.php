@@ -318,6 +318,7 @@ class WPInv_Ajax {
                 }
 
                 $payment_form->set_items( $items );
+
                 $extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
                 $extra_items_key = md5( NONCE_KEY . AUTH_KEY . $extra_items );
                 $extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
@@ -328,7 +329,7 @@ class WPInv_Ajax {
             } else {
                 getpaid_display_payment_form( $form );
             }
-} elseif ( ! empty( $_GET['invoice'] ) ) {
+        } elseif ( ! empty( $_GET['invoice'] ) ) {
 		    getpaid_display_invoice_payment_form( (int) urldecode( $_GET['invoice'] ) );
         } else {
 			$items = getpaid_convert_items_to_array( sanitize_text_field( urldecode( $_GET['item'] ) ) );
@@ -344,7 +345,7 @@ class WPInv_Ajax {
      *
      * @since 1.0.18
      */
-    public static function payment_form() {
+    public static function payment_form() { 
 
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
@@ -419,7 +420,7 @@ class WPInv_Ajax {
                 exit;
 
             }
-}
+        }
 
         exit;
     }

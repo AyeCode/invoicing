@@ -299,6 +299,10 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
                 $item->set_price( $_item['custom_price'] );
             }
 
+            if ( isset( $_item['price_id'] ) ) {
+                $item->set_price_id( $_item['price_id'] );
+            }
+
             // Set name.
             if ( ! empty( $_item['name'] ) ) {
                 $item->set_name( $_item['name'] );
@@ -334,8 +338,8 @@ function wpinv_insert_invoice( $data = array(), $wp_error = false ) {
             if ( is_object( $item ) && is_a( $item, 'GetPaid_Form_Item' ) && $item->can_purchase() ) {
                 $invoice->add_item( $item );
             }
-}
-}
+        }
+    }
 
     // Save the invoice.
     $invoice->recalculate_total();

@@ -44,7 +44,15 @@ $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $
 
             // Display the item totals.
             foreach ( $form->get_items() as $item ) {
-			wpinv_get_template( 'payment-forms/cart-item.php', compact( 'form', 'item', 'columns' ) );
+                $prices = $item->get_variable_prices();
+
+                if ( $item->has_variable_pricing() ) {
+				    foreach ( $prices as $variable_price_id => $price ) {
+					    wpinv_get_template( 'payment-forms/cart-item.php', compact( 'form', 'item', 'variable_price_id', 'price', 'columns' ) );
+                    }
+                } else {
+				    wpinv_get_template( 'payment-forms/cart-item.php', compact( 'form', 'item', 'columns' ) );
+                }
             }
 
             // Display the cart totals.

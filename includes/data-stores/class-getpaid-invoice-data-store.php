@@ -215,7 +215,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$invoice->read_meta_data();
 		$invoice->set_object_read( true );
 		do_action( 'getpaid_read_invoice', $invoice );
-
 	}
 
 	/**
@@ -292,7 +291,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		} else {
 			do_action( 'getpaid_update_invoice', $invoice );
 		}
-
 	}
 
 	/*
@@ -345,7 +343,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		}
 
 		$invoice->set_props( $props );
-
 	}
 
 	/**
@@ -396,7 +393,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			do_action( 'getpaid_invoice_update_database_fields', $invoice, $updated_props );
 
 		}
-
 	}
 
 	/**
@@ -421,7 +417,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$wpdb->insert( $table, $updated_props );
 		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_special_fields' );
 		do_action( 'getpaid_invoice_insert_database_fields', $invoice, $updated_props );
-
 	}
 
 	/**
@@ -446,7 +441,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$this->insert_special_fields( $invoice );
 
 		}
-
 	}
 
 	/**
@@ -487,9 +481,43 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 			$item->item_discount = wpinv_sanitize_amount( $item_data->discount );
 			$item->set_name( $item_data->item_name );
 			$item->set_description( $item_data->item_description );
-			$item->set_price( $item_data->item_price );
+            $item->set_price( $item_data->item_price );
 			$item->set_quantity( $item_data->quantity );
+			$item->set_price_id( $item_data->price_id );
 			$item->set_item_meta( $item_data->meta );
+
+            if ( $item->has_variable_pricing() ) {
+                $price_options = $item->get_variable_prices();
+
+                if ( ! empty( $price_options ) && isset( $price_options[ $item_data->price_id ] ) ) {
+                    $price = $price_options[ $item_data->price_id ];
+
+                    $item->set_price( (float) $price['amount'] );
+
+                    if ( isset( $price['is-recurring'] ) && 'yes' === $price['is-recurring'] ) {
+                        if ( isset( $price['trial-interval'], $price['trial-period'] ) && $price['trial-interval'] > 0 ) {
+                            $trial_interval = (int) $price['trial-interval'];
+                            $trial_period = $price['trial-period'];
+
+                            $item->set_is_free_trial( 1 );
+                            $item->set_trial_interval( $trial_interval );
+                            $item->set_trial_period( $trial_period );
+                        }
+
+                        if ( isset( $price['recurring-interval'], $price['recurring-period'] ) && $price['recurring-interval'] > 0 ) {
+                            $recurring_interval = (int) $price['recurring-interval'];
+                            $recurring_period = $price['recurring-period'];
+                            $recurring_limit = isset( $price['recurring-limit'] ) ? (int) $price['recurring-limit'] : 0;
+
+                            $item->set_is_recurring( 1 );
+                            $item->set_recurring_interval( $recurring_interval );
+                            $item->set_recurring_period( $recurring_period );
+                            $item->set_recurring_limit( $recurring_limit );
+                        }
+                    }
+                }
+            }
+
 			$_items[] = $item;
 		}
 
@@ -515,7 +543,6 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		wp_cache_delete( $invoice->get_id(), 'getpaid_invoice_cart_details' );
 		do_action( 'getpaid_invoice_save_items', $invoice );
-
 	}
 
 	/**
@@ -555,5 +582,4 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 		return $object_status;
 	}
-
 }

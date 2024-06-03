@@ -95,7 +95,6 @@ class GetPaid_Payment_Form extends GetPaid_Data {
             $this->post = get_post( $this->get_id() );
 			$this->data_store->read( $this );
         }
-
 	}
 
     /*
@@ -382,7 +381,6 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -406,7 +404,6 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -500,7 +497,6 @@ class GetPaid_Payment_Form extends GetPaid_Data {
         }
 
         return false;
-
     }
 
     /**
@@ -519,7 +515,6 @@ class GetPaid_Payment_Form extends GetPaid_Data {
         }
 
         return false;
-
     }
 
     /**
@@ -597,15 +592,15 @@ class GetPaid_Payment_Form extends GetPaid_Data {
 
 					// add back the description if set
 					if ( isset( $val_arr['description'] ) ) {
-$value[ $key ]['description'] = $help_text;}
+                        $value[ $key ]['description'] = $help_text;}
 
 					// add back sub array items after its been sanitized.
 					if ( ! empty( $sub_arr ) ) {
 						$value[ $key ] = array_merge( $value[ $key ], $sub_arr );
 					}
 				}
-}
-}
+            }
+        }
 
 		return $value;
 	}
@@ -681,7 +676,6 @@ $value[ $key ]['description'] = $help_text;}
 
 		// Save the item.
 		return $this->save();
-
     }
 
     /**
@@ -767,7 +761,7 @@ $value[ $key ]['description'] = $help_text;}
 			if ( $item->is_recurring() ) {
 				return true;
 			}
-}
+        }
 
         return false;
 	}
@@ -787,7 +781,6 @@ $value[ $key ]['description'] = $help_text;}
 				'extra_markup' => $extra_markup,
 			)
 		);
-
 	}
 
 	/**
@@ -804,5 +797,4 @@ $value[ $key ]['description'] = $help_text;}
 			)
 		);
     }
-
 }

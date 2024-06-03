@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.9 =
+* Variable pricing option for items - ADDED
+
 = 2.8.8 =
 * Failed to save customer billing address from backend edit profile - FIXED
 * Customer data is not deleted when user is deleted - FIXED
