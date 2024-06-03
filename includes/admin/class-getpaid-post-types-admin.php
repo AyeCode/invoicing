@@ -147,17 +147,14 @@ class GetPaid_Post_Types_Admin {
 
 		// Link to item payment form.
 		if ( 'wpi_item' == $post->post_type ) {
-
-			if ( in_array( get_post_meta( $post->ID, '_wpinv_type', true ), array( '', 'fee', 'custom' ), true ) ) {
-
+			if ( getpaid_item_type_supports( get_post_meta( $post->ID, '_wpinv_type', true ), 'buy_now' ) ) {
 				$actions['buy'] = sprintf(
 					'<a href="%1$s">%2$s</a>',
 					esc_url( getpaid_embed_url( false, $post->ID . '|0' ) ),
 					esc_html( __( 'Buy', 'invoicing' ) )
 				);
-
 			}
-}
+		}
 
 		return $actions;
 	}

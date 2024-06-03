@@ -575,3 +575,31 @@ function getpaid_item_recurring_price_help_text( $item, $currency = '', $_initia
     );
 
 }
+
+/**
+ * Check a item type's support for a given feature.
+ *
+ * @since 2.8.8
+ *
+ * @param string $item_type The item type being checked.
+ * @param string $feature   The feature being checked.
+ * @param int    $item_ID   The item post ID. Optional.
+ * @return bool Whether the item type supports the given feature.
+ */
+function getpaid_item_type_supports( $item_type, $feature, $item_ID = 0 ) {
+	$supports = false;
+
+	if ( ! is_scalar( $item_type ) ) {
+		return $supports;
+	}
+
+	switch ( $feature ) {
+		case 'buy_now':
+			if ( '' === $item_type || 'fee' === $item_type || 'custom' === $item_type ) {
+				$supports = true;
+			}
+			break;
+	}
+
+	return apply_filters( 'getpaid_item_type_supports', $supports, $item_type, $feature, $item_ID );
+}
