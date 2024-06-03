@@ -58,8 +58,7 @@ class GetPaid_Meta_Box_Item_Info {
                 </div>
             </div>
 
-            <?php if ( 'fee' === $item->get_type( 'edit' ) || 'custom' === $item->get_type( 'edit' ) ) : ?>
-
+            <?php if ( getpaid_item_type_supports( $item->get_type( 'edit' ), 'buy_now' ) ) : ?>
                 <div class="wpinv_item_shortcode form-group mb-3 row">
                     <label for="wpinv_item_shortcode" class="col-sm-12 col-form-label">
                         <?php esc_html_e( 'Payment Form Shortcode', 'invoicing' ); ?>
