@@ -171,7 +171,7 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 			'start_date'   => __( 'Start Date', 'invoicing' ),
 			'renews_on'    => __( 'Next Payment', 'invoicing' ),
 			'renewals'     => __( 'Collected Payments', 'invoicing' ),
-			'item'         => _n( 'Item', 'Items', $items_count, 'invoicing' ),
+			'item'         => $items_count > 1 ? __( 'Items', 'invoicing' ) : __( 'Item', 'invoicing' ),
 			'gateway'      => __( 'Payment Method', 'invoicing' ),
 			'profile_id'   => __( 'Profile ID', 'invoicing' ),
 			'status'       => __( 'Status', 'invoicing' ),

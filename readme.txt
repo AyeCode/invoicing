@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.5
-Stable tag: 2.8.7
+Stable tag: 2.8.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.8.8 =
+= 2.8.8 - 2024-06-11 =
 * Failed to save customer billing address from backend edit profile - FIXED
 * Customer data is not deleted when user is deleted - FIXED
 * Tax amount not refreshed on country change - FIXED
