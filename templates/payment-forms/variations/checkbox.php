@@ -35,7 +35,6 @@ foreach ( $selectable as $item_id => $item_name ) {
             'label'   => $item_name,
             'value'   => $item_id,
             'no_wrap' => true,
-            'class'   => 'w-auto',
             'checked' => '1' == $is_checked,
         ),
         true

@@ -1575,6 +1575,30 @@ function sd_get_class_input( $type = 'css_class', $overwrite = array() ) {
 }
 
 /**
+ * A helper function for the class input.
+ *
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_custom_name_input( $type = 'metadata_name', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'text',
+		'title'    => __( 'Block Name', 'ayecode-connect' ),
+		'desc'     => __( 'Set a custom name for this block', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Advanced', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
  * A helper function for font size inputs.
  *
  * @param string $type
@@ -2032,6 +2056,148 @@ function sd_get_scrollbars_input( $type = 'scrollbars', $overwrite = array() ) {
 }
 
 /**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_new_window_input( $type = 'target', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'checkbox',
+		'title'    => __( 'Open in new window', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_nofollow_input( $type = 'nofollow', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'checkbox',
+		'title'    => __( 'Add nofollow', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_attributes_input( $type = 'attributes', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'        => 'text',
+		'title'       => __( 'Custom Attributes', 'ayecode-connect' ),
+		'value'       => '',
+		'default'     => '',
+		'placeholder' => 'key|value,key2|value2',
+		'desc_tip'    => true,
+		'group'       => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $args
+ *
+ * @return string
+ */
+function sd_build_attributes_string_escaped( $args ) {
+	global $aui_bs5;
+
+	$attributes = array();
+	$string_escaped = '';
+
+	if ( ! empty( $args['custom'] ) ) {
+		$attributes = sd_parse_custom_attributes($args['custom']);
+	}
+
+	// new window
+	if ( ! empty( $args['new_window'] ) ) {
+		$attributes['target'] = '_blank';
+	}
+
+	// nofollow
+	if ( ! empty( $args['nofollow'] ) ) {
+		$attributes['rel'] = isset($attributes['rel']) ? $attributes['rel'] . ' nofollow' : 'nofollow';
+	}
+
+	if(!empty($attributes )){
+		foreach ( $attributes as $key => $val ) {
+			$string_escaped .= esc_attr($key) . '="' . esc_attr($val) . '" ';
+		}
+	}
+
+	return $string_escaped;
+}
+
+/**
+ * @info borrowed from elementor
+ *
+ * @param $attributes_string
+ * @param $delimiter
+ *
+ * @return array
+ */
+function sd_parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
+	$attributes = explode( $delimiter, $attributes_string );
+	$result = [];
+
+	foreach ( $attributes as $attribute ) {
+		$attr_key_value = explode( '|', $attribute );
+
+		$attr_key = mb_strtolower( $attr_key_value[0] );
+
+		// Remove any not allowed characters.
+		preg_match( '/[-_a-z0-9]+/', $attr_key, $attr_key_matches );
+
+		if ( empty( $attr_key_matches[0] ) ) {
+			continue;
+		}
+
+		$attr_key = $attr_key_matches[0];
+
+		// Avoid Javascript events and unescaped href.
+		if ( 'href' === $attr_key || 'on' === substr( $attr_key, 0, 2 ) ) {
+			continue;
+		}
+
+		if ( isset( $attr_key_value[1] ) ) {
+			$attr_value = trim( $attr_key_value[1] );
+		} else {
+			$attr_value = '';
+		}
+
+		$result[ $attr_key ] = $attr_value;
+	}
+
+	return $result;
+}
+
+/**
  * Build AUI classes from settings.
  *
  * @param $args
@@ -2448,6 +2614,10 @@ function sd_build_aui_class( $args ) {
 		}
 	}
 
+	if ( ! empty( $classes ) ) {
+		$classes = array_unique( array_filter( array_map( 'trim', $classes ) ) );
+	}
+
 	return implode( ' ', $classes );
 }
 
@@ -2587,7 +2757,7 @@ function sd_build_hover_styles( $args, $is_preview = false ) {
 }
 
 /**
- * Try to get a CSS color varibale for a given value.
+ * Try to get a CSS color variable for a given value.
  *
  * @param $var
  *
@@ -3205,6 +3375,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 		if ( $match_field === '' || ( ! empty( $find_post_keys ) && ( in_array( $match_field, $find_post_keys ) || in_array( $_match_field, $find_post_keys ) ) ) ) {
 			$address_fields = array( 'street2', 'neighbourhood', 'city', 'region', 'country', 'zip', 'latitude', 'longitude' ); // Address fields
 			$field = array();
+			$empty_field = false;
 
 			$standard_fields = sd_visibility_gd_standard_fields();
 
@@ -3223,7 +3394,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 				}
 
 				if ( empty( $field ) ) {
-					return false;
+					$empty_field = true;
 				}
 			}
 
@@ -3244,7 +3415,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 			$is_date = ( ! empty( $field['type'] ) && $field['type'] == 'datepicker' ) || in_array( $match_field, array( 'post_date', 'post_modified' ) ) ? true : false;
 			$is_date = apply_filters( 'geodir_post_badge_is_date', $is_date, $match_field, $field, $args, $find_post );
 
-			$match_value = isset($find_post->{$match_field}) ? esc_attr( trim( $find_post->{$match_field} ) ) : '';
+			$match_value = isset( $find_post->{$match_field} ) && empty( $empty_field ) ? esc_attr( trim( $find_post->{$match_field} ) ) : '';
 			$match_found = $match_field === '' ? true : false;
 
 			if ( ! $match_found ) {
@@ -3291,6 +3462,45 @@ function sd_block_check_rule_gd_field( $rule ) {
 			}
 
 			$match_found = apply_filters( 'geodir_post_badge_check_match_found', $match_found, $args, $find_post );
+		} else {
+			$field = array();
+
+			// Parse search.
+			$search = sd_gd_field_rule_search( $args['search'], $find_post->post_type, $rule, $field, $find_post );
+
+			$match_value = '';
+			$match_found = $match_field === '' ? true : false;
+
+			if ( ! $match_found ) {
+				switch ( $args['condition'] ) {
+					case 'is_equal':
+						$match_found = (bool) ( $search != '' && $match_value == $search );
+						break;
+					case 'is_not_equal':
+						$match_found = (bool) ( $search != '' && $match_value != $search );
+						break;
+					case 'is_greater_than':
+						$match_found = false;
+						break;
+					case 'is_less_than':
+						$match_found = false;
+						break;
+					case 'is_empty':
+						$match_found = true;
+						break;
+					case 'is_not_empty':
+						$match_found = false;
+						break;
+					case 'is_contains':
+						$match_found = false;
+						break;
+					case 'is_not_contains':
+						$match_found = false;
+						break;
+				}
+			}
+
+			$match_found = apply_filters( 'geodir_post_badge_check_match_found_empty', $match_found, $args, $find_post );
 		}
 	}
 

@@ -113,7 +113,7 @@ class AUI_Component_Input {
 				$args['class'] .= ' custom-file-input ';
 			} elseif ( $type == 'checkbox' ) {
 				$label_after = true; // if type file we need the label after
-				$args['class'] .= $aui_bs5 ? ' form-check-input' : ' custom-control-input ';
+				$args['class'] .= $aui_bs5 ? ' form-check-input c-pointer ' : ' custom-control-input c-pointer ';
 			} elseif ( $type == 'datepicker' || $type == 'timepicker' ) {
 				$orig_type = $type;
 				$type = 'text';
@@ -1123,8 +1123,15 @@ else{$eli.attr(\'type\',\'password\');}"
 			'label_col'  => $args['label_col']
 		);
 
-		$output = '';
+		if ( $args['label_type'] == 'top' || $args['label_type'] == 'hidden' ) {
+			$label_args['class'] .= 'd-block ';
 
+			if ( $args['label_type'] == 'hidden' ) {
+				$label_args['class'] .= 'sr-only ';
+			}
+		}
+
+		$output = '';
 
 		// label before
 		if ( ! empty( $args['label'] ) ) {
