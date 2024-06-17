@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.9 - TBD =
+* Hide VAT Number for invoice receipt when tax option disabled - CHANGED
+
 = 2.8.8 - 2024-06-11 =
 * Failed to save customer billing address from backend edit profile - FIXED
 * Customer data is not deleted when user is deleted - FIXED
