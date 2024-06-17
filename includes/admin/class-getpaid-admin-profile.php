@@ -109,6 +109,9 @@ if ( ! class_exists( 'GetPaid_Admin_Profile', false ) ) :
 			$customer = getpaid_get_customer_by_user_id( (int) $user->ID );
 
 			foreach ( $show_fields as $fieldset_key => $fieldset ) :
+				if ( ! wpinv_use_taxes() && isset( $fieldset['fields']['_wpinv_vat_number'] ) ) {
+					unset( $fieldset['fields']['_wpinv_vat_number'] );
+				}
 				?>
 				<h2><?php echo esc_html( $fieldset['title'] ); ?></h2>
 				<table class="form-table" id="<?php echo esc_attr( 'getpaid-fieldset-' . $fieldset_key ); ?>">

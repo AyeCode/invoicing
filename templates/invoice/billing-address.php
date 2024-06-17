@@ -50,7 +50,7 @@ $company_id  = $invoice->get_company_id();
                     </div>
                 <?php endif; ?>
 
-                <?php if ( ! empty( $vat_number ) ) : ?>
+                <?php if ( ! empty( $vat_number ) && wpinv_use_taxes() ) : ?>
                     <div class="vat-number">
                         <?php echo wp_sprintf( esc_html__( 'Vat Number: %s', 'invoicing' ), esc_html( $vat_number ) ); ?>
                     </div>
