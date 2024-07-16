@@ -67,7 +67,6 @@ class WPInv_Plugin {
 	 * @return mixed The value.
 	 */
 	public function get( $prop ) {
-
 		if ( isset( $this->data[ $prop ] ) ) {
 			return $this->data[ $prop ];
 		}
@@ -79,7 +78,6 @@ class WPInv_Plugin {
 	 * Define class properties.
 	 */
 	public function set_properties() {
-
 		// Sessions.
 		$this->set( 'session', new WPInv_Session_Handler() );
 		$GLOBALS['wpi_session'] = $this->get( 'session' ); // Backwards compatibility.
@@ -97,7 +95,6 @@ class WPInv_Plugin {
 		$this->set( 'daily_maintenace', new GetPaid_Daily_Maintenance() );
 		$this->set( 'payment_forms', new GetPaid_Payment_Forms() );
 		$this->set( 'maxmind', new GetPaid_MaxMind_Geolocation() );
-
 	}
 
 	 /**
@@ -132,13 +129,12 @@ class WPInv_Plugin {
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts' ) );
 
 		add_filter( 'query_vars', array( $this, 'custom_query_vars' ) );
-        add_action( 'init', array( $this, 'add_rewrite_rule' ), 10, 0 );
+		add_action( 'init', array( $this, 'add_rewrite_rule' ), 10, 0 );
 		add_action( 'pre_get_posts', array( $this, 'maybe_process_new_ipn' ), 1 );
 
 		// Fires after registering actions.
 		do_action( 'wpinv_actions', $this );
 		do_action( 'getpaid_actions', $this );
-
 	}
 
 	public function plugins_loaded() {
@@ -165,20 +161,29 @@ class WPInv_Plugin {
 	 * @since 1.0.0
 	 */
 	public function load_textdomain() {
+		// Determines the current locale.
+		if ( function_exists( 'determine_locale' ) ) {
+			$locale = determine_locale();
+		} else if ( function_exists( 'get_user_locale' ) ) {
+			$locale = get_user_locale();
+		} else {
+			$locale = get_locale();
+		}
 
-		load_plugin_textdomain(
-			'invoicing',
-			false,
-			plugin_basename( dirname( WPINV_PLUGIN_FILE ) ) . '/languages/'
-		);
+		/**
+		 * Filter the locale to use for translations.
+		 */
+		$locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
 
+		unload_textdomain( 'invoicing' );
+		load_textdomain( 'invoicing', WP_LANG_DIR . '/invoicing/invoicing-' . $locale . '.mo' );
+		load_plugin_textdomain( 'invoicing', false, plugin_basename( dirname( WPINV_PLUGIN_FILE ) ) . '/languages/' );
 	}
 
 	/**
 	 * Include required core files used in admin and on the frontend.
 	 */
 	public function includes() {
-
 		// Start with the settings.
 		require_once WPINV_PLUGIN_DIR . 'includes/admin/register-settings.php';
 
@@ -254,7 +259,6 @@ class WPInv_Plugin {
 			require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-cli.php';
 			WP_CLI::add_command( 'invoicing', 'WPInv_CLI' );
 		}
-
 	}
 
 	/**
@@ -266,7 +270,6 @@ class WPInv_Plugin {
 	 * @return      void
 	 */
 	public function autoload( $class_name ) {
-
 		// Normalize the class name...
 		$class_name  = strtolower( $class_name );
 
@@ -295,20 +298,17 @@ class WPInv_Plugin {
 		);
 
 		foreach ( apply_filters( 'getpaid_autoload_locations', $locations ) as $location ) {
-
 			if ( file_exists( trailingslashit( $location ) . $file_name ) ) {
 				include trailingslashit( $location ) . $file_name;
 				break;
 			}
-}
-
+		}
 	}
 
 	/**
 	 * Inits hooks etc.
 	 */
 	public function init() {
-
 		// Fires before getpaid inits.
 		do_action( 'before_getpaid_init', $this );
 
@@ -338,14 +338,12 @@ class WPInv_Plugin {
 
 		// Fires after getpaid inits.
 		do_action( 'getpaid_init', $this );
-
 	}
 
 	/**
 	 * Checks if this is an IPN request and processes it.
 	 */
 	public function maybe_process_ipn() {
-
 		// Ensure that this is an IPN request.
 		if ( empty( $_GET['wpi-listener'] ) || 'IPN' !== $_GET['wpi-listener'] || empty( $_GET['wpi-gateway'] ) ) {
 			return;
@@ -356,11 +354,9 @@ class WPInv_Plugin {
 		do_action( 'wpinv_verify_payment_ipn', $gateway );
 		do_action( "wpinv_verify_{$gateway}_ipn" );
 		exit;
-
 	}
 
 	public function enqueue_scripts() {
-
 		// Fires before adding scripts.
 		do_action( 'getpaid_enqueue_scripts' );
 
@@ -399,29 +395,25 @@ class WPInv_Plugin {
 	}
 
 	/**
-     * Fires an action after verifying that a user can fire them.
+	 * Fires an action after verifying that a user can fire them.
 	 *
 	 * Note: If the action is on an invoice, subscription etc, esure that the
 	 * current user owns the invoice/subscription.
-     */
-    public function maybe_do_authenticated_action() {
-
+	 */
+	public function maybe_do_authenticated_action() {
 		if ( isset( $_REQUEST['getpaid-action'] ) && isset( $_REQUEST['getpaid-nonce'] ) && wp_verify_nonce( $_REQUEST['getpaid-nonce'], 'getpaid-nonce' ) ) {
-
 			$key  = sanitize_key( $_REQUEST['getpaid-action'] );
 			$data = wp_unslash( $_REQUEST );
+
 			if ( is_user_logged_in() ) {
 				do_action( "getpaid_authenticated_action_$key", $data );
 			}
 
 			do_action( "getpaid_unauthenticated_action_$key", $data );
-
 		}
-
-    }
+	}
 
 	public function pre_get_posts( $wp_query ) {
-
 		if ( ! is_admin() && ! empty( $wp_query->query_vars['post_type'] ) && getpaid_is_invoice_post_type( $wp_query->query_vars['post_type'] ) && is_user_logged_in() && is_single() && $wp_query->is_main_query() ) {
 			$wp_query->query_vars['post_status'] = array_keys( wpinv_get_invoice_statuses( false, false, $wp_query->query_vars['post_type'] ) );
 		}
@@ -447,7 +439,6 @@ class WPInv_Plugin {
 		if ( is_admin() && $pagenow && in_array( $pagenow, $block_widget_init_screens ) ) {
 			// don't initiate in these conditions.
 		} else {
-
 			// Only load allowed widgets.
 			$exclude = function_exists( 'sd_widget_exclude' ) ? sd_widget_exclude() : array();
 			$widgets = apply_filters(
@@ -466,7 +457,6 @@ class WPInv_Plugin {
 
 			// For each widget...
 			foreach ( $widgets as $widget ) {
-
 				// Abort early if it is excluded for this page.
 				if ( in_array( $widget, $exclude ) ) {
 					continue;
@@ -478,9 +468,8 @@ class WPInv_Plugin {
 				} else {
 					new $widget();
 				}
-}
-}
-
+			}
+		}
 	}
 
 	/**
@@ -489,7 +478,6 @@ class WPInv_Plugin {
 	 * @since 2.0.2
 	 */
 	public function maybe_upgrade_database() {
-
 		// Ensure the database tables are up to date.
 		GetPaid_Installer::maybe_create_db_tables();
 
@@ -513,12 +501,10 @@ class WPInv_Plugin {
 		);
 
 		foreach ( $upgrades as $key => $method ) {
-
 			if ( version_compare( $wpi_version, $key, '<' ) ) {
 				return $installer->upgrade_db( $method );
 			}
 		}
-
 	}
 
 	/**
@@ -527,14 +513,12 @@ class WPInv_Plugin {
 	 * @since 2.0.8
 	 */
 	public function maybe_flush_permalinks() {
-
 		$flush = get_option( 'wpinv_flush_permalinks', 0 );
 
 		if ( ! empty( $flush ) ) {
 			flush_rewrite_rules();
 			delete_option( 'wpinv_flush_permalinks' );
 		}
-
 	}
 
 	/**
@@ -544,7 +528,6 @@ class WPInv_Plugin {
 	 * @param int[] $excluded_posts_ids
 	 */
 	public function wpseo_exclude_from_sitemap_by_post_ids( $excluded_posts_ids ) {
-
 		// Ensure that we have an array.
 		if ( ! is_array( $excluded_posts_ids ) ) {
 			$excluded_posts_ids = array();
@@ -571,8 +554,8 @@ class WPInv_Plugin {
 		$our_pages   = array_map( 'intval', array_filter( $our_pages ) );
 
 		$excluded_posts_ids = $excluded_posts_ids + $our_pages;
-		return array_unique( $excluded_posts_ids );
 
+		return array_unique( $excluded_posts_ids );
 	}
 
 	/**
@@ -582,7 +565,6 @@ class WPInv_Plugin {
 	 * @param string[] $post_types
 	 */
 	public function exclude_invoicing_post_types( $post_types ) {
-
 		// Ensure that we have an array.
 		if ( ! is_array( $post_types ) ) {
 			$post_types = array();
@@ -615,8 +597,8 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function custom_query_vars( $vars ) {
-        $vars[] = 'getpaid-ipn';
-        return $vars;
+		$vars[] = 'getpaid-ipn';
+		return $vars;
 	}
 
 	/**
@@ -624,9 +606,9 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function add_rewrite_rule() {
-        $tag = 'getpaid-ipn';
-        add_rewrite_tag( "%$tag%", '([^&]+)' );
-        add_rewrite_rule( "^$tag/([^/]*)/?", "index.php?$tag=\$matches[1]", 'top' );
+		$tag = 'getpaid-ipn';
+		add_rewrite_tag( "%$tag%", '([^&]+)' );
+		add_rewrite_rule( "^$tag/([^/]*)/?", "index.php?$tag=\$matches[1]", 'top' );
 	}
 
 	/**
@@ -634,23 +616,18 @@ class WPInv_Plugin {
 	 *
 	 */
 	public function maybe_process_new_ipn( $query ) {
-
-        if ( is_admin() || ! $query->is_main_query() ) {
-            return;
-        }
+		if ( is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
 
 		$gateway = get_query_var( 'getpaid-ipn' );
 
-        if ( ! empty( $gateway ) ) {
-
+		if ( ! empty( $gateway ) ) {
 			$gateway = sanitize_text_field( $gateway );
 			nocache_headers();
 			do_action( 'wpinv_verify_payment_ipn', $gateway );
 			do_action( "wpinv_verify_{$gateway}_ipn" );
 			exit;
-
-        }
-
+		}
 	}
-
 }

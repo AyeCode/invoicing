@@ -922,6 +922,11 @@ function wpinv_display_style() {
         do_action( 'wp_enqueue_scripts' );
     }
 
+    // Add global styles.
+    if ( wp_is_block_theme() ) {
+        wp_print_styles( 'global-styles' );
+    }
+
     // Register the invoices style.
     wp_register_style( 'wpinv-single-style', WPINV_PLUGIN_URL . 'assets/css/invoice.css', array(), filemtime( WPINV_PLUGIN_DIR . 'assets/css/invoice.css' ) );
 
