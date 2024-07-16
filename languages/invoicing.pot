@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.8\n"
+"Project-Id-Version: GetPaid 2.8.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-11 16:32+0530\n"
+"POT-Creation-Date: 2024-07-16 19:58+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
@@ -265,7 +265,7 @@ msgstr ""
 msgid "Searching"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:192 includes/class-wpinv.php:375
+#: includes/admin/class-getpaid-admin.php:192 includes/class-wpinv.php:371
 #: templates/payment-forms/form.php:119
 msgid "Loading..."
 msgstr ""
@@ -751,6 +751,7 @@ msgstr ""
 #: includes/class-getpaid-post-types.php:57
 #: includes/data/payment-form-elements.php:348
 #: includes/reports/class-getpaid-reports-report.php:29 widgets/getpaid.php:52
+#: widgets/subscriptions.php:367
 msgid "Items"
 msgstr ""
 
@@ -1428,9 +1429,7 @@ msgstr ""
 #: includes/invoice-functions.php:903 templates/payment-forms/cart.php:14
 #: widgets/subscriptions.php:367
 msgid "Item"
-msgid_plural "Items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:30
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:622
@@ -1498,7 +1497,7 @@ msgstr ""
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:752
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:794
 #: templates/frontend-footer.php:20
-#: templates/payment-forms/elements/file_upload.php:62
+#: templates/payment-forms/elements/file_upload.php:55
 msgid "Close"
 msgstr ""
 
@@ -2524,7 +2523,7 @@ msgstr ""
 
 #: includes/admin/views/wizard-gateways.php:73
 #: includes/admin/views/wizard-plugins.php:44
-#: includes/admin/views/wizard-settings.php:130 includes/class-wpinv.php:372
+#: includes/admin/views/wizard-settings.php:130 includes/class-wpinv.php:368
 msgid "Continue"
 msgstr ""
 
@@ -3962,7 +3961,7 @@ msgstr ""
 msgid "Manage Subscription"
 msgstr ""
 
-#: includes/class-wpinv.php:376
+#: includes/class-wpinv.php:372
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -14086,7 +14085,7 @@ msgid "Missing payment form"
 msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission.php:283
-#: includes/wpinv-template-functions.php:963
+#: includes/wpinv-template-functions.php:968
 msgid "Invalid invoice"
 msgstr ""
 
@@ -15007,60 +15006,60 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:975
+#: includes/wpinv-template-functions.php:980
 msgid "You are not allowed to view this invoice"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:992
+#: includes/wpinv-template-functions.php:997
 msgid "This invoice has already been paid."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1010
+#: includes/wpinv-template-functions.php:1015
 msgid "Error loading the payment form"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1050
+#: includes/wpinv-template-functions.php:1055
 msgid "Your cart is empty."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1134
-#: includes/wpinv-template-functions.php:1151
+#: includes/wpinv-template-functions.php:1139
+#: includes/wpinv-template-functions.php:1156
 #, php-format
 msgid "%1$s - %2$s at %3$s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1159
+#: includes/wpinv-template-functions.php:1164
 msgid "Delete note"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1186
+#: includes/wpinv-template-functions.php:1191
 #, php-format
 msgid ""
 "Your personal data will be used to process your invoice, payment and for "
 "other purposes described in our %s."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1192
+#: includes/wpinv-template-functions.php:1197
 msgid "privacy policy"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1250
+#: includes/wpinv-template-functions.php:1255
 msgid "No published items found"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1276 widgets/invoice.php:86
+#: includes/wpinv-template-functions.php:1281 widgets/invoice.php:86
 msgid "Invoice not found"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1287
+#: includes/wpinv-template-functions.php:1292
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1503
+#: includes/wpinv-template-functions.php:1508
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1506
+#: includes/wpinv-template-functions.php:1511
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
@@ -15724,15 +15723,14 @@ msgid "Billing / Shipping Address"
 msgstr ""
 
 #: templates/payment-forms-admin/previews/file_upload.php:17
+#: templates/payment-forms/elements/file_upload.php:46
 msgid "Drag files to this area or click to upload"
 msgstr ""
 
 #: templates/payment-forms-admin/previews/file_upload.php:18
-#: templates/payment-forms/elements/file_upload.php:50
+#: templates/payment-forms/elements/file_upload.php:46
 msgid "Drag your file to this area or click to upload"
-msgid_plural "Drag files to this area or click to upload"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: templates/payment-forms-admin/previews/gateway_select.php:14
 msgid "The gateway select box will appear here"
@@ -15784,7 +15782,7 @@ msgstr ""
 msgid "Discount code applied!"
 msgstr ""
 
-#: templates/payment-forms/elements/file_upload.php:62
+#: templates/payment-forms/elements/file_upload.php:55
 msgid "Remove File"
 msgstr ""
 
