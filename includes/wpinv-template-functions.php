@@ -1390,6 +1390,13 @@ add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 10
  * @param GetPaid_Payment_Form $form
  */
 function getpaid_payment_form_element( $element, $form ) {
+    $translatable = array( 'text', 'label', 'input_label', 'button_label', 'description' );
+
+    foreach ( $translatable as $string ) {
+        if ( ! empty( $element[ $string ] ) && is_scalar( $element[ $string ] ) ) {
+            $element[ $string ] = __( $element[ $string ], 'invoicing' );
+        }
+    }
 
     // Set up the args.
     $element_type    = trim( $element['type'] );
