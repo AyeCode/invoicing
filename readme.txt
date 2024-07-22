@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.11 - TBD =
+* Payment form shows field name untranalated with WPML - FIXED
+
 = 2.8.10 - 2024-07-17 =
 * non FSE themes can fail to render new blocks - FIXED
 
