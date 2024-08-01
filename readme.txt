@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
 Requires at least: 4.9
 Tested up to: 6.6
-Stable tag: 2.8.10
+Stable tag: 2.8.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
-= 2.8.11 - TBD =
+= 2.8.11 - 2024-08-01 =
 * Payment form shows field name untranslated with WPML - FIXED
 * Emails are not sent for the bank transfer invoice created for renewal - FIXED
 

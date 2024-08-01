@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.9\n"
+"Project-Id-Version: GetPaid 2.8.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-16 19:58+0530\n"
+"POT-Creation-Date: 2024-08-01 22:17+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
@@ -13513,6 +13513,11 @@ msgstr ""
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
 
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:372
+#, php-format
+msgid "Renewal %1$s created with the status \"%2$s\"."
+msgstr ""
+
 #: includes/gateways/class-getpaid-payment-gateway.php:478
 msgid "January"
 msgstr ""
@@ -15055,11 +15060,11 @@ msgstr ""
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1508
+#: includes/wpinv-template-functions.php:1515
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1511
+#: includes/wpinv-template-functions.php:1518
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
