@@ -145,7 +145,8 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 == Changelog ==
 
 = 2.8.11 - TBD =
-* Payment form shows field name untranalated with WPML - FIXED
+* Payment form shows field name untranslated with WPML - FIXED
+* Emails are not sent for the bank transfer invoice created for renewal - FIXED
 
 = 2.8.10 - 2024-07-17 =
 * non FSE themes can fail to render new blocks - FIXED
