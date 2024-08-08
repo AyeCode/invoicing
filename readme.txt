@@ -144,6 +144,9 @@ Automatic updates should seamlessly work. We always suggest you backup up your w
 
 == Changelog ==
 
+= 2.8.12 - TBD =
+* Restrict backend page access via user capabilities - FIXED
+
 = 2.8.11 - 2024-08-01 =
 * Payment form shows field name untranslated with WPML - FIXED
 * Emails are not sent for the bank transfer invoice created for renewal - FIXED
