@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.2.22';
+		public $version = '0.2.23';
 
 		/**
 		 * Class textdomain.
@@ -2939,15 +2939,18 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                 /**
                  * Reset field default value.
                  */
-                function aui_cf_field_reset_default_value($el) {
+                function aui_cf_field_reset_default_value($el, bHide, setVal) {
                     var type = aui_cf_field_get_type($el), key = $el.data('rule-key'), field = aui_cf_field_default_values[key];
+                    if (typeof setVal === 'undefined' || (typeof setVal !== 'undefined' && setVal === null)) {
+                        setVal = field.value;
+                    }
 
                     switch (type) {
                         case 'text':
                         case 'number':
                         case 'date':
                         case 'textarea':
-                            $el.find('input:text,input[type="number"],textarea').val(field.value);
+                            $el.find('input:text,input[type="number"],textarea').val(setVal);
                             break;
                         case 'phone':
                         case 'email':
@@ -2956,22 +2959,22 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                         case 'hidden':
                         case 'password':
                         case 'file':
-                            $el.find('input[type="' + type + '"]').val(field.value);
+                            $el.find('input[type="' + type + '"]').val(setVal);
                             break;
                         case 'select':
                             $el.find('select').find('option').prop('selected', false);
-                            $el.find('select').val(field.value);
+                            $el.find('select').val(setVal);
                             $el.find('select').trigger('change');
                             break;
                         case 'multiselect':
                             $el.find('select').find('option').prop('selected', false);
-                            if ((typeof field.value === 'object' || typeof field.value === 'array') && !field.value.length && $el.find('select option:first').text() == '') {
+                            if ((typeof setVal === 'object' || typeof setVal === 'array') && !setVal.length && $el.find('select option:first').text() == '') {
                                 $el.find('select option:first').remove(); // Clear first option to show placeholder.
                             }
-                            if (typeof field.value === 'string') {
-                                $el.find('select').val(field.value);
+                            if (typeof setVal === 'string') {
+                                $el.find('select').val(setVal);
                             } else {
-                                jQuery.each(field.value, function(i, v) {
+                                jQuery.each(setVal, function(i, v) {
                                     $el.find('select').find('option[value="' + v + '"]').attr('selected', true);
                                 });
                             }
@@ -2980,12 +2983,12 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                         case 'checkbox':
                             if ($el.find('input[type="checkbox"]:checked').length >= 1) {
                                 $el.find('input[type="checkbox"]:checked').prop('checked', false);
-                                if (Array.isArray(field.value)) {
-                                    jQuery.each(field.value, function(i, v) {
+                                if (Array.isArray(setVal)) {
+                                    jQuery.each(setVal, function(i, v) {
                                         $el.find('input[type="checkbox"][value="' + v + '"]').attr('checked', true);
                                     });
                                 } else {
-                                    $el.find('input[type="checkbox"][value="' + field.value + '"]').attr('checked', true);
+                                    $el.find('input[type="checkbox"][value="' + setVal + '"]').attr('checked', true);
                                 }
                             }
                             break;
@@ -2993,7 +2996,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                             if ($el.find('input[type="radio"]:checked').length >= 1) {
                                 setTimeout(function() {
                                     $el.find('input[type="radio"]:checked').prop('checked', false);
-                                    $el.find('input[type="radio"][value="' + field.value + '"]').attr('checked', true);
+                                    $el.find('input[type="radio"][value="' + setVal + '"]').attr('checked', true);
                                 }, 100);
                             }
                             break;
@@ -3055,13 +3058,15 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                         }
                         aui_cf_field_show_element($destEl);
                     } else if (rule.action === 'show' && !isTrue) {
-                        if (!$destEl.is(':hidden') && !$destEl.hasClass('aui-cf-skip-reset')) {
-                            aui_cf_field_reset_default_value($destEl);
+                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !$destEl.hasClass('aui-cf-skip-reset')) {
+                            var _setVal = $destEl.hasClass('aui-cf-force-empty') ? '' : null;
+                            aui_cf_field_reset_default_value($destEl, true, _setVal);
                         }
                         aui_cf_field_hide_element($destEl);
                     } else if (rule.action === 'hide' && isTrue) {
-                        if (!$destEl.is(':hidden') && !$destEl.hasClass('aui-cf-skip-reset')) {
-                            aui_cf_field_reset_default_value($destEl);
+                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !$destEl.hasClass('aui-cf-skip-reset')) {
+                            var _setVal = $destEl.hasClass('aui-cf-force-empty') ? '' : null;
+                            aui_cf_field_reset_default_value($destEl, true, _setVal);
                         }
                         aui_cf_field_hide_element($destEl);
                     } else if (rule.action === 'hide' && !isTrue) {
