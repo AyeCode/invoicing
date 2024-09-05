@@ -1,18 +1,18 @@
-=== Payment forms, Buy now buttons and Invoicing System | GetPaid ===
+=== Payment forms, Buy now buttons, and Invoicing System | GetPaid ===
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
-Tags:  payments, invoice, invoicing, Recurring payments, Paypal, Stripe, credit card payments, buy now button, checkout form, payments form builder,
+Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.6
 Stable tag: 2.8.12
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Payments & Invoicing plugin for WordPress to quickly and easily sell online. Create buy now buttons or inline checkout forms in seconds to accept online payments on your website.
+Payments & Invoicing plugin for WordPress to quickly and easily sell online. Create Buy Now buttons or inline checkout forms in seconds to accept online payments on your website.
 
 == Description ==
 
-= Lightweight, extensible and very easy to use Online Payments and Invoicing plugin. =
+= Lightweight, extensible, and easy-to-use Online Payments and Invoicing plugin. =
 
 GetPaid can be used as a payment system for 3rd party plugins too.
 
@@ -22,11 +22,11 @@ GetPaid can be used as a payment system for 3rd party plugins too.
 
 * Create items with a one-time fee or recurring payments (subscriptions).
 * Add a free trial and/or allow buyers to name their price.
-* Add items to your website via Buy Now Buttons. Customers will be able to buy on your website via several Payment Gateways.
-* Create inline checkout forms to sell your items through an optimized landing page.
-* Create Invoices that you can send to your customers and they can pay online.
+* Add items to your website via Buy Now Buttons. Customers can buy on your website via several Payment Gateways.
+* Create inline checkout forms to sell items through an optimized landing page.
+* Create Invoices that you can send to your customers, who can pay online.
 * Create quotes and estimates to send to your clients [requires GetPaid quotes add-on](https://wordpress.org/plugins/invoicing-quotes/)
-* Quotes can be turned into invoices and clients can pay online.
+* Quotes can be turned into invoices, and clients can pay online.
 * Create and send invoices directly to receive single or recurring payments.
 * Accept payments via [Stripe](https://wordpress.org/plugins/getpaid-stripe-payments/) - (requires GetPaid Stripe add-on), Paypal Standard, Authorize.net, WorldPay and Pre Bank Transfer (other payment gateways available as premium add-ons).
 * Export payments and any other data through the reporting system.
@@ -38,20 +38,20 @@ GetPaid can be used as a payment system for 3rd party plugins too.
 
 GetPaid can be used as a payment system with a checkout page by any plugin.
 
-[Here you find instructions on how to integrate any plugin with GetPaid.](https://wpgetpaid.com/docs/adding-a-custom-item-type/)
+[Here you find instructions on integrating any plugin with GetPaid.](https://wpgetpaid.com/docs/adding-a-custom-item-type/)
 
 = Plugins currently using GetPaid as their Payment system are =
 
-* [GeoDirectory](https://wpgeodirectory.com/) - GeoDirectory uses GetPaid to manage Invoices, taxes, VAT and payments.
+* [GeoDirectory](https://wpgeodirectory.com/) - GeoDirectory uses GetPaid to manage Invoices, taxes, VAT, and payments.
 
 = Payment Gateways =
 
-* PayPal Standard (built-in) - Accept Paypal and credit card payments (single or recurring) via paypal.
+* PayPal Standard (built-in) - Accept Paypal and credit card payments (single or recurring) via PayPal.
 * Authorize.Net (built-in) - Accept credit card payments (single or recurring) via Authorize.Net.
 * Worldpay (built-in) - Accept credit card payments via Worldpay.
-* Pre Bank Transfer (built-in) - Instruct users how to send you a bank transfer which you can then later mark as paid.
+* Pre-Bank Transfer (built-in) - Instruct users to send you a bank transfer, which you can later mark as paid.
 * [Stripe](https://wordpress.org/plugins/getpaid-stripe-payments/) - Accept credit card payments (single or recurring) directly on your website via Stripe.
-* [PayPal Pro](https://wpgetpaid.com/downloads/paypal-pro-payment-gateway/) - Accept Paypal and credit card payments (single or recurring) directly on your website.
+* [PayPal Pro](https://wpgetpaid.com/downloads/paypal-pro-payment-gateway/) - Accept PayPal and credit card payments (single or recurring) directly on your website.
 * [PayFast](https://wpgetpaid.com/downloads/payfast-payment-gateway/) - Accept payments via PayFast.
 * [Cheque Payment](https://wpgetpaid.com/downloads/cheque-payment-gateway/)  - Accept payments via Cheques
 * [Mollie](https://wpgetpaid.com/downloads/mollie-payment-gateway/)  - Accept payment via Mollie (EUR only)
@@ -66,12 +66,12 @@ GetPaid can be used as a payment system with a checkout page by any plugin.
 * [Square](https://wpgetpaid.com/downloads/square-payment-gateway/) - Accept payments via Square
 * [First Data](https://wpgetpaid.com/downloads/firstdata-payment-gateway/) - Accept payments via FirstData
 * [Braintree](https://wpgetpaid.com/downloads/braintree-payment-gateway/) - Accept payments via Braintree
-* [eWay](https://wpgetpaid.com/downloads/eway-payment-gateway/) - Accept payments via eWay payment gateway
+* [eWay](https://wpgetpaid.com/downloads/eway-payment-gateway/) - Accept payments via eWAY payment gateway
 
 
 = Add-ons =
 
-* [Quotes](https://wordpress.org/plugins/invoicing-quotes/) - Create quotes, send them to clients and convert them to Invoices when accepted by the customer
+* [Quotes](https://wordpress.org/plugins/invoicing-quotes/) - Create quotes, send them to clients, and convert them to Invoices when accepted by the customer
 * [Wallet](https://wordpress.org/plugins/getpaid-wallet/) - Topup and withdraw money from your wallet while also being able to use the balance at checkout
 * [Item Inventory](https://wordpress.org/plugins/getpaid-item-inventory/) - Set stock levels for individual items
 * [PDF Invoices](https://wpgetpaid.com/downloads/pdf-invoices/) - Send PDF invoices via email or let users download them
@@ -96,9 +96,9 @@ Get timely and friendly support for both Core Plugin and add-ons at our official
 
 = Origin =
 
-Work on GetPaid ( AKA, Get Paid or wpGetPaid ) started in April 2016.
+Work on GetPaid ( AKA Get Paid or wpGetPaid ) started in April 2016.
 We are proud the original base of the plugin was a fork of [EDD](https://wordpress.org/plugins/easy-digital-downloads/) with permission from Pippin.
-Additionally, we are proud some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant was used in places, mostly for his beautiful invoice layout.
+Additionally, we are proud of some code from [Sliced Invoices](https://wordpress.org/plugins/sliced-invoices/) by David Grant, which was used in places, mostly for his beautiful invoice layout.
 We worked on the plugin for over a year before it got its first public release, we stripped down the code to make it a simple lightweight payment and invoicing plugin with many additional features to fit the needs of our customers.
 
 This product includes GeoLite2 data created by MaxMind, available from
@@ -114,9 +114,9 @@ This product includes GeoLite2 data created by MaxMind, available from
 
 = Automatic installation =
 
-Automatic installation is the easiest option. To do an automatic install of WP GetPaid, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+The easiest option is automatic installation. To install WP GetPaid automatically, log in to your WordPress dashboard, navigate to the Plugins menu, and click Add New.
 
-In the search field type WP GetPaid and click Search Plugins. Once you've found WP GetPaid plugin you install it by simply clicking Install Now. [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
+In the search field, type WP GetPaid and click Search Plugins. Once you've found the WP GetPaid plugin, you can install it by simply clicking Install Now. [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
 
 = Manual installation =
 
@@ -124,7 +124,7 @@ The manual installation method involves downloading our Directory plugin and upl
 
 = Updating =
 
-Automatic updates should seamlessly work. We always suggest you backup up your website before performing any automated update to avoid unforeseen problems.
+Automatic updates should work seamlessly. To avoid unforeseen problems, we always suggest backing up your website before performing any automated update.
 
 == Frequently Asked Questions ==
 
