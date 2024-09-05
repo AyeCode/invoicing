@@ -26,14 +26,6 @@ defined( 'ABSPATH' ) || exit;
         </select>
     </td>
 
-    <!-- <td class="wpinv-tax-rule-same-country">
-        <select name="tax_rules[<?php echo esc_attr( $tax_rule['key'] ); ?>][same_country_rule]" class="getpaid-tax-rule-same-country" required>
-            <option value="no" <?php selected( $tax_rule['same_country_rule'], 'no' ); ?>><?php esc_html_e( 'Do not charge tax', 'invoicing' ); ?></option>
-            <option value="always" <?php selected( $tax_rule['same_country_rule'], 'always' ); ?>><?php esc_html_e( 'Charge tax unless vat number is validated', 'invoicing' ); ?></option>
-            <option value="vat_too" <?php selected( $tax_rule['same_country_rule'], 'vat_too' ); ?>><?php esc_html_e( 'Charge tax even if vat number is validated', 'invoicing' ); ?></option>
-        </select>
-    </td> -->
-
     <td class="wpinv_tax_remove">
         <button type="button" class="close btn-close wpinv_remove_tax_rule" aria-label="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>" title="<?php esc_attr_e( 'Delete', 'invoicing' ); ?>">
             <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
