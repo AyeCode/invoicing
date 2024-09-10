@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.13 - TBD =
+* Authorize.net documentation links updated - CHANGED
+
 = 2.8.12 - 2024-08-08 =
 * Restrict backend page access via user capabilities - FIXED
 

@@ -872,7 +872,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             'type' => 'text',
             'id'   => 'authorizenet_login_id',
             'name' => __( 'API Login ID', 'invoicing' ),
-            'desc' => '<a href="https://support.authorize.net/s/article/How-do-I-obtain-my-API-Login-ID-and-Transaction-Key"><em>' . __( 'How do I obtain my API Login ID and Transaction Key?', 'invoicing' ) . '</em></a>',
+            'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'How do I obtain my API Login ID and Transaction Key?', 'invoicing' ) . '</em></a>',
         );
 
         $admin_settings['authorizenet_transaction_key'] = array(
@@ -885,7 +885,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             'type' => 'text',
             'id'   => 'authorizenet_signature_key',
             'name' => __( 'Signature Key', 'invoicing' ),
-            'desc' => '<a href="https://support.authorize.net/s/article/What-is-a-Signature-Key"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
+            'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
         );
 
         $admin_settings['authorizenet_ipn_url'] = array(
@@ -893,7 +893,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             'id'       => 'authorizenet_ipn_url',
             'name'     => __( 'Webhook URL', 'invoicing' ),
             'std'      => $this->notify_url,
-            'desc'     => __( 'Create a new webhook using this URL as the endpoint URL and set it to receive all payment events.', 'invoicing' ) . ' <a href="https://support.authorize.net/s/article/How-do-I-add-edit-Webhook-notification-end-points"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
+            'desc'     => __( 'Create a new webhook using this URL as the endpoint URL and set it to receive all payment events.', 'invoicing' ) . ' <a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001542"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
             'custom'   => 'authorizenet',
             'readonly' => true,
         );
