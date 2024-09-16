@@ -35,7 +35,7 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '0.2.23';
+		public $version = '0.2.26';
 
 		/**
 		 * Class textdomain.
@@ -2975,30 +2975,30 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                                 $el.find('select').val(setVal);
                             } else {
                                 jQuery.each(setVal, function(i, v) {
-                                    $el.find('select').find('option[value="' + v + '"]').attr('selected', true);
+                                    $el.find('select').find('option[value="' + v + '"]').prop('selected', true);
                                 });
                             }
                             $el.find('select').trigger('change');
                             break;
                         case 'checkbox':
                             if ($el.find('input[type="checkbox"]:checked').length >= 1) {
-                                $el.find('input[type="checkbox"]:checked').prop('checked', false);
-                                if (Array.isArray(setVal)) {
-                                    jQuery.each(setVal, function(i, v) {
-                                        $el.find('input[type="checkbox"][value="' + v + '"]').attr('checked', true);
-                                    });
-                                } else {
-                                    $el.find('input[type="checkbox"][value="' + setVal + '"]').attr('checked', true);
-                                }
+                                $el.find('input[type="checkbox"]:checked').prop('checked', false).removeAttr('checked');
+                            }
+                            if (Array.isArray(setVal)) {
+                                jQuery.each(setVal, function(i, v) {
+                                    $el.find('input[type="checkbox"][value="' + v + '"]').prop('checked', true);
+                                });
+                            } else {
+                                $el.find('input[type="checkbox"][value="' + setVal + '"]').prop('checked', true);
                             }
                             break;
                         case 'radio':
-                            if ($el.find('input[type="radio"]:checked').length >= 1) {
-                                setTimeout(function() {
-                                    $el.find('input[type="radio"]:checked').prop('checked', false);
-                                    $el.find('input[type="radio"][value="' + setVal + '"]').attr('checked', true);
-                                }, 100);
-                            }
+                            setTimeout(function() {
+                                if ($el.find('input[type="radio"]:checked').length >= 1) {
+                                    $el.find('input[type="radio"]:checked').prop('checked', false).removeAttr('checked');
+                                }
+                                $el.find('input[type="radio"][value="' + setVal + '"]').prop('checked', true);
+                            }, 100);
                             break;
                         default:
                             jQuery(document.body).trigger('aui_cf_field_reset_default_value', type, $el, field);
@@ -3050,27 +3050,27 @@ if ( ! class_exists( 'AyeCode_UI_Settings' ) ) {
                  * App the field condition action.
                  */
                 function aui_cf_field_apply_action($el, rule, isTrue) {
-                    var $destEl = jQuery('[data-rule-key="' + rule.key + '"]');
+                    var $destEl = jQuery('[data-rule-key="' + rule.key + '"]'), $inputEl = (rule.key && $destEl.find('[name="' + rule.key + '"]').length) ? $destEl.find('[name="' + rule.key + '"]') : null;
 
                     if (rule.action === 'show' && isTrue) {
-                        if ($destEl.is(':hidden') && !$destEl.hasClass('aui-cf-skip-reset')) {
+                        if ($destEl.is(':hidden') && !($destEl.hasClass('aui-cf-skip-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')))) {
                             aui_cf_field_reset_default_value($destEl);
                         }
                         aui_cf_field_show_element($destEl);
                     } else if (rule.action === 'show' && !isTrue) {
-                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !$destEl.hasClass('aui-cf-skip-reset')) {
-                            var _setVal = $destEl.hasClass('aui-cf-force-empty') ? '' : null;
+                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')) || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !($destEl.hasClass('aui-cf-skip-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')))) {
+                            var _setVal = $destEl.hasClass('aui-cf-force-empty') || ($inputEl && $inputEl.hasClass('aui-cf-force-empty')) ? '' : null;
                             aui_cf_field_reset_default_value($destEl, true, _setVal);
                         }
                         aui_cf_field_hide_element($destEl);
                     } else if (rule.action === 'hide' && isTrue) {
-                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !$destEl.hasClass('aui-cf-skip-reset')) {
-                            var _setVal = $destEl.hasClass('aui-cf-force-empty') ? '' : null;
+                        if ((!$destEl.is(':hidden') || ($destEl.is(':hidden') && ($destEl.hasClass('aui-cf-force-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')) || ($destEl.closest('.aui-cf-use-parent').length && $destEl.closest('.aui-cf-use-parent').is(':hidden'))))) && !($destEl.hasClass('aui-cf-skip-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')))) {
+                            var _setVal = $destEl.hasClass('aui-cf-force-empty') || ($inputEl && $inputEl.hasClass('aui-cf-force-empty')) ? '' : null;
                             aui_cf_field_reset_default_value($destEl, true, _setVal);
                         }
                         aui_cf_field_hide_element($destEl);
                     } else if (rule.action === 'hide' && !isTrue) {
-                        if ($destEl.is(':hidden') && !$destEl.hasClass('aui-cf-skip-reset')) {
+                        if ($destEl.is(':hidden') && !($destEl.hasClass('aui-cf-skip-reset') || ($inputEl && $inputEl.hasClass('aui-cf-skip-reset')))) {
                             aui_cf_field_reset_default_value($destEl);
                         }
                         aui_cf_field_show_element($destEl);
