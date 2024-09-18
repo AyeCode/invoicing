@@ -3165,17 +3165,11 @@ function sd_visibility_output_options() {
  * @return array Template page options.
  */
 function sd_template_page_options( $args = array() ) {
-	global $sd_tmpl_page_options;
+	global $sd_tmpl_page_options,$wpdb;
 
 	if ( ! empty( $sd_tmpl_page_options ) ) {
 		return $sd_tmpl_page_options;
 	}
-
-	$args = wp_parse_args( $args, array(
-		'child_of'    => 0,
-		'sort_column' => 'post_title',
-		'sort_order'  => 'ASC'
-	) );
 
 	$exclude_pages = array();
 	if ( $page_on_front = get_option( 'page_on_front' ) ) {
@@ -3186,11 +3180,31 @@ function sd_template_page_options( $args = array() ) {
 		$exclude_pages[] = $page_for_posts;
 	}
 
+	$exclude_pages_placeholders = '';
 	if ( ! empty( $exclude_pages ) ) {
-		$args['exclude'] = $exclude_pages;
+		// Sanitize the array of excluded pages and implode it for the SQL query
+		$exclude_pages_placeholders = implode(',', array_fill(0, count($exclude_pages), '%d'));
 	}
 
-	$pages = get_pages( $args );
+	// Prepare the base SQL query, including child_of = 0 (only root-level pages)
+	$sql = "
+		SELECT ID, post_title
+		FROM $wpdb->posts
+		WHERE post_type = 'page'
+		AND post_status = 'publish'
+		AND post_parent = 0 
+	";
+
+	// Add the exclusion if there are pages to exclude
+	if ( ! empty( $exclude_pages ) ) {
+		$sql .= " AND ID NOT IN ($exclude_pages_placeholders)";
+	}
+
+	// Add sorting
+	$sql .= " ORDER BY post_title ASC";
+
+	// Prepare the SQL query to include the excluded pages
+	$pages = $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) );
 
 	$options = array( '' => __( 'Select Page...', 'ayecode-connect' ) );
 	if ( ! empty( $pages ) ) {

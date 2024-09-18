@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.6
-Stable tag: 2.8.12
+Stable tag: 2.8.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.13 - TBD =
+= 2.8.13 - 2024-09-16 =
 * Authorize.net documentation links updated - CHANGED
+* Composer packages updated - UPDATED
+* get_pages() WP function replaced with custom function for better memory usage - CHANGED
 
 = 2.8.12 - 2024-08-08 =
 * Restrict backend page access via user capabilities - FIXED

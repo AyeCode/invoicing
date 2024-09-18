@@ -1,3 +1,9 @@
+= 1.2.9 - 2024-09-12 =
+* Template get_pages call changed to custom query for better memory management - CHANGED
+
+= 1.2.7 - 2024-08-29 =
+* Fix conflicts with UpSolution Core plugin - FIXED
+
 = 1.2.6 - 2024-07-18 =
 * render_block hook only had 2 args prior to WP 5.9 which could cause fatal error when running WP < 5.9 - FIXED
 

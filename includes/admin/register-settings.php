@@ -483,19 +483,64 @@ function wpinv_get_registered_settings_sections() {
 }
 
 function wpinv_get_pages( $with_slug = false, $default_label = null ) {
+
+    global $gp_tmpl_page_options,$wpdb;
+
+    if ( ! empty( $gp_tmpl_page_options ) ) {
+        return $gp_tmpl_page_options;
+    }
+
+    $exclude_pages = array();
+    if ( $page_on_front = get_option( 'page_on_front' ) ) {
+        $exclude_pages[] = $page_on_front;
+    }
+
+    if ( $page_for_posts = get_option( 'page_for_posts' ) ) {
+        $exclude_pages[] = $page_for_posts;
+    }
+
+    $exclude_pages_placeholders = '';
+    if ( ! empty( $exclude_pages ) ) {
+        // Sanitize the array of excluded pages and implode it for the SQL query
+        $exclude_pages_placeholders = implode(',', array_fill(0, count($exclude_pages), '%d'));
+    }
+
+    // Prepare the base SQL query, including child_of = 0 (only root-level pages)
+    $sql = "
+		SELECT ID, post_title, post_name
+		FROM $wpdb->posts
+		WHERE post_type = 'page'
+		AND post_status = 'publish'
+		AND post_parent = 0 
+	";
+
+    // Add the exclusion if there are pages to exclude
+    if ( ! empty( $exclude_pages ) ) {
+        $sql .= " AND ID NOT IN ($exclude_pages_placeholders)";
+    }
+
+    // Add sorting
+    $sql .= " ORDER BY post_title ASC";
+
+    // Prepare the SQL query to include the excluded pages
+    $pages = $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) );
+
 	$pages_options = array();
 
-	if ( $default_label !== null && $default_label !== false ) {
-		$pages_options = array( '' => $default_label ); // Blank option
-	}
-
-	$pages = get_pages();
-	if ( $pages ) {
-		foreach ( $pages as $page ) {
-			$title = $with_slug ? $page->post_title . ' (' . $page->post_name . ')' : $page->post_title;
+    if ( $pages ) {
+        foreach ( $pages as $page ) {
+            $title = $with_slug ? $page->post_title . ' (' . $page->post_name . ')' : $page->post_title;
             $pages_options[ $page->ID ] = $title;
-		}
-	}
+        }
+    }
+
+
+
+    $gp_tmpl_page_options = $pages_options;
+
+    if ( $default_label !== null && $default_label !== false ) {
+        $pages_options = array( '' => $default_label ) + $pages_options; // Blank option
+    }
 
 	return $pages_options;
 }
