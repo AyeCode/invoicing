@@ -160,7 +160,7 @@ abstract class GetPaid_Payment_Gateway {
 		// Gateway settings.
 		add_filter( "wpinv_gateway_settings_{$this->id}", array( $this, 'admin_settings' ) );
 
-		// Gateway checkout fiellds.
+		// Gateway checkout fields.
 		add_action( "wpinv_{$this->id}_cc_form", array( $this, 'payment_fields' ), 10, 2 );
 
 		// Process payment.
@@ -347,7 +347,7 @@ abstract class GetPaid_Payment_Gateway {
 	 * Get a link to the subscription on the 3rd party gateway site (if applicable).
 	 *
 	 * @param string $subscription_url transaction url.
-	 * @param WPInv_Subscription $subscription Subscription objectt.
+	 * @param WPInv_Subscription $subscription Subscription object.
 	 * @return string subscription URL, or empty string.
 	 */
 	public function generate_subscription_url( $subscription_url, $subscription ) {
@@ -501,13 +501,9 @@ abstract class GetPaid_Payment_Gateway {
 
         ?>
             <div class="<?php echo esc_attr( $this->id ); ?>-cc-form getpaid-cc-form mt-1">
-
-
                 <div class="getpaid-cc-card-inner">
                     <div class="row">
-
                         <div class="col-12">
-
 							<div class="form-group mb-3">
 								<label for="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>"><?php esc_html_e( 'Card number', 'invoicing' ); ?></label>
 								<div class="input-group input-group-sm">
@@ -525,44 +521,34 @@ abstract class GetPaid_Payment_Gateway {
 									<input type="text" name="<?php echo esc_attr( $this->id . '[cc_number]' ); ?>" id="<?php echo esc_attr( "$id_prefix-cc-number" ); ?>" class="form-control form-control-sm getpaid-format-card-number" autocomplete="cc-number">
 								</div>
 							</div>
-
                         </div>
-
                         <div class="col-12">
                             <div class="form-group mb-3">
                                 <label><?php esc_html_e( 'Expiration', 'invoicing' ); ?></label>
                                 <div class="form-row row">
-
                                     <div class="col">
                                         <select class="form-control form-control-sm" autocomplete="cc-exp-month" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_month]">
                                             <option disabled selected="selected"><?php esc_html_e( 'MM', 'invoicing' ); ?></option>
-
                                             <?php
                                                 foreach ( $months as $key => $month ) {
 												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $month ) . '</option>';
                                                 }
                                             ?>
-
                                         </select>
                                     </div>
-
                                     <div class="col">
                                         <select class="form-control form-control-sm" autocomplete="cc-exp-year" name="<?php echo esc_attr( $this->id ); ?>[cc_expire_year]">
                                             <option disabled selected="selected"><?php esc_html_e( 'YY', 'invoicing' ); ?></option>
-
                                             <?php
                                                 foreach ( $years as $key => $year ) {
 												echo "<option value='" . esc_attr( $key ) . "'>" . esc_html( $year ) . '</option>';
                                                 }
                                             ?>
-
                                         </select>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-12">
                             <?php
                                 aui()->input(
@@ -574,24 +560,20 @@ abstract class GetPaid_Payment_Gateway {
 										'class'            => 'form-control-sm',
 										'extra_attributes' => array(
 											'autocomplete' => 'cc-csc',
+											'maxlength' => 4
 										),
                                     ),
 									true
                                 );
                             ?>
                         </div>
-
 					</div>
-
 					<?php
-
 						if ( $save ) {
 							$this->save_payment_method_checkbox();
 						}
-
 					?>
                 </div>
-
             </div>
 		<?php
 

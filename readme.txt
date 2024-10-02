@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.15 - TBD =
+* Add maxlength validation to CCV input - CHANGED
+
 = 2.8.14 - 2024-09-26 =
 * wpinv_get_pages() using prepare when not needed causes PHP notice - FIXED
 
