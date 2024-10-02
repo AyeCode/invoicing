@@ -522,8 +522,8 @@ function wpinv_get_pages( $with_slug = false, $default_label = null ) {
     // Add sorting
     $sql .= " ORDER BY post_title ASC";
 
-    // Prepare the SQL query to include the excluded pages
-    $pages = $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) );
+    // Prepare the SQL query to include the excluded pages only if we have placeholders
+    $pages = $exclude_pages_placeholders ? $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) ) : $wpdb->get_results( $sql );
 
 	$pages_options = array();
 

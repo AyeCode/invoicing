@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.6
-Stable tag: 2.8.13
+Stable tag: 2.8.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.14 - 2024-09-26 =
+* wpinv_get_pages() using prepare when not needed causes PHP notice - FIXED
 
 = 2.8.13 - 2024-09-16 =
 * Authorize.net documentation links updated - CHANGED
