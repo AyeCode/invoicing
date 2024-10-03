@@ -511,7 +511,6 @@ function wpinv_get_pages( $with_slug = false, $default_label = null ) {
 		FROM $wpdb->posts
 		WHERE post_type = 'page'
 		AND post_status = 'publish'
-		AND post_parent = 0 
 	";
 
     // Add the exclusion if there are pages to exclude
@@ -521,6 +520,10 @@ function wpinv_get_pages( $with_slug = false, $default_label = null ) {
 
     // Add sorting
     $sql .= " ORDER BY post_title ASC";
+
+    // Add a sanity limit
+    $limit = absint( apply_filters('wpinv_get_pages_limit',500) );
+    $sql .= " LIMIT " . absint($limit);
 
     // Prepare the SQL query to include the excluded pages only if we have placeholders
     $pages = $exclude_pages_placeholders ? $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) ) : $wpdb->get_results( $sql );

@@ -3,7 +3,7 @@
         'name' => 'ayecode/invoicing',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'e67cdc970a7103c4a98b4402991aacdc93ff24e9',
+        'reference' => '268e9ae7fe99f390ae68dc160df5767d367d3eb7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'ayecode/invoicing' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'e67cdc970a7103c4a98b4402991aacdc93ff24e9',
+            'reference' => '268e9ae7fe99f390ae68dc160df5767d367d3eb7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

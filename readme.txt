@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.6
-Stable tag: 2.8.14
+Stable tag: 2.8.15
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.15 - TBD =
+= 2.8.15 - 2024-10-03 =
 * Add maxlength validation to CCV input - CHANGED
+* wpinv_get_pages() not allowing child page selection - FIXED
+* Filter added `wpinv_get_pages_limit` to adjust the 500 pages limit - ADDED
 
 = 2.8.14 - 2024-09-26 =
 * wpinv_get_pages() using prepare when not needed causes PHP notice - FIXED
