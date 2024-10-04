@@ -91,14 +91,20 @@ class GetPaid_Meta_Box_Invoice_Details {
                         // Date paid.
                         aui()->input(
                             array(
-                                'type'        => 'text',
-                                'id'          => 'wpinv_date_completed',
-                                'name'        => 'wpinv_date_completed',
-                                'label'       => __( 'Date Completed:', 'invoicing' ),
-                                'label_type'  => 'vertical',
-                                'class'       => 'form-control-sm',
-                                'value'       => $invoice->get_date_completed( 'edit' ),
-                                'placeholder' => 'YYYY-MM-DD 00:00',
+                                'type'             => 'datepicker',
+                                'id'               => 'wpinv_date_completed',
+                                'name'             => 'wpinv_date_completed',
+                                'label'            => __( 'Date Completed:', 'invoicing' ),
+                                'label_type'       => 'vertical',
+                                'placeholder'      => 'YYYY-MM-DD 00:00',
+                                'class'            => 'form-control-sm',
+                                'value'            => $invoice->get_date_completed( 'edit' ),
+                                'extra_attributes' => array(
+                                    'data-enable-time' => 'true',
+                                    'data-time_24hr'   => 'true',
+                                    'data-allow-input' => 'true',
+                                    'data-max-date'    => 'today',
+                                ),
                             ),
                             true
                         );
