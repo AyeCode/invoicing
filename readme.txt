@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.16 - TBD =
 * Update FlatPickr JS library to v4.6.13 - CHANGED
+* Recurring item period dropdown is not responsive with BS5 - FIXED
 
 = 2.8.15 - 2024-10-03 =
 * Add maxlength validation to CCV input - CHANGED
