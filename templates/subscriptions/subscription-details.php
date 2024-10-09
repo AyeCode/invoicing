@@ -111,7 +111,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 <h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Related Invoices', 'invoicing' ); ?></h2>
 
-<?php echo wp_kses_post( getpaid_admin_subscription_invoice_details_metabox( $subscription ) ); ?>
+<?php ob_start();getpaid_admin_subscription_invoice_details_metabox( $subscription ); $invoice_details = ob_get_clean(); echo wp_kses_post( $invoice_details ); ?>
 
 <?php if ( 1 < count( $subscription_groups ) ) : ?>
 	<h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Related Subscriptions', 'invoicing' ); ?></h2>
