@@ -483,8 +483,17 @@ function wpinv_get_registered_settings_sections() {
 }
 
 function wpinv_get_pages( $with_slug = false, $default_label = null ) {
+    global $wpdb, $gp_tmpl_page_options;
 
-    global $gp_tmpl_page_options,$wpdb;
+    // Same function, lets not call it twice if we don't need to.
+    if ( function_exists( 'sd_template_page_options' ) ) {
+        $args = array(
+            'with_slug' => $with_slug,
+            'default_label' => $default_label
+        );
+
+        return sd_template_page_options( $args );
+    }
 
     if ( ! empty( $gp_tmpl_page_options ) ) {
         return $gp_tmpl_page_options;
