@@ -391,9 +391,8 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 
 		if ( ! empty( $item ) ) {
 			$link = get_edit_post_link( $item );
-			$link = esc_url( $link );
 			$name = esc_html( get_the_title( $item ) );
-			return wpinv_current_user_can_manage_invoicing() ? "<a href='$link'>$name</a>" : $name;
+			return wpinv_current_user_can_manage_invoicing() ? "<a href='" . ( $link ? esc_url( $link ) : '#' ) . "'>$name</a>" : $name;
 		} else {
 			return sprintf( __( 'Item #%s', 'invoicing' ), $item_id );
 		}
