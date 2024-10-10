@@ -601,14 +601,15 @@ function getpaid_admin_subscription_invoice_details_metabox( $subscription, $str
 									break;
 
 								case 'invoice':
-										$link    = esc_url( get_edit_post_link( $payment->get_id() ) );
-
 										if ( ! is_admin() ) {
-										$link = esc_url( $payment->get_view_url() );
+											$link = $payment->get_view_url();
+										} else {
+											$link = get_edit_post_link( $payment->get_id() );
 										}
 
 										$invoice = esc_html( $payment->get_number() );
-										echo wp_kses_post( "<a href='$link'>$invoice</a>" );
+
+										echo wp_kses_post( "<a href='" . ( $link ? esc_url( $link ) : '#' ) . "'>$invoice</a>" );
 									break;
 										}
 
