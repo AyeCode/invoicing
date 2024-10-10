@@ -3165,9 +3165,17 @@ function sd_visibility_output_options() {
  * @return array Template page options.
  */
 function sd_template_page_options( $args = array() ) {
-	global $sd_tmpl_page_options,$wpdb;
+	global $wpdb, $sd_tmpl_page_options;
 
-	if ( ! empty( $sd_tmpl_page_options ) ) {
+	$defaults = array(
+		'nocache' => false,
+		'with_slug' => false,
+		'default_label' => __( 'Select Page...', 'ayecode-connect' )
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+
+	if ( ! empty( $sd_tmpl_page_options ) && empty( $args['nocache'] ) ) {
 		return $sd_tmpl_page_options;
 	}
 
@@ -3182,42 +3190,48 @@ function sd_template_page_options( $args = array() ) {
 
 	$exclude_pages_placeholders = '';
 	if ( ! empty( $exclude_pages ) ) {
-		// Sanitize the array of excluded pages and implode it for the SQL query
-		$exclude_pages_placeholders = implode(',', array_fill(0, count($exclude_pages), '%d'));
+		// Sanitize the array of excluded pages and implode it for the SQL query.
+		$exclude_pages_placeholders = implode( ',', array_fill( 0, count( $exclude_pages ), '%d' ) );
 	}
 
-	// Prepare the base SQL query, including child_of = 0 (only root-level pages)
-	$sql = "
-		SELECT ID, post_title
-		FROM $wpdb->posts
-		WHERE post_type = 'page'
-		AND post_status = 'publish'
-		AND post_parent = 0 
-	";
+	// Prepare the base SQL query.
+	$sql = "SELECT ID, post_title, post_name FROM " . $wpdb->posts . " WHERE post_type = 'page' AND post_status = 'publish'";
 
 	// Add the exclusion if there are pages to exclude
 	if ( ! empty( $exclude_pages ) ) {
 		$sql .= " AND ID NOT IN ($exclude_pages_placeholders)";
 	}
 
-	// Add sorting
+	// Add sorting.
 	$sql .= " ORDER BY post_title ASC";
 
-	// Prepare the SQL query to include the excluded pages
-	$pages = $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) );
+	// Add a limit.
+	$limit = (int) apply_filters( 'sd_template_page_options_limit', 500, $args );
 
-	$options = array( '' => __( 'Select Page...', 'ayecode-connect' ) );
+	if ( $limit > 0 ) {
+		$sql .= " LIMIT " . (int) $limit;
+	}
+
+	// Prepare the SQL query to include the excluded pages only if we have placeholders.
+	$pages = $exclude_pages_placeholders ? $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) ) : $wpdb->get_results( $sql );
+
+	if ( ! empty( $args['default_label'] ) ) {
+		$options = array( '' => $args['default_label'] );
+	} else {
+		$options = array();
+	}
+
 	if ( ! empty( $pages ) ) {
 		foreach ( $pages as $page ) {
-			if ( ! empty( $page->ID ) && ! empty( $page->post_title ) ) {
-				$options[ $page->ID ] = $page->post_title . ' (#' . $page->ID . ')';
-			}
+			$title = ! empty( $args['with_slug'] ) ? $page->post_title . ' (' . $page->post_name . ')' : ( $page->post_title . ' (#' . $page->ID . ')' );
+
+			$options[ $page->ID ] = $title;
 		}
 	}
 
 	$sd_tmpl_page_options = $options;
 
-	return apply_filters( 'sd_template_page_options', $options );
+	return apply_filters( 'sd_template_page_options', $options, $args );
 }
 
 /**
