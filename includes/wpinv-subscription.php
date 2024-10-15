@@ -960,8 +960,14 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		// Maybe recalculate discount (Pre-GetPaid Fix).
 		$discount = new WPInv_Discount( $invoice->get_discount_code() );
-		if ( $discount->exists() && $discount->is_recurring() && 0 == $invoice->get_total_discount() ) {
+
+		if ( $discount->exists() && $discount->is_recurring() ) {
 			$invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+		}  else {
+			// Unset discount code.
+			$invoice->set_discount_code( '' );
+
+			$invoice->remove_discount( 'discount_code' );
 		}
 
 		$invoice->recalculate_total();
