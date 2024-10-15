@@ -456,10 +456,10 @@ add_action( 'getpaid_subscription_admin_display_profile_id', 'getpaid_admin_subs
  * @param WPInv_Subscription $subscription
  */
 function getpaid_admin_subscription_update_metabox( $subscription ) {
+	global $aui_bs5;
 
 	?>
 	<div class="mt-3">
-
 		<?php
 			aui()->select(
 				array(
@@ -477,8 +477,7 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 			);
 		?>
 
-		<div class="mt-2 px-3 py-2 bg-light border-top" style="margin: -12px;">
-
+		<div class="mt-2 px-3 py-2 bg-light border-top" style="margin:-12px">
 		<?php
 			submit_button( __( 'Update', 'invoicing' ), 'primary', 'submit', false );
 
@@ -487,7 +486,7 @@ function getpaid_admin_subscription_update_metabox( $subscription ) {
 			$title  = esc_attr__( 'Are you sure you want to extend the subscription and generate a new invoice that will be automatically marked as paid?', 'invoicing' );
 
 			if ( $subscription->is_active() ) {
-			echo "<a href='" . esc_url( $url ) . "' class='float-right text-muted' onclick='return confirm(\"" . esc_attr( $title ) . "\")'>" . esc_html( $anchor ) . "</a>";
+				echo "<a href='" . esc_url( $url ) . "' class='" . ( $aui_bs5 ? 'float-end' : 'float-right' ) . " button button-secondary' onclick='return confirm(\"" . esc_attr( $title ) . "\")' title='" . esc_attr__( 'Renew subscription manually', 'invoicing' ) . "'>" . esc_html( $anchor ) . "</a>";
 			}
 
 	echo '</div></div>';

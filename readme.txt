@@ -144,6 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.17 - TBD =
+* Renewal invoice shows incorrect total when tax & discount applied to invoice - FIXED
+* Discount code usages don't increase - FIXED
+
 = 2.8.16 - 2024-10-10 =
 * Update FlatPickr JS library to v4.6.13 - CHANGED
 * Recurring item period dropdown is not responsive with BS5 - FIXED
