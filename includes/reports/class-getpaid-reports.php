@@ -67,7 +67,7 @@ class GetPaid_Reports {
 
 					$key   = sanitize_key( $key );
 					$label = esc_html( $label );
-					$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab';
+					$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab ';
 					$url   = esc_url(
                         add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
                     );
