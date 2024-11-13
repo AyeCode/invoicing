@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/cart-item.php.
  *
- * @version 1.0.19
+ * @version 2.8.17
  * @var GetPaid_Payment_Form $form
  * @var GetPaid_Form_Item $item
  */
@@ -71,8 +71,8 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 						if ( $has_featured_image ) {
 							echo '<div class="d-flex align-items-center getpaid-form-item-has-featured-image">';
-							echo '<div class="getpaid-form-item-image-container mr-2">';
-							echo get_the_post_thumbnail( $item->get_id(), 'thumbnail', array( 'class' => 'getpaid-form-item-image mb-0' ) );
+							echo '<div class="getpaid-form-item-image-container mr-2" style="width:85px;">';
+							echo get_the_post_thumbnail( $item->get_id(), array( 75, 75 ), array( 'class' => 'getpaid-form-item-image mb-0' ) );
 							echo '</div>';
 							echo '<div class="getpaid-form-item-name-container">';
 						}

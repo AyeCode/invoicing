@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/line-item.php.
  *
- * @version 1.0.
+ * @version 2.8.17
  * @var WPInv_Invoice $invoice
  * @var GetPaid_Form_Item $item
  * @var array $columns
@@ -36,8 +36,8 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 						if ( $has_featured_image ) {
 							echo '<div class="d-flex align-items-center getpaid-form-item-has-featured-image">';
-							echo '<div class="getpaid-form-item-image-container mr-2">';
-							echo get_the_post_thumbnail( $item->get_id(), 'thumbnail', array( 'class' => 'getpaid-form-item-image mb-0' ) );
+							echo '<div class="getpaid-form-item-image-container mr-2" style="width:85px;">';
+							echo get_the_post_thumbnail( $item->get_id(), array( 75, 75 ), array( 'class' => 'getpaid-form-item-image mb-0' ) );
 							echo '</div>';
 							echo '<div class="getpaid-form-item-name-container">';
 						}
