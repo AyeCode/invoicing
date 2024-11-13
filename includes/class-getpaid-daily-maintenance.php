@@ -91,15 +91,13 @@ class GetPaid_Daily_Maintenance {
 		$subscriptions = new GetPaid_Subscriptions_Query( $args );
 
 		foreach ( $subscriptions->get_results() as $subscription ) {
-
 			/** @var WPInv_Subscription $subscription */
 			if ( $subscription->is_last_renewal() ) {
 				$subscription->complete();
 			} else {
-				do_action( 'getpaid_should_renew_subscription', $subscription );
+				do_action( 'getpaid_should_renew_subscription', $subscription, $subscription->get_parent_invoice() );
 			}
 		}
-
 	}
 
 	/**

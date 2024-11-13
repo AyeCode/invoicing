@@ -65,7 +65,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		add_action( 'getpaid_invoice_line_items', array( $this, 'thankyou_page' ), 40 );
 		add_action( 'wpinv_pdf_content_billing', array( $this, 'thankyou_page' ), 11 );
 		add_action( 'wpinv_email_invoice_details', array( $this, 'email_instructions' ), 10, 3 );
-		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
+		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 12, 2 );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'invoice_paid' ), 20 );
 
     }
@@ -357,9 +357,9 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @param WPInv_Subscription $subscription
 	 */
-	public function maybe_renew_subscription( $subscription ) {
+	public function maybe_renew_subscription( $subscription, $parent_invoice ) {
 		// Ensure its our subscription && it's active.
-		if ( $this->id === $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+		if ( ! empty( $parent_invoice ) && $this->id === $parent_invoice->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
 			add_filter( 'getpaid_invoice_notifications_is_payment_form_invoice', array( $this, 'force_is_payment_form_invoice' ), 10, 2 );
 
 			$invoice = $subscription->create_payment();

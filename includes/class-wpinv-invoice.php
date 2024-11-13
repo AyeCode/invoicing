@@ -3697,7 +3697,17 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * @return float The recalculated discount
 	 */
 	public function recalculate_total_discount() {
-        $discounts = $this->get_discounts();
+		// Fix renewal invoice amount when tax + recurring discount applied.
+		if ( $this->is_renewal() && $this->get_discount_code() ) {
+			// Maybe recalculate discount (Pre-GetPaid Fix).
+			$discount = new WPInv_Discount( $this->get_discount_code() );
+
+			if ( $discount->exists() && $discount->is_recurring() ) {
+				getpaid_calculate_invoice_discount( $this, $discount );
+			}
+		}
+
+		$discounts = $this->get_discounts();
 		$discount  = 0;
 		$recurring = 0;
 

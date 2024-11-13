@@ -49,7 +49,7 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         $this->title        = __( 'Test Gateway', 'invoicing' );
         $this->method_title = __( 'Test Gateway', 'invoicing' );
 
-        add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
+        add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
     }
 
     /**
@@ -90,30 +90,26 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 
     }
 
-    /**
+	/**
 	 * (Maybe) renews a manual subscription profile.
 	 *
 	 *
-     * @param WPInv_Subscription $subscription
+	 * @param WPInv_Subscription $subscription
 	 */
-	public function maybe_renew_subscription( $subscription ) {
+	public function maybe_renew_subscription( $subscription, $parent_invoice ) {
+		// Ensure its our subscription && it's active.
+		if ( ! empty( $parent_invoice ) && $this->id === $parent_invoice->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+			// Renew the subscription.
+			$subscription->add_payment(
+				array(
+					'transaction_id' => $subscription->get_parent_payment()->generate_key(),
+					'gateway'        => $this->id,
+				)
+			);
 
-        // Ensure its our subscription && it's active.
-        if ( $this->id === $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
-
-            // Renew the subscription.
-            $subscription->add_payment(
-                array(
-                    'transaction_id' => $subscription->get_parent_payment()->generate_key(),
-                    'gateway'        => $this->id,
-                )
-            );
-
-            $subscription->renew();
-
-        }
-
-    }
+			$subscription->renew();
+		}
+	}
 
     /**
 	 * Processes invoice addons.
