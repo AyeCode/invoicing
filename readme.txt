@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.18 - TBD =
 * Item image is missing in invoice emails - FIXED
+* Bank Transfer auto renewal invoice shows incorrect total when tax & discount applied to invoice - FIXED
 
 = 2.8.17 - 2024-11-12 =
 * Renewal invoice shows incorrect total when tax & discount applied to invoice - FIXED
