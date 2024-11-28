@@ -175,7 +175,7 @@ class WPInv_Plugin {
 		 */
 		$locale = apply_filters( 'plugin_locale', $locale, 'invoicing' );
 
-		unload_textdomain( 'invoicing' );
+		unload_textdomain( 'invoicing', true );
 		load_textdomain( 'invoicing', WP_LANG_DIR . '/invoicing/invoicing-' . $locale . '.mo' );
 		load_plugin_textdomain( 'invoicing', false, plugin_basename( dirname( WPINV_PLUGIN_FILE ) ) . '/languages/' );
 	}

@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.17
+Stable tag: 2.8.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,9 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.18 - TBD =
+= 2.8.18 - 2024-11-28 =
 * Item image is missing in invoice emails - FIXED
 * Bank Transfer auto renewal invoice shows incorrect total when tax & discount applied to invoice - FIXED
+* WordPress 6.7 compatibility changes for translation - CHANGED
 
 = 2.8.17 - 2024-11-12 =
 * Renewal invoice shows incorrect total when tax & discount applied to invoice - FIXED
