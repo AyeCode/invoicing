@@ -379,8 +379,7 @@ class WPInv_Plugin {
 			wp_enqueue_script( 'recaptcha', $recaptcha_js, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
-		$version = filemtime( WPINV_PLUGIN_DIR . 'assets/js/payment-forms.js' );
-		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.js', array( 'jquery' ), $version, true );
+		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.min.js', array( 'jquery' ), WPINV_VERSION, true );
 		wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
 	}
 

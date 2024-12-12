@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.18
+Stable tag: 2.8.19
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.19 - 2024-12-12 =
+* Changes to better support AyeCode Connect Turnstile Captcha - ADDED
 
 = 2.8.18 - 2024-11-28 =
 * Item image is missing in invoice emails - FIXED
