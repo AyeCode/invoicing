@@ -1,5 +1,6 @@
 window.getpaid = window.getpaid || {}
 
+
 // Init the select2 items container.
 getpaid.init_select2_item_search = function (select, parent) {
 
