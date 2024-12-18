@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.21 - 2024-12-18 =
+* Added recurring billing amount and duration display in invoices - ADDED
+
 = 2.8.20 - 2024-12-13 =
 * admin JS minified file failed to create and was missing - FIXED
 
