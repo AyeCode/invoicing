@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.21 - TBD =
+* Function _load_textdomain_just_in_time was called incorrectly - FIXED
+
 = 2.8.20 - 2024-12-13 =
 * admin JS minified file failed to create and was missing - FIXED
 

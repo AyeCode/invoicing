@@ -25,6 +25,18 @@ class WPInv_Privacy extends WPInv_Abstract_Privacy {
         // Init hooks.
         $this->init();
 
+        // Initialize data exporters and erasers.
+        add_action( 'init', array( $this, 'register_erasers_exporters' ) );
+    }
+
+   /**
+     * Initial registration of privacy erasers and exporters.
+     *
+     * Due to the use of translation functions, this should run only after plugins loaded.
+     */
+    public function register_erasers_exporters() {
+        $this->name = __( 'GetPaid', 'invoicing' );
+
         // This hook registers Invoicing data exporters.
         $this->add_exporter( 'wpinv-customer-invoices', __( 'Customer Invoices', 'invoicing' ), array( 'WPInv_Privacy_Exporters', 'customer_invoice_data_exporter' ) );
     }
