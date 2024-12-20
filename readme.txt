@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.20
+Stable tag: 2.8.21
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.21 - TBD =
+= 2.8.21 - 2024-12-20 =
 * Function _load_textdomain_just_in_time was called incorrectly - FIXED
 
 = 2.8.20 - 2024-12-13 =
