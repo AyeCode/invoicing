@@ -41,8 +41,7 @@ class GetPaid_Invoice_Notification_Emails {
 			)
 		);
 
-		$this->init_hooks();
-
+		add_action( 'init', array( $this, 'init_hooks' ) );
 	}
 
 	/**
