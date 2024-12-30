@@ -1823,3 +1823,63 @@ textarea.wpi-email_overdue_content {
 .getpaid-settings-editor-input {
     width: 620px;
 }
+
+.getpaid-anonymization-logs .wp-list-table .column-details {
+    width: 50px;
+}
+
+.getpaid-anonymization-logs .toggle-details {
+    cursor: pointer;
+}
+
+.getpaid-anonymization-logs .log-details td {
+    padding: 0;
+}
+
+.getpaid-anonymization-logs .log-details-content {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e1e1e1;
+}
+
+.getpaid-anonymization-logs .log-details-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.getpaid-anonymization-logs .log-details-content table th,
+.getpaid-anonymization-logs .log-details-content table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #e1e1e1;
+    vertical-align: top;
+}
+
+.getpaid-anonymization-logs .log-details-content table th {
+    width: 30%;
+    font-weight: bold;
+    background-color: #f1f1f1;
+}
+
+.getpaid-anonymization-logs .toggle-details .dashicons {
+    transition: transform 0.2s ease-in-out;
+}
+
+.getpaid-anonymization-logs .toggle-details[aria-expanded="true"] .dashicons {
+    transform: rotate(180deg);
+}
+
+.getpaid-anonymization-logs .log-details-content table table {
+    margin-top: 10px;
+}
+
+.getpaid-anonymization-logs .log-details-content table table th,
+.getpaid-anonymization-logs .log-details-content table table td {
+    background-color: #ffffff;
+    border: 1px solid #e1e1e1;
+}
+
+.getpaid-anonymization-logs .log-details-content table table th {
+    width: 40%;
+}

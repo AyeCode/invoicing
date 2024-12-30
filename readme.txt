@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.22 - 2024-12-30 =
+* Added data retention and anonymization system with configurable settings, anonymization process, automated cleanup, and enhanced GDPR compliance - ADDED
+
 = 2.8.21 - 2024-12-20 =
 * Function _load_textdomain_just_in_time was called incorrectly - FIXED
 

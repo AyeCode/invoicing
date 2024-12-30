@@ -29,7 +29,6 @@ class GetPaid_Daily_Maintenance {
 		add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_expire_subscriptions' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'check_renewing_subscriptions' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'maybe_update_geoip_databases' ) );
-
 	}
 
 	/**
@@ -42,7 +41,6 @@ class GetPaid_Daily_Maintenance {
 			$timestamp = strtotime( 'tomorrow 07:00:00', current_time( 'timestamp' ) );
 			wp_schedule_event( $timestamp, 'daily', 'getpaid_daily_maintenance' );
 		}
-
 	}
 
 	/**
@@ -56,7 +54,6 @@ class GetPaid_Daily_Maintenance {
 			wp_clear_scheduled_hook( 'wpinv_register_schedule_event_daily' );
 			update_option( 'wpinv_cleared_old_events', 1 );
 		}
-
 	}
 
 	/**
@@ -125,7 +122,6 @@ class GetPaid_Daily_Maintenance {
 				$subscription->save();
 			}
 		}
-
 	}
 
 	/**
@@ -147,7 +143,5 @@ class GetPaid_Daily_Maintenance {
 			set_transient( 'getpaid_updated_geoip_databases', 1, 15 * DAY_IN_SECONDS );
 			do_action( 'getpaid_update_geoip_databases' );
 		}
-
 	}
-
 }
