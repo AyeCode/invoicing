@@ -85,6 +85,7 @@ class WPInv_Invoice extends GetPaid_Data {
         'disable_taxes'          => false,
 		'subscription_id'        => null,
 		'remote_subscription_id' => null,
+        'is_anonymized'          => false,
 		'is_viewed'              => false,
 		'email_cc'               => '',
 		'template'               => 'quantity', // hours, amount only
@@ -180,7 +181,6 @@ class WPInv_Invoice extends GetPaid_Data {
             $this->ID   = $this->get_id();
 			$this->data_store->read( $this );
         }
-
     }
 
     /**
@@ -368,7 +368,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		return empty( $formatted ) ? '' : $date;
-
     }
 
     /**
@@ -574,7 +573,6 @@ class WPInv_Invoice extends GetPaid_Data {
         if ( empty( $number ) || $this->get_id() == $number ) {
 			$this->set_number( $this->generate_number() );
         }
-
 	}
 
     /**
@@ -600,7 +598,6 @@ class WPInv_Invoice extends GetPaid_Data {
             $key = $this->generate_key( $this->get_type() . '_' );
             $this->set_key( $key );
         }
-
     }
 
     /**
@@ -758,7 +755,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		);
 
 		return apply_filters( 'wpinv_user_info', $user_info, $this->get_id(), $this );
-
     }
 
     /**
@@ -783,7 +779,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		return $this->get_author( $context );
     }
 
-     /**
+    /**
 	 * Get customer ID.
 	 *
 	 * @since 1.0.19
@@ -816,7 +812,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		return $this->get_ip( $context );
     }
 
-     /**
+    /**
 	 * Alias of self::get_ip().
 	 *
 	 * @since 1.0.19
@@ -849,7 +845,7 @@ class WPInv_Invoice extends GetPaid_Data {
 		return $this->get_first_name( $context );
     }
 
-     /**
+    /**
 	 * Alias of self::get_first_name().
 	 *
 	 * @since 1.0.19
@@ -1535,7 +1531,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$subtotal = wpinv_round_amount( wpinv_sanitize_amount( $subtotal ) );
         return apply_filters( 'wpinv_get_non_recurring_invoice_total', $subtotal, $this );
-
     }
 
 	/**
@@ -1813,6 +1808,17 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
     /**
+	 * Get the invoice's _anonymize status.
+	 *
+	 * @since 2.8.22
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_anonymized( $context = 'view' ) {
+		return (bool) $this->get_prop( 'is_anonymized', $context );
+    }
+
+    /**
 	 * Retrieves the payment meta for an invoice.
 	 *
 	 * @since 1.0.19
@@ -1834,7 +1840,6 @@ class WPInv_Invoice extends GetPaid_Data {
             'fees'         => $this->get_fees( $context ),
             'taxes'        => $this->get_taxes( $context ),
         );
-
     }
 
     /**
@@ -1972,7 +1977,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$type   = $this->get_type();
 		$status = "wpi-$type-pending";
 		return str_replace( '-invoice', '', $status );
-
 	}
 
     /**
@@ -2021,7 +2025,6 @@ class WPInv_Invoice extends GetPaid_Data {
         if ( is_callable( array( $this, $setter ) ) ) {
             $this->{$setter}( $value );
         }
-
 	}
 
 	/**
@@ -2138,7 +2141,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$this->set_prop( 'date_created', '' );
 		return false;
-
     }
 
     /**
@@ -2158,7 +2160,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$this->set_prop( 'due_date', '' );
         return false;
-
     }
 
     /**
@@ -2188,7 +2189,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$this->set_prop( 'completed_date', '' );
         return false;
-
     }
 
     /**
@@ -2218,7 +2218,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		$this->set_prop( 'date_modified', '' );
         return false;
-
     }
 
     /**
@@ -2354,7 +2353,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			$this->set_prop( 'author', $user->ID );
 			$this->set_prop( 'email', $user->user_email );
 		}
-
     }
 
     /**
@@ -2978,7 +2976,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		$this->set_prop( 'fees', $value );
-
     }
 
     /**
@@ -2994,7 +2991,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		$this->set_prop( 'taxes', $value );
-
     }
 
     /**
@@ -3032,7 +3028,6 @@ class WPInv_Invoice extends GetPaid_Data {
         foreach ( $value as $item ) {
             $this->add_item( $item );
         }
-
     }
 
     /**
@@ -3125,6 +3120,16 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_remote_subscription_id( $value ) {
 		$this->set_prop( 'remote_subscription_id', $value );
+    }
+
+    /**
+	 * Set the invoice anonymize status.
+	 *
+	 * @since 2.8.22
+	 * @param  bool $is_anonymized is anonymized.
+	 */
+	public function set_is_anonymized( $is_anonymized ) {
+		$this->set_prop( 'is_anonymized', (bool) $is_anonymized );
     }
 
     /*
@@ -3303,6 +3308,15 @@ class WPInv_Invoice extends GetPaid_Data {
 		return $this->has_free_trial() && ! $this->item_has_free_trial();
 	}
 
+    /**
+     * Checks if this is an anonymized invoice.
+     *
+     * @since 2.8.22
+     */
+    public function is_anonymized() {
+        return true === (bool) $this->get_is_anonymized();
+    }
+
 	/**
      * @deprecated
      */
@@ -3401,7 +3415,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		return $item;
-
 	}
 
     /**
@@ -3440,7 +3453,6 @@ class WPInv_Invoice extends GetPaid_Data {
 				}
 }
 		}
-
     }
 
     /**
@@ -3454,7 +3466,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$fees                 = $this->get_fees();
 		$fees[ $fee['name'] ] = $fee;
 		$this->set_prop( 'fees', $fees );
-
     }
 
     /**
@@ -3491,7 +3502,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$discounts = $this->get_discounts();
 		$discounts[ $discount['name'] ] = $discount;
 		$this->set_prop( 'discounts', $discounts );
-
 	}
 
     /**
@@ -3529,7 +3539,6 @@ class WPInv_Invoice extends GetPaid_Data {
 				$item->recurring_item_discount = 0;
 			}
 		}
-
     }
 
     /**
@@ -3726,7 +3735,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		);
 
 		return $current;
-
     }
 
     /**
@@ -3797,7 +3805,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_total_tax( $current );
 
 		return $current;
-
     }
 
     /**
@@ -3895,7 +3902,6 @@ class WPInv_Invoice extends GetPaid_Data {
 		}
 
 		return getpaid_notes()->add_invoice_note( $this, $note, $author, $author_email, $customer_type );
-
 	}
 
 	/**
@@ -3919,7 +3925,6 @@ class WPInv_Invoice extends GetPaid_Data {
         }
 
 		return wpinv_format_invoice_number( $number, $this->get_post_type() );
-
 	}
 
 	/**
@@ -3997,7 +4002,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Save the order.
 		return $this->save();
-
 	}
 
 	/**
@@ -4037,7 +4041,6 @@ class WPInv_Invoice extends GetPaid_Data {
 
         // Ensure it is active.
         return $discount->exists();
-
     }
 
 	/**
@@ -4136,5 +4139,4 @@ class WPInv_Invoice extends GetPaid_Data {
 			wp_cache_delete( $this->get_transaction_id(), 'getpaid_invoice_transaction_ids_to_invoice_ids' );
 		}
 	}
-
 }

@@ -450,7 +450,7 @@ function wpinv_get_invoices( $args ) {
         if ( $user ) {
             $args['author'] = $user->user_email;
         }
-}
+    }
 
     // We only want invoice ids.
     $args['fields'] = 'ids';

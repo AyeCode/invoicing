@@ -95,9 +95,10 @@ class WPInv_Plugin {
 		$this->set( 'daily_maintenace', new GetPaid_Daily_Maintenance() );
 		$this->set( 'payment_forms', new GetPaid_Payment_Forms() );
 		$this->set( 'maxmind', new GetPaid_MaxMind_Geolocation() );
+		$this->set( 'data_retention', new WPInv_Data_Retention() );
 	}
 
-	 /**
+	/**
 	 * Define plugin constants.
 	 */
 	public function define_constants() {
@@ -164,7 +165,7 @@ class WPInv_Plugin {
 		// Determines the current locale.
 		if ( function_exists( 'determine_locale' ) ) {
 			$locale = determine_locale();
-		} else if ( function_exists( 'get_user_locale' ) ) {
+		} elseif ( function_exists( 'get_user_locale' ) ) {
 			$locale = get_user_locale();
 		} else {
 			$locale = get_locale();
