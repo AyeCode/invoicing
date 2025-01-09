@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.18\n"
+"Project-Id-Version: GetPaid 2.8.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 19:26+0530\n"
-"PO-Revision-Date: 2024-11-28 19:26+0530\n"
+"POT-Creation-Date: 2025-01-09 21:14+0530\n"
+"PO-Revision-Date: 2025-01-09 21:14+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -21,8 +21,16 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: vendor\n"
 
+#: includes/abstracts/abstract-wpinv-privacy.php:66
+#: includes/admin/class-wpinv-admin-menus.php:43
+#: includes/admin/class-wpinv-admin-menus.php:44
+#: includes/class-wpinv-privacy.php:38 includes/wpinv-general-functions.php:456
+#: widgets/getpaid.php:25
+msgid "GetPaid"
+msgstr ""
+
 #: includes/admin/admin-pages.php:27
-#: includes/class-getpaid-subscription-notification-emails.php:103
+#: includes/class-getpaid-subscription-notification-emails.php:102
 msgid "Never"
 msgstr ""
 
@@ -300,15 +308,15 @@ msgstr ""
 msgid "Thank you for using %s!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:359
+#: includes/admin/class-getpaid-admin.php:358
 msgid "WP Invoicing - an AyeCode product!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:360
+#: includes/admin/class-getpaid-admin.php:359
 msgid "Please confirm you wish to connect your site?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:361
+#: includes/admin/class-getpaid-admin.php:360
 #, php-format
 msgid ""
 "<strong>Have a license?</strong> Forget about entering license keys or "
@@ -316,99 +324,99 @@ msgid ""
 "more%2$s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:362
+#: includes/admin/class-getpaid-admin.php:361
 msgid "Connect Site"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:363
+#: includes/admin/class-getpaid-admin.php:362
 msgid "Connecting..."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:364
+#: includes/admin/class-getpaid-admin.php:363
 msgid "This service will only work with a live domain, not a localhost."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:365
+#: includes/admin/class-getpaid-admin.php:364
 msgid "Something went wrong, please refresh and try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:430
+#: includes/admin/class-getpaid-admin.php:429
 msgid "Invoice duplicated successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:445
+#: includes/admin/class-getpaid-admin.php:444
 msgid "There was an error duplicating this invoice. Please try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:487
+#: includes/admin/class-getpaid-admin.php:486
 #, php-format
 msgid "Subscription #%s cancelled"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:496
+#: includes/admin/class-getpaid-admin.php:495
 msgid "Invoice refunded successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:523
+#: includes/admin/class-getpaid-admin.php:522
 msgid "(copy)"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:529
+#: includes/admin/class-getpaid-admin.php:528
 msgid "Form duplicated successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:532
+#: includes/admin/class-getpaid-admin.php:531
 msgid "Unable to duplicate form"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:563
+#: includes/admin/class-getpaid-admin.php:562
 msgid "Form stats reset successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:589
+#: includes/admin/class-getpaid-admin.php:588
 msgid "Payment reminder was successfully sent to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:591
+#: includes/admin/class-getpaid-admin.php:590
 msgid "Could not sent payment reminder to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:617
+#: includes/admin/class-getpaid-admin.php:616
 msgid "GetPaid pages updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:627
+#: includes/admin/class-getpaid-admin.php:626
 msgid "Permalinks refreshed."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:643
+#: includes/admin/class-getpaid-admin.php:642
 msgid "Your GetPaid tables have been updated:"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:645
+#: includes/admin/class-getpaid-admin.php:644
 msgid "Your GetPaid tables have been updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:663
+#: includes/admin/class-getpaid-admin.php:662
 msgid "Your invoices have been migrated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:680
+#: includes/admin/class-getpaid-admin.php:679
 #: includes/reports/class-getpaid-graph-downloader.php:53
 msgid "Unsupported server"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:818
+#: includes/admin/class-getpaid-admin.php:817
 msgid "Discounts have been recalculated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:950
+#: includes/admin/class-getpaid-admin.php:949
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
 "button below to generate the missing pages."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:951
+#: includes/admin/class-getpaid-admin.php:950
 msgid "Generate Pages"
 msgstr ""
 
@@ -848,12 +856,6 @@ msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:895
 msgid "GetPaid Checkout Page"
-msgstr ""
-
-#: includes/admin/class-wpinv-admin-menus.php:43
-#: includes/admin/class-wpinv-admin-menus.php:44
-#: includes/wpinv-general-functions.php:456 widgets/getpaid.php:25
-msgid "GetPaid"
 msgstr ""
 
 #: includes/admin/class-wpinv-admin-menus.php:60
@@ -3127,47 +3129,47 @@ msgctxt "BuddyPress my account payments sub nav"
 msgid "Billing"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:144
+#: includes/class-getpaid-invoice-notification-emails.php:143
 msgid "on receipt"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:149
+#: includes/class-getpaid-invoice-notification-emails.php:148
 #: includes/wpinv-email-functions.php:356
 msgid "was"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:149
+#: includes/class-getpaid-invoice-notification-emails.php:148
 #: includes/wpinv-email-functions.php:356
 msgid "is"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:202
-#: includes/class-getpaid-subscription-notification-emails.php:198
+#: includes/class-getpaid-invoice-notification-emails.php:201
+#: includes/class-getpaid-subscription-notification-emails.php:197
 msgid " - ADMIN BCC COPY"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:212
-#: includes/class-getpaid-subscription-notification-emails.php:207
+#: includes/class-getpaid-invoice-notification-emails.php:211
+#: includes/class-getpaid-subscription-notification-emails.php:206
 #, php-format
 msgid "Successfully sent %1$s notification email to %2$s."
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:214
-#: includes/class-getpaid-invoice-notification-emails.php:223
-#: includes/class-getpaid-subscription-notification-emails.php:209
-#: includes/class-getpaid-subscription-notification-emails.php:217
+#: includes/class-getpaid-invoice-notification-emails.php:213
+#: includes/class-getpaid-invoice-notification-emails.php:222
+#: includes/class-getpaid-subscription-notification-emails.php:208
+#: includes/class-getpaid-subscription-notification-emails.php:216
 msgid "admin"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:214
-#: includes/class-getpaid-invoice-notification-emails.php:223
-#: includes/class-getpaid-subscription-notification-emails.php:209
-#: includes/class-getpaid-subscription-notification-emails.php:217
+#: includes/class-getpaid-invoice-notification-emails.php:213
+#: includes/class-getpaid-invoice-notification-emails.php:222
+#: includes/class-getpaid-subscription-notification-emails.php:208
+#: includes/class-getpaid-subscription-notification-emails.php:216
 msgid "the customer"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:221
-#: includes/class-getpaid-subscription-notification-emails.php:215
+#: includes/class-getpaid-invoice-notification-emails.php:220
+#: includes/class-getpaid-subscription-notification-emails.php:214
 #, php-format
 msgid "Failed sending %1$s notification email to %2$s."
 msgstr ""
@@ -3811,39 +3813,39 @@ msgstr ""
 msgid "Invoice URL"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:199
+#: includes/class-wpinv-privacy-exporters.php:209
 msgid "Until Cancelled"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:204
+#: includes/class-wpinv-privacy-exporters.php:214
 msgid "Billing Cycle"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:210
+#: includes/class-wpinv-privacy-exporters.php:220
 msgid "Initial Amount"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:216
+#: includes/class-wpinv-privacy-exporters.php:226
 msgid "Times Billed"
 msgstr ""
 
-#: includes/class-wpinv-privacy-exporters.php:224
+#: includes/class-wpinv-privacy-exporters.php:234
 msgid "Expires"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:29
+#: includes/class-wpinv-privacy.php:41
 msgid "Customer Invoices"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:40
+#: includes/class-wpinv-privacy.php:52
 msgid "Invoices and checkout"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:41
+#: includes/class-wpinv-privacy.php:53
 msgid "Example privacy texts."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:42
+#: includes/class-wpinv-privacy.php:54
 msgid ""
 "We collect information about you during the checkout process on our site. "
 "This information may include, but is not limited to, your name, email "
@@ -3852,59 +3854,59 @@ msgid ""
 "your invoice details for legal reasons."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:43
+#: includes/class-wpinv-privacy.php:55
 msgid "Handling this data also allows us to:"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:45
+#: includes/class-wpinv-privacy.php:57
 msgid "- Send you important account/invoice/service information."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:46
+#: includes/class-wpinv-privacy.php:58
 msgid "- Estimate taxes based on your location."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:47
+#: includes/class-wpinv-privacy.php:59
 msgid "- Respond to your queries or complaints."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:48
+#: includes/class-wpinv-privacy.php:60
 msgid ""
 "- Process payments and to prevent fraudulent transactions. We do this on the "
 "basis of our legitimate business interests."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:49
+#: includes/class-wpinv-privacy.php:61
 msgid ""
 "- Retain historical payment and invoice history. We do this on the basis of "
 "legal obligations."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:50
+#: includes/class-wpinv-privacy.php:62
 msgid ""
 "- Set up and administer your account, provide technical and/or customer "
 "support, and to verify your identity. We do this on the basis of our "
 "legitimate business interests."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:52
+#: includes/class-wpinv-privacy.php:64
 msgid ""
 "In addition to collecting information at checkout we may also use and store "
 "your contact details when manually creating invoices for require payments "
 "relating to prior contractual agreements or agreed terms."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:53
+#: includes/class-wpinv-privacy.php:65
 msgid "What we share with others"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:54
+#: includes/class-wpinv-privacy.php:66
 msgid ""
 "We share information with third parties who help us provide our payment and "
 "invoicing services to you; for example --"
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:55
+#: includes/class-wpinv-privacy.php:67
 msgid ""
 "In this subsection you should list which third party payment processors "
 "you’re using to take payments since these may handle customer data. We’ve "
@@ -3912,14 +3914,14 @@ msgid ""
 "using PayPal."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:56
+#: includes/class-wpinv-privacy.php:68
 msgid ""
 "We accept payments through PayPal. When processing payments, some of your "
 "data will be passed to PayPal, including information required to process or "
 "support the payment, such as the purchase total and billing information."
 msgstr ""
 
-#: includes/class-wpinv-privacy.php:57
+#: includes/class-wpinv-privacy.php:69
 msgid ""
 "Please see the <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-"
 "full\">PayPal Privacy Policy</a> for more details."

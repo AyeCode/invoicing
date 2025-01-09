@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.21
+Stable tag: 2.8.22
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.22 - 2024-01-09 =
+* Update Super Duper to v1.2.17 & AUI to v0.2.31 - CHANGED
 
 = 2.8.21 - 2024-12-20 =
 * Function _load_textdomain_just_in_time was called incorrectly - FIXED
