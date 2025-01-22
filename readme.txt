@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.23 - 2025-01-22 =
+* Adjusted payment IPN priority to resolve email issues - FIXED
+
 = 2.8.22 - 2024-01-09 =
 * Update Super Duper to v1.2.17 & AUI to v0.2.31 - CHANGED
 
