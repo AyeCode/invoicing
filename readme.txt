@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.23 - TBD =
 * Allow to export payment form custom fields data in export invoices - ADDED
+* Adjusted payment IPN priority to resolve email issues - FIXED
 
 = 2.8.22 - 2024-01-09 =
 * Update Super Duper to v1.2.17 & AUI to v0.2.31 - CHANGED
