@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.22
+Stable tag: 2.8.23
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.23 - TBD =
+= 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
 * Adjusted payment IPN priority to resolve email issues - FIXED
 * Recommend plugins section is broken with BS 5 in setup wizard window - FIXED
