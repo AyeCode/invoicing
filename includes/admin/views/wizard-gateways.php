@@ -6,8 +6,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+global $aui_bs5;
 ?>
-
 <div class="card shadow-sm my-5">'
 
     <form method="post" class="text-center card-body">
@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
             <ul class="list-group">
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' ); ?>" class="ml-n2" alt="Stripe"></span>
+				    <span class="mr-auto"><img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/stripe-verified.svg' ); ?>" class="<?php echo( $aui_bs5 ? 'ms-n2' : 'ml-n2' ); ?>" alt="Stripe"></span>
 				    <?php if ( false === wpinv_get_option( 'stripe_live_connect_account_id' ) ) : ?>
                         <a href="<?php
                         echo esc_url( wp_nonce_url(
@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
 
 				<li class="list-group-item">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="mr-auto">
+                        <span class="<?php echo( $aui_bs5 ? 'me-auto' : 'mr-auto' ); ?>">
                             <img src="<?php echo esc_url( WPINV_PLUGIN_URL . 'assets/images/pp-logo-150px.webp' ); ?>" class="" alt="PayPal" height="25">
                         </span>
                         <a
@@ -59,13 +59,12 @@ defined( 'ABSPATH' ) || exit;
                 </li>
 
 				<li class="list-group-item d-flex justify-content-between align-items-center">
-				    <span class="mr-auto"><?php esc_html_e( 'Test Gateway', 'invoicing' ); ?></span>
-					<div class="custom-control custom-switch">
-						<input type="checkbox" name="enable-manual-gateway" class="custom-control-input" id="enable-manual-gateway" <?php checked( wpinv_is_gateway_active( 'manual' ) ); ?>>
-						<label class="custom-control-label" for="enable-manual-gateway"></label>
+					<span class="<?php echo( $aui_bs5 ? 'me-auto' : 'mr-auto' ); ?>"><?php esc_html_e( 'Test Gateway', 'invoicing' ); ?></span>
+					<div class="<?php echo ( $aui_bs5 ? 'form-check form-switch' : 'custom-control custom-switch' ); ?>">
+						<input type="checkbox" name="enable-manual-gateway" id="enable-manual-gateway" value="1" class="<?php echo ( $aui_bs5 ? 'form-check-input' : 'custom-control-input' ); ?>" <?php checked( wpinv_is_gateway_active( 'manual' ) ); ?>>
+						<label class="<?php echo ( $aui_bs5 ? 'form-check-label' : 'custom-control-label' ); ?>" for="enable-manual-gateway"></label>
 					</div>
 				</li>
-
 			</ul>
         </div>
 
