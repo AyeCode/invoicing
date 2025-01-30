@@ -144,7 +144,8 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.23 - 2025-01-22 =
+= 2.8.23 - TBD =
+* Allow to export payment form custom fields data in export invoices - ADDED
 * Adjusted payment IPN priority to resolve email issues - FIXED
 
 = 2.8.22 - 2024-01-09 =
