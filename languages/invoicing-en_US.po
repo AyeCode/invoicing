@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.22\n"
+"Project-Id-Version: GetPaid 2.8.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-09 21:14+0530\n"
-"PO-Revision-Date: 2025-01-09 21:14+0530\n"
+"POT-Creation-Date: 2025-01-30 19:50+0530\n"
+"PO-Revision-Date: 2025-01-30 19:51+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -1026,7 +1026,7 @@ msgid "Included Gateways:"
 msgstr ""
 
 #: includes/admin/html-admin-page-addons.php:121
-#: includes/admin/views/wizard-thank-you.php:46
+#: includes/admin/views/wizard-thank-you.php:32
 msgid "Create Invoice"
 msgstr ""
 
@@ -1582,7 +1582,7 @@ msgid "Add"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:751
-#: includes/admin/views/wizard-thank-you.php:34
+#: includes/admin/views/wizard-thank-you.php:30
 msgid "Create Item"
 msgstr ""
 
@@ -2513,9 +2513,9 @@ msgstr ""
 msgid "Test Gateway"
 msgstr ""
 
-#: includes/admin/views/wizard-gateways.php:73
-#: includes/admin/views/wizard-plugins.php:44
-#: includes/admin/views/wizard-settings.php:130 includes/class-wpinv.php:368
+#: includes/admin/views/wizard-gateways.php:72
+#: includes/admin/views/wizard-plugins.php:31
+#: includes/admin/views/wizard-settings.php:129 includes/class-wpinv.php:368
 msgid "Continue"
 msgstr ""
 
@@ -2646,15 +2646,15 @@ msgid "Launch the Setup Wizard!"
 msgstr ""
 
 #: includes/admin/views/wizard-introduction.php:131
-#: includes/admin/views/wizard-thank-you.php:60
+#: includes/admin/views/wizard-thank-you.php:38
 msgid "Documentation"
 msgstr ""
 
-#: includes/admin/views/wizard-plugins.php:19
+#: includes/admin/views/wizard-plugins.php:17
 msgid "Recommended Plugins"
 msgstr ""
 
-#: includes/admin/views/wizard-plugins.php:20
+#: includes/admin/views/wizard-plugins.php:18
 msgid "Below are a few of our own plugins that may help you."
 msgstr ""
 
@@ -2674,23 +2674,23 @@ msgstr ""
 msgid "Next steps"
 msgstr ""
 
-#: includes/admin/views/wizard-thank-you.php:40
+#: includes/admin/views/wizard-thank-you.php:31
 msgid "Create Payment Form"
 msgstr ""
 
-#: includes/admin/views/wizard-thank-you.php:52
+#: includes/admin/views/wizard-thank-you.php:35
 msgid "Learn more"
 msgstr ""
 
-#: includes/admin/views/wizard-thank-you.php:56
+#: includes/admin/views/wizard-thank-you.php:37
 msgid "Getting Started"
 msgstr ""
 
-#: includes/admin/views/wizard-thank-you.php:64
+#: includes/admin/views/wizard-thank-you.php:39
 msgid "Support"
 msgstr ""
 
-#: includes/admin/views/wizard-thank-you.php:68
+#: includes/admin/views/wizard-thank-you.php:40
 msgid "Demos"
 msgstr ""
 
