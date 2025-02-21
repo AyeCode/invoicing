@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.24 - TBD =
+* Payment form file upload not displaying selected files - FIXED
+
 = 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
 * Adjusted payment IPN priority to resolve email issues - FIXED
