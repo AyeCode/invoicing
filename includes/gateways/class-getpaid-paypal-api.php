@@ -24,7 +24,7 @@ class GetPaid_PayPal_API {
 		}
 
 		$client_id  = 'live' === $mode ? wpinv_get_option( 'paypal_client_id' ) : wpinv_get_option( 'paypal_sandbox_client_id' );
-		$secret_key = 'live' === $mode ? wpinv_get_option( 'paypal_secret_key' ) : wpinv_get_option( 'paypal_sandbox_secret_key' );
+		$secret_key = 'live' === $mode ? wpinv_get_option( 'paypal_secret' ) : wpinv_get_option( 'paypal_sandbox_secret' );
 		$url        = self::get_api_url( 'v1/oauth2/token?grant_type=client_credentials', $mode );
 
         if ( empty( $client_id ) || empty( $secret_key ) ) {
@@ -90,8 +90,11 @@ class GetPaid_PayPal_API {
 				'Authorization' => 'Bearer ' . $access_token,
 				'Content-Type'  => 'application/json',
 			),
-			'body'    => wp_json_encode( $data ),
 		);
+
+		if( ! empty( $data )) {
+			$args['body'] = wp_json_encode( $data );
+		}
 
 		return self::response_or_error( wp_remote_post( $url, $args ) );
 	}
@@ -217,4 +220,17 @@ class GetPaid_PayPal_API {
 		return self::post( '/v2/payments/captures/' . $capture_id . '/refund', $args, $mode );
 	}
 
+	/**
+	 * Cancels a subscription.
+	 *
+	 * @since 2.8.24
+	 * @version 2.8.24
+	 * @param string $subscription_id
+	 * @param array  $args
+	 * @link https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_cancel
+	 * @return \WP_Error|object
+	 */
+	public static function cancel_subscription( $subscription_id, $args = array(), $mode = 'live' ) {
+		return self::post( '/v1/billing/subscriptions/' . $subscription_id . '/cancel', $args, $mode );
+	}
 }
