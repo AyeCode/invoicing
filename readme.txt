@@ -146,7 +146,8 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.24 - TBD =
 * Payment form file upload not displaying selected files - FIXED
-* PayPal refund and subscription cancellation issue fixed - FIXED
+* Added PayPal subscription cancellation - ADDED  
+* Fixed PayPal refunds and subscription cancellations not being processed - FIXED  
 
 = 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
