@@ -268,10 +268,28 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'payment_date':
-				if ( $invoice->is_paid() ) {
+				if ( $invoice->is_paid() || $invoice->is_refunded() ) {
 					$date_time = esc_attr( $invoice->get_completed_date() );
 					$date      = esc_html( getpaid_format_date_value( $date_time, '&mdash;', true ) );
 					echo wp_kses_post( "<span title='$date_time'>$date</span>" );
+
+					if ( $_gateway = $invoice->get_gateway() ) {
+						$gateway_label = wpinv_get_gateway_admin_label( $_gateway );
+
+						if ( $transaction_url = $invoice->get_transaction_url() ) {
+							$gateway_label = '<a href="' . esc_url( $transaction_url ) . '" target="_blank" title="' . esc_attr__( 'Open transaction link', 'invoicing' ) . '">' . $gateway_label . '</a>';
+						}
+
+						$gateway = '<small class="meta bsui"><span class="fs-xs text-muted fst-normal">' . wp_sprintf( _x( 'Via %s', 'Paid via gateway', 'invoicing' ), $gateway_label ) . '</span></small>';
+					} else {
+						$gateway = '';
+					}
+
+					$gateway = apply_filters( 'getpaid_admin_invoices_list_table_gateway', $gateway, $invoice );
+
+					if ( $gateway ) {
+						echo wp_kses_post( $gateway ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					}
 				} else {
 					echo '&mdash;';
 				}

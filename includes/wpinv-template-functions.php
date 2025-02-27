@@ -1378,7 +1378,7 @@ function getpaid_the_invoice_description( $invoice ) {
         return;
     }
 
-    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
+    echo "<small class='getpaid-invoice-description text-dark pl-2 ps-2 form-text' style='margin-bottom:20px;border-left:2px solid #2196F3;display:block;padding-left:.5rem'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
 add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
