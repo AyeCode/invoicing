@@ -147,7 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 = 2.8.24 - TBD =
 * Payment form file upload not displaying selected files - FIXED
 * Can't override address fields template - FIXED
-* Show gateway name with transcation link in backend invoices list - ADDED
+* Show gateway name with transaction link in backend invoices list - ADDED
 
 = 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
