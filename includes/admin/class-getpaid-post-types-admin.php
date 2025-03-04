@@ -318,17 +318,16 @@ class GetPaid_Post_Types_Admin {
 				break;
 
 			case 'status':
-				$status       = esc_html( $invoice->get_status() );
-				$status_label = esc_html( $invoice->get_status_nicename() );
+				$status = esc_html( $invoice->get_status() );
 
 				// If it is paid, show the gateway title.
 				if ( $invoice->is_paid() ) {
 					$gateway = esc_html( $invoice->get_gateway_title() );
 					$gateway = wp_sprintf( esc_attr__( 'Paid via %s', 'invoicing' ), esc_html( $gateway ) );
 
-					echo wp_kses_post( "<mark class='wpi-help-tip getpaid-invoice-status $status' title='$gateway'><span>$status_label</span></mark>" );
+					echo wp_kses_post( "<span class='bsui wpi-help-tip getpaid-invoice-statuss $status' title='$gateway'><span class='fs-base'>" . $invoice->get_status_label_html() . "</span></span>" );
 				} else {
-					echo wp_kses_post( "<mark class='getpaid-invoice-status $status'><span>$status_label</span></mark>" );
+					echo wp_kses_post( "<span class='bsui getpaid-invoice-statuss $status'><span class='fs-base'>" . $invoice->get_status_label_html() . "</span></span>" );
 				}
 
 				// If it is not paid, display the overdue and view status.
