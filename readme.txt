@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.20
+Stable tag: 2.8.23
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,22 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.21 - 2024-12-18 =
+= 2.8.24 - TBD =
+* Payment form file upload not displaying selected files - FIXED
+* Can't override address fields template - FIXED
+* Show gateway name with transaction link in backend invoices list - ADDED
 * Added recurring billing amount and duration display in invoices - ADDED
+
+= 2.8.23 - 2024-01-30 =
+* Allow to export payment form custom fields data in export invoices - ADDED
+* Adjusted payment IPN priority to resolve email issues - FIXED
+* Recommend plugins section is broken with BS 5 in setup wizard window - FIXED
+
+= 2.8.22 - 2024-01-09 =
+* Update Super Duper to v1.2.17 & AUI to v0.2.31 - CHANGED
+
+= 2.8.21 - 2024-12-20 =
+* Function _load_textdomain_just_in_time was called incorrectly - FIXED
 
 = 2.8.20 - 2024-12-13 =
 * admin JS minified file failed to create and was missing - FIXED

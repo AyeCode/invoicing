@@ -527,9 +527,9 @@ jQuery(function ($) {
 
 					// Prepare element containers.
 					let dropfield = $(this),
-						parent = dropfield.closest( '.form-group' ),
+						parent = dropfield.closest( '.upload-file' ) || dropfield.closest( '.form-group' ),
 						uploaded_files_div = parent.find( '.getpaid-uploaded-files' ),
-						max_files = parseInt( parent.data( 'max' ) );
+						max_files = parseInt( parent.data( 'max' ) || 1 );
 
 					// Prepare files and readers.
 					let loadedFiles = [],
@@ -604,7 +604,7 @@ jQuery(function ($) {
 						}
 
 						// Have we reached max files count?
-						if ( ! ( loadedFiles.length < max_files ) ) {
+                        if (max_files && loadedFiles.length >= max_files) {
 							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">You have exceeded the number of files you can upload.</div>' );
 							return;
 						}

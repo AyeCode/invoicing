@@ -1146,3 +1146,37 @@ function getpaid_user_delete_invoice( $data ) {
 
 }
 add_action( 'getpaid_authenticated_action_delete_invoice', 'getpaid_user_delete_invoice' );
+
+/**
+ * Converts string to lower case.
+ *
+ * @since 2.8.23
+ *
+ * @param string $string String to convert.
+ * @param string $charset Character set to use for conversion.
+ * @return string Returns converted string.
+ */
+function getpaid_strtolower( $string, $charset = 'UTF-8' ) {
+	if ( function_exists( 'mb_convert_case' ) ) {
+		return mb_convert_case( $string, MB_CASE_LOWER, $charset );
+	} else {
+		return strtolower( $string );
+	}
+}
+
+/**
+ * Converts string to upper case.
+ *
+ * @since 2.8.23
+ *
+ * @param string $string String to convert.
+ * @param string $charset Character set to use for conversion.
+ * @return string Returns converted string.
+ */
+function getpaid_strtoupper( $string, $charset = 'UTF-8' ) {
+	if ( function_exists( 'mb_convert_case' ) ) {
+		return mb_convert_case( $string, MB_CASE_UPPER, $charset );
+	} else {
+		return strtoupper( $string );
+	}
+}

@@ -1378,7 +1378,7 @@ function getpaid_the_invoice_description( $invoice ) {
         return;
     }
 
-    echo "<small class='getpaid-invoice-description text-dark p-2 form-text' style='margin-bottom: 20px; border-left: 2px solid #2196F3;'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
+    echo "<small class='getpaid-invoice-description text-dark pl-2 ps-2 form-text' style='margin-bottom:20px;border-left:2px solid #2196F3;display:block;padding-left:.5rem'><em>" . wp_kses_post( wpautop( $description ) ) . "</em></small>";
 }
 add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100 );
 add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
@@ -1655,3 +1655,43 @@ function getpaid_filter_embed_template( $template ) {
     return $template;
 }
 add_filter( 'template_include', 'getpaid_filter_embed_template' );
+
+/**
+ * Get the payment forms custom fields.
+ *
+ * @since 2.8.23
+ *
+ * @return array Array of custom fields.
+ */
+function getpaid_get_payment_form_custom_fields() {
+	global $wpdb, $payment_form_meta_fields;
+
+	if ( ! empty( $payment_form_meta_fields ) ) {
+		return $payment_form_meta_fields;
+	}
+
+	$results = $wpdb->get_results( "SELECT `pm`.`meta_value` FROM `{$wpdb->postmeta}` AS pm LEFT JOIN `{$wpdb->posts}` AS p ON p.ID = pm.post_id WHERE `pm`.`meta_key` = 'wpinv_form_elements' AND `p`.`post_type` = 'wpi_payment_form'" );
+
+	$meta_fields = array();
+
+	if ( ! empty( $results ) ) {
+		foreach ( $results as $row ) {
+			$fields = maybe_unserialize( $row->meta_value );
+
+			if ( ! empty( $fields ) && is_array( $fields ) ) {
+				foreach ( $fields as $field ) {
+					$label = ! empty( $field['add_meta'] ) && ! empty( $field['label'] ) ? wpinv_clean( wp_unslash( $field['label'] ) ) : '';
+
+					if ( $label ) {
+						$field_key = '_' . str_replace( array( ' ', "'", '"', ',' ), array( '_', '', '', '_' ), getpaid_strtolower( $label ) );
+						$meta_fields[ $field_key ] = $label;
+					}
+				}
+			}
+		}
+	}
+
+	$payment_form_meta_fields = $meta_fields;
+
+	return $meta_fields;
+}
