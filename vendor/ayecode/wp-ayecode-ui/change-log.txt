@@ -1,3 +1,75 @@
+= 0.2.31 - 2025-01-09 =
+* Changes to the get_url() function for getting asset URLs to better support docker containers - CHANGED
+
+= 0.2.30 - 2024-12-12 =
+* Minor JS fix for resetting value of field - FIXED
+
+= 0.2.29 - 2024-11-28 =
+* Load Select2 JavaScript only when required - CHANGED
+
+= 0.2.28 - 2024-11-12 =
+* iOS fixed images zoomed way in with background cover, changed to scroll for ios - CHANGED
+
+= 0.2.27 - 2024-11-06 =
+* Don't apply custom colors to standard wp-admin pages - CHANGED
+* Carousel in BootStrap modal not working on RTL - FIXED
+* Update FlatPickr JS library to v4.6.13 - CHANGED
+
+= 0.2.26 - 2024-09-12 =
+* Primary color setting not working after update - FIXED
+
+= 0.2.25 - 2024-09-05 =
+* Don't apply custom colors to wp-admin - CHANGED
+
+= 0.2.24 - 2024-08-29 =
+* Changes for search form conditional fields - CHANGED
+
+= 0.2.23 - 2024-08-08 =
+* Conditional field set default value changes - CHANGED
+
+= 0.2.22 - 2024-08-01 =
+* Conditional field don't reset field value on hide element - FIXED
+
+= 0.2.21 - 2024-07-31 =
+* JS error on FSE theme edit template part page - FIXED
+
+= 0.2.20 - 2024-07-05 =
+* Multiple carousels breaks carousel in modal - FIXED
+
+= 0.2.19 - 2024-07-04 =
+* Video in lightbox is not working - FIXED
+* Stop video playing in slideshow on move to next slide - FIXED
+
+= 0.2.18 - 2024-06-27 =
+* Pagination style conflict on Hello Elementor theme - FIXED
+
+= 0.2.17 - 2024-06-20 =
+* Carousel slide swipe in BS modal is not working on touch device - FIXED
+
+= 0.2.16 - 2024-06-13  =
+* Buttons after click when still have :focus can have wrong box-shadow if colour has been changed - FIXED
+
+= 0.2.15 - 2024-05-22  =
+* Checkbox not showing hand cursor on hover - FIXED
+
+= 0.2.14 - 2024-05-09  =
+* Label type top don't have margin to label - FIXED
+* Improvements for aui_lightbox_embed() function - CHANGED
+
+= 0.2.13 - 2024-05-02 =
+* BS4 lightbox displays blurred image - FIXED
+* Fix PHP notice in HEX to RGB conversion - FIXED
+* Outline buttons not using correct text color when user adjusted colors in block themes - FIXED
+
+= 0.2.12 - 2024-04-25 =
+* Enhance BS4 to BS5 class replacements - CHANGED
+
+= 0.2.11 - 2024-04-11 =
+* .link-* classes not respecting editor color change - FIXED
+
+= 0.2.10 - 2024-04-04 =
+* Safari wp-admin plupload overflow issue on hidden input causing horizontal scroll issue - FIXED
+
 = 0.2.9 - 2024-03-19 =
 * BS5 styles can call broken font awesome url from css - FIXED
 * Plugin check review - DONE
@@ -35,7 +107,7 @@
 
 = 0.1.97 =
 * BS5 removed mb-3 on slider as it was causing padding issues on GD when mixed Single and Slider archives - CHANGED
-* image cover classes are nto vertically centering image - FIXED
+* image cover classes are not vertically centering image - FIXED
 
 = 0.1.96 =
 * BS4 to BS5 font italic class is not working - FIXED
@@ -115,7 +187,7 @@
 
 = 0.1.73 =
 * Conditional field multiselect field don't match for specific option - FIXED
-* Allow to run conditionl fields on custom event trigger - ADDED
+* Allow to run conditional fields on custom event trigger - ADDED
 
 = 0.1.72 =
 * Input now has "size" option: sm, small, lg, large - ADDED

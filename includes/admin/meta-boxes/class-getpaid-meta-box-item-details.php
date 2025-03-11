@@ -22,6 +22,8 @@ class GetPaid_Meta_Box_Item_Details {
      * @param WP_Post $post
      */
     public static function output( $post ) {
+		global $aui_bs5;
+
         // Prepare the item.
         $item = new WPInv_Item( $post );
 
@@ -66,7 +68,7 @@ class GetPaid_Meta_Box_Item_Details {
                             <div class="input-group input-group-sm">
 
                                 <?php if ( 'left' == $position ) : ?>
-                                    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                    <?php if ( empty( $aui_bs5 ) ) : ?>
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                         </div>
@@ -80,7 +82,7 @@ class GetPaid_Meta_Box_Item_Details {
                                 <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control wpinv-force-integer" autocomplete="off">
 
                                 <?php if ( 'left' != $position ) : ?>
-                                    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                    <?php if ( empty( $aui_bs5 ) ) : ?>
                                         <div class="input-group-append">
                                             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                         </div>
@@ -138,6 +140,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     'value'   => '1',
                                     'checked' => $item->has_variable_pricing(),
                                     'no_wrap' => true,
+                                    'switch'  => 'sm'
                                 ),
                                 true
                             );
@@ -166,6 +169,7 @@ class GetPaid_Meta_Box_Item_Details {
                                         'value'   => '1',
                                         'checked' => $item->user_can_set_their_price(),
                                         'no_wrap' => true,
+										'switch'  => 'sm',
                                     ),
                                     true
                                 );
@@ -185,6 +189,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     'value'   => '1',
                                     'checked' => $item->is_recurring(),
                                     'no_wrap' => true,
+                                    'switch'  => 'sm'
                                 ),
                                 true
                             );
@@ -215,7 +220,7 @@ class GetPaid_Meta_Box_Item_Details {
                         <div class="col-sm-8">
                             <div class="input-group input-group-sm">
                                 <?php if ( 'left' == $position ) : ?>
-                                    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                    <?php if ( empty( $aui_bs5 ) ) : ?>
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                         </div>
@@ -229,7 +234,7 @@ class GetPaid_Meta_Box_Item_Details {
                                 <input type="text" name="wpinv_minimum_price" id="wpinv_minimum_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control wpinv-force-integer">
 
                                 <?php if ( 'left' != $position ) : ?>
-                                    <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                                    <?php if ( empty( $aui_bs5 ) ) : ?>
                                         <div class="input-group-append">
                                             <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                                         </div>
@@ -259,7 +264,7 @@ class GetPaid_Meta_Box_Item_Details {
                         <?php esc_html_e( 'Maximum Renewals', 'invoicing' ); ?>
                     </label>
                     <div class="col-sm-8">
-                        <input type="number" value="<?php echo esc_attr( $item->get_recurring_limit( 'edit' ) ); ?>" placeholder="0" name="wpinv_recurring_limit" id="wpinv_recurring_limit" style="width: 100%;" />
+                        <input type="number" value="<?php echo esc_attr( $item->get_recurring_limit( 'edit' ) ); ?>" placeholder="0" name="wpinv_recurring_limit" id="wpinv_recurring_limit" class="form-control form-control-sm" />
                     </div>
                     <div class="col-sm-1 pt-2 pl-0">
                         <span class="wpi-help-tip dashicons dashicons-editor-help" title="<?php esc_attr_e( 'Leave empty if you want the subscription to renew until it is cancelled.', 'invoicing' ); ?>"></span>
@@ -281,7 +286,7 @@ class GetPaid_Meta_Box_Item_Details {
                                 <?php $value = $item->has_free_trial() ? $item->get_trial_interval( 'edit' ) : 0; ?>
 
                                 <div>
-                                    <input type="number" name="wpinv_trial_interval" style="width: 100%;" placeholder="0" id="wpinv_trial_interval" value="<?php echo esc_attr( $value ); ?>">
+                                    <input type="number" name="wpinv_trial_interval" placeholder="0" id="wpinv_trial_interval" value="<?php echo esc_attr( $value ); ?>" class="form-control form-control-sm">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -473,7 +478,9 @@ class GetPaid_Meta_Box_Item_Details {
      * @param WP_Post $item  WPINV Itemm object.
      * @param int    $index The index of the price row.
      */
-    public static function render_price_row( $key, $args = array(), $item, $index ) {
+    public static function render_price_row( $key, $args = array(), $item, $index ) {   
+		global $aui_bs5;
+
         $defaults = array(
             'name'               => null,
             'amount'             => null,
@@ -540,7 +547,7 @@ class GetPaid_Meta_Box_Item_Details {
                 <label class="form-label"><?php _e( 'Price', 'invoicing' ); ?></label>
                 <div class="input-group input-group-sm">
                     <?php if ( 'left' == $position ) : ?>
-                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                        <?php if ( empty( $aui_bs5 ) ) : ?>
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>
@@ -554,7 +561,7 @@ class GetPaid_Meta_Box_Item_Details {
                     <input type="text" name="wpinv_variable_prices[<?php echo $key; ?>][amount]" id="wpinv_variable_prices[<?php echo $key; ?>][amount]" value="<?php echo esc_attr( getpaid_unstandardize_amount( $args['amount'] ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 9.99 ) ); ?>" class="form-control form-control-sm wpinv-force-integer getpaid-price-field" autocomplete="off">
 
                     <?php if ( 'left' != $position ) : ?>
-                        <?php if ( empty( $GLOBALS['aui_bs5'] ) ) : ?>
+                        <?php if ( empty( $aui_bs5 ) ) : ?>
                             <div class="input-group-append">
                                 <span class="input-group-text"><?php echo wp_kses_post( wpinv_currency_symbol() ); ?></span>
                             </div>

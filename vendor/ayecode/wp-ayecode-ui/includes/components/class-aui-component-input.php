@@ -113,7 +113,7 @@ class AUI_Component_Input {
 				$args['class'] .= ' custom-file-input ';
 			} elseif ( $type == 'checkbox' ) {
 				$label_after = true; // if type file we need the label after
-				$args['class'] .= $aui_bs5 ? ' form-check-input' : ' custom-control-input ';
+				$args['class'] .= $aui_bs5 ? ' form-check-input c-pointer ' : ' custom-control-input c-pointer ';
 			} elseif ( $type == 'datepicker' || $type == 'timepicker' ) {
 				$orig_type = $type;
 				$type = 'text';
@@ -787,7 +787,8 @@ else{$eli.attr(\'type\',\'password\');}"
 	 * @return string The rendered component.
 	 */
 	public static function select( $args = array() ) {
-		global $aui_bs5;
+		global $aui_bs5, $aui_has_select2, $aui_select2_enqueued;
+
 		$defaults = array(
 			'class'            => '',
 			'wrap_class'       => '',
@@ -852,6 +853,19 @@ else{$eli.attr(\'type\',\'password\');}"
 			$is_select2 = true;
 		} elseif ( strpos( $args['class'], 'aui-select2' ) !== false ) {
 			$is_select2 = true;
+		}
+
+		if ( $is_select2 && ! $aui_has_select2 ) {
+			$aui_has_select2 = true;
+			$conditional_select2 = apply_filters( 'aui_is_conditional_select2', true );
+
+			// Enqueue the script,
+			if ( empty( $aui_select2_enqueued ) && $conditional_select2 === true ) {
+				$aui_select2_enqueued = true;
+
+				$aui_settings = AyeCode_UI_Settings::instance();
+				$aui_settings->enqueue_select2();
+			}
 		}
 
 		// select2 tags
@@ -1123,8 +1137,15 @@ else{$eli.attr(\'type\',\'password\');}"
 			'label_col'  => $args['label_col']
 		);
 
-		$output = '';
+		if ( $args['label_type'] == 'top' || $args['label_type'] == 'hidden' ) {
+			$label_args['class'] .= 'd-block ';
 
+			if ( $args['label_type'] == 'hidden' ) {
+				$label_args['class'] .= 'sr-only ';
+			}
+		}
+
+		$output = '';
 
 		// label before
 		if ( ! empty( $args['label'] ) ) {

@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/cart-item.php.
  *
- * @version 1.0.19
+ * @version 2.8.17
  * @var GetPaid_Payment_Form $form
  * @var GetPaid_Form_Item $item
  */
@@ -113,7 +113,7 @@ if ( $has_variable_pricing && (isset( $price['is-recurring'] ) && 'yes' === $pri
                             }
 
                             if ( $has_featured_image ) {
-                                echo '<div class="getpaid-form-item-image-container mr-2">';
+                                echo '<div class="getpaid-form-item-image-container mr-2" style="width:85px;">';
                                 echo get_the_post_thumbnail( $item->get_id(), 'thumbnail', array( 'class' => 'getpaid-form-item-image mb-0' ) );
                                 echo '</div>';
                             }

@@ -17,13 +17,24 @@ function aui_bs_convert_sd_output( $output, $instance = '', $args = '', $sd = ''
 	global $aui_bs5;
 
 	if ( $aui_bs5 ) {
-
 		$convert = array(
-			'ml-'                   => 'ms-',
-			'mr-'                   => 'me-',
-			'pl-'                   => 'ps-',
-			'pr-'                   => 'pe-',
-			' form-row'              => ' row',
+			'"ml-' => '"ms-',
+			'"mr-' => '"me-',
+			'"pl-' => '"ps-',
+			'"pr-' => '"pe-',
+			"'ml-" => "'ms-",
+			"'mr-" => "'me-",
+			"'pl-" => "'ps-",
+			"'pr-" => "'pe-",
+			' ml-' => ' ms-',
+			' mr-' => ' me-',
+			' pl-' => ' ps-',
+			' pr-' => ' pe-',
+			'.ml-' => '.ms-',
+			'.mr-' => '.me-',
+			'.pl-' => '.ps-',
+			'.pr-' => '.pe-',
+			' form-row' => ' row',
 			' embed-responsive-item' => '',
 			' embed-responsive' => ' ratio',
 			'-1by1'    => '-1x1',
@@ -31,6 +42,7 @@ function aui_bs_convert_sd_output( $output, $instance = '', $args = '', $sd = ''
 			'-16by9'    => '-16x9',
 			'-21by9'    => '-21x9',
 			'geodir-lightbox-image' => 'aui-lightbox-image',
+			'geodir-lightbox-iframe' => 'aui-lightbox-iframe',
 			' badge-'   => ' text-bg-',
 			'form-group'   => 'mb-3',
 			'custom-select'   => 'form-select',

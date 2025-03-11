@@ -1,3 +1,90 @@
+= 1.2.17 - 2025-01-09 =
+* Added extensibility for block visibility field settings via hooks, filters and jQuery triggers - ADDED
+
+= 1.2.16 - 2024-12-12 =
+* Changes for Bricks output class to add AyeCode UI class and show icons as icon picker - ADDED
+
+= 1.2.15 - 2024-11-28 =
+* Class added for Bricks element conversion - ADDED
+
+= 1.2.14 - 2024-11-12 =
+* widget_title_tag param now filtered by allowed tags list - CHANGED
+
+= 1.2.13 - 2024-10-10 =
+* sd_template_page_options() not allowing child page selection - FIXED
+* Filter added `sd_template_page_options_limit` to adjust the 500 pages limit - ADDED
+* Multiple blocks with taxonomy linking feature can cause ajax query to loop and freeze browser - FIXED
+* __experimentalGetPreviewDeviceType is deprecated - FIXED
+
+= 1.2.10 - 2024-10-08 =
+* Selecting multiple similar blocks with different settings can cause editor to freeze - FIXED
+* Blocks with content already set will not call a refresh on load - CHANGED
+* New shortcode param could cause some blocks to call the render callback twice on each change - FIXED
+
+= 1.2.9 - 2024-09-12 =
+* Template get_pages call changed to custom query for better memory management - CHANGED
+
+= 1.2.7 - 2024-08-29 =
+* Fix conflicts with UpSolution Core plugin - FIXED
+
+= 1.2.6 - 2024-07-18 =
+* render_block hook only had 2 args prior to WP 5.9 which could cause fatal error when running WP < 5.9 - FIXED
+
+= 1.2.5 - 2024-07-17 =
+* non FSE themes can fail to render templates with blocks - FIXED
+
+= 1.2.4 - 2024-07-16 =
+* Some blocks not being wrapped inside the block wrapper - FIXED
+* Issue with blocks with no arguments not adding shortcode argument - FIXED
+
+= 1.2.2 - 2024-07-12 =
+* Blocks with `block-save-return` set should not have a sd_shortcode argument - FIXED
+
+= 1.2.1 - 2024-07-10 =
+* `html` argument not wrapped correctly in shortcode with new system for blocks - FIXED
+* Hide advanced border options when border color selected to none - FIXED
+
+= 1.2.0 - 2024-07-09 =
+* Added color options for upcoming dark mode feature - ADDED
+* Improvements to blocks to help prevent broken blocks - CHANGED
+* Blocks now store shortcodes in block param and not in the content - CHANGED
+
+= 1.1.45 - 2024-06-20 =
+* Yoast SEO conflict causes JS error on post edit pages - FIXED
+
+= 1.1.44 - 2024-06-13 =
+* Width and Height helper functions added - ADDED
+* Undefined array key warning - FIXED
+
+= 1.1.43 - 2024-06-05 =
+* example block attribute now works for block previews - ADDED
+* Block previews now enabled by default (set example as false to disable) - CHANGED
+* viewportWidth can be set in example attribute to set the preview viewport width - ADDED
+* example argument can be set on individual arguments to pass as the example - ADDED
+* `parent` and `allowedBlocks` block arguments now supported - ADDED
+
+= 1.1.41 - 2024-05-22 =
+* placeholder.png replaced with inline SVG for better block template compatibility - CHANGED
+
+= 1.1.40 - 2024-05-16 =
+* Block Visibility condition not working for CPT non-supported fields - FIXED
+* Block label dynamic name not working for containers - FIXED
+
+= 1.1.39 - 2024-04-18 =
+* Better block recovery - UPDATED
+
+= 1.1.38 - 2024-04-16 =
+* Escape shortcode param names - ADDED
+* Better block recovery - UPDATED
+
+= 1.1.37 - 2024-04-11 =
+* Font size option as inherit could output a 0 as a class - FIXED
+* Block rename functionality removed by default and added back with new function metadata_name = sd_get_custom_name_input() - CHANGED
+* Show eye icon in block list view when visibility conditions are set - ADDED
+
+= 1.1.36 - 2024-03-26 =
+* Added helper functions for link attributes - ADDED
+
 = 1.1.35 - 2024-03-13 =
 * Add style multiselect field for Elementor editor - CHANGED
 

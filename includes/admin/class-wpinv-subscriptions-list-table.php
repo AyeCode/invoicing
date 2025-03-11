@@ -237,14 +237,14 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$username = __( '(Missing User)', 'invoicing' );
 
 		$user = get_userdata( $item->get_customer_id() );
-		if ( $user ) {
+		$capabilities = wpinv_current_user_can_manage_invoicing();
 
+		if ( $user ) {
 			$username = sprintf(
 				'<a href="user-edit.php?user_id=%s">%s</a>',
 				absint( $user->ID ),
 				! empty( $user->display_name ) ? esc_html( $user->display_name ) : sanitize_email( $user->user_email )
 			);
-
 		}
 
 		// translators: $1: is opening link, $2: is subscription id number, $3: is closing link tag, $4: is user's name
@@ -252,7 +252,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			_x( '%1$s#%2$s%3$s for %4$s', 'Subscription title on admin table. (e.g.: #211 for John Doe)', 'invoicing' ),
 			'<a href="' . esc_url( admin_url( 'admin.php?page=wpinv-subscriptions&id=' . absint( $item->get_id() ) ) ) . '">',
 			'<strong>' . esc_attr( $item->get_id() ) . '</strong>',
-            '</a>',
+			'</a>',
 			$username
 		);
 
@@ -283,6 +283,10 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 			)
 		);
 		$row_actions['delete'] = '<a class="text-danger" href="' . $delete_url . '">' . __( 'Delete Subscription', 'invoicing' ) . '</a>';
+
+		if ( ! $capabilities ) {
+			$row_actions = array();
+		}
 
 		$row_actions = $this->row_actions( apply_filters( 'getpaid_subscription_table_row_actions', $row_actions, $item ) );
 
@@ -341,7 +345,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 */
 	public static function column_amount( $item ) {
 		$amount = getpaid_get_formatted_subscription_amount( $item );
-		return "<span class='text-muted form-text mt-2 mb-2'>$amount</span>";
+		return "<span class='text-muted form-text mt-2 mb-2 ms-1 ml-1'>$amount</span>";
 	}
 
 	/**
@@ -387,9 +391,8 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 
 		if ( ! empty( $item ) ) {
 			$link = get_edit_post_link( $item );
-			$link = esc_url( $link );
 			$name = esc_html( get_the_title( $item ) );
-			return wpinv_current_user_can_manage_invoicing() ? "<a href='$link'>$name</a>" : $name;
+			return wpinv_current_user_can_manage_invoicing() ? "<a href='" . ( $link ? esc_url( $link ) : '#' ) . "'>$name</a>" : $name;
 		} else {
 			return sprintf( __( 'Item #%s', 'invoicing' ), $item_id );
 		}

@@ -6,11 +6,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
+global $aui_bs5;
 ?>
-
 <div class="card shadow-sm my-5">
-
-    <form method="post" class="text-left card-body" action="options.php">
+    <form method="post" class="<?php echo( $aui_bs5 ? 'text-start' : 'text-left' ); ?> card-body" action="options.php">
         <?php settings_fields( 'wpinv_settings' ); ?>
         <input type="hidden" name="_wp_http_referer" value="<?php echo esc_url( $next_url ); ?>">
 

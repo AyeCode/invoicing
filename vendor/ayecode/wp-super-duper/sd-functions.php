@@ -232,7 +232,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 			'rounded-bottom' => 'rounded-bottom',
 			'rounded-left'   => 'rounded-left',
 		);
-		$defaults['element_require'] = '[%border%]';
+		$defaults['element_require'] = '([%border%]&&[%border%]!="0")';
 	} elseif ( 'rounded_size' === $type ) {
 		$defaults['title'] = __( 'Border radius size', 'ayecode-connect' );
 
@@ -254,7 +254,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 				'lg' => __( 'Large', 'ayecode-connect' ),
 			);
 		}
-		$defaults['element_require'] = '[%border%]';
+		$defaults['element_require'] = '([%border%]&&[%border%]!="0")';
 	} elseif ( 'width' === $type ) { // BS%
 		$defaults['title']           = __( 'Border width', 'ayecode-connect' );
 		$defaults['options']         = array(
@@ -264,7 +264,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 			'border-4' => '4',
 			'border-5' => '5',
 		);
-		$defaults['element_require'] = $aui_bs5 ? '[%border%]' : '1==2';
+		$defaults['element_require'] = $aui_bs5 ? '([%border%]&&[%border%]!="0")' : '1==2';
 	} elseif ( 'opacity' === $type ) { // BS%
 		$defaults['title']           = __( 'Border opacity', 'ayecode-connect' );
 		$defaults['options']         = array(
@@ -274,7 +274,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 			'border-opacity-25' => '25%',
 			'border-opacity-10' => '10%',
 		);
-		$defaults['element_require'] = $aui_bs5 ? '[%border%]' : '1==2';
+		$defaults['element_require'] = $aui_bs5 ? '([%border%]&&[%border%]!="0")' : '1==2';
 	} elseif ( 'type' === $type ) {
 		$defaults['title']           = __( 'Border show', 'ayecode-connect' );
 		$defaults['options']         = array(
@@ -288,14 +288,13 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 			'border-left-0'   => __( '-Left', 'ayecode-connect' ),
 			'border-right-0'  => __( '-Right', 'ayecode-connect' ),
 		);
-		$defaults['element_require'] = '[%border%]';
-
+		$defaults['element_require'] = '([%border%]&&[%border%]!="0")';
 	} else {
 		$defaults['title']   = __( 'Border color', 'ayecode-connect' );
 		$defaults['options'] = array(
-			                       ''  => __( 'Default', 'ayecode-connect' ),
-			                       '0' => __( 'None', 'ayecode-connect' ),
-		                       ) + sd_aui_colors();
+			''  => __( 'Default', 'ayecode-connect' ),
+			'0' => __( 'None', 'ayecode-connect' )
+		) + sd_aui_colors( false, false, false, false, true );
 	}
 
 	$input = wp_parse_args( $overwrite, $defaults );
@@ -345,7 +344,7 @@ function sd_get_background_input( $type = 'bg', $overwrite = array() ) {
 	$options = array(
 		           ''            => __( 'None', 'ayecode-connect' ),
 		           'transparent' => __( 'Transparent', 'ayecode-connect' ),
-	           ) + sd_aui_colors();
+	           ) + sd_aui_colors(false,false,false,false,true);
 
 	$defaults = array(
 		'type'     => 'select',
@@ -411,7 +410,7 @@ function sd_get_opacity_input( $type = 'opacity', $overwrite = array() ) {
  */
 function sd_get_background_inputs( $type = 'bg', $overwrite = array(), $overwrite_color = array(), $overwrite_gradient = array(), $overwrite_image = array(), $include_button_colors = false ) {
 
-	$color_options = $include_button_colors ? sd_aui_colors( false, true, true, true ) : sd_aui_colors();
+	$color_options = $include_button_colors ? sd_aui_colors( false, true, true, true, true ) : sd_aui_colors(false, false, false, false, true );
 
 	$options = array(
 		           ''            => __( 'None', 'ayecode-connect' ),
@@ -600,7 +599,7 @@ function sd_get_shape_divider_inputs( $type = 'sd', $overwrite = array(), $overw
 	$options = array(
 		           ''            => __( 'None', 'ayecode-connect' ),
 		           'transparent' => __( 'Transparent', 'ayecode-connect' ),
-	           ) + sd_aui_colors()
+	           ) + sd_aui_colors(false,false,false,false,true )
 	           + array(
 		           'custom-color' => __( 'Custom Color', 'ayecode-connect' ),
 	           );
@@ -748,10 +747,10 @@ function sd_get_element_require_string( $args, $key, $type ) {
  *
  * @return array
  */
-function sd_get_text_color_input( $type = 'text_color', $overwrite = array(), $has_custom = false ) {
+function sd_get_text_color_input( $type = 'text_color', $overwrite = array(), $has_custom = false, $emphasis = true ) {
 	$options = array(
 		           '' => __( 'None', 'ayecode-connect' ),
-	           ) + sd_aui_colors();
+	           ) + sd_aui_colors(false,false,false,false,false, true);
 
 	if ( $has_custom ) {
 		$options['custom'] = __( 'Custom color', 'ayecode-connect' );
@@ -1023,7 +1022,7 @@ function sd_get_text_justify_input( $type = 'text_justify', $overwrite = array()
  *
  * @return array
  */
-function sd_aui_colors( $include_branding = false, $include_outlines = false, $outline_button_only_text = false, $include_translucent = false ) {
+function sd_aui_colors( $include_branding = false, $include_outlines = false, $outline_button_only_text = false, $include_translucent = false, $include_subtle = false, $include_emphasis = false ) {
 	$theme_colors = array();
 
 	$theme_colors['primary']   = __( 'Primary', 'ayecode-connect' );
@@ -1044,6 +1043,48 @@ function sd_aui_colors( $include_branding = false, $include_outlines = false, $o
 	$theme_colors['gray-dark'] = __( 'Gray dark', 'ayecode-connect' );
 	$theme_colors['indigo']    = __( 'Indigo', 'ayecode-connect' );
 	$theme_colors['orange']    = __( 'Orange', 'ayecode-connect' );
+	$theme_colors['body']      = __( 'Body', 'ayecode-connect' );
+
+
+	// for bg and borders
+	if ( $include_subtle ) {
+		$theme_colors['primary-subtle']   = __( 'Primary Subtle', 'ayecode-connect' );
+		$theme_colors['primary-subtle']   = __( 'Primary Subtle', 'ayecode-connect' );
+		$theme_colors['secondary-subtle'] = __( 'Secondary Subtle', 'ayecode-connect' );
+		$theme_colors['success-subtle']   = __( 'Success Subtle', 'ayecode-connect' );
+		$theme_colors['danger-subtle']    = __( 'Danger Subtle', 'ayecode-connect' );
+		$theme_colors['warning-subtle']   = __( 'Warning Subtle', 'ayecode-connect' );
+		$theme_colors['info-subtle']      = __( 'Info Subtle', 'ayecode-connect' );
+		$theme_colors['light-subtle']     = __( 'Light Subtle', 'ayecode-connect' );
+		$theme_colors['dark-subtle']      = __( 'Dark Subtle', 'ayecode-connect' );
+		$theme_colors['purple-subtle']    = __( 'Purple Subtle', 'ayecode-connect' );
+		$theme_colors['salmon-subtle']    = __( 'Salmon Subtle', 'ayecode-connect' );
+		$theme_colors['cyan-subtle']      = __( 'Cyan Subtle', 'ayecode-connect' );
+		$theme_colors['gray-subtle']      = __( 'Gray Subtle', 'ayecode-connect' );
+		$theme_colors['gray-dark-subtle'] = __( 'Gray dark Subtle', 'ayecode-connect' );
+		$theme_colors['indigo-subtle']    = __( 'Indigo Subtle', 'ayecode-connect' );
+		$theme_colors['orange-subtle']    = __( 'Orange Subtle', 'ayecode-connect' );
+	}
+
+	// for texts
+	if ($include_emphasis) {
+		$theme_colors['primary-emphasis']   = __( 'Primary Emphasis', 'ayecode-connect' );
+		$theme_colors['secondary-emphasis'] = __( 'Secondary Emphasis', 'ayecode-connect' );
+		$theme_colors['success-emphasis']   = __( 'Success Emphasis', 'ayecode-connect' );
+		$theme_colors['danger-emphasis']    = __( 'Danger Emphasis', 'ayecode-connect' );
+		$theme_colors['warning-emphasis']   = __( 'Warning Emphasis', 'ayecode-connect' );
+		$theme_colors['info-emphasis']      = __( 'Info Emphasis', 'ayecode-connect' );
+		$theme_colors['light-emphasis']     = __( 'Light Emphasis', 'ayecode-connect' );
+		$theme_colors['dark-emphasis']      = __( 'Dark Emphasis', 'ayecode-connect' );
+		$theme_colors['purple-emphasis']    = __( 'Purple Emphasis', 'ayecode-connect' );
+		$theme_colors['salmon-emphasis']    = __( 'Salmon Emphasis', 'ayecode-connect' );
+		$theme_colors['cyan-emphasis']      = __( 'Cyan Emphasis', 'ayecode-connect' );
+		$theme_colors['gray-emphasis']      = __( 'Gray Emphasis', 'ayecode-connect' );
+		$theme_colors['muted-emphasis']     = __( 'Muted Emphasis', 'ayecode-connect' );
+		$theme_colors['gray-dark-emphasis'] = __( 'Gray dark Emphasis', 'ayecode-connect' );
+		$theme_colors['indigo-emphasis']    = __( 'Indigo Emphasis', 'ayecode-connect' );
+		$theme_colors['orange-emphasis']    = __( 'Orange Emphasis', 'ayecode-connect' );
+	}
 
 	if ( $include_outlines ) {
 		$button_only                       = $outline_button_only_text ? ' ' . __( '(button only)', 'ayecode-connect' ) : '';
@@ -1575,6 +1616,30 @@ function sd_get_class_input( $type = 'css_class', $overwrite = array() ) {
 }
 
 /**
+ * A helper function for the class input.
+ *
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_custom_name_input( $type = 'metadata_name', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'text',
+		'title'    => __( 'Block Name', 'ayecode-connect' ),
+		'desc'     => __( 'Set a custom name for this block', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Advanced', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
  * A helper function for font size inputs.
  *
  * @param string $type
@@ -2032,6 +2097,230 @@ function sd_get_scrollbars_input( $type = 'scrollbars', $overwrite = array() ) {
 }
 
 /**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_new_window_input( $type = 'target', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'checkbox',
+		'title'    => __( 'Open in new window', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_nofollow_input( $type = 'nofollow', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'     => 'checkbox',
+		'title'    => __( 'Add nofollow', 'ayecode-connect' ),
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * A helper function for width inputs.
+ *
+ * @param string $type
+ * @param array $overwrite
+ *
+ * @return array
+ */
+function sd_get_width_input( $type = 'width', $overwrite = array() ) {
+
+	$device_size = '';
+	if ( ! empty( $overwrite['device_type'] ) ) {
+		if ( $overwrite['device_type'] == 'Tablet' ) {
+			$device_size = '-md';
+		} elseif ( $overwrite['device_type'] == 'Desktop' ) {
+			$device_size = '-lg';
+		}
+	}
+	$options = array(
+		'' => __('Default', 'ayecode-connect'),
+		'w' . $device_size . '-25' => '25%',
+		'w' . $device_size . '-50' => '50%',
+		'w' . $device_size . '-75' => '75%',
+		'w' . $device_size . '-100' => '100%',
+		'w' . $device_size . '-auto' => 'auto',
+	);
+
+	$defaults = array(
+		'type'     => 'select',
+		'title'    => __( 'Width', 'ayecode-connect' ),
+		'options'  => $options,
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Wrapper Styles', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * A helper function for height inputs.
+ *
+ * @param string $type
+ * @param array $overwrite
+ *
+ * @return array
+ */
+function sd_get_height_input( $type = 'height', $overwrite = array() ) {
+
+	$device_size = '';
+	if ( ! empty( $overwrite['device_type'] ) ) {
+		if ( $overwrite['device_type'] == 'Tablet' ) {
+			$device_size = '-md';
+		} elseif ( $overwrite['device_type'] == 'Desktop' ) {
+			$device_size = '-lg';
+		}
+	}
+	$options = array(
+		'' => __('Default', 'ayecode-connect'),
+		'h' . $device_size . '-25' => '25%',
+		'h' . $device_size . '-50' => '50%',
+		'h' . $device_size . '-75' => '75%',
+		'h' . $device_size . '-100' => '100%',
+		'h' . $device_size . '-auto' => 'auto',
+	);
+
+	$defaults = array(
+		'type'     => 'select',
+		'title'    => __( 'Height', 'ayecode-connect' ),
+		'options'  => $options,
+		'default'  => '',
+		'desc_tip' => true,
+		'group'    => __( 'Wrapper Styles', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $type
+ * @param $overwrite
+ *
+ * @return array
+ */
+function sd_get_attributes_input( $type = 'attributes', $overwrite = array() ) {
+
+	$defaults = array(
+		'type'        => 'text',
+		'title'       => __( 'Custom Attributes', 'ayecode-connect' ),
+		'value'       => '',
+		'default'     => '',
+		'placeholder' => 'key|value,key2|value2',
+		'desc_tip'    => true,
+		'group'       => __( 'Link', 'ayecode-connect' ),
+	);
+
+	$input = wp_parse_args( $overwrite, $defaults );
+
+	return $input;
+}
+
+/**
+ * @param $args
+ *
+ * @return string
+ */
+function sd_build_attributes_string_escaped( $args ) {
+	global $aui_bs5;
+
+	$attributes = array();
+	$string_escaped = '';
+
+	if ( ! empty( $args['custom'] ) ) {
+		$attributes = sd_parse_custom_attributes($args['custom']);
+	}
+
+	// new window
+	if ( ! empty( $args['new_window'] ) ) {
+		$attributes['target'] = '_blank';
+	}
+
+	// nofollow
+	if ( ! empty( $args['nofollow'] ) ) {
+		$attributes['rel'] = isset($attributes['rel']) ? $attributes['rel'] . ' nofollow' : 'nofollow';
+	}
+
+	if(!empty($attributes )){
+		foreach ( $attributes as $key => $val ) {
+			$string_escaped .= esc_attr($key) . '="' . esc_attr($val) . '" ';
+		}
+	}
+
+	return $string_escaped;
+}
+
+/**
+ * @info borrowed from elementor
+ *
+ * @param $attributes_string
+ * @param $delimiter
+ *
+ * @return array
+ */
+function sd_parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
+	$attributes = explode( $delimiter, $attributes_string );
+	$result = [];
+
+	foreach ( $attributes as $attribute ) {
+		$attr_key_value = explode( '|', $attribute );
+
+		$attr_key = mb_strtolower( $attr_key_value[0] );
+
+		// Remove any not allowed characters.
+		preg_match( '/[-_a-z0-9]+/', $attr_key, $attr_key_matches );
+
+		if ( empty( $attr_key_matches[0] ) ) {
+			continue;
+		}
+
+		$attr_key = $attr_key_matches[0];
+
+		// Avoid Javascript events and unescaped href.
+		if ( 'href' === $attr_key || 'on' === substr( $attr_key, 0, 2 ) ) {
+			continue;
+		}
+
+		if ( isset( $attr_key_value[1] ) ) {
+			$attr_value = trim( $attr_key_value[1] );
+		} else {
+			$attr_value = '';
+		}
+
+		$result[ $attr_key ] = $attr_value;
+	}
+
+	return $result;
+}
+
+/**
  * Build AUI classes from settings.
  *
  * @param $args
@@ -2319,6 +2608,11 @@ function sd_build_aui_class( $args ) {
 		$classes[] = 'bg-' . sanitize_html_class( $args['bg'] );
 	}
 
+	// background image fixed bg_image_fixed this helps fix a iOS bug
+	if ( ! empty( $args['bg_image_fixed'] ) ) {
+		$classes[] = 'bg-image-fixed';
+	}
+
 	// text_color
 	if ( ! empty( $args['text_color'] ) ) {
 		$classes[] = 'text-' . sanitize_html_class( $args['text_color'] );
@@ -2446,6 +2740,10 @@ function sd_build_aui_class( $args ) {
 				}
 			}
 		}
+	}
+
+	if ( ! empty( $classes ) ) {
+		$classes = array_unique( array_filter( array_map( 'trim', $classes ) ) );
 	}
 
 	return implode( ' ', $classes );
@@ -2587,7 +2885,7 @@ function sd_build_hover_styles( $args, $is_preview = false ) {
 }
 
 /**
- * Try to get a CSS color varibale for a given value.
+ * Try to get a CSS color variable for a given value.
  *
  * @param $var
  *
@@ -2662,7 +2960,9 @@ function sd_get_class_build_keys() {
 		'h100',
 		'overflow',
 		'scrollbars',
-		'float-MTD'
+		'float-MTD',
+		'height-MTD',
+		'width-MTD'
 	);
 
 	return apply_filters( 'sd_class_build_keys', $keys );
@@ -2713,6 +3013,9 @@ function sd_user_roles_options( $exclude = array() ) {
 			$user_roles[ esc_attr( $role ) ] = translate_user_role( $data['name'] );
 		}
 	}
+
+	// Logged out as a custom role.
+	$user_roles['logged_out'] = __( 'Guest (logged out)', 'ayecode-connect' );
 
 	return apply_filters( 'sd_user_roles_options', $user_roles );
 }
@@ -2847,6 +3150,7 @@ function sd_visibility_field_condition_options(){
  */
 function sd_visibility_output_options() {
 	$options = array(
+		''              => __( 'Show Block', 'ayecode-connect' ),
 		'hide'          => __( 'Hide Block', 'ayecode-connect' ),
 		'message'       => __( 'Show Custom Message', 'ayecode-connect' ),
 		'page'          => __( 'Show Page Content', 'ayecode-connect' ),
@@ -2865,17 +3169,19 @@ function sd_visibility_output_options() {
  * @return array Template page options.
  */
 function sd_template_page_options( $args = array() ) {
-	global $sd_tmpl_page_options;
+	global $wpdb, $sd_tmpl_page_options;
 
-	if ( ! empty( $sd_tmpl_page_options ) ) {
+	$defaults = array(
+		'nocache' => false,
+		'with_slug' => false,
+		'default_label' => __( 'Select Page...', 'ayecode-connect' )
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+
+	if ( ! empty( $sd_tmpl_page_options ) && empty( $args['nocache'] ) ) {
 		return $sd_tmpl_page_options;
 	}
-
-	$args = wp_parse_args( $args, array(
-		'child_of'    => 0,
-		'sort_column' => 'post_title',
-		'sort_order'  => 'ASC'
-	) );
 
 	$exclude_pages = array();
 	if ( $page_on_front = get_option( 'page_on_front' ) ) {
@@ -2886,24 +3192,50 @@ function sd_template_page_options( $args = array() ) {
 		$exclude_pages[] = $page_for_posts;
 	}
 
+	$exclude_pages_placeholders = '';
 	if ( ! empty( $exclude_pages ) ) {
-		$args['exclude'] = $exclude_pages;
+		// Sanitize the array of excluded pages and implode it for the SQL query.
+		$exclude_pages_placeholders = implode( ',', array_fill( 0, count( $exclude_pages ), '%d' ) );
 	}
 
-	$pages = get_pages( $args );
+	// Prepare the base SQL query.
+	$sql = "SELECT ID, post_title, post_name FROM " . $wpdb->posts . " WHERE post_type = 'page' AND post_status = 'publish'";
 
-	$options = array( '' => __( 'Select Page...', 'ayecode-connect' ) );
+	// Add the exclusion if there are pages to exclude
+	if ( ! empty( $exclude_pages ) ) {
+		$sql .= " AND ID NOT IN ($exclude_pages_placeholders)";
+	}
+
+	// Add sorting.
+	$sql .= " ORDER BY post_title ASC";
+
+	// Add a limit.
+	$limit = (int) apply_filters( 'sd_template_page_options_limit', 500, $args );
+
+	if ( $limit > 0 ) {
+		$sql .= " LIMIT " . (int) $limit;
+	}
+
+	// Prepare the SQL query to include the excluded pages only if we have placeholders.
+	$pages = $exclude_pages_placeholders ? $wpdb->get_results( $wpdb->prepare( $sql, ...$exclude_pages ) ) : $wpdb->get_results( $sql );
+
+	if ( ! empty( $args['default_label'] ) ) {
+		$options = array( '' => $args['default_label'] );
+	} else {
+		$options = array();
+	}
+
 	if ( ! empty( $pages ) ) {
 		foreach ( $pages as $page ) {
-			if ( ! empty( $page->ID ) && ! empty( $page->post_title ) ) {
-				$options[ $page->ID ] = $page->post_title . ' (#' . $page->ID . ')';
-			}
+			$title = ! empty( $args['with_slug'] ) ? $page->post_title . ' (' . $page->post_name . ')' : ( $page->post_title . ' (#' . $page->ID . ')' );
+
+			$options[ $page->ID ] = $title;
 		}
 	}
 
 	$sd_tmpl_page_options = $options;
 
-	return apply_filters( 'sd_template_page_options', $options );
+	return apply_filters( 'sd_template_page_options', $options, $args );
 }
 
 /**
@@ -2989,11 +3321,20 @@ function sd_render_block( $block_content, $block, $instance = '' ) {
 		return $block_content;
 	}
 
+	$check_rules = null;
 	$_block_content = $block_content;
 
-	if ( ! empty( $rules ) && sd_block_check_rules( $rules ) ) {
-		if ( ! empty( $attributes['output']['type'] ) ) {
-			switch ( $attributes['output']['type'] ) {
+	if ( ! empty( $rules ) && ( ! empty( $attributes['output'] ) || ! empty( $attributes['outputN'] ) ) ) {
+		$check_rules = sd_block_check_rules( $rules );
+
+		if ( $check_rules ) {
+			$output_condition = ! empty( $attributes['output'] ) ? $attributes['output'] : array();
+		} else {
+			$output_condition = ! empty( $attributes['outputN'] ) ? $attributes['outputN'] : array();
+		}
+
+		if ( ! empty( $output_condition ) && ! empty( $output_condition['type'] ) ) {
+			switch ( $output_condition['type'] ) {
 				case 'hide':
 					$valid_type = true;
 					$content = '';
@@ -3002,12 +3343,12 @@ function sd_render_block( $block_content, $block, $instance = '' ) {
 				case 'message':
 					$valid_type = true;
 
-					if ( isset( $attributes['output']['message'] ) ) {
-						$content = $attributes['output']['message'] != '' ? __( stripslashes( $attributes['output']['message'] ), 'ayecode-connect' ) : $attributes['output']['message'];
+					if ( isset( $output_condition['message'] ) ) {
+						$content = $output_condition['message'] != '' ? __( stripslashes( $output_condition['message'] ), 'ayecode-connect' ) : $output_condition['message'];
 
-						if ( ! empty( $attributes['output']['message_type'] ) ) {
+						if ( ! empty( $output_condition['message_type'] ) ) {
 							$content = aui()->alert( array(
-									'type'=> $attributes['output']['message_type'],
+									'type'=> $output_condition['message_type'],
 									'content'=> $content
 								)
 							);
@@ -3018,14 +3359,14 @@ function sd_render_block( $block_content, $block, $instance = '' ) {
 				case 'page':
 					$valid_type = true;
 
-					$page_id = ! empty( $attributes['output']['page'] ) ? absint( $attributes['output']['page'] ) : 0;
+					$page_id = ! empty( $output_condition['page'] ) ? absint( $output_condition['page'] ) : 0;
 					$content = sd_get_page_content( $page_id );
 
 					break;
 				case 'template_part':
 					$valid_type = true;
 
-					$template_part = ! empty( $attributes['output']['template_part'] ) ? $attributes['output']['template_part'] : '';
+					$template_part = ! empty( $output_condition['template_part'] ) ? $output_condition['template_part'] : '';
 					$content = sd_get_template_part_content( $template_part );
 
 					break;
@@ -3040,7 +3381,7 @@ function sd_render_block( $block_content, $block, $instance = '' ) {
 		}
 	}
 
-	return apply_filters( 'sd_render_block_visibility_content', $block_content, $_block_content, $attributes, $block, $instance );
+	return apply_filters( 'sd_render_block_visibility_content', $block_content, $_block_content, $attributes, $block, $instance, $check_rules );
 }
 add_filter( 'render_block', 'sd_render_block', 9, 3 );
 
@@ -3148,11 +3489,18 @@ function sd_block_check_rule( $match, $rule ) {
 						$user_roles = array_filter( array_map( 'trim', $user_roles ) );
 					}
 
-					if ( ! empty( $user_roles ) && is_array( $user_roles ) && is_user_logged_in() && ( $current_user = wp_get_current_user() ) ) {
-						$current_user_roles = $current_user->roles;
+					if ( ! empty( $user_roles ) && is_array( $user_roles ) ) {
+						if ( is_user_logged_in() && ( $current_user = wp_get_current_user() ) ) {
+							$current_user_roles = $current_user->roles;
 
-						foreach ( $user_roles as $role ) {
-							if ( in_array( $role, $current_user_roles ) ) {
+							foreach ( $user_roles as $role ) {
+								if ( in_array( $role, $current_user_roles ) ) {
+									$match = true;
+								}
+							}
+						} else {
+							// Logged out role.
+							if ( in_array( 'logged_out', $user_roles ) ) {
 								$match = true;
 							}
 						}
@@ -3163,6 +3511,10 @@ function sd_block_check_rule( $match, $rule ) {
 			case 'gd_field':
 				$match = sd_block_check_rule_gd_field( $rule );
 
+				break;
+
+			default:
+				$match = apply_filters( 'sd_block_check_custom_rule', $match, $rule );
 				break;
 		}
 	}
@@ -3205,6 +3557,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 		if ( $match_field === '' || ( ! empty( $find_post_keys ) && ( in_array( $match_field, $find_post_keys ) || in_array( $_match_field, $find_post_keys ) ) ) ) {
 			$address_fields = array( 'street2', 'neighbourhood', 'city', 'region', 'country', 'zip', 'latitude', 'longitude' ); // Address fields
 			$field = array();
+			$empty_field = false;
 
 			$standard_fields = sd_visibility_gd_standard_fields();
 
@@ -3223,7 +3576,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 				}
 
 				if ( empty( $field ) ) {
-					return false;
+					$empty_field = true;
 				}
 			}
 
@@ -3244,7 +3597,7 @@ function sd_block_check_rule_gd_field( $rule ) {
 			$is_date = ( ! empty( $field['type'] ) && $field['type'] == 'datepicker' ) || in_array( $match_field, array( 'post_date', 'post_modified' ) ) ? true : false;
 			$is_date = apply_filters( 'geodir_post_badge_is_date', $is_date, $match_field, $field, $args, $find_post );
 
-			$match_value = isset($find_post->{$match_field}) ? esc_attr( trim( $find_post->{$match_field} ) ) : '';
+			$match_value = isset( $find_post->{$match_field} ) && empty( $empty_field ) ? esc_attr( trim( $find_post->{$match_field} ) ) : '';
 			$match_found = $match_field === '' ? true : false;
 
 			if ( ! $match_found ) {
@@ -3291,6 +3644,45 @@ function sd_block_check_rule_gd_field( $rule ) {
 			}
 
 			$match_found = apply_filters( 'geodir_post_badge_check_match_found', $match_found, $args, $find_post );
+		} else {
+			$field = array();
+
+			// Parse search.
+			$search = sd_gd_field_rule_search( $args['search'], $find_post->post_type, $rule, $field, $find_post );
+
+			$match_value = '';
+			$match_found = $match_field === '' ? true : false;
+
+			if ( ! $match_found ) {
+				switch ( $args['condition'] ) {
+					case 'is_equal':
+						$match_found = (bool) ( $search != '' && $match_value == $search );
+						break;
+					case 'is_not_equal':
+						$match_found = (bool) ( $search != '' && $match_value != $search );
+						break;
+					case 'is_greater_than':
+						$match_found = false;
+						break;
+					case 'is_less_than':
+						$match_found = false;
+						break;
+					case 'is_empty':
+						$match_found = true;
+						break;
+					case 'is_not_empty':
+						$match_found = false;
+						break;
+					case 'is_contains':
+						$match_found = false;
+						break;
+					case 'is_not_contains':
+						$match_found = false;
+						break;
+				}
+			}
+
+			$match_found = apply_filters( 'geodir_post_badge_check_match_found_empty', $match_found, $args, $find_post );
 		}
 	}
 
@@ -3361,3 +3753,46 @@ function sd_gd_field_rule_search( $search, $post_type, $rule, $field = array(), 
 
 	return apply_filters( 'sd_gd_field_rule_search', $search, $post_type, $rule, $orig_search );
 }
+
+
+if(!function_exists('sd_blocks_render_blocks')){
+	/**
+	 * Add the shortcodes to the block content if set as an attribute.
+	 *
+	 * We have moved the shortcodes from the block content to a block argument to help prevent broken blocks.
+	 *
+	 * @param $block_content
+	 * @param $parsed_block
+	 * @param $thiss
+	 * @return mixed|string
+	 */
+	function sd_blocks_render_blocks($block_content, $parsed_block, $thiss = array() ){
+
+		// Check if ita a nested block that needs to be wrapped
+		if(! empty($parsed_block['attrs']['sd_shortcode_close'])){
+			$content = isset($parsed_block['attrs']['html']) ? $parsed_block['attrs']['html'] : $block_content;
+			$block_content = $parsed_block['attrs']['sd_shortcode'].$content.$parsed_block['attrs']['sd_shortcode_close'];
+
+			$block_content = do_shortcode($block_content);
+
+		}elseif(! empty($parsed_block['attrs']['sd_shortcode'])){
+			$has_warp = false;
+			if($block_content && strpos(trim($block_content), '<div class="wp-block-') === 0 ){
+				$parts = explode('></', $block_content);
+				if(count($parts) === 2){
+					$block_content = $parts[0].'>'.$parsed_block['attrs']['sd_shortcode'].'</'.$parts[1];
+					$has_warp = true;
+				}
+			}
+			if (!$has_warp) {
+				// Add the shortcode if its not a wrapped block
+				$block_content .= $parsed_block['attrs']['sd_shortcode'];
+			}
+
+			$block_content = do_shortcode($block_content);
+		}
+		return  $block_content;
+	}
+}
+
+add_filter('render_block', 'sd_blocks_render_blocks',10,3);

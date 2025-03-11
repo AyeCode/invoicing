@@ -187,7 +187,7 @@ class GetPaid_Graph_Downloader {
 				$this->convert_array_xml( $value, $subnode );
 
 			} else {
-				$xml->addChild( $key, htmlspecialchars( $value ) );
+				$xml->addChild( $key, $value ?  htmlspecialchars( $value ) : $value );
 			}
 }
 

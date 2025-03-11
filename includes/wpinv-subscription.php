@@ -960,8 +960,14 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		// Maybe recalculate discount (Pre-GetPaid Fix).
 		$discount = new WPInv_Discount( $invoice->get_discount_code() );
-		if ( $discount->exists() && $discount->is_recurring() && 0 == $invoice->get_total_discount() ) {
+
+		if ( $discount->exists() && $discount->is_recurring() ) {
 			$invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
+		}  else {
+			// Unset discount code.
+			$invoice->set_discount_code( '' );
+
+			$invoice->remove_discount( 'discount_code' );
 		}
 
 		$invoice->recalculate_total();
@@ -982,20 +988,24 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @since  1.0.0
 	 * @return int The subscription's id
 	 */
-	public function renew( $calculate_from = null ) {
-
+	public function renew( $calculate_from = null, $_new_expiration = null ) {
 		// Complete subscription if applicable
 		if ( $this->is_last_renewal() ) {
 			return $this->complete();
 		}
 
-		// Calculate new expiration
-		$frequency      = $this->get_frequency();
-		$period         = $this->get_period();
-		$calculate_from = empty( $calculate_from ) ? $this->get_expiration_time() : $calculate_from;
-		$new_expiration = strtotime( "+ $frequency $period", $calculate_from );
+		if ( ! empty( $_new_expiration ) ) {
+			$new_expiration = $_new_expiration;
+		} else {
+			// Calculate new expiration
+			$frequency      = $this->get_frequency();
+			$period         = $this->get_period();
+			$calculate_from = empty( $calculate_from ) ? $this->get_expiration_time() : $calculate_from;
+			$new_expiration = strtotime( "+ $frequency $period", $calculate_from );
+			$new_expiration = date( 'Y-m-d H:i:s', $new_expiration );
+		}
 
-		$this->set_expiration( date( 'Y-m-d H:i:s', $new_expiration ) );
+		$this->set_expiration( $new_expiration );
 		$this->set_status( 'active' );
 		$this->save();
 

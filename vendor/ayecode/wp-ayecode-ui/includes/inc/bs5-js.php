@@ -277,7 +277,7 @@
         var sStyle = '';
         var $body = "", sClass = "w-100 p-0 m-0";
         if (responsive) {
-            $body += '<div class="embed-responsive embed-responsive-16by9">';
+            $body += '<div class="embed-responsive embed-responsive-16by9 ratio ratio-16x9">';
             wClass += ' h-100';
             sClass += ' embed-responsive-item';
         } else {
@@ -291,7 +291,6 @@
         if (responsive) {
             $body += '</div>';
         }
-        console.log('b4-show-modal');
         $m = aui_modal($title,$body,$footer,$dismissible,$class,$dialog_class,$body_class);
 
         // myModalEl.addEventListener('hidden.bs.modal', event => {
@@ -299,7 +298,7 @@
         // });
 
         const auiModal = document.getElementById('aui-modal');
-        auiModal.addEventListener( 'shown.bs.modal', function ( e ) {console.log('show-modal');
+        auiModal.addEventListener( 'shown.bs.modal', function ( e ) {
             iFrame = jQuery( '#embedModal-iframe') ;
 
             jQuery('.ac-preview-loading').addClass('d-flex');
@@ -315,7 +314,6 @@
         });
 
         return $m;
-
     }
 
     function aui_modal($title,$body,$footer,$dismissible,$class,$dialog_class,$body_class) {
@@ -597,7 +595,7 @@
         // remove it first
         jQuery('.aui-carousel-modal').remove();
 
-        var $modal = '<div class="modal fade aui-carousel-modal bsui" id="aui-carousel-modal" tabindex="-1" role="dialog" aria-labelledby="aui-modal-title" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-xl mw-100"><div class="modal-content bg-transparent border-0"><div class="modal-header"><h5 class="modal-title" id="aui-modal-title"></h5></div><div class="modal-body text-center"><i class="fas fa-circle-notch fa-spin fa-3x"></i></div></div></div></div>';
+        var $modal = '<div class="modal fade aui-carousel-modal bsui" id="aui-carousel-modal" tabindex="-1" role="dialog" aria-labelledby="aui-modal-title" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-xl mw-100"><div class="modal-content bg-transparent border-0 shadow-none"><div class="modal-header"><h5 class="modal-title" id="aui-modal-title"></h5></div><div class="modal-body text-center"><i class="fas fa-circle-notch fa-spin fa-3x"></i></div></div></div></div>';
         jQuery('body').append($modal);
 
         const ayeModal = new bootstrap.Modal('.aui-carousel-modal', {});
@@ -611,7 +609,7 @@
 
         $clicked_href = jQuery($link).attr('href');
         $images = [];
-        $container.find('.aui-lightbox-image').each(function() {
+        $container.find('.aui-lightbox-image, .aui-lightbox-iframe').each(function() {
             var a = this;
             var href = jQuery(a).attr('href');
             if (href) {
@@ -626,7 +624,7 @@
             if($images.length > 1){
                 $i = 0;
                 $carousel  += '<ol class="carousel-indicators position-fixed">';
-                $container.find('.aui-lightbox-image').each(function() {
+                $container.find('.aui-lightbox-image, .aui-lightbox-iframe').each(function() {
                     $active = $clicked_href == jQuery(this).attr('href') ? 'active' : '';
                     $carousel  += '<li data-bs-target="#aui-embed-slider-modal" data-bs-slide-to="'+$i+'" class="'+$active+'"></li>';
                     $i++;
@@ -639,40 +637,68 @@
 
             // items
             $i = 0;
-            $carousel  += '<div class="carousel-inner">';
+            $rtl_class = '<?php echo is_rtl() ? 'justify-content-end' : 'justify-content-start'; ?>'; 
+            $carousel += '<div class="carousel-inner d-flex align-items-center ' + $rtl_class + '">';
             $container.find('.aui-lightbox-image').each(function() {
                 var a = this;
                 var href = jQuery(a).attr('href');
 
                 $active = $clicked_href == jQuery(this).attr('href') ? 'active' : '';
-                $carousel  += '<div class="carousel-item '+ $active+'"><div>';
-
+                $carousel += '<div class="carousel-item '+ $active+'"><div>';
 
                 // image
                 var css_height = window.innerWidth > window.innerHeight ? '90vh' : 'auto';
-                var img = href ? jQuery(a).find('img').clone().attr('src', href ).attr('sizes', '' ).removeClass().addClass('mx-auto d-block w-auto mw-100 rounded').css('max-height',css_height).get(0).outerHTML :  jQuery(a).find('img').clone().removeClass().addClass('mx-auto d-block w-auto mw-100 rounded').css('max-height',css_height).get(0).outerHTML;;
-                $carousel  += img;
+                var srcset = jQuery(a).find('img').attr('srcset');
+                var sizes = '';
+                if (srcset) {
+                    var sources = srcset.split(',')
+                        .map(s => {
+                            var parts = s.trim().split(' ');
+                            return {
+                                width: parseInt(parts[1].replace('w', '')),
+                                descriptor: parts[1].replace('w', 'px')  // Ensuring the descriptor is in pixels
+                            };
+                        })
+                        .sort((a, b) => b.width - a.width); // Sort from largest to smallest for proper descending order
+
+                    // Build the sizes string
+                    sizes = sources.map((source, index, array) => {
+                        // For the largest source, do not include max-width to serve as default for larger viewports
+                        if (index === 0) {
+                            return `${source.descriptor}`; // Using full descriptor for the largest image
+                        } else {
+                            // For other sources, specify max-width for one pixel less than the current width
+                            return `(max-width: ${source.width - 1}px) ${array[index - 1].descriptor}`;
+                        }
+                    }).reverse().join(', '); // Reverse to start from smallest to largest for logical order
+
+                }
+
+
+                var img = href ? jQuery(a).find('img').clone().attr('src', href ).attr('sizes', sizes ).removeClass().addClass('mx-auto d-block w-auto rounded').css({'max-height':css_height,'max-width':'98%'}).get(0).outerHTML :  jQuery(a).find('img').clone().removeClass().addClass('mx-auto d-block w-auto rounded').css({'max-height':css_height,'max-width':'98%'}).get(0).outerHTML;
+                $carousel += img;
                 // captions
                 if(jQuery(a).parent().find('.carousel-caption').length ){
-                    $carousel  += jQuery(a).parent().find('.carousel-caption').clone().removeClass('sr-only').get(0).outerHTML;
+                    $carousel += jQuery(a).parent().find('.carousel-caption').clone().removeClass('sr-only visually-hidden').get(0).outerHTML;
                 }else if(jQuery(a).parent().find('.figure-caption').length ){
-                    $carousel  += jQuery(a).parent().find('.figure-caption').clone().removeClass('sr-only').addClass('carousel-caption').get(0).outerHTML;
+                    $carousel += jQuery(a).parent().find('.figure-caption').clone().removeClass('sr-only visually-hidden').addClass('carousel-caption').get(0).outerHTML;
                 }
-                $carousel  += '</div></div>';
+                $carousel += '</div></div>';
                 $i++;
-
             });
+
             $container.find('.aui-lightbox-iframe').each(function() {
                 var a = this;
+                var css_height = window.innerWidth > window.innerHeight ? '90vh;' : 'auto;';
+                var styleWidth = $images.length > 1 ? 'max-width:70%;' : '';
 
                 $active = $clicked_href == jQuery(this).attr('href') ? 'active' : '';
-                $carousel  += '<div class="carousel-item '+ $active+'"><div class="modal-xl mx-auto embed-responsive embed-responsive-16by9">';
-
+                $carousel += '<div class="carousel-item '+ $active+'"><div class="modal-xl mx-auto ratio ratio-16x9" style="max-height:'+css_height+styleWidth+'">';
 
                 // iframe
-                var css_height = window.innerWidth > window.innerHeight ? '95vh' : 'auto';
                 var url = jQuery(a).attr('href');
-                var iframe = '<iframe class="embed-responsive-item" style="height:'+css_height +'" src="'+url+'?rel=0&amp;showinfo=0&amp;modestbranding=1&amp;autoplay=1" id="video" allow="autoplay"></iframe>';
+                var iframe = '<div class="ac-preview-loading text-light d-none" style="left:0;top:0;height:'+css_height +'"><div class="spinner-border m-auto" role="status"></div></div>';
+                iframe += '<iframe class="aui-carousel-iframe" style="height:'+css_height +'" src="" data-src="'+url+'?rel=0&amp;showinfo=0&amp;modestbranding=1&amp;autoplay=1" allow="autoplay"></iframe>';
                 var img = iframe ;//.css('height',css_height).get(0).outerHTML;
                 $carousel  += img;
 
@@ -692,7 +718,6 @@
                 $carousel += '</a>';
             }
 
-
             $carousel  += '</div>';
 
             var $close = '<button type="button" class="btn-close btn-close-white text-end position-fixed" style="right: 20px;top: 10px; z-index: 1055;" data-bs-dismiss="modal" aria-label="Close"></button>';
@@ -702,10 +727,16 @@
             // ayeModal.getOrCreateInstance();
             ayeModal.show();
 
+            /* Support carousel swipe in BS modal on touch device */
+            try {
+                if ('ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0) {
+                    let _bsC = new bootstrap.Carousel('#aui-embed-slider-modal');
+                }
+            } catch(err) {}
+
             // enable ajax load
             //gd_init_carousel_ajax();
         }
-
     }
 
     /**
@@ -927,6 +958,30 @@
                 window.scrollTo(0, pS);
             });
         }
+
+		$(document).on('slide.bs.carousel', function(el) {
+			var $_modal = $(el.relatedTarget).closest('.aui-carousel-modal:visible').length ? $(el.relatedTarget).closest('.aui-carousel-modal:visible') : '';
+			if ($_modal && $_modal.find('.carousel-item iframe.aui-carousel-iframe').length) {
+				/* Unset iframe src */
+				$_modal.find('.carousel-item.active iframe.aui-carousel-iframe').each(function(){
+					if ($(this).attr('src')) {
+						$(this).data('src', $(this).attr('src'));
+						$(this).attr('src', '');
+					}
+				});
+				/* Set iframe src */
+				if ($(el.relatedTarget).find('iframe.aui-carousel-iframe').length) {
+					$(el.relatedTarget).find('.ac-preview-loading').removeClass('d-none').addClass('d-flex');
+					var $cIframe = $(el.relatedTarget).find('iframe.aui-carousel-iframe');
+					if (! $cIframe.attr('src') && $cIframe.data('src')) {
+						$cIframe.attr('src', $cIframe.data('src'));
+					}
+					$cIframe.on('load', function(){
+						setTimeout(function(){$_modal.find('.ac-preview-loading').removeClass('d-flex').addClass('d-none');},1250);
+					});
+				}
+			}
+		});
     });
 
     /**
@@ -979,8 +1034,8 @@
                 cs_scroll  = 'navbar-light';
             }
 
-            navbar.dataset.cso = cs_original
-            navbar.dataset.css = cs_scroll
+            navbar.dataset.cso = cs_original;
+            navbar.dataset.css = cs_scroll;
         }
 
         if($value > 0 || navbar.classList.contains('nav-menu-open') ){
@@ -1092,39 +1147,22 @@
      * @param $color
      */
     function aui_fse_sync_site_typography(){
-        // const select = wp.data.select('core/edit-site').getSettings();
-        // const select = wp.data.select('core/edit-site');
-        // console.log(select);
-
-
-        // console.log(settings.styles[3].css);
-
         const getGlobalStyles = () => {
             const { select } = wp.data;
             const settings = select('core/block-editor').getSettings();
-            // console.log(settings);
-            return settings.styles[3].css ? settings.styles[3].css : null;
 
+            return ( settings && settings.styles && settings.styles[3].css ? settings.styles[3].css : null );
         };
 
         // set the initial styles
         let Styles = getGlobalStyles();
 
-        // console.log('#####'+colorHex);
-
         wp.data.subscribe(() => {
-
-            // console.log(wp.data);
-
             // get the current styles
             const newStyles = getGlobalStyles();
 
-            // console.log(newStyles);
-
             // only do something if newStyles has changed.
             if( newStyles && Styles !== newStyles ) {
-
-
                 // heading sizes
                 aui_updateCssRule('body.editor-styles-wrapper h1', 'font-size', aui_parseCSS(newStyles, 'h1', 'font-size'));
                 aui_updateCssRule('body.editor-styles-wrapper h2', 'font-size', aui_parseCSS(newStyles, 'h2', 'font-size'));

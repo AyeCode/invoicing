@@ -102,14 +102,16 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 
 		$prepared      = array();
 		$amount_fields = $this->get_amount_fields( $invoice->get_post_type() );
+		$meta_fields = $this->get_payment_form_meta( $invoice );
 
 		foreach ( $fields as $field ) {
-
 			$value  = '';
 			$method = "get_$field";
 
 			if ( method_exists( $invoice, $method ) ) {
 				$value  = $invoice->$method();
+			} else if( strpos( $field, '_' ) === 0 && isset( $meta_fields[ $field ] ) ) {
+				$value = $meta_fields[ $field ];
 			}
 
 			if ( in_array( $field, $amount_fields ) ) {
@@ -180,6 +182,15 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 			'created_via',
     	);
 
+		// Payment form meta fields.
+		$meta_fields = getpaid_get_payment_form_custom_fields();
+
+		if ( ! empty( $meta_fields ) ) {
+			foreach ( $meta_fields as $field_key => $field_label ) {
+				$fields[] = $field_key;
+			}
+		}
+
 		return apply_filters( 'getpaid_invoice_exporter_get_fields', $fields, $post_type );
 	}
 
@@ -202,4 +213,35 @@ class GetPaid_Invoice_Exporter extends GetPaid_Graph_Downloader {
 		return apply_filters( 'getpaid_invoice_exporter_get_amount_fields', $fields, $post_type );
 	}
 
+	/**
+	 * Retrieves payment form meta fields.
+	 *
+	 * @since 2.8.23
+	 *
+	 * @return array
+	 */
+	public function get_payment_form_meta( $invoice ) {
+		// Payment form meta fields.
+		$field_keys = getpaid_get_payment_form_custom_fields();
+		$meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
+
+		$field_values = array();
+		if ( ! empty( $field_keys ) ) {
+			foreach ( $field_keys as $field_key => $field_label ) {
+				$value = '';
+
+				if ( ! empty( $meta ) ) {
+					foreach ( $meta as $meta_label => $meta_value ) {
+						if ( getpaid_strtolower( wpinv_clean( wp_unslash( $meta_label ) ) ) == getpaid_strtolower( $field_label ) ) {
+							$value = $meta_value;
+						}
+					}
+				}
+
+				$field_values[ $field_key ] = $value;
+			}
+		}
+
+		return $field_values;
+	}
 }

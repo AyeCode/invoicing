@@ -176,8 +176,18 @@ class WPInv_Privacy_Exporters {
         );
 
         // Return the values.
-        return apply_filters( 'getpaid_privacy_export_invoice_personal_data', array_values( $props_to_export ), $invoice );
+        $items = apply_filters( 'getpaid_privacy_export_invoice_personal_data', array_values( $props_to_export ), $invoice );
 
+        $data = array();
+
+        // Unset null values to prevent PHP deprecated notice.
+        foreach ( $items as $item ) {
+            if ( isset( $item['value'] ) && ! is_null( $item['value'] ) ) {
+                $data[] = $item;
+            }
+        }
+
+        return $data;
     }
 
     /**

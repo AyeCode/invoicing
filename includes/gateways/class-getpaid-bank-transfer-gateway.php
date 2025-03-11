@@ -65,7 +65,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		add_action( 'getpaid_invoice_line_items', array( $this, 'thankyou_page' ), 40 );
 		add_action( 'wpinv_pdf_content_billing', array( $this, 'thankyou_page' ), 11 );
 		add_action( 'wpinv_email_invoice_details', array( $this, 'email_instructions' ), 10, 3 );
-		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ) );
+		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 12, 2 );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'invoice_paid' ), 20 );
 
     }
@@ -157,7 +157,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		$country = $invoice->get_country();
 		$locale  = $this->get_country_locale();
 
-		// Get sortcode label in the $locale array and use appropriate one.
+		// Get shortcode label in the $locale array and use appropriate one.
 		$sortcode = isset( $locale[ $country ]['sortcode']['label'] ) ? $locale[ $country ]['sortcode']['label'] : __( 'Sort code', 'invoicing' );
 
         $bank_fields = array(
@@ -355,16 +355,29 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 * (Maybe) renews a bank transfer subscription profile.
 	 *
 	 *
-     * @param WPInv_Subscription $subscription
+	 * @param WPInv_Subscription $subscription
 	 */
-	public function maybe_renew_subscription( $subscription ) {
+	public function maybe_renew_subscription( $subscription, $parent_invoice ) {
+		// Ensure its our subscription && it's active.
+		if ( ! empty( $parent_invoice ) && $this->id === $parent_invoice->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
+			add_filter( 'getpaid_invoice_notifications_is_payment_form_invoice', array( $this, 'force_is_payment_form_invoice' ), 10, 2 );
 
-        // Ensure its our subscription && it's active.
-        if ( $this->id === $subscription->get_gateway() && $subscription->has_status( 'active trialling' ) ) {
-			$subscription->create_payment();
-        }
+			$invoice = $subscription->create_payment();
 
-    }
+			if ( ! empty( $invoice ) ) {
+				$is_logged_in = is_user_logged_in();
+
+				// Cron run.
+				if ( ! $is_logged_in ) {
+					$note = wp_sprintf( __( 'Renewal %1$s created with the status "%2$s".', 'invoicing' ), $invoice->get_invoice_quote_type(), wpinv_status_nicename( $invoice->get_status(), $invoice ) );
+
+					$invoice->add_note( $note, false, $is_logged_in, ! $is_logged_in );
+				}
+			}
+
+			remove_filter( 'getpaid_invoice_notifications_is_payment_form_invoice', array( $this, 'force_is_payment_form_invoice' ), 10, 2 );
+		}
+	}
 
 	/**
 	 * Process a bank transfer payment.
@@ -412,5 +425,22 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		}
 
     }
+
+	/**
+	 * Force created from payment false to allow email for auto renewal generation invoice.
+	 *
+	 * @since 2.8.11
+	 *
+	 * @param bool $is_payment_form_invoice True when invoice created via payment form else false.
+	 * @param int  $invoice Invoice ID.
+	 * @return bool True when invoice created via payment form else false.
+	 */
+	public function force_is_payment_form_invoice( $is_payment_form_invoice, $invoice ) {
+		if ( $is_payment_form_invoice ) {
+			$is_payment_form_invoice = false;
+		}
+
+		return $is_payment_form_invoice;
+	}
 
 }

@@ -315,7 +315,7 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
 
 	if ( ! empty( $bill_times ) ) {
 		$bill_times = $subscription->get_frequency() * $bill_times;
-		$bill_times_less = getpaid_get_subscription_period_label( $subscription->get_frequency(), $bill_times - $subscription->get_frequency() );
+		$bill_times_less = getpaid_get_subscription_period_label( $subscription->get_period(), $bill_times - $subscription->get_frequency() );
 		$bill_times = getpaid_get_subscription_period_label( $subscription->get_period(), $bill_times );
 	}
 
