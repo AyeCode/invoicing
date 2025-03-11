@@ -95,11 +95,14 @@ class GetPaid_Meta_Box_Item_Details {
                             </div>
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
-                            <?php
-                            esc_html_e( 'Every' );
-                            echo '&nbsp;';
-                            ?>
-                            <input type="number" style="max-width: 60px;" value="<?php echo esc_attr( $item->get_recurring_interval( 'edit' ) ); ?>" placeholder="1" name="wpinv_recurring_interval" id="wpinv_recurring_interval" />
+                            <div class="mb-3 input-group input-group-sm">
+                                <?php if ( empty( $aui_bs5 ) ) : ?>
+                                    <div class="input-group-prepend"><span class="input-group-text pl-0 pr-2 border-0 bg-transparent"><?php esc_html_e( 'every' ); ?></span></div>
+                                <?php else : ?>
+                                    <span class="input-group-text ps-0 pe-2 border-0"><?php esc_html_e( 'every' ); ?></span>
+                                <?php endif; ?>
+                                <input type="number" name="wpinv_recurring_interval" id="wpinv_recurring_interval" value="<?php echo esc_attr( $item->get_recurring_interval( 'edit' ) ); ?>" placeholder="1" class="form-control rounded-1 rounded-sm">
+                            </div>
                         </div>
                         <div class="col-sm-4 wpinv_show_if_recurring">
                             <?php
@@ -110,8 +113,6 @@ class GetPaid_Meta_Box_Item_Details {
                                     'label'            => __( 'Period', 'invoicing' ),
                                     'placeholder'      => __( 'Select Period', 'invoicing' ),
                                     'value'            => $item->get_recurring_period( 'edit' ),
-                                    'select2'          => true,
-                                    'data-allow-clear' => 'false',
                                     'options'          => array(
                                         'D' => __( 'day(s)', 'invoicing' ),
                                         'W' => __( 'week(s)', 'invoicing' ),
@@ -286,7 +287,7 @@ class GetPaid_Meta_Box_Item_Details {
                                 <?php $value = $item->has_free_trial() ? $item->get_trial_interval( 'edit' ) : 0; ?>
 
                                 <div>
-                                    <input type="number" name="wpinv_trial_interval" placeholder="0" id="wpinv_trial_interval" value="<?php echo esc_attr( $value ); ?>" class="form-control form-control-sm">
+                                    <input type="number" name="wpinv_trial_interval" placeholder="0" id="wpinv_trial_interval" value="<?php echo esc_attr( $value ); ?>" class="form-control form-control-sm wpinv-force-integer">
                                 </div>
                             </div>
                             <div class="col-sm-6">

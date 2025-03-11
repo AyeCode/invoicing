@@ -144,16 +144,11 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-<<<<<<< HEAD
-= 2.8.9 =
-* Variable pricing option for items - ADDED
-
-= 2.8.8 =
-=======
 = 2.8.24 - TBD =
 * Payment form file upload not displaying selected files - FIXED
 * Can't override address fields template - FIXED
 * Show gateway name with transaction link in backend invoices list - ADDED
+* Variable pricing option for items - ADDED
 
 = 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
@@ -213,7 +208,6 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Hide VAT Number for invoice receipt when tax option disabled - CHANGED
 
 = 2.8.8 - 2024-06-11 =
->>>>>>> 04a827aa6a7881010b9803a3a9f7ab2eed0ae512
 * Failed to save customer billing address from backend edit profile - FIXED
 * Customer data is not deleted when user is deleted - FIXED
 * Tax amount not refreshed on country change - FIXED
