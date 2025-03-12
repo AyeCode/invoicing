@@ -85,6 +85,7 @@ class WPInv_Invoice extends GetPaid_Data {
         'disable_taxes'          => false,
 		'subscription_id'        => null,
 		'remote_subscription_id' => null,
+		'is_anonymized'          => false,
 		'is_viewed'              => false,
 		'email_cc'               => '',
 		'template'               => 'quantity', // hours, amount only
@@ -1812,6 +1813,17 @@ class WPInv_Invoice extends GetPaid_Data {
         return $subscription_id;
     }
 
+	/**
+	 * Get the invoice's _anonymize status.
+	 *
+	 * @since 2.8.22
+	 * @param  string $context View or edit context.
+	 * @return string
+	 */
+	public function get_is_anonymized( $context = 'view' ) {
+		return (bool) $this->get_prop( 'is_anonymized', $context );
+    }
+
     /**
 	 * Retrieves the payment meta for an invoice.
 	 *
@@ -3127,6 +3139,16 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->set_prop( 'remote_subscription_id', $value );
     }
 
+	/**
+	 * Set the invoice anonymize status.
+	 *
+	 * @since 2.8.22
+	 * @param  bool $is_anonymized is anonymized.
+	 */
+	public function set_is_anonymized( $is_anonymized ) {
+		$this->set_prop( 'is_anonymized', (bool) $is_anonymized );
+    }
+
     /*
 	|--------------------------------------------------------------------------
 	| Boolean methods
@@ -3302,6 +3324,15 @@ class WPInv_Invoice extends GetPaid_Data {
     public function is_free_trial_from_discount() {
 		return $this->has_free_trial() && ! $this->item_has_free_trial();
 	}
+
+	/**
+     * Checks if this is an anonymized invoice.
+     *
+     * @since 2.8.22
+     */
+    public function is_anonymized() {
+        return true === (bool) $this->get_is_anonymized();
+    }
 
 	/**
      * @deprecated

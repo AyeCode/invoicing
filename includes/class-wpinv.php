@@ -95,6 +95,7 @@ class WPInv_Plugin {
 		$this->set( 'daily_maintenace', new GetPaid_Daily_Maintenance() );
 		$this->set( 'payment_forms', new GetPaid_Payment_Forms() );
 		$this->set( 'maxmind', new GetPaid_MaxMind_Geolocation() );
+		$this->set( 'data_retention', new WPInv_Data_Retention() );
 	}
 
 	 /**

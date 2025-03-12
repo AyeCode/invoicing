@@ -480,6 +480,7 @@ class GetPaid_Installer {
             vat_number VARCHAR(100),
             vat_rate VARCHAR(100),
             custom_meta TEXT,
+			is_anonymized INT(2) NOT NULL DEFAULT 0,
 			PRIMARY KEY  (post_id),
 			KEY `number` (`number`),
 			KEY invoice_key (invoice_key)
@@ -553,6 +554,8 @@ class GetPaid_Installer {
 		$schema['customers'] .= "date_created DATETIME NOT NULL,
 			date_modified DATETIME NOT NULL,
 			uuid VARCHAR(100) NOT NULL,
+			is_anonymized INT(2) NOT NULL DEFAULT 0,
+            deletion_date DATETIME,
 			PRIMARY KEY  (id),
 			KEY user_id (user_id),
 			KEY email (email)
@@ -568,6 +571,21 @@ class GetPaid_Installer {
 			KEY customer_id (customer_id),
 			KEY meta_key (meta_key(191))
 		  ) $charset_collate;";
+
+		// Anonymization Logs.
+		$schema['anonymization_logs'] = "CREATE TABLE {$wpdb->prefix}getpaid_anonymization_logs (
+			log_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			user_id BIGINT(20) UNSIGNED NOT NULL,
+			action VARCHAR(50) NOT NULL,
+			data_type VARCHAR(50) NOT NULL,
+			timestamp DATETIME NOT NULL,
+			additional_info TEXT,
+			PRIMARY KEY  (log_id),
+			KEY user_id (user_id),
+			KEY action (action),
+			KEY data_type (data_type),
+			KEY timestamp (timestamp)
+		) $charset_collate;";
 
 		// Filter.
 		$schema = apply_filters( 'getpaid_db_schema', $schema );
