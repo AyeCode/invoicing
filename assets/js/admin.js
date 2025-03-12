@@ -1552,6 +1552,31 @@ jQuery(function ($) {
 
 	}
 
+	if ($('.getpaid-anonymization-logs').length) {
+        $(document).on('click', '.getpaid-anonymization-logs .toggle-details', function() {
+            var $button = $(this);
+            var $detailsRow = $button.closest('tr').next('.log-details');
+
+            // Close all other open details
+            $('.log-details').not($detailsRow).hide();
+            $('.toggle-details').not($button).attr('aria-expanded', 'false');
+            $('.toggle-details').not($button).find('.dashicons').removeClass('dashicons-arrow-up-alt2').addClass('dashicons-arrow-down-alt2');
+
+            $detailsRow.toggle();
+
+            var isExpanded = $detailsRow.is(':visible');
+            $button.attr('aria-expanded', isExpanded);
+        });
+    }
+
+    // Toggle data retention settings.
+    function toggleDataRetentionSettings() {
+        var show = $( '[name="wpinv_settings[data_retention_method]' ).val() === 'anonymize';
+        $( '[name="wpinv_settings[data_retention_period]"]' ).closest( 'tr' ).toggle( show );
+    }
+
+    $( '[name="wpinv_settings[data_retention_method]"' ).on( 'change', toggleDataRetentionSettings );
+    toggleDataRetentionSettings();
 });
 
 function wpinvBlock(el, message) {

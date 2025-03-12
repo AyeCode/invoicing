@@ -19,6 +19,7 @@ class WPInv_Admin_Menus {
         add_action( 'admin_menu', array( $this, 'add_subscriptions_menu' ), 40 );
         add_action( 'admin_menu', array( $this, 'add_addons_menu' ), 100 );
         add_action( 'admin_menu', array( $this, 'add_settings_menu' ), 60 );
+        add_action( 'admin_menu', array( $this, 'add_anonymization_logs_menu' ), 40 );
         add_action( 'admin_menu', array( $this, 'remove_admin_submenus' ), 10 );
         add_action( 'admin_head-nav-menus.php', array( $this, 'add_nav_menu_meta_boxes' ) );
     }
@@ -119,6 +120,22 @@ class WPInv_Admin_Menus {
             apply_filters( 'invoicing_capability', wpinv_get_capability() ),
             'wpinv-settings',
             array( $this, 'options_page' )
+        );
+    }
+
+    /**
+     * Registers the anonymization logs menu.
+     *
+     * @since 2.8.22
+     */
+    public function add_anonymization_logs_menu() {
+        $anonymization_logs_page = new GetPaid_Anonymization_Logs();
+        add_management_page(
+            __( 'Anonymization Logs', 'invoicing' ),
+            __( 'Anonymization Logs', 'invoicing' ),
+            'manage_options',
+            'wpinv-anonymization-logs',
+            array( $anonymization_logs_page, 'display_logs' )
         );
     }
 
