@@ -24,7 +24,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 *
 	 * @var array
 	 */
-    protected $supports = array( 'subscription', 'sandbox', 'single_subscription_group' );
+    protected $supports = array( 'subscription', 'sandbox', 'single_subscription_group', 'refunds' );
 
     /**
 	 * Payment method order.
@@ -79,6 +79,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 	 * Class constructor.
 	 */
 	public function __construct() {
+		parent::__construct();
 
         $this->title                = __( 'PayPal Standard', 'invoicing' );
         $this->method_title         = __( 'PayPal Standard', 'invoicing' );
@@ -87,11 +88,16 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 
 		add_filter( 'wpinv_subscription_cancel_url', array( $this, 'filter_cancel_subscription_url' ), 10, 2 );
 		add_filter( 'getpaid_paypal_args', array( $this, 'process_subscription' ), 10, 2 );
-        add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
 		add_filter( 'getpaid_get_paypal_connect_url', array( $this, 'maybe_get_connect_url' ), 10, 2 );
 		add_action( 'getpaid_authenticated_admin_action_connect_paypal', array( $this, 'connect_paypal' ) );
 		add_action( 'wpinv_paypal_connect', array( $this, 'display_connect_buttons' ) );
-		parent::__construct();
+
+		if ( $this->enabled ) {
+			add_filter( 'getpaid_paypal_sandbox_notice', array( $this, 'sandbox_notice' ) );
+			add_action( 'getpaid_paypal_subscription_cancelled', array( $this, 'subscription_cancelled' ) );
+			add_action( 'getpaid_delete_subscription', array( $this, 'subscription_cancelled' ) );
+			add_action( 'getpaid_refund_invoice_remotely', array( $this, 'refund_invoice' ) );
+		}
     }
 
     /**
@@ -469,7 +475,7 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
             if ( isset( $paypal_args[ $arg ] ) ) {
                 unset( $paypal_args[ $arg ] );
             }
-}
+		}
 
         return apply_filters(
 			'getpaid_paypal_subscription_args',
@@ -478,6 +484,99 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
         );
 
     }
+
+	/**
+	 * Refunds an invoice remotely.
+	 * 
+	 * @since 2.8.24
+	 * @param WPInv_Invoice $invoice Invoice object.
+	 */
+	public function refund_invoice( $invoice ) {
+
+		if ( $invoice->get_gateway() !== $this->id ) {
+			return;
+		}
+
+		$mode	= $this->is_sandbox( $invoice ) ? 'sandbox' : 'live';
+		$result = GetPaid_PayPal_API::refund_capture( $invoice->get_transaction_id(), array(), $mode );
+
+		if ( is_wp_error( $result ) ) {
+			$invoice->add_system_note(
+				sprintf(
+					// translators: %s is the error message.
+					__( 'An error occured while trying to refund invoice #%1$s in PayPal: %2$s', 'invoicing' ),
+					$invoice->get_id(),
+					$result->get_error_message()
+				)
+			);
+		} else {
+			$invoice->add_system_note(
+				sprintf(
+					// translators: %s is the refund ID.
+					__( 'Successfully refunded invoice #%1$s in PayPal. Refund ID: %2$s', 'invoicing' ),
+					$invoice->get_id(),
+					$result->id
+				)
+			);
+		}
+	}
+
+	/**
+	 * Cancels a subscription remotely.
+	 * 
+	 * @since 2.8.24
+	 * @param WPInv_Subscription $subscription Subscription object.
+	 */
+	public function subscription_cancelled( $subscription ) {
+
+		if ( $subscription->get_gateway() != $this->id ) {
+			return;
+		}
+
+		$invoice = $subscription->get_parent_invoice();
+
+		// Abort if the parent invoice does not exist.
+		if ( ! $invoice->exists() ) {
+			return;
+		}
+
+		$mode	= $this->is_sandbox( $invoice ) ? 'sandbox' : 'live';
+		$result = GetPaid_PayPal_API::cancel_subscription( 
+			$invoice->get_remote_subscription_id(), 
+			array(
+				'reason' => __(' Customer requested cancellation', 'invoicing' ),
+			), 
+			$mode 
+		);
+
+		if ( is_wp_error( $result ) ) {
+
+			$error = sprintf(
+				// translators: %s is the subscription ID.
+				__( 'An error occured while trying to cancel subscription #%s in PayPal.', 'invoicing' ),
+				$subscription->get_id()
+			);
+
+			getpaid_admin()->show_error( $error . ' ' . $result->get_error_message() );
+
+			if ( ! is_admin() ) {
+				wpinv_set_error( $result->get_error_code(), $error );
+			}
+
+			return;
+		}
+
+		if ( is_admin() ) {
+			getpaid_admin()->show_success(
+				sprintf(
+					// translators: %s is the subscription ID.
+					__( 'Successfully cancelled subscription #%s in PayPal.', 'invoicing' ),
+					$subscription->get_id()
+				)
+			);
+		}
+
+	}
 
     /**
 	 * Processes ipns and marks payments as complete.
@@ -762,8 +861,8 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 					set_transient( 'getpaid_paypal_access_token', sanitize_text_field( urldecode( $data['access_token'] ) ), (int) $data['expires_in'] );
 					getpaid_admin()->show_success( __( 'Successfully connected your PayPal account', 'invoicing' ) );
 				}
-}
-}
+			}
+		}
 
 		$redirect = empty( $data['redirect'] ) ? admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) : urldecode( $data['redirect'] );
 
