@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Item Class
  *
  */
-class WPInv_Item  extends GetPaid_Data {
+class WPInv_Item extends GetPaid_Data {
 
     /**
 	 * Which data store to load.
@@ -48,6 +48,10 @@ class WPInv_Item  extends GetPaid_Data {
         'is_editable'          => 1,
         'is_dynamic_pricing'   => null,
         'minimum_price'        => null,
+        'is_multi_price_mode'  => null,
+        'has_variable_pricing' => null,
+        'default_price_id'     => null,
+        'variable_prices'      => null,
         'is_recurring'         => null,
         'recurring_period'     => null,
         'recurring_interval'   => null,
@@ -103,7 +107,6 @@ class WPInv_Item  extends GetPaid_Data {
             $this->ID   = $this->get_id();
 			$this->data_store->read( $this );
         }
-
 	}
 
     /*
@@ -303,13 +306,22 @@ class WPInv_Item  extends GetPaid_Data {
 	 * @param  string $context View or edit context.
 	 * @return float
 	 */
-	public function get_initial_price( $context = 'view' ) {
+	public function get_initial_price( $context = 'view', $price_id = null ) {
+        $price = 0;
 
-		$price = (float) $this->get_price( $context );
+        if ( null === $price_id ) {
+            $price = (float) $this->get_price( $context );
 
-		if ( $this->has_free_trial() ) {
-			$price = 0;
-		}
+            if ( $this->has_free_trial() ) {
+                $price = 0;
+            }
+        } else {
+            $prices = $this->get_variable_prices();
+
+            if ( isset( $prices[ $price_id ] ) ) {
+                $price = (float) $prices[ $price_id ]['amount'];
+            }
+        }
 
         return wpinv_sanitize_amount( apply_filters( 'wpinv_get_initial_item_price', $price, $this ) );
     }
@@ -444,6 +456,89 @@ class WPInv_Item  extends GetPaid_Data {
 	 */
 	public function get_minimum_price( $context = 'view' ) {
         return wpinv_sanitize_amount( $this->get_prop( 'minimum_price', $context ) );
+    }
+
+    /**
+     * Checks if multi price mode is enabled.
+     *
+     * @since 1.0.19
+     * @param  string $context View or edit context.
+     * @return int
+     */
+    public function get_is_multi_price_mode( $context = 'view' ) {
+        return (bool) $this->get_prop( 'is_multi_price_mode', $context );
+    }
+
+    /**
+     * Checks if multi price mode is enabled.
+     *
+     * @since 2.8.9
+     * @param  string $context View or edit context.
+     * @return int
+     */
+    public function is_multi_price_mode() {
+        return $this->get_is_multi_price_mode();
+    }
+
+    /**
+     * Checks if variable pricing is enabled.
+     *
+     * @since 2.8.9
+     * @param  string $context View or edit context.
+     * @return int
+     */
+    public function get_has_variable_pricing( $context = 'view' ) {
+        return (bool) $this->get_prop( 'has_variable_pricing', $context );
+    }
+
+    /**
+     * Checks if variable pricing is enabled.
+     *
+     * @since 2.8.9
+     * @param  string $context View or edit context.
+     * @return int
+     */
+    public function has_variable_pricing() {
+        return $this->get_has_variable_pricing( 'view' );
+    }
+
+    /**
+     * Returns the default price ID for variable pricing, or the first
+     * price if none is set
+     *
+     * @since 2.8.9
+     * @return int              The Price ID to select by default
+     */
+    public function get_default_price_id( $context = 'view' ) {
+        if ( ! $this->has_variable_pricing() ) {
+            return false;
+        }
+
+        $prices = $this->get_variable_prices();
+
+        $default_price_id = (int) $this->get_prop( 'default_price_id', $context );
+
+        if ( '' === $default_price_id || ! isset( $prices[ $default_price_id ] ) ) {
+            $default_price_id = current( array_keys( $prices ) );
+        }
+
+        return  absint( $default_price_id );
+    }
+
+    /**
+     * Retrieve the variable prices
+     *
+    * @since 2.8.9
+     * @return array List of the variable prices
+     */
+    public function get_variable_prices() {
+        $prices = array();
+
+        if ( true === $this->has_variable_pricing() ) {
+            $prices = $this->get_prop( 'variable_prices', 'view' );
+        }
+
+        return $prices;
     }
 
     /**
@@ -705,7 +800,6 @@ class WPInv_Item  extends GetPaid_Data {
         }
 
         return $this->get_prop( $key );
-
     }
 
     /*
@@ -773,7 +867,6 @@ class WPInv_Item  extends GetPaid_Data {
         }
 
         return false;
-
     }
 
     /**
@@ -792,7 +885,6 @@ class WPInv_Item  extends GetPaid_Data {
         }
 
         return false;
-
     }
 
     /**
@@ -974,6 +1066,61 @@ class WPInv_Item  extends GetPaid_Data {
     }
 
     /**
+	 * Sets if this item has multi price mode.
+	 *
+	 * @since 1.0.19
+	 * @param  int|bool $value whether or not dynamic pricing is allowed.
+	 */
+	public function set_is_multi_price_mode( $value ) {
+        $this->set_prop( 'is_multi_price_mode', (int) $value );
+    }
+
+    /**
+	 * Sets if this item has variable pricing.
+	 *
+	 * @since 1.0.19
+	 * @param  int|bool $value whether or not dynamic pricing is allowed.
+	 */
+	public function set_has_variable_pricing( $value ) {
+        $this->set_prop( 'has_variable_pricing', (int) $value );
+    }
+
+    /**
+	 * Set the default price ID.
+	 *
+	 * @since 1.0.19
+	 * @param  int $value default price ID.
+	 */
+	public function set_default_price_id( $value ) {
+        return $this->set_prop( 'default_price_id', (int) $value );
+    }
+
+    /**
+	 * Set the variable prices.
+	 *
+	 * @since 1.0.19
+	 * @param  int $prices variable prices.
+	 */
+	public function set_variable_prices( $prices ) {
+        if ( ! is_array( $prices ) ) {
+            $prices = array();
+        }
+
+        foreach ( $prices as $id => $price ) {
+            if ( empty( $price['amount'] ) && empty( $price['name'] ) ) {
+                unset( $prices[ $id ] );
+                continue;
+            } elseif ( empty( $price['amount'] ) ) {
+                $price['amount'] = 0;
+            }
+
+            $prices[ $id ]['amount'] = getpaid_standardize_amount( $price['amount'] );
+        }
+
+        return $this->set_prop( 'variable_prices', $prices );
+    }
+
+    /**
 	 * Sets if this is a recurring item.
 	 *
 	 * @since 1.0.19
@@ -1058,7 +1205,6 @@ class WPInv_Item  extends GetPaid_Data {
 
 		// Save the item.
 		return $this->save();
-
     }
 
     /**

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Form Item Class
  *
  */
-class GetPaid_Form_Item  extends WPInv_Item {
+class GetPaid_Form_Item extends WPInv_Item {
 
     /**
 	 * Stores a custom description for the item.
@@ -72,6 +72,14 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	public $item_tax = 0;
 
+
+    /**
+	 * Item price ID.
+	 *
+	 * @var int
+	 */
+	public $price_id = 0;
+
     /*
 	|--------------------------------------------------------------------------
 	| CRUD methods
@@ -133,8 +141,8 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 * @param  string $context View or edit context.
 	 * @return float
 	 */
-	public function get_sub_total( $context = 'view' ) {
-		return $this->get_quantity( $context ) * $this->get_initial_price( $context );
+	public function get_sub_total( $context = 'view', $price_id = null ) {
+		return $this->get_quantity( $context ) * $this->get_initial_price( $context, $price_id );
 	}
 
 	/**
@@ -175,7 +183,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		return $quantity;
-
 	}
 
 	/**
@@ -193,7 +200,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		return $meta;
-
 	}
 
 	/**
@@ -211,7 +217,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		return $allow_quantities;
-
 	}
 
 	/**
@@ -229,7 +234,23 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		return $is_required;
+	}
 
+    /**
+	 * Returns whether or not customers can update the item quantity.
+	 *
+	 * @since 1.0.19
+	 * @param  string $context View or edit context.
+	 * @return int
+	 */
+	public function get_price_id( $context = 'view' ) {
+		$price_id = (int) $this->price_id;
+
+		if ( 'view' === $context ) {
+			return apply_filters( 'getpaid_payment_form_item_price_id', $price_id, $this );
+		}
+
+		return $price_id;
 	}
 
 	/**
@@ -248,9 +269,9 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'recurring'        => $this->is_recurring(),
 			'description'      => $this->get_description(),
 			'allow_quantities' => $this->allows_quantities(),
+			'price_id'         => $this->get_price_id(),
 			'required'         => $required,
 		);
-
 	}
 
 	/**
@@ -286,7 +307,6 @@ class GetPaid_Form_Item  extends WPInv_Item {
 				'item-price'       => $price,
 			),
 		);
-
 	}
 
 	/**
@@ -308,9 +328,9 @@ class GetPaid_Form_Item  extends WPInv_Item {
 			'discount'         => $this->item_discount,
 			'subtotal'         => $this->get_sub_total( 'edit' ),
 			'price'            => $this->get_sub_total( 'edit' ) + $this->item_tax - $this->item_discount,
+			'price_id'         => (int) $this->get_price_id( 'edit' ),
 			'meta'             => $this->get_item_meta( 'edit' ),
 		);
-
 	}
 
     /*
@@ -336,7 +356,21 @@ class GetPaid_Form_Item  extends WPInv_Item {
 		}
 
 		$this->quantity = (float) $quantity;
+    }
 
+    /**
+	 * Set the item price ID.
+	 *
+	 * @since 1.0.19
+	 * @param  float $price_id The item price ID.
+	 */
+	public function set_price_id( $price_id ) {
+
+		if ( ! is_numeric( $price_id ) ) {
+			$price_id = $this->get_default_price_id();
+		}
+
+		$this->price_id = (int) $price_id;
 	}
 
 	/**
@@ -416,5 +450,4 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	public function allows_quantities() {
         return (bool) $this->get_allow_quantities();
 	}
-
 }

@@ -46,7 +46,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$this->add_taxes( $submission );
 		$this->add_gateways( $submission );
 		$this->add_data( $submission );
-
 	}
 
 	/**
@@ -82,7 +81,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 
 			)
 		);
-
 	}
 
 	/**
@@ -140,14 +138,15 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					$period
 				);
 			}
-}
+        }
 
 		$texts = array(
 			'.getpaid-checkout-total-payable' => $payable,
 		);
 
 		foreach ( $submission->get_items() as $item ) {
-			$item_id                                               = $item->get_id();
+            $item_id = $item->has_variable_pricing() ? $item->get_price_id() : $item->get_id();
+
 			$initial_price                                         = $submission->format_amount( $item->get_sub_total() - $item->item_discount );
 			$recurring_price                                       = $submission->format_amount( $item->get_recurring_sub_total() - $item->recurring_item_discount );
 			$texts[ ".item-$item_id .getpaid-form-item-price-desc" ] = getpaid_item_recurring_price_help_text( $item, $submission->get_currency(), $initial_price, $recurring_price );
@@ -156,10 +155,9 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			if ( $item->get_quantity() == 1 ) {
 				$texts[ ".item-$item_id .getpaid-mobile-item-subtotal" ] = '';
 			}
-}
+        }
 
 		$this->response = array_merge( $this->response, array( 'texts' => $texts ) );
-
 	}
 
 	/**
@@ -174,12 +172,13 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 		$selected_items = array();
 
         foreach ( $submission->get_items() as $item ) {
-			$item_id             = $item->get_id();
+            $item_id = $item->has_variable_pricing() ? $item->get_price_id() : $item->get_id();
 			$items[ "$item_id" ] = $submission->format_amount( $item->get_sub_total() );
 
 			$selected_items[ "$item_id" ] = array(
 				'quantity'  => $item->get_quantity(),
 				'price'     => $item->get_price(),
+                'price_id'  => (int) $item_id,
 				'price_fmt' => $submission->format_amount( $item->get_price() ),
 			);
 		}
@@ -191,7 +190,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 				'selected_items' => $selected_items,
 			)
 		);
-
 	}
 
 	/**
@@ -211,7 +209,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$this->response,
 			array( 'fees' => $fees )
 		);
-
 	}
 
 	/**
@@ -231,7 +228,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$this->response,
 			array( 'discounts' => $discounts )
 		);
-
 	}
 
 	/**
@@ -254,7 +250,6 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 			$this->response,
 			array( 'taxes' => $taxes )
 		);
-
 	}
 
 	/**
@@ -276,15 +271,14 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 					|| ( $this->response['has_multiple_subscription_groups'] && ! getpaid_payment_gateway_supports( $gateway, 'multiple_subscription_groups' ) ) ) {
 					unset( $gateways[ $i ] );
 				}
-}
-}
+            }
+        }
 
 		$gateways = apply_filters( 'getpaid_submission_gateways', $gateways, $submission );
 		$this->response = array_merge(
 			$this->response,
 			array( 'gateways' => $gateways )
 		);
-
 	}
 
 	/**
@@ -306,7 +300,5 @@ class GetPaid_Payment_Form_Submission_Refresh_Prices {
 				),
 			)
 		);
-
 	}
-
 }
