@@ -68,9 +68,28 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 12, 2 );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'invoice_paid' ), 20 );
 
-    }
+		add_filter( 'wpinv_' . $this->id . '_support_subscription', array( $this, 'supports_subscription' ), 20, 1 );
+		add_filter( 'getpaid_' . $this->id . '_support_subscription', array( $this, 'supports_subscription' ), 20, 1 );
+		add_filter( 'getpaid_' . $this->id . '_supports_subscription', array( $this, 'supports_subscription' ), 20, 1 );
+	}
 
-    /**
+	/**
+	 * Check gateway supports for subscription.
+	 *
+	 * @since 2.8.24
+	 *
+	 * @param bool $supports True if supports else False.
+	 * @return bool True if supports else False.
+	 */
+	public function supports_subscription( $supports ) {
+		if ( $supports && (int) $this->get_option( 'no_subscription' ) ) {
+			$supports = false;
+		}
+
+		return $supports;
+	}
+
+	/**
 	 * Process Payment.
 	 *
 	 * @param WPInv_Invoice $invoice Invoice.
@@ -269,9 +288,27 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
-
-        $admin_settings['bank_transfer_desc']['std']    = __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' );
+		$admin_settings['bank_transfer_desc']['std']    = __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' );
 		$admin_settings['bank_transfer_active']['desc'] = __( 'Enable bank transfer', 'invoicing' );
+
+		$_settings = array();
+
+		foreach ( $admin_settings as $key => $setting ) {
+			$_settings[ $key ] = $setting;
+
+			if ( $key == 'bank_transfer_active' ) {
+				// Enable/disable subscriptions setting.
+				$_settings['bank_transfer_no_subscription'] = array(
+					'id' => 'bank_transfer_no_subscription',
+					'type' => 'checkbox',
+					'name' => __( 'Disable Subscriptions', 'invoicing' ),
+					'desc' => __( 'Tick to disable support for recurring items.', 'invoicing' ),
+					'std' => 0
+				);
+			}
+		}
+
+		$admin_settings = $_settings;
 
 		$locale  = $this->get_country_locale();
 
@@ -280,39 +317,39 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		$sortcode = isset( $locale[ $country ]['sortcode']['label'] ) ? $locale[ $country ]['sortcode']['label'] : __( 'Sort code', 'invoicing' );
 
 		$admin_settings['bank_transfer_ac_name'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_ac_name',
-            'name' => __( 'Account Name', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_ac_name',
+			'name' => __( 'Account Name', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_ac_no'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_ac_no',
-            'name' => __( 'Account Number', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_ac_no',
+			'name' => __( 'Account Number', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_bank_name'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_bank_name',
-            'name' => __( 'Bank Name', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_bank_name',
+			'name' => __( 'Bank Name', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_ifsc'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_ifsc',
-            'name' => __( 'IFSC Code', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_ifsc',
+			'name' => __( 'IFSC Code', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_iban'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_iban',
-            'name' => __( 'IBAN', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_iban',
+			'name' => __( 'IBAN', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_bic'] = array(
-            'type' => 'text',
-            'id'   => 'bank_transfer_bic',
-            'name' => __( 'BIC/Swift Code', 'invoicing' ),
+			'type' => 'text',
+			'id'   => 'bank_transfer_bic',
+			'name' => __( 'BIC/Swift Code', 'invoicing' ),
 		);
 
 		$admin_settings['bank_transfer_sort_code'] = array(
@@ -322,14 +359,14 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		);
 
 		$admin_settings['bank_transfer_info'] = array(
-            'id'   => 'bank_transfer_info',
-            'name' => __( 'Instructions', 'invoicing' ),
-            'desc' => __( 'Instructions that will be added to the thank you page and emails.', 'invoicing' ),
-            'type' => 'textarea',
-            'std'  => __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' ),
-            'cols' => 50,
-            'rows' => 5,
-        );
+			'id'   => 'bank_transfer_info',
+			'name' => __( 'Instructions', 'invoicing' ),
+			'desc' => __( 'Instructions that will be added to the thank you page and emails.', 'invoicing' ),
+			'type' => 'textarea',
+			'std'  => __( "Make your payment directly into our bank account. Please use your Invoice Number as the payment reference. Your invoice won't be processed until the funds have cleared in our account.", 'invoicing' ),
+			'cols' => 50,
+			'rows' => 5,
+		);
 
 		return $admin_settings;
 	}
