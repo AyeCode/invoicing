@@ -148,6 +148,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Payment form file upload not displaying selected files - FIXED
 * Can't override address fields template - FIXED
 * Show gateway name with transaction link in backend invoices list - ADDED
+* Added data retention and anonymization system with configurable settings, anonymization process, automated cleanup, and enhanced GDPR compliance - ADDED
 * Added PayPal subscription cancellation - ADDED  
 * Fixed PayPal refunds and subscription cancellations not being processed - FIXED  
 
