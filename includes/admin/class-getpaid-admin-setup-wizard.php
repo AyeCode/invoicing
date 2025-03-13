@@ -47,6 +47,7 @@ class GetPaid_Admin_Setup_Wizard {
 		if ( apply_filters( 'getpaid_enable_setup_wizard', true ) && wpinv_current_user_can_manage_invoicing() ) {
 			add_action( 'admin_menu', array( $this, 'add_menu' ) );
 			add_action( 'current_screen', array( $this, 'setup_wizard' ) );
+			add_action( 'admin_init', array( $this, 'remove_deprecated_functions' ) );
 		}
 
 	}
@@ -74,6 +75,12 @@ class GetPaid_Admin_Setup_Wizard {
 			exit;
 		}
 
+	}
+
+	public function remove_deprecated_functions() {
+		// removes deprecated warnings from page
+		remove_action('admin_print_styles', 'print_emoji_styles');
+		remove_action( 'admin_head', 'wp_admin_bar_header' );
 	}
 
 	/**

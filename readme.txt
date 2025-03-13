@@ -152,6 +152,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Added PayPal subscription cancellation - ADDED
 * Fixed PayPal refunds and subscription cancellations not being processed - FIXED
 * Option added to disable subscription support for Bank Transfer gateway - ADDED
+* PHP warnings on setup wizard page - FIXED
 
 = 2.8.23 - 2024-01-30 =
 * Allow to export payment form custom fields data in export invoices - ADDED
