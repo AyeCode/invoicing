@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 4.9
 Tested up to: 6.7
-Stable tag: 2.8.23
+Stable tag: 2.8.24
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.24 - TBD =
+= 2.8.24 - 2024-03-27 =
 * Payment form file upload not displaying selected files - FIXED
 * Can't override address fields template - FIXED
 * Show gateway name with transaction link in backend invoices list - ADDED
