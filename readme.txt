@@ -2,9 +2,9 @@
 Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
-Requires at least: 4.9
-Tested up to: 6.7
-Stable tag: 2.8.24
+Requires at least: 5.0
+Tested up to: 6.8
+Stable tag: 2.8.25
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -108,7 +108,7 @@ This product includes GeoLite2 data created by MaxMind, available from
 
 = Minimum Requirements =
 
-* WordPress 4.9 or greater
+* WordPress 5.0 or greater
 * PHP version 5.3 or greater
 * MySQL version 5.0 or greater
 
@@ -143,6 +143,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.25 - 2025-04-17 =
+* Remove initial invoice details from renewal reminder email to prevent confusion - CHANGED
 
 = 2.8.24 - 2024-03-27 =
 * Payment form file upload not displaying selected files - FIXED

@@ -658,7 +658,7 @@ return array(
             'name'  => __( 'Email Content', 'invoicing' ),
             'desc'  => wpinv_get_merge_tags_help_text( true ),
             'type'  => 'rich_editor',
-            'std'   => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your subscription for invoice <a href="{invoice_link}">#{invoice_number}</a> will renew on {subscription_renewal_date}.</p>', 'invoicing' ),
+            'std'   => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your subscription for invoice <a href="{invoice_link}">#{invoice_number}</a> will renew on {subscription_renewal_date} for amount {subscription_recurring_amount}.</p>', 'invoicing' ),
             'class' => 'large',
             'size'  => 10,
         ),

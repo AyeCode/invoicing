@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.24\n"
+"Project-Id-Version: GetPaid 2.8.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-27 20:18+0530\n"
+"POT-Creation-Date: 2025-04-17 19:03+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
@@ -7039,7 +7039,8 @@ msgstr ""
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your "
 "subscription for invoice <a href=\"{invoice_link}\">#{invoice_number}</a> "
-"will renew on {subscription_renewal_date}.</p>"
+"will renew on {subscription_renewal_date} for amount "
+"{subscription_recurring_amount}.</p>"
 msgstr ""
 
 #: includes/data/email-settings.php:672
