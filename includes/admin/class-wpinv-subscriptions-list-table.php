@@ -222,7 +222,9 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_status( $item ) {
-		return $item->get_status_label_html();
+		$extra = $item->has_status( 'expired' ) ? '<small class="text-muted d-block">' . wp_sprintf( _x( 'On: %s', 'Expired On:', 'invoicing' ), getpaid_format_date_value( $item->get_expiration() ) ) . '</small>' : '';
+
+		return $item->get_status_label_html() . $extra;
 	}
 
 	/**
@@ -301,7 +303,13 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	 * @return      string
 	 */
 	public function column_renewal_date( $item ) {
-		return getpaid_format_date_value( $item->get_expiration() );
+		if ( $item->has_status( 'active trialling' ) ) {
+			$value = getpaid_format_date_value( $item->get_expiration() );
+		} else {
+			$value = '-';
+		}
+
+		return $value;
 	}
 
 	/**
