@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.26 - TBD =
+* Expired/cancelled subscriptions should not show next payment date - CHANGED
+
 = 2.8.25 - 2025-04-17 =
 * Remove initial invoice details from renewal reminder email to prevent confusion - CHANGED
 
