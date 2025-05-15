@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.8.25
+Stable tag: 2.8.26
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.26 - TBD =
+= 2.8.26 - 2025-05-15 =
 * Expired/cancelled subscriptions should not show next payment date - CHANGED
 
 = 2.8.25 - 2025-04-17 =

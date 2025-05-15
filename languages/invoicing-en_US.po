@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.25\n"
+"Project-Id-Version: GetPaid 2.8.26\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 19:03+0530\n"
-"PO-Revision-Date: 2025-04-17 19:03+0530\n"
+"POT-Creation-Date: 2025-05-15 20:29+0530\n"
+"PO-Revision-Date: 2025-05-15 20:29+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -751,7 +751,7 @@ msgid "Recurring"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:249
-#: includes/admin/class-wpinv-subscriptions-list-table.php:445
+#: includes/admin/class-wpinv-subscriptions-list-table.php:453
 #: includes/admin/subscriptions.php:177 includes/admin/subscriptions.php:509
 #: includes/admin/subscriptions.php:829 includes/invoice-functions.php:575
 #: includes/reports/class-getpaid-reports-export.php:158
@@ -820,7 +820,7 @@ msgid "Refunded"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:434
-#: includes/admin/class-wpinv-subscriptions-list-table.php:444
+#: includes/admin/class-wpinv-subscriptions-list-table.php:452
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:197
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:205
 #: includes/admin/subscriptions.php:174 includes/admin/subscriptions.php:828
@@ -844,7 +844,7 @@ msgid "Usage / Limit"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:529
-#: includes/admin/class-wpinv-subscriptions-list-table.php:441
+#: includes/admin/class-wpinv-subscriptions-list-table.php:449
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:284
 #: includes/admin/meta-boxes/class-getpaid-meta-box-discount-details.php:293
 #: includes/admin/subscriptions.php:171 includes/admin/subscriptions.php:293
@@ -1005,53 +1005,59 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:237
+#: includes/admin/class-wpinv-subscriptions-list-table.php:225
+#, php-format
+msgctxt "Expired On:"
+msgid "On: %s"
+msgstr ""
+
+#: includes/admin/class-wpinv-subscriptions-list-table.php:239
 #: includes/admin/subscriptions.php:236
 msgid "(Missing User)"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:252
+#: includes/admin/class-wpinv-subscriptions-list-table.php:254
 #, php-format
 msgctxt "Subscription title on admin table. (e.g.: #211 for John Doe)"
 msgid "%1$s#%2$s%3$s for %4$s"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:263
+#: includes/admin/class-wpinv-subscriptions-list-table.php:265
 msgid "View Subscription"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:270
+#: includes/admin/class-wpinv-subscriptions-list-table.php:272
 #: templates/invoice-receipt.php:97
 msgid "View Invoice"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:285
+#: includes/admin/class-wpinv-subscriptions-list-table.php:287
 msgid "Delete Subscription"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:326
-#: includes/admin/class-wpinv-subscriptions-list-table.php:333
+#: includes/admin/class-wpinv-subscriptions-list-table.php:334
+#: includes/admin/class-wpinv-subscriptions-list-table.php:341
 #, php-format
 msgid "Via %s"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:397
+#: includes/admin/class-wpinv-subscriptions-list-table.php:405
 #, php-format
 msgid "Item #%s"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:440
+#: includes/admin/class-wpinv-subscriptions-list-table.php:448
 #: includes/admin/subscriptions.php:168 includes/admin/subscriptions.php:824
 #: widgets/subscriptions.php:138
 msgid "Subscription"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:442
+#: includes/admin/class-wpinv-subscriptions-list-table.php:450
 #: includes/admin/subscriptions.php:172 includes/admin/subscriptions.php:826
 msgid "Next Payment"
 msgstr ""
 
-#: includes/admin/class-wpinv-subscriptions-list-table.php:443
+#: includes/admin/class-wpinv-subscriptions-list-table.php:451
 #: includes/admin/subscriptions.php:827 widgets/subscriptions.php:366
 msgid "Payments"
 msgstr ""
