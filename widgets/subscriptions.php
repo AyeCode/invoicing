@@ -139,6 +139,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			'amount'       => __( 'Amount', 'invoicing' ),
 			'renewal-date' => __( 'Next payment', 'invoicing' ),
 			'status'       => __( 'Status', 'invoicing' ),
+			'actions'      => '',
 		);
 
 		return apply_filters( 'getpaid_frontend_subscriptions_table_columns', $columns );
@@ -256,7 +257,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		// View subscription action.
 		$view_url        = getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) );
 		$view_url        = esc_url( add_query_arg( 'subscription', (int) $subscription->get_id(), $view_url ) );
-		$actions['view'] = "<a href='$view_url' class='text-decoration-none'>" . __( 'Manage Subscription', 'invoicing' ) . '</a>';
+		$actions['view'] = "<a href='$view_url' class='btn btn-xs btn-outline-primary text-decoration-none'><i class='fa fa-cog'></i> " . __( 'Manage', 'invoicing' ) . '</a>';
 
 		// Filter the actions.
 		$actions = apply_filters( 'getpaid_subscriptions_table_subscription_actions', $actions, $subscription );
@@ -268,7 +269,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			$sanitized[] = "<span class='$key'>$action</span>";
 		}
 
-		$row_actions  = "<small class='form-text getpaid-subscription-item-actions'>";
+		$row_actions  = "<small class='form-text getpaid-subscription-item-btn-actions'>";
 		$row_actions .= implode( ' | ', $sanitized );
 		$row_actions .= '</small>';
 

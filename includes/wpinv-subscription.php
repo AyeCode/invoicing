@@ -1212,7 +1212,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		$class        = esc_attr( $this->get_status_class() );
 		$status       = sanitize_html_class( $this->get_status() );
 
-		return "<span class='bsui'><span class='badge $class $status'>$status_label</span></span>";
+		return "<span class='bsui'><span class='badge $class $status text-white'>$status_label</span></span>";
     }
 
     /**

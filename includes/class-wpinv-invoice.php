@@ -3843,8 +3843,13 @@ class WPInv_Invoice extends GetPaid_Data {
 		$recurring = 0;
 
         foreach ( $fees as $data ) {
-			$fee       += wpinv_sanitize_amount( $data['initial_fee'] );
-			$recurring += wpinv_sanitize_amount( $data['recurring_fee'] );
+			if( isset( $data['initial_fee'] ) ){
+				$fee += wpinv_sanitize_amount( $data['initial_fee'] );
+			}
+
+			if( isset( $data['recurring_fee'] ) ){
+				$recurring += wpinv_sanitize_amount( $data['recurring_fee'] );
+			}
 		}
 
 		$current = $this->is_renewal() ? $recurring : $fee;

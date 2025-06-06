@@ -27,11 +27,12 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 				esc_attr_x( '#%s', 'subscription id', 'invoicing' ),
 				(int) $subscription->get_id()
 			);
-			echo wp_kses_post( $widget->add_row_actions( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>", $subscription ) );
+
+			echo wp_kses_post( "<a href='$url' class='font-weight-bold text-decoration-none'>$id_label</a>" );
 			break;
 
 		case 'status':
-			echo esc_html( $subscription->get_status_label() );
+			echo wp_kses_post( $subscription->get_status_label_html() );
 			break;
 
 		case 'renewal-date':
@@ -43,6 +44,10 @@ foreach ( array_keys( $widget->get_subscriptions_table_columns() ) as $column ) 
 			$frequency = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
 			$amount    = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
 			echo wp_kses_post( "<span>$amount</span> / <span class='getpaid-item-recurring-period'>$frequency</span>" );
+			break;
+
+		case 'actions':
+			echo wp_kses_post( $widget->add_row_actions( '', $subscription ) );
 			break;
 
 		endswitch;
