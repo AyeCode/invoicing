@@ -1577,6 +1577,14 @@ jQuery(function ($) {
 
     $( '[name="wpinv_settings[data_retention_method]"' ).on( 'change', toggleDataRetentionSettings );
     toggleDataRetentionSettings();
+
+	// check int input to not accept -ve numbers or strings.
+	$(document).on('input', '[name="wpinv_item_price"], [name="wpinv_minimum_price"], input.getpaid-force-integer', function (e) {
+		var $input = $(this);
+		$input.val(function (_, currentValue) {
+			return currentValue.replace(/[^\d.]+/g, '');
+		});
+	});
 });
 
 function wpinvBlock(el, message) {
