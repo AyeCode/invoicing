@@ -66,7 +66,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 								$sanitized[] = "<span class='$key'>$item_action</span>";
 							}
 
-							echo "<small class='form-text getpaid-line-item-actions'>";
+							echo "<small class='text-primary'>";
 							echo wp_kses_post( implode( ' | ', $sanitized ) );
 							echo '</small>';
 
