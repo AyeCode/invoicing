@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.26\n"
+"Project-Id-Version: GetPaid 2.8.27\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-15 20:29+0530\n"
-"PO-Revision-Date: 2025-05-15 20:29+0530\n"
+"POT-Creation-Date: 2025-06-26 19:35+0530\n"
+"PO-Revision-Date: 2025-06-26 19:35+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -755,7 +755,7 @@ msgstr ""
 #: includes/admin/subscriptions.php:177 includes/admin/subscriptions.php:509
 #: includes/admin/subscriptions.php:829 includes/invoice-functions.php:575
 #: includes/reports/class-getpaid-reports-export.php:158
-#: widgets/subscriptions.php:141 widgets/subscriptions.php:361
+#: widgets/subscriptions.php:141 widgets/subscriptions.php:362
 msgid "Status"
 msgstr ""
 
@@ -770,7 +770,7 @@ msgid "Via %s"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:326
-#: includes/class-wpinv-invoice.php:4120
+#: includes/class-wpinv-invoice.php:4125
 #, php-format
 msgid "Paid via %s"
 msgstr ""
@@ -827,7 +827,7 @@ msgstr ""
 #: includes/class-getpaid-post-types.php:57
 #: includes/data/payment-form-elements.php:348
 #: includes/reports/class-getpaid-reports-report.php:29 widgets/getpaid.php:52
-#: widgets/subscriptions.php:367
+#: widgets/subscriptions.php:368
 msgid "Items"
 msgstr ""
 
@@ -1058,7 +1058,7 @@ msgid "Next Payment"
 msgstr ""
 
 #: includes/admin/class-wpinv-subscriptions-list-table.php:451
-#: includes/admin/subscriptions.php:827 widgets/subscriptions.php:366
+#: includes/admin/subscriptions.php:827 widgets/subscriptions.php:367
 msgid "Payments"
 msgstr ""
 
@@ -1501,7 +1501,7 @@ msgstr ""
 #: includes/admin/subscriptions.php:174 includes/admin/subscriptions.php:651
 #: includes/gateways/class-getpaid-paypal-gateway.php:322
 #: includes/invoice-functions.php:903 templates/payment-forms/cart.php:14
-#: widgets/subscriptions.php:367
+#: widgets/subscriptions.php:368
 msgid "Item"
 msgstr ""
 
@@ -2276,7 +2276,7 @@ msgstr ""
 msgid "Search Subscriptions"
 msgstr ""
 
-#: includes/admin/subscriptions.php:92 widgets/subscriptions.php:411
+#: includes/admin/subscriptions.php:92 widgets/subscriptions.php:412
 msgid "Subscription not found."
 msgstr ""
 
@@ -2401,7 +2401,7 @@ msgstr ""
 msgid "Supports Subscriptions"
 msgstr ""
 
-#: includes/admin/views/html-gateways-edit.php:70
+#: includes/admin/views/html-gateways-edit.php:70 widgets/subscriptions.php:260
 msgid "Manage"
 msgstr ""
 
@@ -3902,21 +3902,21 @@ msgstr ""
 msgid "Tax (%)"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3977
+#: includes/class-wpinv-invoice.php:3982
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4006
+#: includes/class-wpinv-invoice.php:4011
 #, php-format
 msgid "Status set to %s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4013
+#: includes/class-wpinv-invoice.php:4018
 msgid "Error during status transition."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4109
+#: includes/class-wpinv-invoice.php:4114
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -4119,7 +4119,7 @@ msgstr ""
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:597 widgets/subscriptions.php:259
+#: includes/class-wpinv-subscriptions.php:597
 msgid "Manage Subscription"
 msgstr ""
 
@@ -16249,31 +16249,31 @@ msgstr ""
 msgid "You need to log-in or create an account to view this section."
 msgstr ""
 
-#: widgets/subscriptions.php:140 widgets/subscriptions.php:365
+#: widgets/subscriptions.php:140 widgets/subscriptions.php:366
 msgid "Next payment"
 msgstr ""
 
-#: widgets/subscriptions.php:201
+#: widgets/subscriptions.php:202
 msgid "No subscriptions found."
 msgstr ""
 
-#: widgets/subscriptions.php:362
+#: widgets/subscriptions.php:363
 msgid "Initial amount"
 msgstr ""
 
-#: widgets/subscriptions.php:363
+#: widgets/subscriptions.php:364
 msgid "Recurring amount"
 msgstr ""
 
-#: widgets/subscriptions.php:364
+#: widgets/subscriptions.php:365
 msgid "Start date"
 msgstr ""
 
-#: widgets/subscriptions.php:376
+#: widgets/subscriptions.php:377
 msgid "End date"
 msgstr ""
 
-#: widgets/subscriptions.php:423
+#: widgets/subscriptions.php:424
 msgid ""
 "You do not have permission to view this subscription. Ensure that you are "
 "logged in to the account that owns the subscription."
