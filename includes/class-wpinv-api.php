@@ -77,6 +77,13 @@ class WPInv_API {
     public $invoice_counts;
 
     /**
+     * The quotes controller class.
+     *
+     * @param WPInv_REST_Quotes_Controller
+     */
+    public $quotes;
+
+    /**
      * Class constructor.
      *
      * @since 1.0.13
