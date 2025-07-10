@@ -145,7 +145,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.28 - 2025-07-TBD =
-* Fix conflicst with Pods plugin - CHANGED
+* Fix conflicts with Pods plugin - CHANGED
 
 = 2.8.27 - 2025-06-26 =
 * Changes for subscription manage button - CHANGED
