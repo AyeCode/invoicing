@@ -31,7 +31,7 @@ add_ThickBox();
 				<div class="membership-content">
 <!--
 				<h2>With our WPInvoicing Membership you get access to all our products!</h2>
-				<p><a class="button button-primary" href="https://wpinvoicing.com/downloads/membership/">View Memberships</a></p>-->
+				<p><a class="button button-primary" href="https://wpgetpaid.com/downloads/membership/">View Memberships</a></p>-->
 				<?php if ( defined( 'WP_EASY_UPDATES_ACTIVE' ) ) { ?>
 					<h2><?php esc_html_e( 'Have a membership key?', 'invoicing' ); ?></h2>
 					<p>
@@ -60,7 +60,7 @@ add_ThickBox();
 									<div class="feature-cta">
 										<h3><?php esc_html_e( 'Membership Starts from', 'invoicing' ); ?></h3>
 										<h4>$99</h4>
-										<a href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_attr_e( 'Buy Membership', 'invoicing' ); ?></a>
+										<a href="https://wpgetpaid.com/downloads/membership/" target="_blank"><?php esc_attr_e( 'Buy Membership', 'invoicing' ); ?></a>
 									</div>
 									<h3><?php esc_html_e( 'Included Gateways:', 'invoicing' ); ?></h3>
 									<ul>
@@ -117,7 +117,7 @@ Great job so far guys, can’t wait to see where this goes!
 						</div>
 					</div>
 					<div class="member-footer">
-						<a class="footer-btn" href="https://wpinvoicing.com/downloads/membership/" target="_blank"><?php esc_html_e( 'Buy Membership', 'invoicing' ); ?></a>
+						<a class="footer-btn" href="https://wpgetpaid.com/downloads/membership/" target="_blank"><?php esc_html_e( 'Buy Membership', 'invoicing' ); ?></a>
 						<a class="footer-link" href="post-new.php?post_type=wpi_invoice"><?php esc_html_e( 'Create Invoice', 'invoicing' ); ?></a>
 					</div>
 				</div>
@@ -211,9 +211,9 @@ continue;}// don't show quote add on
 	<div class="clearfix" ></div>
 
 	<?php if ( $current_tab == 'addons' ) { ?>
-	<p><?php printf(  esc_attr__( 'All of our Addons can be found on wpGetPaid.com here: %sInvoicing Addons%s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/addons/">','</a>' ); ?></p>
+	<p><?php printf(  esc_attr__( 'All of our Addons can be found on wpGetPaid.com here: %sInvoicing Addons%s', 'invoicing' ), '<a href="https://wpgetpaid.com/downloads/category/addons/">','</a>' ); ?></p>
 	<?php } if ( $current_tab == 'gateways' ) { ?>
-    <p><?php printf( esc_attr__( 'All of our Payment Gateways can be found on wpGetPaid.com here: %sGetPaid Payment Gateways %s', 'invoicing' ), '<a href="https://wpinvoicing.com/downloads/category/gateways/">','</a>'  ); ?></p>
+    <p><?php printf( esc_attr__( 'All of our Payment Gateways can be found on wpGetPaid.com here: %sGetPaid Payment Gateways %s', 'invoicing' ), '<a href="https://wpgetpaid.com/downloads/category/gateways/">','</a>'  ); ?></p>
     <?php } ?>
 
 	<div id="wpi-wpeu-required-activation" style="display:none;"><span class="wpi-notification "><?php echo wp_kses_post(  sprintf( __( "The plugin <a href='https://wpeasyupdates.com/' target='_blank'>WP Easy Updates</a> is required to check for and update some installed plugins/themes, please <a href='%s'>activate</a> it now.", 'invoicing' ), wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=wp-easy-updates/external-updates.php' ), 'activate-plugin_wp-easy-updates/external-updates.php' ) ) ); ?></span></div>
@@ -224,7 +224,7 @@ continue;}// don't show quote add on
 			<input class="wpeu-licence-key" type="text" placeholder="<?php esc_attr_e( 'Enter your licence key', 'invoicing' ); ?>"> <button class="button-primary wpeu-licence-popup-button" ><?php esc_html_e( 'Install', 'invoicing' ); ?></button>
 			<br>
 			<?php
-			printf( esc_html__( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpinvoicing.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpinvoicing.com/downloads/category/addons/" target="_blank">', '</a>' );
+			printf( esc_html__( '%1$sFind your licence key here%2$s OR %3$sBuy one here%4$s', 'invoicing' ), '<a href="https://wpgetpaid.com/your-account/" target="_blank">', '</a>', '<a class="wpeu-licence-link" href="https://wpgetpaid.com/downloads/category/addons/" target="_blank">', '</a>' );
 			?>
 		</span>
 	</div>

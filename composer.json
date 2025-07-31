@@ -3,7 +3,7 @@
   "type": "project",
   "description": "GetPaid is a lightweight Invoicing and Payments system for WordPress. It can be used by freelancers to manage their Invoices or by 3rd party Themes and Plugins as their payment system. ",
   "keywords": ["invoicing", "accounting"],
-  "homepage": "https://wpinvoicing.com/",
+  "homepage": "https://wpgetpaid.com/",
   "license": "GPL-3.0-or-later",
   "authors": [
     {

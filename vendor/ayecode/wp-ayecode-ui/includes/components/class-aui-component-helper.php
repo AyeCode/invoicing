@@ -116,7 +116,7 @@ class AUI_Component_Helper {
 			$classes = array_map( "trim", $classes );
 			$classes = array_map( "sanitize_html_class", $classes );
 			if ( ! empty( $classes ) ) {
-				$output = implode( " ", $classes );
+				$output = implode( " ", array_filter( $classes ) );
 			}
 		}
 
@@ -482,9 +482,10 @@ class AUI_Component_Helper {
 	 * Sanitize FontAwesome icon.
 	 *
 	 * @param string $icon Icon string.
+	 * @param array $args Extra args.
 	 * @return string Sanitized icon.
 	 */
-	public static function sanitize_fa_icon( $icon ) {
+	public static function sanitize_fa_icon( $icon, $args = array() ) {
 		if ( ! is_scalar( $icon ) ) {
 			return "";
 		}
@@ -493,6 +494,6 @@ class AUI_Component_Helper {
 
 		$sanitized_icon = preg_replace( $pattern, '', trim( $icon ) );
 
-		return apply_filters( 'ayecode_ui_sanitize_fa_icon', $sanitized_icon, $icon );
+		return apply_filters( 'ayecode_ui_sanitize_fa_icon', $sanitized_icon, $icon, $args );
 	}
 }
