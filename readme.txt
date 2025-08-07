@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.8.29
+Stable tag: 2.8.30
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.28 - 2025-07-31 =
+= 2.8.30 - 2025-08-07 =
+* Merge SD 1.2.25 - CHANGED
+
+= 2.8.29 - 2025-07-31 =
 * Merge AUI 0.2.40 & FA 1.1.10 - CHANGED
 
 = 2.8.28 - 2025-07-10 =
