@@ -3,7 +3,7 @@
  * Plugin Name: GetPaid
  * Plugin URI: https://wpgetpaid.com/
  * Description: A lightweight and VAT compliant payments and invoicing plugin.
- * Version: 2.8.29
+ * Version: 2.8.30
  * Author: AyeCode Ltd
  * Author URI: https://wpgetpaid.com/
  * Text Domain: invoicing
@@ -23,7 +23,7 @@ if ( ! defined( 'WPINV_PLUGIN_FILE' ) ) {
 }
 
 if ( ! defined( 'WPINV_VERSION' ) ) {
-	define( 'WPINV_VERSION', '2.8.29' );
+	define( 'WPINV_VERSION', '2.8.30' );
 }
 
 // Include the main Invoicing class.
