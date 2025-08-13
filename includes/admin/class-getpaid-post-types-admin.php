@@ -881,38 +881,51 @@ class GetPaid_Post_Types_Admin {
 	}
 
 	/**
-     * Add a post display state for special GetPaid pages in the page list table.
-     *
-     * @param array   $post_states An array of post display states.
-     * @param WP_Post $post        The current post object.
-     *
-     * @return mixed
-     */
-    public static function add_display_post_states( $post_states, $post ) {
-
-        if ( wpinv_get_option( 'success_page', 0 ) == $post->ID ) {
-            $post_states['getpaid_success_page'] = __( 'GetPaid Receipt Page', 'invoicing' );
-        }
+	 * Add a post display state for special GetPaid pages in the page list table.
+	 *
+	 * @param array   $post_states An array of post display states.
+	 * @param WP_Post $post        The current post object.
+	 *
+	 * @return mixed
+	 */
+	public static function add_display_post_states( $post_states, $post ) {
+		if ( wpinv_get_option( 'success_page', 0 ) == $post->ID ) {
+			$post_states['getpaid_success_page'] = __( 'GetPaid Receipt Page', 'invoicing' );
+		}
 
 		foreach ( getpaid_get_invoice_post_types() as $post_type => $label ) {
+			$_post_type = str_replace( "wpi_", "", $post_type );
 
 			if ( wpinv_get_option( "{$post_type}_history_page", 0 ) == $post->ID ) {
-				$post_states[ "getpaid_{$post_type}_history_page" ] = sprintf(
+				$post_states[ "getpaid_{$post_type}_history_page" ] = wp_sprintf(
+					__( 'GetPaid %s History Page', 'invoicing' ),
+					$label
+				);
+			} else if ( wpinv_get_option( "{$_post_type}_history_page", 0 ) == $post->ID ) {
+				$post_states[ "getpaid_{$_post_type}_history_page" ] = wp_sprintf(
 					__( 'GetPaid %s History Page', 'invoicing' ),
 					$label
 				);
 			}
-}
+		}
 
 		if ( wpinv_get_option( 'invoice_subscription_page', 0 ) == $post->ID ) {
-            $post_states['getpaid_invoice_subscription_page'] = __( 'GetPaid Subscription Page', 'invoicing' );
-        }
+			$post_states['getpaid_invoice_subscription_page'] = __( 'GetPaid Subscriptions Page', 'invoicing' );
+		}
 
 		if ( wpinv_get_option( 'checkout_page', 0 ) == $post->ID ) {
-            $post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
-        }
+			$post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
+		}
 
-        return $post_states;
+		if ( wpinv_get_option( 'checkout_page', 0 ) == $post->ID ) {
+			$post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
+		}
+
+		if ( wpinv_get_option( 'failure_page', 0 ) == $post->ID ) {
+			$post_states['getpaid_failure_page'] = __( 'GetPaid Transaction Failed Page', 'invoicing' );
+		}
+
+		return $post_states;
     }
 
 }

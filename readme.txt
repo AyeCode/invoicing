@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.31 - TBD =
 * Subscription status not updating when invoice status changes - FIXED
+* Create pages with blocks when supports blocks on fresh install - CHANGED
 
 = 2.8.30 - 2025-08-07 =
 * Merge SD 1.2.25 - CHANGED

@@ -137,71 +137,53 @@ class GetPaid_Installer {
 	 * Retreives GetPaid pages.
 	 *
 	 */
-	public static function get_pages() {
+	public static function get_pages( $filtered = false ) {
+		$gutenberg = getpaid_is_gutenberg();
 
 		return apply_filters(
 			'wpinv_create_pages',
 			array(
-
 				// Checkout page.
-				'checkout_page'             => array(
+				'checkout_page' => array(
 					'name'    => _x( 'gp-checkout', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'Checkout', 'Page title', 'invoicing' ),
-					'content' => '
-						<!-- wp:shortcode -->
-						[wpinv_checkout]
-						<!-- /wp:shortcode -->
-					',
-					'parent'  => '',
+					'content' => getpaid_page_content_checkout( $filtered, $gutenberg ),
+					'parent'  => ''
 				),
 
 				// Invoice history page.
-				'invoice_history_page'      => array(
+				'invoice_history_page' => array(
 					'name'    => _x( 'gp-invoices', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'My Invoices', 'Page title', 'invoicing' ),
-					'content' => '
-					<!-- wp:shortcode -->
-					[wpinv_history]
-					<!-- /wp:shortcode -->
-				',
-					'parent'  => '',
+					'content' => getpaid_page_content_invoice_history( $filtered, $gutenberg ),
+					'parent'  => ''
 				),
 
 				// Success page content.
-				'success_page'              => array(
+				'success_page' => array(
 					'name'    => _x( 'gp-receipt', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'Payment Confirmation', 'Page title', 'invoicing' ),
-					'content' => '
-					<!-- wp:shortcode -->
-					[wpinv_receipt]
-					<!-- /wp:shortcode -->
-				',
-					'parent'  => 'gp-checkout',
+					'content' => getpaid_page_content_receipt( $filtered, $gutenberg ),
+					'parent'  => 'gp-checkout'
 				),
 
 				// Failure page content.
-				'failure_page'              => array(
+				'failure_page' => array(
 					'name'    => _x( 'gp-transaction-failed', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'Transaction Failed', 'Page title', 'invoicing' ),
-					'content' => __( 'Your transaction failed, please try again or contact site support.', 'invoicing' ),
-					'parent'  => 'gp-checkout',
+					'content' => getpaid_page_content_failure( $filtered, $gutenberg ),
+					'parent'  => 'gp-checkout'
 				),
 
 				// Subscriptions history page.
 				'invoice_subscription_page' => array(
 					'name'    => _x( 'gp-subscriptions', 'Page slug', 'invoicing' ),
 					'title'   => _x( 'My Subscriptions', 'Page title', 'invoicing' ),
-					'content' => '
-					<!-- wp:shortcode -->
-					[wpinv_subscriptions]
-					<!-- /wp:shortcode -->
-				',
-					'parent'  => '',
-				),
-
+					'content' => getpaid_page_content_subscriptions( $filtered, $gutenberg ),
+					'parent'  => ''
+				)
 			)
 		);
-
 	}
 
 	/**
@@ -209,7 +191,6 @@ class GetPaid_Installer {
 	 *
 	 */
 	public function create_pages() {
-
 		foreach ( self::get_pages() as $key => $page ) {
 			wpinv_create_page( esc_sql( $page['name'] ), $key, $page['title'], $page['content'], $page['parent'] );
 		}
