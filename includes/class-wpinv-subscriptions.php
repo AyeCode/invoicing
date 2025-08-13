@@ -20,10 +20,7 @@ class WPInv_Subscriptions {
         add_action( 'getpaid_subscription_status_changed', array( $this, 'process_subscription_status_change' ), 10, 3 );
 
         // De-activate a subscription whenever the invoice changes payment statuses.
-        // add_action( 'getpaid_invoice_status_wpi-refunded', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
-        add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
-        add_action( 'getpaid_invoice_status_wpi-cancelled', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
-        add_action( 'getpaid_invoice_status_wpi-pending', array( $this, 'maybe_deactivate_invoice_subscription' ), 20 );
+        add_action( 'getpaid_invoice_status_changed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20, 1 );
 
         // Handles subscription cancelations.
         add_action( 'getpaid_authenticated_action_subscription_cancel', array( $this, 'user_cancel_single_subscription' ) );
@@ -63,6 +60,28 @@ class WPInv_Subscriptions {
     }
 
     /**
+     * Returns the appropriate subscription status based on the invoice status.
+     *
+     * @param string $invoice_status
+     * @return string
+     */
+    protected function get_subscription_status_from_invoice_status( $invoice_status ) {
+        $status_mapping = array(
+            'draft'            => 'pending',
+            'wpi-failed'       => 'failing',
+            'wpi-processing'   => 'pending',
+            'wpi-onhold'       => 'pending',
+            'publish'          => 'active',
+            'wpi-renewal'      => 'pending',
+            'wpi-cancelled'    => 'cancelled',
+            'wpi-pending'      => 'pending',
+            'wpi-refunded'     => 'cancelled',
+        );
+
+        return isset( $status_mapping[ $invoice_status ] ) ? $status_mapping[ $invoice_status ] : 'pending';
+    }
+
+    /**
      * Deactivates the invoice subscription(s) whenever an invoice status changes.
      *
      * @param WPInv_Invoice $invoice
@@ -79,11 +98,11 @@ class WPInv_Subscriptions {
             $subscriptions = array( $subscriptions );
         }
 
+        $new_status = $this->get_subscription_status_from_invoice_status( $invoice->get_status() );
+
         foreach ( $subscriptions as $subscription ) {
-            if ( $subscription->is_active() ) {
-                $subscription->set_status( 'pending' );
-                $subscription->save();
-            }
+            $subscription->set_status( $new_status );
+            $subscription->save();
         }
 
     }
