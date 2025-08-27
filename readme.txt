@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.32 - 2025-08-TBD =
+* Added tool to add dynamic database strings for translations - ADDED
+
 = 2.8.31 - 2025-08-14 =
 * Subscription status not updating when invoice status changes - FIXED
 * Create pages with blocks when supports blocks on fresh install - CHANGED

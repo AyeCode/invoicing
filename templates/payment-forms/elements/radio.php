@@ -25,7 +25,7 @@ aui()->radio(
         'label_type' => 'vertical',
         'class'      => 'w-auto',
         'inline'     => false,
-        'options'    => empty( $options ) ? array() : array_combine( $options, $options ),
+        'options'    => getpaid_parse_field_options( $options ),
         'help_text'  => empty( $description ) ? '' : wp_kses_post( $description ),
         'class'      => $label_class,
         'value'      => $query_value,

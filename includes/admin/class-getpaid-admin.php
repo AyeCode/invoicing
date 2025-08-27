@@ -74,6 +74,7 @@ class GetPaid_Admin {
 		add_action( 'getpaid_authenticated_admin_action_migrate_old_invoices', array( $this, 'admin_migrate_old_invoices' ) );
 		add_action( 'getpaid_authenticated_admin_action_download_customers', array( $this, 'admin_download_customers' ) );
 		add_action( 'getpaid_authenticated_admin_action_recalculate_discounts', array( $this, 'admin_recalculate_discounts' ) );
+		add_action( 'getpaid_authenticated_admin_action_translate_db_texts', array( $this, 'tool_translate_db_texts' ) );
 		add_action( 'getpaid_authenticated_admin_action_install_plugin', array( $this, 'admin_install_plugin' ) );
 		add_action( 'getpaid_authenticated_admin_action_connect_gateway', array( $this, 'admin_connect_gateway' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
@@ -820,6 +821,32 @@ class GetPaid_Admin {
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
 		exit;
 
+	}
+
+	/**
+	 * Load dynamic strings in to file to translate via po editor
+	 *
+	 * @since   2.8.32
+	 *
+	 * @global null|object $wp_filesystem WP_Filesystem object.
+	 *
+	 * @return bool True if file created otherwise false
+	 */
+    public function tool_translate_db_texts() {
+		$language_file = wp_normalize_path( WPINV_PLUGIN_DIR . 'db-language.php' );
+
+		if ( getpaid_sync_db_text_translation() ) {
+			// Success
+			$this->show_success( wp_sprintf( __( 'Strings are added in the file <b>%s</b> for translation.', 'invoicing' ), $language_file ) );
+		} else {
+			// Failure
+			$this->show_error( wp_sprintf( __( 'There was a problem creating the file <b>%s</b>. Please check file permissions.', 'invoicing' ), $language_file ) );
+		}
+
+		// Redirect the admin.
+		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce' ) ) );
+
+		exit;
 	}
 
     /**

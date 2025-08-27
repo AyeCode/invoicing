@@ -845,7 +845,7 @@ function wpinv_clean( $var ) {
  * @param string $str Data to convert.
  * @return string|array
  */
-function getpaid_convert_price_string_to_options( $str ) {
+function getpaid_convert_price_string_to_options( $str, $translated = true ) {
 
 	$raw_options = array_map( 'trim', explode( ',', $str ) );
     $options     = array();
@@ -881,7 +881,7 @@ function getpaid_convert_price_string_to_options( $str ) {
             $label = $price;
         }
 
-        $options[ "$label|$price" ] = $label;
+        $options[ "$label|$price" ] = $translated ? __( wp_unslash( $label ), 'invoicing' ) : $label;
     }
 
     return $options;
