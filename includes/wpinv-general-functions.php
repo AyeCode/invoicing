@@ -492,3 +492,241 @@ function wpinv_get_report_graphs() {
     );
 
 }
+
+/**
+ * Initiate the WordPress file system and provide fallback if needed.
+ *
+ * @since 2.8.32
+ *
+ * @return bool|WP_Filesystem The WP Filesystem object or false on failure.
+ */
+function getpaid_wp_filesystem() {
+	if ( ! function_exists( 'get_filesystem_method' ) ) {
+		require_once( ABSPATH . "/wp-admin/includes/file.php" );
+	}
+
+	$access_type = get_filesystem_method();
+
+	if ( $access_type === 'direct' ) {
+		/* You can safely run request_filesystem_credentials() without any issues and don't need to worry about passing in a URL */
+		$creds = request_filesystem_credentials( trailingslashit( site_url() ) . 'wp-admin/', '', false, false, array() );
+
+		/* Initialize the API */
+		if ( ! WP_Filesystem( $creds ) ) {
+			/* Any problems and we exit */
+			return false;
+		}
+
+		global $wp_filesystem;
+
+		return $wp_filesystem;
+		/* Do our file manipulations below */
+	} else if ( defined( 'FTP_USER' ) ) {
+		$creds = request_filesystem_credentials( trailingslashit( site_url() ) . 'wp-admin/', '', false, false, array() );
+
+		/* Initialize the API */
+		if ( ! WP_Filesystem( $creds ) ) {
+			/* Any problems and we exit */
+			return false;
+		}
+
+		global $wp_filesystem;
+
+		return $wp_filesystem;
+	} else {
+		/* Don't have direct write access. Prompt user with our notice */
+		return false;
+	}
+}
+
+/**
+ * Load dynamic strings in to file to translate via po editor
+ *
+ * @since 2.8.32
+ *
+ * @return bool True if file created otherwise false
+ */
+function getpaid_sync_db_text_translation() {
+	$wp_filesystem = getpaid_wp_filesystem();
+
+	$language_file = WPINV_PLUGIN_DIR . 'db-language.php';
+
+	if ( is_file( $language_file ) && ! is_writable( $language_file ) ) {
+		return false;
+	}
+
+	if ( ! is_file( $language_file ) && ! is_writable( dirname( $language_file ) ) ) {
+		return false;
+	}
+
+	$head   = array();
+	$head[] = "<?php";
+	$head[] = "/**";
+	$head[] = " * Contains strings for translation that stored in the database. Ex: Payment forms custom fields texts.";
+	$head[] = " *";
+	$head[] = " * @package GetPaid";
+	$head[] = " * @since 2.8.32";
+	$head[] = " */";
+	$head[] = "";
+	$head[] = "__( 'My String', 'invoicing' );";
+
+	$footer   = array();
+	$footer[] = "";
+	$footer[] = "";
+	$footer[] = "/*** GetPaid " . WPINV_VERSION . " @ " . gmdate( 'Y-m-d H:i:s' ) . " ***/";
+	$footer[] = "";
+
+	$contents = implode( PHP_EOL, $head );
+
+	$strings = getpaid_get_db_language_strings();
+
+	if ( ! empty( $strings ) ) {
+		$is_wpml = getpaid_is_wpml();
+
+		foreach ( $strings as $string ) {
+			if ( is_scalar( $string ) && $string != '' ) {
+				do_action( 'getpaid_db_language_add_string', $string );
+
+				if ( $is_wpml ) {
+					// Registers a individual text string for WPML translation.
+					do_action( 'wpml_register_single_string', 'invoicing', '', $string );
+				}
+
+				$string = str_replace( "'", "\'", $string );
+
+				$contents .= PHP_EOL . "__( '" . $string . "', 'invoicing' );";
+			}
+		}
+	}
+
+	$contents .= implode( PHP_EOL, $footer );
+
+	if ( $wp_filesystem->put_contents( $language_file, $contents, FS_CHMOD_FILE ) ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Get the strings stored in database to add for translation.
+ *
+ * @since 2.8.32
+ *
+ * @param array $strings Array of strings.
+ * @return array Filtered strings.
+ */
+function getpaid_get_db_language_strings() {
+	global $wpdb;
+
+	$strings = array();
+
+	// Options
+	$settings = wpinv_get_options();
+
+	$setting_keys = array(
+		'bank_transfer_info',
+		'vat_invoice_notice_label',
+		'vat_invoice_notice'
+	);
+
+	/**
+	 * Filters the GetPaid option names that requires to add for translation.
+	 *
+	 * @since 2.8.32
+	 *
+	 * @param  array $setting_keys Array of setting keys.
+	 */
+	$setting_keys = apply_filters( 'getpaid_options_to_db_language_strings', $setting_keys );
+
+	$setting_keys = array_unique( $setting_keys );
+
+	if ( ! empty( $settings ) && ! empty( $setting_keys ) ) {
+		foreach ( $setting_keys as $setting_key ) {
+			if ( ! empty( $settings[ $setting_key ] ) && is_string( $settings[ $setting_key ] ) ) {
+				$strings[] = wp_unslash( $settings[ $setting_key ] );
+			}
+		}
+	}
+
+	// Payment forms
+	$results = $wpdb->get_col( "SELECT `pm`.`meta_value` FROM `{$wpdb->postmeta}` AS pm LEFT JOIN `{$wpdb->posts}` AS p ON p.ID = pm.post_id WHERE `pm`.`meta_key` = 'wpinv_form_elements' AND `p`.`post_type` = 'wpi_payment_form'" );
+
+	if ( ! empty( $results ) ) {
+		$string_keys = array( 'label', 'placeholder', 'description', 'text', 'input_label', 'button_label' );
+
+		foreach ( $results as $meta_value ) {
+			$fields = maybe_unserialize( $meta_value );
+
+			if ( ! empty( $fields ) && is_array( $fields ) ) {
+				foreach ( $fields as $field ) {
+					// Labels
+					foreach ( $string_keys as $string_key ) {
+						if ( ! empty( $field[ $string_key ] ) && is_string( $field[ $string_key ] ) ) {
+							$strings[] = wp_unslash( $field[ $string_key ] );
+						}
+					}
+
+					// Address fields
+					if ( ! empty( $field['fields'] ) && ! empty( $field['fields'] ) ) {
+						foreach ( $field['fields'] as $sub_field ) {
+							foreach ( $string_keys as $string_key ) {
+								if ( ! empty( $sub_field[ $string_key ] ) && is_string( $sub_field[ $string_key ] ) ) {
+									$strings[] = wp_unslash( $sub_field[ $string_key ] );
+								}
+							}
+						}
+					}
+
+					// Options
+					if ( ! empty( $field['options'] ) ) {
+						$options = array();
+
+						if ( is_array( $field['options'] ) ) {
+							$options = $field['options'];
+						} else if ( is_string( $field['options'] ) ) {
+							$options = getpaid_convert_price_string_to_options( $field['options'], false );
+							$options = ! empty( $options ) ? array_values( $options ) : array();
+						}
+
+						if ( ! empty( $options ) ) {
+							foreach( $options as $option ) {
+								if ( ! empty( $option ) && is_string( $option ) ) {
+									$strings[] = wp_unslash( $option );
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Filter the database strings to add for translation.
+	 *
+	 * @since 2.8.32
+	 *
+	 * @param array $strings Array of strings.
+	 */
+	$strings = apply_filters( 'getpaid_db_language_strings', $strings );
+
+	$strings = array_unique( $strings );
+
+	return $strings;
+}
+
+/**
+ * Check if WPML instaled and active.
+ *
+ * @since 2.8.32
+ *
+ * @return bool True if active else false.
+ */
+function getpaid_is_wpml() {
+	if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress', false ) && function_exists( 'icl_object_id' ) ) {
+		return true;
+	}
+
+	return false;
+}

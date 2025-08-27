@@ -129,7 +129,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 			echo '<div class="mt-4 mb-2 getpaid-bank-transfer-details">' . PHP_EOL;
 
             if ( ! empty( $this->instructions ) ) {
-                echo wp_kses_post( wpautop( wptexturize( $this->instructions ) ) );
+                echo wp_kses_post( wpautop( wptexturize( __( wp_unslash( $this->instructions ), 'invoicing' ) ) ) );
 			}
 
 			$this->bank_details( $invoice );

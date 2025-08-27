@@ -874,11 +874,11 @@ function wpinv_display_invoice_notice() {
     echo '<div class="mt-4 mb-4 wpinv-vat-notice">';
 
     if ( ! empty( $label ) ) {
-        echo "<h5>" . esc_html( $label ) . "</h5>";
+        echo "<h5>" . esc_html( __( wp_unslash( $label ), 'invoicing' ) ) . "</h5>";
     }
 
     if ( ! empty( $notice ) ) {
-        echo '<small class="form-text text-muted">' . wp_kses_post( wpautop( wptexturize( $notice ) ) ) . '</small>';
+        echo '<small class="form-text text-muted">' . wp_kses_post( wpautop( wptexturize( __( wp_unslash( $notice ), 'invoicing' ) ) ) ) . '</small>';
     }
 
     echo '</div>';
@@ -1390,7 +1390,7 @@ add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 10
  * @param GetPaid_Payment_Form $form
  */
 function getpaid_payment_form_element( $element, $form ) {
-    $translatable = array( 'text', 'label', 'input_label', 'button_label', 'description' );
+    $translatable = array( 'text', 'label', 'placeholder', 'input_label', 'button_label', 'description' );
 
     foreach ( $translatable as $string ) {
         if ( ! empty( $element[ $string ] ) && is_scalar( $element[ $string ] ) ) {
@@ -1862,4 +1862,33 @@ function getpaid_is_classicpress() {
 	}
 
 	return $content;
+}
+
+/**
+ * Prepare value => label pair options.
+ *
+ * @since 2.8.32
+ *
+ * @param array  $options The field options.
+ * @param bool   $translated True if label needs to be translated.
+ * @return array Returns options array.
+ */
+function getpaid_parse_field_options( $options, $translated = true ) {
+	$orig_options = $options;
+
+	$options = array();
+
+	if ( ! empty( $orig_options ) ) {
+		foreach ( $orig_options as $key => $value ) {
+			if ( $value && is_string( $value ) ) {
+				$label = $translated ? __( wp_unslash( $value ), 'invoicing' ) : $value;
+			} else {
+				$label = $value;
+			}
+
+			$options[ $value ] = $label;
+		}
+	}
+
+	return apply_filters( 'getpaid_parse_field_options', $options, $orig_options, $translated );
 }

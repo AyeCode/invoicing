@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/elements/select.php.
  *
- * @version 1.0.19
+ * @version 2.8.32
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,7 +25,7 @@ aui()->select(
         'label'       => $label,
         'label_type'  => 'vertical',
         'help_text'   => empty( $description ) ? '' : wp_kses_post( $description ),
-        'options'     => empty( $options ) ? array() : array_combine( $options, $options ),
+        'options'     => getpaid_parse_field_options( $options ),
         'class'       => $label_class,
         'value'       => $query_value,
     ),

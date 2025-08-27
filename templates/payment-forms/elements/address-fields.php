@@ -45,10 +45,10 @@ foreach ( $fields as $address_field ) {
     $field_name  = "{$field_type}[$field_name]";
     $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
     $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
-    $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
-    $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
+    $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( __( wp_unslash( $address_field['placeholder'] ), 'invoicing' ) );
+    $description = empty( $address_field['description'] ) ? '' : wp_kses_post( __( wp_unslash( $address_field['description'] ), 'invoicing' ) );
     $value       = ! empty( $user_id ) ? get_user_meta( $user_id, '_' . $address_field['name'], true ) : '';
-    $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( $address_field['label'] );
+    $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( __( wp_unslash( $address_field['label'] ), 'invoicing' ) );
 
     $method_name = 'get_' . str_replace( 'wpinv_', '', $address_field['name'] );
     if ( ! empty( $form->invoice ) && is_callable( array( $form->invoice, $method_name ) ) ) {
