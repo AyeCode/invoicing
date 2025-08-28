@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.32 - 2025-08-TBD =
 * Added tool to add dynamic database strings for translations - ADDED
+* Merge AUI 0.2.41 & SD 1.2.26 - CHANGED
 
 = 2.8.31 - 2025-08-14 =
 * Subscription status not updating when invoice status changes - FIXED
