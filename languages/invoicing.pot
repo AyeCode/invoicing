@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.31\n"
+"Project-Id-Version: GetPaid 2.8.32\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-14 16:37+0530\n"
+"POT-Creation-Date: 2025-08-28 20:08+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
@@ -21,6 +21,10 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: vendor\n"
 
+#: db-language.php:9
+msgid "My String"
+msgstr ""
+
 #: includes/abstracts/abstract-wpinv-privacy.php:66
 #: includes/admin/class-wpinv-admin-menus.php:44
 #: includes/admin/class-wpinv-admin-menus.php:45
@@ -34,7 +38,7 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: includes/admin/admin-pages.php:46 includes/admin/class-getpaid-admin.php:186
+#: includes/admin/admin-pages.php:46 includes/admin/class-getpaid-admin.php:187
 #: includes/admin/class-getpaid-post-types-admin.php:180
 #: includes/class-getpaid-post-types.php:132
 #: includes/class-getpaid-post-types.php:188
@@ -209,41 +213,41 @@ msgstr ""
 msgid "Frontend user login and registration as well as slick profile pages."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:176
+#: includes/admin/class-getpaid-admin.php:177
 msgid "Save Invoice"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:179
+#: includes/admin/class-getpaid-admin.php:180
 msgid "Are you sure you wish to delete this tax rate?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:181
+#: includes/admin/class-getpaid-admin.php:182
 msgid ""
 "Fill the user's billing information? This will remove any currently entered "
 "billing information"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:182
+#: includes/admin/class-getpaid-admin.php:183
 msgid ""
 "Recalculate totals? This will recalculate totals based on the user billing "
 "country. If no billing country is set it will use the base country."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:183
+#: includes/admin/class-getpaid-admin.php:184
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:184
+#: includes/admin/class-getpaid-admin.php:185
 msgid ""
 "This item is in use! Before delete this item, you need to delete all the "
 "invoice(s) using this item."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:185
+#: includes/admin/class-getpaid-admin.php:186
 msgid "Are you sure you want to delete this subscription?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:187
+#: includes/admin/class-getpaid-admin.php:188
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:149
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:341
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:739
@@ -253,7 +257,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:188
+#: includes/admin/class-getpaid-admin.php:189
 #: includes/admin/class-getpaid-metaboxes.php:99
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:143
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:775
@@ -261,62 +265,62 @@ msgstr ""
 msgid "Item Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:189
+#: includes/admin/class-getpaid-admin.php:190
 msgid "Invoice Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:190
+#: includes/admin/class-getpaid-admin.php:191
 msgid "Discount Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:191
+#: includes/admin/class-getpaid-admin.php:192
 msgid "Searching"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:192 includes/class-wpinv.php:372
+#: includes/admin/class-getpaid-admin.php:193 includes/class-wpinv.php:372
 #: templates/payment-forms/form.php:119
 msgid "Loading..."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:193
+#: includes/admin/class-getpaid-admin.php:194
 msgid "Enter customer name or email"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:194
+#: includes/admin/class-getpaid-admin.php:195
 msgid "Enter item name"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:202
+#: includes/admin/class-getpaid-admin.php:203
 #, php-format
 msgid "Save %s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:207
+#: includes/admin/class-getpaid-admin.php:208
 #, php-format
 msgid "%s Description"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:247
+#: includes/admin/class-getpaid-admin.php:248
 #, php-format
 msgid ""
 "If you like <strong>GetPaid</strong>, please leave us a %s rating. A huge "
 "thanks in advance!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:255
+#: includes/admin/class-getpaid-admin.php:256
 #, php-format
 msgid "Thank you for using %s!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:358
+#: includes/admin/class-getpaid-admin.php:359
 msgid "WP Invoicing - an AyeCode product!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:359
+#: includes/admin/class-getpaid-admin.php:360
 msgid "Please confirm you wish to connect your site?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:360
+#: includes/admin/class-getpaid-admin.php:361
 #, php-format
 msgid ""
 "<strong>Have a license?</strong> Forget about entering license keys or "
@@ -324,99 +328,111 @@ msgid ""
 "more%2$s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:361
+#: includes/admin/class-getpaid-admin.php:362
 msgid "Connect Site"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:362
+#: includes/admin/class-getpaid-admin.php:363
 msgid "Connecting..."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:363
+#: includes/admin/class-getpaid-admin.php:364
 msgid "This service will only work with a live domain, not a localhost."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:364
+#: includes/admin/class-getpaid-admin.php:365
 msgid "Something went wrong, please refresh and try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:429
+#: includes/admin/class-getpaid-admin.php:430
 msgid "Invoice duplicated successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:444
+#: includes/admin/class-getpaid-admin.php:445
 msgid "There was an error duplicating this invoice. Please try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:486
+#: includes/admin/class-getpaid-admin.php:487
 #, php-format
 msgid "Subscription #%s cancelled"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:495
+#: includes/admin/class-getpaid-admin.php:496
 msgid "Invoice refunded successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:522
+#: includes/admin/class-getpaid-admin.php:523
 msgid "(copy)"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:528
+#: includes/admin/class-getpaid-admin.php:529
 msgid "Form duplicated successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:531
+#: includes/admin/class-getpaid-admin.php:532
 msgid "Unable to duplicate form"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:562
+#: includes/admin/class-getpaid-admin.php:563
 msgid "Form stats reset successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:588
+#: includes/admin/class-getpaid-admin.php:589
 msgid "Payment reminder was successfully sent to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:590
+#: includes/admin/class-getpaid-admin.php:591
 msgid "Could not sent payment reminder to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:616
+#: includes/admin/class-getpaid-admin.php:617
 msgid "GetPaid pages updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:626
+#: includes/admin/class-getpaid-admin.php:627
 msgid "Permalinks refreshed."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:642
+#: includes/admin/class-getpaid-admin.php:643
 msgid "Your GetPaid tables have been updated:"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:644
+#: includes/admin/class-getpaid-admin.php:645
 msgid "Your GetPaid tables have been updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:662
+#: includes/admin/class-getpaid-admin.php:663
 msgid "Your invoices have been migrated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:679
+#: includes/admin/class-getpaid-admin.php:680
 #: includes/reports/class-getpaid-graph-downloader.php:53
 msgid "Unsupported server"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:817
+#: includes/admin/class-getpaid-admin.php:818
 msgid "Discounts have been recalculated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:949
+#: includes/admin/class-getpaid-admin.php:840
+#, php-format
+msgid "Strings are added in the file <b>%s</b> for translation."
+msgstr ""
+
+#: includes/admin/class-getpaid-admin.php:843
+#, php-format
+msgid ""
+"There was a problem creating the file <b>%s</b>. Please check file "
+"permissions."
+msgstr ""
+
+#: includes/admin/class-getpaid-admin.php:976
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
 "button below to generate the missing pages."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:950
+#: includes/admin/class-getpaid-admin.php:977
 msgid "Generate Pages"
 msgstr ""
 
@@ -492,46 +508,42 @@ msgctxt "Page title"
 msgid "Checkout"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:160
+#: includes/admin/class-getpaid-installer.php:156
 msgctxt "Page slug"
 msgid "gp-invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:161
+#: includes/admin/class-getpaid-installer.php:157
 msgctxt "Page title"
 msgid "My Invoices"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:172
+#: includes/admin/class-getpaid-installer.php:164
 msgctxt "Page slug"
 msgid "gp-receipt"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:173
+#: includes/admin/class-getpaid-installer.php:165
 msgctxt "Page title"
 msgid "Payment Confirmation"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:184
+#: includes/admin/class-getpaid-installer.php:172
 msgctxt "Page slug"
 msgid "gp-transaction-failed"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:185
+#: includes/admin/class-getpaid-installer.php:173
 msgctxt "Page title"
 msgid "Transaction Failed"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:186
-msgid "Your transaction failed, please try again or contact site support."
-msgstr ""
-
-#: includes/admin/class-getpaid-installer.php:192
+#: includes/admin/class-getpaid-installer.php:180
 msgctxt "Page slug"
 msgid "gp-subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-installer.php:193
+#: includes/admin/class-getpaid-installer.php:181
 msgctxt "Page title"
 msgid "My Subscriptions"
 msgstr ""
@@ -902,21 +914,27 @@ msgstr ""
 msgid "All item types"
 msgstr ""
 
-#: includes/admin/class-getpaid-post-types-admin.php:894
+#: includes/admin/class-getpaid-post-types-admin.php:893
 msgid "GetPaid Receipt Page"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:901
+#: includes/admin/class-getpaid-post-types-admin.php:906
 #, php-format
 msgid "GetPaid %s History Page"
 msgstr ""
 
-#: includes/admin/class-getpaid-post-types-admin.php:908
-msgid "GetPaid Subscription Page"
+#: includes/admin/class-getpaid-post-types-admin.php:913
+msgid "GetPaid Subscriptions Page"
 msgstr ""
 
-#: includes/admin/class-getpaid-post-types-admin.php:912
+#: includes/admin/class-getpaid-post-types-admin.php:917
+#: includes/admin/class-getpaid-post-types-admin.php:921
 msgid "GetPaid Checkout Page"
+msgstr ""
+
+#: includes/admin/class-getpaid-post-types-admin.php:925
+msgid "GetPaid Transaction Failed Page"
 msgstr ""
 
 #: includes/admin/class-wpinv-admin-menus.php:61
@@ -1294,7 +1312,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:103
 #: includes/data/default-payment-form.php:37
 #: includes/data/payment-form-elements.php:202
-#: includes/wpinv-address-functions.php:131
+#: includes/wpinv-address-functions.php:131 widgets/checkout.php:90
 msgid "First Name"
 msgstr ""
 
@@ -1302,7 +1320,7 @@ msgstr ""
 #: includes/class-wpinv-privacy-exporters.php:107
 #: includes/data/default-payment-form.php:47
 #: includes/data/payment-form-elements.php:213
-#: includes/wpinv-address-functions.php:132
+#: includes/wpinv-address-functions.php:132 widgets/checkout.php:103
 msgid "Last Name"
 msgstr ""
 
@@ -2087,6 +2105,7 @@ msgstr ""
 #: includes/admin/register-settings.php:1117
 #: includes/admin/register-settings.php:1136
 #: includes/admin/register-settings.php:1156
+#: includes/admin/register-settings.php:1166
 msgid "Run"
 msgstr ""
 
@@ -2127,143 +2146,154 @@ msgid ""
 msgstr ""
 
 #: includes/admin/register-settings.php:1161
-msgid "Set-up Wizard"
+msgid "Database Text Translation"
 msgstr ""
 
 #: includes/admin/register-settings.php:1163
+msgid ""
+"This tool will collect any strings stored in the database and put them in "
+"the file db-language.php, so those strings can be used to translate by "
+"translation tools."
+msgstr ""
+
+#: includes/admin/register-settings.php:1171
+msgid "Set-up Wizard"
+msgstr ""
+
+#: includes/admin/register-settings.php:1173
 msgid "Launch the quick set-up wizard."
 msgstr ""
 
-#: includes/admin/register-settings.php:1170
+#: includes/admin/register-settings.php:1180
 msgid "Launch"
 msgstr ""
 
-#: includes/admin/register-settings.php:1222
+#: includes/admin/register-settings.php:1232
 msgid "Site Title"
 msgstr ""
 
-#: includes/admin/register-settings.php:1223
+#: includes/admin/register-settings.php:1233
 msgid "Customer's full name"
 msgstr ""
 
-#: includes/admin/register-settings.php:1224
+#: includes/admin/register-settings.php:1234
 msgid "Customer's first name"
 msgstr ""
 
-#: includes/admin/register-settings.php:1225
+#: includes/admin/register-settings.php:1235
 msgid "Customer's last name"
 msgstr ""
 
-#: includes/admin/register-settings.php:1226
+#: includes/admin/register-settings.php:1236
 msgid "Customer's email address"
 msgstr ""
 
-#: includes/admin/register-settings.php:1227
+#: includes/admin/register-settings.php:1237
 msgid "The invoice number"
 msgstr ""
 
-#: includes/admin/register-settings.php:1228
+#: includes/admin/register-settings.php:1238
 msgid "The invoice currency"
 msgstr ""
 
-#: includes/admin/register-settings.php:1229
+#: includes/admin/register-settings.php:1239
 msgid "The invoice total"
 msgstr ""
 
-#: includes/admin/register-settings.php:1230
+#: includes/admin/register-settings.php:1240
 msgid "The invoice link"
 msgstr ""
 
-#: includes/admin/register-settings.php:1231
+#: includes/admin/register-settings.php:1241
 msgid "The payment link"
 msgstr ""
 
-#: includes/admin/register-settings.php:1232
+#: includes/admin/register-settings.php:1242
 msgid "The receipt link"
 msgstr ""
 
-#: includes/admin/register-settings.php:1233
+#: includes/admin/register-settings.php:1243
 msgid "The date the invoice was created"
 msgstr ""
 
-#: includes/admin/register-settings.php:1234
+#: includes/admin/register-settings.php:1244
 msgid "The date the invoice is due"
 msgstr ""
 
-#: includes/admin/register-settings.php:1235
+#: includes/admin/register-settings.php:1245
 msgid "Today's date"
 msgstr ""
 
-#: includes/admin/register-settings.php:1236
+#: includes/admin/register-settings.php:1246
 msgid ""
 "If due date of invoice is past, displays \"was\" otherwise displays \"is\""
 msgstr ""
 
-#: includes/admin/register-settings.php:1237
+#: includes/admin/register-settings.php:1247
 msgid "Invoices/quotes singular name. Ex: Invoice/Quote"
 msgstr ""
 
-#: includes/admin/register-settings.php:1238
+#: includes/admin/register-settings.php:1248
 msgid "Invoices/quotes singular name in small letters. Ex: invoice/quote"
 msgstr ""
 
-#: includes/admin/register-settings.php:1239
+#: includes/admin/register-settings.php:1249
 msgid "The description of the invoice"
 msgstr ""
 
-#: includes/admin/register-settings.php:1246
+#: includes/admin/register-settings.php:1256
 msgid "The next renewal date of the subscription"
 msgstr ""
 
-#: includes/admin/register-settings.php:1247
+#: includes/admin/register-settings.php:1257
 msgid "The subscription's creation date"
 msgstr ""
 
-#: includes/admin/register-settings.php:1248
+#: includes/admin/register-settings.php:1258
 msgid "The subscription's status"
 msgstr ""
 
-#: includes/admin/register-settings.php:1249
+#: includes/admin/register-settings.php:1259
 msgid "The subscription's remote profile id"
 msgstr ""
 
-#: includes/admin/register-settings.php:1250
+#: includes/admin/register-settings.php:1260
 msgid "The subscription's id"
 msgstr ""
 
-#: includes/admin/register-settings.php:1251
+#: includes/admin/register-settings.php:1261
 msgid "The renewal amount of the subscription"
 msgstr ""
 
-#: includes/admin/register-settings.php:1252
+#: includes/admin/register-settings.php:1262
 msgid "The initial amount of the subscription"
 msgstr ""
 
-#: includes/admin/register-settings.php:1253
+#: includes/admin/register-settings.php:1263
 msgid "The recurring period of the subscription (e.g 1 year)"
 msgstr ""
 
-#: includes/admin/register-settings.php:1254
+#: includes/admin/register-settings.php:1264
 msgid "The maximum number of times the subscription can be renewed"
 msgstr ""
 
-#: includes/admin/register-settings.php:1255
+#: includes/admin/register-settings.php:1265
 msgid "The URL to manage a subscription"
 msgstr ""
 
-#: includes/admin/register-settings.php:1256
+#: includes/admin/register-settings.php:1266
 msgid "The name of the recurring item"
 msgstr ""
 
-#: includes/admin/register-settings.php:1279
+#: includes/admin/register-settings.php:1289
 msgid "View available merge tags."
 msgstr ""
 
-#: includes/admin/register-settings.php:1282
+#: includes/admin/register-settings.php:1292
 msgid "The content of the email (Merge Tags and HTML are allowed)."
 msgstr ""
 
-#: includes/admin/register-settings.php:1287
+#: includes/admin/register-settings.php:1297
 msgid ""
 "The following wildcards can be used in email subjects, heading and content:"
 msgstr ""
@@ -4097,29 +4127,29 @@ msgid ""
 "full\">PayPal Privacy Policy</a> for more details."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:479
+#: includes/class-wpinv-subscriptions.php:498
 msgid "Subscription updated"
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:509
+#: includes/class-wpinv-subscriptions.php:528
 msgid ""
 "We are unable to renew this subscription as the parent invoice does not "
 "exist."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:512
+#: includes/class-wpinv-subscriptions.php:531
 msgid "This subscription has been renewed and extended."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:546
+#: includes/class-wpinv-subscriptions.php:565
 msgid "This subscription has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:548
+#: includes/class-wpinv-subscriptions.php:567
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:597
+#: includes/class-wpinv-subscriptions.php:616
 msgid "Manage Subscription"
 msgstr ""
 
@@ -6455,7 +6485,7 @@ msgstr ""
 #: includes/data/default-payment-form.php:19
 #: includes/data/payment-form-elements.php:325
 #: includes/data/payment-form-elements.php:329
-#: includes/data/sample-payment-form.php:19
+#: includes/data/sample-payment-form.php:19 widgets/checkout.php:77
 msgid "Billing Email"
 msgstr ""
 
@@ -6501,12 +6531,12 @@ msgid "Select Payment Method"
 msgstr ""
 
 #: includes/data/default-payment-form.php:173
-#: includes/data/sample-payment-form.php:65
+#: includes/data/sample-payment-form.php:65 widgets/checkout.php:116
 msgid "Pay Now »"
 msgstr ""
 
 #: includes/data/default-payment-form.php:174
-#: includes/data/sample-payment-form.php:66
+#: includes/data/sample-payment-form.php:66 widgets/checkout.php:117
 msgid ""
 "By continuing with your payment, you are agreeing to our privacy policy and "
 "terms of service."
@@ -15278,6 +15308,11 @@ msgstr ""
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
+#: includes/wpinv-template-functions.php:1829
+#: includes/wpinv-template-functions.php:1832
+msgid "Your transaction failed, please try again or contact site support."
+msgstr ""
+
 #: templates/invoice-history.php:87
 msgid "Pay Now"
 msgstr ""
@@ -16165,6 +16200,10 @@ msgstr ""
 msgid "Displays a checkout form."
 msgstr ""
 
+#: widgets/checkout.php:69
+msgid "This is a simple preview for a checkout form."
+msgstr ""
+
 #: widgets/getpaid.php:28
 msgid "Show payment forms or buttons."
 msgstr ""
@@ -16219,6 +16258,10 @@ msgstr ""
 
 #: widgets/invoice-receipt.php:27
 msgid "Displays invoice receipt after checkout."
+msgstr ""
+
+#: widgets/invoice-receipt.php:67
+msgid "This is a simple preview for a invoice receipt."
 msgstr ""
 
 #: widgets/invoice.php:24
