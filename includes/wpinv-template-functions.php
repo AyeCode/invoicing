@@ -1002,10 +1002,17 @@ function wpinv_checkout_form() {
 
     // Set the global invoice id.
     $wpi_checkout_id = $invoice_id;
+    $payment_form_id = (int) $invoice->get_meta( 'force_payment_form' );
+
+    if ( empty( $payment_form_id ) ) {
+        $payment_form_id = (int) $invoice->get_payment_form();
+    }
 
     // Retrieve appropriate payment form.
-    $payment_form = new GetPaid_Payment_Form( wpinv_translate_post_id( $invoice->get_meta( 'force_payment_form' ) ) );
-    $payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+    $payment_form = new GetPaid_Payment_Form( wpinv_translate_post_id( $payment_form_id ) );
+    if ( ! $payment_form->exists() ) {
+        $payment_form = new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+    }
 
     if ( ! $payment_form->exists() ) {
 
