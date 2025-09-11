@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.34 - 2025-09-TBD =
 * Check & use default payment form in checkout if already set - CHANGED
+* Sometimes Subscription marked as pending on renewal payment - FIXED
 
 = 2.8.33 - 2025-08-28 =
 * Added tool to add dynamic database strings for translations - ADDED

@@ -72,10 +72,10 @@ class WPInv_Subscriptions {
             'wpi-processing'   => 'pending',
             'wpi-onhold'       => 'pending',
             'publish'          => 'active',
-            'wpi-renewal'      => 'pending',
+            'wpi-renewal'      => 'active',
             'wpi-cancelled'    => 'cancelled',
             'wpi-pending'      => 'pending',
-            'wpi-refunded'     => 'cancelled',
+            'wpi-refunded'     => 'cancelled'
         );
 
         return isset( $status_mapping[ $invoice_status ] ) ? $status_mapping[ $invoice_status ] : 'pending';
@@ -87,6 +87,9 @@ class WPInv_Subscriptions {
      * @param WPInv_Invoice $invoice
      */
     public function maybe_deactivate_invoice_subscription( $invoice ) {
+        if ( ! empty( $invoice ) && $invoice->is_renewal() && $invoice->has_status( 'pending', 'wpi-pending', 'trash', 'future', 'draft', 'auto-draft' ) ) {
+            return;
+        }
 
         $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
 
@@ -101,10 +104,11 @@ class WPInv_Subscriptions {
         $new_status = $this->get_subscription_status_from_invoice_status( $invoice->get_status() );
 
         foreach ( $subscriptions as $subscription ) {
-            $subscription->set_status( $new_status );
-            $subscription->save();
+            if ( ! $subscription->has_status( $new_status . ' expired completed' ) ) {
+                $subscription->set_status( $new_status );
+                $subscription->save();
+            }
         }
-
     }
 
     /**

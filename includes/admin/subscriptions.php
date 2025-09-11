@@ -179,16 +179,18 @@ function getpaid_admin_subscription_details_metabox( $sub ) {
 	);
 
 	if ( ! $sub->is_active() ) {
+		if ( $sub->has_status( 'expired completed' ) ) {
+			$fields['renews_on'] = __( 'End Date', 'invoicing' );
+		} else {
+			if ( isset( $fields['renews_on'] ) ) {
+				unset( $fields['renews_on'] );
+			}
 
-		if ( isset( $fields['renews_on'] ) ) {
-			unset( $fields['renews_on'] );
+			if ( ! $sub->has_status( 'pending' ) && isset( $fields['gateway'] ) ) {
+				unset( $fields['gateway'] );
+			}
 		}
-
-		if ( isset( $fields['gateway'] ) ) {
-			unset( $fields['gateway'] );
-		}
-	} elseif ( $sub->is_last_renewal() ) {
-
+	} else if ( $sub->is_last_renewal() ) {
 		if ( isset( $fields['renews_on'] ) ) {
 			$fields['renews_on'] = __( 'End Date', 'invoicing' );
 		}
