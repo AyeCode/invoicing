@@ -18,7 +18,7 @@ wp_nonce_field( 'wpinv_tax_rules', 'wpinv_tax_rules_nonce' );
 ?>
 <div class="table-responsive">
     <table id="wpinv-tax-rules" class="widefat fixed table">
-        <caption><?php echo esc_html_e( 'You can use this section to create or edit your tax rules', 'invoicing' ); ?></caption>
+        <caption><?php esc_html_e( 'You can use this section to create or edit your tax rules', 'invoicing' ); ?></caption>
 
         <thead>
             <tr class="table-light">
