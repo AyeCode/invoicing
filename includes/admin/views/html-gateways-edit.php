@@ -12,7 +12,7 @@ ksort( $gateways );
 ?>
 <div class="table-responsive">
     <table id="wpinv_gateways_select" class="table border bg-white form-table">
-        <caption><?php echo esc_html_e( 'This table displays installed payment methods.', 'invoicing' ); ?></caption>
+        <caption><?php esc_html_e( 'This table displays installed payment methods.', 'invoicing' ); ?></caption>
 
         <thead>
             <tr class="table-light">
