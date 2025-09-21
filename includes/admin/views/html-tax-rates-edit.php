@@ -25,7 +25,7 @@ $reset_url = wp_nonce_url(
 ?>
 <div class="table-responsive">
     <table id="wpinv_tax_rates" class="widefat fixed table">
-        <caption><?php echo esc_html_e( 'Enter tax rates for specific regions.', 'invoicing' ); ?></caption>
+        <caption><?php esc_html_e( 'Enter tax rates for specific regions.', 'invoicing' ); ?></caption>
 
         <thead>
             <tr class="table-light">
