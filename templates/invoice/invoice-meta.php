@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$class = ! is_singular( 'page' ) ? 'px-1' : '';
+$class = ! is_singular( 'page' ) ? 'p-2' : '';
 ?>
 
         <?php do_action( 'getpaid_before_invoice_meta', $invoice ); ?>

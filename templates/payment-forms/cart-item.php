@@ -11,47 +11,40 @@
 
 defined( 'ABSPATH' ) || exit;
 
+global $aui_bs5;
+
 do_action( 'getpaid_before_payment_form_cart_item', $form, $item );
 
 $currency = $form->get_currency();
 $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 ?>
 <div class='getpaid-payment-form-items-cart-item getpaid-<?php echo $item->is_required() ? 'required' : 'selectable'; ?> item-<?php echo (int) $item->get_id(); ?> border-bottom py-2 px-3'>
-
 	<div class="form-row row align-items-center needs-validation">
-
 		<?php foreach ( array_keys( $columns ) as $key ) : ?>
-
 			<div class="<?php echo 'name' === $key ? 'col-6' : 'col'; ?> <?php echo ( in_array( $key, array( 'subtotal', 'quantity', 'tax_rate' ), true ) ) ? 'd-none d-sm-block' : ''; ?> position-relative getpaid-form-cart-item-<?php echo esc_attr( $key ); ?> getpaid-form-cart-item-<?php echo esc_attr( $key ); ?>-<?php echo (int) $item->get_id(); ?>">
-
 				<?php
-
 					// Fires before printing a line item column.
 					do_action( "getpaid_form_cart_item_before_$key", $item, $form );
 
 					// Item name.
 					if ( 'name' === $key ) {
-
-
 						ob_start();
-
 						// Add an optional description.
 						$description = $item->get_description();
 
 						if ( ! empty( $description ) ) {
-							echo "<small class='form-text text-muted pr-2 m-0'>" . wp_kses_post( $description ) . '</small>';
+							echo "<small class='form-text text-muted pr-1 pe-1 m-0'>" . wp_kses_post( $description ) . '</small>';
 						}
 
 						// Price help text.
 						$description = getpaid_item_recurring_price_help_text( $item, $currency );
 						if ( $description ) {
-							echo "<small class='getpaid-form-item-price-desc form-text text-muted font-italic pr-2 m-0'>" . wp_kses_post( $description ) . '</small>';
+							echo "<small class='getpaid-form-item-price-desc form-text text-muted font-italic pr-1 pe-1 m-0'>" . wp_kses_post( $description ) . '</small>';
 						}
 
 						do_action( 'getpaid_payment_form_cart_item_description', $item, $form );
 
 						if ( wpinv_current_user_can_manage_invoicing() ) {
-
 							edit_post_link(
 								__( 'Edit this item.', 'invoicing' ),
 								'<small class="form-text text-muted">',
@@ -59,7 +52,6 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 								$item->get_id(),
 								'text-danger'
 							);
-
 						}
 
 						$description = ob_get_clean();
@@ -71,8 +63,8 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 						if ( $has_featured_image ) {
 							echo '<div class="d-flex align-items-center getpaid-form-item-has-featured-image">';
-							echo '<div class="getpaid-form-item-image-container mr-2" style="width:85px;">';
-							echo get_the_post_thumbnail( $item->get_id(), array( 75, 75 ), array( 'class' => 'getpaid-form-item-image mb-0' ) );
+							echo '<div class="getpaid-form-item-image-container ' . ( $aui_bs5 ? 'me-3' : 'mr-3' ) . '" style="min-width:60px;width:60px">';
+							echo get_the_post_thumbnail( $item->get_id(), array( 60, 60 ), array( 'class' => 'getpaid-form-item-image mb-0' ) );
 							echo '</div>';
 							echo '<div class="getpaid-form-item-name-container">';
 						}
@@ -80,7 +72,7 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 						echo '<div class="mb-1 font-weight-bold">' . esc_html( $item->get_name() ) . wp_kses_post( $tootip ) . '</div>';
 
 						if ( ! empty( $description ) ) {
-							printf( '<span class="d-none d-sm-block getpaid-item-desc">%s</span>', wp_kses_post( $description ) );
+							printf( '<span class="d-none d-sm-block getpaid-item-desc lh-sm">%s</span>', wp_kses_post( $description ) );
 						}
 
 						if ( $item->allows_quantities() ) {
@@ -235,13 +227,9 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 
 					do_action( "getpaid_payment_form_cart_item_$key", $item, $form );
 				?>
-
 			</div>
-
 		<?php endforeach; ?>
-
 	</div>
-
 </div>
 <?php
 do_action( 'getpaid_payment_form_cart_item', $form, $item );
