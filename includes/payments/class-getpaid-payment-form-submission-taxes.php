@@ -129,8 +129,10 @@ class GetPaid_Payment_Form_Submission_Taxes {
 	 * @since 1.0.19
 	 * @return bool
 	 */
-	public static function is_eu_transaction( $customer_country ) {
-		return self::is_eu_country( $customer_country ) && self::is_eu_store();
+	public static function is_eu_transaction( $customer_country, $eu_store_check = false ) {
+		$is_eu_transaction = self::is_eu_country( $customer_country ) && ( ( $eu_store_check && self::is_eu_store() ) || ! $eu_store_check );
+
+		return apply_filters( 'getpaid_payment_form_submission_is_eu_transaction', $is_eu_transaction, $customer_country, $eu_store_check );
 	}
 
 	/**
