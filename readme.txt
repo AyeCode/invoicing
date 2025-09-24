@@ -144,6 +144,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.35 - 2025-09-TBD =
+* Minor BS5 compatibility changes - CHANGED
+* EU Vat validation is not working when store counrt is non EU - CHANGED
+
 = 2.8.34 - 2025-09-11 =
 * Check & use default payment form in checkout if already set - CHANGED
 * Sometimes Subscription marked as pending on renewal payment - FIXED
