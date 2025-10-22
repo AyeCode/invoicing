@@ -32,6 +32,14 @@
     padding: .5em 1em;
 }
 
+.getpaid-invoice-line-totals-col.subtotal {
+    background-color: #fcfcfc
+}
+
+.getpaid-invoice-line-totals-col.tax {
+    border-top: 1px solid #dee2e6;
+}
+
 .getpaid-invoice-line-totals-col.total {
     border-top: 1px solid #dee2e6;
     background-color: #fbfbfb

@@ -1158,6 +1158,16 @@ function wpinv_tools_callback( $args ) {
             </tr>
 
 			<tr>
+				<td><?php esc_html_e( 'Database Text Translation', 'invoicing' ); ?></td>
+				<td>
+					<small><?php esc_html_e( 'This tool will collect any strings stored in the database and put them in the file db-language.php, so those strings can be used to translate by translation tools.', 'invoicing' ); ?></small>
+				</td>
+				<td>
+					<a href=" <?php echo esc_url( wp_nonce_url( add_query_arg( 'getpaid-admin-action', 'translate_db_texts' ), 'getpaid-nonce', 'getpaid-nonce' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Run', 'invoicing' ); ?></a>
+				</td>
+			</tr>
+
+			<tr>
                 <td><?php esc_html_e( 'Set-up Wizard', 'invoicing' ); ?></td>
                 <td>
                     <small><?php esc_html_e( 'Launch the quick set-up wizard.', 'invoicing' ); ?></small>

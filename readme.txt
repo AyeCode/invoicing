@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.8.30
+Stable tag: 2.8.35
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,8 +144,19 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.31 - TBD =
-* Dynamic tax field labels based on country-specific tax configuration - ADDED
+= 2.8.35 - 2025-09-25 =
+* Minor BS5 compatibility changes - CHANGED
+* EU Vat validation is not working when store country is non EU - CHANGED
+
+= 2.8.34 - 2025-09-11 =
+* Check & use default payment form in checkout if already set - CHANGED
+* Sometimes Subscription marked as pending on renewal payment - FIXED
+
+= 2.8.33 - 2025-08-28 =
+* Added tool to add dynamic database strings for translations - ADDED
+* Merge AUI 0.2.41 & SD 1.2.26 - CHANGED
+
+= 2.8.31 - 2025-08-14 =
 * Subscription status not updating when invoice status changes - FIXED
 * Create pages with blocks when supports blocks on fresh install - CHANGED
 

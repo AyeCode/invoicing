@@ -48,7 +48,7 @@ $columns = apply_filters( 'getpaid_payment_form_cart_table_columns', $columns, $
             }
 
             // Display the cart totals.
-            wpinv_get_template( 'payment-forms/cart-totals.php', compact( 'form' ) );
+            wpinv_get_template( 'payment-forms/cart-totals.php', compact( 'form', 'columns' ) );
 
         ?>
     </div>

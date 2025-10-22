@@ -12,20 +12,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
+global $aui_bs5;
+
 do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
-
 ?>
-
 <div class='getpaid-invoice-item item-<?php echo (int) $item->get_id(); ?> item-type-<?php echo esc_attr( $item->get_type() ); ?> border-bottom'>
-
 	<div class="form-row row align-items-center">
-
 		<?php foreach ( array_keys( $columns ) as $column ) : ?>
-
 			<div class="<?php echo 'name' === $column ? 'col-12 col-sm-6' : 'col-12 col-sm'; ?> getpaid-invoice-item-<?php echo esc_attr( $column ); ?>">
-
 				<?php
-
 					// Fires before printing a line item column.
 					do_action( "getpaid_invoice_line_item_before_$column", $item, $invoice );
 
@@ -36,7 +31,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 						if ( $has_featured_image ) {
 							echo '<div class="d-flex align-items-center getpaid-form-item-has-featured-image">';
-							echo '<div class="getpaid-form-item-image-container mr-2" style="width:85px;">';
+							echo '<div class="getpaid-form-item-image-container ' . ( $aui_bs5 ? 'me-3' : 'mr-3' ) . '" style="min-width:75px;width:75px">';
 							echo get_the_post_thumbnail( $item->get_id(), array( 75, 75 ), array( 'class' => 'getpaid-form-item-image mb-0' ) );
 							echo '</div>';
 							echo '<div class="getpaid-form-item-name-container">';
@@ -49,7 +44,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 						$description = $item->get_description();
 
 						if ( ! empty( $description ) ) {
-							echo "<small class='form-text text-muted pr-2 m-0'>" . wp_kses_post( $description ) . '</small>';
+							echo "<small class='form-text text-muted pr-1 pe-1 m-0 lh-sm'>" . wp_kses_post( $description ) . '</small>';
 						}
 
 						// Fires before printing the line item actions.
@@ -108,14 +103,9 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 
 					// Fires after printing a line item column.
 					do_action( "getpaid_invoice_line_item_after_$column", $item, $invoice );
-
 				?>
-
 			</div>
-
 		<?php endforeach; ?>
-
 	</div>
-
 </div>
 <?php

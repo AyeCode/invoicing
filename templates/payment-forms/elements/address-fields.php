@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/elements/address-fields.php.
  *
- * @version 1.0.19
+ * @version 2.8.35
  * @var array $fields
  * @var string $field_type Either billing or shipping
  * @var string $uniqid A unique prefix for all ids
@@ -13,6 +13,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+global $aui_bs5;
 
 $field_type = sanitize_key( $field_type );
 
@@ -32,7 +34,6 @@ if ( ! empty( $user_id ) ) {
 }
 
 foreach ( $fields as $address_field ) {
-
     // Skip if it is hidden.
     if ( empty( $address_field['visible'] ) ) {
         continue;
@@ -45,10 +46,10 @@ foreach ( $fields as $address_field ) {
     $field_name  = "{$field_type}[$field_name]";
     $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
     $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
-    $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
-    $description = empty( $address_field['description'] ) ? '' : wp_kses_post( $address_field['description'] );
+    $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( __( wp_unslash( $address_field['placeholder'] ), 'invoicing' ) );
+    $description = empty( $address_field['description'] ) ? '' : wp_kses_post( __( wp_unslash( $address_field['description'] ), 'invoicing' ) );
     $value       = ! empty( $user_id ) ? get_user_meta( $user_id, '_' . $address_field['name'], true ) : '';
-    $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( $address_field['label'] );
+    $label       = empty( $address_field['label'] ) ? '' : wp_kses_post( __( wp_unslash( $address_field['label'] ), 'invoicing' ) );
 
     $method_name = 'get_' . str_replace( 'wpinv_', '', $address_field['name'] );
     if ( ! empty( $form->invoice ) && is_callable( array( $form->invoice, $method_name ) ) ) {
@@ -69,7 +70,6 @@ foreach ( $fields as $address_field ) {
 
     // Display the country.
     if ( 'wpinv_country' === $address_field['name'] ) {
-
         echo "<div class='form-group mb-3 " . esc_attr( $wrap_class ) . " getpaid-address-field-wrapper__country'";
 
         aui()->select(
@@ -95,7 +95,6 @@ foreach ( $fields as $address_field ) {
         );
 
         if ( wpinv_should_validate_vat_number() ) {
-
             aui()->input(
                 array(
                     'type'       => 'checkbox',
@@ -106,20 +105,14 @@ foreach ( $fields as $address_field ) {
                     'label'      => __( 'I certify that I live in the country selected above', 'invoicing' ) . "<span class='text-danger'> *</span>",
                     'value'      => 1,
                     'checked'    => true,
-                    'class'      => 'w-auto',
+                    'class'      => $aui_bs5 ? '' : 'w-auto',
                 ),
                 true
             );
-
         }
 
         echo '</div>';
-
-    }
-
-    // Display the state.
-    elseif ( 'wpinv_state' == $address_field['name'] ) {
-
+    } else if ( 'wpinv_state' == $address_field['name'] ) { // Display the state.
         if ( empty( $value ) ) {
             $value = wpinv_get_default_state();
         }
@@ -135,9 +128,7 @@ foreach ( $fields as $address_field ) {
             $field_name,
             true
         );
-
     } else {
-
         $key      = str_replace( 'wpinv_', '', $address_field['name'] );
         $key      = esc_attr( str_replace( '_', '-', $key ) );
         $autocomplete = '';
@@ -150,7 +141,6 @@ foreach ( $fields as $address_field ) {
             'phone'      => 'tel',
             'city'       => 'address-level2',
         );
-
 
         if ( isset( $replacements[ $key ] ) ) {
             $autocomplete = array(
@@ -190,7 +180,6 @@ foreach ( $fields as $address_field ) {
             ),
             true
         );
-
     }
 
     do_action( 'getpaid_payment_form_address_field_after_' . $address_field['name'], $field_type, $address_field );
