@@ -145,6 +145,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.31 - TBD =
+* Dynamic tax field labels based on country-specific tax configuration - ADDED
 * Subscription status not updating when invoice status changes - FIXED
 * Create pages with blocks when supports blocks on fresh install - CHANGED
 
