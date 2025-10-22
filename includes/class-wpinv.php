@@ -198,6 +198,7 @@ class WPInv_Plugin {
 		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-general-functions.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-helper-functions.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-tax-functions.php';
+		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-dynamic-tax-labels.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-template-functions.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/wpinv-address-functions.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/invoice-functions.php';
