@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.31 - TBD =
+* Dynamic tax field labels based on country-specific tax configuration - ADDED
+
 = 2.8.35 - 2025-09-25 =
 * Minor BS5 compatibility changes - CHANGED
 * EU Vat validation is not working when store country is non EU - CHANGED
