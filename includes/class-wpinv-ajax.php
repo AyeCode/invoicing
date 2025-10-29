@@ -104,6 +104,7 @@ class WPInv_Ajax {
             'run_tool'                      => false,
             'payment_form_refresh_prices'   => true,
             'file_upload'                   => true,
+            'validate_vat_number'           => true,
         );
 
         foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -1177,6 +1178,42 @@ class WPInv_Ajax {
         wp_send_json_success( $response );
 
 	}
+
+    /**
+     * Validates a VAT number via AJAX.
+     *
+     * @since 1.0.19
+     */
+    public static function validate_vat_number() {
+
+        // Check nonce.
+        check_ajax_referer( 'getpaid_form_nonce' );
+
+        if ( empty( $_POST['vat_number'] ) || empty( $_POST['country'] ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'VAT number and country are required.', 'invoicing' )
+            ));
+        }
+
+        $vat_number = sanitize_text_field( $_POST['vat_number'] );
+        $country    = sanitize_text_field( $_POST['country'] );
+
+        // Validate the VAT number
+        $is_valid = wpinv_validate_vat_number( $vat_number, $country );
+        
+        if ( $is_valid ) {
+            wp_send_json_success( array(
+                'message' => __( 'VAT number is valid.', 'invoicing' ),
+                'valid'   => true
+            ));
+        } else {
+            wp_send_json_error( array(
+                'message' => __( 'VAT number is invalid.', 'invoicing' ),
+                'valid'   => false
+            ));
+        }
+
+    }
 
 }
 

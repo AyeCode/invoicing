@@ -67,7 +67,12 @@ if ( ! empty( $columns ) ) {
 							<?php
 								// Total tax.
 								if ( in_array( $key, array( 'tax', 'discount', 'subtotal', 'total', 'fees' ), true ) ) {
-									wpinv_the_price( 0, $currency );
+									// Show actual tax amount if available, otherwise show 0
+									$tax_amount = 0;
+									if ( 'tax' === $key && ! empty( $form->submission ) ) {
+										$tax_amount = $form->submission->get_total_tax();
+									}
+									wpinv_the_price( $tax_amount, $currency );
 								}
 
 								do_action( "getpaid_payment_form_cart_totals_$key", $form );

@@ -471,7 +471,12 @@ jQuery(function ($) {
 				});
 
 				// VAT.
-				this.form.on('click', '.getpaid-vat-number-validate, [name="confirm-address"]', () => {
+				this.form.on('click', '.getpaid-vat-number-validate', (e) => {
+					e.preventDefault();
+					this.validate_vat_number();
+				});
+
+				this.form.on('click', '[name="confirm-address"]', () => {
 					on_field_change()
 				});
 
@@ -942,6 +947,58 @@ jQuery(function ($) {
 
 				});
 
+			},
+
+			// Validates a VAT number.
+			validate_vat_number() {
+				var vat_input = this.form.find('.wpinv_vat_number');
+				var country_input = this.form.find('.wpinv_country');
+				var validator = vat_input.parent().find('.getpaid-vat-number-validate');
+				
+				if (!vat_input.length || !country_input.length) {
+					return;
+				}
+				
+				var vat_number = vat_input.val();
+				var country = country_input.val();
+				
+				if (!vat_number || !country) {
+					this.show_error('Please enter both VAT number and country.', '.getpaid-error-billingwpinv_vat_number');
+					return;
+				}
+				
+				// Show loading state
+				validator.prop('disabled', true).text('Validating...');
+				
+				// Make AJAX request
+				$.post(WPInv.ajax_url, {
+					action: 'wpinv_validate_vat_number',
+					vat_number: vat_number,
+					country: country,
+					_ajax_nonce: WPInv.formNonce
+				})
+				.done((response) => {
+					if (response.success) {
+						validator.removeClass('btn-primary').addClass('btn-success').text('Valid');
+						vat_input.removeClass('is-invalid').addClass('is-valid');
+						this.hide_error();
+					} else {
+						validator.removeClass('btn-success').addClass('btn-danger').text('Invalid');
+						vat_input.removeClass('is-valid').addClass('is-invalid');
+						this.show_error(response.data.message, '.getpaid-error-billingwpinv_vat_number');
+					}
+				})
+				.fail(() => {
+					validator.removeClass('btn-success').addClass('btn-warning').text('Error');
+					this.show_error('Unable to validate VAT number. Please try again.', '.getpaid-error-billingwpinv_vat_number');
+				})
+				.always(() => {
+					validator.prop('disabled', false);
+					// Reset button after 3 seconds
+					setTimeout(() => {
+						validator.removeClass('btn-success btn-danger btn-warning').addClass('btn-primary').text(validator.data('validate'));
+					}, 3000);
+				});
 			},
 
 			// Inits a form.
