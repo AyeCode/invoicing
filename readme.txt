@@ -145,6 +145,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.31 - TBD =
+* VAT validation bypass allowing fake VAT numbers to zero-rate tax - FIXED
 * Dynamic tax field labels based on country-specific tax configuration - ADDED
 
 = 2.8.35 - 2025-09-25 =
