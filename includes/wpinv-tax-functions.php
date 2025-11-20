@@ -317,30 +317,24 @@ function wpinv_regex_validate_vat_number( $vat_number ) {
  * @return bool
  */
 function wpinv_vies_validate_vat_number( $vat_number ) {
+    $country = substr( $vat_number, 0, 2 );
+    $vatin   = substr( $vat_number, 2 );
 
-    $country    = substr( $vat_number, 0, 2 );
-    $vatin      = substr( $vat_number, 2 );
+    $soap_url = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
-    $url        = add_query_arg(
-        array(
-            'ms'  => rawurlencode( $country ),
-            'iso' => rawurlencode( $country ),
-            'vat' => rawurlencode( $vatin ),
-        ),
-        'http://ec.europa.eu/taxation_customs/vies/viesquer.do'
-    );
+    try {
+        $client = new SoapClient( $soap_url );
+        $result = $client->checkVat( array(
+            'countryCode' => $country,
+            'vatNumber'   => $vatin
+        ));
 
-    $response   = wp_remote_get( $url );
-    $response   = wp_remote_retrieve_body( $response );
-
-    // Fallback gracefully if the VIES website is down.
-    if ( empty( $response ) ) {
-        return true;
+        return $result->valid;
+        
+    } catch ( Exception $e ) {
+        return false;
     }
-
-    return 1 !== preg_match( '/invalid VAT number/i', $response );
-
-}
+}   
 
 /**
  * Validates a vat number.
@@ -357,6 +351,15 @@ function wpinv_validate_vat_number( $vat_number, $country ) {
 
     if ( wpinv_country_name( $_country ) === $_country ) {
         $vat_number = strtoupper( $country ) . $vat_number;
+    }
+
+    // Check if this is an EU country - only EU countries can be validated via VIES.
+    $regexes = wpinv_get_data( 'vat-number-regexes' );
+    $country_code = substr( $vat_number, 0, 2 );
+    
+    if ( ! isset( $regexes[ $country_code ] ) ) {
+        // Return false to prevent VAT zero-rating.
+        return false;
     }
 
     return wpinv_regex_validate_vat_number( $vat_number ) && wpinv_vies_validate_vat_number( $vat_number );
