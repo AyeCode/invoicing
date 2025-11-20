@@ -24,21 +24,17 @@ class GetPaid_Invoice_Notification_Emails {
 	 *
 	 */
 	public function __construct() {
-
-		$this->invoice_actions = apply_filters(
-			'getpaid_notification_email_invoice_triggers',
-			array(
-				'getpaid_new_invoice'                   => array( 'new_invoice', 'user_invoice' ),
-				'getpaid_invoice_status_wpi-cancelled'  => 'cancelled_invoice',
-				'getpaid_invoice_status_wpi-failed'     => 'failed_invoice',
-				'getpaid_invoice_status_wpi-onhold'     => 'onhold_invoice',
-				'getpaid_invoice_status_wpi-processing' => 'processing_invoice',
-				'getpaid_invoice_status_publish'        => 'completed_invoice',
-				'getpaid_invoice_status_wpi-renewal'    => 'completed_invoice',
-				'getpaid_invoice_status_wpi-refunded'   => 'refunded_invoice',
-				'getpaid_new_customer_note'             => 'user_note',
-				'getpaid_daily_maintenance'             => 'overdue',
-			)
+		$this->invoice_actions = array(
+			'getpaid_new_invoice'                   => array( 'new_invoice', 'user_invoice' ),
+			'getpaid_invoice_status_wpi-cancelled'  => 'cancelled_invoice',
+			'getpaid_invoice_status_wpi-failed'     => 'failed_invoice',
+			'getpaid_invoice_status_wpi-onhold'     => 'onhold_invoice',
+			'getpaid_invoice_status_wpi-processing' => 'processing_invoice',
+			'getpaid_invoice_status_publish'        => 'completed_invoice',
+			'getpaid_invoice_status_wpi-renewal'    => 'completed_invoice',
+			'getpaid_invoice_status_wpi-refunded'   => 'refunded_invoice',
+			'getpaid_new_customer_note'             => 'user_note',
+			'getpaid_daily_maintenance'             => 'overdue'
 		);
 
 		add_action( 'init', array( $this, 'init_hooks' ) );
@@ -48,6 +44,7 @@ class GetPaid_Invoice_Notification_Emails {
 	 * Registers email hooks.
 	 */
 	public function init_hooks() {
+		$this->invoice_actions = apply_filters( 'getpaid_notification_email_invoice_triggers', $this->invoice_actions );
 
 		add_filter( 'getpaid_get_email_merge_tags', array( $this, 'invoice_merge_tags' ), 10, 2 );
 		add_filter( 'getpaid_invoice_email_recipients', array( $this, 'filter_email_recipients' ), 10, 2 );

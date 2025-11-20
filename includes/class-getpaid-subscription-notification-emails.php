@@ -24,17 +24,13 @@ class GetPaid_Subscription_Notification_Emails {
      *
 	 */
 	public function __construct() {
-
-		$this->subscription_actions = apply_filters(
-			'getpaid_notification_email_subscription_triggers',
-			array(
-				'getpaid_subscription_active'    => 'subscription_active',
-				'getpaid_subscription_trialling' => 'subscription_trial',
-				'getpaid_subscription_cancelled' => 'subscription_cancelled',
-				'getpaid_subscription_expired'   => 'subscription_expired',
-				'getpaid_subscription_completed' => 'subscription_complete',
-				'getpaid_daily_maintenance'      => 'renewal_reminder'
-			)
+		$this->subscription_actions = array(
+			'getpaid_subscription_active'    => 'subscription_active',
+			'getpaid_subscription_trialling' => 'subscription_trial',
+			'getpaid_subscription_cancelled' => 'subscription_cancelled',
+			'getpaid_subscription_expired'   => 'subscription_expired',
+			'getpaid_subscription_completed' => 'subscription_complete',
+			'getpaid_daily_maintenance'      => 'renewal_reminder'
 		);
 
 		add_action( 'init', array( $this, 'init_hooks' ) );
@@ -44,10 +40,11 @@ class GetPaid_Subscription_Notification_Emails {
 	 * Registers email hooks.
 	 */
 	public function init_hooks() {
+		$this->subscription_actions = apply_filters( 'getpaid_notification_email_subscription_triggers', $this->subscription_actions );
 
 		add_filter( 'getpaid_get_email_merge_tags', array( $this, 'subscription_merge_tags' ), 10, 2 );
-		foreach ( $this->subscription_actions as $hook => $email_type ) {
 
+		foreach ( $this->subscription_actions as $hook => $email_type ) {
 			$email = new GetPaid_Notification_Email( $email_type );
 
 			if ( ! $email->is_active() ) {
@@ -60,9 +57,7 @@ class GetPaid_Subscription_Notification_Emails {
 			}
 
 			do_action( 'getpaid_subscription_notification_email_register_hook', $email_type, $hook );
-
 		}
-
 	}
 
 	/**

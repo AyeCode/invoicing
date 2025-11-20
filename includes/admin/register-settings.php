@@ -936,6 +936,7 @@ function wpinv_rich_editor_callback( $args ) {
 				'textarea_name' => 'wpinv_settings[' . esc_attr( $args['id'] ) . ']',
 				'textarea_rows' => absint( $rows ),
 				'media_buttons' => false,
+				'editor_class'  => ! empty( $args['class'] ) ? esc_attr( $args['class'] ) : ''
             )
         );
 	} else {

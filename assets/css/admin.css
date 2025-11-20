@@ -1819,6 +1819,9 @@ textarea.wpi-email_overdue_content {
     vertical-align: top;
     padding: 0 8px;
 }
+.wpi-wpinv-settings table.form-table textarea.gp-email-editor {
+    width: 100%;
+}
 
 .getpaid-settings-editor-input {
     width: 620px;
