@@ -143,47 +143,44 @@ class WPInv_Subscriptions {
         return getpaid_get_subscription_period_label( $period, $frequency_count );
     }
 
-    /**
-     * Handles cancellation requests for a subscription
-     *
-     * @access      public
-     * @since       1.0.0
-     * @return      void
-     */
-    public function user_cancel_single_subscription( $data ) {
+	/**
+	 * Handles cancellation requests for a subscription
+	 *
+	 * @access      public
+	 * @since       1.0.0
+	 * @return      void
+	 */
+	public function user_cancel_single_subscription( $data ) {
+		// Ensure there is a subscription to cancel.
+		if ( empty( $data['subscription'] ) ) {
+			return;
+		}
 
-        // Ensure there is a subscription to cancel.
-        if ( empty( $data['subscription'] ) ) {
-            return;
-        }
+		$subscription = new WPInv_Subscription( (int) $data['subscription'] );
 
-        $subscription = new WPInv_Subscription( (int) $data['subscription'] );
+		if ( ! $subscription->exists() || $subscription->get_customer_id() != get_current_user_id() ) {
+			// Ensure that it exists and that it belongs to the current user.
+			$notice = 'perm_cancel_subscription';
+		} else if ( ! $subscription->can_cancel() ) {
+			// Can it be cancelled.
+			$notice = 'cannot_cancel_subscription';
+		} else {
+			// Cancel it.
+			$subscription->get_parent_payment()->add_note( wp_sprintf( __( 'User has initiated a subscription cancellation #%d.', 'invoicing' ), $subscription->get_id() ), false, false, true );
 
-        // Ensure that it exists and that it belongs to the current user.
-        if ( ! $subscription->exists() || $subscription->get_customer_id() != get_current_user_id() ) {
-            $notice = 'perm_cancel_subscription';
+			$subscription->cancel();
+			$notice = 'cancelled_subscription';
+		}
 
-        // Can it be cancelled.
-        } elseif ( ! $subscription->can_cancel() ) {
-            $notice = 'cannot_cancel_subscription';
+		$redirect = array(
+			'getpaid-action' => false,
+			'getpaid-nonce'  => false,
+			'wpinv-notice'   => $notice,
+		);
 
-        // Cancel it.
-        } else {
-
-            $subscription->cancel();
-            $notice = 'cancelled_subscription';
-        }
-
-        $redirect = array(
-            'getpaid-action' => false,
-            'getpaid-nonce'  => false,
-            'wpinv-notice'   => $notice,
-        );
-
-        wp_safe_redirect( add_query_arg( $redirect ) );
-        exit;
-
-    }
+		wp_safe_redirect( add_query_arg( $redirect ) );
+		exit;
+	}
 
     /**
      * Creates a subscription(s) for an invoice.
