@@ -1122,7 +1122,7 @@ class WPInv_Ajax {
         check_ajax_referer( 'getpaid_form_nonce' );
 
         if ( empty( $_POST['form_id'] ) || empty( $_POST['field_name'] ) || empty( $_FILES['file'] ) ) {
-            wp_die( esc_html_e( 'Bad Request', 'invoicing' ), 400 );
+            wp_die( esc_html__( 'Bad Request', 'invoicing' ), 400 );
         }
 
         // Fetch form.
