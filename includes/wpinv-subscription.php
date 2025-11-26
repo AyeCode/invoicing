@@ -909,15 +909,16 @@ class WPInv_Subscription extends GetPaid_Data {
 		return $this->after_add_payment( $invoice );
 	}
 
-    public function after_add_payment( $invoice ) {
+	public function after_add_payment( $invoice ) {
+		$this->get_parent_payment()->add_note( wp_sprintf( __( 'Renewal invoice %s created.', 'invoicing' ), $invoice->get_number() ), false, false, true );
 
 		do_action( 'getpaid_after_create_subscription_renewal_invoice', $invoice, $this );
 		do_action( 'wpinv_recurring_add_subscription_payment', $invoice, $this );
-        do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->get_parent_invoice_id(), $invoice->get_recurring_total(), $invoice->get_transaction_id() );
+		do_action( 'wpinv_recurring_record_payment', $invoice->get_id(), $this->get_parent_invoice_id(), $invoice->get_recurring_total(), $invoice->get_transaction_id() );
 
-        update_post_meta( $invoice->get_id(), '_wpinv_subscription_id', $this->id );
+		update_post_meta( $invoice->get_id(), '_wpinv_subscription_id', $this->id );
 
-        return $invoice->get_id();
+		return $invoice->get_id();
 	}
 
 	/**
@@ -1238,36 +1239,31 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		if ( $status_transition ) {
 			try {
+				if ( ! empty( $status_transition['from'] ) ) {
+					/* translators: 1: old subscription status 2: new subscription status */
+					$transition_note = sprintf( __( 'Subscription status changed from %1$s to %2$s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['from'] ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
+				} else {
+					/* translators: %s: new invoice status */
+					$transition_note = sprintf( __( 'Subscription status set to %s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
+				}
+
+				// Note the transition occurred.
+				$this->get_parent_payment()->add_note( $transition_note, false, false, true );
 
 				// Fire a hook for the status change.
 				do_action( 'wpinv_subscription_' . $status_transition['to'], $this->get_id(), $this, $status_transition );
 				do_action( 'getpaid_subscription_' . $status_transition['to'], $this, $status_transition );
 
 				if ( ! empty( $status_transition['from'] ) ) {
-
-					/* translators: 1: old subscription status 2: new subscription status */
-					$transition_note = sprintf( __( 'Subscription status changed from %1$s to %2$s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['from'] ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
-
-					// Note the transition occurred.
-					$this->get_parent_payment()->add_note( $transition_note, false, false, true );
-
 					// Fire another hook.
 					do_action( 'getpaid_subscription_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
 					do_action( 'getpaid_subscription_status_changed', $this, $status_transition['from'], $status_transition['to'] );
-
-				} else {
-					/* translators: %s: new invoice status */
-					$transition_note = sprintf( __( 'Subscription status set to %s.', 'invoicing' ), getpaid_get_subscription_status_label( $status_transition['to'] ) );
-
-					// Note the transition occurred.
-					$this->get_parent_payment()->add_note( $transition_note, false, false, true );
 
 				}
 			} catch ( Exception $e ) {
 				$this->get_parent_payment()->add_note( __( 'Error during subscription status transition.', 'invoicing' ) . ' ' . $e->getMessage() );
 			}
 		}
-
 	}
 
 	/**
