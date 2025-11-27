@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.8.35
+Stable tag: 2.8.36
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.36 - TBD =
+= 2.8.36 - 2025-11-27 =
 * VAT validation bypass allowing fake VAT numbers to zero-rate tax - FIXED
 * Dynamic tax field labels based on country-specific tax configuration - ADDED
 * Changes for Stripe renewal payment fail notification email issue - FIXED
