@@ -1899,3 +1899,21 @@ function getpaid_parse_field_options( $options, $translated = true ) {
 
 	return apply_filters( 'getpaid_parse_field_options', $options, $orig_options, $translated );
 }
+
+/**
+ * Prevent invoice post types from Rank Math processing links.
+ *
+ * @since 2.8.36
+ *
+ * @param bool    $process True to process.
+ * @param WP_Post $post The post object.
+ * @return bool True to process.
+ */
+function getpaid_rank_math_links_process_post( $process, $post ) {
+	if ( ! empty( $post ) && ! empty( $post->post_type ) && in_array( $post->post_type, array( 'wpi_discount', 'wpi_invoice', 'wpi_payment_form' ) ) ) {
+		$process = false;
+	}
+
+	return $process;
+}
+add_filter( 'rank_math/links/process_post', 'getpaid_rank_math_links_process_post', 99, 2 );
