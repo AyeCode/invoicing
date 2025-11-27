@@ -3666,6 +3666,10 @@ class WPInv_Invoice extends GetPaid_Data {
 				$tax_name = implode( $sep, $names );
 			}
 
+			if ( empty( $tax_name ) ) {
+				$tax_name = _x( 'Tax', 'Tax name', 'invoicing' );
+			}
+
 			if ( $percentage ) {
 				$tax_name = wp_sprintf( _x( '%s (%%)', 'Tax name with %. Ex: Tax (%)', 'invoicing' ), $tax_name );
 			}
