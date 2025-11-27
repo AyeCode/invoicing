@@ -144,10 +144,11 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.31 - TBD =
+= 2.8.36 - TBD =
 * VAT validation bypass allowing fake VAT numbers to zero-rate tax - FIXED
 * Dynamic tax field labels based on country-specific tax configuration - ADDED
 * Changes for Stripe renewal payment fail notification email issue - FIXED
+* Conflicts with Rank Math SEO on Leads page - FIXED
 
 = 2.8.35 - 2025-09-25 =
 * Minor BS5 compatibility changes - CHANGED
