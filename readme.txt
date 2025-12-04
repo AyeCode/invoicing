@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.8.36
+Stable tag: 2.8.37
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -144,7 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.37 - TBD =
+= 2.8.37 - 2025-12-04 =
 * WordPress 6.9 compatibility check - COMPATIBILITY
 
 = 2.8.36 - 2025-11-27 =
