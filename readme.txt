@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.38 - 2025-12-TBD =
+* Check for Soap class before validating VAT number with VIES - FIXED
+
 = 2.8.37 - 2025-12-04 =
 * WordPress 6.9 compatibility check - COMPATIBILITY
 
