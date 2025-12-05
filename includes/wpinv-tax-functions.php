@@ -320,6 +320,11 @@ function wpinv_vies_validate_vat_number( $vat_number ) {
     $country = substr( $vat_number, 0, 2 );
     $vatin   = substr( $vat_number, 2 );
 
+	// Check Soap is enabled in PHP settings.
+	if ( ! class_exists( 'SoapClient' ) ) {
+		return wpinv_regex_validate_vat_number( $vat_number );
+	}
+
     $soap_url = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
     try {
