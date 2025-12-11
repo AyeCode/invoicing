@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.36\n"
+"Project-Id-Version: GetPaid 2.8.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-27 18:57+0530\n"
-"PO-Revision-Date: 2025-11-27 18:57+0530\n"
+"POT-Creation-Date: 2025-12-11 18:33+0530\n"
+"PO-Revision-Date: 2025-12-11 18:34+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -782,7 +782,7 @@ msgid "Via %s"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:326
-#: includes/class-wpinv-invoice.php:4125
+#: includes/class-wpinv-invoice.php:4129
 #, php-format
 msgid "Paid via %s"
 msgstr ""
@@ -3929,36 +3929,37 @@ msgstr ""
 msgid "This item is not available for purchase"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3621 includes/class-wpinv-invoice.php:3673
+#: includes/class-wpinv-invoice.php:3621 includes/class-wpinv-invoice.php:3670
+#: includes/class-wpinv-invoice.php:3677
 msgctxt "Tax name"
 msgid "Tax"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3670
+#: includes/class-wpinv-invoice.php:3674
 #, php-format
 msgctxt "Tax name with %. Ex: Tax (%)"
 msgid "%s (%%)"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3673
+#: includes/class-wpinv-invoice.php:3677
 msgid "Tax (%)"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3982
+#: includes/class-wpinv-invoice.php:3986
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4011
+#: includes/class-wpinv-invoice.php:4015
 #, php-format
 msgid "Status set to %s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4018
+#: includes/class-wpinv-invoice.php:4022
 msgid "Error during status transition."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4114
+#: includes/class-wpinv-invoice.php:4118
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -15251,15 +15252,15 @@ msgstr ""
 msgid "Error during subscription status transition."
 msgstr ""
 
-#: includes/wpinv-tax-functions.php:495
+#: includes/wpinv-tax-functions.php:500
 msgid "Standard Tax Rate"
 msgstr ""
 
-#: includes/wpinv-tax-functions.php:496
+#: includes/wpinv-tax-functions.php:501
 msgid "Reduced Tax Rate"
 msgstr ""
 
-#: includes/wpinv-tax-functions.php:497
+#: includes/wpinv-tax-functions.php:502
 msgid "Tax Exempt"
 msgstr ""
 
