@@ -1263,11 +1263,13 @@ function getpaid_get_invoice_meta( $invoice ) {
 
             if ( $invoice->is_parent() ) {
 
+                $recurring_item = $invoice->get_recurring( true );
+
                 // Display the recurring amount.
                 $meta['recurring_total'] = array(
 
                     'label' => __( 'Recurring Amount', 'invoicing' ),
-                    'value' => wpinv_price( $subscription->get_recurring_amount(), $invoice->get_currency() ),
+                    'value' => getpaid_item_recurring_price_help_text( $recurring_item ),
 
                 );
 
