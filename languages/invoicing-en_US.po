@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.38\n"
+"Project-Id-Version: GetPaid 2.8.39\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-11 18:33+0530\n"
-"PO-Revision-Date: 2025-12-11 18:34+0530\n"
+"POT-Creation-Date: 2025-12-18 15:49+0530\n"
+"PO-Revision-Date: 2025-12-18 15:49+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -15233,22 +15233,22 @@ msgstr ""
 msgid "Unable to verify that you're not a robot. Please try again."
 msgstr ""
 
-#: includes/wpinv-subscription.php:913
+#: includes/wpinv-subscription.php:930
 #, php-format
 msgid "Renewal invoice %s created."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1244
+#: includes/wpinv-subscription.php:1261
 #, php-format
 msgid "Subscription status changed from %1$s to %2$s."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1247
+#: includes/wpinv-subscription.php:1264
 #, php-format
 msgid "Subscription status set to %s."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1264
+#: includes/wpinv-subscription.php:1281
 msgid "Error during subscription status transition."
 msgstr ""
 

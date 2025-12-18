@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.8.38
+Stable tag: 2.8.39
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.39 - 2025-12-18 =
+* Hook added to filter renewal payment invoice data - ADDED
 
 = 2.8.38 - 2025-12-11 =
 * Check for Soap class before validating VAT number with VIES - FIXED
