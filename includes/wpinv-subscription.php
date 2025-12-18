@@ -586,7 +586,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * Set the initial amount for the subscription.
 	 *
 	 * @since 1.0.19
-	 * @param  float $value The initial subcription amount.
+	 * @param  float $value The initial subscription amount.
 	 */
 	public function set_initial_amount( $value ) {
 		$this->set_prop( 'initial_amount', wpinv_sanitize_amount( $value ) );
@@ -862,20 +862,21 @@ class WPInv_Subscription extends GetPaid_Data {
         return (int) $times_billed;
     }
 
-    /**
-     * Records a new payment on the subscription
-     *
-     * @since  2.4
-     * @param  array $args Array of values for the payment, including amount and transaction ID
+	/**
+	 * Records a new payment on the subscription
+	 *
+	 * @since  2.4
+	 * @param  array $args Array of values for the payment, including amount and transaction ID
 	 * @param  WPInv_Invoice $invoice If adding an existing invoice.
-     * @return bool
-     */
-    public function add_payment( $args = array(), $invoice = false ) {
-
+	 * @return bool
+	 */
+	public function add_payment( $args = array(), $invoice = false ) {
 		// Process each payment once.
-        if ( ! empty( $args['transaction_id'] ) && $this->payment_exists( $args['transaction_id'] ) ) {
-            return false;
-        }
+		if ( ! empty( $args['transaction_id'] ) && $this->payment_exists( $args['transaction_id'] ) ) {
+			return false;
+		}
+
+		$orig_invoice = $invoice;
 
 		// Are we creating a new invoice?
 		if ( empty( $invoice ) ) {
@@ -892,7 +893,11 @@ class WPInv_Subscription extends GetPaid_Data {
 		}
 
 		// Set the completed date.
-		$invoice->set_completed_date( current_time( 'mysql' ) );
+		if ( ! empty( $args['completed_date'] ) ) {
+			$invoice->set_completed_date( $args['completed_date'] );
+		} else {
+			$invoice->set_completed_date( current_time( 'mysql' ) );
+		}
 
 		// And the gateway.
 		if ( ! empty( $args['gateway'] ) ) {
@@ -900,6 +905,18 @@ class WPInv_Subscription extends GetPaid_Data {
 		}
 
 		$invoice->set_status( 'wpi-renewal' );
+
+		/**
+		 * Filter invoice object to create renewal payment.
+		 *
+		 * @since 2.8.39
+		 *
+		 * @param object $invoice      Invoice object.
+		 * @param array  $args         Invoice args.
+		 * @param object $orig_invoice Main invoice object.
+		 */
+		$invoice = apply_filters( 'getpaid_subscription_add_payment_invoice', $invoice, $args, $orig_invoice );
+
 		$invoice->save();
 
 		if ( ! $invoice->exists() ) {
