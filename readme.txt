@@ -144,6 +144,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.40 - TBD =
+* Added bulk actions for admin subscriptions list table - ADDED
+
 = 2.8.39 - 2025-12-18 =
 * Hook added to filter renewal payment invoice data - ADDED
 

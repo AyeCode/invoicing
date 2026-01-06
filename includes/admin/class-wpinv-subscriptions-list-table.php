@@ -65,6 +65,14 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	public $per_page = 10;
 
 	/**
+	 * Bulk action notice to display.
+	 *
+	 * @var   array
+	 * @since 2.8.37
+	 */
+	public $bulk_action_notice = array();
+
+	/**
 	 *  Constructor function.
 	 */
 	public function __construct() {
@@ -484,10 +492,89 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Bulk actions supported by the subscriptions table.
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions() {
+		$actions = array(
+			'delete' => __( 'Delete', 'invoicing' ),
+			'change_status' => __( 'Change status', 'invoicing' ),
+		);
+
+		return apply_filters( 'getpaid_subscriptions_table_bulk_actions', $actions );
+	}
+
+	/**
 	 * Processes bulk actions.
 	 *
 	 */
 	public function process_bulk_action() {
+
+		$action = $this->current_action();
+
+		if ( empty( $action ) ) {
+			return;
+		}
+
+		// Validate capabilities.
+		if ( ! wpinv_current_user_can_manage_invoicing() ) {
+			return;
+		}
+
+		// Validate nonce.
+		check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
+		$ids = isset( $_REQUEST['id'] ) ? array_map( 'absint', (array) $_REQUEST['id'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( empty( $ids ) ) {
+			return;
+		}
+
+		switch ( $action ) {
+			case 'delete':
+				foreach ( $ids as $id ) {
+					$subscription = new WPInv_Subscription( $id );
+
+					if ( $subscription->exists() ) {
+						$subscription->delete();
+					}
+				}
+
+				$this->bulk_action_notice = array(
+					'type'    => 'success',
+					'message' => __( 'Selected subscriptions have been deleted.', 'invoicing' ),
+				);
+				break;
+
+			case 'change_status':
+				$new_status       = isset( $_POST['bulk_status'] ) ? sanitize_text_field( wp_unslash( $_POST['bulk_status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$allowed_statuses = array_keys( getpaid_get_subscription_statuses() );
+
+				if ( empty( $new_status ) || ! in_array( $new_status, $allowed_statuses, true ) ) {
+					$this->bulk_action_notice = array(
+						'type'    => 'error',
+						'message' => __( 'Please select a valid status.', 'invoicing' ),
+					);
+					return;
+				}
+
+				foreach ( $ids as $id ) {
+					$subscription = new WPInv_Subscription( $id );
+
+					if ( $subscription->exists() ) {
+						$subscription->set_status( $new_status );
+						$subscription->save();
+					}
+				}
+
+				/* translators: %s: subscription status label */
+				$this->bulk_action_notice = array(
+					'type'    => 'success',
+					'message' => sprintf( __( 'Selected subscriptions updated to %s.', 'invoicing' ), esc_html( getpaid_get_subscription_status_label( $new_status ) ) ),
+				);
+				break;
+		}
 
 	}
 

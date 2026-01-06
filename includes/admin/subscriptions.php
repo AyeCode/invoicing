@@ -59,17 +59,55 @@ function wpinv_subscriptions_page() {
  * @return      void
  */
 function getpaid_print_subscriptions_list() {
-
+	global $aui_bs5;
+	
 	$subscribers_table = new WPInv_Subscriptions_List_Table();
 	$subscribers_table->prepare_items();
+	$subscription_statuses = getpaid_get_subscription_statuses();
+
+	if ( ! empty( $subscribers_table->bulk_action_notice ) ) {
+		$notice = $subscribers_table->bulk_action_notice;
+		$type   = esc_attr( $notice['type'] );
+		$message = wp_kses_post( $notice['message'] );
+		echo "<div class='notice notice-{$type} is-dismissible'><p>{$message}</p></div>";
+	}
 
 	?>
 	<?php $subscribers_table->views(); ?>
-	<form id="subscribers-filter" class="bsui" method="get">
+	<form id="subscribers-filter" class="bsui" method="post">
+		<?php wp_nonce_field( 'bulk-' . $subscribers_table->_args['plural'] ); ?>
 		<input type="hidden" name="page" value="wpinv-subscriptions" />
+		<?php if ( ! empty( $_GET['status'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<input type="hidden" name="status" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['status'] ) ) ); ?>" />
+		<?php endif; ?>
+		<?php if ( ! empty( $_GET['orderby'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<input type="hidden" name="orderby" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) ); ?>" />
+		<?php endif; ?>
+		<?php if ( ! empty( $_GET['order'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<input type="hidden" name="order" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ); ?>" />
+		<?php endif; ?>
+		<?php if ( ! empty( $_GET['s'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<input type="hidden" name="s" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ); ?>" />
+		<?php endif; ?>
 		<?php $subscribers_table->search_box( __( 'Search Subscriptions', 'invoicing' ), 'getpaid-search-subscriptions' ); ?>
 		<?php $subscribers_table->display(); ?>
 	</form>
+
+	<script type="text/html" id="tmpl-getpaid-bulk-change-subscription-status">
+		<div class="form-group mb-3">
+			<label for="getpaid-bulk-status-select" class="form-label <?php echo $aui_bs5 ? 'fw-bold' : 'fw-semibold'; ?>"><?php esc_html_e( 'Select new status', 'invoicing' ); ?></label>
+			<select id="getpaid-bulk-status-select" class="form-select w-100">
+				<option value=""><?php esc_html_e( 'Select status', 'invoicing' ); ?></option>
+				<?php foreach ( $subscription_statuses as $status_key => $status_label ) : ?>
+					<option value="<?php echo esc_attr( $status_key ); ?>"><?php echo esc_html( $status_label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+		<div class="d-flex justify-content-end gap-2">
+			<button type="button" class="btn btn-outline-secondary btn-md getpaid-bulk-status-cancel" <?php echo $aui_bs5 ? 'data-bs-dismiss="modal"' : 'data-dismiss="modal"'; ?>><?php esc_html_e( 'Cancel', 'invoicing' ); ?></button>
+			<button type="button" class="btn btn-primary btn-md getpaid-bulk-status-apply"><?php esc_html_e( 'Change status', 'invoicing' ); ?></button>
+		</div>
+	</script>
 	<?php
 }
 
