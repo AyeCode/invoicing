@@ -1578,6 +1578,113 @@ jQuery(function ($) {
     $( '[name="wpinv_settings[data_retention_method]"' ).on( 'change', toggleDataRetentionSettings );
     toggleDataRetentionSettings();
 
+	/**
+	 * Bulk change subscription status.
+	 */
+	var wpinv_bulk_change_subscription_status = {
+		selectors: {
+			template: '#tmpl-getpaid-bulk-change-subscription-status',
+			form: '#subscribers-filter',
+			actions: '#doaction, #doaction2',
+			statusSelect: '#getpaid-bulk-status-select'
+		},
+		/**
+		 * Initialize the bulk change subscription status.
+		 * @returns 
+		 */
+		init: function () {
+			this.template = $(this.selectors.template);
+			if (!this.template.length) {
+				return;
+			}
+
+			$(this.selectors.actions).on('click', this.handleActionClick.bind(this));
+		},
+
+		/**
+		 * Handle action click.
+		 * @param {*} e 
+		 * @returns 
+		 */
+		handleActionClick: function (e) {
+			var actionSelect = $(e.currentTarget).attr('id') === 'doaction' ? $('select[name="action"]') : $('select[name="action2"]');
+			var action = actionSelect.val();
+
+			// Check if subscriptions are selected.
+			if ($('input[name="id[]"]:checked').length === 0) {
+				e.preventDefault();
+				window.alert(WPInv_Admin.change_sub_status_notice);
+				return;
+			}
+
+			// Handle delete action with confirmation.
+			if (action === 'delete') {
+				e.preventDefault();
+				var self = this;
+				aui_confirm(
+					WPInv_Admin.delete_subscriptions,
+					WPInv_Admin.txt_delete,
+					WPInv_Admin.action_cancel,
+					true
+				).then(function (confirmed) {
+					if (confirmed) {
+						$(self.selectors.form).trigger('submit');
+					}
+				});
+				return;
+			}
+
+			// Handle change_status action.
+			if (action === 'change_status') {
+				e.preventDefault();
+				this.openModal();
+				return;
+			}
+		},
+		/**
+		 * Open the modal.
+		 * @returns 
+		 */
+		openModal: function () {
+			aui_modal(WPInv_Admin.change_sub_status_title, this.template.html(), '', true, '', 'subscription-status-modal');
+			
+			var modal = $('.aui-modal');
+
+			modal.on('click', '.getpaid-bulk-status-cancel', function (e) {
+				e.preventDefault();
+				var $modal = $('.aui-modal');
+				if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+					var bsModal = bootstrap.Modal.getInstance($modal[0]);
+					if (bsModal) {
+						bsModal.hide();
+					}
+				} else {
+					$modal.modal('hide');
+				}
+			});
+
+			modal.on('click', '.getpaid-bulk-status-apply', function (e) {
+				e.preventDefault();
+				var $button = $(this);
+				var $modal = $('.aui-modal');
+				var status = $modal.find(wpinv_bulk_change_subscription_status.selectors.statusSelect).val();
+
+				if (!status) {
+					$modal.find(wpinv_bulk_change_subscription_status.selectors.statusSelect).focus();
+					return;
+				}
+
+				$button.prop('disabled', true);
+				$button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + WPInv_Admin.loading);
+
+				$(wpinv_bulk_change_subscription_status.selectors.form).find('input[name="bulk_status"]').remove();
+				$('<input>', { type: 'hidden', name: 'bulk_status', value: status }).appendTo(wpinv_bulk_change_subscription_status.selectors.form);
+				$(wpinv_bulk_change_subscription_status.selectors.form).trigger('submit');
+			});
+		}
+	};
+	wpinv_bulk_change_subscription_status.init();
+
 	// check int input to not accept -ve numbers or strings.
 	$(document).on('input', '[name="wpinv_item_price"], [name="wpinv_minimum_price"], input.getpaid-force-integer', function (e) {
 		var $input = $(this);

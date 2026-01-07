@@ -1094,6 +1094,11 @@ textarea.wpi-email_overdue_content {
     width: 140px;
 }
 
+/* Bulk change subscription status modal */
+.modal .modal-dialog.subscription-status-modal {
+    max-width: 400px;
+}
+
 #poststuff #getpaid_admin_subscription_invoice_details_metabox .inside,
 #poststuff #getpaid_admin_subscription_item_details_metabox .inside,
 #poststuff #getpaid_admin_subscription_related_subscriptions_metabox .inside,

@@ -183,9 +183,10 @@ class GetPaid_Admin {
             'confirmCalcTotals'         => __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' ),
             'AreYouSure'                => __( 'Are you sure?', 'invoicing' ),
             'errDeleteItem'             => __( 'This item is in use! Before delete this item, you need to delete all the invoice(s) using this item.', 'invoicing' ),
-            'delete_subscription'       => __( 'Are you sure you want to delete this subscription?', 'invoicing' ),
+            'delete_subscriptions'       => __( 'Are you sure you want to delete the selected subscriptions?', 'invoicing' ),
             'action_edit'               => __( 'Edit', 'invoicing' ),
             'action_cancel'             => __( 'Cancel', 'invoicing' ),
+            'txt_delete'                => __( 'Delete', 'invoicing' ),
             'item_description'          => __( 'Item Description', 'invoicing' ),
             'invoice_description'       => __( 'Invoice Description', 'invoicing' ),
             'discount_description'      => __( 'Discount Description', 'invoicing' ),
@@ -193,6 +194,8 @@ class GetPaid_Admin {
 			'loading'                   => __( 'Loading...', 'invoicing' ),
 			'search_customers'          => __( 'Enter customer name or email', 'invoicing' ),
 			'search_items'              => __( 'Enter item name', 'invoicing' ),
+			'change_sub_status_title'   => __( 'Change subscription status', 'invoicing' ),
+			'change_sub_status_notice'  => __( 'Please select at least one subscription.', 'invoicing' ),
 			'graphs'                    => array_merge( array( 'refunded_fees', 'refunded_items', 'refunded_subtotal', 'refunded_tax' ), array_keys( wpinv_get_report_graphs() ) ),
         );
 
