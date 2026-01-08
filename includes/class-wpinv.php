@@ -362,17 +362,26 @@ class WPInv_Plugin {
 		// Fires before adding scripts.
 		do_action( 'getpaid_enqueue_scripts' );
 
-		$localize                         = array();
-		$localize['ajax_url']             = admin_url( 'admin-ajax.php' );
-		$localize['thousands']            = wpinv_thousands_separator();
-		$localize['decimals']             = wpinv_decimal_separator();
-		$localize['nonce']                = wp_create_nonce( 'wpinv-nonce' );
-		$localize['txtComplete']          = __( 'Continue', 'invoicing' );
-		$localize['UseTaxes']             = wpinv_use_taxes();
-		$localize['formNonce']            = wp_create_nonce( 'getpaid_form_nonce' );
-		$localize['loading']              = __( 'Loading...', 'invoicing' );
-		$localize['connectionError']      = __( 'Could not establish a connection to the server.', 'invoicing' );
-		$localize['recaptchaSettings']    = getpaid_get_recaptcha_settings();
+		$localize = array(
+			'ajax_url'           => admin_url( 'admin-ajax.php' ),
+			'thousands'          => wpinv_thousands_separator(),
+			'decimals'           => wpinv_decimal_separator(),
+			'nonce'              => wp_create_nonce( 'wpinv-nonce' ),
+			'txtComplete'        => __( 'Continue', 'invoicing' ),
+			'UseTaxes'           => wpinv_use_taxes(),
+			'formNonce'          => wp_create_nonce( 'getpaid_form_nonce' ),
+			'recaptchaSettings'  => getpaid_get_recaptcha_settings(),
+			'loading'            => __( 'Loading...', 'invoicing' ),
+			'connectionError'    => __( 'Could not establish a connection to the server.', 'invoicing' ),
+			'vatValidationError' => __( 'Unable to validate VAT number. Please try again.', 'invoicing' ),
+			'vatFieldsRequired'  => __( 'Please enter both VAT number and country.', 'invoicing' ),
+			'maxFilesExceeded'   => __( 'You have exceeded the number of files you can upload.', 'invoicing' ),
+			'unsupportedFile'    => __( 'Unsupported file type.', 'invoicing' ),
+			'validating'         => __( 'Validating...', 'invoicing' ),
+			'valid'              => __( 'Valid', 'invoicing' ),
+			'invalid'            => __( 'Invalid', 'invoicing' ),
+			'error'              => __( 'Error', 'invoicing' ),
+		);
 
 		$localize = apply_filters( 'wpinv_front_js_localize', $localize );
 
