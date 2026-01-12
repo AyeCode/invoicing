@@ -146,6 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.40 - TBD =
 * Added bulk actions for admin subscriptions list table - ADDED
+* Fixed missing translation strings for dynamic tax labels and VAT validation messages - FIXED
 
 = 2.8.39 - 2025-12-18 =
 * Hook added to filter renewal payment invoice data - ADDED
