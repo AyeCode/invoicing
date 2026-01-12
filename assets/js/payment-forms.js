@@ -610,7 +610,7 @@ jQuery(function ($) {
 
 						// Have we reached max files count?
                         if (max_files && loadedFiles.length >= max_files) {
-							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">You have exceeded the number of files you can upload.</div>' );
+							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">' + WPInv.maxFilesExceeded + '</div>' );
 							return;
 						}
 
@@ -619,7 +619,7 @@ jQuery(function ($) {
 							extensions = parent.find( '.getpaid-files-input' ).data( 'extensions' );
 
 						if ( extensions.indexOf( extension.toString().toLowerCase() ) < 0 ) {
-							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">Unsupported file type.</div>' );
+							progress_bar.find( '.getpaid-progress' ).html( '<div class="col-12 alert alert-danger" role="alert">' + WPInv.unsupportedFile + '</div>' );
 							return;
 						}
 
@@ -963,12 +963,12 @@ jQuery(function ($) {
 				var country = country_input.val();
 				
 				if (!vat_number || !country) {
-					this.show_error('Please enter both VAT number and country.', '.getpaid-error-billingwpinv_vat_number');
+					this.show_error(WPInv.vatFieldsRequired, '.getpaid-error-billingwpinv_vat_number');
 					return;
 				}
 				
 				// Show loading state
-				validator.prop('disabled', true).text('Validating...');
+				validator.prop('disabled', true).text(WPInv.validating);
 				
 				// Make AJAX request
 				$.post(WPInv.ajax_url, {
@@ -979,18 +979,18 @@ jQuery(function ($) {
 				})
 				.done((response) => {
 					if (response.success) {
-						validator.removeClass('btn-primary').addClass('btn-success').text('Valid');
+						validator.removeClass('btn-primary').addClass('btn-success').text(WPInv.valid);
 						vat_input.removeClass('is-invalid').addClass('is-valid');
 						this.hide_error();
 					} else {
-						validator.removeClass('btn-success').addClass('btn-danger').text('Invalid');
+						validator.removeClass('btn-success').addClass('btn-danger').text(WPInv.invalid);
 						vat_input.removeClass('is-valid').addClass('is-invalid');
 						this.show_error(response.data.message, '.getpaid-error-billingwpinv_vat_number');
 					}
 				})
 				.fail(() => {
-					validator.removeClass('btn-success').addClass('btn-warning').text('Error');
-					this.show_error('Unable to validate VAT number. Please try again.', '.getpaid-error-billingwpinv_vat_number');
+					validator.removeClass('btn-success').addClass('btn-warning').text(WPInv.error);
+					this.show_error(WPInv.vatValidationError, '.getpaid-error-billingwpinv_vat_number');
 				})
 				.always(() => {
 					validator.prop('disabled', false);
@@ -1301,7 +1301,7 @@ jQuery(function ($) {
 
 		// Add the loader.
 		$('#getpaid-payment-modal .modal-body-wrapper')
-			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>')
+			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">' + WPInv.loading + '</span></div></div>')
 
 		// Display the modal.
         if ( window.bootstrap && window.bootstrap.Modal ) {
@@ -1369,7 +1369,7 @@ jQuery(function ($) {
 
 		// Add the loader.
 		$('#getpaid-payment-modal .modal-body-wrapper')
-			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>')
+			.html('<div class="d-flex align-items-center justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">' + WPInv.loading + '</span></div></div>')
 
 		// Display the modal.
         if ( window.bootstrap && window.bootstrap.Modal ) {
