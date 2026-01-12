@@ -66,7 +66,7 @@ class GetPaid_Notification_Email {
 	 */
 	public function get_body() {
         $body = $this->get_option( 'body' );
-        return apply_filters( 'getpaid_get_email_body', $body, $this->id, $this->object );
+        return apply_filters( 'getpaid_get_email_body', __( $body, 'invoicing' ), $this->id, $this->object );
     }
 
     /**
@@ -76,7 +76,7 @@ class GetPaid_Notification_Email {
 	 */
 	public function get_subject() {
         $subject = $this->get_option( 'subject' );
-        return apply_filters( 'getpaid_get_email_subject', $subject, $this->id, $this->object );
+        return apply_filters( 'getpaid_get_email_subject', __( $subject, 'invoicing' ), $this->id, $this->object );
     }
 
     /**
@@ -86,7 +86,7 @@ class GetPaid_Notification_Email {
 	 */
 	public function get_heading() {
         $heading = $this->get_option( 'heading' );
-        return apply_filters( 'getpaid_get_email_heading', $heading, $this->id, $this->object );
+        return apply_filters( 'getpaid_get_email_heading', __( $heading, 'invoicing' ), $this->id, $this->object );
     }
 
     /**

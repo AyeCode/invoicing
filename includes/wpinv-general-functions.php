@@ -627,8 +627,28 @@ function getpaid_get_db_language_strings() {
 	$setting_keys = array(
 		'bank_transfer_info',
 		'vat_invoice_notice_label',
-		'vat_invoice_notice'
+		'vat_invoice_notice',
+		'email_footer_text'
 	);
+
+	// Gateway Settings
+	$gateway_settings = wpinv_get_payment_gateways();
+
+	foreach ( $gateway_settings as $gateway => $setting ) {
+		$setting_keys[] = $gateway . '_title';
+		$setting_keys[] = $gateway . '_desc';
+	}
+
+	foreach ( $settings as $key => $value ) {
+		if ( empty( $key ) ) {
+			continue;
+		}
+
+		// Email Settings
+		if ( strpos( $key, "email_" ) === 0 && ( strpos( $key, "_heading" ) !== false || strpos( $key, "_subject" ) !== false || strpos( $key, "_body" ) !== false ) ) {
+			$setting_keys[] = $key;
+		}
+	}
 
 	/**
 	 * Filters the GetPaid option names that requires to add for translation.
@@ -662,7 +682,7 @@ function getpaid_get_db_language_strings() {
 				foreach ( $fields as $field ) {
 					// Labels
 					foreach ( $string_keys as $string_key ) {
-						if ( ! empty( $field[ $string_key ] ) && is_string( $field[ $string_key ] ) ) {
+						if ( ! empty( $field[ $string_key ] ) && is_string( $field[ $string_key ] ) && ! is_numeric( $field[ $string_key ] ) ) {
 							$strings[] = wp_unslash( $field[ $string_key ] );
 						}
 					}
@@ -671,7 +691,7 @@ function getpaid_get_db_language_strings() {
 					if ( ! empty( $field['fields'] ) && ! empty( $field['fields'] ) ) {
 						foreach ( $field['fields'] as $sub_field ) {
 							foreach ( $string_keys as $string_key ) {
-								if ( ! empty( $sub_field[ $string_key ] ) && is_string( $sub_field[ $string_key ] ) ) {
+								if ( ! empty( $sub_field[ $string_key ] ) && is_string( $sub_field[ $string_key ] ) && ! is_numeric( $sub_field[ $string_key ] ) ) {
 									$strings[] = wp_unslash( $sub_field[ $string_key ] );
 								}
 							}
@@ -691,7 +711,7 @@ function getpaid_get_db_language_strings() {
 
 						if ( ! empty( $options ) ) {
 							foreach( $options as $option ) {
-								if ( ! empty( $option ) && is_string( $option ) ) {
+								if ( ! empty( $option ) && is_string( $option ) && ! is_numeric( $option ) ) {
 									$strings[] = wp_unslash( $option );
 								}
 							}
