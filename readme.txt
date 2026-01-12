@@ -86,8 +86,6 @@ GetPaid can be used as a payment system with a checkout page by any plugin.
 * [Simple Quantity Discounts](https://wpgetpaid.com/downloads/simple-quantity-discounts/) - Set discounts for Bulk orders
 * [Paid Trials](https://wpgetpaid.com/downloads/paid-trials/) - Offer Paid Trials.
 
-
-
 New Payment Gateways and Add-ons will be created regularly. If there is a Payment Gateway that you need urgently or a feature missing that you think we must add, [get in touch with us](https://wpgetpaid.com/contact-form/) and we will consider it.
 
 = Support =
@@ -147,6 +145,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 = 2.8.40 - TBD =
 * Added bulk actions for admin subscriptions list table - ADDED
 * Fixed missing translation strings for dynamic tax labels and VAT validation messages - FIXED
+* Some email and gateway description text are not translatable - FIXED
 
 = 2.8.39 - 2025-12-18 =
 * Hook added to filter renewal payment invoice data - ADDED

@@ -126,7 +126,7 @@ function wpinv_get_gateway_admin_label( $gateway ) {
 function wpinv_get_gateway_description( $gateway ) {
 
     $options     = wpinv_get_options();
-    $description = ! empty( $options[ $gateway . '_desc' ] ) ? $options[ $gateway . '_desc' ] : '';
+    $description = ! empty( $options[ $gateway . '_desc' ] ) ? __( $options[ $gateway . '_desc' ], 'invoicing' ) : '';
 
     return apply_filters( 'wpinv_gateway_description', $description, $gateway );
 }
