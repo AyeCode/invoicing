@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.8.39
+Stable tag: 2.8.40
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -142,10 +142,11 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.40 - TBD =
+= 2.8.40 - 2026-01-22 =
 * Added bulk actions for admin subscriptions list table - ADDED
 * Fixed missing translation strings for dynamic tax labels and VAT validation messages - FIXED
 * Some email and gateway description text are not translatable - FIXED
+* Merge AUI 0.2.43, SD 1.2.31 & AyeCode Connect Helper 1.0.5 - CHANGED
 
 = 2.8.39 - 2025-12-18 =
 * Hook added to filter renewal payment invoice data - ADDED
