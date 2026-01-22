@@ -232,7 +232,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 			'rounded-bottom' => 'rounded-bottom',
 			'rounded-left'   => 'rounded-left',
 		);
-		$defaults['element_require'] = '([%border%]&&[%border%]!="0")';
+		$defaults['element_require'] = '(([%border%]&&[%border%]!="0")||[%rounded%])';
 	} elseif ( 'rounded_size' === $type ) {
 		$defaults['title'] = __( 'Border radius size', 'ayecode-connect' );
 
@@ -254,7 +254,7 @@ function sd_get_border_input( $type = 'border', $overwrite = array() ) {
 				'lg' => __( 'Large', 'ayecode-connect' ),
 			);
 		}
-		$defaults['element_require'] = '([%border%]&&[%border%]!="0")';
+		$defaults['element_require'] = '(([%border%]&&[%border%]!="0")||[%rounded_size%]!="")';
 	} elseif ( 'width' === $type ) { // BS%
 		$defaults['title']           = __( 'Border width', 'ayecode-connect' );
 		$defaults['options']         = array(
@@ -2297,7 +2297,11 @@ function sd_parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
 	foreach ( $attributes as $attribute ) {
 		$attr_key_value = explode( '|', $attribute );
 
-		$attr_key = mb_strtolower( $attr_key_value[0] );
+		if ( function_exists( 'mb_strtolower' ) ) {
+			$attr_key = mb_strtolower( $attr_key_value[0] );
+		} else {
+			$attr_key = strtolower( $attr_key_value[0] );
+		}
 
 		// Remove any not allowed characters.
 		preg_match( '/[-_a-z0-9]+/', $attr_key, $attr_key_matches );
