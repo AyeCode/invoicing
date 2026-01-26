@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.41 - 2026-01-TBD =
+* Render subscriptions header and footer content via template - CHANGED
+
 = 2.8.40 - 2026-01-22 =
 * Added bulk actions for admin subscriptions list table - ADDED
 * Fixed missing translation strings for dynamic tax labels and VAT validation messages - FIXED
