@@ -19,7 +19,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 *
 	 */
 	public function __construct() {
-
 		$options = array(
 			'textdomain'     => 'invoicing',
 			'block-icon'     => 'controls-repeat',
@@ -54,7 +53,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return GetPaid_Subscriptions_Query
 	 */
 	public function get_subscriptions() {
-
 		// Prepare license args.
 		$args  = array(
 			'customer_in' => get_current_user_id(),
@@ -62,7 +60,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 		);
 
 		return new GetPaid_Subscriptions_Query( $args );
-
 	}
 
 	/**
@@ -75,7 +72,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return mixed|string|bool
 	 */
 	public function output( $args = array(), $widget_args = array(), $content = '' ) {
-
 		// Ensure that the user is logged in.
 		if ( ! is_user_logged_in() ) {
 
@@ -107,24 +103,25 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 
 		do_action( 'getpaid_license_manager_before_subscriptions', $subscriptions );
 
+		$items = $subscriptions->get_results();
+
 		// Print the table header.
-		$this->print_table_header();
+		$this->print_table_header( $items, $subscriptions );
 
 		// Print table body.
-		$this->print_table_body( $subscriptions->get_results() );
+		$this->print_table_body( $items, $subscriptions );
 
 		// Print table footer.
-		$this->print_table_footer();
+		$this->print_table_footer( $items, $subscriptions );
 
 		// Print the navigation.
-		$this->print_navigation( $subscriptions->get_total() );
+		$this->print_navigation( $subscriptions->get_total(), $items, $subscriptions );
 
 		// Backwards compatibility.
 		do_action( 'wpinv_after_user_subscriptions' );
 
 		// Return the output.
 		return ob_get_clean();
-
 	}
 
 	/**
@@ -133,7 +130,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return array
 	 */
 	public function get_subscriptions_table_columns() {
-
 		$columns = array(
 			'subscription' => __( 'Subscription', 'invoicing' ),
 			'amount'       => __( 'Amount', 'invoicing' ),
@@ -149,24 +145,16 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * Displays the table header.
 	 *
 	 */
-	public function print_table_header() {
-
-		?>
-
-			<table class="table table-bordered table-striped">
-
-				<thead>
-					<tr>
-						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th scope="col" class="font-weight-bold getpaid-subscriptions-table-<?php echo esc_attr( $key ); ?>">
-								<?php echo esc_html( $label ); ?>
-							</th>
-						<?php endforeach; ?>
-					</tr>
-				</thead>
-
-		<?php
-
+	public function print_table_header( $subscriptions, $subscriptions_query ) {
+		wpinv_get_template(
+			'subscriptions/subscriptions-table-header.php',
+			array(
+				'widget'              => $this,
+				'subscriptions_query' => $subscriptions_query,
+				'subscriptions'       => $subscriptions,
+				'columns'             => $this->get_subscriptions_table_columns()
+			)
+		);
 	}
 
 	/**
@@ -174,71 +162,26 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 *
 	 * @param WPInv_Subscription[] $subscriptions
 	 */
-	public function print_table_body( $subscriptions ) {
-
-		if ( empty( $subscriptions ) ) {
-			$this->print_table_body_no_subscriptions();
-		} else {
-			$this->print_table_body_subscriptions( $subscriptions );
-		}
-
-	}
-
-	/**
-	 * Displays the table body if no subscriptions were found.
-	 *
-	 */
-	public function print_table_body_no_subscriptions() {
-
-		?>
-		<tbody>
-
-			<tr>
-				<td colspan="<?php echo count( $this->get_subscriptions_table_columns() ); ?>">
-
-					<?php
-						aui()->alert(
-							array(
-								'content' => wp_kses_post( __( 'No subscriptions found.', 'invoicing' ) ),
-								'type'    => 'warning',
-							),
-                            true
-						);
-					?>
-
-				</td>
-			</tr>
-
-		</tbody>
-		<?php
+	public function print_table_body( $subscriptions, $subscriptions_query ) {
+		$this->print_table_body_subscriptions( $subscriptions, $subscriptions_query );
 	}
 
 	/**
 	 * Displays the table body if subscriptions were found.
 	 *
 	 * @param WPInv_Subscription[] $subscriptions
+	 * @param WPInv_Subscription_Query $subscriptions_query
 	 */
-	public function print_table_body_subscriptions( $subscriptions ) {
-
-		?>
-		<tbody>
-
-			<?php foreach ( $subscriptions as $subscription ) : ?>
-				<tr class="getpaid-subscriptions-table-row subscription-<?php echo (int) $subscription->get_id(); ?>">
-					<?php
-						wpinv_get_template(
-							'subscriptions/subscriptions-table-row.php',
-							array(
-								'subscription' => $subscription,
-								'widget'       => $this,
-							)
-						);
-					?>
-				</tr>
-			<?php endforeach; ?>
-
-		</tbody>
-		<?php
+	public function print_table_body_subscriptions( $subscriptions, $subscriptions_query ) {
+		wpinv_get_template(
+			'subscriptions/subscriptions-table-body.php',
+			array(
+				'widget'        => $this,
+				'subscriptions' => $subscriptions,
+				'subscriptions_query' => $subscriptions_query,
+				'columns'       => $this->get_subscriptions_table_columns()
+			)
+		);
 	}
 
 	/**
@@ -250,7 +193,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return      string
 	 */
 	public function add_row_actions( $content, $subscription ) {
-
 		// Prepare row actions.
 		$actions = array();
 
@@ -280,23 +222,16 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * Displays the table footer.
 	 *
 	 */
-	public function print_table_footer() {
-
-		?>
-
-				<tfoot>
-					<tr>
-						<?php foreach ( $this->get_subscriptions_table_columns() as $key => $label ) : ?>
-							<th class="font-weight-bold getpaid-subscriptions-<?php echo esc_attr( $key ); ?>">
-								<?php echo esc_html( $label ); ?>
-							</th>
-						<?php endforeach; ?>
-					</tr>
-				</tfoot>
-
-			</table>
-		<?php
-
+	public function print_table_footer( $subscriptions, $subscriptions_query ) {
+		wpinv_get_template(
+			'subscriptions/subscriptions-table-footer.php',
+			array(
+				'widget'              => $this,
+				'subscriptions_query' => $subscriptions_query,
+				'subscriptions'       => $subscriptions,
+				'columns'             => $this->get_subscriptions_table_columns()
+			)
+		);
 	}
 
 	/**
@@ -304,10 +239,8 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 *
 	 * @param int $total
 	 */
-	public function print_navigation( $total ) {
-
+	public function print_navigation( $total, $subscriptions, $subscriptions_query ) {
 		if ( $total < 1 ) {
-
 			// Out-of-bounds, run the query again without LIMIT for total count.
 			$args  = array(
 				'customer_in' => get_current_user_id(),
@@ -323,25 +256,16 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 			return;
 		}
 
-		?>
-
-		<div class="getpaid-subscriptions-pagination">
-			<?php
-				$big = 999999;
-
-				echo wp_kses_post(
-					getpaid_paginate_links(
-						array(
-							'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-							'format' => '?paged=%#%',
-							'total'  => (int) ceil( $total / 10 ),
-						)
-					)
-				);
-			?>
-		</div>
-
-		<?php
+		wpinv_get_template(
+			'subscriptions/subscriptions-table-pagination.php',
+			array(
+				'widget'              => $this,
+				'total'               => $total,
+				'subscriptions_query' => $subscriptions_query,
+				'subscriptions'       => $subscriptions,
+				'columns'             => $this->get_subscriptions_table_columns()
+			)
+		);
 	}
 
 	/**
@@ -352,7 +276,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return array
 	 */
 	public function get_single_subscription_columns( $subscription ) {
-
 		// Prepare subscription detail columns.
 		$subscription_group = getpaid_get_invoice_subscription_group( $subscription->get_parent_invoice_id(), $subscription->get_id() );
 		$items_count        = empty( $subscription_group ) ? 1 : count( $subscription_group['items'] );
@@ -401,31 +324,26 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 	 * @return string
 	 */
 	public function display_single_subscription( $subscription ) {
-
 		// Fetch the subscription.
 		$subscription = new WPInv_Subscription( (int) $subscription );
 
 		if ( ! $subscription->exists() ) {
-
 			return aui()->alert(
 				array(
 					'content' => wp_kses_post( __( 'Subscription not found.', 'invoicing' ) ),
 					'type'    => 'error',
 				)
 			);
-
 		}
 
 		// Ensure that the user owns this subscription key.
 		if ( get_current_user_id() != $subscription->get_customer_id() && ! wpinv_current_user_can_manage_invoicing() ) {
-
 			return aui()->alert(
 				array(
 					'content' => wp_kses_post( __( 'You do not have permission to view this subscription. Ensure that you are logged in to the account that owns the subscription.', 'invoicing' ) ),
 					'type'    => 'error',
 				)
 			);
-
 		}
 
 		return wpinv_get_template_html(
@@ -435,7 +353,6 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				'widget'       => $this,
 			)
 		);
-
 	}
 
 }
