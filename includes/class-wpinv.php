@@ -237,7 +237,8 @@ class WPInv_Plugin {
 		require_once WPINV_PLUGIN_DIR . 'widgets/subscriptions.php';
 		require_once WPINV_PLUGIN_DIR . 'widgets/buy-item.php';
 		require_once WPINV_PLUGIN_DIR . 'widgets/getpaid.php';
-		require_once WPINV_PLUGIN_DIR . 'widgets/invoice.php';
+        require_once WPINV_PLUGIN_DIR . 'widgets/invoice.php';
+        require_once WPINV_PLUGIN_DIR . 'widgets/getpaid-restrict-paid-content.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php';
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
@@ -462,6 +463,7 @@ class WPInv_Plugin {
 					'WPInv_Messages_Widget',
 					'WPInv_GetPaid_Widget',
 					'WPInv_Invoice_Widget',
+					'WPInv_Restrict_Paid_Content_Widget',
 				)
 			);
 
