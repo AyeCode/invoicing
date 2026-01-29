@@ -33,7 +33,6 @@ GetPaid can be used as a payment system for 3rd party plugins too.
 * Manage taxes.
 * VAT MOSS complaint (European Union VAT management system).
 * Easily accept payments and create invoices programmatically through other plugins.
-* Basic paid content restriction block/widget/shortcode.
 
 = A payment system for other plugins and themes =
 
@@ -145,7 +144,6 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.41 - 2026-01-TBD =
 * Render subscriptions header and footer content via template - CHANGED
-* GP > Restrict Paid Content - basic paid content restriction block - ADDED
 
 = 2.8.40 - 2026-01-22 =
 * Added bulk actions for admin subscriptions list table - ADDED
