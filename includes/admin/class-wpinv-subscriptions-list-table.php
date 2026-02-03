@@ -136,7 +136,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 	public function get_user_in() {
 
 		// Abort if no user.
-		if ( empty( $_GET['s'] ) ) {
+		if ( empty( $_REQUEST['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return null;
 		}
 

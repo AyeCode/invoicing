@@ -237,7 +237,7 @@ class WPInv_Plugin {
 		require_once WPINV_PLUGIN_DIR . 'widgets/subscriptions.php';
 		require_once WPINV_PLUGIN_DIR . 'widgets/buy-item.php';
 		require_once WPINV_PLUGIN_DIR . 'widgets/getpaid.php';
-		require_once WPINV_PLUGIN_DIR . 'widgets/invoice.php';
+        require_once WPINV_PLUGIN_DIR . 'widgets/invoice.php';
 		require_once WPINV_PLUGIN_DIR . 'includes/admin/admin-pages.php';
 
 		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
