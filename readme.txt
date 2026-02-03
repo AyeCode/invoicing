@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.42- TBD =
+* Subscriptions search not returning results - FIXED
+
 = 2.8.41 - 2026-01-29 =
 * Render subscriptions header and footer content via template - CHANGED
 
