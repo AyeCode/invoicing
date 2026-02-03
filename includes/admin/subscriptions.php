@@ -86,8 +86,8 @@ function getpaid_print_subscriptions_list() {
 		<?php if ( ! empty( $_GET['order'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 			<input type="hidden" name="order" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ); ?>" />
 		<?php endif; ?>
-		<?php if ( ! empty( $_GET['s'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
-			<input type="hidden" name="s" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ); ?>" />
+		<?php if ( ! empty( $_REQUEST['s'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<input type="hidden" name="s" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) ); ?>" />
 		<?php endif; ?>
 		<?php $subscribers_table->search_box( __( 'Search Subscriptions', 'invoicing' ), 'getpaid-search-subscriptions' ); ?>
 		<?php $subscribers_table->display(); ?>
