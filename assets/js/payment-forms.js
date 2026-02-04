@@ -496,6 +496,38 @@ jQuery(function ($) {
 					}
 				});
 
+				// Authorize.net ACH/Card payment type toggle.
+				this.form.on('change', '.getpaid-authorizenet-payment-type-selector input[type="radio"]', function () {
+					var paymentType = $(this).val();
+					var container = $(this).closest('.getpaid-gateway-description');
+
+					if (paymentType === 'ach') {
+						container.find('.getpaid-authorizenet-cc-section').hide();
+						container.find('.getpaid-authorizenet-ach-section').show();
+					} else {
+						container.find('.getpaid-authorizenet-cc-section').show();
+						container.find('.getpaid-authorizenet-ach-section').hide();
+					}
+				});
+
+				// Format ACH routing number on input (9 digits only).
+				this.form.on('input', '.getpaid-ach-routing-number', function () {
+					var input = $(this);
+					var value = input.val().replace(/\D/g, '').substring(0, 9);
+					if (input.val() !== value) {
+						input.val(value);
+					}
+				});
+
+				// Format ACH account number on input (17 digits max).
+				this.form.on('input', '.getpaid-ach-account-number', function () {
+					var input = $(this);
+					var value = input.val().replace(/\D/g, '').substring(0, 17);
+					if (input.val() !== value) {
+						input.val(value);
+					}
+				});
+
 				// Discounts.
 				if (this.form.find('.getpaid-discount-field').length) {
 

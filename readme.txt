@@ -143,6 +143,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.42- TBD =
+* Authorize.net - ACH/eCheck bank account payments - ADDED
 * Subscriptions search not returning results - FIXED
 
 = 2.8.41 - 2026-01-29 =

@@ -116,3 +116,6 @@ composer.lock
 
 # Build
 build.sh
+
+# Claude Code
+.claude
