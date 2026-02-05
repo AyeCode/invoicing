@@ -1139,155 +1139,130 @@ function getpaid_duplicate_invoice( $old_invoice ) {
  * @return array
  */
 function getpaid_get_invoice_meta( $invoice ) {
+	// Load the invoice meta.
+	$meta = array(
+		'number'         => array(
+			'label' => sprintf(
+				__( '%s Number', 'invoicing' ),
+				ucfirst( $invoice->get_invoice_quote_type() )
+			),
+			'value' => sanitize_text_field( $invoice->get_number() ),
+		),
+		'status'         => array(
+			'label' => sprintf(
+				__( '%s Status', 'invoicing' ),
+				ucfirst( $invoice->get_invoice_quote_type() )
+			),
+			'value' => $invoice->get_status_label_html(),
+		),
+		'date'           => array(
+			'label' => sprintf(
+				__( '%s Date', 'invoicing' ),
+				ucfirst( $invoice->get_invoice_quote_type() )
+			),
+			'value' => getpaid_format_date( $invoice->get_created_date() ),
+		),
+		'date_paid'      => array(
+			'label' => __( 'Paid On', 'invoicing' ),
+			'value' => getpaid_format_date( $invoice->get_completed_date() ),
+		),
+		'gateway'        => array(
+			'label' => __( 'Payment Method', 'invoicing' ),
+			'value' => sanitize_text_field( $invoice->get_gateway_title() ),
+		),
+		'transaction_id' => array(
+			'label' => __( 'Transaction ID', 'invoicing' ),
+			'value' => sanitize_text_field( $invoice->get_transaction_id() ),
+		),
+		'due_date'       => array(
+			'label' => __( 'Due Date', 'invoicing' ),
+			'value' => getpaid_format_date( $invoice->get_due_date() ),
+		),
+		'vat_number'     => array(
+			'label' => __( 'VAT Number', 'invoicing' ),
+			'value' => sanitize_text_field( $invoice->get_vat_number() ),
+		),
+	);
 
-    // Load the invoice meta.
-    $meta = array(
+	$additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
 
-        'number'         => array(
-            'label' => sprintf(
-                __( '%s Number', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => sanitize_text_field( $invoice->get_number() ),
-        ),
+	if ( ! empty( $additional_meta ) ) {
+		foreach ( $additional_meta as $label => $value ) {
+			$meta[ sanitize_key( $label ) ] = array(
+				'label' => esc_html( $label ),
+				'value' => esc_html( $value ),
+			);
+		}
+	}
 
-        'status'         => array(
-            'label' => sprintf(
-                __( '%s Status', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => $invoice->get_status_label_html(),
-        ),
+	// If it is not paid, remove the date of payment.
+	if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
+		unset( $meta['date_paid'] );
+		unset( $meta['transaction_id'] );
+	}
 
-        'date'           => array(
-            'label' => sprintf(
-                __( '%s Date', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => getpaid_format_date( $invoice->get_created_date() ),
-        ),
+	if ( ! $invoice->is_paid() || 'none' == $invoice->get_gateway() ) {
+		unset( $meta['gateway'] );
+	}
 
-        'date_paid'      => array(
-            'label' => __( 'Paid On', 'invoicing' ),
-            'value' => getpaid_format_date( $invoice->get_completed_date() ),
-        ),
+	// Only display the due date if due dates are enabled.
+	if ( ! $invoice->needs_payment() || ! wpinv_get_option( 'overdue_active' ) ) {
+		unset( $meta['due_date'] );
+	}
 
-        'gateway'        => array(
-            'label' => __( 'Payment Method', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_gateway_title() ),
-        ),
+	// Only display the vat number if taxes are enabled.
+	if ( ! wpinv_use_taxes() ) {
+		unset( $meta['vat_number'] );
+	}
 
-        'transaction_id' => array(
-            'label' => __( 'Transaction ID', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_transaction_id() ),
-        ),
+	// Link to the parent invoice.
+	if ( $invoice->get_parent_id() > 0 ) {
+		$meta['parent'] = array(
+			'label' => sprintf(
+				__( 'Parent %s', 'invoicing' ),
+				ucfirst( $invoice->get_invoice_quote_type() )
+			),
+			'value' => wpinv_invoice_link( $invoice->get_parent_id() ),
+		);
+	}
 
-        'due_date'       => array(
-            'label' => __( 'Due Date', 'invoicing' ),
-            'value' => getpaid_format_date( $invoice->get_due_date() ),
-        ),
+	if ( $invoice->is_recurring() ) {
+		$subscription = getpaid_get_invoice_subscriptions( $invoice );
 
-        'vat_number'     => array(
-            'label' => __( 'VAT Number', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_vat_number() ),
-        ),
+		if ( ! empty( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
+			// Display the renewal date.
+			if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
+				$meta['renewal_date'] = array(
+					'label' => __( 'Renews On', 'invoicing' ),
+					'value' => getpaid_format_date( $subscription->get_expiration() ) .
+					sprintf(
+						' <a class="small" href="%s">%s<a>',
+						$subscription->get_view_url(),
+						__( '(View Subscription)', 'invoicing' )
+					),
+				);
+			}
 
-    );
+			if ( $invoice->is_parent() ) {
+				// Display the recurring amount.
+				$meta['recurring_total'] = array(
+					'label' => __( 'Recurring Amount', 'invoicing' ),
+					'value' => getpaid_get_subscription_recurring_label( $subscription ),
+				);
+			}
+		}
+	}
 
-    $additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
+	// Add the invoice total to the meta.
+	$meta['invoice_total'] = array(
+		'label' => __( 'Total Amount', 'invoicing' ),
+		'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
+	);
 
-    if ( ! empty( $additional_meta ) ) {
+	// Provide a way for third party plugins to filter the meta.
+	$meta = apply_filters( 'getpaid_invoice_meta_data', $meta, $invoice );
 
-        foreach ( $additional_meta as $label => $value ) {
-            $meta[ sanitize_key( $label ) ] = array(
-                'label' => esc_html( $label ),
-                'value' => esc_html( $value ),
-            );
-        }
-}
-    // If it is not paid, remove the date of payment.
-    if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
-        unset( $meta['date_paid'] );
-        unset( $meta['transaction_id'] );
-    }
-
-    if ( ! $invoice->is_paid() || 'none' == $invoice->get_gateway() ) {
-        unset( $meta['gateway'] );
-    }
-
-    // Only display the due date if due dates are enabled.
-    if ( ! $invoice->needs_payment() || ! wpinv_get_option( 'overdue_active' ) ) {
-        unset( $meta['due_date'] );
-    }
-
-    // Only display the vat number if taxes are enabled.
-    if ( ! wpinv_use_taxes() ) {
-        unset( $meta['vat_number'] );
-    }
-
-    // Link to the parent invoice.
-    if ( $invoice->get_parent_id() > 0 ) {
-
-        $meta['parent'] = array(
-
-            'label' => sprintf(
-                __( 'Parent %s', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-
-            'value' => wpinv_invoice_link( $invoice->get_parent_id() ),
-
-        );
-
-    }
-
-    if ( $invoice->is_recurring() ) {
-
-        $subscription = getpaid_get_invoice_subscriptions( $invoice );
-        if ( ! empty( $subscription ) && ! is_array( $subscription ) && $subscription->exists() ) {
-
-            // Display the renewal date.
-            if ( $subscription->is_active() && 'cancelled' != $subscription->get_status() ) {
-
-                $meta['renewal_date'] = array(
-                    'label' => __( 'Renews On', 'invoicing' ),
-                    'value' => getpaid_format_date( $subscription->get_expiration() ) .
-                    sprintf(
-                        ' <a class="small" href="%s">%s<a>',
-                        $subscription->get_view_url(),
-                        __( '(View Subscription)', 'invoicing' )
-                    ),
-                );
-
-            }
-
-            if ( $invoice->is_parent() ) {
-
-                // Display the recurring amount.
-                $meta['recurring_total'] = array(
-
-                    'label' => __( 'Recurring Amount', 'invoicing' ),
-                    'value' => wpinv_price( $subscription->get_recurring_amount(), $invoice->get_currency() ),
-
-                );
-
-            }
-        }
-    }
-
-    // Add the invoice total to the meta.
-    $meta['invoice_total'] = array(
-
-        'label' => __( 'Total Amount', 'invoicing' ),
-        'value' => wpinv_price( $invoice->get_total(), $invoice->get_currency() ),
-
-    );
-
-    // Provide a way for third party plugins to filter the meta.
-    $meta = apply_filters( 'getpaid_invoice_meta_data', $meta, $invoice );
-
-    return $meta;
-
+	return $meta;
 }
 
 /**
