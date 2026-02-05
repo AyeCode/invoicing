@@ -397,6 +397,41 @@ function getpaid_get_formatted_subscription_amount( $subscription ) {
 }
 
 /**
+ * Returns subscription recurring label.
+ *
+ * @param WPInv_Subscription $subscription
+ * @return string
+ */
+function getpaid_get_subscription_recurring_label( $subscription ) {
+	$recurring  = wpinv_price( $subscription->get_recurring_amount(), $subscription->get_parent_payment()->get_currency() );
+	$period     = getpaid_get_subscription_period_label( $subscription->get_period(), $subscription->get_frequency(), '' );
+	$bill_times = $subscription->get_bill_times();
+
+	if ( ! empty( $bill_times ) ) {
+		$bill_times = $subscription->get_frequency() * $bill_times;
+		$bill_times = getpaid_get_subscription_period_label( $subscription->get_period(), $bill_times );
+	}
+
+	if ( empty( $bill_times ) ) {
+		return wp_sprintf(
+			// translators: $1: is the recurring amount, $2: is the recurring period
+			_x( '%1$s / %2$s', 'Subscription amount. (e.g.: $120 / year)', 'invoicing' ),
+			$recurring,
+			$period
+		);
+
+	}
+
+	return wp_sprintf(
+		// translators: $1: is the bill times, $2: is the recurring amount, $3: is the recurring period
+		_x( '%2$s / %3$s for %1$s', 'Subscription amount. (e.g.: $120 / year for 5 years)', 'invoicing' ),
+		$bill_times,
+		$recurring,
+		$period
+	);
+}
+
+/**
  * Returns an invoice subscription.
  *
  * @param WPInv_Invoice $invoice
@@ -628,7 +663,6 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 	$parent_invoice_id = (int) $parent_invoice_id;
 
 	if ( false === $subscription_id || ! (bool) get_post_meta( $parent_invoice_id, '_wpinv_subscription_id', true ) ) {
-
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
@@ -636,7 +670,6 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 				$parent_invoice_id
 			)
 		);
-
 	}
 
 	$invoice_ids = $wpdb->get_col(
@@ -650,12 +683,11 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 	$count = 0;
 
 	foreach ( wp_parse_id_list( $invoice_ids ) as $invoice_id ) {
-
 		if ( $invoice_id == $parent_invoice_id || $subscription_id == (int) get_post_meta( $invoice_id, '_wpinv_subscription_id', true ) ) {
 			$count ++;
 			continue;
 		}
-}
+	}
 
 	return $count;
 }
