@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/invoice-history.php.
  *
- * @version 1.0.19
+ * @version 2.8.43
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,34 +16,22 @@ $current_page   = empty( $_GET['page'] ) ? 1 : absint( $_GET['page'] );
 do_action( 'wpinv_before_user_invoices', $invoices->invoices, $invoices->total, $invoices->max_num_pages, $post_type );
 
 wpinv_print_errors();
-
 ?>
-
-
 	<div class="table-responsive">
 		<table class="table table-bordered table-hover getpaid-user-invoices <?php echo esc_attr( $post_type ); ?>">
-
-
 			<thead>
 				<tr>
-
 					<?php foreach ( wpinv_get_user_invoices_columns( $post_type ) as $column_id => $column_name ) : ?>
 						<th class="<?php echo esc_attr( $column_id ); ?> <?php echo ( ! empty( $column_name['class'] ) ? sanitize_html_class( $column_name['class'] ) : ''); ?> border-bottom-0">
 							<span class="nobr"><?php echo esc_html( $column_name['title'] ); ?></span>
 						</th>
 					<?php endforeach; ?>
-
 				</tr>
 			</thead>
-
-
-
 			<tbody>
 				<?php foreach ( $invoices->invoices as $invoice ) : ?>
-
 					<tr class="wpinv-item wpinv-item-<?php echo esc_attr( $invoice->get_status() ); ?>">
 						<?php
-
 							foreach ( wpinv_get_user_invoices_columns( $post_type ) as $column_id => $column_name ) :
 
 							$column_id = sanitize_html_class( $column_id );
@@ -51,7 +39,6 @@ wpinv_print_errors();
 
 							echo "<td class='" . esc_attr( $column_id . ' ' . $class ) . "'>";
 							switch ( $column_id ) {
-
 								case 'invoice-number':
 									echo wp_kses_post( wpinv_invoice_link( $invoice ) );
 									break;
@@ -112,7 +99,7 @@ wpinv_print_errors();
 
 									foreach ( $actions as $key => $action ) {
 										$class = ! empty( $action['class'] ) ? sanitize_html_class( $action['class'] ) : '';
-										echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm btn-block ' . esc_attr( $class . ' ' . sanitize_html_class( $key ) ) . '" ' . ( ! empty( $action['attrs'] ) ? esc_html( $action['attrs'] ) : '' ) . '>' . esc_attr( $action['name'] ) . '</a>';
+										echo '<a href="' . esc_url( $action['url'] ) . '" class="btn btn-sm btn-block mb-1 ' . esc_attr( $class . ' ' . sanitize_html_class( $key ) ) . '" ' . ( ! empty( $action['attrs'] ) ? esc_html( $action['attrs'] ) : '' ) . '>' . esc_attr( $action['name'] ) . '</a>';
 										}
 
 									break;
@@ -131,9 +118,7 @@ wpinv_print_errors();
 							endforeach;
 						?>
 					</tr>
-
 				<?php endforeach; ?>
-
 			</tbody>
 		</table>
 	</div>
@@ -146,14 +131,16 @@ wpinv_print_errors();
 			$big = 999999;
 
 			echo wp_kses_post(
-				paginate_links(
+				getpaid_paginate_links(
 					array(
 						'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 						'format' => '?paged=%#%',
 						'total'  => $invoices->max_num_pages,
+						'class'  => 'justify-content-end text-end',
+						'rounded_style' => 1
 					)
 				)
-            );
+			);
 			?>
 		</div>
 	<?php endif; ?>
