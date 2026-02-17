@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.43 - 2026-02-TBD =
+* Decimal Separator as comma don't allows to enter prices with comma - FIXED
+
 = 2.8.42 - 2026-02-05 =
 * Subscriptions search not returning results - FIXED
 * Show recurring amount and period on parent invoice - CHANGED
