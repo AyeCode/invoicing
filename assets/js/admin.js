@@ -1689,7 +1689,11 @@ jQuery(function ($) {
 	$(document).on('input', '[name="wpinv_item_price"], [name="wpinv_minimum_price"], input.getpaid-force-integer', function (e) {
 		var $input = $(this);
 		$input.val(function (_, currentValue) {
-			return currentValue.replace(/[^\d.]+/g, '');
+			if ($input.hasClass('getpaid-force-comma')) {
+				return currentValue.replace(/[^\d,]+/g, '');
+			} else {
+				return currentValue.replace(/[^\d.]+/g, '');
+			}
 		});
 	});
 });

@@ -64,7 +64,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     <?php endif; ?>
                                 <?php endif; ?>
 
-                                <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
+                                <input type="text" name="wpinv_item_price" id="wpinv_item_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control<?php echo ( wpinv_decimal_separator() == ',' ? ' getpaid-force-comma' : '' ); ?>">
 
                                 <?php if ( 'left' != $position ) : ?>
                                     <?php if ( empty( $aui_bs5 ) ) : ?>
@@ -192,7 +192,7 @@ class GetPaid_Meta_Box_Item_Details {
                                     <?php endif; ?>
                                 <?php endif; ?>
 
-                                <input type="text" name="wpinv_minimum_price" id="wpinv_minimum_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control">
+                                <input type="text" name="wpinv_minimum_price" id="wpinv_minimum_price" value="<?php echo esc_attr( getpaid_unstandardize_amount( $item->get_minimum_price( 'edit' ) ) ); ?>" placeholder="<?php echo esc_attr( wpinv_sanitize_amount( 0 ) ); ?>" class="form-control<?php echo ( wpinv_decimal_separator() == ',' ? ' getpaid-force-comma' : '' ); ?>">
 
                                 <?php if ( 'left' != $position ) : ?>
                                     <?php if ( empty( $aui_bs5 ) ) : ?>
@@ -298,7 +298,6 @@ class GetPaid_Meta_Box_Item_Details {
 	 * @param int $post_id
 	 */
 	public static function save( $post_id ) {
-
         // Prepare the item.
         $item = new WPInv_Item( $post_id );
 
