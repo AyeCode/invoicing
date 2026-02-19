@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.42\n"
+"Project-Id-Version: GetPaid 2.8.43\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-05 21:23+0530\n"
-"PO-Revision-Date: 2026-02-05 21:23+0530\n"
+"POT-Creation-Date: 2026-02-19 19:41+0530\n"
+"PO-Revision-Date: 2026-02-19 19:41+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -66,7 +66,7 @@ msgstr ""
 #: includes/admin/class-wpinv-subscriptions-list-table.php:501
 #: includes/admin/views/html-tax-rate-edit.php:68
 #: includes/admin/views/html-tax-rule-edit.php:30
-#: templates/invoice-history.php:106
+#: templates/invoice-history.php:93
 msgid "Delete"
 msgstr ""
 
@@ -592,13 +592,13 @@ msgstr ""
 #: includes/admin/class-getpaid-metaboxes.php:136
 #: includes/admin/subscriptions.php:147
 #: includes/wpinv-template-functions.php:849
-#: templates/subscriptions/subscription-details.php:117
+#: templates/subscriptions/subscription-details.php:109
 msgid "Related Subscriptions"
 msgstr ""
 
 #: includes/admin/class-getpaid-metaboxes.php:138
 #: includes/admin/subscriptions.php:139
-#: templates/subscriptions/subscription-details.php:27
+#: templates/subscriptions/subscription-details.php:29
 msgid "Subscription Details"
 msgstr ""
 
@@ -1915,7 +1915,7 @@ msgid "Select tax class"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-payment-form.php:36
-#: templates/subscriptions/subscription-details.php:136
+#: templates/subscriptions/subscription-details.php:125
 msgid "Go Back"
 msgstr ""
 
@@ -2352,13 +2352,13 @@ msgid "Change Status"
 msgstr ""
 
 #: includes/admin/subscriptions.php:151
-#: templates/subscriptions/subscription-details.php:108
+#: templates/subscriptions/subscription-details.php:100
 msgid "Subscription Items"
 msgstr ""
 
 #: includes/admin/subscriptions.php:154
 #: includes/wpinv-template-functions.php:854
-#: templates/subscriptions/subscription-details.php:112
+#: templates/subscriptions/subscription-details.php:104
 msgid "Related Invoices"
 msgstr ""
 
@@ -15421,11 +15421,11 @@ msgstr ""
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
-#: templates/invoice-history.php:87
+#: templates/invoice-history.php:74
 msgid "Pay Now"
 msgstr ""
 
-#: templates/invoice-history.php:93
+#: templates/invoice-history.php:80
 msgid "View"
 msgstr ""
 
@@ -16186,17 +16186,17 @@ msgstr ""
 msgid "Select Item"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:63
+#: templates/subscriptions/subscription-details.php:60
 #, php-format
 msgctxt "Subscription trial period. (e.g.: 1 month trial)"
 msgid "( %1$s trial )"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:128
+#: templates/subscriptions/subscription-details.php:119
 msgid "Are you sure you want to cancel this subscription?"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:129
+#: templates/subscriptions/subscription-details.php:120
 msgid "Cancel Subscription"
 msgstr ""
 
