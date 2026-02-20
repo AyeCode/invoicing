@@ -5,12 +5,15 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/subscriptions/subscription-details.php.
  *
- * @version 1.0.19
+ * @version 2.8.43
+ *
  * @var WPInv_Subscription $subscription
  * @var WPInv_Subscriptions_Widget $widget
  */
 
 defined( 'ABSPATH' ) || exit;
+
+global $aui_bs5;
 
 do_action( 'getpaid_single_subscription_before_notices', $subscription );
 
@@ -23,22 +26,16 @@ $subscription_group  = getpaid_get_invoice_subscription_group( $subscription->ge
 do_action( 'getpaid_before_single_subscription', $subscription, $subscription_groups );
 
 ?>
-
 <h2 class="mb-1 h4"><?php esc_html_e( 'Subscription Details', 'invoicing' ); ?></h2>
 <table class="table table-bordered">
 	<tbody>
-
 		<?php foreach ( $widget->get_single_subscription_columns( $subscription ) as $key => $label ) : ?>
-
 			<tr class="getpaid-subscription-meta-<?php echo esc_attr( $key ); ?>">
-
 				<th class="font-weight-bold" style="width: 35%">
 					<?php echo esc_html( $label ); ?>
 				</th>
-
 				<td style="width: 65%">
 					<?php
-
 						switch ( $key ) {
 
 						case 'status':
@@ -93,17 +90,12 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 
 						}
 						do_action( "getpaid_render_single_subscription_column_$key", $subscription );
-
 					?>
 				</td>
-
 			</tr>
-
 		<?php endforeach; ?>
-
 	</tbody>
 </table>
-
 <?php if ( ! empty( $subscription_group ) ) : ?>
 	<h2 class='mt-5 mb-1 h4'><?php esc_html_e( 'Subscription Items', 'invoicing' ); ?></h2>
 	<?php getpaid_admin_subscription_item_details_metabox( $subscription ); ?>
@@ -118,20 +110,17 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 	<?php getpaid_admin_subscription_related_subscriptions_metabox( $subscription ); ?>
 <?php endif; ?>
 
-<span class="form-text">
-
+<div class="form-text mt-2">
 	<?php
 		if ( $subscription->can_cancel() ) {
-		printf(
-            '<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
-            esc_url( $subscription->get_cancel_url() ),
-            esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
-            esc_html__( 'Cancel Subscription', 'invoicing' )
-        );
+			printf(
+				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
+				esc_url( $subscription->get_cancel_url() ),
+				esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
+				esc_html__( 'Cancel Subscription', 'invoicing' )
+			);
 		}
-
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
-
 	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php esc_html_e( 'Go Back', 'invoicing' ); ?></a>
-</span>
+</div>

@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.41\n"
+"Project-Id-Version: GetPaid 2.8.43\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/invoicing\n"
-"POT-Creation-Date: 2026-01-29 20:12+0530\n"
+"POT-Creation-Date: 2026-02-19 19:41+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,7 +66,7 @@ msgstr ""
 #: includes/admin/class-wpinv-subscriptions-list-table.php:501
 #: includes/admin/views/html-tax-rate-edit.php:68
 #: includes/admin/views/html-tax-rule-edit.php:30
-#: templates/invoice-history.php:106
+#: templates/invoice-history.php:93
 msgid "Delete"
 msgstr ""
 
@@ -161,7 +161,7 @@ msgstr ""
 #: includes/data/admin-settings.php:403
 #: includes/data/default-payment-form.php:127
 #: includes/data/payment-form-elements.php:312
-#: includes/invoice-functions.php:1191 includes/wpinv-address-functions.php:141
+#: includes/invoice-functions.php:1182 includes/wpinv-address-functions.php:141
 msgid "VAT Number"
 msgstr ""
 
@@ -577,13 +577,13 @@ msgstr ""
 #: includes/admin/class-getpaid-metaboxes.php:136
 #: includes/admin/subscriptions.php:147
 #: includes/wpinv-template-functions.php:849
-#: templates/subscriptions/subscription-details.php:117
+#: templates/subscriptions/subscription-details.php:109
 msgid "Related Subscriptions"
 msgstr ""
 
 #: includes/admin/class-getpaid-metaboxes.php:138
 #: includes/admin/subscriptions.php:139
-#: templates/subscriptions/subscription-details.php:27
+#: templates/subscriptions/subscription-details.php:29
 msgid "Subscription Details"
 msgstr ""
 
@@ -1872,7 +1872,7 @@ msgid "Select tax class"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-payment-form.php:36
-#: templates/subscriptions/subscription-details.php:136
+#: templates/subscriptions/subscription-details.php:125
 msgid "Go Back"
 msgstr ""
 
@@ -2298,13 +2298,13 @@ msgid "Change Status"
 msgstr ""
 
 #: includes/admin/subscriptions.php:151
-#: templates/subscriptions/subscription-details.php:108
+#: templates/subscriptions/subscription-details.php:100
 msgid "Subscription Items"
 msgstr ""
 
 #: includes/admin/subscriptions.php:154
 #: includes/wpinv-template-functions.php:854
-#: templates/subscriptions/subscription-details.php:112
+#: templates/subscriptions/subscription-details.php:104
 msgid "Related Invoices"
 msgstr ""
 
@@ -2314,7 +2314,7 @@ msgstr ""
 
 #: includes/admin/subscriptions.php:213
 #: includes/admin/views/html-gateways-edit.php:21
-#: includes/invoice-functions.php:1176
+#: includes/invoice-functions.php:1170
 msgid "Payment Method"
 msgstr ""
 
@@ -2326,7 +2326,7 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1253
+#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1236
 msgid "Renews On"
 msgstr ""
 
@@ -3923,7 +3923,7 @@ msgid "Created Date"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:83
-#: includes/invoice-functions.php:1186
+#: includes/invoice-functions.php:1178
 msgid "Due Date"
 msgstr ""
 
@@ -13959,45 +13959,45 @@ msgstr ""
 msgid "%1$s created with the status \"%2$s\"."
 msgstr ""
 
-#: includes/invoice-functions.php:1148
+#: includes/invoice-functions.php:1146
 #: includes/wpinv-dynamic-tax-labels.php:151
 #: includes/wpinv-dynamic-tax-labels.php:180
 #, php-format
 msgid "%s Number"
 msgstr ""
 
-#: includes/invoice-functions.php:1156
+#: includes/invoice-functions.php:1153
 #, php-format
 msgid "%s Status"
 msgstr ""
 
-#: includes/invoice-functions.php:1164
+#: includes/invoice-functions.php:1160
 #, php-format
 msgid "%s Date"
 msgstr ""
 
-#: includes/invoice-functions.php:1171
+#: includes/invoice-functions.php:1166
 msgid "Paid On"
 msgstr ""
 
-#: includes/invoice-functions.php:1181
+#: includes/invoice-functions.php:1174
 msgid "Transaction ID"
 msgstr ""
 
-#: includes/invoice-functions.php:1234
+#: includes/invoice-functions.php:1222
 #, php-format
 msgid "Parent %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1258
+#: includes/invoice-functions.php:1241
 msgid "(View Subscription)"
 msgstr ""
 
-#: includes/invoice-functions.php:1269
+#: includes/invoice-functions.php:1249
 msgid "Recurring Amount"
 msgstr ""
 
-#: includes/invoice-functions.php:1281
+#: includes/invoice-functions.php:1258
 msgid "Total Amount"
 msgstr ""
 
@@ -14536,12 +14536,14 @@ msgid "Initial payment of %1$s which renews at %2$s / %3$s for %4$s"
 msgstr ""
 
 #: includes/subscription-functions.php:382
+#: includes/subscription-functions.php:418
 #, php-format
 msgctxt "Subscription amount. (e.g.: $120 / year)"
 msgid "%1$s / %2$s"
 msgstr ""
 
 #: includes/subscription-functions.php:391
+#: includes/subscription-functions.php:427
 #, php-format
 msgctxt "Subscription amount. (e.g.: $120 / year for 5 years)"
 msgid "%2$s / %3$s for %1$s"
@@ -15096,11 +15098,11 @@ msgstr ""
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
-#: templates/invoice-history.php:87
+#: templates/invoice-history.php:74
 msgid "Pay Now"
 msgstr ""
 
-#: templates/invoice-history.php:93
+#: templates/invoice-history.php:80
 msgid "View"
 msgstr ""
 
@@ -15839,17 +15841,17 @@ msgstr ""
 msgid "Select Item"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:63
+#: templates/subscriptions/subscription-details.php:60
 #, php-format
 msgctxt "Subscription trial period. (e.g.: 1 month trial)"
 msgid "( %1$s trial )"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:128
+#: templates/subscriptions/subscription-details.php:119
 msgid "Are you sure you want to cancel this subscription?"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:129
+#: templates/subscriptions/subscription-details.php:120
 msgid "Cancel Subscription"
 msgstr ""
 

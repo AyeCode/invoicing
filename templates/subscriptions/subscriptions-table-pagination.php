@@ -4,6 +4,8 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/subscriptions/subscriptions-pagination.php.
  *
+ * @version 2.8.43
+ *
  * @var WPInv_Subscriptions_Widget $widget
  * @var WPInv_Subscriptions_Query $subscriptions_query
  * @var array $subscriptions
@@ -23,6 +25,8 @@ defined( 'ABSPATH' ) || exit;
 					'base'   => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 					'format' => '?paged=%#%',
 					'total'  => (int) ceil( $total / 10 ),
+					'class'  => 'justify-content-end text-end',
+					'rounded_style' => 1
 				)
 			)
 		);
