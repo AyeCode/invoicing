@@ -63,6 +63,24 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 */
 	public $currencies = array( 'USD', 'CAD', 'GBP', 'DKK', 'NOK', 'PLN', 'SEK', 'AUD', 'EUR', 'NZD' );
 
+	/**
+	 * Currencies ACH payments are allowed for.
+	 *
+	 * @var array
+	 */
+	public $ach_currencies = array( 'USD' );
+
+	/**
+	 * ACH account types.
+	 *
+	 * @var array
+	 */
+	protected $ach_account_types = array(
+		'checking'         => 'Checking',
+		'savings'          => 'Savings',
+		'businessChecking' => 'Business Checking',
+	);
+
     /**
 	 * URL to view a transaction.
 	 *
@@ -92,11 +110,27 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 */
     public function payment_fields( $invoice_id, $form ) {
 
-        // Let the user select a payment method.
-        $this->saved_payment_methods();
+		$ach_enabled       = wpinv_get_option( 'authorizenet_enable_ach' );
+		$show_type_selector = $ach_enabled && $this->is_ach_available();
 
-        // Show the credit card entry form.
-        $this->new_payment_method_entry( $this->get_cc_form( true ) );
+		// Payment type selector (CC vs ACH).
+		if ( $show_type_selector ) {
+			$this->render_payment_type_selector();
+		}
+
+		// Credit Card Section.
+		echo '<div class="getpaid-authorizenet-cc-section">';
+		$this->saved_payment_methods_by_type( 'card' );
+		$this->new_payment_method_entry( $this->get_cc_form( true ) );
+		echo '</div>';
+
+		// ACH Section.
+		if ( $show_type_selector ) {
+			echo '<div class="getpaid-authorizenet-ach-section" style="display:none;">';
+			$this->saved_payment_methods_by_type( 'ach' );
+			$this->new_payment_method_entry( $this->get_ach_form( true ) );
+			echo '</div>';
+		}
     }
 
     /**
@@ -111,8 +145,16 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 */
 	public function create_customer_profile( $invoice, $submission_data, $save = true ) {
 
-        // Remove non-digits from the number
-        $submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
+		// Determine payment type.
+		$is_ach_payment = $this->is_ach_payment( $submission_data['authorizenet'] );
+
+		// Remove non-digits from the card/account number.
+		if ( $is_ach_payment ) {
+			$submission_data['authorizenet']['ach_routing_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['ach_routing_number'] );
+			$submission_data['authorizenet']['ach_account_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['ach_account_number'] );
+		} else {
+			$submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
+		}
 
         // Generate args.
         $args = array(
@@ -169,12 +211,19 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         // Save the payment token.
         if ( $save ) {
+			if ( $is_ach_payment ) {
+				$token_name = $this->get_ach_token_name( $submission_data['authorizenet'] );
+			} else {
+				$token_name = getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 );
+			}
+
             $this->save_token(
                 array(
-                    'id'      => $response->customerPaymentProfileIdList[0],
-                    'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
-                    'default' => true,
-                    'type'    => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+                    'id'             => $response->customerPaymentProfileIdList[0],
+                    'name'           => $token_name,
+                    'default'        => true,
+                    'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+					'payment_method' => $is_ach_payment ? 'ach' : 'card',
                 )
             );
         }
@@ -213,26 +262,34 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
     }
 
     /**
-	 * Creates a customer profile.
+	 * Creates a customer payment profile.
 	 *
 	 *
      * @param string $profile_id profile id.
 	 * @param WPInv_Invoice $invoice Invoice.
      * @param array $submission_data Posted checkout fields.
      * @param bool $save Whether or not to save the payment as a token.
-     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-profile
+     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-payment-profile
 	 * @return string|WP_Error Profile id.
 	 */
 	public function create_customer_payment_profile( $customer_profile, $invoice, $submission_data, $save ) {
 
-        // Remove non-digits from the number
-        $submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
+		// Determine payment type.
+		$is_ach_payment = $this->is_ach_payment( $submission_data['authorizenet'] );
 
-        // Prepare card details.
-        $payment_information                          = $this->get_payment_information( $submission_data['authorizenet'] );
+		// Remove non-digits from the card/account number.
+		if ( $is_ach_payment ) {
+			$submission_data['authorizenet']['ach_routing_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['ach_routing_number'] );
+			$submission_data['authorizenet']['ach_account_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['ach_account_number'] );
+		} else {
+			$submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
+		}
 
-        // Authorize.NET does not support saving the same card twice.
-        $cached_information                           = $this->retrieve_payment_profile_from_cache( $payment_information, $customer_profile, $invoice );
+        // Prepare payment details.
+        $payment_information = $this->get_payment_information( $submission_data['authorizenet'] );
+
+        // Authorize.NET does not support saving the same payment method twice.
+        $cached_information = $this->retrieve_payment_profile_from_cache( $payment_information, $customer_profile, $invoice );
 
         if ( $cached_information ) {
             return $cached_information;
@@ -284,12 +341,19 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
         // Save the payment token.
         if ( $save ) {
+			if ( $is_ach_payment ) {
+				$token_name = $this->get_ach_token_name( $submission_data['authorizenet'] );
+			} else {
+				$token_name = getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 );
+			}
+
             $this->save_token(
                 array(
-                    'id'      => $response->customerPaymentProfileId,
-                    'name'    => getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 ),
-                    'default' => true,
-                    'type'    => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+                    'id'             => $response->customerPaymentProfileId,
+                    'name'           => $token_name,
+                    'default'        => true,
+                    'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+					'payment_method' => $is_ach_payment ? 'ach' : 'card',
                 )
             );
         }
@@ -489,20 +553,24 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * Returns payment information.
 	 *
 	 *
-	 * @param array $card Card details.
+	 * @param array $data Payment form data (card or ACH details).
 	 * @return array
 	 */
-	public function get_payment_information( $card ) {
-        return array(
+	public function get_payment_information( $data ) {
+		// Check if this is an ACH payment.
+		if ( $this->is_ach_payment( $data ) ) {
+			return $this->get_ach_payment_information( $data );
+		}
 
-            'creditCard' => array(
-                'cardNumber'     => $card['cc_number'],
-                'expirationDate' => $card['cc_expire_year'] . '-' . $card['cc_expire_month'],
-                'cardCode'       => $card['cc_cvv2'],
-            ),
-
-        );
-    }
+		// Default to credit card.
+		return array(
+			'creditCard' => array(
+				'cardNumber'     => $data['cc_number'],
+				'expirationDate' => $data['cc_expire_year'] . '-' . $data['cc_expire_month'],
+				'cardCode'       => $data['cc_cvv2'],
+			),
+		);
+	}
 
     /**
 	 * Returns the customer profile meta name.
@@ -514,6 +582,302 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	public function get_customer_profile_meta_name( $invoice ) {
         return $this->is_sandbox( $invoice ) ? 'getpaid_authorizenet_sandbox_customer_profile_id' : 'getpaid_authorizenet_customer_profile_id';
     }
+
+	/**
+	 * Checks if ACH payments are available for the current currency.
+	 *
+	 * @return bool
+	 */
+	public function is_ach_available() {
+		$currency = wpinv_get_currency();
+		return in_array( $currency, $this->ach_currencies, true );
+	}
+
+	/**
+	 * Checks if the payment data is for an ACH payment.
+	 *
+	 * @param array $data Payment data.
+	 * @return bool
+	 */
+	public function is_ach_payment( $data ) {
+		return isset( $data['payment_type'] ) && 'ach' === $data['payment_type'];
+	}
+
+	/**
+	 * Generates a display name for an ACH token.
+	 *
+	 * @param array $data ACH form data.
+	 * @return string
+	 */
+	public function get_ach_token_name( $data ) {
+		$account_type   = isset( $data['ach_account_type'] ) ? $data['ach_account_type'] : 'checking';
+		$account_number = preg_replace( '/\D/', '', isset( $data['ach_account_number'] ) ? $data['ach_account_number'] : '' );
+		$last_four      = substr( $account_number, -4 );
+
+		$type_labels = array(
+			'checking'         => __( 'Checking', 'invoicing' ),
+			'savings'          => __( 'Savings', 'invoicing' ),
+			'businessChecking' => __( 'Business Checking', 'invoicing' ),
+		);
+
+		$type_label = isset( $type_labels[ $account_type ] ) ? $type_labels[ $account_type ] : __( 'Bank Account', 'invoicing' );
+
+		return $type_label . ' &middot;&middot;&middot;&middot;' . $last_four;
+	}
+
+	/**
+	 * Returns the ACH/eCheck form HTML.
+	 *
+	 * @param bool $save Whether to display the save checkbox.
+	 * @return string
+	 */
+	public function get_ach_form( $save = false ) {
+		ob_start();
+
+		$id_prefix = esc_attr( uniqid( $this->id . '_ach_' ) );
+		?>
+		<div class="<?php echo esc_attr( $this->id ); ?>-ach-form getpaid-ach-form mt-1">
+			<div class="getpaid-ach-inner">
+
+				<!-- Account Type -->
+				<div class="form-group mb-3">
+					<label for="<?php echo esc_attr( $id_prefix . '-account-type' ); ?>">
+						<?php esc_html_e( 'Account Type', 'invoicing' ); ?>
+					</label>
+					<select name="<?php echo esc_attr( $this->id . '[ach_account_type]' ); ?>"
+							id="<?php echo esc_attr( $id_prefix . '-account-type' ); ?>"
+							class="form-control form-control-sm">
+						<?php foreach ( $this->ach_account_types as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>">
+								<?php echo esc_html( __( $label, 'invoicing' ) ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<!-- Routing Number -->
+				<div class="form-group mb-3">
+					<label for="<?php echo esc_attr( $id_prefix . '-routing-number' ); ?>">
+						<?php esc_html_e( 'Routing Number', 'invoicing' ); ?>
+					</label>
+					<input type="text"
+						   name="<?php echo esc_attr( $this->id . '[ach_routing_number]' ); ?>"
+						   id="<?php echo esc_attr( $id_prefix . '-routing-number' ); ?>"
+						   class="form-control form-control-sm getpaid-ach-routing-number"
+						   autocomplete="off"
+						   maxlength="9"
+						   placeholder="<?php esc_attr_e( '9-digit routing number', 'invoicing' ); ?>">
+				</div>
+
+				<!-- Account Number -->
+				<div class="form-group mb-3">
+					<label for="<?php echo esc_attr( $id_prefix . '-account-number' ); ?>">
+						<?php esc_html_e( 'Account Number', 'invoicing' ); ?>
+					</label>
+					<input type="text"
+						   name="<?php echo esc_attr( $this->id . '[ach_account_number]' ); ?>"
+						   id="<?php echo esc_attr( $id_prefix . '-account-number' ); ?>"
+						   class="form-control form-control-sm getpaid-ach-account-number"
+						   autocomplete="off"
+						   maxlength="17"
+						   placeholder="<?php esc_attr_e( 'Bank account number', 'invoicing' ); ?>">
+				</div>
+
+				<!-- Name on Account -->
+				<div class="form-group mb-3">
+					<label for="<?php echo esc_attr( $id_prefix . '-name-on-account' ); ?>">
+						<?php esc_html_e( 'Name on Account', 'invoicing' ); ?>
+					</label>
+					<input type="text"
+						   name="<?php echo esc_attr( $this->id . '[ach_name_on_account]' ); ?>"
+						   id="<?php echo esc_attr( $id_prefix . '-name-on-account' ); ?>"
+						   class="form-control form-control-sm"
+						   autocomplete="off"
+						   maxlength="22"
+						   placeholder="<?php esc_attr_e( 'Name as it appears on account', 'invoicing' ); ?>">
+				</div>
+
+				<?php if ( $save ) : ?>
+					<?php $this->save_payment_method_checkbox(); ?>
+				<?php endif; ?>
+
+				<!-- ACH Authorization Notice -->
+				<div class="alert alert-info mt-2 mb-0 small p-2">
+					<?php esc_html_e( 'By providing your bank account information, you authorize us to debit your account for the amount shown.', 'invoicing' ); ?>
+				</div>
+
+			</div>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Renders the payment type selector (Credit Card vs Bank Account).
+	 */
+	public function render_payment_type_selector() {
+		?>
+		<div class="getpaid-authorizenet-payment-type-selector mb-3">
+			<div class="form-group mb-2">
+				<label class="d-block mb-2 font-weight-bold"><?php esc_html_e( 'Payment Type', 'invoicing' ); ?></label>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="<?php echo esc_attr( $this->id ); ?>[payment_type]"
+						   id="<?php echo esc_attr( $this->id ); ?>-payment-type-card" value="card" checked>
+					<label class="form-check-label" for="<?php echo esc_attr( $this->id ); ?>-payment-type-card">
+						<?php esc_html_e( 'Credit/Debit Card', 'invoicing' ); ?>
+					</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="<?php echo esc_attr( $this->id ); ?>[payment_type]"
+						   id="<?php echo esc_attr( $this->id ); ?>-payment-type-ach" value="ach">
+					<label class="form-check-label" for="<?php echo esc_attr( $this->id ); ?>-payment-type-ach">
+						<?php esc_html_e( 'Bank Account (ACH)', 'invoicing' ); ?>
+					</label>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Returns ACH payment information for the API.
+	 *
+	 * @param array $data Payment data.
+	 * @return array
+	 */
+	public function get_ach_payment_information( $data ) {
+		$bank_account = array(
+			'accountType'   => sanitize_text_field( isset( $data['ach_account_type'] ) ? $data['ach_account_type'] : 'checking' ),
+			'routingNumber' => preg_replace( '/\D/', '', isset( $data['ach_routing_number'] ) ? $data['ach_routing_number'] : '' ),
+			'accountNumber' => preg_replace( '/\D/', '', isset( $data['ach_account_number'] ) ? $data['ach_account_number'] : '' ),
+			'nameOnAccount' => getpaid_limit_length( sanitize_text_field( isset( $data['ach_name_on_account'] ) ? $data['ach_name_on_account'] : '' ), 22 ),
+			'echeckType'    => 'WEB',
+		);
+
+		return array( 'bankAccount' => $bank_account );
+	}
+
+	/**
+	 * Validates ACH form fields.
+	 *
+	 * @param array $data ACH form data.
+	 * @return true|WP_Error
+	 */
+	public function validate_ach_fields( $data ) {
+		// Routing number validation (9 digits).
+		$routing = preg_replace( '/\D/', '', isset( $data['ach_routing_number'] ) ? $data['ach_routing_number'] : '' );
+		if ( strlen( $routing ) !== 9 ) {
+			return new WP_Error( 'invalid_routing', __( 'Please enter a valid 9-digit routing number.', 'invoicing' ) );
+		}
+
+		// Validate routing number checksum.
+		if ( ! $this->validate_routing_number_checksum( $routing ) ) {
+			return new WP_Error( 'invalid_routing', __( 'The routing number appears to be invalid.', 'invoicing' ) );
+		}
+
+		// Account number validation (1-17 digits).
+		$account = preg_replace( '/\D/', '', isset( $data['ach_account_number'] ) ? $data['ach_account_number'] : '' );
+		if ( empty( $account ) || strlen( $account ) > 17 ) {
+			return new WP_Error( 'invalid_account', __( 'Please enter a valid account number.', 'invoicing' ) );
+		}
+
+		// Name on account validation.
+		$name = trim( isset( $data['ach_name_on_account'] ) ? $data['ach_name_on_account'] : '' );
+		if ( empty( $name ) ) {
+			return new WP_Error( 'invalid_name', __( 'Please enter the name on the account.', 'invoicing' ) );
+		}
+
+		// Account type validation.
+		$valid_types = array_keys( $this->ach_account_types );
+		$account_type = isset( $data['ach_account_type'] ) ? $data['ach_account_type'] : '';
+		if ( ! in_array( $account_type, $valid_types, true ) ) {
+			return new WP_Error( 'invalid_account_type', __( 'Please select a valid account type.', 'invoicing' ) );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validates a routing number using the ABA checksum algorithm.
+	 *
+	 * @param string $routing The 9-digit routing number.
+	 * @return bool
+	 */
+	public function validate_routing_number_checksum( $routing ) {
+		if ( strlen( $routing ) !== 9 ) {
+			return false;
+		}
+
+		$checksum = (
+			3 * ( (int) $routing[0] + (int) $routing[3] + (int) $routing[6] ) +
+			7 * ( (int) $routing[1] + (int) $routing[4] + (int) $routing[7] ) +
+			1 * ( (int) $routing[2] + (int) $routing[5] + (int) $routing[8] )
+		);
+
+		return $checksum % 10 === 0;
+	}
+
+	/**
+	 * Displays saved payment methods filtered by type.
+	 *
+	 * @param string $payment_type 'card' or 'ach'.
+	 */
+	public function saved_payment_methods_by_type( $payment_type = 'card' ) {
+		$tokens = $this->get_tokens( $this->is_sandbox() );
+
+		// Filter tokens by payment method type.
+		$filtered_tokens = array();
+		foreach ( $tokens as $token ) {
+			$token_type = isset( $token['payment_method'] ) ? $token['payment_method'] : 'card';
+			if ( $token_type === $payment_type ) {
+				$filtered_tokens[] = $token;
+			}
+		}
+
+		// For cards, if no tokens have payment_method set, assume they're all cards (backwards compatibility).
+		if ( empty( $filtered_tokens ) && 'card' === $payment_type ) {
+			foreach ( $tokens as $token ) {
+				if ( ! isset( $token['payment_method'] ) || 'card' === $token['payment_method'] ) {
+					$filtered_tokens[] = $token;
+				}
+			}
+		}
+
+		$input_name = 'ach' === $payment_type ? 'getpaid-authorizenet-ach-payment-method' : 'getpaid-authorizenet-payment-method';
+		$new_label  = 'ach' === $payment_type ? __( 'Use a new bank account', 'invoicing' ) : __( 'Use a new card', 'invoicing' );
+
+		echo '<ul class="getpaid-saved-payment-methods list-unstyled m-0 mt-2" data-count="' . esc_attr( count( $filtered_tokens ) ) . '">';
+
+		foreach ( $filtered_tokens as $token ) {
+			printf(
+				'<li class="getpaid-payment-method form-group mb-3">
+					<label>
+						<input name="%1$s" type="radio" value="%2$s" data-currency="%5$s" style="width:auto;" class="getpaid-saved-payment-method-token-input" %4$s />
+						<span>%3$s</span>
+					</label>
+				</li>',
+				esc_attr( $input_name ),
+				esc_attr( $token['id'] ),
+				esc_html( $token['name'] ),
+				checked( ! empty( $token['default'] ), true, false ),
+				empty( $token['currency'] ) ? 'none' : esc_attr( $token['currency'] )
+			);
+		}
+
+		printf(
+			'<li class="getpaid-new-payment-method">
+				<label>
+					<input name="%1$s" type="radio" data-currency="none" value="new" style="width:auto;" />
+					<span>%2$s</span>
+				</label>
+			</li>',
+			esc_attr( $input_name ),
+			esc_html( $new_label )
+		);
+
+		echo '</ul>';
+	}
 
     /**
 	 * Validates the submitted data.
@@ -532,15 +896,30 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing' ) );
         }
 
+		// Determine if this is an ACH payment.
+		$is_ach_payment    = $this->is_ach_payment( isset( $submission_data['authorizenet'] ) ? $submission_data['authorizenet'] : array() );
+		$payment_method_key = $is_ach_payment ? 'getpaid-authorizenet-ach-payment-method' : 'getpaid-authorizenet-payment-method';
+
         // Validate the payment method.
-        if ( empty( $submission_data['getpaid-authorizenet-payment-method'] ) ) {
-            return new WP_Error( 'invalid_payment_method', __( 'Please select a different payment method or add a new card.', 'invoicing' ) );
+        if ( empty( $submission_data[ $payment_method_key ] ) ) {
+			$error_message = $is_ach_payment
+				? __( 'Please select a different payment method or add a new bank account.', 'invoicing' )
+				: __( 'Please select a different payment method or add a new card.', 'invoicing' );
+            return new WP_Error( 'invalid_payment_method', $error_message );
         }
 
         // Are we adding a new payment method?
-        if ( 'new' != $submission_data['getpaid-authorizenet-payment-method'] ) {
-            return $submission_data['getpaid-authorizenet-payment-method'];
+        if ( 'new' != $submission_data[ $payment_method_key ] ) {
+            return $submission_data[ $payment_method_key ];
         }
+
+		// Validate ACH fields if this is a new ACH payment.
+		if ( $is_ach_payment ) {
+			$ach_validation = $this->validate_ach_fields( $submission_data['authorizenet'] );
+			if ( is_wp_error( $ach_validation ) ) {
+				return $ach_validation;
+			}
+		}
 
         // Retrieve the customer profile id.
         $profile_id = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
@@ -895,6 +1274,32 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
             'custom'   => 'authorizenet',
             'readonly' => true,
         );
+
+		// ACH/eCheck Settings.
+		$admin_settings['authorizenet_ach_header'] = array(
+			'type' => 'header',
+			'id'   => 'authorizenet_ach_header',
+			'name' => '<h3>' . __( 'ACH/eCheck Settings', 'invoicing' ) . '</h3>',
+		);
+
+		$admin_settings['authorizenet_enable_ach'] = array(
+			'type' => 'checkbox',
+			'id'   => 'authorizenet_enable_ach',
+			'name' => __( 'Enable ACH Payments', 'invoicing' ),
+			'desc' => sprintf(
+				__( 'Allow customers to pay via bank account (ACH/eCheck). Only available for USD transactions. %1$sLearn more about ACH payments%2$s.', 'invoicing' ),
+				'<a href="https://developer.authorize.net/api/reference/features/echeck.html" target="_blank">',
+				'</a>'
+			),
+		);
+
+		$admin_settings['authorizenet_ach_description'] = array(
+			'type' => 'text',
+			'id'   => 'authorizenet_ach_description',
+			'name' => __( 'ACH Description', 'invoicing' ),
+			'desc' => __( 'Description shown to customers when they select ACH payment.', 'invoicing' ),
+			'std'  => __( 'Pay directly from your bank account.', 'invoicing' ),
+		);
 
 		return $admin_settings;
 	}
