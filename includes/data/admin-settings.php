@@ -173,6 +173,24 @@ return array(
                     'default_content' => empty( $getpaid_pages['invoice_subscription_page'] ) ? '' : $getpaid_pages['invoice_subscription_page']['content'],
                     'help-tip'        => true,
                 ),
+                'native_direct_payment'    => array(
+                    'id'   => 'native_direct_payment',
+                    'name' => __( 'Use Native Page for Direct Payment', 'invoicing' ),
+                    'desc' => __( 'Use the site page template for the Direct Payment page rather than an embedded page.', 'invoicing' ),
+                    'type' => 'checkbox',
+                    'std'  => 0,
+                ),
+                'direct_payment_page' => array(
+                    'id'              => 'direct_payment_page',
+                    'name'            => __( 'Direct Payment Page', 'invoicing' ),
+                    'desc'            => __( 'This is the instant direct payment page where customers can complete their purchase for the item. The <b>[getpaid]</b> short code must be on this page.', 'invoicing' ),
+                    'type'            => 'select',
+                    'options'         => $pages,
+                    'class'           => 'wpi_select2',
+                    'placeholder'     => __( 'Select a page', 'invoicing' ),
+                    'default_content' => empty( $getpaid_pages['direct_payment_page'] ) ? '' : $getpaid_pages['direct_payment_page']['content'],
+                    'help-tip'        => true,
+                ),
             ),
             'currency_section' => array(
                 'currency_settings'   => array(

@@ -75,6 +75,20 @@ function wpinv_is_subscriptions_history_page() {
     return apply_filters( 'wpinv_is_subscriptions_history_page', $ret );
 }
 
+function wpinv_is_direct_payment_page( $validate = false ) {
+	$page_id = (int) wpinv_get_option( 'direct_payment_page', false );
+	$check   = ! empty( $page_id ) ? is_page( $page_id ) : false;
+
+	// Validate current page.
+	if ( $check && $validate ) {
+		if ( ! ( isset( $_GET['getpaid_embed'] ) && wpinv_get_option( 'native_direct_payment' ) ) ) {
+			$check = false;
+		}
+	}
+
+	return apply_filters( 'wpinv_is_direct_payment_page', $check, $validate );
+}
+
 /**
  * Redirects a user the success page.
  */
@@ -160,6 +174,17 @@ function wpinv_get_success_page_url( $query_string = null ) {
     }
 
 	return apply_filters( 'wpinv_success_page_url', $success_page );
+}
+
+function wpinv_get_direct_payment_page_url( $query_string = null ) {
+	$direct_payment_page = wpinv_get_option( 'direct_payment_page', 0 );
+	$direct_payment_page = $direct_payment_page ? get_permalink( $direct_payment_page ) : '';
+
+	if ( $direct_payment_page && $query_string ) {
+		$direct_payment_page .= $query_string;
+    }
+
+	return apply_filters( 'wpinv_direct_payment_page_url', $direct_payment_page );
 }
 
 function wpinv_get_failed_transaction_uri( $extras = false ) {

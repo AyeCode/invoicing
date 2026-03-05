@@ -952,25 +952,27 @@ class GetPaid_Admin {
 	 * @since       1.0.19
 	 */
 	public function show_notices() {
-
-        $notices = $this->get_notices();
-        $this->clear_notices();
+		$notices = $this->get_notices();
+		$this->clear_notices();
 
 		foreach ( $notices as $type => $messages ) {
-
 			if ( ! is_array( $messages ) ) {
 				continue;
 			}
 
-            $type  = esc_attr( $type );
+			$type  = esc_attr( $type );
+
 			foreach ( $messages as $message ) {
 				echo wp_kses_post( "<div class='notice notice-$type is-dismissible'><p>$message</p></div>" );
-            }
-}
+			}
+		}
 
-		foreach ( array( 'checkout_page', 'invoice_history_page', 'success_page', 'failure_page', 'invoice_subscription_page' ) as $page ) {
-
+		foreach ( array( 'checkout_page', 'invoice_history_page', 'success_page', 'failure_page', 'invoice_subscription_page', 'direct_payment_page' ) as $page ) {
 			if ( ! is_numeric( wpinv_get_option( $page, false ) ) ) {
+				if ( $page == 'direct_payment_page' && ! wpinv_get_option( 'native_direct_payment' ) ) {
+					continue;
+				}
+
 				$url     = wp_nonce_url(
 					add_query_arg( 'getpaid-admin-action', 'create_missing_pages' ),
 					'getpaid-nonce',
@@ -981,8 +983,7 @@ class GetPaid_Admin {
 				echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>" );
 				break;
 			}
-}
-
+		}
 	}
 
 }

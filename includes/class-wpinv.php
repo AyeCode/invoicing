@@ -561,6 +561,9 @@ class WPInv_Plugin {
 		// Subscriptions page.
 		$our_pages[] = wpinv_get_option( 'invoice_subscription_page', false );
 
+		// Direct Buy page.
+		$our_pages[] = wpinv_get_option( 'direct_payment_page', false );
+
 		$our_pages   = array_map( 'intval', array_filter( $our_pages ) );
 
 		$excluded_posts_ids = $excluded_posts_ids + $our_pages;

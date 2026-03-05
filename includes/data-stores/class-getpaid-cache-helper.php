@@ -86,7 +86,7 @@ class GetPaid_Cache_Helper {
 			return;
 		}
 
-		if ( wpinv_is_checkout() || wpinv_is_success_page() || wpinv_is_invoice_history_page() || wpinv_is_subscriptions_history_page() ) {
+		if ( wpinv_is_checkout() || wpinv_is_success_page() || wpinv_is_invoice_history_page() || wpinv_is_subscriptions_history_page() || wpinv_is_direct_payment_page() ) {
 			self::set_nocache_constants();
 			nocache_headers();
 		}

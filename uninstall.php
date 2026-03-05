@@ -12,7 +12,7 @@ if ( get_option( 'wpinv_remove_data_on_invoice_unistall' ) ) {
     $settings = get_option( 'wpinv_settings' );
 
     // Delete pages.
-    $pages = array( 'checkout_page', 'success_page', 'failure_page', 'invoice_history_page', 'quote_history_page', 'invoice_subscription_page' );
+    $pages = array( 'checkout_page', 'success_page', 'failure_page', 'invoice_history_page', 'quote_history_page', 'invoice_subscription_page', 'direct_payment_page' );
     foreach ( $pages as $page ) {
         if ( is_array( $settings ) && ! empty( $settings[ $page ] ) ) {
             wp_delete_post( $settings[ $page ], true );

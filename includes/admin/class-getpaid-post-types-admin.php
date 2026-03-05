@@ -917,12 +917,12 @@ class GetPaid_Post_Types_Admin {
 			$post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
 		}
 
-		if ( wpinv_get_option( 'checkout_page', 0 ) == $post->ID ) {
-			$post_states['getpaid_checkout_page'] = __( 'GetPaid Checkout Page', 'invoicing' );
-		}
-
 		if ( wpinv_get_option( 'failure_page', 0 ) == $post->ID ) {
 			$post_states['getpaid_failure_page'] = __( 'GetPaid Transaction Failed Page', 'invoicing' );
+		}
+
+		if ( wpinv_get_option( 'direct_payment_page', 0 ) == (int) $post->ID ) {
+			$post_states['getpaid_direct_payment_page'] = __( 'GetPaid Direct Payment Page', 'invoicing' );
 		}
 
 		return $post_states;

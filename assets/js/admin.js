@@ -1696,6 +1696,20 @@ jQuery(function ($) {
 			}
 		});
 	});
+
+	// Toggle Direct Payment page settings.
+	function getPaidToggleDirectPaymentSetting() {
+		if($('#wpinv-settings-native_direct_payment').is(':checked')) {
+			$('#wpinv-settings-direct_payment_page').closest('tr').show();
+		} else {
+			$('#wpinv-settings-direct_payment_page').closest('tr').hide();
+		}
+	}
+
+	if ($('#wpinv-settings-native_direct_payment').length) {
+		$('#wpinv-settings-native_direct_payment').on('change', getPaidToggleDirectPaymentSetting);
+		getPaidToggleDirectPaymentSetting();
+	}
 });
 
 function wpinvBlock(el, message) {

@@ -83,9 +83,19 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 *
 	 * @return string
 	 */
-    public function output( $args = array(), $widget_args = array(), $content = '' ) {
+	public function output( $args = array(), $widget_args = array(), $content = '' ) {
+		// Set form and item when found.
+		if ( wpinv_is_direct_payment_page( true ) ) {
+			if ( isset( $_REQUEST['form'] ) ) {
+				$args['form'] = $_REQUEST['form'] != '' ? absint( $_REQUEST['form'] ) : '';
+			}
 
-	    // Is the shortcode set up correctly?
+			if ( isset( $_REQUEST['item'] ) ) {
+				$args['item'] = sanitize_text_field( $_REQUEST['item'] );
+			}
+		}
+
+		// Is the shortcode set up correctly?
 		if ( empty( $args['form'] ) && empty( $args['item'] ) ) {
 			return aui()->alert(
 				array(
@@ -101,7 +111,6 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 		} else {
 			return $this->handle_buy_item( $args );
 		}
-
 	}
 
 	/**

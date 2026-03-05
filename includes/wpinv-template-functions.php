@@ -251,6 +251,7 @@ function wpinv_checkout_meta_tags() {
 	$pages[] = wpinv_get_option( 'failure_page' );
 	$pages[] = wpinv_get_option( 'invoice_history_page' );
 	$pages[] = wpinv_get_option( 'invoice_subscription_page' );
+	$pages[] = wpinv_get_option( 'direct_payment_page' );
 
 	if ( ! wpinv_is_checkout() && ! is_page( $pages ) ) {
 		return;
@@ -285,6 +286,11 @@ function wpinv_add_body_classes( $class ) {
 
 	if ( wpinv_is_subscriptions_history_page() ) {
 		$classes[] = 'wpinv-subscription';
+		$classes[] = 'wpinv-page';
+	}
+
+	if ( wpinv_is_direct_payment_page() ) {
+		$classes[] = 'wpinv-direct-payment';
 		$classes[] = 'wpinv-page';
 	}
 
@@ -1635,16 +1641,20 @@ function getpaid_get_form_element_grid_class( $element ) {
  * @return string
  */
 function getpaid_embed_url( $payment_form = false, $items = false ) {
+	if ( wpinv_get_option( 'native_direct_payment' ) && ( $page_url = wpinv_get_direct_payment_page_url() ) ) {
+		$base_url = $page_url;
+	} else {
+		$base_url = home_url( 'index.php' );
+	}
 
-    return add_query_arg(
-        array(
-            'getpaid_embed' => 1,
-            'form'          => $payment_form ? absint( $payment_form ) : false,
-            'item'          => $items ? urlencode( $items ) : false,
-        ),
-        home_url( 'index.php' )
-    );
-
+	return add_query_arg(
+		array(
+			'getpaid_embed' => 1,
+			'form'          => $payment_form ? absint( $payment_form ) : false,
+			'item'          => $items ? urlencode( $items ) : false,
+		),
+		$base_url
+	);
 }
 
 /**
@@ -1653,13 +1663,16 @@ function getpaid_embed_url( $payment_form = false, $items = false ) {
  * @return string
  */
 function getpaid_filter_embed_template( $template ) {
-
     if ( isset( $_GET['getpaid_embed'] ) ) {
-        wpinv_get_template( 'payment-forms/embed.php' );
-        exit;
-    }
+		if ( wpinv_is_direct_payment_page( true ) ) {
+			return $template;
+		}
 
-    return $template;
+		wpinv_get_template( 'payment-forms/embed.php' );
+		exit;
+	}
+
+	return $template;
 }
 add_filter( 'template_include', 'getpaid_filter_embed_template' );
 
@@ -1866,6 +1879,31 @@ function getpaid_is_classicpress() {
 
 	if ( $filtered ) {
 		$content = apply_filters( 'getpaid_page_default_content_subscriptions', $content, $blocks );
+	}
+
+	return $content;
+}
+
+/**
+ * The default content for the direct payment page.
+ *
+ * @since 2.8.44
+ *
+ * @param @bool $filtered True to apply hook. Default false.
+ * @param @bool $blocks True to use blocks.
+ * @return string Page content.
+ */
+ function getpaid_page_content_direct_payment( $filtered = false, $blocks = false ) {
+	if ( $blocks ) {
+		$content = "<!-- wp:invoicing/wpinv-getpaid-widget {\"content\":\"\",\"sd_shortcode\":\"[getpaid title=''  form=''  item=''  button='' ]\"} -->
+<div class=\"wp-block-invoicing-wpinv-getpaid-widget\"></div>
+<!-- /wp:invoicing/wpinv-getpaid-widget -->";
+	} else {
+		$content = "[getpaid]";
+	}
+
+	if ( $filtered ) {
+		$content = apply_filters( 'getpaid_page_default_content_direct_payment', $content, $blocks );
 	}
 
 	return $content;

@@ -181,7 +181,15 @@ class GetPaid_Installer {
 					'title'   => _x( 'My Subscriptions', 'Page title', 'invoicing' ),
 					'content' => getpaid_page_content_subscriptions( $filtered, $gutenberg ),
 					'parent'  => ''
-				)
+				),
+
+				// Direct_payment page content.
+				'direct_payment_page' => array(
+					'name'    => _x( 'gp-instant-payment', 'Page slug', 'invoicing' ),
+					'title'   => _x( 'Instant Direct Payment', 'Page title', 'invoicing' ),
+					'content' => getpaid_page_content_direct_payment( $filtered, $gutenberg ),
+					'parent'  => ''
+				),
 			)
 		);
 	}
