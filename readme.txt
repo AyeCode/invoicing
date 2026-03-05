@@ -143,6 +143,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.43 - TBD =
+* Data anonymization - Fixed GDPR eraser hook, infinite recursion on user deletion, personal data leaking in logs, and missing billing address anonymization - FIXED
 * Authorize.net - ACH/eCheck bank account payments - ADDED
 * Minor bug fixes - FIXED
 

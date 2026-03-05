@@ -56,8 +56,8 @@ class GetPaid_Anonymization_Logs {
                             <?php
                             $months = $this->get_log_months();
                             foreach ( $months as $month ) {
-                                $selected = ( isset( $_GET['m'] ) && $_GET['m'] == $month->month ) ? ' selected="selected"' : '';
-                                echo '<option value="' . esc_attr( $month->month ) . '"' . $selected . '>' . esc_html( $month->month_name . ' ' . $month->year ) . '</option>';
+                                $selected = ( isset( $_GET['m'] ) && $_GET['m'] == $month->year_month ) ? ' selected="selected"' : '';
+                                echo '<option value="' . esc_attr( $month->year_month ) . '"' . $selected . '>' . esc_html( $month->month_name . ' ' . $month->year ) . '</option>';
                             }
                             ?>
                         </select>
@@ -193,14 +193,14 @@ class GetPaid_Anonymization_Logs {
         global $wpdb;
         $table_name = $wpdb->prefix . 'getpaid_anonymization_logs';
 
-        $months = $wpdb->get_results(
-            "SELECT DISTINCT YEAR(timestamp) AS year, MONTH(timestamp) AS month, 
-            DATE_FORMAT(timestamp, '%M') AS month_name, 
-            DATE_FORMAT(timestamp, '%Y%m') AS month
+        return $wpdb->get_results(
+            "SELECT DISTINCT
+                YEAR(timestamp) AS year,
+                MONTH(timestamp) AS month_num,
+                DATE_FORMAT(timestamp, '%M') AS month_name,
+                DATE_FORMAT(timestamp, '%Y%m') AS year_month
             FROM $table_name
-            ORDER BY year DESC, month DESC"
+            ORDER BY year DESC, month_num DESC"
         );
-
-        return $months;
     }
 }
