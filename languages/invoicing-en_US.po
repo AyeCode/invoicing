@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.44\n"
+"Project-Id-Version: GetPaid 2.8.45\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 20:11+0530\n"
-"PO-Revision-Date: 2026-02-26 20:11+0530\n"
+"POT-Creation-Date: 2026-03-05 20:40+0530\n"
+"PO-Revision-Date: 2026-03-05 20:40+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -3873,105 +3873,118 @@ msgstr ""
 msgid "Invoice %s created"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:56
+#: includes/class-wpinv-data-retention.php:58
 msgid "Data Retention"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:62
+#: includes/class-wpinv-data-retention.php:64
 msgid "Data Handling"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:63
+#: includes/class-wpinv-data-retention.php:65
 msgid "Choose how to handle user data when deletion is required."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:66
+#: includes/class-wpinv-data-retention.php:68
 msgid "Anonymize data"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:67
+#: includes/class-wpinv-data-retention.php:69
 msgid "Delete data without anonymization"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:70
+#: includes/class-wpinv-data-retention.php:72
 msgid ""
 "Anonymization replaces personal data with non-identifiable information. "
 "Direct deletion removes all data permanently."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:75
+#: includes/class-wpinv-data-retention.php:77
 msgid "Retention Period"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:76
+#: includes/class-wpinv-data-retention.php:78
 msgid "Specify how long to retain customer data after processing."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:79
+#: includes/class-wpinv-data-retention.php:81
 msgid "Never delete (retain indefinitely)"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:80
+#: includes/class-wpinv-data-retention.php:82
 msgid "30 days"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:81
+#: includes/class-wpinv-data-retention.php:83
 msgid "90 days"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:82
+#: includes/class-wpinv-data-retention.php:84
 msgid "6 months"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:83
+#: includes/class-wpinv-data-retention.php:85
 msgid "1 year"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:84
+#: includes/class-wpinv-data-retention.php:86
 msgid "2 years"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:85
+#: includes/class-wpinv-data-retention.php:87
 msgid "5 years"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:86
+#: includes/class-wpinv-data-retention.php:88
 msgid "10 years"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:89
+#: includes/class-wpinv-data-retention.php:91
 msgid ""
 "Choose how long to keep processed customer data before final action. This "
 "helps balance data minimization with business needs."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:228
+#: includes/class-wpinv-data-retention.php:230
 #, php-format
 msgid ""
 "User deletion for %s has been halted. All active subscriptions should be "
 "cancelled first."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:234
+#: includes/class-wpinv-data-retention.php:236
 #, php-format
 msgid ""
 "User deletion for %s has been halted due to paid invoices. Data will be "
 "anonymized instead."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:239
+#: includes/class-wpinv-data-retention.php:243
 msgid "User Deletion Halted"
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:505
+#: includes/class-wpinv-data-retention.php:275
+#: includes/class-wpinv-data-retention.php:430
+msgid "Anonymized"
+msgstr ""
+
+#: includes/class-wpinv-data-retention.php:301
+msgid "Anonymized User"
+msgstr ""
+
+#: includes/class-wpinv-data-retention.php:558
+msgid "GetPaid Invoice Data"
+msgstr ""
+
+#: includes/class-wpinv-data-retention.php:590
 msgid "User has active subscriptions. Data cannot be erased at this time."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:511
+#: includes/class-wpinv-data-retention.php:596
 msgid "User data has been anonymized due to existing paid invoices."
 msgstr ""
 
-#: includes/class-wpinv-data-retention.php:516
+#: includes/class-wpinv-data-retention.php:601
 msgid "User data has been deleted."
 msgstr ""
 
@@ -13617,105 +13630,228 @@ msgstr ""
 msgid "The chosen payment gateway does not support this currency."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:78
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:96
 msgid "Credit Card / Debit Card"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:79
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:97
 msgid "Authorize.Net"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:184
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:233
 #, php-format
 msgid "Created Authorize.NET customer profile: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:302
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:366
 #, php-format
 msgid "Saved Authorize.NET payment profile: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:420
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:484
 msgid "TAX"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:461
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:525
 #, php-format
 msgid "Authentication code: %1$s (%2$s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:470
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:534
 #, php-format
 msgid "Held for review: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:532
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:618
+msgid "Checking"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:619
+msgid "Savings"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:620
+msgid "Business Checking"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:623
+msgid "Bank Account"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:645
+msgid "Account Type"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:661
+msgid "Routing Number"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:669
+msgid "9-digit routing number"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:675
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:184
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:328
+msgid "Account Number"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:683
+msgid "Bank account number"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:689
+msgid "Name on Account"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:697
+msgid "Name as it appears on account"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:706
+msgid ""
+"By providing your bank account information, you authorize us to debit your "
+"account for the amount shown."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:723
+msgid "Payment Type"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:728
+msgid "Credit/Debit Card"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:735
+msgid "Bank Account (ACH)"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:771
+msgid "Please enter a valid 9-digit routing number."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:776
+msgid "The routing number appears to be invalid."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:782
+msgid "Please enter a valid account number."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:788
+msgid "Please enter the name on the account."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:795
+msgid "Please select a valid account type."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:848
+msgid "Use a new bank account"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:848
+msgid "Use a new card"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:896
 msgid ""
 "Please set-up your login id and transaction key before using this gateway."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:537
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:906
+msgid "Please select a different payment method or add a new bank account."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:907
 msgid "Please select a different payment method or add a new card."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:728
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1107
 msgid "Error generating a renewal invoice."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:742
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:758
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1121
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1137
 #, php-format
 msgid "Error renewing subscription : ( %s )."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:847
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1226
 #, php-format
 msgid ""
 "SANDBOX ENABLED. You can use sandbox testing details only. See the "
 "%1$sAuthorize.NET Sandbox Testing Guide%2$s for more details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:862
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1241
 #: includes/gateways/class-getpaid-paypal-gateway.php:611
 #: includes/gateways/class-getpaid-worldpay-gateway.php:315
 #, php-format
 msgid "Supported Currencies: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:867
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1246
 msgid "Pay securely using your credit or debit card."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:872
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1251
 msgid "API Login ID"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:873
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1252
 msgid "How do I obtain my API Login ID and Transaction Key?"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:879
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1258
 msgid "Transaction Key"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:885
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1264
 msgid "Signature Key"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:886
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:894
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1265
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1273
 #: includes/gateways/class-getpaid-paypal-gateway.php:684
 msgid "Learn more."
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:892
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1271
 msgid "Webhook URL"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-gateway.php:894
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1273
 msgid ""
 "Create a new webhook using this URL as the endpoint URL and set it to "
 "receive all payment events."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1282
+msgid "ACH/eCheck Settings"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1288
+msgid "Enable ACH Payments"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1290
+#, php-format
+msgid ""
+"Allow customers to pay via bank account (ACH/eCheck). Only available for USD "
+"transactions. %1$sLearn more about ACH payments%2$s."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1299
+msgid "ACH Description"
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1300
+msgid "Description shown to customers when they select ACH payment."
+msgstr ""
+
+#: includes/gateways/class-getpaid-authorize-net-gateway.php:1301
+msgid "Pay directly from your bank account."
 msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:66
@@ -13750,11 +13886,6 @@ msgstr ""
 #: includes/gateways/class-getpaid-bank-transfer-gateway.php:183
 #: includes/gateways/class-getpaid-bank-transfer-gateway.php:322
 msgid "Account Name"
-msgstr ""
-
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:184
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:328
-msgid "Account Number"
 msgstr ""
 
 #: includes/gateways/class-getpaid-bank-transfer-gateway.php:185
@@ -15440,17 +15571,17 @@ msgstr ""
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1528
+#: includes/wpinv-template-functions.php:1529
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1531
+#: includes/wpinv-template-functions.php:1532
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1849
-#: includes/wpinv-template-functions.php:1852
+#: includes/wpinv-template-functions.php:1850
+#: includes/wpinv-template-functions.php:1853
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
