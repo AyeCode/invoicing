@@ -142,7 +142,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.46 - 2025-03-TBD =
+= 2.8.46 - 2025-03-10 =
 * Make billing email field readonly for logged in user - CHANGED
 
 = 2.8.45 - 2025-03-05 =
