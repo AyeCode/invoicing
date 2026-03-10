@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/payment-forms/elements/billing_email.php.
  *
- * @version 1.0.19
+ * @version 2.8.46
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -27,6 +27,13 @@ do_action( 'getpaid_before_payment_form_billing_email', $form );
 
 echo "<span class='" . esc_attr( $class ) . "'>";
 
+$value = apply_filters ( 'getpaid_payment_form_billing_email_value', $value );
+
+$extra_attributes = array( 'autocomplete' => 'billing email' );
+if ( is_user_logged_in() && $value && is_email( $value ) ) {
+	$extra_attributes['readonly'] = 'readonly';
+}
+
 aui()->input(
     array(
         'name'             => 'billing_email',
@@ -37,11 +44,9 @@ aui()->input(
         'label_type'       => 'vertical',
         'help_text'        => empty( $description ) ? '' : wp_kses_post( $description ),
         'type'             => 'email',
-        'value'            => apply_filters ( 'getpaid_payment_form_billing_email_value', $value ),
+        'value'            => $value,
         'class'            => 'wpinv_billing_email getpaid-refresh-on-change',
-        'extra_attributes' => array(
-            'autocomplete' => 'billing email',
-        ),
+        'extra_attributes' => $extra_attributes
     ),
     true
 );
