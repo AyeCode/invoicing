@@ -1535,3 +1535,47 @@ function wpinvUnblock(el) {
 	}
 
 }
+
+// Item Variations
+/**
+ * GetPaid Item Packages Frontend
+ *
+ * @package GetPaid
+ */
+
+(function ($) {
+	'use strict';
+
+	$(document).on('change', '.getpaid-variation-radio', function () {
+		var $radio    = $(this);
+		var itemId    = $radio.data('item-id');
+		var price     = parseFloat($radio.data('price')) || 0;
+		var $form     = $radio.closest('.getpaid-payment-form');
+		var $selector = $radio.closest('.getpaid-variation-selector');
+
+		$selector.find('.getpaid-variation-option').removeClass('getpaid-variation-active');
+		$radio.closest('.getpaid-variation-option').addClass('getpaid-variation-active');
+
+		var $priceInput = $form.find('input[name="getpaid-items[' + itemId + '][price]"]');
+
+		if ($priceInput.length) {
+			$priceInput.val(price).trigger('change');
+		}
+
+		// Trigger the form's server-side price refresh.
+		var $refreshInput = $form.find('.getpaid-refresh-on-change').first();
+
+		if ($refreshInput.length) {
+			$refreshInput.trigger('change');
+		}
+	});
+
+	$(document).on('getpaid_payment_form_loaded', function (_, $form) {
+		if ($form && $form.length) {
+			$form.find('.getpaid-variation-radio:checked').each(function () {
+				$(this).closest('.getpaid-variation-option').addClass('getpaid-variation-active');
+			});
+		}
+	});
+
+}(jQuery));
