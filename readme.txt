@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.47
+Stable tag: 2.8.48
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -142,7 +142,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.48 - TBD =
+= 2.8.48 - 2026-04-23 =
 * Embed checkout - Render inside theme header/footer via `?wrap=true` query param (classic & block themes) - ADDED
 
 = 2.8.47 - 2026-04-02 =

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.47\n"
+"Project-Id-Version: GetPaid 2.8.48\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 18:59+0530\n"
-"PO-Revision-Date: 2026-04-02 18:59+0530\n"
+"POT-Creation-Date: 2026-04-23 21:34+0530\n"
+"PO-Revision-Date: 2026-04-23 21:34+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -16324,8 +16324,7 @@ msgstr ""
 msgid "There is no active payment gateway available to process your request."
 msgstr ""
 
-#: templates/payment-forms/embed.php:8 templates/payment-forms/embed.php:11
-#: widgets/getpaid.php:103
+#: templates/payment-forms/embed.php:22 widgets/getpaid.php:103
 msgid "No payment form or item selected"
 msgstr ""
 
