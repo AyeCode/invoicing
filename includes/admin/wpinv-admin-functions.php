@@ -81,7 +81,7 @@ function wpinv_test_payment_gateway_messages() {
         $notice = wp_sprintf( __( '<strong>Important:</strong> Payment Gateway(s) %1$s are in testing mode and will not receive real payments. Go to <a href="%2$s"> Gateway Settings</a>.', 'invoicing' ), $test_gateways, $link );
         ?>
         <div class="notice notice-warning is-dismissible">
-            <p><?php echo wp_kses_post( $notice ); ?></p>
+            <p class="mb-2"><?php echo wp_kses_post( $notice ); ?></p>
         </div>
         <?php
     }
