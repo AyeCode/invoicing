@@ -145,7 +145,7 @@ function wpinv_get_invoice_statuses( $draft = false, $trashed = false, $invoice 
 		'wpi-cancelled'  => _x( 'Cancelled', 'Invoice status', 'invoicing' ),
 		'wpi-refunded'   => _x( 'Refunded', 'Invoice status', 'invoicing' ),
         'wpi-failed'     => _x( 'Failed', 'Invoice status', 'invoicing' ),
-        'wpi-renewal'    => _x( 'Renewal Payment', 'Invoice status', 'invoicing' ),
+        'wpi-renewal'    => _x( 'Paid (renewal)', 'Invoice status', 'invoicing' ),
     );
 
     if ( $draft ) {
