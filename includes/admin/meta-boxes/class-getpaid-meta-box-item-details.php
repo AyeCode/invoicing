@@ -44,7 +44,7 @@ class GetPaid_Meta_Box_Item_Details {
         ?>
         <input type="hidden" id="_wpi_current_type" value="<?php echo esc_attr( $item->get_type( 'edit' ) ); ?>" />
         <style>#poststuff .input-group-text,#poststuff .form-control{border-color:#7e8993}.bsui label.col-sm-3.col-form-label{font-weight:600}.form-check input[type="checkbox"]:checked::before{content:none}</style>
-        <div class='bsui' style='max-width:650px;'><div class="pt-3">
+        <div class='bsui getpaid-item-details-metabox'><div class="pt-3">
             <?php do_action( 'wpinv_item_details_metabox_before_price', $item ); ?>
             <div class="form-group mb-3 row">
                 <label class="col-sm-3 col-form-label" for="wpinv_item_price"><span><?php esc_html_e( 'Item Price', 'invoicing' ); ?></span></label>

@@ -142,6 +142,12 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.49 - TBD =
+* Item Variations - Sell multiple pricing tiers (e.g. Personal, Business, Agency) from a single item, each with its own price and billing cycle - ADDED
+* Bank transfer subscription not advancing when renewal invoice is marked as "Paid (renewal)" - FIXED
+* Billing address state field not refreshing when country changes - FIXED
+* Renamed invoice status label "Renewal Payment" to "Paid (renewal)" for clarity - CHANGED
+
 = 2.8.48 - 2026-04-23 =
 * Embed checkout - Render inside theme header/footer via `?wrap=true` query param (classic & block themes) - ADDED
 

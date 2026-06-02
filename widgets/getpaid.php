@@ -67,6 +67,16 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	                'advanced' => false,
 				),
 
+				'variation' => array(
+	                'title'       => __( 'Variation', 'invoicing' ),
+	                'desc'        => __( 'Enter a variation ID to pre-select a specific pricing tier (only for items with variable pricing enabled).', 'invoicing' ),
+	                'type'        => 'text',
+	                'desc_tip'    => true,
+	                'default'     => '',
+	                'placeholder' => __( 'e.g. pro', 'invoicing' ),
+	                'advanced'    => true,
+				),
+
             ),
 
         );
@@ -149,7 +159,9 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 			return $this->buy_item_form( $args['item'] );
 		}
 
-		return $this->buy_item_button( $args['item'], $args['button'] );
+		$variation = isset( $args['variation'] ) && ! empty( $args['variation'] ) ? sanitize_text_field( $args['variation'] ) : '';
+
+		return $this->buy_item_button( $args['item'], $args['button'], $variation );
 
 	}
 
@@ -170,8 +182,8 @@ class WPInv_GetPaid_Widget extends WP_Super_Duper {
 	 *
 	 * @return string
 	 */
-    protected function buy_item_button( $item, $button ) {
-		$button = getpaid_get_payment_button( $button, null, $item );
+    protected function buy_item_button( $item, $button, $variation = '' ) {
+		$button = getpaid_get_payment_button( $button, null, $item, null, $variation );
 		return apply_filters( 'getpaid_buy_item_button_widget', $button, $item );
     }
 
