@@ -1895,3 +1895,101 @@ textarea.wpi-email_overdue_content {
 .getpaid-anonymization-logs .log-details-content table table th {
     width: 40%;
 }
+/* Item Variations */
+.postbox-container .form-group {
+	max-width: 650px;
+}
+
+.bsui .getpaid-variations-box {
+	max-width: 820px;
+}
+
+.getpaid_has_variations .wpinv_show_if_recurring,
+.getpaid_has_variations .wpinv_show_if_dynamic,
+.getpaid_has_variations .gpms-manual-renewal-option {
+	display: none !important;
+}
+
+.bsui .getpaid-variation-card.ui-sortable-helper {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bsui .form-switch .form-label {
+	margin-bottom: 0;
+}
+
+.bsui .getpaid-pkg-toggle-label {
+	flex: 0 0 120px;
+}
+
+.bsui .getpaid-pkg-sort-handle {
+	cursor: move;
+}
+
+.bsui .getpaid-pkg-name {
+	min-width: 120px;
+}
+
+.bsui .getpaid-pkg-price-wrap {
+	width: 120px;
+}
+
+.bsui .getpaid-pkg-sm-input.form-control {
+	width: 70px !important;
+	flex: 0 0 70px;
+	text-align: center;
+}
+
+.bsui .getpaid-pkg-section .form-select.w-auto {
+	width: auto !important;
+	flex: 0 0 auto;
+}
+
+.bsui .getpaid-pkg-license-fields .form-control-sm {
+	width: 70px;
+	flex: 0 0 70px;
+	text-align: center;
+}
+
+.bsui .getpaid-pkg-license-fields .form-control-sm[type="text"] {
+	width: 100px;
+	flex: 0 0 100px;
+	text-align: left;
+}
+
+.bsui .getpaid-remove-variation {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #b32d2e;
+	opacity: 0.5;
+}
+
+.bsui .getpaid-remove-variation:hover {
+	opacity: 1;
+}
+
+.bsui .getpaid-variation-card-placeholder {
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	background: #f6f7f7;
+	min-height: 50px;
+}
+
+@media (max-width: 782px) {
+	.bsui .getpaid-pkg-header {
+		flex-wrap: wrap;
+	}
+
+	.bsui .getpaid-pkg-name {
+		min-width: 0;
+		width: 100%;
+		order: 10;
+		margin-top: 4px;
+	}
+
+	.bsui .getpaid-pkg-price-wrap {
+		width: auto;
+		flex: 1;
+	}
+}

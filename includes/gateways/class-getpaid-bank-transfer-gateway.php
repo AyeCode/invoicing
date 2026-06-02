@@ -67,6 +67,7 @@ class GetPaid_Bank_Transfer_Gateway extends GetPaid_Payment_Gateway {
 		add_action( 'wpinv_email_invoice_details', array( $this, 'email_instructions' ), 10, 3 );
 		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 12, 2 );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'invoice_paid' ), 20 );
+		add_action( 'getpaid_invoice_status_wpi-renewal', array( $this, 'invoice_paid' ), 20 );
 
 		add_filter( 'wpinv_' . $this->id . '_support_subscription', array( $this, 'supports_subscription' ), 20, 1 );
 		add_filter( 'getpaid_' . $this->id . '_support_subscription', array( $this, 'supports_subscription' ), 20, 1 );

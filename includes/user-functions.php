@@ -511,6 +511,8 @@ function getpaid_allowed_html() {
 
 	// form fields
     $allowed_html['form'] = array(
+        'class'          => true,
+        'id'             => true,
         'action'         => true,
         'accept'         => true,
         'accept-charset' => true,

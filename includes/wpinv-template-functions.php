@@ -1360,17 +1360,18 @@ function getpaid_convert_items_to_string( $items ) {
  *
  * Provide a label and one of $form, $items or $invoice.
  */
-function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null ) {
-    $label = sanitize_text_field( $label );
+function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null, $variation = null ) {
+    $label          = sanitize_text_field( $label );
+    $variation_attr = ! empty( $variation ) ? " data-variation='" . esc_attr( $variation ) . "'" : '';
 
     if ( ! empty( $form ) ) {
         $form  = esc_attr( $form );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-form='$form'>$label</button>";
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-form='$form'{$variation_attr}>$label</button>";
     }
 
 	if ( ! empty( $items ) ) {
         $items  = esc_attr( $items );
-        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-item='$items'>$label</button>";
+        return "<button class='btn btn-primary getpaid-payment-button' type='button' data-item='$items'{$variation_attr}>$label</button>";
     }
 
     if ( ! empty( $invoice ) ) {
