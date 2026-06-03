@@ -89,14 +89,14 @@ class GetPaid_Payment_Form_Submission_Fees {
 	 * @param array $data
 	 */
 	public function process_price_select( $element, $data ) {
-
 		// Abort if not passed.
 		if ( empty( $data[ $element['id'] ] ) ) {
 			return;
 		}
 
 		$options    = getpaid_convert_price_string_to_options( $element['options'] );
-		$selected   = array_filter( array_map( 'trim', explode( ',', $data[ $element['id'] ] ) ) );
+		$selected   = is_array( $data[ $element['id'] ] ) ? $data[ $element['id'] ] : explode( ',', $data[ $element['id'] ] );
+		$selected   = array_filter( array_map( 'trim', $selected ) );
 		$total      = 0;
 		$sub_labels = array();
 

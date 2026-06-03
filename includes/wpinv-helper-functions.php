@@ -236,12 +236,15 @@ function wpinv_thousands_separator( $current = null ) {
  * @param $string|null $current
  */
 function wpinv_decimal_separator( $current = null ) {
+	if ( null == $current ) {
+		$current = wpinv_get_option( 'decimal_separator', '.' );
+	}
 
-    if ( null == $current ) {
-        $current = wpinv_get_option( 'decimal_separator', '.' );
-    }
+	if ( ! $current ) {
+		$current = '.';
+	}
 
-    return trim( $current );
+	return trim( $current );
 }
 
 /**
@@ -956,7 +959,11 @@ function getpaid_time_format() {
  * @return string
  */
 function getpaid_limit_length( $string, $limit ) {
-    $str_limit = $limit - 3;
+	if ( is_null( $string ) ) {
+		return '';
+	}
+
+	$str_limit = $limit - 3;
 
 	if ( function_exists( 'mb_strimwidth' ) ) {
 		if ( mb_strlen( $string ) > $limit ) {
@@ -967,8 +974,8 @@ function getpaid_limit_length( $string, $limit ) {
 			$string = substr( $string, 0, $str_limit ) . '...';
 		}
 	}
-    return $string;
 
+	return $string;
 }
 
 /**
