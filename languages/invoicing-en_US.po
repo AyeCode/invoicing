@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.48\n"
+"Project-Id-Version: GetPaid 2.8.49\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 21:34+0530\n"
-"PO-Revision-Date: 2026-04-23 21:34+0530\n"
+"POT-Creation-Date: 2026-06-04 15:44+0530\n"
+"PO-Revision-Date: 2026-06-04 15:44+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -64,6 +64,7 @@ msgstr ""
 
 #: includes/admin/admin-pages.php:96 includes/admin/class-getpaid-admin.php:189
 #: includes/admin/class-wpinv-subscriptions-list-table.php:501
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:40
 #: includes/admin/views/html-tax-rate-edit.php:68
 #: includes/admin/views/html-tax-rule-edit.php:30
 #: templates/invoice-history.php:93
@@ -254,6 +255,7 @@ msgstr ""
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:739
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:781
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:823
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:41
 #: includes/admin/subscriptions.php:107
 #: includes/wpinv-template-functions.php:665
 msgid "Cancel"
@@ -279,7 +281,7 @@ msgstr ""
 msgid "Searching"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:194 includes/class-wpinv.php:374
+#: includes/admin/class-getpaid-admin.php:194 includes/class-wpinv.php:375
 #: templates/payment-forms/form.php:119
 msgid "Loading..."
 msgstr ""
@@ -780,6 +782,7 @@ msgid "Amount"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:248
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:184
 msgid "Recurring"
 msgstr ""
 
@@ -1123,7 +1126,7 @@ msgid "Selected subscriptions updated to %s."
 msgstr ""
 
 #: includes/admin/class-wpinv-users.php:38
-#: includes/wpinv-helper-functions.php:743
+#: includes/wpinv-helper-functions.php:746
 msgid "Invoicing"
 msgstr ""
 
@@ -1784,6 +1787,7 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:85
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:87
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:189
 msgid "every"
 msgstr ""
 
@@ -1797,21 +1801,25 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:104
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:266
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:192
 msgid "day(s)"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:105
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:267
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:193
 msgid "week(s)"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:106
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:268
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:194
 msgid "month(s)"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:107
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-details.php:269
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:195
 msgid "year(s)"
 msgstr ""
 
@@ -1917,6 +1925,53 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-info.php:128
 msgid "Fee: Like Registration Fee, Sign up Fee etc"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:39
+msgid "Remove this variation?"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:42
+msgid "Each variation must have a name."
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:64
+msgid "Variable Pricing"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:73
+msgid "Enable pricing variations"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:84
+msgid ""
+"Sell multiple pricing tiers (e.g. Personal, Business, Agency) from a single "
+"item. Each variation can have its own price, billing cycle, activation "
+"limits, and download files."
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:101
+msgid "No variations defined. Add your first pricing tier."
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:106
+msgid "+ Add Variation"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:157
+msgid "Pre-selected when no variation is specified"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:159
+msgid "Default"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:162
+msgid "Variation name, e.g. Personal, Business, Agency"
+msgstr ""
+
+#: includes/admin/meta-boxes/class-getpaid-meta-box-item-variations.php:174
+msgid "Remove variation"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-item-vat.php:68
@@ -2663,7 +2718,7 @@ msgstr ""
 
 #: includes/admin/views/wizard-gateways.php:72
 #: includes/admin/views/wizard-plugins.php:31
-#: includes/admin/views/wizard-settings.php:129 includes/class-wpinv.php:370
+#: includes/admin/views/wizard-settings.php:129 includes/class-wpinv.php:371
 msgid "Continue"
 msgstr ""
 
@@ -3322,6 +3377,18 @@ msgstr ""
 msgid "Failed sending %1$s notification email to %2$s."
 msgstr ""
 
+#: includes/class-getpaid-item-variations.php:377 widgets/getpaid.php:71
+msgid "Variation"
+msgstr ""
+
+#: includes/class-getpaid-item-variations.php:419
+msgid "Variation Buy Links"
+msgstr ""
+
+#: includes/class-getpaid-item-variations.php:420
+msgid "Use these to link directly to a specific variation."
+msgstr ""
+
 #: includes/class-getpaid-notification-email-sender.php:101
 #, php-format
 msgid ""
@@ -3778,7 +3845,7 @@ msgstr ""
 msgid "Installing"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:261 includes/class-wpinv.php:383
+#: includes/class-wpinv-addons.php:261 includes/class-wpinv.php:384
 msgid "Error"
 msgstr ""
 
@@ -3840,7 +3907,7 @@ msgstr ""
 msgid "Invalid upload field."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1153 includes/class-wpinv.php:379
+#: includes/class-wpinv-ajax.php:1153 includes/class-wpinv.php:380
 msgid "Unsupported file type."
 msgstr ""
 
@@ -4234,32 +4301,32 @@ msgstr ""
 msgid "Manage Subscription"
 msgstr ""
 
-#: includes/class-wpinv.php:375
+#: includes/class-wpinv.php:376
 msgid "Could not establish a connection to the server."
 msgstr ""
 
-#: includes/class-wpinv.php:376
+#: includes/class-wpinv.php:377
 msgid "Unable to validate VAT number. Please try again."
 msgstr ""
 
-#: includes/class-wpinv.php:377
+#: includes/class-wpinv.php:378
 msgid "Please enter both VAT number and country."
 msgstr ""
 
-#: includes/class-wpinv.php:378
+#: includes/class-wpinv.php:379
 msgid "You have exceeded the number of files you can upload."
 msgstr ""
 
-#: includes/class-wpinv.php:380
+#: includes/class-wpinv.php:381
 msgid "Validating..."
 msgstr ""
 
-#: includes/class-wpinv.php:381
+#: includes/class-wpinv.php:382
 #: templates/payment-forms/elements/address-fields.php:154
 msgid "Valid"
 msgstr ""
 
-#: includes/class-wpinv.php:382
+#: includes/class-wpinv.php:383
 #: templates/payment-forms/elements/address-fields.php:155
 msgid "Invalid"
 msgstr ""
@@ -13691,8 +13758,8 @@ msgid "9-digit routing number"
 msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:675
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:184
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:328
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:185
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:329
 msgid "Account Number"
 msgstr ""
 
@@ -13878,104 +13945,104 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:180
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:317
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:181
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:318
 msgid "Sort code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:183
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:322
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:184
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:323
 msgid "Account Name"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:185
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:334
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:186
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:335
 msgid "Bank Name"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:186
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:187
 msgid "IFSC code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:187
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:346
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:188
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:347
 msgid "IBAN"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:188
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:189
 msgid "BIC/Swift code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:211
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:212
 msgid "Bank Details"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:238
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:239
 msgid "BSB"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:243
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:244
 msgid "Bank transit number"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:248
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:249
 msgid "IFSC"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:253
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:254
 msgid "Branch sort"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:258
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:263
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:259
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:264
 msgid "Bank code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:268
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:269
 msgid "Routing number"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:273
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:274
 msgid "Branch code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:291
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:366
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:292
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:367
 msgid ""
 "Make your payment directly into our bank account. Please use your Invoice "
 "Number as the payment reference. Your invoice won't be processed until the "
 "funds have cleared in our account."
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:292
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:293
 msgid "Enable bank transfer"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:304
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:305
 msgid "Disable Subscriptions"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:305
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:306
 msgid "Tick to disable support for recurring items."
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:340
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:341
 msgid "IFSC Code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:352
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:353
 msgid "BIC/Swift Code"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:363
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:364
 msgid "Instructions"
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:364
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:365
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
 
-#: includes/gateways/class-getpaid-bank-transfer-gateway.php:409
+#: includes/gateways/class-getpaid-bank-transfer-gateway.php:410
 #, php-format
 msgid "Renewal %1$s created with the status \"%2$s\"."
 msgstr ""
@@ -15049,23 +15116,23 @@ msgstr ""
 msgid "New invoices will use this address as the billing address."
 msgstr ""
 
-#: includes/user-functions.php:607 includes/user-functions.php:612
+#: includes/user-functions.php:609 includes/user-functions.php:614
 msgid "UsersWP"
 msgstr ""
 
-#: includes/user-functions.php:618 includes/user-functions.php:697
+#: includes/user-functions.php:620 includes/user-functions.php:699
 msgid "Enable Integration"
 msgstr ""
 
-#: includes/user-functions.php:619
+#: includes/user-functions.php:621
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
-#: includes/user-functions.php:686 includes/user-functions.php:691
+#: includes/user-functions.php:688 includes/user-functions.php:693
 msgid "BuddyPress"
 msgstr ""
 
-#: includes/user-functions.php:698
+#: includes/user-functions.php:700
 msgid "Display GetPaid items on BuddyPress account pages."
 msgstr ""
 
@@ -15202,7 +15269,7 @@ msgstr ""
 
 #: includes/wpinv-helper-functions.php:148
 msgctxt "Invoice status"
-msgid "Renewal Payment"
+msgid "Paid (renewal)"
 msgstr ""
 
 #: includes/wpinv-helper-functions.php:152
@@ -15571,17 +15638,17 @@ msgstr ""
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1529
+#: includes/wpinv-template-functions.php:1530
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1532
+#: includes/wpinv-template-functions.php:1533
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1850
-#: includes/wpinv-template-functions.php:1853
+#: includes/wpinv-template-functions.php:1851
+#: includes/wpinv-template-functions.php:1854
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
@@ -16324,7 +16391,7 @@ msgstr ""
 msgid "There is no active payment gateway available to process your request."
 msgstr ""
 
-#: templates/payment-forms/embed.php:22 widgets/getpaid.php:103
+#: templates/payment-forms/embed.php:22 widgets/getpaid.php:113
 msgid "No payment form or item selected"
 msgstr ""
 
@@ -16342,6 +16409,67 @@ msgstr ""
 
 #: templates/payment-forms/form.php:107
 msgid "This is only visible to website administators."
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:34
+#: templates/payment-forms/variation-selector.php:68
+msgid "day"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:35
+#: templates/payment-forms/variation-selector.php:69
+msgid "week"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:36
+#: templates/payment-forms/variation-selector.php:70
+msgid "month"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:37
+#: templates/payment-forms/variation-selector.php:71
+msgid "year"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:44
+#, php-format
+msgid " / %1$d %2$ss"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:47
+#, php-format
+msgid " / %s"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:57
+msgid "Unlimited activations"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:59
+msgid "1 activation"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:62
+#, php-format
+msgid "%d activations"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:81
+#, php-format
+msgid "%1$d %2$s license"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:84
+#, php-format
+msgid "1 %s license"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:88
+msgid "Lifetime license"
+msgstr ""
+
+#: templates/payment-forms/variation-selector.php:122
+msgid "Recommended"
 msgstr ""
 
 #: templates/payment-forms/variations/radio.php:32
@@ -16501,6 +16629,16 @@ msgstr ""
 #: widgets/getpaid.php:63
 msgid ""
 "Enter button label in case you would like to display the forms in a popup."
+msgstr ""
+
+#: widgets/getpaid.php:72
+msgid ""
+"Enter a variation ID to pre-select a specific pricing tier (only for items "
+"with variable pricing enabled)."
+msgstr ""
+
+#: widgets/getpaid.php:76
+msgid "e.g. pro"
 msgstr ""
 
 #: widgets/invoice-history.php:24
