@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.48
+Stable tag: 2.8.49
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -106,9 +106,9 @@ This product includes GeoLite2 data created by MaxMind, available from
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
-* PHP version 5.3 or greater
-* MySQL version 5.0 or greater
+* WordPress 6.0 or greater
+* PHP version 7.2 or greater
+* MySQL version 8.0 or greater
 
 = Automatic installation =
 
@@ -142,7 +142,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.49 - TBD =
+= 2.8.49 - 2026-06-04 =
 * Item Variations - Sell multiple pricing tiers (e.g. Personal, Business, Agency) from a single item, each with its own price and billing cycle - ADDED
 * Bank transfer subscription not advancing when renewal invoice is marked as "Paid (renewal)" - FIXED
 * Billing address state field not refreshing when country changes - FIXED
