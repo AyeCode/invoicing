@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.49
+Stable tag: 2.8.50
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -141,6 +141,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.50 - 2026-06-05 =
+* Added extra validation to secure AJAX payment form request - SECURITY
 
 = 2.8.49 - 2026-06-04 =
 * Item Variations - Sell multiple pricing tiers (e.g. Personal, Business, Agency) from a single item, each with its own price and billing cycle - ADDED
