@@ -262,83 +262,94 @@ class WPInv_Ajax {
      * Retrieves the markup for a payment form.
      */
     public static function get_payment_form() {
-        global $getpaid_force_checkbox;
+		global $getpaid_force_checkbox;
 
-        // Is the request set up correctly?
+		// Is the request set up correctly?
 		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice'] ) ) {
 			aui()->alert(
 				array(
 					'type'    => 'warning',
 					'content' => __( 'No payment form or item provided', 'invoicing' ),
-                ),
-                true
-            );
-            exit;
-        }
+				),
+				true
+			);
+			exit;
+		}
 
-        // Payment form or button?
+		// Payment form or button?
 		if ( ! empty( $_GET['form'] ) ) {
-            $form = sanitize_text_field( urldecode( $_GET['form'] ) );
+			$form = sanitize_text_field( urldecode( $_GET['form'] ) );
 
-            if ( false !== strpos( $form, '|' ) ) {
-                $form_pos = strpos( $form, '|' );
-                $_items   = getpaid_convert_items_to_array( substr( $form, $form_pos + 1 ) );
-                $form     = substr( $form, 0, $form_pos );
+			if ( false !== strpos( $form, '|' ) ) {
+				$form_pos = strpos( $form, '|' );
+				$_items   = getpaid_convert_items_to_array( substr( $form, $form_pos + 1 ) );
+				$form     = substr( $form, 0, $form_pos );
 
-                // Retrieve appropriate payment form.
-                $payment_form = new GetPaid_Payment_Form( $form );
-                $payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+				// Retrieve appropriate payment form.
+				$payment_form = new GetPaid_Payment_Form( $form );
+				$payment_form = $payment_form->exists() ? $payment_form : new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
 
-                $items    = array();
-                $item_ids = array();
+				$items    = array();
+				$item_ids = array();
 
-                foreach ( $_items as $item_id => $qty ) {
-                    if ( ! in_array( $item_id, $item_ids ) ) {
-                        $item = new GetPaid_Form_Item( $item_id );
-                        $item->set_quantity( $qty );
+				foreach ( $_items as $item_id => $qty ) {
+					if ( ! in_array( $item_id, $item_ids ) ) {
+						$item = new GetPaid_Form_Item( $item_id );
+						$item->set_quantity( $qty );
 
-                        if ( 0 == $qty ) {
-                            $item->set_allow_quantities( true );
-                            $item->set_is_required( false );
-                            $getpaid_force_checkbox = true;
-                        }
+						if ( 0 == $qty ) {
+							$item->set_allow_quantities( true );
+							$item->set_is_required( false );
+							$getpaid_force_checkbox = true;
+						}
 
-                        $item_ids[] = $item->get_id();
-                        $items[]    = $item;
-                    }
-                }
+						$item_ids[] = $item->get_id();
+						$items[]    = $item;
+					}
+				}
 
-                if ( ! $payment_form->is_default() ) {
+				if ( ! $payment_form->is_default() ) {
 
-                    foreach ( $payment_form->get_items() as $item ) {
-                        if ( ! in_array( $item->get_id(), $item_ids ) ) {
-                            $item_ids[] = $item->get_id();
-                            $items[]    = $item;
-                        }
-                    }
-                }
+					foreach ( $payment_form->get_items() as $item ) {
+						if ( ! in_array( $item->get_id(), $item_ids ) ) {
+							$item_ids[] = $item->get_id();
+							$items[]    = $item;
+						}
+					}
+				}
 
-                $payment_form->set_items( $items );
-                $extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
-                $extra_items_key = md5( NONCE_KEY . AUTH_KEY . $extra_items );
-                $extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
-                $extra_items    .= "<input type='hidden' name='getpaid-form-items-key' value='$extra_items_key' />";
-                $payment_form->display( $extra_items );
-                $getpaid_force_checkbox = false;
+				$payment_form->set_items( $items );
+				$extra_items     = esc_attr( getpaid_convert_items_to_string( $_items ) );
+				$extra_items_key = md5( NONCE_KEY . AUTH_KEY . $extra_items );
+				$extra_items     = "<input type='hidden' name='getpaid-form-items' value='$extra_items' />";
+				$extra_items    .= "<input type='hidden' name='getpaid-form-items-key' value='$extra_items_key' />";
+				$payment_form->display( $extra_items );
+				$getpaid_force_checkbox = false;
 
-            } else {
-                getpaid_display_payment_form( $form );
-            }
-} elseif ( ! empty( $_GET['invoice'] ) ) {
-		    getpaid_display_invoice_payment_form( (int) urldecode( $_GET['invoice'] ) );
-        } else {
+			} else {
+				getpaid_display_payment_form( $form );
+			}
+		} else if ( ! empty( $_GET['invoice'] ) ) {
+			if ( ! ( ! empty( $_REQUEST['_ajax_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_REQUEST['_ajax_nonce'] ), 'getpaid_form_nonce' ) ) ) {
+				aui()->alert(
+					array(
+						'type'    => 'warning',
+						'content' => __( 'You are not allowed to perform this action.', 'invoicing' ),
+					),
+					true
+				);
+
+				exit;
+			}
+
+			getpaid_display_invoice_payment_form( (int) urldecode( $_GET['invoice'] ) );
+		} else {
 			$items = getpaid_convert_items_to_array( sanitize_text_field( urldecode( $_GET['item'] ) ) );
-		    getpaid_display_item_payment_form( $items );
-        }
+			getpaid_display_item_payment_form( $items );
+		}
 
-        exit;
-
-    }
+		exit;
+	}
 
     /**
      * Payment forms.

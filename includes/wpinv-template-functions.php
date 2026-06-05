@@ -1284,36 +1284,46 @@ function getpaid_display_item_payment_form( $items ) {
  * Helper function to display an invoice payment form on the frontend.
  */
 function getpaid_display_invoice_payment_form( $invoice_id ) {
+	$invoice = wpinv_get_invoice( $invoice_id );
 
-    $invoice = wpinv_get_invoice( $invoice_id );
-
-    if ( empty( $invoice ) ) {
+	if ( empty( $invoice ) ) {
 		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice not found', 'invoicing' ),
-            ),
-            true
-        );
-        return;
-    }
+			),
+			true
+		);
+		return;
+	}
 
-    if ( $invoice->is_paid() ) {
+	if ( ! wpinv_user_can_view_invoice( $invoice ) ) {
+		aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'You are not allowed to view this invoice.', 'invoicing' ),
+			),
+			true
+		);
+		return;
+	}
+
+	if ( $invoice->is_paid() ) {
 		aui()->alert(
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice has already been paid', 'invoicing' ),
-            ),
-            true
-        );
-        return;
-    }
+			),
+			true
+		);
+		return;
+	}
 
-    $form = new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
-    $form->invoice = $invoice;
-    $form->set_items( $invoice->get_items() );
+	$form = new GetPaid_Payment_Form( wpinv_get_default_payment_form() );
+	$form->invoice = $invoice;
+	$form->set_items( $invoice->get_items() );
 
-    $form->display();
+	$form->display();
 }
 
 /**

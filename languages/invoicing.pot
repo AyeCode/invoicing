@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.49\n"
+"Project-Id-Version: GetPaid 2.8.50\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/invoicing\n"
-"POT-Creation-Date: 2026-06-04 15:43+0530\n"
+"POT-Creation-Date: 2026-06-05 16:28+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
