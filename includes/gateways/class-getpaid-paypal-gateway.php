@@ -97,6 +97,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			add_action( 'getpaid_paypal_subscription_cancelled', array( $this, 'subscription_cancelled' ) );
 			add_action( 'getpaid_delete_subscription', array( $this, 'subscription_cancelled' ) );
 			add_action( 'getpaid_refund_invoice_remotely', array( $this, 'refund_invoice' ) );
+
+			add_filter( 'wpinv_get_emails', array( $this, 'register_email_settings' ) );
+			add_filter( 'getpaid_notification_email_subscription_triggers', array( $this, 'filter_email_triggers' ) );
+			add_action( 'getpaid_subscription_notification_email_register_hook', array( $this, 'init_email_type_hook' ), 10, 2 );
 		}
     }
 
@@ -871,6 +875,127 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		}
 		wp_redirect( $redirect );
 		exit;
+	}
+
+	/**
+	 * Registers the PayPal renewal failed email settings.
+	 *
+	 * @since 2.8.51
+	 *
+	 * @param array $settings Current email settings.
+	 * @return array Updated email settings.
+	 */
+	public function register_email_settings( $settings ) {
+
+		return array_merge(
+			$settings,
+			array(
+
+				'paypal_payment_failed' => array(
+
+					'email_paypal_payment_failed_header' => array(
+						'id'   => 'email_paypal_payment_failed_header',
+						'name' => '<h3>' . __( 'Renewal Payment Failed (PayPal)', 'invoicing' ) . '</h3>',
+						'desc' => __( 'These emails are sent to the customer when a PayPal renewal payment fails.', 'invoicing' ),
+						'type' => 'header',
+					),
+
+					'email_paypal_payment_failed_active' => array(
+						'id'   => 'email_paypal_payment_failed_active',
+						'name' => __( 'Enable/Disable', 'invoicing' ),
+						'desc' => __( 'Enable this email notification', 'invoicing' ),
+						'type' => 'checkbox',
+						'std'  => 0,
+					),
+
+					'email_paypal_payment_failed_admin_bcc' => array(
+						'id'   => 'email_paypal_payment_failed_admin_bcc',
+						'name' => __( 'Enable Admin BCC', 'invoicing' ),
+						'desc' => __( 'Check if you want to send a copy of this notification email to the site admin.', 'invoicing' ),
+						'type' => 'checkbox',
+						'std'  => 0,
+					),
+
+					'email_paypal_payment_failed_subject' => array(
+						'id'       => 'email_paypal_payment_failed_subject',
+						'name'     => __( 'Subject', 'invoicing' ),
+						'desc'     => __( 'Enter the subject line for this email.', 'invoicing' ),
+						'help-tip' => true,
+						'type'     => 'text',
+						'std'      => __( '[{site_title}] Payment Failed', 'invoicing' ),
+						'size'     => 'large',
+					),
+
+					'email_paypal_payment_failed_heading' => array(
+						'id'       => 'email_paypal_payment_failed_heading',
+						'name'     => __( 'Email Heading', 'invoicing' ),
+						'desc'     => __( 'Enter the main heading contained within the email notification.', 'invoicing' ),
+						'help-tip' => true,
+						'type'     => 'text',
+						'std'      => __( 'Payment Failed', 'invoicing' ),
+						'size'     => 'large',
+					),
+
+					'email_paypal_payment_failed_body'   => array(
+						'id'    => 'email_paypal_payment_failed_body',
+						'name'  => __( 'Email Content', 'invoicing' ),
+						'desc'  => '',
+						'type'  => 'rich_editor',
+						'std'   => __( '<p>Hi {name},</p><p>We were unable to process your subscription payment. <a class="btn btn-success" href="{subscription_url}">Update your payment details</a></p>', 'invoicing' ),
+						'class' => 'large',
+						'size'  => '10',
+					),
+
+				),
+
+			)
+		);
+	}
+
+	/**
+	 * Filters subscription email triggers.
+	 *
+	 * @since 2.8.51
+	 *
+	 * @param array $triggers
+	 * @return array
+	 */
+	public function filter_email_triggers( $triggers ) {
+		$triggers['getpaid_paypal_subscription_failing'] = 'paypal_payment_failed';
+
+		return $triggers;
+	}
+
+	/**
+	 * Registers the email send hook.
+	 *
+	 * @since 2.8.51
+	 *
+	 * @param string $email_type
+	 * @param string $hook
+	 */
+	public function init_email_type_hook( $email_type, $hook ) {
+		if ( 'paypal_payment_failed' === $email_type ) {
+			add_action( $hook, array( $this, 'send_paypal_payment_failed_email' ), 100, 2 );
+		}
+	}
+
+	/**
+	 * Sends the PayPal payment failed email.
+	 *
+	 * @since 2.8.51
+	 *
+	 * @param WPInv_Subscription $subscription
+	 */
+	public function send_paypal_payment_failed_email( $subscription ) {
+		if ( empty( $subscription ) || $subscription->get_gateway() !== $this->id ) {
+			return;
+		}
+
+		$email  = new GetPaid_Notification_Email( 'paypal_payment_failed', $subscription );
+		$sender = getpaid()->get( 'subscription_emails' );
+
+		return $sender->send_email( $subscription, $email, 'paypal_payment_failed' );
 	}
 
 }
