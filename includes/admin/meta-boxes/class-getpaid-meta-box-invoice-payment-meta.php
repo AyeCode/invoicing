@@ -204,6 +204,51 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 								}
 							}
                         }
+
+						if ( 'wpi_invoice' === $invoice->get_post_type() ) {
+							$payment_forms = wp_list_pluck(
+									get_posts(
+									array(
+										'numberposts' => -1,
+										'post_type'   => 'wpi_payment_form',
+									)
+								),
+								'post_title',
+								'ID'
+							);
+
+							$payment_form = $invoice->get_payment_form();
+
+							if ( empty( $payment_form ) ) {
+								$payment_form = wpinv_get_default_payment_form();
+							}
+
+							if ( $invoice->has_status( array( 'pending', 'wpi-pending', 'draft', 'auto-draft' ) ) ) {
+								// Set payment form.
+								aui()->select(
+									array(
+										'id'               => 'wpinv_payment_form',
+										'name'             => 'wpinv_payment_form',
+										'label'            => __( 'Payment Form:', 'invoicing' ),
+										'label_type'       => 'vertical',
+										'placeholder'      => __( 'Select Patment Form', 'invoicing' ),
+										'value'            => $payment_form,
+										'select2'          => true,
+										'data-allow-clear' => 'false',
+										'options'          => $payment_forms
+									),
+									true
+								);
+							} else {
+								if ( ! empty( $payment_forms[ $payment_form ] ) ) {
+									$payment_form = $payment_forms[ $payment_form ];
+								} else {
+									$payment_form = '#' . $payment_form;
+								}
+
+								echo '<div data-argument="wpinv_payment_form" class="mb-3"><label for="wpinv_payment_form" class="form-label">' . esc_html__( 'Payment Form:', 'invoicing' ) . '</label> <span class="align-middle">' . esc_html( $payment_form ) . '</span></div>';
+							}
+						}
                     ?>
                     </div>
                 </div>

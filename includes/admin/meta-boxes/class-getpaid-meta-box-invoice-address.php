@@ -282,33 +282,38 @@ class GetPaid_Meta_Box_Invoice_Address {
 		// Prepare the invoice.
 		$invoice = new WPInv_Invoice( $post_id );
 
-		// Load new data.
-		$invoice->set_props(
-			array(
-				'template'       => isset( $posted['wpinv_template'] ) ? wpinv_clean( $posted['wpinv_template'] ) : null,
-				'email_cc'       => isset( $posted['wpinv_cc'] ) ? wpinv_clean( $posted['wpinv_cc'] ) : null,
-				'disable_taxes'  => ! empty( $posted['disable_taxes'] ),
-				'currency'       => isset( $posted['wpinv_currency'] ) ? wpinv_clean( $posted['wpinv_currency'] ) : null,
-				'gateway'        => ( $invoice->needs_payment() && isset( $posted['wpinv_gateway'] ) ) ? wpinv_clean( $posted['wpinv_gateway'] ) : null,
-				'address'        => isset( $posted['wpinv_address'] ) ? wpinv_clean( $posted['wpinv_address'] ) : null,
-				'vat_number'     => isset( $posted['wpinv_vat_number'] ) ? wpinv_clean( $posted['wpinv_vat_number'] ) : null,
-				'company'        => isset( $posted['wpinv_company'] ) ? wpinv_clean( $posted['wpinv_company'] ) : null,
-				'company_id'     => isset( $posted['wpinv_company_id'] ) ? wpinv_clean( $posted['wpinv_company_id'] ) : null,
-				'zip'            => isset( $posted['wpinv_zip'] ) ? wpinv_clean( $posted['wpinv_zip'] ) : null,
-				'state'          => isset( $posted['wpinv_state'] ) ? wpinv_clean( $posted['wpinv_state'] ) : null,
-				'city'           => isset( $posted['wpinv_city'] ) ? wpinv_clean( $posted['wpinv_city'] ) : null,
-				'country'        => isset( $posted['wpinv_country'] ) ? wpinv_clean( $posted['wpinv_country'] ) : null,
-				'phone'          => isset( $posted['wpinv_phone'] ) ? wpinv_clean( $posted['wpinv_phone'] ) : null,
-				'first_name'     => isset( $posted['wpinv_first_name'] ) ? wpinv_clean( $posted['wpinv_first_name'] ) : null,
-				'last_name'      => isset( $posted['wpinv_last_name'] ) ? wpinv_clean( $posted['wpinv_last_name'] ) : null,
-				'author'         => isset( $posted['post_author_override'] ) ? wpinv_clean( $posted['post_author_override'] ) : null,
-				'date_created'   => isset( $posted['date_created'] ) ? wpinv_clean( $posted['date_created'] ) : null,
-				'date_completed' => isset( $posted['wpinv_date_completed'] ) ? wpinv_clean( $posted['wpinv_date_completed'] ) : null,
-				'due_date'       => isset( $posted['wpinv_due_date'] ) ? wpinv_clean( $posted['wpinv_due_date'] ) : null,
-				'number'         => isset( $posted['wpinv_number'] ) ? wpinv_clean( $posted['wpinv_number'] ) : null,
-				'status'         => isset( $posted['wpinv_status'] ) ? wpinv_clean( $posted['wpinv_status'] ) : null,
-			)
+		$props = array(
+			'template'       => isset( $posted['wpinv_template'] ) ? wpinv_clean( $posted['wpinv_template'] ) : null,
+			'email_cc'       => isset( $posted['wpinv_cc'] ) ? wpinv_clean( $posted['wpinv_cc'] ) : null,
+			'disable_taxes'  => ! empty( $posted['disable_taxes'] ),
+			'currency'       => isset( $posted['wpinv_currency'] ) ? wpinv_clean( $posted['wpinv_currency'] ) : null,
+			'gateway'        => ( $invoice->needs_payment() && isset( $posted['wpinv_gateway'] ) ) ? wpinv_clean( $posted['wpinv_gateway'] ) : null,
+			'address'        => isset( $posted['wpinv_address'] ) ? wpinv_clean( $posted['wpinv_address'] ) : null,
+			'vat_number'     => isset( $posted['wpinv_vat_number'] ) ? wpinv_clean( $posted['wpinv_vat_number'] ) : null,
+			'company'        => isset( $posted['wpinv_company'] ) ? wpinv_clean( $posted['wpinv_company'] ) : null,
+			'company_id'     => isset( $posted['wpinv_company_id'] ) ? wpinv_clean( $posted['wpinv_company_id'] ) : null,
+			'zip'            => isset( $posted['wpinv_zip'] ) ? wpinv_clean( $posted['wpinv_zip'] ) : null,
+			'state'          => isset( $posted['wpinv_state'] ) ? wpinv_clean( $posted['wpinv_state'] ) : null,
+			'city'           => isset( $posted['wpinv_city'] ) ? wpinv_clean( $posted['wpinv_city'] ) : null,
+			'country'        => isset( $posted['wpinv_country'] ) ? wpinv_clean( $posted['wpinv_country'] ) : null,
+			'phone'          => isset( $posted['wpinv_phone'] ) ? wpinv_clean( $posted['wpinv_phone'] ) : null,
+			'first_name'     => isset( $posted['wpinv_first_name'] ) ? wpinv_clean( $posted['wpinv_first_name'] ) : null,
+			'last_name'      => isset( $posted['wpinv_last_name'] ) ? wpinv_clean( $posted['wpinv_last_name'] ) : null,
+			'author'         => isset( $posted['post_author_override'] ) ? wpinv_clean( $posted['post_author_override'] ) : null,
+			'date_created'   => isset( $posted['date_created'] ) ? wpinv_clean( $posted['date_created'] ) : null,
+			'date_completed' => isset( $posted['wpinv_date_completed'] ) ? wpinv_clean( $posted['wpinv_date_completed'] ) : null,
+			'due_date'       => isset( $posted['wpinv_due_date'] ) ? wpinv_clean( $posted['wpinv_due_date'] ) : null,
+			'number'         => isset( $posted['wpinv_number'] ) ? wpinv_clean( $posted['wpinv_number'] ) : null,
+			'status'         => isset( $posted['wpinv_status'] ) ? wpinv_clean( $posted['wpinv_status'] ) : null,
 		);
+
+		// Set custom payment form.
+		if ( ! empty( $posted['wpinv_payment_form'] ) && current_user_can( 'manage_options' ) && $invoice->has_status( array( 'pending', 'wpi-pending', 'draft', 'auto-draft' ) ) ) {
+			$props['payment_form'] = (int) $posted['wpinv_payment_form'];
+		}
+
+		// Load new data.
+		$invoice->set_props( $props );
 
 		// Discount code.
 		if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
