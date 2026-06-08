@@ -144,6 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.51 - TBD =
 * PayPal renewal payment failed email notification to customer - ADDED
+* Option added to assign custom payment form to invoice - ADDED
 
 = 2.8.50 - 2026-06-05 =
 * Added extra validation to secure AJAX payment form request - SECURITY
