@@ -508,45 +508,87 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * @param WPInv_Invoice $invoice Invoice.
 	 */
 	public function process_charge_response( $result, $invoice ) {
-
         wpinv_clear_errors();
-		$response_code = (int) $result->transactionResponse->responseCode;
 
-        $invoice->add_note( 'Transaction Response: ' . print_r( $result->transactionResponse, true ), false, false, true );
+		if ( empty( $result ) || empty( $result->transactionResponse ) ) {
+			$invoice->add_note( __( 'Authorize.net processing failed: Empty or invalid response object returned.', 'invoicing' ) );
+			wpinv_set_error( 'processing_error', __( 'Invalid payment response. Please try again.', 'invoicing' ) );
+			return false;
+		}
+
+		$tx_response   = $result->transactionResponse;
+		$response_code = isset( $tx_response->responseCode ) ? (int) $tx_response->responseCode : 0;
+		$trans_id      = ! empty( $tx_response->transId ) ? esc_html( $tx_response->transId ) : '';
+
+		$invoice->add_note( 
+			wp_sprintf( __( 'Authorize.NET processing transaction response. Code: %1$d | Trans ID: %2$s', 'invoicing' ), $response_code, $trans_id ), 
+			false, 
+			false, 
+			true 
+		);
 
 		// Succeeded.
 		if ( 1 == $response_code || 4 == $response_code ) {
-
 			// Maybe set a transaction id.
-			if ( ! empty( $result->transactionResponse->transId ) ) {
-				$invoice->set_transaction_id( $result->transactionResponse->transId );
+			if ( ! empty( $tx_response->transId ) ) {
+				$invoice->set_transaction_id( $tx_response->transId );
 			}
 
-			$invoice->add_note( sprintf( __( 'Authentication code: %1$s (%2$s).', 'invoicing' ), $result->transactionResponse->authCode, $result->transactionResponse->accountNumber ), false, false, true );
+			$auth_code   = ! empty( $tx_response->authCode ) ? esc_html( $tx_response->authCode ) : 'N/A';
+			$account_num = ! empty( $tx_response->accountNumber ) ? esc_html( $tx_response->accountNumber ) : 'N/A';
+			
+			$invoice->add_note( 
+				wp_sprintf( __( 'Payment Authorization successful. Auth Code: %1$s | Account: %2$s.', 'invoicing' ), $auth_code, $account_num ), 
+				false, 
+				false, 
+				true 
+			);
 
 			if ( 1 == $response_code ) {
+				$invoice->add_note( __( 'Authorize.NET Status: Approved and transaction completed.', 'invoicing' ) );
+
 				return $invoice->mark_paid();
 			}
 
-			$invoice->set_status( 'wpi-onhold' );
-        	$invoice->add_note(
-                sprintf(
-                    __( 'Held for review: %s', 'invoicing' ),
-                    $result->transactionResponse->messages->message[0]->description
-                )
+			$msg_desc = __( 'Suspected fraud filter triggered.', 'invoicing' );
+
+			if ( ! empty( $tx_response->messages->message[0]->description ) ) {
+				$msg_desc = esc_html( $tx_response->messages->message[0]->description );
+			}
+
+			$invoice->add_note(
+				wp_sprintf(
+					__( 'Authorize.NET Status: Held for review. Reason: %s', 'invoicing' ),
+					$msg_desc
+				)
 			);
 
-			return $invoice->save();
+			$invoice->set_status( 'wpi-onhold' );
 
+			return $invoice->save();
 		}
 
-        wpinv_set_error( 'card_declined' );
+		if ( ! empty( $tx_response->errors->error[0] ) ) {
+			$error_obj  = $tx_response->errors->error[0];
+			$error_code = ! empty( $error_obj->errorCode ) ? esc_html( $error_obj->errorCode ) : 'Unknown';
+			$error_text = ! empty( $error_obj->errorText ) ? esc_html( $error_obj->errorText ) : 'No error reason provided.';
 
-        if ( ! empty( $result->transactionResponse->errors ) ) {
-            $errors = (object) $result->transactionResponse->errors;
-            wpinv_set_error( $errors->error[0]->errorCode, esc_html( $errors->error[0]->errorText ) );
-        }
+			$invoice->add_note(
+				sprintf(
+					__( 'Authorize.NET Transaction Declined. Error Code: %1$s | Reason: %2$s', 'invoicing' ),
+					$error_code,
+					$error_text
+				)
+			);
 
+			wpinv_set_error( $error_code, $error_text );
+		} else {
+			$invoice->add_note( __( 'Authorize.NET Transaction Declined: General error or insufficient funds.', 'invoicing' ) );
+
+			wpinv_set_error( 'card_declined' );
+		}
+
+		return false;
     }
 
     /**
