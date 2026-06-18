@@ -153,23 +153,26 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 			wpinv_error_log( wp_sprintf( __( 'Invoice Number: %s', 'invoicing' ), $posted->payload->invoiceNumber ), 'Authorize.NET Webhook:', false );
 		}
 
+		$payload_id = ! empty( $posted->payload->id ) ? sanitize_text_field( $posted->payload->id ) : '';
+		$ref_id     = ! empty( $posted->payload->merchantReferenceId ) ? sanitize_text_field( $posted->payload->merchantReferenceId ) : '';
+
 		// Process refunds.
 		if ( 'net.authorize.payment.refund.created' == $posted->eventType ) {
-			$invoice = new WPInv_Invoice( $posted->payload->merchantReferenceId );
+			$invoice = new WPInv_Invoice( $ref_id );
 			$this->validate_ipn_invoice( $invoice, $posted->payload );
 			$invoice->refund();
 		}
 
 		// Held funds approved.
 		if ( 'net.authorize.payment.fraud.approved' == $posted->eventType ) {
-			$invoice = new WPInv_Invoice( $posted->payload->id );
+			$invoice = new WPInv_Invoice( $payload_id );
 			$this->validate_ipn_invoice( $invoice, $posted->payload );
 			$invoice->mark_paid( false, __( 'Payment released', 'invoicing' ) );
 		}
 
 		// Held funds declined.
 		if ( 'net.authorize.payment.fraud.declined' == $posted->eventType ) {
-			$invoice = new WPInv_Invoice( $posted->payload->id );
+			$invoice = new WPInv_Invoice( $payload_id );
 			$this->validate_ipn_invoice( $invoice, $posted->payload );
 			$invoice->set_status( 'wpi-failed', __( 'Payment declined', 'invoicing' ) );
 			$invoice->save();
@@ -256,7 +259,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 		$this->validate_old_ipn_signature( $data );
 
 		// Fetch the associated subscription.
-		$subscription_id = WPInv_Subscription::get_subscription_id_by_field( $data['x_subscription_id'] );
+		$subscription_id = WPInv_Subscription::get_subscription_id_by_field( sanitize_text_field( $data['x_subscription_id'] ) );
 		$subscription    = new WPInv_Subscription( $subscription_id );
 
 		// Abort if it is missing or completed.
@@ -289,26 +292,29 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 	public function validate_old_ipn_signature( $posted ) {
 		$signature_key     = $this->get_option( 'signature_key' );
 
-		if ( ! empty( $signature_key ) ) {
-			$incoming_hash = ! empty( $posted['x_SHA2_Hash'] ) ? trim( $posted['x_SHA2_Hash'] ) : '';
+		if ( empty( $signature_key ) ) {
+			wpinv_error_log( "Legacy IPN rejected: Signature key is not configured.", 'Authorize.NET Webhook:', false );
+			wp_die( 'Authorize.NET Webhook Request Failure: Signature key is missing.', 'Authorize.NET Webhook Error', array( 'response' => 403 ) );
+		}
 
-			if ( empty( $incoming_hash ) ) {
-				wpinv_error_log( "Missing authentication hash.", 'Authorize.NET Webhook:', false );
-				wp_die( 'Authorize.NET Webhook Request Failure: Missing authentication hash.', 'Authorize.NET Webhook Error', array( 'response' => 200 ) );
-			}
+		$incoming_hash = ! empty( $posted['x_SHA2_Hash'] ) ? sanitize_text_field( $posted['x_SHA2_Hash'] ) : '';
 
-			$login_id      = $this->get_option( 'login_id' );
-			$trans_id      = ! empty( $posted['x_trans_id'] ) ? wpinv_clean( $posted['x_trans_id'] ) : '';
-			$amount        = ! empty( $posted['x_amount'] ) ? wpinv_clean( $posted['x_amount'] ) : '';
+		if ( empty( $incoming_hash ) ) {
+			wpinv_error_log( "Missing authentication hash.", 'Authorize.NET Webhook:', false );
+			wp_die( 'Authorize.NET Webhook Request Failure: Missing authentication hash.', 'Authorize.NET Webhook Error', array( 'response' => 200 ) );
+		}
 
-			// Live mode gives Hexadecimal Signature Key.
-			$secret_key    = $this->is_sandbox() ?  $signature_key : hex2bin( $signature_key );
-			$match_hash    = hash_hmac( 'sha512', "^$login_id^$trans_id^$amount^", $secret_key );
+		$login_id      = $this->get_option( 'login_id' );
+		$trans_id      = ! empty( $posted['x_trans_id'] ) ? wpinv_clean( $posted['x_trans_id'] ) : '';
+		$amount        = ! empty( $posted['x_amount'] ) ? wpinv_clean( $posted['x_amount'] ) : '';
 
-			if ( ! hash_equals( strtolower( $incoming_hash ), strtolower( $match_hash ) ) ) {
-				wpinv_error_log( "Authorize.NET Signature Verification Failed. Trans ID: {$trans_id} | Amount: {$amount}", 'Authorize.NET Webhook:', false );
-				wp_die( 'Authorize.NET Webhook Request Failure: Signature mismatch.', 'Authorize.NET Webhook Error', array( 'response' => 200 ) );
-			}
+		// Live mode gives Hexadecimal Signature Key.
+		$secret_key    = $this->is_sandbox() ?  $signature_key : hex2bin( $signature_key );
+		$match_hash    = hash_hmac( 'sha512', "^$login_id^$trans_id^$amount^", $secret_key );
+
+		if ( ! hash_equals( strtolower( $incoming_hash ), strtolower( $match_hash ) ) ) {
+			wpinv_error_log( "Authorize.NET Signature Verification Failed. Trans ID: {$trans_id} | Amount: {$amount}", 'Authorize.NET Webhook:', false );
+			wp_die( 'Authorize.NET Webhook Request Failure: Signature mismatch.', 'Authorize.NET Webhook Error', array( 'response' => 200 ) );
 		}
 	}
 }

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.51\n"
+"Project-Id-Version: GetPaid 2.8.52\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-17 21:00+0530\n"
-"PO-Revision-Date: 2026-06-17 21:00+0530\n"
+"POT-Creation-Date: 2026-06-18 13:28+0530\n"
+"PO-Revision-Date: 2026-06-18 13:28+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -13989,11 +13989,11 @@ msgstr ""
 msgid "Invoice Number: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:167
+#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:170
 msgid "Payment released"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:174
+#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:177
 msgid "Payment declined"
 msgstr ""
 
