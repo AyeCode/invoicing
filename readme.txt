@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.51
+Stable tag: 2.8.52
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -141,6 +141,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.52 - 2026-06-18 =
+* Enhance signature validation on legacy Authorize.NET IPN callback - SECURITY
 
 = 2.8.51 - 2026-06-17 =
 * PayPal renewal payment failed email notification to customer - ADDED
