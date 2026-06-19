@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.53 - 2026-06-TBD =
+* Authorize.NET live mode displays Card code is required error - FIXED
+
 = 2.8.52 - 2026-06-18 =
 * Enhance signature validation on legacy Authorize.NET IPN callback - SECURITY
 

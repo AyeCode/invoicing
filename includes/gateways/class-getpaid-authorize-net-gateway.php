@@ -12,37 +12,37 @@ defined( 'ABSPATH' ) || exit;
  */
 class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway {
 
-    /**
+	/**
 	 * Payment method id.
 	 *
 	 * @var string
 	 */
-    public $id = 'authorizenet';
+	public $id = 'authorizenet';
 
-    /**
+	/**
 	 * An array of features that this gateway supports.
 	 *
 	 * @var array
 	 */
-    protected $supports = array(
-        'subscription',
-        'sandbox',
-        'tokens',
-        'addons',
-        'single_subscription_group',
-        'multiple_subscription_groups',
-        'subscription_date_change',
-        'subscription_bill_times_change',
-    );
+	protected $supports = array(
+		'subscription',
+		'sandbox',
+		'tokens',
+		'addons',
+		'single_subscription_group',
+		'multiple_subscription_groups',
+		'subscription_date_change',
+		'subscription_bill_times_change',
+	);
 
-    /**
+	/**
 	 * Payment method order.
 	 *
 	 * @var int
 	 */
-    public $order = 4;
+	public $order = 4;
 
-    /**
+	/**
 	 * Endpoint for requests from Authorize.net.
 	 *
 	 * @var string
@@ -54,9 +54,9 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 *
 	 * @var string
 	 */
-    protected $endpoint;
+	protected $endpoint;
 
-    /**
+	/**
 	 * Currencies this gateway is allowed for.
 	 *
 	 * @var array
@@ -81,36 +81,34 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		'businessChecking' => 'Business Checking',
 	);
 
-    /**
+	/**
 	 * URL to view a transaction.
 	 *
 	 * @var string
 	 */
-    public $view_transaction_url = 'https://{sandbox}authorize.net/ui/themes/sandbox/Transaction/TransactionReceipt.aspx?transid=%s';
+	public $view_transaction_url = 'https://{sandbox}authorize.net/ui/themes/sandbox/Transaction/TransactionReceipt.aspx?transid=%s';
 
-    /**
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
+		$this->title                = __( 'Credit Card / Debit Card', 'invoicing' );
+		$this->method_title         = __( 'Authorize.Net', 'invoicing' );
+		$this->notify_url           = getpaid_get_non_query_string_ipn_url( $this->id );
 
-        $this->title                = __( 'Credit Card / Debit Card', 'invoicing' );
-        $this->method_title         = __( 'Authorize.Net', 'invoicing' );
-        $this->notify_url           = getpaid_get_non_query_string_ipn_url( $this->id );
+		add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 11, 2 );
+		add_filter( 'getpaid_authorizenet_sandbox_notice', array( $this, 'sandbox_notice' ) );
+		parent::__construct();
+	}
 
-        add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 11, 2 );
-        add_filter( 'getpaid_authorizenet_sandbox_notice', array( $this, 'sandbox_notice' ) );
-        parent::__construct();
-    }
-
-    /**
+	/**
 	 * Displays the payment method select field.
 	 *
 	 * @param int $invoice_id 0 or invoice id.
 	 * @param GetPaid_Payment_Form $form Current payment form.
 	 */
-    public function payment_fields( $invoice_id, $form ) {
-
-		$ach_enabled       = wpinv_get_option( 'authorizenet_enable_ach' );
+	public function payment_fields( $invoice_id, $form ) {
+		$ach_enabled        = wpinv_get_option( 'authorizenet_enable_ach' );
 		$show_type_selector = $ach_enabled && $this->is_ach_available();
 
 		// Payment type selector (CC vs ACH).
@@ -131,20 +129,19 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			$this->new_payment_method_entry( $this->get_ach_form( true ) );
 			echo '</div>';
 		}
-    }
+	}
 
-    /**
+	/**
 	 * Creates a customer profile.
 	 *
 	 *
 	 * @param WPInv_Invoice $invoice Invoice.
-     * @param array $submission_data Posted checkout fields.
-     * @param bool $save Whether or not to save the payment as a token.
-     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-profile
+	 * @param array $submission_data Posted checkout fields.
+	 * @param bool $save Whether or not to save the payment as a token.
+	 * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-profile
 	 * @return string|WP_Error Payment profile id.
 	 */
 	public function create_customer_profile( $invoice, $submission_data, $save = true ) {
-
 		// Determine payment type.
 		$is_ach_payment = $this->is_ach_payment( $submission_data['authorizenet'] );
 
@@ -156,124 +153,121 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			$submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
 		}
 
-        // Generate args.
-        $args = array(
-            'createCustomerProfileRequest' => array(
-                'merchantAuthentication' => $this->get_auth_params(),
-                'profile'                => array(
-                    'merchantCustomerId' => getpaid_limit_length( $invoice->get_user_id(), 20 ),
-                    'description'        => getpaid_limit_length( $invoice->get_full_name(), 255 ),
-                    'email'              => getpaid_limit_length( $invoice->get_email(), 255 ),
-                    'paymentProfiles'    => array(
-                        'customerType' => 'individual',
+		// Generate args.
+		$args = array(
+			'createCustomerProfileRequest' => array(
+				'merchantAuthentication' => $this->get_auth_params(),
+				'profile'                => array(
+					'merchantCustomerId' => getpaid_limit_length( $invoice->get_user_id(), 20 ),
+					'description'        => getpaid_limit_length( $invoice->get_full_name(), 255 ),
+					'email'              => getpaid_limit_length( $invoice->get_email(), 255 ),
+					'paymentProfiles'    => array(
+						'customerType' => 'individual',
 
-                        // Billing information.
-                        'billTo'       => array(
-                            'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
-                            'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
-                            'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
-                            'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
-                            'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
-                            'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
-                            'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
-                        ),
+						// Billing information.
+						'billTo'       => array(
+							'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
+							'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
+							'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
+							'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
+							'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
+							'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
+							'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
+						),
 
-                        // Payment information.
-                        'payment'      => $this->get_payment_information( $submission_data['authorizenet'] ),
-                    ),
-                ),
-                'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
-            ),
-        );
+						// Payment information.
+						'payment'      => $this->get_payment_information( $submission_data['authorizenet'] ),
+					),
+				),
+				'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
+			),
+		);
 
-        $response = $this->post( apply_filters( 'getpaid_authorizenet_customer_profile_args', $args, $invoice ), $invoice );
+		$response = $this->post( apply_filters( 'getpaid_authorizenet_customer_profile_args', $args, $invoice ), $invoice );
 
-        if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) ) {
 
-            // In case the payment profile already exists remotely.
-            if ( 'dup_payment_profile' === $response->get_error_code() ) {
-                $customer_profile_id = strtok( $response->get_error_message(), '.' );
-                update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
-                return strtok( '.' );
-            }
+			// In case the payment profile already exists remotely.
+			if ( 'dup_payment_profile' === $response->get_error_code() ) {
+				$customer_profile_id = strtok( $response->get_error_message(), '.' );
+				update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
+				return strtok( '.' );
+			}
 
-            // In case the customer profile already exists remotely.
-            if ( 'E00039' === $response->get_error_code() ) {
-                $customer_profile_id = str_replace( 'A duplicate record with ID ', '', $response->get_error_message() );
-                $customer_profile_id = str_replace( ' already exists.', '', $customer_profile_id );
-                return $this->create_customer_payment_profile( trim( $customer_profile_id ), $invoice, $submission_data, $save );
-            }
+			// In case the customer profile already exists remotely.
+			if ( 'E00039' === $response->get_error_code() ) {
+				$customer_profile_id = str_replace( 'A duplicate record with ID ', '', $response->get_error_message() );
+				$customer_profile_id = str_replace( ' already exists.', '', $customer_profile_id );
+				return $this->create_customer_payment_profile( trim( $customer_profile_id ), $invoice, $submission_data, $save );
+			}
 
-            return $response;
-        }
+			return $response;
+		}
 
-        update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $response->customerProfileId );
+		update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $response->customerProfileId );
 
-        // Save the payment token.
-        if ( $save ) {
+		// Save the payment token.
+		if ( $save ) {
 			if ( $is_ach_payment ) {
 				$token_name = $this->get_ach_token_name( $submission_data['authorizenet'] );
 			} else {
 				$token_name = getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . '&middot;&middot;&middot;&middot;' . substr( $submission_data['authorizenet']['cc_number'], -4 );
 			}
 
-            $this->save_token(
-                array(
-                    'id'             => $response->customerPaymentProfileIdList[0],
-                    'name'           => $token_name,
-                    'default'        => true,
-                    'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+			$this->save_token(
+				array(
+					'id'             => $response->customerPaymentProfileIdList[0],
+					'name'           => $token_name,
+					'default'        => true,
+					'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
 					'payment_method' => $is_ach_payment ? 'ach' : 'card',
-                )
-            );
-        }
+				)
+			);
+		}
 
-        // Add a note about the validation response.
-        $invoice->add_note(
-            sprintf( __( 'Created Authorize.NET customer profile: %s', 'invoicing' ), $response->validationDirectResponseList[0] ),
-            false,
-            false,
-            true
-        );
+		// Add a note about the validation response.
+		$invoice->add_note(
+			wp_sprintf( __( 'Created Authorize.NET customer profile: %s', 'invoicing' ), $response->validationDirectResponseList[0] ),
+			false,
+			false,
+			true
+		);
 
-        return $response->customerPaymentProfileIdList[0];
-    }
+		return $response->customerPaymentProfileIdList[0];
+	}
 
-    /**
+	/**
 	 * Retrieves a customer profile.
 	 *
 	 *
 	 * @param string $profile_id profile id.
 	 * @return string|WP_Error Profile id.
-     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-get-customer-profile
+	 * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-get-customer-profile
 	 */
 	public function get_customer_profile( $profile_id ) {
+		// Generate args.
+		$args = array(
+			'getCustomerProfileRequest' => array(
+				'merchantAuthentication' => $this->get_auth_params(),
+				'customerProfileId'      => $profile_id,
+			),
+		);
 
-        // Generate args.
-        $args = array(
-            'getCustomerProfileRequest' => array(
-                'merchantAuthentication' => $this->get_auth_params(),
-                'customerProfileId'      => $profile_id,
-            ),
-        );
+		return $this->post( $args, false );
+	}
 
-        return $this->post( $args, false );
-
-    }
-
-    /**
+	/**
 	 * Creates a customer payment profile.
 	 *
 	 *
-     * @param string $profile_id profile id.
+	 * @param string $profile_id profile id.
 	 * @param WPInv_Invoice $invoice Invoice.
-     * @param array $submission_data Posted checkout fields.
-     * @param bool $save Whether or not to save the payment as a token.
-     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-payment-profile
+	 * @param array $submission_data Posted checkout fields.
+	 * @param bool $save Whether or not to save the payment as a token.
+	 * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-create-customer-payment-profile
 	 * @return string|WP_Error Profile id.
 	 */
 	public function create_customer_payment_profile( $customer_profile, $invoice, $submission_data, $save ) {
-
 		// Determine payment type.
 		$is_ach_payment = $this->is_ach_payment( $submission_data['authorizenet'] );
 
@@ -285,233 +279,227 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			$submission_data['authorizenet']['cc_number'] = preg_replace( '/\D/', '', $submission_data['authorizenet']['cc_number'] );
 		}
 
-        // Prepare payment details.
-        $payment_information = $this->get_payment_information( $submission_data['authorizenet'] );
+		// Prepare payment details.
+		$payment_information = $this->get_payment_information( $submission_data['authorizenet'] );
 
-        // Authorize.NET does not support saving the same payment method twice.
-        $cached_information = $this->retrieve_payment_profile_from_cache( $payment_information, $customer_profile, $invoice );
+		// Authorize.NET does not support saving the same payment method twice.
+		$cached_information = $this->retrieve_payment_profile_from_cache( $payment_information, $customer_profile, $invoice );
 
-        if ( $cached_information ) {
-            return $cached_information;
-        }
+		if ( $cached_information ) {
+			return $cached_information;
+		}
 
-        // Generate args.
-        $args = array(
-            'createCustomerPaymentProfileRequest' => array(
-                'merchantAuthentication' => $this->get_auth_params(),
-                'customerProfileId'      => $customer_profile,
-                'paymentProfile'         => array(
+		// Generate args.
+		$args = array(
+			'createCustomerPaymentProfileRequest' => array(
+				'merchantAuthentication' => $this->get_auth_params(),
+				'customerProfileId'      => $customer_profile,
+				'paymentProfile'         => array(
 
-                    // Billing information.
-                    'billTo'  => array(
-                        'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
-                        'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
-                        'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
-                        'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
-                        'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
-                        'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
-                        'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
-                    ),
+					// Billing information.
+					'billTo'  => array(
+						'firstName' => getpaid_limit_length( $invoice->get_first_name(), 50 ),
+						'lastName'  => getpaid_limit_length( $invoice->get_last_name(), 50 ),
+						'address'   => getpaid_limit_length( $invoice->get_address(), 60 ),
+						'city'      => getpaid_limit_length( $invoice->get_city(), 40 ),
+						'state'     => getpaid_limit_length( $invoice->get_state(), 40 ),
+						'zip'       => getpaid_limit_length( $invoice->get_zip(), 20 ),
+						'country'   => getpaid_limit_length( $invoice->get_country(), 60 ),
+					),
 
-                    // Payment information.
-                    'payment' => $payment_information,
-                ),
-                'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
-            ),
-        );
+					// Payment information.
+					'payment' => $payment_information,
+				),
+				'validationMode'         => $this->is_sandbox( $invoice ) ? 'testMode' : 'liveMode',
+			),
+		);
 
-        $response = $this->post( apply_filters( 'getpaid_authorizenet_create_customer_payment_profile_args', $args, $invoice ), $invoice );
+		$response = $this->post( apply_filters( 'getpaid_authorizenet_create_customer_payment_profile_args', $args, $invoice ), $invoice );
 
-        if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) ) {
+			// In case the payment profile already exists remotely.
+			if ( 'dup_payment_profile' == $response->get_error_code() ) {
+				$customer_profile_id = strtok( $response->get_error_message(), '.' );
+				$payment_profile_id  = strtok( '.' );
+				update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
 
-            // In case the payment profile already exists remotely.
-            if ( 'dup_payment_profile' == $response->get_error_code() ) {
-                $customer_profile_id = strtok( $response->get_error_message(), '.' );
-                $payment_profile_id  = strtok( '.' );
-                update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile_id );
+				// Cache payment profile id.
+				$this->add_payment_profile_to_cache( $payment_information, $payment_profile_id );
 
-                // Cache payment profile id.
-                $this->add_payment_profile_to_cache( $payment_information, $payment_profile_id );
+				return $payment_profile_id;
+			}
 
-                return $payment_profile_id;
-            }
+			return $response;
+		}
 
-            return $response;
-        }
-
-        // Save the payment token.
-        if ( $save ) {
+		// Save the payment token.
+		if ( $save ) {
 			if ( $is_ach_payment ) {
 				$token_name = $this->get_ach_token_name( $submission_data['authorizenet'] );
 			} else {
 				$token_name = getpaid_get_card_name( $submission_data['authorizenet']['cc_number'] ) . ' &middot;&middot;&middot;&middot; ' . substr( $submission_data['authorizenet']['cc_number'], -4 );
 			}
 
-            $this->save_token(
-                array(
-                    'id'             => $response->customerPaymentProfileId,
-                    'name'           => $token_name,
-                    'default'        => true,
-                    'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
+			$this->save_token(
+				array(
+					'id'             => $response->customerPaymentProfileId,
+					'name'           => $token_name,
+					'default'        => true,
+					'type'           => $this->is_sandbox( $invoice ) ? 'sandbox' : 'live',
 					'payment_method' => $is_ach_payment ? 'ach' : 'card',
-                )
-            );
-        }
+				)
+			);
+		}
 
-        // Cache payment profile id.
-        $this->add_payment_profile_to_cache( $payment_information, $response->customerPaymentProfileId );
+		// Cache payment profile id.
+		$this->add_payment_profile_to_cache( $payment_information, $response->customerPaymentProfileId );
 
-        // Add a note about the validation response.
-        $invoice->add_note(
-            sprintf( __( 'Saved Authorize.NET payment profile: %s', 'invoicing' ), $response->validationDirectResponse ),
-            false,
-            false,
-            true
-        );
+		// Add a note about the validation response.
+		$invoice->add_note(
+			wp_sprintf( __( 'Saved Authorize.NET payment profile: %s', 'invoicing' ), $response->validationDirectResponse ),
+			false,
+			false,
+			true
+		);
 
-        update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile );
+		update_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), $customer_profile );
 
-        return $response->customerPaymentProfileId;
-    }
+		return $response->customerPaymentProfileId;
+	}
 
-    /**
+	/**
 	 * Retrieves payment details from cache.
 	 *
 	 *
-     * @param array $payment_details.
+	 * @param array $payment_details.
 	 * @return array|false Profile id.
 	 */
 	public function retrieve_payment_profile_from_cache( $payment_details, $customer_profile, $invoice ) {
+		$cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
+		$payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
 
-        $cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
-        $payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
+		if ( ! is_array( $cached_information ) || ! array_key_exists( $payment_details, $cached_information ) ) {
+			return false;
+		}
 
-        if ( ! is_array( $cached_information ) || ! array_key_exists( $payment_details, $cached_information ) ) {
-            return false;
-        }
+		// Generate args.
+		$args = array(
+			'getCustomerPaymentProfileRequest' => array(
+				'merchantAuthentication'   => $this->get_auth_params(),
+				'customerProfileId'        => $customer_profile,
+				'customerPaymentProfileId' => $cached_information[ $payment_details ],
+			),
+		);
 
-        // Generate args.
-        $args = array(
-            'getCustomerPaymentProfileRequest' => array(
-                'merchantAuthentication'   => $this->get_auth_params(),
-                'customerProfileId'        => $customer_profile,
-                'customerPaymentProfileId' => $cached_information[ $payment_details ],
-            ),
-        );
+		$response = $this->post( $args, $invoice );
 
-        $response = $this->post( $args, $invoice );
+		return is_wp_error( $response ) ? false : $cached_information[ $payment_details ];
+	}
 
-        return is_wp_error( $response ) ? false : $cached_information[ $payment_details ];
-
-    }
-
-    /**
+	/**
 	 * Securely adds payment details to cache.
 	 *
 	 *
-     * @param array $payment_details.
-     * @param string $payment_profile_id.
+	 * @param array $payment_details.
+	 * @param string $payment_profile_id.
 	 */
 	public function add_payment_profile_to_cache( $payment_details, $payment_profile_id ) {
+		$cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
+		$cached_information = is_array( $cached_information ) ? $cached_information : array();
+		$payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
 
-        $cached_information = get_option( 'getpaid_authorize_net_cached_profiles', array() );
-        $cached_information = is_array( $cached_information ) ? $cached_information : array();
-        $payment_details    = hash_hmac( 'sha256', json_encode( $payment_details ), SECURE_AUTH_KEY );
+		$cached_information[ $payment_details ] = $payment_profile_id;
 
-        $cached_information[ $payment_details ] = $payment_profile_id;
-        update_option( 'getpaid_authorize_net_cached_profiles', $cached_information );
+		update_option( 'getpaid_authorize_net_cached_profiles', $cached_information );
+	}
 
-    }
-
-    /**
+	/**
 	 * Retrieves a customer payment profile.
 	 *
 	 *
 	 * @param string $customer_profile_id customer profile id.
-     * @param string $payment_profile_id payment profile id.
+	 * @param string $payment_profile_id payment profile id.
 	 * @return string|WP_Error Profile id.
-     * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-get-customer-payment-profile
+	 * @link https://developer.authorize.net/api/reference/index.html#customer-profiles-get-customer-payment-profile
 	 */
 	public function get_customer_payment_profile( $customer_profile_id, $payment_profile_id ) {
+		// Generate args.
+		$args = array(
+			'getCustomerPaymentProfileRequest' => array(
+				'merchantAuthentication'   => $this->get_auth_params(),
+				'customerProfileId'        => $customer_profile_id,
+				'customerPaymentProfileId' => $payment_profile_id,
+			),
+		);
 
-        // Generate args.
-        $args = array(
-            'getCustomerPaymentProfileRequest' => array(
-                'merchantAuthentication'   => $this->get_auth_params(),
-                'customerProfileId'        => $customer_profile_id,
-                'customerPaymentProfileId' => $payment_profile_id,
-            ),
-        );
+		return $this->post( $args, false );
+	}
 
-        return $this->post( $args, false );
-
-    }
-
-    /**
+	/**
 	 * Charges a customer payment profile.
 	 *
-     * @param string $customer_profile_id customer profile id.
-     * @param string $payment_profile_id payment profile id.
+	 * @param string $customer_profile_id customer profile id.
+	 * @param string $payment_profile_id payment profile id.
 	 * @param WPInv_Invoice $invoice Invoice.
-     * @link https://developer.authorize.net/api/reference/index.html#payment-transactions-charge-a-customer-profile
+	 * @link https://developer.authorize.net/api/reference/index.html#payment-transactions-charge-a-customer-profile
 	 * @return WP_Error|object
 	 */
-	public function charge_customer_payment_profile( $customer_profile_id, $payment_profile_id, $invoice ) {
+	public function charge_customer_payment_profile( $customer_profile_id, $payment_profile_id, $invoice, $submission_data = array(), $submission = array() ) {
+		// Generate args.
+		$args = array(
+			'createTransactionRequest' => array(
+				'merchantAuthentication' => $this->get_auth_params(),
+				'refId'                  => $invoice->get_id(),
+				'transactionRequest'     => array(
+					'transactionType' => 'authCaptureTransaction',
+					'amount'          => $invoice->get_total(),
+					'currencyCode'    => $invoice->get_currency(),
+					'profile'         => array(
+						'customerProfileId' => $customer_profile_id,
+						'paymentProfile'    => array(
+							'paymentProfileId' => $payment_profile_id,
+						),
+					),
+					'order'           => array(
+						'invoiceNumber' => getpaid_limit_length( $invoice->get_number(), 20 ),
+					),
+					'lineItems'       => array( 'lineItem' => $this->get_line_items( $invoice ) ),
+					'tax'             => array(
+						'amount' => $invoice->get_total_tax(),
+						'name'   => __( 'TAX', 'invoicing' ),
+					),
+					'poNumber'        => getpaid_limit_length( $invoice->get_number(), 25 ),
+					'customer'        => array(
+						'id'    => getpaid_limit_length( $invoice->get_user_id(), 25 ),
+						'email' => getpaid_limit_length( $invoice->get_email(), 255 ),
+					),
+					'customerIP'      => $invoice->get_ip() ? $invoice->get_ip() : wpinv_clean( wpinv_get_ip() )
+				),
+			),
+		);
 
-        // Generate args.
-        $args = array(
+		if ( ! empty( $submission_data['authorizenet']['cc_cvv2'] ) ) {
+			$args['createTransactionRequest']['transactionRequest']['profile']['paymentProfile']['cardCode'] = wpinv_clean( $submission_data['authorizenet']['cc_cvv2'] );
+		}
 
-            'createTransactionRequest' => array(
+		if ( 0 == $invoice->get_total_tax() ) {
+			unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
+		}
 
-                'merchantAuthentication' => $this->get_auth_params(),
-                'refId'                  => $invoice->get_id(),
-                'transactionRequest'     => array(
-                    'transactionType' => 'authCaptureTransaction',
-                    'amount'          => $invoice->get_total(),
-                    'currencyCode'    => $invoice->get_currency(),
-                    'profile'         => array(
-                        'customerProfileId' => $customer_profile_id,
-                        'paymentProfile'    => array(
-                            'paymentProfileId' => $payment_profile_id,
-                        ),
-                    ),
-                    'order'           => array(
-                        'invoiceNumber' => getpaid_limit_length( $invoice->get_number(), 20 ),
-                    ),
-                    'lineItems'       => array( 'lineItem' => $this->get_line_items( $invoice ) ),
-                    'tax'             => array(
-                        'amount' => $invoice->get_total_tax(),
-                        'name'   => __( 'TAX', 'invoicing' ),
-                    ),
-                    'poNumber'        => getpaid_limit_length( $invoice->get_number(), 25 ),
-                    'customer'        => array(
-                        'id'    => getpaid_limit_length( $invoice->get_user_id(), 25 ),
-                        'email' => getpaid_limit_length( $invoice->get_email(), 25 ),
-                    ),
-                    'customerIP'      => $invoice->get_ip(),
-                ),
-            ),
-        );
+		return $this->post( apply_filters( 'getpaid_authorizenet_charge_customer_payment_profile_args', $args, $invoice ), $invoice );
+	}
 
-        if ( 0 == $invoice->get_total_tax() ) {
-            unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
-        }
-
-        return $this->post( apply_filters( 'getpaid_authorizenet_charge_customer_payment_profile_args', $args, $invoice ), $invoice );
-
-    }
-
-    /**
+	/**
 	 * Processes a customer charge.
 	 *
-     * @param stdClass $result Api response.
+	 * @param stdClass $result Api response.
 	 * @param WPInv_Invoice $invoice Invoice.
 	 */
 	public function process_charge_response( $result, $invoice ) {
-        wpinv_clear_errors();
+		wpinv_clear_errors();
 
 		if ( empty( $result ) || empty( $result->transactionResponse ) ) {
-			$invoice->add_note( __( 'Authorize.net processing failed: Empty or invalid response object returned.', 'invoicing' ) );
+			$invoice->add_note( wp_sprintf( __( '[Authorize.NET %s]: Processing failed due to empty or invalid response object returned.', 'invoicing' ), $this->get_mode_name() ), false, false, true );
 			wpinv_set_error( 'processing_error', __( 'Invalid payment response. Please try again.', 'invoicing' ) );
 			return false;
 		}
@@ -521,7 +509,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		$trans_id      = ! empty( $tx_response->transId ) ? esc_html( $tx_response->transId ) : '';
 
 		$invoice->add_note( 
-			wp_sprintf( __( 'Authorize.NET processing transaction response. Code: %1$d | Trans ID: %2$s', 'invoicing' ), $response_code, $trans_id ), 
+			wp_sprintf( __( '[Authorize.NET %1$s]: Processing transaction response. Code: %2$d | Trans ID: %3$s', 'invoicing' ), $this->get_mode_name(), $response_code, $trans_id ), 
 			false, 
 			false, 
 			true 
@@ -536,16 +524,16 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 
 			$auth_code   = ! empty( $tx_response->authCode ) ? esc_html( $tx_response->authCode ) : 'N/A';
 			$account_num = ! empty( $tx_response->accountNumber ) ? esc_html( $tx_response->accountNumber ) : 'N/A';
-			
+
 			$invoice->add_note( 
-				wp_sprintf( __( 'Payment Authorization successful. Auth Code: %1$s | Account: %2$s.', 'invoicing' ), $auth_code, $account_num ), 
+				wp_sprintf( __( '[Authorize.NET %1$s]: Payment Authorization successful. Auth Code: %2$s | Account: %3$s.', 'invoicing' ), $this->get_mode_name(), $auth_code, $account_num ), 
 				false, 
 				false, 
 				true 
 			);
 
 			if ( 1 == $response_code ) {
-				$invoice->add_note( __( 'Authorize.NET Status: Approved and transaction completed.', 'invoicing' ) );
+				$invoice->add_note( wp_sprintf( __( '[Authorize.NET %s]: Status approved and transaction completed.', 'invoicing' ), $this->get_mode_name() ), false, false, true );
 
 				return $invoice->mark_paid();
 			}
@@ -574,24 +562,28 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			$error_text = ! empty( $error_obj->errorText ) ? esc_html( $error_obj->errorText ) : 'No error reason provided.';
 
 			$invoice->add_note(
-				sprintf(
-					__( 'Authorize.NET Transaction Declined. Error Code: %1$s | Reason: %2$s', 'invoicing' ),
+				wp_sprintf(
+					__( '[Authorize.NET %1$s]: Transaction Declined. Error Code: %2$s | Reason: %3$s', 'invoicing' ),
+					$this->get_mode_name(),
 					$error_code,
 					$error_text
-				)
+				),
+				false,
+				false,
+				true
 			);
 
 			wpinv_set_error( $error_code, $error_text );
 		} else {
-			$invoice->add_note( __( 'Authorize.NET Transaction Declined: General error or insufficient funds.', 'invoicing' ) );
+			$invoice->add_note( wp_sprintf( __( '[Authorize.NET %s]: Transaction declined due to eneral error or insufficient funds.', 'invoicing' ), $this->get_mode_name() ), false, false, true );
 
 			wpinv_set_error( 'card_declined' );
 		}
 
 		return false;
-    }
+	}
 
-    /**
+	/**
 	 * Returns payment information.
 	 *
 	 *
@@ -614,7 +606,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		);
 	}
 
-    /**
+	/**
 	 * Returns the customer profile meta name.
 	 *
 	 *
@@ -622,8 +614,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * @return string
 	 */
 	public function get_customer_profile_meta_name( $invoice ) {
-        return $this->is_sandbox( $invoice ) ? 'getpaid_authorizenet_sandbox_customer_profile_id' : 'getpaid_authorizenet_customer_profile_id';
-    }
+		return $this->is_sandbox( $invoice ) ? 'getpaid_authorizenet_sandbox_customer_profile_id' : 'getpaid_authorizenet_customer_profile_id';
+	}
 
 	/**
 	 * Checks if ACH payments are available for the current currency.
@@ -921,39 +913,38 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		echo '</ul>';
 	}
 
-    /**
+	/**
 	 * Validates the submitted data.
 	 *
 	 *
 	 * @param array $submission_data Posted checkout fields.
-     * @param WPInv_Invoice $invoice
+	 * @param WPInv_Invoice $invoice
 	 * @return WP_Error|string The payment profile id
 	 */
 	public function validate_submission_data( $submission_data, $invoice ) {
+		// Validate authentication details.
+		$auth = $this->get_auth_params();
 
-        // Validate authentication details.
-        $auth = $this->get_auth_params();
-
-        if ( empty( $auth['name'] ) || empty( $auth['transactionKey'] ) ) {
-            return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing' ) );
-        }
+		if ( empty( $auth['name'] ) || empty( $auth['transactionKey'] ) ) {
+			return new WP_Error( 'invalid_settings', __( 'Please set-up your login id and transaction key before using this gateway.', 'invoicing' ) );
+		}
 
 		// Determine if this is an ACH payment.
 		$is_ach_payment    = $this->is_ach_payment( isset( $submission_data['authorizenet'] ) ? $submission_data['authorizenet'] : array() );
 		$payment_method_key = $is_ach_payment ? 'getpaid-authorizenet-ach-payment-method' : 'getpaid-authorizenet-payment-method';
 
-        // Validate the payment method.
-        if ( empty( $submission_data[ $payment_method_key ] ) ) {
+		// Validate the payment method.
+		if ( empty( $submission_data[ $payment_method_key ] ) ) {
 			$error_message = $is_ach_payment
 				? __( 'Please select a different payment method or add a new bank account.', 'invoicing' )
 				: __( 'Please select a different payment method or add a new card.', 'invoicing' );
-            return new WP_Error( 'invalid_payment_method', $error_message );
-        }
+			return new WP_Error( 'invalid_payment_method', $error_message );
+		}
 
-        // Are we adding a new payment method?
-        if ( 'new' != $submission_data[ $payment_method_key ] ) {
-            return $submission_data[ $payment_method_key ];
-        }
+		// Are we adding a new payment method?
+		if ( 'new' != $submission_data[ $payment_method_key ] ) {
+			return $submission_data[ $payment_method_key ];
+		}
 
 		// Validate ACH fields if this is a new ACH payment.
 		if ( $is_ach_payment ) {
@@ -963,19 +954,18 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			}
 		}
 
-        // Retrieve the customer profile id.
-        $profile_id = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
+		// Retrieve the customer profile id.
+		$profile_id = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
 
-        // Create payment method.
-        if ( empty( $profile_id ) ) {
-            return $this->create_customer_profile( $invoice, $submission_data, ! empty( $submission_data['getpaid-authorizenet-new-payment-method'] ) );
-        }
+		// Create payment method.
+		if ( empty( $profile_id ) ) {
+			return $this->create_customer_profile( $invoice, $submission_data, ! empty( $submission_data['getpaid-authorizenet-new-payment-method'] ) );
+		}
 
-        return $this->create_customer_payment_profile( $profile_id, $invoice, $submission_data, ! empty( $submission_data['getpaid-authorizenet-new-payment-method'] ) );
+		return $this->create_customer_payment_profile( $profile_id, $invoice, $submission_data, ! empty( $submission_data['getpaid-authorizenet-new-payment-method'] ) );
+	}
 
-    }
-
-    /**
+	/**
 	 * Returns invoice line items.
 	 *
 	 *
@@ -983,42 +973,42 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * @return array
 	 */
 	public function get_line_items( $invoice ) {
-        $items = array();
+		$items = array();
 
-        foreach ( $invoice->get_items() as $item ) {
+		foreach ( $invoice->get_items() as $item ) {
 
-            $amount  = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
-            $items[] = array(
-                'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
-                'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
-                'description' => getpaid_limit_length( $item->get_description(), 255 ),
-                'quantity'    => (string) ( $invoice->get_template() == 'amount' ? 1 : $item->get_quantity() ),
-                'unitPrice'   => (float) $amount,
-                'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
-            );
+			$amount  = $invoice->is_renewal() ? $item->get_price() : $item->get_initial_price();
+			$items[] = array(
+				'itemId'      => getpaid_limit_length( $item->get_id(), 31 ),
+				'name'        => getpaid_limit_length( $item->get_raw_name(), 31 ),
+				'description' => getpaid_limit_length( $item->get_description(), 255 ),
+				'quantity'    => (string) ( $invoice->get_template() == 'amount' ? 1 : $item->get_quantity() ),
+				'unitPrice'   => (float) $amount,
+				'taxable'     => wpinv_use_taxes() && $invoice->is_taxable() && 'tax-exempt' != $item->get_vat_rule(),
+			);
 
-        }
+		}
 
-        foreach ( $invoice->get_fees() as $fee_name => $fee ) {
+		foreach ( $invoice->get_fees() as $fee_name => $fee ) {
 
-            $amount  = $invoice->is_renewal() ? $fee['recurring_fee'] : $fee['initial_fee'];
+			$amount  = $invoice->is_renewal() ? $fee['recurring_fee'] : $fee['initial_fee'];
 
-            if ( $amount > 0 ) {
-                $items[] = array(
-                    'itemId'      => getpaid_limit_length( $fee_name, 31 ),
-                    'name'        => getpaid_limit_length( $fee_name, 31 ),
-                    'description' => getpaid_limit_length( $fee_name, 255 ),
-                    'quantity'    => '1',
-                    'unitPrice'   => (float) $amount,
-                    'taxable'     => false,
-                );
-            }
-}
+			if ( $amount > 0 ) {
+				$items[] = array(
+					'itemId'      => getpaid_limit_length( $fee_name, 31 ),
+					'name'        => getpaid_limit_length( $fee_name, 31 ),
+					'description' => getpaid_limit_length( $fee_name, 255 ),
+					'quantity'    => '1',
+					'unitPrice'   => (float) $amount,
+					'taxable'     => false,
+				);
+			}
+	}
 
-        return $items;
-    }
+		return $items;
+	}
 
-    /**
+	/**
 	 * Process Payment.
 	 *
 	 *
@@ -1028,50 +1018,49 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * @return array
 	 */
 	public function process_payment( $invoice, $submission_data, $submission ) {
+		// Validate the submitted data.
+		$payment_profile_id = $this->validate_submission_data( $submission_data, $invoice );
 
-        // Validate the submitted data.
-        $payment_profile_id = $this->validate_submission_data( $submission_data, $invoice );
+		// Do we have an error?
+		if ( is_wp_error( $payment_profile_id ) ) {
+			wpinv_set_error( $payment_profile_id->get_error_code(), $payment_profile_id->get_error_message() );
+			wpinv_send_back_to_checkout( $invoice );
+		}
 
-        // Do we have an error?
-        if ( is_wp_error( $payment_profile_id ) ) {
-            wpinv_set_error( $payment_profile_id->get_error_code(), $payment_profile_id->get_error_message() );
-            wpinv_send_back_to_checkout( $invoice );
-        }
+		$invoice->add_note( wp_sprintf( __( '[Authorize.NET %s]: paymentProfileId - %s', 'invoicing' ), $this->get_mode_name(), wpinv_clean( $payment_profile_id ) ), false, false, true );
 
-        // Save the payment method to the order.
-        update_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', $payment_profile_id );
+		// Save the payment method to the order.
+		update_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', $payment_profile_id );
 
-        // Check if this is a subscription or not.
-        $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
-        if ( ! empty( $subscriptions ) ) {
-            $this->process_subscription( $invoice, $subscriptions );
-        }
+		// Check if this is a subscription or not.
+		$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
+		if ( ! empty( $subscriptions ) ) {
+			$this->process_subscription( $invoice, $subscriptions );
+		}
 
-        // If it is free, send to the success page.
-        if ( ! $invoice->needs_payment() ) {
-            $invoice->mark_paid();
-            wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
-        }
+		// If it is free, send to the success page.
+		if ( ! $invoice->needs_payment() ) {
+			$invoice->mark_paid();
+			wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+		}
 
-        // Charge the payment profile.
-        $this->process_initial_payment( $invoice );
+		// Charge the payment profile.
+		$this->process_initial_payment( $invoice, $submission_data, $submission );
 
-        wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+		wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
-        exit;
-
+		exit;
 	}
 
 	/**
 	 * Processes the initial payment.
 	 *
-     * @param WPInv_Invoice $invoice Invoice.
+	 * @param WPInv_Invoice $invoice Invoice.
 	 */
-	protected function process_initial_payment( $invoice ) {
-
+	protected function process_initial_payment( $invoice, $submission_data = array(), $submission = array() ) {
 		$payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
-        $customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
-		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
+		$customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
+		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice, $submission_data, $submission );
 
 		// Do we have an error?
 		if ( is_wp_error( $result ) ) {
@@ -1085,41 +1074,38 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		if ( wpinv_get_errors() ) {
 			wpinv_send_back_to_checkout( $invoice );
 		}
-
 	}
 
-    /**
+	/**
 	 * Processes recurring payments.
 	 *
-     * @param WPInv_Invoice $invoice Invoice.
-     * @param WPInv_Subscription[]|WPInv_Subscription $subscriptions Subscriptions.
+	 * @param WPInv_Invoice $invoice Invoice.
+	 * @param WPInv_Subscription[]|WPInv_Subscription $subscriptions Subscriptions.
 	 */
 	public function process_subscription( $invoice, $subscriptions ) {
-
-        // Check if there is an initial amount to charge.
-        if ( (float) $invoice->get_total() > 0 ) {
+		// Check if there is an initial amount to charge.
+		if ( (float) $invoice->get_total() > 0 ) {
 			$this->process_initial_payment( $invoice );
-        }
+		}
 
-        // Activate the subscriptions.
-        $subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
+		// Activate the subscriptions.
+		$subscriptions = is_array( $subscriptions ) ? $subscriptions : array( $subscriptions );
 
-        foreach ( $subscriptions as $subscription ) {
-            if ( $subscription->exists() ) {
-                $duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
-                $expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
+		foreach ( $subscriptions as $subscription ) {
+			if ( $subscription->exists() ) {
+				$duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
+				$expiry   = date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) );
 
-                $subscription->set_next_renewal_date( $expiry );
-                $subscription->set_date_created( current_time( 'mysql' ) );
-                $subscription->set_profile_id( $invoice->generate_key( 'authnet_sub_' . $invoice->get_id() . '_' . $subscription->get_id() ) );
-                $subscription->activate();
-            }
-        }
+				$subscription->set_next_renewal_date( $expiry );
+				$subscription->set_date_created( current_time( 'mysql' ) );
+				$subscription->set_profile_id( $invoice->generate_key( 'authnet_sub_' . $invoice->get_id() . '_' . $subscription->get_id() ) );
+				$subscription->activate();
+			}
+		}
 
 		// Redirect to the success page.
-        wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
-
-    }
+		wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
+	}
 
 	/**
 	 * (Maybe) renews an authorize.net subscription profile.
@@ -1134,67 +1120,62 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 		}
 	}
 
-    /**
+	/**
 	 * Renews a subscription.
 	 *
-     * @param WPInv_Subscription $subscription
+	 * @param WPInv_Subscription $subscription
 	 */
 	public function renew_subscription( $subscription ) {
-
 		// Generate the renewal invoice.
 		$new_invoice = $subscription->create_payment();
 		$old_invoice = $subscription->get_parent_payment();
 
-        if ( empty( $new_invoice ) ) {
-            $old_invoice->add_note( __( 'Error generating a renewal invoice.', 'invoicing' ), false, false, false );
-            $subscription->failing();
-            return;
-        }
+		if ( empty( $new_invoice ) ) {
+			$old_invoice->add_note( __( 'Error generating a renewal invoice.', 'invoicing' ), false, false, true );
+			$subscription->failing();
+			return;
+		}
 
-        // Charge the payment method.
+		// Charge the payment method.
 		$payment_profile_id = get_post_meta( $old_invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
 		$customer_profile   = get_user_meta( $old_invoice->get_user_id(), $this->get_customer_profile_meta_name( $old_invoice ), true );
 		$result             = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $new_invoice );
 
 		// Do we have an error?
 		if ( is_wp_error( $result ) ) {
-
 			$old_invoice->add_note(
-				sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), $result->get_error_message() ),
+				wp_sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), $result->get_error_message() ),
 				true,
 				false,
 				true
 			);
 			$subscription->failing();
 			return;
-
 		}
 
 		// Process the response.
 		$this->process_charge_response( $result, $new_invoice );
 
 		if ( wpinv_get_errors() ) {
-
 			$old_invoice->add_note(
-				sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), getpaid_get_errors_html() ),
+				wp_sprintf( __( 'Error renewing subscription : ( %s ).', 'invoicing' ), getpaid_get_errors_html() ),
 				true,
 				false,
 				true
 			);
 			$subscription->failing();
 			return;
+		}
 
-        }
+		if ( ! $new_invoice->needs_payment() ) {
+			$subscription->renew();
+			$subscription->after_add_payment( $new_invoice );
+		} else {
+			$subscription->failing();
+		}
+	}
 
-        if ( ! $new_invoice->needs_payment() ) {
-            $subscription->renew();
-            $subscription->after_add_payment( $new_invoice );
-        } else {
-            $subscription->failing();
-        }
-    }
-
-    /**
+	/**
 	 * Processes invoice addons.
 	 *
 	 * @param WPInv_Invoice $invoice
@@ -1202,120 +1183,136 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 	 * @return WPInv_Invoice
 	 */
 	public function process_addons( $invoice, $items ) {
+		global $getpaid_authorize_addons;
 
-        global $getpaid_authorize_addons;
+		$getpaid_authorize_addons = array();
 
-        $getpaid_authorize_addons = array();
-        foreach ( $items as $item ) {
+		foreach ( $items as $item ) {
+			if ( is_null( $invoice->get_item( $item->get_id() ) ) && ! is_wp_error( $invoice->add_item( $item ) ) ) {
+				$getpaid_authorize_addons[] = $item;
+			}
+		}
 
-            if ( is_null( $invoice->get_item( $item->get_id() ) ) && ! is_wp_error( $invoice->add_item( $item ) ) ) {
-                $getpaid_authorize_addons[] = $item;
-            }
-}
+		if ( empty( $getpaid_authorize_addons ) ) {
+			return;
+		}
 
-        if ( empty( $getpaid_authorize_addons ) ) {
-            return;
-        }
+		$invoice->recalculate_total();
 
-        $invoice->recalculate_total();
-
-        $payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
+		$payment_profile_id = get_post_meta( $invoice->get_id(), 'getpaid_authorizenet_profile_id', true );
 		$customer_profile   = get_user_meta( $invoice->get_user_id(), $this->get_customer_profile_meta_name( $invoice ), true );
 
-        add_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ), 10, 2 );
-        $result = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
-        remove_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ) );
+		add_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ), 10, 2 );
+		$result = $this->charge_customer_payment_profile( $customer_profile, $payment_profile_id, $invoice );
+		remove_filter( 'getpaid_authorizenet_charge_customer_payment_profile_args', array( $this, 'filter_addons_request' ) );
 
-        if ( is_wp_error( $result ) ) {
-            wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
-            return;
-        }
+		if ( is_wp_error( $result ) ) {
+			wpinv_set_error( $result->get_error_code(), $result->get_error_message() );
+			return;
+		}
 
-        $invoice->save();
-    }
+		$invoice->save();
+	}
 
-    /**
+	/**
 	 * Processes invoice addons.
 	 *
-     * @param array $args
+	 * @param array $args
 	 * @return array
 	 */
-    public function filter_addons_request( $args ) {
+	public function filter_addons_request( $args ) {
+		global $getpaid_authorize_addons;
 
-        global $getpaid_authorize_addons;
-        $total = 0;
+		$total = 0;
 
-        foreach ( $getpaid_authorize_addons as $addon ) {
-            $total += $addon->get_sub_total();
-        }
+		foreach ( $getpaid_authorize_addons as $addon ) {
+			$total += $addon->get_sub_total();
+		}
 
-        $args['createTransactionRequest']['transactionRequest']['amount'] = $total;
+		$args['createTransactionRequest']['transactionRequest']['amount'] = $total;
 
-        if ( isset( $args['createTransactionRequest']['transactionRequest']['tax'] ) ) {
-            unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
-        }
+		if ( isset( $args['createTransactionRequest']['transactionRequest']['tax'] ) ) {
+			unset( $args['createTransactionRequest']['transactionRequest']['tax'] );
+		}
 
-        return $args;
+		return $args;
+	}
 
-    }
+	/**
+	 * Displays a notice on the checkout page if sandbox is enabled.
+	 */
+	public function sandbox_notice() {
+		return wp_sprintf(
+			__( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %1$sAuthorize.NET Sandbox Testing Guide%2$s for more details.', 'invoicing' ),
+			'<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
+			'</a>'
+		);
+	}
 
-    /**
-     * Displays a notice on the checkout page if sandbox is enabled.
-     */
-    public function sandbox_notice() {
+	/**
+	 * Get a link to the transaction on the 3rd party gateway site.
+	 *
+	 * @param string $transaction_url transaction url.
+	 * @param WPInv_Invoice $invoice Invoice object.
+	 * @return string transaction URL, or empty string.
+	 */
+	public function filter_transaction_url( $transaction_url, $invoice ) {
+		$transaction_id  = $invoice->get_transaction_id();
 
-        return sprintf(
-            __( 'SANDBOX ENABLED. You can use sandbox testing details only. See the %1$sAuthorize.NET Sandbox Testing Guide%2$s for more details.', 'invoicing' ),
-            '<a href="https://developer.authorize.net/hello_world/testing_guide.html">',
-            '</a>'
-        );
+		if ( $this->is_sandbox( $invoice ) ) {
+			$transaction_url = 'https://demo.authorize.net';
+		} else {
+			$transaction_url = 'https://account.authorize.net';
+		}
 
-    }
+		$transaction_url .= '/smb2/merchant/TransactionManagement/ManageTransactions?transactionId=' . $transaction_id;
 
-    /**
+		return $transaction_url;
+	}
+
+	/**
 	 * Filters the gateway settings.
 	 *
 	 * @param array $admin_settings
 	 */
 	public function admin_settings( $admin_settings ) {
+		$currencies = wp_sprintf(
+			__( 'Supported Currencies: %s', 'invoicing' ),
+			implode( ', ', $this->currencies )
+		);
 
-        $currencies = sprintf(
-            __( 'Supported Currencies: %s', 'invoicing' ),
-            implode( ', ', $this->currencies )
-        );
+		$admin_settings['authorizenet_active']['desc'] .= " ($currencies)";
+		$admin_settings['authorizenet_desc']['std']     = __( 'Pay securely using your credit or debit card.', 'invoicing' );
 
-        $admin_settings['authorizenet_active']['desc'] .= " ($currencies)";
-        $admin_settings['authorizenet_desc']['std']     = __( 'Pay securely using your credit or debit card.', 'invoicing' );
+		$admin_settings['authorizenet_login_id'] = array(
+			'type' => 'text',
+			'id'   => 'authorizenet_login_id',
+			'name' => __( 'API Login ID', 'invoicing' ),
+			'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'How do I obtain my API Login ID and Transaction Key?', 'invoicing' ) . '</em></a>',
+		);
 
-        $admin_settings['authorizenet_login_id'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_login_id',
-            'name' => __( 'API Login ID', 'invoicing' ),
-            'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'How do I obtain my API Login ID and Transaction Key?', 'invoicing' ) . '</em></a>',
-        );
+		$admin_settings['authorizenet_transaction_key'] = array(
+			'type' => 'text',
+			'id'   => 'authorizenet_transaction_key',
+			'name' => __( 'Transaction Key', 'invoicing' ),
+		);
 
-        $admin_settings['authorizenet_transaction_key'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_transaction_key',
-            'name' => __( 'Transaction Key', 'invoicing' ),
-        );
+		$admin_settings['authorizenet_signature_key'] = array(
+			'type' => 'text',
+			'id'   => 'authorizenet_signature_key',
+			'name' => __( 'Signature Key', 'invoicing' ),
+			'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
+		);
 
-        $admin_settings['authorizenet_signature_key'] = array(
-            'type' => 'text',
-            'id'   => 'authorizenet_signature_key',
-            'name' => __( 'Signature Key', 'invoicing' ),
-            'desc' => '<a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001271"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
-        );
-
-        $admin_settings['authorizenet_ipn_url'] = array(
-            'type'     => 'ipn_url',
-            'id'       => 'authorizenet_ipn_url',
-            'name'     => __( 'Webhook URL', 'invoicing' ),
-            'std'      => $this->notify_url,
-            'desc'     => __( 'Create a new webhook using this URL as the endpoint URL and set it to receive all payment events.', 'invoicing' ) . ' <a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001542"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
-            'custom'   => 'authorizenet',
-            'readonly' => true,
-        );
+		$admin_settings['authorizenet_ipn_url'] = array(
+			'type'     => 'ipn_url',
+			'id'       => 'authorizenet_ipn_url',
+			'name'     => __( 'Webhook URL', 'invoicing' ),
+			'std'      => $this->notify_url,
+			'desc'     => __( 'Create a new webhook using this URL as the endpoint URL and set it to receive all payment events.', 'invoicing' ) . ' <a href="https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001542"><em>' . __( 'Learn more.', 'invoicing' ) . '</em></a>',
+			'custom'   => 'authorizenet',
+			'readonly' => true,
+		);
 
 		// ACH/eCheck Settings.
 		$admin_settings['authorizenet_ach_header'] = array(
@@ -1328,7 +1325,7 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			'type' => 'checkbox',
 			'id'   => 'authorizenet_enable_ach',
 			'name' => __( 'Enable ACH Payments', 'invoicing' ),
-			'desc' => sprintf(
+			'desc' => wp_sprintf(
 				__( 'Allow customers to pay via bank account (ACH/eCheck). Only available for USD transactions. %1$sLearn more about ACH payments%2$s.', 'invoicing' ),
 				'<a href="https://developer.authorize.net/api/reference/features/echeck.html" target="_blank">',
 				'</a>'
