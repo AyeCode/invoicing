@@ -144,6 +144,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.53 - 2026-06-TBD =
 * Authorize.NET live mode displays Card code is required error - FIXED
+* Merge AUI 0.2.50 & SD 1.2.33
 
 = 2.8.52 - 2026-06-18 =
 * Enhance signature validation on legacy Authorize.NET IPN callback - SECURITY
