@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.52
+Stable tag: 2.8.53
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -142,7 +142,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.53 - 2026-06-TBD =
+= 2.8.53 - 2026-06-24 =
 * Authorize.NET live mode displays Card code is required error - FIXED
 * Merge AUI 0.2.50 & SD 1.2.33
 
