@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.54 - TBD =
+* Verify authenticity of Worldpay payment notifications before marking invoices as paid - SECURITY
+
 = 2.8.53 - 2026-06-24 =
 * Authorize.NET live mode displays Card code is required error - FIXED
 * Merge AUI 0.2.50 & SD 1.2.33
