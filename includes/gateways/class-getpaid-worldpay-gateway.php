@@ -81,6 +81,9 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
         add_filter( 'wpinv_gateway_description', array( $this, 'sandbox_notice' ), 10, 2 );
         add_filter( 'getpaid_worldpay_args', array( $this, 'hash_args' ) );
 
+        // Warn admins when the gateway is active but notifications cannot be verified.
+        add_action( 'admin_notices', array( $this, 'maybe_show_ipn_security_notice' ) );
+
         parent::__construct();
     }
 
@@ -210,19 +213,30 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 	 */
 	public function verify_ipn() {
 
+        // Only process notifications when the Worldpay gateway is active.
+        if ( ! wpinv_is_gateway_active( $this->id ) ) {
+            wpinv_error_log( 'Aborting, the Worldpay gateway is not active.' );
+            wp_die( 'Worldpay IPN Request Failure', 'Worldpay IPN', array( 'response' => 403 ) );
+        }
+
         // Validate the IPN.
         if ( empty( $_POST ) || ! $this->validate_ipn() ) {
 		    wp_die( 'Worldpay IPN Request Failure', 'Worldpay IPN', array( 'response' => 500 ) );
 		}
 
         // Process the IPN.
-        $posted  = wp_kses_post_deep( wp_unslash( $_POST ) );
-        $invoice = wpinv_get_invoice( $posted['MC_invoice_id'] );
+        $posted = wp_kses_post_deep( wp_unslash( $_POST ) );
+
+        // Retrieve the invoice using the same cart id that was validated above.
+        $invoice_id = empty( $posted['cartId'] ) ? 0 : wpinv_get_id_by_invoice_number( wpinv_clean( $posted['cartId'] ) );
+        $invoice    = empty( $invoice_id ) ? false : wpinv_get_invoice( $invoice_id );
 
         if ( $invoice && $this->id == $invoice->get_gateway() ) {
 
+            $transaction_status = isset( $posted['transStatus'] ) ? $posted['transStatus'] : '';
+
             wpinv_error_log( 'Found invoice #' . $invoice->get_number() );
-            wpinv_error_log( 'Payment status:' . $posted['transStatus'] );
+            wpinv_error_log( 'Payment status:' . $transaction_status );
 
             // Update the transaction id.
             if ( ! empty( $posted['transId'] ) ) {
@@ -234,20 +248,30 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
                 $invoice->set_ip( wpinv_clean( $posted['ipAddress'] ) );
             }
 
-            if ( $posted['transStatus'] == 'Y' ) {
-                $invoice->set_completed_date( date( 'Y-m-d H:i:s', $posted['transTime'] ) );
+            if ( 'Y' === $transaction_status ) {
+
+                // Abort if the invoice has already been paid, to prevent reprocessing or replays.
+                if ( $invoice->is_paid() ) {
+                    wpinv_error_log( 'Aborting, the invoice #' . $invoice->get_number() . ' has already been paid for.' );
+                    return;
+                }
+
+                if ( ! empty( $posted['transTime'] ) ) {
+                    $invoice->set_completed_date( date( 'Y-m-d H:i:s', (int) $posted['transTime'] ) );
+                }
+
                 $invoice->mark_paid();
                 return;
             }
 
-            if ( $posted['transStatus'] == 'C' ) {
+            if ( 'C' === $transaction_status ) {
                 $invoice->set_status( 'wpi-failed' );
                 $invoice->add_note( __( 'Payment transaction failed while processing Worldpay payment.', 'invoicing' ), false, false, true );
                 $invoice->save();
                 return;
             }
 
-            wpinv_error_log( 'Aborting, Invalid transaction status:' . $posted['transStatus'] );
+            wpinv_error_log( 'Aborting, Invalid transaction status:' . $transaction_status );
             $invoice->save();
 
         }
@@ -258,6 +282,8 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 
     /**
 	 * Check Worldpay IPN validity.
+	 *
+	 * @return bool
 	 */
 	public function validate_ipn() {
 
@@ -265,29 +291,100 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
 
         $data = wp_kses_post_deep( wp_unslash( $_POST ) );
 
-        // Verify installation.
-        if ( empty( $data['instId'] ) || $data['instId'] != wpinv_clean( $this->get_option( 'instId', '' ) ) ) {
-            wpinv_error_log( 'Received invalid installation ID from Worldpay IPN' );
-            return false;
-        }
+        // Retrieve the associated invoice using the cart id.
+        $invoice_id = empty( $data['cartId'] ) ? 0 : wpinv_get_id_by_invoice_number( wpinv_clean( $data['cartId'] ) );
+        $invoice    = empty( $invoice_id ) ? false : wpinv_get_invoice( $invoice_id );
 
-        // Verify invoice.
-        if ( empty( $data['cartId'] ) || ! wpinv_get_id_by_invoice_number( $data['cartId'] ) ) {
+        if ( empty( $invoice ) ) {
             wpinv_error_log( 'Received invalid invoice number from Worldpay IPN' );
             return false;
         }
 
-        // (maybe) verify password.
-        $password = $this->get_option( 'callback_password' );
+        // Validate the notification against the configured credentials and the invoice.
+        $valid = self::validate_notification(
+            $data,
+            (string) wpinv_clean( $this->get_option( 'instId', '' ) ),
+            (string) $this->get_option( 'callbackPW' ),
+            (string) $this->get_option( 'md5_secret' ),
+            (string) $invoice->get_total(),
+            (string) $invoice->get_currency()
+        );
 
-        if ( ! empty( $password ) && ( empty( $data['callbackPW'] ) || $password != $data['callbackPW'] ) ) {
-            wpinv_error_log( 'Received invalid invoice number from Worldpay IPN' );
-            return false;
+        if ( ! $valid ) {
+            wpinv_error_log( 'Received an invalid Worldpay IPN notification' );
         }
 
-        return true;
+        return $valid;
 
     }
+
+	/**
+	 * Validates a Worldpay payment notification.
+	 *
+	 * @param array  $data             Sanitized, unslashed notification data.
+	 * @param string $inst_id          Configured Worldpay installation id.
+	 * @param string $password         Configured Payment Response password.
+	 * @param string $md5_secret       Configured MD5 secret.
+	 * @param string $invoice_total    Invoice total to verify the paid amount against.
+	 * @param string $invoice_currency Invoice currency to verify the paid currency against.
+	 * @return bool
+	 */
+	public static function validate_notification( $data, $inst_id, $password, $md5_secret, $invoice_total, $invoice_currency ) {
+
+		// Verify the installation id (public value, sanity check only).
+		if ( empty( $data['instId'] ) || ! hash_equals( (string) $inst_id, (string) $data['instId'] ) ) {
+			return false;
+		}
+
+		$password   = (string) $password;
+		$md5_secret = (string) $md5_secret;
+
+		// No shared secret: fall back to the legacy behaviour.
+		if ( '' === $password && '' === $md5_secret ) {
+			return true;
+		}
+
+		// Verify the Payment Response password (fail closed when set).
+		if ( '' !== $password && ( empty( $data['callbackPW'] ) || ! hash_equals( $password, (string) $data['callbackPW'] ) ) ) {
+			return false;
+		}
+
+		// Verify the MD5 signature when set and returned by Worldpay (opportunistic).
+		if ( '' !== $md5_secret && ! empty( $data['signature'] ) ) {
+			$amount   = isset( $data['amount'] ) ? $data['amount'] : '';
+			$currency = isset( $data['currency'] ) ? $data['currency'] : '';
+			$cart_id  = isset( $data['cartId'] ) ? $data['cartId'] : '';
+
+			$signature = md5(
+				sprintf(
+					'%s:%s:%s:%s:%s',
+					$md5_secret,
+					$data['instId'],
+					$amount,
+					$currency,
+					$cart_id
+				)
+			);
+
+			if ( ! hash_equals( $signature, (string) $data['signature'] ) ) {
+				return false;
+			}
+		}
+
+		// Verify the amount and currency against the invoice. Worldpay sends the authorised values in authAmount/authCurrency, falling back to amount/currency.
+		$paid_amount   = isset( $data['authAmount'] ) ? $data['authAmount'] : ( isset( $data['amount'] ) ? $data['amount'] : null );
+		$paid_currency = isset( $data['authCurrency'] ) ? $data['authCurrency'] : ( isset( $data['currency'] ) ? $data['currency'] : null );
+
+		if ( null === $paid_amount || null === $paid_currency ) {
+			return false;
+		}
+
+		if ( wpinv_round_amount( $invoice_total ) !== wpinv_round_amount( $paid_amount ) ) {
+			return false;
+		}
+
+		return strtolower( trim( (string) $invoice_currency ) ) === strtolower( trim( (string) $paid_currency ) );
+	}
 
     /**
      * Displays a notice on the checkout page if sandbox is enabled.
@@ -302,6 +399,37 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
         }
         return $description;
 
+    }
+
+    /**
+	 * Shows an admin notice when the gateway is active but no Payment Response
+	 * password or MD5 secret has been configured to verify notifications.
+	 *
+	 * @return void
+	 */
+	public function maybe_show_ipn_security_notice() {
+
+        // Only show to users who can act on it, and only when the gateway is active.
+        if ( ! current_user_can( 'manage_options' ) || ! wpinv_is_gateway_active( $this->id ) ) {
+            return;
+        }
+
+        // Bail if a shared secret has been configured.
+        if ( '' !== (string) $this->get_option( 'callbackPW' ) || '' !== (string) $this->get_option( 'md5_secret' ) ) {
+            return;
+        }
+
+        $url = esc_url( admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=worldpay' ) );
+
+        echo wp_kses_post(
+            sprintf(
+                '<div class="notice notice-error"><p><strong>%1$s</strong> %2$s <a href="%3$s">%4$s</a></p></div>',
+                esc_html__( 'GetPaid Worldpay:', 'invoicing' ),
+                esc_html__( 'Worldpay is active but has no Payment Response password set — without it, invoices can be marked as paid without a real payment.', 'invoicing' ),
+                $url,
+                esc_html__( 'Configure Worldpay', 'invoicing' )
+            )
+        );
     }
 
     /**
@@ -330,14 +458,15 @@ class GetPaid_Worldpay_Gateway extends GetPaid_Payment_Gateway {
             'type' => 'text',
             'id'   => 'worldpay_md5_secret',
             'name' => __( 'MD5 secret', 'invoicing' ),
-            'desc' => __( 'Optionally enter your MD5 secret here. Next, open your installation settings and ensure that your SignatureFields parameter is set to ', 'invoicing' ) . '<code>instId:amount:currency:cartId</code>',
+            'desc' => __( 'Recommended. Enter your MD5 secret here. Next, open your installation settings and ensure that your SignatureFields parameter is set to ', 'invoicing' ) . '<code>instId:amount:currency:cartId</code>',
         );
 
         $admin_settings['worldpay_callbackPW'] = array(
-            'type' => 'text',
-            'id'   => 'worldpay_callbackPW',
-            'name' => __( 'Payment Response password', 'invoicing' ),
-            'desc' => __( 'Recommended. Enter your WorldPay response password to validate payment notifications.', 'invoicing' ),
+            'type'     => 'text',
+            'id'       => 'worldpay_callbackPW',
+            'name'     => __( 'Payment Response password', 'invoicing' ),
+            'required' => true,
+            'desc'     => __( 'Required for security. Enter your WorldPay Payment Response password so that payment notifications can be verified before invoices are marked as paid.', 'invoicing' ),
         );
 
         $admin_settings['worldpay_ipn_url'] = array(
