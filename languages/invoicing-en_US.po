@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.53\n"
+"Project-Id-Version: GetPaid 2.8.54\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 21:00+0530\n"
-"PO-Revision-Date: 2026-06-24 21:00+0530\n"
+"POT-Creation-Date: 2026-06-30 19:40+0530\n"
+"PO-Revision-Date: 2026-06-30 19:41+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -13921,7 +13921,7 @@ msgstr ""
 
 #: includes/gateways/class-getpaid-authorize-net-gateway.php:1280
 #: includes/gateways/class-getpaid-paypal-gateway.php:615
-#: includes/gateways/class-getpaid-worldpay-gateway.php:315
+#: includes/gateways/class-getpaid-worldpay-gateway.php:443
 #, php-format
 msgid "Supported Currencies: %s"
 msgstr ""
@@ -14493,61 +14493,75 @@ msgstr ""
 msgid "Proceed to Worldpay"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:167
-#: includes/gateways/class-getpaid-worldpay-gateway.php:168
+#: includes/gateways/class-getpaid-worldpay-gateway.php:170
+#: includes/gateways/class-getpaid-worldpay-gateway.php:171
 #, php-format
 msgid "Payment for invoice %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:245
+#: includes/gateways/class-getpaid-worldpay-gateway.php:269
 msgid "Payment transaction failed while processing Worldpay payment."
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:298
+#: includes/gateways/class-getpaid-worldpay-gateway.php:395
 #, php-format
 msgid ""
 "SANDBOX ENABLED. See the %1$sWorldpay Sandbox Testing Guide%2$s for more "
 "details."
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:320
+#: includes/gateways/class-getpaid-worldpay-gateway.php:427
+msgid "GetPaid Worldpay:"
+msgstr ""
+
+#: includes/gateways/class-getpaid-worldpay-gateway.php:428
+msgid ""
+"Worldpay is active but has no Payment Response password set — without it, "
+"invoices can be marked as paid without a real payment."
+msgstr ""
+
+#: includes/gateways/class-getpaid-worldpay-gateway.php:430
+msgid "Configure Worldpay"
+msgstr ""
+
+#: includes/gateways/class-getpaid-worldpay-gateway.php:448
 msgid ""
 "Pay securely via Worldpay using your PayPal account, credit or debit card."
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:325
+#: includes/gateways/class-getpaid-worldpay-gateway.php:453
 msgid "Installation Id"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:326
+#: includes/gateways/class-getpaid-worldpay-gateway.php:454
 msgid "Your installation id. Ex: 211616"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:332
+#: includes/gateways/class-getpaid-worldpay-gateway.php:460
 msgid "MD5 secret"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:333
+#: includes/gateways/class-getpaid-worldpay-gateway.php:461
 msgid ""
-"Optionally enter your MD5 secret here. Next, open your installation settings "
-"and ensure that your SignatureFields parameter is set to "
+"Recommended. Enter your MD5 secret here. Next, open your installation "
+"settings and ensure that your SignatureFields parameter is set to "
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:339
+#: includes/gateways/class-getpaid-worldpay-gateway.php:467
 msgid "Payment Response password"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:340
+#: includes/gateways/class-getpaid-worldpay-gateway.php:469
 msgid ""
-"Recommended. Enter your WorldPay response password to validate payment "
-"notifications."
+"Required for security. Enter your WorldPay Payment Response password so that "
+"payment notifications can be verified before invoices are marked as paid."
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:346
+#: includes/gateways/class-getpaid-worldpay-gateway.php:475
 msgid "Payment Response URL"
 msgstr ""
 
-#: includes/gateways/class-getpaid-worldpay-gateway.php:348
+#: includes/gateways/class-getpaid-worldpay-gateway.php:477
 msgid ""
 "Login to your Worldpay Merchant Interface then enable Payment Response & "
 "Shopper Response. Next, go to the Payment Response URL field and enter the "
