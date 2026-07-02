@@ -55,9 +55,10 @@ do_action( 'getpaid_before_payment_form', $form );
         // Fires when printing the top of a payment form.
         do_action( 'getpaid_payment_form_top', $form );
 
-        // And the optional invoice id.
+        // And the optional invoice id + key.
         if ( ! empty( $form->invoice ) ) {
 		    getpaid_hidden_field( 'invoice_id', $form->invoice->get_id() );
+		    getpaid_hidden_field( 'invoice_key', $form->invoice->get_key() );
         }
 
         // We also want to include the form id.

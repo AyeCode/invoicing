@@ -358,10 +358,14 @@ class WPInv_Ajax {
      */
     public static function payment_form() {
 
+        // Verify nonce.
+        if ( ! check_ajax_referer( 'getpaid_form_nonce', false, false ) ) {
+            wp_send_json_error( __( 'Error: Reload the page and try again.', 'invoicing' ) );
+        }
+
         // ... form fields...
         if ( empty( $_POST['getpaid_payment_form_submission'] ) ) {
-            esc_html_e( 'Error: Reload the page and try again.', 'invoicing' );
-            exit;
+            wp_send_json_error( __( 'Error: Reload the page and try again.', 'invoicing' ) );
         }
 
         // Process the payment form.
@@ -431,7 +435,7 @@ class WPInv_Ajax {
                 exit;
 
             }
-}
+        }
 
         exit;
     }
@@ -1143,9 +1147,9 @@ class WPInv_Ajax {
             wp_send_json_error( __( 'Payment form not active', 'invoicing' ) );
         }
 
-        // Fetch appropriate field.
+        // Fetch appropriate field and ensure it is a file upload field.
         $upload_field = current( wp_list_filter( $form->get_elements(), array( 'id' => sanitize_text_field( $_POST['field_name'] ) ) ) );
-        if ( empty( $upload_field ) ) {
+        if ( empty( $upload_field ) || 'file_upload' !== $upload_field['type'] ) {
             wp_send_json_error( __( 'Invalid upload field.', 'invoicing' ) );
         }
 
@@ -1156,17 +1160,18 @@ class WPInv_Ajax {
 
         foreach ( $file_types as $file_type ) {
             if ( isset( $all_types[ $file_type ] ) ) {
-                $mime_types[] = $all_types[ $file_type ];
+                $mime_types[ $file_type ] = $all_types[ $file_type ];
             }
         }
 
-        if ( ! in_array( $_FILES['file']['type'], $mime_types ) ) {
+        // Validate the real file against the field's allowed types, not the posted mime.
+        $validate = wp_check_filetype_and_ext( $_FILES['file']['tmp_name'], $_FILES['file']['name'], $mime_types );
+        if ( empty( $validate['ext'] ) || empty( $validate['type'] ) ) {
             wp_send_json_error( __( 'Unsupported file type.', 'invoicing' ) );
         }
 
         // Upload file.
-        $file_name = explode( '.', strtolower( $_FILES['file']['name'] ) );
-        $file_name = uniqid( 'getpaid-' ) . '.' . array_pop( $file_name );
+        $file_name = uniqid( 'getpaid-' ) . '.' . $validate['ext'];
 
         $uploaded = wp_upload_bits(
             $file_name,
