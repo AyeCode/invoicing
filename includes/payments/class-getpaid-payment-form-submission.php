@@ -277,6 +277,11 @@ class GetPaid_Payment_Form_Submission {
 		// and that it is not paid for.
 		if ( empty( $invoice ) ) {
 			$invoice = wpinv_get_invoice( $this->data['invoice_id'] );
+
+			// Ensure the requester owns the invoice or supplied its key.
+			if ( ! empty( $invoice ) && ! $this->is_authorized_to_pay( $invoice ) ) {
+				throw new Exception( __( 'You are not allowed to pay for this invoice.', 'invoicing' ) );
+			}
 		}
 
         if ( empty( $invoice ) ) {
@@ -318,6 +323,25 @@ class GetPaid_Payment_Form_Submission {
 		$this->invoice = $invoice;
 
 		do_action_ref_array( 'getpaid_submissions_process_invoice', array( &$this ) );
+	}
+
+	/**
+	 * Checks if the requester may pay for an existing invoice.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @return bool
+	 */
+	protected function is_authorized_to_pay( $invoice ) {
+
+		// Owner, admin, or a guest key match via the URL.
+		if ( wpinv_user_can_view_invoice( $invoice ) ) {
+			return true;
+		}
+
+		// Key supplied with the submission.
+		$key = isset( $this->data['invoice_key'] ) ? sanitize_text_field( $this->data['invoice_key'] ) : '';
+
+		return '' !== $key && ! wpinv_require_login_to_checkout() && hash_equals( (string) $invoice->get_key(), $key );
 	}
 
 	/**

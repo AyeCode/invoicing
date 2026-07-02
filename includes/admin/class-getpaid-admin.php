@@ -963,6 +963,7 @@ class GetPaid_Admin {
 			$type  = esc_attr( $type );
 
 			foreach ( $messages as $message ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo wp_kses_post( "<div class='notice notice-$type is-dismissible'><p>$message</p></div>" );
 			}
 		}
@@ -980,7 +981,31 @@ class GetPaid_Admin {
 				);
 				$message  = __( 'Some GetPaid pages are missing. To use GetPaid without any issues, click the button below to generate the missing pages.', 'invoicing' );
 				$message2 = __( 'Generate Pages', 'invoicing' );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>" );
+				break;
+			}
+		}
+
+		// Warn if the Test Gateway is active alongside a live gateway.
+		$enabled_gateways = wpinv_get_enabled_payment_gateways();
+
+		if ( isset( $enabled_gateways['manual'] ) ) {
+			$url     = admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=manual' );
+			$message = __( 'GetPaid Test Gateway is active. Disable it before accepting real payments.', 'invoicing' );
+			$link    = __( 'Disable Test Gateway', 'invoicing' );
+
+			foreach ( $enabled_gateways as $gateway => $gateway_data ) {
+				if ( 'manual' === $gateway ) {
+					continue;
+				}
+
+				if ( ! getpaid_payment_gateway_supports( $gateway, 'sandbox' ) || wpinv_is_test_mode( $gateway ) ) {
+					continue;
+				}
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$link</a></p></div>" );
 				break;
 			}
 		}
