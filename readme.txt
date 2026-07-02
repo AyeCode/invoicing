@@ -145,6 +145,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 = 2.8.55 - TBD =
 * Verify nonce and invoice ownership before processing checkout - SECURITY
 * Validate payment form uploads against allowed file types - SECURITY
+* Restrict Test Gateway to admins by default - SECURITY
 * Admin reminder to disable Test Gateway once live - ADDED
 * Country and State/Province fields on payment forms now use searchable select2 dropdowns - CHANGED
 

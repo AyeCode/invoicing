@@ -118,10 +118,42 @@ if ( ! empty( $form->invoice ) ) {
 
         <div class="getpaid-no-active-gateways d-none">
             <?php
+                // Non-admins see nothing when the admin-only Test Gateway is the only one enabled.
+                $test_gateway_only = (int) wpinv_get_option( 'manual_active', true ) === 1
+                    && (bool) wpinv_get_option( 'manual_admins_only', true )
+                    && ! wpinv_current_user_can_manage_invoicing();
+
+                if ( $test_gateway_only ) {
+                    foreach ( array_keys( wpinv_get_payment_gateways() ) as $gateway_id ) {
+                        if ( 'manual' !== $gateway_id && (int) wpinv_get_option( "{$gateway_id}_active", false ) === 1 ) {
+                            $test_gateway_only = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ( $test_gateway_only ) {
+                    $settings_url  = add_query_arg(
+                        array(
+                            'page'    => 'wpinv-settings',
+                            'tab'     => 'gateways',
+                            'section' => 'manual',
+                        ),
+                        admin_url( 'admin.php' )
+                    );
+                    $restrict_link = '<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Restrict to admins', 'invoicing' ) . '</a>';
+                    /* translators: %s: link to the "Restrict to admins" setting. */
+                    $content = sprintf( __( 'The Test Gateway is currently restricted to admins. Turn off %s or log in as an administrator to use it.', 'invoicing' ), $restrict_link );
+                    $type    = 'info';
+                } else {
+                    $content = __( 'There is no active payment gateway available to process your request.', 'invoicing' );
+                    $type    = 'danger';
+                }
+
                 aui()->alert(
                     array(
-                        'content' => __( 'There is no active payment gateway available to process your request.', 'invoicing' ),
-                        'type'    => 'danger',
+                        'content' => $content,
+                        'type'    => $type,
                     ),
                     true
                 );
