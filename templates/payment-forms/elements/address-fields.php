@@ -82,6 +82,7 @@ foreach ( $fields as $address_field ) {
                 'required'         => ! empty( $address_field['required'] ),
                 'label'            => wp_kses_post( $label ),
                 'label_type'       => 'vertical',
+                'select2'          => true,
                 'help_text'        => $description,
                 'class'            => 'getpaid-address-field wpinv_country',
                 'label_class'      => 'getpaid-address-field-label getpaid-address-field-label__country',

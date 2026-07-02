@@ -380,6 +380,11 @@ jQuery(function ($) {
 
 						if ('object' == typeof res) {
 							state.replaceWith(res.data)
+
+							// Re-init select2 on the refreshed state field.
+							if (typeof window.aui_init_select2 === 'function') {
+								window.aui_init_select2();
+							}
 						}
 
 					})
@@ -1055,6 +1060,11 @@ jQuery(function ($) {
 
 				// Trigger setup event.
 				$('body').trigger('getpaid_setup_payment_form', [this.form]);
+
+				// Init AUI select2 fields (e.g. country/state).
+				if (typeof window.aui_init_select2 === 'function') {
+					window.aui_init_select2();
+				}
 			},
 		}
 
