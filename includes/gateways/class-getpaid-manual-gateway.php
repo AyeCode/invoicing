@@ -50,6 +50,8 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         $this->method_title = __( 'Test Gateway', 'invoicing' );
 
         add_action( 'getpaid_should_renew_subscription', array( $this, 'maybe_renew_subscription' ), 10, 2 );
+        add_filter( 'wpinv_is_gateway_active', array( $this, 'maybe_restrict_to_admins' ), 10, 2 );
+        add_filter( 'wpinv_enabled_payment_gateways', array( $this, 'maybe_hide_from_checkout' ) );
     }
 
     /**
@@ -62,6 +64,10 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $invoice, $submission_data, $submission ) {
+
+        if ( $this->is_admins_only() && ! wpinv_current_user_can_manage_invoicing() ) {
+            throw new Exception( __( 'The selected payment method is not available.', 'invoicing' ) );
+        }
 
         // Mark it as paid.
         $invoice->mark_paid();
@@ -89,6 +95,78 @@ class GetPaid_Manual_Gateway extends GetPaid_Payment_Gateway {
         wpinv_send_to_success_page( array( 'invoice_key' => $invoice->get_key() ) );
 
     }
+
+	/**
+	 * Checks if the gateway is restricted to admins.
+	 *
+	 * @since 2.8.55
+	 * @return bool
+	 */
+	public function is_admins_only() {
+		return (bool) wpinv_get_option( 'manual_admins_only', true );
+	}
+
+	/**
+	 * Filters the gateway's active state for non-admins.
+	 *
+	 * @since 2.8.55
+	 * @param bool   $is_active
+	 * @param string $gateway
+	 * @return bool
+	 */
+	public function maybe_restrict_to_admins( $is_active, $gateway ) {
+		if ( $this->id === $gateway && $this->is_admins_only() && ! wpinv_current_user_can_manage_invoicing() ) {
+			return false;
+		}
+
+		return $is_active;
+	}
+
+	/**
+	 * Removes the gateway from the checkout for non-admins.
+	 *
+	 * @since 2.8.55
+	 * @param array $gateways
+	 * @return array
+	 */
+	public function maybe_hide_from_checkout( $gateways ) {
+		if ( isset( $gateways[ $this->id ] ) && $this->is_admins_only() && ! wpinv_current_user_can_manage_invoicing() ) {
+			unset( $gateways[ $this->id ] );
+		}
+
+		return $gateways;
+	}
+
+	/**
+	 * Adds the gateway settings.
+	 *
+	 * @since 2.8.55
+	 * @param array $admin_settings Gateway settings.
+	 * @return array The modified gateway settings.
+	 */
+	public function admin_settings( $admin_settings ) {
+
+		$restrict = array(
+			'manual_admins_only' => array(
+				'type' => 'checkbox',
+				'id'   => 'manual_admins_only',
+				'name' => __( 'Restrict to admins', 'invoicing' ),
+				'desc' => __( 'When enabled, only admins can use the Test Gateway. Customers will not see it at checkout. Recommended once your site is live.', 'invoicing' ),
+				'std'  => '1',
+			),
+		);
+
+		// Insert the setting immediately after "Enable Test Gateway".
+		$position = array_search( 'manual_active', array_keys( $admin_settings ), true );
+
+		if ( false === $position ) {
+			return array_merge( $admin_settings, $restrict );
+		}
+
+		return array_slice( $admin_settings, 0, $position + 1, true )
+			+ $restrict
+			+ array_slice( $admin_settings, $position + 1, null, true );
+	}
 
 	/**
 	 * (Maybe) renews a manual subscription profile.
