@@ -1587,6 +1587,7 @@ function getpaid_get_states_select_markup( $country, $state, $placeholder, $labe
 				'required'         => $required,
 				'label'            => wp_kses_post( $label ),
 				'label_type'       => 'vertical',
+				'select2'          => true,
 				'help_text'        => $help_text,
 				'class'            => 'getpaid-address-field wpinv_state',
 				'wrap_class'       => "$wrapper_class getpaid-address-field-wrapper__state",
