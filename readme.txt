@@ -142,6 +142,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.57 - TBD =
+* Local File Inclusion via the payment form element type - SECURITY
+
 = 2.8.56 - 2026-07-22 =
 * Authorize.NET subscriptions with a free trial or zero-total first payment left the invoice stuck as pending - FIXED
 
