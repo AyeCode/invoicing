@@ -1409,6 +1409,16 @@ add_action( 'getpaid_invoice_line_items', 'getpaid_the_invoice_description', 100
 add_action( 'wpinv_email_billing_details', 'getpaid_the_invoice_description', 100 );
 
 /**
+ * Returns the list of registered payment form element types.
+ *
+ * @return string[] The list of registered payment form element types.
+ */
+function getpaid_get_payment_form_element_types() {
+    $types = wp_list_pluck( wpinv_get_data( 'payment-form-elements' ), 'type' );
+    return apply_filters( 'getpaid_payment_form_element_types', $types );
+}
+
+/**
  * Render element on a form.
  *
  * @param array $element
@@ -1425,16 +1435,27 @@ function getpaid_payment_form_element( $element, $form ) {
 
     // Set up the args.
     $element_type    = trim( $element['type'] );
-    $element['form'] = $form;
-    extract( $element ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 
-    // Try to locate the appropriate template.
+    // Restrict the type to a known element to prevent path traversal in the template path.
+    $element_type    = preg_replace( '/[^a-z0-9_-]/', '', strtolower( $element_type ) );
+
+    if ( '' === $element_type || ! in_array( $element_type, getpaid_get_payment_form_element_types(), true ) ) {
+        return;
+    }
+
+    // Locate the template before extracting user data so the validated path cannot be clobbered.
     $located = wpinv_locate_template( "payment-forms/elements/$element_type.php" );
 
     // Abort if this is not our element.
     if ( empty( $located ) || ! file_exists( $located ) ) {
         return;
     }
+
+    $element['type'] = $element_type;
+    $element['form'] = $form;
+
+    // EXTR_SKIP: user-supplied keys must never overwrite existing vars such as $element_type or $located.
+    extract( $element, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 
     // Generate the class and id of the element.
     $wrapper_class = 'getpaid-payment-form-element-' . trim( esc_attr( $element_type ) );
