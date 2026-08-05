@@ -15,18 +15,19 @@ $overdue_days_options       = array();
 $overdue_days_options['0']  = __( 'On the Due Date', 'invoicing' );
 $overdue_days_options['1']  = __( '1 day after Due Date', 'invoicing' );
 
-for ( $i = 2; $i <= 45; $i++ ) {
-    $overdue_days_options[ "$i" ] = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
-}
-
 // Prepare up coming renewal reminder options.
 $renewal_days_options       = array();
 $renewal_days_options['0']  = __( 'On the renewal date', 'invoicing' );
 $renewal_days_options['1']  = __( '1 day before the renewal date', 'invoicing' );
 
 for ( $i = 2; $i <= 45; $i++ ) {
-    $renewal_days_options[ "$i" ]   = wp_sprintf( __( '%d days before the renewal date', 'invoicing' ), $i );
+	$overdue_days_options[ "$i" ] = wp_sprintf( __( '%d days after Due Date', 'invoicing' ), $i );
+
+	$renewal_days_options[ "$i" ]   = wp_sprintf( __( '%d days before the renewal date', 'invoicing' ), $i );
 }
+
+$merge_tags     = wpinv_get_merge_tags_help_text();
+$merge_tags_sub = wpinv_get_merge_tags_help_text( true );
 
 // Default, built-in gateways
 return array(
@@ -70,7 +71,7 @@ return array(
         'email_new_invoice_body'    => array(
             'id'    => 'email_new_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>A new invoice <a href="{invoice_link}">({invoice_number})</a> to {name} for {invoice_total} {invoice_currency} has been created on your site. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -126,7 +127,7 @@ return array(
         'email_cancelled_invoice_body'      => array(
             'id'    => 'email_cancelled_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>The invoice <a href="{invoice_link}">#{invoice_number}</a> created for {name} on {site_title} has been cancelled. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -175,7 +176,7 @@ return array(
         'email_failed_invoice_body'    => array(
             'id'    => 'email_failed_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title} has failed to go through. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -231,7 +232,7 @@ return array(
         'email_onhold_invoice_body'      => array(
             'id'    => 'email_onhold_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we receive your payment. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -288,7 +289,7 @@ return array(
         'email_processing_invoice_body'      => array(
             'id'    => 'email_processing_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>I would like to let you know that we have received and are currently processing your payment for the invoice <a href="{invoice_link}">#{invoice_number}</a> on {site_title}. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -353,7 +354,7 @@ return array(
         'email_completed_invoice_body'           => array(
             'id'    => 'email_completed_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -410,7 +411,7 @@ return array(
         'email_refunded_invoice_body'      => array(
             'id'    => 'email_refunded_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded. <a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -467,7 +468,7 @@ return array(
         'email_user_invoice_body'      => array(
             'id'    => 'email_user_invoice_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>An invoice of {invoice_total} has been created for you on {site_title}. You can <a href="{invoice_link}">view</a> or <a href="{invoice_pay_link}">pay</a> the invoice. Please reply to this email if you have any questions about the invoice.', 'invoicing' ),
             'class' => 'large',
@@ -523,7 +524,7 @@ return array(
         'email_user_note_body'      => array(
             'id'    => 'email_user_note_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {name},</p><p>The following note has been added to your {invoice_label} <a href="{invoice_link}">#{invoice_number}</a>:</p><blockquote class="wpinv-note">{customer_note}</blockquote><a class="btn btn-success" href="{invoice_link}">View / Print Invoice</a>', 'invoicing' ),
             'class' => 'large',
@@ -589,7 +590,7 @@ return array(
         'email_overdue_body'      => array(
             'id'    => 'email_overdue_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text(),
+            'desc'  => $merge_tags,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice <a href="{invoice_link}">#{invoice_number}</a> {is_was} due on {invoice_due_date}.</p><p>The total of this invoice is {invoice_total}</p><p>To view / pay now for this invoice please use the following link: <a class="btn btn-success" href="{invoice_link}">View / Pay</a></p>', 'invoicing' ),
             'class' => 'large',
@@ -656,7 +657,7 @@ return array(
         'email_renewal_reminder_body'      => array(
             'id'    => 'email_renewal_reminder_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {full_name},</p><p>This is just a friendly reminder that your subscription for invoice <a href="{invoice_link}">#{invoice_number}</a> will renew on {subscription_renewal_date} for amount {subscription_recurring_amount}.</p>', 'invoicing' ),
             'class' => 'large',
@@ -713,7 +714,7 @@ return array(
         'email_subscription_active_body'      => array(
             'id'    => 'email_subscription_active_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {first_name},</p><p>Your subscription #{subscription_id} for {subscription_name} has been activated.</p>', 'invoicing' ),
             'class' => 'large',
@@ -769,7 +770,7 @@ return array(
         'email_subscription_trial_body'      => array(
             'id'    => 'email_subscription_trial_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {first_name},</p><p>Your trial for {subscription_name} is now active and will renew on {subscription_renewal_date}.</p>', 'invoicing' ),
             'class' => 'large',
@@ -825,7 +826,7 @@ return array(
         'email_subscription_cancelled_body'      => array(
             'id'    => 'email_subscription_cancelled_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has been cancelled and will no longer renew.</p>', 'invoicing' ),
             'class' => 'large',
@@ -881,7 +882,7 @@ return array(
         'email_subscription_expired_body'      => array(
             'id'    => 'email_subscription_expired_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has expired.</p>', 'invoicing' ),
             'class' => 'large',
@@ -937,7 +938,7 @@ return array(
         'email_subscription_complete_body'      => array(
             'id'    => 'email_subscription_complete_body',
             'name'  => __( 'Email Content', 'invoicing' ),
-            'desc'  => wpinv_get_merge_tags_help_text( true ),
+            'desc'  => $merge_tags_sub,
             'type'  => 'rich_editor',
             'std'   => __( '<p>Hi {first_name},</p><p>Your subscription for {subscription_name} is now complete.</p>', 'invoicing' ),
             'class' => 'large',
